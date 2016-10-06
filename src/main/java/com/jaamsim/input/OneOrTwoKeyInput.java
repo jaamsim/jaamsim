@@ -88,7 +88,7 @@ public class OneOrTwoKeyInput<K1 extends Entity, K2 extends Entity, V> extends I
 		}
 
 		if( ent1 == null ) {
-			noKeyValue = Input.parse( input, valClass, minValue, maxValue, minCount, maxCount, unitType );
+			noKeyValue = Input.parse( input, thisEnt, valClass, minValue, maxValue, minCount, maxCount, unitType );
 			return;
 		}
 
@@ -119,7 +119,7 @@ public class OneOrTwoKeyInput<K1 extends Entity, K2 extends Entity, V> extends I
 		}
 
 		// Determine the value
-		V val = Input.parse( input.subList(numKeys,input.size()), valClass, minValue, maxValue, minCount, maxCount, unitType );
+		V val = Input.parse( input.subList(numKeys,input.size()), thisEnt, valClass, minValue, maxValue, minCount, maxCount, unitType );
 
 		// Set the value for the given keys
 		for( int i = 0; i < list.size(); i++ ) {

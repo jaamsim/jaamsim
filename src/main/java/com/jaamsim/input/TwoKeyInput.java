@@ -86,7 +86,7 @@ public class TwoKeyInput<K1 extends Entity, K2 extends Entity, V> extends Input<
 			ent2 = Input.tryParseEntity( input.get( 1 ), Entity.class );
 		}
 		if( ent1 == null || ent2 == null ) {
-			noKeyValue = Input.parse( input, valClass, minValue, maxValue, minCount, maxCount, unitType );
+			noKeyValue = Input.parse( input, thisEnt, valClass, minValue, maxValue, minCount, maxCount, unitType );
 			return;
 		}
 
@@ -96,7 +96,7 @@ public class TwoKeyInput<K1 extends Entity, K2 extends Entity, V> extends Input<
 		ArrayList<K2> list2 = Input.parseEntityList(input.subList(1, 2), key2Class, true);
 
 		// Determine the value
-		V val = Input.parse( input.subList(2,input.size()), valClass, minValue, maxValue, minCount, maxCount, unitType );
+		V val = Input.parse( input.subList(2,input.size()), thisEnt, valClass, minValue, maxValue, minCount, maxCount, unitType );
 
 		// Set the value for the given keys
 		for( int i = 0; i < list.size(); i++ ) {

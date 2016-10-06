@@ -80,7 +80,7 @@ public class KeyInput<K1 extends Entity, V> extends Input<V> {
 		Entity ent = Input.tryParseEntity( input.get( 0 ), Entity.class );
 		if( ent == null || input.size() == 1 ) {
 			try {
-				noKeyValue = Input.parse( input, valClass, minValue,maxValue, minCount, maxCount, unitType );
+				noKeyValue = Input.parse( input, thisEnt, valClass, minValue,maxValue, minCount, maxCount, unitType );
 				return;
 			}
 			catch (InputErrorException e) {
@@ -93,7 +93,7 @@ public class KeyInput<K1 extends Entity, V> extends Input<V> {
 		ArrayList<K1> list = Input.parseEntityList(input.subList(0, 1), keyClass, true);
 
 		// Determine the value
-		V val = Input.parse( input.subList(1,input.size()), valClass, minValue, maxValue, minCount, maxCount, unitType );
+		V val = Input.parse( input.subList(1,input.size()), thisEnt, valClass, minValue, maxValue, minCount, maxCount, unitType );
 
 		// Set the value for the given keys
 		for( int i = 0; i < list.size(); i++ ) {

@@ -577,7 +577,7 @@ public abstract class Input<T> {
 		}
 	}
 
-	public static <T> T parse(List<String> data, Class<T> aClass, double minValue, double maxValue, int minCount, int maxCount, Class<? extends Unit> unitType) {
+	public static <T> T parse(List<String> data, Entity thisEnt, Class<T> aClass, double minValue, double maxValue, int minCount, int maxCount, Class<? extends Unit> unitType) {
 
 		if( aClass == Double.class ) {
 			DoubleVector tmp = Input.parseDoubles(data, minValue, maxValue, unitType);
