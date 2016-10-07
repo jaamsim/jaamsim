@@ -60,7 +60,13 @@ public class BarGauge extends DisplayEntity {
 	@Override
 	public void updateGraphics(double simTime) {
 		super.updateGraphics(simTime);
-		setTagSize(ShapeModel.TAG_CONTENTS, this.getValue(simTime));
+
+		double val = this.getValue(simTime);
+		if (Double.isNaN(val)) {
+			val = 0.0d;
+		}
+
+		setTagSize(ShapeModel.TAG_CONTENTS, val);
 		setTagColour(ShapeModel.TAG_CONTENTS, colour.getValue());
 	}
 
