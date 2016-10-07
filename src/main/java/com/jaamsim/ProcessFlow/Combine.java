@@ -88,13 +88,15 @@ public class Combine extends LinkedService {
 			if (ent == null)
 				error("An entity with the specified match value %s was not found in %s.",
 						m, queueList.get(i));
-			this.registerEntity(ent);
 
 			// Destroy all the entities but the first
-			if (i == 0)
+			if (i == 0) {
+				this.registerEntity(ent);
 				processedEntity = ent;
-			else
+			}
+			else {
 				ent.kill();
+			}
 		}
 
 		// Position the processed entity relative to the Assemble object
