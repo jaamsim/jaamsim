@@ -35,6 +35,10 @@ public class BarGauge extends DisplayEntity {
 	         exampleList = {"red"})
 	private final ColourInput colour;
 
+	@Keyword(description = "Colour of the gauge's body.",
+	         exampleList = {"white"})
+	private final ColourInput backgroundColour;
+
 	{
 		dataSource = new SampleInput("DataSource", "Key Inputs", new SampleConstant(0.5));
 		dataSource.setUnitType(DimensionlessUnit.class);
@@ -45,6 +49,10 @@ public class BarGauge extends DisplayEntity {
 		colour = new ColourInput("Colour", "Key Inputs", ColourInput.BLUE);
 		this.addInput(colour);
 		this.addSynonym(colour, "Color");
+
+		backgroundColour = new ColourInput("BackgroundColour", "Key Inputs", ColourInput.LIGHT_GREY);
+		this.addInput(backgroundColour);
+		this.addSynonym(backgroundColour, "BackgroundColor");
 	}
 
 	@Output(name = "Value",
@@ -68,6 +76,7 @@ public class BarGauge extends DisplayEntity {
 
 		setTagSize(ShapeModel.TAG_CONTENTS, val);
 		setTagColour(ShapeModel.TAG_CONTENTS, colour.getValue());
+		setTagColour(ShapeModel.TAG_BODY, backgroundColour.getValue());
 	}
 
 }
