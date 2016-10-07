@@ -138,7 +138,6 @@ public class Assemble extends LinkedService {
 				if (ent == null)
 					error("An entity with the specified match value %s was not found in %s.",
 							getMatchValue(), que);
-				this.registerEntity(ent);
 				ent.kill();
 			}
 		}
@@ -150,6 +149,9 @@ public class Assemble extends LinkedService {
 		sb.append(this.getName()).append("_").append(numberGenerated);
 		assembledEntity = Entity.fastCopy(proto, sb.toString());
 		assembledEntity.earlyInit();
+
+		// Set the obj output to the assembled part
+		this.registerEntity(assembledEntity);
 
 		// Set the state for the assembled part
 		if (!stateAssignment.getValue().isEmpty() && assembledEntity instanceof StateEntity)
