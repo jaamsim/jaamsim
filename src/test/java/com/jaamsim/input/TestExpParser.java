@@ -531,6 +531,10 @@ public class TestExpParser {
 		assertTrue(res.type == ExpResType.STRING);
 		assertTrue(res.stringVal.equals("far"));
 
+		exp = ExpParser.parseExpression(vtpc, "size([Arrays].doubleArray)");
+		val = exp.evaluate(ec).value;
+		assertTrue(val == 4);
+
 	}
 
 	@Test

@@ -1724,6 +1724,28 @@ public class ExpParser {
 			}
 		});
 
+		addFunction("size", 1, 1, new CallableFunc() {
+			@Override
+			public void checkUnits(ParseContext context, ExpResult[] args,
+					String source, int pos) throws ExpError {
+			}
+
+			@Override
+			public ExpResult call(ParseContext context, ExpResult[] args, String source, int pos) throws ExpError {
+				if (args[0].type != ExpResType.COLLECTION) {
+					throw new ExpError(source, pos, "Expected Collection type argument");
+				}
+
+				ExpResult.Collection col = args[0].colVal;
+				return ExpResult.makeNumResult(col.getSize(), DimensionlessUnit.class);
+			}
+
+			@Override
+			public ExpValResult validate(ParseContext context, ExpValResult[] args, String source, int pos) {
+				return validateCollection(context, args, source, pos);
+			}
+		});
+
 		addFunction("choose", 2, -1, new CallableFunc() {
 			@Override
 			public void checkUnits(ParseContext context, ExpResult[] args,
