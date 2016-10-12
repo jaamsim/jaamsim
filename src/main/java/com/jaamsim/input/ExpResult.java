@@ -21,8 +21,15 @@ import com.jaamsim.units.Unit;
 
 public class ExpResult {
 
+	public interface Iterator {
+		public boolean hasNext();
+		public ExpResult nextKey() throws ExpError;
+	}
+
 	public interface Collection {
 		public ExpResult index(ExpResult index) throws ExpError;
+
+		public Iterator getIter();
 	}
 
 	public final ExpResType type;

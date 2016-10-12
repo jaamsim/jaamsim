@@ -821,6 +821,22 @@ public class ExpParser {
 		return ExpValResult.makeValidRes(ExpResType.NUMBER, newType);
 	}
 
+	// Make sure the single argument is a collection
+	private static ExpValResult validateCollection(ParseContext context, ExpValResult[] args, String source, int pos) {
+		if (  args[0].state == ExpValResult.State.ERROR ||
+		      args[0].state == ExpValResult.State.UNDECIDABLE) {
+			return args[0];
+		}
+		// Check that the argument is a collection
+		if (args[0].type != ExpResType.COLLECTION) {
+			ExpError error = new ExpError(source, pos, "Expected Collection type argument");
+			return ExpValResult.makeErrorRes(error);
+		}
+
+		return ExpValResult.makeUndecidableRes();
+	}
+
+
 	// Check that a single argument is not an error and is a dimensionless unit
 	private static ExpValResult validateSingleArgDimensionless(ParseContext context, ExpValResult arg, String source, int pos) {
 		if (	arg.state == ExpValResult.State.ERROR ||
@@ -1360,6 +1376,96 @@ public class ExpParser {
 			}
 		});
 
+		addFunction("maxCol", 1, 1, new CallableFunc() {
+			@Override
+			public void checkUnits(ParseContext context, ExpResult[] args,
+					String source, int pos) throws ExpError {
+			}
+
+			@Override
+			public ExpResult call(ParseContext context, ExpResult[] args, String source, int pos) throws ExpError {
+				if (args[0].type != ExpResType.COLLECTION) {
+					throw new ExpError(source, pos, "Expected Collection type argument");
+				}
+
+				ExpResult.Collection col = args[0].colVal;
+				ExpResult.Iterator it = col.getIter();
+				if (!it.hasNext()) {
+					throw new ExpError(source, pos, "Can not get max of empty collection");
+				}
+				ExpResult ret = col.index(it.nextKey());
+				Class<? extends Unit> ut = ret.unitType;
+				if (ret.type != ExpResType.NUMBER) {
+					throw new ExpError(source, pos, "Can not take max of non-numeric type in collection");
+				}
+
+				while (it.hasNext()) {
+					ExpResult comp = col.index(it.nextKey());
+					if (comp.unitType != ut) {
+						throw new ExpError(source, pos, "Unmatched Unit types in collection: %s, %s",
+						                   ut.getSimpleName(), comp.unitType.getSimpleName());
+					}
+					if (comp.type != ExpResType.NUMBER) {
+						throw new ExpError(source, pos, "Can not take max of non-numeric type in collection");
+					}
+					if (comp.value > ret.value) {
+						ret = comp;
+					}
+				}
+				return ret;
+			}
+
+			@Override
+			public ExpValResult validate(ParseContext context, ExpValResult[] args, String source, int pos) {
+				return validateCollection(context, args, source, pos);
+			}
+		});
+
+		addFunction("minCol", 1, 1, new CallableFunc() {
+			@Override
+			public void checkUnits(ParseContext context, ExpResult[] args,
+					String source, int pos) throws ExpError {
+			}
+
+			@Override
+			public ExpResult call(ParseContext context, ExpResult[] args, String source, int pos) throws ExpError {
+				if (args[0].type != ExpResType.COLLECTION) {
+					throw new ExpError(source, pos, "Expected Collection type argument");
+				}
+
+				ExpResult.Collection col = args[0].colVal;
+				ExpResult.Iterator it = col.getIter();
+				if (!it.hasNext()) {
+					throw new ExpError(source, pos, "Can not get min of empty collection");
+				}
+				ExpResult ret = col.index(it.nextKey());
+				Class<? extends Unit> ut = ret.unitType;
+				if (ret.type != ExpResType.NUMBER) {
+					throw new ExpError(source, pos, "Can not take min of non-numeric type in collection");
+				}
+
+				while (it.hasNext()) {
+					ExpResult comp = col.index(it.nextKey());
+					if (comp.unitType != ut) {
+						throw new ExpError(source, pos, "Unmatched Unit types in collection: %s, %s",
+						                   ut.getSimpleName(), comp.unitType.getSimpleName());
+					}
+					if (comp.type != ExpResType.NUMBER) {
+						throw new ExpError(source, pos, "Can not take min of non-numeric type in collection");
+					}
+					if (comp.value < ret.value) {
+						ret = comp;
+					}
+				}
+				return ret;
+			}
+
+			@Override
+			public ExpValResult validate(ParseContext context, ExpValResult[] args, String source, int pos) {
+				return validateCollection(context, args, source, pos);
+			}
+		});
+
 		addFunction("abs", 1, 1, new CallableFunc() {
 			@Override
 			public void checkUnits(ParseContext context, ExpResult[] args,
@@ -1520,6 +1626,101 @@ public class ExpParser {
 			@Override
 			public ExpValResult validate(ParseContext context, ExpValResult[] args, String source, int pos) {
 				return validateSameUnits(context, args, source, pos, DimensionlessUnit.class);
+			}
+		});
+
+		addFunction("indexOfMaxCol", 1, 1, new CallableFunc() {
+			@Override
+			public void checkUnits(ParseContext context, ExpResult[] args,
+					String source, int pos) throws ExpError {
+			}
+
+			@Override
+			public ExpResult call(ParseContext context, ExpResult[] args, String source, int pos) throws ExpError {
+				if (args[0].type != ExpResType.COLLECTION) {
+					throw new ExpError(source, pos, "Expected Collection type argument");
+				}
+
+				ExpResult.Collection col = args[0].colVal;
+				ExpResult.Iterator it = col.getIter();
+				if (!it.hasNext()) {
+					throw new ExpError(source, pos, "Can not get max of empty collection");
+				}
+				ExpResult retKey = it.nextKey();
+				ExpResult ret = col.index(retKey);
+				Class<? extends Unit> ut = ret.unitType;
+				if (ret.type != ExpResType.NUMBER) {
+					throw new ExpError(source, pos, "Can not take max of non-numeric type in collection");
+				}
+
+				while (it.hasNext()) {
+					ExpResult compKey = it.nextKey();
+					ExpResult comp = col.index(compKey);
+					if (comp.unitType != ut) {
+						throw new ExpError(source, pos, "Unmatched Unit types in collection: %s, %s",
+						                   ut.getSimpleName(), comp.unitType.getSimpleName());
+					}
+					if (comp.type != ExpResType.NUMBER) {
+						throw new ExpError(source, pos, "Can not take max of non-numeric type in collection");
+					}
+					if (comp.value > ret.value) {
+						ret = comp;
+						retKey = compKey;
+					}
+				}
+				return retKey;
+			}
+
+			@Override
+			public ExpValResult validate(ParseContext context, ExpValResult[] args, String source, int pos) {
+				return validateCollection(context, args, source, pos);
+			}
+		});
+		addFunction("indexOfMinCol", 1, 1, new CallableFunc() {
+			@Override
+			public void checkUnits(ParseContext context, ExpResult[] args,
+					String source, int pos) throws ExpError {
+			}
+
+			@Override
+			public ExpResult call(ParseContext context, ExpResult[] args, String source, int pos) throws ExpError {
+				if (args[0].type != ExpResType.COLLECTION) {
+					throw new ExpError(source, pos, "Expected Collection type argument");
+				}
+
+				ExpResult.Collection col = args[0].colVal;
+				ExpResult.Iterator it = col.getIter();
+				if (!it.hasNext()) {
+					throw new ExpError(source, pos, "Can not get min of empty collection");
+				}
+				ExpResult retKey = it.nextKey();
+				ExpResult ret = col.index(retKey);
+				Class<? extends Unit> ut = ret.unitType;
+				if (ret.type != ExpResType.NUMBER) {
+					throw new ExpError(source, pos, "Can not take min of non-numeric type in collection");
+				}
+
+				while (it.hasNext()) {
+					ExpResult compKey = it.nextKey();
+					ExpResult comp = col.index(compKey);
+					if (comp.unitType != ut) {
+						throw new ExpError(source, pos, "Unmatched Unit types in collection: %s, %s",
+						                   ut.getSimpleName(), comp.unitType.getSimpleName());
+					}
+					if (comp.type != ExpResType.NUMBER) {
+						throw new ExpError(source, pos, "Can not take min of non-numeric type in collection");
+					}
+					if (comp.value < ret.value) {
+						ret = comp;
+						retKey = compKey;
+					}
+				}
+				return retKey;
+			}
+
+			@Override
+			public ExpValResult validate(ParseContext context, ExpValResult[] args, String source, int pos) {
+				return validateCollection(context, args, source, pos);
 			}
 		});
 

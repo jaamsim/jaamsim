@@ -6,6 +6,8 @@ import java.util.Map;
 
 import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.datatypes.IntegerVector;
+import com.jaamsim.input.ExpResult.Iterator;
+import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 
 public class ExpCollections {
@@ -63,6 +65,28 @@ public class ExpCollections {
 
 	private static class ListCollection implements ExpResult.Collection {
 
+		private class Iter implements ExpResult.Iterator {
+
+			private int next = 0;
+
+			@Override
+			public boolean hasNext() {
+				return next < list.size();
+			}
+
+			@Override
+			public ExpResult nextKey() throws ExpError {
+				ExpResult ret = ExpResult.makeNumResult(next + 1, DimensionlessUnit.class);
+				next++;
+				return ret;
+			}
+		}
+
+		@Override
+		public Iterator getIter() {
+			return new Iter();
+		}
+
 		private final List<?> list;
 		private final Class<? extends Unit> unitType;
 
@@ -96,6 +120,28 @@ public class ExpCollections {
 		public ArrayCollection(Object a, Class<? extends Unit> ut) {
 			this.array = a;
 			this.unitType = ut;
+		}
+
+		private class Iter implements ExpResult.Iterator {
+
+			private int next = 0;
+
+			@Override
+			public boolean hasNext() {
+				return next < Array.getLength(array);
+			}
+
+			@Override
+			public ExpResult nextKey() throws ExpError {
+				ExpResult ret = ExpResult.makeNumResult(next + 1, DimensionlessUnit.class);
+				next++;
+				return ret;
+			}
+		}
+
+		@Override
+		public Iterator getIter() {
+			return new Iter();
 		}
 
 		@Override
@@ -149,6 +195,27 @@ public class ExpCollections {
 			this.unitType = ut;
 		}
 
+		private class Iter implements ExpResult.Iterator {
+
+			private int next = 0;
+
+			@Override
+			public boolean hasNext() {
+				return next < vector.size();
+			}
+
+			@Override
+			public ExpResult nextKey() throws ExpError {
+				ExpResult ret = ExpResult.makeNumResult(next + 1, DimensionlessUnit.class);
+				next++;
+				return ret;
+			}
+		}
+		@Override
+		public Iterator getIter() {
+			return new Iter();
+		}
+
 		@Override
 		public ExpResult index(ExpResult index) throws ExpError {
 
@@ -178,6 +245,27 @@ public class ExpCollections {
 			this.unitType = ut;
 		}
 
+		private class Iter implements ExpResult.Iterator {
+
+			private int next = 0;
+
+			@Override
+			public boolean hasNext() {
+				return next < vector.size();
+			}
+
+			@Override
+			public ExpResult nextKey() throws ExpError {
+				ExpResult ret = ExpResult.makeNumResult(next + 1, DimensionlessUnit.class);
+				next++;
+				return ret;
+			}
+		}
+		@Override
+		public Iterator getIter() {
+			return new Iter();
+		}
+
 		@Override
 		public ExpResult index(ExpResult index) throws ExpError {
 
@@ -205,6 +293,27 @@ public class ExpCollections {
 		public MapCollection(Map<?,?> m, Class<? extends Unit> ut) {
 			this.map = m;
 			this.unitType = ut;
+		}
+
+		private class Iter implements ExpResult.Iterator {
+
+			java.util.Iterator<?> keySetIt = map.keySet().iterator();
+
+			@Override
+			public boolean hasNext() {
+				return keySetIt.hasNext();
+			}
+
+			@Override
+			public ExpResult nextKey() throws ExpError {
+				Object mapKey = keySetIt.next();
+
+				return ExpEvaluator.getResultFromObject(mapKey, DimensionlessUnit.class);
+			}
+		}
+		@Override
+		public Iterator getIter() {
+			return new Iter();
 		}
 
 		@Override
