@@ -153,6 +153,9 @@ public class EntityGenerator extends LinkedService {
 			DisplayEntity ent = Entity.fastCopy(proto, sb.toString());
 			ent.earlyInit();
 
+			// Set the obj output to the assembled part
+			this.registerEntity(ent);
+
 			// Send the entity to the next element in the chain
 			this.sendToNextComponent(ent);
 		}
@@ -166,11 +169,6 @@ public class EntityGenerator extends LinkedService {
 			return firstArrivalTime.getValue().getNextSample(simTime);
 
 		return interArrivalTime.getValue().getNextSample(simTime);
-	}
-
-	@Override
-	public long getNumberInProgress() {
-		return  0;
 	}
 
 	@Output(name = "NumberGenerated",
