@@ -16,6 +16,8 @@
  */
 package com.jaamsim.Samples;
 
+import java.util.ArrayList;
+
 import com.jaamsim.input.Input;
 import com.jaamsim.units.Unit;
 
@@ -69,5 +71,13 @@ public class SampleConstant implements SampleProvider {
 		if (unitType != Unit.class)
 			tmp.append(Input.SEPARATOR).append(Unit.getDisplayedUnit(unitType));
 		return tmp.toString();
+	}
+
+	public ArrayList<String> getTokens() {
+		ArrayList<String> list = new ArrayList<>();
+		list.add(String.format( "%s", val/Unit.getDisplayedUnitFactor(unitType)));
+		if (unitType != Unit.class)
+			list.add(Unit.getDisplayedUnit(unitType));
+		return list;
 	}
 }
