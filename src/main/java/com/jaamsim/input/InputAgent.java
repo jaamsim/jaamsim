@@ -73,6 +73,8 @@ public class InputAgent {
 	private static FileEntity reportFile;     // file to which the output report will be written
 	private static PrintStream outStream;  // location where the selected outputs will be written
 
+	private static long preDefinedEntityCount; // Number of Entities after loading autoload.cfg
+
 	static {
 		recordEditsFound = false;
 		sessionEdited = false;
@@ -113,6 +115,10 @@ public class InputAgent {
 			outStream.close();
 			outStream = null;
 		}
+	}
+
+	public static void setPreDefinedEntityCount(long count) {
+		preDefinedEntityCount = count;
 	}
 
 	private static String getReportDirectory() {
@@ -767,63 +773,94 @@ public class InputAgent {
 		FileEntity inputReportFile = new FileEntity( inputReportFileName);
 		inputReportFile.flush();
 
+		ArrayList<ObjectType> objectTypes = new ArrayList<>();
+		for (ObjectType type : ObjectType.getAll())
+			objectTypes.add( type );
+
+		// Sort ObjectTypes by Units, Simulation, and then alphabetically by palette name
+		Collections.sort(objectTypes, new Comparator<ObjectType>() {
+			@Override
+			public int compare(ObjectType a, ObjectType b) {
+
+				// Put Unit classes first
+				if (Unit.class.isAssignableFrom(a.getJavaClass())) {
+					if (Unit.class.isAssignableFrom(b.getJavaClass()))
+						return 0;
+					else
+						return -1;
+				}
+				if (Unit.class.isAssignableFrom(b.getJavaClass())) {
+						return 1;
+				}
+
+				// Put Simulation classes second
+				if (Simulation.class.isAssignableFrom(a.getJavaClass())) {
+					if (Simulation.class.isAssignableFrom(b.getJavaClass()))
+						return 0;
+					else
+						return -1;
+				}
+				if (Simulation.class.isAssignableFrom(b.getJavaClass())) {
+						return 1;
+				}
+
+				// Sort the rest alphabetically by palette name
+				return a.getPaletteName().compareTo(b.getPaletteName());
+			}
+		});
+
 		// Loop through the entity classes printing Define statements
-		for (ObjectType type : ObjectType.getAll()) {
+		for (ObjectType type : objectTypes) {
 			Class<? extends Entity> each = type.getJavaClass();
 
 			// Loop through the instances for this entity class
 			int count = 0;
 			for (Entity ent : Entity.getInstanceIterator(each)) {
-				boolean hasinput = false;
+				if (ent.getEntityNumber() <= preDefinedEntityCount)
+					continue;
 
-				for (Input<?> in : ent.getEditableInputs()) {
-					if (in.isSynonym())
-						continue;
-					// If the keyword has been used, then add a record to the report
-					if (in.getValueString().length() != 0) {
-						hasinput = true;
-						count++;
-						break;
-					}
+				count++;
+
+				String entityName = ent.getName();
+				if ((count - 1) % 5 == 0) {
+					inputReportFile.write("Define");
+					inputReportFile.write("\t");
+					inputReportFile.write(type.getName());
+					inputReportFile.write("\t");
+					inputReportFile.write("{ " + entityName);
+					inputReportFile.write("\t");
 				}
-
-				if (hasinput) {
-					String entityName = ent.getName();
-					if ((count - 1) % 5 == 0) {
-						inputReportFile.write("Define");
-						inputReportFile.write("\t");
-						inputReportFile.write(type.getName());
-						inputReportFile.write("\t");
-						inputReportFile.write("{ " + entityName);
-						inputReportFile.write("\t");
-					}
-					else if ((count - 1) % 5 == 4) {
-						inputReportFile.write(entityName + " }");
-						inputReportFile.newLine();
-					}
-					else {
-						inputReportFile.write(entityName);
-						inputReportFile.write("\t");
-					}
-				}
-			}
-
-			if (!Entity.getInstanceIterator(each).hasNext()) {
-				if (count % 5 != 0) {
-					inputReportFile.write(" }");
+				else if ((count - 1) % 5 == 4) {
+					inputReportFile.write(entityName + " }");
 					inputReportFile.newLine();
 				}
+				else {
+					inputReportFile.write(entityName);
+					inputReportFile.write("\t");
+				}
+			}
+
+			if (count % 5 != 0) {
+				inputReportFile.write(" }");
 				inputReportFile.newLine();
 			}
+			if (count > 0)
+				inputReportFile.newLine();
 		}
 
-		for (ObjectType type : ObjectType.getAll()) {
+		for (ObjectType type : objectTypes) {
 			Class<? extends Entity> each = type.getJavaClass();
 
 			// Get the list of instances for this entity class
 			// sort the list alphabetically
 			ArrayList<Entity> cloneList = new ArrayList<>();
 			for (Entity ent : Entity.getInstanceIterator(each)) {
+				if (ent.getEntityNumber() <= preDefinedEntityCount) {
+					if (! (ent instanceof Simulation) ) {
+						continue;
+					}
+				}
+
 				cloneList.add(ent);
 			}
 
@@ -845,49 +882,91 @@ public class InputAgent {
 			for (int j = 0; j < cloneList.size(); j++) {
 
 				// Make sure the clone is an instance of the class (and not an instance of a subclass)
-				if (cloneList.get(j).getClass() == each) {
-					Entity ent = cloneList.get(j);
-					String entityName = ent.getName();
-					boolean hasinput = false;
+				if (cloneList.get(j).getClass() != each)
+					continue;
 
-					// Loop through the editable keywords for this instance
-					for (Input<?> in : ent.getEditableInputs()) {
-						if (in.isSynonym())
-							continue;
+				Entity ent = cloneList.get(j);
+				String entityName = ent.getName();
+				boolean hasinput = false;
 
-						// If the keyword has been used, then add a record to the report
-						if (in.getValueString().length() != 0) {
+				// Loop through the editable Key Inputs for this instance
+				for (Input<?> in : ent.getEditableInputs()) {
+					if (in.isSynonym())
+						continue;
 
-							if (!in.getCategory().contains("Graphics")) {
-								hasinput = true;
-								inputReportFile.write("\t");
-								inputReportFile.write(entityName);
-								inputReportFile.write("\t");
-								inputReportFile.write(in.getKeyword());
-								inputReportFile.write("\t");
-								if (in.getValueString().lastIndexOf('{') > 10) {
-									String[] item1Array;
-									item1Array = in.getValueString().trim().split(" }");
+					// If the keyword has been used, then add a record to the report
+					String valueString = in.getValueString();
+					if (valueString.length() == 0)
+						continue;
 
-									inputReportFile.write("{ " + item1Array[0] + " }");
-									for (int l = 1; l < (item1Array.length); l++) {
-										inputReportFile.newLine();
-										inputReportFile.write("\t\t\t\t\t");
-										inputReportFile.write(item1Array[l] + " } ");
-									}
-									inputReportFile.write("	}");
-								}
-								else {
-									inputReportFile.write("{ " + in.getValueString() + " }");
-								}
-								inputReportFile.newLine();
-							}
+					if (! in.getCategory().contains("Key Inputs"))
+						continue;
+
+					hasinput = true;
+					inputReportFile.write("\t");
+					inputReportFile.write(entityName);
+					inputReportFile.write("\t");
+					inputReportFile.write(in.getKeyword());
+					inputReportFile.write("\t");
+					if (valueString.lastIndexOf('{') > 10) {
+						String[] item1Array;
+						item1Array = valueString.trim().split(" }");
+
+						inputReportFile.write("{ " + item1Array[0] + " }");
+						for (int l = 1; l < (item1Array.length); l++) {
+							inputReportFile.newLine();
+							inputReportFile.write("\t\t\t\t\t");
+							inputReportFile.write(item1Array[l] + " } ");
 						}
+						inputReportFile.write("	}");
 					}
-					// Put a blank line after each instance
-					if (hasinput) {
-						inputReportFile.newLine();
+					else {
+						inputReportFile.write("{ " + valueString + " }");
 					}
+					inputReportFile.newLine();
+				}
+
+				// Loop through the editable keywords
+				// (except for Key Inputs) for this instance
+				for (Input<?> in : ent.getEditableInputs()) {
+					if (in.isSynonym())
+						continue;
+
+					// If the keyword has been used, then add a record to the report
+					String valueString = in.getValueString();
+					if (valueString.length() == 0)
+						continue;
+
+					if (in.getCategory().contains("Key Inputs"))
+						continue;
+
+					hasinput = true;
+					inputReportFile.write("\t");
+					inputReportFile.write(entityName);
+					inputReportFile.write("\t");
+					inputReportFile.write(in.getKeyword());
+					inputReportFile.write("\t");
+					if (valueString.lastIndexOf('{') > 10) {
+						String[] item1Array;
+						item1Array = valueString.trim().split(" }");
+
+						inputReportFile.write("{ " + item1Array[0] + " }");
+						for (int l = 1; l < (item1Array.length); l++) {
+							inputReportFile.newLine();
+							inputReportFile.write("\t\t\t\t\t");
+							inputReportFile.write(item1Array[l] + " } ");
+						}
+						inputReportFile.write("	}");
+					}
+					else {
+						inputReportFile.write("{ " + valueString + " }");
+					}
+					inputReportFile.newLine();
+				}
+
+				// Put a blank line after each instance
+				if (hasinput) {
+					inputReportFile.newLine();
 				}
 			}
 		}
