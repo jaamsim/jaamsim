@@ -30,6 +30,8 @@ public class ExpResult {
 		public ExpResult index(ExpResult index) throws ExpError;
 
 		public Iterator getIter();
+
+		public int getSize();
 	}
 
 	public final ExpResType type;

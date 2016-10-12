@@ -110,6 +110,11 @@ public class ExpCollections {
 
 			return ExpEvaluator.getResultFromObject(val, unitType);
 		}
+
+		@Override
+		public int getSize() {
+			return list.size();
+		}
 	}
 
 	private static class ArrayCollection implements ExpResult.Collection {
@@ -183,6 +188,11 @@ public class ExpCollections {
 			}
 			throw new ExpError(null, 0, "Unknown type in array");
 		}
+		@Override
+		public int getSize() {
+			return Array.getLength(array);
+		}
+
 	}
 
 	private static class DoubleVectorCollection implements ExpResult.Collection {
@@ -231,6 +241,10 @@ public class ExpCollections {
 
 			Double value = vector.get(indexVal);
 			return ExpResult.makeNumResult(value, unitType);
+		}
+		@Override
+		public int getSize() {
+			return vector.size();
 		}
 
 	}
@@ -281,6 +295,10 @@ public class ExpCollections {
 
 			Integer value = vector.get(indexVal);
 			return ExpResult.makeNumResult(value, unitType);
+		}
+		@Override
+		public int getSize() {
+			return vector.size();
 		}
 
 	}
@@ -341,6 +359,10 @@ public class ExpCollections {
 				return ExpResult.makeNumResult(0, unitType); // TODO: Is this how we want to handle this case?
 			}
 			return ExpEvaluator.getResultFromObject(val, unitType);
+		}
+		@Override
+		public int getSize() {
+			return map.size();
 		}
 
 	}
