@@ -29,6 +29,8 @@ public class ExpResult {
 	public interface Collection {
 		public ExpResult index(ExpResult index) throws ExpError;
 
+		public void assign(ExpResult key, ExpResult value) throws ExpError;
+
 		public Iterator getIter();
 
 		public int getSize();

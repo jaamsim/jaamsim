@@ -119,6 +119,11 @@ public class ExpCollections {
 		public int getSize() {
 			return list.size();
 		}
+
+		@Override
+		public void assign(ExpResult key, ExpResult value) throws ExpError {
+			throw new ExpError(null, 0, "Can not assign to built in collection");
+		}
 	}
 
 	private static class ArrayCollection implements ExpResult.Collection {
@@ -201,6 +206,10 @@ public class ExpCollections {
 		public int getSize() {
 			return Array.getLength(array);
 		}
+		@Override
+		public void assign(ExpResult key, ExpResult value) throws ExpError {
+			throw new ExpError(null, 0, "Can not assign to built in collection");
+		}
 
 	}
 
@@ -258,6 +267,10 @@ public class ExpCollections {
 		@Override
 		public int getSize() {
 			return vector.size();
+		}
+		@Override
+		public void assign(ExpResult key, ExpResult value) throws ExpError {
+			throw new ExpError(null, 0, "Can not assign to built in collection");
 		}
 
 	}
@@ -317,6 +330,10 @@ public class ExpCollections {
 		@Override
 		public int getSize() {
 			return vector.size();
+		}
+		@Override
+		public void assign(ExpResult key, ExpResult value) throws ExpError {
+			throw new ExpError(null, 0, "Can not assign to built in collection");
 		}
 
 	}
@@ -384,6 +401,10 @@ public class ExpCollections {
 		@Override
 		public int getSize() {
 			return map.size();
+		}
+		@Override
+		public void assign(ExpResult key, ExpResult value) throws ExpError {
+			throw new ExpError(null, 0, "Can not assign to built in collection");
 		}
 
 	}
