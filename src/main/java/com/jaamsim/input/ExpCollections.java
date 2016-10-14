@@ -65,9 +65,13 @@ public class ExpCollections {
 
 	private static class ListCollection implements ExpResult.Collection {
 
-		private class Iter implements ExpResult.Iterator {
+		private static class Iter implements ExpResult.Iterator {
 
 			private int next = 0;
+			private final List<?> list;
+			public Iter(List l) {
+				this.list = l;
+			}
 
 			@Override
 			public boolean hasNext() {
@@ -84,7 +88,7 @@ public class ExpCollections {
 
 		@Override
 		public Iterator getIter() {
-			return new Iter();
+			return new Iter(list);
 		}
 
 		private final List<?> list;
@@ -127,9 +131,14 @@ public class ExpCollections {
 			this.unitType = ut;
 		}
 
-		private class Iter implements ExpResult.Iterator {
+		private static class Iter implements ExpResult.Iterator {
 
 			private int next = 0;
+			private final Object array;
+
+			public Iter(Object a) {
+				array = a;
+			}
 
 			@Override
 			public boolean hasNext() {
@@ -146,7 +155,7 @@ public class ExpCollections {
 
 		@Override
 		public Iterator getIter() {
-			return new Iter();
+			return new Iter(array);
 		}
 
 		@Override
@@ -205,10 +214,14 @@ public class ExpCollections {
 			this.unitType = ut;
 		}
 
-		private class Iter implements ExpResult.Iterator {
+		private static class Iter implements ExpResult.Iterator {
 
 			private int next = 0;
+			private final DoubleVector vector;
 
+			public Iter(DoubleVector v) {
+				this.vector = v;
+			}
 			@Override
 			public boolean hasNext() {
 				return next < vector.size();
@@ -223,7 +236,7 @@ public class ExpCollections {
 		}
 		@Override
 		public Iterator getIter() {
-			return new Iter();
+			return new Iter(vector);
 		}
 
 		@Override
@@ -262,6 +275,11 @@ public class ExpCollections {
 		private class Iter implements ExpResult.Iterator {
 
 			private int next = 0;
+			private final IntegerVector vector;
+
+			public Iter(IntegerVector v) {
+				this.vector = v;
+			}
 
 			@Override
 			public boolean hasNext() {
@@ -277,7 +295,7 @@ public class ExpCollections {
 		}
 		@Override
 		public Iterator getIter() {
-			return new Iter();
+			return new Iter(vector);
 		}
 
 		@Override
@@ -313,9 +331,12 @@ public class ExpCollections {
 			this.unitType = ut;
 		}
 
-		private class Iter implements ExpResult.Iterator {
+		private static class Iter implements ExpResult.Iterator {
 
-			java.util.Iterator<?> keySetIt = map.keySet().iterator();
+			java.util.Iterator<?> keySetIt;
+			public Iter(Map<?,?> map) {
+				keySetIt = map.keySet().iterator();
+			}
 
 			@Override
 			public boolean hasNext() {
@@ -331,7 +352,7 @@ public class ExpCollections {
 		}
 		@Override
 		public Iterator getIter() {
-			return new Iter();
+			return new Iter(map);
 		}
 
 		@Override
