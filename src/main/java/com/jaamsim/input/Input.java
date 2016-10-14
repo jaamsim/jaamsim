@@ -1317,7 +1317,7 @@ public abstract class Input<T> {
 			}
 
 			// If we found a group, expand the list of Entities
-			if (ent instanceof Group) {
+			if (ent instanceof Group && aClass != Group.class) {
 				ArrayList<Entity> gList = ((Group)ent).getList();
 				for (int j = 0; j < gList.size(); j++) {
 					T t = Input.castEntity(gList.get(j), aClass);
@@ -1353,7 +1353,7 @@ public abstract class Input<T> {
 			}
 
 			// If we found a group, expand the list of Entities
-			if (ent instanceof Group) {
+			if (ent instanceof Group && aClass != Group.class) {
 				ArrayList<Entity> gList = ((Group)ent).getList();
 				for (int j = 0; j < gList.size(); j++) {
 					T t = Input.castEntity(gList.get(j), aClass);
