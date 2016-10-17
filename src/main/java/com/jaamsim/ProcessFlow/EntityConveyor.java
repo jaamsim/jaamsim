@@ -127,7 +127,7 @@ public class EntityConveyor extends LinkedService {
 	}
 
 	@Override
-	protected void endProcessing(double simTime) {
+	protected boolean processStep(double simTime) {
 
 		// Remove the entity from the conveyor
 		DisplayEntity ent = entryList.remove(0).entity;
@@ -137,6 +137,8 @@ public class EntityConveyor extends LinkedService {
 
 		// Send the entity to the next component
 		this.sendToNextComponent(ent);
+
+		return true;
 	}
 
 	@Override

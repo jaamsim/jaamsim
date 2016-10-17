@@ -163,11 +163,13 @@ public class Assemble extends LinkedService {
 	}
 
 	@Override
-	protected void endProcessing(double simTime) {
+	protected boolean processStep(double simTime) {
 
 		// Send the assembled part to the next element in the chain
 		this.sendToNextComponent(assembledEntity);
 		assembledEntity = null;
+
+		return true;
 	}
 
 	@Override

@@ -136,11 +136,11 @@ public class EntityGenerator extends LinkedService {
 	}
 
 	@Override
-	protected void endProcessing(double simTime) {
+	protected boolean processStep(double simTime) {
 
 		// Do any of the thresholds stop the generator?
 		if (!this.isOpen()) {
-			return;
+			return true;
 		}
 
 		// Create the new entities
@@ -159,6 +159,7 @@ public class EntityGenerator extends LinkedService {
 			// Send the entity to the next element in the chain
 			this.sendToNextComponent(ent);
 		}
+		return true;
 	}
 
 	@Override

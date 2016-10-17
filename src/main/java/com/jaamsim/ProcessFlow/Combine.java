@@ -106,11 +106,13 @@ public class Combine extends LinkedService {
 	}
 
 	@Override
-	protected void endProcessing(double simTime) {
+	protected boolean processStep(double simTime) {
 
 		// Send the first entity to the next element in the chain
 		this.sendToNextComponent(processedEntity);
 		processedEntity = null;
+
+		return true;
 	}
 
 	@Override
