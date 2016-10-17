@@ -278,12 +278,6 @@ public class Device extends StateUserEntity {
 	protected void updateProgress(double dt) {}
 
 	/**
-	 * Performs any special processing required for this sub-class of LinkedService
-	 * @param simTime - present simulation time
-	 */
-	protected void endProcessing(double simTime) {}
-
-	/**
 	 * Performs any calculations related to the state of the process and returns a boolean to
 	 * specify whether to start a new time step.
 	 * @param simTime - present simulation time
