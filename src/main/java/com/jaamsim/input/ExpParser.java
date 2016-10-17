@@ -2219,8 +2219,19 @@ public class ExpParser {
 
 	private static ExpNode parseExp(ParseContext context, TokenList tokens, double bindPower, Expression exp) throws ExpError {
 		ExpNode lhs = parseOpeningExp(context, tokens, bindPower, exp);
-		// Now peek for a binary op to modify this expression
+		// Parse as many indices as are present
+		while (true) {
+			ExpTokenizer.Token peeked = tokens.peek();
+			if (peeked == null || !peeked.value.equals("(")) {
+				break;
+			}
+			tokens.next(); // Consume '('
+			ExpNode index = parseExp(context, tokens, 0, exp);
+			tokens.expect(ExpTokenizer.SYM_TYPE, ")", exp.source);
+			lhs = new IndexCollection(context, lhs, index, exp, peeked.pos);
+		}
 
+		// Now peek for a binary op to modify this expression
 		while (true) {
 			ExpTokenizer.Token peeked = tokens.peek();
 			if (peeked == null || peeked.type != ExpTokenizer.SYM_TYPE) {
