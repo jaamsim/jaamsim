@@ -144,6 +144,24 @@ public abstract class LinkedService extends LinkedDevice implements QueueUser {
 	}
 
 	// ********************************************************************************************
+	// DEVICE METHODS
+	// ********************************************************************************************
+
+	@Override
+	protected void updateProgress(double dt) {}
+
+	@Override
+	protected void processChanged() {}
+
+	@Override
+	protected boolean isNewStepReqd(boolean completed) {
+		return completed;
+	}
+
+	@Override
+	protected void setProcessStopped() {}
+
+	// ********************************************************************************************
 	// GRAPHICS
 	// ********************************************************************************************
 

@@ -88,6 +88,16 @@ public class Seize extends LinkedService {
 		return false;
 	}
 
+	@Override
+	protected double getStepDuration(double simTime) {
+		return 0.0d;
+	}
+
+	@Override
+	protected boolean processStep(double simTime) {
+		return true;
+	}
+
 	public boolean isReadyToStart() {
 		Integer m = this.getNextMatchValue(getSimTime());
 		return waitQueue.getValue().getMatchCount(m) != 0 && this.checkResources() && this.isOpen();
