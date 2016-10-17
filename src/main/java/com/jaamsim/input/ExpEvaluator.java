@@ -310,21 +310,25 @@ public class ExpEvaluator {
 		@Override
 		public ExpResult resolve(EvalContext ec, ExpResult ent)
 				throws ExpError {
+			double simTime = 0;
+			if (ec != null) {
+				EntityEvalContext eec = (EntityEvalContext)ec;
+				simTime = eec.simTime;
+			}
 
-			EntityEvalContext eec = (EntityEvalContext)ec;
 			switch (type) {
 			case NUMBER:
-				double val = handle.getValueAsDouble(eec.simTime, 0);
+				double val = handle.getValueAsDouble(simTime, 0);
 				return ExpResult.makeNumResult(val, handle.getUnitType());
 			case ENTITY:
-				return ExpResult.makeEntityResult(handle.getValue(eec.simTime, Entity.class));
+				return ExpResult.makeEntityResult(handle.getValue(simTime, Entity.class));
 			case STRING:
-				return ExpResult.makeStringResult(handle.getValue(eec.simTime, String.class));
+				return ExpResult.makeStringResult(handle.getValue(simTime, String.class));
 			case COLLECTION:
-				return ExpCollections.getCollection(handle.getValue(eec.simTime, handle.getReturnType()), handle.getUnitType());
+				return ExpCollections.getCollection(handle.getValue(simTime, handle.getReturnType()), handle.getUnitType());
 			default:
 				assert(false);
-				return ExpResult.makeNumResult(handle.getValueAsDouble(eec.simTime, 0), handle.getUnitType());
+				return ExpResult.makeNumResult(handle.getValueAsDouble(simTime, 0), handle.getUnitType());
 			}
 		}
 
@@ -356,7 +360,11 @@ public class ExpEvaluator {
 		@Override
 		public ExpResult resolve(EvalContext ec, ExpResult entRes) throws ExpError {
 
-			EntityEvalContext eec = (EntityEvalContext)ec;
+			double simTime = 0;
+			if (ec != null) {
+				EntityEvalContext eec = (EntityEvalContext)ec;
+				simTime = eec.simTime;
+			}
 
 			if (entRes.type != ExpResType.ENTITY) {
 				throw new ExpError(null, 0, "Can not look up output on non-entity type");
@@ -369,7 +377,7 @@ public class ExpEvaluator {
 				throw new ExpError(null, 0, "Could not find output '%s' on entity '%s'", outputName, ent.getName());
 			}
 
-			ExpResult res = getResultFromOutput(oh, eec.simTime);
+			ExpResult res = getResultFromOutput(oh, simTime);
 
 			if (res == null)
 				throw new ExpError(null, 0, "Output %s, on entity %s does not return a type compatible with expressions.",
