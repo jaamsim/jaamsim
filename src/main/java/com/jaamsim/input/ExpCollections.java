@@ -1,6 +1,7 @@
 package com.jaamsim.input;
 
 import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -61,6 +62,10 @@ public class ExpCollections {
 
 		assert false;
 		return null;
+	}
+
+	public static ExpResult makeExpressionCollection(ArrayList<ExpResult> vals) {
+		return ExpResult.makeCollectionResult(new AssignableArrayCollection(vals));
 	}
 
 	private static class ListCollection implements ExpResult.Collection {
@@ -408,5 +413,78 @@ public class ExpCollections {
 		}
 
 	}
+	private static class AssignableArrayCollection implements ExpResult.Collection {
 
+		private final ArrayList<ExpResult> list;
+
+		public AssignableArrayCollection(ArrayList vals) {
+			list = new ArrayList<>(vals);
+		}
+
+		@Override
+		public ExpResult index(ExpResult index) throws ExpError {
+			if (index.type != ExpResType.NUMBER) {
+				throw new ExpError(null, 0, "ArrayList is not being indexed by a number");
+			}
+
+			int indexVal = (int)index.value - 1; // Expressions use 1-base arrays
+
+			if (indexVal >= list.size()  || indexVal < 0) {
+				return ExpResult.makeNumResult(0, DimensionlessUnit.class); // TODO: Is this how we want to handle this case?
+			}
+			return list.get(indexVal);
+		}
+
+		@Override
+		public void assign(ExpResult index, ExpResult value) throws ExpError {
+			if (index.type != ExpResType.NUMBER) {
+				throw new ExpError(null, 0, "Assignment is not being indexed by a number");
+			}
+			int indexVal = (int)index.value - 1; // Expressions use 1-base arrays
+			if (indexVal < 0) {
+				throw new ExpError(null, 0, "Attempting to assign to a negative number: %d", indexVal);
+			}
+			if (indexVal >= list.size()) {
+				// This is a dynamically expanding list, so fill in until we get to the index
+				ExpResult filler = ExpResult.makeNumResult(0, DimensionlessUnit.class);
+				list.ensureCapacity(indexVal+1);
+				for (int i = list.size(); i < indexVal; ++i) {
+					list.add(filler);
+				}
+			}
+			list.set(indexVal, value);
+		}
+
+		private static class Iter implements ExpResult.Iterator {
+
+			private int next = 0;
+			private final List<?> list;
+			public Iter(List l) {
+				this.list = l;
+			}
+
+			@Override
+			public boolean hasNext() {
+				return next < list.size();
+			}
+
+			@Override
+			public ExpResult nextKey() throws ExpError {
+				ExpResult ret = ExpResult.makeNumResult(next + 1, DimensionlessUnit.class);
+				next++;
+				return ret;
+			}
+		}
+
+		@Override
+		public Iterator getIter() {
+			return new Iter(list);
+		}
+
+		@Override
+		public int getSize() {
+			return list.size();
+		}
+
+	}
 }

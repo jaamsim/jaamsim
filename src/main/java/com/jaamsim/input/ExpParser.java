@@ -2336,6 +2336,37 @@ public class ExpParser {
 		}
 
 		// The next token must be a symbol
+		if (nextTok.value.equals("{")) {
+
+			boolean foundComma = true;
+
+			ArrayList<ExpNode> exps = new ArrayList<>();
+			while(true) {
+			// Parse an array
+				ExpTokenizer.Token peeked = tokens.peek();
+				if (peeked != null && peeked.value.equals("}")) {
+					tokens.next(); // consume
+					break;
+				}
+
+				if (!foundComma) {
+					throw new ExpError(exp.source, peeked.pos, "Expected ',' or '}' in literal array.");
+				}
+				foundComma = false;
+
+				exps.add(parseExp(context, tokens, 0, exp));
+				peeked = tokens.peek();
+				if (peeked != null && peeked.value.equals(",")) {
+					tokens.next();
+					foundComma = true;
+				}
+			}
+			ArrayList<ExpResult> res = new ArrayList<>();
+			for (ExpNode e : exps) {
+				res.add(e.evaluate(null));
+			}
+			return new Constant(context, ExpCollections.makeExpressionCollection(res), exp, nextTok.pos);
+		}
 
 		// handle parenthesis
 		if (nextTok.value.equals("(")) {

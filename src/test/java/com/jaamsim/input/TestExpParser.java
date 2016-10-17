@@ -536,6 +536,19 @@ public class TestExpParser {
 		assertTrue(val == 4);
 
 	}
+	@Test
+	public void testArray() throws ExpError {
+		ExpParser.Expression exp = ExpParser.parseExpression(pc, "{1, 2, 3, 4}(2)");
+		ExpResult res = exp.evaluate(ec);
+		assertTrue(res.type == ExpResType.NUMBER);
+		assertTrue(res.value == 2);
+
+		exp = ExpParser.parseExpression(pc, "{[[foo]], [[bar]], [[baz]]}(3)");
+		res = exp.evaluate(ec);
+		assertTrue(res.type == ExpResType.STRING);
+		assertTrue(res.stringVal.equals("baz"));
+
+	}
 
 	@Test
 	public void testString() throws ExpError {
