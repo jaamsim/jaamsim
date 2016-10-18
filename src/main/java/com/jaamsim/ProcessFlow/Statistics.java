@@ -117,7 +117,8 @@ public class Statistics extends LinkedComponent {
 	@Output(name = "SampleMinimum",
 	 description = "The smallest value that was recorded.",
 	    unitType = UserSpecifiedUnit.class,
-	  reportable = true)
+	  reportable = true,
+	    sequence = 0)
 	public double getSampleMinimum(double simTime) {
 		return minValue;
 	}
@@ -125,7 +126,8 @@ public class Statistics extends LinkedComponent {
 	@Output(name = "SampleMaximum",
 	 description = "The largest value that was recorded.",
 	    unitType = UserSpecifiedUnit.class,
-	  reportable = true)
+	  reportable = true,
+	    sequence = 1)
 	public double getSampleMaximum(double simTime) {
 		return maxValue;
 	}
@@ -133,7 +135,8 @@ public class Statistics extends LinkedComponent {
 	@Output(name = "SampleAverage",
 	 description = "The average of the values that were recorded.",
 	    unitType = UserSpecifiedUnit.class,
-	  reportable = true)
+	  reportable = true,
+	    sequence = 2)
 	public double getSampleAverage(double simTime) {
 		return totalValue/this.getNumberAdded(simTime);
 	}
@@ -141,7 +144,8 @@ public class Statistics extends LinkedComponent {
 	@Output(name = "SampleStandardDeviation",
 	 description = "The standard deviation of the values that were recorded.",
 	    unitType = UserSpecifiedUnit.class,
-	  reportable = true)
+	  reportable = true,
+	    sequence = 3)
 	public double getSampleStandardDeviation(double simTime) {
 		double num = this.getNumberAdded(simTime);
 		double mean = totalValue/num;
@@ -151,7 +155,8 @@ public class Statistics extends LinkedComponent {
 	@Output(name = "StandardDeviationOfTheMean",
 	 description = "The estimated standard deviation of the sample mean.",
 	    unitType = UserSpecifiedUnit.class,
-	  reportable = true)
+	  reportable = true,
+	    sequence = 4)
 	public double getStandardDeviationOfTheMean(double simTime) {
 		double num = this.getNumberAdded(simTime);
 		return this.getSampleStandardDeviation(simTime)/Math.sqrt(num-1);
