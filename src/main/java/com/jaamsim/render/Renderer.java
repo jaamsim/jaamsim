@@ -1322,10 +1322,16 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 
 	private static class CreateOffscreenTargetMessage extends RenderMessage {
 		public OffscreenTarget target;
+		CreateOffscreenTargetMessage(OffscreenTarget t) {
+			target = t;
+		}
 	}
 
 	private static class FreeOffscreenTargetMessage extends RenderMessage {
 		public OffscreenTarget target;
+		FreeOffscreenTargetMessage(OffscreenTarget t) {
+			target = t;
+		}
 	}
 
 	public TexCache getTexCache() {
@@ -1416,8 +1422,7 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 		OffscreenTarget ret = new OffscreenTarget(width, height);
 
 		synchronized (renderMessages) {
-			CreateOffscreenTargetMessage msg = new CreateOffscreenTargetMessage();
-			msg.target = ret;
+			CreateOffscreenTargetMessage msg = new CreateOffscreenTargetMessage(ret);
 			addRenderMessage(msg);
 		}
 		return ret;
@@ -1425,8 +1430,7 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 
 	public void freeOffscreenTarget(OffscreenTarget target) {
 		synchronized (renderMessages) {
-			FreeOffscreenTargetMessage msg = new FreeOffscreenTargetMessage();
-			msg.target = target;
+			FreeOffscreenTargetMessage msg = new FreeOffscreenTargetMessage(target);
 			addRenderMessage(msg);
 		}
 	}
