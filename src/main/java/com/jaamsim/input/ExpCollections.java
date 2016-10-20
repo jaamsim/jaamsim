@@ -74,7 +74,7 @@ public class ExpCollections {
 
 			private int next = 0;
 			private final List<?> list;
-			public Iter(List l) {
+			public Iter(List<?> l) {
 				this.list = l;
 			}
 
@@ -511,7 +511,7 @@ public class ExpCollections {
 
 		private final ArrayList<ExpResult> list;
 
-		public AssignableArrayCollection(ArrayList vals) {
+		public AssignableArrayCollection(ArrayList<ExpResult> vals) {
 			list = new ArrayList<>(vals);
 		}
 
@@ -553,7 +553,7 @@ public class ExpCollections {
 
 			private int next = 0;
 			private final List<?> list;
-			public Iter(List l) {
+			public Iter(List<?> l) {
 				this.list = l;
 			}
 
