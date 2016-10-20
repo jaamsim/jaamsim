@@ -129,6 +129,26 @@ public class ExpCollections {
 		public void assign(ExpResult key, ExpResult value) throws ExpError {
 			throw new ExpError(null, 0, "Can not assign to built in collection");
 		}
+
+		@Override
+		public String getOutputString() {
+			try {
+				StringBuilder sb = new StringBuilder();
+				sb.append("{ ");
+				for (int i = 0; i < list.size(); ++i) {
+					ExpResult val = index(ExpResult.makeNumResult(i+1, DimensionlessUnit.class));
+					sb.append(val.getOutputString());
+					if (i < list.size() -1) {
+						sb.append(", ");
+					}
+				}
+				sb.append("}");
+				return sb.toString();
+
+			} catch (ExpError err) {
+				return String.format("An error occurred: %s", err.getMessage());
+			}
+		}
 	}
 
 	private static class ArrayCollection implements ExpResult.Collection {
@@ -216,6 +236,26 @@ public class ExpCollections {
 			throw new ExpError(null, 0, "Can not assign to built in collection");
 		}
 
+		@Override
+		public String getOutputString() {
+			try {
+				StringBuilder sb = new StringBuilder();
+				sb.append("{ ");
+				for (int i = 0; i < Array.getLength(array); ++i) {
+					ExpResult val = index(ExpResult.makeNumResult(i+1, DimensionlessUnit.class));
+					sb.append(val.getOutputString());
+					if (i < Array.getLength(array) -1) {
+						sb.append(", ");
+					}
+				}
+				sb.append("}");
+				return sb.toString();
+
+			} catch (ExpError err) {
+				return String.format("An error occurred: %s", err.getMessage());
+			}
+		}
+
 	}
 
 	private static class DoubleVectorCollection implements ExpResult.Collection {
@@ -276,6 +316,22 @@ public class ExpCollections {
 		@Override
 		public void assign(ExpResult key, ExpResult value) throws ExpError {
 			throw new ExpError(null, 0, "Can not assign to built in collection");
+		}
+
+		@Override
+		public String getOutputString() {
+			StringBuilder sb = new StringBuilder();
+			sb.append("{ ");
+			for (int i = 0; i < vector.size(); ++i) {
+				sb.append(vector.get(i+1)*Unit.getDisplayedUnitFactor(unitType));
+				sb.append(" ");
+				sb.append(Unit.getDisplayedUnit(unitType));
+				if (i < vector.size()) {
+					sb.append(", ");
+				}
+			}
+			sb.append("}");
+			return sb.toString();
 		}
 
 	}
@@ -339,6 +395,22 @@ public class ExpCollections {
 		@Override
 		public void assign(ExpResult key, ExpResult value) throws ExpError {
 			throw new ExpError(null, 0, "Can not assign to built in collection");
+		}
+
+		@Override
+		public String getOutputString() {
+			StringBuilder sb = new StringBuilder();
+			sb.append("{ ");
+			for (int i = 0; i < vector.size(); ++i) {
+				sb.append(vector.get(i+1)*Unit.getDisplayedUnitFactor(unitType));
+				sb.append(" ");
+				sb.append(Unit.getDisplayedUnit(unitType));
+				if (i < vector.size()) {
+					sb.append(", ");
+				}
+			}
+			sb.append("}");
+			return sb.toString();
 		}
 
 	}
@@ -410,6 +482,28 @@ public class ExpCollections {
 		@Override
 		public void assign(ExpResult key, ExpResult value) throws ExpError {
 			throw new ExpError(null, 0, "Can not assign to built in collection");
+		}
+		@Override
+		public String getOutputString() {
+			try {
+				StringBuilder sb = new StringBuilder();
+				sb.append("{ ");
+				Iterator it = getIter();
+				while(it.hasNext()) {
+					ExpResult index = it.nextKey();
+					sb.append(index.getOutputString());
+					sb.append(" = ");
+					sb.append(index(index).getOutputString());
+					if (it.hasNext()) {
+						sb.append(", ");
+					}
+				}
+				sb.append("}");
+				return sb.toString();
+
+			} catch (ExpError err) {
+				return String.format("An error occurred: %s", err.getMessage());
+			}
 		}
 
 	}
@@ -484,6 +578,25 @@ public class ExpCollections {
 		@Override
 		public int getSize() {
 			return list.size();
+		}
+		@Override
+		public String getOutputString() {
+			try {
+				StringBuilder sb = new StringBuilder();
+				sb.append("{ ");
+				for (int i = 0; i < list.size(); ++i) {
+					ExpResult val = index(ExpResult.makeNumResult(i+1, DimensionlessUnit.class));
+					sb.append(val.getOutputString());
+					if (i < list.size() -1) {
+						sb.append(", ");
+					}
+				}
+				sb.append("}");
+				return sb.toString();
+
+			} catch (ExpError err) {
+				return String.format("An error occurred: %s", err.getMessage());
+			}
 		}
 
 	}

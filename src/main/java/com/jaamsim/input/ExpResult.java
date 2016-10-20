@@ -34,6 +34,8 @@ public class ExpResult {
 		public Iterator getIter();
 
 		public int getSize();
+
+		public String getOutputString();
 	}
 
 	public final ExpResType type;
@@ -90,6 +92,29 @@ public class ExpResult {
 		}
 
 		return null;
+	}
+
+	public String getOutputString() {
+		switch (type) {
+		case NUMBER:
+			double factor = Unit.getDisplayedUnitFactor(unitType);
+			return String.format("%f %s", value*factor, Unit.getDisplayedUnit(unitType));
+		case STRING:
+			return String.format("\"%s\"", stringVal);
+		case ENTITY:
+			return String.format("[%s]", entVal.getName());
+		case COLLECTION:
+			return colVal.getOutputString();
+
+		default:
+			assert(false);
+			return "???";
+		}
+	}
+
+	@Override
+	public String toString() {
+		return getOutputString();
 	}
 
 }

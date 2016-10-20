@@ -1566,6 +1566,9 @@ public class InputAgent {
 			case NUMBER:
 				sb.append(String.format("%g", result.value/factor));
 				break;
+			case COLLECTION:
+				sb.append(result.colVal.getOutputString());
+				break;
 			default:
 				assert(false);
 				sb.append("???");
