@@ -56,7 +56,7 @@ public class Assign extends LinkedComponent {
 		// Evaluate the assignment expressions
 		for (ExpParser.Assignment ass : assignmentList.getValue()) {
 			try {
-				ExpEvaluator.runAssignment(ass, getSimTime(), this);
+				ExpEvaluator.evaluateExpression(ass, getSimTime());
 			} catch (ExpError err) {
 				throw new ErrorException(err);
 			}

@@ -25,6 +25,7 @@ import java.util.HashMap;
 import org.junit.Test;
 
 import com.jaamsim.basicsim.Entity;
+import com.jaamsim.input.ExpParser.Assigner;
 import com.jaamsim.input.ExpParser.EvalContext;
 import com.jaamsim.input.ExpParser.OutputResolver;
 import com.jaamsim.input.ExpParser.UnitData;
@@ -75,12 +76,6 @@ public class TestExpParser {
 			return DimensionlessUnit.class;
 		}
 		@Override
-		public void validateAssignmentDest(String[] destination)
-				throws ExpError {
-			// N/A
-
-		}
-		@Override
 		public ExpResult getValFromName(String name) throws ExpError {
 			return ExpResult.makeNumResult(1, DimensionlessUnit.class);
 		}
@@ -93,6 +88,15 @@ public class TestExpParser {
 		public OutputResolver getConstOutputResolver(ExpResult constEnt,
 				String name) throws ExpError {
 			return new DummyResolver(name);
+		}
+		@Override
+		public Assigner getAssigner(String attribName) throws ExpError {
+			throw new ExpError(null, 0, "Assign not supported");
+		}
+		@Override
+		public Assigner getConstAssigner(ExpResult constEnt, String attribName)
+				throws ExpError {
+			throw new ExpError(null, 0, "Assign not supported");
 		}
 	}
 
@@ -628,10 +632,13 @@ public class TestExpParser {
 				return new ErrorResolver();
 			}
 			@Override
-			public void validateAssignmentDest(String[] destination)
+			public Assigner getAssigner(String attribName) throws ExpError {
+				throw new ExpError(null, 0, "Assign not supported");
+			}
+			@Override
+			public Assigner getConstAssigner(ExpResult constEnt, String attribName)
 					throws ExpError {
-				// N/A
-
+				throw new ExpError(null, 0, "Assign not supported");
 			}
 			@Override
 			public ExpResult getValFromName(String name) throws ExpError {
@@ -701,21 +708,74 @@ public class TestExpParser {
 
 	}
 
+	private static class AssignContainer {
+		public ExpResult res;
+		public ExpResult.Collection col;
+		public String lastAttribName;
+	}
+
+	private static class TestAssigner implements ExpParser.Assigner {
+
+		AssignContainer cont;
+		String attribName;
+
+		TestAssigner(AssignContainer cont, String attribName) {
+			this.cont = cont;
+			this.attribName = attribName;
+		}
+		@Override
+		public void assign(ExpResult ent, ExpResult index, ExpResult val)
+				throws ExpError {
+			if (index == null) {
+				cont.res = val;
+			} else {
+				cont.col.assign(index, val);
+			}
+			cont.lastAttribName = attribName;
+		}
+	}
+
+	private static class AssignPC extends PC {
+		AssignContainer cont;
+
+		AssignPC(AssignContainer cont) {
+			this.cont = cont;
+		}
+
+		@Override
+		public Assigner getAssigner(String attribName) throws ExpError {
+			return new TestAssigner(cont, attribName);
+		}
+		@Override
+		public Assigner getConstAssigner(ExpResult constEnt, String attribName)
+				throws ExpError {
+			return new TestAssigner(cont, attribName);
+		}
+
+	}
+
 	@Test
 	public void testAssignment() throws ExpError {
+		AssignContainer cont = new AssignContainer();
 
-		ExpParser.Assignment assign = ExpParser.parseAssignment(pc, "[foo].bar = 40 + 2");
+		ArrayList<ExpResult> initialRes = new ArrayList<>();
+		initialRes.add(ExpResult.makeNumResult(42, DimensionlessUnit.class));
+		cont.col = ExpCollections.makeExpressionCollection(initialRes).colVal;
+		AssignPC apc = new AssignPC(cont);
 
-		assertTrue(assign.destination.length == 2);
-		assertTrue(assign.destination[0].equals("foo"));
-		assertTrue(assign.destination[1].equals("bar"));
-		assertTrue(assign.value.evaluate(ec).value == 42);
+		ExpParser.Assignment assign = ExpParser.parseAssignment(apc, "[foo].arg = 40 + 2");
+		ExpResult res = assign.evaluate(ec);
+		assert(res.value == 42.0);
+		assert(cont.res.type == ExpResType.NUMBER);
+		assert(cont.res.value == 42.0);
+		assert(cont.lastAttribName.equals("arg"));
 
-		assign = ExpParser.parseAssignment(pc, "this.bar = 40 + 2");
-		assertTrue(assign.destination.length == 2);
-		assertTrue(assign.destination[0].equals("this"));
-		assertTrue(assign.destination[1].equals("bar"));
-		assertTrue(assign.value.evaluate(ec).value == 42);
-
+		assign = ExpParser.parseAssignment(apc, "[foo].blarg(42) = 40 + 5");
+		res = assign.evaluate(ec);
+		ExpResult contained = cont.col.index(ExpResult.makeNumResult(42, DimensionlessUnit.class));
+		assert(res.value == 45.0);
+		assert(contained.type == ExpResType.NUMBER);
+		assert(contained.value == 45.0);
+		assert(cont.lastAttribName.equals("blarg"));
 	}
 }

@@ -17,11 +17,11 @@
  */
 package com.jaamsim.input;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 import com.jaamsim.basicsim.Entity;
+import com.jaamsim.input.ExpParser.Assigner;
 import com.jaamsim.input.ExpParser.EvalContext;
 import com.jaamsim.input.ExpParser.OutputResolver;
 import com.jaamsim.units.DimensionlessUnit;
@@ -95,74 +95,6 @@ public class ExpEvaluator {
 		throw new ExpError(null, 0, "Unknown type in expression: %s", val.getClass().getSimpleName());
 	}
 
-	private static Entity getEntity(Entity rootEnt, String[] names, ExpResult[] indices, double simTime) throws ExpError {
-
-		Entity ent = rootEnt;
-
-		// Run the output chain up to the second last name
-		for(int i = 1; i < names.length-1; ++i) {
-			String outputName = names[i];
-			OutputHandle oh = ent.getOutputHandleInterned(outputName);
-			if (oh == null) {
-				throw new ExpError(null, 0, "Output '%s' not found on entity '%s'", outputName, ent.getName());
-			}
-			if (indices != null && indices[i] != null) {
-				// This output has a defined index, for now we only support array lists for indexed outputs
-				if (!ArrayList.class.isAssignableFrom(oh.getReturnType())) {
-					throw new ExpError(null, 0, "Output '%s' has an index and is not an ArrayList output", outputName);
-				}
-
-				int index = (int)indices[i].value -1; // 1 based indexing
-				ArrayList<?> outList = oh.getValue(simTime, ArrayList.class);
-				if (index >= outList.size() || index < 0) {
-					throw new ExpError(null, 0, "Index (%d) is out of bounds for array at output: %s", index + 1, outputName);
-				}
-
-				Object val = outList.get(index);
-				if (!(val instanceof Entity)) {
-					throw new ExpError(null, 0, "Non entity type from output: %s index: %d",outputName,  index + 1);
-				}
-				ent = (Entity)val;
-
-			} else {
-				if (Entity.class.isAssignableFrom(oh.getReturnType())) {
-					ent = oh.getValue(simTime, Entity.class);
-				}
-				else if (ExpResult.class.isAssignableFrom(oh.getReturnType())) {
-					ExpResult res = oh.getValue(simTime, ExpResult.class);
-					if (res.type == ExpResType.ENTITY) {
-						ent = res.entVal;
-					} else {
-						throw new ExpError(null, 0, "Output '%s' did not resolve to an entity value", outputName);
-					}
-				}
-				else {
-					throw new ExpError(null, 0, "Output '%s' is not an entity output", outputName);
-				}
-
-			}
-
-			if (ent == null) {
-				// Build up the entity chain for the error report
-				StringBuilder b = new StringBuilder();
-				if (names[0].equals("this"))
-					b.append("this");
-				else
-					b.append("[").append(names[0]).append("]");
-
-				for(int j = 1; j <= i; ++j) {
-					b.append(".").append(names[j]);
-					if (indices != null && indices[j] != null) {
-						b.append("(").append((int)indices[j].value).append(")");
-					}
-				}
-
-				throw new ExpError(null, 0, "Null entity in expression chain: %s", b.toString());
-			}
-		}
-		return ent;
-	}
-
 	public static class EntityParseContext implements ExpParser.ParseContext {
 
 		private final String source;
@@ -228,22 +160,6 @@ public class ExpEvaluator {
 		}
 
 		@Override
-		public void validateAssignmentDest(String[] destination) throws ExpError {
-			Entity rootEnt;
-			if (destination[0] == "this")
-				rootEnt = thisEnt;
-			else {
-				rootEnt = Entity.getNamedEntity(destination[0]);
-				if (rootEnt != null)
-					addEntityReference(rootEnt);
-			}
-
-			if (rootEnt == null) {
-				throw new ExpError(null, 0, "Could not find entity: %s", destination[0]);
-			}
-		}
-
-		@Override
 		public ExpResult getValFromName(String name) throws ExpError {
 			Entity ent;
 			if (name.equals("this"))
@@ -285,6 +201,18 @@ public class ExpEvaluator {
 			} else {
 				return new EntityResolver(name);
 			}
+		}
+
+		@Override
+		public Assigner getAssigner(String attribName) throws ExpError {
+			return new EntityAssigner(attribName);
+		}
+
+		@Override
+		public Assigner getConstAssigner(ExpResult constEnt, String attribName)
+				throws ExpError {
+			// TODO: const optimization
+			return new EntityAssigner(attribName);
 		}
 
 	}
@@ -399,6 +327,24 @@ public class ExpEvaluator {
 
 	}
 
+	private static class EntityAssigner implements ExpParser.Assigner {
+
+		private final String attribName;
+		EntityAssigner(String attribName) {
+			this.attribName = attribName;
+		}
+
+		@Override
+		public void assign(ExpResult ent, ExpResult index, ExpResult val) throws ExpError {
+			if (ent.type != ExpResType.ENTITY) {
+				throw new ExpError(null, 0, "Can not execute assignment, not assigning to an entity");
+			}
+			Entity assignEnt = ent.entVal;
+			assignEnt.setAttribute(attribName, index, val);
+		}
+
+	}
+
 	private static class EntityEvalContext implements ExpParser.EvalContext {
 
 		private final double simTime;
@@ -410,30 +356,6 @@ public class ExpEvaluator {
 
 	public static EntityParseContext getParseContext(Entity thisEnt, String source) {
 		return new EntityParseContext(thisEnt, source);
-	}
-
-	public static void runAssignment(ExpParser.Assignment assign, double simTime, Entity thisEnt) throws ExpError {
-
-		Entity rootEnt;
-		if (assign.destination[0] == "this")
-			rootEnt = thisEnt;
-		else {
-			rootEnt = Entity.getNamedEntity(assign.destination[0]);
-		}
-
-		if (rootEnt == null) {
-			throw new ExpError(null, 0, "Could not find entity: %s", assign.destination[0]);
-		}
-
-		Entity assignmentEnt = getEntity(rootEnt, assign.destination, null, simTime);
-
-		ExpResult result = evaluateExpression(assign.value, simTime);
-
-		String attribName = assign.destination[assign.destination.length-1];
-		if (!assignmentEnt.hasAttribute(attribName)) {
-			throw new ExpError(null, 0, "Entity '%s' does not have attribute '%s'", assignmentEnt, attribName);
-		}
-		assignmentEnt.setAttribute(attribName, result);
 	}
 
 	public static ExpResult evaluateExpression(ExpParser.Expression exp, double simTime) throws ExpError

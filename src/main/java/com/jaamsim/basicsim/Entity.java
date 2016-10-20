@@ -33,6 +33,7 @@ import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.AttributeDefinitionListInput;
 import com.jaamsim.input.AttributeHandle;
 import com.jaamsim.input.BooleanInput;
+import com.jaamsim.input.ExpError;
 import com.jaamsim.input.ExpResType;
 import com.jaamsim.input.ExpResult;
 import com.jaamsim.input.ExpressionHandle;
@@ -802,10 +803,24 @@ public class Entity {
 		return h.getUnitType();
 	}
 
-	public void setAttribute(String name, ExpResult value) {
+	public void setAttribute(String name, ExpResult index, ExpResult value) {
 		AttributeHandle h = attributeMap.get(name);
 		if (h == null)
 			this.error("Invalid attribute name: %s", name);
+
+		if (index != null) {
+			ExpResult attribValue = h.getValue(getSimTime(), ExpResult.class);
+			if (attribValue.type != ExpResType.COLLECTION) {
+				this.error("Trying to set attribute: %s with an index, but it is not a collection", name);
+			}
+			ExpResult.Collection col = attribValue.colVal;
+			try {
+				col.assign(index, value);
+			} catch (ExpError err) {
+				this.error("Error during assignment: %s", err.getMessage());
+			}
+			return;
+		}
 
 		if (value.type == ExpResType.NUMBER && h.getUnitType() != value.unitType)
 			this.error("Invalid unit returned by an expression. Received: %s, expected: %s",

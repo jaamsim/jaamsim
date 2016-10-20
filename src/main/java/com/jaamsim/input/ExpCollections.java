@@ -448,7 +448,7 @@ public class ExpCollections {
 				// This is a dynamically expanding list, so fill in until we get to the index
 				ExpResult filler = ExpResult.makeNumResult(0, DimensionlessUnit.class);
 				list.ensureCapacity(indexVal+1);
-				for (int i = list.size(); i < indexVal; ++i) {
+				for (int i = list.size(); i <= indexVal; ++i) {
 					list.add(filler);
 				}
 			}

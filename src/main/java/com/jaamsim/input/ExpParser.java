@@ -53,6 +53,9 @@ public class ExpParser {
 		public ExpResult resolve(EvalContext ec, ExpResult ent) throws ExpError;
 		public ExpValResult validate(ExpValResult entValRes);
 	}
+	public interface Assigner {
+		public void assign(ExpResult ent, ExpResult index, ExpResult val) throws ExpError;
+	}
 
 	public interface ParseContext {
 		public UnitData getUnitByName(String name);
@@ -62,7 +65,9 @@ public class ExpParser {
 		public ExpResult getValFromName(String name) throws ExpError;
 		public OutputResolver getOutputResolver(String name) throws ExpError;
 		public OutputResolver getConstOutputResolver(ExpResult constEnt, String name) throws ExpError;
-		public void validateAssignmentDest(String[] destination) throws ExpError;
+
+		public Assigner getAssigner(String attribName) throws ExpError;
+		public Assigner getConstAssigner(ExpResult constEnt, String attribName) throws ExpError;
 	}
 
 	public interface EvalContext {
@@ -86,7 +91,7 @@ public class ExpParser {
 
 		public ExpValResult validationResult;
 
-		private final ArrayList<Thread> executingThreads = new ArrayList<>();
+		protected final ArrayList<Thread> executingThreads = new ArrayList<>();
 
 		private ExpNode rootNode;
 		public Expression(String source) {
@@ -117,6 +122,41 @@ public class ExpParser {
 		@Override
 		public String toString() {
 			return source;
+		}
+	}
+
+	public static class Assignment extends Expression {
+		public ExpNode entExp;
+		public ExpNode attribIndex;
+		public ExpNode valueExp;
+		public Assigner assigner;
+		public Assignment(String source) {
+			super(source);
+		}
+		@Override
+		public ExpResult evaluate(EvalContext ec) throws ExpError {
+			synchronized(executingThreads) {
+				if (executingThreads.contains(Thread.currentThread())) {
+					throw new ExpError(null, 0, "Expression recursion detected for expression: %s", source);
+				}
+
+				executingThreads.add(Thread.currentThread());
+			}
+			try {
+				ExpResult ent = entExp.evaluate(ec);
+				ExpResult value = valueExp.evaluate(ec);
+				ExpResult index = null;
+				if (attribIndex != null) {
+					index = attribIndex.evaluate(ec);
+				}
+				assigner.assign(ent, index, value);
+
+				return value;
+			} finally {
+				synchronized(executingThreads) {
+					executingThreads.remove(Thread.currentThread());
+				}
+			}
 		}
 	}
 
@@ -560,10 +600,6 @@ public class ExpParser {
 
 	}
 
-	public static class Assignment {
-		public String[] destination;
-		public Expression value;
-	}
 
 	///////////////////////////////////////////////////////////
 	// Entries for user definable operators and functions
@@ -2063,10 +2099,10 @@ public class ExpParser {
 	 *
 	 */
 	private static class TokenList {
-		ArrayList<ExpTokenizer.Token> tokens;
-		int pos;
+		private final ArrayList<ExpTokenizer.Token> tokens;
+		private int pos;
 
-		TokenList(ArrayList<ExpTokenizer.Token> tokens) {
+		public TokenList(ArrayList<ExpTokenizer.Token> tokens) {
 			this.tokens = tokens;
 			this.pos = 0;
 		}
@@ -2097,6 +2133,7 @@ public class ExpParser {
 			}
 			return tokens.get(pos);
 		}
+
 	}
 
 	private static class ConstOptimizer implements ExpressionWalker {
@@ -2279,36 +2316,62 @@ public class ExpParser {
 	}
 
 	public static Assignment parseAssignment(ParseContext context, String input) throws ExpError {
+
 		ArrayList<ExpTokenizer.Token> ts;
 		ts = ExpTokenizer.tokenize(input);
 
 		TokenList tokens = new TokenList(ts);
 
-		ExpTokenizer.Token nextTok = tokens.next();
-		if (nextTok == null || (nextTok.type != ExpTokenizer.SQ_TYPE &&
-		                        !nextTok.value.equals("this"))) {
-			throw new ExpError(input, 0, "Assignments must start with an identifier");
+		Assignment ret = new Assignment(input);
+		ExpNode lhsNode = parseExp(context, tokens, 0, ret);
+
+		tokens.expect(ExpTokenizer.SYM_TYPE, "=", input);
+
+		ExpNode rhsNode = parseExp(context, tokens, 0, ret);
+
+		// Make sure we've parsed all the tokens
+		ExpTokenizer.Token peeked = tokens.peek();
+		if (peeked != null) {
+			throw new ExpError(input, peeked.pos, "Unexpected additional values");
 		}
 
-		String[] destination = parseIdentifier(nextTok, tokens, new Expression(input));
-		context.validateAssignmentDest(destination);
+		rhsNode = optimizeAndValidateExpression(input, rhsNode, ret);
+		ret.valueExp = rhsNode;
 
-		nextTok = tokens.next();
-		if (nextTok == null || nextTok.type != ExpTokenizer.SYM_TYPE || !nextTok.value.equals("=")) {
-			throw new ExpError(input, nextTok.pos, "Expected '=' in assignment");
+		// Parsing is done, now we need to unwind the lhs expression to get the necessary components
+		ExpNode indexExp = null;
+
+		// Check for an optional index at the end
+		if (lhsNode instanceof IndexCollection) {
+			// the lhs ended with an index, split that off
+			IndexCollection ind = (IndexCollection)lhsNode;
+			indexExp = ind.index;
+			lhsNode = ind.collection;
+
+			indexExp = optimizeAndValidateExpression(input, indexExp, ret);
+		}
+		ret.attribIndex = indexExp;
+
+		// Now make sure the last node of the lhs ends with a output resolve
+		if (!(lhsNode instanceof ResolveOutput)) {
+			throw new ExpError(input, lhsNode.tokenPos, "Assignment left side must end with an output");
 		}
 
-		Assignment ret = new Assignment();
-		ret.destination = destination;
-		ret.value = new Expression(input);
+		ResolveOutput lhsResolve = (ResolveOutput)lhsNode;
+		ExpNode entNode = lhsResolve.entNode;
 
-		ExpNode expNode = parseExp(context, tokens, 0, ret.value);
+		entNode = optimizeAndValidateExpression(input, entNode, ret);
+		ret.entExp = entNode;
 
-		expNode = optimizeAndValidateExpression(input, expNode, ret.value);
-
-		ret.value.setRootNode(expNode);
+		if (ret.entExp instanceof Constant) {
+			ExpResult ent = ret.entExp.evaluate(null);
+			ret.assigner = context.getConstAssigner(ent, lhsResolve.outputName);
+		} else {
+			ret.assigner = context.getAssigner(lhsResolve.outputName);
+		}
 
 		return ret;
+
 	}
 
 	// The first half of expression parsing, parse a simple expression based on the next token
@@ -2459,31 +2522,6 @@ public class ExpParser {
 		}
 
 		return new FuncCall(fe.name, context, fe.function, arguments, exp, pos);
-	}
-
-	private static String[] parseIdentifier(ExpTokenizer.Token firstName, TokenList tokens, Expression exp) throws ExpError {
-		ArrayList<String> vals = new ArrayList<>();
-		vals.add(firstName.value.intern());
-		while (true) {
-			ExpTokenizer.Token peeked = tokens.peek();
-			if (peeked == null || peeked.type != ExpTokenizer.SYM_TYPE || !peeked.value.equals(".")) {
-				break;
-			}
-			// Next token is a '.' so parse another name
-
-			tokens.next(); // consume
-			ExpTokenizer.Token nextName = tokens.next();
-			if (nextName == null || nextName.type != ExpTokenizer.VAR_TYPE) {
-				throw new ExpError(exp.source, peeked.pos, "Expected Identifier after '.'");
-			}
-
-			vals.add(nextName.value.intern());
-		}
-
-		String[] ret = new String[vals.size()];
-		for (int i = 0; i < ret.length; i++)
-			ret[i] = vals.get(i);
-		return ret;
 	}
 
 	private static ExpNode parseVariable(ParseContext context, ExpTokenizer.Token firstName, TokenList tokens, Expression exp, int pos) throws ExpError {
