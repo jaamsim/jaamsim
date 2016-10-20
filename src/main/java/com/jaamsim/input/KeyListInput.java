@@ -221,4 +221,14 @@ public class KeyListInput<K1 extends Entity, V extends Entity> extends ListInput
 	public String toString() {
 		return String.format("%s %s", noKeyValue, hashMap);
 	}
+
+	public ArrayList<K1> getAllKeys() {
+		ArrayList<K1> keys = new ArrayList<>();
+
+		for (K1 each : hashMap.keySet()) {
+			keys.add(each);
+		}
+
+		return keys;
+	}
 }
