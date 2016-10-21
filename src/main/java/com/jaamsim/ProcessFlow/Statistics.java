@@ -170,7 +170,10 @@ public class Statistics extends LinkedComponent {
 	  reportable = true,
 	    sequence = 2)
 	public double getSampleAverage(double simTime) {
-		return totalValue/this.getNumberAdded(simTime);
+		long num = this.getNumberAdded(simTime);
+		if (num == 0L)
+			return 0.0d;
+		return totalValue/num;
 	}
 
 	@Output(name = "SampleStandardDeviation",
@@ -179,7 +182,9 @@ public class Statistics extends LinkedComponent {
 	  reportable = true,
 	    sequence = 3)
 	public double getSampleStandardDeviation(double simTime) {
-		double num = this.getNumberAdded(simTime);
+		long num = this.getNumberAdded(simTime);
+		if (num == 0L)
+			return 0.0d;
 		double mean = totalValue/num;
 		return Math.sqrt(totalSquaredValue/num - mean*mean);
 	}
@@ -190,8 +195,10 @@ public class Statistics extends LinkedComponent {
 	  reportable = true,
 	    sequence = 4)
 	public double getStandardDeviationOfTheMean(double simTime) {
-		double num = this.getNumberAdded(simTime);
-		return this.getSampleStandardDeviation(simTime)/Math.sqrt(num-1);
+		long num = this.getNumberAdded(simTime);
+		if (num <= 1L)
+			return 0.0d;
+		return this.getSampleStandardDeviation(simTime)/Math.sqrt(num-1L);
 	}
 
 	@Output(name = "TimeAverage",
