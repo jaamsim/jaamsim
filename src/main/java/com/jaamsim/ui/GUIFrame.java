@@ -2210,11 +2210,26 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		return desc;
 	}
 
+	/**
+	 * Returns the HTML code for pop-up tooltips in the Model Builder and Control Panel.
+	 * @param name - name of the item whose tooltip is to be generated
+	 * @param description - text describing the item's function
+	 * @return HTML for the tooltip
+	 */
 	public static String formatToolTip(String name, String desc) {
 		return String.format("<html><p width=\"200px\"><b>%s</b><br>%s</p></html>",
 				name, desc);
 	}
 
+	/**
+	 * Returns the HTML code for a keyword's pop-up tooltip in the Input Editor.
+	 * @param className - object whose keyword tooltip is to be displayed
+	 * @param keyword - name of the keyword
+	 * @param description - description of the keyword
+	 * @param example - an example showing how the keyword is used
+	 * @param exampleList - a list of examples that show how the keyword can be used
+	 * @return HTML for the tooltip
+	 */
 	public static String formatKeywordToolTip(String className, String keyword,
 			String description, String example, String[] exampleList) {
 
@@ -2242,9 +2257,16 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 				keyword, desc, examp);
 	}
 
+	/**
+	 * Returns the HTML code for an output's pop-up tooltip in the Output Viewer.
+	 * @param name - name of the output
+	 * @param description - description of the output
+	 * @return HTML for the tooltip
+	 */
 	public static String formatOutputToolTip(String name, String description) {
 		String desc = html_replace(description);
 		return String.format("<html><p width=\"250px\"><b>%s</b><br>%s</p></html>",
 				name, desc);
 	}
+
 }
