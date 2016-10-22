@@ -111,7 +111,7 @@ Release            Description { 'Releases one or more units of a Resource.' }
 Assign             Description { 'Assigns new values to attributes.' }
 Branch             Description { 'Directs a received entity to a selected destination.' }
 Duplicate          Description { 'Sends copies of the received entity to a set of destinations.' }
-Combine            Description { 'Matches entities from multiple queues. The entity from the first queue is passed on while the other entities are destroyed.' }
+Combine            Description { 'Matches entities from multiple queues. Either all the entities are passed on to the next component or just the one from the first queue. Entities not passed on are destroyed.' }
 SetGraphics        Description { 'Changes the appearance of the received entity.' }
 EntityGate         Description { 'Blocks received entities from progressing further until the EntityGate is opened by one or more Thresholds.' }
 EntitySignal       Description { 'Opens or closes a specified SignalThreshold when an entity is received.' }
