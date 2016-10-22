@@ -44,6 +44,11 @@ public class Statistics extends LinkedComponent {
 	private double maxValue;
 	private double totalValue;
 	private double totalSquaredValue;
+	private double lastValue;
+	private double lastUpdateTime;
+	private double totalTimeValue;
+	private double totalSquaredTimeValue;
+	private double firstSampleTime;
 
 	{
 		stateAssignment.setHidden(true);
@@ -75,22 +80,42 @@ public class Statistics extends LinkedComponent {
 	@Override
 	public void earlyInit() {
 		super.earlyInit();
+
 		minValue = Double.POSITIVE_INFINITY;
 		maxValue = Double.NEGATIVE_INFINITY;
 		totalValue = 0.0;
 		totalSquaredValue = 0.0;
+
+		lastValue = 0.0;
+		lastUpdateTime = 0.0;
+		totalTimeValue = 0.0;
+		totalSquaredTimeValue = 0.0;
+		firstSampleTime = 0.0;
 	}
 
 	@Override
 	public void addEntity(DisplayEntity ent) {
 		super.addEntity(ent);
+		double simTime = this.getSimTime();
 
 		// Update the statistics
-		double val = sampleValue.getValue().getNextSample(getSimTime());
+		double val = sampleValue.getValue().getNextSample(simTime);
 		minValue = Math.min(minValue, val);
 		maxValue = Math.max(maxValue, val);
 		totalValue += val;
 		totalSquaredValue += val*val;
+
+		// Calculate the time average
+		if (this.getNumberAdded(simTime) == 1L) {
+			firstSampleTime = simTime;
+		}
+		else {
+			double weightedVal = lastValue * (simTime - lastUpdateTime);
+			totalTimeValue += weightedVal;
+			totalSquaredTimeValue += lastValue*weightedVal;
+		}
+		lastValue = val;
+		lastUpdateTime = simTime;
 
 		// Pass the entity to the next component
 		this.sendToNextComponent(ent);
@@ -99,10 +124,17 @@ public class Statistics extends LinkedComponent {
 	@Override
 	public void clearStatistics() {
 		super.clearStatistics();
+
 		minValue = Double.POSITIVE_INFINITY;
 		maxValue = Double.NEGATIVE_INFINITY;
 		totalValue = 0.0;
 		totalSquaredValue = 0.0;
+
+		totalTimeValue = 0.0;
+		lastValue = 0.0;
+		lastUpdateTime = 0.0;
+		totalSquaredTimeValue = 0.0;
+		firstSampleTime = 0.0;
 	}
 
 	@Override
@@ -161,4 +193,35 @@ public class Statistics extends LinkedComponent {
 		double num = this.getNumberAdded(simTime);
 		return this.getSampleStandardDeviation(simTime)/Math.sqrt(num-1);
 	}
+
+	@Output(name = "TimeAverage",
+	 description = "The average of the values recorded, weighted by the duration of each value.",
+	    unitType = UserSpecifiedUnit.class,
+	  reportable = true,
+	    sequence = 5)
+	public double getTimeAverage(double simTime) {
+		long num = this.getNumberAdded(simTime);
+		if (num == 0L)
+			return 0.0d;
+		if (num == 1L)
+			return lastValue;
+		double dt = simTime - lastUpdateTime;
+		return (totalTimeValue + lastValue*dt)/(simTime - firstSampleTime);
+	}
+
+	@Output(name = "TimeStandardDeviation",
+	 description = "The standard deviation of the values recorded, weighted by the duration of each value.",
+	    unitType = UserSpecifiedUnit.class,
+	  reportable = true,
+	    sequence = 6)
+	public double getTimeStandardDeviation(double simTime) {
+		long num = this.getNumberAdded(simTime);
+		if (num <= 1L)
+			return 0.0d;
+		double mean = this.getTimeAverage(simTime);
+		double dt = simTime - lastUpdateTime;
+		double meanOfSquare = (totalSquaredTimeValue + lastValue*lastValue*dt)/(simTime - firstSampleTime);
+		return Math.sqrt(meanOfSquare - mean*mean);
+	}
+
 }
