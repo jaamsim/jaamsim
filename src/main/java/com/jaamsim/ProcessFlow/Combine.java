@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
+import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.EntityListInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.units.TimeUnit;
@@ -36,7 +37,12 @@ public class Combine extends LinkedService {
 	         exampleList = {"Queue1 Queue2 Queue3"})
 	private final EntityListInput<Queue> waitQueueList;
 
-	private DisplayEntity processedEntity;	// the DisplayEntity being processed
+	@Keyword(description = "If TRUE, all the matching entities are passed to the next component.\n"
+	                     + "If FALSE, only the entity in the first queue is passed on.",
+	         exampleList = {"TRUE"})
+	private final BooleanInput retainAll;
+
+	private DisplayEntity[] processedEntityList;  // entities being processed
 
 	{
 		waitQueue.setHidden(true);
@@ -51,6 +57,9 @@ public class Combine extends LinkedService {
 		waitQueueList = new EntityListInput<>(Queue.class, "WaitQueueList", "Key Inputs", null);
 		waitQueueList.setRequired(true);
 		this.addInput(waitQueueList);
+
+		retainAll = new BooleanInput("RetainAll", "Key Inputs", false);
+		this.addInput(retainAll);
 	}
 
 	public Combine() {}
@@ -58,7 +67,7 @@ public class Combine extends LinkedService {
 	@Override
 	public void earlyInit() {
 		super.earlyInit();
-		processedEntity = null;
+		processedEntityList = new DisplayEntity[waitQueueList.getListSize()];
 	}
 
 	@Override
@@ -83,6 +92,7 @@ public class Combine extends LinkedService {
 		this.setMatchValue(m);
 
 		// Remove one entity from each queue
+		// (performed in reverse order so that obj is set to the entity in the first queue)
 		for (int i=queueList.size()-1; i>=0; i--) {
 			DisplayEntity ent = queueList.get(i).removeFirstForMatch(m);
 			if (ent == null)
@@ -90,17 +100,15 @@ public class Combine extends LinkedService {
 						m, queueList.get(i));
 
 			// Destroy all the entities but the first
-			if (i == 0) {
-				this.registerEntity(ent);
-				processedEntity = ent;
-			}
-			else {
+			if (i > 0 && !retainAll.getValue()) {
 				ent.kill();
+				continue;
 			}
-		}
 
-		// Position the processed entity relative to the Assemble object
-		this.moveToProcessPosition(processedEntity);
+			this.registerEntity(ent);
+			this.moveToProcessPosition(ent);
+			processedEntityList[i] = ent;
+		}
 
 		return true;
 	}
@@ -108,9 +116,17 @@ public class Combine extends LinkedService {
 	@Override
 	protected boolean processStep(double simTime) {
 
-		// Send the first entity to the next element in the chain
-		this.sendToNextComponent(processedEntity);
-		processedEntity = null;
+		// If specified, send all the entities to the next component
+		if (retainAll.getValue()) {
+			for (int i=0; i<processedEntityList.length; i++) {
+				this.sendToNextComponent(processedEntityList[i]);
+			}
+		}
+
+		// Otherwise, send just the first one
+		else {
+			this.sendToNextComponent(processedEntityList[0]);
+		}
 
 		return true;
 	}
