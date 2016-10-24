@@ -50,9 +50,10 @@ public class Threshold extends StateEntity {
 	private final BooleanInput showWhenClosed;
 
 	private final ArrayList<ThresholdUser> userList;
-
 	private boolean open;
 	private boolean initialOpenValue;
+	private long openCount;
+	private long closedCount;
 
 	{
 		workingStateListInput.setHidden(true);
@@ -83,6 +84,8 @@ public class Threshold extends StateEntity {
 		super.earlyInit();
 		thresholdChangedTarget.users.clear();
 		open = initialOpenValue;
+		openCount = 0L;
+		closedCount = 0L;
 
 		userList.clear();
 		for (Entity each : Entity.getClonesOfIterator(Entity.class)) {
@@ -150,10 +153,14 @@ public class Threshold extends StateEntity {
 		if (traceFlag) trace(0, "setOpen(%s)", bool);
 
 		open = bool;
-		if (open)
+		if (open) {
 			setPresentState("Open");
-		else
+			openCount++;
+		}
+		else {
 			setPresentState("Closed");
+			closedCount++;
+		}
 
 		for (ThresholdUser user : this.userList) {
 			if (!thresholdChangedTarget.users.contains(user))
@@ -161,6 +168,12 @@ public class Threshold extends StateEntity {
 		}
 		if (!thresholdChangedTarget.users.isEmpty() && !thresholdChangedHandle.isScheduled())
 			this.scheduleProcessTicks(0, 2, false, thresholdChangedTarget, thresholdChangedHandle);
+	}
+
+	@Override
+	public void clearStatistics() {
+		openCount = 0L;
+		closedCount = 0L;
 	}
 
 	@Override
@@ -219,4 +232,21 @@ public class Threshold extends StateEntity {
 
 		return (double)closedTicks / totTicks;
 	}
+
+	@Output(name = "OpenCount",
+	 description = "The number of times the threshold's state has changed from closed to open.",
+	    unitType = DimensionlessUnit.class,
+	    sequence = 3)
+	public long getOpenCount(double simTime) {
+		return openCount;
+	}
+
+	@Output(name = "ClosedCount",
+	 description = "The number of times the threshold's state has changed from open to closed.",
+	    unitType = DimensionlessUnit.class,
+	    sequence = 4)
+	public long getClosedCount(double simTime) {
+		return closedCount;
+	}
+
 }
