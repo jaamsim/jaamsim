@@ -28,6 +28,8 @@ import java.awt.event.MouseEvent;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 import javax.swing.AbstractCellEditor;
 import javax.swing.DefaultComboBoxModel;
@@ -868,9 +870,11 @@ private static class TabListener implements ChangeListener {
 private static class CategoryInputs {
 	final String category;
 	final ArrayList<Input<?>> inputs;
+	final int sequence;
 
-	CategoryInputs(String cat, ArrayList<Input<?>> ins) {
+	CategoryInputs(String cat, int seq, ArrayList<Input<?>> ins) {
 		category = cat;
+		sequence = seq;
 		inputs = ins;
 	}
 }
@@ -916,18 +920,34 @@ private static class CategoryInputs {
 			add(catInputsList, inputs, cat);
 		}
 
+		Collections.sort(catInputsList, categorySortOrder);
+
 		return catInputsList;
 	}
 
 	private static void add(ArrayList<CategoryInputs> list, ArrayList<Input<?>> inputs, String cat) {
-		CategoryInputs catInputs = new CategoryInputs(cat, inputs);
 
-		// Ensure key inputs are always the first tab
-		if (catInputs.category.equals("Key Inputs"))
-			list.add(0, catInputs);
-		else
-			list.add(catInputs);
+		int seq = 100;
+		if (cat.equals("Key Inputs"))
+			seq = 0;
+		else if (cat.equals("Thresholds"))
+			seq = 1;
+		else if (cat.equals("Maintenance"))
+			seq = 2;
+		else if (cat.equals("Graphics"))
+			seq = 101;
+
+		list.add(new CategoryInputs(cat, seq, inputs));
 	}
+
+	private static class CategoryComparator implements Comparator<CategoryInputs> {
+		@Override
+		public int compare(CategoryInputs cat0, CategoryInputs cat1) {
+			return Integer.compare(cat0.sequence, cat1.sequence);
+		}
+	}
+
+	public static final Comparator<CategoryInputs> categorySortOrder = new CategoryComparator();
 
 public static class EditTable extends JTable {
 	static int col1Width = 150;
