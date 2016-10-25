@@ -51,29 +51,30 @@ import com.jaamsim.render.VisibilityInfo;
 
 public class TextModel extends DisplayModel {
 
-	@Keyword(description = "The name of the font to be used for the label. The " +
-	                "font name must be enclosed in single quotes.",
-	         example = "TitleModel FontName { 'Arial' }")
+	@Keyword(description = "The font to be used for the text.",
+	         exampleList = { "Arial" })
 	private final StringChoiceInput fontName;
 
-	@Keyword(description = "A list of font styles to be applied to the label, e.g. Bold, Italic. ",
-	         example = "TitleModel FontStyle { Bold }  ")
+	@Keyword(description = "The font styles to be applied to the text, e.g. Bold, Italic. ",
+	         exampleList = { "Bold" })
 	private final StringListInput fontStyle;
 
-	@Keyword(description = "The colour of the font, defined using a colour keyword or RGB values.",
-	         example = "TitleModel FontColor { Red }")
+	@Keyword(description = "The colour of the text, specified by a colour keyword or RGB values.",
+	         exampleList = { "red", "skyblue", "135 206 235" })
 	private final ColourInput fontColor;
 
-	@Keyword(description = "A Boolean value.  If TRUE, then a drop shadow appears for the text label.",
-	         example = "TitleModel  DropShadow { TRUE }")
+	@Keyword(description = "If TRUE, then a drop shadow appears for the text.",
+	         exampleList = { "TRUE" })
 	private final BooleanInput dropShadow;
 
-	@Keyword(description = "The colour for the drop shadow, defined using a colour keyword or RGB values.",
-	         example = "TitleModel  DropShadowColour { red }")
+	@Keyword(description = "The colour for the drop shadow, specified by a colour keyword or "
+	                     + "RGB values.",
+	         exampleList = { "red", "skyblue", "135 206 235" })
 	private final ColourInput dropShadowColor;
 
-	@Keyword(description = "A set of { x, y, z } numbers that define the offset in each direction of the drop shadow from the Text.",
-	         example = "TitleModel  DropShadowOffset { 0.1 0.1 0.0 }")
+	@Keyword(description = "The { x, y, z } coordinates of the drop shadow's offset, expressed "
+	                     + "as a decimal fraction of the text height.",
+	         exampleList = { "0.1 -0.1 0.001" })
 	private final Vec3dInput dropShadowOffset;
 
 	private int style; // Font Style
@@ -112,8 +113,8 @@ public class TextModel extends DisplayModel {
 		fontStyle.setCaseSensitive(false);
 		this.addInput(fontStyle);
 
-		dropShadow = new BooleanInput( "DropShadow", "Key Inputs", false );
-		this.addInput( dropShadow );
+		dropShadow = new BooleanInput("DropShadow", "Key Inputs", false);
+		this.addInput(dropShadow);
 
 		dropShadowColor = new ColourInput("DropShadowColour", "Key Inputs", ColourInput.BLACK);
 		this.addInput(dropShadowColor);
