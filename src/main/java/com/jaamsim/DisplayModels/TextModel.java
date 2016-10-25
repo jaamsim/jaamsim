@@ -127,20 +127,25 @@ public class TextModel extends DisplayModel {
 	}
 
 	@Override
-	public void updateForInput( Input<?> in ) {
-		super.updateForInput( in );
+	public void updateForInput(Input<?> in) {
+		super.updateForInput(in);
 
-		if(in == fontStyle) {
-			style = Font.PLAIN;
-			for(String each: fontStyle.getValue() ) {
-				if(each.equalsIgnoreCase("Bold") ) {
-					style += Font.BOLD;
-				}
-				else if (each.equalsIgnoreCase("Italic")) {
-					style += Font.ITALIC;
-				}
+		if (in == fontStyle) {
+			style = getStyle(fontStyle.getValue());
+		}
+	}
+
+	private static int getStyle(ArrayList<String> strArray) {
+		int ret = Font.PLAIN;
+		for(String each: strArray ) {
+			if(each.equalsIgnoreCase("Bold") ) {
+				ret += Font.BOLD;
+			}
+			else if (each.equalsIgnoreCase("Italic")) {
+				ret += Font.ITALIC;
 			}
 		}
+		return ret;
 	}
 
 	@Override
