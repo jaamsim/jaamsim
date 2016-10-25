@@ -20,12 +20,18 @@ import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
+import java.util.ArrayList;
 
 import com.jaamsim.DisplayModels.TextModel;
 import com.jaamsim.controllers.RenderManager;
+import com.jaamsim.input.BooleanInput;
+import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
+import com.jaamsim.input.StringChoiceInput;
+import com.jaamsim.input.StringListInput;
 import com.jaamsim.input.ValueInput;
+import com.jaamsim.input.Vec3dInput;
 import com.jaamsim.math.Transform;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.units.DistanceUnit;
@@ -42,6 +48,32 @@ public abstract class TextBasics extends DisplayEntity {
 	         exampleList = {"15 m"})
 	protected final ValueInput textHeight;
 
+	@Keyword(description = "The font to be used for the text.",
+	         exampleList = { "Arial" })
+	private final StringChoiceInput fontName;
+
+	@Keyword(description = "The font styles to be applied to the text, e.g. Bold, Italic. ",
+	         exampleList = { "Bold" })
+	private final StringListInput fontStyle;
+
+	@Keyword(description = "The colour of the text, specified by a colour keyword or RGB values.",
+	         exampleList = { "red", "skyblue", "135 206 235" })
+	private final ColourInput fontColor;
+
+	@Keyword(description = "If TRUE, then a drop shadow appears for the text.",
+	         exampleList = { "TRUE" })
+	private final BooleanInput dropShadow;
+
+	@Keyword(description = "The colour for the drop shadow, specified by a colour keyword or "
+	                     + "RGB values.",
+	         exampleList = { "red", "skyblue", "135 206 235" })
+	private final ColourInput dropShadowColor;
+
+	@Keyword(description = "The { x, y, z } coordinates of the drop shadow's offset, expressed "
+	                     + "as a decimal fraction of the text height.",
+	         exampleList = { "0.1 -0.1 0.001" })
+	private final Vec3dInput dropShadowOffset;
+
 	private boolean editMode = false;  // true if the entity is being edited
 	private String savedText = "";     // saved text after editing is finished
 	private String editText = "";      // modified text as edited by the user
@@ -53,6 +85,35 @@ public abstract class TextBasics extends DisplayEntity {
 		textHeight.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		textHeight.setUnitType(DistanceUnit.class);
 		this.addInput(textHeight);
+
+		fontName = new StringChoiceInput("FontName", "Font", -1);
+		fontName.setChoices(TextModel.validFontNames);
+		fontName.setDefaultText("TextModel");
+		this.addInput(fontName);
+
+		fontColor = new ColourInput("FontColour", "Font", ColourInput.BLACK);
+		fontColor.setDefaultText("TextModel");
+		this.addInput(fontColor);
+		this.addSynonym(fontColor, "FontColor");
+
+		fontStyle = new StringListInput("FontStyle", "Font", new ArrayList<String>(0));
+		fontStyle.setValidOptions(TextModel.validStyles);
+		fontStyle.setCaseSensitive(false);
+		fontStyle.setDefaultText("TextModel");
+		this.addInput(fontStyle);
+
+		dropShadow = new BooleanInput("DropShadow", "Font", false);
+		dropShadow.setDefaultText("TextModel");
+		this.addInput(dropShadow);
+
+		dropShadowColor = new ColourInput("DropShadowColour", "Font", ColourInput.BLACK);
+		dropShadowColor.setDefaultText("TextModel");
+		this.addInput(dropShadowColor);
+		this.addSynonym(dropShadowColor, "DropShadowColor");
+
+		dropShadowOffset = new Vec3dInput("DropShadowOffset", "Font", null);
+		dropShadowOffset.setDefaultText("TextModel");
+		this.addInput(dropShadowOffset);
 	}
 
 	public TextBasics() {}

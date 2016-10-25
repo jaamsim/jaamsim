@@ -80,8 +80,8 @@ public class TextModel extends DisplayModel {
 	private int style; // Font Style
 
 	private static final int defFont;
-	private static final ArrayList<String> validFontNames;
-	private static final ArrayList<String> validStyles;
+	public static final ArrayList<String> validFontNames;
+	public static final ArrayList<String> validStyles;
 
 	static {
 		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
