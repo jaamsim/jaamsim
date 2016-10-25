@@ -614,10 +614,6 @@ public class TextModel extends DisplayModel {
 		return new TessFontKey("Verdana", Font.PLAIN);
 	}
 
-	public Color4d getFontColorForText(String text) {
-		return fontColor.getValue();
-	}
-
 	public Color4d getFontColor() {
 		return fontColor.getValue();
 	}
