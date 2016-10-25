@@ -89,13 +89,13 @@ public abstract class StateUserEntity extends StateEntity implements ThresholdUs
 	private boolean busy;  // indicates that work is being performed
 
 	{
-		immediateThresholdList = new EntityListInput<>(Threshold.class, "ImmediateThresholdList", "Key Inputs", new ArrayList<Threshold>());
+		immediateThresholdList = new EntityListInput<>(Threshold.class, "ImmediateThresholdList", "Thresholds", new ArrayList<Threshold>());
 		this.addInput(immediateThresholdList);
 
-		immediateReleaseThresholdList = new EntityListInput<>(Threshold.class, "ImmediateReleaseThresholdList", "Key Inputs", new ArrayList<Threshold>());
+		immediateReleaseThresholdList = new EntityListInput<>(Threshold.class, "ImmediateReleaseThresholdList", "Thresholds", new ArrayList<Threshold>());
 		this.addInput(immediateReleaseThresholdList);
 
-		operatingThresholdList = new EntityListInput<>(Threshold.class, "OperatingThresholdList", "Key Inputs", new ArrayList<Threshold>());
+		operatingThresholdList = new EntityListInput<>(Threshold.class, "OperatingThresholdList", "Thresholds", new ArrayList<Threshold>());
 		this.addInput(operatingThresholdList);
 
 		immediateMaintenanceList =  new EntityListInput<>(DowntimeEntity.class,
