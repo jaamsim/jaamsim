@@ -41,6 +41,7 @@ public class ScriptEntity extends Entity {
 
 	{
 		scriptFileName = new FileInput( "Script", "Key Inputs", null );
+		scriptFileName.setRequired(true);
 		this.addInput( scriptFileName );
 
 		scriptTime = new ValueInput("Time", "Key Inputs", 0.0d);
@@ -60,11 +61,7 @@ public class ScriptEntity extends Entity {
 		tokens.clear();
 		lastTokenIdx = -1;
 
-		// If there is no script file, do nothing
-		if (scriptFileName.getValue() == null)
-			return;
-
-		// If the script file exists, open it
+		// Open the script file
 		tokens = FileInput.getTokensFromURI(scriptFileName.getValue());
 		boolean record = InputAgent.recordEdits();
 		InputAgent.setRecordEdits(false);
