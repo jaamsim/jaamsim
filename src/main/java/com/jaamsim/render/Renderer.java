@@ -1528,7 +1528,7 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 			assert(target.isLoaded());
 
 			// Collect the renderables
-			ArrayList<Renderable> renderables;
+			final ArrayList<Renderable> renderables;
 			ArrayList<OverlayRenderable> overlay;
 
 			if (message.scene != null) {
