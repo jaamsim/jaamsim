@@ -23,7 +23,7 @@ import com.jaamsim.events.EventHandle;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.events.ProcessTarget;
 
-public class Device extends StateUserEntity {
+public abstract class Device extends StateUserEntity {
 
 	private double lastUpdateTime; // simulation time at which the process was updated last
 	private double duration; // calculated duration of the process time step
@@ -258,30 +258,20 @@ public class Device extends StateUserEntity {
 	 * @param simTime - present simulation time
 	 * @return indicates whether to continue processing
 	 */
-	protected boolean startProcessing(double simTime) {
-		return true;
-	}
+	protected abstract boolean startProcessing(double simTime);
 
 	/**
 	 * Returns the duration of the next process time step.
 	 * @param simTime - present simulation time
 	 * @return time step duration
 	 */
-	protected double getStepDuration(double simTime) {
-		return 0.0;
-	}
+	protected abstract double getStepDuration(double simTime);
 
 	/**
 	 * Performs the process calculations at the end of the time step.
 	 * @param dt - elapsed simulation time
 	 */
-	protected void updateProgress(double dt) {}
-
-	/**
-	 * Performs any special processing required for this sub-class of LinkedService
-	 * @param simTime - present simulation time
-	 */
-	protected void endProcessing(double simTime) {}
+	protected abstract void updateProgress(double dt);
 
 	/**
 	 * Performs any calculations related to the state of the process and returns a boolean to
@@ -289,29 +279,24 @@ public class Device extends StateUserEntity {
 	 * @param simTime - present simulation time
 	 * @return indicates whether to start a new time step
 	 */
-	protected boolean processStep(double simTime) {
-		this.endProcessing(simTime);
-		return true;
-	}
+	protected abstract boolean processStep(double simTime);
 
 	/**
 	 * Alerts other processes that the present process has changed.
 	 */
-	protected void processChanged() {}
+	protected abstract void processChanged();
 
 	/**
 	 * Determines whether to start a new time step or to complete the present one.
 	 * @param completed - indicate whether the present time step duration was completed in full
 	 * @return whether to start a new time step
 	 */
-	protected boolean isNewStepReqd(boolean completed) {
-		return completed;
-	}
+	protected abstract boolean isNewStepReqd(boolean completed);
 
 	/**
 	 * Set the process to its stopped condition.
 	 */
-	protected void setProcessStopped() {}
+	protected abstract void setProcessStopped();
 
 	/**
 	 * Returns the time at which the last update was performed.

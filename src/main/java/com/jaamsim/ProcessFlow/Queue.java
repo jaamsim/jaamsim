@@ -732,10 +732,22 @@ public class Queue extends LinkedComponent {
 		return itemSet.size();
 	}
 
+	@Output(name = "QueueList",
+	 description = "The entities in the queue.",
+	    sequence = 1)
+	public ArrayList<DisplayEntity> getQueueList(double simTime) {
+		ArrayList<DisplayEntity> ret = new ArrayList<>(itemSet.size());
+		Iterator<QueueEntry> itr = itemSet.iterator();
+		while (itr.hasNext()) {
+			ret.add(itr.next().entity);
+		}
+		return ret;
+	}
+
 	@Output(name = "QueueTimes",
 	 description = "The waiting time for each entity in the queue.",
 	    unitType = TimeUnit.class,
-	    sequence = 1)
+	    sequence = 2)
 	public ArrayList<Double> getQueueTimes(double simTime) {
 		ArrayList<Double> ret = new ArrayList<>(itemSet.size());
 		Iterator<QueueEntry> itr = itemSet.iterator();
@@ -748,7 +760,7 @@ public class Queue extends LinkedComponent {
 	@Output(name = "PriorityValues",
 	 description = "The Priority expression value for each entity in the queue.",
 	    unitType = DimensionlessUnit.class,
-	    sequence = 2)
+	    sequence = 3)
 	public IntegerVector getPriorityValues(double simTime) {
 		IntegerVector ret = new IntegerVector(itemSet.size());
 		Iterator<QueueEntry> itr = itemSet.iterator();
@@ -761,7 +773,7 @@ public class Queue extends LinkedComponent {
 	@Output(name = "MatchValues",
 	 description = "The Match expression value for each entity in the queue.",
 	    unitType = DimensionlessUnit.class,
-	    sequence = 3)
+	    sequence = 4)
 	public IntegerVector getMatchValues(double simTime) {
 		IntegerVector ret = new IntegerVector(itemSet.size());
 		Iterator<QueueEntry> itr = itemSet.iterator();
@@ -779,7 +791,7 @@ public class Queue extends LinkedComponent {
 	 description = "The average number of entities in the queue.",
 	    unitType = DimensionlessUnit.class,
 	  reportable = true,
-	  sequence = 4)
+	    sequence = 5)
 	public double getQueueLengthAverage(double simTime) {
 		double dt = simTime - timeOfLastUpdate;
 		int queueSize = itemSet.size();
@@ -794,7 +806,7 @@ public class Queue extends LinkedComponent {
 	 description = "The standard deviation of the number of entities in the queue.",
 	    unitType = DimensionlessUnit.class,
 	  reportable = true,
-	  sequence = 5)
+	    sequence = 6)
 	public double getQueueLengthStandardDeviation(double simTime) {
 		double dt = simTime - timeOfLastUpdate;
 		int queueSize = itemSet.size();
@@ -810,7 +822,7 @@ public class Queue extends LinkedComponent {
 	 description = "The minimum number of entities in the queue.",
 	    unitType = DimensionlessUnit.class,
 	  reportable = true,
-	  sequence = 6)
+	    sequence = 7)
 	public int getQueueLengthMinimum(double simTime) {
 		return minElements;
 	}
@@ -819,7 +831,7 @@ public class Queue extends LinkedComponent {
 	 description = "The maximum number of entities in the queue.",
 	    unitType = DimensionlessUnit.class,
 	  reportable = true,
-	  sequence = 7)
+	    sequence = 8)
 	public int getQueueLengthMaximum(double simTime) {
 		// An entity that is added to an empty queue and removed immediately
 		// does not count as a non-zero queue length
@@ -832,7 +844,7 @@ public class Queue extends LinkedComponent {
 	 description = "The total time that the queue has length 0, 1, 2, etc.",
 	    unitType = TimeUnit.class,
 	  reportable = true,
-	  sequence = 8)
+	    sequence = 9)
 	public DoubleVector getQueueLengthDistribution(double simTime) {
 		DoubleVector ret = new DoubleVector(queueLengthDist);
 		double dt = simTime - timeOfLastUpdate;
@@ -848,7 +860,7 @@ public class Queue extends LinkedComponent {
 			"by the total number of entities added to the queue.",
 	    unitType = TimeUnit.class,
 	  reportable = true,
-	  sequence = 9)
+	    sequence = 10)
 	public double getAverageQueueTime(double simTime) {
 		long n = this.getNumberAdded();
 		if (n == 0)
@@ -861,7 +873,7 @@ public class Queue extends LinkedComponent {
 	@Output(name = "MatchValueCount",
 	 description = "The present number of unique match values in the queue.",
 	    unitType = DimensionlessUnit.class,
-	    sequence = 10)
+	    sequence = 11)
 	public int getMatchValueCount(double simTime) {
 		return matchMap.size();
 	}
@@ -870,7 +882,7 @@ public class Queue extends LinkedComponent {
 	 description = "The number of entities that reneged from the queue.",
 	    unitType = DimensionlessUnit.class,
 	  reportable = true,
-	    sequence = 11)
+	    sequence = 12)
 	public long getNumberReneged(double simTime) {
 		return numberReneged;
 	}
@@ -880,7 +892,7 @@ public class Queue extends LinkedComponent {
 	             + "First in queue = 1, second in queue = 2, etc.",
 	    unitType = DimensionlessUnit.class,
 	  reportable = false,
-	    sequence = 12)
+	    sequence = 13)
 	public long getQueuePosition(double simTime) {
 		DisplayEntity objEnt = this.getReceivedEntity(simTime);
 		if (objEnt == null)

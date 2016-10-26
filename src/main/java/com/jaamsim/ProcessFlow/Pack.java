@@ -128,7 +128,7 @@ public class Pack extends LinkedService {
 	}
 
 	@Override
-	protected void endProcessing(double simTime) {
+	protected boolean processStep(double simTime) {
 
 		// Remove the next entity from the queue and pack the container
 		if (packedEntity != null) {
@@ -144,6 +144,8 @@ public class Pack extends LinkedService {
 			numberInserted = 0;
 			startedPacking = false;
 		}
+
+		return true;
 	}
 
 	protected int getNumberToInsert(double simTime) {

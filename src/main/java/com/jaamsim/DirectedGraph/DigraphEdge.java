@@ -36,7 +36,7 @@ public class DigraphEdge {
 		this(vertex1, vertex2, wght, grph, null);
 	}
 
-	public void init() {
+	public void initForUnitTest() {
 		tail.addOutgoingEdge(this);
 		head.addIncomingEdge(this);
 		graph.addEdge(this);

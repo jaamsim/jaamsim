@@ -32,9 +32,9 @@ public class TestTrivalDirectedGraph {
 		DigraphVertex vert2 = new DigraphVertex("Vertex2", graph);
 		DigraphEdge edge1_2 = new DigraphEdge(vert1, vert2, 1.0, graph);
 
-		vert1.init();
-		vert2.init();
-		edge1_2.init();
+		vert1.initForUnitTest();
+		vert2.initForUnitTest();
+		edge1_2.initForUnitTest();
 		graph.init();
 
 		assertTrue(vert1.isSource());

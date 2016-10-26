@@ -31,6 +31,7 @@ import javax.swing.event.ChangeListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 
+import com.jaamsim.Graphics.PolylineInfo;
 import com.jaamsim.basicsim.Entity;
 
 /**
@@ -177,6 +178,10 @@ private static class ClassFields implements Comparator<Field> {
 
 		if (value instanceof long[])
 			return Arrays.toString((long[])value);
+
+		if (value instanceof PolylineInfo[]) {
+			return Arrays.toString((PolylineInfo[])value);
+		}
 
 		try {
 			// ArrayLists must be converted to a String one element at a time

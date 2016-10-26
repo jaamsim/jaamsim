@@ -16,14 +16,22 @@
  */
 package com.jaamsim.Graphics;
 
+import java.util.ArrayList;
+
+import com.jaamsim.DisplayModels.TextModel;
 import com.jaamsim.StringProviders.StringProvInput;
+import com.jaamsim.input.BooleanInput;
+import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
+import com.jaamsim.input.StringChoiceInput;
 import com.jaamsim.input.StringInput;
+import com.jaamsim.input.StringListInput;
 import com.jaamsim.input.UnitTypeInput;
+import com.jaamsim.input.Vec3dInput;
 import com.jaamsim.units.Unit;
 
 /**
@@ -70,6 +78,32 @@ public class OverlayText extends OverlayEntity {
 	         exampleList = {"'Input Error'"})
 	protected final StringInput failText;
 
+	@Keyword(description = "The font to be used for the text.",
+	         exampleList = { "Arial" })
+	private final StringChoiceInput fontName;
+
+	@Keyword(description = "The font styles to be applied to the text, e.g. Bold, Italic. ",
+	         exampleList = { "Bold" })
+	private final StringListInput fontStyle;
+
+	@Keyword(description = "The colour of the text, specified by a colour keyword or RGB values.",
+	         exampleList = { "red", "skyblue", "135 206 235" })
+	private final ColourInput fontColor;
+
+	@Keyword(description = "If TRUE, then a drop shadow appears for the text.",
+	         exampleList = { "TRUE" })
+	private final BooleanInput dropShadow;
+
+	@Keyword(description = "The colour for the drop shadow, specified by a colour keyword or "
+	                     + "RGB values.",
+	         exampleList = { "red", "skyblue", "135 206 235" })
+	private final ColourInput dropShadowColor;
+
+	@Keyword(description = "The { x, y, z } coordinates of the drop shadow's offset, expressed "
+	                     + "as a decimal fraction of the text height.",
+	         exampleList = { "0.1 -0.1 0.001" })
+	private final Vec3dInput dropShadowOffset;
+
 	private String renderText;
 
 	{
@@ -93,6 +127,35 @@ public class OverlayText extends OverlayEntity {
 
 		failText = new StringInput("FailText", "Key Inputs", "Input Error");
 		this.addInput(failText);
+
+		fontName = new StringChoiceInput("FontName", "Font", -1);
+		fontName.setChoices(TextModel.validFontNames);
+		fontName.setDefaultText("TextModel");
+		this.addInput(fontName);
+
+		fontColor = new ColourInput("FontColour", "Font", ColourInput.BLACK);
+		fontColor.setDefaultText("TextModel");
+		this.addInput(fontColor);
+		this.addSynonym(fontColor, "FontColor");
+
+		fontStyle = new StringListInput("FontStyle", "Font", new ArrayList<String>(0));
+		fontStyle.setValidOptions(TextModel.validStyles);
+		fontStyle.setCaseSensitive(false);
+		fontStyle.setDefaultText("TextModel");
+		this.addInput(fontStyle);
+
+		dropShadow = new BooleanInput("DropShadow", "Font", false);
+		dropShadow.setDefaultText("TextModel");
+		this.addInput(dropShadow);
+
+		dropShadowColor = new ColourInput("DropShadowColour", "Font", ColourInput.BLACK);
+		dropShadowColor.setDefaultText("TextModel");
+		this.addInput(dropShadowColor);
+		this.addSynonym(dropShadowColor, "DropShadowColor");
+
+		dropShadowOffset = new Vec3dInput("DropShadowOffset", "Font", null);
+		dropShadowOffset.setDefaultText("TextModel");
+		this.addInput(dropShadowOffset);
 	}
 
 	public OverlayText() {}
@@ -157,6 +220,30 @@ public class OverlayText extends OverlayEntity {
 
 	public int getTextHeight() {
 		return textHeight.getValue();
+	}
+
+	public StringChoiceInput getFontNameInput() {
+		return fontName;
+	}
+
+	public StringListInput getFontStyleInput() {
+		return fontStyle;
+	}
+
+	public ColourInput getFontColorInput() {
+		return fontColor;
+	}
+
+	public BooleanInput getDropShadowInput() {
+		return dropShadow;
+	}
+
+	public ColourInput getDropShadowColorInput() {
+		return dropShadowColor;
+	}
+
+	public Vec3dInput getDropShadowOffsetInput() {
+		return dropShadowOffset;
 	}
 
 }

@@ -86,11 +86,13 @@ public class EntityGate extends LinkedService {
 	 * Loop recursively through the queued entities, releasing them one by one.
 	 */
 	@Override
-	protected void endProcessing(double simTime) {
+	protected boolean processStep(double simTime) {
 
 		// Release the first element in the queue and send to the next component
 		this.sendToNextComponent(servedEntity);
 		servedEntity = null;
+
+		return true;
 	}
 
 	@Override
