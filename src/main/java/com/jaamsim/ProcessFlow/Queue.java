@@ -364,6 +364,10 @@ public class Queue extends LinkedComponent {
 		renegeDestination.getValue().addEntity(ent);
 	}
 
+	public DisplayEntity removeEntity(DisplayEntity ent) {
+		return this.remove(getQueueEntry(ent));
+	}
+
 	/**
 	 * Removes a specified entity from the queue
 	 */
