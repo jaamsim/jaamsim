@@ -165,19 +165,8 @@ public abstract class Device extends StateUserEntity {
 	/**
 	 * Halts further processing.
 	 */
-	public final void stopProcessing() {
-		if (traceFlag) {
-			trace(0, "stopProcessing");
-			traceLine(1, "endActionHandle.isScheduled()=%s", endStepHandle.isScheduled());
-		}
-
-		// If the process is working, kill the next scheduled update
-		if (endStepHandle.isScheduled()) {
-			EventManager.killEvent(endStepHandle);
-		}
-
-		// Update the service for any partial progress that has been made
-		this.updateProgress();
+	private final void stopProcessing() {
+		if (traceFlag) trace(0, "stopProcessing");
 
 		// Set the process to its stopped condition
 		this.setProcessStopped();
