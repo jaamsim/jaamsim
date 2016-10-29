@@ -36,6 +36,8 @@ public class ExpResult {
 		public int getSize();
 
 		public String getOutputString();
+
+		public Collection getCopy();
 	}
 
 	public final ExpResType type;
@@ -92,6 +94,13 @@ public class ExpResult {
 		}
 
 		return null;
+	}
+
+	public ExpResult getCopy() {
+		if (type == ExpResType.COLLECTION) {
+			return makeCollectionResult(colVal.getCopy());
+		}
+		return this;
 	}
 
 	public String getOutputString() {
