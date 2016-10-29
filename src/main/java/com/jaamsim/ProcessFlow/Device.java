@@ -336,7 +336,7 @@ public abstract class Device extends StateUserEntity {
 
 		// If an immediate closure, interrupt the present activity and hold the entity
 		if (isImmediateThresholdClosure()) {
-			this.stopProcessing();
+			this.performUnscheduledUpdate();
 			return;
 		}
 
@@ -365,15 +365,27 @@ public abstract class Device extends StateUserEntity {
 				isImmediateDowntime(down), isForcedDowntime(down), isBusy());
 		}
 
-		// If an immediate downtime, interrupt the present activity
-		if (isImmediateDowntime(down)) {
-			this.stopProcessing();
+		// If the device is idle already, then downtime can start right away
+		if (!this.isBusy())
+			return;
+
+		// For an opportunistic downtime, do nothing and wait for the process to finish
+		if (isOpportunisticDowntime(down)) {
 			return;
 		}
 
-		// If a forced downtime, then set the flag to stop further processing
-		if (isForcedDowntime(down) && this.isBusy())
+		// For a forced downtime, set the flag to stop further processing
+		if (isForcedDowntime(down)) {
 			downtimePending = true;
+			return;
+		}
+
+		// For an immediate downtime, set the flag and interrupt the present process
+		if (isImmediateDowntime(down)) {
+			downtimePending = true;
+			this.performUnscheduledUpdate();
+			return;
+		}
 	}
 
 	@Override
