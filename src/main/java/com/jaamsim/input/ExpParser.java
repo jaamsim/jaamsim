@@ -1759,6 +1759,63 @@ public class ExpParser {
 				return validateCollection(context, args, source, pos);
 			}
 		});
+		addFunction("indexOfNearest", 2, 2, new CallableFunc() {
+			@Override
+			public void checkUnits(ParseContext context, ExpResult[] args,
+					String source, int pos) throws ExpError {
+			}
+
+			@Override
+			public ExpResult call(ParseContext context, ExpResult[] args, String source, int pos) throws ExpError {
+				if (args[0].type != ExpResType.COLLECTION) {
+					throw new ExpError(source, pos, "Expected Collection type argument as first argument.");
+				}
+				if (args[1].type != ExpResType.NUMBER) {
+					throw new ExpError(source, pos, "Expected numerical argument as second argument.");
+				}
+
+				ExpResult.Collection col = args[0].colVal;
+				ExpResult nearPoint = args[1];
+
+				ExpResult.Iterator it = col.getIter();
+				if (!it.hasNext()) {
+					throw new ExpError(source, pos, "Can not get nearest value of empty collection.");
+				}
+
+				double nearestDist = Double.MAX_VALUE;
+				ExpResult retKey = null;
+
+				while (it.hasNext()) {
+					ExpResult compKey = it.nextKey();
+					ExpResult comp = col.index(compKey);
+					if (comp.unitType != nearPoint.unitType) {
+						throw new ExpError(source, pos, "Unmatched Unit types when finding nearest: %s, %s",
+						                   nearPoint.unitType.getSimpleName(), comp.unitType.getSimpleName());
+					}
+					if (comp.type != ExpResType.NUMBER) {
+						throw new ExpError(source, pos, "Can not find nearest value of non-numeric type in collection.");
+					}
+					double dist = Math.abs(comp.value - nearPoint.value);
+					if (dist < nearestDist) {
+						nearestDist = dist;
+						retKey = compKey;
+					}
+				}
+				return retKey;
+			}
+
+			@Override
+			public ExpValResult validate(ParseContext context, ExpValResult[] args, String source, int pos) {
+				if (args[1].state == ExpValResult.State.ERROR || args[1].state == ExpValResult.State.UNDECIDABLE) {
+					return args[1];
+				}
+				if (args[1].type != ExpResType.NUMBER) {
+					return ExpValResult.makeErrorRes(new ExpError(source, pos, "Second argument to 'indexOfNearest' must be a number."));
+				}
+
+				return validateCollection(context, args, source, pos);
+			}
+		});
 
 		addFunction("size", 1, 1, new CallableFunc() {
 			@Override

@@ -149,6 +149,10 @@ public class ExpCollections {
 				return String.format("An error occurred: %s", err.getMessage());
 			}
 		}
+		@Override
+		public ExpResult.Collection getCopy() {
+			return this;
+		}
 	}
 
 	private static class ArrayCollection implements ExpResult.Collection {
@@ -255,6 +259,10 @@ public class ExpCollections {
 				return String.format("An error occurred: %s", err.getMessage());
 			}
 		}
+		@Override
+		public ExpResult.Collection getCopy() {
+			return this;
+		}
 
 	}
 
@@ -334,6 +342,10 @@ public class ExpCollections {
 			return sb.toString();
 		}
 
+		@Override
+		public ExpResult.Collection getCopy() {
+			return this;
+		}
 	}
 
 	private static class IntegerVectorCollection implements ExpResult.Collection {
@@ -413,6 +425,10 @@ public class ExpCollections {
 			return sb.toString();
 		}
 
+		@Override
+		public ExpResult.Collection getCopy() {
+			return this;
+		}
 	}
 
 	private static class MapCollection implements ExpResult.Collection {
@@ -506,6 +522,10 @@ public class ExpCollections {
 			}
 		}
 
+		@Override
+		public ExpResult.Collection getCopy() {
+			return this;
+		}
 	}
 	private static class AssignableArrayCollection implements ExpResult.Collection {
 
@@ -597,6 +617,11 @@ public class ExpCollections {
 			} catch (ExpError err) {
 				return String.format("An error occurred: %s", err.getMessage());
 			}
+		}
+
+		@Override
+		public ExpResult.Collection getCopy() {
+			return new AssignableArrayCollection(list);
 		}
 
 	}

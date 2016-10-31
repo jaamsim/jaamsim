@@ -33,7 +33,7 @@ public class AttributeHandle extends OutputHandle {
 	}
 
 	public ExpResult getInitialValue() {
-		return initialValue;
+		return initialValue.getCopy();
 	}
 
 	public void setValue(ExpResult val) {
