@@ -358,8 +358,7 @@ public class ExpCollections {
 			this.unitType = ut;
 		}
 
-		private class Iter implements ExpResult.Iterator {
-
+		private static class Iter implements ExpResult.Iterator {
 			private int next = 0;
 			private final IntegerVector vector;
 
