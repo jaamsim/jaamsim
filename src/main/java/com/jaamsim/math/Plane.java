@@ -17,9 +17,6 @@
 package com.jaamsim.math;
 
 public class Plane {
-
-	public static Plane XY_PLANE = new Plane();
-
 /**
  * The normal direction of the plane, should always be of unit length
  */

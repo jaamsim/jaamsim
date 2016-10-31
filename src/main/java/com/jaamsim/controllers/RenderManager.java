@@ -91,9 +91,13 @@ import com.jaamsim.ui.View;
  *
  */
 public class RenderManager implements DragSourceListener {
-
 	private final static int EXCEPTION_STACK_THRESHOLD = 10; // The number of recoverable exceptions until a stack trace is output
 	private final static int EXCEPTION_PRINT_RATE = 30; // The number of total exceptions until the overall log is printed
+
+	/**
+	 * Default plane used for Mouse click intersections.
+	 */
+	static final Plane XY_PLANE = new Plane();
 
 	private int numberOfExceptions = 0;
 
@@ -1395,7 +1399,7 @@ public class RenderManager implements DragSourceListener {
 
 	public void mouseMoved(int windowID, int x, int y) {
 		Ray currentRay = getRayForMouse(windowID, x, y);
-		double dist = Plane.XY_PLANE.collisionDist(currentRay);
+		double dist = RenderManager.XY_PLANE.collisionDist(currentRay);
 
 		if (dist == Double.POSITIVE_INFINITY) {
 			// I dunno...
@@ -1409,7 +1413,7 @@ public class RenderManager implements DragSourceListener {
 
 	public void createDNDObject(int windowID, int x, int y) {
 		Ray currentRay = getRayForMouse(windowID, x, y);
-		double dist = Plane.XY_PLANE.collisionDist(currentRay);
+		double dist = RenderManager.XY_PLANE.collisionDist(currentRay);
 
 		if (dist == Double.POSITIVE_INFINITY) {
 			// Unfortunate...

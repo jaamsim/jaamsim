@@ -423,7 +423,7 @@ public class CameraControl implements WindowInteractionListener {
 
 				//Cast a ray into the XY plane both for now, and for the previous mouse position
 				Ray mouseRay = RenderUtils.getPickRayForPosition(info.cameraInfo, x, y, info.width, info.height);
-				double dist = Plane.XY_PLANE.collisionDist(mouseRay);
+				double dist = RenderManager.XY_PLANE.collisionDist(mouseRay);
 				if (dist < 0) {
 					return;
 				}
