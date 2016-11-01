@@ -63,17 +63,18 @@ import com.jogamp.newt.event.KeyEvent;
  */
 public class DisplayEntity extends Entity {
 
-	protected static final String LINEAR_CURVE = "Linear";
-	protected static final String BEZIER_CURVE = "Bezier";
-	protected static final String SPLINE_CURVE = "Spline";
-
-
-	@Keyword(description = "The point in the region at which the alignment point of the object is positioned.",
+	@Keyword(description = "The location of the object in {x, y, z} coordinates.",
 	         exampleList = {"-3.922 -1.830 0.000 m"})
 	protected final Vec3dInput positionInput;
 
-	@Keyword(description = "The size of the object in { x, y, z } coordinates. If only the x and y coordinates are given " +
-	                "then the z dimension is assumed to be zero.",
+	@Keyword(description = "The point within the object that is located at the coordinates of "
+	                     + "its Position input. Expressed with respect to a unit box centered "
+	                     + "about { 0 0 0 }.",
+	         exampleList = {"-0.5 -0.5 0.0"})
+	protected final Vec3dInput alignmentInput;
+
+	@Keyword(description = "The size of the object in {x, y, z} coordinates. If only the x- and "
+	                     + "y-dimensions are given then the z-dimension is assumed to be zero.",
 	         exampleList = {"15 12 0 m"})
 	protected final Vec3dInput sizeInput;
 
@@ -81,26 +82,50 @@ public class DisplayEntity extends Entity {
 			exampleList = {"0 0 90 deg"})
 	private final Vec3dInput orientationInput;
 
-	@Keyword(description = "The point within the object about which its Position keyword is defined, " +
-	                "expressed with respect to a unit box centered about { 0 0 0 }.",
-	         exampleList = {"-0.5 -0.5 0.0"})
-	protected final Vec3dInput alignmentInput;
-
-	@Keyword(description = "A list of points in { x, y, z } coordinates that define a polyline. "
-			+ "When two coordinates are given it is assumed that z = 0." ,
+	@Keyword(description = "A list of points in {x, y, z} coordinates that define a polyline. "
+	                     + "When only two coordinates are given it is assumed that z = 0." ,
              exampleList = {"{ 1.0 1.0 0.0 m } { 2.0 2.0 0.0 m } { 3.0 3.0 0.0 m }",
 			                "{ 1.0 1.0 m } { 2.0 2.0 m } { 3.0 3.0 m }"})
 	protected final Vec3dListInput pointsInput;
 
-	@Keyword(description = "The name of the Region containing the object.  Applies an offset " +
-			        "to the Position of the object corresponding to the Region's " +
-			        "Position and Orientation values.",
+	@Keyword(description = "The type of curve interpolation used for line type entities.",
+	         exampleList = {"Linear", "Bezier", "Spline"})
+	protected final StringChoiceInput curveTypeInput;
+
+	@Keyword(description = "If a Region is specified, the Position and Orientation inputs for "
+	                     + "the present object will be relative to the Position and Orientation "
+	                     + "of the specified Region. If the specified Region is moved or "
+	                     + "rotated, the present object with move to maintain it relative "
+	                     + "position and orientation.",
 	         exampleList = {"Region1"})
 	protected final EntityInput<Region> regionInput;
 
-	@Keyword(description = "The type of curve interpolation used for line type entities.",
-	         exampleList = {"Linear"})
-protected final StringChoiceInput curveTypeInput;
+	@Keyword(description = "If an object is specified, the Position input for the present object "
+	                     + "will be relative to the Position for the specified object. If the "
+	                     + "specified object is moved, the present object will move to maintain "
+	                     + "its relative position.",
+	         exampleList = {"DisplayEntity1"})
+	protected final RelativeEntityInput relativeEntity;
+
+	@Keyword(description = "The graphic representation of the object. If a list of DisplayModels "
+	                     + "is entered, each one will be displayed provided that its DrawRange "
+	                     + "input is satisfied. This feature allows the object's appearance to "
+	                     + "change with its distance from the View window's camera.",
+	         exampleList = {"ColladaModel1", "ColladaModel1 ColladaModel2"})
+	protected final EntityListInput<DisplayModel> displayModelListInput;
+
+	@Keyword(description = "If TRUE, the object is displayed in the View windows.",
+	         exampleList = {"FALSE"})
+	private final BooleanInput show;
+
+	@Keyword(description = "If TRUE, the object is active and used in simulation runs.",
+	         exampleList = {"FALSE"})
+	private final BooleanInput active;
+
+	@Keyword(description = "If TRUE, the object will respond to mouse clicks and can be "
+	                     + "positioned by dragging with the mouse.",
+	         exampleList = {"FALSE"})
+	private final BooleanInput movable;
 
 	private final Vec3d position = new Vec3d();
 	private final Vec3d size = new Vec3d(1.0d, 1.0d, 1.0d);
@@ -110,30 +135,13 @@ protected final StringChoiceInput curveTypeInput;
 
 	private Region currentRegion;
 
-	@Keyword(description = "The graphic representation of the object.  Accepts a list of objects where the distances defined in " +
-	                "LevelOfDetail dictate which DisplayModel entry is used.",
-	         exampleList = {"ColladaModel1"})
-	protected final EntityListInput<DisplayModel> displayModelListInput;
-
-	@Keyword(description = "The name of an object with respect to which the Position keyword is referenced.",
-	         exampleList = {"DisplayEntity1"})
-	protected final RelativeEntityInput relativeEntity;
-
-	@Keyword(description = "If TRUE, the object is displayed in the simulation view windows.",
-	         exampleList = {"FALSE"})
-	private final BooleanInput show;
-
-	@Keyword(description = "If TRUE, the object is active and used in simulation runs.",
-	         exampleList = {"FALSE"})
-	private final BooleanInput active;
-
-	@Keyword(description = "If TRUE, the object can be positioned interactively using the GUI.",
-	         exampleList = {"FALSE"})
-	private final BooleanInput movable;
-
 	private ArrayList<DisplayModelBinding> modelBindings;
 
 	private final HashMap<String, Tag> tagMap = new HashMap<>();
+
+	protected static final String LINEAR_CURVE = "Linear";
+	protected static final String BEZIER_CURVE = "Bezier";
+	protected static final String SPLINE_CURVE = "Spline";
 
 	{
 		positionInput = new Vec3dInput("Position", "Graphics", new Vec3d());
@@ -160,14 +168,14 @@ protected final StringChoiceInput curveTypeInput;
 		pointsInput.setUnitType(DistanceUnit.class);
 		this.addInput(pointsInput);
 
-		regionInput = new EntityInput<>(Region.class, "Region", "Graphics", null);
-		this.addInput(regionInput);
-
 		curveTypeInput = new StringChoiceInput("CurveType", "Graphics", 0);
 		curveTypeInput.addChoice(LINEAR_CURVE);
 		curveTypeInput.addChoice(BEZIER_CURVE);
 		curveTypeInput.addChoice(SPLINE_CURVE);
 		this.addInput(curveTypeInput);
+
+		regionInput = new EntityInput<>(Region.class, "Region", "Graphics", null);
+		this.addInput(regionInput);
 
 		relativeEntity = new RelativeEntityInput("RelativeEntity", "Graphics", null);
 		relativeEntity.setEntity(this);
