@@ -53,6 +53,7 @@ public class ArrowModel extends PolylineModel {
 		arrowHeadSize = new Vec3dInput("ArrowSize", "Key Inputs", new Vec3d(0.1d, 0.1d, 0.0d));
 		arrowHeadSize.setUnitType(DistanceUnit.class);
 		this.addInput(arrowHeadSize);
+		arrowHeadSize.setHidden(true);
 	}
 
 	@Override
