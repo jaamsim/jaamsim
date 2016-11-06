@@ -946,11 +946,11 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		mainToolBar.add( remainingDisplay );
 
 		// 12) Create a speed-up factor display
-		JLabel speedUpLabel = new JLabel( "Speed Up:" );
+		JLabel speedUpLabel = new JLabel( "Speed:" );
 		speedUpDisplay = new JLabel( "", JLabel.CENTER );
 		speedUpDisplay.setPreferredSize( new Dimension( 90, 16 ) );
 		speedUpDisplay.setForeground( new Color( 1.0f, 0.0f, 0.0f ) );
-		speedUpDisplay.setToolTipText(formatToolTip("Achieved Speedup",
+		speedUpDisplay.setToolTipText(formatToolTip("Achieved Speed Multiplier",
 				"The ratio of elapsed simulation time to elasped wall clock time that was achieved."));
 		mainToolBar.addSeparator(separatorDim);
 		mainToolBar.add( speedUpLabel );
