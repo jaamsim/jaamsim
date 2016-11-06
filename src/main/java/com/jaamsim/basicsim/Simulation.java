@@ -66,7 +66,7 @@ public class Simulation extends Entity {
 
 	// Key Inputs tab
 	@Keyword(description = "The duration of the simulation run in which all statistics will be recorded.",
-	             example = "Simulation Duration { 8760 h }")
+	             example = "Simulation RunDuration { 8760 h }")
 	private static final ValueInput runDuration;
 
 	@Keyword(description = "The initialization interval for the simulation run. The model will "
@@ -74,7 +74,7 @@ public class Simulation extends Entity {
 	                     + "statistics and execute for the specified RunDuration interval. "
 	                     + "The total length of the simulation run will be the sum of the "
 	                     + "InitializationDuration and RunDuration inputs.",
-	             example = "Simulation Initialization { 720 h }")
+	             example = "Simulation InitializationDuration { 720 h }")
 	private static final ValueInput initializationTime;
 
 	@Keyword(description = "An optional expression that pauses the run when TRUE is returned.",
