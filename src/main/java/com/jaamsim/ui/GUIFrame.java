@@ -159,6 +159,8 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 	public static int VIEW_HEIGHT;
 	public static int VIEW_WIDTH;
 
+	public static int VIEW_OFFSET = 50;
+
 	private static final String RUN_TOOLTIP = GUIFrame.formatToolTip("Run", "Starts or resumes the simulation run.");
 	private static final String PAUSE_TOOLTIP = "<html><b>Pause</b></html>";  // Use a small tooltip for Pause so that it does not block the simulation time display
 
@@ -1094,6 +1096,17 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 				lastView = viewList.get(viewList.size()-1);
 
 			View tmp = InputAgent.defineEntityWithUniqueName(View.class, "View", "", true);
+
+			// Position the new view window to the right of the last one
+			ArrayList<String> arg = new ArrayList<>();
+			if (lastView != null) {
+				int x = lastView.getWindowPos().get(0) + VIEW_OFFSET;
+				int y = lastView.getWindowPos().get(1);
+				arg.add(String.format((Locale)null, "%d", x));
+				arg.add(String.format((Locale)null, "%d", y));
+				InputAgent.apply(tmp, new KeywordIndex("WindowPosition", arg, null));
+			}
+
 			RenderManager.inst().createWindow(tmp);
 			FrameBox.setSelectedEntity(tmp);
 			InputAgent.applyArgs(tmp, "ShowWindow", "TRUE");
@@ -1102,7 +1115,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 			if (lastView == null)
 				return;
 
-			ArrayList<String> arg = new ArrayList<>();
+			arg.clear();
 			lastView.getInput("ViewCenter").getValueTokens(arg);
 			InputAgent.apply(tmp, new KeywordIndex("ViewCenter", arg, null));
 
