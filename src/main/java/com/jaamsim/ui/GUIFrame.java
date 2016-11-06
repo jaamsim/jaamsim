@@ -846,7 +846,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		mainToolBar.add( spinner );
 
 		// 5) Pause time label
-		JLabel pauseAt = new JLabel( "Pause at:" );
+		JLabel pauseAt = new JLabel( "Pause Time:" );
 		mainToolBar.addSeparator(separatorDim);
 		mainToolBar.add(pauseAt);
 
