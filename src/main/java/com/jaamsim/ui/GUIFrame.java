@@ -1073,7 +1073,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 
 	private static class ViewDefiner extends JMenuItem implements ActionListener {
 		ViewDefiner() {} {
-			this.setText("Define new View");
+			this.setText("Define New View");
 			this.addActionListener(this);
 		}
 
