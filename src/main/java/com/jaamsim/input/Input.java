@@ -313,14 +313,22 @@ public abstract class Input<T> {
 	 */
 	public void appendTokens(String[] args) {
 
-		// Determine the size for an array with original and new tokens
-		int newSize = valueTokens.length + args.length;
-
 		// Determine if braces need to be added around original tokens
 		boolean addBracesAroundOriginalTokens = false;
-		if (! valueTokens[0].equals( "{" )) {
-			addBracesAroundOriginalTokens = true;
-			newSize += 2;
+
+		// Determine the size for an array with original and new tokens
+		int newSize;
+		int valueTokensLength = 0;
+		if (valueTokens == null)
+			newSize = args.length;
+		else {
+			valueTokensLength = valueTokens.length;
+			newSize = valueTokens.length + args.length;
+
+			if (! valueTokens[0].equals( "{" )) {
+				addBracesAroundOriginalTokens = true;
+				newSize += 2;
+			}
 		}
 
 		// Determine if braces need to be added around new tokens
@@ -349,15 +357,16 @@ public abstract class Input<T> {
 			}
 		}
 		else {
-			System.arraycopy(valueTokens, 0, newValueTokens, 0, valueTokens.length);
+			if (valueTokens != null)
+				System.arraycopy(valueTokens, 0, newValueTokens, 0, valueTokens.length);
 
 			if (addBracesAroundNewTokens) {
-				newValueTokens[valueTokens.length] = "{";
-				System.arraycopy(args, 0, newValueTokens, valueTokens.length+1, args.length);
+				newValueTokens[valueTokensLength] = "{";
+				System.arraycopy(args, 0, newValueTokens, valueTokensLength+1, args.length);
 				newValueTokens[newSize-1] = "}";
 			}
 			else {
-				System.arraycopy(args, 0, newValueTokens, valueTokens.length, args.length);
+				System.arraycopy(args, 0, newValueTokens, valueTokensLength, args.length);
 			}
 		}
 
