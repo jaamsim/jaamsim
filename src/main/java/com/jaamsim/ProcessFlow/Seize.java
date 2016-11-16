@@ -74,11 +74,11 @@ public class Seize extends LinkedService {
 	@Override
 	protected boolean startProcessing(double simTime) {
 
-		// Determine the match value
-		Integer m = this.getNextMatchValue(simTime);
-
 		// Stop if the queue is empty, there are insufficient resources, or a threshold is closed
 		while (this.isReadyToStart()) {
+
+			// Determine the match value
+			Integer m = this.getNextMatchValue(simTime);
 
 			// If sufficient units are available, then seize them and pass the entity to the next component
 			this.seizeResources();
