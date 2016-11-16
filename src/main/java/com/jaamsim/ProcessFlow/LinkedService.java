@@ -111,10 +111,11 @@ public abstract class LinkedService extends LinkedDevice implements QueueUser {
 	 * @return match value.
 	 */
 	protected Integer getNextMatchValue(double simTime) {
-		matchValue = null;
-		if (match.getValue() != null)
-			matchValue = (int) match.getValue().getNextSample(simTime);
-		return matchValue;
+		Integer ret = null;
+		if (match.getValue() != null) {
+			ret = (int) match.getValue().getNextSample(simTime);
+		}
+		return ret;
 	}
 
 	protected void setMatchValue(Integer m) {

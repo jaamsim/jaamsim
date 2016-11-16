@@ -79,6 +79,7 @@ public class Seize extends LinkedService {
 
 			// Determine the match value
 			Integer m = this.getNextMatchValue(simTime);
+			this.setMatchValue(m);
 
 			// If sufficient units are available, then seize them and pass the entity to the next component
 			this.seizeResources();
