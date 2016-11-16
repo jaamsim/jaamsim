@@ -84,6 +84,8 @@ public class Seize extends LinkedService {
 			// If sufficient units are available, then seize them and pass the entity to the next component
 			this.seizeResources();
 			DisplayEntity ent = this.getNextEntityForMatch(m);
+			if (ent == null)
+				error("Entity not found for specified Match value: %s", m);
 			this.sendToNextComponent(ent);
 		}
 		return false;
