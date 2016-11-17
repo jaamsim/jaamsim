@@ -127,7 +127,6 @@ public class Seize extends LinkedService {
 
 	/**
 	 * Seize the required Resources.
-	 * @return
 	 */
 	public void seizeResources() {
 		double simTime = this.getSimTime();
