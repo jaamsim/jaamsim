@@ -36,15 +36,17 @@ public class FluidTank extends FluidComponent {
 	         example = "Tank1 Capacity { 1.0 m3 }")
 	private final ValueInput capacityInput;
 
-	@Keyword(description = "The volume of fluid in the tank at the start of the simulation.",
+	@Keyword(description = "The volume of fluid in the tank at the start of the simulation run.",
 	         example = "Tank1 InitialVolume { 1.0 m3 }")
 	private final ValueInput initialVolumeInput;
 
-	@Keyword(description = "The ambient pressure in the tank.",
+	@Keyword(description = "The atmospheric pressure acting on the surface of the fluid in the "
+	                     + "tank.",
 	         example = "Tank1 AmbientPressure { 1.0 Pa }")
 	private final ValueInput ambientPressureInput;
 
-	@Keyword(description = "The height of the inlet to the tank above its outlet.",
+	@Keyword(description = "The height of the flow feeding the tank. Measured relative to the "
+	                     + "bottom of the tank.",
 	         example = "Tank1 InletHeight { 1.0 m }")
 	private final ValueInput inletHeightInput;
 
