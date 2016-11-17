@@ -45,7 +45,7 @@ public class Polynomial extends DisplayEntity implements SampleProvider {
 	@Keyword(description = "The list of dimensionless coefficients for the polynomial function.\n"
 	                     + "The number of coefficients provided determines the number of terms "
 	                     + "in the polynomial. For example, inputs c0, c1, c2 specifies the "
-	                     + "second order polynomial P(x) = c0 + c1*x + c2*x^2 ]",
+	                     + "second order polynomial P(x) = c0 + c1*x + c2*x^2.",
 	         exampleList = {"2.0  1.5"})
 	private final ValueListInput coefficientList;
 
