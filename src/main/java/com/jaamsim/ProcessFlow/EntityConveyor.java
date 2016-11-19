@@ -228,4 +228,23 @@ public class EntityConveyor extends LinkedService {
 		ret[0] = new PolylineInfo(pointsInput.getValue(), getCurveType(), colorInput.getValue(), w);
 		return ret;
 	}
+
+	// LinkDisplayable overrides
+	@Override
+	public Vec3d getSourcePoint() {
+		ArrayList<Vec3d> points = pointsInput.getValue();
+		if (points.size() == 0) {
+			return getGlobalPosition();
+		}
+		return points.get(points.size()-1);
+	}
+	@Override
+	public Vec3d getSinkPoint() {
+		ArrayList<Vec3d> points = pointsInput.getValue();
+		if (points.size() == 0) {
+			return getGlobalPosition();
+		}
+		return points.get(0);
+	}
+
 }

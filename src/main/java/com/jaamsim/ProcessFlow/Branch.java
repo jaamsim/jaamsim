@@ -16,8 +16,11 @@
  */
 package com.jaamsim.ProcessFlow;
 
+import java.util.ArrayList;
+
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleInput;
+import com.jaamsim.basicsim.Entity;
 import com.jaamsim.input.InterfaceEntityListInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.units.DimensionlessUnit;
@@ -64,6 +67,21 @@ public class Branch extends LinkedComponent {
 
 		// Pass the entity to the selected next component
 		nextComponentList.getValue().get(i-1).addEntity(ent);
+	}
+
+	@Override
+	public ArrayList<Entity> getDestinationEntities() {
+		ArrayList<Entity> ret = new ArrayList<>();
+		ArrayList<Linkable> ls = nextComponentList.getValue();
+		if (ls == null)
+			return ret;
+
+		for (Linkable l : ls) {
+			if (l != null && (l instanceof Entity)) {
+				ret.add((Entity)l);
+			}
+		}
+		return ret;
 	}
 
 }

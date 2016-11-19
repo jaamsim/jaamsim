@@ -122,6 +122,8 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 	private JToggleButton controlRealTime;
 	private JSpinner spinner;
 
+	private JToggleButton showLinks;
+
 	private RoundToggleButton controlStartResume;
 	private ImageIcon runPressedIcon;
 	private ImageIcon pausePressedIcon;
@@ -966,6 +968,26 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		mainToolBar.addSeparator(separatorDim);
 		mainToolBar.add( locatorLabel );
 		mainToolBar.add( locatorPos );
+
+		// 13) Show links button
+		showLinks = new JToggleButton( " Show Links " );
+		showLinks.setToolTipText(formatToolTip("Show entity simulation connections",
+				"When selected, arrows will be drawn to indicate connections of linked components in the simulation."));
+		showLinks.setMargin( smallMargin );
+		showLinks.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed( ActionEvent event ) {
+
+				boolean bShow = (((JToggleButton)event.getSource()).isSelected());
+				if (RenderManager.isGood()) {
+					RenderManager.inst().setShowLinks(bShow);
+					RenderManager.redraw();
+				}
+			}
+
+		});
+
+		mainToolBar.add( showLinks );
 
 		// Add the main tool bar to the display
 		getContentPane().add( mainToolBar, BorderLayout.NORTH );

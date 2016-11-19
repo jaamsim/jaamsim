@@ -16,7 +16,11 @@
  */
 package com.jaamsim.ProcessFlow;
 
+import java.util.ArrayList;
+
 import com.jaamsim.Graphics.DisplayEntity;
+import com.jaamsim.Graphics.LinkDisplayable;
+import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.Input;
@@ -25,6 +29,7 @@ import com.jaamsim.input.InterfaceEntityInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.StringInput;
+import com.jaamsim.math.Vec3d;
 import com.jaamsim.states.StateEntity;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.RateUnit;
@@ -34,7 +39,7 @@ import com.jaamsim.units.TimeUnit;
  * LinkedComponents are used to form a chain of components that process DisplayEntities that pass through the system.
  * Sub-classes for EntityGenerator, Server, and EntitySink.
  */
-public abstract class LinkedComponent extends StateEntity implements Linkable {
+public abstract class LinkedComponent extends StateEntity implements Linkable, LinkDisplayable {
 
 	@Keyword(description = "The default value for the output obj.\n"
 	                     + "Normally, obj is set to the last entity received by this object. "
@@ -249,6 +254,26 @@ public abstract class LinkedComponent extends StateEntity implements Linkable {
 	    sequence = 5)
 	public double getReleaseTime(double simTime) {
 		return releaseTime;
+	}
+
+	// LinkDisplayable
+	@Override
+	public ArrayList<Entity> getDestinationEntities() {
+		ArrayList<Entity> ret = new ArrayList<>();
+		Linkable l = nextComponent.getValue();
+		if (l != null && (l instanceof Entity)) {
+			ret.add((Entity)l);
+		}
+		return ret;
+	}
+
+	@Override
+	public Vec3d getSourcePoint() {
+		return getGlobalPosition();
+	}
+	@Override
+	public Vec3d getSinkPoint() {
+		return getGlobalPosition();
 	}
 
 }
