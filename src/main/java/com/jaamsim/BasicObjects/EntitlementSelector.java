@@ -37,7 +37,8 @@ import com.jaamsim.units.UserSpecifiedUnit;
  */
 public class EntitlementSelector extends DisplayEntity implements SampleProvider {
 
-	@Keyword(description = "The list of probabilities on which to base the selection.  Must sum to 1.0.",
+	@Keyword(description = "A list of N numbers equal to the relative proportion for each of the "
+	                     + "N indices. Must sum to 1.0.",
 	         exampleList = {"0.3  0.7"})
 	private final ValueListInput proportionList;
 
@@ -82,8 +83,9 @@ public class EntitlementSelector extends DisplayEntity implements SampleProvider
 	 * Returns the next sample.
 	 */
 	@Output(name = "Value",
-	        description = "The last sampled index (from 1 to N).",
-	        unitType = UserSpecifiedUnit.class)
+	 description = "The last sampled index (from 1 to N).",
+	    unitType = UserSpecifiedUnit.class,
+	    sequence = 0)
 	@Override
 	public final double getNextSample(double simTime) {
 		// If we are not in a model context, do not perturb the distribution by sampling,
@@ -135,14 +137,16 @@ public class EntitlementSelector extends DisplayEntity implements SampleProvider
 		return proportionList.getValue().size();
 	}
 
-	@Output( name="NumberOfSamples",
-			 description="The number of times the distribution has been sampled.")
+	@Output(name = "NumberOfSamples",
+	 description = "The number of times the distribution has been sampled.",
+	    sequence = 1)
 	public int getNumberOfSamples(double simTime) {
 		return totalCount;
 	}
 
-	@Output( name="SampleCount",
-			 description="The number samples for each entity.")
+	@Output(name = "SampleCount",
+	 description = "The number samples for each entity.",
+	    sequence = 2)
 	public DoubleVector getSampleCount(double simTime) {
 		DoubleVector ret = new DoubleVector(sampleCount.length);
 		for (int i=0; i<sampleCount.length; i++) {
@@ -151,8 +155,10 @@ public class EntitlementSelector extends DisplayEntity implements SampleProvider
 		return ret;
 	}
 
-	@Output( name="SampleDifference",
-			 description="The difference between the actual number samples for each entity and the expected number.")
+	@Output(name = "SampleDifference",
+	 description = "The difference between the actual number samples for each entity and the "
+	             + "expected number.",
+	    sequence = 3)
 	public DoubleVector getSampleDifference(double simTime) {
 		DoubleVector ret = new DoubleVector(sampleDifference.length);
 		for (int i=0; i<sampleDifference.length; i++) {

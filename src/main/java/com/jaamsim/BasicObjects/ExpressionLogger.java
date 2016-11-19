@@ -50,7 +50,7 @@ import com.jaamsim.units.UserSpecifiedUnit;
 public class ExpressionLogger extends DisplayEntity implements StateEntityListener {
 	private FileEntity file;
 
-	@Keyword(description = "An fixed interval at which entries will be written to the log file. "
+	@Keyword(description = "A fixed interval at which entries will be written to the log file. "
 			+ "This input is optional if state tracing or value tracing is specified.",
 	         exampleList = { "24.0 h" })
 	private final ValueInput interval;
@@ -83,10 +83,10 @@ public class ExpressionLogger extends DisplayEntity implements StateEntityListen
 			+ "An entry in the log file is made every time one of the entities changes state. "
 			+ "Each entity's state is written automatically to the log file - it is not necessary "
 			+ "to add an expression to the DataSource keyword's input.",
-	         exampleList = { "Server1 ExperssionThreshold1" })
+	         exampleList = { "Server1 ExpressionThreshold1" })
 	private final EntityListInput<StateEntity> stateTraceList;
 
-	@Keyword(description = "The unit types for the values being traced. ",
+	@Keyword(description = "The unit types for the values being traced.",
 	         exampleList = {"DistanceUnit  SpeedUnit"})
 	private final UnitTypeListInput valueUnitTypeList;
 

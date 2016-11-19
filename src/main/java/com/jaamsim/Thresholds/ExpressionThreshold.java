@@ -50,7 +50,7 @@ public class ExpressionThreshold extends Threshold {
 	                     + "TRUE = Open, FALSE = Closed.\n"
 	                     + "This input is only relevant when the CloseCondition input is used "
 	                     + "and both the OpenCondition and CloseCondition are FALSE at the "
-	                     + "start of the simulation run. Otherwise, the the initial state is "
+	                     + "start of the simulation run. Otherwise, the initial state is "
 	                     + "determined explicitly by the OpenCondition and CloseCondition.",
 	         exampleList = { "TRUE" })
 	private final BooleanInput initialOpenValue;

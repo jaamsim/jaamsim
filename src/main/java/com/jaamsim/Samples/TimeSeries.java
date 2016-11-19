@@ -45,7 +45,7 @@ public class TimeSeries extends DisplayEntity implements TimeSeriesProvider {
 	                     + "time. The appropriate units should be included with both the time "
 	                     + "and value inputs.\n\n"
 	                     + "The first time stamp MUST be zero simulation time or "
-	                     + "January 1 00:00:00 of an arbitray year. If a non-zero year is "
+	                     + "January 1 00:00:00 of an arbitrary year. If a non-zero year is "
 	                     + "entered, e.g. '2010-01-01 00:00:00', then the TimeSeries considers "
 	                     + "this date to be time zero of the simulation and all other timestamps "
 	                     + "are offset accordingly.",
