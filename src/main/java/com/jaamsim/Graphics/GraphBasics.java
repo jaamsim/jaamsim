@@ -83,7 +83,7 @@ public abstract class GraphBasics extends DisplayEntity {
 	private final ValueInput xAxisInterval;
 
 	@Keyword(description = "The Java format to be used for the tick mark values on the x-axis.\n" +
-			"For example, the format %.1f would dispaly the value 5 as 5.0.",
+			"For example, the format %.1f would display the value 5 as 5.0.",
 	         exampleList = {"%.1f"})
 	private final FormatInput xAxisLabelFormat;
 
@@ -121,7 +121,7 @@ public abstract class GraphBasics extends DisplayEntity {
 	private final ValueInput yAxisInterval;
 
 	@Keyword(description  = "The Java format to be used for the tick mark values on the y-axis.\n" +
-			"For example, the format %.1f would dispaly the value 5 as 5.0.",
+			"For example, the format %.1f would display the value 5 as 5.0.",
 	         exampleList = {"%.1f"})
 	private final FormatInput yAxisLabelFormat;
 
