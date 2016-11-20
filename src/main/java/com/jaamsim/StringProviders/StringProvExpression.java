@@ -67,7 +67,7 @@ public class StringProvExpression implements StringProvider {
 			}
 		}
 		catch(ExpError e) {
-			thisEnt.error("%s", e.getMessage());
+			thisEnt.error(e.toString());
 		}
 		return ret;
 	}
