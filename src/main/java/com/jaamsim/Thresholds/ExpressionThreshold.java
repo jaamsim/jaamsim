@@ -189,7 +189,7 @@ public class ExpressionThreshold extends Threshold {
 			return ret;
 		}
 		catch(ExpError e) {
-			error("%s", e.getMessage());
+			error(e.toString());
 			return false; //never hit, error() will throw
 		}
 	}
