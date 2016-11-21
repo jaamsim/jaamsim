@@ -25,7 +25,7 @@ public class PolylineInfo {
 	public static enum CurveType {
 		LINEAR,
 		BEZIER,
-		SPLINE
+		SPLINE,
 	}
 
 	private final ArrayList<Vec3d> points;

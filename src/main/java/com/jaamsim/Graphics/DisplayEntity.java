@@ -33,6 +33,7 @@ import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.EntityListInput;
+import com.jaamsim.input.EnumInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InputErrorException;
@@ -40,7 +41,6 @@ import com.jaamsim.input.Keyword;
 import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.RelativeEntityInput;
-import com.jaamsim.input.StringChoiceInput;
 import com.jaamsim.input.Vec3dInput;
 import com.jaamsim.input.Vec3dListInput;
 import com.jaamsim.math.Color4d;
@@ -89,8 +89,8 @@ public class DisplayEntity extends Entity {
 	protected final Vec3dListInput pointsInput;
 
 	@Keyword(description = "The type of curve interpolation used for line type entities.",
-	         exampleList = {"Linear", "Bezier", "Spline"})
-	protected final StringChoiceInput curveTypeInput;
+	         exampleList = {"LINEAR", "BEZIER", "SPLINE"})
+	protected final EnumInput<PolylineInfo.CurveType> curveTypeInput;
 
 	@Keyword(description = "If a Region is specified, the Position and Orientation inputs for "
 	                     + "the present object will be relative to the Position and Orientation "
@@ -139,10 +139,6 @@ public class DisplayEntity extends Entity {
 
 	private final HashMap<String, Tag> tagMap = new HashMap<>();
 
-	protected static final String LINEAR_CURVE = "Linear";
-	protected static final String BEZIER_CURVE = "Bezier";
-	protected static final String SPLINE_CURVE = "Spline";
-
 	{
 		positionInput = new Vec3dInput("Position", "Graphics", new Vec3d());
 		positionInput.setUnitType(DistanceUnit.class);
@@ -168,10 +164,7 @@ public class DisplayEntity extends Entity {
 		pointsInput.setUnitType(DistanceUnit.class);
 		this.addInput(pointsInput);
 
-		curveTypeInput = new StringChoiceInput("CurveType", "Graphics", 0);
-		curveTypeInput.addChoice(LINEAR_CURVE);
-		curveTypeInput.addChoice(BEZIER_CURVE);
-		curveTypeInput.addChoice(SPLINE_CURVE);
+		curveTypeInput = new EnumInput<>(PolylineInfo.CurveType.class, "CurveType", "Graphics", PolylineInfo.CurveType.LINEAR);
 		this.addInput(curveTypeInput);
 
 		regionInput = new EntityInput<>(Region.class, "Region", "Graphics", null);
@@ -1051,18 +1044,7 @@ public class DisplayEntity extends Entity {
 	}
 
 	protected PolylineInfo.CurveType getCurveType() {
-		if (curveTypeInput.getChoice().equals(LINEAR_CURVE)) {
-			return PolylineInfo.CurveType.LINEAR;
-		}
-		if (curveTypeInput.getChoice().equals(BEZIER_CURVE)) {
-			return PolylineInfo.CurveType.BEZIER;
-		}
-		if (curveTypeInput.getChoice().equals(SPLINE_CURVE)) {
-			return PolylineInfo.CurveType.SPLINE;
-		}
-		// Error case, should not be possible
-		assert(false);
-		return PolylineInfo.CurveType.LINEAR;
+		return curveTypeInput.getValue();
 	}
 
 	public final void setTagColour(String tagName, Color4d ca) {
