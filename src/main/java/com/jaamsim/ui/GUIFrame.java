@@ -920,6 +920,26 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		mainToolBar.add(Box.createRigidArea(gapDim));
 		mainToolBar.add( toolButtonIsometric );
 
+		// 8) Show links button
+		showLinks = new JToggleButton(new ImageIcon(GUIFrame.class.getResource("/resources/images/ShowLinks-16.png")));
+		showLinks.setToolTipText(formatToolTip("Show Entity Flow",
+				"When selected, arrows are shown between objects to indicate the flow of entities."));
+		showLinks.setMargin( noMargin );
+		showLinks.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed( ActionEvent event ) {
+
+				boolean bShow = (((JToggleButton)event.getSource()).isSelected());
+				if (RenderManager.isGood()) {
+					RenderManager.inst().setShowLinks(bShow);
+					RenderManager.redraw();
+				}
+			}
+
+		});
+		mainToolBar.add(Box.createRigidArea(gapDim));
+		mainToolBar.add( showLinks );
+
 		// 9) Create the display clock and label
 		clockDisplay = new JLabel( "", JLabel.CENTER );
 		clockDisplay.setPreferredSize( new Dimension( 90, 16 ) );
@@ -931,6 +951,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 
 		// 10) Create the progress bar
 		progressBar = new JProgressBar( 0, 100 );
+		progressBar.setPreferredSize( new Dimension( 120, hght ) );
 		progressBar.setValue( 0 );
 		progressBar.setStringPainted( true );
 		progressBar.setToolTipText(formatToolTip("Run Progress",
@@ -968,26 +989,6 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		mainToolBar.addSeparator(separatorDim);
 		mainToolBar.add( locatorLabel );
 		mainToolBar.add( locatorPos );
-
-		// 13) Show links button
-		showLinks = new JToggleButton( " Show Links " );
-		showLinks.setToolTipText(formatToolTip("Show entity simulation connections",
-				"When selected, arrows will be drawn to indicate connections of linked components in the simulation."));
-		showLinks.setMargin( smallMargin );
-		showLinks.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed( ActionEvent event ) {
-
-				boolean bShow = (((JToggleButton)event.getSource()).isSelected());
-				if (RenderManager.isGood()) {
-					RenderManager.inst().setShowLinks(bShow);
-					RenderManager.redraw();
-				}
-			}
-
-		});
-
-		mainToolBar.add( showLinks );
 
 		// Add the main tool bar to the display
 		getContentPane().add( mainToolBar, BorderLayout.NORTH );
