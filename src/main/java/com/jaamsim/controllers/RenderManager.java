@@ -123,6 +123,7 @@ public class RenderManager implements DragSourceListener {
 	private final AtomicBoolean screenshot = new AtomicBoolean(false);
 
 	private final AtomicBoolean showLinks = new AtomicBoolean(false);
+	private final double linkArrowSize = 0.2;
 
 	private final ExceptionLogger exceptionLogger;
 
@@ -1694,10 +1695,61 @@ public class RenderManager implements DragSourceListener {
 
 					Vec3d source = ld.getSourcePoint();
 					Vec3d sink = lDest.getSinkPoint();
-					ArrayList<Vec4d> segments = new ArrayList<>(2);
-					segments.add(new Vec4d(source.x, source.y, source.z, 1));
-					segments.add(new Vec4d(sink.x, sink.y, sink.z, 1));
+					double sourceRadius = ld.getRadius();
+					double sinkRadius = lDest.getRadius();
+					Vec3d arrowDir = new Vec3d();
+					arrowDir.sub3(sink, source);
+					if (arrowDir.mag3() < (sourceRadius + sinkRadius)) {
+						// The two objects are too close
+						continue;
+					}
+
+					// Scale back the arrows to the 'radius' provided
+					double linkSize = arrowDir.mag3() - sourceRadius - sinkRadius;
+					arrowDir.normalize3();
+					Vec3d temp = new Vec3d();
+					temp.scale3(sourceRadius, arrowDir);
+					source.add3(temp);
+					temp.scale3(sinkRadius, arrowDir);
+					sink.sub3(temp);
+
+					double arrowHeadSize = Math.min(linkSize*0.3, linkArrowSize);
+
+					temp.scale3(arrowHeadSize, arrowDir);
+					Vec3d arrowMidPoint = new Vec3d();
+					arrowMidPoint.sub3(sink, temp);
+					Vec3d arrowHeadDir = new Vec3d();
+					arrowHeadDir.cross3(arrowDir, new Vec3d(0,0,1));
+					if (arrowHeadDir.mag3() == 0.0) {
+						arrowHeadDir.set3(1, 0, 0);
+					} else {
+						arrowHeadDir.normalize3();
+					}
+					arrowHeadDir.scale3(arrowHeadSize*0.5);
+
+					Vec3d arrowPoint0 = new Vec3d();
+					Vec3d arrowPoint1 = new Vec3d();
+					arrowPoint0.sub3(arrowMidPoint, arrowHeadDir);
+					arrowPoint1.add3(arrowMidPoint, arrowHeadDir);
+
+					Vec4d source4 = new Vec4d(source.x, source.y, source.z, 1);
+					Vec4d sink4 = new Vec4d(sink.x, sink.y, sink.z, 1);
+					Vec4d ap0 = new Vec4d(arrowPoint0.x, arrowPoint0.y, arrowPoint0.z, 1);
+					Vec4d ap1 = new Vec4d(arrowPoint1.x, arrowPoint1.y, arrowPoint1.z, 1);
+
+					ArrayList<Vec4d> segments = new ArrayList<>(6);
+					segments.add(source4);
+					segments.add(sink4);
+
+					// Now add the 'head' of the arrow
+					segments.add(sink4);
+					segments.add(ap0);
+
+					segments.add(sink4);
+					segments.add(ap1);
+
 					scene.add(new LineProxy(segments, ColourInput.BLACK, 1, DisplayModel.ALWAYS, 0));
+
 				}
 
 			} catch (Throwable t) {

@@ -247,4 +247,9 @@ public class EntityConveyor extends LinkedService {
 		return points.get(0);
 	}
 
+	@Override
+	public double getRadius() {
+		return 0;
+	}
+
 }

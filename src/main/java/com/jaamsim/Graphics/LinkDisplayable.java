@@ -27,4 +27,6 @@ public interface LinkDisplayable {
 
 	public Vec3d getSourcePoint();
 	public Vec3d getSinkPoint();
+
+	public double getRadius();
 }

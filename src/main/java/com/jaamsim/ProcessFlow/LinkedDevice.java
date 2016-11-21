@@ -267,4 +267,9 @@ public abstract class LinkedDevice extends Device implements Linkable, LinkDispl
 		return getGlobalPosition();
 	}
 
+	@Override
+	public double getRadius() {
+		return getSize().mag3()/2.0;
+	}
+
 }
