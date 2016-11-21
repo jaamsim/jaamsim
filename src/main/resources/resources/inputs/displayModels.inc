@@ -1,11 +1,11 @@
 Define ObjectType {
-                    ArrowModel
-                    GraphModel
+                    ColladaModel
+                    ImageModel
+                    ShapeModel
                     PolylineModel
                     TextModel
-                    ImageModel
-                    ColladaModel
-                    ShapeModel
+                    ArrowModel
+                    GraphModel
                   }
 
 ArrowModel      JavaClass { com.jaamsim.DisplayModels.ArrowModel               } Palette { 'Display Models' }    DragAndDrop { FALSE }

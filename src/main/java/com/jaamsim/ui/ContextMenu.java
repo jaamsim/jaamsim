@@ -87,19 +87,7 @@ public class ContextMenu {
 		} );
 		menu.add( inputEditorMenuItem );
 
-		// 2) Property Viewer
-		JMenuItem propertyViewerMenuItem = new JMenuItem( "Property Viewer" );
-		propertyViewerMenuItem.addActionListener( new ActionListener() {
-
-			@Override
-			public void actionPerformed( ActionEvent event ) {
-				InputAgent.applyArgs(Simulation.getInstance(), "ShowPropertyViewer", "TRUE");
-				FrameBox.setSelectedEntity(ent);
-			}
-		} );
-		menu.add( propertyViewerMenuItem );
-
-		// 3) Output Viewer
+		// 2) Output Viewer
 		JMenuItem outputViewerMenuItem = new JMenuItem( "Output Viewer" );
 		outputViewerMenuItem.addActionListener( new ActionListener() {
 
@@ -110,6 +98,18 @@ public class ContextMenu {
 			}
 		} );
 		menu.add( outputViewerMenuItem );
+
+		// 3) Property Viewer
+		JMenuItem propertyViewerMenuItem = new JMenuItem( "Property Viewer" );
+		propertyViewerMenuItem.addActionListener( new ActionListener() {
+
+			@Override
+			public void actionPerformed( ActionEvent event ) {
+				InputAgent.applyArgs(Simulation.getInstance(), "ShowPropertyViewer", "TRUE");
+				FrameBox.setSelectedEntity(ent);
+			}
+		} );
+		menu.add( propertyViewerMenuItem );
 
 		// 4) Duplicate
 		JMenuItem duplicateMenuItem = new JMenuItem( "Duplicate" );

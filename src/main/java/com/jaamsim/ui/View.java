@@ -55,15 +55,15 @@ public class View extends Entity {
 
 	private boolean keepWindowOpen;  // used by GUIFrame to determine whether a window is open or closed
 
-	@Keyword(description = "The Region this View is within.",
+	@Keyword(description = "The region in which the view's coordinates are given.",
 	         example = "View1 Region { Region1 }")
 	private final EntityInput<Region> region;
 
-	@Keyword(description = "The position the view is looking at.",
+	@Keyword(description = "The position the view camera is looking at.",
 	         example = "View1 ViewCenter { 0 0 0 m }")
 	private final Vec3dInput center;
 
-	@Keyword(description = "The position the view is looking from.",
+	@Keyword(description = "The position the view camera is looking from.",
 	         example = "View1 ViewPosition { 0 0 50 m }")
 	private final Vec3dInput position;
 
@@ -76,16 +76,16 @@ public class View extends Entity {
 	         example = "View1 WindowPosition { 220 110 }")
 	private final IntegerListInput windowPos;
 
-	@Keyword(description = "The text to place in the title bar of the window",
+	@Keyword(description = "Text to place in the title bar of the view window. The window must "
+	                     + "be closed and re-opened manually after changing the title.",
 	         example = "View1 TilteBarText { 'An Example Title' }")
 	private final StringInput titleBar;
 
-	@Keyword(description = "A Boolean indicating whether the view should show a window" +
-	                "after all inputs have been loaded",
+	@Keyword(description = "If TRUE, the view window is displayed on screen.",
 	         example = "View1 ShowWindow { FALSE }")
 	private final BooleanInput showWindow;
 
-	@Keyword(description = "A Boolean indicating whether the view position can be moved (panned or rotated)",
+	@Keyword(description = "A Boolean indicating whether the view can be panned or rotated.",
 	 example = "View1 Movable { FALSE }")
 	private final BooleanInput movable;
 

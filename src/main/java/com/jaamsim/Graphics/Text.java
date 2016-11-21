@@ -35,26 +35,27 @@ public class Text extends TextBasics {
 	@Keyword(description = "The fixed and variable text to be displayed. If spaces are included, "
 	                     + "enclose the text in single quotes. If variable text is to be "
 	                     + "displayed using the DataSource keyword, include the appropriate Java "
-	                     + "format in the text, such as %s, %.6f, %.6g.",
+	                     + "format in the text. For example, %s will display a text output and "
+	                     + "%.6f will display a number with six decimals of accuracy.",
 	         exampleList = {"'Present speed = %.3f m/s'", "'Present State = %s'"})
 	protected final StringInput formatText;
 
-	@Keyword(description = "The unit type for the numerical value to be displayed as "
-	                     + "variable text. Set to DimensionlessUnit if the variable text is "
-	                     + "non-numeric, such as the state of a Server.",
+	@Keyword(description = "The unit type for the numerical value to be displayed as variable "
+	                     + "text. Set to DimensionlessUnit if the variable text is non-numeric "
+	                     + "such as the state of a Server.",
 	         exampleList = {"DistanceUnit", "DimensionlessUnit"})
 	protected final UnitTypeInput unitType;
 
-	@Keyword(description = "The unit in which to express an expression that returns a numeric "
-	                     + "value.",
+	@Keyword(description = "The unit in which to express an expression that returns a numerical "
+	                     + "value. For example, if the UnitType input has been set to "
+	                     + "DistanceUnit, then the output value could be displayed in kilometres, "
+	                     + "instead of meters, by entering km to this keyword.",
 	         exampleList = {"m/s"})
 	protected final EntityInput<Unit> unit;
 
 	@Keyword(description = "An expression that returns the variable text to be displayed. "
 	                     + "The expression can return a number that will be formated as text, "
-	                     + "or it can return text directly, such as the state of a Server. "
-	                     + "An object that returns a number, such as a TimeSeries, can also "
-	                     + "be entered.",
+	                     + "or it can return text directly, such as the state of a Server.",
 	         exampleList = {"[Queue1].AverageQueueTime", "[Server1].State",
 	                        "'[Queue1].QueueLength + [Queue2].QueueLength'",
 	                        "TimeSeries1"})

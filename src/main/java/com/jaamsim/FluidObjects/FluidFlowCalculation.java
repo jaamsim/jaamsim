@@ -33,11 +33,11 @@ public abstract class FluidFlowCalculation extends CalculationEntity {
 	      example = "FluidFlow1 Fluid { Fluid1 }")
 	private final EntityInput<Fluid> fluidInput;
 
-	@Keyword(description = "The source for the flow.",
+	@Keyword(description = "The source object for the flow.",
 	      example = "FluidFlow1 Source { Tank1 }")
 	protected final EntityInput<FluidComponent> sourceInput;
 
-	@Keyword(description = "The destination for the flow.",
+	@Keyword(description = "The destination object for the flow.",
 	      example = "FluidFlow1 Destination { Tank1 }")
 	protected final EntityInput<FluidComponent> destinationInput;
 

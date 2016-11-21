@@ -54,7 +54,7 @@ public class UnitDelay extends DoubleCalculation {
 
 	@Override
 	@Output(name = "Value",
-	 description = "The result of the calcuation at the present time.",
+	 description = "The result of the calculation at the present time.",
 	    unitType = UserSpecifiedUnit.class)
 	public double getNextSample(double simTime) {
 		return this.getLastValue();

@@ -32,7 +32,7 @@ import com.jaamsim.units.UserSpecifiedUnit;
  */
 public class Statistics extends LinkedComponent {
 
-	@Keyword(description = "The unit type for the variable whose statistic will be collected.",
+	@Keyword(description = "The unit type for the variable whose statistics will be collected.",
 	         exampleList = {"DistanceUnit"})
 	private final UnitTypeInput unitType;
 

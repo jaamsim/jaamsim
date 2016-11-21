@@ -89,7 +89,7 @@ public class ExpressionEntity extends DisplayEntity implements SampleProvider {
 
 	@Override
 	@Output(name = "Value",
-	 description = "The evaluated value of the expression.",
+	 description = "The present value for the expression.",
 	    unitType = UserSpecifiedUnit.class,
 	  reportable = true)
 	public double getNextSample(double simTime) {

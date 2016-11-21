@@ -329,8 +329,8 @@ public abstract class StateUserEntity extends StateEntity implements ThresholdUs
 	// ********************************************************************************************
 
 	@Output(name = "Open",
-	 description = "Returns TRUE if all the thresholds specified by the OperatingThresholdList "
-	             + "and ImmediateThresholdList keywords are open.",
+	 description = "Returns TRUE if all the thresholds specified by the OperatingThresholdList, "
+	             + "ImmediateThresholdList, and ImmediateReleaseThresholdList keywords are open.",
 	    sequence = 1)
 	public boolean getOpen(double simTime) {
 		return isOpen();

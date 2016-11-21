@@ -33,7 +33,7 @@ import com.jaamsim.units.VolumeFlowUnit;
  */
 public class FluidFixedFlow extends FluidFlowCalculation {
 
-	@Keyword(description = "Volumetric flow rate.",
+	@Keyword(description = "The constant volumetric flow rate from the source to the destination.",
 	         example = "FluidFixedFlow1 FlowRate { 1.0 m3/s }")
 	private final ValueInput flowRateInput;
 
@@ -41,7 +41,7 @@ public class FluidFixedFlow extends FluidFlowCalculation {
 	         example = "Pipe1 Width { 1 }")
 	private final ValueInput widthInput;
 
-	@Keyword(description = "The colour of the pipe, defined using a colour keyword or RGB values.",
+	@Keyword(description = "The colour of the pipe.",
 	         example = "Pipe1 Colour { red }")
 	private final ColourInput colourInput;
 

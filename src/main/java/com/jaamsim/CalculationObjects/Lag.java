@@ -53,7 +53,7 @@ public class Lag extends DoubleCalculation {
 	}
 
 	@Output(name = "Error",
-	 description = "The value for InputValue - OutputValue.",
+	 description = "The value for InputValue - Value.",
 	    unitType = UserSpecifiedUnit.class)
 	public double getError(double simTime) {
 		return this.getInputValue(simTime) - this.getLastValue();
