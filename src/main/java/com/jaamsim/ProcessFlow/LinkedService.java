@@ -75,7 +75,7 @@ public abstract class LinkedService extends LinkedDevice implements QueueUser {
 
 	@Override
 	public void addEntity(DisplayEntity ent) {
-		if (traceFlag) trace(0, "addEntity(%s)", ent);
+		if (isTraceFlag()) trace(0, "addEntity(%s)", ent);
 
 		// If there is no queue, then process the entity immediately
 		if (waitQueue.getValue() == null) {
@@ -142,7 +142,7 @@ public abstract class LinkedService extends LinkedDevice implements QueueUser {
 
 	@Override
 	public void queueChanged() {
-		if (traceFlag) trace(0, "queueChanged");
+		if (isTraceFlag()) trace(0, "queueChanged");
 		this.startStep();
 	}
 

@@ -77,7 +77,7 @@ public class Entity {
 	public static final int FLAG_GENERATED = 0x80;
 	public static final int FLAG_DEAD = 0x0100;
 	private int flags;
-	protected boolean traceFlag = false;
+	private boolean traceFlag = false;
 
 	private final ArrayList<Input<?>> inpList = new ArrayList<>();
 
@@ -383,12 +383,16 @@ public class Entity {
 		return (flags & flag) != 0;
 	}
 
-	public void setTraceFlag() {
+	public final void setTraceFlag() {
 		traceFlag = true;
 	}
 
-	public void clearTraceFlag() {
+	public final void clearTraceFlag() {
 		traceFlag = false;
+	}
+
+	public final boolean isTraceFlag() {
+		return traceFlag;
 	}
 
 	/**

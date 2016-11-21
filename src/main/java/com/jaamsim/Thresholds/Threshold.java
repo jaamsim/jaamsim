@@ -150,7 +150,7 @@ public class Threshold extends StateEntity {
 		if (open == bool)
 			return;
 
-		if (traceFlag) trace(0, "setOpen(%s)", bool);
+		if (isTraceFlag()) trace(0, "setOpen(%s)", bool);
 
 		open = bool;
 		if (open) {

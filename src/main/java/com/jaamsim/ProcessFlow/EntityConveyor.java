@@ -148,7 +148,7 @@ public class EntityConveyor extends LinkedService {
 		double dt = simTime - this.getLastUpdateTime();
 		double dur = (1.0d - entryList.get(0).position)*presentTravelTime - dt;
 		dur = Math.max(dur, 0);  // Round-off to the nearest tick can cause a negative value
-		if (traceFlag) trace(1, "getProcessingTime = %.6f", dur);
+		if (isTraceFlag()) trace(1, "getProcessingTime = %.6f", dur);
 		return dur;
 	}
 
@@ -164,11 +164,11 @@ public class EntityConveyor extends LinkedService {
 			return;
 
 		// Increment the positions of the entities on the conveyor
-		if (traceFlag) traceLine(2, "BEFORE - entryList=%s", entryList);
+		if (isTraceFlag()) traceLine(2, "BEFORE - entryList=%s", entryList);
 		for (ConveyorEntry entry : entryList) {
 			entry.position += frac;
 		}
-		if (traceFlag) traceLine(2, "AFTER - entryList=%s", entryList);
+		if (isTraceFlag()) traceLine(2, "AFTER - entryList=%s", entryList);
 	}
 
 	private void updateTravelTime(double simTime) {
@@ -177,7 +177,7 @@ public class EntityConveyor extends LinkedService {
 		double newTime = travelTimeInput.getValue().getNextSample(simTime);
 		if (newTime != presentTravelTime) {
 
-			if (traceFlag) {
+			if (isTraceFlag()) {
 				trace(1, "updateTravelTime");
 				traceLine(2, "newTime=%.6f, presentTravelTime=%.6f", newTime, presentTravelTime);
 			}

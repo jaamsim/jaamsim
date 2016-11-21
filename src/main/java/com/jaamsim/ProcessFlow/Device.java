@@ -49,7 +49,7 @@ public abstract class Device extends StateUserEntity {
 	 * Starts the next time step for the process.
 	 */
 	public final void startStep() {
-		if (traceFlag) {
+		if (isTraceFlag()) {
 			trace(0, "startStep");
 			traceLine(1, "endActionHandle.isScheduled=%s, isAvailable=%s, forcedDowntimePending=%s",
 					endStepHandle.isScheduled(), this.isAvailable(), downtimePending);
@@ -99,7 +99,7 @@ public abstract class Device extends StateUserEntity {
 		// Schedule the completion of the time step
 		stepCompleted = false;
 		endTicks = EventManager.calcSimTicks(duration);
-		if (traceFlag) traceLine(1, "duration=%.6f", duration);
+		if (isTraceFlag()) traceLine(1, "duration=%.6f", duration);
 		this.scheduleProcess(duration, 5, endStepTarget, endStepHandle);
 
 		// Notify other processes that are dependent on this one
@@ -128,7 +128,7 @@ public abstract class Device extends StateUserEntity {
 	 * Completes the processing of an entity.
 	 */
 	final void endStep() {
-		if (traceFlag) trace(0, "endStep");
+		if (isTraceFlag()) trace(0, "endStep");
 		double simTime = this.getSimTime();
 
 		// Update the process for the time that has elapsed
@@ -151,7 +151,7 @@ public abstract class Device extends StateUserEntity {
 	 * Updates the process calculations at the end of the time step.
 	 */
 	protected final void updateProgress() {
-		if (traceFlag) trace(1, "updateProgress");
+		if (isTraceFlag()) trace(1, "updateProgress");
 		double simTime = this.getSimTime();
 
 		if (this.isBusy()) {
@@ -166,7 +166,7 @@ public abstract class Device extends StateUserEntity {
 	 * Halts further processing.
 	 */
 	private final void stopProcessing() {
-		if (traceFlag) trace(0, "stopProcessing");
+		if (isTraceFlag()) trace(0, "stopProcessing");
 
 		// Set the process to its stopped condition
 		this.setProcessStopped();
@@ -184,7 +184,7 @@ public abstract class Device extends StateUserEntity {
 	 * new conditions.
 	 */
 	final void unscheduledUpdate() {
-		if (traceFlag) trace(0, "unscheduledUpdate");
+		if (isTraceFlag()) trace(0, "unscheduledUpdate");
 
 		// If the process is working, perform its next update immediately
 		if (endStepHandle.isScheduled()) {
@@ -200,7 +200,7 @@ public abstract class Device extends StateUserEntity {
 	 * Schedules an update
 	 */
 	protected final void performUnscheduledUpdate() {
-		if (traceFlag) trace(1, "performUnscheduledUpdate");
+		if (isTraceFlag()) trace(1, "performUnscheduledUpdate");
 
 		if (!unscheduledUpdateHandle.isScheduled()) {
 			EventManager.scheduleTicks(0, 2, false, unscheduledUpdateTarget,
@@ -228,7 +228,7 @@ public abstract class Device extends StateUserEntity {
 	 * Revises the time for the next event by stopping the present process and starting a new one.
 	 */
 	protected final void resetProcess() {
-		if (traceFlag) {
+		if (isTraceFlag()) {
 			trace(0, "resetProcess");
 			traceLine(1, "endActionHandle.isScheduled()=%s", endStepHandle.isScheduled());
 		}
@@ -309,7 +309,7 @@ public abstract class Device extends StateUserEntity {
 
 	@Override
 	public void thresholdChanged() {
-		if (traceFlag) {
+		if (isTraceFlag()) {
 			trace(0, "thresholdChanged");
 			traceLine(1, "isImmediateReleaseThresholdClosure=%s, isImmediateThresholdClosure=%s",
 				isImmediateReleaseThresholdClosure(), isImmediateThresholdClosure());
@@ -348,7 +348,7 @@ public abstract class Device extends StateUserEntity {
 
 	@Override
 	public void prepareForDowntime(DowntimeEntity down) {
-		if (traceFlag) {
+		if (isTraceFlag()) {
 			trace(0, "prepareForDowntime(%s)", down);
 			traceLine(1, "isImmediateDowntime=%s, isForcedDowntime=%s, isBusy=%s",
 				isImmediateDowntime(down), isForcedDowntime(down), isBusy());
@@ -379,13 +379,13 @@ public abstract class Device extends StateUserEntity {
 
 	@Override
 	public void startDowntime(DowntimeEntity down) {
-		if (traceFlag) trace(0, "startDowntime(%s)", down);
+		if (isTraceFlag()) trace(0, "startDowntime(%s)", down);
 		this.setPresentState();
 	}
 
 	@Override
 	public void endDowntime(DowntimeEntity down) {
-		if (traceFlag) trace(0, "endDowntime(%s)", down);
+		if (isTraceFlag()) trace(0, "endDowntime(%s)", down);
 		this.startStep();
 	}
 
