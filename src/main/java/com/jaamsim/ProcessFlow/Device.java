@@ -28,7 +28,7 @@ public abstract class Device extends StateUserEntity {
 	private double lastUpdateTime; // simulation time at which the process was updated last
 	private double duration; // calculated duration of the process time step
 	private long endTicks;  // planned simulation time in ticks at the end of the next process step
-	private boolean forcedDowntimePending;  // indicates that a forced downtime event is ready
+	private boolean downtimePending;  // indicates that a downtime event is ready to start
 	private boolean stepCompleted;  // indicates that the last process time step was completed
 
 	public Device() {}
@@ -41,7 +41,7 @@ public abstract class Device extends StateUserEntity {
 		duration = 0.0;
 		endTicks = 0L;
 		lastUpdateTime = 0.0d;
-		forcedDowntimePending = false;
+		downtimePending = false;
 		stepCompleted = true;
 	}
 
@@ -52,7 +52,7 @@ public abstract class Device extends StateUserEntity {
 		if (traceFlag) {
 			trace(0, "startStep");
 			traceLine(1, "endActionHandle.isScheduled=%s, isAvailable=%s, forcedDowntimePending=%s",
-					endStepHandle.isScheduled(), this.isAvailable(), forcedDowntimePending);
+					endStepHandle.isScheduled(), this.isAvailable(), downtimePending);
 		}
 
 		double simTime = this.getSimTime();
@@ -65,8 +65,8 @@ public abstract class Device extends StateUserEntity {
 
 		// Stop if any of the thresholds, maintenance, or breakdowns close the operation
 		// or if a forced downtime is about to begin
-		if (!this.isAvailable() || forcedDowntimePending) {
-			forcedDowntimePending = false;
+		if (!this.isAvailable() || downtimePending) {
+			downtimePending = false;
 			this.stopProcessing();
 			return;
 		}
@@ -165,19 +165,8 @@ public abstract class Device extends StateUserEntity {
 	/**
 	 * Halts further processing.
 	 */
-	public final void stopProcessing() {
-		if (traceFlag) {
-			trace(0, "stopProcessing");
-			traceLine(1, "endActionHandle.isScheduled()=%s", endStepHandle.isScheduled());
-		}
-
-		// If the process is working, kill the next scheduled update
-		if (endStepHandle.isScheduled()) {
-			EventManager.killEvent(endStepHandle);
-		}
-
-		// Update the service for any partial progress that has been made
-		this.updateProgress();
+	private final void stopProcessing() {
+		if (traceFlag) trace(0, "stopProcessing");
 
 		// Set the process to its stopped condition
 		this.setProcessStopped();
@@ -336,7 +325,7 @@ public abstract class Device extends StateUserEntity {
 
 		// If an immediate closure, interrupt the present activity and hold the entity
 		if (isImmediateThresholdClosure()) {
-			this.stopProcessing();
+			this.performUnscheduledUpdate();
 			return;
 		}
 
@@ -365,15 +354,27 @@ public abstract class Device extends StateUserEntity {
 				isImmediateDowntime(down), isForcedDowntime(down), isBusy());
 		}
 
-		// If an immediate downtime, interrupt the present activity
-		if (isImmediateDowntime(down)) {
-			this.stopProcessing();
+		// If the device is idle already, then downtime can start right away
+		if (!this.isBusy())
+			return;
+
+		// For an opportunistic downtime, do nothing and wait for the process to finish
+		if (isOpportunisticDowntime(down)) {
 			return;
 		}
 
-		// If a forced downtime, then set the flag to stop further processing
-		if (isForcedDowntime(down) && this.isBusy())
-			forcedDowntimePending = true;
+		// For a forced downtime, set the flag to stop further processing
+		if (isForcedDowntime(down)) {
+			downtimePending = true;
+			return;
+		}
+
+		// For an immediate downtime, set the flag and interrupt the present process
+		if (isImmediateDowntime(down)) {
+			downtimePending = true;
+			this.performUnscheduledUpdate();
+			return;
+		}
 	}
 
 	@Override

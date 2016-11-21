@@ -69,7 +69,7 @@ public class SampleExpression implements SampleProvider {
 			ret = res.value;
 		}
 		catch(ExpError e) {
-			thisEnt.error("%s", e.getMessage());
+			thisEnt.error(e.toString());
 		}
 		return ret;
 	}

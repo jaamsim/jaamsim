@@ -106,15 +106,18 @@ public abstract class LinkedService extends LinkedDevice implements QueueUser {
 
 	/**
 	 * Returns a value which determines which of the entities in the queue are
-	 * eligible to be removed.
+	 * eligible to be removed. Returns null if the Match keyword has not been set.
 	 * @param simTime - present simulation time in seconds.
 	 * @return match value.
 	 */
 	protected Integer getNextMatchValue(double simTime) {
-		matchValue = null;
-		if (match.getValue() != null)
-			matchValue = (int) match.getValue().getNextSample(simTime);
-		return matchValue;
+		Integer ret = null;
+		if (match.getValue() != null) {
+			ret = (int) match.getValue().getNextSample(simTime);
+			if (ret == null)
+				error("Cannot evaluate the input to the Match keyword");
+		}
+		return ret;
 	}
 
 	protected void setMatchValue(Integer m) {

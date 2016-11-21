@@ -147,9 +147,11 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 	public static int COL1_WIDTH;
 	public static int COL2_WIDTH;
 	public static int COL3_WIDTH;
+	public static int COL4_WIDTH;
 	public static int COL1_START;
 	public static int COL2_START;
 	public static int COL3_START;
+	public static int COL4_START;
 	public static int HALF_TOP;
 	public static int HALF_BOTTOM;
 	public static int TOP_START;
@@ -158,6 +160,8 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 	public static int LOWER_START;
 	public static int VIEW_HEIGHT;
 	public static int VIEW_WIDTH;
+
+	public static int VIEW_OFFSET = 50;
 
 	private static final String RUN_TOOLTIP = GUIFrame.formatToolTip("Run", "Starts or resumes the simulation run.");
 	private static final String PAUSE_TOOLTIP = "<html><b>Pause</b></html>";  // Use a small tooltip for Pause so that it does not block the simulation time display
@@ -1094,6 +1098,17 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 				lastView = viewList.get(viewList.size()-1);
 
 			View tmp = InputAgent.defineEntityWithUniqueName(View.class, "View", "", true);
+
+			// Position the new view window to the right of the last one
+			ArrayList<String> arg = new ArrayList<>();
+			if (lastView != null) {
+				int x = lastView.getWindowPos().get(0) + VIEW_OFFSET;
+				int y = lastView.getWindowPos().get(1);
+				arg.add(String.format((Locale)null, "%d", x));
+				arg.add(String.format((Locale)null, "%d", y));
+				InputAgent.apply(tmp, new KeywordIndex("WindowPosition", arg, null));
+			}
+
 			RenderManager.inst().createWindow(tmp);
 			FrameBox.setSelectedEntity(tmp);
 			InputAgent.applyArgs(tmp, "ShowWindow", "TRUE");
@@ -1102,7 +1117,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 			if (lastView == null)
 				return;
 
-			ArrayList<String> arg = new ArrayList<>();
+			arg.clear();
 			lastView.getInput("ViewCenter").getValueTokens(arg);
 			InputAgent.apply(tmp, new KeywordIndex("ViewCenter", arg, null));
 
@@ -1512,10 +1527,12 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		COL2_WIDTH = Math.min(520, (winSize.width - COL1_WIDTH) / 2);
 		COL3_WIDTH = Math.min(420, winSize.width - COL1_WIDTH - COL2_WIDTH);
 		VIEW_WIDTH = COL2_WIDTH + COL3_WIDTH;
+		COL4_WIDTH = 520;
 
 		COL1_START = this.getX();
 		COL2_START = COL1_START + COL1_WIDTH;
 		COL3_START = COL2_START + COL2_WIDTH;
+		COL4_START = Math.min(COL3_START + COL3_WIDTH, winSize.width - COL4_WIDTH);
 
 		HALF_TOP = (winSize.height - guiSize.height) / 2;
 		HALF_BOTTOM = (winSize.height - guiSize.height - HALF_TOP);

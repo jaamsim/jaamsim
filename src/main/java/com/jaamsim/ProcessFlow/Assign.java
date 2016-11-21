@@ -19,7 +19,6 @@ package com.jaamsim.ProcessFlow;
 import java.util.ArrayList;
 
 import com.jaamsim.Graphics.DisplayEntity;
-import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.input.AssignmentListInput;
 import com.jaamsim.input.ExpError;
 import com.jaamsim.input.ExpEvaluator;
@@ -58,7 +57,7 @@ public class Assign extends LinkedComponent {
 			try {
 				ExpEvaluator.evaluateExpression(ass, getSimTime());
 			} catch (ExpError err) {
-				throw new ErrorException(err);
+				error(err.toString());
 			}
 		}
 

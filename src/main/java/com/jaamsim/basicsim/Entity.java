@@ -610,9 +610,15 @@ public class Entity {
 	 */
 	public void error(String fmt, Object... args)
 	throws ErrorException {
-		final StringBuilder sb = new StringBuilder(this.getName());
+		final StringBuilder sb = new StringBuilder();
+		String str = String.format(fmt, args);
+		if (str.startsWith("<html>")) {
+			str = str.replaceFirst("<html>", "");
+			sb.append("<html>");
+		}
+		sb.append(this.getName());
 		sb.append(": ");
-		sb.append(String.format(fmt, args));
+		sb.append(str);
 		throw new ErrorException(sb.toString());
 	}
 

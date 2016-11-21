@@ -55,6 +55,7 @@ public class Unpack extends LinkedService {
 
 		// Determine the match value
 		Integer m = this.getNextMatchValue(getSimTime());
+		this.setMatchValue(m);
 
 		// Is there a container waiting to be unpacked?
 		if (container == null && waitQueue.getValue().getMatchCount(m) == 0) {

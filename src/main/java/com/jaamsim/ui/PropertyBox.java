@@ -52,8 +52,8 @@ public class PropertyBox extends FrameBox {
 		jTabbedFrame.addChangeListener(new TabListener());
 		getContentPane().add(jTabbedFrame);
 
-		setLocation(GUIFrame.COL2_START, GUIFrame.LOWER_START);
-		setSize(GUIFrame.COL2_WIDTH, GUIFrame.LOWER_HEIGHT);
+		setLocation(GUIFrame.COL4_START, GUIFrame.TOP_START);
+		setSize(GUIFrame.COL4_WIDTH, GUIFrame.HALF_TOP);
 	}
 
 	/**

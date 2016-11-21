@@ -18,7 +18,6 @@ package com.jaamsim.basicsim;
 
 import com.jaamsim.events.EventManager;
 import com.jaamsim.events.ProcessTarget;
-import com.jaamsim.ui.GUIFrame;
 
 public class PauseModelTarget extends ProcessTarget {
 
@@ -35,7 +34,7 @@ public class PauseModelTarget extends ProcessTarget {
 		// If specified, terminate the simulation run
 		if (Simulation.getExitAtPauseCondition()) {
 			Simulation.endRun();
-			GUIFrame.shutdown(0);
+			return;
 		}
 
 		// Pause the simulation run
