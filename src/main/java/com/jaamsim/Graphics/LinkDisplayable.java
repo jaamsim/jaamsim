@@ -23,7 +23,10 @@ import com.jaamsim.basicsim.Entity;
 import com.jaamsim.math.Vec3d;
 
 public interface LinkDisplayable {
+	// Each link should only be registered once, so if an entity refers to another as a destination
+	// that entity should NOT refer back to the first as a source
 	public ArrayList<Entity> getDestinationEntities();
+	public ArrayList<Entity> getSourceEntities();
 
 	public Vec3d getSourcePoint();
 	public Vec3d getSinkPoint();

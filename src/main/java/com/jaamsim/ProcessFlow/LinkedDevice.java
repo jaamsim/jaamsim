@@ -191,6 +191,36 @@ public abstract class LinkedDevice extends Device implements Linkable, LinkDispl
 		numberProcessed = 0;
 	}
 
+	// LinkDisplayable
+	@Override
+	public ArrayList<Entity> getDestinationEntities() {
+		ArrayList<Entity> ret = new ArrayList<>();
+		Linkable l = nextComponent.getValue();
+		if (l != null && (l instanceof Entity)) {
+			ret.add((Entity)l);
+		}
+		return ret;
+	}
+
+	@Override
+	public ArrayList<Entity> getSourceEntities() {
+		return new ArrayList<Entity>();
+	}
+
+	@Override
+	public Vec3d getSourcePoint() {
+		return getGlobalPosition();
+	}
+	@Override
+	public Vec3d getSinkPoint() {
+		return getGlobalPosition();
+	}
+
+	@Override
+	public double getRadius() {
+		return getSize().mag3()/2.0;
+	}
+
 	// ******************************************************************************************************
 	// OUTPUT METHODS
 	// ******************************************************************************************************
@@ -245,31 +275,6 @@ public abstract class LinkedDevice extends Device implements Linkable, LinkDispl
 	    sequence = 5)
 	public double getReleaseTime(double simTime) {
 		return releaseTime;
-	}
-
-	// LinkDisplayable
-	@Override
-	public ArrayList<Entity> getDestinationEntities() {
-		ArrayList<Entity> ret = new ArrayList<>();
-		Linkable l = nextComponent.getValue();
-		if (l != null && (l instanceof Entity)) {
-			ret.add((Entity)l);
-		}
-		return ret;
-	}
-
-	@Override
-	public Vec3d getSourcePoint() {
-		return getGlobalPosition();
-	}
-	@Override
-	public Vec3d getSinkPoint() {
-		return getGlobalPosition();
-	}
-
-	@Override
-	public double getRadius() {
-		return getSize().mag3()/2.0;
 	}
 
 }
