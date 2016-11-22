@@ -236,7 +236,7 @@ public class EntityConveyor extends LinkedService {
 		if (points.size() == 0) {
 			return getGlobalPosition();
 		}
-		return points.get(points.size()-1);
+		return new Vec3d(points.get(points.size()-1));
 	}
 	@Override
 	public Vec3d getSinkPoint() {
@@ -244,12 +244,12 @@ public class EntityConveyor extends LinkedService {
 		if (points.size() == 0) {
 			return getGlobalPosition();
 		}
-		return points.get(0);
+		return new Vec3d(points.get(0));
 	}
 
 	@Override
 	public double getRadius() {
-		return 0;
+		return 0.2; // TODO: make this a tunable parameter
 	}
 
 }
