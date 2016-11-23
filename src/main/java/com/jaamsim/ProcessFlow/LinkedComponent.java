@@ -213,7 +213,7 @@ public abstract class LinkedComponent extends StateEntity implements Linkable, L
 
 	@Override
 	public ArrayList<Entity> getSourceEntities() {
-		return new ArrayList<Entity>();
+		return new ArrayList<>();
 	}
 
 	@Override
