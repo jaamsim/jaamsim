@@ -16,6 +16,7 @@
  */
 package com.jaamsim.ProcessFlow;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.jaamsim.Graphics.DisplayEntity;
@@ -197,4 +198,29 @@ public class EntityDelay extends LinkedComponent {
 		ret[0] = new PolylineInfo(pointsInput.getValue(), getCurveType(), colorInput.getValue(), w);
 		return ret;
 	}
+
+	// LinkDisplayable overrides
+	@Override
+	public Vec3d getSourcePoint() {
+		ArrayList<Vec3d> points = pointsInput.getValue();
+		if (points.size() == 0) {
+			return getGlobalPosition();
+		}
+		return new Vec3d(points.get(points.size()-1));
+	}
+
+	@Override
+	public Vec3d getSinkPoint() {
+		ArrayList<Vec3d> points = pointsInput.getValue();
+		if (points.size() == 0) {
+			return getGlobalPosition();
+		}
+		return new Vec3d(points.get(0));
+	}
+
+	@Override
+	public double getRadius() {
+		return 0.2; // TODO: make this a tunable parameter
+	}
+
 }
