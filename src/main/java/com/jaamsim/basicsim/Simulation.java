@@ -83,7 +83,9 @@ public class Simulation extends Entity {
 
 	@Keyword(description = "If TRUE, the simulation run will be terminated when the "
 	                     + "PauseCondition expression returns TRUE. If multiple runs have been "
-	                     + "specified, then the next run will be started.",
+	                     + "specified, then the next run will be started. If no more runs have "
+	                     + "been specified, the simulation will be paused or terminated "
+	                     + "depending on the input to the ExitAtStop keyword.",
 	             example = "Simulation ExitAtPauseCondition { TRUE }")
 	private static final BooleanInput exitAtPauseCondition;
 
