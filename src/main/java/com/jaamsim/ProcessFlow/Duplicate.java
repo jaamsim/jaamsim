@@ -16,6 +16,8 @@
  */
 package com.jaamsim.ProcessFlow;
 
+import java.util.ArrayList;
+
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.input.InterfaceEntityListInput;
@@ -63,6 +65,22 @@ public class Duplicate extends LinkedComponent {
 
 		// Send the received entity to the next component
 		this.sendToNextComponent(ent);
+	}
+
+	// LinkDisplayable
+	@Override
+	public ArrayList<Entity> getDestinationEntities() {
+		ArrayList<Entity> ret = new ArrayList<>();
+		ArrayList<Linkable> ls = targetComponentList.getValue();
+		if (ls == null)
+			return ret;
+
+		for (Linkable l : ls) {
+			if (l != null && (l instanceof Entity)) {
+				ret.add((Entity)l);
+			}
+		}
+		return ret;
 	}
 
 }
