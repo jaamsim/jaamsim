@@ -16,8 +16,11 @@
  */
 package com.jaamsim.ProcessFlow;
 
+import java.util.ArrayList;
+
 import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
+import com.jaamsim.basicsim.Entity;
 import com.jaamsim.input.InterfaceEntityInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.units.DimensionlessUnit;
@@ -53,6 +56,17 @@ public class RemoveFrom extends Unpack {
 	@Override
 	protected int getNumberToRemove() {
 		return (int) numberOfEntities.getValue().getNextSample(this.getSimTime());
+	}
+
+	// LinkDisplayable
+	@Override
+	public ArrayList<Entity> getDestinationEntities() {
+		ArrayList<Entity> ret = super.getDestinationEntities();
+		Linkable l = nextForContainers.getValue();
+		if (l != null && (l instanceof Entity)) {
+			ret.add((Entity)l);
+		}
+		return ret;
 	}
 
 }
