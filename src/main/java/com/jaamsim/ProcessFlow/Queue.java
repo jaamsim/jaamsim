@@ -724,6 +724,17 @@ public class Queue extends LinkedComponent {
 		}
 	}
 
+	// LinkDisplayable
+	@Override
+	public ArrayList<Entity> getDestinationEntities() {
+		ArrayList<Entity> ret = super.getDestinationEntities();
+		Linkable l = renegeDestination.getValue();
+		if (l != null && (l instanceof Entity)) {
+			ret.add((Entity)l);
+		}
+		return ret;
+	}
+
 	// ******************************************************************************************************
 	// OUTPUT METHODS
 	// ******************************************************************************************************
