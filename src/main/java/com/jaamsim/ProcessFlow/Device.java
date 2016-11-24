@@ -199,7 +199,7 @@ public abstract class Device extends StateUserEntity {
 	/**
 	 * Schedules an update
 	 */
-	protected final void performUnscheduledUpdate() {
+	public final void performUnscheduledUpdate() {
 		if (isTraceFlag()) trace(1, "performUnscheduledUpdate");
 
 		if (!unscheduledUpdateHandle.isScheduled()) {
