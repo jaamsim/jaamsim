@@ -44,11 +44,13 @@ import javax.swing.JPopupMenu;
 
 import com.jaamsim.DisplayModels.DisplayModel;
 import com.jaamsim.Graphics.DisplayEntity;
+import com.jaamsim.Graphics.LinkDisplayable;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ObjectType;
 import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.datatypes.IntegerVector;
 import com.jaamsim.events.EventManager;
+import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InputErrorException;
@@ -67,6 +69,7 @@ import com.jaamsim.render.Action;
 import com.jaamsim.render.CameraInfo;
 import com.jaamsim.render.DisplayModelBinding;
 import com.jaamsim.render.Future;
+import com.jaamsim.render.LineProxy;
 import com.jaamsim.render.MeshDataCache;
 import com.jaamsim.render.MeshProtoKey;
 import com.jaamsim.render.OffscreenTarget;
@@ -118,6 +121,9 @@ public class RenderManager implements DragSourceListener {
 	private final AtomicBoolean redraw = new AtomicBoolean(false);
 
 	private final AtomicBoolean screenshot = new AtomicBoolean(false);
+
+	private final AtomicBoolean showLinks = new AtomicBoolean(false);
+	private final double linkArrowSize = 0.2;
 
 	private final ExceptionLogger exceptionLogger;
 
@@ -406,6 +412,11 @@ public class RenderManager implements DragSourceListener {
 						// Log the exception in the exception list
 						logException(t);
 					}
+				}
+
+				// Finally include the displayable links for linked entities
+				if (showLinks.get()) {
+					addLinkDisplays(cachedScene);
 				}
 
 				long endNanos = System.nanoTime();
@@ -1659,6 +1670,108 @@ public class RenderManager implements DragSourceListener {
 
 	public void handleKeyReleased(int keyCode, char keyChar, boolean shift, boolean control, boolean alt) {
 		selectedEntity.handleKeyReleased(keyCode, keyChar, shift, control, alt);
+	}
+
+	public void setShowLinks(boolean bShow) {
+		showLinks.set(bShow);
+	}
+
+	private void addLink(LinkDisplayable sourceLD, LinkDisplayable destLD, ArrayList<RenderProxy> scene) {
+		Vec3d source = sourceLD.getSourcePoint();
+		Vec3d sink = destLD.getSinkPoint();
+		double sourceRadius = sourceLD.getRadius();
+		double sinkRadius = destLD.getRadius();
+		Vec3d arrowDir = new Vec3d();
+		arrowDir.sub3(sink, source);
+		if (arrowDir.mag3() < (sourceRadius + sinkRadius)) {
+			// The two objects are too close
+			return;
+		}
+
+		// Scale back the arrows to the 'radius' provided
+		double linkSize = arrowDir.mag3() - sourceRadius - sinkRadius;
+		arrowDir.normalize3();
+		Vec3d temp = new Vec3d();
+		temp.scale3(sourceRadius, arrowDir);
+		source.add3(temp);
+		temp.scale3(sinkRadius, arrowDir);
+		sink.sub3(temp);
+
+		double arrowHeadSize = Math.min(linkSize*0.3, linkArrowSize);
+
+		temp.scale3(arrowHeadSize, arrowDir);
+		Vec3d arrowMidPoint = new Vec3d();
+		arrowMidPoint.sub3(sink, temp);
+		Vec3d arrowHeadDir = new Vec3d();
+		arrowHeadDir.cross3(arrowDir, new Vec3d(0,0,1));
+		if (arrowHeadDir.mag3() == 0.0) {
+			arrowHeadDir.set3(1, 0, 0);
+		} else {
+			arrowHeadDir.normalize3();
+		}
+		arrowHeadDir.scale3(arrowHeadSize*0.5);
+
+		Vec3d arrowPoint0 = new Vec3d();
+		Vec3d arrowPoint1 = new Vec3d();
+		arrowPoint0.sub3(arrowMidPoint, arrowHeadDir);
+		arrowPoint1.add3(arrowMidPoint, arrowHeadDir);
+
+		Vec4d source4 = new Vec4d(source.x, source.y, source.z, 1);
+		Vec4d sink4 = new Vec4d(sink.x, sink.y, sink.z, 1);
+		Vec4d ap0 = new Vec4d(arrowPoint0.x, arrowPoint0.y, arrowPoint0.z, 1);
+		Vec4d ap1 = new Vec4d(arrowPoint1.x, arrowPoint1.y, arrowPoint1.z, 1);
+
+		ArrayList<Vec4d> segments = new ArrayList<>(6);
+		segments.add(source4);
+		segments.add(sink4);
+
+		// Now add the 'head' of the arrow
+		segments.add(sink4);
+		segments.add(ap0);
+
+		segments.add(sink4);
+		segments.add(ap1);
+
+		scene.add(new LineProxy(segments, ColourInput.BLACK, 1, DisplayModel.ALWAYS, 0));
+
+	}
+
+	private void addLinkDisplays(ArrayList<RenderProxy> scene) {
+		ArrayList<? extends Entity> allEnts = Entity.getAll();
+
+		for (int i = 0; i < allEnts.size(); i++) {
+			try {
+				Entity e = allEnts.get(i);
+				if (!(e instanceof LinkDisplayable))
+					continue;
+
+				LinkDisplayable ld = (LinkDisplayable)e;
+				ArrayList<Entity> dests = ld.getDestinationEntities();
+				// Now scan the destinations
+				for (Entity dest : dests) {
+					if (!(dest instanceof LinkDisplayable))
+						continue;
+					LinkDisplayable destLD = (LinkDisplayable)dest;
+
+					addLink(ld, destLD, scene);
+				}
+
+				ArrayList<Entity> sources = ld.getSourceEntities();
+				// Now scan the destinations
+				for (Entity source : sources) {
+					if (!(source instanceof LinkDisplayable))
+						continue;
+					LinkDisplayable sourceLD = (LinkDisplayable)source;
+
+					addLink(sourceLD, ld, scene);
+				}
+
+			} catch (Throwable t) {
+				// Log the exception in the exception list
+				logException(t);
+			}
+		}
+
 	}
 
 	public static void setDebugInfo(boolean showDebug) {

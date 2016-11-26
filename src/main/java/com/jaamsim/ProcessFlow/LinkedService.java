@@ -21,6 +21,7 @@ import java.util.ArrayList;
 
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleInput;
+import com.jaamsim.basicsim.Entity;
 import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
@@ -172,6 +173,16 @@ public abstract class LinkedService extends LinkedDevice implements QueueUser {
 		Vec3d pos = this.getGlobalPosition();
 		pos.add3(processPosition.getValue());
 		ent.setGlobalPosition(pos);
+	}
+
+	@Override
+	public ArrayList<Entity> getSourceEntities() {
+		ArrayList<Entity> ret = super.getSourceEntities();
+		ArrayList<Queue> queues = getQueues();
+
+		ret.addAll(queues);
+
+		return ret;
 	}
 
 	// ********************************************************************************************
