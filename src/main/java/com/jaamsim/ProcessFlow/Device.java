@@ -71,6 +71,12 @@ public abstract class Device extends StateUserEntity {
 			return;
 		}
 
+		// Set the state
+		if (!isBusy()) {
+			this.setBusy(true);
+			this.setPresentState();
+		}
+
 		// Set the last update time in case processing is restarting after a stoppage
 		lastUpdateTime = simTime;
 
@@ -89,12 +95,6 @@ public abstract class Device extends StateUserEntity {
 			error("Cannot calculate duration");
 		if (duration == Double.POSITIVE_INFINITY)
 			error("Infinite duration");
-
-		// Set the state
-		if (!isBusy()) {
-			this.setBusy(true);
-			this.setPresentState();
-		}
 
 		// Schedule the completion of the time step
 		stepCompleted = false;
