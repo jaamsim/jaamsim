@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+JaamSim Discrete Event Simulation
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<exe4j version="5.0.1" transformSequenceNumber="1">
+  <application name="JaamSim" distributionSourceDir=".">
+    <languages>
+      <principalLanguage id="en" customLocalizationFile="" />
+    </languages>
+  </application>
+  <executable name="JaamSim@VERSION@" type="2" iconSet="true" iconFile="./JaamSim-48px.ico" executableDir="." redirectStderr="false" stderrFile="error.log" redirectStdout="false" stdoutFile="output.log" failOnStderrOutput="true" executableMode="1" changeWorkingDirectory="true" workingDirectory="." singleInstance="false" serviceStartType="2" serviceDependencies="" serviceDescription="" jreLocation="" executionLevel="asInvoker" checkConsoleParameter="false" amd64="true">
+    <messageSet />
+    <versionInfo include="false" />
+  </executable>
+  <splashScreen show="false">
+    <text>
+      <statusLine x="20" y="20" text="" font="Arial" fontSize="8" fontColor="0,0,0" fontWeight="500" />
+      <versionLine x="20" y="40" text="" font="Arial" fontSize="8" fontColor="0,0,0" fontWeight="500" />
+    </text>
+  </splashScreen>
+  <java mainClass="com.jaamsim.ui.GUIFrame" vmParameters="&quot;-Xmx4096m&quot;" arguments="" allowVMPassthroughParameters="true" preferredVM="" minVersion="1.5" maxVersion="" allowBetaVM="false" jdkOnly="false">
+    <searchSequence>
+      <registry />
+      <envVar name="JAVA_HOME" />
+      <envVar name="JDK_HOME" />
+    </searchSequence>
+    <classPath>
+      <archive location="./JaamSim@VERSION@-bare.jar" failOnError="true" />
+      <archive location="../../jar/jogl-all.jar" failOnError="true" />
+      <archive location="../../jar/gluegen-rt.jar" failOnError="true" />
+      <archive location="../../jar/gluegen-rt-natives-windows-amd64.jar" failOnError="true" />
+      <archive location="../../jar/jogl-all-natives-windows-amd64.jar" failOnError="true" />
+    </classPath>
+  </java>
+  <includedFiles />
+  <unextractableFiles />
+</exe4j>
