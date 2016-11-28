@@ -34,8 +34,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
-import javax.media.opengl.GL2GL3;
-import javax.media.opengl.GLException;
+import com.jogamp.opengl.GL2GL3;
+import com.jogamp.opengl.GLException;
 
 import com.jaamsim.ui.LogBox;
 import com.jogamp.opengl.GLExtensions;

@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.media.opengl.GL2GL3;
+import com.jogamp.opengl.GL2GL3;
 
 import com.jaamsim.math.AABB;
 import com.jaamsim.math.Color4d;

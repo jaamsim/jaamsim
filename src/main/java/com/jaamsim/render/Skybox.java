@@ -18,7 +18,7 @@ import java.net.URI;
 import java.nio.FloatBuffer;
 import java.util.HashMap;
 
-import javax.media.opengl.GL2GL3;
+import com.jogamp.opengl.GL2GL3;
 
 import com.jaamsim.math.Mat4d;
 

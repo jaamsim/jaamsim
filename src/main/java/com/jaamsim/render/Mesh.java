@@ -27,7 +27,7 @@ import com.jaamsim.math.Transform;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.math.Vec4d;
 
-//import javax.media.opengl.*;
+//import com.jogamp.opengl.*;
 
 public class Mesh implements Renderable {
 

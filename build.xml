@@ -17,12 +17,13 @@ GNU General Public License for more details.
   <property name="ver"           value="2015-17"/>
   <property name="src.dir"       location="src/main"/>
   <property name="res.dir"       location="src/main/resources"/>
+  <property name="make.dir"      location="make"/>
   <property name="build.dir"     location="build"/>
   <property name="jogl.lib"      location="jar/jogl-all.jar"/>
   <property name="gluegen.lib"   location="jar/gluegen-rt.jar"/>
   <property name="class.dir"     location="${build.dir}/classes"/>
   <property name="jars.dir"      location="${build.dir}/jars"/>
-  
+
   <target name="clean">
     <delete dir="${build.dir}"/>
   </target>
@@ -66,6 +67,7 @@ GNU General Public License for more details.
       </manifest>
       <fileset dir="${class.dir}"/>
       <fileset dir="${res.dir}"/>
+      <fileset file="LICENSE-GPLv3"/>
     </jar>
     <jar jarfile="${jars.dir}/JaamSim${ver}.jar" compress="true">
       <manifest>
@@ -73,18 +75,41 @@ GNU General Public License for more details.
       </manifest>
       <fileset dir="${class.dir}"/>
       <fileset dir="${res.dir}"/>
+      <fileset file="LICENSE-GPLv3"/>
       <zipfileset src="jar/gluegen-rt.jar"     includes="jogamp/**/*,com/**/*"/>
-      <zipfileset src="jar/gluegen-rt-natives-windows-i586.jar"     includes="*.dll"    prefix="natives/windows-i586"/>
-      <zipfileset src="jar/gluegen-rt-natives-windows-amd64.jar"    includes="*.dll"    prefix="natives/windows-amd64"/>
-      <zipfileset src="jar/gluegen-rt-natives-linux-i586.jar"       includes="*.so"     prefix="natives/linux-i586"/>
-      <zipfileset src="jar/gluegen-rt-natives-linux-amd64.jar"      includes="*.so"     prefix="natives/linux-amd64"/>
-      <zipfileset src="jar/gluegen-rt-natives-macosx-universal.jar" includes="*.jnilib" prefix="natives/macosx-universal"/>
-      <zipfileset src="jar/jogl-all.jar"       includes="jogamp/**/*,javax/**/*,com/**/*,newt/**/*"/>
-      <zipfileset src="jar/jogl-all-natives-windows-i586.jar"     includes="*.dll"    prefix="natives/windows-i586"/>
-      <zipfileset src="jar/jogl-all-natives-windows-amd64.jar"    includes="*.dll"    prefix="natives/windows-amd64"/>
-      <zipfileset src="jar/jogl-all-natives-linux-i586.jar"       includes="*.so"     prefix="natives/linux-i586"/>
-      <zipfileset src="jar/jogl-all-natives-linux-amd64.jar"      includes="*.so"     prefix="natives/linux-amd64"/>
-      <zipfileset src="jar/jogl-all-natives-macosx-universal.jar" includes="*.jnilib" prefix="natives/macosx-universal"/>
+      <zipfileset src="jar/gluegen-rt-natives-windows-i586.jar"     includes="natives/**/*"/>
+      <zipfileset src="jar/gluegen-rt-natives-windows-amd64.jar"    includes="natives/**/*"/>
+      <zipfileset src="jar/gluegen-rt-natives-linux-i586.jar"       includes="natives/**/*"/>
+      <zipfileset src="jar/gluegen-rt-natives-linux-amd64.jar"      includes="natives/**/*"/>
+      <zipfileset src="jar/gluegen-rt-natives-macosx-universal.jar" includes="natives/**/*"/>
+      <zipfileset src="jar/jogl-all.jar"       includes="jogamp/**/*,com/**/*,newt/**/**/*"/>
+      <zipfileset src="jar/jogl-all-natives-windows-i586.jar"     includes="natives/**/*"/>
+      <zipfileset src="jar/jogl-all-natives-windows-amd64.jar"    includes="natives/**/*"/>
+      <zipfileset src="jar/jogl-all-natives-linux-i586.jar"       includes="natives/**/*"/>
+      <zipfileset src="jar/jogl-all-natives-linux-amd64.jar"      includes="natives/**/*"/>
+      <zipfileset src="jar/jogl-all-natives-macosx-universal.jar" includes="natives/**/*"/>
     </jar>
+  </target>
+  <target name="exe" depends="jar">
+    <delete file="${jars.dir}/JS32.exe4j" quiet="true"/>
+    <copy file="${make.dir}/JS32.exe4j" toFile="${jars.dir}/JS32.exe4j">
+      <filterset>
+        <filter token="VERSION" value="${ver}"/>
+      </filterset>
+    </copy>
+    <delete file="${jars.dir}/JS64.exe4j" quiet="true"/>
+    <copy file="${make.dir}/JS64.exe4j" toFile="${jars.dir}/JS64.exe4j">
+      <filterset>
+        <filter token="VERSION" value="${ver}"/>
+      </filterset>
+    </copy>
+    <delete file="${jars.dir}/JaamSim-48px.ico" quiet="true"/>
+    <copy file="${make.dir}/JaamSim-48px.ico" toFile="${jars.dir}/JaamSim-48px.ico"/>
+    <exec dir="${jars.dir}" executable="exe4jc">
+      <arg value="JS32.exe4j"/>
+    </exec>
+    <exec dir="${jars.dir}" executable="exe4jc">
+      <arg value="JS64.exe4j"/>
+    </exec>
   </target>
 </project>

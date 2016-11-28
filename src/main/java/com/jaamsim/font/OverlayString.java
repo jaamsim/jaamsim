@@ -16,7 +16,7 @@ package com.jaamsim.font;
 
 import java.util.HashMap;
 
-import javax.media.opengl.GL2GL3;
+import com.jogamp.opengl.GL2GL3;
 
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Ray;
