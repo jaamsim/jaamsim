@@ -168,15 +168,15 @@ public abstract class Device extends StateUserEntity {
 	private final void stopProcessing() {
 		if (isTraceFlag()) trace(0, "stopProcessing");
 
-		// Set the process to its stopped condition
-		this.setProcessStopped();
-
 		// Update the state
 		this.setBusy(false);
 		this.setPresentState();
 
 		// Notify other processes that are dependent on this one
 		this.processChanged();
+
+		// Set the process to its stopped condition
+		this.setProcessStopped();
 	}
 
 	/**
