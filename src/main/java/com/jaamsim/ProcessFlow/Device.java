@@ -37,7 +37,6 @@ public abstract class Device extends StateUserEntity {
 	public void earlyInit() {
 		super.earlyInit();
 
-		this.setBusy(false);
 		duration = 0.0;
 		endTicks = 0L;
 		lastUpdateTime = 0.0d;
