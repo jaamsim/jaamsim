@@ -227,7 +227,7 @@ public abstract class LinkedComponent extends StateEntity implements Linkable, L
 
 	@Override
 	public double getRadius() {
-		return getSize().mag3()/2.0;
+		return getSize().mag2()/2.0;
 	}
 
 	// ******************************************************************************************************
