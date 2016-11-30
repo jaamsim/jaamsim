@@ -825,7 +825,7 @@ public class Entity {
 			}
 			ExpResult.Collection col = attribValue.colVal;
 			try {
-				col.assign(index, value);
+				col.assign(index, value.getCopy());
 			} catch (ExpError err) {
 				this.error("Error during assignment: %s", err.getMessage());
 			}
@@ -836,7 +836,7 @@ public class Entity {
 			this.error("Invalid unit returned by an expression. Received: %s, expected: %s",
 					value.unitType.getSimpleName(), h.getUnitType().getSimpleName(), "");
 
-		h.setValue(value);
+		h.setValue(value.getCopy());
 	}
 
 	public ArrayList<String> getAttributeNames(){
