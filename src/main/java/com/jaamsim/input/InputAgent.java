@@ -1561,7 +1561,10 @@ public class InputAgent {
 				sb.append(result.stringVal);
 				break;
 			case ENTITY:
-				sb.append("[").append(result.entVal.getName()).append("]");
+				if (result.entVal == null)
+					sb.append("null");
+				else
+					sb.append("[").append(result.entVal.getName()).append("]");
 				break;
 			case NUMBER:
 				sb.append(String.format("%g", result.value/factor));

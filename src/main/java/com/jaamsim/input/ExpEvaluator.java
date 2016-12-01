@@ -190,6 +190,9 @@ public class ExpEvaluator {
 				throw new ExpError(null, 0, "Can not index a non-entity type");
 			}
 
+			if (constEnt.entVal == null) {
+				throw new ExpError(null, 0, "Trying to resolve output on null entity");
+			}
 			OutputHandle oh = constEnt.entVal.getOutputHandle(name);
 
 			if (oh == null) {
@@ -299,6 +302,9 @@ public class ExpEvaluator {
 			}
 
 			Entity ent = entRes.entVal;
+			if (ent == null) {
+				throw new ExpError(null, 0, "Trying to resolve output on null entity");
+			}
 
 			OutputHandle oh = ent.getOutputHandleInterned(outputName);
 			if (oh == null) {
@@ -340,6 +346,10 @@ public class ExpEvaluator {
 				throw new ExpError(null, 0, "Can not execute assignment, not assigning to an entity");
 			}
 			Entity assignEnt = ent.entVal;
+			if (assignEnt == null) {
+				throw new ExpError(null, 0, "Trying to assign to a null entity");
+			}
+
 			assignEnt.setAttribute(attribName, index, val);
 		}
 

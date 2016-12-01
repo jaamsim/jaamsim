@@ -469,6 +469,10 @@ public class ExpCollections {
 			Object key;
 			switch (index.type) {
 			case ENTITY:
+				if (index.entVal == null) {
+					throw new ExpError(null, 0, "Trying use a null entity as a key");
+				}
+
 				key = index.entVal;
 				break;
 			case NUMBER:
