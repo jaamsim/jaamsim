@@ -497,8 +497,8 @@ public class ExpParser {
 				return ExpValResult.makeErrorRes(typeError);
 			}
 
-			// Check that both sides of the branch return the same unit types
-			if (trueRes.unitType != falseRes.unitType) {
+			// Check that both sides of the branch return the same unit types, for numerical types
+			if (trueRes.type == ExpResType.NUMBER && trueRes.unitType != falseRes.unitType) {
 
 				ExpError unitError = new ExpError(exp.source, tokenPos,
 						"Unit mismatch in conditional. True branch is %s, false branch is %s",
