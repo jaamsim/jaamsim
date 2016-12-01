@@ -2121,6 +2121,34 @@ public class ExpParser {
 				return validateSingleArgDimensionless(context, args[0], source, pos);
 			}
 		});
+
+		addFunction("notNull", 1, 1, new CallableFunc() {
+			@Override
+			public void checkUnits(ParseContext context, ExpResult[] args,
+					String source, int pos) throws ExpError {
+				if (args[0].type != ExpResType.ENTITY) {
+					throw new ExpError(source, pos, "notNull requires entity as argument");
+				}
+			}
+			@Override
+			public ExpResult call(ParseContext context, ExpResult[] args, String source, int pos) throws ExpError {
+
+				return ExpResult.makeNumResult(args[0].entVal == null ? 0 : 1, DimensionlessUnit.class);
+			}
+			@Override
+			public ExpValResult validate(ParseContext context, ExpValResult[] args, String source, int pos) {
+				if (	args[0].state == ExpValResult.State.ERROR ||
+						args[0].state == ExpValResult.State.UNDECIDABLE)
+					return args[0];
+				if (args[0].type != ExpResType.ENTITY) {
+					ExpError error = new ExpError(source, pos, "Argument must be an entity");
+					return ExpValResult.makeErrorRes(error);
+				}
+				return ExpValResult.makeValidRes(ExpResType.NUMBER, DimensionlessUnit.class);
+
+			}
+		});
+
 	}
 
 	private static String unitToString(Class<? extends Unit> unit) {
