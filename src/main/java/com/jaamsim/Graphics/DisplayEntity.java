@@ -819,6 +819,14 @@ public class DisplayEntity extends Entity {
 	}
 
 	/**
+	 * An overloadable method that is called when the 'create link' feature is enabled and selection changes
+	 * @param ent
+	 */
+	public void linkTo(DisplayEntity nextEnt) {
+		// Do nothing in default behavior
+	}
+
+	/**
 	 * This method updates the DisplayEntity for changes in the given input
 	 */
 	@Override

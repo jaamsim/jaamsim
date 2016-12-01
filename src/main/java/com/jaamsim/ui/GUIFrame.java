@@ -123,6 +123,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 	private JSpinner spinner;
 
 	private JToggleButton showLinks;
+	private JToggleButton createLinks;
 
 	private RoundToggleButton controlStartResume;
 	private ImageIcon runPressedIcon;
@@ -943,6 +944,26 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		});
 		mainToolBar.add(Box.createRigidArea(gapDim));
 		mainToolBar.add( showLinks );
+
+		// 8.5) Show links button
+		createLinks = new JToggleButton(new ImageIcon(GUIFrame.class.getResource("/resources/images/MakeLinks-16.png")));
+		createLinks.setToolTipText(formatToolTip("Create Entity Links",
+				"When this is enabled, entities are linked when selection is changed."));
+		createLinks.setMargin( noMargin );
+		createLinks.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed( ActionEvent event ) {
+
+				boolean bCreate = (((JToggleButton)event.getSource()).isSelected());
+				if (RenderManager.isGood()) {
+					RenderManager.inst().setCreateLinks(bCreate);
+					RenderManager.redraw();
+				}
+			}
+
+		});
+		mainToolBar.add(Box.createRigidArea(gapDim));
+		mainToolBar.add( createLinks );
 
 		// 9) Create the display clock and label
 		clockDisplay = new JLabel( "", JLabel.CENTER );

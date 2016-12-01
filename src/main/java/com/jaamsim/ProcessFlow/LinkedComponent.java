@@ -24,9 +24,11 @@ import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.Input;
+import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.InterfaceEntityInput;
 import com.jaamsim.input.Keyword;
+import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.StringInput;
 import com.jaamsim.math.Vec3d;
@@ -198,6 +200,18 @@ public abstract class LinkedComponent extends StateEntity implements Linkable, L
 		initialNumberProcessed = numberProcessed;
 		numberAdded = 0;
 		numberProcessed = 0;
+	}
+
+	@Override
+	public void linkTo(DisplayEntity nextEnt) {
+		if (nextEnt == null) {
+			return;
+		}
+
+		ArrayList<String> toks = new ArrayList<>();
+		toks.add(nextEnt.getName());
+		KeywordIndex kw = new KeywordIndex(nextComponent.getKeyword(), toks, null);
+		InputAgent.apply(this, kw);
 	}
 
 	// LinkDisplayable

@@ -123,6 +123,7 @@ public class RenderManager implements DragSourceListener {
 	private final AtomicBoolean screenshot = new AtomicBoolean(false);
 
 	private final AtomicBoolean showLinks = new AtomicBoolean(false);
+	private final AtomicBoolean createLinks = new AtomicBoolean(false);
 	private final double linkArrowSize = 0.2;
 
 	private final ExceptionLogger exceptionLogger;
@@ -872,10 +873,19 @@ public class RenderManager implements DragSourceListener {
 	}
 
 	private void setSelectEntity(Entity ent) {
-		if (ent instanceof DisplayEntity)
+		if (ent instanceof DisplayEntity) {
+			DisplayEntity oldEnt = selectedEntity;
 			selectedEntity = (DisplayEntity)ent;
-		else
+
+			if (createLinks.get()) {
+				if (selectedEntity != null && oldEnt != null) {
+					oldEnt.linkTo(selectedEntity);
+				}
+			}
+
+		} else {
 			selectedEntity = null;
+		}
 
 		GUIFrame.updateUI();
 	}
@@ -1674,6 +1684,9 @@ public class RenderManager implements DragSourceListener {
 
 	public void setShowLinks(boolean bShow) {
 		showLinks.set(bShow);
+	}
+	public void setCreateLinks(boolean bCreate) {
+		createLinks.set(bCreate);
 	}
 
 	private void addLink(LinkDisplayable sourceLD, LinkDisplayable destLD, ArrayList<RenderProxy> scene) {
