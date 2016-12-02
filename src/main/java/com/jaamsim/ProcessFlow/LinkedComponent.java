@@ -205,7 +205,8 @@ public abstract class LinkedComponent extends StateEntity implements Linkable, L
 
 	@Override
 	public void linkTo(DisplayEntity nextEnt) {
-		if (nextEnt == null) {
+		if (nextComponent.getHidden() || !(nextEnt instanceof Linkable)
+				|| nextEnt instanceof EntityGenerator) {
 			return;
 		}
 
