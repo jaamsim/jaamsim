@@ -956,6 +956,9 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 
 				boolean bCreate = (((JToggleButton)event.getSource()).isSelected());
 				if (RenderManager.isGood()) {
+					if (bCreate) {
+						FrameBox.setSelectedEntity(null, false);
+					}
 					RenderManager.inst().setCreateLinks(bCreate);
 					RenderManager.redraw();
 				}
