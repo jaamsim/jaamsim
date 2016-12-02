@@ -82,7 +82,7 @@ public class ContextMenu {
 			@Override
 			public void actionPerformed( ActionEvent event ) {
 				InputAgent.applyArgs(Simulation.getInstance(), "ShowInputEditor", "TRUE");
-				FrameBox.setSelectedEntity(ent);
+				FrameBox.setSelectedEntity(ent, false);
 			}
 		} );
 		menu.add( inputEditorMenuItem );
@@ -94,7 +94,7 @@ public class ContextMenu {
 			@Override
 			public void actionPerformed( ActionEvent event ) {
 				InputAgent.applyArgs(Simulation.getInstance(), "ShowOutputViewer", "TRUE");
-				FrameBox.setSelectedEntity(ent);
+				FrameBox.setSelectedEntity(ent, false);
 			}
 		} );
 		menu.add( outputViewerMenuItem );
@@ -106,7 +106,7 @@ public class ContextMenu {
 			@Override
 			public void actionPerformed( ActionEvent event ) {
 				InputAgent.applyArgs(Simulation.getInstance(), "ShowPropertyViewer", "TRUE");
-				FrameBox.setSelectedEntity(ent);
+				FrameBox.setSelectedEntity(ent, false);
 			}
 		} );
 		menu.add( propertyViewerMenuItem );
@@ -139,7 +139,7 @@ public class ContextMenu {
 				}
 
 				// Show the duplicated entity in the editors and viewers
-				FrameBox.setSelectedEntity(copiedEntity);
+				FrameBox.setSelectedEntity(copiedEntity, false);
 			}
 		} );
 		if (ent.testFlag(Entity.FLAG_GENERATED)) {
@@ -153,7 +153,7 @@ public class ContextMenu {
 			@Override
 			public void actionPerformed( ActionEvent event ) {
 				ent.kill();
-				FrameBox.setSelectedEntity(null);
+				FrameBox.setSelectedEntity(null, false);
 			}
 		} );
 		menu.add( deleteMenuItem );

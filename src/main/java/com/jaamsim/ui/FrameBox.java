@@ -96,7 +96,12 @@ public class FrameBox extends JFrame {
 		super.dispose();
 	}
 
-	public static final void setSelectedEntity(Entity ent) {
+	/***
+	 * Set the selected entity. This is also the mechanism the 'make link' feature uses to determine the next entity in the chain
+	 * @param ent The entity to select
+	 * @param canMakeLink if this selection can form a new link while 'make link' is active. This should be false in most cases.
+	 */
+	public static final void setSelectedEntity(Entity ent, boolean canMakeLink) {
 		if (ent == selectedEntity)
 			return;
 
@@ -104,7 +109,7 @@ public class FrameBox extends JFrame {
 			selectedEntity.handleSelectionLost();
 
 		selectedEntity = ent;
-		RenderManager.setSelection(ent);
+		RenderManager.setSelection(ent, canMakeLink);
 		GUIFrame.updateUI();
 	}
 

@@ -404,7 +404,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 				InputAgent.setRecordEdits(true);
 				InputAgent.loadDefault();
 				displayWindows();
-				FrameBox.setSelectedEntity(Simulation.getInstance());
+				FrameBox.setSelectedEntity(Simulation.getInstance(), false);
 			}
 		} );
 		fileMenu.add( newMenuItem );
@@ -1115,7 +1115,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 
 			InputAgent.applyArgs(view, "ShowWindow", "TRUE");
 			RenderManager.inst().createWindow(view);
-			FrameBox.setSelectedEntity(view);
+			FrameBox.setSelectedEntity(view, false);
 		}
 	}
 
@@ -1154,7 +1154,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 			}
 
 			RenderManager.inst().createWindow(tmp);
-			FrameBox.setSelectedEntity(tmp);
+			FrameBox.setSelectedEntity(tmp, false);
 			InputAgent.applyArgs(tmp, "ShowWindow", "TRUE");
 
 			// Use the same view position as the last view window
@@ -1814,7 +1814,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 			gui.toFront();
 
 		// Set the selected entity to the Simulation object
-		FrameBox.setSelectedEntity(Simulation.getInstance());
+		FrameBox.setSelectedEntity(Simulation.getInstance(), false);
 	}
 
 	public static class SpeedFactorListener implements ChangeListener {
@@ -1996,7 +1996,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 					InputAgent.setRecordEdits(true);
 
 					GUIFrame.displayWindows();
-					FrameBox.setSelectedEntity(Simulation.getInstance());
+					FrameBox.setSelectedEntity(Simulation.getInstance(), false);
 				}
 			}).start();
 

@@ -807,7 +807,7 @@ public class DisplayEntity extends Entity {
 	public void handleKeyReleased(int keyCode, char keyChar, boolean shift, boolean control, boolean alt) {
 		if (keyCode == KeyEvent.VK_DELETE) {
 			this.kill();
-			FrameBox.setSelectedEntity(null);
+			FrameBox.setSelectedEntity(null, false);
 			return;
 		}
 	}

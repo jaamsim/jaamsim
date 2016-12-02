@@ -54,7 +54,7 @@ public class ObjectSelector extends FrameBox {
 	private static ObjectSelector myInstance;
 
 	// Tree view properties
-	private DefaultMutableTreeNode top;
+	private final DefaultMutableTreeNode top;
 	private final DefaultTreeModel treeModel;
 	private final JTree tree;
 	private final JScrollPane treeView;
@@ -62,7 +62,7 @@ public class ObjectSelector extends FrameBox {
 
 	private long entSequence;
 
-	private int MAX_GENERATED_ENTITIES = 10000;
+	private final int MAX_GENERATED_ENTITIES = 10000;
 
 	public ObjectSelector() {
 		super( "Object Selector" );
@@ -431,10 +431,10 @@ public class ObjectSelector extends FrameBox {
 
 			Object userObj = node.getUserObject();
 			if (userObj instanceof Entity) {
-				FrameBox.setSelectedEntity((Entity)userObj);
+				FrameBox.setSelectedEntity((Entity)userObj, false);
 			}
 			else {
-				FrameBox.setSelectedEntity(null);
+				FrameBox.setSelectedEntity(null, false);
 			}
 		}
 	}
@@ -518,7 +518,7 @@ public class ObjectSelector extends FrameBox {
 
 				// Delete key was released on a movable DisplayEntity
 				disp.kill();
-				FrameBox.setSelectedEntity(null);
+				FrameBox.setSelectedEntity(null, false);
 			}
 		}
 		@Override

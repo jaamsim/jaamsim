@@ -593,7 +593,7 @@ public class RenderManager implements DragSourceListener {
 				if (!ent.isMovable()) {
 					continue;
 				}
-				FrameBox.setSelectedEntity(ent);
+				FrameBox.setSelectedEntity(ent, true);
 
 				Vec3d globalCoord = getGlobalPositionForMouseData(windowID, x, y, ent);
 				ent.handleMouseClicked(count, globalCoord);
@@ -603,7 +603,7 @@ public class RenderManager implements DragSourceListener {
 		}
 
 		// If no entity is found, set the selected entity to the view window
-		FrameBox.setSelectedEntity(windowToViewMap.get(windowID));
+		FrameBox.setSelectedEntity(windowToViewMap.get(windowID), false);
 		GUIFrame.updateUI();
 	}
 
@@ -865,20 +865,20 @@ public class RenderManager implements DragSourceListener {
 		}
 	}
 
-	public static void setSelection(Entity ent) {
+	public static void setSelection(Entity ent, boolean canMakeLink) {
 		if (!RenderManager.isGood())
 			return;
 
-		RenderManager.inst().setSelectEntity(ent);
+		RenderManager.inst().setSelectEntity(ent, canMakeLink);
 	}
 
-	private void setSelectEntity(Entity ent) {
+	private void setSelectEntity(Entity ent, boolean canMakeLink) {
 		if (ent instanceof DisplayEntity) {
 			DisplayEntity oldEnt = selectedEntity;
 			selectedEntity = (DisplayEntity)ent;
 
-			if (createLinks.get()) {
-				if (selectedEntity != null && oldEnt != null) {
+			if (createLinks.get() && canMakeLink) {
+				if (selectedEntity != null && oldEnt != null && oldEnt != selectedEntity) {
 					oldEnt.linkTo(selectedEntity);
 				}
 			}
@@ -1453,7 +1453,7 @@ public class RenderManager implements DragSourceListener {
 
 		// We are no longer drag-and-dropping
 		dndObjectType = null;
-		FrameBox.setSelectedEntity(ent);
+		FrameBox.setSelectedEntity(ent, false);
 
 		if (ent instanceof DisplayEntity) {
 			try {
