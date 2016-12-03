@@ -27,8 +27,10 @@ import com.jaamsim.datatypes.IntegerVector;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.EntityListInput;
+import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.IntegerListInput;
 import com.jaamsim.input.Keyword;
+import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.states.StateEntity;
 import com.jaamsim.units.TimeUnit;
 
@@ -100,6 +102,15 @@ public class Assemble extends LinkedService {
 	@Override
 	public void addEntity( DisplayEntity ent ) {
 		error("An entity cannot be sent directly to an Assemble object. It must be sent to the appropriate queue.");
+	}
+
+	@Override
+	public void addQueue(Queue que) {
+		ArrayList<String> toks = new ArrayList<>();
+		waitQueueList.getValueTokens(toks);
+		toks.add(que.getName());
+		KeywordIndex kw = new KeywordIndex(waitQueueList.getKeyword(), toks, null);
+		InputAgent.apply(this, kw);
 	}
 
 	@Override
