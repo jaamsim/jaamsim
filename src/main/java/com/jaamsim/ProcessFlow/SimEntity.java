@@ -19,6 +19,7 @@ package com.jaamsim.ProcessFlow;
 
 import java.util.ArrayList;
 
+import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.LinkDisplayable;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.input.Keyword;
@@ -60,6 +61,16 @@ public class SimEntity extends StateEntity implements LinkDisplayable {
 	@Override
 	public boolean isValidState(String state) {
 		return true;
+	}
+
+	@Override
+	public void linkTo(DisplayEntity nextEnt) {
+		if (!(nextEnt instanceof EntityGenerator)) {
+			return;
+		}
+
+		EntityGenerator gen = (EntityGenerator)nextEnt;
+		gen.setPrototypeEntity(this);
 	}
 
 	// LinkDisplayable
