@@ -172,6 +172,16 @@ public class EntityGenerator extends LinkedService {
 		return interArrivalTime.getValue().getNextSample(simTime);
 	}
 
+	@Override
+	public ArrayList<Entity> getSourceEntities() {
+		ArrayList<Entity> ret = new ArrayList<>();
+		DisplayEntity ent = prototypeEntity.getValue();
+		if (ent != null) {
+			ret.add(ent);
+		}
+		return ret;
+	}
+
 	@Output(name = "NumberGenerated",
 	 description = "The total number of entities generated, including the initialization period.",
 	    unitType = DimensionlessUnit.class)
