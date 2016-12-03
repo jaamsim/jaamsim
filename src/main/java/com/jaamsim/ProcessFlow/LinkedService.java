@@ -23,7 +23,9 @@ import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.input.EntityInput;
+import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
+import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.Vec3dInput;
 import com.jaamsim.math.Vec3d;
@@ -132,6 +134,17 @@ public abstract class LinkedService extends LinkedDevice implements QueueUser {
 	// ********************************************************************************************
 	// WAIT QUEUE
 	// ********************************************************************************************
+
+	public void addQueue(Queue que) {
+		if (waitQueue.getHidden()) {
+			return;
+		}
+
+		ArrayList<String> toks = new ArrayList<>();
+		toks.add(que.getName());
+		KeywordIndex kw = new KeywordIndex(waitQueue.getKeyword(), toks, null);
+		InputAgent.apply(this, kw);
+	}
 
 	@Override
 	public ArrayList<Queue> getQueues() {

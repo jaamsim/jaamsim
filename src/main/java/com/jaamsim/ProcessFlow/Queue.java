@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2003-2011 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2016 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -722,6 +723,15 @@ public class Queue extends LinkedComponent {
 			queueLengthDist.addAt(dt,oldValue);  // add dt to the entry at index queueSize
 			timeOfLastUpdate = simTime;
 		}
+	}
+
+	@Override
+	public void linkTo(DisplayEntity nextEnt) {
+		if (!(nextEnt instanceof LinkedService))
+			return;
+
+		LinkedService serv = (LinkedService)nextEnt;
+		serv.addQueue(this);
 	}
 
 	// LinkDisplayable
