@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2016 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,8 +21,10 @@ import java.util.ArrayList;
 
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.basicsim.Entity;
+import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InterfaceEntityListInput;
 import com.jaamsim.input.Keyword;
+import com.jaamsim.input.KeywordIndex;
 
 public class Duplicate extends LinkedComponent {
 
@@ -81,6 +84,19 @@ public class Duplicate extends LinkedComponent {
 			}
 		}
 		return ret;
+	}
+
+	@Override
+	public void linkTo(DisplayEntity nextEnt) {
+		if (!(nextEnt instanceof Linkable) || nextEnt instanceof EntityGenerator) {
+			return;
+		}
+
+		ArrayList<String> toks = new ArrayList<>();
+		targetComponentList.getValueTokens(toks);
+		toks.add(nextEnt.getName());
+		KeywordIndex kw = new KeywordIndex(targetComponentList.getKeyword(), toks, null);
+		InputAgent.apply(this, kw);
 	}
 
 }
