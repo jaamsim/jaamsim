@@ -880,7 +880,10 @@ public class RenderManager implements DragSourceListener {
 
 			if (createLinks.get() && canMakeLink) {
 				if (selectedEntity != null && oldEnt != null && oldEnt != selectedEntity) {
-					oldEnt.linkTo(selectedEntity);
+					try {
+						oldEnt.linkTo(selectedEntity);
+					}
+					catch (InputErrorException e) {}
 				}
 			}
 
