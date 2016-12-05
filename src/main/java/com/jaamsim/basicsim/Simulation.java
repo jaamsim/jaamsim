@@ -561,7 +561,7 @@ public class Simulation extends Entity {
 				each.validate();
 			}
 			catch (Throwable e) {
-				InputAgent.logMessage("%s: Validation error - %s", each.getName(), e.getMessage());
+				InputAgent.logMessage("Validation Error - %s: %s", each.getName(), e.getMessage());
 				GUIFrame.showErrorDialog("Input Error",
 						"JaamSim has detected the following input error during validation:",
 						String.format("%s: %-70s", each.getName(), e.getMessage()),

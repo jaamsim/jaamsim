@@ -1921,7 +1921,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 			OutOfMemoryError e = (OutOfMemoryError)t;
 			InputAgent.logMessage("Out of Memory use the -Xmx flag during execution for more memory");
 			InputAgent.logMessage("Further debug information:");
-			InputAgent.logMessage("Error: %s", e.getMessage());
+			InputAgent.logMessage("%s", e.getMessage());
 			InputAgent.logStackTrace(t);
 			GUIFrame.shutdown(1);
 			return;
@@ -1929,7 +1929,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		else {
 			double curSec = evt.ticksToSeconds(currentTick);
 			InputAgent.logMessage("EXCEPTION AT TIME: %f s", curSec);
-			InputAgent.logMessage("Error: %s", t.getMessage());
+			InputAgent.logMessage("%s", t.getMessage());
 			InputAgent.logStackTrace(t);
 		}
 
