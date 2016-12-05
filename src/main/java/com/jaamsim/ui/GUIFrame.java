@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2002-2011 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2016 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -2179,6 +2180,77 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 
 		final String msg = String.format(fmt,  args);
 		JOptionPane.showMessageDialog(null, msg, title, JOptionPane.ERROR_MESSAGE);
+	}
+
+	private static String getErrorMessage(String source, int position, String pre, String message, String post) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("<html>");
+
+		// Initial text prior to the message
+		if (!pre.isEmpty()) {
+			sb.append(html_replace(pre)).append("<br><br>");
+		}
+
+		// Error message
+		sb.append(html_replace(message)).append("<br>");
+
+		// Append the source expression and an 'arrow' pointing at the error
+		if (!source.isEmpty()) {
+			sb.append("<pre><font color=\"red\">");
+			sb.append(html_replace(source)).append("<br>");
+			for (int i = 0; i < position; ++i) {
+				sb.append(" ");
+			}
+			sb.append("<b>^</b></font></pre>");
+		}
+
+		// Final text after the message
+		if (!post.isEmpty()) {
+			if (source.isEmpty()) {
+				sb.append("<br>");
+			}
+			sb.append(html_replace(post));
+		}
+
+		sb.append("</html>");
+		return sb.toString();
+	}
+
+	/**
+	 * Displays the Error Message dialog box
+	 * @param title - text for the dialog box name
+	 * @param source - expression that cause the error (if applicable)
+	 * @param position - location of the error in the expression (if applicable)
+	 * @param pre - text to appear prior to the error message
+	 * @param message - error message
+	 * @param post - text to appear after the error message
+	 */
+	public static void showErrorDialog(String title, String source, int position, String pre, String message, String post) {
+		if (InputAgent.getBatch()) GUIFrame.shutdown(1);
+		String msg = GUIFrame.getErrorMessage(source, position, pre, message, post);
+		JOptionPane.showMessageDialog(null, msg, title, JOptionPane.ERROR_MESSAGE);
+	}
+
+	public static void showErrorDialog(String title, String pre, String message, String post) {
+		GUIFrame.showErrorDialog(title, "", -1, pre, message, post);
+	}
+
+	public static void showErrorDialog(String title, String message) {
+		GUIFrame.showErrorDialog(title, "", -1, "", message, "");
+	}
+
+	public static void showErrorDialog(String title, String pre, Throwable t, String post) {
+		if (t instanceof InputErrorException) {
+			InputErrorException e = (InputErrorException)t;
+			GUIFrame.showErrorDialog(title, e.source, e.position, pre, e.getMessage(), post);
+			return;
+		}
+		if (t instanceof ErrorException) {
+			ErrorException e = (ErrorException)t;
+			GUIFrame.showErrorDialog(title, e.source, e.position, pre, e.getMessage(), post);
+			return;
+		}
+		GUIFrame.showErrorDialog(title, "", -1, pre, t.getMessage(), post);
 	}
 
 	/**
