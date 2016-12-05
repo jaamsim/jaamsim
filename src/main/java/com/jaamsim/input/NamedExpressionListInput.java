@@ -75,7 +75,7 @@ public class NamedExpressionListInput extends ListInput<ArrayList<NamedExpressio
 
 			} catch (ExpError e) {
 				InputAgent.logStackTrace(e);
-				throw new InputErrorException(e.toString());
+				throw new InputErrorException(e);
 			} catch (InputErrorException e) {
 				throw new InputErrorException(INP_ERR_ELEMENT, i+1, e.getMessage());
 			}
