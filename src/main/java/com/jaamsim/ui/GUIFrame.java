@@ -2294,6 +2294,25 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		}
 	}
 
+	/**
+	 * Shows the Error Message dialog box for the Input Editor
+	 * @param title - text for the dialog box name
+	 * @param pre - text to appear before the error message
+	 * @param e - input error object
+	 * @param post - text to appear after the error message
+	 * @return true if the input is to be re-edited
+	 */
+	public static boolean showErrorEditDialog(String title, String pre, InputErrorException e, String post) {
+		String msg = GUIFrame.getErrorMessage(e.source, e.position,
+				"Input error:",
+				e.getMessage(),
+				"Do you want to continue editing, or reset the input?");
+		String[] options = { "Edit", "Reset" };
+		int reply = JOptionPane.showOptionDialog(null, msg, "Input Error", JOptionPane.OK_CANCEL_OPTION,
+				JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+		return (reply == JOptionPane.OK_OPTION);
+	}
+
 	// ******************************************************************************************************
 	// TOOL TIPS
 	// ******************************************************************************************************

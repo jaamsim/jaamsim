@@ -43,7 +43,6 @@ import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JList;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
@@ -824,11 +823,11 @@ public static class CellListener implements CellEditorListener {
 		}
 		catch (InputErrorException exep) {
 			if (editor.canRetry()) {
-				String errorString = String.format("Input error:\n%s\n Do you want to continue editing, or reset the input?", exep.getMessage());
-				String[] options = { "Edit", "Reset" };
-				int reply = JOptionPane.showOptionDialog(null, errorString, "Input Error", JOptionPane.OK_CANCEL_OPTION,
-						JOptionPane.ERROR_MESSAGE, null, options, options[0]);
-				if (reply == JOptionPane.OK_OPTION) {
+				boolean editSelected = GUIFrame.showErrorEditDialog("Input Error",
+						"Input error:",
+						exep,
+						"Do you want to continue editing, or reset the input?");
+				if (editSelected) {
 					// Any editor that supports retry should implement the following
 					final int row = editor.getRow();
 					final int col = editor.getCol();
