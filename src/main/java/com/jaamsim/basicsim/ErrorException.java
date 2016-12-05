@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2002-2011 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2016 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,15 +17,52 @@
  */
 package com.jaamsim.basicsim;
 
+import com.jaamsim.input.ExpError;
+
 /**
  * Custom exception thrown when a program error is encountered.
  */
 public class ErrorException extends RuntimeException {
+
+	public String entName;
+	public String source;
+	public int position;
+
+	public ErrorException(int pos, String src, String name, String msg) {
+		super(msg);
+		entName = name;
+		source = src;
+		position = pos;
+	}
+
 	public ErrorException(String format, Object... args) {
-		super(String.format(format, args));
+		this(-1, "", "", String.format(format, args));
+	}
+
+	public ErrorException(Entity ent, String msg) {
+		this(-1, "", ent.getName(), msg);
+	}
+
+	public ErrorException(Entity ent, ExpError e) {
+		this(e.pos, e.source, ent.getName(), e.getMessage());
 	}
 
 	public ErrorException( Throwable cause ) {
 		super( cause );
+		entName = "";
+		source = "";
+		position = -1;
 	}
+
+	@Override
+	public String getMessage() {
+		if (entName.isEmpty()) {
+			return super.getMessage();
+		}
+		StringBuilder sb = new StringBuilder();
+		sb.append(entName).append(": ");
+		sb.append(super.getMessage());
+		return sb.toString();
+	}
+
 }
