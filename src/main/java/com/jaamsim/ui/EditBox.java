@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2005-2013 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2016 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -851,7 +852,9 @@ public static class CellListener implements CellEditorListener {
 			}
 
 			GUIFrame.showErrorDialog("Input Error",
-					"%s\n" + "Value will be cleared.", exep.getMessage());
+					"Input error:",
+					exep,
+					"Value will be cleared.");
 
 			GUIFrame.updateUI();
 			return;

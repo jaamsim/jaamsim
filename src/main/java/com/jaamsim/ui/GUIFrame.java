@@ -1934,10 +1934,11 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		}
 
 		GUIFrame.showErrorDialog("Runtime Error",
-		                         "JaamSim has detected the following runtime error condition:\n\n%s\n\n" +
-		                         "Programmers can find more information by opening the Log Viewer.\n" +
-		                         "The simulation run must be stopped before it can be restarted.",
-		                         t.getMessage());
+				"JaamSim has detected the following runtime error condition:",
+				t,
+				"Programmers can find more information by opening the Log Viewer.\n"
+						+ "The simulation run must be reset to zero simulation time before it "
+						+ "can be restarted.");
 	}
 
 	void load() {
@@ -2024,8 +2025,9 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 
 		InputAgent.logMessage("Fatal Error while loading file '%s': %s\n", file.getName(), t.getMessage());
 		GUIFrame.showErrorDialog("Fatal Error",
-		                         "A fatal error has occured while loading the file '%s':\n\n%s",
-		                         file.getName(), t.getMessage());
+				String.format("A fatal error has occured while loading the file '%s':", file.getName()),
+				t.getMessage(),
+				"");
 	}
 
 	/**
