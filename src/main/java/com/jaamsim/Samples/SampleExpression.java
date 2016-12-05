@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2016 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +18,7 @@
 package com.jaamsim.Samples;
 
 import com.jaamsim.basicsim.Entity;
+import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.basicsim.ObjectType;
 import com.jaamsim.input.ExpError;
 import com.jaamsim.input.ExpEvaluator;
@@ -69,7 +71,7 @@ public class SampleExpression implements SampleProvider {
 			ret = res.value;
 		}
 		catch(ExpError e) {
-			thisEnt.error(e.toString());
+			throw new ErrorException(thisEnt, e);
 		}
 		return ret;
 	}
