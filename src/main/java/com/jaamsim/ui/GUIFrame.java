@@ -2171,19 +2171,6 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		return false;
 	}
 
-	/**
-	 * Shows the Error Message dialog box
-	 * @param title - text for the dialog box name
-	 * @param fmt - format string for the error message
-	 * @param args - inputs to the error message
-	 */
-	public static void showErrorDialog(String title, String fmt, Object... args) {
-		if (InputAgent.getBatch()) GUIFrame.shutdown(1);
-
-		final String msg = String.format(fmt,  args);
-		JOptionPane.showMessageDialog(null, msg, title, JOptionPane.ERROR_MESSAGE);
-	}
-
 	private static String getErrorMessage(String source, int position, String pre, String message, String post) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("<html>");
