@@ -25,6 +25,7 @@ import com.jaamsim.input.ExpResult;
 import com.jaamsim.input.ExpValResult;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.units.Unit;
+import com.jaamsim.units.UserSpecifiedUnit;
 
 public class SampleExpression implements SampleProvider {
 	private final ExpParser.Expression exp;
@@ -33,10 +34,17 @@ public class SampleExpression implements SampleProvider {
 	private final ExpEvaluator.EntityParseContext parseContext;
 
 	public SampleExpression(String expString, Entity ent, Class<? extends Unit> ut) throws ExpError {
+
+		// Check that a unit type has been specified
+		if (ut == UserSpecifiedUnit.class) {
+			throw new InputErrorException("Unit type has not been specified");
+		}
+
 		thisEnt = ent;
 		unitType = ut;
 		parseContext = ExpEvaluator.getParseContext(thisEnt, expString);
 		exp = ExpParser.parseExpression(parseContext, expString);
+
 		if (exp.validationResult.state == ExpValResult.State.VALID) {
 			// We know the returned unit type with certainty, so we can check it against what we expect
 			Class<? extends Unit> expUnitType = exp.validationResult.unitType;
@@ -45,7 +53,6 @@ public class SampleExpression implements SampleProvider {
 						+ "Received: %s, expected: %s",
 						exp, ObjectType.getObjectTypeForClass(expUnitType),
 						ObjectType.getObjectTypeForClass(unitType));
-
 			}
 		}
 	}
