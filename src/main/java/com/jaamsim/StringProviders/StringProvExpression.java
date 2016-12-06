@@ -21,9 +21,13 @@ import com.jaamsim.basicsim.ObjectType;
 import com.jaamsim.input.ExpError;
 import com.jaamsim.input.ExpEvaluator;
 import com.jaamsim.input.ExpParser;
+import com.jaamsim.input.ExpResType;
 import com.jaamsim.input.ExpResult;
+import com.jaamsim.input.ExpValResult;
+import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.ExpParser.Expression;
 import com.jaamsim.units.Unit;
+import com.jaamsim.units.UserSpecifiedUnit;
 
 public class StringProvExpression implements StringProvider {
 
@@ -37,6 +41,24 @@ public class StringProvExpression implements StringProvider {
 		unitType = ut;
 		parseContext = ExpEvaluator.getParseContext(thisEnt, expString);
 		exp = ExpParser.parseExpression(parseContext, expString);
+
+		if (exp.validationResult.state == ExpValResult.State.VALID
+				&& exp.validationResult.type == ExpResType.NUMBER) {
+
+			// Check that a unit type has been specified
+			if (unitType == UserSpecifiedUnit.class) {
+				throw new InputErrorException("Unit type has not been specified");
+			}
+
+			// We know the returned unit type with certainty, so we can check it against what we expect
+			Class<? extends Unit> expUnitType = exp.validationResult.unitType;
+			if (expUnitType != unitType) {
+				throw new InputErrorException("Invalid unit returned by an expression: '%s'%n"
+						+ "Received: %s, expected: %s",
+						exp, ObjectType.getObjectTypeForClass(expUnitType),
+						ObjectType.getObjectTypeForClass(unitType));
+			}
+		}
 	}
 
 	@Override
