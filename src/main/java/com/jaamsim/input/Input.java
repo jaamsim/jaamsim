@@ -1514,6 +1514,7 @@ public abstract class Input<T> {
 
 		if (unitType == UserSpecifiedUnit.class)
 			throw new InputErrorException(INP_ERR_UNITUNSPECIFIED);
+
 		// If there are exactly two inputs, then it must be a number and its unit
 		if (kw.numArgs() == 2) {
 			if (unitType == DimensionlessUnit.class)
@@ -1524,7 +1525,7 @@ public abstract class Input<T> {
 
 		// If there is only one input, it could be a SampleProvider, a dimensionless constant, or an expression
 
-		// 1) Try parsing a SampleProvider
+		// 1) Try parsing a SampleProvider object
 		SampleProvider s = null;
 		try {
 			Entity ent = Input.parseEntity(kw.getArg(0), Entity.class);
@@ -1533,8 +1534,7 @@ public abstract class Input<T> {
 		catch (InputErrorException e) {}
 
 		if (s != null) {
-			if (s.getUnitType() != UserSpecifiedUnit.class)
-				Input.assertUnitsMatch(unitType, s.getUnitType());
+			Input.assertUnitsMatch(unitType, s.getUnitType());
 			return s;
 		}
 
