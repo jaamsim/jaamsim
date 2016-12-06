@@ -203,8 +203,7 @@ public class OutputBox extends FrameBox {
 					return sb.toString();
 				}
 				catch (Throwable e) {
-					LogBox.logException(e);
-					return "Cannot evaluate - see Log Viewer for details";
+					return "Cannot evaluate";
 				}
 			default:
 				assert false;
