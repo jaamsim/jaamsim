@@ -134,7 +134,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 	private JLabel locatorLabel;
 
 	//JButton toolButtonIsometric;
-	JToggleButton lockViewXYPlane;
+	private JToggleButton lockViewXYPlane;
 
 	private int lastValue = -1;
 	private JProgressBar progressBar;
@@ -1161,6 +1161,11 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 			lastView.getInput("ViewPosition").getValueTokens(arg);
 			InputAgent.apply(tmp, new KeywordIndex("ViewPosition", arg, null));
 		}
+	}
+
+	public static void setActiveView(View activeView) {
+		boolean lock2D = activeView.is2DLocked();
+		instance.lockViewXYPlane.setSelected(lock2D);
 	}
 
 	// ******************************************************************************************************
