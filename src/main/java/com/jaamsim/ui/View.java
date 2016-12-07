@@ -89,6 +89,10 @@ public class View extends Entity {
 	 example = "View1 Movable { FALSE }")
 	private final BooleanInput movable;
 
+	@Keyword(description = "A Boolean indicating whether the view is locked to a downward view (the 2D default).",
+			 example = "View1 Lock2D { FALSE }")
+			private final BooleanInput lock2D;
+
 	@Keyword(description = "The (optional) entity for this view to follow. Setting this input makes the view ignore ViewCenter " +
 	                "and interprets ViewPosition as a relative offset to this entity.",
 	         example = "View1 FollowEntity { Ship1 }")
@@ -106,7 +110,7 @@ public class View extends Entity {
 	example = "View1 SkyboxImage { '/resources/images/sky_map_2048x1024.jpg' }")
 	private final FileInput skyboxImage;
 
-	private Object setLock = new Object();
+	private final Object setLock = new Object();
 
 	private double cachedSimTime = 0;
 
@@ -155,6 +159,9 @@ public class View extends Entity {
 
 		movable = new BooleanInput("Movable", "Graphics", true);
 		this.addInput(movable);
+
+		lock2D = new BooleanInput("Lock2D", "Graphics", false);
+		this.addInput(lock2D);
 
 		followEntityInput = new EntityInput<>(DisplayEntity.class, "FollowEntity", "Graphics", null);
 		this.addInput(followEntityInput);
@@ -236,6 +243,9 @@ public class View extends Entity {
 			if (window != null)
 				new WindowSizePosUpdater(window, null, windowSize.getValue()).doUpdate();
 			return;
+		}
+		if (in == lock2D) {
+			GUIFrame.updateUI();
 		}
 	}
 
@@ -402,6 +412,20 @@ public class View extends Entity {
 
 	public boolean isScripted() {
 		return positionScriptInput.hasKeys() || centerScriptInput.hasKeys();
+	}
+
+	public void setLock2D(boolean bLock2D) {
+		synchronized (setLock) {
+			ArrayList<String> toks = new ArrayList<>();
+			toks.add(bLock2D ? "TRUE" : "FALSE");
+			KeywordIndex kw = new KeywordIndex(lock2D.getKeyword(), toks, null);
+			InputAgent.apply(this, kw);
+		}
+
+	}
+
+	public boolean is2DLocked() {
+		return lock2D.getValue();
 	}
 
 	public URI getSkyboxTexture() {

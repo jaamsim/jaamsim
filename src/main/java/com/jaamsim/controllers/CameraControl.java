@@ -99,7 +99,8 @@ public class CameraControl implements WindowInteractionListener {
 				handleExpPan(dragInfo.x, dragInfo.y, dragInfo.dx, dragInfo.dy);
 			}
 		}
-		else if (dragInfo.button == 3) {
+		else if (dragInfo.button == 3 && !_updateView.is2DLocked()) {
+
 			if (dragInfo.shiftDown()) {
 				handleTurnCamera(dragInfo.dx, dragInfo.dy);
 			} else {
@@ -345,6 +346,11 @@ public class CameraControl implements WindowInteractionListener {
 
 		if (pi.rotX == 0) {
 			pi.rotZ = 0; // If we're ever looking directly down, which is degenerate, force Y up
+		}
+
+		if (_updateView.is2DLocked()) {
+			pi.rotX = 0;
+			pi.rotZ = 0;
 		}
 
 		if (piCache != null && piCache.equals(pi) && !updateInputs) {
