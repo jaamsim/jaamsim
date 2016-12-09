@@ -18,8 +18,6 @@ package com.jaamsim.datatypes;
 
 import java.util.Arrays;
 
-import com.jaamsim.basicsim.ErrorException;
-
 /**
  * This class stores integer values in an array.
  */
@@ -221,69 +219,6 @@ public class IntegerVector {
 		out.append(" }");
 
 		return out.toString();
-	}
-
-	/**
-	 * Select an index deterministically from the given probability distribution.
-	 * The integer buffer receiver of this method is the number of times that each
-	 * index has been selected.
-	 */
-	public static int selectIndexDeterministicallyUsingProbs(IntegerVector vec, DoubleVector probs ) {
-
-		int n;
-		double x;
-		double maxDifference;
-		double cumProb;
-		double expectedNumber;
-		double difference;
-		int selectedIndex;
-
-		// Check the number of indices is equal to number of probabilities
-		if( vec.size() != probs.size() ) {
-			throw new ErrorException("Number of probabilities (%d) does not match the receiver (%d)", probs.size(), vec.size());
-		}
-
-		// Calculate the total number of samples for this selection
-		// (One more than the sum of the counts so far)
-		n = 0;
-		cumProb = 0.0;
-
-		for( int i = 0; i < vec.size(); i++ ) {
-			n += vec.get( i );
-			cumProb += probs.get( i );
-		}
-		x = (n + 1);
-
-		if( Math.abs( cumProb - 1.0 ) > 0.001 ) {
-			throw new ErrorException( "Probabilities do not sum to 1.000" );
-		}
-
-		// Loop through indices
-		maxDifference = -100000.0;
-		selectedIndex = -1;
-
-		for( int i = 0; i < probs.size(); i++ ) {
-			// Calculate the expected number of events for this probability
-			expectedNumber = x * probs.get( i );
-
-			// Select the index with the largest difference between the current
-			// number and the expected number of events
-			difference = expectedNumber - vec.get( i );
-
-			if( !(maxDifference + 1.0E-10 >= difference) ) {
-				maxDifference = difference;
-				selectedIndex = i;
-			}
-		}
-
-		if( selectedIndex < 0 ) {
-			throw new ErrorException( "Error in Method" );
-		}
-
-		// Increment the count for this index
-		n = vec.get( selectedIndex );
-		vec.set( selectedIndex, n + 1 );
-		return selectedIndex + 1;
 	}
 
 	public int getMin() {
