@@ -315,7 +315,7 @@ public class DoubleVector {
 	 * The double buffer receiver of this method is the content of each
 	 * index has been selected.
 	 */
-	public int selectIndexDeterministicallyUsingProbs( DoubleVector probs ) {
+	public static int selectIndexDeterministicallyUsingProbs( DoubleVector vec, DoubleVector probs ) {
 
 		double n;
 		double x;
@@ -326,8 +326,8 @@ public class DoubleVector {
 		int selectedIndex;
 
 		// Check the number of indices is equal to number of probabilities
-		if( size() != probs.size() ) {
-			throw new ErrorException( "Number of probabilities ("+probs.size()+") does not match the receiver ("+size()+")" );
+		if( vec.size() != probs.size() ) {
+			throw new ErrorException( "Number of probabilities ("+probs.size()+") does not match the receiver ("+vec.size()+")" );
 		}
 
 		// Calculate the total number of samples for this selection
@@ -335,8 +335,8 @@ public class DoubleVector {
 		n = 0;
 		cumProb = 0.0;
 
-		for( int i = 0; i < size(); i++ ) {
-			n += get( i );
+		for( int i = 0; i < vec.size(); i++ ) {
+			n += vec.get( i );
 			cumProb += probs.get( i );
 		}
 		x = n + 1;
@@ -355,7 +355,7 @@ public class DoubleVector {
 
 			// Select the index with the largest difference between the current
 			// number and the expected number of events
-			difference = expectedNumber - get( i );
+			difference = expectedNumber - vec.get( i );
 
 			if( !(maxDifference + 1.0E-10 >= difference) ) {
 				maxDifference = difference;
@@ -374,7 +374,7 @@ public class DoubleVector {
 	 * The double buffer receiver of this method is the content of each index has been selected.
 	 * Ignore is a list of all indices that cannot be selected.
 	 */
-	public int selectIndexDeterministicallyUsingProbsIgnore( DoubleVector probs, IntegerVector ignore ) {
+	public static int selectIndexDeterministicallyUsingProbsIgnore( DoubleVector vec, DoubleVector probs, IntegerVector ignore ) {
 
 		double n;
 		double x;
@@ -385,8 +385,8 @@ public class DoubleVector {
 		int selectedIndex;
 
 		// Check the number of indices is equal to number of probabilities
-		if( size() != probs.size() ) {
-			throw new ErrorException( "Number of probabilities ("+probs.size()+") does not match the receiver ("+size()+")" );
+		if( vec.size() != probs.size() ) {
+			throw new ErrorException( "Number of probabilities ("+probs.size()+") does not match the receiver ("+vec.size()+")" );
 		}
 
 		// Calculate the total number of samples for this selection
@@ -394,8 +394,8 @@ public class DoubleVector {
 		n = 0;
 		cumProb = 0.0;
 
-		for( int i = 0; i < size(); i++ ) {
-			n += get( i );
+		for( int i = 0; i < vec.size(); i++ ) {
+			n += vec.get( i );
 			cumProb += probs.get( i );
 		}
 		x = n + 1;
@@ -418,7 +418,7 @@ public class DoubleVector {
 
 			// Select the index with the largest difference between the current
 			// number and the expected number of events
-			difference = expectedNumber - get( i );
+			difference = expectedNumber - vec.get( i );
 
 			if( !(maxDifference + 1.0E-10 >= difference) ) {
 				maxDifference = difference;
@@ -435,19 +435,19 @@ public class DoubleVector {
 	/**
 	 * Return a list of indices representing the next values that would be selected using the given probabilities
 	 */
-	public IntegerVector getNextIndicesDeterministicallyUsingProbs( DoubleVector probs ) {
+	public static IntegerVector getNextIndicesDeterministicallyUsingProbs( DoubleVector vec, DoubleVector probs ) {
 
 		// Check the number of indices is equal to number of probabilities
-		if( size() != probs.size() ) {
-			throw new ErrorException( "Number of probabilities ("+probs.size()+") does not match the receiver ("+size()+")" );
+		if( vec.size() != probs.size() ) {
+			throw new ErrorException( "Number of probabilities ("+probs.size()+") does not match the receiver ("+vec.size()+")" );
 		}
 
 		// Calculate the total number of samples for this selection (One more than the sum of the counts so far)
 		double n = 0;
 		double cumProb = 0.0;
 
-		for( int i = 0; i < size(); i++ ) {
-			n += get( i );
+		for( int i = 0; i < vec.size(); i++ ) {
+			n += vec.get( i );
 			cumProb += probs.get( i );
 		}
 		double x = n + 1;
@@ -466,7 +466,7 @@ public class DoubleVector {
 
 			// Select the index with the largest difference between the current
 			// number and the expected number of events
-			double difference = expectedNumber - get( i );
+			double difference = expectedNumber - vec.get( i );
 			int destIndex = 0;
 			for( int j=0; j < sortedDiffs.size(); j++ ) {
 				if( sortedDiffs.get( j ) < difference ) {
@@ -489,7 +489,7 @@ public class DoubleVector {
 	 * incremented (the total increments add up to one). Check that the number
 	 * of indices is equal to the number of probabilities
 	 */
-	public IntegerVector selectIndicesDeterministicallyUsingProbs_Split( DoubleVector probs, DoubleVector split ) {
+	public static IntegerVector selectIndicesDeterministicallyUsingProbs_Split(DoubleVector vec, DoubleVector probs, DoubleVector split ) {
 
 		double n;
 		double maxDifference;
@@ -499,7 +499,7 @@ public class DoubleVector {
 		int selectedIndex;
 		IntegerVector selectedIndices;
 
-		if( !(this.size() == probs.size()) ) {
+		if( !(vec.size() == probs.size()) ) {
 			throw new ErrorException( "Number of probabilities does not match the number the receiver" );
 		}
 
@@ -517,8 +517,8 @@ public class DoubleVector {
 		// Calculate the total number of samples for this selection so far
 		n = 0.0;
 		cumProb = 0.0;
-		for( int j = 1; j <= this.size(); j++ ) {
-			n = (n + this.get( j - 1 ));
+		for( int j = 1; j <= vec.size(); j++ ) {
+			n = (n + vec.get( j - 1 ));
 			cumProb = (cumProb + probs.get( j - 1 ));
 		}
 		if( Math.abs( (cumProb - 1.0) ) > 0.001 ) {
@@ -540,7 +540,7 @@ public class DoubleVector {
 
 						// Select the index with the largest difference between
 						// the current number and the expected number of events
-						difference = (expectedNumber - this.get( j - 1 ));
+						difference = (expectedNumber - vec.get( j - 1 ));
 						if( !(maxDifference + 1.0E-10 >= difference) ) {
 							maxDifference = difference;
 							selectedIndex = j;
@@ -553,7 +553,7 @@ public class DoubleVector {
 			}
 
 			// Increment the count for this index
-			this.addAt( split.get( i - 1 ), selectedIndex - 1 );
+			vec.addAt( split.get( i - 1 ), selectedIndex - 1 );
 			selectedIndices.add(selectedIndex);
 		}
 		return selectedIndices;
@@ -566,7 +566,7 @@ public class DoubleVector {
 	 * distinct indices will be selected, and by how much they will be
 	 * incremented (the total increments add up to one).  The same index can be selected twice.
 	 */
-	public IntegerVector selectIndicesDeterministicallyUsingProbs_SplitAllowDuplicateIndex( DoubleVector probs, DoubleVector split ) {
+	public static IntegerVector selectIndicesDeterministicallyUsingProbs_SplitAllowDuplicateIndex( DoubleVector vec, DoubleVector probs, DoubleVector split ) {
 
 		double n;
 		double maxDifference;
@@ -577,7 +577,7 @@ public class DoubleVector {
 		IntegerVector selectedIndices;
 
 		// Check that the number of indices is equal to the number of probabilities
-		if( !(this.size() == probs.size()) ) {
+		if( !(vec.size() == probs.size()) ) {
 			throw new ErrorException( "Number of probabilities does not match the number the receiver" );
 		}
 
@@ -595,8 +595,8 @@ public class DoubleVector {
 		// Calculate the total number of samples for this selection so far
 		n = 0.0;
 		cumProb = 0.0;
-		for( int j = 1; j <= this.size(); j++ ) {
-			n = (n + this.get( j - 1 ));
+		for( int j = 1; j <= vec.size(); j++ ) {
+			n = (n + vec.get( j - 1 ));
 			cumProb = (cumProb + probs.get( j - 1 ));
 		}
 		if( Math.abs( (cumProb - 1.0) ) > 0.001 ) {
@@ -617,7 +617,7 @@ public class DoubleVector {
 
 					// Select the index with the largest difference between
 					// the current number and the expected number of events
-					difference = (expectedNumber - this.get( j - 1 ));
+					difference = (expectedNumber - vec.get( j - 1 ));
 					if( !(maxDifference + 1.0E-10 >= difference) ) {
 						maxDifference = difference;
 						selectedIndex = j;
@@ -629,7 +629,7 @@ public class DoubleVector {
 			}
 
 			// Increment the count for this index
-			this.addAt( split.get( i - 1 ), selectedIndex - 1 );
+			vec.addAt( split.get( i - 1 ), selectedIndex - 1 );
 			selectedIndices.add(selectedIndex);
 		}
 		return selectedIndices;
