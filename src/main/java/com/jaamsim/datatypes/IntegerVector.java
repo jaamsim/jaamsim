@@ -228,7 +228,7 @@ public class IntegerVector {
 	 * The integer buffer receiver of this method is the number of times that each
 	 * index has been selected.
 	 */
-	public int selectIndexDeterministicallyUsingProbs( DoubleVector probs ) {
+	public static int selectIndexDeterministicallyUsingProbs(IntegerVector vec, DoubleVector probs ) {
 
 		int n;
 		double x;
@@ -239,8 +239,8 @@ public class IntegerVector {
 		int selectedIndex;
 
 		// Check the number of indices is equal to number of probabilities
-		if( size() != probs.size() ) {
-			throw new ErrorException( "Number of probabilities ("+probs.size()+") does not match the receiver ("+size()+")" );
+		if( vec.size() != probs.size() ) {
+			throw new ErrorException( "Number of probabilities ("+probs.size()+") does not match the receiver ("+vec.size()+")" );
 		}
 
 		// Calculate the total number of samples for this selection
@@ -248,8 +248,8 @@ public class IntegerVector {
 		n = 0;
 		cumProb = 0.0;
 
-		for( int i = 0; i < size(); i++ ) {
-			n += get( i );
+		for( int i = 0; i < vec.size(); i++ ) {
+			n += vec.get( i );
 			cumProb += probs.get( i );
 		}
 		x = (n + 1);
@@ -268,7 +268,7 @@ public class IntegerVector {
 
 			// Select the index with the largest difference between the current
 			// number and the expected number of events
-			difference = expectedNumber - get( i );
+			difference = expectedNumber - vec.get( i );
 
 			if( !(maxDifference + 1.0E-10 >= difference) ) {
 				maxDifference = difference;
@@ -281,8 +281,8 @@ public class IntegerVector {
 		}
 
 		// Increment the count for this index
-		n = get( selectedIndex );
-		set( selectedIndex, n + 1 );
+		n = vec.get( selectedIndex );
+		vec.set( selectedIndex, n + 1 );
 		return selectedIndex + 1;
 	}
 
