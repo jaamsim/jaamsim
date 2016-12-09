@@ -76,7 +76,7 @@ public class TestExpParser {
 			return DimensionlessUnit.class;
 		}
 		@Override
-		public ExpResult getValFromName(String name) throws ExpError {
+		public ExpResult getValFromName(String name, String source, int pos) throws ExpError {
 			return ExpResult.makeNumResult(1, DimensionlessUnit.class);
 		}
 
@@ -453,7 +453,7 @@ public class TestExpParser {
 		}
 
 		@Override
-		public ExpResult getValFromName(String name) throws ExpError {
+		public ExpResult getValFromName(String name, String source, int pos) throws ExpError {
 			if (name.equals("Maps")) {
 				return ExpResult.makeEntityResult(mapEnt);
 			}
@@ -641,7 +641,7 @@ public class TestExpParser {
 				throw new ExpError(null, 0, "Assign not supported");
 			}
 			@Override
-			public ExpResult getValFromName(String name) throws ExpError {
+			public ExpResult getValFromName(String name, String source, int pos) throws ExpError {
 				return null;
 			}
 			@Override

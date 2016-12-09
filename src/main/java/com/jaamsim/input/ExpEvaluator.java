@@ -160,7 +160,7 @@ public class ExpEvaluator {
 		}
 
 		@Override
-		public ExpResult getValFromName(String name) throws ExpError {
+		public ExpResult getValFromName(String name, String source, int pos) throws ExpError {
 			Entity ent;
 			if (name.equals("this"))
 				ent = thisEnt;
@@ -172,7 +172,7 @@ public class ExpEvaluator {
 			}
 
 			if (ent == null) {
-				throw new ExpError(null, 0, "Could not find entity: %s", name);
+				throw new ExpError(source, pos, "Could not find entity: %s", name);
 			}
 
 			return ExpResult.makeEntityResult(ent);
