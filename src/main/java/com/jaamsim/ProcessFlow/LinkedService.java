@@ -21,6 +21,7 @@ import java.util.ArrayList;
 
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleInput;
+import com.jaamsim.Samples.SampleProvider;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.InputAgent;
@@ -114,13 +115,11 @@ public abstract class LinkedService extends LinkedDevice implements QueueUser {
 	 * @return match value.
 	 */
 	protected Integer getNextMatchValue(double simTime) {
-		Integer ret = null;
-		if (match.getValue() != null) {
-			ret = (int) match.getValue().getNextSample(simTime);
-			if (ret == null)
-				error("Cannot evaluate the input to the Match keyword");
-		}
-		return ret;
+		SampleProvider samp = match.getValue();
+		if (samp == null)
+			return null;
+
+		return Integer.valueOf((int)samp.getNextSample(simTime));
 	}
 
 	protected void setMatchValue(Integer m) {
