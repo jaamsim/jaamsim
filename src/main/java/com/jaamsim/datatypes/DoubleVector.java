@@ -327,7 +327,7 @@ public class DoubleVector {
 
 		// Check the number of indices is equal to number of probabilities
 		if( vec.size() != probs.size() ) {
-			throw new ErrorException( "Number of probabilities ("+probs.size()+") does not match the receiver ("+vec.size()+")" );
+			throw new ErrorException("Number of probabilities (%d) does not match the receiver (%d)", probs.size(),	vec.size());
 		}
 
 		// Calculate the total number of samples for this selection
@@ -386,7 +386,7 @@ public class DoubleVector {
 
 		// Check the number of indices is equal to number of probabilities
 		if( vec.size() != probs.size() ) {
-			throw new ErrorException( "Number of probabilities ("+probs.size()+") does not match the receiver ("+vec.size()+")" );
+			throw new ErrorException("Number of probabilities (%d) does not match the receiver (%d)", probs.size(),	vec.size());
 		}
 
 		// Calculate the total number of samples for this selection
@@ -439,7 +439,7 @@ public class DoubleVector {
 
 		// Check the number of indices is equal to number of probabilities
 		if( vec.size() != probs.size() ) {
-			throw new ErrorException( "Number of probabilities ("+probs.size()+") does not match the receiver ("+vec.size()+")" );
+			throw new ErrorException("Number of probabilities (%d) does not match the receiver (%d)", probs.size(),	vec.size());
 		}
 
 		// Calculate the total number of samples for this selection (One more than the sum of the counts so far)
