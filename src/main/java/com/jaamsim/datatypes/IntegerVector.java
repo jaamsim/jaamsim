@@ -240,7 +240,7 @@ public class IntegerVector {
 
 		// Check the number of indices is equal to number of probabilities
 		if( vec.size() != probs.size() ) {
-			throw new ErrorException( "Number of probabilities ("+probs.size()+") does not match the receiver ("+vec.size()+")" );
+			throw new ErrorException("Number of probabilities (%d) does not match the receiver (%d)", probs.size(), vec.size());
 		}
 
 		// Calculate the total number of samples for this selection
