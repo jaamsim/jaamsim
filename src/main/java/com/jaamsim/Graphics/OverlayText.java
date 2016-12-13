@@ -33,6 +33,7 @@ import com.jaamsim.input.StringListInput;
 import com.jaamsim.input.UnitTypeInput;
 import com.jaamsim.input.Vec3dInput;
 import com.jaamsim.units.Unit;
+import com.jaamsim.units.UserSpecifiedUnit;
 
 /**
  * OverylayText displays written text as a 2D overlay on a View window.
@@ -114,7 +115,7 @@ public class OverlayText extends OverlayEntity {
 		formatText = new StringInput("Format", "Key Inputs", "");
 		this.addInput(formatText);
 
-		unitType = new UnitTypeInput("UnitType", "Key Inputs", null);
+		unitType = new UnitTypeInput("UnitType", "Key Inputs", UserSpecifiedUnit.class);
 		this.addInput(unitType);
 
 		unit = new EntityInput<>(Unit.class, "Unit", "Key Inputs", null);
@@ -122,6 +123,8 @@ public class OverlayText extends OverlayEntity {
 		this.addInput(unit);
 
 		dataSource = new StringProvInput("DataSource", "Key Inputs", null);
+		dataSource.setUnitType(UserSpecifiedUnit.class);
+		dataSource.setEntity(this);
 		this.addInput(dataSource);
 		this.addSynonym(dataSource, "OutputName");
 

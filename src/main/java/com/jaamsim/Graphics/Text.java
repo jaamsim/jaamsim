@@ -76,7 +76,7 @@ public class Text extends TextBasics {
 		unitType = new UnitTypeInput("UnitType", "Key Inputs", UserSpecifiedUnit.class);
 		this.addInput(unitType);
 
-		unit = new EntityInput<>( Unit.class, "Unit", "Key Inputs", null);
+		unit = new EntityInput<>(Unit.class, "Unit", "Key Inputs", null);
 		unit.setSubClass(null);
 		this.addInput(unit);
 
