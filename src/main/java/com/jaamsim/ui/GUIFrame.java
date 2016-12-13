@@ -48,7 +48,6 @@ import java.util.regex.Pattern;
 
 import javax.swing.Box;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -135,8 +134,8 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 	private JLabel locatorPos;
 	private JLabel locatorLabel;
 
-	JButton toolButtonIsometric;
-	JButton toolButtonXYPlane;
+	//JButton toolButtonIsometric;
+	private JToggleButton lockViewXYPlane;
 
 	private int lastValue = -1;
 	private JProgressBar progressBar;
@@ -895,36 +894,26 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		mainToolBar.add(pauseTime);
 
 		// 7) 2D button
-		toolButtonXYPlane = new JButton( "2D" );
-		toolButtonXYPlane.setMargin( smallMargin );
-		toolButtonXYPlane.setToolTipText(formatToolTip("2D View",
+		lockViewXYPlane = new JToggleButton( "2D" );
+		lockViewXYPlane.setMargin( smallMargin );
+		lockViewXYPlane.setToolTipText(formatToolTip("2D View",
 				"Sets the camera position to show a bird's eye view of the 3D scene."));
-		toolButtonXYPlane.addActionListener( new ActionListener() {
+		lockViewXYPlane.addActionListener( new ActionListener() {
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				if (RenderManager.isGood())
-					RenderManager.inst().setXYPlaneView();
+				boolean bLock2D = (((JToggleButton)event.getSource()).isSelected());
+
+				if (RenderManager.isGood()) {
+					View currentView = RenderManager.inst().getActiveView();
+					if (currentView != null) {
+						currentView.setLock2D(bLock2D);
+					}
+				}
 			}
 		} );
 		mainToolBar.addSeparator(separatorDim);
-		mainToolBar.add( toolButtonXYPlane );
-
-		// 8) 3D button
-		toolButtonIsometric = new JButton( "3D" );
-		toolButtonIsometric.setMargin( smallMargin );
-		toolButtonIsometric.setToolTipText(formatToolTip("3D View",
-				"Sets the camera position to show an oblique view of the 3D scene."));
-		toolButtonIsometric.addActionListener( new ActionListener() {
-
-			@Override
-			public void actionPerformed( ActionEvent event ) {
-				if (RenderManager.isGood())
-					RenderManager.inst().setIsometricView();
-			}
-		} );
-		mainToolBar.add(Box.createRigidArea(gapDim));
-		mainToolBar.add( toolButtonIsometric );
+		mainToolBar.add( lockViewXYPlane );
 
 		// 8) Show links button
 		showLinks = new JToggleButton(new ImageIcon(GUIFrame.class.getResource("/resources/images/ShowLinks-16.png")));
@@ -1175,6 +1164,11 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		}
 	}
 
+	public static void setActiveView(View activeView) {
+		boolean lock2D = activeView.is2DLocked();
+		instance.lockViewXYPlane.setSelected(lock2D);
+	}
+
 	// ******************************************************************************************************
 	// RUN STATUS UPDATES
 	// ******************************************************************************************************
@@ -1384,8 +1378,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 				controlStartResume.setToolTipText(RUN_TOOLTIP);
 				controlStop.setEnabled( false );
 				controlStop.setSelected( false );
-				toolButtonIsometric.setEnabled( true );
-				toolButtonXYPlane.setEnabled( true );
+				lockViewXYPlane.setEnabled( true );
 				progressBar.setEnabled( false );
 				break;
 
@@ -1407,8 +1400,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 				controlStartResume.setSelected( false );
 				controlStop.setSelected( false );
 				controlStop.setEnabled( false );
-				toolButtonIsometric.setEnabled( true );
-				toolButtonXYPlane.setEnabled( true );
+				lockViewXYPlane.setEnabled( true );
 				progressBar.setEnabled( false );
 				break;
 
@@ -1431,8 +1423,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 				controlStartResume.setToolTipText(RUN_TOOLTIP);
 				controlStop.setSelected( false );
 				controlStop.setEnabled( false );
-				toolButtonIsometric.setEnabled( true );
-				toolButtonXYPlane.setEnabled( true );
+				lockViewXYPlane.setEnabled( true );
 				progressBar.setEnabled( true );
 				break;
 

@@ -52,9 +52,19 @@ public class ColParser {
 
 	private static boolean SHOW_COL_DEBUG = false;
 
+	private static final Effect DEFAULT_EFFECT;
+	private static final String DEFAULT_MATERIAL_NAME = "JaamSimDefaultMaterial";
+
 	private static boolean keepRuntimeData = false;
 	public static void setKeepData(boolean keepData) {
 		keepRuntimeData = keepData;
+	}
+
+	static {
+		DEFAULT_EFFECT = new Effect();
+		DEFAULT_EFFECT.diffuse = new ColorTex();
+		DEFAULT_EFFECT.diffuse.color = new Color4d(0.5, 0.5, 0.5, 1);
+		DEFAULT_EFFECT.transType = MeshData.NO_TRANS;
 	}
 
 	public static MeshData parse(URI asset) throws RenderException {
@@ -376,6 +386,10 @@ public class ColParser {
 	}
 
 	private Effect geoBindingToEffect(Map<String, String> materialMap, String symbol) {
+		if (symbol == DEFAULT_MATERIAL_NAME) {
+			return DEFAULT_EFFECT;
+		}
+
 		String materialId = materialMap.get(symbol);
 		parseAssert(materialId != null);
 
@@ -1210,7 +1224,9 @@ public class ColParser {
 		Vec4d[] posData = getDataArrayFromSource(smd.posDesc.source);
 
 		lsg.materialSymbol = subGeo.getAttrib("material");
-		parseAssert(lsg.materialSymbol != null);
+		if (lsg.materialSymbol == null) {
+			lsg.materialSymbol = DEFAULT_MATERIAL_NAME;
+		}
 
 		for (int i = 0; i < numVerts; ++i) {
 			lsg.verts[i] = posData[smd.posDesc.indices[i]];
@@ -1237,7 +1253,9 @@ public class ColParser {
 		}
 
 		String material = subGeo.getAttrib("material");
-		parseAssert(material != null);
+		if (material == null) {
+			material = DEFAULT_MATERIAL_NAME;
+		}
 
 		smd.material = material;
 

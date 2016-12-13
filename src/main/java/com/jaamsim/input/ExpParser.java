@@ -62,7 +62,7 @@ public class ExpParser {
 		public Class<? extends Unit> multUnitTypes(Class<? extends Unit> a, Class<? extends Unit> b);
 		public Class<? extends Unit> divUnitTypes(Class<? extends Unit> num, Class<? extends Unit> denom);
 
-		public ExpResult getValFromName(String name) throws ExpError;
+		public ExpResult getValFromName(String name, String source, int pos) throws ExpError;
 		public OutputResolver getOutputResolver(String name) throws ExpError;
 		public OutputResolver getConstOutputResolver(ExpResult constEnt, String name) throws ExpError;
 
@@ -152,6 +152,7 @@ public class ExpParser {
 				assigner.assign(ent, index, value);
 
 				return value;
+
 			} finally {
 				synchronized(executingThreads) {
 					executingThreads.remove(Thread.currentThread());
@@ -213,18 +214,28 @@ public class ExpParser {
 			this.entNode = entNode;
 			this.outputName = outputName;
 
-			if (entNode instanceof Constant) {
-				this.resolver = context.getConstOutputResolver(entNode.evaluate(null), outputName);
-			} else {
-				this.resolver = context.getOutputResolver(outputName);
+			try {
+				if (entNode instanceof Constant) {
+					this.resolver = context.getConstOutputResolver(entNode.evaluate(null), outputName);
+				} else {
+					this.resolver = context.getOutputResolver(outputName);
+				}
+			} catch (ExpError ex) {
+				throw (fixError(ex, exp.source, pos));
 			}
+
 		}
 
 		@Override
 		public ExpResult evaluate(EvalContext ec) throws ExpError {
-			ExpResult ent = entNode.evaluate(ec);
+			try {
+				ExpResult ent = entNode.evaluate(ec);
 
-			return resolver.resolve(ec, ent);
+				return resolver.resolve(ec, ent);
+			} catch (ExpError ex) {
+				throw fixError(ex, exp.source, tokenPos);
+			}
+
 		}
 		@Override
 		public ExpValResult validate() {
@@ -234,7 +245,9 @@ public class ExpParser {
 			        entValRes.state == ExpValResult.State.UNDECIDABLE) {
 				return entValRes;
 			}
-			return resolver.validate(entValRes);
+			ExpValResult res =  resolver.validate(entValRes);
+			fixValidationErrors(res, exp.source, tokenPos);
+			return res;
 		}
 
 		@Override
@@ -259,13 +272,17 @@ public class ExpParser {
 
 		@Override
 		public ExpResult evaluate(EvalContext ec) throws ExpError {
-			ExpResult colRes = collection.evaluate(ec);
-			ExpResult indRes = index.evaluate(ec);
+			try {
+				ExpResult colRes = collection.evaluate(ec);
+				ExpResult indRes = index.evaluate(ec);
 
-			if (colRes.type != ExpResType.COLLECTION) {
-				throw new ExpError(exp.source, tokenPos, "Expression does not evaluate to a collection type.");
+				if (colRes.type != ExpResType.COLLECTION) {
+					throw new ExpError(exp.source, tokenPos, "Expression does not evaluate to a collection type.");
+				}
+				return colRes.colVal.index(indRes);
+			} catch (ExpError ex) {
+				throw fixError(ex, exp.source, tokenPos);
 			}
-			return colRes.colVal.index(indRes);
 		}
 		@Override
 		public ExpValResult validate() {
@@ -273,9 +290,11 @@ public class ExpParser {
 			ExpValResult indValRes = index.validate();
 
 			if (colValRes.state == ExpValResult.State.ERROR) {
+				fixValidationErrors(colValRes, exp.source, tokenPos);
 				return colValRes;
 			}
 			if (indValRes.state == ExpValResult.State.ERROR) {
+				fixValidationErrors(indValRes, exp.source, tokenPos);
 				return indValRes;
 			}
 			if (colValRes.state == ExpValResult.State.UNDECIDABLE) {
@@ -332,6 +351,7 @@ public class ExpParser {
 				canSkipRuntimeChecks = true;
 
 			return res;
+
 		}
 
 		@Override
@@ -600,6 +620,22 @@ public class ExpParser {
 
 	}
 
+	// Some errors can be throw without a known source or position, update such errors with the given info
+	private static ExpError fixError(ExpError ex, String source, int pos) {
+		ExpError exFixed = ex;
+		if (ex.source == null) {
+			exFixed = new ExpError(source, pos, ex.getMessage());
+		}
+		return exFixed;
+	}
+
+	private static void fixValidationErrors(ExpValResult res, String source, int pos) {
+		if (res.state == ExpValResult.State.ERROR ) {
+			for (int i = 0; i < res.errors.size(); ++i) {
+				res.errors.set(i, fixError(res.errors.get(i), source, pos));
+			}
+		}
+	}
 
 	///////////////////////////////////////////////////////////
 	// Entries for user definable operators and functions
@@ -2611,7 +2647,7 @@ public class ExpParser {
 
 	private static ExpNode parseVariable(ParseContext context, ExpTokenizer.Token firstName, TokenList tokens, Expression exp, int pos) throws ExpError {
 
-		ExpNode curExp = new Constant(context, context.getValFromName(firstName.value), exp, pos);
+		ExpNode curExp = new Constant(context, context.getValFromName(firstName.value, exp.source, pos), exp, pos);
 		while (true) {
 
 			ExpTokenizer.Token peeked = tokens.peek();

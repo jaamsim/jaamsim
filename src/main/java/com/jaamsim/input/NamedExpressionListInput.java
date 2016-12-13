@@ -17,6 +17,7 @@
 package com.jaamsim.input;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ObjectType;
@@ -83,6 +84,16 @@ public class NamedExpressionListInput extends ListInput<ArrayList<NamedExpressio
 
 		// Save the data for each attribute
 		value = temp;
+	}
+
+	@Override
+	public void copyFrom(Input<?> in) {
+		super.copyFrom(in);
+
+		ArrayList<String> toks = new ArrayList<>(Arrays.asList(valueTokens));
+		KeywordIndex kw = new KeywordIndex(getKeyword(), toks, null);
+
+		parse(kw);
 	}
 
 }

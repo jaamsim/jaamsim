@@ -126,6 +126,11 @@ public class ObjReader {
 
 		finishCurrentMesh();
 
+		MeshData.TreeNode root = new MeshData.TreeNode();
+		root.trans = new MeshData.StaticTrans(new Mat4d());
+
+		data.setTree(root);
+
 		data.finalizeData();
 	}
 
@@ -373,7 +378,7 @@ public class ObjReader {
 			if (tokens.length == 1) return; // Ignore empty tags
 			parseAssert(tokens.length == 2);
 			parseAssert(parsingMat != null);
-			parsingMat.alpha = 1.0 - Double.parseDouble(tokens[1]);
+			parsingMat.alpha = Double.parseDouble(tokens[1]);
 		} else if (tokens[0].equals("map_Kd")) {
 			if (tokens.length == 1) return; // Ignore empty tags
 			parseAssert(tokens.length == 2);
