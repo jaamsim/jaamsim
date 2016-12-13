@@ -37,7 +37,6 @@ public abstract class Device extends StateUserEntity {
 	public void earlyInit() {
 		super.earlyInit();
 
-		this.setBusy(false);
 		duration = 0.0;
 		endTicks = 0L;
 		lastUpdateTime = 0.0d;
@@ -71,6 +70,12 @@ public abstract class Device extends StateUserEntity {
 			return;
 		}
 
+		// Set the state
+		if (!isBusy()) {
+			this.setBusy(true);
+			this.setPresentState();
+		}
+
 		// Set the last update time in case processing is restarting after a stoppage
 		lastUpdateTime = simTime;
 
@@ -89,12 +94,6 @@ public abstract class Device extends StateUserEntity {
 			error("Cannot calculate duration");
 		if (duration == Double.POSITIVE_INFINITY)
 			error("Infinite duration");
-
-		// Set the state
-		if (!isBusy()) {
-			this.setBusy(true);
-			this.setPresentState();
-		}
 
 		// Schedule the completion of the time step
 		stepCompleted = false;
@@ -168,15 +167,15 @@ public abstract class Device extends StateUserEntity {
 	private final void stopProcessing() {
 		if (isTraceFlag()) trace(0, "stopProcessing");
 
-		// Set the process to its stopped condition
-		this.setProcessStopped();
-
 		// Update the state
 		this.setBusy(false);
 		this.setPresentState();
 
 		// Notify other processes that are dependent on this one
 		this.processChanged();
+
+		// Set the process to its stopped condition
+		this.setProcessStopped();
 	}
 
 	/**
@@ -199,8 +198,8 @@ public abstract class Device extends StateUserEntity {
 	/**
 	 * Schedules an update
 	 */
-	protected final void performUnscheduledUpdate() {
-		if (isTraceFlag()) trace(1, "performUnscheduledUpdate");
+	public final void performUnscheduledUpdate() {
+		if (isTraceFlag()) trace(0, "performUnscheduledUpdate");
 
 		if (!unscheduledUpdateHandle.isScheduled()) {
 			EventManager.scheduleTicks(0, 2, false, unscheduledUpdateTarget,

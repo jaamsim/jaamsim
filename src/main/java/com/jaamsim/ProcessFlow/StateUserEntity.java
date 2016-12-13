@@ -129,6 +129,8 @@ public abstract class StateUserEntity extends StateEntity implements ThresholdUs
 	public void earlyInit() {
 		super.earlyInit();
 
+		busy = false;
+
 		this.addState("Idle");
 		this.addState("Working");
 		this.addState("Stopped");
