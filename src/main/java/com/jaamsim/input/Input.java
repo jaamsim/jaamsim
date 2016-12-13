@@ -1504,16 +1504,16 @@ public abstract class Input<T> {
 			} catch (ExpError e) {}
 		}
 
-		// Parse the input as a SampleProvider
-		if (unitType == null) {
-			throw new InputErrorException("A valid unit type must be defined before an expression returning a number can be entered.");
-		}
+		// Parse the input as a SampleProvider object
 		SampleProvider samp = Input.parseSampleExp(kw, thisEnt, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, unitType);
 		return new StringProvSample(samp);
 	}
 
 	public static SampleProvider parseSampleExp(KeywordIndex kw,
 			Entity thisEnt, double minValue, double maxValue, Class<? extends Unit> unitType) {
+
+		if (unitType == UserSpecifiedUnit.class)
+			throw new InputErrorException(INP_ERR_UNITUNSPECIFIED);
 
 		// If there are exactly two inputs, then it must be a number and its unit
 		if (kw.numArgs() == 2) {
@@ -1525,7 +1525,7 @@ public abstract class Input<T> {
 
 		// If there is only one input, it could be a SampleProvider, a dimensionless constant, or an expression
 
-		// 1) Try parsing a SampleProvider
+		// 1) Try parsing a SampleProvider object
 		SampleProvider s = null;
 		try {
 			Entity ent = Input.parseEntity(kw.getArg(0), Entity.class);
@@ -1534,8 +1534,7 @@ public abstract class Input<T> {
 		catch (InputErrorException e) {}
 
 		if (s != null) {
-			if (s.getUnitType() != UserSpecifiedUnit.class)
-				Input.assertUnitsMatch(unitType, s.getUnitType());
+			Input.assertUnitsMatch(unitType, s.getUnitType());
 			return s;
 		}
 
