@@ -57,9 +57,8 @@ public class ExpressionHandle extends OutputHandle {
 			}
 			return er;
 		}
-		catch (ExpError ex) {
-			ent.error(ex.toString());
-			return null;  // never executed
+		catch (ExpError e) {
+			throw new ErrorException(ent, e);
 		}
 	}
 

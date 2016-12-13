@@ -17,6 +17,7 @@
 package com.jaamsim.StringProviders;
 
 import com.jaamsim.basicsim.Entity;
+import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.basicsim.ObjectType;
 import com.jaamsim.input.ExpError;
 import com.jaamsim.input.ExpEvaluator;
@@ -89,7 +90,7 @@ public class StringProvExpression implements StringProvider {
 			}
 		}
 		catch(ExpError e) {
-			thisEnt.error(e.toString());
+			throw new ErrorException(thisEnt, e);
 		}
 		return ret;
 	}

@@ -1936,7 +1936,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 			OutOfMemoryError e = (OutOfMemoryError)t;
 			InputAgent.logMessage("Out of Memory use the -Xmx flag during execution for more memory");
 			InputAgent.logMessage("Further debug information:");
-			InputAgent.logMessage("Error: %s", e.getMessage());
+			InputAgent.logMessage("%s", e.getMessage());
 			InputAgent.logStackTrace(t);
 			GUIFrame.shutdown(1);
 			return;
@@ -1944,15 +1944,16 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		else {
 			double curSec = evt.ticksToSeconds(currentTick);
 			InputAgent.logMessage("EXCEPTION AT TIME: %f s", curSec);
-			InputAgent.logMessage("Error: %s", t.getMessage());
+			InputAgent.logMessage("%s", t.getMessage());
 			InputAgent.logStackTrace(t);
 		}
 
 		GUIFrame.showErrorDialog("Runtime Error",
-		                         "JaamSim has detected the following runtime error condition:\n\n%s\n\n" +
-		                         "Programmers can find more information by opening the Log Viewer.\n" +
-		                         "The simulation run must be stopped before it can be restarted.",
-		                         t.getMessage());
+				"JaamSim has detected the following runtime error condition:",
+				t,
+				"Programmers can find more information by opening the Log Viewer.\n"
+						+ "The simulation run must be reset to zero simulation time before it "
+						+ "can be restarted.");
 	}
 
 	void load() {
@@ -2039,8 +2040,9 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 
 		InputAgent.logMessage("Fatal Error while loading file '%s': %s\n", file.getName(), t.getMessage());
 		GUIFrame.showErrorDialog("Fatal Error",
-		                         "A fatal error has occured while loading the file '%s':\n\n%s",
-		                         file.getName(), t.getMessage());
+				String.format("A fatal error has occured while loading the file '%s':", file.getName()),
+				t.getMessage(),
+				"");
 	}
 
 	/**
@@ -2184,17 +2186,75 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		return false;
 	}
 
-	/**
-	 * Shows the Error Message dialog box
-	 * @param title - text for the dialog box name
-	 * @param fmt - format string for the error message
-	 * @param args - inputs to the error message
-	 */
-	public static void showErrorDialog(String title, String fmt, Object... args) {
-		if (InputAgent.getBatch()) GUIFrame.shutdown(1);
+	private static String getErrorMessage(String source, int position, String pre, String message, String post) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("<html>");
 
-		final String msg = String.format(fmt,  args);
+		// Initial text prior to the message
+		if (!pre.isEmpty()) {
+			sb.append(html_replace(pre)).append("<br><br>");
+		}
+
+		// Error message
+		sb.append(html_replace(message)).append("<br>");
+
+		// Append the source expression and an 'arrow' pointing at the error
+		if (!source.isEmpty()) {
+			sb.append("<pre><font color=\"red\">");
+			sb.append(html_replace(source)).append("<br>");
+			for (int i = 0; i < position; ++i) {
+				sb.append(" ");
+			}
+			sb.append("<b>^</b></font></pre>");
+		}
+
+		// Final text after the message
+		if (!post.isEmpty()) {
+			if (source.isEmpty()) {
+				sb.append("<br>");
+			}
+			sb.append(html_replace(post));
+		}
+
+		sb.append("</html>");
+		return sb.toString();
+	}
+
+	/**
+	 * Displays the Error Message dialog box
+	 * @param title - text for the dialog box name
+	 * @param source - expression that cause the error (if applicable)
+	 * @param position - location of the error in the expression (if applicable)
+	 * @param pre - text to appear prior to the error message
+	 * @param message - error message
+	 * @param post - text to appear after the error message
+	 */
+	public static void showErrorDialog(String title, String source, int position, String pre, String message, String post) {
+		if (InputAgent.getBatch()) GUIFrame.shutdown(1);
+		String msg = GUIFrame.getErrorMessage(source, position, pre, message, post);
 		JOptionPane.showMessageDialog(null, msg, title, JOptionPane.ERROR_MESSAGE);
+	}
+
+	public static void showErrorDialog(String title, String pre, String message, String post) {
+		GUIFrame.showErrorDialog(title, "", -1, pre, message, post);
+	}
+
+	public static void showErrorDialog(String title, String message) {
+		GUIFrame.showErrorDialog(title, "", -1, "", message, "");
+	}
+
+	public static void showErrorDialog(String title, String pre, Throwable t, String post) {
+		if (t instanceof InputErrorException) {
+			InputErrorException e = (InputErrorException)t;
+			GUIFrame.showErrorDialog(title, e.source, e.position, pre, e.getMessage(), post);
+			return;
+		}
+		if (t instanceof ErrorException) {
+			ErrorException e = (ErrorException)t;
+			GUIFrame.showErrorDialog(title, e.source, e.position, pre, e.getMessage(), post);
+			return;
+		}
+		GUIFrame.showErrorDialog(title, "", -1, pre, t.getMessage(), post);
 	}
 
 	/**
@@ -2247,6 +2307,25 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		if (userOption == JOptionPane.YES_OPTION) {
 			InputAgent.applyArgs(Simulation.getInstance(), "ShowLogViewer", "TRUE");
 		}
+	}
+
+	/**
+	 * Shows the Error Message dialog box for the Input Editor
+	 * @param title - text for the dialog box name
+	 * @param pre - text to appear before the error message
+	 * @param e - input error object
+	 * @param post - text to appear after the error message
+	 * @return true if the input is to be re-edited
+	 */
+	public static boolean showErrorEditDialog(String title, String pre, InputErrorException e, String post) {
+		String msg = GUIFrame.getErrorMessage(e.source, e.position,
+				"Input error:",
+				e.getMessage(),
+				"Do you want to continue editing, or reset the input?");
+		String[] options = { "Edit", "Reset" };
+		int reply = JOptionPane.showOptionDialog(null, msg, "Input Error", JOptionPane.OK_CANCEL_OPTION,
+				JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+		return (reply == JOptionPane.OK_OPTION);
 	}
 
 	// ******************************************************************************************************

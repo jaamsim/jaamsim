@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2002-2011 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2016 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -560,10 +561,11 @@ public class Simulation extends Entity {
 				each.validate();
 			}
 			catch (Throwable e) {
-				InputAgent.logMessage("%s: Validation error - %s", each.getName(), e.getMessage());
-				GUIFrame.showErrorDialog("Input Error Detected During Validation",
-				                         "%s: %-70s",
-				                         each.getName(), e.getMessage());
+				InputAgent.logMessage("Validation Error - %s: %s", each.getName(), e.getMessage());
+				GUIFrame.showErrorDialog("Input Error",
+						"JaamSim has detected the following input error during validation:",
+						String.format("%s: %-70s", each.getName(), e.getMessage()),
+						"The error must be corrected before the simulation can be started.");
 
 				GUIFrame.updateForSimState(GUIFrame.SIM_STATE_CONFIGURED);
 				return;

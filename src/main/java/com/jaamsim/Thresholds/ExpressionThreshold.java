@@ -19,6 +19,7 @@ package com.jaamsim.Thresholds;
 
 import com.jaamsim.DisplayModels.ShapeModel;
 import com.jaamsim.basicsim.EntityTarget;
+import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.events.Conditional;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.events.ProcessTarget;
@@ -188,9 +189,8 @@ public class ExpressionThreshold extends Threshold {
 				lastOpenValue = ret;
 			return ret;
 		}
-		catch(ExpError e) {
-			error(e.toString());
-			return false; //never hit, error() will throw
+		catch (ExpError e) {
+			throw new ErrorException(this, e);
 		}
 	}
 

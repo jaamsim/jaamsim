@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2016 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +20,7 @@ package com.jaamsim.ProcessFlow;
 import java.util.ArrayList;
 
 import com.jaamsim.Graphics.DisplayEntity;
+import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.input.AssignmentListInput;
 import com.jaamsim.input.ExpError;
 import com.jaamsim.input.ExpEvaluator;
@@ -57,7 +59,7 @@ public class Assign extends LinkedComponent {
 			try {
 				ExpEvaluator.evaluateExpression(ass, getSimTime());
 			} catch (ExpError err) {
-				error(err.toString());
+				throw new ErrorException(this, err);
 			}
 		}
 

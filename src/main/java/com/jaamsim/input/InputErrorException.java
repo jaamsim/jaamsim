@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2002-2011 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2016 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +21,22 @@ package com.jaamsim.input;
  * Custom exception thrown when an error due to bad input is encountered.
  */
 public class InputErrorException extends RuntimeException {
-	public InputErrorException(String format, Object... args) {
-		super(String.format(format, args));
+
+	public String source;
+	public int position;
+
+	public InputErrorException(int pos, String src, String msg) {
+		super(msg);
+		source = src;
+		position = pos;
 	}
+
+	public InputErrorException(String format, Object... args) {
+		this(-1, "", String.format(format, args));
+	}
+
+	public InputErrorException(ExpError e) {
+		this(e.pos, e.source, e.getMessage());
+	}
+
 }
