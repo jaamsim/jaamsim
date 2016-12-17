@@ -327,6 +327,27 @@ public class ColladaModel extends DisplayModel {
 
 	}
 
+	@Override
+	public void validate() {
+		super.validate();
+
+		// Check that any actions listed in the action list exist in the specified collada file
+		MeshProtoKey meshKey = getCachedMeshKey(colladaFile.getValue());
+		ArrayList<Action.Description> actionDescs = RenderManager.inst().getMeshActions(meshKey, true);
+		ArrayList<Action.Binding> bindings = actions.getValue();
+		for (Action.Binding b : bindings) {
+			boolean found = false;
+			for (Action.Description desc : actionDescs) {
+				if (b.actionName.equals(desc.name)) {
+					found = true;
+				}
+			}
+			if (!found) {
+				error("ColladaModel could not find an action named: %s", b.actionName);
+			}
+		}
+	}
+
 	@Output (name = "Actions")
 	public String getActionsOutput(double simTime) {
 		MeshProtoKey meshKey = getCachedMeshKey(colladaFile.getValue());
