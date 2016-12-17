@@ -350,13 +350,11 @@ public class Queue extends LinkedComponent {
 		this.setReceivedEntity(entry.entity);
 
 		// Check the condition for reneging
-		if (renegeCondition.getValue().getNextSample(simTime) == 0.0d) {
-			this.setReceivedEntity(oldEnt);
+		boolean bool = (renegeCondition.getValue().getNextSample(simTime) == 0.0d);
+		this.setReceivedEntity(oldEnt);
+		if (bool) {
 			return;
 		}
-
-		// Reset the obj entity to the original one
-		this.setReceivedEntity(oldEnt);
 
 		// Remove the entity from the queue and send it to the renege destination
 		this.remove(entry);
