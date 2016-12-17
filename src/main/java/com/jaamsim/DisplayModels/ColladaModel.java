@@ -34,6 +34,7 @@ import com.jaamsim.collada.ColParser;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.input.ActionListInput;
 import com.jaamsim.input.FileInput;
+import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.OutputHandle;
@@ -343,7 +344,9 @@ public class ColladaModel extends DisplayModel {
 				}
 			}
 			if (!found) {
-				error("ColladaModel could not find an action named: %s", b.actionName);
+				throw new InputErrorException("Input to the Action keyword refers to an action "
+						+ "named '%s' that is not specified by the ColladaFile input.",
+						b.actionName);
 			}
 		}
 	}
