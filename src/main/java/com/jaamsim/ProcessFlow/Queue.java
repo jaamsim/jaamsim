@@ -211,14 +211,16 @@ public class Queue extends LinkedComponent {
 		final Integer match;
 		final double timeAdded;
 		final Vec3d orientation;
+		final EventHandle renegeHandle;
 
-		public QueueEntry(DisplayEntity ent, long n, int pri, Integer m, double t, Vec3d orient) {
+		public QueueEntry(DisplayEntity ent, long n, int pri, Integer m, double t, Vec3d orient, EventHandle rh) {
 			entity = ent;
 			entNum = n;
 			priority = pri;
 			match = m;
 			timeAdded = t;
 			orientation = orient;
+			renegeHandle = rh;
 		}
 
 		@Override
@@ -278,7 +280,12 @@ public class Queue extends LinkedComponent {
 		Integer m = null;
 		if (match.getValue() != null)
 			m = Integer.valueOf((int) match.getValue().getNextSample(getSimTime()));
-		QueueEntry entry = new QueueEntry(ent, n, pri, m, getSimTime(), ent.getOrientation());
+
+		EventHandle rh = null;
+		if (renegeTime.getValue() != null)
+			rh = new EventHandle();
+
+		QueueEntry entry = new QueueEntry(ent, n, pri, m, getSimTime(), ent.getOrientation(), rh);
 
 		// Add the entity to the TreeSet of all the entities in the queue
 		boolean bool = itemSet.add(entry);
@@ -320,7 +327,7 @@ public class Queue extends LinkedComponent {
 			double dur = renegeTime.getValue().getNextSample(getSimTime());
 			// Schedule the renege tests in FIFO order so that if two or more entities are added to
 			// the queue at the same time, the one nearest the front of the queue is tested first
-			EventManager.scheduleSeconds(dur, 5, true, new RenegeActionTarget(this, entry), null);
+			EventManager.scheduleSeconds(dur, 5, true, new RenegeActionTarget(this, entry), rh);
 		}
 	}
 
