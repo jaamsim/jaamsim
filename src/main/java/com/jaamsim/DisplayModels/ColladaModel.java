@@ -34,6 +34,7 @@ import com.jaamsim.collada.ColParser;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.input.ActionListInput;
 import com.jaamsim.input.FileInput;
+import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.OutputHandle;
@@ -325,6 +326,29 @@ public class ColladaModel extends DisplayModel {
 
 		return data.getNumSubMeshes();
 
+	}
+
+	@Override
+	public void validate() {
+		super.validate();
+
+		// Check that any actions listed in the action list exist in the specified collada file
+		MeshProtoKey meshKey = getCachedMeshKey(colladaFile.getValue());
+		ArrayList<Action.Description> actionDescs = RenderManager.inst().getMeshActions(meshKey, true);
+		ArrayList<Action.Binding> bindings = actions.getValue();
+		for (Action.Binding b : bindings) {
+			boolean found = false;
+			for (Action.Description desc : actionDescs) {
+				if (b.actionName.equals(desc.name)) {
+					found = true;
+				}
+			}
+			if (!found) {
+				throw new InputErrorException("Input to the Action keyword refers to an action "
+						+ "named '%s' that is not specified by the ColladaFile input.",
+						b.actionName);
+			}
+		}
 	}
 
 	@Output (name = "Actions")
