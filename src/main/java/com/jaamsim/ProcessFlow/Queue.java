@@ -347,10 +347,6 @@ public class Queue extends LinkedComponent {
 
 	public void renegeAction(QueueEntry entry) {
 
-		// Do nothing if the entity has already left the queue
-		if (!itemSet.contains(entry))
-			return;
-
 		// Temporarily set the obj entity to the one that might renege
 		double simTime = this.getSimTime();
 		DisplayEntity oldEnt = this.getReceivedEntity(simTime);
@@ -376,7 +372,7 @@ public class Queue extends LinkedComponent {
 	/**
 	 * Removes a specified entity from the queue
 	 */
-	public DisplayEntity remove(QueueEntry entry) {
+	private DisplayEntity remove(QueueEntry entry) {
 
 		int queueSize = itemSet.size();  // present number of entities in the queue
 		this.updateStatistics(queueSize, queueSize-1);
@@ -385,6 +381,10 @@ public class Queue extends LinkedComponent {
 		boolean found = itemSet.remove(entry);
 		if (!found)
 			error("Cannot find the entry in itemSet.");
+
+		// Kill the renege event
+		if (entry.renegeHandle != null)
+			EventManager.killEvent(entry.renegeHandle);
 
 		// Does the entry have a match value?
 		if (entry.match != null) {
