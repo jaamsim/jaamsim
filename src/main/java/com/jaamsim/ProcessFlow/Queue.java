@@ -211,14 +211,16 @@ public class Queue extends LinkedComponent {
 		final Integer match;
 		final double timeAdded;
 		final Vec3d orientation;
+		final EventHandle renegeHandle;
 
-		public QueueEntry(DisplayEntity ent, long n, int pri, Integer m, double t, Vec3d orient) {
+		public QueueEntry(DisplayEntity ent, long n, int pri, Integer m, double t, Vec3d orient, EventHandle rh) {
 			entity = ent;
 			entNum = n;
 			priority = pri;
 			match = m;
 			timeAdded = t;
 			orientation = orient;
+			renegeHandle = rh;
 		}
 
 		@Override
@@ -278,7 +280,12 @@ public class Queue extends LinkedComponent {
 		Integer m = null;
 		if (match.getValue() != null)
 			m = Integer.valueOf((int) match.getValue().getNextSample(getSimTime()));
-		QueueEntry entry = new QueueEntry(ent, n, pri, m, getSimTime(), ent.getOrientation());
+
+		EventHandle rh = null;
+		if (renegeTime.getValue() != null)
+			rh = new EventHandle();
+
+		QueueEntry entry = new QueueEntry(ent, n, pri, m, getSimTime(), ent.getOrientation(), rh);
 
 		// Add the entity to the TreeSet of all the entities in the queue
 		boolean bool = itemSet.add(entry);
@@ -320,49 +327,42 @@ public class Queue extends LinkedComponent {
 			double dur = renegeTime.getValue().getNextSample(getSimTime());
 			// Schedule the renege tests in FIFO order so that if two or more entities are added to
 			// the queue at the same time, the one nearest the front of the queue is tested first
-			EventManager.scheduleSeconds(dur, 5, true, new RenegeActionTarget(this, ent), null);
+			EventManager.scheduleSeconds(dur, 5, true, new RenegeActionTarget(this, entry), rh);
 		}
 	}
 
 	private static class RenegeActionTarget extends EntityTarget<Queue> {
-		private final DisplayEntity queuedEnt;
+		private final QueueEntry entry;
 
-		RenegeActionTarget(Queue q, DisplayEntity e) {
+		RenegeActionTarget(Queue q, QueueEntry e) {
 			super(q, "renegeAction");
-			queuedEnt = e;
+			entry = e;
 		}
 
 		@Override
 		public void process() {
-			ent.renegeAction(queuedEnt);
+			ent.renegeAction(entry);
 		}
 	}
 
-	public void renegeAction(DisplayEntity ent) {
-
-		// Do nothing if the entity has already left the queue
-		QueueEntry entry = this.getQueueEntry(ent);
-		if (entry == null)
-			return;
+	public void renegeAction(QueueEntry entry) {
 
 		// Temporarily set the obj entity to the one that might renege
 		double simTime = this.getSimTime();
 		DisplayEntity oldEnt = this.getReceivedEntity(simTime);
-		this.setReceivedEntity(ent);
+		this.setReceivedEntity(entry.entity);
 
 		// Check the condition for reneging
-		if (renegeCondition.getValue().getNextSample(simTime) == 0.0d) {
-			this.setReceivedEntity(oldEnt);
+		boolean bool = (renegeCondition.getValue().getNextSample(simTime) == 0.0d);
+		this.setReceivedEntity(oldEnt);
+		if (bool) {
 			return;
 		}
-
-		// Reset the obj entity to the original one
-		this.setReceivedEntity(oldEnt);
 
 		// Remove the entity from the queue and send it to the renege destination
 		this.remove(entry);
 		numberReneged++;
-		renegeDestination.getValue().addEntity(ent);
+		renegeDestination.getValue().addEntity(entry.entity);
 	}
 
 	public DisplayEntity removeEntity(DisplayEntity ent) {
@@ -372,7 +372,7 @@ public class Queue extends LinkedComponent {
 	/**
 	 * Removes a specified entity from the queue
 	 */
-	public DisplayEntity remove(QueueEntry entry) {
+	private DisplayEntity remove(QueueEntry entry) {
 
 		int queueSize = itemSet.size();  // present number of entities in the queue
 		this.updateStatistics(queueSize, queueSize-1);
@@ -381,6 +381,10 @@ public class Queue extends LinkedComponent {
 		boolean found = itemSet.remove(entry);
 		if (!found)
 			error("Cannot find the entry in itemSet.");
+
+		// Kill the renege event
+		if (entry.renegeHandle != null)
+			EventManager.killEvent(entry.renegeHandle);
 
 		// Does the entry have a match value?
 		if (entry.match != null) {

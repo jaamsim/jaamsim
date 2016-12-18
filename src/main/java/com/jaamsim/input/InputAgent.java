@@ -1467,12 +1467,11 @@ public class InputAgent {
 	 * Returns a formated string for the specified output.
 	 * @param out - output
 	 * @param simTime - present simulation time
-	 * @param fmt - format string (may contain additional text)
-	 * @param floatFmt - format string for floating point numbers within an array
-	 * @param factor - divisor to be applied to a numerical value
+	 * @param floatFmt - format string for numerical values
+	 * @param factor - divisor to be applied to numerical values
 	 * @return formated string for the output
 	 */
-	public static String getValueAsString(OutputHandle out, double simTime, String fmt, String floatFmt, double factor) {
+	public static String getValueAsString(OutputHandle out, double simTime, String floatFmt, double factor) {
 		StringBuilder sb = new StringBuilder();
 		String str;
 		String COMMA_SEPARATOR = ", ";
@@ -1482,7 +1481,7 @@ public class InputAgent {
 		// Numeric outputs
 		if (out.isNumericValue()) {
 			double val = out.getValueAsDouble(simTime, Double.NaN);
-			return String.format(fmt, val/factor);
+			return String.format(floatFmt, val/factor);
 		}
 
 		// Vec3d outputs
@@ -1491,7 +1490,7 @@ public class InputAgent {
 			sb.append(vec.x/factor);
 			sb.append(Input.SEPARATOR).append(vec.y/factor);
 			sb.append(Input.SEPARATOR).append(vec.z/factor);
-			return String.format(fmt, sb.toString());
+			return sb.toString();
 		}
 
 		// DoubleVector output
@@ -1506,7 +1505,7 @@ public class InputAgent {
 				}
 			}
 			sb.append("}");
-			return String.format(fmt, sb.toString());
+			return sb.toString();
 		}
 
 		// ArrayList output
@@ -1528,7 +1527,7 @@ public class InputAgent {
 				}
 			}
 			sb.append("}");
-			return String.format(fmt, sb.toString());
+			return sb.toString();
 		}
 
 		// Keyed outputs
@@ -1551,7 +1550,7 @@ public class InputAgent {
 				sb.replace(sb.length()-2, sb.length()-1, "}");
 			else
 				sb.append("}");
-			return String.format(fmt, sb.toString());
+			return sb.toString();
 		}
 
 		if (out.getReturnType() == ExpResult.class) {
@@ -1567,7 +1566,7 @@ public class InputAgent {
 					sb.append("[").append(result.entVal.getName()).append("]");
 				break;
 			case NUMBER:
-				sb.append(String.format("%g", result.value/factor));
+				sb.append(String.format(floatFmt, result.value/factor));
 				break;
 			case COLLECTION:
 				sb.append(result.colVal.getOutputString());
@@ -1577,10 +1576,10 @@ public class InputAgent {
 				sb.append("???");
 				break;
 			}
-			return String.format(fmt, sb.toString());
+			return sb.toString();
 		}
 		// All other outputs
-		return String.format(fmt, out.getValue(simTime, retType));
+		return out.getValue(simTime, retType).toString();
 	}
 
 	/**

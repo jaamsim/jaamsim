@@ -763,7 +763,7 @@ public class Entity {
 			}
 			// Expression based custom outputs
 			else if (out.getReturnType() == ExpResult.class) {
-				String val = InputAgent.getValueAsString(out, simTime, "%s", "%g", factor);
+				String val = InputAgent.getValueAsString(out, simTime, "%s", factor);
 				file.format(OUTPUT_FORMAT,
 						this.getName(), out.getName(), val, unitString);
 			}

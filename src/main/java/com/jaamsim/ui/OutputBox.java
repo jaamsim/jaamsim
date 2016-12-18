@@ -192,7 +192,7 @@ public class OutputBox extends FrameBox {
 
 					// Evaluate the output
 					StringBuilder sb = new StringBuilder();
-					sb.append(InputAgent.getValueAsString(out, simTime, fmt, "%g", factor));
+					sb.append(InputAgent.getValueAsString(out, simTime, fmt, factor));
 
 					// Append the appropriate unit
 					if (ut != Unit.class && ut != DimensionlessUnit.class) {
