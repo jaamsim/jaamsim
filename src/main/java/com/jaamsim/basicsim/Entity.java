@@ -61,6 +61,7 @@ import com.jaamsim.units.UserSpecifiedUnit;
  * event execution.
  */
 public class Entity {
+	private static final JaamSimModel sim = new JaamSimModel();
 	private static AtomicLong entityCount = new AtomicLong(0);
 	private static final ArrayList<Entity> allInstances;
 	private static final HashMap<String, Entity> namedEntities;
