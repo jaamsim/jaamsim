@@ -23,7 +23,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map.Entry;
-import java.util.concurrent.atomic.AtomicLong;
 
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.datatypes.DoubleVector;
@@ -62,9 +61,6 @@ import com.jaamsim.units.UserSpecifiedUnit;
  */
 public class Entity {
 	private static final JaamSimModel sim = new JaamSimModel();
-	private static AtomicLong entityCount = new AtomicLong(0);
-	private static final ArrayList<Entity> allInstances;
-	private static final HashMap<String, Entity> namedEntities;
 
 	private String entityName;
 	private final long entityNumber;
@@ -107,11 +103,6 @@ public class Entity {
 	         exampleList = {"{ TwiceSimTime '2*this.SimTime' TimeUnit } { CargoVolume 'this.Cargo/this.CargoDensity' VolumeUnit }"})
 	public final NamedExpressionListInput namedExpressionInput;
 
-	static {
-		allInstances = new ArrayList<>(100);
-		namedEntities = new HashMap<>(100);
-	}
-
 	{
 		trace = new BooleanInput("Trace", "Key Inputs", false);
 		trace.setHidden(true);
@@ -137,21 +128,17 @@ public class Entity {
 	 * Constructor for entity initializing members.
 	 */
 	public Entity() {
-		entityNumber = getNextID();
-		synchronized(allInstances) {
-			allInstances.add(this);
+		entityNumber = sim.getNextEntityID();
+		synchronized(sim.allInstances) {
+			sim.allInstances.add(this);
 		}
 
 		flags = 0;
 	}
 
-	private static long getNextID() {
-		return entityCount.incrementAndGet();
-	}
-
 	public static ArrayList<? extends Entity> getAll() {
-		synchronized(allInstances) {
-			return allInstances;
+		synchronized(sim.allInstances) {
+			return sim.allInstances;
 		}
 	}
 
@@ -173,8 +160,8 @@ public class Entity {
 	}
 
 	public static Entity idToEntity(long id) {
-		synchronized (allInstances) {
-			for (Entity e : allInstances) {
+		synchronized (sim.allInstances) {
+			for (Entity e : sim.allInstances) {
 				if (e.getEntityNumber() == id) {
 					return e;
 				}
@@ -239,15 +226,15 @@ public class Entity {
 	private static final EntityComparator entityComparator = new EntityComparator();
 
 	public void kill() {
-		synchronized (allInstances) {
-			int index = Collections.binarySearch(allInstances, this, entityComparator);
+		synchronized (sim.allInstances) {
+			int index = Collections.binarySearch(sim.allInstances, this, entityComparator);
 			if (index >= 0)
-				allInstances.remove(index);
+				sim.allInstances.remove(index);
 		}
 		if (!testFlag(FLAG_GENERATED)) {
-			synchronized (namedEntities) {
-				if (namedEntities.get(entityName) == this)
-					namedEntities.remove(entityName);
+			synchronized (sim.namedEntities) {
+				if (sim.namedEntities.get(entityName) == this)
+					sim.namedEntities.remove(entityName);
 
 				entityName = null;
 			}
@@ -271,8 +258,8 @@ public class Entity {
 	public void doEnd() {}
 
 	public static long getEntitySequence() {
-		long seq = (long)allInstances.size() << 32;
-		seq += entityCount.get();
+		long seq = (long)sim.allInstances.size() << 32;
+		seq += sim.entityCount.get();
 		return seq;
 	}
 
@@ -423,8 +410,8 @@ public class Entity {
 	}
 
 	public static Entity getNamedEntity(String name) {
-		synchronized (namedEntities) {
-			return namedEntities.get(name);
+		synchronized (sim.namedEntities) {
+			return sim.namedEntities.get(name);
 		}
 	}
 
@@ -437,10 +424,10 @@ public class Entity {
 			return;
 		}
 
-		synchronized (namedEntities) {
-			namedEntities.remove(entityName);
+		synchronized (sim.namedEntities) {
+			sim.namedEntities.remove(entityName);
 			entityName = newName;
-			namedEntities.put(entityName, this);
+			sim.namedEntities.put(entityName, this);
 		}
 	}
 

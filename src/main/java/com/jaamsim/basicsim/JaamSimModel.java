@@ -16,7 +16,19 @@
  */
 package com.jaamsim.basicsim;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.concurrent.atomic.AtomicLong;
+
 public class JaamSimModel {
+	final AtomicLong entityCount = new AtomicLong(0);
+	final ArrayList<Entity> allInstances = new ArrayList<>(100);
+	final HashMap<String, Entity> namedEntities = new HashMap<>(100);
+
 	public JaamSimModel() {
+	}
+
+	final long getNextEntityID() {
+		return entityCount.incrementAndGet();
 	}
 }
