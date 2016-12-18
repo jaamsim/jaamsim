@@ -195,7 +195,8 @@ public class ColParser {
 
 	private final MeshData _finalData = new MeshData(keepRuntimeData);
 
-	private final HashMap<String, Vec4d[]> _dataSources = new HashMap<>();
+	private final HashMap<String, Vec4d[]> _vec4dSources = new HashMap<>();
+	private final HashMap<String, double[][]> _dataSources = new HashMap<>();
 	private final HashMap<String, String[]> _stringSources = new HashMap<>();
 
 	private XmlNode _colladaNode;
@@ -1221,7 +1222,7 @@ public class ColParser {
 		// Now the SubMeshDesc should be fully populated, and we can actually produce the final triangle arrays
 		LineSubGeo lsg = new LineSubGeo(numVerts);
 
-		Vec4d[] posData = getDataArrayFromSource(smd.posDesc.source);
+		Vec4d[] posData = getVec4dArrayFromSource(smd.posDesc.source);
 
 		lsg.materialSymbol = subGeo.getAttrib("material");
 		if (lsg.materialSymbol == null) {
@@ -1292,11 +1293,11 @@ public class ColParser {
 		// Now the SubMeshDesc should be fully populated, and we can actually produce the final triangle arrays
 		FaceSubGeo fsg = new FaceSubGeo(numVerts);
 
-		Vec4d[] posData = getDataArrayFromSource(smd.posDesc.source);
+		Vec4d[] posData = getVec4dArrayFromSource(smd.posDesc.source);
 
 		Vec4d[] normData = null;
 		if (hasNormal) {
-			normData = getDataArrayFromSource(smd.normDesc.source);
+			normData = getVec4dArrayFromSource(smd.normDesc.source);
 		}
 
 		boolean hasTexCoords = false;
@@ -1307,7 +1308,7 @@ public class ColParser {
 			texSetDesc = smd.texCoordMap.get(smd.usedTexSet);
 			if (texSetDesc != null) {
 				hasTexCoords = true;
-				texCoordData = getDataArrayFromSource(texSetDesc.source);
+				texCoordData = getVec4dArrayFromSource(texSetDesc.source);
 			}
 		}
 
@@ -1715,16 +1716,50 @@ public class ColParser {
 	 * @param id
 	 * @return
 	 */
-	private Vec4d[] getDataArrayFromSource(String id) {
+	private Vec4d[] getVec4dArrayFromSource(String id) {
+		Vec4d[] cached = _vec4dSources.get(id);
+		if (cached != null)
+			return cached;
+
+		double[][] data = getDataArrayFromSource(id);
+
+		// convert to vec4ds
+		Vec4d[] ret = new Vec4d[data.length];
+
+		for (int i = 0; i < data.length; ++i) {
+			double[] ds = data[i];
+			switch (ds.length) {
+			case 1:
+				ret[i] = new Vec4d(ds[0], 0, 0, 1);
+				break;
+			case 2:
+				ret[i] = new Vec4d(ds[0], ds[1], 0, 1);
+				break;
+			case 3:
+				ret[i] = new Vec4d(ds[0], ds[1], ds[2], 1);
+				break;
+			case 4:
+				ret[i] = new Vec4d(ds[0], ds[1], ds[2], ds[3]);
+				break;
+			default:
+				throw new RenderException(String.format("Invalid number of elements in data Vector: %d", ds.length));
+			}
+		}
+		_vec4dSources.put(id, ret);
+		return ret;
+	}
+
+	private double[][] getDataArrayFromSource(String id) {
+
 		// First check the cache
-		Vec4d[] cached = _dataSources.get(id);
+		double[][] cached = _dataSources.get(id);
 		if (cached != null) {
 			return cached;
 		}
 
 		SourceInfo info = getInfoFromSource(id, "float_array");
 
-		Vec4d[] ret = new Vec4d[info.count];
+		double[][] ret = new double[info.count][];
 
 		double[] values = null;
 		try {
@@ -1735,20 +1770,11 @@ public class ColParser {
 
 		int valueOffset = info.offset;
 		for (int i = 0; i < info.count; ++i) {
-			switch(info.stride) {
-			case 1:
-				ret[i] = new Vec4d(values[valueOffset], 0, 0, 1);
-				break;
-			case 2:
-				ret[i] = new Vec4d(values[valueOffset], values[valueOffset+1], 0, 1);
-				break;
-			case 3:
-				ret[i] = new Vec4d(values[valueOffset], values[valueOffset+1], values[valueOffset+2], 1);
-				break;
-			case 4:
-				ret[i] = new Vec4d(values[valueOffset], values[valueOffset+1], values[valueOffset+2], values[valueOffset+3]);
-				break;
+			ret[i] = new double[info.stride];
+			for (int j = 0; j < info.stride; j++) {
+				ret[i][j] = values[valueOffset + j];
 			}
+
 			valueOffset += info.stride;
 		}
 
@@ -1789,7 +1815,13 @@ public class ColParser {
 
 	private AnimCurve buildAnimCurve(AnimSampler samp) {
 		AnimCurve.ColCurve colData = new AnimCurve.ColCurve();
-		colData.in =     getDataArrayFromSource(samp.inputSource);
+
+		double[][] inTemp = getDataArrayFromSource(samp.inputSource);
+		colData.in = new double[inTemp.length];
+		for (int i = 0; i < inTemp.length; ++i) {
+			colData.in[i] = inTemp[i][0];
+		}
+
 		colData.out =    getDataArrayFromSource(samp.outputSource);
 		colData.interp = getStringArrayFromSource(samp.interpSource);
 
@@ -1983,13 +2015,13 @@ public class ColParser {
 			}
 
 			if (act.attachedCurves[0] != null) {
-				ret.x = act.attachedCurves[0].getValueForTime(time).getByInd(act.attachedIndex[0]);
+				ret.x = act.attachedCurves[0].getValueForTime(time)[act.attachedIndex[0]];
 			}
 			if (act.attachedCurves[1] != null) {
-				ret.y = act.attachedCurves[1].getValueForTime(time).getByInd(act.attachedIndex[1]);
+				ret.y = act.attachedCurves[1].getValueForTime(time)[act.attachedIndex[1]];
 			}
 			if (act.attachedCurves[2] != null) {
-				ret.z = act.attachedCurves[2].getValueForTime(time).getByInd(act.attachedIndex[2]);
+				ret.z = act.attachedCurves[2].getValueForTime(time)[act.attachedIndex[2]];
 			}
 			return ret;
 		}
@@ -2014,6 +2046,23 @@ public class ColParser {
 				parseAssert(ret[0] < ret[1]);
 			}
 			return ret;
+		}
+
+		// Return a list of times with (oversample-1) additional points interspersed in each gap
+		protected double[] oversampleTime(double[] originalTimes, int oversample) {
+			double[] times = new double[(originalTimes.length-1)*oversample + 1];
+			for (int i = 0; i < originalTimes.length - 1; ++i) {
+
+				double cur = originalTimes[i];
+				double next = originalTimes[i+1];
+				for (int j = 0; j < oversample; ++j) {
+					double scale = (double)j / (double)oversample;
+					times[i*oversample +j] = cur*(1-scale) + next*scale;
+				}
+			}
+			times[times.length-1] = originalTimes[originalTimes.length-1];
+
+			return times;
 		}
 	}
 
@@ -2156,24 +2205,13 @@ public class ColParser {
 				AnimAction act = eachAction.getValue();
 
 				// Add new sample points because linearly interpolating a rotation matrix usually does not work correctly
-				final int OVERSAMPLE = 4;
-				double[] times = new double[(originalTimes.length-1)*OVERSAMPLE + 1];
-				for (int i = 0; i < originalTimes.length - 1; ++i) {
-
-					double cur = originalTimes[i];
-					double next = originalTimes[i+1];
-					for (int j = 0; j < OVERSAMPLE; ++j) {
-						double scale = (double)j / (double)OVERSAMPLE;
-						times[i*OVERSAMPLE +j] = cur*(1-scale) + next*scale;
-					}
-				}
-				times[times.length-1] = originalTimes[originalTimes.length-1];
+				double[] times = oversampleTime(originalTimes, 4);
 
 				Mat4d[] mats = new Mat4d[times.length];
 				for (int i = 0; i < times.length; ++i) {
 					double animAngle = Math.toRadians(angle);
 					if (act.attachedCurves[3] != null) {
-						animAngle = Math.toRadians(act.attachedCurves[3].getValueForTime(times[i]).getByInd(act.attachedIndex[3]));
+						animAngle = Math.toRadians(act.attachedCurves[3].getValueForTime(times[i])[act.attachedIndex[3]]);
 					}
 
 					Vec3d animAxis = getAnimatedVectAtTime(times[i], actionName);
@@ -2287,12 +2325,48 @@ public class ColParser {
 		}
 		@Override
 		public void attachCurve(AnimCurve curve, String target, String actionName) {
-			// TODO: support this
-			throw new RenderException("Currently do not support animating matrices");
+			if (!target.equals("") || curve.numComponents != 16) {
+				throw new RenderException("Currently only support animating whole matrices");
+			}
+			AnimAction act = actions.get(actionName);
+			if (act != null) {
+				// TODO warn we are over-writing an action here
+			}
+
+			// We only support whole matrix animation and single curve per action currently, so the last curve
+			// bound to an action will dominate
+			act = new AnimAction();
+			act.attachedCurves = new AnimCurve[1];
+			act.attachedCurves[0] = curve;
+			actions.put(actionName, act);
 		}
 		@Override
 		protected Trans toAnimatedTransform() {
-			throw new  RenderException("Do not support animated matrices");
+			Set<String> actionNames = actions.keySet();
+			double[][] timesArray = new double[actionNames.size()][];
+			Mat4d[][] matsArray = new Mat4d[actionNames.size()][];
+			String[] names = new String[actionNames.size()];
+
+			int actionInd = 0;
+			for (Entry<String, AnimAction> eachAction : actions.entrySet()) {
+				String actionName = eachAction.getKey();
+				AnimAction act = eachAction.getValue();
+
+				double[] times = getKeyTimes(actionName);
+				Mat4d[] mats = new Mat4d[times.length];
+				// Fill in the mats
+				for (int i = 0; i < times.length; ++i) {
+					double[] matVals = act.attachedCurves[0].getValueForTime(times[i]);
+					mats[i] = new Mat4d(matVals);
+				}
+
+				names[actionInd] = actionName;
+				timesArray[actionInd] = times;
+				matsArray[actionInd] = mats;
+				actionInd++;
+			}
+
+			return new MeshData.AnimTrans(timesArray, matsArray, names, getStaticMat());
 		}
 	}
 
