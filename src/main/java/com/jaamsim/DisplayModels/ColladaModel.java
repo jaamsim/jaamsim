@@ -332,6 +332,9 @@ public class ColladaModel extends DisplayModel {
 	public void validate() {
 		super.validate();
 
+		if (!RenderManager.isGood())
+			return;
+
 		// Check that any actions listed in the action list exist in the specified collada file
 		MeshProtoKey meshKey = getCachedMeshKey(colladaFile.getValue());
 		ArrayList<Action.Description> actionDescs = RenderManager.inst().getMeshActions(meshKey, true);
