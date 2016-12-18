@@ -23,8 +23,8 @@ import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.StringInput;
 import com.jaamsim.input.UnitTypeInput;
+import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
-import com.jaamsim.units.UserSpecifiedUnit;
 
 /**
  * The "Text" object displays written text within the 3D model universe.  Both fixed and variable text can be displayed.
@@ -73,7 +73,7 @@ public class Text extends TextBasics {
 		formatText = new StringInput("Format", "Key Inputs", "");
 		this.addInput(formatText);
 
-		unitType = new UnitTypeInput("UnitType", "Key Inputs", UserSpecifiedUnit.class);
+		unitType = new UnitTypeInput("UnitType", "Key Inputs", DimensionlessUnit.class);
 		this.addInput(unitType);
 
 		unit = new EntityInput<>(Unit.class, "Unit", "Key Inputs", null);
@@ -81,7 +81,7 @@ public class Text extends TextBasics {
 		this.addInput(unit);
 
 		dataSource = new StringProvInput("DataSource", "Key Inputs", null);
-		dataSource.setUnitType(UserSpecifiedUnit.class);
+		dataSource.setUnitType(DimensionlessUnit.class);
 		dataSource.setEntity(this);
 		this.addInput(dataSource);
 		this.addSynonym(dataSource, "OutputName");
