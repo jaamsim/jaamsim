@@ -31,4 +31,11 @@ public class JaamSimModel {
 	final long getNextEntityID() {
 		return entityCount.incrementAndGet();
 	}
+
+	public final Entity getNamedEntity(String name) {
+		synchronized (namedEntities) {
+			return namedEntities.get(name);
+		}
+	}
+
 }

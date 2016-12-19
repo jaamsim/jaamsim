@@ -410,9 +410,7 @@ public class Entity {
 	}
 
 	public static Entity getNamedEntity(String name) {
-		synchronized (sim.namedEntities) {
-			return sim.namedEntities.get(name);
-		}
+		return sim.getNamedEntity(name);
 	}
 
 	/**
@@ -843,8 +841,8 @@ public class Entity {
 	@Output(name = "Name",
 	 description = "The unique input name for this entity.",
 	    sequence = 0)
-	public String getNameOutput(double simTime) {
-		return entityName;
+	public final String getNameOutput(double simTime) {
+		return getName();
 	}
 
 	@Output(name = "ObjectType",
