@@ -24,7 +24,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public class JaamSimModel {
 	private final AtomicLong entityCount = new AtomicLong(0);
-	final ArrayList<Entity> allInstances = new ArrayList<>(100);
+	private final ArrayList<Entity> allInstances = new ArrayList<>(100);
 	final HashMap<String, Entity> namedEntities = new HashMap<>(100);
 
 	public JaamSimModel() {
@@ -64,6 +64,18 @@ public class JaamSimModel {
         }
      }
 	private static final EntityComparator entityComparator = new EntityComparator();
+
+	public final ArrayList<? extends Entity> getEntities() {
+		synchronized(allInstances) {
+			return allInstances;
+		}
+	}
+
+	void addInstance(Entity e) {
+		synchronized(allInstances) {
+			allInstances.add(e);
+		}
+	}
 
 	void removeInstance(Entity e) {
 		synchronized (allInstances) {

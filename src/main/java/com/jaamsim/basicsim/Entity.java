@@ -127,17 +127,12 @@ public class Entity {
 	 */
 	public Entity() {
 		entityNumber = sim.getNextEntityID();
-		synchronized(sim.allInstances) {
-			sim.allInstances.add(this);
-		}
-
+		sim.addInstance(this);
 		flags = 0;
 	}
 
 	public static ArrayList<? extends Entity> getAll() {
-		synchronized(sim.allInstances) {
-			return sim.allInstances;
-		}
+		return sim.getEntities();
 	}
 
 	public static <T extends Entity> InstanceIterable<T> getInstanceIterator(Class<T> proto){
