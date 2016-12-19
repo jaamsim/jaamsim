@@ -44,4 +44,14 @@ public class JaamSimModel {
 		return seq;
 	}
 
+	public final Entity idToEntity(long id) {
+		synchronized (allInstances) {
+			for (Entity e : allInstances) {
+				if (e.getEntityNumber() == id) {
+					return e;
+				}
+			}
+			return null;
+		}
+	}
 }

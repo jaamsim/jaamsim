@@ -160,14 +160,7 @@ public class Entity {
 	}
 
 	public static Entity idToEntity(long id) {
-		synchronized (sim.allInstances) {
-			for (Entity e : sim.allInstances) {
-				if (e.getEntityNumber() == id) {
-					return e;
-				}
-			}
-			return null;
-		}
+		return sim.idToEntity(id);
 	}
 
 	public void validate() throws InputErrorException {
