@@ -21,7 +21,7 @@ import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class JaamSimModel {
-	final AtomicLong entityCount = new AtomicLong(0);
+	private final AtomicLong entityCount = new AtomicLong(0);
 	final ArrayList<Entity> allInstances = new ArrayList<>(100);
 	final HashMap<String, Entity> namedEntities = new HashMap<>(100);
 
@@ -36,6 +36,12 @@ public class JaamSimModel {
 		synchronized (namedEntities) {
 			return namedEntities.get(name);
 		}
+	}
+
+	public final long getEntitySequence() {
+		long seq = (long)allInstances.size() << 32;
+		seq += entityCount.get();
+		return seq;
 	}
 
 }

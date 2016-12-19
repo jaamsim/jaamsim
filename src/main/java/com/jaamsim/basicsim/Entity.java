@@ -258,9 +258,7 @@ public class Entity {
 	public void doEnd() {}
 
 	public static long getEntitySequence() {
-		long seq = (long)sim.allInstances.size() << 32;
-		seq += sim.entityCount.get();
-		return seq;
+		return sim.getEntitySequence();
 	}
 
 	/**
