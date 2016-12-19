@@ -17,8 +17,6 @@
 package com.jaamsim.basicsim;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -46,24 +44,38 @@ public class JaamSimModel {
 		return seq;
 	}
 
-	public final Entity idToEntity(long id) {
-		synchronized (allInstances) {
-			for (Entity e : allInstances) {
-				if (e.getEntityNumber() == id) {
-					return e;
-				}
+	private final int idToIndex(long id) {
+		int lowIdx = 0;
+		int highIdx = allInstances.size() - 1;
+
+		while (lowIdx <= highIdx) {
+			int testIdx = (lowIdx + highIdx) >>> 1; // Avoid sign extension
+			long testNum = allInstances.get(testIdx).getEntityNumber();
+
+			if (testNum < id) {
+				lowIdx = testIdx + 1;
+				continue;
 			}
-			return null;
+
+			if (testNum > id) {
+				highIdx = testIdx - 1;
+				continue;
+			}
+
+			return testIdx;
 		}
+		return -1;
 	}
 
-	private static class EntityComparator implements Comparator<Entity> {
-		@Override
-        public int compare(Entity e1, Entity e2) {
-			return Long.compare(e1.getEntityNumber(), e2.getEntityNumber());
-        }
-     }
-	private static final EntityComparator entityComparator = new EntityComparator();
+	public final Entity idToEntity(long id) {
+		synchronized (allInstances) {
+			int idx = this.idToIndex(id);
+			if (idx == -1)
+				return null;
+
+			return allInstances.get(idx);
+		}
+	}
 
 	public final ArrayList<? extends Entity> getEntities() {
 		synchronized(allInstances) {
@@ -71,17 +83,18 @@ public class JaamSimModel {
 		}
 	}
 
-	void addInstance(Entity e) {
+	final void addInstance(Entity e) {
 		synchronized(allInstances) {
 			allInstances.add(e);
 		}
 	}
 
-	void removeInstance(Entity e) {
+	final void removeInstance(Entity e) {
 		synchronized (allInstances) {
-			int index = Collections.binarySearch(allInstances, e, entityComparator);
+			int index = idToIndex(e.getEntityNumber());
 			if (index >= 0)
-				allInstances.remove(index);
+				if (e != allInstances.remove(index))
+					throw new ErrorException("Internal Consistency Error - Entity List");
 		}
 	}
 }
