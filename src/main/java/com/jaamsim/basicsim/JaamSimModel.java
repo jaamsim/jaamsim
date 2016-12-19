@@ -17,6 +17,8 @@
 package com.jaamsim.basicsim;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -52,6 +54,22 @@ public class JaamSimModel {
 				}
 			}
 			return null;
+		}
+	}
+
+	private static class EntityComparator implements Comparator<Entity> {
+		@Override
+        public int compare(Entity e1, Entity e2) {
+			return Long.compare(e1.getEntityNumber(), e2.getEntityNumber());
+        }
+     }
+	private static final EntityComparator entityComparator = new EntityComparator();
+
+	void removeInstance(Entity e) {
+		synchronized (allInstances) {
+			int index = Collections.binarySearch(allInstances, e, entityComparator);
+			if (index >= 0)
+				allInstances.remove(index);
 		}
 	}
 }
