@@ -136,15 +136,4 @@ public static final String addQuotes(String str) {
 		sb.append("'");
 	return sb.toString();
 }
-
-/**
- * Remove all commented tokens (starting with the " character)
- * @param tokens
- */
-public static final void removeComments(ArrayList<String> tokens) {
-	for (int i = tokens.size() - 1; i >= 0; i--) {
-		if (tokens.get(i).startsWith("\""))
-			tokens.remove(i);
-	}
-}
 }
