@@ -17,91 +17,67 @@
  */
 package com.jaamsim.ProcessFlow;
 
+import com.jaamsim.BasicObjects.Logger;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.basicsim.FileEntity;
-import com.jaamsim.basicsim.Simulation;
-import com.jaamsim.input.InputAgent;
+import com.jaamsim.input.InterfaceEntityInput;
+import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
-import com.jaamsim.units.TimeUnit;
-import com.jaamsim.units.Unit;
 
-public class EntityLogger extends LinkedComponent {
-	private FileEntity file;
-	private double logTime;
+public class EntityLogger extends Logger implements Linkable {
+
+	@Keyword(description = "The next object to which the processed DisplayEntity is passed.",
+			exampleList = {"Queue1"})
+	protected final InterfaceEntityInput<Linkable> nextComponent;
 
 	{
-		stateAssignment.setHidden(true);
-		defaultEntity.setHidden(true);
+		nextComponent = new InterfaceEntityInput<>(Linkable.class, "NextComponent", "Key Inputs", null);
+		nextComponent.setRequired(true);
+		this.addInput(nextComponent);
 	}
+
+	private DisplayEntity receivedEntity;
 
 	public EntityLogger() {}
 
 	@Override
 	public void earlyInit() {
 		super.earlyInit();
-
-		logTime = 0.0d;
-
-		// Close the file if it is already open
-		if (file != null && Simulation.isFirstRun()) {
-			file.close();
-			file = null;
-		}
-
-		// Create the report file
-		if (file == null) {
-			StringBuilder tmp = new StringBuilder(InputAgent.getReportFileName(InputAgent.getRunName()));
-			tmp.append("-").append(this.getName());
-			tmp.append(".log");
-			file = new FileEntity(tmp.toString());
-		}
-	}
-
-	@Override
-	public void startUp() {
-		super.startUp();
-
-		// Print run number header if multiple runs are to be performed
-		if (Simulation.isMultipleRuns()) {
-			if (!Simulation.isFirstRun())
-				file.format("%n");
-			file.format("%s%n%n", Simulation.getRunHeader());
-		}
-
-		// Print the header information to the file
-		Simulation.getInstance().printReport(file, 0.0d);
+		receivedEntity = null;
 	}
 
 	@Override
 	public void addEntity(DisplayEntity ent) {
-		super.addEntity(ent);
 
-		// Log the entity's outputs
-		file.format("%n");
-		logTime = this.getSimTime();
-		double factor = Unit.getDisplayedUnitFactor(TimeUnit.class);
-		String unitString = Unit.getDisplayedUnit(TimeUnit.class);
-		file.format("%s\t%s\t%s\t%s%n", ent.getName(), "SimTime", logTime/factor, unitString);
-		ent.printReport(file, logTime);
+		receivedEntity = ent;
 
-		// If running in real time mode, empty the file buffer after each entity is logged
-		if (!InputAgent.getBatch() && Simulation.isRealTime())
-			file.flush();
+		// Record the entry in the log
+		this.recordLogEntry(getSimTime());
 
 		// Send the entity to the next element in the chain
-		this.sendToNextComponent(ent);
+		nextComponent.getValue().addEntity(ent);
 	}
 
 	@Override
-	public void doEnd() {
-		super.doEnd();
-		file.flush();
+	protected void printColumnTitles(FileEntity file) {
+		file.format("\t%s", "this.obj");
 	}
 
-	@Output(name = "LogTime",
-	 description = "The simulation time at which the last entity was logged.",
-	    unitType = TimeUnit.class)
-	public double getLogTime(double simTime) {
-		return logTime;
+	@Override
+	protected void printColumnUnits(FileEntity file) {
+		file.format("\t%s", "");
 	}
+
+	@Override
+	protected void recordEntry(FileEntity file, double simTime) {
+		file.format("\t%s", receivedEntity);
+	}
+
+	@Output(name = "obj",
+	 description = "The entity that was received most recently.",
+	    sequence = 0)
+	public DisplayEntity getReceivedEntity(double simTime) {
+		return receivedEntity;
+	}
+
 }
