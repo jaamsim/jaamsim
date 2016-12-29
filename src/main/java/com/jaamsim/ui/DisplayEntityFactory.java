@@ -69,10 +69,10 @@ public class DisplayEntityFactory extends Entity {
 
 		// Create the selected graphics files
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
-            File[] files = chooser.getSelectedFiles();
-            lastDir = chooser.getCurrentDirectory();
-            DisplayEntityFactory.importImageFiles(files);
-        }
+			lastDir = chooser.getCurrentDirectory();
+			File[] files = chooser.getSelectedFiles();
+			DisplayEntityFactory.importImageFiles(files);
+		}
 	}
 
 	/**
@@ -100,10 +100,10 @@ public class DisplayEntityFactory extends Entity {
 
 		// Create the selected graphics files
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
-            File[] files = chooser.getSelectedFiles();
-            lastDir = chooser.getCurrentDirectory();
-            DisplayEntityFactory.import3DFiles(files);
-        }
+			lastDir = chooser.getCurrentDirectory();
+			File[] files = chooser.getSelectedFiles();
+			DisplayEntityFactory.import3DFiles(files);
+		}
 	}
 
 	/**
