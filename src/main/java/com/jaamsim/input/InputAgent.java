@@ -571,7 +571,7 @@ public class InputAgent {
 			throw new ErrorException("Cannot rename an entity that was defined before the RecordEdits command.");
 
 		// Check that the new name is valid
-		if (newName.contains(" ") || newName.contains("\t") || newName.contains("{") || newName.contains("}"))
+		if (!isValidName(newName))
 			throw new ErrorException("Entity names cannot contain spaces, tabs, or braces ({}).");
 
 		// Check that the name has not been used already
