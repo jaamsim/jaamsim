@@ -43,8 +43,6 @@ import com.jaamsim.render.RenderUtils;
  */
 public class DisplayEntityFactory extends Entity {
 
-	private static File lastDir; // Last directory selected by the file chooser
-
 	/**
 	 * Opens a FileDialog for selecting images to import.
 	 *
@@ -53,7 +51,7 @@ public class DisplayEntityFactory extends Entity {
 	public static void importImages(GUIFrame gui) {
 
 		// Create a file chooser
-		final JFileChooser chooser = new JFileChooser(lastDir);
+		final JFileChooser chooser = new JFileChooser(GUIFrame.getImageFolder());
 		chooser.setMultiSelectionEnabled(true);
 
 		// Set the file extension filters
@@ -69,8 +67,8 @@ public class DisplayEntityFactory extends Entity {
 
 		// Create the selected graphics files
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
-			lastDir = chooser.getCurrentDirectory();
 			File[] files = chooser.getSelectedFiles();
+			GUIFrame.setImageFolder(files[0].getParent());
 			DisplayEntityFactory.importImageFiles(files);
 		}
 	}
@@ -83,7 +81,7 @@ public class DisplayEntityFactory extends Entity {
 	public static void import3D(GUIFrame gui) {
 
 		// Create a file chooser
-		final JFileChooser chooser = new JFileChooser(lastDir);
+		final JFileChooser chooser = new JFileChooser(GUIFrame.get3DFolder());
 		chooser.setMultiSelectionEnabled(true);
 
 		// Set the file extension filters
@@ -100,8 +98,8 @@ public class DisplayEntityFactory extends Entity {
 
 		// Create the selected graphics files
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
-			lastDir = chooser.getCurrentDirectory();
 			File[] files = chooser.getSelectedFiles();
+			GUIFrame.set3DFolder(files[0].getParent());
 			DisplayEntityFactory.import3DFiles(files);
 		}
 	}
