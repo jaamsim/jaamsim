@@ -17,6 +17,7 @@
 package com.jaamsim.render;
 
 import java.net.URISyntaxException;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -26,6 +27,7 @@ import com.jaamsim.MeshFiles.MeshData;
 import com.jaamsim.MeshFiles.MeshReader;
 import com.jaamsim.MeshFiles.ObjReader;
 import com.jaamsim.collada.ColParser;
+import com.jaamsim.ui.GUIFrame;
 import com.jaamsim.ui.LogBox;
 
 public class MeshDataCache {
@@ -97,7 +99,11 @@ public class MeshDataCache {
 				assert(false);
 			}
 		} catch (Exception ex) {
-			LogBox.formatRenderLog("Could not load mesh: %s \n Error: %s\n", key.getURI().toString(), ex.getMessage());
+			String path = Paths.get(key.getURI()).toString();  // decode %20 as blank character
+			GUIFrame.invokeErrorDialog("3D Loader Error",
+					"Could not load 3D data file:\n %s \n\n %s",
+					path, ex.getMessage());
+			LogBox.formatRenderLog("Could not load 3D data file: %s\nError: %s\n", path, ex.getMessage());
 			synchronized (badMeshSet) {
 				badMeshSet.add(key);
 				return getBadMesh();
