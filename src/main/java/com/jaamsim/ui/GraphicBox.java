@@ -69,7 +69,6 @@ public class GraphicBox extends JDialog {
 	final ImageIcon previewIcon = new ImageIcon();
 	private static DisplayEntity currentEntity;
 	private final static JList<DisplayModel> displayModelList; // All defined DisplayModels
-	private File lastDir;  // last directory accessed by the file chooser
 
 	private final JCheckBox useModelSize;
 	private final JCheckBox useModelPosition;
@@ -150,7 +149,7 @@ public class GraphicBox extends JDialog {
 				}
 
 				// Create a file chooser
-				final JFileChooser chooser = new JFileChooser(lastDir);
+				final JFileChooser chooser = new JFileChooser(GUIFrame.get3DFolder());
 
 				// Set the file extension filters
 				chooser.setAcceptAllFileFilterUsed(false);
@@ -171,8 +170,8 @@ public class GraphicBox extends JDialog {
 
 				// Create the selected graphics files
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
-		            File f = chooser.getSelectedFile();
-		            lastDir = chooser.getCurrentDirectory();
+					File f = chooser.getSelectedFile();
+					GUIFrame.set3DFolder(f.getParent());
 
 					// Determine the file name and extension
 					String fileName = f.getName();
