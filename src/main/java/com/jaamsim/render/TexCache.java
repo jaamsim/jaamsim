@@ -27,6 +27,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -37,6 +38,7 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
 
+import com.jaamsim.ui.GUIFrame;
 import com.jaamsim.ui.LogBox;
 import com.jogamp.opengl.GL2GL3;
 import com.jogamp.opengl.GLException;
@@ -197,7 +199,10 @@ public class TexCache {
 		Dimension dim = getImageDimension(imageURI);
 		if (dim == null) {
 			// Could not load image
-			LogBox.formatRenderLog("Could not load image URL: %s\n", imageURI.toString());
+			String path = Paths.get(imageURI).toString();  // decode %20 as blank character
+			GUIFrame.invokeErrorDialog("3D Loader Error",
+					"Could not load texture file:\n %s", path);
+			LogBox.formatRenderLog("Could not load texture file: %s\n", path);
 			return null;
 		}
 
