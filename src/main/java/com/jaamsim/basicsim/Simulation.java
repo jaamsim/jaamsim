@@ -518,6 +518,20 @@ public class Simulation extends Entity {
 		}
 	}
 
+	@Override
+	public void validate() {
+		super.validate();
+
+		double maxRunDuration = Long.MAX_VALUE*tickLengthInput.getValue();
+		if (runDuration.getValue() > maxRunDuration) {
+			throw new ErrorException("RunDuration exceeds the maximum value of %g seconds.\n"
+					+ "Received: %g seconds.\n"
+					+ "The maximum value can be increased by increasing the TickLength input.\n"
+					+ "Present value: %g seconds.",
+					maxRunDuration, runDuration.getValue(), tickLengthInput.getValue());
+		}
+	}
+
 	/**
 	 * Clears the Simulation prior to loading a new model
 	 */
