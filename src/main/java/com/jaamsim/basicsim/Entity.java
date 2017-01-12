@@ -18,12 +18,9 @@
 package com.jaamsim.basicsim;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map.Entry;
-import java.util.concurrent.atomic.AtomicLong;
 
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.datatypes.DoubleVector;
@@ -61,9 +58,7 @@ import com.jaamsim.units.UserSpecifiedUnit;
  * event execution.
  */
 public class Entity {
-	private static AtomicLong entityCount = new AtomicLong(0);
-	private static final ArrayList<Entity> allInstances;
-	private static final HashMap<String, Entity> namedEntities;
+	private static final JaamSimModel sim = new JaamSimModel();
 
 	private String entityName;
 	private final long entityNumber;
@@ -106,11 +101,6 @@ public class Entity {
 	         exampleList = {"{ TwiceSimTime '2*this.SimTime' TimeUnit } { CargoVolume 'this.Cargo/this.CargoDensity' VolumeUnit }"})
 	public final NamedExpressionListInput namedExpressionInput;
 
-	static {
-		allInstances = new ArrayList<>(100);
-		namedEntities = new HashMap<>(100);
-	}
-
 	{
 		trace = new BooleanInput("Trace", "Key Inputs", false);
 		trace.setHidden(true);
@@ -136,22 +126,13 @@ public class Entity {
 	 * Constructor for entity initializing members.
 	 */
 	public Entity() {
-		entityNumber = getNextID();
-		synchronized(allInstances) {
-			allInstances.add(this);
-		}
-
+		entityNumber = sim.getNextEntityID();
+		sim.addInstance(this);
 		flags = 0;
 	}
 
-	private static long getNextID() {
-		return entityCount.incrementAndGet();
-	}
-
 	public static ArrayList<? extends Entity> getAll() {
-		synchronized(allInstances) {
-			return allInstances;
-		}
+		return sim.getEntities();
 	}
 
 	public static <T extends Entity> InstanceIterable<T> getInstanceIterator(Class<T> proto){
@@ -172,14 +153,7 @@ public class Entity {
 	}
 
 	public static Entity idToEntity(long id) {
-		synchronized (allInstances) {
-			for (Entity e : allInstances) {
-				if (e.getEntityNumber() == id) {
-					return e;
-				}
-			}
-			return null;
-		}
+		return sim.idToEntity(id);
 	}
 
 	public void validate() throws InputErrorException {
@@ -228,34 +202,20 @@ public class Entity {
 	 */
 	public void setInputsForDragAndDrop() {}
 
-	private static class EntityComparator implements Comparator<Entity> {
-		@Override
-        public int compare(Entity e1, Entity e2) {
-			return Long.compare(e1.getEntityNumber(), e2.getEntityNumber());
-        }
-     }
-
-	private static final EntityComparator entityComparator = new EntityComparator();
 
 	public void kill() {
-		synchronized (allInstances) {
-			int index = Collections.binarySearch(allInstances, this, entityComparator);
-			if (index >= 0)
-				allInstances.remove(index);
-		}
+		sim.removeInstance(this);
 		if (!testFlag(FLAG_GENERATED)) {
-			synchronized (namedEntities) {
-				if (namedEntities.get(entityName) == this)
-					namedEntities.remove(entityName);
+			synchronized (sim.namedEntities) {
+				if (sim.namedEntities.get(entityName) == this)
+					sim.namedEntities.remove(entityName);
 
 				entityName = null;
 			}
-		}
 
-		setFlag(FLAG_DEAD);
+			setFlag(FLAG_DEAD);
 
-		// Remove any references to the deleted entity from the inputs to other entities
-		if (!testFlag(FLAG_GENERATED)) {
+			// Remove any references to the deleted entity from the inputs to other entities
 			for (Entity ent : Entity.getClonesOfIterator(Entity.class)) {
 				for (Input<?> in : ent.getEditableInputs()) {
 					in.removeReferences(this);
@@ -270,9 +230,7 @@ public class Entity {
 	public void doEnd() {}
 
 	public static long getEntitySequence() {
-		long seq = (long)allInstances.size() << 32;
-		seq += entityCount.get();
-		return seq;
+		return sim.getEntitySequence();
 	}
 
 	/**
@@ -422,9 +380,7 @@ public class Entity {
 	}
 
 	public static Entity getNamedEntity(String name) {
-		synchronized (namedEntities) {
-			return namedEntities.get(name);
-		}
+		return sim.getNamedEntity(name);
 	}
 
 	/**
@@ -436,10 +392,10 @@ public class Entity {
 			return;
 		}
 
-		synchronized (namedEntities) {
-			namedEntities.remove(entityName);
+		synchronized (sim.namedEntities) {
+			sim.namedEntities.remove(entityName);
 			entityName = newName;
-			namedEntities.put(entityName, this);
+			sim.namedEntities.put(entityName, this);
 		}
 	}
 
@@ -855,8 +811,8 @@ public class Entity {
 	@Output(name = "Name",
 	 description = "The unique input name for this entity.",
 	    sequence = 0)
-	public String getNameOutput(double simTime) {
-		return entityName;
+	public final String getNameOutput(double simTime) {
+		return getName();
 	}
 
 	@Output(name = "ObjectType",

@@ -451,29 +451,33 @@ public class InputAgent {
 		}
 	}
 
+	private static <T extends Entity> T createInstance(Class<T> proto) {
+		T ent = null;
+		try {
+			ent = proto.newInstance();
+		}
+		catch (Throwable e) {}
+
+		return ent;
+	}
+
 	public static <T extends Entity> T generateEntityWithName(Class<T> proto, String key) {
 		if (key != null && !isValidName(key)) {
 			InputAgent.logError("Entity names cannot contain spaces, tabs, { or }: %s", key);
 			return null;
 		}
 
-		T ent = null;
-		try {
-			ent = proto.newInstance();
-			ent.setFlag(Entity.FLAG_GENERATED);
-			if (key != null)
-				ent.setName(key);
-			else
-				ent.setName(proto.getSimpleName() + "-" + ent.getEntityNumber());
+		T ent = createInstance(proto);
+		if (ent == null) {
+			InputAgent.logError("Could not create new Entity: %s", key);
+			return null;
 		}
-		catch (InstantiationException e) {}
-		catch (IllegalAccessException e) {}
-		finally {
-			if (ent == null) {
-				InputAgent.logError("Could not create new Entity: %s", key);
-				return null;
-			}
-		}
+		ent.setFlag(Entity.FLAG_GENERATED);
+		if (key != null)
+			ent.setName(key);
+		else
+			ent.setName(proto.getSimpleName() + "-" + ent.getEntityNumber());
+
 		return ent;
 	}
 
@@ -534,21 +538,15 @@ public class InputAgent {
 			return null;
 		}
 
-		T ent = null;
-		try {
-			ent = proto.newInstance();
-			if (addedEntity) {
-				ent.setFlag(Entity.FLAG_ADDED);
-				sessionEdited = true;
-			}
+		T ent = createInstance(proto);
+		if (ent == null) {
+			InputAgent.logError("Could not create new Entity: %s", key);
+			return null;
 		}
-		catch (InstantiationException e) {}
-		catch (IllegalAccessException e) {}
-		finally {
-			if (ent == null) {
-				InputAgent.logError("Could not create new Entity: %s", key);
-				return null;
-			}
+
+		if (addedEntity) {
+			ent.setFlag(Entity.FLAG_ADDED);
+			sessionEdited = true;
 		}
 
 		ent.setName(key);
@@ -571,7 +569,7 @@ public class InputAgent {
 			throw new ErrorException("Cannot rename an entity that was defined before the RecordEdits command.");
 
 		// Check that the new name is valid
-		if (newName.contains(" ") || newName.contains("\t") || newName.contains("{") || newName.contains("}"))
+		if (!isValidName(newName))
 			throw new ErrorException("Entity names cannot contain spaces, tabs, or braces ({}).");
 
 		// Check that the name has not been used already
