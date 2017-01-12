@@ -28,6 +28,7 @@ import com.jaamsim.units.Unit;
  */
 public class KeyInput<K1 extends Entity, V> extends Input<V> {
 	private Class<? extends Unit> unitType = DimensionlessUnit.class; // for when V is a SampleProvider
+	private Entity thisEnt;
 
 	protected double minValue = Double.NEGATIVE_INFINITY;
 	protected double maxValue = Double.POSITIVE_INFINITY;
@@ -57,6 +58,10 @@ public class KeyInput<K1 extends Entity, V> extends Input<V> {
 
 	public void setUnitType(Class<? extends Unit> u) {
 		unitType = u;
+	}
+
+	public void setEntity(Entity ent) {
+		thisEnt = ent;
 	}
 
 	@Override
