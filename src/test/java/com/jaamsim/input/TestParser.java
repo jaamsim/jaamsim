@@ -53,6 +53,10 @@ public void testTokenize() {
 	tok.clear();
 	Parser.tokenize(tok, "'OBJECT''KEYWORD''   ");
 	tokenMatch(tok, "OBJECT", "KEYWORD", "   ");
+
+	tok.clear();
+	Parser.tokenize(tok, "'OBJECT\"{#}''KEYWORD''   'a\"bcd ");
+	tokenMatch(tok, "OBJECT\"{#}", "KEYWORD", "   ", "a", "\"bcd ");
 }
 
 private static void validateTokens(ArrayList<String> toks) {
