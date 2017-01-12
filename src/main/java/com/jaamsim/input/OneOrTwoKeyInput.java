@@ -88,12 +88,12 @@ public class OneOrTwoKeyInput<K1 extends Entity, K2 extends Entity, V> extends I
 		}
 
 		if( ent1 == null ) {
-			noKeyValue = Input.parse( input, thisEnt, valClass, minValue, maxValue, minCount, maxCount, unitType );
+			noKeyValue = KeyInput.parse( input, thisEnt, valClass, minValue, maxValue, minCount, maxCount, unitType );
 			return;
 		}
 
 		// Determine the keys
-		ArrayList<K1> list = Input.parseEntityList(input.subList(0, 1), key1Class, true);
+		ArrayList<K1> list = KeyInput.parseEntityList(input.subList(0, 1), key1Class, true);
 		ArrayList<K2> list2;
 
 		// If ent2 is null, assume the line is of the form <Key1> <Value>
@@ -119,7 +119,7 @@ public class OneOrTwoKeyInput<K1 extends Entity, K2 extends Entity, V> extends I
 		}
 
 		// Determine the value
-		V val = Input.parse( input.subList(numKeys,input.size()), thisEnt, valClass, minValue, maxValue, minCount, maxCount, unitType );
+		V val = KeyInput.parse( input.subList(numKeys,input.size()), thisEnt, valClass, minValue, maxValue, minCount, maxCount, unitType );
 
 		// Set the value for the given keys
 		for( int i = 0; i < list.size(); i++ ) {

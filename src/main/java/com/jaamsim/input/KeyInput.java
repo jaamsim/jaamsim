@@ -18,10 +18,17 @@ package com.jaamsim.input;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
+import com.jaamsim.Samples.SampleConstant;
+import com.jaamsim.Samples.SampleExpression;
+import com.jaamsim.Samples.SampleProvider;
 import com.jaamsim.basicsim.Entity;
+import com.jaamsim.datatypes.DoubleVector;
+import com.jaamsim.datatypes.IntegerVector;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
+import com.jaamsim.units.UserSpecifiedUnit;
 
 /**
  * Class KeyInput for storing objects of class V (e.g. Double or DoubleVector), with an optional key of class K1
@@ -64,6 +71,80 @@ public class KeyInput<K1 extends Entity, V> extends Input<V> {
 		thisEnt = ent;
 	}
 
+	static <T> T parse(List<String> data, Entity thisEnt, Class<T> aClass, double minValue, double maxValue, int minCount, int maxCount, Class<? extends Unit> unitType) {
+
+		if( aClass == Double.class ) {
+			DoubleVector tmp = Input.parseDoubles(data, minValue, maxValue, unitType);
+			Input.assertCount(tmp, 1);
+			return aClass.cast( tmp.get(0));
+		}
+
+		if( aClass == DoubleVector.class ) {
+			DoubleVector tmp = Input.parseDoubles(data, minValue, maxValue, unitType);
+			Input.assertCountRange(tmp, minCount, maxCount);
+			return aClass.cast( tmp );
+		}
+
+		if( Entity.class.isAssignableFrom(aClass) ) {
+			Class<? extends Entity> temp = aClass.asSubclass(Entity.class);
+			Input.assertCount(data, 1, 1);
+			return aClass.cast( Input.parseEntity(data.get(0), temp) );
+		}
+
+		if( aClass == Boolean.class ) {
+			Input.assertCount(data, 1);
+			Boolean value = Boolean.valueOf(Input.parseBoolean(data.get(0)));
+			return aClass.cast(value);
+		}
+
+		if( aClass == Integer.class ) {
+			Input.assertCount(data, 1);
+			Integer value = Input.parseInteger(data.get( 0 ), (int)minValue, (int)maxValue);
+			return aClass.cast(value);
+		}
+
+		if( aClass == SampleProvider.class ) {
+
+			// Try to parse as a constant value
+			try {
+				DoubleVector tmp = Input.parseDoubles(data, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, unitType);
+				Input.assertCount(tmp, 1);
+				return aClass.cast( new SampleConstant(unitType, tmp.get(0)) );
+			}
+			catch (InputErrorException e) {}
+
+			// Try parsing a SampleProvider
+			try {
+				Input.assertCount(data, 1);
+				Entity ent = Input.parseEntity(data.get(0), Entity.class);
+				SampleProvider s = Input.castImplements(ent, SampleProvider.class);
+				if( s.getUnitType() != UserSpecifiedUnit.class )
+					Input.assertUnitsMatch(unitType, s.getUnitType());
+				return aClass.cast(s);
+			}
+			catch (InputErrorException e) {}
+
+			// Try parsing an expression
+			try {
+				String expString = data.get(0);
+				return aClass.cast( new SampleExpression(expString, thisEnt, unitType) );
+			}
+			catch (ExpError e) {
+				throw new InputErrorException(e.toString());
+			}
+		}
+
+		if( aClass == IntegerVector.class ) {
+			IntegerVector value = Input.parseIntegerVector(data, (int)minValue, (int)maxValue);
+			if (value.size() < minCount || value.size() > maxCount)
+				throw new InputErrorException(INP_ERR_RANGECOUNT, minCount, maxCount, data);
+			return aClass.cast(value);
+		}
+
+		// TODO - parse other classes
+		throw new InputErrorException("%s is not supported for parsing yet", aClass);
+	}
+
 	@Override
 	public void parse(KeywordIndex kw)
 	throws InputErrorException {
@@ -80,7 +161,7 @@ public class KeyInput<K1 extends Entity, V> extends Input<V> {
 		Entity ent = Input.tryParseEntity( input.get( 0 ), Entity.class );
 		if( ent == null || input.size() == 1 ) {
 			try {
-				noKeyValue = Input.parse( input, thisEnt, valClass, minValue,maxValue, minCount, maxCount, unitType );
+				noKeyValue = KeyInput.parse( input, thisEnt, valClass, minValue,maxValue, minCount, maxCount, unitType );
 				return;
 			}
 			catch (InputErrorException e) {
@@ -93,7 +174,7 @@ public class KeyInput<K1 extends Entity, V> extends Input<V> {
 		ArrayList<K1> list = Input.parseEntityList(input.subList(0, 1), keyClass, true);
 
 		// Determine the value
-		V val = Input.parse( input.subList(1,input.size()), thisEnt, valClass, minValue, maxValue, minCount, maxCount, unitType );
+		V val = KeyInput.parse( input.subList(1,input.size()), thisEnt, valClass, minValue, maxValue, minCount, maxCount, unitType );
 
 		// Set the value for the given keys
 		for( int i = 0; i < list.size(); i++ ) {
