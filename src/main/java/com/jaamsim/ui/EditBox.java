@@ -629,7 +629,7 @@ implements ActionListener {
 
 		// break the value into single options
 		tokens.clear();
-		Parser.tokenize(tokens, text.getText());
+		Parser.tokenize(tokens, text.getText(), true);
 		if( !caseSensitive ) {
 			for(i = 0; i < tokens.size(); i++ ) {
 				tokens.set(i, tokens.get(i).toUpperCase() );

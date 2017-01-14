@@ -1505,7 +1505,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 				str = Parser.addQuotes(str);
 
 		ArrayList<String> tokens = new ArrayList<>();
-		Parser.tokenize(tokens, str);
+		Parser.tokenize(tokens, str, true);
 		// if we only got one token, and it isn't RFC8601 - add a unit
 		if (tokens.size() == 1 && !tokens.get(0).contains("-") && !tokens.get(0).contains(":"))
 			tokens.add(Unit.getDisplayedUnit(TimeUnit.class));

@@ -27,18 +27,6 @@ public class Parser {
  *
  * @param tokens list of String tokens to append to
  * @param rec record to tokenize and append
- */
-public static final void tokenize(ArrayList<String> tokens, String rec) {
-	tokenize(tokens, rec, false);
-}
-
-/**
- * Tokenize the given record and append to the given list of tokens
- *
- * Valid delimiter characters are space, tab and comma.
- *
- * @param tokens list of String tokens to append to
- * @param rec record to tokenize and append
  * @param stripComments if true, do not append any commented tokens
  */
 public static final void tokenize(ArrayList<String> tokens, String rec, boolean stripComments) {
