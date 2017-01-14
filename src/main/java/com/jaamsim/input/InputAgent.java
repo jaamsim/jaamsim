@@ -1011,10 +1011,6 @@ public class InputAgent {
 			String tok = tokens.get(i);
 			logFile.write(tok);
 			beginLine = false;
-			if (tok.startsWith("\"")) {
-				logFile.newLine();
-				beginLine = true;
-			}
 		}
 		// If there were any leftover string written out, make sure the line gets terminated
 		if (!beginLine)

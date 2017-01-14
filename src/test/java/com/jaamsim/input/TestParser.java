@@ -31,32 +31,36 @@ public void testTokenize() {
 
 	// Test the basic delimiter handling, runs of [ ,\t] are one delimiter
 	tok.clear();
-	Parser.tokenize(tok, "A A,A\tA  A,,A\t\tA ,\tA", true);
+	Parser.tokenize(tok, "A A,A\tA  A,,A\t\tA ,\tA", false);
 	tokenMatch(tok, "A", "A,A", "A", "A,,A", "A", ",", "A");
 
 	tok.clear();
-	Parser.tokenize(tok, " A A,A\tA  A,,A\t\tA ,\tA\t,  ", true);
+	Parser.tokenize(tok, " A A,A\tA  A,,A\t\tA ,\tA\t,  ", false);
 	tokenMatch(tok, "A", "A,A", "A", "A,,A", "A", ",", "A", ",");
 
 	tok.clear();
-	Parser.tokenize(tok, "OBJECT KEYWORD{ ARG}KEYWORD\t{ARG ARG,}", true);
+	Parser.tokenize(tok, "OBJECT KEYWORD{ ARG}KEYWORD\t{ARG ARG,}", false);
 	tokenMatch(tok, "OBJECT", "KEYWORD", "{", "ARG", "}", "KEYWORD", "{", "ARG", "ARG,", "}");
 
 	tok.clear();
-	Parser.tokenize(tok, "OBJECT KEYWORD{ 'ARG  '}KEYWORD\t{ARG' ARG',}", true);
+	Parser.tokenize(tok, "OBJECT KEYWORD{ 'ARG  '}KEYWORD\t{ARG' ARG',}", false);
 	tokenMatch(tok, "OBJECT", "KEYWORD", "{", "ARG  ", "}", "KEYWORD", "{", "ARG", " ARG", ",", "}");
 
 	tok.clear();
-	Parser.tokenize(tok, "OBJECT KEYWORD{ ARG }\"FOO ,\t     ", true);
+	Parser.tokenize(tok, "OBJECT KEYWORD{ ARG }\"FOO ,\t     ", false);
 	tokenMatch(tok, "OBJECT", "KEYWORD", "{", "ARG", "}", "\"FOO ,\t     ");
 
 	tok.clear();
-	Parser.tokenize(tok, "'OBJECT''KEYWORD''   ", true);
+	Parser.tokenize(tok, "'OBJECT''KEYWORD''   ", false);
 	tokenMatch(tok, "OBJECT", "KEYWORD", "   ");
 
 	tok.clear();
-	Parser.tokenize(tok, "'OBJECT\"{#}''KEYWORD''   'a\"bcd ", true);
+	Parser.tokenize(tok, "'OBJECT\"{#}''KEYWORD''   'a\"bcd ", false);
 	tokenMatch(tok, "OBJECT\"{#}", "KEYWORD", "   ", "a", "\"bcd ");
+
+	tok.clear();
+	Parser.tokenize(tok, "'OBJECT\"{#}''KEYWORD''   'a#bcd ", false);
+	tokenMatch(tok, "OBJECT\"{#}", "KEYWORD", "   ", "a", "#bcd ");
 }
 
 private static void validateTokens(ArrayList<String> toks) {

@@ -77,7 +77,7 @@ public static final void tokenize(ArrayList<String> tokens, String rec, boolean 
 			continue;
 		}
 
-		if (c == '\"') {
+		if (c == '\"' || c == '#') {
 			cIndex = i;
 			endOfRec = i;
 			break;
@@ -101,7 +101,7 @@ public static final void tokenize(ArrayList<String> tokens, String rec, boolean 
 public static final boolean needsQuoting(CharSequence s) {
 	for (int i = 0; i < s.length(); ++i) {
 		char c = s.charAt(i);
-		if (c == ' ' || c == '\t' || c == '{' || c == '}' || c == '\"')
+		if (c == ' ' || c == '\t' || c == '{' || c == '}' || c == '\"' || c == '#')
 			return true;
 	}
 	return false;
