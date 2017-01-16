@@ -99,7 +99,7 @@ public abstract class Device extends StateUserEntity {
 		stepCompleted = false;
 		endTicks = EventManager.calcSimTicks(duration);
 		if (isTraceFlag()) traceLine(1, "duration=%.6f", duration);
-		this.scheduleProcess(duration, 5, endStepTarget, endStepHandle);
+		this.scheduleProcess(duration, 5, true, endStepTarget, endStepHandle);  // FIFO order
 
 		// Notify other processes that are dependent on this one
 		if (this.isNewStepReqd(stepCompleted)) {
