@@ -24,7 +24,7 @@ public class ExpTokenizer {
 	public static final int NUM_TYPE = 1;
 	public static final int SYM_TYPE = 2;
 	public static final int SQ_TYPE = 3; // Square quoted tokens
-	public static final int DSQ_TYPE = 4; // Double Square quoted tokens
+	public static final int STRING_TYPE = 4; // A literal string
 
 	public static class Token {
 		public int type;
@@ -84,6 +84,11 @@ public class ExpTokenizer {
 			if (c == '[') {
 				// This is the beginning of a square quoted string
 				pos = getSQToken(res, pos, input);
+				continue;
+			}
+			if (c == '"') {
+				// This is the beginning of a regular quoted string
+				pos = getQuotedToken(res, pos, input);
 				continue;
 			}
 
@@ -159,7 +164,7 @@ public class ExpTokenizer {
 			}
 			Token newTok = new Token();
 			newTok.pos = startPos + 1;
-			newTok.type = DSQ_TYPE;
+			newTok.type = STRING_TYPE;
 			newTok.value = input.substring(startPos + 2, closePos);
 			res.add(newTok);
 			return closePos + 2;
@@ -172,6 +177,30 @@ public class ExpTokenizer {
 		res.add(newTok);
 		return closePos + 1;
 
+	}
+
+	private static int getQuotedToken(ArrayList<Token> res, int startPos, String input) throws ExpError {
+
+		int closePos = startPos + 1;
+
+		while (closePos < input.length()) {
+			char c = input.charAt(closePos);
+			if (c == '"')
+				break;
+
+			closePos++;
+		}
+
+		if (closePos == input.length()) {
+			throw new ExpError(input, startPos, "No closing quote character for string.");
+		}
+
+		Token newTok = new Token();
+		newTok.pos = startPos;
+		newTok.type = STRING_TYPE;
+		newTok.value = input.substring(startPos + 1, closePos);
+		res.add(newTok);
+		return closePos + 1;
 	}
 
 	// TODO: Should this include 'f' or 'd' as in the java convention? Also, should we support hex?
