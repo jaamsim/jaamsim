@@ -207,12 +207,13 @@ public class TestExpParser {
 		testToken(tokens.get(5), ExpTokenizer.SYM_TYPE, "&");
 		testToken(tokens.get(6), ExpTokenizer.SYM_TYPE, "|");
 
-		tokens = ExpTokenizer.tokenize("[[blarg]][foo][[bar]] 42");
-		assertTrue(tokens.size() == 4);
-		testToken(tokens.get(0), ExpTokenizer.DSQ_TYPE, "blarg");
+		tokens = ExpTokenizer.tokenize("[[blarg]][foo][[bar]] 42 \"giggity\"");
+		assertTrue(tokens.size() == 5);
+		testToken(tokens.get(0), ExpTokenizer.STRING_TYPE, "blarg");
 		testToken(tokens.get(1), ExpTokenizer.SQ_TYPE, "foo");
-		testToken(tokens.get(2), ExpTokenizer.DSQ_TYPE, "bar");
+		testToken(tokens.get(2), ExpTokenizer.STRING_TYPE, "bar");
 		testToken(tokens.get(3), ExpTokenizer.NUM_TYPE, "42");
+		testToken(tokens.get(4), ExpTokenizer.STRING_TYPE, "giggity");
 
 	}
 
@@ -480,11 +481,11 @@ public class TestExpParser {
 		val = exp.evaluate(ec).value;
 		assertTrue(val == 42);
 
-		exp = ExpParser.parseExpression(vtpc, "[Maps].map1([[two]])");
+		exp = ExpParser.parseExpression(vtpc, "[Maps].map1(\"two\")");
 		val = exp.evaluate(ec).value;
 		assertTrue(val == 2);
 
-		exp = ExpParser.parseExpression(vtpc, "[Maps].map1([[everything]])");
+		exp = ExpParser.parseExpression(vtpc, "[Maps].map1(\"everything\")");
 		val = exp.evaluate(ec).value;
 		assertTrue(val == 42);
 
@@ -547,7 +548,7 @@ public class TestExpParser {
 		assertTrue(res.type == ExpResType.NUMBER);
 		assertTrue(res.value == 2);
 
-		exp = ExpParser.parseExpression(pc, "{[[foo]], [[bar]], [[baz]]}(3)");
+		exp = ExpParser.parseExpression(pc, "{[[foo]], [[bar]], \"baz\"}(3)");
 		res = exp.evaluate(ec);
 		assertTrue(res.type == ExpResType.STRING);
 		assertTrue(res.stringVal.equals("baz"));
@@ -561,7 +562,7 @@ public class TestExpParser {
 		assertTrue(res.type == ExpResType.STRING);
 		assertTrue(res.stringVal.equals("stringly"));
 
-		exp = ExpParser.parseExpression(pc, "[[stri]] + [[ngly]]");
+		exp = ExpParser.parseExpression(pc, "[[stri]] + \"ngly\"");
 		res = exp.evaluate(ec);
 		assertTrue(res.type == ExpResType.STRING);
 		assertTrue(res.stringVal.equals("stringly"));

@@ -2506,7 +2506,8 @@ public class ExpParser {
 		if (nextTok.type == ExpTokenizer.NUM_TYPE) {
 			return parseConstant(context, nextTok.value, tokens, exp, nextTok.pos);
 		}
-		if (nextTok.type == ExpTokenizer.DSQ_TYPE) {
+		if (nextTok.type == ExpTokenizer.STRING_TYPE) {
+
 			// Return a literal string constant
 			return new Constant(context, ExpResult.makeStringResult(nextTok.value), exp, nextTok.pos);
 		}
