@@ -53,8 +53,8 @@ public class RouteWayPoint extends RouteNode {
 
 	@Override
 	public void setName(String str) {
-		inVertex.setName(str + "-in");
-		outVertex.setName(str + "-out");
+		inVertex.setName(str + "_IN");
+		outVertex.setName(str + "_OUT");
 	}
 
 	@Override

@@ -124,13 +124,14 @@ public class DigraphPath {
 			return "";
 
 		// Add the first vertex in the path
-		StringBuilder sb = new StringBuilder();
+		StringBuilder sb = new StringBuilder("[");
 		sb.append(edgeList.get(0).getTail());
 
 		// Loop through the edges, adding the head vertices
 		for (DigraphEdge edge : edgeList) {
-			sb.append("-").append(edge.getHead());
+			sb.append(", ").append(edge.getHead());
 		}
+		sb.append("]");
 		return sb.toString();
 	}
 
