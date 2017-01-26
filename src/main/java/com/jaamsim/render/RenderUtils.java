@@ -193,8 +193,8 @@ static void putPointXYZW(FloatBuffer fb, Vec4d v) {
 			double theta0 = i * thetaStep + startAngle;
 			double theta1 = (i+1) * thetaStep + startAngle;
 
-			ret.add(new Vec4d(radius * Math.cos(theta0) + center.x, radius * Math.sin(theta0) + center.y, 0, 1.0d));
-			ret.add(new Vec4d(radius * Math.cos(theta1) + center.x, radius * Math.sin(theta1) + center.y, 0, 1.0d));
+			ret.add(new Vec4d(radius * Math.cos(theta0) + center.x, radius * Math.sin(theta0) + center.y, center.z, 1.0d));
+			ret.add(new Vec4d(radius * Math.cos(theta1) + center.x, radius * Math.sin(theta1) + center.y, center.z, 1.0d));
 		}
 
 		return ret;
