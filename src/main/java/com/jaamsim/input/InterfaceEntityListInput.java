@@ -71,26 +71,18 @@ public class InterfaceEntityListInput<T> extends ListInput<ArrayList<T>> {
 		return list;
 	}
 
-	private String getInputString(ArrayList<T> val) {
-
-		if (val.size() == 0)
+	@Override
+	public String getDefaultString() {
+		if (defValue == null || defValue.isEmpty())
 			return "";
 
 		StringBuilder tmp = new StringBuilder();
-		tmp.append(((Entity)val.get(0)).getName());
-		for (int i = 1; i < val.size(); i++) {
+		tmp.append(((Entity)defValue.get(0)).getName());
+		for (int i = 1; i < defValue.size(); i++) {
 			tmp.append(SEPARATOR);
-			tmp.append(((Entity)val.get(i)).getName());
+			tmp.append(((Entity)defValue.get(i)).getName());
 		}
 		return tmp.toString();
-	}
-
-
-	@Override
-	public String getDefaultString() {
-		if (defValue == null || defValue.size() == 0)
-			return "";
-		return this.getInputString(defValue);
 	}
 
 	@Override
