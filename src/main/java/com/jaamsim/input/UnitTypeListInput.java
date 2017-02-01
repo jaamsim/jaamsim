@@ -93,4 +93,18 @@ public class UnitTypeListInput extends ListInput<ArrayList<ObjectType>> {
 		return list;
 	}
 
+	@Override
+	public String getDefaultString() {
+		if (defValue == null || defValue.isEmpty())
+			return "";
+
+		StringBuilder tmp = new StringBuilder();
+		tmp.append(defValue.get(0).getName());
+		for (int i = 1; i < defValue.size(); i++) {
+			tmp.append(SEPARATOR);
+			tmp.append(defValue.get(i).getName());
+		}
+		return tmp.toString();
+	}
+
 }
