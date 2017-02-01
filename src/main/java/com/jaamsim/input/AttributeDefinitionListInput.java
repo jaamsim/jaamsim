@@ -131,39 +131,10 @@ public class AttributeDefinitionListInput extends ListInput<ArrayList<AttributeH
 
 	@Override
 	public String getDefaultString() {
-		if (defValue == null || defValue.isEmpty()) return "";
-		return this.getInputString(defValue);
-	}
+		if (defValue == null || defValue.isEmpty())
+			return "";
 
-	private String getInputString(ArrayList<AttributeHandle> handleList) {
-
-		StringBuilder tmp = new StringBuilder();
-		for (int i = 0; i < handleList.size(); i++) {
-			if (i > 0) tmp.append(SEPARATOR);
-			AttributeHandle h = handleList.get(i);
-			tmp.append("{ ");
-			tmp.append(h.getName());
-			tmp.append(SEPARATOR);
-
-			double val = h.getInitialValue().value;
-			String unitString = Unit.getSIUnit(h.getUnitType());
-
-			// Check for a preferred unit
-			Unit unit = Unit.getPreferredUnit(h.getUnitType());
-			if (unit != null) {
-				unitString = unit.toString();
-				val = h.getValueAsDouble(0.0d, 0.0d, unit);
-			}
-			tmp.append(val);
-
-			// Print the unit unless it is dimensionless
-			if (h.getUnitType() != DimensionlessUnit.class) {
-				tmp.append(SEPARATOR);
-				tmp.append(unitString);
-			}
-			tmp.append(" }");
-		}
-		return tmp.toString();
+		return defValue.toString();
 	}
 
 }
