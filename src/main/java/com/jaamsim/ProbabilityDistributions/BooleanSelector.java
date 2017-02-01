@@ -27,7 +27,6 @@ import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.rng.MRG1999a;
-import com.jaamsim.ui.EditBox;
 import com.jaamsim.units.DimensionlessUnit;
 
 public class BooleanSelector extends DisplayEntity {
@@ -46,7 +45,7 @@ public class BooleanSelector extends DisplayEntity {
 		randomSeedInput = new IntegerInput("RandomSeed", "Key Inputs", -1);
 		randomSeedInput.setValidRange(0, Integer.MAX_VALUE);
 		randomSeedInput.setRequired(true);
-		randomSeedInput.setDefaultText(EditBox.NONE);
+		randomSeedInput.setDefaultText("None");
 		this.addInput(randomSeedInput);
 
 		trueProbInput = new SampleInput("TrueProbability", "Key Inputs", new SampleConstant(1.0d));
