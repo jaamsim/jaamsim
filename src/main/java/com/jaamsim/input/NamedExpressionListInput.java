@@ -96,4 +96,12 @@ public class NamedExpressionListInput extends ListInput<ArrayList<NamedExpressio
 		parse(kw);
 	}
 
+	@Override
+	public String getDefaultString() {
+		if (defValue == null || defValue.isEmpty())
+			return "";
+
+		return defValue.toString();
+	}
+
 }
