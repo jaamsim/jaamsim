@@ -30,18 +30,21 @@ import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.UnitTypeListInput;
 import com.jaamsim.input.ValueInput;
+import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
 import com.jaamsim.units.Unit;
-import com.jaamsim.units.UserSpecifiedUnit;
 
 public abstract class Logger extends DisplayEntity {
 
 	@Keyword(description = "The unit types for the quantities being logged. "
+	                     + "If a single unit type is entered, it will apply to all quantities. "
 	                     + "Use DimensionlessUnit for text entries.",
 	         exampleList = {"DistanceUnit  SpeedUnit"})
 	private final UnitTypeListInput unitTypeListInput;
 
 	@Keyword(description = "One or more sources of data to be logged. "
+	                     + "The input to the UnitTypeList keyword must be provided BEFORE the "
+	                     + "data sources. "
 	                     + "Each source is specified by an Expression. Also acceptable are: "
 	                     + "a constant value, a Probability Distribution, TimeSeries, or a "
 	                     + "Calculation Object.",
@@ -65,13 +68,13 @@ public abstract class Logger extends DisplayEntity {
 
 	{
 		ArrayList<Class<? extends Unit>> defList = new ArrayList<>();
+		defList.add(DimensionlessUnit.class);
 		unitTypeListInput = new UnitTypeListInput("UnitTypeList", "Key Inputs", defList);
-		unitTypeListInput.setDefaultText("None");
 		this.addInput(unitTypeListInput);
 
 		dataSource = new StringProvListInput("DataSource", "Key Inputs",
 				new ArrayList<StringProvider>());
-		dataSource.setUnitType(UserSpecifiedUnit.class);
+		dataSource.setUnitType(DimensionlessUnit.class);
 		dataSource.setEntity(this);
 		this.addInput(dataSource);
 
