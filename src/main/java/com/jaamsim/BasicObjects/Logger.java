@@ -73,7 +73,6 @@ public abstract class Logger extends DisplayEntity {
 				new ArrayList<StringProvider>());
 		dataSource.setUnitType(UserSpecifiedUnit.class);
 		dataSource.setEntity(this);
-		dataSource.setDefaultText("None");
 		this.addInput(dataSource);
 
 		includeInitialization = new BooleanInput("IncludeInitialization", "Key Inputs", true);
