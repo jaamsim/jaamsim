@@ -281,11 +281,9 @@ public class Simulation extends Entity {
 
 		ArrayList<Class<? extends Unit>> defList = new ArrayList<>();
 		unitTypeList = new UnitTypeListInput("UnitTypeList", "Key Inputs", defList);
-		unitTypeList.setDefaultText("None");
 
 		runOutputList = new StringProvListInput("RunOutputList", "Key Inputs", null);
 		runOutputList.setUnitType(UserSpecifiedUnit.class);
-		runOutputList.setDefaultText("None");
 
 		tickLengthInput = new ValueInput("TickLength", "Key Inputs", 1e-6d);
 		tickLengthInput.setUnitType(TimeUnit.class);
