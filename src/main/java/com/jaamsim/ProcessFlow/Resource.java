@@ -129,8 +129,8 @@ public class Resource extends DisplayEntity {
 	 * Return the number of units that are available for use at the present time
 	 * @return
 	 */
-	public int getAvailableUnits() {
-		return (int) capacity.getValue().getNextSample(this.getSimTime()) - unitsInUse;
+	public int getAvailableUnits(double simTime) {
+		return getCapacity(simTime) - unitsInUse;
 	}
 
 	/**
