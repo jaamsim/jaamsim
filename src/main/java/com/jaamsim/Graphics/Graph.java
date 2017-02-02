@@ -34,7 +34,6 @@ import com.jaamsim.math.Color4d;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
 import com.jaamsim.units.Unit;
-import com.jaamsim.units.UserSpecifiedUnit;
 
 public class Graph extends GraphBasics  {
 
@@ -169,30 +168,8 @@ public class Graph extends GraphBasics  {
 			return;
 		}
 
-		if (in == dataSource) {
-			// Hack for backwards compatibility
-			// When an entity and output are entered, the unit type will be set automatically
-			// FIXME remove when backwards compatibility is no longer required
-			if (dataSource.getValue() != null && dataSource.getValue().size() > 0) {
-				Class<? extends Unit> ut = dataSource.getValue().get(0).getUnitType();
-				if (ut != null && ut != UserSpecifiedUnit.class)
-					this.setYAxisUnit(ut);
-			}
-			return;
-		}
-
 		if (in == secondaryDataSource) {
 			showSecondaryYAxis = !secondaryDataSource.isDefault();
-			// Hack for backwards compatibility
-			// When an entity and output are entered, the unit type will be set automatically
-			// FIXME remove when backwards compatibility is no longer required
-			if (secondaryDataSource.getValue() != null && secondaryDataSource.getValue().size() > 0) {
-				Class<? extends Unit> ut = secondaryDataSource.getValue().get(0).getUnitType();
-				if (ut != null && ut != UserSpecifiedUnit.class) {
-					this.setSecondaryYAxisUnit(ut);
-					showSecondaryYAxis = (ut != UserSpecifiedUnit.class);
-				}
-			}
 			return;
 		}
 
