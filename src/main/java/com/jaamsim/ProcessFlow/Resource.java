@@ -27,6 +27,9 @@ import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.datatypes.DoubleVector;
+import com.jaamsim.events.Conditional;
+import com.jaamsim.events.EventManager;
+import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Keyword;
@@ -37,6 +40,10 @@ import com.jaamsim.units.TimeUnit;
 public class Resource extends DisplayEntity {
 
 	@Keyword(description = "The number of equivalent resource units that are available.\n"
+	                     + "If the capacity changes during the simulation run, the Resource will "
+	                     + "attempt to use an increase in capacity as soon as it occurs. "
+	                     + "However, a decrease in capacity will have no affect on entities that "
+	                     + "have already seized Resource capacity.\n"
 	                     + "The input can be a constant value, a time series, or an expression.",
 	         exampleList = {"3", "TimeSeries1", "this.attrib1"})
 	private final SampleInput capacity;
@@ -55,6 +62,7 @@ public class Resource extends DisplayEntity {
 
 	private int unitsInUse;  // number of resource units that are being used at present
 	private ArrayList<Seize> seizeList;  // Seize objects that require this resource
+	private int lastCapacity; // capacity for the resource
 
 	//	Statistics
 	protected double timeOfLastUpdate; // time at which the statistics were last updated
@@ -105,6 +113,7 @@ public class Resource extends DisplayEntity {
 		super.earlyInit();
 
 		unitsInUse = 0;
+		lastCapacity = this.getCapacity(0.0d);
 
 		// Clear statistics
 		startOfStatisticsCollection = 0.0;
@@ -123,6 +132,17 @@ public class Resource extends DisplayEntity {
 			if( ent.requiresResource(this) )
 				seizeList.add(ent);
 		}
+	}
+
+	@Override
+	public void startUp() {
+		super.startUp();
+
+		if (capacity.getValue() instanceof SampleConstant)
+			return;
+
+		// Track any changes in the Resource's capacity
+		this.waitForCapacityChange();
 	}
 
 	/**
@@ -233,6 +253,62 @@ public class Resource extends DisplayEntity {
 		}
 	}
 	private SeizeCompare seizeCompare = new SeizeCompare();
+
+	/**
+	 * Returns true if the saved capacity differs from the present capacity
+	 * @return true if the capacity has changed
+	 */
+	boolean isCapacityChanged() {
+		return this.getCapacity(getSimTime()) != lastCapacity;
+	}
+
+	/**
+	 * Loops from one capacity change to the next.
+	 */
+	void waitForCapacityChange() {
+
+		// Set the present capacity
+		lastCapacity = this.getCapacity(getSimTime());
+
+		// Wait until the state is ready to change
+		EventManager.scheduleUntil(updateForCapacityChangeTarget, capacityChangeConditional, null);
+	}
+
+	/**
+	 * Responds to a change in capacity.
+	 */
+	void updateForCapacityChange() {
+		if (isTraceFlag()) trace(0, "updateForCapacityChange");
+
+		// Select the Seize objects to notify
+		this.notifySeizeObjects();
+
+		// Wait for the next capacity change
+		this.waitForCapacityChange();
+	}
+
+	// Conditional for isCapacityChanged()
+	class CapacityChangeConditional extends Conditional {
+		@Override
+		public boolean evaluate() {
+			return Resource.this.isCapacityChanged();
+		}
+	}
+	private final Conditional capacityChangeConditional = new CapacityChangeConditional();
+
+	// Target for updateForCapacityChange()
+	class UpdateForCapacityChangeTarget extends ProcessTarget {
+		@Override
+		public String getDescription() {
+			return Resource.this.getName() + ".updateForCapacityChange";
+		}
+
+		@Override
+		public void process() {
+			Resource.this.updateForCapacityChange();
+		}
+	}
+	private final ProcessTarget updateForCapacityChangeTarget = new UpdateForCapacityChangeTarget();
 
 	// *******************************************************************************************************
 	// STATISTICS
