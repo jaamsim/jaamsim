@@ -160,7 +160,7 @@ public class Resource extends DisplayEntity {
 	public void notifySeizeObjects() {
 
 		// Is there capacity available?
-		int cap = (int) capacity.getValue().getNextSample(this.getSimTime());
+		int cap = this.getCapacity(this.getSimTime());
 		if (cap <= unitsInUse)
 			return;
 
@@ -280,11 +280,27 @@ public class Resource extends DisplayEntity {
 	// OUTPUT METHODS
 	// ******************************************************************************************************
 
+	@Output(name = "Capacity",
+	 description = "The total number of resource units that can be used.",
+	    unitType = DimensionlessUnit.class,
+	    sequence = 0)
+	public int getCapacity(double simTime) {
+		return (int) capacity.getValue().getNextSample(simTime);
+	}
+
+	@Output(name = "UnitsInUse",
+	 description = "The present number of resource units that are in use.",
+	    unitType = DimensionlessUnit.class,
+	    sequence = 1)
+	public int getUnitsInUse(double simTime) {
+		return unitsInUse;
+	}
+
 	@Output(name = "UnitsSeized",
 	 description = "The total number of resource units that have been seized.",
 	    unitType = DimensionlessUnit.class,
 	  reportable = true,
-	    sequence = 0)
+	    sequence = 2)
 	public int getUnitsSeized(double simTime) {
 		return unitsSeized;
 	}
@@ -293,24 +309,16 @@ public class Resource extends DisplayEntity {
 	 description = "The total number of resource units that have been released.",
 	    unitType = DimensionlessUnit.class,
 	  reportable = true,
-	    sequence = 1)
+	    sequence = 3)
 	public int getUnitsReleased(double simTime) {
 		return unitsReleased;
-	}
-
-	@Output(name = "UnitsInUse",
-	 description = "The present number of resource units that are in use.",
-	    unitType = DimensionlessUnit.class,
-	    sequence = 2)
-	public int getUnitsInUse(double simTime) {
-		return unitsInUse;
 	}
 
 	@Output(name = "UnitsInUseAverage",
 	 description = "The average number of resource units that are in use.",
 	    unitType = DimensionlessUnit.class,
 	  reportable = true,
-	  sequence = 3)
+	    sequence = 4)
 	public double getUnitsInUseAverage(double simTime) {
 		double dt = simTime - timeOfLastUpdate;
 		double totalTime = simTime - startOfStatisticsCollection;
@@ -324,7 +332,7 @@ public class Resource extends DisplayEntity {
 	 description = "The standard deviation of the number of resource units that are in use.",
 	    unitType = DimensionlessUnit.class,
 	  reportable = true,
-	  sequence = 4)
+	    sequence = 5)
 	public double getUnitsInUseStandardDeviation(double simTime) {
 		double dt = simTime - timeOfLastUpdate;
 		double mean = this.getUnitsInUseAverage(simTime);
@@ -339,7 +347,7 @@ public class Resource extends DisplayEntity {
 	 description = "The minimum number of resource units that are in use.",
 	    unitType = DimensionlessUnit.class,
 	  reportable = true,
-	    sequence = 5)
+	    sequence = 6)
 	public int getUnitsInUseMinimum(double simTime) {
 		return minUnitsInUse;
 	}
@@ -348,7 +356,7 @@ public class Resource extends DisplayEntity {
 	 description = "The maximum number of resource units that are in use.",
 	    unitType = DimensionlessUnit.class,
 	  reportable = true,
-	    sequence = 6)
+	    sequence = 7)
 	public int getUnitsInUseMaximum(double simTime) {
 		// A unit that is seized and released immediately
 		// does not count as a non-zero maximum in use
@@ -361,7 +369,7 @@ public class Resource extends DisplayEntity {
 	 description = "The total time that the number of resource units in use was 0, 1, 2, etc.",
 	    unitType = TimeUnit.class,
 	  reportable = true,
-	    sequence = 7)
+	    sequence = 8)
 	public DoubleVector getUnitsInUseDistribution(double simTime) {
 		DoubleVector ret = new DoubleVector(unitsInUseDist);
 		double dt = simTime - timeOfLastUpdate;
