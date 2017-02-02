@@ -29,15 +29,20 @@ public class UnitTypeListInput extends ListInput<ArrayList<ObjectType>> {
 
 	public UnitTypeListInput(String key, String cat, ArrayList<Class<? extends Unit>> utList) {
 		super(key, cat, null);
-		if (utList == null)
-			return;
-		defaultUnitTypeList = new ArrayList<>(utList);
-		ArrayList<ObjectType> otList = new ArrayList<>(utList.size());
-		for (Class<? extends Unit> ut : utList) {
-			otList.add(ObjectType.getObjectTypeForClass(ut));
+		setDefaultValue(utList);
+	}
+
+	public void setDefaultValue(ArrayList<Class<? extends Unit>> utList) {
+		ArrayList<ObjectType> otList = null;
+		if (utList != null) {
+			otList = new ArrayList<>(utList.size());
+			for (Class<? extends Unit> ut : utList) {
+				otList.add(ObjectType.getObjectTypeForClass(ut));
+			}
 		}
-		setDefaultValue(otList);
-		setUnitTypeList(value);
+		super.setDefaultValue(otList);
+		unitTypeList = utList;
+		defaultUnitTypeList = utList;
 	}
 
 	private void setUnitTypeList(ArrayList<ObjectType> otList) {
