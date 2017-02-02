@@ -342,9 +342,4 @@ Define RateUnit  { /s  /min  /h  /d  /w  /y  /ms  /us  /ns }
 /us    ConversionFactorToSI { 1.0e6      }  Description { 'Per Microsecond' }
 /ns    ConversionFactorToSI { 1.0e9      }  Description { 'Per Nanosecond' }
 
-# ======================================================================================================================================================
-# Displayed Units
-# ======================================================================================================================================================
-
-Simulation DisplayedUnits { h }
 
