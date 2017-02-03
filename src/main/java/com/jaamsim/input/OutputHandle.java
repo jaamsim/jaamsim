@@ -205,7 +205,10 @@ public class OutputHandle {
 
 			ret = (T)outputInfo.method.invoke(ent, simTime);
 		}
-		catch (InvocationTargetException | IllegalAccessException | ClassCastException ex) {
+		catch (InvocationTargetException ex) {
+			throw new ErrorException(ex.getTargetException());
+		}
+		catch (IllegalAccessException | ClassCastException ex) {
 			throw new ErrorException(ex);
 		}
 		return ret;
