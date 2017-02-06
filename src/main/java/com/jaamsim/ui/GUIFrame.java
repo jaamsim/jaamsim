@@ -1947,6 +1947,11 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 			double curSec = evt.ticksToSeconds(currentTick);
 			InputAgent.logMessage("EXCEPTION AT TIME: %f s", curSec);
 			InputAgent.logMessage("%s", t.getMessage());
+			if (t.getCause() != null) {
+				InputAgent.logMessage("Call Stack of original exception:");
+				InputAgent.logStackTrace(t.getCause());
+			}
+			InputAgent.logMessage("Thrown exception call stack:");
 			InputAgent.logStackTrace(t);
 		}
 
