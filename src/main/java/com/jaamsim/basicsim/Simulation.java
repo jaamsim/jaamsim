@@ -279,13 +279,10 @@ public class Simulation extends Entity {
 		reportDirectory = new DirInput("ReportDirectory", "Key Inputs", null);
 		reportDirectory.setDefaultText("Configuration File Directory");
 
-		ArrayList<Class<? extends Unit>> defList = new ArrayList<>();
-		unitTypeList = new UnitTypeListInput("UnitTypeList", "Key Inputs", defList);
-		unitTypeList.setDefaultText("None");
+		unitTypeList = new UnitTypeListInput("UnitTypeList", "Key Inputs", null);
 
 		runOutputList = new StringProvListInput("RunOutputList", "Key Inputs", null);
 		runOutputList.setUnitType(UserSpecifiedUnit.class);
-		runOutputList.setDefaultText("None");
 
 		tickLengthInput = new ValueInput("TickLength", "Key Inputs", 1e-6d);
 		tickLengthInput.setUnitType(TimeUnit.class);
@@ -416,6 +413,11 @@ public class Simulation extends Entity {
 		pauseConditionInput.setEntity(Simulation.getInstance());
 		globalSeedInput.setEntity(Simulation.getInstance());
 		runOutputList.setEntity(Simulation.getInstance());
+
+		// Set the default unit type for the custom output report
+		ArrayList<Class<? extends Unit>> defList = new ArrayList<>();
+		defList.add(DimensionlessUnit.class);
+		unitTypeList.setDefaultValue(defList);
 	}
 
 	public Simulation() {}

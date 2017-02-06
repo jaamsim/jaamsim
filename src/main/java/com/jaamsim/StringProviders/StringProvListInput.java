@@ -124,6 +124,25 @@ public class StringProvListInput extends ListInput<ArrayList<StringProvider>> {
 	}
 
 	@Override
+	public String getDefaultString() {
+		if (defValue == null || defValue.isEmpty()) {
+			return "";
+		}
+
+		StringBuilder tmp = new StringBuilder();
+		for (int i = 0; i < defValue.size(); i++) {
+			if (i > 0)
+				tmp.append(SEPARATOR);
+
+			tmp.append("{ ");
+			tmp.append(defValue.get(i));
+			tmp.append(" }");
+		}
+
+		return tmp.toString();
+	}
+
+	@Override
 	public void removeReferences(Entity ent) {
 		if (value == null)
 			return;

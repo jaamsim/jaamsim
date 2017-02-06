@@ -43,10 +43,7 @@ public class ColorListInput extends ListInput<ArrayList<Color4d>>  {
 
 	@Override
 	public String getDefaultString() {
-		if (defValue == null)
-			return "";
-
-		if (defValue.size() == 0)
+		if (defValue == null || defValue.isEmpty())
 			return "";
 
 		StringBuilder tmp = new StringBuilder();

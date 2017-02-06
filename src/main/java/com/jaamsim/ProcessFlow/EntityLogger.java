@@ -17,14 +17,21 @@
  */
 package com.jaamsim.ProcessFlow;
 
+import java.util.ArrayList;
+
 import com.jaamsim.BasicObjects.Logger;
 import com.jaamsim.Graphics.DisplayEntity;
+import com.jaamsim.Graphics.LinkDisplayable;
+import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.FileEntity;
+import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InterfaceEntityInput;
 import com.jaamsim.input.Keyword;
+import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.Output;
+import com.jaamsim.math.Vec3d;
 
-public class EntityLogger extends Logger implements Linkable {
+public class EntityLogger extends Logger implements Linkable, LinkDisplayable {
 
 	@Keyword(description = "The next object to which the processed DisplayEntity is passed.",
 			exampleList = {"Queue1"})
@@ -71,6 +78,50 @@ public class EntityLogger extends Logger implements Linkable {
 	@Override
 	protected void recordEntry(FileEntity file, double simTime) {
 		file.format("\t%s", receivedEntity);
+	}
+
+	@Override
+	public void linkTo(DisplayEntity nextEnt) {
+		if (nextComponent.getHidden() || !(nextEnt instanceof Linkable)
+				|| nextEnt instanceof EntityGenerator) {
+			return;
+		}
+
+		ArrayList<String> toks = new ArrayList<>();
+		toks.add(nextEnt.getName());
+		KeywordIndex kw = new KeywordIndex(nextComponent.getKeyword(), toks, null);
+		InputAgent.apply(this, kw);
+	}
+
+	// LinkDisplayable
+	@Override
+	public ArrayList<Entity> getDestinationEntities() {
+		ArrayList<Entity> ret = new ArrayList<>();
+		Linkable l = nextComponent.getValue();
+		if (l != null && (l instanceof Entity)) {
+			ret.add((Entity)l);
+		}
+		return ret;
+	}
+
+	@Override
+	public ArrayList<Entity> getSourceEntities() {
+		return new ArrayList<>();
+	}
+
+	@Override
+	public Vec3d getSourcePoint() {
+		return getGlobalPosition();
+	}
+
+	@Override
+	public Vec3d getSinkPoint() {
+		return getGlobalPosition();
+	}
+
+	@Override
+	public double getRadius() {
+		return getSize().mag2()/2.0;
 	}
 
 	@Output(name = "obj",

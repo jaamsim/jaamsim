@@ -224,10 +224,7 @@ public class TwoKeyListInput<K1 extends Entity, K2 extends Entity, V extends Ent
 
 	@Override
 	public String getDefaultString() {
-		if (defValue == null)
-			return "";
-
-		if (defValue.size() == 0)
+		if (defValue == null || defValue.isEmpty())
 			return "";
 
 		StringBuilder tmp = new StringBuilder(defValue.get(0).getName());

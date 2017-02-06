@@ -31,7 +31,6 @@ import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.UnitTypeInput;
-import com.jaamsim.ui.EditBox;
 import com.jaamsim.ui.FrameBox;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
@@ -80,7 +79,7 @@ implements SampleProvider {
 		randomSeedInput = new IntegerInput("RandomSeed", "Key Inputs", -1);
 		randomSeedInput.setValidRange(0, Integer.MAX_VALUE);
 		randomSeedInput.setRequired(true);
-		randomSeedInput.setDefaultText(EditBox.NONE);
+		randomSeedInput.setDefaultText("None");
 		this.addInput(randomSeedInput);
 
 		SampleConstant negInf = new SampleConstant(Double.NEGATIVE_INFINITY);

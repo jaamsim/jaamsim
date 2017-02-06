@@ -172,7 +172,7 @@ public class SampleListInput extends ListInput<ArrayList<SampleProvider>> {
 
 	@Override
 	public String getDefaultString() {
-		if (defValue == null || defValue.size() == 0) {
+		if (defValue == null || defValue.isEmpty()) {
 			return "";
 		}
 

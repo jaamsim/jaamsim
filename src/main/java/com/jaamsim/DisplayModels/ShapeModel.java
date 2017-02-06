@@ -813,24 +813,24 @@ public class ShapeModel extends DisplayModel {
 		truckContentsTrans.scaleCols3(new Vec3d(0.75, 1, 1));
 
 		arrowHeadVerts = new ArrayList<>(3);
-		arrowHeadVerts.add(new Vec4d(-0.5,  0.0, 0.0, 1.0d));
-		arrowHeadVerts.add(new Vec4d(-0.1, -0.5, 0.0, 1.0d));
-		arrowHeadVerts.add(new Vec4d(-0.1,  0.5, 0.0, 1.0d));
+		arrowHeadVerts.add(new Vec4d( 0.5,  0.0, 0.0, 1.0d));
+		arrowHeadVerts.add(new Vec4d( 0.1,  0.5, 0.0, 1.0d));
+		arrowHeadVerts.add(new Vec4d( 0.1, -0.5, 0.0, 1.0d));
 
 		arrowTailVerts = new ArrayList<>(4);
-		arrowTailVerts.add(new Vec4d(-0.1, -0.2, 0.0, 1.0d));
-		arrowTailVerts.add(new Vec4d( 0.5, -0.2, 0.0, 1.0d));
-		arrowTailVerts.add(new Vec4d( 0.5,  0.2, 0.0, 1.0d));
-		arrowTailVerts.add(new Vec4d(-0.1,  0.2, 0.0, 1.0d));
+		arrowTailVerts.add(new Vec4d( 0.1,  0.2, 0.0, 1.0d));
+		arrowTailVerts.add(new Vec4d(-0.5,  0.2, 0.0, 1.0d));
+		arrowTailVerts.add(new Vec4d(-0.5, -0.2, 0.0, 1.0d));
+		arrowTailVerts.add(new Vec4d( 0.1, -0.2, 0.0, 1.0d));
 
 		arrowOutlineVerts = new ArrayList<>(7);
-		arrowOutlineVerts.add(new Vec4d(-0.5,  0.0, 0.0, 1.0d));
-		arrowOutlineVerts.add(new Vec4d(-0.1, -0.5, 0.0, 1.0d));
-		arrowOutlineVerts.add(new Vec4d(-0.1, -0.2, 0.0, 1.0d));
-		arrowOutlineVerts.add(new Vec4d( 0.5, -0.2, 0.0, 1.0d));
-		arrowOutlineVerts.add(new Vec4d( 0.5,  0.2, 0.0, 1.0d));
-		arrowOutlineVerts.add(new Vec4d(-0.1,  0.2, 0.0, 1.0d));
-		arrowOutlineVerts.add(new Vec4d(-0.1,  0.5, 0.0, 1.0d));
+		arrowOutlineVerts.add(new Vec4d( 0.5,  0.0, 0.0, 1.0d));
+		arrowOutlineVerts.add(new Vec4d( 0.1,  0.5, 0.0, 1.0d));
+		arrowOutlineVerts.add(new Vec4d( 0.1,  0.2, 0.0, 1.0d));
+		arrowOutlineVerts.add(new Vec4d(-0.5,  0.2, 0.0, 1.0d));
+		arrowOutlineVerts.add(new Vec4d(-0.5, -0.2, 0.0, 1.0d));
+		arrowOutlineVerts.add(new Vec4d( 0.1, -0.2, 0.0, 1.0d));
+		arrowOutlineVerts.add(new Vec4d( 0.1, -0.5, 0.0, 1.0d));
 
 		truckCabVerts = new ArrayList<>(4);
 		truckCabVerts.add(new Vec4d( 0.5,  0.5, 0.0, 1.0d));

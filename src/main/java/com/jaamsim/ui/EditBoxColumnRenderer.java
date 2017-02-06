@@ -47,19 +47,25 @@ public Component getTableCellRendererComponent(JTable table, Object value,
                                                int row, int column) {
 
 	Input<?> in = (Input<?>)value;
-
 	String str;
-	if (column == 0)
+
+	// 1) Keyword
+	if (column == 0) {
 		str = in.getKeyword();
+	}
+
+	// 2) Default value
 	else if (column == 1) {
 		if (in.getDefaultText() != null)
 			str = EditBox.formatEditorText(in.getDefaultText());
 		else {
 			str = in.getDefaultString();
-			if (str.isEmpty())
+			if (str == null || str.isEmpty())
 				str = EditBox.NONE;
 		}
 	}
+
+	// 3) Present value
 	else {
 		str = in.getValueString();
 		if (!in.isValid())

@@ -144,10 +144,7 @@ public class StringListInput extends ListInput<ArrayList<String>> {
 
 	@Override
 	public String getDefaultString() {
-		if (defValue == null)
-			return "";
-
-		if (defValue.size() == 0)
+		if (defValue == null || defValue.isEmpty())
 			return "";
 
 		StringBuilder tmp = new StringBuilder(defValue.get(0));

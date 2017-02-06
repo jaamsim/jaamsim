@@ -34,7 +34,6 @@ import com.jaamsim.math.Color4d;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
 import com.jaamsim.units.Unit;
-import com.jaamsim.units.UserSpecifiedUnit;
 
 public class Graph extends GraphBasics  {
 
@@ -98,12 +97,11 @@ public class Graph extends GraphBasics  {
 		numberOfPoints.setValidRange(0, Integer.MAX_VALUE);
 		this.addInput(numberOfPoints);
 
-		unitType = new UnitTypeInput("UnitType", "Key Inputs", UserSpecifiedUnit.class);
-		unitType.setRequired(true);
+		unitType = new UnitTypeInput("UnitType", "Key Inputs", DimensionlessUnit.class);
 		this.addInput(unitType);
 
 		dataSource = new SampleListInput("DataSource", "Key Inputs", null);
-		dataSource.setUnitType(UserSpecifiedUnit.class);
+		dataSource.setUnitType(DimensionlessUnit.class);
 		dataSource.setEntity(this);
 		dataSource.setRequired(true);
 		this.addInput(dataSource);
@@ -122,11 +120,11 @@ public class Graph extends GraphBasics  {
 		lineWidths.setValidCountRange(1, Integer.MAX_VALUE);
 		this.addInput(lineWidths);
 
-		secondaryUnitType = new UnitTypeInput("SecondaryUnitType", "Key Inputs", UserSpecifiedUnit.class);
+		secondaryUnitType = new UnitTypeInput("SecondaryUnitType", "Key Inputs", DimensionlessUnit.class);
 		this.addInput(secondaryUnitType);
 
 		secondaryDataSource = new SampleListInput("SecondaryDataSource", "Key Inputs", null);
-		secondaryDataSource.setUnitType(UserSpecifiedUnit.class);
+		secondaryDataSource.setUnitType(DimensionlessUnit.class);
 		secondaryDataSource.setEntity(this);
 		this.addInput(secondaryDataSource);
 
@@ -146,9 +144,10 @@ public class Graph extends GraphBasics  {
 	}
 
 	public Graph() {
-
 		timeTrace = true;
 		this.setXAxisUnit(TimeUnit.class);
+		this.setYAxisUnit(DimensionlessUnit.class);
+		this.setSecondaryYAxisUnit(DimensionlessUnit.class);
 	}
 
 	@Override
@@ -164,35 +163,13 @@ public class Graph extends GraphBasics  {
 
 		if (in == secondaryUnitType) {
 			Class<? extends Unit> ut = secondaryUnitType.getUnitType();
-			showSecondaryYAxis = (ut != UserSpecifiedUnit.class);
 			secondaryDataSource.setUnitType(ut);
 			this.setSecondaryYAxisUnit(ut);
 			return;
 		}
 
-		if (in == dataSource) {
-			// Hack for backwards compatibility
-			// When an entity and output are entered, the unit type will be set automatically
-			// FIXME remove when backwards compatibility is no longer required
-			if (dataSource.getValue() != null && dataSource.getValue().size() > 0) {
-				Class<? extends Unit> ut = dataSource.getValue().get(0).getUnitType();
-				if (ut != null && ut != UserSpecifiedUnit.class)
-					this.setYAxisUnit(ut);
-			}
-			return;
-		}
-
 		if (in == secondaryDataSource) {
-			// Hack for backwards compatibility
-			// When an entity and output are entered, the unit type will be set automatically
-			// FIXME remove when backwards compatibility is no longer required
-			if (secondaryDataSource.getValue() != null && secondaryDataSource.getValue().size() > 0) {
-				Class<? extends Unit> ut = secondaryDataSource.getValue().get(0).getUnitType();
-				if (ut != null && ut != UserSpecifiedUnit.class) {
-					this.setSecondaryYAxisUnit(ut);
-					showSecondaryYAxis = (ut != UserSpecifiedUnit.class);
-				}
-			}
+			showSecondaryYAxis = !secondaryDataSource.isDefault();
 			return;
 		}
 
