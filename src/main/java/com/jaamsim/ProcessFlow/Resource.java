@@ -25,6 +25,7 @@ import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.ProbabilityDistributions.Distribution;
 import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
+import com.jaamsim.Samples.TimeSeries;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.events.Conditional;
@@ -271,7 +272,15 @@ public class Resource extends DisplayEntity {
 		lastCapacity = this.getCapacity(getSimTime());
 
 		// Wait until the state is ready to change
-		EventManager.scheduleUntil(updateForCapacityChangeTarget, capacityChangeConditional, null);
+		if (capacity.getValue() instanceof TimeSeries) {
+			TimeSeries ts = (TimeSeries)capacity.getValue();
+			long simTicks = getSimTicks();
+			long durTicks = ts.getNextChangeAfterTicks(simTicks) - simTicks;
+			this.scheduleProcessTicks(durTicks, 10, true, updateForCapacityChangeTarget, null); // FIFO
+		}
+		else {
+			EventManager.scheduleUntil(updateForCapacityChangeTarget, capacityChangeConditional, null);
+		}
 	}
 
 	/**
@@ -281,7 +290,9 @@ public class Resource extends DisplayEntity {
 		if (isTraceFlag()) trace(0, "updateForCapacityChange");
 
 		// Select the Seize objects to notify
-		this.notifySeizeObjects();
+		if (this.getCapacity(getSimTime()) > lastCapacity) {
+			this.notifySeizeObjects();
+		}
 
 		// Wait for the next capacity change
 		this.waitForCapacityChange();
