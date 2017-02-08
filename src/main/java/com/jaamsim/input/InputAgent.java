@@ -572,11 +572,6 @@ public class InputAgent {
 		if (!isValidName(newName))
 			throw new ErrorException("Entity names cannot contain spaces, tabs, or braces ({}).");
 
-		// Check that the name has not been used already
-		Entity existingEnt = Input.tryParseEntity(newName, Entity.class);
-		if (existingEnt != null && existingEnt != ent)
-			throw new ErrorException("Entity name: %s is already in use.", newName);
-
 		// Rename the entity
 		ent.setName(newName);
 	}

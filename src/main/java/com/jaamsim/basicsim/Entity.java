@@ -60,7 +60,7 @@ import com.jaamsim.units.UserSpecifiedUnit;
 public class Entity {
 	private static final JaamSimModel sim = new JaamSimModel();
 
-	private String entityName;
+	String entityName;
 	private final long entityNumber;
 
 	//public static final int FLAG_TRACE = 0x01; // reserved in case we want to treat tracing like the other flags
@@ -206,15 +206,6 @@ public class Entity {
 	public void kill() {
 		sim.removeInstance(this);
 		if (!testFlag(FLAG_GENERATED)) {
-			synchronized (sim.namedEntities) {
-				if (sim.namedEntities.get(entityName) == this)
-					sim.namedEntities.remove(entityName);
-
-				entityName = null;
-			}
-
-			setFlag(FLAG_DEAD);
-
 			// Remove any references to the deleted entity from the inputs to other entities
 			for (Entity ent : Entity.getClonesOfIterator(Entity.class)) {
 				for (Input<?> in : ent.getEditableInputs()) {
@@ -387,16 +378,7 @@ public class Entity {
 	 * Method to set the input name of the entity.
 	 */
 	public void setName(String newName) {
-		if (testFlag(FLAG_GENERATED)) {
-			entityName = newName;
-			return;
-		}
-
-		synchronized (sim.namedEntities) {
-			sim.namedEntities.remove(entityName);
-			entityName = newName;
-			sim.namedEntities.put(entityName, this);
-		}
+		sim.renameEntity(this, newName);
 	}
 
 	/**

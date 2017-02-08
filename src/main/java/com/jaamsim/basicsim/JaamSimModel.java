@@ -23,7 +23,7 @@ import java.util.concurrent.atomic.AtomicLong;
 public class JaamSimModel {
 	private final AtomicLong entityCount = new AtomicLong(0);
 	private final ArrayList<Entity> allInstances = new ArrayList<>(100);
-	final HashMap<String, Entity> namedEntities = new HashMap<>(100);
+	private final HashMap<String, Entity> namedEntities = new HashMap<>(100);
 
 	public JaamSimModel() {
 	}
@@ -33,7 +33,7 @@ public class JaamSimModel {
 	}
 
 	public final Entity getNamedEntity(String name) {
-		synchronized (namedEntities) {
+		synchronized (allInstances) {
 			return namedEntities.get(name);
 		}
 	}
@@ -83,6 +83,26 @@ public class JaamSimModel {
 		}
 	}
 
+	final void renameEntity(Entity e, String newName) {
+		synchronized (allInstances) {
+			// Generated Entities do not appear in the named entity hashmap, no consistency checks needed
+			if (e.testFlag(Entity.FLAG_GENERATED)) {
+				e.entityName = newName;
+				return;
+			}
+
+			if (namedEntities.get(newName) != null)
+				throw new ErrorException("Entity name: %s is already in use.", newName);
+
+			String oldName = e.entityName;
+			if (oldName != null && namedEntities.remove(oldName) != e)
+				throw new ErrorException("Named Entities Internal Consistency error");
+
+			e.entityName = newName;
+			namedEntities.put(newName, e);
+		}
+	}
+
 	final void addInstance(Entity e) {
 		synchronized(allInstances) {
 			allInstances.add(e);
@@ -95,6 +115,16 @@ public class JaamSimModel {
 			if (index >= 0)
 				if (e != allInstances.remove(index))
 					throw new ErrorException("Internal Consistency Error - Entity List");
+
+			if (!e.testFlag(Entity.FLAG_GENERATED)) {
+				if (namedEntities.get(e.entityName) != e)
+					throw new ErrorException("Named Entities Internal Consistency error" + e.entityName);
+
+				namedEntities.remove(e.entityName);
+			}
+
+			e.entityName = null;
+			e.setFlag(Entity.FLAG_DEAD);
 		}
 	}
 }

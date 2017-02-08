@@ -50,6 +50,8 @@ public class PreviewCache {
 
 		if (GUIFrame.getInstance().getSimState() != GUIFrame.SIM_STATE_RUNNING) {
 			dummyEntity = new DisplayEntity();
+			//FIXME: remove this when models are no longer static
+			dummyEntity.setName("");
 			dummyEntity.kill();
 		}
 	}
