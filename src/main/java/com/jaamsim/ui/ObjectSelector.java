@@ -242,10 +242,6 @@ public class ObjectSelector extends FrameBox {
 				if (ent instanceof Unit || ent instanceof View)
 					continue;
 
-				// Skip an entity that is locked
-				if (ent.testFlag(Entity.FLAG_LOCKED))
-					continue;
-
 				// Apply an upper bound on the number of generated entities to display
 				if (ent.testFlag(Entity.FLAG_GENERATED)) {
 					if (numGenerated > MAX_GENERATED_ENTITIES)

@@ -726,9 +726,6 @@ public class InputAgent {
 	}
 
 	public static void processKeyword(Entity entity, KeywordIndex key) {
-		if (entity.testFlag(Entity.FLAG_LOCKED))
-			throw new InputErrorException("Entity: %s is locked and cannot be modified", entity.getName());
-
 		Input<?> input = entity.getInput( key.keyword );
 		if (input != null) {
 			InputAgent.apply(entity, input, key);
