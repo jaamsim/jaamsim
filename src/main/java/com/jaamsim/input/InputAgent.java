@@ -67,7 +67,7 @@ public class InputAgent {
 	private static boolean recordEdits;       // TRUE if input changes are to be marked as edited.
 
 	private static final String INP_ERR_DEFINEUSED = "The name: %s has already been used and is a %s";
-	private static final String[] EARLY_KEYWORDS = {"AttributeDefinitionList", "UnitType", "UnitTypeList", "TickLength", "CustomOutputList"};
+	private static final String[] EARLY_KEYWORDS = {"UnitType", "UnitTypeList", "AttributeDefinitionList", "CustomOutputList"};
 
 	private static File reportDir;
 	private static FileEntity reportFile;     // file to which the output report will be written

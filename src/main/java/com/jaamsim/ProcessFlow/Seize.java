@@ -120,7 +120,7 @@ public class Seize extends LinkedService {
 		ArrayList<Resource> resList = resourceList.getValue();
 		ArrayList<SampleProvider> numberList = numberOfUnitsList.getValue();
 		for (int i=0; i<resList.size(); i++) {
-			if (resList.get(i).getAvailableUnits() < (int) numberList.get(i).getNextSample(simTime)) {
+			if (resList.get(i).getAvailableUnits(simTime) < (int) numberList.get(i).getNextSample(simTime)) {
 				this.setReceivedEntity(oldEnt);
 				return false;
 			}

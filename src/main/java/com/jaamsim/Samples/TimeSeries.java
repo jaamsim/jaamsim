@@ -19,8 +19,10 @@ package com.jaamsim.Samples;
 import java.util.Arrays;
 
 import com.jaamsim.Graphics.DisplayEntity;
+import com.jaamsim.basicsim.EntityTarget;
 import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.events.EventManager;
+import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Keyword;
@@ -99,6 +101,40 @@ public class TimeSeries extends DisplayEntity implements TimeSeriesProvider {
 			return;
 		}
 	}
+
+	@Override
+	public void startUp() {
+		super.startUp();
+		this.waitForNextValue();
+	}
+
+	/**
+	 * Schedules an event when the TimeSeries' value changes.
+	 */
+	final void waitForNextValue() {
+		long ticks = this.getSimTicks();
+		long durTicks = getNextChangeAfterTicks(ticks) - ticks;
+		if (isTraceFlag())
+			trace(0, "waitForNextValue - dur=%.6f", EventManager.ticksToSecs(durTicks));
+		if (durTicks == 0L)
+			return;
+		this.scheduleProcessTicks(durTicks, 0, waitForNextValueTarget);
+	}
+
+	/**
+	 * WaitForNextValueTarget
+	 */
+	private static class WaitForNextValueTarget extends EntityTarget<TimeSeries> {
+		WaitForNextValueTarget(TimeSeries ent) {
+			super(ent, "endStep");
+		}
+
+		@Override
+		public void process() {
+			ent.waitForNextValue();
+		}
+	}
+	private final ProcessTarget waitForNextValueTarget = new WaitForNextValueTarget(this);
 
 	@Override
 	public Class<? extends Unit> getUserUnitType() {
