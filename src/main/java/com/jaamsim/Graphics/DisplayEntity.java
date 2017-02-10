@@ -921,26 +921,6 @@ public class DisplayEntity extends Entity {
 		return ret;
 	}
 
-	/**
-	 * Returns the local coordinates for a specified fractional distance along a polyline.
-	 * @param frac - fraction of the total graphical length of the polyline
-	 * @return local coordinates for the specified position
-	 */
-	public Vec3d getPositionOnPolyline(double simTime, double frac) {
-		return PolylineInfo.getPositionOnPolyline(getCurvePoints(), frac);
-	}
-
-	/**
-	 * Returns the local coordinates for a sub-section of the polyline specified by a first and
-	 * last fractional distance.
-	 * @param frac0 - fractional distance for the start of the sub-polyline
-	 * @param frac1 - fractional distance for the end of the sub-polyline
-	 * @return array of local coordinates for the sub-polyline
-	 */
-	public ArrayList<Vec3d> getSubPolyline(double simTime, double frac0, double frac1) {
-		return PolylineInfo.getSubPolyline(getCurvePoints(), frac0, frac1);
-	}
-
 	public boolean selectable() {
 		return true;
 	}
