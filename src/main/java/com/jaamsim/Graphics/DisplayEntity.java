@@ -17,7 +17,6 @@
 package com.jaamsim.Graphics;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 
 import com.jaamsim.DisplayModels.ArrowModel;
@@ -928,37 +927,7 @@ public class DisplayEntity extends Entity {
 	 * @return local coordinates for the specified position
 	 */
 	public Vec3d getPositionOnPolyline(double simTime, double frac) {
-		ArrayList<Vec3d> curvePoints = this.getCurvePoints();
-
-		// Calculate the cumulative graphical lengths along the polyline
-		double[] cumLengthList = this.getCumulativeLengths(simTime);
-
-		// Find the insertion point by binary search
-		double dist = frac * cumLengthList[cumLengthList.length-1];
-		int k = Arrays.binarySearch(cumLengthList, dist);
-
-		// Exact match
-		if (k >= 0)
-			return curvePoints.get(k);
-
-		// Error condition
-		if (k == -1)
-			return new Vec3d();
-
-		// Insertion index = -k-1
-		int index = -k - 1;
-
-		// Interpolate the final position between the two points
-		if (index == cumLengthList.length) {
-			return new Vec3d(curvePoints.get(index-1));
-		}
-		double fracInSegment = (dist - cumLengthList[index-1]) /
-				(cumLengthList[index] - cumLengthList[index-1]);
-		Vec3d vec = new Vec3d();
-		vec.interpolate3(curvePoints.get(index-1),
-				curvePoints.get(index),
-				fracInSegment);
-		return vec;
+		return PolylineInfo.getPositionOnPolyline(getCurvePoints(), frac);
 	}
 
 	/**
@@ -969,82 +938,7 @@ public class DisplayEntity extends Entity {
 	 * @return array of local coordinates for the sub-polyline
 	 */
 	public ArrayList<Vec3d> getSubPolyline(double simTime, double frac0, double frac1) {
-
-		ArrayList<Vec3d> curvePoints = this.getCurvePoints();
-
-		ArrayList<Vec3d> ret = new ArrayList<>();
-
-		// Calculate the cumulative graphical lengths along the polyline
-		double[] cumLengthList = this.getCumulativeLengths(simTime);
-
-		// Find the insertion point for the first distance using binary search
-		double dist0 = frac0 * cumLengthList[cumLengthList.length-1];
-		int k = Arrays.binarySearch(cumLengthList, dist0);
-		if (k == -1)
-			error("Unable to find position in polyline using binary search.");
-
-		// Interpolate the position of the first node
-		int index;
-		if (k >= 0) {
-			ret.add(curvePoints.get(k));
-			index = k + 1;
-			if (index == cumLengthList.length)
-				return ret;
-		}
-		else {
-			Vec3d vec;
-			index = -k - 1;
-			if (index == cumLengthList.length) {
-				vec = new Vec3d(curvePoints.get(index-1));
-			}
-			else {
-				double fracInSegment = (dist0 - cumLengthList[index-1]) /
-						(cumLengthList[index] - cumLengthList[index-1]);
-				vec = new Vec3d();
-				vec.interpolate3(curvePoints.get(index-1),
-						curvePoints.get(index),
-						fracInSegment);
-			}
-			ret.add(vec);
-		}
-
-		// Loop through the indices following the insertion point
-		double dist1 = frac1 * cumLengthList[cumLengthList.length-1];
-		while (index < cumLengthList.length && cumLengthList[index] < dist1) {
-			ret.add(curvePoints.get(index));
-			index++;
-		}
-		if (index == cumLengthList.length)
-			return ret;
-
-		// Interpolate the position of the last node
-		Vec3d vec = new Vec3d();
-		double fracInSegment = (dist1 - cumLengthList[index-1]) /
-                (cumLengthList[index] - cumLengthList[index-1]);
-		vec.interpolate3(curvePoints.get(index-1),
-                 curvePoints.get(index),
-                 fracInSegment);
-		ret.add(vec);
-
-		return ret;
-	}
-
-	/**
-	 * Returns the cumulative graphics lengths for the nodes along the polyline.
-	 * @return array of cumulative graphical lengths
-	 */
-	private double[] getCumulativeLengths(double simTime) {
-		ArrayList<Vec3d> curvePoints = this.getCurvePoints();
-
-		int n = curvePoints.size();
-		double[] cumLengthList = new double[n];
-		cumLengthList[0] = 0.0;
-		for (int i = 1; i < n; i++) {
-			Vec3d vec = new Vec3d();
-			vec.sub3(curvePoints.get(i), curvePoints.get(i-1));
-			cumLengthList[i] = cumLengthList[i-1] + vec.mag3();
-		}
-		return cumLengthList;
+		return PolylineInfo.getSubPolyline(getCurvePoints(), frac0, frac1);
 	}
 
 	public boolean selectable() {
