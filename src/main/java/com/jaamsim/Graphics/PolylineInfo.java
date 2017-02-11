@@ -345,28 +345,31 @@ public class PolylineInfo {
 		if (k == -1)
 			throw new ErrorException("Unable to find position in polyline using binary search.");
 
+		Vec3d lastPt = pts.get(pts.size()-1);
+
 		// Interpolate the position of the first node
 		int index;
 		if (k >= 0) {
 			ret.add(pts.get(k));
 			index = k + 1;
-			if (index == cumLengthList.length)
+			if (index == cumLengthList.length) {
+				ret.add(lastPt);
 				return ret;
+			}
 		}
 		else {
-			Vec3d vec;
 			index = -k - 1;
 			if (index == cumLengthList.length) {
-				vec = new Vec3d(pts.get(index-1));
+				ret.add(lastPt);
+				ret.add(lastPt);
+				return ret;
 			}
-			else {
-				double fracInSegment = (dist0 - cumLengthList[index-1]) /
-						(cumLengthList[index] - cumLengthList[index-1]);
-				vec = new Vec3d();
-				vec.interpolate3(pts.get(index-1),
-						pts.get(index),
-						fracInSegment);
-			}
+			double fracInSegment = (dist0 - cumLengthList[index-1]) /
+					(cumLengthList[index] - cumLengthList[index-1]);
+			Vec3d vec = new Vec3d();
+			vec.interpolate3(pts.get(index-1),
+					pts.get(index),
+					fracInSegment);
 			ret.add(vec);
 		}
 
@@ -376,8 +379,10 @@ public class PolylineInfo {
 			ret.add(pts.get(index));
 			index++;
 		}
-		if (index == cumLengthList.length)
+		if (index == cumLengthList.length) {
+			ret.add(lastPt);
 			return ret;
+		}
 
 		// Interpolate the position of the last node
 		Vec3d vec = new Vec3d();
