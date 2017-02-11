@@ -30,32 +30,20 @@ public class PolylineInfo {
 		SPLINE,
 	}
 
-	private final ArrayList<Vec3d> points;
-	private final CurveType curveType;
 	private final ArrayList<Vec3d> curvePoints;
 	private final Color4d color;
 	private final int width; // Line width in pixels
 
 	public PolylineInfo(ArrayList<Vec3d> pts, CurveType ct, Color4d col, int w) {
-		points = pts;
-		curveType = ct;
 		color = col;
 		width = w;
+		curvePoints = pts;
+	}
 
-		switch (curveType) {
-		case LINEAR:
-			curvePoints = points;
-			break;
-		case BEZIER:
-			curvePoints = getBezierPoints(points);
-			break;
-		case SPLINE:
-			curvePoints = getSplinePoints(points);
-			break;
-		default:
-			assert(false);
-			curvePoints = null;
-		}
+	public PolylineInfo(ArrayList<Vec3d> pts, Color4d col, int w) {
+		color = col;
+		width = w;
+		curvePoints = pts;
 	}
 
 	@Override
@@ -65,14 +53,9 @@ public class PolylineInfo {
 
 		PolylineInfo pi = (PolylineInfo)o;
 
-		return points != null && points.equals(pi.points) &&
-		       curveType == pi.curveType &&
+		return curvePoints != null && curvePoints.equals(pi.curvePoints) &&
 		       color != null && color.equals(pi.color) &&
 		       width == pi.width;
-	}
-
-	public ArrayList<Vec3d> getPoints() {
-		return points;
 	}
 
 	public ArrayList<Vec3d> getCurvePoints() {
@@ -89,7 +72,7 @@ public class PolylineInfo {
 
 	@Override
 	public String toString() {
-		return points.toString();
+		return curvePoints.toString();
 	}
 
 	public static ArrayList<Vec3d> getBezierPoints(ArrayList<Vec3d> ps) {
@@ -397,7 +380,6 @@ public class PolylineInfo {
                  pts.get(index),
                  fracInSegment);
 		ret.add(vec);
-
 		return ret;
 	}
 
