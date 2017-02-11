@@ -198,7 +198,7 @@ public class EntityDelay extends LinkedComponent {
 	public PolylineInfo[] buildScreenPoints(double simTime) {
 		int w = Math.max(1, widthInput.getValue().intValue());
 		PolylineInfo[] ret = new PolylineInfo[1];
-		ret[0] = new PolylineInfo(pointsInput.getValue(), getCurveType(), colorInput.getValue(), w);
+		ret[0] = new PolylineInfo(getCurvePoints(), colorInput.getValue(), w);
 		return ret;
 	}
 
