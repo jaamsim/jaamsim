@@ -111,10 +111,9 @@ public class PolylineModel extends DisplayModel {
 			nodePoints = new ArrayList<>();
 
 			// Cache the points in the first series for selection and editing
-			ArrayList<Vec3d> basePoints = pis[0].getPoints();
-			if (basePoints == null || basePoints.size() < 2) {
-				cachedProxies = new LineProxy[0];
-				return;
+			ArrayList<Vec3d> basePoints = displayObservee.getPoints();
+			if (basePoints == null) {
+				basePoints = new ArrayList<>();
 			}
 
 			for (int i = 1; i < basePoints.size(); ++i) { // Skip the first point

@@ -890,6 +890,8 @@ public class DisplayEntity extends Entity {
 
 	public ArrayList<Vec3d> getPoints() {
 		synchronized(screenPointLock) {
+			if (!this.usePointsInput())
+				return null;
 			return new ArrayList<>(pointsInput.getValue());
 		}
 	}
