@@ -17,7 +17,6 @@ ColladaModel    JavaClass { com.jaamsim.DisplayModels.ColladaModel             }
 ShapeModel      JavaClass { com.jaamsim.DisplayModels.ShapeModel               } Palette { 'Display Models' }    DragAndDrop { FALSE }
 
 Define ShapeModel {
-                    Pixels
                     Rectangle
                     Circle
                     Arrow2D
@@ -25,7 +24,6 @@ Define ShapeModel {
                     BarGauge2D
                   }
 
-Pixels          Shape { PIXELS     }
 Rectangle       Shape { RECTANGLE  }
 Circle          Shape { CIRCLE     }
 Arrow2D         Shape { ARROW2D    }
