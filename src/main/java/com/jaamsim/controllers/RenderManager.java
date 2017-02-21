@@ -1211,9 +1211,14 @@ public class RenderManager implements DragSourceListener {
 		if (Simulation.isSnapToGrid())
 			point = Simulation.getSnapGridPosition(point, selectedEntity.getGlobalPosition(screenPoints.get(nodeIndex)));
 
+		ArrayList<Vec3d> newPoints = new ArrayList<>();
+		for (Vec3d v : screenPoints) {
+			newPoints.add(v);
+		}
+
 		// Set the new position for the node
-		screenPoints.get(nodeIndex).set3(selectedEntity.getLocalPosition(point));
-		InputAgent.apply(selectedEntity, InputAgent.formatPointsInputs("Points", screenPoints, new Vec3d()));
+		newPoints.set(nodeIndex, new Vec3d(selectedEntity.getLocalPosition(point)));
+		InputAgent.apply(selectedEntity, InputAgent.formatPointsInputs("Points", newPoints, new Vec3d()));
 
 		// Set the position of the entity to the coordinates of the first node
 		if (nodeIndex == 0)
