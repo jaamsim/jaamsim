@@ -158,7 +158,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 				continue;
 
 			DowntimeUser du = (DowntimeUser)each;
-			if (du.getMaintenanceEntities().contains(this) || du.getBreakdownEntities().contains(this))
+			if (du.isDowntimeUser(this))
 				downtimeUserList.add(du);
 		}
 	}
