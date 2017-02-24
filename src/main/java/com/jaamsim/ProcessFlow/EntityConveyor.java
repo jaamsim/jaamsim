@@ -209,7 +209,7 @@ public class EntityConveyor extends LinkedService {
 	@Override
 	public void updateGraphics(double simTime) {
 
-		if (!this.isBusy() || presentTravelTime == 0.0d)
+		if (!this.isBusy() || presentTravelTime == 0.0d || !usePointsInput())
 			return;
 
 		// Move each entity on the conveyor to its present position

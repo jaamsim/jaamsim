@@ -180,6 +180,9 @@ public class EntityDelay extends LinkedComponent {
 	@Override
 	public void updateGraphics(double simTime) {
 
+		if (!usePointsInput())
+			return;
+
 		// Loop through the entities on the path
 		for (EntityDelayEntry entry : entityMap.values()) {
 			// Calculate the distance travelled by this entity
