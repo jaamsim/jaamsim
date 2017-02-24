@@ -18,6 +18,7 @@ package com.jaamsim.ui;
 
 import java.awt.EventQueue;
 import java.awt.Frame;
+import java.awt.Point;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.util.ArrayList;
@@ -383,11 +384,19 @@ public class View extends Entity {
 	}
 
 	public IntegerVector getWindowPos() {
-		return windowPos.getValue();
+		Point fix = OSFix.getLocationAdustment();  //FIXME
+		IntegerVector ret = new IntegerVector(windowPos.getValue());
+		ret.addAt(fix.x, 0);
+		ret.addAt(fix.y, 1);
+		return ret;
 	}
 
 	public IntegerVector getWindowSize() {
-		return windowSize.getValue();
+		Point fix = OSFix.getSizeAdustment();  //FIXME
+		IntegerVector ret = new IntegerVector(windowSize.getValue());
+		ret.addAt(fix.x, 0);
+		ret.addAt(fix.y, 1);
+		return ret;
 	}
 
 	public void setKeepWindowOpen(boolean b) {

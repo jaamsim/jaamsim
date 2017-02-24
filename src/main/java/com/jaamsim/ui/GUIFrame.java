@@ -96,7 +96,7 @@ import com.jaamsim.units.Unit;
  * The main window for a Graphical Simulation.  It provides the controls for managing then
  * EventManager (run, pause, ...) and the graphics (zoom, pan, ...)
  */
-public class GUIFrame extends JFrame implements EventTimeListener, EventErrorListener {
+public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErrorListener {
 	private static GUIFrame instance;
 
 	// global shutdown flag
@@ -1741,6 +1741,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 			gui.setTitle(Simulation.getModelName());
 			gui.setVisible(true);
 			gui.calcWindowDefaults();
+			gui.setLocation(gui.getX(), gui.getY());  //FIXME remove when setLocation is fixed for Windows 10
 		}
 
 		// Resolve all input arguments against the current working directory

@@ -42,7 +42,7 @@ import javax.swing.tree.TreeSelectionModel;
 import com.jaamsim.basicsim.ObjectType;
 import com.jaamsim.controllers.RenderManager;
 
-public class EntityPallet extends JFrame implements DragGestureListener {
+public class EntityPallet extends OSFixJFrame implements DragGestureListener {
 
 	private static EntityPallet myInstance;  // only one instance allowed to be open
 
