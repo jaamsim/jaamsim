@@ -293,6 +293,9 @@ public class PolylineInfo {
 	 */
 	public static Vec3d getPositionOnPolyline(ArrayList<Vec3d> pts, double frac) {
 
+		if (pts.isEmpty())
+			return null;
+
 		// Calculate the cumulative graphical lengths along the polyline
 		double[] cumLengthList = PolylineInfo.getCumulativeLengths(pts);
 
@@ -335,6 +338,8 @@ public class PolylineInfo {
 	public static ArrayList<Vec3d> getSubPolyline(ArrayList<Vec3d> pts, double frac0, double frac1) {
 
 		ArrayList<Vec3d> ret = new ArrayList<>();
+		if (pts.isEmpty())
+			return ret;
 
 		// Calculate the cumulative graphical lengths along the polyline
 		double[] cumLengthList = PolylineInfo.getCumulativeLengths(pts);
