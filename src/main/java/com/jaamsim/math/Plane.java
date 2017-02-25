@@ -155,6 +155,35 @@ public double collisionDist(Ray r) {
 
 }
 
+// Return the 'ray' resulting from colliding two planes, or null if the planes are parallel
+public Ray collide(Plane p) {
+	double normDot = normal.dot3(p.normal);
+	if (MathUtils.near(normDot, 1.0) || MathUtils.near(normDot, -1.0)) {
+		return null; // These planes are parallel
+	}
+
+	// Ray dir is the direction of the new ray
+	Vec3d rayDir = new Vec3d();
+	rayDir.cross3(normal, p.normal);
+	rayDir.normalize3();
+
+	// Now, we need a point on both planes, so we will find any ray in this plane and intersect it with the other
+	Vec3d intDir = new Vec3d();
+	intDir.cross3(rayDir, normal); // Take the cross of our new direction and the normal, this must be in the plane
+	intDir.normalize3();
+	Vec3d intStart = new Vec3d(normal);
+	intStart.scale3(_dist); // intStart is in this plane
+	Ray intersectRay = new Ray(new Vec4d(intStart, 1.0),
+	                           new Vec4d(intDir, 0.0));
+	double intDist = p.collisionDist(intersectRay);
+	Vec3d intPoint = new Vec3d(intDir);
+	intPoint.scale3(intDist);
+	intPoint.add3(intStart);
+
+	return new Ray(new Vec4d(intPoint, 1.0),
+	               new Vec4d(rayDir, 0.0));
+}
+
 /**
  * Returns if ray 'r' collides with the back of the plane
  * @param r

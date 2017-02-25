@@ -83,4 +83,37 @@ public void TestTransform() {
 	assertTrue(expected.near(p0));
 }
 
+@Test
+public void testIntersect() {
+	Vec4d xAxis = new Vec4d(1, 0, 0, 0);
+	Vec4d yAxis = new Vec4d(0, 1, 0, 0);
+	Vec4d zAxis = new Vec4d(0, 0, 1, 0);
+
+	Plane pXY = new Plane(zAxis, 0);
+	Plane pXZ = new Plane(yAxis, 0);
+	Plane pYZ = new Plane(xAxis, 0);
+
+	Vec3d intersect = MathUtils.collidePlanes(pXY, pXZ, pYZ);
+
+	Vec3d origin = new Vec3d();
+
+	assertTrue(intersect.near3(origin));
+
+	Plane pXY1 = new Plane(zAxis, 1.0);
+	Vec3d expected = new Vec3d(0,0,1);
+	intersect = MathUtils.collidePlanes(pXY1, pXZ, pYZ);
+	assertTrue(intersect.near3(expected));
+
+	// Try other permutations
+	intersect = MathUtils.collidePlanes(pXZ, pXY1, pYZ);
+	assertTrue(intersect.near3(expected));
+	intersect = MathUtils.collidePlanes(pXZ, pYZ, pXY1);
+	assertTrue(intersect.near3(expected));
+
+	// Check parallel handling
+	intersect = MathUtils.collidePlanes(pXZ, pYZ, pYZ);
+	assertTrue(intersect == null);
+
+}
+
 } // class TestPlane

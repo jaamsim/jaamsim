@@ -255,4 +255,40 @@ public static double collisionDistLines(Mat4d rayMat, Vec4d[] lines, double coll
 
 }
 
+/**
+ * Get the point where 3 planes intesect, or null if any are parallel
+ * @param p0
+ * @param p1
+ * @param p2
+ * @return
+ */
+public static Vec3d collidePlanes(Plane p0, Plane p1, Plane p2) {
+	Ray r = p0.collide(p1);
+	if (r == null)
+		return null;
+
+		double dist = p2.collisionDist(r);
+	if (Double.isInfinite(dist))
+		return null;
+
+	Vec3d ret = new Vec3d(r.getDirRef());
+	ret.scale3(dist);
+	ret.add3(r.getStartRef());
+	return ret;
+}
+
+public static Plane getMidpointPlane(Vec3d p0, Vec3d p1) {
+	Vec3d mid = new Vec3d(p0);
+	mid.add3(p1);
+	mid.scale3(0.5);
+
+	Vec4d normal =  new Vec4d(p1, 0);
+	normal.sub3(p0);
+	normal.normalize3();
+
+	double dist = normal.dot3(mid);
+
+	return new Plane(normal, dist);
+}
+
 } // class
