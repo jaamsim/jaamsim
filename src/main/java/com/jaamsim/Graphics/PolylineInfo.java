@@ -19,6 +19,8 @@ package com.jaamsim.Graphics;
 import java.util.ArrayList;
 
 import com.jaamsim.math.Color4d;
+import com.jaamsim.math.MathUtils;
+import com.jaamsim.math.Plane;
 import com.jaamsim.math.Vec3d;
 
 public class PolylineInfo {
@@ -26,6 +28,7 @@ public class PolylineInfo {
 		LINEAR,
 		BEZIER,
 		SPLINE,
+		CIRCULAR_ARC,
 	}
 
 	private final ArrayList<Vec3d> points;
@@ -49,6 +52,9 @@ public class PolylineInfo {
 			break;
 		case SPLINE:
 			curvePoints = getSplinePoints(points);
+			break;
+		case CIRCULAR_ARC:
+			curvePoints = getCircularArcPoints(points);
 			break;
 		default:
 			assert(false);
@@ -210,6 +216,69 @@ public class PolylineInfo {
 
 		return ret;
 	}
+
+	public static ArrayList<Vec3d> getCircularArcPoints(ArrayList<Vec3d> ps) {
+		if (ps.size() <= 2) {
+			return ps;
+		}
+
+		Vec3d start = new Vec3d(ps.get(0));
+		Vec3d mid = new Vec3d(ps.get(1));
+		Vec3d end = new Vec3d(ps.get(ps.size()-1));
+
+		Plane circlePlane = new Plane(start, mid, end);
+		Plane midPlane0 = MathUtils.getMidpointPlane(start, mid);
+		Plane midPlane1 = MathUtils.getMidpointPlane(mid, end);
+		Vec3d center = MathUtils.collidePlanes(circlePlane, midPlane0, midPlane1);
+		if (center == null) {
+			return ps;
+		}
+
+		Vec3d temp = new Vec3d(center);
+		temp.sub3(start);
+		double radius = temp.mag3();
+
+		// Create the two orthogonal components of our circle (the equivalent of x and y)
+		Vec3d xComp = new Vec3d(start);
+		xComp.sub3(center);
+
+		Vec3d yComp = new Vec3d();
+		yComp.cross3(circlePlane.normal, xComp);
+		yComp.normalize3();
+		yComp.scale3(radius);
+
+		// Find the end arc value
+		temp.sub3(end, center);
+		double xVal = temp.dot3(xComp);
+		double yVal = temp.dot3(yComp);
+		double arcAngle = Math.atan2(yVal, xVal);
+		if (arcAngle < 0) {
+			arcAngle += 2*Math.PI;
+		}
+
+		// Find the number of segments to draw, 60 for a full circle
+		int numSegments = (int)(arcAngle*60/(2*Math.PI));
+		if (numSegments < 2)
+			numSegments = 2;
+
+		// Build the arc
+		ArrayList<Vec3d> ret = new ArrayList<>();
+		for (int i = 0; i <= numSegments; ++i) {
+			double theta = arcAngle*i/numSegments;
+
+			Vec3d point = new Vec3d(center);
+
+			temp.scale3(Math.cos(theta), xComp);
+			point.add3(temp);
+
+			temp.scale3(Math.sin(theta), yComp);
+			point.add3(temp);
+
+			ret.add(point);
+		}
+		return ret;
+	}
+
 
 	// Solve a generic bezier with arbitrary control points
 	private static Vec3d solveBezier(double t, int start, int end, ArrayList<Vec3d> controls) {
