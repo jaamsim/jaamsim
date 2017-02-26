@@ -541,7 +541,6 @@ public class DisplayEntity extends Entity {
 		return getGlobalPosition(getPosition());
 	}
 
-
 	/**
 	 * Convert the specified local coordinate to the global coordinate system
 	 * @param pos - a position in the entity's local coordinate system
@@ -564,6 +563,30 @@ public class DisplayEntity extends Entity {
 		if (currentRegion != null)
 			currentRegion.getRegionTrans().multAndTrans(ret, ret);
 
+		return ret;
+	}
+
+	/**
+	 * Returns the global coordinates for a specified array of local coordinates.
+	 * @return
+	 */
+	public ArrayList<Vec3d> getGlobalPosition(ArrayList<Vec3d> pts) {
+		ArrayList<Vec3d> ret = new ArrayList<>(pts.size());
+		for (Vec3d pt : pts) {
+			ret.add(getGlobalPosition(pt));
+		}
+		return ret;
+	}
+
+	/**
+	 * Returns the local coordinates for a specified array of global coordinates.
+	 * @param pos - a position in the global coordinate system
+	 */
+	public ArrayList<Vec3d> getLocalPosition(ArrayList<Vec3d> pts) {
+		ArrayList<Vec3d> ret = new ArrayList<>(pts.size());
+		for (Vec3d pt : pts) {
+			ret.add(getLocalPosition(pt));
+		}
 		return ret;
 	}
 
@@ -615,6 +638,12 @@ public class DisplayEntity extends Entity {
 		Vec3d localPos = this.getLocalPosition(pos);
 		setPosition(localPos);
 		KeywordIndex kw = InputAgent.formatPointInputs(positionInput.getKeyword(), localPos, "m");
+		InputAgent.apply(this, kw);
+	}
+
+	public void setInputForGlobalPositions(ArrayList<Vec3d> pts) {
+		KeywordIndex kw = InputAgent.formatPointsInputs(pointsInput.getKeyword(),
+				getLocalPosition(pts), new Vec3d());
 		InputAgent.apply(this, kw);
 	}
 
