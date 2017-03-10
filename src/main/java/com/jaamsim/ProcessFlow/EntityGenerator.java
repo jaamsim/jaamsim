@@ -19,13 +19,13 @@ package com.jaamsim.ProcessFlow;
 
 import java.util.ArrayList;
 
+import com.jaamsim.EntityProviders.EntityProvInput;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.OverlayEntity;
 import com.jaamsim.Graphics.TextBasics;
 import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.basicsim.Entity;
-import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
@@ -57,7 +57,7 @@ public class EntityGenerator extends LinkedService {
 	@Keyword(description = "The prototype for entities to be generated.\n" +
 			"The generated entities will be copies of this entity.",
 	         exampleList = {"Proto"})
-	private final EntityInput<DisplayEntity> prototypeEntity;
+	private final EntityProvInput<DisplayEntity> prototypeEntity;
 
 	@Keyword(description = "The maximum number of entities to be generated.",
 	         exampleList = {"3", "InputValue1", "[InputValue1].Value"})
@@ -92,12 +92,11 @@ public class EntityGenerator extends LinkedService {
 		entitiesPerArrival.setValidRange(1, Double.POSITIVE_INFINITY);
 		this.addInput(entitiesPerArrival);
 
-		prototypeEntity = new EntityInput<>(DisplayEntity.class, "PrototypeEntity", "Key Inputs", null);
+		prototypeEntity = new EntityProvInput<>(DisplayEntity.class, "PrototypeEntity", "Key Inputs", null);
+		prototypeEntity.setEntity(this);
 		prototypeEntity.setRequired(true);
-		ArrayList<Class<? extends Entity>> list = new ArrayList<>();
-		list.add(TextBasics.class);
-		list.add(OverlayEntity.class);
-		prototypeEntity.setInvalidClasses(list);
+		prototypeEntity.addInvalidClass(TextBasics.class);
+		prototypeEntity.addInvalidClass(OverlayEntity.class);
 		this.addInput(prototypeEntity);
 
 		maxNumber = new SampleInput("MaxNumber", "Key Inputs", null);
@@ -149,7 +148,7 @@ public class EntityGenerator extends LinkedService {
 		int num = (int) entitiesPerArrival.getValue().getNextSample(getSimTime());
 		for (int i=0; i<num; i++) {
 			numberGenerated++;
-			DisplayEntity proto = prototypeEntity.getValue();
+			DisplayEntity proto = prototypeEntity.getValue().getNextEntity(simTime);
 			StringBuilder sb = new StringBuilder();
 			sb.append(this.getName()).append("_").append(numberGenerated);
 			DisplayEntity ent = Entity.fastCopy(proto, sb.toString());
@@ -184,7 +183,7 @@ public class EntityGenerator extends LinkedService {
 	@Override
 	public ArrayList<Entity> getSourceEntities() {
 		ArrayList<Entity> ret = new ArrayList<>();
-		DisplayEntity ent = prototypeEntity.getValue();
+		DisplayEntity ent = prototypeEntity.getValue().getNextEntity(0.0d);
 		if (ent != null) {
 			ret.add(ent);
 		}
