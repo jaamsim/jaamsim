@@ -298,7 +298,7 @@ public class Simulation extends Entity {
 		endingRunNumber = new RunNumberInput("EndingRunNumber", "Multiple Runs", 1);
 
 		// GUI tab
-		displayedUnits = new EntityListInput<>(Unit.class, "DisplayedUnits", "GUI", null);
+		displayedUnits = new EntityListInput<>(Unit.class, "DisplayedUnits", "GUI", new ArrayList<Unit>());
 		displayedUnits.setDefaultText("SI Units");
 		displayedUnits.setPromptReqd(false);
 
@@ -471,11 +471,7 @@ public class Simulation extends Entity {
 		}
 
 		if (in == displayedUnits) {
-			if (displayedUnits.getValue() == null)
-				return;
-			for (Unit u : displayedUnits.getValue()) {
-				Unit.setPreferredUnit(u.getClass(), u);
-			}
+			Unit.setPreferredUnitList(displayedUnits.getValue());
 			return;
 		}
 

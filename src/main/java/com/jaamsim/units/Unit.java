@@ -64,6 +64,24 @@ public abstract class Unit extends Entity {
 		return "SI";
 	}
 
+	public static final void setPreferredUnitList(ArrayList<? extends Unit> list) {
+		ArrayList<String> utList = Unit.getUnitTypeList();
+
+		// Set the preferred units in the list
+		for (Unit u : list) {
+			Class<? extends Unit> ut = u.getClass();
+			Unit.setPreferredUnit(ut, u);
+			utList.remove(ut.getSimpleName());
+		}
+
+		// Clear the entries for unit types that were not in the list
+		for (String utName : utList) {
+			ObjectType ot = Input.parseEntity(utName, ObjectType.class);
+			Class<? extends Unit> ut = Input.checkCast(ot.getJavaClass(), Unit.class);
+			preferredUnit.remove(ut);
+		}
+	}
+
 	public static final void setPreferredUnit(Class<? extends Unit> type, Unit u) {
 		if (u.getName().equals(Unit.getSIUnit(type))) {
 			preferredUnit.remove(type);
