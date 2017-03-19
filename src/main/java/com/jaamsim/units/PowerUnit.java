@@ -18,7 +18,7 @@ package com.jaamsim.units;
 
 public class PowerUnit extends Unit {
 	static {
-		Unit.setSIUnit(PowerUnit.class, "J/s");
+		Unit.setSIUnit(PowerUnit.class, "W");
 	}
 
 	public PowerUnit() {}
