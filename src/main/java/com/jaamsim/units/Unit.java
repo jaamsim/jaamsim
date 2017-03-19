@@ -90,6 +90,10 @@ public abstract class Unit extends Entity {
 		preferredUnit.put(type, u);
 	}
 
+	public static final ArrayList<Unit> getPreferredUnitList() {
+		return new ArrayList<>(preferredUnit.values());
+	}
+
 	public static final <T extends Unit> Unit getPreferredUnit(Class<T> type) {
 		return preferredUnit.get(type);
 	}
@@ -137,6 +141,24 @@ public abstract class Unit extends Entity {
 		Collections.sort(list, Input.uiSortOrder);
 		return list;
 	}
+
+	public static <T extends Unit> ArrayList<T> getUnitList(Class<T> ut) {
+		ArrayList<T> ret = new ArrayList<>();
+		for (T u: Entity.getClonesOfIterator(ut)) {
+			ret.add(u);
+		}
+		Collections.sort(ret, Unit.unitSortOrder);
+		return ret;
+	}
+
+	// Sorts by increasing SI conversion factor (i.e. smallest unit first)
+	private static class UnitSortOrder implements Comparator<Unit> {
+		@Override
+		public int compare(Unit u1, Unit u2) {
+			return Double.compare(u1.getConversionFactorToSI(), u2.getConversionFactorToSI());
+		}
+	}
+	public static final UnitSortOrder unitSortOrder = new UnitSortOrder();
 
 	private static class MultPair {
 		Class<? extends Unit> a;
