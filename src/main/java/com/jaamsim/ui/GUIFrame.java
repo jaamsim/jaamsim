@@ -107,6 +107,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 	private JMenu windowMenu;
 	private JMenu windowList;
 	private JMenu optionMenu;
+	private JMenu unitsMenu;
 	private JMenu helpMenu;
 	private static JCheckBoxMenuItem snapToGrid;
 	private static JCheckBoxMenuItem xyzAxis;
@@ -359,6 +360,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		this.initializeViewMenu();
 		this.initializeWindowMenu();
 		this.initializeOptionsMenu();
+		this.initializeUnitsMenu();
 		this.initializeHelpMenu();
 
 		// Add the individual menu to the main menu
@@ -367,6 +369,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		mainMenuBar.add( viewMenu );
 		mainMenuBar.add( windowMenu );
 		mainMenuBar.add( optionMenu );
+		mainMenuBar.add( unitsMenu );
 		mainMenuBar.add( helpMenu );
 
 		// Add main menu to the window
@@ -694,6 +697,32 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				RenderManager.setDebugInfo(((JCheckBoxMenuItem)e.getSource()).getState());
+			}
+		});
+	}
+
+	/**
+	 * Sets up the Units menu in the Control Panel's menu bar.
+	 */
+	private void initializeUnitsMenu() {
+
+		unitsMenu = new JMenu( "Units" );
+		unitsMenu.setMnemonic( 'U' );
+
+		unitsMenu.addMenuListener( new MenuListener() {
+
+			@Override
+			public void menuCanceled(MenuEvent arg0) {}
+
+			@Override
+			public void menuDeselected(MenuEvent arg0) {
+				unitsMenu.removeAll();
+			}
+
+			@Override
+			public void menuSelected(MenuEvent arg0) {
+				UnitsSelector.populateMenu(unitsMenu);
+				unitsMenu.setVisible(true);
 			}
 		});
 	}
