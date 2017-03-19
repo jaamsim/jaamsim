@@ -65,6 +65,10 @@ public abstract class Unit extends Entity {
 	}
 
 	public static final void setPreferredUnit(Class<? extends Unit> type, Unit u) {
+		if (u.getName().equals(Unit.getSIUnit(type))) {
+			preferredUnit.remove(type);
+			return;
+		}
 		preferredUnit.put(type, u);
 	}
 
