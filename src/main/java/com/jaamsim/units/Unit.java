@@ -16,9 +16,14 @@
  */
 package com.jaamsim.units;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 
 import com.jaamsim.basicsim.Entity;
+import com.jaamsim.basicsim.ObjectType;
+import com.jaamsim.input.Input;
 import com.jaamsim.input.Keyword;
 
 public abstract class Unit extends Entity {
@@ -95,6 +100,20 @@ public abstract class Unit extends Entity {
 		double f1 = this.getConversionFactorToSI();
 		double f2 = unit.getConversionFactorToSI();
 		return f1 / f2 ;
+	}
+
+	public static ArrayList<String> getUnitTypeList() {
+		ArrayList<String> list = new ArrayList<>();
+		for (ObjectType each: Entity.getClonesOfIterator(ObjectType.class)) {
+			Class<? extends Entity> klass = each.getJavaClass();
+			if (klass == null)
+				continue;
+
+			if (Unit.class.isAssignableFrom(klass))
+				list.add(each.getName());
+		}
+		Collections.sort(list, Input.uiSortOrder);
+		return list;
 	}
 
 	private static class MultPair {
