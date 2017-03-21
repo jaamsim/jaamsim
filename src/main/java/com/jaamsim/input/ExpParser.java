@@ -2380,13 +2380,33 @@ public class ExpParser {
 		// Parse as many indices as are present
 		while (true) {
 			ExpTokenizer.Token peeked = tokens.peek();
-			if (peeked == null || !peeked.value.equals("(")) {
+
+			if (peeked == null || peeked.type != ExpTokenizer.SYM_TYPE) {
 				break;
 			}
-			tokens.next(); // Consume '('
-			ExpNode index = parseExp(context, tokens, 0, exp);
-			tokens.expect(ExpTokenizer.SYM_TYPE, ")", exp.source);
-			lhs = new IndexCollection(context, lhs, index, exp, peeked.pos);
+
+			if (peeked.value.equals(".")) {
+				tokens.next(); // consume
+				ExpTokenizer.Token outputName = tokens.next();
+				if (outputName == null || outputName.type != ExpTokenizer.VAR_TYPE) {
+					throw new ExpError(exp.source, peeked.pos, "Expected Identifier after '.'");
+				}
+
+				lhs = new ResolveOutput(context, outputName.value, lhs, exp, peeked.pos);
+				continue;
+			}
+
+			if (peeked.value.equals("(")) {
+				tokens.next(); // consume
+				ExpNode indexExp = parseExp(context, tokens, 0, exp);
+				tokens.expect(ExpTokenizer.SYM_TYPE, ")", exp.source);
+
+				lhs = new IndexCollection(context, lhs, indexExp, exp, peeked.pos);
+				continue;
+			}
+
+			// Not an index or output. Move on
+			break;
 		}
 
 		// Now peek for a binary op to modify this expression
@@ -2517,7 +2537,8 @@ public class ExpParser {
 		}
 		if (nextTok.type == ExpTokenizer.SQ_TYPE ||
 		    nextTok.value.equals("this")) {
-			return parseVariable(context, nextTok, tokens, exp, nextTok.pos);
+			ExpResult namedVal = context.getValFromName(nextTok.value, exp.source, nextTok.pos);
+			return new Constant(context, namedVal, exp, nextTok.pos);
 		}
 
 		// The next token must be a symbol
@@ -2644,40 +2665,6 @@ public class ExpParser {
 		}
 
 		return new FuncCall(fe.name, context, fe.function, arguments, exp, pos);
-	}
-
-	private static ExpNode parseVariable(ParseContext context, ExpTokenizer.Token firstName, TokenList tokens, Expression exp, int pos) throws ExpError {
-
-		ExpNode curExp = new Constant(context, context.getValFromName(firstName.value, exp.source, pos), exp, pos);
-		while (true) {
-
-			ExpTokenizer.Token peeked = tokens.peek();
-			if (peeked == null || peeked.type != ExpTokenizer.SYM_TYPE || !peeked.value.equals(".")) {
-				break;
-			}
-
-			// Next token is a '.' so parse a ResolveOutput node
-
-			tokens.next(); // consume
-			ExpTokenizer.Token outputName = tokens.next();
-			if (outputName == null || outputName.type != ExpTokenizer.VAR_TYPE) {
-				throw new ExpError(exp.source, peeked.pos, "Expected Identifier after '.'");
-			}
-
-			curExp = new ResolveOutput(context, outputName.value, curExp, exp, peeked.pos);
-
-			peeked = tokens.peek();
-			if (peeked != null && peeked.value.equals("(")) {
-				// Optional index
-				tokens.next(); // consume
-				ExpNode indexExp = parseExp(context, tokens, 0, exp);
-				tokens.expect(ExpTokenizer.SYM_TYPE, ")", exp.source);
-
-				curExp = new IndexCollection(context, curExp, indexExp, exp, peeked.pos);
-			}
-		}
-
-		return curExp;
 	}
 
 }
