@@ -1547,7 +1547,7 @@ public class InputAgent {
 			return sb.toString();
 		}
 
-		if (out.getReturnType() == ExpResult.class) {
+		if (retType == ExpResult.class) {
 			ExpResult result = out.getValue(simTime, ExpResult.class);
 			switch (result.type) {
 			case STRING:
@@ -1573,6 +1573,9 @@ public class InputAgent {
 			return sb.toString();
 		}
 		// All other outputs
+		if (out.getValue(simTime, retType) == null) {
+			return "null";
+		}
 		return out.getValue(simTime, retType).toString();
 	}
 
