@@ -2313,7 +2313,10 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 			GUIFrame.showErrorDialog(title, e.source, e.position, pre, e.getMessage(), post);
 			return;
 		}
-		GUIFrame.showErrorDialog(title, "", -1, pre, t.getMessage(), post);
+		String message = t.getMessage();
+		if (message == null)
+			message = "null";
+		GUIFrame.showErrorDialog(title, "", -1, pre, message, post);
 	}
 
 	/**
