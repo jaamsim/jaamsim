@@ -44,6 +44,19 @@ public Vec4d(Vec4d v) {
 }
 
 /**
+ * Construct a Vec4d from a Vec3d and a w parameter
+ * @param v the Vec3d containing the initial values for x,y,z
+ * @param w the new 'w' value
+ * @throws NullPointerException if v is null
+ */
+public Vec4d(Vec3d v, double w) {
+	x = v.x;
+	y = v.y;
+	z = v.z;
+	this.w = w;
+}
+
+/**
  * Construct a Vec4d initialized to (x, y, z, w);
  * @param x the initial x value
  * @param y the initial y value

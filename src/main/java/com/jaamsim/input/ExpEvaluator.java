@@ -77,6 +77,9 @@ public class ExpEvaluator {
 	}
 
 	public static ExpResult getResultFromObject(Object val, Class<? extends Unit> unitType) throws ExpError {
+		if (val == null)
+			return ExpResult.makeEntityResult(null);
+
 		if (ExpResult.class.isAssignableFrom(val.getClass())) {
 			return (ExpResult)val;
 		}

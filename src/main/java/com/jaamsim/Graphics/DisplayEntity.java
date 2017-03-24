@@ -915,6 +915,9 @@ public class DisplayEntity extends Entity {
 		case SPLINE:
 			ret = PolylineInfo.getSplinePoints(getPoints());
 			break;
+		case CIRCULAR_ARC:
+			ret = PolylineInfo.getCircularArcPoints(getPoints());
+			break;
 		default:
 			assert(false);
 			error("Invalid CurveType");
