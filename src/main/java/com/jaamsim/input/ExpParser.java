@@ -202,7 +202,7 @@ public class ExpParser {
 		}
 	}
 
-	public static class ResolveOutput extends ExpNode {
+	private static class ResolveOutput extends ExpNode {
 		public ExpNode entNode;
 		public String outputName;
 
@@ -243,6 +243,7 @@ public class ExpParser {
 
 			if (    entValRes.state == ExpValResult.State.ERROR ||
 			        entValRes.state == ExpValResult.State.UNDECIDABLE) {
+				fixValidationErrors(entValRes, exp.source, tokenPos);
 				return entValRes;
 			}
 			ExpValResult res =  resolver.validate(entValRes);
@@ -510,7 +511,7 @@ public class ExpParser {
 	}
 
 
-	public static class Conditional extends ExpNode {
+	private static class Conditional extends ExpNode {
 		private ExpNode condExp;
 		private ExpNode trueExp;
 		private ExpNode falseExp;
@@ -594,7 +595,7 @@ public class ExpParser {
 		}
 	}
 
-	public static class FuncCall extends ExpNode {
+	private static class FuncCall extends ExpNode {
 		protected final ArrayList<ExpNode> args;
 		protected final CallableFunc function;
 		private boolean canSkipRuntimeChecks = false;
