@@ -294,21 +294,13 @@ public abstract class StateUserEntity extends StateEntity implements ThresholdUs
 	// ********************************************************************************************
 
 	@Override
-	public ArrayList<DowntimeEntity> getMaintenanceEntities() {
-		ArrayList<DowntimeEntity> ret = new ArrayList<>();
-		ret.addAll(immediateMaintenanceList.getValue());
-		ret.addAll(forcedMaintenanceList.getValue());
-		ret.addAll(opportunisticMaintenanceList.getValue());
-		return ret;
-	}
-
-	@Override
-	public ArrayList<DowntimeEntity> getBreakdownEntities() {
-		ArrayList<DowntimeEntity> ret = new ArrayList<>();
-		ret.addAll(immediateBreakdownList.getValue());
-		ret.addAll(forcedBreakdownList.getValue());
-		ret.addAll(opportunisticBreakdownList.getValue());
-		return ret;
+	public boolean isDowntimeUser(DowntimeEntity down) {
+		return immediateMaintenanceList.getValue().contains(down)
+				|| immediateBreakdownList.getValue().contains(down)
+		        || forcedMaintenanceList.getValue().contains(down)
+				|| forcedBreakdownList.getValue().contains(down)
+		        || opportunisticMaintenanceList.getValue().contains(down)
+				|| opportunisticBreakdownList.getValue().contains(down);
 	}
 
 	public boolean isImmediateDowntime(DowntimeEntity down) {

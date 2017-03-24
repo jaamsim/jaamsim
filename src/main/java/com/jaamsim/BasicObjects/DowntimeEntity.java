@@ -29,7 +29,6 @@ import com.jaamsim.events.EventManager;
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.EntityInput;
-import com.jaamsim.input.EnumInput;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
@@ -40,11 +39,6 @@ import com.jaamsim.states.StateRecord;
 import com.jaamsim.units.TimeUnit;
 
 public class DowntimeEntity extends StateEntity implements StateEntityListener {
-
-	public enum DowntimeTypes {
-		IMMEDIATE,
-		FORCED,
-		OPPORTUNISTIC }
 
 	@Keyword(description = "The calendar or working time for the first planned or unplanned "
 	                     + "maintenance event. If an input is not provided, the first maintenance "
@@ -77,19 +71,6 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 	                     + "that returns a number can be entered.",
 	         exampleList = {"8 h ", "DurationValueSequence", "DurationDistribution" })
 	private final SampleInput downtimeDurationDistribution;
-
-	@Keyword(description = "The severity level for the downtime events. The input must be one of "
-	                     + "the following:\n"
-	                     + "- IMMEDIATE (interrupts the present task and starts maintenance "
-	                     +   "without delay)\n"
-	                     + "- FORCED (completes the present task before starting maintenance)\n"
-	                     + "- OPPORTUNISTIC (completes the present task and any waiting tasks "
-	                     +   "before starting maintenance)\n"
-	                     + "Planned maintenace normally uses the OPPORTUNISTIC setting, while "
-	                     + "unplanned maintenance (breakdowns) normally uses the IMMEDIATE "
-	                     + "setting.",
-	         exampleList = {"FORCED"})
-	private final EnumInput<DowntimeTypes> type;
 
 	@Keyword(description = "If TRUE, the downtime event can occur in parallel with another "
 	                     + "downtime event.",
@@ -136,10 +117,6 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 		this.addInput(downtimeDurationDistribution);
 		this.addSynonym(downtimeDurationDistribution, "TimeToRepair");
 
-		type = new EnumInput<> (DowntimeTypes.class, "Type", "Key Inputs", null);
-		type.setHidden(true);
-		this.addInput(type);
-
 		concurrent = new BooleanInput("Concurrent", "Key Inputs", false);
 		concurrent.setHidden(true);
 		this.addInput(concurrent);
@@ -181,7 +158,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 				continue;
 
 			DowntimeUser du = (DowntimeUser)each;
-			if (du.getMaintenanceEntities().contains(this) || du.getBreakdownEntities().contains(this))
+			if (du.isDowntimeUser(this))
 				downtimeUserList.add(du);
 		}
 	}
@@ -205,10 +182,6 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 			return;
 
 		checkProcessNetwork();
-	}
-
-	public DowntimeTypes getType() {
-		return type.getValue();
 	}
 
 	/**
