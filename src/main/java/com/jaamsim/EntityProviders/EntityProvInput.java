@@ -1,0 +1,90 @@
+/*
+ * JaamSim Discrete Event Simulation
+ * Copyright (C) 2017 JaamSim Software Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.jaamsim.EntityProviders;
+
+import java.util.ArrayList;
+import java.util.Collections;
+
+import com.jaamsim.basicsim.Entity;
+import com.jaamsim.input.Input;
+import com.jaamsim.input.InputErrorException;
+import com.jaamsim.input.KeywordIndex;
+
+public class EntityProvInput<T extends Entity> extends Input<EntityProvider<T>> {
+
+	private Entity thisEnt;
+	private Class<T> entClass;
+	private ArrayList<Class<? extends Entity>> invalidClasses;
+
+	public EntityProvInput(Class<T> aClass, String key, String cat, EntityProvider<T> def) {
+		super(key, cat, def);
+		entClass = aClass;
+		thisEnt = null;
+		invalidClasses = new ArrayList<>();
+	}
+
+	public void setEntity(Entity ent) {
+		thisEnt = ent;
+	}
+
+	@Override
+	public void parse(KeywordIndex kw) throws InputErrorException {
+		value = Input.parseEntityProvider(kw, thisEnt, entClass);
+		this.setValid(true);
+	}
+
+	@Override
+	public ArrayList<String> getValidOptions() {
+		ArrayList<String> list = new ArrayList<>();
+
+		for (T each: Entity.getClonesOfIterator(entClass)) {
+			if (each.testFlag(Entity.FLAG_GENERATED))
+				continue;
+
+			if (!isValid(each))
+				continue;
+
+			list.add(each.getName());
+		}
+		Collections.sort(list, Input.uiSortOrder);
+		return list;
+	}
+
+	public void addInvalidClass(Class<? extends Entity> aClass) {
+		invalidClasses.add(aClass);
+	}
+
+	private boolean isValid(T ent) {
+
+		for (Class<? extends Entity> cls : invalidClasses) {
+			if (cls.isAssignableFrom(ent.getClass())) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	@Override
+	public void getValueTokens(ArrayList<String> toks) {
+		if (value == null)
+			return;
+
+		toks.add(value.toString());
+	}
+
+}

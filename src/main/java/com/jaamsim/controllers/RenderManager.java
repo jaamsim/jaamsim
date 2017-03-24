@@ -967,7 +967,7 @@ public class RenderManager implements DragSourceListener {
 
 		// LINE MOVE
 		if (dragHandleID == LINEDRAG_PICK_ID)
-			return handleLineMove(currentRay, lastRay, currentDist, lastDist, dragInfo.shiftDown());
+			return handleLineMove(currentRay, firstRay, currentDist, firstDist, dragInfo.shiftDown());
 
 		// LINE NODE MOVE
 		if (dragHandleID <= LINENODE_PICK_ID)
@@ -1153,35 +1153,44 @@ public class RenderManager implements DragSourceListener {
 		return true;
 	}
 
-	private boolean handleLineMove(Ray currentRay, Ray lastRay, double currentDist, double lastDist, boolean shift) {
+	private boolean handleLineMove(Ray currentRay, Ray firstRay, double currentDist, double firstDist, boolean shift) {
 
 		// The points where the previous pick ended and current position. Collision is with the entity's XY plane
 		Vec3d currentPoint = currentRay.getPointAtDist(currentDist);
-		Vec3d lastPoint = lastRay.getPointAtDist(lastDist);
+		Vec3d firstPoint = firstRay.getPointAtDist(firstDist);
 
-		ArrayList<Vec3d> screenPoints = selectedEntity.getPoints();
-		if (screenPoints == null || screenPoints.isEmpty())
+		if (dragEntityPoints == null || dragEntityPoints.isEmpty())
 			return true;
+
+		// Global node positions at the start of the move
+		ArrayList<Vec3d> globalPts = selectedEntity.getGlobalPosition(dragEntityPoints);
 
 		Vec3d delta = new Vec3d();
 
 		if (shift) {
-			Vec4d medPoint = RenderUtils.getGeometricMedian(screenPoints);
-			delta.z = RenderUtils.getZDiff(medPoint, currentRay, lastRay);
+			Vec4d medPoint = RenderUtils.getGeometricMedian(globalPts);
+			delta.z = RenderUtils.getZDiff(medPoint, currentRay, firstRay);
 		}
 		else {
-			delta.sub3(currentPoint, lastPoint);
-			if (selectedEntity.getCurrentRegion() != null) {
-				Transform invTrans = selectedEntity.getCurrentRegion().getInverseRegionTransForVectors();
-				invTrans.multAndTrans(delta, delta);
-			}
+			delta.sub3(currentPoint, firstPoint);
+		}
+
+		// Align the first node to snap grid
+		if (Simulation.isSnapToGrid()) {
+			Vec3d point = new Vec3d();
+			point.add3(globalPts.get(0), delta);
+			point = Simulation.getSnapGridPosition(point, globalPts.get(0));
+			delta.sub3(point, globalPts.get(0));
 		}
 
 		// Set the new position for the line
-		InputAgent.apply(selectedEntity, InputAgent.formatPointsInputs("Points", screenPoints, delta));
+		for (Vec3d pt : globalPts) {
+			pt.add3(delta);
+		}
+		selectedEntity.setInputForGlobalPositions(globalPts);
 
 		// Set the position of the entity to the coordinates of the first node
-		InputAgent.apply(selectedEntity, InputAgent.formatPointInputs("Position", screenPoints.get(0), "m"));
+		selectedEntity.setInputForGlobalPosition(globalPts.get(0));
 		return true;
 	}
 

@@ -1944,7 +1944,7 @@ public class ExpParser {
 					throw new ExpError(source, pos,
 							String.format("Invalid index: %s. Index must be between 1 and %s.", k, args.length-1));
 
-				return ExpResult.makeNumResult(args[k].value, args[k].unitType);
+				return args[k];
 			}
 
 			@Override
@@ -1962,18 +1962,25 @@ public class ExpParser {
 					return ExpValResult.makeErrorRes(error);
 				}
 
+				if (args.length < 2) {
+					ExpError error = new ExpError(source, pos, "'choose' function must take at least 2 parameters.");
+					return ExpValResult.makeErrorRes(error);
+				}
+				ExpResType valType = args[1].type;
+				Class<? extends Unit> valUnitType = args[1].unitType;
+
 				for (int i = 2; i < args.length; ++ i) {
-					if (args[i].type != ExpResType.NUMBER) {
-						ExpError error = new ExpError(source, pos, String.format("Parameter #%d must be a number", i+1));
+					if (args[i].type != valType) {
+						ExpError error = new ExpError(source, pos, "All parameter types to 'choose' must be the same type");
 						return ExpValResult.makeErrorRes(error);
 					}
-					// TODO: allow choose to return non-number types
-					if (args[1].unitType != args[i].unitType) {
+
+					if (valType == ExpResType.NUMBER && valUnitType != args[i].unitType) {
 						ExpError error = new ExpError(source, pos, getInvalidUnitString(args[0].unitType, DimensionlessUnit.class));
 						return ExpValResult.makeErrorRes(error);
 					}
 				}
-				return ExpValResult.makeValidRes(args[1].type, args[1].unitType);
+				return ExpValResult.makeValidRes(valType, valUnitType);
 			}
 		});
 

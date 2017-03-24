@@ -98,8 +98,8 @@ public class EntityInput<T extends Entity> extends Input<T> {
 		this.includeSubclasses = bool;
 	}
 
-	public void setInvalidClasses(ArrayList<Class<? extends Entity>> classes ) {
-		invalidClasses = classes;
+	public void addInvalidClass(Class<? extends Entity> aClass ) {
+		invalidClasses.add(aClass);
 	}
 
 	@Override

@@ -16,9 +16,14 @@
  */
 package com.jaamsim.units;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 
 import com.jaamsim.basicsim.Entity;
+import com.jaamsim.basicsim.ObjectType;
+import com.jaamsim.input.Input;
 import com.jaamsim.input.Keyword;
 
 public abstract class Unit extends Entity {
@@ -59,8 +64,34 @@ public abstract class Unit extends Entity {
 		return "SI";
 	}
 
+	public static final void setPreferredUnitList(ArrayList<? extends Unit> list) {
+		ArrayList<String> utList = Unit.getUnitTypeList();
+
+		// Set the preferred units in the list
+		for (Unit u : list) {
+			Class<? extends Unit> ut = u.getClass();
+			Unit.setPreferredUnit(ut, u);
+			utList.remove(ut.getSimpleName());
+		}
+
+		// Clear the entries for unit types that were not in the list
+		for (String utName : utList) {
+			ObjectType ot = Input.parseEntity(utName, ObjectType.class);
+			Class<? extends Unit> ut = Input.checkCast(ot.getJavaClass(), Unit.class);
+			preferredUnit.remove(ut);
+		}
+	}
+
 	public static final void setPreferredUnit(Class<? extends Unit> type, Unit u) {
+		if (u.getName().equals(Unit.getSIUnit(type))) {
+			preferredUnit.remove(type);
+			return;
+		}
 		preferredUnit.put(type, u);
+	}
+
+	public static final ArrayList<Unit> getPreferredUnitList() {
+		return new ArrayList<>(preferredUnit.values());
 	}
 
 	public static final <T extends Unit> Unit getPreferredUnit(Class<T> type) {
@@ -96,6 +127,38 @@ public abstract class Unit extends Entity {
 		double f2 = unit.getConversionFactorToSI();
 		return f1 / f2 ;
 	}
+
+	public static ArrayList<String> getUnitTypeList() {
+		ArrayList<String> list = new ArrayList<>();
+		for (ObjectType each: Entity.getClonesOfIterator(ObjectType.class)) {
+			Class<? extends Entity> klass = each.getJavaClass();
+			if (klass == null)
+				continue;
+
+			if (Unit.class.isAssignableFrom(klass))
+				list.add(each.getName());
+		}
+		Collections.sort(list, Input.uiSortOrder);
+		return list;
+	}
+
+	public static <T extends Unit> ArrayList<T> getUnitList(Class<T> ut) {
+		ArrayList<T> ret = new ArrayList<>();
+		for (T u: Entity.getClonesOfIterator(ut)) {
+			ret.add(u);
+		}
+		Collections.sort(ret, Unit.unitSortOrder);
+		return ret;
+	}
+
+	// Sorts by increasing SI conversion factor (i.e. smallest unit first)
+	private static class UnitSortOrder implements Comparator<Unit> {
+		@Override
+		public int compare(Unit u1, Unit u2) {
+			return Double.compare(u1.getConversionFactorToSI(), u2.getConversionFactorToSI());
+		}
+	}
+	public static final UnitSortOrder unitSortOrder = new UnitSortOrder();
 
 	private static class MultPair {
 		Class<? extends Unit> a;

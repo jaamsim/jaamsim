@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2012 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2017 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.jaamsim.units;
+package com.jaamsim.EntityProviders;
 
-public class PowerUnit extends Unit {
-	static {
-		Unit.setSIUnit(PowerUnit.class, "W");
-	}
+import com.jaamsim.basicsim.Entity;
 
-	public PowerUnit() {}
+public interface EntityProvider<T extends Entity> {
+
+	public T getNextEntity(double simTime);
+
 }

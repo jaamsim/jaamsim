@@ -252,6 +252,10 @@ public class ContextMenu {
 				@Override
 				public void actionPerformed( ActionEvent event ) {
 					Vec3d pos = ent.getGlobalPosition();
+					ArrayList<Vec3d> pts = ent.getPoints();
+					if (pts != null) {
+						pts = ent.getGlobalPosition(pts);
+					}
 					if (entName.equals("<None>")) {
 						InputAgent.applyArgs(ent, "RelativeEntity");
 					}
@@ -259,6 +263,9 @@ public class ContextMenu {
 						InputAgent.applyArgs(ent, "RelativeEntity", entName);
 					}
 					ent.setInputForGlobalPosition(pos);
+					if (pts != null) {
+						ent.setInputForGlobalPositions(pts);
+					}
 				}
 			} );
 			setRelativeEntityMenu.add(item);
@@ -287,6 +294,10 @@ public class ContextMenu {
 				@Override
 				public void actionPerformed( ActionEvent event ) {
 					Vec3d pos = ent.getGlobalPosition();
+					ArrayList<Vec3d> pts = ent.getPoints();
+					if (pts != null) {
+						pts = ent.getGlobalPosition(pts);
+					}
 					if (regionName.equals("<None>")) {
 						InputAgent.applyArgs(ent, "Region");
 					}
@@ -294,6 +305,9 @@ public class ContextMenu {
 						InputAgent.applyArgs(ent, "Region", regionName);
 					}
 					ent.setInputForGlobalPosition(pos);
+					if (pts != null) {
+						ent.setInputForGlobalPositions(pts);
+					}
 				}
 			} );
 			setRegionMenu.add(item);

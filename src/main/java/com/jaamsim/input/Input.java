@@ -24,6 +24,9 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import com.jaamsim.EntityProviders.EntityProvConstant;
+import com.jaamsim.EntityProviders.EntityProvExpression;
+import com.jaamsim.EntityProviders.EntityProvider;
 import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleExpression;
 import com.jaamsim.Samples.SampleProvider;
@@ -1431,6 +1434,25 @@ public abstract class Input<T> {
 			}
 
 			return new Color4d(r, g, b, a);
+		}
+	}
+
+	public static <T extends Entity> EntityProvider<T> parseEntityProvider(KeywordIndex kw, Entity thisEnt, Class<T> entClass) {
+		assertCount(kw, 1);
+
+		// Parse the input as an Entity
+		try {
+			T ent = parseEntity(kw.getArg(0), entClass);
+			return new EntityProvConstant<>(ent);
+		}
+		catch (InputErrorException e) {}
+
+		// Parse the input as an Expression
+		try {
+			return new EntityProvExpression<>(kw.getArg(0), thisEnt, entClass);
+		}
+		catch (ExpError e) {
+			throw new InputErrorException(e);
 		}
 	}
 
