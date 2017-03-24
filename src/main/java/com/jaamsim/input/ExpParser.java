@@ -324,6 +324,54 @@ public class ExpParser {
 		}
 	}
 
+	private static class BuildArray extends ExpNode {
+		public ArrayList<ExpNode> values;
+
+		public BuildArray(ParseContext context, ArrayList<ExpNode> valueExps, Expression exp, int pos) throws ExpError {
+			super(context, exp, pos);
+
+			this.values = valueExps;
+		}
+
+		@Override
+		public ExpResult evaluate(EvalContext ec) throws ExpError {
+			try {
+				ArrayList<ExpResult> res = new ArrayList<>();
+				for (ExpNode e : values) {
+					res.add(e.evaluate(ec));
+				}
+				return ExpCollections.makeExpressionCollection(res);
+			} catch (ExpError ex) {
+				throw fixError(ex, exp.source, tokenPos);
+			}
+
+		}
+		@Override
+		public ExpValResult validate() {
+			for (ExpNode val : values) {
+				ExpValResult valRes = val.validate();
+
+				if (    valRes.state == ExpValResult.State.ERROR ||
+				        valRes.state == ExpValResult.State.UNDECIDABLE) {
+					fixValidationErrors(valRes, exp.source, tokenPos);
+					return valRes;
+				}
+			}
+
+			return ExpValResult.makeValidRes(ExpResType.COLLECTION, DimensionlessUnit.class);
+		}
+
+		@Override
+		void walk(ExpressionWalker w) throws ExpError {
+			for (int i = 0; i < values.size(); ++i) {
+				values.get(i).walk(w);
+				values.set(i, w.updateRef(values.get(i)));
+			}
+
+			w.visit(this);
+		}
+	}
+
 
 	private static class UnaryOp extends ExpNode {
 		public ExpNode subExp;
@@ -2300,6 +2348,18 @@ public class ExpParser {
 					return new Constant(fc.context, val, origNode.exp, fc.tokenPos);
 				}
 			}
+			if (origNode instanceof BuildArray) {
+				BuildArray ba = (BuildArray)origNode;
+				boolean constArgs = true;
+				for (ExpNode val : ba.values) {
+					if (!(val instanceof Constant))
+						constArgs = false;
+				}
+				if (constArgs) {
+					ExpResult val = ba.evaluate(null);
+					return new Constant(ba.context, val, origNode.exp, ba.tokenPos);
+				}
+			}
 			return origNode;
 		}
 	}
@@ -2567,11 +2627,7 @@ public class ExpParser {
 					foundComma = true;
 				}
 			}
-			ArrayList<ExpResult> res = new ArrayList<>();
-			for (ExpNode e : exps) {
-				res.add(e.evaluate(null));
-			}
-			return new Constant(context, ExpCollections.makeExpressionCollection(res), exp, nextTok.pos);
+			return new BuildArray(context, exps, exp, nextTok.pos);
 		}
 
 		// handle parenthesis
