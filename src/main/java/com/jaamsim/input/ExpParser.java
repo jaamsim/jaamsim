@@ -71,12 +71,7 @@ public class ExpParser {
 	}
 
 	public interface EvalContext {
-		//public ExpResult getVariableValue(String[] names, ExpResult[] indices) throws ExpError;
-		//public boolean eagerEval();
 	}
-//	public interface ValContext {
-//
-//	}
 
 	private interface ExpressionWalker {
 		public void visit(ExpNode exp) throws ExpError;
