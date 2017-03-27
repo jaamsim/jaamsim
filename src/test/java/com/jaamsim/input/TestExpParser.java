@@ -75,10 +75,6 @@ public class TestExpParser {
 				Class<? extends Unit> denom) {
 			return DimensionlessUnit.class;
 		}
-		@Override
-		public ExpResult getValFromName(String name, String source, int pos) throws ExpError {
-			return ExpResult.makeNumResult(1, DimensionlessUnit.class);
-		}
 
 		@Override
 		public OutputResolver getOutputResolver(String name) throws ExpError {
@@ -97,6 +93,22 @@ public class TestExpParser {
 		public Assigner getConstAssigner(ExpResult constEnt, String attribName)
 				throws ExpError {
 			throw new ExpError(null, 0, "Assign not supported");
+		}
+		@Override
+		public ExpResult getValFromLitName(String name, String source, int pos) throws ExpError {
+			return ExpResult.makeNumResult(1, DimensionlessUnit.class);
+		}
+		@Override
+		public boolean isVarName(String varName) {
+			return false;
+		}
+		@Override
+		public boolean isVarConstant(String varName) {
+			return false;
+		}
+		@Override
+		public ExpResult getValFromConstVar(String name, String source, int pos) throws ExpError {
+			return ExpResult.makeNumResult(1, DimensionlessUnit.class);
 		}
 	}
 
@@ -133,6 +145,16 @@ public class TestExpParser {
 	static PC pc = new PC();
 
 	private static class EC implements ExpParser.EvalContext {
+
+		@Override
+		public ExpResult getVariableVal(String varName) throws ExpError {
+			return null;
+		}
+
+		@Override
+		public void setVariable(String varName, ExpResult val) throws ExpError {
+			// empty
+		}
 	}
 	static EC ec = new EC();
 
@@ -454,7 +476,7 @@ public class TestExpParser {
 		}
 
 		@Override
-		public ExpResult getValFromName(String name, String source, int pos) throws ExpError {
+		public ExpResult getValFromLitName(String name, String source, int pos) throws ExpError {
 			if (name.equals("Maps")) {
 				return ExpResult.makeEntityResult(mapEnt);
 			}
@@ -642,13 +664,25 @@ public class TestExpParser {
 				throw new ExpError(null, 0, "Assign not supported");
 			}
 			@Override
-			public ExpResult getValFromName(String name, String source, int pos) throws ExpError {
+			public ExpResult getValFromLitName(String name, String source, int pos) throws ExpError {
 				return null;
 			}
 			@Override
 			public OutputResolver getConstOutputResolver(ExpResult constEnt,
 					String name) throws ExpError {
 				return new ErrorResolver();
+			}
+			@Override
+			public boolean isVarName(String varName) {
+				return false;
+			}
+			@Override
+			public boolean isVarConstant(String varName) {
+				return false;
+			}
+			@Override
+			public ExpResult getValFromConstVar(String name, String source, int pos) throws ExpError {
+				return null;
 			}
 
 		}

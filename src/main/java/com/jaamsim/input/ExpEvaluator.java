@@ -163,22 +163,22 @@ public class ExpEvaluator {
 		}
 
 		@Override
-		public ExpResult getValFromName(String name, String source, int pos) throws ExpError {
-			Entity ent;
-			if (name.equals("this"))
-				ent = thisEnt;
-			else {
-				ent = Entity.getNamedEntity(name);
-				if (ent != null) {
-					addEntityReference(ent);
-				}
-			}
-
+		public ExpResult getValFromLitName(String name, String source, int pos) throws ExpError {
+			Entity ent = Entity.getNamedEntity(name);
 			if (ent == null) {
 				throw new ExpError(source, pos, "Could not find entity: %s", name);
 			}
 
+			addEntityReference(ent);
 			return ExpResult.makeEntityResult(ent);
+		}
+
+		@Override
+		public ExpResult getValFromConstVar(String name, String source, int pos) throws ExpError {
+			if (!name.equals("this"))
+				throw new ExpError(null, 0, String.format("Unknown variable:", name));
+
+			return ExpResult.makeEntityResult(thisEnt);
 		}
 
 		@Override
@@ -219,6 +219,16 @@ public class ExpEvaluator {
 				throws ExpError {
 			// TODO: const optimization
 			return new EntityAssigner(attribName);
+		}
+
+		@Override
+		public boolean isVarName(String varName) {
+			return varName.equals("this");
+		}
+
+		@Override
+		public boolean isVarConstant(String varName) {
+			return varName.equals("this");
 		}
 
 	}
@@ -364,6 +374,16 @@ public class ExpEvaluator {
 
 		public EntityEvalContext(double simTime) {
 			this.simTime = simTime;
+		}
+
+		@Override
+		public ExpResult getVariableVal(String varName) throws ExpError {
+			throw new ExpError(null, 0, "Variables un-implemented");
+		}
+
+		@Override
+		public void setVariable(String varName, ExpResult val) throws ExpError {
+			throw new ExpError(null, 0, "Variables un-implemented");
 		}
 	}
 

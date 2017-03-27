@@ -62,15 +62,21 @@ public class ExpParser {
 		public Class<? extends Unit> multUnitTypes(Class<? extends Unit> a, Class<? extends Unit> b);
 		public Class<? extends Unit> divUnitTypes(Class<? extends Unit> num, Class<? extends Unit> denom);
 
-		public ExpResult getValFromName(String name, String source, int pos) throws ExpError;
+		public ExpResult getValFromLitName(String name, String source, int pos) throws ExpError;
 		public OutputResolver getOutputResolver(String name) throws ExpError;
 		public OutputResolver getConstOutputResolver(ExpResult constEnt, String name) throws ExpError;
+
+		public boolean isVarName(String varName);
+		public boolean isVarConstant(String varName);
+		public ExpResult getValFromConstVar(String name, String source, int pos) throws ExpError;
 
 		public Assigner getAssigner(String attribName) throws ExpError;
 		public Assigner getConstAssigner(ExpResult constEnt, String attribName) throws ExpError;
 	}
 
 	public interface EvalContext {
+		public ExpResult getVariableVal(String varName) throws ExpError;
+		public void setVariable(String varName, ExpResult val) throws ExpError;
 	}
 
 	private interface ExpressionWalker {
@@ -189,6 +195,28 @@ public class ExpParser {
 		@Override
 		public ExpValResult validate() {
 			return ExpValResult.makeValidRes(val.type, val.unitType);
+		}
+
+		@Override
+		void walk(ExpressionWalker w) throws ExpError {
+			w.visit(this);
+		}
+	}
+
+	private static class Variable extends ExpNode {
+		public String varName;
+		public Variable(ParseContext context, String varName, Expression exp, int pos) {
+			super(context, exp, pos);
+			this.varName = varName;
+		}
+		@Override
+		public ExpResult evaluate(EvalContext ec) throws ExpError {
+			return ec.getVariableVal(varName);
+		}
+
+		@Override
+		public ExpValResult validate() {
+			return ExpValResult.makeUndecidableRes();
 		}
 
 		@Override
@@ -2594,14 +2622,27 @@ public class ExpParser {
 			// Return a literal string constant
 			return new Constant(context, ExpResult.makeStringResult(nextTok.value), exp, nextTok.pos);
 		}
+
+		if (nextTok.type == ExpTokenizer.SQ_TYPE) {
+			ExpResult namedVal = context.getValFromLitName(nextTok.value, exp.source, nextTok.pos);
+			return new Constant(context, namedVal, exp, nextTok.pos);
+		}
+
 		if (nextTok.type == ExpTokenizer.VAR_TYPE &&
-		    !nextTok.value.equals("this")) {
+		    !context.isVarName(nextTok.value)) {
+
 			return parseFuncCall(context, nextTok.value, tokens, exp, nextTok.pos);
 		}
-		if (nextTok.type == ExpTokenizer.SQ_TYPE ||
-		    nextTok.value.equals("this")) {
-			ExpResult namedVal = context.getValFromName(nextTok.value, exp.source, nextTok.pos);
-			return new Constant(context, namedVal, exp, nextTok.pos);
+
+		if (nextTok.type == ExpTokenizer.VAR_TYPE &&
+		    context.isVarName(nextTok.value)) {
+
+			if (context.isVarConstant(nextTok.value)) {
+				ExpResult namedVal = context.getValFromConstVar(nextTok.value, exp.source, nextTok.pos);
+				return new Constant(context, namedVal, exp, nextTok.pos);
+			} else {
+				return new Variable(context, nextTok.value, exp, nextTok.pos);
+			}
 		}
 
 		// The next token must be a symbol
