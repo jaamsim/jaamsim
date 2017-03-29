@@ -1565,10 +1565,11 @@ public class InputAgent {
 			return sb.toString();
 		}
 		// All other outputs
-		if (out.getValue(simTime, retType) == null) {
+		final Object ret = out.getValue(simTime, retType);
+		if (ret != null)
+			return ret.toString();
+		else
 			return "null";
-		}
-		return out.getValue(simTime, retType).toString();
 	}
 
 	/**
