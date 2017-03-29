@@ -48,6 +48,7 @@ import com.jaamsim.events.EventManager;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.ui.GUIFrame;
 import com.jaamsim.ui.LogBox;
+import com.jaamsim.units.TimeUnit;
 import com.jaamsim.units.Unit;
 
 public class InputAgent {
@@ -1048,7 +1049,8 @@ public class InputAgent {
 		// Print a TIME header every time time has advanced
 		long traceTick = EventManager.simTicks();
 		if (lastTickForTrace != traceTick) {
-			System.out.format(" \nTIME = %.6f\n", EventManager.current().ticksToSeconds(traceTick));
+			double unitFactor = Unit.getDisplayedUnitFactor(TimeUnit.class);
+			System.out.format(" \nTIME = %.6f\n", EventManager.current().ticksToSeconds(traceTick) / unitFactor);
 			lastTickForTrace = traceTick;
 		}
 
