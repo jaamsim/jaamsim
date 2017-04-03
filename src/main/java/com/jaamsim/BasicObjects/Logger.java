@@ -180,6 +180,10 @@ public abstract class Logger extends DisplayEntity {
 	 */
 	protected void recordLogEntry(double simTime) {
 
+		// Skip the log entry if the log file has been closed at the end of the run duration
+		if (file == null)
+			return;
+
 		// Skip the log entry if the run is still initializing
 		if (!includeInitialization.getValue() && simTime < Simulation.getInitializationTime())
 			return;
