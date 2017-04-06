@@ -297,7 +297,8 @@ public class InputAgent {
 
 		try {
 			// locate the resource folder, and create
-			resRoot = InputAgent.class.getResource(res).toURI();
+			URI temp = InputAgent.class.getResource(res).toURI();
+			resRoot = new URI(temp.getScheme(), temp.getSchemeSpecificPart(), null).normalize();
 		}
 		catch (URISyntaxException e) {}
 	}
