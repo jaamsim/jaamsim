@@ -38,17 +38,12 @@ import com.jaamsim.render.RenderUtils;
 import com.jaamsim.render.VisibilityInfo;
 
 public class ShapeModel extends DisplayModel {
+
 	public static final String TAG_CONTENTS = "CONTENTS";
 	public static final String TAG_CONTENTS2 = "CONTENTS2";
 	public static final String TAG_CAPACITY = "CAPACITY";
 	public static final String TAG_OUTLINES = "OUTLINES";
-	public static final String TAG_TRACKFILL = "TRACKFILL";
 	public static final String TAG_BODY = "BODY";
-	public static final String TAG_SERVICE = "SERVICE";
-	public static final String TAG_LINES = "LINES";
-	public static final String TAG_SECONDARY_LINES = "SECONDARY_LINES";
-	public static final String TAG_ARROW_DOWN = "ARROWS_DOWN";
-	public static final String TAG_ARROW_UP = "ARROWS_UP";
 
 	enum ValidShapes {
 		RECTANGLE,
@@ -57,6 +52,7 @@ public class ShapeModel extends DisplayModel {
 		TRIANGLE,
 		BARGAUGE2D,
 	}
+
 	@Keyword(description = "The shape of a display model determines the appearance of the display model.",
 	         exampleList = { "CIRCLE" })
 	private final EnumInput<ValidShapes> shape;
@@ -133,9 +129,6 @@ public class ShapeModel extends DisplayModel {
 		public Binding(Entity ent, DisplayModel dm) {
 			super(ent, dm);
 			dispEnt = (DisplayEntity)ent;
-
-			if (dispEnt != null) {
-			}
 		}
 
 		private void updateCache(double simTime) {
