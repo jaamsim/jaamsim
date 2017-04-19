@@ -30,7 +30,9 @@ public class ExpResult {
 	public interface Collection {
 		public ExpResult index(ExpResult index) throws ExpError;
 
-		public void assign(ExpResult key, ExpResult value) throws ExpError;
+		// Collections have a copy-on-write feature, where the old reference may be invalidated
+		// after assigning, always use the value returned as the new collection
+		public Collection assign(ExpResult key, ExpResult value) throws ExpError;
 
 		public Iterator getIter();
 

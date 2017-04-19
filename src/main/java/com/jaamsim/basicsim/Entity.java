@@ -753,9 +753,9 @@ public class Entity {
 			if (attribValue.type != ExpResType.COLLECTION) {
 				this.error("Trying to set attribute: %s with an index, but it is not a collection", name);
 			}
-			ExpResult.Collection col = attribValue.colVal;
 			try {
-				col.assign(index, value.getCopy());
+				ExpResult.Collection newCol = attribValue.colVal.assign(index, value.getCopy());
+				h.setValue(ExpResult.makeCollectionResult(newCol));
 			} catch (ExpError err) {
 				this.error("Error during assignment: %s", err.getMessage());
 			}

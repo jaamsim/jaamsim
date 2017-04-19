@@ -364,7 +364,10 @@ public class ExpParser {
 				for (ExpNode e : values) {
 					res.add(e.evaluate(ec));
 				}
-				return ExpCollections.makeExpressionCollection(res);
+				// Using the heuristic that if the eval context is null, this is probably an evaluation as part of constant folding
+				// even if this is wrong, the behavior will be correct, but possibly a bit slower
+				boolean isConstant = ec == null;
+				return ExpCollections.makeExpressionCollection(res, isConstant);
 			} catch (ExpError ex) {
 				throw fixError(ex, exp.source, tokenPos);
 			}

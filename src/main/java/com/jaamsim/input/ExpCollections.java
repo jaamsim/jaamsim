@@ -80,8 +80,8 @@ public class ExpCollections {
 		return null;
 	}
 
-	public static ExpResult makeExpressionCollection(ArrayList<ExpResult> vals) {
-		return ExpResult.makeCollectionResult(new AssignableArrayCollection(vals));
+	public static ExpResult makeExpressionCollection(ArrayList<ExpResult> vals, boolean constExp) {
+		return ExpResult.makeCollectionResult(new AssignableArrayCollection(vals, constExp));
 	}
 
 	private static class ListCollection implements ExpResult.Collection {
@@ -142,7 +142,7 @@ public class ExpCollections {
 		}
 
 		@Override
-		public void assign(ExpResult key, ExpResult value) throws ExpError {
+		public ExpResult.Collection assign(ExpResult key, ExpResult value) throws ExpError {
 			throw new ExpError(null, 0, "Can not assign to built in collection");
 		}
 
@@ -252,7 +252,7 @@ public class ExpCollections {
 			return Array.getLength(array);
 		}
 		@Override
-		public void assign(ExpResult key, ExpResult value) throws ExpError {
+		public ExpResult.Collection assign(ExpResult key, ExpResult value) throws ExpError {
 			throw new ExpError(null, 0, "Can not assign to built in collection");
 		}
 
@@ -338,7 +338,7 @@ public class ExpCollections {
 			return vector.size();
 		}
 		@Override
-		public void assign(ExpResult key, ExpResult value) throws ExpError {
+		public ExpResult.Collection assign(ExpResult key, ExpResult value) throws ExpError {
 			throw new ExpError(null, 0, "Can not assign to built in collection");
 		}
 
@@ -420,7 +420,7 @@ public class ExpCollections {
 			return vector.size();
 		}
 		@Override
-		public void assign(ExpResult key, ExpResult value) throws ExpError {
+		public ExpResult.Collection assign(ExpResult key, ExpResult value) throws ExpError {
 			throw new ExpError(null, 0, "Can not assign to built in collection");
 		}
 
@@ -515,7 +515,7 @@ public class ExpCollections {
 			return map.size();
 		}
 		@Override
-		public void assign(ExpResult key, ExpResult value) throws ExpError {
+		public ExpResult.Collection assign(ExpResult key, ExpResult value) throws ExpError {
 			throw new ExpError(null, 0, "Can not assign to built in collection");
 		}
 		@Override
@@ -549,9 +549,11 @@ public class ExpCollections {
 	private static class AssignableArrayCollection implements ExpResult.Collection {
 
 		private final ArrayList<ExpResult> list;
+		private final boolean isConstExp;
 
-		public AssignableArrayCollection(ArrayList<ExpResult> vals) {
+		public AssignableArrayCollection(ArrayList<ExpResult> vals, boolean constExp) {
 			list = new ArrayList<>(vals);
+			isConstExp = constExp;
 		}
 
 		@Override
@@ -569,7 +571,14 @@ public class ExpCollections {
 		}
 
 		@Override
-		public void assign(ExpResult index, ExpResult value) throws ExpError {
+		public ExpResult.Collection assign(ExpResult index, ExpResult value) throws ExpError {
+
+			if (isConstExp) {
+				// This version is a constant, and therefore shareable. Create a new modifiable copy.
+				ExpResult.Collection copy = getCopy();
+				return copy.assign(index,  value);
+			}
+
 			if (index.type != ExpResType.NUMBER) {
 				throw new ExpError(null, 0, "Assignment is not being indexed by a number");
 			}
@@ -586,6 +595,7 @@ public class ExpCollections {
 				}
 			}
 			list.set(indexVal, value);
+			return this;
 		}
 
 		private static class Iter implements ExpResult.Iterator {
@@ -640,7 +650,7 @@ public class ExpCollections {
 
 		@Override
 		public ExpResult.Collection getCopy() {
-			return new AssignableArrayCollection(list);
+			return new AssignableArrayCollection(list, false);
 		}
 
 	}

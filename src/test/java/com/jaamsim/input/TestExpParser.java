@@ -764,7 +764,7 @@ public class TestExpParser {
 			if (index == null) {
 				cont.res = val;
 			} else {
-				cont.col.assign(index, val);
+				cont.col = cont.col.assign(index, val);
 			}
 			cont.lastAttribName = attribName;
 		}
@@ -795,7 +795,7 @@ public class TestExpParser {
 
 		ArrayList<ExpResult> initialRes = new ArrayList<>();
 		initialRes.add(ExpResult.makeNumResult(42, DimensionlessUnit.class));
-		cont.col = ExpCollections.makeExpressionCollection(initialRes).colVal;
+		cont.col = ExpCollections.makeExpressionCollection(initialRes, false).colVal;
 		AssignPC apc = new AssignPC(cont);
 
 		ExpParser.Assignment assign = ExpParser.parseAssignment(apc, "[foo].arg = 40 + 2");
