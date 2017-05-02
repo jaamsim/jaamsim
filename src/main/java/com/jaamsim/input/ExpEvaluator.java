@@ -98,10 +98,9 @@ public class ExpEvaluator {
 		throw new ExpError(null, 0, "Unknown type in expression: %s", val.getClass().getSimpleName());
 	}
 
-	public static class EntityParseContext implements ExpParser.ParseContext {
+	public static class EntityParseContext extends ExpParser.ParseContext {
 
 		private final String source;
-		private final Entity thisEnt;
 
 		private final HashMap<Entity, String> entityReferences = new HashMap<>();
 
@@ -130,8 +129,9 @@ public class ExpEvaluator {
 			return ret;
 		}
 
-		public EntityParseContext(Entity thisEnt, String source) {
-			this.thisEnt = thisEnt;
+		public EntityParseContext(HashMap<String, ExpResult> constants, String source) {
+			super(constants);
+
 			this.source = source;
 		}
 
@@ -174,14 +174,6 @@ public class ExpEvaluator {
 		}
 
 		@Override
-		public ExpResult getValFromConstVar(String name, String source, int pos) throws ExpError {
-			if (!name.equals("this"))
-				throw new ExpError(null, 0, String.format("Unknown variable:", name));
-
-			return ExpResult.makeEntityResult(thisEnt);
-		}
-
-		@Override
 		public OutputResolver getOutputResolver(String name) throws ExpError {
 			return new EntityResolver(name);
 		}
@@ -219,16 +211,6 @@ public class ExpEvaluator {
 				throws ExpError {
 			// TODO: const optimization
 			return new EntityAssigner(attribName);
-		}
-
-		@Override
-		public boolean isVarName(String varName) {
-			return varName.equals("this");
-		}
-
-		@Override
-		public boolean isVarConstant(String varName) {
-			return varName.equals("this");
 		}
 
 	}
@@ -380,15 +362,13 @@ public class ExpEvaluator {
 		public ExpResult getVariableVal(String varName) throws ExpError {
 			throw new ExpError(null, 0, "Variables un-implemented");
 		}
-
-		@Override
-		public void setVariable(String varName, ExpResult val) throws ExpError {
-			throw new ExpError(null, 0, "Variables un-implemented");
-		}
 	}
 
 	public static EntityParseContext getParseContext(Entity thisEnt, String source) {
-		return new EntityParseContext(thisEnt, source);
+		HashMap<String, ExpResult> constants = new HashMap<>();
+		constants.put("this", ExpResult.makeEntityResult(thisEnt));
+
+		return new EntityParseContext(constants, source);
 	}
 
 	public static ExpResult evaluateExpression(ExpParser.Expression exp, double simTime) throws ExpError

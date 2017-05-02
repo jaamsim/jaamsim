@@ -60,7 +60,11 @@ public class TestExpParser {
 
 	}
 
-	private static class PC implements ExpParser.ParseContext {
+	private static class PC extends ExpParser.ParseContext {
+		public PC() {
+			super(new HashMap<String, ExpResult>());
+		}
+
 		@Override
 		public UnitData getUnitByName(String name) {
 			return null;
@@ -151,10 +155,6 @@ public class TestExpParser {
 			return null;
 		}
 
-		@Override
-		public void setVariable(String varName, ExpResult val) throws ExpError {
-			// empty
-		}
 	}
 	static EC ec = new EC();
 
@@ -607,7 +607,11 @@ public class TestExpParser {
 			}
 		}
 
-		class UnitPC implements ExpParser.ParseContext {
+		class UnitPC extends ExpParser.ParseContext {
+			public UnitPC() {
+				super(new HashMap<String, ExpResult>());
+			}
+
 			@Override
 			public UnitData getUnitByName(String name) {
 				UnitData ret = new UnitData();

@@ -18,6 +18,7 @@
 package com.jaamsim.input;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import com.jaamsim.basicsim.ObjectType;
 import com.jaamsim.units.AngleUnit;
@@ -57,26 +58,86 @@ public class ExpParser {
 		public void assign(ExpResult ent, ExpResult index, ExpResult val) throws ExpError;
 	}
 
-	public interface ParseContext {
-		public UnitData getUnitByName(String name);
-		public Class<? extends Unit> multUnitTypes(Class<? extends Unit> a, Class<? extends Unit> b);
-		public Class<? extends Unit> divUnitTypes(Class<? extends Unit> num, Class<? extends Unit> denom);
-
-		public ExpResult getValFromLitName(String name, String source, int pos) throws ExpError;
-		public OutputResolver getOutputResolver(String name) throws ExpError;
-		public OutputResolver getConstOutputResolver(ExpResult constEnt, String name) throws ExpError;
-
-		public boolean isVarName(String varName);
-		public boolean isVarConstant(String varName);
-		public ExpResult getValFromConstVar(String name, String source, int pos) throws ExpError;
-
-		public Assigner getAssigner(String attribName) throws ExpError;
-		public Assigner getConstAssigner(ExpResult constEnt, String attribName) throws ExpError;
+	private static class ParseClosure {
+		public HashMap<String, ExpResult> parseConstants = new HashMap<>();
+		public ArrayList<String> freeVars = new ArrayList<>();
+		public ArrayList<String> boundVars = new ArrayList<>();
 	}
+
+	public static abstract class ParseContext {
+		public ParseContext(HashMap<String, ExpResult> constVals) {
+			ParseClosure initClosure = new ParseClosure();
+			initClosure.parseConstants = constVals;
+			closureStack.add(initClosure);
+		}
+		public abstract UnitData getUnitByName(String name);
+		public abstract Class<? extends Unit> multUnitTypes(Class<? extends Unit> a, Class<? extends Unit> b);
+		public abstract  Class<? extends Unit> divUnitTypes(Class<? extends Unit> num, Class<? extends Unit> denom);
+
+		public abstract ExpResult getValFromLitName(String name, String source, int pos) throws ExpError;
+		public abstract OutputResolver getOutputResolver(String name) throws ExpError;
+		public abstract OutputResolver getConstOutputResolver(ExpResult constEnt, String name) throws ExpError;
+
+
+		public abstract Assigner getAssigner(String attribName) throws ExpError;
+		public abstract Assigner getConstAssigner(ExpResult constEnt, String attribName) throws ExpError;
+
+		public ArrayList<ParseClosure> closureStack = new ArrayList<>();
+
+		public boolean isVarName(String varName) {
+			// Check the constant vars and bound vars for the whole stack to see if this is a valid variable
+			for (ParseClosure close : closureStack) {
+				if (close.parseConstants.containsKey(varName)) {
+					return true;
+				}
+				if (close.boundVars.contains(varName)) {
+					return true;
+				}
+			}
+			return false;
+		}
+
+		public boolean isVarConstant(String varName) {
+			for (ParseClosure close : closureStack) {
+				if (close.parseConstants.containsKey(varName)) {
+					return true;
+				}
+			}
+			return false;
+		}
+
+		public void referenceVar(String varName, String source, int pos) throws ExpError {
+			boolean pastVar = false;
+			for (int i = 0; i < closureStack.size(); i++) {
+				ParseClosure closure = closureStack.get(i);
+				if (pastVar) {
+					if (!closure.freeVars.contains(varName))
+						closure.freeVars.add(varName);
+				} else {
+					if (closure.boundVars.contains(varName)) {
+						pastVar = true;
+					}
+				}
+			}
+			if (!pastVar) {
+				// Trying to reference an variable not bound on the entire closure stack
+				throw new ExpError(source, pos, String.format("Unknown variable: %s", varName));
+			}
+		}
+
+		public ExpResult getValFromConstVar(String varName, String source, int pos) throws ExpError {
+			for (ParseClosure close : closureStack) {
+				if (close.parseConstants.containsKey(varName)) {
+					return close.parseConstants.get(varName);
+				}
+			}
+			throw new ExpError(source, pos, String.format("Unknown constant variable: %s", varName));
+
+		}
+}
 
 	public interface EvalContext {
 		public ExpResult getVariableVal(String varName) throws ExpError;
-		public void setVariable(String varName, ExpResult val) throws ExpError;
 	}
 
 	private interface ExpressionWalker {
@@ -2631,20 +2692,16 @@ public class ExpParser {
 			return new Constant(context, namedVal, exp, nextTok.pos);
 		}
 
-		if (nextTok.type == ExpTokenizer.VAR_TYPE &&
-		    !context.isVarName(nextTok.value)) {
-
-			return parseFuncCall(context, nextTok.value, tokens, exp, nextTok.pos);
-		}
-
-		if (nextTok.type == ExpTokenizer.VAR_TYPE &&
-		    context.isVarName(nextTok.value)) {
-
-			if (context.isVarConstant(nextTok.value)) {
-				ExpResult namedVal = context.getValFromConstVar(nextTok.value, exp.source, nextTok.pos);
-				return new Constant(context, namedVal, exp, nextTok.pos);
+		if (nextTok.type == ExpTokenizer.VAR_TYPE) {
+			if (context.isVarName(nextTok.value)) {
+				if (context.isVarConstant(nextTok.value)) {
+					ExpResult namedVal = context.getValFromConstVar(nextTok.value, exp.source, nextTok.pos);
+					return new Constant(context, namedVal, exp, nextTok.pos);
+				} else {
+					return new Variable(context, nextTok.value, exp, nextTok.pos);
+				}
 			} else {
-				return new Variable(context, nextTok.value, exp, nextTok.pos);
+				return parseFuncCall(context, nextTok.value, tokens, exp, nextTok.pos);
 			}
 		}
 
@@ -2718,6 +2775,11 @@ public class ExpParser {
 
 	private static ExpNode parseFuncCall(ParseContext context, String funcName, TokenList tokens, Expression exp, int pos) throws ExpError {
 
+		FunctionEntry fe = getFunctionEntry(funcName);
+		if (fe == null) {
+			throw new ExpError(exp.source, pos, "Uknown function or variable: \"%s\"", funcName);
+		}
+
 		tokens.expect(ExpTokenizer.SYM_TYPE, "(", exp.source);
 		ArrayList<ExpNode> arguments = new ArrayList<>();
 
@@ -2750,11 +2812,6 @@ public class ExpParser {
 
 			// Unexpected token
 			throw new ExpError(exp.source, nextTok.pos, "Unexpected token in arguement list");
-		}
-
-		FunctionEntry fe = getFunctionEntry(funcName);
-		if (fe == null) {
-			throw new ExpError(exp.source, pos, "Uknown function: \"%s\"", funcName);
 		}
 
 		if (fe.numMinArgs >= 0 && arguments.size() < fe.numMinArgs){
