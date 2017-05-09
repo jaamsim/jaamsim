@@ -350,7 +350,7 @@ public class ExpEvaluator {
 
 	}
 
-	private static class EntityEvalContext implements ExpParser.EvalContext {
+	private static class EntityEvalContext extends ExpParser.EvalContext {
 
 		private final double simTime;
 
@@ -358,10 +358,6 @@ public class ExpEvaluator {
 			this.simTime = simTime;
 		}
 
-		@Override
-		public ExpResult getVariableVal(String varName) throws ExpError {
-			throw new ExpError(null, 0, "Variables un-implemented");
-		}
 	}
 
 	public static EntityParseContext getParseContext(Entity thisEnt, String source) {

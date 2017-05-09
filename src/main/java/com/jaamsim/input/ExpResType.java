@@ -21,5 +21,6 @@ public enum ExpResType {
 	NUMBER,
 	STRING,
 	ENTITY,
-	COLLECTION
+	COLLECTION,
+	LAMBDA
 }

@@ -51,24 +51,29 @@ public class ExpResult {
 	public final String stringVal;
 	public final Entity entVal;
 	public final Collection colVal;
+	public final ExpParser.LambdaClosure lcVal;
 
 	public static ExpResult makeNumResult(double val, Class<? extends Unit> ut) {
-		return new ExpResult(ExpResType.NUMBER, val, ut, null, null, null);
+		return new ExpResult(ExpResType.NUMBER, val, ut, null, null, null, null);
 	}
 
 	public static ExpResult makeStringResult(String str) {
-		return new ExpResult(ExpResType.STRING, 0, null, str, null, null);
+		return new ExpResult(ExpResType.STRING, 0, null, str, null, null, null);
 	}
 
 	public static ExpResult makeEntityResult(Entity ent) {
-		return new ExpResult(ExpResType.ENTITY, 0, null, null, ent, null);
+		return new ExpResult(ExpResType.ENTITY, 0, null, null, ent, null, null);
 	}
 
 	public static ExpResult makeCollectionResult(Collection col) {
-		return new ExpResult(ExpResType.COLLECTION, 0, null, null, null, col);
+		return new ExpResult(ExpResType.COLLECTION, 0, null, null, null, col, null);
 	}
 
-	private ExpResult(ExpResType type, double val, Class<? extends Unit> ut, String str, Entity ent, Collection col) {
+	public static ExpResult makeLambdaResult(ExpParser.LambdaClosure lc) {
+		return new ExpResult(ExpResType.LAMBDA, 0, null, null, null, null, lc);
+	}
+
+	private ExpResult(ExpResType type, double val, Class<? extends Unit> ut, String str, Entity ent, Collection col, ExpParser.LambdaClosure lc) {
 		this.type = type;
 		value = val;
 		unitType = ut;
@@ -76,6 +81,7 @@ public class ExpResult {
 		stringVal = str;
 		entVal = ent;
 		colVal = col;
+		lcVal = lc;
 	}
 
 	public <T> T getValue(double simTime, Class<T> klass) {

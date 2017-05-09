@@ -102,18 +102,6 @@ public class TestExpParser {
 		public ExpResult getValFromLitName(String name, String source, int pos) throws ExpError {
 			return ExpResult.makeNumResult(1, DimensionlessUnit.class);
 		}
-		@Override
-		public boolean isVarName(String varName) {
-			return false;
-		}
-		@Override
-		public boolean isVarConstant(String varName) {
-			return false;
-		}
-		@Override
-		public ExpResult getValFromConstVar(String name, String source, int pos) throws ExpError {
-			return ExpResult.makeNumResult(1, DimensionlessUnit.class);
-		}
 	}
 
 	static Entity mapEnt = new Entity();
@@ -148,12 +136,8 @@ public class TestExpParser {
 
 	static PC pc = new PC();
 
-	private static class EC implements ExpParser.EvalContext {
+	private static class EC extends ExpParser.EvalContext {
 
-		@Override
-		public ExpResult getVariableVal(String varName) throws ExpError {
-			return null;
-		}
 
 	}
 	static EC ec = new EC();
@@ -589,6 +573,26 @@ public class TestExpParser {
 		assertTrue(res.type == ExpResType.STRING);
 		assertTrue(res.stringVal.equals("stringly"));
 	}
+
+	@Test
+	public void testLambda() throws ExpError {
+
+		ExpParser.Expression exp = ExpParser.parseExpression(pc, "|x|(2*x)");
+		ExpResult val = exp.evaluate(ec);
+		assertTrue(val.type == ExpResType.LAMBDA);
+
+		exp = ExpParser.parseExpression(pc, "|x|(2*x)(21)");
+		val = exp.evaluate(ec);
+		assertTrue(val.type == ExpResType.NUMBER);
+		assertTrue(val.value == 42);
+
+		exp = ExpParser.parseExpression(pc, "|x|(|y|(x*y)(2))(21)");
+		val = exp.evaluate(ec);
+		assertTrue(val.type == ExpResType.NUMBER);
+		assertTrue(val.value == 42);
+
+	}
+
 
 	@Test
 	public void testUnits() throws ExpError {

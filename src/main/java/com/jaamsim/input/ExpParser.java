@@ -84,6 +84,13 @@ public class ExpParser {
 
 		public ArrayList<ParseClosure> closureStack = new ArrayList<>();
 
+		public void pushClosure(ParseClosure close) {
+			closureStack.add(close);
+		}
+		public ParseClosure popClosure(ParseClosure close) {
+			return closureStack.remove(closureStack.size()-1);
+		}
+
 		public boolean isVarName(String varName) {
 			// Check the constant vars and bound vars for the whole stack to see if this is a valid variable
 			for (ParseClosure close : closureStack) {
@@ -125,6 +132,18 @@ public class ExpParser {
 			}
 		}
 
+		public int getVarIndex(String varName) {
+			// The index logic is that bound variables take the first indices, then free variables follow
+			// in the order they are referenced
+			ParseClosure topClose = closureStack.get(closureStack.size()-1);
+			if (topClose.boundVars.contains(varName)) {
+				return topClose.boundVars.indexOf(varName);
+			}
+			assert(topClose.boundVars.contains(varName));
+
+			return topClose.freeVars.indexOf(varName) + topClose.boundVars.size();
+		}
+
 		public ExpResult getValFromConstVar(String varName, String source, int pos) throws ExpError {
 			for (ParseClosure close : closureStack) {
 				if (close.parseConstants.containsKey(varName)) {
@@ -134,10 +153,24 @@ public class ExpParser {
 			throw new ExpError(source, pos, String.format("Unknown constant variable: %s", varName));
 
 		}
-}
+	}
 
-	public interface EvalContext {
-		public ExpResult getVariableVal(String varName) throws ExpError;
+	public static class EvalContext {
+		private final ArrayList<ArrayList<ExpResult> > closureStack = new ArrayList<>();
+
+		public EvalContext() {
+			closureStack.add(new ArrayList<ExpResult>());
+		}
+
+		public void pushClosure(ArrayList<ExpResult> closure) {
+			closureStack.add(closure);
+		}
+		public void popClosure() {
+			closureStack.remove(closureStack.size()-1);
+		}
+		public ArrayList<ExpResult> getCurrentClosure() {
+			return closureStack.get(closureStack.size()-1);
+		}
 	}
 
 	private interface ExpressionWalker {
@@ -265,14 +298,15 @@ public class ExpParser {
 	}
 
 	private static class Variable extends ExpNode {
-		public String varName;
-		public Variable(ParseContext context, String varName, Expression exp, int pos) {
+		public int varIndex;
+		public Variable(ParseContext context, int varIndex, Expression exp, int pos) {
 			super(context, exp, pos);
-			this.varName = varName;
+			this.varIndex = varIndex;
 		}
 		@Override
 		public ExpResult evaluate(EvalContext ec) throws ExpError {
-			return ec.getVariableVal(varName);
+			ArrayList<ExpResult> close = ec.getCurrentClosure();
+			return close.get(varIndex);
 		}
 
 		@Override
@@ -282,6 +316,73 @@ public class ExpParser {
 
 		@Override
 		void walk(ExpressionWalker w) throws ExpError {
+			w.visit(this);
+		}
+	}
+
+	public static class LambdaClosure {
+		private final ExpNode body;
+		private final ArrayList<ExpResult> vars;
+		private final int numParams;
+
+		public LambdaClosure(ExpNode body, ArrayList<ExpResult> vars, int numParams) {
+			this.body = body;
+			this.vars = vars;
+			this.numParams = numParams;
+		}
+
+		public ExpResult evaluate(EvalContext ec, ArrayList<ExpResult> params) throws ExpError {
+			// Fill in the context
+			for (int i = 0; i < params.size(); ++i) {
+				vars.set(i, params.get(i));
+			}
+			ec.pushClosure(vars);
+			return body.evaluate(ec);
+		}
+
+		public int getNumParams() {
+			return numParams;
+		}
+	}
+
+	private static class LambdaNode extends ExpNode {
+		private ExpNode lambdaBody;
+		private final int[] varMap;
+		private final int numParams;
+		public LambdaNode(ParseContext context, ExpNode lambdaBody, int[] varMap, int numParams, Expression exp, int pos) {
+			super(context, exp, pos);
+			this.lambdaBody = lambdaBody;
+			this.varMap = varMap;
+			this.numParams = numParams;
+		}
+
+		@Override
+		public ExpResult evaluate(EvalContext ec) throws ExpError {
+			ArrayList<ExpResult> close = ec.getCurrentClosure();
+
+			ArrayList<ExpResult> vars = new ArrayList<>(varMap.length);
+
+			for (int i : varMap) {
+				if (i < 0) {
+					vars.add(null);
+				} else {
+					vars.add(close.get(i).getCopy());
+				}
+			}
+			LambdaClosure lc = new LambdaClosure(lambdaBody, vars, numParams);
+			return ExpResult.makeLambdaResult(lc);
+		}
+
+		@Override
+		public ExpValResult validate() {
+			return ExpValResult.makeUndecidableRes();
+		}
+
+		@Override
+		void walk(ExpressionWalker w) throws ExpError {
+			lambdaBody.walk(w);
+			lambdaBody = w.updateRef(lambdaBody);
+
 			w.visit(this);
 		}
 	}
@@ -361,10 +462,21 @@ public class ExpParser {
 				ExpResult colRes = collection.evaluate(ec);
 				ExpResult indRes = index.evaluate(ec);
 
-				if (colRes.type != ExpResType.COLLECTION) {
-					throw new ExpError(exp.source, tokenPos, "Expression does not evaluate to a collection type.");
+				if (colRes.type == ExpResType.COLLECTION) {
+					return colRes.colVal.index(indRes);
 				}
-				return colRes.colVal.index(indRes);
+				if (colRes.type == ExpResType.LAMBDA) {
+					ArrayList<ExpResult> params = new ArrayList<>();
+					params.add(indRes);
+					if (params.size() != colRes.lcVal.getNumParams()) {
+						throw new ExpError(exp.source, tokenPos, "Invalid number of parameter for lambda. Got: %d, expected: %d",
+								params.size(), colRes.lcVal.getNumParams());
+					}
+					return colRes.lcVal.evaluate(ec, params);
+				}
+
+				throw new ExpError(exp.source, tokenPos, "Expression does not evaluate to a collection or lambda type.");
+
 			} catch (ExpError ex) {
 				throw fixError(ex, exp.source, tokenPos);
 			}
@@ -2698,10 +2810,15 @@ public class ExpParser {
 					ExpResult namedVal = context.getValFromConstVar(nextTok.value, exp.source, nextTok.pos);
 					return new Constant(context, namedVal, exp, nextTok.pos);
 				} else {
-					return new Variable(context, nextTok.value, exp, nextTok.pos);
+					context.referenceVar(nextTok.value, exp.source, nextTok.pos);
+					int varIndex = context.getVarIndex(nextTok.value);
+
+					return new Variable(context, varIndex, exp, nextTok.pos);
 				}
-			} else {
+			} else if (getFunctionEntry(nextTok.value) != null){
 				return parseFuncCall(context, nextTok.value, tokens, exp, nextTok.pos);
+			} else {
+				throw new ExpError(exp.source, nextTok.pos, "Unknown variable or function: %s", nextTok.value);
 			}
 		}
 
@@ -2732,6 +2849,10 @@ public class ExpParser {
 				}
 			}
 			return new BuildArray(context, exps, exp, nextTok.pos);
+		}
+
+		if (nextTok.value.equals("|")) {
+			return parseLambda(context, tokens, exp, nextTok.pos);
 		}
 
 		// handle parenthesis
@@ -2773,6 +2894,59 @@ public class ExpParser {
 		return new Constant(context, ExpResult.makeNumResult(Double.parseDouble(constant)*mult, ut), exp, pos);
 	}
 
+	private static ExpNode parseLambda(ParseContext context, TokenList tokens, Expression exp, int pos) throws ExpError {
+		ExpTokenizer.Token peeked = tokens.peek();
+
+		ArrayList<String> vars = new ArrayList<>();
+		if (!peeked.value.equals("|")) {
+			while (true) {
+				if (peeked.type != ExpTokenizer.VAR_TYPE) {
+					throw new ExpError(exp.source, peeked.pos, "Expected variable name in lambda parameter list");
+				}
+				if (context.isVarName(peeked.value)) {
+					throw new ExpError(exp.source, peeked.pos, "Variable name is the same as existing variable.");
+				}
+				vars.add(peeked.value);
+				// consume var name
+				tokens.next();
+				peeked = tokens.peek();
+				if (peeked.value.equals("|")) {
+					break;
+				}
+				if (peeked.value.equals(",")) {
+					tokens.next();
+					peeked = tokens.peek();
+					continue;
+				}
+				throw new ExpError(exp.source, peeked.pos, "Unexpected token in lambda parameter list");
+			}
+		}
+		tokens.expect(ExpTokenizer.SYM_TYPE, "|", exp.source);
+
+		tokens.expect(ExpTokenizer.SYM_TYPE, "(", exp.source);
+
+		ParseClosure pc = new ParseClosure();
+		pc.boundVars = vars;
+
+		context.pushClosure(pc);
+		ExpNode lambdaBody = parseExp(context, tokens, 0, exp);
+		context.popClosure(pc);
+
+		tokens.expect(ExpTokenizer.SYM_TYPE, ")", exp.source);
+
+		// Create the mapping needed to capture the free variables needed when this lambda is executed
+		int[] varMap = new int[pc.boundVars.size() + pc.freeVars.size()];
+		for (int i = 0; i < varMap.length; ++i) {
+			if (i < pc.boundVars.size()) {
+				varMap[i] = -1;
+			} else {
+				varMap[i] = context.getVarIndex(vars.get(i - pc.boundVars.size()));
+			}
+		}
+
+		return new LambdaNode(context, lambdaBody, varMap, vars.size(), exp, pos);
+
+	}
 	private static ExpNode parseFuncCall(ParseContext context, String funcName, TokenList tokens, Expression exp, int pos) throws ExpError {
 
 		FunctionEntry fe = getFunctionEntry(funcName);
