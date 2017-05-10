@@ -447,32 +447,36 @@ public class ExpParser {
 
 	private static class IndexCollection extends ExpNode {
 		public ExpNode collection;
-		public ExpNode index;
+		public ArrayList<ExpNode> indices;
 
-		public IndexCollection(ParseContext context, ExpNode collection, ExpNode index, Expression exp, int pos) throws ExpError {
+		public IndexCollection(ParseContext context, ExpNode collection, ArrayList<ExpNode> indices, Expression exp, int pos) throws ExpError {
 			super(context, exp, pos);
 
 			this.collection = collection;
-			this.index = index;
+			this.indices = indices;
 		}
 
 		@Override
 		public ExpResult evaluate(EvalContext ec) throws ExpError {
 			try {
 				ExpResult colRes = collection.evaluate(ec);
-				ExpResult indRes = index.evaluate(ec);
+				ArrayList<ExpResult> indResults = new ArrayList<>();
+				for (ExpNode ind : indices) {
+					indResults.add(ind.evaluate(ec));
+				}
 
 				if (colRes.type == ExpResType.COLLECTION) {
-					return colRes.colVal.index(indRes);
+					if (indResults.size() != 1) {
+						throw new ExpError(exp.source, tokenPos, "Collections can only be indexed with a single index");
+					}
+					return colRes.colVal.index(indResults.get(0));
 				}
 				if (colRes.type == ExpResType.LAMBDA) {
-					ArrayList<ExpResult> params = new ArrayList<>();
-					params.add(indRes);
-					if (params.size() != colRes.lcVal.getNumParams()) {
+					if (indResults.size() != colRes.lcVal.getNumParams()) {
 						throw new ExpError(exp.source, tokenPos, "Invalid number of parameter for lambda. Got: %d, expected: %d",
-								params.size(), colRes.lcVal.getNumParams());
+								indResults.size(), colRes.lcVal.getNumParams());
 					}
-					return colRes.lcVal.evaluate(ec, params);
+					return colRes.lcVal.evaluate(ec, indResults);
 				}
 
 				throw new ExpError(exp.source, tokenPos, "Expression does not evaluate to a collection or lambda type.");
@@ -484,25 +488,28 @@ public class ExpParser {
 		@Override
 		public ExpValResult validate() {
 			ExpValResult colValRes = collection.validate();
-			ExpValResult indValRes = index.validate();
 
 			if (colValRes.state == ExpValResult.State.ERROR) {
 				fixValidationErrors(colValRes, exp.source, tokenPos);
 				return colValRes;
 			}
-			if (indValRes.state == ExpValResult.State.ERROR) {
-				fixValidationErrors(indValRes, exp.source, tokenPos);
-				return indValRes;
-			}
 			if (colValRes.state == ExpValResult.State.UNDECIDABLE) {
 				return colValRes;
 			}
-			if (indValRes.state == ExpValResult.State.UNDECIDABLE) {
-				return indValRes;
+			if (colValRes.type != ExpResType.COLLECTION && colValRes.type != ExpResType.LAMBDA) {
+				return ExpValResult.makeErrorRes(new ExpError(exp.source, tokenPos, "Expression does not evaluate to a collection or lambda type."));
 			}
 
-			if (colValRes.type != ExpResType.COLLECTION) {
-				return ExpValResult.makeErrorRes(new ExpError(exp.source, tokenPos, "Expression does not evaluate to a collection type."));
+			for (ExpNode ind : indices) {
+				ExpValResult indValRes = ind.validate();
+
+				if (indValRes.state == ExpValResult.State.ERROR) {
+					fixValidationErrors(indValRes, exp.source, tokenPos);
+					return indValRes;
+				}
+				if (indValRes.state == ExpValResult.State.UNDECIDABLE) {
+					return indValRes;
+				}
 			}
 
 			// TODO: validate collection types
@@ -514,8 +521,11 @@ public class ExpParser {
 			collection.walk(w);
 			collection = w.updateRef(collection);
 
-			index.walk(w);
-			index = w.updateRef(index);
+			for (int i = 0; i < indices.size(); ++i) {
+				indices.get(i).walk(w);
+				ExpNode updated = w.updateRef(indices.get(i));
+				indices.set(i, updated);
+			}
 
 			w.visit(this);
 		}
@@ -2664,11 +2674,9 @@ public class ExpParser {
 			}
 
 			if (peeked.value.equals("(")) {
-				tokens.next(); // consume
-				ExpNode indexExp = parseExp(context, tokens, 0, exp);
-				tokens.expect(ExpTokenizer.SYM_TYPE, ")", exp.source);
+				ArrayList<ExpNode> indices = parseIndices(context, tokens, exp);
 
-				lhs = new IndexCollection(context, lhs, indexExp, exp, peeked.pos);
+				lhs = new IndexCollection(context, lhs, indices, exp, peeked.pos);
 				continue;
 			}
 
@@ -2753,7 +2761,10 @@ public class ExpParser {
 		if (lhsNode instanceof IndexCollection) {
 			// the lhs ended with an index, split that off
 			IndexCollection ind = (IndexCollection)lhsNode;
-			indexExp = ind.index;
+			if (ind.indices.size() != 1)
+				throw new ExpError(input, lhsNode.tokenPos, "Assignment to collections can only take a single index");
+
+			indexExp = ind.indices.get(0);
 			lhsNode = ind.collection;
 
 			indexExp = optimizeAndValidateExpression(input, indexExp, ret);
@@ -2892,6 +2903,35 @@ public class ExpParser {
 		}
 
 		return new Constant(context, ExpResult.makeNumResult(Double.parseDouble(constant)*mult, ut), exp, pos);
+	}
+
+	private static ArrayList<ExpNode> parseIndices(ParseContext context, TokenList tokens, Expression exp) throws ExpError {
+		tokens.next(); // consume '('
+		ExpTokenizer.Token peeked = tokens.peek();
+		if (peeked.value.equals(")")) {
+			// Empty list
+			tokens.next();
+			return new ArrayList<>();
+		}
+
+		ArrayList<ExpNode> indices = new ArrayList<>();
+		while (true) {
+			ExpNode indexExp = parseExp(context, tokens, 0, exp);
+			indices.add(indexExp);
+
+			peeked = tokens.peek();
+			if (peeked.value.equals(")")) {
+				break;
+			}
+			if (peeked.value.equals(",")) {
+				tokens.next();
+				continue;
+			}
+			throw new ExpError(exp.source, peeked.pos, "Unexpected token in index list");
+		}
+
+		tokens.expect(ExpTokenizer.SYM_TYPE, ")", exp.source);
+		return indices;
 	}
 
 	private static ExpNode parseLambda(ParseContext context, TokenList tokens, Expression exp, int pos) throws ExpError {

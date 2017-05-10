@@ -591,6 +591,11 @@ public class TestExpParser {
 		assertTrue(val.type == ExpResType.NUMBER);
 		assertTrue(val.value == 42);
 
+		exp = ExpParser.parseExpression(pc, "|x,y|(x*y)(2,21)");
+		val = exp.evaluate(ec);
+		assertTrue(val.type == ExpResType.NUMBER);
+		assertTrue(val.value == 42);
+
 	}
 
 
