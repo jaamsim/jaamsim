@@ -42,6 +42,10 @@ public class ExpValResult {
 			return "number";
 		case STRING:
 			return "string";
+		case COLLECTION:
+			return "collection";
+		case LAMBDA:
+			return "function";
 		default:
 			assert(false);
 			return "unknown type";
