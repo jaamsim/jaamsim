@@ -624,6 +624,16 @@ public class TestExpParser {
 		double[] mapFilterVals = {22, 42};
 		assertColSame(mapFilterVals, val.colVal);
 
+		exp = ExpParser.parseExpression(pc, "reduce(|val, accum|(val + accum), 0, {1,2,3,4,32})");
+		val = exp.evaluate(ec);
+		assertTrue(val.type == ExpResType.NUMBER);
+		assertTrue(val.value == 42);
+
+		exp = ExpParser.parseExpression(pc, "reduce(|val, accum|(val * accum), 1, {1,2,3,4,5})");
+		val = exp.evaluate(ec);
+		assertTrue(val.type == ExpResType.NUMBER);
+		assertTrue(val.value == 120);
+
 	}
 
 

@@ -2233,6 +2233,59 @@ public class ExpParser {
 			}
 		});
 
+		addFunction("reduce", 3, 3, new CallableFunc() {
+			@Override
+			public void checkUnits(ParseContext context, ExpResult[] args,
+					String source, int pos) throws ExpError {
+			}
+
+			@Override
+			public ExpResult call(EvalContext context, ExpResult[] args, String source, int pos) throws ExpError {
+				if (args[2].type != ExpResType.COLLECTION) {
+					throw new ExpError(source, pos, "Expected Collection type argument as first argument.");
+				}
+				if (args[0].type != ExpResType.LAMBDA) {
+					throw new ExpError(source, pos, "Expected function argument as third argument.");
+				}
+
+				LambdaClosure reduceFunc = args[0].lcVal;
+				if (reduceFunc.numParams != 2) {
+					throw new ExpError(source, pos, "Function passed to 'reduce' must take two parameters.");
+				}
+
+				ExpResult accum = args[1];
+
+				ExpResult.Collection col = args[2].colVal;
+				ExpResult.Iterator it = col.getIter();
+
+				ArrayList<ExpResult> params = new ArrayList<>(2);
+				params.add(null);
+				params.add(null);
+
+				while (it.hasNext()) {
+					ExpResult key = it.nextKey();
+					ExpResult val = col.index(key);
+					params.set(0, val);
+					params.set(1, accum);
+
+					accum = reduceFunc.evaluate(context, params);
+				}
+				return accum;
+			}
+
+			@Override
+			public ExpValResult validate(ParseContext context, ExpValResult[] args, String source, int pos) {
+				if (args[0].state == ExpValResult.State.ERROR || args[0].state == ExpValResult.State.UNDECIDABLE) {
+					return args[0];
+				}
+				if (args[0].type != ExpResType.LAMBDA) {
+					return ExpValResult.makeErrorRes(new ExpError(source, pos, "First argument to 'reduce' must be a function."));
+				}
+
+				return validateCollection(context, args[2], source, pos);
+			}
+		});
+
 		addFunction("size", 1, 1, new CallableFunc() {
 			@Override
 			public void checkUnits(ParseContext context, ExpResult[] args,
