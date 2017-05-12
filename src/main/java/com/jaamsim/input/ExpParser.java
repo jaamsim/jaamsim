@@ -41,7 +41,7 @@ public class ExpParser {
 
 	public interface CallableFunc {
 		public void checkUnits(ParseContext context, ExpResult[] args, String source, int pos) throws ExpError;
-		public ExpResult call(ParseContext context, ExpResult[] args, String source, int pos) throws ExpError;
+		public ExpResult call(EvalContext context, ExpResult[] args, String source, int pos) throws ExpError;
 		public ExpValResult validate(ParseContext context, ExpValResult[] args, String source, int pos);
 	}
 
@@ -823,7 +823,7 @@ public class ExpParser {
 				argVals[i] = args.get(i).evaluate(ec);
 			}
 			function.checkUnits(context, argVals, exp.source, tokenPos);
-			return function.call(context, argVals, exp.source, tokenPos);
+			return function.call(ec, argVals, exp.source, tokenPos);
 		}
 		@Override
 		public ExpValResult validate() {
@@ -873,7 +873,7 @@ public class ExpParser {
 			for (int i = 0; i < args.size(); ++i) {
 				argVals[i] = args.get(i).evaluate(ec);
 			}
-			return function.call(context, argVals, exp.source, tokenPos);
+			return function.call(ec, argVals, exp.source, tokenPos);
 		}
 
 	}
@@ -1666,7 +1666,7 @@ public class ExpParser {
 			}
 
 			@Override
-			public ExpResult call(ParseContext context, ExpResult[] args, String source, int pos) throws ExpError {
+			public ExpResult call(EvalContext context, ExpResult[] args, String source, int pos) throws ExpError {
 				ExpResult res = args[0];
 				for (int i = 1; i < args.length; ++ i) {
 					if (args[i].value > res.value)
@@ -1692,7 +1692,7 @@ public class ExpParser {
 			}
 
 			@Override
-			public ExpResult call(ParseContext context, ExpResult[] args, String source, int pos) throws ExpError {
+			public ExpResult call(EvalContext context, ExpResult[] args, String source, int pos) throws ExpError {
 				ExpResult res = args[0];
 				for (int i = 1; i < args.length; ++ i) {
 					if (args[i].value < res.value)
@@ -1713,7 +1713,7 @@ public class ExpParser {
 			}
 
 			@Override
-			public ExpResult call(ParseContext context, ExpResult[] args, String source, int pos) throws ExpError {
+			public ExpResult call(EvalContext context, ExpResult[] args, String source, int pos) throws ExpError {
 				if (args[0].type != ExpResType.COLLECTION) {
 					throw new ExpError(source, pos, "Expected Collection type argument");
 				}
@@ -1758,7 +1758,7 @@ public class ExpParser {
 			}
 
 			@Override
-			public ExpResult call(ParseContext context, ExpResult[] args, String source, int pos) throws ExpError {
+			public ExpResult call(EvalContext context, ExpResult[] args, String source, int pos) throws ExpError {
 				if (args[0].type != ExpResType.COLLECTION) {
 					throw new ExpError(source, pos, "Expected Collection type argument");
 				}
@@ -1804,7 +1804,7 @@ public class ExpParser {
 			}
 
 			@Override
-			public ExpResult call(ParseContext context, ExpResult[] args, String source, int pos) {
+			public ExpResult call(EvalContext context, ExpResult[] args, String source, int pos) {
 				return ExpResult.makeNumResult(Math.abs(args[0].value), args[0].unitType);
 			}
 			@Override
@@ -1820,7 +1820,7 @@ public class ExpParser {
 				// N/A
 			}
 			@Override
-			public ExpResult call(ParseContext context, ExpResult[] args, String source, int pos) {
+			public ExpResult call(EvalContext context, ExpResult[] args, String source, int pos) {
 				return ExpResult.makeNumResult(Math.ceil(args[0].value), args[0].unitType);
 			}
 			@Override
@@ -1836,7 +1836,7 @@ public class ExpParser {
 				// N/A
 			}
 			@Override
-			public ExpResult call(ParseContext context, ExpResult[] args, String source, int pos) {
+			public ExpResult call(EvalContext context, ExpResult[] args, String source, int pos) {
 				return ExpResult.makeNumResult(Math.floor(args[0].value), args[0].unitType);
 			}
 			@Override
@@ -1852,7 +1852,7 @@ public class ExpParser {
 				// N/A
 			}
 			@Override
-			public ExpResult call(ParseContext context, ExpResult[] args, String source, int pos) {
+			public ExpResult call(EvalContext context, ExpResult[] args, String source, int pos) {
 				return ExpResult.makeNumResult(Math.signum(args[0].value), DimensionlessUnit.class);
 			}
 			@Override
@@ -1877,7 +1877,7 @@ public class ExpParser {
 					throw new ExpError(source, pos, getInvalidUnitString(args[0].unitType, DimensionlessUnit.class));
 			}
 			@Override
-			public ExpResult call(ParseContext context, ExpResult[] args, String source, int pos) throws ExpError {
+			public ExpResult call(EvalContext context, ExpResult[] args, String source, int pos) throws ExpError {
 				return ExpResult.makeNumResult(Math.sqrt(args[0].value), DimensionlessUnit.class);
 			}
 			@Override
@@ -1894,7 +1894,7 @@ public class ExpParser {
 					throw new ExpError(source, pos, getInvalidUnitString(args[0].unitType, DimensionlessUnit.class));
 			}
 			@Override
-			public ExpResult call(ParseContext context, ExpResult[] args, String source, int pos) throws ExpError {
+			public ExpResult call(EvalContext context, ExpResult[] args, String source, int pos) throws ExpError {
 				return ExpResult.makeNumResult(Math.cbrt(args[0].value), DimensionlessUnit.class);
 			}
 			@Override
@@ -1914,7 +1914,7 @@ public class ExpParser {
 			}
 
 			@Override
-			public ExpResult call(ParseContext context, ExpResult[] args, String source, int pos) throws ExpError {
+			public ExpResult call(EvalContext context, ExpResult[] args, String source, int pos) throws ExpError {
 				ExpResult res = args[0];
 				int index = 0;
 				for (int i = 1; i < args.length; ++ i) {
@@ -1942,7 +1942,7 @@ public class ExpParser {
 			}
 
 			@Override
-			public ExpResult call(ParseContext context, ExpResult[] args, String source, int pos) throws ExpError {
+			public ExpResult call(EvalContext context, ExpResult[] args, String source, int pos) throws ExpError {
 				ExpResult res = args[0];
 				int index = 0;
 				for (int i = 1; i < args.length; ++ i) {
@@ -1966,7 +1966,7 @@ public class ExpParser {
 			}
 
 			@Override
-			public ExpResult call(ParseContext context, ExpResult[] args, String source, int pos) throws ExpError {
+			public ExpResult call(EvalContext context, ExpResult[] args, String source, int pos) throws ExpError {
 				if (args[0].type != ExpResType.COLLECTION) {
 					throw new ExpError(source, pos, "Expected Collection type argument");
 				}
@@ -2013,7 +2013,7 @@ public class ExpParser {
 			}
 
 			@Override
-			public ExpResult call(ParseContext context, ExpResult[] args, String source, int pos) throws ExpError {
+			public ExpResult call(EvalContext context, ExpResult[] args, String source, int pos) throws ExpError {
 				if (args[0].type != ExpResType.COLLECTION) {
 					throw new ExpError(source, pos, "Expected Collection type argument");
 				}
@@ -2060,7 +2060,7 @@ public class ExpParser {
 			}
 
 			@Override
-			public ExpResult call(ParseContext context, ExpResult[] args, String source, int pos) throws ExpError {
+			public ExpResult call(EvalContext context, ExpResult[] args, String source, int pos) throws ExpError {
 				if (args[0].type != ExpResType.COLLECTION) {
 					throw new ExpError(source, pos, "Expected Collection type argument as first argument.");
 				}
@@ -2118,7 +2118,7 @@ public class ExpParser {
 			}
 
 			@Override
-			public ExpResult call(ParseContext context, ExpResult[] args, String source, int pos) throws ExpError {
+			public ExpResult call(EvalContext context, ExpResult[] args, String source, int pos) throws ExpError {
 				if (args[0].type != ExpResType.COLLECTION) {
 					throw new ExpError(source, pos, "Expected Collection type argument");
 				}
@@ -2147,7 +2147,7 @@ public class ExpParser {
 			}
 
 			@Override
-			public ExpResult call(ParseContext context, ExpResult[] args, String source, int pos) throws ExpError {
+			public ExpResult call(EvalContext context, ExpResult[] args, String source, int pos) throws ExpError {
 				int k = (int) args[0].value;
 				if (k < 1 || k >= args.length)
 					throw new ExpError(source, pos,
@@ -2202,7 +2202,7 @@ public class ExpParser {
 				// N/A
 			}
 			@Override
-			public ExpResult call(ParseContext context, ExpResult[] args, String source, int pos) throws ExpError {
+			public ExpResult call(EvalContext context, ExpResult[] args, String source, int pos) throws ExpError {
 				return ExpResult.makeNumResult(Math.E, DimensionlessUnit.class);
 			}
 			@Override
@@ -2218,7 +2218,7 @@ public class ExpParser {
 				// N/A
 			}
 			@Override
-			public ExpResult call(ParseContext context, ExpResult[] args, String source, int pos) throws ExpError {
+			public ExpResult call(EvalContext context, ExpResult[] args, String source, int pos) throws ExpError {
 				return ExpResult.makeNumResult(Math.PI, DimensionlessUnit.class);
 			}
 			@Override
@@ -2237,7 +2237,7 @@ public class ExpParser {
 					throw new ExpError(source, pos, getInvalidTrigUnitString(args[0].unitType));
 			}
 			@Override
-			public ExpResult call(ParseContext context, ExpResult[] args, String source, int pos) throws ExpError {
+			public ExpResult call(EvalContext context, ExpResult[] args, String source, int pos) throws ExpError {
 				return ExpResult.makeNumResult(Math.sin(args[0].value), DimensionlessUnit.class);
 			}
 			@Override
@@ -2254,7 +2254,7 @@ public class ExpParser {
 					throw new ExpError(source, pos, getInvalidTrigUnitString(args[0].unitType));
 			}
 			@Override
-			public ExpResult call(ParseContext context, ExpResult[] args, String source, int pos) throws ExpError {
+			public ExpResult call(EvalContext context, ExpResult[] args, String source, int pos) throws ExpError {
 				return ExpResult.makeNumResult(Math.cos(args[0].value), DimensionlessUnit.class);
 			}
 			@Override
@@ -2271,7 +2271,7 @@ public class ExpParser {
 					throw new ExpError(source, pos, getInvalidTrigUnitString(args[0].unitType));
 			}
 			@Override
-			public ExpResult call(ParseContext context, ExpResult[] args, String source, int pos) throws ExpError {
+			public ExpResult call(EvalContext context, ExpResult[] args, String source, int pos) throws ExpError {
 				return ExpResult.makeNumResult(Math.tan(args[0].value), DimensionlessUnit.class);
 			}
 			@Override
@@ -2290,7 +2290,7 @@ public class ExpParser {
 					throw new ExpError(source, pos, getInvalidUnitString(args[0].unitType, DimensionlessUnit.class));
 			}
 			@Override
-			public ExpResult call(ParseContext context, ExpResult[] args, String source, int pos) throws ExpError {
+			public ExpResult call(EvalContext context, ExpResult[] args, String source, int pos) throws ExpError {
 				return ExpResult.makeNumResult(Math.asin(args[0].value), AngleUnit.class);
 			}
 			@Override
@@ -2307,7 +2307,7 @@ public class ExpParser {
 					throw new ExpError(source, pos, getInvalidUnitString(args[0].unitType, DimensionlessUnit.class));
 			}
 			@Override
-			public ExpResult call(ParseContext context, ExpResult[] args, String source, int pos) throws ExpError {
+			public ExpResult call(EvalContext context, ExpResult[] args, String source, int pos) throws ExpError {
 				return ExpResult.makeNumResult(Math.acos(args[0].value), AngleUnit.class);
 			}
 			@Override
@@ -2324,7 +2324,7 @@ public class ExpParser {
 					throw new ExpError(source, pos, getInvalidUnitString(args[0].unitType, DimensionlessUnit.class));
 			}
 			@Override
-			public ExpResult call(ParseContext context, ExpResult[] args, String source, int pos) throws ExpError {
+			public ExpResult call(EvalContext context, ExpResult[] args, String source, int pos) throws ExpError {
 				return ExpResult.makeNumResult(Math.atan(args[0].value), AngleUnit.class);
 			}
 			@Override
@@ -2343,7 +2343,7 @@ public class ExpParser {
 					throw new ExpError(source, pos, getInvalidUnitString(args[1].unitType, DimensionlessUnit.class));
 			}
 			@Override
-			public ExpResult call(ParseContext context, ExpResult[] args, String source, int pos) throws ExpError {
+			public ExpResult call(EvalContext context, ExpResult[] args, String source, int pos) throws ExpError {
 				return ExpResult.makeNumResult(Math.atan2(args[0].value, args[1].value), AngleUnit.class);
 			}
 			@Override
@@ -2380,7 +2380,7 @@ public class ExpParser {
 					throw new ExpError(source, pos, getInvalidUnitString(args[0].unitType, DimensionlessUnit.class));
 			}
 			@Override
-			public ExpResult call(ParseContext context, ExpResult[] args, String source, int pos) throws ExpError {
+			public ExpResult call(EvalContext context, ExpResult[] args, String source, int pos) throws ExpError {
 				return ExpResult.makeNumResult(Math.exp(args[0].value), DimensionlessUnit.class);
 			}
 			@Override
@@ -2397,7 +2397,7 @@ public class ExpParser {
 					throw new ExpError(source, pos, getInvalidUnitString(args[0].unitType, DimensionlessUnit.class));
 			}
 			@Override
-			public ExpResult call(ParseContext context, ExpResult[] args, String source, int pos) throws ExpError {
+			public ExpResult call(EvalContext context, ExpResult[] args, String source, int pos) throws ExpError {
 				return ExpResult.makeNumResult(Math.log(args[0].value), DimensionlessUnit.class);
 			}
 			@Override
@@ -2414,7 +2414,7 @@ public class ExpParser {
 					throw new ExpError(source, pos, getInvalidUnitString(args[0].unitType, DimensionlessUnit.class));
 			}
 			@Override
-			public ExpResult call(ParseContext context, ExpResult[] args, String source, int pos) throws ExpError {
+			public ExpResult call(EvalContext context, ExpResult[] args, String source, int pos) throws ExpError {
 				return ExpResult.makeNumResult(Math.log10(args[0].value), DimensionlessUnit.class);
 			}
 			@Override
@@ -2432,7 +2432,7 @@ public class ExpParser {
 				}
 			}
 			@Override
-			public ExpResult call(ParseContext context, ExpResult[] args, String source, int pos) throws ExpError {
+			public ExpResult call(EvalContext context, ExpResult[] args, String source, int pos) throws ExpError {
 
 				return ExpResult.makeNumResult(args[0].entVal == null ? 0 : 1, DimensionlessUnit.class);
 			}
