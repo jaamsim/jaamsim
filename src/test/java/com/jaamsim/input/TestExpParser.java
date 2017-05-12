@@ -609,8 +609,20 @@ public class TestExpParser {
 		exp = ExpParser.parseExpression(pc, "map(|x|(x*2), {1, 2, 3, 21})");
 		val = exp.evaluate(ec);
 		assertTrue(val.type == ExpResType.COLLECTION);
-		double[] vals = {2, 4, 6, 42};
-		assertColSame(vals, val.colVal);
+		double[] mapVals = {2, 4, 6, 42};
+		assertColSame(mapVals, val.colVal);
+
+		exp = ExpParser.parseExpression(pc, "filter(|x|(x>20), {1, 2, 3, 21, 5, 42})");
+		val = exp.evaluate(ec);
+		assertTrue(val.type == ExpResType.COLLECTION);
+		double[] filterVals = {21, 42};
+		assertColSame(filterVals, val.colVal);
+
+		exp = ExpParser.parseExpression(pc, "filter(|x|(x>20), map(|x|(x*2), {1, 2, 3, 11, 5, 21}))");
+		val = exp.evaluate(ec);
+		assertTrue(val.type == ExpResType.COLLECTION);
+		double[] mapFilterVals = {22, 42};
+		assertColSame(mapFilterVals, val.colVal);
 
 	}
 
