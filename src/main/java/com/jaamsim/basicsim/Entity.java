@@ -63,7 +63,7 @@ public class Entity {
 	String entityName;
 	private final long entityNumber;
 
-	//public static final int FLAG_TRACE = 0x01; // reserved in case we want to treat tracing like the other flags
+	private static final int FLAG_TRACE = 0x01;
 	//public static final int FLAG_TRACEREQUIRED = 0x02;
 	//public static final int FLAG_TRACESTATE = 0x04;
 	//public static final int FLAG_LOCKED = 0x08;
@@ -73,7 +73,6 @@ public class Entity {
 	public static final int FLAG_GENERATED = 0x80;
 	public static final int FLAG_DEAD = 0x0100;
 	private int flags;
-	private boolean traceFlag = false;
 
 	private final ArrayList<Input<?>> inpList = new ArrayList<>();
 
@@ -328,15 +327,15 @@ public class Entity {
 	}
 
 	public final void setTraceFlag() {
-		traceFlag = true;
+		this.setFlag(FLAG_TRACE);
 	}
 
 	public final void clearTraceFlag() {
-		traceFlag = false;
+		this.clearFlag(FLAG_TRACE);
 	}
 
 	public final boolean isTraceFlag() {
-		return traceFlag;
+		return this.testFlag(FLAG_TRACE);
 	}
 
 	/**
