@@ -2946,6 +2946,9 @@ public class ExpParser {
 				if (context.isVarName(peeked.value)) {
 					throw new ExpError(exp.source, peeked.pos, "Variable name is the same as existing variable.");
 				}
+				if (getFunctionEntry(peeked.value) != null) {
+					throw new ExpError(exp.source, peeked.pos, "Variable name is the same as built-in function name.");
+				}
 				vars.add(peeked.value);
 				// consume var name
 				tokens.next();
