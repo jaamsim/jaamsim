@@ -464,7 +464,10 @@ public class InputAgent {
 	}
 
 	public static <T extends Entity> T generateEntityWithName(Class<T> proto, String key) {
-		if (key != null && !isValidName(key)) {
+		if (key == null)
+			throw new ErrorException("Must provide a name for generated Entities");
+
+		if (!isValidName(key)) {
 			InputAgent.logError("Entity names cannot contain spaces, tabs, { or }: %s", key);
 			return null;
 		}
@@ -475,11 +478,7 @@ public class InputAgent {
 			return null;
 		}
 		ent.setFlag(Entity.FLAG_GENERATED);
-		if (key != null)
-			ent.setName(key);
-		else
-			ent.setName(proto.getSimpleName() + "-" + ent.getEntityNumber());
-
+		ent.setName(key);
 		return ent;
 	}
 
