@@ -1152,13 +1152,13 @@ public class ExpParser {
 	}
 
 	// Make sure the single argument is a collection
-	private static ExpValResult validateCollection(ParseContext context, ExpValResult[] args, String source, int pos) {
-		if (  args[0].state == ExpValResult.State.ERROR ||
-		      args[0].state == ExpValResult.State.UNDECIDABLE) {
-			return args[0];
+	private static ExpValResult validateCollection(ParseContext context, ExpValResult arg, String source, int pos) {
+		if (  arg.state == ExpValResult.State.ERROR ||
+		      arg.state == ExpValResult.State.UNDECIDABLE) {
+			return arg;
 		}
 		// Check that the argument is a collection
-		if (args[0].type != ExpResType.COLLECTION) {
+		if (arg.type != ExpResType.COLLECTION) {
 			ExpError error = new ExpError(source, pos, "Expected Collection type argument");
 			return ExpValResult.makeErrorRes(error);
 		}
@@ -1747,7 +1747,7 @@ public class ExpParser {
 
 			@Override
 			public ExpValResult validate(ParseContext context, ExpValResult[] args, String source, int pos) {
-				return validateCollection(context, args, source, pos);
+				return validateCollection(context, args[0], source, pos);
 			}
 		});
 
@@ -1792,7 +1792,7 @@ public class ExpParser {
 
 			@Override
 			public ExpValResult validate(ParseContext context, ExpValResult[] args, String source, int pos) {
-				return validateCollection(context, args, source, pos);
+				return validateCollection(context, args[0], source, pos);
 			}
 		});
 
@@ -2003,7 +2003,7 @@ public class ExpParser {
 
 			@Override
 			public ExpValResult validate(ParseContext context, ExpValResult[] args, String source, int pos) {
-				return validateCollection(context, args, source, pos);
+				return validateCollection(context, args[0], source, pos);
 			}
 		});
 		addFunction("indexOfMinCol", 1, 1, new CallableFunc() {
@@ -2050,7 +2050,7 @@ public class ExpParser {
 
 			@Override
 			public ExpValResult validate(ParseContext context, ExpValResult[] args, String source, int pos) {
-				return validateCollection(context, args, source, pos);
+				return validateCollection(context, args[0], source, pos);
 			}
 		});
 		addFunction("indexOfNearest", 2, 2, new CallableFunc() {
@@ -2107,7 +2107,7 @@ public class ExpParser {
 					return ExpValResult.makeErrorRes(new ExpError(source, pos, "Second argument to 'indexOfNearest' must be a number."));
 				}
 
-				return validateCollection(context, args, source, pos);
+				return validateCollection(context, args[0], source, pos);
 			}
 		});
 
@@ -2129,7 +2129,7 @@ public class ExpParser {
 
 			@Override
 			public ExpValResult validate(ParseContext context, ExpValResult[] args, String source, int pos) {
-				return validateCollection(context, args, source, pos);
+				return validateCollection(context, args[0], source, pos);
 			}
 		});
 
