@@ -158,7 +158,10 @@ public class Assemble extends LinkedService {
 		DisplayEntity proto = prototypeEntity.getValue();
 		StringBuilder sb = new StringBuilder();
 		sb.append(this.getName()).append("_").append(numberGenerated);
-		assembledEntity = Entity.fastCopy(proto, sb.toString());
+
+		// Create the new entity
+		assembledEntity = InputAgent.generateEntityWithName(proto.getClass(), sb.toString());
+		Entity.fastCopyInputs(proto, assembledEntity);
 		assembledEntity.earlyInit();
 
 		// Set the obj output to the assembled part

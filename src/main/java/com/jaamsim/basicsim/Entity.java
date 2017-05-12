@@ -289,12 +289,7 @@ public class Entity {
 	 * @param name - name of the copied entity.
 	 * @return - copied entity.
 	 */
-	public static <T extends Entity> T fastCopy(T ent, String name) {
-
-		// Create the new entity
-		@SuppressWarnings("unchecked")
-		T ret = (T)InputAgent.generateEntityWithName(ent.getClass(), name);
-
+	public static void fastCopyInputs(Entity ent, Entity target) {
 		// Loop through the original entity's inputs
 		ArrayList<Input<?>> orig = ent.getEditableInputs();
 		for (int i = 0; i < orig.size(); i++) {
@@ -305,20 +300,19 @@ public class Entity {
 				continue;
 
 			// Get the matching input for the new entity
-			Input<?> targetInput = ret.getEditableInputs().get(i);
+			Input<?> targetInput = target.getEditableInputs().get(i);
 
 			// SampleInputs need to know their entity for "this" to work correctly
 			if (sourceInput instanceof SampleInput) {
-				((SampleInput)targetInput).setEntity(ret);
+				((SampleInput)targetInput).setEntity(target);
 			}
 
 			// Assign the value to the copied entity's input
 			targetInput.copyFrom(sourceInput);
 
 			// Further processing related to this input
-			ret.updateForInput(targetInput);
+			target.updateForInput(targetInput);
 		}
-		return ret;
 	}
 
 	public void setFlag(int flag) {
