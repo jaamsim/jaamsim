@@ -38,6 +38,16 @@ import com.jaamsim.units.Unit;
 
 public class TestExpParser {
 
+	private static void assertColSame(double[] vals, ExpResult.Collection col) throws ExpError {
+		ExpResult.Iterator colIt = col.getIter();
+		for (double val : vals) {
+			ExpResult nextKey = colIt.nextKey();
+			ExpResult nextVal = col.index(nextKey);
+			assertTrue(nextVal.type == ExpResType.NUMBER);
+			assertTrue(val == nextVal.value);
+		}
+	}
+
 	private static class DummyResolver implements ExpParser.OutputResolver {
 
 		private final String name;
@@ -595,6 +605,12 @@ public class TestExpParser {
 		val = exp.evaluate(ec);
 		assertTrue(val.type == ExpResType.NUMBER);
 		assertTrue(val.value == 42);
+
+		exp = ExpParser.parseExpression(pc, "map(|x|(x*2), {1, 2, 3, 21})");
+		val = exp.evaluate(ec);
+		assertTrue(val.type == ExpResType.COLLECTION);
+		double[] vals = {2, 4, 6, 42};
+		assertColSame(vals, val.colVal);
 
 	}
 
