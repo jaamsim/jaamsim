@@ -848,6 +848,18 @@ public class Simulation extends Entity {
 		return ret;
 	}
 
+	public static Vec3d getSnapGridPosition(Vec3d newPos, Vec3d oldPos, boolean shift) {
+		Vec3d ret = getSnapGridPosition(newPos, oldPos);
+		if (shift) {
+			ret.x = oldPos.x;
+			ret.y = oldPos.y;
+		}
+		else {
+			ret.z = oldPos.z;
+		}
+		return ret;
+	}
+
 	static void updateRealTime() {
 		GUIFrame.updateForRealTime(realTime.getValue(), realTimeFactor.getValue());
 	}
