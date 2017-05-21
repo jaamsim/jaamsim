@@ -36,6 +36,7 @@ public class SimEntity extends StateEntity implements LinkDisplayable {
 
 	{
 		attributeDefinitionList.setHidden(false);
+		stateGraphics.setHidden(false);
 		workingStateListInput.setHidden(true);
 
 		defaultStateList = new StringListInput("DefaultStateList", "Key Inputs", new ArrayList<String>());
