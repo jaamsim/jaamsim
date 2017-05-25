@@ -31,32 +31,34 @@ import com.jaamsim.units.DimensionlessUnit;
 
 public class SetGraphics extends LinkedComponent {
 
-	@Keyword(description = "The entity whose graphics are to be changed. Defaults to the entity that was received.",
-	         exampleList = {"Server1"})
+	@Keyword(description = "The entity whose graphics are to be changed. Defaults to the entity "
+	                     + "that was received.",
+	         exampleList = {"Server1", "this.target"})
 	private final EntityInput<DisplayEntity> targetEntity;
 
-	@Keyword(description = "List of entities whose graphics can chosen for assignment to the target entity.",
+	@Keyword(description = "List of entities whose graphics can chosen for assignment to the "
+	                     + "target entity.",
 	         exampleList = {"DisplayEntity1 DisplayEntity2"})
 	private final EntityListInput<DisplayEntity> graphicsList;
 
-	@Keyword(description = "A number that determines the choice of entities from the GraphicsList:\n" +
-			"     1 = first entity's graphics, 2 = second entity's graphics, etc.\n" +
-			"A constant value, a distribution to be sampled, or a time series can be entered.",
+	@Keyword(description = "A number that determines the choice of entities from the "
+	                     + "GraphicsList:\n"
+	                     + "   1 = first entity's graphics, 2 = second entity's graphics, etc.",
 	         exampleList = {"2", "DiscreteDistribution1", "'1 + [TimeSeries1].PresentValue'"})
 	private final SampleInput choice;
 
 	{
 		targetEntity = new EntityInput<>( DisplayEntity.class, "TargetEntity", "Key Inputs", null);
 		targetEntity.setDefaultText("This Entity");
-		this.addInput( targetEntity);
+		this.addInput(targetEntity);
 
-		graphicsList = new EntityListInput<>( DisplayEntity.class, "GraphicsList", "Key Inputs", null);
+		graphicsList = new EntityListInput<>(DisplayEntity.class, "GraphicsList", "Key Inputs", null);
 		graphicsList.setRequired(true);
 		ArrayList<Class<? extends Entity>> list = new ArrayList<>();
 		list.add(TextBasics.class);
 		list.add(OverlayEntity.class);
 		graphicsList.setInvalidClasses(list);
-		this.addInput( graphicsList);
+		this.addInput(graphicsList);
 
 		choice = new SampleInput("Choice", "Key Inputs", new SampleConstant(DimensionlessUnit.class, 1.0));
 		choice.setUnitType(DimensionlessUnit.class);
@@ -68,7 +70,7 @@ public class SetGraphics extends LinkedComponent {
 	public SetGraphics() {}
 
 	@Override
-	public void addEntity( DisplayEntity ent ) {
+	public void addEntity(DisplayEntity ent) {
 		super.addEntity(ent);
 
 		// Identify the entity whose graphics are to be changed
