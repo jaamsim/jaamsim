@@ -56,7 +56,7 @@ public class EntityGenerator extends LinkedService {
 
 	@Keyword(description = "The prototype for entities to be generated.\n" +
 			"The generated entities will be copies of this entity.",
-	         exampleList = {"Proto"})
+	         exampleList = {"Proto", "'choose( this.NumberGenerated%2+1, [Proto1], [Proto2])'"})
 	private final EntityProvInput<DisplayEntity> prototypeEntity;
 
 	@Keyword(description = "The maximum number of entities to be generated.",
