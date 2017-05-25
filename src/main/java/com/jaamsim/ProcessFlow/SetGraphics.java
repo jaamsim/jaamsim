@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2017 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,13 +19,13 @@ package com.jaamsim.ProcessFlow;
 
 import java.util.ArrayList;
 
+import com.jaamsim.EntityProviders.EntityProvInput;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.OverlayEntity;
 import com.jaamsim.Graphics.TextBasics;
 import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.basicsim.Entity;
-import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.EntityListInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.units.DimensionlessUnit;
@@ -34,7 +35,7 @@ public class SetGraphics extends LinkedComponent {
 	@Keyword(description = "The entity whose graphics are to be changed. Defaults to the entity "
 	                     + "that was received.",
 	         exampleList = {"Server1", "this.target"})
-	private final EntityInput<DisplayEntity> targetEntity;
+	private final EntityProvInput<DisplayEntity> targetEntity;
 
 	@Keyword(description = "List of entities whose graphics can chosen for assignment to the "
 	                     + "target entity.",
@@ -48,8 +49,11 @@ public class SetGraphics extends LinkedComponent {
 	private final SampleInput choice;
 
 	{
-		targetEntity = new EntityInput<>( DisplayEntity.class, "TargetEntity", "Key Inputs", null);
-		targetEntity.setDefaultText("This Entity");
+		targetEntity = new EntityProvInput<>(DisplayEntity.class, "TargetEntity", "Key Inputs", null);
+		targetEntity.setDefaultText("this.obj");
+		targetEntity.setEntity(this);
+		targetEntity.addInvalidClass(TextBasics.class);
+		targetEntity.addInvalidClass(OverlayEntity.class);
 		this.addInput(targetEntity);
 
 		graphicsList = new EntityListInput<>(DisplayEntity.class, "GraphicsList", "Key Inputs", null);
@@ -72,14 +76,15 @@ public class SetGraphics extends LinkedComponent {
 	@Override
 	public void addEntity(DisplayEntity ent) {
 		super.addEntity(ent);
+		double simTime = this.getSimTime();
 
 		// Identify the entity whose graphics are to be changed
-		DisplayEntity target = targetEntity.getValue();
+		DisplayEntity target = targetEntity.getValue().getNextEntity(simTime);
 		if (target == null)
 			target = ent;
 
 		// Choose the new graphics for this entity
-		int i = (int) choice.getValue().getNextSample(this.getSimTime());
+		int i = (int) choice.getValue().getNextSample(simTime);
 		if (i<1 || i>graphicsList.getValue().size())
 			error("Chosen index i=%s is out of range for GraphicList: %s.", i, graphicsList.getValue());
 		DisplayEntity chosen = graphicsList.getValue().get(i-1);
