@@ -12,8 +12,12 @@ Define ObjectType {
                     BillboardText
                     Arrow
                     Graph
+					MimicEntity
                     VideoRecorder
                     }
+
+Define  ImageModel { MimicEntityIconModel }
+MimicEntityIconModel   ImageFile { '<res>/images/MimicEntity-256.png' }  Transparent { TRUE }
 
 View                  JavaClass { com.jaamsim.ui.View                                } Palette { 'Graphics Objects' }                                           DragAndDrop { FALSE }
 Region                JavaClass { com.jaamsim.Graphics.Region                        } Palette { 'Graphics Objects' } DefaultDisplayModel { RegionModelDefault       } IconFile { '<res>/images/Region-24.png' } DefaultSize { 1.125000 1.1568242 1.1266404 m } DefaultAlignment { -0.4393409 -0.4410096 -0.4394292 }
@@ -28,6 +32,7 @@ OverlayClock          JavaClass { com.jaamsim.Graphics.OverlayClock             
 BillboardText         JavaClass { com.jaamsim.Graphics.BillboardText                 } Palette { 'Graphics Objects' } DefaultDisplayModel { TextModelDefault         } IconFile { '<res>/images/Text-24.png' }
 Arrow                 JavaClass { com.jaamsim.Graphics.Arrow                         } Palette { 'Graphics Objects' } DefaultDisplayModel { ArrowModelDefault        } IconFile { '<res>/images/Arrow-24.png' }
 Graph                 JavaClass { com.jaamsim.Graphics.Graph                         } Palette { 'Graphics Objects' } DefaultDisplayModel { GraphModelDefault        } IconFile { '<res>/images/Graph-24.png' } DefaultSize { 5.0 3.0 0.0 m }
+MimicEntity           JavaClass { com.jaamsim.Graphics.MimicEntity                   } Palette { 'Graphics Objects' } DefaultDisplayModel { MimicEntityIconModel     } IconFile { '<res>/images/MimicEntity-24.png' }
 VideoRecorder         JavaClass { com.jaamsim.ui.VideoRecorderEntity                 } Palette { 'Graphics Objects' } DefaultDisplayModel { VideoRecorderIconModel   } IconFile { '<res>/images/VideoRecorder-24.png' }
 
 View          Description { 'Display window showing view of the 3D model universe.' }
@@ -42,4 +47,5 @@ OverlayClock  Description { 'Time and date display that appears in a fixed posit
 BillboardText Description { 'Text that follows a 3D position but is always upright on the screen.' }
 Arrow         Description { 'Line that terminates in an arrow head.' }
 Graph         Description { 'Chart that shows the values of model outputs as they change in time.' }
+MimicEntity   Description { 'Graphical object that copies the appearance of another DisplayEntity.' }
 VideoRecorder Description { 'Object that makes a video recording of the model.' }
