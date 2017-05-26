@@ -64,6 +64,7 @@ public class EntityGenerator extends LinkedService {
 	private final SampleInput maxNumber;
 
 	private int numberGenerated = 0;  // Number of entities generated so far
+	private double presentIAT;
 
 	{
 		defaultEntity.setHidden(true);
@@ -113,6 +114,7 @@ public class EntityGenerator extends LinkedService {
 	public void earlyInit() {
 		super.earlyInit();
 		numberGenerated = 0;
+		presentIAT = 0.0d;
 	}
 
 	@Override
@@ -132,8 +134,17 @@ public class EntityGenerator extends LinkedService {
 	protected boolean startProcessing(double simTime) {
 
 		// Stop if the last entity been generated
-		return (maxNumber.getValue() == null
-				|| numberGenerated < maxNumber.getValue().getNextSample(simTime));
+		if (maxNumber.getValue() != null
+				&& numberGenerated >= maxNumber.getValue().getNextSample(simTime))
+			return false;
+
+		// Select the inter-arrival time for the next entity
+		if (numberGenerated == 0)
+			presentIAT = firstArrivalTime.getValue().getNextSample(simTime);
+		else
+			presentIAT = interArrivalTime.getValue().getNextSample(simTime);
+
+		return true;
 	}
 
 	@Override
@@ -165,12 +176,7 @@ public class EntityGenerator extends LinkedService {
 
 	@Override
 	protected double getStepDuration(double simTime) {
-
-		// Use a separate input for the first arrival time
-		if (numberGenerated == 0)
-			return firstArrivalTime.getValue().getNextSample(simTime);
-
-		return interArrivalTime.getValue().getNextSample(simTime);
+		return presentIAT;
 	}
 
 	public void setPrototypeEntity(DisplayEntity proto) {
@@ -192,9 +198,42 @@ public class EntityGenerator extends LinkedService {
 
 	@Output(name = "NumberGenerated",
 	 description = "The total number of entities generated, including the initialization period.",
-	    unitType = DimensionlessUnit.class)
+	    unitType = DimensionlessUnit.class,
+	    sequence = 1)
 	public int getNumberGenerated(double simTime) {
 		return numberGenerated;
+	}
+
+	@Output(name = "PresentIAT",
+	 description = "The total working time required before the next entity is created.",
+	    unitType = TimeUnit.class,
+	    sequence = 2)
+	public double getPresentIAT(double simTime) {
+		return presentIAT;
+	}
+
+	@Output(name = "ElapsedTime",
+	 description = "The working time that has been completed towards the creation of the next "
+	             + "entity.",
+	    unitType = TimeUnit.class,
+	    sequence = 3)
+	public double getElapsedTime(double simTime) {
+		double ret = presentIAT - getRemainingDuration();
+		if (isWorking(simTime)) {
+			ret += simTime - getLastUpdateTime();
+		}
+		return ret;
+	}
+
+	@Output(name = "FractionCompleted",
+	 description = "The portion of the total working time towards the creation of the next entity "
+	             + "that has been completed.",
+	    unitType = DimensionlessUnit.class,
+	    sequence = 4)
+	public double getFractionCompleted(double simTime) {
+		if (presentIAT == 0.0d)
+			return 0.0d;
+		return getElapsedTime(simTime)/presentIAT;
 	}
 
 }
