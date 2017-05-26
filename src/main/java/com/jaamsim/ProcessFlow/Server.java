@@ -21,6 +21,8 @@ import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.input.Keyword;
+import com.jaamsim.input.Output;
+import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
 
 /**
@@ -35,6 +37,7 @@ public class Server extends LinkedService {
 	private final SampleInput serviceTime;
 
 	private DisplayEntity servedEntity;	// the DisplayEntity being server
+	private double serviceDuration;  // total duration for the present service
 
 	{
 		serviceTime = new SampleInput("ServiceTime", "Key Inputs", new SampleConstant(TimeUnit.class, 0.0));
@@ -50,6 +53,7 @@ public class Server extends LinkedService {
 	public void earlyInit() {
 		super.earlyInit();
 		servedEntity = null;
+		serviceDuration = 0.0d;
 	}
 
 	@Override
@@ -67,6 +71,10 @@ public class Server extends LinkedService {
 		// Remove the first entity from the queue
 		servedEntity = this.getNextEntityForMatch(m);
 		this.moveToProcessPosition(servedEntity);
+
+		// Set the service duration
+		serviceDuration = serviceTime.getValue().getNextSample(simTime);
+
 		return true;
 	}
 
@@ -76,13 +84,49 @@ public class Server extends LinkedService {
 		// Send the entity to the next component in the chain
 		this.sendToNextComponent(servedEntity);
 		servedEntity = null;
+		serviceDuration = 0.0d;
 
 		return true;
 	}
 
 	@Override
 	protected double getStepDuration(double simTime) {
-		return serviceTime.getValue().getNextSample(simTime);
+		return serviceDuration;
+	}
+
+	@Output(name = "ServiceDuration",
+	 description = "The total working time required for the present service activity.",
+	    unitType = TimeUnit.class,
+	    sequence = 1)
+	public double getServiceDuration(double simTime) {
+		return serviceDuration;
+	}
+
+	@Output(name = "ServicePerformed",
+	 description = "The working time that has been completed for the present service activity.",
+	    unitType = TimeUnit.class,
+	    sequence = 2)
+	public double getServicePerformed(double simTime) {
+		if (servedEntity == null) {
+			return 0.0d;
+		}
+		double ret = serviceDuration - getRemainingDuration();
+		if (isWorking()) {
+			ret += simTime - getLastUpdateTime();
+		}
+		return ret;
+	}
+
+	@Output(name = "FractionCompleted",
+	 description = "The portion of the total service time for the present service activity that "
+	             + "has been completed.",
+	    unitType = DimensionlessUnit.class,
+	    sequence = 3)
+	public double getFractionCompleted(double simTime) {
+		if (servedEntity == null) {
+			return 0.0d;
+		}
+		return getServicePerformed(simTime)/serviceDuration;
 	}
 
 }

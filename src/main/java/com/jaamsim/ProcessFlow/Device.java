@@ -302,6 +302,10 @@ public abstract class Device extends StateUserEntity {
 		return stepCompleted;
 	}
 
+	protected final double getRemainingDuration() {
+		return duration;
+	}
+
 	// ********************************************************************************************
 	// THRESHOLDS
 	// ********************************************************************************************
