@@ -26,7 +26,9 @@ import com.jaamsim.input.ExpError;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.KeywordIndex;
+import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
+import com.jaamsim.units.UserSpecifiedUnit;
 
 public class SampleInput extends Input<SampleProvider> {
 	private Class<? extends Unit> unitType;
@@ -88,6 +90,17 @@ public class SampleInput extends Input<SampleProvider> {
 	throws InputErrorException {
 		value = Input.parseSampleExp(kw, thisEnt, minValue, maxValue, unitType);
 		this.setValid(true);
+	}
+
+	@Override
+	public String getValidInputDesc() {
+		if (unitType == UserSpecifiedUnit.class) {
+			return Input.VALID_SAMPLE_PROV_UNIT;
+		}
+		if (unitType == DimensionlessUnit.class) {
+			return Input.VALID_SAMPLE_PROV_DIMLESS;
+		}
+		return String.format(Input.VALID_SAMPLE_PROV, unitType.getSimpleName());
 	}
 
 	@Override

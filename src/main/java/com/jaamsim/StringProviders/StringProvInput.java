@@ -58,6 +58,11 @@ public class StringProvInput extends Input<StringProvider> {
 	}
 
 	@Override
+	public String getValidInputDesc() {
+		return Input.VALID_STRING_PROV;
+	}
+
+	@Override
 	public ArrayList<String> getValidOptions() {
 		ArrayList<String> list = new ArrayList<>();
 		for (Entity each : Entity.getClonesOfIterator(Entity.class, SampleProvider.class)) {

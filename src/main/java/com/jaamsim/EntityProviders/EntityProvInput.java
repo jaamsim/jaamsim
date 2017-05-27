@@ -19,6 +19,7 @@ package com.jaamsim.EntityProviders;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputErrorException;
@@ -45,6 +46,14 @@ public class EntityProvInput<T extends Entity> extends Input<EntityProvider<T>> 
 	public void parse(KeywordIndex kw) throws InputErrorException {
 		value = Input.parseEntityProvider(kw, thisEnt, entClass);
 		this.setValid(true);
+	}
+
+	@Override
+	public String getValidInputDesc() {
+		if (entClass == DisplayEntity.class) {
+			return Input.VALID_ENTITY_PROV;
+		}
+		return String.format(Input.VALID_ENTITY_PROV_TYPE, entClass.getSimpleName());
 	}
 
 	@Override

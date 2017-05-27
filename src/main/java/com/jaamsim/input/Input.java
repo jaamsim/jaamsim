@@ -79,6 +79,14 @@ public abstract class Input<T> {
 	protected static final String INP_VAL_LISTSET = "Values found for %s without %s being set";
 	protected static final String INP_VAL_LISTSIZE = "%s and %s must be of equal size";
 
+	protected static final String VALID_SAMPLE_PROV = "Accepts a number with units of type %s, an object that returns such a number, or an expression that returns such a number.";
+	protected static final String VALID_SAMPLE_PROV_DIMLESS = "Accepts a dimensionless number, an object that returns such a number, or an expression that returns such a number.";
+	protected static final String VALID_SAMPLE_PROV_UNIT = "Accepts a number with or without units, an object that returns such a number, or an expression that returns such a number. "
+	                                                     + "An input to the UnitType keyword MUST BE PROVIDED before an input to this keyword can be entered.";
+	protected static final String VALID_STRING_PROV = "Accepts an expression that returns a number, string, entity, array, or map.";
+	protected static final String VALID_ENTITY_PROV = "Accepts an entity name or an expression that returns an entity.";
+	protected static final String VALID_ENTITY_PROV_TYPE = "Accepts the name of an entity of type %s or an expression that returns such an entity.";
+
 	public static final String POSITIVE_INFINITY = "Infinity";
 	public static final String NEGATIVE_INFINITY = "-Infinity";
 	public static final String SEPARATOR = "  ";
