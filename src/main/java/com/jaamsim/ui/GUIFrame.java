@@ -2428,7 +2428,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 	 * @return HTML for the tooltip
 	 */
 	public static String formatKeywordToolTip(String className, String keyword,
-			String description, String example, String[] exampleList) {
+			String description, String validInputs, String example, String[] exampleList) {
 
 		String desc = html_replace(description);
 
@@ -2450,8 +2450,16 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 			examp = sb.toString();
 		}
 
-		return String.format("<html><p width=\"350px\"><b>%s</b><br>%s<br><br><u>Examples:</u><br>%s</p></html>",
-				keyword, desc, examp);
+		StringBuilder sb = new StringBuilder("<html><p width=\"350px\">");
+		sb.append("<b>").append(keyword).append("</b><br>");
+		sb.append(desc).append("<br><br>");
+		if (validInputs != null) {
+			sb.append(validInputs).append("<br><br>");
+		}
+		sb.append("<u>Examples:</u><br>").append(examp);
+		sb.append("</p></html>");
+
+		return sb.toString();
 	}
 
 	/**

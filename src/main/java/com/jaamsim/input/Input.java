@@ -147,6 +147,14 @@ public abstract class Input<T> {
 	 */
 	public void removeReferences(Entity ent) {}
 
+	/**
+	 * Describes the valid inputs for this type of input.
+	 * @return description of valid inputs
+	 */
+	public String getValidInputDesc() {
+		return null;
+	}
+
 	@Override
 	public String toString() {
 		return String.format("%s", value);
