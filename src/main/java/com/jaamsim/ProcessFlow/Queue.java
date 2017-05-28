@@ -67,18 +67,16 @@ public class Queue extends LinkedComponent {
 	private final BooleanInput fifo;
 
 	@Keyword(description = "The time an entity will wait in the queue before deciding whether or "
-	                     + "not to renege. Evaluated when the entity first enters the queue.\n"
-	                     + "A constant value, a distribution to be sampled, a time series, or an "
-	                     + "expression can be entered.",
-	         exampleList = { "3.0 h", "NormalDistribution1", "'1[s] + 0.5*[TimeSeries1].PresentValue'" })
+	                     + "not to renege. Evaluated when the entity first enters the queue.",
+	         exampleList = {"3.0 h", "NormalDistribution1",
+	                        "'1[s] + 0.5*[TimeSeries1].PresentValue'"})
 	private final SampleInput renegeTime;
 
 	@Keyword(description = "A logical condition that determines whether an entity will renege "
 	                     + "after waiting for its RenegeTime value. Note that TRUE and FALSE are "
-	                     + "entered as 1 and 0, respectively.\n"
-	                     + "A constant value, a distribution to be sampled, a time series, or an "
-	                     + "expression can be entered.",
-	         exampleList = { "1", "'this.QueuePosition > 1'", "'this.QueuePostion > [Queue2].QueueLength'" })
+	                     + "entered as 1 and 0, respectively.",
+	         exampleList = {"1", "'this.QueuePosition > 1'",
+	                        "'this.QueuePostion > [Queue2].QueueLength'"})
 	private final SampleInput renegeCondition;
 
 	@Keyword(description = "The object to which an entity will be sent if it reneges.",

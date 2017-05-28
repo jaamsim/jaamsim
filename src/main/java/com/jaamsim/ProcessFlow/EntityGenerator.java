@@ -39,18 +39,15 @@ import com.jaamsim.units.TimeUnit;
  */
 public class EntityGenerator extends LinkedService {
 
-	@Keyword(description = "The arrival time for the first generated entity.\n" +
-			"A constant value, a distribution to be sampled, or a time series can be entered.",
+	@Keyword(description = "The arrival time for the first generated entity.",
 	         exampleList = { "3.0 h", "ExponentialDistribution1", "'1[s] + 0.5*[TimeSeries1].PresentValue'" })
 	private final SampleInput firstArrivalTime;
 
-	@Keyword(description = "The inter-arrival time between generated entities.\n" +
-			"A constant value, a distribution to be sampled, or a time series can be entered.",
+	@Keyword(description = "The inter-arrival time between generated entities.",
 	         exampleList = { "3.0 h", "ExponentialDistribution1", "'1[s] + 0.5*[TimeSeries1].PresentValue'" })
 	private final SampleInput interArrivalTime;
 
-	@Keyword(description = "The number of entities to be generated for each arrival.\n" +
-			"A constant value, a distribution to be sampled, or a time series can be entered.",
+	@Keyword(description = "The number of entities to be generated for each arrival.",
 	         exampleList = {"3", "TimeSeries1", "'1 + 2*[DiscreteDistribution1].Value'"})
 	private final SampleInput entitiesPerArrival;
 

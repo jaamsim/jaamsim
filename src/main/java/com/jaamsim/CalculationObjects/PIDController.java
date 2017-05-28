@@ -37,18 +37,12 @@ import com.jaamsim.units.UserSpecifiedUnit;
 public class PIDController extends DoubleCalculation {
 
 	@Keyword(description = "The set point for the PID controller. The unit type for the set point "
-	                     + "is given by the UnitType keyword.\n"
-	                     + "The input can be a number or an entity that returns a number, such as "
-	                     + "a CalculationObject, an Expression, a ProbabilityDistribution, or a "
-	                     + "TimeSeries.",
+	                     + "is given by the UnitType keyword.",
 	         exampleList = {"1.2 m", "TimeSeries1", "'1[m] + 2*[TimeSeries1].Value'"})
 	private final SampleInput setPoint;
 
 	@Keyword(description = "The process variable feedback to the PID controller. The unit type "
-	                     + "for the process variable is given by the UnitType keyword.\n"
-	                     + "The input can be a number or an entity that returns a number, such as "
-	                     + "a CalculationObject, an Expression, a ProbabilityDistribution, or a "
-	                     + "TimeSeries.",
+	                     + "for the process variable is given by the UnitType keyword.",
 	         exampleList = {"Process", "'1[m] + [Process].Value'"})
 	private final SampleInput processVariable;
 

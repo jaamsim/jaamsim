@@ -41,10 +41,7 @@ implements SampleProvider {
 	         exampleList = {"DistanceUnit"})
 	protected final UnitTypeInput unitType;
 
-	@Keyword(description = "The input value for the present calculation.\n "
-	                     + "The input can be a number or an entity that returns a number, such as "
-	                     + "a CalculationObject, an Expression, a ProbabilityDistribution, or a "
-	                     + "TimeSeries.",
+	@Keyword(description = "The input value for the present calculation.",
 	         exampleList = {"1.5", "TimeSeries1", "'3 + 2*[Queue1].QueueLength'"})
 	protected final SampleInput inputValue;
 

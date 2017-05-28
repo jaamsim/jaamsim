@@ -38,8 +38,7 @@ import com.jaamsim.units.TimeUnit;
  */
 public class EntityDelay extends LinkedComponent {
 
-	@Keyword(description = "The delay time for the path.\n" +
-			"The input can be a constant value, a time series of values, or a probability distribution to be sampled.",
+	@Keyword(description = "The delay time for the path.",
 	         exampleList = { "3.0 h", "NormalDistribution1", "'1[s] + 0.5*[TimeSeries1].PresentValue'" })
 	private final SampleInput duration;
 

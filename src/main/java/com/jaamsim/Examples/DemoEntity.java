@@ -36,10 +36,7 @@ import com.jaamsim.units.TimeUnit;
  */
 public class DemoEntity extends DisplayEntity {
 
-	@Keyword(description = "The time required to travel from one end of the route to the other.\n"
-	                     + "Accepts a number, an object that returns a number, or an expression "
-	                     + "that returns a number. In each case, the number must have the units "
-	                     + "of time.",
+	@Keyword(description = "The time required to travel from one end of the route to the other.",
 	         exampleList = { "3.0 h", "NormalDistribution1",
 	                         "'1[s] + 0.5*[TimeSeries1].PresentValue'" })
 	private final SampleInput travelTime;

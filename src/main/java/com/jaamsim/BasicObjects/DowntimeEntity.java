@@ -42,8 +42,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 
 	@Keyword(description = "The calendar or working time for the first planned or unplanned "
 	                     + "maintenance event. If an input is not provided, the first maintenance "
-	                     + "event is determined by the input for the Interval keyword. A number, "
-	                     + "an object that returns a number, or an expression can be entered.",
+	                     + "event is determined by the input for the Interval keyword.",
 	         exampleList = {"720 h", "UniformDistribution1" })
 	private final SampleInput firstDowntime;
 
@@ -61,14 +60,12 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 
 	@Keyword(description = "The calendar or working time between the start of the last planned or "
 	                     + "unplanned maintenance activity and the start of the next maintenance "
-	                     + "activity. A number, an expression, or an object that returns a number "
-	                     + "can be entered.",
+	                     + "activity.",
 	         exampleList = {"168 h", "IntervalValueSequence", "IntervalDistribution" })
 	private final SampleInput downtimeIATDistribution;
 
 	@Keyword(description = "The calendar or working time required to complete the planned or "
-	                     + "unplanned maintenance activity. A number, an expression, or an object "
-	                     + "that returns a number can be entered.",
+	                     + "unplanned maintenance activity.",
 	         exampleList = {"8 h ", "DurationValueSequence", "DurationDistribution" })
 	private final SampleInput downtimeDurationDistribution;
 

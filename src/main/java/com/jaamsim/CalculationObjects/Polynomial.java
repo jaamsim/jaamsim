@@ -35,10 +35,7 @@ import com.jaamsim.units.Unit;
  */
 public class Polynomial extends DisplayEntity implements SampleProvider {
 
-	@Keyword(description = "The input value to the polynomial.\n"
-	                     + "The input can be a dimensionless number or an entity that returns a "
-	                     + "dimensionless number, such as an expression, CalculationObject, "
-	                     + "ProbabilityDistribution, or a TimeSeries.",
+	@Keyword(description = "The input value to the polynomial.",
 	         exampleList = {"2.5", "1.5*[Calculation1].Value", "Calculation1"})
 	protected final SampleInput inputValue;
 

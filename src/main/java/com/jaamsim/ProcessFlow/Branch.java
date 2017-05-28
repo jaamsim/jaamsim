@@ -34,9 +34,8 @@ public class Branch extends LinkedComponent {
 	         exampleList = {"Queue1 Queue2"})
 	protected final InterfaceEntityListInput<Linkable> nextComponentList;
 
-	@Keyword(description = "A number that determines the choice of next component:\n" +
-			"     1 = first branch, 2 = second branch, etc.\n" +
-			"A constant value, a distribution to be sampled, or a time series can be entered.",
+	@Keyword(description = "A number that determines the choice of next component: "
+	                     + "1 = first branch, 2 = second branch, etc.",
 	         exampleList = {"2", "DiscreteDistribution1", "'indexOfMin([Queue1].QueueLength, [Queue2].QueueLength)'"})
 	private final SampleInput choice;
 

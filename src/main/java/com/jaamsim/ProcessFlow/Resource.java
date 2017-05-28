@@ -44,8 +44,7 @@ public class Resource extends DisplayEntity {
 	                     + "If the capacity changes during the simulation run, the Resource will "
 	                     + "attempt to use an increase in capacity as soon as it occurs. "
 	                     + "However, a decrease in capacity will have no affect on entities that "
-	                     + "have already seized Resource capacity.\n"
-	                     + "The input can be a constant value, a time series, or an expression.",
+	                     + "have already seized Resource capacity.",
 	         exampleList = {"3", "TimeSeries1", "this.attrib1"})
 	private final SampleInput capacity;
 
