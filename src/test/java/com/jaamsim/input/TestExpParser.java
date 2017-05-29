@@ -38,6 +38,16 @@ import com.jaamsim.units.Unit;
 
 public class TestExpParser {
 
+	private static void assertColSame(double[] vals, ExpResult.Collection col) throws ExpError {
+		ExpResult.Iterator colIt = col.getIter();
+		for (double val : vals) {
+			ExpResult nextKey = colIt.nextKey();
+			ExpResult nextVal = col.index(nextKey);
+			assertTrue(nextVal.type == ExpResType.NUMBER);
+			assertTrue(val == nextVal.value);
+		}
+	}
+
 	private static class DummyResolver implements ExpParser.OutputResolver {
 
 		private final String name;
@@ -60,7 +70,11 @@ public class TestExpParser {
 
 	}
 
-	private static class PC implements ExpParser.ParseContext {
+	private static class PC extends ExpParser.ParseContext {
+		public PC() {
+			super(new HashMap<String, ExpResult>());
+		}
+
 		@Override
 		public UnitData getUnitByName(String name) {
 			return null;
@@ -74,10 +88,6 @@ public class TestExpParser {
 		public Class<? extends Unit> divUnitTypes(Class<? extends Unit> num,
 				Class<? extends Unit> denom) {
 			return DimensionlessUnit.class;
-		}
-		@Override
-		public ExpResult getValFromName(String name, String source, int pos) throws ExpError {
-			return ExpResult.makeNumResult(1, DimensionlessUnit.class);
 		}
 
 		@Override
@@ -97,6 +107,10 @@ public class TestExpParser {
 		public Assigner getConstAssigner(ExpResult constEnt, String attribName)
 				throws ExpError {
 			throw new ExpError(null, 0, "Assign not supported");
+		}
+		@Override
+		public ExpResult getValFromLitName(String name, String source, int pos) throws ExpError {
+			return ExpResult.makeNumResult(1, DimensionlessUnit.class);
 		}
 	}
 
@@ -132,7 +146,9 @@ public class TestExpParser {
 
 	static PC pc = new PC();
 
-	private static class EC implements ExpParser.EvalContext {
+	private static class EC extends ExpParser.EvalContext {
+
+
 	}
 	static EC ec = new EC();
 
@@ -454,7 +470,7 @@ public class TestExpParser {
 		}
 
 		@Override
-		public ExpResult getValFromName(String name, String source, int pos) throws ExpError {
+		public ExpResult getValFromLitName(String name, String source, int pos) throws ExpError {
 			if (name.equals("Maps")) {
 				return ExpResult.makeEntityResult(mapEnt);
 			}
@@ -569,6 +585,59 @@ public class TestExpParser {
 	}
 
 	@Test
+	public void testLambda() throws ExpError {
+
+		ExpParser.Expression exp = ExpParser.parseExpression(pc, "|x|(2*x)");
+		ExpResult val = exp.evaluate(ec);
+		assertTrue(val.type == ExpResType.LAMBDA);
+
+		exp = ExpParser.parseExpression(pc, "|x|(2*x)(21)");
+		val = exp.evaluate(ec);
+		assertTrue(val.type == ExpResType.NUMBER);
+		assertTrue(val.value == 42);
+
+		exp = ExpParser.parseExpression(pc, "|x|(|y|(x*y)(2))(21)");
+		val = exp.evaluate(ec);
+		assertTrue(val.type == ExpResType.NUMBER);
+		assertTrue(val.value == 42);
+
+		exp = ExpParser.parseExpression(pc, "|x,y|(x*y)(2,21)");
+		val = exp.evaluate(ec);
+		assertTrue(val.type == ExpResType.NUMBER);
+		assertTrue(val.value == 42);
+
+		exp = ExpParser.parseExpression(pc, "map(|x|(x*2), {1, 2, 3, 21})");
+		val = exp.evaluate(ec);
+		assertTrue(val.type == ExpResType.COLLECTION);
+		double[] mapVals = {2, 4, 6, 42};
+		assertColSame(mapVals, val.colVal);
+
+		exp = ExpParser.parseExpression(pc, "filter(|x|(x>20), {1, 2, 3, 21, 5, 42})");
+		val = exp.evaluate(ec);
+		assertTrue(val.type == ExpResType.COLLECTION);
+		double[] filterVals = {21, 42};
+		assertColSame(filterVals, val.colVal);
+
+		exp = ExpParser.parseExpression(pc, "filter(|x|(x>20), map(|x|(x*2), {1, 2, 3, 11, 5, 21}))");
+		val = exp.evaluate(ec);
+		assertTrue(val.type == ExpResType.COLLECTION);
+		double[] mapFilterVals = {22, 42};
+		assertColSame(mapFilterVals, val.colVal);
+
+		exp = ExpParser.parseExpression(pc, "reduce(|val, accum|(val + accum), 0, {1,2,3,4,32})");
+		val = exp.evaluate(ec);
+		assertTrue(val.type == ExpResType.NUMBER);
+		assertTrue(val.value == 42);
+
+		exp = ExpParser.parseExpression(pc, "reduce(|val, accum|(val * accum), 1, {1,2,3,4,5})");
+		val = exp.evaluate(ec);
+		assertTrue(val.type == ExpResType.NUMBER);
+		assertTrue(val.value == 120);
+
+	}
+
+
+	@Test
 	public void testUnits() throws ExpError {
 		class ErrorResolver implements ExpParser.OutputResolver {
 
@@ -585,7 +654,11 @@ public class TestExpParser {
 			}
 		}
 
-		class UnitPC implements ExpParser.ParseContext {
+		class UnitPC extends ExpParser.ParseContext {
+			public UnitPC() {
+				super(new HashMap<String, ExpResult>());
+			}
+
 			@Override
 			public UnitData getUnitByName(String name) {
 				UnitData ret = new UnitData();
@@ -642,13 +715,25 @@ public class TestExpParser {
 				throw new ExpError(null, 0, "Assign not supported");
 			}
 			@Override
-			public ExpResult getValFromName(String name, String source, int pos) throws ExpError {
+			public ExpResult getValFromLitName(String name, String source, int pos) throws ExpError {
 				return null;
 			}
 			@Override
 			public OutputResolver getConstOutputResolver(ExpResult constEnt,
 					String name) throws ExpError {
 				return new ErrorResolver();
+			}
+			@Override
+			public boolean isVarName(String varName) {
+				return false;
+			}
+			@Override
+			public boolean isVarConstant(String varName) {
+				return false;
+			}
+			@Override
+			public ExpResult getValFromConstVar(String name, String source, int pos) throws ExpError {
+				return null;
 			}
 
 		}
@@ -730,7 +815,7 @@ public class TestExpParser {
 			if (index == null) {
 				cont.res = val;
 			} else {
-				cont.col.assign(index, val);
+				cont.col = cont.col.assign(index, val);
 			}
 			cont.lastAttribName = attribName;
 		}
@@ -761,7 +846,7 @@ public class TestExpParser {
 
 		ArrayList<ExpResult> initialRes = new ArrayList<>();
 		initialRes.add(ExpResult.makeNumResult(42, DimensionlessUnit.class));
-		cont.col = ExpCollections.makeExpressionCollection(initialRes).colVal;
+		cont.col = ExpCollections.makeExpressionCollection(initialRes, false).colVal;
 		AssignPC apc = new AssignPC(cont);
 
 		ExpParser.Assignment assign = ExpParser.parseAssignment(apc, "[foo].arg = 40 + 2");

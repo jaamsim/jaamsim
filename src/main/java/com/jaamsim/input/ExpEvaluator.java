@@ -98,10 +98,9 @@ public class ExpEvaluator {
 		throw new ExpError(null, 0, "Unknown type in expression: %s", val.getClass().getSimpleName());
 	}
 
-	public static class EntityParseContext implements ExpParser.ParseContext {
+	public static class EntityParseContext extends ExpParser.ParseContext {
 
 		private final String source;
-		private final Entity thisEnt;
 
 		private final HashMap<Entity, String> entityReferences = new HashMap<>();
 
@@ -130,8 +129,9 @@ public class ExpEvaluator {
 			return ret;
 		}
 
-		public EntityParseContext(Entity thisEnt, String source) {
-			this.thisEnt = thisEnt;
+		public EntityParseContext(HashMap<String, ExpResult> constants, String source) {
+			super(constants);
+
 			this.source = source;
 		}
 
@@ -163,21 +163,13 @@ public class ExpEvaluator {
 		}
 
 		@Override
-		public ExpResult getValFromName(String name, String source, int pos) throws ExpError {
-			Entity ent;
-			if (name.equals("this"))
-				ent = thisEnt;
-			else {
-				ent = Entity.getNamedEntity(name);
-				if (ent != null) {
-					addEntityReference(ent);
-				}
-			}
-
+		public ExpResult getValFromLitName(String name, String source, int pos) throws ExpError {
+			Entity ent = Entity.getNamedEntity(name);
 			if (ent == null) {
 				throw new ExpError(source, pos, "Could not find entity: %s", name);
 			}
 
+			addEntityReference(ent);
 			return ExpResult.makeEntityResult(ent);
 		}
 
@@ -358,17 +350,21 @@ public class ExpEvaluator {
 
 	}
 
-	private static class EntityEvalContext implements ExpParser.EvalContext {
+	private static class EntityEvalContext extends ExpParser.EvalContext {
 
 		private final double simTime;
 
 		public EntityEvalContext(double simTime) {
 			this.simTime = simTime;
 		}
+
 	}
 
 	public static EntityParseContext getParseContext(Entity thisEnt, String source) {
-		return new EntityParseContext(thisEnt, source);
+		HashMap<String, ExpResult> constants = new HashMap<>();
+		constants.put("this", ExpResult.makeEntityResult(thisEnt));
+
+		return new EntityParseContext(constants, source);
 	}
 
 	public static ExpResult evaluateExpression(ExpParser.Expression exp, double simTime) throws ExpError

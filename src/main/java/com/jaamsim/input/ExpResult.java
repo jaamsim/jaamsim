@@ -30,7 +30,9 @@ public class ExpResult {
 	public interface Collection {
 		public ExpResult index(ExpResult index) throws ExpError;
 
-		public void assign(ExpResult key, ExpResult value) throws ExpError;
+		// Collections have a copy-on-write feature, where the old reference may be invalidated
+		// after assigning, always use the value returned as the new collection
+		public Collection assign(ExpResult key, ExpResult value) throws ExpError;
 
 		public Iterator getIter();
 
@@ -49,24 +51,29 @@ public class ExpResult {
 	public final String stringVal;
 	public final Entity entVal;
 	public final Collection colVal;
+	public final ExpParser.LambdaClosure lcVal;
 
 	public static ExpResult makeNumResult(double val, Class<? extends Unit> ut) {
-		return new ExpResult(ExpResType.NUMBER, val, ut, null, null, null);
+		return new ExpResult(ExpResType.NUMBER, val, ut, null, null, null, null);
 	}
 
 	public static ExpResult makeStringResult(String str) {
-		return new ExpResult(ExpResType.STRING, 0, null, str, null, null);
+		return new ExpResult(ExpResType.STRING, 0, null, str, null, null, null);
 	}
 
 	public static ExpResult makeEntityResult(Entity ent) {
-		return new ExpResult(ExpResType.ENTITY, 0, null, null, ent, null);
+		return new ExpResult(ExpResType.ENTITY, 0, null, null, ent, null, null);
 	}
 
 	public static ExpResult makeCollectionResult(Collection col) {
-		return new ExpResult(ExpResType.COLLECTION, 0, null, null, null, col);
+		return new ExpResult(ExpResType.COLLECTION, 0, null, null, null, col, null);
 	}
 
-	private ExpResult(ExpResType type, double val, Class<? extends Unit> ut, String str, Entity ent, Collection col) {
+	public static ExpResult makeLambdaResult(ExpParser.LambdaClosure lc) {
+		return new ExpResult(ExpResType.LAMBDA, 0, null, null, null, null, lc);
+	}
+
+	private ExpResult(ExpResType type, double val, Class<? extends Unit> ut, String str, Entity ent, Collection col, ExpParser.LambdaClosure lc) {
 		this.type = type;
 		value = val;
 		unitType = ut;
@@ -74,6 +81,7 @@ public class ExpResult {
 		stringVal = str;
 		entVal = ent;
 		colVal = col;
+		lcVal = lc;
 	}
 
 	public <T> T getValue(double simTime, Class<T> klass) {
