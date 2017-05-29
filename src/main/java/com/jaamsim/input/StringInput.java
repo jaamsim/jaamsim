@@ -28,4 +28,10 @@ public class StringInput extends Input<String> {
 		Input.assertCount(kw, 1);
 		value = kw.getArg(0);
 	}
+
+	@Override
+	public String getValidInputDesc() {
+		return Input.VALID_STRING;
+	}
+
 }

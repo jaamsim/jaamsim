@@ -58,6 +58,11 @@ public class FileInput extends Input<URI> {
 	}
 
 	@Override
+	public String getValidInputDesc() {
+		return Input.VALID_FILE;
+	}
+
+	@Override
 	public void getValueTokens(ArrayList<String> toks) {
 		if (value == null) return;
 

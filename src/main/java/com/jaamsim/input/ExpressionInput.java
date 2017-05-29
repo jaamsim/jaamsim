@@ -55,6 +55,11 @@ public class ExpressionInput extends Input<ExpParser.Expression> {
 	}
 
 	@Override
+	public String getValidInputDesc() {
+		return Input.VALID_EXP;
+	}
+
+	@Override
 	public void getValueTokens(ArrayList<String> toks) {
 		if (value == null) return;
 		toks.add(parseContext.getUpdatedSource());

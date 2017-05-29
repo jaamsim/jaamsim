@@ -45,6 +45,11 @@ public class BooleanInput extends Input<Boolean> {
 	}
 
 	@Override
+	public String getValidInputDesc() {
+		return Input.VALID_BOOLEAN;
+	}
+
+	@Override
 	public ArrayList<String> getValidOptions() {
 		return validOptions;
 	}

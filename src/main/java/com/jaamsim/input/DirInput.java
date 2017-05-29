@@ -55,6 +55,11 @@ public class DirInput extends StringInput {
 	}
 
 	@Override
+	public String getValidInputDesc() {
+		return Input.VALID_DIR;
+	}
+
+	@Override
 	public void reset() {
 		super.reset();
 		dir = null;

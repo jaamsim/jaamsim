@@ -94,6 +94,11 @@ public abstract class Input<T> {
 	protected static final String VALID_ENTITY = "Accepts the name of an entity.";
 	protected static final String VALID_ENTITY_TYPE = "Accepts the name of an entity of type %s.";
 	protected static final String VALID_INTERFACE_ENTITY = "Accepts the name of an entity that supports the %s interface.";
+	protected static final String VALID_BOOLEAN = "Accepts the text TRUE or FALSE (case sensitive).";
+	protected static final String VALID_STRING = "Accepts a text string. The string must be enclosed by single quotes if it includes a space.";
+	protected static final String VALID_FILE = "Accepts a file path enclosed by single quotes.";
+	protected static final String VALID_DIR = "Accepts a directory path enclosed by single quotes.";
+	protected static final String VALID_EXP = "Accepts an expression that returns a dimensionless number. A value of zero implies FALSE; non-zero implies TRUE.";
 
 	public static final String POSITIVE_INFINITY = "Infinity";
 	public static final String NEGATIVE_INFINITY = "-Infinity";
