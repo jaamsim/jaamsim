@@ -38,6 +38,11 @@ public class InterfaceEntityInput<T> extends Input<T> {
 	}
 
 	@Override
+	public String getValidInputDesc() {
+		return String.format(Input.VALID_INTERFACE_ENTITY, entClass.getSimpleName());
+	}
+
+	@Override
 	public ArrayList<String> getValidOptions() {
 		ArrayList<String> list = new ArrayList<>();
 		for (Entity each: Entity.getClonesOfIterator(Entity.class, entClass)) {

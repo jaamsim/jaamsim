@@ -19,6 +19,7 @@ package com.jaamsim.input;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.basicsim.Entity;
 
 public class EntityInput<T extends Entity> extends Input<T> {
@@ -50,6 +51,14 @@ public class EntityInput<T extends Entity> extends Input<T> {
 		if (!isValid(tmp))
 			throw new InputErrorException("%s is not a valid entity", tmp.getName());
 		value = tmp;
+	}
+
+	@Override
+	public String getValidInputDesc() {
+		if (entClass == DisplayEntity.class) {
+			return Input.VALID_ENTITY;
+		}
+		return String.format(Input.VALID_ENTITY_TYPE, entClass.getSimpleName());
 	}
 
 	@Override
