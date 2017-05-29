@@ -115,7 +115,7 @@ public class Simulation extends Entity {
 
 	@Keyword(description = "The directory in which to place the output report. Defaults to the "
 	                     + "directory containing the configuration file for the run.",
-	             example = "Simulation ReportDirectory { 'c:\reports\' }")
+	             example = "Simulation ReportDirectory { 'c:\\reports\\' }")
 	private static final DirInput reportDirectory;
 
 	@Keyword(description = "The unit types for the selected outputs for the simulation run. "
