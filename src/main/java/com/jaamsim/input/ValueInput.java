@@ -19,6 +19,7 @@ package com.jaamsim.input;
 import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
+import com.jaamsim.units.UserSpecifiedUnit;
 
 public class ValueInput extends Input<Double> {
 	private Class<? extends Unit> unitType = DimensionlessUnit.class;
@@ -50,6 +51,17 @@ public class ValueInput extends Input<Double> {
 	public void setValidRange(double min, double max) {
 		minValue = min;
 		maxValue = max;
+	}
+
+	@Override
+	public String getValidInputDesc() {
+		if (unitType == UserSpecifiedUnit.class) {
+			return Input.VALID_VALUE_UNIT;
+		}
+		if (unitType == DimensionlessUnit.class) {
+			return Input.VALID_VALUE_DIMLESS;
+		}
+		return String.format(Input.VALID_VALUE, unitType.getSimpleName());
 	}
 
 	@Override
