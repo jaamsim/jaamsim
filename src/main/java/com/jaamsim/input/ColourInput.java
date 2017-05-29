@@ -57,6 +57,11 @@ static {
 		value = Input.parseColour(kw);
 	}
 
+	@Override
+	public String getValidInputDesc() {
+		return Input.VALID_COLOUR;
+	}
+
 public static Color4d getColorWithName(String colorName) {
 	return colorMap.get(colorName);
 }

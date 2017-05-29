@@ -86,6 +86,7 @@ public abstract class Input<T> {
 	protected static final String VALID_STRING_PROV = "Accepts an expression that returns a number, string, entity, array, or map.";
 	protected static final String VALID_ENTITY_PROV = "Accepts an entity name or an expression that returns an entity.";
 	protected static final String VALID_ENTITY_PROV_TYPE = "Accepts the name of an entity of type %s or an expression that returns such an entity.";
+	protected static final String VALID_COLOUR = "Accepts a colour name, an RGB value, or an RGB/transparency value.";
 
 	public static final String POSITIVE_INFINITY = "Infinity";
 	public static final String NEGATIVE_INFINITY = "-Infinity";
