@@ -126,15 +126,15 @@ public class GraphModel extends DisplayModel {
 	         example = "Graph1 LabelTextModel { TextModelDefault }")
 	protected final EntityInput<TextModel> labelTextModel;
 
-	@Keyword(description = "The color of the graph background, defined by a color keyword or an RGB value.",
+	@Keyword(description = "The color of the graph background.",
 	         example = "Graph1 GraphColor { floralwhite }")
 	private final ColourInput graphColor;
 
-	@Keyword(description = "The color for the outer pane background, defined using a color keyword or an RGB value.",
+	@Keyword(description = "The color for the outer pane background.",
 	         example = "Graph1 BackgroundColor { floralwhite }")
 	private final ColourInput backgroundColor;
 
-	@Keyword(description = "The color of the graph border, defined using a color keyword or an RGB value.",
+	@Keyword(description = "The color of the graph border.",
 	         example = "Graph1 BorderColor { red }")
 	private final ColourInput borderColor;
 

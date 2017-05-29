@@ -51,8 +51,7 @@ public class EntityDelay extends LinkedComponent {
 	         exampleList = {"1"})
 	private final ValueInput widthInput;
 
-	@Keyword(description = "The colour of the path.\n" +
-			"The input can be a colour keyword or RGB value.",
+	@Keyword(description = "The colour of the path.",
 	         exampleList = {"red"})
 	private final ColourInput colorInput;
 

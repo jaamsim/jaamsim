@@ -56,7 +56,7 @@ public abstract class TextBasics extends DisplayEntity {
 	         exampleList = { "Bold" })
 	private final StringListInput fontStyle;
 
-	@Keyword(description = "The colour of the text, specified by a colour keyword or RGB values.",
+	@Keyword(description = "The colour of the text.",
 	         exampleList = { "red", "skyblue", "135 206 235" })
 	private final ColourInput fontColor;
 
@@ -64,8 +64,7 @@ public abstract class TextBasics extends DisplayEntity {
 	         exampleList = { "TRUE" })
 	private final BooleanInput dropShadow;
 
-	@Keyword(description = "The colour for the drop shadow, specified by a colour keyword or "
-	                     + "RGB values.",
+	@Keyword(description = "The colour for the drop shadow.",
 	         exampleList = { "red", "skyblue", "135 206 235" })
 	private final ColourInput dropShadowColor;
 

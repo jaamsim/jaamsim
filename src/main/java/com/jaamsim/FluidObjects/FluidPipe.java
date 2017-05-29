@@ -55,7 +55,7 @@ public class FluidPipe extends FluidComponent {
 	         example = "Pipe1 Width { 1 }")
 	private final ValueInput widthInput;
 
-	@Keyword(description = "The colour of the pipe, defined using a colour keyword or RGB values.",
+	@Keyword(description = "The colour of the pipe.",
 	         example = "Pipe1 Colour { red }")
 	private final ColourInput colourInput;
 

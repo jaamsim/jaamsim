@@ -36,7 +36,7 @@ public class Arrow extends DisplayEntity {
 	         exampleList = {"0.165 0.130 0.0 m"})
 	private final Vec3dInput arrowHeadSize;
 
-	@Keyword(description = "The colour of the arrow, defined using a colour keyword or RGB values.",
+	@Keyword(description = "The colour of the arrow.",
 	         exampleList = {"red"})
 	private final ColourInput color;
 
