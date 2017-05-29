@@ -108,7 +108,7 @@ public class ExpResult {
 		switch (type) {
 		case NUMBER:
 			double factor = Unit.getDisplayedUnitFactor(unitType);
-			return String.format("%f %s", value*factor, Unit.getDisplayedUnit(unitType));
+			return String.format("%f %s", value/factor, Unit.getDisplayedUnit(unitType));
 		case STRING:
 			return String.format("\"%s\"", stringVal);
 		case ENTITY:

@@ -83,9 +83,12 @@ public class StringProvExpression implements StringProvider {
 				}
 				ret = String.format(fmt, result.value/siFactor);
 				break;
+			case COLLECTION:
+				ret = String.format(fmt, result.colVal.getOutputString());
+				break;
 			default:
 				assert(false);
-				ret = "???";
+				ret = String.format(fmt, "???");
 				break;
 			}
 		}

@@ -990,7 +990,7 @@ public class RenderManager implements DragSourceListener {
 			double zDiff = RenderUtils.getZDiff(dragCollisionPoint, currentRay, firstRay);
 			entPos.z += zDiff;
 			if (Simulation.isSnapToGrid())
-				entPos = Simulation.getSnapGridPosition(entPos, selectedEntity.getGlobalPosition());
+				entPos = Simulation.getSnapGridPosition(entPos, selectedEntity.getGlobalPosition(), shift);
 			selectedEntity.setInputForGlobalPosition(entPos);
 			return true;
 		}
@@ -1013,7 +1013,7 @@ public class RenderManager implements DragSourceListener {
 		Vec3d pos = new Vec3d(dragEntityPosition);
 		pos.add3(del);
 		if (Simulation.isSnapToGrid())
-			pos = Simulation.getSnapGridPosition(pos, selectedEntity.getGlobalPosition());
+			pos = Simulation.getSnapGridPosition(pos, selectedEntity.getGlobalPosition(), shift);
 		selectedEntity.setInputForGlobalPosition(pos);
 		return true;
 	}
@@ -1179,7 +1179,7 @@ public class RenderManager implements DragSourceListener {
 		if (Simulation.isSnapToGrid()) {
 			Vec3d point = new Vec3d();
 			point.add3(globalPts.get(0), delta);
-			point = Simulation.getSnapGridPosition(point, globalPts.get(0));
+			point = Simulation.getSnapGridPosition(point, globalPts.get(0), shift);
 			delta.sub3(point, globalPts.get(0));
 		}
 
@@ -1217,8 +1217,10 @@ public class RenderManager implements DragSourceListener {
 		point.add3(diff);
 
 		// Align the node to snap grid
-		if (Simulation.isSnapToGrid())
-			point = Simulation.getSnapGridPosition(point, selectedEntity.getGlobalPosition(screenPoints.get(nodeIndex)));
+		if (Simulation.isSnapToGrid()) {
+			Vec3d oldPos = selectedEntity.getGlobalPosition(screenPoints.get(nodeIndex));
+			point = Simulation.getSnapGridPosition(point, oldPos, shift);
+		}
 
 		ArrayList<Vec3d> newPoints = new ArrayList<>();
 		for (Vec3d v : screenPoints) {

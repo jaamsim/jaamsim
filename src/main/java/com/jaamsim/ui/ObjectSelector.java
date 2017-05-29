@@ -287,12 +287,12 @@ public class ObjectSelector extends FrameBox {
 
 		// Remove any object type tree nodes that have no entities
 		ArrayList<DefaultMutableTreeNode> nodesToRemove = new ArrayList<>();
-		Enumeration<DefaultMutableTreeNode> paletteEnum = top.children();
+		Enumeration<?> paletteEnum = top.children();
 		while (paletteEnum.hasMoreElements()) {
-			DefaultMutableTreeNode paletteNode = paletteEnum.nextElement();
-			Enumeration<DefaultMutableTreeNode> typeEnum = paletteNode.children();
+			DefaultMutableTreeNode paletteNode = (DefaultMutableTreeNode)paletteEnum.nextElement();
+			Enumeration<?> typeEnum = paletteNode.children();
 			while (typeEnum.hasMoreElements()) {
-				DefaultMutableTreeNode typeNode = typeEnum.nextElement();
+				DefaultMutableTreeNode typeNode = (DefaultMutableTreeNode)typeEnum.nextElement();
 				if (typeNode.isLeaf())
 					nodesToRemove.add(typeNode);
 			}
@@ -305,7 +305,7 @@ public class ObjectSelector extends FrameBox {
 		// Remove any palettes that have no object types left
 		paletteEnum = top.children();
 		while (paletteEnum.hasMoreElements()) {
-			DefaultMutableTreeNode paletteNode = paletteEnum.nextElement();
+			DefaultMutableTreeNode paletteNode = (DefaultMutableTreeNode)paletteEnum.nextElement();
 
 			// Do not remove any of the special nodes such as the instance for Simulation
 			if (!paletteNode.getAllowsChildren())
@@ -386,9 +386,9 @@ public class ObjectSelector extends FrameBox {
 	private static DefaultMutableTreeNode getNodeFor_In(Object userObject, DefaultMutableTreeNode parent) {
 
 		// Loop through the parent's children
-		Enumeration<DefaultMutableTreeNode> enumeration = parent.children();
+		Enumeration<?> enumeration = parent.children();
 		while (enumeration.hasMoreElements()) {
-			DefaultMutableTreeNode eachNode = enumeration.nextElement();
+			DefaultMutableTreeNode eachNode = (DefaultMutableTreeNode)enumeration.nextElement();
 			if (eachNode.getUserObject() == userObject ||
 					userObject instanceof String && ((String) userObject).equals(eachNode.getUserObject()) )
 				return eachNode;

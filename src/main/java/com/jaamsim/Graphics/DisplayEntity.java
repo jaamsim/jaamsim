@@ -825,9 +825,13 @@ public class DisplayEntity extends Entity {
 				else
 					pos.y -= inc;
 				break;
+
+			default:
+				return;
 		}
 		if (Simulation.isSnapToGrid())
-			pos = Simulation.getSnapGridPosition(pos);
+			pos = Simulation.getSnapGridPosition(pos, pos, shift);
+
 		KeywordIndex kw = InputAgent.formatPointInputs(positionInput.getKeyword(), pos, "m");
 		InputAgent.apply(this, kw);
 	}
