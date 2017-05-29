@@ -1391,6 +1391,75 @@ public class ExpOperators {
 			}
 		});
 
+		addFunction("range", 1, 3, new CallableFunc() {
+			@Override
+			public void checkUnits(ParseContext context, ExpResult[] args,
+					String source, int pos) throws ExpError {
+				for(ExpResult arg : args) {
+					if (arg.type != ExpResType.NUMBER) {
+						throw new ExpError(source, pos, "Only numbers may be passed to 'range'");
+					}
+				}
+				// Ensure all units are the same
+				for (int i = 1; i < args.length; ++i) {
+					if (args[0].unitType != args[1].unitType) {
+						throw new ExpError(source, pos, "All unit types to 'range' must be the same. %s != %s",
+								args[0].unitType.getSimpleName(), args[i].unitType.getSimpleName());
+					}
+				}
+			}
+
+			@Override
+			public ExpResult call(EvalContext context, ExpResult[] args, String source, int pos) throws ExpError {
+				double startVal = 1;
+				double endVal = 0;
+				if (args.length > 1) {
+					startVal = args[0].value;
+					endVal = args[1].value;
+				} else {
+					endVal = args[0].value;
+				}
+
+				if (startVal > endVal) {
+					return ExpCollections.getCollection(new ArrayList<ExpResult>(), args[0].unitType);
+				}
+
+				double inc = 1;
+				if (args.length > 2) {
+					inc = args[2].value;
+				}
+				ArrayList<ExpResult> res = new ArrayList<>();
+				double val = startVal;
+				while (val <= endVal) {
+					res.add(ExpResult.makeNumResult(val, args[0].unitType));
+					val += inc;
+				}
+				return ExpCollections.getCollection(res, args[0].unitType);
+
+			}
+
+			@Override
+			public ExpValResult validate(ParseContext context, ExpValResult[] args, String source, int pos) {
+				ExpValResult merge = mergeMultipleErrors(args);
+				if (merge != null) {
+					return merge;
+				}
+				for(ExpValResult arg : args) {
+					if (arg.type != ExpResType.NUMBER) {
+						return ExpValResult.makeErrorRes(new ExpError(source, pos, "Only numbers may be passed to 'range'"));
+					}
+				}
+				// Ensure all units are the same
+				for (int i = 1; i < args.length; ++i) {
+					if (args[0].unitType != args[1].unitType) {
+						return ExpValResult.makeErrorRes(new ExpError(source, pos, "All unit types to 'range' must be the same. %s != %s",
+								args[0].unitType.getSimpleName(), args[i].unitType.getSimpleName()));
+					}
+				}
+				return ExpValResult.makeValidRes(ExpResType.COLLECTION, args[0].unitType);
+			}
+		});
+
 		addFunction("choose", 2, -1, new CallableFunc() {
 			@Override
 			public void checkUnits(ParseContext context, ExpResult[] args,
