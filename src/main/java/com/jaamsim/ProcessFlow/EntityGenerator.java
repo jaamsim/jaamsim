@@ -51,8 +51,8 @@ public class EntityGenerator extends LinkedService {
 	         exampleList = {"3", "TimeSeries1", "'1 + 2*[DiscreteDistribution1].Value'"})
 	private final SampleInput entitiesPerArrival;
 
-	@Keyword(description = "The prototype for entities to be generated.\n" +
-			"The generated entities will be copies of this entity.",
+	@Keyword(description = "The prototype for entities to be generated. "
+	                     + "The generated entities will be copies of this entity.",
 	         exampleList = {"Proto", "'choose( this.NumberGenerated%2+1, [Proto1], [Proto2])'"})
 	private final EntityProvInput<DisplayEntity> prototypeEntity;
 

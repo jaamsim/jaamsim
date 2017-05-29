@@ -47,22 +47,26 @@ import com.jaamsim.units.TimeUnit;
 
 public class Queue extends LinkedComponent {
 
-	@Keyword(description = "The priority for positioning the received entity in the queue.\n" +
-			"Priority is integer valued and a lower numerical value indicates a higher priority.\n" +
-			"For example, priority 3 is higher than 4, and priorities 3, 3.2, and 3.8 are equivalent.",
+	@Keyword(description = "The priority for positioning the received entity in the queue. "
+	                     + "Priority is integer valued and a lower numerical value indicates a "
+	                     + "higher priority. "
+	                     + "For example, priority 3 is higher than 4, and priorities 3, 3.2, and "
+	                     + "3.8 are equivalent.",
 	         exampleList = {"this.obj.Attrib1"})
 	private final SampleInput priority;
 
-	@Keyword(description = "An expression that returns a dimensionless integer value that can be used to "
-			+ "match entities in separate queues. The expression is evaluated when the entity "
-			+ "first arrives at the queue. Since Match is integer valued, a value of 3.2 for one "
-			+ "queue and 3.6 for another queue are considered to be equal.",
+	@Keyword(description = "An expression that returns a dimensionless integer value that can be "
+	                     + "used to match entities in separate queues. The expression is "
+	                     + "evaluated when the entity first arrives at the queue. Since Match is "
+	                     + "integer valued, a value of 3.2 for one queue and 3.6 for another "
+	                     + "queue are considered to be equal.",
 	         exampleList = {"this.obj.Attrib1"})
 	private final SampleInput match;
 
-	@Keyword(description = "Determines the order in which entities are placed in the queue (FIFO or LIFO):\n" +
-			"TRUE = first in first out (FIFO) order (the default setting)," +
-			"FALSE = last in first out (LIFO) order.",
+	@Keyword(description = "Determines the order in which entities are placed in the queue (FIFO "
+	                     + "or LIFO):\n"
+	                     + "TRUE = first in first out (FIFO) order (the default setting),\n"
+	                     + "FALSE = last in first out (LIFO) order.",
 	         exampleList = {"FALSE"})
 	private final BooleanInput fifo;
 
@@ -83,7 +87,8 @@ public class Queue extends LinkedComponent {
 	         exampleList = {"Branch1"})
 	protected final InterfaceEntityInput<Linkable> renegeDestination;
 
-	@Keyword(description = "The amount of graphical space shown between DisplayEntity objects in the queue.",
+	@Keyword(description = "The amount of graphical space shown between DisplayEntity objects in "
+	                     + "the queue.",
 	         exampleList = {"1 m"})
 	private final ValueInput spacing;
 

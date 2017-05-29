@@ -31,8 +31,8 @@ import com.jaamsim.units.TimeUnit;
 
 public class Pack extends LinkedService {
 
-	@Keyword(description = "The prototype for EntityContainers to be generated.\n" +
-			"The generated EntityContainers will be copies of this entity.",
+	@Keyword(description = "The prototype for EntityContainers to be generated. "
+	                     + "The generated EntityContainers will be copies of this entity.",
 	         exampleList = {"EntityContainer1"})
 	protected final EntityInput<EntityContainer> prototypeEntityContainer;
 

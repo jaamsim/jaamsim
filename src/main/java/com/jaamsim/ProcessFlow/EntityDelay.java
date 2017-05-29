@@ -42,8 +42,8 @@ public class EntityDelay extends LinkedComponent {
 	         exampleList = { "3.0 h", "NormalDistribution1", "'1[s] + 0.5*[TimeSeries1].PresentValue'" })
 	private final SampleInput duration;
 
-	@Keyword(description = "If TRUE, a delayed entity is moved along the " +
-			"specified path to indicate its progression through the delay.",
+	@Keyword(description = "If TRUE, a delayed entity is moved along the specified path to "
+	                     + "indicate its progression through the delay.",
 	         exampleList = {"TRUE"})
 	private final BooleanInput animation;
 
