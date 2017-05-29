@@ -108,7 +108,7 @@ public class View extends Entity {
 	private final KeyedVec3dInput centerScriptInput;
 
 	@Keyword(description = "The image file to use as the background for this view.",
-	example = "View1 SkyboxImage { '/resources/images/sky_map_2048x1024.jpg' }")
+	         exampleList = {"'<res>/images/sky_map_2048x1024.jpg'"})
 	private final FileInput skyboxImage;
 
 	private final Object setLock = new Object();
