@@ -57,54 +57,56 @@ public class View extends Entity {
 	private boolean keepWindowOpen;  // used by GUIFrame to determine whether a window is open or closed
 
 	@Keyword(description = "The region in which the view's coordinates are given.",
-	         example = "View1 Region { Region1 }")
+	         exampleList = {"Region1"})
 	private final EntityInput<Region> region;
 
-	@Keyword(description = "The position the view camera is looking at.",
-	         example = "View1 ViewCenter { 0 0 0 m }")
+	@Keyword(description = "The position at which the view camera is pointed.",
+	         exampleList = {"0 0 0 m"})
 	private final Vec3dInput center;
 
-	@Keyword(description = "The position the view camera is looking from.",
-	         example = "View1 ViewPosition { 0 0 50 m }")
+	@Keyword(description = "The position of the view camera.",
+	         exampleList = {"0 0 50 m"})
 	private final Vec3dInput position;
 
 	@Keyword(description = "The size of the window in pixels (width, height).",
-	         example = "View1 WindowSize { 500 300 }")
+	         exampleList = {"500 300"})
 	private final IntegerListInput windowSize;
 
-	@Keyword(description = "The position of the upper left corner of the window in pixels measured" +
-	                "from the top left corner of the screen.",
-	         example = "View1 WindowPosition { 220 110 }")
+	@Keyword(description = "The position of the upper left corner of the window in pixels "
+	                     + "measured from the top left corner of the screen.",
+	         exampleList = {"220 110"})
 	private final IntegerListInput windowPos;
 
 	@Keyword(description = "Text to place in the title bar of the view window. The window must "
 	                     + "be closed and re-opened manually after changing the title.",
-	         example = "View1 TilteBarText { 'An Example Title' }")
+	         exampleList = {"'An Example Title'"})
 	private final StringInput titleBar;
 
 	@Keyword(description = "If TRUE, the view window is displayed on screen.",
-	         example = "View1 ShowWindow { FALSE }")
+	         exampleList = {"FALSE"})
 	private final BooleanInput showWindow;
 
 	@Keyword(description = "A Boolean indicating whether the view can be panned or rotated.",
-	 example = "View1 Movable { FALSE }")
+	         exampleList = {"FALSE"})
 	private final BooleanInput movable;
 
-	@Keyword(description = "A Boolean indicating whether the view is locked to a downward view (the 2D default).",
-			 example = "View1 Lock2D { FALSE }")
-			private final BooleanInput lock2D;
+	@Keyword(description = "A Boolean indicating whether the view is locked to a downward view "
+	                     + "(the 2D default).",
+	         exampleList = {"FALSE"})
+	private final BooleanInput lock2D;
 
-	@Keyword(description = "The (optional) entity for this view to follow. Setting this input makes the view ignore ViewCenter " +
-	                "and interprets ViewPosition as a relative offset to this entity.",
-	         example = "View1 FollowEntity { Ship1 }")
+	@Keyword(description = "The (optional) entity for this view to follow. Setting this input "
+	                     + "makes the view ignore ViewCenter and interprets ViewPosition as a "
+	                     + "relative offset to this entity.",
+	         exampleList = {"Ship1"})
 	private final EntityInput<DisplayEntity> followEntityInput;
 
 	@Keyword(description = "The (optional) scripted curve for the view position to follow.",
-	 example = "View1 ScriptedViewPosition { { { 0 h } { 0 0 0 m } } { { 100 h } { 100 0 0 m } } }")
+	         exampleList = {"{{ 0 h } { 0 0 0 m }} {{ 100 h } { 100 0 0 m }}"})
 	private final KeyedVec3dInput positionScriptInput;
 
 	@Keyword(description = "The (optional) scripted curve for the view center to follow.",
-	example = "View1 ScriptedViewCenter { { { 0 h } { 0 0 0 m } } { { 100 h } { 100 0 0 m } } }")
+	         exampleList = {"{{ 0 h } { 0 0 0 m }} {{ 100 h } { 100 0 0 m }}"})
 	private final KeyedVec3dInput centerScriptInput;
 
 	@Keyword(description = "The image file to use as the background for this view.",
