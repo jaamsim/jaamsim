@@ -16,7 +16,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -->
 <project name="jaamsim" basedir="." default="jar">
-  <property name="ver"           value="2017-04"/>
+  <property name="ver"           value="2017-05"/>
   <property name="src.dir"       location="src/main"/>
   <property name="res.dir"       location="src/main/resources"/>
   <property name="make.dir"      location="make"/>
