@@ -1,6 +1,8 @@
 package com.jaamsim.input;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 import com.jaamsim.basicsim.ObjectType;
 import com.jaamsim.input.ExpParser.BinOpFunc;
@@ -1366,6 +1368,88 @@ public class ExpOperators {
 				}
 
 				return validateCollection(context, args[2], source, pos);
+			}
+		});
+
+		addFunction("sort", 2, 2, new CallableFunc() {
+			@Override
+			public void checkUnits(ParseContext context, ExpResult[] args,
+					String source, int pos) throws ExpError {
+			}
+
+			@Override
+			public ExpResult call(EvalContext context, ExpResult[] args, String source, int pos) throws ExpError {
+				if (args[1].type != ExpResType.COLLECTION) {
+					throw new ExpError(source, pos, "Expected Collection type argument as second argument.");
+				}
+				if (args[0].type != ExpResType.LAMBDA) {
+					throw new ExpError(source, pos, "Expected function argument as first argument.");
+				}
+
+				final LambdaClosure sortFunc = args[0].lcVal;
+				if (sortFunc.getNumParams() != 2) {
+					throw new ExpError(source, pos, "Function passed to 'sort' must take two parameters.");
+				}
+
+				ExpResult.Collection col = args[1].colVal;
+				ExpResult.Iterator it = col.getIter();
+
+				Class<? extends Unit> unitType = null;
+
+				ArrayList<ExpResult> results = new ArrayList<>();
+				while (it.hasNext()) {
+					ExpResult key = it.nextKey();
+					ExpResult val = col.index(key);
+					results.add(val);
+				}
+
+				final ArrayList<ExpResult> params = new ArrayList<>(2);
+				params.add(null);
+				params.add(null);
+
+				final EvalContext cont = context;
+
+				Comparator<ExpResult> c = new Comparator<ExpResult>() {
+					@Override
+					public int compare(ExpResult arg0, ExpResult arg1) {
+						params.set(0, arg0);
+						params.set(1, arg1);
+
+						ExpResult res;
+						try {
+							res = sortFunc.evaluate(cont, params);
+						} catch (ExpError e) {
+							// Wrap ExpError in a runtime error and extract below
+							// (annoying checked exceptions...)
+							throw new RuntimeException(e);
+						}
+
+						return (res.value == 0) ? 1 : -1;
+					}
+				};
+
+				try {
+					Collections.sort(results, c);
+				} catch (RuntimeException e) {
+					if (e.getCause() != null && ExpError.class.isAssignableFrom(e.getCause().getClass())) {
+						throw (ExpError)e.getCause();
+					} else {
+						throw e;
+					}
+				}
+				return ExpCollections.getCollection(results, unitType);
+			}
+
+			@Override
+			public ExpValResult validate(ParseContext context, ExpValResult[] args, String source, int pos) {
+				if (args[0].state == ExpValResult.State.ERROR || args[0].state == ExpValResult.State.UNDECIDABLE) {
+					return args[0];
+				}
+				if (args[0].type != ExpResType.LAMBDA) {
+					return ExpValResult.makeErrorRes(new ExpError(source, pos, "First argument to 'sort' must be a function."));
+				}
+
+				return validateCollection(context, args[1], source, pos);
 			}
 		});
 

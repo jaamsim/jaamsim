@@ -634,7 +634,14 @@ public class TestExpParser {
 		assertTrue(val.type == ExpResType.NUMBER);
 		assertTrue(val.value == 120);
 
+		exp = ExpParser.parseExpression(pc, "sort( |x, y|(x<y), {5,2,3,42,4,1} )");
+		val = exp.evaluate(ec);
+		assertTrue(val.type == ExpResType.COLLECTION);
+		double[] sortVals = {1, 2, 3, 4, 5, 42};
+		assertColSame(sortVals, val.colVal);
+
 	}
+
 	@Test
 	public void testRange() throws ExpError {
 
