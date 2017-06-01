@@ -151,9 +151,17 @@ public class EntityContainer extends SimEntity {
 	@Output(name = "Count",
 	 description = "The present number of entities in the EntityContainer.",
 	    unitType = DimensionlessUnit.class,
-	  reportable = false)
+	    sequence = 1)
 	public int getCount(double simTime) {
 		return entityList.size();
+	}
+
+	@Output(name = "EntityList",
+	 description = "The entities contained by the EntityContainer.",
+	    unitType = DimensionlessUnit.class,
+	    sequence = 2)
+	public ArrayList<DisplayEntity> getEntityList(double simTime) {
+		return entityList;
 	}
 
 }
