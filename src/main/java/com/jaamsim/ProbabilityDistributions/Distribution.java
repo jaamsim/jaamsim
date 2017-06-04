@@ -71,6 +71,8 @@ implements SampleProvider {
 
 	private double lastSample = 0;
 
+	private static int MAX_ATTEMPTS = 1000;
+
 	{
 		unitType = new UnitTypeInput("UnitType", "Key Inputs", UserSpecifiedUnit.class);
 		unitType.setRequired(true);
@@ -198,8 +200,15 @@ implements SampleProvider {
 		double nextSample;
 		double minVal = this.minValueInput.getValue().getNextSample(simTime);
 		double maxVal = this.maxValueInput.getValue().getNextSample(simTime);
+		int n = 0;
 		do {
+			if (n > MAX_ATTEMPTS) {
+				this.error("Could not find a sample value that was within the range specified by "
+						+ "the MinValue and MaxValue inputs.%n"
+						+ "Number of samples tested = %s", MAX_ATTEMPTS);
+			}
 			nextSample = this.getSample(simTime);
+			n++;
 		}
 		while (nextSample < minVal ||
 		       nextSample > maxVal);
