@@ -85,7 +85,7 @@ public class ExpParser {
 		public void pushClosure(ParseClosure close) {
 			closureStack.add(close);
 		}
-		public ParseClosure popClosure(ParseClosure close) {
+		public ParseClosure popClosure() {
 			return closureStack.remove(closureStack.size()-1);
 		}
 
@@ -1475,7 +1475,7 @@ public class ExpParser {
 
 		context.pushClosure(pc);
 		ExpNode lambdaBody = parseExp(context, tokens, 0, exp);
-		context.popClosure(pc);
+		context.popClosure();
 
 		tokens.expect(ExpTokenizer.SYM_TYPE, ")", exp.source);
 
@@ -1508,7 +1508,7 @@ public class ExpParser {
 
 		context.pushClosure(pc);
 		ExpNode mainExp = parseExp(context, tokens, 0, exp);
-		context.popClosure(pc);
+		context.popClosure();
 
 		// Create the mapping needed to capture the free variables needed when this lambda is executed
 		int[] varMap = new int[pc.freeVars.size() + 1];
