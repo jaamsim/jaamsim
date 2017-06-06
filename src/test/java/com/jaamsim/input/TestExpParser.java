@@ -643,6 +643,20 @@ public class TestExpParser {
 	}
 
 	@Test
+	public void testLocalVars() throws ExpError {
+		ExpParser.Expression exp = ExpParser.parseExpression(pc, "x = 2; y = x*3; z = 7; y*z");
+		ExpResult val = exp.evaluate(ec);
+		assertTrue(val.type == ExpResType.NUMBER);
+		assertTrue(val.value == 42);
+
+		exp = ExpParser.parseExpression(pc, "array = {1,2,4,21}; mapped = map(|x|(x*2), array); filter(|x|(x>20), mapped)");
+		val = exp.evaluate(ec);
+		assertTrue(val.type == ExpResType.COLLECTION);
+		double[] vals = {42};
+		assertColSame(vals, val.colVal);
+	}
+
+	@Test
 	public void testRange() throws ExpError {
 
 		ExpParser.Expression exp = ExpParser.parseExpression(pc, "range(5)");

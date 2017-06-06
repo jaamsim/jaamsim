@@ -1314,6 +1314,10 @@ public class ExpParser {
 		}
 
 		if (nextTok.type == ExpTokenizer.VAR_TYPE) {
+			ExpTokenizer.Token peeked = tokens.peek();
+			if (peeked != null && peeked.type == ExpTokenizer.SYM_TYPE && peeked.value.equals("=")) {
+				return parseLocalVar(context, nextTok.value, tokens, exp, nextTok.pos);
+			}
 			if (context.isVarName(nextTok.value)) {
 				if (context.isVarConstant(nextTok.value)) {
 					ExpResult namedVal = context.getValFromConstVar(nextTok.value, exp.source, nextTok.pos);
@@ -1488,6 +1492,45 @@ public class ExpParser {
 		return new LambdaNode(context, lambdaBody, varMap, vars.size(), exp, pos);
 
 	}
+
+	private static ExpNode parseLocalVar(ParseContext context, String varName, TokenList tokens, Expression exp, int pos) throws ExpError {
+
+		if (context.isVarName(varName)) {
+			throw new ExpError(exp.source, pos, "Can not declare a local variable with the same name as existing variable: %s", varName);
+		}
+
+		tokens.expect(ExpTokenizer.SYM_TYPE, "=", exp.source);
+		ExpNode varBody = parseExp(context, tokens, 0, exp);
+		tokens.expect(ExpTokenizer.SYM_TYPE, ";", exp.source);
+
+		ParseClosure pc = new ParseClosure();
+		pc.boundVars.add(varName);
+
+		context.pushClosure(pc);
+		ExpNode mainExp = parseExp(context, tokens, 0, exp);
+		context.popClosure(pc);
+
+		// Create the mapping needed to capture the free variables needed when this lambda is executed
+		int[] varMap = new int[pc.freeVars.size() + 1];
+		for (int i = 0; i < varMap.length; ++i) {
+			if (i < 1) {
+				varMap[i] = -1;
+			} else {
+				varMap[i] = context.getVarIndex(pc.freeVars.get(i - 1));
+			}
+		}
+
+		// Treat a local variable as an implicit lambda of a single variable followed immediately by it's evaluation
+		ExpNode ln = new LambdaNode(context, mainExp, varMap, 1, exp, pos);
+
+		ArrayList<ExpNode> indices = new ArrayList<>();
+		indices.add(varBody);
+
+		ExpNode evalNode = new IndexCollection(context, ln, indices, exp, pos);
+		return evalNode;
+	}
+
+
 	private static ExpNode parseFuncCall(ParseContext context, String funcName, TokenList tokens, Expression exp, int pos) throws ExpError {
 
 		FunctionEntry fe = getFunctionEntry(funcName);
