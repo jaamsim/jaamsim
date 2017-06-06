@@ -137,7 +137,7 @@ public class ExpParser {
 			if (topClose.boundVars.contains(varName)) {
 				return topClose.boundVars.indexOf(varName);
 			}
-			assert(topClose.boundVars.contains(varName));
+			assert(topClose.freeVars.contains(varName));
 
 			return topClose.freeVars.indexOf(varName) + topClose.boundVars.size();
 		}
@@ -1481,7 +1481,7 @@ public class ExpParser {
 			if (i < pc.boundVars.size()) {
 				varMap[i] = -1;
 			} else {
-				varMap[i] = context.getVarIndex(vars.get(i - pc.boundVars.size()));
+				varMap[i] = context.getVarIndex(pc.freeVars.get(i - pc.boundVars.size()));
 			}
 		}
 
