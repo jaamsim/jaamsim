@@ -116,7 +116,10 @@ public class ExpResult {
 		switch (type) {
 		case NUMBER:
 			double factor = Unit.getDisplayedUnitFactor(unitType);
-			return String.format("%f %s", value/factor, Unit.getDisplayedUnit(unitType));
+			String unitString = Unit.getDisplayedUnit(unitType);
+			if (unitString.isEmpty())
+				return String.format("%s", value);
+			return String.format("%s[%s]", value/factor, unitString);
 		case STRING:
 			return String.format("\"%s\"", stringVal);
 		case ENTITY:
