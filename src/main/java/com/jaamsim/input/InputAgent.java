@@ -1472,6 +1472,40 @@ public class InputAgent {
 			return String.format(floatFmt, val/factor);
 		}
 
+		// double[] outputs
+		if (retType == double[].class) {
+			double[] val = out.getValue(simTime, double[].class);
+			sb.append("{");
+			for (int i=0; i<val.length; i++) {
+				if (i > 0)
+					sb.append(COMMA_SEPARATOR);
+				str = String.format(floatFmt, val[i]/factor);
+				sb.append(str);
+			}
+			sb.append("}");
+			return sb.toString();
+		}
+
+		// double[][] outputs
+		if (retType == double[][].class) {
+			double[][] val = out.getValue(simTime, double[][].class);
+			sb.append("{");
+			for (int i=0; i<val.length; i++) {
+				if (i > 0)
+					sb.append(COMMA_SEPARATOR);
+				sb.append("{");
+				for (int j=0; j<val[i].length; j++) {
+					if (j > 0)
+						sb.append(COMMA_SEPARATOR);
+					str = String.format(floatFmt, val[i][j]/factor);
+					sb.append(str);
+				}
+				sb.append("}");
+			}
+			sb.append("}");
+			return sb.toString();
+		}
+
 		// Vec3d outputs
 		if (retType == Vec3d.class) {
 			Vec3d vec = out.getValue(simTime, Vec3d.class);
