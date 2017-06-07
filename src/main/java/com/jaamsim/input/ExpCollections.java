@@ -150,7 +150,7 @@ public class ExpCollections {
 		public String getOutputString() {
 			try {
 				StringBuilder sb = new StringBuilder();
-				sb.append("{ ");
+				sb.append("{");
 				for (int i = 0; i < list.size(); ++i) {
 					ExpResult val = index(ExpResult.makeNumResult(i+1, DimensionlessUnit.class));
 					sb.append(val.getOutputString());
@@ -260,7 +260,7 @@ public class ExpCollections {
 		public String getOutputString() {
 			try {
 				StringBuilder sb = new StringBuilder();
-				sb.append("{ ");
+				sb.append("{");
 				for (int i = 0; i < Array.getLength(array); ++i) {
 					ExpResult val = index(ExpResult.makeNumResult(i+1, DimensionlessUnit.class));
 					sb.append(val.getOutputString());
@@ -345,7 +345,7 @@ public class ExpCollections {
 		@Override
 		public String getOutputString() {
 			StringBuilder sb = new StringBuilder();
-			sb.append("{ ");
+			sb.append("{");
 			for (int i = 0; i < vector.size(); ++i) {
 				sb.append(vector.get(i+1)*Unit.getDisplayedUnitFactor(unitType));
 				sb.append(" ");
@@ -427,7 +427,7 @@ public class ExpCollections {
 		@Override
 		public String getOutputString() {
 			StringBuilder sb = new StringBuilder();
-			sb.append("{ ");
+			sb.append("{");
 			for (int i = 0; i < vector.size(); ++i) {
 				sb.append(vector.get(i+1)*Unit.getDisplayedUnitFactor(unitType));
 				sb.append(" ");
@@ -522,7 +522,7 @@ public class ExpCollections {
 		public String getOutputString() {
 			try {
 				StringBuilder sb = new StringBuilder();
-				sb.append("{ ");
+				sb.append("{");
 				Iterator it = getIter();
 				while(it.hasNext()) {
 					ExpResult index = it.nextKey();
@@ -632,7 +632,7 @@ public class ExpCollections {
 		public String getOutputString() {
 			try {
 				StringBuilder sb = new StringBuilder();
-				sb.append("{ ");
+				sb.append("{");
 				for (int i = 0; i < list.size(); ++i) {
 					ExpResult val = index(ExpResult.makeNumResult(i+1, DimensionlessUnit.class));
 					sb.append(val.getOutputString());
