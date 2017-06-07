@@ -13,6 +13,8 @@ Define ObjectType {
                     DowntimeEntity
                     ValueSequence
                     EventSchedule
+                    FileToVector
+                    FileToMatrix
                   }
 
 Define TextModel  {
@@ -27,6 +29,8 @@ Define ImageModel {
                     DowntimeIconModel
                     ValueSequenceIconModel
                     EventScheduleIconModel
+                    FileToVectorIconModel
+                    FileToMatrixIconModel
                   }
 
 TimeSeriesIconModel     ImageFile { '<res>/images/TimeSeries-256.png'   }  Transparent { TRUE }
@@ -36,6 +40,8 @@ ExpressionEntityIconModel  ImageFile { '<res>/images/ExpressionEntity-256.png' }
 DowntimeIconModel       ImageFile { '<res>/images/Downtime-256.png'     }  Transparent { TRUE }
 ValueSequenceIconModel  ImageFile { '<res>/images/ValueSequence-256.png'}  Transparent { TRUE }
 EventScheduleIconModel  ImageFile { '<res>/images/EventSchedule-256.png'}  Transparent { TRUE }
+FileToVectorIconModel   ImageFile { '<res>/images/FileToVector-256.png' }  Transparent { TRUE }
+FileToMatrixIconModel   ImageFile { '<res>/images/FileToMatrix-256.png' }  Transparent { TRUE }
 
 Group                   JavaClass { com.jaamsim.basicsim.Group                          } Palette { 'Basic Objects' } DragAndDrop { FALSE }
 ScriptEntity            JavaClass { com.jaamsim.basicsim.ScriptEntity                   } Palette { 'Basic Objects' } DragAndDrop { FALSE }
@@ -51,6 +57,8 @@ ExpressionEntity        JavaClass { com.jaamsim.BasicObjects.ExpressionEntity   
 DowntimeEntity          JavaClass { com.jaamsim.BasicObjects.DowntimeEntity             } Palette { 'Basic Objects' } DefaultDisplayModel { DowntimeIconModel   } IconFile { '<res>/images/Downtime-24.png'     }
 ValueSequence           JavaClass { com.jaamsim.BasicObjects.ValueSequence              } Palette { 'Basic Objects' } DefaultDisplayModel { ValueSequenceIconModel } IconFile { '<res>/images/ValueSequence-24.png' }
 EventSchedule           JavaClass { com.jaamsim.BasicObjects.EventSchedule              } Palette { 'Basic Objects' } DefaultDisplayModel { EventScheduleIconModel } IconFile { '<res>/images/EventSchedule-24.png' }
+FileToVector            JavaClass { com.jaamsim.BasicObjects.FileToVector               } Palette { 'Basic Objects' } DefaultDisplayModel { FileToVectorIconModel  } IconFile { '<res>/images/FileToVector-24.png'  }
+FileToMatrix            JavaClass { com.jaamsim.BasicObjects.FileToMatrix               } Palette { 'Basic Objects' } DefaultDisplayModel { FileToMatrixIconModel  } IconFile { '<res>/images/FileToMatrix-24.png'  }
 
 Group               Description { 'Collection of entities used as an convenience for specifying model inputs.' }
 ScriptEntity        Description { 'Executes a series of commands in simulated time. Used primarily for recording videos.' }
@@ -66,3 +74,5 @@ ExpressionEntity    Description { 'Calculates the value for a specified expressi
 DowntimeEntity      Description { 'Provides Breakdown and Maintenance controls.' }
 ValueSequence       Description { 'Generates a repeating sequence of numerical values.' }
 EventSchedule       Description { 'Generates a sequence inter-arrival times from a list of event times.' }
+FileToVector        Description { 'Populates a one-dimensional array with numeric data from a specified file.' }
+FileToMatrix        Description { 'Populates a two-dimensional array with numeric data from a specified file.' }
