@@ -173,6 +173,9 @@ private static class ClassFields implements Comparator<Field> {
 		if (value instanceof double[])
 			return Arrays.toString((double[])value);
 
+		if (value instanceof double[][])
+			return Arrays.deepToString((double[][])value);
+
 		if (value instanceof int[])
 			return Arrays.toString((int[])value);
 
