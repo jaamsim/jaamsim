@@ -1,5 +1,6 @@
 Define ObjectType {
 	SimEntity
+	EntityLauncher
 	EntityGenerator
 	EntitySink
 	Server
@@ -72,6 +73,7 @@ EntityLoggerIconModel   ImageFile { '<res>/images/EntityLogger-256.png' }  Trans
 StatisticsIconModel     ImageFile { '<res>/images/Statistics-256.png'   }  Transparent { TRUE }
 
 SimEntity               JavaClass { com.jaamsim.ProcessFlow.SimEntity             }  Palette { 'Process Flow' }  DefaultDisplayModel { Sphere                   } IconFile { '<res>/images/SimEntity-24.png'       } DefaultSize { 0.5 0.5 0.5 m }
+EntityLauncher          JavaClass { com.jaamsim.ProcessFlow.EntityLauncher        }  Palette { 'Process Flow' }  DefaultDisplayModel { SourceIconModel          } IconFile { '<res>/images/Source-24.png'          }
 EntityGenerator         JavaClass { com.jaamsim.ProcessFlow.EntityGenerator       }  Palette { 'Process Flow' }  DefaultDisplayModel { SourceIconModel          } IconFile { '<res>/images/Source-24.png'          }
 EntitySink              JavaClass { com.jaamsim.ProcessFlow.EntitySink            }  Palette { 'Process Flow' }  DefaultDisplayModel { SinkIconModel            } IconFile { '<res>/images/Sink-24.png'            }
 Server                  JavaClass { com.jaamsim.ProcessFlow.Server                }  Palette { 'Process Flow' }  DefaultDisplayModel { ServerIconModel          } IconFile { '<res>/images/Server-24.png'          }
@@ -99,6 +101,7 @@ EntityLogger            JavaClass { com.jaamsim.ProcessFlow.EntityLogger        
 Statistics              JavaClass { com.jaamsim.ProcessFlow.Statistics            }  Palette { 'Process Flow' }  DefaultDisplayModel { StatisticsIconModel      } IconFile { '<res>/images/Statistics-24.png'      }
 
 SimEntity          Description { 'The basic entity for use in a process flow type model.' }
+EntityLauncher     Description { 'Create a copy of a prototype entity when clicked by the user.' }
 EntityGenerator    Description { 'Creates copies of a prototype entity at specified intervals.' }
 EntitySink         Description { 'Destroys any entity it receives.' }
 Server             Description { 'Processes a received entity over a specified duration.' }
