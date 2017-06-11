@@ -1506,6 +1506,20 @@ public class InputAgent {
 			return sb.toString();
 		}
 
+		// int[] outputs
+		if (retType == int[].class) {
+			int[] val = out.getValue(simTime, int[].class);
+			sb.append("{");
+			for (int i=0; i<val.length; i++) {
+				if (i > 0)
+					sb.append(COMMA_SEPARATOR);
+				str = String.format("%s", val[i]);
+				sb.append(str);
+			}
+			sb.append("}");
+			return sb.toString();
+		}
+
 		// Vec3d outputs
 		if (retType == Vec3d.class) {
 			Vec3d vec = out.getValue(simTime, Vec3d.class);
