@@ -17,6 +17,7 @@
 package com.jaamsim.ProcessFlow;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleConstant;
@@ -25,6 +26,7 @@ import com.jaamsim.Samples.SampleProvider;
 import com.jaamsim.input.EntityListInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.Keyword;
+import com.jaamsim.input.Output;
 import com.jaamsim.units.DimensionlessUnit;
 
 public class Seize extends LinkedService {
@@ -36,6 +38,8 @@ public class Seize extends LinkedService {
 	@Keyword(description = "The number of units to seize from the Resource(s).",
 	         exampleList = {"{ 2 } { 1 }", "{ DiscreteDistribution1 } { 'this.obj.attrib1 + 1' }"})
 	private final SampleListInput numberOfUnitsList;
+
+	private int[] seizedUnits = new int[1];  // resource units seized by the last entity
 
 	{
 		processPosition.setHidden(true);
@@ -64,6 +68,12 @@ public class Seize extends LinkedService {
 	public void validate() {
 		super.validate();
 		Input.validateInputSize(resourceList, numberOfUnitsList);
+	}
+
+	@Override
+	public void earlyInit() {
+		super.earlyInit();
+		seizedUnits = new int[resourceList.getListSize()];
 	}
 
 	@Override
@@ -133,10 +143,17 @@ public class Seize extends LinkedService {
 	 */
 	public void seizeResources() {
 		double simTime = this.getSimTime();
-		ArrayList<Resource> resList = resourceList.getValue();
+
+		// Set the number of resources to seize
 		ArrayList<SampleProvider> numberList = numberOfUnitsList.getValue();
+		for (int i=0; i<numberList.size(); i++) {
+			seizedUnits[i] = (int)numberList.get(i).getNextSample(simTime);
+		}
+
+		// Seize the resources
+		ArrayList<Resource> resList = resourceList.getValue();
 		for (int i=0; i<resList.size(); i++) {
-			resList.get(i).seize((int)numberList.get(i).getNextSample(simTime));
+			resList.get(i).seize(seizedUnits[i]);
 		}
 	}
 
@@ -153,6 +170,14 @@ public class Seize extends LinkedService {
 		if (resourceList.getValue() == null)
 			return false;
 		return resourceList.getValue().contains(res);
+	}
+
+	@Output(name = "SeizedUnits",
+	 description = "The number of resource units seized by the last entity.",
+	    unitType = DimensionlessUnit.class,
+	    sequence = 1)
+	public int[] getSeizedUnits(double simTime) {
+		return Arrays.copyOf(seizedUnits, seizedUnits.length);
 	}
 
 }
