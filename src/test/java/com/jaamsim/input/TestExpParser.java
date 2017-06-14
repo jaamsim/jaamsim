@@ -44,7 +44,7 @@ public class TestExpParser {
 			ExpResult nextKey = colIt.nextKey();
 			ExpResult nextVal = col.index(nextKey);
 			assertTrue(nextVal.type == ExpResType.NUMBER);
-			assertTrue(val == nextVal.value);
+			assertTrue(Math.abs(val - nextVal.value) < 0.00001);
 		}
 	}
 
@@ -596,7 +596,7 @@ public class TestExpParser {
 		assertTrue(val.type == ExpResType.NUMBER);
 		assertTrue(val.value == 42);
 
-		exp = ExpParser.parseExpression(pc, "|x|(|y|(x*y)(2))(21)");
+		exp = ExpParser.parseExpression(pc, "|x,y|(|z|(x*y*z)(2))(3,7)");
 		val = exp.evaluate(ec);
 		assertTrue(val.type == ExpResType.NUMBER);
 		assertTrue(val.value == 42);
@@ -634,8 +634,60 @@ public class TestExpParser {
 		assertTrue(val.type == ExpResType.NUMBER);
 		assertTrue(val.value == 120);
 
+		exp = ExpParser.parseExpression(pc, "sort( |x, y|(x<y), {5,2,3,42,4,1} )");
+		val = exp.evaluate(ec);
+		assertTrue(val.type == ExpResType.COLLECTION);
+		double[] sortVals = {1, 2, 3, 4, 5, 42};
+		assertColSame(sortVals, val.colVal);
+
 	}
 
+	@Test
+	public void testLocalVars() throws ExpError {
+		ExpParser.Expression exp = ExpParser.parseExpression(pc, "x = 2; y = x*3; z = 7; y*z");
+		ExpResult val = exp.evaluate(ec);
+		assertTrue(val.type == ExpResType.NUMBER);
+		assertTrue(val.value == 42);
+
+		exp = ExpParser.parseExpression(pc, "array = {1,2,4,21}; mapped = map(|x|(x*2), array); filter(|x|(x>20), mapped)");
+		val = exp.evaluate(ec);
+		assertTrue(val.type == ExpResType.COLLECTION);
+		double[] vals = {42};
+		assertColSame(vals, val.colVal);
+	}
+
+	@Test
+	public void testRange() throws ExpError {
+
+		ExpParser.Expression exp = ExpParser.parseExpression(pc, "range(5)");
+		ExpResult val = exp.evaluate(ec);
+		assertTrue(val.type == ExpResType.COLLECTION);
+
+		double[] vals0 = {1, 2, 3, 4, 5};
+		assertColSame(vals0, val.colVal);
+
+		exp = ExpParser.parseExpression(pc, "range(10, 15)");
+		val = exp.evaluate(ec);
+		assertTrue(val.type == ExpResType.COLLECTION);
+
+		double[] vals1 = {10, 11, 12, 13, 14, 15};
+		assertColSame(vals1, val.colVal);
+
+		exp = ExpParser.parseExpression(pc, "range(1, 2, 0.2)");
+		val = exp.evaluate(ec);
+		assertTrue(val.type == ExpResType.COLLECTION);
+
+		double[] vals2 = {1.0, 1.2, 1.4, 1.6, 1.8, 2.0};
+		assertColSame(vals2, val.colVal);
+
+		exp = ExpParser.parseExpression(pc, "range(2, 1)");
+		val = exp.evaluate(ec);
+		assertTrue(val.type == ExpResType.COLLECTION);
+
+		double[] vals3 = { };
+		assertColSame(vals3, val.colVal);
+
+	}
 
 	@Test
 	public void testUnits() throws ExpError {
