@@ -99,6 +99,8 @@ public abstract class Input<T> {
 	protected static final String VALID_FILE = "Accepts a file path enclosed by single quotes.";
 	protected static final String VALID_DIR = "Accepts a directory path enclosed by single quotes.";
 	protected static final String VALID_EXP = "Accepts an expression that returns a dimensionless number. A value of zero implies FALSE; non-zero implies TRUE.";
+	protected static final String VALID_KEYEVENT = "Accepts a single character representing a key on the keyboard. "
+	                                             + "For non-printing keys, enter the key's name such as HOME, ESCAPE, SPACE, F1, etc.";
 
 	public static final String POSITIVE_INFINITY = "Infinity";
 	public static final String NEGATIVE_INFINITY = "-Infinity";
