@@ -756,6 +756,12 @@ public final class EventManager {
 			if (trcListener != null)
 				trcListener.traceSchedProcess(this, currentTick, schedTick, eventPriority, t);
 			node.addEvent(evt, fifo);
+
+			// During real-time waits an event can be inserted becoming the next event to execute
+			// If nextTick is not updated, we can fall through the entire time update code and not
+			// execute this event, leading to the state machine becoming broken
+			if (nextTick > eventTree.getNextNode().schedTick)
+				nextTick = eventTree.getNextNode().schedTick;
 		}
 	}
 
