@@ -29,6 +29,7 @@ Define ObjectType {
 }
 
 Define	ImageModel {
+	EntityLauncherIconModel
 	SourceIconModel
 	SinkIconModel
 	ServerIconModel
@@ -51,6 +52,7 @@ Define	ImageModel {
 	StatisticsIconModel
 }
 
+EntityLauncherIconModel ImageFile { '<res>/images/EntityLauncher-256.png' }  Transparent { TRUE }
 SourceIconModel         ImageFile { '<res>/images/Source-256.png'       }  Transparent { TRUE }
 SinkIconModel           ImageFile { '<res>/images/Sink-256.png'         }  Transparent { TRUE }
 ServerIconModel         ImageFile { '<res>/images/Server-256.png'       }  Transparent { TRUE }
@@ -73,7 +75,7 @@ EntityLoggerIconModel   ImageFile { '<res>/images/EntityLogger-256.png' }  Trans
 StatisticsIconModel     ImageFile { '<res>/images/Statistics-256.png'   }  Transparent { TRUE }
 
 SimEntity               JavaClass { com.jaamsim.ProcessFlow.SimEntity             }  Palette { 'Process Flow' }  DefaultDisplayModel { Sphere                   } IconFile { '<res>/images/SimEntity-24.png'       } DefaultSize { 0.5 0.5 0.5 m }
-EntityLauncher          JavaClass { com.jaamsim.ProcessFlow.EntityLauncher        }  Palette { 'Process Flow' }  DefaultDisplayModel { SourceIconModel          } IconFile { '<res>/images/Source-24.png'          }
+EntityLauncher          JavaClass { com.jaamsim.ProcessFlow.EntityLauncher        }  Palette { 'Process Flow' }  DefaultDisplayModel { EntityLauncherIconModel  } IconFile { '<res>/images/EntityLauncher-24.png'  }
 EntityGenerator         JavaClass { com.jaamsim.ProcessFlow.EntityGenerator       }  Palette { 'Process Flow' }  DefaultDisplayModel { SourceIconModel          } IconFile { '<res>/images/Source-24.png'          }
 EntitySink              JavaClass { com.jaamsim.ProcessFlow.EntitySink            }  Palette { 'Process Flow' }  DefaultDisplayModel { SinkIconModel            } IconFile { '<res>/images/Sink-24.png'            }
 Server                  JavaClass { com.jaamsim.ProcessFlow.Server                }  Palette { 'Process Flow' }  DefaultDisplayModel { ServerIconModel          } IconFile { '<res>/images/Server-24.png'          }
