@@ -97,7 +97,6 @@ public class TimeSeries extends DisplayEntity implements TimeSeriesProvider {
 
 		if (in == unitType) {
 			value.setUnitType( unitType.getUnitType() );
-			this.getOutputHandle("PresentValue").setUnitType( unitType.getUnitType() );
 			return;
 		}
 	}

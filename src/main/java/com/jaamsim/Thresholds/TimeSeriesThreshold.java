@@ -106,7 +106,6 @@ public class TimeSeriesThreshold extends Threshold {
 			timeSeries.setUnitType(this.getUnitType());
 			maxOpenLimit.setUnitType(this.getUnitType());
 			minOpenLimit.setUnitType(this.getUnitType());
-			this.getOutputHandle("TimeSeriesValue").setUnitType(this.getUnitType());
 		}
 	}
 
