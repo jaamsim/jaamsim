@@ -9,6 +9,7 @@ import com.jaamsim.input.ExpParser.BinOpFunc;
 import com.jaamsim.input.ExpParser.CallableFunc;
 import com.jaamsim.input.ExpParser.EvalContext;
 import com.jaamsim.input.ExpParser.LambdaClosure;
+import com.jaamsim.input.ExpParser.LazyBinOpFunc;
 import com.jaamsim.input.ExpParser.ParseContext;
 import com.jaamsim.input.ExpParser.UnOpFunc;
 import com.jaamsim.units.AngleUnit;
@@ -23,6 +24,10 @@ public class ExpOperators {
 
 	private static void addBinaryOp(String symbol, double bindPower, boolean rAssoc, BinOpFunc func) {
 		ExpParser.addBinaryOp(symbol, bindPower, rAssoc, func);
+	}
+
+	private static void addLazyBinaryOp(String symbol, double bindPower, boolean rAssoc, LazyBinOpFunc func) {
+		ExpParser.addLazyBinaryOp(symbol, bindPower, rAssoc, func);
 	}
 
 	private static void addFunction(String name, int numMinArgs, int numMaxArgs, CallableFunc func) {
@@ -629,15 +634,22 @@ public class ExpOperators {
 			}
 		});
 
-		addBinaryOp("&&", 8, false, new BinOpFunc() {
+		addLazyBinaryOp("&&", 8, false, new LazyBinOpFunc() {
 			@Override
-			public void checkTypeAndUnits(ParseContext context, ExpResult lval,
-					ExpResult rval, String source, int pos) throws ExpError {
-				checkBothNumbers(lval, rval, source, pos);
-			}
-			@Override
-			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval, String source, int pos){
-				return ExpResult.makeNumResult((lval.value!=0) && (rval.value!=0) ? 1 : 0, DimensionlessUnit.class);
+			public ExpResult apply(ParseContext pc, EvalContext ec, ExpParser.ExpNode lval, ExpParser.ExpNode rval, String source, int pos) throws ExpError{
+				ExpResult lRes = lval.evaluate(ec);
+				if (lRes.type != ExpResType.NUMBER) {
+					throw new ExpError(source, pos, "Left operand of '&&' must be a number");
+				}
+				if (lRes.value == 0)
+					return ExpResult.makeNumResult(0, DimensionlessUnit.class);
+
+				ExpResult rRes = rval.evaluate(ec);
+				if (rRes.type != ExpResType.NUMBER) {
+					throw new ExpError(source, pos, "Right operand of '&&' must be a number");
+				}
+
+				return ExpResult.makeNumResult((rRes.value!=0) ? 1 : 0, DimensionlessUnit.class);
 			}
 			@Override
 			public ExpValResult validate(ParseContext context, ExpValResult lval, ExpValResult rval, String source, int pos) {
@@ -645,15 +657,22 @@ public class ExpOperators {
 			}
 		});
 
-		addBinaryOp("||", 6, false, new BinOpFunc() {
+		addLazyBinaryOp("||", 6, false, new LazyBinOpFunc() {
 			@Override
-			public void checkTypeAndUnits(ParseContext context, ExpResult lval,
-					ExpResult rval, String source, int pos) throws ExpError {
-				checkBothNumbers(lval, rval, source, pos);
-			}
-			@Override
-			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval, String source, int pos){
-				return ExpResult.makeNumResult((lval.value!=0) || (rval.value!=0) ? 1 : 0, DimensionlessUnit.class);
+			public ExpResult apply(ParseContext pc, EvalContext ec, ExpParser.ExpNode lval, ExpParser.ExpNode rval, String source, int pos) throws ExpError{
+				ExpResult lRes = lval.evaluate(ec);
+				if (lRes.type != ExpResType.NUMBER) {
+					throw new ExpError(source, pos, "Left operand of '||' must be a number");
+				}
+				if (lRes.value != 0)
+					return ExpResult.makeNumResult(1, DimensionlessUnit.class);
+
+				ExpResult rRes = rval.evaluate(ec);
+				if (rRes.type != ExpResType.NUMBER) {
+					throw new ExpError(source, pos, "Right operand of '||' must be a number");
+				}
+
+				return ExpResult.makeNumResult((rRes.value!=0) ? 1 : 0, DimensionlessUnit.class);
 			}
 			@Override
 			public ExpValResult validate(ParseContext context, ExpValResult lval, ExpValResult rval, String source, int pos) {
