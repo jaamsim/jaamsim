@@ -103,6 +103,11 @@ public class EntityListInput<T extends Entity> extends ListInput<ArrayList<T>> {
 	}
 
 	@Override
+	public String getValidInputDesc() {
+		return Input.VALID_ENTITY_LIST;
+	}
+
+	@Override
 	public int getListSize() {
 		if (value == null)
 			return 0;

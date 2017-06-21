@@ -101,6 +101,18 @@ public abstract class Input<T> {
 	protected static final String VALID_EXP = "Accepts an expression that returns a dimensionless number. A value of zero implies FALSE; non-zero implies TRUE.";
 	protected static final String VALID_KEYEVENT = "Accepts a single character representing a key on the keyboard. "
 	                                             + "For non-printing keys, enter the key's name such as HOME, ESCAPE, SPACE, F1, etc.";
+	protected static final String VALID_VALUE_LIST = "Accepts a list of numbers separated by spaces, followed by a unit for these values, if required.";
+	protected static final String VALID_VALUE_LIST_DIMLESS = "Accepts a list of dimensionless numbers separated by spaces.";
+	protected static final String VALID_SAMPLE_LIST = "Accepts a list containing numbers with or without units, objects that return such a number, or expressions that return such a number. "
+	                                                + "Each entry in the list must be enclosed by braces.";
+	protected static final String VALID_SAMPLE_LIST_DIMLESS = "Accepts a list containing dimensionless numbers, objects that return such a number, or expressions that return such a number. "
+	                                                        + "Each entry in the list must be enclosed by braces.";
+	protected static final String VALID_UNIT_TYPE_LIST = "Accepts a list of unit types separated by spaces.";
+	protected static final String VALID_STRING_PROV_LIST = "Accepts a list of expressions that return a number, string, entity, or array. "
+	                                                     + "Each entry in the list must be enclosed by braces.";
+	protected static final String VALID_COLOR_LIST = "Accepts a list of colours that are expressed as either a colour name or an RGB value. "
+	                                               + "Each entry in the list must be enclosed by braces.";
+	protected static final String VALID_ENTITY_LIST = "Accepts a list of entity names separated by spaces.";
 
 	public static final String POSITIVE_INFINITY = "Infinity";
 	public static final String NEGATIVE_INFINITY = "-Infinity";

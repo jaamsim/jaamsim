@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2015 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2017 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,6 +30,7 @@ import com.jaamsim.units.Unit;
 public class SampleListInput extends ListInput<ArrayList<SampleProvider>> {
 
 	private ArrayList<Class<? extends Unit>> unitTypeList;
+	private boolean dimensionless = false;
 	private Entity thisEnt;
 	private double minValue = Double.NEGATIVE_INFINITY;
 	private double maxValue = Double.POSITIVE_INFINITY;
@@ -61,6 +63,10 @@ public class SampleListInput extends ListInput<ArrayList<SampleProvider>> {
 		ArrayList<Class<? extends Unit>> utList = new ArrayList<>(1);
 		utList.add(u);
 		this.setUnitTypeList(utList);
+	}
+
+	public void setDimensionless(boolean bool) {
+		dimensionless = bool;
 	}
 
 	/**
@@ -107,6 +113,14 @@ public class SampleListInput extends ListInput<ArrayList<SampleProvider>> {
 		}
 		value = temp;
 		this.setValid(true);
+	}
+
+	@Override
+	public String getValidInputDesc() {
+		if (dimensionless) {
+			return Input.VALID_SAMPLE_LIST_DIMLESS;
+		}
+		return Input.VALID_SAMPLE_LIST;
 	}
 
 	@Override
