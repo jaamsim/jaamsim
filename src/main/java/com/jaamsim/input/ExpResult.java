@@ -126,6 +126,8 @@ public class ExpResult {
 			return String.format("[%s]", entVal.getName());
 		case COLLECTION:
 			return colVal.getOutputString();
+		case LAMBDA:
+			return "lambda|" + lcVal.getNumParams()+"|";
 
 		default:
 			assert(false);

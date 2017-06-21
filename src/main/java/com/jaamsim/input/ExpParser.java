@@ -336,11 +336,20 @@ public class ExpParser {
 
 		public ExpResult evaluate(EvalContext ec, ArrayList<ExpResult> params) throws ExpError {
 			// Fill in the context
-			for (int i = 0; i < params.size(); ++i) {
-				vars.set(i, params.get(i));
+
+			ArrayList<ExpResult> close = new ArrayList<>(vars.size());
+			for (int i = 0; i < vars.size(); ++i) {
+				if (i < params.size())
+					close.add(params.get(i));
+				else {
+					close.add(vars.get(i));
+				}
 			}
-			ec.pushClosure(vars);
-			return body.evaluate(ec);
+			ec.pushClosure(close);
+			ExpResult ret = body.evaluate(ec);
+			ec.popClosure();
+
+			return ret;
 		}
 
 		public int getNumParams() {

@@ -666,6 +666,30 @@ public class TestExpParser {
 	}
 
 	@Test
+	public void testRecursion() throws ExpError {
+		String expStr = "" ;
+		expStr += "recFact = |val, rec| ( (val < 1) ? 1 : val * rec(val-1, rec) );";
+		expStr += "fact = |val|( recFact(val, recFact) );";
+		expStr += "fact(6)";
+		ExpParser.Expression exp = ExpParser.parseExpression(pc, expStr);
+		ExpResult val = exp.evaluate(ec);
+		assertTrue(val.type == ExpResType.NUMBER);
+		assertTrue(val.value == 720);
+
+		expStr = "" ;
+		expStr += "thresh = 3;";
+		expStr += "num = 12;";
+		expStr += "recFib = |val, rf| ( (val < thresh) ? 1 : (rf(val-2, rf) + rf(val-1, rf)) );";
+		expStr += "fib = |val| (recFib(val, recFib) );";
+		expStr += "fib(num)";
+		exp = ExpParser.parseExpression(pc, expStr);
+		val = exp.evaluate(ec);
+		assertTrue(val.type == ExpResType.NUMBER);
+		assertTrue(val.value == 144);
+
+	}
+
+	@Test
 	public void testRange() throws ExpError {
 
 		ExpParser.Expression exp = ExpParser.parseExpression(pc, "range(5)");
