@@ -138,4 +138,27 @@ public class ExpResult {
 		return getOutputString();
 	}
 
+	@Override
+	public boolean equals(Object o) {
+		if (ExpResult.class != o.getClass()) {
+			return false;
+		}
+		ExpResult other = (ExpResult)o;
+
+		switch (type) {
+		case NUMBER:
+			return this.value == other.value && this.unitType == other.unitType;
+		case STRING:
+			return this.stringVal.equals(other.stringVal);
+		case ENTITY:
+			return this.entVal == other.entVal;
+		case COLLECTION:
+			return this.colVal == other.colVal;
+
+		default:
+			return false;
+		}
+
+	}
+
 }

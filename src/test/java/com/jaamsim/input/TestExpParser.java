@@ -529,6 +529,15 @@ public class TestExpParser {
 		val = exp.evaluate(ec).value;
 		assertTrue(val == 1);
 
+		exp = ExpParser.parseExpression(vtpc, "indexOf([Arrays].intArray, 42)");
+		val = exp.evaluate(ec).value;
+		assertTrue(val == 4);
+
+		exp = ExpParser.parseExpression(vtpc, "indexOf([Maps].map1, 42)");
+		res = exp.evaluate(ec);
+		assertTrue(res.type == ExpResType.STRING);
+		assertTrue(res.stringVal.equals("everything"));
+
 		exp = ExpParser.parseExpression(vtpc, "[Arrays].intArray(4)");
 		val = exp.evaluate(ec).value;
 		assertTrue(val == 42);

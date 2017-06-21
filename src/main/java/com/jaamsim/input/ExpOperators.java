@@ -1215,6 +1215,45 @@ public class ExpOperators {
 			}
 		});
 
+		addFunction("indexOf", 2, 2, new CallableFunc() {
+			@Override
+			public void checkUnits(ParseContext context, ExpResult[] args,
+					String source, int pos) throws ExpError {
+			}
+
+			@Override
+			public ExpResult call(EvalContext context, ExpResult[] args, String source, int pos) throws ExpError {
+				if (args[0].type != ExpResType.COLLECTION) {
+					throw new ExpError(source, pos, "Expected Collection type argument as first argument.");
+				}
+
+				ExpResult.Collection col = args[0].colVal;
+				ExpResult val = args[1];
+
+				ExpResult.Iterator it = col.getIter();
+				if (!it.hasNext()) {
+					throw new ExpError(source, pos, "Can not get index of empty collection.");
+				}
+
+				while (it.hasNext()) {
+					ExpResult key = it.nextKey();
+					ExpResult colVal = col.index(key);
+					if (colVal.equals(val)) {
+						return key;
+					}
+				}
+				throw new ExpError(source, pos, "'indexof' failed. Value is not in collection.");
+			}
+
+			@Override
+			public ExpValResult validate(ParseContext context, ExpValResult[] args, String source, int pos) {
+				if (args[1].state == ExpValResult.State.ERROR || args[1].state == ExpValResult.State.UNDECIDABLE) {
+					return args[1];
+				}
+				return validateCollection(context, args[0], source, pos);
+			}
+		});
+
 		addFunction("map", 2, 2, new CallableFunc() {
 			@Override
 			public void checkUnits(ParseContext context, ExpResult[] args,
