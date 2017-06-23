@@ -44,32 +44,38 @@ import com.jaamsim.units.UserSpecifiedUnit;
 public class ExpressionLogger extends Logger implements StateEntityListener {
 
 	@Keyword(description = "A fixed interval at which entries will be written to the log file. "
-			+ "This input is optional if state tracing or value tracing is specified.",
+	                     + "This input is optional if state tracing or value tracing is "
+	                     + "specified.",
 	         exampleList = { "24.0 h" })
 	private final ValueInput interval;
 
 	@Keyword(description = "A list of entities whose states will be traced. "
-			+ "An entry in the log file is made every time one of the entities changes state. "
-			+ "Each entity's state is written automatically to the log file - it is not necessary "
-			+ "to add an expression to the DataSource keyword's input.",
+	                     + "An entry in the log file is made every time one of the entities "
+	                     + "changes state. "
+	                     + "Each entity's state is included automatically in the log file.",
 	         exampleList = { "Server1 ExpressionThreshold1" })
 	private final EntityListInput<StateEntity> stateTraceList;
 
-	@Keyword(description = "The unit types for the values being traced.",
+	@Keyword(description = "The unit types for the sources of data specified by the "
+	                     + "'ValueTraceList' keyword. "
+	                     + "If only one unit type is given, then that unit type is used for all "
+	                     + "the values.",
 	         exampleList = {"DistanceUnit  SpeedUnit"})
 	private final UnitTypeListInput valueUnitTypeList;
 
-	@Keyword(description = "One or more sources of data whose values will be traced. An entry in "
-			+ "the log file is made every time one of the data sources changes value. "
-			+ "Each data source's value is written automatically to the log file - it is not "
-			+ "necessary to add an expression to the DataSource keyword's input.\n\n"
-			+ "Each source is specified by an Expression. Also acceptable are: "
-			+ "a constant value, a Probability Distribution, TimeSeries, or a Calculation Object.",
+	@Keyword(description = "One or more sources of data whose values will be traced. "
+	                     + "An entry in the log file is made every time one of the data sources "
+	                     + "changes value. "
+	                     + "Each data source's value is included automatically in the log file. "
+	                     + "BEFORE entering this input, specify the unit types for the data "
+	                     + "sources using the 'ValueUnitTypeList' keyword.",
 	         exampleList = {"{ [Entity1].Output1 } { [Entity2].Output2 }"})
 	private final SampleListInput valueTraceList;
 
-	@Keyword(description = "The number of decimal places to show for each value in valueTraceList."
-			+ "  If only one number is given, then that number of decimal places is used for all values.",
+	@Keyword(description = "The number of decimal places to show for each value specified by the "
+	                     + "input to the 'ValueTraceList' keyword. "
+	                     + "If only one number is given, then that number of decimal places is "
+	                     + "used for all values.",
 	         exampleList = "1 1")
 	private final IntegerListInput valuePrecisionList;
 
