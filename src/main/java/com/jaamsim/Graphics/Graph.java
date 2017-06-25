@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2009-2012 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2017 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,54 +40,51 @@ public class Graph extends GraphBasics  {
 
 	// Key Inputs category
 
-	@Keyword(description = "The number of data points that can be displayed on the graph.\n" +
-			" This parameter determines the resolution of the graph.",
+	@Keyword(description = "The number of data points for each line on the graph.",
 	         exampleList = {"200"})
 	protected final IntegerInput numberOfPoints;
 
-	@Keyword(description = "The unit type for the primary y-axis.",
+	@Keyword(description = "The unit type for the primary y-axis. "
+	                     + "MUST be entered before most other inputs for this axis.",
 	         exampleList = {"DistanceUnit"})
 	private final UnitTypeInput unitType;
 
-	@Keyword(description = "One or more sources of data to be graphed on the primary y-axis.\n" +
-			"Each source is graphed as a separate line and is specified by an Expression. Also" +
-			"acceptable are: a constant value, a Probability Distribution, TimeSeries, or a " +
-			"Calculation Object.",
+	@Keyword(description = "One or more sources of data to be graphed against the primary y-axis. "
+	                     + "Each source is graphed as a separate line. "
+	                     + "BEFORE entering this input, specify the unit type for the primary "
+	                     + "y-axis using the 'UnitType' keyword.",
 	         exampleList = {"{ [Entity1].Output1 } { [Entity2].Output2 }"})
 	protected final SampleListInput dataSource;
 
-	@Keyword(description = "A list of colors for the line series to be displayed.\n" +
-			"Each color can be specified by either a color keyword or an RGB value.\n" +
-			"For multiple lines, each color must be enclosed in braces.\n" +
-			"If only one color is provided, it is used for all the lines.",
+	@Keyword(description = "A list of colours for the lines graphed against the primary y-axis. "
+	                     + "If only one colour is provided, it is used for all the lines.",
 	         exampleList = {"{ red } { green }"})
 	protected final ColorListInput lineColorsList;
 
-	@Keyword(description = "A list of line widths (in pixels) for the line series to be displayed.\n" +
-			"If only one line width is provided, it is used for all the lines.",
+	@Keyword(description = "A list of line widths (in pixels) for the line series to be displayed. "
+	                     + "If only one line width is provided, it is used for all the lines.",
 	         exampleList = {"2 1"})
 	protected final ValueListInput lineWidths;
 
-	@Keyword(description = "The unit type for the secondary y-axis.",
+	@Keyword(description = "The unit type for the secondary y-axis. "
+	                     + "MUST be entered before most other inputs for this axis.",
 	         exampleList = {"DistanceUnit"})
 	private final UnitTypeInput secondaryUnitType;
 
-	@Keyword(description = "One or more sources of data to be graphed on the secondary y-axis.\n" +
-			"Each source is graphed as a separate line and is specified by an Expression. Also" +
-			"acceptable are: a constant value, a Probability Distribution, TimeSeries, or a " +
-			"Calculation Object.",
+	@Keyword(description = "One or more sources of data to be graphed against the secondary y-axis. "
+	                     + "Each source is graphed as a separate line. "
+	                     + "BEFORE entering this input, specify the unit type for the secondary "
+	                     + "y-axis using the 'SecondaryUnitType' keyword.",
 	         exampleList = {"{ [Entity1].Output1 } { [Entity2].Output2 }"})
 	protected final SampleListInput secondaryDataSource;
 
-	@Keyword(description = "A list of colors for the secondary line series to be displayed.\n" +
-			"Each color can be specified by either a color keyword or an RGB value.\n" +
-			"For multiple lines, each color must be enclosed in braces.\n" +
-			"If only one color is provided, it is used for all the lines.",
+	@Keyword(description = "A list of colours for the lines graphed against the secondary y-axis. "
+	                     + "If only one colour is provided, it is used for all the lines.",
 	         exampleList = {"{ red } { green }"})
 	protected final ColorListInput secondaryLineColorsList;
 
-	@Keyword(description = "A list of line widths (in pixels) for the seconardy line series to be displayed.\n" +
-			"If only one line width is provided, it is used for all the lines.",
+	@Keyword(description = "A list of line widths (in pixels) for the seconardy line series to be displayed. "
+	                     + "If only one line width is provided, it is used for all the lines.",
 	         exampleList = {"2 1"})
 	protected final ValueListInput secondaryLineWidths;
 
