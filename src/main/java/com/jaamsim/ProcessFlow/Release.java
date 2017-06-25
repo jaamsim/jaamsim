@@ -29,11 +29,12 @@ import com.jaamsim.units.DimensionlessUnit;
 
 public class Release extends LinkedComponent {
 
-	@Keyword(description = "The Resource(s) to be released.",
+	@Keyword(description = "The Resources from which units are to be released.",
 	         exampleList = {"Resource1 Resource2"})
 	private final EntityListInput<Resource> resourceList;
 
-	@Keyword(description = "The number of units to release from the Resource(s).",
+	@Keyword(description = "The number of units to release from the Resources specified by the "
+	                     + "'ResourceList' keyword.",
 	         exampleList = {"{ 2 } { 1 }", "{ DiscreteDistribution1 } { 'this.obj.attrib1 + 1' }"})
 	private final SampleListInput numberOfUnitsList;
 
@@ -48,8 +49,9 @@ public class Release extends LinkedComponent {
 		numberOfUnitsList = new SampleListInput("NumberOfUnits", "Key Inputs", def);
 		numberOfUnitsList.setEntity(this);
 		numberOfUnitsList.setValidRange(1, Double.POSITIVE_INFINITY);
+		numberOfUnitsList.setDimensionless(true);
 		numberOfUnitsList.setUnitType(DimensionlessUnit.class);
-		this.addInput( numberOfUnitsList);
+		this.addInput(numberOfUnitsList);
 	}
 
 	@Override

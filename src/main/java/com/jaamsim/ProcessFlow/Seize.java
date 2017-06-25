@@ -31,11 +31,12 @@ import com.jaamsim.units.DimensionlessUnit;
 
 public class Seize extends LinkedService {
 
-	@Keyword(description = "The Resource(s) to be seized.",
+	@Keyword(description = "The Resources from which units are to be seized.",
 	         exampleList = {"Resource1 Resource2"})
 	private final EntityListInput<Resource> resourceList;
 
-	@Keyword(description = "The number of units to seize from the Resource(s).",
+	@Keyword(description = "The number of units to seize from the Resources specified by the "
+	                     + "'ResourceList' keyword.",
 	         exampleList = {"{ 2 } { 1 }", "{ DiscreteDistribution1 } { 'this.obj.attrib1 + 1' }"})
 	private final SampleListInput numberOfUnitsList;
 
@@ -61,6 +62,7 @@ public class Seize extends LinkedService {
 		numberOfUnitsList = new SampleListInput("NumberOfUnits", "Key Inputs", def);
 		numberOfUnitsList.setEntity(this);
 		numberOfUnitsList.setValidRange(0, Double.POSITIVE_INFINITY);
+		numberOfUnitsList.setDimensionless(true);
 		numberOfUnitsList.setUnitType(DimensionlessUnit.class);
 		this.addInput(numberOfUnitsList);
 	}
