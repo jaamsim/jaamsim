@@ -37,13 +37,16 @@ import com.jaamsim.units.UserSpecifiedUnit;
  */
 public class DiscreteDistribution extends Distribution {
 
-	@Keyword(description = "The list of discrete values that can be returned by the distribution.  " +
-			"The values can be any positive or negative and can be listed in any order.  " +
-			"No interpolation is performed between these values.",
-	         exampleList = {"6.2 10.1"})
+	@Keyword(description = "The discrete values that can be returned by the distribution. "
+	                     + "The values can be any positive or negative and can be listed in any "
+	                     + "order. "
+	                     + "No interpolation is performed between the values.",
+	         exampleList = {"6.2 10.1", "3.5 4.5 6.5 km"})
 	private final ValueListInput valueListInput;
 
-	@Keyword(description = "The list of probabilities corresponding to the discrete values in the ValueList.  Must sum to 1.0.",
+	@Keyword(description = "The probabilities corresponding to the values in the 'ValueList' "
+	                     + "input. "
+	                     + "Must sum to 1.0.",
 	         exampleList = {"0.3  0.7"})
 	private final ValueListInput probabilityListInput;
 
