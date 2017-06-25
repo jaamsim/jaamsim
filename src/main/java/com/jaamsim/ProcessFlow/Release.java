@@ -38,9 +38,10 @@ public class Release extends LinkedComponent {
 	private final SampleListInput numberOfUnitsList;
 
 	{
-		resourceList = new EntityListInput<>(Resource.class, "Resource", "Key Inputs", null);
+		resourceList = new EntityListInput<>(Resource.class, "ResourceList", "Key Inputs", null);
 		resourceList.setRequired(true);
 		this.addInput( resourceList);
+		this.addSynonym(resourceList, "Resource");
 
 		ArrayList<SampleProvider> def = new ArrayList<>();
 		def.add(new SampleConstant(1));
