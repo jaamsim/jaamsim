@@ -72,19 +72,17 @@ public class DisplayEntity extends Entity {
 	         exampleList = {"-0.5 -0.5 0.0"})
 	protected final Vec3dInput alignmentInput;
 
-	@Keyword(description = "The size of the object in {x, y, z} coordinates. If only the x- and "
-	                     + "y-dimensions are given then the z-dimension is assumed to be zero.",
+	@Keyword(description = "The size of the object in {x, y, z} coordinates.",
 	         exampleList = {"15 12 0 m"})
 	protected final Vec3dInput sizeInput;
 
 	@Keyword(description = "Euler angles defining the rotation of the object.",
-			exampleList = {"0 0 90 deg"})
+	         exampleList = {"0 0 90 deg"})
 	private final Vec3dInput orientationInput;
 
-	@Keyword(description = "A list of points in {x, y, z} coordinates that define a polyline. "
-	                     + "When only two coordinates are given it is assumed that z = 0." ,
-             exampleList = {"{ 1.0 1.0 0.0 m } { 2.0 2.0 0.0 m } { 3.0 3.0 0.0 m }",
-			                "{ 1.0 1.0 m } { 2.0 2.0 m } { 3.0 3.0 m }"})
+	@Keyword(description = "A list of points in {x, y, z} coordinates that defines a polyline.",
+	         exampleList = {"{ 1.0 1.0 0.0 m } { 2.0 2.0 0.0 m } { 3.0 3.0 0.0 m }",
+	                       "{ 1.0 1.0 m } { 2.0 2.0 m } { 3.0 3.0 m }"})
 	protected final Vec3dListInput pointsInput;
 
 	@Keyword(description = "The type of curve interpolation used for line type entities.",
