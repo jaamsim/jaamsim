@@ -113,6 +113,7 @@ public abstract class Input<T> {
 	protected static final String VALID_COLOR_LIST = "Accepts a list of colours that are expressed as either a colour name or an RGB value. "
 	                                               + "Each entry in the list must be enclosed by braces.";
 	protected static final String VALID_ENTITY_LIST = "Accepts a list of entity names separated by spaces.";
+	protected static final String VALID_FORMAT = "Accepts a Java format string for a number. For example, '%.3f' would print a number with three decimal places.";
 
 	public static final String POSITIVE_INFINITY = "Infinity";
 	public static final String NEGATIVE_INFINITY = "-Infinity";
