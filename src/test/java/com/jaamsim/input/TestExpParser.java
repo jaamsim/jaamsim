@@ -621,6 +621,12 @@ public class TestExpParser {
 		double[] mapVals = {2, 4, 6, 42};
 		assertColSame(mapVals, val.colVal);
 
+		exp = ExpParser.parseExpression(pc, "map(|x, key|(key*2), {1, 2, 3, 21})");
+		val = exp.evaluate(ec);
+		assertTrue(val.type == ExpResType.COLLECTION);
+		double[] mapVals2 = {2, 4, 6, 8};
+		assertColSame(mapVals2, val.colVal);
+
 		exp = ExpParser.parseExpression(pc, "filter(|x|(x>20), {1, 2, 3, 21, 5, 42})");
 		val = exp.evaluate(ec);
 		assertTrue(val.type == ExpResType.COLLECTION);

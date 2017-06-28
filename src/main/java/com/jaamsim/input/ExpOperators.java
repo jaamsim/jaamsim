@@ -1270,8 +1270,9 @@ public class ExpOperators {
 				}
 
 				LambdaClosure mapFunc = args[0].lcVal;
-				if (mapFunc.getNumParams() != 1) {
-					throw new ExpError(source, pos, "Function passed to 'map' must take one parameter.");
+				int numParams = mapFunc.getNumParams();
+				if (numParams != 1 && numParams != 2) {
+					throw new ExpError(source, pos, "Function passed to 'map' must take one or two parameters.");
 				}
 
 				ExpResult.Collection col = args[1].colVal;
@@ -1279,14 +1280,21 @@ public class ExpOperators {
 
 				Class<? extends Unit> unitType = null;
 				boolean firstVal = true;
-				ArrayList<ExpResult> params = new ArrayList<>(1);
+				ArrayList<ExpResult> params = new ArrayList<>(numParams);
 
 				ArrayList<ExpResult> results = new ArrayList<>();
 				params.add(null);
+
+				if (numParams == 2)
+					params.add(null);
+
 				while (it.hasNext()) {
 					ExpResult key = it.nextKey();
 					ExpResult val = col.index(key);
 					params.set(0, val);
+
+					if (numParams == 2)
+						params.set(1, key);
 
 					ExpResult result = mapFunc.evaluate(context, params);
 
