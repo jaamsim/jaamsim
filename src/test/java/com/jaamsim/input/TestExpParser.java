@@ -633,6 +633,12 @@ public class TestExpParser {
 		double[] filterVals = {21, 42};
 		assertColSame(filterVals, val.colVal);
 
+		exp = ExpParser.parseExpression(pc, "filter(|x, key|(key > 3), {1, 2, 3, 21, 5, 42})");
+		val = exp.evaluate(ec);
+		assertTrue(val.type == ExpResType.COLLECTION);
+		double[] filterVals2 = {21, 5, 42};
+		assertColSame(filterVals2, val.colVal);
+
 		exp = ExpParser.parseExpression(pc, "filter(|x|(x>20), map(|x|(x*2), {1, 2, 3, 11, 5, 21}))");
 		val = exp.evaluate(ec);
 		assertTrue(val.type == ExpResType.COLLECTION);

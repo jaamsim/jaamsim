@@ -1339,9 +1339,10 @@ public class ExpOperators {
 					throw new ExpError(source, pos, "Expected function argument as first argument.");
 				}
 
-				LambdaClosure mapFunc = args[0].lcVal;
-				if (mapFunc.getNumParams() != 1) {
-					throw new ExpError(source, pos, "Function passed to 'filter' must take one parameter.");
+				LambdaClosure filterFunc = args[0].lcVal;
+				int numParams = filterFunc.getNumParams();
+				if (numParams != 1 && numParams != 2) {
+					throw new ExpError(source, pos, "Function passed to 'filter' must take one or two parameters.");
 				}
 
 				ExpResult.Collection col = args[1].colVal;
@@ -1353,12 +1354,17 @@ public class ExpOperators {
 
 				ArrayList<ExpResult> results = new ArrayList<>();
 				params.add(null);
+				if (numParams == 2)
+					params.add(null);
+
 				while (it.hasNext()) {
 					ExpResult key = it.nextKey();
 					ExpResult val = col.index(key);
 					params.set(0, val);
+					if (numParams == 2)
+						params.set(1, key);
 
-					ExpResult result = mapFunc.evaluate(context, params);
+					ExpResult result = filterFunc.evaluate(context, params);
 					if (result.type == ExpResType.NUMBER && result.value != 0) {
 						results.add(val);
 					}
