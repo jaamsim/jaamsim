@@ -1676,6 +1676,45 @@ public class ExpOperators {
 			}
 		});
 
+		addFunction("format", 1, -1, new CallableFunc() {
+			@Override
+			public void checkUnits(ParseContext context, ExpResult[] args,
+					String source, int pos) throws ExpError {
+			}
+
+			@Override
+			public ExpResult call(EvalContext context, ExpResult[] args, String source, int pos) throws ExpError {
+				if (args[0].type != ExpResType.STRING) {
+					throw new ExpError(source, pos, "First parameter to 'format' must be a string");
+				}
+				// Build up the argument list
+				Object[] strArgs = new Object[args.length-1];
+				for (int i = 1; i < args.length; ++i) {
+					strArgs[i-1] = args[i].getFormatString();
+				}
+				String ret = null;
+				try {
+					ret = String.format(args[0].stringVal, strArgs);
+				} catch(RuntimeException e) {
+					throw new ExpError(source, pos, "Error during 'format': %s", e.getMessage());
+				}
+				return ExpResult.makeStringResult(ret);
+			}
+
+			@Override
+			public ExpValResult validate(ParseContext context, ExpValResult[] args, String source, int pos) {
+				ExpValResult mergedErrors = mergeMultipleErrors(args);
+				if (mergedErrors != null)
+					return mergedErrors;
+
+				if (args[0].type != ExpResType.STRING) {
+					ExpError error = new ExpError(source, pos, "First parameter to 'format' must be a string");
+					return ExpValResult.makeErrorRes(error);
+				}
+				return ExpValResult.makeUndecidableRes();
+			}
+		});
+
 		///////////////////////////////////////////////////
 		// Mathematical Constants
 		addFunction("E", 0, 0, new CallableFunc() {

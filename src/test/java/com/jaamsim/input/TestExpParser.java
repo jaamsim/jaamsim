@@ -591,6 +591,17 @@ public class TestExpParser {
 		res = exp.evaluate(ec);
 		assertTrue(res.type == ExpResType.STRING);
 		assertTrue(res.stringVal.equals("stringly"));
+
+		exp = ExpParser.parseExpression(pc, "[[str]] + [[ing]] +  [[ly]]");
+		res = exp.evaluate(ec);
+		assertTrue(res.type == ExpResType.STRING);
+		assertTrue(res.stringVal.equals("stringly"));
+
+		exp = ExpParser.parseExpression(pc, "format([[stri%s%s]], [[ng]],[[ly]])");
+		res = exp.evaluate(ec);
+		assertTrue(res.type == ExpResType.STRING);
+		assertTrue(res.stringVal.equals("stringly"));
+
 	}
 
 	@Test

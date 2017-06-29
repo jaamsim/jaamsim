@@ -127,7 +127,31 @@ public class ExpResult {
 		case COLLECTION:
 			return colVal.getOutputString();
 		case LAMBDA:
-			return "lambda|" + lcVal.getNumParams()+"|";
+			return "function|" + lcVal.getNumParams()+"|";
+
+		default:
+			assert(false);
+			return "???";
+		}
+	}
+
+	// Like 'getOutputString' but does not quote string types, making it more useful in string formaters
+	public String getFormatString() {
+		switch (type) {
+		case NUMBER:
+			double factor = Unit.getDisplayedUnitFactor(unitType);
+			String unitString = Unit.getDisplayedUnit(unitType);
+			if (unitString.isEmpty())
+				return String.format("%s", value);
+			return String.format("%s[%s]", value/factor, unitString);
+		case STRING:
+			return stringVal;
+		case ENTITY:
+			return String.format("[%s]", entVal.getName());
+		case COLLECTION:
+			return colVal.getOutputString();
+		case LAMBDA:
+			return "function|" + lcVal.getNumParams()+"|";
 
 		default:
 			assert(false);
