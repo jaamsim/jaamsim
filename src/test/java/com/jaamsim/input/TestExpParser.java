@@ -710,6 +710,19 @@ public class TestExpParser {
 		assertTrue(val.type == ExpResType.NUMBER);
 		assertTrue(val.value == 144);
 
+		boolean threw = false;
+		try {
+			expStr = "";
+			expStr += "recFunc = |val, rec| ( rec(val, rec) );";
+			expStr += "recFunc(2, recFunc)";
+			exp = ExpParser.parseExpression(pc, expStr);
+			val = exp.evaluate(ec);
+		} catch (ExpError e) {
+			threw = true;
+		}
+		assert(threw);
+
+
 	}
 
 	@Test

@@ -206,7 +206,11 @@ public class ExpParser {
 			ExpResult res = null;
 			try {
 				res = rootNode.evaluate(ec);
-			} finally {
+			}
+			catch (StackOverflowError e) {
+				throw new ExpError(null, 0, "Excessive recursion detected in expression: %s, source");
+			}
+			finally {
 				synchronized(executingThreads) {
 					executingThreads.remove(Thread.currentThread());
 				}
