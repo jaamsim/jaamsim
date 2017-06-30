@@ -375,48 +375,69 @@ public class ExpOperators {
 			public void checkTypeAndUnits(ParseContext context, ExpResult lval,
 					ExpResult rval, String source, int pos) throws ExpError {
 
-				boolean bothNumbers = (lval.type==ExpResType.NUMBER) && (rval.type==ExpResType.NUMBER);
-				boolean bothStrings = (lval.type==ExpResType.STRING) && (rval.type==ExpResType.STRING);
-				if (!bothNumbers && !bothStrings) {
-					throw new ExpError(source, pos, "Operator '+' requires two numbers or two strings");
-				}
-
-				if (bothNumbers && lval.unitType != rval.unitType) {
-					throw new ExpError(source, pos, getUnitMismatchString(lval.unitType, rval.unitType));
+				switch(lval.type) {
+				case NUMBER:
+					if (rval.type != ExpResType.NUMBER) {
+						throw new ExpError(source, pos, "Operator '+' can only add numbers to numbers");
+					}
+					if (lval.unitType != rval.unitType) {
+						throw new ExpError(source, pos, getUnitMismatchString(lval.unitType, rval.unitType));
+					}
+					return;
+				case LAMBDA:
+					throw new ExpError(source, pos, "Can not add to a function value");
+				case ENTITY:
+					throw new ExpError(source, pos, "Can not add to an entity value");
+				default:
+					return;
 				}
 			}
 			@Override
 			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval, String source, int pos) throws ExpError {
-				if (lval.type == ExpResType.STRING && rval.type == ExpResType.STRING) {
-					return ExpResult.makeStringResult(lval.stringVal.concat(rval.stringVal));
+				switch(lval.type) {
+				case NUMBER:
+					return ExpResult.makeNumResult(lval.value + rval.value, lval.unitType);
+				case STRING:
+					return ExpResult.makeStringResult(lval.stringVal.concat(rval.getFormatString()));
+				case COLLECTION:
+					if (rval.type == ExpResType.COLLECTION) {
+						return ExpCollections.appendCollections(lval.colVal, rval.colVal);
+					} else {
+						return ExpCollections.appendToCollection(lval.colVal, rval);
+					}
+				default:
+					throw new ExpError(source, pos, "Invalid type used in addition");
 				}
-
-				return ExpResult.makeNumResult(lval.value + rval.value, lval.unitType);
 			}
+
 			@Override
 			public ExpValResult validate(ParseContext context, ExpValResult lval, ExpValResult rval, String source, int pos) {
 				ExpValResult mergedErrors = mergeBinaryErrors(lval, rval);
 				if (mergedErrors != null)
 					return mergedErrors;
 
-				boolean bothNumbers = (lval.type==ExpResType.NUMBER) && (rval.type==ExpResType.NUMBER);
-				boolean bothStrings = (lval.type==ExpResType.STRING) && (rval.type==ExpResType.STRING);
-				if (!bothNumbers && !bothStrings) {
-					ExpError err = new ExpError(source, pos, "Operator '+' requires two numbers or two strings");
-					return ExpValResult.makeErrorRes(err);
-				}
-
-				if (bothStrings) {
+				switch(lval.type) {
+				case NUMBER:
+					if (rval.type != ExpResType.NUMBER) {
+						return ExpValResult.makeErrorRes(new ExpError(source, pos, "Operator '+' can only add numbers to numbers"));
+					}
+					if (lval.unitType != rval.unitType) {
+						return ExpValResult.makeErrorRes(new ExpError(source, pos, getUnitMismatchString(lval.unitType, rval.unitType)));
+					}
+					return ExpValResult.makeValidRes(ExpResType.NUMBER, lval.unitType);
+				case LAMBDA:
+					return ExpValResult.makeErrorRes(new ExpError(source, pos, "Can not add to a function value"));
+				case ENTITY:
+					return ExpValResult.makeErrorRes(new ExpError(source, pos, "Can not add to an entity value"));
+				case COLLECTION:
+					return ExpValResult.makeValidRes(ExpResType.COLLECTION, DimensionlessUnit.class);
+				case STRING:
 					return ExpValResult.makeValidRes(ExpResType.STRING, DimensionlessUnit.class);
+				default:
+					return ExpValResult.makeUndecidableRes();
 				}
-
-				// Both numbers
-				if (lval.unitType != rval.unitType) {
-					ExpError error = new ExpError(source, pos, getUnitMismatchString(lval.unitType, rval.unitType));
-					return ExpValResult.makeErrorRes(error);
-				}
-				return ExpValResult.makeValidRes(ExpResType.NUMBER, lval.unitType);
 			}
+
 		});
 
 		addBinaryOp("-", 20, false, new BinOpFunc() {

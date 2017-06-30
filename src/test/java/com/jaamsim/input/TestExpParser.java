@@ -578,10 +578,25 @@ public class TestExpParser {
 		assertTrue(res.type == ExpResType.STRING);
 		assertTrue(res.stringVal.equals("baz"));
 
+		exp = ExpParser.parseExpression(pc, "{1, 2, 3} + {4, 5, 42}");
+		res = exp.evaluate(ec);
+		assertTrue(res.type == ExpResType.COLLECTION);
+		double[] addVals = {1, 2, 3, 4, 5, 42};
+		assertColSame(addVals, res.colVal);
+
+		exp = ExpParser.parseExpression(pc, "{1, 2, 3, 4, 5} + 42");
+		res = exp.evaluate(ec);
+		assertTrue(res.type == ExpResType.COLLECTION);
+		assertColSame(addVals, res.colVal);
+
 	}
 
 	@Test
 	public void testString() throws ExpError {
+		// This is needed since we do not initialize the rest of the unit system
+		@SuppressWarnings("unused")
+		DimensionlessUnit du = new DimensionlessUnit();
+
 		ExpParser.Expression exp = ExpParser.parseExpression(pc, "[[stringly]]");
 		ExpResult res = exp.evaluate(ec);
 		assertTrue(res.type == ExpResType.STRING);
@@ -601,6 +616,11 @@ public class TestExpParser {
 		res = exp.evaluate(ec);
 		assertTrue(res.type == ExpResType.STRING);
 		assertTrue(res.stringVal.equals("stringly"));
+
+		exp = ExpParser.parseExpression(pc, "[[str]] + 5");
+		res = exp.evaluate(ec);
+		assertTrue(res.type == ExpResType.STRING);
+		assertTrue(res.stringVal.equals("str5.0"));
 
 	}
 
@@ -843,18 +863,6 @@ public class TestExpParser {
 			public OutputResolver getConstOutputResolver(ExpResult constEnt,
 					String name) throws ExpError {
 				return new ErrorResolver();
-			}
-			@Override
-			public boolean isVarName(String varName) {
-				return false;
-			}
-			@Override
-			public boolean isVarConstant(String varName) {
-				return false;
-			}
-			@Override
-			public ExpResult getValFromConstVar(String name, String source, int pos) throws ExpError {
-				return null;
 			}
 
 		}
