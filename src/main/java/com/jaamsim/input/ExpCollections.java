@@ -84,6 +84,33 @@ public class ExpCollections {
 		return ExpResult.makeCollectionResult(new AssignableArrayCollection(vals, constExp));
 	}
 
+	public static ExpResult appendCollections(ExpResult.Collection c0, ExpResult.Collection c1) throws ExpError {
+		ArrayList<ExpResult> res = new ArrayList<>();
+		ExpResult.Iterator it = c0.getIter();
+		while (it.hasNext()) {
+			ExpResult val = c0.index(it.nextKey());
+			res.add(val);
+		}
+		it = c1.getIter();
+		while (it.hasNext()) {
+			ExpResult val = c1.index(it.nextKey());
+			res.add(val);
+		}
+		return ExpResult.makeCollectionResult(new AssignableArrayCollection(res, false));
+	}
+
+	public static ExpResult appendToCollection(ExpResult.Collection col, ExpResult val) throws ExpError {
+		ArrayList<ExpResult> res = new ArrayList<>();
+		ExpResult.Iterator it = col.getIter();
+		while (it.hasNext()) {
+			ExpResult v = col.index(it.nextKey());
+			res.add(v);
+		}
+		res.add(val);
+
+		return ExpResult.makeCollectionResult(new AssignableArrayCollection(res, false));
+	}
+
 	private static class ListCollection implements ExpResult.Collection {
 
 		private static class Iter implements ExpResult.Iterator {
