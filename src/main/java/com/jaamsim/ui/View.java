@@ -211,11 +211,15 @@ public class View extends Entity {
 
 		@Override
 		public void run() {
-			if (pos != null)
-				window.setLocation(pos.get(0), pos.get(1));
+			if (pos != null) {
+				Point fix = OSFix.getLocationAdustment();
+				window.setLocation(pos.get(0)+fix.x, pos.get(1)+fix.y);
+			}
 
-			if (size != null)
-				window.setSize(size.get(0), size.get(1));
+			if (size != null) {
+				Point fix = OSFix.getSizeAdustment();
+				window.setSize(size.get(0)+fix.x, size.get(1)+fix.y);
+			}
 		}
 
 		void doUpdate() {
@@ -368,18 +372,20 @@ public class View extends Entity {
 	public void setWindowPos(int x, int y, int width, int height) {
 		ArrayList<String> tokens = new ArrayList<>(2);
 		IntegerVector pos = windowPos.getValue();
-		if (pos.get(0) != x || pos.get(1) != y) {
-			tokens.add(String.format((Locale)null, "%d", x));
-			tokens.add(String.format((Locale)null, "%d", y));
+		Point posFix = OSFix.getLocationAdustment();
+		if (pos.get(0) != x - posFix.x || pos.get(1) != y - posFix.y) {
+			tokens.add(String.format((Locale)null, "%d", x - posFix.x));
+			tokens.add(String.format((Locale)null, "%d", y - posFix.y));
 			KeywordIndex kw = new KeywordIndex(this.windowPos.getKeyword(), tokens, null);
 			InputAgent.apply(this, kw);
 			tokens.clear();
 		}
 
 		IntegerVector size = windowSize.getValue();
-		if (size.get(0) != width || size.get(1) != height) {
-			tokens.add(String.format((Locale)null, "%d", width));
-			tokens.add(String.format((Locale)null, "%d", height));
+		Point sizeFix = OSFix.getSizeAdustment();
+		if (size.get(0) != width - sizeFix.x || size.get(1) != height - sizeFix.y) {
+			tokens.add(String.format((Locale)null, "%d", width - sizeFix.x));
+			tokens.add(String.format((Locale)null, "%d", height - sizeFix.y));
 			KeywordIndex kw = new KeywordIndex(this.windowSize.getKeyword(), tokens, null);
 			InputAgent.apply(this, kw);
 		}
