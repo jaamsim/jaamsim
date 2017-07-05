@@ -529,6 +529,15 @@ public class TestExpParser {
 		val = exp.evaluate(ec).value;
 		assertTrue(val == 1);
 
+		exp = ExpParser.parseExpression(vtpc, "indexOf([Arrays].intArray, 42)");
+		val = exp.evaluate(ec).value;
+		assertTrue(val == 4);
+
+		exp = ExpParser.parseExpression(vtpc, "indexOf([Maps].map1, 42)");
+		res = exp.evaluate(ec);
+		assertTrue(res.type == ExpResType.STRING);
+		assertTrue(res.stringVal.equals("everything"));
+
 		exp = ExpParser.parseExpression(vtpc, "[Arrays].intArray(4)");
 		val = exp.evaluate(ec).value;
 		assertTrue(val == 42);
@@ -569,10 +578,25 @@ public class TestExpParser {
 		assertTrue(res.type == ExpResType.STRING);
 		assertTrue(res.stringVal.equals("baz"));
 
+		exp = ExpParser.parseExpression(pc, "{1, 2, 3} + {4, 5, 42}");
+		res = exp.evaluate(ec);
+		assertTrue(res.type == ExpResType.COLLECTION);
+		double[] addVals = {1, 2, 3, 4, 5, 42};
+		assertColSame(addVals, res.colVal);
+
+		exp = ExpParser.parseExpression(pc, "{1, 2, 3, 4, 5} + 42");
+		res = exp.evaluate(ec);
+		assertTrue(res.type == ExpResType.COLLECTION);
+		assertColSame(addVals, res.colVal);
+
 	}
 
 	@Test
 	public void testString() throws ExpError {
+		// This is needed since we do not initialize the rest of the unit system
+		@SuppressWarnings("unused")
+		DimensionlessUnit du = new DimensionlessUnit();
+
 		ExpParser.Expression exp = ExpParser.parseExpression(pc, "[[stringly]]");
 		ExpResult res = exp.evaluate(ec);
 		assertTrue(res.type == ExpResType.STRING);
@@ -582,6 +606,22 @@ public class TestExpParser {
 		res = exp.evaluate(ec);
 		assertTrue(res.type == ExpResType.STRING);
 		assertTrue(res.stringVal.equals("stringly"));
+
+		exp = ExpParser.parseExpression(pc, "[[str]] + [[ing]] +  [[ly]]");
+		res = exp.evaluate(ec);
+		assertTrue(res.type == ExpResType.STRING);
+		assertTrue(res.stringVal.equals("stringly"));
+
+		exp = ExpParser.parseExpression(pc, "format([[stri%s%s]], [[ng]],[[ly]])");
+		res = exp.evaluate(ec);
+		assertTrue(res.type == ExpResType.STRING);
+		assertTrue(res.stringVal.equals("stringly"));
+
+		exp = ExpParser.parseExpression(pc, "[[str]] + 5");
+		res = exp.evaluate(ec);
+		assertTrue(res.type == ExpResType.STRING);
+		assertTrue(res.stringVal.equals("str5.0"));
+
 	}
 
 	@Test
@@ -612,11 +652,23 @@ public class TestExpParser {
 		double[] mapVals = {2, 4, 6, 42};
 		assertColSame(mapVals, val.colVal);
 
+		exp = ExpParser.parseExpression(pc, "map(|x, key|(key*2), {1, 2, 3, 21})");
+		val = exp.evaluate(ec);
+		assertTrue(val.type == ExpResType.COLLECTION);
+		double[] mapVals2 = {2, 4, 6, 8};
+		assertColSame(mapVals2, val.colVal);
+
 		exp = ExpParser.parseExpression(pc, "filter(|x|(x>20), {1, 2, 3, 21, 5, 42})");
 		val = exp.evaluate(ec);
 		assertTrue(val.type == ExpResType.COLLECTION);
 		double[] filterVals = {21, 42};
 		assertColSame(filterVals, val.colVal);
+
+		exp = ExpParser.parseExpression(pc, "filter(|x, key|(key > 3), {1, 2, 3, 21, 5, 42})");
+		val = exp.evaluate(ec);
+		assertTrue(val.type == ExpResType.COLLECTION);
+		double[] filterVals2 = {21, 5, 42};
+		assertColSame(filterVals2, val.colVal);
 
 		exp = ExpParser.parseExpression(pc, "filter(|x|(x>20), map(|x|(x*2), {1, 2, 3, 11, 5, 21}))");
 		val = exp.evaluate(ec);
@@ -654,6 +706,43 @@ public class TestExpParser {
 		assertTrue(val.type == ExpResType.COLLECTION);
 		double[] vals = {42};
 		assertColSame(vals, val.colVal);
+	}
+
+	@Test
+	public void testRecursion() throws ExpError {
+		String expStr = "" ;
+		expStr += "recFact = |val, rec| ( (val < 1) ? 1 : val * rec(val-1, rec) );";
+		expStr += "fact = |val|( recFact(val, recFact) );";
+		expStr += "fact(6)";
+		ExpParser.Expression exp = ExpParser.parseExpression(pc, expStr);
+		ExpResult val = exp.evaluate(ec);
+		assertTrue(val.type == ExpResType.NUMBER);
+		assertTrue(val.value == 720);
+
+		expStr = "" ;
+		expStr += "thresh = 3;";
+		expStr += "num = 12;";
+		expStr += "recFib = |val, rf| ( (val < thresh) ? 1 : (rf(val-2, rf) + rf(val-1, rf)) );";
+		expStr += "fib = |val| (recFib(val, recFib) );";
+		expStr += "fib(num)";
+		exp = ExpParser.parseExpression(pc, expStr);
+		val = exp.evaluate(ec);
+		assertTrue(val.type == ExpResType.NUMBER);
+		assertTrue(val.value == 144);
+
+		boolean threw = false;
+		try {
+			expStr = "";
+			expStr += "recFunc = |val, rec| ( rec(val, rec) );";
+			expStr += "recFunc(2, recFunc)";
+			exp = ExpParser.parseExpression(pc, expStr);
+			val = exp.evaluate(ec);
+		} catch (ExpError e) {
+			threw = true;
+		}
+		assert(threw);
+
+
 	}
 
 	@Test
@@ -774,18 +863,6 @@ public class TestExpParser {
 			public OutputResolver getConstOutputResolver(ExpResult constEnt,
 					String name) throws ExpError {
 				return new ErrorResolver();
-			}
-			@Override
-			public boolean isVarName(String varName) {
-				return false;
-			}
-			@Override
-			public boolean isVarConstant(String varName) {
-				return false;
-			}
-			@Override
-			public ExpResult getValFromConstVar(String name, String source, int pos) throws ExpError {
-				return null;
 			}
 
 		}

@@ -25,6 +25,7 @@ import com.jaamsim.input.ExpParser.BinOpFunc;
 import com.jaamsim.input.ExpParser.CallableFunc;
 import com.jaamsim.input.ExpParser.EvalContext;
 import com.jaamsim.input.ExpParser.LambdaClosure;
+import com.jaamsim.input.ExpParser.LazyBinOpFunc;
 import com.jaamsim.input.ExpParser.ParseContext;
 import com.jaamsim.input.ExpParser.UnOpFunc;
 import com.jaamsim.units.AngleUnit;
@@ -39,6 +40,10 @@ public class ExpOperators {
 
 	private static void addBinaryOp(String symbol, double bindPower, boolean rAssoc, BinOpFunc func) {
 		ExpParser.addBinaryOp(symbol, bindPower, rAssoc, func);
+	}
+
+	private static void addLazyBinaryOp(String symbol, double bindPower, boolean rAssoc, LazyBinOpFunc func) {
+		ExpParser.addLazyBinaryOp(symbol, bindPower, rAssoc, func);
 	}
 
 	private static void addFunction(String name, int numMinArgs, int numMaxArgs, CallableFunc func) {
@@ -386,48 +391,69 @@ public class ExpOperators {
 			public void checkTypeAndUnits(ParseContext context, ExpResult lval,
 					ExpResult rval, String source, int pos) throws ExpError {
 
-				boolean bothNumbers = (lval.type==ExpResType.NUMBER) && (rval.type==ExpResType.NUMBER);
-				boolean bothStrings = (lval.type==ExpResType.STRING) && (rval.type==ExpResType.STRING);
-				if (!bothNumbers && !bothStrings) {
-					throw new ExpError(source, pos, "Operator '+' requires two numbers or two strings");
-				}
-
-				if (bothNumbers && lval.unitType != rval.unitType) {
-					throw new ExpError(source, pos, getUnitMismatchString(lval.unitType, rval.unitType));
+				switch(lval.type) {
+				case NUMBER:
+					if (rval.type != ExpResType.NUMBER) {
+						throw new ExpError(source, pos, "Operator '+' can only add numbers to numbers");
+					}
+					if (lval.unitType != rval.unitType) {
+						throw new ExpError(source, pos, getUnitMismatchString(lval.unitType, rval.unitType));
+					}
+					return;
+				case LAMBDA:
+					throw new ExpError(source, pos, "Can not add to a function value");
+				case ENTITY:
+					throw new ExpError(source, pos, "Can not add to an entity value");
+				default:
+					return;
 				}
 			}
 			@Override
 			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval, String source, int pos) throws ExpError {
-				if (lval.type == ExpResType.STRING && rval.type == ExpResType.STRING) {
-					return ExpResult.makeStringResult(lval.stringVal.concat(rval.stringVal));
+				switch(lval.type) {
+				case NUMBER:
+					return ExpResult.makeNumResult(lval.value + rval.value, lval.unitType);
+				case STRING:
+					return ExpResult.makeStringResult(lval.stringVal.concat(rval.getFormatString()));
+				case COLLECTION:
+					if (rval.type == ExpResType.COLLECTION) {
+						return ExpCollections.appendCollections(lval.colVal, rval.colVal);
+					} else {
+						return ExpCollections.appendToCollection(lval.colVal, rval);
+					}
+				default:
+					throw new ExpError(source, pos, "Invalid type used in addition");
 				}
-
-				return ExpResult.makeNumResult(lval.value + rval.value, lval.unitType);
 			}
+
 			@Override
 			public ExpValResult validate(ParseContext context, ExpValResult lval, ExpValResult rval, String source, int pos) {
 				ExpValResult mergedErrors = mergeBinaryErrors(lval, rval);
 				if (mergedErrors != null)
 					return mergedErrors;
 
-				boolean bothNumbers = (lval.type==ExpResType.NUMBER) && (rval.type==ExpResType.NUMBER);
-				boolean bothStrings = (lval.type==ExpResType.STRING) && (rval.type==ExpResType.STRING);
-				if (!bothNumbers && !bothStrings) {
-					ExpError err = new ExpError(source, pos, "Operator '+' requires two numbers or two strings");
-					return ExpValResult.makeErrorRes(err);
-				}
-
-				if (bothStrings) {
+				switch(lval.type) {
+				case NUMBER:
+					if (rval.type != ExpResType.NUMBER) {
+						return ExpValResult.makeErrorRes(new ExpError(source, pos, "Operator '+' can only add numbers to numbers"));
+					}
+					if (lval.unitType != rval.unitType) {
+						return ExpValResult.makeErrorRes(new ExpError(source, pos, getUnitMismatchString(lval.unitType, rval.unitType)));
+					}
+					return ExpValResult.makeValidRes(ExpResType.NUMBER, lval.unitType);
+				case LAMBDA:
+					return ExpValResult.makeErrorRes(new ExpError(source, pos, "Can not add to a function value"));
+				case ENTITY:
+					return ExpValResult.makeErrorRes(new ExpError(source, pos, "Can not add to an entity value"));
+				case COLLECTION:
+					return ExpValResult.makeValidRes(ExpResType.COLLECTION, DimensionlessUnit.class);
+				case STRING:
 					return ExpValResult.makeValidRes(ExpResType.STRING, DimensionlessUnit.class);
+				default:
+					return ExpValResult.makeUndecidableRes();
 				}
-
-				// Both numbers
-				if (lval.unitType != rval.unitType) {
-					ExpError error = new ExpError(source, pos, getUnitMismatchString(lval.unitType, rval.unitType));
-					return ExpValResult.makeErrorRes(error);
-				}
-				return ExpValResult.makeValidRes(ExpResType.NUMBER, lval.unitType);
 			}
+
 		});
 
 		addBinaryOp("-", 20, false, new BinOpFunc() {
@@ -645,15 +671,22 @@ public class ExpOperators {
 			}
 		});
 
-		addBinaryOp("&&", 8, false, new BinOpFunc() {
+		addLazyBinaryOp("&&", 8, false, new LazyBinOpFunc() {
 			@Override
-			public void checkTypeAndUnits(ParseContext context, ExpResult lval,
-					ExpResult rval, String source, int pos) throws ExpError {
-				checkBothNumbers(lval, rval, source, pos);
-			}
-			@Override
-			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval, String source, int pos){
-				return ExpResult.makeNumResult((lval.value!=0) && (rval.value!=0) ? 1 : 0, DimensionlessUnit.class);
+			public ExpResult apply(ParseContext pc, EvalContext ec, ExpParser.ExpNode lval, ExpParser.ExpNode rval, String source, int pos) throws ExpError{
+				ExpResult lRes = lval.evaluate(ec);
+				if (lRes.type != ExpResType.NUMBER) {
+					throw new ExpError(source, pos, "Left operand of '&&' must be a number");
+				}
+				if (lRes.value == 0)
+					return ExpResult.makeNumResult(0, DimensionlessUnit.class);
+
+				ExpResult rRes = rval.evaluate(ec);
+				if (rRes.type != ExpResType.NUMBER) {
+					throw new ExpError(source, pos, "Right operand of '&&' must be a number");
+				}
+
+				return ExpResult.makeNumResult((rRes.value!=0) ? 1 : 0, DimensionlessUnit.class);
 			}
 			@Override
 			public ExpValResult validate(ParseContext context, ExpValResult lval, ExpValResult rval, String source, int pos) {
@@ -661,15 +694,22 @@ public class ExpOperators {
 			}
 		});
 
-		addBinaryOp("||", 6, false, new BinOpFunc() {
+		addLazyBinaryOp("||", 6, false, new LazyBinOpFunc() {
 			@Override
-			public void checkTypeAndUnits(ParseContext context, ExpResult lval,
-					ExpResult rval, String source, int pos) throws ExpError {
-				checkBothNumbers(lval, rval, source, pos);
-			}
-			@Override
-			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval, String source, int pos){
-				return ExpResult.makeNumResult((lval.value!=0) || (rval.value!=0) ? 1 : 0, DimensionlessUnit.class);
+			public ExpResult apply(ParseContext pc, EvalContext ec, ExpParser.ExpNode lval, ExpParser.ExpNode rval, String source, int pos) throws ExpError{
+				ExpResult lRes = lval.evaluate(ec);
+				if (lRes.type != ExpResType.NUMBER) {
+					throw new ExpError(source, pos, "Left operand of '||' must be a number");
+				}
+				if (lRes.value != 0)
+					return ExpResult.makeNumResult(1, DimensionlessUnit.class);
+
+				ExpResult rRes = rval.evaluate(ec);
+				if (rRes.type != ExpResType.NUMBER) {
+					throw new ExpError(source, pos, "Right operand of '||' must be a number");
+				}
+
+				return ExpResult.makeNumResult((rRes.value!=0) ? 1 : 0, DimensionlessUnit.class);
 			}
 			@Override
 			public ExpValResult validate(ParseContext context, ExpValResult lval, ExpValResult rval, String source, int pos) {
@@ -1212,6 +1252,45 @@ public class ExpOperators {
 			}
 		});
 
+		addFunction("indexOf", 2, 2, new CallableFunc() {
+			@Override
+			public void checkUnits(ParseContext context, ExpResult[] args,
+					String source, int pos) throws ExpError {
+			}
+
+			@Override
+			public ExpResult call(EvalContext context, ExpResult[] args, String source, int pos) throws ExpError {
+				if (args[0].type != ExpResType.COLLECTION) {
+					throw new ExpError(source, pos, "Expected Collection type argument as first argument.");
+				}
+
+				ExpResult.Collection col = args[0].colVal;
+				ExpResult val = args[1];
+
+				ExpResult.Iterator it = col.getIter();
+				if (!it.hasNext()) {
+					throw new ExpError(source, pos, "Can not get index of empty collection.");
+				}
+
+				while (it.hasNext()) {
+					ExpResult key = it.nextKey();
+					ExpResult colVal = col.index(key);
+					if (colVal.equals(val)) {
+						return key;
+					}
+				}
+				throw new ExpError(source, pos, "'indexof' failed. Value is not in collection.");
+			}
+
+			@Override
+			public ExpValResult validate(ParseContext context, ExpValResult[] args, String source, int pos) {
+				if (args[1].state == ExpValResult.State.ERROR || args[1].state == ExpValResult.State.UNDECIDABLE) {
+					return args[1];
+				}
+				return validateCollection(context, args[0], source, pos);
+			}
+		});
+
 		addFunction("map", 2, 2, new CallableFunc() {
 			@Override
 			public void checkUnits(ParseContext context, ExpResult[] args,
@@ -1228,8 +1307,9 @@ public class ExpOperators {
 				}
 
 				LambdaClosure mapFunc = args[0].lcVal;
-				if (mapFunc.getNumParams() != 1) {
-					throw new ExpError(source, pos, "Function passed to 'map' must take one parameter.");
+				int numParams = mapFunc.getNumParams();
+				if (numParams != 1 && numParams != 2) {
+					throw new ExpError(source, pos, "Function passed to 'map' must take one or two parameters.");
 				}
 
 				ExpResult.Collection col = args[1].colVal;
@@ -1237,14 +1317,21 @@ public class ExpOperators {
 
 				Class<? extends Unit> unitType = null;
 				boolean firstVal = true;
-				ArrayList<ExpResult> params = new ArrayList<>(1);
+				ArrayList<ExpResult> params = new ArrayList<>(numParams);
 
 				ArrayList<ExpResult> results = new ArrayList<>();
 				params.add(null);
+
+				if (numParams == 2)
+					params.add(null);
+
 				while (it.hasNext()) {
 					ExpResult key = it.nextKey();
 					ExpResult val = col.index(key);
 					params.set(0, val);
+
+					if (numParams == 2)
+						params.set(1, key);
 
 					ExpResult result = mapFunc.evaluate(context, params);
 
@@ -1289,9 +1376,10 @@ public class ExpOperators {
 					throw new ExpError(source, pos, "Expected function argument as first argument.");
 				}
 
-				LambdaClosure mapFunc = args[0].lcVal;
-				if (mapFunc.getNumParams() != 1) {
-					throw new ExpError(source, pos, "Function passed to 'filter' must take one parameter.");
+				LambdaClosure filterFunc = args[0].lcVal;
+				int numParams = filterFunc.getNumParams();
+				if (numParams != 1 && numParams != 2) {
+					throw new ExpError(source, pos, "Function passed to 'filter' must take one or two parameters.");
 				}
 
 				ExpResult.Collection col = args[1].colVal;
@@ -1303,12 +1391,17 @@ public class ExpOperators {
 
 				ArrayList<ExpResult> results = new ArrayList<>();
 				params.add(null);
+				if (numParams == 2)
+					params.add(null);
+
 				while (it.hasNext()) {
 					ExpResult key = it.nextKey();
 					ExpResult val = col.index(key);
 					params.set(0, val);
+					if (numParams == 2)
+						params.set(1, key);
 
-					ExpResult result = mapFunc.evaluate(context, params);
+					ExpResult result = filterFunc.evaluate(context, params);
 					if (result.type == ExpResType.NUMBER && result.value != 0) {
 						results.add(val);
 					}
@@ -1617,6 +1710,45 @@ public class ExpOperators {
 					}
 				}
 				return ExpValResult.makeValidRes(valType, valUnitType);
+			}
+		});
+
+		addFunction("format", 1, -1, new CallableFunc() {
+			@Override
+			public void checkUnits(ParseContext context, ExpResult[] args,
+					String source, int pos) throws ExpError {
+			}
+
+			@Override
+			public ExpResult call(EvalContext context, ExpResult[] args, String source, int pos) throws ExpError {
+				if (args[0].type != ExpResType.STRING) {
+					throw new ExpError(source, pos, "First parameter to 'format' must be a string");
+				}
+				// Build up the argument list
+				Object[] strArgs = new Object[args.length-1];
+				for (int i = 1; i < args.length; ++i) {
+					strArgs[i-1] = args[i].getFormatString();
+				}
+				String ret = null;
+				try {
+					ret = String.format(args[0].stringVal, strArgs);
+				} catch(RuntimeException e) {
+					throw new ExpError(source, pos, "Error during 'format': %s", e.getMessage());
+				}
+				return ExpResult.makeStringResult(ret);
+			}
+
+			@Override
+			public ExpValResult validate(ParseContext context, ExpValResult[] args, String source, int pos) {
+				ExpValResult mergedErrors = mergeMultipleErrors(args);
+				if (mergedErrors != null)
+					return mergedErrors;
+
+				if (args[0].type != ExpResType.STRING) {
+					ExpError error = new ExpError(source, pos, "First parameter to 'format' must be a string");
+					return ExpValResult.makeErrorRes(error);
+				}
+				return ExpValResult.makeUndecidableRes();
 			}
 		});
 

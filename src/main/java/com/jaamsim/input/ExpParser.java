@@ -37,6 +37,11 @@ public class ExpParser {
 		public ExpValResult validate(ParseContext context, ExpValResult lval, ExpValResult rval, String source, int pos);
 	}
 
+	public interface LazyBinOpFunc {
+		public ExpResult apply(ParseContext pc, EvalContext ec, ExpNode lval, ExpNode rval, String source, int pos) throws ExpError;
+		public ExpValResult validate(ParseContext context, ExpValResult lval, ExpValResult rval, String source, int pos);
+	}
+
 	public interface CallableFunc {
 		public void checkUnits(ParseContext context, ExpResult[] args, String source, int pos) throws ExpError;
 		public ExpResult call(EvalContext context, ExpResult[] args, String source, int pos) throws ExpError;
@@ -201,7 +206,11 @@ public class ExpParser {
 			ExpResult res = null;
 			try {
 				res = rootNode.evaluate(ec);
-			} finally {
+			}
+			catch (StackOverflowError e) {
+				throw new ExpError(null, 0, "Excessive recursion detected in expression: %s, source");
+			}
+			finally {
 				synchronized(executingThreads) {
 					executingThreads.remove(Thread.currentThread());
 				}
@@ -254,7 +263,7 @@ public class ExpParser {
 		}
 	}
 
-	private abstract static class ExpNode {
+	public abstract static class ExpNode {
 		public final ParseContext context;
 		public final Expression exp;
 		public final int tokenPos;
@@ -331,11 +340,20 @@ public class ExpParser {
 
 		public ExpResult evaluate(EvalContext ec, ArrayList<ExpResult> params) throws ExpError {
 			// Fill in the context
-			for (int i = 0; i < params.size(); ++i) {
-				vars.set(i, params.get(i));
+
+			ArrayList<ExpResult> close = new ArrayList<>(vars.size());
+			for (int i = 0; i < vars.size(); ++i) {
+				if (i < params.size())
+					close.add(params.get(i));
+				else {
+					close.add(vars.get(i));
+				}
 			}
-			ec.pushClosure(vars);
-			return body.evaluate(ec);
+			ec.pushClosure(close);
+			ExpResult ret = body.evaluate(ec);
+			ec.popClosure();
+
+			return ret;
 		}
 
 		public int getNumParams() {
@@ -717,6 +735,33 @@ public class ExpParser {
 
 	}
 
+	private static class LazyBinaryOp extends BinaryOp {
+
+		protected final LazyBinOpFunc lazyFunc;
+		LazyBinaryOp(String name, ParseContext context, ExpNode lSubExp, ExpNode rSubExp, LazyBinOpFunc func, Expression exp, int pos) {
+			super(name, context, lSubExp, rSubExp, null, exp, pos);
+			this.lazyFunc = func;
+		}
+
+		@Override
+		public ExpResult evaluate(EvalContext ec) throws ExpError {
+			return lazyFunc.apply(context, ec, lSubExp, rSubExp, exp.source, tokenPos);
+		}
+
+		@Override
+		public ExpNode getNoCheckVer() {
+			return null;
+		}
+		@Override
+		public ExpValResult validate() {
+			ExpValResult lRes = lSubExp.validate();
+			ExpValResult rRes = rSubExp.validate();
+
+			ExpValResult res = lazyFunc.validate(context, lRes, rRes, exp.source, tokenPos);
+
+			return res;
+		}
+	}
 
 	private static class Conditional extends ExpNode {
 		private ExpNode condExp;
@@ -905,8 +950,10 @@ public class ExpParser {
 	private static class BinaryOpEntry {
 		public String symbol;
 		public BinOpFunc function;
+		public LazyBinOpFunc lazyFunction;
 		public double bindingPower;
 		public boolean rAssoc;
+		public boolean isLazy;
 	}
 
 	private static class FunctionEntry {
@@ -934,6 +981,17 @@ public class ExpParser {
 		oe.function = func;
 		oe.bindingPower = bindPower;
 		oe.rAssoc = rAssoc;
+		oe.isLazy = false;
+		binaryOps.add(oe);
+	}
+
+	public static void addLazyBinaryOp(String symbol, double bindPower, boolean rAssoc, LazyBinOpFunc func) {
+		BinaryOpEntry oe = new BinaryOpEntry();
+		oe.symbol = symbol;
+		oe.lazyFunction = func;
+		oe.bindingPower = bindPower;
+		oe.rAssoc = rAssoc;
+		oe.isLazy = true;
 		binaryOps.add(oe);
 	}
 
@@ -1212,9 +1270,11 @@ public class ExpParser {
 		// For right associative operators, we weaken the binding power a bit at application time (but not testing time)
 		double assocMod = binOp.rAssoc ? -0.5 : 0;
 		ExpNode rhs = parseExp(context, tokens, binOp.bindingPower + assocMod, exp);
-		//currentPower = oe.bindingPower;
 
-		return new BinaryOp(binOp.symbol, context, lhs, rhs, binOp.function, exp, pos);
+		if (binOp.isLazy)
+			return new LazyBinaryOp(binOp.symbol, context, lhs, rhs, binOp.lazyFunction, exp, pos);
+		else
+			return new BinaryOp(binOp.symbol, context, lhs, rhs, binOp.function, exp, pos);
 	}
 
 	private static ExpNode handleConditional(ParseContext context, TokenList tokens, ExpNode lhs, Expression exp, int pos) throws ExpError {

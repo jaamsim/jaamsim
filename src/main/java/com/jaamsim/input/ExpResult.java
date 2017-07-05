@@ -126,6 +126,32 @@ public class ExpResult {
 			return String.format("[%s]", entVal.getName());
 		case COLLECTION:
 			return colVal.getOutputString();
+		case LAMBDA:
+			return "function|" + lcVal.getNumParams()+"|";
+
+		default:
+			assert(false);
+			return "???";
+		}
+	}
+
+	// Like 'getOutputString' but does not quote string types, making it more useful in string formaters
+	public String getFormatString() {
+		switch (type) {
+		case NUMBER:
+			double factor = Unit.getDisplayedUnitFactor(unitType);
+			String unitString = Unit.getDisplayedUnit(unitType);
+			if (unitString.isEmpty())
+				return String.format("%s", value);
+			return String.format("%s[%s]", value/factor, unitString);
+		case STRING:
+			return stringVal;
+		case ENTITY:
+			return String.format("[%s]", entVal.getName());
+		case COLLECTION:
+			return colVal.getOutputString();
+		case LAMBDA:
+			return "function|" + lcVal.getNumParams()+"|";
 
 		default:
 			assert(false);
@@ -136,6 +162,29 @@ public class ExpResult {
 	@Override
 	public String toString() {
 		return getOutputString();
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (ExpResult.class != o.getClass()) {
+			return false;
+		}
+		ExpResult other = (ExpResult)o;
+
+		switch (type) {
+		case NUMBER:
+			return this.value == other.value && this.unitType == other.unitType;
+		case STRING:
+			return this.stringVal.equals(other.stringVal);
+		case ENTITY:
+			return this.entVal == other.entVal;
+		case COLLECTION:
+			return this.colVal == other.colVal;
+
+		default:
+			return false;
+		}
+
 	}
 
 }
