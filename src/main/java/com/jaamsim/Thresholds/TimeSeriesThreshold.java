@@ -16,6 +16,7 @@
  */
 package com.jaamsim.Thresholds;
 
+import com.jaamsim.Samples.TimeSeries;
 import com.jaamsim.Samples.TimeSeriesConstantDouble;
 import com.jaamsim.basicsim.EntityTarget;
 import com.jaamsim.events.EventManager;
@@ -24,6 +25,7 @@ import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Keyword;
+import com.jaamsim.input.Output;
 import com.jaamsim.input.TimeSeriesInput;
 import com.jaamsim.input.UnitTypeInput;
 import com.jaamsim.input.ValueInput;
@@ -136,6 +138,11 @@ public class TimeSeriesThreshold extends Threshold {
 	public void startUp() {
 		super.startUp();
 		this.doOpenClose();
+	}
+
+	@Override
+	public Class<? extends Unit> getUserUnitType() {
+		return unitType.getUnitType();
 	}
 
 	public Class<? extends Unit> getUnitType() {
@@ -451,4 +458,11 @@ public class TimeSeriesThreshold extends Threshold {
 		return (value >= minOpenLimitVal) && (value <= maxOpenLimitVal);
 	}
 
+	@Output(name = "TimeSeriesValue",
+	 description = "The value of the TimeSeries object at the present time plus the offset.",
+	    unitType = UserSpecifiedUnit.class,
+	    sequence = 5)
+	public double getTimeSeriesValue(double simTime) {
+		return ((TimeSeries)timeSeries.getValue()).getPresentValue(simTime + offset.getValue());
+	}
 }
