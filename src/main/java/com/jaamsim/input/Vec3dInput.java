@@ -48,6 +48,14 @@ public class Vec3dInput extends Input<Vec3d> {
 		value = new Vec3d(temp.get(0), temp.get(1), temp.get(2));
 	}
 
+	@Override
+	public String getValidInputDesc() {
+		if (unitType == DimensionlessUnit.class) {
+			return Input.VALID_VEC3D_DIMLESS;
+		}
+		return String.format(Input.VALID_VEC3D, unitType.getSimpleName());
+	}
+
 	public void setValidRange(double min, double max) {
 		minValue = min;
 		maxValue = max;

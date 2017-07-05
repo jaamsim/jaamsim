@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2009-2013 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2017 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -82,55 +83,55 @@ public abstract class GraphBasics extends DisplayEntity {
 	         exampleList = {"8 h"})
 	private final ValueInput xAxisInterval;
 
-	@Keyword(description = "The Java format to be used for the tick mark values on the x-axis.\n" +
-			"For example, the format %.1f would display the value 5 as 5.0.",
+	@Keyword(description = "The format to be used for the tick mark values on the x-axis.",
 	         exampleList = {"%.1f"})
 	private final FormatInput xAxisLabelFormat;
 
-	@Keyword(description = "A list of values between XAxisStart and XAxisEnd at which to insert vertical gridlines.",
+	@Keyword(description = "A list of values between XAxisStart and XAxisEnd at which to insert "
+	                     + "vertical gridlines.",
 	         exampleList = {"-48 -40 -32 -24 -16 -8 0 h"})
 	private final ValueListInput xLines;
 
-	@Keyword(description = "The color of the vertical gridlines (or a list corresponding to the colour of each " +
-	                "gridline defined in XLines), defined using a colour keyword or RGB values.",
+	@Keyword(description = "The colours for the vertical gridlines defined by input to the "
+	                     + "'XLines' keyword. "
+	                     + "If only one colour is provided, it is used for all the lines.",
 	         exampleList = {"gray76"})
 	private final ColorListInput xLinesColor;
 
 	// Y-Axis category
 
-	@Keyword(description = "Title of the y-axis.",
+	@Keyword(description = "Title of the primary y-axis.",
 	         exampleList = {"'Water Height (m)'"})
 	private final StringInput yAxisTitle;
 
-	@Keyword(description = "The unit to be used for the y-axis.\n" +
-			"The unit chosen must be consistent with the unit type for the DataSource value,\n" +
-			"i.e. if the data has units of distance, then unit must be a distance unit such as meters.",
+	@Keyword(description = "The unit to be used for the primary-axis.",
 	         exampleList = {"t/h"})
 	private final EntityInput<Unit> yAxisUnit;
 
-	@Keyword(description = "The minimum value for the y-axis.",
+	@Keyword(description = "The minimum value for the primary y-axis.",
 	         exampleList = {"0 t/h"})
 	private final ValueInput yAxisStart;
 
-	@Keyword(description = "The maximum value for the y-axis.",
+	@Keyword(description = "The maximum value for the primary y-axis.",
 	         exampleList = {"5 t/h"})
 	private final ValueInput yAxisEnd;
 
-	@Keyword(description = "The interval between y-axis labels.",
+	@Keyword(description = "The interval between primary y-axis labels.",
 	         exampleList = {"1 t/h"})
 	private final ValueInput yAxisInterval;
 
-	@Keyword(description  = "The Java format to be used for the tick mark values on the y-axis.\n" +
-			"For example, the format %.1f would display the value 5 as 5.0.",
+	@Keyword(description = "The format to be used for the tick mark values on the primary y-axis.",
 	         exampleList = {"%.1f"})
 	private final FormatInput yAxisLabelFormat;
 
-	@Keyword(description = "A list of values between YAxisStart and YAxisEnd at which to insert horizontal gridlines.",
+	@Keyword(description = "A list of values between YAxisStart and YAxisEnd at which to insert "
+	                     + "horizontal gridlines.",
 	         exampleList = {"0  0.5  1  1.5  2  2.5  3  t/h"})
 	private final ValueListInput yLines;
 
-	@Keyword(description = "The colour of the horizontal gridlines (or a list corresponding to the colour of each " +
-                    "gridline defined in YLines), defined using a colour keyword or RGB values.",
+	@Keyword(description = "The colours for the vertical gridlines defined by input to the "
+	                     + "'YLines' keyword. "
+	                     + "If only one colour is provided, it is used for all the lines.",
 	         exampleList = {"gray76"})
 	private final ColorListInput yLinesColor;
 
@@ -140,9 +141,7 @@ public abstract class GraphBasics extends DisplayEntity {
 	         exampleList = {"'Water Height (m)'"})
 	private final StringInput secondaryYAxisTitle;
 
-	@Keyword(description = "The unit to be used for the secondary y-axis.\n" +
-			"The unit chosen must be consistent with the unit type for the DataSource value,\n" +
-			"i.e. if the data has units of distance, then unit must be a distance unit such as meters.",
+	@Keyword(description = "The unit to be used for the secondary y-axis.",
 	         exampleList = {"m"})
 	private final EntityInput<Unit> secondaryYAxisUnit;
 
@@ -158,8 +157,8 @@ public abstract class GraphBasics extends DisplayEntity {
 	         exampleList = {"1 m"})
 	private final ValueInput secondaryYAxisInterval;
 
-	@Keyword(description  = "The Java format to be used for the tick mark values on the secondary y-axis.\n" +
-			"For example, the format %.1f would dispaly the value 5 as 5.0.",
+	@Keyword(description = "The format to be used for the tick mark values on the secondary "
+	                     + "y-axis.",
 	         exampleList = {"%.1f"})
 	private final FormatInput secondaryYAxisLabelFormat;
 

@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2016 JaamSim Software Inc.
+ * Copyright (C) 2017 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,18 +37,18 @@ import com.jaamsim.units.Unit;
 
 public abstract class Logger extends DisplayEntity {
 
-	@Keyword(description = "The unit types for the quantities being logged. "
-	                     + "If a single unit type is entered, it will apply to all quantities. "
-	                     + "Use DimensionlessUnit for text entries.",
+	@Keyword(description = "The unit types for the sources of data specified by the 'DataSource' "
+	                     + "keyword. "
+	                     + "Use DimensionlessUnit for data sources that return strings, entities, "
+	                     + "or arrays. "
+	                     + "If only one unit type is given, then that unit type is used for all "
+	                     + "the values.",
 	         exampleList = {"DistanceUnit  SpeedUnit"})
 	private final UnitTypeListInput unitTypeListInput;
 
 	@Keyword(description = "One or more sources of data to be logged. "
-	                     + "The input to the UnitTypeList keyword must be provided BEFORE the "
-	                     + "data sources. "
-	                     + "Each source is specified by an Expression. Also acceptable are: "
-	                     + "a constant value, a Probability Distribution, TimeSeries, or a "
-	                     + "Calculation Object.",
+	                     + "BEFORE entering this input, specify the unit types for the data "
+	                     + "sources using the 'UnitTypeList' keyword.",
 	         exampleList = {"{ [Entity1].Output1 } { [Entity2].Output2 }"})
 	private final StringProvListInput dataSource;
 

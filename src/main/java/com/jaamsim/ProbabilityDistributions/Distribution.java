@@ -44,22 +44,28 @@ import com.jaamsim.units.UserSpecifiedUnit;
 public abstract class Distribution extends DisplayEntity
 implements SampleProvider {
 
-	@Keyword(description = "The unit type that the distribution returns values in.",
+	@Keyword(description = "The unit type for the values returned by the distribution. "
+	                     + "MUST be entered before most other inputs.",
 	         exampleList = {"DistanceUnit"})
 	protected final UnitTypeInput unitType;
 
-	@Keyword(description = "Seed for the random number generator.  Must be an integer >= 0. "
-			+ "The RandomSeed keyword works together with the GlobalSubstreamSeed keyword for Simulation "
-			+ "to determine the random sequence. The GlobalSubsteamSeed keyword allows the user "
-			+ "to change all the random sequences in a model with a single input.",
+	@Keyword(description = "Seed for the random number generator. "
+	                     + "Must be an integer >= 0. "
+	                     + "The 'RandomSeed' keyword works together with the "
+	                     + "'GlobalSubstreamSeed' keyword for Simulation to determine the random "
+	                     + "sequence. "
+	                     + "The 'GlobalSubsteamSeed' keyword allows the user to change all the "
+	                     + "random sequences in a model with a single input.",
 			 exampleList = {"547"})
 	private final IntegerInput randomSeedInput;
 
-	@Keyword(description = "Minimum value that can be returned.  Smaller values are rejected and resampled.",
+	@Keyword(description = "Minimum value that can be returned. "
+	                     + "Smaller values are rejected and resampled.",
 	         exampleList = {"0.0", "InputValue1", "'2 * [InputValue1].Value'"})
 	protected final SampleInput minValueInput;
 
-	@Keyword(description = "Maximum value that can be returned.  Larger values are rejected and resampled.",
+	@Keyword(description = "Maximum value that can be returned. "
+	                     + "Larger values are rejected and resampled.",
 	         exampleList = {"200.0", "InputValue1", "'2 * [InputValue1].Value'"})
 	protected final SampleInput maxValueInput;
 

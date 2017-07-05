@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2015 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2017 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,7 +35,6 @@ public class StringProvListInput extends ListInput<ArrayList<StringProvider>> {
 
 	public StringProvListInput(String key, String cat, ArrayList<StringProvider> def) {
 		super(key, cat, def);
-		// TODO Auto-generated constructor stub
 	}
 
 	public void setUnitTypeList(ArrayList<Class<? extends Unit>> utList) {
@@ -98,6 +98,11 @@ public class StringProvListInput extends ListInput<ArrayList<StringProvider>> {
 		}
 		value = temp;
 		this.setValid(true);
+	}
+
+	@Override
+	public String getValidInputDesc() {
+		return Input.VALID_STRING_PROV_LIST;
 	}
 
 	@Override

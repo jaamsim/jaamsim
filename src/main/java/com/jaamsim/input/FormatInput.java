@@ -16,7 +16,6 @@
  */
 package com.jaamsim.input;
 
-
 public class FormatInput extends StringInput {
 	public FormatInput(String key, String cat, String def) {
 		super(key, cat, def);
@@ -34,5 +33,10 @@ public class FormatInput extends StringInput {
 		}
 
 		value = temp;
+	}
+
+	@Override
+	public String getValidInputDesc() {
+		return Input.VALID_FORMAT;
 	}
 }

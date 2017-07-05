@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2015 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2017 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -81,6 +82,11 @@ public class UnitTypeListInput extends ListInput<ArrayList<ObjectType>> {
 		Input.assertCountRange(kw, minCount, maxCount);
 		value = Input.parseEntityList(kw, ObjectType.class, false);
 		setUnitTypeList(value);
+	}
+
+	@Override
+	public String getValidInputDesc() {
+		return Input.VALID_UNIT_TYPE_LIST;
 	}
 
 	@Override

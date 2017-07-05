@@ -61,6 +61,11 @@ public class Vec3dListInput extends ListInput<ArrayList<Vec3d>> {
 	}
 
 	@Override
+	public String getValidInputDesc() {
+		return String.format(Input.VALID_VEC3D_LIST, unitType.getSimpleName());
+	}
+
+	@Override
 	public int getListSize() {
 		if (value == null)
 			return 0;

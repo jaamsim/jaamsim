@@ -62,6 +62,14 @@ public class Duplicate extends LinkedComponent {
 				((SimEntity)dup).setPresentState(state);
 			}
 
+			// Set the graphics for the duplicated entity
+			dup.setRegion(ent.getCurrentRegion());
+			dup.setPosition(ent.getPosition());
+			dup.setDisplayModelList(ent.getDisplayModelList());
+			dup.setSize(ent.getSize());
+			dup.setOrientation(ent.getOrientation());
+			dup.setAlignment(ent.getAlignment());
+
 			// Send the duplicate to the target component
 			target.addEntity(dup);
 			n++;
