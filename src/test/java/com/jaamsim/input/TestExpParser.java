@@ -709,6 +709,13 @@ public class TestExpParser {
 		assertTrue(res.type == ExpResType.STRING);
 		assertTrue(res.stringVal.equals("str5.0"));
 
+		UnitPC upc = new UnitPC();
+
+		exp = ExpParser.parseExpression(upc, "format([[%.0f]],42[km]/1[m])");
+		res = exp.evaluate(ec);
+		assertTrue(res.type == ExpResType.STRING);
+		assertTrue(res.stringVal.equals("42000"));
+
 	}
 
 	@Test
