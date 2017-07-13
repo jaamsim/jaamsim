@@ -32,6 +32,7 @@ import com.jaamsim.math.Vec4d;
 import com.jaamsim.render.DisplayModelBinding;
 import com.jaamsim.render.PolygonProxy;
 import com.jaamsim.render.RenderProxy;
+import com.jaamsim.render.RenderUtils;
 import com.jaamsim.units.DistanceUnit;
 
 public class ArrowModel extends PolylineModel {
@@ -73,6 +74,7 @@ public class ArrowModel extends PolylineModel {
 		private Vec3d fromCache;
 		private Color4d colorCache;
 		private Vec3d arrowSizeCache;
+		private Transform globalTransCache;
 
 		public Binding(Entity ent, DisplayModel dm) {
 			super(ent, dm);
@@ -86,6 +88,11 @@ public class ArrowModel extends PolylineModel {
 
 			if (pointInfos == null || pointInfos.length == 0)
 				return;
+
+			Transform globalTrans = null;
+			if (displayObservee.getCurrentRegion() != null || displayObservee.getRelativeEntity() != null) {
+				globalTrans = displayObservee.getGlobalPositionTransform();
+			}
 
 			ArrayList<Vec3d> curvePoints = pointInfos[0].getCurvePoints();
 			Vec3d startPoint = curvePoints.get(curvePoints.size() - 1);
@@ -105,11 +112,13 @@ public class ArrowModel extends PolylineModel {
 			dirty = dirty || dirty_vec3d(fromCache, fromPoint);
 			dirty = dirty || dirty_col4d(colorCache, color);
 			dirty = dirty || dirty_vec3d(arrowSizeCache, arrowSize);
+			dirty = dirty || !compare(globalTransCache, globalTrans);
 
 			startCache = startPoint;
 			fromCache = fromPoint;
 			colorCache = color;
 			arrowSizeCache = arrowSize;
+			globalTransCache = globalTrans;
 
 			if (cachedProxy != null && !dirty) {
 				// up to date
@@ -136,6 +145,10 @@ public class ArrowModel extends PolylineModel {
 				Vec4d tmp = new Vec4d();
 				tmp.mult4(trans, v);
 				headPoints.add(tmp);
+			}
+
+			if (globalTrans != null) {
+				RenderUtils.transformPointsLocal(globalTrans, headPoints, 0);
 			}
 
 			cachedProxy = new PolygonProxy(headPoints, Transform.ident, DisplayModel.ONES, color,
