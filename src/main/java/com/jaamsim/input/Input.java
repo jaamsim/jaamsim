@@ -1229,6 +1229,20 @@ public abstract class Input<T> {
 		}
 	}
 
+	public static <T extends Enum<T>> ArrayList<T> parseEnumList(Class<T> aClass, KeywordIndex kw) {
+		ArrayList<T> ret = new ArrayList<>(kw.numArgs());
+		for (int i=0; i<kw.numArgs(); i++) {
+			try {
+				ret.add(Enum.valueOf(aClass, kw.getArg(i)));
+			} catch (IllegalArgumentException e) {
+				throw new InputErrorException(INP_ERR_BADCHOICE, Arrays.toString(aClass.getEnumConstants()), kw.getArg(i));
+			} catch (NullPointerException e) {
+				throw new InputErrorException(INP_ERR_BADCHOICE, Arrays.toString(aClass.getEnumConstants()), kw.getArg(i));
+			}
+		}
+		return ret;
+	}
+
 	public static Class<? extends Entity> parseEntityType(String input)
 	throws InputErrorException {
 		ObjectType type = Input.tryParseEntity( input, ObjectType.class );
