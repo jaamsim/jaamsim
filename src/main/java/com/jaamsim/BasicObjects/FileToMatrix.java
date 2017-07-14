@@ -19,19 +19,24 @@ package com.jaamsim.BasicObjects;
 import java.net.URI;
 import java.util.ArrayList;
 
+import com.jaamsim.basicsim.ErrorException;
+import com.jaamsim.input.ExpError;
+import com.jaamsim.input.ExpEvaluator;
+import com.jaamsim.input.ExpParser;
+import com.jaamsim.input.ExpResult;
 import com.jaamsim.input.FileInput;
 import com.jaamsim.input.Output;
-import com.jaamsim.units.DimensionlessUnit;
+import com.jaamsim.input.ExpParser.Expression;
 
 public class FileToMatrix extends FileToArray {
 
-	double[][] value;
+	ArrayList<ArrayList<ExpResult>> value;
 
 	public FileToMatrix() {}
 
 	@Override
 	protected void setValueForURI(URI uri) {
-		value = get2DArrayForURI(uri);
+		value = getMatrixForURI(uri);
 	}
 
 	@Override
@@ -39,29 +44,31 @@ public class FileToMatrix extends FileToArray {
 		value = null;
 	}
 
-	private static double[][] get2DArrayForURI(URI uri) {
+	private ArrayList<ArrayList<ExpResult>> getMatrixForURI(URI uri) {
 		ArrayList<ArrayList<String>> tokens = FileInput.getTokensFromURI(uri);
-		double[][] ret = new double[tokens.size()][];
-		for (int i=0; i<tokens.size(); i++) {
-			double[] record = new double[tokens.get(i).size()];
-			for (int j=0; j<tokens.get(i).size(); j++) {
+		ArrayList<ArrayList<ExpResult>> ret = new ArrayList<>(tokens.size());
+		for (ArrayList<String> strRecord : tokens) {
+			ArrayList<ExpResult> record = new ArrayList<>(strRecord.size());
+			for (String str : strRecord) {
 				try {
-					record[j] = Double.parseDouble(tokens.get(i).get(j));
+					ExpEvaluator.EntityParseContext pc = ExpEvaluator.getParseContext(this, str);
+					Expression exp = ExpParser.parseExpression(pc, str);
+					ExpResult res = ExpEvaluator.evaluateExpression(exp, 0.0d);
+					record.add(res);
 				}
-				catch (NumberFormatException e) {
-					record[j] = Double.NaN;
+				catch (ExpError e) {
+					throw new ErrorException(this, e);
 				}
 			}
-			ret[i] = record;
+			ret.add(record);
 		}
 		return ret;
 	}
 
 	@Output(name = "Value",
-	 description = "A matrix containing the numerical data from the input file.",
-	    unitType = DimensionlessUnit.class,
+	 description = "A matrix containing the data from the input file.",
 	    sequence = 1)
-	public double[][] getValue(double simTime) {
+	public ArrayList<ArrayList<ExpResult>> getValue(double simTime) {
 		return value;
 	}
 

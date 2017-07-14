@@ -19,19 +19,24 @@ package com.jaamsim.BasicObjects;
 import java.net.URI;
 import java.util.ArrayList;
 
+import com.jaamsim.basicsim.ErrorException;
+import com.jaamsim.input.ExpError;
+import com.jaamsim.input.ExpEvaluator;
+import com.jaamsim.input.ExpParser;
+import com.jaamsim.input.ExpParser.Expression;
+import com.jaamsim.input.ExpResult;
 import com.jaamsim.input.FileInput;
 import com.jaamsim.input.Output;
-import com.jaamsim.units.DimensionlessUnit;
 
 public class FileToVector extends FileToArray {
 
-	double[] value;
+	ArrayList<ExpResult> value;
 
 	public FileToVector() {}
 
 	@Override
 	protected void setValueForURI(URI uri) {
-		value = get1DArrayForURI(uri);
+		value = getVectorForURI(uri);
 	}
 
 	@Override
@@ -39,33 +44,33 @@ public class FileToVector extends FileToArray {
 		value = null;
 	}
 
-	private static double[] get1DArrayForURI(URI uri) {
+	private ArrayList<ExpResult> getVectorForURI(URI uri) {
 		ArrayList<ArrayList<String>> tokens = FileInput.getTokensFromURI(uri);
 		int n = 0;
 		for (ArrayList<String> record : tokens) {
 			n += record.size();
 		}
-		double[] ret = new double[n];
-		int i = 0;
+		ArrayList<ExpResult> ret = new ArrayList<>(n);
 		for (ArrayList<String> record : tokens) {
 			for (String str : record) {
 				try {
-					ret[i] = Double.parseDouble(str);
+					ExpEvaluator.EntityParseContext pc = ExpEvaluator.getParseContext(this, str);
+					Expression exp = ExpParser.parseExpression(pc, str);
+					ExpResult res = ExpEvaluator.evaluateExpression(exp, 0.0d);
+					ret.add(res);
 				}
-				catch (NumberFormatException e) {
-					ret[i] = Double.NaN;
+				catch (ExpError e) {
+					throw new ErrorException(this, e);
 				}
-				i++;
 			}
 		}
 		return ret;
 	}
 
 	@Output(name = "Value",
-	 description = "A vector containing the numerical data from the input file.",
-	    unitType = DimensionlessUnit.class,
+	 description = "A vector containing the data from the input file.",
 	    sequence = 1)
-	public double[] getValue(double simTime) {
+	public ArrayList<ExpResult> getValue(double simTime) {
 		return value;
 	}
 
