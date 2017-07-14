@@ -26,7 +26,7 @@ import com.jaamsim.input.Keyword;
 
 public abstract class FileToArray extends LinkedComponent {
 
-	@Keyword(description = "A file containing numerical data, delimited by spaces or tabs.",
+	@Keyword(description = "A file containing entries that are delimited by spaces and/or tabs.",
 	         exampleList = {"'c:/test/data.txt'"})
 	private final FileInput dataFile;
 
@@ -47,11 +47,15 @@ public abstract class FileToArray extends LinkedComponent {
 		if (in == dataFile) {
 			if (dataFile.getValue() == null) {
 				clearValue();
-				return;
 			}
-			setValueForURI(dataFile.getValue());
 			return;
 		}
+	}
+
+	@Override
+	public void earlyInit() {
+		super.earlyInit();
+		setValueForURI(dataFile.getValue());
 	}
 
 	@Override
