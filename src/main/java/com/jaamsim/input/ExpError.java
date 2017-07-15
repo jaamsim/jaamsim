@@ -21,7 +21,7 @@ public class ExpError extends Exception {
 	public final String source;
 	public final int pos;
 
-	ExpError(String source, int pos, String msg) {
+	public ExpError(String source, int pos, String msg) {
 		super(msg);
 		this.source = source;
 		this.pos = pos;
