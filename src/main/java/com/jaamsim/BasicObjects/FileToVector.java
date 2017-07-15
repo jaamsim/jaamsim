@@ -21,9 +21,6 @@ import java.util.ArrayList;
 
 import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.input.ExpError;
-import com.jaamsim.input.ExpEvaluator;
-import com.jaamsim.input.ExpParser;
-import com.jaamsim.input.ExpParser.Expression;
 import com.jaamsim.input.ExpResult;
 import com.jaamsim.input.FileInput;
 import com.jaamsim.input.Output;
@@ -52,12 +49,10 @@ public class FileToVector extends FileToArray {
 		}
 		ArrayList<ExpResult> ret = new ArrayList<>(n);
 		for (ArrayList<String> record : tokens) {
-			for (String str : record) {
+			for (int i=0; i<record.size(); i++) {
+				String str = record.get(i);
 				try {
-					ExpEvaluator.EntityParseContext pc = ExpEvaluator.getParseContext(this, str);
-					Expression exp = ExpParser.parseExpression(pc, str);
-					ExpResult res = ExpEvaluator.evaluateExpression(exp, 0.0d);
-					ret.add(res);
+					ret.add(getExpResult(i, str));
 				}
 				catch (ExpError e) {
 					throw new ErrorException(this, e);

@@ -21,12 +21,9 @@ import java.util.ArrayList;
 
 import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.input.ExpError;
-import com.jaamsim.input.ExpEvaluator;
-import com.jaamsim.input.ExpParser;
 import com.jaamsim.input.ExpResult;
 import com.jaamsim.input.FileInput;
 import com.jaamsim.input.Output;
-import com.jaamsim.input.ExpParser.Expression;
 
 public class FileToMatrix extends FileToArray {
 
@@ -49,12 +46,10 @@ public class FileToMatrix extends FileToArray {
 		ArrayList<ArrayList<ExpResult>> ret = new ArrayList<>(tokens.size());
 		for (ArrayList<String> strRecord : tokens) {
 			ArrayList<ExpResult> record = new ArrayList<>(strRecord.size());
-			for (String str : strRecord) {
+			for (int i=0; i<strRecord.size(); i++) {
+				String str = strRecord.get(i);
 				try {
-					ExpEvaluator.EntityParseContext pc = ExpEvaluator.getParseContext(this, str);
-					Expression exp = ExpParser.parseExpression(pc, str);
-					ExpResult res = ExpEvaluator.evaluateExpression(exp, 0.0d);
-					record.add(res);
+					record.add(getExpResult(i, str));
 				}
 				catch (ExpError e) {
 					throw new ErrorException(this, e);
