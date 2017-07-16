@@ -35,17 +35,19 @@ public abstract class DisplayModel extends Entity {
 
 	private VisibilityInfo visInfo = ALWAYS;
 
-	@Keyword(description = "The view objects this model will be visible on. If this is empty the entity is visible on all views.",
-	         example = "ShipModel VisibleViews { TitleView DefaultView }")
+	@Keyword(description = "The view windows on which this model will be visible. "
+	                     + "If this is empty the entity is visible on all views.",
+	         exampleList = {"TitleView DefaultView"})
 	private final EntityListInput<View> visibleViews;
 
 	@Keyword(description = "The distances from the camera that this display model will be visible",
-	         example = "ShipModel DrawRange { 0 100 m }")
+	         exampleList = {"0 100 m"})
 	private final ValueListInput drawRange;
 
-	@Keyword(description = "ModelScale scales the resulting visualization by this vector. Warning!! Resizing an entity with this set " +
-	         "to a value that is not 1 is very unintuitive.",
-	         example = "ShipModel ModelScale { 5 5 5 }")
+	@Keyword(description = "ModelScale scales the resulting visualization by this vector. "
+	                     + "Warning!! Resizing an entity with this set to a value that is not 1 "
+	                     + "is very unintuitive.",
+	         exampleList = {"5 5 5"})
 	private final Vec3dInput modelScale;
 
 	private static final DoubleVector defRange = new DoubleVector(2);

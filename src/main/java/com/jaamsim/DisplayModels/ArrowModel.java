@@ -36,9 +36,9 @@ import com.jaamsim.render.RenderUtils;
 import com.jaamsim.units.DistanceUnit;
 
 public class ArrowModel extends PolylineModel {
-	@Keyword(description = "A set of { x, y, z } numbers that define the size of the arrowhead " +
-	        "in those directions at the end of the connector.",
-	 example = "Arrow1 ArrowSize { 0.165 0.130 0.0 m }")
+	@Keyword(description = "A set of { x, y, z } numbers that define the size of the arrowhead "
+	                     + "in those directions at the end of the connector.",
+	         exampleList = "Arrow1 ArrowSize { 0.165 0.130 0.0 m }")
 	private final Vec3dInput arrowHeadSize;
 
 	private static List<Vec4d> arrowHeadVerts;
