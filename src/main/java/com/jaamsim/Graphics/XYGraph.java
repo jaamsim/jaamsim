@@ -30,36 +30,36 @@ public class XYGraph extends GraphBasics {
 
 	// Key Inputs category
 
-	@Keyword(description = "One or more sources of data to be graphed on the primary y-axis.\n" +
-			"Each source is graphed as a separate line or bar and is specified by an Entity and its Output.",
-     example = "XYGraph1 DataSource { { Entity1 Output1 } { Entity2 Output2 } }")
+	@Keyword(description = "One or more sources of data to be graphed on the primary y-axis.\n"
+	                     + "Each source is graphed as a separate line or bar and is specified by an Entity and its Output.",
+	         exampleList = {"{ Entity1 Output1 } { Entity2 Output2 }"})
 	protected final SampleListInput dataSource;
 
-	@Keyword(description = "A list of colors for the primary series to be displayed.\n" +
-			"Each color can be specified by either a color keyword or an RGB value.\n" +
-			"For multiple series, each color must be enclosed in braces.\n" +
-			"If only one color is provided, it is used for all the series.",
-	         example = "XYGraph1 SeriesColors { { red } { green } }")
+	@Keyword(description = "A list of colors for the primary series to be displayed.\n"
+	                     + "Each color can be specified by either a color keyword or an RGB value.\n"
+	                     + "For multiple series, each color must be enclosed in braces.\n"
+	                     + "If only one color is provided, it is used for all the series.",
+	         exampleList = "XYGraph1 SeriesColors { { red } { green } }")
 	protected final ColorListInput seriesColorsList;
 
 	@Keyword(description = "Set to TRUE if the primary series are to be shown as bars instead of lines.",
-     example = "XYGraph1 ShowBars { TRUE }")
+	         exampleList = {"TRUE"})
 	protected final BooleanInput showBars;
 
-	@Keyword(description = "One or more sources of data to be graphed on the secondary y-axis.\n" +
-			"Each source is graphed as a separate line or bar and is specified by an Entity and its Output.",
-     example = "XYGraph1 SecondaryDataSource { { Entity1 Output1 } { Entity2 Output2 } }")
+	@Keyword(description = "One or more sources of data to be graphed on the secondary y-axis.\n"
+	                     + "Each source is graphed as a separate line or bar and is specified by an Entity and its Output.",
+	         exampleList = {"{ Entity1 Output1 } { Entity2 Output2 }"})
 	protected final SampleListInput secondaryDataSource;
 
-	@Keyword(description = "A list of colors for the secondary series to be displayed.\n" +
-			"Each color can be specified by either a color keyword or an RGB value.\n" +
-			"For multiple series, each color must be enclosed in braces.\n" +
-			"If only one color is provided, it is used for all the series.",
-	         example = "XYGraph1 SecondarySeriesColors { { red } { green } }")
+	@Keyword(description = "A list of colors for the secondary series to be displayed.\n"
+	                     + "Each color can be specified by either a color keyword or an RGB value.\n"
+	                     + "For multiple series, each color must be enclosed in braces.\n"
+	                     + "If only one color is provided, it is used for all the series.",
+	         exampleList = {"{ red } { green }"})
 	protected final ColorListInput secondarySeriesColorsList;
 
 	@Keyword(description = "Set to TRUE if the secondary series are to be shown as bars instead of lines.",
-     example = "XYGraph1 SecondaryShowBars { TRUE }")
+	         exampleList = {"TRUE"})
 	protected final BooleanInput secondaryShowBars;
 
 	{
