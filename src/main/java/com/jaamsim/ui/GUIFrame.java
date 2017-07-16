@@ -2423,41 +2423,34 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 	 * @param className - object whose keyword tooltip is to be displayed
 	 * @param keyword - name of the keyword
 	 * @param description - description of the keyword
-	 * @param example - an example showing how the keyword is used
 	 * @param exampleList - a list of examples that show how the keyword can be used
 	 * @return HTML for the tooltip
 	 */
 	public static String formatKeywordToolTip(String className, String keyword,
-			String description, String validInputs, String example, String[] exampleList) {
-
-		String desc = html_replace(description);
-
-		// Single example
-		String examp;
-		if (!example.isEmpty()) {
-			examp = html_replace(example);
-		}
-		// List of examples
-		else {
-			StringBuilder sb = new StringBuilder();
-			for (int i=0; i<exampleList.length; i++) {
-				String item = html_replace(exampleList[i]);
-				if (i > 0)
-					sb.append("<BR>");
-				sb.append(item);
-			}
-			examp = sb.toString();
-		}
+			String description, String validInputs, String[] exampleList) {
 
 		StringBuilder sb = new StringBuilder("<html><p width=\"350px\">");
+
+		// Keyword name
 		sb.append("<b>").append(keyword).append("</b><br>");
+
+		// Description
+		String desc = html_replace(description);
 		sb.append(desc).append("<br><br>");
+
+		// Valid Inputs
 		if (validInputs != null) {
 			sb.append(validInputs).append("<br><br>");
 		}
-		sb.append("<u>Examples:</u><br>").append(examp);
-		sb.append("</p></html>");
 
+		// Examples
+		sb.append("<u>Examples:</u>");
+		for (int i=0; i<exampleList.length; i++) {
+			String item = html_replace(exampleList[i]);
+			sb.append("<br>").append(item);
+		}
+
+		sb.append("</p></html>");
 		return sb.toString();
 	}
 

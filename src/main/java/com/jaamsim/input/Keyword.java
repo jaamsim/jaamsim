@@ -25,6 +25,5 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 public @interface Keyword {
 	String description() default "";
-	String example() default "";
 	String[] exampleList() default "";
 }
