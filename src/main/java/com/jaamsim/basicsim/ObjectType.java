@@ -37,32 +37,32 @@ public class ObjectType extends Entity {
 	private static final HashMap<Class<? extends Entity>, ObjectType> objectTypeMap;
 
 	@Keyword(description = "The java class of the object type",
-	         example = "This is placeholder example text")
+	         exampleList = {"This is placeholder example text"})
 	private final ClassInput javaClass;
 
 	@Keyword(description = "The package to which the object type belongs",
-	         example = "This is placeholder example text")
+	         exampleList = {"This is placeholder example text"})
 	private final StringInput palette;
 
 	@Keyword(description = "Only for DisplayEntity",
-	         example = "This is placeholder example text")
+	         exampleList = {"This is placeholder example text"})
 	private final EntityInput<DisplayModel> defaultDisplayModel;
 
 	@Keyword(description = "This is placeholder description text",
-	         example = "This is placeholder example text")
+	         exampleList = {"This is placeholder example text"})
 	private final BooleanInput dragAndDrop;
 
-	@Keyword(description = "The (optional) image to be used in the Model Builder as the icon for this object type." +
-			"The normal image size is 24x24 pixels.",
-	         example = "This is placeholder example text")
+	@Keyword(description = "The (optional) image to be used in the Model Builder as the icon for "
+	                     + "this object type.  The normal image size is 24x24 pixels.",
+	         exampleList = {"This is placeholder example text"})
 	private final ImageInput iconFile;
 
 	@Keyword(description = "The default size for the instances of this class.",
-	         example = "DisplayEntity DefaultSize { 1.0 1.0 1.0 m }")
+	         exampleList = {"1.0 1.0 1.0 m"})
 	private final Vec3dInput defaultSize;
 
 	@Keyword(description = "The default alignment for the instances of this class.",
-	         example = "DisplayEntity DefaultAlignment { 0.0 0.0 -0.5 m }")
+	         exampleList = {"0.0 0.0 -0.5 m"})
 	private final Vec3dInput defaultAlignment;
 
 	private final ArrayList<DisplayModel> displayEntityDefault = new ArrayList<>(1);
