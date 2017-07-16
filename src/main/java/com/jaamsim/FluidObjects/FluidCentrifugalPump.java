@@ -31,20 +31,20 @@ import com.jaamsim.units.VolumeFlowUnit;
 public class FluidCentrifugalPump extends FluidComponent {
 
 	@Keyword(description = "Maximum volumetric flow rate that the pump can generate.",
-	         example = "Pump1 MaxFlowRate { 1.0 m3/s }")
+	         exampleList = {"1.0 m3/s"})
 	private final ValueInput maxFlowRateInput;
 
 	@Keyword(description = "Maximum static pressure that the pump can generate (at zero flow rate).",
-	         example = "Pump1 MaxPressure { 1.0 Pa }")
+	         exampleList = {"1.0 Pa"})
 	private final ValueInput maxPressureInput;
 
 	@Keyword(description = "Maximum static pressure loss for the pump (at maximum flow rate).",
-	         example = "Pump1 MaxPressureLoss { 1.0 Pa }")
+	         exampleList = {"1.0 Pa"})
 	private final ValueInput maxPressureLossInput;
 
-	@Keyword(description = "The CalculationEntity whose output sets the rotational speed of the pump.  " +
-			"The output value is ratio of present speed to maximum speed (0.0 - 1.0).",
-	         example = "Pump1 SpeedController { Calc1 }")
+	@Keyword(description = "The CalculationEntity whose output sets the rotational speed of the pump. "
+	                     + "The output value is ratio of present speed to maximum speed (0.0 - 1.0).",
+	         exampleList = {"Calc1"})
 	private final EntityInput<DoubleCalculation> speedControllerInput;
 
 	{

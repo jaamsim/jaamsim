@@ -35,12 +35,12 @@ import com.jaamsim.units.SpeedUnit;
 public class FluidComponent extends DisplayEntity {
 
 	@Keyword(description = "The upstream component that feeds this component.",
-	      example = "Component1 Previous { Comp1 }")
+	         exampleList = {"Comp1"})
 	private final EntityInput<FluidComponent> previousInput;
 
-	@Keyword(description = "The hydraulic diameter of the component.  " +
-	                "Equal to the inside diameter of a pipe with a circular cross-section.",
-	      example = "Comp1 Diameter { 1.0 m }")
+	@Keyword(description = "The hydraulic diameter of the component. "
+	                     + "Equal to the inside diameter of a pipe with a circular cross-section.",
+	         exampleList = {"1.0 m"})
 	private final ValueInput diameterInput;
 
 	private FluidFlow fluidFlow;  // The fluid flow object that controls the flow from one component to the next.

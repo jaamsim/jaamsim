@@ -33,20 +33,20 @@ import com.jaamsim.units.ViscosityUnit;
 public class Fluid extends DisplayEntity {
 
 	@Keyword(description = "The density of the fluid (default = water).",
-	         example = "Fluid1 Density { 1000 kg/m3 }")
+	         exampleList = {"1000 kg/m3"})
 	private final ValueInput densityInput;
 
 	@Keyword(description = "The dynamic viscosity of the fluid (default = water).",
-	         example = "Fluid1 Viscosity { 0.001002 Pa-s }")
+	         exampleList = {"0.001002 Pa-s"})
 	private final ValueInput viscosityInput;
 
 	@Keyword(description = "The colour used to represent the fluid.",
-	         example = "Fluid1 Colour { red }")
+	         exampleList = {"red"})
 	private final ColourInput colourInput;
 
 	@Keyword(description = "The acceleration of gravity to be used in the fluid flow "
 	                     + "calculations.",
-	         example = "Fluid1 Gravity { 9.81 m/s2 }")
+	         exampleList = {"9.81 m/s2"})
 	private final ValueInput gravityInput;
 
 	{
