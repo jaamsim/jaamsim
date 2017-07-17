@@ -120,6 +120,11 @@ public abstract class Input<T> {
 	protected static final String VALID_VEC3D_LIST = "Accepts a list of vectors enclosed by braces. "
 	                                               + "Each vector consists of three numbers separated by spaces followed by a unit of type %s. "
 	                                               + "If a vector has only two numbers, the third value defaults to zero.";
+	protected static final String VALID_ATTRIB_DEF = "Accepts a list of attribute definitions each consisting of an attribute name followed by an expression "
+	                                               + "that sets the initial value for the attribute. "
+	                                               + "Each definition in the list must be enclosed by braces.";
+	protected static final String VALID_CUSTOM_OUT = "Accepts a list of custom output definitions each consisting of a custom output name, an expression, and a unit type (if required). "
+	                                               + "Each definition in the list must be enclosed by braces.";
 
 	public static final String POSITIVE_INFINITY = "Infinity";
 	public static final String NEGATIVE_INFINITY = "-Infinity";

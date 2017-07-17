@@ -108,6 +108,11 @@ public class AttributeDefinitionListInput extends ListInput<ArrayList<AttributeH
 	}
 
 	@Override
+	public String getValidInputDesc() {
+		return Input.VALID_ATTRIB_DEF;
+	}
+
+	@Override
 	public void copyFrom(Input<?> in) {
 		super.copyFrom(in);
 		value = new ArrayList<>();
