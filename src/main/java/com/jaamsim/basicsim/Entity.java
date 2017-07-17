@@ -88,16 +88,24 @@ public class Entity {
 	         exampleList = {"'A very useful entity'"})
 	protected final StringInput desc;
 
-	@Keyword(description = "The list of user defined attributes for this entity.\n" +
-			" The attribute name is followed by its initial value. The unit provided for" +
-			"this value will determine the attribute's unit type.",
-	         exampleList = {"{ A 20.0 s } { alpha 42 }"})
+	@Keyword(description = "Defines one or more attributes for this entity. "
+	                     + "An attribute's value can be a number with or with units, an entity, "
+	                     + "a string, an array, a map, or a lambda function. "
+	                     + "The initial value set by the definition can only be changed by an "
+	                     + "Assign object.",
+	         exampleList = {"{ AAA 1 }  { bbb 2[s] }  { c '\"abc\"' }  { d [Queue1] }",
+	                        "{ e '{1,2,3}' }  { f '|x|(2*x)' }"})
 	public final AttributeDefinitionListInput attributeDefinitionList;
 
-
-	@Keyword(description = "The list of user defined custom outputs for this entity.\n" +
-			" The output name is followed by an expression to be evaluated as the output and the unit type of the expression.",
-	         exampleList = {"{ TwiceSimTime '2*this.SimTime' TimeUnit } { CargoVolume 'this.Cargo/this.CargoDensity' VolumeUnit }"})
+	@Keyword(description = "Defines one or more custom outputs for this entity. "
+	                     + "A custom output can return a number with or with units, an entity, "
+	                     + "a string, an array, a map, or a lambda function. "
+	                     + "The present value of a custom output is calculated on demand by the "
+	                     + "model. "
+	                     + "A custom output cannot use the value of another custom output in its "
+	                     + "definition.",
+	         exampleList = {"{ TwiceSimTime '2*this.SimTime' TimeUnit }  { SimTimeInDays 'this.SimTime/1[d]' }",
+	                        "{ FirstEnt 'size([Queue1].QueueList)>0 ? [Queue1].QueueList(1) : [SimEntity1]' }"})
 	public final NamedExpressionListInput namedExpressionInput;
 
 	{
