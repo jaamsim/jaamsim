@@ -1074,7 +1074,8 @@ public abstract class Input<T> {
 		boolean includeIndex = true;
 
 		// Parse the unit portion of the input
-		Unit unit = Input.tryParseUnit(kw.getArg(numArgs-1), unitType);
+		String unitName = Parser.removeEnclosure("[", kw.getArg(numArgs-1), "]");
+		Unit unit = Input.tryParseUnit(unitName, unitType);
 
 
 		// A unit is mandatory except for dimensionless values and time values in RFC8601 date/time format
@@ -1138,7 +1139,8 @@ public abstract class Input<T> {
 		int numDoubles = input.size();
 
 		// Parse the unit portion of the input
-		Unit unit = Input.tryParseUnit(input.get(numDoubles-1), unitType);
+		String unitName = Parser.removeEnclosure("[", input.get(numDoubles-1), "]");
+		Unit unit = Input.tryParseUnit(unitName, unitType);
 
 		// A unit is mandatory except for dimensionless values and time values in RFC8601 date/time format
 		if (unit == null && unitType != DimensionlessUnit.class && unitType != TimeUnit.class)
