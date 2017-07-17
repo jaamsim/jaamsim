@@ -116,12 +116,16 @@ public static final boolean isQuoted(CharSequence s) {
 }
 
 public static final String addQuotes(String str) {
+	return addEnclosure("'", str, "'");
+}
+
+public static final String addEnclosure(String prefix, String str, String suffix) {
 	StringBuilder sb = new StringBuilder();
-	if (!str.startsWith("'"))
-		sb.append("'");
+	if (!str.startsWith(prefix))
+		sb.append(prefix);
 	sb.append(str);
-	if (!str.endsWith("'"))
-		sb.append("'");
+	if (!str.endsWith(suffix))
+		sb.append(suffix);
 	return sb.toString();
 }
 }
