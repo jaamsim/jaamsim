@@ -32,8 +32,8 @@ public class FileToMatrix extends FileToArray {
 	public FileToMatrix() {}
 
 	@Override
-	protected void setValueForURI(URI uri) {
-		value = getMatrixForURI(uri);
+	protected void setValueForURI(URI uri, double simTime) {
+		value = getMatrixForURI(uri, simTime);
 	}
 
 	@Override
@@ -41,7 +41,7 @@ public class FileToMatrix extends FileToArray {
 		value = null;
 	}
 
-	private ArrayList<ArrayList<ExpResult>> getMatrixForURI(URI uri) {
+	private ArrayList<ArrayList<ExpResult>> getMatrixForURI(URI uri, double simTime) {
 		ArrayList<ArrayList<String>> tokens = FileInput.getTokensFromURI(uri);
 		ArrayList<ArrayList<ExpResult>> ret = new ArrayList<>(tokens.size());
 		for (ArrayList<String> strRecord : tokens) {
@@ -49,7 +49,7 @@ public class FileToMatrix extends FileToArray {
 			for (int i=0; i<strRecord.size(); i++) {
 				String str = strRecord.get(i);
 				try {
-					record.add(getExpResult(i, str));
+					record.add(getExpResult(i, str, simTime));
 				}
 				catch (ExpError e) {
 					throw new ErrorException(this, e);

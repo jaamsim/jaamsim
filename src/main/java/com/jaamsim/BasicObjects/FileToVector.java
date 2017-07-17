@@ -32,8 +32,8 @@ public class FileToVector extends FileToArray {
 	public FileToVector() {}
 
 	@Override
-	protected void setValueForURI(URI uri) {
-		value = getVectorForURI(uri);
+	protected void setValueForURI(URI uri, double simTime) {
+		value = getVectorForURI(uri, simTime);
 	}
 
 	@Override
@@ -41,7 +41,7 @@ public class FileToVector extends FileToArray {
 		value = null;
 	}
 
-	private ArrayList<ExpResult> getVectorForURI(URI uri) {
+	private ArrayList<ExpResult> getVectorForURI(URI uri, double simTime) {
 		ArrayList<ArrayList<String>> tokens = FileInput.getTokensFromURI(uri);
 		int n = 0;
 		for (ArrayList<String> record : tokens) {
@@ -52,7 +52,7 @@ public class FileToVector extends FileToArray {
 			for (int i=0; i<record.size(); i++) {
 				String str = record.get(i);
 				try {
-					ret.add(getExpResult(i, str));
+					ret.add(getExpResult(i, str, simTime));
 				}
 				catch (ExpError e) {
 					throw new ErrorException(this, e);

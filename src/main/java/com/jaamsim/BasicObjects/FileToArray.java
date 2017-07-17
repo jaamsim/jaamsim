@@ -87,17 +87,17 @@ public abstract class FileToArray extends LinkedComponent {
 	@Override
 	public void earlyInit() {
 		super.earlyInit();
-		setValueForURI(dataFile.getValue());
+		setValueForURI(dataFile.getValue(), 0.0d);
 	}
 
 	@Override
 	public void addEntity(DisplayEntity ent) {
 		super.addEntity(ent);
-		setValueForURI(dataFile.getValue());
+		setValueForURI(dataFile.getValue(), getSimTime());
 		sendToNextComponent(ent);
 	}
 
-	protected ExpResult getExpResult(int i, String str)
+	protected ExpResult getExpResult(int i, String str, double simTime)
 	throws ExpError {
 
 		if (dataFormat.getValue() != null && i < dataFormat.getListSize()) {
@@ -124,10 +124,10 @@ public abstract class FileToArray extends LinkedComponent {
 
 		ExpEvaluator.EntityParseContext pc = ExpEvaluator.getParseContext(this, str);
 		Expression exp = ExpParser.parseExpression(pc, str);
-		return ExpEvaluator.evaluateExpression(exp, 0.0d);
+		return ExpEvaluator.evaluateExpression(exp, simTime);
 	}
 
-	protected abstract void setValueForURI(URI uri);
+	protected abstract void setValueForURI(URI uri, double simTime);
 	protected abstract void clearValue();
 
 }
