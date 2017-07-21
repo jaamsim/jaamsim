@@ -49,7 +49,6 @@ public class ExpressionInput extends Input<ExpParser.Expression> {
 			value = exp;
 
 		} catch (ExpError e) {
-			InputAgent.logStackTrace(e);
 			throw new InputErrorException(e);
 		}
 	}

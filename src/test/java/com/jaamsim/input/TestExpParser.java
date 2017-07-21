@@ -114,6 +114,93 @@ public class TestExpParser {
 		}
 	}
 
+	class ErrorResolver implements ExpParser.OutputResolver {
+
+		private final ExpError error = new ExpError(null, 0, "Variables not supported in test");
+
+		@Override
+		public ExpResult resolve(EvalContext ec, ExpResult ent) throws ExpError {
+			throw error;
+		}
+
+		@Override
+		public ExpValResult validate(ExpValResult entValRes) {
+			return ExpValResult.makeErrorRes(error);
+		}
+	}
+
+	class UnitPC extends ExpParser.ParseContext {
+		public UnitPC() {
+			super(new HashMap<String, ExpResult>());
+		}
+
+		@Override
+		public UnitData getUnitByName(String name) {
+			UnitData ret = new UnitData();
+			if (name.equals("s")) {
+				ret.scaleFactor = 1;
+				ret.unitType = TimeUnit.class;
+				return ret;
+			}
+			if (name.equals("min")) {
+				ret.scaleFactor = 60;
+				ret.unitType = TimeUnit.class;
+				return ret;
+			}
+			if (name.equals("hr")) {
+				ret.scaleFactor = 3600;
+				ret.unitType = TimeUnit.class;
+				return ret;
+			}
+			if (name.equals("m")) {
+				ret.scaleFactor = 1;
+				ret.unitType = DistanceUnit.class;
+				return ret;
+			}
+			if (name.equals("km")) {
+				ret.scaleFactor = 1000;
+				ret.unitType = DistanceUnit.class;
+				return ret;
+			}
+			return null;
+		}
+		@Override
+		public Class<? extends Unit> multUnitTypes(Class<? extends Unit> a,
+				Class<? extends Unit> b) {
+			return Unit.getMultUnitType(a, b);
+		}
+
+		@Override
+		public Class<? extends Unit> divUnitTypes(Class<? extends Unit> num,
+				Class<? extends Unit> denom) {
+			return Unit.getDivUnitType(num, denom);
+		}
+		@Override
+		public OutputResolver getOutputResolver(String name)
+				throws ExpError {
+			return new ErrorResolver();
+		}
+		@Override
+		public Assigner getAssigner(String attribName) throws ExpError {
+			throw new ExpError(null, 0, "Assign not supported");
+		}
+		@Override
+		public Assigner getConstAssigner(ExpResult constEnt, String attribName)
+				throws ExpError {
+			throw new ExpError(null, 0, "Assign not supported");
+		}
+		@Override
+		public ExpResult getValFromLitName(String name, String source, int pos) throws ExpError {
+			return null;
+		}
+		@Override
+		public OutputResolver getConstOutputResolver(ExpResult constEnt,
+				String name) throws ExpError {
+			return new ErrorResolver();
+		}
+
+	}
+
 	static Entity mapEnt = new Entity();
 	static Entity arrayEnt = new Entity();
 	static Entity dummyEnt = new Entity();
@@ -622,6 +709,13 @@ public class TestExpParser {
 		assertTrue(res.type == ExpResType.STRING);
 		assertTrue(res.stringVal.equals("str5.0"));
 
+		UnitPC upc = new UnitPC();
+
+		exp = ExpParser.parseExpression(upc, "format([[%.0f]],42[km]/1[m])");
+		res = exp.evaluate(ec);
+		assertTrue(res.type == ExpResType.STRING);
+		assertTrue(res.stringVal.equals("42000"));
+
 	}
 
 	@Test
@@ -780,92 +874,7 @@ public class TestExpParser {
 
 	@Test
 	public void testUnits() throws ExpError {
-		class ErrorResolver implements ExpParser.OutputResolver {
 
-			private final ExpError error = new ExpError(null, 0, "Variables not supported in test");
-
-			@Override
-			public ExpResult resolve(EvalContext ec, ExpResult ent) throws ExpError {
-				throw error;
-			}
-
-			@Override
-			public ExpValResult validate(ExpValResult entValRes) {
-				return ExpValResult.makeErrorRes(error);
-			}
-		}
-
-		class UnitPC extends ExpParser.ParseContext {
-			public UnitPC() {
-				super(new HashMap<String, ExpResult>());
-			}
-
-			@Override
-			public UnitData getUnitByName(String name) {
-				UnitData ret = new UnitData();
-				if (name.equals("s")) {
-					ret.scaleFactor = 1;
-					ret.unitType = TimeUnit.class;
-					return ret;
-				}
-				if (name.equals("min")) {
-					ret.scaleFactor = 60;
-					ret.unitType = TimeUnit.class;
-					return ret;
-				}
-				if (name.equals("hr")) {
-					ret.scaleFactor = 3600;
-					ret.unitType = TimeUnit.class;
-					return ret;
-				}
-				if (name.equals("m")) {
-					ret.scaleFactor = 1;
-					ret.unitType = DistanceUnit.class;
-					return ret;
-				}
-				if (name.equals("km")) {
-					ret.scaleFactor = 1000;
-					ret.unitType = DistanceUnit.class;
-					return ret;
-				}
-				return null;
-			}
-			@Override
-			public Class<? extends Unit> multUnitTypes(Class<? extends Unit> a,
-					Class<? extends Unit> b) {
-				return Unit.getMultUnitType(a, b);
-			}
-
-			@Override
-			public Class<? extends Unit> divUnitTypes(Class<? extends Unit> num,
-					Class<? extends Unit> denom) {
-				return Unit.getDivUnitType(num, denom);
-			}
-			@Override
-			public OutputResolver getOutputResolver(String name)
-					throws ExpError {
-				return new ErrorResolver();
-			}
-			@Override
-			public Assigner getAssigner(String attribName) throws ExpError {
-				throw new ExpError(null, 0, "Assign not supported");
-			}
-			@Override
-			public Assigner getConstAssigner(ExpResult constEnt, String attribName)
-					throws ExpError {
-				throw new ExpError(null, 0, "Assign not supported");
-			}
-			@Override
-			public ExpResult getValFromLitName(String name, String source, int pos) throws ExpError {
-				return null;
-			}
-			@Override
-			public OutputResolver getConstOutputResolver(ExpResult constEnt,
-					String name) throws ExpError {
-				return new ErrorResolver();
-			}
-
-		}
 		UnitPC upc = new UnitPC();
 
 		ExpParser.Expression exp = ExpParser.parseExpression(upc, "1[km] + 1[m]");

@@ -1512,7 +1512,9 @@ public abstract class Input<T> {
 		if (kw.numArgs() == 1) {
 			try {
 				return new StringProvExpression(kw.getArg(0), thisEnt, unitType);
-			} catch (ExpError e) {}
+			} catch (ExpError e) {
+				throw new InputErrorException(e.getMessage());
+			}
 		}
 
 		// Parse the input as a SampleProvider object
