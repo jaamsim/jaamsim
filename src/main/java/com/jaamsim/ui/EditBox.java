@@ -197,7 +197,7 @@ public class EditBox extends FrameBox {
 					return null;
 
 				return GUIFrame.formatKeywordToolTip(obj.getClass().getSimpleName(),
-						in.getKeyword(), key.description(), in.getValidInputDesc(), key.example(),
+						in.getKeyword(), key.description(), in.getValidInputDesc(),
 						key.exampleList());
 			}
 			catch (IllegalArgumentException e) {}

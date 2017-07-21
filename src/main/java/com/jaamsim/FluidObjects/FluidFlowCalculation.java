@@ -30,15 +30,15 @@ import com.jaamsim.units.VolumeFlowUnit;
 public abstract class FluidFlowCalculation extends CalculationEntity {
 
 	@Keyword(description = "The Fluid being moved by the flow.",
-	      example = "FluidFlow1 Fluid { Fluid1 }")
+	         exampleList = {"Fluid1"})
 	private final EntityInput<Fluid> fluidInput;
 
 	@Keyword(description = "The source object for the flow.",
-	      example = "FluidFlow1 Source { Tank1 }")
+	         exampleList = {"Tank1"})
 	protected final EntityInput<FluidComponent> sourceInput;
 
 	@Keyword(description = "The destination object for the flow.",
-	      example = "FluidFlow1 Destination { Tank1 }")
+	         exampleList = {"Tank1"})
 	protected final EntityInput<FluidComponent> destinationInput;
 
 	private double flowRate;  // The volumetric flow rate (m3/s) for the route.

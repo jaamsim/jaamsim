@@ -86,6 +86,11 @@ public class NamedExpressionListInput extends ListInput<ArrayList<NamedExpressio
 	}
 
 	@Override
+	public String getValidInputDesc() {
+		return Input.VALID_CUSTOM_OUT;
+	}
+
+	@Override
 	public void copyFrom(Input<?> in) {
 		super.copyFrom(in);
 

@@ -71,7 +71,8 @@ public class AttributeDefinitionListInput extends ListInput<ArrayList<AttributeH
 					// Parse the unit type
 					double factor = 1.0;
 					if (subArg.numArgs() == 3) {
-						Unit unit = Input.parseUnit(subArg.getArg(2));
+						String unitName = Parser.removeEnclosure("[", subArg.getArg(2), "]");
+						Unit unit = Input.parseUnit(unitName);
 						unitType = unit.getClass();
 						factor = unit.getConversionFactorToSI();
 					}
@@ -104,6 +105,11 @@ public class AttributeDefinitionListInput extends ListInput<ArrayList<AttributeH
 
 		// Save the data for each attribute
 		value = temp;
+	}
+
+	@Override
+	public String getValidInputDesc() {
+		return Input.VALID_ATTRIB_DEF;
 	}
 
 	@Override

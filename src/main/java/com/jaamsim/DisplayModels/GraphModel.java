@@ -46,96 +46,95 @@ import com.jaamsim.units.Unit;
 public class GraphModel extends DisplayModel {
 
 	@Keyword(description = "The text height for the graph title.",
-	         example = "Graph1 TitleTextHeight { 0.05 }")
+	         exampleList = {"0.05"})
 	private final ValueInput titleTextHeight;
 
-	@Keyword(description = "The text height for the x-axis title.\n" +
-			"Expressed as a fraction of the total graph height.",
-	         example = "Graph1 XAxisTitleTextHeight { 0.05 }")
+	@Keyword(description = "The text height for the x-axis title.\n"
+	                     + "Expressed as a fraction of the total graph height.",
+	         exampleList = {"0.05"})
 	private final ValueInput xAxisTitleTextHeight;
 
-	@Keyword(description = "The text height for the y-axis title.\n" +
-			"Expressed as a fraction of the total graph height.",
-	         example = "Graph1 YAxisTitleTextHeight { 0.05 }")
+	@Keyword(description = "The text height for the y-axis title.\n"
+	                     + "Expressed as a fraction of the total graph height.",
+	         exampleList = {"0.05"})
 	private final ValueInput yAxisTitleTextHeight;
 
-	@Keyword(description = "The text height for both x- and y-axis labels.\n" +
-			"Expressed as a fraction of the total graph height.",
-	         example = "Graph1 LabelTextHeight { 0.025 }")
+	@Keyword(description = "The text height for both x- and y-axis labels.\n"
+	                     + "Expressed as a fraction of the total graph height.",
+	         exampleList = {"0.025"})
 	private final ValueInput labelTextHeight;
 
-	@Keyword(description = "The gap between the title and top of the graph.\n" +
-			"Expressed as a fraction of the total graph height.",
-	         example = "Graph1 TitleGap { 0.025 }")
+	@Keyword(description = "The gap between the title and top of the graph.\n"
+	                     + "Expressed as a fraction of the total graph height.",
+	         exampleList = {"0.025"})
 	private final ValueInput titleGap;
 
-	@Keyword(description = "The gap between the x-axis labels and the x-axis.\n" +
-			"Expressed as a fraction of the total graph height.",
-	         example = "Graph1 XAxisLabelGap { 0.025 }")
+	@Keyword(description = "The gap between the x-axis labels and the x-axis.\n"
+	                     + "Expressed as a fraction of the total graph height.",
+	         exampleList = {"0.025"})
 	private final ValueInput xAxisLabelGap;
 
-	@Keyword(description = "The gap between the x-axis title and the x-axis labels.\n" +
-			"Expressed as a fraction of the total graph height.",
-	         example = "Graph1 xAxisTitleGap { 0.025 }")
+	@Keyword(description = "The gap between the x-axis title and the x-axis labels.\n"
+	                     + "Expressed as a fraction of the total graph height.",
+	         exampleList = {"0.025"})
 	private final ValueInput xAxisTitleGap;
 
-	@Keyword(description = "The gap between the y-axis and its labels.\n" +
-			"Expressed as a fraction of the total graph height.",
-	         example = "Graph1 YAxisLabelGap { 0.025 }")
+	@Keyword(description = "The gap between the y-axis and its labels.\n"
+	                     + "Expressed as a fraction of the total graph height.",
+	         exampleList = {"0.025"})
 	private final ValueInput yAxisLabelGap;
 
-	@Keyword(description = "The gap between the y-axis title and the y-axis labels.\n" +
-			"Expressed as a fraction of the total graph height.",
-	         example = "Graph1 yAxisTitleGap { 0.025 }")
+	@Keyword(description = "The gap between the y-axis title and the y-axis labels.\n"
+	                     + "Expressed as a fraction of the total graph height.",
+	         exampleList = {"0.025"})
 	private final ValueInput yAxisTitleGap;
 
-	@Keyword(description = "The margin between the top of the graph and the top of the graph object.\n" +
-			"Expressed as a fraction of the total graph height." +
-	                "side of the graph.",
-	         example = "Graph1 TopMargin { 0.10 }")
+	@Keyword(description = "The margin between the top of the graph and the top of the graph object.\n"
+	                     + "Expressed as a fraction of the total graph height.",
+	         exampleList = {"0.10"})
 	private final ValueInput topMargin;
 
-	@Keyword(description = "The margin between the bottom of the graph and the bottom of the graph object.\n" +
-	                "Expressed as a fraction of the total graph height.",
-             example = "Graph1 BottomMargin { 0.10 }")
+	@Keyword(description = "The margin between the bottom of the graph and the bottom of the graph object.\n"
+	                     + "Expressed as a fraction of the total graph height.",
+	         exampleList = {"0.10"})
 	private final ValueInput bottomMargin;
 
-	@Keyword(description = "The margin between the left side of the graph and the left side of the graph object.\n" +
-	                "Expressed as a fraction of the total graph height.",
-	         example = "Graph1 LeftMargin { 0.20 }")
+	@Keyword(description = "The margin between the left side of the graph and the left side of the graph object.\n"
+	                     + "Expressed as a fraction of the total graph height.",
+	         exampleList = {"0.20"})
 	private final ValueInput leftMargin;
 
-	@Keyword(description = "The margin between the right side of the graph and the right side of the graph object.\n" +
-	                "Expressed as a fraction of the total graph height.",
-	         example = "Graph1 RightMargin { 0.20 }")
+	@Keyword(description = "The margin between the right side of the graph and the right side of the graph object.\n"
+	                     + "Expressed as a fraction of the total graph height.",
+	         exampleList = {"0.20"})
 	private final ValueInput rightMargin;
 
-	@Keyword(description = "The text model to be used for the graph title.\n" +
-			"Determines the font, color, and style (bold, italics) for the text.",
-	         example = "Graph1 TitleTextModel { TextModelDefault }")
+	@Keyword(description = "The text model to be used for the graph title.\n"
+	                     + "Determines the font, color, and style (bold, italics) for the text.",
+	         exampleList = {"TextModelDefault"})
 	protected final EntityInput<TextModel> titleTextModel;
 
-	@Keyword(description = "The text model to be used for the axis titles (x-axis, y-axis, and secondary y-axis).\n" +
-			"Determines the font, color, and style (bold, italics) for the text.",
-	         example = "Graph1 AxisTitleTextModel { TextModelDefault }")
+	@Keyword(description = "The text model to be used for the axis titles (x-axis, y-axis, and secondary y-axis).\n"
+	                     + "Determines the font, color, and style (bold, italics) for the text.",
+	         exampleList = {"TextModelDefault"})
 	protected final EntityInput<TextModel> axisTitleTextModel;
 
-	@Keyword(description = "The text model to be used for the numbers next to the tick marks on each axis" +
-			" (x-axis, y-axis, and secondary y-axis).\n" +
-			"Determines the font, color, and style (bold, italics) for the text.",
-	         example = "Graph1 LabelTextModel { TextModelDefault }")
+	@Keyword(description = "The text model to be used for the numbers next to the tick marks on "
+	                     + "each axis (x-axis, y-axis, and secondary y-axis).\n"
+	                     + "Determines the font, color, and style (bold, italics) for the text.",
+	         exampleList = {"TextModelDefault"})
 	protected final EntityInput<TextModel> labelTextModel;
 
 	@Keyword(description = "The color of the graph background.",
-	         example = "Graph1 GraphColor { floralwhite }")
+	         exampleList = {"floralwhite"})
 	private final ColourInput graphColor;
 
 	@Keyword(description = "The color for the outer pane background.",
-	         example = "Graph1 BackgroundColor { floralwhite }")
+	         exampleList = {"floralwhite"})
 	private final ColourInput backgroundColor;
 
 	@Keyword(description = "The color of the graph border.",
-	         example = "Graph1 BorderColor { red }")
+	         exampleList = {"red"})
 	private final ColourInput borderColor;
 
 	private static final int maxTicks = 100;

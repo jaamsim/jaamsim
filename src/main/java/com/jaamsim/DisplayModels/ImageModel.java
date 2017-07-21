@@ -40,15 +40,15 @@ import com.jaamsim.render.VisibilityInfo;
 public class ImageModel extends DisplayModel {
 
 	@Keyword(description = "The file containing the image to show, valid formats are: BMP, JPG, PNG, PCX, GIF.",
-	         example = "Ship3DModel ImageFile { ..\\images\\CompanyIcon.png }")
+	         exampleList = {"../images/CompanyIcon.png"})
 	private final FileInput imageFile;
 
 	@Keyword(description = "Indicates the loaded image has an alpha channel (transparency information) that should be used",
-	         example = "CompanyLogo Transparent { TRUE }")
+	         exampleList = {"TRUE"})
 	private final BooleanInput transparent;
 
 	@Keyword(description = "Indicates the loaded image should use texture compression in video memory",
-	         example = "WorldMap CompressedTexture { TRUE }")
+	         exampleList = {"TRUE"})
 	private final BooleanInput compressedTexture;
 
 	private static final String[] validFileExtensions;

@@ -33,21 +33,21 @@ import com.jaamsim.units.VolumeUnit;
 public class FluidTank extends FluidComponent {
 
 	@Keyword(description = "The total volume of fluid that can be stored in the tank.",
-	         example = "Tank1 Capacity { 1.0 m3 }")
+	         exampleList = {"1.0 m3"})
 	private final ValueInput capacityInput;
 
 	@Keyword(description = "The volume of fluid in the tank at the start of the simulation run.",
-	         example = "Tank1 InitialVolume { 1.0 m3 }")
+	         exampleList = {"1.0 m3"})
 	private final ValueInput initialVolumeInput;
 
 	@Keyword(description = "The atmospheric pressure acting on the surface of the fluid in the "
 	                     + "tank.",
-	         example = "Tank1 AmbientPressure { 1.0 Pa }")
+	         exampleList = {"1.0 Pa"})
 	private final ValueInput ambientPressureInput;
 
 	@Keyword(description = "The height of the flow feeding the tank. Measured relative to the "
 	                     + "bottom of the tank.",
-	         example = "Tank1 InletHeight { 1.0 m }")
+	         exampleList = {"1.0 m"})
 	private final ValueInput inletHeightInput;
 
 	private double fluidVolume;  // The present volume of the fluid in the tank.

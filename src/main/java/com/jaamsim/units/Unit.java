@@ -27,11 +27,12 @@ import com.jaamsim.input.Input;
 import com.jaamsim.input.Keyword;
 
 public abstract class Unit extends Entity {
-	@Keyword(description = "Factor to convert from the specified unit to the System International (SI) unit. " +
-					"The factor is entered as A / B, where A is the first entry and B is the second. " +
-					"For example, to convert from miles per hour to m/s, the first factor is 1609.344 (meters in one mile) and " +
-					"the second factor is 3600 (seconds in one hour).",
-			example = "mph  ConversionFactorToSI { 1609.344  3600 }")
+	@Keyword(description = "Factor to convert from the specified unit to the System International "
+	                     + "(SI) unit. The factor is entered as A / B, where A is the first entry "
+	                     + "and B is the second. For example, to convert from miles per hour to "
+	                     + "m/s, the first factor is 1609.344 (meters in one mile) and the second "
+	                     + "factor is 3600 (seconds in one hour).",
+	         exampleList = {"1609.344  3600"})
 	private final SIUnitFactorInput conversionFactorToSI;
 
 	{

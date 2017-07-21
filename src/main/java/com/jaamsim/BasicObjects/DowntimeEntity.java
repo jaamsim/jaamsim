@@ -29,7 +29,6 @@ import com.jaamsim.events.EventManager;
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.EntityInput;
-import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.states.DowntimeUser;
@@ -103,6 +102,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 		downtimeIATDistribution.setUnitType(TimeUnit.class);
 		downtimeIATDistribution.setEntity(this);
 		downtimeIATDistribution.setRequired(true);
+		downtimeIATDistribution.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		this.addInput(downtimeIATDistribution);
 		this.addSynonym(downtimeIATDistribution, "IAT");
 		this.addSynonym(downtimeIATDistribution, "TimeBetweenFailures");
@@ -111,6 +111,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 		downtimeDurationDistribution.setUnitType(TimeUnit.class);
 		downtimeDurationDistribution.setEntity(this);
 		downtimeDurationDistribution.setRequired(true);
+		downtimeDurationDistribution.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		this.addInput(downtimeDurationDistribution);
 		this.addSynonym(downtimeDurationDistribution, "TimeToRepair");
 
@@ -121,18 +122,6 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 
 	public DowntimeEntity(){
 		downtimeUserList = new ArrayList<>();
-	}
-
-	@Override
-	public void validate()
-	throws InputErrorException {
-		super.validate();
-
-		if (downtimeIATDistribution.getValue().getMinValue() < 0)
-			throw new InputErrorException("Interval values can not be less than 0.");
-
-		if (downtimeDurationDistribution.getValue().getMinValue() < 0)
-			throw new InputErrorException("Duration values can not be less than 0.");
 	}
 
 	@Override

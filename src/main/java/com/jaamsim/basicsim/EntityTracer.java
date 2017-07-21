@@ -26,11 +26,11 @@ import com.jaamsim.units.TimeUnit;
 public class EntityTracer extends Entity {
 
 @Keyword(description = "The time at which to start tracing Entities",
-         example = "Trace1 StartTime { 500 h }")
+         exampleList = {"500 h"})
 private final ValueInput startTime;
 
 @Keyword(description = "The Entities to trace",
-         example = "Trace1 Entities { Ent1 Ent2 Ent3 }")
+         exampleList = {"Ent1 Ent2 Ent3"})
 private final EntityListInput<Entity> entities;
 
 {

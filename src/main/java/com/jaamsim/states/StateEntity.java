@@ -37,13 +37,13 @@ import com.jaamsim.units.TimeUnit;
 
 public class StateEntity extends DisplayEntity {
 
-	@Keyword(description = "A list of state/DisplayEntity pairs. For each state," +
-			" the graphics will be changed to those for the corresponding DisplayEntity.",
-	         example = "Object1  StateGraphics { { idle DisplayEntity1 } { working DisplayEntity2 }")
+	@Keyword(description = "A list of state/DisplayEntity pairs. For each state, the graphics "
+	                     + "will be changed to those for the corresponding DisplayEntity.",
+	         exampleList = {"{ idle DisplayEntity1 } { working DisplayEntity2 }"})
 	protected final StringKeyInput<DisplayEntity> stateGraphics;
 
 	@Keyword(description = "If TRUE, a log file (.trc) will be printed with the time of every state change during the run.",
-	         example = "Object1  TraceState { TRUE }")
+	         exampleList = {"TRUE"})
 	private final BooleanInput traceState;
 
 	@Keyword(description = "A list of states for which the entity is considered working.",

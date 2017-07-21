@@ -74,5 +74,5 @@ ExpressionEntity    Description { 'Calculates the value for a specified expressi
 DowntimeEntity      Description { 'Provides Breakdown and Maintenance controls.' }
 ValueSequence       Description { 'Generates a repeating sequence of numerical values.' }
 EventSchedule       Description { 'Generates a sequence inter-arrival times from a list of event times.' }
-FileToVector        Description { 'Populates a one-dimensional array with numeric data from a specified file.' }
-FileToMatrix        Description { 'Populates a two-dimensional array with numeric data from a specified file.' }
+FileToVector        Description { 'Populates a one-dimensional array with data from a specified file.' }
+FileToMatrix        Description { 'Populates a two-dimensional array with data from a specified file.' }

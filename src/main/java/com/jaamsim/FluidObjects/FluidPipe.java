@@ -33,30 +33,31 @@ import com.jaamsim.units.DistanceUnit;
 public class FluidPipe extends FluidComponent {
 
 	@Keyword(description = "The length of the pipe.",
-	         example = "Pipe1 Length { 10.0 m }")
+	         exampleList = {"10.0 m"})
 	private final ValueInput lengthInput;
 
-	@Keyword(description = "The height change over the length of the pipe.  " +
-			"Equal to (outlet height - inlet height).",
-	         example = "Pipe1 HeightChange { 0.0 }")
+	@Keyword(description = "The height change over the length of the pipe. "
+	                     + "Equal to (outlet height - inlet height).",
+	         exampleList = {"0.0 m"})
 	private final ValueInput heightChangeInput;
 
-	@Keyword(description = "The roughness height of the inside pipe surface.  " +
-			"Used to calculate the Darcy friction factor for the pipe.",
-	         example = "Pipe1 Roughness { 0.01 m }")
+	@Keyword(description = "The roughness height of the inside pipe surface. "
+	                     + "Used to calculate the Darcy friction factor for the pipe.",
+	         exampleList = {"0.01 m"})
 	private final ValueInput roughnessInput;
 
-	@Keyword(description = "The pressure loss coefficient or 'K-factor' for the pipe.  " +
-			"The factor multiplies the dynamic pressure and is applied as a loss at the pipe outlet.",
-	         example = "Pipe1 PressureLossCoefficient { 0.5 }")
+	@Keyword(description = "The pressure loss coefficient or 'K-factor' for the pipe. "
+	                     + "The factor multiplies the dynamic pressure and is applied as a loss "
+	                     + "at the pipe outlet.",
+	         exampleList = {"0.5"})
 	private final ValueInput pressureLossCoefficientInput;
 
 	@Keyword(description = "The width of the pipe segments in pixels.",
-	         example = "Pipe1 Width { 1 }")
+	         exampleList = {"1"})
 	private final ValueInput widthInput;
 
 	@Keyword(description = "The colour of the pipe.",
-	         example = "Pipe1 Colour { red }")
+	         exampleList = {"red"})
 	private final ColourInput colourInput;
 
 	private double darcyFrictionFactor;  // The Darcy Friction Factor for the pipe flow.

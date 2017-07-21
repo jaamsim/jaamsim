@@ -19,19 +19,21 @@ package com.jaamsim.BasicObjects;
 import java.net.URI;
 import java.util.ArrayList;
 
+import com.jaamsim.basicsim.ErrorException;
+import com.jaamsim.input.ExpError;
+import com.jaamsim.input.ExpResult;
 import com.jaamsim.input.FileInput;
 import com.jaamsim.input.Output;
-import com.jaamsim.units.DimensionlessUnit;
 
 public class FileToVector extends FileToArray {
 
-	double[] value;
+	ArrayList<ExpResult> value;
 
 	public FileToVector() {}
 
 	@Override
-	protected void setValueForURI(URI uri) {
-		value = get1DArrayForURI(uri);
+	protected void setValueForURI(URI uri, double simTime) {
+		value = getVectorForURI(uri, simTime);
 	}
 
 	@Override
@@ -39,33 +41,31 @@ public class FileToVector extends FileToArray {
 		value = null;
 	}
 
-	private static double[] get1DArrayForURI(URI uri) {
+	private ArrayList<ExpResult> getVectorForURI(URI uri, double simTime) {
 		ArrayList<ArrayList<String>> tokens = FileInput.getTokensFromURI(uri);
 		int n = 0;
 		for (ArrayList<String> record : tokens) {
 			n += record.size();
 		}
-		double[] ret = new double[n];
-		int i = 0;
+		ArrayList<ExpResult> ret = new ArrayList<>(n);
 		for (ArrayList<String> record : tokens) {
-			for (String str : record) {
+			for (int i=0; i<record.size(); i++) {
+				String str = record.get(i);
 				try {
-					ret[i] = Double.parseDouble(str);
+					ret.add(getExpResult(i, str, simTime));
 				}
-				catch (NumberFormatException e) {
-					ret[i] = Double.NaN;
+				catch (ExpError e) {
+					throw new ErrorException(this, e);
 				}
-				i++;
 			}
 		}
 		return ret;
 	}
 
 	@Output(name = "Value",
-	 description = "A vector containing the numerical data from the input file.",
-	    unitType = DimensionlessUnit.class,
+	 description = "A vector containing the data from the input file.",
 	    sequence = 1)
-	public double[] getValue(double simTime) {
+	public ArrayList<ExpResult> getValue(double simTime) {
 		return value;
 	}
 

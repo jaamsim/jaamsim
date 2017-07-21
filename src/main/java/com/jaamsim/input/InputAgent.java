@@ -1549,17 +1549,25 @@ public class InputAgent {
 			sb.append("{");
 			ArrayList<?> array = out.getValue(simTime, ArrayList.class);
 			for (int i=0; i<array.size(); i++) {
+				if (i > 0)
+					sb.append(COMMA_SEPARATOR);
 				Object obj = array.get(i);
 				if (obj instanceof Double) {
 					double val = (Double)obj;
-					str = String.format(floatFmt, val/factor);
+					sb.append(String.format(floatFmt, val/factor));
+				}
+				else if (obj instanceof ArrayList) {
+					ArrayList<?> list = (ArrayList<?>) obj;
+					sb.append("{");
+					for (int j=0; j<list.size(); j++) {
+						if (j > 0)
+							sb.append(COMMA_SEPARATOR);
+						sb.append(list.get(j).toString());
+					}
+					sb.append("}");
 				}
 				else {
-					str = String.format("%s", obj);
-				}
-				sb.append(str);
-				if (i < array.size()-1) {
-					sb.append(COMMA_SEPARATOR);
+					sb.append(String.format("%s", obj));
 				}
 			}
 			sb.append("}");

@@ -120,6 +120,11 @@ public abstract class Input<T> {
 	protected static final String VALID_VEC3D_LIST = "Accepts a list of vectors enclosed by braces. "
 	                                               + "Each vector consists of three numbers separated by spaces followed by a unit of type %s. "
 	                                               + "If a vector has only two numbers, the third value defaults to zero.";
+	protected static final String VALID_ATTRIB_DEF = "Accepts a list of attribute definitions each consisting of an attribute name followed by an expression "
+	                                               + "that sets the initial value for the attribute. "
+	                                               + "Each definition in the list must be enclosed by braces.";
+	protected static final String VALID_CUSTOM_OUT = "Accepts a list of custom output definitions each consisting of a custom output name, an expression, and a unit type (if required). "
+	                                               + "Each definition in the list must be enclosed by braces.";
 
 	public static final String POSITIVE_INFINITY = "Infinity";
 	public static final String NEGATIVE_INFINITY = "-Infinity";
@@ -1074,7 +1079,8 @@ public abstract class Input<T> {
 		boolean includeIndex = true;
 
 		// Parse the unit portion of the input
-		Unit unit = Input.tryParseUnit(kw.getArg(numArgs-1), unitType);
+		String unitName = Parser.removeEnclosure("[", kw.getArg(numArgs-1), "]");
+		Unit unit = Input.tryParseUnit(unitName, unitType);
 
 
 		// A unit is mandatory except for dimensionless values and time values in RFC8601 date/time format
@@ -1138,7 +1144,8 @@ public abstract class Input<T> {
 		int numDoubles = input.size();
 
 		// Parse the unit portion of the input
-		Unit unit = Input.tryParseUnit(input.get(numDoubles-1), unitType);
+		String unitName = Parser.removeEnclosure("[", input.get(numDoubles-1), "]");
+		Unit unit = Input.tryParseUnit(unitName, unitType);
 
 		// A unit is mandatory except for dimensionless values and time values in RFC8601 date/time format
 		if (unit == null && unitType != DimensionlessUnit.class && unitType != TimeUnit.class)
@@ -1227,6 +1234,20 @@ public abstract class Input<T> {
 		} catch (NullPointerException e) {
 			throw new InputErrorException(INP_ERR_BADCHOICE, Arrays.toString(aClass.getEnumConstants()), input);
 		}
+	}
+
+	public static <T extends Enum<T>> ArrayList<T> parseEnumList(Class<T> aClass, KeywordIndex kw) {
+		ArrayList<T> ret = new ArrayList<>(kw.numArgs());
+		for (int i=0; i<kw.numArgs(); i++) {
+			try {
+				ret.add(Enum.valueOf(aClass, kw.getArg(i)));
+			} catch (IllegalArgumentException e) {
+				throw new InputErrorException(INP_ERR_BADCHOICE, Arrays.toString(aClass.getEnumConstants()), kw.getArg(i));
+			} catch (NullPointerException e) {
+				throw new InputErrorException(INP_ERR_BADCHOICE, Arrays.toString(aClass.getEnumConstants()), kw.getArg(i));
+			}
+		}
+		return ret;
 	}
 
 	public static Class<? extends Entity> parseEntityType(String input)

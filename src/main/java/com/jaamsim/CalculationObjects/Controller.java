@@ -36,7 +36,7 @@ import com.jaamsim.units.TimeUnit;
 public class Controller extends DisplayEntity {
 
 	@Keyword(description = "The sampling time for the Controller.",
-	         example = "Controller1 SamplingTime { 100 ms }")
+	         exampleList = {"100 ms"})
 	private final ValueInput samplingTime;
 
 	private final ArrayList<CalculationEntity> calculationEntityList;  // List of the CalculationEntities controller by this Controller.

@@ -28,12 +28,13 @@ import com.jaamsim.units.TimeUnit;
 
 public class ScriptEntity extends Entity {
 	@Keyword(description = "The name of the script file for the script entity.",
-	         example = "ScriptEntity Script { test.scr }")
+	         exampleList = {"test.scr"})
 	private final FileInput scriptFileName;
 
-	@Keyword(description = "The Time keyword appears inside the script file. The value represents the simulation " +
-	                "time at which the next set of commands in the script are implemented.",
-	         example = "ScriptEntity Time { 24.0 h }")
+	@Keyword(description = "The Time keyword appears inside the script file. The value represents "
+	                     + "the simulation time at which the next set of commands in the script "
+	                     + "are implemented.",
+	         exampleList = {"24.0 h"})
 	private final ValueInput scriptTime; // the time that has been read in the script
 
 	private ArrayList<ArrayList<String>> tokens;

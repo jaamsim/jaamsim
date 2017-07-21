@@ -28,16 +28,16 @@ import com.jaamsim.input.StringListInput;
 public class OutputMethod extends Entity {
 
 @Keyword(description = "The target Entity we are collecting output from",
-         example = "Output1 Target { Entity1 }")
+         exampleList = {"Entity1"})
 private final EntityInput<Entity> target;
 
 @Keyword(description = "The name of the method to call on the target",
-         example = "Output1 Method { getAmountLoaded }")
+         exampleList = {"getAmountLoaded"})
 private final StringInput method;
 
-@Keyword(description = "A list of arguments to pass to the target method, these will be interpreted" +
-                "Entities, then Integers and finally as literal Strings",
-         example = "Output1 Arguments { Entity1 5 'A String' }")
+@Keyword(description = "A list of arguments to pass to the target method, these will be "
+                     + "interpreted as Entities, then Integers and finally as literal Strings",
+         exampleList = {"Entity1 5 'A String'"})
 private final StringListInput arguments;
 
 {

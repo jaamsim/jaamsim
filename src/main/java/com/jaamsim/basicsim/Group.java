@@ -38,17 +38,17 @@ public class Group extends Entity {
 	private final ArrayList<Entity> list; // list of objects in group
 
 	@Keyword(description = "The list of objects included in the group.",
-	         example = "Group1 List { DisplayEntity1 DisplayEntity2 }")
+	         exampleList = {"DisplayEntity1 DisplayEntity2"})
 	private final GroupListInput groupListInput;
 
 	@Keyword(description = "A list of additional objects to be included in " +
 			 		"the already existing list of group objects.  The added " +
 			 		"objects will inherit all inputs previously set for the group.",
-	         example = "Group1 AppendList { DisplayEntity3 DisplayEntity4 }")
+	         exampleList = {"DisplayEntity3 DisplayEntity4"})
 	private final GroupAppendListInput groupAppendListInput;
 
 	@Keyword(description = "The object type for the group.",
-	         example = "Group1 GroupType { DisplayEntity }")
+	         exampleList = {"DisplayEntity"})
 	private final GroupTypeInput groupTypeInput;
 
 	{
