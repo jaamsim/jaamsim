@@ -22,7 +22,7 @@ limitations under the License.
   </application>
   <executable name="JaamSim@VERSION@_x86" type="2" iconSet="true" iconFile="./JaamSim-48px.ico" executableDir="." redirectStderr="false" stderrFile="error.log" redirectStdout="false" stdoutFile="output.log" failOnStderrOutput="true" executableMode="1" changeWorkingDirectory="true" workingDirectory="." singleInstance="false" serviceStartType="2" serviceDependencies="" serviceDescription="" jreLocation="" executionLevel="asInvoker" checkConsoleParameter="false" amd64="false">
     <messageSet />
-    <versionInfo include="false" />
+    <versionInfo include="true" fileVersion="@VERMAJOR@.@VERMINOR@.0.0" fileDescription="JaamSim Executable version @VERSION@" legalCopyright="Copyright (C) @VERMAJOR@ JaamSim Software Inc." internalName="JaamSim" productName="" companyName="JaamSim Software Inc." productVersion="Windows 32 bit" />
   </executable>
   <splashScreen show="false">
     <text>

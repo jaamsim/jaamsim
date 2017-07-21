@@ -16,7 +16,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -->
 <project name="jaamsim" basedir="." default="jar">
-  <property name="ver"           value="2017-07"/>
+  <property name="ver.major"           value="2017"/>
+  <property name="ver.minor"           value="07"/>
+  <property name="ver"                 value="${ver.major}-${ver.minor}"/>
   <property name="src.dir"       location="src/main"/>
   <property name="res.dir"       location="src/main/resources"/>
   <property name="make.dir"      location="make"/>
@@ -97,12 +99,16 @@ limitations under the License.
     <copy file="${make.dir}/JS32.exe4j" toFile="${jars.dir}/JS32.exe4j">
       <filterset>
         <filter token="VERSION" value="${ver}"/>
+        <filter token="VERMAJOR" value="${ver.major}"/>
+        <filter token="VERMINOR" value="${ver.minor}"/>
       </filterset>
     </copy>
     <delete file="${jars.dir}/JS64.exe4j" quiet="true"/>
     <copy file="${make.dir}/JS64.exe4j" toFile="${jars.dir}/JS64.exe4j">
       <filterset>
         <filter token="VERSION" value="${ver}"/>
+        <filter token="VERMAJOR" value="${ver.major}"/>
+        <filter token="VERMINOR" value="${ver.minor}"/>
       </filterset>
     </copy>
     <delete file="${jars.dir}/JaamSim-48px.ico" quiet="true"/>
