@@ -29,7 +29,9 @@ public class FileToVector extends FileToArray {
 
 	ArrayList<ExpResult> value;
 
-	public FileToVector() {}
+	public FileToVector() {
+		value = new ArrayList<>();
+	}
 
 	@Override
 	protected void setValueForURI(URI uri, double simTime) {
@@ -38,7 +40,7 @@ public class FileToVector extends FileToArray {
 
 	@Override
 	protected void clearValue() {
-		value = null;
+		value = new ArrayList<>();
 	}
 
 	private ArrayList<ExpResult> getVectorForURI(URI uri, double simTime) {

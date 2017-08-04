@@ -29,7 +29,9 @@ public class FileToMatrix extends FileToArray {
 
 	ArrayList<ArrayList<ExpResult>> value;
 
-	public FileToMatrix() {}
+	public FileToMatrix() {
+		value = new ArrayList<>();
+	}
 
 	@Override
 	protected void setValueForURI(URI uri, double simTime) {
@@ -38,7 +40,7 @@ public class FileToMatrix extends FileToArray {
 
 	@Override
 	protected void clearValue() {
-		value = null;
+		value = new ArrayList<>();
 	}
 
 	private ArrayList<ArrayList<ExpResult>> getMatrixForURI(URI uri, double simTime) {
