@@ -89,8 +89,8 @@ public class Entity {
 	protected final StringInput desc;
 
 	@Keyword(description = "Defines one or more attributes for this entity. "
-	                     + "An attribute's value can be a number with or with units, an entity, "
-	                     + "a string, an array, a map, or a lambda function. "
+	                     + "An attribute's value can be a number with or without units, "
+	                     + "an entity, a string, an array, a map, or a lambda function. "
 	                     + "The initial value set by the definition can only be changed by an "
 	                     + "Assign object.",
 	         exampleList = {"{ AAA 1 }  { bbb 2[s] }  { c '\"abc\"' }  { d [Queue1] }",
@@ -98,8 +98,8 @@ public class Entity {
 	public final AttributeDefinitionListInput attributeDefinitionList;
 
 	@Keyword(description = "Defines one or more custom outputs for this entity. "
-	                     + "A custom output can return a number with or with units, an entity, "
-	                     + "a string, an array, a map, or a lambda function. "
+	                     + "A custom output can return a number with or without units, "
+	                     + "an entity, a string, an array, a map, or a lambda function. "
 	                     + "The present value of a custom output is calculated on demand by the "
 	                     + "model. "
 	                     + "A custom output cannot use the value of another custom output in its "
