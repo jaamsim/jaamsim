@@ -303,7 +303,7 @@ public abstract class TextBasics extends DisplayEntity {
 				}
 
 			default:
-				if (keyChar == KeyEvent.VK_UNDEFINED || control)
+				if (control || !KeyEvent.isPrintableKey((short)keyCode, false))
 					break;
 				deleteSelection();
 				StringBuilder sb = new StringBuilder(editText);
