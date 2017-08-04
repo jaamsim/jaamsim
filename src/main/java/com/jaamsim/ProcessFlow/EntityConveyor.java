@@ -83,8 +83,14 @@ public class EntityConveyor extends LinkedService {
 	@Override
 	public void earlyInit() {
 		super.earlyInit();
-		presentTravelTime = travelTimeInput.getValue().getNextSample(0.0);
 		entryList.clear();
+		presentTravelTime = 0.0d;
+	}
+
+	@Override
+	public void startUp() {
+		super.startUp();
+		presentTravelTime = travelTimeInput.getValue().getNextSample(0.0);
 	}
 
 	private static class ConveyorEntry {
