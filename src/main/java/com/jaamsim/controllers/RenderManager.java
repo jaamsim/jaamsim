@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2012 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016 JaamSim Software Inc.
+ * Copyright (C) 2016-2017 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -152,7 +152,6 @@ public class RenderManager implements DragSourceListener {
 
 	// The object type for drag-and-drop operation, if this is null, the user is not dragging
 	private ObjectType dndObjectType;
-	private long dndDropTime = 0;
 
 	// The video recorder to sample
 	private VideoRecorder recorder;
@@ -1437,14 +1436,6 @@ public class RenderManager implements DragSourceListener {
 		}
 	}
 
-	public boolean isDragAndDropping() {
-		// This is such a brutal hack to work around newt's lack of drag and drop support
-		// Claim we are still dragging for up to 10ms after the last drop failed...
-		long currTime = System.nanoTime();
-		return dndObjectType != null &&
-		       ((currTime - dndDropTime) < 100000000); // Did the last 'drop' happen less than 100 ms ago?
-	}
-
 	public void startDragAndDrop(ObjectType ot) {
 		dndObjectType = ot;
 	}
@@ -1496,9 +1487,32 @@ public class RenderManager implements DragSourceListener {
 	}
 
 	@Override
-	public void dragDropEnd(DragSourceDropEvent arg0) {
-		// Clear the dragging flag
-		dndDropTime = System.nanoTime();
+	public void dragDropEnd(DragSourceDropEvent evt) {
+
+		// Find the view windows that contain this screen point
+		ArrayList<Integer> list = new ArrayList<>();
+		for (int id : windowToViewMap.keySet()) {
+			if (renderer.getAWTFrame(id).getBounds().contains(evt.getX(), evt.getY())) {
+				list.add(id);
+			}
+		}
+		if (list.isEmpty())
+			return;
+
+		// If multiple windows are found, try to select the one on top
+		int windowID = list.get(0);
+		if (list.contains(activeWindowID)) {
+			windowID = activeWindowID;
+		}
+
+		// Convert the global screen points to ones for the window
+		Renderer.WindowMouseInfo mouseInfo = renderer.getMouseInfo(windowID);
+		if (mouseInfo == null)
+			return;
+		int x = evt.getX() - mouseInfo.viewableX;
+		int y = evt.getY() - mouseInfo.viewableY;
+
+		createDNDObject(windowID, x, y);
 	}
 
 	@Override

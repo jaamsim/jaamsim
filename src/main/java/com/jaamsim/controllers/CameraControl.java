@@ -323,13 +323,7 @@ public class CameraControl implements WindowInteractionListener {
 	}
 
 	@Override
-	public void mouseEntry(int windowID, int x, int y, boolean isInWindow) {
-		if (!RenderManager.isGood()) { return; }
-
-		if (isInWindow && RenderManager.inst().isDragAndDropping()) {
-			RenderManager.inst().createDNDObject(windowID, x, y);
-		}
-	}
+	public void mouseEntry(int windowID, int x, int y, boolean isInWindow) {}
 
 	private Quaternion polarToRot(PolarInfo pi) {
 		Quaternion rot = new Quaternion();
