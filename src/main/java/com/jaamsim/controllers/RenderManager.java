@@ -1592,6 +1592,7 @@ public class RenderManager implements DragSourceListener {
 	}
 
 	public void focusWindow(int windowID) {
+		setActiveWindow(windowID);
 		renderer.focusWindow(windowID);
 	}
 
