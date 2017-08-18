@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016 JaamSim Software Inc.
+ * Copyright (C) 2016-2017 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,8 +20,7 @@ package com.jaamsim.ProcessFlow;
 import java.util.ArrayList;
 
 import com.jaamsim.Graphics.DisplayEntity;
-import com.jaamsim.Samples.SampleInput;
-import com.jaamsim.Samples.SampleProvider;
+import com.jaamsim.StringProviders.StringProvInput;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.InputAgent;
@@ -43,13 +42,18 @@ public abstract class LinkedService extends LinkedDevice implements QueueUser {
 	         exampleList = {"Queue1"})
 	protected final EntityInput<Queue> waitQueue;
 
-	@Keyword(description = "An expression returning a dimensionless integer value that can be "
-	                     + "used to determine which of the queued entities is eligible for "
-	                     + "processing.",
+	@Keyword(description = "An expression returning a string value that determines which of the "
+	                     + "queued entities are eligible to be selected. "
+	                     + "If used, the only entities eligible for selection are the ones whose "
+	                     + "inputs for the Queue's Match keyword are equal to value returned by "
+	                     + "the expression entered for this Match keyword. "
+	                     + "Expressions that return a dimensionless integer or an object are also "
+	                     + "valid. The returned number or object is converted to a string "
+	                     + "automatically. A floating point number is truncated to an integer.",
 	         exampleList = {"this.obj.Attrib1"})
-	protected final SampleInput match;
+	protected final StringProvInput match;
 
-	private Integer matchValue;
+	private String matchValue;
 
 	{
 		stateGraphics.setHidden(false);
@@ -63,7 +67,7 @@ public abstract class LinkedService extends LinkedDevice implements QueueUser {
 		waitQueue.setRequired(true);
 		this.addInput(waitQueue);
 
-		match = new SampleInput("Match", "Key Inputs", null);
+		match = new StringProvInput("Match", "Key Inputs", null);
 		match.setUnitType(DimensionlessUnit.class);
 		match.setEntity(this);
 		this.addInput(match);
@@ -102,7 +106,7 @@ public abstract class LinkedService extends LinkedDevice implements QueueUser {
 	 * @param m - match value.
 	 * @return next entity for processing.
 	 */
-	protected DisplayEntity getNextEntityForMatch(Integer m) {
+	protected DisplayEntity getNextEntityForMatch(String m) {
 		DisplayEntity ent = waitQueue.getValue().removeFirstForMatch(m);
 		this.registerEntity(ent);
 		return ent;
@@ -114,19 +118,18 @@ public abstract class LinkedService extends LinkedDevice implements QueueUser {
 	 * @param simTime - present simulation time in seconds.
 	 * @return match value.
 	 */
-	protected Integer getNextMatchValue(double simTime) {
-		SampleProvider samp = match.getValue();
-		if (samp == null)
+	protected String getNextMatchValue(double simTime) {
+		if (match.getValue() == null)
 			return null;
 
-		return Integer.valueOf((int)samp.getNextSample(simTime));
+		return match.getValue().getNextString(simTime, "%s", 1.0d);
 	}
 
-	protected void setMatchValue(Integer m) {
+	protected void setMatchValue(String m) {
 		matchValue = m;
 	}
 
-	protected Integer getMatchValue() {
+	protected String getMatchValue() {
 		return matchValue;
 	}
 
@@ -204,7 +207,7 @@ public abstract class LinkedService extends LinkedDevice implements QueueUser {
 	@Output(name = "MatchValue",
 	 description = "The present value to be matched in the queue.",
 	    sequence = 0)
-	public Integer getMatchValue(double simTime) {
+	public String getMatchValue(double simTime) {
 		return matchValue;
 	}
 

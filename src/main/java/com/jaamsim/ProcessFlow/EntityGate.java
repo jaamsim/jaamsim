@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016 JaamSim Software Inc.
+ * Copyright (C) 2016-2017 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -68,7 +68,7 @@ public class EntityGate extends LinkedService {
 	protected boolean startProcessing(double simTime) {
 
 		// Determine the match value
-		Integer m = this.getNextMatchValue(getSimTime());
+		String m = this.getNextMatchValue(getSimTime());
 		this.setMatchValue(m);
 
 		// Stop if the queue has become empty

@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016 JaamSim Software Inc.
+ * Copyright (C) 2016-2017 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -108,7 +108,7 @@ public class Pack extends LinkedService {
 
 		// Are there sufficient entities in the queue to start packing?
 		if (!startedPacking) {
-			Integer m = this.getNextMatchValue(simTime);
+			String m = this.getNextMatchValue(simTime);
 			numberToInsert = this.getNumberToInsert(simTime);
 			if (waitQueue.getValue().getMatchCount(m) < numberToInsert) {
 				return false;

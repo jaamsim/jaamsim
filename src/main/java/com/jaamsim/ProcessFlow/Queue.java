@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2003-2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016 JaamSim Software Inc.
+ * Copyright (C) 2016-2017 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ import java.util.TreeSet;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
+import com.jaamsim.StringProviders.StringProvInput;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.EntityTarget;
 import com.jaamsim.datatypes.DoubleVector;
@@ -55,13 +56,14 @@ public class Queue extends LinkedComponent {
 	         exampleList = {"this.obj.Attrib1"})
 	private final SampleInput priority;
 
-	@Keyword(description = "An expression that returns a dimensionless integer value that can be "
-	                     + "used to match entities in separate queues. The expression is "
-	                     + "evaluated when the entity first arrives at the queue. Since Match is "
-	                     + "integer valued, a value of 3.2 for one queue and 3.6 for another "
-	                     + "queue are considered to be equal.",
+	@Keyword(description = "An expression returning a string value that categorizes the queued "
+	                     + "entities. The expression is evaluated and the value saved when the "
+	                     + "entity first arrives at the queue. "
+	                     + "Expressions that return a dimensionless integer or an object are also "
+	                     + "valid. The returned number or object is converted to a string "
+	                     + "automatically. A floating point number is truncated to an integer.",
 	         exampleList = {"this.obj.Attrib1"})
-	private final SampleInput match;
+	private final StringProvInput match;
 
 	@Keyword(description = "Determines the order in which entities are placed in the queue (FIFO "
 	                     + "or LIFO):\n"
@@ -97,9 +99,9 @@ public class Queue extends LinkedComponent {
 	protected final IntegerInput maxPerLine; // maximum items per sub line-up of queue
 
 	private final TreeSet<QueueEntry> itemSet;  // contains all the entities in queue order
-	private final HashMap<Integer, TreeSet<QueueEntry>> matchMap; // each TreeSet contains the queued entities for a given match value
+	private final HashMap<String, TreeSet<QueueEntry>> matchMap; // each TreeSet contains the queued entities for a given match value
 
-	private Integer matchForMaxCount;  // match value with the largest number of entities
+	private String matchForMaxCount;  // match value with the largest number of entities
 	private int maxCount;     // largest number of entities for a given match value
 
 	private final ArrayList<QueueUser> userList;  // other objects that use this queue
@@ -124,7 +126,7 @@ public class Queue extends LinkedComponent {
 		priority.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		this.addInput(priority);
 
-		match = new SampleInput("Match", "Key Inputs", null);
+		match = new StringProvInput("Match", "Key Inputs", null);
 		match.setUnitType(DimensionlessUnit.class);
 		match.setEntity(this);
 		this.addInput(match);
@@ -211,12 +213,12 @@ public class Queue extends LinkedComponent {
 		final DisplayEntity entity;
 		final long entNum;
 		final int priority;
-		final Integer match;
+		final String match;
 		final double timeAdded;
 		final Vec3d orientation;
 		final EventHandle renegeHandle;
 
-		public QueueEntry(DisplayEntity ent, long n, int pri, Integer m, double t, Vec3d orient, EventHandle rh) {
+		public QueueEntry(DisplayEntity ent, long n, int pri, String m, double t, Vec3d orient, EventHandle rh) {
 			entity = ent;
 			entNum = n;
 			priority = pri;
@@ -280,9 +282,9 @@ public class Queue extends LinkedComponent {
 		if (!fifo.getValue())
 			n *= -1;
 		int pri = (int) priority.getValue().getNextSample(getSimTime());
-		Integer m = null;
+		String m = null;
 		if (match.getValue() != null)
-			m = Integer.valueOf((int) match.getValue().getNextSample(getSimTime()));
+			m = match.getValue().getNextString(getSimTime(), "%s", 1.0d);
 
 		EventHandle rh = null;
 		if (renegeTime.getValue() != null)
@@ -497,7 +499,7 @@ public class Queue extends LinkedComponent {
 	 * @param m - value to be matched.
 	 * @return number of entities that have this match value.
 	 */
-	public int getMatchCount(Integer m) {
+	public int getMatchCount(String m) {
 		if (m == null)
 			return itemSet.size();
 		TreeSet<QueueEntry> matchSet = matchMap.get(m);
@@ -513,7 +515,7 @@ public class Queue extends LinkedComponent {
 	 * @param m - value to be matched.
 	 * @return entity whose match value equals the specified value.
 	 */
-	public DisplayEntity removeFirstForMatch(Integer m) {
+	public DisplayEntity removeFirstForMatch(String m) {
 
 		if (m == null)
 			return this.removeFirst();
@@ -524,9 +526,9 @@ public class Queue extends LinkedComponent {
 		return this.remove(matchSet.first());
 	}
 
-	public ArrayList<Integer> getUniqueMatchValues() {
-		ArrayList<Integer> ret = new ArrayList<>(matchMap.size());
-		Iterator<Integer> itr = matchMap.keySet().iterator();
+	public ArrayList<String> getUniqueMatchValues() {
+		ArrayList<String> ret = new ArrayList<>(matchMap.size());
+		Iterator<String> itr = matchMap.keySet().iterator();
 		while (itr.hasNext()) {
 			ret.add(itr.next());
 		}
@@ -537,7 +539,7 @@ public class Queue extends LinkedComponent {
 	 * Returns the match value that has the largest number of entities in the queue.
 	 * @return match value with the most entities.
 	 */
-	public int getMatchForMax() {
+	public String getMatchForMax() {
 		if (matchForMaxCount == null)
 			this.setMaxCount();
 		return matchForMaxCount;
@@ -558,7 +560,7 @@ public class Queue extends LinkedComponent {
 	 */
 	private void setMaxCount() {
 		maxCount = -1;
-		for (Entry<Integer, TreeSet<QueueEntry>> each : matchMap.entrySet()) {
+		for (Entry<String, TreeSet<QueueEntry>> each : matchMap.entrySet()) {
 			int count = each.getValue().size();
 			if (count > maxCount) {
 				maxCount = count;
@@ -575,7 +577,7 @@ public class Queue extends LinkedComponent {
 	 * @param numberList - number of matches required for each queue.
 	 * @return match value.
 	 */
-	public static Integer selectMatchValue(ArrayList<Queue> queueList, IntegerVector numberList) {
+	public static String selectMatchValue(ArrayList<Queue> queueList, IntegerVector numberList) {
 
 		// Check whether each queue has sufficient entities for any match value
 		int number;
@@ -603,7 +605,7 @@ public class Queue extends LinkedComponent {
 		}
 
 		// Return the first match value that has sufficient entities in each queue
-		for (int m : shortest.getUniqueMatchValues()) {
+		for (String m : shortest.getUniqueMatchValues()) {
 			if (Queue.sufficientEntities(queueList, numberList, m))
 				return m;
 		}
@@ -621,7 +623,7 @@ public class Queue extends LinkedComponent {
 	 * @param m - match value.
 	 * @return true if there are sufficient entities in each queue.
 	 */
-	public static boolean sufficientEntities(ArrayList<Queue> queueList, IntegerVector numberList, Integer m) {
+	public static boolean sufficientEntities(ArrayList<Queue> queueList, IntegerVector numberList, String m) {
 		int number;
 		for (int i=0; i<queueList.size(); i++) {
 			if (numberList == null) {
@@ -806,13 +808,13 @@ public class Queue extends LinkedComponent {
 	 description = "The Match expression value for each entity in the queue.",
 	    unitType = DimensionlessUnit.class,
 	    sequence = 4)
-	public IntegerVector getMatchValues(double simTime) {
-		IntegerVector ret = new IntegerVector(itemSet.size());
+	public ArrayList<String> getMatchValues(double simTime) {
+		ArrayList<String> ret = new ArrayList<>(itemSet.size());
 		Iterator<QueueEntry> itr = itemSet.iterator();
 		while (itr.hasNext()) {
-			Integer val = itr.next().match;
-			if (val != null) {
-				ret.add(val);
+			String m = itr.next().match;
+			if (m != null) {
+				ret.add(m);
 			}
 		}
 		return ret;
