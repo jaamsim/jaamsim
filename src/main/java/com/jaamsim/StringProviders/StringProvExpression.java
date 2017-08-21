@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2016 JaamSim Software Inc.
+ * Copyright (C) 2016-2017 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -64,6 +64,11 @@ public class StringProvExpression implements StringProvider {
 
 	@Override
 	public String getNextString(double simTime, String fmt, double siFactor) {
+		return getNextString(simTime, fmt, siFactor, false);
+	}
+
+	@Override
+	public String getNextString(double simTime, String fmt, double siFactor, boolean integerValue) {
 		String ret = "";
 		try {
 			ExpResult result = ExpEvaluator.evaluateExpression(exp, simTime);
@@ -81,7 +86,12 @@ public class StringProvExpression implements StringProvider {
 							exp, ObjectType.getObjectTypeForClass(result.unitType),
 							ObjectType.getObjectTypeForClass(unitType));
 				}
-				ret = String.format(fmt, result.value/siFactor);
+				if (integerValue) {
+					ret = String.format(fmt, (int)(result.value/siFactor));
+				}
+				else {
+					ret = String.format(fmt, result.value/siFactor);
+				}
 				break;
 			case COLLECTION:
 				ret = String.format(fmt, result.colVal.getOutputString());
