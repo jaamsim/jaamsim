@@ -284,7 +284,7 @@ public class Queue extends LinkedComponent {
 		int pri = (int) priority.getValue().getNextSample(getSimTime());
 		String m = null;
 		if (match.getValue() != null)
-			m = match.getValue().getNextString(getSimTime(), "%s", 1.0d);
+			m = match.getValue().getNextString(getSimTime(), "%s", 1.0d, true);
 
 		EventHandle rh = null;
 		if (renegeTime.getValue() != null)
