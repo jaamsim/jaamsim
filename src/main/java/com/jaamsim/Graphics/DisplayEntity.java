@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2002-2011 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2017 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -215,9 +216,100 @@ public class DisplayEntity extends Entity {
 	}
 
 	@Override
+	public void setInputsForDragAndDrop() {
+
+		// Determine whether the entity should sit on top of the x-y plane
+		boolean alignBottom = true;
+		ArrayList<DisplayModel> displayModels = displayModelListInput.getValue();
+		if (displayModels != null && displayModels.size() > 0) {
+			DisplayModel dm0 = displayModels.get(0);
+			if (dm0 instanceof ShapeModel || dm0 instanceof ImageModel || dm0 instanceof TextModel )
+				alignBottom = false;
+		}
+
+		if (this instanceof Graph || this.usePointsInput() || this instanceof Region) {
+			alignBottom = false;
+		}
+
+		if (alignBottom)
+			InputAgent.applyArgs(this, "Alignment", "0.0", "0.0", "-0.5");
+	}
+
+	@Override
+	public void updateForInput( Input<?> in ) {
+		super.updateForInput( in );
+
+		if (in == positionInput) {
+			this.setPosition(positionInput.getValue());
+			return;
+		}
+		if (in == sizeInput) {
+			this.setSize(sizeInput.getValue());
+			return;
+		}
+		if (in == orientationInput) {
+			this.setOrientation(orientationInput.getValue());
+			return;
+		}
+		if (in == alignmentInput) {
+			this.setAlignment(alignmentInput.getValue());
+			return;
+		}
+		if (in == regionInput) {
+			this.setRegion(regionInput.getValue());
+			return;
+		}
+		if (in == displayModelListInput) {
+			this.setDisplayModelList(displayModelListInput.getValue());
+			return;
+		}
+		if (in == showInput) {
+			this.setShow(showInput.getValue());
+			return;
+		}
+
+		// If Points were input, then use them to set the start and end coordinates
+		if (in == pointsInput || in == curveTypeInput) {
+			invalidateScreenPoints();
+			return;
+		}
+	}
+
+	@Override
+	public void validate()
+	throws InputErrorException {
+		super.validate();
+
+		if (getDisplayModelList() != null) {
+			for (DisplayModel dm : getDisplayModelList()) {
+				if (!dm.canDisplayEntity(this)) {
+					error("Invalid DisplayModel: %s for this DisplayEntity", dm.getName());
+				}
+			}
+		}
+	}
+
+	@Override
 	public void earlyInit() {
 		super.earlyInit();
 		this.resetGraphics();
+	}
+
+	@Override
+	public void kill() {
+
+		// Kill the label
+		if (! this.testFlag(FLAG_GENERATED)) {
+			EntityLabel label = EntityLabel.getLabel(this);
+			if (label != null)
+				label.kill();
+		}
+
+		// Kill the DisplayEntity
+		super.kill();
+
+		// Clear the properties
+		currentRegion = null;
 	}
 
 	/**
@@ -278,60 +370,6 @@ public class DisplayEntity extends Entity {
 		// Standard displaymodel
 		showStandardGraphicsKeywords(true);
 		showPolylineGraphicsKeywords(false);
-	}
-
-	@Override
-	public void validate()
-	throws InputErrorException {
-		super.validate();
-
-		if (getDisplayModelList() != null) {
-			for (DisplayModel dm : getDisplayModelList()) {
-				if (!dm.canDisplayEntity(this)) {
-					error("Invalid DisplayModel: %s for this DisplayEntity", dm.getName());
-				}
-			}
-		}
-	}
-
-	@Override
-	public void setInputsForDragAndDrop() {
-
-		// Determine whether the entity should sit on top of the x-y plane
-		boolean alignBottom = true;
-		ArrayList<DisplayModel> displayModels = displayModelListInput.getValue();
-		if (displayModels != null && displayModels.size() > 0) {
-			DisplayModel dm0 = displayModels.get(0);
-			if (dm0 instanceof ShapeModel || dm0 instanceof ImageModel || dm0 instanceof TextModel )
-				alignBottom = false;
-		}
-
-		if (this instanceof Graph || this.usePointsInput() || this instanceof Region) {
-			alignBottom = false;
-		}
-
-		if (alignBottom)
-			InputAgent.applyArgs(this, "Alignment", "0.0", "0.0", "-0.5");
-	}
-
-	/**
-	 * Destroys the branchGroup hierarchy for the entity
-	 */
-	@Override
-	public void kill() {
-
-		// Kill the label
-		if (! this.testFlag(FLAG_GENERATED)) {
-			EntityLabel label = EntityLabel.getLabel(this);
-			if (label != null)
-				label.kill();
-		}
-
-		// Kill the DisplayEntity
-		super.kill();
-
-		// Clear the properties
-		currentRegion = null;
 	}
 
 	public boolean getShow() {
@@ -866,48 +904,6 @@ public class DisplayEntity extends Entity {
 	 */
 	public void linkTo(DisplayEntity nextEnt) {
 		// Do nothing in default behavior
-	}
-
-	/**
-	 * This method updates the DisplayEntity for changes in the given input
-	 */
-	@Override
-	public void updateForInput( Input<?> in ) {
-		super.updateForInput( in );
-
-		if( in == positionInput ) {
-			this.setPosition(  positionInput.getValue() );
-			return;
-		}
-		if( in == sizeInput ) {
-			this.setSize( sizeInput.getValue() );
-			return;
-		}
-		if( in == orientationInput ) {
-			this.setOrientation( orientationInput.getValue() );
-			return;
-		}
-		if( in == alignmentInput ) {
-			this.setAlignment( alignmentInput.getValue() );
-			return;
-		}
-		if( in == regionInput ) {
-			this.setRegion(regionInput.getValue());
-		}
-
-		if (in == displayModelListInput) {
-			this.setDisplayModelList( displayModelListInput.getValue() );
-		}
-		if (in == showInput) {
-			this.setShow(showInput.getValue());
-			return;
-		}
-
-		// If Points were input, then use them to set the start and end coordinates
-		if( in == pointsInput || in == curveTypeInput) {
-			invalidateScreenPoints();
-			return;
-		}
 	}
 
 	private final Object screenPointLock = new Object();
