@@ -113,7 +113,7 @@ public class DisplayEntity extends Entity {
 
 	@Keyword(description = "If TRUE, the object is displayed in the View windows.",
 	         exampleList = {"FALSE"})
-	private final BooleanInput show;
+	private final BooleanInput showInput;
 
 	@Keyword(description = "If TRUE, the object is active and used in simulation runs.",
 	         exampleList = {"FALSE"})
@@ -129,6 +129,7 @@ public class DisplayEntity extends Entity {
 	private final Vec3d orient = new Vec3d();
 	private final Vec3d align = new Vec3d();
 	private final ArrayList<DisplayModel> displayModelList = new ArrayList<>();
+	private boolean show;
 
 	private Region currentRegion;
 
@@ -179,8 +180,8 @@ public class DisplayEntity extends Entity {
 		active.setHidden(true);
 		this.addInput(active);
 
-		show = new BooleanInput("Show", "Graphics", true);
-		this.addInput(show);
+		showInput = new BooleanInput("Show", "Graphics", true);
+		this.addInput(showInput);
 
 		movable = new BooleanInput("Movable", "Graphics", true);
 		this.addInput(movable);
@@ -207,6 +208,8 @@ public class DisplayEntity extends Entity {
 		alignmentInput.setDefaultValue(type.getDefaultAlignment());
 		this.setAlignment(type.getDefaultAlignment());
 
+		this.setShow(showInput.getValue());
+
 		// Choose which set of keywords to show
 		this.setGraphicsKeywords();
 	}
@@ -227,6 +230,7 @@ public class DisplayEntity extends Entity {
 		this.setOrientation(orientationInput.getValue());
 		this.setDisplayModelList(displayModelListInput.getValue());
 		this.setRegion(regionInput.getValue());
+		this.setShow(showInput.getValue());
 	}
 
 	private void showStandardGraphicsKeywords(boolean bool) {
@@ -259,7 +263,7 @@ public class DisplayEntity extends Entity {
 			showPolylineGraphicsKeywords(false);
 			regionInput.setHidden(true);
 			relativeEntity.setHidden(true);
-			show.setHidden(true);
+			showInput.setHidden(true);
 			movable.setHidden(true);
 			return;
 		}
@@ -328,6 +332,18 @@ public class DisplayEntity extends Entity {
 
 		// Clear the properties
 		currentRegion = null;
+	}
+
+	public boolean getShow() {
+		synchronized (position) {
+			return show;
+		}
+	}
+
+	public void setShow(boolean bool) {
+		synchronized (position) {
+			show = bool;
+		}
 	}
 
 	public Region getCurrentRegion() {
@@ -785,10 +801,6 @@ public class DisplayEntity extends Entity {
 		return active.getValue();
 	}
 
-	public boolean getShow() {
-		return show.getValue();
-	}
-
 	public boolean isMovable() {
 		return movable.getValue();
 	}
@@ -885,6 +897,10 @@ public class DisplayEntity extends Entity {
 
 		if (in == displayModelListInput) {
 			this.setDisplayModelList( displayModelListInput.getValue() );
+		}
+		if (in == showInput) {
+			this.setShow(showInput.getValue());
+			return;
 		}
 
 		// If Points were input, then use them to set the start and end coordinates
