@@ -184,14 +184,11 @@ public class Threshold extends StateEntity {
 		Color4d col;
 		if (open) {
 			col = openColour.getValue();
-			setTagVisibility(ShapeModel.TAG_CONTENTS, showWhenOpen.getValue());
-			setTagVisibility(ShapeModel.TAG_OUTLINES, showWhenOpen.getValue());
+			setShow(showWhenOpen.getValue());
 		}
 		else {
 			col = closedColour.getValue();
-			setTagVisibility(ShapeModel.TAG_CONTENTS, showWhenClosed.getValue());
-			setTagVisibility(ShapeModel.TAG_OUTLINES, showWhenClosed.getValue());
-
+			setShow(showWhenClosed.getValue());
 		}
 
 		setTagColour( ShapeModel.TAG_CONTENTS, col );
