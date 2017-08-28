@@ -372,6 +372,54 @@ public class DisplayEntity extends Entity {
 		showPolylineGraphicsKeywords(false);
 	}
 
+	public Vec3d getPosition() {
+		synchronized (position) {
+			return new Vec3d(position);
+		}
+	}
+
+	public void setPosition(Vec3d pos) {
+		synchronized (position) {
+			position.set3(pos);
+		}
+	}
+
+	public Vec3d getSize() {
+		synchronized (position) {
+			return new Vec3d(size);
+		}
+	}
+
+	public void setSize(Vec3d size) {
+		synchronized (position) {
+			this.size.set3(size);
+		}
+	}
+
+	public Vec3d getOrientation() {
+		synchronized (position) {
+			return new Vec3d(orient);
+		}
+	}
+
+	public void setOrientation(Vec3d orientation) {
+		synchronized (position) {
+			orient.set3(orientation);
+		}
+	}
+
+	public Vec3d getAlignment() {
+		synchronized (position) {
+			return new Vec3d(align);
+		}
+	}
+
+	public void setAlignment(Vec3d align) {
+		synchronized (position) {
+			this.align.set3(align);
+		}
+	}
+
 	public boolean getShow() {
 		synchronized (position) {
 			return show;
@@ -382,6 +430,26 @@ public class DisplayEntity extends Entity {
 		synchronized (position) {
 			show = bool;
 		}
+	}
+
+	public boolean isActive() {
+		return active.getValue();
+	}
+
+	public boolean isMovable() {
+		return movable.getValue();
+	}
+
+	public DisplayEntity getRelativeEntity() {
+		return relativeEntity.getValue();
+	}
+
+	public ArrayList<String> getRelativeEntityOptions() {
+		return relativeEntity.getValidOptions();
+	}
+
+	public ArrayList<String> getRegionOptions() {
+		return regionInput.getValidOptions();
 	}
 
 	public Region getCurrentRegion() {
@@ -397,11 +465,7 @@ public class DisplayEntity extends Entity {
 	}
 
 	/**
-	 * Update any internal stated needed by either renderer. This is a transition method to get away from
-	 * java3D onto the new renderer.
-	 *
-	 * The JaamSim renderer will only call updateGraphics() while the Java3D renderer will call both
-	 * updateGraphics() and render()
+	 * Update any internal stated needed by either renderer.
 	 */
 	public void updateGraphics(double simTime) {
 	}
@@ -456,42 +520,6 @@ public class DisplayEntity extends Entity {
 		}
 
 		return temp;
-	}
-
-	public Vec3d getOrientation() {
-		synchronized (position) {
-			return new Vec3d(orient);
-		}
-	}
-
-	public void setOrientation(Vec3d orientation) {
-		synchronized (position) {
-			orient.set3(orientation);
-		}
-	}
-
-	public void setSize(Vec3d size) {
-		synchronized (position) {
-			this.size.set3(size);
-		}
-	}
-
-	public Vec3d getPosition() {
-		synchronized (position) {
-			return new Vec3d(position);
-		}
-	}
-
-	public DisplayEntity getRelativeEntity() {
-		return relativeEntity.getValue();
-	}
-
-	public ArrayList<String> getRelativeEntityOptions() {
-		return relativeEntity.getValidOptions();
-	}
-
-	public ArrayList<String> getRegionOptions() {
-		return regionInput.getValidOptions();
 	}
 
 	/**
@@ -584,7 +612,6 @@ public class DisplayEntity extends Entity {
 		return RenderUtils.getInverseWithScale(getGlobalTrans(), size);
 	}
 
-
 	/**
 	 * Return the position in the global coordinate system
 	 * @return
@@ -652,33 +679,6 @@ public class DisplayEntity extends Entity {
 			cent.add3(ent.getGlobalPosition());
 
 		return cent;
-	}
-
-	/**
-	 *  Returns the extent for the DisplayEntity
-	 */
-	public Vec3d getSize() {
-		synchronized (position) {
-			return new Vec3d(size);
-		}
-	}
-
-	public Vec3d getAlignment() {
-		synchronized (position) {
-			return new Vec3d(align);
-		}
-	}
-
-	public void setAlignment(Vec3d align) {
-		synchronized (position) {
-			this.align.set3(align);
-		}
-	}
-
-	public void setPosition(Vec3d pos) {
-		synchronized (position) {
-			position.set3(pos);
-		}
 	}
 
 	/**
@@ -833,14 +833,6 @@ public class DisplayEntity extends Entity {
 		dist.sub3(points.get(0));
 		kw = InputAgent.formatPointsInputs(pointsInput.getKeyword(), pointsInput.getValue(), dist);
 		InputAgent.apply(this, kw);
-	}
-
-	public boolean isActive() {
-		return active.getValue();
-	}
-
-	public boolean isMovable() {
-		return movable.getValue();
 	}
 
 	public void handleKeyPressed(int keyCode, char keyChar, boolean shift, boolean control, boolean alt) {
