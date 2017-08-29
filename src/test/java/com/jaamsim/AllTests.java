@@ -60,8 +60,6 @@ import org.junit.runners.Suite.SuiteClasses;
 	com.jaamsim.probability.TestBooleanSelector.class,
 	com.jaamsim.MeshFiles.TestVertexMap.class,
 	com.jaamsim.MeshFiles.TestDataBlocks.class,
-	com.jaamsim.DirectedGraph.TestComplexDirectedGraph.class,
-	com.jaamsim.DirectedGraph.TestTrivalDirectedGraph.class,
 	com.jaamsim.Route.TestRouteComponents.class,
 })
 public class AllTests {}
