@@ -1654,22 +1654,46 @@ public class InputAgent {
 		if (retType == LinkedHashMap.class) {
 			sb.append("{");
 			LinkedHashMap<?, ?> map = out.getValue(simTime, LinkedHashMap.class);
+			boolean first = true;
 			for (Entry<?, ?> mapEntry : map.entrySet()) {
+				if (first)
+					first = false;
+				else
+					sb.append(COMMA_SEPARATOR);
+
 				sb.append(String.format("%s=", mapEntry.getKey()));
 				Object obj = mapEntry.getValue();
 				if (obj instanceof Double) {
 					double val = (Double)obj;
-					str = String.format(floatFmt, val/factor);
+					sb.append(String.format(floatFmt, val/factor));
+				}
+				else if (obj instanceof LinkedHashMap) {
+					sb.append("{");
+					LinkedHashMap<?, ?> innerMap = (LinkedHashMap<?, ?>)obj;
+					boolean innerFirst = true;
+					for (Entry<?, ?> innerMapEntry : innerMap.entrySet()) {
+						if (innerFirst)
+							innerFirst = false;
+						else
+							sb.append(COMMA_SEPARATOR);
+
+						sb.append(String.format("%s=", innerMapEntry.getKey()));
+						Object innerMapObj = innerMapEntry.getValue();
+						if (innerMapObj instanceof Double) {
+							double val = (Double)innerMapObj;
+							sb.append(String.format(floatFmt, val/factor));
+						}
+						else {
+							sb.append(String.format("%s", obj));
+						}
+					}
+					sb.append("}");
 				}
 				else {
-					str = String.format("%s", obj);
+					sb.append(String.format("%s", obj));
 				}
-				sb.append(str).append(COMMA_SEPARATOR);
 			}
-			if (sb.length() > 1)
-				sb.replace(sb.length()-2, sb.length()-1, "}");
-			else
-				sb.append("}");
+			sb.append("}");
 			return sb.toString();
 		}
 
