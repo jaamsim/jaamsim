@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2002-2014 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2017 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +18,8 @@
 package com.jaamsim.events;
 
 import java.util.ArrayList;
+
+import com.jaamsim.basicsim.Simulation;
 
 /**
  * The EventManager is responsible for scheduling future events, controlling
@@ -51,6 +54,8 @@ public final class EventManager {
 	private long currentTick; // Master simulation time (long)
 	private long nextTick; // The next tick to execute events at
 	private long targetTick; // the largest time we will execute events for (run to time)
+	private boolean oneEvent; // execute a single event
+	private boolean oneSimTime; // execute all the events at the next simulation time
 
 	private double ticksPerSecond; // The number of discrete ticks per simulated second
 	private double secsPerTick;    // The length of time in seconds each tick represents
@@ -81,6 +86,8 @@ public final class EventManager {
 		// Initialize and event lists and timekeeping variables
 		currentTick = 0;
 		nextTick = 0;
+		oneEvent = false;
+		oneSimTime = false;
 
 		setTickLength(1e-6d);
 
@@ -253,7 +260,12 @@ public final class EventManager {
 
 					// the return from execute target informs whether or not this
 					// thread should grab an new Event, or return to the pool
-					if (executeTarget(cur, nextTarget))
+					boolean bool = executeTarget(cur, nextTarget);
+					if (oneEvent) {
+						oneEvent = false;
+						executeEvents = false;
+					}
+					if (bool)
 						continue;
 					else
 						return;
@@ -296,8 +308,23 @@ public final class EventManager {
 					currentTick = nextTick;
 
 				timelistener.tickUpdate(currentTick);
+
+				if (oneSimTime) {
+					executeEvents = false;
+					oneSimTime = false;
+				}
 			}
 		}
+	}
+
+	public void nextOneEvent() {
+		oneEvent = true;
+		resume(this.secondsToNearestTick(Simulation.getPauseTime()));
+	}
+
+	public void nextEventTime() {
+		oneSimTime = true;
+		resume(this.secondsToNearestTick(Simulation.getPauseTime()));
 	}
 
 	private void evaluateConditions(Process cur) {
