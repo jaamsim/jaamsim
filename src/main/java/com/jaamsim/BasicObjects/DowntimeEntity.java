@@ -29,6 +29,7 @@ import com.jaamsim.events.EventManager;
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.EntityInput;
+import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.states.DowntimeUser;
@@ -72,6 +73,10 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 	                     + "downtime event.",
 	         exampleList = {"FALSE"})
 	protected final BooleanInput concurrent;
+
+	@Keyword(description = "The maximum number of downtimes pending for the downtime event.",
+            exampleList = {"1"})
+	protected final IntegerInput maxDowntimesPending;
 
 	private final ArrayList<DowntimeUser> downtimeUserList;  // entities that use this downtime entity
 	private boolean down;             // true for the duration of a downtime event
@@ -118,6 +123,10 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 		concurrent = new BooleanInput("Concurrent", "Key Inputs", false);
 		concurrent.setHidden(true);
 		this.addInput(concurrent);
+
+		maxDowntimesPending = new IntegerInput("MaxDowntimesPending", "Key Inputs", Integer.MAX_VALUE);
+		maxDowntimesPending.setValidRange(1, Integer.MAX_VALUE);
+		this.addInput(maxDowntimesPending);
 	}
 
 	public DowntimeEntity(){
@@ -336,6 +345,9 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 	}
 
 	public void scheduleDowntime() {
+		if (downtimePendings == maxDowntimesPending.getValue())
+			return;
+
 		downtimePendings++;
 		if( downtimePendings == 1 )
 			downtimePendingStartTime = this.getSimTime();
