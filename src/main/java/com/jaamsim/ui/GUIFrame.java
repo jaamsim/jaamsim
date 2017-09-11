@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2002-2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016 JaamSim Software Inc.
+ * Copyright (C) 2016-2017 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -586,6 +586,12 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		logMenuItem.setMnemonic( 'L' );
 		logMenuItem.addActionListener(new SimulationMenuAction("ShowLogViewer", "TRUE"));
 		viewMenu.add( logMenuItem );
+
+		// 9) "Event Viewer" menu item
+		JMenuItem eventsMenuItem = new JMenuItem( "Event Viewer" );
+		eventsMenuItem.setMnemonic( 'E' );
+		eventsMenuItem.addActionListener(new SimulationMenuAction("ShowEventViewer", "TRUE"));
+		viewMenu.add( eventsMenuItem );
 	}
 
 	private static final class SimulationMenuAction implements ActionListener {
