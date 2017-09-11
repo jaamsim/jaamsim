@@ -58,6 +58,7 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 	private static ArrayList<EventData> retiredEventDataList;
 	private static ArrayList<EventData> eventDataList;
 	private static boolean dirty;
+	private static Unit timeUnit;
 
 	private static final TableCellRenderer evCellRenderer;
 	private static JTable eventList;
@@ -91,6 +92,8 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 
 		evtMan = em;
 		evtMan.setTraceListener(this);
+
+		timeUnit = Unit.getPreferredUnit(TimeUnit.class);
 
 		// Next Event Button
 		JButton nextEventButton = new JButton( "Next Event" );
@@ -194,7 +197,14 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 		if (!this.isVisible())
 			return;
 
-		if (isDirty()) {
+		boolean bool = isDirty();
+
+		if (Unit.getPreferredUnit(TimeUnit.class) != timeUnit) {
+			timeUnit = Unit.getPreferredUnit(TimeUnit.class);
+			bool = true;
+		}
+
+		if (bool) {
 			setDirty(false);
 			update();
 		}
