@@ -31,6 +31,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableModel;
 
 import com.jaamsim.events.EventManager;
 import com.jaamsim.events.EventTraceListener;
@@ -140,18 +141,7 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 		getContentPane().add(buttonPanel, BorderLayout.NORTH);
 
 		// Event List
-		eventList = new JTable(new DefaultTableModel(0, headers.length));
-		eventList.setDefaultRenderer(Object.class, evCellRenderer);
-		eventList.setFillsViewportHeight(true);
-		eventList.setAutoResizeMode( JTable.AUTO_RESIZE_OFF );
-		eventList.getTableHeader().setFont(FrameBox.boldFont);
-		eventList.getTableHeader().setReorderingAllowed(false);
-
-		for (int i = 0; i < headers.length; i++) {
-			eventList.getColumnModel().getColumn(i).setHeaderValue(headers[i]);
-			eventList.getColumnModel().getColumn(i).setPreferredWidth(colWidth[i]);
-		}
-
+		eventList = new EventTable(new DefaultTableModel(0, headers.length));
 		sp = new JScrollPane();
 		sp.getViewport().add(eventList);
 		sp.setPreferredSize(new Dimension( 800, 300 ));
@@ -190,6 +180,28 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 		super.dispose();
 		killInstance();
 		evtMan.setTraceListener(null);
+	}
+
+	private class EventTable extends JTable {
+		public EventTable(TableModel model) {
+			super(model);
+
+			setDefaultRenderer(Object.class, evCellRenderer);
+			setFillsViewportHeight(true);
+
+			for (int i = 0; i < headers.length; i++) {
+				getColumnModel().getColumn(i).setHeaderValue(headers[i]);
+				getColumnModel().getColumn(i).setWidth(colWidth[i]);
+			}
+
+			this.getTableHeader().setFont(FrameBox.boldFont);
+			this.getTableHeader().setReorderingAllowed(false);
+		}
+
+		@Override
+		public void doLayout() {
+			FrameBox.fitTableToLastColumn(this);
+		}
 	}
 
 	@Override
