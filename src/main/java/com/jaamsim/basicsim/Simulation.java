@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2002-2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016 JaamSim Software Inc.
+ * Copyright (C) 2016-2017 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,6 +45,7 @@ import com.jaamsim.math.Vec3d;
 import com.jaamsim.ui.AboutBox;
 import com.jaamsim.ui.EditBox;
 import com.jaamsim.ui.EntityPallet;
+import com.jaamsim.ui.EventViewer;
 import com.jaamsim.ui.FrameBox;
 import com.jaamsim.ui.GUIFrame;
 import com.jaamsim.ui.LogBox;
@@ -220,6 +221,10 @@ public class Simulation extends Entity {
 	         exampleList = {"TRUE"})
 	private static final BooleanInput showLogViewer;
 
+	@Keyword(description = "If TRUE, the Event Viewer tool is shown on startup.",
+	         exampleList = {"TRUE"})
+	private static final BooleanInput showEventViewer;
+
 	@Keyword(description = "Time at which the simulation run is started (hh:mm).",
 	         exampleList = {"2160 h"})
 	private static final ValueInput startTimeInput;
@@ -341,6 +346,9 @@ public class Simulation extends Entity {
 		showLogViewer = new BooleanInput("ShowLogViewer", "GUI", false);
 		showLogViewer.setPromptReqd(false);
 
+		showEventViewer = new BooleanInput("ShowEventViewer", "GUI", false);
+		showEventViewer.setPromptReqd(false);
+
 		// Hidden keywords
 		startTimeInput = new ValueInput("StartTime", "Key Inputs", 0.0d);
 		startTimeInput.setUnitType(TimeUnit.class);
@@ -392,6 +400,7 @@ public class Simulation extends Entity {
 		this.addInput(showOutputViewer);
 		this.addInput(showPropertyViewer);
 		this.addInput(showLogViewer);
+		this.addInput(showEventViewer);
 
 		// Hidden keywords
 		this.addInput(startTimeInput);
@@ -508,6 +517,16 @@ public class Simulation extends Entity {
 			if (GUIFrame.getInstance() != null)
 				setWindowVisible(LogBox.getInstance(), showLogViewer.getValue());
 			FrameBox.reSelectEntity();
+			return;
+		}
+
+		if (in == showEventViewer) {
+			if (GUIFrame.getInstance() != null) {
+				if (showEventViewer.getValue())
+					setWindowVisible(EventViewer.getInstance(), true);
+				else if (EventViewer.hasInstance())
+					EventViewer.getInstance().dispose();
+			}
 			return;
 		}
 	}
