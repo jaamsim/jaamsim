@@ -20,6 +20,7 @@ package com.jaamsim.events;
 import java.util.ArrayList;
 
 import com.jaamsim.basicsim.Simulation;
+import com.jaamsim.ui.EventData;
 
 /**
  * The EventManager is responsible for scheduling future events, controlling
@@ -958,4 +959,33 @@ public final class EventManager {
 	public static final double ticksToSecs(long ticks) {
 		return ticks * globalsecsPerTick;
 	}
+
+	public ArrayList<EventData> getEventDataList() {
+		synchronized (lockObject) {
+			EventDataBuilder lb = new EventDataBuilder();
+			eventTree.runOnAllNodes(lb);
+			return lb.eventDataList;
+		}
+	}
+
+	private static class EventDataBuilder implements EventNode.Runner {
+		ArrayList<EventData> eventDataList;
+
+		EventDataBuilder() {
+			eventDataList = new ArrayList<>();
+		}
+
+		@Override
+		public void runOnNode(EventNode node) {
+			Event evt = node.head;
+			while (evt != null) {
+				long ticks = evt.node.schedTick;
+				int pri = evt.node.priority;
+				String desc = evt.target.getDescription();
+				eventDataList.add(new EventData(ticks, pri, desc, ""));
+				evt = evt.next;
+			}
+		}
+	}
+
 }
