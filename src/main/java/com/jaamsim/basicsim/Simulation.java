@@ -922,6 +922,8 @@ public class Simulation extends Entity {
 		setWindowVisible(OutputBox.getInstance(), showOutputViewer.getValue());
 		setWindowVisible(PropertyBox.getInstance(), showPropertyViewer.getValue());
 		setWindowVisible(LogBox.getInstance(), showLogViewer.getValue());
+		if (EventViewer.hasInstance())
+			setWindowVisible(EventViewer.getInstance(), showEventViewer.getValue());
 	}
 
 	/**
@@ -936,6 +938,8 @@ public class Simulation extends Entity {
 		setWindowVisible(OutputBox.getInstance(), false);
 		setWindowVisible(PropertyBox.getInstance(), false);
 		setWindowVisible(LogBox.getInstance(), false);
+		if (EventViewer.hasInstance())
+			setWindowVisible(EventViewer.getInstance(), false);
 	}
 
 	private static void setRunNumber(int n) {
