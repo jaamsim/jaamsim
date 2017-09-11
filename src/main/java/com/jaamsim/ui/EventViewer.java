@@ -53,7 +53,7 @@ import com.jaamsim.units.Unit;
  * the ability to execute a single event <br>
  * the ability to execute only waituntil events <br>
  */
-public class EventViewer extends OSFixJFrame implements EventTraceListener {
+public class EventViewer extends FrameBox implements EventTraceListener {
 	private static EventViewer myInstance;
 	private static ArrayList<EventData> retiredEventDataList;
 	private static ArrayList<EventData> eventDataList;
@@ -83,8 +83,6 @@ public class EventViewer extends OSFixJFrame implements EventTraceListener {
 
 	public EventViewer( EventManager em ) {
 		super("Event Viewer");
-		setType(Type.UTILITY);
-		setAutoRequestFocus(false);
 		setDefaultCloseOperation( FrameBox.DISPOSE_ON_CLOSE );
 		addWindowListener(FrameBox.getCloseListener("ShowEventViewer"));
 
@@ -189,6 +187,17 @@ public class EventViewer extends OSFixJFrame implements EventTraceListener {
 		super.dispose();
 		killInstance();
 		evtMan.setTraceListener(null);
+	}
+
+	@Override
+	public void updateValues(double simTime) {
+		if (!this.isVisible())
+			return;
+
+		if (isDirty()) {
+			setDirty(false);
+			update();
+		}
 	}
 
 	private void setDirty(boolean bool) {
