@@ -215,9 +215,15 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 
 	public void update() {
 
-		// Update the event data
+		// Try to update the event data. If unsuccessful, try again later.
 		ArrayList<EventData> newEventDataList = new ArrayList<>(retiredEventDataList);
-		newEventDataList.addAll(evtMan.getEventDataList());
+		try {
+			newEventDataList.addAll(evtMan.getEventDataList());
+		}
+		catch (Exception e) {
+			setDirty(true);
+			return;
+		}
 
 		// Find the selected row in the updated event data
 		int selection = eventList.getSelectedRow();

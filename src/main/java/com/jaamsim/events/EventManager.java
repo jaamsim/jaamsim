@@ -961,11 +961,10 @@ public final class EventManager {
 	}
 
 	public ArrayList<EventData> getEventDataList() {
-		synchronized (lockObject) {
-			EventDataBuilder lb = new EventDataBuilder();
-			eventTree.runOnAllNodes(lb);
-			return lb.eventDataList;
-		}
+		// Unsynchronized for use by the Event Viewer
+		EventDataBuilder lb = new EventDataBuilder();
+		eventTree.runOnAllNodes(lb);
+		return lb.eventDataList;
 	}
 
 	private static class EventDataBuilder implements EventNode.Runner {
