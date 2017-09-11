@@ -613,6 +613,9 @@ public class Simulation extends Entity {
 			EventTracer trc = new EventTracer(evtName);
 			evt.setTraceListener(trc);
 		}
+		else if (Simulation.showEventViewer.getValue()) {
+			evt.setTraceListener(EventViewer.getInstance());
+		}
 
 		evt.setTickLength(tickLengthInput.getValue());
 
