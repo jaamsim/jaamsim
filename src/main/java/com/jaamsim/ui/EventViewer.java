@@ -66,6 +66,7 @@ public class EventViewer extends OSFixJFrame implements EventTraceListener {
 	private static final String[] headers= {"Ticks", "SimTime", "Priority", "Description", "State"};
 	private static final int[] colWidth = {100, 100, 60, 180, 80};
 
+	private static final int MAX_RETIRED_EVENTS = 1000;
 
 	private static final String STATE_COMPLETED   = "Completed";    // event executed
 	private static final String STATE_INTERRUPTED = "Interrupted";  // event executed early
@@ -236,6 +237,9 @@ public class EventViewer extends OSFixJFrame implements EventTraceListener {
 	}
 
 	public void addRetiredEvent(EventData evtData) {
+		if (retiredEventDataList.size() >= MAX_RETIRED_EVENTS) {
+			retiredEventDataList.remove(0);
+		}
 		retiredEventDataList.add(evtData);
 		update();
 	}
