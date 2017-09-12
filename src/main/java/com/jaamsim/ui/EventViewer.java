@@ -28,7 +28,10 @@ import java.util.ArrayList;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
 import javax.swing.JTable;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
@@ -62,8 +65,11 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 	private static String timeUnit;
 
 	private static final TableCellRenderer evCellRenderer;
+	private static JTabbedPane jTabbedFrame;
 	private static JTable eventList;
 	private static JScrollPane sp;
+	private static JTable condList;
+	private static JScrollPane condSp;
 	private static EventManager evtMan;
 
 	private static final String[] headers= {"Ticks", "SimTime", "Priority", "Description", "State"};
@@ -133,6 +139,11 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 		clearButton.setToolTipText(GUIFrame.formatToolTip("Clear Events",
 				"Removes the completed events from the viewer."));
 
+		// Tabs
+		jTabbedFrame = new JTabbedPane();
+		jTabbedFrame.addChangeListener(new TabListener());
+		getContentPane().add(jTabbedFrame);
+
 		// Button Bar
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.setLayout( new FlowLayout( FlowLayout.LEFT ) );
@@ -146,7 +157,7 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 		sp = new JScrollPane();
 		sp.getViewport().add(eventList);
 		sp.setPreferredSize(new Dimension( 800, 300 ));
-		getContentPane().add(sp, BorderLayout.CENTER);
+		jTabbedFrame.addTab("Future Events", null, sp, null);
 
 		// Size and position of the viewer
 		pack();
@@ -205,6 +216,13 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 		@Override
 		public void doLayout() {
 			FrameBox.fitTableToLastColumn(this);
+		}
+	}
+
+	private static class TabListener implements ChangeListener {
+		@Override
+		public void stateChanged(ChangeEvent e) {
+			GUIFrame.updateUI();
 		}
 	}
 
