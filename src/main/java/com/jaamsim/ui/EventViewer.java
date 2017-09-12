@@ -70,6 +70,7 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 	private static final int[] colWidth = {100, 100, 60, 180, 80};
 
 	private static final int MAX_RETIRED_EVENTS = 1000;
+	private static final int SCROLL_POSITION = 5;
 
 	private static final String STATE_COMPLETED   = "Completed";    // event executed
 	private static final String STATE_INTERRUPTED = "Interrupted";  // event executed early
@@ -289,6 +290,14 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 		if (selection > -1) {
 			eventList.setRowSelectionInterval(selection, selection);
 		}
+
+		// Scroll to show either the selected row or the next event to be executed
+		int line = selection;
+		if (selection == -1) {
+			line = retiredEventDataList.size();
+		}
+		line = Math.min(line + SCROLL_POSITION, eventDataList.size()-1);
+		eventList.scrollRectToVisible(eventList.getCellRect(line, 0, true));
 	}
 
 	public void addRetiredEvent(EventData evtData) {
