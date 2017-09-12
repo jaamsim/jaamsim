@@ -159,6 +159,16 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 		sp.setPreferredSize(new Dimension( 800, 300 ));
 		jTabbedFrame.addTab("Future Events", null, sp, null);
 
+		// Conditionals List
+		condList = new JTable(new DefaultTableModel(0, 1));
+		condList.getColumnModel().getColumn(0).setHeaderValue("Description");
+		condList.getTableHeader().setFont(FrameBox.boldFont);
+		condList.setDefaultRenderer(Object.class, colRenderer);
+		condSp = new JScrollPane();
+		condSp.getViewport().add(condList);
+		condSp.setPreferredSize(new Dimension( 800, 300 ));
+		jTabbedFrame.addTab("Conditional Events", null, condSp, null);
+
 		// Size and position of the viewer
 		pack();
 		setLocation(GUIFrame.COL4_START, GUIFrame.BOTTOM_START);
@@ -316,6 +326,16 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 		}
 		line = Math.min(line + SCROLL_POSITION, eventDataList.size()-1);
 		eventList.scrollRectToVisible(eventList.getCellRect(line, 0, true));
+
+		// Update the conditionals
+		ArrayList<String> condDataList = evtMan.getConditionalDataList();
+		tableModel = (DefaultTableModel) condList.getModel();
+		String[] condData = new String[1];
+		for (int i = 0; i < condDataList.size(); i++) {
+			condData[0] = condDataList.get(i);
+			tableModel.insertRow(i, condData);
+		}
+		tableModel.setRowCount(condDataList.size());
 	}
 
 	public void addRetiredEvent(EventData evtData) {
