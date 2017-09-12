@@ -57,6 +57,7 @@ public class EventViewer extends OSFixJFrame implements EventTraceListener {
 	private static EventViewer myInstance;
 	private static ArrayList<EventData> retiredEventDataList;
 	private static ArrayList<EventData> eventDataList;
+	private static boolean dirty;
 
 	private static final TableCellRenderer evCellRenderer;
 	private static JTable eventList;
@@ -161,8 +162,8 @@ public class EventViewer extends OSFixJFrame implements EventTraceListener {
 		setSize(GUIFrame.COL4_WIDTH, GUIFrame.HALF_BOTTOM);
 
 		// Display the viewer
-		update();
 		setVisible(true);
+		setDirty(true);
 	}
 
 	/**
@@ -188,6 +189,19 @@ public class EventViewer extends OSFixJFrame implements EventTraceListener {
 		super.dispose();
 		killInstance();
 		evtMan.setTraceListener(null);
+	}
+
+	private void setDirty(boolean bool) {
+		if (bool != dirty) {
+			dirty = bool;
+			if (bool) {
+				GUIFrame.updateUI();
+			}
+		}
+	}
+
+	private boolean isDirty() {
+		return dirty;
 	}
 
 	public void update() {
@@ -241,7 +255,6 @@ public class EventViewer extends OSFixJFrame implements EventTraceListener {
 			retiredEventDataList.remove(0);
 		}
 		retiredEventDataList.add(evtData);
-		update();
 	}
 
 	public static Color getColor(int i) {
@@ -256,46 +269,50 @@ public class EventViewer extends OSFixJFrame implements EventTraceListener {
 	@Override
 	public void traceEvent(EventManager e, long curTick, long tick, int priority, ProcessTarget t) {
 		addRetiredEvent(new EventData(tick, priority, t.getDescription(), STATE_COMPLETED));
+		setDirty(true);
 	}
 
 	@Override
 	public void traceWait(EventManager e, long curTick, long tick, int priority, ProcessTarget t) {
-		update();
+		setDirty(true);
 	}
 
 	@Override
 	public void traceSchedProcess(EventManager e, long curTick, long tick, int priority, ProcessTarget t) {
-		update();
+		setDirty(true);
 	}
 
 	@Override
 	public void traceProcessStart(EventManager e, ProcessTarget t, long tick) {
-		update();
+		setDirty(true);
 	}
 
 	@Override
 	public void traceProcessEnd(EventManager e, long tick) {
-		update();
+		setDirty(true);
 	}
 
 	@Override
 	public void traceInterrupt(EventManager e, long curTick, long tick, int priority, ProcessTarget t) {
 		addRetiredEvent(new EventData(curTick, priority, t.getDescription(), STATE_INTERRUPTED));
+		setDirty(true);
 	}
 
 	@Override
 	public void traceKill(EventManager e, long curTick, long tick, int priority, ProcessTarget t) {
 		addRetiredEvent(new EventData(curTick, priority, t.getDescription(), STATE_TERMINATED));
+		setDirty(true);
 	}
 
 	@Override
 	public void traceWaitUntil(EventManager e, long tick) {
-		update();
+		setDirty(true);
 	}
 
 	@Override
 	public void traceWaitUntilEnded(EventManager e, long tick, ProcessTarget t) {
 		addRetiredEvent(new EventData(tick, 0, t.getDescription(), STATE_COMPLETED));
+		setDirty(true);
 	}
 
 }
