@@ -59,7 +59,7 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 	private static ArrayList<EventData> retiredEventDataList;
 	private static ArrayList<EventData> eventDataList;
 	private static boolean dirty;
-	private static Unit timeUnit;
+	private static String timeUnit;
 
 	private static final TableCellRenderer evCellRenderer;
 	private static JTable eventList;
@@ -94,7 +94,7 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 		evtMan = em;
 		evtMan.setTraceListener(this);
 
-		timeUnit = Unit.getPreferredUnit(TimeUnit.class);
+		timeUnit = Unit.getDisplayedUnit(TimeUnit.class);
 
 		// Next Event Button
 		JButton nextEventButton = new JButton( "Next Event" );
@@ -194,6 +194,9 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 				getColumnModel().getColumn(i).setWidth(colWidth[i]);
 			}
 
+			getColumnModel().getColumn(1).setHeaderValue(String.format("%s (%s)",
+					headers[1], timeUnit));
+
 			this.getTableHeader().setFont(FrameBox.boldFont);
 			this.getTableHeader().setReorderingAllowed(false);
 		}
@@ -209,14 +212,7 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 		if (!this.isVisible())
 			return;
 
-		boolean bool = isDirty();
-
-		if (Unit.getPreferredUnit(TimeUnit.class) != timeUnit) {
-			timeUnit = Unit.getPreferredUnit(TimeUnit.class);
-			bool = true;
-		}
-
-		if (bool) {
+		if (isDirty() || !Unit.getDisplayedUnit(TimeUnit.class).equals(timeUnit)) {
 			setDirty(false);
 			update();
 		}
@@ -265,6 +261,14 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 			}
 		}
 		eventDataList = newEventDataList;
+
+		// Update the header if the time unit has changed
+		if (!Unit.getDisplayedUnit(TimeUnit.class).equals(timeUnit)) {
+			timeUnit = Unit.getDisplayedUnit(TimeUnit.class);
+			eventList.getColumnModel().getColumn(1).setHeaderValue(String.format("%s (%s)",
+					headers[1], timeUnit));
+			repaint();
+		}
 
 		// Rebuild the event list with the updated data
 		double factor = Unit.getDisplayedUnitFactor(TimeUnit.class);
