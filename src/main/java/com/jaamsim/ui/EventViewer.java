@@ -198,6 +198,13 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 	}
 
 	@Override
+	public void reset() {
+		super.reset();
+		retiredEventDataList.clear();
+		setDirty(true);
+	}
+
+	@Override
 	public void dispose() {
 		super.dispose();
 		killInstance();

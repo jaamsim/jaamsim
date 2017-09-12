@@ -67,6 +67,15 @@ public class FrameBox extends OSFixJFrame {
 		}
 	}
 
+	public static void stop() {
+		ArrayList<FrameBox> boxes = new ArrayList<>(allInstances);
+		for (FrameBox each : boxes) {
+			each.reset();
+		}
+	}
+
+	public void reset() {}
+
 	public static WindowAdapter getCloseListener(String key) {
 		return new CloseListener(key);
 	}
