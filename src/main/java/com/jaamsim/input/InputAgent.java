@@ -36,6 +36,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map.Entry;
 
+import com.jaamsim.Commands.Command;
 import com.jaamsim.StringProviders.StringProvider;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ErrorException;
@@ -76,6 +77,9 @@ public class InputAgent {
 
 	private static long preDefinedEntityCount; // Number of Entities after loading autoload.cfg
 
+	private static ArrayList<Command> undoList;
+	private static ArrayList<Command> redoList;
+
 	static {
 		recordEditsFound = false;
 		sessionEdited = false;
@@ -85,6 +89,8 @@ public class InputAgent {
 		reportFile = null;
 		outStream = null;
 		lastTickForTrace = -1l;
+		undoList = new ArrayList<>();
+		redoList = new ArrayList<>();
 	}
 
 	/**
@@ -101,6 +107,8 @@ public class InputAgent {
 		lastTickForTrace = -1l;
 		setReportDirectory(null);
 		stop();
+		undoList.clear();
+		redoList.clear();
 	}
 
 	/**
@@ -263,6 +271,66 @@ public class InputAgent {
 
 	public static boolean isScriptMode() {
 		return scriptMode;
+	}
+
+	public static void storeAndExecute(Command cmd) {
+		Command mergedCmd = null;
+		if (!undoList.isEmpty()) {
+			Command lastCmd = undoList.get(undoList.size() - 1);
+			mergedCmd = lastCmd.tryMerge(cmd);
+		}
+		if (mergedCmd != null) {
+			undoList.set(undoList.size() - 1, mergedCmd);
+		}
+		else {
+			undoList.add(cmd);
+		}
+		cmd.execute();
+		redoList.clear();
+	}
+
+	public static void undo() {
+		if (undoList.isEmpty())
+			return;
+		Command cmd = undoList.remove(undoList.size() - 1);
+		redoList.add(cmd);
+		cmd.undo();
+	}
+
+	public static void redo() {
+		if (redoList.isEmpty())
+			return;
+		Command cmd = redoList.remove(redoList.size() - 1);
+		undoList.add(cmd);
+		cmd.execute();
+	}
+
+	public static boolean hasUndo() {
+		return !undoList.isEmpty();
+	}
+
+	public static boolean hasRedo() {
+		return !redoList.isEmpty();
+	}
+
+	public static ArrayList<Command> getUndoList() {
+		return undoList;
+	}
+
+	public static ArrayList<Command> getRedoList() {
+		return redoList;
+	}
+
+	public static void undo(int n) {
+		for (int i = 0; i < n; i++) {
+			InputAgent.undo();
+		}
+	}
+
+	public static void redo(int n) {
+		for (int i = 0; i < n; i++) {
+			InputAgent.redo();
+		}
 	}
 
 	private static int getBraceDepth(ArrayList<String> tokens, int startingBraceDepth, int startingIndex) {
