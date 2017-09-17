@@ -48,6 +48,7 @@ import java.util.regex.Pattern;
 
 import javax.swing.Box;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -73,6 +74,7 @@ import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import com.jaamsim.Commands.Command;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ErrorException;
@@ -122,6 +124,11 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 
 	private JToggleButton controlRealTime;
 	private JSpinner spinner;
+
+	private JButton undo;
+	private JButton redo;
+	private JButton undoDropdown;
+	private JButton redoDropdown;
 
 	private JToggleButton showLinks;
 	private JToggleButton createLinks;
@@ -931,6 +938,91 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 
 		mainToolBar.add(Box.createRigidArea(gapDim));
 		mainToolBar.add(pauseTime);
+
+		// 6.5) Undo button
+		undo = new JButton( new ImageIcon(GUIFrame.class.getResource("/resources/images/Undo-16.png")) );
+		undo.setMargin( smallMargin );
+		undo.setToolTipText(formatToolTip("Undo", "Reverses the last change to the model."));
+		undo.setEnabled(InputAgent.hasUndo());
+		undo.addActionListener( new ActionListener() {
+
+			@Override
+			public void actionPerformed( ActionEvent event ) {
+				InputAgent.undo();
+			}
+		} );
+		mainToolBar.addSeparator(separatorDim);
+		mainToolBar.add( undo );
+
+		// 6.6 Undo Dropdown MenulistButton = new JButton(new ImageIcon(
+		undoDropdown = new JButton(new ImageIcon(
+				GUIFrame.class.getResource("/resources/images/dropdown.png")));
+		undoDropdown.setEnabled(InputAgent.hasUndo());
+		undoDropdown.addActionListener( new ActionListener() {
+
+			@Override
+			public void actionPerformed( ActionEvent event ) {
+				JPopupMenu menu = new JPopupMenu("UndoMenu");
+				ArrayList<Command> list = InputAgent.getUndoList();
+				for (int i = 1; i <= list.size(); i++) {
+					Command cmd = list.get(list.size() - i);
+					final int num = i;
+					JMenuItem item = new JMenuItem(cmd.toString());
+					item.addActionListener( new ActionListener() {
+
+						@Override
+						public void actionPerformed( ActionEvent event ) {
+							InputAgent.undo(num);
+						}
+					} );
+					menu.add(item);
+				}
+				menu.show(undoDropdown, 0, undoDropdown.getHeight());
+			}
+		} );
+		mainToolBar.add( undoDropdown );
+
+		// 6.7) Redo button
+		redo = new JButton( new ImageIcon(GUIFrame.class.getResource("/resources/images/Redo-16.png")) );
+		redo.setMargin( smallMargin );
+		redo.setToolTipText(formatToolTip("Redo", "Re-performs the last change to the model that was undone."));
+		redo.setEnabled(InputAgent.hasRedo());
+		redo.addActionListener( new ActionListener() {
+
+			@Override
+			public void actionPerformed( ActionEvent event ) {
+				InputAgent.redo();
+			}
+		} );
+		mainToolBar.add( redo );
+
+		// 6.8 Redo Dropdown Menu
+		redoDropdown = new JButton(new ImageIcon(
+				GUIFrame.class.getResource("/resources/images/dropdown.png")));
+		redoDropdown.setEnabled(InputAgent.hasRedo());
+		redoDropdown.addActionListener( new ActionListener() {
+
+			@Override
+			public void actionPerformed( ActionEvent event ) {
+				JPopupMenu menu = new JPopupMenu("RedoMenu");
+				ArrayList<Command> list = InputAgent.getRedoList();
+				for (int i = 1; i <= list.size(); i++) {
+					Command cmd = list.get(list.size() - i);
+					final int num = i;
+					JMenuItem item = new JMenuItem(cmd.toString());
+					item.addActionListener( new ActionListener() {
+
+						@Override
+						public void actionPerformed( ActionEvent event ) {
+							InputAgent.redo(num);
+						}
+					} );
+					menu.add(item);
+				}
+				menu.show(redoDropdown, 0, redoDropdown.getHeight());
+			}
+		} );
+		mainToolBar.add( redoDropdown );
 
 		// 7) 2D button
 		lockViewXYPlane = new JToggleButton( "2D" );
