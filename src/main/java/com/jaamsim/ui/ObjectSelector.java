@@ -40,6 +40,7 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
+import com.jaamsim.Commands.DeleteCommand;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.EntityLabel;
 import com.jaamsim.basicsim.Entity;
@@ -513,7 +514,7 @@ public class ObjectSelector extends FrameBox {
 					return;
 
 				// Delete key was released on a movable DisplayEntity
-				disp.kill();
+				InputAgent.storeAndExecute(new DeleteCommand(disp));
 				FrameBox.setSelectedEntity(null, false);
 			}
 		}
