@@ -124,15 +124,14 @@ public class JaamSimModel {
 	final void removeInstance(Entity e) {
 		synchronized (allInstances) {
 			int index = idToIndex(e.getEntityNumber());
-			if (index >= 0)
-				if (e != allInstances.remove(index))
-					throw new ErrorException("Internal Consistency Error - Entity List");
+			if (index < 0)
+				throw new ErrorException("Entity not found in allInstances: %s", e);
+			if (e != allInstances.remove(index))
+				throw new ErrorException("Internal Consistency Error - Entity List");
 
 			if (!e.testFlag(Entity.FLAG_GENERATED)) {
-				if (namedEntities.get(e.entityName) != e)
-					throw new ErrorException("Named Entities Internal Consistency error" + e.entityName);
-
-				namedEntities.remove(e.entityName);
+				if (e != namedEntities.remove(e.entityName))
+					throw new ErrorException("Named Entities Internal Consistency error: %s", e);
 			}
 
 			e.entityName = null;
