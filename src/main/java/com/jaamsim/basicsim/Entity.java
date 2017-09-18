@@ -240,6 +240,16 @@ public class Entity {
 	}
 
 	/**
+	 * Reverses the actions taken by the kill method.
+	 * @param name - entity's name before it was deleted
+	 */
+	public void restore(String name) {
+		sim.restoreInstance(this);
+		this.setName(name);
+		this.clearFlag(Entity.FLAG_DEAD);
+	}
+
+	/**
 	 * Performs any actions that are required at the end of the simulation run, e.g. to create an output report.
 	 */
 	public void doEnd() {}

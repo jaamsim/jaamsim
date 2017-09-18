@@ -111,6 +111,16 @@ public class JaamSimModel {
 		}
 	}
 
+	final void restoreInstance(Entity e) {
+		synchronized(allInstances) {
+			int index = idToIndex(e.getEntityNumber());
+			if (index >= 0) {
+				throw new ErrorException("Entity already included in allInstances: %s", e);
+			}
+			allInstances.add(-index - 1, e);
+		}
+	}
+
 	final void removeInstance(Entity e) {
 		synchronized (allInstances) {
 			int index = idToIndex(e.getEntityNumber());
