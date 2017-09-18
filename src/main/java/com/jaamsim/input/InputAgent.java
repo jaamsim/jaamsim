@@ -553,6 +553,23 @@ public class InputAgent {
 		return ent;
 	}
 
+	public static String getUniqueName(String name, String sep) {
+
+		// Is the provided name unused?
+		if (Entity.getNamedEntity(name) == null)
+			return name;
+
+		// Try the provided name plus "1", "2", etc. until an unused name is found
+		int entityNum = 1;
+		while(true) {
+			String ret = String.format("%s%s%d", name, sep, entityNum);
+			if (Entity.getNamedEntity(ret) == null) {
+				return ret;
+			}
+			entityNum++;
+		}
+	}
+
 	/**
 	 * Like defineEntity(), but will generate a unique name if a name collision exists
 	 * @param proto
@@ -562,22 +579,8 @@ public class InputAgent {
 	 * @return
 	 */
 	public static <T extends Entity> T defineEntityWithUniqueName(Class<T> proto, String key, String sep, boolean addedEntity) {
-
-		// Has the provided name been used already?
-		if (Entity.getNamedEntity(key) == null) {
-			return defineEntity(proto, key, addedEntity);
-		}
-
-		// Try the provided name plus "1", "2", etc. until an unused name is found
-		int entityNum = 1;
-		while(true) {
-			String name = String.format("%s%s%d", key, sep, entityNum);
-			if (Entity.getNamedEntity(name) == null) {
-				return defineEntity(proto, name, addedEntity);
-			}
-
-			entityNum++;
-		}
+		String name = getUniqueName(key, sep);
+		return defineEntity(proto, name, addedEntity);
 	}
 
 	private static boolean isValidName(String key) {
