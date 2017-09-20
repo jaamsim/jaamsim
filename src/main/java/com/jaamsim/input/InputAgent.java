@@ -287,6 +287,7 @@ public class InputAgent {
 		}
 		cmd.execute();
 		redoList.clear();
+		GUIFrame.getInstance().updateForUndo();
 	}
 
 	public static void undo() {
@@ -295,6 +296,7 @@ public class InputAgent {
 		Command cmd = undoList.remove(undoList.size() - 1);
 		redoList.add(cmd);
 		cmd.undo();
+		GUIFrame.getInstance().updateForUndo();
 	}
 
 	public static void redo() {
@@ -303,6 +305,7 @@ public class InputAgent {
 		Command cmd = redoList.remove(redoList.size() - 1);
 		undoList.add(cmd);
 		cmd.execute();
+		GUIFrame.getInstance().updateForUndo();
 	}
 
 	public static boolean hasUndo() {

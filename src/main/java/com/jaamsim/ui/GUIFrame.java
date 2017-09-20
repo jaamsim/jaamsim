@@ -1653,6 +1653,14 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		}
 	}
 
+	public void updateForUndo() {
+		undo.setEnabled(InputAgent.hasUndo());
+		undoDropdown.setEnabled(InputAgent.hasUndo());
+		redo.setEnabled(InputAgent.hasRedo());
+		redoDropdown.setEnabled(InputAgent.hasRedo());
+		GUIFrame.updateUI();
+	}
+
 	public static Image getWindowIcon() {
 		return iconImage;
 	}
