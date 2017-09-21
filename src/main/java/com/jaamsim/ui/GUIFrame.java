@@ -75,12 +75,14 @@ import javax.swing.event.MenuListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import com.jaamsim.Commands.Command;
+import com.jaamsim.Commands.DefineViewCommand;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.controllers.RateLimiter;
 import com.jaamsim.controllers.RenderManager;
+import com.jaamsim.datatypes.IntegerVector;
 import com.jaamsim.events.EventErrorListener;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.events.EventTimeListener;
@@ -1260,38 +1262,19 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 				}
 			}
 
-			View lastView = null;
+			String name = InputAgent.getUniqueName("View", "");
+			IntegerVector winPos = null;
+			Vec3d pos = null;
+			Vec3d center = null;
 			ArrayList<View> viewList = View.getAll();
-			if (!viewList.isEmpty())
-				lastView = viewList.get(viewList.size()-1);
-
-			View tmp = InputAgent.defineEntityWithUniqueName(View.class, "View", "", true);
-
-			// Position the new view window to the right of the last one
-			ArrayList<String> arg = new ArrayList<>();
-			if (lastView != null) {
-				int x = lastView.getWindowPos().get(0) + VIEW_OFFSET;
-				int y = lastView.getWindowPos().get(1);
-				arg.add(String.format((Locale)null, "%d", x));
-				arg.add(String.format((Locale)null, "%d", y));
-				InputAgent.apply(tmp, new KeywordIndex("WindowPosition", arg, null));
+			if (!viewList.isEmpty()) {
+				View lastView = viewList.get(viewList.size()-1);
+				winPos = lastView.getWindowPos();
+				winPos.set(0, winPos.get(0) + VIEW_OFFSET);
+				pos = lastView.getViewPosition();
+				center = lastView.getViewCenter();
 			}
-
-			RenderManager.inst().createWindow(tmp);
-			FrameBox.setSelectedEntity(tmp, false);
-			InputAgent.applyArgs(tmp, "ShowWindow", "TRUE");
-
-			// Use the same view position as the last view window
-			if (lastView == null)
-				return;
-
-			arg.clear();
-			lastView.getInput("ViewCenter").getValueTokens(arg);
-			InputAgent.apply(tmp, new KeywordIndex("ViewCenter", arg, null));
-
-			arg.clear();
-			lastView.getInput("ViewPosition").getValueTokens(arg);
-			InputAgent.apply(tmp, new KeywordIndex("ViewPosition", arg, null));
+			InputAgent.storeAndExecute(new DefineViewCommand(name, pos, center, winPos));
 		}
 	}
 

@@ -257,6 +257,14 @@ public class View extends Entity {
 		}
 	}
 
+	public Vec3d getViewCenter() {
+		return center.getValue();
+	}
+
+	public Vec3d getViewPosition() {
+		return position.getValue();
+	}
+
 	public Vec3d getGlobalPosition() {
 		synchronized (setLock) {
 
