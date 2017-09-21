@@ -257,6 +257,10 @@ public class RenderManager implements DragSourceListener {
 		GUIFrame.updateUI();
 	}
 
+	public void closeWindow(View view) {
+		renderer.closeViewWindow(view.getID());
+	}
+
 	public static final void clear() {
 		if (!isGood()) return;
 

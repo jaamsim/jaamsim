@@ -566,6 +566,15 @@ public class Renderer implements GLAnimatorControl {
 		}
 	}
 
+	public void closeViewWindow(int viewID) {
+		for (RenderWindow wind : openWindows.values()) {
+			if (wind.getViewID() == viewID) {
+				closeWindow(wind.getWindowID());
+				return;
+			}
+		}
+	}
+
 	public void closeWindow(int windowID) {
 		addRenderMessage(new CloseWindowMessage(windowID));
 	}
