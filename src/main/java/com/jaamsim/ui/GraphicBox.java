@@ -47,6 +47,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import com.jaamsim.Commands.DefineCommand;
 import com.jaamsim.DisplayModels.ColladaModel;
 import com.jaamsim.DisplayModels.DisplayModel;
 import com.jaamsim.DisplayModels.ImageModel;
@@ -186,16 +187,19 @@ public class GraphicBox extends JDialog {
 					// Set the entity name
 					String entityName = fileName.substring(0, i);
 					entityName = entityName.replaceAll(" ", "_"); // Space is not allowed for Entity Name
-					String modelName = entityName + "-model";
+					entityName = InputAgent.getUniqueName(entityName, "");
+					String modelName = InputAgent.getUniqueName(entityName + "-model", "");
 
 					// Create the DisplayModel
 					DisplayModel dm = null;
 					if (ColladaModel.isValidExtension(extension)) {
-						dm = InputAgent.defineEntityWithUniqueName(ColladaModel.class, modelName, "", true);
+						InputAgent.storeAndExecute(new DefineCommand(ColladaModel.class, modelName));
+						dm = (DisplayModel) Entity.getNamedEntity(modelName);
 						InputAgent.applyArgs(dm, "ColladaFile", f.getPath());
 					}
 					else if (ImageModel.isValidExtension(extension)) {
-						dm = InputAgent.defineEntityWithUniqueName(ImageModel.class, modelName, "", true);
+						InputAgent.storeAndExecute(new DefineCommand(ImageModel.class, modelName));
+						dm = (DisplayModel) Entity.getNamedEntity(modelName);
 						InputAgent.applyArgs(dm, "ImageFile", f.getPath());
 					}
 					else {
