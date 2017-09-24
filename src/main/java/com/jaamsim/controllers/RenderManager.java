@@ -1153,7 +1153,7 @@ public class RenderManager implements DragSourceListener {
 		Vec3d orient = selectedEntity.getOrientation();
 		orient.z += theta;
 		KeywordIndex kw = InputAgent.formatPointInputs("Orientation", orient, "rad");
-		InputAgent.apply(selectedEntity, kw);
+		InputAgent.storeAndExecute(new KeywordCommand(selectedEntity, kw));
 		return true;
 	}
 
