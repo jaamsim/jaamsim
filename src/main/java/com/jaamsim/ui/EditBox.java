@@ -59,6 +59,7 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
 
+import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.Samples.SampleListInput;
 import com.jaamsim.StringProviders.StringProvListInput;
 import com.jaamsim.basicsim.Entity;
@@ -818,8 +819,9 @@ public static class CellListener implements CellEditorListener {
 			Parser.tokenize(tokens, str, true);
 
 			// Parse the keyword inputs
+			Entity ent = EditBox.getInstance().getCurrentEntity();
 			KeywordIndex kw = new KeywordIndex(in.getKeyword(), tokens, null);
-			InputAgent.processKeyword(EditBox.getInstance().getCurrentEntity(), kw);
+			InputAgent.storeAndExecute(new KeywordCommand(ent, kw));
 			in.setValid(true);
 		}
 		catch (InputErrorException exep) {
