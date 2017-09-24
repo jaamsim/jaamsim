@@ -43,6 +43,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
+import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.DisplayModels.DisplayModel;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.LinkDisplayable;
@@ -990,7 +991,9 @@ public class RenderManager implements DragSourceListener {
 			entPos.z += zDiff;
 			if (Simulation.isSnapToGrid())
 				entPos = Simulation.getSnapGridPosition(entPos, selectedEntity.getGlobalPosition(), shift);
-			selectedEntity.setInputForGlobalPosition(entPos);
+			Vec3d localPos = selectedEntity.getLocalPosition(entPos);
+			KeywordIndex kw = InputAgent.formatPointInputs("Position", localPos, "m");
+			InputAgent.storeAndExecute(new KeywordCommand(selectedEntity, kw));
 			return true;
 		}
 
@@ -1013,7 +1016,9 @@ public class RenderManager implements DragSourceListener {
 		pos.add3(del);
 		if (Simulation.isSnapToGrid())
 			pos = Simulation.getSnapGridPosition(pos, selectedEntity.getGlobalPosition(), shift);
-		selectedEntity.setInputForGlobalPosition(pos);
+		Vec3d localPos = selectedEntity.getLocalPosition(pos);
+		KeywordIndex kw = InputAgent.formatPointInputs("Position", localPos, "m");
+		InputAgent.storeAndExecute(new KeywordCommand(selectedEntity, kw));
 		return true;
 	}
 
