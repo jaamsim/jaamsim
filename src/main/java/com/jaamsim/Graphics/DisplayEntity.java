@@ -20,6 +20,7 @@ package com.jaamsim.Graphics;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import com.jaamsim.Commands.DeleteCommand;
 import com.jaamsim.DisplayModels.ArrowModel;
 import com.jaamsim.DisplayModels.DisplayModel;
 import com.jaamsim.DisplayModels.ImageModel;
@@ -872,7 +873,7 @@ public class DisplayEntity extends Entity {
 
 	public void handleKeyReleased(int keyCode, char keyChar, boolean shift, boolean control, boolean alt) {
 		if (keyCode == KeyEvent.VK_DELETE) {
-			this.kill();
+			InputAgent.storeAndExecute(new DeleteCommand(this));
 			FrameBox.setSelectedEntity(null, false);
 			return;
 		}
