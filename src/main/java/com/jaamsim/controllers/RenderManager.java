@@ -1119,10 +1119,9 @@ public class RenderManager implements DragSourceListener {
 		posAdjust.sub3(oldFixed, newFixed);
 
 		pos.add3(posAdjust);
-		selectedEntity.setInputForGlobalPosition(pos);
-
-		KeywordIndex kw = InputAgent.formatPointInputs("Size", selectedEntity.getSize(), "m");
-		InputAgent.apply(selectedEntity, kw);
+		KeywordIndex sizeKw = InputAgent.formatPointInputs("Size", selectedEntity.getSize(), "m");
+		KeywordIndex posKw = InputAgent.formatPointInputs("Position", pos, "m");
+		InputAgent.storeAndExecute(new KeywordCommand(selectedEntity, sizeKw, posKw));
 		return true;
 	}
 
