@@ -37,6 +37,7 @@ import java.util.Locale;
 import java.util.Map.Entry;
 
 import com.jaamsim.Commands.Command;
+import com.jaamsim.Commands.RenameCommand;
 import com.jaamsim.StringProviders.StringProvider;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ErrorException;
@@ -648,7 +649,7 @@ public class InputAgent {
 			throw new ErrorException("Entity names cannot contain spaces, tabs, or braces ({}).");
 
 		// Rename the entity
-		ent.setName(newName);
+		InputAgent.storeAndExecute(new RenameCommand(ent, newName));
 	}
 
 	public static void processKeywordRecord(ArrayList<String> record, ParseContext context) {
