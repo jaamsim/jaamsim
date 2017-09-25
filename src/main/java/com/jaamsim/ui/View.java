@@ -24,6 +24,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Locale;
 
+import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.Region;
 import com.jaamsim.basicsim.Entity;
@@ -333,10 +334,9 @@ public class View extends Entity {
 				tempPos.sub3(followEntityInput.getValue().getGlobalPosition(), tempPos);
 			}
 
-			KeywordIndex kw = InputAgent.formatPointInputs(this.position.getKeyword(), tempPos, "m");
-			InputAgent.apply(this, kw);
-			kw = InputAgent.formatPointInputs(this.center.getKeyword(), tempCent, "m");
-			InputAgent.apply(this, kw);
+			KeywordIndex posKw = InputAgent.formatPointInputs("ViewPosition", tempPos, "m");
+			KeywordIndex ctrKw = InputAgent.formatPointInputs("ViewCenter", tempCent, "m");
+			InputAgent.storeAndExecute(new KeywordCommand(this, posKw, ctrKw));
 		}
 	}
 
