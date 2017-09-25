@@ -18,6 +18,7 @@ package com.jaamsim.Graphics;
 
 import java.util.ArrayList;
 
+import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InputErrorException;
@@ -67,7 +68,7 @@ public class InputBox extends TextBasics {
 			ArrayList<String> tokens = new ArrayList<>();
 			Parser.tokenize(tokens, getEditText(), true);
 			KeywordIndex kw = new KeywordIndex(target.getValue(), tokens, null);
-			InputAgent.apply(target.getTargetEntity(), kw);
+			InputAgent.storeAndExecute(new KeywordCommand(target.getTargetEntity(), kw));
 			super.acceptEdits();
 		}
 		catch (InputErrorException e) {
