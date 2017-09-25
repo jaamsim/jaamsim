@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.jaamsim.Commands.DeleteCommand;
+import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.DisplayModels.ArrowModel;
 import com.jaamsim.DisplayModels.DisplayModel;
 import com.jaamsim.DisplayModels.ImageModel;
@@ -868,7 +869,7 @@ public class DisplayEntity extends Entity {
 			pos = Simulation.getSnapGridPosition(pos, pos, shift);
 
 		KeywordIndex kw = InputAgent.formatPointInputs(positionInput.getKeyword(), pos, "m");
-		InputAgent.apply(this, kw);
+		InputAgent.storeAndExecute(new KeywordCommand(this, kw));
 	}
 
 	public void handleKeyReleased(int keyCode, char keyChar, boolean shift, boolean control, boolean alt) {
