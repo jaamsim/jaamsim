@@ -22,6 +22,7 @@ import java.io.File;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import com.jaamsim.Commands.DefineCommand;
 import com.jaamsim.DisplayModels.ColladaModel;
 import com.jaamsim.DisplayModels.ImageModel;
 import com.jaamsim.Graphics.DisplayEntity;
@@ -226,16 +227,19 @@ public class DisplayEntityFactory extends Entity {
 			// Set the entity name
 			String entityName = fileName.substring(0, i);
 			entityName = entityName.replaceAll(" ", "_"); // Space is not allowed for Entity Name
+			entityName = InputAgent.getUniqueName(entityName, "");
 
 			// Create the ColladaModel
-			String modelName = entityName + "-model";
-			ColladaModel dm = InputAgent.defineEntityWithUniqueName(ColladaModel.class, modelName, "", true);
+			String modelName = InputAgent.getUniqueName(entityName + "-model", "");
+			InputAgent.storeAndExecute(new DefineCommand(ColladaModel.class, modelName));
+			ColladaModel dm = (ColladaModel)Entity.getNamedEntity(modelName);
 
 			// Load the 3D content to the ColladaModel
 			InputAgent.applyArgs(dm, "ColladaFile", f.getPath());
 
 			// Create the DisplayEntity
-			DisplayEntity de = InputAgent.defineEntityWithUniqueName(DisplayEntity.class, entityName, "", true);
+			InputAgent.storeAndExecute(new DefineCommand(DisplayEntity.class, entityName));
+			DisplayEntity de = (DisplayEntity)Entity.getNamedEntity(entityName);
 
 			// Assign the ColladaModel to the new DisplayEntity
 			InputAgent.applyArgs(de, "DisplayModel", dm.getName());
@@ -248,13 +252,9 @@ public class DisplayEntityFactory extends Entity {
 			modelSize.scale3(2);
 
 			// Set the DisplayEntity's position, size, and alignment
-			KeywordIndex kw;
-			kw = InputAgent.formatPointInputs("Position", entityPos, "m");
-			InputAgent.apply(de, kw);
-			kw = InputAgent.formatPointInputs("Alignment", new Vec3d(), null);
-			InputAgent.apply(de, kw);
-			kw = InputAgent.formatPointInputs("Size", modelSize, "m");
-			InputAgent.apply(de, kw);
+			InputAgent.apply(de, InputAgent.formatPointInputs("Position", entityPos, "m"));
+			InputAgent.apply(de, InputAgent.formatPointInputs("Alignment", new Vec3d(), null));
+			InputAgent.apply(de, InputAgent.formatPointInputs("Size", modelSize, "m"));
 		}
 	}
 
