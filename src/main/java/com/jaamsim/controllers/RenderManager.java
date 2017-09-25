@@ -43,6 +43,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
+import com.jaamsim.Commands.DefineCommand;
 import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.DisplayModels.DisplayModel;
 import com.jaamsim.Graphics.DisplayEntity;
@@ -1475,11 +1476,15 @@ public class RenderManager implements DragSourceListener {
 		}
 
 		Vec3d creationPoint = currentRay.getPointAtDist(dist);
+		if (Simulation.isSnapToGrid()) {
+			creationPoint = Simulation.getSnapGridPosition(creationPoint);
+		}
 
 		// Create a new instance
 		Class<? extends Entity> proto  = dndObjectType.getJavaClass();
-		String name = proto.getSimpleName();
-		Entity ent = InputAgent.defineEntityWithUniqueName(proto, name, "", true);
+		String name = InputAgent.getUniqueName(proto.getSimpleName(), "");
+		InputAgent.storeAndExecute(new DefineCommand(proto, name));
+		Entity ent = Entity.getNamedEntity(name);
 
 		// Set input values for a dragged and dropped entity
 		ent.setInputsForDragAndDrop();
@@ -1488,6 +1493,7 @@ public class RenderManager implements DragSourceListener {
 		dndObjectType = null;
 		FrameBox.setSelectedEntity(ent, false);
 
+		// Set the position for the entity
 		if (ent instanceof DisplayEntity) {
 			try {
 				((DisplayEntity)ent).dragged(creationPoint);
