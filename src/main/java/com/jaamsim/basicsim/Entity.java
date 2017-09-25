@@ -229,14 +229,6 @@ public class Entity {
 
 	public void kill() {
 		sim.removeInstance(this);
-		if (!testFlag(FLAG_GENERATED)) {
-			// Remove any references to the deleted entity from the inputs to other entities
-			for (Entity ent : Entity.getClonesOfIterator(Entity.class)) {
-				for (Input<?> in : ent.getEditableInputs()) {
-					in.removeReferences(this);
-				}
-			}
-		}
 	}
 
 	/**
