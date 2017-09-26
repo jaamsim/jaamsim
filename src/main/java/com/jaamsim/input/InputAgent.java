@@ -759,13 +759,7 @@ public class InputAgent {
 	 * @param value - the input value String for the keyword.
 	 */
 	public static void applyArgs(Entity ent, String keyword, String... args){
-		// Keyword
-		ArrayList<String> tokens = new ArrayList<>(args.length);
-		for (String each : args)
-			tokens.add(each);
-
-		// Parse the keyword inputs
-		KeywordIndex kw = new KeywordIndex(keyword, tokens, null);
+		KeywordIndex kw = formatArgs(keyword, args);
 		InputAgent.apply(ent, kw);
 	}
 
@@ -1772,6 +1766,14 @@ public class InputAgent {
 			tokens.add(unit);
 
 		// Parse the keyword inputs
+		return new KeywordIndex(keyword, tokens, null);
+	}
+
+	public static KeywordIndex formatArgs(String keyword, String... args) {
+		ArrayList<String> tokens = new ArrayList<>(args.length);
+		for (String each : args) {
+			tokens.add(each);
+		}
 		return new KeywordIndex(keyword, tokens, null);
 	}
 
