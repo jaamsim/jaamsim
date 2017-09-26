@@ -16,11 +16,13 @@
  */
 package com.jaamsim.Graphics;
 
+import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.StringProviders.StringProvInput;
 import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
+import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.StringInput;
 import com.jaamsim.input.UnitTypeInput;
 import com.jaamsim.units.DimensionlessUnit;
@@ -120,7 +122,8 @@ public class Text extends TextBasics {
 	@Override
 	public void acceptEdits() {
 		super.acceptEdits();
-		InputAgent.applyArgs(this, "Format", getEditText());
+		KeywordIndex kw = InputAgent.formatArgs("Format", getEditText());
+		InputAgent.storeAndExecute(new KeywordCommand(this, kw));
 	}
 
 	public String getRenderText(double simTime) {
