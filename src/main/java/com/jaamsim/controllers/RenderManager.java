@@ -1190,10 +1190,11 @@ public class RenderManager implements DragSourceListener {
 		for (Vec3d pt : globalPts) {
 			pt.add3(delta);
 		}
-		selectedEntity.setInputForGlobalPositions(globalPts);
+		ArrayList<Vec3d> localPts = selectedEntity.getLocalPosition(globalPts);
 
-		// Set the position of the entity to the coordinates of the first node
-		selectedEntity.setInputForGlobalPosition(globalPts.get(0));
+		KeywordIndex ptsKw = InputAgent.formatPointsInputs("Points", localPts, new Vec3d());
+		KeywordIndex posKw = InputAgent.formatPointInputs("Position", localPts.get(0), "m");
+		InputAgent.storeAndExecute(new KeywordCommand(selectedEntity, -1, ptsKw, posKw));
 		return true;
 	}
 
@@ -1232,11 +1233,15 @@ public class RenderManager implements DragSourceListener {
 
 		// Set the new position for the node
 		newPoints.set(nodeIndex, new Vec3d(selectedEntity.getLocalPosition(point)));
-		InputAgent.apply(selectedEntity, InputAgent.formatPointsInputs("Points", newPoints, new Vec3d()));
 
-		// Set the position of the entity to the coordinates of the first node
-		if (nodeIndex == 0)
-			InputAgent.apply(selectedEntity, InputAgent.formatPointInputs("Position", screenPoints.get(0), "m"));
+		KeywordIndex ptsKw = InputAgent.formatPointsInputs("Points", newPoints, new Vec3d());
+		if (nodeIndex == 0) {
+			KeywordIndex posKw = InputAgent.formatPointInputs("Position", newPoints.get(0), "m");
+			InputAgent.storeAndExecute(new KeywordCommand(selectedEntity, nodeIndex, ptsKw, posKw));
+		}
+		else {
+			InputAgent.storeAndExecute(new KeywordCommand(selectedEntity, nodeIndex, ptsKw));
+		}
 		return true;
 	}
 
@@ -1293,8 +1298,9 @@ public class RenderManager implements DragSourceListener {
 		for (int i = splitInd+1; i < points.size(); ++i) {
 			splitPoints.add(points.get(i));
 		}
-		KeywordIndex kw = InputAgent.formatPointsInputs("Points", splitPoints, new Vec3d());
-		InputAgent.apply(selectedEntity, kw);
+
+		KeywordIndex ptsKw = InputAgent.formatPointsInputs("Points", splitPoints, new Vec3d());
+		InputAgent.storeAndExecute(new KeywordCommand(selectedEntity, splitInd + 1, ptsKw));
 	}
 
 	private void removeLineNode(int windowID, int x, int y) {
@@ -1336,8 +1342,9 @@ public class RenderManager implements DragSourceListener {
 			if (i == removeInd) continue;
 			splitPoints.add(points.get(i));
 		}
-		KeywordIndex kw = InputAgent.formatPointsInputs("Points", splitPoints, new Vec3d());
-		InputAgent.apply(selectedEntity, kw);
+
+		KeywordIndex ptsKw = InputAgent.formatPointsInputs("Points", splitPoints, new Vec3d());
+		InputAgent.storeAndExecute(new KeywordCommand(selectedEntity, removeInd, ptsKw));
 	}
 
 	private boolean isMouseHandleID(long id) {
