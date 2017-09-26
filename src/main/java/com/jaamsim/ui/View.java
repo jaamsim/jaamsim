@@ -373,20 +373,6 @@ public class View extends Entity {
 		return region.getValue();
 	}
 
-	public void setRegion(Region reg) {
-		InputAgent.applyArgs(this, region.getKeyword(), reg.getName());
-	}
-
-	public void setPosition(Vec3d pos) {
-		KeywordIndex kw = InputAgent.formatPointInputs(position.getKeyword(), pos, "m");
-		InputAgent.apply(this, kw);
-	}
-
-	public void setCenter(Vec3d cent) {
-		KeywordIndex kw = InputAgent.formatPointInputs(center.getKeyword(), cent, "m");
-		InputAgent.apply(this, kw);
-	}
-
 	public void setWindowPos(int x, int y, int width, int height) {
 		ArrayList<String> tokens = new ArrayList<>(2);
 		IntegerVector pos = windowPos.getValue();
