@@ -374,25 +374,34 @@ public class View extends Entity {
 	}
 
 	public void setWindowPos(int x, int y, int width, int height) {
-		ArrayList<String> tokens = new ArrayList<>(2);
+		ArrayList<KeywordIndex> kwList = new ArrayList<>(2);
+
 		IntegerVector pos = windowPos.getValue();
 		Point posFix = OSFix.getLocationAdustment();
 		if (pos.get(0) != x - posFix.x || pos.get(1) != y - posFix.y) {
+			ArrayList<String> tokens = new ArrayList<>(2);
 			tokens.add(String.format((Locale)null, "%d", x - posFix.x));
 			tokens.add(String.format((Locale)null, "%d", y - posFix.y));
-			KeywordIndex kw = new KeywordIndex(this.windowPos.getKeyword(), tokens, null);
-			InputAgent.apply(this, kw);
-			tokens.clear();
+			KeywordIndex posKw = new KeywordIndex(this.windowPos.getKeyword(), tokens, null);
+			kwList.add(posKw);
 		}
 
 		IntegerVector size = windowSize.getValue();
 		Point sizeFix = OSFix.getSizeAdustment();
 		if (size.get(0) != width - sizeFix.x || size.get(1) != height - sizeFix.y) {
+			ArrayList<String> tokens = new ArrayList<>(2);
 			tokens.add(String.format((Locale)null, "%d", width - sizeFix.x));
 			tokens.add(String.format((Locale)null, "%d", height - sizeFix.y));
-			KeywordIndex kw = new KeywordIndex(this.windowSize.getKeyword(), tokens, null);
-			InputAgent.apply(this, kw);
+			KeywordIndex sizeKw = new KeywordIndex(this.windowSize.getKeyword(), tokens, null);
+			kwList.add(sizeKw);
 		}
+
+		if (kwList.isEmpty())
+			return;
+
+		KeywordIndex[] kws = new KeywordIndex[kwList.size()];
+		kwList.toArray(kws);
+		InputAgent.storeAndExecute(new KeywordCommand(this, kws));
 	}
 
 	public IntegerVector getWindowPos() {
