@@ -683,24 +683,6 @@ public class DisplayEntity extends Entity {
 		return cent;
 	}
 
-	/**
-	 * Set the global position for this entity, this takes into account the region
-	 * transform and sets the local position accordingly
-	 * @param pos - The new position in the global coordinate system
-	 */
-	public void setInputForGlobalPosition(Vec3d pos) {
-		Vec3d localPos = this.getLocalPosition(pos);
-		setPosition(localPos);
-		KeywordIndex kw = InputAgent.formatPointInputs(positionInput.getKeyword(), localPos, "m");
-		InputAgent.apply(this, kw);
-	}
-
-	public void setInputForGlobalPositions(ArrayList<Vec3d> pts) {
-		KeywordIndex kw = InputAgent.formatPointsInputs(pointsInput.getKeyword(),
-				getLocalPosition(pts), new Vec3d());
-		InputAgent.apply(this, kw);
-	}
-
 	public void setGlobalPosition(Vec3d pos) {
 		setPosition(getLocalPosition(pos));
 	}
