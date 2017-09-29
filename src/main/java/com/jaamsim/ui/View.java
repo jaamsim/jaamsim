@@ -254,6 +254,16 @@ public class View extends Entity {
 		}
 		if (in == lock2D) {
 			GUIFrame.updateUI();
+			return;
+		}
+		if (in == showWindow) {
+			if (showWindow.getValue()) {
+				RenderManager.inst().createWindow(this);
+			}
+			else {
+				RenderManager.inst().closeWindow(this);
+			}
+			return;
 		}
 	}
 

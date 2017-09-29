@@ -76,6 +76,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import com.jaamsim.Commands.Command;
 import com.jaamsim.Commands.DefineViewCommand;
+import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ErrorException;
@@ -1238,9 +1239,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 					return;
 				}
 			}
-
-			InputAgent.applyArgs(view, "ShowWindow", "TRUE");
-			RenderManager.inst().createWindow(view);
+			KeywordIndex kw = InputAgent.formatArgs("ShowWindow", "TRUE");
+			InputAgent.storeAndExecute(new KeywordCommand(view, kw));
 			FrameBox.setSelectedEntity(view, false);
 		}
 	}
