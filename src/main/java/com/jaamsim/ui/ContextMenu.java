@@ -27,6 +27,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
 
 import com.jaamsim.Commands.DefineCommand;
+import com.jaamsim.Commands.CoordinateCommand;
 import com.jaamsim.Commands.DeleteCommand;
 import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.Graphics.DisplayEntity;
@@ -259,21 +260,14 @@ public class ContextMenu {
 
 				@Override
 				public void actionPerformed( ActionEvent event ) {
-					Vec3d pos = ent.getGlobalPosition();
-					ArrayList<Vec3d> pts = ent.getPoints();
-					if (pts != null) {
-						pts = ent.getGlobalPosition(pts);
-					}
+					KeywordIndex kw;
 					if (entName.equals("<None>")) {
-						InputAgent.applyArgs(ent, "RelativeEntity");
+						kw = InputAgent.formatArgs("RelativeEntity");
 					}
 					else {
-						InputAgent.applyArgs(ent, "RelativeEntity", entName);
+						kw = InputAgent.formatArgs("RelativeEntity", entName);
 					}
-					ent.setInputForGlobalPosition(pos);
-					if (pts != null) {
-						ent.setInputForGlobalPositions(pts);
-					}
+					InputAgent.storeAndExecute(new CoordinateCommand(ent, kw));
 				}
 			} );
 			setRelativeEntityMenu.add(item);
@@ -301,21 +295,14 @@ public class ContextMenu {
 
 				@Override
 				public void actionPerformed( ActionEvent event ) {
-					Vec3d pos = ent.getGlobalPosition();
-					ArrayList<Vec3d> pts = ent.getPoints();
-					if (pts != null) {
-						pts = ent.getGlobalPosition(pts);
-					}
+					KeywordIndex kw;
 					if (regionName.equals("<None>")) {
-						InputAgent.applyArgs(ent, "Region");
+						kw = InputAgent.formatArgs("Region");
 					}
 					else {
-						InputAgent.applyArgs(ent, "Region", regionName);
+						kw = InputAgent.formatArgs("Region", regionName);
 					}
-					ent.setInputForGlobalPosition(pos);
-					if (pts != null) {
-						ent.setInputForGlobalPositions(pts);
-					}
+					InputAgent.storeAndExecute(new CoordinateCommand(ent, kw));
 				}
 			} );
 			setRegionMenu.add(item);
