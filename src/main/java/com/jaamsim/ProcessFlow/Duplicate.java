@@ -19,6 +19,7 @@ package com.jaamsim.ProcessFlow;
 
 import java.util.ArrayList;
 
+import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.input.InputAgent;
@@ -105,7 +106,7 @@ public class Duplicate extends LinkedComponent {
 		targetComponentList.getValueTokens(toks);
 		toks.add(nextEnt.getName());
 		KeywordIndex kw = new KeywordIndex(targetComponentList.getKeyword(), toks, null);
-		InputAgent.apply(this, kw);
+		InputAgent.storeAndExecute(new KeywordCommand(this, kw));
 	}
 
 }

@@ -20,6 +20,7 @@ package com.jaamsim.ProcessFlow;
 import java.util.ArrayList;
 
 import com.jaamsim.BasicObjects.Logger;
+import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.LinkDisplayable;
 import com.jaamsim.basicsim.Entity;
@@ -90,7 +91,7 @@ public class EntityLogger extends Logger implements Linkable, LinkDisplayable {
 		ArrayList<String> toks = new ArrayList<>();
 		toks.add(nextEnt.getName());
 		KeywordIndex kw = new KeywordIndex(nextComponent.getKeyword(), toks, null);
-		InputAgent.apply(this, kw);
+		InputAgent.storeAndExecute(new KeywordCommand(this, kw));
 	}
 
 	// LinkDisplayable

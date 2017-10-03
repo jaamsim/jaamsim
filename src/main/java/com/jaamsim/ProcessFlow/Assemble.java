@@ -19,6 +19,7 @@ package com.jaamsim.ProcessFlow;
 
 import java.util.ArrayList;
 
+import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
@@ -110,7 +111,7 @@ public class Assemble extends LinkedService {
 		waitQueueList.getValueTokens(toks);
 		toks.add(que.getName());
 		KeywordIndex kw = new KeywordIndex(waitQueueList.getKeyword(), toks, null);
-		InputAgent.apply(this, kw);
+		InputAgent.storeAndExecute(new KeywordCommand(this, kw));
 	}
 
 	@Override

@@ -18,6 +18,7 @@ package com.jaamsim.ProcessFlow;
 
 import java.util.ArrayList;
 
+import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.EntityProviders.EntityProvInput;
 import com.jaamsim.GameObjects.GameEntity;
 import com.jaamsim.Graphics.DisplayEntity;
@@ -85,7 +86,7 @@ public class EntityLauncher extends GameEntity implements LinkDisplayable {
 		ArrayList<String> toks = new ArrayList<>();
 		toks.add(nextEnt.getName());
 		KeywordIndex kw = new KeywordIndex(nextComponent.getKeyword(), toks, null);
-		InputAgent.apply(this, kw);
+		InputAgent.storeAndExecute(new KeywordCommand(this, kw));
 	}
 
 	// LinkDisplayable

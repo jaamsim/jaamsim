@@ -19,6 +19,7 @@ package com.jaamsim.ProcessFlow;
 
 import java.util.ArrayList;
 
+import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.StringProviders.StringProvInput;
 import com.jaamsim.basicsim.Entity;
@@ -145,7 +146,7 @@ public abstract class LinkedService extends LinkedDevice implements QueueUser {
 		ArrayList<String> toks = new ArrayList<>();
 		toks.add(que.getName());
 		KeywordIndex kw = new KeywordIndex(waitQueue.getKeyword(), toks, null);
-		InputAgent.apply(this, kw);
+		InputAgent.storeAndExecute(new KeywordCommand(this, kw));
 	}
 
 	@Override

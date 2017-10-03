@@ -19,6 +19,7 @@ package com.jaamsim.ProcessFlow;
 
 import java.util.ArrayList;
 
+import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.basicsim.Entity;
@@ -96,7 +97,7 @@ public class Branch extends LinkedComponent {
 		nextComponentList.getValueTokens(toks);
 		toks.add(nextEnt.getName());
 		KeywordIndex kw = new KeywordIndex(nextComponentList.getKeyword(), toks, null);
-		InputAgent.apply(this, kw);
+		InputAgent.storeAndExecute(new KeywordCommand(this, kw));
 	}
 
 }

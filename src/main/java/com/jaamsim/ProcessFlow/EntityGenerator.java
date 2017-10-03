@@ -19,6 +19,7 @@ package com.jaamsim.ProcessFlow;
 
 import java.util.ArrayList;
 
+import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.EntityProviders.EntityProvInput;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.OverlayEntity;
@@ -182,7 +183,7 @@ public class EntityGenerator extends LinkedService {
 		ArrayList<String> toks = new ArrayList<>();
 		toks.add(proto.getName());
 		KeywordIndex kw = new KeywordIndex(prototypeEntity.getKeyword(), toks, null);
-		InputAgent.apply(this, kw);
+		InputAgent.storeAndExecute(new KeywordCommand(this, kw));
 	}
 
 	@Override
