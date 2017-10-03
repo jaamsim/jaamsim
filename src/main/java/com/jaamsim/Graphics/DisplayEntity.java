@@ -815,17 +815,11 @@ public class DisplayEntity extends Entity {
 		return modelBindings;
 	}
 
-	public void dragged(Vec3d distance) {
-		Vec3d newPos = this.getPosition();
-		newPos.add3(distance);
-		if (Simulation.isSnapToGrid())
-			newPos = Simulation.getSnapGridPosition(newPos);
+	public void dragged(Vec3d newPos) {
 
 		KeywordIndex kw = InputAgent.formatPointInputs(positionInput.getKeyword(), newPos, "m");
 		InputAgent.apply(this, kw);
 
-		if (!usePointsInput())
-			return;
 		ArrayList<Vec3d> points = pointsInput.getValue();
 		if (points == null || points.isEmpty())
 			return;
