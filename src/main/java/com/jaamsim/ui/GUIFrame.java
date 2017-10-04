@@ -215,6 +215,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 
 		// Initialize the working environment
 		initializeMenus();
+		initializeButtonBar();
 		initializeMainToolBars();
 
 		this.setIconImage(GUIFrame.getWindowIcon());
@@ -781,6 +782,118 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 	}
 
 	// ******************************************************************************************************
+	// BUTTON BAR
+	// ******************************************************************************************************
+
+	/**
+	 * Sets up the Control Panel's button bar.
+	 */
+	public void initializeButtonBar() {
+
+		Insets noMargin = new Insets( 0, 0, 0, 0 );
+		Insets smallMargin = new Insets( 1, 1, 1, 1 );
+		Dimension separatorDim = new Dimension(11, 20);
+
+		// Initialize the button bar
+		JToolBar buttonBar = new JToolBar();
+		buttonBar.setMargin( smallMargin );
+		buttonBar.setFloatable(false);
+		buttonBar.setLayout( new FlowLayout( FlowLayout.LEFT, 0, 0 ) );
+
+		// 4) Undo button
+		undo = new JButton( new ImageIcon(
+				GUIFrame.class.getResource("/resources/images/Undo-16.png")) );
+		undo.setMargin( noMargin );
+		undo.setToolTipText(formatToolTip("Undo", "Reverses the last change to the model."));
+		undo.setEnabled(InputAgent.hasUndo());
+		undo.addActionListener( new ActionListener() {
+
+			@Override
+			public void actionPerformed( ActionEvent event ) {
+				InputAgent.undo();
+			}
+		} );
+		buttonBar.addSeparator(separatorDim);
+		buttonBar.add( undo );
+
+		// 4.1) Undo Dropdown Menu
+		undoDropdown = new JButton(new ImageIcon(
+				GUIFrame.class.getResource("/resources/images/dropdown.png")));
+		undoDropdown.setMargin( noMargin );
+		undoDropdown.setEnabled(InputAgent.hasUndo());
+		undoDropdown.addActionListener( new ActionListener() {
+
+			@Override
+			public void actionPerformed( ActionEvent event ) {
+				JPopupMenu menu = new JPopupMenu("UndoMenu");
+				ArrayList<Command> list = InputAgent.getUndoList();
+				for (int i = 1; i <= list.size(); i++) {
+					Command cmd = list.get(list.size() - i);
+					final int num = i;
+					JMenuItem item = new JMenuItem(cmd.toString());
+					item.addActionListener( new ActionListener() {
+
+						@Override
+						public void actionPerformed( ActionEvent event ) {
+							InputAgent.undo(num);
+						}
+					} );
+					menu.add(item);
+				}
+				menu.show(undoDropdown, 0, undoDropdown.getHeight());
+			}
+		} );
+		buttonBar.add( undoDropdown );
+
+		// 5) Redo button
+		redo = new JButton( new ImageIcon(
+				GUIFrame.class.getResource("/resources/images/Redo-16.png")) );
+		redo.setMargin( noMargin );
+		redo.setToolTipText(formatToolTip("Redo", "Re-performs the last change to the model that was undone."));
+		redo.setEnabled(InputAgent.hasRedo());
+		redo.addActionListener( new ActionListener() {
+
+			@Override
+			public void actionPerformed( ActionEvent event ) {
+				InputAgent.redo();
+			}
+		} );
+		buttonBar.add( redo );
+
+		// 5.1 Redo Dropdown Menu
+		redoDropdown = new JButton(new ImageIcon(
+				GUIFrame.class.getResource("/resources/images/dropdown.png")));
+		redoDropdown.setMargin( noMargin );
+		redoDropdown.setEnabled(InputAgent.hasRedo());
+		redoDropdown.addActionListener( new ActionListener() {
+
+			@Override
+			public void actionPerformed( ActionEvent event ) {
+				JPopupMenu menu = new JPopupMenu("RedoMenu");
+				ArrayList<Command> list = InputAgent.getRedoList();
+				for (int i = 1; i <= list.size(); i++) {
+					Command cmd = list.get(list.size() - i);
+					final int num = i;
+					JMenuItem item = new JMenuItem(cmd.toString());
+					item.addActionListener( new ActionListener() {
+
+						@Override
+						public void actionPerformed( ActionEvent event ) {
+							InputAgent.redo(num);
+						}
+					} );
+					menu.add(item);
+				}
+				menu.show(redoDropdown, 0, redoDropdown.getHeight());
+			}
+		} );
+		buttonBar.add( redoDropdown );
+
+		// Add the main tool bar to the display
+		getContentPane().add( buttonBar, BorderLayout.NORTH );
+	}
+
+	// ******************************************************************************************************
 	// TOOL BAR
 	// ******************************************************************************************************
 
@@ -789,11 +902,11 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 	 */
 	public void initializeMainToolBars() {
 
-		// Insets used in setting the toolbar components
+		// Insets used in setting the tool bar components
 		Insets noMargin = new Insets( 0, 0, 0, 0 );
 		Insets smallMargin = new Insets( 1, 1, 1, 1 );
 
-		// Initilize the main toolbar
+		// Initialize the main tool bar
 		JToolBar mainToolBar = new JToolBar();
 		mainToolBar.setMargin( smallMargin );
 		mainToolBar.setFloatable(false);
@@ -948,91 +1061,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		mainToolBar.add(Box.createRigidArea(gapDim));
 		mainToolBar.add(pauseTime);
 
-		// 6.5) Undo button
-		undo = new JButton( new ImageIcon(GUIFrame.class.getResource("/resources/images/Undo-16.png")) );
-		undo.setMargin( smallMargin );
-		undo.setToolTipText(formatToolTip("Undo", "Reverses the last change to the model."));
-		undo.setEnabled(InputAgent.hasUndo());
-		undo.addActionListener( new ActionListener() {
-
-			@Override
-			public void actionPerformed( ActionEvent event ) {
-				InputAgent.undo();
-			}
-		} );
-		mainToolBar.addSeparator(separatorDim);
-		mainToolBar.add( undo );
-
-		// 6.6 Undo Dropdown MenulistButton = new JButton(new ImageIcon(
-		undoDropdown = new JButton(new ImageIcon(
-				GUIFrame.class.getResource("/resources/images/dropdown.png")));
-		undoDropdown.setEnabled(InputAgent.hasUndo());
-		undoDropdown.addActionListener( new ActionListener() {
-
-			@Override
-			public void actionPerformed( ActionEvent event ) {
-				JPopupMenu menu = new JPopupMenu("UndoMenu");
-				ArrayList<Command> list = InputAgent.getUndoList();
-				for (int i = 1; i <= list.size(); i++) {
-					Command cmd = list.get(list.size() - i);
-					final int num = i;
-					JMenuItem item = new JMenuItem(cmd.toString());
-					item.addActionListener( new ActionListener() {
-
-						@Override
-						public void actionPerformed( ActionEvent event ) {
-							InputAgent.undo(num);
-						}
-					} );
-					menu.add(item);
-				}
-				menu.show(undoDropdown, 0, undoDropdown.getHeight());
-			}
-		} );
-		mainToolBar.add( undoDropdown );
-
-		// 6.7) Redo button
-		redo = new JButton( new ImageIcon(GUIFrame.class.getResource("/resources/images/Redo-16.png")) );
-		redo.setMargin( smallMargin );
-		redo.setToolTipText(formatToolTip("Redo", "Re-performs the last change to the model that was undone."));
-		redo.setEnabled(InputAgent.hasRedo());
-		redo.addActionListener( new ActionListener() {
-
-			@Override
-			public void actionPerformed( ActionEvent event ) {
-				InputAgent.redo();
-			}
-		} );
-		mainToolBar.add( redo );
-
-		// 6.8 Redo Dropdown Menu
-		redoDropdown = new JButton(new ImageIcon(
-				GUIFrame.class.getResource("/resources/images/dropdown.png")));
-		redoDropdown.setEnabled(InputAgent.hasRedo());
-		redoDropdown.addActionListener( new ActionListener() {
-
-			@Override
-			public void actionPerformed( ActionEvent event ) {
-				JPopupMenu menu = new JPopupMenu("RedoMenu");
-				ArrayList<Command> list = InputAgent.getRedoList();
-				for (int i = 1; i <= list.size(); i++) {
-					Command cmd = list.get(list.size() - i);
-					final int num = i;
-					JMenuItem item = new JMenuItem(cmd.toString());
-					item.addActionListener( new ActionListener() {
-
-						@Override
-						public void actionPerformed( ActionEvent event ) {
-							InputAgent.redo(num);
-						}
-					} );
-					menu.add(item);
-				}
-				menu.show(redoDropdown, 0, redoDropdown.getHeight());
-			}
-		} );
-		mainToolBar.add( redoDropdown );
-
 		// 7) 2D button
 		lockViewXYPlane = new JToggleButton( "2D" );
 		lockViewXYPlane.setMargin( smallMargin );
@@ -1149,7 +1177,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		mainToolBar.add( locatorPos );
 
 		// Add the main tool bar to the display
-		getContentPane().add( mainToolBar, BorderLayout.NORTH );
+		getContentPane().add( mainToolBar, BorderLayout.SOUTH );
 	}
 
 	// ******************************************************************************************************
