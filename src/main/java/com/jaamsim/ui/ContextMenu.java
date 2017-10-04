@@ -203,15 +203,21 @@ public class ContextMenu {
 
 					// If required, create the EntityLabel object
 					if (label == null) {
-						EntityLabel newLabel = InputAgent.defineEntityWithUniqueName(EntityLabel.class, ent.getName() + "_Label", "", true);
-						InputAgent.applyArgs(newLabel, "TargetEntity", ent.getName());
+						String name = InputAgent.getUniqueName(ent.getName(), "_Label");
+						InputAgent.storeAndExecute(new DefineCommand(EntityLabel.class, name));
+						EntityLabel newLabel = (EntityLabel)Entity.getNamedEntity(name);
 
+						// Assign inputs that link the label to its target entity
+						InputAgent.applyArgs(newLabel, "TargetEntity", ent.getName());
 						InputAgent.applyArgs(newLabel, "RelativeEntity", ent.getName());
 						if (ent.getCurrentRegion() != null)
 							InputAgent.applyArgs(newLabel, "Region", ent.getCurrentRegion().getName());
 
+						// Set the label's position
 						double ypos = -0.15 - 0.5*ent.getSize().y;
 						InputAgent.apply(newLabel, InputAgent.formatPointInputs("Position", new Vec3d(0.0, ypos, 0.0), "m"));
+
+						// Set the text size
 						InputAgent.applyArgs(newLabel, "TextHeight", "0.15", "m");
 						newLabel.resizeForText();
 						return;
