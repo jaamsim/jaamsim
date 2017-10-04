@@ -28,6 +28,7 @@ import javax.swing.JRadioButtonMenuItem;
 
 import com.jaamsim.Commands.DefineCommand;
 import com.jaamsim.Commands.DeleteCommand;
+import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.EntityLabel;
 import com.jaamsim.basicsim.Entity;
@@ -35,6 +36,7 @@ import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InputErrorException;
+import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.math.Vec3d;
 
 public class ContextMenu {
@@ -334,8 +336,10 @@ public class ContextMenu {
 				Vec3d viewPos = new Vec3d(v.getGlobalPosition());
 				viewPos.sub3(v.getGlobalCenter());
 				viewPos.add3(ent.getPosition());
-				v.setCenter(ent.getPosition());
-				v.setPosition(viewPos);
+
+				KeywordIndex posKw = InputAgent.formatPointInputs("ViewPosition", viewPos, "m");
+				KeywordIndex ctrKw = InputAgent.formatPointInputs("ViewCenter", ent.getPosition(), "m");
+				InputAgent.storeAndExecute(new KeywordCommand(v, posKw, ctrKw));
 			}
 		} );
 		if (v == null) {
