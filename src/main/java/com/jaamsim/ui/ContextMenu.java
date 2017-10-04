@@ -33,7 +33,7 @@ import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.input.InputAgent;
-import com.jaamsim.input.KeywordIndex;
+import com.jaamsim.input.InputErrorException;
 import com.jaamsim.math.Vec3d;
 
 public class ContextMenu {
@@ -131,12 +131,10 @@ public class ContextMenu {
 					Vec3d pos = dEnt.getPosition();
 					pos.x += 0.5d * dEnt.getSize().x;
 					pos.y -= 0.5d * dEnt.getSize().y;
-
-					dEnt.setPosition(pos);
-
-					// Set the input for the "Position" keyword to the new value
-					KeywordIndex kw = InputAgent.formatPointInputs("Position", pos, "m");
-					InputAgent.apply(dEnt, kw);
+					try {
+						dEnt.dragged(pos);
+					}
+					catch (InputErrorException e) {}
 				}
 
 				// Show the duplicated entity in the editors and viewers
