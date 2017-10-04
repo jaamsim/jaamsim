@@ -26,6 +26,7 @@ import java.awt.FontMetrics;
 import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.Insets;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
@@ -222,7 +223,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		setResizable( true );  //FIXME should be false, but this causes the window to be sized
 		                       //      and positioned incorrectly in the Windows 7 Aero theme
 		pack();
-		setSize(DEFAULT_GUI_WIDTH, getPreferredSize().height);
 
 		controlStartResume.setSelected( false );
 		controlStartResume.setEnabled( false );
@@ -231,6 +231,12 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		setProgress( 0 );
 		ToolTipManager.sharedInstance().setLightWeightPopupEnabled( false );
 		JPopupMenu.setDefaultLightWeightPopupEnabled( false );
+	}
+
+	@Override
+	public Dimension getPreferredSize() {
+		Point fix = OSFix.getSizeAdustment();
+		return new Dimension(DEFAULT_GUI_WIDTH + fix.x, super.getPreferredSize().height);
 	}
 
 	public static synchronized GUIFrame getInstance() {
