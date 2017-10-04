@@ -48,6 +48,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import com.jaamsim.Commands.DefineCommand;
+import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.DisplayModels.ColladaModel;
 import com.jaamsim.DisplayModels.DisplayModel;
 import com.jaamsim.DisplayModels.ImageModel;
@@ -57,6 +58,7 @@ import com.jaamsim.basicsim.Entity;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
+import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.math.AABB;
 import com.jaamsim.math.Vec2d;
 import com.jaamsim.math.Vec3d;
@@ -227,7 +229,9 @@ public class GraphicBox extends JDialog {
 			public void actionPerformed( ActionEvent e ) {
 				setEnabled(false); // Don't accept any interaction
 				DisplayModel dm = displayModelList.getSelectedValue();
-				InputAgent.applyArgs(currentEntity, "DisplayModel", dm.getName());
+				ArrayList<KeywordIndex> kwList = new ArrayList<>(3);
+				KeywordIndex dmKw = InputAgent.formatArgs("DisplayModel", dm.getName());
+				kwList.add(dmKw);
 
 				if (!RenderManager.isGood()) {
 					myInstance.close();
@@ -263,10 +267,11 @@ public class GraphicBox extends JDialog {
 
 					entitySize = new Vec3d(modelSize);
 					entitySize.scale3(ratio);
-					InputAgent.applyArgs(currentEntity, "Size",
+					KeywordIndex sizeKw = InputAgent.formatArgs("Size",
 		                                 String.format(loc, "%.6f", entitySize.x),
 		                                 String.format(loc, "%.6f", entitySize.y),
 		                                 String.format(loc, "%.6f", entitySize.z), "m");
+					kwList.add(sizeKw);
 				}
 
 				if (dm instanceof ImageModel) {
@@ -275,10 +280,11 @@ public class GraphicBox extends JDialog {
 					if (imageDims != null && useModelSize.isSelected()) {
 						// Keep the y size the same, but use the image's proportions. We can't really use the model size, as it is in pixels
 						double scale = currentEntity.getSize().y / imageDims.y;
-						InputAgent.applyArgs(currentEntity, "Size",
+						KeywordIndex sizeKw = InputAgent.formatArgs("Size",
 						                     String.format(loc, "%.6f", imageDims.x * scale),
 						                     String.format(loc, "%.6f", imageDims.y * scale),
 						                     "1.0", "m");
+						kwList.add(sizeKw);
 					}
 				}
 
@@ -286,12 +292,19 @@ public class GraphicBox extends JDialog {
 
 					Vec3d entityPos = modelBounds.center;
 
-					InputAgent.applyArgs(currentEntity, "Position",
+					KeywordIndex posKw = InputAgent.formatArgs("Position",
 					                     String.format(loc, "%.6f", entityPos.x),
 					                     String.format(loc, "%.6f", entityPos.y),
 					                     String.format(loc, "%.6f", entityPos.z), "m");
-					InputAgent.applyArgs(currentEntity, "Alignment", "0", "0", "0");
+					KeywordIndex alignKw = InputAgent.formatArgs("Alignment", "0", "0", "0");
+					kwList.add(posKw);
+					kwList.add(alignKw);
 				}
+
+				KeywordIndex[] kws = new KeywordIndex[kwList.size()];
+				kwList.toArray(kws);
+				InputAgent.storeAndExecute(new KeywordCommand(currentEntity, kws));
+
 				GUIFrame.updateUI();
 				myInstance.close();
 			}
