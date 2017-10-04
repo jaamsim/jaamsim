@@ -27,6 +27,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
 
 import com.jaamsim.Commands.DefineCommand;
+import com.jaamsim.Commands.DeleteCommand;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.EntityLabel;
 import com.jaamsim.basicsim.Entity;
@@ -151,7 +152,7 @@ public class ContextMenu {
 		deleteMenuItem.addActionListener( new ActionListener() {
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				ent.kill();
+				InputAgent.storeAndExecute(new DeleteCommand(ent));
 				FrameBox.setSelectedEntity(null, false);
 			}
 		} );
