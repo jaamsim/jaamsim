@@ -29,7 +29,6 @@ import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.input.InputAgent;
-import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.math.AABB;
 import com.jaamsim.math.Vec2d;
 import com.jaamsim.math.Vec3d;
@@ -170,16 +169,19 @@ public class DisplayEntityFactory extends Entity {
 			// Set the entity name
 			String entityName = fileName.substring(0, i);
 			entityName = entityName.replaceAll(" ", "_"); // Space is not allowed for Entity Name
+			entityName = InputAgent.getUniqueName(entityName, "");
 
 			// Create the ImageModel
-			String modelName = entityName + "-model";
-			ImageModel dm = InputAgent.defineEntityWithUniqueName(ImageModel.class, modelName, "", true);
+			String modelName = InputAgent.getUniqueName(entityName + "-model", "");
+			InputAgent.storeAndExecute(new DefineCommand(ImageModel.class, modelName));
+			ImageModel dm = (ImageModel) Entity.getNamedEntity(modelName);
 
 			// Load the image to the ImageModel
 			InputAgent.applyArgs(dm, "ImageFile", f.getPath());
 
 			// Create the DisplayEntity
-			DisplayEntity de = InputAgent.defineEntityWithUniqueName(DisplayEntity.class, entityName, "", true);
+			InputAgent.storeAndExecute(new DefineCommand(DisplayEntity.class, entityName));
+			DisplayEntity de = (DisplayEntity) Entity.getNamedEntity(entityName);
 
 			// Assign the ImageModel to the new DisplayEntity
 			InputAgent.applyArgs(de, "DisplayModel", dm.getName());
@@ -189,8 +191,7 @@ public class DisplayEntityFactory extends Entity {
 			Vec2d imageDims = RenderManager.inst().getImageDims(f.toURI());
 			if (imageDims != null)
 				size.x = imageDims.x / imageDims.y;
-			KeywordIndex kw = InputAgent.formatPointInputs("Size", size, "m");
-			InputAgent.apply(de, kw);
+			InputAgent.apply(de, InputAgent.formatPointInputs("Size", size, "m"));
 		}
 	}
 
