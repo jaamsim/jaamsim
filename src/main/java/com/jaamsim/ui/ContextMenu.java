@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2016 JaamSim Software Inc.
+ * Copyright (C) 2016-17 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
 
+import com.jaamsim.Commands.DefineCommand;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.EntityLabel;
 import com.jaamsim.basicsim.Entity;
@@ -117,8 +118,9 @@ public class ContextMenu {
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				Entity copiedEntity = InputAgent.defineEntityWithUniqueName(ent.getClass(),
-						ent.getName(), "_Copy", true);
+				String name = InputAgent.getUniqueName(ent.getName(), "_Copy");
+				InputAgent.storeAndExecute(new DefineCommand(ent.getClass(), name));
+				Entity copiedEntity = Entity.getNamedEntity(name);
 
 				// Match all the inputs
 				copiedEntity.copyInputs(ent);
@@ -126,7 +128,6 @@ public class ContextMenu {
 				// Position the duplicated entity next to the original
 				if (copiedEntity instanceof DisplayEntity) {
 					DisplayEntity dEnt = (DisplayEntity)copiedEntity;
-
 					Vec3d pos = dEnt.getPosition();
 					pos.x += 0.5d * dEnt.getSize().x;
 					pos.y -= 0.5d * dEnt.getSize().y;
