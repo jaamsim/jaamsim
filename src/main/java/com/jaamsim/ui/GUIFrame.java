@@ -915,6 +915,71 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		} );
 		buttonBar.add( redoDropdown );
 
+		// 6) 2D button
+		lockViewXYPlane = new JToggleButton( "2D" );
+		lockViewXYPlane.setMargin( smallMargin );
+		lockViewXYPlane.setToolTipText(formatToolTip("2D View",
+				"Sets the camera position to show a bird's eye view of the 3D scene."));
+		lockViewXYPlane.addActionListener( new ActionListener() {
+
+			@Override
+			public void actionPerformed( ActionEvent event ) {
+				boolean bLock2D = (((JToggleButton)event.getSource()).isSelected());
+
+				if (RenderManager.isGood()) {
+					View currentView = RenderManager.inst().getActiveView();
+					if (currentView != null) {
+						currentView.setLock2D(bLock2D);
+					}
+				}
+			}
+		} );
+		buttonBar.addSeparator(separatorDim);
+		buttonBar.add( lockViewXYPlane );
+
+		// 10) Show links button
+		showLinks = new JToggleButton(new ImageIcon(GUIFrame.class.getResource("/resources/images/ShowLinks-16.png")));
+		showLinks.setToolTipText(formatToolTip("Show Entity Flow",
+				"When selected, arrows are shown between objects to indicate the flow of entities."));
+		showLinks.setMargin( noMargin );
+		showLinks.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed( ActionEvent event ) {
+
+				boolean bShow = (((JToggleButton)event.getSource()).isSelected());
+				if (RenderManager.isGood()) {
+					RenderManager.inst().setShowLinks(bShow);
+					RenderManager.redraw();
+				}
+			}
+
+		});
+		buttonBar.addSeparator(separatorDim);
+		buttonBar.add( showLinks );
+
+		// 11) Create links button
+		createLinks = new JToggleButton(new ImageIcon(GUIFrame.class.getResource("/resources/images/MakeLinks-16.png")));
+		createLinks.setToolTipText(formatToolTip("Create Entity Links",
+				"When this is enabled, entities are linked when selection is changed."));
+		createLinks.setMargin( noMargin );
+		createLinks.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed( ActionEvent event ) {
+
+				boolean bCreate = (((JToggleButton)event.getSource()).isSelected());
+				if (RenderManager.isGood()) {
+					if (bCreate) {
+						FrameBox.setSelectedEntity(null, false);
+					}
+					RenderManager.inst().setCreateLinks(bCreate);
+					RenderManager.redraw();
+				}
+			}
+
+		});
+		buttonBar.add(Box.createRigidArea(gapDim));
+		buttonBar.add( createLinks );
+
 		// Add the main tool bar to the display
 		getContentPane().add( buttonBar, BorderLayout.NORTH );
 	}
@@ -1086,71 +1151,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 
 		mainToolBar.add(Box.createRigidArea(gapDim));
 		mainToolBar.add(pauseTime);
-
-		// 7) 2D button
-		lockViewXYPlane = new JToggleButton( "2D" );
-		lockViewXYPlane.setMargin( smallMargin );
-		lockViewXYPlane.setToolTipText(formatToolTip("2D View",
-				"Sets the camera position to show a bird's eye view of the 3D scene."));
-		lockViewXYPlane.addActionListener( new ActionListener() {
-
-			@Override
-			public void actionPerformed( ActionEvent event ) {
-				boolean bLock2D = (((JToggleButton)event.getSource()).isSelected());
-
-				if (RenderManager.isGood()) {
-					View currentView = RenderManager.inst().getActiveView();
-					if (currentView != null) {
-						currentView.setLock2D(bLock2D);
-					}
-				}
-			}
-		} );
-		mainToolBar.addSeparator(separatorDim);
-		mainToolBar.add( lockViewXYPlane );
-
-		// 8) Show links button
-		showLinks = new JToggleButton(new ImageIcon(GUIFrame.class.getResource("/resources/images/ShowLinks-16.png")));
-		showLinks.setToolTipText(formatToolTip("Show Entity Flow",
-				"When selected, arrows are shown between objects to indicate the flow of entities."));
-		showLinks.setMargin( noMargin );
-		showLinks.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed( ActionEvent event ) {
-
-				boolean bShow = (((JToggleButton)event.getSource()).isSelected());
-				if (RenderManager.isGood()) {
-					RenderManager.inst().setShowLinks(bShow);
-					RenderManager.redraw();
-				}
-			}
-
-		});
-		mainToolBar.add(Box.createRigidArea(gapDim));
-		mainToolBar.add( showLinks );
-
-		// 8.5) Show links button
-		createLinks = new JToggleButton(new ImageIcon(GUIFrame.class.getResource("/resources/images/MakeLinks-16.png")));
-		createLinks.setToolTipText(formatToolTip("Create Entity Links",
-				"When this is enabled, entities are linked when selection is changed."));
-		createLinks.setMargin( noMargin );
-		createLinks.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed( ActionEvent event ) {
-
-				boolean bCreate = (((JToggleButton)event.getSource()).isSelected());
-				if (RenderManager.isGood()) {
-					if (bCreate) {
-						FrameBox.setSelectedEntity(null, false);
-					}
-					RenderManager.inst().setCreateLinks(bCreate);
-					RenderManager.redraw();
-				}
-			}
-
-		});
-		mainToolBar.add(Box.createRigidArea(gapDim));
-		mainToolBar.add( createLinks );
 
 		// 9) Create the display clock and label
 		clockDisplay = new JLabel( "", JLabel.CENTER );
