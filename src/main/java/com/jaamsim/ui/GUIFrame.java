@@ -129,6 +129,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 	private JToggleButton controlRealTime;
 	private JSpinner spinner;
 
+	private JButton fileSave;
 	private JButton undo;
 	private JButton redo;
 	private JButton undoDropdown;
@@ -808,6 +809,21 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		} );
 		buttonBar.add(Box.createRigidArea(gapDim));
 		buttonBar.add( fileOpen );
+
+		// 3) File Save button
+		fileSave = new JButton( new ImageIcon(
+				GUIFrame.class.getResource("/resources/images/Save-16.png")) );
+		fileSave.setMargin( noMargin );
+		fileSave.setToolTipText(formatToolTip("Save", "Saves the present model."));
+		fileSave.addActionListener( new ActionListener() {
+
+			@Override
+			public void actionPerformed( ActionEvent event ) {
+				GUIFrame.this.save();
+			}
+		} );
+		buttonBar.add(Box.createRigidArea(gapDim));
+		buttonBar.add( fileSave );
 
 		// 4) Undo button
 		undo = new JButton( new ImageIcon(
