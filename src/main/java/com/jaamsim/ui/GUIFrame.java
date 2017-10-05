@@ -428,16 +428,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				currentEvt.pause();
-
-				// check for unsaved changes
-				if (InputAgent.isSessionEdited()) {
-					boolean confirmed = GUIFrame.showSaveChangesDialog(GUIFrame.this);
-					if (!confirmed) {
-						return;
-					}
-				}
-
 				GUIFrame.this.load();
 			}
 		} );
@@ -803,6 +793,21 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		} );
 		buttonBar.add(Box.createRigidArea(gapDim));
 		buttonBar.add( fileNew );
+
+		// 2) File Open button
+		JButton fileOpen = new JButton( new ImageIcon(
+				GUIFrame.class.getResource("/resources/images/Open-16.png")) );
+		fileOpen.setMargin( noMargin );
+		fileOpen.setToolTipText(formatToolTip("Open...", "Opens a model."));
+		fileOpen.addActionListener( new ActionListener() {
+
+			@Override
+			public void actionPerformed( ActionEvent event ) {
+				GUIFrame.this.load();
+			}
+		} );
+		buttonBar.add(Box.createRigidArea(gapDim));
+		buttonBar.add( fileOpen );
 
 		// 4) Undo button
 		undo = new JButton( new ImageIcon(
@@ -2144,6 +2149,16 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 	}
 
 	void load() {
+		currentEvt.pause();
+
+		// check for unsaved changes
+		if (InputAgent.isSessionEdited()) {
+			boolean confirmed = GUIFrame.showSaveChangesDialog(GUIFrame.this);
+			if (!confirmed) {
+				return;
+			}
+		}
+
 		LogBox.logLine("Loading...");
 
 		Preferences prefs = Preferences.userRoot().node(getClass().getName());
