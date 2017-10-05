@@ -416,21 +416,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				currentEvt.pause();
-
-				// check for unsaved changes
-				if (InputAgent.isSessionEdited()) {
-					boolean confirmed = GUIFrame.showSaveChangesDialog(GUIFrame.this);
-					if (!confirmed) {
-						return;
-					}
-				}
-
-				clear();
-				InputAgent.setRecordEdits(true);
-				InputAgent.loadDefault();
-				displayWindows();
-				FrameBox.setSelectedEntity(Simulation.getInstance(), false);
+				GUIFrame.this.newModel();
 			}
 		} );
 		fileMenu.add( newMenuItem );
@@ -795,12 +781,28 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		Insets noMargin = new Insets( 0, 0, 0, 0 );
 		Insets smallMargin = new Insets( 1, 1, 1, 1 );
 		Dimension separatorDim = new Dimension(11, 20);
+		Dimension gapDim = new Dimension(5, separatorDim.height);
 
 		// Initialize the button bar
 		JToolBar buttonBar = new JToolBar();
 		buttonBar.setMargin( smallMargin );
 		buttonBar.setFloatable(false);
 		buttonBar.setLayout( new FlowLayout( FlowLayout.LEFT, 0, 0 ) );
+
+		// 1) File New button
+		JButton fileNew = new JButton( new ImageIcon(
+				GUIFrame.class.getResource("/resources/images/New-16.png")) );
+		fileNew.setMargin( noMargin );
+		fileNew.setToolTipText(formatToolTip("New", "Starts a new model."));
+		fileNew.addActionListener( new ActionListener() {
+
+			@Override
+			public void actionPerformed( ActionEvent event ) {
+				GUIFrame.this.newModel();
+			}
+		} );
+		buttonBar.add(Box.createRigidArea(gapDim));
+		buttonBar.add( fileNew );
 
 		// 4) Undo button
 		undo = new JButton( new ImageIcon(
@@ -2121,6 +2123,24 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 				"Programmers can find more information by opening the Log Viewer.\n"
 						+ "The simulation run must be reset to zero simulation time before it "
 						+ "can be restarted.");
+	}
+
+	void newModel() {
+		currentEvt.pause();
+
+		// check for unsaved changes
+		if (InputAgent.isSessionEdited()) {
+			boolean confirmed = GUIFrame.showSaveChangesDialog(GUIFrame.this);
+			if (!confirmed) {
+				return;
+			}
+		}
+
+		clear();
+		InputAgent.setRecordEdits(true);
+		InputAgent.loadDefault();
+		displayWindows();
+		FrameBox.setSelectedEntity(Simulation.getInstance(), false);
 	}
 
 	void load() {
