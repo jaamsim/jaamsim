@@ -102,7 +102,7 @@ public class InputAgent {
 		numErrors = 0;
 		numWarnings = 0;
 		recordEditsFound = false;
-		sessionEdited = false;
+		setSessionEdited(false);
 		configFile = null;
 		reportDir = null;
 		lastTickForTrace = -1l;
@@ -252,6 +252,13 @@ public class InputAgent {
 	 */
 	public static void setRecordEdits(boolean b) {
 		recordEdits = b;
+	}
+
+	public static void setSessionEdited(boolean bool) {
+		if (bool == sessionEdited)
+			return;
+		sessionEdited = bool;
+		GUIFrame.updateSaveButton();
 	}
 
 	public static boolean isSessionEdited() {
@@ -622,7 +629,7 @@ public class InputAgent {
 
 		if (addedEntity) {
 			ent.setFlag(Entity.FLAG_ADDED);
-			sessionEdited = true;
+			setSessionEdited(true);
 		}
 
 		ent.setName(key);
@@ -731,7 +738,7 @@ public class InputAgent {
 		InputAgent.readStream("", dirURI, file.getName());
 
 		// The session is not considered to be edited after loading a configuration file
-		sessionEdited = false;
+		setSessionEdited(false);
 
 		// Save and close the input trace file
 		if (logFile != null) {
@@ -789,7 +796,7 @@ public class InputAgent {
 			in.setEdited(true);
 			ent.setFlag(Entity.FLAG_EDITED);
 			if (!ent.testFlag(Entity.FLAG_GENERATED) && in.isPromptReqd())
-				sessionEdited = true;
+				setSessionEdited(true);
 		}
 
 		ent.updateForInput(in);
@@ -1314,7 +1321,7 @@ public class InputAgent {
 		file.flush();
 		file.close();
 
-		sessionEdited = false;
+		setSessionEdited(false);
 	}
 
 	private static boolean matchesKey(String key, String[] keys) {
@@ -1739,7 +1746,7 @@ public class InputAgent {
 		InputAgent.setRecordEditsFound(false);
 
 		// Set the model state to unedited
-		sessionEdited = false;
+		setSessionEdited(false);
 	}
 
 	public static KeywordIndex formatPointsInputs(String keyword, ArrayList<Vec3d> points, Vec3d offset) {

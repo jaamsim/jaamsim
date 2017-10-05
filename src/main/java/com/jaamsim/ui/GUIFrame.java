@@ -815,6 +815,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 				GUIFrame.class.getResource("/resources/images/Save-16.png")) );
 		fileSave.setMargin( noMargin );
 		fileSave.setToolTipText(formatToolTip("Save", "Saves the present model."));
+		fileSave.setEnabled(false);
 		fileSave.addActionListener( new ActionListener() {
 
 			@Override
@@ -1625,6 +1626,18 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 				throw new ErrorException( "Unrecognized Graphics State" );
 		}
 		fileMenu.setEnabled( true );
+	}
+
+	public static void updateSaveButton() {
+		GUIFrame inst = GUIFrame.getInstance();
+		if (inst == null)
+			return;
+
+		inst.updateSB();
+	}
+
+	private void updateSB() {
+		fileSave.setEnabled(InputAgent.isSessionEdited());
 	}
 
 	public static synchronized void updateForRealTime(boolean executeRT, double factorRT) {
