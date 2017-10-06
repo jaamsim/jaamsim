@@ -627,7 +627,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		optionMenu = new JMenu( "Options" );
 		optionMenu.setMnemonic( 'O' );
 
-		// 4) "Always on top" check box
+		// 1) "Always on top" check box
 		alwaysTop = new JCheckBoxMenuItem( "Always on top", false );
 		alwaysTop.setMnemonic( 'A' );
 		optionMenu.add( alwaysTop );
@@ -643,7 +643,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 			}
 		} );
 
-		// 5) "Graphics Debug Info" check box
+		// 2) "Graphics Debug Info" check box
 		graphicsDebug = new JCheckBoxMenuItem( "Graphics Debug Info", false );
 		graphicsDebug.setMnemonic( 'D' );
 		optionMenu.add( graphicsDebug );
