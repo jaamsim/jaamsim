@@ -116,8 +116,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 	private JMenu unitsMenu;
 	private JMenu helpMenu;
 	private static JCheckBoxMenuItem snapToGrid;
-	private static JCheckBoxMenuItem grid;
 	private static JToggleButton xyzAxis;
+	private static JToggleButton grid;
 	private JCheckBoxMenuItem alwaysTop;
 	private JCheckBoxMenuItem graphicsDebug;
 	private JMenuItem printInputItem;
@@ -641,23 +641,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 			}
 		} );
 
-		// 3) "Show Grid" check box
-		grid = new JCheckBoxMenuItem( "Show Grid", true );
-		grid.setMnemonic( 'G' );
-		optionMenu.add( grid );
-		grid.addActionListener( new ActionListener() {
-			@Override
-			public void actionPerformed( ActionEvent e ) {
-				DisplayEntity ent = (DisplayEntity) Entity.getNamedEntity("XY-Grid");
-				if (ent != null) {
-					if (grid.isSelected())
-						InputAgent.applyArgs(ent, "Show", "TRUE");
-					else
-						InputAgent.applyArgs(ent, "Show", "FALSE");
-				}
-			}
-		} );
-
 		// 4) "Always on top" check box
 		alwaysTop = new JCheckBoxMenuItem( "Always on top", false );
 		alwaysTop.setMnemonic( 'A' );
@@ -941,6 +924,28 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		} );
 		buttonBar.add(Box.createRigidArea(gapDim));
 		buttonBar.add( xyzAxis );
+
+		// 8) Show Grid
+		grid = new JToggleButton( new ImageIcon(
+				GUIFrame.class.getResource("/resources/images/Grid-16.png")) );
+		grid.setMargin( noMargin );
+		grid.setToolTipText(formatToolTip("Show Grid",
+				"Shows the coordinate grid on the x-y plane."));
+		grid.addActionListener( new ActionListener() {
+
+			@Override
+			public void actionPerformed( ActionEvent event ) {
+				DisplayEntity ent = (DisplayEntity) Entity.getNamedEntity("XY-Grid");
+				if (ent != null) {
+					if (grid.isSelected())
+						InputAgent.applyArgs(ent, "Show", "TRUE");
+					else
+						InputAgent.applyArgs(ent, "Show", "FALSE");
+				}
+			}
+		} );
+		buttonBar.add(Box.createRigidArea(gapDim));
+		buttonBar.add( grid );
 
 		// 10) Show links button
 		showLinks = new JToggleButton(new ImageIcon(GUIFrame.class.getResource("/resources/images/ShowLinks-16.png")));
