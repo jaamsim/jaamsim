@@ -115,7 +115,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 	private JMenu optionMenu;
 	private JMenu unitsMenu;
 	private JMenu helpMenu;
-	private static JCheckBoxMenuItem snapToGrid;
+	private static JToggleButton snapToGrid;
 	private static JToggleButton xyzAxis;
 	private static JToggleButton grid;
 	private JCheckBoxMenuItem alwaysTop;
@@ -627,20 +627,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		optionMenu = new JMenu( "Options" );
 		optionMenu.setMnemonic( 'O' );
 
-		// 1) "Snap to Grid" check box
-		snapToGrid = new JCheckBoxMenuItem( "Snap to Grid", false );
-		snapToGrid.setMnemonic( 'S' );
-		optionMenu.add( snapToGrid );
-		snapToGrid.addActionListener( new ActionListener() {
-			@Override
-			public void actionPerformed( ActionEvent e ) {
-				if (snapToGrid.isSelected())
-					InputAgent.applyArgs(Simulation.getInstance(), "SnapToGrid", "TRUE");
-				else
-					InputAgent.applyArgs(Simulation.getInstance(), "SnapToGrid", "FALSE");
-			}
-		} );
-
 		// 4) "Always on top" check box
 		alwaysTop = new JCheckBoxMenuItem( "Always on top", false );
 		alwaysTop.setMnemonic( 'A' );
@@ -946,6 +932,25 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		} );
 		buttonBar.add(Box.createRigidArea(gapDim));
 		buttonBar.add( grid );
+
+		// 9) Snap to Grid
+		snapToGrid = new JToggleButton( new ImageIcon(
+				GUIFrame.class.getResource("/resources/images/Snap-16.png")) );
+		snapToGrid.setMargin( noMargin );
+		snapToGrid.setToolTipText(formatToolTip("Snap to Grid",
+				"During repositioning, objects are forced to the nearest grid point."));
+		snapToGrid.addActionListener( new ActionListener() {
+
+			@Override
+			public void actionPerformed( ActionEvent event ) {
+				if (snapToGrid.isSelected())
+					InputAgent.applyArgs(Simulation.getInstance(), "SnapToGrid", "TRUE");
+				else
+					InputAgent.applyArgs(Simulation.getInstance(), "SnapToGrid", "FALSE");
+			}
+		} );
+		buttonBar.add(Box.createRigidArea(gapDim));
+		buttonBar.add( snapToGrid );
 
 		// 10) Show links button
 		showLinks = new JToggleButton(new ImageIcon(GUIFrame.class.getResource("/resources/images/ShowLinks-16.png")));
