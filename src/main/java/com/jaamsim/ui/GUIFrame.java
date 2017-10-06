@@ -116,8 +116,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 	private JMenu unitsMenu;
 	private JMenu helpMenu;
 	private static JCheckBoxMenuItem snapToGrid;
-	private static JCheckBoxMenuItem xyzAxis;
 	private static JCheckBoxMenuItem grid;
+	private static JToggleButton xyzAxis;
 	private JCheckBoxMenuItem alwaysTop;
 	private JCheckBoxMenuItem graphicsDebug;
 	private JMenuItem printInputItem;
@@ -641,23 +641,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 			}
 		} );
 
-		// 2) "Show Axes" check box
-		xyzAxis = new JCheckBoxMenuItem( "Show Axes", true );
-		xyzAxis.setMnemonic( 'X' );
-		optionMenu.add( xyzAxis );
-		xyzAxis.addActionListener( new ActionListener() {
-			@Override
-			public void actionPerformed( ActionEvent e ) {
-				DisplayEntity ent = (DisplayEntity) Entity.getNamedEntity("XYZ-Axis");
-				if (ent != null) {
-					if (xyzAxis.isSelected())
-						InputAgent.applyArgs(ent, "Show", "TRUE");
-					else
-						InputAgent.applyArgs(ent, "Show", "FALSE");
-				}
-			}
-		} );
-
 		// 3) "Show Grid" check box
 		grid = new JCheckBoxMenuItem( "Show Grid", true );
 		grid.setMnemonic( 'G' );
@@ -936,6 +919,28 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		} );
 		buttonBar.addSeparator(separatorDim);
 		buttonBar.add( lockViewXYPlane );
+
+		// 7) Show Axes
+		xyzAxis = new JToggleButton( new ImageIcon(
+				GUIFrame.class.getResource("/resources/images/Axes-16.png")) );
+		xyzAxis.setMargin( noMargin );
+		xyzAxis.setToolTipText(formatToolTip("Show Axes",
+				"Shows the unit vectors for the x, y, and z axes."));
+		xyzAxis.addActionListener( new ActionListener() {
+
+			@Override
+			public void actionPerformed( ActionEvent event ) {
+				DisplayEntity ent = (DisplayEntity) Entity.getNamedEntity("XYZ-Axis");
+				if (ent != null) {
+					if (xyzAxis.isSelected())
+						InputAgent.applyArgs(ent, "Show", "TRUE");
+					else
+						InputAgent.applyArgs(ent, "Show", "FALSE");
+				}
+			}
+		} );
+		buttonBar.add(Box.createRigidArea(gapDim));
+		buttonBar.add( xyzAxis );
 
 		// 10) Show links button
 		showLinks = new JToggleButton(new ImageIcon(GUIFrame.class.getResource("/resources/images/ShowLinks-16.png")));
