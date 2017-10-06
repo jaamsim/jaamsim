@@ -1152,16 +1152,16 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		mainToolBar.add(Box.createRigidArea(gapDim));
 		mainToolBar.add(pauseTime);
 
-		// 9) Create the display clock and label
+		// 7) Create the display clock and label
 		clockDisplay = new JLabel( "", JLabel.CENTER );
-		clockDisplay.setPreferredSize( new Dimension( 90, 16 ) );
+		clockDisplay.setPreferredSize( new Dimension( 110, 16 ) );
 		clockDisplay.setForeground( new Color( 1.0f, 0.0f, 0.0f ) );
 		clockDisplay.setToolTipText(formatToolTip("Simulation Time",
 				"The present simulation time"));
 		mainToolBar.addSeparator(separatorDim);
 		mainToolBar.add( clockDisplay );
 
-		// 10) Create the progress bar
+		// 8) Create the progress bar
 		progressBar = new JProgressBar( 0, 100 );
 		progressBar.setPreferredSize( new Dimension( 120, hght ) );
 		progressBar.setValue( 0 );
@@ -1171,19 +1171,19 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		mainToolBar.add(Box.createRigidArea(gapDim));
 		mainToolBar.add( progressBar );
 
-		// 11) Create a remaining run time display
+		// 9) Create a remaining run time display
 		remainingDisplay = new JLabel( "", JLabel.CENTER );
-		remainingDisplay.setPreferredSize( new Dimension( 90, 16 ) );
+		remainingDisplay.setPreferredSize( new Dimension( 110, 16 ) );
 		remainingDisplay.setForeground( new Color( 1.0f, 0.0f, 0.0f ) );
 		remainingDisplay.setToolTipText(formatToolTip("Remaining Time",
 				"The remaining time required to complete the present simulation run."));
 		mainToolBar.add(Box.createRigidArea(gapDim));
 		mainToolBar.add( remainingDisplay );
 
-		// 12) Create a speed-up factor display
+		// 10) Create a speed-up factor display
 		JLabel speedUpLabel = new JLabel( "Speed:" );
 		speedUpDisplay = new JLabel( "", JLabel.CENTER );
-		speedUpDisplay.setPreferredSize( new Dimension( 90, 16 ) );
+		speedUpDisplay.setPreferredSize( new Dimension( 110, 16 ) );
 		speedUpDisplay.setForeground( new Color( 1.0f, 0.0f, 0.0f ) );
 		speedUpDisplay.setToolTipText(formatToolTip("Achieved Speed Multiplier",
 				"The ratio of elapsed simulation time to elasped wall clock time that was achieved."));
@@ -1191,7 +1191,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		mainToolBar.add( speedUpLabel );
 		mainToolBar.add( speedUpDisplay );
 
-		// 13) Create a cursor position display
+		// 11) Create a cursor position display
 		locatorLabel = new JLabel( "Position:" );
 		locatorPos = new JLabel( "", JLabel.CENTER );
 		locatorPos.setPreferredSize( new Dimension( 140, 16 ) );
