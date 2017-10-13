@@ -302,12 +302,15 @@ public class Simulation extends Entity {
 		displayedUnits = new EntityListInput<>(Unit.class, "DisplayedUnits", "GUI", new ArrayList<Unit>());
 		displayedUnits.setDefaultText("SI Units");
 		displayedUnits.setPromptReqd(false);
+		displayedUnits.setHidden(true);
 
 		realTime = new BooleanInput("RealTime", "GUI", false);
 		realTime.setPromptReqd(false);
+		realTime.setHidden(true);
 
 		snapToGrid = new BooleanInput("SnapToGrid", "GUI", false);
 		snapToGrid.setPromptReqd(false);
+		snapToGrid.setHidden(true);
 
 		snapGridSpacing = new ValueInput("SnapGridSpacing", "GUI", 0.1d);
 		snapGridSpacing.setUnitType(DistanceUnit.class);
@@ -322,32 +325,41 @@ public class Simulation extends Entity {
 		realTimeFactor = new ValueInput("RealTimeFactor", "GUI", DEFAULT_REAL_TIME_FACTOR);
 		realTimeFactor.setValidRange(MIN_REAL_TIME_FACTOR, MAX_REAL_TIME_FACTOR);
 		realTimeFactor.setPromptReqd(false);
+		realTimeFactor.setHidden(true);
 
 		pauseTime = new ValueInput("PauseTime", "GUI", Double.POSITIVE_INFINITY);
 		pauseTime.setUnitType(TimeUnit.class);
 		pauseTime.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		pauseTime.setPromptReqd(false);
+		pauseTime.setHidden(true);
 
 		showModelBuilder = new BooleanInput("ShowModelBuilder", "GUI", false);
 		showModelBuilder.setPromptReqd(false);
+		showModelBuilder.setHidden(true);
 
 		showObjectSelector = new BooleanInput("ShowObjectSelector", "GUI", false);
 		showObjectSelector.setPromptReqd(false);
+		showObjectSelector.setHidden(true);
 
 		showInputEditor = new BooleanInput("ShowInputEditor", "GUI", false);
 		showInputEditor.setPromptReqd(false);
+		showInputEditor.setHidden(true);
 
 		showOutputViewer = new BooleanInput("ShowOutputViewer", "GUI", false);
 		showOutputViewer.setPromptReqd(false);
+		showOutputViewer.setHidden(true);
 
 		showPropertyViewer = new BooleanInput("ShowPropertyViewer", "GUI", false);
 		showPropertyViewer.setPromptReqd(false);
+		showPropertyViewer.setHidden(true);
 
 		showLogViewer = new BooleanInput("ShowLogViewer", "GUI", false);
 		showLogViewer.setPromptReqd(false);
+		showLogViewer.setHidden(true);
 
 		showEventViewer = new BooleanInput("ShowEventViewer", "GUI", false);
 		showEventViewer.setPromptReqd(false);
+		showEventViewer.setHidden(true);
 
 		// Hidden keywords
 		startTimeInput = new ValueInput("StartTime", "Key Inputs", 0.0d);
