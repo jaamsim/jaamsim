@@ -480,6 +480,12 @@ public class Simulation extends Entity {
 			return;
 		}
 
+		if (in == snapToGrid) {
+			if (GUIFrame.getInstance() != null)
+				GUIFrame.getInstance().updateForSnapToGrid();
+			return;
+		}
+
 		if (in == showModelBuilder) {
 			if (GUIFrame.getInstance() != null)
 				setWindowVisible(EntityPallet.getInstance(), showModelBuilder.getValue());

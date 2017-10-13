@@ -1731,6 +1731,10 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		GUIFrame.updateUI();
 	}
 
+	public void updateForSnapToGrid() {
+		snapToGrid.setSelected(Simulation.isSnapToGrid());
+	}
+
 	public static Image getWindowIcon() {
 		return iconImage;
 	}
@@ -1805,9 +1809,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 			if (v.showWindow())
 				RenderManager.inst().createWindow(v);
 		}
-
-		// Set the initial state for the "Snap to Grid" check box
-		snapToGrid.setSelected(Simulation.isSnapToGrid());
 
 		// Set the initial state for the "Show Axes" check box
 		DisplayEntity ent = (DisplayEntity) Entity.getNamedEntity("XYZ-Axis");
