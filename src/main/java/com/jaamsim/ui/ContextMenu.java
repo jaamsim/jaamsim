@@ -79,7 +79,7 @@ public class ContextMenu {
 	 * @param x - screen coordinate for the menu
 	 * @param y - screen coordinate for the menu
 	 */
-	public static void populateMenu(JPopupMenu menu, final Entity ent, final int x, final int y) {
+	public static void populateMenu(JPopupMenu menu, final Entity ent, final int nodeIndex, final int x, final int y) {
 		// 1) Input Editor
 		JMenuItem inputEditorMenuItem = new JMenuItem( "Input Editor" );
 		inputEditorMenuItem.addActionListener( new ActionListener() {
@@ -163,7 +163,7 @@ public class ContextMenu {
 
 		// DisplayEntity menu items
 		if (ent instanceof DisplayEntity) {
-			ContextMenu.populateDisplayEntityMenu(menu, (DisplayEntity)ent, x, y);
+			ContextMenu.populateDisplayEntityMenu(menu, (DisplayEntity)ent, nodeIndex, x, y);
 		}
 
 		synchronized (menuItems) {
@@ -174,7 +174,7 @@ public class ContextMenu {
 		}
 	}
 
-	public static void populateDisplayEntityMenu(JPopupMenu menu, final DisplayEntity ent, final int x, final int y) {
+	public static void populateDisplayEntityMenu(JPopupMenu menu, final DisplayEntity ent, final int nodeIndex, final int x, final int y) {
 
 		if (!RenderManager.isGood())
 			return;

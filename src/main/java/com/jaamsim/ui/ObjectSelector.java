@@ -487,7 +487,7 @@ public class ObjectSelector extends FrameBox {
 
 			// Right mouse click on a movable DisplayEntity
 			menu.removeAll();
-			ContextMenu.populateMenu(menu, currentEntity, e.getX(), e.getY());
+			ContextMenu.populateMenu(menu, currentEntity, -1, e.getX(), e.getY());
 			menu.show(e.getComponent(), e.getX(), e.getX());
 		}
 		@Override

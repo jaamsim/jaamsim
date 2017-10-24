@@ -568,11 +568,12 @@ public class RenderManager implements DragSourceListener {
 			menu.setLightWeightPopupEnabled(false);
 			final int menuX = mouseInfo.x + awtFrame.getInsets().left;
 			final int menuY = mouseInfo.y + awtFrame.getInsets().top;
+			final int nodeIndex = getNodeIndex(windowID, mouseInfo.x, mouseInfo.y);
 
 			if (ents.size() == 0) { return; } // Nothing to show
 
 			if (ents.size() == 1) {
-				ContextMenu.populateMenu(menu, ents.get(0), menuX, menuY);
+				ContextMenu.populateMenu(menu, ents.get(0), nodeIndex, menuX, menuY);
 			}
 			else {
 				// Several entities, let the user pick the interesting entity first
@@ -584,7 +585,7 @@ public class RenderManager implements DragSourceListener {
 						@Override
 						public void actionPerformed( ActionEvent event ) {
 							menu.removeAll();
-							ContextMenu.populateMenu(menu, de, menuX, menuY);
+							ContextMenu.populateMenu(menu, de, nodeIndex, menuX, menuY);
 							menu.show(awtFrame, menuX, menuY);
 						}
 					} );
