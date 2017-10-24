@@ -1260,13 +1260,7 @@ public class RenderManager implements DragSourceListener {
 		if (points == null || points.isEmpty())
 			return;
 
-		Transform trans = null;
-		if (selectedEntity.getCurrentRegion() != null || selectedEntity.getRelativeEntity() != null)
-			trans = selectedEntity.getGlobalPositionTransform();
-
-		ArrayList<Vec3d> globalPoints = new ArrayList<>(points);
-		if (trans != null)
-			globalPoints = (ArrayList<Vec3d>) RenderUtils.transformPointsWithTrans(trans.getMat4dRef(), globalPoints);
+		ArrayList<Vec3d> globalPoints = selectedEntity.getGlobalPosition(points);
 
 		int splitInd = 0;
 		Vec4d nearPoint = null;
@@ -1289,18 +1283,12 @@ public class RenderManager implements DragSourceListener {
 			return;
 		}
 
-		if (trans != null) {
-			Transform invTrans = new Transform();
-			trans.inverse(invTrans);
-			invTrans.multAndTrans(nearPoint, nearPoint);
-		}
-
 		// If we are here, we have a segment to split, at index i
 		ArrayList<Vec3d> splitPoints = new ArrayList<>();
 		for(int i = 0; i <= splitInd; ++i) {
 			splitPoints.add(points.get(i));
 		}
-		splitPoints.add(nearPoint);
+		splitPoints.add(selectedEntity.getLocalPosition(nearPoint));
 		for (int i = splitInd+1; i < points.size(); ++i) {
 			splitPoints.add(points.get(i));
 		}
@@ -1318,13 +1306,7 @@ public class RenderManager implements DragSourceListener {
 		if (points == null || points.size() <= 2)
 			return;
 
-		ArrayList<Vec3d> globalPoints = new ArrayList<>(points);
-
-		Transform trans = null;
-		if (selectedEntity.getCurrentRegion() != null || selectedEntity.getRelativeEntity() != null) {
-			trans = selectedEntity.getGlobalPositionTransform();
-			globalPoints = (ArrayList<Vec3d>) RenderUtils.transformPointsWithTrans(trans.getMat4dRef(), globalPoints);
-		}
+		ArrayList<Vec3d> globalPoints = selectedEntity.getGlobalPosition(points);
 
 		int removeInd = 0;
 		// Find a line segment we are near
