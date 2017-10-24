@@ -1298,32 +1298,13 @@ public class RenderManager implements DragSourceListener {
 	}
 
 	private void removeLineNode(int windowID, int x, int y) {
-		Ray currentRay = getRayForMouse(windowID, x, y);
-
-		Mat4d rayMatrix = MathUtils.RaySpace(currentRay);
-
 		ArrayList<Vec3d> points = selectedEntity.getPoints();
 		if (points == null || points.size() <= 2)
 			return;
 
-		ArrayList<Vec3d> globalPoints = selectedEntity.getGlobalPosition(points);
-
-		int removeInd = 0;
-		// Find a line segment we are near
-		for ( ;removeInd < points.size(); ++removeInd) {
-			Vec4d p = new Vec4d(globalPoints.get(removeInd).x, globalPoints.get(removeInd).y, globalPoints.get(removeInd).z, 1.0d);
-
-			double rayAngle = RenderUtils.angleToRay(rayMatrix, p);
-
-			if (rayAngle > 0 && rayAngle < 0.01309) { // 0.75 degrees in radians
-				break;
-			}
-
-			if (removeInd == points.size()) {
-				// No appropriate point was found
-				return;
-			}
-		}
+		int removeInd = getNodeIndex(windowID, x, y);
+		if (removeInd == -1)
+			return;
 
 		ArrayList<Vec3d> splitPoints = new ArrayList<>();
 		for(int i = 0; i < points.size(); ++i) {
