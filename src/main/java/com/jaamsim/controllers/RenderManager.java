@@ -1335,6 +1335,26 @@ public class RenderManager implements DragSourceListener {
 		InputAgent.storeAndExecute(new KeywordCommand(selectedEntity, removeInd, ptsKw));
 	}
 
+	public int getNodeIndex(int windowID, int x, int y) {
+
+		ArrayList<Vec3d> points = selectedEntity.getPoints();
+		if (points == null)
+			return -1;
+
+		Ray currentRay = getRayForMouse(windowID, x, y);
+		Mat4d rayMatrix = MathUtils.RaySpace(currentRay);
+
+		ArrayList<Vec3d> globalPoints = selectedEntity.getGlobalPosition(points);
+		for (int i = 0; i < points.size(); i++) {
+			Vec4d p = new Vec4d(globalPoints.get(i).x, globalPoints.get(i).y, globalPoints.get(i).z, 1.0d);
+			double rayAngle = RenderUtils.angleToRay(rayMatrix, p);
+			if (rayAngle > 0 && rayAngle < 0.01309) { // 0.75 degrees in radians
+				return i;
+			}
+		}
+		return -1;
+	}
+
 	private boolean isMouseHandleID(long id) {
 		return (id < 0); // For now all negative IDs are mouse handles, this may change
 	}
