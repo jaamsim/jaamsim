@@ -125,7 +125,8 @@ public class JaamSimModel {
 		synchronized (allInstances) {
 			int index = idToIndex(e.getEntityNumber());
 			if (index < 0)
-				throw new ErrorException("Entity not found in allInstances: %s", e);
+				return;
+
 			if (e != allInstances.remove(index))
 				throw new ErrorException("Internal Consistency Error - Entity List");
 
