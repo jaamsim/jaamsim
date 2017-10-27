@@ -459,4 +459,19 @@ public class PolylineInfo {
 		return cumLengthList;
 	}
 
+	/**
+	 * Returns the total graphics length for a polyline.
+	 * @param pts - points for the polyline
+	 * @return total length
+	 */
+	public static double getLength(ArrayList<Vec3d> pts) {
+		double ret = 0.0d;
+		for (int i = 1; i < pts.size(); i++) {
+			Vec3d vec = new Vec3d();
+			vec.sub3(pts.get(i), pts.get(i-1));
+			ret += vec.mag3();
+		}
+		return ret;
+	}
+
 }
