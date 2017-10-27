@@ -1283,17 +1283,10 @@ public class RenderManager implements DragSourceListener {
 			return;
 		}
 
-		// If we are here, we have a segment to split, at index i
-		ArrayList<Vec3d> splitPoints = new ArrayList<>();
-		for(int i = 0; i <= splitInd; ++i) {
-			splitPoints.add(points.get(i));
-		}
-		splitPoints.add(selectedEntity.getLocalPosition(nearPoint));
-		for (int i = splitInd+1; i < points.size(); ++i) {
-			splitPoints.add(points.get(i));
-		}
+		// Insert the new node
+		points.add(splitInd + 1, selectedEntity.getLocalPosition(nearPoint));
 
-		KeywordIndex ptsKw = InputAgent.formatPointsInputs("Points", splitPoints, new Vec3d());
+		KeywordIndex ptsKw = InputAgent.formatPointsInputs("Points", points, new Vec3d());
 		InputAgent.storeAndExecute(new KeywordCommand(selectedEntity, splitInd + 1, ptsKw));
 	}
 
@@ -1306,13 +1299,10 @@ public class RenderManager implements DragSourceListener {
 		if (removeInd == -1)
 			return;
 
-		ArrayList<Vec3d> splitPoints = new ArrayList<>();
-		for(int i = 0; i < points.size(); ++i) {
-			if (i == removeInd) continue;
-			splitPoints.add(points.get(i));
-		}
+		// Remove the selected node
+		points.remove(removeInd);
 
-		KeywordIndex ptsKw = InputAgent.formatPointsInputs("Points", splitPoints, new Vec3d());
+		KeywordIndex ptsKw = InputAgent.formatPointsInputs("Points", points, new Vec3d());
 		InputAgent.storeAndExecute(new KeywordCommand(selectedEntity, removeInd, ptsKw));
 	}
 
