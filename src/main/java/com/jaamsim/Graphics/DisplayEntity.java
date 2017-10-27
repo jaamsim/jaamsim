@@ -876,6 +876,14 @@ public class DisplayEntity extends Entity {
 		// Do nothing in default behavior
 	}
 
+	/**
+	 * Set the inputs for the two entities affected by a 'split' operation.
+	 * @param splitEnt - entity split from the original
+	 */
+	public void setInputsForSplit(DisplayEntity splitEnt) {
+		// Do nothing in default behavior
+	}
+
 	private final Object screenPointLock = new Object();
 	private PolylineInfo[] cachedPointInfo;
 	private ArrayList<Vec3d> cachedCurvePoints;

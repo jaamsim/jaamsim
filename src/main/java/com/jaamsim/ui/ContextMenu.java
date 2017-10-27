@@ -333,5 +333,49 @@ public class ContextMenu {
 			centerInViewMenuItem.setEnabled(false);
 		}
 		menu.add( centerInViewMenuItem );
+
+		// 6) Split
+		JMenuItem spitMenuItem = new JMenuItem( "Split" );
+		spitMenuItem.addActionListener( new ActionListener() {
+
+			@Override
+			public void actionPerformed( ActionEvent event ) {
+				String name = InputAgent.getUniqueName(ent.getName(), "_Split");
+				InputAgent.storeAndExecute(new DefineCommand(ent.getClass(), name));
+				DisplayEntity splitEnt = (DisplayEntity) Entity.getNamedEntity(name);
+
+				// Match all the inputs
+				splitEnt.copyInputs(ent);
+
+				// Original entity is left with the first portion of the nodes
+				ArrayList<Vec3d> pts = ent.getPoints();
+				ArrayList<Vec3d> pts0 = new ArrayList<>(nodeIndex + 1);
+				for (int i = 0; i <= nodeIndex; i++) {
+					pts0.add(pts.get(i));
+				}
+				KeywordIndex ptsKw0 = InputAgent.formatPointsInputs("Points", pts0, new Vec3d());
+				InputAgent.storeAndExecute(new KeywordCommand(ent, nodeIndex, ptsKw0));
+
+				// New entity receives the remaining portion of the nodes
+				ArrayList<Vec3d> pts1 = new ArrayList<>(pts.size() - nodeIndex);
+				for (int i = nodeIndex; i < pts.size(); i++) {
+					pts1.add(pts.get(i));
+				}
+				KeywordIndex ptsKw1 = InputAgent.formatPointsInputs("Points", pts1, new Vec3d());
+				InputAgent.processKeyword(splitEnt, ptsKw1);
+
+				// Change any other object specific inputs for the split
+				ent.setInputsForSplit(splitEnt);
+
+				// Show the split entity in the editors and viewers
+				FrameBox.setSelectedEntity(splitEnt, false);
+			}
+		} );
+		if (ent.testFlag(Entity.FLAG_GENERATED) || nodeIndex == -1
+				|| nodeIndex == ent.getPoints().size() - 1) {
+			spitMenuItem.setEnabled(false);
+		}
+		menu.add( spitMenuItem );
 	}
+
 }
