@@ -16,7 +16,6 @@
  */
 package com.jaamsim.render;
 
-import java.net.URI;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,15 +36,12 @@ import com.jogamp.opengl.GL2GL3;
  */
 public class TextureView implements Renderable {
 
-	private final URI _imageURI;
+	private final TexLoader _texLoader;
 	private final Transform _trans;
 	private final Vec3d _scale;
 	private final long _pickingID;
 
 	private final AABB _bounds;
-
-	private final boolean _isTransparent;
-	private final boolean _isCompressed;
 
 	private final VisibilityInfo _visInfo;
 
@@ -88,15 +84,13 @@ public class TextureView implements Renderable {
 		identMat[ 3] = 0.0f; identMat[ 7] = 0.0f; identMat[11] = 0.0f; identMat[15] = 1.0f;
 	}
 
-	public TextureView(URI imageURI, Transform trans, Vec3d scale, boolean isTransparent, boolean isCompressed,
+	public TextureView(TexLoader loader, Transform trans, Vec3d scale,
 	                   VisibilityInfo visInfo, long pickingID) {
-		_imageURI = imageURI;
+		_texLoader = loader;
 		_trans = trans;
 		_scale = scale;
 		_scale.z = 1; // This object can only be scaled in X, Y
 		_pickingID = pickingID;
-		_isTransparent = isTransparent;
-		_isCompressed = isCompressed;
 		_visInfo = visInfo;
 
 
@@ -226,7 +220,7 @@ public class TextureView implements Renderable {
 
 	@Override
 	public void render(int contextID, Renderer renderer, Camera cam, Ray pickRay) {
-		if (_isTransparent) {
+		if (_texLoader.hasTransparent()) {
 			// Return, this will be handled in the transparent render phase
 			return;
 		}
@@ -242,7 +236,7 @@ public class TextureView implements Renderable {
 
 		GL2GL3 gl = renderer.getGL();
 
-		int textureID = renderer.getTexCache().getTexID(gl, _imageURI, _isTransparent, _isCompressed, false);
+		int textureID = _texLoader.getTexID(renderer);
 
 		if (textureID == TexCache.LOADING_TEX_ID) {
 			return; // This texture is not ready yet
@@ -319,7 +313,7 @@ public class TextureView implements Renderable {
 
 	@Override
 	public boolean hasTransparent() {
-		return _isTransparent;
+		return _texLoader.hasTransparent();
 	}
 
 	@Override
