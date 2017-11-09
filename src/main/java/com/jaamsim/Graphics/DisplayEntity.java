@@ -294,7 +294,9 @@ public class DisplayEntity extends Entity {
 	@Override
 	public void earlyInit() {
 		super.earlyInit();
-		this.resetGraphics();
+		if (! this.testFlag(FLAG_GENERATED)) {
+			this.resetGraphics();
+		}
 	}
 
 	@Override
