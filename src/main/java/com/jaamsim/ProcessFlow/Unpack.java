@@ -68,9 +68,6 @@ public class Unpack extends LinkedService {
 			container = (EntityContainer)this.getNextEntityForMatch(m);
 			numberToRemove = this.getNumberToRemove();
 			numberRemoved = 0;
-
-			// Position the container over the unpack object
-			this.moveToProcessPosition(container);
 		}
 
 		return true;
@@ -100,6 +97,13 @@ public class Unpack extends LinkedService {
 		}
 
 		return true;
+	}
+
+	@Override
+	public void updateGraphics(double simTime) {
+		if (container == null)
+			return;
+		moveToProcessPosition(container);
 	}
 
 	@Override

@@ -101,9 +101,6 @@ public class Pack extends LinkedService {
 			// Set the state for the container and its contents
 			if (!stateAssignment.getValue().isEmpty())
 				container.setPresentState(stateAssignment.getValue());
-
-			// Position the container over the pack object
-			this.moveToProcessPosition(container);
 		}
 
 		// Are there sufficient entities in the queue to start packing?
@@ -122,9 +119,6 @@ public class Pack extends LinkedService {
 			packedEntity = this.getNextEntityForMatch(getMatchValue());
 			if (!stateAssignment.getValue().isEmpty() && packedEntity instanceof StateEntity)
 				((StateEntity)packedEntity).setPresentState(stateAssignment.getValue());
-
-			// Move the entity into position for processing
-			this.moveToProcessPosition(packedEntity);
 		}
 		return true;
 	}
@@ -159,6 +153,14 @@ public class Pack extends LinkedService {
 	@Override
 	protected double getStepDuration(double simTime) {
 		return serviceTime.getValue().getNextSample(simTime);
+	}
+
+	@Override
+	public void updateGraphics(double simTime) {
+		if (container != null)
+			moveToProcessPosition(container);
+		if (packedEntity != null)
+			moveToProcessPosition(packedEntity);
 	}
 
 	@Output(name = "Container",

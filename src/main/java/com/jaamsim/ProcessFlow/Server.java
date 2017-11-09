@@ -69,7 +69,6 @@ public class Server extends LinkedService {
 
 		// Remove the first entity from the queue
 		servedEntity = this.getNextEntityForMatch(m);
-		this.moveToProcessPosition(servedEntity);
 
 		// Set the service duration
 		serviceDuration = serviceTime.getValue().getNextSample(simTime);
@@ -91,6 +90,13 @@ public class Server extends LinkedService {
 	@Override
 	protected double getStepDuration(double simTime) {
 		return serviceDuration;
+	}
+
+	@Override
+	public void updateGraphics(double simTime) {
+		if (servedEntity == null)
+			return;
+		moveToProcessPosition(servedEntity);
 	}
 
 	@Output(name = "ServiceDuration",

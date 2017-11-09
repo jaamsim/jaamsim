@@ -171,9 +171,6 @@ public class Assemble extends LinkedService {
 		// Set the state for the assembled part
 		if (!stateAssignment.getValue().isEmpty() && assembledEntity instanceof StateEntity)
 			((StateEntity)assembledEntity).setPresentState(stateAssignment.getValue());
-
-		// Position the assembled part relative to the Assemble object
-		this.moveToProcessPosition(assembledEntity);
 		return true;
 	}
 
@@ -190,6 +187,13 @@ public class Assemble extends LinkedService {
 	@Override
 	protected double getStepDuration(double simTime) {
 		return serviceTime.getValue().getNextSample(simTime);
+	}
+
+	@Override
+	public void updateGraphics(double simTime) {
+		if (assembledEntity == null)
+			return;
+		moveToProcessPosition(assembledEntity);
 	}
 
 }
