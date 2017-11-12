@@ -16,6 +16,8 @@
  */
 package com.jaamsim.ui;
 
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -87,6 +89,19 @@ public class ObjectSelector extends FrameBox {
 
 		setLocation(Simulation.getObjectSelectorPos().get(0), Simulation.getObjectSelectorPos().get(1));
 		setSize(Simulation.getObjectSelectorSize().get(0), Simulation.getObjectSelectorSize().get(1));
+
+		addComponentListener(new ComponentAdapter() {
+
+			@Override
+			public void componentMoved(ComponentEvent e) {
+				Simulation.setObjectSelectorPos(getLocation().x, getLocation().y);
+			}
+
+			@Override
+			public void componentResized(ComponentEvent e) {
+				Simulation.setObjectSelectorSize(getSize().width, getSize().height);
+			}
+		});
 
 		tree.addTreeSelectionListener( new MyTreeSelectionListener() );
 		treeModel.addTreeModelListener( new MyTreeModelListener(tree) );

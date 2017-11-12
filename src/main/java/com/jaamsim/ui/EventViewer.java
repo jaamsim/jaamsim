@@ -23,6 +23,8 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.util.ArrayList;
 
 import javax.swing.JButton;
@@ -174,6 +176,19 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 		pack();
 		setLocation(Simulation.getEventViewerPos().get(0), Simulation.getEventViewerPos().get(1));
 		setSize(Simulation.getEventViewerSize().get(0), Simulation.getEventViewerSize().get(1));
+
+		addComponentListener(new ComponentAdapter() {
+
+			@Override
+			public void componentMoved(ComponentEvent e) {
+				Simulation.setEventViewerPos(getLocation().x, getLocation().y);
+			}
+
+			@Override
+			public void componentResized(ComponentEvent e) {
+				Simulation.setEventViewerSize(getSize().width, getSize().height);
+			}
+		});
 
 		// Display the viewer
 		setVisible(true);

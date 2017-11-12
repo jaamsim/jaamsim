@@ -16,6 +16,8 @@
  */
 package com.jaamsim.ui;
 
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -55,6 +57,19 @@ public class PropertyBox extends FrameBox {
 
 		setLocation(Simulation.getPropertyViewerPos().get(0), Simulation.getPropertyViewerPos().get(1));
 		setSize(Simulation.getPropertyViewerSize().get(0), Simulation.getPropertyViewerSize().get(1));
+
+		addComponentListener(new ComponentAdapter() {
+
+			@Override
+			public void componentMoved(ComponentEvent e) {
+				Simulation.setPropertyViewerPos(getLocation().x, getLocation().y);
+			}
+
+			@Override
+			public void componentResized(ComponentEvent e) {
+				Simulation.setPropertyViewerSize(getSize().width, getSize().height);
+			}
+		});
 	}
 
 	/**

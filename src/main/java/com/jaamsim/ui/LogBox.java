@@ -16,6 +16,8 @@
  */
 package com.jaamsim.ui;
 
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
@@ -51,6 +53,19 @@ public class LogBox extends FrameBox {
 
 		setLocation(Simulation.getLogViewerPos().get(0), Simulation.getLogViewerPos().get(1));
 		setSize(Simulation.getLogViewerSize().get(0), Simulation.getLogViewerSize().get(1));
+
+		addComponentListener(new ComponentAdapter() {
+
+			@Override
+			public void componentMoved(ComponentEvent e) {
+				Simulation.setLogViewerPos(getLocation().x, getLocation().y);
+			}
+
+			@Override
+			public void componentResized(ComponentEvent e) {
+				Simulation.setLogViewerSize(getSize().width, getSize().height);
+			}
+		});
 	}
 
 	/**

@@ -24,6 +24,8 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
@@ -109,6 +111,19 @@ public class EditBox extends FrameBox {
 
 		setLocation(Simulation.getInputEditorPos().get(0), Simulation.getInputEditorPos().get(1));
 		setSize(Simulation.getInputEditorSize().get(0), Simulation.getInputEditorSize().get(1));
+
+		addComponentListener(new ComponentAdapter() {
+
+			@Override
+			public void componentMoved(ComponentEvent e) {
+				Simulation.setInputEditorPos(getLocation().x, getLocation().y);
+			}
+
+			@Override
+			public void componentResized(ComponentEvent e) {
+				Simulation.setInputEditorSize(getSize().width, getSize().height);
+			}
+		});
 	}
 
 	public synchronized static EditBox getInstance() {

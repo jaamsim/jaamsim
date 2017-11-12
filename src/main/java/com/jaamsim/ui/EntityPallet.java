@@ -25,6 +25,8 @@ import java.awt.dnd.DnDConstants;
 import java.awt.dnd.DragGestureEvent;
 import java.awt.dnd.DragGestureListener;
 import java.awt.dnd.DragSource;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.MouseEvent;
 import java.util.HashMap;
 
@@ -84,6 +86,19 @@ public class EntityPallet extends OSFixJFrame implements DragGestureListener {
 
 		setLocation(Simulation.getModelBuilderPos().get(0), Simulation.getModelBuilderPos().get(1));
 		setSize(Simulation.getModelBuilderSize().get(0), Simulation.getModelBuilderSize().get(1));
+
+		addComponentListener(new ComponentAdapter() {
+
+			@Override
+			public void componentMoved(ComponentEvent e) {
+				Simulation.setModelBuilderPos(getLocation().x, getLocation().y);
+			}
+
+			@Override
+			public void componentResized(ComponentEvent e) {
+				Simulation.setModelBuilderSize(getSize().width, getSize().height);
+			}
+		});
 	}
 
 	@Override

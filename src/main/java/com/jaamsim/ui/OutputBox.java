@@ -17,6 +17,8 @@
 package com.jaamsim.ui;
 
 import java.awt.Point;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
@@ -53,6 +55,19 @@ public class OutputBox extends FrameBox {
 
 		setLocation(Simulation.getOutputViewerPos().get(0), Simulation.getOutputViewerPos().get(1));
 		setSize(Simulation.getOutputViewerSize().get(0), Simulation.getOutputViewerSize().get(1));
+
+		addComponentListener(new ComponentAdapter() {
+
+			@Override
+			public void componentMoved(ComponentEvent e) {
+				Simulation.setOutputViewerPos(getLocation().x, getLocation().y);
+			}
+
+			@Override
+			public void componentResized(ComponentEvent e) {
+				Simulation.setOutputViewerSize(getSize().width, getSize().height);
+			}
+		});
 	}
 
 	/**
