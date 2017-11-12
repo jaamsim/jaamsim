@@ -1182,6 +1182,23 @@ public class Simulation extends Entity {
 		eventViewerSize.setDefaultValue(GUIFrame.COL4_WIDTH, GUIFrame.HALF_BOTTOM);
 	}
 
+	public static void resetWindowPositionsAndSizes() {
+		InputAgent.applyArgs(getInstance(), modelBuilderPos.getKeyword());
+		InputAgent.applyArgs(getInstance(), modelBuilderSize.getKeyword());
+		InputAgent.applyArgs(getInstance(), objectSelectorPos.getKeyword());
+		InputAgent.applyArgs(getInstance(), objectSelectorSize.getKeyword());
+		InputAgent.applyArgs(getInstance(), inputEditorPos.getKeyword());
+		InputAgent.applyArgs(getInstance(), inputEditorSize.getKeyword());
+		InputAgent.applyArgs(getInstance(), outputViewerPos.getKeyword());
+		InputAgent.applyArgs(getInstance(), outputViewerSize.getKeyword());
+		InputAgent.applyArgs(getInstance(), propertyViewerPos.getKeyword());
+		InputAgent.applyArgs(getInstance(), propertyViewerSize.getKeyword());
+		InputAgent.applyArgs(getInstance(), logViewerPos.getKeyword());
+		InputAgent.applyArgs(getInstance(), logViewerSize.getKeyword());
+		InputAgent.applyArgs(getInstance(), eventViewerPos.getKeyword());
+		InputAgent.applyArgs(getInstance(), eventViewerSize.getKeyword());
+	}
+
 	public static IntegerVector getModelBuilderPos() {
 		return modelBuilderPos.getValue();
 	}

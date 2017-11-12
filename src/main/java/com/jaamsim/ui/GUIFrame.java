@@ -588,6 +588,17 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		eventsMenuItem.setMnemonic( 'E' );
 		eventsMenuItem.addActionListener(new SimulationMenuAction("ShowEventViewer", "TRUE"));
 		viewMenu.add( eventsMenuItem );
+
+		// 10) "Reset Positions and Sizes" menu item
+		JMenuItem resetItem = new JMenuItem( "Reset Positions and Sizes" );
+		resetItem.setMnemonic( 'R' );
+		resetItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed( ActionEvent e ) {
+				Simulation.resetWindowPositionsAndSizes();
+			}
+		} );
+		viewMenu.add( resetItem );
 	}
 
 	private static final class SimulationMenuAction implements ActionListener {
