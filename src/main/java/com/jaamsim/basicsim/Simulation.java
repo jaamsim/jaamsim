@@ -1165,6 +1165,23 @@ public class Simulation extends Entity {
 			f.toFront();
 	}
 
+	public static void setWindowDefaults() {
+		modelBuilderPos.setDefaultValue(GUIFrame.COL1_START, GUIFrame.TOP_START);
+		modelBuilderSize.setDefaultValue(GUIFrame.COL1_WIDTH, GUIFrame.HALF_TOP);
+		objectSelectorPos.setDefaultValue(GUIFrame.COL1_START, GUIFrame.BOTTOM_START);
+		objectSelectorSize.setDefaultValue(GUIFrame.COL1_WIDTH, GUIFrame.HALF_BOTTOM);
+		inputEditorPos.setDefaultValue(GUIFrame.COL2_START, GUIFrame.LOWER_START);
+		inputEditorSize.setDefaultValue(GUIFrame.COL2_WIDTH, GUIFrame.LOWER_HEIGHT);
+		outputViewerPos.setDefaultValue(GUIFrame.COL3_START, GUIFrame.LOWER_START);
+		outputViewerSize.setDefaultValue(GUIFrame.COL3_WIDTH, GUIFrame.LOWER_HEIGHT);
+		propertyViewerPos.setDefaultValue(GUIFrame.COL4_START, GUIFrame.TOP_START);
+		propertyViewerSize.setDefaultValue(GUIFrame.COL4_WIDTH, GUIFrame.HALF_TOP);
+		logViewerPos.setDefaultValue(GUIFrame.COL4_START, GUIFrame.BOTTOM_START);
+		logViewerSize.setDefaultValue(GUIFrame.COL4_WIDTH, GUIFrame.HALF_BOTTOM);
+		eventViewerPos.setDefaultValue(GUIFrame.COL4_START, GUIFrame.BOTTOM_START);
+		eventViewerSize.setDefaultValue(GUIFrame.COL4_WIDTH, GUIFrame.HALF_BOTTOM);
+	}
+
 	/**
 	 * Re-open any Tools windows that have been closed temporarily.
 	 */

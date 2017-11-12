@@ -1953,6 +1953,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 			gui.setVisible(true);
 			gui.calcWindowDefaults();
 			gui.setLocation(gui.getX(), gui.getY());  //FIXME remove when setLocation is fixed for Windows 10
+			Simulation.setWindowDefaults();
 		}
 
 		// Resolve all input arguments against the current working directory

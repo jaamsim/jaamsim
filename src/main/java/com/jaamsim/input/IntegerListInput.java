@@ -28,6 +28,14 @@ public class IntegerListInput extends ListInput<IntegerVector> {
 		validCounts = new int[] { };
 	}
 
+	public void setDefaultValue(int... args) {
+		IntegerVector def = new IntegerVector(args.length);
+		for (int each : args) {
+			def.add(each);
+		}
+		setDefaultValue(def);
+	}
+
 	@Override
 	public void parse(KeywordIndex kw)
 	throws InputErrorException {
