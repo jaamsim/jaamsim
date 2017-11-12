@@ -35,6 +35,7 @@ import com.jaamsim.input.DirInput;
 import com.jaamsim.input.EntityListInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
+import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.IntegerListInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
@@ -288,6 +289,10 @@ public class Simulation extends Entity {
 	         exampleList = {"500 300"})
 	private static final IntegerListInput eventViewerSize;
 
+	@Keyword(description = "The width of the Control Panel window in pixels.",
+	         exampleList = {"1920"})
+	private static final IntegerInput controlPanelWidth;
+
 	@Keyword(description = "Time at which the simulation run is started (hh:mm).",
 	         exampleList = {"2160 h"})
 	private static final ValueInput startTimeInput;
@@ -494,6 +499,10 @@ public class Simulation extends Entity {
 		eventViewerSize.setValidRange(1, 8192);
 		eventViewerSize.setPromptReqd(false);
 
+		controlPanelWidth = new IntegerInput("ControlPanelWidth", "GUI", null);
+		eventViewerSize.setValidRange(1, 8192);
+		eventViewerSize.setPromptReqd(false);
+
 		// Hidden keywords
 		startTimeInput = new ValueInput("StartTime", "Key Inputs", 0.0d);
 		startTimeInput.setUnitType(TimeUnit.class);
@@ -560,6 +569,7 @@ public class Simulation extends Entity {
 		this.addInput(logViewerSize);
 		this.addInput(eventViewerPos);
 		this.addInput(eventViewerSize);
+		this.addInput(controlPanelWidth);
 
 		// Hidden keywords
 		this.addInput(startTimeInput);
@@ -780,6 +790,13 @@ public class Simulation extends Entity {
 				IntegerVector size = eventViewerSize.getValue();
 				EventViewer.getInstance().setSize(size.get(0), size.get(1));
 			}
+			return;
+		}
+
+		if (in == controlPanelWidth) {
+			int width = controlPanelWidth.getValue();
+			int height = GUIFrame.getInstance().getSize().height;
+			GUIFrame.getInstance().setSize(width, height);
 			return;
 		}
 	}
@@ -1180,6 +1197,7 @@ public class Simulation extends Entity {
 		logViewerSize.setDefaultValue(GUIFrame.COL4_WIDTH, GUIFrame.HALF_BOTTOM);
 		eventViewerPos.setDefaultValue(GUIFrame.COL4_START, GUIFrame.BOTTOM_START);
 		eventViewerSize.setDefaultValue(GUIFrame.COL4_WIDTH, GUIFrame.HALF_BOTTOM);
+		controlPanelWidth.setDefaultValue(GUIFrame.DEFAULT_GUI_WIDTH);
 	}
 
 	public static void resetWindowPositionsAndSizes() {
@@ -1197,6 +1215,7 @@ public class Simulation extends Entity {
 		InputAgent.applyArgs(getInstance(), logViewerSize.getKeyword());
 		InputAgent.applyArgs(getInstance(), eventViewerPos.getKeyword());
 		InputAgent.applyArgs(getInstance(), eventViewerSize.getKeyword());
+		InputAgent.applyArgs(getInstance(), controlPanelWidth.getKeyword());
 	}
 
 	public static IntegerVector getModelBuilderPos() {
@@ -1337,6 +1356,12 @@ public class Simulation extends Entity {
 		if (eventViewerSize.getValue().get(0) == x && eventViewerSize.getValue().get(1) == y)
 			return;
 		InputAgent.applyIntegers(getInstance(), eventViewerSize.getKeyword(), x, y);
+	}
+
+	public static void setControlPanelWidth(int width) {
+		if (controlPanelWidth.getValue() == width)
+			return;
+		InputAgent.applyIntegers(getInstance(), controlPanelWidth.getKeyword(), width);
 	}
 
 	/**
