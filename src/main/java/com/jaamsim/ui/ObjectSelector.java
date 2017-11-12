@@ -85,8 +85,8 @@ public class ObjectSelector extends FrameBox {
 
 		entSequence = 0;
 
-		setLocation(GUIFrame.COL1_START, GUIFrame.BOTTOM_START);
-		setSize(GUIFrame.COL1_WIDTH, GUIFrame.HALF_BOTTOM);
+		setLocation(Simulation.getObjectSelectorPos().get(0), Simulation.getObjectSelectorPos().get(1));
+		setSize(Simulation.getObjectSelectorSize().get(0), Simulation.getObjectSelectorSize().get(1));
 
 		tree.addTreeSelectionListener( new MyTreeSelectionListener() );
 		treeModel.addTreeModelListener( new MyTreeModelListener(tree) );

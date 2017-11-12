@@ -23,6 +23,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 
+import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.input.InputAgent;
 
 public class LogBox extends FrameBox {
@@ -48,8 +49,8 @@ public class LogBox extends FrameBox {
 
 		getContentPane().add( scrollPane );
 
-		setLocation(GUIFrame.COL4_START, GUIFrame.BOTTOM_START);
-		setSize(GUIFrame.COL4_WIDTH, GUIFrame.HALF_BOTTOM);
+		setLocation(Simulation.getLogViewerPos().get(0), Simulation.getLogViewerPos().get(1));
+		setSize(Simulation.getLogViewerSize().get(0), Simulation.getLogViewerSize().get(1));
 	}
 
 	/**

@@ -40,6 +40,7 @@ import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 import com.jaamsim.basicsim.ObjectType;
+import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.controllers.RenderManager;
 
 public class EntityPallet extends OSFixJFrame implements DragGestureListener {
@@ -81,8 +82,8 @@ public class EntityPallet extends OSFixJFrame implements DragGestureListener {
 		ToolTipManager.sharedInstance().registerComponent(tree);
 		ToolTipManager.sharedInstance().setDismissDelay(600000);
 
-		setLocation(GUIFrame.COL1_START, GUIFrame.TOP_START);
-		setSize(GUIFrame.COL1_WIDTH, GUIFrame.HALF_TOP);
+		setLocation(Simulation.getModelBuilderPos().get(0), Simulation.getModelBuilderPos().get(1));
+		setSize(Simulation.getModelBuilderSize().get(0), Simulation.getModelBuilderSize().get(1));
 	}
 
 	@Override

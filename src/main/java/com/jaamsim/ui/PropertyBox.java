@@ -33,6 +33,7 @@ import javax.swing.table.TableModel;
 
 import com.jaamsim.Graphics.PolylineInfo;
 import com.jaamsim.basicsim.Entity;
+import com.jaamsim.basicsim.Simulation;
 
 /**
  * Class to display information about model objects. <br>
@@ -52,8 +53,8 @@ public class PropertyBox extends FrameBox {
 		jTabbedFrame.addChangeListener(new TabListener());
 		getContentPane().add(jTabbedFrame);
 
-		setLocation(GUIFrame.COL4_START, GUIFrame.TOP_START);
-		setSize(GUIFrame.COL4_WIDTH, GUIFrame.HALF_TOP);
+		setLocation(Simulation.getPropertyViewerPos().get(0), Simulation.getPropertyViewerPos().get(1));
+		setSize(Simulation.getPropertyViewerSize().get(0), Simulation.getPropertyViewerSize().get(1));
 	}
 
 	/**

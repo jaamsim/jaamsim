@@ -36,6 +36,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
 
+import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.events.EventTraceListener;
 import com.jaamsim.events.ProcessTarget;
@@ -171,8 +172,8 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 
 		// Size and position of the viewer
 		pack();
-		setLocation(GUIFrame.COL4_START, GUIFrame.BOTTOM_START);
-		setSize(GUIFrame.COL4_WIDTH, GUIFrame.HALF_BOTTOM);
+		setLocation(Simulation.getEventViewerPos().get(0), Simulation.getEventViewerPos().get(1));
+		setSize(Simulation.getEventViewerSize().get(0), Simulation.getEventViewerSize().get(1));
 
 		// Display the viewer
 		setVisible(true);

@@ -63,6 +63,7 @@ import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.Samples.SampleListInput;
 import com.jaamsim.StringProviders.StringProvListInput;
 import com.jaamsim.basicsim.Entity;
+import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.ExpressionInput;
 import com.jaamsim.input.FileInput;
@@ -106,8 +107,8 @@ public class EditBox extends FrameBox {
 		jTabbedFrame.addChangeListener(new TabListener());
 		getContentPane().add(jTabbedFrame);
 
-		setLocation(GUIFrame.COL2_START, GUIFrame.LOWER_START);
-		setSize(GUIFrame.COL2_WIDTH, GUIFrame.LOWER_HEIGHT);
+		setLocation(Simulation.getInputEditorPos().get(0), Simulation.getInputEditorPos().get(1));
+		setSize(Simulation.getInputEditorSize().get(0), Simulation.getInputEditorSize().get(1));
 	}
 
 	public synchronized static EditBox getInstance() {
