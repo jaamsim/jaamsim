@@ -770,6 +770,11 @@ public class InputAgent {
 		InputAgent.apply(ent, kw);
 	}
 
+	public static void applyIntegers(Entity ent, String keyword, int... args){
+		KeywordIndex kw = formatIntegers(keyword, args);
+		InputAgent.apply(ent, kw);
+	}
+
 	public static final void apply(Entity ent, KeywordIndex kw) {
 		Input<?> in = ent.getInput(kw.keyword);
 		if (in == null) {
@@ -1804,6 +1809,14 @@ public class InputAgent {
 		ArrayList<String> tokens = new ArrayList<>(args.length);
 		for (String each : args) {
 			tokens.add(each);
+		}
+		return new KeywordIndex(keyword, tokens, null);
+	}
+
+	public static KeywordIndex formatIntegers(String keyword, int... args) {
+		ArrayList<String> tokens = new ArrayList<>(args.length);
+		for (int each : args) {
+			tokens.add(String.format((Locale)null, "%d", each));
 		}
 		return new KeywordIndex(keyword, tokens, null);
 	}
