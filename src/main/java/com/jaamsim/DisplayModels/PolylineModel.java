@@ -88,7 +88,7 @@ public class PolylineModel extends DisplayModel {
 
 		protected ArrayList<Vec4d> headPoints = null;
 
-		protected RenderProxy cachedProxy = null;
+		protected RenderProxy cachedArrowHeadProxy = null;
 
 		protected Vec3d startCache;
 		protected Vec3d fromCache;
@@ -132,15 +132,23 @@ public class PolylineModel extends DisplayModel {
 				globalTrans = displayObservee.getGlobalPositionTransform();
 			}
 
+			Vec3d arrowSize;
+			if (arrowObservee != null)
+				arrowSize = arrowObservee.getArrowHeadSize();
+			else
+				arrowSize = arrowHeadSize.getValue();
+
 			VisibilityInfo vi = getVisibilityInfo();
 
 			boolean dirty = false;
 
 			dirty = dirty || !compareArray(pisCache, pis);
+			dirty = dirty || dirty_vec3d(arrowSizeCache, arrowSize);
 			dirty = dirty || !compare(globalTransCache, globalTrans);
 			dirty = dirty || !compare(viCache, vi);
 
 			pisCache = pis;
+			arrowSizeCache = arrowSize;
 			globalTransCache = globalTrans;
 			viCache = vi;
 
@@ -202,50 +210,16 @@ public class PolylineModel extends DisplayModel {
 
 				cachedProxies[proxyIndex++] = new LineProxy(points, pi.getColor(), pi.getWidth(), vi, displayObservee.getEntityNumber());
 			}
-		}
 
-		private void updateHead(double simTime) {
-
-			PolylineInfo[] pointInfos = displayObservee.getScreenPoints(simTime);
-
-			if (pointInfos == null || pointInfos.length == 0)
+			// Add the arrowhead
+			if (!showArrowHead.getValue())
 				return;
 
-			Transform globalTrans = null;
-			if (displayObservee.getCurrentRegion() != null || displayObservee.getRelativeEntity() != null) {
-				globalTrans = displayObservee.getGlobalPositionTransform();
-			}
+			ArrayList<Vec3d> curvePts = pis[0].getCurvePoints();
+			Vec3d startPoint = curvePts.get(curvePts.size() - 1);
+			Vec3d fromPoint = curvePts.get(curvePts.size() - 2);
 
-			ArrayList<Vec3d> curvePoints = pointInfos[0].getCurvePoints();
-			Vec3d startPoint = curvePoints.get(curvePoints.size() - 1);
-			Vec3d fromPoint = curvePoints.get(curvePoints.size() - 2);
-
-			Color4d color = pointInfos[0].getColor();
-
-			boolean dirty = false;
-
-			Vec3d arrowSize;
-			if (arrowObservee != null)
-				arrowSize = arrowObservee.getArrowHeadSize();
-			else
-				arrowSize = arrowHeadSize.getValue();
-
-			dirty = dirty || dirty_vec3d(startCache, startPoint);
-			dirty = dirty || dirty_vec3d(fromCache, fromPoint);
-			dirty = dirty || dirty_col4d(colorCache, color);
-			dirty = dirty || dirty_vec3d(arrowSizeCache, arrowSize);
-			dirty = dirty || !compare(globalTransCache, globalTrans);
-
-			startCache = startPoint;
-			fromCache = fromPoint;
-			colorCache = color;
-			arrowSizeCache = arrowSize;
-			globalTransCache = globalTrans;
-
-			if (cachedProxy != null && !dirty) {
-				// up to date
-				return;
-			}
+			Color4d color = pis[0].getColor();
 
 			// Draw an arrow head at the last two points
 			if (selectionPoints.size() < 2) {
@@ -273,7 +247,7 @@ public class PolylineModel extends DisplayModel {
 				RenderUtils.transformPointsLocal(globalTrans, headPoints, 0);
 			}
 
-			cachedProxy = new PolygonProxy(headPoints, Transform.ident, DisplayModel.ONES, color,
+			cachedArrowHeadProxy = new PolygonProxy(headPoints, Transform.ident, DisplayModel.ONES, color,
 			        false, 1, getVisibilityInfo(), observee.getEntityNumber());
 		}
 
@@ -291,8 +265,7 @@ public class PolylineModel extends DisplayModel {
 			}
 
 			if (showArrowHead.getValue()) {
-				updateHead(simTime);
-				out.add(cachedProxy);
+				out.add(cachedArrowHeadProxy);
 			}
 		}
 
