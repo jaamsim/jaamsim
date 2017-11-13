@@ -84,24 +84,20 @@ public class PolylineModel extends DisplayModel {
 
 	protected class Binding extends DisplayModelBinding {
 
-		protected Arrow arrowObservee;
+		private Arrow arrowObservee;
 
-		protected ArrayList<Vec4d> headPoints = null;
+		private ArrayList<Vec4d> headPoints = null;
+		private RenderProxy cachedArrowHeadProxy = null;
+		private Vec3d arrowSizeCache;
 
-		protected RenderProxy cachedArrowHeadProxy = null;
+		private Transform globalTransCache;
 
-		protected Vec3d startCache;
-		protected Vec3d fromCache;
-		protected Color4d colorCache;
-		protected Vec3d arrowSizeCache;
-		protected Transform globalTransCache;
-
-		protected DisplayEntity displayObservee;
+		private DisplayEntity displayObservee;
 
 		private PolylineInfo[] pisCache;
 		private VisibilityInfo viCache;
 
-		protected ArrayList<Vec4d> selectionPoints = null;
+		private ArrayList<Vec4d> selectionPoints = null;
 		private ArrayList<Vec4d> nodePoints = null;
 		private LineProxy[] cachedProxies = null;
 
