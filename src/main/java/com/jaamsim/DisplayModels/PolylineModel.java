@@ -99,7 +99,6 @@ public class PolylineModel extends DisplayModel {
 		protected DisplayEntity displayObservee;
 
 		private PolylineInfo[] pisCache;
-		private Transform transCache;
 		private VisibilityInfo viCache;
 
 		protected ArrayList<Vec4d> selectionPoints = null;
@@ -128,9 +127,9 @@ public class PolylineModel extends DisplayModel {
 			if (pis == null || pis.length == 0)
 				return;
 
-			Transform trans = null;
+			Transform globalTrans = null;
 			if (displayObservee.getCurrentRegion() != null || displayObservee.getRelativeEntity() != null) {
-				trans = displayObservee.getGlobalPositionTransform();
+				globalTrans = displayObservee.getGlobalPositionTransform();
 			}
 
 			VisibilityInfo vi = getVisibilityInfo();
@@ -138,11 +137,11 @@ public class PolylineModel extends DisplayModel {
 			boolean dirty = false;
 
 			dirty = dirty || !compareArray(pisCache, pis);
-			dirty = dirty || !compare(transCache, trans);
+			dirty = dirty || !compare(globalTransCache, globalTrans);
 			dirty = dirty || !compare(viCache, vi);
 
 			pisCache = pis;
-			transCache = trans;
+			globalTransCache = globalTrans;
 			viCache = vi;
 
 			if (cachedProxies != null && !dirty) {
@@ -176,9 +175,9 @@ public class PolylineModel extends DisplayModel {
 				nodePoints.add(new Vec4d(p.x, p.y, p.z, 1.0d));
 			}
 
-			if (trans != null) {
-				RenderUtils.transformPointsLocal(trans, selectionPoints, 0);
-				RenderUtils.transformPointsLocal(trans, nodePoints, 0);
+			if (globalTrans != null) {
+				RenderUtils.transformPointsLocal(globalTrans, selectionPoints, 0);
+				RenderUtils.transformPointsLocal(globalTrans, nodePoints, 0);
 			}
 
 			// Add the line proxies
@@ -197,8 +196,8 @@ public class PolylineModel extends DisplayModel {
 					points.add(new Vec4d(end.x, end.y, end.z, 1.0d));
 				}
 
-				if (trans != null) {
-					RenderUtils.transformPointsLocal(trans, points, 0);
+				if (globalTrans != null) {
+					RenderUtils.transformPointsLocal(globalTrans, points, 0);
 				}
 
 				cachedProxies[proxyIndex++] = new LineProxy(points, pi.getColor(), pi.getWidth(), vi, displayObservee.getEntityNumber());
