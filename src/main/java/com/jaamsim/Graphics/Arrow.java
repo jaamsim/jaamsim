@@ -48,6 +48,7 @@ public class Arrow extends DisplayEntity {
 
 		arrowHeadSize = new Vec3dInput( "ArrowSize", "Graphics", new Vec3d(0.1d, 0.1d, 0.0d) );
 		arrowHeadSize.setUnitType(DistanceUnit.class);
+		arrowHeadSize.setDefaultText("PolylineModel");
 		this.addInput( arrowHeadSize );
 
 		color = new ColourInput("Color", "Graphics", ColourInput.BLACK);
@@ -76,8 +77,8 @@ public class Arrow extends DisplayEntity {
 		return ret;
 	}
 
-	public Vec3d getArrowHeadSize() {
-		return arrowHeadSize.getValue();
+	public Vec3dInput getArrowHeadSizeInput() {
+		return arrowHeadSize;
 	}
 
 }

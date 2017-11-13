@@ -128,11 +128,9 @@ public class PolylineModel extends DisplayModel {
 				globalTrans = displayObservee.getGlobalPositionTransform();
 			}
 
-			Vec3d arrowSize;
-			if (arrowObservee != null)
-				arrowSize = arrowObservee.getArrowHeadSize();
-			else
-				arrowSize = arrowHeadSize.getValue();
+			Vec3d arrowSize = arrowHeadSize.getValue();
+			if (arrowObservee != null && !arrowObservee.getArrowHeadSizeInput().isDefault())
+				arrowSize = arrowObservee.getArrowHeadSizeInput().getValue();
 
 			VisibilityInfo vi = getVisibilityInfo();
 
