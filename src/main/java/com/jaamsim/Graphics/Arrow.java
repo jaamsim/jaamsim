@@ -46,10 +46,11 @@ public class Arrow extends DisplayEntity {
 		width.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		this.addInput(width);
 
-		arrowHeadSize = new Vec3dInput( "ArrowSize", "Graphics", new Vec3d(0.1d, 0.1d, 0.0d) );
+		arrowHeadSize = new Vec3dInput( "ArrowHeadSize", "Graphics", new Vec3d(0.1d, 0.1d, 0.0d) );
 		arrowHeadSize.setUnitType(DistanceUnit.class);
 		arrowHeadSize.setDefaultText("PolylineModel");
 		this.addInput( arrowHeadSize );
+		this.addSynonym(arrowHeadSize, "ArrowSize");
 
 		color = new ColourInput("Color", "Graphics", ColourInput.BLACK);
 		this.addInput(color);
