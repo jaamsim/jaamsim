@@ -1301,11 +1301,29 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		@Override
 		public void menuSelected(MenuEvent e) {
 
+			// 1) Select from the available view windows
 			for (View view : View.getAll()) {
 				this.add(new NewRenderWindowLauncher(view));
 			}
+
+			// 2) "Define New View" menu item
 			this.addSeparator();
 			this.add(new ViewDefiner());
+
+			// 3) "Reset Positions and Sizes" menu item
+			JMenuItem resetItem = new JMenuItem( "Reset Positions and Sizes" );
+			resetItem.setMnemonic( 'R' );
+			resetItem.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed( ActionEvent e ) {
+					for (View v : View.getAll()) {
+						InputAgent.applyArgs(v, "WindowPosition");
+						InputAgent.applyArgs(v, "WindowSize");
+					}
+				}
+			} );
+			this.addSeparator();
+			this.add(resetItem);
 		}
 
 		@Override
