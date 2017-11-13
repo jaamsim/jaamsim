@@ -560,6 +560,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		JMenuItem objectPalletMenuItem = new JMenuItem( "Model Builder" );
 		objectPalletMenuItem.setMnemonic( 'O' );
 		objectPalletMenuItem.addActionListener(new SimulationMenuAction("ShowModelBuilder", "TRUE"));
+		viewMenu.addSeparator();
 		viewMenu.add( objectPalletMenuItem );
 
 		// 4) "Object Selector" menu item
@@ -607,6 +608,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 				Simulation.resetWindowPositionsAndSizes();
 			}
 		} );
+		viewMenu.addSeparator();
 		viewMenu.add( resetItem );
 	}
 
@@ -1576,6 +1578,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 					fileMenu.getItem(i).setEnabled(true);
 				}
 				for( int i = 0; i < viewMenu.getItemCount(); i++ ) {
+					if (viewMenu.getItem(i) == null)
+						continue;
 					viewMenu.getItem(i).setEnabled(true);
 				}
 
@@ -1599,6 +1603,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 					fileMenu.getItem(i).setEnabled(true);
 				}
 				for( int i = 0; i < viewMenu.getItemCount(); i++ ) {
+					if (viewMenu.getItem(i) == null)
+						continue;
 					viewMenu.getItem(i).setEnabled(true);
 				}
 
@@ -1621,6 +1627,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 					fileMenu.getItem(i).setEnabled(true);
 				}
 				for( int i = 0; i < viewMenu.getItemCount(); i++ ) {
+					if (viewMenu.getItem(i) == null)
+						continue;
 					viewMenu.getItem(i).setEnabled(true);
 				}
 
