@@ -22,7 +22,6 @@ import java.util.HashMap;
 
 import com.jaamsim.Commands.DeleteCommand;
 import com.jaamsim.Commands.KeywordCommand;
-import com.jaamsim.DisplayModels.ArrowModel;
 import com.jaamsim.DisplayModels.DisplayModel;
 import com.jaamsim.DisplayModels.ImageModel;
 import com.jaamsim.DisplayModels.PolylineModel;
@@ -345,10 +344,7 @@ public class DisplayEntity extends Entity {
 		ArrayList<DisplayModel> dmList = displayModelListInput.getValue();
 		if (dmList == null || dmList.isEmpty())
 			return false;
-		boolean isPoly = dmList.get(0) instanceof PolylineModel;
-		boolean isArrow = dmList.get(0) instanceof ArrowModel;
-
-		return isPoly || isArrow;
+		return dmList.get(0) instanceof PolylineModel;
 	}
 
 	private void setGraphicsKeywords() {
