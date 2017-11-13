@@ -16,9 +16,6 @@
  */
 package com.jaamsim.Commands;
 
-import java.util.ArrayList;
-import java.util.Locale;
-
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.datatypes.IntegerVector;
 import com.jaamsim.input.InputAgent;
@@ -33,14 +30,14 @@ public class DefineViewCommand implements Command {
 	private final String viewName;
 	private final Vec3d viewPosition;
 	private final Vec3d viewCenter;
-	private final IntegerVector windowPosition;
+	private final IntegerVector windowPos;
 
 	public DefineViewCommand(String str, Vec3d viewPos, Vec3d viewCntr, IntegerVector winPos) {
 		view = null;
 		viewName = str;
 		viewPosition = viewPos;
 		viewCenter = viewCntr;
-		windowPosition = winPos;
+		windowPos = winPos;
 	}
 
 	@Override
@@ -50,11 +47,8 @@ public class DefineViewCommand implements Command {
 		view = InputAgent.defineEntityWithUniqueName(View.class, viewName, "", true);
 
 		// Position the window on the screen
-		if (windowPosition != null) {
-			ArrayList<String> arg = new ArrayList<>();
-			arg.add(String.format((Locale)null, "%d", windowPosition.get(0)));
-			arg.add(String.format((Locale)null, "%d", windowPosition.get(1)));
-			InputAgent.apply(view, new KeywordIndex("WindowPosition", arg, null));
+		if (windowPos != null) {
+			InputAgent.applyIntegers(view, "WindowPosition", windowPos.get(0), windowPos.get(1));
 		}
 
 		// Display the window
