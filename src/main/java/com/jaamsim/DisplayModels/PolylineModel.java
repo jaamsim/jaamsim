@@ -43,15 +43,15 @@ import com.jaamsim.units.DistanceUnit;
 
 public class PolylineModel extends DisplayModel {
 
-	@Keyword(description = "A set of { x, y, z } numbers that define the size of the arrowhead "
-	                     + "in those directions at the end of the connector.",
-	         exampleList = "Arrow1 ArrowSize { 0.165 0.130 0.0 m }")
+	@Keyword(description = "A set of (x, y, z) numbers that define the size of the arrowhead.",
+	         exampleList = { "0.165 0.130 0.0 m" })
 	protected final Vec3dInput arrowHeadSize;
 
 	{
-		arrowHeadSize = new Vec3dInput("ArrowSize", "Key Inputs", new Vec3d(0.1d, 0.1d, 0.0d));
+		arrowHeadSize = new Vec3dInput("ArrowHeadSize", "Graphics", new Vec3d(0.1d, 0.1d, 0.0d));
 		arrowHeadSize.setUnitType(DistanceUnit.class);
 		this.addInput(arrowHeadSize);
+		this.addSynonym(arrowHeadSize, "ArrowSize");
 	}
 
 	private static final Color4d MINT = ColourInput.getColorWithName("mint");
