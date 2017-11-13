@@ -154,7 +154,7 @@ implements SampleProvider {
 		}
 
 		// Set the random number seed next unused value
-		InputAgent.applyArgs(this, "RandomSeed", String.format("%s", seed+1));
+		InputAgent.applyIntegers(this, randomSeedInput.getKeyword(), seed + 1);
 	}
 
 	@Override
