@@ -4,11 +4,9 @@ Define ObjectType {
                     ShapeModel
                     PolylineModel
                     TextModel
-                    ArrowModel
                     GraphModel
                   }
 
-ArrowModel      JavaClass { com.jaamsim.DisplayModels.ArrowModel               } Palette { 'Display Models' }    DragAndDrop { FALSE }
 GraphModel      JavaClass { com.jaamsim.DisplayModels.GraphModel               } Palette { 'Display Models' }    DragAndDrop { FALSE }
 PolylineModel   JavaClass { com.jaamsim.DisplayModels.PolylineModel            } Palette { 'Display Models' }    DragAndDrop { FALSE }
 TextModel       JavaClass { com.jaamsim.DisplayModels.TextModel                } Palette { 'Display Models' }    DragAndDrop { FALSE }
@@ -42,10 +40,11 @@ Sphere             ColladaFile { '<res>/shapes/Sphere.dae'     }
 CrossHairs         ColladaFile { '<res>/shapes/CrossHairs.dae' }
 RegionModelDefault ColladaFile { <res>/shapes/axis_text.dae }
 
-Define ArrowModel     { ArrowModelDefault          }
 Define GraphModel     { GraphModelDefault          }
-Define PolylineModel  { PolylineModelDefault       }
 Define TextModel      { TextModelDefault  EntityLabelModel  InputBoxModel }
+
+Define PolylineModel  { PolylineModelDefault  ArrowModelDefault }
+ArrowModelDefault ShowArrowHead { TRUE }
 
 Define  ImageModel { VideoRecorderIconModel }
 VideoRecorderIconModel ImageFile { '<res>/images/VideoRecorder-256.png' }
