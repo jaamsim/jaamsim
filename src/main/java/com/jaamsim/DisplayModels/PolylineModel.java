@@ -24,6 +24,7 @@ import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.PolylineInfo;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.controllers.RenderManager;
+import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Vec3dInput;
@@ -43,11 +44,18 @@ import com.jaamsim.units.DistanceUnit;
 
 public class PolylineModel extends DisplayModel {
 
+	@Keyword(description = "If TRUE, an arrow head is displayed at the end of the polyline.",
+	         exampleList = {"TRUE", "FALSE"})
+	protected final BooleanInput showArrowHead;
+
 	@Keyword(description = "A set of (x, y, z) numbers that define the size of the arrowhead.",
 	         exampleList = { "0.165 0.130 0.0 m" })
 	protected final Vec3dInput arrowHeadSize;
 
 	{
+		showArrowHead = new BooleanInput("ShowArrowHead", "Graphics", false);
+		this.addInput(showArrowHead);
+
 		arrowHeadSize = new Vec3dInput("ArrowHeadSize", "Graphics", new Vec3d(0.1d, 0.1d, 0.0d));
 		arrowHeadSize.setUnitType(DistanceUnit.class);
 		this.addInput(arrowHeadSize);
@@ -283,8 +291,10 @@ public class PolylineModel extends DisplayModel {
 				out.add(lp);
 			}
 
-			updateHead(simTime);
-			out.add(cachedProxy);
+			if (showArrowHead.getValue()) {
+				updateHead(simTime);
+				out.add(cachedProxy);
+			}
 		}
 
 		@Override
