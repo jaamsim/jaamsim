@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2017 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -108,6 +109,8 @@ public class PolylineModel extends DisplayModel {
 		private ArrayList<Vec4d> headPoints = null;
 		private RenderProxy cachedArrowHeadProxy = null;
 		private Vec3d arrowSizeCache;
+		private int lineWidthCache;
+		private Color4d lineColourCache;
 
 		private Transform globalTransCache;
 
@@ -147,6 +150,9 @@ public class PolylineModel extends DisplayModel {
 				globalTrans = displayObservee.getGlobalPositionTransform();
 			}
 
+			Color4d lineColour = colour.getValue();
+			int lineWidth = Math.max(1, width.getValue().intValue());
+
 			Vec3d arrowSize = arrowHeadSize.getValue();
 			if (arrowObservee != null && !arrowObservee.getArrowHeadSizeInput().isDefault())
 				arrowSize = arrowObservee.getArrowHeadSizeInput().getValue();
@@ -156,11 +162,15 @@ public class PolylineModel extends DisplayModel {
 			boolean dirty = false;
 
 			dirty = dirty || !compareArray(pisCache, pis);
+			dirty = dirty || lineWidthCache != lineWidth;
+			dirty = dirty || dirty_col4d(lineColourCache, lineColour);
 			dirty = dirty || dirty_vec3d(arrowSizeCache, arrowSize);
 			dirty = dirty || !compare(globalTransCache, globalTrans);
 			dirty = dirty || !compare(viCache, vi);
 
 			pisCache = pis;
+			lineWidthCache = lineWidth;
+			lineColourCache = lineColour;
 			arrowSizeCache = arrowSize;
 			globalTransCache = globalTrans;
 			viCache = vi;
@@ -221,7 +231,15 @@ public class PolylineModel extends DisplayModel {
 					RenderUtils.transformPointsLocal(globalTrans, points, 0);
 				}
 
-				cachedProxies[proxyIndex++] = new LineProxy(points, pi.getColor(), pi.getWidth(), vi, displayObservee.getEntityNumber());
+				int wid = pi.getWidth();
+				if (wid == -1)
+					wid = lineWidth;
+
+				Color4d col = pi.getColor();
+				if (col == null)
+					col = lineColour;
+
+				cachedProxies[proxyIndex++] = new LineProxy(points, col, wid, vi, displayObservee.getEntityNumber());
 			}
 
 			// Add the arrowhead
@@ -233,6 +251,8 @@ public class PolylineModel extends DisplayModel {
 			Vec3d fromPoint = curvePts.get(curvePts.size() - 2);
 
 			Color4d color = pis[0].getColor();
+			if (color == null)
+				color = lineColour;
 
 			// Draw an arrow head at the last two points
 			if (selectionPoints.size() < 2) {
