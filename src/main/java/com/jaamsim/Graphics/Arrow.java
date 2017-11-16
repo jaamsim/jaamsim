@@ -27,20 +27,22 @@ import com.jaamsim.units.DistanceUnit;
 
 public class Arrow extends DisplayEntity {
 
-	@Keyword(description = "The width of the Arrow line segments in pixels.",
-	         exampleList = {"1"})
-	private final ValueInput width;
-
-	@Keyword(description = "A set of { x, y, z } numbers that define the size of the arrowhead " +
-	                "in those directions at the end of the connector.",
-	         exampleList = {"0.165 0.130 0.0 m"})
-	private final Vec3dInput arrowHeadSize;
-
 	@Keyword(description = "The colour of the arrow.",
 	         exampleList = {"red"})
 	private final ColourInput color;
 
+	@Keyword(description = "The width of the Arrow line segments in pixels.",
+	         exampleList = {"1"})
+	private final ValueInput width;
+
+	@Keyword(description = "A set of (x, y, z) numbers that define the size of the arrowhead.",
+	         exampleList = {"0.165 0.130 0.0 m"})
+	private final Vec3dInput arrowHeadSize;
+
 	{
+		color = new ColourInput("Colour", "Graphics", ColourInput.BLACK);
+		this.addInput(color);
+		this.addSynonym(color, "Color");
 		width = new ValueInput("Width", "Graphics", 1.0d);
 		width.setUnitType(DimensionlessUnit.class);
 		width.setValidRange(0.0d, Double.POSITIVE_INFINITY);
@@ -51,10 +53,6 @@ public class Arrow extends DisplayEntity {
 		arrowHeadSize.setDefaultText("PolylineModel");
 		this.addInput( arrowHeadSize );
 		this.addSynonym(arrowHeadSize, "ArrowSize");
-
-		color = new ColourInput("Color", "Graphics", ColourInput.BLACK);
-		this.addInput(color);
-		this.addSynonym(color, "Colour");
 	}
 
 	public Arrow() {}
