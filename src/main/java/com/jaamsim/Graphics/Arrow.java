@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2009-2011 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2017 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +22,7 @@ import com.jaamsim.input.Input;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.input.Vec3dInput;
+import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.DistanceUnit;
@@ -41,11 +43,14 @@ public class Arrow extends DisplayEntity {
 
 	{
 		color = new ColourInput("Colour", "Graphics", ColourInput.BLACK);
+		color.setDefaultText("PolylineModel");
 		this.addInput(color);
 		this.addSynonym(color, "Color");
+
 		width = new ValueInput("Width", "Graphics", 1.0d);
 		width.setUnitType(DimensionlessUnit.class);
 		width.setValidRange(0.0d, Double.POSITIVE_INFINITY);
+		width.setDefaultText("PolylineModel");
 		this.addInput(width);
 
 		arrowHeadSize = new Vec3dInput( "ArrowHeadSize", "Graphics", new Vec3d(0.1d, 0.1d, 0.0d) );
@@ -70,9 +75,16 @@ public class Arrow extends DisplayEntity {
 
 	@Override
 	public PolylineInfo[] buildScreenPoints(double simTime) {
-		int w = Math.max(1, width.getValue().intValue());
+		int wid = -1;
+		if (!width.isDefault())
+			wid = Math.max(1, width.getValue().intValue());
+
+		Color4d col = null;
+		if (!color.isDefault())
+			col = color.getValue();
+
 		PolylineInfo[] ret = new PolylineInfo[1];
-		ret[0] = new PolylineInfo(getCurvePoints(), color.getValue(), w);
+		ret[0] = new PolylineInfo(getCurvePoints(), col, wid);
 		return ret;
 	}
 
