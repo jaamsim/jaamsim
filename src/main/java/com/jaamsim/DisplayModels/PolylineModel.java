@@ -27,6 +27,7 @@ import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.Keyword;
+import com.jaamsim.input.ValueInput;
 import com.jaamsim.input.Vec3dInput;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Mat4d;
@@ -40,9 +41,18 @@ import com.jaamsim.render.PolygonProxy;
 import com.jaamsim.render.RenderProxy;
 import com.jaamsim.render.RenderUtils;
 import com.jaamsim.render.VisibilityInfo;
+import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.DistanceUnit;
 
 public class PolylineModel extends DisplayModel {
+
+	@Keyword(description = "The colour of the polyline.",
+	         exampleList = {"red"})
+	private final ColourInput colour;
+
+	@Keyword(description = "The width of the polyline in pixels.",
+	         exampleList = {"1"})
+	private final ValueInput width;
 
 	@Keyword(description = "If TRUE, an arrow head is displayed at the end of the polyline.",
 	         exampleList = {"TRUE", "FALSE"})
@@ -53,6 +63,15 @@ public class PolylineModel extends DisplayModel {
 	protected final Vec3dInput arrowHeadSize;
 
 	{
+		colour = new ColourInput("Colour", "Graphics", ColourInput.BLACK);
+		this.addInput(colour);
+		this.addSynonym(colour, "Color");
+
+		width = new ValueInput("Width", "Graphics", 1.0d);
+		width.setUnitType(DimensionlessUnit.class);
+		width.setValidRange(0.0d, Double.POSITIVE_INFINITY);
+		this.addInput(width);
+
 		showArrowHead = new BooleanInput("ShowArrowHead", "Graphics", false);
 		this.addInput(showArrowHead);
 
