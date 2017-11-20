@@ -107,7 +107,6 @@ public class PolylineModel extends DisplayModel {
 		private Arrow arrowObservee;
 
 		private ArrayList<Vec4d> headPoints = null;
-		private RenderProxy cachedArrowHeadProxy = null;
 		private Vec3d arrowSizeCache;
 		private int lineWidthCache;
 		private Color4d lineColourCache;
@@ -121,7 +120,7 @@ public class PolylineModel extends DisplayModel {
 
 		private ArrayList<Vec4d> selectionPoints = null;
 		private ArrayList<Vec4d> nodePoints = null;
-		private LineProxy[] cachedProxies = null;
+		private ArrayList<RenderProxy> cachedProxies = null;
 
 		public Binding(Entity ent, DisplayModel dm) {
 			super(ent, dm);
@@ -212,9 +211,8 @@ public class PolylineModel extends DisplayModel {
 			}
 
 			// Add the line proxies
-			cachedProxies = new LineProxy[pis.length];
+			cachedProxies = new ArrayList<>(pis.length + 1);
 
-			int proxyIndex = 0;
 			for (PolylineInfo pi : pis) {
 				List<Vec4d> points = new ArrayList<>();
 
@@ -239,7 +237,7 @@ public class PolylineModel extends DisplayModel {
 				if (col == null)
 					col = lineColour;
 
-				cachedProxies[proxyIndex++] = new LineProxy(points, col, wid, vi, displayObservee.getEntityNumber());
+				cachedProxies.add(new LineProxy(points, col, wid, vi, displayObservee.getEntityNumber()));
 			}
 
 			// Add the arrowhead
@@ -280,26 +278,20 @@ public class PolylineModel extends DisplayModel {
 				RenderUtils.transformPointsLocal(globalTrans, headPoints, 0);
 			}
 
-			cachedArrowHeadProxy = new PolygonProxy(headPoints, Transform.ident, DisplayModel.ONES, color,
-			        false, 1, getVisibilityInfo(), observee.getEntityNumber());
+			cachedProxies.add(new PolygonProxy(headPoints, Transform.ident, DisplayModel.ONES, color,
+			        false, 1, getVisibilityInfo(), observee.getEntityNumber()));
 		}
 
 		@Override
 		public void collectProxies(double simTime, ArrayList<RenderProxy> out) {
 
-			if (displayObservee == null ||!displayObservee.getShow()) {
+			if (displayObservee == null || !displayObservee.getShow()) {
 				return;
 			}
 
 			updateProxies(simTime);
 
-			for (LineProxy lp : cachedProxies) {
-				out.add(lp);
-			}
-
-			if (showArrowHead.getValue()) {
-				out.add(cachedArrowHeadProxy);
-			}
+			out.addAll(cachedProxies);
 		}
 
 		@Override
