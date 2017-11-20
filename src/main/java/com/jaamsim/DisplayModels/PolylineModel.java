@@ -110,6 +110,7 @@ public class PolylineModel extends DisplayModel {
 		private Vec3d arrowSizeCache;
 		private int lineWidthCache;
 		private Color4d lineColourCache;
+		private boolean showArrowHeadCache;
 
 		private Transform globalTransCache;
 
@@ -163,6 +164,7 @@ public class PolylineModel extends DisplayModel {
 			dirty = dirty || !compareArray(pisCache, pis);
 			dirty = dirty || lineWidthCache != lineWidth;
 			dirty = dirty || dirty_col4d(lineColourCache, lineColour);
+			dirty = dirty || showArrowHeadCache != showArrowHead.getValue();
 			dirty = dirty || dirty_vec3d(arrowSizeCache, arrowSize);
 			dirty = dirty || !compare(globalTransCache, globalTrans);
 			dirty = dirty || !compare(viCache, vi);
@@ -170,6 +172,7 @@ public class PolylineModel extends DisplayModel {
 			pisCache = pis;
 			lineWidthCache = lineWidth;
 			lineColourCache = lineColour;
+			showArrowHeadCache = showArrowHead.getValue();
 			arrowSizeCache = arrowSize;
 			globalTransCache = globalTrans;
 			viCache = vi;
