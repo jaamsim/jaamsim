@@ -22,20 +22,20 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.jogamp.opengl.GL2GL3;
 
-public class TexMemManager {
+public class GraphicsMemManager {
 
 	private static final long TEX_FREE_TIMEOUT = 1000; // time since last use before freeing this texture (in ms)
 	private static final long TEX_FREE_FRAMES = 10; // number of renderer frames where this texture is not used before being freed
 
-	public static class Handle {
+	public static class TexHandle {
 		private final AtomicBoolean valid = new AtomicBoolean();
 		private final int texID;
 		private final int width, height;
 		private long lastUsedTime;
 		private long lastUsedFrame;
-		private final TexMemManager manager;
+		private final GraphicsMemManager manager;
 
-		Handle(int texID, int width, int height, TexMemManager m) {
+		private TexHandle(int texID, int width, int height, GraphicsMemManager m) {
 			this.texID = texID;
 			this.width = width;
 			this.height = height;
@@ -66,15 +66,51 @@ public class TexMemManager {
 		}
 	}
 
+	public static class BufferHandle {
+		private final AtomicBoolean valid = new AtomicBoolean();
+		private final int bufferID;
+		private final int size;
+		private long lastUsedTime;
+		private long lastUsedFrame;
+		private final GraphicsMemManager manager;
+
+		private BufferHandle(int bufferID, int size, GraphicsMemManager m) {
+			this.bufferID = bufferID;
+			this.size = size;
+			this.valid.set(true);
+			this.lastUsedTime = System.currentTimeMillis();
+			this.lastUsedFrame = Long.MAX_VALUE;
+			this.manager = m;
+		}
+
+		public boolean isValid() {
+			return valid.get();
+		}
+		// Returns a GL buffer ID valid for the current render cycle
+		public int bind() {
+			this.lastUsedTime = System.currentTimeMillis();
+			this.lastUsedFrame = manager.frameCounter;
+			assert(valid.get());
+			return bufferID;
+		}
+		void invalidate() {
+			valid.set(false);
+		}
+		public int getSize() {
+			return size;
+		}
+	}
+
 	private long frameCounter = 0;
-	private final ArrayList<Handle> allocated = new ArrayList<>();
+	private final ArrayList<TexHandle> allocatedTextures = new ArrayList<>();
+	private final ArrayList<BufferHandle> allocatedBuffers = new ArrayList<>();
 	private final Renderer renderer;
 
-	TexMemManager(Renderer r) {
+	GraphicsMemManager(Renderer r) {
 		this.renderer = r;
 	}
 
-	public Handle allocate(int width, int height, GL2GL3 gl) {
+	public TexHandle allocateTexture(int width, int height, GL2GL3 gl) {
 		int[] i = new int[1];
 		gl.glGenTextures(1, i, 0);
 		int glTexID = i[0];
@@ -87,17 +123,25 @@ public class TexMemManager {
 		gl.glTexParameteri(GL2GL3.GL_TEXTURE_2D, GL2GL3.GL_TEXTURE_WRAP_S, GL2GL3.GL_CLAMP_TO_EDGE);
 		gl.glTexParameteri(GL2GL3.GL_TEXTURE_2D, GL2GL3.GL_TEXTURE_WRAP_T, GL2GL3.GL_CLAMP_TO_EDGE);
 
-		// Attempt to load to a proxy texture first, then see what happens
-//		gl.glTexImage2D(GL2GL3.GL_TEXTURE_2D, 0, GL2GL3.GL_RGBA, width,
-//		                height, 0, GL2GL3.GL_BGRA, GL2GL3.GL_UNSIGNED_INT_8_8_8_8_REV, 0);
 		renderer.usingVRAM(width*height*4);
-
-		// TODO: handle out of mem here
 
 		gl.glBindTexture(GL2GL3.GL_TEXTURE_2D, 0);
 
-		Handle h = new Handle(glTexID, width, height, this);
-		allocated.add(h);
+		TexHandle h = new TexHandle(glTexID, width, height, this);
+		allocatedTextures.add(h);
+		return h;
+
+	}
+
+	public BufferHandle allocateBuffer(int size, GL2GL3 gl) {
+		int[] i = new int[1];
+		gl.glGenBuffers(1, i, 0);
+		int glBufferID = i[0];
+
+		renderer.usingVRAM(size);
+
+		BufferHandle h = new BufferHandle(glBufferID, size, this);
+		allocatedBuffers.add(h);
 		return h;
 
 	}
@@ -109,9 +153,9 @@ public class TexMemManager {
 	public void freeOldTextures() {
 		GL2GL3 gl = renderer.getGL();
 
-		Iterator<Handle> it = allocated.iterator();
-		while(it.hasNext()) {
-			Handle h = it.next();
+		Iterator<TexHandle> texIt = allocatedTextures.iterator();
+		while(texIt.hasNext()) {
+			TexHandle h = texIt.next();
 
 			if (  (System.currentTimeMillis() - h.lastUsedTime > TEX_FREE_TIMEOUT ) &&
 			      (frameCounter - h.lastUsedFrame > TEX_FREE_FRAMES) ) {
@@ -121,7 +165,22 @@ public class TexMemManager {
 				texs[0] = h.texID;
 				gl.glDeleteTextures(1, texs, 0);
 				renderer.usingVRAM(-(h.width*h.height*4));
-				it.remove();
+				texIt.remove();
+			}
+		}
+		Iterator<BufferHandle> buffIt = allocatedBuffers.iterator();
+		while(buffIt.hasNext()) {
+			BufferHandle h = buffIt.next();
+
+			if (  (System.currentTimeMillis() - h.lastUsedTime > TEX_FREE_TIMEOUT ) &&
+			      (frameCounter - h.lastUsedFrame > TEX_FREE_FRAMES) ) {
+				// Free this texture
+				h.invalidate();
+				int[] texs = new int[1];
+				texs[0] = h.bufferID;
+				gl.glDeleteBuffers(1, texs, 0);
+				renderer.usingVRAM(-h.size);
+				buffIt.remove();
 			}
 		}
 	}
