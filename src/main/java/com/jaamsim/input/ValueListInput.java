@@ -96,12 +96,12 @@ public class ValueListInput extends ListInput<DoubleVector> {
 		for (int i = 0; i < defValue.size(); i++) {
 			if (i > 0)
 				tmp.append(SEPARATOR);
-			tmp.append(defValue.get(i));
+			tmp.append(defValue.get(i)/Unit.getDisplayedUnitFactor(unitType));
 		}
 
 		if (unitType != Unit.class) {
 			tmp.append(SEPARATOR);
-			tmp.append(Unit.getSIUnit(unitType));
+			tmp.append(Unit.getDisplayedUnit(unitType));
 		}
 
 		return tmp.toString();
