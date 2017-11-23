@@ -228,7 +228,7 @@ public class DisplayEntity extends Entity {
 				alignBottom = false;
 		}
 
-		if (this instanceof Graph || this.usePointsInput() || this instanceof Region) {
+		if (this.usePointsInput() || alignmentInput.getHidden() || getSize().z == 0.0d) {
 			alignBottom = false;
 		}
 
