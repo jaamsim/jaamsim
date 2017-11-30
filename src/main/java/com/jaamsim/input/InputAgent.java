@@ -1131,7 +1131,10 @@ public class InputAgent {
 		long traceTick = EventManager.simTicks();
 		if (lastTickForTrace != traceTick) {
 			double unitFactor = Unit.getDisplayedUnitFactor(TimeUnit.class);
-			System.out.format(" \nTIME = %.6f\n", EventManager.current().ticksToSeconds(traceTick) / unitFactor);
+			String unitString = Unit.getDisplayedUnit(TimeUnit.class);
+			System.out.format(" \nTIME = %.6f %s,  TICKS = %d\n",
+					EventManager.current().ticksToSeconds(traceTick) / unitFactor, unitString,
+					traceTick);
 			lastTickForTrace = traceTick;
 		}
 
