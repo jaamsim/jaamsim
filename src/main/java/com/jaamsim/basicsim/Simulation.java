@@ -500,8 +500,8 @@ public class Simulation extends Entity {
 		eventViewerSize.setPromptReqd(false);
 
 		controlPanelWidth = new IntegerInput("ControlPanelWidth", "GUI", null);
-		eventViewerSize.setValidRange(1, 8192);
-		eventViewerSize.setPromptReqd(false);
+		controlPanelWidth.setValidRange(1, 8192);
+		controlPanelWidth.setPromptReqd(false);
 
 		// Hidden keywords
 		startTimeInput = new ValueInput("StartTime", "Key Inputs", 0.0d);
