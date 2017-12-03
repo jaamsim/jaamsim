@@ -433,75 +433,90 @@ public class Simulation extends Entity {
 		modelBuilderPos.setValidCount(2);
 		modelBuilderPos.setValidRange(-8192, 8192);
 		modelBuilderPos.setPromptReqd(false);
+		modelBuilderPos.setHidden(true);
 
 		modelBuilderSize = new IntegerListInput("ModelBuilderSize", "GUI", null);
 		modelBuilderSize.setValidCount(2);
 		modelBuilderSize.setValidRange(1, 8192);
 		modelBuilderSize.setPromptReqd(false);
+		modelBuilderSize.setHidden(true);
 
 		objectSelectorPos = new IntegerListInput("ObjectSelectorPos", "GUI", null);
 		objectSelectorPos.setValidCount(2);
 		objectSelectorPos.setValidRange(-8192, 8192);
 		objectSelectorPos.setPromptReqd(false);
+		objectSelectorPos.setHidden(true);
 
 		objectSelectorSize = new IntegerListInput("ObjectSelectorSize", "GUI", null);
 		objectSelectorSize.setValidCount(2);
 		objectSelectorSize.setValidRange(1, 8192);
 		objectSelectorSize.setPromptReqd(false);
+		objectSelectorSize.setHidden(true);
 
 		inputEditorPos = new IntegerListInput("InputEditorPos", "GUI", null);
 		inputEditorPos.setValidCount(2);
 		inputEditorPos.setValidRange(-8192, 8192);
 		inputEditorPos.setPromptReqd(false);
+		inputEditorPos.setHidden(true);
 
 		inputEditorSize = new IntegerListInput("InputEditorSize", "GUI", null);
 		inputEditorSize.setValidCount(2);
 		inputEditorSize.setValidRange(1, 8192);
 		inputEditorSize.setPromptReqd(false);
+		inputEditorSize.setHidden(true);
 
 		outputViewerPos = new IntegerListInput("OutputViewerPos", "GUI", null);
 		outputViewerPos.setValidCount(2);
 		outputViewerPos.setValidRange(-8192, 8192);
 		outputViewerPos.setPromptReqd(false);
+		outputViewerPos.setHidden(true);
 
 		outputViewerSize = new IntegerListInput("OutputViewerSize", "GUI", null);
 		outputViewerSize.setValidCount(2);
 		outputViewerSize.setValidRange(1, 8192);
 		outputViewerSize.setPromptReqd(false);
+		outputViewerSize.setHidden(true);
 
 		propertyViewerPos = new IntegerListInput("PropertyViewerPos", "GUI", null);
 		propertyViewerPos.setValidCount(2);
 		propertyViewerPos.setValidRange(-8192, 8192);
 		propertyViewerPos.setPromptReqd(false);
+		propertyViewerPos.setHidden(true);
 
 		propertyViewerSize = new IntegerListInput("PropertyViewerSize", "GUI", null);
 		propertyViewerSize.setValidCount(2);
 		propertyViewerSize.setValidRange(1, 8192);
 		propertyViewerSize.setPromptReqd(false);
+		propertyViewerSize.setHidden(true);
 
 		logViewerPos = new IntegerListInput("LogViewerPos", "GUI", null);
 		logViewerPos.setValidCount(2);
 		logViewerPos.setValidRange(-8192, 8192);
 		logViewerPos.setPromptReqd(false);
+		logViewerPos.setHidden(true);
 
 		logViewerSize = new IntegerListInput("LogViewerSize", "GUI", null);
 		logViewerSize.setValidCount(2);
 		logViewerSize.setValidRange(1, 8192);
 		logViewerSize.setPromptReqd(false);
+		logViewerSize.setHidden(true);
 
 		eventViewerPos = new IntegerListInput("EventViewerPos", "GUI", null);
 		eventViewerPos.setValidCount(2);
 		eventViewerPos.setValidRange(-8192, 8192);
 		eventViewerPos.setPromptReqd(false);
+		eventViewerPos.setHidden(true);
 
 		eventViewerSize = new IntegerListInput("EventViewerSize", "GUI", null);
 		eventViewerSize.setValidCount(2);
 		eventViewerSize.setValidRange(1, 8192);
 		eventViewerSize.setPromptReqd(false);
+		eventViewerSize.setHidden(true);
 
 		controlPanelWidth = new IntegerInput("ControlPanelWidth", "GUI", null);
 		controlPanelWidth.setValidRange(1, 8192);
 		controlPanelWidth.setPromptReqd(false);
+		controlPanelWidth.setHidden(true);
 
 		// Hidden keywords
 		startTimeInput = new ValueInput("StartTime", "Key Inputs", 0.0d);
