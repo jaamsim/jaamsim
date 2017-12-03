@@ -837,7 +837,7 @@ public class Simulation extends Entity {
 
 		// Reset all Simulation inputs to their default values
 		for (Input<?> inp : Simulation.getInstance().getEditableInputs()) {
-			inp.reset();
+			InputAgent.applyArgs(getInstance(), inp.getKeyword());
 		}
 
 		updateRealTime();
