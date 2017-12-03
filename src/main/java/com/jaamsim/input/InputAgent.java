@@ -789,6 +789,8 @@ public class InputAgent {
 	public static final void apply(Entity ent, Input<?> in, KeywordIndex kw) {
 		// If the input value is blank, restore the default
 		if (kw.numArgs() == 0) {
+			if (in.isDefault())
+				return;
 			in.reset();
 		}
 		else {
