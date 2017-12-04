@@ -218,6 +218,14 @@ public abstract class StateUserEntity extends StateEntity implements ThresholdUs
 		return false;
 	}
 
+	public boolean isImmediateMaintenance() {
+		for (DowntimeEntity de : immediateMaintenanceList.getValue()) {
+			if (de.isDown())
+				return true;
+		}
+		return false;
+	}
+
 	public boolean isBreakdown() {
 		for (DowntimeEntity de : immediateBreakdownList.getValue()) {
 			if (de.isDown())
@@ -228,6 +236,14 @@ public abstract class StateUserEntity extends StateEntity implements ThresholdUs
 				return true;
 		}
 		for (DowntimeEntity de : opportunisticBreakdownList.getValue()) {
+			if (de.isDown())
+				return true;
+		}
+		return false;
+	}
+
+	public boolean isImmediateBreakdown() {
+		for (DowntimeEntity de : immediateBreakdownList.getValue()) {
 			if (de.isDown())
 				return true;
 		}
