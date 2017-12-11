@@ -240,6 +240,10 @@ public class View extends Entity {
 	public void updateForInput( Input<?> in ) {
 		super.updateForInput( in );
 
+		// Do nothing if the renderer has not be initialized successfully
+		if (!RenderManager.isGood())
+			return;
+
 		if (in == windowPos) {
 			final Frame window = RenderManager.getOpenWindowForView(this);
 			if (window != null)
