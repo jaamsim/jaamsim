@@ -97,7 +97,7 @@ public abstract class Device extends StateUserEntity {
 
 		// Schedule the completion of the time step
 		stepCompleted = false;
-		endTicks = EventManager.calcSimTicks(duration);
+		endTicks = getSimTicks() + EventManager.secsToNearestTick(duration);
 		if (isTraceFlag()) traceLine(1, "duration=%.6f", duration);
 		this.scheduleProcess(duration, 5, true, endStepTarget, endStepHandle);  // FIFO order
 
