@@ -187,7 +187,8 @@ public abstract class Device extends StateUserEntity {
 
 		// If the process is working, perform its next update immediately
 		if (endStepHandle.isScheduled()) {
-			EventManager.interruptEvent(endStepHandle);
+			EventManager.killEvent(endStepHandle);
+			EventManager.scheduleTicks(0L, 5, true, endStepTarget, endStepHandle);  // FIFO order
 			return;
 		}
 
@@ -237,7 +238,8 @@ public abstract class Device extends StateUserEntity {
 
 		// End the present process prematurely
 		if (endStepHandle.isScheduled()) {
-			EventManager.interruptEvent(endStepHandle);
+			EventManager.killEvent(endStepHandle);
+			EventManager.scheduleTicks(0L, 5, true, endStepTarget, endStepHandle);  // FIFO order
 		}
 	}
 
@@ -321,7 +323,8 @@ public abstract class Device extends StateUserEntity {
 		// If an interrupt closure, interrupt the present activity and release the entity
 		if (isImmediateReleaseThresholdClosure()) {
 			if (endStepHandle.isScheduled()) {
-				EventManager.interruptEvent(endStepHandle);
+				EventManager.killEvent(endStepHandle);
+				EventManager.scheduleTicks(0L, 5, true, endStepTarget, endStepHandle);  // FIFO order
 			}
 			return;
 		}
