@@ -138,19 +138,22 @@ public class Seize extends LinkedService implements ResourceUser {
 	@Override
 	public boolean isReadyToStart() {
 		String m = this.getNextMatchValue(getSimTime());
-		return waitQueue.getValue().getMatchCount(m) != 0 && this.checkResources() && this.isOpen();
+		DisplayEntity ent = waitQueue.getValue().getFirstForMatch(m);
+		if (ent == null)
+			return false;
+		return checkResources(ent) && isOpen();
 	}
 
 	/**
 	 * Determine whether the required Resources are available.
 	 * @return = TRUE if all the resources are available
 	 */
-	public boolean checkResources() {
+	public boolean checkResources(DisplayEntity ent) {
 		double simTime = this.getSimTime();
 
 		// Temporarily set the obj entity to the first one in the queue
 		DisplayEntity oldEnt = this.getReceivedEntity(simTime);
-		this.setReceivedEntity(waitQueue.getValue().getFirst());
+		this.setReceivedEntity(ent);
 
 		ArrayList<Resource> resList = resourceList.getValue();
 		ArrayList<SampleProvider> numberList = numberOfUnitsList.getValue();
@@ -160,6 +163,7 @@ public class Seize extends LinkedService implements ResourceUser {
 				return false;
 			}
 		}
+		this.setReceivedEntity(oldEnt);
 		return true;
 	}
 
