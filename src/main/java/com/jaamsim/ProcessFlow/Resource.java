@@ -61,7 +61,7 @@ public class Resource extends DisplayEntity {
 	private final BooleanInput strictOrder;
 
 	private int unitsInUse;  // number of resource units that are being used at present
-	private ArrayList<Seize> seizeList;  // Seize objects that require this resource
+	private ArrayList<ResourceUser> userList;  // objects that seize this resource
 	private int lastCapacity; // capacity for the resource
 
 	//	Statistics
@@ -90,19 +90,20 @@ public class Resource extends DisplayEntity {
 
 	public Resource() {
 		unitsInUseDist = new DoubleVector();
-		seizeList = new ArrayList<>();
+		userList = new ArrayList<>();
 	}
 
 	@Override
 	public void validate() {
 
 		boolean found = false;
-		for (Seize ent : Entity.getClonesOfIterator(Seize.class)) {
-			if( ent.requiresResource(this) )
+		for (Entity ent : Entity.getClonesOfIterator(Entity.class, ResourceUser.class)) {
+			ResourceUser ru = (ResourceUser) ent;
+			if (ru.requiresResource(this))
 				found = true;
 		}
 		if (!found)
-			throw new InputErrorException( "At least one Seize object must use this resource." );
+			throw new InputErrorException( "At least one object must seize this resource." );
 
 		if( capacity.getValue() instanceof Distribution )
 			throw new InputErrorException( "The Capacity keyword cannot accept a probability distribution.");
@@ -126,11 +127,12 @@ public class Resource extends DisplayEntity {
 		unitsReleased = 0;
 		unitsInUseDist.clear();
 
-		// Prepare a list of the Seize objects that use this resource
-		seizeList.clear();
-		for (Seize ent : Entity.getClonesOfIterator(Seize.class)) {
-			if( ent.requiresResource(this) )
-				seizeList.add(ent);
+		// Prepare a list of the objects that seize this resource
+		userList.clear();
+		for (Entity ent : Entity.getClonesOfIterator(Entity.class, ResourceUser.class)) {
+			ResourceUser ru = (ResourceUser) ent;
+			if (ru.requiresResource(this))
+				userList.add(ru);
 		}
 	}
 
@@ -167,7 +169,7 @@ public class Resource extends DisplayEntity {
 	}
 
 	/**
-	 * Notify all the Seize object that the number of available units of this Resource has increased.
+	 * Notify all the users of this Resource that the number of available units has increased.
 	 */
 	public void notifySeizeObjects() {
 
@@ -176,75 +178,73 @@ public class Resource extends DisplayEntity {
 		if (cap <= unitsInUse)
 			return;
 
-		// Prepare a sorted list of the Seize objects that have a waiting entity
-		ArrayList<Seize> list = new ArrayList<>(seizeList.size());
-		for (Seize s : seizeList) {
-			if (!s.getQueue().isEmpty()) {
-				list.add(s);
+		// Prepare a sorted list of the users that have a waiting entity
+		ArrayList<ResourceUser> list = new ArrayList<>(userList.size());
+		for (ResourceUser ru : userList) {
+			if (ru.hasWaitingEntity()) {
+				list.add(ru);
 			}
 		}
-		Collections.sort(list, seizeCompare);
+		Collections.sort(list, userCompare);
 
-		// Find the Seize object(s) that can use the released units
+		// Attempt to start the resource users in order of priority and wait time
 		while (true) {
 
-			// Find the first Seize object that can seize the Resource
-			Seize selection = null;
-			for (Seize s : list) {
-				if (s.isReadyToStart()) {
-					selection = s;
+			// Find the first resource user that can seize its resources
+			ResourceUser selection = null;
+			for (ResourceUser ru : list) {
+				if (ru.isReadyToStart()) {
+					selection = ru;
 					break;
 				}
 
-				// In StrictOrder mode, only the highest priority/longest waiting time entity is
-				// eligible to seize the Resource
+				// In strict-order mode, only the highest priority/longest wait time entity is
+				// eligible to seize its resources
 				if (strictOrder.getValue())
 					return;
 			}
 
-			// If none of the Seize objects can seize the Resource, then we are done
+			// If none of the resource users can seize its resources, then we are done
 			if (selection == null)
 				return;
 
-			// Seize the resource
-			selection.startProcessing(getSimTime());
+			// Seize the resources
+			selection.startNextEntity();
 
 			// Is additional capacity available?
 			if (cap <= unitsInUse)
 				return;
 
-			// If the selected Seize object has no more entities, remove it from the list
-			if (selection.getQueue().isEmpty()) {
+			// If the selected object has no more entities, remove it from the list
+			if (!selection.hasWaitingEntity()) {
 				list.remove(selection);
 			}
 			// If it does have more entities, re-sort the list to account for the next entity
 			else {
-				Collections.sort(list, seizeCompare);
+				Collections.sort(list, userCompare);
 			}
 		}
 	}
 
 	/**
-	 * Sorts the Seize objects by the priority and waiting time of the first entity in each queue
+	 * Sorts the users of the Resource by their priority and waiting time
 	 */
-	private static class SeizeCompare implements Comparator<Seize> {
+	private static class UserCompare implements Comparator<ResourceUser> {
 		@Override
-		public int compare(Seize s1, Seize s2) {
+		public int compare(ResourceUser ru1, ResourceUser ru2) {
 
-			// Chose the Seize object whose Queue contains the highest priority entity
+			// Chose the object with the highest priority entity
 			// (lowest numerical value, i.e. 1 is higher priority than 2)
-			Queue que1 = s1.getQueue();
-			Queue que2 = s2.getQueue();
-			int ret = Integer.compare(que1.getFirstPriority(), que2.getFirstPriority());
+			int ret = Integer.compare(ru1.getPriority(), ru2.getPriority());
 
 			// If the priorities are the same, choose the one with the longest waiting time
 			if (ret == 0) {
-				return Double.compare(que2.getQueueTime(), que1.getQueueTime());
+				return Double.compare(ru2.getWaitTime(), ru1.getWaitTime());
 			}
 			return ret;
 		}
 	}
-	private SeizeCompare seizeCompare = new SeizeCompare();
+	private UserCompare userCompare = new UserCompare();
 
 	/**
 	 * Returns true if the saved capacity differs from the present capacity
@@ -280,7 +280,7 @@ public class Resource extends DisplayEntity {
 	void updateForCapacityChange() {
 		if (isTraceFlag()) trace(0, "updateForCapacityChange");
 
-		// Select the Seize objects to notify
+		// Select the resource users to notify
 		if (this.getCapacity(getSimTime()) > lastCapacity) {
 			this.notifySeizeObjects();
 		}
