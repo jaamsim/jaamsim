@@ -462,6 +462,8 @@ public class Queue extends LinkedComponent {
 	 * @return first entity in the queue.
 	 */
 	public DisplayEntity getFirst() {
+		if (itemSet.isEmpty())
+			return null;
 		return itemSet.first().entity;
 	}
 
@@ -506,6 +508,16 @@ public class Queue extends LinkedComponent {
 		if (matchSet == null)
 			return 0;
 		return matchSet.size();
+	}
+
+	public DisplayEntity getFirstForMatch(String m) {
+		if (m == null) {
+			return this.getFirst();
+		}
+		TreeSet<QueueEntry> matchSet = matchMap.get(m);
+		if (matchSet == null)
+			return null;
+		return matchSet.first().entity;
 	}
 
 	/**
