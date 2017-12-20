@@ -30,7 +30,7 @@ import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.units.DimensionlessUnit;
 
-public class Seize extends LinkedService {
+public class Seize extends LinkedService implements ResourceUser {
 
 	@Keyword(description = "The Resources from which units are to be seized.",
 	         exampleList = {"Resource1 Resource2"})
@@ -115,6 +115,27 @@ public class Seize extends LinkedService {
 		return true;
 	}
 
+	@Override
+	public boolean hasWaitingEntity() {
+		return !getQueue().isEmpty();
+	}
+
+	@Override
+	public int getPriority() {
+		return getQueue().getFirstPriority();
+	}
+
+	@Override
+	public double getWaitTime() {
+		return getQueue().getQueueTime();
+	}
+
+	@Override
+	public void startNextEntity() {
+		startProcessing(getSimTime());
+	}
+
+	@Override
 	public boolean isReadyToStart() {
 		String m = this.getNextMatchValue(getSimTime());
 		return waitQueue.getValue().getMatchCount(m) != 0 && this.checkResources() && this.isOpen();
@@ -165,11 +186,7 @@ public class Seize extends LinkedService {
 		return waitQueue.getValue();
 	}
 
-	/**
-	 * Is the specified Resource required by this Seize object?
-	 * @param res = the specified Resource.
-	 * @return = TRUE if the Resource is required.
-	 */
+	@Override
 	public boolean requiresResource(Resource res) {
 		if (resourceList.getValue() == null)
 			return false;
