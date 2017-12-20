@@ -82,26 +82,13 @@ public class Seize extends LinkedService implements ResourceUser {
 
 	@Override
 	public void queueChanged() {
-		this.startProcessing(getSimTime());
+		if (this.isReadyToStart()) {
+			startNextEntity();
+		}
 	}
 
 	@Override
 	protected boolean startProcessing(double simTime) {
-
-		// Stop if the queue is empty, there are insufficient resources, or a threshold is closed
-		while (this.isReadyToStart()) {
-
-			// Determine the match value
-			String m = this.getNextMatchValue(simTime);
-			this.setMatchValue(m);
-
-			// If sufficient units are available, then seize them and pass the entity to the next component
-			this.seizeResources();
-			DisplayEntity ent = this.getNextEntityForMatch(m);
-			if (ent == null)
-				error("Entity not found for specified Match value: %s", m);
-			this.sendToNextComponent(ent);
-		}
 		return false;
 	}
 
@@ -132,7 +119,18 @@ public class Seize extends LinkedService implements ResourceUser {
 
 	@Override
 	public void startNextEntity() {
-		startProcessing(getSimTime());
+		if (isTraceFlag()) trace(2, "startNextEntity");
+
+		// Remove the first entity from the queue
+		String m = this.getNextMatchValue(getSimTime());
+		DisplayEntity ent = waitQueue.getValue().removeFirstForMatch(m);
+		if (ent == null)
+			error("Entity not found for specified Match value: %s", m);
+		this.registerEntity(ent);
+
+		// Seize the resources and pass the entity to the next component
+		this.seizeResources();
+		this.sendToNextComponent(ent);
 	}
 
 	@Override
