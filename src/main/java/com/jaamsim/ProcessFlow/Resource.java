@@ -155,6 +155,10 @@ public class Resource extends DisplayEntity {
 		this.updateStatistics(unitsInUse, unitsInUse+n);
 		unitsInUse += n;
 		unitsSeized += n;
+		if (getAvailableUnits(getSimTime()) < 0) {
+			error("Capacity of resource exceeded. Capacity: %s, units in use: %s.",
+					getCapacity(getSimTime()), unitsInUse);
+		}
 	}
 
 	/**
