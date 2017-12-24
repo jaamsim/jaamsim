@@ -82,10 +82,8 @@ public class Release extends LinkedComponent {
 			resList.get(i).release(n);
 		}
 
-		// Notify any Seize objects that are waiting for these Resources
-		for(int i=0; i<resList.size(); i++) {
-			resList.get(i).notifySeizeObjects();
-		}
+		// Notify any resource users that are waiting for these Resources
+		Resource.notifyResourceUsers(resList);
 	}
 
 }

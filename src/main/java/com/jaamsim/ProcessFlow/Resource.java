@@ -173,20 +173,17 @@ public class Resource extends DisplayEntity {
 	}
 
 	/**
-	 * Notify all the users of this Resource that the number of available units has increased.
+	 * Starts resource users on their next entities.
 	 */
-	public void notifySeizeObjects() {
+	public static void notifyResourceUsers(ArrayList<Resource> resList) {
 
-		// Is there capacity available?
-		int cap = this.getCapacity(this.getSimTime());
-		if (cap <= unitsInUse)
-			return;
-
-		// Prepare a sorted list of the users that have a waiting entity
-		ArrayList<ResourceUser> list = new ArrayList<>(userList.size());
-		for (ResourceUser ru : userList) {
-			if (ru.hasWaitingEntity()) {
-				list.add(ru);
+		// Prepare a sorted list of the resource users that have a waiting entity
+		ArrayList<ResourceUser> list = new ArrayList<>();
+		for (Resource res : resList) {
+			for (ResourceUser ru : res.userList) {
+				if (!list.contains(ru) && ru.hasWaitingEntity()) {
+					list.add(ru);
+				}
 			}
 		}
 		Collections.sort(list, userCompare);
@@ -204,7 +201,7 @@ public class Resource extends DisplayEntity {
 
 				// In strict-order mode, only the highest priority/longest wait time entity is
 				// eligible to seize its resources
-				if (strictOrder.getValue())
+				if (ru.hasStrictResource())
 					return;
 			}
 
@@ -214,10 +211,6 @@ public class Resource extends DisplayEntity {
 
 			// Seize the resources
 			selection.startNextEntity();
-
-			// Is additional capacity available?
-			if (cap <= unitsInUse)
-				return;
 
 			// If the selected object has no more entities, remove it from the list
 			if (!selection.hasWaitingEntity()) {
@@ -252,7 +245,7 @@ public class Resource extends DisplayEntity {
 			return ret;
 		}
 	}
-	private UserCompare userCompare = new UserCompare();
+	private static UserCompare userCompare = new UserCompare();
 
 	/**
 	 * Returns true if the saved capacity differs from the present capacity
@@ -290,7 +283,9 @@ public class Resource extends DisplayEntity {
 
 		// Select the resource users to notify
 		if (this.getCapacity(getSimTime()) > lastCapacity) {
-			this.notifySeizeObjects();
+			ArrayList<Resource> resList = new ArrayList<>(1);
+			resList.add(this);
+			Resource.notifyResourceUsers(resList);
 		}
 
 		// Wait for the next capacity change
