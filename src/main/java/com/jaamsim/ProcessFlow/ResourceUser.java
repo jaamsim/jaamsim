@@ -53,4 +53,10 @@ public interface ResourceUser {
 	 * Seizes the Resources for the next entity and begins its processing.
 	 */
 	public abstract void startNextEntity();
+
+	/**
+	 * Returns whether the seize object uses a Resource that required strict-order.
+	 * @return true if a strict-order Resource is required
+	 */
+	public abstract boolean hasStrictResource();
 }

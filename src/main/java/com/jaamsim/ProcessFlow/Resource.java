@@ -230,6 +230,10 @@ public class Resource extends DisplayEntity {
 		}
 	}
 
+	public boolean isStrictOrder() {
+		return strictOrder.getValue();
+	}
+
 	/**
 	 * Sorts the users of the Resource by their priority and waiting time
 	 */

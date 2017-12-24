@@ -134,6 +134,16 @@ public class Seize extends LinkedService implements ResourceUser {
 	}
 
 	@Override
+	public boolean hasStrictResource() {
+		for (Resource res : getResourceList()) {
+			if (res.isStrictOrder()) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
 	public boolean isReadyToStart() {
 		String m = this.getNextMatchValue(getSimTime());
 		DisplayEntity ent = waitQueue.getValue().getFirstForMatch(m);
