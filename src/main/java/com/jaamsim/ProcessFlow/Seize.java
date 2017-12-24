@@ -153,7 +153,7 @@ public class Seize extends LinkedService implements ResourceUser {
 		DisplayEntity oldEnt = this.getReceivedEntity(simTime);
 		this.setReceivedEntity(ent);
 
-		ArrayList<Resource> resList = resourceList.getValue();
+		ArrayList<Resource> resList = getResourceList();
 		ArrayList<SampleProvider> numberList = numberOfUnitsList.getValue();
 		for (int i=0; i<resList.size(); i++) {
 			if (resList.get(i).getAvailableUnits(simTime) < (int) numberList.get(i).getNextSample(simTime)) {
@@ -178,7 +178,7 @@ public class Seize extends LinkedService implements ResourceUser {
 		}
 
 		// Seize the resources
-		ArrayList<Resource> resList = resourceList.getValue();
+		ArrayList<Resource> resList = getResourceList();
 		for (int i=0; i<resList.size(); i++) {
 			resList.get(i).seize(seizedUnits[i]);
 		}
@@ -188,11 +188,15 @@ public class Seize extends LinkedService implements ResourceUser {
 		return waitQueue.getValue();
 	}
 
+	public ArrayList<Resource> getResourceList() {
+		return resourceList.getValue();
+	}
+
 	@Override
 	public boolean requiresResource(Resource res) {
-		if (resourceList.getValue() == null)
+		if (getResourceList() == null)
 			return false;
-		return resourceList.getValue().contains(res);
+		return getResourceList().contains(res);
 	}
 
 	@Output(name = "SeizedUnits",
