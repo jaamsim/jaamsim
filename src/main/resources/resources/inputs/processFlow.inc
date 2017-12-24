@@ -10,6 +10,7 @@ Define ObjectType {
 	Resource
 	Seize
 	Release
+	EntityProcessor
 	Assign
 	Branch
 	Duplicate
@@ -36,6 +37,7 @@ Define	ImageModel {
 	ResourceIconModel
 	SeizeIconModel
 	ReleaseIconModel
+	EntityProcessorIconModel
 	AssignModel
 	BranchIconModel
 	DuplicateIconModel
@@ -59,6 +61,7 @@ ServerIconModel         ImageFile { '<res>/images/Server-256.png'       }  Trans
 ResourceIconModel       ImageFile { '<res>/images/Resource-256.png'     }  Transparent { TRUE }
 SeizeIconModel          ImageFile { '<res>/images/Seize-256.png'        }  Transparent { TRUE }
 ReleaseIconModel        ImageFile { '<res>/images/Release-256.png'      }  Transparent { TRUE }
+EntityProcessorIconModel  ImageFile { '<res>/images/EntityProcessor-256.png' }  Transparent { TRUE }
 AssignModel             ImageFile { '<res>/images/Assign-256.png'       }  Transparent { TRUE }
 BranchIconModel         ImageFile { '<res>/images/Branch-256.png'       }  Transparent { TRUE }
 DuplicateIconModel      ImageFile { '<res>/images/Duplicate-256.png'    }  Transparent { TRUE }
@@ -85,6 +88,7 @@ EntityDelay             JavaClass { com.jaamsim.ProcessFlow.EntityDelay         
 Resource                JavaClass { com.jaamsim.ProcessFlow.Resource              }  Palette { 'Process Flow' }  DefaultDisplayModel { ResourceIconModel        } IconFile { '<res>/images/Resource-24.png'        }
 Seize                   JavaClass { com.jaamsim.ProcessFlow.Seize                 }  Palette { 'Process Flow' }  DefaultDisplayModel { SeizeIconModel           } IconFile { '<res>/images/Seize-24.png'           }
 Release                 JavaClass { com.jaamsim.ProcessFlow.Release               }  Palette { 'Process Flow' }  DefaultDisplayModel { ReleaseIconModel         } IconFile { '<res>/images/Release-24.png'         }
+EntityProcessor         JavaClass { com.jaamsim.ProcessFlow.EntityProcessor       }  Palette { 'Process Flow' }  DefaultDisplayModel { EntityProcessorIconModel } IconFile { '<res>/images/EntityProcessor-24.png' }
 Assign                  JavaClass { com.jaamsim.ProcessFlow.Assign                }  Palette { 'Process Flow' }  DefaultDisplayModel { AssignModel              } IconFile { '<res>/images/Assign-24.png'          }
 Branch                  JavaClass { com.jaamsim.ProcessFlow.Branch                }  Palette { 'Process Flow' }  DefaultDisplayModel { BranchIconModel          } IconFile { '<res>/images/Branch-24.png'          }
 Duplicate               JavaClass { com.jaamsim.ProcessFlow.Duplicate             }  Palette { 'Process Flow' }  DefaultDisplayModel { DuplicateIconModel       } IconFile { '<res>/images/Duplicate-24.png'       }
@@ -113,6 +117,7 @@ EntityDelay        Description { 'Delays a received entity by a specified durati
 Resource           Description { 'Set of identical resource units that can be seized and released by various processes.' }
 Seize              Description { 'Seizes one or more units of a Resource.' }
 Release            Description { 'Releases one or more units of a Resource.' }
+EntityProcessor    Description { 'Seizes one or more Resources, delays the received entity by a specified duration, and releases the resources.' }
 Assign             Description { 'Assigns new values to attributes.' }
 Branch             Description { 'Directs a received entity to a selected destination.' }
 Duplicate          Description { 'Sends copies of the received entity to a set of destinations.' }
