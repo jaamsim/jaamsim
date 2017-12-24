@@ -82,8 +82,8 @@ public class Seize extends LinkedService implements ResourceUser {
 
 	@Override
 	public void queueChanged() {
-		if (this.isReadyToStart()) {
-			startNextEntity();
+		if (isReadyToStart()) {
+			Resource.notifyResourceUsers(getResourceList());
 		}
 	}
 
