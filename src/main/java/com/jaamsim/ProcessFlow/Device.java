@@ -28,7 +28,8 @@ public abstract class Device extends StateUserEntity {
 	private double lastUpdateTime; // simulation time at which the process was updated last
 	private double duration; // calculated duration of the process time step
 	private long endTicks;  // planned simulation time in ticks at the end of the next process step
-	private boolean downtimePending;  // indicates that a downtime event is ready to start
+	private boolean forcedDowntimePending;  // indicates that a forced downtime event is ready to start
+	private boolean immediateDowntimePending;  // indicates that an immediate downtime event is ready to start
 	private boolean stepCompleted;  // indicates that the last process time step was completed
 
 	public Device() {}
@@ -40,7 +41,8 @@ public abstract class Device extends StateUserEntity {
 		duration = 0.0;
 		endTicks = 0L;
 		lastUpdateTime = 0.0d;
-		downtimePending = false;
+		forcedDowntimePending = false;
+		immediateDowntimePending = false;
 		stepCompleted = true;
 	}
 
@@ -50,8 +52,10 @@ public abstract class Device extends StateUserEntity {
 	public final void startStep() {
 		if (isTraceFlag()) {
 			trace(0, "startStep");
-			traceLine(1, "endActionHandle.isScheduled=%s, isAvailable=%s, forcedDowntimePending=%s",
-					endStepHandle.isScheduled(), this.isAvailable(), downtimePending);
+			traceLine(1, "endActionHandle.isScheduled=%s, isAvailable=%s",
+					endStepHandle.isScheduled(), this.isAvailable());
+			traceLine(1, "forcedDowntimePending=%s, immediateDowntimePending=%s",
+					forcedDowntimePending, immediateDowntimePending);
 		}
 
 		double simTime = this.getSimTime();
@@ -64,8 +68,9 @@ public abstract class Device extends StateUserEntity {
 
 		// Stop if any of the thresholds, maintenance, or breakdowns close the operation
 		// or if a forced downtime is about to begin
-		if (!this.isAvailable() || downtimePending) {
-			downtimePending = false;
+		if (!isAvailable() || isReadyForDowntime()) {
+			forcedDowntimePending = false;
+			immediateDowntimePending = false;
 			this.stopProcessing();
 			return;
 		}
@@ -343,6 +348,18 @@ public abstract class Device extends StateUserEntity {
 	// MAINTENANCE AND BREAKDOWNS
 	// ********************************************************************************************
 
+	public boolean isForcedDowntimePending() {
+		return forcedDowntimePending;
+	}
+
+	public boolean isImmediateDowntimePending() {
+		return immediateDowntimePending;
+	}
+
+	public boolean isReadyForDowntime() {
+		return immediateDowntimePending || forcedDowntimePending;
+	}
+
 	@Override
 	public boolean canStartDowntime(DowntimeEntity down) {
 
@@ -371,13 +388,13 @@ public abstract class Device extends StateUserEntity {
 
 		// For a forced downtime, set the flag to stop further processing
 		if (isForcedDowntime(down)) {
-			downtimePending = true;
+			forcedDowntimePending = true;
 			return;
 		}
 
 		// For an immediate downtime, set the flag and interrupt the present process
 		if (isImmediateDowntime(down)) {
-			downtimePending = true;
+			immediateDowntimePending = true;
 			this.performUnscheduledUpdate();
 			return;
 		}
