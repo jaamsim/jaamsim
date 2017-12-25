@@ -145,11 +145,12 @@ public class Seize extends LinkedService implements ResourceUser {
 
 	@Override
 	public boolean isReadyToStart() {
+		if (!isOpen()) {
+			return false;
+		}
 		String m = this.getNextMatchValue(getSimTime());
 		DisplayEntity ent = waitQueue.getValue().getFirstForMatch(m);
-		if (ent == null)
-			return false;
-		return checkResources(ent) && isOpen();
+		return ent != null && checkResources(ent);
 	}
 
 	/**
