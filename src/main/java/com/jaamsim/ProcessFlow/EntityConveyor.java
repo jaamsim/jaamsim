@@ -215,11 +215,14 @@ public class EntityConveyor extends LinkedService {
 	@Override
 	public void updateGraphics(double simTime) {
 
-		if (!this.isBusy() || presentTravelTime == 0.0d || !usePointsInput())
+		if (presentTravelTime == 0.0d || !usePointsInput())
 			return;
 
 		// Move each entity on the conveyor to its present position
-		double frac = (simTime - this.getLastUpdateTime())/presentTravelTime;
+		double frac = 0.0d;
+		if (isBusy()) {
+			frac = (simTime - this.getLastUpdateTime())/presentTravelTime;
+		}
 		for (int i=0; i<entryList.size(); i++) {
 			ConveyorEntry entry = entryList.get(i);
 			Vec3d localPos = PolylineInfo.getPositionOnPolyline(getCurvePoints(), entry.position + frac);
