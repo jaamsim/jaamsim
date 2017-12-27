@@ -271,11 +271,9 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 	}
 
 	private void setDirty(boolean bool) {
-		if (bool != dirty) {
-			dirty = bool;
-			if (bool) {
-				GUIFrame.updateUI();
-			}
+		dirty = bool;
+		if (bool) {
+			GUIFrame.updateUI();
 		}
 	}
 
