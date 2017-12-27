@@ -145,7 +145,7 @@ public class Seize extends LinkedService implements ResourceUser {
 
 	@Override
 	public boolean isReadyToStart() {
-		if (!isOpen()) {
+		if (!isOpen() || isForcedDowntimePending() || isImmediateDowntimePending()) {
 			return false;
 		}
 		String m = this.getNextMatchValue(getSimTime());

@@ -19,6 +19,7 @@ package com.jaamsim.ProcessFlow;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import com.jaamsim.BasicObjects.DowntimeEntity;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
@@ -181,6 +182,32 @@ public class EntityProcessor extends Seize {
 	@Override
 	protected boolean isNewStepReqd(boolean completed) {
 		return true;
+	}
+
+	@Override
+	public void thresholdChanged() {
+		if (isReadyToStart()) {
+			Resource.notifyResourceUsers(getResourceList());
+		}
+		if (isImmediateReleaseThresholdClosure()) {
+			for (ProcessorEntry entry : entryList) {
+				entry.remainingTicks = 0L;
+			}
+		}
+		super.thresholdChanged();
+	}
+
+	@Override
+	public boolean isReadyForDowntime() {
+		return isImmediateDowntimePending() || (isForcedDowntimePending() && entryList.isEmpty());
+	}
+
+	@Override
+	public void endDowntime(DowntimeEntity down) {
+		if (isReadyToStart()) {
+			Resource.notifyResourceUsers(getResourceList());
+		}
+		super.endDowntime(down);
 	}
 
 	@Override
