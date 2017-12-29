@@ -89,6 +89,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 
 		firstDowntime = new SampleInput("FirstDowntime", "Key Inputs", null);
 		firstDowntime.setUnitType(TimeUnit.class);
+		firstDowntime.setEntity(this);
 		this.addInput(firstDowntime);
 
 		iatWorkingEntity = new EntityInput<>(StateEntity.class, "IntervalWorkingEntity", "Key Inputs", null);
