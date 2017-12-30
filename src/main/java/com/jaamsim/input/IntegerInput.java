@@ -32,6 +32,11 @@ public class IntegerInput extends Input<Integer> {
 		value = Input.parseInteger(kw.getArg(0), minValue, maxValue);
 	}
 
+	@Override
+	public String getValidInputDesc() {
+		return Input.VALID_INTEGER;
+	}
+
 	public void setValidRange(int min, int max) {
 		minValue = min;
 		maxValue = max;

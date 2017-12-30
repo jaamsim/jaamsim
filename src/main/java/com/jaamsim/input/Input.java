@@ -87,6 +87,7 @@ public abstract class Input<T> {
 	protected static final String VALID_ENTITY_PROV = "Accepts an entity name or an expression that returns an entity.";
 	protected static final String VALID_ENTITY_PROV_TYPE = "Accepts the name of an entity of type %s or an expression that returns such an entity.";
 	protected static final String VALID_COLOUR = "Accepts a colour name, an RGB value, or an RGB/transparency value.";
+	protected static final String VALID_INTEGER = "Accepts a dimensionless integer value.";
 	protected static final String VALID_VALUE = "Accepts a number with units of type %s.";
 	protected static final String VALID_VALUE_DIMLESS = "Accepts a dimensionless number.";
 	protected static final String VALID_VALUE_UNIT = "Accepts a number with or without units. "
