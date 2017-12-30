@@ -34,7 +34,7 @@ public class Seize extends LinkedService implements ResourceUser {
 
 	@Keyword(description = "The Resources from which units are to be seized.",
 	         exampleList = {"Resource1 Resource2"})
-	private final EntityListInput<Resource> resourceList;
+	protected final EntityListInput<Resource> resourceList;
 
 	@Keyword(description = "The number of units to seize from the Resources specified by the "
 	                     + "'ResourceList' keyword.",
@@ -53,7 +53,8 @@ public class Seize extends LinkedService implements ResourceUser {
 		forcedBreakdownList.setHidden(true);
 		opportunisticBreakdownList.setHidden(true);
 
-		resourceList = new EntityListInput<>(Resource.class, "ResourceList", "Key Inputs", null);
+		ArrayList<Resource> resDef = new ArrayList<>();
+		resourceList = new EntityListInput<>(Resource.class, "ResourceList", "Key Inputs", resDef);
 		resourceList.setRequired(true);
 		this.addInput(resourceList);
 		this.addSynonym(resourceList, "Resource");
@@ -71,7 +72,9 @@ public class Seize extends LinkedService implements ResourceUser {
 	@Override
 	public void validate() {
 		super.validate();
-		Input.validateInputSize(resourceList, numberOfUnitsList);
+		if (!resourceList.getValue().isEmpty()) {
+			Input.validateInputSize(resourceList, numberOfUnitsList);
+		}
 	}
 
 	@Override
@@ -181,6 +184,8 @@ public class Seize extends LinkedService implements ResourceUser {
 	 */
 	public void seizeResources() {
 		double simTime = this.getSimTime();
+		if (getResourceList().isEmpty())
+			return;
 
 		// Set the number of resources to seize
 		ArrayList<SampleProvider> numberList = numberOfUnitsList.getValue();

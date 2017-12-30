@@ -25,9 +25,15 @@ import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.input.Keyword;
+import com.jaamsim.input.Output;
+import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
 
 public class EntityProcessor extends Seize {
+
+	@Keyword(description = "The maximum number of entities that can be processed simultaneously.",
+	         exampleList = { "2" })
+	private final SampleInput capacity;
 
 	@Keyword(description = "The service time required to process an entity.",
 	         exampleList = { "3.0 h", "NormalDistribution1", "'1[s] + 0.5*[TimeSeries1].PresentValue'" })
@@ -47,6 +53,14 @@ public class EntityProcessor extends Seize {
 		immediateBreakdownList.setHidden(false);
 		forcedBreakdownList.setHidden(false);
 		opportunisticBreakdownList.setHidden(false);
+
+		resourceList.setRequired(false);
+
+		capacity = new SampleInput("Capacity", "Key Inputs", new SampleConstant(1.0));
+		capacity.setUnitType(DimensionlessUnit.class);
+		capacity.setEntity(this);
+		capacity.setValidRange(0, Double.POSITIVE_INFINITY);
+		this.addInput(capacity);
 
 		serviceTime = new SampleInput("ServiceTime", "Key Inputs", new SampleConstant(TimeUnit.class, 0.0));
 		serviceTime.setUnitType(TimeUnit.class);
@@ -83,6 +97,26 @@ public class EntityProcessor extends Seize {
 			return String.format("(%s, %s, %s)",
 					entity, Arrays.toString(resourceUnits), remainingTicks);
 		}
+	}
+
+	@Override
+	public void queueChanged() {
+		if (getResourceList().isEmpty()) {
+			while (isReadyToStart()) {
+				startNextEntity();
+			}
+		}
+		else {
+			super.queueChanged();
+		}
+	}
+
+	@Override
+	public boolean isReadyToStart() {
+		if (entryList.size() + newEntryList.size() >= getCapacity(getSimTime())) {
+			return false;
+		}
+		return super.isReadyToStart();
 	}
 
 	@Override
@@ -169,7 +203,14 @@ public class EntityProcessor extends Seize {
 		}
 
 		// Notify any resource users that are waiting for these Resources
-		Resource.notifyResourceUsers(getResourceList());
+		if (getResourceList().isEmpty()) {
+			while (isReadyToStart()) {
+				startNextEntity();
+			}
+		}
+		else {
+			Resource.notifyResourceUsers(getResourceList());
+		}
 
 		// Pass the entities to the next component
 		for (ProcessorEntry entry : completedEntries) {
@@ -215,6 +256,14 @@ public class EntityProcessor extends Seize {
 		for (ProcessorEntry entry : entryList) {
 			moveToProcessPosition(entry.entity);
 		}
+	}
+
+	@Output(name = "Capacity",
+	 description = "The present number of entities that can be processed simultaneously.",
+	    unitType = DimensionlessUnit.class,
+	    sequence = 0)
+	public int getCapacity(double simTime) {
+		return (int) capacity.getValue().getNextSample(simTime);
 	}
 
 }
