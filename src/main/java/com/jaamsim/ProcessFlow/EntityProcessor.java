@@ -358,4 +358,38 @@ public class EntityProcessor extends Seize {
 		return (int) capacity.getValue().getNextSample(simTime);
 	}
 
+	@Output(name = "UnitsInUse",
+	 description = "The present number of capacity units that are being used.",
+	    unitType = DimensionlessUnit.class,
+	    sequence = 1)
+	public int getUnitsInUse(double simTime) {
+		return entryList.size();
+	}
+
+	@Output(name = "EntityList",
+	 description = "The entities being processed at present.",
+	    sequence = 2)
+	public ArrayList<DisplayEntity> getEntityList(double simTime) {
+		ArrayList<DisplayEntity> ret = new ArrayList<>(entryList.size());
+		for (ProcessorEntry entry : entryList) {
+			ret.add(entry.entity);
+		}
+		return ret;
+	}
+
+	@Output(name = "RemainingTime",
+	 description = "The remaining processing time for the entities being processed at present.",
+	    sequence = 3)
+	public double[] getRemainingTime(double simTime) {
+		double[] ret = new double[entryList.size()];
+		double dt = 0.0d;
+		if (isBusy()) {
+			dt = simTime - getLastUpdateTime();
+		}
+		for (int i = 0; i < entryList.size(); i++) {
+			ret[i] = EventManager.ticksToSecs(entryList.get(i).remainingTicks) - dt;
+		}
+		return ret;
+	}
+
 }
