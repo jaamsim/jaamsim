@@ -23,7 +23,10 @@ import com.jaamsim.BasicObjects.DowntimeEntity;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
+import com.jaamsim.Samples.TimeSeries;
+import com.jaamsim.events.Conditional;
 import com.jaamsim.events.EventManager;
+import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.units.DimensionlessUnit;
@@ -31,8 +34,12 @@ import com.jaamsim.units.TimeUnit;
 
 public class EntityProcessor extends Seize {
 
-	@Keyword(description = "The maximum number of entities that can be processed simultaneously.",
-	         exampleList = { "2" })
+	@Keyword(description = "The maximum number of entities that can be processed simultaneously.\n"
+	                     + "If the capacity changes during the simulation run, the EntityProcessor "
+	                     + "will attempt to use an increase in capacity as soon as it occurs. "
+	                     + "However, a decrease in capacity will have no affect on entities that "
+	                     + "have already started processing.",
+	         exampleList = {"3", "TimeSeries1", "this.attrib1"})
 	private final SampleInput capacity;
 
 	@Keyword(description = "The service time required to process an entity.",
@@ -41,6 +48,7 @@ public class EntityProcessor extends Seize {
 
 	private final ArrayList<ProcessorEntry> entryList;  // List of the entities being processed
 	private final ArrayList<ProcessorEntry> newEntryList;  // List of the entities to add to entryList
+	private int lastCapacity; // Last recorded value for capacity
 
 	{
 		trace.setHidden(false);
@@ -79,6 +87,17 @@ public class EntityProcessor extends Seize {
 		super.earlyInit();
 		entryList.clear();
 		newEntryList.clear();
+	}
+
+	@Override
+	public void startUp() {
+		super.startUp();
+
+		if (capacity.getValue() instanceof SampleConstant)
+			return;
+
+		// Track any changes in capacity
+		this.waitForCapacityChange();
 	}
 
 	private static class ProcessorEntry {
@@ -250,6 +269,79 @@ public class EntityProcessor extends Seize {
 		}
 		super.endDowntime(down);
 	}
+
+	/**
+	 * Returns true if the saved capacity differs from the present capacity
+	 * @return true if the capacity has changed
+	 */
+	boolean isCapacityChanged() {
+		return this.getCapacity(getSimTime()) != lastCapacity;
+	}
+
+	/**
+	 * Loops from one capacity change to the next.
+	 */
+	void waitForCapacityChange() {
+
+		// Set the present capacity
+		lastCapacity = this.getCapacity(getSimTime());
+
+		// Wait until the state is ready to change
+		if (capacity.getValue() instanceof TimeSeries) {
+			TimeSeries ts = (TimeSeries)capacity.getValue();
+			long simTicks = getSimTicks();
+			long durTicks = ts.getNextChangeAfterTicks(simTicks) - simTicks;
+			this.scheduleProcessTicks(durTicks, 10, true, updateForCapacityChangeTarget, null); // FIFO
+		}
+		else {
+			EventManager.scheduleUntil(updateForCapacityChangeTarget, capacityChangeConditional, null);
+		}
+	}
+
+	/**
+	 * Responds to a change in capacity.
+	 */
+	void updateForCapacityChange() {
+		if (isTraceFlag()) trace(0, "updateForCapacityChange");
+
+		// Select the resource users to notify
+		if (getCapacity(getSimTime()) > lastCapacity) {
+			if (getResourceList().isEmpty()) {
+				while (isReadyToStart()) {
+					startNextEntity();
+				}
+			}
+			else {
+				Resource.notifyResourceUsers(getResourceList());
+			}
+		}
+
+		// Wait for the next capacity change
+		this.waitForCapacityChange();
+	}
+
+	// Conditional for isCapacityChanged()
+	class CapacityChangeConditional extends Conditional {
+		@Override
+		public boolean evaluate() {
+			return EntityProcessor.this.isCapacityChanged();
+		}
+	}
+	private final Conditional capacityChangeConditional = new CapacityChangeConditional();
+
+	// Target for updateForCapacityChange()
+	class UpdateForCapacityChangeTarget extends ProcessTarget {
+		@Override
+		public String getDescription() {
+			return EntityProcessor.this.getName() + ".updateForCapacityChange";
+		}
+
+		@Override
+		public void process() {
+			EntityProcessor.this.updateForCapacityChange();
+		}
+	}
+	private final ProcessTarget updateForCapacityChangeTarget = new UpdateForCapacityChangeTarget();
 
 	@Override
 	public void updateGraphics(double simTime) {
