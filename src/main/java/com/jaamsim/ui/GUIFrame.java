@@ -1062,8 +1062,14 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 				JToggleButton startResume = (JToggleButton)event.getSource();
 				startResume.setEnabled(false);
 				if(startResume.isSelected()) {
-					GUIFrame.this.startSimulation();
-					controlStartResume.setPressedIcon(pausePressedIcon);
+					boolean bool = GUIFrame.this.startSimulation();
+					if (bool) {
+						controlStartResume.setPressedIcon(pausePressedIcon);
+					}
+					else {
+						startResume.setSelected(false);
+						startResume.setEnabled(true);
+					}
 				}
 				else {
 					GUIFrame.this.pauseSimulation();
@@ -1510,16 +1516,22 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 
 	/**
 	 * Starts or resumes the simulation run.
+	 * @return true if the simulation was started or resumed; false if cancel or close was selected
 	 */
-	public void startSimulation() {
+	public boolean startSimulation() {
 		if( getSimState() <= SIM_STATE_CONFIGURED ) {
+			boolean confirmed = true;
 			if (InputAgent.isSessionEdited()) {
-				this.saveAs();
+				confirmed = GUIFrame.showSaveChangesDialog(this);
 			}
-			Simulation.start(currentEvt);
+			if (confirmed) {
+				Simulation.start(currentEvt);
+			}
+			return confirmed;
 		}
 		else if( getSimState() == SIM_STATE_PAUSED ) {
 			currentEvt.resume(currentEvt.secondsToNearestTick(Simulation.getPauseTime()));
+			return true;
 		}
 		else
 			throw new ErrorException( "Invalid Simulation State for Start/Resume" );
