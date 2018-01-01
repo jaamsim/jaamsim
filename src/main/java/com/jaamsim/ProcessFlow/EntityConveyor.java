@@ -135,14 +135,20 @@ public class EntityConveyor extends LinkedService {
 	@Override
 	protected boolean processStep(double simTime) {
 
-		// Remove the entity from the conveyor
-		DisplayEntity ent = entryList.remove(0).entity;
+		// Remove the first entity from the conveyor and send it to the next component
+		ConveyorEntry entry = entryList.remove(0);
+		DisplayEntity ent = entry.entity;
+		this.sendToNextComponent(ent);
+
+		// Remove any other entities that have also reached the end
+		double maxPos = Math.max(entry.position, 1.0d);
+		while (!entryList.isEmpty() && entryList.get(0).position >= maxPos) {
+			ent = entryList.remove(0).entity;
+			this.sendToNextComponent(ent);
+		}
 
 		// Update the travel time
 		this.updateTravelTime(simTime);
-
-		// Send the entity to the next component
-		this.sendToNextComponent(ent);
 
 		return true;
 	}
@@ -195,6 +201,16 @@ public class EntityConveyor extends LinkedService {
 			// (required when an entity is added to a conveyor that already has entities in flight)
 			this.resetProcess();
 		}
+	}
+
+	@Override
+	public void thresholdChanged() {
+		if (isImmediateReleaseThresholdClosure()) {
+			for (ConveyorEntry entry : entryList) {
+				entry.position = 1.0d;
+			}
+		}
+		super.thresholdChanged();
 	}
 
 	// ********************************************************************************************
