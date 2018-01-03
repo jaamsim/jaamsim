@@ -1470,6 +1470,9 @@ public class ExpParser {
 	private static ArrayList<ExpNode> parseIndices(ParseContext context, TokenList tokens, Expression exp) throws ExpError {
 		tokens.next(); // consume '('
 		ExpTokenizer.Token peeked = tokens.peek();
+		if (peeked == null) {
+			throw new ExpError(exp.source, exp.source.length(), "Unexpected end of input in argument list");
+		}
 		if (peeked.value.equals(")")) {
 			// Empty list
 			tokens.next();
@@ -1482,6 +1485,9 @@ public class ExpParser {
 			indices.add(indexExp);
 
 			peeked = tokens.peek();
+			if (peeked == null) {
+				throw new ExpError(exp.source, exp.source.length(), "Unexpected end of input in argument list");
+			}
 			if (peeked.value.equals(")")) {
 				break;
 			}
@@ -1498,6 +1504,9 @@ public class ExpParser {
 
 	private static ExpNode parseLambda(ParseContext context, TokenList tokens, Expression exp, int pos) throws ExpError {
 		ExpTokenizer.Token peeked = tokens.peek();
+		if (peeked == null) {
+			throw new ExpError(exp.source, exp.source.length(), "Unexpected end of input in lambda parameter list");
+		}
 
 		ArrayList<String> vars = new ArrayList<>();
 		if (!peeked.value.equals("|")) {
@@ -1515,6 +1524,9 @@ public class ExpParser {
 				// consume var name
 				tokens.next();
 				peeked = tokens.peek();
+				if (peeked == null) {
+					throw new ExpError(exp.source, exp.source.length(), "Unexpected end of input in lambda parameter list");
+				}
 				if (peeked.value.equals("|")) {
 					break;
 				}
