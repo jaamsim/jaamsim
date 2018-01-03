@@ -18,8 +18,10 @@
 package com.jaamsim.ProcessFlow;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 import java.util.TreeSet;
 
@@ -832,7 +834,6 @@ public class Queue extends LinkedComponent {
 		return ret;
 	}
 
-
 	@Output(name = "QueueLengthAverage",
 	 description = "The average number of entities in the queue.",
 	    unitType = DimensionlessUnit.class,
@@ -924,11 +925,52 @@ public class Queue extends LinkedComponent {
 		return matchMap.size();
 	}
 
+	@Output(name = "UniqueMatchValues",
+	 description = "The list of unique Match values for the entities in the queue.",
+	    sequence = 12)
+	public ArrayList<String> getUniqueMatchValues(double simTime) {
+		ArrayList<String> ret = new ArrayList<>(matchMap.keySet());
+		Collections.sort(ret);
+		return ret;
+	}
+
+	@Output(name = "MatchValueCountMap",
+	 description = "The number of entities in the queue for each Match expression value.\n"
+	             + "For example, '[Queue1].MatchValueCountMap(\"SKU1\")' returns the number of "
+	             + "entities whose Match value is \"SKU1\".",
+	    unitType = DimensionlessUnit.class,
+	    sequence = 13)
+	public LinkedHashMap<String, Integer> getMatchValueCountMap(double simTime) {
+		LinkedHashMap<String, Integer> ret = new LinkedHashMap<>(matchMap.size());
+		for (String m : getUniqueMatchValues(simTime)) {
+			ret.put(m, matchMap.get(m).size());
+		}
+		return ret;
+	}
+
+	@Output(name = "MatchValueMap",
+	 description = "Provides a list of entities in the queue for each Match expression value.\n"
+	             + "For example, '[Queue1].MatchValueMap(\"SKU1\")' returns a list of entities "
+	             + "whose Match value is \"SKU1\".",
+	    sequence = 14)
+	public LinkedHashMap<String, ArrayList<DisplayEntity>> getMatchValueMap(double simTime) {
+		LinkedHashMap<String, ArrayList<DisplayEntity>> ret = new LinkedHashMap<>(matchMap.size());
+		for (String m : getUniqueMatchValues(simTime)) {
+			TreeSet<QueueEntry> entrySet = matchMap.get(m);
+			ArrayList<DisplayEntity> list = new ArrayList<>(entrySet.size());
+			for (QueueEntry entry : entrySet) {
+				list.add(entry.entity);
+			}
+			ret.put(m, list);
+		}
+		return ret;
+	}
+
 	@Output(name = "NumberReneged",
 	 description = "The number of entities that reneged from the queue.",
 	    unitType = DimensionlessUnit.class,
 	  reportable = true,
-	    sequence = 12)
+	    sequence = 15)
 	public long getNumberReneged(double simTime) {
 		return numberReneged;
 	}
@@ -938,7 +980,7 @@ public class Queue extends LinkedComponent {
 	             + "First in queue = 1, second in queue = 2, etc.",
 	    unitType = DimensionlessUnit.class,
 	  reportable = false,
-	    sequence = 13)
+	    sequence = 16)
 	public long getQueuePosition(double simTime) {
 		DisplayEntity objEnt = this.getReceivedEntity(simTime);
 		if (objEnt == null)
