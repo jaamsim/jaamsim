@@ -92,6 +92,9 @@ public class ExpEvaluator {
 		if (Double.class.isAssignableFrom(val.getClass())) {
 			return ExpResult.makeNumResult((Double)val, unitType);
 		}
+		if (Integer.class.isAssignableFrom(val.getClass())) {
+			return ExpResult.makeNumResult((Integer)val, unitType);
+		}
 		if (ExpCollections.isCollectionClass(val.getClass())) {
 			return ExpCollections.getCollection(val, unitType);
 		}
