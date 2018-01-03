@@ -540,15 +540,6 @@ public class Queue extends LinkedComponent {
 		return this.remove(matchSet.first());
 	}
 
-	public ArrayList<String> getUniqueMatchValues() {
-		ArrayList<String> ret = new ArrayList<>(matchMap.size());
-		Iterator<String> itr = matchMap.keySet().iterator();
-		while (itr.hasNext()) {
-			ret.add(itr.next());
-		}
-		return ret;
-	}
-
 	/**
 	 * Returns the match value that has the largest number of entities in the queue.
 	 * @return match value with the most entities.
@@ -611,15 +602,14 @@ public class Queue extends LinkedComponent {
 		Queue shortest = null;
 		int count = -1;
 		for (Queue que : queueList) {
-			int n = que.getMatchValueCount(0.0);
-			if (n > count) {
-				count = n;
+			if (que.matchMap.size() > count) {
+				count = que.matchMap.size();
 				shortest = que;
 			}
 		}
 
 		// Return the first match value that has sufficient entities in each queue
-		for (String m : shortest.getUniqueMatchValues()) {
+		for (String m : shortest.matchMap.keySet()) {
 			if (Queue.sufficientEntities(queueList, numberList, m))
 				return m;
 		}
