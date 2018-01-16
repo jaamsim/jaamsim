@@ -32,6 +32,7 @@ import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.Output;
+import com.jaamsim.input.StringInput;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
 
@@ -56,6 +57,11 @@ public class EntityGenerator extends LinkedService {
 	                     + "The generated entities will be copies of this entity.",
 	         exampleList = {"Proto", "'choose( this.NumberGenerated%2+1, [Proto1], [Proto2])'"})
 	private final EntityProvInput<DisplayEntity> prototypeEntity;
+
+	@Keyword(description = "The base for the names assigned to the generated entities. "
+	                     + "The generated entities will be named Name1, Name2, etc.",
+	         exampleList = {"Customer", "Package"})
+	private final StringInput baseName;
 
 	@Keyword(description = "The maximum number of entities to be generated.",
 	         exampleList = {"3", "InputValue1", "[InputValue1].Value"})
@@ -97,6 +103,10 @@ public class EntityGenerator extends LinkedService {
 		prototypeEntity.addInvalidClass(TextBasics.class);
 		prototypeEntity.addInvalidClass(OverlayEntity.class);
 		this.addInput(prototypeEntity);
+
+		baseName = new StringInput("BaseName", "Key Inputs", null);
+		baseName.setDefaultText("Generator Name");
+		this.addInput(baseName);
 
 		maxNumber = new SampleInput("MaxNumber", "Key Inputs", null);
 		maxNumber.setUnitType(DimensionlessUnit.class);
@@ -153,17 +163,21 @@ public class EntityGenerator extends LinkedService {
 			return true;
 		}
 
+		// Set the name for the entities
+		String name = baseName.getValue();
+		if (name == null)
+			name = this.getName() + "_";
+
 		// Create the new entities
 		int num = (int) entitiesPerArrival.getValue().getNextSample(getSimTime());
 		for (int i=0; i<num; i++) {
 			numberGenerated++;
 			DisplayEntity proto = prototypeEntity.getValue().getNextEntity(simTime);
 			StringBuilder sb = new StringBuilder();
-			sb.append(this.getName()).append("_").append(numberGenerated);
+			sb.append(name).append(numberGenerated);
 			DisplayEntity ent = InputAgent.generateEntityWithName(proto.getClass(), sb.toString());
 			Entity.fastCopyInputs(proto, ent);
 			ent.earlyInit();
-
 
 			// Set the obj output to the assembled part
 			this.registerEntity(ent);
