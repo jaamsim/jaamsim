@@ -50,6 +50,13 @@ public class DoubleVector {
 		System.arraycopy(original.storage, 0, storage, 0, numElements);
 	}
 
+	public DoubleVector(DoubleVector original, int numCopied) {
+		numElements = numCopied;
+		capIncrement = 1;
+		storage = new double[numCopied];
+		System.arraycopy(original.storage, 0, storage, 0, numCopied);
+	}
+
 	/**
 	 * Construct an empty vector with the given initial capacity and capacity
 	 * increment.
@@ -160,6 +167,28 @@ public class DoubleVector {
 	}
 
 	/**
+	 * Pops the last element from the vector and returns it
+	 */
+	public double pop() {
+		if(numElements <= 0) {
+			throw new ErrorException( "Cannot pop from empty array" );
+		}
+		return storage[--numElements];
+	}
+
+	/**
+	 * Drops the specified number of elements from the end of the vector
+	 */
+	public void drop(int num) {
+		if (num < 0) throw new ErrorException(" num must be positive ");
+		if(numElements - num < 0) {
+			throw new ErrorException( " num is larger than the length of the array " );
+		}
+
+		numElements -= num;
+	}
+
+	/**
 	 * Add the specified value to the value at the specified index.
 	 */
 	public void addAt( double value, int index ) {
@@ -174,6 +203,13 @@ public class DoubleVector {
 	}
 
 	/**
+	 * Multiply the specified value by the value at the specified index.
+	 */
+	public void multAt( double value, int index ) {
+		set(index, (get( index ) * value));
+	}
+
+	/**
 	 * Add the specified vector to this vector.
 	 */
 	public void add( DoubleVector vec ) {
@@ -183,6 +219,22 @@ public class DoubleVector {
 		for( int i = 0; i < this.size(); i++ ) {
 			addAt( vec.get( i ), i );
 		}
+	}
+
+	/**
+	 * Calculates the dot product with the specified vector
+	 */
+	public double dotProduct( DoubleVector vec ) {
+		if( this.size() != vec.size() ) {
+			throw new ErrorException( "Both vectors should have the same size" );
+		}
+
+		double tmp = 0d;
+
+		for (int i = 0 ; i< this.size(); i ++) {
+			tmp += this.get(i) * vec.get(i);
+		}
+		return tmp;
 	}
 
 	/**
