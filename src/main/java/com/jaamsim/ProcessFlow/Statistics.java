@@ -143,6 +143,37 @@ public class Statistics extends LinkedComponent {
 	}
 
 	// ******************************************************************************************************
+	// PROTECTED GETTERS
+	// ******************************************************************************************************
+	protected double getTotalValue() {
+		return totalValue;
+	}
+
+	protected double getTotalSquaredValue() {
+		return totalSquaredValue;
+	}
+
+	protected double getLastValue() {
+		return lastValue;
+	}
+
+	protected double getLastUpdateTime() {
+		return lastUpdateTime;
+	}
+
+	protected double getTotalTimeValue() {
+		return totalTimeValue;
+	}
+
+	protected double getTotalSquaredTimeValue() {
+		return totalSquaredTimeValue;
+	}
+
+	protected double getFirstSampleTime() {
+		return firstSampleTime;
+	}
+
+	// ******************************************************************************************************
 	// OUTPUT METHODS
 	// ******************************************************************************************************
 
