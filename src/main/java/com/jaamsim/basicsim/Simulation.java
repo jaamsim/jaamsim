@@ -355,7 +355,7 @@ public class Simulation extends Entity {
 
 		tickLengthInput = new ValueInput("TickLength", "Key Inputs", 1e-6d);
 		tickLengthInput.setUnitType(TimeUnit.class);
-		tickLengthInput.setValidRange(1e-9d, 5.0d);
+		tickLengthInput.setValidRange(1e-12d, Double.POSITIVE_INFINITY);
 
 		// Multiple Runs tab
 		IntegerVector defRangeList = new IntegerVector();
