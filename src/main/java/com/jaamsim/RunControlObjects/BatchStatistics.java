@@ -407,11 +407,11 @@ public class BatchStatistics extends Statistics {
 	}
 
 
-	@Output(name="SamplesIndependant",
-			description="Returns if the batch means can be assumed to be independant",
+	@Output(name="SamplesIndependent",
+			description="True if the assumption that the samples means are independent holds",
 			reportable=true,
 			sequence=5)
-	public boolean getIndependant(double simTime) {
+	public boolean getIndependent(double simTime) {
 
 		return !correlated;
 	}

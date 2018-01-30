@@ -372,11 +372,11 @@ public class BatchRecorder extends DisplayEntity {
 	}
 
 
-	@Output(name = "IsIndependant",
-			description = "True if the assumption that the samples means are independant holds",
+	@Output(name = "IsIndependent",
+			description = "True if the assumption that the samples means are independent holds",
 			reportable = true,
 			sequence = 7)
-	public boolean getIndependant(double simTime) {
+	public boolean getIndependent(double simTime) {
 
 		return !correlated;
 	}
