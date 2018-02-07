@@ -370,12 +370,29 @@ public class BatchStatistics extends Statistics {
 		return numIntervals;
 	}
 
+	@Output(name="IntervalTimeWidth",
+			description="The length of time for an interval",
+			unitType=TimeUnit.class,
+			reportable=true,
+			sequence=2)
+	public double getTimeWidth(double simTime) {
+		return intervalTimeWidth;
+	}
+
+	@Output(name="IntervalSamplesWidth",
+			description="The number of samples for an interval",
+			unitType=DimensionlessUnit.class,
+			reportable=true,
+			sequence=3)
+	public long getSamplesWidth(double simTime) {
+		return numSamplesWidth;
+	}
 
 	@Output(name="AllIntervalMeans",
 			description="Each of the means of the intervals",
 			unitType=UserSpecifiedUnit.class,
 			reportable=true,
-			sequence=2)
+			sequence=4)
 	public DoubleVector getIntervals(double simTime) {
 
 		return new DoubleVector(recordsList);
@@ -386,7 +403,7 @@ public class BatchStatistics extends Statistics {
 			description="The mean of the previous intervals, not considering the value in the current interval",
 			unitType=UserSpecifiedUnit.class,
 			reportable=true,
-			sequence=3)
+			sequence=5)
 	public double getIntervalsMean(double simTime) {
 
 		if(numIntervals == 0) {
@@ -400,7 +417,7 @@ public class BatchStatistics extends Statistics {
 			description="Half Width interval for the expected mean",
 			unitType=UserSpecifiedUnit.class,
 			reportable=true,
-			sequence=4)
+			sequence=6)
 	public double getHalfWidthInterval(double simTime) {
 
 		return halfWidth;
@@ -410,7 +427,7 @@ public class BatchStatistics extends Statistics {
 	@Output(name="SamplesIndependent",
 			description="True if the assumption that the samples means are independent holds",
 			reportable=true,
-			sequence=5)
+			sequence=7)
 	public boolean getIndependent(double simTime) {
 
 		return !correlated;
