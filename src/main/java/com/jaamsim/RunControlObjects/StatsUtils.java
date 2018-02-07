@@ -172,6 +172,8 @@ public class StatsUtils {
 	 *  Fishman 1978 test for grouping observations in digital simulations
 	 * 	Test to test whether we can safely assume that the sample means are
 	 *  independent.
+	 *  TITLE:	Grouping Observations in Digital Simulation
+	 *  URL:   	https://doi.org/10.1287/mnsc.24.5.510
 	 *
 	 *  Assume Central Limit Theorem holds here
 	 *
