@@ -20,7 +20,7 @@ import com.jaamsim.units.UserSpecifiedUnit;
 public class ParetoDistribution extends Distribution {
 
 
-	@Keyword(description = "The shape parameter for the Pareto distribution.  A decimal value > 0.0.",
+	@Keyword(description = "The scale parameter for the Pareto distribution.  A decimal value > 0.0.",
 	         exampleList = {"5.0", "InputValue1", "'2 * [InputValue1].Value'"})
 	private final SampleInput scaleInput;
 
@@ -37,7 +37,7 @@ public class ParetoDistribution extends Distribution {
 		minValueInput.setDefaultValue(new SampleConstant(0.0d));
 		minValueInput.setValidRange(0.0, Double.POSITIVE_INFINITY);
 
-		scaleInput = new SampleInput("Mean", "Key Inputs", new SampleConstant(1.0d));
+		scaleInput = new SampleInput("Scale", "Key Inputs", new SampleConstant(1.0d));
 		scaleInput.setUnitType(UserSpecifiedUnit.class);
 		scaleInput.setValidRange( 1.0e-10d, Double.POSITIVE_INFINITY );
 		scaleInput.setEntity(this);
