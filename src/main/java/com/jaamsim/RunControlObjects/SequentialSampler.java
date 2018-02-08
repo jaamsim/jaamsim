@@ -223,7 +223,7 @@ public class SequentialSampler extends DisplayEntity {
 		}
 
 		RecalculateLists();
-		pauseCond = IsPause();
+		pauseCond = getAllLessThanInput();
 	}
 
 	// call at end of current run
@@ -273,7 +273,7 @@ public class SequentialSampler extends DisplayEntity {
 		return intervalsList;
 	}
 
-	@Output(name="IsPause",
+	@Output(name="AllWithinUserRange",
 			description="True if all calculated half-width intervals are less than the inputs",
 			reportable = true,
 			sequence=3)
@@ -332,7 +332,7 @@ public class SequentialSampler extends DisplayEntity {
 	/**
 	 * checks to see if all the intervals are within a range
 	 */
-	private final boolean IsPause() {
+	private final boolean getAllLessThanInput() {
 		boolean result = true;
 
 		for(int i = 0 ; i < numRecords ; i++) {
