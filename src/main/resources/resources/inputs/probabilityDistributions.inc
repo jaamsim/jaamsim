@@ -8,6 +8,7 @@ Define ObjectType {
 					GammaDistribution
 					BetaDistribution
 					WeibullDistribution
+					ParetoDistribution
 					LogNormalDistribution
 					LogLogisticDistribution
 					DiscreteDistribution
@@ -24,6 +25,7 @@ ErlangDistribution			JavaClass { com.jaamsim.ProbabilityDistributions.ErlangDist
 GammaDistribution			JavaClass { com.jaamsim.ProbabilityDistributions.GammaDistribution			} Palette { 'Probability Distributions' } IconFile { '<res>/images/ErlangDist-24.png'     }
 BetaDistribution			JavaClass { com.jaamsim.ProbabilityDistributions.BetaDistribution			} Palette { 'Probability Distributions' } IconFile { '<res>/images/ErlangDist-24.png'     }
 WeibullDistribution			JavaClass { com.jaamsim.ProbabilityDistributions.WeibullDistribution		} Palette { 'Probability Distributions' } IconFile { '<res>/images/ErlangDist-24.png'     }
+ParetoDistribution			JavaClass { com.jaamsim.ProbabilityDistributions.ParetoDistribution			} Palette { 'Probability Distributions' } IconFile { '<res>/images/Exp Dist-24.png'       }
 LogNormalDistribution		JavaClass { com.jaamsim.ProbabilityDistributions.LogNormalDistribution		} Palette { 'Probability Distributions' } IconFile { '<res>/images/ErlangDist-24.png'     }
 LogLogisticDistribution	    JavaClass { com.jaamsim.ProbabilityDistributions.LogLogisticDistribution	} Palette { 'Probability Distributions' } IconFile { '<res>/images/ErlangDist-24.png'     }
 DiscreteDistribution		JavaClass { com.jaamsim.ProbabilityDistributions.DiscreteDistribution		} Palette { 'Probability Distributions' } IconFile { '<res>/images/DiscreteDist-24.png'   }
@@ -63,6 +65,7 @@ ErlangDistribution			DefaultDisplayModel { ErlangDistributionIconModel      }
 GammaDistribution			DefaultDisplayModel { ProbabilityDistributionIconModel }
 BetaDistribution			DefaultDisplayModel { ProbabilityDistributionIconModel }
 WeibullDistribution			DefaultDisplayModel { ProbabilityDistributionIconModel }
+ParetoDistribution			DefaultDisplayModel { ExponentialDistributionIconModel }
 LogNormalDistribution		DefaultDisplayModel { ProbabilityDistributionIconModel }
 LogLogisticDistribution	    DefaultDisplayModel { ProbabilityDistributionIconModel }
 DiscreteDistribution		DefaultDisplayModel { DiscreteDistributionIconModel    }
@@ -76,8 +79,9 @@ ExponentialDistribution  Description { 'Generates random numbers from a negative
 NonStatExponentialDist   Description { 'Generates random numbers from a negative exponential probability density function with an average rate that varies with time.' }
 ErlangDistribution       Description { 'Generates random numbers from an Erlang probability density function.' }
 GammaDistribution        Description { 'Generates random numbers from a gamma probability density function.' }
-BetaDistribution        Description { 'Generates random numbers from a beta probability density function.' }
+BetaDistribution         Description { 'Generates random numbers from a beta probability density function.' }
 WeibullDistribution      Description { 'Generates random numbers from a Weibull probability density function.' }
+ParetoDistribution		 Description { 'Generates random numbers from a Pareto probability density function.' }
 LogNormalDistribution    Description { 'Generates random numbers from a log-normal probability density function.' }
 LogLogisticDistribution  Description { 'Generates random numbers from a log-logistic probability density function.' }
 DiscreteDistribution     Description { 'Generates random numbers from a user-specified set of values and probabilities.' }
