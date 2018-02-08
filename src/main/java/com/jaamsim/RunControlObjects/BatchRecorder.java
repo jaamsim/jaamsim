@@ -99,9 +99,9 @@ public class BatchRecorder extends DisplayEntity {
 
 		// Initialisation of selection list options
 		variableTypes = new ArrayList<>();
-		variableTypes.add("ACCUMULATED"); // TODO: Remove this input?, average over the time period
-		variableTypes.add("TIME_MEAN");  // Some overlapping functionality but I cannot see how this is avoidable
-		variableTypes.add("TRANSIENT");  // this one may need to be re-implemented with a value listener
+		variableTypes.add("ACCUMULATED");
+		variableTypes.add("TIME_MEAN");
+		variableTypes.add("TRANSIENT");
 
 	}
 
@@ -299,9 +299,9 @@ public class BatchRecorder extends DisplayEntity {
 
 	/*
 	 * **********************************************************************
-	 *		 TODO: Any More?
+	 *
 	 *		OUTPUTS
-	 *		 TODO: better descriptions!
+	 *
 	 * **********************************************************************
 	 */
 
@@ -431,7 +431,7 @@ public class BatchRecorder extends DisplayEntity {
 
 
 	/**
-	 * For when the sample value increases
+	 * For when the sample value increases, accumulates over the simulation time
 	 */
 	private class Accumulated extends ValueFunction {
 		@Override
@@ -456,7 +456,8 @@ public class BatchRecorder extends DisplayEntity {
 
 
 	/**
-	 * For when the sample value
+	 * For when the sample value is the raw value that fluctuates with time,
+	 * 	e.g. queue length or number in progress.
 	 */
 	private class Transient extends ValueFunction {
 

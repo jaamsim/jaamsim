@@ -153,7 +153,6 @@ public class BatchStatistics extends Statistics {
 
 		// Hide or show the inputs for the tally or time-persistent interval widths
 		// depending on the input
-		// TODO can this function?
 		if (in == varInput) {
 			if (varInput.getChoice().equals("TALLY_MEAN")) {
 				//minIntervalTimeInput.setHidden(true);
@@ -342,9 +341,9 @@ public class BatchStatistics extends Statistics {
 
 	/*
 	 * ******************************************************************
-	 *		 TODO: More?
+	 *
 	 * 		OUTPUTS
-	 *		 TODO: descriptions for outputs
+	 *
 	 * ******************************************************************
 	 */
 
