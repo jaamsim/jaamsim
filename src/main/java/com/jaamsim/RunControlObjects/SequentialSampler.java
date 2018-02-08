@@ -211,7 +211,6 @@ public class SequentialSampler extends DisplayEntity {
 
 		for(int i = 0; i < numRecords ; i++) {
 
-
 			// read value from input field and add it to the list of saved means
 			double val = outputMonitorList.getValue().get(i).getNextSample(getSimTime());
 			double factor = Unit.getDisplayedUnitFactor(outputMonitorList.getUnitType(i));
@@ -232,9 +231,11 @@ public class SequentialSampler extends DisplayEntity {
 	public void doEnd() {
 		super.doEnd();
 
+		EndOfRun();
+		/* remove this?
 		if(!pauseCond) {
 			EndOfRun();
-		}
+		} */
 	}
 
 	/*
@@ -273,10 +274,10 @@ public class SequentialSampler extends DisplayEntity {
 	}
 
 	@Output(name="IsPause",
-			description="True if all are within half width interval",
+			description="True if all calculated half-width intervals are less than the inputs",
 			reportable = true,
 			sequence=3)
-	public boolean getIsPause(double simTime) {
+	public boolean getAllWithinWidth(double simTime) {
 
 		// it does not change every simulation step
 		return pauseCond;
