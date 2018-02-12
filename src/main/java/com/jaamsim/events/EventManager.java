@@ -926,7 +926,7 @@ public final class EventManager {
 	 * should be exposed.
 	 */
 	private static double globalsecsPerTick = 1e-6d;
-	private static double globalticksPerSecond = Math.round(globalsecsPerTick) / 1e9d;
+	private static double globalticksPerSecond = Math.round(1e9d / globalsecsPerTick) / 1e9d;
 
 	/**
 	 * Convert the number of seconds rounded to the nearest tick. The same as EventManager.secondsToNearestTick()
