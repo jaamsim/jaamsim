@@ -169,18 +169,18 @@ public class StatsUtils {
 
 	/**
 	 *
-	 *  Fishman 1978 test for grouping observations in digital simulations
-	 * 	Test to test whether we can safely assume that the sample means are
-	 *  independent.
+	 *  Fishman 1978 hypothesis test for grouping observations in digital simulations
+	 * 	Test to test whether we can assume that the sample means are independent.
+	 *
 	 *  TITLE:	Grouping Observations in Digital Simulation
+	 *  AUTHOR:	G S Fishman
 	 *  URL:   	https://doi.org/10.1287/mnsc.24.5.510
 	 *
-	 *  Assume Central Limit Theorem holds here
+	 *  This assumes the Central Limit Theorem holds here
 	 *
-	 * @param vals The vector of sample values
+	 * @param vals The double vector of sample values
 	 * @param beta The p value, assuming the normal distribution is valid
 	 *
-	 * @return
 	 *
 	 */
 	public static boolean isSampleCorrelated(DoubleVector vals, double beta) {
@@ -212,11 +212,9 @@ public class StatsUtils {
 
 	/**
 	 *
-	 * isSampleCorrelated, with beta := 0.05
+	 * isSampleCorrelated above but optimised for fixed beta := 0.05
 	 *
-	 * @param vals The vector of sample values
-	 *
-	 * @return
+	 * @param vals The double vector of sample values
 	 *
 	 */
 	public static boolean isSampleCorrelated(DoubleVector vals) {
