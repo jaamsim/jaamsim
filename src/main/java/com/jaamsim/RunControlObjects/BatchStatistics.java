@@ -130,7 +130,7 @@ public class BatchStatistics extends Statistics {
 		this.addInput(minIntervalTimeInput);
 
 
-		minNumSamples = new IntegerInput("MinNumberSamples", "Key Inputs", Integer.valueOf(16));
+		minNumSamples = new IntegerInput("MinNumberSamplesInterval", "Key Inputs", Integer.valueOf(16));
 		minNumSamples.setValidRange(2, Integer.MAX_VALUE);
 		//minNumSamples.setHidden(true);
 		this.addInput(minNumSamples);
