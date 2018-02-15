@@ -25,6 +25,7 @@ import com.jaamsim.events.Conditional;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.Input;
+import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.StringChoiceInput;
@@ -51,8 +52,8 @@ public class BatchRecorder extends DisplayEntity {
 	private final ValueInput minIntervalWidth;
 
 
-	@Keyword(description="The number of intervals for which to store values",
-			 exampleList={"20"})
+	@Keyword(description="The maximum number of intervals for which to store values before rebatching",
+			 exampleList={"40"})
 	private final IntegerInput numIntervalsIn;
 
 
@@ -114,7 +115,7 @@ public class BatchRecorder extends DisplayEntity {
 		this.addInput(minIntervalWidth);
 
 
-		numIntervalsIn = new IntegerInput("NumberIntervals", "Key Inputs", Integer.valueOf(20));
+		numIntervalsIn = new IntegerInput("MaxNumberIntervals", "Key Inputs", Integer.valueOf(40));
 		numIntervalsIn.setValidRange(2, Integer.MAX_VALUE);
 		this.addInput(numIntervalsIn);
 
@@ -158,6 +159,15 @@ public class BatchRecorder extends DisplayEntity {
 
 	}
 
+
+	@Override
+	public void validate() {
+		super.validate();
+
+		if(numIntervalsIn.getValue().intValue() % 2 != 0) {
+			throw new InputErrorException("MaxNumberIntervals must be even for proper batching");
+		}
+	}
 
 	@Override
 	public void earlyInit() {
@@ -227,14 +237,14 @@ public class BatchRecorder extends DisplayEntity {
 		lastIntervalTime = simTime;
 		lastIntervalSampleVal = sampleValue.getValue().getNextSample(simTime);
 
-		if (numIntervals >= numIntervalsIn.getValue()*2) {
+		if (numIntervals >= numIntervalsIn.getValue()) {
 			mergeIntervals();
 			intervalWidth *= 2; // double the interval time
 		}
 
 		typeFunc.ClearData(simTime);
 
-		if (numIntervals >= numIntervalsIn.getValue()) {
+		if (numIntervals >= numIntervalsIn.getValue() / 2) {
 			correlated = StatsUtils.isSampleCorrelated(valsList);
 		} else {
 			correlated = true;
@@ -259,7 +269,7 @@ public class BatchRecorder extends DisplayEntity {
 	 */
 	private void mergeIntervals() {
 
-		int n = numIntervalsIn.getValue().intValue();
+		int n = numIntervalsIn.getValue().intValue() / 2;
 		// average pairs of consecutive intervals
 		for(int i = 0 ; i < n ; i++) {
 			double v1 = valsList.get(2*i);

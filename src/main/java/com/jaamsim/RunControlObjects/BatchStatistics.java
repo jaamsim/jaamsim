@@ -23,6 +23,7 @@ import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.Input;
+import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
@@ -56,8 +57,8 @@ public class BatchStatistics extends Statistics {
 	private final IntegerInput minNumSamples;
 
 
-	@Keyword(description="The number of intervals for which to store values",
-			 exampleList={"20"})
+	@Keyword(description="The maximum number of intervals for which to store values before rebatching",
+			 exampleList={"40"})
 	private final IntegerInput numIntervalsInput;
 
 
@@ -117,8 +118,7 @@ public class BatchStatistics extends Statistics {
 		varInput.setRequired(true);
 		this.addInput(varInput);
 
-
-		numIntervalsInput = new IntegerInput("NumberIntervals", "Key Inputs", Integer.valueOf(20));
+		numIntervalsInput = new IntegerInput("MaxNumberIntervals", "Key Inputs", Integer.valueOf(40));
 		numIntervalsInput.setValidRange(2, Integer.MAX_VALUE);
 		this.addInput(numIntervalsInput);
 
@@ -168,6 +168,14 @@ public class BatchStatistics extends Statistics {
 		}
 	}
 
+	@Override
+	public void validate() {
+		super.validate();
+
+		if(numIntervalsInput.getValue().intValue() % 2 != 0) {
+			throw new InputErrorException("MaxNumberIntervals must be even for proper batching");
+		}
+	}
 
 	@Override
 	public void earlyInit() {
@@ -266,7 +274,7 @@ public class BatchStatistics extends Statistics {
 
 		//sumIntervals += getIntervalAverage(simTime);
 
-		if (numIntervals == 2*numIntervalsInput.getValue().intValue()) {
+		if (numIntervals == numIntervalsInput.getValue().intValue()) {
 			mergeIntervals();
 		}
 
@@ -277,7 +285,7 @@ public class BatchStatistics extends Statistics {
 		currentIntervalValue = 0d;
 		lastTotalTimeValue = getTotalTimeValue() + getLastValue()*(simTime-getLastUpdateTime());
 
-		if (numIntervals < numIntervalsInput.getValue().intValue()) {
+		if (numIntervals < numIntervalsInput.getValue().intValue() / 2) {
 			correlated = true;
 		} else {
 			correlated = StatsUtils.isSampleCorrelated(recordsList);
@@ -301,7 +309,7 @@ public class BatchStatistics extends Statistics {
 	 */
 	private void mergeIntervals() {
 
-		int n = numIntervalsInput.getValue().intValue();
+		int n = numIntervalsInput.getValue().intValue() / 2;
 
 		for(int i = 0 ; i < n ; i++) {
 			double v1 = recordsList.get(2*i);
