@@ -68,9 +68,9 @@ public class SequentialSampler extends DisplayEntity {
 	@Keyword(description="This accept values between 0.01 and 99.99 as percentages for the "
 			+ "confidence intervals.  If only one value is present, all will have the same "
 			+ "percentage confidence interval.",
-			exampleList = {"  95  70  99.5  "}
+			exampleList = {"  95.0  70.0  99.5  "}
 			)
-	private final ValueListInput confidenceIntervalList;
+	private final ValueListInput confidencePercentList;
 
 	//private FileEntity file; // file is here just in case we wish to save outputs to a log-file
 	private int runNumber;
@@ -110,10 +110,10 @@ public class SequentialSampler extends DisplayEntity {
 		DoubleVector dv = new DoubleVector();
 		dv.add(95.0);
 
-		confidenceIntervalList = new ValueListInput("ConfidencePercent", "Key Inputs", dv);
-		confidenceIntervalList.setUnitType(DimensionlessUnit.class);
-		confidenceIntervalList.setValidRange(0.01, 99.99);
-		this.addInput(confidenceIntervalList);
+		confidencePercentList = new ValueListInput("ConfidencePercent", "Key Inputs", dv);
+		confidencePercentList.setUnitType(DimensionlessUnit.class);
+		confidencePercentList.setValidRange(0.01, 99.99);
+		this.addInput(confidencePercentList);
 	}
 
 	public SequentialSampler() {/* Nothing */}
@@ -140,8 +140,8 @@ public class SequentialSampler extends DisplayEntity {
 		if (outputMonitorList.getValue().size() != halfWidthList.getValue().size()) {
 			throw new InputErrorException( "There must be the same number of entries in DataList and HalfWidths!" );
 		}
-		if(confidenceIntervalList.getValue().size() != 1) {
-			if(confidenceIntervalList.getValue().size() != numRecords) {
+		if(confidencePercentList.getValue().size() != 1) {
+			if(confidencePercentList.getValue().size() != numRecords) {
 				throw new InputErrorException("The number of Confidence Intervals must be either 1 or the same as the number of entries in DataList!");
 			}
 		}
@@ -187,16 +187,16 @@ public class SequentialSampler extends DisplayEntity {
 			}
 
 			// fill the confidence interval with values.
-			if(confidenceIntervalList.getValue().size() == 1) {
+			if(confidencePercentList.getValue().size() == 1) {
 
-				double val = confidenceIntervalList.getValue().get(0) / 100;
+				double val = confidencePercentList.getValue().get(0) / 100;
 				val = 1 - val;
 				confIntList.addAll(Collections.nCopies(numRecords, Double.valueOf(val)));
 
 			} else {
 				for(int i = 0 ; i < numRecords ; i++) {
 
-					double val = confidenceIntervalList.getValue().get(i) / 100;
+					double val = confidencePercentList.getValue().get(i) / 100;
 					val = 1 - val;
 					confIntList.add(Double.valueOf(val));
 				}
