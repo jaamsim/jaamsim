@@ -17,6 +17,7 @@
 package com.jaamsim.ProcessFlow;
 
 import com.jaamsim.Graphics.DisplayEntity;
+import com.jaamsim.basicsim.Entity;
 
 /**
  * EntitySink kills the DisplayEntities sent to it.
@@ -37,7 +38,9 @@ public class EntitySink extends LinkedComponent {
 		this.sendToNextComponent(ent);
 
 		// Kill the added entity
-		ent.kill();
+		if (ent.testFlag(Entity.FLAG_GENERATED)) {
+			ent.kill();
+		}
 	}
 
 }
