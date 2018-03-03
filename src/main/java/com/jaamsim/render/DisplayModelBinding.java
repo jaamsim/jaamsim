@@ -241,6 +241,14 @@ public abstract class DisplayModelBinding {
 
 	public VisibilityInfo getVisibilityInfo() {
 
+		// If set, the DisplayEntity overrides the visibility info for the DisplayModel
+		if (observee instanceof DisplayEntity) {
+			DisplayEntity de = (DisplayEntity)observee;
+			if (de.getVisibilityInfo() != null) {
+				return de.getVisibilityInfo();
+			}
+		}
+
 		return dm.getVisibilityInfo();
 	}
 

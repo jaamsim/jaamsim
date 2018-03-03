@@ -30,6 +30,7 @@ import com.jaamsim.DisplayModels.TextModel;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ObjectType;
 import com.jaamsim.basicsim.Simulation;
+import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.EntityInput;
@@ -42,6 +43,7 @@ import com.jaamsim.input.Keyword;
 import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.RelativeEntityInput;
+import com.jaamsim.input.ValueListInput;
 import com.jaamsim.input.Vec3dInput;
 import com.jaamsim.input.Vec3dListInput;
 import com.jaamsim.math.Color4d;
@@ -51,7 +53,9 @@ import com.jaamsim.math.Transform;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.render.DisplayModelBinding;
 import com.jaamsim.render.RenderUtils;
+import com.jaamsim.render.VisibilityInfo;
 import com.jaamsim.ui.FrameBox;
+import com.jaamsim.ui.View;
 import com.jaamsim.units.AngleUnit;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.DistanceUnit;
@@ -126,6 +130,14 @@ public class DisplayEntity extends Entity {
 	         exampleList = {"FALSE"})
 	private final BooleanInput movable;
 
+	@Keyword(description = "The view windows on which this entity will be visible.",
+	         exampleList = {"View2 View3"})
+	private final EntityListInput<View> visibleViews;
+
+	@Keyword(description = "The distances from the camera that this entity will be visible",
+	         exampleList = {"0 100 m"})
+	private final ValueListInput drawRange;
+
 	private final Vec3d position = new Vec3d();
 	private final Vec3d size = new Vec3d(1.0d, 1.0d, 1.0d);
 	private final Vec3d orient = new Vec3d();
@@ -136,8 +148,15 @@ public class DisplayEntity extends Entity {
 	private Region currentRegion;
 
 	private ArrayList<DisplayModelBinding> modelBindings;
+	private VisibilityInfo visInfo = null;
 
 	private final HashMap<String, Tag> tagMap = new HashMap<>();
+
+	private static final DoubleVector defRange = new DoubleVector(2);
+	static {
+		defRange.add(0.0d);
+		defRange.add(Double.POSITIVE_INFINITY);
+	}
 
 	{
 		positionInput = new Vec3dInput("Position", "Graphics", new Vec3d());
@@ -187,6 +206,16 @@ public class DisplayEntity extends Entity {
 
 		movable = new BooleanInput("Movable", "Graphics", true);
 		this.addInput(movable);
+
+		visibleViews = new EntityListInput<>(View.class, "VisibleViews", "Graphics", null);
+		visibleViews.setDefaultText("All Views");
+		this.addInput(visibleViews);
+
+		drawRange = new ValueListInput("DrawRange", "Graphics", defRange);
+		drawRange.setUnitType(DistanceUnit.class);
+		drawRange.setValidCount(2);
+		drawRange.setValidRange(0, Double.POSITIVE_INFINITY);
+		this.addInput(drawRange);
 	}
 
 	/**
@@ -272,6 +301,21 @@ public class DisplayEntity extends Entity {
 		// If Points were input, then use them to set the start and end coordinates
 		if (in == pointsInput || in == curveTypeInput) {
 			invalidateScreenPoints();
+			return;
+		}
+
+		if (in == visibleViews || in == drawRange) {
+			if (visibleViews.isDefault() && drawRange.isDefault()) {
+				visInfo = null;
+			}
+			double minDist = drawRange.getValue().get(0);
+			double maxDist = drawRange.getValue().get(1);
+			// It's possible for the distance to be behind the camera, yet have the object visible (distance is to center)
+			// So instead use negative infinity in place of zero to never cull when close to the camera.
+			if (minDist == 0.0) {
+				minDist = Double.NEGATIVE_INFINITY;
+			}
+			visInfo = new VisibilityInfo(visibleViews.getValue(), minDist, maxDist);
 			return;
 		}
 	}
@@ -795,6 +839,10 @@ public class DisplayEntity extends Entity {
 			}
 		}
 		return modelBindings;
+	}
+
+	public VisibilityInfo getVisibilityInfo() {
+		return visInfo;
 	}
 
 	public void dragged(Vec3d newPos) {
