@@ -70,24 +70,24 @@ public abstract class Logger extends DisplayEntity {
 	{
 		ArrayList<Class<? extends Unit>> defList = new ArrayList<>();
 		defList.add(DimensionlessUnit.class);
-		unitTypeListInput = new UnitTypeListInput("UnitTypeList", "Key Inputs", defList);
+		unitTypeListInput = new UnitTypeListInput("UnitTypeList", KEY_INPUTS, defList);
 		this.addInput(unitTypeListInput);
 
-		dataSource = new StringProvListInput("DataSource", "Key Inputs",
+		dataSource = new StringProvListInput("DataSource", KEY_INPUTS,
 				new ArrayList<StringProvider>());
 		dataSource.setUnitType(DimensionlessUnit.class);
 		dataSource.setEntity(this);
 		this.addInput(dataSource);
 
-		includeInitialization = new BooleanInput("IncludeInitialization", "Key Inputs", true);
+		includeInitialization = new BooleanInput("IncludeInitialization", KEY_INPUTS, true);
 		this.addInput(includeInitialization);
 
-		startTime = new ValueInput("StartTime", "Key Inputs", 0.0d);
+		startTime = new ValueInput("StartTime", KEY_INPUTS, 0.0d);
 		startTime.setUnitType(TimeUnit.class);
 		startTime.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		this.addInput(startTime);
 
-		endTime = new ValueInput("EndTime", "Key Inputs", Double.POSITIVE_INFINITY);
+		endTime = new ValueInput("EndTime", KEY_INPUTS, Double.POSITIVE_INFINITY);
 		endTime.setUnitType(TimeUnit.class);
 		endTime.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		this.addInput(endTime);

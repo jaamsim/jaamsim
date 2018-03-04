@@ -61,11 +61,11 @@ public abstract class FileToArray extends LinkedComponent {
 	{
 		nextComponent.setRequired(false);
 
-		dataFile = new FileInput("DataFile", "Key Inputs", null);
+		dataFile = new FileInput("DataFile", KEY_INPUTS, null);
 		dataFile.setRequired(true);
 		this.addInput(dataFile);
 
-		dataFormat = new EnumListInput<>(ValidFormats.class, "DataFormat", "Key Inputs", null);
+		dataFormat = new EnumListInput<>(ValidFormats.class, "DataFormat", KEY_INPUTS, null);
 		dataFormat.setDefaultText("EXPRESSION");
 		this.addInput(dataFormat);
 	}

@@ -46,14 +46,14 @@ public class EventSchedule extends DisplayEntity implements SampleProvider{
 	private boolean firstSample = true;
 
 	{
-		timeList = new ValueListInput("TimeList", "Key Inputs", null);
+		timeList = new ValueListInput("TimeList", KEY_INPUTS, null);
 		timeList.setUnitType(TimeUnit.class);
 		timeList.setValidRange(0.0, Double.POSITIVE_INFINITY);
 		timeList.setMonotonic(1);
 		timeList.setRequired(true);
 		this.addInput(timeList);
 
-		cycleTime = new ValueInput("CycleTime", "Key Inputs", null);
+		cycleTime = new ValueInput("CycleTime", KEY_INPUTS, null);
 		cycleTime.setUnitType(TimeUnit.class);
 		cycleTime.setValidRange(0.0, Double.POSITIVE_INFINITY);
 		cycleTime.setRequired(true);

@@ -48,7 +48,7 @@ public class EntitlementSelector extends DisplayEntity implements SampleProvider
 	private double[] sampleDifference;  // (actual number of samples) - (expected number)
 
 	{
-		proportionList = new ValueListInput("ProportionList", "Key Inputs", null);
+		proportionList = new ValueListInput("ProportionList", KEY_INPUTS, null);
 		proportionList.setUnitType(DimensionlessUnit.class);
 		proportionList.setRequired(true);
 		this.addInput(proportionList);

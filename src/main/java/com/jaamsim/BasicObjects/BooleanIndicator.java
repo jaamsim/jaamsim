@@ -51,25 +51,25 @@ public class BooleanIndicator extends DisplayEntity {
 	private final StringInput falseText;
 
 	{
-		expInput = new SampleInput("DataSource", "Key Inputs", null);
+		expInput = new SampleInput("DataSource", KEY_INPUTS, null);
 		expInput.setUnitType(DimensionlessUnit.class);
 		expInput.setEntity(this);
 		expInput.setRequired(true);
 		this.addInput(expInput);
 		this.addSynonym(expInput, "OutputName");
 
-		trueColor = new ColourInput("TrueColour", "Key Inputs", ColourInput.GREEN);
+		trueColor = new ColourInput("TrueColour", KEY_INPUTS, ColourInput.GREEN);
 		this.addInput(trueColor);
 		this.addSynonym(trueColor, "TrueColor");
 
-		falseColor = new ColourInput("FalseColour", "Key Inputs", ColourInput.RED);
+		falseColor = new ColourInput("FalseColour", KEY_INPUTS, ColourInput.RED);
 		this.addInput(falseColor);
 		this.addSynonym(falseColor, "FalseColor");
 
-		trueText = new StringInput("TrueText", "Key Inputs", "TRUE");
+		trueText = new StringInput("TrueText", KEY_INPUTS, "TRUE");
 		this.addInput(trueText);
 
-		falseText = new StringInput("FalseText", "Key Inputs", "FALSE");
+		falseText = new StringInput("FalseText", KEY_INPUTS, "FALSE");
 		this.addInput(falseText);
 	}
 

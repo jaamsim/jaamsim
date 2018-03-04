@@ -43,11 +43,11 @@ public class ValueSequence extends DisplayEntity implements SampleProvider {
 	private int index = -1;
 
 	{
-		unitType = new UnitTypeInput("UnitType", "Key Inputs", UserSpecifiedUnit.class);
+		unitType = new UnitTypeInput("UnitType", KEY_INPUTS, UserSpecifiedUnit.class);
 		unitType.setRequired(true);
 		this.addInput(unitType);
 
-		valueList = new ValueListInput("ValueList", "Key Inputs", null);
+		valueList = new ValueListInput("ValueList", KEY_INPUTS, null);
 		valueList.setUnitType(UserSpecifiedUnit.class);
 		valueList.setRequired(true);
 		this.addInput(valueList);

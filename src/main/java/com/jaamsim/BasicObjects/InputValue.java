@@ -47,11 +47,11 @@ public class InputValue extends TextBasics implements SampleProvider {
 	private boolean suppressUpdate = false; // prevents the white space in the edited text from changing
 
 	{
-		unitType = new UnitTypeInput("UnitType", "Key Inputs", UserSpecifiedUnit.class);
+		unitType = new UnitTypeInput("UnitType", KEY_INPUTS, UserSpecifiedUnit.class);
 		unitType.setRequired(true);
 		this.addInput(unitType);
 
-		valInput = new ValueInput("Value", "Key Inputs", 0.0d);
+		valInput = new ValueInput("Value", KEY_INPUTS, 0.0d);
 		valInput.setUnitType(UserSpecifiedUnit.class);
 		this.addInput(valInput);
 	}
