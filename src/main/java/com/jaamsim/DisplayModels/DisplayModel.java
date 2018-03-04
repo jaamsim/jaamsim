@@ -58,7 +58,7 @@ public abstract class DisplayModel extends Entity {
 	}
 
 	{
-		visibleViews = new EntityListInput<>(View.class, "VisibleViews", "Graphics", null);
+		visibleViews = new EntityListInput<>(View.class, "VisibleViews", GRAPHICS, null);
 		visibleViews.setDefaultText("All Views");
 		this.addInput(visibleViews);
 

@@ -88,13 +88,13 @@ public class ColladaModel extends DisplayModel {
 	}
 
 	{
-		colladaFile = new FileInput( "ColladaFile", "Key Inputs", null );
+		colladaFile = new FileInput( "ColladaFile", GRAPHICS, null );
 		colladaFile.setFileType("3D");
 		colladaFile.setValidFileExtensions(validFileExtensions);
 		colladaFile.setValidFileDescriptions(validFileDescriptions);
 		this.addInput( colladaFile);
 
-		actions = new ActionListInput("Actions", "Key Inputs", new ArrayList<Action.Binding>());
+		actions = new ActionListInput("Actions", GRAPHICS, new ArrayList<Action.Binding>());
 		this.addInput(actions);
 	}
 

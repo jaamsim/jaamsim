@@ -140,76 +140,76 @@ public class GraphModel extends DisplayModel {
 	private static final int maxTicks = 100;
 
 	{
-		titleTextHeight = new ValueInput("TitleTextHeight", "Key Inputs", 0.05d);
+		titleTextHeight = new ValueInput("TitleTextHeight", GRAPHICS, 0.05d);
 		titleTextHeight.setUnitType(DimensionlessUnit.class);
 		this.addInput(titleTextHeight);
 
-		xAxisTitleTextHeight = new ValueInput("XAxisTitleTextHeight", "Key Inputs", 0.05d);
+		xAxisTitleTextHeight = new ValueInput("XAxisTitleTextHeight", GRAPHICS, 0.05d);
 		xAxisTitleTextHeight.setUnitType(DimensionlessUnit.class);
 		this.addInput(xAxisTitleTextHeight);
 
-		yAxisTitleTextHeight = new ValueInput("YAxisTitleTextHeight", "Key Inputs", 0.05d);
+		yAxisTitleTextHeight = new ValueInput("YAxisTitleTextHeight", GRAPHICS, 0.05d);
 		yAxisTitleTextHeight.setUnitType(DimensionlessUnit.class);
 		this.addInput(yAxisTitleTextHeight);
 
-		labelTextHeight = new ValueInput("LabelTextHeight", "Key Inputs", 0.025d);
+		labelTextHeight = new ValueInput("LabelTextHeight", GRAPHICS, 0.025d);
 		labelTextHeight.setUnitType(DimensionlessUnit.class);
 		this.addInput(labelTextHeight);
 
-		titleGap = new ValueInput("TitleGap", "Key Inputs", 0.05d);
+		titleGap = new ValueInput("TitleGap", GRAPHICS, 0.05d);
 		titleGap.setUnitType(DimensionlessUnit.class);
 		this.addInput(titleGap);
 
-		xAxisTitleGap = new ValueInput("XAxisTitleGap", "Key Inputs", 0.025d);
+		xAxisTitleGap = new ValueInput("XAxisTitleGap", GRAPHICS, 0.025d);
 		xAxisTitleGap.setUnitType(DimensionlessUnit.class);
 		this.addInput(xAxisTitleGap);
 
-		xAxisLabelGap = new ValueInput("XAxisLabelGap", "Key Inputs", 0.025d);
+		xAxisLabelGap = new ValueInput("XAxisLabelGap", GRAPHICS, 0.025d);
 		xAxisLabelGap.setUnitType(DimensionlessUnit.class);
 		this.addInput(xAxisLabelGap);
 
-		yAxisTitleGap = new ValueInput("YAxisTitleGap", "Key Inputs", 0.025d);
+		yAxisTitleGap = new ValueInput("YAxisTitleGap", GRAPHICS, 0.025d);
 		yAxisTitleGap.setUnitType(DimensionlessUnit.class);
 		this.addInput(yAxisTitleGap);
 
-		yAxisLabelGap = new ValueInput("YAxisLabelGap", "Key Inputs", 0.025d);
+		yAxisLabelGap = new ValueInput("YAxisLabelGap", GRAPHICS, 0.025d);
 		yAxisLabelGap.setUnitType(DimensionlessUnit.class);
 		this.addInput(yAxisLabelGap);
 
-		topMargin = new ValueInput("TopMargin", "Key Inputs", 0.15d);
+		topMargin = new ValueInput("TopMargin", GRAPHICS, 0.15d);
 		topMargin.setUnitType(DimensionlessUnit.class);
 		this.addInput(topMargin);
 
-		bottomMargin = new ValueInput("BottomMargin", "Key Inputs", 0.175d);
+		bottomMargin = new ValueInput("BottomMargin", GRAPHICS, 0.175d);
 		bottomMargin.setUnitType(DimensionlessUnit.class);
 		this.addInput(bottomMargin);
 
-		leftMargin = new ValueInput("LeftMargin", "Key Inputs", 0.21d);
+		leftMargin = new ValueInput("LeftMargin", GRAPHICS, 0.21d);
 		leftMargin.setUnitType(DimensionlessUnit.class);
 		this.addInput(leftMargin);
 
-		rightMargin = new ValueInput("RightMargin", "Key Inputs", 0.21d);
+		rightMargin = new ValueInput("RightMargin", GRAPHICS, 0.21d);
 		rightMargin.setUnitType(DimensionlessUnit.class);
 		this.addInput(rightMargin);
 
-		titleTextModel = new EntityInput<>(TextModel.class, "TitleTextModel", "Key Inputs", null);
+		titleTextModel = new EntityInput<>(TextModel.class, "TitleTextModel", GRAPHICS, null);
 		this.addInput(titleTextModel);
 
-		axisTitleTextModel = new EntityInput<>(TextModel.class, "AxisTitleTextModel", "Key Inputs", null);
+		axisTitleTextModel = new EntityInput<>(TextModel.class, "AxisTitleTextModel", GRAPHICS, null);
 		this.addInput(axisTitleTextModel);
 
-		labelTextModel = new EntityInput<>(TextModel.class, "LabelTextModel", "Key Inputs", null);
+		labelTextModel = new EntityInput<>(TextModel.class, "LabelTextModel", GRAPHICS, null);
 		this.addInput(labelTextModel);
 
-		graphColor = new ColourInput("GraphColor", "Key Inputs", ColourInput.getColorWithName("ivory"));
+		graphColor = new ColourInput("GraphColor", GRAPHICS, ColourInput.getColorWithName("ivory"));
 		this.addInput(graphColor);
 		this.addSynonym(graphColor, "GraphColour");
 
-		backgroundColor = new ColourInput("BackgroundColor", "Key Inputs", ColourInput.getColorWithName("gray95"));
+		backgroundColor = new ColourInput("BackgroundColor", GRAPHICS, ColourInput.getColorWithName("gray95"));
 		this.addInput(backgroundColor);
 		this.addSynonym(backgroundColor, "BackgroundColour");
 
-		borderColor = new ColourInput("BorderColor", "Key Inputs", ColourInput.BLACK);
+		borderColor = new ColourInput("BorderColor", GRAPHICS, ColourInput.BLACK);
 		this.addInput(borderColor);
 		this.addSynonym(borderColor, "BorderColour");
 	}

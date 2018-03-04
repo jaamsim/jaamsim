@@ -76,21 +76,21 @@ public class ShapeModel extends DisplayModel {
 	private final BooleanInput bold;
 
 	{
-		shape = new EnumInput<>(ValidShapes.class, "Shape", "Key Inputs", ValidShapes.CIRCLE);
+		shape = new EnumInput<>(ValidShapes.class, "Shape", GRAPHICS, ValidShapes.CIRCLE);
 		this.addInput(shape);
 
-		fillColour = new ColourInput("FillColour", "Key Inputs", ColourInput.MED_GREY);
+		fillColour = new ColourInput("FillColour", GRAPHICS, ColourInput.MED_GREY);
 		this.addInput(fillColour);
 		this.addSynonym(fillColour, "FillColor");
 
-		outlineColour = new ColourInput("OutlineColour", "Key Inputs", ColourInput.BLACK);
+		outlineColour = new ColourInput("OutlineColour", GRAPHICS, ColourInput.BLACK);
 		this.addInput(outlineColour);
 		this.addSynonym(outlineColour, "OutlineColor");
 
-		filled = new BooleanInput("Filled", "Key Inputs", true);
+		filled = new BooleanInput("Filled", GRAPHICS, true);
 		this.addInput(filled);
 
-		bold = new BooleanInput("Bold", "Key Inputs", false);
+		bold = new BooleanInput("Bold", GRAPHICS, false);
 		this.addInput(bold);
 	}
 

@@ -64,19 +64,19 @@ public class PolylineModel extends DisplayModel {
 	protected final Vec3dInput arrowHeadSize;
 
 	{
-		colour = new ColourInput("Colour", "Graphics", ColourInput.BLACK);
+		colour = new ColourInput("Colour", GRAPHICS, ColourInput.BLACK);
 		this.addInput(colour);
 		this.addSynonym(colour, "Color");
 
-		width = new ValueInput("Width", "Graphics", 1.0d);
+		width = new ValueInput("Width", GRAPHICS, 1.0d);
 		width.setUnitType(DimensionlessUnit.class);
 		width.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		this.addInput(width);
 
-		showArrowHead = new BooleanInput("ShowArrowHead", "Graphics", false);
+		showArrowHead = new BooleanInput("ShowArrowHead", GRAPHICS, false);
 		this.addInput(showArrowHead);
 
-		arrowHeadSize = new Vec3dInput("ArrowHeadSize", "Graphics", new Vec3d(0.1d, 0.1d, 0.0d));
+		arrowHeadSize = new Vec3dInput("ArrowHeadSize", GRAPHICS, new Vec3d(0.1d, 0.1d, 0.0d));
 		arrowHeadSize.setUnitType(DistanceUnit.class);
 		this.addInput(arrowHeadSize);
 		this.addSynonym(arrowHeadSize, "ArrowSize");
