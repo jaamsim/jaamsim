@@ -33,7 +33,7 @@ public class SignalThreshold extends Threshold {
 	private final BooleanInput initState;
 
 	{
-		initState = new BooleanInput("InitialState", "Key Inputs", false);
+		initState = new BooleanInput("InitialState", KEY_INPUTS, false);
 		this.addInput(initState);
 	}
 

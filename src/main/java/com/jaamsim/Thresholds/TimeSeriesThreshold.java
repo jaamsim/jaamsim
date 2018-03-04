@@ -72,28 +72,28 @@ public class TimeSeriesThreshold extends Threshold {
 	private final UnitTypeInput unitType;
 
 	{
-		unitType = new UnitTypeInput("UnitType", "Key Inputs", UserSpecifiedUnit.class);
+		unitType = new UnitTypeInput("UnitType", KEY_INPUTS, UserSpecifiedUnit.class);
 		unitType.setRequired(true);
 		this.addInput(unitType);
 
-		timeSeries = new TimeSeriesInput("TimeSeries", "Key Inputs", null);
+		timeSeries = new TimeSeriesInput("TimeSeries", KEY_INPUTS, null);
 		timeSeries.setUnitType(UserSpecifiedUnit.class);
 		timeSeries.setRequired(true);
 		this.addInput(timeSeries);
 
-		maxOpenLimit = new TimeSeriesInput("MaxOpenLimit", "Key Inputs", new TimeSeriesConstantDouble(Double.POSITIVE_INFINITY));
+		maxOpenLimit = new TimeSeriesInput("MaxOpenLimit", KEY_INPUTS, new TimeSeriesConstantDouble(Double.POSITIVE_INFINITY));
 		maxOpenLimit.setUnitType(UserSpecifiedUnit.class);
 		this.addInput( maxOpenLimit );
 
-		minOpenLimit = new TimeSeriesInput("MinOpenLimit", "Key Inputs", new TimeSeriesConstantDouble(Double.NEGATIVE_INFINITY));
+		minOpenLimit = new TimeSeriesInput("MinOpenLimit", KEY_INPUTS, new TimeSeriesConstantDouble(Double.NEGATIVE_INFINITY));
 		minOpenLimit.setUnitType(UserSpecifiedUnit.class);
 		this.addInput( minOpenLimit );
 
-		lookAhead = new ValueInput( "LookAhead", "Key Inputs", 0.0d );
+		lookAhead = new ValueInput( "LookAhead", KEY_INPUTS, 0.0d );
 		lookAhead.setUnitType(TimeUnit.class);
 		this.addInput( lookAhead );
 
-		offset = new ValueInput( "Offset", "Key Inputs", 0.0d );
+		offset = new ValueInput( "Offset", KEY_INPUTS, 0.0d );
 		offset.setUnitType(TimeUnit.class);
 		this.addInput( offset );
 	}

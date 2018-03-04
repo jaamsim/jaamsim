@@ -76,27 +76,27 @@ public class ExpressionThreshold extends Threshold {
 	{
 		attributeDefinitionList.setHidden(false);
 
-		openCondition = new ExpressionInput("OpenCondition", "Key Inputs", null);
+		openCondition = new ExpressionInput("OpenCondition", KEY_INPUTS, null);
 		openCondition.setEntity(this);
 		openCondition.setRequired(true);
 		this.addInput(openCondition);
 
-		closeCondition = new ExpressionInput("CloseCondition", "Key Inputs", null);
+		closeCondition = new ExpressionInput("CloseCondition", KEY_INPUTS, null);
 		closeCondition.setEntity(this);
 		this.addInput(closeCondition);
 
-		initialOpenValue = new BooleanInput("InitialOpenValue", "Key Inputs", false);
+		initialOpenValue = new BooleanInput("InitialOpenValue", KEY_INPUTS, false);
 		this.addInput(initialOpenValue);
 
-		pendingOpenColour = new ColourInput("PendingOpenColour", "Graphics", ColourInput.YELLOW);
+		pendingOpenColour = new ColourInput("PendingOpenColour", GRAPHICS, ColourInput.YELLOW);
 		this.addInput(pendingOpenColour);
 		this.addSynonym(pendingOpenColour, "PendingOpenColor");
 
-		pendingClosedColour = new ColourInput("PendingClosedColour", "Graphics", ColourInput.PURPLE);
+		pendingClosedColour = new ColourInput("PendingClosedColour", GRAPHICS, ColourInput.PURPLE);
 		this.addInput(pendingClosedColour);
 		this.addSynonym(pendingClosedColour, "PendingClosedColor");
 
-		showPendingStates = new BooleanInput("ShowPendingStates", "Graphics", true);
+		showPendingStates = new BooleanInput("ShowPendingStates", GRAPHICS, true);
 		this.addInput(showPendingStates);
 	}
 
