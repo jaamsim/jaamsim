@@ -60,15 +60,15 @@ public class StateEntity extends DisplayEntity {
 	protected FileEntity stateReportFile;        // The file to store the state information
 
 	{
-		stateGraphics = new StringKeyInput<>(DisplayEntity.class, "StateGraphics", "Key Inputs");
+		stateGraphics = new StringKeyInput<>(DisplayEntity.class, "StateGraphics", KEY_INPUTS);
 		stateGraphics.setHidden(true);
 		this.addInput(stateGraphics);
 
-		traceState = new BooleanInput("TraceState", "Key Inputs", false);
+		traceState = new BooleanInput("TraceState", KEY_INPUTS, false);
 		traceState.setHidden(true);
 		this.addInput(traceState);
 
-		workingStateListInput = new StringListInput("WorkingStateList", "Maintenance", new ArrayList<String>(0));
+		workingStateListInput = new StringListInput("WorkingStateList", MAINTENANCE, new ArrayList<String>(0));
 		this.addInput(workingStateListInput);
 	}
 
