@@ -45,7 +45,7 @@ public class Controller extends DisplayEntity {
 	private final ProcessTarget doUpdate = new DoUpdateTarget(this);
 
 	{
-		samplingTime = new ValueInput("SamplingTime", "Key Inputs", 1.0d);
+		samplingTime = new ValueInput("SamplingTime", KEY_INPUTS, 1.0d);
 		samplingTime.setUnitType(TimeUnit.class);
 		samplingTime.setValidRange(0.0, Double.POSITIVE_INFINITY);
 		this.addInput(samplingTime);

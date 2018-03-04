@@ -58,25 +58,25 @@ public abstract class WaveGenerator extends DisplayEntity implements SampleProvi
 	private final ValueInput offset;
 
 	{
-		unitType = new UnitTypeInput("UnitType", "Key Inputs", UserSpecifiedUnit.class);
+		unitType = new UnitTypeInput("UnitType", KEY_INPUTS, UserSpecifiedUnit.class);
 		unitType.setRequired(true);
 		this.addInput(unitType);
 
-		amplitude = new ValueInput("Amplitude", "Key Inputs", 1.0d);
+		amplitude = new ValueInput("Amplitude", KEY_INPUTS, 1.0d);
 		amplitude.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		amplitude.setUnitType(UserSpecifiedUnit.class);
 		this.addInput(amplitude);
 
-		period = new ValueInput("Period", "Key Inputs", 1.0d);
+		period = new ValueInput("Period", KEY_INPUTS, 1.0d);
 		period.setUnitType(TimeUnit.class);
 		period.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		this.addInput(period);
 
-		phaseAngle = new ValueInput("PhaseAngle", "Key Inputs", 0.0d);
+		phaseAngle = new ValueInput("PhaseAngle", KEY_INPUTS, 0.0d);
 		phaseAngle.setUnitType(AngleUnit.class);
 		this.addInput(phaseAngle);
 
-		offset = new ValueInput("Offset", "Key Inputs", 0.0d);
+		offset = new ValueInput("Offset", KEY_INPUTS, 0.0d);
 		offset.setUnitType(UserSpecifiedUnit.class);
 		this.addInput(offset);
 	}

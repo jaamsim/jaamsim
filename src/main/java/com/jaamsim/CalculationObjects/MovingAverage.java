@@ -40,7 +40,7 @@ public class MovingAverage extends DoubleCalculation {
 	private double average;  // The present value for the moving average
 
 	{
-		numberOfSamples = new IntegerInput("NumberOfSamples", "Key Inputs", 1);
+		numberOfSamples = new IntegerInput("NumberOfSamples", KEY_INPUTS, 1);
 		numberOfSamples.setValidRange(1, Integer.MAX_VALUE);
 		this.addInput(numberOfSamples);
 	}

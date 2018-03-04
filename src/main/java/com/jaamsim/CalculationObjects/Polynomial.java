@@ -48,14 +48,14 @@ public class Polynomial extends DisplayEntity implements SampleProvider {
 
 	{
 		SampleConstant def = new SampleConstant(DimensionlessUnit.class, 0.0d);
-		inputValue = new SampleInput("InputValue", "Key Inputs", def);
+		inputValue = new SampleInput("InputValue", KEY_INPUTS, def);
 		inputValue.setUnitType(DimensionlessUnit.class);
 		inputValue.setEntity(this);
 		this.addInput(inputValue);
 
 		DoubleVector defList = new DoubleVector();
 		defList.add(0.0);
-		coefficientList = new ValueListInput("CoefficientList", "Key Inputs", defList);
+		coefficientList = new ValueListInput("CoefficientList", KEY_INPUTS, defList);
 		coefficientList.setUnitType(DimensionlessUnit.class);
 		this.addInput( coefficientList);
 	}

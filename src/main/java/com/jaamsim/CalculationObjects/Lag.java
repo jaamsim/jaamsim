@@ -37,7 +37,7 @@ public class Lag extends DoubleCalculation {
 	private final ValueInput lagTime;
 
 	{
-		lagTime = new ValueInput("LagTime", "Key Inputs", 1.0d);
+		lagTime = new ValueInput("LagTime", KEY_INPUTS, 1.0d);
 		lagTime.setValidRange(1.0e-10, Double.POSITIVE_INFINITY);
 		lagTime.setUnitType(TimeUnit.class);
 		this.addInput(lagTime);

@@ -41,11 +41,11 @@ public abstract class CalculationEntity extends DisplayEntity {
 	private final ValueInput sequenceNumber;
 
 	{
-		controller = new EntityInput<>(Controller.class, "Controller", "Key Inputs", null);
+		controller = new EntityInput<>(Controller.class, "Controller", KEY_INPUTS, null);
 		controller.setRequired(true);
 		this.addInput(controller);
 
-		sequenceNumber = new ValueInput("SequenceNumber", "Key Inputs", 0.0);
+		sequenceNumber = new ValueInput("SequenceNumber", KEY_INPUTS, 0.0);
 		sequenceNumber.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		sequenceNumber.setUnitType(DimensionlessUnit.class);
 		this.addInput(sequenceNumber);

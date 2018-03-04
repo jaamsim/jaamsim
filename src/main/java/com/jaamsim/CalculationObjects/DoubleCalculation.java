@@ -51,12 +51,12 @@ implements SampleProvider {
 	protected Class<? extends Unit> outUnitType;  // Unit type for the output from this calculation
 
 	{
-		unitType = new UnitTypeInput("UnitType", "Key Inputs", UserSpecifiedUnit.class);
+		unitType = new UnitTypeInput("UnitType", KEY_INPUTS, UserSpecifiedUnit.class);
 		unitType.setRequired(true);
 		this.addInput(unitType);
 
 		SampleConstant def = new SampleConstant(UserSpecifiedUnit.class, 0.0d);
-		inputValue = new SampleInput("InputValue", "Key Inputs", def);
+		inputValue = new SampleInput("InputValue", KEY_INPUTS, def);
 		inputValue.setUnitType(UserSpecifiedUnit.class);
 		inputValue.setEntity(this);
 		this.addInput(inputValue);

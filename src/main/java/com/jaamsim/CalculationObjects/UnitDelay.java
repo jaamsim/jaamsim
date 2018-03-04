@@ -29,7 +29,7 @@ public class UnitDelay extends DoubleCalculation {
 	private final ValueInput initialValue;
 
 	{
-		initialValue = new ValueInput("InitialValue", "Key Inputs", 0.0d);
+		initialValue = new ValueInput("InitialValue", KEY_INPUTS, 0.0d);
 		initialValue.setUnitType(UserSpecifiedUnit.class);
 		this.addInput(initialValue);
 	}

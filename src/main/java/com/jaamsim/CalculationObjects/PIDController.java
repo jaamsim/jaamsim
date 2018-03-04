@@ -85,47 +85,47 @@ public class PIDController extends DoubleCalculation {
 	{
 		inputValue.setHidden(true);
 
-		setPoint = new SampleInput("SetPoint", "Key Inputs", null);
+		setPoint = new SampleInput("SetPoint", KEY_INPUTS, null);
 		setPoint.setUnitType(UserSpecifiedUnit.class);
 		setPoint.setEntity(this);
 		setPoint.setRequired(true);
 		this.addInput(setPoint);
 
-		processVariable = new SampleInput("ProcessVariable", "Key Inputs", null);
+		processVariable = new SampleInput("ProcessVariable", KEY_INPUTS, null);
 		processVariable.setUnitType(UserSpecifiedUnit.class);
 		processVariable.setEntity(this);
 		processVariable.setRequired(true);
 		this.addInput(processVariable);
 
-		processVariableScale = new ValueInput("ProcessVariableScale", "Key Inputs", 1.0d);
+		processVariableScale = new ValueInput("ProcessVariableScale", KEY_INPUTS, 1.0d);
 		processVariableScale.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		processVariableScale.setUnitType(UserSpecifiedUnit.class);
 		this.addInput(processVariableScale);
 
-		outputUnitType = new UnitTypeInput("OutputUnitType", "Key Inputs", UserSpecifiedUnit.class);
+		outputUnitType = new UnitTypeInput("OutputUnitType", KEY_INPUTS, UserSpecifiedUnit.class);
 		outputUnitType.setRequired(true);
 		this.addInput(outputUnitType);
 
-		proportionalGain = new ValueInput("ProportionalGain", "Key Inputs", 1.0d);
+		proportionalGain = new ValueInput("ProportionalGain", KEY_INPUTS, 1.0d);
 		proportionalGain.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		proportionalGain.setUnitType(UserSpecifiedUnit.class);
 		this.addInput(proportionalGain);
 
-		integralTime = new ValueInput("IntegralTime", "Key Inputs", 1.0d);
+		integralTime = new ValueInput("IntegralTime", KEY_INPUTS, 1.0d);
 		integralTime.setValidRange(1.0e-10, Double.POSITIVE_INFINITY);
 		integralTime.setUnitType(TimeUnit.class );
 		this.addInput(integralTime);
 
-		derivativeTime = new ValueInput("DerivativeTime", "Key Inputs", 1.0d);
+		derivativeTime = new ValueInput("DerivativeTime", KEY_INPUTS, 1.0d);
 		derivativeTime.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		derivativeTime.setUnitType(TimeUnit.class );
 		this.addInput(derivativeTime);
 
-		outputLow = new ValueInput("OutputLow", "Key Inputs", Double.NEGATIVE_INFINITY);
+		outputLow = new ValueInput("OutputLow", KEY_INPUTS, Double.NEGATIVE_INFINITY);
 		outputLow.setUnitType(UserSpecifiedUnit.class);
 		this.addInput(outputLow);
 
-		outputHigh = new ValueInput("OutputHigh", "Key Inputs", Double.POSITIVE_INFINITY);
+		outputHigh = new ValueInput("OutputHigh", KEY_INPUTS, Double.POSITIVE_INFINITY);
 		outputHigh.setUnitType(UserSpecifiedUnit.class);
 		this.addInput(outputHigh);
 	}

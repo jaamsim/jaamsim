@@ -37,7 +37,7 @@ public class Integrator extends DoubleCalculation {
 	private final SampleInput initialValue;
 
 	{
-		initialValue = new SampleInput("InitialValue", "Key Inputs", new SampleConstant(0.0));
+		initialValue = new SampleInput("InitialValue", KEY_INPUTS, new SampleConstant(0.0));
 		initialValue.setEntity(this);
 		initialValue.setUnitType(UserSpecifiedUnit.class);
 		this.addInput(initialValue);

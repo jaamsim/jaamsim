@@ -61,18 +61,18 @@ public class WeightedSum extends DisplayEntity implements SampleProvider {
 	private final ValueListInput coefficientList;
 
 	{
-		unitType = new UnitTypeInput("UnitType", "Key Inputs", UserSpecifiedUnit.class);
+		unitType = new UnitTypeInput("UnitType", KEY_INPUTS, UserSpecifiedUnit.class);
 		unitType.setRequired(true);
 		this.addInput(unitType);
 
 		ArrayList<SampleProvider> def = new ArrayList<>();
- 		def.add(new SampleConstant(0.0));
- 		inputValueList = new SampleListInput("InputValueList", "Key Inputs", def);
+		def.add(new SampleConstant(0.0));
+		inputValueList = new SampleListInput("InputValueList", KEY_INPUTS, def);
 		inputValueList.setUnitType(UserSpecifiedUnit.class);
 		inputValueList.setEntity(this);
 		this.addInput(inputValueList);
 
-		coefficientList = new ValueListInput("CoefficientList", "Key Inputs", null);
+		coefficientList = new ValueListInput("CoefficientList", KEY_INPUTS, null);
 		coefficientList.setUnitType(DimensionlessUnit.class);
 		this.addInput(coefficientList);
 	}
