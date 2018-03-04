@@ -46,17 +46,17 @@ public class FluidFixedFlow extends FluidFlowCalculation {
 	private final ColourInput colourInput;
 
 	{
-		flowRateInput = new ValueInput( "FlowRate", "Key Inputs", 0.0d);
+		flowRateInput = new ValueInput( "FlowRate", KEY_INPUTS, 0.0d);
 		flowRateInput.setValidRange( 0.0d, Double.POSITIVE_INFINITY);
 		flowRateInput.setUnitType( VolumeFlowUnit.class );
 		this.addInput( flowRateInput);
 
-		widthInput = new ValueInput("Width", "Key Inputs", 1.0d);
+		widthInput = new ValueInput("Width", KEY_INPUTS, 1.0d);
 		widthInput.setValidRange(1.0d, Double.POSITIVE_INFINITY);
 		widthInput.setUnitType( DimensionlessUnit.class );
 		this.addInput(widthInput);
 
-		colourInput = new ColourInput("Colour", "Key Inputs", ColourInput.BLACK);
+		colourInput = new ColourInput("Colour", KEY_INPUTS, ColourInput.BLACK);
 		this.addInput(colourInput);
 		this.addSynonym(colourInput, "Color");
 	}

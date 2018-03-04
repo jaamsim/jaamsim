@@ -50,21 +50,21 @@ public class Fluid extends DisplayEntity {
 	private final ValueInput gravityInput;
 
 	{
-		densityInput = new ValueInput( "Density", "Key Inputs", 1000.0d);
+		densityInput = new ValueInput( "Density", KEY_INPUTS, 1000.0d);
 		densityInput.setValidRange( 0.0, Double.POSITIVE_INFINITY);
 		densityInput.setUnitType( DensityUnit.class );
 		this.addInput( densityInput);
 
-		viscosityInput = new ValueInput( "Viscosity", "Key Inputs", 0.001002d);
+		viscosityInput = new ValueInput( "Viscosity", KEY_INPUTS, 0.001002d);
 		viscosityInput.setValidRange( 0.0, Double.POSITIVE_INFINITY);
 		viscosityInput.setUnitType( ViscosityUnit.class );
 		this.addInput( viscosityInput);
 
-		colourInput = new ColourInput( "Colour", "Key Inputs", ColourInput.RED);
+		colourInput = new ColourInput( "Colour", KEY_INPUTS, ColourInput.RED);
 		this.addInput(colourInput);
 		this.addSynonym(colourInput, "Color");
 
-		gravityInput = new ValueInput( "Gravity", "Key Inputs", 9.81d);
+		gravityInput = new ValueInput( "Gravity", KEY_INPUTS, 9.81d);
 		gravityInput.setValidRange( 0.0, Double.POSITIVE_INFINITY);
 		gravityInput.setUnitType( AccelerationUnit.class );
 		this.addInput( gravityInput);

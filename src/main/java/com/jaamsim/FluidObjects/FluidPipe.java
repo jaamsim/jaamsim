@@ -63,32 +63,32 @@ public class FluidPipe extends FluidComponent {
 	private double darcyFrictionFactor;  // The Darcy Friction Factor for the pipe flow.
 
 	{
-		lengthInput = new ValueInput( "Length", "Key Inputs", 1.0d);
+		lengthInput = new ValueInput( "Length", KEY_INPUTS, 1.0d);
 		lengthInput.setValidRange( 0.0, Double.POSITIVE_INFINITY);
 		lengthInput.setUnitType( DistanceUnit.class );
 		this.addInput( lengthInput);
 
-		heightChangeInput = new ValueInput( "HeightChange", "Key Inputs", 0.0d);
+		heightChangeInput = new ValueInput( "HeightChange", KEY_INPUTS, 0.0d);
 		heightChangeInput.setValidRange( Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
 		heightChangeInput.setUnitType( DistanceUnit.class );
 		this.addInput( heightChangeInput);
 
-		roughnessInput = new ValueInput( "Roughness", "Key Inputs", 0.0d);
+		roughnessInput = new ValueInput( "Roughness", KEY_INPUTS, 0.0d);
 		roughnessInput.setValidRange( 0.0, Double.POSITIVE_INFINITY);
 		roughnessInput.setUnitType( DistanceUnit.class );
 		this.addInput( roughnessInput);
 
-		pressureLossCoefficientInput = new ValueInput( "PressureLossCoefficient", "Key Inputs", 0.0d);
+		pressureLossCoefficientInput = new ValueInput( "PressureLossCoefficient", KEY_INPUTS, 0.0d);
 		pressureLossCoefficientInput.setValidRange( 0.0, Double.POSITIVE_INFINITY);
 		pressureLossCoefficientInput.setUnitType( DimensionlessUnit.class );
 		this.addInput( pressureLossCoefficientInput);
 
-		widthInput = new ValueInput("Width", "Key Inputs", 1.0d);
+		widthInput = new ValueInput("Width", KEY_INPUTS, 1.0d);
 		widthInput.setValidRange(1.0d, Double.POSITIVE_INFINITY);
 		widthInput.setUnitType( DimensionlessUnit.class );
 		this.addInput(widthInput);
 
-		colourInput = new ColourInput("Colour", "Key Inputs", ColourInput.BLACK);
+		colourInput = new ColourInput("Colour", KEY_INPUTS, ColourInput.BLACK);
 		this.addInput(colourInput);
 		this.addSynonym(colourInput, "Color");
 	}

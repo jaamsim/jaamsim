@@ -45,14 +45,14 @@ public abstract class FluidFlowCalculation extends CalculationEntity {
 	private double lastUpdateTime;  // The time at which the last update was performed.
 
 	{
-		fluidInput = new EntityInput<>( Fluid.class, "Fluid", "Key Inputs", null);
+		fluidInput = new EntityInput<>( Fluid.class, "Fluid", KEY_INPUTS, null);
 		this.addInput( fluidInput);
 		fluidInput.setRequired(true);
 
-		sourceInput = new EntityInput<>( FluidComponent.class, "Source", "Key Inputs", null);
+		sourceInput = new EntityInput<>( FluidComponent.class, "Source", KEY_INPUTS, null);
 		this.addInput( sourceInput);
 
-		destinationInput = new EntityInput<>( FluidComponent.class, "Destination", "Key Inputs", null);
+		destinationInput = new EntityInput<>( FluidComponent.class, "Destination", KEY_INPUTS, null);
 		this.addInput( destinationInput);
 	}
 

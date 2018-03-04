@@ -54,21 +54,21 @@ public class FluidTank extends FluidComponent {
 	private double fluidLevel;  // The height of the fluid in the tank.
 
 	{
-		capacityInput = new ValueInput( "Capacity", "Key Inputs", 1.0d);
+		capacityInput = new ValueInput( "Capacity", KEY_INPUTS, 1.0d);
 		capacityInput.setValidRange( 0.0, Double.POSITIVE_INFINITY);
 		capacityInput.setUnitType( VolumeUnit.class );
 		this.addInput( capacityInput);
 
-		initialVolumeInput = new ValueInput( "InitialVolume", "Key Inputs", 0.0d);
+		initialVolumeInput = new ValueInput( "InitialVolume", KEY_INPUTS, 0.0d);
 		initialVolumeInput.setValidRange( 0.0, Double.POSITIVE_INFINITY);
 		initialVolumeInput.setUnitType( VolumeUnit.class );
 		this.addInput( initialVolumeInput);
 
-		ambientPressureInput = new ValueInput( "AmbientPressure", "Key Inputs", 0.0d);
+		ambientPressureInput = new ValueInput( "AmbientPressure", KEY_INPUTS, 0.0d);
 		ambientPressureInput.setUnitType( PressureUnit.class );
 		this.addInput( ambientPressureInput);
 
-		inletHeightInput = new ValueInput( "InletHeight", "Key Inputs", 0.0d);
+		inletHeightInput = new ValueInput( "InletHeight", KEY_INPUTS, 0.0d);
 		inletHeightInput.setValidRange( 0.0, Double.POSITIVE_INFINITY);
 		inletHeightInput.setUnitType( DistanceUnit.class );
 		this.addInput( inletHeightInput);
