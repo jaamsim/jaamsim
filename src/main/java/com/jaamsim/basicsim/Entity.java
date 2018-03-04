@@ -79,6 +79,9 @@ public class Entity {
 	private final HashMap<String, AttributeHandle> attributeMap = new LinkedHashMap<>();
 	private final HashMap<String, ExpressionHandle> customOutputMap = new LinkedHashMap<>();
 
+	public static final String KEY_INPUTS = "Key Inputs";
+	public static final String GRAPHICS = "Graphics";
+
 	@Keyword(description = "Provides the programmer with a detailed trace of the logic executed "
 	                     + "by the entity. Trace information is sent to standard out.",
 	         exampleList = {"TRUE"})
@@ -109,21 +112,21 @@ public class Entity {
 	public final NamedExpressionListInput namedExpressionInput;
 
 	{
-		trace = new BooleanInput("Trace", "Key Inputs", false);
+		trace = new BooleanInput("Trace", KEY_INPUTS, false);
 		trace.setHidden(true);
 		this.addInput(trace);
 
-		desc = new StringInput("Description", "Key Inputs", "");
+		desc = new StringInput("Description", KEY_INPUTS, "");
 		desc.setHidden(true);
 		this.addInput(desc);
 
 		attributeDefinitionList = new AttributeDefinitionListInput(this, "AttributeDefinitionList",
-				"Key Inputs", new ArrayList<AttributeHandle>());
+				KEY_INPUTS, new ArrayList<AttributeHandle>());
 		attributeDefinitionList.setHidden(false);
 		this.addInput(attributeDefinitionList);
 
 		namedExpressionInput = new NamedExpressionListInput(this, "CustomOutputList",
-				"Key Inputs", new ArrayList<NamedExpression>());
+				KEY_INPUTS, new ArrayList<NamedExpression>());
 		namedExpressionInput.setHidden(false);
 		this.addInput(namedExpressionInput);
 

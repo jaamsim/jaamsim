@@ -163,56 +163,56 @@ public class DisplayEntity extends Entity {
 	}
 
 	{
-		positionInput = new Vec3dInput("Position", "Graphics", new Vec3d());
+		positionInput = new Vec3dInput("Position", GRAPHICS, new Vec3d());
 		positionInput.setUnitType(DistanceUnit.class);
 		this.addInput(positionInput);
 
-		alignmentInput = new Vec3dInput("Alignment", "Graphics", new Vec3d());
+		alignmentInput = new Vec3dInput("Alignment", GRAPHICS, new Vec3d());
 		this.addInput(alignmentInput);
 
-		sizeInput = new Vec3dInput("Size", "Graphics", new Vec3d(1.0d, 1.0d, 1.0d));
+		sizeInput = new Vec3dInput("Size", GRAPHICS, new Vec3d(1.0d, 1.0d, 1.0d));
 		sizeInput.setUnitType(DistanceUnit.class);
 		sizeInput.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		this.addInput(sizeInput);
 
-		orientationInput = new Vec3dInput("Orientation", "Graphics", new Vec3d());
+		orientationInput = new Vec3dInput("Orientation", GRAPHICS, new Vec3d());
 		orientationInput.setUnitType(AngleUnit.class);
 		this.addInput(orientationInput);
 
-		pointsInput = new Vec3dListInput("Points", "Graphics", defPoints);
+		pointsInput = new Vec3dListInput("Points", GRAPHICS, defPoints);
 		pointsInput.setValidCountRange( 2, Integer.MAX_VALUE );
 		pointsInput.setUnitType(DistanceUnit.class);
 		this.addInput(pointsInput);
 
-		curveTypeInput = new EnumInput<>(PolylineInfo.CurveType.class, "CurveType", "Graphics", PolylineInfo.CurveType.LINEAR);
+		curveTypeInput = new EnumInput<>(PolylineInfo.CurveType.class, "CurveType", GRAPHICS, PolylineInfo.CurveType.LINEAR);
 		this.addInput(curveTypeInput);
 
-		regionInput = new EntityInput<>(Region.class, "Region", "Graphics", null);
+		regionInput = new EntityInput<>(Region.class, "Region", GRAPHICS, null);
 		this.addInput(regionInput);
 
-		relativeEntity = new RelativeEntityInput("RelativeEntity", "Graphics", null);
+		relativeEntity = new RelativeEntityInput("RelativeEntity", GRAPHICS, null);
 		relativeEntity.setEntity(this);
 		this.addInput(relativeEntity);
 
-		displayModelListInput = new EntityListInput<>( DisplayModel.class, "DisplayModel", "Graphics", null);
+		displayModelListInput = new EntityListInput<>( DisplayModel.class, "DisplayModel", GRAPHICS, null);
 		this.addInput(displayModelListInput);
 		displayModelListInput.setUnique(false);
 
-		active = new BooleanInput("Active", "Key Inputs", true);
+		active = new BooleanInput("Active", KEY_INPUTS, true);
 		active.setHidden(true);
 		this.addInput(active);
 
-		showInput = new BooleanInput("Show", "Graphics", true);
+		showInput = new BooleanInput("Show", GRAPHICS, true);
 		this.addInput(showInput);
 
-		movable = new BooleanInput("Movable", "Graphics", true);
+		movable = new BooleanInput("Movable", GRAPHICS, true);
 		this.addInput(movable);
 
-		visibleViews = new EntityListInput<>(View.class, "VisibleViews", "Graphics", null);
+		visibleViews = new EntityListInput<>(View.class, "VisibleViews", GRAPHICS, null);
 		visibleViews.setDefaultText("All Views");
 		this.addInput(visibleViews);
 
-		drawRange = new ValueListInput("DrawRange", "Graphics", defRange);
+		drawRange = new ValueListInput("DrawRange", GRAPHICS, defRange);
 		drawRange.setUnitType(DistanceUnit.class);
 		drawRange.setValidCount(2);
 		drawRange.setValidRange(0, Double.POSITIVE_INFINITY);
