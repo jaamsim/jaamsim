@@ -67,25 +67,25 @@ public class Assemble extends LinkedService {
 		waitQueue.setHidden(true);
 		match.setHidden(true);
 
-		serviceTime = new SampleInput("ServiceTime", "Key Inputs", new SampleConstant(TimeUnit.class, 0.0));
+		serviceTime = new SampleInput("ServiceTime", KEY_INPUTS, new SampleConstant(TimeUnit.class, 0.0));
 		serviceTime.setUnitType(TimeUnit.class);
 		serviceTime.setEntity(this);
 		serviceTime.setValidRange(0, Double.POSITIVE_INFINITY);
 		this.addInput(serviceTime);
 
-		waitQueueList = new EntityListInput<>(Queue.class, "WaitQueueList", "Key Inputs", null);
+		waitQueueList = new EntityListInput<>(Queue.class, "WaitQueueList", KEY_INPUTS, null);
 		waitQueueList.setRequired(true);
 		this.addInput(waitQueueList);
 
 		IntegerVector def = new IntegerVector();
 		def.add(1);
-		numberRequired = new IntegerListInput("NumberRequired", "Key Inputs", def);
+		numberRequired = new IntegerListInput("NumberRequired", KEY_INPUTS, def);
 		this.addInput(numberRequired);
 
-		matchRequired = new BooleanInput("MatchRequired", "Key Inputs", false);
+		matchRequired = new BooleanInput("MatchRequired", KEY_INPUTS, false);
 		this.addInput(matchRequired);
 
-		prototypeEntity = new EntityInput<>(DisplayEntity.class, "PrototypeEntity", "Key Inputs", null);
+		prototypeEntity = new EntityInput<>(DisplayEntity.class, "PrototypeEntity", KEY_INPUTS, null);
 		prototypeEntity.setRequired(true);
 		this.addInput(prototypeEntity);
 	}

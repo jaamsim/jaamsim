@@ -53,11 +53,11 @@ public class Statistics extends LinkedComponent {
 	{
 		stateAssignment.setHidden(true);
 
-		unitType = new UnitTypeInput("UnitType", "Key Inputs", UserSpecifiedUnit.class);
+		unitType = new UnitTypeInput("UnitType", KEY_INPUTS, UserSpecifiedUnit.class);
 		unitType.setRequired(true);
 		this.addInput(unitType);
 
-		sampleValue = new SampleInput("SampleValue", "Key Inputs", null);
+		sampleValue = new SampleInput("SampleValue", KEY_INPUTS, null);
 		sampleValue.setUnitType(UserSpecifiedUnit.class);
 		sampleValue.setEntity(this);
 		sampleValue.setRequired(true);

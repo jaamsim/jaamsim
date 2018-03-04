@@ -35,7 +35,7 @@ public class Duplicate extends LinkedComponent {
 	protected final InterfaceEntityListInput<Linkable> targetComponentList;
 
 	{
-		targetComponentList = new InterfaceEntityListInput<>( Linkable.class, "TargetComponentList", "Key Inputs", null);
+		targetComponentList = new InterfaceEntityListInput<>( Linkable.class, "TargetComponentList", KEY_INPUTS, null);
 		targetComponentList.setUnique(false);
 		targetComponentList.setRequired(true);
 		this.addInput( targetComponentList);

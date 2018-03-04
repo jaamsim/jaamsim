@@ -52,17 +52,17 @@ public class Pack extends LinkedService {
 	private DisplayEntity packedEntity;  // the entity being packed
 
 	{
-		prototypeEntityContainer = new EntityInput<>(EntityContainer.class, "PrototypeEntityContainer", "Key Inputs", null);
+		prototypeEntityContainer = new EntityInput<>(EntityContainer.class, "PrototypeEntityContainer", KEY_INPUTS, null);
 		prototypeEntityContainer.setRequired(true);
 		this.addInput(prototypeEntityContainer);
 
-		numberOfEntities = new SampleInput("NumberOfEntities", "Key Inputs", new SampleConstant(1.0));
+		numberOfEntities = new SampleInput("NumberOfEntities", KEY_INPUTS, new SampleConstant(1.0));
 		numberOfEntities.setUnitType(DimensionlessUnit.class);
 		numberOfEntities.setEntity(this);
 		numberOfEntities.setValidRange(0, Double.POSITIVE_INFINITY);
 		this.addInput(numberOfEntities);
 
-		serviceTime = new SampleInput("ServiceTime", "Key Inputs", new SampleConstant(TimeUnit.class, 0.0));
+		serviceTime = new SampleInput("ServiceTime", KEY_INPUTS, new SampleConstant(TimeUnit.class, 0.0));
 		serviceTime.setUnitType(TimeUnit.class);
 		serviceTime.setEntity(this);
 		serviceTime.setValidRange(0, Double.POSITIVE_INFINITY);

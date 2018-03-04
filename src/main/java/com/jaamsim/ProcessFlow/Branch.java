@@ -43,11 +43,11 @@ public class Branch extends LinkedComponent {
 	{
 		nextComponent.setHidden(true);
 
-		nextComponentList = new InterfaceEntityListInput<>(Linkable.class, "NextComponentList", "Key Inputs", null);
+		nextComponentList = new InterfaceEntityListInput<>(Linkable.class, "NextComponentList", KEY_INPUTS, null);
 		nextComponentList.setRequired(true);
 		this.addInput(nextComponentList);
 
-		choice = new SampleInput("Choice", "Key Inputs", null);
+		choice = new SampleInput("Choice", KEY_INPUTS, null);
 		choice.setUnitType(DimensionlessUnit.class );
 		choice.setEntity(this);
 		choice.setValidRange(1, Double.POSITIVE_INFINITY);

@@ -51,17 +51,17 @@ public class Combine extends LinkedService {
 		waitQueue.setHidden(true);
 		match.setHidden(true);
 
-		serviceTime = new SampleInput("ServiceTime", "Key Inputs", new SampleConstant(TimeUnit.class, 0.0));
+		serviceTime = new SampleInput("ServiceTime", KEY_INPUTS, new SampleConstant(TimeUnit.class, 0.0));
 		serviceTime.setUnitType(TimeUnit.class);
 		serviceTime.setEntity(this);
 		serviceTime.setValidRange(0, Double.POSITIVE_INFINITY);
 		this.addInput(serviceTime);
 
-		waitQueueList = new EntityListInput<>(Queue.class, "WaitQueueList", "Key Inputs", null);
+		waitQueueList = new EntityListInput<>(Queue.class, "WaitQueueList", KEY_INPUTS, null);
 		waitQueueList.setRequired(true);
 		this.addInput(waitQueueList);
 
-		retainAll = new BooleanInput("RetainAll", "Key Inputs", false);
+		retainAll = new BooleanInput("RetainAll", KEY_INPUTS, false);
 		this.addInput(retainAll);
 	}
 

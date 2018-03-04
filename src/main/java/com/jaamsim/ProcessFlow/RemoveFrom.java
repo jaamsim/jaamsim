@@ -36,13 +36,13 @@ public class RemoveFrom extends Unpack {
 	protected final InterfaceEntityInput<Linkable> nextForContainers;
 
 	{
-		numberOfEntities = new SampleInput("NumberOfEntities", "Key Inputs", new SampleConstant(1.0));
+		numberOfEntities = new SampleInput("NumberOfEntities", KEY_INPUTS, new SampleConstant(1.0));
 		numberOfEntities.setUnitType(DimensionlessUnit.class);
 		numberOfEntities.setEntity(this);
 		numberOfEntities.setValidRange(0, Double.POSITIVE_INFINITY);
 		this.addInput(numberOfEntities);
 
-		nextForContainers = new InterfaceEntityInput<>(Linkable.class, "NextForContainers", "Key Inputs", null);
+		nextForContainers = new InterfaceEntityInput<>(Linkable.class, "NextForContainers", KEY_INPUTS, null);
 		nextForContainers.setRequired(true);
 		this.addInput(nextForContainers);
 	}

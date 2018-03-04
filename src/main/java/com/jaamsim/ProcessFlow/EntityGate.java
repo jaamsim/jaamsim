@@ -33,7 +33,7 @@ public class EntityGate extends LinkedService {
 	private DisplayEntity servedEntity; // the entity about to be released from the queue
 
 	{
-		releaseDelay = new SampleInput("ReleaseDelay", "Key Inputs", new SampleConstant(0.0));
+		releaseDelay = new SampleInput("ReleaseDelay", KEY_INPUTS, new SampleConstant(0.0));
 		releaseDelay.setUnitType(TimeUnit.class);
 		releaseDelay.setValidRange(0.0, Double.POSITIVE_INFINITY);
 		releaseDelay.setEntity(this);

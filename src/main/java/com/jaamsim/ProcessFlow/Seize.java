@@ -54,14 +54,14 @@ public class Seize extends LinkedService implements ResourceUser {
 		opportunisticBreakdownList.setHidden(true);
 
 		ArrayList<Resource> resDef = new ArrayList<>();
-		resourceList = new EntityListInput<>(Resource.class, "ResourceList", "Key Inputs", resDef);
+		resourceList = new EntityListInput<>(Resource.class, "ResourceList", KEY_INPUTS, resDef);
 		resourceList.setRequired(true);
 		this.addInput(resourceList);
 		this.addSynonym(resourceList, "Resource");
 
 		ArrayList<SampleProvider> def = new ArrayList<>();
 		def.add(new SampleConstant(1));
-		numberOfUnitsList = new SampleListInput("NumberOfUnits", "Key Inputs", def);
+		numberOfUnitsList = new SampleListInput("NumberOfUnits", KEY_INPUTS, def);
 		numberOfUnitsList.setEntity(this);
 		numberOfUnitsList.setValidRange(0, Double.POSITIVE_INFINITY);
 		numberOfUnitsList.setDimensionless(true);

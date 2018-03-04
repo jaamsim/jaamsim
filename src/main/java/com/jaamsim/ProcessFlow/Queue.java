@@ -122,41 +122,41 @@ public class Queue extends LinkedComponent {
 		defaultEntity.setHidden(true);
 		nextComponent.setHidden(true);
 
-		priority = new SampleInput("Priority", "Key Inputs", new SampleConstant(0));
+		priority = new SampleInput("Priority", KEY_INPUTS, new SampleConstant(0));
 		priority.setUnitType(DimensionlessUnit.class);
 		priority.setEntity(this);
 		priority.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		this.addInput(priority);
 
-		match = new StringProvInput("Match", "Key Inputs", null);
+		match = new StringProvInput("Match", KEY_INPUTS, null);
 		match.setUnitType(DimensionlessUnit.class);
 		match.setEntity(this);
 		this.addInput(match);
 
-		fifo = new BooleanInput("FIFO", "Key Inputs", true);
+		fifo = new BooleanInput("FIFO", KEY_INPUTS, true);
 		this.addInput(fifo);
 
-		renegeTime = new SampleInput("RenegeTime", "Key Inputs", null);
+		renegeTime = new SampleInput("RenegeTime", KEY_INPUTS, null);
 		renegeTime.setUnitType(TimeUnit.class);
 		renegeTime.setEntity(this);
 		renegeTime.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		this.addInput(renegeTime);
 
-		renegeCondition = new SampleInput("RenegeCondition", "Key Inputs", new SampleConstant(1));
+		renegeCondition = new SampleInput("RenegeCondition", KEY_INPUTS, new SampleConstant(1));
 		renegeCondition.setUnitType(DimensionlessUnit.class);
 		renegeCondition.setEntity(this);
 		renegeCondition.setValidRange(0.0d, 1.0d);
 		this.addInput(renegeCondition);
 
-		renegeDestination = new InterfaceEntityInput<>(Linkable.class, "RenegeDestination", "Key Inputs", null);
+		renegeDestination = new InterfaceEntityInput<>(Linkable.class, "RenegeDestination", KEY_INPUTS, null);
 		this.addInput(renegeDestination);
 
-		spacing = new ValueInput("Spacing", "Key Inputs", 0.0d);
+		spacing = new ValueInput("Spacing", KEY_INPUTS, 0.0d);
 		spacing.setUnitType(DistanceUnit.class);
 		spacing.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		this.addInput(spacing);
 
-		maxPerLine = new IntegerInput("MaxPerLine", "Key Inputs", Integer.MAX_VALUE);
+		maxPerLine = new IntegerInput("MaxPerLine", KEY_INPUTS, Integer.MAX_VALUE);
 		maxPerLine.setValidRange(1, Integer.MAX_VALUE);
 		this.addInput(maxPerLine);
 	}

@@ -46,14 +46,14 @@ public class EntityLauncher extends GameEntity implements LinkDisplayable {
 	private int numberGenerated = 0;  // Number of entities generated so far
 
 	{
-		prototypeEntity = new EntityProvInput<>(DisplayEntity.class, "PrototypeEntity", "Key Inputs", null);
+		prototypeEntity = new EntityProvInput<>(DisplayEntity.class, "PrototypeEntity", KEY_INPUTS, null);
 		prototypeEntity.setEntity(this);
 		prototypeEntity.setRequired(true);
 		prototypeEntity.addInvalidClass(TextBasics.class);
 		prototypeEntity.addInvalidClass(OverlayEntity.class);
 		this.addInput(prototypeEntity);
 
-		nextComponent = new InterfaceEntityInput<>(Linkable.class, "NextComponent", "Key Inputs", null);
+		nextComponent = new InterfaceEntityInput<>(Linkable.class, "NextComponent", KEY_INPUTS, null);
 		nextComponent.setRequired(true);
 		this.addInput(nextComponent);
 	}

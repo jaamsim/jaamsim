@@ -31,7 +31,7 @@ public class AddTo extends Pack {
 	{
 		prototypeEntityContainer.setHidden(true);
 
-		containerQueue = new EntityInput<>(Queue.class, "ContainerQueue", "Key Inputs", null);
+		containerQueue = new EntityInput<>(Queue.class, "ContainerQueue", KEY_INPUTS, null);
 		containerQueue.setRequired(true);
 		this.addInput(containerQueue);
 	}

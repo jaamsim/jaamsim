@@ -39,7 +39,7 @@ public class EntityLogger extends Logger implements Linkable, LinkDisplayable {
 	protected final InterfaceEntityInput<Linkable> nextComponent;
 
 	{
-		nextComponent = new InterfaceEntityInput<>(Linkable.class, "NextComponent", "Key Inputs", null);
+		nextComponent = new InterfaceEntityInput<>(Linkable.class, "NextComponent", KEY_INPUTS, null);
 		nextComponent.setRequired(true);
 		this.addInput(nextComponent);
 	}

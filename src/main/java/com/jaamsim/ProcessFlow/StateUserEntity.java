@@ -89,37 +89,37 @@ public abstract class StateUserEntity extends StateEntity implements ThresholdUs
 	private boolean busy;  // indicates that work is being performed
 
 	{
-		immediateThresholdList = new EntityListInput<>(Threshold.class, "ImmediateThresholdList", "Thresholds", new ArrayList<Threshold>());
+		immediateThresholdList = new EntityListInput<>(Threshold.class, "ImmediateThresholdList", THRESHOLDS, new ArrayList<Threshold>());
 		this.addInput(immediateThresholdList);
 
-		immediateReleaseThresholdList = new EntityListInput<>(Threshold.class, "ImmediateReleaseThresholdList", "Thresholds", new ArrayList<Threshold>());
+		immediateReleaseThresholdList = new EntityListInput<>(Threshold.class, "ImmediateReleaseThresholdList", THRESHOLDS, new ArrayList<Threshold>());
 		this.addInput(immediateReleaseThresholdList);
 
-		operatingThresholdList = new EntityListInput<>(Threshold.class, "OperatingThresholdList", "Thresholds", new ArrayList<Threshold>());
+		operatingThresholdList = new EntityListInput<>(Threshold.class, "OperatingThresholdList", THRESHOLDS, new ArrayList<Threshold>());
 		this.addInput(operatingThresholdList);
 
 		immediateMaintenanceList =  new EntityListInput<>(DowntimeEntity.class,
-				"ImmediateMaintenanceList", "Maintenance", new ArrayList<DowntimeEntity>());
+				"ImmediateMaintenanceList", MAINTENANCE, new ArrayList<DowntimeEntity>());
 		this.addInput(immediateMaintenanceList);
 
 		forcedMaintenanceList =  new EntityListInput<>(DowntimeEntity.class,
-				"ForcedMaintenanceList", "Maintenance", new ArrayList<DowntimeEntity>());
+				"ForcedMaintenanceList", MAINTENANCE, new ArrayList<DowntimeEntity>());
 		this.addInput(forcedMaintenanceList);
 
 		opportunisticMaintenanceList =  new EntityListInput<>(DowntimeEntity.class,
-				"OpportunisticMaintenanceList", "Maintenance", new ArrayList<DowntimeEntity>());
+				"OpportunisticMaintenanceList", MAINTENANCE, new ArrayList<DowntimeEntity>());
 		this.addInput(opportunisticMaintenanceList);
 
 		immediateBreakdownList =  new EntityListInput<>(DowntimeEntity.class,
-				"ImmediateBreakdownList", "Maintenance", new ArrayList<DowntimeEntity>());
+				"ImmediateBreakdownList", MAINTENANCE, new ArrayList<DowntimeEntity>());
 		this.addInput(immediateBreakdownList);
 
 		forcedBreakdownList =  new EntityListInput<>(DowntimeEntity.class,
-				"ForcedBreakdownList", "Maintenance", new ArrayList<DowntimeEntity>());
+				"ForcedBreakdownList", MAINTENANCE, new ArrayList<DowntimeEntity>());
 		this.addInput(forcedBreakdownList);
 
 		opportunisticBreakdownList =  new EntityListInput<>(DowntimeEntity.class,
-				"OpportunisticBreakdownList", "Maintenance", new ArrayList<DowntimeEntity>());
+				"OpportunisticBreakdownList", MAINTENANCE, new ArrayList<DowntimeEntity>());
 		this.addInput(opportunisticBreakdownList);
 	}
 

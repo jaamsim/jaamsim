@@ -78,13 +78,13 @@ public class Resource extends DisplayEntity {
 	{
 		attributeDefinitionList.setHidden(false);
 
-		capacity = new SampleInput("Capacity", "Key Inputs", new SampleConstant(1.0));
+		capacity = new SampleInput("Capacity", KEY_INPUTS, new SampleConstant(1.0));
 		capacity.setUnitType(DimensionlessUnit.class);
 		capacity.setEntity(this);
 		capacity.setValidRange(0, Double.POSITIVE_INFINITY);
 		this.addInput(capacity);
 
-		strictOrder = new BooleanInput("StrictOrder", "Key Inputs", false);
+		strictOrder = new BooleanInput("StrictOrder", KEY_INPUTS, false);
 		this.addInput(strictOrder);
 	}
 

@@ -64,13 +64,13 @@ public class EntityProcessor extends Seize {
 
 		resourceList.setRequired(false);
 
-		capacity = new SampleInput("Capacity", "Key Inputs", new SampleConstant(1.0));
+		capacity = new SampleInput("Capacity", KEY_INPUTS, new SampleConstant(1.0));
 		capacity.setUnitType(DimensionlessUnit.class);
 		capacity.setEntity(this);
 		capacity.setValidRange(0, Double.POSITIVE_INFINITY);
 		this.addInput(capacity);
 
-		serviceTime = new SampleInput("ServiceTime", "Key Inputs", new SampleConstant(TimeUnit.class, 0.0));
+		serviceTime = new SampleInput("ServiceTime", KEY_INPUTS, new SampleConstant(TimeUnit.class, 0.0));
 		serviceTime.setUnitType(TimeUnit.class);
 		serviceTime.setEntity(this);
 		serviceTime.setValidRange(0, Double.POSITIVE_INFINITY);

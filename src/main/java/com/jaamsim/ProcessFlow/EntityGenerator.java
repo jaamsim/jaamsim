@@ -79,36 +79,36 @@ public class EntityGenerator extends LinkedService {
 		opportunisticMaintenanceList.setHidden(true);
 		opportunisticBreakdownList.setHidden(true);
 
-		firstArrivalTime = new SampleInput("FirstArrivalTime", "Key Inputs", new SampleConstant(TimeUnit.class, 0.0));
+		firstArrivalTime = new SampleInput("FirstArrivalTime", KEY_INPUTS, new SampleConstant(TimeUnit.class, 0.0));
 		firstArrivalTime.setUnitType(TimeUnit.class);
 		firstArrivalTime.setEntity(this);
 		firstArrivalTime.setValidRange(0, Double.POSITIVE_INFINITY);
 		this.addInput(firstArrivalTime);
 
-		interArrivalTime = new SampleInput("InterArrivalTime", "Key Inputs", new SampleConstant(TimeUnit.class, 1.0));
+		interArrivalTime = new SampleInput("InterArrivalTime", KEY_INPUTS, new SampleConstant(TimeUnit.class, 1.0));
 		interArrivalTime.setUnitType(TimeUnit.class);
 		interArrivalTime.setEntity(this);
 		interArrivalTime.setValidRange(0, Double.POSITIVE_INFINITY);
 		this.addInput(interArrivalTime);
 
-		entitiesPerArrival = new SampleInput("EntitiesPerArrival", "Key Inputs", new SampleConstant(DimensionlessUnit.class, 1.0));
+		entitiesPerArrival = new SampleInput("EntitiesPerArrival", KEY_INPUTS, new SampleConstant(DimensionlessUnit.class, 1.0));
 		entitiesPerArrival.setUnitType(DimensionlessUnit.class);
 		entitiesPerArrival.setEntity(this);
 		entitiesPerArrival.setValidRange(1, Double.POSITIVE_INFINITY);
 		this.addInput(entitiesPerArrival);
 
-		prototypeEntity = new EntityProvInput<>(DisplayEntity.class, "PrototypeEntity", "Key Inputs", null);
+		prototypeEntity = new EntityProvInput<>(DisplayEntity.class, "PrototypeEntity", KEY_INPUTS, null);
 		prototypeEntity.setEntity(this);
 		prototypeEntity.setRequired(true);
 		prototypeEntity.addInvalidClass(TextBasics.class);
 		prototypeEntity.addInvalidClass(OverlayEntity.class);
 		this.addInput(prototypeEntity);
 
-		baseName = new StringInput("BaseName", "Key Inputs", null);
+		baseName = new StringInput("BaseName", KEY_INPUTS, null);
 		baseName.setDefaultText("Generator Name");
 		this.addInput(baseName);
 
-		maxNumber = new SampleInput("MaxNumber", "Key Inputs", null);
+		maxNumber = new SampleInput("MaxNumber", KEY_INPUTS, null);
 		maxNumber.setUnitType(DimensionlessUnit.class);
 		maxNumber.setEntity(this);
 		maxNumber.setValidRange(1, Double.POSITIVE_INFINITY);

@@ -60,18 +60,18 @@ public class EntityConveyor extends LinkedService {
 		forcedMaintenanceList.setHidden(true);
 		forcedBreakdownList.setHidden(true);
 
-		travelTimeInput = new SampleInput("TravelTime", "Key Inputs", new SampleConstant(0.0d));
+		travelTimeInput = new SampleInput("TravelTime", KEY_INPUTS, new SampleConstant(0.0d));
 		travelTimeInput.setValidRange(0.0, Double.POSITIVE_INFINITY);
 		travelTimeInput.setUnitType(TimeUnit.class);
 		travelTimeInput.setEntity(this);
 		this.addInput(travelTimeInput);
 
-		widthInput = new ValueInput("Width", "Key Inputs", 1.0d);
+		widthInput = new ValueInput("Width", KEY_INPUTS, 1.0d);
 		widthInput.setUnitType(DimensionlessUnit.class);
 		widthInput.setValidRange(1.0d, Double.POSITIVE_INFINITY);
 		this.addInput(widthInput);
 
-		colorInput = new ColourInput("Color", "Key Inputs", ColourInput.BLACK);
+		colorInput = new ColourInput("Color", KEY_INPUTS, ColourInput.BLACK);
 		this.addInput(colorInput);
 		this.addSynonym(colorInput, "Colour");
 	}

@@ -60,22 +60,22 @@ public class EntityDelay extends LinkedComponent {
 	{
 		stateGraphics.setHidden(false);
 
-		duration = new SampleInput("Duration", "Key Inputs", null);
+		duration = new SampleInput("Duration", KEY_INPUTS, null);
 		duration.setUnitType(TimeUnit.class);
 		duration.setEntity(this);
 		duration.setValidRange(0, Double.POSITIVE_INFINITY);
 		duration.setRequired(true);
 		this.addInput(duration);
 
-		animation = new BooleanInput("Animation", "Key Inputs", true);
+		animation = new BooleanInput("Animation", KEY_INPUTS, true);
 		this.addInput(animation);
 
-		widthInput = new ValueInput("Width", "Key Inputs", 1.0d);
+		widthInput = new ValueInput("Width", KEY_INPUTS, 1.0d);
 		widthInput.setUnitType(DimensionlessUnit.class);
 		widthInput.setValidRange(1.0d, Double.POSITIVE_INFINITY);
 		this.addInput(widthInput);
 
-		colorInput = new ColourInput("Color", "Key Inputs", ColourInput.BLACK);
+		colorInput = new ColourInput("Color", KEY_INPUTS, ColourInput.BLACK);
 		this.addInput(colorInput);
 		this.addSynonym(colorInput, "Colour");
 	}

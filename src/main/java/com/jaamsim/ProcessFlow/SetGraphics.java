@@ -49,14 +49,14 @@ public class SetGraphics extends LinkedComponent {
 	private final SampleInput choice;
 
 	{
-		targetEntity = new EntityProvInput<>(DisplayEntity.class, "TargetEntity", "Key Inputs", null);
+		targetEntity = new EntityProvInput<>(DisplayEntity.class, "TargetEntity", KEY_INPUTS, null);
 		targetEntity.setDefaultText("this.obj");
 		targetEntity.setEntity(this);
 		targetEntity.addInvalidClass(TextBasics.class);
 		targetEntity.addInvalidClass(OverlayEntity.class);
 		this.addInput(targetEntity);
 
-		graphicsList = new EntityListInput<>(DisplayEntity.class, "GraphicsList", "Key Inputs", null);
+		graphicsList = new EntityListInput<>(DisplayEntity.class, "GraphicsList", KEY_INPUTS, null);
 		graphicsList.setRequired(true);
 		ArrayList<Class<? extends Entity>> list = new ArrayList<>();
 		list.add(TextBasics.class);
@@ -64,7 +64,7 @@ public class SetGraphics extends LinkedComponent {
 		graphicsList.setInvalidClasses(list);
 		this.addInput(graphicsList);
 
-		choice = new SampleInput("Choice", "Key Inputs", new SampleConstant(DimensionlessUnit.class, 1.0));
+		choice = new SampleInput("Choice", KEY_INPUTS, new SampleConstant(DimensionlessUnit.class, 1.0));
 		choice.setUnitType(DimensionlessUnit.class);
 		choice.setEntity(this);
 		choice.setValidRange(1, Double.POSITIVE_INFINITY);
