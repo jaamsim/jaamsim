@@ -152,8 +152,12 @@ public class DisplayEntity extends Entity {
 
 	private final HashMap<String, Tag> tagMap = new HashMap<>();
 
+	private static final ArrayList<Vec3d> defPoints =  new ArrayList<>();
 	private static final DoubleVector defRange = new DoubleVector(2);
 	static {
+		defPoints.add(new Vec3d(0.0d, 0.0d, 0.0d));
+		defPoints.add(new Vec3d(1.0d, 0.0d, 0.0d));
+
 		defRange.add(0.0d);
 		defRange.add(Double.POSITIVE_INFINITY);
 	}
@@ -175,9 +179,6 @@ public class DisplayEntity extends Entity {
 		orientationInput.setUnitType(AngleUnit.class);
 		this.addInput(orientationInput);
 
-		ArrayList<Vec3d> defPoints =  new ArrayList<>();
-		defPoints.add(new Vec3d(0.0d, 0.0d, 0.0d));
-		defPoints.add(new Vec3d(1.0d, 0.0d, 0.0d));
 		pointsInput = new Vec3dListInput("Points", "Graphics", defPoints);
 		pointsInput.setValidCountRange( 2, Integer.MAX_VALUE );
 		pointsInput.setUnitType(DistanceUnit.class);
