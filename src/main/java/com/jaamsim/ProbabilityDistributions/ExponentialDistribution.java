@@ -39,7 +39,7 @@ public class ExponentialDistribution extends Distribution {
 	{
 		minValueInput.setDefaultValue(new SampleConstant(0.0d));
 
-		meanInput = new SampleInput("Mean", "Key Inputs", new SampleConstant(1.0d));
+		meanInput = new SampleInput("Mean", KEY_INPUTS, new SampleConstant(1.0d));
 		meanInput.setUnitType(UserSpecifiedUnit.class);
 		meanInput.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		meanInput.setEntity(this);

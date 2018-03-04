@@ -50,18 +50,18 @@ public class LogNormalDistribution extends Distribution {
 	{
 		minValueInput.setDefaultValue(new SampleConstant(0.0d));
 
-		scaleInput = new SampleInput("Scale", "Key Inputs", new SampleConstant(1.0d));
+		scaleInput = new SampleInput("Scale", KEY_INPUTS, new SampleConstant(1.0d));
 		scaleInput.setValidRange(0.0, Double.POSITIVE_INFINITY);
 		scaleInput.setUnitType(UserSpecifiedUnit.class);
 		scaleInput.setEntity(this);
 		this.addInput(scaleInput);
 
-		normalMeanInput = new SampleInput("NormalMean", "Key Inputs", new SampleConstant(0.0d));
+		normalMeanInput = new SampleInput("NormalMean", KEY_INPUTS, new SampleConstant(0.0d));
 		normalMeanInput.setUnitType(DimensionlessUnit.class);
 		normalMeanInput.setEntity(this);
 		this.addInput(normalMeanInput);
 
-		normalStandardDeviationInput = new SampleInput("NormalStandardDeviation", "Key Inputs",
+		normalStandardDeviationInput = new SampleInput("NormalStandardDeviation", KEY_INPUTS,
 				new SampleConstant(1.0d));
 		normalStandardDeviationInput.setUnitType(DimensionlessUnit.class);
 		normalStandardDeviationInput.setValidRange(0.0d, Double.POSITIVE_INFINITY);

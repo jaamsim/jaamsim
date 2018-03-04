@@ -41,7 +41,7 @@ public class TriangularDistribution extends Distribution {
 		minValueInput.setDefaultValue(new SampleConstant(0.0d));
 		maxValueInput.setDefaultValue(new SampleConstant(2.0d));
 
-		modeInput = new SampleInput("Mode", "Key Inputs", new SampleConstant(1.0d));
+		modeInput = new SampleInput("Mode", KEY_INPUTS, new SampleConstant(1.0d));
 		modeInput.setUnitType(UserSpecifiedUnit.class);
 		modeInput.setEntity(this);
 		this.addInput(modeInput);

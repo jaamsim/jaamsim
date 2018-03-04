@@ -47,13 +47,13 @@ public class ContinuousDistribution extends Distribution {
 	private final MRG1999a rng = new MRG1999a();
 
 	{
-		valueListInput = new ValueListInput("ValueList", "Key Inputs", null);
+		valueListInput = new ValueListInput("ValueList", KEY_INPUTS, null);
 		valueListInput.setUnitType(UserSpecifiedUnit.class);
 		valueListInput.setRequired(true);
 		valueListInput.setMonotonic( 1 );
 		this.addInput( valueListInput);
 
-		cumulativeProbabilityListInput = new CumulativeProbInput("CumulativeProbabilityList", "Key Inputs", null);
+		cumulativeProbabilityListInput = new CumulativeProbInput("CumulativeProbabilityList", KEY_INPUTS, null);
 		cumulativeProbabilityListInput.setRequired(true);
 		this.addInput(cumulativeProbabilityListInput);
 	}

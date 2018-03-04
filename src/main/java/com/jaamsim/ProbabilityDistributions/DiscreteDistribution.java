@@ -56,12 +56,12 @@ public class DiscreteDistribution extends Distribution {
 	private double[] cumProbList;
 
 	{
-		valueListInput = new ValueListInput( "ValueList", "Key Inputs", null);
+		valueListInput = new ValueListInput( "ValueList", KEY_INPUTS, null);
 		valueListInput.setUnitType(UserSpecifiedUnit.class);
 		valueListInput.setRequired(true);
 		this.addInput( valueListInput);
 
-		probabilityListInput = new ValueListInput( "ProbabilityList", "Key Inputs", null);
+		probabilityListInput = new ValueListInput( "ProbabilityList", KEY_INPUTS, null);
 		probabilityListInput.setUnitType(DimensionlessUnit.class);
 		probabilityListInput.setValidSum(1.0d, 0.001d);
 		probabilityListInput.setValidRange(0.0d, 1.0d);

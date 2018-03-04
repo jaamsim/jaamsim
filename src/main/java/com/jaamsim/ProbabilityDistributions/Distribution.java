@@ -80,24 +80,24 @@ implements SampleProvider {
 	private static int MAX_ATTEMPTS = 1000;
 
 	{
-		unitType = new UnitTypeInput("UnitType", "Key Inputs", UserSpecifiedUnit.class);
+		unitType = new UnitTypeInput("UnitType", KEY_INPUTS, UserSpecifiedUnit.class);
 		unitType.setRequired(true);
 		this.addInput(unitType);
 
-		randomSeedInput = new IntegerInput("RandomSeed", "Key Inputs", -1);
+		randomSeedInput = new IntegerInput("RandomSeed", KEY_INPUTS, -1);
 		randomSeedInput.setValidRange(0, Integer.MAX_VALUE);
 		randomSeedInput.setRequired(true);
 		randomSeedInput.setDefaultText("None");
 		this.addInput(randomSeedInput);
 
 		SampleConstant negInf = new SampleConstant(Double.NEGATIVE_INFINITY);
-		minValueInput = new SampleInput("MinValue", "Key Inputs", negInf);
+		minValueInput = new SampleInput("MinValue", KEY_INPUTS, negInf);
 		minValueInput.setUnitType(UserSpecifiedUnit.class);
 		minValueInput.setEntity(this);
 		this.addInput(minValueInput);
 
 		SampleConstant posInf = new SampleConstant(Double.POSITIVE_INFINITY);
-		maxValueInput = new SampleInput("MaxValue", "Key Inputs", posInf);
+		maxValueInput = new SampleInput("MaxValue", KEY_INPUTS, posInf);
 		maxValueInput.setUnitType(UserSpecifiedUnit.class);
 		maxValueInput.setEntity(this);
 		this.addInput(maxValueInput);

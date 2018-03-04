@@ -44,13 +44,13 @@ public class LogLogisticDistribution extends Distribution {
 	{
 		minValueInput.setDefaultValue(new SampleConstant(0.0d));
 
-		scaleInput = new SampleInput("Scale", "Key Inputs", new SampleConstant(1.0d));
+		scaleInput = new SampleInput("Scale", KEY_INPUTS, new SampleConstant(1.0d));
 		scaleInput.setValidRange(0.0, Double.POSITIVE_INFINITY);
 		scaleInput.setUnitType(UserSpecifiedUnit.class);
 		scaleInput.setEntity(this);
 		this.addInput(scaleInput);
 
-		shapeInput = new SampleInput("Shape", "Key Inputs", new SampleConstant(1.0d));
+		shapeInput = new SampleInput("Shape", KEY_INPUTS, new SampleConstant(1.0d));
 		shapeInput.setValidRange(2.000001d, Double.POSITIVE_INFINITY);
 		shapeInput.setUnitType(DimensionlessUnit.class);
 		shapeInput.setEntity(this);

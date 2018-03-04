@@ -42,13 +42,13 @@ public class BooleanSelector extends DisplayEntity {
 	private boolean lastValue;
 
 	{
-		randomSeedInput = new IntegerInput("RandomSeed", "Key Inputs", -1);
+		randomSeedInput = new IntegerInput("RandomSeed", KEY_INPUTS, -1);
 		randomSeedInput.setValidRange(0, Integer.MAX_VALUE);
 		randomSeedInput.setRequired(true);
 		randomSeedInput.setDefaultText("None");
 		this.addInput(randomSeedInput);
 
-		trueProbInput = new SampleInput("TrueProbability", "Key Inputs", new SampleConstant(1.0d));
+		trueProbInput = new SampleInput("TrueProbability", KEY_INPUTS, new SampleConstant(1.0d));
 		trueProbInput.setUnitType(DimensionlessUnit.class);
 		trueProbInput.setValidRange(0.0d, 1.0d);
 		trueProbInput.setEntity(this);

@@ -45,19 +45,19 @@ public class BetaDistribution extends Distribution {
 	{
 		minValueInput.setDefaultValue(new SampleConstant(0.0d));
 
-		alphaInput = new SampleInput("AlphaParam", "Key Inputs", new SampleConstant(1.0d));
+		alphaInput = new SampleInput("AlphaParam", KEY_INPUTS, new SampleConstant(1.0d));
 		alphaInput.setUnitType(DimensionlessUnit.class);
 		alphaInput.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		alphaInput.setEntity(this);
 		this.addInput(alphaInput);
 
-		betaInput = new SampleInput("BetaParam", "Key Inputs", new SampleConstant(1.0d));
+		betaInput = new SampleInput("BetaParam", KEY_INPUTS, new SampleConstant(1.0d));
 		betaInput.setUnitType(DimensionlessUnit.class);
 		betaInput.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		betaInput.setEntity(this);
 		this.addInput(betaInput);
 
-		scaleInput = new SampleInput("Scale", "Key Inputs", new SampleConstant(1.0d));
+		scaleInput = new SampleInput("Scale", KEY_INPUTS, new SampleConstant(1.0d));
 		scaleInput.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		scaleInput.setUnitType(UserSpecifiedUnit.class);
 		scaleInput.setEntity(this);
