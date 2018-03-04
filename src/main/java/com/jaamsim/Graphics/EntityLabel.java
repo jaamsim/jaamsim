@@ -31,7 +31,7 @@ public class EntityLabel extends TextBasics {
 	protected final EntityInput<DisplayEntity> targetEntity;
 
 	{
-		targetEntity = new EntityInput<>(DisplayEntity.class, "TargetEntity", "Key Inputs", null);
+		targetEntity = new EntityInput<>(DisplayEntity.class, "TargetEntity", KEY_INPUTS, null);
 		this.addInput(targetEntity);
 
 		targetEntity.setHidden(true);

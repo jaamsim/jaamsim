@@ -46,15 +46,15 @@ public abstract class OverlayEntity extends DisplayEntity {
 		IntegerVector defPos = new IntegerVector(2);
 		defPos.add(10);
 		defPos.add(10);
-		screenPosition = new IntegerListInput("ScreenPosition", "Graphics", defPos);
+		screenPosition = new IntegerListInput("ScreenPosition", GRAPHICS, defPos);
 		screenPosition.setValidCount(2);
 		screenPosition.setValidRange(0, 2500);
 		this.addInput(screenPosition);
 
-		alignRight = new BooleanInput("AlignRight", "Graphics", false);
+		alignRight = new BooleanInput("AlignRight", GRAPHICS, false);
 		this.addInput(alignRight);
 
-		alignBottom = new BooleanInput("AlignBottom", "Graphics", false);
+		alignBottom = new BooleanInput("AlignBottom", GRAPHICS, false);
 		this.addInput(alignBottom);
 	}
 

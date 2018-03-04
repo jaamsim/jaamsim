@@ -91,14 +91,14 @@ public class Graph extends GraphBasics  {
 	{
 		// Key Inputs category
 
-		numberOfPoints = new IntegerInput("NumberOfPoints", "Key Inputs", 100);
+		numberOfPoints = new IntegerInput("NumberOfPoints", KEY_INPUTS, 100);
 		numberOfPoints.setValidRange(0, Integer.MAX_VALUE);
 		this.addInput(numberOfPoints);
 
-		unitType = new UnitTypeInput("UnitType", "Key Inputs", DimensionlessUnit.class);
+		unitType = new UnitTypeInput("UnitType", KEY_INPUTS, DimensionlessUnit.class);
 		this.addInput(unitType);
 
-		dataSource = new SampleListInput("DataSource", "Key Inputs", null);
+		dataSource = new SampleListInput("DataSource", KEY_INPUTS, null);
 		dataSource.setUnitType(DimensionlessUnit.class);
 		dataSource.setEntity(this);
 		dataSource.setRequired(true);
@@ -106,36 +106,36 @@ public class Graph extends GraphBasics  {
 
 		ArrayList<Color4d> defLineColor = new ArrayList<>(0);
 		defLineColor.add(ColourInput.getColorWithName("red"));
-		lineColorsList = new ColorListInput("LineColours", "Key Inputs", defLineColor);
+		lineColorsList = new ColorListInput("LineColours", KEY_INPUTS, defLineColor);
 		lineColorsList.setValidCountRange(1, Integer.MAX_VALUE);
 		this.addInput(lineColorsList);
 		this.addSynonym(lineColorsList, "LineColors");
 
 		DoubleVector defLineWidths = new DoubleVector(1);
 		defLineWidths.add(1.0);
-		lineWidths = new ValueListInput("LineWidths", "Key Inputs", defLineWidths);
+		lineWidths = new ValueListInput("LineWidths", KEY_INPUTS, defLineWidths);
 		lineWidths.setUnitType(DimensionlessUnit.class);
 		lineWidths.setValidCountRange(1, Integer.MAX_VALUE);
 		this.addInput(lineWidths);
 
-		secondaryUnitType = new UnitTypeInput("SecondaryUnitType", "Key Inputs", DimensionlessUnit.class);
+		secondaryUnitType = new UnitTypeInput("SecondaryUnitType", KEY_INPUTS, DimensionlessUnit.class);
 		this.addInput(secondaryUnitType);
 
-		secondaryDataSource = new SampleListInput("SecondaryDataSource", "Key Inputs", null);
+		secondaryDataSource = new SampleListInput("SecondaryDataSource", KEY_INPUTS, null);
 		secondaryDataSource.setUnitType(DimensionlessUnit.class);
 		secondaryDataSource.setEntity(this);
 		this.addInput(secondaryDataSource);
 
 		ArrayList<Color4d> defSecondaryLineColor = new ArrayList<>(0);
 		defSecondaryLineColor.add(ColourInput.getColorWithName("black"));
-		secondaryLineColorsList = new ColorListInput("SecondaryLineColours", "Key Inputs", defSecondaryLineColor);
+		secondaryLineColorsList = new ColorListInput("SecondaryLineColours", KEY_INPUTS, defSecondaryLineColor);
 		secondaryLineColorsList.setValidCountRange(1, Integer.MAX_VALUE);
 		this.addInput(secondaryLineColorsList);
 		this.addSynonym(secondaryLineColorsList, "SecondaryLineColors");
 
 		DoubleVector defSecondaryLineWidths = new DoubleVector(1);
 		defSecondaryLineWidths.add(1.0);
-		secondaryLineWidths = new ValueListInput("SecondaryLineWidths", "Key Inputs", defSecondaryLineWidths);
+		secondaryLineWidths = new ValueListInput("SecondaryLineWidths", KEY_INPUTS, defSecondaryLineWidths);
 		secondaryLineWidths.setUnitType(DimensionlessUnit.class);
 		secondaryLineWidths.setValidCountRange(1, Integer.MAX_VALUE);
 		this.addInput(secondaryLineWidths);

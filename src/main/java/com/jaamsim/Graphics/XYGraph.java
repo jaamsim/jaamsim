@@ -65,34 +65,34 @@ public class XYGraph extends GraphBasics {
 	{
 		// Key Inputs category
 
-		dataSource = new SampleListInput("DataSource", "Key Inputs", null);
+		dataSource = new SampleListInput("DataSource", KEY_INPUTS, null);
 		dataSource.setUnitType(UserSpecifiedUnit.class);
 		dataSource.setEntity(this);
 		this.addInput(dataSource);
 
 		ArrayList<Color4d> defSeriesColor = new ArrayList<>(0);
 		defSeriesColor.add(ColourInput.getColorWithName("red"));
-		seriesColorsList = new ColorListInput("SeriesColours", "Key Inputs", defSeriesColor);
+		seriesColorsList = new ColorListInput("SeriesColours", KEY_INPUTS, defSeriesColor);
 		seriesColorsList.setValidCountRange(1, Integer.MAX_VALUE);
 		this.addInput(seriesColorsList);
 		this.addSynonym(seriesColorsList, "LineColors");
 
-		showBars = new BooleanInput("ShowBars", "Key Inputs", false);
+		showBars = new BooleanInput("ShowBars", KEY_INPUTS, false);
 		this.addInput(showBars);
 
-		secondaryDataSource = new SampleListInput("SecondaryDataSource", "Key Inputs", null);
+		secondaryDataSource = new SampleListInput("SecondaryDataSource", KEY_INPUTS, null);
 		secondaryDataSource.setUnitType(UserSpecifiedUnit.class);
 		secondaryDataSource.setEntity(this);
 		this.addInput(secondaryDataSource);
 
 		ArrayList<Color4d> defSecondaryLineColor = new ArrayList<>(0);
 		defSecondaryLineColor.add(ColourInput.getColorWithName("black"));
-		secondarySeriesColorsList = new ColorListInput("SecondarySeriesColours", "Key Inputs", defSecondaryLineColor);
+		secondarySeriesColorsList = new ColorListInput("SecondarySeriesColours", KEY_INPUTS, defSecondaryLineColor);
 		secondarySeriesColorsList.setValidCountRange(1, Integer.MAX_VALUE);
 		this.addInput(secondarySeriesColorsList);
 		this.addSynonym(secondarySeriesColorsList, "SecondaryLineColors");
 
-		secondaryShowBars = new BooleanInput("SecondaryShowBars", "Key Inputs", false);
+		secondaryShowBars = new BooleanInput("SecondaryShowBars", KEY_INPUTS, false);
 		this.addInput(secondaryShowBars);
 	}
 

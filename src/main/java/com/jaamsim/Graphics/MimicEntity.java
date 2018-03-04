@@ -33,7 +33,7 @@ public class MimicEntity extends DisplayEntity {
 	private ArrayList<DisplayModelBinding> sourceBindings;
 
 	{
-		sourceEntity = new EntityProvInput<>(DisplayEntity.class, "SourceEntity", "Key Inputs", null);
+		sourceEntity = new EntityProvInput<>(DisplayEntity.class, "SourceEntity", KEY_INPUTS, null);
 		sourceEntity.setEntity(this);
 		sourceEntity.addInvalidClass(MimicEntity.class);
 		sourceEntity.addInvalidClass(TextBasics.class);

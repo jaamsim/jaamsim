@@ -107,55 +107,55 @@ public class OverlayText extends OverlayEntity {
 	private String renderText;
 
 	{
-		textHeight = new IntegerInput("TextHeight", "Key Inputs", 15);
+		textHeight = new IntegerInput("TextHeight", KEY_INPUTS, 15);
 		textHeight.setValidRange(0, 1000);
 		this.addInput(textHeight);
 
-		formatText = new StringInput("Format", "Key Inputs", "");
+		formatText = new StringInput("Format", KEY_INPUTS, "");
 		this.addInput(formatText);
 
-		unitType = new UnitTypeInput("UnitType", "Key Inputs", DimensionlessUnit.class);
+		unitType = new UnitTypeInput("UnitType", KEY_INPUTS, DimensionlessUnit.class);
 		this.addInput(unitType);
 
-		unit = new EntityInput<>(Unit.class, "Unit", "Key Inputs", null);
+		unit = new EntityInput<>(Unit.class, "Unit", KEY_INPUTS, null);
 		unit.setSubClass(null);
 		this.addInput(unit);
 
-		dataSource = new StringProvInput("DataSource", "Key Inputs", null);
+		dataSource = new StringProvInput("DataSource", KEY_INPUTS, null);
 		dataSource.setUnitType(DimensionlessUnit.class);
 		dataSource.setEntity(this);
 		this.addInput(dataSource);
 		this.addSynonym(dataSource, "OutputName");
 
-		failText = new StringInput("FailText", "Key Inputs", "Input Error");
+		failText = new StringInput("FailText", KEY_INPUTS, "Input Error");
 		this.addInput(failText);
 
-		fontName = new StringChoiceInput("FontName", "Font", -1);
+		fontName = new StringChoiceInput("FontName", FONT, -1);
 		fontName.setChoices(TextModel.validFontNames);
 		fontName.setDefaultText("TextModel");
 		this.addInput(fontName);
 
-		fontColor = new ColourInput("FontColour", "Font", ColourInput.BLACK);
+		fontColor = new ColourInput("FontColour", FONT, ColourInput.BLACK);
 		fontColor.setDefaultText("TextModel");
 		this.addInput(fontColor);
 		this.addSynonym(fontColor, "FontColor");
 
-		fontStyle = new StringListInput("FontStyle", "Font", new ArrayList<String>(0));
+		fontStyle = new StringListInput("FontStyle", FONT, new ArrayList<String>(0));
 		fontStyle.setValidOptions(TextModel.validStyles);
 		fontStyle.setCaseSensitive(false);
 		fontStyle.setDefaultText("TextModel");
 		this.addInput(fontStyle);
 
-		dropShadow = new BooleanInput("DropShadow", "Font", false);
+		dropShadow = new BooleanInput("DropShadow", FONT, false);
 		dropShadow.setDefaultText("TextModel");
 		this.addInput(dropShadow);
 
-		dropShadowColor = new ColourInput("DropShadowColour", "Font", ColourInput.BLACK);
+		dropShadowColor = new ColourInput("DropShadowColour", FONT, ColourInput.BLACK);
 		dropShadowColor.setDefaultText("TextModel");
 		this.addInput(dropShadowColor);
 		this.addSynonym(dropShadowColor, "DropShadowColor");
 
-		dropShadowOffset = new Vec3dInput("DropShadowOffset", "Font", null);
+		dropShadowOffset = new Vec3dInput("DropShadowOffset", FONT, null);
 		dropShadowOffset.setDefaultText("TextModel");
 		this.addInput(dropShadowOffset);
 	}

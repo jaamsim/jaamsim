@@ -84,6 +84,7 @@ public class Entity {
 	public static final String THRESHOLDS = "Thresholds";
 	public static final String MAINTENANCE = "Maintenance";
 	public static final String TRACING = "Tracing";
+	public static final String FONT = "Font";
 
 	@Keyword(description = "Provides the programmer with a detailed trace of the logic executed "
 	                     + "by the entity. Trace information is sent to standard out.",

@@ -80,37 +80,37 @@ public abstract class TextBasics extends DisplayEntity {
 	private int numSelected = 0;       // number of characters selected (positive to the right of the insertion position)
 
 	{
-		textHeight = new ValueInput("TextHeight", "Key Inputs", 0.3d);
+		textHeight = new ValueInput("TextHeight", KEY_INPUTS, 0.3d);
 		textHeight.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		textHeight.setUnitType(DistanceUnit.class);
 		this.addInput(textHeight);
 
-		fontName = new StringChoiceInput("FontName", "Font", -1);
+		fontName = new StringChoiceInput("FontName", FONT, -1);
 		fontName.setChoices(TextModel.validFontNames);
 		fontName.setDefaultText("TextModel");
 		this.addInput(fontName);
 
-		fontColor = new ColourInput("FontColour", "Font", ColourInput.BLACK);
+		fontColor = new ColourInput("FontColour", FONT, ColourInput.BLACK);
 		fontColor.setDefaultText("TextModel");
 		this.addInput(fontColor);
 		this.addSynonym(fontColor, "FontColor");
 
-		fontStyle = new StringListInput("FontStyle", "Font", new ArrayList<String>(0));
+		fontStyle = new StringListInput("FontStyle", FONT, new ArrayList<String>(0));
 		fontStyle.setValidOptions(TextModel.validStyles);
 		fontStyle.setCaseSensitive(false);
 		fontStyle.setDefaultText("TextModel");
 		this.addInput(fontStyle);
 
-		dropShadow = new BooleanInput("DropShadow", "Font", false);
+		dropShadow = new BooleanInput("DropShadow", FONT, false);
 		dropShadow.setDefaultText("TextModel");
 		this.addInput(dropShadow);
 
-		dropShadowColor = new ColourInput("DropShadowColour", "Font", ColourInput.BLACK);
+		dropShadowColor = new ColourInput("DropShadowColour", FONT, ColourInput.BLACK);
 		dropShadowColor.setDefaultText("TextModel");
 		this.addInput(dropShadowColor);
 		this.addSynonym(dropShadowColor, "DropShadowColor");
 
-		dropShadowOffset = new Vec3dInput("DropShadowOffset", "Font", null);
+		dropShadowOffset = new Vec3dInput("DropShadowOffset", FONT, null);
 		dropShadowOffset.setDefaultText("TextModel");
 		this.addInput(dropShadowOffset);
 	}

@@ -162,73 +162,77 @@ public abstract class GraphBasics extends DisplayEntity {
 	         exampleList = {"%.1f"})
 	private final FormatInput secondaryYAxisLabelFormat;
 
+	public static final String X_AXIS = "X-Axis";
+	public static final String Y_AXIS = "Y-Axis";
+	public static final String SEC_Y_AXIS = "Secondary Y-Axis";
+
 	{
 		// Key Inputs category
 
-		title = new StringInput("Title", "Key Inputs", "Graph Title");
+		title = new StringInput("Title", "KEY_INPUTS", "Graph Title");
 		this.addInput(title);
 
 		// X-Axis category
 
-		xAxisTitle = new StringInput("XAxisTitle", "X-Axis", "X-Axis Title");
+		xAxisTitle = new StringInput("XAxisTitle", X_AXIS, "X-Axis Title");
 		this.addInput(xAxisTitle);
 
-		xAxisUnit = new EntityInput<>(Unit.class, "XAxisUnit", "X-Axis", null);
+		xAxisUnit = new EntityInput<>(Unit.class, "XAxisUnit", X_AXIS, null);
 		this.addInput(xAxisUnit);
 
-		xAxisStart = new ValueInput("XAxisStart", "X-Axis", -60.0d);
+		xAxisStart = new ValueInput("XAxisStart", X_AXIS, -60.0d);
 		xAxisStart.setUnitType(UserSpecifiedUnit.class);
 		xAxisStart.setValidRange(Double.NEGATIVE_INFINITY, 1.0e-6);
 		this.addInput(xAxisStart);
 
-		xAxisEnd = new ValueInput("XAxisEnd", "X-Axis", 0.0d);
+		xAxisEnd = new ValueInput("XAxisEnd", X_AXIS, 0.0d);
 		xAxisEnd.setUnitType(UserSpecifiedUnit.class);
 		xAxisEnd.setValidRange(0.0, Double.POSITIVE_INFINITY);
 		this.addInput(xAxisEnd);
 
-		xAxisInterval = new ValueInput("XAxisInterval", "X-Axis", 10.0d);
+		xAxisInterval = new ValueInput("XAxisInterval", X_AXIS, 10.0d);
 		xAxisInterval.setUnitType(UserSpecifiedUnit.class);
 		xAxisInterval.setValidRange(1.0e-6, Double.POSITIVE_INFINITY);
 		this.addInput(xAxisInterval);
 
-		xAxisLabelFormat = new FormatInput("XAxisLabelFormat", "X-Axis", "%.0f");
+		xAxisLabelFormat = new FormatInput("XAxisLabelFormat", X_AXIS, "%.0f");
 		this.addInput(xAxisLabelFormat);
 
 		DoubleVector defXLines = new DoubleVector();
 		defXLines.add(-20.0);
 		defXLines.add(-40.0);
-		xLines = new ValueListInput("XLines", "X-Axis", defXLines);
+		xLines = new ValueListInput("XLines", X_AXIS, defXLines);
 		xLines.setUnitType(UserSpecifiedUnit.class);
 		this.addInput(xLines);
 
 		ArrayList<Color4d> defXlinesColor = new ArrayList<>(0);
 		defXlinesColor.add(ColourInput.getColorWithName("gray50"));
-		xLinesColor = new ColorListInput("XLinesColor", "X-Axis", defXlinesColor);
+		xLinesColor = new ColorListInput("XLinesColor", X_AXIS, defXlinesColor);
 		this.addInput(xLinesColor);
 		this.addSynonym(xLinesColor, "XLinesColour");
 
 		// Y-Axis category
 
-		yAxisTitle = new StringInput("YAxisTitle", "Y-Axis", "Y-Axis Title");
+		yAxisTitle = new StringInput("YAxisTitle", Y_AXIS, "Y-Axis Title");
 		this.addInput(yAxisTitle);
 
-		yAxisUnit = new EntityInput<>(Unit.class, "YAxisUnit", "Y-Axis", null);
+		yAxisUnit = new EntityInput<>(Unit.class, "YAxisUnit", Y_AXIS, null);
 		this.addInput(yAxisUnit);
 
-		yAxisStart = new ValueInput("YAxisStart", "Y-Axis", 0.0);
+		yAxisStart = new ValueInput("YAxisStart", Y_AXIS, 0.0);
 		yAxisStart.setUnitType(UserSpecifiedUnit.class);
 		this.addInput(yAxisStart);
 
-		yAxisEnd = new ValueInput("YAxisEnd", "Y-Axis", 5.0d);
+		yAxisEnd = new ValueInput("YAxisEnd", Y_AXIS, 5.0d);
 		yAxisEnd.setUnitType(UserSpecifiedUnit.class);
 		this.addInput(yAxisEnd);
 
-		yAxisInterval = new ValueInput("YAxisInterval", "Y-Axis", 1.0d);
+		yAxisInterval = new ValueInput("YAxisInterval", Y_AXIS, 1.0d);
 		yAxisInterval.setUnitType(UserSpecifiedUnit.class);
 		yAxisInterval.setValidRange(1.0e-10, Double.POSITIVE_INFINITY);
 		this.addInput(yAxisInterval);
 
-		yAxisLabelFormat = new FormatInput("YAxisLabelFormat", "Y-Axis", "%.1f");
+		yAxisLabelFormat = new FormatInput("YAxisLabelFormat", Y_AXIS, "%.1f");
 		this.addInput(yAxisLabelFormat);
 
 		DoubleVector defYLines = new DoubleVector();
@@ -236,38 +240,38 @@ public abstract class GraphBasics extends DisplayEntity {
 		defYLines.add(2.0);
 		defYLines.add(3.0);
 		defYLines.add(4.0);
-		yLines = new ValueListInput("YLines", "Y-Axis", defYLines);
+		yLines = new ValueListInput("YLines", Y_AXIS, defYLines);
 		yLines.setUnitType(UserSpecifiedUnit.class);
 		this.addInput(yLines);
 
 		ArrayList<Color4d> defYlinesColor = new ArrayList<>(0);
 		defYlinesColor.add(ColourInput.getColorWithName("gray50"));
-		yLinesColor = new ColorListInput("YLinesColor", "Y-Axis", defYlinesColor);
+		yLinesColor = new ColorListInput("YLinesColor", Y_AXIS, defYlinesColor);
 		this.addInput(yLinesColor);
 		this.addSynonym(yLinesColor, "YLinesColour");
 
 		// Secondary Y-Axis category
 
-		secondaryYAxisTitle = new StringInput("SecondaryYAxisTitle", "Secondary Y-Axis", "Secondary Y-Axis Title");
+		secondaryYAxisTitle = new StringInput("SecondaryYAxisTitle", SEC_Y_AXIS, "Secondary Y-Axis Title");
 		this.addInput(secondaryYAxisTitle);
 
-		secondaryYAxisUnit = new EntityInput<>(Unit.class, "SecondaryYAxisUnit", "Secondary Y-Axis", null);
+		secondaryYAxisUnit = new EntityInput<>(Unit.class, "SecondaryYAxisUnit", SEC_Y_AXIS, null);
 		this.addInput(secondaryYAxisUnit);
 
-		secondaryYAxisStart = new ValueInput("SecondaryYAxisStart", "Secondary Y-Axis", 0.0);
+		secondaryYAxisStart = new ValueInput("SecondaryYAxisStart", SEC_Y_AXIS, 0.0);
 		secondaryYAxisStart.setUnitType(UserSpecifiedUnit.class);
 		this.addInput(secondaryYAxisStart);
 
-		secondaryYAxisEnd = new ValueInput("SecondaryYAxisEnd", "Secondary Y-Axis", 5.0);
+		secondaryYAxisEnd = new ValueInput("SecondaryYAxisEnd", SEC_Y_AXIS, 5.0);
 		secondaryYAxisEnd.setUnitType(UserSpecifiedUnit.class);
 		this.addInput(secondaryYAxisEnd);
 
-		secondaryYAxisInterval = new ValueInput("SecondaryYAxisInterval", "Secondary Y-Axis", 1.0);
+		secondaryYAxisInterval = new ValueInput("SecondaryYAxisInterval", SEC_Y_AXIS, 1.0);
 		secondaryYAxisInterval.setUnitType(UserSpecifiedUnit.class);
 		secondaryYAxisInterval.setValidRange(1.0e-10, Double.POSITIVE_INFINITY);
 		this.addInput(secondaryYAxisInterval);
 
-		secondaryYAxisLabelFormat = new FormatInput("SecondaryYAxisLabelFormat", "Secondary Y-Axis", "%.1f");
+		secondaryYAxisLabelFormat = new FormatInput("SecondaryYAxisLabelFormat", SEC_Y_AXIS, "%.1f");
 		this.addInput(secondaryYAxisLabelFormat);
 	}
 

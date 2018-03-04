@@ -35,7 +35,7 @@ public class InputBox extends TextBasics {
 	protected final KeywordInput target;
 
 	{
-		target = new KeywordInput("TargetInput", "Key Inputs", null);
+		target = new KeywordInput("TargetInput", KEY_INPUTS, null);
 		target.setRequired(true);
 		this.addInput(target);
 	}

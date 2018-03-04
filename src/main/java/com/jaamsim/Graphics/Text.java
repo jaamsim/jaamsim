@@ -72,23 +72,23 @@ public class Text extends TextBasics {
 	protected String renderText = "";
 
 	{
-		formatText = new StringInput("Format", "Key Inputs", "");
+		formatText = new StringInput("Format", KEY_INPUTS, "");
 		this.addInput(formatText);
 
-		unitType = new UnitTypeInput("UnitType", "Key Inputs", DimensionlessUnit.class);
+		unitType = new UnitTypeInput("UnitType", KEY_INPUTS, DimensionlessUnit.class);
 		this.addInput(unitType);
 
-		unit = new EntityInput<>(Unit.class, "Unit", "Key Inputs", null);
+		unit = new EntityInput<>(Unit.class, "Unit", KEY_INPUTS, null);
 		unit.setSubClass(null);
 		this.addInput(unit);
 
-		dataSource = new StringProvInput("DataSource", "Key Inputs", null);
+		dataSource = new StringProvInput("DataSource", KEY_INPUTS, null);
 		dataSource.setUnitType(DimensionlessUnit.class);
 		dataSource.setEntity(this);
 		this.addInput(dataSource);
 		this.addSynonym(dataSource, "OutputName");
 
-		failText = new StringInput("FailText", "Key Inputs", "Input Error");
+		failText = new StringInput("FailText", KEY_INPUTS, "Input Error");
 		this.addInput(failText);
 	}
 

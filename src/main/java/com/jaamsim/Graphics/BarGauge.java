@@ -40,17 +40,17 @@ public class BarGauge extends DisplayEntity {
 	private final ColourInput backgroundColour;
 
 	{
-		dataSource = new SampleInput("DataSource", "Key Inputs", new SampleConstant(0.5));
+		dataSource = new SampleInput("DataSource", KEY_INPUTS, new SampleConstant(0.5));
 		dataSource.setUnitType(DimensionlessUnit.class);
 		dataSource.setEntity(this);
 		dataSource.setValidRange(0.0d, 1.0d);
 		this.addInput(dataSource);
 
-		colour = new ColourInput("Colour", "Key Inputs", ColourInput.BLUE);
+		colour = new ColourInput("Colour", KEY_INPUTS, ColourInput.BLUE);
 		this.addInput(colour);
 		this.addSynonym(colour, "Color");
 
-		backgroundColour = new ColourInput("BackgroundColour", "Key Inputs", ColourInput.LIGHT_GREY);
+		backgroundColour = new ColourInput("BackgroundColour", KEY_INPUTS, ColourInput.LIGHT_GREY);
 		this.addInput(backgroundColour);
 		this.addSynonym(backgroundColour, "BackgroundColor");
 	}

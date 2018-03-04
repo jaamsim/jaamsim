@@ -35,7 +35,7 @@ public abstract class GameEntity extends DisplayEntity {
 	private EventManager evt;
 
 	{
-		actionKey = new KeyEventInput("ActionKey", "Key Inputs", null);
+		actionKey = new KeyEventInput("ActionKey", KEY_INPUTS, null);
 		actionKey.setDefaultValue("SPACE");
 		this.addInput(actionKey);
 	}
