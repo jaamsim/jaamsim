@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2017 JaamSim Software Inc.
+ * Copyright (C) 2017-2018 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -71,6 +71,8 @@ public class Seize extends LinkedService implements ResourceUser {
 		numberOfUnitsList.setUnitType(DimensionlessUnit.class);
 		this.addInput(numberOfUnitsList);
 	}
+
+	public Seize() {}
 
 	@Override
 	public void validate() {
