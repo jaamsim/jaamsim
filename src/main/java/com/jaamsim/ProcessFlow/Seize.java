@@ -53,6 +53,9 @@ public class Seize extends LinkedService implements ResourceUser {
 		forcedBreakdownList.setHidden(true);
 		opportunisticBreakdownList.setHidden(true);
 
+		immediateThresholdList.setHidden(true);
+		immediateReleaseThresholdList.setHidden(true);
+
 		ArrayList<Resource> resDef = new ArrayList<>();
 		resourceList = new EntityListInput<>(Resource.class, "ResourceList", KEY_INPUTS, resDef);
 		resourceList.setRequired(true);

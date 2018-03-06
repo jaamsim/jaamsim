@@ -62,6 +62,9 @@ public class EntityProcessor extends Seize {
 		forcedBreakdownList.setHidden(false);
 		opportunisticBreakdownList.setHidden(false);
 
+		immediateThresholdList.setHidden(false);
+		immediateReleaseThresholdList.setHidden(false);
+
 		resourceList.setRequired(false);
 
 		capacity = new SampleInput("Capacity", KEY_INPUTS, new SampleConstant(1.0));
