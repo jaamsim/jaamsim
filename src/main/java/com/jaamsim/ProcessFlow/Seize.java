@@ -91,6 +91,14 @@ public class Seize extends LinkedService implements ResourceUser {
 	}
 
 	@Override
+	public void thresholdChanged() {
+		if (isReadyToStart()) {
+			Resource.notifyResourceUsers(getResourceList());
+		}
+		super.thresholdChanged();
+	}
+
+	@Override
 	protected boolean startProcessing(double simTime) {
 		return false;
 	}

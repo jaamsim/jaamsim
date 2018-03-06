@@ -246,9 +246,6 @@ public class EntityProcessor extends Seize {
 
 	@Override
 	public void thresholdChanged() {
-		if (isReadyToStart()) {
-			Resource.notifyResourceUsers(getResourceList());
-		}
 		if (isImmediateReleaseThresholdClosure()) {
 			for (ProcessorEntry entry : entryList) {
 				entry.remainingTicks = 0L;
