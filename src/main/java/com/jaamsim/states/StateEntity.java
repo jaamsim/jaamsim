@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2018 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -58,6 +59,9 @@ public class StateEntity extends DisplayEntity {
 	private long workingTicks;
 
 	protected FileEntity stateReportFile;        // The file to store the state information
+
+	protected static final String STATE_IDLE = "Idle";
+	protected static final String STATE_WORKING = "Working";
 
 	{
 		stateGraphics = new StringKeyInput<>(DisplayEntity.class, "StateGraphics", KEY_INPUTS);
@@ -130,7 +134,7 @@ public class StateEntity extends DisplayEntity {
 	 * @return
 	 */
 	public String getInitialState() {
-		return "Idle";
+		return STATE_IDLE;
 	}
 
 	/**
@@ -139,7 +143,7 @@ public class StateEntity extends DisplayEntity {
 	 * @return
 	 */
 	public boolean isValidState(String state) {
-		return "Idle".equals(state) || "Working".equals(state);
+		return STATE_IDLE.equals(state) || STATE_WORKING.equals(state);
 	}
 
 	/**
@@ -153,7 +157,7 @@ public class StateEntity extends DisplayEntity {
 		if( workingStateListInput.getValue().size() > 0 )
 			return workingStateListInput.getValue().contains( state );
 
-		return "Working".equals(state);
+		return STATE_WORKING.equals(state);
 	}
 
 	/**
