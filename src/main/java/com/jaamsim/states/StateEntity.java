@@ -21,7 +21,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.Map.Entry;
 
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.basicsim.Entity;
@@ -422,6 +424,26 @@ public class StateEntity extends DisplayEntity {
 		if (rec == null)
 			return 0.0;
 		long ticks = getTicksInState(simTicks, rec);
+		return EventManager.ticksToSecs(ticks);
+	}
+
+	/**
+	 * Returns the total elapsed time in seconds after the completion of the initialisation period
+	 * the entity has been in any state that ends in the specified string.
+	 * @param simTime - present simulation time
+	 * @param state - string representing the specified type of state
+	 * @return total time
+	 */
+	public double getTotalTimeInState(double simTime, String state) {
+		long simTicks = EventManager.secsToNearestTick(simTime);
+		long ticks = 0L;
+		Iterator<Entry<String, StateRecord>> itr = states.entrySet().iterator();
+		while (itr.hasNext()) {
+			Entry<String, StateRecord> pair = itr.next();
+			if (pair.getKey().endsWith(state)) {
+				ticks += getTicksInState(simTicks, pair.getValue());
+			}
+		}
 		return EventManager.ticksToSecs(ticks);
 	}
 
