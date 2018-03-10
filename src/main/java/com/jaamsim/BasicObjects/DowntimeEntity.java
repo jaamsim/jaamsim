@@ -84,6 +84,8 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 	private double startTime;        // The start time of the latest downtime event
 	private double endTime;          // the end time of the latest downtime event
 
+	private static final String STATE_DOWNTIME = "Downtime";
+
 	{
 		workingStateListInput.setHidden(true);
 
@@ -177,7 +179,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 	 */
 	@Override
 	public String getInitialState() {
-		return "Working";
+		return STATE_WORKING;
 	}
 
 	/**
@@ -187,7 +189,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 	 */
 	@Override
 	public boolean isValidState(String state) {
-		return "Working".equals(state) || "Downtime".equals(state);
+		return STATE_WORKING.equals(state) || STATE_DOWNTIME.equals(state);
 	}
 
 	/**
@@ -198,7 +200,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 	 */
 	@Override
 	public boolean isValidWorkingState(String state) {
-		return "Working".equals(state);
+		return STATE_WORKING.equals(state);
 	}
 
 	/**
@@ -393,9 +395,9 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 	private void setDown(boolean b) {
 		down = b;
 		if (down)
-			setPresentState("Downtime");
+			setPresentState(STATE_DOWNTIME);
 		else
-			setPresentState("Working");
+			setPresentState(STATE_WORKING);
 	}
 
 	final void endDowntime() {
@@ -555,7 +557,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 		double total = simTime;
 		if (simTime > Simulation.getInitializationTime())
 			total -= Simulation.getInitializationTime();
-		double down = this.getTimeInState(simTime, "Downtime");
+		double down = this.getTimeInState(simTime, STATE_DOWNTIME);
 		return 1.0d - down/total;
 	}
 
