@@ -62,7 +62,6 @@ public abstract class Device extends StateUserEntity {
 
 		// Is the process loop is already working?
 		if (endStepHandle.isScheduled()) {
-			this.setPresentState();
 			return;
 		}
 
