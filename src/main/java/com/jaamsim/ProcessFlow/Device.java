@@ -99,11 +99,13 @@ public abstract class Device extends StateUserEntity {
 		if (duration == Double.POSITIVE_INFINITY)
 			error("Infinite duration");
 
+		long durTicks = EventManager.secsToNearestTick(duration);
+
 		// Schedule the completion of the time step
 		stepCompleted = false;
-		endTicks = getSimTicks() + EventManager.secsToNearestTick(duration);
+		endTicks = getSimTicks() + durTicks;
 		if (isTraceFlag()) traceLine(1, "duration=%.6f", duration);
-		this.scheduleProcess(duration, 5, true, endStepTarget, endStepHandle);  // FIFO order
+		EventManager.scheduleTicks(durTicks, 5, true, endStepTarget, endStepHandle);  // FIFO order
 
 		// Notify other processes that are dependent on this one
 		if (this.isNewStepReqd(stepCompleted)) {
