@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2018 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +17,6 @@
  */
 package com.jaamsim.rng;
 
-
 /**
  * Combined MRG based on L'Ecuyer (1999a), implementation ported from the ANSI C
  * version provided in Simulation Modeling and Analysis 5th Ed. Averill M. Law. (Appendix 7B)
@@ -28,6 +28,11 @@ public class MRG1999a {
 
 	// The internal state machine is held in 6 integer values (treat as unsigned)
 	int s0, s1, s2, s3, s4, s5;
+
+	// Saved initial state
+	int stream = -1;
+	int substream;
+	long[] initSeeds;
 
 	private static final long streamAdvance[][] = {
 		{ 2427906178L, 3580155704L,  949770784L },
@@ -126,6 +131,11 @@ public class MRG1999a {
 			advanceSubstream(seeds);
 
 		setSeed(seeds[0], seeds[1], seeds[2], seeds[3], seeds[4], seeds[5]);
+
+		// Save the initial state for the generator
+		this.stream = stream;
+		this.substream = substream;
+		initSeeds = seeds;
 	}
 
 	public void setSeed(long s0, long s1, long s2, long s3, long s4, long s5) {
