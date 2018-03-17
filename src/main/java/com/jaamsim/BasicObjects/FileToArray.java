@@ -33,7 +33,21 @@ import com.jaamsim.input.ExpParser.Expression;
 
 public abstract class FileToArray extends LinkedComponent {
 
-	@Keyword(description = "A file containing entries that are delimited by spaces and/or tabs.",
+	@Keyword(description = "A text file containing one or more records whose entries are "
+	                     + "delimited by tabs and/or spaces.\n\n"
+	                     + "The following types of entries can be used. "
+	                     + "If an entry includes spaces, double quotation marks, or curly braces, "
+	                     + "it must be enclosed by single quotation marks.\n"
+	                     + "- Comments. Records that begin with a # symbol are ignored (e.g. # abc)\n"
+	                     + "- Numbers with or without units, specified in expression format (e.g. 5.2[m])\n"
+	                     + "- Strings (e.g. 'quick red fox' or quick_red_fox)\n"
+	                     + "- Entity names (e.g. DisplayEntity1)\n"
+	                     + "- Time stamps in YYYY-MM-DD HH:MM:SS.SSS or YYYY-MM-DDTHH:MM:SS.SSS format "
+	                     + "(e.g. '2018-06-31 13:00:00.000' or 2018-06-31T13:00:00.000)\n"
+	                     + "- Arrays of numbers, entities, strings, or arrays, specified in expression format "
+	                     + "(e.g. '{ 5[m], \"abc\", [DisplayEntity1] }'\n"
+	                     + "- Expressions. A valid expression is executed and saved when the file is read "
+	                     + "(e.g. 1[m]/2[s] is saved as 1.0[m/s]). An invalid expression is saved as a string.",
 	         exampleList = {"'c:/test/data.txt'"})
 	private final FileInput dataFile;
 
