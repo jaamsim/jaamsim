@@ -79,7 +79,9 @@ public abstract class FileToArray extends LinkedComponent {
 		if (in == dataFile) {
 			if (dataFile.getValue() == null) {
 				clearValue();
+				return;
 			}
+			setValueForURI(dataFile.getValue(), 0.0d);
 			return;
 		}
 	}
