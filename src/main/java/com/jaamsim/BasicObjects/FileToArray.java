@@ -21,7 +21,6 @@ import java.net.URI;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.ProcessFlow.LinkedComponent;
 import com.jaamsim.basicsim.Entity;
-import com.jaamsim.input.EnumListInput;
 import com.jaamsim.input.ExpError;
 import com.jaamsim.input.ExpEvaluator;
 import com.jaamsim.input.ExpParser;
@@ -34,29 +33,9 @@ import com.jaamsim.input.ExpParser.Expression;
 
 public abstract class FileToArray extends LinkedComponent {
 
-	enum ValidFormats {
-		TIMESTAMP,
-		ENTITY,
-		STRING,
-		EXPRESSION,
-	}
-
 	@Keyword(description = "A file containing entries that are delimited by spaces and/or tabs.",
 	         exampleList = {"'c:/test/data.txt'"})
 	private final FileInput dataFile;
-
-	@Keyword(description = "An optional list of data types that describe the entries in each "
-	                     + "column of the data file. The data type inputs cause the data file "
-	                     + "entries to be processed as follows:\n"
-	                     + "- TIMESTAMP: parse the data entry as a time stamp in "
-	                     + "'YYYY-MM-DD HH:MM:SS.SSS' or YYYY-MM-DDTHH:MM:SS.SSS format.\n"
-	                     + "- ENTITY: add square bracket around the data entry and parse it "
-	                     + "as an entity name.\n"
-	                     + "- STRING: add double quotes around the data entry and parse it "
-	                     + "as an string.\n"
-	                     + "- EXPRESSION: parse the data entry as an expression.",
-	         exampleList = { "TIMESTAMP ENTITY STRING STRING" })
-	private final EnumListInput<ValidFormats> dataFormat;
 
 	{
 		nextComponent.setRequired(false);
@@ -64,10 +43,6 @@ public abstract class FileToArray extends LinkedComponent {
 		dataFile = new FileInput("DataFile", KEY_INPUTS, null);
 		dataFile.setRequired(true);
 		this.addInput(dataFile);
-
-		dataFormat = new EnumListInput<>(ValidFormats.class, "DataFormat", KEY_INPUTS, null);
-		dataFormat.setDefaultText("EXPRESSION");
-		this.addInput(dataFormat);
 	}
 
 	public FileToArray() {}
