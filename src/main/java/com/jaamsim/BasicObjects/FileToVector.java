@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2017 JaamSim Software Inc.
+ * Copyright (C) 2017-2018 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,8 +19,6 @@ package com.jaamsim.BasicObjects;
 import java.net.URI;
 import java.util.ArrayList;
 
-import com.jaamsim.basicsim.ErrorException;
-import com.jaamsim.input.ExpError;
 import com.jaamsim.input.ExpResult;
 import com.jaamsim.input.FileInput;
 import com.jaamsim.input.Output;
@@ -53,12 +51,7 @@ public class FileToVector extends FileToArray {
 		for (ArrayList<String> record : tokens) {
 			for (int i=0; i<record.size(); i++) {
 				String str = record.get(i);
-				try {
-					ret.add(getExpResult(i, str, simTime));
-				}
-				catch (ExpError e) {
-					throw new ErrorException(this, e);
-				}
+				ret.add(getExpResult(i, str, simTime));
 			}
 		}
 		return ret;

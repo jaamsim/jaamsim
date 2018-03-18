@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2017 JaamSim Software Inc.
+ * Copyright (C) 2017-2018 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import java.net.URI;
 
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.ProcessFlow.LinkedComponent;
+import com.jaamsim.basicsim.Entity;
 import com.jaamsim.input.EnumListInput;
 import com.jaamsim.input.ExpError;
 import com.jaamsim.input.ExpEvaluator;
@@ -28,7 +29,6 @@ import com.jaamsim.input.ExpResult;
 import com.jaamsim.input.FileInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.Keyword;
-import com.jaamsim.input.Parser;
 import com.jaamsim.units.TimeUnit;
 import com.jaamsim.input.ExpParser.Expression;
 
@@ -97,34 +97,33 @@ public abstract class FileToArray extends LinkedComponent {
 		sendToNextComponent(ent);
 	}
 
-	protected ExpResult getExpResult(int i, String str, double simTime)
-	throws ExpError {
+	protected ExpResult getExpResult(int i, String str, double simTime) {
 
-		if (dataFormat.getValue() != null && i < dataFormat.getListSize()) {
-			switch (dataFormat.getValue().get(i)) {
-			case TIMESTAMP:
-				double time = 0.0d;
-				try {
-					time = Input.parseRFC8601DateTime(str)/1e6;
-				}
-				catch (Exception e) {
-					throw new ExpError(str, 0, e.getMessage());
-				}
+		// Is the entry a time stamp?
+		if (Input.isRFC8601DateTime(str)) {
+			try {
+				double time = Input.parseRFC8601DateTime(str)/1e6;
 				return ExpResult.makeNumResult(time, TimeUnit.class);
-			case ENTITY:
-				str = Parser.addEnclosure("[", str, "]");
-				break;
-			case STRING:
-				str = Parser.addEnclosure("\"", str, "\"");
-				break;
-			case EXPRESSION:
-				break;
 			}
+			catch (Exception e) {}
 		}
 
-		ExpEvaluator.EntityParseContext pc = ExpEvaluator.getParseContext(this, str);
-		Expression exp = ExpParser.parseExpression(pc, str);
-		return ExpEvaluator.evaluateExpression(exp, simTime);
+		// Is the entry an entity?
+		Entity ent = Entity.getNamedEntity(str);
+		if (ent != null) {
+			return ExpResult.makeEntityResult(ent);
+		}
+
+		// Is the entry a valid expression?
+		try {
+			ExpEvaluator.EntityParseContext pc = ExpEvaluator.getParseContext(this, str);
+			Expression exp = ExpParser.parseExpression(pc, str);
+			return ExpEvaluator.evaluateExpression(exp, simTime);
+		}
+		catch (ExpError e) {}
+
+		// If all else fails, return a string
+		return ExpResult.makeStringResult(str);
 	}
 
 	protected abstract void setValueForURI(URI uri, double simTime);

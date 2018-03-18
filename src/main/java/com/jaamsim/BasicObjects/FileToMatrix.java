@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2017 JaamSim Software Inc.
+ * Copyright (C) 2017-2018 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,8 +19,6 @@ package com.jaamsim.BasicObjects;
 import java.net.URI;
 import java.util.ArrayList;
 
-import com.jaamsim.basicsim.ErrorException;
-import com.jaamsim.input.ExpError;
 import com.jaamsim.input.ExpResult;
 import com.jaamsim.input.FileInput;
 import com.jaamsim.input.Output;
@@ -50,12 +48,7 @@ public class FileToMatrix extends FileToArray {
 			ArrayList<ExpResult> record = new ArrayList<>(strRecord.size());
 			for (int i=0; i<strRecord.size(); i++) {
 				String str = strRecord.get(i);
-				try {
-					record.add(getExpResult(i, str, simTime));
-				}
-				catch (ExpError e) {
-					throw new ErrorException(this, e);
-				}
+				record.add(getExpResult(i, str, simTime));
 			}
 			ret.add(record);
 		}
