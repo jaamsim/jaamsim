@@ -50,6 +50,7 @@ import com.jaamsim.events.EventManager;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.ui.GUIFrame;
 import com.jaamsim.ui.LogBox;
+import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
 import com.jaamsim.units.Unit;
 
@@ -1268,7 +1269,6 @@ public class InputAgent {
 			file.format("}%n");
 		}
 
-
 		// 3) WRITE THE INPUTS FOR SPECIAL KEYWORDS THAT MUST COME BEFORE THE OTHERS
 
 		// Prepare a sorted list of all the entities that were edited
@@ -1280,11 +1280,23 @@ public class InputAgent {
 		}
 		Collections.sort(entityList, uiEntitySortOrder);
 
+		// Write a stub definition for the Custom Outputs for each entity
+		boolean blankLinePrinted = false;
+		for (Entity ent : entityList) {
+			if (ent.getCustomOutputNames().isEmpty())
+				continue;
+			if (!blankLinePrinted) {
+				file.format("%n");
+				blankLinePrinted = true;
+			}
+			writeStubOutputDefs(file, ent);
+		}
+
 		// Loop through the early keywords
 		for (int i = 0; i < EARLY_KEYWORDS.length; i++) {
 
 			// Loop through the entities
-			boolean blankLinePrinted = false;
+			blankLinePrinted = false;
 			for (Entity ent : entityList) {
 
 				// Print an entry for each entity that used this keyword
@@ -1345,6 +1357,28 @@ public class InputAgent {
 	static void writeInputOnFile_ForEntity(FileEntity file, Entity ent, Input<?> in) {
 		file.format("%s %s { %s }%n",
 		            ent.getName(), in.getKeyword(), in.getValueString());
+	}
+
+	static void writeStubOutputDefs(FileEntity file, Entity ent) {
+		NamedExpressionListInput in = (NamedExpressionListInput) ent.getInput("CustomOutputList");
+		if (in == null || in.isDefault()) {
+			return;
+		}
+		StringBuilder sb = new StringBuilder();
+		for (NamedExpression ne : in.getValue()) {
+			String str;
+			Class<? extends Unit> ut = ne.getUnitType();
+			if (ut == DimensionlessUnit.class) {
+				str = String.format(" { %s  0 }", ne.getName());
+			}
+			else {
+				str = String.format(" { %s  0[%s]  %s }",
+						ne.getName(), Unit.getSIUnit(ut), ut.getSimpleName());
+			}
+			sb.append(str);
+		}
+		file.format("%s %s {%s }%n",
+	            ent.getName(), in.getKeyword(), sb.toString());
 	}
 
 	/**
