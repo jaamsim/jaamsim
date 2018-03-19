@@ -130,6 +130,7 @@ public abstract class Input<T> {
 	public static final String POSITIVE_INFINITY = "Infinity";
 	public static final String NEGATIVE_INFINITY = "-Infinity";
 	public static final String SEPARATOR = "  ";
+	public static final String BRACE_SEPARATOR = " ";
 
 	private String keyword; // the preferred name for the input keyword
 	private final String category;
@@ -463,8 +464,14 @@ public abstract class Input<T> {
 		for (int i = 0; i < tmp.size(); i++) {
 			String dat = tmp.get(i);
 			if (dat == null) continue;
-			if (i > 0)
-				sb.append(Input.SEPARATOR);
+			if (i > 0) {
+				if (dat.equals("{") || dat.equals("}") || tmp.get(i-1).equals("{")) {
+					sb.append(Input.BRACE_SEPARATOR);
+				}
+				else {
+					sb.append(Input.SEPARATOR);
+				}
+			}
 
 			if (Parser.needsQuoting(dat) && !dat.equals("{") && !dat.equals("}"))
 				sb.append("'").append(dat).append("'");
