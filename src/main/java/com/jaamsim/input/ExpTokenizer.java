@@ -133,20 +133,12 @@ public class ExpTokenizer {
 
 	private static int getSQToken(ArrayList<Token> res, int startPos, String input) throws ExpError {
 
-		boolean isDoubleQuoted = false;
-
 		int closePos = startPos + 1;
-
-		if (input.length() > startPos+1 && input.charAt(startPos+1) == '[') {
-			// This is double square quoted token
-			isDoubleQuoted = true;
-			closePos += 1;
-		}
 
 		while (closePos < input.length()) {
 			char c = input.charAt(closePos);
 			if (c == '[')
-				throw new ExpError(input, closePos, "Nested square quotes");
+				throw new ExpError(input, closePos, "Nested square brace");
 			if (c == ']')
 				break;
 
@@ -155,19 +147,6 @@ public class ExpTokenizer {
 
 		if (closePos == input.length()) {
 			throw new ExpError(input, startPos, "No closing square brace for brace");
-		}
-
-		if (isDoubleQuoted) {
-			// Check for the second closing brace
-			if ((closePos+1) == input.length() || input.charAt(closePos+1) != ']') {
-				throw new ExpError(input, startPos, "No closing double brace for double square brace string");
-			}
-			Token newTok = new Token();
-			newTok.pos = startPos + 1;
-			newTok.type = STRING_TYPE;
-			newTok.value = input.substring(startPos + 2, closePos);
-			res.add(newTok);
-			return closePos + 2;
 		}
 
 		Token newTok = new Token();

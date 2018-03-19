@@ -310,7 +310,7 @@ public class TestExpParser {
 		testToken(tokens.get(5), ExpTokenizer.SYM_TYPE, "&");
 		testToken(tokens.get(6), ExpTokenizer.SYM_TYPE, "|");
 
-		tokens = ExpTokenizer.tokenize("[[blarg]][foo][[bar]] 42 \"giggity\"");
+		tokens = ExpTokenizer.tokenize("\"blarg\"[foo]\"bar\" 42 \"giggity\"");
 		assertTrue(tokens.size() == 5);
 		testToken(tokens.get(0), ExpTokenizer.STRING_TYPE, "blarg");
 		testToken(tokens.get(1), ExpTokenizer.SQ_TYPE, "foo");
@@ -660,7 +660,7 @@ public class TestExpParser {
 		assertTrue(res.type == ExpResType.NUMBER);
 		assertTrue(res.value == 2);
 
-		exp = ExpParser.parseExpression(pc, "{[[foo]], [[bar]], \"baz\"}(3)");
+		exp = ExpParser.parseExpression(pc, "{\"foo\", \"bar\", \"baz\"}(3)");
 		res = exp.evaluate(ec);
 		assertTrue(res.type == ExpResType.STRING);
 		assertTrue(res.stringVal.equals("baz"));
@@ -684,34 +684,34 @@ public class TestExpParser {
 		@SuppressWarnings("unused")
 		DimensionlessUnit du = new DimensionlessUnit();
 
-		ExpParser.Expression exp = ExpParser.parseExpression(pc, "[[stringly]]");
+		ExpParser.Expression exp = ExpParser.parseExpression(pc, "\"stringly\"");
 		ExpResult res = exp.evaluate(ec);
 		assertTrue(res.type == ExpResType.STRING);
 		assertTrue(res.stringVal.equals("stringly"));
 
-		exp = ExpParser.parseExpression(pc, "[[stri]] + \"ngly\"");
+		exp = ExpParser.parseExpression(pc, "\"stri\" + \"ngly\"");
 		res = exp.evaluate(ec);
 		assertTrue(res.type == ExpResType.STRING);
 		assertTrue(res.stringVal.equals("stringly"));
 
-		exp = ExpParser.parseExpression(pc, "[[str]] + [[ing]] +  [[ly]]");
+		exp = ExpParser.parseExpression(pc, "\"str\" + \"ing\" +  \"ly\"");
 		res = exp.evaluate(ec);
 		assertTrue(res.type == ExpResType.STRING);
 		assertTrue(res.stringVal.equals("stringly"));
 
-		exp = ExpParser.parseExpression(pc, "format([[stri%s%s]], [[ng]],[[ly]])");
+		exp = ExpParser.parseExpression(pc, "format(\"stri%s%s\", \"ng\",\"ly\")");
 		res = exp.evaluate(ec);
 		assertTrue(res.type == ExpResType.STRING);
 		assertTrue(res.stringVal.equals("stringly"));
 
-		exp = ExpParser.parseExpression(pc, "[[str]] + 5");
+		exp = ExpParser.parseExpression(pc, "\"str\" + 5");
 		res = exp.evaluate(ec);
 		assertTrue(res.type == ExpResType.STRING);
 		assertTrue(res.stringVal.equals("str5.0"));
 
 		UnitPC upc = new UnitPC();
 
-		exp = ExpParser.parseExpression(upc, "format([[%.0f]],42[km]/1[m])");
+		exp = ExpParser.parseExpression(upc, "format(\"%.0f\",42[km]/1[m])");
 		res = exp.evaluate(ec);
 		assertTrue(res.type == ExpResType.STRING);
 		assertTrue(res.stringVal.equals("42000"));
