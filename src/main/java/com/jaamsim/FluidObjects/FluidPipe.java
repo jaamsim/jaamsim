@@ -22,6 +22,7 @@ import com.jaamsim.input.Input;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.ValueInput;
+import com.jaamsim.math.Color4d;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.DistanceUnit;
 
@@ -86,9 +87,11 @@ public class FluidPipe extends FluidComponent {
 		widthInput = new ValueInput("Width", KEY_INPUTS, 1.0d);
 		widthInput.setValidRange(1.0d, Double.POSITIVE_INFINITY);
 		widthInput.setUnitType( DimensionlessUnit.class );
+		widthInput.setDefaultText("PolylineModel");
 		this.addInput(widthInput);
 
 		colourInput = new ColourInput("Colour", KEY_INPUTS, ColourInput.BLACK);
+		colourInput.setDefaultText("PolylineModel");
 		this.addInput(colourInput);
 		this.addSynonym(colourInput, "Color");
 	}
@@ -179,9 +182,16 @@ public class FluidPipe extends FluidComponent {
 
 	@Override
 	public PolylineInfo[] buildScreenPoints(double simTime) {
-		int w = Math.max(1, widthInput.getValue().intValue());
+		int wid = -1;
+		if (!widthInput.isDefault())
+			wid = Math.max(1, widthInput.getValue().intValue());
+
+		Color4d col = null;
+		if (!colourInput.isDefault())
+			col = colourInput.getValue();
+
 		PolylineInfo[] ret = new PolylineInfo[1];
-		ret[0] = new PolylineInfo(getCurvePoints(), colourInput.getValue(), w);
+		ret[0] = new PolylineInfo(getCurvePoints(), col, wid);
 		return ret;
 	}
 

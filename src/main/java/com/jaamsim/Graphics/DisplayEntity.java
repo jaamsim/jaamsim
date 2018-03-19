@@ -32,7 +32,6 @@ import com.jaamsim.basicsim.ObjectType;
 import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.input.BooleanInput;
-import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.EntityListInput;
 import com.jaamsim.input.EnumInput;
@@ -952,7 +951,7 @@ public class DisplayEntity extends Entity {
 
 	public PolylineInfo[] buildScreenPoints(double simTime) {
 		PolylineInfo[] ret = new PolylineInfo[1];
-		ret[0] = new PolylineInfo(getCurvePoints(), ColourInput.BLACK, 1);
+		ret[0] = new PolylineInfo(getCurvePoints(), null, -1);
 		return ret;
 	}
 
