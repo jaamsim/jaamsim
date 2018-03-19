@@ -47,16 +47,12 @@ public void testTokenize() {
 	tokenMatch(tok, "OBJECT", "KEYWORD", "{", "ARG  ", "}", "KEYWORD", "{", "ARG", " ARG", ",", "}");
 
 	tok.clear();
-	Parser.tokenize(tok, "OBJECT KEYWORD{ ARG }\"FOO ,\t     ", false);
-	tokenMatch(tok, "OBJECT", "KEYWORD", "{", "ARG", "}", "\"FOO ,\t     ");
+	Parser.tokenize(tok, "OBJECT KEYWORD{ ARG }#FOO ,\t     ", false);
+	tokenMatch(tok, "OBJECT", "KEYWORD", "{", "ARG", "}", "#FOO ,\t     ");
 
 	tok.clear();
 	Parser.tokenize(tok, "'OBJECT''KEYWORD''   ", false);
 	tokenMatch(tok, "OBJECT", "KEYWORD", "   ");
-
-	tok.clear();
-	Parser.tokenize(tok, "'OBJECT\"{#}''KEYWORD''   'a\"bcd ", false);
-	tokenMatch(tok, "OBJECT\"{#}", "KEYWORD", "   ", "a", "\"bcd ");
 
 	tok.clear();
 	Parser.tokenize(tok, "'OBJECT\"{#}''KEYWORD''   'a#bcd ", false);

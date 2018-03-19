@@ -78,7 +78,8 @@ public static final void tokenize(ArrayList<String> tokens, String rec, boolean 
 			continue;
 		}
 
-		if (c == '"' || c == '#') {
+		// start a comment
+		if (c == '#') {
 			cIndex = i;
 			endOfRec = i;
 			break;
@@ -94,7 +95,7 @@ public static final void tokenize(ArrayList<String> tokens, String rec, boolean 
 	if (quoteStart != -1)
 		tokens.add(rec.substring(quoteStart + 1, endOfRec));
 
-	// add comments if they exist including the leading " to denote it as commented
+	// add comments if they exist including the leading # to denote it as commented
 	if (!stripComments && cIndex > -1)
 		tokens.add(rec.substring(cIndex, rec.length()));
 }
