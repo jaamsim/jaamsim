@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2018 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -195,6 +196,32 @@ public class TestMRG1999a {
 			MRG1999a.advanceStream(seeds4);
 		}
 		test2 = new MRG1999a(seeds4[0], seeds4[1], seeds4[2], seeds4[3], seeds4[4], seeds4[5]);
+
+		assertTrue(test1.toString().equals(test2.toString()));
+	}
+
+	@Test
+	public void testSavedSubstream() {
+
+		// Test stream 1
+		MRG1999a test1 = new MRG1999a(1, 100);
+
+		MRG1999a test2 = new MRG1999a(1, 50);
+		test2.setSeedStream(1, 100);
+
+		assertTrue(test1.toString().equals(test2.toString()));
+
+		// Test stream 10500
+		test1 = new MRG1999a(10500, 1001);
+
+		test2 = new MRG1999a(10500, 1000);
+		test2.setSeedStream(10500, 1001);
+
+		assertTrue(test1.toString().equals(test2.toString()));
+
+		// Test later substream for 10500
+		test1 = new MRG1999a(10500, 1010);
+		test2.setSeedStream(10500, 1010);
 
 		assertTrue(test1.toString().equals(test2.toString()));
 	}
