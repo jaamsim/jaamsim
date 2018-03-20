@@ -67,13 +67,13 @@ public class EntityConveyor extends LinkedService {
 		travelTimeInput.setEntity(this);
 		this.addInput(travelTimeInput);
 
-		widthInput = new ValueInput("Width", KEY_INPUTS, 1.0d);
+		widthInput = new ValueInput("Width", GRAPHICS, 1.0d);
 		widthInput.setUnitType(DimensionlessUnit.class);
 		widthInput.setValidRange(1.0d, Double.POSITIVE_INFINITY);
 		widthInput.setDefaultText("PolylineModel");
 		this.addInput(widthInput);
 
-		colorInput = new ColourInput("Color", KEY_INPUTS, ColourInput.BLACK);
+		colorInput = new ColourInput("Color", GRAPHICS, ColourInput.BLACK);
 		colorInput.setDefaultText("PolylineModel");
 		this.addInput(colorInput);
 		this.addSynonym(colorInput, "Colour");

@@ -84,13 +84,13 @@ public class FluidPipe extends FluidComponent {
 		pressureLossCoefficientInput.setUnitType( DimensionlessUnit.class );
 		this.addInput( pressureLossCoefficientInput);
 
-		widthInput = new ValueInput("Width", KEY_INPUTS, 1.0d);
+		widthInput = new ValueInput("Width", GRAPHICS, 1.0d);
 		widthInput.setValidRange(1.0d, Double.POSITIVE_INFINITY);
 		widthInput.setUnitType( DimensionlessUnit.class );
 		widthInput.setDefaultText("PolylineModel");
 		this.addInput(widthInput);
 
-		colourInput = new ColourInput("Colour", KEY_INPUTS, ColourInput.BLACK);
+		colourInput = new ColourInput("Colour", GRAPHICS, ColourInput.BLACK);
 		colourInput.setDefaultText("PolylineModel");
 		this.addInput(colourInput);
 		this.addSynonym(colourInput, "Color");
