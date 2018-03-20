@@ -324,209 +324,209 @@ public class Simulation extends Entity {
 	static {
 
 		// Key Inputs tab
-		runDuration = new ValueInput("RunDuration", "Key Inputs", 31536000.0d);
+		runDuration = new ValueInput("RunDuration", KEY_INPUTS, 31536000.0d);
 		runDuration.setUnitType(TimeUnit.class);
 		runDuration.setValidRange(1e-15d, Double.POSITIVE_INFINITY);
 
-		initializationTime = new ValueInput("InitializationDuration", "Key Inputs", 0.0);
+		initializationTime = new ValueInput("InitializationDuration", KEY_INPUTS, 0.0);
 		initializationTime.setUnitType(TimeUnit.class);
 		initializationTime.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 
-		pauseConditionInput = new SampleInput("PauseCondition", "Key Inputs", null);
+		pauseConditionInput = new SampleInput("PauseCondition", KEY_INPUTS, null);
 		pauseConditionInput.setUnitType(DimensionlessUnit.class);
 
-		exitAtPauseCondition = new BooleanInput("ExitAtPauseCondition", "Key Inputs", false);
+		exitAtPauseCondition = new BooleanInput("ExitAtPauseCondition", KEY_INPUTS, false);
 
-		exitAtStop = new BooleanInput("ExitAtStop", "Key Inputs", false);
+		exitAtStop = new BooleanInput("ExitAtStop", KEY_INPUTS, false);
 
-		globalSeedInput = new SampleInput("GlobalSubstreamSeed", "Key Inputs", new SampleConstant(0));
+		globalSeedInput = new SampleInput("GlobalSubstreamSeed", KEY_INPUTS, new SampleConstant(0));
 		globalSeedInput.setUnitType(DimensionlessUnit.class);
 		globalSeedInput.setValidRange(0, Integer.MAX_VALUE);
 
-		printReport = new BooleanInput("PrintReport", "Key Inputs", false);
+		printReport = new BooleanInput("PrintReport", KEY_INPUTS, false);
 
-		reportDirectory = new DirInput("ReportDirectory", "Key Inputs", null);
+		reportDirectory = new DirInput("ReportDirectory", KEY_INPUTS, null);
 		reportDirectory.setDefaultText("Configuration File Directory");
 
-		unitTypeList = new UnitTypeListInput("UnitTypeList", "Key Inputs", null);
+		unitTypeList = new UnitTypeListInput("UnitTypeList", KEY_INPUTS, null);
 
-		runOutputList = new StringProvListInput("RunOutputList", "Key Inputs", null);
+		runOutputList = new StringProvListInput("RunOutputList", KEY_INPUTS, null);
 		runOutputList.setUnitType(UserSpecifiedUnit.class);
 
-		tickLengthInput = new ValueInput("TickLength", "Key Inputs", 1e-6d);
+		tickLengthInput = new ValueInput("TickLength", KEY_INPUTS, 1e-6d);
 		tickLengthInput.setUnitType(TimeUnit.class);
 		tickLengthInput.setValidRange(1e-12d, Double.POSITIVE_INFINITY);
 
 		// Multiple Runs tab
 		IntegerVector defRangeList = new IntegerVector();
 		defRangeList.add(1);
-		runIndexDefinitionList = new IntegerListInput("RunIndexDefinitionList", "Multiple Runs", defRangeList);
+		runIndexDefinitionList = new IntegerListInput("RunIndexDefinitionList", MULTIPLE_RUNS, defRangeList);
 
-		startingRunNumber = new RunNumberInput("StartingRunNumber", "Multiple Runs", 1);
+		startingRunNumber = new RunNumberInput("StartingRunNumber", MULTIPLE_RUNS, 1);
 
-		endingRunNumber = new RunNumberInput("EndingRunNumber", "Multiple Runs", 1);
+		endingRunNumber = new RunNumberInput("EndingRunNumber", MULTIPLE_RUNS, 1);
 
 		// GUI tab
-		displayedUnits = new EntityListInput<>(Unit.class, "DisplayedUnits", "GUI", new ArrayList<Unit>());
+		displayedUnits = new EntityListInput<>(Unit.class, "DisplayedUnits", GUI, new ArrayList<Unit>());
 		displayedUnits.setDefaultText("SI Units");
 		displayedUnits.setPromptReqd(false);
 		displayedUnits.setHidden(true);
 
-		realTime = new BooleanInput("RealTime", "GUI", false);
+		realTime = new BooleanInput("RealTime", GUI, false);
 		realTime.setPromptReqd(false);
 		realTime.setHidden(true);
 
-		snapToGrid = new BooleanInput("SnapToGrid", "GUI", false);
+		snapToGrid = new BooleanInput("SnapToGrid", GUI, false);
 		snapToGrid.setPromptReqd(false);
 		snapToGrid.setHidden(true);
 
-		snapGridSpacing = new ValueInput("SnapGridSpacing", "GUI", 0.1d);
+		snapGridSpacing = new ValueInput("SnapGridSpacing", GUI, 0.1d);
 		snapGridSpacing.setUnitType(DistanceUnit.class);
 		snapGridSpacing.setValidRange(1.0e-6, Double.POSITIVE_INFINITY);
 		snapGridSpacing.setPromptReqd(false);
 
-		incrementSize = new ValueInput("IncrementSize", "GUI", 0.1d);
+		incrementSize = new ValueInput("IncrementSize", GUI, 0.1d);
 		incrementSize.setUnitType(DistanceUnit.class);
 		incrementSize.setValidRange(1.0e-6, Double.POSITIVE_INFINITY);
 		incrementSize.setPromptReqd(false);
 
-		realTimeFactor = new ValueInput("RealTimeFactor", "GUI", DEFAULT_REAL_TIME_FACTOR);
+		realTimeFactor = new ValueInput("RealTimeFactor", GUI, DEFAULT_REAL_TIME_FACTOR);
 		realTimeFactor.setValidRange(MIN_REAL_TIME_FACTOR, MAX_REAL_TIME_FACTOR);
 		realTimeFactor.setPromptReqd(false);
 		realTimeFactor.setHidden(true);
 
-		pauseTime = new ValueInput("PauseTime", "GUI", Double.POSITIVE_INFINITY);
+		pauseTime = new ValueInput("PauseTime", GUI, Double.POSITIVE_INFINITY);
 		pauseTime.setUnitType(TimeUnit.class);
 		pauseTime.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		pauseTime.setPromptReqd(false);
 		pauseTime.setHidden(true);
 
-		showModelBuilder = new BooleanInput("ShowModelBuilder", "GUI", false);
+		showModelBuilder = new BooleanInput("ShowModelBuilder", GUI, false);
 		showModelBuilder.setPromptReqd(false);
 		showModelBuilder.setHidden(true);
 
-		showObjectSelector = new BooleanInput("ShowObjectSelector", "GUI", false);
+		showObjectSelector = new BooleanInput("ShowObjectSelector", GUI, false);
 		showObjectSelector.setPromptReqd(false);
 		showObjectSelector.setHidden(true);
 
-		showInputEditor = new BooleanInput("ShowInputEditor", "GUI", false);
+		showInputEditor = new BooleanInput("ShowInputEditor", GUI, false);
 		showInputEditor.setPromptReqd(false);
 		showInputEditor.setHidden(true);
 
-		showOutputViewer = new BooleanInput("ShowOutputViewer", "GUI", false);
+		showOutputViewer = new BooleanInput("ShowOutputViewer", GUI, false);
 		showOutputViewer.setPromptReqd(false);
 		showOutputViewer.setHidden(true);
 
-		showPropertyViewer = new BooleanInput("ShowPropertyViewer", "GUI", false);
+		showPropertyViewer = new BooleanInput("ShowPropertyViewer", GUI, false);
 		showPropertyViewer.setPromptReqd(false);
 		showPropertyViewer.setHidden(true);
 
-		showLogViewer = new BooleanInput("ShowLogViewer", "GUI", false);
+		showLogViewer = new BooleanInput("ShowLogViewer", GUI, false);
 		showLogViewer.setPromptReqd(false);
 		showLogViewer.setHidden(true);
 
-		showEventViewer = new BooleanInput("ShowEventViewer", "GUI", false);
+		showEventViewer = new BooleanInput("ShowEventViewer", GUI, false);
 		showEventViewer.setPromptReqd(false);
 		showEventViewer.setHidden(true);
 
-		modelBuilderPos = new IntegerListInput("ModelBuilderPos", "GUI", null);
+		modelBuilderPos = new IntegerListInput("ModelBuilderPos", GUI, null);
 		modelBuilderPos.setValidCount(2);
 		modelBuilderPos.setValidRange(-8192, 8192);
 		modelBuilderPos.setPromptReqd(false);
 		modelBuilderPos.setHidden(true);
 
-		modelBuilderSize = new IntegerListInput("ModelBuilderSize", "GUI", null);
+		modelBuilderSize = new IntegerListInput("ModelBuilderSize", GUI, null);
 		modelBuilderSize.setValidCount(2);
 		modelBuilderSize.setValidRange(1, 8192);
 		modelBuilderSize.setPromptReqd(false);
 		modelBuilderSize.setHidden(true);
 
-		objectSelectorPos = new IntegerListInput("ObjectSelectorPos", "GUI", null);
+		objectSelectorPos = new IntegerListInput("ObjectSelectorPos", GUI, null);
 		objectSelectorPos.setValidCount(2);
 		objectSelectorPos.setValidRange(-8192, 8192);
 		objectSelectorPos.setPromptReqd(false);
 		objectSelectorPos.setHidden(true);
 
-		objectSelectorSize = new IntegerListInput("ObjectSelectorSize", "GUI", null);
+		objectSelectorSize = new IntegerListInput("ObjectSelectorSize", GUI, null);
 		objectSelectorSize.setValidCount(2);
 		objectSelectorSize.setValidRange(1, 8192);
 		objectSelectorSize.setPromptReqd(false);
 		objectSelectorSize.setHidden(true);
 
-		inputEditorPos = new IntegerListInput("InputEditorPos", "GUI", null);
+		inputEditorPos = new IntegerListInput("InputEditorPos", GUI, null);
 		inputEditorPos.setValidCount(2);
 		inputEditorPos.setValidRange(-8192, 8192);
 		inputEditorPos.setPromptReqd(false);
 		inputEditorPos.setHidden(true);
 
-		inputEditorSize = new IntegerListInput("InputEditorSize", "GUI", null);
+		inputEditorSize = new IntegerListInput("InputEditorSize", GUI, null);
 		inputEditorSize.setValidCount(2);
 		inputEditorSize.setValidRange(1, 8192);
 		inputEditorSize.setPromptReqd(false);
 		inputEditorSize.setHidden(true);
 
-		outputViewerPos = new IntegerListInput("OutputViewerPos", "GUI", null);
+		outputViewerPos = new IntegerListInput("OutputViewerPos", GUI, null);
 		outputViewerPos.setValidCount(2);
 		outputViewerPos.setValidRange(-8192, 8192);
 		outputViewerPos.setPromptReqd(false);
 		outputViewerPos.setHidden(true);
 
-		outputViewerSize = new IntegerListInput("OutputViewerSize", "GUI", null);
+		outputViewerSize = new IntegerListInput("OutputViewerSize", GUI, null);
 		outputViewerSize.setValidCount(2);
 		outputViewerSize.setValidRange(1, 8192);
 		outputViewerSize.setPromptReqd(false);
 		outputViewerSize.setHidden(true);
 
-		propertyViewerPos = new IntegerListInput("PropertyViewerPos", "GUI", null);
+		propertyViewerPos = new IntegerListInput("PropertyViewerPos", GUI, null);
 		propertyViewerPos.setValidCount(2);
 		propertyViewerPos.setValidRange(-8192, 8192);
 		propertyViewerPos.setPromptReqd(false);
 		propertyViewerPos.setHidden(true);
 
-		propertyViewerSize = new IntegerListInput("PropertyViewerSize", "GUI", null);
+		propertyViewerSize = new IntegerListInput("PropertyViewerSize", GUI, null);
 		propertyViewerSize.setValidCount(2);
 		propertyViewerSize.setValidRange(1, 8192);
 		propertyViewerSize.setPromptReqd(false);
 		propertyViewerSize.setHidden(true);
 
-		logViewerPos = new IntegerListInput("LogViewerPos", "GUI", null);
+		logViewerPos = new IntegerListInput("LogViewerPos", GUI, null);
 		logViewerPos.setValidCount(2);
 		logViewerPos.setValidRange(-8192, 8192);
 		logViewerPos.setPromptReqd(false);
 		logViewerPos.setHidden(true);
 
-		logViewerSize = new IntegerListInput("LogViewerSize", "GUI", null);
+		logViewerSize = new IntegerListInput("LogViewerSize", GUI, null);
 		logViewerSize.setValidCount(2);
 		logViewerSize.setValidRange(1, 8192);
 		logViewerSize.setPromptReqd(false);
 		logViewerSize.setHidden(true);
 
-		eventViewerPos = new IntegerListInput("EventViewerPos", "GUI", null);
+		eventViewerPos = new IntegerListInput("EventViewerPos", GUI, null);
 		eventViewerPos.setValidCount(2);
 		eventViewerPos.setValidRange(-8192, 8192);
 		eventViewerPos.setPromptReqd(false);
 		eventViewerPos.setHidden(true);
 
-		eventViewerSize = new IntegerListInput("EventViewerSize", "GUI", null);
+		eventViewerSize = new IntegerListInput("EventViewerSize", GUI, null);
 		eventViewerSize.setValidCount(2);
 		eventViewerSize.setValidRange(1, 8192);
 		eventViewerSize.setPromptReqd(false);
 		eventViewerSize.setHidden(true);
 
-		controlPanelWidth = new IntegerInput("ControlPanelWidth", "GUI", null);
+		controlPanelWidth = new IntegerInput("ControlPanelWidth", GUI, null);
 		controlPanelWidth.setValidRange(1, 8192);
 		controlPanelWidth.setPromptReqd(false);
 		controlPanelWidth.setHidden(true);
 
 		// Hidden keywords
-		startTimeInput = new ValueInput("StartTime", "Key Inputs", 0.0d);
+		startTimeInput = new ValueInput("StartTime", KEY_INPUTS, 0.0d);
 		startTimeInput.setUnitType(TimeUnit.class);
 		startTimeInput.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 
-		traceEventsInput = new BooleanInput("TraceEvents", "Key Inputs", false);
-		verifyEventsInput = new BooleanInput("VerifyEvents", "Key Inputs", false);
+		traceEventsInput = new BooleanInput("TraceEvents", KEY_INPUTS, false);
+		verifyEventsInput = new BooleanInput("VerifyEvents", KEY_INPUTS, false);
 
-		printInputReport = new BooleanInput("PrintInputReport", "Key Inputs", false);
+		printInputReport = new BooleanInput("PrintInputReport", KEY_INPUTS, false);
 
 		// Initialize basic model information
 		startTime = 0.0;
