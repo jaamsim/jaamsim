@@ -77,14 +77,16 @@ RemoveFromIconModel     ImageFile { '<res>/images/RemoveFrom-256.png'   }  Trans
 EntityLoggerIconModel   ImageFile { '<res>/images/EntityLogger-256.png' }  Transparent { TRUE }
 StatisticsIconModel     ImageFile { '<res>/images/Statistics-256.png'   }  Transparent { TRUE }
 
+Define PolylineModel { EntityDelayModel  EntityConveyorModel }
+
 SimEntity               JavaClass { com.jaamsim.ProcessFlow.SimEntity             }  Palette { 'Process Flow' }  DefaultDisplayModel { Sphere                   } IconFile { '<res>/images/SimEntity-24.png'       } DefaultSize { 0.5 0.5 0.5 m }
 EntityLauncher          JavaClass { com.jaamsim.ProcessFlow.EntityLauncher        }  Palette { 'Process Flow' }  DefaultDisplayModel { EntityLauncherIconModel  } IconFile { '<res>/images/EntityLauncher-24.png'  }
 EntityGenerator         JavaClass { com.jaamsim.ProcessFlow.EntityGenerator       }  Palette { 'Process Flow' }  DefaultDisplayModel { SourceIconModel          } IconFile { '<res>/images/Source-24.png'          }
 EntitySink              JavaClass { com.jaamsim.ProcessFlow.EntitySink            }  Palette { 'Process Flow' }  DefaultDisplayModel { SinkIconModel            } IconFile { '<res>/images/Sink-24.png'            }
 Server                  JavaClass { com.jaamsim.ProcessFlow.Server                }  Palette { 'Process Flow' }  DefaultDisplayModel { ServerIconModel          } IconFile { '<res>/images/Server-24.png'          }
 Queue                   JavaClass { com.jaamsim.ProcessFlow.Queue                 }  Palette { 'Process Flow' }  DefaultDisplayModel { Triangle                 } IconFile { '<res>/images/Queue-24.png'           } DefaultSize { 0.5 0.5 0.0 m }
-EntityConveyor          JavaClass { com.jaamsim.ProcessFlow.EntityConveyor        }  Palette { 'Process Flow' }  DefaultDisplayModel { PolylineModelDefault     } IconFile { '<res>/images/Line-24.png'            }
-EntityDelay             JavaClass { com.jaamsim.ProcessFlow.EntityDelay           }  Palette { 'Process Flow' }  DefaultDisplayModel { PolylineModelDefault     } IconFile { '<res>/images/Line-24.png'            }
+EntityConveyor          JavaClass { com.jaamsim.ProcessFlow.EntityConveyor        }  Palette { 'Process Flow' }  DefaultDisplayModel { EntityConveyorModel      } IconFile { '<res>/images/Line-24.png'            }
+EntityDelay             JavaClass { com.jaamsim.ProcessFlow.EntityDelay           }  Palette { 'Process Flow' }  DefaultDisplayModel { EntityDelayModel         } IconFile { '<res>/images/Line-24.png'            }
 Resource                JavaClass { com.jaamsim.ProcessFlow.Resource              }  Palette { 'Process Flow' }  DefaultDisplayModel { ResourceIconModel        } IconFile { '<res>/images/Resource-24.png'        }
 Seize                   JavaClass { com.jaamsim.ProcessFlow.Seize                 }  Palette { 'Process Flow' }  DefaultDisplayModel { SeizeIconModel           } IconFile { '<res>/images/Seize-24.png'           }
 Release                 JavaClass { com.jaamsim.ProcessFlow.Release               }  Palette { 'Process Flow' }  DefaultDisplayModel { ReleaseIconModel         } IconFile { '<res>/images/Release-24.png'         }
