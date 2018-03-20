@@ -60,5 +60,6 @@ import org.junit.runners.Suite.SuiteClasses;
 	com.jaamsim.probability.TestBooleanSelector.class,
 	com.jaamsim.MeshFiles.TestVertexMap.class,
 	com.jaamsim.MeshFiles.TestDataBlocks.class,
+	com.jaamsim.Statistics.TestStatistics.class,
 })
 public class AllTests {}
