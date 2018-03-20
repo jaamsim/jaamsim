@@ -73,26 +73,26 @@ public class ObjectType extends Entity {
 	}
 
 	{
-		javaClass = new ClassInput( "JavaClass", "Key Inputs", null );
+		javaClass = new ClassInput( "JavaClass", KEY_INPUTS, null );
 		this.addInput( javaClass );
 
-		palette = new StringInput("Palette", "Key Inputs", null);
+		palette = new StringInput("Palette", KEY_INPUTS, null);
 		this.addInput( palette );
 
-		defaultDisplayModel = new EntityInput<>(DisplayModel.class, "DefaultDisplayModel", "Key Inputs", null);
+		defaultDisplayModel = new EntityInput<>(DisplayModel.class, "DefaultDisplayModel", KEY_INPUTS, null);
 		this.addInput(defaultDisplayModel);
 
-		dragAndDrop = new BooleanInput("DragAndDrop", "Key inputs", true);
+		dragAndDrop = new BooleanInput("DragAndDrop", KEY_INPUTS, true);
 		this.addInput(dragAndDrop);
 
-		iconFile = new ImageInput("IconFile", "Key inputs", null);
+		iconFile = new ImageInput("IconFile", KEY_INPUTS, null);
 		this.addInput(iconFile);
 
-		defaultSize = new Vec3dInput("DefaultSize", "Key inputs", new Vec3d(1.0d, 1.0d, 1.0d));
+		defaultSize = new Vec3dInput("DefaultSize", KEY_INPUTS, new Vec3d(1.0d, 1.0d, 1.0d));
 		defaultSize.setUnitType(DistanceUnit.class);
 		this.addInput(defaultSize);
 
-		defaultAlignment = new Vec3dInput("DefaultAlignment", "Key inputs", new Vec3d(0.0d, 0.0d, 0.0d));
+		defaultAlignment = new Vec3dInput("DefaultAlignment", KEY_INPUTS, new Vec3d(0.0d, 0.0d, 0.0d));
 		this.addInput(defaultAlignment);
 	}
 

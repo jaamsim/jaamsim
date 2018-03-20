@@ -36,7 +36,7 @@ public abstract class Unit extends Entity {
 	private final SIUnitFactorInput conversionFactorToSI;
 
 	{
-		conversionFactorToSI = new SIUnitFactorInput("ConversionFactorToSI", "Key Inputs");
+		conversionFactorToSI = new SIUnitFactorInput("ConversionFactorToSI", KEY_INPUTS);
 		this.addInput(conversionFactorToSI);
 	}
 

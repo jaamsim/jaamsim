@@ -34,12 +34,12 @@ private final ValueInput startTime;
 private final EntityListInput<Entity> entities;
 
 {
-	startTime = new ValueInput("StartTime", "Key Inputs", 0.0d);
+	startTime = new ValueInput("StartTime", KEY_INPUTS, 0.0d);
 	startTime.setUnitType(TimeUnit.class);
 	startTime.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 	this.addInput(startTime);
 
-	entities = new EntityListInput<>(Entity.class, "Entities", "Key Inputs", new ArrayList<Entity>(0));
+	entities = new EntityListInput<>(Entity.class, "Entities", KEY_INPUTS, new ArrayList<Entity>(0));
 	this.addInput(entities);
 }
 

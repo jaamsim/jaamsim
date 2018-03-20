@@ -41,11 +41,11 @@ public class ScriptEntity extends Entity {
 	private int lastTokenIdx;
 
 	{
-		scriptFileName = new FileInput( "Script", "Key Inputs", null );
+		scriptFileName = new FileInput( "Script", KEY_INPUTS, null );
 		scriptFileName.setRequired(true);
 		this.addInput( scriptFileName );
 
-		scriptTime = new ValueInput("Time", "Key Inputs", 0.0d);
+		scriptTime = new ValueInput("Time", KEY_INPUTS, 0.0d);
 		scriptTime.setUnitType(TimeUnit.class);
 		scriptTime.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		this.addInput(scriptTime);

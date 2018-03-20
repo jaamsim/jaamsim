@@ -949,13 +949,13 @@ private static class CategoryInputs {
 	private static void add(ArrayList<CategoryInputs> list, ArrayList<Input<?>> inputs, String cat) {
 
 		int seq = 100;
-		if (cat.equals("Key Inputs"))
+		if (cat.equals(Entity.KEY_INPUTS))
 			seq = 0;
-		else if (cat.equals("Thresholds"))
+		else if (cat.equals(Entity.THRESHOLDS))
 			seq = 1;
-		else if (cat.equals("Maintenance"))
+		else if (cat.equals(Entity.MAINTENANCE))
 			seq = 2;
-		else if (cat.equals("Graphics"))
+		else if (cat.equals(Entity.GRAPHICS))
 			seq = 101;
 
 		list.add(new CategoryInputs(cat, seq, inputs));

@@ -55,18 +55,18 @@ public class DemoEntity extends DisplayEntity {
 	private long numberOfTrips; // number of times the entity has travelled between the nodes
 
 	{
-		travelTime = new SampleInput("TravelTime", "Key Inputs", null);
+		travelTime = new SampleInput("TravelTime", KEY_INPUTS, null);
 		travelTime.setUnitType(TimeUnit.class);
 		travelTime.setEntity(this);
 		travelTime.setRequired(true);
 		travelTime.setValidRange(1.0e-6, Double.POSITIVE_INFINITY);
 		this.addInput(travelTime);
 
-		node1 = new Vec3dInput("Node1", "Key Inputs", new Vec3d(0.0, 0.0, 0.0));
+		node1 = new Vec3dInput("Node1", KEY_INPUTS, new Vec3d(0.0, 0.0, 0.0));
 		node1.setUnitType(DistanceUnit.class);
 		this.addInput(node1);
 
-		node2 = new Vec3dInput("Node2", "Key Inputs", new Vec3d(1.0, 0.0, 0.0));
+		node2 = new Vec3dInput("Node2", KEY_INPUTS, new Vec3d(1.0, 0.0, 0.0));
 		node2.setUnitType(DistanceUnit.class);
 		this.addInput(node2);
 	}

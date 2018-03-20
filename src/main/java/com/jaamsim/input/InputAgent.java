@@ -973,7 +973,7 @@ public class InputAgent {
 					if (valueString.length() == 0)
 						continue;
 
-					if (! in.getCategory().contains("Key Inputs"))
+					if (! in.getCategory().contains(Entity.KEY_INPUTS))
 						continue;
 
 					hasinput = true;
@@ -1011,7 +1011,7 @@ public class InputAgent {
 					if (valueString.length() == 0)
 						continue;
 
-					if (in.getCategory().contains("Key Inputs"))
+					if (in.getCategory().contains(Entity.KEY_INPUTS))
 						continue;
 
 					hasinput = true;
@@ -1314,7 +1314,7 @@ public class InputAgent {
 					continue;
 
 				// defer all inputs outside the Key Inputs category
-				if (!"Key Inputs".equals(in.getCategory())) {
+				if (!Entity.KEY_INPUTS.equals(in.getCategory())) {
 					deferredInputs.add(in);
 					continue;
 				}

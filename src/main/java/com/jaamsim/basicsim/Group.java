@@ -70,7 +70,7 @@ public class Group extends Entity {
 
 	private class GroupListInput extends Input<String> {
 		public GroupListInput() {
-			super("List", "Key Inputs", null);
+			super("List", KEY_INPUTS, null);
 		}
 
 		@Override
@@ -147,7 +147,7 @@ public class Group extends Entity {
 
 	private class GroupAppendListInput extends Input<String> {
 		public GroupAppendListInput() {
-			super("AppendList", "Key Inputs", null);
+			super("AppendList", KEY_INPUTS, null);
 		}
 
 		@Override
@@ -174,7 +174,7 @@ public class Group extends Entity {
 
 	private class GroupTypeInput extends Input<String> {
 		public GroupTypeInput() {
-			super("GroupType", "Key Inputs", null);
+			super("GroupType", KEY_INPUTS, null);
 		}
 
 		@Override

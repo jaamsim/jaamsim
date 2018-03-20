@@ -103,43 +103,43 @@ public class VideoRecorderEntity extends DisplayEntity {
 	{
 		attributeDefinitionList.setHidden(true);
 
-		captureStartTime = new ValueInput("CaptureStartTime", "Key Inputs", 0.0d);
+		captureStartTime = new ValueInput("CaptureStartTime", KEY_INPUTS, 0.0d);
 		captureStartTime.setUnitType(TimeUnit.class);
 		captureStartTime.setValidRange(0, Double.POSITIVE_INFINITY);
 		this.addInput(captureStartTime);
 
-		captureInterval = new ValueInput("CaptureInterval", "Key Inputs", 3600.0d);
+		captureInterval = new ValueInput("CaptureInterval", KEY_INPUTS, 3600.0d);
 		captureInterval.setUnitType(TimeUnit.class);
 		captureInterval.setValidRange(0.1d, Double.POSITIVE_INFINITY);
 		this.addInput(captureInterval);
 
-		captureFrames = new IntegerInput("CaptureFrames", "Key Inputs", 0);
+		captureFrames = new IntegerInput("CaptureFrames", KEY_INPUTS, 0);
 		captureFrames.setValidRange(0, 30000);
 		this.addInput(captureFrames);
 
 		IntegerVector defArea = new IntegerVector(2);
 		defArea.add(1920);
 		defArea.add(1080);
-		captureArea = new IntegerListInput("CaptureArea", "Key Inputs", defArea);
+		captureArea = new IntegerListInput("CaptureArea", KEY_INPUTS, defArea);
 		captureArea.setValidCount(2);
 		captureArea.setValidRange(0, 3000);
 		this.addInput(captureArea);
 
-		captureViews = new EntityListInput<>(View.class, "CaptureViews", "Key Inputs", new ArrayList<View>(0));
+		captureViews = new EntityListInput<>(View.class, "CaptureViews", KEY_INPUTS, new ArrayList<View>(0));
 		captureViews.setRequired(true);
 		this.addInput(captureViews);
 
-		videoBGColor = new ColourInput("VideoBackgroundColor", "Key Inputs", ColourInput.WHITE);
+		videoBGColor = new ColourInput("VideoBackgroundColor", KEY_INPUTS, ColourInput.WHITE);
 		this.addInput(videoBGColor);
 		this.addSynonym(videoBGColor, "Colour");
 
-		videoName = new StringInput("VideoName", "Key Inputs", "");
+		videoName = new StringInput("VideoName", KEY_INPUTS, "");
 		this.addInput(videoName);
 
-		saveImages = new BooleanInput("SaveImages", "Key Inputs", false);
+		saveImages = new BooleanInput("SaveImages", KEY_INPUTS, false);
 		this.addInput(saveImages);
 
-		saveVideo = new BooleanInput("SaveVideo", "Key Inputs", false);
+		saveVideo = new BooleanInput("SaveVideo", KEY_INPUTS, false);
 		this.addInput(saveVideo);
 	}
 

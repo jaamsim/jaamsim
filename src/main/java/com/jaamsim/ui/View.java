@@ -123,15 +123,15 @@ public class View extends Entity {
 	}
 
 	{
-		region = new EntityInput<>(Region.class, "Region", "Graphics", null);
+		region = new EntityInput<>(Region.class, "Region", GRAPHICS, null);
 		this.addInput(region);
 
-		center = new Vec3dInput("ViewCenter", "Graphics", new Vec3d());
+		center = new Vec3dInput("ViewCenter", GRAPHICS, new Vec3d());
 		center.setUnitType(DistanceUnit.class);
 		center.setPromptReqd(false);
 		this.addInput(center);
 
-		position = new Vec3dInput("ViewPosition", "Graphics", new Vec3d(5.0d, -5.0d, 5.0d));
+		position = new Vec3dInput("ViewPosition", GRAPHICS, new Vec3d(5.0d, -5.0d, 5.0d));
 		position.setUnitType(DistanceUnit.class);
 		position.setPromptReqd(false);
 		this.addInput(position);
@@ -139,7 +139,7 @@ public class View extends Entity {
 		IntegerVector defSize = new IntegerVector(2);
 		defSize.add(GUIFrame.VIEW_WIDTH);
 		defSize.add(GUIFrame.VIEW_HEIGHT);
-		windowSize = new IntegerListInput("WindowSize", "Graphics", defSize);
+		windowSize = new IntegerListInput("WindowSize", GRAPHICS, defSize);
 		windowSize.setValidCount(2);
 		windowSize.setValidRange(1, 8192);
 		windowSize.setPromptReqd(false);
@@ -148,37 +148,37 @@ public class View extends Entity {
 		IntegerVector defPos = new IntegerVector(2);
 		defPos.add(GUIFrame.COL2_START);
 		defPos.add(GUIFrame.TOP_START);
-		windowPos = new IntegerListInput("WindowPosition", "Graphics", defPos);
+		windowPos = new IntegerListInput("WindowPosition", GRAPHICS, defPos);
 		windowPos.setValidCount(2);
 		windowPos.setValidRange(-8192, 8192);
 		windowPos.setPromptReqd(false);
 		this.addInput(windowPos);
 
-		titleBar = new StringInput("TitleBarText", "Graphics", null);
+		titleBar = new StringInput("TitleBarText", GRAPHICS, null);
 		this.addInput(titleBar);
 
-		showWindow = new BooleanInput("ShowWindow", "Graphics", false);
+		showWindow = new BooleanInput("ShowWindow", GRAPHICS, false);
 		showWindow.setPromptReqd(false);
 		this.addInput(showWindow);
 
-		movable = new BooleanInput("Movable", "Graphics", true);
+		movable = new BooleanInput("Movable", GRAPHICS, true);
 		this.addInput(movable);
 
-		lock2D = new BooleanInput("Lock2D", "Graphics", false);
+		lock2D = new BooleanInput("Lock2D", GRAPHICS, false);
 		this.addInput(lock2D);
 
-		followEntityInput = new EntityInput<>(DisplayEntity.class, "FollowEntity", "Graphics", null);
+		followEntityInput = new EntityInput<>(DisplayEntity.class, "FollowEntity", GRAPHICS, null);
 		this.addInput(followEntityInput);
 
-		positionScriptInput = new KeyedVec3dInput("ScriptedViewPosition", "Graphics");
+		positionScriptInput = new KeyedVec3dInput("ScriptedViewPosition", GRAPHICS);
 		positionScriptInput.setUnitType(DistanceUnit.class);
 		this.addInput(positionScriptInput);
 
-		centerScriptInput = new KeyedVec3dInput("ScriptedViewCenter", "Graphics");
+		centerScriptInput = new KeyedVec3dInput("ScriptedViewCenter", GRAPHICS);
 		centerScriptInput.setUnitType(DistanceUnit.class);
 		this.addInput(centerScriptInput);
 
-		skyboxImage = new FileInput("SkyboxImage", "Graphics", null);
+		skyboxImage = new FileInput("SkyboxImage", GRAPHICS, null);
 		this.addInput(skyboxImage);
 
 	}
