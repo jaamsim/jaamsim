@@ -24,11 +24,13 @@ FluidIconModel                 ImageFile { '<res>/images/Fluid-256.png' }   Tran
 FluidFlowIconModel             ImageFile { '<res>/images/Flow-256.png' }   Transparent { TRUE }
 FluidCentrifugalPumpIconModel  ImageFile { '<res>/images/Pump-256.png' }   Transparent { TRUE }
 
+Define PolylineModel { FluidFixedFlowModel  FluidPipeModel }
+
 Fluid                 DefaultDisplayModel 	{ FluidIconModel }
 FluidFlow             DefaultDisplayModel 	{ FluidFlowIconModel }
-FluidFixedFlow        DefaultDisplayModel 	{ PolylineModelDefault }
+FluidFixedFlow        DefaultDisplayModel 	{ FluidFixedFlowModel }
 FluidTank             DefaultDisplayModel   { BarGauge2D }
-FluidPipe             DefaultDisplayModel 	{ PolylineModelDefault }
+FluidPipe             DefaultDisplayModel 	{ FluidPipeModel }
 FluidCentrifugalPump  DefaultDisplayModel 	{ FluidCentrifugalPumpIconModel }
 
 Fluid                Description { 'Defines a specific fluid and its properties.' }
