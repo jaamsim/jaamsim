@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2018 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +19,8 @@ package com.jaamsim.ProcessFlow;
 
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleInput;
+import com.jaamsim.Statistics.SampleStatistics;
+import com.jaamsim.Statistics.TimeBasedStatistics;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
@@ -40,15 +43,8 @@ public class Statistics extends LinkedComponent {
 	         exampleList = {"'this.obj.attrib1'"})
 	private final SampleInput sampleValue;
 
-	private double minValue;
-	private double maxValue;
-	private double totalValue;
-	private double totalSquaredValue;
-	private double lastValue;
-	private double lastUpdateTime;
-	private double totalTimeValue;
-	private double totalSquaredTimeValue;
-	private double firstSampleTime;
+	private final SampleStatistics sampStats = new SampleStatistics();
+	private final TimeBasedStatistics timeStats = new TimeBasedStatistics();
 
 	{
 		stateAssignment.setHidden(true);
@@ -60,7 +56,6 @@ public class Statistics extends LinkedComponent {
 		sampleValue = new SampleInput("SampleValue", KEY_INPUTS, null);
 		sampleValue.setUnitType(UserSpecifiedUnit.class);
 		sampleValue.setEntity(this);
-		sampleValue.setRequired(true);
 		this.addInput(sampleValue);
 	}
 
@@ -80,17 +75,8 @@ public class Statistics extends LinkedComponent {
 	@Override
 	public void earlyInit() {
 		super.earlyInit();
-
-		minValue = Double.POSITIVE_INFINITY;
-		maxValue = Double.NEGATIVE_INFINITY;
-		totalValue = 0.0;
-		totalSquaredValue = 0.0;
-
-		lastValue = 0.0;
-		lastUpdateTime = 0.0;
-		totalTimeValue = 0.0;
-		totalSquaredTimeValue = 0.0;
-		firstSampleTime = 0.0;
+		sampStats.clear();
+		timeStats.clear();
 	}
 
 	@Override
@@ -100,22 +86,8 @@ public class Statistics extends LinkedComponent {
 
 		// Update the statistics
 		double val = sampleValue.getValue().getNextSample(simTime);
-		minValue = Math.min(minValue, val);
-		maxValue = Math.max(maxValue, val);
-		totalValue += val;
-		totalSquaredValue += val*val;
-
-		// Calculate the time average
-		if (this.getNumberAdded(simTime) == 1L) {
-			firstSampleTime = simTime;
-		}
-		else {
-			double weightedVal = lastValue * (simTime - lastUpdateTime);
-			totalTimeValue += weightedVal;
-			totalSquaredTimeValue += lastValue*weightedVal;
-		}
-		lastValue = val;
-		lastUpdateTime = simTime;
+		sampStats.addValue(val);
+		timeStats.addValue(simTime, val);
 
 		// Pass the entity to the next component
 		this.sendToNextComponent(ent);
@@ -124,17 +96,8 @@ public class Statistics extends LinkedComponent {
 	@Override
 	public void clearStatistics() {
 		super.clearStatistics();
-
-		minValue = Double.POSITIVE_INFINITY;
-		maxValue = Double.NEGATIVE_INFINITY;
-		totalValue = 0.0;
-		totalSquaredValue = 0.0;
-
-		totalTimeValue = 0.0;
-		lastValue = 0.0;
-		lastUpdateTime = 0.0;
-		totalSquaredTimeValue = 0.0;
-		firstSampleTime = 0.0;
+		sampStats.clear();
+		timeStats.clear();
 	}
 
 	@Override
@@ -152,7 +115,7 @@ public class Statistics extends LinkedComponent {
 	  reportable = true,
 	    sequence = 0)
 	public double getSampleMinimum(double simTime) {
-		return minValue;
+		return sampStats.getMin();
 	}
 
 	@Output(name = "SampleMaximum",
@@ -161,7 +124,7 @@ public class Statistics extends LinkedComponent {
 	  reportable = true,
 	    sequence = 1)
 	public double getSampleMaximum(double simTime) {
-		return maxValue;
+		return sampStats.getMax();
 	}
 
 	@Output(name = "SampleAverage",
@@ -170,10 +133,7 @@ public class Statistics extends LinkedComponent {
 	  reportable = true,
 	    sequence = 2)
 	public double getSampleAverage(double simTime) {
-		long num = this.getNumberAdded(simTime);
-		if (num == 0L)
-			return 0.0d;
-		return totalValue/num;
+		return sampStats.getMean();
 	}
 
 	@Output(name = "SampleStandardDeviation",
@@ -182,11 +142,7 @@ public class Statistics extends LinkedComponent {
 	  reportable = true,
 	    sequence = 3)
 	public double getSampleStandardDeviation(double simTime) {
-		long num = this.getNumberAdded(simTime);
-		if (num == 0L)
-			return 0.0d;
-		double mean = totalValue/num;
-		return Math.sqrt(totalSquaredValue/num - mean*mean);
+		return sampStats.getStandardDeviation();
 	}
 
 	@Output(name = "StandardDeviationOfTheMean",
@@ -195,10 +151,7 @@ public class Statistics extends LinkedComponent {
 	  reportable = true,
 	    sequence = 4)
 	public double getStandardDeviationOfTheMean(double simTime) {
-		long num = this.getNumberAdded(simTime);
-		if (num <= 1L)
-			return 0.0d;
-		return this.getSampleStandardDeviation(simTime)/Math.sqrt(num-1L);
+		return sampStats.getStandardDeviation()/Math.sqrt(sampStats.getCount() - 1L);
 	}
 
 	@Output(name = "TimeAverage",
@@ -207,13 +160,7 @@ public class Statistics extends LinkedComponent {
 	  reportable = true,
 	    sequence = 5)
 	public double getTimeAverage(double simTime) {
-		long num = this.getNumberAdded(simTime);
-		if (num == 0L)
-			return 0.0d;
-		if (num == 1L)
-			return lastValue;
-		double dt = simTime - lastUpdateTime;
-		return (totalTimeValue + lastValue*dt)/(simTime - firstSampleTime);
+		return timeStats.getMean(simTime);
 	}
 
 	@Output(name = "TimeStandardDeviation",
@@ -222,13 +169,7 @@ public class Statistics extends LinkedComponent {
 	  reportable = true,
 	    sequence = 6)
 	public double getTimeStandardDeviation(double simTime) {
-		long num = this.getNumberAdded(simTime);
-		if (num <= 1L)
-			return 0.0d;
-		double mean = this.getTimeAverage(simTime);
-		double dt = simTime - lastUpdateTime;
-		double meanOfSquare = (totalSquaredTimeValue + lastValue*lastValue*dt)/(simTime - firstSampleTime);
-		return Math.sqrt(meanOfSquare - mean*mean);
+		return timeStats.getStandardDeviation(simTime);
 	}
 
 }
