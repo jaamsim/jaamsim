@@ -21,6 +21,7 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 import com.jaamsim.Statistics.SampleStatistics;
+import com.jaamsim.Statistics.TimeBasedStatistics;
 import com.jaamsim.math.MathUtils;
 
 public class TestStatistics {
@@ -43,6 +44,27 @@ public class TestStatistics {
 		assertTrue(MathUtils.near(stats.getMeanSquared(), 20.6d));
 		assertTrue(MathUtils.near(stats.getVariance(), 9.04d));
 		assertTrue(MathUtils.near(stats.getStandardDeviation(), Math.sqrt(9.04d)));
+	}
+
+	@Test
+	public void testTimeBasedStatistics() {
+		TimeBasedStatistics stats = new TimeBasedStatistics();
+		stats.addValue(0.0d, 2.0d);
+		stats.clear();
+		stats.addValue(2.0d, 5.0d);
+		stats.addValue(4.0d, 3.0d);
+		stats.addValue(5.0d, 8.0d);
+		stats.addValue(8.0d, -1.0d);
+		stats.addValue(9.0d, 2.0d);
+
+		assertTrue(stats.getMin() == -1.0d);
+		assertTrue(stats.getMax() == 8.0d);
+		assertTrue(stats.getSum(12.0d) == 42.0d);
+		assertTrue(stats.getSumSquared(12.0d) == 264.0d);
+		assertTrue(MathUtils.near(stats.getMean(12.0d), 4.2d));
+		assertTrue(MathUtils.near(stats.getMeanSquared(12.0d), 26.4d));
+		assertTrue(MathUtils.near(stats.getVariance(12.0d), 8.76d));
+		assertTrue(MathUtils.near(stats.getStandardDeviation(12.0d), Math.sqrt(8.76d)));
 	}
 
 }
