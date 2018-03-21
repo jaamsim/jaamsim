@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016 JaamSim Software Inc.
+ * Copyright (C) 2016-2018 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ import com.jaamsim.ProbabilityDistributions.Distribution;
 import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.Samples.TimeSeries;
+import com.jaamsim.Statistics.TimeBasedStatistics;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.events.Conditional;
@@ -65,12 +66,8 @@ public class Resource extends DisplayEntity {
 	private int lastCapacity; // capacity for the resource
 
 	//	Statistics
+	private final TimeBasedStatistics stats;
 	protected double timeOfLastUpdate; // time at which the statistics were last updated
-	protected double startOfStatisticsCollection; // time at which statistics collection was started
-	protected int minUnitsInUse; // minimum observed number of units in use
-	protected int maxUnitsInUse; // maximum observed number of units in use
-	protected double unitSeconds;  // total time that units have been used
-	protected double squaredUnitSeconds;  // total time for the square of the number of units in use
 	protected int unitsSeized;    // number of units that have been seized
 	protected int unitsReleased;  // number of units that have been released
 	protected DoubleVector unitsInUseDist;  // entry at position n is the total time that n units have been in use
@@ -91,6 +88,7 @@ public class Resource extends DisplayEntity {
 	public Resource() {
 		unitsInUseDist = new DoubleVector();
 		userList = new ArrayList<>();
+		stats = new TimeBasedStatistics();
 	}
 
 	@Override
@@ -117,12 +115,9 @@ public class Resource extends DisplayEntity {
 		lastCapacity = this.getCapacity(0.0d);
 
 		// Clear statistics
-		startOfStatisticsCollection = 0.0;
+		stats.clear();
+		stats.addValue(0.0d, 0);
 		timeOfLastUpdate = 0.0;
-		minUnitsInUse = 0;
-		maxUnitsInUse = 0;
-		unitSeconds = 0.0;
-		squaredUnitSeconds = 0.0;
 		unitsSeized = 0;
 		unitsReleased = 0;
 		unitsInUseDist.clear();
@@ -323,12 +318,9 @@ public class Resource extends DisplayEntity {
 	public void clearStatistics() {
 		super.clearStatistics();
 		double simTime = this.getSimTime();
-		startOfStatisticsCollection = simTime;
+		stats.clear();
+		stats.addValue(simTime, unitsInUse);
 		timeOfLastUpdate = simTime;
-		minUnitsInUse = unitsInUse;
-		maxUnitsInUse = unitsInUse;
-		unitSeconds = 0.0;
-		squaredUnitSeconds = 0.0;
 		unitsSeized = 0;
 		unitsReleased = 0;
 		for (int i=0; i<unitsInUseDist.size(); i++) {
@@ -338,9 +330,6 @@ public class Resource extends DisplayEntity {
 
 	public void updateStatistics( int oldValue, int newValue) {
 
-		minUnitsInUse = Math.min(newValue, minUnitsInUse);
-		maxUnitsInUse = Math.max(newValue, maxUnitsInUse);
-
 		// Add the necessary number of additional bins to the queue length distribution
 		int n = newValue + 1 - unitsInUseDist.size();
 		for( int i=0; i<n; i++ ) {
@@ -348,10 +337,9 @@ public class Resource extends DisplayEntity {
 		}
 
 		double simTime = this.getSimTime();
+		stats.addValue(simTime, newValue);
 		double dt = simTime - timeOfLastUpdate;
 		if( dt > 0.0 ) {
-			unitSeconds += dt * oldValue;
-			squaredUnitSeconds += dt * oldValue * oldValue;
 			unitsInUseDist.addAt(dt,oldValue);  // add dt to the entry at index queueSize
 			timeOfLastUpdate = simTime;
 		}
@@ -409,12 +397,7 @@ public class Resource extends DisplayEntity {
 	  reportable = true,
 	    sequence = 5)
 	public double getUnitsInUseAverage(double simTime) {
-		double dt = simTime - timeOfLastUpdate;
-		double totalTime = simTime - startOfStatisticsCollection;
-		if( totalTime > 0.0 ) {
-			return (unitSeconds + dt*unitsInUse)/totalTime;
-		}
-		return 0.0;
+		return stats.getMean(simTime);
 	}
 
 	@Output(name = "UnitsInUseStandardDeviation",
@@ -423,13 +406,7 @@ public class Resource extends DisplayEntity {
 	  reportable = true,
 	    sequence = 6)
 	public double getUnitsInUseStandardDeviation(double simTime) {
-		double dt = simTime - timeOfLastUpdate;
-		double mean = this.getUnitsInUseAverage(simTime);
-		double totalTime = simTime - startOfStatisticsCollection;
-		if( totalTime > 0.0 ) {
-			return Math.sqrt( (squaredUnitSeconds + dt*unitsInUse*unitsInUse)/totalTime - mean*mean );
-		}
-		return 0.0;
+		return stats.getStandardDeviation(simTime);
 	}
 
 	@Output(name = "UnitsInUseMinimum",
@@ -438,7 +415,7 @@ public class Resource extends DisplayEntity {
 	  reportable = true,
 	    sequence = 7)
 	public int getUnitsInUseMinimum(double simTime) {
-		return minUnitsInUse;
+		return (int) stats.getMin();
 	}
 
 	@Output(name = "UnitsInUseMaximum",
@@ -447,11 +424,12 @@ public class Resource extends DisplayEntity {
 	  reportable = true,
 	    sequence = 8)
 	public int getUnitsInUseMaximum(double simTime) {
+		int ret = (int) stats.getMax();
 		// A unit that is seized and released immediately
 		// does not count as a non-zero maximum in use
-		if( maxUnitsInUse == 1 && unitsInUseDist.get(1) == 0.0 )
+		if( ret == 1 && unitsInUseDist.get(1) == 0.0 )
 			return 0;
-		return maxUnitsInUse;
+		return ret;
 	}
 
 	@Output(name = "UnitsInUseTimes",
