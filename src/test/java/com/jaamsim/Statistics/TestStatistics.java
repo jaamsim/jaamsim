@@ -67,4 +67,35 @@ public class TestStatistics {
 		assertTrue(MathUtils.near(stats.getStandardDeviation(12.0d), Math.sqrt(8.76d)));
 	}
 
+	@Test
+	public void testSampleFrequency() {
+		SampleFrequency freq = new SampleFrequency(2, 7);
+		freq.addValue(5);
+		freq.addValue(3);
+		freq.addValue(8);
+		freq.addValue(-1);
+		freq.addValue(2);
+		freq.addValue(3);
+		freq.addValue(5);
+		freq.addValue(3);
+
+		assertTrue(freq.getCount() == 8L);
+		assertTrue(freq.getMin() == -1.0d);
+		assertTrue(freq.getMax() == 8.0d);
+		assertTrue(freq.getBinCount(3) == 3L);
+		assertTrue(MathUtils.near(freq.getBinFraction(3), 0.375d));
+		assertTrue(freq.getBinValues().length == 10);
+		assertTrue(freq.getBinValues()[0] == -1);
+		assertTrue(freq.getBinValues()[4] == 3);
+		assertTrue(freq.getBinValues()[9] == 8);
+		assertTrue(freq.getBinCounts().length == 10);
+		assertTrue(freq.getBinCounts()[0] == 1L);
+		assertTrue(freq.getBinCounts()[4] == 3L);
+		assertTrue(freq.getBinCounts()[9] == 1L);
+		assertTrue(freq.getBinFractions().length == 10);
+		assertTrue(MathUtils.near(freq.getBinFractions()[0], 0.125d));
+		assertTrue(MathUtils.near(freq.getBinFractions()[4], 0.375d));
+		assertTrue(MathUtils.near(freq.getBinFractions()[9], 0.125d));
+	}
+
 }
