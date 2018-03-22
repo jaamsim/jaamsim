@@ -97,5 +97,37 @@ public class TestStatistics {
 		assertTrue(MathUtils.near(freq.getBinFractions()[4], 0.375d));
 		assertTrue(MathUtils.near(freq.getBinFractions()[9], 0.125d));
 	}
+	@Test
+	public void testTimeBasedFrequency() {
+		TimeBasedFrequency freq = new TimeBasedFrequency(2, 7);
+		freq.addValue(0.0d, 1);
+		freq.clear();
+		freq.addValue(2.0d, 5);
+		freq.addValue(3.0d, 3);
+		freq.addValue(5.0d, 8);
+		freq.addValue(8.0d, -1);
+		freq.addValue(9.0d, 2);
+		freq.addValue(11.0d, 3);
+		freq.addValue(15.0d, 5);
+		freq.addValue(16.0d, 3);
+
+		assertTrue(MathUtils.near(freq.getTotalTime(22.0d), 20.0d));
+		assertTrue(freq.getMin() == -1.0d);
+		assertTrue(freq.getMax() == 8.0d);
+		assertTrue(MathUtils.near(freq.getBinTime(22.0d, 3), 12.0d));
+		assertTrue(MathUtils.near(freq.getBinFraction(22.0d, 3), 0.60d));
+		assertTrue(freq.getBinValues().length == 10);
+		assertTrue(freq.getBinValues()[0] == -1);
+		assertTrue(freq.getBinValues()[4] == 3);
+		assertTrue(freq.getBinValues()[9] == 8);
+		assertTrue(freq.getBinTimes(22.0d).length == 10);
+		assertTrue(MathUtils.near(freq.getBinTimes(22.0d)[0], 1.0d));
+		assertTrue(MathUtils.near(freq.getBinTimes(22.0d)[4], 12.0d));
+		assertTrue(MathUtils.near(freq.getBinTimes(22.0d)[9], 3.0d));
+		assertTrue(freq.getBinFractions(22.0d).length == 10);
+		assertTrue(MathUtils.near(freq.getBinFractions(22.0d)[0], 0.05d));
+		assertTrue(MathUtils.near(freq.getBinFractions(22.0d)[4], 0.60d));
+		assertTrue(MathUtils.near(freq.getBinFractions(22.0d)[9], 0.15d));
+	}
 
 }
