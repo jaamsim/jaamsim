@@ -28,11 +28,11 @@ import java.util.TreeSet;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
+import com.jaamsim.Statistics.TimeBasedFrequency;
 import com.jaamsim.Statistics.TimeBasedStatistics;
 import com.jaamsim.StringProviders.StringProvInput;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.EntityTarget;
-import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.datatypes.IntegerVector;
 import com.jaamsim.events.EventHandle;
 import com.jaamsim.events.EventManager;
@@ -111,8 +111,7 @@ public class Queue extends LinkedComponent {
 
 	//	Statistics
 	private final TimeBasedStatistics stats;
-	protected double timeOfLastUpdate; // time at which the statistics were last updated
-	protected DoubleVector queueLengthDist;  // entry at position n is the total time the queue has had length n
+	private final TimeBasedFrequency freq;
 	protected long numberReneged;  // number of entities that reneged from the queue
 
 	{
@@ -160,10 +159,10 @@ public class Queue extends LinkedComponent {
 
 	public Queue() {
 		itemSet = new TreeSet<>();
-		queueLengthDist = new DoubleVector(10,10);
 		userList = new ArrayList<>();
 		matchMap = new HashMap<>();
 		stats = new TimeBasedStatistics();
+		freq = new TimeBasedFrequency(0, 10);
 	}
 
 	@Override
@@ -191,8 +190,8 @@ public class Queue extends LinkedComponent {
 		// Clear statistics
 		stats.clear();
 		stats.addValue(0.0d, 0.0d);
-		timeOfLastUpdate = 0.0;
-		queueLengthDist.clear();
+		freq.clear();
+		freq.addValue(0.0d, 0);
 		numberReneged = 0;
 
 		// Identify the objects that use this queue
@@ -269,10 +268,11 @@ public class Queue extends LinkedComponent {
 	@Override
 	public void addEntity(DisplayEntity ent) {
 		super.addEntity(ent);
+		double simTime = getSimTime();
 
 		// Update the queue statistics
-		int queueSize = itemSet.size();  // present number of entities in the queue
-		this.updateStatistics(queueSize, queueSize+1);
+		stats.addValue(simTime, itemSet.size() + 1);
+		freq.addValue(simTime, itemSet.size() + 1);
 
 		// Build the entry for the entity
 		long n = this.getTotalNumberAdded();
@@ -375,9 +375,11 @@ public class Queue extends LinkedComponent {
 	 * Removes a specified entity from the queue
 	 */
 	private DisplayEntity remove(QueueEntry entry) {
+		double simTime = getSimTime();
 
-		int queueSize = itemSet.size();  // present number of entities in the queue
-		this.updateStatistics(queueSize, queueSize-1);
+		// Update the queue statistics
+		stats.addValue(simTime, itemSet.size() - 1);
+		freq.addValue(simTime, itemSet.size() - 1);
 
 		// Remove the entity from the TreeSet of all entities in the queue
 		boolean found = itemSet.remove(entry);
@@ -702,28 +704,9 @@ public class Queue extends LinkedComponent {
 		double simTime = this.getSimTime();
 		stats.clear();
 		stats.addValue(simTime, itemSet.size());
-		timeOfLastUpdate = simTime;
-		for (int i=0; i<queueLengthDist.size(); i++) {
-			queueLengthDist.set(i, 0.0d);
-		}
+		freq.clear();
+		freq.addValue(simTime, itemSet.size());
 		numberReneged = 0;
-	}
-
-	private void updateStatistics(int oldValue, int newValue) {
-
-		// Add the necessary number of additional bins to the queue length distribution
-		int n = newValue + 1 - queueLengthDist.size();
-		for (int i = 0; i < n; i++) {
-			queueLengthDist.add(0.0);
-		}
-
-		double simTime = this.getSimTime();
-		stats.addValue(simTime, newValue);
-		double dt = simTime - timeOfLastUpdate;
-		if (dt > 0.0) {
-			queueLengthDist.addAt(dt,oldValue);  // add dt to the entry at index queueSize
-			timeOfLastUpdate = simTime;
-		}
 	}
 
 	@Override
@@ -848,7 +831,7 @@ public class Queue extends LinkedComponent {
 		// An entity that is added to an empty queue and removed immediately
 		// does not count as a non-zero queue length
 		int ret = (int) stats.getMax();
-		if (ret == 1 && queueLengthDist.get(1) == 0.0)
+		if (ret == 1 && freq.getBinTime(simTime, 1) == 0.0d)
 			return 0;
 		return ret;
 	}
@@ -858,14 +841,8 @@ public class Queue extends LinkedComponent {
 	    unitType = TimeUnit.class,
 	  reportable = true,
 	    sequence = 9)
-	public DoubleVector getQueueLengthDistribution(double simTime) {
-		DoubleVector ret = new DoubleVector(queueLengthDist);
-		double dt = simTime - timeOfLastUpdate;
-		int queueSize = itemSet.size();
-		if (ret.size() == 0)
-			ret.add(0.0);
-		ret.addAt(dt, queueSize);
-		return ret;
+	public double[] getQueueLengthDistribution(double simTime) {
+		return freq.getBinTimes(simTime);
 	}
 
 	@Output(name = "AverageQueueTime",
