@@ -151,9 +151,9 @@ public class Resource extends DisplayEntity {
 		double simTime = this.getSimTime();
 		stats.addValue(simTime, unitsInUse);
 		freq.addValue(simTime, unitsInUse);
-		if (getAvailableUnits(getSimTime()) < 0) {
+		if (getAvailableUnits(simTime) < 0) {
 			error("Capacity of resource exceeded. Capacity: %s, units in use: %s.",
-					getCapacity(getSimTime()), unitsInUse);
+					getCapacity(simTime), unitsInUse);
 		}
 	}
 
