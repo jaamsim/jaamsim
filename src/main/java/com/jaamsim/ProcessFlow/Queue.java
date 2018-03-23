@@ -278,16 +278,16 @@ public class Queue extends LinkedComponent {
 		long n = this.getTotalNumberAdded();
 		if (!fifo.getValue())
 			n *= -1;
-		int pri = (int) priority.getValue().getNextSample(getSimTime());
+		int pri = (int) priority.getValue().getNextSample(simTime);
 		String m = null;
 		if (match.getValue() != null)
-			m = match.getValue().getNextString(getSimTime(), "%s", 1.0d, true);
+			m = match.getValue().getNextString(simTime, "%s", 1.0d, true);
 
 		EventHandle rh = null;
 		if (renegeTime.getValue() != null)
 			rh = new EventHandle();
 
-		QueueEntry entry = new QueueEntry(ent, n, pri, m, getSimTime(), ent.getOrientation(), rh);
+		QueueEntry entry = new QueueEntry(ent, n, pri, m, simTime, ent.getOrientation(), rh);
 
 		// Add the entity to the TreeSet of all the entities in the queue
 		boolean bool = itemSet.add(entry);
