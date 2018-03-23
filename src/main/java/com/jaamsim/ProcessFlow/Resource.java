@@ -26,9 +26,9 @@ import com.jaamsim.ProbabilityDistributions.Distribution;
 import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.Samples.TimeSeries;
+import com.jaamsim.Statistics.TimeBasedFrequency;
 import com.jaamsim.Statistics.TimeBasedStatistics;
 import com.jaamsim.basicsim.Entity;
-import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.events.Conditional;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.events.ProcessTarget;
@@ -67,10 +67,9 @@ public class Resource extends DisplayEntity {
 
 	//	Statistics
 	private final TimeBasedStatistics stats;
-	protected double timeOfLastUpdate; // time at which the statistics were last updated
+	private final TimeBasedFrequency freq;
 	protected int unitsSeized;    // number of units that have been seized
 	protected int unitsReleased;  // number of units that have been released
-	protected DoubleVector unitsInUseDist;  // entry at position n is the total time that n units have been in use
 
 	{
 		attributeDefinitionList.setHidden(false);
@@ -86,9 +85,9 @@ public class Resource extends DisplayEntity {
 	}
 
 	public Resource() {
-		unitsInUseDist = new DoubleVector();
 		userList = new ArrayList<>();
 		stats = new TimeBasedStatistics();
+		freq = new TimeBasedFrequency(0, 10);
 	}
 
 	@Override
@@ -117,10 +116,10 @@ public class Resource extends DisplayEntity {
 		// Clear statistics
 		stats.clear();
 		stats.addValue(0.0d, 0);
-		timeOfLastUpdate = 0.0;
+		freq.clear();
+		freq.addValue(0.0d,  0);
 		unitsSeized = 0;
 		unitsReleased = 0;
-		unitsInUseDist.clear();
 
 		// Prepare a list of the objects that seize this resource
 		userList.clear();
@@ -147,9 +146,11 @@ public class Resource extends DisplayEntity {
 	 * @param n = number of units to seize
 	 */
 	public void seize(int n) {
-		this.updateStatistics(unitsInUse, unitsInUse+n);
 		unitsInUse += n;
 		unitsSeized += n;
+		double simTime = this.getSimTime();
+		stats.addValue(simTime, unitsInUse);
+		freq.addValue(simTime, unitsInUse);
 		if (getAvailableUnits(getSimTime()) < 0) {
 			error("Capacity of resource exceeded. Capacity: %s, units in use: %s.",
 					getCapacity(getSimTime()), unitsInUse);
@@ -162,9 +163,11 @@ public class Resource extends DisplayEntity {
 	 */
 	public void release(int m) {
 		int n = Math.min(m, unitsInUse);
-		this.updateStatistics(unitsInUse, unitsInUse-n);
 		unitsInUse -= n;
 		unitsReleased += n;
+		double simTime = this.getSimTime();
+		stats.addValue(simTime, unitsInUse);
+		freq.addValue(simTime, unitsInUse);
 	}
 
 	/**
@@ -320,29 +323,10 @@ public class Resource extends DisplayEntity {
 		double simTime = this.getSimTime();
 		stats.clear();
 		stats.addValue(simTime, unitsInUse);
-		timeOfLastUpdate = simTime;
+		freq.clear();
+		freq.addValue(simTime, unitsInUse);
 		unitsSeized = 0;
 		unitsReleased = 0;
-		for (int i=0; i<unitsInUseDist.size(); i++) {
-			unitsInUseDist.set(i, 0.0d);
-		}
-	}
-
-	public void updateStatistics( int oldValue, int newValue) {
-
-		// Add the necessary number of additional bins to the queue length distribution
-		int n = newValue + 1 - unitsInUseDist.size();
-		for( int i=0; i<n; i++ ) {
-			unitsInUseDist.add(0.0);
-		}
-
-		double simTime = this.getSimTime();
-		stats.addValue(simTime, newValue);
-		double dt = simTime - timeOfLastUpdate;
-		if( dt > 0.0 ) {
-			unitsInUseDist.addAt(dt,oldValue);  // add dt to the entry at index queueSize
-			timeOfLastUpdate = simTime;
-		}
 	}
 
 	// ******************************************************************************************************
@@ -427,7 +411,7 @@ public class Resource extends DisplayEntity {
 		int ret = (int) stats.getMax();
 		// A unit that is seized and released immediately
 		// does not count as a non-zero maximum in use
-		if( ret == 1 && unitsInUseDist.get(1) == 0.0 )
+		if (ret == 1 && freq.getBinTime(simTime, 1) == 0.0d)
 			return 0;
 		return ret;
 	}
@@ -437,13 +421,8 @@ public class Resource extends DisplayEntity {
 	    unitType = TimeUnit.class,
 	  reportable = true,
 	    sequence = 9)
-	public DoubleVector getUnitsInUseDistribution(double simTime) {
-		DoubleVector ret = new DoubleVector(unitsInUseDist);
-		double dt = simTime - timeOfLastUpdate;
-		if(ret.size() == 0)
-			ret.add(0.0);
-		ret.addAt(dt, unitsInUse);  // adds dt to the entry at index unitsInUse
-		return ret;
+	public double[] getUnitsInUseDistribution(double simTime) {
+		return freq.getBinTimes(simTime);
 	}
 
 }
