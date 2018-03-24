@@ -19,12 +19,15 @@ package com.jaamsim.ProcessFlow;
 
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleInput;
+import com.jaamsim.Statistics.SampleFrequency;
 import com.jaamsim.Statistics.SampleStatistics;
 import com.jaamsim.Statistics.TimeBasedStatistics;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.UnitTypeInput;
+import com.jaamsim.input.ValueInput;
+import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
 
@@ -43,8 +46,15 @@ public class Statistics extends LinkedComponent {
 	         exampleList = {"'this.obj.attrib1'"})
 	private final SampleInput sampleValue;
 
+	@Keyword(description = "Width of the histogram bins into which the recorded values are "
+	                     + "placed. Histogram data will not be generated if the input is left "
+	                     + "blank.",
+	         exampleList = {"1 h"})
+	private final ValueInput histogramBinWidth;
+
 	private final SampleStatistics sampStats = new SampleStatistics();
 	private final TimeBasedStatistics timeStats = new TimeBasedStatistics();
+	private final SampleFrequency freq = new SampleFrequency(0, 10);
 
 	{
 		stateAssignment.setHidden(true);
@@ -57,6 +67,10 @@ public class Statistics extends LinkedComponent {
 		sampleValue.setUnitType(UserSpecifiedUnit.class);
 		sampleValue.setEntity(this);
 		this.addInput(sampleValue);
+
+		histogramBinWidth = new ValueInput("HistogramBinWidth", KEY_INPUTS, null);
+		histogramBinWidth.setUnitType(UserSpecifiedUnit.class);
+		this.addInput(histogramBinWidth);
 	}
 
 	public Statistics() {}
@@ -68,6 +82,7 @@ public class Statistics extends LinkedComponent {
 		if (in == unitType) {
 			Class<? extends Unit> ut = unitType.getUnitType();
 			sampleValue.setUnitType(ut);
+			histogramBinWidth.setUnitType(ut);
 			return;
 		}
 	}
@@ -77,6 +92,7 @@ public class Statistics extends LinkedComponent {
 		super.earlyInit();
 		sampStats.clear();
 		timeStats.clear();
+		freq.clear();
 	}
 
 	@Override
@@ -88,6 +104,9 @@ public class Statistics extends LinkedComponent {
 		double val = sampleValue.getValue().getNextSample(simTime);
 		sampStats.addValue(val);
 		timeStats.addValue(simTime, val);
+		if (!histogramBinWidth.isDefault()) {
+			freq.addValue((int) Math.round(val/histogramBinWidth.getValue()));
+		}
 
 		// Pass the entity to the next component
 		this.sendToNextComponent(ent);
@@ -98,6 +117,7 @@ public class Statistics extends LinkedComponent {
 		super.clearStatistics();
 		sampStats.clear();
 		timeStats.clear();
+		freq.clear();
 	}
 
 	@Override
@@ -170,6 +190,35 @@ public class Statistics extends LinkedComponent {
 	    sequence = 6)
 	public double getTimeStandardDeviation(double simTime) {
 		return timeStats.getStandardDeviation(simTime);
+	}
+
+	@Output(name = "HistogramBinCentres",
+	 description = "The central value for each histogram bin.",
+	    unitType = UserSpecifiedUnit.class,
+	  reportable = true,
+	    sequence = 7)
+	public double[] getHistogramBinCentres(double simTime) {
+		if (histogramBinWidth.isDefault()) {
+			return new double[0];
+		}
+		int[] binVals = freq.getBinValues();
+		double[] ret = new double[binVals.length];
+		for (int i = 0; i < binVals.length; i++) {
+			ret[i] = histogramBinWidth.getValue() * binVals[i];
+		}
+		return ret;
+	}
+
+	@Output(name = "HistogramBinFractions",
+	 description = "The fractional number of values within each histogram bin.",
+	    unitType = DimensionlessUnit.class,
+	  reportable = true,
+	    sequence = 8)
+	public double[] getHistogramBinFractions(double simTime) {
+		if (histogramBinWidth.isDefault()) {
+			return new double[0];
+		}
+		return freq.getBinFractions();
 	}
 
 }
