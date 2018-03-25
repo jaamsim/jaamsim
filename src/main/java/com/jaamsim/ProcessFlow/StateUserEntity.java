@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import com.jaamsim.BasicObjects.DowntimeEntity;
 import com.jaamsim.Thresholds.Threshold;
 import com.jaamsim.Thresholds.ThresholdUser;
-import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.input.EntityListInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
@@ -357,9 +356,7 @@ public abstract class StateUserEntity extends StateEntity implements ThresholdUs
 	  reportable = true,
 	    sequence = 5)
 	public double getUtilisation(double simTime) {
-		double total = simTime;
-		if (simTime > Simulation.getInitializationTime())
-			total -= Simulation.getInitializationTime();
+		double total = this.getTotalTime(simTime);
 		double working = this.getTimeInState(simTime, "Working");
 		return working/total;
 	}
@@ -370,9 +367,7 @@ public abstract class StateUserEntity extends StateEntity implements ThresholdUs
 	  reportable = true,
 	    sequence = 6)
 	public double getCommitment(double simTime) {
-		double total = simTime;
-		if (simTime > Simulation.getInitializationTime())
-			total -= Simulation.getInitializationTime();
+		double total = this.getTotalTime(simTime);
 		double idle = this.getTimeInState(simTime, "Idle");
 		return 1.0d - idle/total;
 	}
@@ -383,9 +378,7 @@ public abstract class StateUserEntity extends StateEntity implements ThresholdUs
 	  reportable = true,
 	    sequence = 7)
 	public double getAvailability(double simTime) {
-		double total = simTime;
-		if (simTime > Simulation.getInitializationTime())
-			total -= Simulation.getInitializationTime();
+		double total = this.getTotalTime(simTime);
 		double maintenance = this.getTimeInState(simTime, "Maintenance");
 		double breakdown = this.getTimeInState(simTime, "Breakdown");
 		return 1.0d - (maintenance + breakdown)/total;
