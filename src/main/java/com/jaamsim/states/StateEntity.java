@@ -474,4 +474,19 @@ public class StateEntity extends DisplayEntity {
 		return ret;
 	}
 
+	@Output(name = "TotalTime",
+	 description = "The total time the entity has spent in the model after the completion of "
+	             + "the initialisation period. It is equal to the sum of the state times.",
+	    unitType = TimeUnit.class,
+	  reportable = true,
+	    sequence = 4)
+	public double getTotalTime(double simTime) {
+		long simTicks = EventManager.secsToNearestTick(simTime);
+		long ticks = 0L;
+		for (StateRecord stateRec : states.values()) {
+			ticks += getTicksInState(simTicks, stateRec);
+		}
+		return EventManager.ticksToSecs(ticks);
+	}
+
 }
