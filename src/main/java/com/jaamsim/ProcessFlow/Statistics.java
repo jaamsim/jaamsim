@@ -17,17 +17,24 @@
  */
 package com.jaamsim.ProcessFlow;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.Statistics.SampleFrequency;
 import com.jaamsim.Statistics.SampleStatistics;
 import com.jaamsim.Statistics.TimeBasedStatistics;
+import com.jaamsim.events.EventManager;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.UnitTypeInput;
 import com.jaamsim.input.ValueInput;
+import com.jaamsim.states.StateEntity;
+import com.jaamsim.states.StateRecord;
 import com.jaamsim.units.DimensionlessUnit;
+import com.jaamsim.units.TimeUnit;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
 
@@ -55,6 +62,7 @@ public class Statistics extends LinkedComponent {
 	private final SampleStatistics sampStats = new SampleStatistics();
 	private final TimeBasedStatistics timeStats = new TimeBasedStatistics();
 	private final SampleFrequency freq = new SampleFrequency(0, 10);
+	private final LinkedHashMap<String, SampleStatistics> stateStats = new LinkedHashMap<>();
 
 	{
 		stateAssignment.setHidden(true);
@@ -93,6 +101,7 @@ public class Statistics extends LinkedComponent {
 		sampStats.clear();
 		timeStats.clear();
 		freq.clear();
+		stateStats.clear();
 	}
 
 	@Override
@@ -108,6 +117,20 @@ public class Statistics extends LinkedComponent {
 			freq.addValue((int) Math.round(val/histogramBinWidth.getValue()));
 		}
 
+		// Update the statistics for each of the entity's states
+		if (ent instanceof StateEntity) {
+			StateEntity se = (StateEntity) ent;
+			for (StateRecord rec : se.getStateRecs()) {
+				SampleStatistics durStats = stateStats.get(rec.name);
+				if (durStats == null) {
+					durStats = new SampleStatistics();
+					stateStats.put(rec.name, durStats);
+				}
+				double dur = EventManager.ticksToSecs(se.getTicksInState(rec));
+				durStats.addValue(dur);
+			}
+		}
+
 		// Pass the entity to the next component
 		this.sendToNextComponent(ent);
 	}
@@ -118,6 +141,7 @@ public class Statistics extends LinkedComponent {
 		sampStats.clear();
 		timeStats.clear();
 		freq.clear();
+		stateStats.clear();
 	}
 
 	@Override
@@ -219,6 +243,71 @@ public class Statistics extends LinkedComponent {
 			return new double[0];
 		}
 		return freq.getBinFractions();
+	}
+
+	@Output(name = "EntityTimeMinimum",
+	 description = "The minimum time the received entities have spent in each state.",
+	    unitType = TimeUnit.class,
+	  reportable = true,
+	    sequence = 9)
+	public LinkedHashMap<String, Double> getEntityTimeMinimum(double simTime) {
+		long num = getNumberProcessed(simTime);
+		LinkedHashMap<String, Double> ret = new LinkedHashMap<>(stateStats.size());
+		for (Map.Entry<String, SampleStatistics> entry : stateStats.entrySet()) {
+			double min = entry.getValue().getMin();
+			if (entry.getValue().getCount() < num) {
+				min = 0.0d;
+			}
+			ret.put(entry.getKey(), min);
+		}
+		return ret;
+	}
+
+	@Output(name = "EntityTimeMaximum",
+	 description = "The maximum time the received entities have spent in each state.",
+	    unitType = TimeUnit.class,
+	  reportable = true,
+	    sequence = 10)
+	public LinkedHashMap<String, Double> getEntityTimeMaximum(double simTime) {
+		LinkedHashMap<String, Double> ret = new LinkedHashMap<>(stateStats.size());
+		for (Map.Entry<String, SampleStatistics> entry : stateStats.entrySet()) {
+			double max = entry.getValue().getMax();
+			ret.put(entry.getKey(), max);
+		}
+		return ret;
+	}
+
+	@Output(name = "EntityTimeAverage",
+	 description = "The average time the received entities have spent in each state.",
+	    unitType = TimeUnit.class,
+	  reportable = true,
+	    sequence = 11)
+	public LinkedHashMap<String, Double> getEntityTimeAverage(double simTime) {
+		long num = getNumberProcessed(simTime);
+		LinkedHashMap<String, Double> ret = new LinkedHashMap<>(stateStats.size());
+		for (Map.Entry<String, SampleStatistics> entry : stateStats.entrySet()) {
+			double mean = entry.getValue().getSum() / num;
+			ret.put(entry.getKey(), mean);
+		}
+		return ret;
+	}
+
+	@Output(name = "EntityTimeStandardDeviation",
+	 description = "The standard deviation of the time the received entities have spent in "
+	             + "each state.",
+	    unitType = TimeUnit.class,
+	  reportable = true,
+	    sequence = 12)
+	public LinkedHashMap<String, Double> getEntityTimeStandardDeviation(double simTime) {
+		long num = getNumberProcessed(simTime);
+		LinkedHashMap<String, Double> ret = new LinkedHashMap<>(stateStats.size());
+		for (Map.Entry<String, SampleStatistics> entry : stateStats.entrySet()) {
+			double mean = entry.getValue().getSum() / num;
+			double meanSquared = entry.getValue().getSumSquared() / num;
+			double sd = Math.sqrt(meanSquared - mean*mean);
+			ret.put(entry.getKey(), sd);
+		}
+		return ret;
 	}
 
 }
