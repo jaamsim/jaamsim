@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2016 JaamSim Software Inc.
+ * Copyright (C) 2016-2018 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -87,6 +87,10 @@ public abstract class StateUserEntity extends StateEntity implements ThresholdUs
 
 	private boolean busy;  // indicates that work is being performed
 
+	protected static final String STATE_MAINTENANCE = "Maintenance";
+	protected static final String STATE_BREAKDOWN = "Breakdown";
+	protected static final String STATE_STOPPED = "Stopped";
+
 	{
 		immediateThresholdList = new EntityListInput<>(Threshold.class, "ImmediateThresholdList", THRESHOLDS, new ArrayList<Threshold>());
 		this.addInput(immediateThresholdList);
@@ -127,14 +131,13 @@ public abstract class StateUserEntity extends StateEntity implements ThresholdUs
 	@Override
 	public void earlyInit() {
 		super.earlyInit();
-
 		busy = false;
 
-		this.addState("Idle");
-		this.addState("Working");
-		this.addState("Stopped");
-		this.addState("Maintenance");
-		this.addState("Breakdown");
+		this.addState(STATE_IDLE);
+		this.addState(STATE_WORKING);
+		this.addState(STATE_MAINTENANCE);
+		this.addState(STATE_BREAKDOWN);
+		this.addState(STATE_STOPPED);
 	}
 
 	@Override
@@ -281,26 +284,26 @@ public abstract class StateUserEntity extends StateEntity implements ThresholdUs
 
 		// Working (Busy)
 		if (this.isBusy()) {
-			this.setPresentState("Working");
+			this.setPresentState(STATE_WORKING);
 			return;
 		}
 
 		// Not working because of maintenance or a closure (UnableToWork)
 		if (this.isMaintenance()) {
-			this.setPresentState("Maintenance");
+			this.setPresentState(STATE_MAINTENANCE);
 			return;
 		}
 		if (this.isBreakdown()) {
-			this.setPresentState("Breakdown");
+			this.setPresentState(STATE_BREAKDOWN);
 			return;
 		}
 		if (!this.isOpen()) {
-			this.setPresentState("Stopped");
+			this.setPresentState(STATE_STOPPED);
 			return;
 		}
 
 		// Not working because there is nothing to do (Idle)
-		this.setPresentState("Idle");
+		this.setPresentState(STATE_IDLE);
 		return;
 	}
 
@@ -373,7 +376,7 @@ public abstract class StateUserEntity extends StateEntity implements ThresholdUs
 	    sequence = 5)
 	public double getUtilisation(double simTime) {
 		double total = this.getTotalTime(simTime);
-		double working = this.getTimeInState(simTime, "Working");
+		double working = this.getTimeInState(simTime, STATE_WORKING);
 		return working/total;
 	}
 
@@ -384,7 +387,7 @@ public abstract class StateUserEntity extends StateEntity implements ThresholdUs
 	    sequence = 6)
 	public double getCommitment(double simTime) {
 		double total = this.getTotalTime(simTime);
-		double idle = this.getTimeInState(simTime, "Idle");
+		double idle = this.getTimeInState(simTime, STATE_IDLE);
 		return 1.0d - idle/total;
 	}
 
@@ -395,8 +398,8 @@ public abstract class StateUserEntity extends StateEntity implements ThresholdUs
 	    sequence = 7)
 	public double getAvailability(double simTime) {
 		double total = this.getTotalTime(simTime);
-		double maintenance = this.getTimeInState(simTime, "Maintenance");
-		double breakdown = this.getTimeInState(simTime, "Breakdown");
+		double maintenance = this.getTimeInState(simTime, STATE_MAINTENANCE);
+		double breakdown = this.getTimeInState(simTime, STATE_BREAKDOWN);
 		return 1.0d - (maintenance + breakdown)/total;
 	}
 
@@ -406,8 +409,8 @@ public abstract class StateUserEntity extends StateEntity implements ThresholdUs
 	  reportable = true,
 	    sequence = 8)
 	public double getReliability(double simTime) {
-		double working = this.getTimeInState(simTime, "Working");
-		double breakdown = this.getTimeInState(simTime, "Breakdown");
+		double working = this.getTimeInState(simTime, STATE_WORKING);
+		double breakdown = this.getTimeInState(simTime, STATE_BREAKDOWN);
 		return working / (working + breakdown);
 	}
 
