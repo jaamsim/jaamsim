@@ -339,6 +339,26 @@ public abstract class StateUserEntity extends StateEntity implements ThresholdUs
 				|| opportunisticBreakdownList.getValue().contains(down);
 	}
 
+	public double getTimeInState_Idle(double simTime) {
+		return getTimeInState(simTime, STATE_IDLE);
+	}
+
+	public double getTimeInState_Working(double simTime) {
+		return getTimeInState(simTime, STATE_WORKING);
+	}
+
+	public double getTimeInState_Maintenance(double simTime) {
+		return getTimeInState(simTime, STATE_MAINTENANCE);
+	}
+
+	public double getTimeInState_Breakdown(double simTime) {
+		return getTimeInState(simTime, STATE_BREAKDOWN);
+	}
+
+	public double getTimeInState_Stopped(double simTime) {
+		return getTimeInState(simTime, STATE_STOPPED);
+	}
+
 	// ********************************************************************************************
 	// OUTPUTS
 	// ********************************************************************************************
@@ -379,7 +399,7 @@ public abstract class StateUserEntity extends StateEntity implements ThresholdUs
 	    sequence = 5)
 	public double getUtilisation(double simTime) {
 		double total = this.getTotalTime(simTime);
-		double working = this.getTimeInState(simTime, STATE_WORKING);
+		double working = getTimeInState_Working(simTime);
 		return working/total;
 	}
 
@@ -390,7 +410,7 @@ public abstract class StateUserEntity extends StateEntity implements ThresholdUs
 	    sequence = 6)
 	public double getCommitment(double simTime) {
 		double total = this.getTotalTime(simTime);
-		double idle = this.getTimeInState(simTime, STATE_IDLE);
+		double idle = getTimeInState_Idle(simTime);
 		return 1.0d - idle/total;
 	}
 
@@ -401,8 +421,8 @@ public abstract class StateUserEntity extends StateEntity implements ThresholdUs
 	    sequence = 7)
 	public double getAvailability(double simTime) {
 		double total = this.getTotalTime(simTime);
-		double maintenance = this.getTimeInState(simTime, STATE_MAINTENANCE);
-		double breakdown = this.getTimeInState(simTime, STATE_BREAKDOWN);
+		double maintenance = getTimeInState_Maintenance(simTime);
+		double breakdown = getTimeInState_Breakdown(simTime);
 		return 1.0d - (maintenance + breakdown)/total;
 	}
 
@@ -412,8 +432,8 @@ public abstract class StateUserEntity extends StateEntity implements ThresholdUs
 	  reportable = true,
 	    sequence = 8)
 	public double getReliability(double simTime) {
-		double working = this.getTimeInState(simTime, STATE_WORKING);
-		double breakdown = this.getTimeInState(simTime, STATE_BREAKDOWN);
+		double working = getTimeInState_Working(simTime);
+		double breakdown = getTimeInState_Breakdown(simTime);
 		return working / (working + breakdown);
 	}
 
