@@ -152,6 +152,9 @@ public class EntityGenerator extends LinkedService {
 		else
 			presentIAT = interArrivalTime.getValue().getNextSample(simTime);
 
+		if (presentIAT == Double.POSITIVE_INFINITY)
+			return false;
+
 		return true;
 	}
 
