@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2018 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,4 +48,19 @@ public class TimeSeriesData {
 	public double getMinValue() {
 		return minValue;
 	}
+
+	/**
+	 * Tests whether the time series values are monotonically increasing or decreasing.
+	 * @param dir - direction (positive = increasing, negative = decreasing)
+	 * @return true if monotonic
+	 */
+	public boolean isMonotonic(int dir) {
+		for (int i = 1; i < valueList.length; i++) {
+			int comp = Double.compare(valueList[i], valueList[i - 1]);
+			if (dir * comp < 0)
+				return false;
+		}
+		return true;
+	}
+
 }
