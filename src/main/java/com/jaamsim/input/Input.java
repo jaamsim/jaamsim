@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2010-2012 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016 JaamSim Software Inc.
+ * Copyright (C) 2016-2018 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -188,6 +188,21 @@ public abstract class Input<T> {
 		isDef = false;
 		edited = true;
 		isValid = true;
+	}
+
+	/**
+	 * Assigns the internal state for this input to the same values as the
+	 * specified input.
+	 * <p>
+	 * This method provides the same function as copyFrom by re-parsing the input data instead of
+	 * copying the internal variables. This operation is much slower, but is needed for inputs that
+	 * cannot be copied successfully using copyFrom, such as inputs that accept an expression.
+	 * @param in - input object to be copied.
+	 */
+	public void parseFrom(Input<?> in) {
+		ArrayList<String> toks = new ArrayList<>(Arrays.asList(valueTokens));
+		KeywordIndex kw = new KeywordIndex(in.getKeyword(), toks, null);
+		parse(kw);
 	}
 
 	/**
