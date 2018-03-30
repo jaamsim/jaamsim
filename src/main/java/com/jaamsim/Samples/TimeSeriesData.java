@@ -18,6 +18,7 @@
 package com.jaamsim.Samples;
 
 import com.jaamsim.datatypes.DoubleVector;
+import com.jaamsim.events.EventManager;
 
 public class TimeSeriesData {
 	final long[] ticksList;   // time in clock ticks corresponding to each value
@@ -61,6 +62,20 @@ public class TimeSeriesData {
 				return false;
 		}
 		return true;
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder("{");
+		for (int i = 0; i < ticksList.length; i++) {
+			if (i > 0) {
+				sb.append(",");
+			}
+			String str = String.format(" {%s[s], %s}", EventManager.ticksToSecs(ticksList[i]), valueList[i]);
+			sb.append(str);
+		}
+		sb.append(" }");
+		return sb.toString();
 	}
 
 }
