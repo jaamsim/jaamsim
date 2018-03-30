@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2018 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -106,7 +107,7 @@ public class TimeSeriesDataInput extends Input<TimeSeriesData> {
 
 			// Make sure the times are in increasing order
 			if (recordus <= lastTime)
-				throw new InputErrorException( "The times must be given in increasing order on " + each.get(0));
+				throw new InputErrorException("The times must be given in increasing order.");
 
 			lastTime = recordus;
 
@@ -128,6 +129,10 @@ public class TimeSeriesDataInput extends Input<TimeSeriesData> {
 
 		if (braceOpened)
 			throw new InputErrorException("Final closing brace ( } ) is missing.");
+
+		// Confirm that the first entry is for time zero
+		if (times.get(0) != 0.0d)
+			throw new InputErrorException("First entry must be for zero simulation time.");
 
 		// Set the value to a new time series data object
 		value = new TimeSeriesData( times, values );
