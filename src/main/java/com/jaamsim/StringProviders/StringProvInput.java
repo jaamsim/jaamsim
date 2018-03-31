@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2015 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2018 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,6 +50,16 @@ public class StringProvInput extends Input<StringProvider> {
 
 	public void setEntity(Entity ent) {
 		thisEnt = ent;
+	}
+
+	@Override
+	public void copyFrom(Input<?> in) {
+		super.copyFrom(in);
+
+		// An expression input must be re-parsed to reset the entity referred to by "this"
+		if (value instanceof StringProvExpression) {
+			parseFrom(in);
+		}
 	}
 
 	@Override
