@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016 JaamSim Software Inc.
+ * Copyright (C) 2016-2018 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,6 +32,14 @@ public class ExpressionInput extends Input<ExpParser.Expression> {
 
 	public void setEntity(Entity ent) {
 		thisEnt = ent;
+	}
+
+	@Override
+	public void copyFrom(Input<?> in) {
+		super.copyFrom(in);
+
+		// An expression input must be re-parsed to reset the entity referred to by "this"
+		parseFrom(in);
 	}
 
 	@Override
