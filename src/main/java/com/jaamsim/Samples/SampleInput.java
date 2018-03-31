@@ -65,11 +65,6 @@ public class SampleInput extends Input<SampleProvider> {
 	@Override
 	public void copyFrom(Input<?> in) {
 		super.copyFrom(in);
-		SampleInput inp = (SampleInput) in;
-		unitType = inp.unitType;
-		minValue = inp.minValue;
-		maxValue = inp.maxValue;
-		// thisEnt must not be reset. Assume that it has been set already to the new entity
 
 		// SampleExpressions must be re-parsed to reset the entity referred to by "this"
 		if (value instanceof SampleExpression) {
