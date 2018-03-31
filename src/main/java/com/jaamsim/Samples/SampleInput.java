@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016 JaamSim Software Inc.
+ * Copyright (C) 2016-2018 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,6 @@ import java.util.Collections;
 
 import com.jaamsim.BasicObjects.ExpressionEntity;
 import com.jaamsim.basicsim.Entity;
-import com.jaamsim.input.ExpError;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.KeywordIndex;
@@ -74,14 +73,7 @@ public class SampleInput extends Input<SampleProvider> {
 
 		// SampleExpressions must be re-parsed to reset the entity referred to by "this"
 		if (value instanceof SampleExpression) {
-			ArrayList<String> tmp = new ArrayList<>();
-			inp.getValueTokens(tmp);
-			try {
-				value = new SampleExpression(tmp.get(0), thisEnt, unitType);
-			}
-			catch (ExpError e) {
-				throw new InputErrorException(e);
-			}
+			parseFrom(in);
 		}
 	}
 
