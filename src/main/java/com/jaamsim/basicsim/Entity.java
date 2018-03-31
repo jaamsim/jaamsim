@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2002-2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016 JaamSim Software Inc.
+ * Copyright (C) 2016-2018 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 
-import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.events.Conditional;
 import com.jaamsim.events.EventHandle;
@@ -316,13 +315,10 @@ public class Entity {
 	}
 
 	/**
-	 * Creates an exact copy of the specified entity.
-	 * <p>
-	 * All the entity's inputs are copied to the new entity, but its internal
-	 * properties are left uninitialised.
-	 * @param ent - entity to be copied.
-	 * @param name - name of the copied entity.
-	 * @return - copied entity.
+	 * Copies the input values from one entity to another. This method is significantly faster
+	 * than copying and re-parsing the input data.
+	 * @param ent - entity whose inputs are to be copied.
+	 * @param target - entity whose inputs are to be assigned.
 	 */
 	public static void fastCopyInputs(Entity ent, Entity target) {
 		// Loop through the original entity's inputs
@@ -336,11 +332,6 @@ public class Entity {
 
 			// Get the matching input for the new entity
 			Input<?> targetInput = target.getEditableInputs().get(i);
-
-			// SampleInputs need to know their entity for "this" to work correctly
-			if (sourceInput instanceof SampleInput) {
-				((SampleInput)targetInput).setEntity(target);
-			}
 
 			// Assign the value to the copied entity's input
 			targetInput.copyFrom(sourceInput);
