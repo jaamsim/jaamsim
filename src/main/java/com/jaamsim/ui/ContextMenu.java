@@ -371,7 +371,7 @@ public class ContextMenu {
 				FrameBox.setSelectedEntity(splitEnt, false);
 			}
 		} );
-		if (ent.testFlag(Entity.FLAG_GENERATED) || nodeIndex == -1
+		if (ent.testFlag(Entity.FLAG_GENERATED) || nodeIndex <= 0
 				|| nodeIndex == ent.getPoints().size() - 1) {
 			spitMenuItem.setEnabled(false);
 		}
