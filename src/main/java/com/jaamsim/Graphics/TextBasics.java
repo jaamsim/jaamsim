@@ -89,6 +89,7 @@ public abstract class TextBasics extends DisplayEntity {
 		textHeight = new ValueInput("TextHeight", FONT, 0.3d);
 		textHeight.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		textHeight.setUnitType(DistanceUnit.class);
+		textHeight.setDefaultText("TextModel");
 		this.addInput(textHeight);
 
 		fontColor = new ColourInput("FontColour", FONT, ColourInput.BLACK);
@@ -389,10 +390,6 @@ public abstract class TextBasics extends DisplayEntity {
 		return savedText;
 	}
 
-	public double getTextHeight() {
-		return textHeight.getValue().doubleValue();
-	}
-
 	public Vec3d getTextSize() {
 		double height = textHeight.getValue();
 		TextModel tm = (TextModel) displayModelListInput.getValue().get(0);
@@ -421,6 +418,10 @@ public abstract class TextBasics extends DisplayEntity {
 
 	public StringChoiceInput getFontNameInput() {
 		return fontName;
+	}
+
+	public ValueInput getTextHeightInput() {
+		return textHeight;
 	}
 
 	public StringListInput getFontStyleInput() {

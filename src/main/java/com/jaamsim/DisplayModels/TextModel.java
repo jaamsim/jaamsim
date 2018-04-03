@@ -33,6 +33,7 @@ import com.jaamsim.input.Input;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.StringChoiceInput;
 import com.jaamsim.input.StringListInput;
+import com.jaamsim.input.ValueInput;
 import com.jaamsim.input.Vec3dInput;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Transform;
@@ -48,12 +49,17 @@ import com.jaamsim.render.RenderUtils;
 import com.jaamsim.render.StringProxy;
 import com.jaamsim.render.TessFontKey;
 import com.jaamsim.render.VisibilityInfo;
+import com.jaamsim.units.DistanceUnit;
 
 public class TextModel extends DisplayModel {
 
 	@Keyword(description = "The font to be used for the text.",
 	         exampleList = { "Arial" })
 	private final StringChoiceInput fontName;
+
+	@Keyword(description = "The height of the text as displayed in the view window.",
+	         exampleList = {"15 m"})
+	protected final ValueInput textHeight;
 
 	@Keyword(description = "The font styles to be applied to the text, e.g. Bold, Italic. ",
 	         exampleList = { "Bold" })
@@ -102,6 +108,11 @@ public class TextModel extends DisplayModel {
 		fontName = new StringChoiceInput("FontName", FONT, defFont);
 		fontName.setChoices(validFontNames);
 		this.addInput(fontName);
+
+		textHeight = new ValueInput("TextHeight", FONT, 0.3d);
+		textHeight.setValidRange(0.0d, Double.POSITIVE_INFINITY);
+		textHeight.setUnitType(DistanceUnit.class);
+		this.addInput(textHeight);
 
 		fontColor = new ColourInput("FontColour", FONT, ColourInput.BLACK);
 		this.addInput(fontColor);
@@ -207,7 +218,11 @@ public class TextModel extends DisplayModel {
 			}
 
 			String text = labelObservee.getCachedText();
-			double height = labelObservee.getTextHeight();
+
+			double height = textHeight.getValue();
+			if (!labelObservee.getTextHeightInput().isDefault()) {
+				height = labelObservee.getTextHeightInput().getValue();
+			}
 
 			Color4d color = fontColor.getValue();
 			if (!labelObservee.getFontColorInput().isDefault()) {
@@ -520,7 +535,11 @@ public class TextModel extends DisplayModel {
 			}
 
 			String text = labelObservee.getCachedText();
-			int height = (int)labelObservee.getTextHeight();
+
+			int height = textHeight.getValue().intValue();
+			if (!labelObservee.getTextHeightInput().isDefault()) {
+				height = labelObservee.getTextHeightInput().getValue().intValue();
+			}
 
 			Color4d color = fontColor.getValue();
 			if (!labelObservee.getFontColorInput().isDefault()) {
