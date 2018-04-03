@@ -42,8 +42,9 @@ RegionModelDefault ColladaFile { <res>/shapes/axis_text.dae }
 
 Define GraphModel     { GraphModelDefault          }
 
-Define TextModel      { TextModelDefault  EntityLabelModel  InputBoxModel }
+Define TextModel      { TextModelDefault  EntityLabelModel  InputBoxModel  BillboardTextModel }
 EntityLabelModel  TextHeight { 0.15 m }
+BillboardTextModel  TextHeight { 10 m }
 
 Define PolylineModel  { PolylineModelDefault  ArrowModelDefault }
 ArrowModelDefault ShowArrowHead { TRUE }
