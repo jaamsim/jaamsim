@@ -44,13 +44,13 @@ import com.jogamp.newt.event.KeyEvent;
  */
 public abstract class TextBasics extends DisplayEntity {
 
-	@Keyword(description = "The height of the font as displayed in the view window.",
-	         exampleList = {"15 m"})
-	protected final ValueInput textHeight;
-
 	@Keyword(description = "The font to be used for the text.",
 	         exampleList = { "Arial" })
 	private final StringChoiceInput fontName;
+
+	@Keyword(description = "The height of the font as displayed in the view window.",
+	         exampleList = {"15 m"})
+	protected final ValueInput textHeight;
 
 	@Keyword(description = "The font styles to be applied to the text, e.g. Bold, Italic. ",
 	         exampleList = { "Bold" })
@@ -80,15 +80,16 @@ public abstract class TextBasics extends DisplayEntity {
 	private int numSelected = 0;       // number of characters selected (positive to the right of the insertion position)
 
 	{
-		textHeight = new ValueInput("TextHeight", KEY_INPUTS, 0.3d);
-		textHeight.setValidRange(0.0d, Double.POSITIVE_INFINITY);
-		textHeight.setUnitType(DistanceUnit.class);
-		this.addInput(textHeight);
 
 		fontName = new StringChoiceInput("FontName", FONT, -1);
 		fontName.setChoices(TextModel.validFontNames);
 		fontName.setDefaultText("TextModel");
 		this.addInput(fontName);
+
+		textHeight = new ValueInput("TextHeight", FONT, 0.3d);
+		textHeight.setValidRange(0.0d, Double.POSITIVE_INFINITY);
+		textHeight.setUnitType(DistanceUnit.class);
+		this.addInput(textHeight);
 
 		fontColor = new ColourInput("FontColour", FONT, ColourInput.BLACK);
 		fontColor.setDefaultText("TextModel");
