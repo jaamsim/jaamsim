@@ -41,7 +41,9 @@ CrossHairs         ColladaFile { '<res>/shapes/CrossHairs.dae' }
 RegionModelDefault ColladaFile { <res>/shapes/axis_text.dae }
 
 Define GraphModel     { GraphModelDefault          }
+
 Define TextModel      { TextModelDefault  EntityLabelModel  InputBoxModel }
+EntityLabelModel  TextHeight { 0.15 m }
 
 Define PolylineModel  { PolylineModelDefault  ArrowModelDefault }
 ArrowModelDefault ShowArrowHead { TRUE }

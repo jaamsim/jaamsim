@@ -220,8 +220,7 @@ public class ContextMenu {
 						double ypos = -0.15 - 0.5*ent.getSize().y;
 						InputAgent.apply(newLabel, InputAgent.formatPointInputs("Position", new Vec3d(0.0, ypos, 0.0), "m"));
 
-						// Set the text size
-						InputAgent.applyArgs(newLabel, "TextHeight", "0.15", "m");
+						// Set the label's size
 						newLabel.resizeForText();
 						return;
 					}
