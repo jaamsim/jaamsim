@@ -109,9 +109,7 @@ public class Entity {
 	                     + "A custom output can return a number with or without units, "
 	                     + "an entity, a string, an array, a map, or a lambda function. "
 	                     + "The present value of a custom output is calculated on demand by the "
-	                     + "model. "
-	                     + "A custom output cannot use the value of another custom output in its "
-	                     + "definition.",
+	                     + "model.",
 	         exampleList = {"{ TwiceSimTime '2*this.SimTime' TimeUnit }  { SimTimeInDays 'this.SimTime/1[d]' }",
 	                        "{ FirstEnt 'size([Queue1].QueueList)>0 ? [Queue1].QueueList(1) : [SimEntity1]' }"})
 	public final NamedExpressionListInput namedExpressionInput;
