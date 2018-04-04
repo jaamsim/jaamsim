@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import com.jaamsim.Graphics.BillboardText;
+import com.jaamsim.Graphics.EntityLabel;
 import com.jaamsim.Graphics.OverlayText;
 import com.jaamsim.Graphics.TextBasics;
 import com.jaamsim.basicsim.Entity;
@@ -142,6 +143,16 @@ public class TextModel extends DisplayModel {
 
 		if (in == fontStyle) {
 			style = getStyle(fontStyle.getValue());
+			return;
+		}
+
+		if (in == textHeight) {
+			for (TextBasics text : Entity.getClonesOfIterator(EntityLabel.class)) {
+				if (text.getDisplayModelList().get(0) == this) {
+					text.resizeForText();
+				}
+			}
+			return;
 		}
 	}
 
