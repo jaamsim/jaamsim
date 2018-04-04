@@ -636,4 +636,8 @@ public class TextModel extends DisplayModel {
 		return fontColor.getValue();
 	}
 
+	public double getTextHeight() {
+		return textHeight.getValue();
+	}
+
 }

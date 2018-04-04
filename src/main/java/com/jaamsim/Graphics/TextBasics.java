@@ -393,8 +393,10 @@ public abstract class TextBasics extends DisplayEntity {
 	public Vec3d getTextSize() {
 		double height = textHeight.getValue();
 		TextModel tm = (TextModel) displayModelListInput.getValue().get(0);
+		if (textHeight.isDefault())
+			height = tm.getTextHeight();
 		return RenderManager.inst().getRenderedStringSize(tm.getTessFontKey(), height, savedText);
-		}
+	}
 
 	public void resizeForText() {
 		Vec3d textSize = getTextSize();
