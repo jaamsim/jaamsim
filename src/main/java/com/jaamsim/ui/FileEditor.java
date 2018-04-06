@@ -17,19 +17,11 @@
  */
 package com.jaamsim.ui;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JFileChooser;
-import javax.swing.JPanel;
 import javax.swing.JTable;
-import javax.swing.JTextField;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import com.jaamsim.input.FileInput;
@@ -39,38 +31,17 @@ import com.jaamsim.input.InputAgent;
  * Handles file inputs.
  *
  */
-public class FileEditor extends CellEditor
-implements ActionListener {
+public class FileEditor extends ChooserEditor {
 
-	private final JPanel jPanel;
-	private final JTextField text;
-	private final JButton fileButton;
 	private FileInput fileInput;
 	private static File lastDir;  // last directory accessed by the file chooser
 
 	public FileEditor(JTable table) {
-		super(table);
-
-		jPanel = new JPanel(new BorderLayout());
-
-		text = new JTextField();
-		jPanel.add(text, BorderLayout.WEST);
-
-		fileButton = new JButton(new ImageIcon(
-			GUIFrame.class.getResource("/resources/images/dropdown.png")));
-		fileButton.addActionListener(this);
-		fileButton.setActionCommand("button");
-
-		jPanel.add(fileButton, BorderLayout.EAST);
+		super(table, true);
 	}
 
 	public void setFileInput(FileInput in) {
 		fileInput = in;
-	}
-
-	@Override
-	public String getValue() {
-		return text.getText();
 	}
 
 	@Override
@@ -100,7 +71,7 @@ implements ActionListener {
 			if (returnVal == JFileChooser.APPROVE_OPTION) {
 	            File file = fileChooser.getSelectedFile();
 				lastDir = fileChooser.getCurrentDirectory();
-				text.setText(file.getPath());
+				setValue(file.getPath());
 	        }
 
 			// Apply editing
@@ -111,27 +82,4 @@ implements ActionListener {
 		}
 	}
 
-	@Override
-	public Component getTableCellEditorComponent(JTable table,
-			Object value, boolean isSelected, int row, int column) {
-
-		setTableInfo(table, row, column);
-
-		// set the value
-		input = (FileInput)value;
-		text.setText( input.getValueString() );
-
-		// right size for jPanel and its components
-		Dimension dim = new Dimension(
-			  table.getColumnModel().getColumn( EditBox.VALUE_COLUMN ).getWidth() -
-			  table.getColumnModel().getColumnMargin(),
-			  table.getRowHeight());
-		jPanel.setPreferredSize(dim);
-		dim = new Dimension(dim.width - (dim.height), dim.height);
-		text.setPreferredSize(dim);
-		dim = new Dimension(dim.height, dim.height);
-		fileButton.setPreferredSize(dim);
-
-		return jPanel;
-	}
 }

@@ -17,40 +17,29 @@
  */
 package com.jaamsim.ui;
 
-import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 import javax.swing.DefaultListModel;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JList;
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.JTextField;
 import javax.swing.ListCellRenderer;
 
-import com.jaamsim.input.Input;
 import com.jaamsim.input.Parser;
 
 /**
  * Handles inputs where a list of entities can be selected.
  *
  */
-public class ListEditor extends CellEditor
-implements ActionListener {
+public class ListEditor extends ChooserEditor {
 
-	private final JPanel jPanel;
-	private final JTextField text;
-	private final JButton listButton;
 	private JDialog dialog;
 	private JScrollPane jScroll;
 	private JList<JCheckBox> list;
@@ -63,26 +52,9 @@ implements ActionListener {
 	private boolean innerBraces;
 
 	public ListEditor(JTable table) {
-		super(table);
-
-		jPanel = new JPanel(new BorderLayout());
-
-		text = new JTextField();
-		jPanel.add(text, BorderLayout.WEST);
-
-		listButton = new JButton(new ImageIcon(
-			GUIFrame.class.getResource("/resources/images/dropdown.png")));
-		listButton.addActionListener(this);
-		listButton.setActionCommand("button");
-		listButton.setContentAreaFilled(false);
-		jPanel.add(listButton, BorderLayout.EAST);
+		super(table, true);
 		caseSensitive = true;
 		innerBraces = false;
-	}
-
-	@Override
-	public String getValue() {
-		return text.getText();
 	}
 
 	@Override
@@ -101,7 +73,7 @@ implements ActionListener {
 				else
 					sb.append(str).append(" ");
 			}
-			text.setText(sb.toString());
+			setValue(sb.toString());
 		}
 
 		if(! "button".equals(e.getActionCommand())) {
@@ -125,7 +97,7 @@ implements ActionListener {
 
 		// break the value into single options
 		tokens.clear();
-		Parser.tokenize(tokens, text.getText(), true);
+		Parser.tokenize(tokens, getValue(), true);
 		if( !caseSensitive ) {
 			for(i = 0; i < tokens.size(); i++ ) {
 				tokens.set(i, tokens.get(i).toUpperCase() );
@@ -163,29 +135,6 @@ implements ActionListener {
 			JCheckBox checkBox = new JCheckBox(each);
 			listModel.addElement(checkBox);
 		}
-	}
-
-	@Override
-	public Component getTableCellEditorComponent(JTable table,
-			Object value, boolean isSelected, int row, int column) {
-
-		setTableInfo(table, row, column);
-
-		input = (Input<?>)value;
-		text.setText( input.getValueString() );
-
-		// right size for jPanel and its components in the cell
-		Dimension dim = new Dimension(
-				table.getColumnModel().getColumn( EditBox.VALUE_COLUMN ).getWidth() -
-				table.getColumnModel().getColumnMargin(),
-				table.getRowHeight());
-		jPanel.setPreferredSize(dim);
-		dim = new Dimension(dim.width - (dim.height), dim.height);
-		text.setPreferredSize(dim);
-		dim = new Dimension(dim.height, dim.height);
-		listButton.setPreferredSize(dim);
-
-		return jPanel;
 	}
 
 	public void setCaseSensitive(boolean bool) {

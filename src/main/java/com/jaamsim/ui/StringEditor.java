@@ -17,48 +17,26 @@
  */
 package com.jaamsim.ui;
 
-import java.awt.Component;
+import java.awt.event.ActionEvent;
 
 import javax.swing.JTable;
-import javax.swing.JTextField;
-
-import com.jaamsim.input.Input;
 
 /**
  * Handles inputs that are edited in place.
  *
  */
-public class StringEditor extends CellEditor {
-	private final JTextField text;
+public class StringEditor extends ChooserEditor {
 
 	public StringEditor(JTable table) {
-		super(table);
-		text = new JTextField();
+		super(table, false);
 	}
 
-	@Override
-	public Component getTableCellEditorComponent(JTable table,
-			Object value, boolean isSelected, int row, int column) {
-
-		setTableInfo(table, row, column);
-
-		input = (Input<?>)value;
-		String val = input.getValueString();
-		if (retryString != null) {
-			val = retryString;
-			retryString = null;
-		}
-		text.setText( val );
-		return text;
-	}
-
-	@Override
-	public String getValue() {
-		return text.getText();
-	}
 	@Override
 	public boolean canRetry() {
 		return true;
 	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {}
 
 }
