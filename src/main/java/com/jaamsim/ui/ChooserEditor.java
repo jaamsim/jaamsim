@@ -21,11 +21,12 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionListener;
 
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.UIManager;
+import javax.swing.plaf.basic.BasicArrowButton;
 
 import com.jaamsim.input.Input;
 
@@ -53,12 +54,14 @@ implements ActionListener {
 		// Dropdown button
 		int buttonWidth = 0;
 		if (showButton) {
-			button = new JButton(new ImageIcon(
-					GUIFrame.class.getResource("/resources/images/dropdown.png")));
+			button = new BasicArrowButton(BasicArrowButton.SOUTH,
+					UIManager.getColor("ComboBox.buttonBackground"),  // FIXME does not respect look and feel
+					UIManager.getColor("ComboBox.buttonBackground"),  // "ComboBox.buttonShadow"
+					UIManager.getColor("ComboBox.buttonDarkShadow"),
+					UIManager.getColor("ComboBox.buttonBackground")); // "ComboBox.buttonHighlight"
 			button.addActionListener(this);
 			button.setActionCommand("button");
-			buttonWidth = height;
-			button.setPreferredSize(new Dimension(buttonWidth, height));
+			buttonWidth = button.getPreferredSize().width;
 			jPanel.add(button, BorderLayout.EAST);
 		}
 		else {
