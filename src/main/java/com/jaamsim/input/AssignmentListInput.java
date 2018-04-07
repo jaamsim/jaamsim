@@ -99,4 +99,9 @@ public class AssignmentListInput extends ListInput<ArrayList<ExpParser.Assignmen
 		return "";
 	}
 
+	@Override
+	public boolean useExpressionBuilder() {
+		return true;
+	}
+
 }

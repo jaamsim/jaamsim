@@ -143,4 +143,9 @@ public class AttributeDefinitionListInput extends ListInput<ArrayList<AttributeH
 		return defValue.toString();
 	}
 
+	@Override
+	public boolean useExpressionBuilder() {
+		return true;
+	}
+
 }

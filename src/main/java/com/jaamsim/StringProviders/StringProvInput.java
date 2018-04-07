@@ -112,4 +112,9 @@ public class StringProvInput extends Input<StringProvider> {
 		}
 	}
 
+	@Override
+	public boolean useExpressionBuilder() {
+		return true;
+	}
+
 }

@@ -307,6 +307,10 @@ public abstract class Input<T> {
 		return isValid;
 	}
 
+	public boolean useExpressionBuilder() {
+		return false;
+	}
+
 	public void validate() throws InputErrorException {
 		if (isReqd && isDef && !hidden)
 			throw new InputErrorException("An input must be provided for the keyword '%s'.", keyword);
@@ -463,7 +467,6 @@ public abstract class Input<T> {
 
 	public final String getValueString() {
 		if (isDefault()) return "";
-
 		ArrayList<String> tmp = new ArrayList<>();
 		try {
 			getValueTokens(tmp);
@@ -473,15 +476,27 @@ public abstract class Input<T> {
 			InputAgent.logStackTrace(e);
 			this.reset();
 		}
-		if (tmp.size() == 0) return "";
+		return getValueString(tmp, false);
+	}
+
+	public static final String getValueString(ArrayList<String> tokens, boolean addLF) {
+		if (tokens.size() == 0) return "";
 
 		StringBuilder sb = new StringBuilder();
-		for (int i = 0; i < tmp.size(); i++) {
-			String dat = tmp.get(i);
+		for (int i = 0; i < tokens.size(); i++) {
+			String dat = tokens.get(i);
 			if (dat == null) continue;
 			if (i > 0) {
-				if (dat.equals("{") || dat.equals("}") || tmp.get(i-1).equals("{")) {
+				if (dat.equals("}") || tokens.get(i-1).equals("{")) {
 					sb.append(Input.BRACE_SEPARATOR);
+				}
+				else if (dat.equals("{")) {
+					if (addLF) {
+						sb.append("\n");
+					}
+					else {
+						sb.append(Input.BRACE_SEPARATOR);
+					}
 				}
 				else {
 					sb.append(Input.SEPARATOR);

@@ -72,4 +72,9 @@ public class ExpressionInput extends Input<ExpParser.Expression> {
 		toks.add(parseContext.getUpdatedSource());
 	}
 
+	@Override
+	public boolean useExpressionBuilder() {
+		return true;
+	}
+
 }

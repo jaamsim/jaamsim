@@ -105,4 +105,9 @@ public class NamedExpressionListInput extends ListInput<ArrayList<NamedExpressio
 		return defValue.toString();
 	}
 
+	@Override
+	public boolean useExpressionBuilder() {
+		return true;
+	}
+
 }

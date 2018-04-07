@@ -172,4 +172,9 @@ public class StringProvListInput extends ListInput<ArrayList<StringProvider>> {
 		value.removeAll(list);
 	}
 
+	@Override
+	public boolean useExpressionBuilder() {
+		return true;
+	}
+
 }

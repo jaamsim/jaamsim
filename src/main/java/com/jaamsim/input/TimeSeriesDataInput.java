@@ -147,4 +147,10 @@ public class TimeSeriesDataInput extends Input<TimeSeriesData> {
 	public double getTickLength() {
 		return tickLength;
 	}
+
+	@Override
+	public boolean useExpressionBuilder() {
+		return true;
+	}
+
 }
