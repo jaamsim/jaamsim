@@ -365,12 +365,17 @@ public static class EditTable extends JTable {
 			ret = new FileEditor(this);
 		}
 
-		// 3) Normal text
+		// 3) Expression Builder
+		else if (in.useExpressionBuilder()) {
+			ret = new ExpressionEditor(this);
+		}
+
+		// 4) Normal text
 		else if (array == null) {
 			ret = new StringEditor(this);
 		}
 
-		// 4) Multiple selections from a List
+		// 5) Multiple selections from a List
 		else if (in instanceof ListInput) {
 			if(listEditor == null) {
 				listEditor = new ListEditor(this);
@@ -386,7 +391,7 @@ public static class EditTable extends JTable {
 			ret = listEditor;
 		}
 
-		// 5) Single selection from a drop down box
+		// 6) Single selection from a drop down box
 		else {
 			ret = new DropDownMenuEditor(this, array);
 		}
