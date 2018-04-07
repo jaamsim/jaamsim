@@ -362,9 +362,7 @@ public static class EditTable extends JTable {
 
 		// 2) File input
 		else if(in instanceof FileInput) {
-			FileEditor fileEditor = new FileEditor(this);
-			fileEditor.setFileInput((FileInput)in);
-			ret = fileEditor;
+			ret = new FileEditor(this);
 		}
 
 		// 3) Normal text

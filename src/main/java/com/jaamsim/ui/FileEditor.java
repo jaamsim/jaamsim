@@ -33,15 +33,10 @@ import com.jaamsim.input.InputAgent;
  */
 public class FileEditor extends ChooserEditor {
 
-	private FileInput fileInput;
 	private static File lastDir;  // last directory accessed by the file chooser
 
 	public FileEditor(JTable table) {
 		super(table, true);
-	}
-
-	public void setFileInput(FileInput in) {
-		fileInput = in;
 	}
 
 	@Override
@@ -54,7 +49,7 @@ public class FileEditor extends ChooserEditor {
 			JFileChooser fileChooser = new JFileChooser(lastDir);
 
 			// Set the file extension filters
-			FileNameExtensionFilter[] filters = fileInput.getFileNameExtensionFilters();
+			FileNameExtensionFilter[] filters = ((FileInput)input).getFileNameExtensionFilters();
 			if (filters.length > 0) {
 				// Turn off the "All Files" filter
 				fileChooser.setAcceptAllFileFilterUsed(false);
