@@ -353,7 +353,7 @@ public static class EditTable extends JTable {
 		ArrayList<String> array = in.getValidOptions();
 
 		// 1) Colour input
-		if(in instanceof ColourInput) {
+		if (in instanceof ColourInput) {
 			if(colorEditor == null) {
 				colorEditor = new ColorEditor(this);
 			}
@@ -361,20 +361,20 @@ public static class EditTable extends JTable {
 		}
 
 		// 2) File input
-		else if(in instanceof FileInput) {
+		else if (in instanceof FileInput) {
 			ret = new FileEditor(this);
 		}
 
 		// 3) Normal text
-		else if(array == null) {
+		else if (array == null) {
 			ret = new StringEditor(this);
 		}
 
 		// 4) Multiple selections from a List
-		else if(in instanceof ListInput) {
+		else if (in instanceof ListInput) {
 			if(listEditor == null) {
 				listEditor = new ListEditor(this);
-				if(in instanceof StringListInput) {
+				if (in instanceof StringListInput) {
 					listEditor.setCaseSensitive(
 							((StringListInput)(in)).getCaseSensitive() );
 				}
@@ -392,7 +392,7 @@ public static class EditTable extends JTable {
 		}
 
 		// If the user is going to retry a failed edit, update the editor with the old value
-		if (ret.canRetry() && retryString != null && row == retryRow && col == retryCol ) {
+		if (ret.canRetry() && retryString != null && row == retryRow && col == retryCol) {
 			ret.setRetry(retryString);
 		}
 		retryString = null;
