@@ -33,12 +33,19 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
+import com.jaamsim.Commands.KeywordCommand;
+import com.jaamsim.basicsim.Entity;
 import com.jaamsim.input.Input;
+import com.jaamsim.input.InputAgent;
+import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.Parser;
 
 public class ExpressionBox extends JDialog {
 
+	private final Input<?> input;
 	private final JTextArea editArea;
 	private final JButton acceptButton;
 	private final JButton cancelButton;
@@ -48,7 +55,7 @@ public class ExpressionBox extends JDialog {
 	public static final int APPROVE_OPTION = 0; // Accept button is clicked
 	public static final int ERROR_OPTION = -1;  // Error occurs or the dialog is dismissed
 
-	public ExpressionBox(String str) {
+	public ExpressionBox(Input<?> in, String str) {
 		super((JDialog)null, "Expression Builder", true);
 
 		getContentPane().setLayout( new BorderLayout() );
@@ -57,6 +64,7 @@ public class ExpressionBox extends JDialog {
 		setAlwaysOnTop(true);
 
 		// Initial text
+		input = in;
 		ArrayList<String> tokens = new ArrayList<>();
 		Parser.tokenize(tokens, str, true);
 
@@ -86,6 +94,7 @@ public class ExpressionBox extends JDialog {
 			public void windowClosing( WindowEvent e ) {
 				result = ERROR_OPTION;
 				setVisible(false);
+				undoEdits();
 				dispose();
 			}
 		} );
@@ -106,9 +115,46 @@ public class ExpressionBox extends JDialog {
 			public void actionPerformed( ActionEvent e ) {
 				result = CANCEL_OPTION;
 				setVisible(false);
+				undoEdits();
 				dispose();
 			}
 		} );
+
+		// Listen for changes to the text
+		editArea.getDocument().addDocumentListener(new DocumentListener() {
+
+			@Override
+			public void insertUpdate(DocumentEvent e) {
+				tryParse();
+			}
+
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+				tryParse();
+			}
+
+			@Override
+			public void changedUpdate(DocumentEvent e) {}
+	    });
+	}
+
+	private void tryParse() {
+		try {
+			Entity ent = EditBox.getInstance().getCurrentEntity();
+			String str = editArea.getText().replace("\n", " ");
+			ArrayList<String> tokens = new ArrayList<>();
+			Parser.tokenize(tokens, str, true);
+			KeywordIndex kw = new KeywordIndex(input.getKeyword(), tokens, null);
+			InputAgent.storeAndExecute(new KeywordCommand(ent, kw));
+			acceptButton.setEnabled(true);
+		}
+		catch (Exception e) {
+			acceptButton.setEnabled(false);
+		}
+	}
+
+	private void undoEdits() {
+		InputAgent.undo();
 	}
 
 	public int showDialog() {

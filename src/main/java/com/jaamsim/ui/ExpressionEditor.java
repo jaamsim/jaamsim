@@ -37,7 +37,7 @@ public class ExpressionEditor extends ChooserEditor {
 		if ("button".equals(e.getActionCommand())) {
 
 			// Launch the dialog box and wait for editing to finish
-			ExpressionBox expDialog = new ExpressionBox(getValue());
+			ExpressionBox expDialog = new ExpressionBox(input, getValue());
 			int result = expDialog.showDialog();
 
 			// Return the new expression
