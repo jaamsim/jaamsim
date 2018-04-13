@@ -2696,7 +2696,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 	 * @return HTML for the tooltip
 	 */
 	public static String formatKeywordToolTip(String className, String keyword,
-			String description, String validInputs, String[] exampleList) {
+			String description, String validInputs, String... exampleList) {
 
 		StringBuilder sb = new StringBuilder("<html><p width=\"350px\">");
 
