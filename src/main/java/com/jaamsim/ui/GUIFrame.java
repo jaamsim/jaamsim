@@ -2701,7 +2701,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		StringBuilder sb = new StringBuilder("<html><p width=\"350px\">");
 
 		// Keyword name
-		sb.append("<b>").append(keyword).append("</b><br>");
+		String key = html_replace(keyword);
+		sb.append("<b>").append(key).append("</b><br>");
 
 		// Description
 		String desc = html_replace(description);
