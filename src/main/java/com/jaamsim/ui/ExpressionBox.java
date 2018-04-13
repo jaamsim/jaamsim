@@ -29,9 +29,11 @@ import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -47,6 +49,7 @@ public class ExpressionBox extends JDialog {
 
 	private final Input<?> input;
 	private final JTextArea editArea;
+	private final JTextField msgText;
 	private final JButton acceptButton;
 	private final JButton cancelButton;
 	private int result;
@@ -76,12 +79,19 @@ public class ExpressionBox extends JDialog {
 		scrollPane.setBorder(new EmptyBorder(5, 10, 0, 10));
 		getContentPane().add(scrollPane, BorderLayout.CENTER);
 
+		// Error message text
+		JLabel msgLabel = new JLabel( "Message:" );
+		msgText = new JTextField("", 60);
+		msgText.setEditable(false);
+
 		// Buttons
 		acceptButton = new JButton("Accept");
 		cancelButton = new JButton("Cancel");
 
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.setLayout( new FlowLayout(FlowLayout.CENTER) );
+		buttonPanel.add(msgLabel);
+		buttonPanel.add(msgText);
 		buttonPanel.add(acceptButton);
 		buttonPanel.add(cancelButton);
 		getContentPane().add(buttonPanel, BorderLayout.SOUTH);
@@ -146,9 +156,11 @@ public class ExpressionBox extends JDialog {
 			Parser.tokenize(tokens, str, true);
 			KeywordIndex kw = new KeywordIndex(input.getKeyword(), tokens, null);
 			InputAgent.storeAndExecute(new KeywordCommand(ent, kw));
+			msgText.setText("");
 			acceptButton.setEnabled(true);
 		}
 		catch (Exception e) {
+			msgText.setText(e.getMessage());
 			acceptButton.setEnabled(false);
 		}
 	}
