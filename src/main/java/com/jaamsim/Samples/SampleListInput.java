@@ -218,4 +218,9 @@ public class SampleListInput extends ListInput<ArrayList<SampleProvider>> {
 		value.removeAll(Collections.singleton(ent));
 	}
 
+	@Override
+	public boolean useExpressionBuilder() {
+		return true;
+	}
+
 }

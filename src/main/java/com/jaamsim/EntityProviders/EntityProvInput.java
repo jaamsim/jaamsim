@@ -106,4 +106,9 @@ public class EntityProvInput<T extends Entity> extends Input<EntityProvider<T>> 
 		toks.add(value.toString());
 	}
 
+	@Override
+	public boolean useExpressionBuilder() {
+		return true;
+	}
+
 }

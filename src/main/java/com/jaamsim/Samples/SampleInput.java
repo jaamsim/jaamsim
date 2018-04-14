@@ -145,4 +145,9 @@ public class SampleInput extends Input<SampleProvider> {
 		}
 	}
 
+	@Override
+	public boolean useExpressionBuilder() {
+		return true;
+	}
+
 }
