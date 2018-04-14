@@ -16,11 +16,18 @@
  */
 package com.jaamsim.ui;
 
+import java.awt.Component;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 import javax.swing.JTable;
 
 public class ExpressionEditor extends ChooserEditor {
+
+	private static final String OPTION_EXP_BUILDER = "*** Expression Builder ***";
 
 	public ExpressionEditor(JTable table) {
 		super(table, true);
@@ -36,22 +43,58 @@ public class ExpressionEditor extends ChooserEditor {
 
 		if ("button".equals(e.getActionCommand())) {
 
-			// Launch the dialog box and wait for editing to finish
-			ExpressionBox expDialog = new ExpressionBox(input, getValue());
-			int result = expDialog.showDialog();
-
-			// Return the new expression
-			if (result == ExpressionBox.APPROVE_OPTION) {
-				setValue(expDialog.getInputString());
+			// Launch the Expression Builder if there are no other options
+			ArrayList<String> array = input.getValidOptions();
+			if (array == null || array.isEmpty()) {
+				launchExpressionBox();
+				return;
 			}
 
-			// Apply editing
-			stopCellEditing();
+			// If there are multiple options, select either one of the options or the
+			// Expression Builder
+			array.add(0, OPTION_EXP_BUILDER);
+			JPopupMenu menu = new JPopupMenu();
+			Component button = (Component)e.getSource();
+			Component panel = button.getParent();
+			for (final String option : array) {
+				JMenuItem item = new JMenuItem(option);
+				item.setPreferredSize(panel.getPreferredSize());
+				item.addActionListener( new ActionListener() {
 
-			// Focus the cell
-			propTable.requestFocusInWindow();
+					@Override
+					public void actionPerformed( ActionEvent event ) {
+						if (OPTION_EXP_BUILDER.equals(option)) {
+							launchExpressionBox();
+							return;
+						}
+						setValue(option);
+						stopCellEditing();
+						propTable.requestFocusInWindow();
+					}
+				} );
+				menu.add(item);
+			}
+			menu.show(panel, 0, panel.getHeight());
 			return;
 		}
+	}
+
+	private void launchExpressionBox() {
+
+		// Launch the dialog box and wait for editing to finish
+		ExpressionBox expDialog = new ExpressionBox(input, getValue());
+		int result = expDialog.showDialog();
+
+		// Return the new expression
+		if (result == ExpressionBox.APPROVE_OPTION) {
+			setValue(expDialog.getInputString());
+		}
+
+		// Apply editing
+		stopCellEditing();
+
+		// Focus the cell
+		propTable.requestFocusInWindow();
 	}
 
 }
