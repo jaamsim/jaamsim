@@ -311,6 +311,10 @@ public abstract class Input<T> {
 		return false;
 	}
 
+	public String getPresentValueString(double simTime) {
+		return getValueString();
+	}
+
 	public void validate() throws InputErrorException {
 		if (isReqd && isDef && !hidden)
 			throw new InputErrorException("An input must be provided for the keyword '%s'.", keyword);

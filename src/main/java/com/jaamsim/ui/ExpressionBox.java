@@ -34,7 +34,6 @@ import java.util.Collections;
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
@@ -116,10 +115,13 @@ public class ExpressionBox extends JDialog {
 		addToolBarButtons(buttonBar);
 		getContentPane().add( buttonBar, BorderLayout.NORTH );
 
-		// Error message text
-		JLabel msgLabel = new JLabel( "Message:" );
-		msgText = new JTextField("", 60);
+		// Result value or error message
+		String msg = formatMessage(true, input.getPresentValueString(0.0d));
+		msgText = new JTextField(msg, 80);
 		msgText.setEditable(false);
+		msgText.setToolTipText(GUIFrame.formatToolTip("Result",
+				"The value returned by a valid input or "
+				+ "the error message returned an invalid input."));
 
 		// Buttons
 		acceptButton = new JButton("Accept");
@@ -127,7 +129,6 @@ public class ExpressionBox extends JDialog {
 
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.setLayout( new FlowLayout(FlowLayout.CENTER) );
-		buttonPanel.add(msgLabel);
 		buttonPanel.add(msgText);
 		buttonPanel.add(acceptButton);
 		buttonPanel.add(cancelButton);
@@ -236,19 +237,29 @@ public class ExpressionBox extends JDialog {
 
 	private void tryParse() {
 		try {
+			// Load the input
 			Entity ent = EditBox.getInstance().getCurrentEntity();
 			String str = editArea.getText().replace("\n", " ");
 			ArrayList<String> tokens = new ArrayList<>();
 			Parser.tokenize(tokens, str, true);
 			KeywordIndex kw = new KeywordIndex(input.getKeyword(), tokens, null);
 			InputAgent.storeAndExecute(new KeywordCommand(ent, kw));
-			msgText.setText("");
+
+			// If successful, show the result
+			msgText.setText(formatMessage(true, input.getPresentValueString(0.0d)));
 			acceptButton.setEnabled(true);
 		}
 		catch (Exception e) {
-			msgText.setText(e.getMessage());
+			msgText.setText(formatMessage(false, e.getMessage()));
 			acceptButton.setEnabled(false);
 		}
+	}
+
+	private static String formatMessage(boolean isValid, String str) {
+		if (isValid)
+			return "PRESENT VALUE: " + str;
+		else
+			return "ERROR: " + str;
 	}
 
 	private void undoEdits() {
