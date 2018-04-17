@@ -29,6 +29,7 @@ import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -89,6 +90,14 @@ public class ExpressionBox extends JDialog {
 		JScrollPane scrollPane = new JScrollPane(editArea);
 		scrollPane.setBorder(new EmptyBorder(5, 10, 0, 10));
 		getContentPane().add(scrollPane, BorderLayout.CENTER);
+
+		// Button bar
+		JToolBar buttonBar = new JToolBar();
+		buttonBar.setMargin(new Insets( 1, 1, 1, 1 ));
+		buttonBar.setFloatable(false);
+		buttonBar.setLayout( new FlowLayout( FlowLayout.LEFT, 0, 0 ) );
+		addToolBarButtons(buttonBar);
+		getContentPane().add( buttonBar, BorderLayout.NORTH );
 
 		// Error message text
 		JLabel msgLabel = new JLabel( "Message:" );
@@ -196,6 +205,37 @@ public class ExpressionBox extends JDialog {
 
 	public String getInputString() {
 		return editArea.getText();
+	}
+
+	private void addToolBarButtons(JToolBar buttonBar) {
+
+	    Dimension separatorDim = new Dimension(11, 20);
+	    Dimension gapDim = new Dimension(5, separatorDim.height);
+
+		// Single quotes and curly braces
+		int width = 20;
+		buttonBar.add(Box.createRigidArea(gapDim));
+		addButtons(buttonBar, initObjects, width, editArea);
+
+		// Object buttons
+		width = 35;
+		buttonBar.addSeparator(separatorDim);
+		addButtons(buttonBar, simObjects, width, editArea);
+		buttonBar.add( new EntityButton("Entity", width, editArea) );
+		addButtons(buttonBar, expObjects, width, editArea);
+
+		// Unit objects
+		buttonBar.addSeparator(separatorDim);
+		buttonBar.add( new UnitButton("Unit", width, editArea) );
+		buttonBar.add( new UnitTypeButton("Type", width, editArea) );
+
+		// Operator buttons
+		width = 20;
+		buttonBar.addSeparator(separatorDim);
+		addButtons(buttonBar, basicOperators, width, editArea);
+
+		buttonBar.addSeparator(separatorDim);
+		addButtons(buttonBar, logicalOperators, width, editArea);
 	}
 
 	public void addButtons(JToolBar buttonBar, ArrayList<ButtonDesc> bdList, int w, JTextArea text) {
