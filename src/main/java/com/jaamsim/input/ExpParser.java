@@ -18,6 +18,7 @@
 package com.jaamsim.input;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 
 import com.jaamsim.units.DimensionlessUnit;
@@ -1026,6 +1027,15 @@ public class ExpParser {
 			}
 		}
 		return null;
+	}
+
+	public static ArrayList<String> getFunctionNames() {
+		ArrayList<String> ret = new ArrayList<>(functions.size());
+		for (FunctionEntry fe : functions) {
+			ret.add(fe.name);
+		}
+		Collections.sort(ret, Input.uiSortOrder);
+		return ret;
 	}
 
 	////////////////////////////////////////////////////////
