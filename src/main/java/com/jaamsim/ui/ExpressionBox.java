@@ -58,6 +58,7 @@ import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.KeywordIndex;
+import com.jaamsim.input.OutputHandle;
 import com.jaamsim.input.Parser;
 import com.jaamsim.units.Unit;
 
@@ -72,10 +73,15 @@ public class ExpressionBox extends JDialog {
 
 	private int editMode;
 	private static JPopupMenu entityMenu;
+	private static JPopupMenu outputMenu;
+
 	private static final int EDIT_MODE_NORMAL = 0;
 	private static final int EDIT_MODE_ENTITY = 1;
+	private static final int EDIT_MODE_OUTPUT = 2;
 
 	private static final char[] invalidEntityChars = {']', ' ', '\t', '\n', '{', '}'};
+	private static final char[] controlChars = {' ', '.', ',', ';', '(', ')', '{', '}', '[', ']', '"', '\'', '\t', '\n'};
+	private static final char[] mathChars = { '+', '-', '*', '/', '^', '%', '?', '=', '>', '<', '!', '&', '|'};
 
 	public static final int CANCEL_OPTION = 1;  // Cancel button is clicked
 	public static final int APPROVE_OPTION = 0; // Accept button is clicked
@@ -168,6 +174,7 @@ public class ExpressionBox extends JDialog {
 			@Override
 			public void insertUpdate(DocumentEvent e) {
 				tryParse();
+
 				if (e.getLength() > 1) {
 					setEditMode(EDIT_MODE_NORMAL);
 					return;
@@ -177,6 +184,9 @@ public class ExpressionBox extends JDialog {
 				char c = editArea.getText().charAt(e.getOffset());
 				if (c == '[') {
 					setEditMode(EDIT_MODE_ENTITY);
+				}
+				else if (c == '.') {
+					setEditMode(EDIT_MODE_OUTPUT);
 				}
 
 				// Show the pop-up menus for entity/output selection
@@ -217,6 +227,9 @@ public class ExpressionBox extends JDialog {
 		editMode = mode;
 		if (mode != EDIT_MODE_ENTITY && entityMenu != null) {
 			entityMenu.setVisible(false);
+		}
+		if (mode != EDIT_MODE_OUTPUT && outputMenu != null) {
+			outputMenu.setVisible(false);
 		}
 	}
 
@@ -503,6 +516,44 @@ public class ExpressionBox extends JDialog {
 			showEntityMenu(name, ind0, ind1);
 			return;
 		}
+
+		if (editMode == EDIT_MODE_OUTPUT) {
+
+			// Find the entity name
+			Entity ent = null;
+			int dotIndex = text.lastIndexOf('.', ind1);
+			if (dotIndex >= 1 && text.charAt(dotIndex - 1) == ']') {
+				int bracketIndex = text.lastIndexOf('[', dotIndex);
+				if (bracketIndex >= 0) {
+					String entName = text.substring(bracketIndex + 1, dotIndex - 1);
+					ent = Entity.getNamedEntity(entName);
+				}
+			}
+
+			if (ent == null) {
+				setEditMode(EDIT_MODE_NORMAL);
+				return;
+			}
+
+			// Find the partial output name
+			String name = "";
+			if (ind1 > dotIndex) {
+				name = text.substring(dotIndex + 1, ind1 + 1);
+			}
+
+			// Does the name contain any invalid characters?
+			for (char c : name.toCharArray()) {
+				if (Arrays.asList(controlChars).contains(c)
+						|| Arrays.asList(mathChars).contains(c)) {
+					setEditMode(EDIT_MODE_NORMAL);
+					return;
+				}
+			}
+
+			// Show the output name pop-up
+			showOutputMenu(ent, name, dotIndex, ind1);
+			return;
+		}
 	}
 
 	private void showEntityMenu(String name, final int ind0, final int ind1) {
@@ -546,6 +597,45 @@ public class ExpressionBox extends JDialog {
 			p = new Point();  // p is null after text is selected and the '[' key is pressed
 		int height = editArea.getFontMetrics(editArea.getFont()).getHeight();
 		entityMenu.show(editArea, p.x, p.y + height);
+		editArea.requestFocusInWindow();
+	}
+
+	private void showOutputMenu(Entity ent, String name, final int ind0, final int ind1) {
+		outputMenu = new JPopupMenu();
+
+		ArrayList<OutputHandle> handles = new ArrayList<>();
+		for (OutputHandle hand : OutputHandle.getOutputHandleList(ent)) {
+			if (hand.getName().contains(" "))
+				continue;
+
+			if (!hand.getName().toUpperCase().contains(name.toUpperCase()))
+				continue;
+
+			handles.add(hand);
+		}
+		Collections.sort(handles, Input.uiSortOrder);
+
+		for (final OutputHandle hand : handles) {
+			JMenuItem item = new JMenuItem(hand.getName());
+			item.setToolTipText(GUIFrame.formatOutputToolTip(
+					hand.getName(),
+					hand.getDescription()) );
+			item.addActionListener( new ActionListener() {
+
+				@Override
+				public void actionPerformed( ActionEvent event ) {
+					editArea.replaceRange(hand.getName(), ind0 + 1, ind1 + 1);
+					editArea.requestFocusInWindow();
+					setEditMode(EDIT_MODE_NORMAL);
+				}
+			} );
+			outputMenu.add(item);
+		}
+		Point p = editArea.getCaret().getMagicCaretPosition();
+		if (p == null)
+			p = new Point();
+		int height = editArea.getFontMetrics(editArea.getFont()).getHeight();
+		outputMenu.show(editArea, p.x, p.y + height);
 		editArea.requestFocusInWindow();
 	}
 

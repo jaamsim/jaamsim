@@ -412,4 +412,9 @@ public class OutputHandle {
 		return null;
 	}
 
+	@Override
+	public String toString() {
+		return getName();
+	}
+
 }
