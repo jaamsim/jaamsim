@@ -27,11 +27,15 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -41,11 +45,17 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import com.jaamsim.Commands.KeywordCommand;
+import com.jaamsim.Graphics.DisplayEntity;
+import com.jaamsim.Graphics.EntityLabel;
+import com.jaamsim.Graphics.OverlayEntity;
+import com.jaamsim.Graphics.Region;
 import com.jaamsim.basicsim.Entity;
+import com.jaamsim.basicsim.ObjectType;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.Parser;
+import com.jaamsim.units.Unit;
 
 public class ExpressionBox extends JDialog {
 
@@ -217,6 +227,159 @@ public class ExpressionBox extends JDialog {
 					text.requestFocusInWindow();
 				}
 			} );
+		}
+
+	}
+
+	public static class EntityButton extends JButton {
+
+		private EntityButton(String name, int w, final JTextArea text) {
+			super(name);
+			setMargin(new Insets( 0, 0, 0, 0 ));
+			int width = Math.max(w, getPreferredSize().width);
+			final int height = getPreferredSize().height;
+			setPreferredSize(new Dimension(width, height));
+			setToolTipText(GUIFrame.formatKeywordToolTip(
+					(String)null,
+					"Named Entity",
+					"A named Entity is referenced by enclosing the entity name in square brackets.",
+					null,
+					"[Entity1]"));
+			addActionListener( new ActionListener() {
+
+				@Override
+				public void actionPerformed( ActionEvent event ) {
+					JPopupMenu entityMenu = new JPopupMenu();
+					ArrayList<String> entNameList = new ArrayList<>();
+					for (DisplayEntity each: Entity.getClonesOfIterator(DisplayEntity.class)) {
+						if (each.testFlag(Entity.FLAG_GENERATED))
+							continue;
+
+						if (each instanceof OverlayEntity || each instanceof Region
+								|| each instanceof EntityLabel)
+							continue;
+
+						entNameList.add(each.getName());
+					}
+					Collections.sort(entNameList, Input.uiSortOrder);
+
+					for (final String entName : entNameList) {
+						JMenuItem item = new JMenuItem(entName);
+						item.addActionListener( new ActionListener() {
+
+							@Override
+							public void actionPerformed( ActionEvent event ) {
+								String str = String.format("[%s]", entName);
+								text.insert(str, text.getCaretPosition());
+								text.requestFocusInWindow();
+							}
+						} );
+						entityMenu.add(item);
+					}
+					entityMenu.show(EntityButton.this, 0, height);
+				}
+			} );
+		}
+
+	}
+
+	public static class UnitButton extends JButton {
+
+		private UnitButton(String name, int w, final JTextArea text) {
+			super(name);
+			setMargin(new Insets( 0, 0, 0, 0 ));
+			int width = Math.max(w, getPreferredSize().width);
+			final int height = getPreferredSize().height;
+			setPreferredSize(new Dimension(width, height));
+			setToolTipText(GUIFrame.formatKeywordToolTip(
+					null,
+					"Unit",
+					"Units are assigned to a number by following it with the unit name enclosed by "
+							+ "square brackets. Units are grouped by the type of unit, such as "
+							+ "TimeUnit and DistanceUnit.",
+					null,
+					"[s] indicates the units of seconds.",
+					"[m] indicates the units of metres."));
+			addActionListener( new ActionListener() {
+
+				@Override
+				public void actionPerformed( ActionEvent event ) {
+					JPopupMenu unitMenu = new JPopupMenu();
+
+					// Loop through the unit types that have been defined
+					for (String utName : Unit.getUnitTypeList()) {
+						ObjectType ot = Input.parseEntity(utName, ObjectType.class);
+						final Class<? extends Unit> ut = Input.checkCast(ot.getJavaClass(), Unit.class);
+
+						ArrayList<? extends Unit> unitList = Unit.getUnitList(ut);
+						if (unitList.isEmpty())
+							continue;
+
+						// For each unit type create a sub-menu of units from which to select
+						JMenu subMenu = new JMenu(utName);
+						for (final Unit u : unitList) {
+							JMenuItem item = new JMenuItem(u.getName());
+							item.addActionListener( new ActionListener() {
+
+								@Override
+								public void actionPerformed( ActionEvent event ) {
+									String str = String.format("[%s]", u.getName());
+									text.insert(str, text.getCaretPosition());
+									text.requestFocusInWindow();
+								}
+							} );
+							subMenu.add(item);
+						}
+						unitMenu.add(subMenu);
+					}
+					unitMenu.show(UnitButton.this, 0, height);
+				}
+			} );
+		}
+
+	}
+
+	public static class UnitTypeButton extends JButton {
+
+		private UnitTypeButton(String name, int w, final JTextArea text) {
+			super(name);
+			setMargin(new Insets( 0, 0, 0, 0 ));
+			int width = Math.max(w, getPreferredSize().width);
+			final int height = getPreferredSize().height;
+			setPreferredSize(new Dimension(width, height));
+			setToolTipText(GUIFrame.formatKeywordToolTip(
+					null,
+					"Unit Type",
+					"The unit type is required for attribute and custom output definitions.",
+					null,
+					"TimeUnit indicates a quantity with the units of time.",
+					"DistanceUnit indicates a quantity with the units of distance.",
+					"DimensionlessUnit indicates a quantity that is a pure number."));
+			addActionListener( new ActionListener() {
+
+				@Override
+				public void actionPerformed( ActionEvent event ) {
+					JPopupMenu unitTypeMenu = new JPopupMenu();
+
+					// Loop through the unit types that have been defined
+					for (String utName : Unit.getUnitTypeList()) {
+						ObjectType ot = Input.parseEntity(utName, ObjectType.class);
+						final Class<? extends Unit> ut = Input.checkCast(ot.getJavaClass(), Unit.class);
+						JMenuItem item = new JMenuItem(ut.getSimpleName());
+						item.addActionListener( new ActionListener() {
+
+							@Override
+							public void actionPerformed( ActionEvent event ) {
+								String str = String.format(" %s ", ut.getSimpleName());
+								text.insert(str, text.getCaretPosition());
+								text.requestFocusInWindow();
+							}
+						} );
+						unitTypeMenu.add(item);
+					}
+					unitTypeMenu.show(UnitTypeButton.this, 0, height);
+				}
+			});
 		}
 
 	}
