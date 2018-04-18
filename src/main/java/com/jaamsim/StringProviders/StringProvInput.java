@@ -26,7 +26,9 @@ import com.jaamsim.basicsim.Entity;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.KeywordIndex;
+import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
+import com.jaamsim.units.UserSpecifiedUnit;
 
 public class StringProvInput extends Input<StringProvider> {
 
@@ -115,6 +117,25 @@ public class StringProvInput extends Input<StringProvider> {
 	@Override
 	public boolean useExpressionBuilder() {
 		return true;
+	}
+
+	@Override
+	public String getPresentValueString(double simTime) {
+		if (value == null)
+			return "";
+
+		StringBuilder sb = new StringBuilder();
+		if (unitType == null || unitType == DimensionlessUnit.class
+				|| unitType == UserSpecifiedUnit.class) {
+			sb.append(value.getNextString(simTime, "%s", 1.0d));
+		}
+		else {
+			String unitString = Unit.getDisplayedUnit(unitType);
+			double sifactor = Unit.getDisplayedUnitFactor(unitType);
+			sb.append(value.getNextString(simTime, "%s", sifactor));
+			sb.append("[").append(unitString).append("]");
+		}
+		return sb.toString();
 	}
 
 }

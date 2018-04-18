@@ -150,4 +150,20 @@ public class SampleInput extends Input<SampleProvider> {
 		return true;
 	}
 
+	@Override
+	public String getPresentValueString(double simTime) {
+		StringBuilder sb = new StringBuilder();
+		Class<? extends Unit> ut = value.getUnitType();
+		if (ut == DimensionlessUnit.class) {
+			sb.append(Double.toString(value.getNextSample(simTime)));
+		}
+		else {
+			String unitString = Unit.getDisplayedUnit(ut);
+			double sifactor = Unit.getDisplayedUnitFactor(ut);
+			sb.append(Double.toString(value.getNextSample(simTime)/sifactor));
+			sb.append("[").append(unitString).append("]");
+		}
+		return sb.toString();
+	}
+
 }

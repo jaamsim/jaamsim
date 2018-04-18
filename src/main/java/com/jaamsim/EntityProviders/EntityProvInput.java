@@ -111,4 +111,12 @@ public class EntityProvInput<T extends Entity> extends Input<EntityProvider<T>> 
 		return true;
 	}
 
+	@Override
+	public String getPresentValueString(double simTime) {
+		if (value == null)
+			return "";
+
+		return String.format("[%s]", value.getNextEntity(simTime));
+	}
+
 }

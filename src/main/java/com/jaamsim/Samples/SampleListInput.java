@@ -25,6 +25,7 @@ import com.jaamsim.input.Input;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.ListInput;
+import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 
 public class SampleListInput extends ListInput<ArrayList<SampleProvider>> {
@@ -221,6 +222,36 @@ public class SampleListInput extends ListInput<ArrayList<SampleProvider>> {
 	@Override
 	public boolean useExpressionBuilder() {
 		return true;
+	}
+
+	@Override
+	public String getPresentValueString(double simTime) {
+		if (value == null)
+			return "";
+
+		StringBuilder sb = new StringBuilder();
+		boolean first = true;
+		for (SampleProvider samp : value) {
+			if (!first) {
+				first = false;
+			}
+			else {
+				sb.append(Input.SEPARATOR);
+			}
+			sb.append("{").append(Input.BRACE_SEPARATOR);
+			Class<? extends Unit> ut = samp.getUnitType();
+			if (ut == DimensionlessUnit.class) {
+				sb.append(Double.toString(samp.getNextSample(simTime)));
+			}
+			else {
+				String unitString = Unit.getDisplayedUnit(ut);
+				double sifactor = Unit.getDisplayedUnitFactor(ut);
+				sb.append(Double.toString(samp.getNextSample(simTime)/sifactor));
+				sb.append("[").append(unitString).append("]");
+			}
+			sb.append(Input.BRACE_SEPARATOR).append("}");
+		}
+		return sb.toString();
 	}
 
 }
