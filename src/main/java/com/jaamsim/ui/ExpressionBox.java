@@ -665,11 +665,21 @@ public class ExpressionBox extends JDialog {
 
 	}
 
+	public static ButtonDesc getButtonDesc(ArrayList<ButtonDesc> list, String name) {
+		for (ButtonDesc bd : list) {
+			if (bd.symbol.equals(name)) {
+				return bd;
+			}
+		}
+		return null;
+	}
+
 	private static ArrayList<ButtonDesc> initObjects = new ArrayList<>();
 	private static ArrayList<ButtonDesc> simObjects = new ArrayList<>();
 	private static ArrayList<ButtonDesc> expObjects = new ArrayList<>();
 	private static ArrayList<ButtonDesc> basicOperators = new ArrayList<>();
 	private static ArrayList<ButtonDesc> logicalOperators = new ArrayList<>();
+	private static ArrayList<ButtonDesc> functions = new ArrayList<>();
 
 	static {
 
@@ -944,6 +954,341 @@ public class ExpressionBox extends JDialog {
 				"The argument must be a dimensionless number.",
 				"'!0' returns 1.",
 				"'!1' returns 0."));
+
+		// FUNCTIONS
+
+		functions.add(new ButtonDesc("PI", "Mathematical constant ('PI')",
+				"Returns 3.14159...",
+				null,
+				"PI()",
+				0,
+				"'PI() + 1' returns 4.14159..."));
+
+		functions.add(new ButtonDesc("E", "Mathematical constant ('E')",
+				"Returns 2.71828...",
+				null,
+				"E()",
+				0,
+				"'E() + 1' returns 3.71828..."));
+
+		functions.add(new ButtonDesc("min", "Minimum function ('min')",
+				"Returns the smallest of a list of values.",
+				"Accepts a list of numbers with or without units. "
+						+ "Returns a number with the same units.",
+				"min()",
+				-1,
+				"'min(2, 1, 3)' returns 1",
+				"'min(2[s], 1[s], 3[s])' returns 1[s]"));
+
+		functions.add(new ButtonDesc("max", "Maximum function ('max')",
+				"Returns the largest of a list of values.",
+				"Accepts a list of numbers with or without units. "
+						+ "Returns a number with the same units.",
+				"max()",
+				-1,
+				"'max(2, 1, 3)' returns 3",
+				"'max(2[s], 1[s], 3[s])' returns 3[s]"));
+
+		functions.add(new ButtonDesc("indexOfMin", "IndexOfMin function ('indexOfMin')",
+				"Returns the position of the minimum in a list of values.",
+				"Accepts a list of numbers with or without units. "
+						+ "Returns a dimensionless integer.",
+				"indexOfMin()",
+				-1,
+				"'indexOfMin(2, 1, 3)' returns 2",
+				"'indexOfMin(2[s], 1[s], 3[s])' returns 2"));
+
+		functions.add(new ButtonDesc("indexOfMax", "IndexOfMax function ('indexOfMax')",
+				"Returns the position of the maximum in a list of values.",
+				"Accepts a list of numbers with or without units. "
+						+ "Returns a dimensionless integer.",
+				"indexOfMax()",
+				-1,
+				"'indexOfMax(2, 1, 3)' returns 3",
+				"'indexOfMax(2[s], 1[s], 3[s])' returns 3"));
+
+		functions.add(new ButtonDesc("abs", "Absolute value function ('abs')",
+				"Returns the absolute value of a number with or without units.",
+				"Accepts a number with or without units. Returns a number with the same units.",
+				"abs()",
+				-1,
+				"'abs(2)' returns 2",
+				"'abs(-2)' returns 2",
+				"'abs(-2[s])' returns 2[s]"));
+
+		functions.add(new ButtonDesc("ceil", "Ceiling function ('ceil')",
+				"Returns the smallest (closest to negative infinity) integer that is greater than "
+						+ "or equal to the argument.",
+				"Accepts a number with or without units. Returns an integer with the same units.",
+				"ceil()",
+				-1,
+				"'ceil(2.4)' returns 3",
+				"'ceil(-2.4)' returns -2",
+				"'ceil(2.4[s])' returns 3[s]"));
+
+		functions.add(new ButtonDesc("floor", "Floor function ('floor')",
+				"Returns the largest (closest to positive infinity) integer that is less than "
+						+ "or equal to the argument.",
+				"Accepts a number with or without units. Returns an integer with the same units.",
+				"floor()",
+				-1,
+				"'floor(2.4)' returns 2",
+				"'floor(-2.4)' returns -3",
+				"'floor(2.4[s])' returns 2[s]"));
+
+		functions.add(new ButtonDesc("signum", "Signum function ('signum')",
+				"Returns zero if the argument is zero, 1.0 if the argument is greater than zero, "
+						+ "and -1.0 if the argument is less than zero.",
+				"Accepts a number with or without units. Returns a dimensionless integer.",
+				"signum()",
+				-1,
+				"'signum(0.0)' returns 0",
+				"'signum(2.4)' returns 1",
+				"'signum(-2.4)' returns -1",
+				"'signum(2.4[s])' returns 1"));
+
+		functions.add(new ButtonDesc("sqrt", "Square root function ('sqrt')",
+				"Returns the square root of a number.",
+				"Accepts a non-negative, dimensionless number and returns a non-negative, "
+						+ "dimensionless number.",
+				"sqrt()",
+				-1,
+				"'sqrt(4.0)' returns 2.0"));
+
+		functions.add(new ButtonDesc("cbrt", "Cube root function ('cbrt')",
+				"Returns the cube root of a number.",
+				"Accepts a dimensionless number and returns a dimensionless number.",
+				"cbrt()",
+				-1,
+				"'cbrt(8.0)' returns 2.0",
+				"'cbrt(-8.0)' returns -2.0"));
+
+		functions.add(new ButtonDesc("choose", "Choose function ('choose')",
+				"Returns a value selected from a list using an index.",
+				"Accepts an integer followed by a list of numbers (with or without units), "
+						+ "strings, entities, arrays, or lambda functions. ",
+				"choose()",
+				-1,
+				"'choose(2, 1[s], 2[s], 3[s])' returns 2[s].",
+				"'choose(2, \"abc\", \"def\", \"ghi\")' returns \"def\".",
+				"'choose(2, [Entity1], [Entity2], [Entity3])' returns [Entity2]."));
+
+		functions.add(new ButtonDesc("exp", "Exponential function ('exp')",
+				"Returns the exponential of the input value.",
+				"Accepts a dimensionless number and returns a non-negative, dimensionless number.",
+				"exp()",
+				-1,
+				"'exp(1.0)' returns 2.71828..."));
+
+		functions.add(new ButtonDesc("ln", "Natural logarithm function ('ln')",
+				"Returns the natural logarithm of the input value.",
+				"Accepts a non-negative, dimensionless number and returns a dimensionless number.",
+				"ln()",
+				-1,
+				"'ln(2.71828)' returns 0.999999"));
+
+		functions.add(new ButtonDesc("log", "Base 10 logarithm function ('log')",
+				"Returns the base 10 logarithm of the input value.",
+				"Accepts a non-negative, dimensionless number and returns a dimensionless number.",
+				"log()",
+				-1,
+				"'log(100.0)' returns 2.0"));
+
+		functions.add(new ButtonDesc("sin", "Sine function ('sin')",
+				"Returns the sine function of the input value.",
+				"Accepts a dimensionless number or one with the units of AngleUnit and returns a "
+						+ "dimensionless number between -1.0 and 1.0.",
+				"sin()",
+				-1,
+				"'sin(30[deg])' returns 0.5"));
+
+		functions.add(new ButtonDesc("cos", "Cosine function ('cos')",
+				"Returns the cosine function of the input value.",
+				"Accepts a dimensionless number or one with the units of AngleUnit and returns a "
+						+ "dimensionless number between -1.0 and 1.0.",
+				"cos()",
+				-1,
+				"'cos(60[deg])' returns 0.5"));
+
+		functions.add(new ButtonDesc("tan", "Tangent function ('tan')",
+				"Returns the cosine function of the input value.",
+				"Accepts a dimensionless number or one with the units of AngleUnit and returns a "
+						+ "dimensionless number.",
+				"tan()",
+				-1,
+				"'tan(45[deg])' returns 1.0"));
+
+		functions.add(new ButtonDesc("asin", "Arcsine function ('asin')",
+				"Returns the arcsine function of the input value.",
+				"Accepts a dimensionless number between -1.0 and 1.0, and returns number with "
+						+ "units of AngleUnit.",
+				"asin()",
+				-1,
+				"'asin(0.5)' returns 30[deg]"));
+
+		functions.add(new ButtonDesc("acos", "Arccosine function ('acos')",
+				"Returns the arccosine function of the input value.",
+				"Accepts a dimensionless number between -1.0 and 1.0, and returns number with "
+						+ "units of AngleUnit.",
+				"acos()",
+				-1,
+				"'acos(0.5)' returns 60[deg]"));
+
+		functions.add(new ButtonDesc("atan", "Arctangent function ('atan')",
+				"Returns the arctangent function of the input value.",
+				"Accepts a dimensionless number and returns number with units of AngleUnit.",
+				"atan()",
+				-1,
+				"'atan(1.0)' returns 45[deg]"));
+
+		functions.add(new ButtonDesc("atan2", "Two-argument arctangent function ('atan2')",
+				"For Cartesian coordinates x and y, atan2(x,y) returns the angle for the "
+						+ "corresponding polar coordinates.",
+				"Accepts two dimensionless numbers and returns number with units of AngleUnit.",
+				"atan2()",
+				-1,
+				"'atan2(1.0, -1.0)' returns 135[deg]"));
+
+		functions.add(new ButtonDesc("notNull", "Not-null function ('notNull')",
+				"Determines whether an entity exists. It can be used to test whether an output "
+						+ "such as obj has been set.",
+				"Accepts an entity and returns a dimensionless number (either 0 or 1).",
+				"notNull()",
+				-1,
+				"'notNull([Server1].obj)' returns 1 if the output obj has been set."));
+
+		functions.add(new ButtonDesc("format", "Format function ('format')",
+				"Constructs a string using a format string and one or more additional arguments. "
+						+ "Each argument can be a dimensionless number, string, entity, array, "
+						+ "or map. The function mirrors the String.format method provided in "
+						+ "Java. Each entry of % in the format string indicates a format code "
+						+ "that inserts the next argument in the resulting output text. "
+						+ "The full set of Java format codes is supported. The two most relevant "
+						+ "are: %s - displays any argument as a string, and %.nf - displays a "
+						+ "number with n decimal places.",
+				"Accepts a string followed by one or more arguments that can be dimensionless "
+						+ "numbers, strings, entities, arrays, or maps. Returns a string.",
+				"format()",
+				-1,
+				"'format(\"x = %s\", [Entity1])' returns \"x = [Entity1]\".",
+				"'format(\"x = %s\", 5)' returns \"x = 5.0\".",
+				"'format(\"x = %.3f\", 5)' returns \"x = 5.000\".",
+				"'format(\"x = %.0f cm\", 5[m]/1[cm])' returns \"x = 500 cm\"."));
+
+		functions.add(new ButtonDesc("size", "Size function ('size')",
+				"Returns the number of entries in an array or map.",
+				"Accepts an array or map and returns a dimensionless, non-negative number.",
+				"size()",
+				-1,
+				"'size( {5, -1, 2} )' returns 3."));
+
+		functions.add(new ButtonDesc("minCol", "Minimum function for a Collection ('minCol')",
+				"Returns the smallest entry in an array or map.",
+				"Accepts an array or map of numbers with or without units. "
+						+ "Returns a number in the same units.",
+				"minCol()",
+				-1,
+				"'minCol( {5, -1, 2} )' returns -1."));
+
+		functions.add(new ButtonDesc("maxCol", "Minimum function for a Collection ('maxCol')",
+				"Returns the largest entry in an array or map.",
+				"Accepts an array or map of numbers with or without units. "
+						+ "Returns a number in the same units.",
+				"maxCol()",
+				-1,
+				"'maxCol( {5, -1, 2} )' returns 5."));
+
+		functions.add(new ButtonDesc("indexOfMinCol", "IndexOfMin function for a Collection "
+						+ "('indexOfMinCol')",
+				"Returns index or key for the smallest entry in an array or map.",
+				"Accepts an array or map of numbers with or without units. "
+						+ "Returns a postive integer or a key for the map.",
+				"indexOfMinCol()",
+				-1,
+				"'indexOfMinCol( {5, -1, 2} )' returns 2."));
+
+		functions.add(new ButtonDesc("indexOfMaxCol", "IndexOfMax function for a Collection "
+						+ "('indexOfMaxCol')",
+				"Returns index or key for the largest entry in an array or map.",
+				"Accepts an array or map of numbers with or without units. "
+						+ "Returns a postive integer or a key for the map.",
+				"indexOfMaxCol()",
+				-1,
+				"'indexOfMaxCol( {5, -1, 2} )' returns 1."));
+
+		functions.add(new ButtonDesc("indexOfNearest", "indexOfNearest function for a Collection "
+						+ "('indexOfNearest')",
+				"Returns index or key for the entry in an array or map that is closest to a "
+						+ "specified number.",
+				"Accepts an array or map of numbers with or without units, followed by number "
+						+ "with the same units. Returns a postive integer or a key for the map.",
+				"indexOfNearest()",
+				-1,
+				"'indexOfNearest( {5, -1, 2}, 1.5 )' returns 3."));
+
+		functions.add(new ButtonDesc("range", "Range function ('range')",
+				"Returns an array of numerical values that can be used as an input to a "
+						+ "higher-order function.",
+				"Accepts one, two, or three numerical arguments corresponding to the initial "
+						+ "value, the final value, and the increment between values.",
+				"range()",
+				-1,
+				"'range(3)' returns {1, 2, 3}.",
+				"'range(2, 4)' returns {2, 3, 4}.",
+				"'range(2, 3, 0.5)' returns {2.0, 2.5, 3.0}.",
+				"'range(2, 1)' returns {}."));
+
+		functions.add(new ButtonDesc("map", "Map higher-order function ('map')",
+				"Applies a one-input lambda function to each element of an array and returns an "
+						+ "array with the resulting values. If a two-input lambda function is "
+						+ "specified, the second input is the index of the element in the array.",
+				"Accepts a lamdba function and an array whose entries are suitable as inputs to "
+						+ "the lambda function. Returns a array containing the outputs of the "
+						+ "lambda function.",
+				"map()",
+				-1,
+				"'map( |x|(2 * x), {1, 2} )' returns {2, 4}.",
+				"'map( |x, i|(2 * i), {5, 8} )' returns {2, 4}."));
+
+		functions.add(new ButtonDesc("filter", "Filter higher-order function ('filter')",
+				"Applies a one-input lambda function to each element of an array and returns an "
+						+ "array with only the ones that return a non-zero number (true). "
+						+ "If a two-input lambda function is specified, the second input is the "
+						+ "index of the element in the array.",
+				"Accepts a lamdba function and an array whose entries are suitable as inputs to "
+						+ "the lambda function. Returns a array containing a sub-set of the input "
+						+ "array.",
+				"filter()",
+				-1,
+				"'filter( |x|(x > 2), {1, 2, 3, 4} )' returns {3, 4}.",
+				"'filter( |x, i|(i > 2), {5, 6, 7, 8} )' returns {7, 8}."));
+
+		functions.add(new ButtonDesc("reduce", "Reduce higher-order function ('reduce')",
+				"Applies the first input of a two-input lambda function to each element of an "
+						+ "array. The second input to the reduce function is the initial value "
+						+ "for an internal value maintained by the function during the "
+						+ "calculation. The result of the calculation for each element is "
+						+ "assigned to this internal value. After the last element is processed, "
+						+ "the internal value is returned.",
+				"Accepts three inputs: the lambda function, the initial value to be assigned to "
+						+ "the internal value, and the array to be processed.",
+				"reduce()",
+				-1,
+				"'reduce( |x, accum|(x + accum), 0, {1, 2, 3} )' returns 6.",
+				"'reduce( |x, accum|(max(x, accum)), 0, {1, 2, 3})' returns 3.",
+				"'reduce( |x, accum|(x || accum), 0, {0, 1, 0})' returns 1."));
+
+		functions.add(new ButtonDesc("sort", "Sort higher-order function ('sort')",
+				"Applies a two-input lambda function to the elements of an array and returns an "
+						+ "array that has been re-ordered so that the lambda function returns a "
+						+ "non-zero number (true) for each adjacent pair of elements. The lambda "
+						+ "function must return 0 (false) for entries that are equal.",
+				"Accepts a lamdba function and an array whose entries are suitable as inputs to "
+						+ "the lambda function. Returns a array containing a re-ordered version "
+						+ "of the input array.",
+				"sort()",
+				-1,
+				"'sort(|x, y|(x > y),{2, 3, 1})' returns {3, 2, 1}."));
 	}
 
 }
