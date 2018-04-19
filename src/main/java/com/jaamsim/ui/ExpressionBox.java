@@ -34,6 +34,7 @@ import java.util.Collections;
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
@@ -122,6 +123,18 @@ public class ExpressionBox extends JDialog {
 		msgText.setToolTipText(GUIFrame.formatToolTip("Result",
 				"The value returned by a valid input or "
 				+ "the error message returned an invalid input."));
+		int msgHeight = msgText.getPreferredSize().height;
+
+		// Entity and keyword
+		Entity ent = EditBox.getInstance().getCurrentEntity();
+		JLabel keyText = new JLabel(String.format("%s - %s", ent, input.getKeyword()));
+		keyText.setToolTipText(EditBox.getInputDesc(ent, input));
+		keyText.setPreferredSize(new Dimension(keyText.getPreferredSize().width, msgHeight));
+
+		JPanel keyPanel = new JPanel();
+		keyPanel.setLayout( new FlowLayout( FlowLayout.LEFT, 0, 0 ) );
+		keyPanel.add(Box.createRigidArea(new Dimension(40, msgHeight)));
+		keyPanel.add(keyText);
 
 		// Buttons
 		acceptButton = new JButton("Accept");
