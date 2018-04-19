@@ -55,6 +55,7 @@ import com.jaamsim.Graphics.Region;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ObjectType;
 import com.jaamsim.basicsim.Simulation;
+import com.jaamsim.input.ExpParser;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.KeywordIndex;
@@ -293,6 +294,10 @@ public class ExpressionBox extends JDialog {
 		buttonBar.add( new UnitButton("Unit", width, editArea) );
 		buttonBar.add( new UnitTypeButton("Type", width, editArea) );
 
+		// Function button
+		buttonBar.addSeparator(separatorDim);
+		buttonBar.add( new FunctionButton("Function", width, editArea) );
+
 		// Operator buttons
 		width = 20;
 		buttonBar.addSeparator(separatorDim);
@@ -482,6 +487,61 @@ public class ExpressionBox extends JDialog {
 						unitTypeMenu.add(item);
 					}
 					unitTypeMenu.show(UnitTypeButton.this, 0, height);
+				}
+			});
+		}
+
+	}
+
+	public static class FunctionButton extends JButton {
+
+		private FunctionButton(String name, int w, final JTextArea text) {
+			super(name);
+			setMargin(new Insets( 0, 0, 0, 0 ));
+			int width = Math.max(w, getPreferredSize().width);
+			final int height = getPreferredSize().height;
+			setPreferredSize(new Dimension(width, height));
+			setToolTipText(GUIFrame.formatKeywordToolTip(
+					null,
+					"Functions",
+					"Various functions provided with JaamSim.",
+					null));
+			addActionListener( new ActionListener() {
+
+				@Override
+				public void actionPerformed( ActionEvent event ) {
+					JPopupMenu funcMenu = new JPopupMenu();
+
+					// Loop through the unit types that have been defined
+					for (final String funcName : ExpParser.getFunctionNames()) {
+						JMenuItem item = new JMenuItem(funcName);
+						final ButtonDesc bd = getButtonDesc(functions, funcName);
+						if (bd != null) {
+							item.setToolTipText(GUIFrame.formatKeywordToolTip(
+									null,
+									bd.title,
+									bd.description,
+									bd.arguments,
+									bd.examples));
+						}
+						item.addActionListener( new ActionListener() {
+
+							@Override
+							public void actionPerformed( ActionEvent event ) {
+								String str = funcName + "()";
+								int offset = -1;
+								if (bd != null) {
+									str = bd.insert;
+									offset = bd.insertPos;
+								}
+								text.insert(str, text.getCaretPosition());
+								text.setCaretPosition(text.getCaretPosition() + offset);
+								text.requestFocusInWindow();
+							}
+						} );
+						funcMenu.add(item);
+					}
+					funcMenu.show(FunctionButton.this, 0, height);
 				}
 			});
 		}
