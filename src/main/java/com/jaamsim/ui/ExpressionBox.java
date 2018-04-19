@@ -131,10 +131,10 @@ public class ExpressionBox extends JDialog {
 		keyText.setToolTipText(EditBox.getInputDesc(ent, input));
 		keyText.setPreferredSize(new Dimension(keyText.getPreferredSize().width, msgHeight));
 
-		JPanel keyPanel = new JPanel();
-		keyPanel.setLayout( new FlowLayout( FlowLayout.LEFT, 0, 0 ) );
-		keyPanel.add(Box.createRigidArea(new Dimension(40, msgHeight)));
-		keyPanel.add(keyText);
+		JPanel leftPanel = new JPanel();
+		leftPanel.setLayout( new BorderLayout() );
+		leftPanel.add(keyText, BorderLayout.NORTH);
+		leftPanel.add(msgText, BorderLayout.SOUTH);
 
 		// Buttons
 		acceptButton = new JButton("Accept");
@@ -142,10 +142,22 @@ public class ExpressionBox extends JDialog {
 
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.setLayout( new FlowLayout(FlowLayout.CENTER) );
-		buttonPanel.add(msgText);
 		buttonPanel.add(acceptButton);
 		buttonPanel.add(cancelButton);
-		getContentPane().add(buttonPanel, BorderLayout.SOUTH);
+
+		JPanel rightPanel = new JPanel();
+		rightPanel.setLayout( new BorderLayout());
+		rightPanel.add(Box.createRigidArea(new Dimension(40, msgHeight)), BorderLayout.NORTH);
+		rightPanel.add(buttonPanel, BorderLayout.SOUTH);
+
+		// Combined panel with entity, keyword, result, and buttons
+		JPanel southPanel = new JPanel();
+		southPanel.setLayout( new FlowLayout(FlowLayout.LEFT) );
+		southPanel.add(leftPanel);
+		southPanel.add(Box.createRigidArea(new Dimension(10, msgHeight)));
+		southPanel.add(rightPanel);
+		southPanel.setBorder(new EmptyBorder(0, 10, 0, 0));
+		getContentPane().add(southPanel, BorderLayout.SOUTH);
 
 		pack();
 		editArea.requestFocusInWindow();
