@@ -589,6 +589,9 @@ public class ExpressionBox extends JDialog {
 					ent = Entity.getNamedEntity(entName);
 				}
 			}
+			else if (dotIndex >= 4 && text.substring(dotIndex - 4, dotIndex).equals("this")) {
+				ent = EditBox.getInstance().getCurrentEntity();
+			}
 
 			if (ent == null) {
 				setEditMode(EDIT_MODE_NORMAL);
