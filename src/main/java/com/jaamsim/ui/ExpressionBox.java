@@ -21,12 +21,14 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GraphicsEnvironment;
 import java.awt.Insets;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 
 import javax.swing.Box;
@@ -52,6 +54,7 @@ import com.jaamsim.Graphics.OverlayEntity;
 import com.jaamsim.Graphics.Region;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ObjectType;
+import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.KeywordIndex;
@@ -66,6 +69,13 @@ public class ExpressionBox extends JDialog {
 	private final JButton acceptButton;
 	private final JButton cancelButton;
 	private int result;
+
+	private int editMode;
+	private static JPopupMenu entityMenu;
+	private static final int EDIT_MODE_NORMAL = 0;
+	private static final int EDIT_MODE_ENTITY = 1;
+
+	private static final char[] invalidEntityChars = {']', ' ', '\t', '\n', '{', '}'};
 
 	public static final int CANCEL_OPTION = 1;  // Cancel button is clicked
 	public static final int APPROVE_OPTION = 0; // Accept button is clicked
@@ -118,6 +128,7 @@ public class ExpressionBox extends JDialog {
 
 		pack();
 		editArea.requestFocusInWindow();
+		setEditMode(EDIT_MODE_NORMAL);
 
 		// Window closed event
 		this.addWindowListener( new WindowAdapter() {
@@ -157,16 +168,56 @@ public class ExpressionBox extends JDialog {
 			@Override
 			public void insertUpdate(DocumentEvent e) {
 				tryParse();
+				if (e.getLength() > 1) {
+					setEditMode(EDIT_MODE_NORMAL);
+					return;
+				}
+
+				// Set or terminate the entity/output name selection state
+				char c = editArea.getText().charAt(e.getOffset());
+				if (c == '[') {
+					setEditMode(EDIT_MODE_ENTITY);
+				}
+
+				// Show the pop-up menus for entity/output selection
+				showMenus(e.getOffset());
 			}
 
 			@Override
 			public void removeUpdate(DocumentEvent e) {
 				tryParse();
+				if (e.getLength() > 1) {
+					setEditMode(EDIT_MODE_NORMAL);
+					return;
+				}
+
+				// FIXME Bugs in getCaretPosition and getOffset methods:
+				// getCaretPosition and e.getOffset work differently depending on whether
+				// the Delete key or Backspace key is pressed. For Delete, both methods return
+				// the correct value. For Backspace, the two methods return different incorrect
+				// values: getOffset returns the 1 + correct value, while getCaretPosition returns
+				// 2 + correct value.
+				int offset = e.getOffset();
+				if (offset != editArea.getCaretPosition())
+					offset = offset - 1;
+				offset = Math.min(offset, editArea.getText().length() - 1);
+
+				// Show the pop-up menus for entity/output selection
+				showMenus(offset);
 			}
 
 			@Override
-			public void changedUpdate(DocumentEvent e) {}
+			public void changedUpdate(DocumentEvent e) {
+				setEditMode(EDIT_MODE_NORMAL);
+			}
 	    });
+	}
+
+	private void setEditMode(int mode) {
+		editMode = mode;
+		if (mode != EDIT_MODE_ENTITY && entityMenu != null) {
+			entityMenu.setVisible(false);
+		}
 	}
 
 	private void tryParse() {
@@ -422,6 +473,80 @@ public class ExpressionBox extends JDialog {
 			});
 		}
 
+	}
+
+	private void showMenus(int ind1) {
+		String text = editArea.getText();
+
+		if (editMode == EDIT_MODE_ENTITY) {
+
+			// Determine the partial name for the entity
+			final int ind0 = text.lastIndexOf('[', ind1);
+			if (ind0 == -1) {
+				setEditMode(EDIT_MODE_NORMAL);
+				return;
+			}
+			String name = "";
+			if (ind1 > ind0) {
+				name = text.substring(ind0 + 1, ind1 + 1);
+			}
+
+			// Does the name contain any invalid characters?
+			for (char c : name.toCharArray()) {
+				if (Arrays.asList(invalidEntityChars).contains(c)) {
+					setEditMode(EDIT_MODE_NORMAL);
+					return;
+				}
+			}
+
+			// Show the entity name pop-up
+			showEntityMenu(name, ind0, ind1);
+			return;
+		}
+	}
+
+	private void showEntityMenu(String name, final int ind0, final int ind1) {
+		entityMenu = new JPopupMenu();
+		ArrayList<String> nameList = new ArrayList<>();
+		for (DisplayEntity each: Entity.getClonesOfIterator(DisplayEntity.class)) {
+			if (each.testFlag(Entity.FLAG_GENERATED))
+				continue;
+
+			if (each instanceof OverlayEntity || each instanceof Region
+					|| each instanceof EntityLabel)
+				continue;
+
+			if (!each.getName().toUpperCase().contains(name.toUpperCase()))
+				continue;
+
+			nameList.add(each.getName());
+		}
+		String simName = Simulation.getInstance().getName();
+		if (simName.toUpperCase().contains(name.toUpperCase())) {
+			nameList.add(simName);
+		}
+		Collections.sort(nameList, Input.uiSortOrder);
+
+		for (final String entName : nameList) {
+			JMenuItem item = new JMenuItem(entName);
+			item.addActionListener( new ActionListener() {
+
+				@Override
+				public void actionPerformed( ActionEvent event ) {
+					String str = String.format("[%s]", entName);
+					editArea.replaceRange(str, ind0, ind1 + 1);
+					editArea.requestFocusInWindow();
+					setEditMode(EDIT_MODE_NORMAL);
+				}
+			} );
+			entityMenu.add(item);
+		}
+		Point p = editArea.getCaret().getMagicCaretPosition();
+		if (p == null)
+			p = new Point();  // p is null after text is selected and the '[' key is pressed
+		int height = editArea.getFontMetrics(editArea.getFont()).getHeight();
+		entityMenu.show(editArea, p.x, p.y + height);
+		editArea.requestFocusInWindow();
 	}
 
 	private static class ButtonDesc {
