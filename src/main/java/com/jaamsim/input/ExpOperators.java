@@ -1732,8 +1732,11 @@ public class ExpOperators {
 					}
 					else {
 						if (args[i].unitType != DimensionlessUnit.class) {
-							throw new ExpError(source, pos, "'format' argument %d must be a dimensionless number. Remove units by dividing by the " +
-															"desired unit. \nExample: format(\"5km is %%f meters\", 5[km]/1[m])", i);
+							throw new ExpError(source, pos,
+									"'format' argument %d must be a dimensionless number. "
+									+ "Make it so by dividing it by 1 in the desired unit.\n"
+									+ "Example: 'format(\"5km is %%f metres\", 5[km]/1[m])'",
+									i + 1);
 						}
 						strArgs[i-1] = new Double(args[i].value);
 					}
