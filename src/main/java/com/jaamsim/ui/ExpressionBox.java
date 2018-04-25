@@ -88,8 +88,10 @@ public class ExpressionBox extends JDialog {
 	public static final int APPROVE_OPTION = 0; // Accept button is clicked
 	public static final int ERROR_OPTION = -1;  // Error occurs or the dialog is dismissed
 
+	public static final String DIALOG_NAME = "Input Builder";
+
 	public ExpressionBox(Input<?> in, String str) {
-		super((JDialog)null, "Expression Builder", true);
+		super((JDialog)null, DIALOG_NAME, true);
 
 		getContentPane().setLayout( new BorderLayout() );
 		setPreferredSize(new Dimension(900, 300));

@@ -27,8 +27,6 @@ import javax.swing.JTable;
 
 public class ExpressionEditor extends ChooserEditor {
 
-	private static final String OPTION_EXP_BUILDER = "*** Expression Builder ***";
-
 	public ExpressionEditor(JTable table) {
 		super(table, true);
 	}
@@ -52,7 +50,8 @@ public class ExpressionEditor extends ChooserEditor {
 
 			// If there are multiple options, select either one of the options or the
 			// Expression Builder
-			array.add(0, OPTION_EXP_BUILDER);
+			final String expBuilderOption = String.format("*** %s ***", ExpressionBox.DIALOG_NAME);
+			array.add(0, expBuilderOption);
 			JPopupMenu menu = new JPopupMenu();
 			Component button = (Component)e.getSource();
 			Component panel = button.getParent();
@@ -63,7 +62,7 @@ public class ExpressionEditor extends ChooserEditor {
 
 					@Override
 					public void actionPerformed( ActionEvent event ) {
-						if (OPTION_EXP_BUILDER.equals(option)) {
+						if (expBuilderOption.equals(option)) {
 							launchExpressionBox();
 							return;
 						}
