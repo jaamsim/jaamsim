@@ -1868,6 +1868,12 @@ public class InputAgent {
 		return new KeywordIndex(keyword, tokens, null);
 	}
 
+	public static KeywordIndex formatInput(String keyword, String str) {
+		ArrayList<String> tokens = new ArrayList<>();
+		Parser.tokenize(tokens, str, true);
+		return new KeywordIndex(keyword, tokens, null);
+	}
+
 	/**
 	 * Split an input (list of strings) down to a single level of nested braces, this may then be called again for
 	 * further nesting.
