@@ -267,9 +267,7 @@ public class ExpressionBox extends JDialog {
 			// Load the input
 			Entity ent = EditBox.getInstance().getCurrentEntity();
 			String str = editArea.getText().replace("\n", " ");
-			ArrayList<String> tokens = new ArrayList<>();
-			Parser.tokenize(tokens, str, true);
-			KeywordIndex kw = new KeywordIndex(input.getKeyword(), tokens, null);
+			KeywordIndex kw = InputAgent.formatInput(input.getKeyword(), str);
 			InputAgent.storeAndExecute(new KeywordCommand(ent, kw));
 
 			// If successful, show the result

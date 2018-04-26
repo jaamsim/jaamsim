@@ -17,8 +17,6 @@
  */
 package com.jaamsim.ui;
 
-import java.util.ArrayList;
-
 import javax.swing.AbstractCellEditor;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
@@ -106,13 +104,10 @@ public abstract class CellEditor extends AbstractCellEditor implements TableCell
 					if (Parser.needsQuoting(str) && !Parser.isQuoted(str))
 						str = Parser.addQuotes(str);
 				}
-				// Keyword
-				ArrayList<String> tokens = new ArrayList<>();
-				Parser.tokenize(tokens, str, true);
 
 				// Parse the keyword inputs
 				Entity ent = EditBox.getInstance().getCurrentEntity();
-				KeywordIndex kw = new KeywordIndex(in.getKeyword(), tokens, null);
+				KeywordIndex kw = InputAgent.formatInput(in.getKeyword(), str);
 				InputAgent.storeAndExecute(new KeywordCommand(ent, kw));
 				in.setValid(true);
 			}

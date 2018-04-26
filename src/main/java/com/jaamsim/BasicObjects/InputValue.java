@@ -16,8 +16,6 @@
  */
 package com.jaamsim.BasicObjects;
 
-import java.util.ArrayList;
-
 import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.Graphics.TextBasics;
 import com.jaamsim.Samples.SampleProvider;
@@ -27,7 +25,6 @@ import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.Output;
-import com.jaamsim.input.Parser;
 import com.jaamsim.input.UnitTypeInput;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.ui.GUIFrame;
@@ -89,9 +86,7 @@ public class InputValue extends TextBasics implements SampleProvider {
 	public void acceptEdits() {
 		try {
 			suppressUpdate = true;
-			ArrayList<String> tokens = new ArrayList<>();
-			Parser.tokenize(tokens, getEditText(), true);
-			KeywordIndex kw = new KeywordIndex(valInput.getKeyword(), tokens, null);
+			KeywordIndex kw = InputAgent.formatInput(valInput.getKeyword(), getEditText());
 			InputAgent.storeAndExecute(new KeywordCommand(this, kw));
 			super.acceptEdits();
 		}
