@@ -57,7 +57,6 @@ import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.DistanceUnit;
 import com.jaamsim.units.TimeUnit;
 import com.jaamsim.units.Unit;
-import com.jaamsim.units.UserSpecifiedUnit;
 
 /**
  * Simulation provides the basic structure for the Entity model lifetime of earlyInit,
@@ -351,7 +350,7 @@ public class Simulation extends Entity {
 		unitTypeList = new UnitTypeListInput("UnitTypeList", KEY_INPUTS, null);
 
 		runOutputList = new StringProvListInput("RunOutputList", KEY_INPUTS, null);
-		runOutputList.setUnitType(UserSpecifiedUnit.class);
+		runOutputList.setUnitType(DimensionlessUnit.class);
 
 		tickLengthInput = new ValueInput("TickLength", KEY_INPUTS, 1e-6d);
 		tickLengthInput.setUnitType(TimeUnit.class);
