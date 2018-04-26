@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2002-2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2017 JaamSim Software Inc.
+ * Copyright (C) 2016-2018 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -118,7 +118,13 @@ public class Simulation extends Entity {
 	private static final DirInput reportDirectory;
 
 	@Keyword(description = "The unit types for the selected outputs for the simulation run. "
-	                     + "Use DimensionlessUnit for a text output.",
+	                     + "Use DimensionlessUnit for non-numeric outputs such as strings, "
+	                     + "entities, and arrays. "
+	                     + "If the RunOutputList keyword has more entries than the UnitTypesList "
+	                     + "keyword, then the last unit type in the list is applied to the "
+	                     + "remaining RunOutputList entries.\n\n"
+	                     + "It is best to leave this input blank and use only dimensionless "
+	                     + "quantities and non-numeric outputs in the RunOutputList.",
 	         exampleList = {"DistanceUnit  SpeedUnit"})
 	private static final UnitTypeListInput unitTypeList;
 
@@ -126,8 +132,16 @@ public class Simulation extends Entity {
 	                     + "simulation run. Each output is specified by an expression. In script "
 	                     + "mode (-s tag), the selected outputs are printed to the command line "
 	                     + "(standard out). Otherwise, they are printed to the file "
-	                     + "<configuration file name>.dat.",
-	         exampleList = {"{ [Entity1].Out1 } { [Entity2].Out2 }"})
+	                     + "<configuration file name>.dat.\n\n"
+	                     + "It is best to include only dimensionless quantities and non-numeric "
+	                     + "outputs in the RunOutputList. "
+	                     + "An output with dimensions can be made non-dimensional by dividing it "
+	                     + "by 1 in the desired unit, e.g. '[Queue1].AverageQueueTime / 1[h]' is "
+	                     + "the average queue time in hours.\n\n"
+	                     + "If a number with dimensions is to be recorded, its unit type must "
+	                     + "first be entered in the correct position in the input to the "
+	                     + "UnitTypeList keyword.",
+	         exampleList = {"{ [Simulation].RunNumber } { '[Queue1].AverageQueueTime / 1[h]' }"})
 	protected static final StringProvListInput runOutputList;
 
 	@Keyword(description = "The length of time represented by one simulation tick.",
