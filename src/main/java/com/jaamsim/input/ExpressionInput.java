@@ -43,6 +43,11 @@ public class ExpressionInput extends Input<ExpParser.Expression> {
 	}
 
 	@Override
+	public String applyConditioning(String str) {
+		return Parser.addQuotesIfNeeded(str);
+	}
+
+	@Override
 	public void parse(KeywordIndex kw)
 	throws InputErrorException {
 		Input.assertCount(kw, 1);
