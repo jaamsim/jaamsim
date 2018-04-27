@@ -26,14 +26,10 @@ import javax.swing.table.TableCellEditor;
 
 import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.basicsim.Entity;
-import com.jaamsim.input.ExpressionInput;
-import com.jaamsim.input.FileInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.KeywordIndex;
-import com.jaamsim.input.Parser;
-import com.jaamsim.input.StringInput;
 import com.jaamsim.ui.EditBox.EditTable;
 
 public abstract class CellEditor extends AbstractCellEditor implements TableCellEditor {
@@ -95,16 +91,10 @@ public abstract class CellEditor extends AbstractCellEditor implements TableCell
 				return;
 
 			// Adjust the user's entry to standardise the syntax
+			String str = newValue.trim();
+			str = in.applyConditioning(str);
+
 			try {
-				String str = newValue.trim();
-				Class<?> klass = in.getClass();
-
-				// Add single quotes to String inputs
-				if (klass == StringInput.class || klass == FileInput.class || klass == ExpressionInput.class) {
-					if (Parser.needsQuoting(str) && !Parser.isQuoted(str))
-						str = Parser.addQuotes(str);
-				}
-
 				// Parse the keyword inputs
 				Entity ent = EditBox.getInstance().getCurrentEntity();
 				KeywordIndex kw = InputAgent.formatInput(in.getKeyword(), str);
