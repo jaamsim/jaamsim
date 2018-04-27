@@ -24,6 +24,7 @@ import com.jaamsim.basicsim.Entity;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.KeywordIndex;
+import com.jaamsim.input.Parser;
 
 public class EntityProvInput<T extends Entity> extends Input<EntityProvider<T>> {
 
@@ -50,6 +51,11 @@ public class EntityProvInput<T extends Entity> extends Input<EntityProvider<T>> 
 		if (value instanceof EntityProvExpression<?>) {
 			parseFrom(in);
 		}
+	}
+
+	@Override
+	public String applyConditioning(String str) {
+		return Parser.addQuotesIfNeeded(str);
 	}
 
 	@Override

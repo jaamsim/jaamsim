@@ -26,6 +26,7 @@ import com.jaamsim.basicsim.Entity;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.KeywordIndex;
+import com.jaamsim.input.Parser;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
@@ -62,6 +63,11 @@ public class StringProvInput extends Input<StringProvider> {
 		if (value instanceof StringProvExpression) {
 			parseFrom(in);
 		}
+	}
+
+	@Override
+	public String applyConditioning(String str) {
+		return Parser.addQuotesIfNeeded(str);
 	}
 
 	@Override
