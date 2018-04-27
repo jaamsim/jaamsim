@@ -219,6 +219,15 @@ public abstract class Input<T> {
 		return null;
 	}
 
+	/**
+	 * Corrects common input errors that can be detected prior to parsing.
+	 * @param str - uncorrected input string
+	 * @return corrected input string
+	 */
+	public String applyConditioning(String str) {
+		return str;
+	}
+
 	@Override
 	public String toString() {
 		return String.format("%s", value);
