@@ -196,6 +196,9 @@ public class View extends Entity {
 	public void kill() {
 		super.kill();
 		allInstances.remove(this);
+		if (RenderManager.isGood()) {
+			RenderManager.inst().closeWindow(this);
+		}
 	}
 
 
