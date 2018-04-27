@@ -201,6 +201,15 @@ public class View extends Entity {
 		}
 	}
 
+	@Override
+	public void restore(String name) {
+		super.restore(name);
+		allInstances.add(this);
+		if (RenderManager.isGood()) {
+			RenderManager.inst().createWindow(this);
+		}
+	}
+
 
 	private static class WindowSizePosUpdater implements Runnable {
 		private final IntegerVector pos;
