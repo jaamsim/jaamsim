@@ -254,8 +254,8 @@ public class ObjectSelector extends FrameBox {
 				if (ent == tls)
 					continue;
 
-				// Do not include the units or views
-				if (ent instanceof Unit || ent instanceof View)
+				// Do not include the units
+				if (ent instanceof Unit)
 					continue;
 
 				// Apply an upper bound on the number of generated entities to display
