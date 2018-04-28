@@ -233,6 +233,8 @@ public class ObjectSelector extends FrameBox {
 				}
 
 				// Add the node for the Object Type to the palette
+				if (type.getName().equals(type.getPaletteName()))
+					continue;
 				DefaultMutableTreeNode typeNode = new DefaultMutableTreeNode(type.getName(), true);
 				paletteNode.add(typeNode);
 			}
@@ -291,6 +293,9 @@ public class ObjectSelector extends FrameBox {
 
 				// Find the object type node for this entity
 				DefaultMutableTreeNode typeNode = getNodeFor_In(type.getName(), paletteNode);
+				if (type.getName().equals(type.getPaletteName())) {
+					typeNode = paletteNode;
+				}
 				if (typeNode == null)
 					continue;
 
@@ -309,6 +314,8 @@ public class ObjectSelector extends FrameBox {
 			Enumeration<?> typeEnum = paletteNode.children();
 			while (typeEnum.hasMoreElements()) {
 				DefaultMutableTreeNode typeNode = (DefaultMutableTreeNode)typeEnum.nextElement();
+				if (!typeNode.getAllowsChildren())
+					continue;
 				if (typeNode.isLeaf())
 					nodesToRemove.add(typeNode);
 			}
