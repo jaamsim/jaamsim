@@ -1,5 +1,4 @@
 Define ObjectType {
-                    View
                     Region
                     DisplayEntity
                     Text
@@ -19,7 +18,6 @@ Define ObjectType {
 Define  ImageModel { MimicEntityIconModel }
 MimicEntityIconModel   ImageFile { '<res>/images/MimicEntity-256.png' }  Transparent { TRUE }
 
-View                  JavaClass { com.jaamsim.ui.View                                } Palette { 'Graphics Objects' }                                           DragAndDrop { FALSE }
 Region                JavaClass { com.jaamsim.Graphics.Region                        } Palette { 'Graphics Objects' } DefaultDisplayModel { RegionModelDefault       } IconFile { '<res>/images/Region-24.png' } DefaultSize { 1.125000 1.1568242 1.1266404 m } DefaultAlignment { -0.4393409 -0.4410096 -0.4394292 }
 DisplayEntity         JavaClass { com.jaamsim.Graphics.DisplayEntity                 } Palette { 'Graphics Objects' } DefaultDisplayModel { Cube                     } IconFile { '<res>/images/DisplayEntity-24.png' }
 Text                  JavaClass { com.jaamsim.Graphics.Text                          } Palette { 'Graphics Objects' } DefaultDisplayModel { TextModelDefault         } IconFile { '<res>/images/Text-24.png' }
@@ -35,7 +33,6 @@ Graph                 JavaClass { com.jaamsim.Graphics.Graph                    
 MimicEntity           JavaClass { com.jaamsim.Graphics.MimicEntity                   } Palette { 'Graphics Objects' } DefaultDisplayModel { MimicEntityIconModel     } IconFile { '<res>/images/MimicEntity-24.png' }
 VideoRecorder         JavaClass { com.jaamsim.ui.VideoRecorderEntity                 } Palette { 'Graphics Objects' } DefaultDisplayModel { VideoRecorderIconModel   } IconFile { '<res>/images/VideoRecorder-24.png' }
 
-View          Description { 'Display window showing view of the 3D model universe.' }
 Region        Description { 'Local coordinate system.' }
 DisplayEntity Description { 'Graphical object displaying either a 3D shape or a 2D picture.' }
 Text          Description { 'Text that appears in the 3D model universe.' }
