@@ -123,6 +123,9 @@ public class View extends Entity {
 	}
 
 	{
+		attributeDefinitionList.setHidden(true);
+		namedExpressionInput.setHidden(true);
+
 		region = new EntityInput<>(Region.class, "Region", GRAPHICS, null);
 		this.addInput(region);
 
