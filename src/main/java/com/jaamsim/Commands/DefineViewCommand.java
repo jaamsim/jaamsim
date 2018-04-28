@@ -70,7 +70,6 @@ public class DefineViewCommand implements Command {
 	@Override
 	public void undo() {
 		view.kill();
-		RenderManager.inst().closeWindow(view);
 	}
 
 	@Override
