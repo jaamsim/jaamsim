@@ -25,6 +25,7 @@ import java.util.LinkedHashMap;
 import java.util.TreeSet;
 
 import com.jaamsim.Graphics.DisplayEntity;
+import com.jaamsim.ProcessFlow.EntStorage.StorageEntry;
 import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.Statistics.TimeBasedFrequency;
@@ -379,9 +380,9 @@ public class Queue extends LinkedComponent {
 	}
 
 	private QueueEntry getQueueEntry(DisplayEntity ent) {
-		Iterator<QueueEntry> itr = itemSet.iterator();
+		Iterator<StorageEntry> itr = storage.iterator();
 		while (itr.hasNext()) {
-			QueueEntry entry = itr.next();
+			QueueEntry entry = (QueueEntry) itr.next();
 			if (entry.entity == ent)
 				return entry;
 		}
@@ -396,7 +397,7 @@ public class Queue extends LinkedComponent {
 	 */
 	public int getPosition(DisplayEntity ent) {
 		int ret = 0;
-		Iterator<QueueEntry> itr = itemSet.iterator();
+		Iterator<StorageEntry> itr = storage.iterator();
 		while (itr.hasNext()) {
 			if (itr.next().entity == ent)
 				return ret;
@@ -410,9 +411,10 @@ public class Queue extends LinkedComponent {
 	 * Removes the first entity from the queue
 	 */
 	public DisplayEntity removeFirst() {
-		if (itemSet.isEmpty())
+		if (storage.isEmpty())
 			error("Cannot remove an entity from an empty queue");
-		return this.remove(itemSet.first());
+		QueueEntry entry = (QueueEntry) storage.first();
+		return this.remove(entry);
 	}
 
 	/**
@@ -420,37 +422,38 @@ public class Queue extends LinkedComponent {
 	 * @return first entity in the queue.
 	 */
 	public DisplayEntity getFirst() {
-		if (itemSet.isEmpty())
+		if (storage.isEmpty())
 			return null;
-		return itemSet.first().entity;
+		return storage.first().entity;
 	}
 
 	/**
 	 * Returns the number of entities in the queue
 	 */
 	public int getCount() {
-		return itemSet.size();
+		return storage.size();
 	}
 
 	/**
 	 * Returns true if the queue is empty
 	 */
 	public boolean isEmpty() {
-		return itemSet.isEmpty();
+		return storage.isEmpty();
 	}
 
 	/**
 	 * Returns the number of seconds spent by the first object in the queue
 	 */
 	public double getQueueTime() {
-		return this.getSimTime() - itemSet.first().timeAdded;
+		QueueEntry entry = (QueueEntry) storage.first();
+		return this.getSimTime() - entry.timeAdded;
 	}
 
 	/**
 	 * Returns the priority value for the first object in the queue
 	 */
 	public int getFirstPriority() {
-		return itemSet.first().priority;
+		return storage.first().priority;
 	}
 
 	/**
@@ -460,22 +463,20 @@ public class Queue extends LinkedComponent {
 	 * @return number of entities that have this match value.
 	 */
 	public int getMatchCount(String m) {
-		if (m == null)
-			return itemSet.size();
-		TreeSet<QueueEntry> matchSet = matchMap.get(m);
-		if (matchSet == null)
-			return 0;
-		return matchSet.size();
+		if (m == null) {
+			return storage.size();
+		}
+		return storage.size(m);
 	}
 
 	public DisplayEntity getFirstForMatch(String m) {
 		if (m == null) {
 			return this.getFirst();
 		}
-		TreeSet<QueueEntry> matchSet = matchMap.get(m);
-		if (matchSet == null)
+		StorageEntry entry = storage.first(m);
+		if (entry == null)
 			return null;
-		return matchSet.first().entity;
+		return entry.entity;
 	}
 
 	/**
@@ -490,10 +491,8 @@ public class Queue extends LinkedComponent {
 		if (m == null)
 			return this.removeFirst();
 
-		TreeSet<QueueEntry> matchSet = matchMap.get(m);
-		if (matchSet == null)
-			return null;
-		return this.remove(matchSet.first());
+		QueueEntry entry = (QueueEntry) storage.first(m);
+		return this.remove(entry);
 	}
 
 	/**
