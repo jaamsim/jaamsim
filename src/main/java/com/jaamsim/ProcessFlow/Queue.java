@@ -18,6 +18,7 @@
 package com.jaamsim.ProcessFlow;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -686,15 +687,15 @@ public class Queue extends LinkedComponent {
 	    unitType = DimensionlessUnit.class,
 	    sequence = 0)
 	public int getQueueLength(double simTime) {
-		return itemSet.size();
+		return storage.size();
 	}
 
 	@Output(name = "QueueList",
 	 description = "The entities in the queue.",
 	    sequence = 1)
 	public ArrayList<DisplayEntity> getQueueList(double simTime) {
-		ArrayList<DisplayEntity> ret = new ArrayList<>(itemSet.size());
-		Iterator<QueueEntry> itr = itemSet.iterator();
+		ArrayList<DisplayEntity> ret = new ArrayList<>(storage.size());
+		Iterator<StorageEntry> itr = storage.iterator();
 		while (itr.hasNext()) {
 			ret.add(itr.next().entity);
 		}
@@ -706,10 +707,11 @@ public class Queue extends LinkedComponent {
 	    unitType = TimeUnit.class,
 	    sequence = 2)
 	public ArrayList<Double> getQueueTimes(double simTime) {
-		ArrayList<Double> ret = new ArrayList<>(itemSet.size());
-		Iterator<QueueEntry> itr = itemSet.iterator();
+		ArrayList<Double> ret = new ArrayList<>(storage.size());
+		Iterator<StorageEntry> itr = storage.iterator();
 		while (itr.hasNext()) {
-			ret.add(simTime - itr.next().timeAdded);
+			QueueEntry entry = (QueueEntry) itr.next();
+			ret.add(simTime - entry.timeAdded);
 		}
 		return ret;
 	}
@@ -719,8 +721,8 @@ public class Queue extends LinkedComponent {
 	    unitType = DimensionlessUnit.class,
 	    sequence = 3)
 	public IntegerVector getPriorityValues(double simTime) {
-		IntegerVector ret = new IntegerVector(itemSet.size());
-		Iterator<QueueEntry> itr = itemSet.iterator();
+		IntegerVector ret = new IntegerVector(storage.size());
+		Iterator<StorageEntry> itr = storage.iterator();
 		while (itr.hasNext()) {
 			ret.add(itr.next().priority);
 		}
@@ -732,8 +734,8 @@ public class Queue extends LinkedComponent {
 	    unitType = DimensionlessUnit.class,
 	    sequence = 4)
 	public ArrayList<String> getMatchValues(double simTime) {
-		ArrayList<String> ret = new ArrayList<>(itemSet.size());
-		Iterator<QueueEntry> itr = itemSet.iterator();
+		ArrayList<String> ret = new ArrayList<>(storage.size());
+		Iterator<StorageEntry> itr = storage.iterator();
 		while (itr.hasNext()) {
 			String m = itr.next().type;
 			if (m != null) {
@@ -808,14 +810,14 @@ public class Queue extends LinkedComponent {
 	    unitType = DimensionlessUnit.class,
 	    sequence = 11)
 	public int getMatchValueCount(double simTime) {
-		return matchMap.size();
+		return storage.getTypes().size();
 	}
 
 	@Output(name = "UniqueMatchValues",
 	 description = "The list of unique Match values for the entities in the queue.",
 	    sequence = 12)
 	public ArrayList<String> getUniqueMatchValues(double simTime) {
-		ArrayList<String> ret = new ArrayList<>(matchMap.keySet());
+		ArrayList<String> ret = new ArrayList<>(storage.getTypes());
 		Collections.sort(ret);
 		return ret;
 	}
@@ -827,9 +829,9 @@ public class Queue extends LinkedComponent {
 	    unitType = DimensionlessUnit.class,
 	    sequence = 13)
 	public LinkedHashMap<String, Integer> getMatchValueCountMap(double simTime) {
-		LinkedHashMap<String, Integer> ret = new LinkedHashMap<>(matchMap.size());
+		LinkedHashMap<String, Integer> ret = new LinkedHashMap<>(storage.getTypes().size());
 		for (String m : getUniqueMatchValues(simTime)) {
-			ret.put(m, matchMap.get(m).size());
+			ret.put(m, storage.size(m));
 		}
 		return ret;
 	}
@@ -840,11 +842,11 @@ public class Queue extends LinkedComponent {
 	             + "whose Match value is \"SKU1\".",
 	    sequence = 14)
 	public LinkedHashMap<String, ArrayList<DisplayEntity>> getMatchValueMap(double simTime) {
-		LinkedHashMap<String, ArrayList<DisplayEntity>> ret = new LinkedHashMap<>(matchMap.size());
+		LinkedHashMap<String, ArrayList<DisplayEntity>> ret = new LinkedHashMap<>(storage.getTypes().size());
 		for (String m : getUniqueMatchValues(simTime)) {
-			TreeSet<QueueEntry> entrySet = matchMap.get(m);
+			Collection<StorageEntry> entrySet = storage.getEntries(m);
 			ArrayList<DisplayEntity> list = new ArrayList<>(entrySet.size());
-			for (QueueEntry entry : entrySet) {
+			for (StorageEntry entry : entrySet) {
 				list.add(entry.entity);
 			}
 			ret.put(m, list);
