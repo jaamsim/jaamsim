@@ -603,20 +603,20 @@ public class Queue extends LinkedComponent {
 		double distanceY = 0;
 		double maxWidth = 0;
 
-		// Copy the item set to avoid some concurrent modification exceptions
-		TreeSet<QueueEntry> itemSetCopy = new TreeSet<>(itemSet);
+		// Copy the storage entries to avoid some concurrent modification exceptions
+		TreeSet<StorageEntry> entries = new TreeSet<>(storage.getEntries());
 
-		// find widest vessel
-		if (itemSetCopy.size() >  maxPerLine.getValue()){
-			Iterator<QueueEntry> itr = itemSetCopy.iterator();
+		// find widest entity
+		if (entries.size() >  maxPerLine.getValue()){
+			Iterator<StorageEntry> itr = entries.iterator();
 			while (itr.hasNext()) {
-				 maxWidth = Math.max(maxWidth, itr.next().entity.getSize().y);
+				maxWidth = Math.max(maxWidth, itr.next().entity.getSize().y);
 			 }
 		}
 
 		// update item locations
 		int i = 0;
-		Iterator<QueueEntry> itr = itemSetCopy.iterator();
+		Iterator<StorageEntry> itr = entries.iterator();
 		while (itr.hasNext()) {
 			DisplayEntity item = itr.next().entity;
 
