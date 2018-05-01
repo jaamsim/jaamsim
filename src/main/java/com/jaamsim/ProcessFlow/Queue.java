@@ -183,8 +183,6 @@ public class Queue extends LinkedComponent {
 
 		// Clear the entries in the queue
 		storage.clear();
-		itemSet.clear();
-		matchMap.clear();
 
 		// Clear statistics
 		stats.clear();
@@ -267,26 +265,6 @@ public class Queue extends LinkedComponent {
 		QueueEntry entry = new QueueEntry(ent, m, pri, n, simTime, ent.getOrientation(), rh);
 		storage.add(entry);
 
-		// Add the entity to the TreeSet of all the entities in the queue
-		boolean bool = itemSet.add(entry);
-		if (!bool)
-			error("Entity %s is already present in the queue.", ent);
-
-		// Does the entry have a match value?
-		if (entry.type != null) {
-
-			// Add the entity to the TreeSet of all the entities with this match value
-			TreeSet<QueueEntry> matchSet = matchMap.get(entry.type);
-			if (matchSet == null) {
-				matchSet = new TreeSet<>();
-				matchSet.add(entry);
-				matchMap.put(entry.type, matchSet);
-			}
-			else {
-				matchSet.add(entry);
-			}
-		}
-
 		// Notify the users of this queue
 		if (!userUpdateHandle.isScheduled())
 			EventManager.scheduleTicks(0, 2, false, userUpdate, userUpdateHandle);
@@ -348,31 +326,14 @@ public class Queue extends LinkedComponent {
 		stats.addValue(simTime, storage.size() - 1);
 		freq.addValue(simTime, storage.size() - 1);
 
-		// Remove the entity from the TreeSet of all entities in the queue
-		boolean found = itemSet.remove(entry);
-		found = storage.remove(entry);
+		// Remove the entity from the storage
+		boolean found = storage.remove(entry);
 		if (!found)
 			error("Cannot find the entry in itemSet.");
 
 		// Kill the renege event
 		if (entry.renegeHandle != null)
 			EventManager.killEvent(entry.renegeHandle);
-
-		// Does the entry have a match value?
-		if (entry.type != null) {
-
-			// Remove the entity from the TreeSet for that match value
-			TreeSet<QueueEntry> matchSet = matchMap.get(entry.type);
-			if (matchSet == null)
-				error("Cannot find an entry in matchMap for match value: %s", entry.type);
-			found = matchSet.remove(entry);
-			if (!found)
-				error("Cannot find the entry in matchMap.");
-
-			// If there are no more entities for this match value, remove it from the HashMap of match values
-			if (matchSet.isEmpty())
-				matchMap.remove(entry.type);
-		}
 
 		// Reset the entity's orientation to its original value
 		entry.entity.setOrientation(entry.orientation);
