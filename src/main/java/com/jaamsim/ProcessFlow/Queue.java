@@ -22,7 +22,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.Map.Entry;
 import java.util.TreeSet;
 
 import com.jaamsim.Graphics.DisplayEntity;
@@ -105,9 +104,6 @@ public class Queue extends LinkedComponent {
 	private final TreeSet<QueueEntry> itemSet;  // contains all the entities in queue order
 	private final HashMap<String, TreeSet<QueueEntry>> matchMap; // each TreeSet contains the queued entities for a given match value
 
-	private String matchForMaxCount;  // match value with the largest number of entities
-	private int maxCount;     // largest number of entities for a given match value
-
 	private final ArrayList<QueueUser> userList;  // other objects that use this queue
 
 	//	Statistics
@@ -186,9 +182,6 @@ public class Queue extends LinkedComponent {
 		storage.clear();
 		itemSet.clear();
 		matchMap.clear();
-
-		matchForMaxCount = null;
-		maxCount = -1;
 
 		// Clear statistics
 		stats.clear();
@@ -289,17 +282,6 @@ public class Queue extends LinkedComponent {
 			else {
 				matchSet.add(entry);
 			}
-
-			// Update the maximum count
-			if (entry.type.equals(matchForMaxCount)) {
-				maxCount++;
-			}
-			else {
-				if (matchSet.size() > maxCount) {
-					matchForMaxCount = entry.type;
-					maxCount = matchSet.size();
-				}
-			}
 		}
 
 		// Notify the users of this queue
@@ -387,12 +369,6 @@ public class Queue extends LinkedComponent {
 			// If there are no more entities for this match value, remove it from the HashMap of match values
 			if (matchSet.isEmpty())
 				matchMap.remove(entry.type);
-
-			// Update the maximum count
-			if (entry.type.equals(matchForMaxCount)) {
-				matchForMaxCount = null;
-				maxCount = -1;
-			}
 		}
 
 		// Reset the entity's orientation to its original value
@@ -525,9 +501,7 @@ public class Queue extends LinkedComponent {
 	 * @return match value with the most entities.
 	 */
 	public String getMatchForMax() {
-		if (matchForMaxCount == null)
-			this.setMaxCount();
-		return matchForMaxCount;
+		return storage.getTypeWithMaxCount();
 	}
 
 	/**
@@ -535,23 +509,7 @@ public class Queue extends LinkedComponent {
 	 * @return number of entities in the longest match value queue.
 	 */
 	public int getMaxCount() {
-		if (matchForMaxCount == null)
-			this.setMaxCount();
-		return maxCount;
-	}
-
-	/**
-	 * Determines the longest queue for a give match value.
-	 */
-	private void setMaxCount() {
-		maxCount = -1;
-		for (Entry<String, TreeSet<QueueEntry>> each : matchMap.entrySet()) {
-			int count = each.getValue().size();
-			if (count > maxCount) {
-				maxCount = count;
-				matchForMaxCount = each.getKey();
-			}
-		}
+		return storage.getCountForMaxType();
 	}
 
 	/**
