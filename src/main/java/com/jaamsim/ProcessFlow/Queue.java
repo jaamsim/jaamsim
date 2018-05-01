@@ -252,8 +252,8 @@ public class Queue extends LinkedComponent {
 		double simTime = getSimTime();
 
 		// Update the queue statistics
-		stats.addValue(simTime, itemSet.size() + 1);
-		freq.addValue(simTime, itemSet.size() + 1);
+		stats.addValue(simTime, storage.size() + 1);
+		freq.addValue(simTime, storage.size() + 1);
 
 		// Build the entry for the entity
 		long n = this.getTotalNumberAdded();
@@ -360,8 +360,8 @@ public class Queue extends LinkedComponent {
 		double simTime = getSimTime();
 
 		// Update the queue statistics
-		stats.addValue(simTime, itemSet.size() - 1);
-		freq.addValue(simTime, itemSet.size() - 1);
+		stats.addValue(simTime, storage.size() - 1);
+		freq.addValue(simTime, storage.size() - 1);
 
 		// Remove the entity from the TreeSet of all entities in the queue
 		boolean found = itemSet.remove(entry);
@@ -686,9 +686,9 @@ public class Queue extends LinkedComponent {
 		super.clearStatistics();
 		double simTime = this.getSimTime();
 		stats.clear();
-		stats.addValue(simTime, itemSet.size());
+		stats.addValue(simTime, storage.size());
 		freq.clear();
-		freq.addValue(simTime, itemSet.size());
+		freq.addValue(simTime, storage.size());
 		numberReneged = 0;
 	}
 
