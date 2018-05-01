@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.Set;
 import java.util.TreeSet;
 
 import com.jaamsim.Graphics.DisplayEntity;
@@ -512,6 +513,13 @@ public class Queue extends LinkedComponent {
 	}
 
 	/**
+	 * Returns the set of entity types that are present in this Queue.
+	 */
+	public Set<String> getEntityTypes() {
+		return storage.getTypes();
+	}
+
+	/**
 	 * Returns a match value that has sufficient numbers of entities in each
 	 * queue. The first match value that satisfies the criterion is selected.
 	 * If the numberList is too short, then the last value is used.
@@ -539,14 +547,14 @@ public class Queue extends LinkedComponent {
 		Queue shortest = null;
 		int count = -1;
 		for (Queue que : queueList) {
-			if (que.matchMap.size() > count) {
-				count = que.matchMap.size();
+			if (que.getEntityTypes().size() > count) {
+				count = que.getEntityTypes().size();
 				shortest = que;
 			}
 		}
 
 		// Return the first match value that has sufficient entities in each queue
-		for (String m : shortest.matchMap.keySet()) {
+		for (String m : shortest.getEntityTypes()) {
 			if (Queue.sufficientEntities(queueList, numberList, m))
 				return m;
 		}
