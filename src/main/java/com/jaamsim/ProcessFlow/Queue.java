@@ -269,6 +269,7 @@ public class Queue extends LinkedComponent {
 			rh = new EventHandle();
 
 		QueueEntry entry = new QueueEntry(ent, m, pri, n, simTime, ent.getOrientation(), rh);
+		storage.add(entry);
 
 		// Add the entity to the TreeSet of all the entities in the queue
 		boolean bool = itemSet.add(entry);
@@ -364,6 +365,7 @@ public class Queue extends LinkedComponent {
 
 		// Remove the entity from the TreeSet of all entities in the queue
 		boolean found = itemSet.remove(entry);
+		found = storage.remove(entry);
 		if (!found)
 			error("Cannot find the entry in itemSet.");
 
