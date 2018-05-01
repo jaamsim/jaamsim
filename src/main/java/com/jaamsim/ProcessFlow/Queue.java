@@ -208,38 +208,16 @@ public class Queue extends LinkedComponent {
 		}
 	}
 
-	private static class QueueEntry implements Comparable<QueueEntry> {
-		final DisplayEntity entity;
-		final long entNum;
-		final int priority;
-		final String match;
+	private static class QueueEntry extends EntStorage.StorageEntry {
 		final double timeAdded;
 		final Vec3d orientation;
 		final EventHandle renegeHandle;
 
-		public QueueEntry(DisplayEntity ent, long n, int pri, String m, double t, Vec3d orient, EventHandle rh) {
-			entity = ent;
-			entNum = n;
-			priority = pri;
-			match = m;
+		public QueueEntry(DisplayEntity ent, String m, int pri, long n, double t, Vec3d orient, EventHandle rh) {
+			super(ent, m, pri, n);
 			timeAdded = t;
 			orientation = orient;
 			renegeHandle = rh;
-		}
-
-		@Override
-		public int compareTo(QueueEntry entry) {
-			if (this.priority > entry.priority)
-				return 1;
-			else if (this.priority < entry.priority)
-				return -1;
-			else {
-				if (this.entNum > entry.entNum)
-					return 1;
-				else if (this.entNum < entry.entNum)
-					return -1;
-				return 0;
-			}
 		}
 	}
 
@@ -290,7 +268,7 @@ public class Queue extends LinkedComponent {
 		if (renegeTime.getValue() != null)
 			rh = new EventHandle();
 
-		QueueEntry entry = new QueueEntry(ent, n, pri, m, simTime, ent.getOrientation(), rh);
+		QueueEntry entry = new QueueEntry(ent, m, pri, n, simTime, ent.getOrientation(), rh);
 
 		// Add the entity to the TreeSet of all the entities in the queue
 		boolean bool = itemSet.add(entry);
@@ -298,26 +276,26 @@ public class Queue extends LinkedComponent {
 			error("Entity %s is already present in the queue.", ent);
 
 		// Does the entry have a match value?
-		if (entry.match != null) {
+		if (entry.type != null) {
 
 			// Add the entity to the TreeSet of all the entities with this match value
-			TreeSet<QueueEntry> matchSet = matchMap.get(entry.match);
+			TreeSet<QueueEntry> matchSet = matchMap.get(entry.type);
 			if (matchSet == null) {
 				matchSet = new TreeSet<>();
 				matchSet.add(entry);
-				matchMap.put(entry.match, matchSet);
+				matchMap.put(entry.type, matchSet);
 			}
 			else {
 				matchSet.add(entry);
 			}
 
 			// Update the maximum count
-			if (entry.match.equals(matchForMaxCount)) {
+			if (entry.type.equals(matchForMaxCount)) {
 				maxCount++;
 			}
 			else {
 				if (matchSet.size() > maxCount) {
-					matchForMaxCount = entry.match;
+					matchForMaxCount = entry.type;
 					maxCount = matchSet.size();
 				}
 			}
@@ -394,22 +372,22 @@ public class Queue extends LinkedComponent {
 			EventManager.killEvent(entry.renegeHandle);
 
 		// Does the entry have a match value?
-		if (entry.match != null) {
+		if (entry.type != null) {
 
 			// Remove the entity from the TreeSet for that match value
-			TreeSet<QueueEntry> matchSet = matchMap.get(entry.match);
+			TreeSet<QueueEntry> matchSet = matchMap.get(entry.type);
 			if (matchSet == null)
-				error("Cannot find an entry in matchMap for match value: %s", entry.match);
+				error("Cannot find an entry in matchMap for match value: %s", entry.type);
 			found = matchSet.remove(entry);
 			if (!found)
 				error("Cannot find the entry in matchMap.");
 
 			// If there are no more entities for this match value, remove it from the HashMap of match values
 			if (matchSet.isEmpty())
-				matchMap.remove(entry.match);
+				matchMap.remove(entry.type);
 
 			// Update the maximum count
-			if (entry.match.equals(matchForMaxCount)) {
+			if (entry.type.equals(matchForMaxCount)) {
 				matchForMaxCount = null;
 				maxCount = -1;
 			}
@@ -790,7 +768,7 @@ public class Queue extends LinkedComponent {
 		ArrayList<String> ret = new ArrayList<>(itemSet.size());
 		Iterator<QueueEntry> itr = itemSet.iterator();
 		while (itr.hasNext()) {
-			String m = itr.next().match;
+			String m = itr.next().type;
 			if (m != null) {
 				ret.add(m);
 			}
