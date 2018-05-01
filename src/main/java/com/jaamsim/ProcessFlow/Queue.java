@@ -20,7 +20,6 @@ package com.jaamsim.ProcessFlow;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Set;
@@ -104,12 +103,7 @@ public class Queue extends LinkedComponent {
 	protected final IntegerInput maxPerLine; // maximum items per sub line-up of queue
 
 	private final EntStorage storage;  // stores the entities in the queue
-	private final TreeSet<QueueEntry> itemSet;  // contains all the entities in queue order
-	private final HashMap<String, TreeSet<QueueEntry>> matchMap; // each TreeSet contains the queued entities for a given match value
-
 	private final ArrayList<QueueUser> userList;  // other objects that use this queue
-
-	//	Statistics
 	private final TimeBasedStatistics stats;
 	private final TimeBasedFrequency freq;
 	protected long numberReneged;  // number of entities that reneged from the queue
@@ -159,9 +153,7 @@ public class Queue extends LinkedComponent {
 
 	public Queue() {
 		storage = new EntStorage();
-		itemSet = new TreeSet<>();
 		userList = new ArrayList<>();
-		matchMap = new HashMap<>();
 		stats = new TimeBasedStatistics();
 		freq = new TimeBasedFrequency(0, 10);
 	}
