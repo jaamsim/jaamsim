@@ -101,6 +101,7 @@ public class Queue extends LinkedComponent {
 			exampleList = {"4"})
 	protected final IntegerInput maxPerLine; // maximum items per sub line-up of queue
 
+	private final EntStorage storage;  // stores the entities in the queue
 	private final TreeSet<QueueEntry> itemSet;  // contains all the entities in queue order
 	private final HashMap<String, TreeSet<QueueEntry>> matchMap; // each TreeSet contains the queued entities for a given match value
 
@@ -158,6 +159,7 @@ public class Queue extends LinkedComponent {
 	}
 
 	public Queue() {
+		storage = new EntStorage();
 		itemSet = new TreeSet<>();
 		userList = new ArrayList<>();
 		matchMap = new HashMap<>();
@@ -181,6 +183,7 @@ public class Queue extends LinkedComponent {
 		super.earlyInit();
 
 		// Clear the entries in the queue
+		storage.clear();
 		itemSet.clear();
 		matchMap.clear();
 
