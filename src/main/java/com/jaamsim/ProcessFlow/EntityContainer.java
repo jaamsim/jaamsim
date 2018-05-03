@@ -52,6 +52,8 @@ public class EntityContainer extends SimEntity {
 
 	private ArrayList<DisplayEntity> entityList;
 	private DisplayEntity lastEntity;
+	private long initialNumberAdded;
+	private long initialNumberRemoved;
 	private long numberAdded;
 	private long numberRemoved;
 
@@ -82,6 +84,8 @@ public class EntityContainer extends SimEntity {
 		super.earlyInit();
 		entityList.clear();
 		lastEntity = null;
+		initialNumberAdded = 0L;
+		initialNumberRemoved = 0L;
 		numberAdded = 0L;
 		numberRemoved = 0L;
 	}
@@ -124,9 +128,27 @@ public class EntityContainer extends SimEntity {
 		super.kill();
 	}
 
+	/**
+	 * Returns the number of entities that have been added during the entire
+	 * simulation run, including the initialisation period.
+	 */
+	public long getTotalNumberAdded() {
+		return initialNumberAdded + numberAdded;
+	}
+
+	/**
+	 * Returns the number of entities that have been removed during the entire
+	 * simulation run, including the initialisation period.
+	 */
+	public long getTotalNumberProcessed() {
+		return initialNumberRemoved + numberRemoved;
+	}
+
 	@Override
 	public void clearStatistics() {
 		super.clearStatistics();
+		initialNumberAdded = numberAdded;
+		initialNumberRemoved = numberRemoved;
 		numberAdded = 0L;
 		numberRemoved = 0L;
 	}
