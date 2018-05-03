@@ -152,8 +152,11 @@ public class EntityContainer extends SimEntity {
 		numberAdded++;
 	}
 
-	public DisplayEntity removeEntity() {
+	public DisplayEntity removeEntity(String m) {
 		StorageEntry entry = storage.first();
+		if (m != null) {
+			entry = storage.first(m);
+		}
 		storage.remove(entry);
 		DisplayEntity ent = entry.entity;
 		if (!showEntities.getValue()) {
@@ -163,8 +166,18 @@ public class EntityContainer extends SimEntity {
 		return ent;
 	}
 
-	public int getCount() {
-		return storage.size();
+	public int getCount(String m) {
+		if (m == null) {
+			return storage.size();
+		}
+		return storage.size(m);
+	}
+
+	public boolean isEmpty(String m) {
+		if (m == null) {
+			return storage.isEmpty();
+		}
+		return storage.isEmpty(m);
 	}
 
 	@Override
