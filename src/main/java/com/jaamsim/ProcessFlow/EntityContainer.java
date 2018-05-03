@@ -51,6 +51,7 @@ public class EntityContainer extends SimEntity {
 	protected final BooleanInput showEntities;
 
 	private ArrayList<DisplayEntity> entityList;
+	private DisplayEntity lastEntity;
 
 	{
 		positionOffset = new Vec3dInput("PositionOffset", KEY_INPUTS, new Vec3d(0.0d, 0.0d, 0.01d));
@@ -78,10 +79,12 @@ public class EntityContainer extends SimEntity {
 	public void earlyInit() {
 		super.earlyInit();
 		entityList.clear();
+		lastEntity = null;
 	}
 
 	public void addEntity(DisplayEntity ent) {
 		entityList.add(ent);
+		lastEntity = ent;
 	}
 
 	public DisplayEntity removeEntity() {
@@ -160,6 +163,13 @@ public class EntityContainer extends SimEntity {
 			// increment total distance
 			distanceX += 0.5*itemSize.x;
 		}
+	}
+
+	@Output(name = "obj",
+	 description = "The entity that was loaded most recently.",
+	    sequence = 0)
+	public DisplayEntity getLastEntity(double simTime) {
+		return lastEntity;
 	}
 
 	@Output(name = "Count",
