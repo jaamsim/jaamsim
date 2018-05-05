@@ -41,6 +41,7 @@ public class Unpack extends LinkedService {
 	         exampleList = { "3.0 h", "NormalDistribution1", "'1[s] + 0.5*[TimeSeries1].PresentValue'" })
 	private final SampleInput serviceTime;
 
+	private String entityMatch;   // Match value for the entities to be removed from the container
 	private int numberToRemove;   // Number of entities to remove from the present EntityContainer
 
 	{
@@ -85,6 +86,9 @@ public class Unpack extends LinkedService {
 			// Remove the container from the queue
 			container = (EntityContainer)this.getNextEntityForMatch(m);
 			numberToRemove = this.getNumberToRemove();
+			entityMatch = null;
+			if (matchForEntities.getValue() != null)
+				entityMatch = matchForEntities.getValue().getNextString(simTime, "%s", 1.0d, true);
 			numberRemoved = 0;
 		}
 
@@ -103,13 +107,13 @@ public class Unpack extends LinkedService {
 	protected boolean processStep(double simTime) {
 
 		// Remove the next entity from the container
-		if (numberRemoved < numberToRemove && container.getCount() > 0) {
-			this.sendToNextComponent(container.removeEntity());
+		if (numberRemoved < numberToRemove && !container.isEmpty(entityMatch)) {
+			this.sendToNextComponent(container.removeEntity(entityMatch));
 			numberRemoved++;
 		}
 
 		// Stop when the desired number of entities have been removed
-		if (container.getCount() == 0 || numberRemoved == numberToRemove) {
+		else {
 			this.disposeContainer(container);
 			container = null;
 		}
@@ -127,7 +131,7 @@ public class Unpack extends LinkedService {
 	@Override
 	protected double getStepDuration(double simTime) {
 		double dur = 0.0;
-		if (numberRemoved < numberToRemove && container.getCount() > 0)
+		if (numberRemoved < numberToRemove && !container.isEmpty(entityMatch))
 			dur = serviceTime.getValue().getNextSample(simTime);
 		return dur;
 	}
