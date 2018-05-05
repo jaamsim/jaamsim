@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2011 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2018 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -224,18 +225,20 @@ public class ObjectSelector extends FrameBox {
 				final ObjectType type = ObjectType.getAll().get(i);
 				if (type == null)
 					continue;
+				String paletteName = type.getPaletteName();
+				String typeName = type.getName();
 
 				// Find or create the node for the palette
-				DefaultMutableTreeNode paletteNode = getNodeFor_In(type.getPaletteName(), top);
+				DefaultMutableTreeNode paletteNode = getNodeFor_In(paletteName, top);
 				if (paletteNode == null) {
-					paletteNode = new DefaultMutableTreeNode(type.getPaletteName());
+					paletteNode = new DefaultMutableTreeNode(paletteName);
 					top.add(paletteNode);
 				}
 
 				// Add the node for the Object Type to the palette
-				if (type.getName().equals(type.getPaletteName()))
+				if (typeName == null || typeName.equals(paletteName))
 					continue;
-				DefaultMutableTreeNode typeNode = new DefaultMutableTreeNode(type.getName(), true);
+				DefaultMutableTreeNode typeNode = new DefaultMutableTreeNode(typeName, true);
 				paletteNode.add(typeNode);
 			}
 			catch (IndexOutOfBoundsException e) {}
@@ -285,15 +288,17 @@ public class ObjectSelector extends FrameBox {
 				final ObjectType type = ent.getObjectType();
 				if (type == null)
 					continue;
+				String paletteName = type.getPaletteName();
+				String typeName = type.getName();
 
 				// Find the palette node for this entity
-				DefaultMutableTreeNode paletteNode = getNodeFor_In(type.getPaletteName(), top);
+				DefaultMutableTreeNode paletteNode = getNodeFor_In(paletteName, top);
 				if (paletteNode == null)
 					continue;
 
 				// Find the object type node for this entity
-				DefaultMutableTreeNode typeNode = getNodeFor_In(type.getName(), paletteNode);
-				if (type.getName().equals(type.getPaletteName())) {
+				DefaultMutableTreeNode typeNode = getNodeFor_In(typeName, paletteNode);
+				if (typeName != null && typeName.equals(paletteName)) {
 					typeNode = paletteNode;
 				}
 				if (typeNode == null)
