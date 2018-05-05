@@ -314,4 +314,35 @@ public class EntityContainer extends SimEntity {
 		return ret;
 	}
 
+	@Output(name = "PriorityValues",
+	 description = "The Priority expression value for each entity in the queue.",
+	    unitType = DimensionlessUnit.class,
+	    sequence = 5)
+	public int[] getPriorityValues(double simTime) {
+		int[] ret = new int[storage.size()];
+		Iterator<StorageEntry> itr = storage.iterator();
+		int i = 0;
+		while (itr.hasNext()) {
+			ret[i] = itr.next().priority;
+			i++;
+		}
+		return ret;
+	}
+
+	@Output(name = "MatchValues",
+	 description = "The Match expression value for each entity in the queue.",
+	    unitType = DimensionlessUnit.class,
+	    sequence = 6)
+	public ArrayList<String> getMatchValues(double simTime) {
+		ArrayList<String> ret = new ArrayList<>(storage.size());
+		Iterator<StorageEntry> itr = storage.iterator();
+		while (itr.hasNext()) {
+			String m = itr.next().type;
+			if (m != null) {
+				ret.add(m);
+			}
+		}
+		return ret;
+	}
+
 }
