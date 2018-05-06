@@ -276,6 +276,10 @@ public class Entity {
 		inpList.add(in);
 	}
 
+	protected void removeInput(Input<?> in) {
+		inpList.remove(in);
+	}
+
 	protected void addSynonym(Input<?> in, String synonym) {
 		inpList.add(new SynonymInput(synonym, in));
 	}
