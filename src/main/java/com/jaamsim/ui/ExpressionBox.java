@@ -53,7 +53,6 @@ import com.jaamsim.Graphics.EntityLabel;
 import com.jaamsim.Graphics.OverlayEntity;
 import com.jaamsim.Graphics.Region;
 import com.jaamsim.basicsim.Entity;
-import com.jaamsim.basicsim.ObjectType;
 import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.input.ExpParser;
 import com.jaamsim.input.Input;
@@ -454,9 +453,7 @@ public class ExpressionBox extends JDialog {
 
 					// Loop through the unit types that have been defined
 					for (String utName : Unit.getUnitTypeList()) {
-						ObjectType ot = Input.parseEntity(utName, ObjectType.class);
-						final Class<? extends Unit> ut = Input.checkCast(ot.getJavaClass(), Unit.class);
-
+						final Class<? extends Unit> ut = Input.parseUnitType(utName);
 						ArrayList<? extends Unit> unitList = Unit.getUnitList(ut);
 						if (unitList.isEmpty())
 							continue;
@@ -509,8 +506,7 @@ public class ExpressionBox extends JDialog {
 
 					// Loop through the unit types that have been defined
 					for (String utName : Unit.getUnitTypeList()) {
-						ObjectType ot = Input.parseEntity(utName, ObjectType.class);
-						final Class<? extends Unit> ut = Input.checkCast(ot.getJavaClass(), Unit.class);
+						final Class<? extends Unit> ut = Input.parseUnitType(utName);
 						JMenuItem item = new JMenuItem(ut.getSimpleName());
 						item.addActionListener( new ActionListener() {
 

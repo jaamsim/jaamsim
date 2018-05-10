@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2011 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2018 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -77,8 +78,7 @@ public abstract class Unit extends Entity {
 
 		// Clear the entries for unit types that were not in the list
 		for (String utName : utList) {
-			ObjectType ot = Input.parseEntity(utName, ObjectType.class);
-			Class<? extends Unit> ut = Input.checkCast(ot.getJavaClass(), Unit.class);
+			Class<? extends Unit> ut = Input.parseUnitType(utName);
 			preferredUnit.remove(ut);
 		}
 	}

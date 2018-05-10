@@ -19,7 +19,6 @@ package com.jaamsim.input;
 import java.util.ArrayList;
 
 import com.jaamsim.basicsim.Entity;
-import com.jaamsim.basicsim.ObjectType;
 import com.jaamsim.input.ExpParser.Expression;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
@@ -65,8 +64,7 @@ public class NamedExpressionListInput extends ListInput<ArrayList<NamedExpressio
 
 				Class<? extends Unit> unitType = DimensionlessUnit.class;
 				if (subArg.numArgs() == 3) {
-					ObjectType t = Input.parseEntity(subArg.getArg(2), ObjectType.class);
-					unitType = Input.checkCast(t.getJavaClass(), Unit.class);
+					unitType = Input.parseUnitType(subArg.getArg(2));
 				}
 
 				// Save the data for this expression

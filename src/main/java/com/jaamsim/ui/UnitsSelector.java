@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2017 JaamSim Software Inc.
+ * Copyright (C) 2017-2018 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import javax.swing.JMenu;
 import javax.swing.JRadioButtonMenuItem;
 
-import com.jaamsim.basicsim.ObjectType;
 import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
@@ -36,9 +35,7 @@ public class UnitsSelector {
 
 		// Loop through the unit types that have been defined
 		for (String utName : Unit.getUnitTypeList()) {
-			ObjectType ot = Input.parseEntity(utName, ObjectType.class);
-			final Class<? extends Unit> ut = Input.checkCast(ot.getJavaClass(), Unit.class);
-
+			final Class<? extends Unit> ut = Input.parseUnitType(utName);
 			ArrayList<? extends Unit> unitList = Unit.getUnitList(ut);
 			if (unitList.isEmpty())
 				continue;
