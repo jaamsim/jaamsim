@@ -1379,6 +1379,12 @@ public abstract class Input<T> {
 		return u;
 	}
 
+	public static Class<? extends Unit> parseUnitType(String utName) {
+		ObjectType ot = Input.parseEntity(utName, ObjectType.class);
+		Class<? extends Unit> ut = Input.checkCast(ot.getJavaClass(), Unit.class);
+		return ut;
+	}
+
 	public static <T extends Entity> ArrayList<T> parseEntityList(KeywordIndex kw, Class<T> aClass, boolean unique)
 	throws InputErrorException {
 		ArrayList<T> temp = new ArrayList<>(kw.numArgs());
