@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016 JaamSim Software Inc.
+ * Copyright (C) 2016-2018 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,6 @@ import com.jaamsim.input.ExpError;
 import com.jaamsim.input.ExpEvaluator;
 import com.jaamsim.input.ExpParser;
 import com.jaamsim.input.ExpResult;
-import com.jaamsim.input.ExpValResult;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
@@ -46,17 +45,7 @@ public class SampleExpression implements SampleProvider {
 		unitType = ut;
 		parseContext = ExpEvaluator.getParseContext(thisEnt, expString);
 		exp = ExpParser.parseExpression(parseContext, expString);
-
-		if (exp.validationResult.state == ExpValResult.State.VALID) {
-			// We know the returned unit type with certainty, so we can check it against what we expect
-			Class<? extends Unit> expUnitType = exp.validationResult.unitType;
-			if (expUnitType != unitType) {
-				throw new InputErrorException("Invalid unit returned by an expression: '%s'%n"
-						+ "Received: %s, expected: %s",
-						exp, ObjectType.getObjectTypeForClass(expUnitType),
-						ObjectType.getObjectTypeForClass(unitType));
-			}
-		}
+		ExpParser.assertUnitType(exp, unitType);
 	}
 
 	@Override
