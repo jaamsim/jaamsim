@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2017 JaamSim Software Inc.
+ * Copyright (C) 2017-2018 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,9 +23,7 @@ import com.jaamsim.input.ExpEvaluator;
 import com.jaamsim.input.ExpParser;
 import com.jaamsim.input.ExpResType;
 import com.jaamsim.input.ExpResult;
-import com.jaamsim.input.ExpValResult;
 import com.jaamsim.input.ExpParser.Expression;
-import com.jaamsim.input.InputErrorException;
 
 public class EntityProvExpression<T extends Entity> implements EntityProvider<T> {
 
@@ -43,15 +41,8 @@ public class EntityProvExpression<T extends Entity> implements EntityProvider<T>
 		thisEnt = ent;
 		parseContext = ExpEvaluator.getParseContext(thisEnt, expString);
 		exp = ExpParser.parseExpression(parseContext, expString);
+		ExpParser.assertResultType(exp, ExpResType.ENTITY);
 		entClass = aClass;
-
-		if (exp.validationResult.state != ExpValResult.State.VALID)
-			return;
-
-		if (exp.validationResult.type != ExpResType.ENTITY) {
-			throw new InputErrorException(BAD_RESULT_TYPE, exp.source,
-					exp.validationResult.type, "ENTITY");
-		}
 	}
 
 	@SuppressWarnings("unchecked")
