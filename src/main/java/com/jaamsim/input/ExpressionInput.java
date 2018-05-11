@@ -21,13 +21,27 @@ import java.util.ArrayList;
 
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.input.ExpParser.Expression;
+import com.jaamsim.units.Unit;
 
 public class ExpressionInput extends Input<ExpParser.Expression> {
+	private Class<? extends Unit> unitType;
 	private Entity thisEnt;
 	private ExpEvaluator.EntityParseContext parseContext;
 
 	public ExpressionInput(String key, String cat, ExpParser.Expression def) {
 		super(key, cat, def);
+	}
+
+	public void setUnitType(Class<? extends Unit> u) {
+		if (u == unitType) {
+			return;
+		}
+		unitType = u;
+		this.setValid(false);
+	}
+
+	public Class<? extends Unit> getUnitType() {
+		return unitType;
 	}
 
 	public void setEntity(Entity ent) {
@@ -56,10 +70,12 @@ public class ExpressionInput extends Input<ExpParser.Expression> {
 
 			ExpEvaluator.EntityParseContext pc = ExpEvaluator.getParseContext(thisEnt, expString);
 			Expression exp = ExpParser.parseExpression(pc, expString);
+			ExpParser.assertUnitType(exp, unitType);
 
 			// Save the expression
 			parseContext = pc;
 			value = exp;
+			this.setValid(true);
 
 		} catch (ExpError e) {
 			throw new InputErrorException(e);
