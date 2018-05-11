@@ -674,6 +674,15 @@ public class Entity {
 				}
 			}
 
+			// double[] output
+			else if (out.getReturnType() == double[].class) {
+				double[] vec = out.getValue(simTime, double[].class);
+				for (int i = 0; i < vec.length; i++) {
+					file.format(LIST_OUTPUT_FORMAT,
+							this.getName(), out.getName(), i, vec[i]/factor, unitString);
+				}
+			}
+
 			// DoubleVector output
 			else if (out.getReturnType() == DoubleVector.class) {
 				DoubleVector vec = out.getValue(simTime, DoubleVector.class);
