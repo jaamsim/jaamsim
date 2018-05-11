@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016 JaamSim Software Inc.
+ * Copyright (C) 2016-2018 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
+import com.jaamsim.basicsim.ObjectType;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 
@@ -1189,6 +1190,20 @@ public class ExpParser {
 		exp.validationResult = valRes;
 
 		return expNode;
+	}
+
+	public static void assertUnitType(Expression exp, Class<? extends Unit> unitType) {
+		if (exp.validationResult.state != ExpValResult.State.VALID
+				|| exp.validationResult.type != ExpResType.NUMBER)
+			return;
+
+		if (exp.validationResult.unitType != unitType) {
+			throw new InputErrorException("Invalid unit returned by an expression: '%s'%n"
+					+ "Received: %s, expected: %s",
+					exp,
+					ObjectType.getObjectTypeForClass(exp.validationResult.unitType),
+					ObjectType.getObjectTypeForClass(unitType));
+		}
 	}
 
 
