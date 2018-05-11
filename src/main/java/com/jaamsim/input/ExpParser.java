@@ -1206,6 +1206,17 @@ public class ExpParser {
 		}
 	}
 
+	public static void assertResultType(Expression exp, ExpResType type) {
+		if (exp.validationResult.state != ExpValResult.State.VALID)
+			return;
+
+		if (exp.validationResult.type != type) {
+			throw new InputErrorException("Incorrect result type returned by expression: '%s'%n"
+					+ "Received: %s, expected: %s",
+					exp, exp.validationResult.type, type);
+		}
+	}
+
 
 	/**
 	 * The main entry point to the expression parsing system, will either return a valid
