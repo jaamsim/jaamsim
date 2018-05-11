@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2018 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +20,7 @@ package com.jaamsim.ProcessFlow;
 import java.util.ArrayList;
 
 import com.jaamsim.Graphics.DisplayEntity;
+import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
@@ -44,6 +46,10 @@ public class EntityContainer extends SimEntity {
 			exampleList = {"4"})
 	protected final IntegerInput maxPerLineInput;
 
+	@Keyword(description = "If TRUE, the entities in the EntityContainer are displayed.",
+			exampleList = {"FALSE"})
+	protected final BooleanInput showEntities;
+
 	private ArrayList<DisplayEntity> entityList;
 
 	{
@@ -59,6 +65,9 @@ public class EntityContainer extends SimEntity {
 		maxPerLineInput = new IntegerInput("MaxPerLine", KEY_INPUTS, Integer.MAX_VALUE);
 		maxPerLineInput.setValidRange( 1, Integer.MAX_VALUE);
 		this.addInput(maxPerLineInput);
+
+		showEntities = new BooleanInput("ShowEntities", KEY_INPUTS, true);
+		this.addInput(showEntities);
 	}
 
 	public EntityContainer() {
@@ -77,6 +86,9 @@ public class EntityContainer extends SimEntity {
 
 	public DisplayEntity removeEntity() {
 		DisplayEntity ent = entityList.remove(entityList.size()-1);
+		if (!showEntities.getValue()) {
+			ent.setShow(true);
+		}
 		return ent;
 	}
 
@@ -110,6 +122,7 @@ public class EntityContainer extends SimEntity {
 	@Override
 	public void updateGraphics( double simTime ) {
 
+		boolean visible = showEntities.getValue();
 		Vec3d orient = getOrientation();
 		Vec3d size = this.getSize();
 		Vec3d tmp = new Vec3d();
@@ -133,6 +146,7 @@ public class EntityContainer extends SimEntity {
 
 			// Rotate each entity about its center so it points to the right direction
 			DisplayEntity item = entityList.get(i);
+			item.setShow(visible);
 			item.setOrientation(orient);
 
 			// Set Position
