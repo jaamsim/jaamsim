@@ -23,6 +23,7 @@ import com.jaamsim.basicsim.ObjectType;
 import com.jaamsim.input.ExpError;
 import com.jaamsim.input.ExpEvaluator;
 import com.jaamsim.input.ExpParser;
+import com.jaamsim.input.ExpResType;
 import com.jaamsim.input.ExpResult;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.units.Unit;
@@ -46,6 +47,7 @@ public class SampleExpression implements SampleProvider {
 		parseContext = ExpEvaluator.getParseContext(thisEnt, expString);
 		exp = ExpParser.parseExpression(parseContext, expString);
 		ExpParser.assertUnitType(exp, unitType);
+		ExpParser.assertResultType(exp, ExpResType.NUMBER);
 	}
 
 	@Override
