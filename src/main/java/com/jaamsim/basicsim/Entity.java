@@ -640,6 +640,10 @@ public class Entity {
 		return false;
 	}
 
+	public void removeCustomOutput(String name) {
+		customOutputMap.remove(name);
+	}
+
 	private static final String OUTPUT_FORMAT = "%s\t%s\t%s\t%s%n";
 	private static final String LIST_OUTPUT_FORMAT = "%s\t%s[%s]\t%s\t%s%n";
 
