@@ -31,6 +31,7 @@ import com.jaamsim.input.AttributeDefinitionListInput;
 import com.jaamsim.input.AttributeHandle;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.ExpError;
+import com.jaamsim.input.ExpParser.Expression;
 import com.jaamsim.input.ExpResType;
 import com.jaamsim.input.ExpResult;
 import com.jaamsim.input.ExpressionHandle;
@@ -430,9 +431,7 @@ public class Entity {
 		if (in == namedExpressionInput) {
 			customOutputMap.clear();
 			for (NamedExpression ne : namedExpressionInput.getValue()) {
-				ExpressionHandle eh = new ExpressionHandle(this, ne.getExpression(), ne.getName());
-				eh.setUnitType(ne.getUnitType());
-				customOutputMap.put(ne.getName(), eh);
+				addCustomOutput(ne.getName(), ne.getExpression(), ne.getUnitType());
 			}
 
 			// Update the OutputBox
@@ -638,6 +637,12 @@ public class Entity {
 			return true;
 
 		return false;
+	}
+
+	public void addCustomOutput(String name, Expression exp, Class<? extends Unit> unitType) {
+		ExpressionHandle eh = new ExpressionHandle(this, exp, name);
+		eh.setUnitType(unitType);
+		customOutputMap.put(name, eh);
 	}
 
 	public void removeCustomOutput(String name) {
