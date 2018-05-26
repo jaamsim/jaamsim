@@ -60,7 +60,7 @@ public abstract class Device extends StateUserEntity {
 	/**
 	 * Starts the next time step for the process.
 	 */
-	public final void startStep() {
+	private final void startStep() {
 		if (isTraceFlag()) {
 			trace(0, "startStep");
 			traceLine(1, "endActionHandle.isScheduled=%s, isAvailable=%s",
