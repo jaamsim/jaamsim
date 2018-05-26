@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2016 JaamSim Software Inc.
+ * Copyright (C) 2016-2018 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,6 +44,17 @@ public abstract class Device extends StateUserEntity {
 		forcedDowntimePending = false;
 		immediateDowntimePending = false;
 		stepCompleted = true;
+	}
+
+	/**
+	 * Restarts the processing loop.
+	 */
+	public final void restart() {
+		if (isTraceFlag()) trace(0, "restart");
+		if (isBusy())
+			return;
+		setBusy(true);
+		startStep();
 	}
 
 	/**
