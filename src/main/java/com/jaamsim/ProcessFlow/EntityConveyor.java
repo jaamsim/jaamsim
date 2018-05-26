@@ -144,7 +144,7 @@ public class EntityConveyor extends LinkedService {
 		this.sendToNextComponent(ent);
 
 		// Remove any other entities that have also reached the end
-		double maxPos = Math.max(entry.position, 1.0d);
+		double maxPos = Math.min(entry.position, 1.0d);
 		while (!entryList.isEmpty() && entryList.get(0).position >= maxPos) {
 			ent = entryList.remove(0).entity;
 			this.sendToNextComponent(ent);
