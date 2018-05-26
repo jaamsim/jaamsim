@@ -63,17 +63,15 @@ public abstract class Device extends StateUserEntity {
 	private final void startStep() {
 		if (isTraceFlag()) {
 			trace(0, "startStep");
-			traceLine(1, "endActionHandle.isScheduled=%s, isAvailable=%s",
-					endStepHandle.isScheduled(), this.isAvailable());
-			traceLine(1, "forcedDowntimePending=%s, immediateDowntimePending=%s",
-					forcedDowntimePending, immediateDowntimePending);
+			traceLine(1, "isAvailable=%s, forcedDowntimePending=%s, immediateDowntimePending=%s",
+					isAvailable(), forcedDowntimePending, immediateDowntimePending);
 		}
 
 		double simTime = this.getSimTime();
 
 		// Is the process loop is already working?
 		if (endStepHandle.isScheduled()) {
-			return;
+			error("Processing is already in progress.");
 		}
 
 		// Stop if any of the thresholds, maintenance, or breakdowns close the operation
@@ -84,9 +82,6 @@ public abstract class Device extends StateUserEntity {
 			this.stopProcessing();
 			return;
 		}
-
-		// Set the process to busy
-		this.setBusy(true);
 
 		// Set the last update time in case processing is restarting after a stoppage
 		lastUpdateTime = simTime;
