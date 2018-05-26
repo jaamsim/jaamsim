@@ -31,6 +31,7 @@ public abstract class Device extends StateUserEntity {
 	private boolean forcedDowntimePending;  // indicates that a forced downtime event is ready to start
 	private boolean immediateDowntimePending;  // indicates that an immediate downtime event is ready to start
 	private boolean stepCompleted;  // indicates that the last process time step was completed
+	private boolean processing;  // indicates that the process loop is active
 
 	public Device() {}
 
@@ -44,6 +45,7 @@ public abstract class Device extends StateUserEntity {
 		forcedDowntimePending = false;
 		immediateDowntimePending = false;
 		stepCompleted = true;
+		processing = false;
 	}
 
 	/**
@@ -51,8 +53,9 @@ public abstract class Device extends StateUserEntity {
 	 */
 	public final void restart() {
 		if (isTraceFlag()) trace(0, "restart");
-		if (isBusy())
+		if (processing)
 			return;
+		processing = true;
 		setBusy(true);
 		startStep();
 	}
@@ -181,6 +184,7 @@ public abstract class Device extends StateUserEntity {
 		if (isTraceFlag()) trace(0, "stopProcessing");
 
 		// Update the state
+		processing = false;
 		this.setBusy(false);
 		this.setPresentState();
 
