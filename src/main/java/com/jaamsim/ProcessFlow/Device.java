@@ -211,7 +211,7 @@ public abstract class Device extends StateUserEntity {
 		}
 
 		// If the process is stopped, then restart it
-		this.startStep();
+		this.restart();
 	}
 
 	/**
@@ -354,7 +354,7 @@ public abstract class Device extends StateUserEntity {
 		}
 
 		// Otherwise, check whether processing can be restarted
-		this.startStep();
+		this.restart();
 	}
 
 	// ********************************************************************************************
@@ -422,7 +422,7 @@ public abstract class Device extends StateUserEntity {
 	@Override
 	public void endDowntime(DowntimeEntity down) {
 		if (isTraceFlag()) trace(0, "endDowntime(%s)", down);
-		this.startStep();
+		this.restart();
 	}
 
 }

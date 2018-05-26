@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2017 JaamSim Software Inc.
+ * Copyright (C) 2016-2018 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -160,7 +160,7 @@ public abstract class LinkedService extends LinkedDevice implements QueueUser {
 	@Override
 	public void queueChanged() {
 		if (isTraceFlag()) trace(0, "queueChanged");
-		this.startStep();
+		this.restart();
 	}
 
 	// ********************************************************************************************
