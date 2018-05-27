@@ -21,6 +21,8 @@ import java.util.ArrayList;
 
 import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.Graphics.DisplayEntity;
+import com.jaamsim.Graphics.OverlayEntity;
+import com.jaamsim.Graphics.TextBasics;
 import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.basicsim.Entity;
@@ -87,6 +89,8 @@ public class Assemble extends LinkedService {
 
 		prototypeEntity = new EntityInput<>(DisplayEntity.class, "PrototypeEntity", KEY_INPUTS, null);
 		prototypeEntity.setRequired(true);
+		prototypeEntity.addInvalidClass(TextBasics.class);
+		prototypeEntity.addInvalidClass(OverlayEntity.class);
 		this.addInput(prototypeEntity);
 	}
 
