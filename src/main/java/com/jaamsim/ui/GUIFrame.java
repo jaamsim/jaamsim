@@ -825,7 +825,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				JPopupMenu menu = new JPopupMenu("UndoMenu");
+				ScrollablePopupMenu menu = new ScrollablePopupMenu("UndoMenu");
 				ArrayList<Command> list = InputAgent.getUndoList();
 				for (int i = 1; i <= list.size(); i++) {
 					Command cmd = list.get(list.size() - i);
@@ -869,7 +869,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				JPopupMenu menu = new JPopupMenu("RedoMenu");
+				ScrollablePopupMenu menu = new ScrollablePopupMenu("RedoMenu");
 				ArrayList<Command> list = InputAgent.getRedoList();
 				for (int i = 1; i <= list.size(); i++) {
 					Command cmd = list.get(list.size() - i);
