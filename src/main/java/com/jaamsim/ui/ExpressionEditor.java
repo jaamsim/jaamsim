@@ -22,7 +22,6 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
 import javax.swing.JTable;
 
 public class ExpressionEditor extends ChooserEditor {
@@ -52,7 +51,7 @@ public class ExpressionEditor extends ChooserEditor {
 			// Expression Builder
 			final String expBuilderOption = String.format("*** %s ***", ExpressionBox.DIALOG_NAME);
 			array.add(0, expBuilderOption);
-			JPopupMenu menu = new JPopupMenu();
+			ScrollablePopupMenu menu = new ScrollablePopupMenu();
 			Component button = (Component)e.getSource();
 			Component panel = button.getParent();
 			for (final String option : array) {

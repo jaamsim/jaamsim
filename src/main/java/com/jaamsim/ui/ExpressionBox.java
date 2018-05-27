@@ -394,7 +394,7 @@ public class ExpressionBox extends JDialog {
 
 				@Override
 				public void actionPerformed( ActionEvent event ) {
-					JPopupMenu entityMenu = new JPopupMenu();
+					ScrollablePopupMenu entityMenu = new ScrollablePopupMenu();
 					ArrayList<String> entNameList = new ArrayList<>();
 					for (DisplayEntity each: Entity.getClonesOfIterator(DisplayEntity.class)) {
 						if (each.testFlag(Entity.FLAG_GENERATED))
@@ -449,7 +449,7 @@ public class ExpressionBox extends JDialog {
 
 				@Override
 				public void actionPerformed( ActionEvent event ) {
-					JPopupMenu unitMenu = new JPopupMenu();
+					ScrollablePopupMenu unitMenu = new ScrollablePopupMenu();
 
 					// Loop through the unit types that have been defined
 					for (String utName : Unit.getUnitTypeList()) {
@@ -502,7 +502,7 @@ public class ExpressionBox extends JDialog {
 
 				@Override
 				public void actionPerformed( ActionEvent event ) {
-					JPopupMenu unitTypeMenu = new JPopupMenu();
+					ScrollablePopupMenu unitTypeMenu = new ScrollablePopupMenu();
 
 					// Loop through the unit types that have been defined
 					for (String utName : Unit.getUnitTypeList()) {
@@ -543,7 +543,7 @@ public class ExpressionBox extends JDialog {
 
 				@Override
 				public void actionPerformed( ActionEvent event ) {
-					JPopupMenu funcMenu = new JPopupMenu();
+					ScrollablePopupMenu funcMenu = new ScrollablePopupMenu();
 
 					// Loop through the unit types that have been defined
 					for (final String funcName : ExpParser.getFunctionNames()) {
@@ -653,7 +653,7 @@ public class ExpressionBox extends JDialog {
 	}
 
 	private void showEntityMenu(String name, final int ind0, final int ind1) {
-		entityMenu = new JPopupMenu();
+		entityMenu = new ScrollablePopupMenu();
 		ArrayList<String> nameList = new ArrayList<>();
 		for (DisplayEntity each: Entity.getClonesOfIterator(DisplayEntity.class)) {
 			if (each.testFlag(Entity.FLAG_GENERATED))
@@ -697,7 +697,7 @@ public class ExpressionBox extends JDialog {
 	}
 
 	private void showOutputMenu(Entity ent, String name, final int ind0, final int ind1) {
-		outputMenu = new JPopupMenu();
+		outputMenu = new ScrollablePopupMenu();
 
 		ArrayList<OutputHandle> handles = new ArrayList<>();
 		for (OutputHandle hand : OutputHandle.getOutputHandleList(ent)) {
