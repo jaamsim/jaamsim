@@ -114,6 +114,8 @@ public class EditBox extends FrameBox {
 				lastCategory = jTabbedFrame.getTitleAt(idx);
 		}
 
+		if (jTabbedFrame == null)
+			return;
 		jTabbedFrame.removeAll();
 
 		currentEntity = entity;
