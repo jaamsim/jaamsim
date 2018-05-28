@@ -621,8 +621,8 @@ public class RenderManager implements DragSourceListener {
 			}
 		}
 
-		// If no entity is found, set the selected entity to the view window
-		FrameBox.setSelectedEntity(windowToViewMap.get(windowID), false);
+		// If no entity is found, set the selected entity to null
+		FrameBox.setSelectedEntity(null, false);
 		GUIFrame.updateUI();
 	}
 
