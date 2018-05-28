@@ -18,6 +18,7 @@
 package com.jaamsim.ui;
 
 import java.awt.Component;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -28,6 +29,7 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JList;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListCellRenderer;
@@ -60,8 +62,8 @@ public class ListEditor extends ChooserEditor {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 
-		// OK button
-		if("OK".equals(e.getActionCommand())) {
+		// Accept button
+		if ("Accept".equals(e.getActionCommand())) {
 			dialog.setVisible(false);
 			StringBuilder sb = new StringBuilder();
 			for(int i = 0; i < list.getModel().getSize(); i++) {
@@ -76,20 +78,36 @@ public class ListEditor extends ChooserEditor {
 			setValue(sb.toString());
 		}
 
-		if(! "button".equals(e.getActionCommand())) {
+		// Cancel button
+		if ("Cancel".equals(e.getActionCommand())) {
+			dialog.setVisible(false);
+		}
+
+		if (!"button".equals(e.getActionCommand())) {
 			return;
 		}
 
-		if(dialog == null) {
+		if (dialog == null) {
 			dialog = new JDialog(EditBox.getInstance(), "Select items",
 					true); // model
 			dialog.setSize(190, 300);
 			jScroll = new JScrollPane(list);
 			dialog.getContentPane().add(jScroll); // top of the JDialog
-			JButton okButton = new JButton("Ok");
-			okButton.setActionCommand("OK");
-			okButton.addActionListener(this);
-			dialog.getContentPane().add("South", okButton);
+
+			JButton acceptButton = new JButton("Accept");
+			acceptButton.setActionCommand("Accept");
+			acceptButton.addActionListener(this);
+
+			JButton cancelButton = new JButton("Cancel");
+			cancelButton.setActionCommand("Cancel");
+			cancelButton.addActionListener(this);
+
+			JPanel buttonPanel = new JPanel();
+			buttonPanel.setLayout( new FlowLayout(FlowLayout.CENTER) );
+			buttonPanel.add(acceptButton);
+			buttonPanel.add(cancelButton);
+			dialog.getContentPane().add("South", buttonPanel);
+
 			dialog.setIconImage(GUIFrame.getWindowIcon());
 			dialog.setAlwaysOnTop(true);
 			tokens = new ArrayList<>();
