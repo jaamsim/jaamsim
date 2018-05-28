@@ -21,7 +21,6 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
@@ -242,7 +241,7 @@ public class ContextMenu {
 		menu.add( showLabelMenuItem );
 
 		// 3) Set RelativeEntity
-		JMenu setRelativeEntityMenu = new JMenu( "Set RelativeEntity" );
+		ScrollableMenu setRelativeEntityMenu = new ScrollableMenu( "Set RelativeEntity" );
 		ArrayList<String> entNameList = new ArrayList<>();
 		entNameList.add("<None>");
 		entNameList.addAll(ent.getRelativeEntityOptions());
@@ -277,7 +276,7 @@ public class ContextMenu {
 		menu.add( setRelativeEntityMenu );
 
 		// 4) Set Region
-		JMenu setRegionMenu = new JMenu( "Set Region" );
+		ScrollableMenu setRegionMenu = new ScrollableMenu( "Set Region" );
 		ArrayList<String> regionNameList = new ArrayList<>();
 		regionNameList.add("<None>");
 		regionNameList.addAll(ent.getRegionOptions());
