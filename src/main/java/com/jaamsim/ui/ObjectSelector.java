@@ -43,7 +43,6 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
-import com.jaamsim.Commands.DeleteCommand;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.EntityLabel;
 import com.jaamsim.basicsim.Entity;
@@ -530,7 +529,6 @@ public class ObjectSelector extends FrameBox {
 	static class MyKeyListener implements KeyListener {
 		@Override
 		public void keyReleased(KeyEvent e) {
-
 			if (e.getKeyCode() != KeyEvent.VK_DELETE)
 				return;
 
@@ -539,9 +537,8 @@ public class ObjectSelector extends FrameBox {
 					&& !((DisplayEntity) currentEntity).isMovable())
 				return;
 
-				// Delete key was released on a movable DisplayEntity
-				InputAgent.storeAndExecute(new DeleteCommand(disp));
-				FrameBox.setSelectedEntity(null, false);
+			currentEntity.delete();
+			FrameBox.setSelectedEntity(null, false);
 		}
 		@Override
 		public void keyPressed(KeyEvent e) {}

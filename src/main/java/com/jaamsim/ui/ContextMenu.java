@@ -27,7 +27,6 @@ import javax.swing.JRadioButtonMenuItem;
 
 import com.jaamsim.Commands.DefineCommand;
 import com.jaamsim.Commands.CoordinateCommand;
-import com.jaamsim.Commands.DeleteCommand;
 import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.EntityLabel;
@@ -154,7 +153,7 @@ public class ContextMenu {
 		deleteMenuItem.addActionListener( new ActionListener() {
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				InputAgent.storeAndExecute(new DeleteCommand(ent));
+				ent.delete();
 				FrameBox.setSelectedEntity(null, false);
 			}
 		} );
