@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 
+import com.jaamsim.Commands.DeleteCommand;
 import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.events.Conditional;
 import com.jaamsim.events.EventHandle;
@@ -246,6 +247,13 @@ public class Entity {
 		sim.restoreInstance(this);
 		this.setName(name);
 		this.clearFlag(Entity.FLAG_DEAD);
+	}
+
+	/**
+	 * Executes the delete action from the user interface.
+	 */
+	public void delete() {
+		InputAgent.storeAndExecute(new DeleteCommand(this));
 	}
 
 	/**
