@@ -108,16 +108,18 @@ public class StringProvInput extends Input<StringProvider> {
 	}
 
 	@Override
-	public void removeReferences(Entity ent) {
+	public boolean removeReferences(Entity ent) {
 		if (value == null)
-			return;
+			return false;
 
 		if (value instanceof StringProvSample) {
 			StringProvSample spsamp = (StringProvSample) value;
 			if (spsamp.getSampleProvider() == ent) {
 				this.reset();
+				return true;
 			}
 		}
+		return false;
 	}
 
 	@Override

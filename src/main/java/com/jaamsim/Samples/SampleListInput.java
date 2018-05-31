@@ -213,10 +213,11 @@ public class SampleListInput extends ListInput<ArrayList<SampleProvider>> {
 	}
 
 	@Override
-	public void removeReferences(Entity ent) {
+	public boolean removeReferences(Entity ent) {
 		if (value == null)
-			return;
-		value.removeAll(Collections.singleton(ent));
+			return false;
+		boolean ret = value.removeAll(Collections.singleton(ent));
+		return ret;
 	}
 
 	@Override

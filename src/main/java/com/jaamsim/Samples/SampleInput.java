@@ -139,10 +139,12 @@ public class SampleInput extends Input<SampleProvider> {
 	}
 
 	@Override
-	public void removeReferences(Entity ent) {
+	public boolean removeReferences(Entity ent) {
 		if (value == ent) {
 			this.reset();
+			return true;
 		}
+		return false;
 	}
 
 	@Override

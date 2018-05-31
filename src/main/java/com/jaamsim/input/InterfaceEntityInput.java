@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2016 JaamSim Software Inc.
+ * Copyright (C) 2016-2018 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -63,10 +63,12 @@ public class InterfaceEntityInput<T> extends Input<T> {
 	}
 
 	@Override
-	public void removeReferences(Entity ent) {
+	public boolean removeReferences(Entity ent) {
 		if (value == ent) {
 			this.reset();
+			return true;
 		}
+		return false;
 	}
 
 }

@@ -158,9 +158,9 @@ public class StringProvListInput extends ListInput<ArrayList<StringProvider>> {
 	}
 
 	@Override
-	public void removeReferences(Entity ent) {
+	public boolean removeReferences(Entity ent) {
 		if (value == null)
-			return;
+			return false;
 
 		ArrayList<StringProvider> list = new ArrayList<>();
 		for (StringProvider samp : value) {
@@ -171,7 +171,8 @@ public class StringProvListInput extends ListInput<ArrayList<StringProvider>> {
 				}
 			}
 		}
-		value.removeAll(list);
+		boolean ret = value.removeAll(list);
+		return ret;
 	}
 
 	@Override

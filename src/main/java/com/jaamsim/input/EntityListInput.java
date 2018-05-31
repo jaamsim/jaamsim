@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2010-2011 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2018 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -231,10 +232,11 @@ public class EntityListInput<T extends Entity> extends ListInput<ArrayList<T>> {
 	}
 
 	@Override
-	public void removeReferences(Entity ent) {
+	public boolean removeReferences(Entity ent) {
 		if (value == null)
-			return;
-		value.removeAll(Collections.singleton(ent));
+			return false;
+		boolean ret = value.removeAll(Collections.singleton(ent));
+		return ret;
 	}
 
 }

@@ -208,8 +208,11 @@ public abstract class Input<T> {
 	/**
 	 * Deletes any use of the specified entity from this input.
 	 * @param ent - entity whose references are to be deleted
+	 * @return true if a reference was removed
 	 */
-	public void removeReferences(Entity ent) {}
+	public boolean removeReferences(Entity ent) {
+		return false;
+	}
 
 	/**
 	 * Describes the valid inputs for this type of input.
