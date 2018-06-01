@@ -473,6 +473,12 @@ public abstract class Input<T> {
 		return isDef;
 	}
 
+	public ArrayList<String> getValueTokens() {
+		ArrayList<String> ret = new ArrayList<>();
+		getValueTokens(ret);
+		return ret;
+	}
+
 	public void getValueTokens(ArrayList<String> toks) {
 		if (valueTokens == null)
 			return;
