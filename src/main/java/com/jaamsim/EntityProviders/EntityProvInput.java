@@ -113,6 +113,18 @@ public class EntityProvInput<T extends Entity> extends Input<EntityProvider<T>> 
 	}
 
 	@Override
+	public boolean removeReferences(Entity ent) {
+		if (value instanceof EntityProvConstant) {
+			EntityProvConstant<T> epc = (EntityProvConstant<T>) value;
+			if (epc.getEntity() == ent) {
+				this.reset();
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
 	public boolean useExpressionBuilder() {
 		return true;
 	}
