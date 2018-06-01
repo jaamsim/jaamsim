@@ -23,6 +23,7 @@ import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 
 import com.jaamsim.Commands.DeleteCommand;
+import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.events.Conditional;
 import com.jaamsim.events.EventHandle;
@@ -253,7 +254,45 @@ public class Entity {
 	 * Executes the delete action from the user interface.
 	 */
 	public void delete() {
+
+		// Generated entities are not part of the model inputs so do not support undo/redo
+		if (testFlag(Entity.FLAG_GENERATED)) {
+			kill();
+			return;
+		}
+
+		// Delete any references to this entity in the inputs to other entities
+		for (Entity ent : Entity.getClonesOfIterator(Entity.class)) {
+			if (ent == this)
+				continue;
+			ArrayList<KeywordIndex> oldKwList = new ArrayList<>();
+			ArrayList<KeywordIndex> newKwList = new ArrayList<>();
+			for (Input<?> in : ent.inpList) {
+				ArrayList<String> oldTokens = in.getValueTokens();
+				boolean changed = in.removeReferences(this);
+				if (!changed)
+					continue;
+				KeywordIndex oldKw = new KeywordIndex(in.getKeyword(), oldTokens, null);
+				KeywordIndex newKw = new KeywordIndex(in.getKeyword(), in.getValueTokens(), null);
+				oldKwList.add(oldKw);
+				newKwList.add(newKw);
+			}
+
+			// Reload any inputs that have changed so that redo/undo works correctly
+			if (newKwList.isEmpty())
+				continue;
+			KeywordIndex[] oldKws = new KeywordIndex[oldKwList.size()];
+			KeywordIndex[] newKws = new KeywordIndex[newKwList.size()];
+			oldKws = oldKwList.toArray(oldKws);
+			newKws = newKwList.toArray(newKws);
+			InputAgent.storeAndExecute(new KeywordCommand(ent, 0, oldKws, newKws));
+		}
+
+		// Execute the delete command
 		InputAgent.storeAndExecute(new DeleteCommand(this));
+
+		// Record that the model has changed
+		InputAgent.setSessionEdited(true);
 	}
 
 	/**

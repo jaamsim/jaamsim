@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2017 JaamSim Software Inc.
+ * Copyright (C) 2017-2018 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,8 +17,6 @@
 package com.jaamsim.Commands;
 
 import com.jaamsim.basicsim.Entity;
-import com.jaamsim.input.Input;
-import com.jaamsim.input.InputAgent;
 
 public class DeleteCommand implements Command {
 
@@ -33,23 +31,11 @@ public class DeleteCommand implements Command {
 	@Override
 	public void execute() {
 		entity.kill();
-		if (!entity.testFlag(Entity.FLAG_GENERATED)) {
-			InputAgent.setSessionEdited(true);
-		}
-
-		// Remove any references to the deleted entity from the inputs to other entities
-		for (Entity ent : Entity.getClonesOfIterator(Entity.class)) {
-			for (Input<?> in : ent.getEditableInputs()) {
-				in.removeReferences(entity);
-			}
-		}
 	}
 
 	@Override
 	public void undo() {
 		entity.restore(entityName);
-
-		// FIXME need to restore references to the deleted entity in the inputs to other entities
 	}
 
 	@Override
