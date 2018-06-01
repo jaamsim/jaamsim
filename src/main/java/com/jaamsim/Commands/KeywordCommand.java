@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2017 JaamSim Software Inc.
+ * Copyright (C) 2017-2018 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,8 +15,6 @@
  * limitations under the License.
  */
 package com.jaamsim.Commands;
-
-import java.util.ArrayList;
 
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.input.Input;
@@ -52,9 +50,7 @@ public class KeywordCommand implements Command {
 		for (int i = 0; i < kws.length; i++) {
 			String key = kws[i].keyword;
 			Input<?> in = ent.getInput(key);
-			ArrayList<String> tokens = new ArrayList<>();
-			in.getValueTokens(tokens);
-			ret[i] = new KeywordIndex(key, tokens, null);
+			ret[i] = new KeywordIndex(key, in.getValueTokens(), null);
 		}
 		return ret;
 	}
