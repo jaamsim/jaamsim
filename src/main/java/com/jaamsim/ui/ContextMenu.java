@@ -187,7 +187,7 @@ public class ContextMenu {
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				GraphicBox graphicBox = GraphicBox.getInstance(ent, x, y);
+				GraphicBox graphicBox = GraphicBox.getInstance(ent, c, x, y);
 				graphicBox.setVisible( true );
 			}
 		} );

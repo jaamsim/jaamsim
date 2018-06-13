@@ -18,6 +18,7 @@
 package com.jaamsim.ui;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Point;
@@ -339,10 +340,8 @@ public class GraphicBox extends JDialog {
 		this.pack();
 	}
 
-	public static GraphicBox getInstance( DisplayEntity ent, int x, int y ) {
+	public static GraphicBox getInstance(DisplayEntity ent, Component c, int x, int y) {
 		currentEntity = ent;
-
-		Point pos = new Point(x, y);
 
 		// Has the Graphic Box been created?
 		if (myInstance == null) {
@@ -351,8 +350,8 @@ public class GraphicBox extends JDialog {
 		}
 
 		// Position of the GraphicBox
-		pos.setLocation(pos.x + myInstance.getSize().width /2 , pos.y + myInstance.getSize().height /2);
-		myInstance.setLocation(pos.x, pos.y);
+		Point pos = c.getLocationOnScreen();
+		myInstance.setLocation(pos.x + x, pos.y + y);
 		myInstance.refresh();
 		myInstance.setEnabled(true);
 		return myInstance;
