@@ -380,7 +380,7 @@ public static class EditTable extends JTable {
 		// 5) Multiple selections from a List
 		else if (in instanceof ListInput) {
 			if(listEditor == null) {
-				listEditor = new ListEditor(this);
+				listEditor = new ListEditor(this, array);
 				if (in instanceof StringListInput) {
 					listEditor.setCaseSensitive(
 							((StringListInput)(in)).getCaseSensitive() );
@@ -389,7 +389,6 @@ public static class EditTable extends JTable {
 					listEditor.setInnerBraces(true);
 				}
 			}
-			listEditor.setListData(array);
 			ret = listEditor;
 		}
 
