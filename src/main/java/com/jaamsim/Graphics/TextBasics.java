@@ -399,6 +399,8 @@ public abstract class TextBasics extends DisplayEntity {
 	}
 
 	public void resizeForText() {
+		if (!RenderManager.isGood())
+			return;
 		Vec3d textSize = getTextSize();
 		double length = textSize.x + textSize.y;
 		double height = 2.0 * textSize.y;
