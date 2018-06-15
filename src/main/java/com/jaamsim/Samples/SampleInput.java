@@ -131,6 +131,9 @@ public class SampleInput extends Input<SampleProvider> {
 
 	@Override
 	public String getPresentValueString(double simTime) {
+		if (value == null)
+			return "";
+
 		StringBuilder sb = new StringBuilder();
 		Class<? extends Unit> ut = value.getUnitType();
 		if (ut == DimensionlessUnit.class) {
