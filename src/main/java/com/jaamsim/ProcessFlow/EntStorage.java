@@ -257,6 +257,20 @@ public class EntStorage {
 	}
 
 	/**
+	 * Returns the entities in storage for the specified entity type.
+	 * @param type - specified entity type
+	 * @return entities in storage for the specified type
+	 */
+	public ArrayList<DisplayEntity> getEntityList(String type) {
+		Collection<StorageEntry> entries = entrySet.values(type);
+		ArrayList<DisplayEntity> ret = new ArrayList<>(entries.size());
+		for (StorageEntry entry : entries) {
+			ret.add(entry.entity);
+		}
+		return ret;
+	}
+
+	/**
 	 * Returns the priority for each entity in the storage.
 	 * @return priority for each entity
 	 */
