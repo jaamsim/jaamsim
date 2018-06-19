@@ -16,6 +16,7 @@
  */
 package com.jaamsim.ProcessFlow;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
@@ -238,6 +239,48 @@ public class EntStorage {
 			countForMaxType = entrySet.size(typeWithMaxCount);
 		}
 		return countForMaxType;
+	}
+
+	/**
+	 * Returns the entities in the storage.
+	 * @return entities in storage
+	 */
+	public ArrayList<DisplayEntity> getEntityList() {
+		ArrayList<DisplayEntity> ret = new ArrayList<>(entrySet.size());
+		Iterator<StorageEntry> itr = entrySet.iterator();
+		while (itr.hasNext()) {
+			ret.add(itr.next().entity);
+		}
+		return ret;
+	}
+
+	/**
+	 * Returns the priority for each entity in the storage.
+	 * @return priority for each entity
+	 */
+	public ArrayList<Integer> getPriorityList() {
+		ArrayList<Integer> ret = new ArrayList<>(entrySet.size());
+		Iterator<StorageEntry> itr = entrySet.iterator();
+		while (itr.hasNext()) {
+			ret.add(itr.next().priority);
+		}
+		return ret;
+	}
+
+	/**
+	 * Returns the type for each entity in the storage.
+	 * @return type for each entity
+	 */
+	public ArrayList<String> getTypeList() {
+		ArrayList<String> ret = new ArrayList<>(entrySet.size());
+		Iterator<StorageEntry> itr = entrySet.iterator();
+		while (itr.hasNext()) {
+			String type = itr.next().type;
+			if (type != null) {
+				ret.add(type);
+			}
+		}
+		return ret;
 	}
 
 }
