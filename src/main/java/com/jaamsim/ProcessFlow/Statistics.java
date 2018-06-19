@@ -110,11 +110,13 @@ public class Statistics extends LinkedComponent {
 		double simTime = this.getSimTime();
 
 		// Update the statistics
-		double val = sampleValue.getValue().getNextSample(simTime);
-		sampStats.addValue(val);
-		timeStats.addValue(simTime, val);
-		if (!histogramBinWidth.isDefault()) {
-			freq.addValue((int) Math.round(val/histogramBinWidth.getValue()));
+		if (!sampleValue.isDefault()) {
+			double val = sampleValue.getValue().getNextSample(simTime);
+			sampStats.addValue(val);
+			timeStats.addValue(simTime, val);
+			if (!histogramBinWidth.isDefault()) {
+				freq.addValue((int) Math.round(val/histogramBinWidth.getValue()));
+			}
 		}
 
 		// Update the statistics for each of the entity's states
