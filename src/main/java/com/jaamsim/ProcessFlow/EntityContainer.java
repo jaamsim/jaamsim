@@ -18,7 +18,9 @@
 package com.jaamsim.ProcessFlow;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.ProcessFlow.EntStorage.StorageEntry;
@@ -344,6 +346,51 @@ public class EntityContainer extends SimEntity {
 	    sequence = 7)
 	public ArrayList<Double> getStorageTimes(double simTime) {
 		return storage.getStorageTimeList(simTime);
+	}
+
+	@Output(name = "MatchValueCount",
+	 description = "The present number of unique match values in the container.",
+	    unitType = DimensionlessUnit.class,
+	    sequence = 8)
+	public int getMatchValueCount(double simTime) {
+		return storage.getTypes().size();
+	}
+
+	@Output(name = "UniqueMatchValues",
+	 description = "The list of unique Match values for the entities in the container.",
+	    sequence = 9)
+	public ArrayList<String> getUniqueMatchValues(double simTime) {
+		ArrayList<String> ret = new ArrayList<>(storage.getTypes());
+		Collections.sort(ret);
+		return ret;
+	}
+
+	@Output(name = "MatchValueCountMap",
+	 description = "The number of entities in the container for each Match expression value.\n"
+	             + "For example, '[EntityContainer1].MatchValueCountMap(\"SKU1\")' returns the "
+	             + "number of entities whose Match value is \"SKU1\".",
+	    unitType = DimensionlessUnit.class,
+	    sequence = 10)
+	public LinkedHashMap<String, Integer> getMatchValueCountMap(double simTime) {
+		LinkedHashMap<String, Integer> ret = new LinkedHashMap<>(storage.getTypes().size());
+		for (String m : getUniqueMatchValues(simTime)) {
+			ret.put(m, storage.size(m));
+		}
+		return ret;
+	}
+
+	@Output(name = "MatchValueMap",
+	 description = "Provides a list of entities in the container for each Match expression "
+	             + "value.\n"
+	             + "For example, '[EntityContainer1].MatchValueMap(\"SKU1\")' returns a list of "
+	             + "entities whose Match value is \"SKU1\".",
+	    sequence = 11)
+	public LinkedHashMap<String, ArrayList<DisplayEntity>> getMatchValueMap(double simTime) {
+		LinkedHashMap<String, ArrayList<DisplayEntity>> ret = new LinkedHashMap<>(storage.getTypes().size());
+		for (String m : getUniqueMatchValues(simTime)) {
+			ret.put(m, storage.getEntityList(m));
+		}
+		return ret;
 	}
 
 }
