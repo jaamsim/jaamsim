@@ -653,13 +653,7 @@ public class Queue extends LinkedComponent {
 	    unitType = TimeUnit.class,
 	    sequence = 2)
 	public ArrayList<Double> getQueueTimes(double simTime) {
-		ArrayList<Double> ret = new ArrayList<>(storage.size());
-		Iterator<StorageEntry> itr = storage.iterator();
-		while (itr.hasNext()) {
-			QueueEntry entry = (QueueEntry) itr.next();
-			ret.add(simTime - entry.timeAdded);
-		}
-		return ret;
+		return storage.getStorageTimeList(simTime);
 	}
 
 	@Output(name = "PriorityValues",
