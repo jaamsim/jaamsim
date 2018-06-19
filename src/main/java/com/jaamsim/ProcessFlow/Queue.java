@@ -195,13 +195,11 @@ public class Queue extends LinkedComponent {
 	}
 
 	private static class QueueEntry extends EntStorage.StorageEntry {
-		final double timeAdded;
 		final Vec3d orientation;
 		final EventHandle renegeHandle;
 
 		public QueueEntry(DisplayEntity ent, String m, int pri, long n, double t, Vec3d orient, EventHandle rh) {
-			super(ent, m, pri, n);
-			timeAdded = t;
+			super(ent, m, pri, n, t);
 			orientation = orient;
 			renegeHandle = rh;
 		}

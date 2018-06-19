@@ -51,12 +51,14 @@ public class EntStorage {
 		final String type;
 		final int priority;
 		final long seqNum;
+		final double timeAdded;
 
-		public StorageEntry(DisplayEntity ent, String tp, int pri, long n) {
+		public StorageEntry(DisplayEntity ent, String tp, int pri, long n, double t) {
 			entity = ent;
 			type = tp;
 			priority = pri;
 			seqNum = n;
+			timeAdded = t;
 		}
 
 		@Override
