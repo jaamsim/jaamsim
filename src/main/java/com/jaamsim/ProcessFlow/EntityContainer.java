@@ -140,6 +140,10 @@ public class EntityContainer extends SimEntity {
 	public void addEntity(DisplayEntity ent) {
 		double simTime = getSimTime();
 
+		// Register the entity
+		lastEntity = ent;
+		numberAdded++;
+
 		// Build the entry for the entity
 		long n = this.getTotalNumberAdded();
 		if (!fifo.getValue())
@@ -151,8 +155,6 @@ public class EntityContainer extends SimEntity {
 
 		StorageEntry entry = new StorageEntry(ent, m, pri, n, simTime);
 		storage.add(entry);
-		lastEntity = ent;
-		numberAdded++;
 	}
 
 	public DisplayEntity removeEntity(String m) {
