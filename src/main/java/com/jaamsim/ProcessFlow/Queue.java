@@ -647,12 +647,7 @@ public class Queue extends LinkedComponent {
 	 description = "The entities in the queue.",
 	    sequence = 1)
 	public ArrayList<DisplayEntity> getQueueList(double simTime) {
-		ArrayList<DisplayEntity> ret = new ArrayList<>(storage.size());
-		Iterator<StorageEntry> itr = storage.iterator();
-		while (itr.hasNext()) {
-			ret.add(itr.next().entity);
-		}
-		return ret;
+		return storage.getEntityList();
 	}
 
 	@Output(name = "QueueTimes",
@@ -673,13 +668,8 @@ public class Queue extends LinkedComponent {
 	 description = "The Priority expression value for each entity in the queue.",
 	    unitType = DimensionlessUnit.class,
 	    sequence = 3)
-	public IntegerVector getPriorityValues(double simTime) {
-		IntegerVector ret = new IntegerVector(storage.size());
-		Iterator<StorageEntry> itr = storage.iterator();
-		while (itr.hasNext()) {
-			ret.add(itr.next().priority);
-		}
-		return ret;
+	public ArrayList<Integer> getPriorityValues(double simTime) {
+		return storage.getPriorityList();
 	}
 
 	@Output(name = "MatchValues",
@@ -687,15 +677,7 @@ public class Queue extends LinkedComponent {
 	    unitType = DimensionlessUnit.class,
 	    sequence = 4)
 	public ArrayList<String> getMatchValues(double simTime) {
-		ArrayList<String> ret = new ArrayList<>(storage.size());
-		Iterator<StorageEntry> itr = storage.iterator();
-		while (itr.hasNext()) {
-			String m = itr.next().type;
-			if (m != null) {
-				ret.add(m);
-			}
-		}
-		return ret;
+		return storage.getTypeList();
 	}
 
 	@Output(name = "QueueLengthAverage",

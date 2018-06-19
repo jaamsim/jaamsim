@@ -318,28 +318,15 @@ public class EntityContainer extends SimEntity {
 	    unitType = DimensionlessUnit.class,
 	    sequence = 4)
 	public ArrayList<DisplayEntity> getEntityList(double simTime) {
-		ArrayList<DisplayEntity> ret = new ArrayList<>(storage.size());
-		Iterator<StorageEntry> itr = storage.iterator();
-		while (itr.hasNext()) {
-			DisplayEntity ent = itr.next().entity;
-			ret.add(ent);
-		}
-		return ret;
+		return storage.getEntityList();
 	}
 
 	@Output(name = "PriorityValues",
 	 description = "The Priority expression value for each entity in the queue.",
 	    unitType = DimensionlessUnit.class,
 	    sequence = 5)
-	public int[] getPriorityValues(double simTime) {
-		int[] ret = new int[storage.size()];
-		Iterator<StorageEntry> itr = storage.iterator();
-		int i = 0;
-		while (itr.hasNext()) {
-			ret[i] = itr.next().priority;
-			i++;
-		}
-		return ret;
+	public ArrayList<Integer> getPriorityValues(double simTime) {
+		return storage.getPriorityList();
 	}
 
 	@Output(name = "MatchValues",
@@ -347,15 +334,7 @@ public class EntityContainer extends SimEntity {
 	    unitType = DimensionlessUnit.class,
 	    sequence = 6)
 	public ArrayList<String> getMatchValues(double simTime) {
-		ArrayList<String> ret = new ArrayList<>(storage.size());
-		Iterator<StorageEntry> itr = storage.iterator();
-		while (itr.hasNext()) {
-			String m = itr.next().type;
-			if (m != null) {
-				ret.add(m);
-			}
-		}
-		return ret;
+		return storage.getTypeList();
 	}
 
 }
