@@ -285,4 +285,18 @@ public class EntStorage {
 		return ret;
 	}
 
+	/**
+	 * Returns the time each entity has spent in the storage.
+	 * @param simTime - present time
+	 * @return time in storage for each entity
+	 */
+	public ArrayList<Double> getStorageTimeList(double simTime) {
+		ArrayList<Double> ret = new ArrayList<>(entrySet.size());
+		Iterator<StorageEntry> itr = entrySet.iterator();
+		while (itr.hasNext()) {
+			ret.add(simTime - itr.next().timeAdded);
+		}
+		return ret;
+	}
+
 }
