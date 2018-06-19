@@ -18,7 +18,6 @@
 package com.jaamsim.ProcessFlow;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -771,12 +770,7 @@ public class Queue extends LinkedComponent {
 	public LinkedHashMap<String, ArrayList<DisplayEntity>> getMatchValueMap(double simTime) {
 		LinkedHashMap<String, ArrayList<DisplayEntity>> ret = new LinkedHashMap<>(storage.getTypes().size());
 		for (String m : getUniqueMatchValues(simTime)) {
-			Collection<StorageEntry> entrySet = storage.getEntries(m);
-			ArrayList<DisplayEntity> list = new ArrayList<>(entrySet.size());
-			for (StorageEntry entry : entrySet) {
-				list.add(entry.entity);
-			}
-			ret.put(m, list);
+			ret.put(m, storage.getEntityList(m));
 		}
 		return ret;
 	}
