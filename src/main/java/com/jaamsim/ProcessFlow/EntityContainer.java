@@ -36,6 +36,7 @@ import com.jaamsim.states.StateEntity;
 import com.jaamsim.states.StateRecord;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.DistanceUnit;
+import com.jaamsim.units.TimeUnit;
 
 public class EntityContainer extends SimEntity {
 
@@ -335,6 +336,14 @@ public class EntityContainer extends SimEntity {
 	    sequence = 6)
 	public ArrayList<String> getMatchValues(double simTime) {
 		return storage.getTypeList();
+	}
+
+	@Output(name = "StorageTimes",
+	 description = "The elapsed time since each entity was placed in storage.",
+	    unitType = TimeUnit.class,
+	    sequence = 7)
+	public ArrayList<Double> getStorageTimes(double simTime) {
+		return storage.getStorageTimeList(simTime);
 	}
 
 }
