@@ -167,33 +167,6 @@ public class SampleListInput extends ListInput<ArrayList<SampleProvider>> {
 	}
 
 	@Override
-	public void validate() {
-		super.validate();
-
-		if (value == null)
-			return;
-
-		for (int i=0; i<value.size(); i++) {
-			SampleProvider sp = value.get(i);
-
-			if (sp instanceof SampleExpression) continue;
-			if (sp instanceof SampleConstant) continue;
-
-			Input.assertUnitsMatch(sp.getUnitType(), getUnitType(i));
-
-			if (sp.getMinValue() < minValue)
-				throw new InputErrorException("The minimum value allowed for keyword: '%s' is: %s.\n" +
-						"The specified entity: '%s' can return values as small as: %s.",
-						this.getKeyword(), minValue, ((Entity)sp).getName(), sp.getMinValue());
-
-			if (sp.getMaxValue() > maxValue)
-				throw new InputErrorException("The maximum value allowed for keyword: '%s' is: %s.\n" +
-						"The specified entity: '%s' can return values as large as: %s.",
-						this.getKeyword(), maxValue, ((Entity)sp).getName(), sp.getMaxValue());
-		}
-	}
-
-	@Override
 	public String getDefaultString() {
 		if (defValue == null || defValue.isEmpty()) {
 			return "";

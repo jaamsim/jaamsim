@@ -20,7 +20,6 @@ package com.jaamsim.Samples;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import com.jaamsim.BasicObjects.ExpressionEntity;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputErrorException;
@@ -114,28 +113,6 @@ public class SampleInput extends Input<SampleProvider> {
 
 		// All other inputs can be built from scratch
 		toks.add(value.toString());
-	}
-
-	@Override
-	public void validate() {
-		super.validate();
-
-		if (value == null) return;
-		if (value instanceof SampleExpression) return;
-		if (value instanceof ExpressionEntity) return;
-		if (value instanceof SampleConstant) return;
-
-		Input.assertUnitsMatch(unitType, value.getUnitType());
-
-		if (value.getMinValue() < minValue)
-			throw new InputErrorException("The minimum value allowed for keyword: '%s' is: %s.\n" +
-					"The specified entity: '%s' can return values as small as: %s.",
-					this.getKeyword(), minValue, ((Entity)value).getName(), value.getMinValue());
-
-		if (value.getMaxValue() > maxValue)
-			throw new InputErrorException("The maximum value allowed for keyword: '%s' is: %s.\n" +
-					"The specified entity: '%s' can return values as large as: %s.",
-					this.getKeyword(), maxValue, ((Entity)value).getName(), value.getMaxValue());
 	}
 
 	@Override
