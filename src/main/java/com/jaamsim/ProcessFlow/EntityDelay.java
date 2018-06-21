@@ -21,6 +21,7 @@ import java.util.HashMap;
 
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.PolylineInfo;
+import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.basicsim.EntityTarget;
 import com.jaamsim.input.BooleanInput;
@@ -43,6 +44,18 @@ public class EntityDelay extends LinkedComponent {
 	         exampleList = { "3.0 h", "NormalDistribution1", "'1[s] + 0.5*[TimeSeries1].PresentValue'" })
 	private final SampleInput duration;
 
+	@Keyword(description = "If TRUE, an entity can pass a second entity that started ahead of it. "
+	                     + "If FALSE, the entity's duration is increased sufficiently for it to "
+	                     + "arrive no earlier than the previous entity.",
+	         exampleList = {"TRUE"})
+	private final BooleanInput allowOvertaking;
+
+	@Keyword(description = "The minimum time between the previous entity leaving the path and "
+	                     + "the present entity leaving the path. "
+	                     + "Applicable only when entities are prevented from overtaking.",
+	         exampleList = { "3.0 h", "NormalDistribution1", "'1[s] + 0.5*[TimeSeries1].PresentValue'" })
+	private final SampleInput minSeparation;
+
 	@Keyword(description = "If TRUE, a delayed entity is moved along the specified path to "
 	                     + "indicate its progression through the delay.",
 	         exampleList = {"TRUE"})
@@ -56,6 +69,7 @@ public class EntityDelay extends LinkedComponent {
 	         exampleList = {"red"})
 	private final ColourInput colorInput;
 
+	private double exitTime;  // time at which the previous entity will leave the path
 	private final HashMap<Long, EntityDelayEntry> entityMap = new HashMap<>();  // List of the entities being handled
 
 	{
@@ -67,6 +81,15 @@ public class EntityDelay extends LinkedComponent {
 		duration.setValidRange(0, Double.POSITIVE_INFINITY);
 		duration.setRequired(true);
 		this.addInput(duration);
+
+		allowOvertaking = new BooleanInput("AllowOvertaking", KEY_INPUTS, true);
+		this.addInput(allowOvertaking);
+
+		minSeparation = new SampleInput("MinSeparation", KEY_INPUTS, new SampleConstant(0.0d));
+		minSeparation.setUnitType(TimeUnit.class);
+		minSeparation.setEntity(this);
+		minSeparation.setValidRange(0, Double.POSITIVE_INFINITY);
+		this.addInput(minSeparation);
 
 		animation = new BooleanInput("Animation", GRAPHICS, true);
 		this.addInput(animation);
@@ -106,6 +129,7 @@ public class EntityDelay extends LinkedComponent {
 	@Override
 	public void earlyInit() {
 		super.earlyInit();
+		exitTime = Double.NEGATIVE_INFINITY;
 		entityMap.clear();
 	}
 
@@ -127,6 +151,13 @@ public class EntityDelay extends LinkedComponent {
 		// Select the delay time for this entity
 		double simTime = this.getSimTime();
 		double dur = duration.getValue().getNextSample(simTime);
+
+		// Adjust the duration for the previous entity's exit time
+		if (!allowOvertaking.getValue()) {
+			double sep = minSeparation.getValue().getNextSample(simTime);
+			dur = Math.max(dur, exitTime - simTime + sep);
+			exitTime = simTime + dur;
+		}
 
 		// Add the entity to the list of entities being delayed
 		if (animation.getValue()) {
