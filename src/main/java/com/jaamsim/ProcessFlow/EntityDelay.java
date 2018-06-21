@@ -168,7 +168,7 @@ public class EntityDelay extends LinkedComponent {
 			entityMap.put(ent.getEntityNumber(), entry);
 		}
 
-		this.scheduleProcess(dur, 5, new RemoveDisplayEntityTarget(this, ent));
+		scheduleProcess(dur, 5, true, new RemoveDisplayEntityTarget(this, ent), null); // FIFO
 
 		// Set the present state to Working
 		this.setPresentState();
