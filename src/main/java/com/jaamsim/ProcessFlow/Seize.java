@@ -114,9 +114,7 @@ public class Seize extends LinkedService implements ResourceUser {
 	}
 
 	@Override
-	protected boolean processStep(double simTime) {
-		return true;
-	}
+	protected void processStep(double simTime) {}
 
 	@Override
 	public boolean hasWaitingEntity() {

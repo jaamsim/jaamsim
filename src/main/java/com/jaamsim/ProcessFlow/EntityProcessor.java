@@ -206,7 +206,7 @@ public class EntityProcessor extends Seize {
 	}
 
 	@Override
-	protected boolean processStep(double simTime) {
+	protected void processStep(double simTime) {
 
 		// Identify the entities whose processing is finished
 		ArrayList<ProcessorEntry> completedEntries = new ArrayList<>(entryList.size());
@@ -238,8 +238,6 @@ public class EntityProcessor extends Seize {
 		for (ProcessorEntry entry : completedEntries) {
 			this.sendToNextComponent(entry.entity);
 		}
-
-		return true;
 	}
 
 	@Override

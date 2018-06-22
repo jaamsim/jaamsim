@@ -136,7 +136,7 @@ public class EntityConveyor extends LinkedService {
 	}
 
 	@Override
-	protected boolean processStep(double simTime) {
+	protected void processStep(double simTime) {
 
 		// Remove the first entity from the conveyor and send it to the next component
 		ConveyorEntry entry = entryList.remove(0);
@@ -152,8 +152,6 @@ public class EntityConveyor extends LinkedService {
 
 		// Update the travel time
 		this.updateTravelTime(simTime);
-
-		return true;
 	}
 
 	@Override

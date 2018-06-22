@@ -82,7 +82,7 @@ public class Unpack extends LinkedService {
 	}
 
 	@Override
-	protected boolean processStep(double simTime) {
+	protected void processStep(double simTime) {
 
 		// Remove the next entity from the container
 		if (numberRemoved < numberToRemove && container.getCount() > 0) {
@@ -95,8 +95,6 @@ public class Unpack extends LinkedService {
 			this.disposeContainer(container);
 			container = null;
 		}
-
-		return true;
 	}
 
 	@Override

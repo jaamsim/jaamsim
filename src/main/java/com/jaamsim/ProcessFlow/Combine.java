@@ -127,7 +127,7 @@ public class Combine extends LinkedService {
 	}
 
 	@Override
-	protected boolean processStep(double simTime) {
+	protected void processStep(double simTime) {
 
 		// If specified, send all the entities to the next component
 		if (retainAll.getValue()) {
@@ -142,8 +142,6 @@ public class Combine extends LinkedService {
 			this.sendToNextComponent(processedEntityList[0]);
 			processedEntityList[0] = null;
 		}
-
-		return true;
 	}
 
 	@Override

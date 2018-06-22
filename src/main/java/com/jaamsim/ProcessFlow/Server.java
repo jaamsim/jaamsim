@@ -77,14 +77,12 @@ public class Server extends LinkedService {
 	}
 
 	@Override
-	protected boolean processStep(double simTime) {
+	protected void processStep(double simTime) {
 
 		// Send the entity to the next component in the chain
 		this.sendToNextComponent(servedEntity);
 		servedEntity = null;
 		serviceDuration = 0.0d;
-
-		return true;
 	}
 
 	@Override
