@@ -153,9 +153,7 @@ public abstract class Device extends StateUserEntity {
 		// closure, then determine whether to change state and/or to continue to the next step
 		if (this.getSimTicks() == endTicks || this.isImmediateReleaseThresholdClosure()) {
 			stepCompleted = true;
-			boolean bool = this.processStep(simTime);
-			if (!bool)
-				return;
+			this.processStep(simTime);
 		}
 
 		// Start the next time step
