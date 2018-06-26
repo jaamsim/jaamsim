@@ -18,8 +18,10 @@
 package com.jaamsim.ProcessFlow;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import com.jaamsim.Graphics.DisplayEntity;
+import com.jaamsim.ProcessFlow.EntStorage.StorageEntry;
 import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.StringProviders.StringProvInput;
@@ -78,7 +80,7 @@ public class EntityContainer extends SimEntity {
 			exampleList = {"FALSE"})
 	protected final BooleanInput showEntities;
 
-	private ArrayList<DisplayEntity> entityList;
+	private EntStorage storage;
 	private DisplayEntity lastEntity;
 	private long initialNumberAdded;
 	private long initialNumberRemoved;
@@ -118,13 +120,13 @@ public class EntityContainer extends SimEntity {
 	}
 
 	public EntityContainer() {
-		entityList = new ArrayList<>();
+		storage = new EntStorage();
 	}
 
 	@Override
 	public void earlyInit() {
 		super.earlyInit();
-		entityList.clear();
+		storage.clear();
 		lastEntity = null;
 		initialNumberAdded = 0L;
 		initialNumberRemoved = 0L;
@@ -133,13 +135,27 @@ public class EntityContainer extends SimEntity {
 	}
 
 	public void addEntity(DisplayEntity ent) {
-		entityList.add(ent);
+		double simTime = getSimTime();
+
+		// Build the entry for the entity
+		long n = this.getTotalNumberAdded();
+		if (!fifo.getValue())
+			n *= -1;
+		int pri = (int) priority.getValue().getNextSample(simTime);
+		String m = null;
+		if (match.getValue() != null)
+			m = match.getValue().getNextString(simTime, "%s", 1.0d, true);
+
+		StorageEntry entry = new StorageEntry(ent, m, pri, n);
+		storage.add(entry);
 		lastEntity = ent;
 		numberAdded++;
 	}
 
 	public DisplayEntity removeEntity() {
-		DisplayEntity ent = entityList.remove(entityList.size()-1);
+		StorageEntry entry = storage.first();
+		storage.remove(entry);
+		DisplayEntity ent = entry.entity;
 		if (!showEntities.getValue()) {
 			ent.setShow(true);
 		}
@@ -148,7 +164,7 @@ public class EntityContainer extends SimEntity {
 	}
 
 	public int getCount() {
-		return entityList.size();
+		return storage.size();
 	}
 
 	@Override
@@ -156,7 +172,9 @@ public class EntityContainer extends SimEntity {
 		super.stateChanged(prev, next);
 
 		// Set the states for the entities carried by the EntityContainer to the new state
-		for (DisplayEntity ent : entityList) {
+		Iterator<StorageEntry> itr = storage.iterator();
+		while (itr.hasNext()) {
+			DisplayEntity ent = itr.next().entity;
 			if (ent instanceof StateEntity)
 				((StateEntity)ent).setPresentState(next.name);
 		}
@@ -164,7 +182,9 @@ public class EntityContainer extends SimEntity {
 
 	@Override
 	public void kill() {
-		for (DisplayEntity ent : entityList) {
+		Iterator<StorageEntry> itr = storage.iterator();
+		while (itr.hasNext()) {
+			DisplayEntity ent = itr.next().entity;
 			ent.kill();
 		}
 		super.kill();
@@ -209,14 +229,19 @@ public class EntityContainer extends SimEntity {
 
 		// Find widest entity
 		double maxWidth = 0;
-		for (int j = 0; j < entityList.size(); j++) {
-			maxWidth = Math.max(maxWidth, entityList.get(j).getSize().y);
+		Iterator<StorageEntry> itr = storage.iterator();
+		while (itr.hasNext()) {
+			DisplayEntity ent = itr.next().entity;
+			maxWidth = Math.max(maxWidth, ent.getSize().y);
 		}
 
 		// Update the position of each entity (start at the bottom left of the container)
 		double distanceX = -0.5*size.x;
 		double distanceY = -0.5*size.y + 0.5*maxWidth;
-		for (int i = 0; i < entityList.size(); i++) {
+		itr = storage.iterator();
+		int i = 0;
+		while (itr.hasNext()) {
+			DisplayEntity item = itr.next().entity;
 
 			// if new row is required, reset distanceX and move distanceY up one row
 			if (i > 0 && i % maxPerLineInput.getValue() == 0){
@@ -225,7 +250,6 @@ public class EntityContainer extends SimEntity {
 			}
 
 			// Rotate each entity about its center so it points to the right direction
-			DisplayEntity item = entityList.get(i);
 			item.setShow(visible);
 			item.setOrientation(orient);
 
@@ -239,6 +263,7 @@ public class EntityContainer extends SimEntity {
 
 			// increment total distance
 			distanceX += 0.5*itemSize.x;
+			i++;
 		}
 	}
 
@@ -272,7 +297,7 @@ public class EntityContainer extends SimEntity {
 	    unitType = DimensionlessUnit.class,
 	    sequence = 3)
 	public int getCount(double simTime) {
-		return entityList.size();
+		return storage.size();
 	}
 
 	@Output(name = "EntityList",
@@ -280,7 +305,13 @@ public class EntityContainer extends SimEntity {
 	    unitType = DimensionlessUnit.class,
 	    sequence = 4)
 	public ArrayList<DisplayEntity> getEntityList(double simTime) {
-		return entityList;
+		ArrayList<DisplayEntity> ret = new ArrayList<>(storage.size());
+		Iterator<StorageEntry> itr = storage.iterator();
+		while (itr.hasNext()) {
+			DisplayEntity ent = itr.next().entity;
+			ret.add(ent);
+		}
+		return ret;
 	}
 
 }
