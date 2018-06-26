@@ -52,6 +52,8 @@ public class EntityContainer extends SimEntity {
 
 	private ArrayList<DisplayEntity> entityList;
 	private DisplayEntity lastEntity;
+	private long numberAdded;
+	private long numberRemoved;
 
 	{
 		positionOffset = new Vec3dInput("PositionOffset", KEY_INPUTS, new Vec3d(0.0d, 0.0d, 0.01d));
@@ -80,11 +82,14 @@ public class EntityContainer extends SimEntity {
 		super.earlyInit();
 		entityList.clear();
 		lastEntity = null;
+		numberAdded = 0L;
+		numberRemoved = 0L;
 	}
 
 	public void addEntity(DisplayEntity ent) {
 		entityList.add(ent);
 		lastEntity = ent;
+		numberAdded++;
 	}
 
 	public DisplayEntity removeEntity() {
@@ -92,6 +97,7 @@ public class EntityContainer extends SimEntity {
 		if (!showEntities.getValue()) {
 			ent.setShow(true);
 		}
+		numberRemoved++;
 		return ent;
 	}
 
@@ -116,6 +122,13 @@ public class EntityContainer extends SimEntity {
 			ent.kill();
 		}
 		super.kill();
+	}
+
+	@Override
+	public void clearStatistics() {
+		super.clearStatistics();
+		numberAdded = 0L;
+		numberRemoved = 0L;
 	}
 
 	/**
@@ -172,10 +185,28 @@ public class EntityContainer extends SimEntity {
 		return lastEntity;
 	}
 
+	@Output(name = "NumberAdded",
+	 description = "The number of entities loaded after the initialization period.",
+	    unitType = DimensionlessUnit.class,
+	  reportable = true,
+	    sequence = 1)
+	public long getNumberAdded(double simTime) {
+		return numberAdded;
+	}
+
+	@Output(name = "NumberRemoved",
+	 description = "The number of entities unloaded after the initialization period.",
+	    unitType = DimensionlessUnit.class,
+	  reportable = true,
+	    sequence = 2)
+	public long getNumberRemoved(double simTime) {
+		return numberRemoved;
+	}
+
 	@Output(name = "Count",
 	 description = "The present number of entities in the EntityContainer.",
 	    unitType = DimensionlessUnit.class,
-	    sequence = 1)
+	    sequence = 3)
 	public int getCount(double simTime) {
 		return entityList.size();
 	}
@@ -183,7 +214,7 @@ public class EntityContainer extends SimEntity {
 	@Output(name = "EntityList",
 	 description = "The entities contained by the EntityContainer.",
 	    unitType = DimensionlessUnit.class,
-	    sequence = 2)
+	    sequence = 4)
 	public ArrayList<DisplayEntity> getEntityList(double simTime) {
 		return entityList;
 	}
