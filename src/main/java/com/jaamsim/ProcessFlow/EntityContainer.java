@@ -20,6 +20,9 @@ package com.jaamsim.ProcessFlow;
 import java.util.ArrayList;
 
 import com.jaamsim.Graphics.DisplayEntity;
+import com.jaamsim.Samples.SampleConstant;
+import com.jaamsim.Samples.SampleInput;
+import com.jaamsim.StringProviders.StringProvInput;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
@@ -33,6 +36,31 @@ import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.DistanceUnit;
 
 public class EntityContainer extends SimEntity {
+
+	@Keyword(description = "The priority for positioning the received entity in the container. "
+	                     + "Priority is integer valued and a lower numerical value indicates a "
+	                     + "higher priority. "
+	                     + "For example, priority 3 is higher than 4, and priorities 3, 3.2, and "
+	                     + "3.8 are equivalent.",
+	         exampleList = {"this.obj.Attrib1"})
+	private final SampleInput priority;
+
+	@Keyword(description = "An expression returning a string value that categorizes the entities "
+	                     + "in the container. "
+	                     + "The expression is evaluated and the value saved when the entity is "
+	                     + "first loaded into the container. "
+	                     + "Expressions that return a dimensionless integer or an object are also "
+	                     + "valid. The returned number or object is converted to a string "
+	                     + "automatically. A floating point number is truncated to an integer.",
+	         exampleList = {"this.obj.Attrib1"})
+	private final StringProvInput match;
+
+	@Keyword(description = "Determines the order in which entities are placed in the container "
+	                     + "(FIFO or LIFO):\n"
+	                     + "TRUE = first in first out (FIFO) order (the default setting),\n"
+	                     + "FALSE = last in first out (LIFO) order.",
+	         exampleList = {"FALSE"})
+	private final BooleanInput fifo;
 
 	@Keyword(description = "The position of the first entity in the container relative to the container.",
 	         exampleList = {"1.0 0.0 0.01 m"})
@@ -58,6 +86,20 @@ public class EntityContainer extends SimEntity {
 	private long numberRemoved;
 
 	{
+		priority = new SampleInput("Priority", KEY_INPUTS, new SampleConstant(0));
+		priority.setUnitType(DimensionlessUnit.class);
+		priority.setEntity(this);
+		priority.setValidRange(0.0d, Double.POSITIVE_INFINITY);
+		this.addInput(priority);
+
+		match = new StringProvInput("Match", KEY_INPUTS, null);
+		match.setUnitType(DimensionlessUnit.class);
+		match.setEntity(this);
+		this.addInput(match);
+
+		fifo = new BooleanInput("FIFO", KEY_INPUTS, true);
+		this.addInput(fifo);
+
 		positionOffset = new Vec3dInput("PositionOffset", KEY_INPUTS, new Vec3d(0.0d, 0.0d, 0.01d));
 		positionOffset.setUnitType(DistanceUnit.class);
 		this.addInput(positionOffset);
