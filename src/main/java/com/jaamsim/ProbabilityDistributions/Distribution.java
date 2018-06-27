@@ -22,7 +22,6 @@ import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.Samples.SampleProvider;
 import com.jaamsim.Statistics.SampleStatistics;
-import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.input.Input;
@@ -134,13 +133,7 @@ implements SampleProvider, RandomStreamUser {
 		super.setInputsForDragAndDrop();
 
 		// Find the largest seed used so far
-		int seed = 0;
-		for (Distribution dist : Entity.getClonesOfIterator(Distribution.class)) {
-			seed = Math.max(seed, dist.getStreamNumber());
-		}
-		for (BooleanSelector bs : Entity.getClonesOfIterator(BooleanSelector.class)) {
-			seed = Math.max(seed, bs.getStreamNumber());
-		}
+		int seed = Simulation.getLargestStreamNumber();
 
 		// Set the random number seed next unused value
 		InputAgent.applyIntegers(this, randomSeedInput.getKeyword(), seed + 1);

@@ -20,7 +20,7 @@ package com.jaamsim.ProbabilityDistributions;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
-import com.jaamsim.basicsim.Entity;
+import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.IntegerInput;
@@ -62,13 +62,7 @@ public class BooleanSelector extends DisplayEntity implements RandomStreamUser {
 		super.setInputsForDragAndDrop();
 
 		// Find the largest seed used so far
-		int seed = 0;
-		for (Distribution dist : Entity.getClonesOfIterator(Distribution.class)) {
-			seed = Math.max(seed, dist.getStreamNumber());
-		}
-		for (BooleanSelector bs : Entity.getClonesOfIterator(BooleanSelector.class)) {
-			seed = Math.max(seed, bs.getStreamNumber());
-		}
+		int seed = Simulation.getLargestStreamNumber();
 
 		// Set the random number seed next unused value
 		InputAgent.applyIntegers(this, randomSeedInput.getKeyword(), seed + 1);
