@@ -771,6 +771,11 @@ public class InputAgent {
 		InputAgent.apply(ent, kw);
 	}
 
+	public static void applyBoolean(Entity ent, String keyword, boolean bool) {
+		KeywordIndex kw = formatBoolean(keyword, bool);
+		InputAgent.apply(ent, kw);
+	}
+
 	public static void applyIntegers(Entity ent, String keyword, int... args){
 		KeywordIndex kw = formatIntegers(keyword, args);
 		InputAgent.apply(ent, kw);
@@ -1850,6 +1855,13 @@ public class InputAgent {
 			tokens.add(each);
 		}
 		return new KeywordIndex(keyword, tokens, null);
+	}
+
+	public static KeywordIndex formatBoolean(String keyword, boolean bool) {
+		String str = "FALSE";
+		if (bool)
+			str = "TRUE";
+		return formatArgs(keyword, str);
 	}
 
 	public static KeywordIndex formatIntegers(String keyword, int... args) {
