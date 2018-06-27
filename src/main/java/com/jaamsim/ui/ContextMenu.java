@@ -87,7 +87,7 @@ public class ContextMenu {
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				InputAgent.applyArgs(Simulation.getInstance(), "ShowInputEditor", "TRUE");
+				InputAgent.applyBoolean(Simulation.getInstance(), "ShowInputEditor", true);
 				FrameBox.setSelectedEntity(ent, false);
 			}
 		} );
@@ -99,7 +99,7 @@ public class ContextMenu {
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				InputAgent.applyArgs(Simulation.getInstance(), "ShowOutputViewer", "TRUE");
+				InputAgent.applyBoolean(Simulation.getInstance(), "ShowOutputViewer", true);
 				FrameBox.setSelectedEntity(ent, false);
 			}
 		} );
@@ -111,7 +111,7 @@ public class ContextMenu {
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				InputAgent.applyArgs(Simulation.getInstance(), "ShowPropertyViewer", "TRUE");
+				InputAgent.applyBoolean(Simulation.getInstance(), "ShowPropertyViewer", true);
 				FrameBox.setSelectedEntity(ent, false);
 			}
 		} );
@@ -228,13 +228,13 @@ public class ContextMenu {
 					}
 
 					// Show the label
-					InputAgent.applyArgs(label, "Show", "TRUE");
+					InputAgent.applyBoolean(label, "Show", true);
 				}
 				else {
 
 					// Hide the label if it already exists
 					if (label != null)
-						InputAgent.applyArgs(label, "Show", "FALSE");
+						InputAgent.applyBoolean(label, "Show", false);
 				}
 			}
 		} );

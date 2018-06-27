@@ -530,10 +530,10 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 			@Override
 			public void actionPerformed( ActionEvent event ) {
 				Simulation sim = Simulation.getInstance();
-				InputAgent.applyArgs(sim, "ShowModelBuilder", "TRUE");
-				InputAgent.applyArgs(sim, "ShowObjectSelector", "TRUE");
-				InputAgent.applyArgs(sim, "ShowInputEditor", "TRUE");
-				InputAgent.applyArgs(sim, "ShowOutputViewer", "TRUE");
+				InputAgent.applyBoolean(sim, "ShowModelBuilder", true);
+				InputAgent.applyBoolean(sim, "ShowObjectSelector", true);
+				InputAgent.applyBoolean(sim, "ShowInputEditor", true);
+				InputAgent.applyBoolean(sim, "ShowOutputViewer", true);
 			}
 		} );
 		viewMenu.add( showBasicToolsMenuItem );
@@ -546,12 +546,12 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 			@Override
 			public void actionPerformed( ActionEvent event ) {
 				Simulation sim = Simulation.getInstance();
-				InputAgent.applyArgs(sim, "ShowModelBuilder", "FALSE");
-				InputAgent.applyArgs(sim, "ShowObjectSelector", "FALSE");
-				InputAgent.applyArgs(sim, "ShowInputEditor", "FALSE");
-				InputAgent.applyArgs(sim, "ShowOutputViewer", "FALSE");
-				InputAgent.applyArgs(sim, "ShowPropertyViewer", "FALSE");
-				InputAgent.applyArgs(sim, "ShowLogViewer", "FALSE");
+				InputAgent.applyBoolean(sim, "ShowModelBuilder", false);
+				InputAgent.applyBoolean(sim, "ShowObjectSelector", false);
+				InputAgent.applyBoolean(sim, "ShowInputEditor", false);
+				InputAgent.applyBoolean(sim, "ShowOutputViewer", false);
+				InputAgent.applyBoolean(sim, "ShowPropertyViewer", false);
+				InputAgent.applyBoolean(sim, "ShowLogViewer", false);
 			}
 		} );
 		viewMenu.add( closeAllToolsMenuItem );
@@ -923,10 +923,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 			public void actionPerformed( ActionEvent event ) {
 				DisplayEntity ent = (DisplayEntity) Entity.getNamedEntity("XYZ-Axis");
 				if (ent != null) {
-					if (xyzAxis.isSelected())
-						InputAgent.applyArgs(ent, "Show", "TRUE");
-					else
-						InputAgent.applyArgs(ent, "Show", "FALSE");
+					InputAgent.applyBoolean(ent, "Show", xyzAxis.isSelected());
 				}
 			}
 		} );
@@ -945,10 +942,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 			public void actionPerformed( ActionEvent event ) {
 				DisplayEntity ent = (DisplayEntity) Entity.getNamedEntity("XY-Grid");
 				if (ent != null) {
-					if (grid.isSelected())
-						InputAgent.applyArgs(ent, "Show", "TRUE");
-					else
-						InputAgent.applyArgs(ent, "Show", "FALSE");
+					InputAgent.applyBoolean(ent, "Show", grid.isSelected());
 				}
 			}
 		} );
@@ -965,10 +959,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				if (snapToGrid.isSelected())
-					InputAgent.applyArgs(Simulation.getInstance(), "SnapToGrid", "TRUE");
-				else
-					InputAgent.applyArgs(Simulation.getInstance(), "SnapToGrid", "FALSE");
+				InputAgent.applyBoolean(Simulation.getInstance(), "SnapToGrid", snapToGrid.isSelected());
 			}
 		} );
 		buttonBar.add(Box.createRigidArea(gapDim));
@@ -2144,10 +2135,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 	public static class RealTimeActionListener implements ActionListener {
 		@Override
 		public void actionPerformed( ActionEvent event ) {
-			if (((JToggleButton)event.getSource()).isSelected())
-				InputAgent.applyArgs(Simulation.getInstance(), "RealTime", "TRUE");
-			else
-				InputAgent.applyArgs(Simulation.getInstance(), "RealTime", "FALSE");
+			boolean bool = ((JToggleButton)event.getSource()).isSelected();
+			InputAgent.applyBoolean(Simulation.getInstance(), "RealTime", bool);
 		}
 	}
 
@@ -2636,7 +2625,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 				options[0]);
 
 		if (userOption == JOptionPane.YES_OPTION) {
-			InputAgent.applyArgs(Simulation.getInstance(), "ShowLogViewer", "TRUE");
+			InputAgent.applyBoolean(Simulation.getInstance(), "ShowLogViewer", true);
 		}
 	}
 
