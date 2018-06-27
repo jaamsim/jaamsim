@@ -43,7 +43,7 @@ import com.jaamsim.units.UserSpecifiedUnit;
  *
  */
 public abstract class Distribution extends DisplayEntity
-implements SampleProvider {
+implements SampleProvider, RandomStreamUser {
 
 	@Keyword(description = "The unit type for the values returned by the distribution. "
 	                     + "MUST be entered before most other inputs.",
@@ -166,8 +166,14 @@ implements SampleProvider {
 		maxValueInput.setUnitType(ut);
 	}
 
-	protected int getStreamNumber() {
+	@Override
+	public int getStreamNumber() {
 		return randomSeedInput.getValue();
+	}
+
+	@Override
+	public String getStreamNumberKeyword() {
+		return randomSeedInput.getKeyword();
 	}
 
 	public static int getSubstreamNumber() {

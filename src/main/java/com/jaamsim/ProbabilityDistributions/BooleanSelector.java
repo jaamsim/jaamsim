@@ -29,7 +29,7 @@ import com.jaamsim.input.Output;
 import com.jaamsim.rng.MRG1999a;
 import com.jaamsim.units.DimensionlessUnit;
 
-public class BooleanSelector extends DisplayEntity {
+public class BooleanSelector extends DisplayEntity implements RandomStreamUser {
 	@Keyword(description = "Seed for the random number generator.  Must be an integer >= 0.",
 	         exampleList = {"547"})
 	private IntegerInput randomSeedInput;
@@ -81,8 +81,14 @@ public class BooleanSelector extends DisplayEntity {
 		lastValue = false;
 	}
 
-	protected int getStreamNumber() {
+	@Override
+	public int getStreamNumber() {
 		return randomSeedInput.getValue();
+	}
+
+	@Override
+	public String getStreamNumberKeyword() {
+		return randomSeedInput.getKeyword();
 	}
 
 	public boolean getNextValue() {
