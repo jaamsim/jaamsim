@@ -376,7 +376,9 @@ public class ContextMenu {
 				|| nodeIndex == ent.getPoints().size() - 1) {
 			spitMenuItem.setEnabled(false);
 		}
-		menu.add( spitMenuItem );
+		if (ent.usePointsInput()) {
+			menu.add( spitMenuItem );
+		}
 
 		// 7) Delete Node
 		JMenuItem deleteNodeItem = new JMenuItem( "Delete Node" );
@@ -394,7 +396,9 @@ public class ContextMenu {
 				|| ent.getPoints().size() <= 2) {
 			deleteNodeItem.setEnabled(false);
 		}
-		menu.add( deleteNodeItem );
+		if (ent.usePointsInput()) {
+			menu.add( deleteNodeItem );
+		}
 	}
 
 }
