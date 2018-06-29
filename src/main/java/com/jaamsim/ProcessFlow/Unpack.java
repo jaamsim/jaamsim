@@ -19,18 +19,37 @@ package com.jaamsim.ProcessFlow;
 
 import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
+import com.jaamsim.StringProviders.StringProvInput;
 import com.jaamsim.input.Keyword;
+import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
 
 public class Unpack extends LinkedService {
+
+	@Keyword(description = "An expression returning a string value that determines which of the "
+	                     + "entities in the container are eligible to be removed. "
+	                     + "If used, the only entities eligible for selection are the ones whose "
+	                     + "inputs for the container's Match keyword are equal to value returned by "
+	                     + "the expression entered for this Match keyword. "
+	                     + "Expressions that return a dimensionless integer or an object are also "
+	                     + "valid. The returned number or object is converted to a string "
+	                     + "automatically. A floating point number is truncated to an integer.",
+	         exampleList = {"this.obj.Attrib1"})
+	private final StringProvInput matchForEntities;
 
 	@Keyword(description = "The service time required to unpack each entity.",
 	         exampleList = { "3.0 h", "NormalDistribution1", "'1[s] + 0.5*[TimeSeries1].PresentValue'" })
 	private final SampleInput serviceTime;
 
+	private String entityMatch;   // Match value for the entities to be removed from the container
 	private int numberToRemove;   // Number of entities to remove from the present EntityContainer
 
 	{
+		matchForEntities = new StringProvInput("MatchForEntities", KEY_INPUTS, null);
+		matchForEntities.setUnitType(DimensionlessUnit.class);
+		matchForEntities.setEntity(this);
+		this.addInput(matchForEntities);
+
 		serviceTime = new SampleInput("ServiceTime", KEY_INPUTS, new SampleConstant(TimeUnit.class, 0.0));
 		serviceTime.setUnitType(TimeUnit.class);
 		serviceTime.setEntity(this);
@@ -67,6 +86,9 @@ public class Unpack extends LinkedService {
 			// Remove the container from the queue
 			container = (EntityContainer)this.getNextEntityForMatch(m);
 			numberToRemove = this.getNumberToRemove();
+			entityMatch = null;
+			if (matchForEntities.getValue() != null)
+				entityMatch = matchForEntities.getValue().getNextString(simTime, "%s", 1.0d, true);
 			numberRemoved = 0;
 		}
 
@@ -85,13 +107,13 @@ public class Unpack extends LinkedService {
 	protected void processStep(double simTime) {
 
 		// Remove the next entity from the container
-		if (numberRemoved < numberToRemove && container.getCount() > 0) {
-			this.sendToNextComponent(container.removeEntity());
+		if (numberRemoved < numberToRemove && !container.isEmpty(entityMatch)) {
+			this.sendToNextComponent(container.removeEntity(entityMatch));
 			numberRemoved++;
 		}
 
 		// Stop when the desired number of entities have been removed
-		if (container.getCount() == 0 || numberRemoved == numberToRemove) {
+		else {
 			this.disposeContainer(container);
 			container = null;
 		}
@@ -107,7 +129,7 @@ public class Unpack extends LinkedService {
 	@Override
 	protected double getStepDuration(double simTime) {
 		double dur = 0.0;
-		if (numberRemoved < numberToRemove && container.getCount() > 0)
+		if (numberRemoved < numberToRemove && !container.isEmpty(entityMatch))
 			dur = serviceTime.getValue().getNextSample(simTime);
 		return dur;
 	}
