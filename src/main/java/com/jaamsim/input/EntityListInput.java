@@ -231,6 +231,10 @@ public class EntityListInput<T extends Entity> extends ListInput<ArrayList<T>> {
 		invalidClasses = classes;
 	}
 
+	public void addInvalidClass(Class<? extends Entity> aClass ) {
+		invalidClasses.add(aClass);
+	}
+
 	@Override
 	public boolean removeReferences(Entity ent) {
 		if (value == null)
