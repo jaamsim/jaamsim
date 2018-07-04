@@ -17,7 +17,6 @@
  */
 package com.jaamsim.ProcessFlow;
 
-import java.util.ArrayList;
 
 import com.jaamsim.EntityProviders.EntityProvInput;
 import com.jaamsim.Graphics.DisplayEntity;
@@ -25,7 +24,6 @@ import com.jaamsim.Graphics.OverlayEntity;
 import com.jaamsim.Graphics.TextBasics;
 import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
-import com.jaamsim.basicsim.Entity;
 import com.jaamsim.input.EntityListInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.units.DimensionlessUnit;
@@ -58,10 +56,8 @@ public class SetGraphics extends LinkedComponent {
 
 		graphicsList = new EntityListInput<>(DisplayEntity.class, "GraphicsList", KEY_INPUTS, null);
 		graphicsList.setRequired(true);
-		ArrayList<Class<? extends Entity>> list = new ArrayList<>();
-		list.add(TextBasics.class);
-		list.add(OverlayEntity.class);
-		graphicsList.setInvalidClasses(list);
+		graphicsList.addInvalidClass(TextBasics.class);
+		graphicsList.addInvalidClass(OverlayEntity.class);
 		this.addInput(graphicsList);
 
 		choice = new SampleInput("Choice", KEY_INPUTS, new SampleConstant(DimensionlessUnit.class, 1.0));
