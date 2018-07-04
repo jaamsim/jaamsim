@@ -227,10 +227,6 @@ public class EntityListInput<T extends Entity> extends ListInput<ArrayList<T>> {
 		return false;
 	}
 
-	public void setInvalidClasses(ArrayList<Class<? extends Entity>> classes) {
-		invalidClasses = classes;
-	}
-
 	public void addInvalidClass(Class<? extends Entity> aClass ) {
 		invalidClasses.add(aClass);
 	}
