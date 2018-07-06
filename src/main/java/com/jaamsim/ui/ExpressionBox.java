@@ -118,8 +118,7 @@ public class ExpressionBox extends JDialog {
 		getContentPane().add( buttonBar, BorderLayout.NORTH );
 
 		// Result value or error message
-		String msg = formatMessage(true, input.getPresentValueString(0.0d));
-		msgText = new JTextField(msg, 80);
+		msgText = new JTextField("", 80);
 		msgText.setEditable(false);
 		msgText.setToolTipText(GUIFrame.formatToolTip("Result",
 				"The value returned by a valid input or "
@@ -163,6 +162,9 @@ public class ExpressionBox extends JDialog {
 		pack();
 		editArea.requestFocusInWindow();
 		setEditMode(EDIT_MODE_NORMAL);
+
+		// Set the result value or error message for the present input
+		tryParse();
 
 		// Window closed event
 		this.addWindowListener( new WindowAdapter() {
