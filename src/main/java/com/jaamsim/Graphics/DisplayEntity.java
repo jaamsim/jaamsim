@@ -507,6 +507,10 @@ public class DisplayEntity extends Entity {
 		currentRegion = newRegion;
 	}
 
+	public ArrayList<View> getVisibleViews() {
+		return visibleViews.getValue();
+	}
+
 	/**
 	 * Update any internal stated needed by either renderer.
 	 */

@@ -218,6 +218,16 @@ public class ContextMenu {
 						if (ent.getCurrentRegion() != null)
 							InputAgent.applyArgs(newLabel, "Region", ent.getCurrentRegion().getName());
 
+						// Set the visible views to match its target entity
+						if (ent.getVisibleViews() != null) {
+							ArrayList<String> tokens = new ArrayList<>(ent.getVisibleViews().size());
+							for (View v : ent.getVisibleViews()) {
+								tokens.add(v.getName());
+							}
+							KeywordIndex kw = new KeywordIndex("VisibleViews", tokens, null);
+							InputAgent.apply(newLabel, kw);
+						}
+
 						// Set the label's position
 						double ypos = -0.15 - 0.5*ent.getSize().y;
 						InputAgent.apply(newLabel, InputAgent.formatPointInputs("Position", new Vec3d(0.0, ypos, 0.0), "m"));
