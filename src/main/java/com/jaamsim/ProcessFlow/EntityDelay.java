@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2018 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -166,6 +167,9 @@ public class EntityDelay extends LinkedComponent {
 			entry.startTime = simTime;
 			entry.duration = dur;
 			entityMap.put(ent.getEntityNumber(), entry);
+		}
+		else {
+			ent.setGlobalPosition(this.getGlobalPosition());
 		}
 
 		scheduleProcess(dur, 5, true, new RemoveDisplayEntityTarget(this, ent), null); // FIFO
