@@ -245,8 +245,7 @@ public class StateEntity extends DisplayEntity {
 		long durTicks = curTick - lastStateCollectionTick;
 		lastStateCollectionTick = curTick;
 
-		presentState.totalTicks += durTicks;
-		presentState.currentCycleTicks += durTicks;
+		presentState.addTicks(durTicks);
 		if (presentState.working)
 			workingTicks += durTicks;
 	}
