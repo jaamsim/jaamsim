@@ -366,7 +366,7 @@ public class StateEntity extends DisplayEntity {
 		if (state == null)
 			return 0;
 
-		return state.completedCycleTicks;
+		return state.getCompletedCycleTicks();
 	}
 	public long getInitTicks(StateRecord state) {
 		if (state == null)

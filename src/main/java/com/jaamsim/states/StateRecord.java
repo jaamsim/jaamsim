@@ -21,7 +21,7 @@ public class StateRecord {
 	public final String name;
 	private long initTicks;
 	private long totalTicks;
-	long completedCycleTicks;
+	private long completedCycleTicks;
 	private long currentCycleTicks;
 	private long startTick;  // clock ticks at which the entity was last set to this state
 	public final boolean working;
@@ -74,6 +74,10 @@ public class StateRecord {
 
 	public long getCurrentCycleTicks() {
 		return currentCycleTicks;
+	}
+
+	public long getCompletedCycleTicks() {
+		return completedCycleTicks;
 	}
 
 	@Override
