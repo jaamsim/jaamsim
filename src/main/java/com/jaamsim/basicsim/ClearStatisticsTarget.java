@@ -36,7 +36,7 @@ public class ClearStatisticsTarget extends ProcessTarget {
 
 		// Reset state statistics
 		for (StateEntity each : Entity.getClonesOfIterator(StateEntity.class)) {
-			each.clearReportStats();
+			each.collectInitializationStats();
 		}
 	}
 

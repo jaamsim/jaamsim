@@ -60,10 +60,10 @@ public class SimEntity extends StateEntity implements LinkDisplayable {
 	}
 
 	@Override
-	public void clearReportStats() {
+	public void collectInitializationStats() {
 		if (testFlag(Entity.FLAG_GENERATED))
 			return;
-		super.clearReportStats();
+		super.collectInitializationStats();
 	}
 
 	@Override
