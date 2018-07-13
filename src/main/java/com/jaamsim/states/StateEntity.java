@@ -246,7 +246,7 @@ public class StateEntity extends DisplayEntity {
 		lastStateCollectionTick = curTick;
 
 		presentState.addTicks(durTicks);
-		if (presentState.working)
+		if (presentState.isWorking())
 			workingTicks += durTicks;
 	}
 
@@ -328,7 +328,7 @@ public class StateEntity extends DisplayEntity {
 	 * Return true if the entity is working
 	 */
 	public boolean isWorking() {
-		return presentState.working;
+		return presentState.isWorking();
 	}
 
 	/**
@@ -377,7 +377,7 @@ public class StateEntity extends DisplayEntity {
 
 	private long getWorkingTicks(long simTicks) {
 		long ticks = workingTicks;
-		if (presentState.working)
+		if (presentState.isWorking())
 			ticks += (simTicks - lastStateCollectionTick);
 
 		return ticks;
@@ -447,7 +447,7 @@ public class StateEntity extends DisplayEntity {
 		if (presentState == null) {
 			return this.isValidWorkingState(this.getInitialState());
 		}
-		return presentState.working;
+		return presentState.isWorking();
 	}
 
 	@Output(name = "WorkingTime",

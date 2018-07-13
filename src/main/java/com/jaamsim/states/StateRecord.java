@@ -19,12 +19,12 @@ package com.jaamsim.states;
 
 public class StateRecord {
 	public final String name;
+	private final boolean working;
 	private long initTicks;
 	private long totalTicks;
 	private long completedCycleTicks;
 	private long currentCycleTicks;
 	private long startTick;  // clock ticks at which the entity was last set to this state
-	public final boolean working;
 
 	StateRecord(String state, boolean work) {
 		name = state;
@@ -54,6 +54,10 @@ public class StateRecord {
 
 	public void clearCurrentCycleStats() {
 		currentCycleTicks = 0L;
+	}
+
+	public boolean isWorking() {
+		return working;
 	}
 
 	public void setStartTick(long tick) {
