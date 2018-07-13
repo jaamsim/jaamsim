@@ -36,6 +36,12 @@ public class StateRecord {
 		currentCycleTicks += ticks;
 	}
 
+	public void finishWarmUp() {
+		initTicks = totalTicks;
+		totalTicks = 0L;
+		completedCycleTicks = 0L;
+	}
+
 	public long getStartTick() {
 		return startTick;
 	}

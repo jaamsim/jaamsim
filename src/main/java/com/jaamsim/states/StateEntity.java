@@ -255,11 +255,8 @@ public class StateEntity extends DisplayEntity {
 	 */
 	public void collectInitializationStats() {
 		updateStateStats();
-
 		for (StateRecord each : states.values()) {
-			each.initTicks = each.totalTicks;
-			each.totalTicks = 0;
-			each.completedCycleTicks = 0;
+			each.finishWarmUp();
 		}
 	}
 
