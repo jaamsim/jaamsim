@@ -356,7 +356,7 @@ public class StateEntity extends DisplayEntity {
 		if (state == null)
 			return 0;
 
-		long ticks = state.currentCycleTicks;
+		long ticks = state.getCurrentCycleTicks();
 		if (getState() == state)
 			ticks += (getSimTicks() - lastStateCollectionTick);
 		return ticks;
