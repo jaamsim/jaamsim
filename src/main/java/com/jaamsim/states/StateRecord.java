@@ -47,6 +47,11 @@ public class StateRecord {
 		currentCycleTicks = 0L;
 	}
 
+	public void clearStats() {
+		totalTicks = 0L;
+		completedCycleTicks = 0L;
+	}
+
 	public long getStartTick() {
 		return startTick;
 	}

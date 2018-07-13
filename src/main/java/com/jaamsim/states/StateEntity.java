@@ -265,11 +265,8 @@ public class StateEntity extends DisplayEntity {
 	 */
 	public void clearReportStats() {
 		updateStateStats();
-
-		// clear totalHours for each state record
 		for (StateRecord each : states.values()) {
-			each.totalTicks = 0;
-			each.completedCycleTicks = 0;
+			each.clearStats();
 		}
 	}
 
