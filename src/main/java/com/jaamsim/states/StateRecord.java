@@ -20,7 +20,7 @@ package com.jaamsim.states;
 public class StateRecord {
 	public final String name;
 	private long initTicks;
-	long totalTicks;
+	private long totalTicks;
 	long completedCycleTicks;
 	long currentCycleTicks;
 	private long startTick;  // clock ticks at which the entity was last set to this state
@@ -66,6 +66,10 @@ public class StateRecord {
 
 	public long getInitTicks() {
 		return initTicks;
+	}
+
+	public long getTotalTicks() {
+		return totalTicks;
 	}
 
 	@Override

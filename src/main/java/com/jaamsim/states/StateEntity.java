@@ -342,20 +342,14 @@ public class StateEntity extends DisplayEntity {
 		if (state == null)
 			return 0;
 
-		long ticks = state.totalTicks;
+		long ticks = state.getTotalTicks();
 		if (getState() == state)
 			ticks += (simTicks - lastStateCollectionTick);
 		return ticks;
 	}
 
 	public long getTicksInState(StateRecord state) {
-		if (state == null)
-			return 0;
-
-		long ticks = state.totalTicks;
-		if (getState() == state)
-			ticks += (getSimTicks() - lastStateCollectionTick);
-		return ticks;
+		return getTicksInState(getSimTicks(), state);
 	}
 
 	public long getCurrentCycleTicks(StateRecord state) {
