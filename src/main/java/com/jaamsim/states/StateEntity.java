@@ -275,10 +275,8 @@ public class StateEntity extends DisplayEntity {
 	 */
 	public void clearCurrentCycleStats() {
 		updateStateStats();
-
-		// clear current cycle hours for each state record
 		for (StateRecord each : states.values()) {
-			each.currentCycleTicks = 0;
+			each.clearCurrentCycleStats();
 		}
 	}
 
