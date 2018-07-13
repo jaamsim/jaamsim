@@ -23,7 +23,7 @@ public class StateRecord {
 	long totalTicks;
 	long completedCycleTicks;
 	long currentCycleTicks;
-	long startTick;
+	private long startTick;  // clock ticks at which the entity was last set to this state
 	public final boolean working;
 
 	StateRecord(String state, boolean work) {
@@ -54,6 +54,10 @@ public class StateRecord {
 
 	public void clearCurrentCycleStats() {
 		currentCycleTicks = 0L;
+	}
+
+	public void setStartTick(long tick) {
+		startTick = tick;
 	}
 
 	public long getStartTick() {

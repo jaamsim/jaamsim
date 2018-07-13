@@ -120,7 +120,7 @@ public class StateEntity extends DisplayEntity {
 
 		String initState = getInitialState().intern();
 		StateRecord init = new StateRecord(initState, isValidWorkingState(initState));
-		init.startTick = lastStateCollectionTick;
+		init.setStartTick(lastStateCollectionTick);
 		presentState = init;
 		states.put(init.name, init);
 
@@ -185,7 +185,7 @@ public class StateEntity extends DisplayEntity {
 		this.setGraphicsForState(state);
 
 		updateStateStats();
-		nextState.startTick = lastStateCollectionTick;
+		nextState.setStartTick(lastStateCollectionTick);
 
 		StateRecord prev = presentState;
 		presentState = nextState;
