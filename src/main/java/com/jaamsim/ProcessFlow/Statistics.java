@@ -123,10 +123,10 @@ public class Statistics extends LinkedComponent {
 		if (ent instanceof StateEntity) {
 			StateEntity se = (StateEntity) ent;
 			for (StateRecord rec : se.getStateRecs()) {
-				SampleStatistics durStats = stateStats.get(rec.name);
+				SampleStatistics durStats = stateStats.get(rec.getName());
 				if (durStats == null) {
 					durStats = new SampleStatistics();
-					stateStats.put(rec.name, durStats);
+					stateStats.put(rec.getName(), durStats);
 				}
 				double dur = EventManager.ticksToSecs(se.getTicksInState(rec));
 				durStats.addValue(dur);

@@ -122,7 +122,7 @@ public class StateEntity extends DisplayEntity {
 		StateRecord init = new StateRecord(initState, isValidWorkingState(initState));
 		init.setStartTick(lastStateCollectionTick);
 		presentState = init;
-		states.put(init.name, init);
+		states.put(init.getName(), init);
 
 		this.setGraphicsForState(initState);
 	}
@@ -169,7 +169,7 @@ public class StateEntity extends DisplayEntity {
 		if (presentState == null)
 			this.initStateData();
 
-		if (presentState.name.equals(state))
+		if (presentState.getName().equals(state))
 			return;
 
 		StateRecord nextState = states.get(state);
@@ -179,7 +179,7 @@ public class StateEntity extends DisplayEntity {
 
 			String intState = state.intern();
 			nextState = new StateRecord(intState, isValidWorkingState(intState));
-			states.put(nextState.name, nextState);
+			states.put(nextState.getName(), nextState);
 		}
 
 		this.setGraphicsForState(state);
@@ -225,7 +225,7 @@ public class StateEntity extends DisplayEntity {
 			double timeOfPrevStart = evt.ticksToSeconds(prev.getStartTick());
 			stateReportFile.format("%.5f  %s.setState( \"%s\" ) dt = %g\n",
 			                       timeOfPrevStart, this.getName(),
-			                       prev.name, duration);
+			                       prev.getName(), duration);
 			stateReportFile.flush();
 		}
 
@@ -298,7 +298,7 @@ public class StateEntity extends DisplayEntity {
 
 		String state = str.intern();
 		StateRecord stateRec = new StateRecord(state, isValidWorkingState(state));
-		states.put(stateRec.name, stateRec);
+		states.put(stateRec.getName(), stateRec);
 	}
 
 	public StateRecord getState(String state) {
@@ -312,7 +312,7 @@ public class StateEntity extends DisplayEntity {
 	private static class StateRecSort implements Comparator<StateRecord> {
 		@Override
 		public int compare(StateRecord sr1, StateRecord sr2) {
-			return sr1.name.compareTo(sr2.name);
+			return sr1.getName().compareTo(sr2.getName());
 		}
 	}
 
@@ -437,7 +437,7 @@ public class StateEntity extends DisplayEntity {
 		if (presentState == null) {
 			return this.getInitialState();
 		}
-		return presentState.name;
+		return presentState.getName();
 	}
 
 	@Output(name = "WorkingState",
@@ -477,7 +477,7 @@ public class StateEntity extends DisplayEntity {
 		for (StateRecord stateRec : this.getStateRecs()) {
 			long ticks = getTicksInState(simTicks, stateRec);
 			Double t = EventManager.ticksToSecs(ticks);
-			ret.put(stateRec.name, t);
+			ret.put(stateRec.getName(), t);
 		}
 		return ret;
 	}

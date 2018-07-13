@@ -194,7 +194,7 @@ public class EntityContainer extends SimEntity {
 		while (itr.hasNext()) {
 			DisplayEntity ent = itr.next().entity;
 			if (ent instanceof StateEntity)
-				((StateEntity)ent).setPresentState(next.name);
+				((StateEntity)ent).setPresentState(next.getName());
 		}
 	}
 

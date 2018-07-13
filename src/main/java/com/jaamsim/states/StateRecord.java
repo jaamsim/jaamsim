@@ -18,7 +18,7 @@
 package com.jaamsim.states;
 
 public class StateRecord {
-	public final String name;
+	private final String name;
 	private final boolean working;
 	private long initTicks;
 	private long totalTicks;
@@ -54,6 +54,10 @@ public class StateRecord {
 
 	public void clearCurrentCycleStats() {
 		currentCycleTicks = 0L;
+	}
+
+	public String getName() {
+		return name;
 	}
 
 	public boolean isWorking() {
