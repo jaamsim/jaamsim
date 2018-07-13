@@ -378,7 +378,7 @@ public class StateEntity extends DisplayEntity {
 		if (state == null)
 			return 0;
 
-		return state.initTicks;
+		return state.getInitTicks();
 	}
 
 	private long getWorkingTicks(long simTicks) {

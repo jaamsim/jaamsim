@@ -19,7 +19,7 @@ package com.jaamsim.states;
 
 public class StateRecord {
 	public final String name;
-	long initTicks;
+	private long initTicks;
 	long totalTicks;
 	long completedCycleTicks;
 	long currentCycleTicks;
@@ -58,6 +58,10 @@ public class StateRecord {
 
 	public long getStartTick() {
 		return startTick;
+	}
+
+	public long getInitTicks() {
+		return initTicks;
 	}
 
 	@Override
