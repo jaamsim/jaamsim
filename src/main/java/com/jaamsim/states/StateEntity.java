@@ -290,11 +290,8 @@ public class StateEntity extends DisplayEntity {
 	 */
 	public void collectCycleStats() {
 		updateStateStats();
-
-		// finalize cycle for each state record
 		for (StateRecord each : states.values()) {
-			each.completedCycleTicks += each.currentCycleTicks;
-			each.currentCycleTicks = 0;
+			each.finishCycle();
 		}
 	}
 
