@@ -61,6 +61,8 @@ public class EditBox extends FrameBox {
 	private Entity currentEntity;
 	private final JTabbedPane jTabbedFrame;
 
+	private final ArrayList<EditTable> editTableList;
+
 	private final TableCellRenderer columnRender = new EditBoxColumnRenderer();
 
 	private String lastCategory = null;
@@ -69,6 +71,8 @@ public class EditBox extends FrameBox {
 		super( "Input Editor" );
 		setDefaultCloseOperation(FrameBox.DISPOSE_ON_CLOSE);
 		addWindowListener(FrameBox.getCloseListener("ShowInputEditor"));
+
+		editTableList = new ArrayList<>();
 
 		// Provide tabs for the editor
 		jTabbedFrame = new JTabbedPane();
@@ -135,9 +139,11 @@ public class EditBox extends FrameBox {
 
 		int initialTab = 0;
 		int curTab = 0;
+		editTableList.clear();
 		for (CategoryInputs each : getInputs(currentEntity)) {
 			EditTableModel mod = new EditTableModel(each);
-			JTable propTable = new EditTable(mod, columnRender);
+			EditTable propTable = new EditTable(mod, columnRender);
+			editTableList.add(propTable);
 			JScrollPane jScrollPane = new JScrollPane(propTable);
 			jScrollPane.getVerticalScrollBar().setUnitIncrement(ROW_HEIGHT);
 			jScrollPane.setColumnHeaderView( propTable.getTableHeader());
