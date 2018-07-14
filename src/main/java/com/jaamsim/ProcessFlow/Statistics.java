@@ -65,6 +65,11 @@ public class Statistics extends LinkedComponent {
 	         exampleList = {"TRUE"})
 	private final BooleanInput recordEntityStateTimes;
 
+	@Keyword(description = "If TRUE, the state times for received entities are set to zero on "
+	                     + "departure.",
+	         exampleList = {"TRUE"})
+	private final BooleanInput resetEntityStateTimes;
+
 	private final SampleStatistics sampStats = new SampleStatistics();
 	private final TimeBasedStatistics timeStats = new TimeBasedStatistics();
 	private final SampleFrequency freq = new SampleFrequency(0, 10);
@@ -88,6 +93,9 @@ public class Statistics extends LinkedComponent {
 
 		recordEntityStateTimes = new BooleanInput("RecordEntityStateTimes", KEY_INPUTS, false);
 		this.addInput(recordEntityStateTimes);
+
+		resetEntityStateTimes = new BooleanInput("ResetEntityStateTimes", KEY_INPUTS, false);
+		this.addInput(resetEntityStateTimes);
 	}
 
 	public Statistics() {}
@@ -139,9 +147,17 @@ public class Statistics extends LinkedComponent {
 						stateStats.put(rec.getName(), durStats);
 					}
 					long ticks = se.getTicksInState(rec);
+					if (resetEntityStateTimes.getValue()) {
+						ticks = se.getCurrentCycleTicks(rec);
+					}
 					double dur = EventManager.ticksToSecs(ticks);
 					durStats.addValue(dur);
 				}
+			}
+
+			// Reset the entity's statistics
+			if (resetEntityStateTimes.getValue()) {
+				se.collectCycleStats();
 			}
 		}
 
