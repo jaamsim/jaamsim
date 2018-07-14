@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2011 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2018 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +17,8 @@
  */
 package com.jaamsim.input;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 
 import com.jaamsim.math.Color4d;
@@ -342,4 +345,12 @@ public String getDefaultString() {
 	return String.format("%.0f%s%.0f%s%.0f", defValue.r * 255, SEPARATOR,
 	   defValue.g * 255, SEPARATOR, defValue.b * 255);
 }
+
+	@Override
+	public ArrayList<String> getValidOptions() {
+		ArrayList<String> list = new ArrayList<>(colorMap.keySet());
+		Collections.sort(list, Input.uiSortOrder);
+		return list;
+	}
+
 }
