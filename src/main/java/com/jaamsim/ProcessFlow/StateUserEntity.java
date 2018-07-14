@@ -394,7 +394,7 @@ public abstract class StateUserEntity extends StateEntity implements ThresholdUs
 
 	@Output(name = "Utilisation",
 	 description = "The fraction of calendar time (excluding the initialisation period) that "
-	             + "this object is in the Working state.",
+	             + "this object is in the Working state. Includes any completed cycles.",
 	  reportable = true,
 	    sequence = 5)
 	public double getUtilisation(double simTime) {
@@ -405,7 +405,7 @@ public abstract class StateUserEntity extends StateEntity implements ThresholdUs
 
 	@Output(name = "Commitment",
 	 description = "The fraction of calendar time (excluding the initialisation period) that "
-	             + "this object is in any state other than Idle.",
+	             + "this object is in any state other than Idle. Includes any completed cycles.",
 	  reportable = true,
 	    sequence = 6)
 	public double getCommitment(double simTime) {
@@ -416,7 +416,8 @@ public abstract class StateUserEntity extends StateEntity implements ThresholdUs
 
 	@Output(name = "Availability",
 	 description = "The fraction of calendar time (excluding the initialisation period) that "
-	             + "this object is in any state other than Maintenance or Breakdown.",
+	             + "this object is in any state other than Maintenance or Breakdown. "
+	             + "Includes any completed cycles.",
 	  reportable = true,
 	    sequence = 7)
 	public double getAvailability(double simTime) {
@@ -428,7 +429,7 @@ public abstract class StateUserEntity extends StateEntity implements ThresholdUs
 
 	@Output(name = "Reliability",
 	 description = "The ratio of Working time to the sum of Working time and Breakdown time. "
-	             + "All times exclude the initialisation period.",
+	             + "All times exclude the initialisation period and include any completed cycles.",
 	  reportable = true,
 	    sequence = 8)
 	public double getReliability(double simTime) {

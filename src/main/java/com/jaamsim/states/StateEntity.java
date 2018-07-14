@@ -437,6 +437,21 @@ public class StateEntity extends DisplayEntity {
 		return EventManager.ticksToSecs(ticks);
 	}
 
+	/**
+	 * Returns the total elapsed time in seconds after the completion of the initialisation period.
+	 * Includes the time in any completed cycles.
+	 * @param simTime - present simulation time
+	 * @return total time in any state
+	 */
+	public double getTotalTime(double simTime) {
+		long simTicks = EventManager.secsToNearestTick(simTime);
+		long ticks = 0L;
+		for (StateRecord rec : states.values()) {
+			ticks += getTicksInState(simTicks, rec);
+		}
+		return EventManager.ticksToSecs(ticks);
+	}
+
 	@Output(name = "State",
 	 description = "The present state for the object.",
 	    unitType = DimensionlessUnit.class,
@@ -499,7 +514,7 @@ public class StateEntity extends DisplayEntity {
 	    unitType = TimeUnit.class,
 	  reportable = true,
 	    sequence = 4)
-	public double getTotalTime(double simTime) {
+	public double getTotalTimeInCycle(double simTime) {
 		long simTicks = EventManager.secsToNearestTick(simTime);
 		long ticks = 0L;
 		for (StateRecord stateRec : states.values()) {
