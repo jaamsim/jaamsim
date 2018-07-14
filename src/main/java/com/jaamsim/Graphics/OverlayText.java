@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2018 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,10 +43,6 @@ import com.jaamsim.units.Unit;
  */
 public class OverlayText extends OverlayEntity {
 
-	@Keyword(description = "The height of the font as displayed in the view window. Unit is in pixels.",
-	         exampleList = {"15"})
-	private final IntegerInput textHeight;
-
 	@Keyword(description = "The fixed and variable text to be displayed. If spaces are included, "
 	                     + "enclose the text in single quotes. If variable text is to be "
 	                     + "displayed using the DataSource keyword, include the appropriate Java "
@@ -83,6 +80,10 @@ public class OverlayText extends OverlayEntity {
 	         exampleList = { "Arial" })
 	private final StringChoiceInput fontName;
 
+	@Keyword(description = "The height of the font as displayed in the view window. Unit is in pixels.",
+	         exampleList = {"15"})
+	private final IntegerInput textHeight;
+
 	@Keyword(description = "The font styles to be applied to the text, e.g. Bold, Italic. ",
 	         exampleList = { "Bold" })
 	private final StringListInput fontStyle;
@@ -107,10 +108,6 @@ public class OverlayText extends OverlayEntity {
 	private String renderText;
 
 	{
-		textHeight = new IntegerInput("TextHeight", KEY_INPUTS, 15);
-		textHeight.setValidRange(0, 1000);
-		this.addInput(textHeight);
-
 		formatText = new StringInput("Format", KEY_INPUTS, "");
 		this.addInput(formatText);
 
@@ -134,6 +131,10 @@ public class OverlayText extends OverlayEntity {
 		fontName.setChoices(TextModel.validFontNames);
 		fontName.setDefaultText("TextModel");
 		this.addInput(fontName);
+
+		textHeight = new IntegerInput("TextHeight", FONT, 15);
+		textHeight.setValidRange(0, 1000);
+		this.addInput(textHeight);
 
 		fontColor = new ColourInput("FontColour", FONT, ColourInput.BLACK);
 		fontColor.setDefaultText("TextModel");
