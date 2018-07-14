@@ -20,9 +20,12 @@ package com.jaamsim.ui;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 import javax.swing.JColorChooser;
 import javax.swing.JDialog;
+import javax.swing.JMenuItem;
 import javax.swing.JTable;
 
 import com.jaamsim.input.ColourInput;
@@ -37,6 +40,8 @@ public class ColorEditor extends ChooserEditor {
 	private JColorChooser colorChooser;
 	private JDialog dialog;
 
+	public static final String DIALOG_NAME = "Colour Chooser";
+
 	public ColorEditor(JTable table) {
 		super(table, true);
 	}
@@ -44,28 +49,34 @@ public class ColorEditor extends ChooserEditor {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if("button".equals(e.getActionCommand())) {
-			if(colorChooser == null || dialog == null) {
-				colorChooser = new JColorChooser();
-				dialog = JColorChooser.createDialog(null,
-						"Pick a Color",
-						true,  //modal
-						colorChooser,
-						this,  //OK button listener
-						null); //no CANCEL button listener
-				dialog.setIconImage(GUIFrame.getWindowIcon());
-				dialog.setAlwaysOnTop(true);
+
+			// Prepare a list of the named colours
+			ArrayList<String> array = input.getValidOptions();
+			final String colourChooserOption = String.format("*** %s ***", DIALOG_NAME);
+			array.add(0, colourChooserOption);
+			ScrollablePopupMenu menu = new ScrollablePopupMenu();
+			Component button = (Component)e.getSource();
+			Component panel = button.getParent();
+			for (final String option : array) {
+				JMenuItem item = new JMenuItem(option);
+				item.setPreferredSize(panel.getPreferredSize());
+				item.addActionListener( new ActionListener() {
+
+					@Override
+					public void actionPerformed( ActionEvent event ) {
+						if (colourChooserOption.equals(option)) {
+							launchDialog();
+							return;
+						}
+						setValue(option);
+						stopCellEditing();
+						propTable.requestFocusInWindow();
+					}
+				} );
+				menu.add(item);
 			}
-
-			Color4d col = ((ColourInput)input).getValue();
-			colorChooser.setColor(new Color((float)col.r, (float)col.g, (float)col.b, (float)col.a));
-			dialog.setLocationRelativeTo((Component)e.getSource());
-			dialog.setVisible(true);
-
-			// Apply editing
-			stopCellEditing();
-
-			// Focus the cell
-			propTable.requestFocusInWindow();
+			menu.show(panel, 0, panel.getHeight());
+			return;
 		}
 		else {
 			Color color = colorChooser.getColor();
@@ -77,6 +88,30 @@ public class ColorEditor extends ChooserEditor {
 			setValue( String.format("%d %d %d %d",
 					 color.getRed(),color.getGreen(), color.getBlue(), color.getAlpha() ) );
 		}
+	}
+
+	public void launchDialog() {
+		if (colorChooser == null || dialog == null) {
+			colorChooser = new JColorChooser();
+			dialog = JColorChooser.createDialog(null,
+					DIALOG_NAME,
+					true,  //modal
+					colorChooser,
+					this,  //OK button listener
+					null); //no CANCEL button listener
+			dialog.setIconImage(GUIFrame.getWindowIcon());
+			dialog.setAlwaysOnTop(true);
+		}
+
+		Color4d col = ((ColourInput)input).getValue();
+		colorChooser.setColor(new Color((float)col.r, (float)col.g, (float)col.b, (float)col.a));
+		dialog.setVisible(true);
+
+		// Apply editing
+		stopCellEditing();
+
+		// Focus the cell
+		propTable.requestFocusInWindow();
 	}
 
 }
