@@ -26,6 +26,7 @@ import com.jaamsim.Statistics.SampleFrequency;
 import com.jaamsim.Statistics.SampleStatistics;
 import com.jaamsim.Statistics.TimeBasedStatistics;
 import com.jaamsim.events.EventManager;
+import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
@@ -59,6 +60,11 @@ public class Statistics extends LinkedComponent {
 	         exampleList = {"1 h"})
 	private final ValueInput histogramBinWidth;
 
+	@Keyword(description = "If TRUE, the state times for received entities are recorded for "
+	                     + "statistics generation.",
+	         exampleList = {"TRUE"})
+	private final BooleanInput recordEntityStateTimes;
+
 	private final SampleStatistics sampStats = new SampleStatistics();
 	private final TimeBasedStatistics timeStats = new TimeBasedStatistics();
 	private final SampleFrequency freq = new SampleFrequency(0, 10);
@@ -79,6 +85,9 @@ public class Statistics extends LinkedComponent {
 		histogramBinWidth = new ValueInput("HistogramBinWidth", KEY_INPUTS, null);
 		histogramBinWidth.setUnitType(UserSpecifiedUnit.class);
 		this.addInput(histogramBinWidth);
+
+		recordEntityStateTimes = new BooleanInput("RecordEntityStateTimes", KEY_INPUTS, false);
+		this.addInput(recordEntityStateTimes);
 	}
 
 	public Statistics() {}
@@ -122,14 +131,17 @@ public class Statistics extends LinkedComponent {
 		// Update the statistics for each of the entity's states
 		if (ent instanceof StateEntity) {
 			StateEntity se = (StateEntity) ent;
-			for (StateRecord rec : se.getStateRecs()) {
-				SampleStatistics durStats = stateStats.get(rec.getName());
-				if (durStats == null) {
-					durStats = new SampleStatistics();
-					stateStats.put(rec.getName(), durStats);
+			if (recordEntityStateTimes.getValue()) {
+				for (StateRecord rec : se.getStateRecs()) {
+					SampleStatistics durStats = stateStats.get(rec.getName());
+					if (durStats == null) {
+						durStats = new SampleStatistics();
+						stateStats.put(rec.getName(), durStats);
+					}
+					long ticks = se.getTicksInState(rec);
+					double dur = EventManager.ticksToSecs(ticks);
+					durStats.addValue(dur);
 				}
-				double dur = EventManager.ticksToSecs(se.getTicksInState(rec));
-				durStats.addValue(dur);
 			}
 		}
 
