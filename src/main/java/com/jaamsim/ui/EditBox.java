@@ -70,14 +70,22 @@ public class EditBox extends FrameBox {
 		setDefaultCloseOperation(FrameBox.DISPOSE_ON_CLOSE);
 		addWindowListener(FrameBox.getCloseListener("ShowInputEditor"));
 
-		// Set the preferred size of the panes
+		// Provide tabs for the editor
 		jTabbedFrame = new JTabbedPane();
-		jTabbedFrame.addChangeListener(new TabListener());
+		jTabbedFrame.addChangeListener(new ChangeListener()  {
+
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				GUIFrame.updateUI();
+			}
+		});
 		getContentPane().add(jTabbedFrame);
 
+		// Set the size and position of the editor
 		setLocation(Simulation.getInputEditorPos().get(0), Simulation.getInputEditorPos().get(1));
 		setSize(Simulation.getInputEditorSize().get(0), Simulation.getInputEditorSize().get(1));
 
+		// Save changes to the editor's size and position
 		addComponentListener(new ComponentAdapter() {
 
 			@Override
@@ -221,13 +229,6 @@ public class EditBox extends FrameBox {
 	public static String formatErrorText(String str) {
 		return String.format("<html><font color=\"red\">%s</font></html>", str);
 	}
-
-private static class TabListener implements ChangeListener {
-	@Override
-	public void stateChanged(ChangeEvent e) {
-		GUIFrame.updateUI();
-	}
-}
 
 private static class CategoryInputs {
 	final String category;
