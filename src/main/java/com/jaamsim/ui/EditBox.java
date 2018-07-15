@@ -330,6 +330,8 @@ public static class EditTable extends JTable {
 	private int retryRow;
 	private int retryCol;
 
+	private CellEditor presentCellEditor;
+
 	@Override
 	public boolean isCellEditable( int row, int column ) {
 		return ( column == VALUE_COLUMN ); // Only Value column is editable
@@ -351,6 +353,8 @@ public static class EditTable extends JTable {
 
 		this.getTableHeader().setFont(FrameBox.boldFont);
 		this.getTableHeader().setReorderingAllowed(false);
+
+		this.setPresentCellEditor(null);
 	}
 
 	@Override
@@ -409,6 +413,8 @@ public static class EditTable extends JTable {
 			ret.setRetry(retryString);
 		}
 		retryString = null;
+
+		setPresentCellEditor(ret);
 		return ret;
 	}
 
@@ -444,6 +450,15 @@ public static class EditTable extends JTable {
 		retryRow = row;
 		retryCol = col;
 	}
+
+	public CellEditor getPresentCellEditor() {
+		return presentCellEditor;
+	}
+
+	public void setPresentCellEditor(CellEditor editor) {
+		presentCellEditor = editor;
+	}
+
 }
 
 private static class EditTableModel extends AbstractTableModel {

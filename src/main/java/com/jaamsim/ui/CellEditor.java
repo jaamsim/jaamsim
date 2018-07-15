@@ -137,7 +137,9 @@ public abstract class CellEditor extends AbstractCellEditor implements TableCell
 
 				GUIFrame.updateUI();
 				return;
-
+			}
+			finally {
+				((EditTable)editor.propTable).setPresentCellEditor(null);
 			}
 		}
 	}
