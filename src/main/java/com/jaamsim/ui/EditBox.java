@@ -28,6 +28,7 @@ import java.util.Comparator;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.table.AbstractTableModel;
@@ -62,6 +63,7 @@ public class EditBox extends FrameBox {
 	private final JTabbedPane jTabbedFrame;
 
 	private final ArrayList<EditTable> editTableList;
+	private int prevTab;
 
 	private final TableCellRenderer columnRender = new EditBoxColumnRenderer();
 
@@ -80,6 +82,19 @@ public class EditBox extends FrameBox {
 
 			@Override
 			public void stateChanged(ChangeEvent e) {
+				if (prevTab != -1 && editTableList.size() > prevTab) {
+					final CellEditor editor = editTableList.get(prevTab).getPresentCellEditor();
+					if (editor != null) {
+						// Wait for a change in selected entity to take effect
+						SwingUtilities.invokeLater(new Runnable() {
+							@Override
+							public void run() {
+								editor.stopCellEditing();
+							}
+						});
+					}
+				}
+				prevTab = jTabbedFrame.getSelectedIndex();
 				GUIFrame.updateUI();
 			}
 		});
@@ -155,8 +170,10 @@ public class EditBox extends FrameBox {
 			curTab++;
 		}
 
+		prevTab = -1;
 		if (jTabbedFrame.getTabCount() > 0) {
 			jTabbedFrame.setSelectedIndex(initialTab);
+			prevTab = initialTab;
 		}
 	}
 
