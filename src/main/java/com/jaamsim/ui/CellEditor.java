@@ -83,6 +83,7 @@ public abstract class CellEditor extends AbstractCellEditor implements TableCell
 
 			CellEditor editor = (CellEditor)evt.getSource();
 			Input<?> in = (Input<?>)editor.getCellEditorValue();
+			Entity ent = ((EditTable)editor.getTable()).getEntity();
 
 			final String newValue = editor.getValue();
 
@@ -96,7 +97,6 @@ public abstract class CellEditor extends AbstractCellEditor implements TableCell
 
 			try {
 				// Parse the keyword inputs
-				Entity ent = EditBox.getInstance().getCurrentEntity();
 				KeywordIndex kw = InputAgent.formatInput(in.getKeyword(), str);
 				InputAgent.storeAndExecute(new KeywordCommand(ent, kw));
 				in.setValid(true);
