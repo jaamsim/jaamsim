@@ -91,7 +91,8 @@ implements ActionListener {
 
 	@Override
 	public String getValue() {
-		return (String)dropDown.getSelectedItem();
+		// dropDown.getSelectedItem() returns blank with a typed entry until Enter is pressed
+		return dropDown.getEditor().getItem().toString();
 	}
 
 	@Override
