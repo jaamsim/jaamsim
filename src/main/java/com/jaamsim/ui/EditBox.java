@@ -157,7 +157,7 @@ public class EditBox extends FrameBox {
 		editTableList.clear();
 		for (CategoryInputs each : getInputs(currentEntity)) {
 			EditTableModel mod = new EditTableModel(each);
-			EditTable propTable = new EditTable(mod, columnRender);
+			EditTable propTable = new EditTable(currentEntity, curTab, mod, columnRender);
 			editTableList.add(propTable);
 			JScrollPane jScrollPane = new JScrollPane(propTable);
 			jScrollPane.getVerticalScrollBar().setUnitIncrement(ROW_HEIGHT);
@@ -336,6 +336,9 @@ private static class CategoryInputs {
 	public static final Comparator<CategoryInputs> categorySortOrder = new CategoryComparator();
 
 public static class EditTable extends JTable {
+	private final Entity entity;
+	private final int tab;
+
 	static int col1Width = 150;
 	static int col2Width = 100;
 	static int col3Width = 150;
@@ -349,8 +352,10 @@ public static class EditTable extends JTable {
 
 	private CellEditor presentCellEditor;
 
-	public EditTable(EditTableModel mod, TableCellRenderer colRender) {
+	public EditTable(Entity ent, int tb, EditTableModel mod, TableCellRenderer colRender) {
 		super(mod);
+		entity = ent;
+		tab = tb;
 
 		this.setRowHeight(ROW_HEIGHT);
 		this.setRowSelectionAllowed(false);
@@ -466,6 +471,14 @@ public static class EditTable extends JTable {
 		retryString = rs;
 		retryRow = row;
 		retryCol = col;
+	}
+
+	public Entity getEntity() {
+		return entity;
+	}
+
+	public int getTab() {
+		return tab;
 	}
 
 	public CellEditor getPresentCellEditor() {
