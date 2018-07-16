@@ -102,7 +102,15 @@ public abstract class CellEditor extends AbstractCellEditor implements TableCell
 				in.setValid(true);
 			}
 			catch (InputErrorException exep) {
-				if (editor.canRetry()) {
+				boolean entityChanged = (EditBox.getInstance().getCurrentEntity() !=  ent);
+
+				// Reset the Input Editor to the original tab
+				final EditTable table = (EditTable)editor.getTable();
+				if (!entityChanged) {
+					EditBox.getInstance().setTab(table.getTab());
+				}
+
+				if (editor.canRetry() && !entityChanged) {
 					boolean editSelected = GUIFrame.showErrorEditDialog("Input Error",
 							"Input error:",
 							exep,
@@ -111,7 +119,6 @@ public abstract class CellEditor extends AbstractCellEditor implements TableCell
 						// Any editor that supports retry should implement the following
 						final int row = editor.getRow();
 						final int col = editor.getCol();
-						final EditTable table = (EditTable)editor.getTable();
 						final Input<?> inp = in;
 						SwingUtilities.invokeLater(new Runnable() {
 							@Override
