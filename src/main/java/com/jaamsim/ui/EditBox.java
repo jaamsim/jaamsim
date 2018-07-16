@@ -245,6 +245,11 @@ public class EditBox extends FrameBox {
 		return currentEntity;
 	}
 
+	public void setTab(int tab) {
+		jTabbedFrame.setSelectedIndex(tab);
+		prevTab = tab;
+	}
+
 	public static String formatEditorText(String str) {
 		return String.format("<html><i><font color=\"gray\">%s</font></i></html>", str);
 	}
