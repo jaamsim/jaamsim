@@ -349,11 +349,6 @@ public static class EditTable extends JTable {
 
 	private CellEditor presentCellEditor;
 
-	@Override
-	public boolean isCellEditable( int row, int column ) {
-		return ( column == VALUE_COLUMN ); // Only Value column is editable
-	}
-
 	public EditTable(EditTableModel mod, TableCellRenderer colRender) {
 		super(mod);
 
@@ -372,6 +367,11 @@ public static class EditTable extends JTable {
 		this.getTableHeader().setReorderingAllowed(false);
 
 		this.setPresentCellEditor(null);
+	}
+
+	@Override
+	public boolean isCellEditable( int row, int column ) {
+		return ( column == VALUE_COLUMN ); // Only Value column is editable
 	}
 
 	@Override
