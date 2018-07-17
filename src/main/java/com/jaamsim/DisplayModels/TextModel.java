@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2018 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -156,7 +157,7 @@ public class TextModel extends DisplayModel {
 		}
 	}
 
-	private static int getStyle(ArrayList<String> strArray) {
+	public static int getStyle(ArrayList<String> strArray) {
 		int ret = Font.PLAIN;
 		for(String each: strArray ) {
 			if(each.equalsIgnoreCase("Bold") ) {
@@ -185,6 +186,26 @@ public class TextModel extends DisplayModel {
 	@Override
 	public boolean canDisplayEntity(Entity ent) {
 		return (ent instanceof TextBasics) || (ent instanceof OverlayText);
+	}
+
+	public String getFontName() {
+		return fontName.getChoice();
+	}
+
+	public int getStyle() {
+		return getStyle(fontStyle.getValue());
+	}
+
+	public boolean getDropShadow() {
+		return dropShadow.getValue();
+	}
+
+	public Color4d getDropShadowColor() {
+		return dropShadowColor.getValue();
+	}
+
+	public Vec3d getDropShadowOffset() {
+		return dropShadowOffset.getValue();
 	}
 
 	private class Binding extends DisplayModelBinding {
