@@ -19,7 +19,7 @@ package com.jaamsim.ui;
 
 import java.awt.event.ActionEvent;
 
-import javax.swing.JTable;
+import com.jaamsim.ui.EditBox.EditTable;
 
 /**
  * Handles inputs that are edited in place.
@@ -27,7 +27,7 @@ import javax.swing.JTable;
  */
 public class StringEditor extends ChooserEditor {
 
-	public StringEditor(JTable table) {
+	public StringEditor(EditTable table) {
 		super(table, false);
 	}
 

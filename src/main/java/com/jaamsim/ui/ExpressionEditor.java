@@ -22,11 +22,12 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 import javax.swing.JMenuItem;
-import javax.swing.JTable;
+
+import com.jaamsim.ui.EditBox.EditTable;
 
 public class ExpressionEditor extends ChooserEditor {
 
-	public ExpressionEditor(JTable table) {
+	public ExpressionEditor(EditTable table) {
 		super(table, true);
 	}
 

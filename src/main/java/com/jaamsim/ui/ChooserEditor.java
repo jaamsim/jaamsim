@@ -29,6 +29,7 @@ import javax.swing.UIManager;
 import javax.swing.plaf.basic.BasicArrowButton;
 
 import com.jaamsim.input.Input;
+import com.jaamsim.ui.EditBox.EditTable;
 
 public abstract class ChooserEditor extends CellEditor
 implements ActionListener {
@@ -37,7 +38,7 @@ implements ActionListener {
 	private final JTextField text;
 	private final JButton button;
 
-	public ChooserEditor(JTable table, boolean showButton) {
+	public ChooserEditor(EditTable table, boolean showButton) {
 		super(table);
 
 		// Table cell

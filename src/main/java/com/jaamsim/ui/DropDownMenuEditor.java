@@ -27,6 +27,7 @@ import javax.swing.JComboBox;
 import javax.swing.JTable;
 
 import com.jaamsim.input.Input;
+import com.jaamsim.ui.EditBox.EditTable;
 
 /**
  * Handles inputs with drop-down menus.
@@ -39,7 +40,7 @@ implements ActionListener {
 
 	private boolean retrying;
 
-	public DropDownMenuEditor(JTable table, ArrayList<String> aList) {
+	public DropDownMenuEditor(EditTable table, ArrayList<String> aList) {
 		super(table);
 
 		dropDown = new JComboBox<>();

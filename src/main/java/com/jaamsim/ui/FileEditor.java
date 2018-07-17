@@ -21,11 +21,11 @@ import java.awt.event.ActionEvent;
 import java.io.File;
 
 import javax.swing.JFileChooser;
-import javax.swing.JTable;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import com.jaamsim.input.FileInput;
 import com.jaamsim.input.InputAgent;
+import com.jaamsim.ui.EditBox.EditTable;
 
 /**
  * Handles file inputs.
@@ -35,7 +35,7 @@ public class FileEditor extends ChooserEditor {
 
 	private static File lastDir;  // last directory accessed by the file chooser
 
-	public FileEditor(JTable table) {
+	public FileEditor(EditTable table) {
 		super(table, true);
 	}
 

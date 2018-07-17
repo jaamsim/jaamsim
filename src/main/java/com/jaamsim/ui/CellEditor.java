@@ -33,15 +33,15 @@ import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.ui.EditBox.EditTable;
 
 public abstract class CellEditor extends AbstractCellEditor implements TableCellEditor {
-	protected final JTable propTable;
+	protected final EditTable propTable;
 	protected Input<?> input;
 
 	private int row;
 	private int col;
-	private JTable table;
+	private EditTable table;
 	protected String retryString;
 
-	public CellEditor(JTable table) {
+	public CellEditor(EditTable table) {
 		propTable = table;
 		this.addCellEditorListener(new CellListener());
 	}
@@ -61,14 +61,14 @@ public abstract class CellEditor extends AbstractCellEditor implements TableCell
 
 	final public int getRow() { return row; }
 	final public int getCol() { return col; }
-	final public JTable getTable() { return table; }
+	final public EditTable getTable() { return table; }
 
 	final public void setRetry(String retryString) {
 		this.retryString = retryString;
 	}
 
 	protected void setTableInfo(JTable table, int row, int col) {
-		this.table = table;
+		this.table = (EditTable) table;
 		this.row = row;
 		this.col = col;
 	}
@@ -83,7 +83,7 @@ public abstract class CellEditor extends AbstractCellEditor implements TableCell
 
 			CellEditor editor = (CellEditor)evt.getSource();
 			Input<?> in = (Input<?>)editor.getCellEditorValue();
-			Entity ent = ((EditTable)editor.getTable()).getEntity();
+			Entity ent = editor.getTable().getEntity();
 
 			final String newValue = editor.getValue();
 
@@ -105,7 +105,7 @@ public abstract class CellEditor extends AbstractCellEditor implements TableCell
 				boolean entityChanged = (EditBox.getInstance().getCurrentEntity() !=  ent);
 
 				// Reset the Input Editor to the original tab
-				final EditTable table = (EditTable)editor.getTable();
+				final EditTable table = editor.getTable();
 				if (!entityChanged) {
 					EditBox.getInstance().setTab(table.getTab());
 				}
@@ -146,7 +146,7 @@ public abstract class CellEditor extends AbstractCellEditor implements TableCell
 				return;
 			}
 			finally {
-				((EditTable)editor.propTable).setPresentCellEditor(null);
+				editor.propTable.setPresentCellEditor(null);
 			}
 		}
 	}

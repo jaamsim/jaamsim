@@ -26,10 +26,10 @@ import java.util.ArrayList;
 import javax.swing.JColorChooser;
 import javax.swing.JDialog;
 import javax.swing.JMenuItem;
-import javax.swing.JTable;
 
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.math.Color4d;
+import com.jaamsim.ui.EditBox.EditTable;
 
 /**
  * Handles colour inputs.
@@ -42,7 +42,7 @@ public class ColorEditor extends ChooserEditor {
 
 	public static final String DIALOG_NAME = "Colour Chooser";
 
-	public ColorEditor(JTable table) {
+	public ColorEditor(EditTable table) {
 		super(table, true);
 	}
 
