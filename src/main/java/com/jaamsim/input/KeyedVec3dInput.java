@@ -74,8 +74,12 @@ public class KeyedVec3dInput extends Input<Vec3d> {
 			throw new InputErrorException("Value entry not formated correctly: %s", valInput.toString());
 		}
 
-		DoubleVector time = Input.parseDoubles(timeInput.subList(1, 3), 0.0d, Double.POSITIVE_INFINITY, TimeUnit.class);
-		DoubleVector vals = Input.parseDoubles(valInput.subList(1, 5), Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, unitType);
+		KeywordIndex timeKw = new KeywordIndex("", timeInput, 1, 3, null);
+		DoubleVector time = Input.parseDoubles(timeKw, 0.0d, Double.POSITIVE_INFINITY, TimeUnit.class);
+
+		KeywordIndex valKw = new KeywordIndex("", valInput, 1, 5, null);
+		DoubleVector vals = Input.parseDoubles(valKw, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, unitType);
+
 		Vec3d val = new Vec3d(vals.get(0), vals.get(1), vals.get(2));
 		curve.addKey(time.get(0), val);
 	}
