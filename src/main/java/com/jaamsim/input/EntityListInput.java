@@ -48,9 +48,7 @@ public class EntityListInput<T extends Entity> extends ListInput<ArrayList<T>> {
 
 		// If adding to the list
 		if( kw.getArg( 0 ).equals( "++" ) ) {
-			ArrayList<String> input = new ArrayList<>(kw.numArgs()-1);
-			for (int i = 1; i < kw.numArgs(); i++)
-				input.add(kw.getArg(i));
+			KeywordIndex subKw = new KeywordIndex(kw, 1);
 
 			ArrayList<T> newValue;
 			if( value == null )
@@ -58,13 +56,13 @@ public class EntityListInput<T extends Entity> extends ListInput<ArrayList<T>> {
 			else
 				newValue = new ArrayList<>( value );
 
-			Input.assertCountRange(input, 0, maxCount - newValue.size());
+			Input.assertCountRange(subKw, 0, maxCount - newValue.size());
 			if( even ) {
 				if ((kw.numArgs() % 2) == 0)
 					throw new InputErrorException(INP_ERR_EVENCOUNT, kw.argString());
 			}
 
-			ArrayList<T> addedValues = Input.parseEntityList(input, entClass, unique);
+			ArrayList<T> addedValues = Input.parseEntityList(subKw, entClass, unique);
 			for( T val : addedValues ) {
 				if( unique && newValue.contains( val ) )
 					throw new InputErrorException(INP_ERR_NOTUNIQUE, val.getName());
@@ -74,18 +72,16 @@ public class EntityListInput<T extends Entity> extends ListInput<ArrayList<T>> {
 		}
 		// If removing from the list
 		else if( kw.getArg( 0 ).equals( "--" ) ) {
-			ArrayList<String> input = new ArrayList<>(kw.numArgs()-1);
-			for (int i = 1; i < kw.numArgs(); i++)
-				input.add(kw.getArg(i));
+			KeywordIndex subKw = new KeywordIndex(kw, 1);
 
-			Input.assertCountRange(input, 0, value.size() - minCount );
+			Input.assertCountRange(subKw, 0, value.size() - minCount );
 			if( even ) {
 				if ((kw.numArgs() % 2) == 0)
 					throw new InputErrorException(INP_ERR_EVENCOUNT, kw.argString());
 			}
 
 			ArrayList<T> newValue = new ArrayList<>( value );
-			ArrayList<T> removedValues = Input.parseEntityList(input, entClass, unique);
+			ArrayList<T> removedValues = Input.parseEntityList(subKw, entClass, unique);
 			for( T val : removedValues ) {
 				if( ! newValue.contains( val ) )
 					InputAgent.logWarning( "Could not remove " + val + " from " + this.getKeyword() );
