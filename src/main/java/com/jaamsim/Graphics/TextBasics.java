@@ -335,19 +335,8 @@ public abstract class TextBasics extends DisplayEntity {
 		if (count == 2)
 			editMode = true;
 
-		// Set up the transformation from global coordinates to the entity's coordinates
-		double height = textHeight.getValue();
-		TextModel tm = (TextModel) displayModelListInput.getValue().get(0);
-		Vec3d textsize = RenderManager.inst().getRenderedStringSize(tm.getTessFontKey(), height, editText);
-		Transform trans = getEntityTransForSize(textsize);
-
-		// Calculate the entity's coordinates for the mouse click
-		Vec3d entityCoord = new Vec3d();
-		trans.multAndTrans(globalCoord, entityCoord);
-
 		// Position the insertion point where the text was clicked
-		double insert = entityCoord.x + 0.5d*textsize.x;
-		insertPos = RenderManager.inst().getRenderedStringPosition(tm.getTessFontKey(), height, editText, insert);
+		insertPos = getStringPosition(globalCoord);
 		numSelected = 0;
 
 		// Double click selects a whole word
@@ -360,23 +349,9 @@ public abstract class TextBasics extends DisplayEntity {
 		if (!editMode)
 			return false;
 
-		// Set up the transformation from global coordinates to the entity's coordinates
-		double height = textHeight.getValue();
-		TextModel tm = (TextModel) displayModelListInput.getValue().get(0);
-		Vec3d textsize = RenderManager.inst().getRenderedStringSize(tm.getTessFontKey(), height, editText);
-		Transform trans = getEntityTransForSize(textsize);
-
-		// Calculate the entity's coordinates for the mouse click
-		Vec3d currentCoord = new Vec3d();
-		trans.multAndTrans(currentPt, currentCoord);
-		Vec3d firstCoord = new Vec3d();
-		trans.multAndTrans(firstPt, firstCoord);
-
 		// Set the start and end of highlighting
-		double insert = currentCoord.x + 0.5d*textsize.x;
-		double first = firstCoord.x + 0.5d*textsize.x;
-		insertPos = RenderManager.inst().getRenderedStringPosition(tm.getTessFontKey(), height, editText, insert);
-		int firstPos = RenderManager.inst().getRenderedStringPosition(tm.getTessFontKey(), height, editText, first);
+		insertPos = getStringPosition(currentPt);
+		int firstPos = getStringPosition(firstPt);
 		numSelected = firstPos - insertPos;
 		return true;
 	}
