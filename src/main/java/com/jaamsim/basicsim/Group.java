@@ -77,11 +77,9 @@ public class Group extends Entity {
 		public void parse(KeywordIndex kw) {
 			// If adding to the list
 			if( kw.getArg( 0 ).equals( "++" ) ) {
-				ArrayList<String> input = new ArrayList<>(kw.numArgs()-1);
-				for (int i = 1; i < kw.numArgs(); i++)
-					input.add(kw.getArg(i));
+				KeywordIndex subKw = new KeywordIndex(kw, 1);
 
-				ArrayList<Entity> addedValues = Input.parseEntityList(input, Entity.class, true);
+				ArrayList<Entity> addedValues = Input.parseEntityList(subKw, Entity.class, true);
 				for( Entity ent : addedValues ) {
 					if( list.contains( ent ) )
 						throw new InputErrorException(INP_ERR_NOTUNIQUE, ent.getName());
@@ -98,11 +96,9 @@ public class Group extends Entity {
 			}
 			// If removing from the list
 			else if( kw.getArg( 0 ).equals( "--" ) ) {
-				ArrayList<String> input = new ArrayList<>(kw.numArgs()-1);
-				for (int i = 1; i < kw.numArgs(); i++)
-					input.add(kw.getArg(i));
+				KeywordIndex subKw = new KeywordIndex(kw, 1);
 
-				ArrayList<Entity> removedValues = Input.parseEntityList(input, Entity.class, true);
+				ArrayList<Entity> removedValues = Input.parseEntityList(subKw, Entity.class, true);
 				for( Entity ent : removedValues ) {
 					if( ! list.contains( ent ) )
 						InputAgent.logWarning( "Could not remove " + ent + " from " + this.getKeyword() );
