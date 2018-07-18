@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2009-2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2017 JaamSim Software Inc.
+ * Copyright (C) 2017-2018 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,8 @@
  */
 package com.jaamsim.Graphics;
 
+import com.jaamsim.DisplayModels.DisplayModel;
+import com.jaamsim.DisplayModels.PolylineModel;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.Keyword;
@@ -86,6 +88,20 @@ public class Arrow extends DisplayEntity {
 		PolylineInfo[] ret = new PolylineInfo[1];
 		ret[0] = new PolylineInfo(getCurvePoints(), col, wid);
 		return ret;
+	}
+
+	public PolylineModel getPolylineModel() {
+		DisplayModel dm = displayModelListInput.getValue().get(0);
+		if (dm instanceof PolylineModel)
+			return (PolylineModel) dm;
+		return null;
+	}
+
+	public Vec3d getArrowHeadSize() {
+		PolylineModel plModel = getPolylineModel();
+		if (arrowHeadSize.isDefault() && plModel != null)
+			return plModel.getArrowHeadSize();
+		return arrowHeadSize.getValue();
 	}
 
 	public Vec3dInput getArrowHeadSizeInput() {
