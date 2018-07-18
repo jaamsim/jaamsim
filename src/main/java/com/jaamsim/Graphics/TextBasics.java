@@ -83,6 +83,7 @@ public abstract class TextBasics extends DisplayEntity {
 	private int numSelected = 0;       // number of characters selected (positive to the right of the insertion position)
 
 	{
+		displayModelListInput.addValidClass(TextModel.class);
 
 		fontName = new StringChoiceInput("FontName", FONT, -1);
 		fontName.setChoices(TextModel.validFontNames);

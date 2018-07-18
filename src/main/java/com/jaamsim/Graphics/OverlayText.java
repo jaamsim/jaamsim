@@ -111,6 +111,8 @@ public class OverlayText extends OverlayEntity {
 	private String renderText;
 
 	{
+		displayModelListInput.addValidClass(TextModel.class);
+
 		formatText = new StringInput("Format", KEY_INPUTS, "");
 		this.addInput(formatText);
 
