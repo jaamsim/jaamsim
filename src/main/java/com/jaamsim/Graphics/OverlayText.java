@@ -33,6 +33,9 @@ import com.jaamsim.input.StringInput;
 import com.jaamsim.input.StringListInput;
 import com.jaamsim.input.UnitTypeInput;
 import com.jaamsim.input.Vec3dInput;
+import com.jaamsim.math.Color4d;
+import com.jaamsim.math.Vec3d;
+import com.jaamsim.render.TessFontKey;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 
@@ -221,8 +224,61 @@ public class OverlayText extends OverlayEntity {
 		return renderText;
 	}
 
+	public TextModel getTextModel() {
+		return (TextModel) displayModelListInput.getValue().get(0);
+	}
+
+	public String getFontName() {
+		if (fontName.isDefault()) {
+			return getTextModel().getFontName();
+		}
+		return fontName.getChoice();
+	}
+
 	public int getTextHeight() {
+		if (textHeight.isDefault()) {
+			return (int) getTextModel().getTextHeight();
+		}
 		return textHeight.getValue();
+	}
+
+	public int getStyle() {
+		if (fontStyle.isDefault()) {
+			return getTextModel().getStyle();
+		}
+		return TextModel.getStyle(fontStyle.getValue());
+	}
+
+	public TessFontKey getTessFontKey() {
+		return new TessFontKey(getFontName(), getStyle());
+	}
+
+	public Color4d getFontColor() {
+		if (fontColor.isDefault()) {
+			return getTextModel().getFontColor();
+		}
+		return fontColor.getValue();
+	}
+
+	public boolean getDropShadow() {
+		if (dropShadow.isDefault()) {
+			return getTextModel().getDropShadow();
+		}
+		return dropShadow.getValue();
+	}
+
+	public Color4d getDropShadowColor() {
+		if (dropShadowColor.isDefault()) {
+			return getTextModel().getDropShadowColor();
+		}
+		return dropShadowColor.getValue();
+	}
+
+	public Vec3d getDropShadowOffset() {
+		if (dropShadowOffset.isDefault()) {
+			return getTextModel().getDropShadowOffset();
+		}
+		return dropShadowOffset.getValue();
 	}
 
 	public StringChoiceInput getFontNameInput() {
