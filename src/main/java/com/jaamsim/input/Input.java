@@ -756,21 +756,6 @@ public abstract class Input<T> {
 		return temp;
 	}
 
-	public static BooleanVector parseBooleanVector(List<String> input)
-	throws InputErrorException {
-		BooleanVector temp = new BooleanVector(input.size());
-
-		for (int i = 0; i < input.size(); i++) {
-			try {
-				boolean element = Input.parseBoolean(input.get(i));
-				temp.add(element);
-			} catch (InputErrorException e) {
-				throw new InputErrorException(INP_ERR_ELEMENT, i+1, e.getMessage());
-			}
-		}
-		return temp;
-	}
-
 	public static ArrayList<Color4d> parseColorVector(KeywordIndex kw)
 	throws InputErrorException {
 		ArrayList<KeywordIndex> subArgs = kw.getSubArgs();
@@ -834,21 +819,6 @@ public abstract class Input<T> {
 			return true;
 		}
 		catch (NumberFormatException e) { return false; }
-	}
-
-	public static IntegerVector parseIntegerVector(List<String> input, int minValue, int maxValue)
-	throws InputErrorException {
-		IntegerVector temp = new IntegerVector(input.size());
-
-		for (int i = 0; i < input.size(); i++) {
-			try {
-				int element = Input.parseInteger(input.get(i), minValue, maxValue);
-				temp.add(element);
-			} catch (InputErrorException e) {
-				throw new InputErrorException(INP_ERR_ELEMENT, i+1, e.getMessage());
-			}
-		}
-		return temp;
 	}
 
 	public static IntegerVector parseIntegerVector(KeywordIndex kw, int minValue, int maxValue)
@@ -1103,24 +1073,6 @@ public abstract class Input<T> {
 		if (temp < minValue || temp > maxValue)
 			throw new InputErrorException(INP_ERR_DOUBLERANGE, minValue, maxValue, temp);
 
-		return temp;
-	}
-
-	/**
-	 * Convert the given input to a DoubleVector and apply the given conversion factor
-	 */
-	public static DoubleVector parseDoubleVector(List<String> input, double minValue, double maxValue, double factor)
-	throws InputErrorException {
-		DoubleVector temp = new DoubleVector(input.size());
-
-		for (int i = 0; i < input.size(); i++) {
-			try {
-				double element = Input.parseDouble(input.get(i), minValue, maxValue, factor);
-				temp.add(element);
-			} catch (InputErrorException e) {
-				throw new InputErrorException(INP_ERR_ELEMENT, i+1, e.getMessage());
-			}
-		}
 		return temp;
 	}
 
