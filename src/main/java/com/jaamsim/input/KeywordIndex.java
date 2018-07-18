@@ -30,6 +30,14 @@ public class KeywordIndex {
 		this(word, arg, 0, arg.size(), ctxt);
 	}
 
+	public KeywordIndex(KeywordIndex kw, int s) {
+		this(kw.keyword, kw.input, s, kw.end, kw.context);
+	}
+
+	public KeywordIndex(KeywordIndex kw, int s, int e) {
+		this(kw.keyword, kw.input, s, e, kw.context);
+	}
+
 	public KeywordIndex(String word, ArrayList<String> inp, int s, int e, ParseContext ctxt) {
 		input = inp;
 		keyword = word;
