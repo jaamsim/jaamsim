@@ -69,9 +69,11 @@ public class EntityListInput<T extends Entity> extends ListInput<ArrayList<T>> {
 				newValue.add( val );
 			}
 			value = newValue;
+			return;
 		}
+
 		// If removing from the list
-		else if( kw.getArg( 0 ).equals( "--" ) ) {
+		if( kw.getArg( 0 ).equals( "--" ) ) {
 			KeywordIndex subKw = new KeywordIndex(kw, 1);
 
 			Input.assertCountRange(subKw, 0, value.size() - minCount );
@@ -88,15 +90,15 @@ public class EntityListInput<T extends Entity> extends ListInput<ArrayList<T>> {
 				newValue.remove( val );
 			}
 			value = newValue;
+			return;
 		}
-		// Otherwise, just set the list normally
-		else {
-			Input.assertCountRange(kw, minCount, maxCount);
-			if( even )
-				Input.assertCountEven(kw);
 
-			value = Input.parseEntityList(kw, entClass, unique);
-		}
+		// Otherwise, just set the list normally
+		Input.assertCountRange(kw, minCount, maxCount);
+		if( even )
+			Input.assertCountEven(kw);
+
+		value = Input.parseEntityList(kw, entClass, unique);
 	}
 
 	@Override
