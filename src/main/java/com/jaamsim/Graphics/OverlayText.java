@@ -281,28 +281,4 @@ public class OverlayText extends OverlayEntity {
 		return dropShadowOffset.getValue();
 	}
 
-	public StringChoiceInput getFontNameInput() {
-		return fontName;
-	}
-
-	public StringListInput getFontStyleInput() {
-		return fontStyle;
-	}
-
-	public ColourInput getFontColorInput() {
-		return fontColor;
-	}
-
-	public BooleanInput getDropShadowInput() {
-		return dropShadow;
-	}
-
-	public ColourInput getDropShadowColorInput() {
-		return dropShadowColor;
-	}
-
-	public Vec3dInput getDropShadowOffsetInput() {
-		return dropShadowOffset;
-	}
-
 }
