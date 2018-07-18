@@ -120,7 +120,8 @@ public class TimeSeriesDataInput extends Input<TimeSeriesData> {
 			long usOffset = recordus - startingYearOffset;
 
 			// Value portion of the record
-			DoubleVector v = Input.parseDoubles(each, minValue, maxValue, unitType);
+			KeywordIndex valKw = new KeywordIndex("", each, null);
+			DoubleVector v = Input.parseDoubles(valKw, minValue, maxValue, unitType);
 
 			// Store the time and value for this record
 			times.add( usOffset/(1.0e6*tickLength) );
