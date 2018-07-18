@@ -135,8 +135,9 @@ public class OverlayText extends OverlayEntity {
 		fontName.setDefaultText("TextModel");
 		this.addInput(fontName);
 
-		textHeight = new IntegerInput("TextHeight", FONT, 15);
+		textHeight = new IntegerInput("TextHeight", FONT, 0);
 		textHeight.setValidRange(0, 1000);
+		textHeight.setDefaultText("TextModel");
 		this.addInput(textHeight);
 
 		fontColor = new ColourInput("FontColour", FONT, ColourInput.BLACK);
