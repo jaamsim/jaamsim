@@ -104,8 +104,4 @@ public class Arrow extends DisplayEntity {
 		return arrowHeadSize.getValue();
 	}
 
-	public Vec3dInput getArrowHeadSizeInput() {
-		return arrowHeadSize;
-	}
-
 }
