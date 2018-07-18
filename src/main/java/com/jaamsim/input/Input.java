@@ -1143,68 +1143,6 @@ public abstract class Input<T> {
 		return temp;
 	}
 
-	/**
-	 * Convert the given input to a DoubleVector and apply the given conversion factor
-	 */
-	public static DoubleVector parseDoubles(List<String> input, double minValue, double maxValue, Class<? extends Unit> unitType)
-	throws InputErrorException {
-
-		if (unitType == UserSpecifiedUnit.class)
-			throw new InputErrorException(INP_ERR_UNITUNSPECIFIED);
-
-		double factor = 1.0d;
-		int numDoubles = input.size();
-
-		// Parse the unit portion of the input
-		String unitName = Parser.removeEnclosure("[", input.get(numDoubles-1), "]");
-		Unit unit = Input.tryParseUnit(unitName, unitType);
-
-		// A unit is mandatory except for dimensionless values and time values in RFC8601 date/time format
-		if (unit == null && unitType != DimensionlessUnit.class && unitType != TimeUnit.class)
-			throw new InputErrorException(INP_ERR_NOUNITFOUND, input.get(numDoubles-1), unitType.getSimpleName());
-
-		if (unit != null) {
-			factor = unit.getConversionFactorToSI();
-			numDoubles = numDoubles - 1;
-		}
-
-		// Parse the numeric portion of the input
-		DoubleVector temp = new DoubleVector(numDoubles);
-		for (int i = 0; i < numDoubles; i++) {
-			try {
-				// Time input
-				if (unitType == TimeUnit.class) {
-
-					// RFC8601 date/time format
-					if (Input.isRFC8601DateTime(input.get(i))) {
-						double element = Input.parseRFC8601DateTime(input.get(i))/1e6;
-						if (element < minValue || element > maxValue)
-							throw new InputErrorException(INP_ERR_DOUBLERANGE, minValue, maxValue, temp);
-						temp.add(element);
-					}
-					// Normal format
-					else {
-						if (unit == null)
-							throw new InputErrorException(INP_ERR_NOUNITFOUND, input.get(numDoubles-1), unitType.getSimpleName());
-						double element = Input.parseDouble(input.get(i), minValue, maxValue, factor);
-						temp.add(element);
-					}
-				}
-				// Non-time input
-				else {
-					double element = Input.parseDouble(input.get(i), minValue, maxValue, factor);
-					temp.add(element);
-				}
-			} catch (InputErrorException e) {
-				if (numDoubles == 1)
-					throw e;
-				else
-					throw new InputErrorException(INP_ERR_ELEMENT, i+1, e.getMessage());
-			}
-		}
-		return temp;
-	}
-
 	public static String parseString(String input, ArrayList<String> validList)
 	throws InputErrorException {
 		return parseString(input, validList, false);
