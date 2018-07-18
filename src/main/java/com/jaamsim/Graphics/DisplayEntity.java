@@ -22,6 +22,7 @@ import java.util.HashMap;
 
 import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.DisplayModels.DisplayModel;
+import com.jaamsim.DisplayModels.GraphModel;
 import com.jaamsim.DisplayModels.ImageModel;
 import com.jaamsim.DisplayModels.PolylineModel;
 import com.jaamsim.DisplayModels.ShapeModel;
@@ -193,6 +194,8 @@ public class DisplayEntity extends Entity {
 		this.addInput(relativeEntity);
 
 		displayModelListInput = new EntityListInput<>( DisplayModel.class, "DisplayModel", GRAPHICS, null);
+		displayModelListInput.addInvalidClass(TextModel.class);
+		displayModelListInput.addInvalidClass(GraphModel.class);
 		this.addInput(displayModelListInput);
 		displayModelListInput.setUnique(false);
 
