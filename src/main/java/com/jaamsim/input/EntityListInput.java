@@ -130,10 +130,6 @@ public class EntityListInput<T extends Entity> extends ListInput<ArrayList<T>> {
 		this.includeSelf = bool;
 	}
 
-	public void setValidClasses(ArrayList<Class<? extends Entity>> classes ) {
-		validClasses = classes;
-	}
-
 	@Override
 	public ArrayList<String> getValidOptions() {
 		ArrayList<String> list = new ArrayList<>();
@@ -227,7 +223,13 @@ public class EntityListInput<T extends Entity> extends ListInput<ArrayList<T>> {
 		return false;
 	}
 
+	public void addValidClass(Class<? extends Entity> aClass ) {
+		invalidClasses.remove(aClass);
+		validClasses.add(aClass);
+	}
+
 	public void addInvalidClass(Class<? extends Entity> aClass ) {
+		validClasses.remove(aClass);
 		invalidClasses.add(aClass);
 	}
 
