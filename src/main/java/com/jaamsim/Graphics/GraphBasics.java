@@ -19,6 +19,7 @@ package com.jaamsim.Graphics;
 
 import java.util.ArrayList;
 
+import com.jaamsim.DisplayModels.GraphModel;
 import com.jaamsim.Samples.SampleProvider;
 import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.input.ColorListInput;
@@ -167,6 +168,8 @@ public abstract class GraphBasics extends DisplayEntity {
 	public static final String SEC_Y_AXIS = "Secondary Y-Axis";
 
 	{
+		displayModelListInput.addValidClass(GraphModel.class);
+
 		// Key Inputs category
 
 		title = new StringInput("Title", KEY_INPUTS, "Graph Title");
