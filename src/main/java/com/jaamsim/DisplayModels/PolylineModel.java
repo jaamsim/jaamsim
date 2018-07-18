@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2017 JaamSim Software Inc.
+ * Copyright (C) 2017-2018 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -100,6 +100,22 @@ public class PolylineModel extends DisplayModel {
 	@Override
 	public boolean canDisplayEntity(Entity ent) {
 		return (ent instanceof DisplayEntity);
+	}
+
+	public Color4d getColour() {
+		return colour.getValue();
+	}
+
+	public int getWidth() {
+		return Math.max(1, width.getValue().intValue());
+	}
+
+	public boolean getShowArrowHead() {
+		return showArrowHead.getValue();
+	}
+
+	public Vec3d getArrowHeadSize() {
+		return arrowHeadSize.getValue();
 	}
 
 	protected class Binding extends DisplayModelBinding {
