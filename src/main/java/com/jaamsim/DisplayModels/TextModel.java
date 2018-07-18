@@ -422,20 +422,15 @@ public class TextModel extends DisplayModel {
 			}
 
 			String text = labelObservee.getCachedText();
-
 			IntegerVector pos = labelObservee.getScreenPosition();
 			int height = labelObservee.getTextHeight();
-
 			boolean alignRight = labelObservee.getAlignRight();
 			boolean alignBottom = labelObservee.getAlignBottom();
-
 			Color4d color = labelObservee.getFontColor();
 			TessFontKey fk = labelObservee.getTessFontKey();
 			boolean ds = labelObservee.getDropShadow();
 			Color4d dsColor = labelObservee.getDropShadowColor();
-
 			Vec3d dsOffset = labelObservee.getDropShadowOffset();
-			dsOffset.scale3(height);
 
 			VisibilityInfo vi = getVisibilityInfo();
 
@@ -478,7 +473,8 @@ public class TextModel extends DisplayModel {
 			cachedProxies = new ArrayList<>();
 
 			if (ds) {
-
+				dsOffset = new Vec3d(dsOffset);
+				dsOffset.scale3(height);
 				cachedProxies.add(new OverlayStringProxy(text, fk, dsColor, height,
 				                                      pos.get(0) + (dsOffset.x * (alignRight ? -1 : 1)),
 				                                      pos.get(1) - (dsOffset.y * (alignBottom ? -1 : 1)),
@@ -543,10 +539,7 @@ public class TextModel extends DisplayModel {
 			TessFontKey fk = labelObservee.getTessFontKey();
 			boolean ds = labelObservee.getDropShadow();
 			Color4d dsColor = labelObservee.getDropShadowColor();
-
 			Vec3d dsOffset = labelObservee.getDropShadowOffset();
-			dsOffset.scale3(height);
-
 			Vec3d pos = labelObservee.getGlobalPosition();
 
 			VisibilityInfo vi = getVisibilityInfo();
@@ -586,6 +579,8 @@ public class TextModel extends DisplayModel {
 			cachedProxies = new ArrayList<>();
 
 			if (ds) {
+				dsOffset = new Vec3d(dsOffset);
+				dsOffset.scale3(height);
 				cachedProxies.add(new BillboardStringProxy(text, fk, dsColor, height, pos, dsOffset.x, dsOffset.y, vi));
 			}
 
