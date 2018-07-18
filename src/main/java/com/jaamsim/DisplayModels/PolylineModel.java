@@ -166,12 +166,12 @@ public class PolylineModel extends DisplayModel {
 				globalTrans = displayObservee.getGlobalPositionTransform();
 			}
 
-			Color4d lineColour = colour.getValue();
-			int lineWidth = Math.max(1, width.getValue().intValue());
+			Color4d lineColour = getColour();
+			int lineWidth = getWidth();
 
-			Vec3d arrowSize = arrowHeadSize.getValue();
-			if (arrowObservee != null && !arrowObservee.getArrowHeadSizeInput().isDefault())
-				arrowSize = arrowObservee.getArrowHeadSizeInput().getValue();
+			Vec3d arrowSize = getArrowHeadSize();
+			if (arrowObservee != null)
+				arrowSize = arrowObservee.getArrowHeadSize();
 
 			VisibilityInfo vi = getVisibilityInfo();
 
@@ -180,7 +180,7 @@ public class PolylineModel extends DisplayModel {
 			dirty = dirty || !compareArray(pisCache, pis);
 			dirty = dirty || lineWidthCache != lineWidth;
 			dirty = dirty || dirty_col4d(lineColourCache, lineColour);
-			dirty = dirty || showArrowHeadCache != showArrowHead.getValue();
+			dirty = dirty || showArrowHeadCache != getShowArrowHead();
 			dirty = dirty || dirty_vec3d(arrowSizeCache, arrowSize);
 			dirty = dirty || !compare(globalTransCache, globalTrans);
 			dirty = dirty || !compare(viCache, vi);
@@ -188,7 +188,7 @@ public class PolylineModel extends DisplayModel {
 			pisCache = pis;
 			lineWidthCache = lineWidth;
 			lineColourCache = lineColour;
-			showArrowHeadCache = showArrowHead.getValue();
+			showArrowHeadCache = getShowArrowHead();
 			arrowSizeCache = arrowSize;
 			globalTransCache = globalTrans;
 			viCache = vi;
@@ -260,7 +260,7 @@ public class PolylineModel extends DisplayModel {
 			}
 
 			// Add the arrowhead
-			if (!showArrowHead.getValue())
+			if (!getShowArrowHead())
 				return;
 
 			ArrayList<Vec3d> curvePts = pis[0].getCurvePoints();
