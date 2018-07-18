@@ -1381,43 +1381,6 @@ public abstract class Input<T> {
 		return temp;
 	}
 
-
-	public static <T extends Entity> ArrayList<T> parseEntityList(List<String> input, Class<T> aClass, boolean unique)
-	throws InputErrorException {
-		ArrayList<T> temp = new ArrayList<>(input.size());
-
-		for (int i = 0; i < input.size(); i++) {
-			Entity ent = Entity.getNamedEntity(input.get(i));
-			if (ent == null) {
-				throw new InputErrorException(INP_ERR_ENTNAME, input.get(i));
-			}
-
-			// If we found a group, expand the list of Entities
-			if (ent instanceof Group && aClass != Group.class) {
-				ArrayList<Entity> gList = ((Group)ent).getList();
-				for (int j = 0; j < gList.size(); j++) {
-					T t = Input.castEntity(gList.get(j), aClass);
-					if (t == null) {
-						throw new InputErrorException(INP_ERR_ENTCLASS, aClass.getSimpleName(), gList.get(j), gList.get(j).getClass().getSimpleName());
-					}
-					temp.add(t);
-				}
-			} else {
-				T t = Input.castEntity(ent, aClass);
-				if (t == null) {
-					throw new InputErrorException(INP_ERR_ENTCLASS, aClass.getSimpleName(), input.get(i), ent.getClass().getSimpleName());
-				}
-				temp.add(t);
-			}
-		}
-
-		if (unique)
-			Input.assertUnique(temp);
-
-		return temp;
-	}
-
-
 	public static <T extends Entity> ArrayList<ArrayList<T>> parseListOfEntityLists(KeywordIndex kw, Class<T> aClass, boolean unique)
 	throws InputErrorException {
 		ArrayList<KeywordIndex> subArgs = kw.getSubArgs();
