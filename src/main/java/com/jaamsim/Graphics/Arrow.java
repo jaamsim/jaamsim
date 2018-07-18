@@ -44,6 +44,8 @@ public class Arrow extends DisplayEntity {
 	private final Vec3dInput arrowHeadSize;
 
 	{
+		displayModelListInput.addValidClass(PolylineModel.class);
+
 		color = new ColourInput("Colour", GRAPHICS, ColourInput.BLACK);
 		color.setDefaultText("PolylineModel");
 		this.addInput(color);
