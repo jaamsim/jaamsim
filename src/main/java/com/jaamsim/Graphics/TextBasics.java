@@ -393,6 +393,30 @@ public abstract class TextBasics extends DisplayEntity {
 		return savedText;
 	}
 
+	/**
+	 * Returns the insert position in the present text that corresponds to the specified global
+	 * coordinate. Index 0 is located immediately before the first character in the text.
+	 * @param globalCoord - position in the global coordinate system
+	 * @return insert position in the text string
+	 */
+	public int getStringPosition(Vec3d globalCoord) {
+		double height = getTextHeight();
+		TessFontKey fontKey = getTessFontKey();
+
+		// Set up the transformation from global coordinates to the entity's coordinates
+		Vec3d textsize = RenderManager.inst().getRenderedStringSize(fontKey, height, editText);
+		Transform trans = getEntityTransForSize(textsize);
+
+		// Calculate the entity's coordinates for the mouse click
+		Vec3d entityCoord = new Vec3d();
+		trans.multAndTrans(globalCoord, entityCoord);
+
+		// Position the insertion point where the text was clicked
+		double insert = entityCoord.x + 0.5d*textsize.x;
+		int pos = RenderManager.inst().getRenderedStringPosition(fontKey, height, editText, insert);
+		return pos;
+	}
+
 	public Vec3d getTextSize() {
 		double height = getTextHeight();
 		TessFontKey fontKey = getTessFontKey();
