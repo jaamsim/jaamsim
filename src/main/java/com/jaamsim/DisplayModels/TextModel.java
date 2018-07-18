@@ -188,6 +188,22 @@ public class TextModel extends DisplayModel {
 		return (ent instanceof TextBasics) || (ent instanceof OverlayText);
 	}
 
+	public TessFontKey getTessFontKey() {
+		return new TessFontKey(fontName.getChoice(), style);
+	}
+
+	public static TessFontKey getDefaultTessFontKey() {
+		return new TessFontKey("Verdana", Font.PLAIN);
+	}
+
+	public Color4d getFontColor() {
+		return fontColor.getValue();
+	}
+
+	public double getTextHeight() {
+		return textHeight.getValue();
+	}
+
 	public String getFontName() {
 		return fontName.getChoice();
 	}
@@ -208,6 +224,9 @@ public class TextModel extends DisplayModel {
 		return dropShadowOffset.getValue();
 	}
 
+	// ********************************************************************************************
+	// Binding
+	// ********************************************************************************************
 	private class Binding extends DisplayModelBinding {
 
 		private TextBasics labelObservee;
@@ -390,6 +409,9 @@ public class TextModel extends DisplayModel {
 		}
 	}
 
+	// ********************************************************************************************
+	// OverlayBinding
+	// ********************************************************************************************
 	private class OverlayBinding extends DisplayModelBinding {
 
 		private OverlayText labelObservee;
@@ -529,6 +551,9 @@ public class TextModel extends DisplayModel {
 		}
 	}
 
+	// ********************************************************************************************
+	// BillboardBinding
+	// ********************************************************************************************
 	private class BillboardBinding extends DisplayModelBinding {
 
 		private BillboardText labelObservee;
@@ -654,22 +679,6 @@ public class TextModel extends DisplayModel {
 		protected void collectSelectionBox(double simTime, ArrayList<RenderProxy> out) {
 			// No selection widgets for now
 		}
-	}
-
-	public TessFontKey getTessFontKey() {
-		return new TessFontKey(fontName.getChoice(), style);
-	}
-
-	public static TessFontKey getDefaultTessFontKey() {
-		return new TessFontKey("Verdana", Font.PLAIN);
-	}
-
-	public Color4d getFontColor() {
-		return fontColor.getValue();
-	}
-
-	public double getTextHeight() {
-		return textHeight.getValue();
 	}
 
 }
