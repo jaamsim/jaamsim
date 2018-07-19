@@ -72,4 +72,8 @@ public class ScrollableMenu extends JMenu {
 		}
 	}
 
+	public void ensureIndexIsVisible(int index) {
+		((ScrollablePopupMenu)popupMenu).ensureIndexIsVisible(index);
+	}
+
 }

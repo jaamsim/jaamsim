@@ -21,6 +21,7 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.LayoutManager;
+import java.awt.Rectangle;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
 import java.awt.event.MouseWheelEvent;
@@ -102,6 +103,28 @@ public class ScrollablePopupMenu extends JPopupMenu {
 		}
 
 		super.show(invoker, x, y);
+	}
+
+	public void ensureIndexIsVisible(int index) {
+		Rectangle rect = getComponent(index + 1).getBounds();  // scrollBar is the first component
+		scrollBar.scrollRectToVisible(rect);
+	}
+
+	@Override
+	public void scrollRectToVisible(Rectangle rect) {
+
+		// ScrollBar values for the top and bottom of the rectangle
+		Insets i = getInsets();
+		int valTop = rect.y - 2*i.top + scrollBar.getMinimum();  // FIXME why two times the inset?
+		int valBottom = valTop + rect.height;
+		int val = scrollBar.getValue();
+
+		// Is the rectangle visible with the present scroll bar position
+		if (val <= valTop && valBottom <= val + scrollBar.getVisibleAmount())
+			return;
+
+		// Show the rectangle at the top of the view area
+		scrollBar.setValue(valTop);
 	}
 
 	protected static class ScrollableMenuLayout implements LayoutManager{
