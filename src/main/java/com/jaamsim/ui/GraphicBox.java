@@ -30,7 +30,6 @@ import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Locale;
 
 import javax.swing.ImageIcon;
@@ -53,11 +52,9 @@ import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.DisplayModels.ColladaModel;
 import com.jaamsim.DisplayModels.DisplayModel;
 import com.jaamsim.DisplayModels.ImageModel;
-import com.jaamsim.DisplayModels.ShapeModel;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.controllers.RenderManager;
-import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.math.AABB;
@@ -72,7 +69,8 @@ public class GraphicBox extends JDialog {
 	private final  JLabel previewLabel; // preview DisplayModel as a picture
 	final ImageIcon previewIcon = new ImageIcon();
 	private static DisplayEntity currentEntity;
-	private final static JList<DisplayModel> displayModelList; // All defined DisplayModels
+	private ArrayList<String> modelList;
+	private final static JList<String> displayModelList; // Names of valid DisplayModel choices
 
 	private final JCheckBox useModelSize;
 	private final JCheckBox useModelPosition;
@@ -120,7 +118,10 @@ public class GraphicBox extends JDialog {
 					return;
 
 				// Selected DisplayModel
-				DisplayModel dm = (DisplayModel)((JList<?>)e.getSource()).getSelectedValue();
+				String dmName = (String)((JList<?>)e.getSource()).getSelectedValue();
+				DisplayModel dm = (DisplayModel)Entity.getNamedEntity(dmName);
+				if (dm == null)
+					return;
 
 				if (!RenderManager.isGood()) { return; }
 
@@ -216,7 +217,7 @@ public class GraphicBox extends JDialog {
 					GUIFrame.updateUI();
 
 					// Scroll to the new DisplayModel and ensure it is visible
-					int index = GraphicBox.this.getListIndex(dm);
+					int index = modelList.indexOf(dm.getName());
 					displayModelList.setSelectedIndex(index);
 					displayModelList.ensureIndexIsVisible(index);
 				}
@@ -229,9 +230,12 @@ public class GraphicBox extends JDialog {
 			@Override
 			public void actionPerformed( ActionEvent e ) {
 				setEnabled(false); // Don't accept any interaction
-				DisplayModel dm = displayModelList.getSelectedValue();
+				String dmName = displayModelList.getSelectedValue();
+				DisplayModel dm = (DisplayModel) Entity.getNamedEntity(dmName);
+				if (dm == null)
+					return;
 				ArrayList<KeywordIndex> kwList = new ArrayList<>(3);
-				KeywordIndex dmKw = InputAgent.formatArgs("DisplayModel", dm.getName());
+				KeywordIndex dmKw = InputAgent.formatArgs("DisplayModel", dmName);
 				kwList.add(dmKw);
 
 				if (!RenderManager.isGood()) {
@@ -369,37 +373,19 @@ public class GraphicBox extends JDialog {
 	}
 
 	private void refresh() {
-		// Prepare a sorted array of all the DisplayModels
-		ArrayList<DisplayModel> models = new ArrayList<>();
-		for (DisplayModel each : Entity.getClonesOfIterator(DisplayModel.class)) {
-			if (each instanceof ImageModel ||
-			    each instanceof ColladaModel ||
-			    each instanceof ShapeModel)
-				models.add(each);
-		}
-		Collections.sort(models, Input.uiSortOrder);
-
-		DisplayModel[] displayModels = new DisplayModel[models.size()];
-		for (int i = 0; i < models.size(); i++) {
-			displayModels[i] = models.get(i);
-		}
-		displayModelList.setListData(displayModels);
+		modelList = currentEntity.getInput("DisplayModel").getValidOptions();
+		String[] models = new String[modelList.size()];
+		models = modelList.toArray(models);
+		displayModelList.setListData(models);
 		displayModelList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
 		// Select the present DisplayModel
 		if (!currentEntity.getDisplayModelList().isEmpty()) {
-			int index = this.getListIndex(currentEntity.getDisplayModelList().get(0));
+			String presentDmName = currentEntity.getDisplayModelList().get(0).getName();
+			int index = modelList.indexOf(presentDmName);
 			displayModelList.setSelectedIndex(index);
 			displayModelList.ensureIndexIsVisible(index);
 		}
 	}
 
-	private int getListIndex(DisplayModel dm) {
-		for (int i=0; i<displayModelList.getModel().getSize(); i++) {
-			if (displayModelList.getModel().getElementAt(i) == dm) {
-				return i;
-			}
-		}
-		return -1;
-	}
 }
