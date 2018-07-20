@@ -50,6 +50,7 @@ public class ExpressionEditor extends ChooserEditor {
 
 			// If there are multiple options, select either one of the options or the
 			// Expression Builder
+			String valStr = input.getValueString();
 			final String expBuilderOption = String.format("*** %s ***", ExpressionBox.DIALOG_NAME);
 			array.add(0, expBuilderOption);
 			ScrollablePopupMenu menu = new ScrollablePopupMenu();
@@ -57,6 +58,9 @@ public class ExpressionEditor extends ChooserEditor {
 			Component panel = button.getParent();
 			for (final String option : array) {
 				JMenuItem item = new JMenuItem(option);
+				if (option.equals(valStr)) {
+					item.setArmed(true);
+				}
 				item.setPreferredSize(panel.getPreferredSize());
 				item.addActionListener( new ActionListener() {
 
@@ -74,6 +78,14 @@ public class ExpressionEditor extends ChooserEditor {
 				menu.add(item);
 			}
 			menu.show(panel, 0, panel.getHeight());
+
+			// Scroll to show the present value
+			if (input.isDefault())
+				return;
+			int index = array.indexOf(valStr);
+			if (index != -1) {
+				menu.ensureIndexIsVisible(index);
+			}
 			return;
 		}
 	}
