@@ -50,6 +50,10 @@ public class ColorEditor extends ChooserEditor {
 	public void actionPerformed(ActionEvent e) {
 		if("button".equals(e.getActionCommand())) {
 
+			// Present colour
+			Color4d col = (Color4d) input.getValue();
+			String colName = ColourInput.getColorName(col);
+
 			// Prepare a list of the named colours
 			ArrayList<String> array = input.getValidOptions();
 			final String colourChooserOption = String.format("*** %s ***", DIALOG_NAME);
@@ -59,6 +63,9 @@ public class ColorEditor extends ChooserEditor {
 			Component panel = button.getParent();
 			for (final String option : array) {
 				JMenuItem item = new JMenuItem(option);
+				if (option.equals(colName)) {
+					item.setArmed(true);
+				}
 				item.setPreferredSize(panel.getPreferredSize());
 				item.addActionListener( new ActionListener() {
 
@@ -76,6 +83,14 @@ public class ColorEditor extends ChooserEditor {
 				menu.add(item);
 			}
 			menu.show(panel, 0, panel.getHeight());
+
+			// Scroll to show the present colour
+			if (input.isDefault())
+				return;
+			int index = array.indexOf(colName);
+			if (index != -1) {
+				menu.ensureIndexIsVisible(index);
+			}
 			return;
 		}
 		else {
