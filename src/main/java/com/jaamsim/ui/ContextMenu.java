@@ -254,7 +254,20 @@ public class ContextMenu {
 		menu.add( showLabelMenuItem );
 
 		// 3) Set RelativeEntity
-		ScrollableMenu setRelativeEntityMenu = new ScrollableMenu( "Set RelativeEntity" );
+		ScrollableMenu setRelativeEntityMenu = new ScrollableMenu( "Set RelativeEntity" ) {
+
+			@Override
+			public void setPopupMenuVisible(boolean bool) {
+				super.setPopupMenuVisible(bool);
+				if (!bool || ent.getRelativeEntity() == null)
+					return;
+				String presentEntName = ent.getRelativeEntity().getName();
+				int index = ent.getRelativeEntityOptions().indexOf(presentEntName);
+				if (index != -1) {
+					ensureIndexIsVisible(index + 1);  // Allows for the option <None>
+				}
+			}
+		};
 		ArrayList<String> entNameList = new ArrayList<>();
 		entNameList.add("<None>");
 		entNameList.addAll(ent.getRelativeEntityOptions());
