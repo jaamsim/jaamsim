@@ -5,6 +5,7 @@ Define ObjectType {
                     PolylineModel
                     TextModel
                     GraphModel
+                    IconModel
                   }
 
 GraphModel      JavaClass { com.jaamsim.DisplayModels.GraphModel               } Palette { 'Display Models' }    DragAndDrop { FALSE }
@@ -13,6 +14,7 @@ TextModel       JavaClass { com.jaamsim.DisplayModels.TextModel                }
 ImageModel      JavaClass { com.jaamsim.DisplayModels.ImageModel               } Palette { 'Display Models' }    DragAndDrop { FALSE }
 ColladaModel    JavaClass { com.jaamsim.DisplayModels.ColladaModel             } Palette { 'Display Models' }    DragAndDrop { FALSE }
 ShapeModel      JavaClass { com.jaamsim.DisplayModels.ShapeModel               } Palette { 'Display Models' }    DragAndDrop { FALSE }
+IconModel       JavaClass { com.jaamsim.DisplayModels.IconModel                } Palette { 'Display Models' }    DragAndDrop { FALSE }
 
 Define ShapeModel {
                     Rectangle
