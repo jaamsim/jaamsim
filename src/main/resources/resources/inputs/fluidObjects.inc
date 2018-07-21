@@ -14,7 +14,7 @@ FluidTank               JavaClass { com.jaamsim.FluidObjects.FluidTank          
 FluidPipe               JavaClass { com.jaamsim.FluidObjects.FluidPipe            } Palette { 'Fluid Objects' } IconFile { '<res>/images/Line-24.png'      }
 FluidCentrifugalPump    JavaClass { com.jaamsim.FluidObjects.FluidCentrifugalPump } Palette { 'Fluid Objects' } IconFile { '<res>/images/Pump-24.png'      }
 
-Define	ImageModel {
+Define	IconModel  {
 			FluidIconModel
 			FluidFlowIconModel
 			FluidCentrifugalPumpIconModel

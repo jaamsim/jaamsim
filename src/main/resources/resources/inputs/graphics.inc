@@ -15,7 +15,7 @@ Define ObjectType {
                     VideoRecorder
                     }
 
-Define  ImageModel { MimicEntityIconModel }
+Define  IconModel  { MimicEntityIconModel }
 MimicEntityIconModel   ImageFile { '<res>/images/MimicEntity-256.png' }  Transparent { TRUE }
 
 Region                JavaClass { com.jaamsim.Graphics.Region                        } Palette { 'Graphics Objects' } DefaultDisplayModel { RegionModelDefault       } IconFile { '<res>/images/Region-24.png' } DefaultSize { 1.125000 1.1568242 1.1266404 m } DefaultAlignment { -0.4393409 -0.4410096 -0.4394292 }

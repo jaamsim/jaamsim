@@ -30,7 +30,7 @@ DiscreteDistribution		JavaClass { com.jaamsim.ProbabilityDistributions.DiscreteD
 ContinuousDistribution		JavaClass { com.jaamsim.ProbabilityDistributions.ContinuousDistribution		} Palette { 'Probability Distributions' } IconFile { '<res>/images/ContinuousDist-24.png' }
 BooleanSelector				JavaClass { com.jaamsim.ProbabilityDistributions.BooleanSelector			} Palette { 'Probability Distributions' } IconFile { '<res>/images/Selector-24.png'       }
 
-Define	ImageModel {
+Define	IconModel  {
 					ProbabilityDistributionIconModel
 					NormalDistributionIconModel
 					ExponentialDistributionIconModel

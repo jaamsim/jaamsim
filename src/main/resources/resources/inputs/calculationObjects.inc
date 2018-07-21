@@ -24,7 +24,7 @@ SineWave                JavaClass { com.jaamsim.CalculationObjects.SineWave     
 SquareWave              JavaClass { com.jaamsim.CalculationObjects.SquareWave          } Palette { 'Calculation Objects' } IconFile { '<res>/images/SquareWave-24.png'     }
 UnitDelay               JavaClass { com.jaamsim.CalculationObjects.UnitDelay           } Palette { 'Calculation Objects' } IconFile { '<res>/images/UnitDelay-24.png'      }
 
-Define	ImageModel {
+Define	IconModel  {
 			ControllerIconModel
 			WeightedSumIconModel
 			PolynomialIconModel

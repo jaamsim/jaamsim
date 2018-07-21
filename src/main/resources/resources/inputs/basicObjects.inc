@@ -21,7 +21,7 @@ Define TextModel  {
                     InputValueModel
                   }
 
-Define ImageModel {
+Define IconModel  {
                     TimeSeriesIconModel
                     ExpLoggerIconModel
                     SelectorIconModel

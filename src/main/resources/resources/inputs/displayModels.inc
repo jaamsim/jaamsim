@@ -52,5 +52,5 @@ OverlayTextModel    TextHeight { 15 m }
 Define PolylineModel  { PolylineModelDefault  ArrowModelDefault }
 ArrowModelDefault ShowArrowHead { TRUE }
 
-Define  ImageModel { VideoRecorderIconModel }
+Define  IconModel  { VideoRecorderIconModel }
 VideoRecorderIconModel ImageFile { '<res>/images/VideoRecorder-256.png' }

@@ -29,7 +29,7 @@ Define ObjectType {
 	Statistics
 }
 
-Define	ImageModel {
+Define	IconModel  {
 	EntityLauncherIconModel
 	SourceIconModel
 	SinkIconModel
