@@ -302,7 +302,20 @@ public class ContextMenu {
 		menu.add( setRelativeEntityMenu );
 
 		// 4) Set Region
-		ScrollableMenu setRegionMenu = new ScrollableMenu( "Set Region" );
+		ScrollableMenu setRegionMenu = new ScrollableMenu( "Set Region" ) {
+
+			@Override
+			public void setPopupMenuVisible(boolean bool) {
+				super.setPopupMenuVisible(bool);
+				if (!bool || ent.getCurrentRegion() == null)
+					return;
+				String presentRegionName = ent.getCurrentRegion().getName();
+				int index = ent.getRegionOptions().indexOf(presentRegionName);
+				if (index != -1) {
+					ensureIndexIsVisible(index + 1);  // Allows for the option <None>
+				}
+			}
+		};
 		ArrayList<String> regionNameList = new ArrayList<>();
 		regionNameList.add("<None>");
 		regionNameList.addAll(ent.getRegionOptions());
