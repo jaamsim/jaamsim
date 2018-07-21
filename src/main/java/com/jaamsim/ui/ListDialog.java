@@ -68,6 +68,15 @@ public class ListDialog extends JDialog {
 		JScrollPane jScroll = new JScrollPane(list);
 		getContentPane().add(jScroll);
 
+		// Scroll to the first item on the initial list
+		if (!initList.isEmpty()) {
+			String init = initList.get(0);
+			int visIndex = optionList.indexOf(init);
+			if (visIndex != -1) {
+				list.ensureIndexIsVisible(visIndex);
+			}
+		}
+
 		// Accept button
 		JButton acceptButton = new JButton("Accept");
 		acceptButton.addActionListener( new ActionListener() {
