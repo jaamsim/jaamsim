@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2018 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,12 +33,9 @@ import com.jaamsim.MeshFiles.MeshData;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.collada.ColParser;
 import com.jaamsim.controllers.RenderManager;
-import com.jaamsim.input.ActionListInput;
 import com.jaamsim.input.FileInput;
-import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
-import com.jaamsim.input.OutputHandle;
 import com.jaamsim.math.AABB;
 import com.jaamsim.math.Transform;
 import com.jaamsim.math.Vec3d;
@@ -61,10 +59,6 @@ public class ColladaModel extends DisplayModel {
 			+ "DAE, OBJ, JSM, and JSB, or a compressed version of any of these files in ZIP format.",
 	         exampleList = {"..\\graphics\\ship.dae", "..\\graphics\\ship.dae.zip" })
 	private final FileInput colladaFile;
-
-	@Keyword(description = "A list of active actions and the entity output that drives them",
-	         exampleList = { "{ ContentAction Contents } { BoomAngleAction BoomAngle }" })
-	private final ActionListInput actions;
 
 	private static HashMap<URI, MeshProtoKey> _cachedKeys = new HashMap<>();
 
@@ -93,9 +87,6 @@ public class ColladaModel extends DisplayModel {
 		colladaFile.setValidFileExtensions(validFileExtensions);
 		colladaFile.setValidFileDescriptions(validFileDescriptions);
 		this.addInput( colladaFile);
-
-		actions = new ActionListInput("Actions", GRAPHICS, new ArrayList<Action.Binding>());
-		this.addInput(actions);
 	}
 
 	public ColladaModel() {}
@@ -161,7 +152,6 @@ public class ColladaModel extends DisplayModel {
 		private Transform transCache;
 		private Vec3d scaleCache;
 		private URI colCache;
-		private ArrayList<Action.Queue> actionsCache;
 		private VisibilityInfo viCache;
 
 		public Binding(Entity ent, DisplayModel dm) {
@@ -190,23 +180,6 @@ public class ColladaModel extends DisplayModel {
 			URI filename = colladaFile.getValue();
 
 			ArrayList<Action.Queue> aqList = new ArrayList<>();
-			for (Action.Binding b : actions.getValue()) {
-				Action.Queue aq = new Action.Queue();
-				aq.name = b.actionName;
-				OutputHandle handle = dispEnt.getOutputHandle(b.outputName);
-				aq.time = 0;
-				if (handle != null) {
-					try {
-						aq.time = handle.getValueAsDouble(simTime, 0);
-					}
-					catch (Throwable e) {
-						LogBox.logException(e);
-					}
-				}
-
-				aqList.add(aq);
-			}
-
 			VisibilityInfo vi = getVisibilityInfo();
 
 			boolean dirty = false;
@@ -214,13 +187,11 @@ public class ColladaModel extends DisplayModel {
 			dirty = dirty || !compare(transCache, trans);
 			dirty = dirty || dirty_vec3d(scaleCache, scale);
 			dirty = dirty || !compare(colCache, filename);
-			dirty = dirty || !compare(actionsCache, aqList);
 			dirty = dirty || !compare(viCache, vi);
 
 			transCache = trans;
 			scaleCache = scale;
 			colCache = filename;
-			actionsCache = aqList;
 			viCache = vi;
 
 			if (cachedProxies != null && !dirty) {
@@ -326,44 +297,6 @@ public class ColladaModel extends DisplayModel {
 
 		return data.getNumSubMeshes();
 
-	}
-
-	@Override
-	public void validate() {
-		super.validate();
-
-		if (!RenderManager.isGood())
-			return;
-
-		// Check that any actions listed in the action list exist in the specified collada file
-		MeshProtoKey meshKey = getCachedMeshKey(colladaFile.getValue());
-		ArrayList<Action.Description> actionDescs = RenderManager.inst().getMeshActions(meshKey, true);
-		ArrayList<Action.Binding> bindings = actions.getValue();
-		for (Action.Binding b : bindings) {
-			boolean found = false;
-			for (Action.Description desc : actionDescs) {
-				if (b.actionName.equals(desc.name)) {
-					found = true;
-				}
-			}
-			if (!found) {
-				throw new InputErrorException("Input to the Action keyword refers to an action "
-						+ "named '%s' that is not specified by the ColladaFile input.",
-						b.actionName);
-			}
-		}
-	}
-
-	@Output (name = "Actions")
-	public String getActionsOutput(double simTime) {
-		MeshProtoKey meshKey = getCachedMeshKey(colladaFile.getValue());
-		ArrayList<Action.Description> actionDescs = RenderManager.inst().getMeshActions(meshKey, true);
-
-		StringBuilder ret = new StringBuilder();
-		for (Action.Description desc : actionDescs) {
-			ret.append(desc.name + " ");
-		}
-		return ret.toString();
 	}
 
 	public void exportBinaryMesh(String outputName) {
