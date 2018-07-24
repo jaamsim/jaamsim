@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2009-2011 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2018 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,6 +52,7 @@ import com.jaamsim.math.Vec3d;
 import com.jaamsim.ui.GUIFrame;
 import com.jaamsim.ui.LogBox;
 import com.jaamsim.units.DimensionlessUnit;
+import com.jaamsim.units.DistanceUnit;
 import com.jaamsim.units.TimeUnit;
 import com.jaamsim.units.Unit;
 
@@ -1823,13 +1825,15 @@ public class InputAgent {
 	}
 
 	public static KeywordIndex formatPointsInputs(String keyword, ArrayList<Vec3d> points, Vec3d offset) {
+		String unitStr = Unit.getDisplayedUnit(DistanceUnit.class);
+		double factor = Unit.getDisplayedUnitFactor(DistanceUnit.class);
 		ArrayList<String> tokens = new ArrayList<>(points.size() * 6);
 		for (Vec3d v : points) {
 			tokens.add("{");
-			tokens.add(String.format((Locale)null, "%.3f", v.x + offset.x));
-			tokens.add(String.format((Locale)null, "%.3f", v.y + offset.y));
-			tokens.add(String.format((Locale)null, "%.3f", v.z + offset.z));
-			tokens.add("m");
+			tokens.add(String.format((Locale)null, "%s", (v.x + offset.x)/factor));
+			tokens.add(String.format((Locale)null, "%s", (v.y + offset.y)/factor));
+			tokens.add(String.format((Locale)null, "%s", (v.z + offset.z)/factor));
+			tokens.add(unitStr);
 			tokens.add("}");
 		}
 
