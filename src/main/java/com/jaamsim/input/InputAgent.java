@@ -1841,6 +1841,20 @@ public class InputAgent {
 		return new KeywordIndex(keyword, tokens, null);
 	}
 
+	public static KeywordIndex formatVec3dInput(String keyword, Vec3d point, Class<? extends Unit> ut) {
+		String unitStr = Unit.getDisplayedUnit(ut);
+		double factor = Unit.getDisplayedUnitFactor(ut);
+		ArrayList<String> tokens = new ArrayList<>(4);
+		tokens.add(String.format((Locale)null, "%s", point.x/factor));
+		tokens.add(String.format((Locale)null, "%s", point.y/factor));
+		tokens.add(String.format((Locale)null, "%s", point.z/factor));
+		if (!unitStr.isEmpty())
+			tokens.add(unitStr);
+
+		// Parse the keyword inputs
+		return new KeywordIndex(keyword, tokens, null);
+	}
+
 	public static KeywordIndex formatPointInputs(String keyword, Vec3d point, String unit) {
 		ArrayList<String> tokens = new ArrayList<>(4);
 		tokens.add(String.format((Locale)null, "%.6f", point.x));
