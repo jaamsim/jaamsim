@@ -1855,18 +1855,6 @@ public class InputAgent {
 		return new KeywordIndex(keyword, tokens, null);
 	}
 
-	public static KeywordIndex formatPointInputs(String keyword, Vec3d point, String unit) {
-		ArrayList<String> tokens = new ArrayList<>(4);
-		tokens.add(String.format((Locale)null, "%.6f", point.x));
-		tokens.add(String.format((Locale)null, "%.6f", point.y));
-		tokens.add(String.format((Locale)null, "%.6f", point.z));
-		if (unit != null)
-			tokens.add(unit);
-
-		// Parse the keyword inputs
-		return new KeywordIndex(keyword, tokens, null);
-	}
-
 	public static KeywordIndex formatArgs(String keyword, String... args) {
 		ArrayList<String> tokens = new ArrayList<>(args.length);
 		for (String each : args) {
