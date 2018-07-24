@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2017 JaamSim Software Inc.
+ * Copyright (C) 2017-2018 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.ui.FrameBox;
 import com.jaamsim.ui.View;
+import com.jaamsim.units.DistanceUnit;
 
 public class DefineViewCommand implements Command {
 
@@ -58,11 +59,11 @@ public class DefineViewCommand implements Command {
 
 		// Set the camera position
 		if (viewPosition != null) {
-			KeywordIndex kw1 = InputAgent.formatPointInputs("ViewPosition", viewPosition, "m");
+			KeywordIndex kw1 = InputAgent.formatVec3dInput("ViewPosition", viewPosition, DistanceUnit.class);
 			InputAgent.apply(view, kw1);
 		}
 		if (viewCenter != null) {
-			KeywordIndex kw2 = InputAgent.formatPointInputs("ViewCenter", viewCenter, "m");
+			KeywordIndex kw2 = InputAgent.formatVec3dInput("ViewCenter", viewCenter, DistanceUnit.class);
 			InputAgent.apply(view, kw2);
 		}
 	}

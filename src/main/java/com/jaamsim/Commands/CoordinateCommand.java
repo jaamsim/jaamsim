@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2017 JaamSim Software Inc.
+ * Copyright (C) 2017-2018 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.math.Vec3d;
+import com.jaamsim.units.DistanceUnit;
 
 public class CoordinateCommand extends KeywordCommand {
 
@@ -56,7 +57,7 @@ public class CoordinateCommand extends KeywordCommand {
 
 	private void resetPosition() {
 		Vec3d localPos = dispEnt.getLocalPosition(globalPos);
-		KeywordIndex posKw = InputAgent.formatPointInputs("Position", localPos, "m");
+		KeywordIndex posKw = InputAgent.formatVec3dInput("Position", localPos, DistanceUnit.class);
 		InputAgent.apply(dispEnt, posKw);
 
 		if (globalPts != null) {

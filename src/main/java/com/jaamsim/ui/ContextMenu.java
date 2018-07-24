@@ -38,6 +38,7 @@ import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.math.Vec3d;
+import com.jaamsim.units.DistanceUnit;
 
 public class ContextMenu {
 	private static final ArrayList<ContextMenuItem> menuItems = new ArrayList<>();
@@ -230,7 +231,7 @@ public class ContextMenu {
 
 						// Set the label's position
 						double ypos = -0.15 - 0.5*ent.getSize().y;
-						InputAgent.apply(newLabel, InputAgent.formatPointInputs("Position", new Vec3d(0.0, ypos, 0.0), "m"));
+						InputAgent.apply(newLabel, InputAgent.formatVec3dInput("Position", new Vec3d(0.0, ypos, 0.0), DistanceUnit.class));
 
 						// Set the label's size
 						newLabel.resizeForText();
@@ -361,8 +362,8 @@ public class ContextMenu {
 				viewPos.sub3(v.getGlobalCenter());
 				viewPos.add3(ent.getPosition());
 
-				KeywordIndex posKw = InputAgent.formatPointInputs("ViewPosition", viewPos, "m");
-				KeywordIndex ctrKw = InputAgent.formatPointInputs("ViewCenter", ent.getPosition(), "m");
+				KeywordIndex posKw = InputAgent.formatVec3dInput("ViewPosition", viewPos, DistanceUnit.class);
+				KeywordIndex ctrKw = InputAgent.formatVec3dInput("ViewCenter", ent.getPosition(), DistanceUnit.class);
 				InputAgent.storeAndExecute(new KeywordCommand(v, posKw, ctrKw));
 			}
 		} );

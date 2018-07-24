@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2018 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -371,8 +372,8 @@ public class View extends Entity {
 				tempPos.sub3(followEntityInput.getValue().getGlobalPosition(), tempPos);
 			}
 
-			KeywordIndex posKw = InputAgent.formatPointInputs("ViewPosition", tempPos, "m");
-			KeywordIndex ctrKw = InputAgent.formatPointInputs("ViewCenter", tempCent, "m");
+			KeywordIndex posKw = InputAgent.formatVec3dInput("ViewPosition", tempPos, DistanceUnit.class);
+			KeywordIndex ctrKw = InputAgent.formatVec3dInput("ViewCenter", tempCent, DistanceUnit.class);
 			InputAgent.storeAndExecute(new KeywordCommand(this, posKw, ctrKw));
 		}
 	}

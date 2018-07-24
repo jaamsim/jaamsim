@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2012 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2017 JaamSim Software Inc.
+ * Copyright (C) 2016-2018 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -89,6 +89,8 @@ import com.jaamsim.ui.FrameBox;
 import com.jaamsim.ui.GUIFrame;
 import com.jaamsim.ui.LogBox;
 import com.jaamsim.ui.View;
+import com.jaamsim.units.AngleUnit;
+import com.jaamsim.units.DistanceUnit;
 
 /**
  * Top level owner of the JaamSim renderer. This class both owns and drives the Renderer object, but is also
@@ -999,7 +1001,7 @@ public class RenderManager implements DragSourceListener {
 			if (Simulation.isSnapToGrid())
 				entPos = Simulation.getSnapGridPosition(entPos, selectedEntity.getGlobalPosition(), shift);
 			Vec3d localPos = selectedEntity.getLocalPosition(entPos);
-			KeywordIndex kw = InputAgent.formatPointInputs("Position", localPos, "m");
+			KeywordIndex kw = InputAgent.formatVec3dInput("Position", localPos, DistanceUnit.class);
 			InputAgent.storeAndExecute(new KeywordCommand(selectedEntity, kw));
 			return true;
 		}
@@ -1024,7 +1026,7 @@ public class RenderManager implements DragSourceListener {
 		if (Simulation.isSnapToGrid())
 			pos = Simulation.getSnapGridPosition(pos, selectedEntity.getGlobalPosition(), shift);
 		Vec3d localPos = selectedEntity.getLocalPosition(pos);
-		KeywordIndex kw = InputAgent.formatPointInputs("Position", localPos, "m");
+		KeywordIndex kw = InputAgent.formatVec3dInput("Position", localPos, DistanceUnit.class);
 		InputAgent.storeAndExecute(new KeywordCommand(selectedEntity, kw));
 		return true;
 	}
@@ -1126,8 +1128,8 @@ public class RenderManager implements DragSourceListener {
 		posAdjust.sub3(oldFixed, newFixed);
 
 		pos.add3(posAdjust);
-		KeywordIndex sizeKw = InputAgent.formatPointInputs("Size", selectedEntity.getSize(), "m");
-		KeywordIndex posKw = InputAgent.formatPointInputs("Position", pos, "m");
+		KeywordIndex sizeKw = InputAgent.formatVec3dInput("Size", selectedEntity.getSize(), DistanceUnit.class);
+		KeywordIndex posKw = InputAgent.formatVec3dInput("Position", pos, DistanceUnit.class);
 		InputAgent.storeAndExecute(new KeywordCommand(selectedEntity, sizeKw, posKw));
 		return true;
 	}
@@ -1158,7 +1160,7 @@ public class RenderManager implements DragSourceListener {
 
 		Vec3d orient = selectedEntity.getOrientation();
 		orient.z += theta;
-		KeywordIndex kw = InputAgent.formatPointInputs("Orientation", orient, "rad");
+		KeywordIndex kw = InputAgent.formatVec3dInput("Orientation", orient, AngleUnit.class);
 		InputAgent.storeAndExecute(new KeywordCommand(selectedEntity, kw));
 		return true;
 	}
@@ -1200,7 +1202,7 @@ public class RenderManager implements DragSourceListener {
 		ArrayList<Vec3d> localPts = selectedEntity.getLocalPosition(globalPts);
 
 		KeywordIndex ptsKw = InputAgent.formatPointsInputs("Points", localPts, new Vec3d());
-		KeywordIndex posKw = InputAgent.formatPointInputs("Position", localPts.get(0), "m");
+		KeywordIndex posKw = InputAgent.formatVec3dInput("Position", localPts.get(0), DistanceUnit.class);
 		InputAgent.storeAndExecute(new KeywordCommand(selectedEntity, -1, ptsKw, posKw));
 		return true;
 	}
@@ -1243,7 +1245,7 @@ public class RenderManager implements DragSourceListener {
 
 		KeywordIndex ptsKw = InputAgent.formatPointsInputs("Points", newPoints, new Vec3d());
 		if (nodeIndex == 0) {
-			KeywordIndex posKw = InputAgent.formatPointInputs("Position", newPoints.get(0), "m");
+			KeywordIndex posKw = InputAgent.formatVec3dInput("Position", newPoints.get(0), DistanceUnit.class);
 			InputAgent.storeAndExecute(new KeywordCommand(selectedEntity, nodeIndex, ptsKw, posKw));
 		}
 		else {

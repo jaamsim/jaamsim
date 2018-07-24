@@ -855,7 +855,7 @@ public class DisplayEntity extends Entity {
 
 	public void dragged(Vec3d newPos) {
 
-		KeywordIndex kw = InputAgent.formatPointInputs(positionInput.getKeyword(), newPos, "m");
+		KeywordIndex kw = InputAgent.formatVec3dInput(positionInput.getKeyword(), newPos, DistanceUnit.class);
 		InputAgent.apply(this, kw);
 
 		ArrayList<Vec3d> points = pointsInput.getValue();
@@ -904,7 +904,7 @@ public class DisplayEntity extends Entity {
 		if (Simulation.isSnapToGrid())
 			pos = Simulation.getSnapGridPosition(pos, pos, shift);
 
-		KeywordIndex kw = InputAgent.formatPointInputs(positionInput.getKeyword(), pos, "m");
+		KeywordIndex kw = InputAgent.formatVec3dInput(positionInput.getKeyword(), pos, DistanceUnit.class);
 		InputAgent.storeAndExecute(new KeywordCommand(this, kw));
 	}
 

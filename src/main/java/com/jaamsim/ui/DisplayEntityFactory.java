@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016 JaamSim Software Inc.
+ * Copyright (C) 2016-2018 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,6 +34,8 @@ import com.jaamsim.math.Vec2d;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.render.MeshProtoKey;
 import com.jaamsim.render.RenderUtils;
+import com.jaamsim.units.DimensionlessUnit;
+import com.jaamsim.units.DistanceUnit;
 
 /**
  * Creates entities from a 3D asset file (.DAE, .OBJ, etc.) or a image file (.png, .jpg, etc.).
@@ -191,7 +193,7 @@ public class DisplayEntityFactory extends Entity {
 			Vec2d imageDims = RenderManager.inst().getImageDims(f.toURI());
 			if (imageDims != null)
 				size.x = imageDims.x / imageDims.y;
-			InputAgent.apply(de, InputAgent.formatPointInputs("Size", size, "m"));
+			InputAgent.apply(de, InputAgent.formatVec3dInput("Size", size, DistanceUnit.class));
 		}
 	}
 
@@ -253,9 +255,9 @@ public class DisplayEntityFactory extends Entity {
 			modelSize.scale3(2);
 
 			// Set the DisplayEntity's position, size, and alignment
-			InputAgent.apply(de, InputAgent.formatPointInputs("Position", entityPos, "m"));
-			InputAgent.apply(de, InputAgent.formatPointInputs("Alignment", new Vec3d(), null));
-			InputAgent.apply(de, InputAgent.formatPointInputs("Size", modelSize, "m"));
+			InputAgent.apply(de, InputAgent.formatVec3dInput("Position", entityPos, DistanceUnit.class));
+			InputAgent.apply(de, InputAgent.formatVec3dInput("Alignment", new Vec3d(), DimensionlessUnit.class));
+			InputAgent.apply(de, InputAgent.formatVec3dInput("Size", modelSize, DistanceUnit.class));
 		}
 	}
 
