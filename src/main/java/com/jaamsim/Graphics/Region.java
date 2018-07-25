@@ -25,14 +25,14 @@ public class Region extends DisplayEntity {
 		this.addSynonym(positionInput, "Origin");
 
 		desc.setHidden(true);
-		sizeInput.setHidden(true);
-		alignmentInput.setHidden(true);
 		regionInput.setHidden(true);
 		relativeEntity.setHidden(true);
-		displayModelListInput.setHidden(true);
 	}
 
 	public Region() {}
+
+	@Override
+	public void setInputsForDragAndDrop() {}
 
 	/**
 	 * Return the transformation that converts the local coordinates for a
