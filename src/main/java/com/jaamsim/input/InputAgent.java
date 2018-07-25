@@ -1565,12 +1565,11 @@ public class InputAgent {
 			// Place the Simulation entity in the first position
 			Class<? extends Entity> class0 = ent0.getClass();
 			Class<? extends Entity> class1 = ent1.getClass();
-			if (class0 == Simulation.class && class1 == Simulation.class)
-				return 0;
-			if (class0 == Simulation.class && class1 != Simulation.class)
-				return -1;
-			if (class0 != Simulation.class && class1 == Simulation.class)
-				return 1;
+			boolean isSim0 = (class0 == Simulation.class);
+			boolean isSim1 = (class1 == Simulation.class);
+			int ret = Boolean.compare(isSim1, isSim0);  // Simulation goes first
+			if (ret != 0)
+				return ret;
 
 			// Otherwise, sort in natural order
 			return Input.uiSortOrder.compare(ent0, ent1);
