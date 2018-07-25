@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2002-2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2017 JaamSim Software Inc.
+ * Copyright (C) 2016-2018 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -78,6 +78,7 @@ import javax.swing.event.MenuListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import com.jaamsim.Commands.Command;
+import com.jaamsim.Commands.DefineCommand;
 import com.jaamsim.Commands.DefineViewCommand;
 import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.Graphics.DisplayEntity;
@@ -941,6 +942,14 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 			@Override
 			public void actionPerformed( ActionEvent event ) {
 				DisplayEntity ent = (DisplayEntity) Entity.getNamedEntity("XY-Grid");
+				if (ent == null && Entity.getNamedEntity("Grid100x100") != null) {
+					InputAgent.storeAndExecute(new DefineCommand(DisplayEntity.class, "XY-Grid"));
+					ent = (DisplayEntity) Entity.getNamedEntity("XY-Grid");
+					KeywordIndex dmKw = InputAgent.formatArgs("DisplayModel", "Grid100x100");
+					KeywordIndex sizeKw = InputAgent.formatArgs("Size", "100", "100", "0", "m");
+					InputAgent.storeAndExecute(new KeywordCommand(ent, dmKw, sizeKw));
+					grid.setSelected(true);
+				}
 				if (ent != null) {
 					InputAgent.applyBoolean(ent, "Show", grid.isSelected());
 				}
@@ -1872,14 +1881,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 
 		// Set the initial state for the "Show Grid" check box
 		ent = (DisplayEntity) Entity.getNamedEntity("XY-Grid");
-		if (ent == null) {
-			grid.setEnabled(false);
-			grid.setSelected(false);
-		}
-		else {
-			grid.setEnabled(true);
-			grid.setSelected(ent.getShow());
-		}
+		grid.setSelected(ent != null && ent.getShow());
 	}
 
 	// ******************************************************************************************************
