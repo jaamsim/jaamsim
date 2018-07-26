@@ -1247,36 +1247,37 @@ public class InputAgent {
 				continue;
 			newEntities.add(ent);
 		}
-		Collections.sort(newEntities, Input.uiSortOrder);
-
-		// Prepare a sorted list of all the new classes that were created
-		ArrayList<Class<? extends Entity>> newClasses = new ArrayList<>();
-		for (Entity ent : newEntities) {
-			if (!newClasses.contains(ent.getClass()))
-				newClasses.add(ent.getClass());
-		}
-		Collections.sort(newClasses, uiClassSortOrder);
+		Collections.sort(newEntities, uiEntitySortOrder);
 
 		// Add a blank line before the first object definition
-		if( !newClasses.isEmpty() )
+		if (!newEntities.isEmpty())
 			file.format("%n");
 
 		// Print the first part of the "Define" statement for this object type
-		for( Class<? extends Entity> newClass : newClasses ) {
-			ObjectType o = ObjectType.getObjectTypeForClass(newClass);
-			if (o == null)
-				throw new ErrorException("Cannot find object type for class: " + newClass.getName());
-			file.format("Define %s {", o.getName());
+		Class<? extends Entity> entClass = null;
+		for (Entity ent : newEntities) {
 
-			// Print the new instances that were defined
-			for (Entity ent : newEntities) {
-				if (ent.getClass() == newClass)
-					file.format(" %s ", ent.getName());
+			// Is the class different from the last one
+			if (ent.getClass() != entClass) {
 
+				// Close the previous Define statement
+				if (entClass != null) {
+					file.format("}%n");
+				}
+
+				// Start the new Define statement
+				entClass = ent.getClass();
+				ObjectType ot = ObjectType.getObjectTypeForClass(entClass);
+				file.format("Define %s {", ot.getName());
 			}
-			// Close the define statement
-			file.format("}%n");
+
+			// Print the entity name to the Define statement
+			file.format(" %s ", ent.getName());
 		}
+
+		// Close the define statement
+		if (!newEntities.isEmpty())
+			file.format("}%n");
 
 		// 3) WRITE THE INPUTS FOR SPECIAL KEYWORDS THAT MUST COME BEFORE THE OTHERS
 
