@@ -1489,8 +1489,8 @@ public class InputAgent {
 		if (Simulation.isMultipleRuns())
 			reportFile.format("%s%n%n", Simulation.getRunHeader());
 
-		// Identify the classes that were used in the model
-		ArrayList<Class<? extends Entity>> newClasses = new ArrayList<>();
+		// Prepare a sorted list of entities
+		ArrayList<Entity> entList = new ArrayList<>();
 		for (Entity ent : Entity.getClonesOfIterator(Entity.class)) {
 
 			if (ent.testFlag(Entity.FLAG_GENERATED))
@@ -1499,38 +1499,26 @@ public class InputAgent {
 			if (!ent.isReportable())
 				continue;
 
-			if (!newClasses.contains(ent.getClass()))
-				newClasses.add(ent.getClass());
+			entList.add(ent);
 		}
+		Collections.sort(entList, uiEntitySortOrder);
 
-		// Sort the classes by the names of their object types, except for Simulation
-		// which is first on the list
-		Collections.sort(newClasses, uiClassSortOrder);
+		// Loop through the entities
+		Class<? extends Entity> entClass = null;
+		for (Entity ent : entList) {
 
-		// Loop through the classes and identify the instances
-		for (Class<? extends Entity> newClass : newClasses) {
-			ArrayList<Entity> entList = new ArrayList<>();
-			for (Entity ent : Entity.getClonesOfIterator(Entity.class)) {
-
-				if (ent.testFlag(Entity.FLAG_GENERATED))
-					continue;
-
-				if (ent.getClass() == newClass)
-					entList.add(ent);
+			// Print a header if the entity class is new
+			if (ent.getClass() != entClass) {
+				entClass = ent.getClass();
+				if (entClass != Simulation.class) {
+					ObjectType ot = ObjectType.getObjectTypeForClass(entClass);
+					reportFile.format("*** %s ***%n%n", ot);
+				}
 			}
 
-			// Sort the entities alphabetically by their names
-			Collections.sort(entList, Input.uiSortOrder);
-
-			// Print a header for this class
-			if (newClass != Simulation.class)
-				reportFile.format("*** %s ***%n%n", ObjectType.getObjectTypeForClass(newClass));
-
-			// Print each entity to the output report
-			for (Entity ent : entList) {
-				ent.printReport(reportFile, simTime);
-				reportFile.format("%n");
-			}
+			// Print the report for the entity
+			ent.printReport(reportFile, simTime);
+			reportFile.format("%n");
 		}
 
 		// Close the report file
