@@ -76,6 +76,7 @@ public class InputAgent {
 	private static final String INP_ERR_DEFINEUSED = "The name: %s has already been used and is a %s";
 	private static final String[] EARLY_KEYWORDS = {"UnitType", "UnitTypeList", "DataFile", "AttributeDefinitionList", "CustomOutputList"};
 	private static final String[] GRAPHICS_PALETTES = {"Graphics Objects", "View", "Display Models"};
+	private static final String[] GRAPHICS_CATEGORIES = {Entity.GRAPHICS, Entity.FONT, Entity.GUI};
 
 	private static File reportDir;
 	private static FileEntity reportFile;     // file to which the output report will be written
@@ -1370,6 +1371,16 @@ public class InputAgent {
 	public static boolean isEarlyInput(Input<?> in) {
 		String key = in.getKeyword();
 		return Arrays.asList(EARLY_KEYWORDS).contains(key);
+	}
+
+	public static boolean isGraphicsInput(Input<?> in) {
+		String cat = in.getCategory();
+		return Arrays.asList(GRAPHICS_CATEGORIES).contains(cat);
+	}
+
+	public static boolean isGraphicsEntity(Entity ent) {
+		String pal = ent.getObjectType().getPaletteName();
+		return Arrays.asList(GRAPHICS_PALETTES).contains(pal);
 	}
 
 	static void writeInputOnFile_ForEntity(FileEntity file, Entity ent, Input<?> in) {
