@@ -1324,9 +1324,11 @@ public class InputAgent {
 
 		// 4) WRITE THE INPUTS FOR THE REMAINING KEYWORDS
 
-		// Identify the entities whose inputs were edited
+		// 4.1) Non-graphics inputs for non-graphic entities
 		entClass = null;
 		for (Entity ent : entityList) {
+			if (isGraphicsEntity(ent))
+				continue;
 
 			// Print a header if the entity class is new
 			if (ent.getClass() != entClass) {
@@ -1339,24 +1341,48 @@ public class InputAgent {
 			}
 			file.format("%n");
 
-			ArrayList<Input<?>> deferredInputs = new ArrayList<>();
-			// Print the key inputs first
 			for (Input<?> in : ent.getEditableInputs()) {
-				if (in.isSynonym())
+				if (in.isSynonym() || !in.isEdited() || isEarlyInput(in) || isGraphicsInput(in))
 					continue;
-				if (!in.isEdited() || isEarlyInput(in))
-					continue;
-
-				// defer all inputs outside the Key Inputs category
-				if (!Entity.KEY_INPUTS.equals(in.getCategory())) {
-					deferredInputs.add(in);
-					continue;
-				}
-
 				writeInputOnFile_ForEntity(file, ent, in);
 			}
+		}
 
-			for (Input<?> in : deferredInputs) {
+		// 4.2) Graphics inputs for non-graphic entities
+		file.format("%n");
+		file.format("# *** GRAPHICS INPUTS ***%n");
+		for (Entity ent : entityList) {
+			if (isGraphicsEntity(ent))
+				continue;
+			file.format("%n");
+
+			for (Input<?> in : ent.getEditableInputs()) {
+				if (in.isSynonym() || !in.isEdited() || isEarlyInput(in) || !isGraphicsInput(in))
+					continue;
+				writeInputOnFile_ForEntity(file, ent, in);
+			}
+		}
+
+		// 4.3) All inputs for graphic entities
+		entClass = null;
+		for (Entity ent : entityList) {
+			if (!isGraphicsEntity(ent))
+				continue;
+
+			// Print a header if the entity class is new
+			if (ent.getClass() != entClass) {
+				entClass = ent.getClass();
+				if (entClass != Simulation.class) {
+					ObjectType ot = ObjectType.getObjectTypeForClass(entClass);
+					file.format("%n");
+					file.format("# *** %s ***%n", ot);
+				}
+			}
+			file.format("%n");
+
+			for (Input<?> in : ent.getEditableInputs()) {
+				if (in.isSynonym() || !in.isEdited() || isEarlyInput(in))
+					continue;
 				writeInputOnFile_ForEntity(file, ent, in);
 			}
 		}
