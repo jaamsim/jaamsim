@@ -1343,7 +1343,7 @@ public class InputAgent {
 			for (Input<?> in : ent.getEditableInputs()) {
 				if (in.isSynonym())
 					continue;
-				if (!in.isEdited() || matchesKey(in.getKeyword(), EARLY_KEYWORDS))
+				if (!in.isEdited() || isEarlyInput(in))
 					continue;
 
 				// defer all inputs outside the Key Inputs category
@@ -1367,12 +1367,9 @@ public class InputAgent {
 		setSessionEdited(false);
 	}
 
-	private static boolean matchesKey(String key, String[] keys) {
-		for (int i=0; i<keys.length; i++) {
-			if (keys[i].equals(key))
-				return true;
-		}
-		return false;
+	public static boolean isEarlyInput(Input<?> in) {
+		String key = in.getKeyword();
+		return Arrays.asList(EARLY_KEYWORDS).contains(key);
 	}
 
 	static void writeInputOnFile_ForEntity(FileEntity file, Entity ent, Input<?> in) {
