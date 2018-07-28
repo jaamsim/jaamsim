@@ -1595,6 +1595,15 @@ public class RenderManager implements DragSourceListener {
 		renderer.focusWindow(windowID);
 	}
 
+	private int getWindowID(View view) {
+		for (Map.Entry<Integer, View> entry : windowToViewMap.entrySet()) {
+			if (entry.getValue() == view) {
+				return entry.getKey();
+			}
+		}
+		return -1;
+	}
+
 	public static Frame getOpenWindowForView(View view) {
 		if (!isGood()) return null;
 
