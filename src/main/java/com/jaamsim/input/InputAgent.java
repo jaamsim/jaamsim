@@ -1571,7 +1571,14 @@ public class InputAgent {
 			if (ret != 0)
 				return ret;
 
-			// Otherwise, sort in natural order
+			// Otherwise, first sort alphabetically by class name
+			ObjectType ot0 = ObjectType.getObjectTypeForClass(class0);
+			ObjectType ot1 = ObjectType.getObjectTypeForClass(class1);
+			ret = Input.uiSortOrder.compare(ot0, ot1);
+			if (ret != 0)
+				return ret;
+
+			// If the classes are the same, then sort alphabetically by entity name
 			return Input.uiSortOrder.compare(ent0, ent1);
 		}
 	}
