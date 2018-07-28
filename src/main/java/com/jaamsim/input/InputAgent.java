@@ -1324,7 +1324,18 @@ public class InputAgent {
 		// 4) WRITE THE INPUTS FOR THE REMAINING KEYWORDS
 
 		// Identify the entities whose inputs were edited
+		entClass = null;
 		for (Entity ent : entityList) {
+
+			// Print a header if the entity class is new
+			if (ent.getClass() != entClass) {
+				entClass = ent.getClass();
+				if (entClass != Simulation.class) {
+					ObjectType ot = ObjectType.getObjectTypeForClass(entClass);
+					file.format("%n");
+					file.format("# *** %s ***%n", ot);
+				}
+			}
 			file.format("%n");
 
 			ArrayList<Input<?>> deferredInputs = new ArrayList<>();
