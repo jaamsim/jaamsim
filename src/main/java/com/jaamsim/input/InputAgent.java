@@ -30,6 +30,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
@@ -74,6 +75,7 @@ public class InputAgent {
 
 	private static final String INP_ERR_DEFINEUSED = "The name: %s has already been used and is a %s";
 	private static final String[] EARLY_KEYWORDS = {"UnitType", "UnitTypeList", "DataFile", "AttributeDefinitionList", "CustomOutputList"};
+	private static final String[] GRAPHICS_PALETTES = {"Graphics Objects", "View", "Display Models"};
 
 	private static File reportDir;
 	private static FileEntity reportFile;     // file to which the output report will be written
@@ -1571,9 +1573,24 @@ public class InputAgent {
 			if (ret != 0)
 				return ret;
 
-			// Otherwise, first sort alphabetically by class name
 			ObjectType ot0 = ObjectType.getObjectTypeForClass(class0);
 			ObjectType ot1 = ObjectType.getObjectTypeForClass(class1);
+			String pal0 = ot0.getPaletteName();
+			String pal1 = ot1.getPaletteName();
+
+			// Otherwise, first sort by graphics vs non-graphics palettes
+			boolean isGraf0 = Arrays.asList(GRAPHICS_PALETTES).contains(pal0);
+			boolean isGraf1 = Arrays.asList(GRAPHICS_PALETTES).contains(pal1);
+			ret = Boolean.compare(isGraf0, isGraf1);  // Non-graphics goes first
+			if (ret != 0)
+				return ret;
+
+			// If the graphics types are the same, then sort alphabetically by palette name
+			ret = Input.uiSortOrder.compare(pal0, pal1);
+			if (ret != 0)
+				return ret;
+
+			// If the palettes are the same, then sort alphabetically by class name
 			ret = Input.uiSortOrder.compare(ot0, ot1);
 			if (ret != 0)
 				return ret;
