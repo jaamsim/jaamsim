@@ -1537,26 +1537,6 @@ public class InputAgent {
 		}
 	}
 
-	private static class ClassComparator implements Comparator<Class<? extends Entity>> {
-		@Override
-		public int compare(Class<? extends Entity> class0, Class<? extends Entity> class1) {
-
-			// Place the Simulation class in the first position
-			if (class0 == Simulation.class && class1 == Simulation.class)
-				return 0;
-			if (class0 == Simulation.class && class1 != Simulation.class)
-				return -1;
-			if (class0 != Simulation.class && class1 == Simulation.class)
-				return 1;
-
-			// Sort alphabetically by Object Type name
-			ObjectType ot0 = ObjectType.getObjectTypeForClass(class0);
-			ObjectType ot1 = ObjectType.getObjectTypeForClass(class1);
-			return Input.uiSortOrder.compare(ot0, ot1);
-		}
-	}
-	public static final Comparator<Class<? extends Entity>> uiClassSortOrder = new ClassComparator();
-
 	private static class EntityComparator implements Comparator<Entity> {
 		@Override
 		public int compare(Entity ent0, Entity ent1) {
