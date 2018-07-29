@@ -470,6 +470,10 @@ public class CameraControl implements WindowInteractionListener {
 		return _updateView;
 	}
 
+	public Vec3d getPOI() {
+		return POI;
+	}
+
 	private PolarInfo getPolarFrom(Vec3d center, Vec3d pos) {
 		PolarInfo pi = new PolarInfo(center);
 

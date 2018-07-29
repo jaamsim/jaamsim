@@ -1612,6 +1612,14 @@ public class RenderManager implements DragSourceListener {
 		return rman.renderer.getAWTFrame(winID);
 	}
 
+	public Vec3d getPOI(View view) {
+		int winID = getWindowID(view);
+		CameraControl control = windowControls.get(winID);
+		if (control == null)
+			return null;
+		return control.getPOI();
+	}
+
 	/**
 	 * Can this hardware perform off screen rendering. Note: this method returning true is necessary, but not sufficient to
 	 * support off screen rendering.

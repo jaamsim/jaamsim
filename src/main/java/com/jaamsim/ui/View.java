@@ -40,6 +40,7 @@ import com.jaamsim.input.IntegerListInput;
 import com.jaamsim.input.KeyedVec3dInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.KeywordIndex;
+import com.jaamsim.input.Output;
 import com.jaamsim.input.StringInput;
 import com.jaamsim.input.Vec3dInput;
 import com.jaamsim.math.Transform;
@@ -488,6 +489,16 @@ public class View extends Entity {
 
 	public void update(double simTime) {
 		cachedSimTime = simTime;
+	}
+
+	@Output(name = "PointOfInterest",
+	 description = "The point at which the view will zoom towards or rotate around.",
+	    unitType = DistanceUnit.class,
+	    sequence = 1)
+	public Vec3d getPointOfInterest(double simTime) {
+		if (!RenderManager.isGood())
+			return null;
+		return RenderManager.inst().getPOI(this);
 	}
 
 }
