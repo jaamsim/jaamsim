@@ -43,6 +43,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -2083,15 +2085,10 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		@Override
 		public void stateChanged( ChangeEvent e ) {
 			Double val = (Double)((JSpinner)e.getSource()).getValue();
-
-			String str;
-			if (val.doubleValue() >= 1.0) {
-				str = String.format("%.0f", val);
-			}
-			else {
-				str = String.format("%.6f", val);
-			}
-			InputAgent.applyArgs(Simulation.getInstance(), "RealTimeFactor", str);
+			NumberFormat nf = NumberFormat.getNumberInstance(Locale.US);
+			DecimalFormat df = (DecimalFormat)nf;
+			df.applyPattern("0.######");
+			InputAgent.applyArgs(Simulation.getInstance(), "RealTimeFactor", df.format(val));
 		}
 	}
 
