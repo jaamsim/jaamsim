@@ -1608,11 +1608,8 @@ public class RenderManager implements DragSourceListener {
 		if (!isGood()) return null;
 
 		RenderManager rman = RenderManager.inst();
-		for (Map.Entry<Integer, View> entry : rman.windowToViewMap.entrySet()) {
-			if (entry.getValue() == view)
-				return rman.renderer.getAWTFrame(entry.getKey());
-		}
-		return null;
+		int winID = rman.getWindowID(view);
+		return rman.renderer.getAWTFrame(winID);
 	}
 
 	/**
