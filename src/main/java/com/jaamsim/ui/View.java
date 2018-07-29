@@ -501,4 +501,21 @@ public class View extends Entity {
 		return RenderManager.inst().getPOI(this);
 	}
 
+	@Output(name = "DistanceToPOI",
+	 description = "The distance from the camera position to the point of interest.",
+	    unitType = DistanceUnit.class,
+	    sequence = 2)
+	public double geDistanceToPOI(double simTime) {
+		if (!RenderManager.isGood())
+			return Double.NaN;
+
+		Vec3d poi = RenderManager.inst().getPOI(this);
+		if (poi == null)
+			return Double.NaN;
+
+		Vec3d vec = new Vec3d(getViewPosition());
+		vec.sub3(poi);
+		return vec.mag3();
+	}
+
 }
