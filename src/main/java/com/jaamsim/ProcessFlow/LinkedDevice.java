@@ -71,6 +71,7 @@ public abstract class LinkedDevice extends Device implements Linkable, LinkDispl
 		defaultEntity = new EntityInput<>(DisplayEntity.class, "DefaultEntity", KEY_INPUTS, null);
 		this.addInput(defaultEntity);
 		this.addSynonym(defaultEntity, "TestEntity");
+		defaultEntity.setHidden(true);
 
 		nextComponent = new InterfaceEntityInput<>(Linkable.class, "NextComponent", KEY_INPUTS, null);
 		nextComponent.setRequired(true);

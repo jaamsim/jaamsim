@@ -74,6 +74,7 @@ public abstract class LinkedComponent extends StateEntity implements Linkable, L
 		workingStateListInput.setHidden(true);
 
 		defaultEntity = new EntityInput<>(DisplayEntity.class, "DefaultEntity", KEY_INPUTS, null);
+		defaultEntity.setHidden(true);
 		this.addInput(defaultEntity);
 		this.addSynonym(defaultEntity, "TestEntity");
 
