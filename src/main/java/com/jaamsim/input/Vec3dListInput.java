@@ -86,7 +86,7 @@ public class Vec3dListInput extends ListInput<ArrayList<Vec3d>> {
 
 			// blank space between elements
 			if (tmp.length() > 0)
-				tmp.append(SEPARATOR);
+				tmp.append(BRACE_SEPARATOR);
 
 			if (each == null) {
 				tmp.append("");
@@ -94,17 +94,17 @@ public class Vec3dListInput extends ListInput<ArrayList<Vec3d>> {
 			}
 
 			tmp.append("{");
-			tmp.append(SEPARATOR);
+			tmp.append(BRACE_SEPARATOR);
 			tmp.append(each.x/factor);
 			tmp.append(SEPARATOR);
 			tmp.append(each.y/factor);
 			tmp.append(SEPARATOR);
 			tmp.append(each.z/factor);
-			tmp.append(SEPARATOR);
 			if (!unitStr.isEmpty()) {
-				tmp.append(unitStr);
 				tmp.append(SEPARATOR);
+				tmp.append(unitStr);
 			}
+			tmp.append(BRACE_SEPARATOR);
 			tmp.append("}");
 		}
 		return tmp.toString();
