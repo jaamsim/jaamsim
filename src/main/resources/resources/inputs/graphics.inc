@@ -4,6 +4,7 @@ Define ObjectType {
                     Text
                     EntityLabel
                     BarGauge
+                    BooleanIndicator
                     OverlayImage
                     OverlayText
                     OverlayClock
@@ -22,6 +23,7 @@ DisplayEntity         JavaClass { com.jaamsim.Graphics.DisplayEntity            
 Text                  JavaClass { com.jaamsim.Graphics.Text                          } Palette { 'Graphics Objects' } DefaultDisplayModel { TextModelDefault         } IconFile { '<res>/images/Text-24.png' }
 EntityLabel           JavaClass { com.jaamsim.Graphics.EntityLabel                   } Palette { 'Graphics Objects' } DefaultDisplayModel { EntityLabelModel         } DragAndDrop { FALSE }
 BarGauge              JavaClass { com.jaamsim.Graphics.BarGauge                      } Palette { 'Graphics Objects' } DefaultDisplayModel { BarGauge2D               } IconFile { '<res>/images/BarGauge-24.png' } DefaultSize { 0.5 1.0 0.0 m }
+BooleanIndicator      JavaClass { com.jaamsim.BasicObjects.BooleanIndicator          } Palette { 'Graphics Objects' } DefaultDisplayModel { Circle                   } IconFile { '<res>/images/BooleanIndicator-24.png' } DefaultSize { 0.25 0.25 0.0 m }
 OverlayImage          JavaClass { com.jaamsim.Graphics.OverlayImage                  } Palette { 'Graphics Objects' }
 OverlayText           JavaClass { com.jaamsim.Graphics.OverlayText                   } Palette { 'Graphics Objects' } DefaultDisplayModel { OverlayTextModel         } IconFile { '<res>/images/Text-24.png' }
 OverlayClock          JavaClass { com.jaamsim.Graphics.OverlayClock                  } Palette { 'Graphics Objects' } DefaultDisplayModel { TextModelDefault         }
@@ -35,6 +37,7 @@ Region        Description { 'Local coordinate system.' }
 DisplayEntity Description { 'Graphical object displaying either a 3D shape or a 2D picture.' }
 Text          Description { 'Text that appears in the 3D model universe.' }
 BarGauge      Description { 'Gauge that displays the value of an expression.' }
+BooleanIndicator  Description { 'Circular entity that changes color to indicate TRUE and FALSE' }
 OverlayImage  Description { 'Picture that appears in a fixed position in the display window.' }
 OverlayText   Description { 'Text that appears in a fixed position in the dispay window.' }
 OverlayClock  Description { 'Time and date display that appears in a fixed position in the display window.' }
