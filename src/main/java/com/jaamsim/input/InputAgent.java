@@ -29,6 +29,8 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -1864,12 +1866,17 @@ public class InputAgent {
 	public static KeywordIndex formatPointsInputs(String keyword, ArrayList<Vec3d> points, Vec3d offset) {
 		String unitStr = Unit.getDisplayedUnit(DistanceUnit.class);
 		double factor = Unit.getDisplayedUnitFactor(DistanceUnit.class);
+
+		NumberFormat nf = NumberFormat.getNumberInstance(Locale.US);
+		DecimalFormat df = (DecimalFormat)nf;
+		df.applyPattern("0.0#####");
+
 		ArrayList<String> tokens = new ArrayList<>(points.size() * 6);
 		for (Vec3d v : points) {
 			tokens.add("{");
-			tokens.add(String.format((Locale)null, "%s", (v.x + offset.x)/factor));
-			tokens.add(String.format((Locale)null, "%s", (v.y + offset.y)/factor));
-			tokens.add(String.format((Locale)null, "%s", (v.z + offset.z)/factor));
+			tokens.add(df.format((v.x + offset.x)/factor));
+			tokens.add(df.format((v.y + offset.y)/factor));
+			tokens.add(df.format((v.z + offset.z)/factor));
 			tokens.add(unitStr);
 			tokens.add("}");
 		}
@@ -1881,10 +1888,15 @@ public class InputAgent {
 	public static KeywordIndex formatVec3dInput(String keyword, Vec3d point, Class<? extends Unit> ut) {
 		String unitStr = Unit.getDisplayedUnit(ut);
 		double factor = Unit.getDisplayedUnitFactor(ut);
+
+		NumberFormat nf = NumberFormat.getNumberInstance(Locale.US);
+		DecimalFormat df = (DecimalFormat)nf;
+		df.applyPattern("0.0#####");
+
 		ArrayList<String> tokens = new ArrayList<>(4);
-		tokens.add(String.format((Locale)null, "%s", point.x/factor));
-		tokens.add(String.format((Locale)null, "%s", point.y/factor));
-		tokens.add(String.format((Locale)null, "%s", point.z/factor));
+		tokens.add(df.format(point.x/factor));
+		tokens.add(df.format(point.y/factor));
+		tokens.add(df.format(point.z/factor));
 		if (!unitStr.isEmpty())
 			tokens.add(unitStr);
 
