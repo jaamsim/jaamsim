@@ -28,11 +28,10 @@ import com.jaamsim.basicsim.EntityTarget;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.Input;
+import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
-import com.jaamsim.input.ValueInput;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Vec3d;
-import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
 
 /**
@@ -64,7 +63,7 @@ public class EntityDelay extends LinkedComponent {
 
 	@Keyword(description = "The width of the path in pixels.",
 	         exampleList = {"1"})
-	private final ValueInput widthInput;
+	private final IntegerInput widthInput;
 
 	@Keyword(description = "The colour of the path.",
 	         exampleList = {"red"})
@@ -95,9 +94,8 @@ public class EntityDelay extends LinkedComponent {
 		animation = new BooleanInput("Animation", GRAPHICS, true);
 		this.addInput(animation);
 
-		widthInput = new ValueInput("Width", GRAPHICS, 1.0d);
-		widthInput.setUnitType(DimensionlessUnit.class);
-		widthInput.setValidRange(1.0d, Double.POSITIVE_INFINITY);
+		widthInput = new IntegerInput("Width", GRAPHICS, 1);
+		widthInput.setValidRange(1, Integer.MAX_VALUE);
 		widthInput.setDefaultText("PolylineModel");
 		this.addInput(widthInput);
 
@@ -234,7 +232,7 @@ public class EntityDelay extends LinkedComponent {
 	public PolylineInfo[] buildScreenPoints(double simTime) {
 		int wid = -1;
 		if (!widthInput.isDefault())
-			wid = Math.max(1, widthInput.getValue().intValue());
+			wid = Math.max(1, widthInput.getValue());
 
 		Color4d col = null;
 		if (!colorInput.isDefault())

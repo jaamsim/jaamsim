@@ -21,12 +21,11 @@ import com.jaamsim.DisplayModels.DisplayModel;
 import com.jaamsim.DisplayModels.PolylineModel;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.Input;
+import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
-import com.jaamsim.input.ValueInput;
 import com.jaamsim.input.Vec3dInput;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Vec3d;
-import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.DistanceUnit;
 
 public class Arrow extends DisplayEntity {
@@ -37,7 +36,7 @@ public class Arrow extends DisplayEntity {
 
 	@Keyword(description = "The width of the Arrow line segments in pixels.",
 	         exampleList = {"1"})
-	private final ValueInput width;
+	private final IntegerInput width;
 
 	@Keyword(description = "A set of (x, y, z) numbers that define the size of the arrowhead.",
 	         exampleList = {"0.165 0.130 0.0 m"})
@@ -51,9 +50,8 @@ public class Arrow extends DisplayEntity {
 		this.addInput(color);
 		this.addSynonym(color, "Color");
 
-		width = new ValueInput("Width", GRAPHICS, 1.0d);
-		width.setUnitType(DimensionlessUnit.class);
-		width.setValidRange(0.0d, Double.POSITIVE_INFINITY);
+		width = new IntegerInput("Width", GRAPHICS, 1);
+		width.setValidRange(1, Integer.MAX_VALUE);
 		width.setDefaultText("PolylineModel");
 		this.addInput(width);
 
@@ -81,7 +79,7 @@ public class Arrow extends DisplayEntity {
 	public PolylineInfo[] buildScreenPoints(double simTime) {
 		int wid = -1;
 		if (!width.isDefault())
-			wid = Math.max(1, width.getValue().intValue());
+			wid = Math.max(1, width.getValue());
 
 		Color4d col = null;
 		if (!color.isDefault())

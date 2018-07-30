@@ -25,12 +25,11 @@ import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.Input;
+import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
-import com.jaamsim.input.ValueInput;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.MathUtils;
 import com.jaamsim.math.Vec3d;
-import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
 
 /**
@@ -44,7 +43,7 @@ public class EntityConveyor extends LinkedService {
 
 	@Keyword(description = "The width of the conveyor in pixels.",
 	         exampleList = {"1"})
-	private final ValueInput widthInput;
+	private final IntegerInput widthInput;
 
 	@Keyword(description = "The colour of the conveyor.",
 	         exampleList = {"red"})
@@ -67,9 +66,8 @@ public class EntityConveyor extends LinkedService {
 		travelTimeInput.setEntity(this);
 		this.addInput(travelTimeInput);
 
-		widthInput = new ValueInput("Width", GRAPHICS, 1.0d);
-		widthInput.setUnitType(DimensionlessUnit.class);
-		widthInput.setValidRange(1.0d, Double.POSITIVE_INFINITY);
+		widthInput = new IntegerInput("Width", GRAPHICS, 1);
+		widthInput.setValidRange(1, Integer.MAX_VALUE);
 		widthInput.setDefaultText("PolylineModel");
 		this.addInput(widthInput);
 

@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2018 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +20,7 @@ package com.jaamsim.FluidObjects;
 import com.jaamsim.Graphics.PolylineInfo;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.Input;
+import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.ValueInput;
@@ -55,7 +57,7 @@ public class FluidPipe extends FluidComponent {
 
 	@Keyword(description = "The width of the pipe segments in pixels.",
 	         exampleList = {"1"})
-	private final ValueInput widthInput;
+	private final IntegerInput widthInput;
 
 	@Keyword(description = "The colour of the pipe.",
 	         exampleList = {"red"})
@@ -84,9 +86,8 @@ public class FluidPipe extends FluidComponent {
 		pressureLossCoefficientInput.setUnitType( DimensionlessUnit.class );
 		this.addInput( pressureLossCoefficientInput);
 
-		widthInput = new ValueInput("Width", GRAPHICS, 1.0d);
-		widthInput.setValidRange(1.0d, Double.POSITIVE_INFINITY);
-		widthInput.setUnitType( DimensionlessUnit.class );
+		widthInput = new IntegerInput("Width", GRAPHICS, 1);
+		widthInput.setValidRange(1, Integer.MAX_VALUE);
 		widthInput.setDefaultText("PolylineModel");
 		this.addInput(widthInput);
 
@@ -184,7 +185,7 @@ public class FluidPipe extends FluidComponent {
 	public PolylineInfo[] buildScreenPoints(double simTime) {
 		int wid = -1;
 		if (!widthInput.isDefault())
-			wid = Math.max(1, widthInput.getValue().intValue());
+			wid = Math.max(1, widthInput.getValue());
 
 		Color4d col = null;
 		if (!colourInput.isDefault())
