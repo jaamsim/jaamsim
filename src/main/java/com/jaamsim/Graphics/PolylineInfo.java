@@ -553,4 +553,23 @@ public class PolylineInfo {
 		return pos/totalLength;
 	}
 
+	/**
+	 * Returns the index in a polyline at which to insert a new point that is located near the
+	 * polyline's path.
+	 * @param pts - coordinates for the polyline's nodes
+	 * @param point - specified point
+	 * @return insersion index
+	 */
+	public static int getInsertionIndex(ArrayList<Vec3d> pts, Vec3d point) {
+		double[] cumLengthList = getCumulativeLengths(pts);
+		double length = cumLengthList[cumLengthList.length - 1];
+		double frac = getNearestPosition(pts, point);
+		int k = Arrays.binarySearch(cumLengthList, frac * length);
+		if (k == -1)
+			throw new ErrorException("Unable to find position in polyline using binary search.");
+		if (k >= 0)
+			return k;
+		return -k - 1;
+	}
+
 }

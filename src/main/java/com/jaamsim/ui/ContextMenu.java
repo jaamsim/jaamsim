@@ -35,6 +35,7 @@ import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.EntityLabel;
 import com.jaamsim.Graphics.OverlayEntity;
+import com.jaamsim.Graphics.PolylineInfo;
 import com.jaamsim.Graphics.View;
 import com.jaamsim.SubModels.CompoundEntity;
 import com.jaamsim.basicsim.Entity;
@@ -376,6 +377,35 @@ public class ContextMenu {
 			centerInViewMenuItem.setEnabled(false);
 		}
 		menu.add( centerInViewMenuItem );
+
+		// 6) Add Node
+		JMenuItem addNodeItem = new JMenuItem( "Add Node" );
+		addNodeItem.addActionListener( new ActionListener() {
+
+			@Override
+			public void actionPerformed( ActionEvent event ) {
+				ArrayList<Vec3d> pts = ent.getPoints();
+				Vec3d pos = RenderManager.inst().getPOI();
+				if (pos == null)
+					return;
+				Vec3d localPos = ent.getLocalPosition(pos);
+				Simulation simulation = ent.getJaamSimModel().getSimulation();
+				if (simulation.isSnapToGrid()) {
+					localPos = simulation.getSnapGridPosition(localPos);
+				}
+				int ind = PolylineInfo.getInsertionIndex(pts, localPos);
+				pts.add(ind, localPos);
+				KeywordIndex ptsKw = InputAgent.formatPointsInputs("Points", pts, new Vec3d());
+				InputAgent.storeAndExecute(new KeywordCommand(ent, ind, ptsKw));
+			}
+		} );
+		if (ent.isGenerated() || nodeIndex >= 0) {
+			addNodeItem.setEnabled(false);
+		}
+		if (ent.usePointsInput()) {
+			menu.addSeparator();
+			menu.add( addNodeItem );
+		}
 
 		// 6) Split
 		JMenuItem spitMenuItem = new JMenuItem( "Split" );
