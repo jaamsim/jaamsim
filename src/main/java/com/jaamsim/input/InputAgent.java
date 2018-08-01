@@ -639,6 +639,7 @@ public class InputAgent {
 			ent.setFlag(Entity.FLAG_ADDED);
 			setSessionEdited(true);
 		}
+		ent.setFlag(Entity.FLAG_REGISTERED);
 
 		ent.setName(key);
 		return ent;

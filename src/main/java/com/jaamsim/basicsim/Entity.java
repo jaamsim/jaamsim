@@ -70,10 +70,11 @@ public class Entity {
 	//public static final int FLAG_TRACESTATE = 0x04;
 	//public static final int FLAG_LOCKED = 0x08;
 	//public static final int FLAG_TRACKEVENTS = 0x10;
-	public static final int FLAG_ADDED = 0x20;
-	public static final int FLAG_EDITED = 0x40;
-	public static final int FLAG_GENERATED = 0x80;
-	public static final int FLAG_DEAD = 0x0100;
+	public static final int FLAG_ADDED = 0x20;  // entity was defined after the 'RecordEdits' flag
+	public static final int FLAG_EDITED = 0x40;  // one or more inputs were modified after the 'RecordEdits' flag
+	public static final int FLAG_GENERATED = 0x80;  // entity was created during the execution of the simulation
+	public static final int FLAG_DEAD = 0x0100;  // entity has been deleted
+	public static final int FLAG_REGISTERED = 0x0200;  // entity is included in the namedEntities HashMap
 	private int flags;
 
 	private final ArrayList<Input<?>> inpList = new ArrayList<>();

@@ -87,8 +87,8 @@ public class JaamSimModel {
 
 	final void renameEntity(Entity e, String newName) {
 		synchronized (allInstances) {
-			// Generated Entities do not appear in the named entity hashmap, no consistency checks needed
-			if (e.testFlag(Entity.FLAG_GENERATED)) {
+			// Unregistered entities do not appear in the named entity hashmap, no consistency checks needed
+			if (!e.testFlag(Entity.FLAG_REGISTERED)) {
 				e.entityName = newName;
 				return;
 			}
@@ -130,7 +130,7 @@ public class JaamSimModel {
 			if (e != allInstances.remove(index))
 				throw new ErrorException("Internal Consistency Error - Entity List");
 
-			if (!e.testFlag(Entity.FLAG_GENERATED)) {
+			if (e.testFlag(Entity.FLAG_REGISTERED)) {
 				if (e != namedEntities.remove(e.entityName))
 					throw new ErrorException("Named Entities Internal Consistency error: %s", e);
 			}
