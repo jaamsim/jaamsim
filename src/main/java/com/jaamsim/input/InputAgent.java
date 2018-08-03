@@ -551,6 +551,10 @@ public class InputAgent {
 	}
 
 	public static <T extends Entity> T generateEntityWithName(Class<T> proto, String key) {
+		return generateEntityWithName(proto, key, false);
+	}
+
+	public static <T extends Entity> T generateEntityWithName(Class<T> proto, String key, boolean reg) {
 		if (key == null)
 			throw new ErrorException("Must provide a name for generated Entities");
 
@@ -564,7 +568,12 @@ public class InputAgent {
 			InputAgent.logError("Could not create new Entity: %s", key);
 			return null;
 		}
+
 		ent.setFlag(Entity.FLAG_GENERATED);
+		if (reg) {
+			ent.setFlag(Entity.FLAG_REGISTERED);
+		}
+
 		ent.setName(key);
 		return ent;
 	}
