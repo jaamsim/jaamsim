@@ -256,8 +256,21 @@ public class Entity {
 	 */
 	public void delete() {
 
+		// Unregistered entities do not appear in the inputs to any other objects
+		if (!testFlag(Entity.FLAG_REGISTERED)) {
+			kill();
+			return;
+		}
+
 		// Generated entities are not part of the model inputs so do not support undo/redo
 		if (testFlag(Entity.FLAG_GENERATED)) {
+			for (Entity ent : Entity.getClonesOfIterator(Entity.class)) {
+				if (ent == this)
+					continue;
+				for (Input<?> in : ent.inpList) {
+					in.removeReferences(this);
+				}
+			}
 			kill();
 			return;
 		}
