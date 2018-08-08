@@ -25,6 +25,7 @@ import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
+import com.jaamsim.input.StringInput;
 import com.jaamsim.states.StateEntity;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
@@ -47,6 +48,11 @@ public class Pack extends LinkedService {
 	@Keyword(description = "The service time required to pack each entity in the container.",
 	         exampleList = { "3.0 h", "ExponentialDistribution1", "'1[s] + 0.5*[TimeSeries1].PresentValue'" })
 	private final SampleInput serviceTime;
+
+	@Keyword(description = "The state to be assigned to container on arrival at this object.\n"
+                         + "No state is assigned if the entry is blank.",
+	         exampleList = {"Service"})
+	protected final StringInput containerStateAssignment;
 
 	protected EntityContainer container;	// the generated EntityContainer
 	private int numberGenerated;  // Number of EntityContainers generated so far
@@ -78,6 +84,9 @@ public class Pack extends LinkedService {
 		serviceTime.setEntity(this);
 		serviceTime.setValidRange(0, Double.POSITIVE_INFINITY);
 		this.addInput(serviceTime);
+
+		containerStateAssignment = new StringInput("ContainerStateAssignment", KEY_INPUTS, "");
+		this.addInput(containerStateAssignment);
 	}
 
 	@Override
@@ -110,8 +119,8 @@ public class Pack extends LinkedService {
 			numberInserted = 0;
 
 			// Set the state for the container and its contents
-			if (!stateAssignment.getValue().isEmpty())
-				container.setPresentState(stateAssignment.getValue());
+			if (!containerStateAssignment.getValue().isEmpty())
+				container.setPresentState(containerStateAssignment.getValue());
 		}
 
 		// Are there sufficient entities in the queue to start packing?
