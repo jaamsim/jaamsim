@@ -113,20 +113,20 @@ public class EntityContainer extends SimEntity {
 		setEntityState = new BooleanInput("SetEntityState", KEY_INPUTS, true);
 		this.addInput(setEntityState);
 
-		positionOffset = new Vec3dInput("PositionOffset", KEY_INPUTS, new Vec3d(0.0d, 0.0d, 0.01d));
+		positionOffset = new Vec3dInput("PositionOffset", GRAPHICS, new Vec3d(0.0d, 0.0d, 0.01d));
 		positionOffset.setUnitType(DistanceUnit.class);
 		this.addInput(positionOffset);
 
-		spacingInput = new ValueInput("Spacing", KEY_INPUTS, 0.0d);
+		spacingInput = new ValueInput("Spacing", GRAPHICS, 0.0d);
 		spacingInput.setUnitType(DistanceUnit.class);
 		spacingInput.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		this.addInput(spacingInput);
 
-		maxPerLineInput = new IntegerInput("MaxPerLine", KEY_INPUTS, Integer.MAX_VALUE);
+		maxPerLineInput = new IntegerInput("MaxPerLine", GRAPHICS, Integer.MAX_VALUE);
 		maxPerLineInput.setValidRange( 1, Integer.MAX_VALUE);
 		this.addInput(maxPerLineInput);
 
-		showEntities = new BooleanInput("ShowEntities", KEY_INPUTS, true);
+		showEntities = new BooleanInput("ShowEntities", GRAPHICS, true);
 		this.addInput(showEntities);
 	}
 
