@@ -23,6 +23,7 @@ import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.LinkDisplayable;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.input.Keyword;
+import com.jaamsim.input.StringInput;
 import com.jaamsim.input.StringListInput;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.states.StateEntity;
@@ -34,6 +35,10 @@ public class SimEntity extends StateEntity implements LinkDisplayable {
 	         exampleList = "Idle Working")
 	protected final StringListInput defaultStateList;
 
+	@Keyword(description = "The state assigned to the entity when it is first created.",
+	         exampleList = "Idle")
+	protected final StringInput initialState;
+
 	{
 		attributeDefinitionList.setHidden(false);
 		stateGraphics.setHidden(false);
@@ -41,6 +46,9 @@ public class SimEntity extends StateEntity implements LinkDisplayable {
 
 		defaultStateList = new StringListInput("DefaultStateList", KEY_INPUTS, new ArrayList<String>());
 		this.addInput(defaultStateList);
+
+		initialState = new StringInput("InitialState", KEY_INPUTS, "None");
+		this.addInput(initialState);
 	}
 
 	public SimEntity() {}
@@ -56,7 +64,7 @@ public class SimEntity extends StateEntity implements LinkDisplayable {
 
 	@Override
 	public String getInitialState() {
-		return "None";
+		return initialState.getValue();
 	}
 
 	@Override
