@@ -368,13 +368,15 @@ public class Entity {
 	public void copyInputs(Entity ent) {
 		ArrayList<String> tmp = new ArrayList<>();
 		for (Input<?> sourceInput : ent.inpList) {
-			if (sourceInput.isDefault() || sourceInput.isSynonym()) {
+			String key = sourceInput.getKeyword();
+			Input<?> targetInput = this.getInput(key);
+			if (sourceInput.isDefault() || sourceInput.isSynonym() || targetInput == null) {
 				continue;
 			}
 			tmp.clear();
 			sourceInput.getValueTokens(tmp);
-			KeywordIndex kw = new KeywordIndex(sourceInput.getKeyword(), tmp, null);
-			InputAgent.apply(this, kw);
+			KeywordIndex kw = new KeywordIndex(key, tmp, null);
+			InputAgent.apply(this, targetInput, kw);
 		}
 	}
 
