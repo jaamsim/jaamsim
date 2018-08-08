@@ -67,6 +67,11 @@ public class EntityContainer extends SimEntity {
 	         exampleList = {"FALSE"})
 	private final BooleanInput fifo;
 
+	@Keyword(description = "Determines whether the states for the entities held by the container "
+	                     + "are updated to match each change to the container's state.",
+	         exampleList = {"FALSE"})
+	private final BooleanInput setEntityState;
+
 	@Keyword(description = "The position of the first entity in the container relative to the container.",
 	         exampleList = {"1.0 0.0 0.01 m"})
 	protected final Vec3dInput positionOffset;
@@ -104,6 +109,9 @@ public class EntityContainer extends SimEntity {
 
 		fifo = new BooleanInput("FIFO", KEY_INPUTS, true);
 		this.addInput(fifo);
+
+		setEntityState = new BooleanInput("SetEntityState", KEY_INPUTS, true);
+		this.addInput(setEntityState);
 
 		positionOffset = new Vec3dInput("PositionOffset", KEY_INPUTS, new Vec3d(0.0d, 0.0d, 0.01d));
 		positionOffset.setUnitType(DistanceUnit.class);
@@ -188,6 +196,9 @@ public class EntityContainer extends SimEntity {
 	@Override
 	public void stateChanged(StateRecord prev, StateRecord next) {
 		super.stateChanged(prev, next);
+
+		if (!setEntityState.getValue())
+			return;
 
 		// Set the states for the entities carried by the EntityContainer to the new state
 		Iterator<StorageEntry> itr = storage.iterator();
