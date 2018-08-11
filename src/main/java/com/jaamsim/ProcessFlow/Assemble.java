@@ -173,8 +173,10 @@ public class Assemble extends LinkedService {
 		this.registerEntity(assembledEntity);
 
 		// Set the state for the assembled part
-		if (!stateAssignment.getValue().isEmpty() && assembledEntity instanceof StateEntity)
-			((StateEntity)assembledEntity).setPresentState(stateAssignment.getValue());
+		if (!stateAssignment.isDefault() && assembledEntity instanceof StateEntity) {
+			String state = stateAssignment.getValue().getNextString(simTime);
+			((StateEntity)assembledEntity).setPresentState(state);
+		}
 		return true;
 	}
 

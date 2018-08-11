@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2016 JaamSim Software Inc.
+ * Copyright (C) 2016-2018 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.LinkDisplayable;
+import com.jaamsim.StringProviders.StringProvInput;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.input.EntityInput;
@@ -31,7 +32,6 @@ import com.jaamsim.input.InterfaceEntityInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.Output;
-import com.jaamsim.input.StringInput;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.states.StateEntity;
 import com.jaamsim.units.DimensionlessUnit;
@@ -55,7 +55,7 @@ public abstract class LinkedDevice extends Device implements Linkable, LinkDispl
 	@Keyword(description = "The state to be assigned to each entity on arrival at this object.\n"
                          + "No state is assigned if the entry is blank.",
 	         exampleList = {"Service"})
-	protected final StringInput stateAssignment;
+	protected final StringProvInput stateAssignment;
 
 	private long numberAdded;     // Number of entities added to this component from upstream after initialisation
 	private long numberProcessed; // Number of entities processed by this component after initialisation
@@ -77,7 +77,9 @@ public abstract class LinkedDevice extends Device implements Linkable, LinkDispl
 		nextComponent.setRequired(true);
 		this.addInput(nextComponent);
 
-		stateAssignment = new StringInput("StateAssignment", KEY_INPUTS, "");
+		stateAssignment = new StringProvInput("StateAssignment", KEY_INPUTS, null);
+		stateAssignment.setUnitType(DimensionlessUnit.class);
+		stateAssignment.setEntity(this);
 		this.addInput(stateAssignment);
 	}
 
@@ -96,7 +98,7 @@ public abstract class LinkedDevice extends Device implements Linkable, LinkDispl
 		super.validate();
 
 		// If a state is to be assigned, ensure that the prototype is a StateEntity
-		if (defaultEntity.getValue() != null && !stateAssignment.getValue().isEmpty()) {
+		if (defaultEntity.getValue() != null && !stateAssignment.isDefault()) {
 			if (!(defaultEntity.getValue() instanceof StateEntity)) {
 				throw new InputErrorException("Only a SimEntity can be specified for the TestEntity keyword if a state is be be assigned.");
 			}
@@ -130,8 +132,10 @@ public abstract class LinkedDevice extends Device implements Linkable, LinkDispl
 		numberAdded++;
 
 		// Assign a new state to the received entity
-		if (!stateAssignment.getValue().isEmpty() && ent instanceof StateEntity)
-			((StateEntity)ent).setPresentState(stateAssignment.getValue());
+		if (!stateAssignment.isDefault() && ent instanceof StateEntity) {
+			String state = stateAssignment.getValue().getNextString(getSimTime());
+			((StateEntity)ent).setPresentState(state);
+		}
 	}
 
 	protected void setReceivedEntity(DisplayEntity ent) {

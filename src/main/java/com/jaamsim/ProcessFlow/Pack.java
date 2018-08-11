@@ -20,12 +20,12 @@ package com.jaamsim.ProcessFlow;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
+import com.jaamsim.StringProviders.StringProvInput;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
-import com.jaamsim.input.StringInput;
 import com.jaamsim.states.StateEntity;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
@@ -52,7 +52,7 @@ public class Pack extends LinkedService {
 	@Keyword(description = "The state to be assigned to container on arrival at this object.\n"
                          + "No state is assigned if the entry is blank.",
 	         exampleList = {"Service"})
-	protected final StringInput containerStateAssignment;
+	protected final StringProvInput containerStateAssignment;
 
 	protected EntityContainer container;	// the generated EntityContainer
 	private int numberGenerated;  // Number of EntityContainers generated so far
@@ -85,7 +85,9 @@ public class Pack extends LinkedService {
 		serviceTime.setValidRange(0, Double.POSITIVE_INFINITY);
 		this.addInput(serviceTime);
 
-		containerStateAssignment = new StringInput("ContainerStateAssignment", KEY_INPUTS, "");
+		containerStateAssignment = new StringProvInput("ContainerStateAssignment", KEY_INPUTS, null);
+		containerStateAssignment.setUnitType(DimensionlessUnit.class);
+		containerStateAssignment.setEntity(this);
 		this.addInput(containerStateAssignment);
 	}
 
@@ -119,8 +121,10 @@ public class Pack extends LinkedService {
 			numberInserted = 0;
 
 			// Set the state for the container and its contents
-			if (!containerStateAssignment.getValue().isEmpty())
-				container.setPresentState(containerStateAssignment.getValue());
+			if (!containerStateAssignment.isDefault()) {
+				String state = containerStateAssignment.getValue().getNextString(simTime);
+				container.setPresentState(state);
+			}
 		}
 
 		// Are there sufficient entities in the queue to start packing?
@@ -139,8 +143,10 @@ public class Pack extends LinkedService {
 			if (waitQueue.getValue().getMatchCount(getMatchValue()) == 0)
 				return false;
 			packedEntity = this.getNextEntityForMatch(getMatchValue());
-			if (!stateAssignment.getValue().isEmpty() && packedEntity instanceof StateEntity)
-				((StateEntity)packedEntity).setPresentState(stateAssignment.getValue());
+			if (!stateAssignment.isDefault() && packedEntity instanceof StateEntity) {
+				String state = stateAssignment.getValue().getNextString(simTime);
+				((StateEntity)packedEntity).setPresentState(state);
+			}
 		}
 		return true;
 	}
