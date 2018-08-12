@@ -42,6 +42,57 @@ public class StringProvExpression implements StringProvider {
 	}
 
 	@Override
+	public String getNextString(double simTime) {
+		return getNextString(simTime, 1.0d, false);
+	}
+
+	@Override
+	public String getNextString(double simTime, double siFactor) {
+		return getNextString(simTime, siFactor, false);
+	}
+
+	@Override
+	public String getNextString(double simTime, double siFactor, boolean integerValue) {
+		String ret = "";
+		try {
+			ExpResult result = ExpEvaluator.evaluateExpression(exp, simTime);
+			switch (result.type) {
+			case STRING:
+				ret = result.stringVal;
+				break;
+			case ENTITY:
+				ret = result.entVal.getName();
+				break;
+			case NUMBER:
+				if (result.unitType != unitType) {
+					thisEnt.error("Invalid unit returned by an expression: '%s'%n"
+							+ "Received: %s, expected: %s",
+							exp, ObjectType.getObjectTypeForClass(result.unitType),
+							ObjectType.getObjectTypeForClass(unitType));
+				}
+				if (integerValue) {
+					ret = Double.toString((int)(result.value/siFactor));
+				}
+				else {
+					ret = Double.toString(result.value/siFactor);
+				}
+				break;
+			case COLLECTION:
+				ret = result.colVal.getOutputString();
+				break;
+			default:
+				assert(false);
+				ret = "???";
+				break;
+			}
+		}
+		catch(ExpError e) {
+			throw new ErrorException(thisEnt, e);
+		}
+		return ret;
+	}
+
+	@Override
 	public String getNextString(double simTime, String fmt, double siFactor) {
 		return getNextString(simTime, fmt, siFactor, false);
 	}
