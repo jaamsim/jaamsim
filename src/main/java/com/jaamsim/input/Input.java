@@ -31,6 +31,7 @@ import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleExpression;
 import com.jaamsim.Samples.SampleProvider;
 import com.jaamsim.Samples.TimeSeriesConstantDouble;
+import com.jaamsim.StringProviders.StringProvConstant;
 import com.jaamsim.StringProviders.StringProvExpression;
 import com.jaamsim.StringProviders.StringProvSample;
 import com.jaamsim.StringProviders.StringProvider;
@@ -83,7 +84,8 @@ public abstract class Input<T> {
 	protected static final String VALID_SAMPLE_PROV_DIMLESS = "Accepts a dimensionless number, an object that returns such a number, or an expression that returns such a number.";
 	protected static final String VALID_SAMPLE_PROV_UNIT = "Accepts a number with or without units, an object that returns such a number, or an expression that returns such a number. "
 	                                                     + "An input to the UnitType keyword MUST BE PROVIDED before an input to this keyword can be entered.";
-	protected static final String VALID_STRING_PROV = "Accepts an expression that returns a number, string, entity, array, or map.";
+	protected static final String VALID_STRING_PROV = "Accepts a string or an expression that returns a string. "
+	                                                + "Also accepts other types of expressions whose outputs will be converted to a string.";
 	protected static final String VALID_ENTITY_PROV = "Accepts an entity name or an expression that returns an entity.";
 	protected static final String VALID_ENTITY_PROV_TYPE = "Accepts the name of an entity of type %s or an expression that returns such an entity.";
 	protected static final String VALID_COLOUR = "Accepts a colour name, an RGB value, or an RGB/transparency value.";
@@ -109,7 +111,8 @@ public abstract class Input<T> {
 	protected static final String VALID_SAMPLE_LIST_DIMLESS = "Accepts a list containing dimensionless numbers, objects that return such a number, or expressions that return such a number. "
 	                                                        + "Each entry in the list must be enclosed by braces.";
 	protected static final String VALID_UNIT_TYPE_LIST = "Accepts a list of unit types separated by spaces.";
-	protected static final String VALID_STRING_PROV_LIST = "Accepts a list of expressions that return a number, string, entity, or array. "
+	protected static final String VALID_STRING_PROV_LIST = "Accepts a list of strings or expressions that return strings. "
+	                                                     + "Also accepts other types of expressions whose outputs will be converted to strings. "
 	                                                     + "Each entry in the list must be enclosed by braces.";
 	protected static final String VALID_COLOR_LIST = "Accepts a list of colours that are expressed as either a colour name or an RGB value. "
 	                                               + "Each entry in the list must be enclosed by braces.";
@@ -1456,8 +1459,13 @@ public abstract class Input<T> {
 		}
 
 		// Parse the input as a SampleProvider object
-		SampleProvider samp = Input.parseSampleExp(kw, thisEnt, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, unitType);
-		return new StringProvSample(samp);
+		try {
+			SampleProvider samp = Input.parseSampleExp(kw, thisEnt, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, unitType);
+			return new StringProvSample(samp);
+		} catch (InputErrorException e) {}
+
+		// If nothing else works, return the constant string
+		return new StringProvConstant(kw.getArg(0));
 	}
 
 	public static SampleProvider parseSampleExp(KeywordIndex kw,
