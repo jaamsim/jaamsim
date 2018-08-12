@@ -159,7 +159,7 @@ public class EntityContainer extends SimEntity {
 		int pri = (int) priority.getValue().getNextSample(simTime);
 		String m = null;
 		if (match.getValue() != null)
-			m = match.getValue().getNextString(simTime, "%s", 1.0d, true);
+			m = match.getValue().getNextString(simTime, 1.0d, true);
 
 		StorageEntry entry = new StorageEntry(ent, m, pri, n, simTime);
 		storage.add(entry);

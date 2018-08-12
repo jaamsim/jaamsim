@@ -123,7 +123,7 @@ public abstract class LinkedService extends LinkedDevice implements QueueUser {
 		if (match.getValue() == null)
 			return null;
 
-		return match.getValue().getNextString(simTime, "%s", 1.0d, true);
+		return match.getValue().getNextString(simTime, 1.0d, true);
 	}
 
 	protected void setMatchValue(String m) {

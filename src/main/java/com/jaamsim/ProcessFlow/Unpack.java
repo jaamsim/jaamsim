@@ -88,7 +88,7 @@ public class Unpack extends LinkedService {
 			numberToRemove = this.getNumberToRemove();
 			entityMatch = null;
 			if (matchForEntities.getValue() != null)
-				entityMatch = matchForEntities.getValue().getNextString(simTime, "%s", 1.0d, true);
+				entityMatch = matchForEntities.getValue().getNextString(simTime, 1.0d, true);
 			numberRemoved = 0;
 		}
 
