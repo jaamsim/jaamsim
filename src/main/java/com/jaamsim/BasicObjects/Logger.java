@@ -218,7 +218,7 @@ public abstract class Logger extends DisplayEntity {
 			try {
 				StringProvider samp = dataSource.getValue().get(i);
 				factor = Unit.getDisplayedUnitFactor(dataSource.getUnitType(i));
-				str = samp.getNextString(simTime, "%s", factor);
+				str = samp.getNextString(simTime, factor);
 			}
 			catch (Exception e) {
 				str = e.getMessage();

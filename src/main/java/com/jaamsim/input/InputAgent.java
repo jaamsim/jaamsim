@@ -1512,7 +1512,7 @@ public class InputAgent {
 			double factor = Unit.getDisplayedUnitFactor(ut);
 			String str;
 			try {
-				str = samp.getNextString(simTime, "%s", factor);
+				str = samp.getNextString(simTime, factor);
 			} catch (Exception e) {
 				str = e.getMessage();
 			}
