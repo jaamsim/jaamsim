@@ -135,12 +135,12 @@ public class StringProvInput extends Input<StringProvider> {
 		StringBuilder sb = new StringBuilder();
 		if (unitType == null || unitType == DimensionlessUnit.class
 				|| unitType == UserSpecifiedUnit.class) {
-			sb.append(value.getNextString(simTime, "%s", 1.0d));
+			sb.append(value.getNextString(simTime));
 		}
 		else {
 			String unitString = Unit.getDisplayedUnit(unitType);
 			double sifactor = Unit.getDisplayedUnitFactor(unitType);
-			sb.append(value.getNextString(simTime, "%s", sifactor));
+			sb.append(value.getNextString(simTime, sifactor));
 			sb.append("[").append(unitString).append("]");
 		}
 		return sb.toString();

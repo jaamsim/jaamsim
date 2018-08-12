@@ -198,12 +198,12 @@ public class StringProvListInput extends ListInput<ArrayList<StringProvider>> {
 			sb.append("{").append(Input.BRACE_SEPARATOR);
 			Class<? extends Unit> ut = getUnitType(i);
 			if (ut == DimensionlessUnit.class || ut == UserSpecifiedUnit.class) {
-				sb.append(prov.getNextString(simTime, "%s", 1.0d));
+				sb.append(prov.getNextString(simTime));
 			}
 			else {
 				String unitString = Unit.getDisplayedUnit(ut);
 				double sifactor = Unit.getDisplayedUnitFactor(ut);
-				sb.append(prov.getNextString(simTime, "%s", sifactor));
+				sb.append(prov.getNextString(simTime, sifactor));
 				sb.append("[").append(unitString).append("]");
 			}
 			sb.append(Input.BRACE_SEPARATOR).append("}");
