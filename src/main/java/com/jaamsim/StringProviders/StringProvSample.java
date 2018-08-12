@@ -48,17 +48,7 @@ public class StringProvSample implements StringProvider {
 
 	@Override
 	public String getNextString(double simTime, String fmt, double siFactor) {
-		return getNextString(simTime, fmt, siFactor, false);
-	}
-
-	@Override
-	public String getNextString(double simTime, String fmt, double siFactor, boolean integerValue) {
-		if (integerValue) {
-			return String.format(fmt, (int)(samp.getNextSample(simTime)/siFactor));
-		}
-		else {
-			return String.format(fmt, samp.getNextSample(simTime)/siFactor);
-		}
+		return String.format(fmt, samp.getNextSample(simTime)/siFactor);
 	}
 
 	@Override

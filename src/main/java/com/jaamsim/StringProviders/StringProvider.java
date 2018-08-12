@@ -24,5 +24,4 @@ public interface StringProvider {
 	public String getNextString(double simTime, double siFactor, boolean bool);
 
 	public String getNextString(double simTime, String fmt, double siFactor);
-	public String getNextString(double simTime, String fmt, double siFactor, boolean bool);
 }

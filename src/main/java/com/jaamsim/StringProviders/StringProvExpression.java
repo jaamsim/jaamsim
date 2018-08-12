@@ -94,11 +94,6 @@ public class StringProvExpression implements StringProvider {
 
 	@Override
 	public String getNextString(double simTime, String fmt, double siFactor) {
-		return getNextString(simTime, fmt, siFactor, false);
-	}
-
-	@Override
-	public String getNextString(double simTime, String fmt, double siFactor, boolean integerValue) {
 		String ret = "";
 		try {
 			ExpResult result = ExpEvaluator.evaluateExpression(exp, simTime);
@@ -116,12 +111,7 @@ public class StringProvExpression implements StringProvider {
 							exp, ObjectType.getObjectTypeForClass(result.unitType),
 							ObjectType.getObjectTypeForClass(unitType));
 				}
-				if (integerValue) {
-					ret = String.format(fmt, (int)(result.value/siFactor));
-				}
-				else {
-					ret = String.format(fmt, result.value/siFactor);
-				}
+				ret = String.format(fmt, result.value/siFactor);
 				break;
 			case COLLECTION:
 				ret = String.format(fmt, result.colVal.getOutputString());
