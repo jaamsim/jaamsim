@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2009-2013 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2018 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -72,7 +73,7 @@ public class Text extends TextBasics {
 	protected String renderText = "";
 
 	{
-		formatText = new StringInput("Format", KEY_INPUTS, "");
+		formatText = new StringInput("Format", KEY_INPUTS, "%s");
 		this.addInput(formatText);
 
 		unitType = new UnitTypeInput("UnitType", KEY_INPUTS, DimensionlessUnit.class);

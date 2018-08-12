@@ -113,7 +113,7 @@ public class OverlayText extends OverlayEntity {
 	{
 		displayModelListInput.addValidClass(TextModel.class);
 
-		formatText = new StringInput("Format", KEY_INPUTS, "");
+		formatText = new StringInput("Format", KEY_INPUTS, "%s");
 		this.addInput(formatText);
 
 		unitType = new UnitTypeInput("UnitType", KEY_INPUTS, DimensionlessUnit.class);
