@@ -134,15 +134,20 @@ public class Text extends TextBasics {
 		if (isEditMode())
 			return getEditText();
 
+		double siFactor = 1.0d;
+		if (unit.getValue() != null)
+			siFactor = unit.getValue().getConversionFactorToSI();
+
+		// Default Format
+		if (formatText.isDefault())
+			return dataSource.getValue().getNextString(simTime, siFactor);
+
 		// Only static text is to be displayed
 		if (dataSource.isDefault())
 			return formatText.getValue();
 
 		// Dynamic text is to be displayed
 		try {
-			double siFactor = 1.0d;
-			if (unit.getValue() != null)
-				siFactor = unit.getValue().getConversionFactorToSI();
 			return dataSource.getValue().getNextString(simTime, formatText.getValue(), siFactor);
 		}
 		catch (Throwable e) {
