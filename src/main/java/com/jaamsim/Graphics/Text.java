@@ -18,6 +18,7 @@
 package com.jaamsim.Graphics;
 
 import com.jaamsim.Commands.KeywordCommand;
+import com.jaamsim.StringProviders.StringProvConstant;
 import com.jaamsim.StringProviders.StringProvInput;
 import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.Input;
@@ -83,7 +84,7 @@ public class Text extends TextBasics {
 		unit.setSubClass(null);
 		this.addInput(unit);
 
-		dataSource = new StringProvInput("DataSource", KEY_INPUTS, null);
+		dataSource = new StringProvInput("DataSource", KEY_INPUTS, new StringProvConstant(""));
 		dataSource.setUnitType(DimensionlessUnit.class);
 		dataSource.setEntity(this);
 		this.addInput(dataSource);
@@ -134,7 +135,7 @@ public class Text extends TextBasics {
 			return getEditText();
 
 		// Only static text is to be displayed
-		if( dataSource.getValue() == null )
+		if (dataSource.isDefault())
 			return formatText.getValue();
 
 		// Dynamic text is to be displayed

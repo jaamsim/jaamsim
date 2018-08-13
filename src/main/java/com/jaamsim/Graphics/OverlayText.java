@@ -20,6 +20,7 @@ package com.jaamsim.Graphics;
 import java.util.ArrayList;
 
 import com.jaamsim.DisplayModels.TextModel;
+import com.jaamsim.StringProviders.StringProvConstant;
 import com.jaamsim.StringProviders.StringProvInput;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.ColourInput;
@@ -123,7 +124,7 @@ public class OverlayText extends OverlayEntity {
 		unit.setSubClass(null);
 		this.addInput(unit);
 
-		dataSource = new StringProvInput("DataSource", KEY_INPUTS, null);
+		dataSource = new StringProvInput("DataSource", KEY_INPUTS, new StringProvConstant(""));
 		dataSource.setUnitType(DimensionlessUnit.class);
 		dataSource.setEntity(this);
 		this.addInput(dataSource);
@@ -192,7 +193,7 @@ public class OverlayText extends OverlayEntity {
 	public String getRenderText(double simTime) {
 
 		// Only static text is to be displayed
-		if( dataSource.getValue() == null )
+		if (dataSource.isDefault())
 			return formatText.getValue();
 
 		// Dynamic text is to be displayed
