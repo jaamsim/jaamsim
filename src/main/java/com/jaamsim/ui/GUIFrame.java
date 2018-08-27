@@ -1103,9 +1103,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 					return;
 
 				GUIFrame.this.stopSimulation();
-				lastSimTime = 0.0d;
-				lastSystemTime = System.currentTimeMillis();
-				setSpeedUp(0.0d);
+				initSpeedUp(0.0d);
 			}
 		} );
 
@@ -1410,9 +1408,14 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 	// RUN STATUS UPDATES
 	// ******************************************************************************************************
 
-	private long lastSystemTime = System.currentTimeMillis();
-	private double lastSimTime = 0.0d;
-	private double speedUp = 0.0d;
+	private long lastSystemTime;
+	private double lastSimTime;
+	private double speedUp;
+
+	public void initSpeedUp(double simTime) {
+		lastSystemTime = System.currentTimeMillis();
+		lastSimTime = simTime;
+	}
 
 	/**
 	 * Sets the values for the simulation time, run progress, speedup factor,
@@ -1452,8 +1455,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		}
 
 		// Set the remaining time display
-		if (speedUp > 0.0)
-			setRemaining( (duration - timeElapsed)/speedUp );
+		setRemaining( (duration - timeElapsed)/speedUp );
 	}
 
 	/**
@@ -1532,6 +1534,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 			return confirmed;
 		}
 		else if( getSimState() == SIM_STATE_PAUSED ) {
+			initSpeedUp(EventManager.ticksToSecs(simTicks));
 			currentEvt.resume(currentEvt.secondsToNearestTick(Simulation.getPauseTime()));
 			return true;
 		}

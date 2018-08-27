@@ -930,6 +930,8 @@ public class Simulation extends Entity {
 	 * @param evt - EventManager for the run.
 	 */
 	private static void startRun(EventManager evt) {
+		if (GUIFrame.getInstance() != null)
+			GUIFrame.getInstance().initSpeedUp(0.0d);
 		evt.scheduleProcessExternal(0, 0, false, new InitModelTarget(), null);
 		evt.resume(evt.secondsToNearestTick(Simulation.getPauseTime()));
 	}
