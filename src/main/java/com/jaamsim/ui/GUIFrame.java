@@ -1430,16 +1430,16 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		double factor = Unit.getDisplayedUnitFactor(TimeUnit.class);
 		clockDisplay.setText(String.format("%,.2f  %s", simTime/factor, unit));
 
-		// Still update progress if paused at end of run to show 100%
-		if (getSimState() < SIM_STATE_RUNNING)
-			return;
-
 		// Set the run progress bar display
 		long cTime = System.currentTimeMillis();
 		double duration = Simulation.getRunDuration() + Simulation.getInitializationTime();
 		double timeElapsed = simTime - Simulation.getStartTime();
 		int progress = (int)(timeElapsed * 100.0d / duration);
 		this.setProgress(progress);
+
+		// Do nothing further if the simulation is not executing events
+		if (getSimState() != SIM_STATE_RUNNING)
+			return;
 
 		// Set the speedup factor display
 		if (cTime - lastSystemTime > 5000) {
