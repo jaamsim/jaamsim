@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2002-2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2017 JaamSim Software Inc.
+ * Copyright (C) 2017-2018 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -844,10 +844,17 @@ public final class EventManager {
 	 * in case the eventManager thread has already been paused and needs to
 	 * resume the event execution loop.  This prevents the model being resumed
 	 * from an inconsistent state.
+	 * @param targetTicks - clock ticks at which to pause
 	 */
 	public void resume(long targetTicks) {
 		synchronized (lockObject) {
-			targetTick = targetTicks;
+
+			// Ignore the pause time if it has already been reached
+			if (currentTick < targetTicks)
+				targetTick = targetTicks;
+			else
+				targetTick = Long.MAX_VALUE;
+
 			rebaseRealTime = true;
 			if (executeEvents)
 				return;
