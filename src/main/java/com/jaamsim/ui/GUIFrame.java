@@ -1408,12 +1408,14 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 	// RUN STATUS UPDATES
 	// ******************************************************************************************************
 
+	private long resumeSystemTime;
 	private long lastSystemTime;
 	private double lastSimTime;
 	private double speedUp;
 
 	public void initSpeedUp(double simTime) {
-		lastSystemTime = System.currentTimeMillis();
+		resumeSystemTime = System.currentTimeMillis();
+		lastSystemTime = resumeSystemTime;
 		lastSimTime = simTime;
 	}
 
@@ -1442,16 +1444,17 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 			return;
 
 		// Set the speedup factor display
-		if (cTime - lastSystemTime > 5000) {
+		if (cTime - lastSystemTime > 5000L || cTime - resumeSystemTime < 5000L) {
 			long elapsedMillis = cTime - lastSystemTime;
 			double elapsedSimTime = timeElapsed - lastSimTime;
 
 			// Determine the speed-up factor
 			speedUp = (elapsedSimTime * 1000.0d) / elapsedMillis;
 			setSpeedUp(speedUp);
-
-			lastSystemTime = cTime;
-			lastSimTime = timeElapsed;
+			if (elapsedMillis > 5000L) {
+				lastSystemTime = cTime;
+				lastSimTime = timeElapsed;
+			}
 		}
 
 		// Set the remaining time display
