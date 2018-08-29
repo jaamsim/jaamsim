@@ -1560,7 +1560,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 	 */
 	public void stopSimulation() {
 		if( getSimState() == SIM_STATE_RUNNING ||
-		    getSimState() == SIM_STATE_PAUSED ) {
+		    getSimState() == SIM_STATE_PAUSED ||
+		    getSimState() == SIM_STATE_ENDED) {
 			Simulation.stop(currentEvt);
 			FrameBox.stop();
 			this.updateForSimulationState(GUIFrame.SIM_STATE_CONFIGURED);
@@ -1579,6 +1580,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 	public static final int SIM_STATE_RUNNING = 3;
 	/** model has run, but presently is paused */
 	public static final int SIM_STATE_PAUSED = 4;
+	/** model is paused but cannot be resumed */
+	public static final int SIM_STATE_ENDED = 5;
 
 	private int simState;
 	public int getSimState() {
@@ -1697,6 +1700,14 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 
 			case SIM_STATE_PAUSED:
 				controlStartResume.setEnabled( true );
+				controlStartResume.setSelected( false );
+				controlStartResume.setToolTipText(RUN_TOOLTIP);
+				controlStop.setEnabled( true );
+				controlStop.setSelected( false );
+				break;
+
+			case SIM_STATE_ENDED:
+				controlStartResume.setEnabled( false );
 				controlStartResume.setSelected( false );
 				controlStartResume.setToolTipText(RUN_TOOLTIP);
 				controlStop.setEnabled( true );
