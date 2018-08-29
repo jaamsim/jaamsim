@@ -1041,6 +1041,16 @@ public class Simulation extends Entity {
 		}
 	}
 
+	/**
+	 * Returns whether a paused simulation can be resumed.
+	 * @param simTicks - present simulation time in clock ticks
+	 * @return true if the simulation can be resumed
+	 */
+	public static boolean canResume(long simTicks) {
+		double totalDur = getRunDuration() + getInitializationTime();
+		return simTicks < EventManager.secsToNearestTick(totalDur);
+	}
+
 	public static int getSubstreamNumber() {
 		return (int)globalSeedInput.getValue().getNextSample(0.0);
 	}

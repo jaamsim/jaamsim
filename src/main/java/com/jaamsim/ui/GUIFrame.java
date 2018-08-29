@@ -2204,7 +2204,10 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 			updateForSimulationState(SIM_STATE_RUNNING);
 		}
 		else {
-			updateForSimulationState(SIM_STATE_PAUSED);
+			int state = SIM_STATE_PAUSED;
+			if (!Simulation.canResume(simTicks))
+				state = SIM_STATE_ENDED;
+			updateForSimulationState(state);
 		}
 	}
 
