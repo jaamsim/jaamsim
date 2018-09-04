@@ -30,18 +30,18 @@ import com.jaamsim.input.ValueInput;
 import com.jaamsim.units.TimeUnit;
 
 /**
- * The Controller object simulates the operation of a Programmable Logic Controller
+ * Generates update signals that are sent to the objects managed by the Controller.
  * @author Harry King
  *
  */
 public class Controller extends DisplayEntity {
 
-	@Keyword(description = "The sampling time for the Controller.",
+	@Keyword(description = "Time interval between update signals.",
 	         exampleList = {"100 ms"})
 	private final ValueInput samplingTime;
 
-	private final ArrayList<Controllable> calculationEntityList;  // List of the CalculationEntities controller by this Controller.
-	private int count;  // Number of times that the controller has initiated its calculations.
+	private final ArrayList<Controllable> entityList;  // Entities controlled by this Controller.
+	private int count;  // Number of update cycle completed.
 
 	private final ProcessTarget doUpdate = new DoUpdateTarget(this);
 
@@ -53,7 +53,7 @@ public class Controller extends DisplayEntity {
 	}
 
 	public Controller() {
-		calculationEntityList = new ArrayList<>();
+		entityList = new ArrayList<>();
 	}
 
 	@Override
@@ -62,15 +62,15 @@ public class Controller extends DisplayEntity {
 		count = 0;
 
 		// Prepare a list of the calculation entities managed by this controller
-		calculationEntityList.clear();
+		entityList.clear();
 		for (Entity ent : Entity.getClonesOfIterator(Entity.class, Controllable.class)) {
 			Controllable con = (Controllable) ent;
 			if (con.getController() == this)
-				calculationEntityList.add(con);
+				entityList.add(con);
 		}
 
 		// Sort the calculation entities into the correct sequence
-		Collections.sort(calculationEntityList, new SequenceCompare());
+		Collections.sort(entityList, new SequenceCompare());
 	}
 
 	// Sorts by increasing sequence number
@@ -104,7 +104,7 @@ public class Controller extends DisplayEntity {
 
 		// Update the last value for each entity
 		double simTime = this.getSimTime();
-		for (Controllable ent : calculationEntityList) {
+		for (Controllable ent : entityList) {
 			ent.update(simTime);
 		}
 
