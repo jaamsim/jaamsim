@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2018 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,7 +40,7 @@ public class Controller extends DisplayEntity {
 	         exampleList = {"100 ms"})
 	private final ValueInput samplingTime;
 
-	private final ArrayList<CalculationEntity> calculationEntityList;  // List of the CalculationEntities controller by this Controller.
+	private final ArrayList<Controllable> calculationEntityList;  // List of the CalculationEntities controller by this Controller.
 	private int count;  // Number of times that the controller has initiated its calculations.
 
 	private final ProcessTarget doUpdate = new DoUpdateTarget(this);
@@ -62,9 +63,10 @@ public class Controller extends DisplayEntity {
 
 		// Prepare a list of the calculation entities managed by this controller
 		calculationEntityList.clear();
-		for (CalculationEntity ent : Entity.getClonesOfIterator(CalculationEntity.class)) {
-			if (ent.getController() == this)
-				calculationEntityList.add(ent);
+		for (Entity ent : Entity.getClonesOfIterator(Entity.class, Controllable.class)) {
+			Controllable con = (Controllable) ent;
+			if (con.getController() == this)
+				calculationEntityList.add(con);
 		}
 
 		// Sort the calculation entities into the correct sequence
@@ -72,9 +74,9 @@ public class Controller extends DisplayEntity {
 	}
 
 	// Sorts by increasing sequence number
-	private static class SequenceCompare implements Comparator<CalculationEntity> {
+	private static class SequenceCompare implements Comparator<Controllable> {
 		@Override
-		public int compare(CalculationEntity c1, CalculationEntity c2) {
+		public int compare(Controllable c1, Controllable c2) {
 			return Double.compare(c1.getSequenceNumber(), c2.getSequenceNumber());
 		}
 	}
@@ -102,7 +104,7 @@ public class Controller extends DisplayEntity {
 
 		// Update the last value for each entity
 		double simTime = this.getSimTime();
-		for (CalculationEntity ent : calculationEntityList) {
+		for (Controllable ent : calculationEntityList) {
 			ent.update(simTime);
 		}
 
@@ -116,4 +118,5 @@ public class Controller extends DisplayEntity {
 	public int getCount() {
 		return count;
 	}
+
 }
