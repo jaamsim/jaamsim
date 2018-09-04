@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016 JaamSim Software Inc.
+ * Copyright (C) 2016-2018 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ import com.jaamsim.units.DimensionlessUnit;
  * @author Harry King
  *
  */
-public abstract class CalculationEntity extends DisplayEntity {
+public abstract class CalculationEntity extends DisplayEntity implements Controllable {
 
 	@Keyword(description = "The Controller object that signals the updating of the calculation.",
 	         exampleList = {"Controller1"})
@@ -51,16 +51,17 @@ public abstract class CalculationEntity extends DisplayEntity {
 		this.addInput(sequenceNumber);
 	}
 
+	@Override
 	public Controller getController() {
 		return controller.getValue();
 	}
 
+	@Override
 	public double getSequenceNumber() {
 		return sequenceNumber.getValue();
 	}
 
-	/*
-	 * Calculate the current value for this object.
-	 */
+	@Override
 	public abstract void update(double simTime);
+
 }
