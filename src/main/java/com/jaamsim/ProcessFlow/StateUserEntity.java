@@ -90,6 +90,7 @@ public abstract class StateUserEntity extends StateEntity implements ThresholdUs
 	protected static final String STATE_MAINTENANCE = "Maintenance";
 	protected static final String STATE_BREAKDOWN = "Breakdown";
 	protected static final String STATE_STOPPED = "Stopped";
+	protected static final String STATE_BLOCKED = "Blocked";
 
 	{
 		immediateThresholdList = new EntityListInput<>(Threshold.class, "ImmediateThresholdList", THRESHOLDS, new ArrayList<Threshold>());
