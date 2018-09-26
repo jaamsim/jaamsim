@@ -1109,4 +1109,18 @@ public class DisplayEntity extends Entity {
 		return getAlignment();
 	}
 
+	@Output(name = "GraphicalLength",
+	 description = "Polyline type objects: the length of the polyline determined by its "
+	             + "Points and CurveType inputs.\n"
+	             + "Non-polyline type objects: the largest of the Size inputs.",
+	    unitType = DistanceUnit.class,
+	    sequence = 4)
+	public double getGraphicalLength(double simTime) {
+		if (usePointsInput()) {
+			return PolylineInfo.getLength(getCurvePoints());
+		}
+		Vec3d vec = getSize();
+		return Math.max(Math.max(vec.x, vec.y), vec.z);
+	}
+
 }
