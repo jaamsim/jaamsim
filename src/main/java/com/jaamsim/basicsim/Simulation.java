@@ -443,91 +443,95 @@ public class Simulation extends Entity {
 		showEventViewer.setPromptReqd(false);
 		showEventViewer.setHidden(true);
 
-		modelBuilderPos = new IntegerListInput("ModelBuilderPos", GUI, null);
+		final IntegerVector def = new IntegerVector(2);
+		def.add(1);
+		def.add(1);
+
+		modelBuilderPos = new IntegerListInput("ModelBuilderPos", GUI, def);
 		modelBuilderPos.setValidCount(2);
 		modelBuilderPos.setValidRange(-8192, 8192);
 		modelBuilderPos.setPromptReqd(false);
 		modelBuilderPos.setHidden(true);
 
-		modelBuilderSize = new IntegerListInput("ModelBuilderSize", GUI, null);
+		modelBuilderSize = new IntegerListInput("ModelBuilderSize", GUI, def);
 		modelBuilderSize.setValidCount(2);
 		modelBuilderSize.setValidRange(1, 8192);
 		modelBuilderSize.setPromptReqd(false);
 		modelBuilderSize.setHidden(true);
 
-		objectSelectorPos = new IntegerListInput("ObjectSelectorPos", GUI, null);
+		objectSelectorPos = new IntegerListInput("ObjectSelectorPos", GUI, def);
 		objectSelectorPos.setValidCount(2);
 		objectSelectorPos.setValidRange(-8192, 8192);
 		objectSelectorPos.setPromptReqd(false);
 		objectSelectorPos.setHidden(true);
 
-		objectSelectorSize = new IntegerListInput("ObjectSelectorSize", GUI, null);
+		objectSelectorSize = new IntegerListInput("ObjectSelectorSize", GUI, def);
 		objectSelectorSize.setValidCount(2);
 		objectSelectorSize.setValidRange(1, 8192);
 		objectSelectorSize.setPromptReqd(false);
 		objectSelectorSize.setHidden(true);
 
-		inputEditorPos = new IntegerListInput("InputEditorPos", GUI, null);
+		inputEditorPos = new IntegerListInput("InputEditorPos", GUI, def);
 		inputEditorPos.setValidCount(2);
 		inputEditorPos.setValidRange(-8192, 8192);
 		inputEditorPos.setPromptReqd(false);
 		inputEditorPos.setHidden(true);
 
-		inputEditorSize = new IntegerListInput("InputEditorSize", GUI, null);
+		inputEditorSize = new IntegerListInput("InputEditorSize", GUI, def);
 		inputEditorSize.setValidCount(2);
 		inputEditorSize.setValidRange(1, 8192);
 		inputEditorSize.setPromptReqd(false);
 		inputEditorSize.setHidden(true);
 
-		outputViewerPos = new IntegerListInput("OutputViewerPos", GUI, null);
+		outputViewerPos = new IntegerListInput("OutputViewerPos", GUI, def);
 		outputViewerPos.setValidCount(2);
 		outputViewerPos.setValidRange(-8192, 8192);
 		outputViewerPos.setPromptReqd(false);
 		outputViewerPos.setHidden(true);
 
-		outputViewerSize = new IntegerListInput("OutputViewerSize", GUI, null);
+		outputViewerSize = new IntegerListInput("OutputViewerSize", GUI, def);
 		outputViewerSize.setValidCount(2);
 		outputViewerSize.setValidRange(1, 8192);
 		outputViewerSize.setPromptReqd(false);
 		outputViewerSize.setHidden(true);
 
-		propertyViewerPos = new IntegerListInput("PropertyViewerPos", GUI, null);
+		propertyViewerPos = new IntegerListInput("PropertyViewerPos", GUI, def);
 		propertyViewerPos.setValidCount(2);
 		propertyViewerPos.setValidRange(-8192, 8192);
 		propertyViewerPos.setPromptReqd(false);
 		propertyViewerPos.setHidden(true);
 
-		propertyViewerSize = new IntegerListInput("PropertyViewerSize", GUI, null);
+		propertyViewerSize = new IntegerListInput("PropertyViewerSize", GUI, def);
 		propertyViewerSize.setValidCount(2);
 		propertyViewerSize.setValidRange(1, 8192);
 		propertyViewerSize.setPromptReqd(false);
 		propertyViewerSize.setHidden(true);
 
-		logViewerPos = new IntegerListInput("LogViewerPos", GUI, null);
+		logViewerPos = new IntegerListInput("LogViewerPos", GUI, def);
 		logViewerPos.setValidCount(2);
 		logViewerPos.setValidRange(-8192, 8192);
 		logViewerPos.setPromptReqd(false);
 		logViewerPos.setHidden(true);
 
-		logViewerSize = new IntegerListInput("LogViewerSize", GUI, null);
+		logViewerSize = new IntegerListInput("LogViewerSize", GUI, def);
 		logViewerSize.setValidCount(2);
 		logViewerSize.setValidRange(1, 8192);
 		logViewerSize.setPromptReqd(false);
 		logViewerSize.setHidden(true);
 
-		eventViewerPos = new IntegerListInput("EventViewerPos", GUI, null);
+		eventViewerPos = new IntegerListInput("EventViewerPos", GUI, def);
 		eventViewerPos.setValidCount(2);
 		eventViewerPos.setValidRange(-8192, 8192);
 		eventViewerPos.setPromptReqd(false);
 		eventViewerPos.setHidden(true);
 
-		eventViewerSize = new IntegerListInput("EventViewerSize", GUI, null);
+		eventViewerSize = new IntegerListInput("EventViewerSize", GUI, def);
 		eventViewerSize.setValidCount(2);
 		eventViewerSize.setValidRange(1, 8192);
 		eventViewerSize.setPromptReqd(false);
 		eventViewerSize.setHidden(true);
 
-		controlPanelWidth = new IntegerInput("ControlPanelWidth", GUI, null);
+		controlPanelWidth = new IntegerInput("ControlPanelWidth", GUI, Integer.valueOf(1));
 		controlPanelWidth.setValidRange(1, 8192);
 		controlPanelWidth.setPromptReqd(false);
 		controlPanelWidth.setHidden(true);
