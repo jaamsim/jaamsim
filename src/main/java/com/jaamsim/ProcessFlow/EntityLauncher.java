@@ -71,6 +71,12 @@ public class EntityLauncher extends GameEntity implements LinkDisplayable {
 	public EntityLauncher() {}
 
 	@Override
+	public void earlyInit() {
+		super.earlyInit();
+		numberGenerated = 0;
+	}
+
+	@Override
 	public void doAction() {
 
 		// Set the name for the entities
