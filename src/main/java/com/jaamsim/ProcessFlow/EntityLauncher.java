@@ -30,6 +30,7 @@ import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InterfaceEntityInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.KeywordIndex;
+import com.jaamsim.input.StringInput;
 import com.jaamsim.math.Vec3d;
 
 public class EntityLauncher extends GameEntity implements LinkDisplayable {
@@ -42,6 +43,11 @@ public class EntityLauncher extends GameEntity implements LinkDisplayable {
 	@Keyword(description = "The object to which the generated DisplayEntity is passed.",
 	         exampleList = {"Queue1"})
 	protected final InterfaceEntityInput<Linkable> nextComponent;
+
+	@Keyword(description = "The base for the names assigned to the generated entities. "
+	                     + "The generated entities will be named Name1, Name2, etc.",
+	         exampleList = {"Customer", "Package"})
+	private final StringInput baseName;
 
 	private int numberGenerated = 0;  // Number of entities generated so far
 
@@ -56,6 +62,10 @@ public class EntityLauncher extends GameEntity implements LinkDisplayable {
 		nextComponent = new InterfaceEntityInput<>(Linkable.class, "NextComponent", KEY_INPUTS, null);
 		nextComponent.setRequired(true);
 		this.addInput(nextComponent);
+
+		baseName = new StringInput("BaseName", KEY_INPUTS, null);
+		baseName.setDefaultText("Generator Name");
+		this.addInput(baseName);
 	}
 
 	public EntityLauncher() {}
@@ -63,12 +73,16 @@ public class EntityLauncher extends GameEntity implements LinkDisplayable {
 	@Override
 	public void doAction() {
 
+		// Set the name for the entities
+		String name = baseName.getValue();
+		if (name == null)
+			name = this.getName() + "_";
+
 		// Create a new entity
 		numberGenerated++;
 		DisplayEntity proto = prototypeEntity.getValue().getNextEntity(0.0d);
-		StringBuilder sb = new StringBuilder();
-		sb.append(this.getName()).append("_").append(numberGenerated);
-		DisplayEntity ent = InputAgent.generateEntityWithName(proto.getClass(), sb.toString());
+		name = name + numberGenerated;
+		DisplayEntity ent = InputAgent.generateEntityWithName(proto.getClass(), name);
 		Entity.fastCopyInputs(proto, ent);
 		ent.earlyInit();
 
