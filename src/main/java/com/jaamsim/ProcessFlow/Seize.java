@@ -28,6 +28,8 @@ import com.jaamsim.input.EntityListInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
+import com.jaamsim.resourceObjects.Resource;
+import com.jaamsim.resourceObjects.ResourceUser;
 import com.jaamsim.units.DimensionlessUnit;
 
 public class Seize extends LinkedService implements ResourceUser {
