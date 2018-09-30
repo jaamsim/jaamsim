@@ -39,7 +39,7 @@ import com.jaamsim.input.Output;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
 
-public class Resource extends DisplayEntity {
+public class Resource extends AbstractResourceProvider {
 
 	@Keyword(description = "The number of equivalent resource units that are available.\n"
 	                     + "If the capacity changes during the simulation run, the Resource will "
@@ -141,11 +141,22 @@ public class Resource extends DisplayEntity {
 		this.waitForCapacityChange();
 	}
 
+	@Override
+	public boolean canSeize(int n, DisplayEntity ent) {
+		double simTime = getSimTime();
+		return getAvailableUnits(simTime) >= n;
+	}
+
 	/**
 	 * Seize the given number of units from the resource.
 	 * @param n = number of units to seize
 	 */
 	public void seize(int n) {
+		seize(n, null);
+	}
+
+	@Override
+	public void seize(int n, DisplayEntity ent) {
 		unitsInUse += n;
 		unitsSeized += n;
 		double simTime = this.getSimTime();
@@ -162,12 +173,22 @@ public class Resource extends DisplayEntity {
 	 * @param n = number of units to release
 	 */
 	public void release(int m) {
+		release(m, null);
+	}
+
+	@Override
+	public void release(int m, DisplayEntity ent) {
 		int n = Math.min(m, unitsInUse);
 		unitsInUse -= n;
 		unitsReleased += n;
 		double simTime = this.getSimTime();
 		stats.addValue(simTime, unitsInUse);
 		freq.addValue(simTime, unitsInUse);
+	}
+
+	@Override
+	public ArrayList<ResourceUser> getUserList() {
+		return userList;
 	}
 
 	/**
@@ -221,6 +242,7 @@ public class Resource extends DisplayEntity {
 		}
 	}
 
+	@Override
 	public boolean isStrictOrder() {
 		return strictOrder.getValue();
 	}
