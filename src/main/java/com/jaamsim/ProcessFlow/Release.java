@@ -23,17 +23,18 @@ import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleListInput;
 import com.jaamsim.Samples.SampleProvider;
-import com.jaamsim.input.EntityListInput;
 import com.jaamsim.input.Input;
+import com.jaamsim.input.InterfaceEntityListInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.resourceObjects.Resource;
+import com.jaamsim.resourceObjects.ResourceProvider;
 import com.jaamsim.units.DimensionlessUnit;
 
 public class Release extends LinkedComponent {
 
 	@Keyword(description = "The Resources from which units are to be released.",
 	         exampleList = {"Resource1 Resource2"})
-	private final EntityListInput<Resource> resourceList;
+	private final InterfaceEntityListInput<ResourceProvider> resourceList;
 
 	@Keyword(description = "The number of units to release from the Resources specified by the "
 	                     + "'ResourceList' keyword.",
@@ -41,7 +42,7 @@ public class Release extends LinkedComponent {
 	private final SampleListInput numberOfUnitsList;
 
 	{
-		resourceList = new EntityListInput<>(Resource.class, "ResourceList", KEY_INPUTS, null);
+		resourceList = new InterfaceEntityListInput<>(ResourceProvider.class, "ResourceList", KEY_INPUTS, null);
 		resourceList.setRequired(true);
 		this.addInput( resourceList);
 		this.addSynonym(resourceList, "Resource");
@@ -75,7 +76,7 @@ public class Release extends LinkedComponent {
 	 */
 	public void releaseResources(DisplayEntity ent) {
 		double simTime = this.getSimTime();
-		ArrayList<Resource> resList = resourceList.getValue();
+		ArrayList<ResourceProvider> resList = resourceList.getValue();
 		ArrayList<SampleProvider> numberList = numberOfUnitsList.getValue();
 
 		// Release the Resources

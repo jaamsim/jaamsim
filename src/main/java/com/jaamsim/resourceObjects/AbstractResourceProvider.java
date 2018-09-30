@@ -76,11 +76,11 @@ public abstract class AbstractResourceProvider extends DisplayEntity implements 
 	/**
 	 * Starts resource users on their next entities.
 	 */
-	public static void notifyResourceUsers(ArrayList<Resource> resList) {
+	public static void notifyResourceUsers(ArrayList<ResourceProvider> resList) {
 
 		// Prepare a sorted list of the resource users that have a waiting entity
 		ArrayList<ResourceUser> list = new ArrayList<>();
-		for (Resource res : resList) {
+		for (ResourceProvider res : resList) {
 			for (ResourceUser ru : res.getUserList()) {
 				if (!list.contains(ru) && ru.hasWaitingEntity()) {
 					list.add(ru);

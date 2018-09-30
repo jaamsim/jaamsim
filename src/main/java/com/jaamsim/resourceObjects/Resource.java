@@ -178,7 +178,7 @@ public class Resource extends AbstractResourceProvider {
 
 		// Select the resource users to notify
 		if (this.getCapacity(getSimTime()) > lastCapacity) {
-			ArrayList<Resource> resList = new ArrayList<>(1);
+			ArrayList<ResourceProvider> resList = new ArrayList<>(1);
 			resList.add(this);
 			Resource.notifyResourceUsers(resList);
 		}

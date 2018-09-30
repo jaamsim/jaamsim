@@ -24,8 +24,8 @@ import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleListInput;
 import com.jaamsim.Samples.SampleProvider;
-import com.jaamsim.input.EntityListInput;
 import com.jaamsim.input.Input;
+import com.jaamsim.input.InterfaceEntityListInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.resourceObjects.Resource;
@@ -37,7 +37,7 @@ public class Seize extends LinkedService implements ResourceUser {
 
 	@Keyword(description = "The Resources from which units are to be seized.",
 	         exampleList = {"Resource1 Resource2"})
-	protected final EntityListInput<Resource> resourceList;
+	protected final InterfaceEntityListInput<ResourceProvider> resourceList;
 
 	@Keyword(description = "The number of units to seize from the Resources specified by the "
 	                     + "'ResourceList' keyword.",
@@ -59,8 +59,8 @@ public class Seize extends LinkedService implements ResourceUser {
 		immediateThresholdList.setHidden(true);
 		immediateReleaseThresholdList.setHidden(true);
 
-		ArrayList<Resource> resDef = new ArrayList<>();
-		resourceList = new EntityListInput<>(Resource.class, "ResourceList", KEY_INPUTS, resDef);
+		ArrayList<ResourceProvider> resDef = new ArrayList<>();
+		resourceList = new InterfaceEntityListInput<>(ResourceProvider.class, "ResourceList", KEY_INPUTS, resDef);
 		resourceList.setRequired(true);
 		this.addInput(resourceList);
 		this.addSynonym(resourceList, "Resource");
@@ -152,7 +152,7 @@ public class Seize extends LinkedService implements ResourceUser {
 
 	@Override
 	public boolean hasStrictResource() {
-		for (Resource res : getResourceList()) {
+		for (ResourceProvider res : getResourceList()) {
 			if (res.isStrictOrder()) {
 				return true;
 			}
@@ -181,7 +181,7 @@ public class Seize extends LinkedService implements ResourceUser {
 		DisplayEntity oldEnt = this.getReceivedEntity(simTime);
 		this.setReceivedEntity(ent);
 
-		ArrayList<Resource> resList = getResourceList();
+		ArrayList<ResourceProvider> resList = getResourceList();
 		ArrayList<SampleProvider> numberList = numberOfUnitsList.getValue();
 		for (int i=0; i<resList.size(); i++) {
 			int n = (int) numberList.get(i).getNextSample(simTime);
@@ -210,7 +210,7 @@ public class Seize extends LinkedService implements ResourceUser {
 
 		// Seize the resources
 		DisplayEntity ent = getReceivedEntity(simTime);
-		ArrayList<Resource> resList = getResourceList();
+		ArrayList<ResourceProvider> resList = getResourceList();
 		for (int i=0; i<resList.size(); i++) {
 			resList.get(i).seize(seizedUnits[i], ent);
 		}
@@ -220,7 +220,7 @@ public class Seize extends LinkedService implements ResourceUser {
 		return waitQueue.getValue();
 	}
 
-	public ArrayList<Resource> getResourceList() {
+	public ArrayList<ResourceProvider> getResourceList() {
 		return resourceList.getValue();
 	}
 
