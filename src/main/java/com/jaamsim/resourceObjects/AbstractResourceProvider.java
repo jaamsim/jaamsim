@@ -17,6 +17,8 @@
 package com.jaamsim.resourceObjects;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.basicsim.Entity;
@@ -70,5 +72,76 @@ public abstract class AbstractResourceProvider extends DisplayEntity implements 
 	public ArrayList<ResourceUser> getUserList() {
 		return userList;
 	}
+
+	/**
+	 * Starts resource users on their next entities.
+	 */
+	public static void notifyResourceUsers(ArrayList<Resource> resList) {
+
+		// Prepare a sorted list of the resource users that have a waiting entity
+		ArrayList<ResourceUser> list = new ArrayList<>();
+		for (Resource res : resList) {
+			for (ResourceUser ru : res.getUserList()) {
+				if (!list.contains(ru) && ru.hasWaitingEntity()) {
+					list.add(ru);
+				}
+			}
+		}
+		Collections.sort(list, userCompare);
+
+		// Attempt to start the resource users in order of priority and wait time
+		while (true) {
+
+			// Find the first resource user that can seize its resources
+			ResourceUser selection = null;
+			for (ResourceUser ru : list) {
+				if (ru.isReadyToStart()) {
+					selection = ru;
+					break;
+				}
+
+				// In strict-order mode, only the highest priority/longest wait time entity is
+				// eligible to seize its resources
+				if (ru.hasStrictResource())
+					return;
+			}
+
+			// If none of the resource users can seize its resources, then we are done
+			if (selection == null)
+				return;
+
+			// Seize the resources
+			selection.startNextEntity();
+
+			// If the selected object has no more entities, remove it from the list
+			if (!selection.hasWaitingEntity()) {
+				list.remove(selection);
+			}
+			// If it does have more entities, re-sort the list to account for the next entity
+			else {
+				Collections.sort(list, userCompare);
+			}
+		}
+	}
+
+	/**
+	 * Sorts the users of the Resource by their priority and waiting time
+	 */
+	private static class UserCompare implements Comparator<ResourceUser> {
+		@Override
+		public int compare(ResourceUser ru1, ResourceUser ru2) {
+
+			// Chose the object with the highest priority entity
+			// (lowest numerical value, i.e. 1 is higher priority than 2)
+			int ret = Integer.compare(ru1.getPriority(), ru2.getPriority());
+
+			// If the priorities are the same, choose the one with the longest waiting time
+			if (ret == 0) {
+				return Double.compare(ru2.getWaitTime(), ru1.getWaitTime());
+			}
+			return ret;
+		}
+	}
+	private static UserCompare userCompare = new UserCompare();
 
 }
