@@ -65,7 +65,7 @@ public class Release extends LinkedComponent {
 	@Override
 	public void addEntity( DisplayEntity ent ) {
 		super.addEntity(ent);
-		this.releaseResources();
+		this.releaseResources(ent);
 		this.sendToNextComponent( ent );
 	}
 
@@ -73,7 +73,7 @@ public class Release extends LinkedComponent {
 	 * Release the specified Resources.
 	 * @return
 	 */
-	public void releaseResources() {
+	public void releaseResources(DisplayEntity ent) {
 		double simTime = this.getSimTime();
 		ArrayList<Resource> resList = resourceList.getValue();
 		ArrayList<SampleProvider> numberList = numberOfUnitsList.getValue();
@@ -81,7 +81,7 @@ public class Release extends LinkedComponent {
 		// Release the Resources
 		for(int i=0; i<resList.size(); i++) {
 			int n = (int) numberList.get(i).getNextSample(simTime);
-			resList.get(i).release(n);
+			resList.get(i).release(n, ent);
 		}
 
 		// Notify any resource users that are waiting for these Resources

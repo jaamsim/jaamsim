@@ -221,7 +221,7 @@ public class EntityProcessor extends Seize {
 		// Release the resources for each entity
 		for (ProcessorEntry entry : completedEntries) {
 			for (int i = 0; i < entry.resourceUnits.length; i++) {
-				getResourceList().get(i).release(entry.resourceUnits[i]);
+				getResourceList().get(i).release(entry.resourceUnits[i], entry.entity);
 			}
 		}
 
