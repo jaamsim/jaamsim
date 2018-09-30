@@ -119,14 +119,6 @@ public class Resource extends AbstractResourceProvider {
 		return getAvailableUnits(simTime) >= n;
 	}
 
-	/**
-	 * Seize the given number of units from the resource.
-	 * @param n = number of units to seize
-	 */
-	public void seize(int n) {
-		seize(n, null);
-	}
-
 	@Override
 	public void seize(int n, DisplayEntity ent) {
 		unitsInUse += n;
@@ -138,14 +130,6 @@ public class Resource extends AbstractResourceProvider {
 			error("Capacity of resource exceeded. Capacity: %s, units in use: %s.",
 					getCapacity(simTime), unitsInUse);
 		}
-	}
-
-	/**
-	 * Release the given number of units back to the resource.
-	 * @param n = number of units to release
-	 */
-	public void release(int m) {
-		release(m, null);
 	}
 
 	@Override
