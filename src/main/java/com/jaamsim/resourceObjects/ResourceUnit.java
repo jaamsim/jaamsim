@@ -21,6 +21,7 @@ import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.ProcessFlow.StateUserEntity;
 import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.Keyword;
+import com.jaamsim.input.Output;
 
 public class ResourceUnit extends StateUserEntity implements Seizable {
 
@@ -114,6 +115,13 @@ public class ResourceUnit extends StateUserEntity implements Seizable {
 	@Override
 	public void endDowntime(DowntimeEntity down) {
 		// TODO Auto-generated method stub
+	}
+
+	@Output(name = "Assignment",
+	 description = "The entity to which this unit is assigned.",
+	    sequence = 0)
+	public DisplayEntity getAssignment(double simTime) {
+		return presentAssignment;
 	}
 
 }
