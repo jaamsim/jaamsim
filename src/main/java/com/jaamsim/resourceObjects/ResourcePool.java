@@ -16,11 +16,31 @@
  */
 package com.jaamsim.resourceObjects;
 
+import java.util.ArrayList;
+
 import com.jaamsim.Graphics.DisplayEntity;
+import com.jaamsim.basicsim.Entity;
 
 public class ResourcePool extends AbstractResourceProvider {
 
-	public ResourcePool() {}
+	private final ArrayList<Seizable> seizableList;
+
+	public ResourcePool() {
+		seizableList = new ArrayList<>();
+	}
+
+	@Override
+	public void earlyInit() {
+		super.earlyInit();
+
+		seizableList.clear();
+		for (Entity ent : Entity.getClonesOfIterator(Entity.class, Seizable.class)) {
+			Seizable unit = (Seizable) ent;
+			if (unit.getResourcePool() != this)
+				continue;
+			seizableList.add(unit);
+		}
+	}
 
 	@Override
 	public boolean canSeize(int n, DisplayEntity ent) {
