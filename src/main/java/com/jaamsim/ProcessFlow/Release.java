@@ -26,7 +26,7 @@ import com.jaamsim.Samples.SampleProvider;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InterfaceEntityListInput;
 import com.jaamsim.input.Keyword;
-import com.jaamsim.resourceObjects.Resource;
+import com.jaamsim.resourceObjects.AbstractResourceProvider;
 import com.jaamsim.resourceObjects.ResourceProvider;
 import com.jaamsim.units.DimensionlessUnit;
 
@@ -86,7 +86,7 @@ public class Release extends LinkedComponent {
 		}
 
 		// Notify any resource users that are waiting for these Resources
-		Resource.notifyResourceUsers(resList);
+		AbstractResourceProvider.notifyResourceUsers(resList);
 	}
 
 }

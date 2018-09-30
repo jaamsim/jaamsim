@@ -28,7 +28,7 @@ import com.jaamsim.input.Input;
 import com.jaamsim.input.InterfaceEntityListInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
-import com.jaamsim.resourceObjects.Resource;
+import com.jaamsim.resourceObjects.AbstractResourceProvider;
 import com.jaamsim.resourceObjects.ResourceProvider;
 import com.jaamsim.resourceObjects.ResourceUser;
 import com.jaamsim.units.DimensionlessUnit;
@@ -94,14 +94,14 @@ public class Seize extends LinkedService implements ResourceUser {
 	@Override
 	public void queueChanged() {
 		if (isReadyToStart()) {
-			Resource.notifyResourceUsers(getResourceList());
+			AbstractResourceProvider.notifyResourceUsers(getResourceList());
 		}
 	}
 
 	@Override
 	public void thresholdChanged() {
 		if (isReadyToStart()) {
-			Resource.notifyResourceUsers(getResourceList());
+			AbstractResourceProvider.notifyResourceUsers(getResourceList());
 		}
 		super.thresholdChanged();
 	}

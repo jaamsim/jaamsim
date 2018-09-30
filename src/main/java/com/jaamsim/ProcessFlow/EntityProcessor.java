@@ -29,7 +29,7 @@ import com.jaamsim.events.EventManager;
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
-import com.jaamsim.resourceObjects.Resource;
+import com.jaamsim.resourceObjects.AbstractResourceProvider;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
 
@@ -232,7 +232,7 @@ public class EntityProcessor extends Seize {
 			}
 		}
 		else {
-			Resource.notifyResourceUsers(getResourceList());
+			AbstractResourceProvider.notifyResourceUsers(getResourceList());
 		}
 
 		// Pass the entities to the next component
@@ -264,7 +264,7 @@ public class EntityProcessor extends Seize {
 	@Override
 	public void endDowntime(DowntimeEntity down) {
 		if (isReadyToStart()) {
-			Resource.notifyResourceUsers(getResourceList());
+			AbstractResourceProvider.notifyResourceUsers(getResourceList());
 		}
 		super.endDowntime(down);
 	}
@@ -311,7 +311,7 @@ public class EntityProcessor extends Seize {
 				}
 			}
 			else {
-				Resource.notifyResourceUsers(getResourceList());
+				AbstractResourceProvider.notifyResourceUsers(getResourceList());
 			}
 		}
 
