@@ -19,15 +19,27 @@ package com.jaamsim.resourceObjects;
 import com.jaamsim.BasicObjects.DowntimeEntity;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.ProcessFlow.StateUserEntity;
+import com.jaamsim.input.EntityInput;
+import com.jaamsim.input.Keyword;
 
 public class ResourceUnit extends StateUserEntity implements Seizable {
+
+	@Keyword(description = "The name of the ResourcePool from which this ResourceUnit can be "
+	                     + "selected.",
+	         exampleList = {"ResourcePool1"})
+	private final EntityInput<ResourcePool> resourcePool;
+
+	{
+		resourcePool = new EntityInput<>(ResourcePool.class, "ResourcePool", KEY_INPUTS, null);
+		resourcePool.setRequired(true);
+		this.addInput(resourcePool);
+	}
 
 	public ResourceUnit() {}
 
 	@Override
 	public ResourcePool getResourcePool() {
-		// TODO Auto-generated method stub
-		return null;
+		return resourcePool.getValue();
 	}
 
 	@Override
