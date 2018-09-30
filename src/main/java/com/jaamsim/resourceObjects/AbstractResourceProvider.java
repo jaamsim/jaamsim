@@ -17,7 +17,31 @@
 package com.jaamsim.resourceObjects;
 
 import com.jaamsim.Graphics.DisplayEntity;
+import com.jaamsim.input.BooleanInput;
+import com.jaamsim.input.Keyword;
 
 public abstract class AbstractResourceProvider extends DisplayEntity implements ResourceProvider {
+
+	@Keyword(description = "If TRUE, the next entity to seize the resource will be chosen "
+	                     + "strictly on the basis of priority and waiting time. If this entity "
+	                     + "is unable to seize the resource because of other restrictions such as "
+	                     + "an OperatingThreshold input or the unavailability of other resources "
+	                     + "it needs to seize at the same time, then other entities with lower "
+	                     + "priority or shorter waiting time will NOT be allowed to seize the "
+	                     + "resource. If FALSE, the entities will be tested in the same order of "
+	                     + "priority and waiting time, but the first entity that is able to seize "
+	                     + "the resource will be allowed to do so.",
+	         exampleList = {"TRUE"})
+	private final BooleanInput strictOrder;
+
+	{
+		strictOrder = new BooleanInput("StrictOrder", KEY_INPUTS, false);
+		this.addInput(strictOrder);
+	}
+
+	@Override
+	public boolean isStrictOrder() {
+		return strictOrder.getValue();
+	}
 
 }

@@ -32,7 +32,6 @@ import com.jaamsim.basicsim.Entity;
 import com.jaamsim.events.Conditional;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.events.ProcessTarget;
-import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
@@ -48,18 +47,6 @@ public class Resource extends AbstractResourceProvider {
 	                     + "have already seized Resource capacity.",
 	         exampleList = {"3", "TimeSeries1", "this.attrib1"})
 	private final SampleInput capacity;
-
-	@Keyword(description = "If TRUE, the next entity to seize the resource will be chosen "
-	                     + "strictly on the basis of priority and waiting time. If this entity "
-	                     + "is unable to seize the resource because of other restrictions such as "
-	                     + "an OperatingThreshold input or the unavailability of other resources "
-	                     + "it needs to seize at the same time, then other entities with lower "
-	                     + "priority or shorter waiting time will NOT be allowed to seize the "
-	                     + "resource. If FALSE, the entities will be tested in the same order of "
-	                     + "priority and waiting time, but the first entity that is able to seize "
-	                     + "the resource will be allowed to do so.",
-	         exampleList = {"TRUE"})
-	private final BooleanInput strictOrder;
 
 	private int unitsInUse;  // number of resource units that are being used at present
 	private ArrayList<ResourceUser> userList;  // objects that seize this resource
@@ -79,9 +66,6 @@ public class Resource extends AbstractResourceProvider {
 		capacity.setEntity(this);
 		capacity.setValidRange(0, Double.POSITIVE_INFINITY);
 		this.addInput(capacity);
-
-		strictOrder = new BooleanInput("StrictOrder", KEY_INPUTS, false);
-		this.addInput(strictOrder);
 	}
 
 	public Resource() {
@@ -240,11 +224,6 @@ public class Resource extends AbstractResourceProvider {
 				Collections.sort(list, userCompare);
 			}
 		}
-	}
-
-	@Override
-	public boolean isStrictOrder() {
-		return strictOrder.getValue();
 	}
 
 	/**
