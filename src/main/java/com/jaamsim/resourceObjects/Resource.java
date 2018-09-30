@@ -49,7 +49,6 @@ public class Resource extends AbstractResourceProvider {
 	private final SampleInput capacity;
 
 	private int unitsInUse;  // number of resource units that are being used at present
-	private ArrayList<ResourceUser> userList;  // objects that seize this resource
 	private int lastCapacity; // capacity for the resource
 
 	//	Statistics
@@ -69,7 +68,6 @@ public class Resource extends AbstractResourceProvider {
 	}
 
 	public Resource() {
-		userList = new ArrayList<>();
 		stats = new TimeBasedStatistics();
 		freq = new TimeBasedFrequency(0, 10);
 	}
@@ -104,14 +102,6 @@ public class Resource extends AbstractResourceProvider {
 		freq.addValue(0.0d,  0);
 		unitsSeized = 0;
 		unitsReleased = 0;
-
-		// Prepare a list of the objects that seize this resource
-		userList.clear();
-		for (Entity ent : Entity.getClonesOfIterator(Entity.class, ResourceUser.class)) {
-			ResourceUser ru = (ResourceUser) ent;
-			if (ru.requiresResource(this))
-				userList.add(ru);
-		}
 	}
 
 	@Override
@@ -170,11 +160,6 @@ public class Resource extends AbstractResourceProvider {
 		freq.addValue(simTime, unitsInUse);
 	}
 
-	@Override
-	public ArrayList<ResourceUser> getUserList() {
-		return userList;
-	}
-
 	/**
 	 * Starts resource users on their next entities.
 	 */
@@ -183,7 +168,7 @@ public class Resource extends AbstractResourceProvider {
 		// Prepare a sorted list of the resource users that have a waiting entity
 		ArrayList<ResourceUser> list = new ArrayList<>();
 		for (Resource res : resList) {
-			for (ResourceUser ru : res.userList) {
+			for (ResourceUser ru : res.getUserList()) {
 				if (!list.contains(ru) && ru.hasWaitingEntity()) {
 					list.add(ru);
 				}

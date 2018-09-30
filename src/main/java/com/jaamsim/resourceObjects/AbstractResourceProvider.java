@@ -16,7 +16,10 @@
  */
 package com.jaamsim.resourceObjects;
 
+import java.util.ArrayList;
+
 import com.jaamsim.Graphics.DisplayEntity;
+import com.jaamsim.basicsim.Entity;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.Keyword;
 
@@ -34,14 +37,38 @@ public abstract class AbstractResourceProvider extends DisplayEntity implements 
 	         exampleList = {"TRUE"})
 	private final BooleanInput strictOrder;
 
+	private ArrayList<ResourceUser> userList;  // objects that can use this provider's units
+
 	{
 		strictOrder = new BooleanInput("StrictOrder", KEY_INPUTS, false);
 		this.addInput(strictOrder);
 	}
 
+	public AbstractResourceProvider() {
+		userList = new ArrayList<>();
+	}
+
+	@Override
+	public void earlyInit() {
+		super.earlyInit();
+
+		// Prepare a list of the objects that seize this resource
+		userList.clear();
+		for (Entity ent : Entity.getClonesOfIterator(Entity.class, ResourceUser.class)) {
+			ResourceUser ru = (ResourceUser) ent;
+			if (ru.requiresResource(this))
+				userList.add(ru);
+		}
+	}
+
 	@Override
 	public boolean isStrictOrder() {
 		return strictOrder.getValue();
+	}
+
+	@Override
+	public ArrayList<ResourceUser> getUserList() {
+		return userList;
 	}
 
 }
