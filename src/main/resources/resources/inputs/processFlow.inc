@@ -7,7 +7,6 @@ Define ObjectType {
 	Queue
 	EntityConveyor
 	EntityDelay
-	Resource
 	Seize
 	Release
 	EntityProcessor
@@ -34,7 +33,6 @@ Define	IconModel  {
 	SourceIconModel
 	SinkIconModel
 	ServerIconModel
-	ResourceIconModel
 	SeizeIconModel
 	ReleaseIconModel
 	EntityProcessorIconModel
@@ -58,7 +56,6 @@ EntityLauncherIconModel ImageFile { '<res>/images/EntityLauncher-256.png' }  Tra
 SourceIconModel         ImageFile { '<res>/images/Source-256.png'       }  Transparent { TRUE }
 SinkIconModel           ImageFile { '<res>/images/Sink-256.png'         }  Transparent { TRUE }
 ServerIconModel         ImageFile { '<res>/images/Server-256.png'       }  Transparent { TRUE }
-ResourceIconModel       ImageFile { '<res>/images/Resource-256.png'     }  Transparent { TRUE }
 SeizeIconModel          ImageFile { '<res>/images/Seize-256.png'        }  Transparent { TRUE }
 ReleaseIconModel        ImageFile { '<res>/images/Release-256.png'      }  Transparent { TRUE }
 EntityProcessorIconModel  ImageFile { '<res>/images/EntityProcessor-256.png' }  Transparent { TRUE }
@@ -87,7 +84,6 @@ Server                  JavaClass { com.jaamsim.ProcessFlow.Server              
 Queue                   JavaClass { com.jaamsim.ProcessFlow.Queue                 }  Palette { 'Process Flow' }  DefaultDisplayModel { Triangle                 } IconFile { '<res>/images/Queue-24.png'           } DefaultSize { 0.5 0.5 0.0 m }
 EntityConveyor          JavaClass { com.jaamsim.ProcessFlow.EntityConveyor        }  Palette { 'Process Flow' }  DefaultDisplayModel { EntityConveyorModel      } IconFile { '<res>/images/Line-24.png'            }
 EntityDelay             JavaClass { com.jaamsim.ProcessFlow.EntityDelay           }  Palette { 'Process Flow' }  DefaultDisplayModel { EntityDelayModel         } IconFile { '<res>/images/Line-24.png'            }
-Resource                JavaClass { com.jaamsim.resourceObjects.Resource          }  Palette { 'Process Flow' }  DefaultDisplayModel { ResourceIconModel        } IconFile { '<res>/images/Resource-24.png'        }
 Seize                   JavaClass { com.jaamsim.ProcessFlow.Seize                 }  Palette { 'Process Flow' }  DefaultDisplayModel { SeizeIconModel           } IconFile { '<res>/images/Seize-24.png'           }
 Release                 JavaClass { com.jaamsim.ProcessFlow.Release               }  Palette { 'Process Flow' }  DefaultDisplayModel { ReleaseIconModel         } IconFile { '<res>/images/Release-24.png'         }
 EntityProcessor         JavaClass { com.jaamsim.ProcessFlow.EntityProcessor       }  Palette { 'Process Flow' }  DefaultDisplayModel { EntityProcessorIconModel } IconFile { '<res>/images/EntityProcessor-24.png' }
@@ -116,7 +112,6 @@ Server             Description { 'Processes a received entity over a specified d
 Queue              Description { 'Stores received entities until they are needed.' }
 EntityConveyor     Description { 'Transports a received entity along a specified path at a fixed speed.' }
 EntityDelay        Description { 'Delays a received entity by a specified duration.' }
-Resource           Description { 'Set of identical resource units that can be seized and released by various processes.' }
 Seize              Description { 'Seizes one or more units of a Resource.' }
 Release            Description { 'Releases one or more units of a Resource.' }
 EntityProcessor    Description { 'Seizes one or more Resources, delays the received entity by a specified duration, and releases the resources.' }
