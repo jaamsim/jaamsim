@@ -17,6 +17,7 @@
 package com.jaamsim.resourceObjects;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.basicsim.Entity;
@@ -42,20 +43,80 @@ public class ResourcePool extends AbstractResourceProvider {
 		}
 	}
 
+	public ArrayList<Seizable> getEligibleList(DisplayEntity ent) {
+		ArrayList<Seizable> ret = new ArrayList<>(seizableList.size());
+		for (Seizable unit : seizableList) {
+			if (!unit.canSeize(ent))
+				continue;
+			ret.add(unit);
+		}
+		return ret;
+	}
+
 	@Override
 	public boolean canSeize(int n, DisplayEntity ent) {
-		// TODO Auto-generated method stub
-		return false;
+		return n <= getEligibleList(ent).size();
 	}
 
 	@Override
 	public void seize(int n, DisplayEntity ent) {
-		// TODO Auto-generated method stub
+
+		// List the units that are eligible to be seized
+		ArrayList<Seizable> eligibleList = getEligibleList(ent);
+		if (n > eligibleList.size())
+			error("Insufficient resouce units are available: available=%s, required=%s",
+					eligibleList.size(), n);
+
+		// Sort the units by priority and release time
+		ArrayList<SeizableUnit> list = new ArrayList<>(eligibleList.size());
+		for (Seizable unit : eligibleList) {
+			list.add(new SeizableUnit(unit, ent));
+		}
+		Collections.sort(list);
+
+		// Seize the first n units
+		for (int i = 0; i < n; i++) {
+			list.get(i).unit.seize(ent);
+		}
 	}
 
 	@Override
 	public void release(int n, DisplayEntity ent) {
-		// TODO Auto-generated method stub
+		for (Seizable unit : seizableList) {
+			if (unit.getAssignment() != ent)
+				continue;
+			unit.release();
+		}
+	}
+
+	private static class SeizableUnit implements Comparable<SeizableUnit> {
+		private final Seizable unit;
+		private final int priority;
+		private final long ticks;
+
+		private SeizableUnit(Seizable u, DisplayEntity ent) {
+			unit = u;
+			priority = u.getPriority(ent);
+			ticks = u.getLastReleaseTicks();
+		}
+
+		@Override
+		public int compareTo(SeizableUnit su) {
+
+			// Compare priorities
+			int ret = Integer.compare(priority, su.priority);
+			if (ret != 0)
+				return ret;
+
+			// Priorities are equal
+			// Compare the release times
+			return Long.compare(ticks, su.ticks);
+		}
+
+		@Override
+		public String toString() {
+			return unit.toString();
+		}
 	}
 
 }
