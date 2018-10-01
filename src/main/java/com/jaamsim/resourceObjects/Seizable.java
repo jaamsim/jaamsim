@@ -50,4 +50,12 @@ public interface Seizable {
 	 */
 	public DisplayEntity getAssignment();
 
+	/**
+	 * Returns the priority for this unit to be used by the ResourcePool when choosing the next
+	 * unit to be seized.
+	 * @param ent - entity that would seize this unit
+	 * @return priority for this unit
+	 */
+	public int getPriority(DisplayEntity ent);
+
 }

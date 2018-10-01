@@ -44,6 +44,15 @@ public class ResourceUnit extends StateUserEntity implements Seizable {
 	         exampleList = {"'this.Assignment.type == 1'"})
 	private final ExpressionInput assignmentCondition;
 
+	@Keyword(description = "An optional expression that returns the priority for this unit to be "
+	                     + "used by the ResourcePool when choosing the next unit to be seized. "
+	                     + "The calculated priority should be a positive integer, with a lower "
+	                     + "value indicating a higher priority. "
+	                     + "The entry 'this.Assignment' can be used in the expression to "
+	                     + "represent the entity that would seize the unit.",
+	         exampleList = {"'this.Assignment.type == 1 ? 1 : 2'"})
+	private final ExpressionInput priority;
+
 	private DisplayEntity presentAssignment;  // entity to which this unit is assigned
 
 	{
@@ -55,6 +64,12 @@ public class ResourceUnit extends StateUserEntity implements Seizable {
 		assignmentCondition.setEntity(this);
 		assignmentCondition.setUnitType(DimensionlessUnit.class);
 		this.addInput(assignmentCondition);
+
+		priority = new ExpressionInput("Priority", KEY_INPUTS, null);
+		priority.setEntity(this);
+		priority.setUnitType(DimensionlessUnit.class);
+		priority.setDefaultText("1");
+		this.addInput(priority);
 	}
 
 	public ResourceUnit() {}
@@ -129,6 +144,32 @@ public class ResourceUnit extends StateUserEntity implements Seizable {
 	@Override
 	public DisplayEntity getAssignment() {
 		return presentAssignment;
+	}
+
+	@Override
+	public int getPriority(DisplayEntity ent) {
+		Expression exp = priority.getValue();
+		if (exp == null)
+			return 1;
+
+		// Temporarily set the present user so that the expression can be evaluated
+		DisplayEntity oldAssignment = presentAssignment;
+		presentAssignment = ent;
+
+		// Evaluate the condition for the proposed user
+		int ret = 0;
+		double simTime = getSimTime();
+		try {
+			ret = (int) ExpEvaluator.evaluateExpression(exp, simTime).value;
+		}
+		catch (ExpError e) {
+			throw new ErrorException(this, e);
+		}
+
+		// Reset the original user
+		presentAssignment = oldAssignment;
+
+		return ret;
 	}
 
 	@Override
