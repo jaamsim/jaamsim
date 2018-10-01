@@ -50,20 +50,39 @@ public class ResourceUnit extends StateUserEntity implements Seizable {
 		return resourcePool.getValue();
 	}
 
+	/**
+	 * Tests whether the specified entity is eligible to seize this unit.
+	 * @param ent - entity to be tested
+	 * @return true if the entity is eligible
+	 */
+	public boolean isAllowed(DisplayEntity ent) {
+		return true;
+	}
+
 	@Override
 	public boolean canSeize(DisplayEntity ent) {
-		// TODO Auto-generated method stub
-		return false;
+		return (presentAssignment == null && isAllowed(ent));
 	}
 
 	@Override
 	public void seize(DisplayEntity ent) {
-		// TODO Auto-generated method stub
+		if (!canSeize(ent)) {
+			error("Unit is already in use: assignment=%s, entity=%s", presentAssignment, ent);
+		}
+		presentAssignment = ent;
+
+		// Set the new state
+		setBusy(true);
+		setPresentState();
 	}
 
 	@Override
 	public void release() {
-		// TODO Auto-generated method stub
+		presentAssignment = null;
+
+		// Set the new state
+		setBusy(false);
+		setPresentState();
 	}
 
 	@Override
