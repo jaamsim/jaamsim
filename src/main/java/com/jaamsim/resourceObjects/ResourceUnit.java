@@ -29,6 +29,8 @@ public class ResourceUnit extends StateUserEntity implements Seizable {
 	         exampleList = {"ResourcePool1"})
 	private final EntityInput<ResourcePool> resourcePool;
 
+	private DisplayEntity presentAssignment;  // entity to which this unit is assigned
+
 	{
 		resourcePool = new EntityInput<>(ResourcePool.class, "ResourcePool", KEY_INPUTS, null);
 		resourcePool.setRequired(true);
@@ -36,6 +38,12 @@ public class ResourceUnit extends StateUserEntity implements Seizable {
 	}
 
 	public ResourceUnit() {}
+
+	@Override
+	public void earlyInit() {
+		super.earlyInit();
+		presentAssignment = null;
+	}
 
 	@Override
 	public ResourcePool getResourcePool() {
@@ -60,8 +68,7 @@ public class ResourceUnit extends StateUserEntity implements Seizable {
 
 	@Override
 	public DisplayEntity getAssignment() {
-		// TODO Auto-generated method stub
-		return null;
+		return presentAssignment;
 	}
 
 	@Override
