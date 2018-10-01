@@ -19,9 +19,15 @@ package com.jaamsim.resourceObjects;
 import com.jaamsim.BasicObjects.DowntimeEntity;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.ProcessFlow.StateUserEntity;
+import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.input.EntityInput;
+import com.jaamsim.input.ExpError;
+import com.jaamsim.input.ExpEvaluator;
+import com.jaamsim.input.ExpParser.Expression;
+import com.jaamsim.input.ExpressionInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
+import com.jaamsim.units.DimensionlessUnit;
 
 public class ResourceUnit extends StateUserEntity implements Seizable {
 
@@ -30,12 +36,25 @@ public class ResourceUnit extends StateUserEntity implements Seizable {
 	         exampleList = {"ResourcePool1"})
 	private final EntityInput<ResourcePool> resourcePool;
 
+	@Keyword(description = "An optional expression that tests whether an entity is elible to "
+	                     + "seize this unit. "
+	                     + "The entry 'this.Assignment' represents the entity that is being "
+	                     + "tested in the expression. "
+	                     + "The expression should return 1 (true) if the entity is eligible.",
+	         exampleList = {"'this.Assignment.type == 1'"})
+	private final ExpressionInput assignmentCondition;
+
 	private DisplayEntity presentAssignment;  // entity to which this unit is assigned
 
 	{
 		resourcePool = new EntityInput<>(ResourcePool.class, "ResourcePool", KEY_INPUTS, null);
 		resourcePool.setRequired(true);
 		this.addInput(resourcePool);
+
+		assignmentCondition = new ExpressionInput("AssignmentCondition", KEY_INPUTS, null);
+		assignmentCondition.setEntity(this);
+		assignmentCondition.setUnitType(DimensionlessUnit.class);
+		this.addInput(assignmentCondition);
 	}
 
 	public ResourceUnit() {}
@@ -57,7 +76,28 @@ public class ResourceUnit extends StateUserEntity implements Seizable {
 	 * @return true if the entity is eligible
 	 */
 	public boolean isAllowed(DisplayEntity ent) {
-		return true;
+		Expression exp = assignmentCondition.getValue();
+		if (exp == null)
+			return true;
+
+		// Temporarily set the present user so that the expression can be evaluated
+		DisplayEntity oldAssignment = presentAssignment;
+		presentAssignment = ent;
+
+		// Evaluate the condition for the proposed user
+		boolean ret = false;
+		double simTime = getSimTime();
+		try {
+			ret = ExpEvaluator.evaluateExpression(exp, simTime).value != 0;
+		}
+		catch (ExpError e) {
+			throw new ErrorException(this, e);
+		}
+
+		// Reset the original user
+		presentAssignment = oldAssignment;
+
+		return ret;
 	}
 
 	@Override
