@@ -54,6 +54,7 @@ public class ResourceUnit extends StateUserEntity implements Seizable {
 	private final ExpressionInput priority;
 
 	private DisplayEntity presentAssignment;  // entity to which this unit is assigned
+	private long lastReleaseTicks;  // clock ticks at which the unit was unassigned
 
 	{
 		resourcePool = new EntityInput<>(ResourcePool.class, "ResourcePool", KEY_INPUTS, null);
@@ -78,6 +79,7 @@ public class ResourceUnit extends StateUserEntity implements Seizable {
 	public void earlyInit() {
 		super.earlyInit();
 		presentAssignment = null;
+		lastReleaseTicks = 0L;
 	}
 
 	@Override
@@ -135,6 +137,7 @@ public class ResourceUnit extends StateUserEntity implements Seizable {
 	@Override
 	public void release() {
 		presentAssignment = null;
+		lastReleaseTicks = getSimTicks();
 
 		// Set the new state
 		setBusy(false);
@@ -170,6 +173,11 @@ public class ResourceUnit extends StateUserEntity implements Seizable {
 		presentAssignment = oldAssignment;
 
 		return ret;
+	}
+
+	@Override
+	public long getLastReleaseTicks() {
+		return lastReleaseTicks;
 	}
 
 	@Override

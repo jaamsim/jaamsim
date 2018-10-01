@@ -58,4 +58,10 @@ public interface Seizable {
 	 */
 	public int getPriority(DisplayEntity ent);
 
+	/**
+	 * Returns the last time in clock ticks at which this unit was unassigned.
+	 * @return last clock tick at which the unit was released
+	 */
+	public long getLastReleaseTicks();
+
 }
