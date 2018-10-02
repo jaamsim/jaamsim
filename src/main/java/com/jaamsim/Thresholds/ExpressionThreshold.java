@@ -21,6 +21,7 @@ import com.jaamsim.DisplayModels.ShapeModel;
 import com.jaamsim.basicsim.EntityTarget;
 import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.events.Conditional;
+import com.jaamsim.events.EventHandle;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.BooleanInput;
@@ -207,8 +208,9 @@ public class ExpressionThreshold extends Threshold {
 		boolean ret = this.getOpenConditionValue(getSimTime());
 
 		// If necessary, schedule an event to change the saved state
-		if (ret != super.isOpen())
-			this.scheduleProcessTicks(0, 2, setOpenTarget);
+		if (ret != super.isOpen() && !setOpenHandle.isScheduled()) {
+			this.scheduleProcessTicks(0L, 2, true, setOpenTarget, setOpenHandle);  // FIFO
+		}
 
 		// Return the value calculated on demand
 		return ret;
@@ -241,7 +243,6 @@ public class ExpressionThreshold extends Threshold {
 	}
 	private final ProcessTarget doOpenClose = new DoOpenCloseTarget();
 
-	private final SetOpenTarget setOpenTarget = new SetOpenTarget(this);
 	private static class SetOpenTarget extends EntityTarget<ExpressionThreshold> {
 		SetOpenTarget(ExpressionThreshold thresh) {
 			super(thresh, "setOpen");
@@ -252,6 +253,8 @@ public class ExpressionThreshold extends Threshold {
 			ent.setOpen(ent.getOpenConditionValue(ent.getSimTime()));
 		}
 	}
+	private final SetOpenTarget setOpenTarget = new SetOpenTarget(this);
+	private final EventHandle setOpenHandle = new EventHandle();
 
 	@Override
 	public void updateGraphics(double simTime) {
