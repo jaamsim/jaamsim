@@ -53,11 +53,19 @@ public abstract class Device extends StateUserEntity {
 	 */
 	public final void restart() {
 		if (isTraceFlag()) trace(0, "restart");
-		if (processing)
+		if (processing || !isAbleToRestart())
 			return;
 		processing = true;
 		setBusy(true);
 		startStep();
+	}
+
+	/**
+	 * Returns whether the caller can be started.
+	 * @return true if the caller can be started
+	 */
+	public boolean isAbleToRestart() {
+		return isAvailable();
 	}
 
 	/**
