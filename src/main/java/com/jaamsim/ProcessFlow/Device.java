@@ -32,6 +32,7 @@ public abstract class Device extends StateUserEntity {
 	private boolean immediateDowntimePending;  // indicates that an immediate downtime event is ready to start
 	private boolean stepCompleted;  // indicates that the last process time step was completed
 	private boolean processing;  // indicates that the process loop is active
+	private long startUpTicks;  // clock ticks at which device was started most recently
 
 	public Device() {}
 
@@ -46,6 +47,7 @@ public abstract class Device extends StateUserEntity {
 		immediateDowntimePending = false;
 		stepCompleted = true;
 		processing = false;
+		startUpTicks = -1L;
 	}
 
 	/**
@@ -56,6 +58,7 @@ public abstract class Device extends StateUserEntity {
 		if (processing || !isAbleToRestart())
 			return;
 		processing = true;
+		startUpTicks = getSimTicks();
 		setBusy(true);
 		startStep();
 	}
@@ -66,6 +69,14 @@ public abstract class Device extends StateUserEntity {
 	 */
 	public boolean isAbleToRestart() {
 		return isAvailable();
+	}
+
+	/**
+	 * Returns the simulation time in clock ticks at which the device was started most recently.
+	 * @return start time in clock ticks
+	 */
+	public long getStartUpTicks() {
+		return startUpTicks;
 	}
 
 	/**
@@ -199,6 +210,7 @@ public abstract class Device extends StateUserEntity {
 
 		// Set the process to its stopped condition
 		this.setProcessStopped();
+		startUpTicks = -1L;
 	}
 
 	/**
