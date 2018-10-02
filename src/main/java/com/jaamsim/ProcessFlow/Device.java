@@ -206,7 +206,8 @@ public abstract class Device extends StateUserEntity {
 		this.setPresentState();
 
 		// Notify other processes that are dependent on this one
-		this.processChanged();
+		if (getSimTicks() > startUpTicks)
+			this.processChanged();
 
 		// Set the process to its stopped condition
 		this.setProcessStopped();
