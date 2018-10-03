@@ -41,6 +41,8 @@ public abstract class AbstractResourceProvider extends DisplayEntity implements 
 
 	private ArrayList<ResourceUser> userList;  // objects that can use this provider's units
 
+	public final static String ERR_CAPACITY = "Insufficient resource units: available=%s, req'd=%s";
+
 	{
 		strictOrder = new BooleanInput("StrictOrder", KEY_INPUTS, false);
 		this.addInput(strictOrder);

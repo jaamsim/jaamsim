@@ -64,8 +64,7 @@ public class ResourcePool extends AbstractResourceProvider {
 		// List the units that are eligible to be seized
 		ArrayList<Seizable> eligibleList = getEligibleList(ent);
 		if (n > eligibleList.size())
-			error("Insufficient resouce units are available: available=%s, required=%s",
-					eligibleList.size(), n);
+			error(ERR_CAPACITY, eligibleList.size(), n);
 
 		// Sort the units by priority and release time
 		ArrayList<SeizableUnit> list = new ArrayList<>(eligibleList.size());

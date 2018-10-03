@@ -121,15 +121,14 @@ public class Resource extends AbstractResourceProvider {
 
 	@Override
 	public void seize(int n, DisplayEntity ent) {
+		double simTime = getSimTime();
+		if (getAvailableUnits(simTime) < n)
+			error(ERR_CAPACITY, getCapacity(simTime), n);
+
 		unitsInUse += n;
 		unitsSeized += n;
-		double simTime = this.getSimTime();
 		stats.addValue(simTime, unitsInUse);
 		freq.addValue(simTime, unitsInUse);
-		if (getAvailableUnits(simTime) < 0) {
-			error("Capacity of resource exceeded. Capacity: %s, units in use: %s.",
-					getCapacity(simTime), unitsInUse);
-		}
 	}
 
 	@Override
