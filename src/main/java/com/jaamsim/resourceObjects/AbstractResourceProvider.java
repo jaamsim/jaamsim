@@ -55,14 +55,7 @@ public abstract class AbstractResourceProvider extends DisplayEntity implements 
 	@Override
 	public void earlyInit() {
 		super.earlyInit();
-
-		// Prepare a list of the objects that seize this resource
-		userList.clear();
-		for (Entity ent : Entity.getClonesOfIterator(Entity.class, ResourceUser.class)) {
-			ResourceUser ru = (ResourceUser) ent;
-			if (ru.requiresResource(this))
-				userList.add(ru);
-		}
+		userList = getUserList(this);
 	}
 
 	@Override
@@ -73,6 +66,22 @@ public abstract class AbstractResourceProvider extends DisplayEntity implements 
 	@Override
 	public ArrayList<ResourceUser> getUserList() {
 		return userList;
+	}
+
+	/**
+	 * Returns a list of the ResourceUsers (such as Seize) that want to seize the specified
+	 * ResourceProvider (such as ResourcePool).
+	 * @param pool - specified ResourceProvider
+	 * @return list of ResourceUsers that want to seize this ResourceProvider
+	 */
+	public static ArrayList<ResourceUser> getUserList(ResourceProvider pool) {
+		ArrayList<ResourceUser> ret = new ArrayList<>();
+		for (Entity ent : Entity.getClonesOfIterator(Entity.class, ResourceUser.class)) {
+			ResourceUser ru = (ResourceUser) ent;
+			if (ru.requiresResource(pool))
+				ret.add(ru);
+		}
+		return ret;
 	}
 
 	/**
