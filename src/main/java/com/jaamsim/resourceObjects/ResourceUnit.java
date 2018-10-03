@@ -16,6 +16,8 @@
  */
 package com.jaamsim.resourceObjects;
 
+import java.util.ArrayList;
+
 import com.jaamsim.BasicObjects.DowntimeEntity;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.ProcessFlow.StateUserEntity;
@@ -29,10 +31,11 @@ import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.units.DimensionlessUnit;
 
-public class ResourceUnit extends StateUserEntity implements Seizable {
+public class ResourceUnit extends StateUserEntity implements Seizable, ResourceProvider {
 
 	@Keyword(description = "The name of the ResourcePool from which this ResourceUnit can be "
-	                     + "selected.",
+	                     + "selected. If no pool is specified, the ResourceUnit itself is "
+	                     + "considered to be a ResourcePool with one unit.",
 	         exampleList = {"ResourcePool1"})
 	private final EntityInput<ResourcePool> resourcePool;
 
@@ -55,10 +58,10 @@ public class ResourceUnit extends StateUserEntity implements Seizable {
 
 	private DisplayEntity presentAssignment;  // entity to which this unit is assigned
 	private long lastReleaseTicks;  // clock ticks at which the unit was unassigned
+	private ArrayList<ResourceUser> userList;  // objects that can use this resource
 
 	{
 		resourcePool = new EntityInput<>(ResourcePool.class, "ResourcePool", KEY_INPUTS, null);
-		resourcePool.setRequired(true);
 		this.addInput(resourcePool);
 
 		assignmentCondition = new ExpressionInput("AssignmentCondition", KEY_INPUTS, null);
@@ -73,13 +76,16 @@ public class ResourceUnit extends StateUserEntity implements Seizable {
 		this.addInput(priority);
 	}
 
-	public ResourceUnit() {}
+	public ResourceUnit() {
+		userList = new ArrayList<>();
+	}
 
 	@Override
 	public void earlyInit() {
 		super.earlyInit();
 		presentAssignment = null;
 		lastReleaseTicks = 0L;
+		userList = AbstractResourceProvider.getUserList(this);
 	}
 
 	@Override
@@ -178,6 +184,35 @@ public class ResourceUnit extends StateUserEntity implements Seizable {
 	@Override
 	public long getLastReleaseTicks() {
 		return lastReleaseTicks;
+	}
+
+	// ResourcePool interface methods
+
+	@Override
+	public boolean canSeize(int n, DisplayEntity ent) {
+		return canSeize(ent) && n <= 1;
+	}
+
+	@Override
+	public void seize(int n, DisplayEntity ent) {
+		if (n > 1)
+			error(AbstractResourceProvider.ERR_CAPACITY, 1, n);
+		seize(ent);
+	}
+
+	@Override
+	public void release(int n, DisplayEntity ent) {
+		release();
+	}
+
+	@Override
+	public ArrayList<ResourceUser> getUserList() {
+		return userList;
+	}
+
+	@Override
+	public boolean isStrictOrder() {
+		return false;
 	}
 
 	@Override
