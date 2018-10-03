@@ -209,6 +209,9 @@ public class ExpressionThreshold extends Threshold {
 
 		// If necessary, schedule an event to change the saved state
 		if (ret != super.isOpen() && !setOpenHandle.isScheduled()) {
+			if (isTraceFlag()) {
+				trace(0, "isOpen - super.isOpen=%s, openCondition=%s", super.isOpen(), ret);
+			}
 			this.scheduleProcessTicks(0L, 2, true, setOpenTarget, setOpenHandle);  // FIFO
 		}
 
@@ -250,7 +253,9 @@ public class ExpressionThreshold extends Threshold {
 
 		@Override
 		public void process() {
-			ent.setOpen(ent.getOpenConditionValue(ent.getSimTime()));
+			boolean bool = ent.getOpenConditionValue(ent.getSimTime());
+			if (ent.isTraceFlag()) ent.trace(0, "setOpen(%s)", bool);
+			ent.setOpen(bool);
 		}
 	}
 	private final SetOpenTarget setOpenTarget = new SetOpenTarget(this);
