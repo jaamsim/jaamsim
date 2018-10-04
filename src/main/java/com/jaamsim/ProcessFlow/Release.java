@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2018 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,16 +23,18 @@ import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleListInput;
 import com.jaamsim.Samples.SampleProvider;
-import com.jaamsim.input.EntityListInput;
 import com.jaamsim.input.Input;
+import com.jaamsim.input.InterfaceEntityListInput;
 import com.jaamsim.input.Keyword;
+import com.jaamsim.resourceObjects.AbstractResourceProvider;
+import com.jaamsim.resourceObjects.ResourceProvider;
 import com.jaamsim.units.DimensionlessUnit;
 
 public class Release extends LinkedComponent {
 
 	@Keyword(description = "The Resources from which units are to be released.",
 	         exampleList = {"Resource1 Resource2"})
-	private final EntityListInput<Resource> resourceList;
+	private final InterfaceEntityListInput<ResourceProvider> resourceList;
 
 	@Keyword(description = "The number of units to release from the Resources specified by the "
 	                     + "'ResourceList' keyword.",
@@ -39,7 +42,7 @@ public class Release extends LinkedComponent {
 	private final SampleListInput numberOfUnitsList;
 
 	{
-		resourceList = new EntityListInput<>(Resource.class, "ResourceList", KEY_INPUTS, null);
+		resourceList = new InterfaceEntityListInput<>(ResourceProvider.class, "ResourceList", KEY_INPUTS, null);
 		resourceList.setRequired(true);
 		this.addInput( resourceList);
 		this.addSynonym(resourceList, "Resource");
@@ -63,7 +66,7 @@ public class Release extends LinkedComponent {
 	@Override
 	public void addEntity( DisplayEntity ent ) {
 		super.addEntity(ent);
-		this.releaseResources();
+		this.releaseResources(ent);
 		this.sendToNextComponent( ent );
 	}
 
@@ -71,19 +74,19 @@ public class Release extends LinkedComponent {
 	 * Release the specified Resources.
 	 * @return
 	 */
-	public void releaseResources() {
+	public void releaseResources(DisplayEntity ent) {
 		double simTime = this.getSimTime();
-		ArrayList<Resource> resList = resourceList.getValue();
+		ArrayList<ResourceProvider> resList = resourceList.getValue();
 		ArrayList<SampleProvider> numberList = numberOfUnitsList.getValue();
 
 		// Release the Resources
 		for(int i=0; i<resList.size(); i++) {
 			int n = (int) numberList.get(i).getNextSample(simTime);
-			resList.get(i).release(n);
+			resList.get(i).release(n, ent);
 		}
 
 		// Notify any resource users that are waiting for these Resources
-		Resource.notifyResourceUsers(resList);
+		AbstractResourceProvider.notifyResourceUsers(resList);
 	}
 
 }

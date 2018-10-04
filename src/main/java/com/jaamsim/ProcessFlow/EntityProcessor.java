@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2017 JaamSim Software Inc.
+ * Copyright (C) 2017-2018 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,6 +29,7 @@ import com.jaamsim.events.EventManager;
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
+import com.jaamsim.resourceObjects.AbstractResourceProvider;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
 
@@ -220,7 +221,7 @@ public class EntityProcessor extends Seize {
 		// Release the resources for each entity
 		for (ProcessorEntry entry : completedEntries) {
 			for (int i = 0; i < entry.resourceUnits.length; i++) {
-				getResourceList().get(i).release(entry.resourceUnits[i]);
+				getResourceList().get(i).release(entry.resourceUnits[i], entry.entity);
 			}
 		}
 
@@ -231,7 +232,7 @@ public class EntityProcessor extends Seize {
 			}
 		}
 		else {
-			Resource.notifyResourceUsers(getResourceList());
+			AbstractResourceProvider.notifyResourceUsers(getResourceList());
 		}
 
 		// Pass the entities to the next component
@@ -263,7 +264,7 @@ public class EntityProcessor extends Seize {
 	@Override
 	public void endDowntime(DowntimeEntity down) {
 		if (isReadyToStart()) {
-			Resource.notifyResourceUsers(getResourceList());
+			AbstractResourceProvider.notifyResourceUsers(getResourceList());
 		}
 		super.endDowntime(down);
 	}
@@ -310,7 +311,7 @@ public class EntityProcessor extends Seize {
 				}
 			}
 			else {
-				Resource.notifyResourceUsers(getResourceList());
+				AbstractResourceProvider.notifyResourceUsers(getResourceList());
 			}
 		}
 

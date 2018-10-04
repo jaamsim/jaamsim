@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2017 JaamSim Software Inc.
+ * Copyright (C) 2017-2018 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.jaamsim.ProcessFlow;
+package com.jaamsim.resourceObjects;
 
 public interface ResourceUser {
 
@@ -23,7 +23,7 @@ public interface ResourceUser {
 	 * @param res - Resource to be seized.
 	 * @return true if the specified Resource can be seized.
 	 */
-	public abstract boolean requiresResource(Resource res);
+	public abstract boolean requiresResource(ResourceProvider res);
 
 	/**
 	 * Returns whether there is an eligible entity that is waiting to seize one or more Resources.

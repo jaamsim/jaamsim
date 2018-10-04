@@ -15,11 +15,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.jaamsim.ProcessFlow;
+package com.jaamsim.resourceObjects;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.ProbabilityDistributions.Distribution;
@@ -32,14 +30,13 @@ import com.jaamsim.basicsim.Entity;
 import com.jaamsim.events.Conditional;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.events.ProcessTarget;
-import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
 
-public class Resource extends DisplayEntity {
+public class Resource extends AbstractResourceProvider {
 
 	@Keyword(description = "The number of equivalent resource units that are available.\n"
 	                     + "If the capacity changes during the simulation run, the Resource will "
@@ -49,20 +46,7 @@ public class Resource extends DisplayEntity {
 	         exampleList = {"3", "TimeSeries1", "this.attrib1"})
 	private final SampleInput capacity;
 
-	@Keyword(description = "If TRUE, the next entity to seize the resource will be chosen "
-	                     + "strictly on the basis of priority and waiting time. If this entity "
-	                     + "is unable to seize the resource because of other restrictions such as "
-	                     + "an OperatingThreshold input or the unavailability of other resources "
-	                     + "it needs to seize at the same time, then other entities with lower "
-	                     + "priority or shorter waiting time will NOT be allowed to seize the "
-	                     + "resource. If FALSE, the entities will be tested in the same order of "
-	                     + "priority and waiting time, but the first entity that is able to seize "
-	                     + "the resource will be allowed to do so.",
-	         exampleList = {"TRUE"})
-	private final BooleanInput strictOrder;
-
 	private int unitsInUse;  // number of resource units that are being used at present
-	private ArrayList<ResourceUser> userList;  // objects that seize this resource
 	private int lastCapacity; // capacity for the resource
 
 	//	Statistics
@@ -79,13 +63,9 @@ public class Resource extends DisplayEntity {
 		capacity.setEntity(this);
 		capacity.setValidRange(0, Double.POSITIVE_INFINITY);
 		this.addInput(capacity);
-
-		strictOrder = new BooleanInput("StrictOrder", KEY_INPUTS, false);
-		this.addInput(strictOrder);
 	}
 
 	public Resource() {
-		userList = new ArrayList<>();
 		stats = new TimeBasedStatistics();
 		freq = new TimeBasedFrequency(0, 10);
 	}
@@ -120,14 +100,6 @@ public class Resource extends DisplayEntity {
 		freq.addValue(0.0d,  0);
 		unitsSeized = 0;
 		unitsReleased = 0;
-
-		// Prepare a list of the objects that seize this resource
-		userList.clear();
-		for (Entity ent : Entity.getClonesOfIterator(Entity.class, ResourceUser.class)) {
-			ResourceUser ru = (ResourceUser) ent;
-			if (ru.requiresResource(this))
-				userList.add(ru);
-		}
 	}
 
 	@Override
@@ -141,27 +113,26 @@ public class Resource extends DisplayEntity {
 		this.waitForCapacityChange();
 	}
 
-	/**
-	 * Seize the given number of units from the resource.
-	 * @param n = number of units to seize
-	 */
-	public void seize(int n) {
-		unitsInUse += n;
-		unitsSeized += n;
-		double simTime = this.getSimTime();
-		stats.addValue(simTime, unitsInUse);
-		freq.addValue(simTime, unitsInUse);
-		if (getAvailableUnits(simTime) < 0) {
-			error("Capacity of resource exceeded. Capacity: %s, units in use: %s.",
-					getCapacity(simTime), unitsInUse);
-		}
+	@Override
+	public boolean canSeize(int n, DisplayEntity ent) {
+		double simTime = getSimTime();
+		return getAvailableUnits(simTime) >= n;
 	}
 
-	/**
-	 * Release the given number of units back to the resource.
-	 * @param n = number of units to release
-	 */
-	public void release(int m) {
+	@Override
+	public void seize(int n, DisplayEntity ent) {
+		double simTime = getSimTime();
+		if (getAvailableUnits(simTime) < n)
+			error(ERR_CAPACITY, getCapacity(simTime), n);
+
+		unitsInUse += n;
+		unitsSeized += n;
+		stats.addValue(simTime, unitsInUse);
+		freq.addValue(simTime, unitsInUse);
+	}
+
+	@Override
+	public void release(int m, DisplayEntity ent) {
 		int n = Math.min(m, unitsInUse);
 		unitsInUse -= n;
 		unitsReleased += n;
@@ -169,81 +140,6 @@ public class Resource extends DisplayEntity {
 		stats.addValue(simTime, unitsInUse);
 		freq.addValue(simTime, unitsInUse);
 	}
-
-	/**
-	 * Starts resource users on their next entities.
-	 */
-	public static void notifyResourceUsers(ArrayList<Resource> resList) {
-
-		// Prepare a sorted list of the resource users that have a waiting entity
-		ArrayList<ResourceUser> list = new ArrayList<>();
-		for (Resource res : resList) {
-			for (ResourceUser ru : res.userList) {
-				if (!list.contains(ru) && ru.hasWaitingEntity()) {
-					list.add(ru);
-				}
-			}
-		}
-		Collections.sort(list, userCompare);
-
-		// Attempt to start the resource users in order of priority and wait time
-		while (true) {
-
-			// Find the first resource user that can seize its resources
-			ResourceUser selection = null;
-			for (ResourceUser ru : list) {
-				if (ru.isReadyToStart()) {
-					selection = ru;
-					break;
-				}
-
-				// In strict-order mode, only the highest priority/longest wait time entity is
-				// eligible to seize its resources
-				if (ru.hasStrictResource())
-					return;
-			}
-
-			// If none of the resource users can seize its resources, then we are done
-			if (selection == null)
-				return;
-
-			// Seize the resources
-			selection.startNextEntity();
-
-			// If the selected object has no more entities, remove it from the list
-			if (!selection.hasWaitingEntity()) {
-				list.remove(selection);
-			}
-			// If it does have more entities, re-sort the list to account for the next entity
-			else {
-				Collections.sort(list, userCompare);
-			}
-		}
-	}
-
-	public boolean isStrictOrder() {
-		return strictOrder.getValue();
-	}
-
-	/**
-	 * Sorts the users of the Resource by their priority and waiting time
-	 */
-	private static class UserCompare implements Comparator<ResourceUser> {
-		@Override
-		public int compare(ResourceUser ru1, ResourceUser ru2) {
-
-			// Chose the object with the highest priority entity
-			// (lowest numerical value, i.e. 1 is higher priority than 2)
-			int ret = Integer.compare(ru1.getPriority(), ru2.getPriority());
-
-			// If the priorities are the same, choose the one with the longest waiting time
-			if (ret == 0) {
-				return Double.compare(ru2.getWaitTime(), ru1.getWaitTime());
-			}
-			return ret;
-		}
-	}
-	private static UserCompare userCompare = new UserCompare();
 
 	/**
 	 * Returns true if the saved capacity differs from the present capacity
@@ -281,7 +177,7 @@ public class Resource extends DisplayEntity {
 
 		// Select the resource users to notify
 		if (this.getCapacity(getSimTime()) > lastCapacity) {
-			ArrayList<Resource> resList = new ArrayList<>(1);
+			ArrayList<ResourceProvider> resList = new ArrayList<>(1);
 			resList.add(this);
 			Resource.notifyResourceUsers(resList);
 		}
