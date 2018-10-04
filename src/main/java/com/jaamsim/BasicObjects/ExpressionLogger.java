@@ -58,24 +58,37 @@ public class ExpressionLogger extends Logger implements StateEntityListener {
 
 	@Keyword(description = "The unit types for the sources of data specified by the "
 	                     + "'ValueTraceList' keyword. "
-	                     + "If only one unit type is given, then that unit type is used for all "
-	                     + "the values.",
+	                     + "If the ValueTraceList keyword has more entries than the "
+	                     + "ValueUnitTypesList keyword, then the last unit type in the list is "
+	                     + "applied to the remaining ValueTraceList entries.\n\n"
+	                     + "It is best to leave this input blank and use only dimensionless "
+	                     + "quantities and non-numeric outputs in the ValueTraceList input.",
 	         exampleList = {"DistanceUnit  SpeedUnit"})
 	private final UnitTypeListInput valueUnitTypeList;
 
 	@Keyword(description = "One or more sources of data whose values will be traced. "
 	                     + "An entry in the log file is made every time one of the data sources "
 	                     + "changes value. "
-	                     + "Each data source's value is included automatically in the log file. "
-	                     + "BEFORE entering this input, specify the unit types for the data "
-	                     + "sources using the 'ValueUnitTypeList' keyword.",
-	         exampleList = {"{ [Entity1].Output1 } { [Entity2].Output2 }"})
-	private final SampleListInput valueTraceList;
+	                     + "Each data source's value is included automatically in the log file.\n\n"
+	                     + "It is best to include only dimensionless quantities and non-numeric "
+	                     + "outputs in the ValueTraceList input. "
+	                     + "An output with dimensions can be made non-dimensional by dividing it "
+	                     + "by 1 in the desired unit, e.g. '[Queue1].AverageQueueTime / 1[h]' is "
+	                     + "the average queue time in hours.\n\n"
+	                     + "If a number with dimensions is to be recorded, its unit type must "
+	                     + "first be entered in the correct position in the input to the "
+	                     + "UnitTypeList keyword.",
+	         exampleList = {"{ [Queue1].QueueLengthAverage }"
+	                     + " { '[Queue1].AverageQueueTime / 1[h]' }"})
+	private final StringProvListInput valueTraceList;
 
 	@Keyword(description = "The number of decimal places to show for each value specified by the "
 	                     + "input to the 'ValueTraceList' keyword. "
-	                     + "If only one number is given, then that number of decimal places is "
-	                     + "used for all values.",
+	                     + "If the ValueTraceList keyword has more entries than the "
+	                     + "ValuePrecisionList keyword, then the last unit type in the list is "
+	                     + "applied to the remaining ValueTraceList entries.\n\n"
+	                     + "It is best to leave this input blank and do any formating of "
+	                     + "numerical values in the ValueTraceList input.",
 	         exampleList = "1 1")
 	private final IntegerListInput valuePrecisionList;
 
