@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2015 Ausenco Engineering Canada Inc.
- * Copyright (C) 2015 JaamSim Software Inc.
+ * Copyright (C) 2015-2018 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,8 +19,8 @@ package com.jaamsim.BasicObjects;
 
 import java.util.ArrayList;
 
-import com.jaamsim.Samples.SampleListInput;
-import com.jaamsim.Samples.SampleProvider;
+import com.jaamsim.StringProviders.StringProvListInput;
+import com.jaamsim.StringProviders.StringProvider;
 import com.jaamsim.basicsim.EntityTarget;
 import com.jaamsim.basicsim.FileEntity;
 import com.jaamsim.datatypes.IntegerVector;
@@ -37,9 +37,9 @@ import com.jaamsim.input.ValueInput;
 import com.jaamsim.states.StateEntity;
 import com.jaamsim.states.StateEntityListener;
 import com.jaamsim.states.StateRecord;
+import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
 import com.jaamsim.units.Unit;
-import com.jaamsim.units.UserSpecifiedUnit;
 
 public class ExpressionLogger extends Logger implements StateEntityListener {
 
@@ -79,7 +79,7 @@ public class ExpressionLogger extends Logger implements StateEntityListener {
 	         exampleList = "1 1")
 	private final IntegerListInput valuePrecisionList;
 
-	private final ArrayList<Double> lastValueList = new ArrayList<>();
+	private final ArrayList<String> lastValueList = new ArrayList<>();
 
 	{
 		interval = new ValueInput("Interval", KEY_INPUTS, null);
@@ -96,9 +96,9 @@ public class ExpressionLogger extends Logger implements StateEntityListener {
 				valDefList);
 		this.addInput(valueUnitTypeList);
 
-		valueTraceList = new SampleListInput("ValueTraceList", TRACING,
-				new ArrayList<SampleProvider>());
-		valueTraceList.setUnitType(UserSpecifiedUnit.class);
+		valueTraceList = new StringProvListInput("ValueTraceList", TRACING,
+				new ArrayList<StringProvider>());
+		valueTraceList.setUnitType(DimensionlessUnit.class);
 		valueTraceList.setEntity(this);
 		this.addInput(valueTraceList);
 
@@ -120,7 +120,7 @@ public class ExpressionLogger extends Logger implements StateEntityListener {
 		if (in == valueTraceList) {
 			lastValueList.clear();
 			for (int i=0; i<valueTraceList.getListSize(); i++) {
-				lastValueList.add(Double.NaN);
+				lastValueList.add("");
 			}
 			return;
 		}
@@ -226,23 +226,17 @@ public class ExpressionLogger extends Logger implements StateEntityListener {
 		try {
 			// Write the traced expression values
 			for (int i=0; i<valueTraceList.getListSize(); i++) {
-				double val = valueTraceList.getValue().get(i).getNextSample(simTime);
+
+				String fmt = "\t%s";
+				if (!valuePrecisionList.isDefault()) {
+				int k = Math.min(i, valuePrecisionList.getListSize() - 1);
+					int precision = valuePrecisionList.getValue().get(k);
+					fmt = "\t%." + precision + "f";
+				}
+
 				double factor = Unit.getDisplayedUnitFactor(valueTraceList.getUnitType(i));
-
-				if (valuePrecisionList.getValue().size() == 1) {
-					int precision = valuePrecisionList.getValue().get(0);
-					file.format("\t%."+precision+"f", val/factor );
-				}
-				else if (valuePrecisionList.getValue().size() > 1) {
-					int precision = valuePrecisionList.getValue().get(i);
-					file.format("\t%."+precision+"f", val/factor );
-				}
-				else {
-					file.format("\t%s", val/factor);
-				}
-
-				// Update the last recorded values for the traced expressions
-				lastValueList.set(i, val);
+				String str = valueTraceList.getValue().get(i).getNextString(simTime, fmt, factor);
+				file.write(str);
 			}
 		}
 		catch (Exception e) {
@@ -268,9 +262,9 @@ public class ExpressionLogger extends Logger implements StateEntityListener {
 		double simTime = getSimTime();
 		try {
 			for (int i=0; i<valueTraceList.getListSize(); i++) {
-				double val = valueTraceList.getValue().get(i).getNextSample(simTime);
-				if (val != lastValueList.get(i)) {
-					lastValueList.set(i, val);
+				String str = valueTraceList.getValue().get(i).getNextString(simTime);
+				if (!str.equals(lastValueList.get(i))) {
+					lastValueList.set(i, str);
 					ret = true;
 				}
 			}
