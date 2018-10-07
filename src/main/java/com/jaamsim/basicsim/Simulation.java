@@ -827,9 +827,11 @@ public class Simulation extends Entity {
 		}
 
 		if (in == controlPanelWidth) {
-			int width = controlPanelWidth.getValue();
-			int height = GUIFrame.getInstance().getSize().height;
-			GUIFrame.getInstance().setSize(width, height);
+			if (GUIFrame.getInstance() != null) {
+				int width = controlPanelWidth.getValue();
+				int height = GUIFrame.getInstance().getSize().height;
+				GUIFrame.getInstance().setSize(width, height);
+			}
 			return;
 		}
 	}
