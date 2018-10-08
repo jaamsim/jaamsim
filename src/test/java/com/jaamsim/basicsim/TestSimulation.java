@@ -19,12 +19,14 @@ package com.jaamsim.basicsim;
 import java.net.URL;
 import java.util.ArrayList;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.KeywordIndex;
+import com.jaamsim.input.OutputHandle;
 
 public class TestSimulation {
 
@@ -50,6 +52,7 @@ public class TestSimulation {
 
 	@Test
 	public void testAllEditableInputs() {
+		int numErrors = 0;
 		// Define an instance of every drag-and-drop type
 		for (ObjectType each: Entity.getClonesOfIterator(ObjectType.class)) {
 			Class<? extends Entity> proto = Input.parseEntityType(each.getName());
@@ -61,7 +64,20 @@ public class TestSimulation {
 				inp.setTokens(kw);
 				InputAgent.apply(ent, inp, kw);
 			}
+
+			for (OutputHandle out : OutputHandle.getOutputHandleList(ent)) {
+				try {
+					InputAgent.getValueAsString(out, 0.0d, "%s", 1.0d);
+				}
+				catch (Throwable t) {
+					System.out.println("Ent: " + ent.getName() + " Out: " + out.getName());
+					numErrors++;
+				}
+			}
 		}
+
+		if (numErrors > 0)
+			Assert.fail();
 	}
 
 	@Test
