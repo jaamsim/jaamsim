@@ -497,7 +497,7 @@ public class View extends Entity {
 	    sequence = 1)
 	public Vec3d getPointOfInterest(double simTime) {
 		if (!RenderManager.isGood())
-			return null;
+			return new Vec3d();
 		return RenderManager.inst().getPOI(this);
 	}
 
