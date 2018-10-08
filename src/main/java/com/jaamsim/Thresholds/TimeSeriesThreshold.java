@@ -463,6 +463,8 @@ public class TimeSeriesThreshold extends Threshold {
 	    unitType = UserSpecifiedUnit.class,
 	    sequence = 5)
 	public double getTimeSeriesValue(double simTime) {
+		if (timeSeries.getValue() == null)
+			return Double.NaN;
 		return ((TimeSeries)timeSeries.getValue()).getPresentValue(simTime + offset.getValue());
 	}
 }
