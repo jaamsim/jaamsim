@@ -46,6 +46,7 @@ public class TestSimulation {
 		// Define an instance of every drag-and-drop type
 		for (ObjectType each: Entity.getClonesOfIterator(ObjectType.class)) {
 			Class<? extends Entity> proto = Input.parseEntityType(each.getName());
+			@SuppressWarnings("unused")
 			Entity ent = InputAgent.defineEntityWithUniqueName(proto, each.getName(), "-", true);
 		}
 	}
