@@ -163,6 +163,8 @@ public class PIDController extends DoubleCalculation {
 	}
 
 	public double getError(double simTime) {
+		if (setPoint.getValue() == null || processVariable.getValue() == null)
+			return Double.NaN;
 		return setPoint.getValue().getNextSample(simTime) - processVariable.getValue().getNextSample(simTime);
 	}
 
