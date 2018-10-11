@@ -256,6 +256,11 @@ public class Entity {
 	 */
 	public void delete() {
 
+		if (!testFlag(Entity.FLAG_ADDED)) {
+			error("Cannot delete an entity that was defined prior to RecordEdits in the input "
+					+ "file.");
+		}
+
 		// Unregistered entities do not appear in the inputs to any other objects
 		if (!testFlag(Entity.FLAG_REGISTERED)) {
 			kill();

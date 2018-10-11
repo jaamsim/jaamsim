@@ -351,6 +351,10 @@ public class DisplayEntity extends Entity {
 	@Override
 	public void delete() {
 
+		if (!testFlag(Entity.FLAG_ADDED))
+			error("Cannot delete an entity that was defined prior to RecordEdits in the input "
+					+ "file.");
+
 		if (!isMovable())
 			error("Cannot delete an entity that is not movable.");
 
