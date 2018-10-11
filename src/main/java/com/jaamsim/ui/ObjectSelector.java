@@ -537,8 +537,13 @@ public class ObjectSelector extends FrameBox {
 					&& !((DisplayEntity) currentEntity).isMovable())
 				return;
 
-			currentEntity.delete();
-			FrameBox.setSelectedEntity(null, false);
+			try {
+				currentEntity.delete();
+				FrameBox.setSelectedEntity(null, false);
+			}
+			catch (ErrorException err) {
+				GUIFrame.invokeErrorDialog("User Error", err.getMessage());
+			}
 		}
 		@Override
 		public void keyPressed(KeyEvent e) {}

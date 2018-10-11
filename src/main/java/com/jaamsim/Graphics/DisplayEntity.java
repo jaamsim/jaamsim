@@ -29,6 +29,7 @@ import com.jaamsim.DisplayModels.PolylineModel;
 import com.jaamsim.DisplayModels.ShapeModel;
 import com.jaamsim.DisplayModels.TextModel;
 import com.jaamsim.basicsim.Entity;
+import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.basicsim.ObjectType;
 import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.datatypes.DoubleVector;
@@ -55,6 +56,7 @@ import com.jaamsim.render.DisplayModelBinding;
 import com.jaamsim.render.RenderUtils;
 import com.jaamsim.render.VisibilityInfo;
 import com.jaamsim.ui.FrameBox;
+import com.jaamsim.ui.GUIFrame;
 import com.jaamsim.ui.View;
 import com.jaamsim.units.AngleUnit;
 import com.jaamsim.units.DimensionlessUnit;
@@ -910,8 +912,13 @@ public class DisplayEntity extends Entity {
 
 	public void handleKeyReleased(int keyCode, char keyChar, boolean shift, boolean control, boolean alt) {
 		if (keyCode == KeyEvent.VK_DELETE) {
-			delete();
-			FrameBox.setSelectedEntity(null, false);
+			try {
+				delete();
+				FrameBox.setSelectedEntity(null, false);
+			}
+			catch (ErrorException e) {
+				GUIFrame.invokeErrorDialog("User Error", e.getMessage());
+			}
 			return;
 		}
 	}
