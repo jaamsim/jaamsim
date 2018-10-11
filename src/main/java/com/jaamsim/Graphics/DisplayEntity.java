@@ -351,6 +351,9 @@ public class DisplayEntity extends Entity {
 	@Override
 	public void delete() {
 
+		if (!isMovable())
+			error("Cannot delete an entity that is not movable.");
+
 		// Kill the label
 		if (! this.testFlag(FLAG_GENERATED)) {
 			EntityLabel label = EntityLabel.getLabel(this);
