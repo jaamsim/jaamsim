@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2017 JaamSim Software Inc.
+ * Copyright (C) 2016-2018 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
  */
 package com.jaamsim.ProcessFlow;
 
+import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.StringProviders.StringProvInput;
@@ -57,7 +58,7 @@ public class Unpack extends LinkedService {
 		this.addInput(serviceTime);
 	}
 
-	private EntityContainer container;	// the received EntityContainer
+	private EntContainer container;	// the received EntityContainer
 	private int numberRemoved;   // Number of entities removed from the received EntityContainer
 
 	public Unpack() {}
@@ -84,7 +85,7 @@ public class Unpack extends LinkedService {
 		if (container == null) {
 
 			// Remove the container from the queue
-			container = (EntityContainer)this.getNextEntityForMatch(m);
+			container = (EntContainer)this.getNextEntityForMatch(m);
 			numberToRemove = this.getNumberToRemove();
 			entityMatch = null;
 			if (matchForEntities.getValue() != null)
@@ -95,8 +96,8 @@ public class Unpack extends LinkedService {
 		return true;
 	}
 
-	protected void disposeContainer(EntityContainer c) {
-		c.kill();
+	protected void disposeContainer(EntContainer c) {
+		((DisplayEntity)c).kill();
 	}
 
 	protected int getNumberToRemove() {
@@ -123,7 +124,7 @@ public class Unpack extends LinkedService {
 	public void updateGraphics(double simTime) {
 		if (container == null)
 			return;
-		moveToProcessPosition(container);
+		moveToProcessPosition((DisplayEntity)container);
 	}
 
 	@Override

@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2018 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +19,7 @@ package com.jaamsim.ProcessFlow;
 
 import java.util.ArrayList;
 
+import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.basicsim.Entity;
@@ -48,9 +50,9 @@ public class RemoveFrom extends Unpack {
 	}
 
 	@Override
-	protected void disposeContainer(EntityContainer c) {
+	protected void disposeContainer(EntContainer c) {
 		if( nextForContainers.getValue() != null )
-			nextForContainers.getValue().addEntity(c);
+			nextForContainers.getValue().addEntity((DisplayEntity)c);
 	}
 
 	@Override
