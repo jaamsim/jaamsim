@@ -38,7 +38,7 @@ import com.jaamsim.input.StringListInput;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
 
-public class StateEntity extends DisplayEntity {
+public class StateEntity extends DisplayEntity implements StateUser {
 
 	@Keyword(description = "A list of state/DisplayEntity pairs. For each state, the graphics "
 	                     + "will be changed to those for the corresponding DisplayEntity.",
@@ -164,9 +164,7 @@ public class StateEntity extends DisplayEntity {
 		return STATE_WORKING.equals(state);
 	}
 
-	/**
-	 * Sets the state of this Entity to the given state.
-	 */
+	@Override
 	public final void setPresentState( String state ) {
 		if (presentState == null)
 			this.initStateData();
@@ -327,9 +325,7 @@ public class StateEntity extends DisplayEntity {
 		return recs;
 	}
 
-	/**
-	 * Return true if the entity is working
-	 */
+	@Override
 	public boolean isWorking() {
 		return presentState.isWorking();
 	}
