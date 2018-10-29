@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2017 JaamSim Software Inc.
+ * Copyright (C) 2016-2018 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,8 +22,8 @@ import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.StringProviders.StringProvInput;
 import com.jaamsim.basicsim.Entity;
-import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.InputAgent;
+import com.jaamsim.input.InterfaceEntityInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.states.StateEntity;
@@ -35,7 +35,7 @@ public class Pack extends LinkedService {
 	@Keyword(description = "The prototype for EntityContainers to be generated. "
 	                     + "The generated EntityContainers will be copies of this entity.",
 	         exampleList = {"EntityContainer1"})
-	protected final EntityInput<EntityContainer> prototypeEntityContainer;
+	protected final InterfaceEntityInput<EntContainer> prototypeEntityContainer;
 
 	@Keyword(description = "The number of entities to pack into the container.",
 	         exampleList = {"2", "DiscreteDistribution1", "'1 + [TimeSeries1].PresentValue'"})
@@ -54,7 +54,7 @@ public class Pack extends LinkedService {
 	         exampleList = {"Service"})
 	protected final StringProvInput containerStateAssignment;
 
-	protected EntityContainer container;	// the generated EntityContainer
+	protected EntContainer container;	// the generated EntityContainer
 	private int numberGenerated;  // Number of EntityContainers generated so far
 	private int numberInserted;   // Number of entities inserted to the EntityContainer
 	private int numberToInsert;   // Number of entities to insert in the present EntityContainer
@@ -62,7 +62,7 @@ public class Pack extends LinkedService {
 	private DisplayEntity packedEntity;  // the entity being packed
 
 	{
-		prototypeEntityContainer = new EntityInput<>(EntityContainer.class, "PrototypeEntityContainer", KEY_INPUTS, null);
+		prototypeEntityContainer = new InterfaceEntityInput<>(EntContainer.class, "PrototypeEntityContainer", KEY_INPUTS, null);
 		prototypeEntityContainer.setRequired(true);
 		this.addInput(prototypeEntityContainer);
 
@@ -101,15 +101,15 @@ public class Pack extends LinkedService {
 		packedEntity = null;
 	}
 
-	protected EntityContainer getNextContainer() {
+	protected EntContainer getNextContainer() {
 		numberGenerated++;
-		EntityContainer proto = prototypeEntityContainer.getValue();
+		DisplayEntity proto = (DisplayEntity)prototypeEntityContainer.getValue();
 		StringBuilder sb = new StringBuilder();
 		sb.append(this.getName()).append("_").append(numberGenerated);
-		EntityContainer ret = InputAgent.generateEntityWithName(proto.getClass(), sb.toString());
+		DisplayEntity ret = InputAgent.generateEntityWithName(proto.getClass(), sb.toString());
 		Entity.fastCopyInputs(proto, ret);
 		ret.earlyInit();
-		return ret;
+		return (EntContainer)ret;
 	}
 
 	@Override
@@ -163,7 +163,7 @@ public class Pack extends LinkedService {
 
 		// If the container is full, send it to the next component
 		if (numberInserted >= numberToInsert) {
-			this.sendToNextComponent(container);
+			this.sendToNextComponent((DisplayEntity)container);
 			container = null;
 			numberInserted = 0;
 			startedPacking = false;
@@ -193,7 +193,7 @@ public class Pack extends LinkedService {
 	@Override
 	public void updateGraphics(double simTime) {
 		if (container != null)
-			moveToProcessPosition(container);
+			moveToProcessPosition((DisplayEntity)container);
 		if (packedEntity != null)
 			moveToProcessPosition(packedEntity);
 	}
@@ -201,7 +201,7 @@ public class Pack extends LinkedService {
 	@Output(name = "Container",
 	 description = "The EntityContainer that is being filled.")
 	public DisplayEntity getContainer(double simTime) {
-		return container;
+		return (DisplayEntity)container;
 	}
 
 }
