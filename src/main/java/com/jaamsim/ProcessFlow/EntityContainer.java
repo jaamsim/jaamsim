@@ -40,7 +40,7 @@ import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.DistanceUnit;
 import com.jaamsim.units.TimeUnit;
 
-public class EntityContainer extends SimEntity {
+public class EntityContainer extends SimEntity implements EntContainer {
 
 	@Keyword(description = "The priority for positioning the received entity in the container. "
 	                     + "Priority is integer valued and a lower numerical value indicates a "
@@ -145,6 +145,7 @@ public class EntityContainer extends SimEntity {
 		numberRemoved = 0L;
 	}
 
+	@Override
 	public void addEntity(DisplayEntity ent) {
 		double simTime = getSimTime();
 
@@ -165,6 +166,7 @@ public class EntityContainer extends SimEntity {
 		storage.add(entry);
 	}
 
+	@Override
 	public DisplayEntity removeEntity(String m) {
 		StorageEntry entry = storage.first();
 		if (m != null) {
@@ -179,6 +181,7 @@ public class EntityContainer extends SimEntity {
 		return ent;
 	}
 
+	@Override
 	public int getCount(String m) {
 		if (m == null) {
 			return storage.size();
@@ -186,6 +189,7 @@ public class EntityContainer extends SimEntity {
 		return storage.size(m);
 	}
 
+	@Override
 	public boolean isEmpty(String m) {
 		if (m == null) {
 			return storage.isEmpty();
