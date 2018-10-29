@@ -38,7 +38,7 @@ import com.jaamsim.input.StringListInput;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
 
-public class StateEntity extends DisplayEntity implements StateUser {
+public abstract class StateEntity extends DisplayEntity implements StateUser {
 
 	@Keyword(description = "A list of state/DisplayEntity pairs. For each state, the graphics "
 	                     + "will be changed to those for the corresponding DisplayEntity.",
