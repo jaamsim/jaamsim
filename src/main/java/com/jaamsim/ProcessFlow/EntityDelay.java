@@ -201,7 +201,6 @@ public class EntityDelay extends LinkedComponent {
 		this.setPresentState();
 	}
 
-	@Override
 	public void setPresentState() {
 		if (this.getNumberInProgress() > 0) {
 			this.setPresentState("Working");

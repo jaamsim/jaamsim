@@ -283,7 +283,6 @@ public abstract class StateUserEntity extends StateEntity implements ThresholdUs
 		return !isBusy() && !isAvailable();
 	}
 
-	@Override
 	public void setPresentState() {
 
 		// Working (Busy)

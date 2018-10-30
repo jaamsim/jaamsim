@@ -395,8 +395,6 @@ public class StateEntity extends DisplayEntity implements StateUser {
 		return EventManager.ticksToSecs(ticks);
 	}
 
-	public void setPresentState() {}
-
 	/**
 	 * Returns the elapsed time in seconds after the completion of the initialisation period
 	 * that the entity has been in the specified state.
