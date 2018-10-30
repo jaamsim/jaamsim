@@ -156,6 +156,11 @@ public class EntContainerDelegate implements EntContainer {
 		return storage.getStorageTimeList(simTime);
 	}
 
+	@Override
+	public String toString() {
+		return storage.toString();
+	}
+
 	// Used stubs for the StateUser methods
 
 	@Override
