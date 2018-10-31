@@ -318,15 +318,15 @@ private static class CategoryInputs {
 
 	private static void add(ArrayList<CategoryInputs> list, ArrayList<Input<?>> inputs, String cat) {
 
-		int seq = 100;
+		int seq = 1;
 		if (cat.equals(Entity.KEY_INPUTS))
 			seq = 0;
 		else if (cat.equals(Entity.THRESHOLDS))
-			seq = 1;
-		else if (cat.equals(Entity.MAINTENANCE))
 			seq = 2;
+		else if (cat.equals(Entity.MAINTENANCE))
+			seq = 3;
 		else if (cat.equals(Entity.GRAPHICS))
-			seq = 101;
+			seq = 4;
 
 		list.add(new CategoryInputs(cat, seq, inputs));
 	}
