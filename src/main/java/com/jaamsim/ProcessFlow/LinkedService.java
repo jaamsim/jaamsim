@@ -189,6 +189,7 @@ public abstract class LinkedService extends LinkedDevice implements QueueUser {
 		Vec3d pos = this.getGlobalPosition();
 		pos.add3(processPosition.getValue());
 		ent.setGlobalPosition(pos);
+		ent.setOrientation(this.getOrientation());
 	}
 
 	@Override
