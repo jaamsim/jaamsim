@@ -65,6 +65,7 @@ public abstract class StateEntity extends DisplayEntity implements StateUser {
 
 	protected static final String STATE_IDLE = "Idle";
 	protected static final String STATE_WORKING = "Working";
+	protected static final String STATE_INACTIVE = "Inactive";
 
 	{
 		stateGraphics = new StringKeyInput<>(DisplayEntity.class, "StateGraphics", KEY_INPUTS);
@@ -147,7 +148,8 @@ public abstract class StateEntity extends DisplayEntity implements StateUser {
 	 * @return
 	 */
 	public boolean isValidState(String state) {
-		return STATE_IDLE.equals(state) || STATE_WORKING.equals(state);
+		return STATE_IDLE.equals(state) || STATE_WORKING.equals(state)
+				|| STATE_INACTIVE.equals(state);
 	}
 
 	/**
