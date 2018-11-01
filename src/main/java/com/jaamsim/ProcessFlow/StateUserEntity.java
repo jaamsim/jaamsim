@@ -258,7 +258,7 @@ public abstract class StateUserEntity extends StateEntity implements ThresholdUs
 	}
 
 	public boolean isAvailable() {
-		return isOpen() && !isMaintenance() && !isBreakdown();
+		return isOpen() && !isMaintenance() && !isBreakdown() && isActive();
 	}
 
 	/**
@@ -284,6 +284,12 @@ public abstract class StateUserEntity extends StateEntity implements ThresholdUs
 	}
 
 	public void setPresentState() {
+
+		// Inactive
+		if (!this.isActive()) {
+			this.setPresentState(STATE_INACTIVE);
+			return;
+		}
 
 		// Working (Busy)
 		if (this.isBusy()) {
