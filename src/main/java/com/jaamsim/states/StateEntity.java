@@ -139,7 +139,7 @@ public abstract class StateEntity extends DisplayEntity implements StateUser {
 	 * @return
 	 */
 	public String getInitialState() {
-		return STATE_IDLE;
+		return isActive() ? STATE_IDLE : STATE_INACTIVE;
 	}
 
 	/**
