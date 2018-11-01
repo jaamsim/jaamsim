@@ -123,10 +123,6 @@ public class DisplayEntity extends Entity {
 	         exampleList = {"FALSE"})
 	private final BooleanInput showInput;
 
-	@Keyword(description = "If TRUE, the object is active and used in simulation runs.",
-	         exampleList = {"FALSE"})
-	private final BooleanInput active;
-
 	@Keyword(description = "If TRUE, the object will respond to mouse clicks and can be "
 	                     + "positioned by dragging with the mouse.",
 	         exampleList = {"FALSE"})
@@ -202,10 +198,6 @@ public class DisplayEntity extends Entity {
 		displayModelListInput.addInvalidClass(GraphModel.class);
 		this.addInput(displayModelListInput);
 		displayModelListInput.setUnique(false);
-
-		active = new BooleanInput("Active", KEY_INPUTS, true);
-		active.setHidden(true);
-		this.addInput(active);
 
 		showInput = new BooleanInput("Show", GRAPHICS, true);
 		this.addInput(showInput);
@@ -487,10 +479,6 @@ public class DisplayEntity extends Entity {
 		synchronized (position) {
 			show = bool;
 		}
-	}
-
-	public boolean isActive() {
-		return active.getValue();
 	}
 
 	public boolean isMovable() {
