@@ -30,11 +30,13 @@ import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.FileEntity;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.input.BooleanInput;
+import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.StringKeyInput;
 import com.jaamsim.input.StringListInput;
+import com.jaamsim.math.Color4d;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
 
@@ -66,6 +68,10 @@ public abstract class StateEntity extends DisplayEntity implements StateUser {
 	protected static final String STATE_IDLE = "Idle";
 	protected static final String STATE_WORKING = "Working";
 	protected static final String STATE_INACTIVE = "Inactive";
+
+	protected static final Color4d COL_IDLE = ColourInput.LIGHT_GREY;
+	protected static final Color4d COL_WORKING = ColourInput.GREEN;
+	protected static final Color4d COL_INACTIVE = ColourInput.WHITE;
 
 	{
 		stateGraphics = new StringKeyInput<>(DisplayEntity.class, "StateGraphics", KEY_INPUTS);
