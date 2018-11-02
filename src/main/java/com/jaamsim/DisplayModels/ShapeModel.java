@@ -50,6 +50,12 @@ public class ShapeModel extends DisplayModel {
 		CIRCLE,
 		ARROW2D,
 		TRIANGLE,
+		PENTAGON,
+		HEXAGON,
+		OCTAGON,
+		PENTAGRAM,
+		HEPTAGRAM,
+		OCTAGRAM,
 		BARGAUGE2D,
 	}
 
@@ -192,6 +198,24 @@ public class ShapeModel extends DisplayModel {
 				break;
 			case TRIANGLE:
 				points = RenderUtils.TRIANGLE_POINTS;
+				break;
+			case PENTAGON:
+				points = RenderUtils.PENTAGON_POINTS;
+				break;
+			case HEXAGON:
+				points = RenderUtils.HEXAGON_POINTS;
+				break;
+			case OCTAGON:
+				points = RenderUtils.OCTAGON_POINTS;
+				break;
+			case PENTAGRAM:
+				points = RenderUtils.PENTAGRAM_POINTS;
+				break;
+			case HEPTAGRAM:
+				points = RenderUtils.HEPTAGRAM_POINTS;
+				break;
+			case OCTAGRAM:
+				points = RenderUtils.OCTAGRAM_POINTS;
 				break;
 			}
 
