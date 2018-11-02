@@ -132,7 +132,7 @@ public class ResourceUnit extends StateUserEntity implements Seizable, ResourceP
 
 	@Override
 	public boolean canSeize(DisplayEntity ent) {
-		return (presentAssignment == null && isAllowed(ent));
+		return (presentAssignment == null && isAllowed(ent) && isAvailable());
 	}
 
 	@Override
