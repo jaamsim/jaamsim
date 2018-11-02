@@ -7,7 +7,6 @@ Define ObjectType {
 Define IconModel  {
                     ResourceIconModel
                     ResourcePoolIconModel
-                    ResourceUnitIconModel
                   }
 
 Define ShapeModel {
@@ -17,7 +16,6 @@ ResourceUnitModelDefault  Shape { PENTAGRAM }
 
 ResourceIconModel        ImageFile { '<res>/images/Resource-256.png'       }  Transparent { TRUE }
 ResourcePoolIconModel    ImageFile { '<res>/images/ResourcePool-256.png'   }  Transparent { TRUE }
-ResourceUnitIconModel    ImageFile { '<res>/images/ResourceUnit-256.png'   }  Transparent { TRUE }
 
 Resource            JavaClass { com.jaamsim.resourceObjects.Resource       } Palette { 'Resource Objects' } DefaultDisplayModel { ResourceIconModel     } IconFile { '<res>/images/Resource-24.png'     }
 ResourcePool        JavaClass { com.jaamsim.resourceObjects.ResourcePool   } Palette { 'Resource Objects' } DefaultDisplayModel { ResourcePoolIconModel } IconFile { '<res>/images/ResourcePool-24.png' }
