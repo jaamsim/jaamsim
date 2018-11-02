@@ -66,6 +66,8 @@ public class ResourceUnit extends StateUserEntity implements Seizable, ResourceP
 	public static final Color4d COL_OUTLINE = ColourInput.MED_GREY;
 
 	{
+		active.setHidden(false);
+
 		resourcePool = new EntityInput<>(ResourcePool.class, "ResourcePool", KEY_INPUTS, null);
 		this.addInput(resourcePool);
 
