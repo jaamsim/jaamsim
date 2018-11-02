@@ -37,7 +37,7 @@ public class ResourcePool extends AbstractResourceProvider {
 		seizableList.clear();
 		for (Entity ent : Entity.getClonesOfIterator(Entity.class, Seizable.class)) {
 			Seizable unit = (Seizable) ent;
-			if (unit.getResourcePool() != this)
+			if (unit.getResourcePool() != this || !((DisplayEntity)unit).isActive())
 				continue;
 			seizableList.add(unit);
 		}
