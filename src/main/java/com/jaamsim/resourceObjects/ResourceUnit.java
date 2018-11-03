@@ -19,9 +19,11 @@ package com.jaamsim.resourceObjects;
 import java.util.ArrayList;
 
 import com.jaamsim.BasicObjects.DowntimeEntity;
+import com.jaamsim.DisplayModels.ShapeModel;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.ProcessFlow.StateUserEntity;
 import com.jaamsim.basicsim.ErrorException;
+import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.ExpError;
 import com.jaamsim.input.ExpEvaluator;
@@ -29,6 +31,7 @@ import com.jaamsim.input.ExpParser.Expression;
 import com.jaamsim.input.ExpressionInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
+import com.jaamsim.math.Color4d;
 import com.jaamsim.units.DimensionlessUnit;
 
 public class ResourceUnit extends StateUserEntity implements Seizable, ResourceProvider {
@@ -59,6 +62,8 @@ public class ResourceUnit extends StateUserEntity implements Seizable, ResourceP
 	private DisplayEntity presentAssignment;  // entity to which this unit is assigned
 	private long lastReleaseTicks;  // clock ticks at which the unit was unassigned
 	private ArrayList<ResourceUser> userList;  // objects that can use this resource
+
+	public static final Color4d COL_OUTLINE = ColourInput.MED_GREY;
 
 	{
 		resourcePool = new EntityInput<>(ResourcePool.class, "ResourcePool", KEY_INPUTS, null);
@@ -239,6 +244,15 @@ public class ResourceUnit extends StateUserEntity implements Seizable, ResourceP
 	@Override
 	public void endDowntime(DowntimeEntity down) {
 		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void updateGraphics(double simTime) {
+		super.updateGraphics(simTime);
+		setTagVisibility(ShapeModel.TAG_CONTENTS, true);
+		setTagVisibility(ShapeModel.TAG_OUTLINES, true);
+		setTagColour(ShapeModel.TAG_CONTENTS, getColourForPresentState());
+		setTagColour(ShapeModel.TAG_OUTLINES, COL_OUTLINE);
 	}
 
 	@Output(name = "Assignment",
