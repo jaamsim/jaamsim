@@ -101,6 +101,17 @@ public class ResourceUnit extends StateUserEntity implements Seizable, ResourceP
 	}
 
 	/**
+	 * Returns the ResourceProvider that manages this ResourceUnit.
+	 * Normally, the ResourceProvider is the ResourceUnit's ResourcePool, however if no
+	 * ResourcePool was assigned then the ResourceUnit as its own ResourceProv, essentially as a
+	 * ResourcePool with one unit.
+	 * @return ResourceProvider that manages this ResourceUnit
+	 */
+	public ResourceProvider getResourceProvider() {
+		return resourcePool.isDefault() ? this : getResourcePool();
+	}
+
+	/**
 	 * Tests whether the specified entity is eligible to seize this unit.
 	 * @param ent - entity to be tested
 	 * @return true if the entity is eligible
