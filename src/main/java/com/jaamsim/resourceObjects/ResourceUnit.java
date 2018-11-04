@@ -23,6 +23,7 @@ import com.jaamsim.DisplayModels.ShapeModel;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.ProcessFlow.StateUserEntity;
 import com.jaamsim.basicsim.ErrorException;
+import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.ExpError;
@@ -31,8 +32,11 @@ import com.jaamsim.input.ExpParser.Expression;
 import com.jaamsim.input.ExpressionInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
+import com.jaamsim.input.Vec3dInput;
 import com.jaamsim.math.Color4d;
+import com.jaamsim.math.Vec3d;
 import com.jaamsim.units.DimensionlessUnit;
+import com.jaamsim.units.DistanceUnit;
 
 public class ResourceUnit extends StateUserEntity implements Seizable, ResourceProvider {
 
@@ -58,6 +62,15 @@ public class ResourceUnit extends StateUserEntity implements Seizable, ResourceP
 	                     + "represent the entity that would seize the unit.",
 	         exampleList = {"'this.Assignment.type == 1 ? 1 : 2'"})
 	private final ExpressionInput priority;
+
+	@Keyword(description = "If TRUE, the ResourceUnit will move next to the entity that has "
+	                     + "seized it, and will follow that entity until it is released.",
+	         exampleList = {"TRUE"})
+	private final BooleanInput followAssignment;
+
+	@Keyword(description = "The position of the ResourceUnit relative to the entity that has seized it.",
+	         exampleList = {"0.0 1.0 0.01 m"})
+	protected final Vec3dInput assignmentOffset;
 
 	private DisplayEntity presentAssignment;  // entity to which this unit is assigned
 	private long lastReleaseTicks;  // clock ticks at which the unit was unassigned
@@ -85,6 +98,13 @@ public class ResourceUnit extends StateUserEntity implements Seizable, ResourceP
 		priority.setUnitType(DimensionlessUnit.class);
 		priority.setDefaultText("1");
 		this.addInput(priority);
+
+		followAssignment = new BooleanInput("FollowAssignment", GRAPHICS, false);
+		this.addInput(followAssignment);
+
+		assignmentOffset = new Vec3dInput("AssignmentOffset", GRAPHICS, new Vec3d());
+		assignmentOffset.setUnitType(DistanceUnit.class);
+		this.addInput(assignmentOffset);
 	}
 
 	public ResourceUnit() {
