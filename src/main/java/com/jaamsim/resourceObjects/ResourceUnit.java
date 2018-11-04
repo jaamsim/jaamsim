@@ -67,6 +67,10 @@ public class ResourceUnit extends StateUserEntity implements Seizable, ResourceP
 
 	{
 		active.setHidden(false);
+		immediateThresholdList.setHidden(true);
+		immediateReleaseThresholdList.setHidden(true);
+		immediateMaintenanceList.setHidden(true);
+		immediateBreakdownList.setHidden(true);
 
 		resourcePool = new EntityInput<>(ResourcePool.class, "ResourcePool", KEY_INPUTS, null);
 		this.addInput(resourcePool);
