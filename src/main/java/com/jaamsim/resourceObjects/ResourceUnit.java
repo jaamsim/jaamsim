@@ -308,6 +308,20 @@ public class ResourceUnit extends StateUserEntity implements Seizable, ResourceP
 	@Override
 	public void updateGraphics(double simTime) {
 		super.updateGraphics(simTime);
+
+		// Set the resource unit's position
+		if (followAssignment.getValue()) {
+			if (presentAssignment == null) {
+				setPosition(positionInput.getValue());
+			}
+			else {
+				Vec3d pos = presentAssignment.getGlobalPosition();
+				pos.add3(assignmentOffset.getValue());
+				setGlobalPosition(pos);
+			}
+		}
+
+		// Set the resource unit's colour based on its state
 		setTagVisibility(ShapeModel.TAG_CONTENTS, true);
 		setTagVisibility(ShapeModel.TAG_OUTLINES, true);
 		setTagColour(ShapeModel.TAG_CONTENTS, getColourForPresentState());
