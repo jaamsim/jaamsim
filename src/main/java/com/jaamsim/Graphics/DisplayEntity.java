@@ -377,6 +377,22 @@ public class DisplayEntity extends Entity {
 		this.setShow(showInput.getValue());
 	}
 
+	public boolean isGraphicsNominal() {
+		boolean ret = position.equals3(positionInput.getValue());
+		ret = ret && size.equals3(sizeInput.getValue());
+		ret = ret && align.equals3(alignmentInput.getValue());
+		ret = ret && orient.equals3(orientationInput.getValue());
+
+		ret = ret && (displayModelList.isEmpty() && displayModelListInput.getValue() == null
+				|| displayModelList.equals(displayModelListInput.getValue()));
+
+		ret = ret && (currentRegion == null && regionInput.getValue() == null
+				|| currentRegion.equals(regionInput.getValue()));
+
+		ret = ret && show == showInput.getValue();
+		return ret;
+	}
+
 	private void showStandardGraphicsKeywords(boolean bool) {
 		positionInput.setHidden(!bool);
 		sizeInput.setHidden(!bool);

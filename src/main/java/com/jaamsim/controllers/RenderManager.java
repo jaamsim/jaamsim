@@ -926,9 +926,10 @@ public class RenderManager implements DragSourceListener {
 	 */
 	public boolean handleDrag(WindowInteractionListener.DragInfo dragInfo) {
 
-		// If there is no object to move and the control is pressed then do nothing (return true)
-		// If control is not pressed then move the camera (return false)
-		if (selectedEntity == null || !selectedEntity.isMovable())
+		// If control key is pressed and there is no object to move then do nothing (return true)
+		// If control key is not pressed, then move the camera (return false)
+		if (selectedEntity == null || !selectedEntity.isMovable()
+				|| !selectedEntity.isGraphicsNominal())
 			return dragInfo.controlDown();
 
 		// Find the start and current world space positions
