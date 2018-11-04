@@ -61,7 +61,7 @@ public class ResourceUnit extends StateUserEntity implements Seizable, ResourceP
 	                     + "The entry 'this.Assignment' can be used in the expression to "
 	                     + "represent the entity that would seize the unit.",
 	         exampleList = {"'this.Assignment.type == 1 ? 1 : 2'"})
-	private final ExpressionInput priority;
+	private final ExpressionInput assignmentPriority;
 
 	@Keyword(description = "If TRUE, the ResourceUnit will move next to the entity that has "
 	                     + "seized it, and will follow that entity until it is released.",
@@ -93,11 +93,12 @@ public class ResourceUnit extends StateUserEntity implements Seizable, ResourceP
 		assignmentCondition.setUnitType(DimensionlessUnit.class);
 		this.addInput(assignmentCondition);
 
-		priority = new ExpressionInput("Priority", KEY_INPUTS, null);
-		priority.setEntity(this);
-		priority.setUnitType(DimensionlessUnit.class);
-		priority.setDefaultText("1");
-		this.addInput(priority);
+		assignmentPriority = new ExpressionInput("AssignmentPriority", KEY_INPUTS, null);
+		assignmentPriority.setEntity(this);
+		assignmentPriority.setUnitType(DimensionlessUnit.class);
+		assignmentPriority.setDefaultText("1");
+		this.addInput(assignmentPriority);
+		this.addSynonym(assignmentPriority, "Priority");
 
 		followAssignment = new BooleanInput("FollowAssignment", GRAPHICS, false);
 		this.addInput(followAssignment);
@@ -199,7 +200,7 @@ public class ResourceUnit extends StateUserEntity implements Seizable, ResourceP
 
 	@Override
 	public int getPriority(DisplayEntity ent) {
-		Expression exp = priority.getValue();
+		Expression exp = assignmentPriority.getValue();
 		if (exp == null)
 			return 1;
 
