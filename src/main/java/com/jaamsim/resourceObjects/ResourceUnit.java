@@ -235,28 +235,50 @@ public class ResourceUnit extends StateUserEntity implements Seizable, ResourceP
 
 	@Override
 	public void thresholdChanged() {
-		// TODO Auto-generated method stub
+		if (isTraceFlag())
+			trace(0, "thresholdChanged");
+
+		// If the resource unit is available, try to put it to work
+		if (isAvailable()) {
+			AbstractResourceProvider.notifyResourceUsers(getResourceProvider());
+			return;
+		}
+		// Do nothing if the threshold is closed. A threshold closure takes effect after the
+		// ResourceUnit has been released
 	}
 
 	@Override
 	public boolean canStartDowntime(DowntimeEntity down) {
-		// TODO Auto-generated method stub
-		return false;
+
+		// Downtime can start when any work in progress has been interrupted and there are no
+		// other maintenance or breakdown activities that are being performed. It is okay to start
+		// downtime when one or more thresholds are closed.
+		return !isBusy() && !isMaintenance() && !isBreakdown();
 	}
 
 	@Override
 	public void prepareForDowntime(DowntimeEntity down) {
-		// TODO Auto-generated method stub
+		if (isTraceFlag())
+			trace(0, "prepareForDowntime(%s)", down);
+		// Do nothing - a breakdown can only start after the ResourceUnit has been released
 	}
 
 	@Override
 	public void startDowntime(DowntimeEntity down) {
-		// TODO Auto-generated method stub
+		if (isTraceFlag()) trace(0, "startDowntime(%s)", down);
+		setPresentState();
 	}
 
 	@Override
 	public void endDowntime(DowntimeEntity down) {
-		// TODO Auto-generated method stub
+		if (isTraceFlag()) trace(0, "endDowntime(%s)", down);
+		setPresentState();
+
+		// If the resource unit is available, try to put it to work
+		if (isAvailable()) {
+			AbstractResourceProvider.notifyResourceUsers(getResourceProvider());
+			return;
+		}
 	}
 
 	@Override
