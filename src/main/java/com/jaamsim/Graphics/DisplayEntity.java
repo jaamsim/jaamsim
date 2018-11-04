@@ -55,6 +55,7 @@ import com.jaamsim.math.Vec3d;
 import com.jaamsim.render.DisplayModelBinding;
 import com.jaamsim.render.RenderUtils;
 import com.jaamsim.render.VisibilityInfo;
+import com.jaamsim.ui.EditBox;
 import com.jaamsim.ui.FrameBox;
 import com.jaamsim.ui.GUIFrame;
 import com.jaamsim.ui.View;
@@ -289,6 +290,9 @@ public class DisplayEntity extends Entity {
 		}
 		if (in == displayModelListInput) {
 			this.setDisplayModelList(displayModelListInput.getValue());
+			setGraphicsKeywords();
+			EditBox.getInstance().setEntity(null); // refresh the contents of the Input Editor
+			FrameBox.reSelectEntity();
 			return;
 		}
 		if (in == showInput) {
