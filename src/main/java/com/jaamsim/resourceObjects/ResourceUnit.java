@@ -80,6 +80,7 @@ public class ResourceUnit extends StateUserEntity implements Seizable, ResourceP
 
 	{
 		active.setHidden(false);
+		stateGraphics.setHidden(false);
 		immediateThresholdList.setHidden(true);
 		immediateReleaseThresholdList.setHidden(true);
 		immediateMaintenanceList.setHidden(true);
