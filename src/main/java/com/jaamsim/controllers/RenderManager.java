@@ -1381,6 +1381,12 @@ public class RenderManager implements DragSourceListener {
 			return false;
 		}
 
+		// Record the data for the selected entity before it is dragged
+		if (selectedEntity != null) {
+			dragEntityPosition = selectedEntity.getGlobalPosition();
+			dragEntityPoints = selectedEntity.getPoints();
+		}
+
 		double mouseHandleDist = Double.POSITIVE_INFINITY;
 		double entityDist = Double.POSITIVE_INFINITY;
 		// See if we are hovering over any interaction handles
@@ -1402,16 +1408,12 @@ public class RenderManager implements DragSourceListener {
 		    (dragHandleID == 0 || dragHandleID == MOVE_PICK_ID)) {
 
 			// Use the entity collision point for dragging instead of the handle collision point
-			dragEntityPosition = selectedEntity.getGlobalPosition();
-			dragEntityPoints = selectedEntity.getPoints();
 			dragCollisionPoint = pickRay.getPointAtDist(entityDist);
 			dragHandleID = MOVE_PICK_ID;
 			return true;
 		}
 		if (mouseHandleDist != Double.POSITIVE_INFINITY) {
 			// We hit a mouse handle
-			dragEntityPosition = selectedEntity.getGlobalPosition();
-			dragEntityPoints = selectedEntity.getPoints();
 			dragCollisionPoint = pickRay.getPointAtDist(mouseHandleDist);
 			return true;
 		}
