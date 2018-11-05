@@ -88,8 +88,10 @@ public abstract class CellEditor extends AbstractCellEditor implements TableCell
 			final String newValue = editor.getValue();
 
 			// The value has not changed
-			if ( in.getValueString().equals(newValue) && in.isValid() )
+			if (in.getValueString().equals(newValue) && in.isValid()) {
+				editor.propTable.setPresentCellEditor(null);
 				return;
+			}
 
 			// Adjust the user's entry to standardise the syntax
 			String str = newValue.trim();
