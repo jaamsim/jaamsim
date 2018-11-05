@@ -994,36 +994,33 @@ public class RenderManager implements DragSourceListener {
 		      firstDist < 0 ||   firstDist == Double.POSITIVE_INFINITY)
 			return true;
 
+		// Global position of the entity prior to the drag
+		Vec3d pos = new Vec3d(dragEntityPosition);
+
 		// Vertical move
 		if (shift) {
-			Vec3d entPos = new Vec3d(dragEntityPosition);
 			double zDiff = RenderUtils.getZDiff(dragCollisionPoint, currentRay, firstRay);
-			entPos.z += zDiff;
-			if (Simulation.isSnapToGrid())
-				entPos = Simulation.getSnapGridPosition(entPos, selectedEntity.getGlobalPosition(), shift);
-			Vec3d localPos = selectedEntity.getLocalPosition(entPos);
-			KeywordIndex kw = InputAgent.formatVec3dInput("Position", localPos, DistanceUnit.class);
-			InputAgent.storeAndExecute(new KeywordCommand(selectedEntity, kw));
-			return true;
+			pos.z += zDiff;
 		}
 
 		// Horizontal move
-		Plane dragPlane = new Plane(new Vec3d(0, 0, 1), dragCollisionPoint.z); // XY plane at collision point
-		double cDist = dragPlane.collisionDist(currentRay);
-		double lDist = dragPlane.collisionDist(firstRay);
+		else {
+			Plane dragPlane = new Plane(new Vec3d(0, 0, 1), dragCollisionPoint.z); // XY plane at collision point
+			double cDist = dragPlane.collisionDist(currentRay);
+			double lDist = dragPlane.collisionDist(firstRay);
 
-		if (cDist < 0 || cDist == Double.POSITIVE_INFINITY ||
-		    lDist < 0 || lDist == Double.POSITIVE_INFINITY)
-			return true;
+			if (cDist < 0 || cDist == Double.POSITIVE_INFINITY ||
+			    lDist < 0 || lDist == Double.POSITIVE_INFINITY)
+				return true;
 
-		Vec3d cPoint = currentRay.getPointAtDist(cDist);
-		Vec3d lPoint = firstRay.getPointAtDist(lDist);
+			Vec3d cPoint = currentRay.getPointAtDist(cDist);
+			Vec3d lPoint = firstRay.getPointAtDist(lDist);
 
-		Vec3d del = new Vec3d();
-		del.sub3(cPoint, lPoint);
+			Vec3d del = new Vec3d();
+			del.sub3(cPoint, lPoint);
+			pos.add3(del);
+		}
 
-		Vec3d pos = new Vec3d(dragEntityPosition);
-		pos.add3(del);
 		if (Simulation.isSnapToGrid())
 			pos = Simulation.getSnapGridPosition(pos, selectedEntity.getGlobalPosition(), shift);
 		Vec3d localPos = selectedEntity.getLocalPosition(pos);
