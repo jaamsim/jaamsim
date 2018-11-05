@@ -761,6 +761,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		JButton fileNew = new JButton( new ImageIcon(
 				GUIFrame.class.getResource("/resources/images/New-16.png")) );
 		fileNew.setMargin( noMargin );
+		fileNew.setFocusPainted(false);
 		fileNew.setToolTipText(formatToolTip("New", "Starts a new model."));
 		fileNew.addActionListener( new ActionListener() {
 
@@ -776,6 +777,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		JButton fileOpen = new JButton( new ImageIcon(
 				GUIFrame.class.getResource("/resources/images/Open-16.png")) );
 		fileOpen.setMargin( noMargin );
+		fileOpen.setFocusPainted(false);
 		fileOpen.setToolTipText(formatToolTip("Open...", "Opens a model."));
 		fileOpen.addActionListener( new ActionListener() {
 
@@ -791,6 +793,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		fileSave = new JButton( new ImageIcon(
 				GUIFrame.class.getResource("/resources/images/Save-16.png")) );
 		fileSave.setMargin( noMargin );
+		fileSave.setFocusPainted(false);
 		fileSave.setToolTipText(formatToolTip("Save", "Saves the present model."));
 		fileSave.setEnabled(false);
 		fileSave.addActionListener( new ActionListener() {
@@ -807,6 +810,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		undo = new JButton( new ImageIcon(
 				GUIFrame.class.getResource("/resources/images/Undo-16.png")) );
 		undo.setMargin( noMargin );
+		undo.setFocusPainted(false);
 		undo.setToolTipText(formatToolTip("Undo", "Reverses the last change to the model."));
 		undo.setEnabled(InputAgent.hasUndo());
 		undo.addActionListener( new ActionListener() {
@@ -823,6 +827,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		undoDropdown = new JButton(new ImageIcon(
 				GUIFrame.class.getResource("/resources/images/dropdown.png")));
 		undoDropdown.setMargin( noMargin );
+		undoDropdown.setFocusPainted(false);
 		undoDropdown.setEnabled(InputAgent.hasUndo());
 		undoDropdown.addActionListener( new ActionListener() {
 
@@ -852,6 +857,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		redo = new JButton( new ImageIcon(
 				GUIFrame.class.getResource("/resources/images/Redo-16.png")) );
 		redo.setMargin( noMargin );
+		redo.setFocusPainted(false);
 		redo.setToolTipText(formatToolTip("Redo", "Re-performs the last change to the model that was undone."));
 		redo.setEnabled(InputAgent.hasRedo());
 		redo.addActionListener( new ActionListener() {
@@ -867,6 +873,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		redoDropdown = new JButton(new ImageIcon(
 				GUIFrame.class.getResource("/resources/images/dropdown.png")));
 		redoDropdown.setMargin( noMargin );
+		redoDropdown.setFocusPainted(false);
 		redoDropdown.setEnabled(InputAgent.hasRedo());
 		redoDropdown.addActionListener( new ActionListener() {
 
@@ -895,6 +902,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		// 6) 2D button
 		lockViewXYPlane = new JToggleButton( "2D" );
 		lockViewXYPlane.setMargin( smallMargin );
+		lockViewXYPlane.setFocusPainted(false);
 		lockViewXYPlane.setToolTipText(formatToolTip("2D View",
 				"Sets the camera position to show a bird's eye view of the 3D scene."));
 		lockViewXYPlane.addActionListener( new ActionListener() {
@@ -918,6 +926,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		xyzAxis = new JToggleButton( new ImageIcon(
 				GUIFrame.class.getResource("/resources/images/Axes-16.png")) );
 		xyzAxis.setMargin( noMargin );
+		xyzAxis.setFocusPainted(false);
 		xyzAxis.setToolTipText(formatToolTip("Show Axes",
 				"Shows the unit vectors for the x, y, and z axes."));
 		xyzAxis.addActionListener( new ActionListener() {
@@ -937,6 +946,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		grid = new JToggleButton( new ImageIcon(
 				GUIFrame.class.getResource("/resources/images/Grid-16.png")) );
 		grid.setMargin( noMargin );
+		grid.setFocusPainted(false);
 		grid.setToolTipText(formatToolTip("Show Grid",
 				"Shows the coordinate grid on the x-y plane."));
 		grid.addActionListener( new ActionListener() {
@@ -964,6 +974,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		snapToGrid = new JToggleButton( new ImageIcon(
 				GUIFrame.class.getResource("/resources/images/Snap-16.png")) );
 		snapToGrid.setMargin( noMargin );
+		snapToGrid.setFocusPainted(false);
 		snapToGrid.setToolTipText(formatToolTip("Snap to Grid",
 				"During repositioning, objects are forced to the nearest grid point."));
 		snapToGrid.addActionListener( new ActionListener() {
@@ -981,6 +992,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		showLinks.setToolTipText(formatToolTip("Show Entity Flow",
 				"When selected, arrows are shown between objects to indicate the flow of entities."));
 		showLinks.setMargin( noMargin );
+		showLinks.setFocusPainted(false);
 		showLinks.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed( ActionEvent event ) {
@@ -1001,6 +1013,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		createLinks.setToolTipText(formatToolTip("Create Entity Links",
 				"When this is enabled, entities are linked when selection is changed."));
 		createLinks.setMargin( noMargin );
+		createLinks.setFocusPainted(false);
 		createLinks.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed( ActionEvent event ) {
