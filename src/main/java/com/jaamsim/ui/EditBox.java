@@ -349,7 +349,6 @@ public static class EditTable extends JTable {
 	static int col3Width = 150;
 
 	private ColorEditor colorEditor;
-	private ListEditor listEditor;
 
 	private String retryString;
 	private int retryRow;
@@ -417,15 +416,12 @@ public static class EditTable extends JTable {
 
 		// 5) Multiple selections from a List
 		else if (in instanceof ListInput) {
-			if(listEditor == null) {
-				listEditor = new ListEditor(this, array);
-				if (in instanceof StringListInput) {
-					listEditor.setCaseSensitive(
-							((StringListInput)(in)).getCaseSensitive() );
-				}
-				if (in instanceof SampleListInput || in instanceof StringProvListInput) {
-					listEditor.setInnerBraces(true);
-				}
+			ListEditor listEditor = new ListEditor(this, array);
+			if (in instanceof StringListInput) {
+				listEditor.setCaseSensitive( ((StringListInput)(in)).getCaseSensitive() );
+			}
+			if (in instanceof SampleListInput || in instanceof StringProvListInput) {
+				listEditor.setInnerBraces(true);
 			}
 			ret = listEditor;
 		}
