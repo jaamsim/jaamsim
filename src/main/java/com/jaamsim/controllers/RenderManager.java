@@ -153,6 +153,9 @@ public class RenderManager implements DragSourceListener {
 	private Vec3d dragCollisionPoint;
 	private Vec3d dragEntityPosition;
 	private ArrayList<Vec3d> dragEntityPoints;
+	private Vec3d dragEntitySize;
+	private Mat4d dragEntityTransMat;
+	private Mat4d dragEntityInvTransMat;
 
 	// The object type for drag-and-drop operation, if this is null, the user is not dragging
 	private ObjectType dndObjectType;
@@ -969,7 +972,7 @@ public class RenderManager implements DragSourceListener {
 		// RESIZE
 		if (dragHandleID <= RESIZE_POSX_PICK_ID &&
 		    dragHandleID >= RESIZE_NXNY_PICK_ID)
-			return handleResize(currentRay, lastRay, currentDist, lastDist);
+			return handleResize(currentRay, firstRay, currentDist, firstDist);
 
 		// ROTATE
 		if (dragHandleID == ROTATE_PICK_ID)
@@ -1035,26 +1038,26 @@ public class RenderManager implements DragSourceListener {
 		return true;
 	}
 
-	private boolean handleResize(Ray currentRay, Ray lastRay, double currentDist, double lastDist) {
+	private boolean handleResize(Ray currentRay, Ray firstRay, double currentDist, double firstDist) {
 
 		Vec3d currentPoint = currentRay.getPointAtDist(currentDist);
-		Vec3d lastPoint = lastRay.getPointAtDist(lastDist);
+		Vec3d firstPoint = firstRay.getPointAtDist(firstDist);
 
-		Vec3d size = selectedEntity.getSize();
-		Mat4d transMat = selectedEntity.getTransMatrix();
-		Mat4d invTransMat = selectedEntity.getInvTransMatrix();
+		Vec3d size = dragEntitySize;
+		Mat4d transMat = dragEntityTransMat;
+		Mat4d invTransMat = dragEntityInvTransMat;
 
 		Vec3d entSpaceCurrent = new Vec3d(); // entSpacePoint is the current point in model space
 		entSpaceCurrent.multAndTrans3(invTransMat, currentPoint);
 
-		Vec3d entSpaceLast = new Vec3d(); // entSpaceLast is the last point in model space
-		entSpaceLast.multAndTrans3(invTransMat, lastPoint);
+		Vec3d entSpaceFirst = new Vec3d(); // entSpaceLast is the last point in model space
+		entSpaceFirst.multAndTrans3(invTransMat, firstPoint);
 
 		Vec3d entSpaceDelta = new Vec3d();
-		entSpaceDelta.sub3(entSpaceCurrent, entSpaceLast);
+		entSpaceDelta.sub3(entSpaceCurrent, entSpaceFirst);
 
-		Vec3d pos = selectedEntity.getGlobalPosition();
-		Vec3d scale = selectedEntity.getSize();
+		Vec3d pos = dragEntityPosition;
+		Vec3d scale = new Vec3d(size);
 		Vec4d fixedPoint = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
 
 		if (dragHandleID == RESIZE_POSX_PICK_ID) {
@@ -1095,6 +1098,9 @@ public class RenderManager implements DragSourceListener {
 			scale.y -= entSpaceDelta.y * size.y;
 			fixedPoint = new Vec4d( 0.5,  0.5, 0.0, 1.0d);
 		}
+
+		if (Simulation.isSnapToGrid())
+			scale = Simulation.getSnapGridPosition(scale, dragEntitySize, false);
 
 		// Handle the case where the scale is pulled through itself. Fix the scale,
 		// and swap the currently selected handle
@@ -1385,6 +1391,9 @@ public class RenderManager implements DragSourceListener {
 		if (selectedEntity != null) {
 			dragEntityPosition = selectedEntity.getGlobalPosition();
 			dragEntityPoints = selectedEntity.getPoints();
+			dragEntitySize = selectedEntity.getSize();
+			dragEntityTransMat = selectedEntity.getTransMatrix();
+			dragEntityInvTransMat = selectedEntity.getInvTransMatrix();
 		}
 
 		double mouseHandleDist = Double.POSITIVE_INFINITY;
