@@ -811,6 +811,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 				GUIFrame.class.getResource("/resources/images/Undo-16.png")) );
 		undo.setMargin( noMargin );
 		undo.setFocusPainted(false);
+		undo.setRequestFocusEnabled(false);
 		undo.setToolTipText(formatToolTip("Undo", "Reverses the last change to the model."));
 		undo.setEnabled(InputAgent.hasUndo());
 		undo.addActionListener( new ActionListener() {
@@ -828,6 +829,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 				GUIFrame.class.getResource("/resources/images/dropdown.png")));
 		undoDropdown.setMargin( noMargin );
 		undoDropdown.setFocusPainted(false);
+		undoDropdown.setRequestFocusEnabled(false);
 		undoDropdown.setEnabled(InputAgent.hasUndo());
 		undoDropdown.addActionListener( new ActionListener() {
 
@@ -858,6 +860,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 				GUIFrame.class.getResource("/resources/images/Redo-16.png")) );
 		redo.setMargin( noMargin );
 		redo.setFocusPainted(false);
+		redo.setRequestFocusEnabled(false);
 		redo.setToolTipText(formatToolTip("Redo", "Re-performs the last change to the model that was undone."));
 		redo.setEnabled(InputAgent.hasRedo());
 		redo.addActionListener( new ActionListener() {
@@ -874,6 +877,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 				GUIFrame.class.getResource("/resources/images/dropdown.png")));
 		redoDropdown.setMargin( noMargin );
 		redoDropdown.setFocusPainted(false);
+		redoDropdown.setRequestFocusEnabled(false);
 		redoDropdown.setEnabled(InputAgent.hasRedo());
 		redoDropdown.addActionListener( new ActionListener() {
 
@@ -903,6 +907,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		lockViewXYPlane = new JToggleButton( "2D" );
 		lockViewXYPlane.setMargin( smallMargin );
 		lockViewXYPlane.setFocusPainted(false);
+		lockViewXYPlane.setRequestFocusEnabled(false);
 		lockViewXYPlane.setToolTipText(formatToolTip("2D View",
 				"Sets the camera position to show a bird's eye view of the 3D scene."));
 		lockViewXYPlane.addActionListener( new ActionListener() {
@@ -927,6 +932,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 				GUIFrame.class.getResource("/resources/images/Axes-16.png")) );
 		xyzAxis.setMargin( noMargin );
 		xyzAxis.setFocusPainted(false);
+		xyzAxis.setRequestFocusEnabled(false);
 		xyzAxis.setToolTipText(formatToolTip("Show Axes",
 				"Shows the unit vectors for the x, y, and z axes."));
 		xyzAxis.addActionListener( new ActionListener() {
@@ -947,6 +953,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 				GUIFrame.class.getResource("/resources/images/Grid-16.png")) );
 		grid.setMargin( noMargin );
 		grid.setFocusPainted(false);
+		grid.setRequestFocusEnabled(false);
 		grid.setToolTipText(formatToolTip("Show Grid",
 				"Shows the coordinate grid on the x-y plane."));
 		grid.addActionListener( new ActionListener() {
@@ -975,6 +982,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 				GUIFrame.class.getResource("/resources/images/Snap-16.png")) );
 		snapToGrid.setMargin( noMargin );
 		snapToGrid.setFocusPainted(false);
+		snapToGrid.setRequestFocusEnabled(false);
 		snapToGrid.setToolTipText(formatToolTip("Snap to Grid",
 				"During repositioning, objects are forced to the nearest grid point."));
 		snapToGrid.addActionListener( new ActionListener() {
@@ -993,6 +1001,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 				"When selected, arrows are shown between objects to indicate the flow of entities."));
 		showLinks.setMargin( noMargin );
 		showLinks.setFocusPainted(false);
+		showLinks.setRequestFocusEnabled(false);
 		showLinks.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed( ActionEvent event ) {
@@ -1014,6 +1023,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 				"When this is enabled, entities are linked when selection is changed."));
 		createLinks.setMargin( noMargin );
 		createLinks.setFocusPainted(false);
+		createLinks.setRequestFocusEnabled(false);
 		createLinks.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed( ActionEvent event ) {
