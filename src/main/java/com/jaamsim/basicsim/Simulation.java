@@ -1176,16 +1176,24 @@ public class Simulation extends Entity {
 	}
 	private final Conditional pauseCondition = new PauseConditional();
 
+	public static Vec3d getSnapGridPosition(Vec3d pos) {
+		return getSnapGridPosition(pos, snapGridSpacing.getValue());
+	}
+
+	public static Vec3d getSnapGridPosition(Vec3d newPos, Vec3d oldPos, boolean shift) {
+		return getSnapGridPosition(newPos, oldPos, shift, snapGridSpacing.getValue());
+	}
+
 	/**
 	 * Returns the nearest point on the snap grid to the given coordinate.
 	 * To avoid dithering, the new position must be at least one grid space
 	 * from the old position.
 	 * @param newPos - new coordinate for the object
 	 * @param oldPos - present coordinate for the object
+	 * @param spacing - distance between adjacent grid points
 	 * @return newest snap grid point.
 	 */
-	public static Vec3d getSnapGridPosition(Vec3d newPos, Vec3d oldPos) {
-		double spacing = snapGridSpacing.getValue();
+	public static Vec3d getSnapGridPosition(Vec3d newPos, Vec3d oldPos, double spacing) {
 		Vec3d ret = new Vec3d(newPos);
 		if (Math.abs(newPos.x - oldPos.x) < spacing)
 			ret.x = oldPos.x;
@@ -1193,16 +1201,16 @@ public class Simulation extends Entity {
 			ret.y = oldPos.y;
 		if (Math.abs(newPos.z - oldPos.z) < spacing)
 			ret.z = oldPos.z;
-		return Simulation.getSnapGridPosition(ret);
+		return Simulation.getSnapGridPosition(ret, spacing);
 	}
 
 	/**
 	 * Returns the nearest point on the snap grid to the given coordinate.
 	 * @param pos - position to be adjusted
+	 * @param spacing - distance between adjacent grid points
 	 * @return nearest snap grid point.
 	 */
-	public static Vec3d getSnapGridPosition(Vec3d pos) {
-		double spacing = snapGridSpacing.getValue();
+	public static Vec3d getSnapGridPosition(Vec3d pos, double spacing) {
 		Vec3d ret = new Vec3d(pos);
 		ret.x = spacing*Math.rint(ret.x/spacing);
 		ret.y = spacing*Math.rint(ret.y/spacing);
@@ -1210,8 +1218,8 @@ public class Simulation extends Entity {
 		return ret;
 	}
 
-	public static Vec3d getSnapGridPosition(Vec3d newPos, Vec3d oldPos, boolean shift) {
-		Vec3d ret = getSnapGridPosition(newPos, oldPos);
+	public static Vec3d getSnapGridPosition(Vec3d newPos, Vec3d oldPos, boolean shift, double spacing) {
+		Vec3d ret = getSnapGridPosition(newPos, oldPos, spacing);
 		if (shift) {
 			ret.x = oldPos.x;
 			ret.y = oldPos.y;
