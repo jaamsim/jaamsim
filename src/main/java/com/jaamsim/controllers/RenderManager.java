@@ -153,6 +153,7 @@ public class RenderManager implements DragSourceListener {
 	private Vec3d dragCollisionPoint;
 	private Vec3d dragEntityPosition;
 	private ArrayList<Vec3d> dragEntityPoints;
+	private Vec3d dragEntityOrientation;
 	private Vec3d dragEntitySize;
 	private Mat4d dragEntityTransMat;
 	private Mat4d dragEntityInvTransMat;
@@ -938,9 +939,6 @@ public class RenderManager implements DragSourceListener {
 		// Find the start and current world space positions
 		Ray firstRay = getRayForMouse(dragInfo.windowID, dragInfo.startX, dragInfo.startY);
 		Ray currentRay = getRayForMouse(dragInfo.windowID, dragInfo.x, dragInfo.y);
-		Ray lastRay = getRayForMouse(dragInfo.windowID,
-		                             dragInfo.x - dragInfo.dx,
-		                             dragInfo.y - dragInfo.dy);
 
 		Transform trans = selectedEntity.getGlobalTrans();
 
@@ -949,7 +947,6 @@ public class RenderManager implements DragSourceListener {
 
 		double firstDist = entityPlane.collisionDist(firstRay);
 		double currentDist = entityPlane.collisionDist(currentRay);
-		double lastDist = entityPlane.collisionDist(lastRay);
 
 		// If the Control key is not pressed, then the selected entity handles the drag action
 		if (!dragInfo.controlDown()) {
@@ -976,7 +973,7 @@ public class RenderManager implements DragSourceListener {
 
 		// ROTATE
 		if (dragHandleID == ROTATE_PICK_ID)
-			return handleRotate(currentRay, lastRay, currentDist, lastDist);
+			return handleRotate(currentRay, firstRay, currentDist, firstDist);
 
 		// LINE MOVE
 		if (dragHandleID == LINEDRAG_PICK_ID)
@@ -1129,6 +1126,7 @@ public class RenderManager implements DragSourceListener {
 		Vec4d oldFixed = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
 		oldFixed.mult4(transMat, fixedPoint);
 		selectedEntity.setSize(scale);
+
 		transMat = selectedEntity.getTransMatrix(); // Get the new matrix
 
 		Vec4d newFixed = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
@@ -1136,8 +1134,8 @@ public class RenderManager implements DragSourceListener {
 
 		Vec4d posAdjust = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
 		posAdjust.sub3(oldFixed, newFixed);
-
 		pos.add3(posAdjust);
+
 		Vec3d localPos = selectedEntity.getLocalPosition(pos);
 		KeywordIndex sizeKw = InputAgent.formatVec3dInput("Size", selectedEntity.getSize(), DistanceUnit.class);
 		KeywordIndex posKw = InputAgent.formatVec3dInput("Position", localPos, DistanceUnit.class);
@@ -1145,13 +1143,15 @@ public class RenderManager implements DragSourceListener {
 		return true;
 	}
 
-	private boolean handleRotate(Ray currentRay, Ray lastRay, double currentDist, double lastDist) {
+	public static final double ANGLE_SPACING = Math.toRadians(1.0d);
 
-		Mat4d transMat = selectedEntity.getTransMatrix();
+	private boolean handleRotate(Ray currentRay, Ray firstRay, double currentDist, double firstDist) {
+
+		Mat4d transMat = dragEntityTransMat;
 
 		// The points where the previous pick ended and current position. Collision is with the entity's XY plane
 		Vec3d currentPoint = currentRay.getPointAtDist(currentDist);
-		Vec3d lastPoint = lastRay.getPointAtDist(lastDist);
+		Vec3d firstPoint = firstRay.getPointAtDist(firstDist);
 
 		Vec3d align = selectedEntity.getAlignment();
 
@@ -1159,7 +1159,7 @@ public class RenderManager implements DragSourceListener {
 		rotateCenter.mult4(transMat, rotateCenter);
 
 		Vec4d a = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
-		a.sub3(lastPoint, rotateCenter);
+		a.sub3(firstPoint, rotateCenter);
 		Vec4d b = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
 		b.sub3(currentPoint, rotateCenter);
 
@@ -1167,10 +1167,14 @@ public class RenderManager implements DragSourceListener {
 		aCrossB.cross3(a, b);
 
 		double sinTheta = aCrossB.z / a.mag3() / b.mag3();
-		double theta = Math.asin(sinTheta);
+		double cosTheta = a.dot3(b) / a.mag3() / b.mag3();
+		double theta = Math.atan2(sinTheta, cosTheta);
 
-		Vec3d orient = selectedEntity.getOrientation();
+		Vec3d orient = new Vec3d(dragEntityOrientation);
 		orient.z += theta;
+		if (Simulation.isSnapToGrid())
+			orient = Simulation.getSnapGridPosition(orient, dragEntityOrientation, true, ANGLE_SPACING);
+
 		KeywordIndex kw = InputAgent.formatVec3dInput("Orientation", orient, AngleUnit.class);
 		InputAgent.storeAndExecute(new KeywordCommand(selectedEntity, kw));
 		return true;
@@ -1391,6 +1395,7 @@ public class RenderManager implements DragSourceListener {
 		if (selectedEntity != null) {
 			dragEntityPosition = selectedEntity.getGlobalPosition();
 			dragEntityPoints = selectedEntity.getPoints();
+			dragEntityOrientation = selectedEntity.getOrientation();
 			dragEntitySize = selectedEntity.getSize();
 			dragEntityTransMat = selectedEntity.getTransMatrix();
 			dragEntityInvTransMat = selectedEntity.getInvTransMatrix();
@@ -1410,6 +1415,7 @@ public class RenderManager implements DragSourceListener {
 				entityDist = pd.dist;
 			}
 		}
+
 		// The following logical condition effectively checks if we hit the entity first, and did not select
 		// any mouse handle other than the move handle
 		if (entityDist != Double.POSITIVE_INFINITY &&
