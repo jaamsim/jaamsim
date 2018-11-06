@@ -1223,8 +1223,18 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		dim.width -= diff;
 		dim.height = hght;
 		spinner.setPreferredSize(dim);
+		spinner.addChangeListener(new ChangeListener() {
 
-		spinner.addChangeListener(new SpeedFactorListener());
+			@Override
+			public void stateChanged( ChangeEvent e ) {
+				Double val = (Double)((JSpinner)e.getSource()).getValue();
+				NumberFormat nf = NumberFormat.getNumberInstance(Locale.US);
+				DecimalFormat df = (DecimalFormat)nf;
+				df.applyPattern("0.######");
+				InputAgent.applyArgs(Simulation.getInstance(), "RealTimeFactor", df.format(val));
+			}
+		});
+
 		spinner.setToolTipText(formatToolTip("Speed Multiplier (up/down key)",
 				"Target ratio of simulation time to wall clock time when Real Time mode is selected."));
 		spinner.setEnabled(false);
@@ -2161,18 +2171,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 
 		// Set the selected entity to the Simulation object
 		FrameBox.setSelectedEntity(Simulation.getInstance(), false);
-	}
-
-	public static class SpeedFactorListener implements ChangeListener {
-
-		@Override
-		public void stateChanged( ChangeEvent e ) {
-			Double val = (Double)((JSpinner)e.getSource()).getValue();
-			NumberFormat nf = NumberFormat.getNumberInstance(Locale.US);
-			DecimalFormat df = (DecimalFormat)nf;
-			df.applyPattern("0.######");
-			InputAgent.applyArgs(Simulation.getInstance(), "RealTimeFactor", df.format(val));
-		}
 	}
 
 	/*
