@@ -655,7 +655,8 @@ public class Simulation extends Entity {
 		}
 
 		if (in == pauseTime) {
-			updatePauseTime();
+			if (GUIFrame.getInstance() != null)
+				GUIFrame.getInstance().updateForPauseTime(pauseTime.getValueString());
 			return;
 		}
 
@@ -1242,10 +1243,6 @@ public class Simulation extends Entity {
 
 	static void updateRealTime() {
 		GUIFrame.updateForRealTime(realTime.getValue(), realTimeFactor.getValue());
-	}
-
-	static void updatePauseTime() {
-		GUIFrame.updateForPauseTime(pauseTime.getValueString());
 	}
 
 	public static void setModelName(String newModelName) {

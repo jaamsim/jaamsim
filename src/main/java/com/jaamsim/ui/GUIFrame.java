@@ -1823,18 +1823,10 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 			spinner.setEnabled(false);
 	}
 
-	public static void updateForPauseTime(String str) {
-		GUIFrame inst = GUIFrame.getInstance();
-		if (inst == null)
-			return;
-
-		inst.updateForPT(str);
-	}
-
 	/**
 	 * updates PauseTime entry
 	 */
-	private void updateForPT(String str) {
+	public void updateForPauseTime(String str) {
 		pauseTime.setText(str);
 	}
 
