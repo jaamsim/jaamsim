@@ -923,6 +923,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 						currentView.setLock2D(bLock2D);
 					}
 				}
+				fileSave.requestFocusInWindow();
 			}
 		} );
 		buttonBar.addSeparator(separatorDim);
@@ -944,6 +945,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 				if (ent != null) {
 					InputAgent.applyBoolean(ent, "Show", xyzAxis.isSelected());
 				}
+				fileSave.requestFocusInWindow();
 			}
 		} );
 		buttonBar.add(Box.createRigidArea(gapDim));
@@ -973,6 +975,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 				if (ent != null) {
 					InputAgent.applyBoolean(ent, "Show", grid.isSelected());
 				}
+				fileSave.requestFocusInWindow();
 			}
 		} );
 		buttonBar.add(Box.createRigidArea(gapDim));
@@ -992,6 +995,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 			public void actionPerformed( ActionEvent event ) {
 				InputAgent.applyBoolean(Simulation.getInstance(), "SnapToGrid", snapToGrid.isSelected());
 				gridSpacing.setEnabled(snapToGrid.isSelected());
+				fileSave.requestFocusInWindow();
 			}
 		} );
 		buttonBar.addSeparator(separatorDim);
@@ -1017,6 +1021,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 			public void actionPerformed(ActionEvent evt) {
 				KeywordIndex kw = InputAgent.formatInput("SnapGridSpacing", gridSpacing.getText());
 				InputAgent.apply(Simulation.getInstance(), kw);
+				fileSave.requestFocusInWindow();
 			}
 		});
 
@@ -1049,6 +1054,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 					RenderManager.inst().setShowLinks(bShow);
 					RenderManager.redraw();
 				}
+				fileSave.requestFocusInWindow();
 			}
 
 		});
@@ -1074,6 +1080,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 					RenderManager.inst().setCreateLinks(bCreate);
 					RenderManager.redraw();
 				}
+				fileSave.requestFocusInWindow();
 			}
 
 		});
