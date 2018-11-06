@@ -625,6 +625,10 @@ public class Simulation extends Entity {
 		ArrayList<Class<? extends Unit>> defList = new ArrayList<>();
 		defList.add(DimensionlessUnit.class);
 		unitTypeList.setDefaultValue(defList);
+
+		// Set the initial value for snap grid spacing
+		if (GUIFrame.getInstance() != null)
+			GUIFrame.getInstance().updateForSnapGridSpacing(snapGridSpacing.getDefaultString());
 	}
 
 	public Simulation() {}
