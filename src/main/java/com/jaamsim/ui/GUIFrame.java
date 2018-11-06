@@ -1790,15 +1790,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		fileMenu.setEnabled( true );
 	}
 
-	public static void updateSaveButton() {
-		GUIFrame inst = GUIFrame.getInstance();
-		if (inst == null)
-			return;
-
-		inst.updateSB();
-	}
-
-	private void updateSB() {
+	public void updateSaveButton() {
 		fileSave.setEnabled(InputAgent.isSessionEdited());
 	}
 
