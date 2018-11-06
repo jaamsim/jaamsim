@@ -991,6 +991,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 			@Override
 			public void actionPerformed( ActionEvent event ) {
 				InputAgent.applyBoolean(Simulation.getInstance(), "SnapToGrid", snapToGrid.isSelected());
+				gridSpacing.setEnabled(snapToGrid.isSelected());
 			}
 		} );
 		buttonBar.addSeparator(separatorDim);
@@ -1874,6 +1875,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 
 	public void updateForSnapToGrid() {
 		snapToGrid.setSelected(Simulation.isSnapToGrid());
+		gridSpacing.setEnabled(Simulation.isSnapToGrid());
 	}
 
 	public static Image getWindowIcon() {
