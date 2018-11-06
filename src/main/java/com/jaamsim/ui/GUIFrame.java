@@ -1191,6 +1191,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		controlRealTime.setToolTipText(formatToolTip("Real Time Mode",
 				"When selected, the simulation runs at a fixed multiple of wall clock time."));
 		controlRealTime.setMargin( smallMargin );
+		controlRealTime.setFocusPainted(false);
+		controlRealTime.setRequestFocusEnabled(false);
 		controlRealTime.addActionListener(new RealTimeActionListener());
 
 		mainToolBar.addSeparator(separatorDim);
