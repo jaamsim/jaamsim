@@ -190,7 +190,7 @@ public class Simulation extends Entity {
 	private static final ValueInput snapGridSpacing;
 
 	@Keyword(description = "The distance moved by the selected entity when the an arrow key is "
-	                     + "pressed.",
+	                     + "pressed. Defaults to the SnapGridSpacing value.",
 	         exampleList = {"1 cm"})
 	private static final ValueInput incrementSize;
 
@@ -1154,6 +1154,8 @@ public class Simulation extends Entity {
 	}
 
 	public static double getIncrementSize() {
+		if (incrementSize.isDefault())
+			return snapGridSpacing.getValue();
 		return incrementSize.getValue();
 	}
 
