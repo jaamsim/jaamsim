@@ -398,11 +398,13 @@ public class Simulation extends Entity {
 		snapGridSpacing.setUnitType(DistanceUnit.class);
 		snapGridSpacing.setValidRange(1.0e-6, Double.POSITIVE_INFINITY);
 		snapGridSpacing.setPromptReqd(false);
+		snapGridSpacing.setHidden(true);
 
 		incrementSize = new ValueInput("IncrementSize", GUI, 0.1d);
 		incrementSize.setUnitType(DistanceUnit.class);
 		incrementSize.setValidRange(1.0e-6, Double.POSITIVE_INFINITY);
 		incrementSize.setPromptReqd(false);
+		incrementSize.setHidden(true);
 
 		realTimeFactor = new ValueInput("RealTimeFactor", GUI, DEFAULT_REAL_TIME_FACTOR);
 		realTimeFactor.setValidRange(MIN_REAL_TIME_FACTOR, MAX_REAL_TIME_FACTOR);
