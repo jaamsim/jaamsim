@@ -682,6 +682,12 @@ public class Simulation extends Entity {
 			return;
 		}
 
+		if (in == snapGridSpacing) {
+			if (GUIFrame.getInstance() != null)
+				GUIFrame.getInstance().updateForSnapGridSpacing(snapGridSpacing.getValueString());
+			return;
+		}
+
 		if (in == snapToGrid) {
 			if (GUIFrame.getInstance() != null)
 				GUIFrame.getInstance().updateForSnapToGrid();

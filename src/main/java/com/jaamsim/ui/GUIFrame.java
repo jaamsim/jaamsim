@@ -1868,6 +1868,10 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		GUIFrame.updateUI();
 	}
 
+	public void updateForSnapGridSpacing(String str) {
+		gridSpacing.setText(str);
+	}
+
 	public void updateForSnapToGrid() {
 		snapToGrid.setSelected(Simulation.isSnapToGrid());
 	}
