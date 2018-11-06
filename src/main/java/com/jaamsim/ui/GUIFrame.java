@@ -148,6 +148,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 	private ImageIcon pausePressedIcon;
 	private RoundToggleButton controlStop;
 	private JTextField pauseTime;
+	private JTextField gridSpacing;
 
 	private JLabel locatorPos;
 	private JLabel locatorLabel;
@@ -992,8 +993,44 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 				InputAgent.applyBoolean(Simulation.getInstance(), "SnapToGrid", snapToGrid.isSelected());
 			}
 		} );
-		buttonBar.add(Box.createRigidArea(gapDim));
+		buttonBar.addSeparator(separatorDim);
 		buttonBar.add( snapToGrid );
+
+		// 9.1) Snap Grid Spacing
+		gridSpacing = new JTextField("1000000 m") {
+			@Override
+			protected void processFocusEvent(FocusEvent fe) {
+				if (fe.getID() == FocusEvent.FOCUS_LOST) {
+					KeywordIndex kw = InputAgent.formatInput("SnapGridSpacing", gridSpacing.getText());
+					InputAgent.apply(Simulation.getInstance(), kw);
+				}
+				else if (fe.getID() == FocusEvent.FOCUS_GAINED) {
+					gridSpacing.selectAll();
+				}
+				super.processFocusEvent( fe );
+			}
+		};
+
+		gridSpacing.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent evt) {
+				KeywordIndex kw = InputAgent.formatInput("SnapGridSpacing", gridSpacing.getText());
+				InputAgent.apply(Simulation.getInstance(), kw);
+			}
+		});
+
+		gridSpacing.setMaximumSize(gridSpacing.getPreferredSize());
+		int hght = snapToGrid.getPreferredSize().height;
+		gridSpacing.setPreferredSize(new Dimension(gridSpacing.getPreferredSize().width, hght));
+
+		gridSpacing.setHorizontalAlignment(JTextField.RIGHT);
+		gridSpacing.setToolTipText(formatToolTip("Snap Grid Spacing",
+				"Distance between adjacent grid points, e.g. 0.1 m, 10 km, etc."));
+
+		gridSpacing.setEnabled(snapToGrid.isSelected());
+
+		buttonBar.add(Box.createRigidArea(gapDim));
+		buttonBar.add(gridSpacing);
 
 		// 10) Show links button
 		showLinks = new JToggleButton(new ImageIcon(GUIFrame.class.getResource("/resources/images/ShowLinks-16.png")));
