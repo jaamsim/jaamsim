@@ -1193,7 +1193,14 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		controlRealTime.setMargin( smallMargin );
 		controlRealTime.setFocusPainted(false);
 		controlRealTime.setRequestFocusEnabled(false);
-		controlRealTime.addActionListener(new RealTimeActionListener());
+		controlRealTime.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed( ActionEvent event ) {
+				boolean bool = ((JToggleButton)event.getSource()).isSelected();
+				InputAgent.applyBoolean(Simulation.getInstance(), "RealTime", bool);
+			}
+		});
 
 		mainToolBar.addSeparator(separatorDim);
 		mainToolBar.add( controlRealTime );
@@ -2204,14 +2211,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 				return max;
 			}
 			return value;
-		}
-	}
-
-	public static class RealTimeActionListener implements ActionListener {
-		@Override
-		public void actionPerformed( ActionEvent event ) {
-			boolean bool = ((JToggleButton)event.getSource()).isSelected();
-			InputAgent.applyBoolean(Simulation.getInstance(), "RealTime", bool);
 		}
 	}
 
