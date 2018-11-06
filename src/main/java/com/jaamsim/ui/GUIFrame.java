@@ -1138,7 +1138,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 					GUIFrame.this.pauseSimulation();
 					controlStartResume.setPressedIcon(runPressedIcon);
 				}
-				controlStartResume.grabFocus();
+				controlStartResume.requestFocusInWindow();
 			}
 		} );
 		mainToolBar.add( controlStartResume );
@@ -1244,7 +1244,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 			@Override
 			public void actionPerformed(ActionEvent evt) {
 				GUIFrame.this.setPauseTime(pauseTime.getText());
-				controlStartResume.grabFocus();
+				controlStartResume.requestFocusInWindow();
 			}
 		});
 
