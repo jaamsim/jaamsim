@@ -118,6 +118,7 @@ public class FrameBox extends OSFixJFrame {
 
 		selectedEntity = ent;
 		RenderManager.setSelection(ent, canMakeLink);
+		GUIFrame.setSelectedEntity(ent);
 		GUIFrame.updateUI();
 	}
 

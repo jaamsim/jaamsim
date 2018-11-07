@@ -143,6 +143,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 	private JToggleButton showLinks;
 	private JToggleButton createLinks;
 
+	private Entity selectedEntity;
 	private RoundToggleButton controlStartResume;
 	private ImageIcon runPressedIcon;
 	private ImageIcon pausePressedIcon;
@@ -1886,6 +1887,16 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 	public void updateForSnapToGrid() {
 		snapToGrid.setSelected(Simulation.isSnapToGrid());
 		gridSpacing.setEnabled(Simulation.isSnapToGrid());
+	}
+
+	public static void setSelectedEntity(Entity ent) {
+		if (instance == null)
+			return;
+		instance.setSelectedEnt(ent);
+	}
+
+	public void setSelectedEnt(Entity ent) {
+		selectedEntity = ent;
 	}
 
 	public static Image getWindowIcon() {
