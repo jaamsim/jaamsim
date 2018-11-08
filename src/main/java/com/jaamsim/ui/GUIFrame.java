@@ -1207,6 +1207,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
+				if (!(selectedEntity instanceof TextBasics))
+					return;
 				TextBasics textEnt = (TextBasics) selectedEntity;
 				String fontName = (String) fontSelector.getSelectedItem();
 				fontName = Parser.addQuotesIfNeeded(fontName);
@@ -2038,8 +2040,11 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		alignRight.setEnabled(bool);
 		bold.setEnabled(bool);
 		italic.setEnabled(bool);
-		if (!bool)
+		fontSelector.setEnabled(bool);
+		if (!bool) {
+			fontSelector.setSelectedItem(null);
 			return;
+		}
 
 		TextBasics textEnt = (TextBasics) selectedEntity;
 		int val = (int) Math.signum(textEnt.getAlignment().x);
@@ -2049,6 +2054,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 
 		bold.setSelected(textEnt.isBold());
 		italic.setSelected(textEnt.isItalic());
+		fontSelector.setSelectedItem(textEnt.getFontName());
 	}
 
 	public static Image getWindowIcon() {
