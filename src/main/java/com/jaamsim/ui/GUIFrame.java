@@ -151,6 +151,9 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 	private JToggleButton alignCentre;
 	private JToggleButton alignRight;
 
+	private JToggleButton bold;
+	private JToggleButton italic;
+
 	private RoundToggleButton controlStartResume;
 	private ImageIcon runPressedIcon;
 	private ImageIcon pausePressedIcon;
@@ -1154,6 +1157,25 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		buttonBar.add( alignLeft );
 		buttonBar.add( alignCentre );
 		buttonBar.add( alignRight );
+
+		// 13) Bold and Italic buttons
+		bold = new JToggleButton(new ImageIcon(
+				GUIFrame.class.getResource("/resources/images/Bold-16.png")));
+		bold.setMargin( noMargin );
+		bold.setFocusPainted(false);
+		bold.setRequestFocusEnabled(false);
+		bold.setToolTipText(formatToolTip("Bold", "Makes the text bold."));
+
+		italic = new JToggleButton(new ImageIcon(
+				GUIFrame.class.getResource("/resources/images/Italic-16.png")));
+		italic.setMargin( noMargin );
+		italic.setFocusPainted(false);
+		italic.setRequestFocusEnabled(false);
+		italic.setToolTipText(formatToolTip("Italic", "Italicizes the text."));
+
+		buttonBar.add(Box.createRigidArea(gapDim));
+		buttonBar.add( bold );
+		buttonBar.add( italic );
 
 		// Add the main tool bar to the display
 		getContentPane().add( buttonBar, BorderLayout.NORTH );
