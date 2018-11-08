@@ -1203,6 +1203,18 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		String[] fontNames = TextModel.validFontNames.toArray(new String[TextModel.validFontNames.size()]);
 		fontSelector = new JComboBox<>(fontNames);
 		fontSelector.setToolTipText(formatToolTip("Font", "Sets the font for the text."));
+		fontSelector.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed( ActionEvent event ) {
+				TextBasics textEnt = (TextBasics) selectedEntity;
+				String fontName = (String) fontSelector.getSelectedItem();
+				fontName = Parser.addQuotesIfNeeded(fontName);
+				KeywordIndex kw = InputAgent.formatInput("FontName", fontName);
+				InputAgent.storeAndExecute(new KeywordCommand(textEnt, kw));
+				fileSave.requestFocusInWindow();
+			}
+		});
 
 		buttonBar.add(Box.createRigidArea(gapDim));
 		buttonBar.add(fontSelector);
