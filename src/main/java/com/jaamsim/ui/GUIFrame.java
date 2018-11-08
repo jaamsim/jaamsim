@@ -2013,6 +2013,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		alignLeft.setEnabled(bool);
 		alignCentre.setEnabled(bool);
 		alignRight.setEnabled(bool);
+		bold.setEnabled(bool);
+		italic.setEnabled(bool);
 		if (!bool)
 			return;
 
@@ -2021,6 +2023,9 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		alignLeft.setSelected(val == -1);
 		alignCentre.setSelected(val == 0);
 		alignRight.setSelected(val == 1);
+
+		bold.setSelected(textEnt.isBold());
+		italic.setSelected(textEnt.isItalic());
 	}
 
 	public static Image getWindowIcon() {
