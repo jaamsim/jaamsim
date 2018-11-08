@@ -85,6 +85,7 @@ import com.jaamsim.Commands.DefineCommand;
 import com.jaamsim.Commands.DefineViewCommand;
 import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.Graphics.DisplayEntity;
+import com.jaamsim.Graphics.TextBasics;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.basicsim.Simulation;
@@ -100,6 +101,7 @@ import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.Parser;
 import com.jaamsim.math.Vec3d;
+import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.DistanceUnit;
 import com.jaamsim.units.TimeUnit;
 import com.jaamsim.units.Unit;
@@ -1094,6 +1096,28 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		buttonBar.add( createLinks );
 
 		// 12) Alignment buttons
+		ActionListener alignListener = new ActionListener() {
+
+			@Override
+			public void actionPerformed( ActionEvent event ) {
+				TextBasics textEnt = (TextBasics) selectedEntity;
+				Vec3d align = textEnt.getAlignment();
+				double prevAlign = align.x;
+				align.x = alignLeft.isSelected() ? -0.5d : align.x;
+				align.x = alignCentre.isSelected() ? 0.0d : align.x;
+				align.x = alignRight.isSelected() ? 0.5d : align.x;
+				KeywordIndex kw = InputAgent.formatVec3dInput("Alignment", align, DimensionlessUnit.class);
+
+				Vec3d pos = textEnt.getPosition();
+				Vec3d size = textEnt.getSize();
+				pos.x += (align.x - prevAlign) * size.x;
+				KeywordIndex posKw = InputAgent.formatVec3dInput("Position", pos, DistanceUnit.class);
+
+				InputAgent.storeAndExecute(new KeywordCommand(textEnt, kw, posKw));
+				fileSave.requestFocusInWindow();
+			}
+		};
+
 		alignLeft = new JToggleButton(new ImageIcon(
 				GUIFrame.class.getResource("/resources/images/AlignLeft-16.png")));
 		alignLeft.setMargin( noMargin );
@@ -1101,6 +1125,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		alignLeft.setRequestFocusEnabled(false);
 		alignLeft.setToolTipText(formatToolTip("Align Left",
 				"Aligns the text to the left margin."));
+		alignLeft.addActionListener( alignListener );
 
 		alignCentre = new JToggleButton(new ImageIcon(
 				GUIFrame.class.getResource("/resources/images/AlignCentre-16.png")));
@@ -1109,6 +1134,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		alignCentre.setRequestFocusEnabled(false);
 		alignCentre.setToolTipText(formatToolTip("Align Centre",
 				"Centres the text between the right and left margins."));
+		alignCentre.addActionListener( alignListener );
 
 		alignRight = new JToggleButton(new ImageIcon(
 				GUIFrame.class.getResource("/resources/images/AlignRight-16.png")));
@@ -1117,6 +1143,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		alignRight.setRequestFocusEnabled(false);
 		alignRight.setToolTipText(formatToolTip("Align Right",
 				"Aligns the text to the right margin."));
+		alignRight.addActionListener( alignListener );
 
 		ButtonGroup alignmentGroup = new ButtonGroup();
 		alignmentGroup.add(alignLeft);
