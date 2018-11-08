@@ -163,6 +163,10 @@ public abstract class LinkedComponent extends StateEntity implements Linkable, L
 			nextComponent.getValue().addEntity(ent);
 	}
 
+	public void setReleaseTime(double simTime) {
+		releaseTime = simTime;
+	}
+
 	/**
 	 * Returns the number of entities that have been received from upstream during the entire
 	 * simulation run, including the initialisation period.
