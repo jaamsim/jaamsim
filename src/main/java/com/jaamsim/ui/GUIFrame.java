@@ -1964,6 +1964,22 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 
 	public void setSelectedEnt(Entity ent) {
 		selectedEntity = ent;
+		updateTextButtons();
+	}
+
+	public void updateTextButtons() {
+		boolean bool = selectedEntity instanceof TextBasics;
+		alignLeft.setEnabled(bool);
+		alignCentre.setEnabled(bool);
+		alignRight.setEnabled(bool);
+		if (!bool)
+			return;
+
+		TextBasics textEnt = (TextBasics) selectedEntity;
+		int val = (int) Math.signum(textEnt.getAlignment().x);
+		alignLeft.setSelected(val == -1);
+		alignCentre.setSelected(val == 0);
+		alignRight.setSelected(val == 1);
 	}
 
 	public static Image getWindowIcon() {
