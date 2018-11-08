@@ -170,6 +170,14 @@ public class TextModel extends DisplayModel {
 		return ret;
 	}
 
+	public static boolean isBold(int style) {
+		return (style & Font.BOLD) != 0;
+	}
+
+	public static boolean isItalic(int style) {
+		return (style & Font.ITALIC) != 0;
+	}
+
 	@Override
 	public DisplayModelBinding getBinding(Entity ent) {
 		if (ent instanceof BillboardText) {
