@@ -56,6 +56,7 @@ import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -84,6 +85,7 @@ import com.jaamsim.Commands.Command;
 import com.jaamsim.Commands.DefineCommand;
 import com.jaamsim.Commands.DefineViewCommand;
 import com.jaamsim.Commands.KeywordCommand;
+import com.jaamsim.DisplayModels.TextModel;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.TextBasics;
 import com.jaamsim.basicsim.Entity;
@@ -153,6 +155,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 
 	private JToggleButton bold;
 	private JToggleButton italic;
+	private JComboBox<String> fontSelector;
 
 	private RoundToggleButton controlStartResume;
 	private ImageIcon runPressedIcon;
@@ -1195,6 +1198,14 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		buttonBar.add(Box.createRigidArea(gapDim));
 		buttonBar.add( bold );
 		buttonBar.add( italic );
+
+		// 14) Font
+		String[] fontNames = TextModel.validFontNames.toArray(new String[TextModel.validFontNames.size()]);
+		fontSelector = new JComboBox<>(fontNames);
+		fontSelector.setToolTipText(formatToolTip("Font", "Sets the font for the text."));
+
+		buttonBar.add(Box.createRigidArea(gapDim));
+		buttonBar.add(fontSelector);
 
 		// Add the main tool bar to the display
 		getContentPane().add( buttonBar, BorderLayout.NORTH );
