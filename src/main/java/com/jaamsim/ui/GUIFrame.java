@@ -1159,12 +1159,30 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		buttonBar.add( alignRight );
 
 		// 13) Bold and Italic buttons
+		ActionListener alignmentListener = new ActionListener() {
+
+			@Override
+			public void actionPerformed( ActionEvent event ) {
+				TextBasics textEnt = (TextBasics) selectedEntity;
+				ArrayList<String> stylesList = new ArrayList<>(2);
+				if (bold.isSelected())
+					stylesList.add("BOLD");
+				if (italic.isSelected())
+					stylesList.add("ITALIC");
+				String[] styles = stylesList.toArray(new String[stylesList.size()]);
+				KeywordIndex kw = InputAgent.formatArgs("FontStyle", styles);
+				InputAgent.storeAndExecute(new KeywordCommand(textEnt, kw));
+				fileSave.requestFocusInWindow();
+			}
+		};
+
 		bold = new JToggleButton(new ImageIcon(
 				GUIFrame.class.getResource("/resources/images/Bold-16.png")));
 		bold.setMargin( noMargin );
 		bold.setFocusPainted(false);
 		bold.setRequestFocusEnabled(false);
 		bold.setToolTipText(formatToolTip("Bold", "Makes the text bold."));
+		bold.addActionListener( alignmentListener );
 
 		italic = new JToggleButton(new ImageIcon(
 				GUIFrame.class.getResource("/resources/images/Italic-16.png")));
@@ -1172,6 +1190,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		italic.setFocusPainted(false);
 		italic.setRequestFocusEnabled(false);
 		italic.setToolTipText(formatToolTip("Italic", "Italicizes the text."));
+		italic.addActionListener( alignmentListener );
 
 		buttonBar.add(Box.createRigidArea(gapDim));
 		buttonBar.add( bold );
