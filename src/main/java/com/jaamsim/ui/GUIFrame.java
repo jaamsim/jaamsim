@@ -52,6 +52,7 @@ import java.util.prefs.Preferences;
 import java.util.regex.Pattern;
 
 import javax.swing.Box;
+import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
@@ -144,6 +145,10 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 	private JToggleButton createLinks;
 
 	private Entity selectedEntity;
+	private JToggleButton alignLeft;
+	private JToggleButton alignCentre;
+	private JToggleButton alignRight;
+
 	private RoundToggleButton controlStartResume;
 	private ImageIcon runPressedIcon;
 	private ImageIcon pausePressedIcon;
@@ -1087,6 +1092,41 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		});
 		buttonBar.add(Box.createRigidArea(gapDim));
 		buttonBar.add( createLinks );
+
+		// 12) Alignment buttons
+		alignLeft = new JToggleButton(new ImageIcon(
+				GUIFrame.class.getResource("/resources/images/AlignLeft-16.png")));
+		alignLeft.setMargin( noMargin );
+		alignLeft.setFocusPainted(false);
+		alignLeft.setRequestFocusEnabled(false);
+		alignLeft.setToolTipText(formatToolTip("Align Left",
+				"Aligns the text to the left margin."));
+
+		alignCentre = new JToggleButton(new ImageIcon(
+				GUIFrame.class.getResource("/resources/images/AlignCentre-16.png")));
+		alignCentre.setMargin( noMargin );
+		alignCentre.setFocusPainted(false);
+		alignCentre.setRequestFocusEnabled(false);
+		alignCentre.setToolTipText(formatToolTip("Align Centre",
+				"Centres the text between the right and left margins."));
+
+		alignRight = new JToggleButton(new ImageIcon(
+				GUIFrame.class.getResource("/resources/images/AlignRight-16.png")));
+		alignRight.setMargin( noMargin );
+		alignRight.setFocusPainted(false);
+		alignRight.setRequestFocusEnabled(false);
+		alignRight.setToolTipText(formatToolTip("Align Right",
+				"Aligns the text to the right margin."));
+
+		ButtonGroup alignmentGroup = new ButtonGroup();
+		alignmentGroup.add(alignLeft);
+		alignmentGroup.add(alignCentre);
+		alignmentGroup.add(alignRight);
+
+		buttonBar.addSeparator(separatorDim);
+		buttonBar.add( alignLeft );
+		buttonBar.add( alignCentre );
+		buttonBar.add( alignRight );
 
 		// Add the main tool bar to the display
 		getContentPane().add( buttonBar, BorderLayout.NORTH );
