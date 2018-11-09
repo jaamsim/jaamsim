@@ -156,6 +156,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 	private JToggleButton bold;
 	private JToggleButton italic;
 	private JComboBox<String> fontSelector;
+	private JTextField textHeight;
 
 	private RoundToggleButton controlStartResume;
 	private ImageIcon runPressedIcon;
@@ -1229,6 +1230,19 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 
 		buttonBar.add(Box.createRigidArea(gapDim));
 		buttonBar.add(fontSelector);
+
+		// 15) Text Height
+		textHeight = new JTextField("1000000 m") {
+		};
+
+		textHeight.setMaximumSize(textHeight.getPreferredSize());
+		textHeight.setPreferredSize(new Dimension(textHeight.getPreferredSize().width, hght));
+
+		textHeight.setHorizontalAlignment(JTextField.RIGHT);
+		textHeight.setToolTipText(formatToolTip("Text Height",
+				"Sets the height of the text, e.g. 0.1 m, 200 cm, etc."));
+
+		buttonBar.add(textHeight);
 
 		// Add the main tool bar to the display
 		getContentPane().add( buttonBar, BorderLayout.NORTH );
