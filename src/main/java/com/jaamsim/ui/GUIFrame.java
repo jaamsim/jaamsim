@@ -157,6 +157,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 	private JToggleButton italic;
 	private JComboBox<String> fontSelector;
 	private JTextField textHeight;
+	private JButton largerText;
+	private JButton smallerText;
 
 	private RoundToggleButton controlStartResume;
 	private ImageIcon runPressedIcon;
@@ -1259,6 +1261,28 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 
 		buttonBar.add(textHeight);
 
+		// 15.1) Larger and Smaller Text buttons
+		largerText = new JButton(new ImageIcon(
+				GUIFrame.class.getResource("/resources/images/LargerText-16.png")));
+		largerText.setMargin( noMargin );
+		largerText.setFocusPainted(false);
+		largerText.setRequestFocusEnabled(false);
+		largerText.setToolTipText(formatToolTip("Larger Text",
+				"Increases the text height to the next higher multiple of the snap grid spacing."));
+		largerText.setActionCommand("LargerText");
+		smallerText = new JButton(new ImageIcon(
+				GUIFrame.class.getResource("/resources/images/SmallerText-16.png")));
+		smallerText.setMargin( noMargin );
+		smallerText.setFocusPainted(false);
+		smallerText.setRequestFocusEnabled(false);
+		smallerText.setToolTipText(formatToolTip("Smaller Text",
+				"Decreases the text height to the next lower multiple of the snap grid spacing."));
+		smallerText.setActionCommand("SmallerText");
+
+		buttonBar.add(Box.createRigidArea(gapDim));
+		buttonBar.add( largerText );
+		buttonBar.add( smallerText );
+
 		// Add the main tool bar to the display
 		getContentPane().add( buttonBar, BorderLayout.NORTH );
 	}
@@ -2101,6 +2125,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		italic.setEnabled(bool);
 		fontSelector.setEnabled(bool);
 		textHeight.setEnabled(bool);
+		largerText.setEnabled(bool);
+		smallerText.setEnabled(bool);
 		if (!bool) {
 			fontSelector.setSelectedItem(null);
 			textHeight.setText(null);
