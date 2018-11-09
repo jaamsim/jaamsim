@@ -532,13 +532,13 @@ public class ObjectSelector extends FrameBox {
 			if (e.getKeyCode() != KeyEvent.VK_DELETE)
 				return;
 
-			// Cannot delete a non-movable entity
-			if (currentEntity instanceof DisplayEntity
-					&& !((DisplayEntity) currentEntity).isMovable())
-				return;
-
-			currentEntity.delete();
-			FrameBox.setSelectedEntity(null, false);
+			try {
+				currentEntity.delete();
+				FrameBox.setSelectedEntity(null, false);
+			}
+			catch (ErrorException err) {
+				GUIFrame.invokeErrorDialog("User Error", err.getMessage());
+			}
 		}
 		@Override
 		public void keyPressed(KeyEvent e) {}

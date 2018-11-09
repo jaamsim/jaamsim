@@ -446,6 +446,14 @@ public abstract class TextBasics extends DisplayEntity {
 		return TextModel.getStyle(fontStyle.getValue());
 	}
 
+	public boolean isBold() {
+		return TextModel.isBold(getStyle());
+	}
+
+	public boolean isItalic() {
+		return TextModel.isItalic(getStyle());
+	}
+
 	public TessFontKey getTessFontKey() {
 		return new TessFontKey(getFontName(), getStyle());
 	}

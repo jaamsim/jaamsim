@@ -52,9 +52,11 @@ import java.util.prefs.Preferences;
 import java.util.regex.Pattern;
 
 import javax.swing.Box;
+import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -83,7 +85,9 @@ import com.jaamsim.Commands.Command;
 import com.jaamsim.Commands.DefineCommand;
 import com.jaamsim.Commands.DefineViewCommand;
 import com.jaamsim.Commands.KeywordCommand;
+import com.jaamsim.DisplayModels.TextModel;
 import com.jaamsim.Graphics.DisplayEntity;
+import com.jaamsim.Graphics.TextBasics;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.basicsim.Simulation;
@@ -99,6 +103,7 @@ import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.Parser;
 import com.jaamsim.math.Vec3d;
+import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.DistanceUnit;
 import com.jaamsim.units.TimeUnit;
 import com.jaamsim.units.Unit;
@@ -143,11 +148,21 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 	private JToggleButton showLinks;
 	private JToggleButton createLinks;
 
+	private Entity selectedEntity;
+	private JToggleButton alignLeft;
+	private JToggleButton alignCentre;
+	private JToggleButton alignRight;
+
+	private JToggleButton bold;
+	private JToggleButton italic;
+	private JComboBox<String> fontSelector;
+
 	private RoundToggleButton controlStartResume;
 	private ImageIcon runPressedIcon;
 	private ImageIcon pausePressedIcon;
 	private RoundToggleButton controlStop;
 	private JTextField pauseTime;
+	private JTextField gridSpacing;
 
 	private JLabel locatorPos;
 	private JLabel locatorLabel;
@@ -761,6 +776,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		JButton fileNew = new JButton( new ImageIcon(
 				GUIFrame.class.getResource("/resources/images/New-16.png")) );
 		fileNew.setMargin( noMargin );
+		fileNew.setFocusPainted(false);
 		fileNew.setToolTipText(formatToolTip("New", "Starts a new model."));
 		fileNew.addActionListener( new ActionListener() {
 
@@ -776,6 +792,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		JButton fileOpen = new JButton( new ImageIcon(
 				GUIFrame.class.getResource("/resources/images/Open-16.png")) );
 		fileOpen.setMargin( noMargin );
+		fileOpen.setFocusPainted(false);
 		fileOpen.setToolTipText(formatToolTip("Open...", "Opens a model."));
 		fileOpen.addActionListener( new ActionListener() {
 
@@ -791,6 +808,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		fileSave = new JButton( new ImageIcon(
 				GUIFrame.class.getResource("/resources/images/Save-16.png")) );
 		fileSave.setMargin( noMargin );
+		fileSave.setFocusPainted(false);
 		fileSave.setToolTipText(formatToolTip("Save", "Saves the present model."));
 		fileSave.setEnabled(false);
 		fileSave.addActionListener( new ActionListener() {
@@ -807,6 +825,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		undo = new JButton( new ImageIcon(
 				GUIFrame.class.getResource("/resources/images/Undo-16.png")) );
 		undo.setMargin( noMargin );
+		undo.setFocusPainted(false);
+		undo.setRequestFocusEnabled(false);
 		undo.setToolTipText(formatToolTip("Undo", "Reverses the last change to the model."));
 		undo.setEnabled(InputAgent.hasUndo());
 		undo.addActionListener( new ActionListener() {
@@ -823,6 +843,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		undoDropdown = new JButton(new ImageIcon(
 				GUIFrame.class.getResource("/resources/images/dropdown.png")));
 		undoDropdown.setMargin( noMargin );
+		undoDropdown.setFocusPainted(false);
+		undoDropdown.setRequestFocusEnabled(false);
 		undoDropdown.setEnabled(InputAgent.hasUndo());
 		undoDropdown.addActionListener( new ActionListener() {
 
@@ -852,6 +874,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		redo = new JButton( new ImageIcon(
 				GUIFrame.class.getResource("/resources/images/Redo-16.png")) );
 		redo.setMargin( noMargin );
+		redo.setFocusPainted(false);
+		redo.setRequestFocusEnabled(false);
 		redo.setToolTipText(formatToolTip("Redo", "Re-performs the last change to the model that was undone."));
 		redo.setEnabled(InputAgent.hasRedo());
 		redo.addActionListener( new ActionListener() {
@@ -867,6 +891,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		redoDropdown = new JButton(new ImageIcon(
 				GUIFrame.class.getResource("/resources/images/dropdown.png")));
 		redoDropdown.setMargin( noMargin );
+		redoDropdown.setFocusPainted(false);
+		redoDropdown.setRequestFocusEnabled(false);
 		redoDropdown.setEnabled(InputAgent.hasRedo());
 		redoDropdown.addActionListener( new ActionListener() {
 
@@ -895,6 +921,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		// 6) 2D button
 		lockViewXYPlane = new JToggleButton( "2D" );
 		lockViewXYPlane.setMargin( smallMargin );
+		lockViewXYPlane.setFocusPainted(false);
+		lockViewXYPlane.setRequestFocusEnabled(false);
 		lockViewXYPlane.setToolTipText(formatToolTip("2D View",
 				"Sets the camera position to show a bird's eye view of the 3D scene."));
 		lockViewXYPlane.addActionListener( new ActionListener() {
@@ -909,6 +937,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 						currentView.setLock2D(bLock2D);
 					}
 				}
+				fileSave.requestFocusInWindow();
 			}
 		} );
 		buttonBar.addSeparator(separatorDim);
@@ -918,6 +947,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		xyzAxis = new JToggleButton( new ImageIcon(
 				GUIFrame.class.getResource("/resources/images/Axes-16.png")) );
 		xyzAxis.setMargin( noMargin );
+		xyzAxis.setFocusPainted(false);
+		xyzAxis.setRequestFocusEnabled(false);
 		xyzAxis.setToolTipText(formatToolTip("Show Axes",
 				"Shows the unit vectors for the x, y, and z axes."));
 		xyzAxis.addActionListener( new ActionListener() {
@@ -928,6 +959,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 				if (ent != null) {
 					InputAgent.applyBoolean(ent, "Show", xyzAxis.isSelected());
 				}
+				fileSave.requestFocusInWindow();
 			}
 		} );
 		buttonBar.add(Box.createRigidArea(gapDim));
@@ -937,6 +969,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		grid = new JToggleButton( new ImageIcon(
 				GUIFrame.class.getResource("/resources/images/Grid-16.png")) );
 		grid.setMargin( noMargin );
+		grid.setFocusPainted(false);
+		grid.setRequestFocusEnabled(false);
 		grid.setToolTipText(formatToolTip("Show Grid",
 				"Shows the coordinate grid on the x-y plane."));
 		grid.addActionListener( new ActionListener() {
@@ -955,6 +989,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 				if (ent != null) {
 					InputAgent.applyBoolean(ent, "Show", grid.isSelected());
 				}
+				fileSave.requestFocusInWindow();
 			}
 		} );
 		buttonBar.add(Box.createRigidArea(gapDim));
@@ -964,6 +999,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		snapToGrid = new JToggleButton( new ImageIcon(
 				GUIFrame.class.getResource("/resources/images/Snap-16.png")) );
 		snapToGrid.setMargin( noMargin );
+		snapToGrid.setFocusPainted(false);
+		snapToGrid.setRequestFocusEnabled(false);
 		snapToGrid.setToolTipText(formatToolTip("Snap to Grid",
 				"During repositioning, objects are forced to the nearest grid point."));
 		snapToGrid.addActionListener( new ActionListener() {
@@ -971,16 +1008,57 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 			@Override
 			public void actionPerformed( ActionEvent event ) {
 				InputAgent.applyBoolean(Simulation.getInstance(), "SnapToGrid", snapToGrid.isSelected());
+				gridSpacing.setEnabled(snapToGrid.isSelected());
+				fileSave.requestFocusInWindow();
 			}
 		} );
-		buttonBar.add(Box.createRigidArea(gapDim));
+		buttonBar.addSeparator(separatorDim);
 		buttonBar.add( snapToGrid );
+
+		// 9.1) Snap Grid Spacing
+		gridSpacing = new JTextField("1000000 m") {
+			@Override
+			protected void processFocusEvent(FocusEvent fe) {
+				if (fe.getID() == FocusEvent.FOCUS_LOST) {
+					KeywordIndex kw = InputAgent.formatInput("SnapGridSpacing", gridSpacing.getText());
+					InputAgent.apply(Simulation.getInstance(), kw);
+				}
+				else if (fe.getID() == FocusEvent.FOCUS_GAINED) {
+					gridSpacing.selectAll();
+				}
+				super.processFocusEvent( fe );
+			}
+		};
+
+		gridSpacing.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent evt) {
+				KeywordIndex kw = InputAgent.formatInput("SnapGridSpacing", gridSpacing.getText());
+				InputAgent.apply(Simulation.getInstance(), kw);
+				fileSave.requestFocusInWindow();
+			}
+		});
+
+		gridSpacing.setMaximumSize(gridSpacing.getPreferredSize());
+		int hght = snapToGrid.getPreferredSize().height;
+		gridSpacing.setPreferredSize(new Dimension(gridSpacing.getPreferredSize().width, hght));
+
+		gridSpacing.setHorizontalAlignment(JTextField.RIGHT);
+		gridSpacing.setToolTipText(formatToolTip("Snap Grid Spacing",
+				"Distance between adjacent grid points, e.g. 0.1 m, 10 km, etc."));
+
+		gridSpacing.setEnabled(snapToGrid.isSelected());
+
+		buttonBar.add(Box.createRigidArea(gapDim));
+		buttonBar.add(gridSpacing);
 
 		// 10) Show links button
 		showLinks = new JToggleButton(new ImageIcon(GUIFrame.class.getResource("/resources/images/ShowLinks-16.png")));
 		showLinks.setToolTipText(formatToolTip("Show Entity Flow",
 				"When selected, arrows are shown between objects to indicate the flow of entities."));
 		showLinks.setMargin( noMargin );
+		showLinks.setFocusPainted(false);
+		showLinks.setRequestFocusEnabled(false);
 		showLinks.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed( ActionEvent event ) {
@@ -990,6 +1068,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 					RenderManager.inst().setShowLinks(bShow);
 					RenderManager.redraw();
 				}
+				fileSave.requestFocusInWindow();
 			}
 
 		});
@@ -1001,6 +1080,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		createLinks.setToolTipText(formatToolTip("Create Entity Links",
 				"When this is enabled, entities are linked when selection is changed."));
 		createLinks.setMargin( noMargin );
+		createLinks.setFocusPainted(false);
+		createLinks.setRequestFocusEnabled(false);
 		createLinks.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed( ActionEvent event ) {
@@ -1013,11 +1094,132 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 					RenderManager.inst().setCreateLinks(bCreate);
 					RenderManager.redraw();
 				}
+				fileSave.requestFocusInWindow();
 			}
 
 		});
 		buttonBar.add(Box.createRigidArea(gapDim));
 		buttonBar.add( createLinks );
+
+		// 12) Alignment buttons
+		ActionListener alignListener = new ActionListener() {
+
+			@Override
+			public void actionPerformed( ActionEvent event ) {
+				TextBasics textEnt = (TextBasics) selectedEntity;
+				Vec3d align = textEnt.getAlignment();
+				double prevAlign = align.x;
+				align.x = alignLeft.isSelected() ? -0.5d : align.x;
+				align.x = alignCentre.isSelected() ? 0.0d : align.x;
+				align.x = alignRight.isSelected() ? 0.5d : align.x;
+				KeywordIndex kw = InputAgent.formatVec3dInput("Alignment", align, DimensionlessUnit.class);
+
+				Vec3d pos = textEnt.getPosition();
+				Vec3d size = textEnt.getSize();
+				pos.x += (align.x - prevAlign) * size.x;
+				KeywordIndex posKw = InputAgent.formatVec3dInput("Position", pos, DistanceUnit.class);
+
+				InputAgent.storeAndExecute(new KeywordCommand(textEnt, kw, posKw));
+				fileSave.requestFocusInWindow();
+			}
+		};
+
+		alignLeft = new JToggleButton(new ImageIcon(
+				GUIFrame.class.getResource("/resources/images/AlignLeft-16.png")));
+		alignLeft.setMargin( noMargin );
+		alignLeft.setFocusPainted(false);
+		alignLeft.setRequestFocusEnabled(false);
+		alignLeft.setToolTipText(formatToolTip("Align Left",
+				"Aligns the text to the left margin."));
+		alignLeft.addActionListener( alignListener );
+
+		alignCentre = new JToggleButton(new ImageIcon(
+				GUIFrame.class.getResource("/resources/images/AlignCentre-16.png")));
+		alignCentre.setMargin( noMargin );
+		alignCentre.setFocusPainted(false);
+		alignCentre.setRequestFocusEnabled(false);
+		alignCentre.setToolTipText(formatToolTip("Align Centre",
+				"Centres the text between the right and left margins."));
+		alignCentre.addActionListener( alignListener );
+
+		alignRight = new JToggleButton(new ImageIcon(
+				GUIFrame.class.getResource("/resources/images/AlignRight-16.png")));
+		alignRight.setMargin( noMargin );
+		alignRight.setFocusPainted(false);
+		alignRight.setRequestFocusEnabled(false);
+		alignRight.setToolTipText(formatToolTip("Align Right",
+				"Aligns the text to the right margin."));
+		alignRight.addActionListener( alignListener );
+
+		ButtonGroup alignmentGroup = new ButtonGroup();
+		alignmentGroup.add(alignLeft);
+		alignmentGroup.add(alignCentre);
+		alignmentGroup.add(alignRight);
+
+		buttonBar.addSeparator(separatorDim);
+		buttonBar.add( alignLeft );
+		buttonBar.add( alignCentre );
+		buttonBar.add( alignRight );
+
+		// 13) Bold and Italic buttons
+		ActionListener alignmentListener = new ActionListener() {
+
+			@Override
+			public void actionPerformed( ActionEvent event ) {
+				TextBasics textEnt = (TextBasics) selectedEntity;
+				ArrayList<String> stylesList = new ArrayList<>(2);
+				if (bold.isSelected())
+					stylesList.add("BOLD");
+				if (italic.isSelected())
+					stylesList.add("ITALIC");
+				String[] styles = stylesList.toArray(new String[stylesList.size()]);
+				KeywordIndex kw = InputAgent.formatArgs("FontStyle", styles);
+				InputAgent.storeAndExecute(new KeywordCommand(textEnt, kw));
+				fileSave.requestFocusInWindow();
+			}
+		};
+
+		bold = new JToggleButton(new ImageIcon(
+				GUIFrame.class.getResource("/resources/images/Bold-16.png")));
+		bold.setMargin( noMargin );
+		bold.setFocusPainted(false);
+		bold.setRequestFocusEnabled(false);
+		bold.setToolTipText(formatToolTip("Bold", "Makes the text bold."));
+		bold.addActionListener( alignmentListener );
+
+		italic = new JToggleButton(new ImageIcon(
+				GUIFrame.class.getResource("/resources/images/Italic-16.png")));
+		italic.setMargin( noMargin );
+		italic.setFocusPainted(false);
+		italic.setRequestFocusEnabled(false);
+		italic.setToolTipText(formatToolTip("Italic", "Italicizes the text."));
+		italic.addActionListener( alignmentListener );
+
+		buttonBar.add(Box.createRigidArea(gapDim));
+		buttonBar.add( bold );
+		buttonBar.add( italic );
+
+		// 14) Font
+		String[] fontNames = TextModel.validFontNames.toArray(new String[TextModel.validFontNames.size()]);
+		fontSelector = new JComboBox<>(fontNames);
+		fontSelector.setToolTipText(formatToolTip("Font", "Sets the font for the text."));
+		fontSelector.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed( ActionEvent event ) {
+				if (!(selectedEntity instanceof TextBasics))
+					return;
+				TextBasics textEnt = (TextBasics) selectedEntity;
+				String fontName = (String) fontSelector.getSelectedItem();
+				fontName = Parser.addQuotesIfNeeded(fontName);
+				KeywordIndex kw = InputAgent.formatInput("FontName", fontName);
+				InputAgent.storeAndExecute(new KeywordCommand(textEnt, kw));
+				fileSave.requestFocusInWindow();
+			}
+		});
+
+		buttonBar.add(Box.createRigidArea(gapDim));
+		buttonBar.add(fontSelector);
 
 		// Add the main tool bar to the display
 		getContentPane().add( buttonBar, BorderLayout.NORTH );
@@ -1077,7 +1279,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 					GUIFrame.this.pauseSimulation();
 					controlStartResume.setPressedIcon(runPressedIcon);
 				}
-				controlStartResume.grabFocus();
+				controlStartResume.requestFocusInWindow();
 			}
 		} );
 		mainToolBar.add( controlStartResume );
@@ -1123,7 +1325,16 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		controlRealTime.setToolTipText(formatToolTip("Real Time Mode",
 				"When selected, the simulation runs at a fixed multiple of wall clock time."));
 		controlRealTime.setMargin( smallMargin );
-		controlRealTime.addActionListener(new RealTimeActionListener());
+		controlRealTime.setFocusPainted(false);
+		controlRealTime.setRequestFocusEnabled(false);
+		controlRealTime.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed( ActionEvent event ) {
+				boolean bool = ((JToggleButton)event.getSource()).isSelected();
+				InputAgent.applyBoolean(Simulation.getInstance(), "RealTime", bool);
+			}
+		});
 
 		mainToolBar.addSeparator(separatorDim);
 		mainToolBar.add( controlRealTime );
@@ -1146,8 +1357,18 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		dim.width -= diff;
 		dim.height = hght;
 		spinner.setPreferredSize(dim);
+		spinner.addChangeListener(new ChangeListener() {
 
-		spinner.addChangeListener(new SpeedFactorListener());
+			@Override
+			public void stateChanged( ChangeEvent e ) {
+				Double val = (Double)((JSpinner)e.getSource()).getValue();
+				NumberFormat nf = NumberFormat.getNumberInstance(Locale.US);
+				DecimalFormat df = (DecimalFormat)nf;
+				df.applyPattern("0.######");
+				InputAgent.applyArgs(Simulation.getInstance(), "RealTimeFactor", df.format(val));
+			}
+		});
+
 		spinner.setToolTipText(formatToolTip("Speed Multiplier (up/down key)",
 				"Target ratio of simulation time to wall clock time when Real Time mode is selected."));
 		spinner.setEnabled(false);
@@ -1183,7 +1404,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 			@Override
 			public void actionPerformed(ActionEvent evt) {
 				GUIFrame.this.setPauseTime(pauseTime.getText());
-				controlStartResume.grabFocus();
+				controlStartResume.requestFocusInWindow();
 			}
 		});
 
@@ -1720,15 +1941,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		fileMenu.setEnabled( true );
 	}
 
-	public static void updateSaveButton() {
-		GUIFrame inst = GUIFrame.getInstance();
-		if (inst == null)
-			return;
-
-		inst.updateSB();
-	}
-
-	private void updateSB() {
+	public void updateSaveButton() {
 		fileSave.setEnabled(InputAgent.isSessionEdited());
 	}
 
@@ -1753,18 +1966,10 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 			spinner.setEnabled(false);
 	}
 
-	public static void updateForPauseTime(String str) {
-		GUIFrame inst = GUIFrame.getInstance();
-		if (inst == null)
-			return;
-
-		inst.updateForPT(str);
-	}
-
 	/**
 	 * updates PauseTime entry
 	 */
-	private void updateForPT(String str) {
+	public void updateForPauseTime(String str) {
 		pauseTime.setText(str);
 	}
 
@@ -1808,8 +2013,48 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		GUIFrame.updateUI();
 	}
 
+	public void updateForSnapGridSpacing(String str) {
+		gridSpacing.setText(str);
+	}
+
 	public void updateForSnapToGrid() {
 		snapToGrid.setSelected(Simulation.isSnapToGrid());
+		gridSpacing.setEnabled(Simulation.isSnapToGrid());
+	}
+
+	public static void setSelectedEntity(Entity ent) {
+		if (instance == null)
+			return;
+		instance.setSelectedEnt(ent);
+	}
+
+	public void setSelectedEnt(Entity ent) {
+		selectedEntity = ent;
+		updateTextButtons();
+	}
+
+	public void updateTextButtons() {
+		boolean bool = selectedEntity instanceof TextBasics;
+		alignLeft.setEnabled(bool);
+		alignCentre.setEnabled(bool);
+		alignRight.setEnabled(bool);
+		bold.setEnabled(bool);
+		italic.setEnabled(bool);
+		fontSelector.setEnabled(bool);
+		if (!bool) {
+			fontSelector.setSelectedItem(null);
+			return;
+		}
+
+		TextBasics textEnt = (TextBasics) selectedEntity;
+		int val = (int) Math.signum(textEnt.getAlignment().x);
+		alignLeft.setSelected(val == -1);
+		alignCentre.setSelected(val == 0);
+		alignRight.setSelected(val == 1);
+
+		bold.setSelected(textEnt.isBold());
+		italic.setSelected(textEnt.isItalic());
+		fontSelector.setSelectedItem(textEnt.getFontName());
 	}
 
 	public static Image getWindowIcon() {
@@ -2097,18 +2342,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		FrameBox.setSelectedEntity(Simulation.getInstance(), false);
 	}
 
-	public static class SpeedFactorListener implements ChangeListener {
-
-		@Override
-		public void stateChanged( ChangeEvent e ) {
-			Double val = (Double)((JSpinner)e.getSource()).getValue();
-			NumberFormat nf = NumberFormat.getNumberInstance(Locale.US);
-			DecimalFormat df = (DecimalFormat)nf;
-			df.applyPattern("0.######");
-			InputAgent.applyArgs(Simulation.getInstance(), "RealTimeFactor", df.format(val));
-		}
-	}
-
 	/*
 	 * this class is created so the next value will be value * 2 and the
 	 * previous value will be value / 2
@@ -2145,14 +2378,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 				return max;
 			}
 			return value;
-		}
-	}
-
-	public static class RealTimeActionListener implements ActionListener {
-		@Override
-		public void actionPerformed( ActionEvent event ) {
-			boolean bool = ((JToggleButton)event.getSource()).isSelected();
-			InputAgent.applyBoolean(Simulation.getInstance(), "RealTime", bool);
 		}
 	}
 

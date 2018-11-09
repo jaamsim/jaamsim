@@ -49,6 +49,12 @@ public class RenderUtils {
 	public static List<Vec4d> CIRCLE_POINTS;
 	public static List<Vec4d> RECT_POINTS;
 	public static List<Vec4d> TRIANGLE_POINTS;
+	public static List<Vec4d> PENTAGON_POINTS;
+	public static List<Vec4d> HEXAGON_POINTS;
+	public static List<Vec4d> OCTAGON_POINTS;
+	public static List<Vec4d> PENTAGRAM_POINTS;
+	public static List<Vec4d> HEPTAGRAM_POINTS;
+	public static List<Vec4d> OCTAGRAM_POINTS;
 
 	static {
 		CIRCLE_POINTS = getCirclePoints(32);
@@ -67,6 +73,14 @@ public class RenderUtils {
 		TRIANGLE_POINTS.add(new Vec4d( 0.5, -0.5, 0, 1.0d));
 		TRIANGLE_POINTS.add(new Vec4d( 0.5,  0.5, 0, 1.0d));
 		TRIANGLE_POINTS.add(new Vec4d(-0.5,  0.0, 0, 1.0d));
+
+		PENTAGON_POINTS = getStarPoints(0.5, 5, 1);
+		HEXAGON_POINTS = getStarPoints(0.5, 6, 1);
+		OCTAGON_POINTS = getStarPoints(0.5, 8, 1);
+
+		PENTAGRAM_POINTS = getStarPoints(0.5, 5, 2);
+		HEPTAGRAM_POINTS = getStarPoints(0.5, 7, 3);
+		OCTAGRAM_POINTS = getStarPoints(0.5, 8, 3);
 	}
 
 	// Transform the list of points in place
@@ -131,6 +145,24 @@ static void putPointXYZW(FloatBuffer fb, Vec4d v) {
 			ret.add(new Vec4d(Math.cos(theta), Math.sin(theta), 0, 1.0d));
 		}
 
+		return ret;
+	}
+
+	/**
+	 * Returns a list of points for a polygon or star.
+	 * @param radius - distance from the centre of the polygon or star to each vertex
+	 * @param n - number of vertices
+	 * @param m - number of vertices spanned by each line
+	 * @return list of coordinates for the vertices
+	 */
+	public static ArrayList<Vec4d> getStarPoints(double radius, int n, int m) {
+		ArrayList<Vec4d> ret = new ArrayList<>(n + 1);
+		double angle = 2 * Math.PI / n * m;
+		for (int i = 0; i <= n; i++) {
+			double x = -radius * Math.sin(angle * i);
+			double y = radius * Math.cos(angle * i);
+			ret.add(new Vec4d(x, y, 0, 1));
+		}
 		return ret;
 	}
 

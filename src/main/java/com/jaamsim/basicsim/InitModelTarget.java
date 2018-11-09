@@ -43,6 +43,8 @@ public class InitModelTarget extends ProcessTarget {
 		// Start each entity
 		double startTime = Simulation.getStartTime();
 		for (Entity each : Entity.getClonesOfIterator(Entity.class)) {
+			if (!each.isActive())
+				continue;
 			EventManager.scheduleSeconds(startTime, 0, true, new StartUpTarget(each), null);
 		}
 

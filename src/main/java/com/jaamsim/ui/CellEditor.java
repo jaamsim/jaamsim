@@ -88,8 +88,10 @@ public abstract class CellEditor extends AbstractCellEditor implements TableCell
 			final String newValue = editor.getValue();
 
 			// The value has not changed
-			if ( in.getValueString().equals(newValue) && in.isValid() )
+			if (in.getValueString().equals(newValue) && in.isValid()) {
+				editor.propTable.setPresentCellEditor(null);
 				return;
+			}
 
 			// Adjust the user's entry to standardise the syntax
 			String str = newValue.trim();
@@ -119,15 +121,11 @@ public abstract class CellEditor extends AbstractCellEditor implements TableCell
 						// Any editor that supports retry should implement the following
 						final int row = editor.getRow();
 						final int col = editor.getCol();
-						final Input<?> inp = in;
 						SwingUtilities.invokeLater(new Runnable() {
 							@Override
 							public void run() {
-								boolean bool = inp.isValid();
-								inp.setValid(true); //FIXME required for DropDownMenuEditor
 								table.setRetry(newValue, row, col);
 								table.editCellAt(row, col);
-								inp.setValid(bool);
 							}
 						});
 

@@ -29,6 +29,7 @@ import com.jaamsim.DisplayModels.PolylineModel;
 import com.jaamsim.DisplayModels.ShapeModel;
 import com.jaamsim.DisplayModels.TextModel;
 import com.jaamsim.basicsim.Entity;
+import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.basicsim.ObjectType;
 import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.datatypes.DoubleVector;
@@ -54,7 +55,9 @@ import com.jaamsim.math.Vec3d;
 import com.jaamsim.render.DisplayModelBinding;
 import com.jaamsim.render.RenderUtils;
 import com.jaamsim.render.VisibilityInfo;
+import com.jaamsim.ui.EditBox;
 import com.jaamsim.ui.FrameBox;
+import com.jaamsim.ui.GUIFrame;
 import com.jaamsim.ui.View;
 import com.jaamsim.units.AngleUnit;
 import com.jaamsim.units.DimensionlessUnit;
@@ -120,10 +123,6 @@ public class DisplayEntity extends Entity {
 	@Keyword(description = "If TRUE, the object is displayed in the View windows.",
 	         exampleList = {"FALSE"})
 	private final BooleanInput showInput;
-
-	@Keyword(description = "If TRUE, the object is active and used in simulation runs.",
-	         exampleList = {"FALSE"})
-	private final BooleanInput active;
 
 	@Keyword(description = "If TRUE, the object will respond to mouse clicks and can be "
 	                     + "positioned by dragging with the mouse.",
@@ -200,10 +199,6 @@ public class DisplayEntity extends Entity {
 		displayModelListInput.addInvalidClass(GraphModel.class);
 		this.addInput(displayModelListInput);
 		displayModelListInput.setUnique(false);
-
-		active = new BooleanInput("Active", KEY_INPUTS, true);
-		active.setHidden(true);
-		this.addInput(active);
 
 		showInput = new BooleanInput("Show", GRAPHICS, true);
 		this.addInput(showInput);
@@ -295,6 +290,9 @@ public class DisplayEntity extends Entity {
 		}
 		if (in == displayModelListInput) {
 			this.setDisplayModelList(displayModelListInput.getValue());
+			setGraphicsKeywords();
+			EditBox.getInstance().setEntity(null); // refresh the contents of the Input Editor
+			FrameBox.reSelectEntity();
 			return;
 		}
 		if (in == showInput) {
@@ -349,6 +347,13 @@ public class DisplayEntity extends Entity {
 	@Override
 	public void delete() {
 
+		if (!testFlag(Entity.FLAG_ADDED))
+			error("Cannot delete an entity that was defined prior to RecordEdits in the input "
+					+ "file.");
+
+		if (!isMovable())
+			error("Cannot delete an entity that is not movable.");
+
 		// Kill the label
 		if (! this.testFlag(FLAG_GENERATED)) {
 			EntityLabel label = EntityLabel.getLabel(this);
@@ -374,6 +379,22 @@ public class DisplayEntity extends Entity {
 		this.setDisplayModelList(displayModelListInput.getValue());
 		this.setRegion(regionInput.getValue());
 		this.setShow(showInput.getValue());
+	}
+
+	public boolean isGraphicsNominal() {
+		boolean ret = position.equals3(positionInput.getValue());
+		ret = ret && size.equals3(sizeInput.getValue());
+		ret = ret && align.equals3(alignmentInput.getValue());
+		ret = ret && orient.equals3(orientationInput.getValue());
+
+		ret = ret && (displayModelList.isEmpty() && displayModelListInput.getValue() == null
+				|| displayModelList.equals(displayModelListInput.getValue()));
+
+		ret = ret && (currentRegion == null && regionInput.getValue() == null
+				|| currentRegion.equals(regionInput.getValue()));
+
+		ret = ret && show == showInput.getValue();
+		return ret;
 	}
 
 	private void showStandardGraphicsKeywords(boolean bool) {
@@ -478,10 +499,6 @@ public class DisplayEntity extends Entity {
 		synchronized (position) {
 			show = bool;
 		}
-	}
-
-	public boolean isActive() {
-		return active.getValue();
 	}
 
 	public boolean isMovable() {
@@ -910,8 +927,13 @@ public class DisplayEntity extends Entity {
 
 	public void handleKeyReleased(int keyCode, char keyChar, boolean shift, boolean control, boolean alt) {
 		if (keyCode == KeyEvent.VK_DELETE) {
-			delete();
-			FrameBox.setSelectedEntity(null, false);
+			try {
+				delete();
+				FrameBox.setSelectedEntity(null, false);
+			}
+			catch (ErrorException e) {
+				GUIFrame.invokeErrorDialog("User Error", e.getMessage());
+			}
 			return;
 		}
 	}
@@ -965,8 +987,6 @@ public class DisplayEntity extends Entity {
 
 	public ArrayList<Vec3d> getPoints() {
 		synchronized(screenPointLock) {
-			if (!this.usePointsInput())
-				return null;
 			return new ArrayList<>(pointsInput.getValue());
 		}
 	}

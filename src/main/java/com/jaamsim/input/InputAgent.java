@@ -266,7 +266,8 @@ public class InputAgent {
 		if (bool == sessionEdited)
 			return;
 		sessionEdited = bool;
-		GUIFrame.updateSaveButton();
+		if (GUIFrame.getInstance() != null)
+			GUIFrame.getInstance().updateSaveButton();
 	}
 
 	public static boolean isSessionEdited() {

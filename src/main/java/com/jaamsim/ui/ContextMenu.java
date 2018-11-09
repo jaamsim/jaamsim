@@ -32,6 +32,7 @@ import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.EntityLabel;
 import com.jaamsim.basicsim.Entity;
+import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.input.InputAgent;
@@ -157,8 +158,13 @@ public class ContextMenu {
 		deleteMenuItem.addActionListener( new ActionListener() {
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				ent.delete();
-				FrameBox.setSelectedEntity(null, false);
+				try {
+					ent.delete();
+					FrameBox.setSelectedEntity(null, false);
+				}
+				catch (ErrorException e) {
+					GUIFrame.invokeErrorDialog("User Error", e.getMessage());
+				}
 			}
 		} );
 		menu.add( deleteMenuItem );

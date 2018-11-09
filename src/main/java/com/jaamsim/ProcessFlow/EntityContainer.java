@@ -23,7 +23,6 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 
 import com.jaamsim.Graphics.DisplayEntity;
-import com.jaamsim.ProcessFlow.EntStorage.StorageEntry;
 import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.StringProviders.StringProvInput;
@@ -40,7 +39,7 @@ import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.DistanceUnit;
 import com.jaamsim.units.TimeUnit;
 
-public class EntityContainer extends SimEntity {
+public class EntityContainer extends SimEntity implements EntContainer {
 
 	@Keyword(description = "The priority for positioning the received entity in the container. "
 	                     + "Priority is integer valued and a lower numerical value indicates a "
@@ -88,12 +87,7 @@ public class EntityContainer extends SimEntity {
 			exampleList = {"FALSE"})
 	protected final BooleanInput showEntities;
 
-	private EntStorage storage;
-	private DisplayEntity lastEntity;
-	private long initialNumberAdded;
-	private long initialNumberRemoved;
-	private long numberAdded;
-	private long numberRemoved;
+	private EntContainerDelegate container;
 
 	{
 		priority = new SampleInput("Priority", KEY_INPUTS, new SampleConstant(0));
@@ -131,66 +125,41 @@ public class EntityContainer extends SimEntity {
 	}
 
 	public EntityContainer() {
-		storage = new EntStorage();
+		container = new EntContainerDelegate();
 	}
 
 	@Override
 	public void earlyInit() {
 		super.earlyInit();
-		storage.clear();
-		lastEntity = null;
-		initialNumberAdded = 0L;
-		initialNumberRemoved = 0L;
-		numberAdded = 0L;
-		numberRemoved = 0L;
+		container.clear();
 	}
 
+	@Override
 	public void addEntity(DisplayEntity ent) {
 		double simTime = getSimTime();
 
-		// Register the entity
-		lastEntity = ent;
-		numberAdded++;
-
-		// Build the entry for the entity
-		long n = this.getTotalNumberAdded();
-		if (!fifo.getValue())
-			n *= -1;
 		int pri = (int) priority.getValue().getNextSample(simTime);
+
 		String m = null;
 		if (match.getValue() != null)
 			m = match.getValue().getNextString(simTime, 1.0d, true);
 
-		StorageEntry entry = new StorageEntry(ent, m, pri, n, simTime);
-		storage.add(entry);
+		container.addEntity(ent, m, pri, fifo.getValue(), simTime);
 	}
 
+	@Override
 	public DisplayEntity removeEntity(String m) {
-		StorageEntry entry = storage.first();
-		if (m != null) {
-			entry = storage.first(m);
-		}
-		storage.remove(entry);
-		DisplayEntity ent = entry.entity;
-		if (!showEntities.getValue()) {
-			ent.setShow(true);
-		}
-		numberRemoved++;
-		return ent;
+		return container.removeEntity(m);
 	}
 
+	@Override
 	public int getCount(String m) {
-		if (m == null) {
-			return storage.size();
-		}
-		return storage.size(m);
+		return container.getCount(m);
 	}
 
+	@Override
 	public boolean isEmpty(String m) {
-		if (m == null) {
-			return storage.isEmpty();
-		}
-		return storage.isEmpty(m);
+		return container.isEmpty(m);
 	}
 
 	@Override
@@ -201,9 +170,9 @@ public class EntityContainer extends SimEntity {
 			return;
 
 		// Set the states for the entities carried by the EntityContainer to the new state
-		Iterator<StorageEntry> itr = storage.iterator();
+		Iterator<DisplayEntity> itr = container.iterator();
 		while (itr.hasNext()) {
-			DisplayEntity ent = itr.next().entity;
+			DisplayEntity ent = itr.next();
 			if (ent instanceof StateEntity)
 				((StateEntity)ent).setPresentState(next.getName());
 		}
@@ -211,37 +180,18 @@ public class EntityContainer extends SimEntity {
 
 	@Override
 	public void kill() {
-		Iterator<StorageEntry> itr = storage.iterator();
+		Iterator<DisplayEntity> itr = container.iterator();
 		while (itr.hasNext()) {
-			DisplayEntity ent = itr.next().entity;
+			DisplayEntity ent = itr.next();
 			ent.kill();
 		}
 		super.kill();
 	}
 
-	/**
-	 * Returns the number of entities that have been added during the entire
-	 * simulation run, including the initialisation period.
-	 */
-	public long getTotalNumberAdded() {
-		return initialNumberAdded + numberAdded;
-	}
-
-	/**
-	 * Returns the number of entities that have been removed during the entire
-	 * simulation run, including the initialisation period.
-	 */
-	public long getTotalNumberProcessed() {
-		return initialNumberRemoved + numberRemoved;
-	}
-
 	@Override
 	public void clearStatistics() {
 		super.clearStatistics();
-		initialNumberAdded = numberAdded;
-		initialNumberRemoved = numberRemoved;
-		numberAdded = 0L;
-		numberRemoved = 0L;
+		container.clearStatistics();
 	}
 
 	/**
@@ -258,19 +208,19 @@ public class EntityContainer extends SimEntity {
 
 		// Find widest entity
 		double maxWidth = 0;
-		Iterator<StorageEntry> itr = storage.iterator();
+		Iterator<DisplayEntity> itr = container.iterator();
 		while (itr.hasNext()) {
-			DisplayEntity ent = itr.next().entity;
+			DisplayEntity ent = itr.next();
 			maxWidth = Math.max(maxWidth, ent.getSize().y);
 		}
 
 		// Update the position of each entity (start at the bottom left of the container)
 		double distanceX = -0.5*size.x;
 		double distanceY = -0.5*size.y + 0.5*maxWidth;
-		itr = storage.iterator();
+		itr = container.iterator();
 		int i = 0;
 		while (itr.hasNext()) {
-			DisplayEntity item = itr.next().entity;
+			DisplayEntity item = itr.next();
 
 			// if new row is required, reset distanceX and move distanceY up one row
 			if (i > 0 && i % maxPerLineInput.getValue() == 0){
@@ -300,7 +250,7 @@ public class EntityContainer extends SimEntity {
 	 description = "The entity that was loaded most recently.",
 	    sequence = 0)
 	public DisplayEntity getLastEntity(double simTime) {
-		return lastEntity;
+		return container.getLastEntity();
 	}
 
 	@Output(name = "NumberAdded",
@@ -309,7 +259,7 @@ public class EntityContainer extends SimEntity {
 	  reportable = true,
 	    sequence = 1)
 	public long getNumberAdded(double simTime) {
-		return numberAdded;
+		return container.getTotalNumberAdded();
 	}
 
 	@Output(name = "NumberRemoved",
@@ -318,7 +268,7 @@ public class EntityContainer extends SimEntity {
 	  reportable = true,
 	    sequence = 2)
 	public long getNumberRemoved(double simTime) {
-		return numberRemoved;
+		return container.getTotalNumberProcessed();
 	}
 
 	@Output(name = "Count",
@@ -326,7 +276,7 @@ public class EntityContainer extends SimEntity {
 	    unitType = DimensionlessUnit.class,
 	    sequence = 3)
 	public int getCount(double simTime) {
-		return storage.size();
+		return getCount(null);
 	}
 
 	@Output(name = "EntityList",
@@ -334,7 +284,7 @@ public class EntityContainer extends SimEntity {
 	    unitType = DimensionlessUnit.class,
 	    sequence = 4)
 	public ArrayList<DisplayEntity> getEntityList(double simTime) {
-		return storage.getEntityList();
+		return container.getEntityList(null);
 	}
 
 	@Output(name = "PriorityValues",
@@ -342,7 +292,7 @@ public class EntityContainer extends SimEntity {
 	    unitType = DimensionlessUnit.class,
 	    sequence = 5)
 	public ArrayList<Integer> getPriorityValues(double simTime) {
-		return storage.getPriorityList();
+		return container.getPriorityList();
 	}
 
 	@Output(name = "MatchValues",
@@ -350,7 +300,7 @@ public class EntityContainer extends SimEntity {
 	    unitType = DimensionlessUnit.class,
 	    sequence = 6)
 	public ArrayList<String> getMatchValues(double simTime) {
-		return storage.getTypeList();
+		return container.getTypeList();
 	}
 
 	@Output(name = "StorageTimes",
@@ -358,7 +308,7 @@ public class EntityContainer extends SimEntity {
 	    unitType = TimeUnit.class,
 	    sequence = 7)
 	public ArrayList<Double> getStorageTimes(double simTime) {
-		return storage.getStorageTimeList(simTime);
+		return container.getStorageTimeList(simTime);
 	}
 
 	@Output(name = "MatchValueCount",
@@ -366,14 +316,14 @@ public class EntityContainer extends SimEntity {
 	    unitType = DimensionlessUnit.class,
 	    sequence = 8)
 	public int getMatchValueCount(double simTime) {
-		return storage.getTypes().size();
+		return container.getTypeList().size();
 	}
 
 	@Output(name = "UniqueMatchValues",
 	 description = "The list of unique Match values for the entities in the container.",
 	    sequence = 9)
 	public ArrayList<String> getUniqueMatchValues(double simTime) {
-		ArrayList<String> ret = new ArrayList<>(storage.getTypes());
+		ArrayList<String> ret = new ArrayList<>(container.getTypeList());
 		Collections.sort(ret);
 		return ret;
 	}
@@ -385,9 +335,9 @@ public class EntityContainer extends SimEntity {
 	    unitType = DimensionlessUnit.class,
 	    sequence = 10)
 	public LinkedHashMap<String, Integer> getMatchValueCountMap(double simTime) {
-		LinkedHashMap<String, Integer> ret = new LinkedHashMap<>(storage.getTypes().size());
+		LinkedHashMap<String, Integer> ret = new LinkedHashMap<>(container.getTypeList().size());
 		for (String m : getUniqueMatchValues(simTime)) {
-			ret.put(m, storage.size(m));
+			ret.put(m, getCount(m));
 		}
 		return ret;
 	}
@@ -399,9 +349,9 @@ public class EntityContainer extends SimEntity {
 	             + "entities whose Match value is \"SKU1\".",
 	    sequence = 11)
 	public LinkedHashMap<String, ArrayList<DisplayEntity>> getMatchValueMap(double simTime) {
-		LinkedHashMap<String, ArrayList<DisplayEntity>> ret = new LinkedHashMap<>(storage.getTypes().size());
+		LinkedHashMap<String, ArrayList<DisplayEntity>> ret = new LinkedHashMap<>(container.getTypeList().size());
 		for (String m : getUniqueMatchValues(simTime)) {
-			ret.put(m, storage.getEntityList(m));
+			ret.put(m, container.getEntityList(m));
 		}
 		return ret;
 	}

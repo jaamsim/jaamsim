@@ -204,4 +204,9 @@ public class MappedTreeSet<K,V> {
 		return ret;
 	}
 
+	@Override
+	public String toString() {
+		return objSet.toString();
+	}
+
 }

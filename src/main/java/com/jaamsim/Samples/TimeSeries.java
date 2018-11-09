@@ -413,12 +413,35 @@ public class TimeSeries extends DisplayEntity implements TimeSeriesProvider {
 	// ******************************************************************************************************
 
 	@Output(name = "PresentValue",
-	        description = "The time series value for the present time.",
-	        unitType = UserSpecifiedUnit.class)
+	 description = "Value for the time series at the present time.",
+	    unitType = UserSpecifiedUnit.class,
+	    sequence = 1)
 	public final double getPresentValue(double simTime) {
 		if (value.getValue() == null)
 			return Double.NaN;
 		return this.getNextSample(simTime);
+	}
+
+	@Output(name = "NextTime",
+	 description = "Time at which the time series value is updated next.",
+	    unitType = TimeUnit.class,
+	    sequence = 2)
+	public final double getNextEventTime(double simTime) {
+		if (value.getValue() == null)
+			return 0.0d;
+		return this.getNextTimeAfter(simTime);
+	}
+
+	@Output(name = "NextValue",
+	 description = "Value for the time series when it is updated next.",
+	    unitType = UserSpecifiedUnit.class,
+	    sequence = 3)
+	public final double getNextValue(double simTime) {
+		if (value.getValue() == null)
+			return Double.NaN;
+		long simTicks = EventManager.secsToNearestTick(simTime);
+		long nextTicks = getNextChangeAfterTicks(simTicks);
+		return this.getValueForTicks(nextTicks);
 	}
 
 }

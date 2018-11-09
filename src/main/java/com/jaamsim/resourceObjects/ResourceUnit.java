@@ -19,9 +19,12 @@ package com.jaamsim.resourceObjects;
 import java.util.ArrayList;
 
 import com.jaamsim.BasicObjects.DowntimeEntity;
+import com.jaamsim.DisplayModels.ShapeModel;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.ProcessFlow.StateUserEntity;
 import com.jaamsim.basicsim.ErrorException;
+import com.jaamsim.input.BooleanInput;
+import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.ExpError;
 import com.jaamsim.input.ExpEvaluator;
@@ -29,7 +32,11 @@ import com.jaamsim.input.ExpParser.Expression;
 import com.jaamsim.input.ExpressionInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
+import com.jaamsim.input.Vec3dInput;
+import com.jaamsim.math.Color4d;
+import com.jaamsim.math.Vec3d;
 import com.jaamsim.units.DimensionlessUnit;
+import com.jaamsim.units.DistanceUnit;
 
 public class ResourceUnit extends StateUserEntity implements Seizable, ResourceProvider {
 
@@ -54,13 +61,31 @@ public class ResourceUnit extends StateUserEntity implements Seizable, ResourceP
 	                     + "The entry 'this.Assignment' can be used in the expression to "
 	                     + "represent the entity that would seize the unit.",
 	         exampleList = {"'this.Assignment.type == 1 ? 1 : 2'"})
-	private final ExpressionInput priority;
+	private final ExpressionInput assignmentPriority;
+
+	@Keyword(description = "If TRUE, the ResourceUnit will move next to the entity that has "
+	                     + "seized it, and will follow that entity until it is released.",
+	         exampleList = {"TRUE"})
+	private final BooleanInput followAssignment;
+
+	@Keyword(description = "The position of the ResourceUnit relative to the entity that has seized it.",
+	         exampleList = {"0.0 1.0 0.01 m"})
+	protected final Vec3dInput assignmentOffset;
 
 	private DisplayEntity presentAssignment;  // entity to which this unit is assigned
 	private long lastReleaseTicks;  // clock ticks at which the unit was unassigned
 	private ArrayList<ResourceUser> userList;  // objects that can use this resource
 
+	public static final Color4d COL_OUTLINE = ColourInput.MED_GREY;
+
 	{
+		active.setHidden(false);
+		stateGraphics.setHidden(false);
+		immediateThresholdList.setHidden(true);
+		immediateReleaseThresholdList.setHidden(true);
+		immediateMaintenanceList.setHidden(true);
+		immediateBreakdownList.setHidden(true);
+
 		resourcePool = new EntityInput<>(ResourcePool.class, "ResourcePool", KEY_INPUTS, null);
 		this.addInput(resourcePool);
 
@@ -69,11 +94,19 @@ public class ResourceUnit extends StateUserEntity implements Seizable, ResourceP
 		assignmentCondition.setUnitType(DimensionlessUnit.class);
 		this.addInput(assignmentCondition);
 
-		priority = new ExpressionInput("Priority", KEY_INPUTS, null);
-		priority.setEntity(this);
-		priority.setUnitType(DimensionlessUnit.class);
-		priority.setDefaultText("1");
-		this.addInput(priority);
+		assignmentPriority = new ExpressionInput("AssignmentPriority", KEY_INPUTS, null);
+		assignmentPriority.setEntity(this);
+		assignmentPriority.setUnitType(DimensionlessUnit.class);
+		assignmentPriority.setDefaultText("1");
+		this.addInput(assignmentPriority);
+		this.addSynonym(assignmentPriority, "Priority");
+
+		followAssignment = new BooleanInput("FollowAssignment", GRAPHICS, false);
+		this.addInput(followAssignment);
+
+		assignmentOffset = new Vec3dInput("AssignmentOffset", GRAPHICS, new Vec3d());
+		assignmentOffset.setUnitType(DistanceUnit.class);
+		this.addInput(assignmentOffset);
 	}
 
 	public ResourceUnit() {
@@ -91,6 +124,17 @@ public class ResourceUnit extends StateUserEntity implements Seizable, ResourceP
 	@Override
 	public ResourcePool getResourcePool() {
 		return resourcePool.getValue();
+	}
+
+	/**
+	 * Returns the ResourceProvider that manages this ResourceUnit.
+	 * Normally, the ResourceProvider is the ResourceUnit's ResourcePool, however if no
+	 * ResourcePool was assigned then the ResourceUnit as its own ResourceProv, essentially as a
+	 * ResourcePool with one unit.
+	 * @return ResourceProvider that manages this ResourceUnit
+	 */
+	public ResourceProvider getResourceProvider() {
+		return resourcePool.isDefault() ? this : getResourcePool();
 	}
 
 	/**
@@ -125,7 +169,7 @@ public class ResourceUnit extends StateUserEntity implements Seizable, ResourceP
 
 	@Override
 	public boolean canSeize(DisplayEntity ent) {
-		return (presentAssignment == null && isAllowed(ent));
+		return (presentAssignment == null && isAllowed(ent) && isAvailable());
 	}
 
 	@Override
@@ -157,7 +201,7 @@ public class ResourceUnit extends StateUserEntity implements Seizable, ResourceP
 
 	@Override
 	public int getPriority(DisplayEntity ent) {
-		Expression exp = priority.getValue();
+		Expression exp = assignmentPriority.getValue();
 		if (exp == null)
 			return 1;
 
@@ -217,28 +261,73 @@ public class ResourceUnit extends StateUserEntity implements Seizable, ResourceP
 
 	@Override
 	public void thresholdChanged() {
-		// TODO Auto-generated method stub
+		if (isTraceFlag())
+			trace(0, "thresholdChanged");
+
+		// If the resource unit is available, try to put it to work
+		if (isAvailable()) {
+			AbstractResourceProvider.notifyResourceUsers(getResourceProvider());
+			return;
+		}
+		// Do nothing if the threshold is closed. A threshold closure takes effect after the
+		// ResourceUnit has been released
 	}
 
 	@Override
 	public boolean canStartDowntime(DowntimeEntity down) {
-		// TODO Auto-generated method stub
-		return false;
+
+		// Downtime can start when any work in progress has been interrupted and there are no
+		// other maintenance or breakdown activities that are being performed. It is okay to start
+		// downtime when one or more thresholds are closed.
+		return !isBusy() && !isMaintenance() && !isBreakdown();
 	}
 
 	@Override
 	public void prepareForDowntime(DowntimeEntity down) {
-		// TODO Auto-generated method stub
+		if (isTraceFlag())
+			trace(0, "prepareForDowntime(%s)", down);
+		// Do nothing - a breakdown can only start after the ResourceUnit has been released
 	}
 
 	@Override
 	public void startDowntime(DowntimeEntity down) {
-		// TODO Auto-generated method stub
+		if (isTraceFlag()) trace(0, "startDowntime(%s)", down);
+		setPresentState();
 	}
 
 	@Override
 	public void endDowntime(DowntimeEntity down) {
-		// TODO Auto-generated method stub
+		if (isTraceFlag()) trace(0, "endDowntime(%s)", down);
+		setPresentState();
+
+		// If the resource unit is available, try to put it to work
+		if (isAvailable()) {
+			AbstractResourceProvider.notifyResourceUsers(getResourceProvider());
+			return;
+		}
+	}
+
+	@Override
+	public void updateGraphics(double simTime) {
+		super.updateGraphics(simTime);
+
+		// Set the resource unit's position
+		if (followAssignment.getValue()) {
+			if (presentAssignment == null) {
+				setPosition(positionInput.getValue());
+			}
+			else {
+				Vec3d pos = presentAssignment.getGlobalPosition();
+				pos.add3(assignmentOffset.getValue());
+				setGlobalPosition(pos);
+			}
+		}
+
+		// Set the resource unit's colour based on its state
+		setTagVisibility(ShapeModel.TAG_CONTENTS, true);
+		setTagVisibility(ShapeModel.TAG_OUTLINES, true);
+		setTagColour(ShapeModel.TAG_CONTENTS, getColourForPresentState());
+		setTagColour(ShapeModel.TAG_OUTLINES, COL_OUTLINE);
 	}
 
 	@Output(name = "Assignment",

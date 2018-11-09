@@ -17,6 +17,7 @@
 package com.jaamsim.resourceObjects;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 
@@ -82,6 +83,10 @@ public abstract class AbstractResourceProvider extends DisplayEntity implements 
 				ret.add(ru);
 		}
 		return ret;
+	}
+
+	public static void notifyResourceUsers(ResourceProvider prov) {
+		notifyResourceUsers(new ArrayList<>(Arrays.asList(prov)));
 	}
 
 	/**

@@ -318,15 +318,15 @@ private static class CategoryInputs {
 
 	private static void add(ArrayList<CategoryInputs> list, ArrayList<Input<?>> inputs, String cat) {
 
-		int seq = 100;
+		int seq = 1;
 		if (cat.equals(Entity.KEY_INPUTS))
 			seq = 0;
 		else if (cat.equals(Entity.THRESHOLDS))
-			seq = 1;
-		else if (cat.equals(Entity.MAINTENANCE))
 			seq = 2;
+		else if (cat.equals(Entity.MAINTENANCE))
+			seq = 3;
 		else if (cat.equals(Entity.GRAPHICS))
-			seq = 101;
+			seq = 4;
 
 		list.add(new CategoryInputs(cat, seq, inputs));
 	}
@@ -349,7 +349,6 @@ public static class EditTable extends JTable {
 	static int col3Width = 150;
 
 	private ColorEditor colorEditor;
-	private ListEditor listEditor;
 
 	private String retryString;
 	private int retryRow;
@@ -417,15 +416,12 @@ public static class EditTable extends JTable {
 
 		// 5) Multiple selections from a List
 		else if (in instanceof ListInput) {
-			if(listEditor == null) {
-				listEditor = new ListEditor(this, array);
-				if (in instanceof StringListInput) {
-					listEditor.setCaseSensitive(
-							((StringListInput)(in)).getCaseSensitive() );
-				}
-				if (in instanceof SampleListInput || in instanceof StringProvListInput) {
-					listEditor.setInnerBraces(true);
-				}
+			ListEditor listEditor = new ListEditor(this, array);
+			if (in instanceof StringListInput) {
+				listEditor.setCaseSensitive( ((StringListInput)(in)).getCaseSensitive() );
+			}
+			if (in instanceof SampleListInput || in instanceof StringProvListInput) {
+				listEditor.setInnerBraces(true);
 			}
 			ret = listEditor;
 		}

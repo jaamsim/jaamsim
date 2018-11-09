@@ -21,6 +21,12 @@ Define ShapeModel {
                     Circle
                     Arrow2D
                     Triangle
+                    Pentagon
+                    Hexagon
+                    Octagon
+                    Pentagram
+                    Heptagram
+                    Octagram
                     BarGauge2D
                   }
 
@@ -29,6 +35,12 @@ Circle          Shape { CIRCLE     }
 Arrow2D         Shape { ARROW2D    }
 Triangle        Shape { TRIANGLE   }
 BarGauge2D      Shape { BARGAUGE2D }
+Pentagon        Shape { PENTAGON   }
+Hexagon         Shape { HEXAGON    }
+Octagon         Shape { OCTAGON    }
+Pentagram       Shape { PENTAGRAM  }
+Heptagram       Shape { HEPTAGRAM  }
+Octagram        Shape { OCTAGRAM   }
 
 Define ColladaModel {
                       Cube

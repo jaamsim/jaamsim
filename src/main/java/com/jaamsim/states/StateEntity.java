@@ -30,15 +30,17 @@ import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.FileEntity;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.input.BooleanInput;
+import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.StringKeyInput;
 import com.jaamsim.input.StringListInput;
+import com.jaamsim.math.Color4d;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
 
-public class StateEntity extends DisplayEntity {
+public abstract class StateEntity extends DisplayEntity implements StateUser {
 
 	@Keyword(description = "A list of state/DisplayEntity pairs. For each state, the graphics "
 	                     + "will be changed to those for the corresponding DisplayEntity.",
@@ -65,9 +67,14 @@ public class StateEntity extends DisplayEntity {
 
 	protected static final String STATE_IDLE = "Idle";
 	protected static final String STATE_WORKING = "Working";
+	protected static final String STATE_INACTIVE = "Inactive";
+
+	protected static final Color4d COL_IDLE = ColourInput.LIGHT_GREY;
+	protected static final Color4d COL_WORKING = ColourInput.GREEN;
+	protected static final Color4d COL_INACTIVE = ColourInput.WHITE;
 
 	{
-		stateGraphics = new StringKeyInput<>(DisplayEntity.class, "StateGraphics", KEY_INPUTS);
+		stateGraphics = new StringKeyInput<>(DisplayEntity.class, "StateGraphics", GRAPHICS);
 		stateGraphics.setHidden(true);
 		this.addInput(stateGraphics);
 
@@ -138,7 +145,7 @@ public class StateEntity extends DisplayEntity {
 	 * @return
 	 */
 	public String getInitialState() {
-		return STATE_IDLE;
+		return isActive() ? STATE_IDLE : STATE_INACTIVE;
 	}
 
 	/**
@@ -147,7 +154,8 @@ public class StateEntity extends DisplayEntity {
 	 * @return
 	 */
 	public boolean isValidState(String state) {
-		return STATE_IDLE.equals(state) || STATE_WORKING.equals(state);
+		return STATE_IDLE.equals(state) || STATE_WORKING.equals(state)
+				|| STATE_INACTIVE.equals(state);
 	}
 
 	/**
@@ -164,9 +172,7 @@ public class StateEntity extends DisplayEntity {
 		return STATE_WORKING.equals(state);
 	}
 
-	/**
-	 * Sets the state of this Entity to the given state.
-	 */
+	@Override
 	public final void setPresentState( String state ) {
 		if (presentState == null)
 			this.initStateData();
@@ -327,9 +333,7 @@ public class StateEntity extends DisplayEntity {
 		return recs;
 	}
 
-	/**
-	 * Return true if the entity is working
-	 */
+	@Override
 	public boolean isWorking() {
 		return presentState.isWorking();
 	}
@@ -398,8 +402,6 @@ public class StateEntity extends DisplayEntity {
 		long ticks = getWorkingTicks(getSimTicks());
 		return EventManager.ticksToSecs(ticks);
 	}
-
-	public void setPresentState() {}
 
 	/**
 	 * Returns the elapsed time in seconds after the completion of the initialisation period

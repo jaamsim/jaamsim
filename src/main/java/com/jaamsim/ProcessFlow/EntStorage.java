@@ -313,4 +313,9 @@ public class EntStorage {
 		return ret;
 	}
 
+	@Override
+	public String toString() {
+		return entrySet.toString();
+	}
+
 }

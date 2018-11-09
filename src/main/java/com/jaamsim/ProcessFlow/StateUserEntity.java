@@ -21,9 +21,11 @@ import java.util.ArrayList;
 import com.jaamsim.BasicObjects.DowntimeEntity;
 import com.jaamsim.Thresholds.Threshold;
 import com.jaamsim.Thresholds.ThresholdUser;
+import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.EntityListInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
+import com.jaamsim.math.Color4d;
 import com.jaamsim.states.DowntimeUser;
 import com.jaamsim.states.StateEntity;
 
@@ -91,6 +93,11 @@ public abstract class StateUserEntity extends StateEntity implements ThresholdUs
 	protected static final String STATE_BREAKDOWN = "Breakdown";
 	protected static final String STATE_STOPPED = "Stopped";
 	protected static final String STATE_BLOCKED = "Blocked";
+
+	protected static final Color4d COL_MAINTENANCE = ColourInput.RED;
+	protected static final Color4d COL_BREAKDOWN = ColourInput.RED;
+	protected static final Color4d COL_STOPPED = ColourInput.DARK_BLUE;
+	protected static final Color4d COL_BLOCKED = ColourInput.DARK_BLUE;
 
 	{
 		immediateThresholdList = new EntityListInput<>(Threshold.class, "ImmediateThresholdList", THRESHOLDS, new ArrayList<Threshold>());
@@ -258,7 +265,7 @@ public abstract class StateUserEntity extends StateEntity implements ThresholdUs
 	}
 
 	public boolean isAvailable() {
-		return isOpen() && !isMaintenance() && !isBreakdown();
+		return isOpen() && !isMaintenance() && !isBreakdown() && isActive();
 	}
 
 	/**
@@ -283,8 +290,13 @@ public abstract class StateUserEntity extends StateEntity implements ThresholdUs
 		return !isBusy() && !isAvailable();
 	}
 
-	@Override
 	public void setPresentState() {
+
+		// Inactive
+		if (!this.isActive()) {
+			this.setPresentState(STATE_INACTIVE);
+			return;
+		}
 
 		// Working (Busy)
 		if (this.isBusy()) {
@@ -309,6 +321,33 @@ public abstract class StateUserEntity extends StateEntity implements ThresholdUs
 		// Not working because there is nothing to do (Idle)
 		this.setPresentState(STATE_IDLE);
 		return;
+	}
+
+	protected Color4d getColourForPresentState() {
+
+		// Inactive
+		if (!this.isActive()) {
+			return COL_INACTIVE;
+		}
+
+		// Working (Busy)
+		if (this.isBusy()) {
+			return COL_WORKING;
+		}
+
+		// Not working because of maintenance or a closure (UnableToWork)
+		if (this.isMaintenance()) {
+			return COL_MAINTENANCE;
+		}
+		if (this.isBreakdown()) {
+			return COL_BREAKDOWN;
+		}
+		if (!this.isOpen()) {
+			return COL_STOPPED;
+		}
+
+		// Not working because there is nothing to do (Idle)
+		return COL_IDLE;
 	}
 
 	// ********************************************************************************************

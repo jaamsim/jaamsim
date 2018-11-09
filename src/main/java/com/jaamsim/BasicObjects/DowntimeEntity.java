@@ -166,10 +166,6 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 	@Override
     public void startUp() {
 		super.startUp();
-
-		if (!this.isActive())
-			return;
-
 		checkProcessNetwork();
 	}
 

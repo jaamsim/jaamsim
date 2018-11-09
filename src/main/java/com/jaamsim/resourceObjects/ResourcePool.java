@@ -37,7 +37,7 @@ public class ResourcePool extends AbstractResourceProvider {
 		seizableList.clear();
 		for (Entity ent : Entity.getClonesOfIterator(Entity.class, Seizable.class)) {
 			Seizable unit = (Seizable) ent;
-			if (unit.getResourcePool() != this)
+			if (unit.getResourcePool() != this || !((DisplayEntity)unit).isActive())
 				continue;
 			seizableList.add(unit);
 		}
@@ -60,6 +60,7 @@ public class ResourcePool extends AbstractResourceProvider {
 
 	@Override
 	public void seize(int n, DisplayEntity ent) {
+		if (isTraceFlag()) trace(1,"seize(%s, %s)", n, ent);
 
 		// List the units that are eligible to be seized
 		ArrayList<Seizable> eligibleList = getEligibleList(ent);
@@ -81,6 +82,7 @@ public class ResourcePool extends AbstractResourceProvider {
 
 	@Override
 	public void release(int n, DisplayEntity ent) {
+		if (isTraceFlag()) trace(1,"release(%s, %s)", n, ent);
 		for (Seizable unit : seizableList) {
 			if (unit.getAssignment() != ent)
 				continue;

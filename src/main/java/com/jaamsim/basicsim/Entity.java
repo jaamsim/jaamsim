@@ -96,6 +96,10 @@ public class Entity {
 	         exampleList = {"TRUE"})
 	protected final BooleanInput trace;
 
+	@Keyword(description = "If TRUE, the object is used in the simulation run.",
+	         exampleList = {"FALSE"})
+	protected final BooleanInput active;
+
 	@Keyword(description = "A free form string describing the Entity",
 	         exampleList = {"'A very useful entity'"})
 	protected final StringInput desc;
@@ -122,6 +126,10 @@ public class Entity {
 		trace = new BooleanInput("Trace", KEY_INPUTS, false);
 		trace.setHidden(true);
 		this.addInput(trace);
+
+		active = new BooleanInput("Active", KEY_INPUTS, true);
+		active.setHidden(true);
+		this.addInput(active);
 
 		desc = new StringInput("Description", KEY_INPUTS, "");
 		desc.setHidden(true);
@@ -256,6 +264,11 @@ public class Entity {
 	 */
 	public void delete() {
 
+		if (!testFlag(Entity.FLAG_ADDED)) {
+			error("Cannot delete an entity that was defined prior to RecordEdits in the input "
+					+ "file.");
+		}
+
 		// Unregistered entities do not appear in the inputs to any other objects
 		if (!testFlag(Entity.FLAG_REGISTERED)) {
 			kill();
@@ -307,6 +320,14 @@ public class Entity {
 
 		// Record that the model has changed
 		InputAgent.setSessionEdited(true);
+	}
+
+	/**
+	 * Returns whether the entity can participate in the simulation.
+	 * @return true if the entity can be used
+	 */
+	public boolean isActive() {
+		return active.getValue();
 	}
 
 	/**
