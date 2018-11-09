@@ -391,7 +391,7 @@ public class DisplayEntity extends Entity {
 				|| displayModelList.equals(displayModelListInput.getValue()));
 
 		ret = ret && (currentRegion == null && regionInput.getValue() == null
-				|| currentRegion.equals(regionInput.getValue()));
+				|| currentRegion != null && currentRegion.equals(regionInput.getValue()));
 
 		ret = ret && show == showInput.getValue();
 		return ret;
