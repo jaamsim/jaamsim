@@ -27,6 +27,7 @@ import com.jaamsim.DisplayModels.TextModel;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.ColourInput;
+import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.StringChoiceInput;
@@ -37,6 +38,7 @@ import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Transform;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.render.TessFontKey;
+import com.jaamsim.ui.GUIFrame;
 import com.jaamsim.units.DistanceUnit;
 import com.jogamp.newt.event.KeyEvent;
 
@@ -122,6 +124,18 @@ public abstract class TextBasics extends DisplayEntity {
 	}
 
 	public TextBasics() {}
+
+	@Override
+	public void updateForInput( Input<?> in ) {
+		super.updateForInput( in );
+
+		if (in == fontName || in == textHeight || in == fontColor || in == fontStyle) {
+			if (GUIFrame.getInstance() == null)
+				return;
+			GUIFrame.getInstance().updateTextButtons();
+			return;
+		}
+	}
 
 	public void setSavedText(String str) {
 		savedText = str;
