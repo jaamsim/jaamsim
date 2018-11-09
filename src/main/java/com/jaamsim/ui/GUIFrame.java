@@ -1106,6 +1106,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
+				if (!(selectedEntity instanceof TextBasics))
+					return;
 				TextBasics textEnt = (TextBasics) selectedEntity;
 				Vec3d align = textEnt.getAlignment();
 				double prevAlign = align.x;
@@ -1166,6 +1168,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
+				if (!(selectedEntity instanceof TextBasics))
+					return;
 				TextBasics textEnt = (TextBasics) selectedEntity;
 				ArrayList<String> stylesList = new ArrayList<>(2);
 				if (bold.isSelected())
