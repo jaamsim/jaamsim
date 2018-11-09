@@ -2085,8 +2085,10 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		bold.setEnabled(bool);
 		italic.setEnabled(bool);
 		fontSelector.setEnabled(bool);
+		textHeight.setEnabled(bool);
 		if (!bool) {
 			fontSelector.setSelectedItem(null);
+			textHeight.setText(null);
 			return;
 		}
 
@@ -2099,6 +2101,11 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		bold.setSelected(textEnt.isBold());
 		italic.setSelected(textEnt.isItalic());
 		fontSelector.setSelectedItem(textEnt.getFontName());
+
+		String str = textEnt.getInput("TextHeight").getValueString();
+		if (str.isEmpty())
+			str = String.format("%s  m", textEnt.getTextHeight());
+		textHeight.setText(str);
 	}
 
 	public static Image getWindowIcon() {
