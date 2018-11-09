@@ -1112,6 +1112,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 				align.x = alignLeft.isSelected() ? -0.5d : align.x;
 				align.x = alignCentre.isSelected() ? 0.0d : align.x;
 				align.x = alignRight.isSelected() ? 0.5d : align.x;
+				if (align.x == textEnt.getAlignment().x)
+					return;
 				KeywordIndex kw = InputAgent.formatVec3dInput("Alignment", align, DimensionlessUnit.class);
 
 				Vec3d pos = textEnt.getPosition();
@@ -1169,6 +1171,9 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 				if (!(selectedEntity instanceof TextBasics))
 					return;
 				TextBasics textEnt = (TextBasics) selectedEntity;
+				if (textEnt.isBold() == bold.isSelected()
+						&& textEnt.isItalic() && italic.isSelected())
+					return;
 				ArrayList<String> stylesList = new ArrayList<>(2);
 				if (bold.isSelected())
 					stylesList.add("BOLD");
@@ -1213,6 +1218,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 					return;
 				TextBasics textEnt = (TextBasics) selectedEntity;
 				String fontName = (String) fontSelector.getSelectedItem();
+				if (fontName.equals(textEnt.getFontName()))
+					return;
 				fontName = Parser.addQuotesIfNeeded(fontName);
 				KeywordIndex kw = InputAgent.formatInput("FontName", fontName);
 				InputAgent.storeAndExecute(new KeywordCommand(textEnt, kw));
