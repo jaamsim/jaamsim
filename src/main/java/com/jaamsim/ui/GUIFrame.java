@@ -1020,8 +1020,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 			@Override
 			protected void processFocusEvent(FocusEvent fe) {
 				if (fe.getID() == FocusEvent.FOCUS_LOST) {
-					KeywordIndex kw = InputAgent.formatInput("SnapGridSpacing", gridSpacing.getText());
-					InputAgent.apply(Simulation.getInstance(), kw);
+					GUIFrame.this.setSnapGridSpacing(this.getText().trim());
 				}
 				else if (fe.getID() == FocusEvent.FOCUS_GAINED) {
 					gridSpacing.selectAll();
@@ -1033,8 +1032,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		gridSpacing.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent evt) {
-				KeywordIndex kw = InputAgent.formatInput("SnapGridSpacing", gridSpacing.getText());
-				InputAgent.apply(Simulation.getInstance(), kw);
+				GUIFrame.this.setSnapGridSpacing(gridSpacing.getText().trim());
 				fileSave.requestFocusInWindow();
 			}
 		});
@@ -2019,6 +2017,27 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 
 	public void updateForSnapGridSpacing(String str) {
 		gridSpacing.setText(str);
+	}
+
+	private void setSnapGridSpacing(String str) {
+		Input<?> in = Simulation.getInstance().getInput("SnapGridSpacing");
+		String prevVal = in.getValueString();
+		if (prevVal.equals(str))
+			return;
+
+		if (str.isEmpty()) {
+			gridSpacing.setText(prevVal);
+			return;
+		}
+
+		try {
+			KeywordIndex kw = InputAgent.formatInput("SnapGridSpacing", str);
+			InputAgent.storeAndExecute(new KeywordCommand(Simulation.getInstance(), kw));
+		}
+		catch (InputErrorException e) {
+			gridSpacing.setText(prevVal);
+			GUIFrame.showErrorDialog("Input Error", e.getMessage());
+		}
 	}
 
 	public void updateForSnapToGrid() {
