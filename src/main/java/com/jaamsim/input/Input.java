@@ -135,7 +135,7 @@ public abstract class Input<T> {
 	public static final String SEPARATOR = "  ";
 	public static final String BRACE_SEPARATOR = " ";
 
-	private String keyword; // the preferred name for the input keyword
+	private final String keyword; // the preferred name for the input keyword
 	private final String category;
 
 	protected T defValue;
@@ -243,10 +243,6 @@ public abstract class Input<T> {
 		return keyword;
 	}
 
-	public void setKeyword(String str) {
-		keyword = str;
-	}
-
 	public final String getCategory() {
 		return category;
 	}
@@ -332,7 +328,7 @@ public abstract class Input<T> {
 
 	public void validate() throws InputErrorException {
 		if (isReqd && isDef && !hidden)
-			throw new InputErrorException("An input must be provided for the keyword '%s'.", keyword);
+			throw new InputErrorException("An input must be provided for the keyword '%s'.", getKeyword());
 	}
 
 	public void setTokens(KeywordIndex kw) {
