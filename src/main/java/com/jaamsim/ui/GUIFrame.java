@@ -1233,7 +1233,22 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 
 		// 15) Text Height
 		textHeight = new JTextField("1000000 m") {
+			@Override
+			protected void processFocusEvent(FocusEvent fe) {
+				if (fe.getID() == FocusEvent.FOCUS_LOST) {
+					GUIFrame.this.setTextHeight(this.getText().trim());
+				}
+				super.processFocusEvent( fe );
+			}
 		};
+
+		textHeight.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent evt) {
+				GUIFrame.this.setTextHeight(textHeight.getText().trim());
+				fileSave.requestFocusInWindow();
+			}
+		});
 
 		textHeight.setMaximumSize(textHeight.getPreferredSize());
 		textHeight.setPreferredSize(new Dimension(textHeight.getPreferredSize().width, hght));
@@ -2106,6 +2121,28 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		if (str.isEmpty())
 			str = String.format("%s  m", textEnt.getTextHeight());
 		textHeight.setText(str);
+	}
+
+	private void setTextHeight(String str) {
+		if (!(selectedEntity instanceof TextBasics))
+			return;
+		TextBasics textEnt = (TextBasics) selectedEntity;
+
+		String prevVal = textEnt.getInput("TextHeight").getValueString();
+		if (prevVal.isEmpty())
+			prevVal = String.format("%s  m", textEnt.getTextHeight());
+
+		if (prevVal.equals(str))
+			return;
+
+		try {
+			KeywordIndex kw = InputAgent.formatInput("TextHeight", str);
+			InputAgent.storeAndExecute(new KeywordCommand(textEnt, kw));
+		}
+		catch (InputErrorException e) {
+			textHeight.setText(prevVal);
+			GUIFrame.showErrorDialog("Input Error", e.getMessage());
+		}
 	}
 
 	public static Image getWindowIcon() {
