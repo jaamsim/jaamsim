@@ -1262,6 +1262,33 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		buttonBar.add(textHeight);
 
 		// 15.1) Larger and Smaller Text buttons
+		ActionListener textHeightListener = new ActionListener() {
+
+			@Override
+			public void actionPerformed( ActionEvent event ) {
+				if (!(selectedEntity instanceof TextBasics))
+					return;
+				TextBasics textEnt = (TextBasics) selectedEntity;
+
+				double height = textEnt.getTextHeight();
+				double spacing = Simulation.getSnapGridSpacing();
+				height = Math.round(height/spacing) * spacing;
+
+				if (event.getActionCommand().equals("LargerText")) {
+					height += spacing;
+				}
+				else if (event.getActionCommand().equals("SmallerText")) {
+					height -= spacing;
+					height = Math.max(spacing, height);
+				}
+
+				String str = String.format("%.1f  m", height);
+				KeywordIndex kw = InputAgent.formatInput("TextHeight", str);
+				InputAgent.storeAndExecute(new KeywordCommand(textEnt, kw));
+				fileSave.requestFocusInWindow();
+			}
+		};
+
 		largerText = new JButton(new ImageIcon(
 				GUIFrame.class.getResource("/resources/images/LargerText-16.png")));
 		largerText.setMargin( noMargin );
@@ -1270,6 +1297,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		largerText.setToolTipText(formatToolTip("Larger Text",
 				"Increases the text height to the next higher multiple of the snap grid spacing."));
 		largerText.setActionCommand("LargerText");
+		largerText.addActionListener( textHeightListener );
+
 		smallerText = new JButton(new ImageIcon(
 				GUIFrame.class.getResource("/resources/images/SmallerText-16.png")));
 		smallerText.setMargin( noMargin );
@@ -1278,6 +1307,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		smallerText.setToolTipText(formatToolTip("Smaller Text",
 				"Decreases the text height to the next lower multiple of the snap grid spacing."));
 		smallerText.setActionCommand("SmallerText");
+		smallerText.addActionListener( textHeightListener );
 
 		buttonBar.add(Box.createRigidArea(gapDim));
 		buttonBar.add( largerText );
