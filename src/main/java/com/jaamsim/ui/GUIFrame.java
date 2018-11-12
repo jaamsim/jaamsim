@@ -56,7 +56,6 @@ import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -155,7 +154,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 
 	private JToggleButton bold;
 	private JToggleButton italic;
-	private JComboBox<String> fontSelector;
+	private JButton fontSelector;
 	private JTextField textHeight;
 	private JButton largerText;
 	private JButton smallerText;
@@ -1210,8 +1209,11 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		buttonBar.add( italic );
 
 		// 14) Font
-		String[] fontNames = TextModel.validFontNames.toArray(new String[TextModel.validFontNames.size()]);
-		fontSelector = new JComboBox<>(fontNames);
+		fontSelector = new JButton("");
+		fontSelector.setMargin( smallMargin );
+		fontSelector.setFocusPainted(false);
+		fontSelector.setRequestFocusEnabled(false);
+		fontSelector.setPreferredSize( new Dimension(120, hght) );
 		fontSelector.setToolTipText(formatToolTip("Font", "Sets the font for the text."));
 		fontSelector.addActionListener(new ActionListener() {
 
@@ -1219,14 +1221,33 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 			public void actionPerformed( ActionEvent event ) {
 				if (!(selectedEntity instanceof TextBasics))
 					return;
-				TextBasics textEnt = (TextBasics) selectedEntity;
-				String fontName = (String) fontSelector.getSelectedItem();
-				if (fontName.equals(textEnt.getFontName()))
-					return;
-				fontName = Parser.addQuotesIfNeeded(fontName);
-				KeywordIndex kw = InputAgent.formatInput("FontName", fontName);
-				InputAgent.storeAndExecute(new KeywordCommand(textEnt, kw));
-				fileSave.requestFocusInWindow();
+				final TextBasics textEnt = (TextBasics) selectedEntity;
+				ScrollablePopupMenu fontMenu = new ScrollablePopupMenu();
+
+				ActionListener fontActionListener = new ActionListener() {
+					@Override
+					public void actionPerformed( ActionEvent event ) {
+						if (!(event.getSource() instanceof JMenuItem))
+							return;
+						JMenuItem item = (JMenuItem) event.getSource();
+						String fontName = item.getText();
+						if (!fontName.equals(textEnt.getFontName())) {
+							String name = Parser.addQuotesIfNeeded(fontName);
+							KeywordIndex kw = InputAgent.formatInput("FontName", name);
+							InputAgent.storeAndExecute(new KeywordCommand(textEnt, kw));
+						}
+						fileSave.requestFocusInWindow();
+					}
+				};
+
+				// All possible fonts
+				for (final String fontName : TextModel.validFontNames) {
+					JMenuItem item = new JMenuItem(fontName);
+					item.addActionListener(fontActionListener);
+					fontMenu.add(item);
+				}
+
+				fontMenu.show(fontSelector, 0, fontSelector.getPreferredSize().height);
 			}
 		});
 
@@ -2158,7 +2179,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		largerText.setEnabled(bool);
 		smallerText.setEnabled(bool);
 		if (!bool) {
-			fontSelector.setSelectedItem(null);
+			fontSelector.setText(null);
 			textHeight.setText(null);
 			return;
 		}
@@ -2171,7 +2192,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 
 		bold.setSelected(textEnt.isBold());
 		italic.setSelected(textEnt.isItalic());
-		fontSelector.setSelectedItem(textEnt.getFontName());
+		fontSelector.setText(textEnt.getFontName());
 
 		String str = textEnt.getInput("TextHeight").getValueString();
 		if (str.isEmpty())
