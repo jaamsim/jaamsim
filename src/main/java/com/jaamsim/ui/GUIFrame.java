@@ -36,6 +36,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.FocusEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.geom.Rectangle2D;
@@ -1240,6 +1242,29 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 					}
 				};
 
+				MouseListener fontMouseListener = new MouseListener() {
+					@Override
+					public void mouseClicked(MouseEvent e) {}
+					@Override
+					public void mousePressed(MouseEvent e) {}
+					@Override
+					public void mouseReleased(MouseEvent e) {}
+					@Override
+					public void mouseEntered(MouseEvent e) {
+						if (!(e.getSource() instanceof JMenuItem))
+							return;
+						JMenuItem item = (JMenuItem) e.getSource();
+						String fontName = item.getText();
+						if (!fontName.equals(textEnt.getFontName())) {
+							String name = Parser.addQuotesIfNeeded(fontName);
+							KeywordIndex kw = InputAgent.formatInput("FontName", name);
+							InputAgent.storeAndExecute(new KeywordCommand(textEnt, kw));
+						}
+					}
+					@Override
+					public void mouseExited(MouseEvent e) {}
+				};
+
 				// Fonts already in use
 				JMenuItem selectedItem = null;
 				int selectedIndex = -1;
@@ -1252,6 +1277,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 					}
 					ind++;
 					item.addActionListener(fontActionListener);
+					item.addMouseListener(fontMouseListener);
 					fontMenu.add(item);
 				}
 				fontMenu.addSeparator();
@@ -1260,6 +1286,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 				for (final String fontName : TextModel.validFontNames) {
 					JMenuItem item = new JMenuItem(fontName);
 					item.addActionListener(fontActionListener);
+					item.addMouseListener(fontMouseListener);
 					fontMenu.add(item);
 				}
 
