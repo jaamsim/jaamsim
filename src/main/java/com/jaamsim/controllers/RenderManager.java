@@ -1502,7 +1502,11 @@ public class RenderManager implements DragSourceListener {
 				((DisplayEntity)ent).dragged(creationPoint);
 			}
 			catch (InputErrorException e) {}
-			this.focusWindow(windowID);
+
+			// Set the focus on the window that received the entity
+			Frame awtRef = renderer.getAWTFrame(windowID);
+			if (awtRef != null)
+				awtRef.requestFocus();
 		}
 	}
 
