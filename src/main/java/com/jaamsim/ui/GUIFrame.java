@@ -1241,8 +1241,16 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 				};
 
 				// Fonts already in use
+				JMenuItem selectedItem = null;
+				int selectedIndex = -1;
+				int ind = 0;
 				for (final String fontName : TextBasics.getFontsInUse()) {
 					JMenuItem item = new JMenuItem(fontName);
+					if (selectedItem == null && fontName.equals(textEnt.getFontName())) {
+						selectedItem = item;
+						selectedIndex = ind;
+					}
+					ind++;
 					item.addActionListener(fontActionListener);
 					fontMenu.add(item);
 				}
@@ -1256,6 +1264,10 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 				}
 
 				fontMenu.show(fontSelector, 0, fontSelector.getPreferredSize().height);
+				if (selectedItem != null) {
+					fontMenu.ensureIndexIsVisible(selectedIndex);
+					selectedItem.setArmed(true);
+				}
 			}
 		});
 
