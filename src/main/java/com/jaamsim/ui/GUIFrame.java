@@ -1240,6 +1240,14 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 					}
 				};
 
+				// Fonts already in use
+				for (final String fontName : TextBasics.getFontsInUse()) {
+					JMenuItem item = new JMenuItem(fontName);
+					item.addActionListener(fontActionListener);
+					fontMenu.add(item);
+				}
+				fontMenu.addSeparator();
+
 				// All possible fonts
 				for (final String fontName : TextModel.validFontNames) {
 					JMenuItem item = new JMenuItem(fontName);

@@ -22,8 +22,10 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import com.jaamsim.DisplayModels.TextModel;
+import com.jaamsim.basicsim.Entity;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.ColourInput;
@@ -498,6 +500,17 @@ public abstract class TextBasics extends DisplayEntity {
 			return getTextModel().getDropShadowOffset();
 		}
 		return dropShadowOffset.getValue();
+	}
+
+	public static ArrayList<String> getFontsInUse() {
+		ArrayList<String> ret = new ArrayList<>();
+		for (TextBasics text : Entity.getClonesOfIterator(TextBasics.class)) {
+			if (ret.contains(text.getFontName()))
+				continue;
+			ret.add(text.getFontName());
+		}
+		Collections.sort(ret);
+		return ret;
 	}
 
 }
