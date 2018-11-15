@@ -1419,6 +1419,29 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 					}
 				};
 
+				MouseListener fontMouseListener = new MouseListener() {
+					@Override
+					public void mouseClicked(MouseEvent e) {}
+					@Override
+					public void mousePressed(MouseEvent e) {}
+					@Override
+					public void mouseReleased(MouseEvent e) {}
+					@Override
+					public void mouseEntered(MouseEvent e) {
+						if (!(e.getSource() instanceof JMenuItem))
+							return;
+						JMenuItem item = (JMenuItem) e.getSource();
+						String colourName = item.getText();
+						KeywordIndex kw = InputAgent.formatInput("FontColour", colourName);
+						Color4d col = Input.parseColour(kw);
+						if (!col.equals(textEnt.getFontColor())) {
+							InputAgent.storeAndExecute(new KeywordCommand(textEnt, kw));
+						}
+					}
+					@Override
+					public void mouseExited(MouseEvent e) {}
+				};
+
 				// Font colours already in use
 				JMenuItem selectedItem = null;
 				int selectedIndex = -1;
@@ -1432,6 +1455,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 					}
 					ind++;
 					item.addActionListener(fontActionListener);
+					item.addMouseListener(fontMouseListener);
 					fontMenu.add(item);
 				}
 				fontMenu.addSeparator();
@@ -1441,6 +1465,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 					String colourName = ColourInput.toString(col);
 					JMenuItem item = new JMenuItem(colourName);
 					item.addActionListener(fontActionListener);
+					item.addMouseListener(fontMouseListener);
 					fontMenu.add(item);
 				}
 
