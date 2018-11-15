@@ -1419,6 +1419,15 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 					}
 				};
 
+				// Font colours already in use
+				for (Color4d col : TextBasics.getFontColoursInUse()) {
+					String colourName = ColourInput.toString(col);
+					JMenuItem item = new JMenuItem(colourName);
+					item.addActionListener(fontActionListener);
+					fontMenu.add(item);
+				}
+				fontMenu.addSeparator();
+
 				// All possible fonts
 				for (Color4d col : ColourInput.namedColourList) {
 					String colourName = ColourInput.toString(col);
