@@ -19,6 +19,7 @@ package com.jaamsim.input;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 
 import com.jaamsim.math.Color4d;
@@ -44,6 +45,15 @@ public static final Color4d DARK_PURPLE = new Color4d(0.75d, 0.0d, 0.75d);
 
 private static final HashMap<String, Color4d> colorMap;
 private static final HashMap<Color4d, String> colorNameMap;
+
+public static Comparator<Color4d> colourComparator = new Comparator<Color4d>() {
+	@Override
+	public int compare(Color4d col1, Color4d col2) {
+		String str1 = ColourInput.toString(col1);
+		String str2 = ColourInput.toString(col2);
+		return Input.uiSortOrder.compare(str1, str2);
+	}
+};
 
 static {
 	colorMap = new HashMap<>();
