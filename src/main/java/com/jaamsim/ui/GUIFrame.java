@@ -774,16 +774,77 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		Dimension separatorDim = new Dimension(11, 20);
 		Dimension gapDim = new Dimension(5, separatorDim.height);
 
-		// Initialize the button bar
 		JToolBar buttonBar = new JToolBar();
 		buttonBar.setMargin( smallMargin );
 		buttonBar.setFloatable(false);
 		buttonBar.setLayout( new FlowLayout( FlowLayout.LEFT, 0, 0 ) );
 
-		// 1) File New button
+		getContentPane().add( buttonBar, BorderLayout.NORTH );
+
+		// File new, open, and save buttons
+		buttonBar.add(Box.createRigidArea(gapDim));
+		addFileNewButton(buttonBar, noMargin);
+
+		buttonBar.add(Box.createRigidArea(gapDim));
+		addFileOpenButton(buttonBar, noMargin);
+
+		buttonBar.add(Box.createRigidArea(gapDim));
+		addFileSaveButton(buttonBar, noMargin);
+
+		// Undo and redo buttons
+		buttonBar.addSeparator(separatorDim);
+		addUndoButtons(buttonBar, noMargin);
+
+		// 2D, axes, and grid buttons
+		buttonBar.addSeparator(separatorDim);
+		add2dButton(buttonBar, smallMargin);
+
+		buttonBar.add(Box.createRigidArea(gapDim));
+		addShowAxesButton(buttonBar, noMargin);
+
+		buttonBar.add(Box.createRigidArea(gapDim));
+		addShowGridButton(buttonBar, noMargin);
+
+		// Snap-to-grid button and field
+		buttonBar.addSeparator(separatorDim);
+		addSnapToGridButton(buttonBar, noMargin);
+
+		buttonBar.add(Box.createRigidArea(gapDim));
+		addSnapToGridField(buttonBar, noMargin);
+
+		// Show and create links buttons
+		buttonBar.addSeparator(separatorDim);
+		addShowLinksButton(buttonBar, noMargin);
+
+		buttonBar.add(Box.createRigidArea(gapDim));
+		addCreateLinksButton(buttonBar, noMargin);
+
+		// Text alignment buttons
+		buttonBar.addSeparator(separatorDim);
+		addTextAlignmentButtons(buttonBar, noMargin);
+
+		// Bold and Italic buttons
+		buttonBar.add(Box.createRigidArea(gapDim));
+		addFontStyleButtons(buttonBar, noMargin);
+
+		// Font selector and text height field
+		buttonBar.add(Box.createRigidArea(gapDim));
+		addFontSelector(buttonBar, smallMargin);
+		addTextHeightField(buttonBar, noMargin);
+
+		// Larger and smaller text height buttons
+		buttonBar.add(Box.createRigidArea(gapDim));
+		addTextHeightButtons(buttonBar, noMargin);
+
+		// Font colour button
+		buttonBar.add(Box.createRigidArea(gapDim));
+		addFontColourButton(buttonBar, noMargin);
+	}
+
+	private void addFileNewButton(JToolBar buttonBar, Insets margin) {
 		JButton fileNew = new JButton( new ImageIcon(
 				GUIFrame.class.getResource("/resources/images/New-16.png")) );
-		fileNew.setMargin( noMargin );
+		fileNew.setMargin(margin);
 		fileNew.setFocusPainted(false);
 		fileNew.setToolTipText(formatToolTip("New", "Starts a new model."));
 		fileNew.addActionListener( new ActionListener() {
@@ -793,13 +854,13 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 				GUIFrame.this.newModel();
 			}
 		} );
-		buttonBar.add(Box.createRigidArea(gapDim));
 		buttonBar.add( fileNew );
+	}
 
-		// 2) File Open button
+	private void addFileOpenButton(JToolBar buttonBar, Insets margin) {
 		JButton fileOpen = new JButton( new ImageIcon(
 				GUIFrame.class.getResource("/resources/images/Open-16.png")) );
-		fileOpen.setMargin( noMargin );
+		fileOpen.setMargin(margin);
 		fileOpen.setFocusPainted(false);
 		fileOpen.setToolTipText(formatToolTip("Open...", "Opens a model."));
 		fileOpen.addActionListener( new ActionListener() {
@@ -809,13 +870,13 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 				GUIFrame.this.load();
 			}
 		} );
-		buttonBar.add(Box.createRigidArea(gapDim));
 		buttonBar.add( fileOpen );
+	}
 
-		// 3) File Save button
+	private void addFileSaveButton(JToolBar buttonBar, Insets margin) {
 		fileSave = new JButton( new ImageIcon(
 				GUIFrame.class.getResource("/resources/images/Save-16.png")) );
-		fileSave.setMargin( noMargin );
+		fileSave.setMargin(margin);
 		fileSave.setFocusPainted(false);
 		fileSave.setToolTipText(formatToolTip("Save", "Saves the present model."));
 		fileSave.setEnabled(false);
@@ -826,13 +887,15 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 				GUIFrame.this.save();
 			}
 		} );
-		buttonBar.add(Box.createRigidArea(gapDim));
 		buttonBar.add( fileSave );
+	}
 
-		// 4) Undo button
+	private void addUndoButtons(JToolBar buttonBar, Insets margin) {
+
+		// Undo button
 		undo = new JButton( new ImageIcon(
 				GUIFrame.class.getResource("/resources/images/Undo-16.png")) );
-		undo.setMargin( noMargin );
+		undo.setMargin(margin);
 		undo.setFocusPainted(false);
 		undo.setRequestFocusEnabled(false);
 		undo.setToolTipText(formatToolTip("Undo", "Reverses the last change to the model."));
@@ -844,13 +907,12 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 				InputAgent.undo();
 			}
 		} );
-		buttonBar.addSeparator(separatorDim);
 		buttonBar.add( undo );
 
-		// 4.1) Undo Dropdown Menu
+		// Undo Dropdown Menu
 		undoDropdown = new JButton(new ImageIcon(
 				GUIFrame.class.getResource("/resources/images/dropdown.png")));
-		undoDropdown.setMargin( noMargin );
+		undoDropdown.setMargin(margin);
 		undoDropdown.setFocusPainted(false);
 		undoDropdown.setRequestFocusEnabled(false);
 		undoDropdown.setEnabled(InputAgent.hasUndo());
@@ -878,10 +940,10 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		} );
 		buttonBar.add( undoDropdown );
 
-		// 5) Redo button
+		// Redo button
 		redo = new JButton( new ImageIcon(
 				GUIFrame.class.getResource("/resources/images/Redo-16.png")) );
-		redo.setMargin( noMargin );
+		redo.setMargin(margin);
 		redo.setFocusPainted(false);
 		redo.setRequestFocusEnabled(false);
 		redo.setToolTipText(formatToolTip("Redo", "Re-performs the last change to the model that was undone."));
@@ -895,10 +957,10 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		} );
 		buttonBar.add( redo );
 
-		// 5.1 Redo Dropdown Menu
+		// Redo Dropdown Menu
 		redoDropdown = new JButton(new ImageIcon(
 				GUIFrame.class.getResource("/resources/images/dropdown.png")));
-		redoDropdown.setMargin( noMargin );
+		redoDropdown.setMargin(margin);
 		redoDropdown.setFocusPainted(false);
 		redoDropdown.setRequestFocusEnabled(false);
 		redoDropdown.setEnabled(InputAgent.hasRedo());
@@ -925,10 +987,11 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 			}
 		} );
 		buttonBar.add( redoDropdown );
+	}
 
-		// 6) 2D button
+	private void add2dButton(JToolBar buttonBar, Insets margin) {
 		lockViewXYPlane = new JToggleButton( "2D" );
-		lockViewXYPlane.setMargin( smallMargin );
+		lockViewXYPlane.setMargin(margin);
 		lockViewXYPlane.setFocusPainted(false);
 		lockViewXYPlane.setRequestFocusEnabled(false);
 		lockViewXYPlane.setToolTipText(formatToolTip("2D View",
@@ -948,13 +1011,13 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 				fileSave.requestFocusInWindow();
 			}
 		} );
-		buttonBar.addSeparator(separatorDim);
 		buttonBar.add( lockViewXYPlane );
+	}
 
-		// 7) Show Axes
+	private void addShowAxesButton(JToolBar buttonBar, Insets margin) {
 		xyzAxis = new JToggleButton( new ImageIcon(
 				GUIFrame.class.getResource("/resources/images/Axes-16.png")) );
-		xyzAxis.setMargin( noMargin );
+		xyzAxis.setMargin(margin);
 		xyzAxis.setFocusPainted(false);
 		xyzAxis.setRequestFocusEnabled(false);
 		xyzAxis.setToolTipText(formatToolTip("Show Axes",
@@ -970,13 +1033,13 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 				fileSave.requestFocusInWindow();
 			}
 		} );
-		buttonBar.add(Box.createRigidArea(gapDim));
 		buttonBar.add( xyzAxis );
+	}
 
-		// 8) Show Grid
+	private void addShowGridButton(JToolBar buttonBar, Insets margin) {
 		grid = new JToggleButton( new ImageIcon(
 				GUIFrame.class.getResource("/resources/images/Grid-16.png")) );
-		grid.setMargin( noMargin );
+		grid.setMargin(margin);
 		grid.setFocusPainted(false);
 		grid.setRequestFocusEnabled(false);
 		grid.setToolTipText(formatToolTip("Show Grid",
@@ -1000,13 +1063,13 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 				fileSave.requestFocusInWindow();
 			}
 		} );
-		buttonBar.add(Box.createRigidArea(gapDim));
 		buttonBar.add( grid );
+	}
 
-		// 9) Snap to Grid
+	private void addSnapToGridButton(JToolBar buttonBar, Insets margin) {
 		snapToGrid = new JToggleButton( new ImageIcon(
 				GUIFrame.class.getResource("/resources/images/Snap-16.png")) );
-		snapToGrid.setMargin( noMargin );
+		snapToGrid.setMargin(margin);
 		snapToGrid.setFocusPainted(false);
 		snapToGrid.setRequestFocusEnabled(false);
 		snapToGrid.setToolTipText(formatToolTip("Snap to Grid",
@@ -1020,10 +1083,12 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 				fileSave.requestFocusInWindow();
 			}
 		} );
-		buttonBar.addSeparator(separatorDim);
-		buttonBar.add( snapToGrid );
 
-		// 9.1) Snap Grid Spacing
+		buttonBar.add( snapToGrid );
+	}
+
+	private void addSnapToGridField(JToolBar buttonBar, Insets margin) {
+
 		gridSpacing = new JTextField("1000000 m") {
 			@Override
 			protected void processFocusEvent(FocusEvent fe) {
@@ -1055,14 +1120,14 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 
 		gridSpacing.setEnabled(snapToGrid.isSelected());
 
-		buttonBar.add(Box.createRigidArea(gapDim));
 		buttonBar.add(gridSpacing);
+	}
 
-		// 10) Show links button
+	private void addShowLinksButton(JToolBar buttonBar, Insets margin) {
 		showLinks = new JToggleButton(new ImageIcon(GUIFrame.class.getResource("/resources/images/ShowLinks-16.png")));
 		showLinks.setToolTipText(formatToolTip("Show Entity Flow",
 				"When selected, arrows are shown between objects to indicate the flow of entities."));
-		showLinks.setMargin( noMargin );
+		showLinks.setMargin(margin);
 		showLinks.setFocusPainted(false);
 		showLinks.setRequestFocusEnabled(false);
 		showLinks.addActionListener(new ActionListener() {
@@ -1078,14 +1143,14 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 			}
 
 		});
-		buttonBar.addSeparator(separatorDim);
 		buttonBar.add( showLinks );
+	}
 
-		// 11) Create links button
+	private void addCreateLinksButton(JToolBar buttonBar, Insets margin) {
 		createLinks = new JToggleButton(new ImageIcon(GUIFrame.class.getResource("/resources/images/MakeLinks-16.png")));
 		createLinks.setToolTipText(formatToolTip("Create Entity Links",
 				"When this is enabled, entities are linked when selection is changed."));
-		createLinks.setMargin( noMargin );
+		createLinks.setMargin(margin);
 		createLinks.setFocusPainted(false);
 		createLinks.setRequestFocusEnabled(false);
 		createLinks.addActionListener(new ActionListener() {
@@ -1104,10 +1169,11 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 			}
 
 		});
-		buttonBar.add(Box.createRigidArea(gapDim));
 		buttonBar.add( createLinks );
+	}
 
-		// 12) Alignment buttons
+	private void addTextAlignmentButtons(JToolBar buttonBar, Insets margin) {
+
 		ActionListener alignListener = new ActionListener() {
 
 			@Override
@@ -1136,7 +1202,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 
 		alignLeft = new JToggleButton(new ImageIcon(
 				GUIFrame.class.getResource("/resources/images/AlignLeft-16.png")));
-		alignLeft.setMargin( noMargin );
+		alignLeft.setMargin(margin);
 		alignLeft.setFocusPainted(false);
 		alignLeft.setRequestFocusEnabled(false);
 		alignLeft.setToolTipText(formatToolTip("Align Left",
@@ -1145,7 +1211,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 
 		alignCentre = new JToggleButton(new ImageIcon(
 				GUIFrame.class.getResource("/resources/images/AlignCentre-16.png")));
-		alignCentre.setMargin( noMargin );
+		alignCentre.setMargin(margin);
 		alignCentre.setFocusPainted(false);
 		alignCentre.setRequestFocusEnabled(false);
 		alignCentre.setToolTipText(formatToolTip("Align Centre",
@@ -1154,7 +1220,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 
 		alignRight = new JToggleButton(new ImageIcon(
 				GUIFrame.class.getResource("/resources/images/AlignRight-16.png")));
-		alignRight.setMargin( noMargin );
+		alignRight.setMargin(margin);
 		alignRight.setFocusPainted(false);
 		alignRight.setRequestFocusEnabled(false);
 		alignRight.setToolTipText(formatToolTip("Align Right",
@@ -1166,12 +1232,13 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		alignmentGroup.add(alignCentre);
 		alignmentGroup.add(alignRight);
 
-		buttonBar.addSeparator(separatorDim);
 		buttonBar.add( alignLeft );
 		buttonBar.add( alignCentre );
 		buttonBar.add( alignRight );
+	}
 
-		// 13) Bold and Italic buttons
+	private void addFontStyleButtons(JToolBar buttonBar, Insets margin) {
+
 		ActionListener alignmentListener = new ActionListener() {
 
 			@Override
@@ -1196,7 +1263,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 
 		bold = new JToggleButton(new ImageIcon(
 				GUIFrame.class.getResource("/resources/images/Bold-16.png")));
-		bold.setMargin( noMargin );
+		bold.setMargin(margin);
 		bold.setFocusPainted(false);
 		bold.setRequestFocusEnabled(false);
 		bold.setToolTipText(formatToolTip("Bold", "Makes the text bold."));
@@ -1204,22 +1271,23 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 
 		italic = new JToggleButton(new ImageIcon(
 				GUIFrame.class.getResource("/resources/images/Italic-16.png")));
-		italic.setMargin( noMargin );
+		italic.setMargin(margin);
 		italic.setFocusPainted(false);
 		italic.setRequestFocusEnabled(false);
 		italic.setToolTipText(formatToolTip("Italic", "Italicizes the text."));
 		italic.addActionListener( alignmentListener );
 
-		buttonBar.add(Box.createRigidArea(gapDim));
 		buttonBar.add( bold );
 		buttonBar.add( italic );
+	}
 
-		// 14) Font
+	private void addFontSelector(JToolBar buttonBar, Insets margin) {
+
 		fontSelector = new JButton("");
-		fontSelector.setMargin( smallMargin );
+		fontSelector.setMargin(margin);
 		fontSelector.setFocusPainted(false);
 		fontSelector.setRequestFocusEnabled(false);
-		fontSelector.setPreferredSize( new Dimension(120, hght) );
+		fontSelector.setPreferredSize(new Dimension(120, fileSave.getPreferredSize().height));
 		fontSelector.setToolTipText(formatToolTip("Font", "Sets the font for the text."));
 		fontSelector.addActionListener(new ActionListener() {
 
@@ -1302,10 +1370,11 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 			}
 		});
 
-		buttonBar.add(Box.createRigidArea(gapDim));
 		buttonBar.add(fontSelector);
+	}
 
-		// 15) Text Height
+	private void addTextHeightField(JToolBar buttonBar, Insets margin) {
+
 		textHeight = new JTextField("1000000 m") {
 			@Override
 			protected void processFocusEvent(FocusEvent fe) {
@@ -1325,15 +1394,18 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		});
 
 		textHeight.setMaximumSize(textHeight.getPreferredSize());
-		textHeight.setPreferredSize(new Dimension(textHeight.getPreferredSize().width, hght));
+		textHeight.setPreferredSize(new Dimension(textHeight.getPreferredSize().width,
+				fontSelector.getPreferredSize().height));
 
 		textHeight.setHorizontalAlignment(JTextField.RIGHT);
 		textHeight.setToolTipText(formatToolTip("Text Height",
 				"Sets the height of the text, e.g. 0.1 m, 200 cm, etc."));
 
 		buttonBar.add(textHeight);
+	}
 
-		// 15.1) Larger and Smaller Text buttons
+	private void addTextHeightButtons(JToolBar buttonBar, Insets margin) {
+
 		ActionListener textHeightListener = new ActionListener() {
 
 			@Override
@@ -1363,7 +1435,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 
 		largerText = new JButton(new ImageIcon(
 				GUIFrame.class.getResource("/resources/images/LargerText-16.png")));
-		largerText.setMargin( noMargin );
+		largerText.setMargin(margin);
 		largerText.setFocusPainted(false);
 		largerText.setRequestFocusEnabled(false);
 		largerText.setToolTipText(formatToolTip("Larger Text",
@@ -1373,7 +1445,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 
 		smallerText = new JButton(new ImageIcon(
 				GUIFrame.class.getResource("/resources/images/SmallerText-16.png")));
-		smallerText.setMargin( noMargin );
+		smallerText.setMargin(margin);
 		smallerText.setFocusPainted(false);
 		smallerText.setRequestFocusEnabled(false);
 		smallerText.setToolTipText(formatToolTip("Smaller Text",
@@ -1381,16 +1453,17 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		smallerText.setActionCommand("SmallerText");
 		smallerText.addActionListener( textHeightListener );
 
-		buttonBar.add(Box.createRigidArea(gapDim));
 		buttonBar.add( largerText );
 		buttonBar.add( smallerText );
+	}
 
-		// 16) Font Colour
+	private void addFontColourButton(JToolBar buttonBar, Insets margin) {
+
 		colourIcon = new ColorIcon(16, 16);
 		colourIcon.setFillColor(Color.LIGHT_GRAY);
 		colourIcon.setOutlineColor(Color.LIGHT_GRAY);
 		fontColour = new JButton(colourIcon);
-		fontColour.setMargin( noMargin );
+		fontColour.setMargin(margin);
 		fontColour.setFocusPainted(false);
 		fontColour.setRequestFocusEnabled(false);
 		fontColour.setToolTipText(formatToolTip("Font Colour", "Sets the colour of the text."));
@@ -1487,11 +1560,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 			}
 		});
 
-		buttonBar.add(Box.createRigidArea(gapDim));
 		buttonBar.add( fontColour );
-
-		// Add the main tool bar to the display
-		getContentPane().add( buttonBar, BorderLayout.NORTH );
 	}
 
 	// ******************************************************************************************************
