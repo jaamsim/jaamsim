@@ -160,6 +160,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 	private JTextField textHeight;
 	private JButton largerText;
 	private JButton smallerText;
+	private ColorIcon colourIcon;
+	private JButton fontColour;
 
 	private RoundToggleButton controlStartResume;
 	private ImageIcon runPressedIcon;
@@ -1380,6 +1382,19 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		buttonBar.add(Box.createRigidArea(gapDim));
 		buttonBar.add( largerText );
 		buttonBar.add( smallerText );
+
+		// 16) Font Colour
+		colourIcon = new ColorIcon(16, 16);
+		colourIcon.setFillColor(Color.LIGHT_GRAY);
+		colourIcon.setOutlineColor(Color.LIGHT_GRAY);
+		fontColour = new JButton(colourIcon);
+		fontColour.setMargin( noMargin );
+		fontColour.setFocusPainted(false);
+		fontColour.setRequestFocusEnabled(false);
+		fontColour.setToolTipText(formatToolTip("Font Colour", "Sets the colour of the text."));
+
+		buttonBar.add(Box.createRigidArea(gapDim));
+		buttonBar.add( fontColour );
 
 		// Add the main tool bar to the display
 		getContentPane().add( buttonBar, BorderLayout.NORTH );
