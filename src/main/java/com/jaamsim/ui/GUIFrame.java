@@ -1449,6 +1449,11 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 				for (Color4d col : TextBasics.getFontColoursInUse()) {
 					String colourName = ColourInput.toString(col);
 					JMenuItem item = new JMenuItem(colourName);
+					ColorIcon icon = new ColorIcon(16, 16);
+					icon.setFillColor(
+							new Color((float)col.r, (float)col.g, (float)col.b, (float)col.a));
+					icon.setOutlineColor(Color.DARK_GRAY);
+					item.setIcon(icon);
 					if (selectedItem == null && col.equals(textEnt.getFontColor())) {
 						selectedItem = item;
 						selectedIndex = ind;
@@ -1464,6 +1469,11 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 				for (Color4d col : ColourInput.namedColourList) {
 					String colourName = ColourInput.toString(col);
 					JMenuItem item = new JMenuItem(colourName);
+					ColorIcon icon = new ColorIcon(16, 16);
+					icon.setFillColor(
+							new Color((float)col.r, (float)col.g, (float)col.b, (float)col.a));
+					icon.setOutlineColor(Color.DARK_GRAY);
+					item.setIcon(icon);
 					item.addActionListener(fontActionListener);
 					item.addMouseListener(fontMouseListener);
 					fontMenu.add(item);
