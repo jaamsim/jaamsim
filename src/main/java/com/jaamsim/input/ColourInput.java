@@ -333,18 +333,36 @@ private static void initColors() {
 	defColor("gray1", 3, 3, 3);
 }
 
-@Override
-public String getDefaultString() {
-	if (defValue == null)
-		return "";
+	public static String toString(Color4d col) {
+		if (col == null)
+			return "";
 
-	String colorName = getColorName(defValue);
-	if (colorName != null)
-		return colorName;
+		String colorName = getColorName(col);
+		if (colorName != null)
+			return colorName;
 
-	return String.format("%.0f%s%.0f%s%.0f", defValue.r * 255, SEPARATOR,
-	   defValue.g * 255, SEPARATOR, defValue.b * 255);
-}
+		int red = (int) Math.round(col.r * 255);
+		int green = (int) Math.round(col.g * 255);
+		int blue = (int) Math.round(col.b * 255);
+		int alpha = (int) Math.round(col.a * 255);
+
+		StringBuilder sb = new StringBuilder();
+		sb.append(red).append(SEPARATOR);
+		sb.append(green).append(SEPARATOR);
+		sb.append(blue);
+		if (alpha == 255) {
+			return sb.toString();
+		}
+		else {
+			sb.append(SEPARATOR).append(alpha);
+			return sb.toString();
+		}
+	}
+
+	@Override
+	public String getDefaultString() {
+		return toString(defValue);
+	}
 
 	@Override
 	public ArrayList<String> getValidOptions() {
