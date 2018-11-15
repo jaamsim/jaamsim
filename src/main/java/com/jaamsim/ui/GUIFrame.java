@@ -819,16 +819,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		buttonBar.add(Box.createRigidArea(gapDim));
 		addCreateLinksButton(buttonBar, noMargin);
 
-		// Text alignment buttons
-		buttonBar.addSeparator(separatorDim);
-		addTextAlignmentButtons(buttonBar, noMargin);
-
-		// Bold and Italic buttons
-		buttonBar.add(Box.createRigidArea(gapDim));
-		addFontStyleButtons(buttonBar, noMargin);
-
 		// Font selector and text height field
-		buttonBar.add(Box.createRigidArea(gapDim));
+		buttonBar.addSeparator(separatorDim);
 		addFontSelector(buttonBar, smallMargin);
 		addTextHeightField(buttonBar, noMargin);
 
@@ -836,9 +828,17 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		buttonBar.add(Box.createRigidArea(gapDim));
 		addTextHeightButtons(buttonBar, noMargin);
 
+		// Bold and Italic buttons
+		buttonBar.add(Box.createRigidArea(gapDim));
+		addFontStyleButtons(buttonBar, noMargin);
+
 		// Font colour button
 		buttonBar.add(Box.createRigidArea(gapDim));
 		addFontColourButton(buttonBar, noMargin);
+
+		// Text alignment buttons
+		buttonBar.add(Box.createRigidArea(gapDim));
+		addTextAlignmentButtons(buttonBar, noMargin);
 	}
 
 	private void addFileNewButton(JToolBar buttonBar, Insets margin) {
