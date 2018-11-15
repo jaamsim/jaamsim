@@ -1287,7 +1287,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		fontSelector.setMargin(margin);
 		fontSelector.setFocusPainted(false);
 		fontSelector.setRequestFocusEnabled(false);
-		fontSelector.setPreferredSize(new Dimension(120, fileSave.getPreferredSize().height));
+		fontSelector.setPreferredSize(new Dimension(100, fileSave.getPreferredSize().height));
 		fontSelector.setToolTipText(formatToolTip("Font", "Sets the font for the text."));
 		fontSelector.addActionListener(new ActionListener() {
 
