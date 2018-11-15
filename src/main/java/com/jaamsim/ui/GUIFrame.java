@@ -2405,7 +2405,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		smallerText.setEnabled(bool);
 		fontColour.setEnabled(bool);
 		if (!bool) {
-			fontSelector.setText(null);
+			fontSelector.setText("-");
 			textHeight.setText(null);
 			colourIcon.setFillColor(Color.LIGHT_GRAY);
 			colourIcon.setOutlineColor(Color.LIGHT_GRAY);
