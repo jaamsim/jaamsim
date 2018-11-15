@@ -45,6 +45,7 @@ public static final Color4d DARK_PURPLE = new Color4d(0.75d, 0.0d, 0.75d);
 
 private static final HashMap<String, Color4d> colorMap;
 private static final HashMap<Color4d, String> colorNameMap;
+public static final ArrayList<Color4d> namedColourList;
 
 public static Comparator<Color4d> colourComparator = new Comparator<Color4d>() {
 	@Override
@@ -58,7 +59,9 @@ public static Comparator<Color4d> colourComparator = new Comparator<Color4d>() {
 static {
 	colorMap = new HashMap<>();
 	colorNameMap = new HashMap<>();
+	namedColourList = new ArrayList<>();
 	initColors();
+	Collections.sort(namedColourList, colourComparator);
 }
 	public ColourInput(String key, String cat, Color4d def) {
 		super(key, cat, def);
@@ -92,6 +95,7 @@ private static void mapColor(String colorName, Color4d col) {
 		System.out.println(String.format("ColorName added twice: %s ", colorName));
 	if (colorNameMap.put(col, colorName) != null)
 		System.out.println(String.format("Color4d added twice: %s", colorName));
+	namedColourList.add(col);
 }
 
 private static void initColors() {
