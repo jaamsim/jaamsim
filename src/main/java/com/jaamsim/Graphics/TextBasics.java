@@ -513,4 +513,15 @@ public abstract class TextBasics extends DisplayEntity {
 		return ret;
 	}
 
+	public static ArrayList<Color4d> getFontColoursInUse() {
+		ArrayList<Color4d> ret = new ArrayList<>();
+		for (TextBasics text : Entity.getClonesOfIterator(TextBasics.class)) {
+			if (ret.contains(text.getFontColor()))
+				continue;
+			ret.add(text.getFontColor());
+		}
+		Collections.sort(ret, ColourInput.colourComparator);
+		return ret;
+	}
+
 }
