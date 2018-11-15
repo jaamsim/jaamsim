@@ -103,6 +103,7 @@ import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.Parser;
+import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.DistanceUnit;
@@ -2240,9 +2241,12 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		textHeight.setEnabled(bool);
 		largerText.setEnabled(bool);
 		smallerText.setEnabled(bool);
+		fontColour.setEnabled(bool);
 		if (!bool) {
 			fontSelector.setText(null);
 			textHeight.setText(null);
+			colourIcon.setFillColor(Color.LIGHT_GRAY);
+			colourIcon.setOutlineColor(Color.LIGHT_GRAY);
 			return;
 		}
 
@@ -2260,6 +2264,11 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		if (str.isEmpty())
 			str = String.format("%s  m", textEnt.getTextHeight());
 		textHeight.setText(str);
+
+		Color4d col = textEnt.getFontColor();
+		colourIcon.setFillColor(new Color((float)col.r, (float)col.g, (float)col.b, (float)col.a));
+		colourIcon.setOutlineColor(Color.DARK_GRAY);
+		fontColour.repaint();
 	}
 
 	private void setTextHeight(String str) {
