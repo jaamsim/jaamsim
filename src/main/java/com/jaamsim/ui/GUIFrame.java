@@ -98,6 +98,7 @@ import com.jaamsim.datatypes.IntegerVector;
 import com.jaamsim.events.EventErrorListener;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.events.EventTimeListener;
+import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InputErrorException;
@@ -1393,6 +1394,42 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		fontColour.setFocusPainted(false);
 		fontColour.setRequestFocusEnabled(false);
 		fontColour.setToolTipText(formatToolTip("Font Colour", "Sets the colour of the text."));
+		fontColour.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed( ActionEvent event ) {
+				if (!(selectedEntity instanceof TextBasics))
+					return;
+				final TextBasics textEnt = (TextBasics) selectedEntity;
+				ScrollablePopupMenu fontMenu = new ScrollablePopupMenu();
+
+				ActionListener fontActionListener = new ActionListener() {
+					@Override
+					public void actionPerformed( ActionEvent event ) {
+						if (!(event.getSource() instanceof JMenuItem))
+							return;
+						JMenuItem item = (JMenuItem) event.getSource();
+						String colourName = item.getText();
+						KeywordIndex kw = InputAgent.formatInput("FontColour", colourName);
+						Color4d col = Input.parseColour(kw);
+						if (!col.equals(textEnt.getFontColor())) {
+							InputAgent.storeAndExecute(new KeywordCommand(textEnt, kw));
+						}
+						fileSave.requestFocusInWindow();
+					}
+				};
+
+				// All possible fonts
+				for (Color4d col : ColourInput.namedColourList) {
+					String colourName = ColourInput.toString(col);
+					JMenuItem item = new JMenuItem(colourName);
+					item.addActionListener(fontActionListener);
+					fontMenu.add(item);
+				}
+
+				fontMenu.show(fontColour, 0, fontColour.getPreferredSize().height);
+			}
+		});
 
 		buttonBar.add(Box.createRigidArea(gapDim));
 		buttonBar.add( fontColour );
