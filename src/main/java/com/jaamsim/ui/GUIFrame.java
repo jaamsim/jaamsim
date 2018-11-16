@@ -173,7 +173,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 	private JTextField gridSpacing;
 
 	private JLabel locatorPos;
-	private JLabel locatorLabel;
 
 	//JButton toolButtonIsometric;
 	private JToggleButton lockViewXYPlane;
@@ -1582,7 +1581,57 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		mainToolBar.setFloatable(false);
 		mainToolBar.setLayout( new FlowLayout( FlowLayout.LEFT, 0, 0 ) );
 
-		// 1) Run/Pause button
+		// Add the main tool bar to the display
+		getContentPane().add( mainToolBar, BorderLayout.SOUTH );
+
+		// Run/pause button
+		addRunButton(mainToolBar, noMargin);
+
+		Dimension separatorDim = new Dimension(11, controlStartResume.getPreferredSize().height);
+		Dimension gapDim = new Dimension(5, separatorDim.height);
+
+		// Reset button
+		mainToolBar.add(Box.createRigidArea(gapDim));
+		addResetButton(mainToolBar, noMargin);
+
+		// Real time button
+		mainToolBar.addSeparator(separatorDim);
+		addRealTimeButton(mainToolBar, smallMargin);
+
+		// Speed multiplier spinner
+		mainToolBar.add(Box.createRigidArea(gapDim));
+		addSpeedMultiplier(mainToolBar, noMargin);
+
+		// Pause time field
+		mainToolBar.addSeparator(separatorDim);
+		mainToolBar.add(new JLabel("Pause Time:"));
+		mainToolBar.add(Box.createRigidArea(gapDim));
+		addPauseTime(mainToolBar, noMargin);
+
+		// Simulation time display
+		mainToolBar.addSeparator(separatorDim);
+		addSimulationTime(mainToolBar, noMargin);
+
+		// Run progress bar
+		mainToolBar.add(Box.createRigidArea(gapDim));
+		addRunProgress(mainToolBar, noMargin);
+
+		// Remaining time display
+		mainToolBar.add(Box.createRigidArea(gapDim));
+		addRemainingTime(mainToolBar, noMargin);
+
+		// Achieved speed multiplier
+		mainToolBar.addSeparator(separatorDim);
+		mainToolBar.add(new JLabel("Speed:"));
+		addAchievedSpeedMultiplier(mainToolBar, noMargin);
+
+		// Cursor position
+		mainToolBar.addSeparator(separatorDim);
+		mainToolBar.add(new JLabel("Position:"));
+		addCursorPosition(mainToolBar, noMargin);
+	}
+
+	private void addRunButton(JToolBar mainToolBar, Insets margin) {
 		runPressedIcon = new ImageIcon(GUIFrame.class.getResource("/resources/images/run-pressed-24.png"));
 		pausePressedIcon = new ImageIcon(GUIFrame.class.getResource("/resources/images/pause-pressed-24.png"));
 
@@ -1595,7 +1644,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		controlStartResume.setRolloverSelectedIcon(
 				new ImageIcon(GUIFrame.class.getResource("/resources/images/pause-rollover-24.png")));
 		controlStartResume.setToolTipText(RUN_TOOLTIP);
-		controlStartResume.setMargin( noMargin );
+		controlStartResume.setMargin(margin);
 		controlStartResume.setEnabled( false );
 		controlStartResume.addActionListener( new ActionListener() {
 
@@ -1621,15 +1670,16 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 			}
 		} );
 		mainToolBar.add( controlStartResume );
+	}
 
-		// 2) Stop button
+	private void addResetButton(JToolBar mainToolBar, Insets margin) {
 		controlStop = new RoundToggleButton(new ImageIcon(GUIFrame.class.getResource("/resources/images/reset-16.png")));
 		controlStop.setToolTipText(formatToolTip("Reset",
 				"Resets the simulation run time to zero."));
 		controlStop.setPressedIcon(new ImageIcon(GUIFrame.class.getResource("/resources/images/reset-pressed-16.png")));
 		controlStop.setRolloverEnabled( true );
 		controlStop.setRolloverIcon(new ImageIcon(GUIFrame.class.getResource("/resources/images/reset-rollover-16.png")));
-		controlStop.setMargin( noMargin );
+		controlStop.setMargin(margin);
 		controlStop.setEnabled( false );
 		controlStop.addActionListener( new ActionListener() {
 
@@ -1646,23 +1696,14 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 				initSpeedUp(0.0d);
 			}
 		} );
-
-		int hght = controlStop.getPreferredSize().height;
-
-		// Separators have 5 pixels before and after and the preferred height of controlStartResume button
-		Dimension separatorDim = new Dimension(11, controlStartResume.getPreferredSize().height);
-
-		// dimension for 5 pixels gaps
-		Dimension gapDim = new Dimension(5, separatorDim.height);
-
-		mainToolBar.add(Box.createRigidArea(gapDim));
 		mainToolBar.add( controlStop );
+	}
 
-		// 3) Real time button
+	private void addRealTimeButton(JToolBar mainToolBar, Insets margin) {
 		controlRealTime = new JToggleButton( " Real Time " );
 		controlRealTime.setToolTipText(formatToolTip("Real Time Mode",
 				"When selected, the simulation runs at a fixed multiple of wall clock time."));
-		controlRealTime.setMargin( smallMargin );
+		controlRealTime.setMargin(margin);
 		controlRealTime.setFocusPainted(false);
 		controlRealTime.setRequestFocusEnabled(false);
 		controlRealTime.addActionListener(new ActionListener() {
@@ -1673,11 +1714,10 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 				InputAgent.applyBoolean(Simulation.getInstance(), "RealTime", bool);
 			}
 		});
-
-		mainToolBar.addSeparator(separatorDim);
 		mainToolBar.add( controlRealTime );
+	}
 
-		// 4) Speed Up spinner
+	private void addSpeedMultiplier(JToolBar mainToolBar, Insets margin) {
 		SpinnerNumberModel numberModel =
 				new SpinnerModel(Simulation.DEFAULT_REAL_TIME_FACTOR,
 				   Simulation.MIN_REAL_TIME_FACTOR, Simulation.MAX_REAL_TIME_FACTOR, 1);
@@ -1693,7 +1733,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 			getPixelWidthOfString_ForFont("9", spinner.getFont()) * 9;
 		Dimension dim = spinner.getPreferredSize();
 		dim.width -= diff;
-		dim.height = hght;
+		dim.height = controlStop.getPreferredSize().height;
 		spinner.setPreferredSize(dim);
 		spinner.addChangeListener(new ChangeListener() {
 
@@ -1710,15 +1750,10 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		spinner.setToolTipText(formatToolTip("Speed Multiplier (up/down key)",
 				"Target ratio of simulation time to wall clock time when Real Time mode is selected."));
 		spinner.setEnabled(false);
-		mainToolBar.add(Box.createRigidArea(gapDim));
 		mainToolBar.add( spinner );
+	}
 
-		// 5) Pause time label
-		JLabel pauseAt = new JLabel( "Pause Time:" );
-		mainToolBar.addSeparator(separatorDim);
-		mainToolBar.add(pauseAt);
-
-		// 6) Pause time value box
+	private void addPauseTime(JToolBar mainToolBar, Insets margin) {
 		pauseTime = new JTextField("0000-00-00T00:00:00") {
 			@Override
 			protected void processFocusEvent(FocusEvent fe) {
@@ -1736,7 +1771,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		pauseTime.setMaximumSize(pauseTime.getPreferredSize());
 
 		// avoid stretching for pauseTime when focusing in and out
-		pauseTime.setPreferredSize(new Dimension(pauseTime.getPreferredSize().width, hght));
+		pauseTime.setPreferredSize(new Dimension(pauseTime.getPreferredSize().width,
+				controlStop.getPreferredSize().height));
 
 		pauseTime.addActionListener(new ActionListener() {
 			@Override
@@ -1751,61 +1787,53 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		pauseTime.setToolTipText(formatToolTip("Pause Time",
 				"Time at which to pause the run, e.g. 3 h, 10 s, etc."));
 
-		mainToolBar.add(Box.createRigidArea(gapDim));
 		mainToolBar.add(pauseTime);
+	}
 
-		// 7) Create the display clock and label
+	private void addSimulationTime(JToolBar mainToolBar, Insets margin) {
 		clockDisplay = new JLabel( "", JLabel.CENTER );
 		clockDisplay.setPreferredSize( new Dimension( 110, 16 ) );
 		clockDisplay.setForeground( new Color( 1.0f, 0.0f, 0.0f ) );
 		clockDisplay.setToolTipText(formatToolTip("Simulation Time",
 				"The present simulation time"));
-		mainToolBar.addSeparator(separatorDim);
 		mainToolBar.add( clockDisplay );
+	}
 
-		// 8) Create the progress bar
+	private void addRunProgress(JToolBar mainToolBar, Insets margin) {
 		progressBar = new JProgressBar( 0, 100 );
-		progressBar.setPreferredSize( new Dimension( 120, hght ) );
+		progressBar.setPreferredSize( new Dimension( 120, controlStop.getPreferredSize().height ) );
 		progressBar.setValue( 0 );
 		progressBar.setStringPainted( true );
 		progressBar.setToolTipText(formatToolTip("Run Progress",
 				"Percent of the present simulation run that has been completed."));
-		mainToolBar.add(Box.createRigidArea(gapDim));
 		mainToolBar.add( progressBar );
+	}
 
-		// 9) Create a remaining run time display
+	private void addRemainingTime(JToolBar mainToolBar, Insets margin) {
 		remainingDisplay = new JLabel( "", JLabel.CENTER );
 		remainingDisplay.setPreferredSize( new Dimension( 110, 16 ) );
 		remainingDisplay.setForeground( new Color( 1.0f, 0.0f, 0.0f ) );
 		remainingDisplay.setToolTipText(formatToolTip("Remaining Time",
 				"The remaining time required to complete the present simulation run."));
-		mainToolBar.add(Box.createRigidArea(gapDim));
 		mainToolBar.add( remainingDisplay );
+	}
 
-		// 10) Create a speed-up factor display
-		JLabel speedUpLabel = new JLabel( "Speed:" );
+	private void addAchievedSpeedMultiplier(JToolBar mainToolBar, Insets margin) {
 		speedUpDisplay = new JLabel( "", JLabel.CENTER );
 		speedUpDisplay.setPreferredSize( new Dimension( 110, 16 ) );
 		speedUpDisplay.setForeground( new Color( 1.0f, 0.0f, 0.0f ) );
 		speedUpDisplay.setToolTipText(formatToolTip("Achieved Speed Multiplier",
 				"The ratio of elapsed simulation time to elasped wall clock time that was achieved."));
-		mainToolBar.addSeparator(separatorDim);
-		mainToolBar.add( speedUpLabel );
 		mainToolBar.add( speedUpDisplay );
+	}
 
-		// 11) Create a cursor position display
-		locatorLabel = new JLabel( "Position:" );
+	private void addCursorPosition(JToolBar mainToolBar, Insets margin) {
 		locatorPos = new JLabel( "", JLabel.CENTER );
 		locatorPos.setPreferredSize( new Dimension( 140, 16 ) );
 		locatorPos.setForeground( new Color( 1.0f, 0.0f, 0.0f ) );
 		locatorPos.setToolTipText(formatToolTip("Cursor Position",
 				"The coordinates of the cursor on the x-y plane."));
-		mainToolBar.addSeparator(separatorDim);
-		mainToolBar.add( locatorLabel );
 		mainToolBar.add( locatorPos );
-
-		// Add the main tool bar to the display
-		getContentPane().add( mainToolBar, BorderLayout.SOUTH );
 	}
 
 	// ******************************************************************************************************
