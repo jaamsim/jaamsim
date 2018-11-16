@@ -1733,7 +1733,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 			getPixelWidthOfString_ForFont("9", spinner.getFont()) * 9;
 		Dimension dim = spinner.getPreferredSize();
 		dim.width -= diff;
-		dim.height = controlStop.getPreferredSize().height;
 		spinner.setPreferredSize(dim);
 		spinner.addChangeListener(new ChangeListener() {
 
@@ -1767,12 +1766,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 			}
 		};
 
-		// avoid height increase for pauseTime
-		pauseTime.setMaximumSize(pauseTime.getPreferredSize());
-
-		// avoid stretching for pauseTime when focusing in and out
 		pauseTime.setPreferredSize(new Dimension(pauseTime.getPreferredSize().width,
-				controlStop.getPreferredSize().height));
+				pauseTime.getPreferredSize().height));
 
 		pauseTime.addActionListener(new ActionListener() {
 			@Override
@@ -1801,7 +1796,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 
 	private void addRunProgress(JToolBar mainToolBar, Insets margin) {
 		progressBar = new JProgressBar( 0, 100 );
-		progressBar.setPreferredSize( new Dimension( 120, controlStop.getPreferredSize().height ) );
+		progressBar.setPreferredSize( new Dimension( 120, controlRealTime.getPreferredSize().height ) );
 		progressBar.setValue( 0 );
 		progressBar.setStringPainted( true );
 		progressBar.setToolTipText(formatToolTip("Run Progress",
