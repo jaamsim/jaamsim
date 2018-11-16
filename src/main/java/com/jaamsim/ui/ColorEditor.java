@@ -37,8 +37,7 @@ import com.jaamsim.ui.EditBox.EditTable;
  */
 public class ColorEditor extends ChooserEditor {
 
-	private JColorChooser colorChooser;
-	private JDialog dialog;
+	private static JColorChooser colorChooser;
 
 	public static final String DIALOG_NAME = "Colour Chooser";
 
@@ -106,17 +105,17 @@ public class ColorEditor extends ChooserEditor {
 	}
 
 	public void launchDialog() {
-		if (colorChooser == null || dialog == null) {
+		if (colorChooser == null)
 			colorChooser = new JColorChooser();
-			dialog = JColorChooser.createDialog(null,
-					DIALOG_NAME,
-					true,  //modal
-					colorChooser,
-					this,  //OK button listener
-					null); //no CANCEL button listener
-			dialog.setIconImage(GUIFrame.getWindowIcon());
-			dialog.setAlwaysOnTop(true);
-		}
+
+		JDialog dialog = JColorChooser.createDialog(null,
+				DIALOG_NAME,
+				true,  //modal
+				colorChooser,
+				this,  //OK button listener
+				null); //no CANCEL button listener
+		dialog.setIconImage(GUIFrame.getWindowIcon());
+		dialog.setAlwaysOnTop(true);
 
 		Color4d col = ((ColourInput)input).getValue();
 		colorChooser.setColor(new Color((float)col.r, (float)col.g, (float)col.b, (float)col.a));
