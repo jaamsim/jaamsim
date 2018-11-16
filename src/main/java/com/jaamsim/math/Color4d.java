@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2012 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2018 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,6 +41,10 @@ public Color4d(double r, double g, double b, double a) {
 
 public Color4d(Color4d col) {
 	this.r = col.r; this.g = col.g; this.b = col.b; this.a = col.a;
+}
+
+public Color4d(int red, int green, int blue, int alpha) {
+	r = red/255.0d; g = green/255.0d; b = blue/255.0d; a = alpha/255.0d;
 }
 
 public float[] toFloats() {
