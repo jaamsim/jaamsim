@@ -348,8 +348,6 @@ public static class EditTable extends JTable {
 	static int col2Width = 100;
 	static int col3Width = 150;
 
-	private ColorEditor colorEditor;
-
 	private String retryString;
 	private int retryRow;
 	private int retryCol;
@@ -393,10 +391,7 @@ public static class EditTable extends JTable {
 
 		// 1) Colour input
 		if (in instanceof ColourInput) {
-			if(colorEditor == null) {
-				colorEditor = new ColorEditor(this);
-			}
-			ret = colorEditor;
+			ret = new ColorEditor(this);
 		}
 
 		// 2) File input
