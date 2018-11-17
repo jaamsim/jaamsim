@@ -54,12 +54,22 @@ public class ColorEditor extends ChooserEditor {
 			Color4d col = (Color4d) input.getValue();
 			String colName = ColourInput.getColorName(col);
 
-			// Prepare a list of the named colours
 			ArrayList<String> array = input.getValidOptions();
-			array.add(0, OPTION_COLOUR_CHOOSER);
 			ScrollablePopupMenu menu = new ScrollablePopupMenu();
 			Component button = (Component)e.getSource();
 			Component panel = button.getParent();
+
+			// Colour Chooser
+			JMenuItem chooserItem = new JMenuItem(OPTION_COLOUR_CHOOSER);
+			chooserItem.addActionListener( new ActionListener() {
+				@Override
+				public void actionPerformed( ActionEvent event ) {
+					launchDialog();
+				}
+			} );
+			menu.add(chooserItem);
+
+			// All named colours
 			for (final String option : array) {
 				JMenuItem item = new JMenuItem(option);
 				if (option.equals(colName)) {
@@ -67,13 +77,8 @@ public class ColorEditor extends ChooserEditor {
 				}
 				item.setPreferredSize(panel.getPreferredSize());
 				item.addActionListener( new ActionListener() {
-
 					@Override
 					public void actionPerformed( ActionEvent event ) {
-						if (OPTION_COLOUR_CHOOSER.equals(option)) {
-							launchDialog();
-							return;
-						}
 						setValue(option);
 						stopCellEditing();
 						propTable.requestFocusInWindow();
@@ -88,7 +93,7 @@ public class ColorEditor extends ChooserEditor {
 				return;
 			int index = array.indexOf(colName);
 			if (index != -1) {
-				menu.ensureIndexIsVisible(index);
+				menu.ensureIndexIsVisible(index + 1);
 			}
 			return;
 		}
