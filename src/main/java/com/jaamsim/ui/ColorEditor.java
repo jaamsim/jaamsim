@@ -74,6 +74,11 @@ public class ColorEditor extends ChooserEditor {
 				if (colour.equals(col)) {
 					item.setArmed(true);
 				}
+				ColorIcon icon = new ColorIcon(16, 16);
+				icon.setFillColor(new Color((float)colour.r, (float)colour.g,
+						(float)colour.b, (float)colour.a));
+				icon.setOutlineColor(Color.DARK_GRAY);
+				item.setIcon(icon);
 				item.setPreferredSize(panel.getPreferredSize());
 				item.addActionListener( new ActionListener() {
 					@Override
