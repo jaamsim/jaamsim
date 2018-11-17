@@ -100,6 +100,12 @@ public class ColorEditor extends ChooserEditor {
 		}
 	}
 
+	public static JColorChooser getColorChooser() {
+		if (colorChooser == null)
+			colorChooser = new JColorChooser();
+		return colorChooser;
+	}
+
 	public void launchDialog() {
 		if (colorChooser == null)
 			colorChooser = new JColorChooser();
