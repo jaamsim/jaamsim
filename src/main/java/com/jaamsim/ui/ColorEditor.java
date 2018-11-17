@@ -40,6 +40,7 @@ public class ColorEditor extends ChooserEditor {
 	private static JColorChooser colorChooser;
 
 	public static final String DIALOG_NAME = "Colour Chooser";
+	public static final String OPTION_COLOUR_CHOOSER = String.format("*** %s ***", DIALOG_NAME);
 
 	public ColorEditor(EditTable table) {
 		super(table, true);
@@ -55,8 +56,7 @@ public class ColorEditor extends ChooserEditor {
 
 			// Prepare a list of the named colours
 			ArrayList<String> array = input.getValidOptions();
-			final String colourChooserOption = String.format("*** %s ***", DIALOG_NAME);
-			array.add(0, colourChooserOption);
+			array.add(0, OPTION_COLOUR_CHOOSER);
 			ScrollablePopupMenu menu = new ScrollablePopupMenu();
 			Component button = (Component)e.getSource();
 			Component panel = button.getParent();
@@ -70,7 +70,7 @@ public class ColorEditor extends ChooserEditor {
 
 					@Override
 					public void actionPerformed( ActionEvent event ) {
-						if (colourChooserOption.equals(option)) {
+						if (OPTION_COLOUR_CHOOSER.equals(option)) {
 							launchDialog();
 							return;
 						}
