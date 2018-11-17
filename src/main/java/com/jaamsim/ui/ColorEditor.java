@@ -94,13 +94,9 @@ public class ColorEditor extends ChooserEditor {
 		}
 		else {
 			Color color = colorChooser.getColor();
-			if (color.getAlpha() == 255) {
-				setValue( String.format("%d %d %d",
-						color.getRed(), color.getGreen(), color.getBlue() ) );
-				return;
-			}
-			setValue( String.format("%d %d %d %d",
-					 color.getRed(),color.getGreen(), color.getBlue(), color.getAlpha() ) );
+			Color4d newColour = new Color4d(color.getRed(), color.getGreen(),
+					color.getBlue(), color.getAlpha());
+			setValue(ColourInput.toString(newColour));
 		}
 	}
 
