@@ -58,6 +58,8 @@ import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JColorChooser;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -1514,6 +1516,21 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 					public void mouseExited(MouseEvent e) {}
 				};
 
+				final ActionListener chooserActionListener = new ActionListener() {
+					@Override
+					public void actionPerformed( ActionEvent event ) {
+						Color clr = ColorEditor.getColorChooser().getColor();
+						Color4d newColour = new Color4d(clr.getRed(), clr.getGreen(),
+								clr.getBlue(), clr.getAlpha());
+						if (newColour != textEnt.getFontColor()) {
+							String colourName = ColourInput.toString(newColour);
+							KeywordIndex kw = InputAgent.formatInput("FontColour", colourName);
+							InputAgent.storeAndExecute(new KeywordCommand(textEnt, kw));
+						}
+						fileSave.requestFocusInWindow();
+					}
+				};
+
 				// Font colours already in use
 				JMenuItem selectedItem = null;
 				int selectedIndex = -1;
@@ -1539,6 +1556,23 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 
 				// Colour chooser
 				JMenuItem chooserItem = new JMenuItem(ColorEditor.OPTION_COLOUR_CHOOSER);
+				chooserItem.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent event) {
+						JColorChooser chooser = ColorEditor.getColorChooser();
+						JDialog dialog = JColorChooser.createDialog(null,
+								ColorEditor.DIALOG_NAME,
+								true,  //modal
+								chooser,
+								chooserActionListener,  //OK button listener
+								null); //no CANCEL button listener
+						dialog.setIconImage(GUIFrame.getWindowIcon());
+						dialog.setAlwaysOnTop(true);
+						Color4d col = textEnt.getFontColor();
+						chooser.setColor(new Color((float)col.r, (float)col.g, (float)col.b, (float)col.a));
+						dialog.setVisible(true);
+					}
+				});
 				fontMenu.add(chooserItem);
 				fontMenu.addSeparator();
 
