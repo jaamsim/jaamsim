@@ -93,7 +93,7 @@ public class ColorEditor extends ChooserEditor {
 			return;
 		}
 		else {
-			Color color = colorChooser.getColor();
+			Color color = getColorChooser().getColor();
 			Color4d newColour = new Color4d(color.getRed(), color.getGreen(),
 					color.getBlue(), color.getAlpha());
 			setValue(ColourInput.toString(newColour));
@@ -107,20 +107,18 @@ public class ColorEditor extends ChooserEditor {
 	}
 
 	public void launchDialog() {
-		if (colorChooser == null)
-			colorChooser = new JColorChooser();
-
+		JColorChooser chooser = getColorChooser();
 		JDialog dialog = JColorChooser.createDialog(null,
 				DIALOG_NAME,
 				true,  //modal
-				colorChooser,
+				chooser,
 				this,  //OK button listener
 				null); //no CANCEL button listener
 		dialog.setIconImage(GUIFrame.getWindowIcon());
 		dialog.setAlwaysOnTop(true);
 
 		Color4d col = ((ColourInput)input).getValue();
-		colorChooser.setColor(new Color((float)col.r, (float)col.g, (float)col.b, (float)col.a));
+		chooser.setColor(new Color((float)col.r, (float)col.g, (float)col.b, (float)col.a));
 		dialog.setVisible(true);
 
 		// Apply editing
