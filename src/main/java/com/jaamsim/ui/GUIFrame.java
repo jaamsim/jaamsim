@@ -1537,6 +1537,11 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 				}
 				fontMenu.addSeparator();
 
+				// Colour chooser
+				JMenuItem chooserItem = new JMenuItem(ColorEditor.OPTION_COLOUR_CHOOSER);
+				fontMenu.add(chooserItem);
+				fontMenu.addSeparator();
+
 				// All possible fonts
 				for (Color4d col : ColourInput.namedColourList) {
 					String colourName = ColourInput.toString(col);
