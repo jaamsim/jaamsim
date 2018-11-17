@@ -21,7 +21,6 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 
 import javax.swing.JColorChooser;
 import javax.swing.JDialog;
@@ -54,7 +53,6 @@ public class ColorEditor extends ChooserEditor {
 			Color4d col = (Color4d) input.getValue();
 			String colName = ColourInput.getColorName(col);
 
-			ArrayList<String> array = input.getValidOptions();
 			ScrollablePopupMenu menu = new ScrollablePopupMenu();
 			Component button = (Component)e.getSource();
 			Component panel = button.getParent();
@@ -70,16 +68,17 @@ public class ColorEditor extends ChooserEditor {
 			menu.add(chooserItem);
 
 			// All named colours
-			for (final String option : array) {
-				JMenuItem item = new JMenuItem(option);
-				if (option.equals(colName)) {
+			for (Color4d colour : ColourInput.namedColourList) {
+				final String colourName = ColourInput.toString(colour);
+				JMenuItem item = new JMenuItem(colourName);
+				if (colour.equals(col)) {
 					item.setArmed(true);
 				}
 				item.setPreferredSize(panel.getPreferredSize());
 				item.addActionListener( new ActionListener() {
 					@Override
 					public void actionPerformed( ActionEvent event ) {
-						setValue(option);
+						setValue(colourName);
 						stopCellEditing();
 						propTable.requestFocusInWindow();
 					}
@@ -91,7 +90,7 @@ public class ColorEditor extends ChooserEditor {
 			// Scroll to show the present colour
 			if (input.isDefault())
 				return;
-			int index = array.indexOf(colName);
+			int index = ColourInput.namedColourList.indexOf(colName);
 			if (index != -1) {
 				menu.ensureIndexIsVisible(index + 1);
 			}
