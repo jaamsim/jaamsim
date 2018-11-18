@@ -37,6 +37,7 @@ import com.jaamsim.input.Vec3dInput;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.render.TessFontKey;
+import com.jaamsim.ui.GUIFrame;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 
@@ -178,6 +179,13 @@ public class OverlayText extends OverlayEntity implements TextEntity {
 			Class<? extends Unit> ut = unitType.getUnitType();
 			dataSource.setUnitType(ut);
 			unit.setSubClass(ut);
+			return;
+		}
+
+		if (in == fontName || in == textHeight || in == fontColor || in == fontStyle) {
+			if (GUIFrame.getInstance() == null)
+				return;
+			GUIFrame.getInstance().updateTextButtons();
 			return;
 		}
 	}
