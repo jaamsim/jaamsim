@@ -91,6 +91,7 @@ import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.DisplayModels.TextModel;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.TextBasics;
+import com.jaamsim.Graphics.TextEntity;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.basicsim.Simulation;
@@ -1244,9 +1245,9 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				if (!(selectedEntity instanceof TextBasics))
+				if (!(selectedEntity instanceof TextEntity))
 					return;
-				TextBasics textEnt = (TextBasics) selectedEntity;
+				TextEntity textEnt = (TextEntity) selectedEntity;
 				if (textEnt.isBold() == bold.isSelected()
 						&& textEnt.isItalic() && italic.isSelected())
 					return;
@@ -1257,7 +1258,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 					stylesList.add("ITALIC");
 				String[] styles = stylesList.toArray(new String[stylesList.size()]);
 				KeywordIndex kw = InputAgent.formatArgs("FontStyle", styles);
-				InputAgent.storeAndExecute(new KeywordCommand(textEnt, kw));
+				InputAgent.storeAndExecute(new KeywordCommand((Entity)textEnt, kw));
 				fileSave.requestFocusInWindow();
 			}
 		};
@@ -1294,9 +1295,9 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				if (!(selectedEntity instanceof TextBasics))
+				if (!(selectedEntity instanceof TextEntity))
 					return;
-				final TextBasics textEnt = (TextBasics) selectedEntity;
+				final TextEntity textEnt = (TextEntity) selectedEntity;
 				ScrollablePopupMenu fontMenu = new ScrollablePopupMenu();
 
 				ActionListener fontActionListener = new ActionListener() {
@@ -1309,7 +1310,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 						if (!fontName.equals(textEnt.getFontName())) {
 							String name = Parser.addQuotesIfNeeded(fontName);
 							KeywordIndex kw = InputAgent.formatInput("FontName", name);
-							InputAgent.storeAndExecute(new KeywordCommand(textEnt, kw));
+							InputAgent.storeAndExecute(new KeywordCommand((Entity)textEnt, kw));
 						}
 						fileSave.requestFocusInWindow();
 					}
@@ -1331,7 +1332,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 						if (!fontName.equals(textEnt.getFontName())) {
 							String name = Parser.addQuotesIfNeeded(fontName);
 							KeywordIndex kw = InputAgent.formatInput("FontName", name);
-							InputAgent.storeAndExecute(new KeywordCommand(textEnt, kw));
+							InputAgent.storeAndExecute(new KeywordCommand((Entity)textEnt, kw));
 						}
 					}
 					@Override
@@ -1472,9 +1473,9 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				if (!(selectedEntity instanceof TextBasics))
+				if (!(selectedEntity instanceof TextEntity))
 					return;
-				final TextBasics textEnt = (TextBasics) selectedEntity;
+				final TextEntity textEnt = (TextEntity) selectedEntity;
 				ScrollablePopupMenu fontMenu = new ScrollablePopupMenu();
 
 				ActionListener fontActionListener = new ActionListener() {
@@ -1487,7 +1488,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 						KeywordIndex kw = InputAgent.formatInput("FontColour", colourName);
 						Color4d col = Input.parseColour(kw);
 						if (!col.equals(textEnt.getFontColor())) {
-							InputAgent.storeAndExecute(new KeywordCommand(textEnt, kw));
+							InputAgent.storeAndExecute(new KeywordCommand((Entity)textEnt, kw));
 						}
 						fileSave.requestFocusInWindow();
 					}
@@ -1509,7 +1510,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 						KeywordIndex kw = InputAgent.formatInput("FontColour", colourName);
 						Color4d col = Input.parseColour(kw);
 						if (!col.equals(textEnt.getFontColor())) {
-							InputAgent.storeAndExecute(new KeywordCommand(textEnt, kw));
+							InputAgent.storeAndExecute(new KeywordCommand((Entity)textEnt, kw));
 						}
 					}
 					@Override
@@ -1525,7 +1526,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 						if (newColour != textEnt.getFontColor()) {
 							String colourName = ColourInput.toString(newColour);
 							KeywordIndex kw = InputAgent.formatInput("FontColour", colourName);
-							InputAgent.storeAndExecute(new KeywordCommand(textEnt, kw));
+							InputAgent.storeAndExecute(new KeywordCommand((Entity)textEnt, kw));
 						}
 						fileSave.requestFocusInWindow();
 					}
@@ -2455,7 +2456,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 	}
 
 	public void updateTextButtons() {
-		boolean bool = selectedEntity instanceof TextBasics;
+		boolean bool = selectedEntity instanceof TextEntity;
 		alignLeft.setEnabled(bool);
 		alignCentre.setEnabled(bool);
 		alignRight.setEnabled(bool);
@@ -2474,8 +2475,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 			return;
 		}
 
-		TextBasics textEnt = (TextBasics) selectedEntity;
-		int val = (int) Math.signum(textEnt.getAlignment().x);
+		TextEntity textEnt = (TextEntity) selectedEntity;
+		int val = (int) Math.signum(((DisplayEntity) textEnt).getAlignment().x);
 		alignLeft.setSelected(val == -1);
 		alignCentre.setSelected(val == 0);
 		alignRight.setSelected(val == 1);
@@ -2484,7 +2485,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		italic.setSelected(textEnt.isItalic());
 		fontSelector.setText(textEnt.getFontName());
 
-		String str = textEnt.getInput("TextHeight").getValueString();
+		String str = ((Entity) textEnt).getInput("TextHeight").getValueString();
 		if (str.isEmpty())
 			str = String.format("%s  m", textEnt.getTextHeight());
 		textHeight.setText(str);
@@ -2509,7 +2510,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 
 		try {
 			KeywordIndex kw = InputAgent.formatInput("TextHeight", str);
-			InputAgent.storeAndExecute(new KeywordCommand(textEnt, kw));
+			InputAgent.storeAndExecute(new KeywordCommand((Entity)textEnt, kw));
 		}
 		catch (InputErrorException e) {
 			textHeight.setText(prevVal);
