@@ -89,7 +89,9 @@ import com.jaamsim.Commands.DefineCommand;
 import com.jaamsim.Commands.DefineViewCommand;
 import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.DisplayModels.TextModel;
+import com.jaamsim.Graphics.BillboardText;
 import com.jaamsim.Graphics.DisplayEntity;
+import com.jaamsim.Graphics.OverlayText;
 import com.jaamsim.Graphics.TextBasics;
 import com.jaamsim.Graphics.TextEntity;
 import com.jaamsim.basicsim.Entity;
@@ -2457,9 +2459,13 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 
 	public void updateTextButtons() {
 		boolean bool = selectedEntity instanceof TextEntity;
-		alignLeft.setEnabled(bool);
-		alignCentre.setEnabled(bool);
-		alignRight.setEnabled(bool);
+
+		boolean isAlignable = bool && !(selectedEntity instanceof OverlayText)
+				&& !(selectedEntity instanceof BillboardText);
+		alignLeft.setEnabled(isAlignable);
+		alignCentre.setEnabled(isAlignable);
+		alignRight.setEnabled(isAlignable);
+
 		bold.setEnabled(bool);
 		italic.setEnabled(bool);
 		fontSelector.setEnabled(bool);
