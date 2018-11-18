@@ -27,6 +27,9 @@ public class BillboardText extends Text {
 	{
 		// Set the default text height to 10 pixels
 		textHeight.setDefaultValue(10.0);
+
+		// Alignment input is ignored
+		alignmentInput.setHidden(true);
 	}
 
 }
