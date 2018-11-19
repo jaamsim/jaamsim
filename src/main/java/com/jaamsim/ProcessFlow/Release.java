@@ -51,7 +51,7 @@ public class Release extends LinkedComponent {
 		def.add(new SampleConstant(1));
 		numberOfUnitsList = new SampleListInput("NumberOfUnits", KEY_INPUTS, def);
 		numberOfUnitsList.setEntity(this);
-		numberOfUnitsList.setValidRange(1, Double.POSITIVE_INFINITY);
+		numberOfUnitsList.setValidRange(0, Double.POSITIVE_INFINITY);
 		numberOfUnitsList.setDimensionless(true);
 		numberOfUnitsList.setUnitType(DimensionlessUnit.class);
 		this.addInput(numberOfUnitsList);
@@ -82,6 +82,8 @@ public class Release extends LinkedComponent {
 		// Release the Resources
 		for(int i=0; i<resList.size(); i++) {
 			int n = (int) numberList.get(i).getNextSample(simTime);
+			if (n == 0)
+				continue;
 			resList.get(i).release(n, ent);
 		}
 
