@@ -3063,7 +3063,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 
 	/**
 	 * Saves the configuration file.
-	 * @param gui = Control Panel window for JaamSim
 	 * @param fileName = absolute file path and file name for the file to be saved
 	 */
 	private void setSaveFile(String fileName) {
@@ -3072,11 +3071,16 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		File temp = new File(fileName);
 
 		// Save the configuration file
-		InputAgent.printNewConfigurationFileWithName( fileName );
-		InputAgent.setConfigFile(temp);
+		try {
+			InputAgent.printNewConfigurationFileWithName( fileName );
+			InputAgent.setConfigFile(temp);
 
-		// Set the title bar to match the new run name
-		this.setTitle( Simulation.getModelName() + " - " + InputAgent.getRunName() );
+			// Set the title bar to match the new run name
+			this.setTitle( Simulation.getModelName() + " - " + InputAgent.getRunName() );
+		}
+		catch (Exception e) {
+			GUIFrame.showErrorDialog("File Error", e.getMessage());
+		}
 	}
 
 	boolean save() {
