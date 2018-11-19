@@ -43,17 +43,16 @@ public class FileEntity {
 			outputStream = new BufferedWriter( new FileWriter(backingFileObject, append) );
 		}
 		catch (IOException e) {
-			throw new InputErrorException("IOException thrown trying to open FileEntity %s%n%s",
+			throw new InputErrorException("IOException thrown trying to open file: '%s'%n%s",
 					fileName, e.getMessage());
 		}
 		catch (IllegalArgumentException e) {
-			throw new InputErrorException("IllegalArgumentException thrown trying to open "
-					+ "FileEntity %s (Should not happen)%n%s",
+			throw new InputErrorException("IllegalArgumentException thrown trying to open file: "
+					+ "'%s'%n%s",
 					fileName, e.getMessage());
 		}
 		catch (SecurityException e) {
-			throw new InputErrorException("SecurityException thrown trying to open "
-					+ "FileEntity %s%n%s",
+			throw new InputErrorException("SecurityException thrown trying to open file: '%s'%n%s",
 					fileName, e.getMessage());
 		}
 	}
