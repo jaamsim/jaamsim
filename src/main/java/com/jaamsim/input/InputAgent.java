@@ -432,7 +432,7 @@ public class InputAgent {
 			InputStream in = url.openStream();
 			buf = new BufferedReader(new InputStreamReader(in));
 		} catch (IOException e) {
-			InputAgent.logError("Could not read from %s", url.toString());
+			InputAgent.logError("Could not read from url: '%s'%n%s", url.toString(), e.getMessage());
 			return false;
 		}
 
@@ -750,7 +750,7 @@ public class InputAgent {
 			logFile = new FileEntity( logURI.getPath());
 		}
 		catch( Exception e ) {
-			InputAgent.logWarning("Could not create trace file");
+			InputAgent.logWarning("Could not create trace file.%n%s", e.getMessage());
 		}
 
 		URI dirURI = file.getParentFile().toURI();
