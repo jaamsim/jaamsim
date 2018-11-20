@@ -1300,6 +1300,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 				if (!(selectedEntity instanceof TextEntity))
 					return;
 				final TextEntity textEnt = (TextEntity) selectedEntity;
+				final String presentFontName = textEnt.getFontName();
 				ScrollablePopupMenu fontMenu = new ScrollablePopupMenu();
 
 				ActionListener fontActionListener = new ActionListener() {
@@ -1338,7 +1339,13 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 						}
 					}
 					@Override
-					public void mouseExited(MouseEvent e) {}
+					public void mouseExited(MouseEvent e) {
+						if (!presentFontName.equals(textEnt.getFontName())) {
+							String name = Parser.addQuotesIfNeeded(presentFontName);
+							KeywordIndex kw = InputAgent.formatInput("FontName", name);
+							InputAgent.storeAndExecute(new KeywordCommand((Entity)textEnt, kw));
+						}
+					}
 				};
 
 				// Fonts already in use
