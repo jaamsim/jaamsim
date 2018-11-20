@@ -2490,11 +2490,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		bold.setSelected(textEnt.isBold());
 		italic.setSelected(textEnt.isItalic());
 		fontSelector.setText(textEnt.getFontName());
-
-		String str = ((Entity) textEnt).getInput("TextHeight").getValueString();
-		if (str.isEmpty())
-			str = String.format("%s  m", textEnt.getTextHeight());
-		textHeight.setText(str);
+		textHeight.setText(textEnt.getTextHeightString());
 
 		Color4d col = textEnt.getFontColor();
 		colourIcon.setFillColor(new Color((float)col.r, (float)col.g, (float)col.b, (float)col.a));
@@ -2503,15 +2499,10 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 	}
 
 	private void setTextHeight(String str) {
-		if (!(selectedEntity instanceof TextBasics))
+		if (!(selectedEntity instanceof TextEntity))
 			return;
-		TextBasics textEnt = (TextBasics) selectedEntity;
-
-		String prevVal = textEnt.getInput("TextHeight").getValueString();
-		if (prevVal.isEmpty())
-			prevVal = String.format("%s  m", textEnt.getTextHeight());
-
-		if (prevVal.equals(str))
+		TextEntity textEnt = (TextEntity) selectedEntity;
+		if (str.equals(textEnt.getTextHeightString()))
 			return;
 
 		try {
@@ -2519,7 +2510,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 			InputAgent.storeAndExecute(new KeywordCommand((Entity)textEnt, kw));
 		}
 		catch (InputErrorException e) {
-			textHeight.setText(prevVal);
+			textHeight.setText(textEnt.getTextHeightString());
 			GUIFrame.showErrorDialog("Input Error", e.getMessage());
 		}
 	}
