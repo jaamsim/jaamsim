@@ -1414,12 +1414,14 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				if (!(selectedEntity instanceof TextBasics))
+				if (!(selectedEntity instanceof TextEntity))
 					return;
-				TextBasics textEnt = (TextBasics) selectedEntity;
+				TextEntity textEnt = (TextEntity) selectedEntity;
 
 				double height = textEnt.getTextHeight();
 				double spacing = Simulation.getSnapGridSpacing();
+				if (textEnt instanceof OverlayText || textEnt instanceof BillboardText)
+					spacing = 1.0d;
 				height = Math.round(height/spacing) * spacing;
 
 				if (event.getActionCommand().equals("LargerText")) {
@@ -1430,9 +1432,12 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 					height = Math.max(spacing, height);
 				}
 
-				String str = String.format("%.1f  m", height);
+				String format = "%.1f  m";
+				if (textEnt instanceof OverlayText || textEnt instanceof BillboardText)
+					format = "%.0f";
+				String str = String.format(format, height);
 				KeywordIndex kw = InputAgent.formatInput("TextHeight", str);
-				InputAgent.storeAndExecute(new KeywordCommand(textEnt, kw));
+				InputAgent.storeAndExecute(new KeywordCommand((Entity)textEnt, kw));
 				fileSave.requestFocusInWindow();
 			}
 		};
