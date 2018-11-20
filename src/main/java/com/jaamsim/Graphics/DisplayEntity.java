@@ -291,8 +291,12 @@ public class DisplayEntity extends Entity {
 		if (in == displayModelListInput) {
 			this.setDisplayModelList(displayModelListInput.getValue());
 			setGraphicsKeywords();
-			EditBox.getInstance().setEntity(null); // refresh the contents of the Input Editor
-			FrameBox.reSelectEntity();
+
+			// Refresh the contents of the Input Editor
+			if (FrameBox.isSelected(this)) {
+				EditBox.getInstance().setEntity(null);
+				FrameBox.reSelectEntity();
+			}
 			return;
 		}
 		if (in == showInput) {
