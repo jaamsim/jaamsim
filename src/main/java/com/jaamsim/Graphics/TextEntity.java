@@ -22,6 +22,7 @@ import com.jaamsim.math.Vec3d;
 public interface TextEntity {
 	public String getFontName();
 	public double getTextHeight();
+	public String getTextHeightString();
 	public int getStyle();
 	public boolean isBold();
 	public boolean isItalic();

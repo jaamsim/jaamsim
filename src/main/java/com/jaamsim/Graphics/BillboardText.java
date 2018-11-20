@@ -45,4 +45,12 @@ public class BillboardText extends Text {
 		return textHeight.getValue();
 	}
 
+	@Override
+	public String getTextHeightString() {
+		if (textHeight.isDefault()) {
+			return getTextModel().getTextHeightInPixelsString();
+		}
+		return textHeight.getValueString();
+	}
+
 }

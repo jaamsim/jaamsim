@@ -458,6 +458,14 @@ public abstract class TextBasics extends DisplayEntity implements TextEntity {
 	}
 
 	@Override
+	public String getTextHeightString() {
+		if (textHeight.isDefault()) {
+			return getTextModel().getTextHeightString();
+		}
+		return textHeight.getValueString();
+	}
+
+	@Override
 	public int getStyle() {
 		if (fontStyle.isDefault()) {
 			return getTextModel().getStyle();
