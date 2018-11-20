@@ -127,6 +127,10 @@ public class FrameBox extends OSFixJFrame {
 		GUIFrame.updateUI();
 	}
 
+	public static final boolean isSelected(Entity ent) {
+		return (ent == selectedEntity);
+	}
+
 	public void setEntity(Entity ent) {}
 	public void updateValues(double simTime) {}
 
