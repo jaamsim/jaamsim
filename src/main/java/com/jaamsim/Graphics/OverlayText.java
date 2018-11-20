@@ -248,7 +248,7 @@ public class OverlayText extends OverlayEntity implements TextEntity {
 	@Override
 	public double getTextHeight() {
 		if (textHeight.isDefault()) {
-			return getTextModel().getTextHeight();
+			return getTextModel().getTextHeightInPixels();
 		}
 		return textHeight.getValue();
 	}
