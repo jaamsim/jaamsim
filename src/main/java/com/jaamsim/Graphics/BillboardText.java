@@ -16,6 +16,7 @@
  */
 package com.jaamsim.Graphics;
 
+import com.jaamsim.units.DimensionlessUnit;
 
 /**
  * BillboardText is a DisplayEntity used to display billboarded text labels
@@ -26,6 +27,7 @@ public class BillboardText extends Text {
 
 	{
 		// Set the default text height to 10 pixels
+		textHeight.setUnitType(DimensionlessUnit.class);
 		textHeight.setDefaultValue(10.0);
 
 		// Alignment input is ignored
