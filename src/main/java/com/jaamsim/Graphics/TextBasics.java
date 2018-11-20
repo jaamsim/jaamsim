@@ -49,7 +49,7 @@ import com.jogamp.newt.event.KeyEvent;
  * @author Harry King
  *
  */
-public abstract class TextBasics extends DisplayEntity {
+public abstract class TextBasics extends DisplayEntity implements TextEntity {
 
 	@Keyword(description = "The font to be used for the text.",
 	         exampleList = { "Arial" })
@@ -441,6 +441,7 @@ public abstract class TextBasics extends DisplayEntity {
 		return (TextModel) displayModelListInput.getValue().get(0);
 	}
 
+	@Override
 	public String getFontName() {
 		if (fontName.isDefault()) {
 			return getTextModel().getFontName();
@@ -448,6 +449,7 @@ public abstract class TextBasics extends DisplayEntity {
 		return fontName.getChoice();
 	}
 
+	@Override
 	public double getTextHeight() {
 		if (textHeight.isDefault()) {
 			return getTextModel().getTextHeight();
@@ -455,6 +457,7 @@ public abstract class TextBasics extends DisplayEntity {
 		return textHeight.getValue();
 	}
 
+	@Override
 	public int getStyle() {
 		if (fontStyle.isDefault()) {
 			return getTextModel().getStyle();
@@ -462,10 +465,12 @@ public abstract class TextBasics extends DisplayEntity {
 		return TextModel.getStyle(fontStyle.getValue());
 	}
 
+	@Override
 	public boolean isBold() {
 		return TextModel.isBold(getStyle());
 	}
 
+	@Override
 	public boolean isItalic() {
 		return TextModel.isItalic(getStyle());
 	}
@@ -474,6 +479,7 @@ public abstract class TextBasics extends DisplayEntity {
 		return new TessFontKey(getFontName(), getStyle());
 	}
 
+	@Override
 	public Color4d getFontColor() {
 		if (fontColor.isDefault()) {
 			return getTextModel().getFontColor();
@@ -481,6 +487,7 @@ public abstract class TextBasics extends DisplayEntity {
 		return fontColor.getValue();
 	}
 
+	@Override
 	public boolean getDropShadow() {
 		if (dropShadow.isDefault()) {
 			return getTextModel().getDropShadow();
@@ -488,6 +495,7 @@ public abstract class TextBasics extends DisplayEntity {
 		return dropShadow.getValue();
 	}
 
+	@Override
 	public Color4d getDropShadowColor() {
 		if (dropShadowColor.isDefault()) {
 			return getTextModel().getDropShadowColor();
@@ -495,6 +503,7 @@ public abstract class TextBasics extends DisplayEntity {
 		return dropShadowColor.getValue();
 	}
 
+	@Override
 	public Vec3d getDropShadowOffset() {
 		if (dropShadowOffset.isDefault()) {
 			return getTextModel().getDropShadowOffset();
