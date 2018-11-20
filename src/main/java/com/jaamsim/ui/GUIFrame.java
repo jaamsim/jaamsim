@@ -1490,6 +1490,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 				if (!(selectedEntity instanceof TextEntity))
 					return;
 				final TextEntity textEnt = (TextEntity) selectedEntity;
+				final String presentColourName = ColourInput.toString(textEnt.getFontColor());
 				ScrollablePopupMenu fontMenu = new ScrollablePopupMenu();
 
 				ActionListener fontActionListener = new ActionListener() {
@@ -1528,7 +1529,13 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 						}
 					}
 					@Override
-					public void mouseExited(MouseEvent e) {}
+					public void mouseExited(MouseEvent e) {
+						KeywordIndex kw = InputAgent.formatInput("FontColour", presentColourName);
+						Color4d col = Input.parseColour(kw);
+						if (!col.equals(textEnt.getFontColor())) {
+							InputAgent.storeAndExecute(new KeywordCommand((Entity)textEnt, kw));
+						}
+					}
 				};
 
 				final ActionListener chooserActionListener = new ActionListener() {
