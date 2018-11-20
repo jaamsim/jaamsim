@@ -431,7 +431,7 @@ public class TextModel extends DisplayModel {
 
 			String text = labelObservee.getCachedText();
 			IntegerVector pos = labelObservee.getScreenPosition();
-			int height = labelObservee.getTextHeight();
+			int height = (int) labelObservee.getTextHeight();
 			boolean alignRight = labelObservee.getAlignRight();
 			boolean alignBottom = labelObservee.getAlignBottom();
 			Color4d color = labelObservee.getFontColor();

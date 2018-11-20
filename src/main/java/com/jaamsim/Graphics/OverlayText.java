@@ -45,7 +45,7 @@ import com.jaamsim.units.Unit;
  * @author Harry King
  *
  */
-public class OverlayText extends OverlayEntity {
+public class OverlayText extends OverlayEntity implements TextEntity {
 
 	@Keyword(description = "The fixed and variable text to be displayed. If spaces are included, "
 	                     + "enclose the text in single quotes. If variable text is to be "
@@ -237,6 +237,7 @@ public class OverlayText extends OverlayEntity {
 		return (TextModel) displayModelListInput.getValue().get(0);
 	}
 
+	@Override
 	public String getFontName() {
 		if (fontName.isDefault()) {
 			return getTextModel().getFontName();
@@ -244,13 +245,15 @@ public class OverlayText extends OverlayEntity {
 		return fontName.getChoice();
 	}
 
-	public int getTextHeight() {
+	@Override
+	public double getTextHeight() {
 		if (textHeight.isDefault()) {
-			return (int) getTextModel().getTextHeight();
+			return getTextModel().getTextHeight();
 		}
 		return textHeight.getValue();
 	}
 
+	@Override
 	public int getStyle() {
 		if (fontStyle.isDefault()) {
 			return getTextModel().getStyle();
@@ -262,6 +265,7 @@ public class OverlayText extends OverlayEntity {
 		return new TessFontKey(getFontName(), getStyle());
 	}
 
+	@Override
 	public Color4d getFontColor() {
 		if (fontColor.isDefault()) {
 			return getTextModel().getFontColor();
@@ -269,6 +273,7 @@ public class OverlayText extends OverlayEntity {
 		return fontColor.getValue();
 	}
 
+	@Override
 	public boolean getDropShadow() {
 		if (dropShadow.isDefault()) {
 			return getTextModel().getDropShadow();
@@ -276,6 +281,7 @@ public class OverlayText extends OverlayEntity {
 		return dropShadow.getValue();
 	}
 
+	@Override
 	public Color4d getDropShadowColor() {
 		if (dropShadowColor.isDefault()) {
 			return getTextModel().getDropShadowColor();
@@ -283,11 +289,22 @@ public class OverlayText extends OverlayEntity {
 		return dropShadowColor.getValue();
 	}
 
+	@Override
 	public Vec3d getDropShadowOffset() {
 		if (dropShadowOffset.isDefault()) {
 			return getTextModel().getDropShadowOffset();
 		}
 		return dropShadowOffset.getValue();
+	}
+
+	@Override
+	public boolean isBold() {
+		return TextModel.isBold(getStyle());
+	}
+
+	@Override
+	public boolean isItalic() {
+		return TextModel.isItalic(getStyle());
 	}
 
 }
