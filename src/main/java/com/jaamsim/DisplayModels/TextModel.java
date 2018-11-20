@@ -226,6 +226,18 @@ public class TextModel extends DisplayModel {
 		return textHeightInPixels.getValue();
 	}
 
+	public String getTextHeightString() {
+		if (textHeight.isDefault())
+			return textHeight.getDefaultString();
+		return textHeight.getValueString();
+	}
+
+	public String getTextHeightInPixelsString() {
+		if (textHeightInPixels.isDefault())
+			return textHeightInPixels.getDefaultString();
+		return textHeightInPixels.getValueString();
+	}
+
 	public String getFontName() {
 		return fontName.getChoice();
 	}
