@@ -32,6 +32,7 @@ import com.jaamsim.datatypes.IntegerVector;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.Input;
+import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.StringChoiceInput;
 import com.jaamsim.input.StringListInput;
@@ -62,6 +63,11 @@ public class TextModel extends DisplayModel {
 	@Keyword(description = "The height of the text as displayed in the view window.",
 	         exampleList = {"15 m"})
 	protected final ValueInput textHeight;
+
+	@Keyword(description = "The height of the text in pixels, used by billboard text and "
+	                     + "overlay text.",
+	         exampleList = {"15"})
+	protected final IntegerInput textHeightInPixels;
 
 	@Keyword(description = "The font styles to be applied to the text, e.g. Bold, Italic. ",
 	         exampleList = { "Bold" })
@@ -115,6 +121,10 @@ public class TextModel extends DisplayModel {
 		textHeight.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		textHeight.setUnitType(DistanceUnit.class);
 		this.addInput(textHeight);
+
+		textHeightInPixels = new IntegerInput("TextHeightInPixels", FONT, 10);
+		textHeightInPixels.setValidRange(0, Integer.MAX_VALUE);
+		this.addInput(textHeightInPixels);
 
 		fontColor = new ColourInput("FontColour", FONT, ColourInput.BLACK);
 		this.addInput(fontColor);
@@ -210,6 +220,10 @@ public class TextModel extends DisplayModel {
 
 	public double getTextHeight() {
 		return textHeight.getValue();
+	}
+
+	public int getTextHeightInPixels() {
+		return textHeightInPixels.getValue();
 	}
 
 	public String getFontName() {
