@@ -385,4 +385,9 @@ private static void initColors() {
 		return list;
 	}
 
+	@Override
+	public String toString() {
+		return toString(value);
+	}
+
 }
