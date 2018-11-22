@@ -101,7 +101,7 @@ public class Text extends TextBasics {
 		super.updateForInput(in);
 
 		if (in == formatText) {
-			setSavedText(formatText.getValue());
+			setText(formatText.getValue());
 			return;
 		}
 
@@ -124,7 +124,7 @@ public class Text extends TextBasics {
 	@Override
 	public void acceptEdits() {
 		super.acceptEdits();
-		KeywordIndex kw = InputAgent.formatArgs("Format", getEditText());
+		KeywordIndex kw = InputAgent.formatArgs("Format", getText());
 		InputAgent.storeAndExecute(new KeywordCommand(this, kw));
 	}
 
@@ -132,7 +132,7 @@ public class Text extends TextBasics {
 
 		// If the object is selected, show the editable text
 		if (isEditMode())
-			return getEditText();
+			return getText();
 
 		double siFactor = 1.0d;
 		if (unit.getValue() != null)

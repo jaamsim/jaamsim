@@ -60,10 +60,10 @@ public class EntityLabel extends TextBasics {
 		if (in == targetEntity) {
 			DisplayEntity ent = targetEntity.getValue();
 			if (ent == null) {
-				setSavedText("ERROR");
+				setText("ERROR");
 				return;
 			}
-			setSavedText(ent.getName());
+			setText(ent.getName());
 			return;
 		}
 
@@ -77,7 +77,7 @@ public class EntityLabel extends TextBasics {
 	public void acceptEdits() {
 		try {
 			// Rename both the target entity and the label
-			InputAgent.renameEntity(targetEntity.getValue(), getEditText());
+			InputAgent.renameEntity(targetEntity.getValue(), getText());
 			super.acceptEdits();
 		}
 		catch (ErrorException e) {
@@ -92,7 +92,7 @@ public class EntityLabel extends TextBasics {
 
 	public void updateForTargetNameChange() {
 		String targetName = targetEntity.getValue().getName();
-		setSavedText(targetName);
+		setText(targetName);
 		this.resizeForText();
 	}
 

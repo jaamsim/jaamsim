@@ -258,7 +258,7 @@ public abstract class TextBasics extends DisplayEntity implements TextEntity, Ed
 	}
 
 	public String getCachedText() {
-		return getEditText();
+		return getText();
 	}
 
 	/**
@@ -272,7 +272,7 @@ public abstract class TextBasics extends DisplayEntity implements TextEntity, Ed
 		TessFontKey fontKey = getTessFontKey();
 
 		// Set up the transformation from global coordinates to the entity's coordinates
-		Vec3d textsize = RenderManager.inst().getRenderedStringSize(fontKey, height, getEditText());
+		Vec3d textsize = RenderManager.inst().getRenderedStringSize(fontKey, height, getText());
 		Transform trans = getEntityTransForSize(textsize);
 
 		// Calculate the entity's coordinates for the mouse click
@@ -281,14 +281,14 @@ public abstract class TextBasics extends DisplayEntity implements TextEntity, Ed
 
 		// Position the insertion point where the text was clicked
 		double insert = entityCoord.x + 0.5d*textsize.x;
-		int pos = RenderManager.inst().getRenderedStringPosition(fontKey, height, getEditText(), insert);
+		int pos = RenderManager.inst().getRenderedStringPosition(fontKey, height, getText(), insert);
 		return pos;
 	}
 
 	public Vec3d getTextSize() {
 		double height = getTextHeight();
 		TessFontKey fontKey = getTessFontKey();
-		return RenderManager.inst().getRenderedStringSize(fontKey, height, getEditText());
+		return RenderManager.inst().getRenderedStringSize(fontKey, height, getText());
 	}
 
 	public void resizeForText() {

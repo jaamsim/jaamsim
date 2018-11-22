@@ -54,7 +54,7 @@ public class InputValue extends TextBasics implements SampleProvider {
 	}
 
 	public InputValue() {
-		setSavedText(valInput.getDefaultString());
+		setText(valInput.getDefaultString());
 	}
 
 	@Override
@@ -64,15 +64,15 @@ public class InputValue extends TextBasics implements SampleProvider {
 		if (in == unitType) {
 			setUnitType(unitType.getUnitType());
 			if (valInput.isDefault())
-				setSavedText(valInput.getDefaultString());
+				setText(valInput.getDefaultString());
 			return;
 		}
 
 		if (in == valInput) {
 			if (!suppressUpdate)
-				setSavedText(valInput.getValueString());
+				setText(valInput.getValueString());
 			if (valInput.isDefault())
-				setSavedText(valInput.getDefaultString());
+				setText(valInput.getDefaultString());
 			suppressUpdate = false;
 			return;
 		}
@@ -86,7 +86,7 @@ public class InputValue extends TextBasics implements SampleProvider {
 	public void acceptEdits() {
 		try {
 			suppressUpdate = true;
-			KeywordIndex kw = InputAgent.formatInput(valInput.getKeyword(), getEditText());
+			KeywordIndex kw = InputAgent.formatInput(valInput.getKeyword(), getText());
 			InputAgent.storeAndExecute(new KeywordCommand(this, kw));
 			super.acceptEdits();
 		}

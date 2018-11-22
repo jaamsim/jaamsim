@@ -42,7 +42,7 @@ public class InputBox extends TextBasics {
 	@Override
 	public void setInputsForDragAndDrop() {
 		super.setInputsForDragAndDrop();
-		this.setSavedText(this.getName());
+		this.setText(this.getName());
 	}
 
 	@Override
@@ -62,7 +62,7 @@ public class InputBox extends TextBasics {
 			return;
 		}
 		try {
-			KeywordIndex kw = InputAgent.formatInput(target.getValue(), getEditText());
+			KeywordIndex kw = InputAgent.formatInput(target.getValue(), getText());
 			InputAgent.storeAndExecute(new KeywordCommand(target.getTargetEntity(), kw));
 			super.acceptEdits();
 		}
@@ -86,9 +86,9 @@ public class InputBox extends TextBasics {
 			String str = targetInput.getValueString();
 			if (str.isEmpty())
 				str = targetInput.getDefaultString();
-			this.setSavedText(str);
+			this.setText(str);
 		}
-		return getEditText();
+		return getText();
 	}
 
 }
