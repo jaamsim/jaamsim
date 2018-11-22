@@ -43,7 +43,7 @@ import com.jogamp.newt.event.KeyEvent;
  * @author Harry King
  *
  */
-public abstract class TextBasics extends DisplayEntity implements TextEntity {
+public abstract class TextBasics extends DisplayEntity implements TextEntity, EditableText {
 
 	@Keyword(description = "The font to be used for the text.",
 	         exampleList = { "Arial" })
@@ -132,27 +132,51 @@ public abstract class TextBasics extends DisplayEntity implements TextEntity {
 	}
 
 	public void setSavedText(String str) {
+		setText(str);
+	}
+
+	@Override
+	public void setText(String str) {
 		editableText.setText(str);
 	}
 
 	public String getEditText() {
+		return getText();
+	}
+
+	@Override
+	public String getText() {
 		return editableText.getText();
 	}
 
-	protected void acceptEdits() {
+	@Override
+	public void acceptEdits() {
 		editableText.acceptEdits();
 	}
 
-	protected void cancelEdits() {
+	@Override
+	public void cancelEdits() {
 		editableText.cancelEdits();
 	}
 
+	@Override
 	public int handleEditKeyPressed(int keyCode, char keyChar, boolean shift, boolean control, boolean alt) {
 		return editableText.handleEditKeyPressed(keyCode, keyChar, shift, control, alt);
 	}
 
+	@Override
 	public int handleEditKeyReleased(int keyCode, char keyChar, boolean shift, boolean control, boolean alt) {
 		return editableText.handleEditKeyReleased(keyCode, keyChar, shift, control, alt);
+	}
+
+	@Override
+	public void setInsertPosition(int pos, boolean shift) {
+		editableText.setInsertPosition(pos, shift);
+	}
+
+	@Override
+	public void selectPresentWord() {
+		editableText.selectPresentWord();
 	}
 
 	@Override
@@ -277,18 +301,22 @@ public abstract class TextBasics extends DisplayEntity implements TextEntity {
 		InputAgent.apply(this, InputAgent.formatVec3dInput("Size", newSize, DistanceUnit.class));
 	}
 
+	@Override
 	public boolean isEditMode() {
 		return editableText.isEditMode();
 	}
 
+	@Override
 	public void setEditMode(boolean bool) {
 		editableText.setEditMode(bool);
 	}
 
+	@Override
 	public int getInsertPosition() {
 		return editableText.getInsertPosition();
 	}
 
+	@Override
 	public int getNumberSelected() {
 		return editableText.getNumberSelected();
 	}
