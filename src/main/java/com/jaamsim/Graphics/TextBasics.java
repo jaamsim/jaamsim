@@ -131,17 +131,9 @@ public abstract class TextBasics extends DisplayEntity implements TextEntity, Ed
 		}
 	}
 
-	public void setSavedText(String str) {
-		setText(str);
-	}
-
 	@Override
 	public void setText(String str) {
 		editableText.setText(str);
-	}
-
-	public String getEditText() {
-		return getText();
 	}
 
 	@Override
