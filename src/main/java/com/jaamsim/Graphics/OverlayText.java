@@ -19,9 +19,11 @@ package com.jaamsim.Graphics;
 
 import java.util.ArrayList;
 
+import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.DisplayModels.TextModel;
 import com.jaamsim.StringProviders.StringProvConstant;
 import com.jaamsim.StringProviders.StringProvInput;
+import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.EntityInput;
@@ -29,6 +31,7 @@ import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
+import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.StringChoiceInput;
 import com.jaamsim.input.StringInput;
 import com.jaamsim.input.StringListInput;
@@ -40,13 +43,14 @@ import com.jaamsim.render.TessFontKey;
 import com.jaamsim.ui.GUIFrame;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
+import com.jogamp.newt.event.KeyEvent;
 
 /**
  * OverylayText displays written text as a 2D overlay on a View window.
  * @author Harry King
  *
  */
-public class OverlayText extends OverlayEntity implements TextEntity {
+public class OverlayText extends OverlayEntity implements TextEntity, EditableText {
 
 	@Keyword(description = "The fixed and variable text to be displayed. If spaces are included, "
 	                     + "enclose the text in single quotes. If variable text is to be "
@@ -111,6 +115,7 @@ public class OverlayText extends OverlayEntity implements TextEntity {
 	private final Vec3dInput dropShadowOffset;
 
 	private String renderText;
+	private final EditableTextDelegate editableText;
 
 	{
 		displayModelListInput.addValidClass(TextModel.class);
@@ -169,11 +174,18 @@ public class OverlayText extends OverlayEntity implements TextEntity {
 		this.addInput(dropShadowOffset);
 	}
 
-	public OverlayText() {}
+	public OverlayText() {
+		editableText = new EditableTextDelegate();
+	}
 
 	@Override
 	public void updateForInput(Input<?> in) {
 		super.updateForInput(in);
+
+		if (in == formatText) {
+			setText(formatText.getValue());
+			return;
+		}
 
 		if (in == unitType) {
 			Class<? extends Unit> ut = unitType.getUnitType();
@@ -198,7 +210,109 @@ public class OverlayText extends OverlayEntity implements TextEntity {
 		InputAgent.applyArgs(this, "Format", this.getName());
 	}
 
+	@Override
+	public void setText(String str) {
+		editableText.setText(str);
+	}
+
+	@Override
+	public String getText() {
+		return editableText.getText();
+	}
+
+	@Override
+	public void acceptEdits() {
+		editableText.acceptEdits();
+		KeywordIndex kw = InputAgent.formatArgs("Format", getText());
+		InputAgent.storeAndExecute(new KeywordCommand(this, kw));
+	}
+
+	@Override
+	public void cancelEdits() {
+		editableText.cancelEdits();
+	}
+
+	@Override
+	public boolean isEditMode() {
+		return editableText.isEditMode();
+	}
+
+	@Override
+	public void setEditMode(boolean bool) {
+		editableText.setEditMode(bool);
+	}
+
+	@Override
+	public int getInsertPosition() {
+		return editableText.getInsertPosition();
+	}
+
+	@Override
+	public int getNumberSelected() {
+		return editableText.getNumberSelected();
+	}
+
+	@Override
+	public int handleEditKeyPressed(int keyCode, char keyChar, boolean shift, boolean control, boolean alt) {
+		return editableText.handleEditKeyPressed(keyCode, keyChar, shift, control, alt);
+	}
+
+	@Override
+	public int handleEditKeyReleased(int keyCode, char keyChar, boolean shift, boolean control, boolean alt) {
+		return editableText.handleEditKeyReleased(keyCode, keyChar, shift, control, alt);
+	}
+
+	@Override
+	public void setInsertPosition(int pos, boolean shift) {
+		editableText.setInsertPosition(pos, shift);
+	}
+
+	@Override
+	public void selectPresentWord() {
+		editableText.selectPresentWord();
+	}
+
+	@Override
+	public void handleKeyPressed(int keyCode, char keyChar, boolean shift, boolean control, boolean alt) {
+
+		// If F2 is pressed, set edit mode
+		if (keyCode == KeyEvent.VK_F2) {
+			setEditMode(true);
+			RenderManager.redraw();
+			return;
+		}
+
+		// If not in edit mode, apply the normal action for the keystroke
+		if (!isEditMode()) {
+			super.handleKeyPressed(keyCode, keyChar, shift, control, alt);
+			return;
+		}
+
+		// If in edit mode, the apply the keystroke to the text
+		int result = handleEditKeyPressed(keyCode, keyChar, shift, control, alt);
+		if (result == ACCEPT_EDITS) {
+			acceptEdits();
+		}
+		else if (result == CANCEL_EDITS) {
+			cancelEdits();
+		}
+		RenderManager.redraw();
+	}
+
+	@Override
+	public void handleKeyReleased(int keyCode, char keyChar, boolean shift, boolean control, boolean alt) {
+		if (isEditMode()) {
+			handleEditKeyReleased(keyCode, keyChar, shift, control, alt);
+			return;
+		}
+		super.handleKeyReleased(keyCode, keyChar, shift, control, alt);
+	}
+
 	public String getRenderText(double simTime) {
+
+		// If the object is selected, show the editable text
+		if (isEditMode())
+			return getText();
 
 		double siFactor = 1.0d;
 		if (unit.getValue() != null)
