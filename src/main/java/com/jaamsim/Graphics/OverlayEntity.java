@@ -16,10 +16,15 @@
  */
 package com.jaamsim.Graphics;
 
+import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.datatypes.IntegerVector;
 import com.jaamsim.input.BooleanInput;
+import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.IntegerListInput;
 import com.jaamsim.input.Keyword;
+import com.jaamsim.input.KeywordIndex;
+import com.jaamsim.math.Vec3d;
+import com.jogamp.newt.event.KeyEvent;
 
 /**
  * OverlayEntity is the superclass for DisplayEntities that have 2D overlay graphics instead of 3D graphics.  Overlay graphics
@@ -68,6 +73,44 @@ public abstract class OverlayEntity extends DisplayEntity {
 
 	public IntegerVector getScreenPosition() {
 		return screenPosition.getValue();
+	}
+
+	@Override
+	public void dragged(Vec3d newPos) {}
+
+	@Override
+	public void handleKeyPressed(int keyCode, char keyChar, boolean shift, boolean control, boolean alt) {
+		if (!isMovable())
+			return;
+
+		IntegerVector pos = screenPosition.getValue();
+		int x = pos.get(0);
+		int y = pos.get(1);
+
+		switch (keyCode) {
+
+			case KeyEvent.VK_LEFT:
+				x += getAlignRight() ? 1 : -1;
+				break;
+
+			case KeyEvent.VK_RIGHT:
+				x += getAlignRight() ? -1 : 1;
+				break;
+
+			case KeyEvent.VK_UP:
+				y += getAlignBottom() ? 1 : -1;
+				break;
+
+			case KeyEvent.VK_DOWN:
+				y += getAlignBottom() ? -1 : 1;
+				break;
+
+			default:
+				return;
+		}
+
+		KeywordIndex kw = InputAgent.formatIntegers(screenPosition.getKeyword(), x, y);
+		InputAgent.storeAndExecute(new KeywordCommand(this, kw));
 	}
 
 }
