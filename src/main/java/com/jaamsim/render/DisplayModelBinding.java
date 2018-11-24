@@ -116,7 +116,12 @@ public abstract class DisplayModelBinding {
 		rotateHandlePoints = RenderUtils.transformPoints(mat, ROTATE_POINTS, 0);
 	}
 
-	// Collect the proxies for the selection box
+	/**
+	 * Collects the proxies for the green box and handles that are shown around the selected
+	 * entity.
+	 * @param simTime - present simulation time
+	 * @param out - array to which the render proxies are appended
+	 */
 	public void collectSelectionProxies(double simTime, ArrayList<RenderProxy> out) {
 		collectSelectionBox(simTime, out);
 	}

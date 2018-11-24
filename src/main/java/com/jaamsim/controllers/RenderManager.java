@@ -401,6 +401,7 @@ public class RenderManager implements DragSourceListener {
 
 				long updateNanos = System.nanoTime();
 
+				// Collect the render proxies for each entity
 				int totalBindings = 0;
 				for (int i = 0; i < allEnts.size(); i++) {
 					DisplayEntity de;
@@ -429,7 +430,8 @@ public class RenderManager implements DragSourceListener {
 					}
 				}
 
-				// Collect selection proxies second so they always appear on top
+				// Collect the proxies for the green box that is shown around the selected entity
+				// (collected second so they always appear on top)
 				for (DisplayModelBinding binding : selectedBindings) {
 					try {
 						binding.collectSelectionProxies(renderTime, cachedScene);
