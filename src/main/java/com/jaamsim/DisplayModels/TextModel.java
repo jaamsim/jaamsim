@@ -621,11 +621,6 @@ public class TextModel extends DisplayModel {
 			cachedProxies.add(new BillboardStringProxy(text, fk, color, height, pos, 0, 0, vi));
 			out.addAll(cachedProxies);
 		}
-
-		@Override
-		protected void collectSelectionBox(double simTime, ArrayList<RenderProxy> out) {
-			// No selection widgets for now
-		}
 	}
 
 }
