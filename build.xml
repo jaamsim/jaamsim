@@ -53,7 +53,7 @@ limitations under the License.
     <mkdir dir="${class.dir}"/>
 
     <javac srcdir="${src.dir}" destdir="${class.dir}"
-           source="1.7" target="1.7"
+           source="1.8" target="1.8"
            debug="true"
            debuglevel="lines,source"
            deprecation="on"
