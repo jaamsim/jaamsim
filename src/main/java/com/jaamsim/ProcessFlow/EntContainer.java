@@ -27,6 +27,11 @@ import com.jaamsim.states.StateUser;
 public interface EntContainer extends StateUser {
 
 	/**
+	 * Updates the container's parameters prior to adding the specified entity.
+	 */
+	public void registerEntity(DisplayEntity ent);
+
+	/**
 	 * Adds the specified entity to the container.
 	 */
 	public void addEntity(DisplayEntity ent);

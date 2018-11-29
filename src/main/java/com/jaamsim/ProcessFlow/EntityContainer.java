@@ -135,9 +135,19 @@ public class EntityContainer extends SimEntity implements EntContainer {
 	}
 
 	@Override
+	public void registerEntity(DisplayEntity ent) {
+		container.registerEntity(ent);
+	}
+
+	@Override
 	public void addEntity(DisplayEntity ent) {
 		double simTime = getSimTime();
 
+		// Register the entity so that the outputs are updated before the expressions for priority
+		// and match value are evaluated
+		registerEntity(ent);
+
+		// Determine the priority and match value for the received entity
 		int pri = (int) priority.getValue().getNextSample(simTime);
 
 		String m = null;

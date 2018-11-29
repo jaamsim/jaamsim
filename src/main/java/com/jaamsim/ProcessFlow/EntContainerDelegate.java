@@ -45,6 +45,12 @@ public class EntContainerDelegate implements EntContainer {
 	}
 
 	@Override
+	public void registerEntity(DisplayEntity ent) {
+		lastEntity = ent;
+		numberAdded++;
+	}
+
+	@Override
 	public void addEntity(DisplayEntity ent) {}
 
 	/**
@@ -57,9 +63,9 @@ public class EntContainerDelegate implements EntContainer {
 	 */
 	public void addEntity(DisplayEntity ent, String type, int pri, boolean fifo, double simTime) {
 
-		// Register the entity
-		lastEntity = ent;
-		numberAdded++;
+		// Ensure that the entity has been registered
+		if (ent != lastEntity)
+			ent.error("An entity must be registered by the container before it can be added.");
 
 		// Build the entry for the entity
 		long n = this.getTotalNumberAdded();
