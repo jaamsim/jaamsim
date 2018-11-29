@@ -31,7 +31,9 @@ public class EditableTextDelegate implements EditableText {
 	private int insertPos;        // position in the string where new text will be inserted
 	private int numSelected;      // number of characters selected (positive to the right of the insertion position)
 
-	public EditableTextDelegate() {}
+	public EditableTextDelegate() {
+		setText("");
+	}
 
 	@Override
 	public void setText(String str) {
