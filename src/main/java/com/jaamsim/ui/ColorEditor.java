@@ -51,7 +51,6 @@ public class ColorEditor extends ChooserEditor {
 
 			// Present colour
 			Color4d col = (Color4d) input.getValue();
-			String colName = ColourInput.getColorName(col);
 
 			ScrollablePopupMenu menu = new ScrollablePopupMenu();
 			Component button = (Component)e.getSource();
@@ -95,7 +94,7 @@ public class ColorEditor extends ChooserEditor {
 			// Scroll to show the present colour
 			if (input.isDefault())
 				return;
-			int index = ColourInput.namedColourList.indexOf(colName);
+			int index = ColourInput.namedColourList.indexOf(col);
 			if (index != -1) {
 				menu.ensureIndexIsVisible(index + 1);
 			}
