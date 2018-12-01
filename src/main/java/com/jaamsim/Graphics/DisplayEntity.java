@@ -836,6 +836,20 @@ public class DisplayEntity extends Entity {
 		return ret;
 	}
 
+	/**
+	 * Returns the first display model for the entity.
+	 * Null is returned if the entity does not have a display model.
+	 * @return first DisplayModel
+	 */
+	public DisplayModel getDisplayModel() {
+		ArrayList<DisplayModel> list = displayModelListInput.getValue();
+		if (displayModelListInput.isDefault())
+			list = displayModelListInput.getDefaultValue();
+		if (list == null || list.isEmpty())
+			return null;
+		return list.get(0);
+	}
+
 	public ArrayList<DisplayModel> getDisplayModelList() {
 		return displayModelList;
 	}
