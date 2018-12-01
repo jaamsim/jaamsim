@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2011 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2018 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -76,6 +77,12 @@ public class ShapeModel extends DisplayModel {
 	         exampleList = { "FALSE" })
 	private final BooleanInput filled;
 
+	@Keyword(description = "Determines whether or not the shape is outlined. "
+	                     + "If TRUE, it is outlined with a uniform colour. "
+	                     + "If FALSE, it is drawn without an outline.",
+	         exampleList = {"FALSE"})
+	private final BooleanInput outlined;
+
 	@Keyword(description = "If the value is true, then the display model outline will be a bold line. Otherwise the outline " +
 	                "will be one pixel wide line.",
 	         exampleList = { "TRUE" })
@@ -95,6 +102,9 @@ public class ShapeModel extends DisplayModel {
 
 		filled = new BooleanInput("Filled", GRAPHICS, true);
 		this.addInput(filled);
+
+		outlined = new BooleanInput("Outlined", GRAPHICS, true);
+		this.addInput(outlined);
 
 		bold = new BooleanInput("Bold", GRAPHICS, false);
 		this.addInput(bold);
@@ -130,6 +140,7 @@ public class ShapeModel extends DisplayModel {
 		private Color4d fillColourCache;
 		private Color4d outlineColourCache;
 		private boolean filledCache;
+		private boolean outlinedCache;
 		private boolean boldCache;
 
 		public Binding(Entity ent, DisplayModel dm) {
@@ -148,6 +159,7 @@ public class ShapeModel extends DisplayModel {
 			Color4d fc = fillColour.getValue();
 			Color4d oc =  outlineColour.getValue();
 			boolean fill = filled.getValue();
+			boolean outln = outlined.getValue();
 			boolean bld = bold.getValue();
 
 			boolean dirty = false;
@@ -160,6 +172,7 @@ public class ShapeModel extends DisplayModel {
 			dirty = dirty || fillColourCache != fc;
 			dirty = dirty || outlineColourCache != oc;
 			dirty = dirty || filledCache != fill;
+			dirty = dirty || outlinedCache != outln;
 			dirty = dirty || boldCache != bld;
 
 			transCache = trans;
@@ -170,6 +183,7 @@ public class ShapeModel extends DisplayModel {
 			fillColourCache = fc;
 			outlineColourCache = oc;
 			filledCache = fill;
+			outlinedCache = outln;
 			boldCache = bld;
 
 			if (cachedProxies != null && !dirty) {
@@ -220,7 +234,7 @@ public class ShapeModel extends DisplayModel {
 			}
 
 			// Gather some inputs
-			if (isTagVisible(ShapeModel.TAG_OUTLINES))
+			if (outlinedCache && isTagVisible(ShapeModel.TAG_OUTLINES))
 			{
 				Color4d colour = getTagColor(ShapeModel.TAG_OUTLINES, outlineColourCache);
 				cachedProxies.add(new PolygonProxy(points, trans, scale, colour, true, (boldCache ? 2 : 1), getVisibilityInfo(), pickingID));
