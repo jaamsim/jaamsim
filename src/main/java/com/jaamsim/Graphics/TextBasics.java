@@ -314,7 +314,7 @@ public abstract class TextBasics extends DisplayEntity implements TextEntity, Ed
 	}
 
 	public TextModel getTextModel() {
-		return (TextModel) displayModelListInput.getValue().get(0);
+		return (TextModel) getDisplayModel();
 	}
 
 	@Override
