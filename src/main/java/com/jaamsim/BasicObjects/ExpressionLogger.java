@@ -154,8 +154,13 @@ public class ExpressionLogger extends Logger implements StateEntityListener {
 		super.startUp();
 
 		// Start tracing the expression values
-		if (valueTraceList.getListSize() > 0)
+		if (valueTraceList.getListSize() > 0) {
+			for (int i=0; i<valueTraceList.getListSize(); i++) {
+				String str = valueTraceList.getValue().get(i).getNextString(getSimTime());
+				lastValueList.set(i, str);
+			}
 			this.doValueTrace();
+		}
 
 		// Start log entries at fixed intervals
 		if (interval.getValue() != null)
