@@ -91,6 +91,7 @@ import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.DisplayModels.TextModel;
 import com.jaamsim.Graphics.BillboardText;
 import com.jaamsim.Graphics.DisplayEntity;
+import com.jaamsim.Graphics.OverlayEntity;
 import com.jaamsim.Graphics.OverlayText;
 import com.jaamsim.Graphics.TextBasics;
 import com.jaamsim.Graphics.TextEntity;
@@ -169,6 +170,9 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 	private JButton smallerText;
 	private ColorIcon colourIcon;
 	private JButton fontColour;
+
+	private JButton increaseZ;
+	private JButton decreaseZ;
 
 	private RoundToggleButton controlStartResume;
 	private ImageIcon runPressedIcon;
@@ -843,6 +847,10 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		// Text alignment buttons
 		buttonBar.add(Box.createRigidArea(gapDim));
 		addTextAlignmentButtons(buttonBar, noMargin);
+
+		// Z-coordinate buttons
+		buttonBar.addSeparator(separatorDim);
+		addZButtons(buttonBar, noMargin);
 	}
 
 	private void addFileNewButton(JToolBar buttonBar, Insets margin) {
@@ -1621,6 +1629,66 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		});
 
 		buttonBar.add( fontColour );
+	}
+
+	private void addZButtons(JToolBar buttonBar, Insets margin) {
+
+		ActionListener actionListener = new ActionListener() {
+
+			@Override
+			public void actionPerformed( ActionEvent event ) {
+				if (!(selectedEntity instanceof DisplayEntity)
+						|| selectedEntity instanceof OverlayEntity)
+					return;
+				DisplayEntity dispEnt = (DisplayEntity) selectedEntity;
+
+				double delta = Simulation.getSnapGridSpacing()/100.0d;
+				Vec3d pos = dispEnt.getPosition();
+				ArrayList<Vec3d> points = dispEnt.getPoints();
+				Vec3d offset = new Vec3d();
+
+				if (event.getActionCommand().equals("Up")) {
+					pos.z += delta;
+					offset.z += delta;
+				}
+				else if (event.getActionCommand().equals("Down")) {
+					pos.z -= delta;
+					offset.z -= delta;
+				}
+
+				KeywordIndex posKw = InputAgent.formatVec3dInput("Position", pos, DistanceUnit.class);
+				KeywordIndex ptsKw = InputAgent.formatPointsInputs("Points", points, offset);
+				InputAgent.storeAndExecute(new KeywordCommand(dispEnt, posKw, ptsKw));
+				fileSave.requestFocusInWindow();
+			}
+		};
+
+		increaseZ = new JButton(new ImageIcon(
+				GUIFrame.class.getResource("/resources/images/PlusZ-16.png")));
+		increaseZ.setMargin(margin);
+		increaseZ.setFocusPainted(false);
+		increaseZ.setRequestFocusEnabled(false);
+		increaseZ.setToolTipText(formatToolTip("Move Up",
+				"Increases the selected object's z-coordinate by one hundredth of the snap-grid "
+				+ "spacing. By moving the object closer to the camera, it will appear on top of "
+				+ "other objects with smaller z-coordinates."));
+		increaseZ.setActionCommand("Up");
+		increaseZ.addActionListener( actionListener );
+
+		decreaseZ = new JButton(new ImageIcon(
+				GUIFrame.class.getResource("/resources/images/MinusZ-16.png")));
+		decreaseZ.setMargin(margin);
+		decreaseZ.setFocusPainted(false);
+		decreaseZ.setRequestFocusEnabled(false);
+		decreaseZ.setToolTipText(formatToolTip("Move Down",
+				"Decreases the selected object's z-coordinate by one hundredth of the snap-grid "
+				+ "spacing. By moving the object farther from the camera, it will appear below "
+				+ "other objects with larger z-coordinates."));
+		decreaseZ.setActionCommand("Down");
+		decreaseZ.addActionListener( actionListener );
+
+		buttonBar.add( increaseZ );
+		buttonBar.add( decreaseZ );
 	}
 
 	// ******************************************************************************************************
