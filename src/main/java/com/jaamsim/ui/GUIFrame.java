@@ -2542,6 +2542,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 	public void setSelectedEnt(Entity ent) {
 		selectedEntity = ent;
 		updateTextButtons();
+		updateZButtons();
 	}
 
 	public void updateTextButtons() {
@@ -2583,6 +2584,14 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		colourIcon.setFillColor(new Color((float)col.r, (float)col.g, (float)col.b, (float)col.a));
 		colourIcon.setOutlineColor(Color.DARK_GRAY);
 		fontColour.repaint();
+	}
+
+	public void updateZButtons() {
+		boolean bool = selectedEntity instanceof DisplayEntity;
+		bool = bool && !(selectedEntity instanceof OverlayEntity);
+		bool = bool && !(selectedEntity instanceof BillboardText);
+		increaseZ.setEnabled(bool);
+		decreaseZ.setEnabled(bool);
 	}
 
 	private void setTextHeight(String str) {
