@@ -109,6 +109,8 @@ public abstract class OverlayEntity extends DisplayEntity {
 				return;
 		}
 
+		x = Math.max(0, x);
+		y = Math.max(0, y);
 		KeywordIndex kw = InputAgent.formatIntegers(screenPosition.getKeyword(), x, y);
 		InputAgent.storeAndExecute(new KeywordCommand(this, kw));
 	}
