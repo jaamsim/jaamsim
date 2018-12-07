@@ -351,6 +351,13 @@ public class OverlayText extends OverlayEntity implements TextEntity, EditableTe
 
 	}
 
+	@Override
+	public void handleSelectionLost() {
+		if (isEditMode()) {
+			acceptEdits();
+		}
+	}
+
 	public String getCachedText() {
 		return renderText;
 	}
