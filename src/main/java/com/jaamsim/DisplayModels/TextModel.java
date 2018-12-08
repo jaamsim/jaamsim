@@ -578,7 +578,29 @@ public class TextModel extends DisplayModel {
 
 		@Override
 		protected void collectSelectionBox(double simTime, ArrayList<RenderProxy> out) {
-			// No selection widgets for now
+
+			double length = RenderManager.inst().getRenderedStringLength(fkCache, heightCache, textCache);
+			double margin = 0.5d*heightCache;
+			double start = alignRightCache ? posCache.get(0) + length + margin
+					: posCache.get(0) - margin;
+			double end = alignRightCache ? posCache.get(0) - margin
+					: posCache.get(0) + length + margin;
+			double top = posCache.get(1) - margin;
+			double bottom = posCache.get(1) + heightCache + margin;
+
+			ArrayList<Vec2d> rect = new ArrayList<>(8);
+			rect.add(new Vec2d( start, bottom ));
+			rect.add(new Vec2d(   end, bottom ));
+			rect.add(new Vec2d(   end, bottom ));
+			rect.add(new Vec2d(   end, top    ));
+			rect.add(new Vec2d(   end, top    ));
+			rect.add(new Vec2d( start, top    ));
+			rect.add(new Vec2d( start, top    ));
+			rect.add(new Vec2d( start, bottom ));
+
+			OverlayLineProxy outline = new OverlayLineProxy(rect, ColourInput.GREEN,
+					!alignBottomCache, alignRightCache, 1, viCache, labelObservee.getEntityNumber());
+			out.add(outline);
 		}
 	}
 
