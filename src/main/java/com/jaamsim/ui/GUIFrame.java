@@ -91,6 +91,7 @@ import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.DisplayModels.TextModel;
 import com.jaamsim.Graphics.BillboardText;
 import com.jaamsim.Graphics.DisplayEntity;
+import com.jaamsim.Graphics.LineEntity;
 import com.jaamsim.Graphics.OverlayEntity;
 import com.jaamsim.Graphics.OverlayText;
 import com.jaamsim.Graphics.TextBasics;
@@ -173,6 +174,11 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 
 	private JButton increaseZ;
 	private JButton decreaseZ;
+
+	private JToggleButton outline;
+	private JSpinner lineWidth;
+	private ColorIcon lineColourIcon;
+	private JButton lineColour;
 
 	private RoundToggleButton controlStartResume;
 	private ImageIcon runPressedIcon;
@@ -851,6 +857,12 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		// Z-coordinate buttons
 		buttonBar.addSeparator(separatorDim);
 		addZButtons(buttonBar, noMargin);
+
+		// Line buttons
+		buttonBar.addSeparator(separatorDim);
+		addOutlineButton(buttonBar, noMargin);
+		addLineWidthSpinner(buttonBar, noMargin);
+		addLineColourButton(buttonBar, noMargin);
 	}
 
 	private void addFileNewButton(JToolBar buttonBar, Insets margin) {
@@ -1689,6 +1701,203 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 
 		buttonBar.add( increaseZ );
 		buttonBar.add( decreaseZ );
+	}
+
+	private void addOutlineButton(JToolBar buttonBar, Insets margin) {
+		outline = new JToggleButton(new ImageIcon(
+				GUIFrame.class.getResource("/resources/images/Outline-16.png")));
+		outline.setMargin(margin);
+		outline.setFocusPainted(false);
+		outline.setRequestFocusEnabled(false);
+		outline.setToolTipText(formatToolTip("Show Outline", "Shows the outline."));
+		outline.addActionListener( new ActionListener() {
+
+			@Override
+			public void actionPerformed( ActionEvent event ) {
+				if (!(selectedEntity instanceof LineEntity))
+					return;
+				LineEntity lineEnt = (LineEntity) selectedEntity;
+				lineWidth.setEnabled(outline.isSelected());
+				lineColour.setEnabled(outline.isSelected());
+				if (lineEnt.isOutlined() == outline.isSelected())
+					return;
+				KeywordIndex kw = InputAgent.formatBoolean("Outlined", outline.isSelected());
+				InputAgent.storeAndExecute(new KeywordCommand((Entity)lineEnt, kw));
+				fileSave.requestFocusInWindow();
+			}
+		});
+
+		buttonBar.add( outline );
+	}
+
+	private void addLineWidthSpinner(JToolBar buttonBar, Insets margin) {
+		SpinnerNumberModel numberModel = new SpinnerNumberModel(1, 1, 10, 1);
+		lineWidth = new JSpinner(numberModel);
+		lineWidth.addChangeListener(new ChangeListener() {
+
+			@Override
+			public void stateChanged( ChangeEvent e ) {
+				if (!(selectedEntity instanceof LineEntity))
+					return;
+				LineEntity lineEnt = (LineEntity) selectedEntity;
+				int val = (int) lineWidth.getValue();
+				if (val == lineEnt.getLineWidth())
+					return;
+				InputAgent.applyIntegers((Entity)lineEnt, "LineWidth", val);
+			}
+		});
+
+		lineWidth.setToolTipText(formatToolTip("Line Width",
+				"Sets the width of the line in pixels."));
+
+		buttonBar.add( lineWidth );
+	}
+
+	private void addLineColourButton(JToolBar buttonBar, Insets margin) {
+
+		lineColourIcon = new ColorIcon(16, 16);
+		lineColourIcon.setFillColor(Color.LIGHT_GRAY);
+		lineColourIcon.setOutlineColor(Color.LIGHT_GRAY);
+		lineColour = new JButton(lineColourIcon);
+		lineColour.setMargin(margin);
+		lineColour.setFocusPainted(false);
+		lineColour.setRequestFocusEnabled(false);
+		lineColour.setToolTipText(formatToolTip("Line Colour",
+				"Sets the colour of the line."));
+		lineColour.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed( ActionEvent event ) {
+				if (!(selectedEntity instanceof LineEntity))
+					return;
+				final LineEntity lineEnt = (LineEntity) selectedEntity;
+				final Color4d presentColour = lineEnt.getLineColour();
+				ScrollablePopupMenu menu = new ScrollablePopupMenu();
+
+				ActionListener actionListener = new ActionListener() {
+					@Override
+					public void actionPerformed( ActionEvent event ) {
+						if (!(event.getSource() instanceof JMenuItem))
+							return;
+						JMenuItem item = (JMenuItem) event.getSource();
+						setLineColour(lineEnt, item.getText());
+						fileSave.requestFocusInWindow();
+					}
+				};
+
+				MouseListener mouseListener = new MouseListener() {
+					@Override
+					public void mouseClicked(MouseEvent e) {}
+					@Override
+					public void mousePressed(MouseEvent e) {}
+					@Override
+					public void mouseReleased(MouseEvent e) {}
+					@Override
+					public void mouseEntered(MouseEvent e) {
+						if (!(e.getSource() instanceof JMenuItem))
+							return;
+						JMenuItem item = (JMenuItem) e.getSource();
+						setLineColour(lineEnt, item.getText());
+					}
+					@Override
+					public void mouseExited(MouseEvent e) {
+						setLineColour(lineEnt, presentColour);
+					}
+				};
+
+				final ActionListener chooserActionListener = new ActionListener() {
+					@Override
+					public void actionPerformed( ActionEvent event ) {
+						Color clr = ColorEditor.getColorChooser().getColor();
+						Color4d newColour = new Color4d(clr.getRed(), clr.getGreen(),
+								clr.getBlue(), clr.getAlpha());
+						setLineColour(lineEnt, newColour);
+						fileSave.requestFocusInWindow();
+					}
+				};
+
+				// Line colours already in use
+				JMenuItem selectedItem = null;
+				int selectedIndex = -1;
+				int ind = 0;
+				for (Color4d col : LineEntity.getLineColoursInUse()) {
+					String colourName = ColourInput.toString(col);
+					JMenuItem item = new JMenuItem(colourName);
+					ColorIcon icon = new ColorIcon(16, 16);
+					icon.setFillColor(
+							new Color((float)col.r, (float)col.g, (float)col.b, (float)col.a));
+					icon.setOutlineColor(Color.DARK_GRAY);
+					item.setIcon(icon);
+					if (selectedItem == null && col.equals(lineEnt.getLineColour())) {
+						selectedItem = item;
+						selectedIndex = ind;
+					}
+					ind++;
+					item.addActionListener(actionListener);
+					item.addMouseListener(mouseListener);
+					menu.add(item);
+				}
+				menu.addSeparator();
+
+				// Colour chooser
+				JMenuItem chooserItem = new JMenuItem(ColorEditor.OPTION_COLOUR_CHOOSER);
+				chooserItem.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent event) {
+						JColorChooser chooser = ColorEditor.getColorChooser();
+						JDialog dialog = JColorChooser.createDialog(null,
+								ColorEditor.DIALOG_NAME,
+								true,  //modal
+								chooser,
+								chooserActionListener,  //OK button listener
+								null); //no CANCEL button listener
+						dialog.setIconImage(GUIFrame.getWindowIcon());
+						dialog.setAlwaysOnTop(true);
+						Color4d col = lineEnt.getLineColour();
+						chooser.setColor(new Color((float)col.r, (float)col.g, (float)col.b, (float)col.a));
+						dialog.setVisible(true);
+					}
+				});
+				menu.add(chooserItem);
+				menu.addSeparator();
+
+				// All possible colours
+				for (Color4d col : ColourInput.namedColourList) {
+					String colourName = ColourInput.toString(col);
+					JMenuItem item = new JMenuItem(colourName);
+					ColorIcon icon = new ColorIcon(16, 16);
+					icon.setFillColor(
+							new Color((float)col.r, (float)col.g, (float)col.b, (float)col.a));
+					icon.setOutlineColor(Color.DARK_GRAY);
+					item.setIcon(icon);
+					item.addActionListener(actionListener);
+					item.addMouseListener(mouseListener);
+					menu.add(item);
+				}
+
+				menu.show(lineColour, 0, lineColour.getPreferredSize().height);
+				if (selectedItem != null) {
+					menu.ensureIndexIsVisible(selectedIndex);
+					selectedItem.setArmed(true);
+				}
+			}
+		});
+
+		buttonBar.add( lineColour );
+	}
+
+	private static void setLineColour(LineEntity lineEnt, String colName) {
+		KeywordIndex kw = InputAgent.formatInput("LineColour", colName);
+		Color4d col = Input.parseColour(kw);
+		setLineColour(lineEnt, col);
+	}
+
+	private static void setLineColour(LineEntity lineEnt, Color4d col) {
+		if (col.equals(lineEnt.getLineColour()))
+			return;
+		String colName = ColourInput.toString(col);
+		KeywordIndex kw = InputAgent.formatInput("LineColour", colName);
+		InputAgent.storeAndExecute(new KeywordCommand((Entity)lineEnt, kw));
 	}
 
 	// ******************************************************************************************************
