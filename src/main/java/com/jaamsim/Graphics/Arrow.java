@@ -28,7 +28,7 @@ import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.units.DistanceUnit;
 
-public class Arrow extends DisplayEntity {
+public class Arrow extends DisplayEntity implements LineEntity {
 
 	@Keyword(description = "The colour of the arrow.",
 	         exampleList = {"red"})
@@ -45,17 +45,19 @@ public class Arrow extends DisplayEntity {
 	{
 		displayModelListInput.addValidClass(PolylineModel.class);
 
-		color = new ColourInput("Colour", GRAPHICS, ColourInput.BLACK);
+		color = new ColourInput("LineColour", FORMAT, ColourInput.BLACK);
 		color.setDefaultText("PolylineModel");
 		this.addInput(color);
 		this.addSynonym(color, "Color");
+		this.addSynonym(color, "Colour");
 
-		width = new IntegerInput("Width", GRAPHICS, 1);
+		width = new IntegerInput("LineWidth", FORMAT, 1);
 		width.setValidRange(1, Integer.MAX_VALUE);
 		width.setDefaultText("PolylineModel");
 		this.addInput(width);
+		this.addSynonym(width, "Width");
 
-		arrowHeadSize = new Vec3dInput( "ArrowHeadSize", GRAPHICS, new Vec3d(0.1d, 0.1d, 0.0d) );
+		arrowHeadSize = new Vec3dInput( "ArrowHeadSize", FORMAT, new Vec3d(0.1d, 0.1d, 0.0d) );
 		arrowHeadSize.setUnitType(DistanceUnit.class);
 		arrowHeadSize.setDefaultText("PolylineModel");
 		this.addInput( arrowHeadSize );
@@ -102,6 +104,21 @@ public class Arrow extends DisplayEntity {
 		if (arrowHeadSize.isDefault() && plModel != null)
 			return plModel.getArrowHeadSize();
 		return arrowHeadSize.getValue();
+	}
+
+	@Override
+	public boolean isOutlined() {
+		return true;
+	}
+
+	@Override
+	public int getLineWidth() {
+		return width.getValue();
+	}
+
+	@Override
+	public Color4d getLineColour() {
+		return color.getValue();
 	}
 
 }
