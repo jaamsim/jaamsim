@@ -71,7 +71,7 @@ public class ShapeModel extends DisplayModel {
 
 	@Keyword(description = "The colour for the outline part of the display model.",
 	         exampleList = { "magenta" })
-	private final ColourInput outlineColour;
+	private final ColourInput lineColour;
 
 	@Keyword(description = "If the value is true, then the display model will have a solid fill. Otherwise, the display model " +
 	                "will appear as hollow.",
@@ -101,9 +101,10 @@ public class ShapeModel extends DisplayModel {
 		this.addInput(fillColour);
 		this.addSynonym(fillColour, "FillColor");
 
-		outlineColour = new ColourInput("OutlineColour", GRAPHICS, ColourInput.BLACK);
-		this.addInput(outlineColour);
-		this.addSynonym(outlineColour, "OutlineColor");
+		lineColour = new ColourInput("LineColour", GRAPHICS, ColourInput.BLACK);
+		this.addInput(lineColour);
+		this.addSynonym(lineColour, "OutlineColour");
+		this.addSynonym(lineColour, "OutlineColor");
 
 		filled = new BooleanInput("Filled", GRAPHICS, true);
 		this.addInput(filled);
@@ -173,7 +174,7 @@ public class ShapeModel extends DisplayModel {
 			VisibilityInfo vi = getVisibilityInfo();
 			ValidShapes sc = shape.getValue();
 			Color4d fc = fillColour.getValue();
-			Color4d oc =  outlineColour.getValue();
+			Color4d oc =  lineColour.getValue();
 			boolean fill = filled.getValue();
 			boolean outln = outlined.getValue();
 			int width = getLineWidth();
