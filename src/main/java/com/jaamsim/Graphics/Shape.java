@@ -23,7 +23,7 @@ import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.math.Color4d;
 
-public class Shape extends DisplayEntity {
+public class Shape extends DisplayEntity implements LineEntity, FillEntity {
 
 	@Keyword(description = "Determines whether or not the shape is filled. "
 	                     + "If TRUE, it is filled with a specified colour. "
@@ -81,30 +81,35 @@ public class Shape extends DisplayEntity {
 		return (ShapeModel) getDisplayModel();
 	}
 
+	@Override
 	public boolean isFilled() {
 		if (filled.isDefault())
 			return getShapeModel().isFilled();
 		return filled.getValue();
 	}
 
+	@Override
 	public boolean isOutlined() {
 		if (outlined.isDefault())
 			return getShapeModel().isOutlined();
 		return outlined.getValue();
 	}
 
+	@Override
 	public int getLineWidth() {
 		if (lineWidth.isDefault())
 			return getShapeModel().getLineWidth();
 		return lineWidth.getValue();
 	}
 
+	@Override
 	public Color4d getFillColour() {
 		if (fillColour.isDefault())
 			return getShapeModel().getFillColour();
 		return fillColour.getValue();
 	}
 
+	@Override
 	public Color4d getLineColour() {
 		if (lineColour.isDefault())
 			return getShapeModel().getLineColour();
