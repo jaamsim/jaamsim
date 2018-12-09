@@ -98,26 +98,26 @@ public class ShapeModel extends DisplayModel {
 		shape = new EnumInput<>(ValidShapes.class, "Shape", GRAPHICS, ValidShapes.CIRCLE);
 		this.addInput(shape);
 
-		fillColour = new ColourInput("FillColour", GRAPHICS, ColourInput.MED_GREY);
+		fillColour = new ColourInput("FillColour", FORMAT, ColourInput.MED_GREY);
 		this.addInput(fillColour);
 		this.addSynonym(fillColour, "FillColor");
 
-		lineColour = new ColourInput("LineColour", GRAPHICS, ColourInput.BLACK);
+		lineColour = new ColourInput("LineColour", FORMAT, ColourInput.BLACK);
 		this.addInput(lineColour);
 		this.addSynonym(lineColour, "OutlineColour");
 		this.addSynonym(lineColour, "OutlineColor");
 
-		filled = new BooleanInput("Filled", GRAPHICS, true);
+		filled = new BooleanInput("Filled", FORMAT, true);
 		this.addInput(filled);
 
-		outlined = new BooleanInput("Outlined", GRAPHICS, true);
+		outlined = new BooleanInput("Outlined", FORMAT, true);
 		this.addInput(outlined);
 
-		bold = new BooleanInput("Bold", GRAPHICS, false);
+		bold = new BooleanInput("Bold", FORMAT, false);
 		bold.setHidden(true);
 		this.addInput(bold);
 
-		lineWidth = new IntegerInput("LineWidth", GRAPHICS, 1);
+		lineWidth = new IntegerInput("LineWidth", FORMAT, 1);
 		lineWidth.setValidRange(0, Integer.MAX_VALUE);
 		this.addInput(lineWidth);
 	}
