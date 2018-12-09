@@ -91,6 +91,7 @@ import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.DisplayModels.TextModel;
 import com.jaamsim.Graphics.BillboardText;
 import com.jaamsim.Graphics.DisplayEntity;
+import com.jaamsim.Graphics.FillEntity;
 import com.jaamsim.Graphics.LineEntity;
 import com.jaamsim.Graphics.OverlayEntity;
 import com.jaamsim.Graphics.OverlayText;
@@ -2752,6 +2753,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		selectedEntity = ent;
 		updateTextButtons();
 		updateZButtons();
+		updateLineButtons();
 	}
 
 	public void updateTextButtons() {
@@ -2801,6 +2803,31 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		bool = bool && !(selectedEntity instanceof BillboardText);
 		increaseZ.setEnabled(bool);
 		decreaseZ.setEnabled(bool);
+	}
+
+	public void updateLineButtons() {
+		boolean bool = selectedEntity instanceof LineEntity;
+		outline.setEnabled(bool && selectedEntity instanceof FillEntity);
+		lineWidth.setEnabled(bool);
+		lineColour.setEnabled(bool);
+		if (!bool) {
+			lineWidth.setValue(1);
+			lineColourIcon.setFillColor(Color.LIGHT_GRAY);
+			lineColourIcon.setOutlineColor(Color.LIGHT_GRAY);
+			return;
+		}
+
+		LineEntity lineEnt = (LineEntity) selectedEntity;
+		outline.setSelected(lineEnt.isOutlined());
+		lineWidth.setEnabled(lineEnt.isOutlined());
+		lineColour.setEnabled(lineEnt.isOutlined());
+
+		lineWidth.setValue(Integer.valueOf(lineEnt.getLineWidth()));
+
+		Color4d col = lineEnt.getLineColour();
+		lineColourIcon.setFillColor(new Color((float)col.r, (float)col.g, (float)col.b, (float)col.a));
+		lineColourIcon.setOutlineColor(Color.DARK_GRAY);
+		lineColour.repaint();
 	}
 
 	private void setTextHeight(String str) {
