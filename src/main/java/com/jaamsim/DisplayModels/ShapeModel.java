@@ -22,7 +22,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import com.jaamsim.Graphics.DisplayEntity;
-import com.jaamsim.Graphics.Shape;
+import com.jaamsim.Graphics.FillEntity;
+import com.jaamsim.Graphics.LineEntity;
 import com.jaamsim.Graphics.Tag;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.input.BooleanInput;
@@ -165,7 +166,8 @@ public class ShapeModel extends DisplayModel {
 		private ArrayList<RenderProxy> cachedProxies;
 
 		private DisplayEntity dispEnt;
-		private Shape shapeEnt;
+		private LineEntity lineEnt;
+		private FillEntity fillEnt;
 
 		private Transform transCache;
 		private Vec3d scaleCache;
@@ -181,8 +183,10 @@ public class ShapeModel extends DisplayModel {
 		public Binding(Entity ent, DisplayModel dm) {
 			super(ent, dm);
 			dispEnt = (DisplayEntity)ent;
-			if (ent instanceof Shape)
-				shapeEnt = (Shape) ent;
+			if (ent instanceof LineEntity)
+				lineEnt = (LineEntity) ent;
+			if (ent instanceof FillEntity)
+				fillEnt = (FillEntity) ent;
 		}
 
 		private void updateCache(double simTime) {
@@ -193,11 +197,11 @@ public class ShapeModel extends DisplayModel {
 			HashMap<String, Tag> tags = getTags();
 			VisibilityInfo vi = getVisibilityInfo();
 			ValidShapes sc = shape.getValue();
-			Color4d fc = shapeEnt == null ? fillColour.getValue() : shapeEnt.getFillColour();
-			Color4d oc =  shapeEnt == null ? lineColour.getValue() : shapeEnt.getLineColour();
-			boolean fill = shapeEnt == null ? filled.getValue() : shapeEnt.isFilled();
-			boolean outln = shapeEnt == null ? outlined.getValue() : shapeEnt.isOutlined();
-			int width = shapeEnt == null ? getLineWidth() : shapeEnt.getLineWidth();
+			Color4d fc = fillEnt == null ? fillColour.getValue() : fillEnt.getFillColour();
+			Color4d oc =  lineEnt == null ? lineColour.getValue() : lineEnt.getLineColour();
+			boolean fill = fillEnt == null ? filled.getValue() : fillEnt.isFilled();
+			boolean outln = lineEnt == null ? outlined.getValue() : lineEnt.isOutlined();
+			int width = lineEnt == null ? getLineWidth() : lineEnt.getLineWidth();
 
 			boolean dirty = false;
 
