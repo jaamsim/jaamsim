@@ -41,7 +41,7 @@ import com.jaamsim.render.RenderProxy;
 import com.jaamsim.render.RenderUtils;
 import com.jaamsim.render.VisibilityInfo;
 
-public class ShapeModel extends DisplayModel {
+public class ShapeModel extends DisplayModel implements LineEntity, FillEntity {
 
 	public static final String TAG_CONTENTS = "CONTENTS";
 	public static final String TAG_CONTENTS2 = "CONTENTS2";
@@ -129,24 +129,29 @@ public class ShapeModel extends DisplayModel {
 		return shape.getValue().name();
 	}
 
+	@Override
 	public boolean isFilled() {
 		return filled.getValue();
 	}
 
+	@Override
 	public boolean isOutlined() {
 		return outlined.getValue();
 	}
 
+	@Override
 	public int getLineWidth() {
 		if (!bold.isDefault() && lineWidth.isDefault())
 			return bold.getValue() ? 2 : 1;
 		return lineWidth.getValue();
 	}
 
+	@Override
 	public Color4d getFillColour() {
 		return fillColour.getValue();
 	}
 
+	@Override
 	public Color4d getLineColour() {
 		return lineColour.getValue();
 	}
