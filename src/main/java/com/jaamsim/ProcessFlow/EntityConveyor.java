@@ -269,21 +269,6 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 		}
 	}
 
-	@Override
-	public PolylineInfo[] buildScreenPoints(double simTime) {
-		int wid = -1;
-		if (!widthInput.isDefault())
-			wid = Math.max(1, widthInput.getValue().intValue());
-
-		Color4d col = null;
-		if (!colorInput.isDefault())
-			col = colorInput.getValue();
-
-		PolylineInfo[] ret = new PolylineInfo[1];
-		ret[0] = new PolylineInfo(getCurvePoints(), col, wid);
-		return ret;
-	}
-
 	// LinkDisplayable overrides
 	@Override
 	public Vec3d getSourcePoint() {
