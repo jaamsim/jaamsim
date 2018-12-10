@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.jaamsim.Graphics.DisplayEntity;
+import com.jaamsim.Graphics.LineEntity;
 import com.jaamsim.Graphics.PolylineInfo;
 import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
@@ -38,7 +39,7 @@ import com.jaamsim.units.TimeUnit;
  * Moves one or more Entities along a path with a specified travel time. Entities can have different travel times, which
  * are represented as varying speeds.
  */
-public class EntityDelay extends LinkedComponent {
+public class EntityDelay extends LinkedComponent implements LineEntity {
 
 	@Keyword(description = "The delay time for the path.",
 	         exampleList = { "3.0 h", "NormalDistribution1", "'1[s] + 0.5*[TimeSeries1].PresentValue'" })
@@ -91,18 +92,20 @@ public class EntityDelay extends LinkedComponent {
 		minSeparation.setValidRange(0, Double.POSITIVE_INFINITY);
 		this.addInput(minSeparation);
 
-		animation = new BooleanInput("Animation", GRAPHICS, true);
+		animation = new BooleanInput("Animation", FORMAT, true);
 		this.addInput(animation);
 
-		widthInput = new IntegerInput("Width", GRAPHICS, 1);
+		widthInput = new IntegerInput("LineWidth", FORMAT, 1);
 		widthInput.setValidRange(1, Integer.MAX_VALUE);
 		widthInput.setDefaultText("PolylineModel");
 		this.addInput(widthInput);
+		this.addSynonym(widthInput, "Width");
 
-		colorInput = new ColourInput("Color", GRAPHICS, ColourInput.BLACK);
+		colorInput = new ColourInput("LineColour", FORMAT, ColourInput.BLACK);
 		colorInput.setDefaultText("PolylineModel");
 		this.addInput(colorInput);
 		this.addSynonym(colorInput, "Colour");
+		this.addSynonym(colorInput, "Color");
 	}
 
 	public EntityDelay() {}
@@ -208,6 +211,21 @@ public class EntityDelay extends LinkedComponent {
 		else {
 			this.setPresentState("Idle");
 		}
+	}
+
+	@Override
+	public boolean isOutlined() {
+		return true;
+	}
+
+	@Override
+	public int getLineWidth() {
+		return widthInput.getValue();
+	}
+
+	@Override
+	public Color4d getLineColour() {
+		return colorInput.getValue();
 	}
 
 	@Override
