@@ -17,6 +17,8 @@
  */
 package com.jaamsim.FluidObjects;
 
+import com.jaamsim.DisplayModels.DisplayModel;
+import com.jaamsim.DisplayModels.PolylineModel;
 import com.jaamsim.Graphics.LineEntity;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.Input;
@@ -185,6 +187,13 @@ public class FluidPipe extends FluidComponent implements LineEntity {
 		}
 	}
 
+	public PolylineModel getPolylineModel() {
+		DisplayModel dm = getDisplayModel();
+		if (dm instanceof PolylineModel)
+			return (PolylineModel) dm;
+		return null;
+	}
+
 	@Override
 	public boolean isOutlined() {
 		return true;
@@ -192,11 +201,17 @@ public class FluidPipe extends FluidComponent implements LineEntity {
 
 	@Override
 	public int getLineWidth() {
+		PolylineModel model = getPolylineModel();
+		if (widthInput.isDefault() && model != null)
+			return model.getLineWidth();
 		return widthInput.getValue();
 	}
 
 	@Override
 	public Color4d getLineColour() {
+		PolylineModel model = getPolylineModel();
+		if (colourInput.isDefault() && model != null)
+			return model.getLineColour();
 		return colourInput.getValue();
 	}
 
