@@ -83,21 +83,6 @@ public class Arrow extends DisplayEntity implements LineEntity {
 		}
 	}
 
-	@Override
-	public PolylineInfo[] buildScreenPoints(double simTime) {
-		int wid = -1;
-		if (!width.isDefault())
-			wid = Math.max(1, width.getValue());
-
-		Color4d col = null;
-		if (!color.isDefault())
-			col = color.getValue();
-
-		PolylineInfo[] ret = new PolylineInfo[1];
-		ret[0] = new PolylineInfo(getCurvePoints(), col, wid);
-		return ret;
-	}
-
 	public PolylineModel getPolylineModel() {
 		DisplayModel dm = displayModelListInput.getValue().get(0);
 		if (dm instanceof PolylineModel)
