@@ -33,6 +33,7 @@ import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Vec3d;
+import com.jaamsim.ui.GUIFrame;
 import com.jaamsim.units.TimeUnit;
 
 /**
@@ -120,10 +121,14 @@ public class EntityDelay extends LinkedComponent implements LineEntity {
 				entityMap.clear();
 			return;
 		}
-
-		// If Points were input, then use them to set the start and end coordinates
-		if (in == pointsInput || in == colorInput || in == widthInput) {
+		if (in == pointsInput) {
 			invalidateScreenPoints();
+			return;
+		}
+		if (in == colorInput || in == widthInput) {
+			if (GUIFrame.getInstance() == null)
+				return;
+			GUIFrame.getInstance().updateLineButtons();
 			return;
 		}
 	}
