@@ -18,7 +18,6 @@
 package com.jaamsim.FluidObjects;
 
 import com.jaamsim.Graphics.LineEntity;
-import com.jaamsim.Graphics.PolylineInfo;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.IntegerInput;
@@ -85,21 +84,6 @@ public class FluidFixedFlow extends FluidFlowCalculation implements LineEntity {
 			GUIFrame.getInstance().updateLineButtons();
 			return;
 		}
-	}
-
-	@Override
-	public PolylineInfo[] buildScreenPoints(double simTime) {
-		int wid = -1;
-		if (!widthInput.isDefault())
-			wid = Math.max(1, widthInput.getValue());
-
-		Color4d col = null;
-		if (!colourInput.isDefault())
-			col = colourInput.getValue();
-
-		PolylineInfo[] ret = new PolylineInfo[1];
-		ret[0] = new PolylineInfo(getCurvePoints(), col, wid);
-		return ret;
 	}
 
 	@Override
