@@ -19,6 +19,8 @@ package com.jaamsim.ProcessFlow;
 
 import java.util.ArrayList;
 
+import com.jaamsim.DisplayModels.DisplayModel;
+import com.jaamsim.DisplayModels.PolylineModel;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.LineEntity;
 import com.jaamsim.Graphics.PolylineInfo;
@@ -236,6 +238,13 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 		}
 	}
 
+	public PolylineModel getPolylineModel() {
+		DisplayModel dm = getDisplayModel();
+		if (dm instanceof PolylineModel)
+			return (PolylineModel) dm;
+		return null;
+	}
+
 	@Override
 	public boolean isOutlined() {
 		return true;
@@ -243,11 +252,17 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 
 	@Override
 	public int getLineWidth() {
+		PolylineModel model = getPolylineModel();
+		if (widthInput.isDefault() && model != null)
+			return model.getLineWidth();
 		return widthInput.getValue();
 	}
 
 	@Override
 	public Color4d getLineColour() {
+		PolylineModel model = getPolylineModel();
+		if (colorInput.isDefault() && model != null)
+			return model.getLineColour();
 		return colorInput.getValue();
 	}
 
