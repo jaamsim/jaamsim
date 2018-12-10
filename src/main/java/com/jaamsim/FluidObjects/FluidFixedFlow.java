@@ -17,6 +17,7 @@
  */
 package com.jaamsim.FluidObjects;
 
+import com.jaamsim.Graphics.LineEntity;
 import com.jaamsim.Graphics.PolylineInfo;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.Input;
@@ -33,7 +34,7 @@ import com.jaamsim.units.VolumeFlowUnit;
  * @author Harry King
  *
  */
-public class FluidFixedFlow extends FluidFlowCalculation {
+public class FluidFixedFlow extends FluidFlowCalculation implements LineEntity {
 
 	@Keyword(description = "The constant volumetric flow rate from the source to the destination.",
 	         exampleList = {"1.0 m3/s"})
@@ -53,15 +54,17 @@ public class FluidFixedFlow extends FluidFlowCalculation {
 		flowRateInput.setUnitType( VolumeFlowUnit.class );
 		this.addInput( flowRateInput);
 
-		widthInput = new IntegerInput("Width", GRAPHICS, 1);
+		widthInput = new IntegerInput("LineWidth", FORMAT, 1);
 		widthInput.setValidRange(1, Integer.MAX_VALUE);
 		widthInput.setDefaultText("PolylineModel");
 		this.addInput(widthInput);
+		this.addSynonym(widthInput, "Width");
 
-		colourInput = new ColourInput("Colour", GRAPHICS, ColourInput.BLACK);
+		colourInput = new ColourInput("LineColour", FORMAT, ColourInput.BLACK);
 		colourInput.setDefaultText("PolylineModel");
 		this.addInput(colourInput);
 		this.addSynonym(colourInput, "Color");
+		this.addSynonym(colourInput, "Colour");
 	}
 
 	@Override
@@ -96,4 +99,20 @@ public class FluidFixedFlow extends FluidFlowCalculation {
 		ret[0] = new PolylineInfo(getCurvePoints(), col, wid);
 		return ret;
 	}
+
+	@Override
+	public boolean isOutlined() {
+		return true;
+	}
+
+	@Override
+	public int getLineWidth() {
+		return widthInput.getValue();
+	}
+
+	@Override
+	public Color4d getLineColour() {
+		return colourInput.getValue();
+	}
+
 }
