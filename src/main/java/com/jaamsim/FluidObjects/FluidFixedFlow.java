@@ -76,7 +76,7 @@ public class FluidFixedFlow extends FluidFlowCalculation {
 		super.updateForInput(in);
 
 		// If Points were input, then use them to set the start and end coordinates
-		if( in == pointsInput || in == colourInput || in == widthInput ) {
+		if (in == colourInput || in == widthInput) {
 			invalidateScreenPoints();
 			return;
 		}

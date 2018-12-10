@@ -226,10 +226,6 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 	public void updateForInput(Input<?> in) {
 		super.updateForInput(in);
 
-		if (in == pointsInput) {
-			invalidateScreenPoints();
-			return;
-		}
 		if (in == colorInput || in == widthInput) {
 			if (GUIFrame.getInstance() == null)
 				return;

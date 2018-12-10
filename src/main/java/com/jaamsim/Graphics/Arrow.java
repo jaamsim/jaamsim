@@ -71,10 +71,6 @@ public class Arrow extends DisplayEntity implements LineEntity {
 	public void updateForInput( Input<?> in ) {
 		super.updateForInput(in);
 
-		if (in == pointsInput) {
-			invalidateScreenPoints();
-			return;
-		}
 		if (in == color || in == width) {
 			if (GUIFrame.getInstance() == null)
 				return;

@@ -123,10 +123,6 @@ public class EntityDelay extends LinkedComponent implements LineEntity {
 				entityMap.clear();
 			return;
 		}
-		if (in == pointsInput) {
-			invalidateScreenPoints();
-			return;
-		}
 		if (in == colorInput || in == widthInput) {
 			if (GUIFrame.getInstance() == null)
 				return;
