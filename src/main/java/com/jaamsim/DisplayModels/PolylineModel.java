@@ -129,6 +129,7 @@ public class PolylineModel extends DisplayModel implements LineEntity {
 	protected class Binding extends DisplayModelBinding {
 
 		private Arrow arrowObservee;
+		private LineEntity lineEnt;
 
 		private ArrayList<Vec4d> headPoints = null;
 		private Vec3d arrowSizeCache;
@@ -158,6 +159,8 @@ public class PolylineModel extends DisplayModel implements LineEntity {
 			}
 			if (observee instanceof Arrow)
 				arrowObservee = (Arrow)observee;
+			if (observee instanceof LineEntity)
+				lineEnt = (LineEntity) observee;
 		}
 
 		/**
@@ -174,8 +177,8 @@ public class PolylineModel extends DisplayModel implements LineEntity {
 				globalTrans = displayObservee.getGlobalPositionTransform();
 			}
 
-			Color4d lineColour = getLineColour();
-			int lineWidth = getLineWidth();
+			Color4d lineColour = lineEnt == null ? getLineColour() : lineEnt.getLineColour();
+			int lineWidth = lineEnt == null ? getLineWidth() : lineEnt.getLineWidth();
 
 			Vec3d arrowSize = getArrowHeadSize();
 			if (arrowObservee != null)
