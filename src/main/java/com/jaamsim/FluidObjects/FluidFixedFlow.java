@@ -25,6 +25,7 @@ import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.math.Color4d;
+import com.jaamsim.ui.GUIFrame;
 import com.jaamsim.units.VolumeFlowUnit;
 
 /**
@@ -78,9 +79,10 @@ public class FluidFixedFlow extends FluidFlowCalculation implements LineEntity {
 	public void updateForInput( Input<?> in ) {
 		super.updateForInput(in);
 
-		// If Points were input, then use them to set the start and end coordinates
 		if (in == colourInput || in == widthInput) {
-			invalidateScreenPoints();
+			if (GUIFrame.getInstance() == null)
+				return;
+			GUIFrame.getInstance().updateLineButtons();
 			return;
 		}
 	}
