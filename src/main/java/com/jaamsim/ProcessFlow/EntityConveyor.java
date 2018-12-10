@@ -31,6 +31,7 @@ import com.jaamsim.input.Keyword;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.MathUtils;
 import com.jaamsim.math.Vec3d;
+import com.jaamsim.ui.GUIFrame;
 import com.jaamsim.units.TimeUnit;
 
 /**
@@ -223,9 +224,14 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 	public void updateForInput(Input<?> in) {
 		super.updateForInput(in);
 
-		// If Points were input, then use them to set the start and end coordinates
-		if (in == pointsInput || in == colorInput || in == widthInput) {
+		if (in == pointsInput) {
 			invalidateScreenPoints();
+			return;
+		}
+		if (in == colorInput || in == widthInput) {
+			if (GUIFrame.getInstance() == null)
+				return;
+			GUIFrame.getInstance().updateLineButtons();
 			return;
 		}
 	}
