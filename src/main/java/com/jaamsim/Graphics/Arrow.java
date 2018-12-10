@@ -84,7 +84,7 @@ public class Arrow extends DisplayEntity implements LineEntity {
 	}
 
 	public PolylineModel getPolylineModel() {
-		DisplayModel dm = displayModelListInput.getValue().get(0);
+		DisplayModel dm = getDisplayModel();
 		if (dm instanceof PolylineModel)
 			return (PolylineModel) dm;
 		return null;
@@ -104,11 +104,17 @@ public class Arrow extends DisplayEntity implements LineEntity {
 
 	@Override
 	public int getLineWidth() {
+		PolylineModel model = getPolylineModel();
+		if (width.isDefault() && model != null)
+			return model.getLineWidth();
 		return width.getValue();
 	}
 
 	@Override
 	public Color4d getLineColour() {
+		PolylineModel model = getPolylineModel();
+		if (color.isDefault() && model != null)
+			return model.getLineColour();
 		return color.getValue();
 	}
 
