@@ -26,6 +26,7 @@ import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Vec3dInput;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Vec3d;
+import com.jaamsim.ui.GUIFrame;
 import com.jaamsim.units.DistanceUnit;
 
 public class Arrow extends DisplayEntity implements LineEntity {
@@ -70,9 +71,14 @@ public class Arrow extends DisplayEntity implements LineEntity {
 	public void updateForInput( Input<?> in ) {
 		super.updateForInput(in);
 
-		// If Points were input, then use them to set the start and end coordinates
-		if( in == pointsInput || in == color || in == width ) {
+		if (in == pointsInput) {
 			invalidateScreenPoints();
+			return;
+		}
+		if (in == color || in == width) {
+			if (GUIFrame.getInstance() == null)
+				return;
+			GUIFrame.getInstance().updateLineButtons();
 			return;
 		}
 	}
