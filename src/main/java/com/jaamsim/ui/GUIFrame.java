@@ -2937,6 +2937,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		updateTextButtons();
 		updateZButtons();
 		updateLineButtons();
+		updateFillButtons();
 	}
 
 	public void updateTextButtons() {
@@ -3011,6 +3012,26 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		lineColourIcon.setFillColor(new Color((float)col.r, (float)col.g, (float)col.b, (float)col.a));
 		lineColourIcon.setOutlineColor(Color.DARK_GRAY);
 		lineColour.repaint();
+	}
+
+	public void updateFillButtons() {
+		boolean bool = selectedEntity instanceof FillEntity;
+		fill.setEnabled(bool);
+		fillColour.setEnabled(bool);
+		if (!bool) {
+			fillColourIcon.setFillColor(Color.LIGHT_GRAY);
+			fillColourIcon.setOutlineColor(Color.LIGHT_GRAY);
+			return;
+		}
+
+		FillEntity fillEnt = (FillEntity) selectedEntity;
+		fill.setSelected(fillEnt.isFilled());
+		fillColour.setEnabled(fillEnt.isFilled());
+
+		Color4d col = fillEnt.getFillColour();
+		fillColourIcon.setFillColor(new Color((float)col.r, (float)col.g, (float)col.b, (float)col.a));
+		fillColourIcon.setOutlineColor(Color.DARK_GRAY);
+		fillColour.repaint();
 	}
 
 	private void setTextHeight(String str) {
