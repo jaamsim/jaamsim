@@ -88,6 +88,7 @@ public class Shape extends DisplayEntity implements LineEntity, FillEntity {
 			if (GUIFrame.getInstance() == null)
 				return;
 			GUIFrame.getInstance().updateLineButtons();
+			GUIFrame.getInstance().updateFillButtons();
 			return;
 		}
 	}
