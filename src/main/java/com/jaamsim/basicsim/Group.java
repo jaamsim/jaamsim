@@ -60,6 +60,8 @@ public class Group extends Entity {
 
 		groupTypeInput = new Group.GroupTypeInput();
 		this.addInput(groupTypeInput);
+
+		this.removeInput(active);
 	}
 
 	public Group() {
