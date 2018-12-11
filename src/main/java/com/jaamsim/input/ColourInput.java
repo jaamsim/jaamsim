@@ -352,19 +352,22 @@ private static void initColors() {
 		if (col == null)
 			return "";
 
-		String colorName = getColorName(col);
-		if (colorName != null)
-			return colorName;
-
 		int red = (int) Math.round(col.r * 255);
 		int green = (int) Math.round(col.g * 255);
 		int blue = (int) Math.round(col.b * 255);
 		int alpha = (int) Math.round(col.a * 255);
 
 		StringBuilder sb = new StringBuilder();
-		sb.append(red).append(SEPARATOR);
-		sb.append(green).append(SEPARATOR);
-		sb.append(blue);
+		String colorName = getColorName(new Color4d(col.r, col.g, col.b));
+		if (colorName != null) {
+			sb.append(colorName);
+		}
+		else {
+			sb.append(red).append(SEPARATOR);
+			sb.append(green).append(SEPARATOR);
+			sb.append(blue);
+		}
+
 		if (alpha == 255) {
 			return sb.toString();
 		}
