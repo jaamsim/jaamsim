@@ -181,6 +181,10 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 	private ColorIcon lineColourIcon;
 	private JButton lineColour;
 
+	private JToggleButton fill;
+	private ColorIcon fillColourIcon;
+	private JButton fillColour;
+
 	private RoundToggleButton controlStartResume;
 	private ImageIcon runPressedIcon;
 	private ImageIcon pausePressedIcon;
@@ -864,6 +868,11 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		addOutlineButton(buttonBar, noMargin);
 		addLineWidthSpinner(buttonBar, noMargin);
 		addLineColourButton(buttonBar, noMargin);
+
+		// Fill buttons
+		buttonBar.addSeparator(separatorDim);
+		addFillButton(buttonBar, noMargin);
+		addFillColourButton(buttonBar, noMargin);
 	}
 
 	private void addFileNewButton(JToolBar buttonBar, Insets margin) {
@@ -1899,6 +1908,180 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		String colName = ColourInput.toString(col);
 		KeywordIndex kw = InputAgent.formatInput("LineColour", colName);
 		InputAgent.storeAndExecute(new KeywordCommand((Entity)lineEnt, kw));
+	}
+
+	private void addFillButton(JToolBar buttonBar, Insets margin) {
+		fill = new JToggleButton(new ImageIcon(
+				GUIFrame.class.getResource("/resources/images/Fill-16.png")));
+		fill.setMargin(margin);
+		fill.setFocusPainted(false);
+		fill.setRequestFocusEnabled(false);
+		fill.setToolTipText(formatToolTip("Show Fill",
+				"Fills the entity with the selected colour."));
+		fill.addActionListener( new ActionListener() {
+
+			@Override
+			public void actionPerformed( ActionEvent event ) {
+				if (!(selectedEntity instanceof FillEntity))
+					return;
+				FillEntity fillEnt = (FillEntity) selectedEntity;
+				fillColour.setEnabled(fill.isSelected());
+				if (fillEnt.isFilled() == fill.isSelected())
+					return;
+				KeywordIndex kw = InputAgent.formatBoolean("Filled", fill.isSelected());
+				InputAgent.storeAndExecute(new KeywordCommand((Entity)fillEnt, kw));
+				fileSave.requestFocusInWindow();
+			}
+		});
+
+		buttonBar.add( fill );
+	}
+
+	private void addFillColourButton(JToolBar buttonBar, Insets margin) {
+
+		fillColourIcon = new ColorIcon(16, 16);
+		fillColourIcon.setFillColor(Color.LIGHT_GRAY);
+		fillColourIcon.setOutlineColor(Color.LIGHT_GRAY);
+		fillColour = new JButton(fillColourIcon);
+		fillColour.setMargin(margin);
+		fillColour.setFocusPainted(false);
+		fillColour.setRequestFocusEnabled(false);
+		fillColour.setToolTipText(formatToolTip("Fill Colour",
+				"Sets the colour of the fill."));
+		fillColour.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed( ActionEvent event ) {
+				if (!(selectedEntity instanceof FillEntity))
+					return;
+				final FillEntity fillEnt = (FillEntity) selectedEntity;
+				final Color4d presentColour = fillEnt.getFillColour();
+				ScrollablePopupMenu menu = new ScrollablePopupMenu();
+
+				ActionListener actionListener = new ActionListener() {
+					@Override
+					public void actionPerformed( ActionEvent event ) {
+						if (!(event.getSource() instanceof JMenuItem))
+							return;
+						JMenuItem item = (JMenuItem) event.getSource();
+						setFillColour(fillEnt, item.getText());
+						fileSave.requestFocusInWindow();
+					}
+				};
+
+				MouseListener mouseListener = new MouseListener() {
+					@Override
+					public void mouseClicked(MouseEvent e) {}
+					@Override
+					public void mousePressed(MouseEvent e) {}
+					@Override
+					public void mouseReleased(MouseEvent e) {}
+					@Override
+					public void mouseEntered(MouseEvent e) {
+						if (!(e.getSource() instanceof JMenuItem))
+							return;
+						JMenuItem item = (JMenuItem) e.getSource();
+						setFillColour(fillEnt, item.getText());
+					}
+					@Override
+					public void mouseExited(MouseEvent e) {
+						setFillColour(fillEnt, presentColour);
+					}
+				};
+
+				final ActionListener chooserActionListener = new ActionListener() {
+					@Override
+					public void actionPerformed( ActionEvent event ) {
+						Color clr = ColorEditor.getColorChooser().getColor();
+						Color4d newColour = new Color4d(clr.getRed(), clr.getGreen(),
+								clr.getBlue(), clr.getAlpha());
+						setFillColour(fillEnt, newColour);
+						fileSave.requestFocusInWindow();
+					}
+				};
+
+				// Fill colours already in use
+				JMenuItem selectedItem = null;
+				int selectedIndex = -1;
+				int ind = 0;
+				for (Color4d col : FillEntity.getFillColoursInUse()) {
+					String colourName = ColourInput.toString(col);
+					JMenuItem item = new JMenuItem(colourName);
+					ColorIcon icon = new ColorIcon(16, 16);
+					icon.setFillColor(
+							new Color((float)col.r, (float)col.g, (float)col.b, (float)col.a));
+					icon.setOutlineColor(Color.DARK_GRAY);
+					item.setIcon(icon);
+					if (selectedItem == null && col.equals(fillEnt.getFillColour())) {
+						selectedItem = item;
+						selectedIndex = ind;
+					}
+					ind++;
+					item.addActionListener(actionListener);
+					item.addMouseListener(mouseListener);
+					menu.add(item);
+				}
+				menu.addSeparator();
+
+				// Colour chooser
+				JMenuItem chooserItem = new JMenuItem(ColorEditor.OPTION_COLOUR_CHOOSER);
+				chooserItem.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent event) {
+						JColorChooser chooser = ColorEditor.getColorChooser();
+						JDialog dialog = JColorChooser.createDialog(null,
+								ColorEditor.DIALOG_NAME,
+								true,  //modal
+								chooser,
+								chooserActionListener,  //OK button listener
+								null); //no CANCEL button listener
+						dialog.setIconImage(GUIFrame.getWindowIcon());
+						dialog.setAlwaysOnTop(true);
+						Color4d col = fillEnt.getFillColour();
+						chooser.setColor(new Color((float)col.r, (float)col.g, (float)col.b, (float)col.a));
+						dialog.setVisible(true);
+					}
+				});
+				menu.add(chooserItem);
+				menu.addSeparator();
+
+				// All possible colours
+				for (Color4d col : ColourInput.namedColourList) {
+					String colourName = ColourInput.toString(col);
+					JMenuItem item = new JMenuItem(colourName);
+					ColorIcon icon = new ColorIcon(16, 16);
+					icon.setFillColor(
+							new Color((float)col.r, (float)col.g, (float)col.b, (float)col.a));
+					icon.setOutlineColor(Color.DARK_GRAY);
+					item.setIcon(icon);
+					item.addActionListener(actionListener);
+					item.addMouseListener(mouseListener);
+					menu.add(item);
+				}
+
+				menu.show(fillColour, 0, fillColour.getPreferredSize().height);
+				if (selectedItem != null) {
+					menu.ensureIndexIsVisible(selectedIndex);
+					selectedItem.setArmed(true);
+				}
+			}
+		});
+
+		buttonBar.add( fillColour );
+	}
+
+	private static void setFillColour(FillEntity fillEnt, String colName) {
+		KeywordIndex kw = InputAgent.formatInput("FillColour", colName);
+		Color4d col = Input.parseColour(kw);
+		setFillColour(fillEnt, col);
+	}
+
+	private static void setFillColour(FillEntity fillEnt, Color4d col) {
+		if (col.equals(fillEnt.getFillColour()))
+			return;
+		String colName = ColourInput.toString(col);
+		KeywordIndex kw = InputAgent.formatInput("FillColour", colName);
+		InputAgent.storeAndExecute(new KeywordCommand((Entity)fillEnt, kw));
 	}
 
 	// ******************************************************************************************************
