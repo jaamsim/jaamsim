@@ -1520,7 +1520,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 				if (!(selectedEntity instanceof TextEntity))
 					return;
 				final TextEntity textEnt = (TextEntity) selectedEntity;
-				final String presentColourName = ColourInput.toString(textEnt.getFontColor());
+				final Color4d presentColour = textEnt.getFontColor();
 				ScrollablePopupMenu fontMenu = new ScrollablePopupMenu();
 
 				ActionListener fontActionListener = new ActionListener() {
@@ -1529,12 +1529,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 						if (!(event.getSource() instanceof JMenuItem))
 							return;
 						JMenuItem item = (JMenuItem) event.getSource();
-						String colourName = item.getText();
-						KeywordIndex kw = InputAgent.formatInput("FontColour", colourName);
-						Color4d col = Input.parseColour(kw);
-						if (!col.equals(textEnt.getFontColor())) {
-							InputAgent.storeAndExecute(new KeywordCommand((Entity)textEnt, kw));
-						}
+						setFontColour(textEnt, item.getText());
 						fileSave.requestFocusInWindow();
 					}
 				};
@@ -1551,20 +1546,11 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 						if (!(e.getSource() instanceof JMenuItem))
 							return;
 						JMenuItem item = (JMenuItem) e.getSource();
-						String colourName = item.getText();
-						KeywordIndex kw = InputAgent.formatInput("FontColour", colourName);
-						Color4d col = Input.parseColour(kw);
-						if (!col.equals(textEnt.getFontColor())) {
-							InputAgent.storeAndExecute(new KeywordCommand((Entity)textEnt, kw));
-						}
+						setFontColour(textEnt, item.getText());
 					}
 					@Override
 					public void mouseExited(MouseEvent e) {
-						KeywordIndex kw = InputAgent.formatInput("FontColour", presentColourName);
-						Color4d col = Input.parseColour(kw);
-						if (!col.equals(textEnt.getFontColor())) {
-							InputAgent.storeAndExecute(new KeywordCommand((Entity)textEnt, kw));
-						}
+						setFontColour(textEnt, presentColour);
 					}
 				};
 
@@ -1574,11 +1560,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 						Color clr = ColorEditor.getColorChooser().getColor();
 						Color4d newColour = new Color4d(clr.getRed(), clr.getGreen(),
 								clr.getBlue(), clr.getAlpha());
-						if (newColour != textEnt.getFontColor()) {
-							String colourName = ColourInput.toString(newColour);
-							KeywordIndex kw = InputAgent.formatInput("FontColour", colourName);
-							InputAgent.storeAndExecute(new KeywordCommand((Entity)textEnt, kw));
-						}
+						setFontColour(textEnt, newColour);
 						fileSave.requestFocusInWindow();
 					}
 				};
@@ -1651,6 +1633,20 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		});
 
 		buttonBar.add( fontColour );
+	}
+
+	private static void setFontColour(TextEntity textEnt, String colName) {
+		KeywordIndex kw = InputAgent.formatInput("FontColour", colName);
+		Color4d col = Input.parseColour(kw);
+		setFontColour(textEnt, col);
+	}
+
+	private static void setFontColour(TextEntity textEnt, Color4d col) {
+		if (col.equals(textEnt.getFontColor()))
+			return;
+		String colName = ColourInput.toString(col);
+		KeywordIndex kw = InputAgent.formatInput("FontColour", colName);
+		InputAgent.storeAndExecute(new KeywordCommand((Entity)textEnt, kw));
 	}
 
 	private void addZButtons(JToolBar buttonBar, Insets margin) {
