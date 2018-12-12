@@ -18,11 +18,10 @@ package com.jaamsim.font;
 
 import java.util.HashMap;
 
-import com.jogamp.opengl.GL2GL3;
-
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Mat4d;
 import com.jaamsim.math.Ray;
+import com.jaamsim.math.Vec2d;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.math.Vec4d;
 import com.jaamsim.render.Camera;
@@ -31,6 +30,7 @@ import com.jaamsim.render.RenderUtils;
 import com.jaamsim.render.Renderer;
 import com.jaamsim.render.Shader;
 import com.jaamsim.render.VisibilityInfo;
+import com.jogamp.opengl.GL2GL3;
 
 public class BillboardString implements OverlayRenderable {
 
@@ -43,6 +43,7 @@ public class BillboardString implements OverlayRenderable {
 	private final Vec3d _pos;
 	private final double _xOffset, _yOffset;
 	private final VisibilityInfo _visInfo;
+	private final long _pickingID;
 
 	private final Mat4d tempViewMat = new Mat4d();
 	private final Vec4d tempPos = new Vec4d();
@@ -50,7 +51,7 @@ public class BillboardString implements OverlayRenderable {
 	private static HashMap<Integer, Integer> VAOMap = new HashMap<>();
 
 	public BillboardString(TessFont font, String contents, Color4d color,
-            double height, Vec3d pos, double xOffset, double yOffset, VisibilityInfo visInfo) {
+            double height, Vec3d pos, double xOffset, double yOffset, VisibilityInfo visInfo, long pickingID) {
 		_font = font;
 		_contents = contents;
 		_color = color.toFloats();
@@ -59,6 +60,7 @@ public class BillboardString implements OverlayRenderable {
 		_yOffset = yOffset;
 		_pos = pos;
 		_visInfo = visInfo;
+		_pickingID = pickingID;
 	}
 
 	/**
@@ -167,4 +169,43 @@ public class BillboardString implements OverlayRenderable {
 		return tempPos.z < 0;
 	}
 
+	@Override
+	public long getPickingID() {
+		return _pickingID;
+	}
+
+	@Override
+	public boolean collides(Vec2d coords, double windowWidth, double windowHeight, Camera cam) {
+
+		// Work out the billboard position
+		cam.getViewMat4d(tempViewMat);
+		// Build up the projection*view matrix
+		tempViewMat.mult4(cam.getProjMat4d(), tempViewMat);
+
+		tempPos.x = _pos.x;
+		tempPos.y = _pos.y;
+		tempPos.z = _pos.z;
+		tempPos.w = 1.0;
+
+		tempPos.mult4(tempViewMat, tempPos);
+		tempPos.x /= tempPos.w;
+		tempPos.y /= tempPos.w;
+		// TempPos x and y are now in normalized coordinate space (after the projection)
+
+		// x and y in [0,1]
+		double x = (tempPos.x + 1.0)/2.0;
+		double y = (tempPos.y + 1.0)/2.0;
+
+		// x and y in pixels
+		x *= windowWidth;
+		y *= windowHeight;
+
+		Vec3d renderedSize = _font.getStringSize(_height, _contents);
+
+		boolean inX = (coords.x > x) && (coords.x < x + renderedSize.x);
+		boolean inY = (coords.y > y) && (coords.y < y + renderedSize.y);
+
+		return inX && inY;
+
+	}
 }

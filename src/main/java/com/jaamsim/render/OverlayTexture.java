@@ -20,9 +20,9 @@ import java.net.URI;
 import java.nio.FloatBuffer;
 import java.util.HashMap;
 
-import com.jogamp.opengl.GL2GL3;
-
 import com.jaamsim.math.Ray;
+import com.jaamsim.math.Vec2d;
+import com.jogamp.opengl.GL2GL3;
 
 public class OverlayTexture implements OverlayRenderable {
 
@@ -34,6 +34,7 @@ public class OverlayTexture implements OverlayRenderable {
 
 	private boolean _isTransparent;
 	private boolean _isCompressed;
+	private long _pickingID;
 
 	static private boolean staticInit = false;
 	static private int vertBuff;
@@ -51,13 +52,14 @@ public class OverlayTexture implements OverlayRenderable {
 	private VisibilityInfo _visInfo;
 
 	public OverlayTexture(int x, int y, int width, int height, URI imageURI, boolean transparent, boolean compressed,
-	                      boolean alignRight, boolean alignBottom, VisibilityInfo visInfo) {
+	                      boolean alignRight, boolean alignBottom, VisibilityInfo visInfo, long pickingID) {
 		_x = x; _y = y;
 		_width = width; _height = height;
 		_imageURI = imageURI;
 		_isTransparent = transparent; _isCompressed = compressed;
 		_alignRight = alignRight; _alignBottom = alignBottom;
 		_visInfo = visInfo;
+		_pickingID = pickingID;
 	}
 
 	private static void initStaticBuffers(Renderer r) {
@@ -205,5 +207,28 @@ public class OverlayTexture implements OverlayRenderable {
 	@Override
 	public boolean renderForView(int viewID, Camera cam) {
 		return _visInfo.isVisible(viewID);
+	}
+
+	@Override
+	public long getPickingID() {
+		return _pickingID;
+	}
+
+	@Override
+	public boolean collides(Vec2d coords, double windowWidth, double windowHeight, Camera cam) {
+
+		double x = _x;
+		double y = _y;
+		if (_alignRight) {
+			x = windowWidth - _x - _width;
+		}
+		if (!_alignBottom) {
+			y = windowHeight - _y - _height;
+		}
+
+		boolean inX = (coords.x > x) && (coords.x < x + _width);
+		boolean inY = (coords.y > y) && (coords.y < y + _height);
+
+		return inX && inY;
 	}
 }

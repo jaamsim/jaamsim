@@ -22,12 +22,11 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.util.ArrayList;
 
+import com.jogamp.newt.awt.NewtCanvasAWT;
+import com.jogamp.newt.opengl.GLWindow;
 import com.jogamp.opengl.GLCapabilitiesImmutable;
 import com.jogamp.opengl.GLContext;
 import com.jogamp.opengl.GLEventListener;
-
-import com.jogamp.newt.awt.NewtCanvasAWT;
-import com.jogamp.newt.opengl.GLWindow;
 
 public class RenderWindow {
 

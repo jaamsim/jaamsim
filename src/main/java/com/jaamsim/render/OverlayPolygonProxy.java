@@ -27,7 +27,7 @@ public class OverlayPolygonProxy implements RenderProxy {
 
 	private final List<Vec2d> points;
 	private final Color4d colour;
-	//private final long pickingID;
+	private final long pickingID;
 	private OverlayPolygon cachedPoly;
 	private final VisibilityInfo visInfo;
 	private final boolean originTop;
@@ -53,7 +53,7 @@ public class OverlayPolygonProxy implements RenderProxy {
 	                             VisibilityInfo visInfo, long pickingID) {
 		this.points = points;
 		this.colour = colour;
-		//_pickingID = pickingID;
+		this.pickingID = pickingID;
 		this.visInfo = visInfo;
 		this.originTop = originTop;
 		this.originRight = originRight;
@@ -71,7 +71,7 @@ public class OverlayPolygonProxy implements RenderProxy {
 			return;
 
 		if (cachedPoly == null) {
-			cachedPoly = new OverlayPolygon(points, colour, originTop, originRight, visInfo);
+			cachedPoly = new OverlayPolygon(points, colour, originTop, originRight, visInfo, pickingID);
 		}
 		outList.add(cachedPoly);
 

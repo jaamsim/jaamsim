@@ -33,6 +33,7 @@ public class OverlayPolygon implements OverlayRenderable {
 	private final VisibilityInfo visInfo;
 	private final boolean originTop;
 	private final boolean originRight;
+	private final long pickingID;
 
 	static private boolean staticInit = false;
 
@@ -50,9 +51,9 @@ public class OverlayPolygon implements OverlayRenderable {
 
 	public OverlayPolygon(  List<Vec2d> points, Color4d color,
 	                     boolean originTop, boolean originRight,
-	                     VisibilityInfo visInfo) {
+	                     VisibilityInfo visInfo, long pickingID) {
 		this.color = color;
-		//this.pickingID = pickingID;
+		this.pickingID = pickingID;
 		this.visInfo = visInfo;
 		this.originTop = originTop;
 		this.originRight = originRight;
@@ -181,6 +182,42 @@ public class OverlayPolygon implements OverlayRenderable {
 	@Override
 	public boolean renderForView(int viewID, Camera cam) {
 		return visInfo.isVisible(viewID);
+	}
+
+	@Override
+	public long getPickingID() {
+		return pickingID;
+	}
+
+	@Override
+	public boolean collides(Vec2d coords, double windowWidth, double windowHeight, Camera cam) {
+		float[] floats = pointsBuffer.array();
+
+		// The logic for this collision detection is that any point inside the polygon should have the same sign
+		// for the "2D cross product" for all segments. This assumes the polygon is concave
+		boolean sign = false;
+
+		for (int i = 0; i < floats.length; i+=2) {
+			Vec2d p0 = new Vec2d(floats[i], floats[i+1]);
+
+			int i2 = (i+2 >= floats.length) ? 0 : i+2;
+			Vec2d p1 = new Vec2d(floats[i2], floats[i2+1]);
+
+			Vec2d locCoord = new Vec2d();
+			locCoord.sub2(coords, p0);
+			Vec2d locP1 = new Vec2d();
+			locP1.sub2(p1, p0);
+
+			double cross = locCoord.x*locP1.y - locCoord.y*locP1.x;
+			if (i == 0) {
+				sign = cross > 0.0;
+			} else {
+				if (sign != cross > 0.0)
+					return false;
+			}
+		}
+
+		return true;
 	}
 
 

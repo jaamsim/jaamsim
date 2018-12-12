@@ -53,6 +53,7 @@ import com.jaamsim.input.ColourInput;
 import com.jaamsim.math.AABB;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Ray;
+import com.jaamsim.math.Vec2d;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.math.Vec4d;
 import com.jaamsim.render.util.ExceptionLogger;
@@ -104,6 +105,8 @@ public class Renderer implements GLAnimatorControl {
 
 	public static int DIFF_TEX_FLAG = 1;
 	public static int NUM_MESH_SHADERS = 2; // Should be 2^(max_flag)
+
+	public static long DEBUG_PICK_ID = Long.MIN_VALUE;
 
 	private EnumMap<ShaderHandle, Shader> shaders;
 	private final Shader[] meshShaders = new Shader[NUM_MESH_SHADERS];
@@ -993,6 +996,48 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 		}
 	}
 
+	/**
+	 * Pick from the overlay objects based on pixel coordinates
+	 * @param coord - Coordinate in window pixel space
+	 *
+	 * @return - List of picking IDs for successful collisions
+	 *
+	 */
+	public List<Long> overlayPick(Vec2d coord, int viewID) {
+
+		synchronized(openWindows) {
+			ArrayList<Long> ret = new ArrayList<>();
+
+			if (currentOverlay == null) {
+				return ret;
+			}
+
+			int width = 0;
+			int height = 0;
+			Camera cam = null;
+			for (RenderWindow wind : openWindows.values()) {
+				if (wind.getViewID() == viewID) {
+					cam = cameras.get(wind.getWindowID());
+					width = wind.getViewableWidth();
+					height = wind.getViewableHeight();
+					break;
+				}
+			}
+
+			// Do not update the scene while a pick is underway
+			synchronized (sceneLock) {
+				for (OverlayRenderable r : currentOverlay) {
+					boolean collides = r.collides(coord, width, height, cam);
+
+					if (r.renderForView(viewID, cam) && collides) {
+						ret.add(r.getPickingID());
+					}
+				}
+				return ret;
+			}
+		}
+	}
+
 	public static class WindowMouseInfo {
 		public int x, y;
 		public int width, height;
@@ -1238,13 +1283,13 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 
 					TessFont defFont = getTessFont(defaultBoldFontKey);
 					OverlayString os = new OverlayString(defFont, perf.toString(), ColourInput.BLACK,
-					                                     10, 10, 15, false, false, DisplayModel.ALWAYS);
+					                                     10, 10, 15, false, false, DisplayModel.ALWAYS, DEBUG_PICK_ID);
 					os.render(window.getWindowID(), Renderer.this,
 					          window.getViewableWidth(), window.getViewableHeight(), cam, null);
 
 					// Also draw this window's debug string
 					os = new OverlayString(defFont, window.getDebugString(), ColourInput.BLACK,
-					                       10, 10, 30, false, false, DisplayModel.ALWAYS);
+					                       10, 10, 30, false, false, DisplayModel.ALWAYS, DEBUG_PICK_ID);
 					os.render(window.getWindowID(), Renderer.this,
 					          window.getViewableWidth(), window.getViewableHeight(), cam, null);
 

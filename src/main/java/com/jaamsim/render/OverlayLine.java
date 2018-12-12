@@ -33,6 +33,7 @@ public class OverlayLine implements OverlayRenderable {
 	private final VisibilityInfo visInfo;
 	private final boolean originTop;
 	private final boolean originRight;
+	private final long pickingID;
 
 	static private boolean staticInit = false;
 
@@ -45,15 +46,17 @@ public class OverlayLine implements OverlayRenderable {
 	static private int hasTexVar;
 	static private int lineGLBuff;
 
+	static private double COLL_DIST = 3; // The collision distance in pixels
 
 	private static HashMap<Integer, Integer> VAOMap = new HashMap<>();
 
 	public OverlayLine(  List<Vec2d> lineSegments, Color4d color,
 	                     boolean originTop, boolean originRight,
-	                     double lineWidth, VisibilityInfo visInfo) {
+	                     double lineWidth, VisibilityInfo visInfo,
+	                     long pickingID) {
 		this.color = color;
 		this.lineWidth = lineWidth;
-		//this.pickingID = pickingID;
+		this.pickingID = pickingID;
 		this.visInfo = visInfo;
 		this.originTop = originTop;
 		this.originRight = originRight;
@@ -173,5 +176,36 @@ public class OverlayLine implements OverlayRenderable {
 		return visInfo.isVisible(viewID);
 	}
 
+	@Override
+	public long getPickingID() {
+		return pickingID;
+	}
+
+	@Override
+	public boolean collides(Vec2d coords, double windowWidth, double windowHeight, Camera cam) {
+
+		float[] floats = lineBuffer.array();
+		for (int i = 0; i < floats.length; i+=4) {
+			Vec2d l0 = new Vec2d(floats[i+0], floats[i+1]);
+			Vec2d l1 = new Vec2d(floats[i+2], floats[i+3]);
+			Vec2d dir = new Vec2d();
+			dir.sub2(l1, l0);
+
+			dir.normalize2();
+			Vec2d locPoint = new Vec2d(coords);
+			locPoint.sub2(l0);
+
+			double dot = locPoint.dot2(dir);
+			Vec2d parallel = new Vec2d(dir);
+			parallel.scale2(dot);
+			Vec2d diff = new Vec2d();
+			diff.sub2(locPoint, parallel);
+
+			if (diff.magSquare2() < (COLL_DIST+lineWidth)*(COLL_DIST+lineWidth))
+				return true;
+		}
+
+		return false;
+	}
 
 }

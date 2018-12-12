@@ -17,6 +17,7 @@
 package com.jaamsim.render;
 
 import com.jaamsim.math.Ray;
+import com.jaamsim.math.Vec2d;
 
 
 /**
@@ -46,4 +47,7 @@ public interface OverlayRenderable {
 	 */
 	public boolean renderForView(int windowID, Camera cam);
 
+	public long getPickingID();
+
+	public boolean collides(Vec2d coords, double windowWidth, double windowHeight, Camera cam);
 }

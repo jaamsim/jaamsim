@@ -27,7 +27,7 @@ public class OverlayLineProxy implements RenderProxy {
 	private final List<Vec2d> lineSegments;
 	private final Color4d colour;
 	private final double lineWidth;
-	//private final long pickingID;
+	private final long pickingID;
 	private OverlayLine cachedLine;
 	private final VisibilityInfo visInfo;
 	private final boolean originTop;
@@ -57,7 +57,7 @@ public class OverlayLineProxy implements RenderProxy {
 		this.lineSegments = lineSegments;
 		this.colour = colour;
 		this.lineWidth = lineWidth;
-		//_pickingID = pickingID;
+		this.pickingID = pickingID;
 		this.visInfo = visInfo;
 		this.originTop = originTop;
 		this.originRight = originRight;
@@ -75,7 +75,7 @@ public class OverlayLineProxy implements RenderProxy {
 			return;
 
 		if (cachedLine == null) {
-			cachedLine = new OverlayLine(lineSegments, colour, originTop, originRight, lineWidth, visInfo);
+			cachedLine = new OverlayLine(lineSegments, colour, originTop, originRight, lineWidth, visInfo, pickingID);
 		}
 		outList.add(cachedLine);
 

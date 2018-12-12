@@ -288,7 +288,7 @@ public class ImageModel extends DisplayModel {
 				cachedProxy = new OverlayTextureProxy(pos.get(0), pos.get(1), size.get(0), size.get(1),
 				                                      filename,
 				                                      transp, false,
-				                                      alignRight, alignBottom, vi);
+				                                      alignRight, alignBottom, vi, imageObservee.getEntityNumber());
 
 				out.add(cachedProxy);
 			} catch (ErrorException ex) {

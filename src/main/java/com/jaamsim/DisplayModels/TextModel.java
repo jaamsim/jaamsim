@@ -566,12 +566,12 @@ public class TextModel extends DisplayModel {
 				cachedProxies.add(new OverlayStringProxy(text, fk, dsColor, height,
 				                                      pos.get(0) + (dsOffset.x * (alignRight ? -1 : 1)),
 				                                      pos.get(1) - (dsOffset.y * (alignBottom ? -1 : 1)),
-				                                      alignRight, alignBottom, vi));
+				                                      alignRight, alignBottom, vi, labelObservee.getEntityNumber()));
 			}
 
 			// Show the text
 			cachedProxies.add(new OverlayStringProxy(text, fk, color, height, pos.get(0), pos.get(1),
-			                                     alignRight, alignBottom, vi));
+			                                     alignRight, alignBottom, vi, labelObservee.getEntityNumber()));
 
 			out.addAll(cachedProxies);
 		}
@@ -692,10 +692,12 @@ public class TextModel extends DisplayModel {
 			if (ds) {
 				dsOffset = new Vec3d(dsOffset);
 				dsOffset.scale3(height);
-				cachedProxies.add(new BillboardStringProxy(text, fk, dsColor, height, pos, dsOffset.x, dsOffset.y, vi));
+				cachedProxies.add(new BillboardStringProxy(text, fk, dsColor, height, pos, dsOffset.x, dsOffset.y,
+				                                           vi, labelObservee.getEntityNumber()));
 			}
 
-			cachedProxies.add(new BillboardStringProxy(text, fk, color, height, pos, 0, 0, vi));
+			cachedProxies.add(new BillboardStringProxy(text, fk, color, height, pos, 0, 0,
+			                                           vi, labelObservee.getEntityNumber()));
 			out.addAll(cachedProxies);
 		}
 	}
