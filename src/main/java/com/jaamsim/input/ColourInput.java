@@ -88,7 +88,7 @@ public static String getColorName(Color4d col) {
 }
 
 private static void defColor(String colorName, int r, int g, int b) {
-	mapColor(colorName, new Color4d(r / 255.0d, g / 255.0d, b / 255.0d));
+	mapColor(colorName, new Color4d(r, g, b, 255));
 }
 
 private static void mapColor(String colorName, Color4d col) {
