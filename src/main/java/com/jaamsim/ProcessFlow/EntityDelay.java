@@ -20,7 +20,10 @@ package com.jaamsim.ProcessFlow;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import com.jaamsim.DisplayModels.DisplayModel;
+import com.jaamsim.DisplayModels.PolylineModel;
 import com.jaamsim.Graphics.DisplayEntity;
+import com.jaamsim.Graphics.LineEntity;
 import com.jaamsim.Graphics.PolylineInfo;
 import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
@@ -32,13 +35,14 @@ import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Vec3d;
+import com.jaamsim.ui.GUIFrame;
 import com.jaamsim.units.TimeUnit;
 
 /**
  * Moves one or more Entities along a path with a specified travel time. Entities can have different travel times, which
  * are represented as varying speeds.
  */
-public class EntityDelay extends LinkedComponent {
+public class EntityDelay extends LinkedComponent implements LineEntity {
 
 	@Keyword(description = "The delay time for the path.",
 	         exampleList = { "3.0 h", "NormalDistribution1", "'1[s] + 0.5*[TimeSeries1].PresentValue'" })
@@ -91,18 +95,20 @@ public class EntityDelay extends LinkedComponent {
 		minSeparation.setValidRange(0, Double.POSITIVE_INFINITY);
 		this.addInput(minSeparation);
 
-		animation = new BooleanInput("Animation", GRAPHICS, true);
+		animation = new BooleanInput("Animation", FORMAT, true);
 		this.addInput(animation);
 
-		widthInput = new IntegerInput("Width", GRAPHICS, 1);
+		widthInput = new IntegerInput("LineWidth", FORMAT, 1);
 		widthInput.setValidRange(1, Integer.MAX_VALUE);
 		widthInput.setDefaultText("PolylineModel");
 		this.addInput(widthInput);
+		this.addSynonym(widthInput, "Width");
 
-		colorInput = new ColourInput("Color", GRAPHICS, ColourInput.BLACK);
+		colorInput = new ColourInput("LineColour", FORMAT, ColourInput.BLACK);
 		colorInput.setDefaultText("PolylineModel");
 		this.addInput(colorInput);
 		this.addSynonym(colorInput, "Colour");
+		this.addSynonym(colorInput, "Color");
 	}
 
 	public EntityDelay() {}
@@ -117,10 +123,10 @@ public class EntityDelay extends LinkedComponent {
 				entityMap.clear();
 			return;
 		}
-
-		// If Points were input, then use them to set the start and end coordinates
-		if (in == pointsInput || in == colorInput || in == widthInput) {
-			invalidateScreenPoints();
+		if (in == colorInput || in == widthInput) {
+			if (GUIFrame.getInstance() == null)
+				return;
+			GUIFrame.getInstance().updateLineButtons();
 			return;
 		}
 	}
@@ -210,6 +216,34 @@ public class EntityDelay extends LinkedComponent {
 		}
 	}
 
+	public PolylineModel getPolylineModel() {
+		DisplayModel dm = getDisplayModel();
+		if (dm instanceof PolylineModel)
+			return (PolylineModel) dm;
+		return null;
+	}
+
+	@Override
+	public boolean isOutlined() {
+		return true;
+	}
+
+	@Override
+	public int getLineWidth() {
+		PolylineModel model = getPolylineModel();
+		if (widthInput.isDefault() && model != null)
+			return model.getLineWidth();
+		return widthInput.getValue();
+	}
+
+	@Override
+	public Color4d getLineColour() {
+		PolylineModel model = getPolylineModel();
+		if (colorInput.isDefault() && model != null)
+			return model.getLineColour();
+		return colorInput.getValue();
+	}
+
 	@Override
 	public void updateGraphics(double simTime) {
 
@@ -225,21 +259,6 @@ public class EntityDelay extends LinkedComponent {
 			Vec3d localPos = PolylineInfo.getPositionOnPolyline(getCurvePoints(), frac);
 			entry.ent.setGlobalPosition(this.getGlobalPosition(localPos));
 		}
-	}
-
-	@Override
-	public PolylineInfo[] buildScreenPoints(double simTime) {
-		int wid = -1;
-		if (!widthInput.isDefault())
-			wid = Math.max(1, widthInput.getValue());
-
-		Color4d col = null;
-		if (!colorInput.isDefault())
-			col = colorInput.getValue();
-
-		PolylineInfo[] ret = new PolylineInfo[1];
-		ret[0] = new PolylineInfo(getCurvePoints(), col, wid);
-		return ret;
 	}
 
 	// LinkDisplayable overrides

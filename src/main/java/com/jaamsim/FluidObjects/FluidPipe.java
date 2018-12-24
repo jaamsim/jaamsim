@@ -17,7 +17,9 @@
  */
 package com.jaamsim.FluidObjects;
 
-import com.jaamsim.Graphics.PolylineInfo;
+import com.jaamsim.DisplayModels.DisplayModel;
+import com.jaamsim.DisplayModels.PolylineModel;
+import com.jaamsim.Graphics.LineEntity;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.IntegerInput;
@@ -25,6 +27,7 @@ import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.math.Color4d;
+import com.jaamsim.ui.GUIFrame;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.DistanceUnit;
 
@@ -33,7 +36,7 @@ import com.jaamsim.units.DistanceUnit;
  * @author Harry King
  *
  */
-public class FluidPipe extends FluidComponent {
+public class FluidPipe extends FluidComponent implements LineEntity {
 
 	@Keyword(description = "The length of the pipe.",
 	         exampleList = {"10.0 m"})
@@ -86,15 +89,17 @@ public class FluidPipe extends FluidComponent {
 		pressureLossCoefficientInput.setUnitType( DimensionlessUnit.class );
 		this.addInput( pressureLossCoefficientInput);
 
-		widthInput = new IntegerInput("Width", GRAPHICS, 1);
+		widthInput = new IntegerInput("LineWidth", FORMAT, 1);
 		widthInput.setValidRange(1, Integer.MAX_VALUE);
 		widthInput.setDefaultText("PolylineModel");
 		this.addInput(widthInput);
+		this.addSynonym(widthInput, "Width");
 
-		colourInput = new ColourInput("Colour", GRAPHICS, ColourInput.BLACK);
+		colourInput = new ColourInput("LineColour", FORMAT, ColourInput.BLACK);
 		colourInput.setDefaultText("PolylineModel");
 		this.addInput(colourInput);
 		this.addSynonym(colourInput, "Color");
+		this.addSynonym(colourInput, "Colour");
 	}
 
 	@Override
@@ -174,26 +179,40 @@ public class FluidPipe extends FluidComponent {
 	public void updateForInput( Input<?> in ) {
 		super.updateForInput(in);
 
-		// If Points were input, then use them to set the start and end coordinates
-		if( in == pointsInput || in == colourInput || in == widthInput ) {
-			invalidateScreenPoints();
+		if (in == colourInput || in == widthInput) {
+			if (GUIFrame.getInstance() == null)
+				return;
+			GUIFrame.getInstance().updateLineButtons();
 			return;
 		}
 	}
 
+	public PolylineModel getPolylineModel() {
+		DisplayModel dm = getDisplayModel();
+		if (dm instanceof PolylineModel)
+			return (PolylineModel) dm;
+		return null;
+	}
+
 	@Override
-	public PolylineInfo[] buildScreenPoints(double simTime) {
-		int wid = -1;
-		if (!widthInput.isDefault())
-			wid = Math.max(1, widthInput.getValue());
+	public boolean isOutlined() {
+		return true;
+	}
 
-		Color4d col = null;
-		if (!colourInput.isDefault())
-			col = colourInput.getValue();
+	@Override
+	public int getLineWidth() {
+		PolylineModel model = getPolylineModel();
+		if (widthInput.isDefault() && model != null)
+			return model.getLineWidth();
+		return widthInput.getValue();
+	}
 
-		PolylineInfo[] ret = new PolylineInfo[1];
-		ret[0] = new PolylineInfo(getCurvePoints(), col, wid);
-		return ret;
+	@Override
+	public Color4d getLineColour() {
+		PolylineModel model = getPolylineModel();
+		if (colourInput.isDefault() && model != null)
+			return model.getLineColour();
+		return colourInput.getValue();
 	}
 
 	@Output(name = "DarcyFrictionFactor",

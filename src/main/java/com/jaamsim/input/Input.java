@@ -1404,7 +1404,7 @@ public abstract class Input<T> {
 			double a = Input.parseDouble(kw.getArg(1), 0.0d, 255.0d);
 			if (a > 1.0f)
 				a /= 255.0d;
-			return new Color4d(colAtt.r, colAtt.b, colAtt.g, a);
+			return new Color4d(colAtt.r, colAtt.g, colAtt.b, a);
 		}
 
 		// RGB

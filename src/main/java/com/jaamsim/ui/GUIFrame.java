@@ -91,6 +91,9 @@ import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.DisplayModels.TextModel;
 import com.jaamsim.Graphics.BillboardText;
 import com.jaamsim.Graphics.DisplayEntity;
+import com.jaamsim.Graphics.FillEntity;
+import com.jaamsim.Graphics.LineEntity;
+import com.jaamsim.Graphics.OverlayEntity;
 import com.jaamsim.Graphics.OverlayText;
 import com.jaamsim.Graphics.TextBasics;
 import com.jaamsim.Graphics.TextEntity;
@@ -169,6 +172,18 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 	private JButton smallerText;
 	private ColorIcon colourIcon;
 	private JButton fontColour;
+
+	private JButton increaseZ;
+	private JButton decreaseZ;
+
+	private JToggleButton outline;
+	private JSpinner lineWidth;
+	private ColorIcon lineColourIcon;
+	private JButton lineColour;
+
+	private JToggleButton fill;
+	private ColorIcon fillColourIcon;
+	private JButton fillColour;
 
 	private RoundToggleButton controlStartResume;
 	private ImageIcon runPressedIcon;
@@ -843,6 +858,21 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		// Text alignment buttons
 		buttonBar.add(Box.createRigidArea(gapDim));
 		addTextAlignmentButtons(buttonBar, noMargin);
+
+		// Z-coordinate buttons
+		buttonBar.addSeparator(separatorDim);
+		addZButtons(buttonBar, noMargin);
+
+		// Line buttons
+		buttonBar.addSeparator(separatorDim);
+		addOutlineButton(buttonBar, noMargin);
+		addLineWidthSpinner(buttonBar, noMargin);
+		addLineColourButton(buttonBar, noMargin);
+
+		// Fill buttons
+		buttonBar.addSeparator(separatorDim);
+		addFillButton(buttonBar, noMargin);
+		addFillColourButton(buttonBar, noMargin);
 	}
 
 	private void addFileNewButton(JToolBar buttonBar, Insets margin) {
@@ -1490,7 +1520,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 				if (!(selectedEntity instanceof TextEntity))
 					return;
 				final TextEntity textEnt = (TextEntity) selectedEntity;
-				final String presentColourName = ColourInput.toString(textEnt.getFontColor());
+				final Color4d presentColour = textEnt.getFontColor();
 				ScrollablePopupMenu fontMenu = new ScrollablePopupMenu();
 
 				ActionListener fontActionListener = new ActionListener() {
@@ -1499,12 +1529,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 						if (!(event.getSource() instanceof JMenuItem))
 							return;
 						JMenuItem item = (JMenuItem) event.getSource();
-						String colourName = item.getText();
-						KeywordIndex kw = InputAgent.formatInput("FontColour", colourName);
-						Color4d col = Input.parseColour(kw);
-						if (!col.equals(textEnt.getFontColor())) {
-							InputAgent.storeAndExecute(new KeywordCommand((Entity)textEnt, kw));
-						}
+						setFontColour(textEnt, item.getText());
 						fileSave.requestFocusInWindow();
 					}
 				};
@@ -1521,20 +1546,11 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 						if (!(e.getSource() instanceof JMenuItem))
 							return;
 						JMenuItem item = (JMenuItem) e.getSource();
-						String colourName = item.getText();
-						KeywordIndex kw = InputAgent.formatInput("FontColour", colourName);
-						Color4d col = Input.parseColour(kw);
-						if (!col.equals(textEnt.getFontColor())) {
-							InputAgent.storeAndExecute(new KeywordCommand((Entity)textEnt, kw));
-						}
+						setFontColour(textEnt, item.getText());
 					}
 					@Override
 					public void mouseExited(MouseEvent e) {
-						KeywordIndex kw = InputAgent.formatInput("FontColour", presentColourName);
-						Color4d col = Input.parseColour(kw);
-						if (!col.equals(textEnt.getFontColor())) {
-							InputAgent.storeAndExecute(new KeywordCommand((Entity)textEnt, kw));
-						}
+						setFontColour(textEnt, presentColour);
 					}
 				};
 
@@ -1544,11 +1560,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 						Color clr = ColorEditor.getColorChooser().getColor();
 						Color4d newColour = new Color4d(clr.getRed(), clr.getGreen(),
 								clr.getBlue(), clr.getAlpha());
-						if (newColour != textEnt.getFontColor()) {
-							String colourName = ColourInput.toString(newColour);
-							KeywordIndex kw = InputAgent.formatInput("FontColour", colourName);
-							InputAgent.storeAndExecute(new KeywordCommand((Entity)textEnt, kw));
-						}
+						setFontColour(textEnt, newColour);
 						fileSave.requestFocusInWindow();
 					}
 				};
@@ -1621,6 +1633,451 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		});
 
 		buttonBar.add( fontColour );
+	}
+
+	private static void setFontColour(TextEntity textEnt, String colName) {
+		KeywordIndex kw = InputAgent.formatInput("FontColour", colName);
+		Color4d col = Input.parseColour(kw);
+		setFontColour(textEnt, col);
+	}
+
+	private static void setFontColour(TextEntity textEnt, Color4d col) {
+		if (col.equals(textEnt.getFontColor()))
+			return;
+		String colName = ColourInput.toString(col);
+		KeywordIndex kw = InputAgent.formatInput("FontColour", colName);
+		InputAgent.storeAndExecute(new KeywordCommand((Entity)textEnt, kw));
+	}
+
+	private void addZButtons(JToolBar buttonBar, Insets margin) {
+
+		ActionListener actionListener = new ActionListener() {
+
+			@Override
+			public void actionPerformed( ActionEvent event ) {
+				if (!(selectedEntity instanceof DisplayEntity)
+						|| selectedEntity instanceof OverlayEntity)
+					return;
+				DisplayEntity dispEnt = (DisplayEntity) selectedEntity;
+
+				double delta = Simulation.getSnapGridSpacing()/100.0d;
+				Vec3d pos = dispEnt.getPosition();
+				ArrayList<Vec3d> points = dispEnt.getPoints();
+				Vec3d offset = new Vec3d();
+
+				if (event.getActionCommand().equals("Up")) {
+					pos.z += delta;
+					offset.z += delta;
+				}
+				else if (event.getActionCommand().equals("Down")) {
+					pos.z -= delta;
+					offset.z -= delta;
+				}
+
+				KeywordIndex posKw = InputAgent.formatVec3dInput("Position", pos, DistanceUnit.class);
+				KeywordIndex ptsKw = InputAgent.formatPointsInputs("Points", points, offset);
+				InputAgent.storeAndExecute(new KeywordCommand(dispEnt, posKw, ptsKw));
+				fileSave.requestFocusInWindow();
+			}
+		};
+
+		increaseZ = new JButton(new ImageIcon(
+				GUIFrame.class.getResource("/resources/images/PlusZ-16.png")));
+		increaseZ.setMargin(margin);
+		increaseZ.setFocusPainted(false);
+		increaseZ.setRequestFocusEnabled(false);
+		increaseZ.setToolTipText(formatToolTip("Move Up",
+				"Increases the selected object's z-coordinate by one hundredth of the snap-grid "
+				+ "spacing. By moving the object closer to the camera, it will appear on top of "
+				+ "other objects with smaller z-coordinates."));
+		increaseZ.setActionCommand("Up");
+		increaseZ.addActionListener( actionListener );
+
+		decreaseZ = new JButton(new ImageIcon(
+				GUIFrame.class.getResource("/resources/images/MinusZ-16.png")));
+		decreaseZ.setMargin(margin);
+		decreaseZ.setFocusPainted(false);
+		decreaseZ.setRequestFocusEnabled(false);
+		decreaseZ.setToolTipText(formatToolTip("Move Down",
+				"Decreases the selected object's z-coordinate by one hundredth of the snap-grid "
+				+ "spacing. By moving the object farther from the camera, it will appear below "
+				+ "other objects with larger z-coordinates."));
+		decreaseZ.setActionCommand("Down");
+		decreaseZ.addActionListener( actionListener );
+
+		buttonBar.add( increaseZ );
+		buttonBar.add( decreaseZ );
+	}
+
+	private void addOutlineButton(JToolBar buttonBar, Insets margin) {
+		outline = new JToggleButton(new ImageIcon(
+				GUIFrame.class.getResource("/resources/images/Outline-16.png")));
+		outline.setMargin(margin);
+		outline.setFocusPainted(false);
+		outline.setRequestFocusEnabled(false);
+		outline.setToolTipText(formatToolTip("Show Outline", "Shows the outline."));
+		outline.addActionListener( new ActionListener() {
+
+			@Override
+			public void actionPerformed( ActionEvent event ) {
+				if (!(selectedEntity instanceof LineEntity))
+					return;
+				LineEntity lineEnt = (LineEntity) selectedEntity;
+				lineWidth.setEnabled(outline.isSelected());
+				lineColour.setEnabled(outline.isSelected());
+				if (lineEnt.isOutlined() == outline.isSelected())
+					return;
+				KeywordIndex kw = InputAgent.formatBoolean("Outlined", outline.isSelected());
+				InputAgent.storeAndExecute(new KeywordCommand((Entity)lineEnt, kw));
+				fileSave.requestFocusInWindow();
+			}
+		});
+
+		buttonBar.add( outline );
+	}
+
+	private void addLineWidthSpinner(JToolBar buttonBar, Insets margin) {
+		SpinnerNumberModel numberModel = new SpinnerNumberModel(1, 1, 10, 1);
+		lineWidth = new JSpinner(numberModel);
+		lineWidth.addChangeListener(new ChangeListener() {
+
+			@Override
+			public void stateChanged( ChangeEvent e ) {
+				if (!(selectedEntity instanceof LineEntity))
+					return;
+				LineEntity lineEnt = (LineEntity) selectedEntity;
+				int val = (int) lineWidth.getValue();
+				if (val == lineEnt.getLineWidth())
+					return;
+				InputAgent.applyIntegers((Entity)lineEnt, "LineWidth", val);
+			}
+		});
+
+		lineWidth.setToolTipText(formatToolTip("Line Width",
+				"Sets the width of the line in pixels."));
+
+		buttonBar.add( lineWidth );
+	}
+
+	private void addLineColourButton(JToolBar buttonBar, Insets margin) {
+
+		lineColourIcon = new ColorIcon(16, 16);
+		lineColourIcon.setFillColor(Color.LIGHT_GRAY);
+		lineColourIcon.setOutlineColor(Color.LIGHT_GRAY);
+		lineColour = new JButton(lineColourIcon);
+		lineColour.setMargin(margin);
+		lineColour.setFocusPainted(false);
+		lineColour.setRequestFocusEnabled(false);
+		lineColour.setToolTipText(formatToolTip("Line Colour",
+				"Sets the colour of the line."));
+		lineColour.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed( ActionEvent event ) {
+				if (!(selectedEntity instanceof LineEntity))
+					return;
+				final LineEntity lineEnt = (LineEntity) selectedEntity;
+				final Color4d presentColour = lineEnt.getLineColour();
+				ScrollablePopupMenu menu = new ScrollablePopupMenu();
+
+				ActionListener actionListener = new ActionListener() {
+					@Override
+					public void actionPerformed( ActionEvent event ) {
+						if (!(event.getSource() instanceof JMenuItem))
+							return;
+						JMenuItem item = (JMenuItem) event.getSource();
+						setLineColour(lineEnt, item.getText());
+						fileSave.requestFocusInWindow();
+					}
+				};
+
+				MouseListener mouseListener = new MouseListener() {
+					@Override
+					public void mouseClicked(MouseEvent e) {}
+					@Override
+					public void mousePressed(MouseEvent e) {}
+					@Override
+					public void mouseReleased(MouseEvent e) {}
+					@Override
+					public void mouseEntered(MouseEvent e) {
+						if (!(e.getSource() instanceof JMenuItem))
+							return;
+						JMenuItem item = (JMenuItem) e.getSource();
+						setLineColour(lineEnt, item.getText());
+					}
+					@Override
+					public void mouseExited(MouseEvent e) {
+						setLineColour(lineEnt, presentColour);
+					}
+				};
+
+				final ActionListener chooserActionListener = new ActionListener() {
+					@Override
+					public void actionPerformed( ActionEvent event ) {
+						Color clr = ColorEditor.getColorChooser().getColor();
+						Color4d newColour = new Color4d(clr.getRed(), clr.getGreen(),
+								clr.getBlue(), clr.getAlpha());
+						setLineColour(lineEnt, newColour);
+						fileSave.requestFocusInWindow();
+					}
+				};
+
+				// Line colours already in use
+				JMenuItem selectedItem = null;
+				int selectedIndex = -1;
+				int ind = 0;
+				for (Color4d col : LineEntity.getLineColoursInUse()) {
+					String colourName = ColourInput.toString(col);
+					JMenuItem item = new JMenuItem(colourName);
+					ColorIcon icon = new ColorIcon(16, 16);
+					icon.setFillColor(
+							new Color((float)col.r, (float)col.g, (float)col.b, (float)col.a));
+					icon.setOutlineColor(Color.DARK_GRAY);
+					item.setIcon(icon);
+					if (selectedItem == null && col.equals(lineEnt.getLineColour())) {
+						selectedItem = item;
+						selectedIndex = ind;
+					}
+					ind++;
+					item.addActionListener(actionListener);
+					item.addMouseListener(mouseListener);
+					menu.add(item);
+				}
+				menu.addSeparator();
+
+				// Colour chooser
+				JMenuItem chooserItem = new JMenuItem(ColorEditor.OPTION_COLOUR_CHOOSER);
+				chooserItem.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent event) {
+						JColorChooser chooser = ColorEditor.getColorChooser();
+						JDialog dialog = JColorChooser.createDialog(null,
+								ColorEditor.DIALOG_NAME,
+								true,  //modal
+								chooser,
+								chooserActionListener,  //OK button listener
+								null); //no CANCEL button listener
+						dialog.setIconImage(GUIFrame.getWindowIcon());
+						dialog.setAlwaysOnTop(true);
+						Color4d col = lineEnt.getLineColour();
+						chooser.setColor(new Color((float)col.r, (float)col.g, (float)col.b, (float)col.a));
+						dialog.setVisible(true);
+					}
+				});
+				menu.add(chooserItem);
+				menu.addSeparator();
+
+				// All possible colours
+				for (Color4d col : ColourInput.namedColourList) {
+					String colourName = ColourInput.toString(col);
+					JMenuItem item = new JMenuItem(colourName);
+					ColorIcon icon = new ColorIcon(16, 16);
+					icon.setFillColor(
+							new Color((float)col.r, (float)col.g, (float)col.b, (float)col.a));
+					icon.setOutlineColor(Color.DARK_GRAY);
+					item.setIcon(icon);
+					item.addActionListener(actionListener);
+					item.addMouseListener(mouseListener);
+					menu.add(item);
+				}
+
+				menu.show(lineColour, 0, lineColour.getPreferredSize().height);
+				if (selectedItem != null) {
+					menu.ensureIndexIsVisible(selectedIndex);
+					selectedItem.setArmed(true);
+				}
+			}
+		});
+
+		buttonBar.add( lineColour );
+	}
+
+	private static void setLineColour(LineEntity lineEnt, String colName) {
+		KeywordIndex kw = InputAgent.formatInput("LineColour", colName);
+		Color4d col = Input.parseColour(kw);
+		setLineColour(lineEnt, col);
+	}
+
+	private static void setLineColour(LineEntity lineEnt, Color4d col) {
+		if (col.equals(lineEnt.getLineColour()))
+			return;
+		String colName = ColourInput.toString(col);
+		KeywordIndex kw = InputAgent.formatInput("LineColour", colName);
+		InputAgent.storeAndExecute(new KeywordCommand((Entity)lineEnt, kw));
+	}
+
+	private void addFillButton(JToolBar buttonBar, Insets margin) {
+		fill = new JToggleButton(new ImageIcon(
+				GUIFrame.class.getResource("/resources/images/Fill-16.png")));
+		fill.setMargin(margin);
+		fill.setFocusPainted(false);
+		fill.setRequestFocusEnabled(false);
+		fill.setToolTipText(formatToolTip("Show Fill",
+				"Fills the entity with the selected colour."));
+		fill.addActionListener( new ActionListener() {
+
+			@Override
+			public void actionPerformed( ActionEvent event ) {
+				if (!(selectedEntity instanceof FillEntity))
+					return;
+				FillEntity fillEnt = (FillEntity) selectedEntity;
+				fillColour.setEnabled(fill.isSelected());
+				if (fillEnt.isFilled() == fill.isSelected())
+					return;
+				KeywordIndex kw = InputAgent.formatBoolean("Filled", fill.isSelected());
+				InputAgent.storeAndExecute(new KeywordCommand((Entity)fillEnt, kw));
+				fileSave.requestFocusInWindow();
+			}
+		});
+
+		buttonBar.add( fill );
+	}
+
+	private void addFillColourButton(JToolBar buttonBar, Insets margin) {
+
+		fillColourIcon = new ColorIcon(16, 16);
+		fillColourIcon.setFillColor(Color.LIGHT_GRAY);
+		fillColourIcon.setOutlineColor(Color.LIGHT_GRAY);
+		fillColour = new JButton(fillColourIcon);
+		fillColour.setMargin(margin);
+		fillColour.setFocusPainted(false);
+		fillColour.setRequestFocusEnabled(false);
+		fillColour.setToolTipText(formatToolTip("Fill Colour",
+				"Sets the colour of the fill."));
+		fillColour.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed( ActionEvent event ) {
+				if (!(selectedEntity instanceof FillEntity))
+					return;
+				final FillEntity fillEnt = (FillEntity) selectedEntity;
+				final Color4d presentColour = fillEnt.getFillColour();
+				ScrollablePopupMenu menu = new ScrollablePopupMenu();
+
+				ActionListener actionListener = new ActionListener() {
+					@Override
+					public void actionPerformed( ActionEvent event ) {
+						if (!(event.getSource() instanceof JMenuItem))
+							return;
+						JMenuItem item = (JMenuItem) event.getSource();
+						setFillColour(fillEnt, item.getText());
+						fileSave.requestFocusInWindow();
+					}
+				};
+
+				MouseListener mouseListener = new MouseListener() {
+					@Override
+					public void mouseClicked(MouseEvent e) {}
+					@Override
+					public void mousePressed(MouseEvent e) {}
+					@Override
+					public void mouseReleased(MouseEvent e) {}
+					@Override
+					public void mouseEntered(MouseEvent e) {
+						if (!(e.getSource() instanceof JMenuItem))
+							return;
+						JMenuItem item = (JMenuItem) e.getSource();
+						setFillColour(fillEnt, item.getText());
+					}
+					@Override
+					public void mouseExited(MouseEvent e) {
+						setFillColour(fillEnt, presentColour);
+					}
+				};
+
+				final ActionListener chooserActionListener = new ActionListener() {
+					@Override
+					public void actionPerformed( ActionEvent event ) {
+						Color clr = ColorEditor.getColorChooser().getColor();
+						Color4d newColour = new Color4d(clr.getRed(), clr.getGreen(),
+								clr.getBlue(), clr.getAlpha());
+						setFillColour(fillEnt, newColour);
+						fileSave.requestFocusInWindow();
+					}
+				};
+
+				// Fill colours already in use
+				JMenuItem selectedItem = null;
+				int selectedIndex = -1;
+				int ind = 0;
+				for (Color4d col : FillEntity.getFillColoursInUse()) {
+					String colourName = ColourInput.toString(col);
+					JMenuItem item = new JMenuItem(colourName);
+					ColorIcon icon = new ColorIcon(16, 16);
+					icon.setFillColor(
+							new Color((float)col.r, (float)col.g, (float)col.b, (float)col.a));
+					icon.setOutlineColor(Color.DARK_GRAY);
+					item.setIcon(icon);
+					if (selectedItem == null && col.equals(fillEnt.getFillColour())) {
+						selectedItem = item;
+						selectedIndex = ind;
+					}
+					ind++;
+					item.addActionListener(actionListener);
+					item.addMouseListener(mouseListener);
+					menu.add(item);
+				}
+				menu.addSeparator();
+
+				// Colour chooser
+				JMenuItem chooserItem = new JMenuItem(ColorEditor.OPTION_COLOUR_CHOOSER);
+				chooserItem.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent event) {
+						JColorChooser chooser = ColorEditor.getColorChooser();
+						JDialog dialog = JColorChooser.createDialog(null,
+								ColorEditor.DIALOG_NAME,
+								true,  //modal
+								chooser,
+								chooserActionListener,  //OK button listener
+								null); //no CANCEL button listener
+						dialog.setIconImage(GUIFrame.getWindowIcon());
+						dialog.setAlwaysOnTop(true);
+						Color4d col = fillEnt.getFillColour();
+						chooser.setColor(new Color((float)col.r, (float)col.g, (float)col.b, (float)col.a));
+						dialog.setVisible(true);
+					}
+				});
+				menu.add(chooserItem);
+				menu.addSeparator();
+
+				// All possible colours
+				for (Color4d col : ColourInput.namedColourList) {
+					String colourName = ColourInput.toString(col);
+					JMenuItem item = new JMenuItem(colourName);
+					ColorIcon icon = new ColorIcon(16, 16);
+					icon.setFillColor(
+							new Color((float)col.r, (float)col.g, (float)col.b, (float)col.a));
+					icon.setOutlineColor(Color.DARK_GRAY);
+					item.setIcon(icon);
+					item.addActionListener(actionListener);
+					item.addMouseListener(mouseListener);
+					menu.add(item);
+				}
+
+				menu.show(fillColour, 0, fillColour.getPreferredSize().height);
+				if (selectedItem != null) {
+					menu.ensureIndexIsVisible(selectedIndex);
+					selectedItem.setArmed(true);
+				}
+			}
+		});
+
+		buttonBar.add( fillColour );
+	}
+
+	private static void setFillColour(FillEntity fillEnt, String colName) {
+		KeywordIndex kw = InputAgent.formatInput("FillColour", colName);
+		Color4d col = Input.parseColour(kw);
+		setFillColour(fillEnt, col);
+	}
+
+	private static void setFillColour(FillEntity fillEnt, Color4d col) {
+		if (col.equals(fillEnt.getFillColour()))
+			return;
+		String colName = ColourInput.toString(col);
+		KeywordIndex kw = InputAgent.formatInput("FillColour", colName);
+		InputAgent.storeAndExecute(new KeywordCommand((Entity)fillEnt, kw));
 	}
 
 	// ******************************************************************************************************
@@ -2474,6 +2931,9 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 	public void setSelectedEnt(Entity ent) {
 		selectedEntity = ent;
 		updateTextButtons();
+		updateZButtons();
+		updateLineButtons();
+		updateFillButtons();
 	}
 
 	public void updateTextButtons() {
@@ -2515,6 +2975,59 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		colourIcon.setFillColor(new Color((float)col.r, (float)col.g, (float)col.b, (float)col.a));
 		colourIcon.setOutlineColor(Color.DARK_GRAY);
 		fontColour.repaint();
+	}
+
+	public void updateZButtons() {
+		boolean bool = selectedEntity instanceof DisplayEntity;
+		bool = bool && !(selectedEntity instanceof OverlayEntity);
+		bool = bool && !(selectedEntity instanceof BillboardText);
+		increaseZ.setEnabled(bool);
+		decreaseZ.setEnabled(bool);
+	}
+
+	public void updateLineButtons() {
+		boolean bool = selectedEntity instanceof LineEntity;
+		outline.setEnabled(bool && selectedEntity instanceof FillEntity);
+		lineWidth.setEnabled(bool);
+		lineColour.setEnabled(bool);
+		if (!bool) {
+			lineWidth.setValue(1);
+			lineColourIcon.setFillColor(Color.LIGHT_GRAY);
+			lineColourIcon.setOutlineColor(Color.LIGHT_GRAY);
+			return;
+		}
+
+		LineEntity lineEnt = (LineEntity) selectedEntity;
+		outline.setSelected(lineEnt.isOutlined());
+		lineWidth.setEnabled(lineEnt.isOutlined());
+		lineColour.setEnabled(lineEnt.isOutlined());
+
+		lineWidth.setValue(Integer.valueOf(lineEnt.getLineWidth()));
+
+		Color4d col = lineEnt.getLineColour();
+		lineColourIcon.setFillColor(new Color((float)col.r, (float)col.g, (float)col.b, (float)col.a));
+		lineColourIcon.setOutlineColor(Color.DARK_GRAY);
+		lineColour.repaint();
+	}
+
+	public void updateFillButtons() {
+		boolean bool = selectedEntity instanceof FillEntity;
+		fill.setEnabled(bool);
+		fillColour.setEnabled(bool);
+		if (!bool) {
+			fillColourIcon.setFillColor(Color.LIGHT_GRAY);
+			fillColourIcon.setOutlineColor(Color.LIGHT_GRAY);
+			return;
+		}
+
+		FillEntity fillEnt = (FillEntity) selectedEntity;
+		fill.setSelected(fillEnt.isFilled());
+		fillColour.setEnabled(fillEnt.isFilled());
+
+		Color4d col = fillEnt.getFillColour();
+		fillColourIcon.setFillColor(new Color((float)col.r, (float)col.g, (float)col.b, (float)col.a));
+		fillColourIcon.setOutlineColor(Color.DARK_GRAY);
+		fillColour.repaint();
 	}
 
 	private void setTextHeight(String str) {

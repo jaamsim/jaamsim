@@ -19,7 +19,10 @@ package com.jaamsim.ProcessFlow;
 
 import java.util.ArrayList;
 
+import com.jaamsim.DisplayModels.DisplayModel;
+import com.jaamsim.DisplayModels.PolylineModel;
 import com.jaamsim.Graphics.DisplayEntity;
+import com.jaamsim.Graphics.LineEntity;
 import com.jaamsim.Graphics.PolylineInfo;
 import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
@@ -30,12 +33,13 @@ import com.jaamsim.input.Keyword;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.MathUtils;
 import com.jaamsim.math.Vec3d;
+import com.jaamsim.ui.GUIFrame;
 import com.jaamsim.units.TimeUnit;
 
 /**
  * Moves one or more Entities along a path at a constant speed.
  */
-public class EntityConveyor extends LinkedService {
+public class EntityConveyor extends LinkedService implements LineEntity {
 
 	@Keyword(description = "The travel time for the conveyor.",
 	         exampleList = {"10.0 s"})
@@ -66,15 +70,17 @@ public class EntityConveyor extends LinkedService {
 		travelTimeInput.setEntity(this);
 		this.addInput(travelTimeInput);
 
-		widthInput = new IntegerInput("Width", GRAPHICS, 1);
+		widthInput = new IntegerInput("LineWidth", FORMAT, 1);
 		widthInput.setValidRange(1, Integer.MAX_VALUE);
 		widthInput.setDefaultText("PolylineModel");
 		this.addInput(widthInput);
+		this.addSynonym(widthInput, "Width");
 
-		colorInput = new ColourInput("Color", GRAPHICS, ColourInput.BLACK);
+		colorInput = new ColourInput("LineColour", FORMAT, ColourInput.BLACK);
 		colorInput.setDefaultText("PolylineModel");
 		this.addInput(colorInput);
 		this.addSynonym(colorInput, "Colour");
+		this.addSynonym(colorInput, "Color");
 	}
 
 	public EntityConveyor() {
@@ -220,11 +226,40 @@ public class EntityConveyor extends LinkedService {
 	public void updateForInput(Input<?> in) {
 		super.updateForInput(in);
 
-		// If Points were input, then use them to set the start and end coordinates
-		if (in == pointsInput || in == colorInput || in == widthInput) {
-			invalidateScreenPoints();
+		if (in == colorInput || in == widthInput) {
+			if (GUIFrame.getInstance() == null)
+				return;
+			GUIFrame.getInstance().updateLineButtons();
 			return;
 		}
+	}
+
+	public PolylineModel getPolylineModel() {
+		DisplayModel dm = getDisplayModel();
+		if (dm instanceof PolylineModel)
+			return (PolylineModel) dm;
+		return null;
+	}
+
+	@Override
+	public boolean isOutlined() {
+		return true;
+	}
+
+	@Override
+	public int getLineWidth() {
+		PolylineModel model = getPolylineModel();
+		if (widthInput.isDefault() && model != null)
+			return model.getLineWidth();
+		return widthInput.getValue();
+	}
+
+	@Override
+	public Color4d getLineColour() {
+		PolylineModel model = getPolylineModel();
+		if (colorInput.isDefault() && model != null)
+			return model.getLineColour();
+		return colorInput.getValue();
 	}
 
 	@Override
@@ -243,21 +278,6 @@ public class EntityConveyor extends LinkedService {
 			Vec3d localPos = PolylineInfo.getPositionOnPolyline(getCurvePoints(), entry.position + frac);
 			entry.entity.setGlobalPosition(this.getGlobalPosition(localPos));
 		}
-	}
-
-	@Override
-	public PolylineInfo[] buildScreenPoints(double simTime) {
-		int wid = -1;
-		if (!widthInput.isDefault())
-			wid = Math.max(1, widthInput.getValue().intValue());
-
-		Color4d col = null;
-		if (!colorInput.isDefault())
-			col = colorInput.getValue();
-
-		PolylineInfo[] ret = new PolylineInfo[1];
-		ret[0] = new PolylineInfo(getCurvePoints(), col, wid);
-		return ret;
 	}
 
 	// LinkDisplayable overrides

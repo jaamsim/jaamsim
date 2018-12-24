@@ -88,6 +88,7 @@ public class Entity {
 	public static final String MAINTENANCE = "Maintenance";
 	public static final String TRACING = "Tracing";
 	public static final String FONT = "Font";
+	public static final String FORMAT = "Format";
 	public static final String GUI = "GUI";
 	public static final String MULTIPLE_RUNS = "Multiple Runs";
 

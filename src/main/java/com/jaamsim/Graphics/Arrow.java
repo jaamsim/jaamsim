@@ -26,9 +26,10 @@ import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Vec3dInput;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Vec3d;
+import com.jaamsim.ui.GUIFrame;
 import com.jaamsim.units.DistanceUnit;
 
-public class Arrow extends DisplayEntity {
+public class Arrow extends DisplayEntity implements LineEntity {
 
 	@Keyword(description = "The colour of the arrow.",
 	         exampleList = {"red"})
@@ -45,17 +46,19 @@ public class Arrow extends DisplayEntity {
 	{
 		displayModelListInput.addValidClass(PolylineModel.class);
 
-		color = new ColourInput("Colour", GRAPHICS, ColourInput.BLACK);
+		color = new ColourInput("LineColour", FORMAT, ColourInput.BLACK);
 		color.setDefaultText("PolylineModel");
 		this.addInput(color);
 		this.addSynonym(color, "Color");
+		this.addSynonym(color, "Colour");
 
-		width = new IntegerInput("Width", GRAPHICS, 1);
+		width = new IntegerInput("LineWidth", FORMAT, 1);
 		width.setValidRange(1, Integer.MAX_VALUE);
 		width.setDefaultText("PolylineModel");
 		this.addInput(width);
+		this.addSynonym(width, "Width");
 
-		arrowHeadSize = new Vec3dInput( "ArrowHeadSize", GRAPHICS, new Vec3d(0.1d, 0.1d, 0.0d) );
+		arrowHeadSize = new Vec3dInput( "ArrowHeadSize", FORMAT, new Vec3d(0.1d, 0.1d, 0.0d) );
 		arrowHeadSize.setUnitType(DistanceUnit.class);
 		arrowHeadSize.setDefaultText("PolylineModel");
 		this.addInput( arrowHeadSize );
@@ -68,30 +71,16 @@ public class Arrow extends DisplayEntity {
 	public void updateForInput( Input<?> in ) {
 		super.updateForInput(in);
 
-		// If Points were input, then use them to set the start and end coordinates
-		if( in == pointsInput || in == color || in == width ) {
-			invalidateScreenPoints();
+		if (in == color || in == width) {
+			if (GUIFrame.getInstance() == null)
+				return;
+			GUIFrame.getInstance().updateLineButtons();
 			return;
 		}
 	}
 
-	@Override
-	public PolylineInfo[] buildScreenPoints(double simTime) {
-		int wid = -1;
-		if (!width.isDefault())
-			wid = Math.max(1, width.getValue());
-
-		Color4d col = null;
-		if (!color.isDefault())
-			col = color.getValue();
-
-		PolylineInfo[] ret = new PolylineInfo[1];
-		ret[0] = new PolylineInfo(getCurvePoints(), col, wid);
-		return ret;
-	}
-
 	public PolylineModel getPolylineModel() {
-		DisplayModel dm = displayModelListInput.getValue().get(0);
+		DisplayModel dm = getDisplayModel();
 		if (dm instanceof PolylineModel)
 			return (PolylineModel) dm;
 		return null;
@@ -102,6 +91,27 @@ public class Arrow extends DisplayEntity {
 		if (arrowHeadSize.isDefault() && plModel != null)
 			return plModel.getArrowHeadSize();
 		return arrowHeadSize.getValue();
+	}
+
+	@Override
+	public boolean isOutlined() {
+		return true;
+	}
+
+	@Override
+	public int getLineWidth() {
+		PolylineModel model = getPolylineModel();
+		if (width.isDefault() && model != null)
+			return model.getLineWidth();
+		return width.getValue();
+	}
+
+	@Override
+	public Color4d getLineColour() {
+		PolylineModel model = getPolylineModel();
+		if (color.isDefault() && model != null)
+			return model.getLineColour();
+		return color.getValue();
 	}
 
 }

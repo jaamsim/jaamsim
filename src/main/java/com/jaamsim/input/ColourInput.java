@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 
+import com.jaamsim.basicsim.Entity;
 import com.jaamsim.math.Color4d;
 
 public class ColourInput extends Input<Color4d> {
@@ -87,7 +88,7 @@ public static String getColorName(Color4d col) {
 }
 
 private static void defColor(String colorName, int r, int g, int b) {
-	mapColor(colorName, new Color4d(r / 255.0f, g / 255.0f, b / 255.0f));
+	mapColor(colorName, new Color4d(r / 255.0d, g / 255.0d, b / 255.0d));
 }
 
 private static void mapColor(String colorName, Color4d col) {
@@ -351,19 +352,22 @@ private static void initColors() {
 		if (col == null)
 			return "";
 
-		String colorName = getColorName(col);
-		if (colorName != null)
-			return colorName;
-
 		int red = (int) Math.round(col.r * 255);
 		int green = (int) Math.round(col.g * 255);
 		int blue = (int) Math.round(col.b * 255);
 		int alpha = (int) Math.round(col.a * 255);
 
 		StringBuilder sb = new StringBuilder();
-		sb.append(red).append(SEPARATOR);
-		sb.append(green).append(SEPARATOR);
-		sb.append(blue);
+		String colorName = getColorName(new Color4d(col.r, col.g, col.b));
+		if (colorName != null) {
+			sb.append(colorName);
+		}
+		else {
+			sb.append(red).append(SEPARATOR);
+			sb.append(green).append(SEPARATOR);
+			sb.append(blue);
+		}
+
 		if (alpha == 255) {
 			return sb.toString();
 		}
@@ -388,6 +392,22 @@ private static void initColors() {
 	@Override
 	public String toString() {
 		return toString(value);
+	}
+
+	public static ArrayList<Color4d> getColoursInUse() {
+		ArrayList<Color4d> ret = new ArrayList<>();
+		for (Entity ent : Entity.getClonesOfIterator(Entity.class)) {
+			for (Input<?> in : ent.getEditableInputs()) {
+				if (!(in instanceof ColourInput))
+					continue;
+				Color4d col = (Color4d) in.getValue();
+				if (ret.contains(col))
+					continue;
+				ret.add(col);
+			}
+		}
+		Collections.sort(ret, ColourInput.colourComparator);
+		return ret;
 	}
 
 }

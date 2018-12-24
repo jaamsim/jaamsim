@@ -22,11 +22,13 @@ import java.util.List;
 
 import com.jaamsim.Graphics.Arrow;
 import com.jaamsim.Graphics.DisplayEntity;
+import com.jaamsim.Graphics.LineEntity;
 import com.jaamsim.Graphics.PolylineInfo;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.ColourInput;
+import com.jaamsim.input.Input;
 import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Vec3dInput;
@@ -42,9 +44,10 @@ import com.jaamsim.render.PolygonProxy;
 import com.jaamsim.render.RenderProxy;
 import com.jaamsim.render.RenderUtils;
 import com.jaamsim.render.VisibilityInfo;
+import com.jaamsim.ui.GUIFrame;
 import com.jaamsim.units.DistanceUnit;
 
-public class PolylineModel extends DisplayModel {
+public class PolylineModel extends DisplayModel implements LineEntity {
 
 	@Keyword(description = "The colour of the polyline.",
 	         exampleList = {"red"})
@@ -63,21 +66,37 @@ public class PolylineModel extends DisplayModel {
 	protected final Vec3dInput arrowHeadSize;
 
 	{
-		colour = new ColourInput("Colour", GRAPHICS, ColourInput.BLACK);
+		colour = new ColourInput("LineColour", FORMAT, ColourInput.BLACK);
 		this.addInput(colour);
 		this.addSynonym(colour, "Color");
+		this.addSynonym(colour, "Colour");
 
-		width = new IntegerInput("Width", GRAPHICS, 1);
+		width = new IntegerInput("LineWidth", FORMAT, 1);
 		width.setValidRange(0, Integer.MAX_VALUE);
 		this.addInput(width);
+		this.addSynonym(width, "Width");
 
-		showArrowHead = new BooleanInput("ShowArrowHead", GRAPHICS, false);
+		showArrowHead = new BooleanInput("ShowArrowHead", FORMAT, false);
 		this.addInput(showArrowHead);
 
-		arrowHeadSize = new Vec3dInput("ArrowHeadSize", GRAPHICS, new Vec3d(0.1d, 0.1d, 0.0d));
+		arrowHeadSize = new Vec3dInput("ArrowHeadSize", FORMAT, new Vec3d(0.1d, 0.1d, 0.0d));
 		arrowHeadSize.setUnitType(DistanceUnit.class);
 		this.addInput(arrowHeadSize);
 		this.addSynonym(arrowHeadSize, "ArrowSize");
+	}
+
+	public PolylineModel() {}
+
+	@Override
+	public void updateForInput( Input<?> in ) {
+		super.updateForInput( in );
+
+		if (in == colour || in == width) {
+			if (GUIFrame.getInstance() == null)
+				return;
+			GUIFrame.getInstance().updateLineButtons();
+			return;
+		}
 	}
 
 	private static final Color4d MINT = ColourInput.getColorWithName("mint");
@@ -100,11 +119,18 @@ public class PolylineModel extends DisplayModel {
 		return (ent instanceof DisplayEntity);
 	}
 
-	public Color4d getColour() {
+	@Override
+	public boolean isOutlined() {
+		return true;
+	}
+
+	@Override
+	public Color4d getLineColour() {
 		return colour.getValue();
 	}
 
-	public int getWidth() {
+	@Override
+	public int getLineWidth() {
 		return Math.max(1, width.getValue());
 	}
 
@@ -119,6 +145,7 @@ public class PolylineModel extends DisplayModel {
 	protected class Binding extends DisplayModelBinding {
 
 		private Arrow arrowObservee;
+		private LineEntity lineEnt;
 
 		private ArrayList<Vec4d> headPoints = null;
 		private Vec3d arrowSizeCache;
@@ -148,6 +175,8 @@ public class PolylineModel extends DisplayModel {
 			}
 			if (observee instanceof Arrow)
 				arrowObservee = (Arrow)observee;
+			if (observee instanceof LineEntity)
+				lineEnt = (LineEntity) observee;
 		}
 
 		/**
@@ -164,8 +193,8 @@ public class PolylineModel extends DisplayModel {
 				globalTrans = displayObservee.getGlobalPositionTransform();
 			}
 
-			Color4d lineColour = getColour();
-			int lineWidth = getWidth();
+			Color4d lineColour = lineEnt == null ? getLineColour() : lineEnt.getLineColour();
+			int lineWidth = lineEnt == null ? getLineWidth() : lineEnt.getLineWidth();
 
 			Vec3d arrowSize = getArrowHeadSize();
 			if (arrowObservee != null)
@@ -353,4 +382,5 @@ public class PolylineModel extends DisplayModel {
 
 		out.add(pp);
 	}
+
 }

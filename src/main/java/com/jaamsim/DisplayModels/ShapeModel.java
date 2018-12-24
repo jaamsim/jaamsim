@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2011 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2018 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,11 +22,15 @@ import java.util.HashMap;
 import java.util.List;
 
 import com.jaamsim.Graphics.DisplayEntity;
+import com.jaamsim.Graphics.FillEntity;
+import com.jaamsim.Graphics.LineEntity;
 import com.jaamsim.Graphics.Tag;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.EnumInput;
+import com.jaamsim.input.Input;
+import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Transform;
@@ -36,8 +41,9 @@ import com.jaamsim.render.PolygonProxy;
 import com.jaamsim.render.RenderProxy;
 import com.jaamsim.render.RenderUtils;
 import com.jaamsim.render.VisibilityInfo;
+import com.jaamsim.ui.GUIFrame;
 
-public class ShapeModel extends DisplayModel {
+public class ShapeModel extends DisplayModel implements LineEntity, FillEntity {
 
 	public static final String TAG_CONTENTS = "CONTENTS";
 	public static final String TAG_CONTENTS2 = "CONTENTS2";
@@ -69,41 +75,100 @@ public class ShapeModel extends DisplayModel {
 
 	@Keyword(description = "The colour for the outline part of the display model.",
 	         exampleList = { "magenta" })
-	private final ColourInput outlineColour;
+	private final ColourInput lineColour;
 
 	@Keyword(description = "If the value is true, then the display model will have a solid fill. Otherwise, the display model " +
 	                "will appear as hollow.",
 	         exampleList = { "FALSE" })
 	private final BooleanInput filled;
 
+	@Keyword(description = "Determines whether or not the shape is outlined. "
+	                     + "If TRUE, it is outlined with a uniform colour. "
+	                     + "If FALSE, it is drawn without an outline.",
+	         exampleList = {"FALSE"})
+	private final BooleanInput outlined;
+
 	@Keyword(description = "If the value is true, then the display model outline will be a bold line. Otherwise the outline " +
 	                "will be one pixel wide line.",
 	         exampleList = { "TRUE" })
 	private final BooleanInput bold;
 
+	@Keyword(description = "Width of the outline in pixels.",
+	         exampleList = { "3" })
+	private final IntegerInput lineWidth;
+
 	{
 		shape = new EnumInput<>(ValidShapes.class, "Shape", GRAPHICS, ValidShapes.CIRCLE);
 		this.addInput(shape);
 
-		fillColour = new ColourInput("FillColour", GRAPHICS, ColourInput.MED_GREY);
+		fillColour = new ColourInput("FillColour", FORMAT, ColourInput.MED_GREY);
 		this.addInput(fillColour);
 		this.addSynonym(fillColour, "FillColor");
 
-		outlineColour = new ColourInput("OutlineColour", GRAPHICS, ColourInput.BLACK);
-		this.addInput(outlineColour);
-		this.addSynonym(outlineColour, "OutlineColor");
+		lineColour = new ColourInput("LineColour", FORMAT, ColourInput.BLACK);
+		this.addInput(lineColour);
+		this.addSynonym(lineColour, "OutlineColour");
+		this.addSynonym(lineColour, "OutlineColor");
 
-		filled = new BooleanInput("Filled", GRAPHICS, true);
+		filled = new BooleanInput("Filled", FORMAT, true);
 		this.addInput(filled);
 
-		bold = new BooleanInput("Bold", GRAPHICS, false);
+		outlined = new BooleanInput("Outlined", FORMAT, true);
+		this.addInput(outlined);
+
+		bold = new BooleanInput("Bold", FORMAT, false);
+		bold.setHidden(true);
 		this.addInput(bold);
+
+		lineWidth = new IntegerInput("LineWidth", FORMAT, 1);
+		lineWidth.setValidRange(0, Integer.MAX_VALUE);
+		this.addInput(lineWidth);
 	}
 
 	public ShapeModel() {}
 
+	@Override
+	public void updateForInput( Input<?> in ) {
+		super.updateForInput( in );
+
+		if (in == lineColour || in == outlined || in == lineWidth
+				|| in == fillColour || in == filled) {
+			if (GUIFrame.getInstance() == null)
+				return;
+			GUIFrame.getInstance().updateLineButtons();
+			return;
+		}
+	}
+
 	public String getShapeName() {
 		return shape.getValue().name();
+	}
+
+	@Override
+	public boolean isFilled() {
+		return filled.getValue();
+	}
+
+	@Override
+	public boolean isOutlined() {
+		return outlined.getValue();
+	}
+
+	@Override
+	public int getLineWidth() {
+		if (!bold.isDefault() && lineWidth.isDefault())
+			return bold.getValue() ? 2 : 1;
+		return lineWidth.getValue();
+	}
+
+	@Override
+	public Color4d getFillColour() {
+		return fillColour.getValue();
+	}
+
+	@Override
+	public Color4d getLineColour() {
+		return lineColour.getValue();
 	}
 
 	@Override
@@ -121,6 +186,8 @@ public class ShapeModel extends DisplayModel {
 		private ArrayList<RenderProxy> cachedProxies;
 
 		private DisplayEntity dispEnt;
+		private LineEntity lineEnt;
+		private FillEntity fillEnt;
 
 		private Transform transCache;
 		private Vec3d scaleCache;
@@ -130,11 +197,16 @@ public class ShapeModel extends DisplayModel {
 		private Color4d fillColourCache;
 		private Color4d outlineColourCache;
 		private boolean filledCache;
-		private boolean boldCache;
+		private boolean outlinedCache;
+		private int lineWidthCache;
 
 		public Binding(Entity ent, DisplayModel dm) {
 			super(ent, dm);
 			dispEnt = (DisplayEntity)ent;
+			if (ent instanceof LineEntity)
+				lineEnt = (LineEntity) ent;
+			if (ent instanceof FillEntity)
+				fillEnt = (FillEntity) ent;
 		}
 
 		private void updateCache(double simTime) {
@@ -145,10 +217,11 @@ public class ShapeModel extends DisplayModel {
 			HashMap<String, Tag> tags = getTags();
 			VisibilityInfo vi = getVisibilityInfo();
 			ValidShapes sc = shape.getValue();
-			Color4d fc = fillColour.getValue();
-			Color4d oc =  outlineColour.getValue();
-			boolean fill = filled.getValue();
-			boolean bld = bold.getValue();
+			Color4d fc = fillEnt == null ? fillColour.getValue() : fillEnt.getFillColour();
+			Color4d oc =  lineEnt == null ? lineColour.getValue() : lineEnt.getLineColour();
+			boolean fill = fillEnt == null ? filled.getValue() : fillEnt.isFilled();
+			boolean outln = lineEnt == null ? outlined.getValue() : lineEnt.isOutlined();
+			int width = lineEnt == null ? getLineWidth() : lineEnt.getLineWidth();
 
 			boolean dirty = false;
 
@@ -160,7 +233,8 @@ public class ShapeModel extends DisplayModel {
 			dirty = dirty || fillColourCache != fc;
 			dirty = dirty || outlineColourCache != oc;
 			dirty = dirty || filledCache != fill;
-			dirty = dirty || boldCache != bld;
+			dirty = dirty || outlinedCache != outln;
+			dirty = dirty || lineWidthCache != width;
 
 			transCache = trans;
 			scaleCache = scale;
@@ -170,7 +244,8 @@ public class ShapeModel extends DisplayModel {
 			fillColourCache = fc;
 			outlineColourCache = oc;
 			filledCache = fill;
-			boldCache = bld;
+			outlinedCache = outln;
+			lineWidthCache = width;
 
 			if (cachedProxies != null && !dirty) {
 				// Nothing changed
@@ -220,10 +295,10 @@ public class ShapeModel extends DisplayModel {
 			}
 
 			// Gather some inputs
-			if (isTagVisible(ShapeModel.TAG_OUTLINES))
+			if (outlinedCache && isTagVisible(ShapeModel.TAG_OUTLINES))
 			{
 				Color4d colour = getTagColor(ShapeModel.TAG_OUTLINES, outlineColourCache);
-				cachedProxies.add(new PolygonProxy(points, trans, scale, colour, true, (boldCache ? 2 : 1), getVisibilityInfo(), pickingID));
+				cachedProxies.add(new PolygonProxy(points, trans, scale, colour, true, width, getVisibilityInfo(), pickingID));
 			}
 
 			if (filledCache && isTagVisible(ShapeModel.TAG_CONTENTS))

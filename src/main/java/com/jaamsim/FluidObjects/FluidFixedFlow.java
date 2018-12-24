@@ -17,13 +17,16 @@
  */
 package com.jaamsim.FluidObjects;
 
-import com.jaamsim.Graphics.PolylineInfo;
+import com.jaamsim.DisplayModels.DisplayModel;
+import com.jaamsim.DisplayModels.PolylineModel;
+import com.jaamsim.Graphics.LineEntity;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.math.Color4d;
+import com.jaamsim.ui.GUIFrame;
 import com.jaamsim.units.VolumeFlowUnit;
 
 /**
@@ -33,7 +36,7 @@ import com.jaamsim.units.VolumeFlowUnit;
  * @author Harry King
  *
  */
-public class FluidFixedFlow extends FluidFlowCalculation {
+public class FluidFixedFlow extends FluidFlowCalculation implements LineEntity {
 
 	@Keyword(description = "The constant volumetric flow rate from the source to the destination.",
 	         exampleList = {"1.0 m3/s"})
@@ -53,15 +56,17 @@ public class FluidFixedFlow extends FluidFlowCalculation {
 		flowRateInput.setUnitType( VolumeFlowUnit.class );
 		this.addInput( flowRateInput);
 
-		widthInput = new IntegerInput("Width", GRAPHICS, 1);
+		widthInput = new IntegerInput("LineWidth", FORMAT, 1);
 		widthInput.setValidRange(1, Integer.MAX_VALUE);
 		widthInput.setDefaultText("PolylineModel");
 		this.addInput(widthInput);
+		this.addSynonym(widthInput, "Width");
 
-		colourInput = new ColourInput("Colour", GRAPHICS, ColourInput.BLACK);
+		colourInput = new ColourInput("LineColour", FORMAT, ColourInput.BLACK);
 		colourInput.setDefaultText("PolylineModel");
 		this.addInput(colourInput);
 		this.addSynonym(colourInput, "Color");
+		this.addSynonym(colourInput, "Colour");
 	}
 
 	@Override
@@ -75,25 +80,40 @@ public class FluidFixedFlow extends FluidFlowCalculation {
 	public void updateForInput( Input<?> in ) {
 		super.updateForInput(in);
 
-		// If Points were input, then use them to set the start and end coordinates
-		if( in == pointsInput || in == colourInput || in == widthInput ) {
-			invalidateScreenPoints();
+		if (in == colourInput || in == widthInput) {
+			if (GUIFrame.getInstance() == null)
+				return;
+			GUIFrame.getInstance().updateLineButtons();
 			return;
 		}
 	}
 
-	@Override
-	public PolylineInfo[] buildScreenPoints(double simTime) {
-		int wid = -1;
-		if (!widthInput.isDefault())
-			wid = Math.max(1, widthInput.getValue());
-
-		Color4d col = null;
-		if (!colourInput.isDefault())
-			col = colourInput.getValue();
-
-		PolylineInfo[] ret = new PolylineInfo[1];
-		ret[0] = new PolylineInfo(getCurvePoints(), col, wid);
-		return ret;
+	public PolylineModel getPolylineModel() {
+		DisplayModel dm = getDisplayModel();
+		if (dm instanceof PolylineModel)
+			return (PolylineModel) dm;
+		return null;
 	}
+
+	@Override
+	public boolean isOutlined() {
+		return true;
+	}
+
+	@Override
+	public int getLineWidth() {
+		PolylineModel model = getPolylineModel();
+		if (widthInput.isDefault() && model != null)
+			return model.getLineWidth();
+		return widthInput.getValue();
+	}
+
+	@Override
+	public Color4d getLineColour() {
+		PolylineModel model = getPolylineModel();
+		if (colourInput.isDefault() && model != null)
+			return model.getLineColour();
+		return colourInput.getValue();
+	}
+
 }
