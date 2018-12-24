@@ -26,8 +26,14 @@ public class TestColor4d {
 
 	@Test
 	public void testColor4d() {
-		String colName = "banana";
-		Color4d col = ColourInput.getColorWithName(colName);
+		for (Color4d col : ColourInput.namedColourList) {
+			String colName = ColourInput.getColorName(col);
+			compareColor(colName);
+		}
+	}
+
+	private void compareColor(String name) {
+		Color4d col = ColourInput.getColorWithName(name);
 
 		int red = (int) Math.round(col.r * 255.0d);
 		int green = (int) Math.round(col.g * 255.0d);
@@ -37,6 +43,6 @@ public class TestColor4d {
 		assertTrue(col.equals(newCol));
 
 		String newColName = ColourInput.getColorName(newCol);
-		assertTrue(colName.equals(newColName));
+		assertTrue(name.equals(newColName));
 	}
 }
