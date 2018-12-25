@@ -47,6 +47,7 @@ import com.jaamsim.render.BillboardStringProxy;
 import com.jaamsim.render.DisplayModelBinding;
 import com.jaamsim.render.LineProxy;
 import com.jaamsim.render.OverlayLineProxy;
+import com.jaamsim.render.OverlayPolygonProxy;
 import com.jaamsim.render.OverlayStringProxy;
 import com.jaamsim.render.PolygonProxy;
 import com.jaamsim.render.RenderProxy;
@@ -545,8 +546,8 @@ public class TextModel extends DisplayModel {
 					rect.add(new Vec2d( start, top ));
 					rect.add(new Vec2d(   end, top ));
 					rect.add(new Vec2d(   end, bottom ));
-					cachedProxies.add(new OverlayLineProxy(rect, ColourInput.LIGHT_GREY,
-							!alignBottom, alignRight, 1, vi, labelObservee.getEntityNumber()));
+					cachedProxies.add(new OverlayPolygonProxy(rect, ColourInput.LIGHT_GREY,
+							!alignBottom, alignRight, vi, labelObservee.getEntityNumber()));
 				}
 
 				// Show the text insertion mark
