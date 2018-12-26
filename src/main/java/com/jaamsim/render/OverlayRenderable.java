@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2012 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2018 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +18,7 @@
 package com.jaamsim.render;
 
 import com.jaamsim.math.Ray;
+import com.jaamsim.math.Vec2d;
 
 
 /**
@@ -46,4 +48,7 @@ public interface OverlayRenderable {
 	 */
 	public boolean renderForView(int windowID, Camera cam);
 
+	public long getPickingID();
+
+	public boolean collides(Vec2d coords, double windowWidth, double windowHeight, Camera cam);
 }

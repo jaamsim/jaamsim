@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2012 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2018 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,11 +32,12 @@ public class OverlayStringProxy implements RenderProxy {
 	private double _height;
 	private boolean _alignRight, _alignBottom;
 	private VisibilityInfo _visInfo;
+	private final long _pickingID;
 	OverlayString cachedString;
 
 	public OverlayStringProxy(String cont, TessFontKey fontKey, Color4d colour,
 	                          double height, double x, double y, boolean alignRight, boolean alignBottom,
-	                          VisibilityInfo visInfo) {
+	                          VisibilityInfo visInfo, long pickingID) {
 		_contents = cont;
 		_fontKey = fontKey;
 		_fontColour = colour;
@@ -43,6 +45,7 @@ public class OverlayStringProxy implements RenderProxy {
 		_x = x; _y = y;
 		_alignRight = alignRight; _alignBottom = alignBottom;
 		_visInfo = visInfo;
+		_pickingID = pickingID;
 	}
 
 
@@ -56,7 +59,7 @@ public class OverlayStringProxy implements RenderProxy {
 
 		if (cachedString == null) {
 			TessFont tf = r.getTessFont(_fontKey);
-			cachedString = new OverlayString(tf, _contents, _fontColour, _height, _x, _y, _alignRight, _alignBottom, _visInfo);
+			cachedString = new OverlayString(tf, _contents, _fontColour, _height, _x, _y, _alignRight, _alignBottom, _visInfo, _pickingID);
 		}
 		outList.add(cachedString);
 

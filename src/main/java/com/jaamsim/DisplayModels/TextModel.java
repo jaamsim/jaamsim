@@ -40,11 +40,14 @@ import com.jaamsim.input.ValueInput;
 import com.jaamsim.input.Vec3dInput;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Transform;
+import com.jaamsim.math.Vec2d;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.math.Vec4d;
 import com.jaamsim.render.BillboardStringProxy;
 import com.jaamsim.render.DisplayModelBinding;
 import com.jaamsim.render.LineProxy;
+import com.jaamsim.render.OverlayLineProxy;
+import com.jaamsim.render.OverlayPolygonProxy;
 import com.jaamsim.render.OverlayStringProxy;
 import com.jaamsim.render.PolygonProxy;
 import com.jaamsim.render.RenderProxy;
@@ -434,6 +437,10 @@ public class TextModel extends DisplayModel {
 		private Vec3d dsOffsetCache;
 		private Color4d dsColorCache;
 
+		private boolean editModeCache;
+		private int insertPosCache;
+		private int numSelectedCache;
+
 		private VisibilityInfo viCache;
 
 		private ArrayList<RenderProxy> cachedProxies = null;
@@ -465,6 +472,9 @@ public class TextModel extends DisplayModel {
 			boolean ds = labelObservee.getDropShadow();
 			Color4d dsColor = labelObservee.getDropShadowColor();
 			Vec3d dsOffset = labelObservee.getDropShadowOffset();
+			boolean editMode = labelObservee.isEditMode();
+			int insertPos = labelObservee.getInsertPosition();
+			int numSelected = labelObservee.getNumberSelected();
 
 			VisibilityInfo vi = getVisibilityInfo();
 
@@ -480,6 +490,9 @@ public class TextModel extends DisplayModel {
 			dirty = dirty || dropShadowCache != ds;
 			dirty = dirty || dirty_col4d(dsColorCache, dsColor);
 			dirty = dirty || dirty_vec3d(dsOffsetCache, dsOffset);
+			dirty = dirty || editMode != editModeCache;
+			dirty = dirty || insertPos != insertPosCache;
+			dirty = dirty || numSelected != numSelectedCache;
 			dirty = dirty || !compare(viCache, vi);
 
 			textCache = text;
@@ -492,6 +505,9 @@ public class TextModel extends DisplayModel {
 			dropShadowCache = ds;
 			dsColorCache = dsColor;
 			dsOffsetCache = dsOffset;
+			editModeCache = editMode;
+			insertPosCache = insertPos;
+			numSelectedCache = numSelected;
 			viCache = vi;
 
 			if (cachedProxies != null && !dirty) {
@@ -506,24 +522,86 @@ public class TextModel extends DisplayModel {
 
 			cachedProxies = new ArrayList<>();
 
+			// If the text is being edited, show the selection and the text insertion mark
+			if (editMode) {
+				double length = RenderManager.inst().getRenderedStringLength(fk, height, text);
+				double margin = 0.25d*height;
+				double textStart = alignRight ? pos.get(0) + length : pos.get(0);
+				double top = pos.get(1) - margin;
+				double bottom = pos.get(1) + height + margin;
+
+				// Highlight the selected text
+				if (numSelected != 0) {
+					int startPos = Math.min(insertPos, insertPos + numSelected);
+					int endPos = Math.max(insertPos, insertPos + numSelected);
+
+					// Calculate the position of the selected text in pixels relative to the start of the string
+					double startOffset = RenderManager.inst().getOffsetForStringPosition(fk, height, text, startPos);
+					double endOffset = RenderManager.inst().getOffsetForStringPosition(fk, height, text, endPos);
+					double start = textStart + startOffset * (alignRight ? -1.0d : 1.0d);
+					double end = textStart + endOffset * (alignRight ? -1.0d : 1.0d);
+
+					ArrayList<Vec2d> rect = new ArrayList<>(4);
+					rect.add(new Vec2d( start, bottom ));
+					rect.add(new Vec2d( start, top ));
+					rect.add(new Vec2d(   end, top ));
+					rect.add(new Vec2d(   end, bottom ));
+					cachedProxies.add(new OverlayPolygonProxy(rect, ColourInput.LIGHT_GREY,
+							!alignBottom, alignRight, vi, labelObservee.getEntityNumber()));
+				}
+
+				// Show the text insertion mark
+				double insertOffset = RenderManager.inst().getOffsetForStringPosition(fk, height, text, insertPos);
+				double insert = textStart + insertOffset * (alignRight ? -1.0d : 1.0d);
+				ArrayList<Vec2d> points = new ArrayList<>(2);
+				points.add(new Vec2d( insert, top ));
+				points.add(new Vec2d( insert, bottom ));
+				cachedProxies.add(new OverlayLineProxy(points, ColourInput.BLACK,
+						!alignBottom, alignRight, 1, vi, labelObservee.getEntityNumber()));
+			}
+
+			// Show the drop shadow
 			if (ds) {
 				dsOffset = new Vec3d(dsOffset);
 				dsOffset.scale3(height);
 				cachedProxies.add(new OverlayStringProxy(text, fk, dsColor, height,
 				                                      pos.get(0) + (dsOffset.x * (alignRight ? -1 : 1)),
 				                                      pos.get(1) - (dsOffset.y * (alignBottom ? -1 : 1)),
-				                                      alignRight, alignBottom, vi));
+				                                      alignRight, alignBottom, vi, labelObservee.getEntityNumber()));
 			}
 
+			// Show the text
 			cachedProxies.add(new OverlayStringProxy(text, fk, color, height, pos.get(0), pos.get(1),
-			                                     alignRight, alignBottom, vi));
+			                                     alignRight, alignBottom, vi, labelObservee.getEntityNumber()));
 
 			out.addAll(cachedProxies);
 		}
 
 		@Override
 		protected void collectSelectionBox(double simTime, ArrayList<RenderProxy> out) {
-			// No selection widgets for now
+
+			double length = RenderManager.inst().getRenderedStringLength(fkCache, heightCache, textCache);
+			double margin = 0.5d*heightCache;
+			double start = alignRightCache ? posCache.get(0) + length + margin
+					: posCache.get(0) - margin;
+			double end = alignRightCache ? posCache.get(0) - margin
+					: posCache.get(0) + length + margin;
+			double top = posCache.get(1) - margin;
+			double bottom = posCache.get(1) + heightCache + margin;
+
+			ArrayList<Vec2d> rect = new ArrayList<>(8);
+			rect.add(new Vec2d( start, bottom ));
+			rect.add(new Vec2d(   end, bottom ));
+			rect.add(new Vec2d(   end, bottom ));
+			rect.add(new Vec2d(   end, top    ));
+			rect.add(new Vec2d(   end, top    ));
+			rect.add(new Vec2d( start, top    ));
+			rect.add(new Vec2d( start, top    ));
+			rect.add(new Vec2d( start, bottom ));
+
+			OverlayLineProxy outline = new OverlayLineProxy(rect, ColourInput.GREEN,
+					!alignBottomCache, alignRightCache, 1, viCache, labelObservee.getEntityNumber());
+			out.add(outline);
 		}
 	}
 
@@ -615,10 +693,12 @@ public class TextModel extends DisplayModel {
 			if (ds) {
 				dsOffset = new Vec3d(dsOffset);
 				dsOffset.scale3(height);
-				cachedProxies.add(new BillboardStringProxy(text, fk, dsColor, height, pos, dsOffset.x, dsOffset.y, vi));
+				cachedProxies.add(new BillboardStringProxy(text, fk, dsColor, height, pos, dsOffset.x, dsOffset.y,
+				                                           vi, labelObservee.getEntityNumber()));
 			}
 
-			cachedProxies.add(new BillboardStringProxy(text, fk, color, height, pos, 0, 0, vi));
+			cachedProxies.add(new BillboardStringProxy(text, fk, color, height, pos, 0, 0,
+			                                           vi, labelObservee.getEntityNumber()));
 			out.addAll(cachedProxies);
 		}
 	}

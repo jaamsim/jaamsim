@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2018 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,13 +28,16 @@ import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.datatypes.IntegerVector;
 import com.jaamsim.input.BooleanInput;
+import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.FileInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.math.Transform;
+import com.jaamsim.math.Vec2d;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.render.CachedTexLoader;
 import com.jaamsim.render.DisplayModelBinding;
 import com.jaamsim.render.ImageProxy;
+import com.jaamsim.render.OverlayLineProxy;
 import com.jaamsim.render.OverlayTextureProxy;
 import com.jaamsim.render.RenderProxy;
 import com.jaamsim.render.VisibilityInfo;
@@ -284,7 +288,7 @@ public class ImageModel extends DisplayModel {
 				cachedProxy = new OverlayTextureProxy(pos.get(0), pos.get(1), size.get(0), size.get(1),
 				                                      filename,
 				                                      transp, false,
-				                                      alignRight, alignBottom, vi);
+				                                      alignRight, alignBottom, vi, imageObservee.getEntityNumber());
 
 				out.add(cachedProxy);
 			} catch (ErrorException ex) {
@@ -294,7 +298,25 @@ public class ImageModel extends DisplayModel {
 
 		@Override
 		protected void collectSelectionBox(double simTime, ArrayList<RenderProxy> out) {
-			// No selection widgets for now
+
+			double start = alignRightCache ? posCache.get(0) + sizeCache.get(0) : posCache.get(0);
+			double end = alignRightCache ? posCache.get(0) : posCache.get(0) + sizeCache.get(0);
+			double top = posCache.get(1);
+			double bottom = posCache.get(1) + sizeCache.get(1);
+
+			ArrayList<Vec2d> rect = new ArrayList<>(8);
+			rect.add(new Vec2d( start, bottom ));
+			rect.add(new Vec2d(   end, bottom ));
+			rect.add(new Vec2d(   end, bottom ));
+			rect.add(new Vec2d(   end, top    ));
+			rect.add(new Vec2d(   end, top    ));
+			rect.add(new Vec2d( start, top    ));
+			rect.add(new Vec2d( start, top    ));
+			rect.add(new Vec2d( start, bottom ));
+
+			OverlayLineProxy outline = new OverlayLineProxy(rect, ColourInput.GREEN,
+					!alignBottomCache, alignRightCache, 1, viCache, imageObservee.getEntityNumber());
+			out.add(outline);
 		}
 	}
 
