@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2015 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2018 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -94,14 +95,6 @@ public class InputValue extends TextBasics implements SampleProvider {
 			GUIFrame.invokeErrorDialog("Input Error", e.getMessage());
 			suppressUpdate = false;
 		}
-	}
-
-	@Override
-	public void handleSelectionLost() {
-		super.handleSelectionLost();
-
-		// Stop editing, even if the inputs were not accepted successfully
-		cancelEdits();
 	}
 
 	@Override
