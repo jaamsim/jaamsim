@@ -650,11 +650,27 @@ public class RenderManager implements DragSourceListener {
 			return new ArrayList<>(); // empty set
 		}
 
-		Ray pickRay = RenderUtils.getPickRay(mouseInfo);
+		// Look for overlay entities
+		int x = mouseInfo.x;
+		int y = mouseInfo.y;
+		List<PickData> ret = pickForRasterCoord(x, y, view.getID());
 
-		return pickForRay(pickRay, view.getID(), precise);
+		// Look for normal entities
+		Ray pickRay = RenderUtils.getPickRay(mouseInfo);
+		ret.addAll(pickForRay(pickRay, view.getID(), precise));
+
+		return ret;
 	}
 
+	private List<PickData> pickForRasterCoord(int x, int y, int viewID) {
+		List<PickData> ret = new ArrayList<>();
+		Vec2d vec = new Vec2d(x, y);
+		List<Long> overlayList = renderer.overlayPick(vec, viewID);
+		for (Long id : overlayList) {
+			ret.add(new PickData(id));
+		}
+		return ret;
+	}
 
 	/**
 	 * PickData represents enough information to sort a list of picks based on a picking preference
@@ -687,6 +703,17 @@ public class RenderManager implements DragSourceListener {
 			size = ent.getSize().mag3();
 			dist = d;
 
+			isEntity = true;
+		}
+
+		/**
+		 * This pick was an overlay entity.
+		 * @param id
+		 */
+		public PickData(long id) {
+			this.id = id;
+			size = 0;
+			dist = 0;
 			isEntity = true;
 		}
 	}
