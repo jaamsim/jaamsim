@@ -514,6 +514,19 @@ public class Renderer implements GLAnimatorControl {
 	}
 
 	/**
+	 * Returns the width and height in pixels of the graphics contents of the specified view
+	 * window.
+	 * @param windowID - identification number for the window
+	 * @return width and height of graphics portion of the window
+	 */
+	public Vec2d getViewableSize(int windowID) {
+		synchronized(openWindows) {
+			RenderWindow win = openWindows.get(windowID);
+			return new Vec2d(win.getViewableWidth(), win.getViewableHeight());
+		}
+	}
+
+	/**
 	 * Construct a new window (a NEWT window specifically)
 	 *
 	 * @param width
