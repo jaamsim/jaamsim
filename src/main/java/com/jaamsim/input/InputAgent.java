@@ -807,7 +807,6 @@ public class InputAgent {
 		}
 
 		InputAgent.apply(ent, in, kw);
-		GUIFrame.updateUI();
 	}
 
 	public static final void apply(Entity ent, Input<?> in, KeywordIndex kw) {
@@ -831,13 +830,13 @@ public class InputAgent {
 		}
 
 		ent.updateForInput(in);
+		GUIFrame.updateUI();
 	}
 
 	public static void processKeyword(Entity entity, KeywordIndex key) {
 		Input<?> input = entity.getInput( key.keyword );
 		if (input != null) {
 			InputAgent.apply(entity, input, key);
-			GUIFrame.updateUI();
 			return;
 		}
 
