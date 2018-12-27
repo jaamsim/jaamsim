@@ -429,7 +429,6 @@ public class DisplayEntity extends Entity {
 			regionInput.setHidden(true);
 			relativeEntity.setHidden(true);
 			showInput.setHidden(true);
-			movable.setHidden(true);
 			return;
 		}
 
