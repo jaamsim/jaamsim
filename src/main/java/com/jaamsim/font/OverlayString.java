@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2012 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2018 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -158,7 +159,7 @@ public class OverlayString implements OverlayRenderable {
 		if (_alignRight) {
 			x = windowWidth - _x - renderedSize.x;
 		}
-		if (!_alignBottom) {
+		if (_alignBottom) {
 			y = windowHeight - _y - renderedSize.y;
 		}
 
