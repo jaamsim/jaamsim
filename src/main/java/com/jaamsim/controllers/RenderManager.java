@@ -157,6 +157,7 @@ public class RenderManager implements DragSourceListener {
 	private Vec3d dragEntitySize;
 	private Mat4d dragEntityTransMat;
 	private Mat4d dragEntityInvTransMat;
+	private IntegerVector dragEntityScreenPosition;
 
 	// The object type for drag-and-drop operation, if this is null, the user is not dragging
 	private ObjectType dndObjectType;
@@ -1405,6 +1406,19 @@ public class RenderManager implements DragSourceListener {
 			return false;
 		}
 
+		// Record the data for the selected entity before it is dragged
+		if (selectedEntity != null) {
+			dragEntityPosition = selectedEntity.getGlobalPosition();
+			dragEntityPoints = selectedEntity.getPoints();
+			dragEntityOrientation = selectedEntity.getOrientation();
+			dragEntitySize = selectedEntity.getSize();
+			dragEntityTransMat = selectedEntity.getTransMatrix();
+			dragEntityInvTransMat = selectedEntity.getInvTransMatrix();
+			if (selectedEntity instanceof OverlayEntity) {
+				dragEntityScreenPosition = ((OverlayEntity) selectedEntity).getScreenPosition();
+			}
+		}
+
 		Ray pickRay = getRayForMouse(windowID, x, y);
 
 		View view = windowToViewMap.get(windowID);
@@ -1418,16 +1432,6 @@ public class RenderManager implements DragSourceListener {
 
 		if (picks.size() == 0) {
 			return false;
-		}
-
-		// Record the data for the selected entity before it is dragged
-		if (selectedEntity != null) {
-			dragEntityPosition = selectedEntity.getGlobalPosition();
-			dragEntityPoints = selectedEntity.getPoints();
-			dragEntityOrientation = selectedEntity.getOrientation();
-			dragEntitySize = selectedEntity.getSize();
-			dragEntityTransMat = selectedEntity.getTransMatrix();
-			dragEntityInvTransMat = selectedEntity.getInvTransMatrix();
 		}
 
 		double mouseHandleDist = Double.POSITIVE_INFINITY;
