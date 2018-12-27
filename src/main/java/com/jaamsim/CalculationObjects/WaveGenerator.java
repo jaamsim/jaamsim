@@ -24,7 +24,6 @@ import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.UnitTypeInput;
 import com.jaamsim.input.ValueInput;
-import com.jaamsim.ui.FrameBox;
 import com.jaamsim.units.AngleUnit;
 import com.jaamsim.units.TimeUnit;
 import com.jaamsim.units.Unit;
@@ -88,7 +87,6 @@ public abstract class WaveGenerator extends DisplayEntity implements SampleProvi
 		if (in == unitType) {
 			amplitude.setUnitType(unitType.getUnitType());
 			offset.setUnitType(unitType.getUnitType());
-			FrameBox.reSelectEntity();  // Update the units in the Output Viewer
 			return;
 		}
 	}

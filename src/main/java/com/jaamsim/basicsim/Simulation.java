@@ -48,7 +48,6 @@ import com.jaamsim.ui.AboutBox;
 import com.jaamsim.ui.EditBox;
 import com.jaamsim.ui.EntityPallet;
 import com.jaamsim.ui.EventViewer;
-import com.jaamsim.ui.FrameBox;
 import com.jaamsim.ui.GUIFrame;
 import com.jaamsim.ui.LogBox;
 import com.jaamsim.ui.ObjectSelector;
@@ -716,28 +715,24 @@ public class Simulation extends Entity {
 		if (in == showInputEditor) {
 			if (GUIFrame.getInstance() != null)
 				setWindowVisible(EditBox.getInstance(), showInputEditor.getValue());
-			FrameBox.reSelectEntity();
 			return;
 		}
 
 		if (in == showOutputViewer) {
 			if (GUIFrame.getInstance() != null)
 				setWindowVisible(OutputBox.getInstance(), showOutputViewer.getValue());
-			FrameBox.reSelectEntity();
 			return;
 		}
 
 		if (in == showPropertyViewer) {
 			if (GUIFrame.getInstance() != null)
 				setWindowVisible(PropertyBox.getInstance(), showPropertyViewer.getValue());
-			FrameBox.reSelectEntity();
 			return;
 		}
 
 		if (in == showLogViewer) {
 			if (GUIFrame.getInstance() != null)
 				setWindowVisible(LogBox.getInstance(), showLogViewer.getValue());
-			FrameBox.reSelectEntity();
 			return;
 		}
 

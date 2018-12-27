@@ -295,7 +295,6 @@ public class DisplayEntity extends Entity {
 			// Refresh the contents of the Input Editor
 			if (FrameBox.isSelected(this)) {
 				EditBox.getInstance().setEntity(null);
-				FrameBox.reSelectEntity();
 			}
 			return;
 		}

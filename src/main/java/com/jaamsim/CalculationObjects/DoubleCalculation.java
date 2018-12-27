@@ -25,7 +25,6 @@ import com.jaamsim.input.Input;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.UnitTypeInput;
-import com.jaamsim.ui.FrameBox;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
 
@@ -71,7 +70,6 @@ implements SampleProvider {
 		if (in == unitType) {
 			Class<? extends Unit> ut = unitType.getUnitType();
 			this.setUnitType(ut);
-			FrameBox.reSelectEntity();  // Update the units in the Output Viewer
 			return;
 		}
 	}

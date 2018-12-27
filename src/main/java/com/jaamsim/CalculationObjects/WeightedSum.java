@@ -29,7 +29,6 @@ import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.UnitTypeInput;
 import com.jaamsim.input.ValueListInput;
-import com.jaamsim.ui.FrameBox;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
@@ -85,7 +84,6 @@ public class WeightedSum extends DisplayEntity implements SampleProvider {
 
 		if (in == unitType) {
 			inputValueList.setUnitType(unitType.getUnitType());
-			FrameBox.reSelectEntity();  // Update the units in the Output Viewer
 			return;
 		}
 	}

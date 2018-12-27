@@ -273,10 +273,6 @@ public class View extends Entity {
 				new WindowSizePosUpdater(window, null, windowSize.getValue()).doUpdate();
 			return;
 		}
-		if (in == lock2D) {
-			GUIFrame.updateUI();
-			return;
-		}
 		if (in == showWindow) {
 			if (showWindow.getValue()) {
 				RenderManager.inst().createWindow(this);

@@ -48,7 +48,6 @@ import com.jaamsim.input.Output;
 import com.jaamsim.input.OutputHandle;
 import com.jaamsim.input.StringInput;
 import com.jaamsim.input.SynonymInput;
-import com.jaamsim.ui.FrameBox;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
 import com.jaamsim.units.Unit;
@@ -508,9 +507,6 @@ public class Entity {
 			for (AttributeHandle h : attributeDefinitionList.getValue()) {
 				this.addAttribute(h.getName(), h);
 			}
-
-			// Update the OutputBox
-			FrameBox.reSelectEntity();
 			return;
 		}
 		if (in == namedExpressionInput) {
@@ -518,9 +514,6 @@ public class Entity {
 			for (NamedExpression ne : namedExpressionInput.getValue()) {
 				addCustomOutput(ne.getName(), ne.getExpression(), ne.getUnitType());
 			}
-
-			// Update the OutputBox
-			FrameBox.reSelectEntity();
 			return;
 		}
 
