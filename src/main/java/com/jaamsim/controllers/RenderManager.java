@@ -48,6 +48,7 @@ import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.DisplayModels.DisplayModel;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.LinkDisplayable;
+import com.jaamsim.Graphics.OverlayEntity;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ObjectType;
 import com.jaamsim.basicsim.Simulation;
@@ -623,6 +624,13 @@ public class RenderManager implements DragSourceListener {
 				}
 				FrameBox.setSelectedEntity(ent, true);
 
+				if (ent instanceof OverlayEntity) {
+					OverlayEntity olEnt = (OverlayEntity) ent;
+					Vec2d size = renderer.getViewableSize(windowID);
+					olEnt.handleMouseClicked(count, x, y, (int)size.x, (int)size.y);
+					GUIFrame.updateUI();
+					return;
+				}
 				Vec3d globalCoord = getGlobalPositionForMouseData(windowID, x, y, ent);
 				ent.handleMouseClicked(count, globalCoord);
 				GUIFrame.updateUI();
