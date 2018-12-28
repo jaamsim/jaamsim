@@ -631,6 +631,7 @@ public class RenderManager implements DragSourceListener {
 					GUIFrame.updateUI();
 					return;
 				}
+
 				Vec3d globalCoord = getGlobalPositionForMouseData(windowID, x, y, ent);
 				ent.handleMouseClicked(count, globalCoord);
 				GUIFrame.updateUI();
@@ -973,6 +974,17 @@ public class RenderManager implements DragSourceListener {
 		if (selectedEntity == null || !selectedEntity.isMovable()
 				|| !selectedEntity.isGraphicsNominal())
 			return dragInfo.controlDown();
+
+		// Overlay object
+		if (selectedEntity instanceof OverlayEntity) {
+			Vec2d size = renderer.getViewableSize(dragInfo.windowID);
+			if (!dragInfo.controlDown()) {
+				OverlayEntity olEnt = (OverlayEntity) selectedEntity;
+				return olEnt.handleDrag(dragInfo.x, dragInfo.y, dragInfo.startX, dragInfo.startY,
+					(int)size.x, (int)size.y);
+			}
+			return false;
+		}
 
 		// Find the start and current world space positions
 		Ray firstRay = getRayForMouse(dragInfo.windowID, dragInfo.startX, dragInfo.startY);

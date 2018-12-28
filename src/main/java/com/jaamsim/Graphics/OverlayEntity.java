@@ -118,4 +118,8 @@ public abstract class OverlayEntity extends DisplayEntity {
 
 	public void handleMouseClicked(short count, int x, int y, int windowWidth, int windowHeight) {}
 
+	public boolean handleDrag(int x, int y, int startX, int startY, int windowWidth, int windowHeight) {
+		return false;
+	}
+
 }

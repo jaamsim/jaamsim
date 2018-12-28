@@ -331,6 +331,19 @@ public class OverlayText extends OverlayEntity implements TextEntity, EditableTe
 			editableText.selectPresentWord();
 	}
 
+	@Override
+	public boolean handleDrag(int x, int y, int startX, int startY, int windowWidth, int windowHeight) {
+		if (!isEditMode())
+			return false;
+
+		// Set the start and end of highlighting
+		int insertPos = getStringPosition(x, y, windowWidth, windowHeight);
+		int firstPos = getStringPosition(startX, startY, windowWidth, windowHeight);
+		editableText.setInsertPosition(insertPos, false);
+		editableText.setNumberSelected(firstPos - insertPos);
+		return true;
+	}
+
 	/**
 	 * Returns the insert position in the present text that corresponds to the specified global
 	 * coordinate. Index 0 is located immediately before the first character in the text.
