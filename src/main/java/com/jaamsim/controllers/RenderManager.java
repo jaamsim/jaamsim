@@ -983,7 +983,8 @@ public class RenderManager implements DragSourceListener {
 				return olEnt.handleDrag(dragInfo.x, dragInfo.y, dragInfo.startX, dragInfo.startY,
 					(int)size.x, (int)size.y);
 			}
-			return false;
+			return handleOverlayMove(dragInfo.x, dragInfo.y, dragInfo.startX, dragInfo.startY,
+					(int)size.x, (int)size.y);
 		}
 
 		// Find the start and current world space positions
@@ -1034,6 +1035,22 @@ public class RenderManager implements DragSourceListener {
 			return handleLineNodeMove(currentRay, firstRay, currentDist, firstDist, dragInfo.shiftDown());
 
 		return false;
+	}
+
+	// Moves an overlay entity to a new position in the windows
+	private boolean handleOverlayMove(int x, int y, int startX, int startY, int windowWidth, int windowHeight) {
+		if (dragEntityScreenPosition == null)
+			return false;
+		int dx = x - startX;
+		int dy = y - startY;
+		OverlayEntity olEnt = (OverlayEntity) selectedEntity;
+		int posX = dragEntityScreenPosition.get(0) + dx * (olEnt.getAlignRight() ? -1 : 1);
+		int posY = dragEntityScreenPosition.get(1) + dy * (olEnt.getAlignBottom() ? -1 : 1);
+		posX = Math.min(Math.max(0, posX), windowWidth);
+		posY = Math.min(Math.max(0, posY), windowHeight);
+		KeywordIndex kw = InputAgent.formatIntegers("ScreenPosition", posX, posY);
+		InputAgent.storeAndExecute(new KeywordCommand(olEnt, kw));
+		return true;
 	}
 
 	//Moves the selected entity to a new position in space
