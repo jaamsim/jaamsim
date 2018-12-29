@@ -77,7 +77,10 @@ public abstract class OverlayEntity extends DisplayEntity {
 	}
 
 	@Override
-	public void dragged(Vec3d newPos) {}
+	public void dragged(int x, int y, Vec3d newPos) {
+		KeywordIndex kw = InputAgent.formatIntegers("ScreenPosition", x, y);
+		InputAgent.apply(this, kw);
+	}
 
 	@Override
 	public void handleKeyPressed(int keyCode, char keyChar, boolean shift, boolean control, boolean alt) {

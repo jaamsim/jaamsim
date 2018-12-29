@@ -1569,7 +1569,7 @@ public class RenderManager implements DragSourceListener {
 		// Set the position for the entity
 		if (ent instanceof DisplayEntity) {
 			try {
-				((DisplayEntity)ent).dragged(creationPoint);
+				((DisplayEntity)ent).dragged(x, y, creationPoint);
 			}
 			catch (InputErrorException e) {}
 
