@@ -887,10 +887,6 @@ public class DisplayEntity extends Entity {
 		return visInfo;
 	}
 
-	public void dragged(Vec3d newPos) {
-		dragged(0, 0, newPos);
-	}
-
 	public void dragged(int x, int y, Vec3d newPos) {
 		KeywordIndex kw = InputAgent.formatVec3dInput(positionInput.getKeyword(), newPos, DistanceUnit.class);
 		InputAgent.apply(this, kw);
