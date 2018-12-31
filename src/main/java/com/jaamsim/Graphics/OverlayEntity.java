@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2018 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -76,7 +77,10 @@ public abstract class OverlayEntity extends DisplayEntity {
 	}
 
 	@Override
-	public void dragged(Vec3d newPos) {}
+	public void dragged(int x, int y, Vec3d newPos) {
+		KeywordIndex kw = InputAgent.formatIntegers("ScreenPosition", x, y);
+		InputAgent.apply(this, kw);
+	}
 
 	@Override
 	public void handleKeyPressed(int keyCode, char keyChar, boolean shift, boolean control, boolean alt) {
@@ -113,6 +117,12 @@ public abstract class OverlayEntity extends DisplayEntity {
 		y = Math.max(0, y);
 		KeywordIndex kw = InputAgent.formatIntegers(screenPosition.getKeyword(), x, y);
 		InputAgent.storeAndExecute(new KeywordCommand(this, kw));
+	}
+
+	public void handleMouseClicked(short count, int x, int y, int windowWidth, int windowHeight) {}
+
+	public boolean handleDrag(int x, int y, int startX, int startY, int windowWidth, int windowHeight) {
+		return false;
 	}
 
 }

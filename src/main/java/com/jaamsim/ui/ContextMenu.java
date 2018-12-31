@@ -31,6 +31,7 @@ import com.jaamsim.Commands.CoordinateCommand;
 import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.EntityLabel;
+import com.jaamsim.Graphics.OverlayEntity;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.basicsim.Simulation;
@@ -134,12 +135,19 @@ public class ContextMenu {
 
 				// Position the duplicated entity next to the original
 				if (copiedEntity instanceof DisplayEntity) {
+					int x = 0;
+					int y = 0;
+					if (copiedEntity instanceof OverlayEntity) {
+						OverlayEntity olEnt = (OverlayEntity) copiedEntity;
+						x = olEnt.getScreenPosition().get(0) + 10;
+						y = olEnt.getScreenPosition().get(1) + 10;
+					}
 					DisplayEntity dEnt = (DisplayEntity)copiedEntity;
 					Vec3d pos = dEnt.getPosition();
 					pos.x += 0.5d * dEnt.getSize().x;
 					pos.y -= 0.5d * dEnt.getSize().y;
 					try {
-						dEnt.dragged(pos);
+						dEnt.dragged(x, y, pos);
 					}
 					catch (InputErrorException e) {}
 				}

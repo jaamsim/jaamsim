@@ -48,6 +48,7 @@ import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.DisplayModels.DisplayModel;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.LinkDisplayable;
+import com.jaamsim.Graphics.OverlayEntity;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ObjectType;
 import com.jaamsim.basicsim.Simulation;
@@ -157,6 +158,7 @@ public class RenderManager implements DragSourceListener {
 	private Vec3d dragEntitySize;
 	private Mat4d dragEntityTransMat;
 	private Mat4d dragEntityInvTransMat;
+	private IntegerVector dragEntityScreenPosition;
 
 	// The object type for drag-and-drop operation, if this is null, the user is not dragging
 	private ObjectType dndObjectType;
@@ -622,6 +624,14 @@ public class RenderManager implements DragSourceListener {
 				}
 				FrameBox.setSelectedEntity(ent, true);
 
+				if (ent instanceof OverlayEntity) {
+					OverlayEntity olEnt = (OverlayEntity) ent;
+					Vec2d size = renderer.getViewableSize(windowID);
+					olEnt.handleMouseClicked(count, x, y, (int)size.x, (int)size.y);
+					GUIFrame.updateUI();
+					return;
+				}
+
 				Vec3d globalCoord = getGlobalPositionForMouseData(windowID, x, y, ent);
 				ent.handleMouseClicked(count, globalCoord);
 				GUIFrame.updateUI();
@@ -650,11 +660,27 @@ public class RenderManager implements DragSourceListener {
 			return new ArrayList<>(); // empty set
 		}
 
-		Ray pickRay = RenderUtils.getPickRay(mouseInfo);
+		// Look for overlay entities
+		int x = mouseInfo.x;
+		int y = mouseInfo.y;
+		List<PickData> ret = pickForRasterCoord(x, y, view.getID());
 
-		return pickForRay(pickRay, view.getID(), precise);
+		// Look for normal entities
+		Ray pickRay = RenderUtils.getPickRay(mouseInfo);
+		ret.addAll(pickForRay(pickRay, view.getID(), precise));
+
+		return ret;
 	}
 
+	private List<PickData> pickForRasterCoord(int x, int y, int viewID) {
+		List<PickData> ret = new ArrayList<>();
+		Vec2d vec = new Vec2d(x, y);
+		List<Long> overlayList = renderer.overlayPick(vec, viewID);
+		for (Long id : overlayList) {
+			ret.add(new PickData(id));
+		}
+		return ret;
+	}
 
 	/**
 	 * PickData represents enough information to sort a list of picks based on a picking preference
@@ -687,6 +713,17 @@ public class RenderManager implements DragSourceListener {
 			size = ent.getSize().mag3();
 			dist = d;
 
+			isEntity = true;
+		}
+
+		/**
+		 * This pick was an overlay entity.
+		 * @param id
+		 */
+		public PickData(long id) {
+			this.id = id;
+			size = 0;
+			dist = 0;
 			isEntity = true;
 		}
 	}
@@ -938,6 +975,18 @@ public class RenderManager implements DragSourceListener {
 				|| !selectedEntity.isGraphicsNominal())
 			return dragInfo.controlDown();
 
+		// Overlay object
+		if (selectedEntity instanceof OverlayEntity) {
+			Vec2d size = renderer.getViewableSize(dragInfo.windowID);
+			if (!dragInfo.controlDown()) {
+				OverlayEntity olEnt = (OverlayEntity) selectedEntity;
+				return olEnt.handleDrag(dragInfo.x, dragInfo.y, dragInfo.startX, dragInfo.startY,
+					(int)size.x, (int)size.y);
+			}
+			return handleOverlayMove(dragInfo.x, dragInfo.y, dragInfo.startX, dragInfo.startY,
+					(int)size.x, (int)size.y);
+		}
+
 		// Find the start and current world space positions
 		Ray firstRay = getRayForMouse(dragInfo.windowID, dragInfo.startX, dragInfo.startY);
 		Ray currentRay = getRayForMouse(dragInfo.windowID, dragInfo.x, dragInfo.y);
@@ -986,6 +1035,22 @@ public class RenderManager implements DragSourceListener {
 			return handleLineNodeMove(currentRay, firstRay, currentDist, firstDist, dragInfo.shiftDown());
 
 		return false;
+	}
+
+	// Moves an overlay entity to a new position in the windows
+	private boolean handleOverlayMove(int x, int y, int startX, int startY, int windowWidth, int windowHeight) {
+		if (dragEntityScreenPosition == null)
+			return false;
+		int dx = x - startX;
+		int dy = y - startY;
+		OverlayEntity olEnt = (OverlayEntity) selectedEntity;
+		int posX = dragEntityScreenPosition.get(0) + dx * (olEnt.getAlignRight() ? -1 : 1);
+		int posY = dragEntityScreenPosition.get(1) + dy * (olEnt.getAlignBottom() ? -1 : 1);
+		posX = Math.min(Math.max(0, posX), windowWidth);
+		posY = Math.min(Math.max(0, posY), windowHeight);
+		KeywordIndex kw = InputAgent.formatIntegers("ScreenPosition", posX, posY);
+		InputAgent.storeAndExecute(new KeywordCommand(olEnt, kw));
+		return true;
 	}
 
 	//Moves the selected entity to a new position in space
@@ -1378,6 +1443,19 @@ public class RenderManager implements DragSourceListener {
 			return false;
 		}
 
+		// Record the data for the selected entity before it is dragged
+		if (selectedEntity != null) {
+			dragEntityPosition = selectedEntity.getGlobalPosition();
+			dragEntityPoints = selectedEntity.getPoints();
+			dragEntityOrientation = selectedEntity.getOrientation();
+			dragEntitySize = selectedEntity.getSize();
+			dragEntityTransMat = selectedEntity.getTransMatrix();
+			dragEntityInvTransMat = selectedEntity.getInvTransMatrix();
+			if (selectedEntity instanceof OverlayEntity) {
+				dragEntityScreenPosition = ((OverlayEntity) selectedEntity).getScreenPosition();
+			}
+		}
+
 		Ray pickRay = getRayForMouse(windowID, x, y);
 
 		View view = windowToViewMap.get(windowID);
@@ -1391,16 +1469,6 @@ public class RenderManager implements DragSourceListener {
 
 		if (picks.size() == 0) {
 			return false;
-		}
-
-		// Record the data for the selected entity before it is dragged
-		if (selectedEntity != null) {
-			dragEntityPosition = selectedEntity.getGlobalPosition();
-			dragEntityPoints = selectedEntity.getPoints();
-			dragEntityOrientation = selectedEntity.getOrientation();
-			dragEntitySize = selectedEntity.getSize();
-			dragEntityTransMat = selectedEntity.getTransMatrix();
-			dragEntityInvTransMat = selectedEntity.getInvTransMatrix();
 		}
 
 		double mouseHandleDist = Double.POSITIVE_INFINITY;
@@ -1501,7 +1569,7 @@ public class RenderManager implements DragSourceListener {
 		// Set the position for the entity
 		if (ent instanceof DisplayEntity) {
 			try {
-				((DisplayEntity)ent).dragged(creationPoint);
+				((DisplayEntity)ent).dragged(x, y, creationPoint);
 			}
 			catch (InputErrorException e) {}
 

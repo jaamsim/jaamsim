@@ -337,6 +337,9 @@ public class PolylineModel extends DisplayModel implements LineEntity {
 
 			updateProxies(simTime);
 
+			if (cachedProxies == null)
+				return;
+
 			out.addAll(cachedProxies);
 		}
 

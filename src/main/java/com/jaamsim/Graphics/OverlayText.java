@@ -24,6 +24,7 @@ import com.jaamsim.DisplayModels.TextModel;
 import com.jaamsim.StringProviders.StringProvConstant;
 import com.jaamsim.StringProviders.StringProvInput;
 import com.jaamsim.controllers.RenderManager;
+import com.jaamsim.datatypes.IntegerVector;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.EntityInput;
@@ -306,6 +307,57 @@ public class OverlayText extends OverlayEntity implements TextEntity, EditableTe
 			return;
 		}
 		super.handleKeyReleased(keyCode, keyChar, shift, control, alt);
+	}
+
+	@Override
+	public void handleMouseClicked(short count, int x, int y, int windowWidth, int windowHeight) {
+		if (count > 2)
+			return;
+
+		// Double click starts edit mode
+		if (!isEditMode() && count == 2) {
+			setEditMode(true);
+		}
+
+		if (!isEditMode())
+			return;
+
+		// Position the insertion point where the text was clicked
+		int pos = getStringPosition(x, y, windowWidth, windowHeight);
+		editableText.setInsertPosition(pos, false);
+
+		// Double click selects a whole word
+		if (count == 2)
+			editableText.selectPresentWord();
+	}
+
+	@Override
+	public boolean handleDrag(int x, int y, int startX, int startY, int windowWidth, int windowHeight) {
+		if (!isEditMode())
+			return false;
+
+		// Set the start and end of highlighting
+		int insertPos = getStringPosition(x, y, windowWidth, windowHeight);
+		int firstPos = getStringPosition(startX, startY, windowWidth, windowHeight);
+		editableText.setInsertPosition(insertPos, false);
+		editableText.setNumberSelected(firstPos - insertPos);
+		return true;
+	}
+
+	/**
+	 * Returns the insert position in the present text that corresponds to the specified global
+	 * coordinate. Index 0 is located immediately before the first character in the text.
+	 * @param x -
+	 * @param y -
+	 * @return insert position in the text string
+	 */
+	public int getStringPosition(int x, int y, int windowWidth, int windowHeight) {
+		double height = getTextHeight();
+		TessFontKey fontKey = getTessFontKey();
+		double length = RenderManager.inst().getRenderedStringLength(fontKey, height, getText());
+		IntegerVector pos = getScreenPosition();
+		double textStart = getAlignRight() ? windowWidth - pos.get(0) - length : pos.get(0);
+		return RenderManager.inst().getRenderedStringPosition(fontKey, height, getText(), x - textStart);
 	}
 
 	public String getRenderText(double simTime) {

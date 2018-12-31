@@ -223,7 +223,7 @@ public class OverlayTexture implements OverlayRenderable {
 		if (_alignRight) {
 			x = windowWidth - _x - _width;
 		}
-		if (!_alignBottom) {
+		if (_alignBottom) {
 			y = windowHeight - _y - _height;
 		}
 

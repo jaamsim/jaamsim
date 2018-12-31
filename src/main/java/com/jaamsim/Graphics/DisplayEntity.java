@@ -428,7 +428,6 @@ public class DisplayEntity extends Entity {
 			regionInput.setHidden(true);
 			relativeEntity.setHidden(true);
 			showInput.setHidden(true);
-			movable.setHidden(true);
 			return;
 		}
 
@@ -887,8 +886,7 @@ public class DisplayEntity extends Entity {
 		return visInfo;
 	}
 
-	public void dragged(Vec3d newPos) {
-
+	public void dragged(int x, int y, Vec3d newPos) {
 		KeywordIndex kw = InputAgent.formatVec3dInput(positionInput.getKeyword(), newPos, DistanceUnit.class);
 		InputAgent.apply(this, kw);
 

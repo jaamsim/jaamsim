@@ -753,8 +753,20 @@ public class InputAgent {
 			InputAgent.logWarning("Could not create trace file.%n%s", e.getMessage());
 		}
 
+		// Load the input file
 		URI dirURI = file.getParentFile().toURI();
 		InputAgent.readStream("", dirURI, file.getName());
+
+		// Validate the inputs
+		for (Entity each : Entity.getClonesOfIterator(Entity.class)) {
+			try {
+				each.validate();
+			}
+			catch (Throwable e) {
+				numErrors++;
+				InputAgent.logMessage("Validation Error - %s: %s", each, e.getMessage());
+			}
+		}
 
 		// The session is not considered to be edited after loading a configuration file
 		setSessionEdited(false);
