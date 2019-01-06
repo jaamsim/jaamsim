@@ -188,7 +188,7 @@ public abstract class StateUserEntity extends StateEntity implements ThresholdUs
 	// PRESENT STATE
 	// ********************************************************************************************
 
-	protected void setBusy(boolean bool) {
+	public void setBusy(boolean bool) {
 		busy = bool;
 	}
 
