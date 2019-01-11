@@ -143,6 +143,12 @@ public abstract class StateUserEntity extends StateEntity implements ThresholdUs
 		initStates();
 	}
 
+	@Override
+	public void startUp() {
+		super.startUp();
+		setPresentState();
+	}
+
 	public void initStates() {
 		this.addState(STATE_IDLE);
 		this.addState(STATE_WORKING);
