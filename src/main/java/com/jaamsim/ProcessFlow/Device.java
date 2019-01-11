@@ -55,8 +55,10 @@ public abstract class Device extends StateUserEntity {
 	 */
 	public final void restart() {
 		if (isTraceFlag()) trace(0, "restart");
-		if (processing || !isAbleToRestart())
+		if (processing || !isAbleToRestart()) {
+			setPresentState();
 			return;
+		}
 		processing = true;
 		startUpTicks = getSimTicks();
 		setBusy(true);
