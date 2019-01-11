@@ -96,8 +96,8 @@ public abstract class StateUserEntity extends StateEntity implements ThresholdUs
 
 	protected static final Color4d COL_MAINTENANCE = ColourInput.RED;
 	protected static final Color4d COL_BREAKDOWN = ColourInput.RED;
-	protected static final Color4d COL_STOPPED = ColourInput.DARK_BLUE;
-	protected static final Color4d COL_BLOCKED = ColourInput.DARK_BLUE;
+	protected static final Color4d COL_STOPPED = ColourInput.getColorWithName("gray25");
+	protected static final Color4d COL_BLOCKED = ColourInput.getColorWithName("gray25");
 
 	{
 		immediateThresholdList = new EntityListInput<>(Threshold.class, "ImmediateThresholdList", THRESHOLDS, new ArrayList<Threshold>());
