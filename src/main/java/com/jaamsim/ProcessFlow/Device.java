@@ -61,6 +61,7 @@ public abstract class Device extends StateUserEntity {
 		}
 		processing = true;
 		startUpTicks = getSimTicks();
+		lastUpdateTime = getSimTime();
 		setBusy(true);
 		startStep();
 	}
@@ -106,9 +107,6 @@ public abstract class Device extends StateUserEntity {
 			this.stopProcessing();
 			return;
 		}
-
-		// Set the last update time in case processing is restarting after a stoppage
-		lastUpdateTime = simTime;
 
 		// Start the next time step
 		if (this.isNewStepReqd(stepCompleted)) {
