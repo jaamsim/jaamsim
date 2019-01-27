@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2002-2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2017-2018 JaamSim Software Inc.
+ * Copyright (C) 2017-2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -138,6 +138,7 @@ public class DisplayEntity extends Entity {
 	private final ValueListInput drawRange;
 
 	private final Vec3d position = new Vec3d();
+	private final ArrayList<Vec3d> points = new ArrayList<>();
 	private final Vec3d size = new Vec3d(1.0d, 1.0d, 1.0d);
 	private final Vec3d orient = new Vec3d();
 	private final Vec3d align = new Vec3d();
@@ -272,6 +273,11 @@ public class DisplayEntity extends Entity {
 			this.setPosition(positionInput.getValue());
 			return;
 		}
+
+		if (in == pointsInput) {
+			this.setPoints(pointsInput.getValue());
+			return;
+		}
 		if (in == sizeInput) {
 			this.setSize(sizeInput.getValue());
 			return;
@@ -303,8 +309,7 @@ public class DisplayEntity extends Entity {
 			return;
 		}
 
-		// If Points were input, then use them to set the start and end coordinates
-		if (in == pointsInput || in == curveTypeInput) {
+		if (in == curveTypeInput) {
 			invalidateScreenPoints();
 			return;
 		}
@@ -1002,7 +1007,7 @@ public class DisplayEntity extends Entity {
 
 	public ArrayList<Vec3d> getPoints() {
 		synchronized(screenPointLock) {
-			return new ArrayList<>(pointsInput.getValue());
+			return new ArrayList<>(points);
 		}
 	}
 
@@ -1034,6 +1039,22 @@ public class DisplayEntity extends Entity {
 			error("Invalid CurveType");
 		}
 		return ret;
+	}
+
+	public void setPoints(ArrayList<Vec3d> pts) {
+		synchronized (screenPointLock) {
+			points.clear();
+			points.addAll(pts);
+		}
+		invalidateScreenPoints();
+	}
+
+	public void setGlobalPoints(ArrayList<Vec3d> pts) {
+		synchronized (screenPointLock) {
+			points.clear();
+			points.addAll(getLocalPosition(pts));
+		}
+		invalidateScreenPoints();
 	}
 
 	public boolean selectable() {
