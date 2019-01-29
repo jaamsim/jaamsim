@@ -1331,13 +1331,7 @@ public class RenderManager implements DragSourceListener {
 		newPoints.set(nodeIndex, new Vec3d(selectedEntity.getLocalPosition(point)));
 
 		KeywordIndex ptsKw = InputAgent.formatPointsInputs("Points", newPoints, new Vec3d());
-		if (nodeIndex == 0) {
-			KeywordIndex posKw = InputAgent.formatVec3dInput("Position", newPoints.get(0), DistanceUnit.class);
-			InputAgent.storeAndExecute(new KeywordCommand(selectedEntity, nodeIndex, ptsKw, posKw));
-		}
-		else {
-			InputAgent.storeAndExecute(new KeywordCommand(selectedEntity, nodeIndex, ptsKw));
-		}
+		InputAgent.storeAndExecute(new KeywordCommand(selectedEntity, nodeIndex, ptsKw));
 		return true;
 	}
 
