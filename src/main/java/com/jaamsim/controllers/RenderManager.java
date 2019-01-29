@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2012 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2018 JaamSim Software Inc.
+ * Copyright (C) 2016-2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -1283,8 +1283,13 @@ public class RenderManager implements DragSourceListener {
 		}
 		ArrayList<Vec3d> localPts = selectedEntity.getLocalPosition(globalPts);
 
+		// Set the new position coordinate
+		Vec3d pos = new Vec3d(dragEntityPosition);
+		pos.add3(delta);
+		Vec3d localPos = selectedEntity.getLocalPosition(pos);
+
 		KeywordIndex ptsKw = InputAgent.formatPointsInputs("Points", localPts, new Vec3d());
-		KeywordIndex posKw = InputAgent.formatVec3dInput("Position", localPts.get(0), DistanceUnit.class);
+		KeywordIndex posKw = InputAgent.formatVec3dInput("Position", localPos, DistanceUnit.class);
 		InputAgent.storeAndExecute(new KeywordCommand(selectedEntity, -1, ptsKw, posKw));
 		return true;
 	}
