@@ -1095,7 +1095,7 @@ public class RenderManager implements DragSourceListener {
 
 		ArrayList<Vec3d> points = selectedEntity.getPoints();
 		Vec3d offset = new Vec3d(localPos);
-		offset.sub3(points.get(0));
+		offset.sub3(selectedEntity.getPosition());
 		KeywordIndex ptsKw = InputAgent.formatPointsInputs("Points", points, offset);
 
 		InputAgent.storeAndExecute(new KeywordCommand(selectedEntity, kw, ptsKw));
