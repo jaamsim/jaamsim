@@ -383,6 +383,7 @@ public class ShapeModel extends DisplayModel implements LineEntity, FillEntity {
 			Vec3d scale = getScale();
 			long pickingID = getPickingID();
 
+			// Height for each bar
 			Tag tag_contents = tagsCache.get(ShapeModel.TAG_CONTENTS);
 			if (tag_contents == null || tag_contents.sizes == null || tag_contents.colors == null ||
 			    tag_contents.colors.length < tag_contents.sizes.length) {
@@ -392,6 +393,7 @@ public class ShapeModel extends DisplayModel implements LineEntity, FillEntity {
 
 			double[] sizes = tag_contents.sizes;
 
+			// Height for the background above each bar
 			Tag tag_contents2 = tagsCache.get(ShapeModel.TAG_CONTENTS2);
 			double[] rescapacities = null;
 			Color4d[] rescolours = null;
@@ -399,9 +401,8 @@ public class ShapeModel extends DisplayModel implements LineEntity, FillEntity {
 				rescapacities = tag_contents2.sizes;
 				rescolours = tag_contents2.colors;
 			}
-			Color4d outlineColour = getTagColor(ShapeModel.TAG_OUTLINES, ColourInput.BLACK);
-			Color4d backgroundColour = getTagColor(ShapeModel.TAG_BODY, ColourInput.WHITE);
 
+			// Width for each bar
 			Tag tag_cap = tagsCache.get(ShapeModel.TAG_CAPACITY);
 			double[] capacities;
 			if (tag_cap == null || tag_cap.sizes == null || tag_cap.sizes.length != sizes.length) {
@@ -414,21 +415,25 @@ public class ShapeModel extends DisplayModel implements LineEntity, FillEntity {
 				capacities = tag_cap.sizes;
 			}
 
-
+			// Calculate the total width
 			double totalCap = 0;
 			for (int i = 0; i < capacities.length; ++i) {
 				totalCap += capacities[i];
 			}
 			if (totalCap == 0) totalCap = 1; // Guard against div by 0
 
-			// Add the background and outline
+			// Draw the background and outline
+			Color4d outlineColour = getTagColor(ShapeModel.TAG_OUTLINES, ColourInput.BLACK);
+			Color4d backgroundColour = getTagColor(ShapeModel.TAG_BODY, ColourInput.WHITE);
 			cachedProxies.add(new PolygonProxy(RenderUtils.RECT_POINTS, trans, scale, backgroundColour, false, 1, getVisibilityInfo(), pickingID));
 			cachedProxies.add(new PolygonProxy(RenderUtils.RECT_POINTS, trans, scale, outlineColour, true, 1, getVisibilityInfo(), pickingID));
 
+			// Loop through the values to be displayed
 			double accumWidth = 0;
 			for (int i = 0; i < sizes.length; ++i) {
-				// Add a rectangle for each size
 
+				// Draw a vertical bar with the specified height and width
+				// Each bar is placed to the right of the previous one
 				double size = sizes[i];
 				double width = capacities[i]/totalCap;
 
@@ -448,6 +453,7 @@ public class ShapeModel extends DisplayModel implements LineEntity, FillEntity {
 
 				cachedProxies.add(new PolygonProxy(contentsPoints, trans, scale, tag_contents.colors[i], false, 1, getVisibilityInfo(), pickingID));
 
+				// Draw a second vertical bar above the first one
 				if (rescapacities != null) {
 					double startResY = endY;
 					double endResY = startResY + rescapacities[i];
