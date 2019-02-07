@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018 JaamSim Software Inc.
+ * Copyright (C) 2018-2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -244,14 +244,14 @@ public class EntityContainer extends SimEntity implements EntContainer {
 
 			// Set Position
 			Vec3d itemSize = item.getSize();
-			distanceX += spacingInput.getValue() + 0.5*itemSize.x;
+			distanceX += 0.5*itemSize.x;
 			tmp.set3(distanceX/size.x, distanceY/size.y, 0.0d);
 			Vec3d itemCenter = this.getGlobalPositionForAlignment(tmp);
 			itemCenter.add3(positionOffset.getValue());
 			item.setGlobalPositionForAlignment(new Vec3d(), itemCenter);
 
 			// increment total distance
-			distanceX += 0.5*itemSize.x;
+			distanceX += 0.5*itemSize.x + spacingInput.getValue();
 			i++;
 		}
 	}
