@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2003-2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2018 JaamSim Software Inc.
+ * Copyright (C) 2016-2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -582,11 +582,11 @@ public class Queue extends LinkedComponent {
 			// Rotate each transporter about its center so it points to the right direction
 			item.setOrientation(queueOrientation);
 			Vec3d itemSize = item.getSize();
-			distanceX += spacing.getValue() + 0.5d * itemSize.x;
+			distanceX += 0.5d * itemSize.x;
 			tmp.set3(-distanceX / qSize.x, distanceY/qSize.y, 0.0d);
 
 			// increment total distance
-			distanceX += 0.5d * itemSize.x;
+			distanceX += 0.5d * itemSize.x + spacing.getValue();
 
 			// Set Position
 			Vec3d itemCenter = this.getGlobalPositionForAlignment(tmp);
