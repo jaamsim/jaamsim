@@ -111,15 +111,15 @@ public class EntityContainer extends SimEntity implements EntContainer {
 		positionOffset.setUnitType(DistanceUnit.class);
 		this.addInput(positionOffset);
 
-		spacingInput = new ValueInput("Spacing", GRAPHICS, 0.0d);
+		spacingInput = new ValueInput("Spacing", FORMAT, 0.0d);
 		spacingInput.setUnitType(DistanceUnit.class);
 		this.addInput(spacingInput);
 
-		maxPerLineInput = new IntegerInput("MaxPerLine", GRAPHICS, Integer.MAX_VALUE);
+		maxPerLineInput = new IntegerInput("MaxPerLine", FORMAT, Integer.MAX_VALUE);
 		maxPerLineInput.setValidRange( 1, Integer.MAX_VALUE);
 		this.addInput(maxPerLineInput);
 
-		showEntities = new BooleanInput("ShowEntities", GRAPHICS, true);
+		showEntities = new BooleanInput("ShowEntities", FORMAT, true);
 		this.addInput(showEntities);
 	}
 
