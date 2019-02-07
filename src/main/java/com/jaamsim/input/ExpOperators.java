@@ -205,8 +205,7 @@ public class ExpOperators {
 				return ExpValResult.makeErrorRes(err);
 			}
 		}
-		return ExpValResult.makeValidRes(lval.type, DimensionlessUnit.class);
-
+		return ExpValResult.makeValidRes(ExpResType.NUMBER, DimensionlessUnit.class);
 	}
 
 
