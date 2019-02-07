@@ -140,11 +140,11 @@ public class Queue extends LinkedComponent {
 		renegeDestination = new InterfaceEntityInput<>(Linkable.class, "RenegeDestination", KEY_INPUTS, null);
 		this.addInput(renegeDestination);
 
-		spacing = new ValueInput("Spacing", KEY_INPUTS, 0.0d);
+		spacing = new ValueInput("Spacing", FORMAT, 0.0d);
 		spacing.setUnitType(DistanceUnit.class);
 		this.addInput(spacing);
 
-		maxPerLine = new IntegerInput("MaxPerLine", KEY_INPUTS, Integer.MAX_VALUE);
+		maxPerLine = new IntegerInput("MaxPerLine", FORMAT, Integer.MAX_VALUE);
 		maxPerLine.setValidRange(1, Integer.MAX_VALUE);
 		this.addInput(maxPerLine);
 	}
