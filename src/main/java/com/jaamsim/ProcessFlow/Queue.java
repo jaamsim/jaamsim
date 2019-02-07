@@ -142,7 +142,6 @@ public class Queue extends LinkedComponent {
 
 		spacing = new ValueInput("Spacing", KEY_INPUTS, 0.0d);
 		spacing.setUnitType(DistanceUnit.class);
-		spacing.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		this.addInput(spacing);
 
 		maxPerLine = new IntegerInput("MaxPerLine", KEY_INPUTS, Integer.MAX_VALUE);
