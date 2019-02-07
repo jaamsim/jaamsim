@@ -113,7 +113,6 @@ public class EntityContainer extends SimEntity implements EntContainer {
 
 		spacingInput = new ValueInput("Spacing", GRAPHICS, 0.0d);
 		spacingInput.setUnitType(DistanceUnit.class);
-		spacingInput.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		this.addInput(spacingInput);
 
 		maxPerLineInput = new IntegerInput("MaxPerLine", GRAPHICS, Integer.MAX_VALUE);
