@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2018 JaamSim Software Inc.
+ * Copyright (C) 2016-2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
+import com.jaamsim.input.Output;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.MathUtils;
 import com.jaamsim.math.Vec3d;
@@ -301,6 +302,17 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 	@Override
 	public double getRadius() {
 		return 0.2; // TODO: make this a tunable parameter
+	}
+
+	@Output(name = "EntityList",
+	 description = "The entities being processed at present.",
+	    sequence = 1)
+	public ArrayList<DisplayEntity> getEntityList(double simTime) {
+		ArrayList<DisplayEntity> ret = new ArrayList<>(entryList.size());
+		for (ConveyorEntry entry : entryList) {
+			ret.add(entry.entity);
+		}
+		return ret;
 	}
 
 }
