@@ -18,7 +18,7 @@
 package com.jaamsim.ProcessFlow;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 import com.jaamsim.DisplayModels.DisplayModel;
 import com.jaamsim.DisplayModels.PolylineModel;
@@ -75,7 +75,7 @@ public class EntityDelay extends LinkedComponent implements LineEntity {
 	private final ColourInput colorInput;
 
 	private double exitTime;  // time at which the previous entity will leave the path
-	private final HashMap<Long, EntityDelayEntry> entityMap = new HashMap<>();  // List of the entities being handled
+	private final LinkedHashMap<Long, EntityDelayEntry> entityMap = new LinkedHashMap<>();  // Entities being handled
 
 	{
 		stateGraphics.setHidden(false);
