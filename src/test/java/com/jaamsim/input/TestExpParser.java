@@ -335,6 +335,11 @@ public class TestExpParser {
 		val = exp.evaluate(ec).value;
 		assertTrue(val == -5);
 
+		exp = ExpParser.parseExpression(pc, "null");
+		ExpResult res = exp.evaluate(ec);
+		assertTrue(res.type == ExpResType.ENTITY);
+		assertTrue(res.entVal == null);
+
 		exp = ExpParser.parseExpression(pc, "max(3, 42, -5, 602)");
 		val = exp.evaluate(ec).value;
 		assertTrue(val == 602);

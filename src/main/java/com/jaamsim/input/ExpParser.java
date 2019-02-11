@@ -1409,6 +1409,10 @@ public class ExpParser {
 			return new Constant(context, namedVal, exp, nextTok.pos);
 		}
 
+		if (nextTok.type == ExpTokenizer.NULL_TYPE) {
+			return new Constant(context, ExpResult.makeEntityResult(null), exp, nextTok.pos);
+		}
+
 		if (nextTok.type == ExpTokenizer.VAR_TYPE) {
 			ExpTokenizer.Token peeked = tokens.peek();
 			if (peeked != null && peeked.type == ExpTokenizer.SYM_TYPE && peeked.value.equals("=")) {
