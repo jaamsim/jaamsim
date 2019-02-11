@@ -17,6 +17,8 @@
  */
 package com.jaamsim.math;
 
+import com.jaamsim.input.ColourInput;
+
 /**
  * A data structure to hold RGBA color information.
  */
@@ -87,6 +89,11 @@ public int hashCode() {
 	       Double.valueOf(g).hashCode() * 7 +
 	       Double.valueOf(b).hashCode() * 79 +
 	       Double.valueOf(a).hashCode() * 1239;
+}
+
+@Override
+public String toString() {
+	return ColourInput.toString(this);
 }
 
 }
