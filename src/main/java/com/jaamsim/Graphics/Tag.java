@@ -16,6 +16,8 @@
  */
 package com.jaamsim.Graphics;
 
+import java.util.Arrays;
+
 import com.jaamsim.math.Color4d;
 
 public class Tag {
@@ -50,4 +52,14 @@ public class Tag {
 	public final boolean visMatch(boolean v) {
 		return v == visible;
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder("(");
+		sb.append(Arrays.toString(sizes)).append(", ");
+		sb.append(Arrays.toString(colors)).append(", ");
+		sb.append(visible).append(")");
+		return sb.toString();
+	}
+
 }
