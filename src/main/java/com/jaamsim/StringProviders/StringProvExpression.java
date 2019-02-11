@@ -61,7 +61,9 @@ public class StringProvExpression implements StringProvider {
 				ret = result.stringVal;
 				break;
 			case ENTITY:
-				ret = result.entVal.getName();
+				ret = "null";
+				if (result.entVal != null)
+					ret = result.entVal.getName();
 				break;
 			case NUMBER:
 				if (result.unitType != unitType) {
