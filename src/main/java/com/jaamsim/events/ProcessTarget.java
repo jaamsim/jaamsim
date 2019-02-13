@@ -23,4 +23,9 @@ public abstract class ProcessTarget {
 
 	public abstract String getDescription();
 	public abstract void process();
+
+	@Override
+	public String toString() {
+		return getDescription();
+	}
 }

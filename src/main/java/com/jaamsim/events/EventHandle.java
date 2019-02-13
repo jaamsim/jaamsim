@@ -32,4 +32,9 @@ public class EventHandle {
 	public final boolean isScheduled() {
 		return event != null;
 	}
+
+	@Override
+	public String toString() {
+		return Boolean.toString(isScheduled());
+	}
 }
