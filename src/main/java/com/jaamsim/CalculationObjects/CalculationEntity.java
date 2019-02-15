@@ -60,8 +60,4 @@ public abstract class CalculationEntity extends DisplayEntity implements Control
 	public double getSequenceNumber() {
 		return sequenceNumber.getValue();
 	}
-
-	@Override
-	public abstract void update(double simTime);
-
 }
