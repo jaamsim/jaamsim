@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2002-2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2018 JaamSim Software Inc.
+ * Copyright (C) 2016-2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -99,6 +99,7 @@ import com.jaamsim.Graphics.TextBasics;
 import com.jaamsim.Graphics.TextEntity;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ErrorException;
+import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.controllers.RateLimiter;
 import com.jaamsim.controllers.RenderManager;
@@ -125,6 +126,8 @@ import com.jaamsim.units.Unit;
  */
 public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErrorListener {
 	private static GUIFrame instance;
+
+	private static JaamSimModel sim;
 
 	// global shutdown flag
 	static private AtomicBoolean shuttingDown;
@@ -287,6 +290,10 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 				Simulation.setControlPanelWidth(getSize().width);
 			}
 		});
+	}
+
+	public static JaamSimModel getJaamSimModel() {
+		return sim;
 	}
 
 	@Override
@@ -3223,6 +3230,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 
 		// create a graphic simulation
 		LogBox.logLine("Loading Simulation Environment ... ");
+		sim = new JaamSimModel();
 
 		EventManager evt = new EventManager("DefaultEventManager");
 		GUIFrame gui = null;

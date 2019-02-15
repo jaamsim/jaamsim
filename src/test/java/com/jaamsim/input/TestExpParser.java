@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2015 JaamSim Software Inc.
+ * Copyright (C) 2015-2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import java.util.HashMap;
 import org.junit.Test;
 
 import com.jaamsim.basicsim.Entity;
+import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.input.ExpParser.Assigner;
 import com.jaamsim.input.ExpParser.EvalContext;
 import com.jaamsim.input.ExpParser.OutputResolver;
@@ -201,6 +202,7 @@ public class TestExpParser {
 
 	}
 
+	static JaamSimModel sim = new JaamSimModel();
 	static Entity mapEnt = new Entity();
 	static Entity arrayEnt = new Entity();
 	static Entity dummyEnt = new Entity();

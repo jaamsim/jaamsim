@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2016-2017 JaamSim Software Inc.
+ * Copyright (C) 2016-2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ public class JaamSimModel {
 	private final HashMap<String, Entity> namedEntities = new HashMap<>(100);
 
 	public JaamSimModel() {
+		Entity.setJaamSimModel(this);
 	}
 
 	final long getNextEntityID() {
