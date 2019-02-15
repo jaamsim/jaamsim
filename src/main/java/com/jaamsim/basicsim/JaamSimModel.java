@@ -20,13 +20,22 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
+import com.jaamsim.events.EventManager;
+
 public class JaamSimModel {
+
+	private final EventManager eventManager;
 	private final AtomicLong entityCount = new AtomicLong(0);
 	private final ArrayList<Entity> allInstances = new ArrayList<>(100);
 	private final HashMap<String, Entity> namedEntities = new HashMap<>(100);
 
 	public JaamSimModel() {
 		Entity.setJaamSimModel(this);
+		eventManager = new EventManager("DefaultEventManager");
+	}
+
+	public EventManager getEventManager() {
+		return eventManager;
 	}
 
 	final long getNextEntityID() {
