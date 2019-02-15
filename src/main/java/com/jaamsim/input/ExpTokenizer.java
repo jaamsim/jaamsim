@@ -25,6 +25,7 @@ public class ExpTokenizer {
 	public static final int SYM_TYPE = 2;
 	public static final int SQ_TYPE = 3; // Square quoted tokens
 	public static final int STRING_TYPE = 4; // A literal string
+	public static final int NULL_TYPE = 5; // The specific null keyword
 
 	public static class Token {
 		public int type;
@@ -126,6 +127,11 @@ public class ExpTokenizer {
 		}
 
 		newTok.value = sb.toString();
+		// If the string is specifically "null" this is actually a keyword
+		if (newTok.value.equals("null")) {
+			newTok.type = NULL_TYPE;
+		}
+
 		res.add(newTok);
 		return pos;
 	}
