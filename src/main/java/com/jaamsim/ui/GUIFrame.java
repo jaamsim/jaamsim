@@ -99,6 +99,7 @@ import com.jaamsim.Graphics.TextBasics;
 import com.jaamsim.Graphics.TextEntity;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ErrorException;
+import com.jaamsim.basicsim.InputErrorListener;
 import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.controllers.RateLimiter;
@@ -124,7 +125,7 @@ import com.jaamsim.units.Unit;
  * The main window for a Graphical Simulation.  It provides the controls for managing then
  * EventManager (run, pause, ...) and the graphics (zoom, pan, ...)
  */
-public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErrorListener {
+public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErrorListener, InputErrorListener {
 	private static GUIFrame instance;
 
 	private static JaamSimModel sim;
@@ -3230,6 +3231,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 			gui.updateForSimulationState(SIM_STATE_LOADED);
 			evt.setTimeListener(gui);
 			evt.setErrorListener(gui);
+			sim.setInputErrorListener(gui);
 
 			if (minimize)
 				gui.setExtendedState(JFrame.ICONIFIED);
@@ -3420,6 +3422,17 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 				state = SIM_STATE_ENDED;
 			updateForSimulationState(state);
 		}
+	}
+
+	@Override
+	public void handleInputError(Throwable t, Entity ent) {
+		InputAgent.logMessage("Validation Error - %s: %s", ent.getName(), t.getMessage());
+		GUIFrame.showErrorDialog("Input Error",
+				"JaamSim has detected the following input error during validation:",
+				String.format("%s: %-70s", ent.getName(), t.getMessage()),
+				"The error must be corrected before the simulation can be started.");
+
+		GUIFrame.updateForSimState(GUIFrame.SIM_STATE_CONFIGURED);
 	}
 
 	@Override
