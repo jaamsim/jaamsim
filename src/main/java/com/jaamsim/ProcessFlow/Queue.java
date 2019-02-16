@@ -569,7 +569,8 @@ public class Queue extends LinkedComponent {
 		int i = 0;
 		Iterator<StorageEntry> itr = entries.iterator();
 		while (itr.hasNext()) {
-			DisplayEntity item = itr.next().entity;
+			QueueEntry entry = (QueueEntry) itr.next();
+			DisplayEntity item = entry.entity;
 
 			// if new row is required, set reset distanceX and move distanceY up one row
 			if( i > 0 && i % maxPerLine.getValue() == 0 ){
@@ -579,7 +580,9 @@ public class Queue extends LinkedComponent {
 			i++;
 
 			// Rotate each transporter about its center so it points to the right direction
-			item.setOrientation(queueOrientation);
+			Vec3d orient = new Vec3d(queueOrientation);
+			orient.add3(entry.orientation);
+			item.setOrientation(orient);
 			Vec3d itemSize = item.getSize();
 			distanceX += 0.5d * itemSize.x;
 			tmp.set3(-distanceX / qSize.x, distanceY/qSize.y, 0.0d);
