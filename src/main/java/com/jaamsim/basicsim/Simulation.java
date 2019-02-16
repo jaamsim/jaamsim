@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2002-2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2018 JaamSim Software Inc.
+ * Copyright (C) 2016-2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -978,7 +978,7 @@ public class Simulation extends Entity {
 		// Start the next run
 		final EventManager currentEvt = EventManager.current();
 		Simulation.setRunNumber(runNumber + 1);
-		Simulation.stopRun(currentEvt);
+		GUIFrame.getJaamSimModel().reset();
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -1010,49 +1010,13 @@ public class Simulation extends Entity {
 	public static void stop(EventManager evt) {
 
 		// Stop the present simulation run
-		Simulation.stopRun(evt);
+		GUIFrame.getJaamSimModel().reset();
 
 		// Reset the run number and run indices
 		Simulation.setRunNumber(startingRunNumber.getValue());
 
 		// Close the output reports
 		InputAgent.stop();
-	}
-
-	/**
-	 * Stops the present simulation run when multiple runs are to be executed.
-	 * @param evt - EventManager for the run.
-	 */
-	private static void stopRun(EventManager evt) {
-
-		// Stop the simulation and clear the event list
-		evt.pause();
-		evt.clear();
-
-		// Destroy the entities that were generated during the run
-		for (int i = 0; i < Entity.getAll().size();) {
-			Entity ent = Entity.getAll().get(i);
-			if (ent.testFlag(Entity.FLAG_GENERATED))
-				ent.kill();
-			else
-				i++;
-		}
-
-		// Re-initialise the model
-		for (Entity each : Entity.getClonesOfIterator(Entity.class)) {
-			// Try/catch is required because some earlyInit methods use simTime which is only
-			// available from a process thread
-			try {
-				each.earlyInit();
-			} catch (Exception e) {}
-		}
-
-		// Initialise each entity a second time
-		for (Entity each : Entity.getClonesOfIterator(Entity.class)) {
-			try {
-				each.lateInit();
-			} catch (Exception e) {}
-		}
 	}
 
 	/**

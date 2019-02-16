@@ -57,6 +57,39 @@ public class JaamSimModel {
 		eventManager.resume(eventManager.secondsToNearestTick(simTime));
 	}
 
+	/**
+	 * Sets the simulation time to zero and re-initializes the model.
+	 */
+	public void reset() {
+		eventManager.pause();
+		eventManager.clear();
+
+		// Destroy the entities that were generated during the run
+		for (int i = 0; i < allInstances.size();) {
+			Entity ent = allInstances.get(i);
+			if (ent.testFlag(Entity.FLAG_GENERATED))
+				ent.kill();
+			else
+				i++;
+		}
+
+		// Re-initialise the model
+		for (Entity each : allInstances) {
+			// Try/catch is required because some earlyInit methods use simTime which is only
+			// available from a process thread
+			try {
+				each.earlyInit();
+			} catch (Exception e) {}
+		}
+
+		// Initialise each entity a second time
+		for (Entity each : allInstances) {
+			try {
+				each.lateInit();
+			} catch (Exception e) {}
+		}
+	}
+
 	public EventManager getEventManager() {
 		return eventManager;
 	}
