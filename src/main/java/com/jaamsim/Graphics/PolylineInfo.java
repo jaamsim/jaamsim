@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2015 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -368,6 +369,36 @@ public class PolylineInfo {
 				pts.get(index),
 				fracInSegment);
 		return vec;
+	}
+
+	public static double getAngleOnPolyline(ArrayList<Vec3d> pts, double frac) {
+
+		if (pts.isEmpty())
+			return 0.0d;
+
+		// Calculate the cumulative graphical lengths along the polyline
+		double[] cumLengthList = PolylineInfo.getCumulativeLengths(pts);
+
+		// Find the insertion point by binary search
+		double dist = frac * cumLengthList[cumLengthList.length-1];
+		int k = Arrays.binarySearch(cumLengthList, dist);
+
+		// Error condition
+		if (k == -1)
+			return 0.0d;
+
+		// Insertion index
+		int index = k;
+		if (k < 0)
+			index = -k - 1;
+		index = Math.max(index, 1);
+		index = Math.min(index, pts.size() - 1);
+
+		// Return the angle
+		Vec3d vec = new Vec3d(pts.get(index));
+		vec.sub3(pts.get(index - 1));
+		vec.normalize3();
+		return Math.atan2(vec.y, vec.x);
 	}
 
 	/**
