@@ -2700,10 +2700,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		currentEvt = e;
 	}
 
-	public EventManager getEventManager() {
-		return currentEvt;
-	}
-
 	public static void updateForSimState(int state) {
 		GUIFrame inst = GUIFrame.getInstance();
 		if (inst == null)
