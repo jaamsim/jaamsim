@@ -158,7 +158,9 @@ public class EntityContainer extends SimEntity implements EntContainer {
 
 	@Override
 	public DisplayEntity removeEntity(String m) {
-		return container.removeEntity(m);
+		DisplayEntity ent = container.removeEntity(m);
+		ent.setShow(true);
+		return ent;
 	}
 
 	@Override
