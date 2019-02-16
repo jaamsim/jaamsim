@@ -561,7 +561,11 @@ public class Queue extends LinkedComponent {
 		if (entries.size() >  maxPerLine.getValue()){
 			Iterator<StorageEntry> itr = entries.iterator();
 			while (itr.hasNext()) {
-				maxWidth = Math.max(maxWidth, itr.next().entity.getSize().y);
+				QueueEntry entry = (QueueEntry) itr.next();
+				Vec3d size = entry.entity.getSize();
+				double angle = entry.orientation.z;
+				maxWidth = Math.max(maxWidth,
+						Math.abs(Math.cos(angle))*size.y + Math.abs(Math.sin(angle))*size.x);
 			 }
 		}
 
@@ -583,12 +587,15 @@ public class Queue extends LinkedComponent {
 			Vec3d orient = new Vec3d(queueOrientation);
 			orient.add3(entry.orientation);
 			item.setOrientation(orient);
+
 			Vec3d itemSize = item.getSize();
-			distanceX += 0.5d * itemSize.x;
+			double angle = entry.orientation.z;
+			double length = Math.abs(Math.cos(angle))*itemSize.x + Math.abs(Math.sin(angle))*itemSize.y;
+			distanceX += 0.5d * length;
 			tmp.set3(-distanceX / qSize.x, distanceY/qSize.y, 0.0d);
 
 			// increment total distance
-			distanceX += 0.5d * itemSize.x + spacing.getValue();
+			distanceX += 0.5d * length + spacing.getValue();
 
 			// Set Position
 			Vec3d itemCenter = this.getGlobalPositionForAlignment(tmp);
