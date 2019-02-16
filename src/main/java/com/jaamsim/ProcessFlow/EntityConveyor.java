@@ -26,6 +26,7 @@ import com.jaamsim.Graphics.LineEntity;
 import com.jaamsim.Graphics.PolylineInfo;
 import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
+import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.IntegerInput;
@@ -53,6 +54,10 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 	@Keyword(description = "The colour of the conveyor.",
 	         exampleList = {"red"})
 	private final ColourInput colorInput;
+
+	@Keyword(description = "Determines whether to rotate the entities to match the conveyor.",
+	         exampleList = {"TRUE"})
+	private final BooleanInput rotateEntities;
 
 	private final ArrayList<ConveyorEntry> entryList;  // List of the entities being conveyed
 	private double presentTravelTime;
@@ -82,6 +87,9 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 		this.addInput(colorInput);
 		this.addSynonym(colorInput, "Colour");
 		this.addSynonym(colorInput, "Color");
+
+		rotateEntities = new BooleanInput("RotateEntities", FORMAT, false);
+		this.addInput(rotateEntities);
 	}
 
 	public EntityConveyor() {
@@ -103,10 +111,12 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 
 	private static class ConveyorEntry {
 		final DisplayEntity entity;
+		final Vec3d orientation;
 		double position;
 
-		public ConveyorEntry(DisplayEntity ent, double pos) {
+		public ConveyorEntry(DisplayEntity ent, Vec3d orient, double pos) {
 			entity = ent;
+			orientation = orient;
 			position = pos;
 		}
 
@@ -128,7 +138,7 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 		this.updateTravelTime(simTime);
 
 		// Add the entity to the conveyor
-		ConveyorEntry entry = new ConveyorEntry(ent, 0.0d);
+		ConveyorEntry entry = new ConveyorEntry(ent, ent.getOrientation(), 0.0d);
 		entryList.add(entry);
 
 		// If necessary, wake up the conveyor
@@ -146,12 +156,14 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 		// Remove the first entity from the conveyor and send it to the next component
 		ConveyorEntry entry = entryList.remove(0);
 		DisplayEntity ent = entry.entity;
+		ent.setOrientation(entry.orientation);
 		this.sendToNextComponent(ent);
 
 		// Remove any other entities that have also reached the end
 		double maxPos = Math.min(entry.position, 1.0d);
 		while (!entryList.isEmpty() && entryList.get(0).position >= maxPos) {
 			ent = entryList.remove(0).entity;
+			ent.setOrientation(entry.orientation);
 			this.sendToNextComponent(ent);
 		}
 
@@ -276,8 +288,16 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 		}
 		for (int i=0; i<entryList.size(); i++) {
 			ConveyorEntry entry = entryList.get(i);
+
 			Vec3d localPos = PolylineInfo.getPositionOnPolyline(getCurvePoints(), entry.position + frac);
 			entry.entity.setGlobalPosition(this.getGlobalPosition(localPos));
+
+			if (rotateEntities.getValue()) {
+				double angle = PolylineInfo.getAngleOnPolyline(getCurvePoints(), entry.position + frac);
+				Vec3d orient = new Vec3d(0.0d, 0.0d, angle);
+				orient.add3(entry.orientation);
+				entry.entity.setOrientation(orient);
+			}
 		}
 	}
 
