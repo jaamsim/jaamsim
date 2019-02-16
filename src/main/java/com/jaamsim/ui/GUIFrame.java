@@ -2695,11 +2695,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		return simState;
 	}
 
-	EventManager currentEvt;
-	public void setEventManager(EventManager e) {
-		currentEvt = e;
-	}
-
 	public static void updateForSimState(int state) {
 		GUIFrame inst = GUIFrame.getInstance();
 		if (inst == null)
@@ -3232,7 +3227,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		GUIFrame gui = null;
 		if (!headless) {
 			gui = GUIFrame.createInstance();
-			gui.setEventManager(evt);
 			gui.updateForSimulationState(SIM_STATE_LOADED);
 			evt.setTimeListener(gui);
 			evt.setErrorListener(gui);
