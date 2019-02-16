@@ -2645,7 +2645,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		}
 		else if( getSimState() == SIM_STATE_PAUSED ) {
 			initSpeedUp(EventManager.ticksToSecs(simTicks));
-			currentEvt.resume(currentEvt.secondsToNearestTick(Simulation.getPauseTime()));
+			sim.resume(Simulation.getPauseTime());
 			return true;
 		}
 		else
@@ -2657,7 +2657,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 	 */
 	private void pauseSimulation() {
 		if( getSimState() == SIM_STATE_RUNNING )
-			currentEvt.pause();
+			sim.pause();
 		else
 			throw new ErrorException( "Invalid Simulation State for pause" );
 	}
@@ -3462,7 +3462,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 	}
 
 	void newModel() {
-		currentEvt.pause();
+		sim.pause();
 
 		// check for unsaved changes
 		if (InputAgent.isSessionEdited()) {
@@ -3480,7 +3480,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 	}
 
 	void load() {
-		currentEvt.pause();
+		sim.pause();
 
 		// check for unsaved changes
 		if (InputAgent.isSessionEdited()) {

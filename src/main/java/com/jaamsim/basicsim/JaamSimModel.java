@@ -34,6 +34,22 @@ public class JaamSimModel {
 		eventManager = new EventManager("DefaultEventManager");
 	}
 
+	/**
+	 * Temporarily stops the simulation model at the present simulation time.
+	 */
+	public void pause() {
+		eventManager.pause();
+	}
+
+	/**
+	 * Re-starts the simulation model at the present simulation and allows it to proceed to the
+	 * specified pause time.
+	 * @param simTime - next pause time
+	 */
+	public void resume(double simTime) {
+		eventManager.resume(eventManager.secondsToNearestTick(simTime));
+	}
+
 	public EventManager getEventManager() {
 		return eventManager;
 	}
