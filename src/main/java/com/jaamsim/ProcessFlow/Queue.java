@@ -101,6 +101,10 @@ public class Queue extends LinkedComponent {
 			exampleList = {"4"})
 	protected final IntegerInput maxPerLine; // maximum items per sub line-up of queue
 
+	@Keyword(description = "If TRUE, the entities in the Queue are displayed.",
+			exampleList = {"FALSE"})
+	protected final BooleanInput showEntities;
+
 	private final EntStorage storage;  // stores the entities in the queue
 	private final ArrayList<QueueUser> userList;  // other objects that use this queue
 	private final TimeBasedStatistics stats;
@@ -147,6 +151,9 @@ public class Queue extends LinkedComponent {
 		maxPerLine = new IntegerInput("MaxPerLine", FORMAT, Integer.MAX_VALUE);
 		maxPerLine.setValidRange(1, Integer.MAX_VALUE);
 		this.addInput(maxPerLine);
+
+		showEntities = new BooleanInput("ShowEntities", FORMAT, true);
+		this.addInput(showEntities);
 	}
 
 	public Queue() {
@@ -325,6 +332,7 @@ public class Queue extends LinkedComponent {
 
 		// Reset the entity's orientation to its original value
 		entry.entity.setOrientation(entry.orientation);
+		entry.entity.setShow(true);
 
 		this.incrementNumberProcessed();
 		this.setReleaseTime(simTime);
@@ -546,6 +554,7 @@ public class Queue extends LinkedComponent {
 	@Override
 	public void updateGraphics(double simTime) {
 
+		boolean visible = showEntities.getValue();
 		Vec3d queueOrientation = getOrientation();
 		Vec3d qSize = this.getSize();
 		Vec3d tmp = new Vec3d();
@@ -587,6 +596,7 @@ public class Queue extends LinkedComponent {
 			Vec3d orient = new Vec3d(queueOrientation);
 			orient.add3(entry.orientation);
 			item.setOrientation(orient);
+			item.setShow(visible);
 
 			Vec3d itemSize = item.getSize();
 			double angle = entry.orientation.z;
