@@ -153,7 +153,8 @@ public class ObjectSelector extends FrameBox {
 
 	@Override
 	public void updateValues(double simTime) {
-		if (!this.isVisible())
+		GUIFrame gui = GUIFrame.getInstance();
+		if (!this.isVisible() || gui == null || gui.getSimState() == GUIFrame.SIM_STATE_RUNNING)
 			return;
 
 		long curSequence = Entity.getEntitySequence();
