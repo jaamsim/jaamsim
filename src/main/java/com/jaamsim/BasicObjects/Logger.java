@@ -77,6 +77,8 @@ public abstract class Logger extends DisplayEntity {
 	private double logTime;
 
 	{
+		active.setHidden(false);
+
 		ArrayList<Class<? extends Unit>> defList = new ArrayList<>();
 		defList.add(DimensionlessUnit.class);
 		unitTypeListInput = new UnitTypeListInput("UnitTypeList", KEY_INPUTS, defList);
@@ -127,7 +129,7 @@ public abstract class Logger extends DisplayEntity {
 		}
 
 		// Create the report file
-		if (file == null) {
+		if (file == null && isActive()) {
 			StringBuilder tmp = new StringBuilder(InputAgent.getReportFileName(InputAgent.getRunName()));
 			tmp.append("-").append(this.getName());
 			tmp.append(".log");
@@ -189,6 +191,9 @@ public abstract class Logger extends DisplayEntity {
 	 * Writes an entry to the log file.
 	 */
 	protected void recordLogEntry(double simTime) {
+
+		if (!isActive())
+			return;
 
 		// Skip the log entry if the log file has been closed at the end of the run duration
 		if (file == null)
