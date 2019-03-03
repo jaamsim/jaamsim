@@ -16,6 +16,8 @@
  */
 package com.jaamsim.basicsim;
 
+import java.io.File;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicLong;
@@ -42,6 +44,16 @@ public class JaamSimModel {
 		InputAgent.setRecordEdits(false);
 		InputAgent.readResource("<res>/inputs/autoload.cfg");
 		InputAgent.setPreDefinedEntityCount( allInstances.get( allInstances.size() - 1 ).getEntityNumber());
+	}
+
+	/**
+	 * Loads the specified configuration file to create the objects in the model.
+	 * @param file - configuration file
+	 * @throws URISyntaxException
+	 */
+	public void configure(File file) throws URISyntaxException {
+		InputAgent.setConfigFile(file);
+		InputAgent.loadConfigurationFile(file);
 	}
 
 	/**

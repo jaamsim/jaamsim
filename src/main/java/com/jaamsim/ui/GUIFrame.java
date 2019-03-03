@@ -3526,12 +3526,11 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 	}
 
 	static Throwable configure(File file) {
-		InputAgent.setConfigFile(file);
 		GUIFrame.updateForSimState(GUIFrame.SIM_STATE_UNCONFIGURED);
 
 		Throwable ret = null;
 		try {
-			InputAgent.loadConfigurationFile(file);
+			sim.configure(file);
 		}
 		catch (Throwable t) {
 			ret = t;
