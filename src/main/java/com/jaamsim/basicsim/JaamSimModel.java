@@ -89,6 +89,24 @@ public class JaamSimModel {
 	}
 
 	/**
+	 * Performs the first stage of initialization for each entity.
+	 */
+	public void earlyInit() {
+		for (Entity each : allInstances) {
+			each.earlyInit();
+		}
+	}
+
+	/**
+	 * Performs the second stage of initialization for each entity.
+	 */
+	public void lateInit() {
+		for (Entity each : allInstances) {
+			each.lateInit();
+		}
+	}
+
+	/**
 	 * Temporarily stops the simulation model at the present simulation time.
 	 */
 	public void pause() {
