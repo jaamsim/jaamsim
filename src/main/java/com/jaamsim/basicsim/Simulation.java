@@ -861,7 +861,7 @@ public class Simulation extends Entity {
 	/**
 	 * Clears the Simulation prior to loading a new model
 	 */
-	public static void clear() {
+	public void clear() {
 
 		// Reset all Simulation inputs to their default values
 		for (Input<?> inp : Simulation.getInstance().getEditableInputs()) {
