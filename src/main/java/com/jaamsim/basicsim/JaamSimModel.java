@@ -44,6 +44,12 @@ public class JaamSimModel {
 		inputErrorListener = l;
 	}
 
+	public void clear() {
+		eventManager.clear();
+		eventManager.setTraceListener(null);
+		Simulation.clear();
+	}
+
 	/**
 	 * Pre-loads the simulation model with basic objects such as DisplayModels and Units.
 	 */
