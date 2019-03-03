@@ -22,7 +22,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
+import com.jaamsim.events.EventErrorListener;
 import com.jaamsim.events.EventManager;
+import com.jaamsim.events.EventTimeListener;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.states.StateEntity;
 
@@ -39,6 +41,14 @@ public class JaamSimModel {
 		Entity.setJaamSimModel(this);
 		eventManager = new EventManager("DefaultEventManager");
 		simulation = null;
+	}
+
+	public final void setTimeListener(EventTimeListener l) {
+		eventManager.setTimeListener(l);
+	}
+
+	public final void setErrorListener(EventErrorListener l) {
+		eventManager.setErrorListener(l);
 	}
 
 	public void setInputErrorListener(InputErrorListener l) {

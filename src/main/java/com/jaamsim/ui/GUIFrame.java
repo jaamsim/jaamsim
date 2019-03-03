@@ -3221,13 +3221,12 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		LogBox.logLine("Loading Simulation Environment ... ");
 		sim = new JaamSimModel();
 
-		EventManager evt = sim.getEventManager();
 		GUIFrame gui = null;
 		if (!headless) {
 			gui = GUIFrame.createInstance();
 			gui.updateForSimulationState(SIM_STATE_LOADED);
-			evt.setTimeListener(gui);
-			evt.setErrorListener(gui);
+			sim.setTimeListener(gui);
+			sim.setErrorListener(gui);
 			sim.setInputErrorListener(gui);
 
 			if (minimize)
