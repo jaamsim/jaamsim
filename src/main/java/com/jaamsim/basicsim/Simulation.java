@@ -918,14 +918,14 @@ public class Simulation extends Entity {
 		endTime = startTime + Simulation.getInitializationTime() + Simulation.getRunDuration();
 
 		Simulation.setRunNumber(startingRunNumber.getValue());
-		Simulation.startRun(evt);
+		startRun(evt);
 	}
 
 	/**
 	 * Starts a single simulation run.
 	 * @param evt - EventManager for the run.
 	 */
-	private static void startRun(EventManager evt) {
+	private void startRun(EventManager evt) {
 		if (GUIFrame.getInstance() != null)
 			GUIFrame.getInstance().initSpeedUp(0.0d);
 		evt.scheduleProcessExternal(0, 0, false, new InitModelTarget(getInstance()), null);
@@ -935,7 +935,7 @@ public class Simulation extends Entity {
 	/**
 	 * Ends a single simulation run and if appropriate restarts the model for the next run.
 	 */
-	public static void endRun() {
+	public void endRun() {
 
 		// Execute the end of run method for each entity
 		for (Entity each : Entity.getClonesOfIterator(Entity.class)) {
@@ -964,7 +964,7 @@ public class Simulation extends Entity {
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
-				Simulation.startRun(currentEvt);
+				startRun(currentEvt);
 			}
 		}).start();
 	}
@@ -1121,7 +1121,7 @@ public class Simulation extends Entity {
 			EventManager.scheduleUntil(pauseModel, pauseCondition, null);
 	}
 
-	private final PauseModelTarget pauseModel = new PauseModelTarget();
+	private final PauseModelTarget pauseModel = new PauseModelTarget(this);
 
 	static class PauseConditional extends Conditional {
 		@Override

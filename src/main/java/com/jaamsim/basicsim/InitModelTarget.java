@@ -52,12 +52,12 @@ public class InitModelTarget extends ProcessTarget {
 		// Schedule the initialisation period
 		if (Simulation.getInitializationTime() > 0.0) {
 			double clearTime = startTime + Simulation.getInitializationTime();
-			EventManager.scheduleSeconds(clearTime, 5, false, new ClearStatisticsTarget(), null);
+			EventManager.scheduleSeconds(clearTime, 5, false, new ClearStatisticsTarget(simulation), null);
 		}
 
 		// Schedule the end of the simulation run
 		double endTime = Simulation.getEndTime();
-		EventManager.scheduleSeconds(endTime, 5, false, new EndModelTarget(), null);
+		EventManager.scheduleSeconds(endTime, 5, false, new EndModelTarget(simulation), null);
 
 		// Start checking the pause condition
 		simulation.doPauseCondition();
