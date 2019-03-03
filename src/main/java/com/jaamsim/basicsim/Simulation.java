@@ -878,12 +878,6 @@ public class Simulation extends Entity {
 		// close warning/error trace file
 		InputAgent.closeLogFile();
 
-		// Kill all entities except simulation
-		while(Entity.getAll().size() > 0) {
-			Entity ent = Entity.getAll().get(Entity.getAll().size()-1);
-			ent.kill();
-		}
-
 		// Reset the run number and run indices
 		Simulation.setRunNumber(1);
 	}
