@@ -403,8 +403,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 	 * Clears the simulation and user interface prior to loading a new model
 	 */
 	public void clear() {
-		currentEvt.clear();
-		currentEvt.setTraceListener(null);
+		sim.getEventManager().clear();
+		sim.getEventManager().setTraceListener(null);
 		// Clear the simulation
 		Simulation.clear();
 		FrameBox.clear();
@@ -2669,7 +2669,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		if( getSimState() == SIM_STATE_RUNNING ||
 		    getSimState() == SIM_STATE_PAUSED ||
 		    getSimState() == SIM_STATE_ENDED) {
-			Simulation.stop(currentEvt);
+			Simulation.stop(sim.getEventManager());
 			FrameBox.stop();
 			this.updateForSimulationState(GUIFrame.SIM_STATE_CONFIGURED);
 		}
@@ -2839,7 +2839,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 	 * updates RealTime button and Spinner
 	 */
 	private void updateForRT(boolean executeRT, double factorRT) {
-		currentEvt.setExecuteRealTime(executeRT, factorRT);
+		sim.getEventManager().setExecuteRealTime(executeRT, factorRT);
 		controlRealTime.setSelected(executeRT);
 		spinner.setValue(factorRT);
 		if (executeRT)
