@@ -2639,7 +2639,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 				confirmed = GUIFrame.showSaveChangesDialog(this);
 			}
 			if (confirmed) {
-				Simulation.start(currentEvt);
+				sim.start();
 			}
 			return confirmed;
 		}
@@ -3318,7 +3318,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		if (batch) {
 			if (InputAgent.numErrors() > 0)
 				GUIFrame.shutdown(0);
-			Simulation.start(evt);
+			sim.start();
 			return;
 		}
 

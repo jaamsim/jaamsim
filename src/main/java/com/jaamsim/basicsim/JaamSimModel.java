@@ -35,6 +35,13 @@ public class JaamSimModel {
 	}
 
 	/**
+	 * Starts the simulation model.
+	 */
+	public void start() {
+		Simulation.start(eventManager);
+	}
+
+	/**
 	 * Temporarily stops the simulation model at the present simulation time.
 	 */
 	public void pause() {
