@@ -28,6 +28,7 @@ import com.jaamsim.input.InputAgent;
 public class JaamSimModel {
 
 	private final EventManager eventManager;
+	private InputErrorListener inputErrorListener;
 	private final AtomicLong entityCount = new AtomicLong(0);
 	private final ArrayList<Entity> allInstances = new ArrayList<>(100);
 	private final HashMap<String, Entity> namedEntities = new HashMap<>(100);
@@ -35,6 +36,10 @@ public class JaamSimModel {
 	public JaamSimModel() {
 		Entity.setJaamSimModel(this);
 		eventManager = new EventManager("DefaultEventManager");
+	}
+
+	public void setInputErrorListener(InputErrorListener l) {
+		inputErrorListener = l;
 	}
 
 	/**
