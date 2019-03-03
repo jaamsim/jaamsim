@@ -162,6 +162,14 @@ public class Entity {
 		flags = 0;
 	}
 
+	public JaamSimModel getJaamSimModel() {
+		return simModel;
+	}
+
+	public Simulation getSimulation() {
+		return simModel.getSimulation();
+	}
+
 	public static void setJaamSimModel(JaamSimModel sim) {
 		Entity.sim = sim;
 	}
