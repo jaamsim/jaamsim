@@ -256,7 +256,7 @@ public class Entity {
 
 
 	public void kill() {
-		sim.removeInstance(this);
+		simModel.removeInstance(this);
 	}
 
 	/**
@@ -264,7 +264,7 @@ public class Entity {
 	 * @param name - entity's name before it was deleted
 	 */
 	public void restore(String name) {
-		sim.restoreInstance(this);
+		simModel.restoreInstance(this);
 		this.setName(name);
 		this.clearFlag(Entity.FLAG_DEAD);
 	}
@@ -495,7 +495,7 @@ public class Entity {
 	 * Method to set the input name of the entity.
 	 */
 	public void setName(String newName) {
-		sim.renameEntity(this, newName);
+		simModel.renameEntity(this, newName);
 	}
 
 	/**
