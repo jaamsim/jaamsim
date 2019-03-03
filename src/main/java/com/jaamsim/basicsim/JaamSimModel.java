@@ -62,6 +62,26 @@ public class JaamSimModel {
 	}
 
 	/**
+	 * Performs consistency checks on the model inputs.
+	 */
+	public void validate() {
+		for (Entity each : allInstances) {
+			try {
+				each.validate();
+			}
+			catch (Throwable t) {
+				if (inputErrorListener != null) {
+					inputErrorListener.handleInputError(t, each);
+				}
+				else {
+					System.out.format("Validation Error - %s: %s%n", each.getName(), t.getMessage());
+				}
+				return;
+			}
+		}
+	}
+
+	/**
 	 * Starts the simulation model.
 	 */
 	public void start() {

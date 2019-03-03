@@ -895,22 +895,7 @@ public class Simulation extends Entity {
 	 *		3) start EventManager processing events
 	 */
 	public static void start(EventManager evt) {
-		// Validate each entity based on inputs only
-		for (Entity each : Entity.getClonesOfIterator(Entity.class)) {
-			try {
-				each.validate();
-			}
-			catch (Throwable e) {
-				InputAgent.logMessage("Validation Error - %s: %s", each.getName(), e.getMessage());
-				GUIFrame.showErrorDialog("Input Error",
-						"JaamSim has detected the following input error during validation:",
-						String.format("%s: %-70s", each.getName(), e.getMessage()),
-						"The error must be corrected before the simulation can be started.");
-
-				GUIFrame.updateForSimState(GUIFrame.SIM_STATE_CONFIGURED);
-				return;
-			}
-		}
+		GUIFrame.getJaamSimModel().validate();
 
 		InputAgent.prepareReportDirectory();
 		evt.clear();
