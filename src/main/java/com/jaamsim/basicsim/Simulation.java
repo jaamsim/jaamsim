@@ -953,7 +953,7 @@ public class Simulation extends Entity {
 
 		// Increment the run number and check for last run
 		if (Simulation.isLastRun()) {
-			Simulation.end();
+			end();
 			return;
 		}
 
@@ -972,7 +972,7 @@ public class Simulation extends Entity {
 	/**
 	 * Ends a set of simulation runs.
 	 */
-	private static void end() {
+	private void end() {
 
 		// Close warning/error trace file
 		LogBox.logLine("Made it to do end at");
