@@ -60,6 +60,7 @@ import com.jaamsim.units.UserSpecifiedUnit;
  */
 public class Entity {
 	private static JaamSimModel sim;
+	private final JaamSimModel simModel;
 
 	String entityName;
 	private final long entityNumber;
@@ -151,8 +152,13 @@ public class Entity {
 	 * Constructor for entity initializing members.
 	 */
 	public Entity() {
-		entityNumber = sim.getNextEntityID();
-		sim.addInstance(this);
+		this(sim);
+	}
+
+	public Entity(JaamSimModel sm) {
+		simModel = sm;
+		entityNumber = simModel.getNextEntityID();
+		simModel.addInstance(this);
 		flags = 0;
 	}
 
