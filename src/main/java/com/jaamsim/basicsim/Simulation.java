@@ -931,7 +931,7 @@ public class Simulation extends Entity {
 	private static void startRun(EventManager evt) {
 		if (GUIFrame.getInstance() != null)
 			GUIFrame.getInstance().initSpeedUp(0.0d);
-		evt.scheduleProcessExternal(0, 0, false, new InitModelTarget(), null);
+		evt.scheduleProcessExternal(0, 0, false, new InitModelTarget(getInstance()), null);
 		evt.resume(evt.secondsToNearestTick(Simulation.getPauseTime()));
 	}
 

@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +21,12 @@ import com.jaamsim.events.EventManager;
 import com.jaamsim.events.ProcessTarget;
 
 public class InitModelTarget extends ProcessTarget {
-	public InitModelTarget() {}
+
+	final Simulation simulation;
+
+	public InitModelTarget(Simulation sim) {
+		simulation = sim;
+	}
 
 	@Override
 	public String getDescription() {
@@ -59,6 +65,6 @@ public class InitModelTarget extends ProcessTarget {
 		EventManager.scheduleSeconds(endTime, 5, false, new EndModelTarget(), null);
 
 		// Start checking the pause condition
-		Simulation.getInstance().doPauseCondition();
+		simulation.doPauseCondition();
 	}
 }
