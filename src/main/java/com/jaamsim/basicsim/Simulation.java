@@ -960,7 +960,7 @@ public class Simulation extends Entity {
 		// Start the next run
 		final EventManager currentEvt = EventManager.current();
 		Simulation.setRunNumber(runNumber + 1);
-		GUIFrame.getJaamSimModel().reset();
+		getJaamSimModel().endRun();
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -989,10 +989,7 @@ public class Simulation extends Entity {
 	 * Stops and resets the simulation model to zero simulation time.
 	 * @param evt - EventManager for the run.
 	 */
-	public static void stop(EventManager evt) {
-
-		// Stop the present simulation run
-		GUIFrame.getJaamSimModel().reset();
+	public void stop() {
 
 		// Reset the run number and run indices
 		Simulation.setRunNumber(startingRunNumber.getValue());
