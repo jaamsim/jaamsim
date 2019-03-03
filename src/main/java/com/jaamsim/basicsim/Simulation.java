@@ -894,7 +894,7 @@ public class Simulation extends Entity {
 	 *		2) calls startModel() to allow the model to add its starting events to EventManager
 	 *		3) start EventManager processing events
 	 */
-	public static void start(EventManager evt) {
+	public void start(EventManager evt) {
 
 		evt.setTraceListener(null);
 

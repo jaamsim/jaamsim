@@ -90,7 +90,7 @@ public class JaamSimModel {
 		validate();
 		InputAgent.prepareReportDirectory();
 		eventManager.clear();
-		Simulation.start(eventManager);
+		getSimulation().start(eventManager);
 	}
 
 	/**
