@@ -24,6 +24,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import com.jaamsim.events.EventManager;
 import com.jaamsim.input.InputAgent;
+import com.jaamsim.states.StateEntity;
 
 public class JaamSimModel {
 
@@ -114,6 +115,20 @@ public class JaamSimModel {
 	public void lateInit() {
 		for (Entity each : allInstances) {
 			each.lateInit();
+		}
+	}
+
+	/**
+	 * Reset the statistics for each entity.
+	 */
+	public void clearStatistics() {
+		for (Entity ent : allInstances) {
+			ent.clearStatistics();
+		}
+
+		// Reset state statistics
+		for (StateEntity each : Entity.getClonesOfIterator(StateEntity.class)) {  //FIXME
+			each.collectInitializationStats();
 		}
 	}
 

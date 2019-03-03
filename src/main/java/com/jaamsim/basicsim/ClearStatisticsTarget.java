@@ -18,7 +18,6 @@
 package com.jaamsim.basicsim;
 
 import com.jaamsim.events.ProcessTarget;
-import com.jaamsim.states.StateEntity;
 
 public class ClearStatisticsTarget extends ProcessTarget {
 
@@ -35,16 +34,7 @@ public class ClearStatisticsTarget extends ProcessTarget {
 
 	@Override
 	public void process() {
-
-		// Reset the statistics for each entity in the model
-		for (Entity ent : Entity.getClonesOfIterator(Entity.class)) {
-			ent.clearStatistics();
-		}
-
-		// Reset state statistics
-		for (StateEntity each : Entity.getClonesOfIterator(StateEntity.class)) {
-			each.collectInitializationStats();
-		}
+		simulation.getJaamSimModel().clearStatistics();
 	}
 
 }
