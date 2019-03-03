@@ -895,10 +895,7 @@ public class Simulation extends Entity {
 	 *		3) start EventManager processing events
 	 */
 	public static void start(EventManager evt) {
-		GUIFrame.getJaamSimModel().validate();
 
-		InputAgent.prepareReportDirectory();
-		evt.clear();
 		evt.setTraceListener(null);
 
 		if( Simulation.traceEvents() ) {

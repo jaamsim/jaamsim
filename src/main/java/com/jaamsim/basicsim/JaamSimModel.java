@@ -87,6 +87,9 @@ public class JaamSimModel {
 	 * Starts the simulation model.
 	 */
 	public void start() {
+		validate();
+		InputAgent.prepareReportDirectory();
+		eventManager.clear();
 		Simulation.start(eventManager);
 	}
 
