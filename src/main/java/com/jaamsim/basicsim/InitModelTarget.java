@@ -35,20 +35,15 @@ public class InitModelTarget extends ProcessTarget {
 
 	@Override
 	public void process() {
+		JaamSimModel simModel = simulation.getJaamSimModel();
 
 		// Initialise each entity
-		for (Entity each : Entity.getClonesOfIterator(Entity.class)) {
-			each.earlyInit();
-		}
-
-		// Initialise each entity a second time
-		for (Entity each : Entity.getClonesOfIterator(Entity.class)) {
-			each.lateInit();
-		}
+		simModel.earlyInit();
+		simModel.lateInit();
 
 		// Start each entity
 		double startTime = Simulation.getStartTime();
-		for (Entity each : Entity.getClonesOfIterator(Entity.class)) {
+		for (Entity each : simModel.getEntities()) {
 			if (!each.isActive())
 				continue;
 			EventManager.scheduleSeconds(startTime, 0, true, new StartUpTarget(each), null);
