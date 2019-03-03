@@ -3246,9 +3246,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 			InputAgent.setBatch(true);
 
 		// Load the autoload file
-		InputAgent.setRecordEdits(false);
-		InputAgent.readResource("<res>/inputs/autoload.cfg");
-		InputAgent.setPreDefinedEntityCount( Entity.getAll().get( Entity.getAll().size() - 1 ).getEntityNumber());
+		sim.autoLoad();
 
 		// Show the Control Panel
 		if (gui != null) {

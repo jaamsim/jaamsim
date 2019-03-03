@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
 import com.jaamsim.events.EventManager;
+import com.jaamsim.input.InputAgent;
 
 public class JaamSimModel {
 
@@ -32,6 +33,15 @@ public class JaamSimModel {
 	public JaamSimModel() {
 		Entity.setJaamSimModel(this);
 		eventManager = new EventManager("DefaultEventManager");
+	}
+
+	/**
+	 * Pre-loads the simulation model with basic objects such as DisplayModels and Units.
+	 */
+	public void autoLoad() {
+		InputAgent.setRecordEdits(false);
+		InputAgent.readResource("<res>/inputs/autoload.cfg");
+		InputAgent.setPreDefinedEntityCount( allInstances.get( allInstances.size() - 1 ).getEntityNumber());
 	}
 
 	/**
