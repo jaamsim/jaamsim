@@ -997,7 +997,7 @@ public class Simulation extends Entity {
 	 * @param simTicks - present simulation time in clock ticks
 	 * @return true if the simulation can be resumed
 	 */
-	public static boolean canResume(long simTicks) {
+	public boolean canResume(long simTicks) {
 		double totalDur = getRunDuration() + getInitializationTime();
 		return simTicks < EventManager.secsToNearestTick(totalDur);
 	}
