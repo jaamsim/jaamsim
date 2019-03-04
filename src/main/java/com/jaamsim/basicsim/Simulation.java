@@ -1047,7 +1047,7 @@ public class Simulation extends Entity {
 		return verifyEventsInput.getValue();
 	}
 
-	public static double getTickLength() {
+	public double getTickLength() {
 		return tickLengthInput.getValue();
 	}
 

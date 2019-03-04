@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018 JaamSim Software Inc.
+ * Copyright (C) 2018-2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@ import java.util.Arrays;
 
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.basicsim.EntityTarget;
-import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.Input;
@@ -67,6 +66,7 @@ public class TimeSeries extends DisplayEntity implements TimeSeriesProvider {
 		this.addInput(unitType);
 
 		value = new TimeSeriesDataInput("Value", KEY_INPUTS, null);
+		value.setTickLength(getSimulation().getTickLength());
 		value.setUnitType(UserSpecifiedUnit.class);
 		value.setRequired(true);
 		this.addInput(value);
@@ -82,7 +82,7 @@ public class TimeSeries extends DisplayEntity implements TimeSeriesProvider {
 	public void validate() {
 		super.validate();
 
-		if (value.getTickLength() != Simulation.getTickLength())
+		if (value.getTickLength() != getSimulation().getTickLength())
 			throw new InputErrorException("A new value was entered for the Simulation keyword TickLength " +
 					"after the TimeSeries data had been loaded.%n" +
 					"The configuration file must be saved and reloaded before the simulation can be executed.");
