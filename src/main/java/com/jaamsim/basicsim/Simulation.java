@@ -892,12 +892,12 @@ public class Simulation extends Entity {
 
 		evt.setTraceListener(null);
 
-		if( Simulation.traceEvents() ) {
+		if (traceEvents()) {
 			String evtName = InputAgent.getConfigFile().getParentFile() + File.separator + InputAgent.getRunName() + ".evt";
 			EventRecorder rec = new EventRecorder(evtName);
 			evt.setTraceListener(rec);
 		}
-		else if( Simulation.verifyEvents() ) {
+		else if (verifyEvents()) {
 			String evtName = InputAgent.getConfigFile().getParentFile() + File.separator + InputAgent.getRunName() + ".evt";
 			EventTracer trc = new EventTracer(evtName);
 			evt.setTraceListener(trc);
@@ -1035,15 +1035,15 @@ public class Simulation extends Entity {
 		return ret;
 	}
 
-	public static boolean getPrintReport() {
+	public boolean getPrintReport() {
 		return printReport.getValue();
 	}
 
-	public static boolean traceEvents() {
+	public boolean traceEvents() {
 		return traceEventsInput.getValue();
 	}
 
-	public static boolean verifyEvents() {
+	public boolean verifyEvents() {
 		return verifyEventsInput.getValue();
 	}
 
