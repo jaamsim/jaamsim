@@ -909,7 +909,7 @@ public class Simulation extends Entity {
 		evt.setTickLength(tickLengthInput.getValue());
 
 		startTime = startTimeInput.getValue();
-		endTime = startTime + Simulation.getInitializationTime() + Simulation.getRunDuration();
+		endTime = startTime + getInitializationTime() + getRunDuration();
 
 		Simulation.setRunNumber(startingRunNumber.getValue());
 		startRun(evt);
@@ -1059,7 +1059,7 @@ public class Simulation extends Entity {
 	 * Returns the start time of the run.
 	 * @return - simulation time in seconds for the start of the run.
 	 */
-	public static double getStartTime() {
+	public double getStartTime() {
 		return startTime;
 	}
 
@@ -1067,21 +1067,21 @@ public class Simulation extends Entity {
 	 * Returns the end time of the run.
 	 * @return - simulation time in seconds when the current run will stop.
 	 */
-	public static double getEndTime() {
+	public double getEndTime() {
 		return endTime;
 	}
 
 	/**
 	 * Returns the duration of the run (not including intialization)
 	 */
-	public static double getRunDuration() {
+	public double getRunDuration() {
 		return runDuration.getValue();
 	}
 
 	/**
 	 * Returns the duration of the initialization period
 	 */
-	public static double getInitializationTime() {
+	public double getInitializationTime() {
 		return initializationTime.getValue();
 	}
 

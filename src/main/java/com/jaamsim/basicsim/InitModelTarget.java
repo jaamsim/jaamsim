@@ -42,7 +42,7 @@ public class InitModelTarget extends ProcessTarget {
 		simModel.lateInit();
 
 		// Start each entity
-		double startTime = Simulation.getStartTime();
+		double startTime = simulation.getStartTime();
 		for (Entity each : simModel.getEntities()) {
 			if (!each.isActive())
 				continue;
@@ -50,13 +50,13 @@ public class InitModelTarget extends ProcessTarget {
 		}
 
 		// Schedule the initialisation period
-		if (Simulation.getInitializationTime() > 0.0) {
-			double clearTime = startTime + Simulation.getInitializationTime();
+		if (simulation.getInitializationTime() > 0.0) {
+			double clearTime = startTime + simulation.getInitializationTime();
 			EventManager.scheduleSeconds(clearTime, 5, false, new ClearStatisticsTarget(simulation), null);
 		}
 
 		// Schedule the end of the simulation run
-		double endTime = Simulation.getEndTime();
+		double endTime = simulation.getEndTime();
 		EventManager.scheduleSeconds(endTime, 5, false, new EndModelTarget(simulation), null);
 
 		// Start checking the pause condition

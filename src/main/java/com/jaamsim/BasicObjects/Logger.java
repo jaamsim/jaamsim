@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2016-2018 JaamSim Software Inc.
+ * Copyright (C) 2016-2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -195,7 +195,7 @@ public abstract class Logger extends DisplayEntity {
 			return;
 
 		// Skip the log entry if the run is still initializing
-		if (!includeInitialization.getValue() && simTime < Simulation.getInitializationTime())
+		if (!includeInitialization.getValue() && simTime < getSimulation().getInitializationTime())
 			return;
 
 		// Skip the log entry if it is outside the time range
