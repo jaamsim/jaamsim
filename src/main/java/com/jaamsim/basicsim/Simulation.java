@@ -923,7 +923,7 @@ public class Simulation extends Entity {
 		if (GUIFrame.getInstance() != null)
 			GUIFrame.getInstance().initSpeedUp(0.0d);
 		evt.scheduleProcessExternal(0, 0, false, new InitModelTarget(getInstance()), null);
-		evt.resume(evt.secondsToNearestTick(Simulation.getPauseTime()));
+		evt.resume(evt.secondsToNearestTick(getPauseTime()));
 	}
 
 	/**
@@ -1051,7 +1051,7 @@ public class Simulation extends Entity {
 		return tickLengthInput.getValue();
 	}
 
-	public static double getPauseTime() {
+	public double getPauseTime() {
 		return pauseTime.getValue();
 	}
 

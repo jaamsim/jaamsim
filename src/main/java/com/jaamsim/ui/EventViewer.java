@@ -111,7 +111,7 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 		nextEventButton.addActionListener( new ActionListener() {
 			@Override
 			public void actionPerformed( ActionEvent e ) {
-				evtMan.nextOneEvent();
+				evtMan.nextOneEvent(GUIFrame.getJaamSimModel().getSimulation().getPauseTime());
 			}
 		});
 		nextEventButton.setToolTipText(GUIFrame.formatToolTip("Next Event",
@@ -122,7 +122,7 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 		nextTimeButton.addActionListener( new ActionListener() {
 			@Override
 			public void actionPerformed( ActionEvent e ) {
-				evtMan.nextEventTime();
+				evtMan.nextEventTime(GUIFrame.getJaamSimModel().getSimulation().getPauseTime());
 			}
 		});
 		nextTimeButton.setToolTipText(GUIFrame.formatToolTip("Next Time",

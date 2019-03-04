@@ -2643,7 +2643,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		}
 		else if( getSimState() == SIM_STATE_PAUSED ) {
 			initSpeedUp(EventManager.ticksToSecs(simTicks));
-			sim.resume(Simulation.getPauseTime());
+			sim.resume(sim.getSimulation().getPauseTime());
 			return true;
 		}
 		else
