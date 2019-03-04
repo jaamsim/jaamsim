@@ -1002,7 +1002,7 @@ public class Simulation extends Entity {
 		return simTicks < EventManager.secsToNearestTick(totalDur);
 	}
 
-	public static int getSubstreamNumber() {
+	public int getSubstreamNumber() {
 		return (int)globalSeedInput.getValue().getNextSample(0.0);
 	}
 
@@ -1010,7 +1010,7 @@ public class Simulation extends Entity {
 	 * Returns the largest random seed used by the objects in the simulation.
 	 * @return largest random seed
 	 */
-	public static int getLargestStreamNumber() {
+	public int getLargestStreamNumber() {
 		int seed = 0;
 		for (Entity each : Entity.getClonesOfIterator(Entity.class, RandomStreamUser.class)) {
 			RandomStreamUser user = (RandomStreamUser) each;
@@ -1024,7 +1024,7 @@ public class Simulation extends Entity {
 	 * @param seed - random stream number
 	 * @return users of the random stream
 	 */
-	public static ArrayList<RandomStreamUser> getRandomStreamUsers(int seed) {
+	public ArrayList<RandomStreamUser> getRandomStreamUsers(int seed) {
 		ArrayList<RandomStreamUser> ret = new ArrayList<>();
 		for (Entity each : Entity.getClonesOfIterator(Entity.class, RandomStreamUser.class)) {
 			RandomStreamUser user = (RandomStreamUser) each;

@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2018 JaamSim Software Inc.
+ * Copyright (C) 2016-2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,6 @@ import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.Samples.SampleProvider;
 import com.jaamsim.Statistics.SampleStatistics;
-import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
@@ -131,7 +130,7 @@ implements SampleProvider, RandomStreamUser {
 		super.setInputsForDragAndDrop();
 
 		// Find the largest seed used so far
-		int seed = Simulation.getLargestStreamNumber();
+		int seed = getSimulation().getLargestStreamNumber();
 
 		// Set the random number seed next unused value
 		InputAgent.applyIntegers(this, randomSeedInput.getKeyword(), seed + 1);
@@ -167,8 +166,8 @@ implements SampleProvider, RandomStreamUser {
 		return randomSeedInput.getKeyword();
 	}
 
-	public static int getSubstreamNumber() {
-		return Simulation.getSubstreamNumber();
+	public int getSubstreamNumber() {
+		return getSimulation().getSubstreamNumber();
 	}
 
 	/**
