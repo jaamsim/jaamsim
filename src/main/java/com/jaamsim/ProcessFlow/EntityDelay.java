@@ -145,9 +145,15 @@ public class EntityDelay extends LinkedComponent implements LineEntity {
 	}
 
 	private static class EntityDelayEntry {
-		DisplayEntity ent;
-		double startTime;
-		double duration;
+		final DisplayEntity ent;
+		final double startTime;
+		final double duration;
+
+		public EntityDelayEntry(DisplayEntity e, double start, double dur) {
+			ent = e;
+			startTime = start;
+			duration = dur;
+		}
 	}
 
 	@Override
@@ -167,10 +173,7 @@ public class EntityDelay extends LinkedComponent implements LineEntity {
 
 		// Add the entity to the list of entities being delayed
 		if (animation.getValue()) {
-			EntityDelayEntry entry = new EntityDelayEntry();
-			entry.ent = ent;
-			entry.startTime = simTime;
-			entry.duration = dur;
+			EntityDelayEntry entry = new EntityDelayEntry(ent, simTime, dur);
 			entityMap.put(ent.getEntityNumber(), entry);
 		}
 		else {
