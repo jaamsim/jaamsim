@@ -541,6 +541,29 @@ public class DisplayEntity extends Entity {
 	}
 
 	/**
+	 * Sets the orientation to the specified value relative its its normal orientation.
+	 * @param relOrient - relative orientation
+	 */
+	public void setRelativeOrientation(Vec3d relOrient) {
+		Vec3d val = new Vec3d(orientationInput.getValue());
+		val.add3(relOrient);
+		setOrientation(val);
+	}
+
+	/**
+	 * Returns the entity's size in the global coordinate system after applying its orientation.
+	 * @return global size
+	 */
+	public Vec3d getGlobalSize() {
+		Vec3d ret = new Vec3d(sizeInput.getValue());
+		calculateEulerRotation(ret, orientationInput.getValue());
+		ret.x = Math.abs(ret.x);
+		ret.y = Math.abs(ret.y);
+		ret.z = Math.abs(ret.z);
+		return ret;
+	}
+
+	/**
 	 * Update any internal stated needed by either renderer.
 	 */
 	public void updateGraphics(double simTime) {
