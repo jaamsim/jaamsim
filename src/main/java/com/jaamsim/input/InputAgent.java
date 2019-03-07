@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2009-2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018 JaamSim Software Inc.
+ * Copyright (C) 2018-2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -1465,6 +1465,7 @@ public class InputAgent {
 	 * @param simTime - simulation time at which the outputs are printed.
 	 */
 	public static void printRunOutputs(double simTime) {
+		Simulation simulation = GUIFrame.getJaamSimModel().getSimulation();
 
 		// Set up the custom outputs
 		if (outStream == null) {
@@ -1491,7 +1492,7 @@ public class InputAgent {
 			// Write the header line for the expressions
 			StringBuilder sb = new StringBuilder();
 			ArrayList<String> toks = new ArrayList<>();
-			Simulation.getRunOutputList().getValueTokens(toks);
+			simulation.getRunOutputList().getValueTokens(toks);
 			boolean first = true;
 			for (String str : toks) {
 				if (str.equals("{") || str.equals("}"))
@@ -1506,8 +1507,8 @@ public class InputAgent {
 
 			// Write the header line for the units
 			sb = new StringBuilder();
-			for (int i=0; i<Simulation.getRunOutputList().getListSize(); i++) {
-				Class<? extends Unit> ut = Simulation.getRunOutputList().getUnitType(i);
+			for (int i = 0; i < simulation.getRunOutputList().getListSize(); i++) {
+				Class<? extends Unit> ut = simulation.getRunOutputList().getUnitType(i);
 				String unit = Unit.getDisplayedUnit(ut);
 				if (i > 0)
 					sb.append("\t");
@@ -1518,9 +1519,9 @@ public class InputAgent {
 
 		// Write the selected outputs
 		StringBuilder sb = new StringBuilder();
-		for (int i=0; i<Simulation.getRunOutputList().getListSize(); i++) {
-			StringProvider samp = Simulation.getRunOutputList().getValue().get(i);
-			Class<? extends Unit> ut = Simulation.getRunOutputList().getUnitType(i);
+		for (int i = 0; i < simulation.getRunOutputList().getListSize(); i++) {
+			StringProvider samp = simulation.getRunOutputList().getValue().get(i);
+			Class<? extends Unit> ut = simulation.getRunOutputList().getUnitType(i);
 			double factor = Unit.getDisplayedUnitFactor(ut);
 			String str;
 			try {

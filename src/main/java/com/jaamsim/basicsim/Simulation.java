@@ -1085,7 +1085,7 @@ public class Simulation extends Entity {
 		return initializationTime.getValue();
 	}
 
-	public static StringProvListInput getRunOutputList() {
+	public StringProvListInput getRunOutputList() {
 		return runOutputList;
 	}
 
