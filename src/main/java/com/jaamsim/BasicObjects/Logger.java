@@ -148,7 +148,7 @@ public abstract class Logger extends DisplayEntity {
 			if (!Simulation.isFirstRun()) {
 				file.format("%n");
 			}
-			file.format("%n%s%n", Simulation.getRunHeader());
+			file.format("%n%s%n", getSimulation().getRunHeader());
 		}
 
 		// Print the title for each column

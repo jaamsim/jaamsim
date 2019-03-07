@@ -1504,12 +1504,12 @@ public class Simulation extends Entity {
 		return sb.toString();
 	}
 
-	public static String getRunCode() {
+	public String getRunCode() {
 		return Simulation.getRunCode(runIndexList);
 	}
 
-	public static String getRunHeader() {
-		return String.format("##### RUN %s #####", Simulation.getRunCode());
+	public String getRunHeader() {
+		return String.format("##### RUN %s #####", getRunCode());
 	}
 
 	public static boolean isMultipleRuns() {
