@@ -908,7 +908,7 @@ public class DisplayEntity extends Entity {
 		if (!isMovable())
 			return;
 		Vec3d pos = getPosition();
-		double inc = Simulation.getIncrementSize();
+		double inc = getSimulation().getIncrementSize();
 		if (Simulation.isSnapToGrid())
 			inc = Math.max(inc, Simulation.getSnapGridSpacing());
 		switch (keyCode) {

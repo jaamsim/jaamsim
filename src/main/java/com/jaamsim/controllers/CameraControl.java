@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2012 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +18,6 @@
 
 package com.jaamsim.controllers;
 
-import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.math.Mat4d;
 import com.jaamsim.math.MathUtils;
 import com.jaamsim.math.Plane;
@@ -530,7 +530,7 @@ public class CameraControl implements WindowInteractionListener {
 		Vec3d left = new Vec3d( -forward.y, forward.x, 0.0d);
 
 		// Scale the two vectors to the desired step size
-		double inc = Simulation.getIncrementSize();
+		double inc = GUIFrame.getJaamSimModel().getSimulation().getIncrementSize();
 		forward.scale3(inc);
 		left.scale3(inc);
 

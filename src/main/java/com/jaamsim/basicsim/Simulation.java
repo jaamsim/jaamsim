@@ -1089,7 +1089,7 @@ public class Simulation extends Entity {
 		return runOutputList;
 	}
 
-	public static double getIncrementSize() {
+	public double getIncrementSize() {
 		if (incrementSize.isDefault())
 			return snapGridSpacing.getValue();
 		return incrementSize.getValue();
