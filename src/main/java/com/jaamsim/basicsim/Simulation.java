@@ -1142,7 +1142,7 @@ public class Simulation extends Entity {
 
 	private final PauseModelTarget pauseModel = new PauseModelTarget(this);
 
-	static class PauseConditional extends Conditional {
+	private final Conditional pauseCondition = new Conditional() {
 		@Override
 		public boolean evaluate() {
 			if (pauseConditionInput.getValue() == null)
@@ -1150,8 +1150,7 @@ public class Simulation extends Entity {
 			double simTime = EventManager.simSeconds();
 			return pauseConditionInput.getValue().getNextSample(simTime) != 0.0d;
 		}
-	}
-	private final Conditional pauseCondition = new PauseConditional();
+	};
 
 	public Vec3d getSnapGridPosition(Vec3d pos) {
 		return getSnapGridPosition(pos, snapGridSpacing.getValue());
