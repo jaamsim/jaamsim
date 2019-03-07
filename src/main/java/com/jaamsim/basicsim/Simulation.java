@@ -747,78 +747,104 @@ public class Simulation extends Entity {
 		}
 
 		if (in == modelBuilderPos) {
+			if (GUIFrame.getInstance() == null)
+				return;
 			IntegerVector pos = modelBuilderPos.getValue();
 			EntityPallet.getInstance().setLocation(pos.get(0), pos.get(1));
 			return;
 		}
 
 		if (in == modelBuilderSize) {
+			if (GUIFrame.getInstance() == null)
+				return;
 			IntegerVector size = modelBuilderSize.getValue();
 			EntityPallet.getInstance().setSize(size.get(0), size.get(1));
 			return;
 		}
 
 		if (in == objectSelectorPos) {
+			if (GUIFrame.getInstance() == null)
+				return;
 			IntegerVector pos = objectSelectorPos.getValue();
 			ObjectSelector.getInstance().setLocation(pos.get(0), pos.get(1));
 			return;
 		}
 
 		if (in == objectSelectorSize) {
+			if (GUIFrame.getInstance() == null)
+				return;
 			IntegerVector size = objectSelectorSize.getValue();
 			ObjectSelector.getInstance().setSize(size.get(0), size.get(1));
 			return;
 		}
 
 		if (in == inputEditorPos) {
+			if (GUIFrame.getInstance() == null)
+				return;
 			IntegerVector pos = inputEditorPos.getValue();
 			EditBox.getInstance().setLocation(pos.get(0), pos.get(1));
 			return;
 		}
 
 		if (in == inputEditorSize) {
+			if (GUIFrame.getInstance() == null)
+				return;
 			IntegerVector size = inputEditorSize.getValue();
 			EditBox.getInstance().setSize(size.get(0), size.get(1));
 			return;
 		}
 
 		if (in == outputViewerPos) {
+			if (GUIFrame.getInstance() == null)
+				return;
 			IntegerVector pos = outputViewerPos.getValue();
 			OutputBox.getInstance().setLocation(pos.get(0), pos.get(1));
 			return;
 		}
 
 		if (in == outputViewerSize) {
+			if (GUIFrame.getInstance() == null)
+				return;
 			IntegerVector size = outputViewerSize.getValue();
 			OutputBox.getInstance().setSize(size.get(0), size.get(1));
 			return;
 		}
 
 		if (in == propertyViewerPos) {
+			if (GUIFrame.getInstance() == null)
+				return;
 			IntegerVector pos = propertyViewerPos.getValue();
 			PropertyBox.getInstance().setLocation(pos.get(0), pos.get(1));
 			return;
 		}
 
 		if (in == propertyViewerSize) {
+			if (GUIFrame.getInstance() == null)
+				return;
 			IntegerVector size = propertyViewerSize.getValue();
 			PropertyBox.getInstance().setSize(size.get(0), size.get(1));
 			return;
 		}
 
 		if (in == logViewerPos) {
+			if (GUIFrame.getInstance() == null)
+				return;
 			IntegerVector pos = logViewerPos.getValue();
 			LogBox.getInstance().setLocation(pos.get(0), pos.get(1));
 			return;
 		}
 
 		if (in == logViewerSize) {
+			if (GUIFrame.getInstance() == null)
+				return;
 			IntegerVector size = logViewerSize.getValue();
 			LogBox.getInstance().setSize(size.get(0), size.get(1));
 			return;
 		}
 
 		if (in == eventViewerPos) {
+			if (GUIFrame.getInstance() == null)
+				return;
 			if (EventViewer.hasInstance()) {
 				IntegerVector pos = eventViewerPos.getValue();
 				EventViewer.getInstance().setLocation(pos.get(0), pos.get(1));
@@ -827,6 +853,8 @@ public class Simulation extends Entity {
 		}
 
 		if (in == eventViewerSize) {
+			if (GUIFrame.getInstance() == null)
+				return;
 			if (EventViewer.hasInstance()) {
 				IntegerVector size = eventViewerSize.getValue();
 				EventViewer.getInstance().setSize(size.get(0), size.get(1));
