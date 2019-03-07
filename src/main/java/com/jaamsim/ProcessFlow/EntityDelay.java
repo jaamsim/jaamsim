@@ -259,6 +259,10 @@ public class EntityDelay extends LinkedComponent implements LineEntity {
 			// Set the position for the entity
 			Vec3d localPos = PolylineInfo.getPositionOnPolyline(getCurvePoints(), frac);
 			entry.ent.setGlobalPosition(this.getGlobalPosition(localPos));
+
+			// Set the orientation for the entity
+			Vec3d orient = new Vec3d();
+			entry.ent.setRelativeOrientation(orient);
 		}
 	}
 
