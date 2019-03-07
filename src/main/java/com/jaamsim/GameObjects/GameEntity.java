@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2017 JaamSim Software Inc.
+ * Copyright (C) 2017-2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ package com.jaamsim.GameObjects;
 
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.basicsim.EntityTarget;
-import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.events.EventHandle;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.events.ProcessTarget;
@@ -91,7 +90,7 @@ public abstract class GameEntity extends DisplayEntity {
 	}
 
 	private void scheduleAction() {
-		if (evt == null || doActionHandle.isScheduled() || !Simulation.isRealTime())
+		if (evt == null || doActionHandle.isScheduled() || !getSimulation().isRealTime())
 			return;
 		evt.scheduleProcessExternal(0L, 0, false, doActionTarget, doActionHandle);
 	}

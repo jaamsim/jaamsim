@@ -1199,7 +1199,7 @@ public class Simulation extends Entity {
 		return printInputReport.getValue();
 	}
 
-	public static boolean isRealTime() {
+	public boolean isRealTime() {
 		return realTime.getValue();
 	}
 
