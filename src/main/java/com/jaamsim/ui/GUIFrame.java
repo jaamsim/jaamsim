@@ -2540,6 +2540,10 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		// Set the run progress bar display
 		long cTime = System.currentTimeMillis();
 		Simulation simulation = sim.getSimulation();
+		if (simulation == null) {
+			setProgress(0);
+			return;
+		}
 		double duration = simulation.getRunDuration() + simulation.getInitializationTime();
 		double timeElapsed = simTime - simulation.getStartTime();
 		int progress = (int)(timeElapsed * 100.0d / duration);
