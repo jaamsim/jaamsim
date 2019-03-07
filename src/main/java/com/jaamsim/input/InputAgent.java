@@ -785,7 +785,7 @@ public class InputAgent {
 		if( InputAgent.numErrors > 0 )
 			throw new InputErrorException("%d input errors and %d warnings found", InputAgent.numErrors, InputAgent.numWarnings);
 
-		if (Simulation.getPrintInputReport())
+		if (GUIFrame.getJaamSimModel().getSimulation().getPrintInputReport())
 			InputAgent.printInputFileKeywords();
 	}
 

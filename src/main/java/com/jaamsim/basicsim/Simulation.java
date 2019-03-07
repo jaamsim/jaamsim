@@ -1195,7 +1195,7 @@ public class Simulation extends Entity {
 		return exitAtStop.getValue();
 	}
 
-	public static boolean getPrintInputReport() {
+	public boolean getPrintInputReport() {
 		return printInputReport.getValue();
 	}
 
