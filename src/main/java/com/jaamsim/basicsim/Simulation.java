@@ -974,7 +974,7 @@ public class Simulation extends Entity {
 		}
 
 		// Increment the run number and check for last run
-		if (Simulation.isLastRun()) {
+		if (isLastRun()) {
 			end();
 			return;
 		}
@@ -1512,15 +1512,15 @@ public class Simulation extends Entity {
 		return String.format("##### RUN %s #####", getRunCode());
 	}
 
-	public static boolean isMultipleRuns() {
+	public boolean isMultipleRuns() {
 		return endingRunNumber.getValue() > startingRunNumber.getValue();
 	}
 
-	public static boolean isFirstRun() {
+	public boolean isFirstRun() {
 		return runNumber == startingRunNumber.getValue();
 	}
 
-	public static boolean isLastRun() {
+	public boolean isLastRun() {
 		return runNumber >= endingRunNumber.getValue();
 	}
 

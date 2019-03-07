@@ -121,7 +121,7 @@ public abstract class Logger extends DisplayEntity {
 		logTime = 0.0d;
 
 		// Close the file if it is already open
-		if (file != null && Simulation.isFirstRun()) {
+		if (file != null && getSimulation().isFirstRun()) {
 			file.close();
 			file = null;
 		}
@@ -140,12 +140,12 @@ public abstract class Logger extends DisplayEntity {
 		super.startUp();
 
 		// Print the detailed run information to the file
-		if (Simulation.isFirstRun())
+		if (getSimulation().isFirstRun())
 			Simulation.getInstance().printReport(file, 0.0d);
 
 		// Print run number header if multiple runs are to be performed
-		if (Simulation.isMultipleRuns()) {
-			if (!Simulation.isFirstRun()) {
+		if (getSimulation().isMultipleRuns()) {
+			if (!getSimulation().isFirstRun()) {
 				file.format("%n");
 			}
 			file.format("%n%s%n", getSimulation().getRunHeader());
@@ -251,7 +251,7 @@ public abstract class Logger extends DisplayEntity {
 		file.flush();
 
 		// Close the report file
-		if (Simulation.isLastRun()) {
+		if (getSimulation().isLastRun()) {
 			file.close();
 			file = null;
 		}

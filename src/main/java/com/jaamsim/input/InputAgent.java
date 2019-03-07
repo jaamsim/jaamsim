@@ -1536,7 +1536,7 @@ public class InputAgent {
 		outStream.println(sb.toString());
 
 		// Terminate the outputs
-		if (Simulation.isLastRun()) {
+		if (simulation.isLastRun()) {
 			outStream.close();
 			outStream = null;
 		}
@@ -1558,7 +1558,7 @@ public class InputAgent {
 
 		// Print run number header when multiple runs are to be performed
 		Simulation simulation = GUIFrame.getJaamSimModel().getSimulation();
-		if (Simulation.isMultipleRuns())
+		if (simulation.isMultipleRuns())
 			reportFile.format("%s%n%n", simulation.getRunHeader());
 
 		// Prepare a sorted list of entities
@@ -1594,7 +1594,7 @@ public class InputAgent {
 		}
 
 		// Close the report file
-		if (Simulation.isLastRun()) {
+		if (simulation.isLastRun()) {
 			reportFile.close();
 			reportFile = null;
 		}
