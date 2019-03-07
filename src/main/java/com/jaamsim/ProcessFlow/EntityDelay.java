@@ -66,6 +66,10 @@ public class EntityDelay extends LinkedComponent implements LineEntity {
 	         exampleList = {"TRUE"})
 	private final BooleanInput animation;
 
+	@Keyword(description = "Determines whether to rotate the entities to match the path.",
+	         exampleList = {"TRUE"})
+	private final BooleanInput rotateEntities;
+
 	@Keyword(description = "The width of the path in pixels.",
 	         exampleList = {"1"})
 	private final IntegerInput widthInput;
@@ -98,6 +102,9 @@ public class EntityDelay extends LinkedComponent implements LineEntity {
 
 		animation = new BooleanInput("Animation", FORMAT, true);
 		this.addInput(animation);
+
+		rotateEntities = new BooleanInput("RotateEntities", FORMAT, false);
+		this.addInput(rotateEntities);
 
 		widthInput = new IntegerInput("LineWidth", FORMAT, 1);
 		widthInput.setValidRange(1, Integer.MAX_VALUE);
@@ -265,6 +272,9 @@ public class EntityDelay extends LinkedComponent implements LineEntity {
 
 			// Set the orientation for the entity
 			Vec3d orient = new Vec3d();
+			if (rotateEntities.getValue()) {
+				orient.z = PolylineInfo.getAngleOnPolyline(getCurvePoints(), frac);
+			}
 			entry.ent.setRelativeOrientation(orient);
 		}
 	}
