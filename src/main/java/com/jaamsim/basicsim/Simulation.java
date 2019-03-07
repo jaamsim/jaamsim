@@ -1191,7 +1191,7 @@ public class Simulation extends Entity {
 		return modelName;
 	}
 
-	public static boolean getExitAtStop() {
+	public boolean getExitAtStop() {
 		return exitAtStop.getValue();
 	}
 
