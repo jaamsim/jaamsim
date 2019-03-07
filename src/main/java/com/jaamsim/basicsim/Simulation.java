@@ -69,7 +69,7 @@ public class Simulation extends Entity {
 	// Key Inputs tab
 	@Keyword(description = "The duration of the simulation run in which all statistics will be recorded.",
 	         exampleList = {"8760 h"})
-	private static final ValueInput runDuration;
+	private final ValueInput runDuration;
 
 	@Keyword(description = "The initialization interval for the simulation run. The model will "
 	                     + "run for the InitializationDuration interval and then clear the "
@@ -77,11 +77,11 @@ public class Simulation extends Entity {
 	                     + "The total length of the simulation run will be the sum of the "
 	                     + "InitializationDuration and RunDuration inputs.",
 	         exampleList = {"720 h"})
-	private static final ValueInput initializationTime;
+	private final ValueInput initializationTime;
 
 	@Keyword(description = "An optional expression that pauses the run when TRUE is returned.",
 	         exampleList = {"'[Queue1].QueueLength > 20'"})
-	private static final SampleInput pauseConditionInput;
+	private final SampleInput pauseConditionInput;
 
 	@Keyword(description = "If TRUE, the simulation run will be terminated when the "
 	                     + "PauseCondition expression returns TRUE. If multiple runs have been "
@@ -89,12 +89,12 @@ public class Simulation extends Entity {
 	                     + "been specified, the simulation will be paused or terminated "
 	                     + "depending on the input to the ExitAtStop keyword.",
 	         exampleList = {"TRUE"})
-	private static final BooleanInput exitAtPauseCondition;
+	private final BooleanInput exitAtPauseCondition;
 
 	@Keyword(description = "If TRUE, the program will be closed on completion of the last "
 	                     + "simulation run. Otherwise, the last run will be paused.",
 	         exampleList = {"TRUE"})
-	private static final BooleanInput exitAtStop;
+	private final BooleanInput exitAtStop;
 
 	@Keyword(description = "Global seed that sets the substream for each probability "
 	                     + "distribution. Must be an integer >= 0. GlobalSubstreamSeed works "
@@ -105,17 +105,17 @@ public class Simulation extends Entity {
 	                     + "and then set the GlobalSubstreamSeed input to the run number or to "
 	                     + "one of the run indices.",
 	         exampleList = {"5", "[Simulation].RunNumber", "[Simulation].RunIndex(3)"})
-	private static final SampleInput globalSeedInput;
+	private final SampleInput globalSeedInput;
 
 	@Keyword(description = "If TRUE, a full output report is printed to the file "
 	                     + "<configuration file name>.rep at the end of the simulation run.",
 	         exampleList = {"TRUE"})
-	private static final BooleanInput printReport;
+	private final BooleanInput printReport;
 
 	@Keyword(description = "The directory in which to place the output report. Defaults to the "
 	                     + "directory containing the configuration file for the run.",
 	         exampleList = {"'c:/reports/'"})
-	private static final DirInput reportDirectory;
+	private final DirInput reportDirectory;
 
 	@Keyword(description = "The unit types for the selected outputs for the simulation run. "
 	                     + "Use DimensionlessUnit for non-numeric outputs such as strings, "
@@ -126,7 +126,7 @@ public class Simulation extends Entity {
 	                     + "It is best to leave this input blank and use only dimensionless "
 	                     + "quantities and non-numeric outputs in the RunOutputList.",
 	         exampleList = {"DistanceUnit  SpeedUnit"})
-	private static final UnitTypeListInput unitTypeList;
+	private final UnitTypeListInput unitTypeList;
 
 	@Keyword(description = "One or more selected outputs to be printed at the end of each "
 	                     + "simulation run. Each output is specified by an expression. In script "
@@ -142,11 +142,11 @@ public class Simulation extends Entity {
 	                     + "first be entered in the correct position in the input to the "
 	                     + "UnitTypeList keyword.",
 	         exampleList = {"{ [Simulation].RunNumber } { '[Queue1].AverageQueueTime / 1[h]' }"})
-	protected static final StringProvListInput runOutputList;
+	protected final StringProvListInput runOutputList;
 
 	@Keyword(description = "The length of time represented by one simulation tick.",
 	         exampleList = {"1e-6 s"})
-	private static final ValueInput tickLengthInput;
+	private final ValueInput tickLengthInput;
 
 	// Multiple Runs tab
 	@Keyword(description = "Defines the number of run indices and the maximum value N for each "
@@ -156,7 +156,7 @@ public class Simulation extends Entity {
 	                     + "indices are defined with ranges of 3, 5, and 10, then at total of "
 	                     + "3*5*10 = 150 runs will be executed.",
 	         exampleList = {"3 5 10"})
-	private static final IntegerListInput runIndexDefinitionList;
+	private final IntegerListInput runIndexDefinitionList;
 
 	@Keyword(description = "The first run number to be executed. The value can be entered as "
 	                     + "either an integer or as the equivalent combination of run indices. "
@@ -164,7 +164,7 @@ public class Simulation extends Entity {
 	                     + "3, 5, and 10, then run number 22 can be expressed as 1-3-2 because "
 	                     + "22 = (1-1)*5*10 + (3-1)*10 + 2.",
 	         exampleList = {"22", "1-3-2"})
-	private static final RunNumberInput startingRunNumber;
+	private final RunNumberInput startingRunNumber;
 
 	@Keyword(description = "The last run number to be executed. The value can be entered as "
 	                     + "either an integer or as the equivalent combination of run indices. "
@@ -172,36 +172,36 @@ public class Simulation extends Entity {
 	                     + "3, 5, and 10, then run number 78 can be expressed as 2-3-8 because "
 	                     + "78 = (2-1)*5*10 + (3-1)*10 + 8.",
 	         exampleList = {"78", "2-3-8"})
-	private static final RunNumberInput endingRunNumber;
+	private final RunNumberInput endingRunNumber;
 
 	// GUI tab
 	@Keyword(description = "An optional list of units to be used for displaying model outputs.",
 	         exampleList = {"h kt"})
-	private static final EntityListInput<? extends Unit> displayedUnits;
+	private final EntityListInput<? extends Unit> displayedUnits;
 
 	@Keyword(description = "If TRUE, a dragged object will be positioned to the nearest grid "
 	                     + "point.",
 	         exampleList = {"TRUE"})
-	private static final BooleanInput snapToGrid;
+	private final BooleanInput snapToGrid;
 
 	@Keyword(description = "The distance between snap grid points.",
 	         exampleList = {"1 m"})
-	private static final ValueInput snapGridSpacing;
+	private final ValueInput snapGridSpacing;
 
 	@Keyword(description = "The distance moved by the selected entity when the an arrow key is "
 	                     + "pressed. Defaults to the SnapGridSpacing value.",
 	         exampleList = {"1 cm"})
-	private static final ValueInput incrementSize;
+	private final ValueInput incrementSize;
 
 	@Keyword(description = "If TRUE, the simulation is executed a constant multiple of real time. "
 	                     + "Otherwise, the run is executed as fast as possible, limited only by "
 	                     + "processor speed.",
 	         exampleList = {"TRUE"})
-	private static final BooleanInput realTime;
+	private final BooleanInput realTime;
 
 	@Keyword(description = "The target ratio of elapsed simulation time to elapsed real time.",
 	         exampleList = {"1200"})
-	private static final ValueInput realTimeFactor;
+	private final ValueInput realTimeFactor;
 
 	public static final double DEFAULT_REAL_TIME_FACTOR = 1;
 	public static final double MIN_REAL_TIME_FACTOR = 1e-6;
@@ -209,121 +209,121 @@ public class Simulation extends Entity {
 
 	@Keyword(description = "The time at which the simulation will be paused.",
 	         exampleList = {"200 h"})
-	private static final ValueInput pauseTime;
+	private final ValueInput pauseTime;
 
 	@Keyword(description = "If TRUE, the Model Builder tool is shown on startup.",
 	         exampleList = {"TRUE"})
-	private static final BooleanInput showModelBuilder;
+	private final BooleanInput showModelBuilder;
 
 	@Keyword(description = "If TRUE, the Object Selector tool is shown on startup.",
 	         exampleList = {"TRUE"})
-	private static final BooleanInput showObjectSelector;
+	private final BooleanInput showObjectSelector;
 
 	@Keyword(description = "If TRUE, the Input Editor tool is shown on startup.",
 	         exampleList = {"TRUE"})
-	private static final BooleanInput showInputEditor;
+	private final BooleanInput showInputEditor;
 
 	@Keyword(description = "If TRUE, the Output Viewer tool is shown on startup.",
 	         exampleList = {"TRUE"})
-	private static final BooleanInput showOutputViewer;
+	private final BooleanInput showOutputViewer;
 
 	@Keyword(description = "If TRUE, the Property Viewer tool is shown on startup.",
 	         exampleList = {"TRUE"})
-	private static final BooleanInput showPropertyViewer;
+	private final BooleanInput showPropertyViewer;
 
 	@Keyword(description = "If TRUE, the Log Viewer tool is shown on startup.",
 	         exampleList = {"TRUE"})
-	private static final BooleanInput showLogViewer;
+	private final BooleanInput showLogViewer;
 
 	@Keyword(description = "If TRUE, the Event Viewer tool is shown on startup.",
 	         exampleList = {"TRUE"})
-	private static final BooleanInput showEventViewer;
+	private final BooleanInput showEventViewer;
 
 	@Keyword(description = "The position of the upper left corner of the Model Builder window "
 	                     + "in pixels measured from the top left corner of the screen.",
 	         exampleList = {"220 110"})
-	private static final IntegerListInput modelBuilderPos;
+	private final IntegerListInput modelBuilderPos;
 
 	@Keyword(description = "The size of the Model Builder window in pixels (width, height).",
 	         exampleList = {"500 300"})
-	private static final IntegerListInput modelBuilderSize;
+	private final IntegerListInput modelBuilderSize;
 
 	@Keyword(description = "The position of the upper left corner of the Object Selector window "
 	                     + "in pixels measured from the top left corner of the screen.",
 	         exampleList = {"220 110"})
-	private static final IntegerListInput objectSelectorPos;
+	private final IntegerListInput objectSelectorPos;
 
 	@Keyword(description = "The size of the Object Selector window in pixels (width, height).",
 	         exampleList = {"500 300"})
-	private static final IntegerListInput objectSelectorSize;
+	private final IntegerListInput objectSelectorSize;
 
 	@Keyword(description = "The position of the upper left corner of the Input Editor window "
 	                     + "in pixels measured from the top left corner of the screen.",
 	         exampleList = {"220 110"})
-	private static final IntegerListInput inputEditorPos;
+	private final IntegerListInput inputEditorPos;
 
 	@Keyword(description = "The size of the Input Editor window in pixels (width, height).",
 	         exampleList = {"500 300"})
-	private static final IntegerListInput inputEditorSize;
+	private final IntegerListInput inputEditorSize;
 
 	@Keyword(description = "The position of the upper left corner of the Output Viewer window "
 	                     + "in pixels measured from the top left corner of the screen.",
 	         exampleList = {"220 110"})
-	private static final IntegerListInput outputViewerPos;
+	private final IntegerListInput outputViewerPos;
 
 	@Keyword(description = "The size of the Output Viewer window in pixels (width, height).",
 	         exampleList = {"500 300"})
-	private static final IntegerListInput outputViewerSize;
+	private final IntegerListInput outputViewerSize;
 
 	@Keyword(description = "The position of the upper left corner of the Property Viewer window "
 	                     + "in pixels measured from the top left corner of the screen.",
 	         exampleList = {"220 110"})
-	private static final IntegerListInput propertyViewerPos;
+	private final IntegerListInput propertyViewerPos;
 
 	@Keyword(description = "The size of the Property Viewer window in pixels (width, height).",
 	         exampleList = {"500 300"})
-	private static final IntegerListInput propertyViewerSize;
+	private final IntegerListInput propertyViewerSize;
 
 	@Keyword(description = "The position of the upper left corner of the Log Viewer window "
 	                     + "in pixels measured from the top left corner of the screen.",
 	         exampleList = {"220 110"})
-	private static final IntegerListInput logViewerPos;
+	private final IntegerListInput logViewerPos;
 
 	@Keyword(description = "The size of the Log Viewer window in pixels (width, height).",
 	         exampleList = {"500 300"})
-	private static final IntegerListInput logViewerSize;
+	private final IntegerListInput logViewerSize;
 
 	@Keyword(description = "The position of the upper left corner of the Event Viewer window "
 	                     + "in pixels measured from the top left corner of the screen.",
 	         exampleList = {"220 110"})
-	private static final IntegerListInput eventViewerPos;
+	private final IntegerListInput eventViewerPos;
 
 	@Keyword(description = "The size of the Event Viewer window in pixels (width, height).",
 	         exampleList = {"500 300"})
-	private static final IntegerListInput eventViewerSize;
+	private final IntegerListInput eventViewerSize;
 
 	@Keyword(description = "The width of the Control Panel window in pixels.",
 	         exampleList = {"1920"})
-	private static final IntegerInput controlPanelWidth;
+	private final IntegerInput controlPanelWidth;
 
 	@Keyword(description = "Time at which the simulation run is started (hh:mm).",
 	         exampleList = {"2160 h"})
-	private static final ValueInput startTimeInput;
+	private final ValueInput startTimeInput;
 
 	// Hidden keywords
 	@Keyword(description = "If TRUE, then the input report file will be printed after loading "
 	                     + "the configuration file.  The input report can always be generated "
 	                     + "when needed by selecting \"Print Input Report\" under the File menu.",
 	         exampleList = {"TRUE"})
-	private static final BooleanInput printInputReport;
+	private final BooleanInput printInputReport;
 
 	@Keyword(description = "This is placeholder description text",
 	         exampleList = {"TRUE"})
-	private static final BooleanInput traceEventsInput;
+	private final BooleanInput traceEventsInput;
 
 	@Keyword(description = "This is placeholder description text",
 	         exampleList = {"TRUE"})
-	private static final BooleanInput verifyEventsInput;
+	private final BooleanInput verifyEventsInput;
 
 	private static double startTime; // simulation time (seconds) for the start of the run (not necessarily zero)
 	private static double endTime;   // simulation time (seconds) for the end of the run
@@ -334,7 +334,7 @@ public class Simulation extends Entity {
 
 	private static String modelName = "JaamSim";
 
-	static {
+	{
 
 		// Key Inputs tab
 		runDuration = new ValueInput("RunDuration", KEY_INPUTS, 31536000.0d);
@@ -930,7 +930,7 @@ public class Simulation extends Entity {
 			EventTracer trc = new EventTracer(evtName);
 			evt.setTraceListener(trc);
 		}
-		else if (Simulation.showEventViewer.getValue()) {
+		else if (showEventViewer.getValue()) {
 			evt.setTraceListener(EventViewer.getInstance());
 		}
 
