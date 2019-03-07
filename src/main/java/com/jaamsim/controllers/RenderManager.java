@@ -1090,7 +1090,7 @@ public class RenderManager implements DragSourceListener {
 
 		Simulation simulation = GUIFrame.getJaamSimModel().getSimulation();
 		if (simulation.isSnapToGrid())
-			pos = Simulation.getSnapGridPosition(pos, selectedEntity.getGlobalPosition(), shift);
+			pos = simulation.getSnapGridPosition(pos, selectedEntity.getGlobalPosition(), shift);
 		Vec3d localPos = selectedEntity.getLocalPosition(pos);
 		KeywordIndex kw = InputAgent.formatVec3dInput("Position", localPos, DistanceUnit.class);
 
@@ -1166,7 +1166,7 @@ public class RenderManager implements DragSourceListener {
 
 		Simulation simulation = GUIFrame.getJaamSimModel().getSimulation();
 		if (simulation.isSnapToGrid())
-			scale = Simulation.getSnapGridPosition(scale, dragEntitySize, false);
+			scale = simulation.getSnapGridPosition(scale, dragEntitySize, false);
 
 		// Handle the case where the scale is pulled through itself. Fix the scale,
 		// and swap the currently selected handle
@@ -1277,7 +1277,7 @@ public class RenderManager implements DragSourceListener {
 		if (simulation.isSnapToGrid()) {
 			Vec3d point = new Vec3d();
 			point.add3(globalPts.get(0), delta);
-			point = Simulation.getSnapGridPosition(point, globalPts.get(0), shift);
+			point = simulation.getSnapGridPosition(point, globalPts.get(0), shift);
 			delta.sub3(point, globalPts.get(0));
 		}
 
@@ -1324,7 +1324,7 @@ public class RenderManager implements DragSourceListener {
 		Simulation simulation = GUIFrame.getJaamSimModel().getSimulation();
 		if (simulation.isSnapToGrid()) {
 			Vec3d oldPos = selectedEntity.getGlobalPosition(screenPoints.get(nodeIndex));
-			point = Simulation.getSnapGridPosition(point, oldPos, shift);
+			point = simulation.getSnapGridPosition(point, oldPos, shift);
 		}
 
 		ArrayList<Vec3d> newPoints = new ArrayList<>();
@@ -1555,7 +1555,7 @@ public class RenderManager implements DragSourceListener {
 		Vec3d creationPoint = currentRay.getPointAtDist(dist);
 		Simulation simulation = GUIFrame.getJaamSimModel().getSimulation();
 		if (simulation.isSnapToGrid()) {
-			creationPoint = Simulation.getSnapGridPosition(creationPoint);
+			creationPoint = simulation.getSnapGridPosition(creationPoint);
 		}
 
 		// Create a new instance

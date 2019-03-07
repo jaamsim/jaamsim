@@ -31,7 +31,6 @@ import com.jaamsim.DisplayModels.TextModel;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.basicsim.ObjectType;
-import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.EntityInput;
@@ -939,7 +938,7 @@ public class DisplayEntity extends Entity {
 				return;
 		}
 		if (getSimulation().isSnapToGrid())
-			pos = Simulation.getSnapGridPosition(pos, pos, shift);
+			pos = getSimulation().getSnapGridPosition(pos, pos, shift);
 
 		KeywordIndex kw = InputAgent.formatVec3dInput(positionInput.getKeyword(), pos, DistanceUnit.class);
 		InputAgent.storeAndExecute(new KeywordCommand(this, kw));

@@ -1125,11 +1125,11 @@ public class Simulation extends Entity {
 	}
 	private final Conditional pauseCondition = new PauseConditional();
 
-	public static Vec3d getSnapGridPosition(Vec3d pos) {
+	public Vec3d getSnapGridPosition(Vec3d pos) {
 		return getSnapGridPosition(pos, snapGridSpacing.getValue());
 	}
 
-	public static Vec3d getSnapGridPosition(Vec3d newPos, Vec3d oldPos, boolean shift) {
+	public Vec3d getSnapGridPosition(Vec3d newPos, Vec3d oldPos, boolean shift) {
 		return getSnapGridPosition(newPos, oldPos, shift, snapGridSpacing.getValue());
 	}
 
