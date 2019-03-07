@@ -1425,7 +1425,7 @@ public class Simulation extends Entity {
 	/**
 	 * Re-open any Tools windows that have been closed temporarily.
 	 */
-	public static void showActiveTools() {
+	public void showActiveTools() {
 		setWindowVisible(EntityPallet.getInstance(), showModelBuilder.getValue());
 		setWindowVisible(ObjectSelector.getInstance(), showObjectSelector.getValue());
 		setWindowVisible(EditBox.getInstance(), showInputEditor.getValue());
@@ -1439,7 +1439,7 @@ public class Simulation extends Entity {
 	/**
 	 * Closes all the Tools windows temporarily.
 	 */
-	public static void closeAllTools() {
+	public void closeAllTools() {
 		if (GUIFrame.getInstance() == null)
 			return;
 		setWindowVisible(EntityPallet.getInstance(), false);

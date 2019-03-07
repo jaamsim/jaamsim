@@ -351,7 +351,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 			}
 
 			// Re-open the tools
-			Simulation.showActiveTools();
+			sim.getSimulation().showActiveTools();
 			FrameBox.reSelectEntity();
 		}
 
@@ -359,7 +359,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		public void windowIconified(WindowEvent e) {
 
 			// Close all the tools
-			Simulation.closeAllTools();
+			sim.getSimulation().closeAllTools();
 
 			// Save whether each window is open or closed
 			for (View v : View.getAll()) {
@@ -381,7 +381,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 			}
 
 			// Re-open the tools
-			Simulation.showActiveTools();
+			sim.getSimulation().showActiveTools();
 			FrameBox.reSelectEntity();
 		}
 	}
@@ -3301,7 +3301,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 
 		// If in batch or quiet mode, close the any tools that were opened
 		if (quiet || batch)
-			Simulation.closeAllTools();
+			sim.getSimulation().closeAllTools();
 
 		// Set RecordEdits mode (if it has not already been set in the configuration file)
 		InputAgent.setRecordEdits(true);
