@@ -1179,7 +1179,7 @@ public class Simulation extends Entity {
 		return ret;
 	}
 
-	static void updateRealTime() {
+	public void updateRealTime() {
 		GUIFrame.updateForRealTime(realTime.getValue(), realTimeFactor.getValue());
 	}
 
