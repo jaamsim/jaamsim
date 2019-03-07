@@ -909,7 +909,7 @@ public class DisplayEntity extends Entity {
 			return;
 		Vec3d pos = getPosition();
 		double inc = getSimulation().getIncrementSize();
-		if (Simulation.isSnapToGrid())
+		if (getSimulation().isSnapToGrid())
 			inc = Math.max(inc, getSimulation().getSnapGridSpacing());
 		switch (keyCode) {
 
@@ -938,7 +938,7 @@ public class DisplayEntity extends Entity {
 			default:
 				return;
 		}
-		if (Simulation.isSnapToGrid())
+		if (getSimulation().isSnapToGrid())
 			pos = Simulation.getSnapGridPosition(pos, pos, shift);
 
 		KeywordIndex kw = InputAgent.formatVec3dInput(positionInput.getKeyword(), pos, DistanceUnit.class);

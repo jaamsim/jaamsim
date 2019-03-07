@@ -2915,8 +2915,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 	}
 
 	public void updateForSnapToGrid() {
-		snapToGrid.setSelected(Simulation.isSnapToGrid());
-		gridSpacing.setEnabled(Simulation.isSnapToGrid());
+		snapToGrid.setSelected(sim.getSimulation().isSnapToGrid());
+		gridSpacing.setEnabled(sim.getSimulation().isSnapToGrid());
 	}
 
 	public static void setSelectedEntity(Entity ent) {

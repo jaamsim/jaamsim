@@ -1095,7 +1095,7 @@ public class Simulation extends Entity {
 		return incrementSize.getValue();
 	}
 
-	public static boolean isSnapToGrid() {
+	public boolean isSnapToGrid() {
 		return snapToGrid.getValue();
 	}
 

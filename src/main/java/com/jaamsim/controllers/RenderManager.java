@@ -1088,7 +1088,8 @@ public class RenderManager implements DragSourceListener {
 			pos.add3(del);
 		}
 
-		if (Simulation.isSnapToGrid())
+		Simulation simulation = GUIFrame.getJaamSimModel().getSimulation();
+		if (simulation.isSnapToGrid())
 			pos = Simulation.getSnapGridPosition(pos, selectedEntity.getGlobalPosition(), shift);
 		Vec3d localPos = selectedEntity.getLocalPosition(pos);
 		KeywordIndex kw = InputAgent.formatVec3dInput("Position", localPos, DistanceUnit.class);
@@ -1163,7 +1164,8 @@ public class RenderManager implements DragSourceListener {
 			fixedPoint = new Vec4d( 0.5,  0.5, 0.0, 1.0d);
 		}
 
-		if (Simulation.isSnapToGrid())
+		Simulation simulation = GUIFrame.getJaamSimModel().getSimulation();
+		if (simulation.isSnapToGrid())
 			scale = Simulation.getSnapGridPosition(scale, dragEntitySize, false);
 
 		// Handle the case where the scale is pulled through itself. Fix the scale,
@@ -1239,7 +1241,8 @@ public class RenderManager implements DragSourceListener {
 
 		Vec3d orient = new Vec3d(dragEntityOrientation);
 		orient.z += theta;
-		if (Simulation.isSnapToGrid())
+		Simulation simulation = GUIFrame.getJaamSimModel().getSimulation();
+		if (simulation.isSnapToGrid())
 			orient = Simulation.getSnapGridPosition(orient, dragEntityOrientation, true, ANGLE_SPACING);
 
 		KeywordIndex kw = InputAgent.formatVec3dInput("Orientation", orient, AngleUnit.class);
@@ -1270,7 +1273,8 @@ public class RenderManager implements DragSourceListener {
 		}
 
 		// Align the first node to snap grid
-		if (Simulation.isSnapToGrid()) {
+		Simulation simulation = GUIFrame.getJaamSimModel().getSimulation();
+		if (simulation.isSnapToGrid()) {
 			Vec3d point = new Vec3d();
 			point.add3(globalPts.get(0), delta);
 			point = Simulation.getSnapGridPosition(point, globalPts.get(0), shift);
@@ -1317,7 +1321,8 @@ public class RenderManager implements DragSourceListener {
 		point.add3(diff);
 
 		// Align the node to snap grid
-		if (Simulation.isSnapToGrid()) {
+		Simulation simulation = GUIFrame.getJaamSimModel().getSimulation();
+		if (simulation.isSnapToGrid()) {
 			Vec3d oldPos = selectedEntity.getGlobalPosition(screenPoints.get(nodeIndex));
 			point = Simulation.getSnapGridPosition(point, oldPos, shift);
 		}
@@ -1548,7 +1553,8 @@ public class RenderManager implements DragSourceListener {
 		}
 
 		Vec3d creationPoint = currentRay.getPointAtDist(dist);
-		if (Simulation.isSnapToGrid()) {
+		Simulation simulation = GUIFrame.getJaamSimModel().getSimulation();
+		if (simulation.isSnapToGrid()) {
 			creationPoint = Simulation.getSnapGridPosition(creationPoint);
 		}
 
