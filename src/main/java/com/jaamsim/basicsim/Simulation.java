@@ -1103,7 +1103,7 @@ public class Simulation extends Entity {
 		return snapGridSpacing.getValue();
 	}
 
-	public static boolean getExitAtPauseCondition() {
+	public boolean getExitAtPauseCondition() {
 		return exitAtPauseCondition.getValue();
 	}
 
