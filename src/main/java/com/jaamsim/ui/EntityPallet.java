@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2011 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -84,19 +85,20 @@ public class EntityPallet extends OSFixJFrame implements DragGestureListener {
 		ToolTipManager.sharedInstance().registerComponent(tree);
 		ToolTipManager.sharedInstance().setDismissDelay(600000);
 
-		setLocation(Simulation.getModelBuilderPos().get(0), Simulation.getModelBuilderPos().get(1));
-		setSize(Simulation.getModelBuilderSize().get(0), Simulation.getModelBuilderSize().get(1));
+		Simulation simulation = GUIFrame.getJaamSimModel().getSimulation();
+		setLocation(simulation.getModelBuilderPos().get(0), simulation.getModelBuilderPos().get(1));
+		setSize(simulation.getModelBuilderSize().get(0), simulation.getModelBuilderSize().get(1));
 
 		addComponentListener(new ComponentAdapter() {
 
 			@Override
 			public void componentMoved(ComponentEvent e) {
-				Simulation.setModelBuilderPos(getLocation().x, getLocation().y);
+				simulation.setModelBuilderPos(getLocation().x, getLocation().y);
 			}
 
 			@Override
 			public void componentResized(ComponentEvent e) {
-				Simulation.setModelBuilderSize(getSize().width, getSize().height);
+				simulation.setModelBuilderSize(getSize().width, getSize().height);
 			}
 		});
 	}

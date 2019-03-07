@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2005-2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2018 JaamSim Software Inc.
+ * Copyright (C) 2016-2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -101,20 +101,21 @@ public class EditBox extends FrameBox {
 		getContentPane().add(jTabbedFrame);
 
 		// Set the size and position of the editor
-		setLocation(Simulation.getInputEditorPos().get(0), Simulation.getInputEditorPos().get(1));
-		setSize(Simulation.getInputEditorSize().get(0), Simulation.getInputEditorSize().get(1));
+		Simulation simulation = GUIFrame.getJaamSimModel().getSimulation();
+		setLocation(simulation.getInputEditorPos().get(0), simulation.getInputEditorPos().get(1));
+		setSize(simulation.getInputEditorSize().get(0), simulation.getInputEditorSize().get(1));
 
 		// Save changes to the editor's size and position
 		addComponentListener(new ComponentAdapter() {
 
 			@Override
 			public void componentMoved(ComponentEvent e) {
-				Simulation.setInputEditorPos(getLocation().x, getLocation().y);
+				simulation.setInputEditorPos(getLocation().x, getLocation().y);
 			}
 
 			@Override
 			public void componentResized(ComponentEvent e) {
-				Simulation.setInputEditorSize(getSize().width, getSize().height);
+				simulation.setInputEditorSize(getSize().width, getSize().height);
 			}
 		});
 	}

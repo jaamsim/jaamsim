@@ -1273,147 +1273,147 @@ public class Simulation extends Entity {
 		InputAgent.applyArgs(getInstance(), controlPanelWidth.getKeyword());
 	}
 
-	public static IntegerVector getModelBuilderPos() {
+	public IntegerVector getModelBuilderPos() {
 		return modelBuilderPos.getValue();
 	}
 
-	public static IntegerVector getModelBuilderSize() {
+	public IntegerVector getModelBuilderSize() {
 		return modelBuilderSize.getValue();
 	}
 
-	public static IntegerVector getObjectSelectorPos() {
+	public IntegerVector getObjectSelectorPos() {
 		return objectSelectorPos.getValue();
 	}
 
-	public static IntegerVector getObjectSelectorSize() {
+	public IntegerVector getObjectSelectorSize() {
 		return objectSelectorSize.getValue();
 	}
 
-	public static IntegerVector getInputEditorPos() {
+	public IntegerVector getInputEditorPos() {
 		return inputEditorPos.getValue();
 	}
 
-	public static IntegerVector getInputEditorSize() {
+	public IntegerVector getInputEditorSize() {
 		return inputEditorSize.getValue();
 	}
 
-	public static IntegerVector getOutputViewerPos() {
+	public IntegerVector getOutputViewerPos() {
 		return outputViewerPos.getValue();
 	}
 
-	public static IntegerVector getOutputViewerSize() {
+	public IntegerVector getOutputViewerSize() {
 		return outputViewerSize.getValue();
 	}
 
-	public static IntegerVector getPropertyViewerPos() {
+	public IntegerVector getPropertyViewerPos() {
 		return propertyViewerPos.getValue();
 	}
 
-	public static IntegerVector getPropertyViewerSize() {
+	public IntegerVector getPropertyViewerSize() {
 		return propertyViewerSize.getValue();
 	}
 
-	public static IntegerVector getLogViewerPos() {
+	public IntegerVector getLogViewerPos() {
 		return logViewerPos.getValue();
 	}
 
-	public static IntegerVector getLogViewerSize() {
+	public IntegerVector getLogViewerSize() {
 		return logViewerSize.getValue();
 	}
 
-	public static IntegerVector getEventViewerPos() {
+	public IntegerVector getEventViewerPos() {
 		return eventViewerPos.getValue();
 	}
 
-	public static IntegerVector getEventViewerSize() {
+	public IntegerVector getEventViewerSize() {
 		return eventViewerSize.getValue();
 	}
 
-	public static void setModelBuilderPos(int x, int y) {
+	public void setModelBuilderPos(int x, int y) {
 		if (modelBuilderPos.getValue().get(0) == x && modelBuilderPos.getValue().get(1) == y)
 			return;
 		InputAgent.applyIntegers(getInstance(), modelBuilderPos.getKeyword(), x, y);
 	}
 
-	public static void setModelBuilderSize(int x, int y) {
+	public void setModelBuilderSize(int x, int y) {
 		if (modelBuilderSize.getValue().get(0) == x && modelBuilderSize.getValue().get(1) == y)
 			return;
 		InputAgent.applyIntegers(getInstance(), modelBuilderSize.getKeyword(), x, y);
 	}
 
-	public static void setObjectSelectorPos(int x, int y) {
+	public void setObjectSelectorPos(int x, int y) {
 		if (objectSelectorPos.getValue().get(0) == x && objectSelectorPos.getValue().get(1) == y)
 			return;
 		InputAgent.applyIntegers(getInstance(), objectSelectorPos.getKeyword(), x, y);
 	}
 
-	public static void setObjectSelectorSize(int x, int y) {
+	public void setObjectSelectorSize(int x, int y) {
 		if (objectSelectorSize.getValue().get(0) == x && objectSelectorSize.getValue().get(1) == y)
 			return;
 		InputAgent.applyIntegers(getInstance(), objectSelectorSize.getKeyword(), x, y);
 	}
 
-	public static void setInputEditorPos(int x, int y) {
+	public void setInputEditorPos(int x, int y) {
 		if (inputEditorPos.getValue().get(0) == x && inputEditorPos.getValue().get(1) == y)
 			return;
 		InputAgent.applyIntegers(getInstance(), inputEditorPos.getKeyword(), x, y);
 	}
 
-	public static void setInputEditorSize(int x, int y) {
+	public void setInputEditorSize(int x, int y) {
 		if (inputEditorSize.getValue().get(0) == x && inputEditorSize.getValue().get(1) == y)
 			return;
 		InputAgent.applyIntegers(getInstance(), inputEditorSize.getKeyword(), x, y);
 	}
 
-	public static void setOutputViewerPos(int x, int y) {
+	public void setOutputViewerPos(int x, int y) {
 		if (outputViewerPos.getValue().get(0) == x && outputViewerPos.getValue().get(1) == y)
 			return;
 		InputAgent.applyIntegers(getInstance(), outputViewerPos.getKeyword(), x, y);
 	}
 
-	public static void setOutputViewerSize(int x, int y) {
+	public void setOutputViewerSize(int x, int y) {
 		if (outputViewerSize.getValue().get(0) == x && outputViewerSize.getValue().get(1) == y)
 			return;
 		InputAgent.applyIntegers(getInstance(), outputViewerSize.getKeyword(), x, y);
 	}
 
-	public static void setPropertyViewerPos(int x, int y) {
+	public void setPropertyViewerPos(int x, int y) {
 		if (propertyViewerPos.getValue().get(0) == x && propertyViewerPos.getValue().get(1) == y)
 			return;
 		InputAgent.applyIntegers(getInstance(), propertyViewerPos.getKeyword(), x, y);
 	}
 
-	public static void setPropertyViewerSize(int x, int y) {
+	public void setPropertyViewerSize(int x, int y) {
 		if (propertyViewerSize.getValue().get(0) == x && propertyViewerSize.getValue().get(1) == y)
 			return;
 		InputAgent.applyIntegers(getInstance(), propertyViewerSize.getKeyword(), x, y);
 	}
 
-	public static void setLogViewerPos(int x, int y) {
+	public void setLogViewerPos(int x, int y) {
 		if (logViewerPos.getValue().get(0) == x && logViewerPos.getValue().get(1) == y)
 			return;
 		InputAgent.applyIntegers(getInstance(), logViewerPos.getKeyword(), x, y);
 	}
 
-	public static void setLogViewerSize(int x, int y) {
+	public void setLogViewerSize(int x, int y) {
 		if (logViewerSize.getValue().get(0) == x && logViewerSize.getValue().get(1) == y)
 			return;
 		InputAgent.applyIntegers(getInstance(), logViewerSize.getKeyword(), x, y);
 	}
 
-	public static void setEventViewerPos(int x, int y) {
+	public void setEventViewerPos(int x, int y) {
 		if (eventViewerPos.getValue().get(0) == x && eventViewerPos.getValue().get(1) == y)
 			return;
 		InputAgent.applyIntegers(getInstance(), eventViewerPos.getKeyword(), x, y);
 	}
 
-	public static void setEventViewerSize(int x, int y) {
+	public void setEventViewerSize(int x, int y) {
 		if (eventViewerSize.getValue().get(0) == x && eventViewerSize.getValue().get(1) == y)
 			return;
 		InputAgent.applyIntegers(getInstance(), eventViewerSize.getKeyword(), x, y);
 	}
 
-	public static void setControlPanelWidth(int width) {
+	public void setControlPanelWidth(int width) {
 		if (controlPanelWidth.getValue() == width)
 			return;
 		// Temporary workaround for the callback being done before autoload.cfg is loaded

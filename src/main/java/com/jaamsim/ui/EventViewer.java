@@ -174,19 +174,20 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 
 		// Size and position of the viewer
 		pack();
-		setLocation(Simulation.getEventViewerPos().get(0), Simulation.getEventViewerPos().get(1));
-		setSize(Simulation.getEventViewerSize().get(0), Simulation.getEventViewerSize().get(1));
+		Simulation simulation = GUIFrame.getJaamSimModel().getSimulation();
+		setLocation(simulation.getEventViewerPos().get(0), simulation.getEventViewerPos().get(1));
+		setSize(simulation.getEventViewerSize().get(0), simulation.getEventViewerSize().get(1));
 
 		addComponentListener(new ComponentAdapter() {
 
 			@Override
 			public void componentMoved(ComponentEvent e) {
-				Simulation.setEventViewerPos(getLocation().x, getLocation().y);
+				simulation.setEventViewerPos(getLocation().x, getLocation().y);
 			}
 
 			@Override
 			public void componentResized(ComponentEvent e) {
-				Simulation.setEventViewerSize(getSize().width, getSize().height);
+				simulation.setEventViewerSize(getSize().width, getSize().height);
 			}
 		});
 

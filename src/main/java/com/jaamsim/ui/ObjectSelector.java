@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018 JaamSim Software Inc.
+ * Copyright (C) 2018-2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -87,19 +87,20 @@ public class ObjectSelector extends FrameBox {
 
 		entSequence = 0;
 
-		setLocation(Simulation.getObjectSelectorPos().get(0), Simulation.getObjectSelectorPos().get(1));
-		setSize(Simulation.getObjectSelectorSize().get(0), Simulation.getObjectSelectorSize().get(1));
+		Simulation simulation = GUIFrame.getJaamSimModel().getSimulation();
+		setLocation(simulation.getObjectSelectorPos().get(0), simulation.getObjectSelectorPos().get(1));
+		setSize(simulation.getObjectSelectorSize().get(0), simulation.getObjectSelectorSize().get(1));
 
 		addComponentListener(new ComponentAdapter() {
 
 			@Override
 			public void componentMoved(ComponentEvent e) {
-				Simulation.setObjectSelectorPos(getLocation().x, getLocation().y);
+				simulation.setObjectSelectorPos(getLocation().x, getLocation().y);
 			}
 
 			@Override
 			public void componentResized(ComponentEvent e) {
-				Simulation.setObjectSelectorSize(getSize().width, getSize().height);
+				simulation.setObjectSelectorSize(getSize().width, getSize().height);
 			}
 		});
 
