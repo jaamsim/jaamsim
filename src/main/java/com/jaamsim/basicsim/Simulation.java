@@ -672,14 +672,14 @@ public class Simulation extends Entity {
 		}
 
 		if (in == runIndexDefinitionList) {
-			Simulation.setRunNumber(runNumber);
+			setRunNumber(runNumber);
 			startingRunNumber.setRunIndexRangeList(runIndexDefinitionList.getValue());
 			endingRunNumber.setRunIndexRangeList(runIndexDefinitionList.getValue());
 			return;
 		}
 
 		if (in == startingRunNumber) {
-			Simulation.setRunNumber(startingRunNumber.getValue());
+			setRunNumber(startingRunNumber.getValue());
 			return;
 		}
 
@@ -907,7 +907,7 @@ public class Simulation extends Entity {
 		InputAgent.closeLogFile();
 
 		// Reset the run number and run indices
-		Simulation.setRunNumber(1);
+		setRunNumber(1);
 	}
 
 	/**
@@ -939,7 +939,7 @@ public class Simulation extends Entity {
 		startTime = startTimeInput.getValue();
 		endTime = startTime + getInitializationTime() + getRunDuration();
 
-		Simulation.setRunNumber(startingRunNumber.getValue());
+		setRunNumber(startingRunNumber.getValue());
 		startRun(evt);
 	}
 
@@ -981,7 +981,7 @@ public class Simulation extends Entity {
 
 		// Start the next run
 		final EventManager currentEvt = EventManager.current();
-		Simulation.setRunNumber(runNumber + 1);
+		setRunNumber(runNumber + 1);
 		getJaamSimModel().endRun();
 		new Thread(new Runnable() {
 			@Override
@@ -1014,7 +1014,7 @@ public class Simulation extends Entity {
 	public void stop() {
 
 		// Reset the run number and run indices
-		Simulation.setRunNumber(startingRunNumber.getValue());
+		setRunNumber(startingRunNumber.getValue());
 
 		// Close the output reports
 		InputAgent.stop();
@@ -1452,7 +1452,7 @@ public class Simulation extends Entity {
 			setWindowVisible(EventViewer.getInstance(), false);
 	}
 
-	private static void setRunNumber(int n) {
+	private void setRunNumber(int n) {
 		runNumber = n;
 		runIndexList = Simulation.getRunIndexList(n, runIndexDefinitionList.getValue());
 	}
