@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2002-2011 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,8 +26,6 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JTextArea;
-
-import com.jaamsim.basicsim.Simulation;
 
 /**
  * Class to display information about model objects.
@@ -56,7 +55,8 @@ public class AboutBox extends FrameBox implements ActionListener {
 		constraints.insets = new Insets( 15, 15, 0, 15 );
 
 		// display the model's name
-		JLabel lab = new JLabel(Simulation.getModelName() + " Version: " + version);
+		String name = GUIFrame.getJaamSimModel().getSimulation().getModelName();
+		JLabel lab = new JLabel(name + " Version: " + version);
 		lab.setFont(boldFont);
 		layout.setConstraints( lab, constraints );
 		getContentPane().add( lab );

@@ -412,7 +412,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		this.updateForSimulationState(GUIFrame.SIM_STATE_LOADED);
 
 		// Clear the title bar
-		setTitle(Simulation.getModelName());
+		setTitle(sim.getSimulation().getModelName());
 
 		// Clear the status bar
 		setProgress( 0 );
@@ -2581,7 +2581,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		lastValue = val;
 
 		if (getSimState() >= SIM_STATE_CONFIGURED) {
-			String title = String.format("%d%% %s - %s", val, Simulation.getModelName(), InputAgent.getRunName());
+			String name = sim.getSimulation().getModelName();
+			String title = String.format("%d%% %s - %s", val, name, InputAgent.getRunName());
 			setTitle(title);
 		}
 	}
@@ -3249,7 +3250,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 
 		// Show the Control Panel
 		if (gui != null) {
-			gui.setTitle(Simulation.getModelName());
+			gui.setTitle(sim.getSimulation().getModelName());
 			gui.setVisible(true);
 			gui.calcWindowDefaults();
 			gui.setLocation(gui.getX(), gui.getY());  //FIXME remove when setLocation is fixed for Windows 10
@@ -3555,7 +3556,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		GUIFrame gui = GUIFrame.getInstance();
 		if (gui != null) {
 			gui.setProgress(0);
-			gui.setTitle( Simulation.getModelName() + " - " + InputAgent.getRunName() );
+			gui.setTitle( sim.getSimulation().getModelName() + " - " + InputAgent.getRunName() );
 			gui.updateForSimulationState(GUIFrame.SIM_STATE_CONFIGURED);
 			gui.enableSave(InputAgent.getRecordEditsFound());
 		}
@@ -3594,7 +3595,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 			InputAgent.setConfigFile(temp);
 
 			// Set the title bar to match the new run name
-			this.setTitle( Simulation.getModelName() + " - " + InputAgent.getRunName() );
+			this.setTitle( sim.getSimulation().getModelName() + " - " + InputAgent.getRunName() );
 		}
 		catch (Exception e) {
 			GUIFrame.showErrorDialog("File Error", e.getMessage());

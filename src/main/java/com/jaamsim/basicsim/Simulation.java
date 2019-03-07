@@ -1183,11 +1183,11 @@ public class Simulation extends Entity {
 		GUIFrame.updateForRealTime(realTime.getValue(), realTimeFactor.getValue());
 	}
 
-	public static void setModelName(String newModelName) {
+	public void setModelName(String newModelName) {
 		modelName = newModelName;
 	}
 
-	public static String getModelName() {
+	public String getModelName() {
 		return modelName;
 	}
 
