@@ -200,12 +200,10 @@ public class Queue extends LinkedComponent {
 	}
 
 	private static class QueueEntry extends EntStorage.StorageEntry {
-		final Vec3d orientation;
 		final EventHandle renegeHandle;
 
-		public QueueEntry(DisplayEntity ent, String m, int pri, long n, double t, Vec3d orient, EventHandle rh) {
+		public QueueEntry(DisplayEntity ent, String m, int pri, long n, double t, EventHandle rh) {
 			super(ent, m, pri, n, t);
-			orientation = orient;
 			renegeHandle = rh;
 		}
 	}
@@ -257,7 +255,7 @@ public class Queue extends LinkedComponent {
 		if (renegeTime.getValue() != null)
 			rh = new EventHandle();
 
-		QueueEntry entry = new QueueEntry(ent, m, pri, n, simTime, ent.getOrientation(), rh);
+		QueueEntry entry = new QueueEntry(ent, m, pri, n, simTime, rh);
 		storage.add(entry);
 
 		// Notify the users of this queue
@@ -331,7 +329,6 @@ public class Queue extends LinkedComponent {
 			EventManager.killEvent(entry.renegeHandle);
 
 		// Reset the entity's orientation to its original value
-		entry.entity.setOrientation(entry.orientation);
 		entry.entity.setShow(true);
 
 		this.incrementNumberProcessed();
@@ -571,10 +568,7 @@ public class Queue extends LinkedComponent {
 			Iterator<StorageEntry> itr = entries.iterator();
 			while (itr.hasNext()) {
 				QueueEntry entry = (QueueEntry) itr.next();
-				Vec3d size = entry.entity.getSize();
-				double angle = entry.orientation.z;
-				maxWidth = Math.max(maxWidth,
-						Math.abs(Math.cos(angle))*size.y + Math.abs(Math.sin(angle))*size.x);
+				maxWidth = Math.max(maxWidth, entry.entity.getGlobalSize().y);
 			 }
 		}
 
@@ -593,14 +587,10 @@ public class Queue extends LinkedComponent {
 			i++;
 
 			// Rotate each transporter about its center so it points to the right direction
-			Vec3d orient = new Vec3d(queueOrientation);
-			orient.add3(entry.orientation);
-			item.setOrientation(orient);
+			item.setRelativeOrientation(queueOrientation);
 			item.setShow(visible);
 
-			Vec3d itemSize = item.getSize();
-			double angle = entry.orientation.z;
-			double length = Math.abs(Math.cos(angle))*itemSize.x + Math.abs(Math.sin(angle))*itemSize.y;
+			double length = entry.entity.getGlobalSize().x;
 			distanceX += 0.5d * length;
 			tmp.set3(-distanceX / qSize.x, distanceY/qSize.y, 0.0d);
 
