@@ -1227,7 +1227,7 @@ public class Simulation extends Entity {
 		controlPanelWidth.setDefaultValue(GUIFrame.DEFAULT_GUI_WIDTH);
 	}
 
-	public static void resetWindowPositionsAndSizes() {
+	public void resetWindowPositionsAndSizes() {
 		InputAgent.applyArgs(getInstance(), modelBuilderPos.getKeyword());
 		InputAgent.applyArgs(getInstance(), modelBuilderSize.getKeyword());
 		InputAgent.applyArgs(getInstance(), objectSelectorPos.getKeyword());

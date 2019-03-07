@@ -655,7 +655,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		resetItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed( ActionEvent e ) {
-				Simulation.resetWindowPositionsAndSizes();
+				sim.getSimulation().resetWindowPositionsAndSizes();
 			}
 		} );
 		viewMenu.addSeparator();
