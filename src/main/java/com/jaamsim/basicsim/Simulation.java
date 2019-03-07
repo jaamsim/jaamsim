@@ -1209,7 +1209,7 @@ public class Simulation extends Entity {
 			f.toFront();
 	}
 
-	public static void setWindowDefaults() {
+	public void setWindowDefaults() {
 		modelBuilderPos.setDefaultValue(GUIFrame.COL1_START, GUIFrame.TOP_START);
 		modelBuilderSize.setDefaultValue(GUIFrame.COL1_WIDTH, GUIFrame.HALF_TOP);
 		objectSelectorPos.setDefaultValue(GUIFrame.COL1_START, GUIFrame.BOTTOM_START);
