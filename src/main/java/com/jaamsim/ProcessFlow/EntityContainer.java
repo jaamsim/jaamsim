@@ -222,7 +222,7 @@ public class EntityContainer extends SimEntity implements EntContainer {
 		Iterator<DisplayEntity> itr = container.iterator();
 		while (itr.hasNext()) {
 			DisplayEntity ent = itr.next();
-			maxWidth = Math.max(maxWidth, ent.getSize().y);
+			maxWidth = Math.max(maxWidth, ent.getGlobalSize().y);
 		}
 
 		// Update the position of each entity (start at the bottom left of the container)
@@ -241,10 +241,10 @@ public class EntityContainer extends SimEntity implements EntContainer {
 
 			// Rotate each entity about its center so it points to the right direction
 			item.setShow(visible);
-			item.setOrientation(orient);
+			item.setRelativeOrientation(orient);
 
 			// Set Position
-			Vec3d itemSize = item.getSize();
+			Vec3d itemSize = item.getGlobalSize();
 			distanceX += 0.5*itemSize.x;
 			tmp.set3(distanceX/size.x, distanceY/size.y, 0.0d);
 			Vec3d itemCenter = this.getGlobalPositionForAlignment(tmp);
