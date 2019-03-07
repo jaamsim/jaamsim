@@ -1461,7 +1461,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 				TextEntity textEnt = (TextEntity) selectedEntity;
 
 				double height = textEnt.getTextHeight();
-				double spacing = Simulation.getSnapGridSpacing();
+				double spacing = sim.getSimulation().getSnapGridSpacing();
 				if (textEnt instanceof OverlayText || textEnt instanceof BillboardText)
 					spacing = 1.0d;
 				height = Math.round(height/spacing) * spacing;
@@ -1665,7 +1665,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 					return;
 				DisplayEntity dispEnt = (DisplayEntity) selectedEntity;
 
-				double delta = Simulation.getSnapGridSpacing()/100.0d;
+				double delta = sim.getSimulation().getSnapGridSpacing()/100.0d;
 				Vec3d pos = dispEnt.getPosition();
 				ArrayList<Vec3d> points = dispEnt.getPoints();
 				Vec3d offset = new Vec3d();

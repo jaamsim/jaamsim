@@ -1099,7 +1099,7 @@ public class Simulation extends Entity {
 		return snapToGrid.getValue();
 	}
 
-	public static double getSnapGridSpacing() {
+	public double getSnapGridSpacing() {
 		return snapGridSpacing.getValue();
 	}
 

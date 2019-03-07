@@ -910,7 +910,7 @@ public class DisplayEntity extends Entity {
 		Vec3d pos = getPosition();
 		double inc = getSimulation().getIncrementSize();
 		if (Simulation.isSnapToGrid())
-			inc = Math.max(inc, Simulation.getSnapGridSpacing());
+			inc = Math.max(inc, getSimulation().getSnapGridSpacing());
 		switch (keyCode) {
 
 			case KeyEvent.VK_LEFT:
