@@ -581,11 +581,10 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				Simulation sim = Simulation.getInstance();
-				InputAgent.applyBoolean(sim, "ShowModelBuilder", true);
-				InputAgent.applyBoolean(sim, "ShowObjectSelector", true);
-				InputAgent.applyBoolean(sim, "ShowInputEditor", true);
-				InputAgent.applyBoolean(sim, "ShowOutputViewer", true);
+				InputAgent.applyBoolean(sim.getSimulation(), "ShowModelBuilder", true);
+				InputAgent.applyBoolean(sim.getSimulation(), "ShowObjectSelector", true);
+				InputAgent.applyBoolean(sim.getSimulation(), "ShowInputEditor", true);
+				InputAgent.applyBoolean(sim.getSimulation(), "ShowOutputViewer", true);
 			}
 		} );
 		viewMenu.add( showBasicToolsMenuItem );
@@ -597,13 +596,12 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				Simulation sim = Simulation.getInstance();
-				InputAgent.applyBoolean(sim, "ShowModelBuilder", false);
-				InputAgent.applyBoolean(sim, "ShowObjectSelector", false);
-				InputAgent.applyBoolean(sim, "ShowInputEditor", false);
-				InputAgent.applyBoolean(sim, "ShowOutputViewer", false);
-				InputAgent.applyBoolean(sim, "ShowPropertyViewer", false);
-				InputAgent.applyBoolean(sim, "ShowLogViewer", false);
+				InputAgent.applyBoolean(sim.getSimulation(), "ShowModelBuilder", false);
+				InputAgent.applyBoolean(sim.getSimulation(), "ShowObjectSelector", false);
+				InputAgent.applyBoolean(sim.getSimulation(), "ShowInputEditor", false);
+				InputAgent.applyBoolean(sim.getSimulation(), "ShowOutputViewer", false);
+				InputAgent.applyBoolean(sim.getSimulation(), "ShowPropertyViewer", false);
+				InputAgent.applyBoolean(sim.getSimulation(), "ShowLogViewer", false);
 			}
 		} );
 		viewMenu.add( closeAllToolsMenuItem );
@@ -675,7 +673,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			InputAgent.applyArgs(Simulation.getInstance(), keyword, args);
+			InputAgent.applyArgs(sim.getSimulation(), keyword, args);
 		}
 	}
 
@@ -1119,7 +1117,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				InputAgent.applyBoolean(Simulation.getInstance(), "SnapToGrid", snapToGrid.isSelected());
+				InputAgent.applyBoolean(sim.getSimulation(), "SnapToGrid", snapToGrid.isSelected());
 				gridSpacing.setEnabled(snapToGrid.isSelected());
 				fileSave.requestFocusInWindow();
 			}
@@ -2236,7 +2234,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 			@Override
 			public void actionPerformed( ActionEvent event ) {
 				boolean bool = ((JToggleButton)event.getSource()).isSelected();
-				InputAgent.applyBoolean(Simulation.getInstance(), "RealTime", bool);
+				InputAgent.applyBoolean(sim.getSimulation(), "RealTime", bool);
 			}
 		});
 		mainToolBar.add( controlRealTime );
@@ -2267,7 +2265,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 				NumberFormat nf = NumberFormat.getNumberInstance(Locale.US);
 				DecimalFormat df = (DecimalFormat)nf;
 				df.applyPattern("0.######");
-				InputAgent.applyArgs(Simulation.getInstance(), "RealTimeFactor", df.format(val));
+				InputAgent.applyArgs(sim.getSimulation(), "RealTimeFactor", df.format(val));
 			}
 		});
 
@@ -2861,7 +2859,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 	 * @param str - value to assign.
 	 */
 	private void setPauseTime(String str) {
-		Input<?> pause = Simulation.getInstance().getInput("PauseTime");
+		Input<?> pause = sim.getSimulation().getInput("PauseTime");
 		String prevVal = pause.getValueString();
 		if (prevVal.equals(str))
 			return;
@@ -2880,7 +2878,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		try {
 			// Parse the keyword inputs
 			KeywordIndex kw = new KeywordIndex("PauseTime", tokens, null);
-			InputAgent.apply(Simulation.getInstance(), kw);
+			InputAgent.apply(sim.getSimulation(), kw);
 		}
 		catch (InputErrorException e) {
 			pauseTime.setText(prevVal);
@@ -2901,7 +2899,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 	}
 
 	private void setSnapGridSpacing(String str) {
-		Input<?> in = Simulation.getInstance().getInput("SnapGridSpacing");
+		Input<?> in = sim.getSimulation().getInput("SnapGridSpacing");
 		String prevVal = in.getValueString();
 		if (prevVal.equals(str))
 			return;
@@ -2913,7 +2911,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 
 		try {
 			KeywordIndex kw = InputAgent.formatInput("SnapGridSpacing", str);
-			InputAgent.storeAndExecute(new KeywordCommand(Simulation.getInstance(), kw));
+			InputAgent.storeAndExecute(new KeywordCommand(sim.getSimulation(), kw));
 		}
 		catch (InputErrorException e) {
 			gridSpacing.setText(prevVal);
@@ -3331,7 +3329,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 			gui.toFront();
 
 		// Set the selected entity to the Simulation object
-		FrameBox.setSelectedEntity(Simulation.getInstance(), false);
+		FrameBox.setSelectedEntity(sim.getSimulation(), false);
 	}
 
 	/*
@@ -3485,7 +3483,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		InputAgent.setRecordEdits(true);
 		InputAgent.loadDefault();
 		displayWindows();
-		FrameBox.setSelectedEntity(Simulation.getInstance(), false);
+		FrameBox.setSelectedEntity(sim.getSimulation(), false);
 	}
 
 	void load() {
@@ -3534,7 +3532,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 					InputAgent.setRecordEdits(true);
 
 					GUIFrame.displayWindows();
-					FrameBox.setSelectedEntity(Simulation.getInstance(), false);
+					FrameBox.setSelectedEntity(sim.getSimulation(), false);
 				}
 			}).start();
 
@@ -3876,7 +3874,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 				options[0]);
 
 		if (userOption == JOptionPane.YES_OPTION) {
-			InputAgent.applyBoolean(Simulation.getInstance(), "ShowLogViewer", true);
+			InputAgent.applyBoolean(sim.getSimulation(), "ShowLogViewer", true);
 		}
 	}
 
