@@ -3546,6 +3546,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		Throwable ret = null;
 		try {
 			sim.configure(file);
+			sim.getSimulation().setWindowDefaults();
 		}
 		catch (Throwable t) {
 			ret = t;
