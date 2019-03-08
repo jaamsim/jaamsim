@@ -32,9 +32,9 @@ public class TestSimulation {
 
 	@Before
 	public void setupTests() {
-		Entity.setJaamSimModel(new JaamSimModel());
-		if (Simulation.getInstance() != null)
-			Simulation.getInstance().clear();
+		JaamSimModel simModel = new JaamSimModel();
+		if (simModel.getSimulation() != null)
+			simModel.clear();
 		InputAgent.setBatch(true);
 
 		// Load the autoload file
