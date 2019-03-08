@@ -340,109 +340,142 @@ public class Simulation extends Entity {
 		runDuration = new ValueInput("RunDuration", KEY_INPUTS, 31536000.0d);
 		runDuration.setUnitType(TimeUnit.class);
 		runDuration.setValidRange(1e-15d, Double.POSITIVE_INFINITY);
+		this.addInput(runDuration);
 
 		initializationTime = new ValueInput("InitializationDuration", KEY_INPUTS, 0.0);
 		initializationTime.setUnitType(TimeUnit.class);
 		initializationTime.setValidRange(0.0d, Double.POSITIVE_INFINITY);
+		this.addInput(initializationTime);
 
 		pauseConditionInput = new SampleInput("PauseCondition", KEY_INPUTS, null);
+		pauseConditionInput.setEntity(this);
 		pauseConditionInput.setUnitType(DimensionlessUnit.class);
+		this.addInput(pauseConditionInput);
 
 		exitAtPauseCondition = new BooleanInput("ExitAtPauseCondition", KEY_INPUTS, false);
+		this.addInput(exitAtPauseCondition);
 
 		exitAtStop = new BooleanInput("ExitAtStop", KEY_INPUTS, false);
+		this.addInput(exitAtStop);
 
 		globalSeedInput = new SampleInput("GlobalSubstreamSeed", KEY_INPUTS, new SampleConstant(0));
+		globalSeedInput.setEntity(this);
 		globalSeedInput.setUnitType(DimensionlessUnit.class);
 		globalSeedInput.setValidRange(0, Integer.MAX_VALUE);
+		this.addInput(globalSeedInput);
 
 		printReport = new BooleanInput("PrintReport", KEY_INPUTS, false);
+		this.addInput(printReport);
 
 		reportDirectory = new DirInput("ReportDirectory", KEY_INPUTS, null);
 		reportDirectory.setDefaultText("Configuration File Directory");
+		this.addInput(reportDirectory);
 
-		unitTypeList = new UnitTypeListInput("UnitTypeList", KEY_INPUTS, null);
+		ArrayList<Class<? extends Unit>> defList = new ArrayList<>();
+		defList.add(DimensionlessUnit.class);
+		unitTypeList = new UnitTypeListInput("UnitTypeList", KEY_INPUTS, defList);
+		this.addInput(unitTypeList);
 
 		runOutputList = new StringProvListInput("RunOutputList", KEY_INPUTS, null);
+		runOutputList.setEntity(this);
 		runOutputList.setUnitType(DimensionlessUnit.class);
+		this.addInput(runOutputList);
 
 		tickLengthInput = new ValueInput("TickLength", KEY_INPUTS, 1e-6d);
 		tickLengthInput.setUnitType(TimeUnit.class);
 		tickLengthInput.setValidRange(1e-12d, Double.POSITIVE_INFINITY);
+		this.addInput(tickLengthInput);
 
 		// Multiple Runs tab
 		IntegerVector defRangeList = new IntegerVector();
 		defRangeList.add(1);
 		runIndexDefinitionList = new IntegerListInput("RunIndexDefinitionList", MULTIPLE_RUNS, defRangeList);
+		this.addInput(runIndexDefinitionList);
 
 		startingRunNumber = new RunNumberInput("StartingRunNumber", MULTIPLE_RUNS, 1);
+		this.addInput(startingRunNumber);
 
 		endingRunNumber = new RunNumberInput("EndingRunNumber", MULTIPLE_RUNS, 1);
+		this.addInput(endingRunNumber);
 
 		// GUI tab
 		displayedUnits = new EntityListInput<>(Unit.class, "DisplayedUnits", GUI, new ArrayList<Unit>());
 		displayedUnits.setDefaultText("SI Units");
 		displayedUnits.setPromptReqd(false);
 		displayedUnits.setHidden(true);
+		this.addInput(displayedUnits);
 
 		realTime = new BooleanInput("RealTime", GUI, false);
 		realTime.setPromptReqd(false);
 		realTime.setHidden(true);
+		this.addInput(realTime);
 
 		snapToGrid = new BooleanInput("SnapToGrid", GUI, false);
 		snapToGrid.setPromptReqd(false);
 		snapToGrid.setHidden(true);
+		this.addInput(snapToGrid);
 
 		snapGridSpacing = new ValueInput("SnapGridSpacing", GUI, 0.1d);
 		snapGridSpacing.setUnitType(DistanceUnit.class);
 		snapGridSpacing.setValidRange(1.0e-6, Double.POSITIVE_INFINITY);
 		snapGridSpacing.setPromptReqd(false);
 		snapGridSpacing.setHidden(true);
+		this.addInput(snapGridSpacing);
 
 		incrementSize = new ValueInput("IncrementSize", GUI, 0.1d);
 		incrementSize.setUnitType(DistanceUnit.class);
 		incrementSize.setValidRange(1.0e-6, Double.POSITIVE_INFINITY);
 		incrementSize.setPromptReqd(false);
 		incrementSize.setHidden(true);
+		this.addInput(incrementSize);
 
 		realTimeFactor = new ValueInput("RealTimeFactor", GUI, DEFAULT_REAL_TIME_FACTOR);
 		realTimeFactor.setValidRange(MIN_REAL_TIME_FACTOR, MAX_REAL_TIME_FACTOR);
 		realTimeFactor.setPromptReqd(false);
 		realTimeFactor.setHidden(true);
+		this.addInput(realTimeFactor);
 
 		pauseTime = new ValueInput("PauseTime", GUI, Double.POSITIVE_INFINITY);
 		pauseTime.setUnitType(TimeUnit.class);
 		pauseTime.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		pauseTime.setPromptReqd(false);
 		pauseTime.setHidden(true);
+		this.addInput(pauseTime);
 
 		showModelBuilder = new BooleanInput("ShowModelBuilder", GUI, false);
 		showModelBuilder.setPromptReqd(false);
 		showModelBuilder.setHidden(true);
+		this.addInput(showModelBuilder);
 
 		showObjectSelector = new BooleanInput("ShowObjectSelector", GUI, false);
 		showObjectSelector.setPromptReqd(false);
 		showObjectSelector.setHidden(true);
+		this.addInput(showObjectSelector);
 
 		showInputEditor = new BooleanInput("ShowInputEditor", GUI, false);
 		showInputEditor.setPromptReqd(false);
 		showInputEditor.setHidden(true);
+		this.addInput(showInputEditor);
 
 		showOutputViewer = new BooleanInput("ShowOutputViewer", GUI, false);
 		showOutputViewer.setPromptReqd(false);
 		showOutputViewer.setHidden(true);
+		this.addInput(showOutputViewer);
 
 		showPropertyViewer = new BooleanInput("ShowPropertyViewer", GUI, false);
 		showPropertyViewer.setPromptReqd(false);
 		showPropertyViewer.setHidden(true);
+		this.addInput(showPropertyViewer);
 
 		showLogViewer = new BooleanInput("ShowLogViewer", GUI, false);
 		showLogViewer.setPromptReqd(false);
 		showLogViewer.setHidden(true);
+		this.addInput(showLogViewer);
 
 		showEventViewer = new BooleanInput("ShowEventViewer", GUI, false);
 		showEventViewer.setPromptReqd(false);
 		showEventViewer.setHidden(true);
+		this.addInput(showEventViewer);
 
 		final IntegerVector def = new IntegerVector(2);
 		def.add(1);
@@ -453,172 +486,123 @@ public class Simulation extends Entity {
 		modelBuilderPos.setValidRange(-8192, 8192);
 		modelBuilderPos.setPromptReqd(false);
 		modelBuilderPos.setHidden(true);
+		this.addInput(modelBuilderPos);
 
 		modelBuilderSize = new IntegerListInput("ModelBuilderSize", GUI, def);
 		modelBuilderSize.setValidCount(2);
 		modelBuilderSize.setValidRange(1, 8192);
 		modelBuilderSize.setPromptReqd(false);
 		modelBuilderSize.setHidden(true);
+		this.addInput(modelBuilderSize);
 
 		objectSelectorPos = new IntegerListInput("ObjectSelectorPos", GUI, def);
 		objectSelectorPos.setValidCount(2);
 		objectSelectorPos.setValidRange(-8192, 8192);
 		objectSelectorPos.setPromptReqd(false);
 		objectSelectorPos.setHidden(true);
+		this.addInput(objectSelectorPos);
 
 		objectSelectorSize = new IntegerListInput("ObjectSelectorSize", GUI, def);
 		objectSelectorSize.setValidCount(2);
 		objectSelectorSize.setValidRange(1, 8192);
 		objectSelectorSize.setPromptReqd(false);
 		objectSelectorSize.setHidden(true);
+		this.addInput(objectSelectorSize);
 
 		inputEditorPos = new IntegerListInput("InputEditorPos", GUI, def);
 		inputEditorPos.setValidCount(2);
 		inputEditorPos.setValidRange(-8192, 8192);
 		inputEditorPos.setPromptReqd(false);
 		inputEditorPos.setHidden(true);
+		this.addInput(inputEditorPos);
 
 		inputEditorSize = new IntegerListInput("InputEditorSize", GUI, def);
 		inputEditorSize.setValidCount(2);
 		inputEditorSize.setValidRange(1, 8192);
 		inputEditorSize.setPromptReqd(false);
 		inputEditorSize.setHidden(true);
+		this.addInput(inputEditorSize);
 
 		outputViewerPos = new IntegerListInput("OutputViewerPos", GUI, def);
 		outputViewerPos.setValidCount(2);
 		outputViewerPos.setValidRange(-8192, 8192);
 		outputViewerPos.setPromptReqd(false);
 		outputViewerPos.setHidden(true);
+		this.addInput(outputViewerPos);
 
 		outputViewerSize = new IntegerListInput("OutputViewerSize", GUI, def);
 		outputViewerSize.setValidCount(2);
 		outputViewerSize.setValidRange(1, 8192);
 		outputViewerSize.setPromptReqd(false);
 		outputViewerSize.setHidden(true);
+		this.addInput(outputViewerSize);
 
 		propertyViewerPos = new IntegerListInput("PropertyViewerPos", GUI, def);
 		propertyViewerPos.setValidCount(2);
 		propertyViewerPos.setValidRange(-8192, 8192);
 		propertyViewerPos.setPromptReqd(false);
 		propertyViewerPos.setHidden(true);
+		this.addInput(propertyViewerPos);
 
 		propertyViewerSize = new IntegerListInput("PropertyViewerSize", GUI, def);
 		propertyViewerSize.setValidCount(2);
 		propertyViewerSize.setValidRange(1, 8192);
 		propertyViewerSize.setPromptReqd(false);
 		propertyViewerSize.setHidden(true);
+		this.addInput(propertyViewerSize);
 
 		logViewerPos = new IntegerListInput("LogViewerPos", GUI, def);
 		logViewerPos.setValidCount(2);
 		logViewerPos.setValidRange(-8192, 8192);
 		logViewerPos.setPromptReqd(false);
 		logViewerPos.setHidden(true);
+		this.addInput(logViewerPos);
 
 		logViewerSize = new IntegerListInput("LogViewerSize", GUI, def);
 		logViewerSize.setValidCount(2);
 		logViewerSize.setValidRange(1, 8192);
 		logViewerSize.setPromptReqd(false);
 		logViewerSize.setHidden(true);
+		this.addInput(logViewerSize);
 
 		eventViewerPos = new IntegerListInput("EventViewerPos", GUI, def);
 		eventViewerPos.setValidCount(2);
 		eventViewerPos.setValidRange(-8192, 8192);
 		eventViewerPos.setPromptReqd(false);
 		eventViewerPos.setHidden(true);
+		this.addInput(eventViewerPos);
 
 		eventViewerSize = new IntegerListInput("EventViewerSize", GUI, def);
 		eventViewerSize.setValidCount(2);
 		eventViewerSize.setValidRange(1, 8192);
 		eventViewerSize.setPromptReqd(false);
 		eventViewerSize.setHidden(true);
+		this.addInput(eventViewerSize);
 
 		controlPanelWidth = new IntegerInput("ControlPanelWidth", GUI, Integer.valueOf(1));
 		controlPanelWidth.setValidRange(1, 8192);
 		controlPanelWidth.setPromptReqd(false);
 		controlPanelWidth.setHidden(true);
+		this.addInput(controlPanelWidth);
 
 		// Hidden keywords
 		startTimeInput = new ValueInput("StartTime", KEY_INPUTS, 0.0d);
 		startTimeInput.setUnitType(TimeUnit.class);
 		startTimeInput.setValidRange(0.0d, Double.POSITIVE_INFINITY);
+		startTimeInput.setHidden(true);
+		this.addInput(startTimeInput);
 
 		traceEventsInput = new BooleanInput("TraceEvents", KEY_INPUTS, false);
+		traceEventsInput.setHidden(true);
+		this.addInput(traceEventsInput);
+
 		verifyEventsInput = new BooleanInput("VerifyEvents", KEY_INPUTS, false);
+		verifyEventsInput.setHidden(true);
+		this.addInput(verifyEventsInput);
 
 		printInputReport = new BooleanInput("PrintInputReport", KEY_INPUTS, false);
-	}
-
-	{
-		// Key Inputs tab
-		this.addInput(runDuration);
-		this.addInput(initializationTime);
-		this.addInput(pauseConditionInput);
-		this.addInput(exitAtPauseCondition);
-		this.addInput(exitAtStop);
-		this.addInput(globalSeedInput);
-		this.addInput(printReport);
-		this.addInput(reportDirectory);
-		this.addInput(unitTypeList);
-		this.addInput(runOutputList);
-		this.addInput(tickLengthInput);
-
-		// Multiple Runs tab
-		this.addInput(runIndexDefinitionList);
-		this.addInput(startingRunNumber);
-		this.addInput(endingRunNumber);
-
-		// GUI tab
-		this.addInput(displayedUnits);
-		this.addInput(snapToGrid);
-		this.addInput(snapGridSpacing);
-		this.addInput(incrementSize);
-		this.addInput(realTime);
-		this.addInput(realTimeFactor);
-		this.addInput(pauseTime);
-		this.addInput(showModelBuilder);
-		this.addInput(showObjectSelector);
-		this.addInput(showInputEditor);
-		this.addInput(showOutputViewer);
-		this.addInput(showPropertyViewer);
-		this.addInput(showLogViewer);
-		this.addInput(showEventViewer);
-		this.addInput(modelBuilderPos);
-		this.addInput(modelBuilderSize);
-		this.addInput(objectSelectorPos);
-		this.addInput(objectSelectorSize);
-		this.addInput(inputEditorPos);
-		this.addInput(inputEditorSize);
-		this.addInput(outputViewerPos);
-		this.addInput(outputViewerSize);
-		this.addInput(propertyViewerPos);
-		this.addInput(propertyViewerSize);
-		this.addInput(logViewerPos);
-		this.addInput(logViewerSize);
-		this.addInput(eventViewerPos);
-		this.addInput(eventViewerSize);
-		this.addInput(controlPanelWidth);
-
-		// Hidden keywords
-		this.addInput(startTimeInput);
-		this.addInput(traceEventsInput);
-		this.addInput(verifyEventsInput);
-		this.addInput(printInputReport);
-
-		// Hide various keywords
-		startTimeInput.setHidden(true);
-		traceEventsInput.setHidden(true);
-		verifyEventsInput.setHidden(true);
 		printInputReport.setHidden(true);
-
-		// Set the entity corresponding to "this" for keywords that can accept an expression
-		pauseConditionInput.setEntity(Simulation.getInstance());
-		globalSeedInput.setEntity(Simulation.getInstance());
-		runOutputList.setEntity(Simulation.getInstance());
-
-		// Set the default unit type for the custom output report
-		ArrayList<Class<? extends Unit>> defList = new ArrayList<>();
-		defList.add(DimensionlessUnit.class);
-		unitTypeList.setDefaultValue(defList);
+		this.addInput(printInputReport);
 
 		// Set the initial value for snap grid spacing
 		if (GUIFrame.getInstance() != null)
