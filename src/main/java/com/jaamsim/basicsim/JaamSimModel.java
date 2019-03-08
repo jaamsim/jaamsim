@@ -28,6 +28,7 @@ import com.jaamsim.events.EventTimeListener;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.states.StateEntity;
 import com.jaamsim.ui.EventViewer;
+import com.jaamsim.ui.GUIFrame;
 
 public class JaamSimModel {
 
@@ -155,7 +156,17 @@ public class JaamSimModel {
 
 		runNumber = simulation.getStartingRunNumber();
 		simulation.setRunNumber(runNumber);
-		simulation.startRun(eventManager);
+		startRun();
+	}
+
+	/**
+	 * Starts a single simulation run.
+	 */
+	public void startRun() {
+		if (GUIFrame.getInstance() != null)
+			GUIFrame.getInstance().initSpeedUp(0.0d);
+		eventManager.scheduleProcessExternal(0, 0, false, new InitModelTarget(simulation), null);
+		eventManager.resume(eventManager.secondsToNearestTick(simulation.getPauseTime()));
 	}
 
 	/**
