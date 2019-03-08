@@ -288,6 +288,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		addComponentListener(new ComponentAdapter() {
 			@Override
 			public void componentResized(ComponentEvent e) {
+				if (sim.getSimulation() == null)
+					return;
 				sim.getSimulation().setControlPanelWidth(getSize().width);
 			}
 		});

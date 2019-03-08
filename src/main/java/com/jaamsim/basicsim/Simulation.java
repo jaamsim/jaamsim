@@ -1398,10 +1398,7 @@ public class Simulation extends Entity {
 	public void setControlPanelWidth(int width) {
 		if (controlPanelWidth.getValue() == width)
 			return;
-		// Temporary workaround for the callback being done before autoload.cfg is loaded
-		if (getInstance() == null)
-			return;
-		InputAgent.applyIntegers(getInstance(), controlPanelWidth.getKeyword(), width);
+		InputAgent.applyIntegers(this, controlPanelWidth.getKeyword(), width);
 	}
 
 	/**
