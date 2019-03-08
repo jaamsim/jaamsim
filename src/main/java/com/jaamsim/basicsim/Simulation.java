@@ -330,8 +330,6 @@ public class Simulation extends Entity {
 	private int runNumber;    // labels each run when multiple runs are being made
 	private IntegerVector runIndexList;
 
-	private static Simulation myInstance;
-
 	private static String modelName = "JaamSim";
 
 	{
@@ -617,18 +615,6 @@ public class Simulation extends Entity {
 		runIndexList.add(1);
 	}
 
-	public static Simulation getInstance() {
-		if (myInstance == null) {
-			for (Entity ent : Entity.getClonesOfIterator(Entity.class)) {
-				if (ent instanceof Simulation) {
-					myInstance = (Simulation)ent;
-					break;
-				}
-			}
-		}
-		return myInstance;
-	}
-
 	@Override
 	public void updateForInput( Input<?> in ) {
 		super.updateForInput( in );
@@ -884,7 +870,6 @@ public class Simulation extends Entity {
 		// Initialize basic model information
 		startTime = 0.0;
 		endTime = 8760.0*3600.0;
-		myInstance = null;
 
 		// close warning/error trace file
 		InputAgent.closeLogFile();
