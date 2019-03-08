@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2016-2018 JaamSim Software Inc.
+ * Copyright (C) 2016-2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -84,13 +84,15 @@ public class ContextMenu {
 	public static void populateMenu(JPopupMenu menu, final Entity ent, final int nodeIndex,
 			Component c, final int x, final int y) {
 
+		Simulation simulation = GUIFrame.getJaamSimModel().getSimulation();
+
 		// 1) Input Editor
 		JMenuItem inputEditorMenuItem = new JMenuItem( "Input Editor" );
 		inputEditorMenuItem.addActionListener( new ActionListener() {
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				InputAgent.applyBoolean(Simulation.getInstance(), "ShowInputEditor", true);
+				InputAgent.applyBoolean(simulation, "ShowInputEditor", true);
 				FrameBox.setSelectedEntity(ent, false);
 			}
 		} );
@@ -102,7 +104,7 @@ public class ContextMenu {
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				InputAgent.applyBoolean(Simulation.getInstance(), "ShowOutputViewer", true);
+				InputAgent.applyBoolean(simulation, "ShowOutputViewer", true);
 				FrameBox.setSelectedEntity(ent, false);
 			}
 		} );
@@ -114,7 +116,7 @@ public class ContextMenu {
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				InputAgent.applyBoolean(Simulation.getInstance(), "ShowPropertyViewer", true);
+				InputAgent.applyBoolean(simulation, "ShowPropertyViewer", true);
 				FrameBox.setSelectedEntity(ent, false);
 			}
 		} );

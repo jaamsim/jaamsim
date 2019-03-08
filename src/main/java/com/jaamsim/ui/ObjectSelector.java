@@ -212,7 +212,8 @@ public class ObjectSelector extends FrameBox {
 		top.removeAllChildren();
 
 		// Add the instance for Simulation to the top of the tree as a single leaf node
-		top.add(new DefaultMutableTreeNode(Simulation.getInstance(), false));
+		Simulation simulation = GUIFrame.getJaamSimModel().getSimulation();
+		top.add(new DefaultMutableTreeNode(simulation, false));
 
 		// Add the instance for TLS if present
 		Entity tls = Entity.getNamedEntity("TLS");
@@ -252,7 +253,7 @@ public class ObjectSelector extends FrameBox {
 				final Entity ent = Entity.getAll().get(i);
 
 				// The instance for Simulation has already been added
-				if (ent == Simulation.getInstance())
+				if (ent == simulation)
 					continue;
 
 				// The instance for TLS has already been added

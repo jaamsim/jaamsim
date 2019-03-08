@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2018 JaamSim Software Inc.
+ * Copyright (C) 2018-2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,7 +53,6 @@ import com.jaamsim.Graphics.EntityLabel;
 import com.jaamsim.Graphics.OverlayEntity;
 import com.jaamsim.Graphics.Region;
 import com.jaamsim.basicsim.Entity;
-import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.input.ExpParser;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
@@ -670,7 +669,7 @@ public class ExpressionBox extends JDialog {
 
 			nameList.add(each.getName());
 		}
-		String simName = Simulation.getInstance().getName();
+		String simName = GUIFrame.getJaamSimModel().getSimulation().getName();
 		if (simName.toUpperCase().contains(name.toUpperCase())) {
 			nameList.add(simName);
 		}
