@@ -17,7 +17,6 @@
  */
 package com.jaamsim.basicsim;
 
-import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -879,43 +878,10 @@ public class Simulation extends Entity {
 	}
 
 	/**
-	 *	Initializes and starts the model
-	 *		1) Initializes EventManager to accept events.
-	 *		2) calls startModel() to allow the model to add its starting events to EventManager
-	 *		3) start EventManager processing events
-	 */
-	public void start(EventManager evt) {
-
-		evt.setTraceListener(null);
-
-		if (traceEvents()) {
-			String evtName = InputAgent.getConfigFile().getParentFile() + File.separator + InputAgent.getRunName() + ".evt";
-			EventRecorder rec = new EventRecorder(evtName);
-			evt.setTraceListener(rec);
-		}
-		else if (verifyEvents()) {
-			String evtName = InputAgent.getConfigFile().getParentFile() + File.separator + InputAgent.getRunName() + ".evt";
-			EventTracer trc = new EventTracer(evtName);
-			evt.setTraceListener(trc);
-		}
-		else if (showEventViewer.getValue()) {
-			evt.setTraceListener(EventViewer.getInstance());
-		}
-
-		evt.setTickLength(tickLengthInput.getValue());
-
-		startTime = startTimeInput.getValue();
-		endTime = startTime + getInitializationTime() + getRunDuration();
-
-		setRunNumber(startingRunNumber.getValue());
-		startRun(evt);
-	}
-
-	/**
 	 * Starts a single simulation run.
 	 * @param evt - EventManager for the run.
 	 */
-	private void startRun(EventManager evt) {
+	public void startRun(EventManager evt) {
 		if (GUIFrame.getInstance() != null)
 			GUIFrame.getInstance().initSpeedUp(0.0d);
 		evt.scheduleProcessExternal(0, 0, false, new InitModelTarget(this), null);
@@ -1057,6 +1023,10 @@ public class Simulation extends Entity {
 	 */
 	public double getStartTime() {
 		return startTime;
+	}
+
+	public void setEndTime(double t) {
+		endTime = t;
 	}
 
 	/**
@@ -1386,6 +1356,10 @@ public class Simulation extends Entity {
 		InputAgent.applyIntegers(this, controlPanelWidth.getKeyword(), width);
 	}
 
+	public boolean showEventViewer() {
+		return showEventViewer.getValue();
+	}
+
 	/**
 	 * Re-open any Tools windows that have been closed temporarily.
 	 */
@@ -1416,7 +1390,7 @@ public class Simulation extends Entity {
 			setWindowVisible(EventViewer.getInstance(), false);
 	}
 
-	private void setRunNumber(int n) {
+	public void setRunNumber(int n) {
 		runNumber = n;
 		runIndexList = Simulation.getRunIndexList(n, runIndexDefinitionList.getValue());
 	}
@@ -1474,6 +1448,10 @@ public class Simulation extends Entity {
 
 	public String getRunHeader() {
 		return String.format("##### RUN %s #####", getRunCode());
+	}
+
+	public int getStartingRunNumber() {
+		return startingRunNumber.getValue();
 	}
 
 	public boolean isMultipleRuns() {

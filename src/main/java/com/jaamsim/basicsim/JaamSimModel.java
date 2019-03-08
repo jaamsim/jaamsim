@@ -27,11 +27,15 @@ import com.jaamsim.events.EventManager;
 import com.jaamsim.events.EventTimeListener;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.states.StateEntity;
+import com.jaamsim.ui.EventViewer;
 
 public class JaamSimModel {
 
 	private final EventManager eventManager;
 	private Simulation simulation;
+	private double startTime; // simulation time (seconds) for the start of the run (not necessarily zero)
+	private double endTime;   // simulation time (seconds) for the end of the run
+	private int runNumber;    // labels each run when multiple runs are being made
 	private InputErrorListener inputErrorListener;
 	private final AtomicLong entityCount = new AtomicLong(0);
 	private final ArrayList<Entity> allInstances = new ArrayList<>(100);
@@ -116,7 +120,32 @@ public class JaamSimModel {
 		validate();
 		InputAgent.prepareReportDirectory();
 		eventManager.clear();
-		getSimulation().start(eventManager);
+
+		// Set up any tracing to be performed
+		eventManager.setTraceListener(null);
+		if (simulation.traceEvents()) {
+			String evtName = InputAgent.getConfigFile().getParentFile() + File.separator + InputAgent.getRunName() + ".evt";
+			EventRecorder rec = new EventRecorder(evtName);
+			eventManager.setTraceListener(rec);
+		}
+		else if (simulation.verifyEvents()) {
+			String evtName = InputAgent.getConfigFile().getParentFile() + File.separator + InputAgent.getRunName() + ".evt";
+			EventTracer trc = new EventTracer(evtName);
+			eventManager.setTraceListener(trc);
+		}
+		else if (simulation.showEventViewer()) {
+			eventManager.setTraceListener(EventViewer.getInstance());
+		}
+
+		eventManager.setTickLength(simulation.getTickLength());
+
+		startTime = simulation.getStartTime();
+		endTime = startTime + simulation.getInitializationTime() + simulation.getRunDuration();
+		simulation.setEndTime(endTime);
+
+		runNumber = simulation.getStartingRunNumber();
+		simulation.setRunNumber(runNumber);
+		simulation.startRun(eventManager);
 	}
 
 	/**
