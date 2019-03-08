@@ -61,6 +61,7 @@ public class JaamSimModel {
 		if (getSimulation() == null)
 			return;
 		getSimulation().clear();
+		simulation = null;
 
 		// Kill all entities
 		while (allInstances.size() > 0) {

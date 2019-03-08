@@ -404,7 +404,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 	 * Clears the simulation and user interface prior to loading a new model
 	 */
 	public void clear() {
-		sim.clear();
 		FrameBox.clear();
 		EntityPallet.clear();
 		RenderManager.clear();
@@ -413,6 +412,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 
 		// Clear the title bar
 		setTitle(sim.getSimulation().getModelName());
+		sim.clear();
 
 		// Clear the status bar
 		setProgress( 0 );
