@@ -863,18 +863,6 @@ public class Simulation extends Entity {
 		for (Input<?> inp : getEditableInputs()) {
 			InputAgent.applyArgs(this, inp.getKeyword());
 		}
-
-		updateRealTime();
-
-		// Initialize basic model information
-		startTime = 0.0;
-		endTime = 8760.0*3600.0;
-
-		// close warning/error trace file
-		InputAgent.closeLogFile();
-
-		// Reset the run number and run indices
-		setRunNumber(1);
 	}
 
 	/**

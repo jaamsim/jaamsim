@@ -72,6 +72,16 @@ public class JaamSimModel {
 			Entity ent = allInstances.get(allInstances.size() - 1);
 			ent.kill();
 		}
+
+		// Initialize basic model information
+		startTime = 0.0;
+		endTime = 8760.0*3600.0;
+
+		// close warning/error trace file
+		InputAgent.closeLogFile();
+
+		// Reset the run number and run indices
+		runNumber = 1;
 	}
 
 	/**
