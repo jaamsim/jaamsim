@@ -1238,21 +1238,21 @@ public class Simulation extends Entity {
 	}
 
 	public void resetWindowPositionsAndSizes() {
-		InputAgent.applyArgs(getInstance(), modelBuilderPos.getKeyword());
-		InputAgent.applyArgs(getInstance(), modelBuilderSize.getKeyword());
-		InputAgent.applyArgs(getInstance(), objectSelectorPos.getKeyword());
-		InputAgent.applyArgs(getInstance(), objectSelectorSize.getKeyword());
-		InputAgent.applyArgs(getInstance(), inputEditorPos.getKeyword());
-		InputAgent.applyArgs(getInstance(), inputEditorSize.getKeyword());
-		InputAgent.applyArgs(getInstance(), outputViewerPos.getKeyword());
-		InputAgent.applyArgs(getInstance(), outputViewerSize.getKeyword());
-		InputAgent.applyArgs(getInstance(), propertyViewerPos.getKeyword());
-		InputAgent.applyArgs(getInstance(), propertyViewerSize.getKeyword());
-		InputAgent.applyArgs(getInstance(), logViewerPos.getKeyword());
-		InputAgent.applyArgs(getInstance(), logViewerSize.getKeyword());
-		InputAgent.applyArgs(getInstance(), eventViewerPos.getKeyword());
-		InputAgent.applyArgs(getInstance(), eventViewerSize.getKeyword());
-		InputAgent.applyArgs(getInstance(), controlPanelWidth.getKeyword());
+		InputAgent.applyArgs(this, modelBuilderPos.getKeyword());
+		InputAgent.applyArgs(this, modelBuilderSize.getKeyword());
+		InputAgent.applyArgs(this, objectSelectorPos.getKeyword());
+		InputAgent.applyArgs(this, objectSelectorSize.getKeyword());
+		InputAgent.applyArgs(this, inputEditorPos.getKeyword());
+		InputAgent.applyArgs(this, inputEditorSize.getKeyword());
+		InputAgent.applyArgs(this, outputViewerPos.getKeyword());
+		InputAgent.applyArgs(this, outputViewerSize.getKeyword());
+		InputAgent.applyArgs(this, propertyViewerPos.getKeyword());
+		InputAgent.applyArgs(this, propertyViewerSize.getKeyword());
+		InputAgent.applyArgs(this, logViewerPos.getKeyword());
+		InputAgent.applyArgs(this, logViewerSize.getKeyword());
+		InputAgent.applyArgs(this, eventViewerPos.getKeyword());
+		InputAgent.applyArgs(this, eventViewerSize.getKeyword());
+		InputAgent.applyArgs(this, controlPanelWidth.getKeyword());
 	}
 
 	public IntegerVector getModelBuilderPos() {
@@ -1314,85 +1314,85 @@ public class Simulation extends Entity {
 	public void setModelBuilderPos(int x, int y) {
 		if (modelBuilderPos.getValue().get(0) == x && modelBuilderPos.getValue().get(1) == y)
 			return;
-		InputAgent.applyIntegers(getInstance(), modelBuilderPos.getKeyword(), x, y);
+		InputAgent.applyIntegers(this, modelBuilderPos.getKeyword(), x, y);
 	}
 
 	public void setModelBuilderSize(int x, int y) {
 		if (modelBuilderSize.getValue().get(0) == x && modelBuilderSize.getValue().get(1) == y)
 			return;
-		InputAgent.applyIntegers(getInstance(), modelBuilderSize.getKeyword(), x, y);
+		InputAgent.applyIntegers(this, modelBuilderSize.getKeyword(), x, y);
 	}
 
 	public void setObjectSelectorPos(int x, int y) {
 		if (objectSelectorPos.getValue().get(0) == x && objectSelectorPos.getValue().get(1) == y)
 			return;
-		InputAgent.applyIntegers(getInstance(), objectSelectorPos.getKeyword(), x, y);
+		InputAgent.applyIntegers(this, objectSelectorPos.getKeyword(), x, y);
 	}
 
 	public void setObjectSelectorSize(int x, int y) {
 		if (objectSelectorSize.getValue().get(0) == x && objectSelectorSize.getValue().get(1) == y)
 			return;
-		InputAgent.applyIntegers(getInstance(), objectSelectorSize.getKeyword(), x, y);
+		InputAgent.applyIntegers(this, objectSelectorSize.getKeyword(), x, y);
 	}
 
 	public void setInputEditorPos(int x, int y) {
 		if (inputEditorPos.getValue().get(0) == x && inputEditorPos.getValue().get(1) == y)
 			return;
-		InputAgent.applyIntegers(getInstance(), inputEditorPos.getKeyword(), x, y);
+		InputAgent.applyIntegers(this, inputEditorPos.getKeyword(), x, y);
 	}
 
 	public void setInputEditorSize(int x, int y) {
 		if (inputEditorSize.getValue().get(0) == x && inputEditorSize.getValue().get(1) == y)
 			return;
-		InputAgent.applyIntegers(getInstance(), inputEditorSize.getKeyword(), x, y);
+		InputAgent.applyIntegers(this, inputEditorSize.getKeyword(), x, y);
 	}
 
 	public void setOutputViewerPos(int x, int y) {
 		if (outputViewerPos.getValue().get(0) == x && outputViewerPos.getValue().get(1) == y)
 			return;
-		InputAgent.applyIntegers(getInstance(), outputViewerPos.getKeyword(), x, y);
+		InputAgent.applyIntegers(this, outputViewerPos.getKeyword(), x, y);
 	}
 
 	public void setOutputViewerSize(int x, int y) {
 		if (outputViewerSize.getValue().get(0) == x && outputViewerSize.getValue().get(1) == y)
 			return;
-		InputAgent.applyIntegers(getInstance(), outputViewerSize.getKeyword(), x, y);
+		InputAgent.applyIntegers(this, outputViewerSize.getKeyword(), x, y);
 	}
 
 	public void setPropertyViewerPos(int x, int y) {
 		if (propertyViewerPos.getValue().get(0) == x && propertyViewerPos.getValue().get(1) == y)
 			return;
-		InputAgent.applyIntegers(getInstance(), propertyViewerPos.getKeyword(), x, y);
+		InputAgent.applyIntegers(this, propertyViewerPos.getKeyword(), x, y);
 	}
 
 	public void setPropertyViewerSize(int x, int y) {
 		if (propertyViewerSize.getValue().get(0) == x && propertyViewerSize.getValue().get(1) == y)
 			return;
-		InputAgent.applyIntegers(getInstance(), propertyViewerSize.getKeyword(), x, y);
+		InputAgent.applyIntegers(this, propertyViewerSize.getKeyword(), x, y);
 	}
 
 	public void setLogViewerPos(int x, int y) {
 		if (logViewerPos.getValue().get(0) == x && logViewerPos.getValue().get(1) == y)
 			return;
-		InputAgent.applyIntegers(getInstance(), logViewerPos.getKeyword(), x, y);
+		InputAgent.applyIntegers(this, logViewerPos.getKeyword(), x, y);
 	}
 
 	public void setLogViewerSize(int x, int y) {
 		if (logViewerSize.getValue().get(0) == x && logViewerSize.getValue().get(1) == y)
 			return;
-		InputAgent.applyIntegers(getInstance(), logViewerSize.getKeyword(), x, y);
+		InputAgent.applyIntegers(this, logViewerSize.getKeyword(), x, y);
 	}
 
 	public void setEventViewerPos(int x, int y) {
 		if (eventViewerPos.getValue().get(0) == x && eventViewerPos.getValue().get(1) == y)
 			return;
-		InputAgent.applyIntegers(getInstance(), eventViewerPos.getKeyword(), x, y);
+		InputAgent.applyIntegers(this, eventViewerPos.getKeyword(), x, y);
 	}
 
 	public void setEventViewerSize(int x, int y) {
 		if (eventViewerSize.getValue().get(0) == x && eventViewerSize.getValue().get(1) == y)
 			return;
-		InputAgent.applyIntegers(getInstance(), eventViewerSize.getKeyword(), x, y);
+		InputAgent.applyIntegers(this, eventViewerSize.getKeyword(), x, y);
 	}
 
 	public void setControlPanelWidth(int width) {
