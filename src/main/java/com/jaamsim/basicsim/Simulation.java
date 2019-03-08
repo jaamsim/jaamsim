@@ -875,8 +875,8 @@ public class Simulation extends Entity {
 	public void clear() {
 
 		// Reset all Simulation inputs to their default values
-		for (Input<?> inp : Simulation.getInstance().getEditableInputs()) {
-			InputAgent.applyArgs(getInstance(), inp.getKeyword());
+		for (Input<?> inp : getEditableInputs()) {
+			InputAgent.applyArgs(this, inp.getKeyword());
 		}
 
 		updateRealTime();
@@ -933,7 +933,7 @@ public class Simulation extends Entity {
 	private void startRun(EventManager evt) {
 		if (GUIFrame.getInstance() != null)
 			GUIFrame.getInstance().initSpeedUp(0.0d);
-		evt.scheduleProcessExternal(0, 0, false, new InitModelTarget(getInstance()), null);
+		evt.scheduleProcessExternal(0, 0, false, new InitModelTarget(this), null);
 		evt.resume(evt.secondsToNearestTick(getPauseTime()));
 	}
 
