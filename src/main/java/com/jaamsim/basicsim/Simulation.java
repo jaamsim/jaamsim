@@ -325,10 +325,10 @@ public class Simulation extends Entity {
 	         exampleList = {"TRUE"})
 	private final BooleanInput verifyEventsInput;
 
-	private static double startTime; // simulation time (seconds) for the start of the run (not necessarily zero)
-	private static double endTime;   // simulation time (seconds) for the end of the run
-	private static int runNumber;    // labels each run when multiple runs are being made
-	private static IntegerVector runIndexList;
+	private double startTime; // simulation time (seconds) for the start of the run (not necessarily zero)
+	private double endTime;   // simulation time (seconds) for the end of the run
+	private int runNumber;    // labels each run when multiple runs are being made
+	private IntegerVector runIndexList;
 
 	private static Simulation myInstance;
 
@@ -546,13 +546,6 @@ public class Simulation extends Entity {
 		verifyEventsInput = new BooleanInput("VerifyEvents", KEY_INPUTS, false);
 
 		printInputReport = new BooleanInput("PrintInputReport", KEY_INPUTS, false);
-
-		// Initialize basic model information
-		startTime = 0.0;
-		endTime = 8760.0*3600.0;
-		runNumber = 1;
-		runIndexList = new IntegerVector();
-		runIndexList.add(1);
 	}
 
 	{
@@ -632,7 +625,13 @@ public class Simulation extends Entity {
 			GUIFrame.getInstance().updateForSnapGridSpacing(snapGridSpacing.getDefaultString());
 	}
 
-	public Simulation() {}
+	public Simulation() {
+		startTime = 0.0;
+		endTime = 8760.0*3600.0;
+		runNumber = 1;
+		runIndexList = new IntegerVector();
+		runIndexList.add(1);
+	}
 
 	public static Simulation getInstance() {
 		if (myInstance == null) {
