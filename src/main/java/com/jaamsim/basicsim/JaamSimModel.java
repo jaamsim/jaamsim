@@ -229,7 +229,11 @@ public class JaamSimModel {
 	 * Sets the simulation time to zero and re-initializes the model.
 	 */
 	public void reset() {
-		endRun();
+		eventManager.pause();
+		eventManager.clear();
+		killGeneratedEntities();
+		earlyInit();
+		lateInit();
 		simulation.stop();
 	}
 
