@@ -235,7 +235,13 @@ public class JaamSimModel {
 		killGeneratedEntities();
 		earlyInit();
 		lateInit();
-		simulation.stop();
+
+		// Reset the run number and run indices
+		runNumber = simulation.getStartingRunNumber();
+		simulation.setRunNumber(runNumber);
+
+		// Close the output reports
+		InputAgent.stop();
 	}
 
 	/**

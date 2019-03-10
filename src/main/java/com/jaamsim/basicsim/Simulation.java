@@ -866,19 +866,6 @@ public class Simulation extends Entity {
 	}
 
 	/**
-	 * Stops and resets the simulation model to zero simulation time.
-	 * @param evt - EventManager for the run.
-	 */
-	public void stop() {
-
-		// Reset the run number and run indices
-		setRunNumber(startingRunNumber.getValue());
-
-		// Close the output reports
-		InputAgent.stop();
-	}
-
-	/**
 	 * Returns whether a paused simulation can be resumed.
 	 * @param simTicks - present simulation time in clock ticks
 	 * @return true if the simulation can be resumed
