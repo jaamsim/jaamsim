@@ -239,8 +239,15 @@ public class JaamSimModel {
 	public void endRun() {
 		eventManager.pause();
 		eventManager.clear();
+		killGeneratedEntities();
+		earlyInit();
+		lateInit();
+	}
 
-		// Destroy the entities that were generated during the run
+	/**
+	 * Destroys the entities that were generated during the present simulation run.
+	 */
+	public void killGeneratedEntities() {
 		for (int i = 0; i < allInstances.size();) {
 			Entity ent = allInstances.get(i);
 			if (ent.testFlag(Entity.FLAG_GENERATED))
@@ -248,10 +255,6 @@ public class JaamSimModel {
 			else
 				i++;
 		}
-
-		// Re-initialise the model
-		earlyInit();
-		lateInit();
 	}
 
 	public EventManager getEventManager() {
