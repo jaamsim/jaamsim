@@ -29,6 +29,7 @@ import com.jaamsim.input.InputAgent;
 import com.jaamsim.states.StateEntity;
 import com.jaamsim.ui.EventViewer;
 import com.jaamsim.ui.GUIFrame;
+import com.jaamsim.ui.LogBox;
 
 public class JaamSimModel {
 
@@ -258,7 +259,7 @@ public class JaamSimModel {
 
 		// Increment the run number and check for last run
 		if (simulation.isLastRun()) {
-			simulation.end();
+			end();
 			return;
 		}
 
@@ -291,6 +292,22 @@ public class JaamSimModel {
 			else
 				i++;
 		}
+	}
+
+	/**
+	 * Ends a set of simulation runs.
+	 */
+	public void end() {
+
+		// Close warning/error trace file
+		LogBox.logLine("Made it to do end at");
+		InputAgent.closeLogFile();
+
+		// Always terminate the run when in batch mode
+		if (InputAgent.getBatch() || simulation.getExitAtStop())
+			GUIFrame.shutdown(0);
+
+		pause();
 	}
 
 	public EventManager getEventManager() {

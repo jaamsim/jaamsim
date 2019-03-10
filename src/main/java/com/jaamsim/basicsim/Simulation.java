@@ -866,22 +866,6 @@ public class Simulation extends Entity {
 	}
 
 	/**
-	 * Ends a set of simulation runs.
-	 */
-	public void end() {
-
-		// Close warning/error trace file
-		LogBox.logLine("Made it to do end at");
-		InputAgent.closeLogFile();
-
-		// Always terminate the run when in batch mode
-		if (InputAgent.getBatch() || exitAtStop.getValue())
-			GUIFrame.shutdown(0);
-
-		EventManager.current().pause();
-	}
-
-	/**
 	 * Stops and resets the simulation model to zero simulation time.
 	 * @param evt - EventManager for the run.
 	 */
