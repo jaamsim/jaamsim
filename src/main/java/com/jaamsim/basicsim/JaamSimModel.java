@@ -241,11 +241,43 @@ public class JaamSimModel {
 	 * Prepares the model for the next simulation run number.
 	 */
 	public void endRun() {
+
+		// Execute the end of run method for each entity
+		for (Entity each : Entity.getClonesOfIterator(Entity.class)) {
+			each.doEnd();
+		}
+
+		// Print the output report
+		if (simulation.getPrintReport())
+			InputAgent.printReport(EventManager.simSeconds());
+
+		// Print the selected outputs
+		if (simulation.getRunOutputList().getValue() != null) {
+			InputAgent.printRunOutputs(EventManager.simSeconds());
+		}
+
+		// Increment the run number and check for last run
+		if (simulation.isLastRun()) {
+			simulation.end();
+			return;
+		}
+
+		// Start the next run
+		runNumber++;
+		simulation.setRunNumber(runNumber);
+
 		eventManager.pause();
 		eventManager.clear();
 		killGeneratedEntities();
 		earlyInit();
 		lateInit();
+
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				startRun();
+			}
+		}).start();
 	}
 
 	/**

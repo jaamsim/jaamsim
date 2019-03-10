@@ -866,45 +866,9 @@ public class Simulation extends Entity {
 	}
 
 	/**
-	 * Ends a single simulation run and if appropriate restarts the model for the next run.
-	 */
-	public void endRun() {
-
-		// Execute the end of run method for each entity
-		for (Entity each : Entity.getClonesOfIterator(Entity.class)) {
-			each.doEnd();
-		}
-
-		// Print the output report
-		if (printReport.getValue())
-			InputAgent.printReport(EventManager.simSeconds());
-
-		// Print the selected outputs
-		if (runOutputList.getValue() != null) {
-			InputAgent.printRunOutputs(EventManager.simSeconds());
-		}
-
-		// Increment the run number and check for last run
-		if (isLastRun()) {
-			end();
-			return;
-		}
-
-		// Start the next run
-		setRunNumber(runNumber + 1);
-		getJaamSimModel().endRun();
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				getJaamSimModel().startRun();
-			}
-		}).start();
-	}
-
-	/**
 	 * Ends a set of simulation runs.
 	 */
-	private void end() {
+	public void end() {
 
 		// Close warning/error trace file
 		LogBox.logLine("Made it to do end at");

@@ -34,6 +34,6 @@ class EndModelTarget extends ProcessTarget {
 
 	@Override
 	public void process() {
-		simulation.endRun();
+		simulation.getJaamSimModel().endRun();
 	}
 }

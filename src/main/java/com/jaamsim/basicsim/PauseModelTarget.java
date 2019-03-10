@@ -37,7 +37,7 @@ public class PauseModelTarget extends ProcessTarget {
 
 		// If specified, terminate the simulation run
 		if (simulation.getExitAtPauseCondition()) {
-			simulation.endRun();
+			simulation.getJaamSimModel().endRun();
 			return;
 		}
 
