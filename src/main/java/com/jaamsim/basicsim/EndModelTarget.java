@@ -21,10 +21,10 @@ import com.jaamsim.events.ProcessTarget;
 
 class EndModelTarget extends ProcessTarget {
 
-	final Simulation simulation;
+	final JaamSimModel simModel;
 
-	EndModelTarget(Simulation sim) {
-		simulation = sim;
+	EndModelTarget(JaamSimModel model) {
+		simModel = model;
 	}
 
 	@Override
@@ -34,6 +34,6 @@ class EndModelTarget extends ProcessTarget {
 
 	@Override
 	public void process() {
-		simulation.getJaamSimModel().endRun();
+		simModel.endRun();
 	}
 }

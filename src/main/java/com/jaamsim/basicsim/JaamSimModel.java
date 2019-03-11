@@ -167,7 +167,7 @@ public class JaamSimModel {
 	public void startRun() {
 		if (GUIFrame.getInstance() != null)
 			GUIFrame.getInstance().initSpeedUp(0.0d);
-		eventManager.scheduleProcessExternal(0, 0, false, new InitModelTarget(simulation), null);
+		eventManager.scheduleProcessExternal(0, 0, false, new InitModelTarget(this), null);
 		eventManager.resume(eventManager.secondsToNearestTick(simulation.getPauseTime()));
 	}
 
@@ -202,7 +202,7 @@ public class JaamSimModel {
 			EventManager.scheduleUntil(pauseModelTarget, pauseCondition, null);
 	}
 
-	private final PauseModelTarget pauseModelTarget = new PauseModelTarget(this.getSimulation());
+	private final PauseModelTarget pauseModelTarget = new PauseModelTarget(this);
 
 	private final Conditional pauseCondition = new Conditional() {
 		@Override

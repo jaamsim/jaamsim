@@ -21,10 +21,10 @@ import com.jaamsim.events.ProcessTarget;
 
 public class ClearStatisticsTarget extends ProcessTarget {
 
-	final Simulation simulation;
+	final JaamSimModel simModel;
 
-	public ClearStatisticsTarget(Simulation sim) {
-		simulation = sim;
+	public ClearStatisticsTarget(JaamSimModel model) {
+		simModel = model;
 	}
 
 	@Override
@@ -34,7 +34,7 @@ public class ClearStatisticsTarget extends ProcessTarget {
 
 	@Override
 	public void process() {
-		simulation.getJaamSimModel().clearStatistics();
+		simModel.clearStatistics();
 	}
 
 }

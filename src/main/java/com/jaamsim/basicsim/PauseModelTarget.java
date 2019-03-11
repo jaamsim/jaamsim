@@ -21,10 +21,10 @@ import com.jaamsim.events.ProcessTarget;
 
 public class PauseModelTarget extends ProcessTarget {
 
-	final Simulation simulation;
+	final JaamSimModel simModel;
 
-	public PauseModelTarget(Simulation sim) {
-		simulation = sim;
+	public PauseModelTarget(JaamSimModel model) {
+		simModel = model;
 	}
 
 	@Override
@@ -34,18 +34,19 @@ public class PauseModelTarget extends ProcessTarget {
 
 	@Override
 	public void process() {
+		Simulation simulation = simModel.getSimulation();
 
 		// If specified, terminate the simulation run
 		if (simulation.getExitAtPauseCondition()) {
-			simulation.getJaamSimModel().endRun();
+			simModel.endRun();
 			return;
 		}
 
 		// Pause the simulation run
-		simulation.getJaamSimModel().pause();
+		simModel.pause();
 
 		// When the run is resumed, continue to check the pause condition
-		simulation.getJaamSimModel().doPauseCondition();
+		simModel.doPauseCondition();
 	}
 
 }
