@@ -47,6 +47,7 @@ import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.basicsim.FileEntity;
 import com.jaamsim.basicsim.Group;
+import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.basicsim.ObjectType;
 import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.datatypes.DoubleVector;
@@ -1465,7 +1466,8 @@ public class InputAgent {
 	 * @param simTime - simulation time at which the outputs are printed.
 	 */
 	public static void printRunOutputs(double simTime) {
-		Simulation simulation = GUIFrame.getJaamSimModel().getSimulation();
+		JaamSimModel simModel = GUIFrame.getJaamSimModel();
+		Simulation simulation = simModel.getSimulation();
 
 		// Set up the custom outputs
 		if (outStream == null) {
@@ -1536,7 +1538,7 @@ public class InputAgent {
 		outStream.println(sb.toString());
 
 		// Terminate the outputs
-		if (simulation.isLastRun()) {
+		if (simModel.isLastRun()) {
 			outStream.close();
 			outStream = null;
 		}
@@ -1557,8 +1559,9 @@ public class InputAgent {
 		}
 
 		// Print run number header when multiple runs are to be performed
-		Simulation simulation = GUIFrame.getJaamSimModel().getSimulation();
-		if (simulation.isMultipleRuns())
+		JaamSimModel simModel = GUIFrame.getJaamSimModel();
+		Simulation simulation = simModel.getSimulation();
+		if (simModel.isMultipleRuns())
 			reportFile.format("%s%n%n", simulation.getRunHeader());
 
 		// Prepare a sorted list of entities
@@ -1594,7 +1597,7 @@ public class InputAgent {
 		}
 
 		// Close the report file
-		if (simulation.isLastRun()) {
+		if (simModel.isLastRun()) {
 			reportFile.close();
 			reportFile = null;
 		}

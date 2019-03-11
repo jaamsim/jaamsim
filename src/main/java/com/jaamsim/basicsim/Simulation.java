@@ -1352,18 +1352,6 @@ public class Simulation extends Entity {
 		return endingRunNumber.getValue();
 	}
 
-	public boolean isMultipleRuns() {
-		return endingRunNumber.getValue() > startingRunNumber.getValue();
-	}
-
-	public boolean isFirstRun() {
-		return runNumber == startingRunNumber.getValue();
-	}
-
-	public boolean isLastRun() {
-		return runNumber >= endingRunNumber.getValue();
-	}
-
 	@Output(name = "Software Name",
 	 description = "The licensed name for the simulation software.",
 	  reportable = true,

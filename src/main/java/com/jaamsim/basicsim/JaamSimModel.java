@@ -270,7 +270,7 @@ public class JaamSimModel {
 		}
 
 		// Increment the run number and check for last run
-		if (simulation.isLastRun()) {
+		if (isLastRun()) {
 			end();
 			return;
 		}
