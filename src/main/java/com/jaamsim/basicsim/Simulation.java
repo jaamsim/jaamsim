@@ -984,8 +984,17 @@ public class Simulation extends Entity {
 		return exitAtPauseCondition.getValue();
 	}
 
+	public boolean isPauseConditionSet() {
+		return pauseConditionInput.getValue() != null;
+	}
+
+	public boolean isPauseConditionSatisfied(double simTime) {
+		return pauseConditionInput.getValue() != null &&
+				pauseConditionInput.getValue().getNextSample(simTime) != 0.0d;
+	}
+
 	public void doPauseCondition() {
-		if (pauseConditionInput.getValue() != null)
+		if (isPauseConditionSet())
 			EventManager.scheduleUntil(pauseModel, pauseCondition, null);
 	}
 
@@ -994,10 +1003,8 @@ public class Simulation extends Entity {
 	private final Conditional pauseCondition = new Conditional() {
 		@Override
 		public boolean evaluate() {
-			if (pauseConditionInput.getValue() == null)
-				return false;
 			double simTime = EventManager.simSeconds();
-			return pauseConditionInput.getValue().getNextSample(simTime) != 0.0d;
+			return isPauseConditionSatisfied(simTime);
 		}
 	};
 
