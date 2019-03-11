@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
+import com.jaamsim.events.Conditional;
 import com.jaamsim.events.EventErrorListener;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.events.EventTimeListener;
@@ -195,6 +196,21 @@ public class JaamSimModel {
 			} catch (Exception e) {}
 		}
 	}
+
+	public void doPauseCondition() {
+		if (simulation.isPauseConditionSet())
+			EventManager.scheduleUntil(pauseModelTarget, pauseCondition, null);
+	}
+
+	private final PauseModelTarget pauseModelTarget = new PauseModelTarget(this.getSimulation());
+
+	private final Conditional pauseCondition = new Conditional() {
+		@Override
+		public boolean evaluate() {
+			double simTime = EventManager.simSeconds();
+			return simulation.isPauseConditionSatisfied(simTime);
+		}
+	};
 
 	/**
 	 * Reset the statistics for each entity.

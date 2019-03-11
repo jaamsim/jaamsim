@@ -28,7 +28,6 @@ import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.StringProviders.StringProvListInput;
 import com.jaamsim.datatypes.IntegerVector;
-import com.jaamsim.events.Conditional;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.DirInput;
@@ -992,21 +991,6 @@ public class Simulation extends Entity {
 		return pauseConditionInput.getValue() != null &&
 				pauseConditionInput.getValue().getNextSample(simTime) != 0.0d;
 	}
-
-	public void doPauseCondition() {
-		if (isPauseConditionSet())
-			EventManager.scheduleUntil(pauseModel, pauseCondition, null);
-	}
-
-	private final PauseModelTarget pauseModel = new PauseModelTarget(this);
-
-	private final Conditional pauseCondition = new Conditional() {
-		@Override
-		public boolean evaluate() {
-			double simTime = EventManager.simSeconds();
-			return isPauseConditionSatisfied(simTime);
-		}
-	};
 
 	public Vec3d getSnapGridPosition(Vec3d pos) {
 		return getSnapGridPosition(pos, snapGridSpacing.getValue());

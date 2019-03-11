@@ -60,6 +60,6 @@ public class InitModelTarget extends ProcessTarget {
 		EventManager.scheduleSeconds(endTime, 5, false, new EndModelTarget(simulation), null);
 
 		// Start checking the pause condition
-		simulation.doPauseCondition();
+		simModel.doPauseCondition();
 	}
 }

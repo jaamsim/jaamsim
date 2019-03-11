@@ -45,7 +45,7 @@ public class PauseModelTarget extends ProcessTarget {
 		simulation.getJaamSimModel().pause();
 
 		// When the run is resumed, continue to check the pause condition
-		simulation.doPauseCondition();
+		simulation.getJaamSimModel().doPauseCondition();
 	}
 
 }
