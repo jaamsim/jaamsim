@@ -1348,6 +1348,10 @@ public class Simulation extends Entity {
 		return startingRunNumber.getValue();
 	}
 
+	public int getEndingRunNumber() {
+		return endingRunNumber.getValue();
+	}
+
 	public boolean isMultipleRuns() {
 		return endingRunNumber.getValue() > startingRunNumber.getValue();
 	}

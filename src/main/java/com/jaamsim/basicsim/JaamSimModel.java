@@ -338,6 +338,18 @@ public class JaamSimModel {
 		return simulation;
 	}
 
+	public boolean isMultipleRuns() {
+		return getSimulation().getEndingRunNumber() > getSimulation().getStartingRunNumber();
+	}
+
+	public boolean isFirstRun() {
+		return runNumber == getSimulation().getStartingRunNumber();
+	}
+
+	public boolean isLastRun() {
+		return runNumber >= getSimulation().getEndingRunNumber();
+	}
+
 	final long getNextEntityID() {
 		return entityCount.incrementAndGet();
 	}
