@@ -1286,7 +1286,7 @@ public class Simulation extends Entity {
 
 	public void setRunNumber(int n) {
 		runNumber = n;
-		runIndexList = Simulation.getRunIndexList(n, runIndexDefinitionList.getValue());
+		runIndexList = JaamSimModel.getRunIndexList(n, runIndexDefinitionList.getValue());
 	}
 
 	/**
@@ -1337,7 +1337,7 @@ public class Simulation extends Entity {
 	}
 
 	public String getRunCode() {
-		return Simulation.getRunCode(runIndexList);
+		return JaamSimModel.getRunCode(runIndexList);
 	}
 
 	public String getRunHeader() {
