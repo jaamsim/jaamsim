@@ -1289,53 +1289,6 @@ public class Simulation extends Entity {
 		runIndexList = JaamSimModel.getRunIndexList(n, runIndexDefinitionList.getValue());
 	}
 
-	/**
-	 * Returns the run indices that correspond to a given run number.
-	 * @param n - run number.
-	 * @param rangeList - maximum value for each index.
-	 * @return run indices.
-	 */
-	public static IntegerVector getRunIndexList(int n, IntegerVector rangeList) {
-		IntegerVector indexList = new IntegerVector(rangeList.size());
-		indexList.fillWithEntriesOf(rangeList.size(), 0);
-		int denom = 1;
-		for (int i=rangeList.size()-1; i>=0; i--) {
-			indexList.set(i, (n-1)/denom % rangeList.get(i) + 1);
-			denom *= rangeList.get(i);
-		}
-		return indexList;
-	}
-
-	/**
-	 * Returns the run number that corresponds to a given set of run indices.
-	 * @param indexList - run indices.
-	 * @param rangeList - maximum value for each index.
-	 * @return run number.
-	 */
-	public static int getRunNumber(IntegerVector indexList, IntegerVector rangeList) {
-		int n = 1;
-		int factor = 1;
-		for (int i=indexList.size()-1; i>=0; i--) {
-			n += (indexList.get(i)-1)*factor;
-			factor *= rangeList.get(i);
-		}
-		return n;
-	}
-
-	/**
-	 * Returns the input format used to specify a set of run indices.
-	 * @param indexList - run indices.
-	 * @return run code.
-	 */
-	public static String getRunCode(IntegerVector indexList) {
-		StringBuilder sb = new StringBuilder();
-		sb.append(indexList.get(0));
-		for (int i=1; i<indexList.size(); i++) {
-			sb.append("-").append(indexList.get(i));
-		}
-		return sb.toString();
-	}
-
 	public String getRunCode() {
 		return JaamSimModel.getRunCode(runIndexList);
 	}
