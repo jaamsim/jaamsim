@@ -324,7 +324,6 @@ public class Simulation extends Entity {
 	private final BooleanInput verifyEventsInput;
 
 	private int runNumber;    // labels each run when multiple runs are being made
-	private IntegerVector runIndexList;
 
 	private static String modelName = "JaamSim";
 
@@ -605,8 +604,6 @@ public class Simulation extends Entity {
 
 	public Simulation() {
 		runNumber = 1;
-		runIndexList = new IntegerVector();
-		runIndexList.add(1);
 	}
 
 	@Override
@@ -1287,7 +1284,6 @@ public class Simulation extends Entity {
 
 	public void setRunNumber(int n) {
 		runNumber = n;
-		runIndexList = JaamSimModel.getRunIndexList(n, runIndexDefinitionList.getValue());
 	}
 
 	public int getStartingRunNumber() {
