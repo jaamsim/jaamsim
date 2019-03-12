@@ -620,7 +620,7 @@ public class ExpressionBox extends JDialog {
 				int bracketIndex = text.lastIndexOf('[', dotIndex);
 				if (bracketIndex >= 0) {
 					String entName = text.substring(bracketIndex + 1, dotIndex - 1);
-					ent = Entity.getNamedEntity(entName);
+					ent = GUIFrame.getJaamSimModel().getNamedEntity(entName);
 				}
 			}
 			else if (dotIndex >= 4 && text.substring(dotIndex - 4, dotIndex).equals("this")) {

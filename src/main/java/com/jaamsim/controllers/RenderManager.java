@@ -1562,7 +1562,7 @@ public class RenderManager implements DragSourceListener {
 		Class<? extends Entity> proto  = dndObjectType.getJavaClass();
 		String name = InputAgent.getUniqueName(proto.getSimpleName(), "");
 		InputAgent.storeAndExecute(new DefineCommand(proto, name));
-		Entity ent = Entity.getNamedEntity(name);
+		Entity ent = GUIFrame.getJaamSimModel().getNamedEntity(name);
 
 		// Set input values for a dragged and dropped entity
 		ent.setInputsForDragAndDrop();

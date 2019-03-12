@@ -130,7 +130,7 @@ public class ContextMenu {
 			public void actionPerformed( ActionEvent event ) {
 				String name = InputAgent.getUniqueName(ent.getName(), "_Copy");
 				InputAgent.storeAndExecute(new DefineCommand(ent.getClass(), name));
-				Entity copiedEntity = Entity.getNamedEntity(name);
+				Entity copiedEntity = GUIFrame.getJaamSimModel().getNamedEntity(name);
 
 				// Match all the inputs
 				copiedEntity.copyInputs(ent);
@@ -227,7 +227,7 @@ public class ContextMenu {
 					if (label == null) {
 						String name = InputAgent.getUniqueName(ent.getName(), "_Label");
 						InputAgent.storeAndExecute(new DefineCommand(EntityLabel.class, name));
-						EntityLabel newLabel = (EntityLabel)Entity.getNamedEntity(name);
+						EntityLabel newLabel = (EntityLabel)GUIFrame.getJaamSimModel().getNamedEntity(name);
 
 						// Assign inputs that link the label to its target entity
 						InputAgent.applyArgs(newLabel, "TargetEntity", ent.getName());
@@ -396,7 +396,7 @@ public class ContextMenu {
 			public void actionPerformed( ActionEvent event ) {
 				String name = InputAgent.getUniqueName(ent.getName(), "_Split");
 				InputAgent.storeAndExecute(new DefineCommand(ent.getClass(), name));
-				DisplayEntity splitEnt = (DisplayEntity) Entity.getNamedEntity(name);
+				DisplayEntity splitEnt = (DisplayEntity) GUIFrame.getJaamSimModel().getNamedEntity(name);
 
 				// Match all the inputs
 				splitEnt.copyInputs(ent);

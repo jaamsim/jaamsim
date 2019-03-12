@@ -1065,7 +1065,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				DisplayEntity ent = (DisplayEntity) Entity.getNamedEntity("XYZ-Axis");
+				DisplayEntity ent = (DisplayEntity) sim.getNamedEntity("XYZ-Axis");
 				if (ent != null) {
 					InputAgent.applyBoolean(ent, "Show", xyzAxis.isSelected());
 				}
@@ -1087,10 +1087,10 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				DisplayEntity ent = (DisplayEntity) Entity.getNamedEntity("XY-Grid");
-				if (ent == null && Entity.getNamedEntity("Grid100x100") != null) {
+				DisplayEntity ent = (DisplayEntity) sim.getNamedEntity("XY-Grid");
+				if (ent == null && sim.getNamedEntity("Grid100x100") != null) {
 					InputAgent.storeAndExecute(new DefineCommand(DisplayEntity.class, "XY-Grid"));
-					ent = (DisplayEntity) Entity.getNamedEntity("XY-Grid");
+					ent = (DisplayEntity) sim.getNamedEntity("XY-Grid");
 					KeywordIndex dmKw = InputAgent.formatArgs("DisplayModel", "Grid100x100");
 					KeywordIndex sizeKw = InputAgent.formatArgs("Size", "100", "100", "0", "m");
 					InputAgent.storeAndExecute(new KeywordCommand(ent, dmKw, sizeKw));
@@ -3125,7 +3125,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		}
 
 		// Set the initial state for the "Show Axes" check box
-		DisplayEntity ent = (DisplayEntity) Entity.getNamedEntity("XYZ-Axis");
+		DisplayEntity ent = (DisplayEntity) sim.getNamedEntity("XYZ-Axis");
 		if (ent == null) {
 			xyzAxis.setEnabled(false);
 			xyzAxis.setSelected(false);
@@ -3136,7 +3136,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		}
 
 		// Set the initial state for the "Show Grid" check box
-		ent = (DisplayEntity) Entity.getNamedEntity("XY-Grid");
+		ent = (DisplayEntity) sim.getNamedEntity("XY-Grid");
 		grid.setSelected(ent != null && ent.getShow());
 	}
 

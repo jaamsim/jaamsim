@@ -216,7 +216,7 @@ public class ObjectSelector extends FrameBox {
 		top.add(new DefaultMutableTreeNode(simulation, false));
 
 		// Add the instance for TLS if present
-		Entity tls = Entity.getNamedEntity("TLS");
+		Entity tls = GUIFrame.getJaamSimModel().getNamedEntity("TLS");
 		if (tls != null)
 			top.add(new DefaultMutableTreeNode(tls, false));
 
