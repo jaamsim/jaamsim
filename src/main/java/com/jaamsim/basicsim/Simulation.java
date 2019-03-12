@@ -323,8 +323,6 @@ public class Simulation extends Entity {
 	         exampleList = {"TRUE"})
 	private final BooleanInput verifyEventsInput;
 
-	private int runNumber;    // labels each run when multiple runs are being made
-
 	private static String modelName = "JaamSim";
 
 	{
@@ -602,9 +600,7 @@ public class Simulation extends Entity {
 			GUIFrame.getInstance().updateForSnapGridSpacing(snapGridSpacing.getDefaultString());
 	}
 
-	public Simulation() {
-		runNumber = 1;
-	}
+	public Simulation() {}
 
 	@Override
 	public void updateForInput( Input<?> in ) {
@@ -633,7 +629,6 @@ public class Simulation extends Entity {
 
 		if (in == runIndexDefinitionList) {
 			getJaamSimModel().setRunIndexList();
-			setRunNumber(runNumber);
 			startingRunNumber.setRunIndexRangeList(runIndexDefinitionList.getValue());
 			endingRunNumber.setRunIndexRangeList(runIndexDefinitionList.getValue());
 			return;
@@ -641,7 +636,6 @@ public class Simulation extends Entity {
 
 		if (in == startingRunNumber) {
 			getJaamSimModel().setRunNumber(startingRunNumber.getValue());
-			setRunNumber(startingRunNumber.getValue());
 			return;
 		}
 
@@ -1283,10 +1277,6 @@ public class Simulation extends Entity {
 			setWindowVisible(EventViewer.getInstance(), false);
 	}
 
-	public void setRunNumber(int n) {
-		runNumber = n;
-	}
-
 	public int getStartingRunNumber() {
 		return startingRunNumber.getValue();
 	}
@@ -1333,7 +1323,7 @@ public class Simulation extends Entity {
 	  reportable = true,
 	    sequence = 3)
 	public int getRunNumber(double simTime) {
-		return runNumber;
+		return getJaamSimModel().getRunNumber();
 	}
 
 	@Output(name = "RunIndex",

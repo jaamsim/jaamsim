@@ -48,6 +48,7 @@ public class JaamSimModel {
 		Entity.setJaamSimModel(this);
 		eventManager = new EventManager("DefaultEventManager");
 		simulation = null;
+		runNumber = 1;
 		runIndexList = new IntegerVector();
 		runIndexList.add(1);
 	}
@@ -152,7 +153,6 @@ public class JaamSimModel {
 
 		runNumber = simulation.getStartingRunNumber();
 		setRunIndexList();
-		simulation.setRunNumber(runNumber);
 		startRun();
 	}
 
@@ -250,7 +250,6 @@ public class JaamSimModel {
 		// Reset the run number and run indices
 		runNumber = simulation.getStartingRunNumber();
 		setRunIndexList();
-		simulation.setRunNumber(runNumber);
 
 		// Close the output reports
 		InputAgent.stop();
@@ -284,7 +283,6 @@ public class JaamSimModel {
 		// Start the next run
 		runNumber++;
 		setRunIndexList();
-		simulation.setRunNumber(runNumber);
 
 		eventManager.pause();
 		eventManager.clear();
@@ -411,6 +409,10 @@ public class JaamSimModel {
 
 	public void setRunIndexList() {
 		runIndexList = getRunIndexList(runNumber, getSimulation().getRunIndexDefinitionList());
+	}
+
+	public int getRunNumber() {
+		return runNumber;
 	}
 
 	public IntegerVector getRunIndexList() {
