@@ -544,4 +544,39 @@ public class JaamSimModel {
 			e.setFlag(Entity.FLAG_DEAD);
 		}
 	}
+
+	/**
+	 * Returns an Iterator that loops over the instances of the specified class. It does not
+	 * include instances of any sub-classes of the class.
+	 * The specified class must be a sub-class of Entity.
+	 * @param proto - specified class
+	 * @return Iterator for instances of the class
+	 */
+	public <T extends Entity> InstanceIterable<T> getInstanceIterator(Class<T> proto){
+		return new InstanceIterable<>(proto);
+	}
+
+	/**
+	 * Returns an Iterator that loops over the instances of the specified class and its
+	 * sub-classes.
+	 * The specified class must be a sub-class of Entity.
+	 * @param proto - specified class
+	 * @return Iterator for instances of the class and its sub-classes
+	 */
+	public <T extends Entity> ClonesOfIterable<T> getClonesOfIterator(Class<T> proto){
+		return new ClonesOfIterable<>(proto);
+	}
+
+	/**
+	 * Returns an iterator that loops over the instances of the specified class and its
+	 * sub-classes, but of only those classes that implement the specified interface.
+	 * The specified class must be a sub-class of Entity.
+	 * @param proto - specified class
+	 * @param iface - specified interface
+	 * @return Iterator for instances of the class and its sub-classes that implement the specified interface
+	 */
+	public <T extends Entity> ClonesOfIterableInterface<T> getClonesOfIterator(Class<T> proto, Class<?> iface){
+		return new ClonesOfIterableInterface<>(proto, iface);
+	}
+
 }
