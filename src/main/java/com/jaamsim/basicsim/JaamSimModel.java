@@ -244,8 +244,24 @@ public class JaamSimModel {
 		eventManager.pause();
 		eventManager.clear();
 		killGeneratedEntities();
-		earlyInit();
-		lateInit();
+
+		// Perform earlyInit
+		for (Entity each : allInstances) {
+			// Try/catch is required because some earlyInit methods use simTime which is only
+			// available from a process thread, which is not the case when called from endRun
+			try {
+				each.earlyInit();
+			} catch (Exception e) {}
+		}
+
+		// Perform lateInit
+		for (Entity each : allInstances) {
+			// Try/catch is required because some lateInit methods use simTime which is only
+			// available from a process thread, which is not the case when called from endRun
+			try {
+				each.lateInit();
+			} catch (Exception e) {}
+		}
 
 		// Reset the run number and run indices
 		runNumber = simulation.getStartingRunNumber();
