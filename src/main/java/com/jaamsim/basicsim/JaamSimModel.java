@@ -171,11 +171,7 @@ public class JaamSimModel {
 	 */
 	public void earlyInit() {
 		for (Entity each : allInstances) {
-			// FIXME Try/catch is required because some earlyInit methods use simTime which is only
-			// available from a process thread, which is not the case when called from endRun
-			try {
-				each.earlyInit();
-			} catch (Exception e) {}
+			each.earlyInit();
 		}
 	}
 
@@ -184,11 +180,7 @@ public class JaamSimModel {
 	 */
 	public void lateInit() {
 		for (Entity each : allInstances) {
-			// FIXME Try/catch is required because some lateInit methods use simTime which is only
-			// available from a process thread, which is not the case when called from endRun
-			try {
-				each.lateInit();
-			} catch (Exception e) {}
+			each.lateInit();
 		}
 	}
 
