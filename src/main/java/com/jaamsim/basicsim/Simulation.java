@@ -1345,7 +1345,7 @@ public class Simulation extends Entity {
 	  reportable = true,
 	    sequence = 4)
 	public IntegerVector getRunIndex(double simTime) {
-		return runIndexList;
+		return getJaamSimModel().getRunIndexList();
 	}
 
 	@Output(name = "Present Time and Date",

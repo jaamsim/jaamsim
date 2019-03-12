@@ -409,6 +409,10 @@ public class JaamSimModel {
 		runIndexList = getRunIndexList(n, getSimulation().getRunIndexDefinitionList());
 	}
 
+	public IntegerVector getRunIndexList() {
+		return runIndexList;
+	}
+
 	public String getRunCode() {
 		return getRunCode(runIndexList);
 	}
