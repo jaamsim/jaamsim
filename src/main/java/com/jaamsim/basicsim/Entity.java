@@ -349,10 +349,6 @@ public class Entity {
 	 */
 	public void doEnd() {}
 
-	public static long getEntitySequence() {
-		return sim.getEntitySequence();
-	}
-
 	/**
 	 * Get the current Simulation ticks value.
 	 * @return the current simulation tick

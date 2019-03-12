@@ -121,7 +121,7 @@ public class ObjectSelector extends FrameBox {
 		if (tree == null)
 			return;
 
-		long curSequence = Entity.getEntitySequence();
+		long curSequence = GUIFrame.getJaamSimModel().getEntitySequence();
 		if (entSequence != curSequence) {
 			entSequence = curSequence;
 			updateTree();
@@ -157,7 +157,7 @@ public class ObjectSelector extends FrameBox {
 		if (!this.isVisible())
 			return;
 
-		long curSequence = Entity.getEntitySequence();
+		long curSequence = GUIFrame.getJaamSimModel().getEntitySequence();
 		if (entSequence != curSequence) {
 			entSequence = curSequence;
 			updateTree();
