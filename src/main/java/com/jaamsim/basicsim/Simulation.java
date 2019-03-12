@@ -632,7 +632,7 @@ public class Simulation extends Entity {
 		}
 
 		if (in == runIndexDefinitionList) {
-			getJaamSimModel().setRunNumber(runNumber);
+			getJaamSimModel().setRunIndexList();
 			setRunNumber(runNumber);
 			startingRunNumber.setRunIndexRangeList(runIndexDefinitionList.getValue());
 			endingRunNumber.setRunIndexRangeList(runIndexDefinitionList.getValue());

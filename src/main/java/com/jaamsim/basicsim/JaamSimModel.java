@@ -151,7 +151,7 @@ public class JaamSimModel {
 		eventManager.setTickLength(simulation.getTickLength());
 
 		runNumber = simulation.getStartingRunNumber();
-		setRunNumber(runNumber);
+		setRunIndexList();
 		simulation.setRunNumber(runNumber);
 		startRun();
 	}
@@ -249,7 +249,7 @@ public class JaamSimModel {
 
 		// Reset the run number and run indices
 		runNumber = simulation.getStartingRunNumber();
-		setRunNumber(runNumber);
+		setRunIndexList();
 		simulation.setRunNumber(runNumber);
 
 		// Close the output reports
@@ -283,7 +283,7 @@ public class JaamSimModel {
 
 		// Start the next run
 		runNumber++;
-		setRunNumber(runNumber);
+		setRunIndexList();
 		simulation.setRunNumber(runNumber);
 
 		eventManager.pause();
@@ -406,7 +406,11 @@ public class JaamSimModel {
 
 	public void setRunNumber(int n) {
 		runNumber = n;
-		runIndexList = getRunIndexList(n, getSimulation().getRunIndexDefinitionList());
+		setRunIndexList();
+	}
+
+	public void setRunIndexList() {
+		runIndexList = getRunIndexList(runNumber, getSimulation().getRunIndexDefinitionList());
 	}
 
 	public IntegerVector getRunIndexList() {
