@@ -409,6 +409,14 @@ public class JaamSimModel {
 		runIndexList = getRunIndexList(n, getSimulation().getRunIndexDefinitionList());
 	}
 
+	public String getRunCode() {
+		return getRunCode(runIndexList);
+	}
+
+	public String getRunHeader() {
+		return String.format("##### RUN %s #####", getRunCode());
+	}
+
 	final long getNextEntityID() {
 		return entityCount.incrementAndGet();
 	}

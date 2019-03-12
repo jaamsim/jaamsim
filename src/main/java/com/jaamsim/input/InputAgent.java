@@ -1560,9 +1560,8 @@ public class InputAgent {
 
 		// Print run number header when multiple runs are to be performed
 		JaamSimModel simModel = GUIFrame.getJaamSimModel();
-		Simulation simulation = simModel.getSimulation();
 		if (simModel.isMultipleRuns())
-			reportFile.format("%s%n%n", simulation.getRunHeader());
+			reportFile.format("%s%n%n", simModel.getRunHeader());
 
 		// Prepare a sorted list of entities
 		ArrayList<Entity> entList = new ArrayList<>();
