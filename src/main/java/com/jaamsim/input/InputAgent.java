@@ -925,7 +925,7 @@ public class InputAgent {
 
 			// Loop through the instances for this entity class
 			int count = 0;
-			for (Entity ent : Entity.getInstanceIterator(each)) {
+			for (Entity ent : GUIFrame.getJaamSimModel().getInstanceIterator(each)) {
 				if (ent.getEntityNumber() <= preDefinedEntityCount)
 					continue;
 
@@ -964,7 +964,7 @@ public class InputAgent {
 			// Get the list of instances for this entity class
 			// sort the list alphabetically
 			ArrayList<Entity> cloneList = new ArrayList<>();
-			for (Entity ent : Entity.getInstanceIterator(each)) {
+			for (Entity ent : GUIFrame.getJaamSimModel().getInstanceIterator(each)) {
 				if (ent.getEntityNumber() <= preDefinedEntityCount) {
 					if (! (ent instanceof Simulation) ) {
 						continue;
