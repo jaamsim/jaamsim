@@ -68,9 +68,9 @@ public class JaamSimModel {
 	public void clear() {
 		eventManager.clear();
 		eventManager.setTraceListener(null);
-		if (getSimulation() == null)
-			return;
-		getSimulation().clear();
+		if (getSimulation() != null) {
+			getSimulation().clear();
+		}
 		simulation = null;
 
 		// Kill all entities
