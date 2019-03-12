@@ -479,7 +479,7 @@ public class RenderManager implements DragSourceListener {
 					dbgMsg.append(" entities at (").append(mouseInfo.x);
 					dbgMsg.append(", ").append(mouseInfo.y).append("): ");
 					for (PickData pd : picks) {
-						Entity ent = Entity.idToEntity(pd.id);
+						Entity ent = GUIFrame.getJaamSimModel().idToEntity(pd.id);
 						if (ent != null)
 							dbgMsg.append(ent.getName());
 
@@ -559,7 +559,7 @@ public class RenderManager implements DragSourceListener {
 
 			for (PickData pd : picks) {
 				if (!pd.isEntity) { continue; }
-				Entity ent = Entity.idToEntity(pd.id);
+				Entity ent = GUIFrame.getJaamSimModel().idToEntity(pd.id);
 				if (ent instanceof DisplayEntity) {
 					DisplayEntity de = (DisplayEntity)ent;
 					if (de.isMovable()) // only a movable DisplayEntity responds to a right-click
@@ -618,7 +618,7 @@ public class RenderManager implements DragSourceListener {
 		for (PickData pd : picks) {
 			// Select the first entity after sorting
 			if (pd.isEntity) {
-				DisplayEntity ent = (DisplayEntity)Entity.idToEntity(pd.id);
+				DisplayEntity ent = (DisplayEntity) GUIFrame.getJaamSimModel().idToEntity(pd.id);
 				if (!ent.isMovable()) {
 					continue;
 				}
@@ -840,7 +840,7 @@ public class RenderManager implements DragSourceListener {
 			}
 			knownIDs.add(pick.pickingID);
 
-			DisplayEntity ent = (DisplayEntity)Entity.idToEntity(pick.pickingID);
+			DisplayEntity ent = (DisplayEntity)GUIFrame.getJaamSimModel().idToEntity(pick.pickingID);
 			if (ent == null) {
 				// This object is not an entity, but may be a picking handle
 				uniquePicks.add(new PickData(pick.pickingID, pick.dist));

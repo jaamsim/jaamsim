@@ -212,10 +212,6 @@ public class Entity {
 		return new ClonesOfIterableInterface<>(proto, iface);
 	}
 
-	public static Entity idToEntity(long id) {
-		return sim.idToEntity(id);
-	}
-
 	public void validate() throws InputErrorException {
 		for (Input<?> in : inpList) {
 			in.validate();
