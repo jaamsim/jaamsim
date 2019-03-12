@@ -287,8 +287,6 @@ public class JaamSimModel {
 		eventManager.pause();
 		eventManager.clear();
 		killGeneratedEntities();
-		earlyInit();
-		lateInit();
 
 		new Thread(new Runnable() {
 			@Override
