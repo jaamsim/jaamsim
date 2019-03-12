@@ -640,6 +640,7 @@ public class Simulation extends Entity {
 		}
 
 		if (in == startingRunNumber) {
+			getJaamSimModel().setRunNumber(startingRunNumber.getValue());
 			setRunNumber(startingRunNumber.getValue());
 			return;
 		}
