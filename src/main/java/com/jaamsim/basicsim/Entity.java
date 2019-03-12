@@ -291,7 +291,7 @@ public class Entity {
 
 		// Generated entities are not part of the model inputs so do not support undo/redo
 		if (testFlag(Entity.FLAG_GENERATED)) {
-			for (Entity ent : Entity.getClonesOfIterator(Entity.class)) {
+			for (Entity ent : getJaamSimModel().getClonesOfIterator(Entity.class)) {
 				if (ent == this)
 					continue;
 				for (Input<?> in : ent.inpList) {
@@ -303,7 +303,7 @@ public class Entity {
 		}
 
 		// Delete any references to this entity in the inputs to other entities
-		for (Entity ent : Entity.getClonesOfIterator(Entity.class)) {
+		for (Entity ent : getJaamSimModel().getClonesOfIterator(Entity.class)) {
 			if (ent == this)
 				continue;
 			ArrayList<KeywordIndex> oldKwList = new ArrayList<>();

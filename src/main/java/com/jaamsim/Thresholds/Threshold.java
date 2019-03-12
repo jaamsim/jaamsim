@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -88,7 +89,7 @@ public class Threshold extends StateEntity {
 		closedCount = 0L;
 
 		userList.clear();
-		for (Entity each : Entity.getClonesOfIterator(Entity.class)) {
+		for (Entity each : getJaamSimModel().getClonesOfIterator(Entity.class)) {
 			if (each instanceof ThresholdUser) {
 				ThresholdUser tu = (ThresholdUser)each;
 				if (tu.getThresholds().contains(this))

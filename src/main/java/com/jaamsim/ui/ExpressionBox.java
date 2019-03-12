@@ -53,6 +53,7 @@ import com.jaamsim.Graphics.EntityLabel;
 import com.jaamsim.Graphics.OverlayEntity;
 import com.jaamsim.Graphics.Region;
 import com.jaamsim.basicsim.Entity;
+import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.input.ExpParser;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
@@ -397,7 +398,8 @@ public class ExpressionBox extends JDialog {
 				public void actionPerformed( ActionEvent event ) {
 					ScrollablePopupMenu entityMenu = new ScrollablePopupMenu();
 					ArrayList<String> entNameList = new ArrayList<>();
-					for (DisplayEntity each: Entity.getClonesOfIterator(DisplayEntity.class)) {
+					JaamSimModel simModel = GUIFrame.getJaamSimModel();
+					for (DisplayEntity each: simModel.getClonesOfIterator(DisplayEntity.class)) {
 						if (each.testFlag(Entity.FLAG_GENERATED))
 							continue;
 
@@ -656,7 +658,8 @@ public class ExpressionBox extends JDialog {
 	private void showEntityMenu(String name, final int ind0, final int ind1) {
 		entityMenu = new ScrollablePopupMenu();
 		ArrayList<String> nameList = new ArrayList<>();
-		for (DisplayEntity each: Entity.getClonesOfIterator(DisplayEntity.class)) {
+		JaamSimModel simModel = GUIFrame.getJaamSimModel();
+		for (DisplayEntity each: simModel.getClonesOfIterator(DisplayEntity.class)) {
 			if (each.testFlag(Entity.FLAG_GENERATED))
 				continue;
 

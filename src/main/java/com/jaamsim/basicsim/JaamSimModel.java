@@ -208,7 +208,7 @@ public class JaamSimModel {
 		}
 
 		// Reset state statistics
-		for (StateEntity each : Entity.getClonesOfIterator(StateEntity.class)) {  //FIXME
+		for (StateEntity each : getClonesOfIterator(StateEntity.class)) {  //FIXME
 			each.collectInitializationStats();
 		}
 	}
@@ -269,7 +269,7 @@ public class JaamSimModel {
 	public void endRun() {
 
 		// Execute the end of run method for each entity
-		for (Entity each : Entity.getClonesOfIterator(Entity.class)) {
+		for (Entity each : getClonesOfIterator(Entity.class)) {
 			each.doEnd();
 		}
 

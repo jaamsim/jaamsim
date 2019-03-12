@@ -30,9 +30,11 @@ import com.jaamsim.input.OutputHandle;
 
 public class TestSimulation {
 
+	JaamSimModel simModel;
+
 	@Before
 	public void setupTests() {
-		JaamSimModel simModel = new JaamSimModel();
+		simModel = new JaamSimModel();
 		if (simModel.getSimulation() != null)
 			simModel.clear();
 		InputAgent.setBatch(true);
@@ -45,7 +47,7 @@ public class TestSimulation {
 	@Test
 	public void testAllDefineableTypes() {
 		// Define an instance of every drag-and-drop type
-		for (ObjectType each: Entity.getClonesOfIterator(ObjectType.class)) {
+		for (ObjectType each: simModel.getClonesOfIterator(ObjectType.class)) {
 			Class<? extends Entity> proto = Input.parseEntityType(each.getName());
 			@SuppressWarnings("unused")
 			Entity ent = InputAgent.defineEntityWithUniqueName(proto, each.getName(), "-", true);
@@ -56,7 +58,7 @@ public class TestSimulation {
 	public void testAllEditableInputs() {
 		int numErrors = 0;
 		// Define an instance of every drag-and-drop type
-		for (ObjectType each: Entity.getClonesOfIterator(ObjectType.class)) {
+		for (ObjectType each: simModel.getClonesOfIterator(ObjectType.class)) {
 			Class<? extends Entity> proto = Input.parseEntityType(each.getName());
 			Entity ent = InputAgent.defineEntityWithUniqueName(proto, each.getName(), "-", true);
 
