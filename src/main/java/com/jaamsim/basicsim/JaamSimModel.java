@@ -38,6 +38,7 @@ public class JaamSimModel {
 	private final EventManager eventManager;
 	private Simulation simulation;
 	private int runNumber;    // labels each run when multiple runs are being made
+	private IntegerVector runIndexList;
 	private InputErrorListener inputErrorListener;
 	private final AtomicLong entityCount = new AtomicLong(0);
 	private final ArrayList<Entity> allInstances = new ArrayList<>(100);
@@ -47,6 +48,8 @@ public class JaamSimModel {
 		Entity.setJaamSimModel(this);
 		eventManager = new EventManager("DefaultEventManager");
 		simulation = null;
+		runIndexList = new IntegerVector();
+		runIndexList.add(1);
 	}
 
 	public final void setTimeListener(EventTimeListener l) {
@@ -148,6 +151,7 @@ public class JaamSimModel {
 		eventManager.setTickLength(simulation.getTickLength());
 
 		runNumber = simulation.getStartingRunNumber();
+		setRunNumber(runNumber);
 		simulation.setRunNumber(runNumber);
 		startRun();
 	}
@@ -245,6 +249,7 @@ public class JaamSimModel {
 
 		// Reset the run number and run indices
 		runNumber = simulation.getStartingRunNumber();
+		setRunNumber(runNumber);
 		simulation.setRunNumber(runNumber);
 
 		// Close the output reports
@@ -278,6 +283,7 @@ public class JaamSimModel {
 
 		// Start the next run
 		runNumber++;
+		setRunNumber(runNumber);
 		simulation.setRunNumber(runNumber);
 
 		eventManager.pause();
@@ -396,6 +402,11 @@ public class JaamSimModel {
 			sb.append("-").append(indexList.get(i));
 		}
 		return sb.toString();
+	}
+
+	public void setRunNumber(int n) {
+		runNumber = n;
+		runIndexList = getRunIndexList(n, getSimulation().getRunIndexDefinitionList());
 	}
 
 	final long getNextEntityID() {

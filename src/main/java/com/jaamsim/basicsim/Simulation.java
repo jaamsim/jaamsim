@@ -635,6 +635,7 @@ public class Simulation extends Entity {
 		}
 
 		if (in == runIndexDefinitionList) {
+			getJaamSimModel().setRunNumber(runNumber);
 			setRunNumber(runNumber);
 			startingRunNumber.setRunIndexRangeList(runIndexDefinitionList.getValue());
 			endingRunNumber.setRunIndexRangeList(runIndexDefinitionList.getValue());
@@ -1303,6 +1304,10 @@ public class Simulation extends Entity {
 
 	public int getEndingRunNumber() {
 		return endingRunNumber.getValue();
+	}
+
+	public IntegerVector getRunIndexDefinitionList() {
+		return runIndexDefinitionList.getValue();
 	}
 
 	@Output(name = "Software Name",
