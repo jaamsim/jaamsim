@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2018 JaamSim Software Inc.
+ * Copyright (C) 2016-2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@ import com.jaamsim.DisplayModels.ColladaModel;
 import com.jaamsim.DisplayModels.ImageModel;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.basicsim.Entity;
+import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.math.AABB;
@@ -150,6 +151,8 @@ public class DisplayEntityFactory extends Entity {
 			return;
 		}
 
+		JaamSimModel simModel = GUIFrame.getJaamSimModel();
+
 		// Loop through the graphics files
 		for (File f : files) {
 
@@ -176,14 +179,14 @@ public class DisplayEntityFactory extends Entity {
 			// Create the ImageModel
 			String modelName = InputAgent.getUniqueName(entityName + "-model", "");
 			InputAgent.storeAndExecute(new DefineCommand(ImageModel.class, modelName));
-			ImageModel dm = (ImageModel) Entity.getNamedEntity(modelName);
+			ImageModel dm = (ImageModel) simModel.getNamedEntity(modelName);
 
 			// Load the image to the ImageModel
 			InputAgent.applyArgs(dm, "ImageFile", f.getPath());
 
 			// Create the DisplayEntity
 			InputAgent.storeAndExecute(new DefineCommand(DisplayEntity.class, entityName));
-			DisplayEntity de = (DisplayEntity) Entity.getNamedEntity(entityName);
+			DisplayEntity de = (DisplayEntity) simModel.getNamedEntity(entityName);
 
 			// Assign the ImageModel to the new DisplayEntity
 			InputAgent.applyArgs(de, "DisplayModel", dm.getName());
@@ -208,6 +211,8 @@ public class DisplayEntityFactory extends Entity {
 			GUIFrame.invokeErrorDialog("Runtime Error",	"The renderer is not ready.");
 			return;
 		}
+
+		JaamSimModel simModel = GUIFrame.getJaamSimModel();
 
 		// Loop through the graphics files
 		for (File f : files) {
@@ -235,14 +240,14 @@ public class DisplayEntityFactory extends Entity {
 			// Create the ColladaModel
 			String modelName = InputAgent.getUniqueName(entityName + "-model", "");
 			InputAgent.storeAndExecute(new DefineCommand(ColladaModel.class, modelName));
-			ColladaModel dm = (ColladaModel)Entity.getNamedEntity(modelName);
+			ColladaModel dm = (ColladaModel) simModel.getNamedEntity(modelName);
 
 			// Load the 3D content to the ColladaModel
 			InputAgent.applyArgs(dm, "ColladaFile", f.getPath());
 
 			// Create the DisplayEntity
 			InputAgent.storeAndExecute(new DefineCommand(DisplayEntity.class, entityName));
-			DisplayEntity de = (DisplayEntity)Entity.getNamedEntity(entityName);
+			DisplayEntity de = (DisplayEntity) simModel.getNamedEntity(entityName);
 
 			// Assign the ColladaModel to the new DisplayEntity
 			InputAgent.applyArgs(de, "DisplayModel", dm.getName());
