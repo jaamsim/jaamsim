@@ -1228,8 +1228,7 @@ public class InputAgent {
 	 *
 	 * @param fileName - the full path and file name for the new configuration file.
 	 */
-	public static void printNewConfigurationFileWithName( String fileName ) {
-		JaamSimModel simModel = GUIFrame.getJaamSimModel();
+	public static void printNewConfigurationFileWithName(JaamSimModel simModel, String fileName) {
 
 		// 1) WRITE LINES FROM THE ORIGINAL CONFIGURATION FILE
 
