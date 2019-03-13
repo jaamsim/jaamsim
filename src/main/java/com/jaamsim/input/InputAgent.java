@@ -467,7 +467,7 @@ public class InputAgent {
 				InputAgent.echoInputRecord(record);
 
 				if ("DEFINE".equalsIgnoreCase(record.get(0))) {
-					InputAgent.processDefineRecord(record);
+					InputAgent.processDefineRecord(simModel, record);
 					record.clear();
 					continue;
 				}
@@ -514,7 +514,7 @@ public class InputAgent {
 		InputAgent.readStream(simModel, pc.jail, pc.context, record.get(1).replaceAll("\\\\", "/"));
 	}
 
-	private static void processDefineRecord(ArrayList<String> record) {
+	private static void processDefineRecord(JaamSimModel simModel, ArrayList<String> record) {
 		if (record.size() < 5 ||
 		    !record.get(2).equals("{") ||
 		    !record.get(record.size() - 1).equals("}")) {
