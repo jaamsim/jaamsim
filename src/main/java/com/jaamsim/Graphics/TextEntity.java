@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2018 JaamSim Software Inc.
+ * Copyright (C) 2018-2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,10 +19,11 @@ package com.jaamsim.Graphics;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import com.jaamsim.basicsim.Entity;
+import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Vec3d;
+import com.jaamsim.ui.GUIFrame;
 
 public interface TextEntity {
 	public String getFontName();
@@ -38,7 +39,8 @@ public interface TextEntity {
 
 	public static ArrayList<String> getFontsInUse() {
 		ArrayList<String> ret = new ArrayList<>();
-		for (DisplayEntity ent : Entity.getClonesOfIterator(DisplayEntity.class, TextEntity.class)) {
+		JaamSimModel simModel = GUIFrame.getJaamSimModel();
+		for (DisplayEntity ent : simModel.getClonesOfIterator(DisplayEntity.class, TextEntity.class)) {
 			TextEntity textEnt = (TextEntity) ent;
 			if (ret.contains(textEnt.getFontName()))
 				continue;
@@ -50,7 +52,8 @@ public interface TextEntity {
 
 	public static ArrayList<Color4d> getFontColoursInUse() {
 		ArrayList<Color4d> ret = new ArrayList<>();
-		for (DisplayEntity ent : Entity.getClonesOfIterator(DisplayEntity.class, TextEntity.class)) {
+		JaamSimModel simModel = GUIFrame.getJaamSimModel();
+		for (DisplayEntity ent : simModel.getClonesOfIterator(DisplayEntity.class, TextEntity.class)) {
 			TextEntity textEnt = (TextEntity) ent;
 			if (ret.contains(textEnt.getFontColor()))
 				continue;

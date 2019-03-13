@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2018 JaamSim Software Inc.
+ * Copyright (C) 2018-2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import java.util.Comparator;
 
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.basicsim.Entity;
+import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.Keyword;
 
@@ -77,7 +78,8 @@ public abstract class AbstractResourceProvider extends DisplayEntity implements 
 	 */
 	public static ArrayList<ResourceUser> getUserList(ResourceProvider pool) {
 		ArrayList<ResourceUser> ret = new ArrayList<>();
-		for (Entity ent : Entity.getClonesOfIterator(Entity.class, ResourceUser.class)) {
+		JaamSimModel simModel = ((Entity) pool).getJaamSimModel();
+		for (Entity ent : simModel.getClonesOfIterator(Entity.class, ResourceUser.class)) {
 			ResourceUser ru = (ResourceUser) ent;
 			if (ru.requiresResource(pool))
 				ret.add(ru);
