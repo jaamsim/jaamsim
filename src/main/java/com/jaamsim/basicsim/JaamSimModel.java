@@ -109,7 +109,7 @@ public class JaamSimModel {
 	 * Performs consistency checks on the model inputs.
 	 */
 	public void validate() {
-		for (Entity each : allInstances) {
+		for (Entity each : getClonesOfIterator(Entity.class)) {
 			try {
 				each.validate();
 			}
@@ -170,7 +170,7 @@ public class JaamSimModel {
 	 * Performs the first stage of initialization for each entity.
 	 */
 	public void earlyInit() {
-		for (Entity each : allInstances) {
+		for (Entity each : getClonesOfIterator(Entity.class)) {
 			each.earlyInit();
 		}
 	}
@@ -179,7 +179,7 @@ public class JaamSimModel {
 	 * Performs the second stage of initialization for each entity.
 	 */
 	public void lateInit() {
-		for (Entity each : allInstances) {
+		for (Entity each : getClonesOfIterator(Entity.class)) {
 			each.lateInit();
 		}
 	}
@@ -203,12 +203,12 @@ public class JaamSimModel {
 	 * Reset the statistics for each entity.
 	 */
 	public void clearStatistics() {
-		for (Entity ent : allInstances) {
+		for (Entity ent : getClonesOfIterator(Entity.class)) {
 			ent.clearStatistics();
 		}
 
 		// Reset state statistics
-		for (StateEntity each : getClonesOfIterator(StateEntity.class)) {  //FIXME
+		for (StateEntity each : getClonesOfIterator(StateEntity.class)) {
 			each.collectInitializationStats();
 		}
 	}
@@ -238,7 +238,7 @@ public class JaamSimModel {
 		killGeneratedEntities();
 
 		// Perform earlyInit
-		for (Entity each : allInstances) {
+		for (Entity each : getClonesOfIterator(Entity.class)) {
 			// Try/catch is required because some earlyInit methods use simTime which is only
 			// available from a process thread, which is not the case when called from endRun
 			try {
@@ -247,7 +247,7 @@ public class JaamSimModel {
 		}
 
 		// Perform lateInit
-		for (Entity each : allInstances) {
+		for (Entity each : getClonesOfIterator(Entity.class)) {
 			// Try/catch is required because some lateInit methods use simTime which is only
 			// available from a process thread, which is not the case when called from endRun
 			try {
@@ -339,11 +339,9 @@ public class JaamSimModel {
 
 	public Simulation getSimulation() {
 		if (simulation == null) {
-			for (Entity ent : allInstances) {
-				if (ent instanceof Simulation) {
-					simulation = (Simulation) ent;
-					break;
-				}
+			for (Entity ent : getInstanceIterator(Simulation.class)) {
+				simulation = (Simulation) ent;
+				break;
 			}
 		}
 		return simulation;
