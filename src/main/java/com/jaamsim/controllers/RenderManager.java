@@ -378,7 +378,7 @@ public class RenderManager implements DragSourceListener {
 				ArrayList<DisplayModelBinding> selectedBindings = new ArrayList<>();
 
 				// Update all graphical entities in the simulation
-				final ArrayList<? extends Entity> allEnts = Entity.getAll();
+				final ArrayList<? extends Entity> allEnts = GUIFrame.getJaamSimModel().getEntities();
 				for (int i = 0; i < allEnts.size(); i++) {
 					DisplayEntity de;
 					try {
@@ -1909,7 +1909,7 @@ public class RenderManager implements DragSourceListener {
 	}
 
 	private void addLinkDisplays(ArrayList<RenderProxy> scene) {
-		ArrayList<? extends Entity> allEnts = Entity.getAll();
+		ArrayList<? extends Entity> allEnts = GUIFrame.getJaamSimModel().getEntities();
 
 		for (int i = 0; i < allEnts.size(); i++) {
 			try {

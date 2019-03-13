@@ -247,10 +247,11 @@ public class ObjectSelector extends FrameBox {
 
 		// Prepare a sorted list of entities
 		int numGenerated = 0;
+		final ArrayList<? extends Entity> allEnts = GUIFrame.getJaamSimModel().getEntities();
 		ArrayList<Entity> entityList = new ArrayList<>();
-		for (int i = 0; i < Entity.getAll().size(); i++) {
+		for (int i = 0; i < allEnts.size(); i++) {
 			try {
-				final Entity ent = Entity.getAll().get(i);
+				final Entity ent = allEnts.get(i);
 
 				// The instance for Simulation has already been added
 				if (ent == simulation)
