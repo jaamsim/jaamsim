@@ -736,8 +736,7 @@ public class InputAgent {
 	}
 
 	// Load the run file
-	public static void loadConfigurationFile( File file) throws URISyntaxException {
-		JaamSimModel simModel = GUIFrame.getJaamSimModel();
+	public static void loadConfigurationFile(JaamSimModel simModel, File file) throws URISyntaxException {
 
 		String inputTraceFileName = InputAgent.getRunName() + ".log";
 		// Initializing the tracing for the model
@@ -787,7 +786,7 @@ public class InputAgent {
 		if( InputAgent.numErrors > 0 )
 			throw new InputErrorException("%d input errors and %d warnings found", InputAgent.numErrors, InputAgent.numWarnings);
 
-		if (GUIFrame.getJaamSimModel().getSimulation().getPrintInputReport())
+		if (simModel.getSimulation().getPrintInputReport())
 			InputAgent.printInputFileKeywords();
 	}
 

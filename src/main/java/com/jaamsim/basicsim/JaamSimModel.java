@@ -102,7 +102,7 @@ public class JaamSimModel {
 	 */
 	public void configure(File file) throws URISyntaxException {
 		InputAgent.setConfigFile(file);
-		InputAgent.loadConfigurationFile(file);
+		InputAgent.loadConfigurationFile(this, file);
 	}
 
 	/**
