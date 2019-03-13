@@ -873,7 +873,7 @@ public class Simulation extends Entity {
 	 */
 	public int getLargestStreamNumber() {
 		int seed = 0;
-		for (Entity each : Entity.getClonesOfIterator(Entity.class, RandomStreamUser.class)) {
+		for (Entity each : getJaamSimModel().getClonesOfIterator(Entity.class, RandomStreamUser.class)) {
 			RandomStreamUser user = (RandomStreamUser) each;
 			seed = Math.max(seed, user.getStreamNumber());
 		}
@@ -887,7 +887,7 @@ public class Simulation extends Entity {
 	 */
 	public ArrayList<RandomStreamUser> getRandomStreamUsers(int seed) {
 		ArrayList<RandomStreamUser> ret = new ArrayList<>();
-		for (Entity each : Entity.getClonesOfIterator(Entity.class, RandomStreamUser.class)) {
+		for (Entity each : getJaamSimModel().getClonesOfIterator(Entity.class, RandomStreamUser.class)) {
 			RandomStreamUser user = (RandomStreamUser) each;
 			if (user.getStreamNumber() == seed) {
 				ret.add(user);

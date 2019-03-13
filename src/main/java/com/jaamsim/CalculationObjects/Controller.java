@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018 JaamSim Software Inc.
+ * Copyright (C) 2018-2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -63,7 +63,7 @@ public class Controller extends DisplayEntity {
 
 		// Prepare a list of the calculation entities managed by this controller
 		entityList.clear();
-		for (Entity ent : Entity.getClonesOfIterator(Entity.class, Controllable.class)) {
+		for (Entity ent : getJaamSimModel().getClonesOfIterator(Entity.class, Controllable.class)) {
 			Controllable con = (Controllable) ent;
 			if (con.getController() == this)
 				entityList.add(con);

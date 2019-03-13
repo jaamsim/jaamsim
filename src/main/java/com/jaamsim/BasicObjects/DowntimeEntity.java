@@ -21,7 +21,6 @@ import java.util.ArrayList;
 
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.Samples.SampleProvider;
-import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.EntityTarget;
 import com.jaamsim.events.EventHandle;
 import com.jaamsim.events.EventManager;
@@ -140,7 +139,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 		if (!this.isActive())
 			return;
 
-		for (StateEntity each : Entity.getClonesOfIterator(StateEntity.class, DowntimeUser.class)) {
+		for (StateEntity each : getJaamSimModel().getClonesOfIterator(StateEntity.class, DowntimeUser.class)) {
 
 			if (!each.isActive())
 				continue;
