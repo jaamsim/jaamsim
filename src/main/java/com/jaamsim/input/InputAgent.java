@@ -1548,7 +1548,7 @@ public class InputAgent {
 	 * Prints the output report for the simulation run.
 	 * @param simTime - simulation time at which the report is printed.
 	 */
-	public static void printReport(double simTime) {
+	public static void printReport(JaamSimModel simModel, double simTime) {
 
 		// Create the report file
 		if (reportFile == null) {
@@ -1559,7 +1559,6 @@ public class InputAgent {
 		}
 
 		// Print run number header when multiple runs are to be performed
-		JaamSimModel simModel = GUIFrame.getJaamSimModel();
 		if (simModel.isMultipleRuns())
 			reportFile.format("%s%n%n", simModel.getRunHeader());
 

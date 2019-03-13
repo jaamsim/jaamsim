@@ -275,7 +275,7 @@ public class JaamSimModel {
 
 		// Print the output report
 		if (simulation.getPrintReport())
-			InputAgent.printReport(EventManager.simSeconds());
+			InputAgent.printReport(this, EventManager.simSeconds());
 
 		// Print the selected outputs
 		if (simulation.getRunOutputList().getValue() != null) {
