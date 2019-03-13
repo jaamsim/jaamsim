@@ -3288,7 +3288,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		// If in script mode, load a configuration file from standard in
 		if (scriptMode) {
 			BufferedReader buf = new BufferedReader(new InputStreamReader(System.in));
-			InputAgent.readBufferedStream(buf, null, "");
+			InputAgent.readBufferedStream(sim, buf, null, "");
 		}
 
 		// If no configuration files were specified on the command line, then load the default configuration file

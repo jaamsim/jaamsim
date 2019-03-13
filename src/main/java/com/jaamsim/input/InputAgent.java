@@ -404,7 +404,7 @@ public class InputAgent {
 			return;
 
 		try {
-			readStream(null, null, res);
+			readStream(simModel, null, null, res);
 		}
 		catch (URISyntaxException ex) {
 			rethrowWrapped(ex);
@@ -412,7 +412,7 @@ public class InputAgent {
 
 	}
 
-	public static final boolean readStream(String root, URI path, String file) throws URISyntaxException {
+	public static final boolean readStream(JaamSimModel simModel, String root, URI path, String file) throws URISyntaxException {
 		URI resolved = getFileURI(path, file, root);
 
 		URL url = null;
@@ -437,11 +437,11 @@ public class InputAgent {
 			return false;
 		}
 
-		InputAgent.readBufferedStream(buf, resolved, root);
+		InputAgent.readBufferedStream(simModel, buf, resolved, root);
 		return true;
 	}
 
-	public static final void readBufferedStream(BufferedReader buf, URI resolved, String root) {
+	public static final void readBufferedStream(JaamSimModel simModel, BufferedReader buf, URI resolved, String root) {
 
 		try {
 			ArrayList<String> record = new ArrayList<>();
@@ -474,7 +474,7 @@ public class InputAgent {
 
 				if ("INCLUDE".equalsIgnoreCase(record.get(0))) {
 					try {
-						InputAgent.processIncludeRecord(pc, record);
+						InputAgent.processIncludeRecord(simModel, pc, record);
 					}
 					catch (URISyntaxException ex) {
 						rethrowWrapped(ex);
@@ -506,12 +506,12 @@ public class InputAgent {
 		}
 	}
 
-	private static void processIncludeRecord(ParseContext pc, ArrayList<String> record) throws URISyntaxException {
+	private static void processIncludeRecord(JaamSimModel simModel, ParseContext pc, ArrayList<String> record) throws URISyntaxException {
 		if (record.size() != 2) {
 			InputAgent.logError("Bad Include record, should be: Include <File>");
 			return;
 		}
-		InputAgent.readStream(pc.jail, pc.context, record.get(1).replaceAll("\\\\", "/"));
+		InputAgent.readStream(simModel, pc.jail, pc.context, record.get(1).replaceAll("\\\\", "/"));
 	}
 
 	private static void processDefineRecord(ArrayList<String> record) {
@@ -756,7 +756,7 @@ public class InputAgent {
 
 		// Load the input file
 		URI dirURI = file.getParentFile().toURI();
-		InputAgent.readStream("", dirURI, file.getName());
+		InputAgent.readStream(simModel, "", dirURI, file.getName());
 
 		// Validate the inputs
 		for (Entity each : simModel.getClonesOfIterator(Entity.class)) {
