@@ -41,7 +41,7 @@ public class TestSimulation {
 
 		// Load the autoload file
 		InputAgent.setRecordEdits(false);
-		InputAgent.readResource("<res>/inputs/autoload.cfg");
+		InputAgent.readResource(simModel, "<res>/inputs/autoload.cfg");
 	}
 
 	@Test
@@ -87,6 +87,6 @@ public class TestSimulation {
 	@Test
 	public void testSimpleInputFile() {
 		URL url = TestSimulation.class.getResource("Test0001.cfg");
-		InputAgent.readResource(url.toString());
+		InputAgent.readResource(simModel, url.toString());
 	}
 }

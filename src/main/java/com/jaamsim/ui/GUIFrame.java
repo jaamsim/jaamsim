@@ -425,7 +425,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		// Read the autoload configuration file
 		InputAgent.clear();
 		InputAgent.setRecordEdits(false);
-		InputAgent.readResource("<res>/inputs/autoload.cfg");
+		InputAgent.readResource(sim, "<res>/inputs/autoload.cfg");
 		InputAgent.setPreDefinedEntityCount( sim.getEntities().get( sim.getEntities().size() - 1 ).getEntityNumber());
 
 		updateForUndo();

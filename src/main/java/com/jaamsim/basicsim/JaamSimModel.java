@@ -91,7 +91,7 @@ public class JaamSimModel {
 	 */
 	public void autoLoad() {
 		InputAgent.setRecordEdits(false);
-		InputAgent.readResource("<res>/inputs/autoload.cfg");
+		InputAgent.readResource(this, "<res>/inputs/autoload.cfg");
 		InputAgent.setPreDefinedEntityCount( allInstances.get( allInstances.size() - 1 ).getEntityNumber());
 	}
 

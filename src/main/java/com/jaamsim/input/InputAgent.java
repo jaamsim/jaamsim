@@ -399,7 +399,7 @@ public class InputAgent {
 		throw new InputErrorException("Caught exception: %s", ex.getMessage() + "\n" + causedStack.toString());
 	}
 
-	public static final void readResource(String res) {
+	public static final void readResource(JaamSimModel simModel, String res) {
 		if (res == null)
 			return;
 
@@ -1878,7 +1878,7 @@ public class InputAgent {
 	public static void loadDefault(JaamSimModel simModel) {
 
 		// Read the default configuration file
-		InputAgent.readResource("<res>/inputs/default.cfg");
+		InputAgent.readResource(simModel, "<res>/inputs/default.cfg");
 
 		// A RecordEdits marker in the default configuration must be ignored
 		InputAgent.setRecordEditsFound(false);
