@@ -279,7 +279,7 @@ public class JaamSimModel {
 
 		// Print the selected outputs
 		if (simulation.getRunOutputList().getValue() != null) {
-			InputAgent.printRunOutputs(EventManager.simSeconds());
+			InputAgent.printRunOutputs(this, EventManager.simSeconds());
 		}
 
 		// Increment the run number and check for last run

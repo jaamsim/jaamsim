@@ -1465,8 +1465,7 @@ public class InputAgent {
 	 * Prints selected outputs for the simulation run to stdout or a file.
 	 * @param simTime - simulation time at which the outputs are printed.
 	 */
-	public static void printRunOutputs(double simTime) {
-		JaamSimModel simModel = GUIFrame.getJaamSimModel();
+	public static void printRunOutputs(JaamSimModel simModel, double simTime) {
 		Simulation simulation = simModel.getSimulation();
 
 		// Set up the custom outputs
