@@ -605,7 +605,7 @@ public class InputAgent {
 	 * @param addedEntity
 	 * @return
 	 */
-	public static <T extends Entity> T defineEntityWithUniqueName(Class<T> proto, String key, String sep, boolean addedEntity) {
+	public static <T extends Entity> T defineEntityWithUniqueName(JaamSimModel simModel, Class<T> proto, String key, String sep, boolean addedEntity) {
 		String name = getUniqueName(key, sep);
 		return defineEntity(proto, name, addedEntity);
 	}

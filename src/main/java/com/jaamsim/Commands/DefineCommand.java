@@ -48,7 +48,7 @@ public class DefineCommand implements Command {
 		if (simModel.getNamedEntity(entityName) != null) {
 			throw new ErrorException("Name is already in use. Should never happen.");
 		}
-		entity = InputAgent.defineEntityWithUniqueName(klass, entityName, "", true);
+		entity = InputAgent.defineEntityWithUniqueName(simModel, klass, entityName, "", true);
 	}
 
 	@Override
