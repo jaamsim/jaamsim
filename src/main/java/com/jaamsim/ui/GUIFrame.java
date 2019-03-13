@@ -553,7 +553,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				InputAgent.printInputFileKeywords();
+				InputAgent.printInputFileKeywords(sim);
 			}
 		} );
 		fileMenu.add( printInputItem );

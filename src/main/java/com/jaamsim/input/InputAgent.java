@@ -787,7 +787,7 @@ public class InputAgent {
 			throw new InputErrorException("%d input errors and %d warnings found", InputAgent.numErrors, InputAgent.numWarnings);
 
 		if (simModel.getSimulation().getPrintInputReport())
-			InputAgent.printInputFileKeywords();
+			InputAgent.printInputFileKeywords(simModel);
 	}
 
 	/**
@@ -876,7 +876,7 @@ public class InputAgent {
 	 *  <Object name> <Keyword> { < values > }
 	 *
 	 */
-	public static void printInputFileKeywords() {
+	public static void printInputFileKeywords(JaamSimModel simModel) {
 		// Create report file for the inputs
 		String inputReportFileName = InputAgent.getReportFileName(InputAgent.getRunName() + ".inp");
 
@@ -925,7 +925,7 @@ public class InputAgent {
 
 			// Loop through the instances for this entity class
 			int count = 0;
-			for (Entity ent : GUIFrame.getJaamSimModel().getInstanceIterator(each)) {
+			for (Entity ent : simModel.getInstanceIterator(each)) {
 				if (ent.getEntityNumber() <= preDefinedEntityCount)
 					continue;
 
@@ -964,7 +964,7 @@ public class InputAgent {
 			// Get the list of instances for this entity class
 			// sort the list alphabetically
 			ArrayList<Entity> cloneList = new ArrayList<>();
-			for (Entity ent : GUIFrame.getJaamSimModel().getInstanceIterator(each)) {
+			for (Entity ent : simModel.getInstanceIterator(each)) {
 				if (ent.getEntityNumber() <= preDefinedEntityCount) {
 					if (! (ent instanceof Simulation) ) {
 						continue;
