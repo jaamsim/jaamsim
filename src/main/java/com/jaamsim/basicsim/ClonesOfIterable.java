@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,8 +19,8 @@ package com.jaamsim.basicsim;
 
 
 public class ClonesOfIterable<T extends Entity> extends EntityIterator<T> {
-	public ClonesOfIterable(Class<T> aClass) {
-		super(aClass);
+	public ClonesOfIterable(JaamSimModel simModel, Class<T> aClass) {
+		super(simModel, aClass);
 	}
 
 	@Override

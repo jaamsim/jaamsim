@@ -551,7 +551,7 @@ public class JaamSimModel {
 	 * @return Iterator for instances of the class
 	 */
 	public <T extends Entity> InstanceIterable<T> getInstanceIterator(Class<T> proto){
-		return new InstanceIterable<>(proto);
+		return new InstanceIterable<>(this, proto);
 	}
 
 	/**
@@ -562,7 +562,7 @@ public class JaamSimModel {
 	 * @return Iterator for instances of the class and its sub-classes
 	 */
 	public <T extends Entity> ClonesOfIterable<T> getClonesOfIterator(Class<T> proto){
-		return new ClonesOfIterable<>(proto);
+		return new ClonesOfIterable<>(this, proto);
 	}
 
 	/**
@@ -574,7 +574,7 @@ public class JaamSimModel {
 	 * @return Iterator for instances of the class and its sub-classes that implement the specified interface
 	 */
 	public <T extends Entity> ClonesOfIterableInterface<T> getClonesOfIterator(Class<T> proto, Class<?> iface){
-		return new ClonesOfIterableInterface<>(proto, iface);
+		return new ClonesOfIterableInterface<>(this, proto, iface);
 	}
 
 }

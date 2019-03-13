@@ -186,7 +186,7 @@ public class Entity {
 	 * @return Iterator for instances of the class
 	 */
 	public static <T extends Entity> InstanceIterable<T> getInstanceIterator(Class<T> proto){
-		return new InstanceIterable<>(proto);
+		return new InstanceIterable<>(sim, proto);
 	}
 
 	/**
@@ -197,7 +197,7 @@ public class Entity {
 	 * @return Iterator for instances of the class and its sub-classes
 	 */
 	public static <T extends Entity> ClonesOfIterable<T> getClonesOfIterator(Class<T> proto){
-		return new ClonesOfIterable<>(proto);
+		return new ClonesOfIterable<>(sim, proto);
 	}
 
 	/**
@@ -209,7 +209,7 @@ public class Entity {
 	 * @return Iterator for instances of the class and its sub-classes that implement the specified interface
 	 */
 	public static <T extends Entity> ClonesOfIterableInterface<T> getClonesOfIterator(Class<T> proto, Class<?> iface){
-		return new ClonesOfIterableInterface<>(proto, iface);
+		return new ClonesOfIterableInterface<>(sim, proto, iface);
 	}
 
 	public void validate() throws InputErrorException {
