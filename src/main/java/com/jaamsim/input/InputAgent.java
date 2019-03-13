@@ -640,7 +640,9 @@ public class InputAgent {
 			return null;
 		}
 
+		Entity.setJaamSimModel(simModel);
 		T ent = createInstance(proto);
+
 		if (ent == null) {
 			InputAgent.logError("Could not create new Entity: %s", key);
 			return null;
