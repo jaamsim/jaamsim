@@ -640,6 +640,8 @@ public class Simulation extends Entity {
 		}
 
 		if (in == displayedUnits) {
+			if (GUIFrame.getInstance() == null)
+				return;
 			Unit.setPreferredUnitList(displayedUnits.getValue());
 			return;
 		}
