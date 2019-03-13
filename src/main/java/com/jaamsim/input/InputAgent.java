@@ -737,6 +737,7 @@ public class InputAgent {
 
 	// Load the run file
 	public static void loadConfigurationFile( File file) throws URISyntaxException {
+		JaamSimModel simModel = GUIFrame.getJaamSimModel();
 
 		String inputTraceFileName = InputAgent.getRunName() + ".log";
 		// Initializing the tracing for the model
@@ -759,7 +760,7 @@ public class InputAgent {
 		InputAgent.readStream("", dirURI, file.getName());
 
 		// Validate the inputs
-		for (Entity each : Entity.getClonesOfIterator(Entity.class)) {
+		for (Entity each : simModel.getClonesOfIterator(Entity.class)) {
 			try {
 				each.validate();
 			}
@@ -1229,6 +1230,7 @@ public class InputAgent {
 	 * @param fileName - the full path and file name for the new configuration file.
 	 */
 	public static void printNewConfigurationFileWithName( String fileName ) {
+		JaamSimModel simModel = GUIFrame.getJaamSimModel();
 
 		// 1) WRITE LINES FROM THE ORIGINAL CONFIGURATION FILE
 
@@ -1268,7 +1270,7 @@ public class InputAgent {
 
 		// Prepare a sorted list of all the entities that were added to the model
 		ArrayList<Entity> newEntities = new ArrayList<>();
-		for (Entity ent : Entity.getClonesOfIterator(Entity.class)) {
+		for (Entity ent : simModel.getClonesOfIterator(Entity.class)) {
 			if (!ent.testFlag(Entity.FLAG_ADDED) || ent.testFlag(Entity.FLAG_GENERATED))
 				continue;
 			newEntities.add(ent);
@@ -1309,7 +1311,7 @@ public class InputAgent {
 
 		// Prepare a sorted list of all the entities that were edited
 		ArrayList<Entity> entityList = new ArrayList<>();
-		for (Entity ent : Entity.getClonesOfIterator(Entity.class)) {
+		for (Entity ent : simModel.getClonesOfIterator(Entity.class)) {
 			if (!ent.testFlag(Entity.FLAG_EDITED) || ent.testFlag(Entity.FLAG_GENERATED))
 				continue;
 			entityList.add(ent);
@@ -1565,7 +1567,7 @@ public class InputAgent {
 
 		// Prepare a sorted list of entities
 		ArrayList<Entity> entList = new ArrayList<>();
-		for (Entity ent : Entity.getClonesOfIterator(Entity.class)) {
+		for (Entity ent : simModel.getClonesOfIterator(Entity.class)) {
 
 			if (ent.testFlag(Entity.FLAG_GENERATED))
 				continue;
