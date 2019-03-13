@@ -36,7 +36,6 @@ public class JaamSimModel {
 
 	private final EventManager eventManager;
 	private Simulation simulation;
-	private double endTime;   // simulation time (seconds) for the end of the run
 	private int runNumber;    // labels each run when multiple runs are being made
 	private InputErrorListener inputErrorListener;
 	private final AtomicLong entityCount = new AtomicLong(0);
@@ -74,9 +73,6 @@ public class JaamSimModel {
 			Entity ent = allInstances.get(allInstances.size() - 1);
 			ent.kill();
 		}
-
-		// Initialize basic model information
-		endTime = 8760.0*3600.0;
 
 		// close warning/error trace file
 		InputAgent.closeLogFile();
@@ -149,9 +145,6 @@ public class JaamSimModel {
 		}
 
 		eventManager.setTickLength(simulation.getTickLength());
-
-		endTime = simulation.getStartTime() + simulation.getInitializationTime() + simulation.getRunDuration();
-		simulation.setEndTime(endTime);
 
 		runNumber = simulation.getStartingRunNumber();
 		simulation.setRunNumber(runNumber);

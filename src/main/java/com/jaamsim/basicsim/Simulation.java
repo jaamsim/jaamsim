@@ -323,7 +323,6 @@ public class Simulation extends Entity {
 	         exampleList = {"TRUE"})
 	private final BooleanInput verifyEventsInput;
 
-	private double endTime;   // simulation time (seconds) for the end of the run
 	private int runNumber;    // labels each run when multiple runs are being made
 	private IntegerVector runIndexList;
 
@@ -605,7 +604,6 @@ public class Simulation extends Entity {
 	}
 
 	public Simulation() {
-		endTime = 8760.0*3600.0;
 		runNumber = 1;
 		runIndexList = new IntegerVector();
 		runIndexList.add(1);
@@ -933,16 +931,12 @@ public class Simulation extends Entity {
 		return startTimeInput.getValue();
 	}
 
-	public void setEndTime(double t) {
-		endTime = t;
-	}
-
 	/**
 	 * Returns the end time of the run.
 	 * @return - simulation time in seconds when the current run will stop.
 	 */
 	public double getEndTime() {
-		return endTime;
+		return getStartTime() + getInitializationTime() + getRunDuration();
 	}
 
 	/**
