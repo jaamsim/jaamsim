@@ -538,7 +538,7 @@ public class InputAgent {
 
 		// Loop over all the new Entity names
 		for (int i = 3; i < record.size() - 1; i++) {
-			InputAgent.defineEntity(proto, record.get(i), InputAgent.recordEdits());
+			InputAgent.defineEntity(simModel, proto, record.get(i), InputAgent.recordEdits());
 		}
 	}
 
@@ -607,7 +607,7 @@ public class InputAgent {
 	 */
 	public static <T extends Entity> T defineEntityWithUniqueName(JaamSimModel simModel, Class<T> proto, String key, String sep, boolean addedEntity) {
 		String name = getUniqueName(key, sep);
-		return defineEntity(proto, name, addedEntity);
+		return defineEntity(simModel, proto, name, addedEntity);
 	}
 
 	private static boolean isValidName(String key) {
@@ -628,7 +628,7 @@ public class InputAgent {
 	 * @param key
 	 * @param addedEntity
 	 */
-	private static <T extends Entity> T defineEntity(Class<T> proto, String key, boolean addedEntity) {
+	private static <T extends Entity> T defineEntity(JaamSimModel simModel, Class<T> proto, String key, boolean addedEntity) {
 		Entity existingEnt = Input.tryParseEntity(key, Entity.class);
 		if (existingEnt != null) {
 			InputAgent.logError(INP_ERR_DEFINEUSED, key, existingEnt.getClass().getSimpleName());
