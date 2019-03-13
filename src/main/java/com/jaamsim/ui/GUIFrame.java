@@ -3294,7 +3294,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		// If no configuration files were specified on the command line, then load the default configuration file
 		if (configFiles.size() == 0 && !scriptMode) {
 			InputAgent.setRecordEdits(true);
-			InputAgent.loadDefault();
+			InputAgent.loadDefault(sim);
 			GUIFrame.updateForSimState(GUIFrame.SIM_STATE_CONFIGURED);
 		}
 
@@ -3481,7 +3481,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 
 		clear();
 		InputAgent.setRecordEdits(true);
-		InputAgent.loadDefault();
+		InputAgent.loadDefault(sim);
 		displayWindows();
 		FrameBox.setSelectedEntity(sim.getSimulation(), false);
 	}
