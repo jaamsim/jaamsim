@@ -606,17 +606,6 @@ public class Simulation extends Entity {
 	public void updateForInput( Input<?> in ) {
 		super.updateForInput( in );
 
-		if(in == realTimeFactor || in == realTime) {
-			updateRealTime();
-			return;
-		}
-
-		if (in == pauseTime) {
-			if (GUIFrame.getInstance() != null)
-				GUIFrame.getInstance().updateForPauseTime(pauseTime.getValueString());
-			return;
-		}
-
 		if (in == reportDirectory) {
 			InputAgent.setReportDirectory(reportDirectory.getDir());
 			return;
@@ -639,170 +628,147 @@ public class Simulation extends Entity {
 			return;
 		}
 
+		// GUI keywords that require an instance of GUIFrame
+		if (GUIFrame.getInstance() == null)
+			return;
+		GUIFrame gui = GUIFrame.getInstance();
+
+		if (in == realTimeFactor || in == realTime) {
+			updateRealTime();
+			return;
+		}
+
+		if (in == pauseTime) {
+			gui.updateForPauseTime(pauseTime.getValueString());
+			return;
+		}
+
 		if (in == displayedUnits) {
-			if (GUIFrame.getInstance() == null)
-				return;
 			Unit.setPreferredUnitList(displayedUnits.getValue());
 			return;
 		}
 
 		if (in == snapGridSpacing) {
-			if (GUIFrame.getInstance() != null)
-				GUIFrame.getInstance().updateForSnapGridSpacing(snapGridSpacing.getValueString());
+			gui.updateForSnapGridSpacing(snapGridSpacing.getValueString());
 			return;
 		}
 
 		if (in == snapToGrid) {
-			if (GUIFrame.getInstance() != null)
-				GUIFrame.getInstance().updateForSnapToGrid();
+			gui.updateForSnapToGrid();
 			return;
 		}
 
 		if (in == showModelBuilder) {
-			if (GUIFrame.getInstance() != null)
-				setWindowVisible(EntityPallet.getInstance(), showModelBuilder.getValue());
+			setWindowVisible(EntityPallet.getInstance(), showModelBuilder.getValue());
 			return;
 		}
 
 		if (in == showObjectSelector) {
-			if (GUIFrame.getInstance() != null)
-				setWindowVisible(ObjectSelector.getInstance(), showObjectSelector.getValue());
+			setWindowVisible(ObjectSelector.getInstance(), showObjectSelector.getValue());
 			return;
 		}
 
 		if (in == showInputEditor) {
-			if (GUIFrame.getInstance() != null)
-				setWindowVisible(EditBox.getInstance(), showInputEditor.getValue());
+			setWindowVisible(EditBox.getInstance(), showInputEditor.getValue());
 			return;
 		}
 
 		if (in == showOutputViewer) {
-			if (GUIFrame.getInstance() != null)
-				setWindowVisible(OutputBox.getInstance(), showOutputViewer.getValue());
+			setWindowVisible(OutputBox.getInstance(), showOutputViewer.getValue());
 			return;
 		}
 
 		if (in == showPropertyViewer) {
-			if (GUIFrame.getInstance() != null)
-				setWindowVisible(PropertyBox.getInstance(), showPropertyViewer.getValue());
+			setWindowVisible(PropertyBox.getInstance(), showPropertyViewer.getValue());
 			return;
 		}
 
 		if (in == showLogViewer) {
-			if (GUIFrame.getInstance() != null)
-				setWindowVisible(LogBox.getInstance(), showLogViewer.getValue());
+			setWindowVisible(LogBox.getInstance(), showLogViewer.getValue());
 			return;
 		}
 
 		if (in == showEventViewer) {
-			if (GUIFrame.getInstance() != null) {
-				if (showEventViewer.getValue())
-					setWindowVisible(EventViewer.getInstance(), true);
-				else if (EventViewer.hasInstance())
-					EventViewer.getInstance().dispose();
-			}
+			if (showEventViewer.getValue())
+				setWindowVisible(EventViewer.getInstance(), true);
+			else if (EventViewer.hasInstance())
+				EventViewer.getInstance().dispose();
 			return;
 		}
 
 		if (in == modelBuilderPos) {
-			if (GUIFrame.getInstance() == null)
-				return;
 			IntegerVector pos = modelBuilderPos.getValue();
 			EntityPallet.getInstance().setLocation(pos.get(0), pos.get(1));
 			return;
 		}
 
 		if (in == modelBuilderSize) {
-			if (GUIFrame.getInstance() == null)
-				return;
 			IntegerVector size = modelBuilderSize.getValue();
 			EntityPallet.getInstance().setSize(size.get(0), size.get(1));
 			return;
 		}
 
 		if (in == objectSelectorPos) {
-			if (GUIFrame.getInstance() == null)
-				return;
 			IntegerVector pos = objectSelectorPos.getValue();
 			ObjectSelector.getInstance().setLocation(pos.get(0), pos.get(1));
 			return;
 		}
 
 		if (in == objectSelectorSize) {
-			if (GUIFrame.getInstance() == null)
-				return;
 			IntegerVector size = objectSelectorSize.getValue();
 			ObjectSelector.getInstance().setSize(size.get(0), size.get(1));
 			return;
 		}
 
 		if (in == inputEditorPos) {
-			if (GUIFrame.getInstance() == null)
-				return;
 			IntegerVector pos = inputEditorPos.getValue();
 			EditBox.getInstance().setLocation(pos.get(0), pos.get(1));
 			return;
 		}
 
 		if (in == inputEditorSize) {
-			if (GUIFrame.getInstance() == null)
-				return;
 			IntegerVector size = inputEditorSize.getValue();
 			EditBox.getInstance().setSize(size.get(0), size.get(1));
 			return;
 		}
 
 		if (in == outputViewerPos) {
-			if (GUIFrame.getInstance() == null)
-				return;
 			IntegerVector pos = outputViewerPos.getValue();
 			OutputBox.getInstance().setLocation(pos.get(0), pos.get(1));
 			return;
 		}
 
 		if (in == outputViewerSize) {
-			if (GUIFrame.getInstance() == null)
-				return;
 			IntegerVector size = outputViewerSize.getValue();
 			OutputBox.getInstance().setSize(size.get(0), size.get(1));
 			return;
 		}
 
 		if (in == propertyViewerPos) {
-			if (GUIFrame.getInstance() == null)
-				return;
 			IntegerVector pos = propertyViewerPos.getValue();
 			PropertyBox.getInstance().setLocation(pos.get(0), pos.get(1));
 			return;
 		}
 
 		if (in == propertyViewerSize) {
-			if (GUIFrame.getInstance() == null)
-				return;
 			IntegerVector size = propertyViewerSize.getValue();
 			PropertyBox.getInstance().setSize(size.get(0), size.get(1));
 			return;
 		}
 
 		if (in == logViewerPos) {
-			if (GUIFrame.getInstance() == null)
-				return;
 			IntegerVector pos = logViewerPos.getValue();
 			LogBox.getInstance().setLocation(pos.get(0), pos.get(1));
 			return;
 		}
 
 		if (in == logViewerSize) {
-			if (GUIFrame.getInstance() == null)
-				return;
 			IntegerVector size = logViewerSize.getValue();
 			LogBox.getInstance().setSize(size.get(0), size.get(1));
 			return;
 		}
 
 		if (in == eventViewerPos) {
-			if (GUIFrame.getInstance() == null)
-				return;
 			if (EventViewer.hasInstance()) {
 				IntegerVector pos = eventViewerPos.getValue();
 				EventViewer.getInstance().setLocation(pos.get(0), pos.get(1));
@@ -811,8 +777,6 @@ public class Simulation extends Entity {
 		}
 
 		if (in == eventViewerSize) {
-			if (GUIFrame.getInstance() == null)
-				return;
 			if (EventViewer.hasInstance()) {
 				IntegerVector size = eventViewerSize.getValue();
 				EventViewer.getInstance().setSize(size.get(0), size.get(1));
@@ -821,11 +785,9 @@ public class Simulation extends Entity {
 		}
 
 		if (in == controlPanelWidth) {
-			if (GUIFrame.getInstance() != null) {
-				int width = controlPanelWidth.getValue();
-				int height = GUIFrame.getInstance().getSize().height;
-				GUIFrame.getInstance().setSize(width, height);
-			}
+			int width = controlPanelWidth.getValue();
+			int height = gui.getSize().height;
+			gui.setSize(width, height);
 			return;
 		}
 	}
