@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2017-2018 JaamSim Software Inc.
+ * Copyright (C) 2017-2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -76,7 +76,7 @@ public class EntityProvInput<T extends Entity> extends Input<EntityProvider<T>> 
 	public ArrayList<String> getValidOptions() {
 		ArrayList<String> list = new ArrayList<>();
 
-		for (T each: Entity.getClonesOfIterator(entClass)) {
+		for (T each: thisEnt.getJaamSimModel().getClonesOfIterator(entClass)) {
 			if (each.testFlag(Entity.FLAG_GENERATED))
 				continue;
 
