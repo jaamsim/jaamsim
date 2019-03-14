@@ -160,8 +160,6 @@ public class JaamSimModel {
 	 * Starts a single simulation run.
 	 */
 	public void startRun() {
-		if (GUIFrame.getInstance() != null)
-			GUIFrame.getInstance().initSpeedUp(0.0d);
 		eventManager.scheduleProcessExternal(0, 0, false, new InitModelTarget(this), null);
 		eventManager.resume(eventManager.secondsToNearestTick(simulation.getPauseTime()));
 	}

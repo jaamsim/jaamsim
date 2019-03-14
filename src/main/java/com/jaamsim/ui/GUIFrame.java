@@ -2648,7 +2648,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 			return confirmed;
 		}
 		else if( getSimState() == SIM_STATE_PAUSED ) {
-			initSpeedUp(EventManager.ticksToSecs(simTicks));
 			sim.resume(sim.getSimulation().getPauseTime());
 			return true;
 		}
@@ -3416,6 +3415,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 	@Override
 	public void timeRunning(long tick, boolean running) {
 		if (running) {
+			initSpeedUp(EventManager.ticksToSecs(tick));
 			updateForSimulationState(SIM_STATE_RUNNING);
 		}
 		else {
