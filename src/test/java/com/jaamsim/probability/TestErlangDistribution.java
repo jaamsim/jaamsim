@@ -34,6 +34,8 @@ public class TestErlangDistribution {
 	@Before
 	public void setupTests() {
 		simModel = new JaamSimModel();
+		InputAgent.setRecordEdits(false);
+		InputAgent.readResource(simModel, "<res>/inputs/autoload.cfg");
 	}
 
 	@Test

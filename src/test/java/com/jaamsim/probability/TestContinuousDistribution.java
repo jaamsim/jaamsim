@@ -38,6 +38,8 @@ public class TestContinuousDistribution {
 	@Before
 	public void setupTests() {
 		simModel = new JaamSimModel();
+		InputAgent.setRecordEdits(false);
+		InputAgent.readResource(simModel, "<res>/inputs/autoload.cfg");
 	}
 
 	static class SampleDistribution extends ProcessTarget {
