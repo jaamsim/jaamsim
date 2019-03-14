@@ -106,7 +106,7 @@ public class Pack extends LinkedService {
 		DisplayEntity proto = (DisplayEntity)prototypeEntityContainer.getValue();
 		StringBuilder sb = new StringBuilder();
 		sb.append(this.getName()).append("_").append(numberGenerated);
-		DisplayEntity ret = InputAgent.generateEntityWithName(proto.getClass(), sb.toString());
+		DisplayEntity ret = InputAgent.generateEntityWithName(getJaamSimModel(), proto.getClass(), sb.toString());
 		Entity.fastCopyInputs(proto, ret);
 		ret.earlyInit();
 		return (EntContainer)ret;

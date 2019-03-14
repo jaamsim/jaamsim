@@ -552,11 +552,11 @@ public class InputAgent {
 		return ent;
 	}
 
-	public static <T extends Entity> T generateEntityWithName(Class<T> proto, String key) {
-		return generateEntityWithName(proto, key, false);
+	public static <T extends Entity> T generateEntityWithName(JaamSimModel simModel, Class<T> proto, String key) {
+		return generateEntityWithName(simModel, proto, key, false);
 	}
 
-	public static <T extends Entity> T generateEntityWithName(Class<T> proto, String key, boolean reg) {
+	public static <T extends Entity> T generateEntityWithName(JaamSimModel simModel, Class<T> proto, String key, boolean reg) {
 		if (key == null)
 			throw new ErrorException("Must provide a name for generated Entities");
 

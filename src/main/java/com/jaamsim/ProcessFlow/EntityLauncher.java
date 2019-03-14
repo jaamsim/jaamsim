@@ -88,7 +88,7 @@ public class EntityLauncher extends GameEntity implements LinkDisplayable {
 		numberGenerated++;
 		DisplayEntity proto = prototypeEntity.getValue().getNextEntity(0.0d);
 		name = name + numberGenerated;
-		DisplayEntity ent = InputAgent.generateEntityWithName(proto.getClass(), name);
+		DisplayEntity ent = InputAgent.generateEntityWithName(getJaamSimModel(), proto.getClass(), name);
 		Entity.fastCopyInputs(proto, ent);
 		ent.earlyInit();
 

@@ -178,7 +178,7 @@ public class EntityGenerator extends LinkedService {
 			DisplayEntity proto = prototypeEntity.getValue().getNextEntity(simTime);
 			StringBuilder sb = new StringBuilder();
 			sb.append(name).append(numberGenerated);
-			DisplayEntity ent = InputAgent.generateEntityWithName(proto.getClass(), sb.toString());
+			DisplayEntity ent = InputAgent.generateEntityWithName(getJaamSimModel(), proto.getClass(), sb.toString());
 			Entity.fastCopyInputs(proto, ent);
 			ent.earlyInit();
 

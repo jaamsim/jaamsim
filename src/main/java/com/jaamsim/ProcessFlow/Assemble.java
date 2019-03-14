@@ -165,7 +165,7 @@ public class Assemble extends LinkedService {
 		sb.append(this.getName()).append("_").append(numberGenerated);
 
 		// Create the new entity
-		assembledEntity = InputAgent.generateEntityWithName(proto.getClass(), sb.toString());
+		assembledEntity = InputAgent.generateEntityWithName(getJaamSimModel(), proto.getClass(), sb.toString());
 		Entity.fastCopyInputs(proto, assembledEntity);
 		assembledEntity.earlyInit();
 
