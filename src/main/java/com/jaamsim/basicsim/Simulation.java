@@ -323,7 +323,7 @@ public class Simulation extends Entity {
 	         exampleList = {"TRUE"})
 	private final BooleanInput verifyEventsInput;
 
-	private static String modelName = "JaamSim";
+	private String modelName = "JaamSim";
 
 	{
 
