@@ -542,16 +542,6 @@ public class InputAgent {
 		}
 	}
 
-	private static <T extends Entity> T createInstance(Class<T> proto) {
-		T ent = null;
-		try {
-			ent = proto.newInstance();
-		}
-		catch (Throwable e) {}
-
-		return ent;
-	}
-
 	public static <T extends Entity> T generateEntityWithName(JaamSimModel simModel, Class<T> proto, String key) {
 		return generateEntityWithName(simModel, proto, key, false);
 	}
@@ -565,7 +555,7 @@ public class InputAgent {
 			return null;
 		}
 
-		T ent = createInstance(proto);
+		T ent = simModel.createInstance(proto);
 		if (ent == null) {
 			InputAgent.logError("Could not create new Entity: %s", key);
 			return null;
@@ -640,8 +630,7 @@ public class InputAgent {
 			return null;
 		}
 
-		Entity.setJaamSimModel(simModel);
-		T ent = createInstance(proto);
+		T ent = simModel.createInstance(proto);
 
 		if (ent == null) {
 			InputAgent.logError("Could not create new Entity: %s", key);

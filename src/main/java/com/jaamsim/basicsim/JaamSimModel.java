@@ -490,6 +490,18 @@ public class JaamSimModel {
 		}
 	}
 
+
+	public final <T extends Entity> T createInstance(Class<T> proto) {
+		Entity.setJaamSimModel(this);
+		T ent = null;
+		try {
+			ent = proto.newInstance();
+		}
+		catch (Throwable e) {}
+
+		return ent;
+	}
+
 	final void renameEntity(Entity e, String newName) {
 		synchronized (allInstances) {
 			// Unregistered entities do not appear in the named entity hashmap, no consistency checks needed
