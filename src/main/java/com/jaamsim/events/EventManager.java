@@ -229,7 +229,7 @@ public final class EventManager {
 				return;
 
 			processRunning = true;
-			timelistener.timeRunning(true);
+			timelistener.timeRunning(currentTick, true);
 
 			// Loop continuously
 			while (true) {
@@ -241,7 +241,7 @@ public final class EventManager {
 
 				if (!executeEvents) {
 					processRunning = false;
-					timelistener.timeRunning(false);
+					timelistener.timeRunning(currentTick, false);
 					return;
 				}
 

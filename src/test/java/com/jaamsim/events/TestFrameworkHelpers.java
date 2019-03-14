@@ -29,7 +29,7 @@ public class TestFrameworkHelpers {
 		@Override
 		public void tickUpdate(long tick) {}
 		@Override
-		public void timeRunning(boolean running) {
+		public void timeRunning(long tick, boolean running) {
 			synchronized (this) {
 				if (running) return;
 

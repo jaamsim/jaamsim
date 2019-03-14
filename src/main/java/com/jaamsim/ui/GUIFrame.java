@@ -3414,7 +3414,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 	}
 
 	@Override
-	public void timeRunning(boolean running) {
+	public void timeRunning(long tick, boolean running) {
 		if (running) {
 			updateForSimulationState(SIM_STATE_RUNNING);
 		}
