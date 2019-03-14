@@ -133,6 +133,7 @@ public abstract class LinkedComponent extends StateEntity implements Linkable, L
 
 	@Override
 	public void addEntity(DisplayEntity ent) {
+		if (isTraceFlag()) trace(0, "addEntity(%s)", ent);
 		this.registerEntity(ent);
 	}
 
