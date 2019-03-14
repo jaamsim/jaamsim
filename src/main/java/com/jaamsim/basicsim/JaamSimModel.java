@@ -339,8 +339,8 @@ public class JaamSimModel {
 
 	public Simulation getSimulation() {
 		if (simulation == null) {
-			for (Entity ent : getInstanceIterator(Simulation.class)) {
-				simulation = (Simulation) ent;
+			for (Simulation ent : getInstanceIterator(Simulation.class)) {
+				simulation = ent;
 				break;
 			}
 		}
