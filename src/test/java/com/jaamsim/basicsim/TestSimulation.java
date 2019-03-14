@@ -23,6 +23,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.jaamsim.events.TestFrameworkHelpers;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.KeywordIndex;
@@ -37,7 +38,7 @@ public class TestSimulation {
 		simModel = new JaamSimModel();
 		if (simModel.getSimulation() != null)
 			simModel.clear();
-		InputAgent.setBatch(true);
+		InputAgent.setBatch(false);
 
 		// Load the autoload file
 		InputAgent.setRecordEdits(false);
@@ -88,5 +89,8 @@ public class TestSimulation {
 	public void testSimpleInputFile() {
 		URL url = TestSimulation.class.getResource("Test0001.cfg");
 		InputAgent.readResource(simModel, url.toString());
+
+		simModel.initRun();
+		TestFrameworkHelpers.runEventsToTick(simModel.getEventManager(), Long.MAX_VALUE, 1000);
 	}
 }
