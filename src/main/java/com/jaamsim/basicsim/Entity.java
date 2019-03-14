@@ -152,11 +152,7 @@ public class Entity {
 	 * Constructor for entity initializing members.
 	 */
 	public Entity() {
-		this(sim);
-	}
-
-	public Entity(JaamSimModel sm) {
-		simModel = sm;
+		simModel = sim;
 		entityNumber = simModel.getNextEntityID();
 		simModel.addInstance(this);
 		flags = 0;
