@@ -50,11 +50,11 @@ public class TestFrameworkHelpers {
 					evt.setTimeListener(null);
 					return;
 				}
+				waitThread = null;
 			}
 
 			evt.pause();
 			evt.setTimeListener(null);
-			waitThread = null;
 			throw new RuntimeException("Test not complete before timeout");
 		}
 	}
