@@ -457,7 +457,7 @@ public class ExpressionBox extends JDialog {
 					// Loop through the unit types that have been defined
 					for (String utName : Unit.getUnitTypeList()) {
 						final Class<? extends Unit> ut = Input.parseUnitType(utName);
-						ArrayList<? extends Unit> unitList = Unit.getUnitList(ut);
+						ArrayList<? extends Unit> unitList = Unit.getUnitList(GUIFrame.getJaamSimModel(), ut);
 						if (unitList.isEmpty())
 							continue;
 

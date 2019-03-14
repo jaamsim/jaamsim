@@ -23,6 +23,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 
 import com.jaamsim.basicsim.Entity;
+import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.basicsim.ObjectType;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.Keyword;
@@ -144,9 +145,9 @@ public abstract class Unit extends Entity {
 		return list;
 	}
 
-	public static <T extends Unit> ArrayList<T> getUnitList(Class<T> ut) {
+	public static <T extends Unit> ArrayList<T> getUnitList(JaamSimModel model, Class<T> ut) {
 		ArrayList<T> ret = new ArrayList<>();
-		for (T u: GUIFrame.getJaamSimModel().getClonesOfIterator(ut)) {
+		for (T u: model.getClonesOfIterator(ut)) {
 			ret.add(u);
 		}
 		Collections.sort(ret, Unit.unitSortOrder);
