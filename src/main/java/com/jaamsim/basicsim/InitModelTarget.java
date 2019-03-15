@@ -42,16 +42,11 @@ public class InitModelTarget extends ProcessTarget {
 		simModel.lateInit();
 
 		// Start each entity
-		double startTime = simulation.getStartTime();
-		for (Entity each : simModel.getEntities()) {
-			if (!each.isActive())
-				continue;
-			EventManager.scheduleSeconds(startTime, 0, true, new StartUpTarget(each), null);
-		}
+		simModel.startUp();
 
 		// Schedule the initialisation period
 		if (simulation.getInitializationTime() > 0.0) {
-			double clearTime = startTime + simulation.getInitializationTime();
+			double clearTime = simulation.getStartTime() + simulation.getInitializationTime();
 			EventManager.scheduleSeconds(clearTime, 5, false, new ClearStatisticsTarget(simModel), null);
 		}
 

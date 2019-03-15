@@ -186,6 +186,18 @@ public class JaamSimModel {
 		}
 	}
 
+	/**
+	 * Performs the start-up procedure for each entity.
+	 */
+	public void startUp() {
+		long startTicks = eventManager.secondsToNearestTick(simulation.getStartTime());
+		for (Entity each : getClonesOfIterator(Entity.class)) {
+			if (!each.isActive())
+				continue;
+			EventManager.scheduleTicks(startTicks, 0, true, new StartUpTarget(each), null);
+		}
+	}
+
 	public void doPauseCondition() {
 		if (simulation.isPauseConditionSet())
 			EventManager.scheduleUntil(pauseModelTarget, pauseCondition, null);
