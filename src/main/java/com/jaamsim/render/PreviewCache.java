@@ -49,7 +49,7 @@ public class PreviewCache {
 		_imageCache = new HashMap<>();
 
 		if (GUIFrame.getInstance().getSimState() != GUIFrame.SIM_STATE_RUNNING) {
-			dummyEntity = new DisplayEntity();
+			dummyEntity = GUIFrame.getJaamSimModel().createInstance(DisplayEntity.class);
 			//FIXME: remove this when models are no longer static
 			dummyEntity.setName("");
 			dummyEntity.kill();
@@ -108,7 +108,7 @@ public class PreviewCache {
 
 			if (dummyEntity == null) {
 				if (GUIFrame.getInstance().getSimState() != GUIFrame.SIM_STATE_RUNNING) {
-					dummyEntity = new DisplayEntity();
+					dummyEntity = GUIFrame.getJaamSimModel().createInstance(DisplayEntity.class);
 					dummyEntity.kill();
 				} else {
 					// The simulation is running so we can't make the dummy entity
