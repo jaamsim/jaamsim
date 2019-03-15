@@ -24,17 +24,18 @@ import org.junit.Test;
 
 import com.jaamsim.ProbabilityDistributions.BooleanSelector;
 import com.jaamsim.basicsim.JaamSimModel;
+import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.input.InputAgent;
 
 public class TestBooleanSelector {
 
 	JaamSimModel simModel;
+	Simulation simulation;
 
 	@Before
 	public void setupTests() {
 		simModel = new JaamSimModel();
-		InputAgent.setRecordEdits(false);
-		InputAgent.readResource(simModel, "<res>/inputs/autoload.cfg");
+		simulation = new Simulation();
 	}
 
 	@Test
