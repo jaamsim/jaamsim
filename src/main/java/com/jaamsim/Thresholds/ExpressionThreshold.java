@@ -209,9 +209,7 @@ public class ExpressionThreshold extends Threshold {
 
 		// If necessary, schedule an event to change the saved state
 		if (ret != super.isOpen() && !setOpenHandle.isScheduled()) {
-			if (isTraceFlag()) {
-				trace(0, "isOpen - super.isOpen=%s, openCondition=%s", super.isOpen(), ret);
-			}
+			if (isTraceFlag()) trace(0, "isOpen()=%s, super.isOpen()=%s", ret, super.isOpen());
 			this.scheduleProcessTicks(0L, 2, true, setOpenTarget, setOpenHandle);  // FIFO
 		}
 
