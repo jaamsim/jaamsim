@@ -218,11 +218,15 @@ public class JaamSimModel {
 	 */
 	public void clearStatistics() {
 		for (Entity ent : getClonesOfIterator(Entity.class)) {
+			if (!ent.isActive())
+				continue;
 			ent.clearStatistics();
 		}
 
 		// Reset state statistics
 		for (StateEntity each : getClonesOfIterator(StateEntity.class)) {
+			if (!each.isActive())
+				continue;
 			each.collectInitializationStats();
 		}
 	}
@@ -284,6 +288,8 @@ public class JaamSimModel {
 
 		// Execute the end of run method for each entity
 		for (Entity each : getClonesOfIterator(Entity.class)) {
+			if (!each.isActive())
+				continue;
 			each.doEnd();
 		}
 
