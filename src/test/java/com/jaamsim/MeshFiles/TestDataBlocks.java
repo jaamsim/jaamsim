@@ -207,7 +207,7 @@ public class TestDataBlocks {
 
 		DataBlock grandChild = new DataBlock(grandChildName, 128);
 		for (int i = 0; i < 4; ++i) {
-			grandChild.writeLong(i * 16000);
+			grandChild.writeLong(i * 16000l);
 			grandChild.writeDouble(i * 16000);
 		}
 

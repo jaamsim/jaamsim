@@ -115,7 +115,7 @@ public class TestExpParser {
 		}
 	}
 
-	class ErrorResolver implements ExpParser.OutputResolver {
+	static class ErrorResolver implements ExpParser.OutputResolver {
 
 		private final ExpError error = new ExpError(null, 0, "Variables not supported in test");
 

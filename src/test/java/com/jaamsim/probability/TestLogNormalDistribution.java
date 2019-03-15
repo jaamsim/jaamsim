@@ -31,12 +31,11 @@ import com.jaamsim.input.InputAgent;
 public class TestLogNormalDistribution {
 
 	JaamSimModel simModel;
-	Simulation simulation;
 
 	@Before
 	public void setupTests() {
 		simModel = new JaamSimModel();
-		simulation = simModel.createInstance(Simulation.class);
+		simModel.createInstance(Simulation.class);
 	}
 
 	@Test
