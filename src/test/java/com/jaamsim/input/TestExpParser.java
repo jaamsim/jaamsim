@@ -203,9 +203,9 @@ public class TestExpParser {
 	}
 
 	static JaamSimModel sim = new JaamSimModel();
-	static Entity mapEnt = new Entity();
-	static Entity arrayEnt = new Entity();
-	static Entity dummyEnt = new Entity();
+	static Entity mapEnt = sim.createInstance(Entity.class);
+	static Entity arrayEnt = sim.createInstance(Entity.class);
+	static Entity dummyEnt = sim.createInstance(Entity.class);
 	static HashMap<Double, Double> map0 = new HashMap<>();
 	static HashMap<String, Double> map1 = new HashMap<>();
 	static HashMap<String, Double> distanceMap = new HashMap<>();
@@ -688,8 +688,8 @@ public class TestExpParser {
 	@Test
 	public void testString() throws ExpError {
 		// This is needed since we do not initialize the rest of the unit system
-		@SuppressWarnings("unused")
-		DimensionlessUnit du = new DimensionlessUnit();
+		JaamSimModel mod = new JaamSimModel();
+		mod.createInstance(DimensionlessUnit.class);
 
 		ExpParser.Expression exp = ExpParser.parseExpression(pc, "\"stringly\"");
 		ExpResult res = exp.evaluate(ec);

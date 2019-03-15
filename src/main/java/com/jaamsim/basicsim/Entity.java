@@ -152,7 +152,7 @@ public class Entity {
 	 * Constructor for entity initializing members.
 	 */
 	public Entity() {
-		simModel = sim;
+		simModel = JaamSimModel.getCreateModel();
 		entityNumber = simModel.getNextEntityID();
 		simModel.addInstance(this);
 		flags = 0;
@@ -166,7 +166,7 @@ public class Entity {
 		return simModel.getSimulation();
 	}
 
-	public static void setJaamSimModel(JaamSimModel sim) {
+	static void setJaamSimModel(JaamSimModel sim) {
 		Entity.sim = sim;
 	}
 

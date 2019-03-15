@@ -34,6 +34,8 @@ import com.jaamsim.ui.GUIFrame;
 import com.jaamsim.ui.LogBox;
 
 public class JaamSimModel {
+	private static final Object createLock = new Object();
+	private static JaamSimModel createModel = null;
 
 	private final EventManager eventManager;
 	private Simulation simulation;
@@ -508,12 +510,21 @@ public class JaamSimModel {
 		}
 	}
 
+	static JaamSimModel getCreateModel() {
+		synchronized (createLock) {
+			JaamSimModel mod = createModel;
+			createModel = null;
+			return mod;
+		}
+	}
 
 	public final <T extends Entity> T createInstance(Class<T> proto) {
-		Entity.setJaamSimModel(this);
 		T ent = null;
 		try {
-			ent = proto.newInstance();
+			synchronized (createLock) {
+				createModel = this;
+				ent = proto.newInstance();
+			}
 		}
 		catch (Throwable e) {}
 
