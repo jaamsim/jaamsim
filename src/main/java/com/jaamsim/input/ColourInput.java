@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018 JaamSim Software Inc.
+ * Copyright (C) 2018-2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import java.util.HashMap;
 
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.math.Color4d;
+import com.jaamsim.ui.GUIFrame;
 
 public class ColourInput extends Input<Color4d> {
 
@@ -396,7 +397,7 @@ private static void initColors() {
 
 	public static ArrayList<Color4d> getColoursInUse() {
 		ArrayList<Color4d> ret = new ArrayList<>();
-		for (Entity ent : Entity.getClonesOfIterator(Entity.class)) {
+		for (Entity ent : GUIFrame.getJaamSimModel().getClonesOfIterator(Entity.class)) {
 			for (Input<?> in : ent.getEditableInputs()) {
 				if (!(in instanceof ColourInput))
 					continue;

@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,15 +19,28 @@ package com.jaamsim.probability;
 
 import static org.junit.Assert.assertTrue;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import com.jaamsim.ProbabilityDistributions.BooleanSelector;
+import com.jaamsim.basicsim.JaamSimModel;
+import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.input.InputAgent;
 
 public class TestBooleanSelector {
+
+	JaamSimModel simModel;
+	Simulation simulation;
+
+	@Before
+	public void setupTests() {
+		simModel = new JaamSimModel();
+		simulation = simModel.createInstance(Simulation.class);
+	}
+
 	@Test
 	public void allTrue() {
-		BooleanSelector selector = InputAgent.defineEntityWithUniqueName(BooleanSelector.class, "Dist", "-", true);
+		BooleanSelector selector = InputAgent.defineEntityWithUniqueName(simModel, BooleanSelector.class, "Dist", "-", true);
 		InputAgent.applyArgs(selector, "RandomSeed", "1");
 		selector.validate();
 		selector.earlyInit();
@@ -46,7 +60,7 @@ public class TestBooleanSelector {
 
 	@Test
 	public void allFalse() {
-		BooleanSelector selector = InputAgent.defineEntityWithUniqueName(BooleanSelector.class, "Dist", "-", true);
+		BooleanSelector selector = InputAgent.defineEntityWithUniqueName(simModel, BooleanSelector.class, "Dist", "-", true);
 		InputAgent.applyArgs(selector, "RandomSeed", "1");
 		InputAgent.applyArgs(selector, "TrueProbability", "0.0");
 		selector.validate();
@@ -75,7 +89,7 @@ public class TestBooleanSelector {
 	}
 
 	private void testMix(double trueProb, int numSamples) {
-		BooleanSelector selector = InputAgent.defineEntityWithUniqueName(BooleanSelector.class, "Dist", "-", true);
+		BooleanSelector selector = InputAgent.defineEntityWithUniqueName(simModel, BooleanSelector.class, "Dist", "-", true);
 		InputAgent.applyArgs(selector, "RandomSeed", "1");
 		InputAgent.applyArgs(selector, "TrueProbability", Double.toString(trueProb));
 		selector.validate();

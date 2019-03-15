@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018 JaamSim Software Inc.
+ * Copyright (C) 2018-2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ package com.jaamsim.input;
 import java.util.ArrayList;
 
 import com.jaamsim.Samples.TimeSeriesData;
-import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
@@ -42,9 +41,6 @@ public class TimeSeriesDataInput extends Input<TimeSeriesData> {
 	public void parse(KeywordIndex kw) throws InputErrorException {
 
 		boolean braceOpened = false;
-
-		// Set the clock tick length
-		tickLength = Simulation.getTickLength();
 
 		if (unitType == UserSpecifiedUnit.class)
 			throw new InputErrorException(INP_ERR_UNITUNSPECIFIED);
@@ -143,6 +139,10 @@ public class TimeSeriesDataInput extends Input<TimeSeriesData> {
 		if (u != unitType)
 			this.reset();
 		unitType = u;
+	}
+
+	public void setTickLength(double val) {
+		tickLength = val;
 	}
 
 	public double getTickLength() {

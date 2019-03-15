@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2010-2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018 JaamSim Software Inc.
+ * Copyright (C) 2018-2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import com.jaamsim.basicsim.Entity;
+import com.jaamsim.ui.GUIFrame;
 
 public class EntityListInput<T extends Entity> extends ListInput<ArrayList<T>> {
 	private Class<T> entClass;
@@ -131,7 +132,7 @@ public class EntityListInput<T extends Entity> extends ListInput<ArrayList<T>> {
 	@Override
 	public ArrayList<String> getValidOptions() {
 		ArrayList<String> list = new ArrayList<>();
-		for(T each: Entity.getClonesOfIterator(entClass) ) {
+		for(T each: GUIFrame.getJaamSimModel().getClonesOfIterator(entClass) ) {
 			if(each.testFlag(Entity.FLAG_GENERATED))
 				continue;
 

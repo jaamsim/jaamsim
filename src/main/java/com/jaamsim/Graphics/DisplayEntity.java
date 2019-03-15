@@ -31,7 +31,6 @@ import com.jaamsim.DisplayModels.TextModel;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.basicsim.ObjectType;
-import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.EntityInput;
@@ -931,9 +930,9 @@ public class DisplayEntity extends Entity {
 		if (!isMovable())
 			return;
 		Vec3d pos = getPosition();
-		double inc = Simulation.getIncrementSize();
-		if (Simulation.isSnapToGrid())
-			inc = Math.max(inc, Simulation.getSnapGridSpacing());
+		double inc = getSimulation().getIncrementSize();
+		if (getSimulation().isSnapToGrid())
+			inc = Math.max(inc, getSimulation().getSnapGridSpacing());
 		switch (keyCode) {
 
 			case KeyEvent.VK_LEFT:
@@ -961,8 +960,8 @@ public class DisplayEntity extends Entity {
 			default:
 				return;
 		}
-		if (Simulation.isSnapToGrid())
-			pos = Simulation.getSnapGridPosition(pos, pos, shift);
+		if (getSimulation().isSnapToGrid())
+			pos = getSimulation().getSnapGridPosition(pos, pos, shift);
 
 		KeywordIndex kw = InputAgent.formatVec3dInput(positionInput.getKeyword(), pos, DistanceUnit.class);
 		InputAgent.storeAndExecute(new KeywordCommand(this, kw));

@@ -378,7 +378,7 @@ public class RenderManager implements DragSourceListener {
 				ArrayList<DisplayModelBinding> selectedBindings = new ArrayList<>();
 
 				// Update all graphical entities in the simulation
-				final ArrayList<? extends Entity> allEnts = Entity.getAll();
+				final ArrayList<? extends Entity> allEnts = GUIFrame.getJaamSimModel().getEntities();
 				for (int i = 0; i < allEnts.size(); i++) {
 					DisplayEntity de;
 					try {
@@ -479,7 +479,7 @@ public class RenderManager implements DragSourceListener {
 					dbgMsg.append(" entities at (").append(mouseInfo.x);
 					dbgMsg.append(", ").append(mouseInfo.y).append("): ");
 					for (PickData pd : picks) {
-						Entity ent = Entity.idToEntity(pd.id);
+						Entity ent = GUIFrame.getJaamSimModel().idToEntity(pd.id);
 						if (ent != null)
 							dbgMsg.append(ent.getName());
 
@@ -559,7 +559,7 @@ public class RenderManager implements DragSourceListener {
 
 			for (PickData pd : picks) {
 				if (!pd.isEntity) { continue; }
-				Entity ent = Entity.idToEntity(pd.id);
+				Entity ent = GUIFrame.getJaamSimModel().idToEntity(pd.id);
 				if (ent instanceof DisplayEntity) {
 					DisplayEntity de = (DisplayEntity)ent;
 					if (de.isMovable()) // only a movable DisplayEntity responds to a right-click
@@ -618,7 +618,7 @@ public class RenderManager implements DragSourceListener {
 		for (PickData pd : picks) {
 			// Select the first entity after sorting
 			if (pd.isEntity) {
-				DisplayEntity ent = (DisplayEntity)Entity.idToEntity(pd.id);
+				DisplayEntity ent = (DisplayEntity) GUIFrame.getJaamSimModel().idToEntity(pd.id);
 				if (!ent.isMovable()) {
 					continue;
 				}
@@ -840,7 +840,7 @@ public class RenderManager implements DragSourceListener {
 			}
 			knownIDs.add(pick.pickingID);
 
-			DisplayEntity ent = (DisplayEntity)Entity.idToEntity(pick.pickingID);
+			DisplayEntity ent = (DisplayEntity)GUIFrame.getJaamSimModel().idToEntity(pick.pickingID);
 			if (ent == null) {
 				// This object is not an entity, but may be a picking handle
 				uniquePicks.add(new PickData(pick.pickingID, pick.dist));
@@ -1088,8 +1088,9 @@ public class RenderManager implements DragSourceListener {
 			pos.add3(del);
 		}
 
-		if (Simulation.isSnapToGrid())
-			pos = Simulation.getSnapGridPosition(pos, selectedEntity.getGlobalPosition(), shift);
+		Simulation simulation = GUIFrame.getJaamSimModel().getSimulation();
+		if (simulation.isSnapToGrid())
+			pos = simulation.getSnapGridPosition(pos, selectedEntity.getGlobalPosition(), shift);
 		Vec3d localPos = selectedEntity.getLocalPosition(pos);
 		KeywordIndex kw = InputAgent.formatVec3dInput("Position", localPos, DistanceUnit.class);
 
@@ -1163,8 +1164,9 @@ public class RenderManager implements DragSourceListener {
 			fixedPoint = new Vec4d( 0.5,  0.5, 0.0, 1.0d);
 		}
 
-		if (Simulation.isSnapToGrid())
-			scale = Simulation.getSnapGridPosition(scale, dragEntitySize, false);
+		Simulation simulation = GUIFrame.getJaamSimModel().getSimulation();
+		if (simulation.isSnapToGrid())
+			scale = simulation.getSnapGridPosition(scale, dragEntitySize, false);
 
 		// Handle the case where the scale is pulled through itself. Fix the scale,
 		// and swap the currently selected handle
@@ -1239,7 +1241,8 @@ public class RenderManager implements DragSourceListener {
 
 		Vec3d orient = new Vec3d(dragEntityOrientation);
 		orient.z += theta;
-		if (Simulation.isSnapToGrid())
+		Simulation simulation = GUIFrame.getJaamSimModel().getSimulation();
+		if (simulation.isSnapToGrid())
 			orient = Simulation.getSnapGridPosition(orient, dragEntityOrientation, true, ANGLE_SPACING);
 
 		KeywordIndex kw = InputAgent.formatVec3dInput("Orientation", orient, AngleUnit.class);
@@ -1270,10 +1273,11 @@ public class RenderManager implements DragSourceListener {
 		}
 
 		// Align the first node to snap grid
-		if (Simulation.isSnapToGrid()) {
+		Simulation simulation = GUIFrame.getJaamSimModel().getSimulation();
+		if (simulation.isSnapToGrid()) {
 			Vec3d point = new Vec3d();
 			point.add3(globalPts.get(0), delta);
-			point = Simulation.getSnapGridPosition(point, globalPts.get(0), shift);
+			point = simulation.getSnapGridPosition(point, globalPts.get(0), shift);
 			delta.sub3(point, globalPts.get(0));
 		}
 
@@ -1317,9 +1321,10 @@ public class RenderManager implements DragSourceListener {
 		point.add3(diff);
 
 		// Align the node to snap grid
-		if (Simulation.isSnapToGrid()) {
+		Simulation simulation = GUIFrame.getJaamSimModel().getSimulation();
+		if (simulation.isSnapToGrid()) {
 			Vec3d oldPos = selectedEntity.getGlobalPosition(screenPoints.get(nodeIndex));
-			point = Simulation.getSnapGridPosition(point, oldPos, shift);
+			point = simulation.getSnapGridPosition(point, oldPos, shift);
 		}
 
 		ArrayList<Vec3d> newPoints = new ArrayList<>();
@@ -1548,15 +1553,16 @@ public class RenderManager implements DragSourceListener {
 		}
 
 		Vec3d creationPoint = currentRay.getPointAtDist(dist);
-		if (Simulation.isSnapToGrid()) {
-			creationPoint = Simulation.getSnapGridPosition(creationPoint);
+		Simulation simulation = GUIFrame.getJaamSimModel().getSimulation();
+		if (simulation.isSnapToGrid()) {
+			creationPoint = simulation.getSnapGridPosition(creationPoint);
 		}
 
 		// Create a new instance
 		Class<? extends Entity> proto  = dndObjectType.getJavaClass();
 		String name = InputAgent.getUniqueName(proto.getSimpleName(), "");
 		InputAgent.storeAndExecute(new DefineCommand(proto, name));
-		Entity ent = Entity.getNamedEntity(name);
+		Entity ent = GUIFrame.getJaamSimModel().getNamedEntity(name);
 
 		// Set input values for a dragged and dropped entity
 		ent.setInputsForDragAndDrop();
@@ -1903,7 +1909,7 @@ public class RenderManager implements DragSourceListener {
 	}
 
 	private void addLinkDisplays(ArrayList<RenderProxy> scene) {
-		ArrayList<? extends Entity> allEnts = Entity.getAll();
+		ArrayList<? extends Entity> allEnts = GUIFrame.getJaamSimModel().getEntities();
 
 		for (int i = 0; i < allEnts.size(); i++) {
 			try {

@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2015 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,9 +18,14 @@
 package com.jaamsim.basicsim;
 
 import com.jaamsim.events.ProcessTarget;
-import com.jaamsim.states.StateEntity;
 
 public class ClearStatisticsTarget extends ProcessTarget {
+
+	final JaamSimModel simModel;
+
+	public ClearStatisticsTarget(JaamSimModel model) {
+		simModel = model;
+	}
 
 	@Override
 	public String getDescription() {
@@ -28,16 +34,7 @@ public class ClearStatisticsTarget extends ProcessTarget {
 
 	@Override
 	public void process() {
-
-		// Reset the statistics for each entity in the model
-		for (Entity ent : Entity.getClonesOfIterator(Entity.class)) {
-			ent.clearStatistics();
-		}
-
-		// Reset state statistics
-		for (StateEntity each : Entity.getClonesOfIterator(StateEntity.class)) {
-			each.collectInitializationStats();
-		}
+		simModel.clearStatistics();
 	}
 
 }

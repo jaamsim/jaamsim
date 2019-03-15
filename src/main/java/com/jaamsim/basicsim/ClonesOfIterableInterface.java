@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,8 +20,8 @@ package com.jaamsim.basicsim;
 
 public class ClonesOfIterableInterface<T extends Entity> extends EntityIterator<T> {
 	private final Class<?> ifaceClass;
-	public ClonesOfIterableInterface(Class<T> aClass, Class<?> iface) {
-		super(aClass);
+	public ClonesOfIterableInterface(JaamSimModel simModel, Class<T> aClass, Class<?> iface) {
+		super(simModel, aClass);
 		ifaceClass = iface;
 	}
 

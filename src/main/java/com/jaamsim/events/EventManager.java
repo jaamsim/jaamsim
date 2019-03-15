@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2002-2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2017-2018 JaamSim Software Inc.
+ * Copyright (C) 2017-2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ package com.jaamsim.events;
 
 import java.util.ArrayList;
 
-import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.ui.EventData;
 
 /**
@@ -230,7 +229,7 @@ public final class EventManager {
 				return;
 
 			processRunning = true;
-			timelistener.timeRunning(true);
+			timelistener.timeRunning(currentTick, true);
 
 			// Loop continuously
 			while (true) {
@@ -242,7 +241,7 @@ public final class EventManager {
 
 				if (!executeEvents) {
 					processRunning = false;
-					timelistener.timeRunning(false);
+					timelistener.timeRunning(currentTick, false);
 					return;
 				}
 
@@ -318,14 +317,14 @@ public final class EventManager {
 		}
 	}
 
-	public void nextOneEvent() {
+	public void nextOneEvent(double simTime) {
 		oneEvent = true;
-		resume(this.secondsToNearestTick(Simulation.getPauseTime()));
+		resume(this.secondsToNearestTick(simTime));
 	}
 
-	public void nextEventTime() {
+	public void nextEventTime(double simTime) {
 		oneSimTime = true;
-		resume(this.secondsToNearestTick(Simulation.getPauseTime()));
+		resume(this.secondsToNearestTick(simTime));
 	}
 
 	private void evaluateConditions(Process cur) {

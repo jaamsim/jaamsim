@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,20 +19,32 @@ package com.jaamsim.probability;
 
 import static org.junit.Assert.assertTrue;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import com.jaamsim.ProbabilityDistributions.WeibullDistribution;
+import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.basicsim.ObjectType;
+import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.input.InputAgent;
 
 public class TestWeibullDistribution {
 
+	JaamSimModel simModel;
+	Simulation simulation;
+
+	@Before
+	public void setupTests() {
+		simModel = new JaamSimModel();
+		simulation = simModel.createInstance(Simulation.class);
+	}
+
 	@Test
 	public void MeanAndStandardDeviation() {
-		ObjectType t = InputAgent.defineEntityWithUniqueName(ObjectType.class, "TestType", "-", true);
+		ObjectType t = InputAgent.defineEntityWithUniqueName(simModel, ObjectType.class, "TestType", "-", true);
 		InputAgent.applyArgs(t, "JavaClass", "com.jaamsim.units.DimensionlessUnit");
 
-		WeibullDistribution dist = InputAgent.defineEntityWithUniqueName(WeibullDistribution.class, "Dist", "-", true);
+		WeibullDistribution dist = InputAgent.defineEntityWithUniqueName(simModel, WeibullDistribution.class, "Dist", "-", true);
 		InputAgent.applyArgs(dist, "UnitType", t.getName());
 		InputAgent.applyArgs(dist, "Scale", "10.0");
 		InputAgent.applyArgs(dist, "Shape", "2.0");
@@ -47,7 +60,7 @@ public class TestWeibullDistribution {
 		assertTrue( Math.abs( dist.getSampleMean(0.0) / dist.getMeanValue(0.0) - 1.0 ) < 0.001 );
 		assertTrue( Math.abs( dist.getSampleStandardDeviation(0.0) / dist.getStandardDeviation(0.0) - 1.0 ) < 0.001 );
 
-		WeibullDistribution dist2 = InputAgent.defineEntityWithUniqueName(WeibullDistribution.class, "Dist", "-", true);
+		WeibullDistribution dist2 = InputAgent.defineEntityWithUniqueName(simModel, WeibullDistribution.class, "Dist", "-", true);
 		InputAgent.applyArgs(dist2, "UnitType", t.getName());
 		InputAgent.applyArgs(dist2, "Scale", "10.0");
 		InputAgent.applyArgs(dist2, "Shape", "2.0");

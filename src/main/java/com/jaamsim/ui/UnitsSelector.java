@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2017-2018 JaamSim Software Inc.
+ * Copyright (C) 2017-2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ public class UnitsSelector {
 		// Loop through the unit types that have been defined
 		for (String utName : Unit.getUnitTypeList()) {
 			final Class<? extends Unit> ut = Input.parseUnitType(utName);
-			ArrayList<? extends Unit> unitList = Unit.getUnitList(ut);
+			ArrayList<? extends Unit> unitList = Unit.getUnitList(GUIFrame.getJaamSimModel(), ut);
 			if (unitList.isEmpty())
 				continue;
 
@@ -58,7 +58,8 @@ public class UnitsSelector {
 							toks.add(pref.getName());
 						}
 						KeywordIndex kw = new KeywordIndex("DisplayedUnits", toks, null);
-						InputAgent.apply(Simulation.getInstance(), kw);
+						Simulation simulation = GUIFrame.getJaamSimModel().getSimulation();
+						InputAgent.apply(simulation, kw);
 					}
 				} );
 				subMenu.add(item);

@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2018 JaamSim Software Inc.
+ * Copyright (C) 2016-2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -74,7 +74,7 @@ public class Resource extends AbstractResourceProvider {
 	public void validate() {
 
 		boolean found = false;
-		for (Entity ent : Entity.getClonesOfIterator(Entity.class, ResourceUser.class)) {
+		for (Entity ent : getJaamSimModel().getClonesOfIterator(Entity.class, ResourceUser.class)) {
 			ResourceUser ru = (ResourceUser) ent;
 			if (ru.requiresResource(this))
 				found = true;

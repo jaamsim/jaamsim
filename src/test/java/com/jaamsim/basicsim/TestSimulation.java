@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2018 JaamSim Software Inc.
+ * Copyright (C) 2018-2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.jaamsim.events.TestFrameworkHelpers;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.KeywordIndex;
@@ -30,24 +31,27 @@ import com.jaamsim.input.OutputHandle;
 
 public class TestSimulation {
 
+	JaamSimModel simModel;
+
 	@Before
 	public void setupTests() {
-		if (Simulation.getInstance() != null)
-			Simulation.clear();
-		InputAgent.setBatch(true);
+		simModel = new JaamSimModel();
+		if (simModel.getSimulation() != null)
+			simModel.clear();
+		InputAgent.setBatch(false);
 
 		// Load the autoload file
 		InputAgent.setRecordEdits(false);
-		InputAgent.readResource("<res>/inputs/autoload.cfg");
+		InputAgent.readResource(simModel, "<res>/inputs/autoload.cfg");
 	}
 
 	@Test
 	public void testAllDefineableTypes() {
 		// Define an instance of every drag-and-drop type
-		for (ObjectType each: Entity.getClonesOfIterator(ObjectType.class)) {
+		for (ObjectType each: simModel.getClonesOfIterator(ObjectType.class)) {
 			Class<? extends Entity> proto = Input.parseEntityType(each.getName());
 			@SuppressWarnings("unused")
-			Entity ent = InputAgent.defineEntityWithUniqueName(proto, each.getName(), "-", true);
+			Entity ent = InputAgent.defineEntityWithUniqueName(simModel, proto, each.getName(), "-", true);
 		}
 	}
 
@@ -55,9 +59,9 @@ public class TestSimulation {
 	public void testAllEditableInputs() {
 		int numErrors = 0;
 		// Define an instance of every drag-and-drop type
-		for (ObjectType each: Entity.getClonesOfIterator(ObjectType.class)) {
+		for (ObjectType each: simModel.getClonesOfIterator(ObjectType.class)) {
 			Class<? extends Entity> proto = Input.parseEntityType(each.getName());
-			Entity ent = InputAgent.defineEntityWithUniqueName(proto, each.getName(), "-", true);
+			Entity ent = InputAgent.defineEntityWithUniqueName(simModel, proto, each.getName(), "-", true);
 
 			KeywordIndex kw = new KeywordIndex("none", new ArrayList<String>(0), null);
 			for (Input<?> inp : ent.getEditableInputs()) {
@@ -84,6 +88,9 @@ public class TestSimulation {
 	@Test
 	public void testSimpleInputFile() {
 		URL url = TestSimulation.class.getResource("Test0001.cfg");
-		InputAgent.readResource(url.toString());
+		InputAgent.readResource(simModel, url.toString());
+
+		simModel.initRun();
+		TestFrameworkHelpers.runEventsToTick(simModel.getEventManager(), Long.MAX_VALUE, 1000);
 	}
 }

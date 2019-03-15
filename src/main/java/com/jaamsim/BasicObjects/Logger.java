@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2016-2018 JaamSim Software Inc.
+ * Copyright (C) 2016-2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,6 @@ import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.StringProviders.StringProvListInput;
 import com.jaamsim.StringProviders.StringProvider;
 import com.jaamsim.basicsim.FileEntity;
-import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
@@ -123,7 +122,7 @@ public abstract class Logger extends DisplayEntity {
 		logTime = 0.0d;
 
 		// Close the file if it is already open
-		if (file != null && Simulation.isFirstRun()) {
+		if (file != null && getJaamSimModel().isFirstRun()) {
 			file.close();
 			file = null;
 		}
@@ -142,15 +141,15 @@ public abstract class Logger extends DisplayEntity {
 		super.startUp();
 
 		// Print the detailed run information to the file
-		if (Simulation.isFirstRun())
-			Simulation.getInstance().printReport(file, 0.0d);
+		if (getJaamSimModel().isFirstRun())
+			getSimulation().printReport(file, 0.0d);
 
 		// Print run number header if multiple runs are to be performed
-		if (Simulation.isMultipleRuns()) {
-			if (!Simulation.isFirstRun()) {
+		if (getJaamSimModel().isMultipleRuns()) {
+			if (!getJaamSimModel().isFirstRun()) {
 				file.format("%n");
 			}
-			file.format("%n%s%n", Simulation.getRunHeader());
+			file.format("%n%s%n", getJaamSimModel().getRunHeader());
 		}
 
 		// Print the title for each column
@@ -200,7 +199,7 @@ public abstract class Logger extends DisplayEntity {
 			return;
 
 		// Skip the log entry if the run is still initializing
-		if (!includeInitialization.getValue() && simTime < Simulation.getInitializationTime())
+		if (!includeInitialization.getValue() && simTime < getSimulation().getInitializationTime())
 			return;
 
 		// Skip the log entry if it is outside the time range
@@ -232,7 +231,7 @@ public abstract class Logger extends DisplayEntity {
 		}
 
 		// If running in real time mode, empty the file buffer after each entity is logged
-		if (!InputAgent.getBatch() && Simulation.isRealTime())
+		if (!InputAgent.getBatch() && getSimulation().isRealTime())
 			file.flush();
 	}
 
@@ -256,7 +255,7 @@ public abstract class Logger extends DisplayEntity {
 		file.flush();
 
 		// Close the report file
-		if (Simulation.isLastRun()) {
+		if (getJaamSimModel().isLastRun()) {
 			file.close();
 			file = null;
 		}

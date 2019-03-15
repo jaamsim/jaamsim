@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018 JaamSim Software Inc.
+ * Copyright (C) 2018-2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -112,7 +112,7 @@ public abstract class StateEntity extends DisplayEntity implements StateUser {
 		super.lateInit();
 
 		stateListeners.clear();
-		for (Entity ent : Entity.getClonesOfIterator(Entity.class, StateEntityListener.class)) {
+		for (Entity ent : getJaamSimModel().getClonesOfIterator(Entity.class, StateEntityListener.class)) {
 			StateEntityListener sel = (StateEntityListener)ent;
 			if (sel.isWatching(this))
 				stateListeners.add(sel);

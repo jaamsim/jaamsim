@@ -1,6 +1,8 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2015 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2019 JaamSim Software Inc.
+
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +26,7 @@ import com.jaamsim.Graphics.EntityLabel;
 import com.jaamsim.Graphics.OverlayEntity;
 import com.jaamsim.Graphics.Region;
 import com.jaamsim.basicsim.Entity;
+import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.input.EntityInput;
 
 public class RelativeEntityInput extends EntityInput<DisplayEntity> {
@@ -59,7 +62,8 @@ public class RelativeEntityInput extends EntityInput<DisplayEntity> {
 	@Override
 	public ArrayList<String> getValidOptions() {
 		ArrayList<String> list = new ArrayList<>();
-		for (DisplayEntity each: Entity.getClonesOfIterator(DisplayEntity.class)) {
+		JaamSimModel simModel = thisEnt.getJaamSimModel();
+		for (DisplayEntity each: simModel.getClonesOfIterator(DisplayEntity.class)) {
 			if (each.testFlag(Entity.FLAG_GENERATED))
 				continue;
 

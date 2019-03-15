@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2010-2015 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +17,7 @@
  */
 package com.jaamsim.input;
 
-import com.jaamsim.basicsim.Simulation;
+import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.datatypes.IntegerVector;
 
 public class RunNumberInput extends Input<Integer> {
@@ -86,7 +87,7 @@ public class RunNumberInput extends Input<Integer> {
 			indexList.set(i, val);
 		}
 
-		int temp = Simulation.getRunNumber(indexList, rangeList);
+		int temp = JaamSimModel.getRunNumber(indexList, rangeList);
 		if (temp < 1 || temp > max)
 			throw new InputErrorException(INP_ERR_INTEGERRANGE, 1, max, temp);
 

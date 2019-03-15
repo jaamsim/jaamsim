@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2018 JaamSim Software Inc.
+ * Copyright (C) 2018-2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,7 +53,7 @@ import com.jaamsim.Graphics.EntityLabel;
 import com.jaamsim.Graphics.OverlayEntity;
 import com.jaamsim.Graphics.Region;
 import com.jaamsim.basicsim.Entity;
-import com.jaamsim.basicsim.Simulation;
+import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.input.ExpParser;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
@@ -398,7 +398,8 @@ public class ExpressionBox extends JDialog {
 				public void actionPerformed( ActionEvent event ) {
 					ScrollablePopupMenu entityMenu = new ScrollablePopupMenu();
 					ArrayList<String> entNameList = new ArrayList<>();
-					for (DisplayEntity each: Entity.getClonesOfIterator(DisplayEntity.class)) {
+					JaamSimModel simModel = GUIFrame.getJaamSimModel();
+					for (DisplayEntity each: simModel.getClonesOfIterator(DisplayEntity.class)) {
 						if (each.testFlag(Entity.FLAG_GENERATED))
 							continue;
 
@@ -456,7 +457,7 @@ public class ExpressionBox extends JDialog {
 					// Loop through the unit types that have been defined
 					for (String utName : Unit.getUnitTypeList()) {
 						final Class<? extends Unit> ut = Input.parseUnitType(utName);
-						ArrayList<? extends Unit> unitList = Unit.getUnitList(ut);
+						ArrayList<? extends Unit> unitList = Unit.getUnitList(GUIFrame.getJaamSimModel(), ut);
 						if (unitList.isEmpty())
 							continue;
 
@@ -621,7 +622,7 @@ public class ExpressionBox extends JDialog {
 				int bracketIndex = text.lastIndexOf('[', dotIndex);
 				if (bracketIndex >= 0) {
 					String entName = text.substring(bracketIndex + 1, dotIndex - 1);
-					ent = Entity.getNamedEntity(entName);
+					ent = GUIFrame.getJaamSimModel().getNamedEntity(entName);
 				}
 			}
 			else if (dotIndex >= 4 && text.substring(dotIndex - 4, dotIndex).equals("this")) {
@@ -657,7 +658,8 @@ public class ExpressionBox extends JDialog {
 	private void showEntityMenu(String name, final int ind0, final int ind1) {
 		entityMenu = new ScrollablePopupMenu();
 		ArrayList<String> nameList = new ArrayList<>();
-		for (DisplayEntity each: Entity.getClonesOfIterator(DisplayEntity.class)) {
+		JaamSimModel simModel = GUIFrame.getJaamSimModel();
+		for (DisplayEntity each: simModel.getClonesOfIterator(DisplayEntity.class)) {
 			if (each.testFlag(Entity.FLAG_GENERATED))
 				continue;
 
@@ -670,7 +672,7 @@ public class ExpressionBox extends JDialog {
 
 			nameList.add(each.getName());
 		}
-		String simName = Simulation.getInstance().getName();
+		String simName = GUIFrame.getJaamSimModel().getSimulation().getName();
 		if (simName.toUpperCase().contains(name.toUpperCase())) {
 			nameList.add(simName);
 		}

@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018 JaamSim Software Inc.
+ * Copyright (C) 2018-2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,9 @@ import java.util.Collections;
 import com.jaamsim.Samples.TimeSeriesConstantDouble;
 import com.jaamsim.Samples.TimeSeriesProvider;
 import com.jaamsim.basicsim.Entity;
+import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.datatypes.DoubleVector;
+import com.jaamsim.ui.GUIFrame;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
@@ -69,7 +71,8 @@ public class TimeSeriesInput extends Input<TimeSeriesProvider> {
 	@Override
 	public ArrayList<String> getValidOptions() {
 		ArrayList<String> list = new ArrayList<>();
-		for (Entity each : Entity.getClonesOfIterator(Entity.class, TimeSeriesProvider.class)) {
+		JaamSimModel simModel = GUIFrame.getJaamSimModel();
+		for (Entity each : simModel.getClonesOfIterator(Entity.class, TimeSeriesProvider.class)) {
 			TimeSeriesProvider tsp = (TimeSeriesProvider)each;
 			if (tsp.getUnitType() == unitType)
 				list.add(each.getName());

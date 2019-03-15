@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2011 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -94,7 +95,8 @@ public class FrameBox extends OSFixJFrame {
 
 		@Override
 		public void windowClosing(WindowEvent e) {
-			InputAgent.apply(Simulation.getInstance(), kw);
+			Simulation simulation = GUIFrame.getJaamSimModel().getSimulation();
+			InputAgent.apply(simulation, kw);
 		}
 	}
 

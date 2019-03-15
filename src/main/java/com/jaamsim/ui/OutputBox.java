@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,19 +54,20 @@ public class OutputBox extends FrameBox {
 
 		getContentPane().add( scrollPane );
 
-		setLocation(Simulation.getOutputViewerPos().get(0), Simulation.getOutputViewerPos().get(1));
-		setSize(Simulation.getOutputViewerSize().get(0), Simulation.getOutputViewerSize().get(1));
+		Simulation simulation = GUIFrame.getJaamSimModel().getSimulation();
+		setLocation(simulation.getOutputViewerPos().get(0), simulation.getOutputViewerPos().get(1));
+		setSize(simulation.getOutputViewerSize().get(0), simulation.getOutputViewerSize().get(1));
 
 		addComponentListener(new ComponentAdapter() {
 
 			@Override
 			public void componentMoved(ComponentEvent e) {
-				Simulation.setOutputViewerPos(getLocation().x, getLocation().y);
+				simulation.setOutputViewerPos(getLocation().x, getLocation().y);
 			}
 
 			@Override
 			public void componentResized(ComponentEvent e) {
-				Simulation.setOutputViewerSize(getSize().width, getSize().height);
+				simulation.setOutputViewerSize(getSize().width, getSize().height);
 			}
 		});
 	}

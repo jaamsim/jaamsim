@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2002-2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2018 JaamSim Software Inc.
+ * Copyright (C) 2016-2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -59,7 +59,8 @@ import com.jaamsim.units.UserSpecifiedUnit;
  * event execution.
  */
 public class Entity {
-	private static final JaamSimModel sim = new JaamSimModel();
+	private static JaamSimModel sim;
+	private final JaamSimModel simModel;
 
 	String entityName;
 	private final long entityNumber;
@@ -151,9 +152,22 @@ public class Entity {
 	 * Constructor for entity initializing members.
 	 */
 	public Entity() {
-		entityNumber = sim.getNextEntityID();
-		sim.addInstance(this);
+		simModel = JaamSimModel.getCreateModel();
+		entityNumber = simModel.getNextEntityID();
+		simModel.addInstance(this);
 		flags = 0;
+	}
+
+	public JaamSimModel getJaamSimModel() {
+		return simModel;
+	}
+
+	public Simulation getSimulation() {
+		return simModel.getSimulation();
+	}
+
+	static void setJaamSimModel(JaamSimModel sim) {
+		Entity.sim = sim;
 	}
 
 	public static ArrayList<? extends Entity> getAll() {
@@ -168,7 +182,7 @@ public class Entity {
 	 * @return Iterator for instances of the class
 	 */
 	public static <T extends Entity> InstanceIterable<T> getInstanceIterator(Class<T> proto){
-		return new InstanceIterable<>(proto);
+		return new InstanceIterable<>(sim, proto);
 	}
 
 	/**
@@ -179,7 +193,7 @@ public class Entity {
 	 * @return Iterator for instances of the class and its sub-classes
 	 */
 	public static <T extends Entity> ClonesOfIterable<T> getClonesOfIterator(Class<T> proto){
-		return new ClonesOfIterable<>(proto);
+		return new ClonesOfIterable<>(sim, proto);
 	}
 
 	/**
@@ -191,11 +205,7 @@ public class Entity {
 	 * @return Iterator for instances of the class and its sub-classes that implement the specified interface
 	 */
 	public static <T extends Entity> ClonesOfIterableInterface<T> getClonesOfIterator(Class<T> proto, Class<?> iface){
-		return new ClonesOfIterableInterface<>(proto, iface);
-	}
-
-	public static Entity idToEntity(long id) {
-		return sim.idToEntity(id);
+		return new ClonesOfIterableInterface<>(sim, proto, iface);
 	}
 
 	public void validate() throws InputErrorException {
@@ -246,7 +256,7 @@ public class Entity {
 
 
 	public void kill() {
-		sim.removeInstance(this);
+		simModel.removeInstance(this);
 	}
 
 	/**
@@ -254,7 +264,7 @@ public class Entity {
 	 * @param name - entity's name before it was deleted
 	 */
 	public void restore(String name) {
-		sim.restoreInstance(this);
+		simModel.restoreInstance(this);
 		this.setName(name);
 		this.clearFlag(Entity.FLAG_DEAD);
 	}
@@ -277,7 +287,7 @@ public class Entity {
 
 		// Generated entities are not part of the model inputs so do not support undo/redo
 		if (testFlag(Entity.FLAG_GENERATED)) {
-			for (Entity ent : Entity.getClonesOfIterator(Entity.class)) {
+			for (Entity ent : getJaamSimModel().getClonesOfIterator(Entity.class)) {
 				if (ent == this)
 					continue;
 				for (Input<?> in : ent.inpList) {
@@ -289,7 +299,7 @@ public class Entity {
 		}
 
 		// Delete any references to this entity in the inputs to other entities
-		for (Entity ent : Entity.getClonesOfIterator(Entity.class)) {
+		for (Entity ent : getJaamSimModel().getClonesOfIterator(Entity.class)) {
 			if (ent == this)
 				continue;
 			ArrayList<KeywordIndex> oldKwList = new ArrayList<>();
@@ -334,10 +344,6 @@ public class Entity {
 	 * Performs any actions that are required at the end of the simulation run, e.g. to create an output report.
 	 */
 	public void doEnd() {}
-
-	public static long getEntitySequence() {
-		return sim.getEntitySequence();
-	}
 
 	/**
 	 * Get the current Simulation ticks value.
@@ -485,7 +491,7 @@ public class Entity {
 	 * Method to set the input name of the entity.
 	 */
 	public void setName(String newName) {
-		sim.renameEntity(this, newName);
+		simModel.renameEntity(this, newName);
 	}
 
 	/**

@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2004-2013 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,19 +56,20 @@ public class PropertyBox extends FrameBox {
 		jTabbedFrame.addChangeListener(new TabListener());
 		getContentPane().add(jTabbedFrame);
 
-		setLocation(Simulation.getPropertyViewerPos().get(0), Simulation.getPropertyViewerPos().get(1));
-		setSize(Simulation.getPropertyViewerSize().get(0), Simulation.getPropertyViewerSize().get(1));
+		Simulation simulation = GUIFrame.getJaamSimModel().getSimulation();
+		setLocation(simulation.getPropertyViewerPos().get(0), simulation.getPropertyViewerPos().get(1));
+		setSize(simulation.getPropertyViewerSize().get(0), simulation.getPropertyViewerSize().get(1));
 
 		addComponentListener(new ComponentAdapter() {
 
 			@Override
 			public void componentMoved(ComponentEvent e) {
-				Simulation.setPropertyViewerPos(getLocation().x, getLocation().y);
+				simulation.setPropertyViewerPos(getLocation().x, getLocation().y);
 			}
 
 			@Override
 			public void componentResized(ComponentEvent e) {
-				Simulation.setPropertyViewerSize(getSize().width, getSize().height);
+				simulation.setPropertyViewerSize(getSize().width, getSize().height);
 			}
 		});
 	}

@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2009-2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2017 JaamSim Software Inc.
+ * Copyright (C) 2017-2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -111,7 +111,7 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 		nextEventButton.addActionListener( new ActionListener() {
 			@Override
 			public void actionPerformed( ActionEvent e ) {
-				evtMan.nextOneEvent();
+				evtMan.nextOneEvent(GUIFrame.getJaamSimModel().getSimulation().getPauseTime());
 			}
 		});
 		nextEventButton.setToolTipText(GUIFrame.formatToolTip("Next Event",
@@ -122,7 +122,7 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 		nextTimeButton.addActionListener( new ActionListener() {
 			@Override
 			public void actionPerformed( ActionEvent e ) {
-				evtMan.nextEventTime();
+				evtMan.nextEventTime(GUIFrame.getJaamSimModel().getSimulation().getPauseTime());
 			}
 		});
 		nextTimeButton.setToolTipText(GUIFrame.formatToolTip("Next Time",
@@ -174,19 +174,20 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 
 		// Size and position of the viewer
 		pack();
-		setLocation(Simulation.getEventViewerPos().get(0), Simulation.getEventViewerPos().get(1));
-		setSize(Simulation.getEventViewerSize().get(0), Simulation.getEventViewerSize().get(1));
+		Simulation simulation = GUIFrame.getJaamSimModel().getSimulation();
+		setLocation(simulation.getEventViewerPos().get(0), simulation.getEventViewerPos().get(1));
+		setSize(simulation.getEventViewerSize().get(0), simulation.getEventViewerSize().get(1));
 
 		addComponentListener(new ComponentAdapter() {
 
 			@Override
 			public void componentMoved(ComponentEvent e) {
-				Simulation.setEventViewerPos(getLocation().x, getLocation().y);
+				simulation.setEventViewerPos(getLocation().x, getLocation().y);
 			}
 
 			@Override
 			public void componentResized(ComponentEvent e) {
-				Simulation.setEventViewerSize(getSize().width, getSize().height);
+				simulation.setEventViewerSize(getSize().width, getSize().height);
 			}
 		});
 
@@ -200,7 +201,7 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 	 */
 	public synchronized static EventViewer getInstance() {
 		if (myInstance == null)
-			myInstance = new EventViewer(GUIFrame.getInstance().getEventManager());
+			myInstance = new EventViewer(GUIFrame.getJaamSimModel().getEventManager());
 
 		return myInstance;
 	}

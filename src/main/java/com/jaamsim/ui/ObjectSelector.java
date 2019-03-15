@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018 JaamSim Software Inc.
+ * Copyright (C) 2018-2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -87,19 +87,20 @@ public class ObjectSelector extends FrameBox {
 
 		entSequence = 0;
 
-		setLocation(Simulation.getObjectSelectorPos().get(0), Simulation.getObjectSelectorPos().get(1));
-		setSize(Simulation.getObjectSelectorSize().get(0), Simulation.getObjectSelectorSize().get(1));
+		Simulation simulation = GUIFrame.getJaamSimModel().getSimulation();
+		setLocation(simulation.getObjectSelectorPos().get(0), simulation.getObjectSelectorPos().get(1));
+		setSize(simulation.getObjectSelectorSize().get(0), simulation.getObjectSelectorSize().get(1));
 
 		addComponentListener(new ComponentAdapter() {
 
 			@Override
 			public void componentMoved(ComponentEvent e) {
-				Simulation.setObjectSelectorPos(getLocation().x, getLocation().y);
+				simulation.setObjectSelectorPos(getLocation().x, getLocation().y);
 			}
 
 			@Override
 			public void componentResized(ComponentEvent e) {
-				Simulation.setObjectSelectorSize(getSize().width, getSize().height);
+				simulation.setObjectSelectorSize(getSize().width, getSize().height);
 			}
 		});
 
@@ -120,7 +121,7 @@ public class ObjectSelector extends FrameBox {
 		if (tree == null)
 			return;
 
-		long curSequence = Entity.getEntitySequence();
+		long curSequence = GUIFrame.getJaamSimModel().getEntitySequence();
 		if (entSequence != curSequence) {
 			entSequence = curSequence;
 			updateTree();
@@ -157,7 +158,7 @@ public class ObjectSelector extends FrameBox {
 		if (!this.isVisible() || gui == null || gui.getSimState() == GUIFrame.SIM_STATE_RUNNING)
 			return;
 
-		long curSequence = Entity.getEntitySequence();
+		long curSequence = GUIFrame.getJaamSimModel().getEntitySequence();
 		if (entSequence != curSequence) {
 			entSequence = curSequence;
 			updateTree();
@@ -212,10 +213,11 @@ public class ObjectSelector extends FrameBox {
 		top.removeAllChildren();
 
 		// Add the instance for Simulation to the top of the tree as a single leaf node
-		top.add(new DefaultMutableTreeNode(Simulation.getInstance(), false));
+		Simulation simulation = GUIFrame.getJaamSimModel().getSimulation();
+		top.add(new DefaultMutableTreeNode(simulation, false));
 
 		// Add the instance for TLS if present
-		Entity tls = Entity.getNamedEntity("TLS");
+		Entity tls = GUIFrame.getJaamSimModel().getNamedEntity("TLS");
 		if (tls != null)
 			top.add(new DefaultMutableTreeNode(tls, false));
 
@@ -246,13 +248,14 @@ public class ObjectSelector extends FrameBox {
 
 		// Prepare a sorted list of entities
 		int numGenerated = 0;
+		final ArrayList<? extends Entity> allEnts = GUIFrame.getJaamSimModel().getEntities();
 		ArrayList<Entity> entityList = new ArrayList<>();
-		for (int i = 0; i < Entity.getAll().size(); i++) {
+		for (int i = 0; i < allEnts.size(); i++) {
 			try {
-				final Entity ent = Entity.getAll().get(i);
+				final Entity ent = allEnts.get(i);
 
 				// The instance for Simulation has already been added
-				if (ent == Simulation.getInstance())
+				if (ent == simulation)
 					continue;
 
 				// The instance for TLS has already been added

@@ -22,6 +22,7 @@ import java.util.Collections;
 
 import com.jaamsim.Samples.SampleProvider;
 import com.jaamsim.basicsim.Entity;
+import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.KeywordIndex;
@@ -118,7 +119,8 @@ public class StringProvListInput extends ListInput<ArrayList<StringProvider>> {
 	@Override
 	public ArrayList<String> getValidOptions() {
 		ArrayList<String> list = new ArrayList<>();
-		for (Entity each : Entity.getClonesOfIterator(Entity.class, SampleProvider.class)) {
+		JaamSimModel simModel = thisEnt.getJaamSimModel();
+		for (Entity each : simModel.getClonesOfIterator(Entity.class, SampleProvider.class)) {
 			SampleProvider samp = (SampleProvider)each;
 			if (unitTypeList.contains(samp.getUnitType()))
 				list.add(each.getName());

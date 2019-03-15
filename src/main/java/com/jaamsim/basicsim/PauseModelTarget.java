@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2015 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +17,15 @@
  */
 package com.jaamsim.basicsim;
 
-import com.jaamsim.events.EventManager;
 import com.jaamsim.events.ProcessTarget;
 
 public class PauseModelTarget extends ProcessTarget {
 
-	public PauseModelTarget() {}
+	final JaamSimModel simModel;
+
+	public PauseModelTarget(JaamSimModel model) {
+		simModel = model;
+	}
 
 	@Override
 	public String getDescription() {
@@ -30,18 +34,19 @@ public class PauseModelTarget extends ProcessTarget {
 
 	@Override
 	public void process() {
+		Simulation simulation = simModel.getSimulation();
 
 		// If specified, terminate the simulation run
-		if (Simulation.getExitAtPauseCondition()) {
-			Simulation.endRun();
+		if (simulation.getExitAtPauseCondition()) {
+			simModel.endRun();
 			return;
 		}
 
 		// Pause the simulation run
-		EventManager.current().pause();
+		simModel.pause();
 
 		// When the run is resumed, continue to check the pause condition
-		Simulation.getInstance().doPauseCondition();
+		simModel.doPauseCondition();
 	}
 
 }

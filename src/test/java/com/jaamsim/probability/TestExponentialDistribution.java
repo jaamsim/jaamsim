@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,20 +19,32 @@ package com.jaamsim.probability;
 
 import static org.junit.Assert.assertTrue;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import com.jaamsim.ProbabilityDistributions.ExponentialDistribution;
+import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.basicsim.ObjectType;
+import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.input.InputAgent;
 
 public class TestExponentialDistribution {
 
+	JaamSimModel simModel;
+	Simulation simulation;
+
+	@Before
+	public void setupTests() {
+		simModel = new JaamSimModel();
+		simulation = simModel.createInstance(Simulation.class);
+	}
+
 	@Test
 	public void MeanAndStandardDeviation() {
-		ObjectType t = InputAgent.defineEntityWithUniqueName(ObjectType.class, "TestType", "-", true);
+		ObjectType t = InputAgent.defineEntityWithUniqueName(simModel, ObjectType.class, "TestType", "-", true);
 		InputAgent.applyArgs(t, "JavaClass", "com.jaamsim.units.DimensionlessUnit");
 
-		ExponentialDistribution dist = InputAgent.defineEntityWithUniqueName(ExponentialDistribution.class, "Dist", "-", true);
+		ExponentialDistribution dist = InputAgent.defineEntityWithUniqueName(simModel, ExponentialDistribution.class, "Dist", "-", true);
 		InputAgent.applyArgs(dist, "UnitType", t.getName());
 		InputAgent.applyArgs(dist, "Mean", "10.0");
 		InputAgent.applyArgs(dist, "RandomSeed", "0");

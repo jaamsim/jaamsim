@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2018 JaamSim Software Inc.
+ * Copyright (C) 2016-2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,7 +53,6 @@ import com.jaamsim.DisplayModels.ColladaModel;
 import com.jaamsim.DisplayModels.DisplayModel;
 import com.jaamsim.DisplayModels.ImageModel;
 import com.jaamsim.Graphics.DisplayEntity;
-import com.jaamsim.basicsim.Entity;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.KeywordIndex;
@@ -119,7 +118,7 @@ public class GraphicBox extends JDialog {
 
 				// Selected DisplayModel
 				String dmName = (String)((JList<?>)e.getSource()).getSelectedValue();
-				DisplayModel dm = (DisplayModel)Entity.getNamedEntity(dmName);
+				DisplayModel dm = (DisplayModel) GUIFrame.getJaamSimModel().getNamedEntity(dmName);
 				if (dm == null)
 					return;
 
@@ -198,12 +197,12 @@ public class GraphicBox extends JDialog {
 					DisplayModel dm = null;
 					if (ColladaModel.isValidExtension(extension)) {
 						InputAgent.storeAndExecute(new DefineCommand(ColladaModel.class, modelName));
-						dm = (DisplayModel) Entity.getNamedEntity(modelName);
+						dm = (DisplayModel) GUIFrame.getJaamSimModel().getNamedEntity(modelName);
 						InputAgent.applyArgs(dm, "ColladaFile", f.getPath());
 					}
 					else if (ImageModel.isValidExtension(extension)) {
 						InputAgent.storeAndExecute(new DefineCommand(ImageModel.class, modelName));
-						dm = (DisplayModel) Entity.getNamedEntity(modelName);
+						dm = (DisplayModel) GUIFrame.getJaamSimModel().getNamedEntity(modelName);
 						InputAgent.applyArgs(dm, "ImageFile", f.getPath());
 					}
 					else {
@@ -231,7 +230,7 @@ public class GraphicBox extends JDialog {
 			public void actionPerformed( ActionEvent e ) {
 				setEnabled(false); // Don't accept any interaction
 				String dmName = displayModelList.getSelectedValue();
-				DisplayModel dm = (DisplayModel) Entity.getNamedEntity(dmName);
+				DisplayModel dm = (DisplayModel) GUIFrame.getJaamSimModel().getNamedEntity(dmName);
 				if (dm == null)
 					return;
 				ArrayList<KeywordIndex> kwList = new ArrayList<>(3);

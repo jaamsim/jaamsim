@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2017 JaamSim Software Inc.
+ * Copyright (C) 2017-2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,9 @@ package com.jaamsim.Commands;
 
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ErrorException;
+import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.input.InputAgent;
+import com.jaamsim.ui.GUIFrame;
 
 public class DefineCommand implements Command {
 
@@ -42,10 +44,11 @@ public class DefineCommand implements Command {
 		}
 
 		// Create the entity
-		if (Entity.getNamedEntity(entityName) != null) {
+		JaamSimModel simModel = GUIFrame.getJaamSimModel();
+		if (simModel.getNamedEntity(entityName) != null) {
 			throw new ErrorException("Name is already in use. Should never happen.");
 		}
-		entity = InputAgent.defineEntityWithUniqueName(klass, entityName, "", true);
+		entity = InputAgent.defineEntityWithUniqueName(simModel, klass, entityName, "", true);
 	}
 
 	@Override

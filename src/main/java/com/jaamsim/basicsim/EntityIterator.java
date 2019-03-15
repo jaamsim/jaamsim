@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,12 +23,13 @@ import java.util.NoSuchElementException;
 
 
 public abstract class EntityIterator<T extends Entity> implements Iterable<T>, Iterator<T> {
-	private final ArrayList<? extends Entity> allInstances = Entity.getAll();
+	private final ArrayList<? extends Entity> allInstances;
 	protected final Class<T> entClass;
 	private int curPos;
 	private int nextPos;
 
-	public EntityIterator(Class<T> aClass) {
+	public EntityIterator(JaamSimModel simModel, Class<T> aClass) {
+		allInstances = simModel.getEntities();
 		entClass = aClass;
 		curPos = -1;
 		nextPos = -1;

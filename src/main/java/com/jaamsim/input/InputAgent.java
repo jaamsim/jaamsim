@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2009-2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018 JaamSim Software Inc.
+ * Copyright (C) 2018-2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,6 +47,7 @@ import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.basicsim.FileEntity;
 import com.jaamsim.basicsim.Group;
+import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.basicsim.ObjectType;
 import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.datatypes.DoubleVector;
@@ -398,12 +399,12 @@ public class InputAgent {
 		throw new InputErrorException("Caught exception: %s", ex.getMessage() + "\n" + causedStack.toString());
 	}
 
-	public static final void readResource(String res) {
+	public static final void readResource(JaamSimModel simModel, String res) {
 		if (res == null)
 			return;
 
 		try {
-			readStream(null, null, res);
+			readStream(simModel, null, null, res);
 		}
 		catch (URISyntaxException ex) {
 			rethrowWrapped(ex);
@@ -411,7 +412,7 @@ public class InputAgent {
 
 	}
 
-	public static final boolean readStream(String root, URI path, String file) throws URISyntaxException {
+	public static final boolean readStream(JaamSimModel simModel, String root, URI path, String file) throws URISyntaxException {
 		URI resolved = getFileURI(path, file, root);
 
 		URL url = null;
@@ -436,11 +437,11 @@ public class InputAgent {
 			return false;
 		}
 
-		InputAgent.readBufferedStream(buf, resolved, root);
+		InputAgent.readBufferedStream(simModel, buf, resolved, root);
 		return true;
 	}
 
-	public static final void readBufferedStream(BufferedReader buf, URI resolved, String root) {
+	public static final void readBufferedStream(JaamSimModel simModel, BufferedReader buf, URI resolved, String root) {
 
 		try {
 			ArrayList<String> record = new ArrayList<>();
@@ -466,14 +467,14 @@ public class InputAgent {
 				InputAgent.echoInputRecord(record);
 
 				if ("DEFINE".equalsIgnoreCase(record.get(0))) {
-					InputAgent.processDefineRecord(record);
+					InputAgent.processDefineRecord(simModel, record);
 					record.clear();
 					continue;
 				}
 
 				if ("INCLUDE".equalsIgnoreCase(record.get(0))) {
 					try {
-						InputAgent.processIncludeRecord(pc, record);
+						InputAgent.processIncludeRecord(simModel, pc, record);
 					}
 					catch (URISyntaxException ex) {
 						rethrowWrapped(ex);
@@ -505,15 +506,15 @@ public class InputAgent {
 		}
 	}
 
-	private static void processIncludeRecord(ParseContext pc, ArrayList<String> record) throws URISyntaxException {
+	private static void processIncludeRecord(JaamSimModel simModel, ParseContext pc, ArrayList<String> record) throws URISyntaxException {
 		if (record.size() != 2) {
 			InputAgent.logError("Bad Include record, should be: Include <File>");
 			return;
 		}
-		InputAgent.readStream(pc.jail, pc.context, record.get(1).replaceAll("\\\\", "/"));
+		InputAgent.readStream(simModel, pc.jail, pc.context, record.get(1).replaceAll("\\\\", "/"));
 	}
 
-	private static void processDefineRecord(ArrayList<String> record) {
+	private static void processDefineRecord(JaamSimModel simModel, ArrayList<String> record) {
 		if (record.size() < 5 ||
 		    !record.get(2).equals("{") ||
 		    !record.get(record.size() - 1).equals("}")) {
@@ -537,25 +538,15 @@ public class InputAgent {
 
 		// Loop over all the new Entity names
 		for (int i = 3; i < record.size() - 1; i++) {
-			InputAgent.defineEntity(proto, record.get(i), InputAgent.recordEdits());
+			InputAgent.defineEntity(simModel, proto, record.get(i), InputAgent.recordEdits());
 		}
 	}
 
-	private static <T extends Entity> T createInstance(Class<T> proto) {
-		T ent = null;
-		try {
-			ent = proto.newInstance();
-		}
-		catch (Throwable e) {}
-
-		return ent;
+	public static <T extends Entity> T generateEntityWithName(JaamSimModel simModel, Class<T> proto, String key) {
+		return generateEntityWithName(simModel, proto, key, false);
 	}
 
-	public static <T extends Entity> T generateEntityWithName(Class<T> proto, String key) {
-		return generateEntityWithName(proto, key, false);
-	}
-
-	public static <T extends Entity> T generateEntityWithName(Class<T> proto, String key, boolean reg) {
+	public static <T extends Entity> T generateEntityWithName(JaamSimModel simModel, Class<T> proto, String key, boolean reg) {
 		if (key == null)
 			throw new ErrorException("Must provide a name for generated Entities");
 
@@ -564,7 +555,7 @@ public class InputAgent {
 			return null;
 		}
 
-		T ent = createInstance(proto);
+		T ent = simModel.createInstance(proto);
 		if (ent == null) {
 			InputAgent.logError("Could not create new Entity: %s", key);
 			return null;
@@ -604,9 +595,9 @@ public class InputAgent {
 	 * @param addedEntity
 	 * @return
 	 */
-	public static <T extends Entity> T defineEntityWithUniqueName(Class<T> proto, String key, String sep, boolean addedEntity) {
+	public static <T extends Entity> T defineEntityWithUniqueName(JaamSimModel simModel, Class<T> proto, String key, String sep, boolean addedEntity) {
 		String name = getUniqueName(key, sep);
-		return defineEntity(proto, name, addedEntity);
+		return defineEntity(simModel, proto, name, addedEntity);
 	}
 
 	private static boolean isValidName(String key) {
@@ -627,7 +618,7 @@ public class InputAgent {
 	 * @param key
 	 * @param addedEntity
 	 */
-	private static <T extends Entity> T defineEntity(Class<T> proto, String key, boolean addedEntity) {
+	private static <T extends Entity> T defineEntity(JaamSimModel simModel, Class<T> proto, String key, boolean addedEntity) {
 		Entity existingEnt = Input.tryParseEntity(key, Entity.class);
 		if (existingEnt != null) {
 			InputAgent.logError(INP_ERR_DEFINEUSED, key, existingEnt.getClass().getSimpleName());
@@ -639,7 +630,8 @@ public class InputAgent {
 			return null;
 		}
 
-		T ent = createInstance(proto);
+		T ent = simModel.createInstance(proto);
+
 		if (ent == null) {
 			InputAgent.logError("Could not create new Entity: %s", key);
 			return null;
@@ -735,7 +727,7 @@ public class InputAgent {
 	}
 
 	// Load the run file
-	public static void loadConfigurationFile( File file) throws URISyntaxException {
+	public static void loadConfigurationFile(JaamSimModel simModel, File file) throws URISyntaxException {
 
 		String inputTraceFileName = InputAgent.getRunName() + ".log";
 		// Initializing the tracing for the model
@@ -755,10 +747,10 @@ public class InputAgent {
 
 		// Load the input file
 		URI dirURI = file.getParentFile().toURI();
-		InputAgent.readStream("", dirURI, file.getName());
+		InputAgent.readStream(simModel, "", dirURI, file.getName());
 
 		// Validate the inputs
-		for (Entity each : Entity.getClonesOfIterator(Entity.class)) {
+		for (Entity each : simModel.getClonesOfIterator(Entity.class)) {
 			try {
 				each.validate();
 			}
@@ -785,8 +777,8 @@ public class InputAgent {
 		if( InputAgent.numErrors > 0 )
 			throw new InputErrorException("%d input errors and %d warnings found", InputAgent.numErrors, InputAgent.numWarnings);
 
-		if (Simulation.getPrintInputReport())
-			InputAgent.printInputFileKeywords();
+		if (simModel.getSimulation().getPrintInputReport())
+			InputAgent.printInputFileKeywords(simModel);
 	}
 
 	/**
@@ -875,7 +867,7 @@ public class InputAgent {
 	 *  <Object name> <Keyword> { < values > }
 	 *
 	 */
-	public static void printInputFileKeywords() {
+	public static void printInputFileKeywords(JaamSimModel simModel) {
 		// Create report file for the inputs
 		String inputReportFileName = InputAgent.getReportFileName(InputAgent.getRunName() + ".inp");
 
@@ -924,7 +916,7 @@ public class InputAgent {
 
 			// Loop through the instances for this entity class
 			int count = 0;
-			for (Entity ent : Entity.getInstanceIterator(each)) {
+			for (Entity ent : simModel.getInstanceIterator(each)) {
 				if (ent.getEntityNumber() <= preDefinedEntityCount)
 					continue;
 
@@ -963,7 +955,7 @@ public class InputAgent {
 			// Get the list of instances for this entity class
 			// sort the list alphabetically
 			ArrayList<Entity> cloneList = new ArrayList<>();
-			for (Entity ent : Entity.getInstanceIterator(each)) {
+			for (Entity ent : simModel.getInstanceIterator(each)) {
 				if (ent.getEntityNumber() <= preDefinedEntityCount) {
 					if (! (ent instanceof Simulation) ) {
 						continue;
@@ -1227,7 +1219,7 @@ public class InputAgent {
 	 *
 	 * @param fileName - the full path and file name for the new configuration file.
 	 */
-	public static void printNewConfigurationFileWithName( String fileName ) {
+	public static void printNewConfigurationFileWithName(JaamSimModel simModel, String fileName) {
 
 		// 1) WRITE LINES FROM THE ORIGINAL CONFIGURATION FILE
 
@@ -1267,7 +1259,7 @@ public class InputAgent {
 
 		// Prepare a sorted list of all the entities that were added to the model
 		ArrayList<Entity> newEntities = new ArrayList<>();
-		for (Entity ent : Entity.getClonesOfIterator(Entity.class)) {
+		for (Entity ent : simModel.getClonesOfIterator(Entity.class)) {
 			if (!ent.testFlag(Entity.FLAG_ADDED) || ent.testFlag(Entity.FLAG_GENERATED))
 				continue;
 			newEntities.add(ent);
@@ -1308,7 +1300,7 @@ public class InputAgent {
 
 		// Prepare a sorted list of all the entities that were edited
 		ArrayList<Entity> entityList = new ArrayList<>();
-		for (Entity ent : Entity.getClonesOfIterator(Entity.class)) {
+		for (Entity ent : simModel.getClonesOfIterator(Entity.class)) {
 			if (!ent.testFlag(Entity.FLAG_EDITED) || ent.testFlag(Entity.FLAG_GENERATED))
 				continue;
 			entityList.add(ent);
@@ -1464,7 +1456,8 @@ public class InputAgent {
 	 * Prints selected outputs for the simulation run to stdout or a file.
 	 * @param simTime - simulation time at which the outputs are printed.
 	 */
-	public static void printRunOutputs(double simTime) {
+	public static void printRunOutputs(JaamSimModel simModel, double simTime) {
+		Simulation simulation = simModel.getSimulation();
 
 		// Set up the custom outputs
 		if (outStream == null) {
@@ -1491,7 +1484,7 @@ public class InputAgent {
 			// Write the header line for the expressions
 			StringBuilder sb = new StringBuilder();
 			ArrayList<String> toks = new ArrayList<>();
-			Simulation.getRunOutputList().getValueTokens(toks);
+			simulation.getRunOutputList().getValueTokens(toks);
 			boolean first = true;
 			for (String str : toks) {
 				if (str.equals("{") || str.equals("}"))
@@ -1506,8 +1499,8 @@ public class InputAgent {
 
 			// Write the header line for the units
 			sb = new StringBuilder();
-			for (int i=0; i<Simulation.getRunOutputList().getListSize(); i++) {
-				Class<? extends Unit> ut = Simulation.getRunOutputList().getUnitType(i);
+			for (int i = 0; i < simulation.getRunOutputList().getListSize(); i++) {
+				Class<? extends Unit> ut = simulation.getRunOutputList().getUnitType(i);
 				String unit = Unit.getDisplayedUnit(ut);
 				if (i > 0)
 					sb.append("\t");
@@ -1518,9 +1511,9 @@ public class InputAgent {
 
 		// Write the selected outputs
 		StringBuilder sb = new StringBuilder();
-		for (int i=0; i<Simulation.getRunOutputList().getListSize(); i++) {
-			StringProvider samp = Simulation.getRunOutputList().getValue().get(i);
-			Class<? extends Unit> ut = Simulation.getRunOutputList().getUnitType(i);
+		for (int i = 0; i < simulation.getRunOutputList().getListSize(); i++) {
+			StringProvider samp = simulation.getRunOutputList().getValue().get(i);
+			Class<? extends Unit> ut = simulation.getRunOutputList().getUnitType(i);
 			double factor = Unit.getDisplayedUnitFactor(ut);
 			String str;
 			try {
@@ -1535,7 +1528,7 @@ public class InputAgent {
 		outStream.println(sb.toString());
 
 		// Terminate the outputs
-		if (Simulation.isLastRun()) {
+		if (simModel.isLastRun()) {
 			outStream.close();
 			outStream = null;
 		}
@@ -1545,7 +1538,7 @@ public class InputAgent {
 	 * Prints the output report for the simulation run.
 	 * @param simTime - simulation time at which the report is printed.
 	 */
-	public static void printReport(double simTime) {
+	public static void printReport(JaamSimModel simModel, double simTime) {
 
 		// Create the report file
 		if (reportFile == null) {
@@ -1556,12 +1549,12 @@ public class InputAgent {
 		}
 
 		// Print run number header when multiple runs are to be performed
-		if (Simulation.isMultipleRuns())
-			reportFile.format("%s%n%n", Simulation.getRunHeader());
+		if (simModel.isMultipleRuns())
+			reportFile.format("%s%n%n", simModel.getRunHeader());
 
 		// Prepare a sorted list of entities
 		ArrayList<Entity> entList = new ArrayList<>();
-		for (Entity ent : Entity.getClonesOfIterator(Entity.class)) {
+		for (Entity ent : simModel.getClonesOfIterator(Entity.class)) {
 
 			if (ent.testFlag(Entity.FLAG_GENERATED))
 				continue;
@@ -1592,7 +1585,7 @@ public class InputAgent {
 		}
 
 		// Close the report file
-		if (Simulation.isLastRun()) {
+		if (simModel.isLastRun()) {
 			reportFile.close();
 			reportFile = null;
 		}
@@ -1873,10 +1866,10 @@ public class InputAgent {
 	/**
 	 * Loads the default configuration file.
 	 */
-	public static void loadDefault() {
+	public static void loadDefault(JaamSimModel simModel) {
 
 		// Read the default configuration file
-		InputAgent.readResource("<res>/inputs/default.cfg");
+		InputAgent.readResource(simModel, "<res>/inputs/default.cfg");
 
 		// A RecordEdits marker in the default configuration must be ignored
 		InputAgent.setRecordEditsFound(false);

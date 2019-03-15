@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +21,12 @@ import com.jaamsim.events.EventManager;
 import com.jaamsim.events.ProcessTarget;
 
 public class InitModelTarget extends ProcessTarget {
-	public InitModelTarget() {}
+
+	final JaamSimModel simModel;
+
+	public InitModelTarget(JaamSimModel model) {
+		simModel = model;
+	}
 
 	@Override
 	public String getDescription() {
@@ -29,36 +35,26 @@ public class InitModelTarget extends ProcessTarget {
 
 	@Override
 	public void process() {
+		Simulation simulation = simModel.getSimulation();
 
 		// Initialise each entity
-		for (Entity each : Entity.getClonesOfIterator(Entity.class)) {
-			each.earlyInit();
-		}
-
-		// Initialise each entity a second time
-		for (Entity each : Entity.getClonesOfIterator(Entity.class)) {
-			each.lateInit();
-		}
+		simModel.earlyInit();
+		simModel.lateInit();
 
 		// Start each entity
-		double startTime = Simulation.getStartTime();
-		for (Entity each : Entity.getClonesOfIterator(Entity.class)) {
-			if (!each.isActive())
-				continue;
-			EventManager.scheduleSeconds(startTime, 0, true, new StartUpTarget(each), null);
-		}
+		simModel.startUp();
 
 		// Schedule the initialisation period
-		if (Simulation.getInitializationTime() > 0.0) {
-			double clearTime = startTime + Simulation.getInitializationTime();
-			EventManager.scheduleSeconds(clearTime, 5, false, new ClearStatisticsTarget(), null);
+		if (simulation.getInitializationTime() > 0.0) {
+			double clearTime = simulation.getStartTime() + simulation.getInitializationTime();
+			EventManager.scheduleSeconds(clearTime, 5, false, new ClearStatisticsTarget(simModel), null);
 		}
 
 		// Schedule the end of the simulation run
-		double endTime = Simulation.getEndTime();
-		EventManager.scheduleSeconds(endTime, 5, false, new EndModelTarget(), null);
+		double endTime = simulation.getEndTime();
+		EventManager.scheduleSeconds(endTime, 5, false, new EndModelTarget(simModel), null);
 
 		// Start checking the pause condition
-		Simulation.getInstance().doPauseCondition();
+		simModel.doPauseCondition();
 	}
 }

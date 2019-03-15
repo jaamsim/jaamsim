@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2010-2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018 JaamSim Software Inc.
+ * Copyright (C) 2018-2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import java.util.Collections;
 
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.basicsim.Entity;
+import com.jaamsim.ui.GUIFrame;
 
 public class EntityInput<T extends Entity> extends Input<T> {
 
@@ -68,7 +69,7 @@ public class EntityInput<T extends Entity> extends Input<T> {
 		if (entSubClass == null)
 			return list;
 
-		for (T each: Entity.getClonesOfIterator(entSubClass)) {
+		for (T each: GUIFrame.getJaamSimModel().getClonesOfIterator(entSubClass)) {
 			if (each.testFlag(Entity.FLAG_GENERATED))
 				continue;
 

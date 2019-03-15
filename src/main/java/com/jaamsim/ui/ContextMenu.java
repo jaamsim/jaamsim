@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2016-2018 JaamSim Software Inc.
+ * Copyright (C) 2016-2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -84,13 +84,15 @@ public class ContextMenu {
 	public static void populateMenu(JPopupMenu menu, final Entity ent, final int nodeIndex,
 			Component c, final int x, final int y) {
 
+		Simulation simulation = GUIFrame.getJaamSimModel().getSimulation();
+
 		// 1) Input Editor
 		JMenuItem inputEditorMenuItem = new JMenuItem( "Input Editor" );
 		inputEditorMenuItem.addActionListener( new ActionListener() {
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				InputAgent.applyBoolean(Simulation.getInstance(), "ShowInputEditor", true);
+				InputAgent.applyBoolean(simulation, "ShowInputEditor", true);
 				FrameBox.setSelectedEntity(ent, false);
 			}
 		} );
@@ -102,7 +104,7 @@ public class ContextMenu {
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				InputAgent.applyBoolean(Simulation.getInstance(), "ShowOutputViewer", true);
+				InputAgent.applyBoolean(simulation, "ShowOutputViewer", true);
 				FrameBox.setSelectedEntity(ent, false);
 			}
 		} );
@@ -114,7 +116,7 @@ public class ContextMenu {
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				InputAgent.applyBoolean(Simulation.getInstance(), "ShowPropertyViewer", true);
+				InputAgent.applyBoolean(simulation, "ShowPropertyViewer", true);
 				FrameBox.setSelectedEntity(ent, false);
 			}
 		} );
@@ -128,7 +130,7 @@ public class ContextMenu {
 			public void actionPerformed( ActionEvent event ) {
 				String name = InputAgent.getUniqueName(ent.getName(), "_Copy");
 				InputAgent.storeAndExecute(new DefineCommand(ent.getClass(), name));
-				Entity copiedEntity = Entity.getNamedEntity(name);
+				Entity copiedEntity = GUIFrame.getJaamSimModel().getNamedEntity(name);
 
 				// Match all the inputs
 				copiedEntity.copyInputs(ent);
@@ -225,7 +227,7 @@ public class ContextMenu {
 					if (label == null) {
 						String name = InputAgent.getUniqueName(ent.getName(), "_Label");
 						InputAgent.storeAndExecute(new DefineCommand(EntityLabel.class, name));
-						EntityLabel newLabel = (EntityLabel)Entity.getNamedEntity(name);
+						EntityLabel newLabel = (EntityLabel)GUIFrame.getJaamSimModel().getNamedEntity(name);
 
 						// Assign inputs that link the label to its target entity
 						InputAgent.applyArgs(newLabel, "TargetEntity", ent.getName());
@@ -394,7 +396,7 @@ public class ContextMenu {
 			public void actionPerformed( ActionEvent event ) {
 				String name = InputAgent.getUniqueName(ent.getName(), "_Split");
 				InputAgent.storeAndExecute(new DefineCommand(ent.getClass(), name));
-				DisplayEntity splitEnt = (DisplayEntity) Entity.getNamedEntity(name);
+				DisplayEntity splitEnt = (DisplayEntity) GUIFrame.getJaamSimModel().getNamedEntity(name);
 
 				// Match all the inputs
 				splitEnt.copyInputs(ent);

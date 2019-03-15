@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2018 JaamSim Software Inc.
+ * Copyright (C) 2016-2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,6 @@ import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.LinkDisplayable;
 import com.jaamsim.StringProviders.StringProvInput;
 import com.jaamsim.basicsim.Entity;
-import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
@@ -299,7 +298,7 @@ public abstract class LinkedComponent extends StateEntity implements Linkable, L
 	    unitType = RateUnit.class,
 	    sequence = 4)
 	public double getProcessingRate(double simTime) {
-		double dur = simTime - Simulation.getInitializationTime();
+		double dur = simTime - getSimulation().getInitializationTime();
 		if (dur <= 0.0)
 			return 0.0;
 		return numberProcessed/dur;

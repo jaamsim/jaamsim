@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018 JaamSim Software Inc.
+ * Copyright (C) 2018-2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,9 +23,11 @@ import java.util.Comparator;
 import java.util.HashMap;
 
 import com.jaamsim.basicsim.Entity;
+import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.basicsim.ObjectType;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.Keyword;
+import com.jaamsim.ui.GUIFrame;
 
 public abstract class Unit extends Entity {
 	@Keyword(description = "Factor to convert from the specified unit to the System International "
@@ -131,7 +133,7 @@ public abstract class Unit extends Entity {
 
 	public static ArrayList<String> getUnitTypeList() {
 		ArrayList<String> list = new ArrayList<>();
-		for (ObjectType each: Entity.getClonesOfIterator(ObjectType.class)) {
+		for (ObjectType each: GUIFrame.getJaamSimModel().getClonesOfIterator(ObjectType.class)) {
 			Class<? extends Entity> klass = each.getJavaClass();
 			if (klass == null)
 				continue;
@@ -143,9 +145,9 @@ public abstract class Unit extends Entity {
 		return list;
 	}
 
-	public static <T extends Unit> ArrayList<T> getUnitList(Class<T> ut) {
+	public static <T extends Unit> ArrayList<T> getUnitList(JaamSimModel model, Class<T> ut) {
 		ArrayList<T> ret = new ArrayList<>();
-		for (T u: Entity.getClonesOfIterator(ut)) {
+		for (T u: model.getClonesOfIterator(ut)) {
 			ret.add(u);
 		}
 		Collections.sort(ret, Unit.unitSortOrder);
