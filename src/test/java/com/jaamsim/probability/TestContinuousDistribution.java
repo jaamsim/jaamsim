@@ -40,7 +40,7 @@ public class TestContinuousDistribution {
 	@Before
 	public void setupTests() {
 		simModel = new JaamSimModel();
-		simulation = new Simulation();
+		simulation = simModel.createInstance(Simulation.class);
 	}
 
 	static class SampleDistribution extends ProcessTarget {

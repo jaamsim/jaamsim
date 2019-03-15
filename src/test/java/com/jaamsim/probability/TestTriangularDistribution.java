@@ -36,7 +36,7 @@ public class TestTriangularDistribution {
 	@Before
 	public void setupTests() {
 		simModel = new JaamSimModel();
-		simulation = new Simulation();
+		simulation = simModel.createInstance(Simulation.class);
 	}
 
 	@Test
