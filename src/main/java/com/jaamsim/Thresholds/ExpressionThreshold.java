@@ -208,9 +208,11 @@ public class ExpressionThreshold extends Threshold {
 		boolean ret = this.getOpenConditionValue(getSimTime());
 
 		// If necessary, schedule an event to change the saved state
+		// The event is scheduled LIFO so it is performed as soon as possible, before the condition
+		// can change again.
 		if (ret != super.isOpen() && !setOpenHandle.isScheduled()) {
 			if (isTraceFlag()) trace(0, "isOpen()=%s, super.isOpen()=%s", ret, super.isOpen());
-			this.scheduleProcessTicks(0L, 2, true, setOpenTarget, setOpenHandle);  // FIFO
+			this.scheduleProcessTicks(0L, 2, false, setOpenTarget, setOpenHandle);  // LIFO
 		}
 
 		// Return the value calculated on demand
