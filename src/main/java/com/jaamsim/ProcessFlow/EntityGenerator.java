@@ -81,19 +81,16 @@ public class EntityGenerator extends LinkedService {
 
 		firstArrivalTime = new SampleInput("FirstArrivalTime", KEY_INPUTS, new SampleConstant(TimeUnit.class, 0.0));
 		firstArrivalTime.setUnitType(TimeUnit.class);
-		firstArrivalTime.setEntity(this);
 		firstArrivalTime.setValidRange(0, Double.POSITIVE_INFINITY);
 		this.addInput(firstArrivalTime);
 
 		interArrivalTime = new SampleInput("InterArrivalTime", KEY_INPUTS, new SampleConstant(TimeUnit.class, 1.0));
 		interArrivalTime.setUnitType(TimeUnit.class);
-		interArrivalTime.setEntity(this);
 		interArrivalTime.setValidRange(0, Double.POSITIVE_INFINITY);
 		this.addInput(interArrivalTime);
 
 		entitiesPerArrival = new SampleInput("EntitiesPerArrival", KEY_INPUTS, new SampleConstant(DimensionlessUnit.class, 1.0));
 		entitiesPerArrival.setUnitType(DimensionlessUnit.class);
-		entitiesPerArrival.setEntity(this);
 		entitiesPerArrival.setValidRange(1, Double.POSITIVE_INFINITY);
 		this.addInput(entitiesPerArrival);
 
@@ -109,7 +106,6 @@ public class EntityGenerator extends LinkedService {
 
 		maxNumber = new SampleInput("MaxNumber", KEY_INPUTS, null);
 		maxNumber.setUnitType(DimensionlessUnit.class);
-		maxNumber.setEntity(this);
 		maxNumber.setValidRange(1, Double.POSITIVE_INFINITY);
 		maxNumber.setDefaultText(Input.POSITIVE_INFINITY);
 		this.addInput(maxNumber);

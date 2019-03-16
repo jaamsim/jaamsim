@@ -73,7 +73,6 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 		travelTimeInput = new SampleInput("TravelTime", KEY_INPUTS, new SampleConstant(0.0d));
 		travelTimeInput.setValidRange(0.0, Double.POSITIVE_INFINITY);
 		travelTimeInput.setUnitType(TimeUnit.class);
-		travelTimeInput.setEntity(this);
 		this.addInput(travelTimeInput);
 
 		widthInput = new IntegerInput("LineWidth", FORMAT, 1);

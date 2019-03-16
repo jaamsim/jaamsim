@@ -57,7 +57,6 @@ public class DemoEntity extends DisplayEntity {
 	{
 		travelTime = new SampleInput("TravelTime", KEY_INPUTS, null);
 		travelTime.setUnitType(TimeUnit.class);
-		travelTime.setEntity(this);
 		travelTime.setRequired(true);
 		travelTime.setValidRange(1.0e-6, Double.POSITIVE_INFINITY);
 		this.addInput(travelTime);

@@ -87,13 +87,11 @@ public class PIDController extends DoubleCalculation {
 
 		setPoint = new SampleInput("SetPoint", KEY_INPUTS, null);
 		setPoint.setUnitType(UserSpecifiedUnit.class);
-		setPoint.setEntity(this);
 		setPoint.setRequired(true);
 		this.addInput(setPoint);
 
 		processVariable = new SampleInput("ProcessVariable", KEY_INPUTS, null);
 		processVariable.setUnitType(UserSpecifiedUnit.class);
-		processVariable.setEntity(this);
 		processVariable.setRequired(true);
 		this.addInput(processVariable);
 

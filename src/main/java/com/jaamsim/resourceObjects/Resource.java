@@ -60,7 +60,6 @@ public class Resource extends AbstractResourceProvider {
 
 		capacity = new SampleInput("Capacity", KEY_INPUTS, new SampleConstant(1.0));
 		capacity.setUnitType(DimensionlessUnit.class);
-		capacity.setEntity(this);
 		capacity.setValidRange(0, Double.POSITIVE_INFINITY);
 		this.addInput(capacity);
 	}

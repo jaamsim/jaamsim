@@ -50,7 +50,6 @@ public class Polynomial extends DisplayEntity implements SampleProvider {
 		SampleConstant def = new SampleConstant(DimensionlessUnit.class, 0.0d);
 		inputValue = new SampleInput("InputValue", KEY_INPUTS, def);
 		inputValue.setUnitType(DimensionlessUnit.class);
-		inputValue.setEntity(this);
 		this.addInput(inputValue);
 
 		DoubleVector defList = new DoubleVector();

@@ -52,18 +52,15 @@ public class WeibullDistribution extends Distribution {
 		scaleInput = new SampleInput("Scale", KEY_INPUTS, new SampleConstant(1.0d));
 		scaleInput.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		scaleInput.setUnitType(UserSpecifiedUnit.class);
-		scaleInput.setEntity(this);
 		this.addInput(scaleInput);
 
 		locationInput = new SampleInput("Location", KEY_INPUTS, new SampleConstant(0.0d));
 		locationInput.setUnitType(UserSpecifiedUnit.class);
-		locationInput.setEntity(this);
 		this.addInput(locationInput);
 
 		shapeInput = new SampleInput("Shape", KEY_INPUTS, new SampleConstant(1.0d));
 		shapeInput.setValidRange(1.0e-10d, Double.POSITIVE_INFINITY);
 		shapeInput.setUnitType(DimensionlessUnit.class);
-		shapeInput.setEntity(this);
 		this.addInput(shapeInput);
 	}
 

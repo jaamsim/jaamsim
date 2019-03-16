@@ -49,7 +49,6 @@ public class Branch extends LinkedComponent {
 
 		choice = new SampleInput("Choice", KEY_INPUTS, null);
 		choice.setUnitType(DimensionlessUnit.class );
-		choice.setEntity(this);
 		choice.setValidRange(1, Double.POSITIVE_INFINITY);
 		choice.setRequired(true);
 		this.addInput(choice);

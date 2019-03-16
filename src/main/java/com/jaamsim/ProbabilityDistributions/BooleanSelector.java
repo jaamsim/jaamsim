@@ -50,7 +50,6 @@ public class BooleanSelector extends DisplayEntity implements RandomStreamUser {
 		trueProbInput = new SampleInput("TrueProbability", KEY_INPUTS, new SampleConstant(1.0d));
 		trueProbInput.setUnitType(DimensionlessUnit.class);
 		trueProbInput.setValidRange(0.0d, 1.0d);
-		trueProbInput.setEntity(this);
 		this.addInput(trueProbInput);
 	}
 

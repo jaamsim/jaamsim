@@ -86,13 +86,11 @@ implements SampleProvider, RandomStreamUser {
 		SampleConstant negInf = new SampleConstant(Double.NEGATIVE_INFINITY);
 		minValueInput = new SampleInput("MinValue", KEY_INPUTS, negInf);
 		minValueInput.setUnitType(UserSpecifiedUnit.class);
-		minValueInput.setEntity(this);
 		this.addInput(minValueInput);
 
 		SampleConstant posInf = new SampleConstant(Double.POSITIVE_INFINITY);
 		maxValueInput = new SampleInput("MaxValue", KEY_INPUTS, posInf);
 		maxValueInput.setUnitType(UserSpecifiedUnit.class);
-		maxValueInput.setEntity(this);
 		this.addInput(maxValueInput);
 	}
 

@@ -92,7 +92,6 @@ public class EntityContainer extends SimEntity implements EntContainer {
 	{
 		priority = new SampleInput("Priority", KEY_INPUTS, new SampleConstant(0));
 		priority.setUnitType(DimensionlessUnit.class);
-		priority.setEntity(this);
 		priority.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		this.addInput(priority);
 

@@ -84,7 +84,6 @@ public class Statistics extends LinkedComponent {
 
 		sampleValue = new SampleInput("SampleValue", KEY_INPUTS, null);
 		sampleValue.setUnitType(UserSpecifiedUnit.class);
-		sampleValue.setEntity(this);
 		this.addInput(sampleValue);
 
 		histogramBinWidth = new ValueInput("HistogramBinWidth", KEY_INPUTS, null);

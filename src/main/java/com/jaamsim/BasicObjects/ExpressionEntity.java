@@ -43,7 +43,6 @@ public class ExpressionEntity extends DisplayEntity implements SampleProvider {
 
 		sampleValue = new SampleInput("Expression", KEY_INPUTS, null);
 		sampleValue.setUnitType(UserSpecifiedUnit.class);
-		sampleValue.setEntity(this);
 		sampleValue.setRequired(true);
 		this.addInput(sampleValue);
 	}

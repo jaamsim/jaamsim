@@ -339,7 +339,6 @@ public class Simulation extends Entity {
 		this.addInput(initializationTime);
 
 		pauseConditionInput = new SampleInput("PauseCondition", KEY_INPUTS, null);
-		pauseConditionInput.setEntity(this);
 		pauseConditionInput.setUnitType(DimensionlessUnit.class);
 		this.addInput(pauseConditionInput);
 
@@ -350,7 +349,6 @@ public class Simulation extends Entity {
 		this.addInput(exitAtStop);
 
 		globalSeedInput = new SampleInput("GlobalSubstreamSeed", KEY_INPUTS, new SampleConstant(0));
-		globalSeedInput.setEntity(this);
 		globalSeedInput.setUnitType(DimensionlessUnit.class);
 		globalSeedInput.setValidRange(0, Integer.MAX_VALUE);
 		this.addInput(globalSeedInput);

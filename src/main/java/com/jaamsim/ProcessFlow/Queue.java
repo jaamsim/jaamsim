@@ -117,7 +117,6 @@ public class Queue extends LinkedComponent {
 
 		priority = new SampleInput("Priority", KEY_INPUTS, new SampleConstant(0));
 		priority.setUnitType(DimensionlessUnit.class);
-		priority.setEntity(this);
 		priority.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		this.addInput(priority);
 
@@ -130,13 +129,11 @@ public class Queue extends LinkedComponent {
 
 		renegeTime = new SampleInput("RenegeTime", KEY_INPUTS, null);
 		renegeTime.setUnitType(TimeUnit.class);
-		renegeTime.setEntity(this);
 		renegeTime.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		this.addInput(renegeTime);
 
 		renegeCondition = new SampleInput("RenegeCondition", KEY_INPUTS, new SampleConstant(1));
 		renegeCondition.setUnitType(DimensionlessUnit.class);
-		renegeCondition.setEntity(this);
 		renegeCondition.setValidRange(0.0d, 1.0d);
 		this.addInput(renegeCondition);
 

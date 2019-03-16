@@ -52,7 +52,6 @@ public class Unpack extends LinkedService {
 
 		serviceTime = new SampleInput("ServiceTime", KEY_INPUTS, new SampleConstant(TimeUnit.class, 0.0));
 		serviceTime.setUnitType(TimeUnit.class);
-		serviceTime.setEntity(this);
 		serviceTime.setValidRange(0, Double.POSITIVE_INFINITY);
 		this.addInput(serviceTime);
 	}

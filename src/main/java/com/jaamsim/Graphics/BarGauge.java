@@ -42,7 +42,6 @@ public class BarGauge extends DisplayEntity {
 	{
 		dataSource = new SampleInput("DataSource", KEY_INPUTS, new SampleConstant(0.5));
 		dataSource.setUnitType(DimensionlessUnit.class);
-		dataSource.setEntity(this);
 		dataSource.setValidRange(0.0d, 1.0d);
 		this.addInput(dataSource);
 

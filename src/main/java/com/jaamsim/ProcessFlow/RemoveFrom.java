@@ -40,7 +40,6 @@ public class RemoveFrom extends Unpack {
 	{
 		numberOfEntities = new SampleInput("NumberOfEntities", KEY_INPUTS, new SampleConstant(1.0));
 		numberOfEntities.setUnitType(DimensionlessUnit.class);
-		numberOfEntities.setEntity(this);
 		numberOfEntities.setValidRange(0, Double.POSITIVE_INFINITY);
 		this.addInput(numberOfEntities);
 

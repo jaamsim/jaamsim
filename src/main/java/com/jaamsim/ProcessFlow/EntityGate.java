@@ -36,7 +36,6 @@ public class EntityGate extends LinkedService {
 		releaseDelay = new SampleInput("ReleaseDelay", KEY_INPUTS, new SampleConstant(0.0));
 		releaseDelay.setUnitType(TimeUnit.class);
 		releaseDelay.setValidRange(0.0, Double.POSITIVE_INFINITY);
-		releaseDelay.setEntity(this);
 		this.addInput(releaseDelay);
 	}
 

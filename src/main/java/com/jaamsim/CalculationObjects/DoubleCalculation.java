@@ -57,7 +57,6 @@ implements SampleProvider {
 		SampleConstant def = new SampleConstant(UserSpecifiedUnit.class, 0.0d);
 		inputValue = new SampleInput("InputValue", KEY_INPUTS, def);
 		inputValue.setUnitType(UserSpecifiedUnit.class);
-		inputValue.setEntity(this);
 		this.addInput(inputValue);
 	}
 

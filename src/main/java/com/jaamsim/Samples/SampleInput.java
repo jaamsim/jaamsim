@@ -31,7 +31,6 @@ import com.jaamsim.units.UserSpecifiedUnit;
 
 public class SampleInput extends Input<SampleProvider> {
 	private Class<? extends Unit> unitType;
-	private Entity thisEnt;
 	private double minValue = Double.NEGATIVE_INFINITY;
 	private double maxValue = Double.POSITIVE_INFINITY;
 
@@ -51,10 +50,6 @@ public class SampleInput extends Input<SampleProvider> {
 			((SampleConstant)defValue).setUnitType(unitType);
 		if (defValue instanceof TimeSeriesConstantDouble)
 			((TimeSeriesConstantDouble)defValue).setUnitType(unitType);
-	}
-
-	public void setEntity(Entity ent) {
-		thisEnt = ent;
 	}
 
 	public void setValidRange(double min, double max) {
@@ -93,10 +88,10 @@ public class SampleInput extends Input<SampleProvider> {
 	@Override
 	public ArrayList<String> getValidOptions(Entity ent) {
 		ArrayList<String> list = new ArrayList<>();
-		JaamSimModel simModel = thisEnt.getJaamSimModel();
+		JaamSimModel simModel = ent.getJaamSimModel();
 		for (Entity each : simModel.getClonesOfIterator(Entity.class, SampleProvider.class)) {
 			SampleProvider sp = (SampleProvider)each;
-			if (sp.getUnitType() == unitType && sp != thisEnt)
+			if (sp.getUnitType() == unitType && sp != ent)
 				list.add(each.getName());
 		}
 		Collections.sort(list, Input.uiSortOrder);

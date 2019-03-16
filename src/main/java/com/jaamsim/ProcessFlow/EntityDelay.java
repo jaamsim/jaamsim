@@ -86,7 +86,6 @@ public class EntityDelay extends LinkedComponent implements LineEntity {
 
 		duration = new SampleInput("Duration", KEY_INPUTS, null);
 		duration.setUnitType(TimeUnit.class);
-		duration.setEntity(this);
 		duration.setValidRange(0, Double.POSITIVE_INFINITY);
 		duration.setRequired(true);
 		this.addInput(duration);
@@ -96,7 +95,6 @@ public class EntityDelay extends LinkedComponent implements LineEntity {
 
 		minSeparation = new SampleInput("MinSeparation", KEY_INPUTS, new SampleConstant(0.0d));
 		minSeparation.setUnitType(TimeUnit.class);
-		minSeparation.setEntity(this);
 		minSeparation.setValidRange(0, Double.POSITIVE_INFINITY);
 		this.addInput(minSeparation);
 

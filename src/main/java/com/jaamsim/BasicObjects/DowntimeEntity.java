@@ -89,7 +89,6 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 
 		firstDowntime = new SampleInput("FirstDowntime", KEY_INPUTS, null);
 		firstDowntime.setUnitType(TimeUnit.class);
-		firstDowntime.setEntity(this);
 		this.addInput(firstDowntime);
 
 		iatWorkingEntity = new EntityInput<>(StateEntity.class, "IntervalWorkingEntity", KEY_INPUTS, null);
@@ -101,7 +100,6 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 
 		downtimeIATDistribution = new SampleInput("Interval", KEY_INPUTS, null);
 		downtimeIATDistribution.setUnitType(TimeUnit.class);
-		downtimeIATDistribution.setEntity(this);
 		downtimeIATDistribution.setRequired(true);
 		downtimeIATDistribution.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		this.addInput(downtimeIATDistribution);
@@ -110,7 +108,6 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 
 		downtimeDurationDistribution = new SampleInput("Duration", KEY_INPUTS, null);
 		downtimeDurationDistribution.setUnitType(TimeUnit.class);
-		downtimeDurationDistribution.setEntity(this);
 		downtimeDurationDistribution.setRequired(true);
 		downtimeDurationDistribution.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		this.addInput(downtimeDurationDistribution);
