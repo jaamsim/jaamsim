@@ -1275,7 +1275,7 @@ public abstract class Input<T> {
 		return Input.castEntity(Entity.getNamedEntity(choice), aClass);
 	}
 
-	public static Unit parseUnit(String str)
+	public static Unit parseUnit(JaamSimModel simModel, String str)
 	throws InputErrorException {
 		Unit u = Input.tryParseUnit(str, Unit.class);
 		if (u == null)

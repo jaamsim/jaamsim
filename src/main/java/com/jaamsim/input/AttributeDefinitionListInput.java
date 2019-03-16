@@ -68,7 +68,7 @@ public class AttributeDefinitionListInput extends ListInput<ArrayList<AttributeH
 					double factor = 1.0;
 					if (subArg.numArgs() == 3) {
 						String unitName = Parser.removeEnclosure("[", subArg.getArg(2), "]");
-						Unit unit = Input.parseUnit(unitName);
+						Unit unit = Input.parseUnit(thisEnt.getJaamSimModel(), unitName);
 						unitType = unit.getClass();
 						factor = unit.getConversionFactorToSI();
 					}
