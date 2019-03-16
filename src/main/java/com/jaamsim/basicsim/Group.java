@@ -81,7 +81,7 @@ public class Group extends Entity {
 			if( kw.getArg( 0 ).equals( "++" ) ) {
 				KeywordIndex subKw = new KeywordIndex(kw, 1);
 
-				ArrayList<Entity> addedValues = Input.parseEntityList(subKw, Entity.class, true);
+				ArrayList<Entity> addedValues = Input.parseEntityList(thisEnt.getJaamSimModel(), subKw, Entity.class, true);
 				for( Entity ent : addedValues ) {
 					if( list.contains( ent ) )
 						throw new InputErrorException(INP_ERR_NOTUNIQUE, ent.getName());
@@ -100,7 +100,7 @@ public class Group extends Entity {
 			else if( kw.getArg( 0 ).equals( "--" ) ) {
 				KeywordIndex subKw = new KeywordIndex(kw, 1);
 
-				ArrayList<Entity> removedValues = Input.parseEntityList(subKw, Entity.class, true);
+				ArrayList<Entity> removedValues = Input.parseEntityList(thisEnt.getJaamSimModel(), subKw, Entity.class, true);
 				for( Entity ent : removedValues ) {
 					if( ! list.contains( ent ) )
 						InputAgent.logWarning( "Could not remove " + ent + " from " + this.getKeyword() );
@@ -109,7 +109,7 @@ public class Group extends Entity {
 			}
 			// Otherwise, just set the list normally
 			else {
-				ArrayList<Entity> temp = Input.parseEntityList(kw, Entity.class, true);
+				ArrayList<Entity> temp = Input.parseEntityList(thisEnt.getJaamSimModel(), kw, Entity.class, true);
 				list.clear();
 				list.addAll(temp);
 			}
@@ -151,7 +151,7 @@ public class Group extends Entity {
 		@Override
 		public void parse(Entity thisEnt, KeywordIndex kw) {
 			int originalListSize = list.size();
-			ArrayList<Entity> temp = Input.parseEntityList(kw, Entity.class, true);
+			ArrayList<Entity> temp = Input.parseEntityList(thisEnt.getJaamSimModel(), kw, Entity.class, true);
 			for (Entity each : temp) {
 				if (!list.contains(each))
 					list.add(each);

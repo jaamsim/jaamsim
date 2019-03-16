@@ -1290,12 +1290,12 @@ public abstract class Input<T> {
 		return ut;
 	}
 
-	public static <T extends Entity> ArrayList<T> parseEntityList(KeywordIndex kw, Class<T> aClass, boolean unique)
+	public static <T extends Entity> ArrayList<T> parseEntityList(JaamSimModel simModel, KeywordIndex kw, Class<T> aClass, boolean unique)
 	throws InputErrorException {
 		ArrayList<T> temp = new ArrayList<>(kw.numArgs());
 
 		for (int i = 0; i < kw.numArgs(); i++) {
-			Entity ent = Entity.getNamedEntity(kw.getArg(i));
+			Entity ent = simModel.getNamedEntity(kw.getArg(i));
 			if (ent == null) {
 				throw new InputErrorException(INP_ERR_ENTNAME, kw.getArg(i));
 			}
@@ -1325,14 +1325,14 @@ public abstract class Input<T> {
 		return temp;
 	}
 
-	public static <T extends Entity> ArrayList<ArrayList<T>> parseListOfEntityLists(KeywordIndex kw, Class<T> aClass, boolean unique)
+	public static <T extends Entity> ArrayList<ArrayList<T>> parseListOfEntityLists(JaamSimModel simModel, KeywordIndex kw, Class<T> aClass, boolean unique)
 	throws InputErrorException {
 		ArrayList<KeywordIndex> subArgs = kw.getSubArgs();
 		ArrayList<ArrayList<T>> temp = new ArrayList<>(subArgs.size());
 
 		for (int i = 0; i < subArgs.size(); i++) {
 			try {
-				ArrayList<T> element = Input.parseEntityList(subArgs.get(i), aClass, unique);
+				ArrayList<T> element = Input.parseEntityList(simModel, subArgs.get(i), aClass, unique);
 				temp.add(element);
 			} catch (InputErrorException e) {
 				throw new InputErrorException(INP_ERR_ELEMENT, i+1, e.getMessage());

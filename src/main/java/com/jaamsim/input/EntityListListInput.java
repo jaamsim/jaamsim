@@ -40,7 +40,7 @@ public class EntityListListInput<T extends Entity> extends ListInput<ArrayList<A
 		if (subArgs.size() < minCount || subArgs.size() > maxCount)
 			throw new InputErrorException(INP_ERR_RANGECOUNT, minCount, maxCount, kw.argString());
 
-		value = Input.parseListOfEntityLists(kw, entClass, unique);
+		value = Input.parseListOfEntityLists(thisEnt.getJaamSimModel(), kw, entClass, unique);
 	}
 
 	@Override

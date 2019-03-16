@@ -63,7 +63,7 @@ public class EntityListInput<T extends Entity> extends ListInput<ArrayList<T>> {
 					throw new InputErrorException(INP_ERR_EVENCOUNT, kw.argString());
 			}
 
-			ArrayList<T> addedValues = Input.parseEntityList(subKw, entClass, unique);
+			ArrayList<T> addedValues = Input.parseEntityList(thisEnt.getJaamSimModel(), subKw, entClass, unique);
 			for( T val : addedValues ) {
 				if( unique && newValue.contains( val ) )
 					throw new InputErrorException(INP_ERR_NOTUNIQUE, val.getName());
@@ -84,7 +84,7 @@ public class EntityListInput<T extends Entity> extends ListInput<ArrayList<T>> {
 			}
 
 			ArrayList<T> newValue = new ArrayList<>( value );
-			ArrayList<T> removedValues = Input.parseEntityList(subKw, entClass, unique);
+			ArrayList<T> removedValues = Input.parseEntityList(thisEnt.getJaamSimModel(), subKw, entClass, unique);
 			for( T val : removedValues ) {
 				if( ! newValue.contains( val ) )
 					InputAgent.logWarning( "Could not remove " + val + " from " + this.getKeyword() );
@@ -99,7 +99,7 @@ public class EntityListInput<T extends Entity> extends ListInput<ArrayList<T>> {
 		if( even )
 			Input.assertCountEven(kw);
 
-		value = Input.parseEntityList(kw, entClass, unique);
+		value = Input.parseEntityList(thisEnt.getJaamSimModel(), kw, entClass, unique);
 	}
 
 	@Override

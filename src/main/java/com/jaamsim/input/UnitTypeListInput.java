@@ -81,7 +81,7 @@ public class UnitTypeListInput extends ListInput<ArrayList<ObjectType>> {
 	@Override
 	public void parse(Entity thisEnt, KeywordIndex kw) throws InputErrorException {
 		Input.assertCountRange(kw, minCount, maxCount);
-		value = Input.parseEntityList(kw, ObjectType.class, false);
+		value = Input.parseEntityList(thisEnt.getJaamSimModel(), kw, ObjectType.class, false);
 		setUnitTypeList(value);
 	}
 
