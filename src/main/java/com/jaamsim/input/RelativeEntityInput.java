@@ -27,30 +27,22 @@ import com.jaamsim.Graphics.OverlayEntity;
 import com.jaamsim.Graphics.Region;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.JaamSimModel;
-import com.jaamsim.input.EntityInput;
 
 public class RelativeEntityInput extends EntityInput<DisplayEntity> {
-
-	private DisplayEntity thisEnt;  // entity that owns this input
-
 	public RelativeEntityInput(String key, String cat, DisplayEntity def) {
 		super(DisplayEntity.class, key, cat, def);
-	}
-
-	public void setEntity(DisplayEntity ent) {
-		thisEnt = ent;
 	}
 
 	@Override
 	public void parse(Entity thisEnt, KeywordIndex kw) throws InputErrorException {
 		Input.assertCount(kw, 1);
 		DisplayEntity ent = Input.parseEntity(kw.getArg(0), DisplayEntity.class);
-		if (isCircular(ent))
+		if (isCircular(thisEnt, ent))
 			throw new InputErrorException("The assignment of %s to RelativeEntity would create a circular loop.", ent);
 		value = ent;
 	}
 
-	private boolean isCircular(DisplayEntity ent) {
+	private boolean isCircular(Entity thisEnt, DisplayEntity ent) {
 		while (ent != null) {
 			if (ent == thisEnt)
 				return true;
@@ -62,7 +54,7 @@ public class RelativeEntityInput extends EntityInput<DisplayEntity> {
 	@Override
 	public ArrayList<String> getValidOptions(Entity ent) {
 		ArrayList<String> list = new ArrayList<>();
-		JaamSimModel simModel = thisEnt.getJaamSimModel();
+		JaamSimModel simModel = ent.getJaamSimModel();
 		for (DisplayEntity each: simModel.getClonesOfIterator(DisplayEntity.class)) {
 			if (each.testFlag(Entity.FLAG_GENERATED))
 				continue;
@@ -70,7 +62,7 @@ public class RelativeEntityInput extends EntityInput<DisplayEntity> {
 			if (each instanceof OverlayEntity || each instanceof Region || each instanceof EntityLabel)
 				continue;
 
-			if (isCircular(each))
+			if (isCircular(ent, each))
 				continue;
 
 			list.add(each.getName());

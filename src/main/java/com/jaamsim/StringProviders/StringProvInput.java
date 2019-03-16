@@ -35,12 +35,10 @@ import com.jaamsim.units.UserSpecifiedUnit;
 public class StringProvInput extends Input<StringProvider> {
 
 	private Class<? extends Unit> unitType;
-	private Entity thisEnt;
 
 	public StringProvInput(String key, String cat, StringProvider def) {
 		super(key, cat, def);
 		unitType = null;
-		thisEnt = null;
 	}
 
 	public void setUnitType(Class<? extends Unit> ut) {
@@ -50,10 +48,6 @@ public class StringProvInput extends Input<StringProvider> {
 
 		this.setValid(false);
 		unitType = ut;
-	}
-
-	public void setEntity(Entity ent) {
-		thisEnt = ent;
 	}
 
 	@Override
@@ -85,7 +79,7 @@ public class StringProvInput extends Input<StringProvider> {
 	@Override
 	public ArrayList<String> getValidOptions(Entity ent) {
 		ArrayList<String> list = new ArrayList<>();
-		JaamSimModel simModel = thisEnt.getJaamSimModel();
+		JaamSimModel simModel = ent.getJaamSimModel();
 		for (Entity each : simModel.getClonesOfIterator(Entity.class, SampleProvider.class)) {
 			SampleProvider sp = (SampleProvider)each;
 			if (sp.getUnitType() == unitType)
