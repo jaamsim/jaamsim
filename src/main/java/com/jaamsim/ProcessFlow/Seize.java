@@ -68,7 +68,6 @@ public class Seize extends LinkedService implements ResourceUser {
 		ArrayList<SampleProvider> def = new ArrayList<>();
 		def.add(new SampleConstant(1));
 		numberOfUnitsList = new SampleListInput("NumberOfUnits", KEY_INPUTS, def);
-		numberOfUnitsList.setEntity(this);
 		numberOfUnitsList.setValidRange(0, Double.POSITIVE_INFINITY);
 		numberOfUnitsList.setDimensionless(true);
 		numberOfUnitsList.setUnitType(DimensionlessUnit.class);

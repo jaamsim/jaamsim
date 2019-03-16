@@ -67,7 +67,6 @@ public class XYGraph extends GraphBasics {
 
 		dataSource = new SampleListInput("DataSource", KEY_INPUTS, null);
 		dataSource.setUnitType(UserSpecifiedUnit.class);
-		dataSource.setEntity(this);
 		this.addInput(dataSource);
 
 		ArrayList<Color4d> defSeriesColor = new ArrayList<>(0);
@@ -82,7 +81,6 @@ public class XYGraph extends GraphBasics {
 
 		secondaryDataSource = new SampleListInput("SecondaryDataSource", KEY_INPUTS, null);
 		secondaryDataSource.setUnitType(UserSpecifiedUnit.class);
-		secondaryDataSource.setEntity(this);
 		this.addInput(secondaryDataSource);
 
 		ArrayList<Color4d> defSecondaryLineColor = new ArrayList<>(0);

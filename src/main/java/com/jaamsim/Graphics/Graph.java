@@ -100,7 +100,6 @@ public class Graph extends GraphBasics  {
 
 		dataSource = new SampleListInput("DataSource", KEY_INPUTS, null);
 		dataSource.setUnitType(DimensionlessUnit.class);
-		dataSource.setEntity(this);
 		dataSource.setRequired(true);
 		this.addInput(dataSource);
 
@@ -123,7 +122,6 @@ public class Graph extends GraphBasics  {
 
 		secondaryDataSource = new SampleListInput("SecondaryDataSource", KEY_INPUTS, null);
 		secondaryDataSource.setUnitType(DimensionlessUnit.class);
-		secondaryDataSource.setEntity(this);
 		this.addInput(secondaryDataSource);
 
 		ArrayList<Color4d> defSecondaryLineColor = new ArrayList<>(0);

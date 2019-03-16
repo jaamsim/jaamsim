@@ -33,7 +33,6 @@ public class SampleListInput extends ListInput<ArrayList<SampleProvider>> {
 
 	private ArrayList<Class<? extends Unit>> unitTypeList;
 	private boolean dimensionless = false;
-	private Entity thisEnt;
 	private double minValue = Double.NEGATIVE_INFINITY;
 	private double maxValue = Double.POSITIVE_INFINITY;
 
@@ -84,10 +83,6 @@ public class SampleListInput extends ListInput<ArrayList<SampleProvider>> {
 			return null;
 		int k = Math.min(i, unitTypeList.size()-1);
 		return unitTypeList.get(k);
-	}
-
-	public void setEntity(Entity ent) {
-		thisEnt = ent;
 	}
 
 	public void setValidRange(double min, double max) {
@@ -144,7 +139,7 @@ public class SampleListInput extends ListInput<ArrayList<SampleProvider>> {
 	@Override
 	public ArrayList<String> getValidOptions(Entity ent) {
 		ArrayList<String> list = new ArrayList<>();
-		JaamSimModel simModel = thisEnt.getJaamSimModel();
+		JaamSimModel simModel = ent.getJaamSimModel();
 		for (Entity each : simModel.getClonesOfIterator(Entity.class, SampleProvider.class)) {
 			SampleProvider samp = (SampleProvider)each;
 			if (unitTypeList.contains(samp.getUnitType()))
