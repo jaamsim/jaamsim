@@ -43,7 +43,7 @@ public class ValueInput extends Input<Double> {
 	@Override
 	public void parse(Entity thisEnt, KeywordIndex kw)
 	throws InputErrorException {
-		DoubleVector temp = Input.parseDoubles(kw, minValue, maxValue, unitType);
+		DoubleVector temp = Input.parseDoubles(thisEnt.getJaamSimModel(), kw, minValue, maxValue, unitType);
 		Input.assertCount(temp, 1);
 		value = Double.valueOf(temp.get(0));
 		this.setValid(true);

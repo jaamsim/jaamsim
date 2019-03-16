@@ -49,7 +49,7 @@ public class Vec3dListInput extends ListInput<ArrayList<Vec3d>> {
 
 		ArrayList<Vec3d> tempValue = new ArrayList<>(subArgs.size());
 		for (KeywordIndex subArg : subArgs) {
-			DoubleVector temp = Input.parseDoubles(subArg, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, unitType);
+			DoubleVector temp = Input.parseDoubles(thisEnt.getJaamSimModel(), subArg, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, unitType);
 			// pad the vector to have 3 elements
 			while (temp.size() < 3) {
 				temp.add(0.0d);

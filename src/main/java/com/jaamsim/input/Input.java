@@ -1085,7 +1085,7 @@ public abstract class Input<T> {
 	/**
 	 * Convert the given input to a DoubleVector and apply the given conversion factor
 	 */
-	public static DoubleVector parseDoubles(KeywordIndex kw, double minValue, double maxValue, Class<? extends Unit> unitType)
+	public static DoubleVector parseDoubles(JaamSimModel simModel, KeywordIndex kw, double minValue, double maxValue, Class<? extends Unit> unitType)
 	throws InputErrorException {
 
 		if (unitType == UserSpecifiedUnit.class)
@@ -1412,7 +1412,7 @@ public abstract class Input<T> {
 
 		// RGB
 		else {
-			DoubleVector dbuf = Input.parseDoubles(kw, 0.0d, 255.0d, DimensionlessUnit.class);
+			DoubleVector dbuf = Input.parseDoubles(simModel, kw, 0.0d, 255.0d, DimensionlessUnit.class);
 			double r = dbuf.get(0);
 			double g = dbuf.get(1);
 			double b = dbuf.get(2);
@@ -1485,7 +1485,7 @@ public abstract class Input<T> {
 		if (kw.numArgs() == 2) {
 			if (unitType == DimensionlessUnit.class)
 				throw new InputErrorException(INP_ERR_COUNT, 1, kw.argString());
-			DoubleVector tmp = Input.parseDoubles(kw, minValue, maxValue, unitType);
+			DoubleVector tmp = Input.parseDoubles(thisEnt.getJaamSimModel(), kw, minValue, maxValue, unitType);
 			return new SampleConstant(unitType, tmp.get(0));
 		}
 
@@ -1507,7 +1507,7 @@ public abstract class Input<T> {
 		// 2) Try parsing a constant value
 		DoubleVector tmp = null;
 		try {
-			tmp = Input.parseDoubles(kw, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, DimensionlessUnit.class);
+			tmp = Input.parseDoubles(thisEnt.getJaamSimModel(), kw, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, DimensionlessUnit.class);
 		}
 		catch (InputErrorException e) {}
 

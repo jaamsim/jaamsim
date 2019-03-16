@@ -33,7 +33,7 @@ public class SIUnitFactorInput extends Input<double[]> {
 	@Override
 	public void parse(Entity thisEnt, KeywordIndex kw)
 	throws InputErrorException {
-		DoubleVector temp = Input.parseDoubles(kw, 1e-15d, Double.POSITIVE_INFINITY, DimensionlessUnit.class);
+		DoubleVector temp = Input.parseDoubles(thisEnt.getJaamSimModel(), kw, 1e-15d, Double.POSITIVE_INFINITY, DimensionlessUnit.class);
 		Input.assertCountRange(temp, 1, 2);
 		double[] tmp = new double[temp.size()];
 		tmp[0] = temp.get(0);

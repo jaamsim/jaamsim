@@ -118,7 +118,7 @@ public class TimeSeriesDataInput extends Input<TimeSeriesData> {
 
 			// Value portion of the record
 			KeywordIndex valKw = new KeywordIndex("", each, null);
-			DoubleVector v = Input.parseDoubles(valKw, minValue, maxValue, unitType);
+			DoubleVector v = Input.parseDoubles(thisEnt.getJaamSimModel(), valKw, minValue, maxValue, unitType);
 
 			// Store the time and value for this record
 			times.add( usOffset/(1.0e6*tickLength) );

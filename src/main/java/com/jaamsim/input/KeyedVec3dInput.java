@@ -19,6 +19,7 @@ package com.jaamsim.input;
 import java.util.ArrayList;
 
 import com.jaamsim.basicsim.Entity;
+import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.units.DimensionlessUnit;
@@ -51,11 +52,11 @@ public class KeyedVec3dInput extends Input<Vec3d> {
 		}
 		ArrayList<ArrayList<String>> keys = InputAgent.splitForNestedBraces(strings);
 		for( ArrayList<String> key : keys) {
-			parseKey(key);
+			parseKey(thisEnt.getJaamSimModel(), key);
 		}
 	}
 
-	private void parseKey(ArrayList<String> key) throws InputErrorException {
+	private void parseKey(JaamSimModel simModel, ArrayList<String> key) throws InputErrorException {
 		if (key.size() <= 2 || !key.get(0).equals("{") || !key.get(key.size()-1).equals("}")) {
 			throw new InputErrorException("Malformed key entry: %s", key.toString());
 		}
@@ -76,10 +77,10 @@ public class KeyedVec3dInput extends Input<Vec3d> {
 		}
 
 		KeywordIndex timeKw = new KeywordIndex("", timeInput, 1, 3, null);
-		DoubleVector time = Input.parseDoubles(timeKw, 0.0d, Double.POSITIVE_INFINITY, TimeUnit.class);
+		DoubleVector time = Input.parseDoubles(simModel, timeKw, 0.0d, Double.POSITIVE_INFINITY, TimeUnit.class);
 
 		KeywordIndex valKw = new KeywordIndex("", valInput, 1, 5, null);
-		DoubleVector vals = Input.parseDoubles(valKw, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, unitType);
+		DoubleVector vals = Input.parseDoubles(simModel, valKw, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, unitType);
 
 		Vec3d val = new Vec3d(vals.get(0), vals.get(1), vals.get(2));
 		curve.addKey(time.get(0), val);

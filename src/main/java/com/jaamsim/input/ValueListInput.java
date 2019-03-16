@@ -44,7 +44,7 @@ public class ValueListInput extends ListInput<DoubleVector> {
 	@Override
 	public void parse(Entity thisEnt, KeywordIndex kw)
 	throws InputErrorException {
-		DoubleVector temp = Input.parseDoubles(kw, minValue, maxValue, unitType);
+		DoubleVector temp = Input.parseDoubles(thisEnt.getJaamSimModel(), kw, minValue, maxValue, unitType);
 		Input.assertCount(temp, validCounts);
 		Input.assertCountRange(temp, minCount, maxCount);
 		Input.assertMonotonic(temp, monotonic);

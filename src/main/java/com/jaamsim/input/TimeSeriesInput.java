@@ -52,7 +52,7 @@ public class TimeSeriesInput extends Input<TimeSeriesProvider> {
 
 		// Try to parse as a constant value
 		try {
-			DoubleVector tmp = Input.parseDoubles(kw, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, unitType);
+			DoubleVector tmp = Input.parseDoubles(thisEnt.getJaamSimModel(), kw, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, unitType);
 			Input.assertCount(tmp, 1);
 			value = new TimeSeriesConstantDouble(unitType, tmp.get(0));
 			return;

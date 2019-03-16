@@ -38,7 +38,7 @@ public class Vec3dInput extends Input<Vec3d> {
 	@Override
 	public void parse(Entity thisEnt, KeywordIndex kw)
 	throws InputErrorException {
-		DoubleVector temp = Input.parseDoubles(kw, minValue, maxValue, unitType);
+		DoubleVector temp = Input.parseDoubles(thisEnt.getJaamSimModel(), kw, minValue, maxValue, unitType);
 		Input.assertCountRange(temp, 1, 3);
 
 		// pad the vector to have 3 elements
