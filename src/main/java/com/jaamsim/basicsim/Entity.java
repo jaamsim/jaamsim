@@ -151,7 +151,6 @@ public class Entity {
 	public Entity() {
 		simModel = JaamSimModel.getCreateModel();
 		entityNumber = simModel.getNextEntityID();
-		simModel.addInstance(this);
 		flags = 0;
 	}
 

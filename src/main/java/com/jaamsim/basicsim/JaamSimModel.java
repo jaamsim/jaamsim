@@ -521,6 +521,7 @@ public class JaamSimModel {
 				createModel = this;
 				ent = proto.newInstance();
 			}
+			addInstance(ent);
 		}
 		catch (Throwable e) {}
 
