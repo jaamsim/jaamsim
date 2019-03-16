@@ -491,7 +491,7 @@ public class InputAgent {
 				}
 
 				// Otherwise assume it is a Keyword record
-				InputAgent.processKeywordRecord(record, pc);
+				InputAgent.processKeywordRecord(simModel, record, pc);
 				record.clear();
 			}
 
@@ -619,7 +619,7 @@ public class InputAgent {
 	 * @param addedEntity
 	 */
 	private static <T extends Entity> T defineEntity(JaamSimModel simModel, Class<T> proto, String key, boolean addedEntity) {
-		Entity existingEnt = Input.tryParseEntity(key, Entity.class);
+		Entity existingEnt = Input.tryParseEntity(simModel, key, Entity.class);
 		if (existingEnt != null) {
 			InputAgent.logError(INP_ERR_DEFINEUSED, key, existingEnt.getClass().getSimpleName());
 			return null;
@@ -670,8 +670,8 @@ public class InputAgent {
 		InputAgent.storeAndExecute(new RenameCommand(ent, newName));
 	}
 
-	public static void processKeywordRecord(ArrayList<String> record, ParseContext context) {
-		Entity ent = Input.tryParseEntity(record.get(0), Entity.class);
+	public static void processKeywordRecord(JaamSimModel simModel, ArrayList<String> record, ParseContext context) {
+		Entity ent = Input.tryParseEntity(simModel, record.get(0), Entity.class);
 		if (ent == null) {
 			InputAgent.logError("Could not find Entity: %s", record.get(0));
 			return;

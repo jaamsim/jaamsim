@@ -1208,7 +1208,7 @@ public abstract class Input<T> {
 
 	public static Class<? extends Entity> parseEntityType(JaamSimModel simModel, String input)
 	throws InputErrorException {
-		ObjectType type = Input.tryParseEntity( input, ObjectType.class );
+		ObjectType type = Input.tryParseEntity(simModel, input, ObjectType.class);
 		if (type == null)
 			throw new InputErrorException("Entity type not found: %s", input);
 
@@ -1267,7 +1267,7 @@ public abstract class Input<T> {
 		return t;
 	}
 
-	public static <T extends Entity> T tryParseEntity(String choice, Class<T> aClass) {
+	public static <T extends Entity> T tryParseEntity(JaamSimModel simModel, String choice, Class<T> aClass) {
 		return Input.castEntity(Entity.getNamedEntity(choice), aClass);
 	}
 

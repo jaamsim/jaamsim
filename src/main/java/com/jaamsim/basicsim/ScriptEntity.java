@@ -70,7 +70,7 @@ public class ScriptEntity extends Entity {
 		// Restarts will work for simple scripts with a record at Time 0
 		// Restarts should work for all scripts provided the script has initial inputs before the first Time record
 		for (lastTokenIdx++; lastTokenIdx < tokens.size(); lastTokenIdx++) {
-			InputAgent.processKeywordRecord(tokens.get(lastTokenIdx), null);
+			InputAgent.processKeywordRecord(this.getJaamSimModel(), tokens.get(lastTokenIdx), null);
 			if( tokens.get(lastTokenIdx).get( 0 ).equals( this.getName() ) ) {
 				if( tokens.get( lastTokenIdx ).get( 1 ).equals( "Time" ) ) {
 					lastTokenIdx--;
@@ -112,7 +112,7 @@ public class ScriptEntity extends Entity {
 		boolean record = InputAgent.recordEdits();
 		InputAgent.setRecordEdits(false);
 		for (lastTokenIdx++; lastTokenIdx < tokens.size(); lastTokenIdx++) {
-			InputAgent.processKeywordRecord(tokens.get(lastTokenIdx), null);
+			InputAgent.processKeywordRecord(this.getJaamSimModel(), tokens.get(lastTokenIdx), null);
 			// If a "Time" record was read, then wait until the time
 			long delayTicks = EventManager.current().secondsToNearestTick(scriptTime.getValue()) - getSimTicks();
 			if (delayTicks > 0) {

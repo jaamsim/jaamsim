@@ -88,7 +88,7 @@ private void appendOutput(StringBuilder bld) {
 		String arg = arguments.getValue().get(i);
 
 		// Treat as an Entity if possible
-		Entity e = Input.tryParseEntity(arg, Entity.class);
+		Entity e = Input.tryParseEntity(this.getJaamSimModel(), arg, Entity.class);
 		if (e != null) {
 			params[i] = e;
 			paramClass[i] = e.getClass();
