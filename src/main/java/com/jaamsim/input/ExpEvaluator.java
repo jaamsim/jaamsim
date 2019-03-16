@@ -102,7 +102,7 @@ public class ExpEvaluator {
 	}
 
 	public static class EntityParseContext extends ExpParser.ParseContext {
-
+		private final Entity thisEnt;
 		private final String source;
 
 		private final HashMap<Entity, String> entityReferences = new HashMap<>();
@@ -132,9 +132,9 @@ public class ExpEvaluator {
 			return ret;
 		}
 
-		public EntityParseContext(HashMap<String, ExpResult> constants, String source) {
+		public EntityParseContext(Entity ent, HashMap<String, ExpResult> constants, String source) {
 			super(constants);
-
+			this.thisEnt = ent;
 			this.source = source;
 		}
 
@@ -167,7 +167,7 @@ public class ExpEvaluator {
 
 		@Override
 		public ExpResult getValFromLitName(String name, String source, int pos) throws ExpError {
-			Entity ent = Entity.getNamedEntity(name);
+			Entity ent = thisEnt.getJaamSimModel().getNamedEntity(name);
 			if (ent == null) {
 				throw new ExpError(source, pos, "Could not find entity: %s", name);
 			}
@@ -367,7 +367,7 @@ public class ExpEvaluator {
 		HashMap<String, ExpResult> constants = new HashMap<>();
 		constants.put("this", ExpResult.makeEntityResult(thisEnt));
 
-		return new EntityParseContext(constants, source);
+		return new EntityParseContext(thisEnt, constants, source);
 	}
 
 	public static ExpResult evaluateExpression(ExpParser.Expression exp, double simTime) throws ExpError
