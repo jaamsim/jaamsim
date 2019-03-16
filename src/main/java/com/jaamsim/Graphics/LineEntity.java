@@ -25,6 +25,7 @@ import com.jaamsim.math.Color4d;
 import com.jaamsim.ui.GUIFrame;
 
 public interface LineEntity {
+	public JaamSimModel getJaamSimModel();
 	public boolean isOutlined();
 	public int getLineWidth();
 	public Color4d getLineColour();

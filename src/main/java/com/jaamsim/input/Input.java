@@ -762,14 +762,14 @@ public abstract class Input<T> {
 		return temp;
 	}
 
-	public static ArrayList<Color4d> parseColorVector(KeywordIndex kw)
+	public static ArrayList<Color4d> parseColorVector(JaamSimModel simModel, KeywordIndex kw)
 	throws InputErrorException {
 		ArrayList<KeywordIndex> subArgs = kw.getSubArgs();
 		ArrayList<Color4d> temp = new ArrayList<>(subArgs.size());
 
 		for (int i = 0; i < subArgs.size(); i++) {
 			try {
-				Color4d element = Input.parseColour(subArgs.get(i));
+				Color4d element = Input.parseColour(simModel, subArgs.get(i));
 				temp.add(element);
 			} catch (InputErrorException e) {
 				throw new InputErrorException(INP_ERR_ELEMENT, i+1, e.getMessage());
@@ -1391,7 +1391,7 @@ public abstract class Input<T> {
 		return temp;
 	}
 
-	public static Color4d parseColour(KeywordIndex kw) {
+	public static Color4d parseColour(JaamSimModel simModel, KeywordIndex kw) {
 
 		Input.assertCountRange(kw, 1, 4);
 

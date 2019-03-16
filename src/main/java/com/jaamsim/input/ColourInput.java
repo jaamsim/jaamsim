@@ -72,7 +72,7 @@ static {
 	@Override
 	public void parse(Entity thisEnt, KeywordIndex kw)
 	throws InputErrorException {
-		value = Input.parseColour(kw);
+		value = Input.parseColour(thisEnt.getJaamSimModel(), kw);
 	}
 
 	@Override

@@ -25,6 +25,7 @@ import com.jaamsim.math.Color4d;
 import com.jaamsim.ui.GUIFrame;
 
 public interface FillEntity {
+	public JaamSimModel getJaamSimModel();
 	public boolean isFilled();
 	public Color4d getFillColour();
 

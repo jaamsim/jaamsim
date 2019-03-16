@@ -32,7 +32,7 @@ public class ColorListInput extends ListInput<ArrayList<Color4d>>  {
 	public void parse(Entity thisEnt, KeywordIndex kw)
 	throws InputErrorException {
 		Input.assertCountRange(kw, minCount, maxCount);
-		value = Input.parseColorVector(kw);
+		value = Input.parseColorVector(thisEnt.getJaamSimModel(), kw);
 	}
 
 	@Override

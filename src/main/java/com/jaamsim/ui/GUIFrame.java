@@ -1642,7 +1642,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 
 	private static void setFontColour(TextEntity textEnt, String colName) {
 		KeywordIndex kw = InputAgent.formatInput("FontColour", colName);
-		Color4d col = Input.parseColour(kw);
+		Color4d col = Input.parseColour(textEnt.getJaamSimModel(), kw);
 		setFontColour(textEnt, col);
 	}
 
@@ -1899,7 +1899,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 
 	private static void setLineColour(LineEntity lineEnt, String colName) {
 		KeywordIndex kw = InputAgent.formatInput("LineColour", colName);
-		Color4d col = Input.parseColour(kw);
+		Color4d col = Input.parseColour(lineEnt.getJaamSimModel(), kw);
 		setLineColour(lineEnt, col);
 	}
 
@@ -2073,7 +2073,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 
 	private static void setFillColour(FillEntity fillEnt, String colName) {
 		KeywordIndex kw = InputAgent.formatInput("FillColour", colName);
-		Color4d col = Input.parseColour(kw);
+		Color4d col = Input.parseColour(fillEnt.getJaamSimModel(), kw);
 		setFillColour(fillEnt, col);
 	}
 

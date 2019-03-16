@@ -26,6 +26,7 @@ import com.jaamsim.math.Vec3d;
 import com.jaamsim.ui.GUIFrame;
 
 public interface TextEntity {
+	public JaamSimModel getJaamSimModel();
 	public String getFontName();
 	public double getTextHeight();
 	public String getTextHeightString();
