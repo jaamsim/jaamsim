@@ -30,12 +30,8 @@ import com.jaamsim.units.Unit;
  * @author Harry King
  */
 public class AttributeDefinitionListInput extends ListInput<ArrayList<AttributeHandle>> {
-
-	private final Entity ent;
-
-	public AttributeDefinitionListInput(Entity e, String key, String cat, ArrayList<AttributeHandle> def) {
+	public AttributeDefinitionListInput(String key, String cat, ArrayList<AttributeHandle> def) {
 		super(key, cat, def);
-		ent = e;
 	}
 
 	@Override
@@ -52,7 +48,7 @@ public class AttributeDefinitionListInput extends ListInput<ArrayList<AttributeH
 			try {
 				// Parse the attribute name
 				String name = subArg.getArg(0);
-				if (OutputHandle.hasOutput(ent.getClass(), name)) {
+				if (OutputHandle.hasOutput(thisEnt.getClass(), name)) {
 					throw new InputErrorException("Attribute name is the same as existing output name: %s", name);
 				}
 
@@ -62,7 +58,7 @@ public class AttributeDefinitionListInput extends ListInput<ArrayList<AttributeH
 				if (subArg.numArgs() == 2) {
 					// parse this as an expression
 					String expString = subArg.getArg(1);
-					ExpParser.Expression exp = ExpParser.parseExpression(ExpEvaluator.getParseContext(ent, expString), expString);
+					ExpParser.Expression exp = ExpParser.parseExpression(ExpEvaluator.getParseContext(thisEnt, expString), expString);
 					expVal = ExpEvaluator.evaluateExpression(exp, 0);
 					if (expVal.type == ExpResType.NUMBER) {
 						unitType = expVal.unitType;
@@ -88,9 +84,9 @@ public class AttributeDefinitionListInput extends ListInput<ArrayList<AttributeH
 				}
 
 				// Save the data for this attribute
-				AttributeHandle h = (AttributeHandle) ent.getOutputHandle(name);
+				AttributeHandle h = (AttributeHandle) thisEnt.getOutputHandle(name);
 				if (h == null)
-					h = new AttributeHandle(ent, name);
+					h = new AttributeHandle(thisEnt, name);
 				h.setUnitType(unitType);
 				h.setInitialValue(expVal);
 				h.setValue(expVal);
@@ -119,7 +115,7 @@ public class AttributeDefinitionListInput extends ListInput<ArrayList<AttributeH
 		@SuppressWarnings("unchecked")
 		ArrayList<AttributeHandle> inValue = (ArrayList<AttributeHandle>) (in.value);
 		for (AttributeHandle h : inValue) {
-			AttributeHandle hNew = new AttributeHandle(ent, h.getName());
+			AttributeHandle hNew = new AttributeHandle(thisEnt, h.getName());
 			hNew.setUnitType(h.getUnitType());
 			hNew.setInitialValue(h.getInitialValue());
 			hNew.setValue(h.getValue(0.0d, ExpResult.class));

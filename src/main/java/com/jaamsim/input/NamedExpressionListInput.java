@@ -24,13 +24,8 @@ import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 
 public class NamedExpressionListInput extends ListInput<ArrayList<NamedExpression>> {
-
-	private final Entity ent;
-
-	public NamedExpressionListInput(Entity e, String key, String cat,
-			ArrayList<NamedExpression> def) {
+	public NamedExpressionListInput(String key, String cat, ArrayList<NamedExpression> def) {
 		super(key, cat, def);
-		ent = e;
 	}
 
 	@Override
@@ -55,12 +50,12 @@ public class NamedExpressionListInput extends ListInput<ArrayList<NamedExpressio
 			try {
 				// Parse the expression name
 				String name = subArg.getArg(0);
-				if (OutputHandle.hasOutput(ent.getClass(), name)) {
+				if (OutputHandle.hasOutput(thisEnt.getClass(), name)) {
 					throw new InputErrorException("Expression name is the same as existing output name: %s", name);
 				}
 
 				String expString = subArg.getArg(1);
-				Expression exp = ExpParser.parseExpression(ExpEvaluator.getParseContext(ent, expString), expString);
+				Expression exp = ExpParser.parseExpression(ExpEvaluator.getParseContext(thisEnt, expString), expString);
 
 				Class<? extends Unit> unitType = DimensionlessUnit.class;
 				if (subArg.numArgs() == 3) {

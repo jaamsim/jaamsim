@@ -136,12 +136,12 @@ public class Entity {
 		desc.setHidden(true);
 		this.addInput(desc);
 
-		attributeDefinitionList = new AttributeDefinitionListInput(this, "AttributeDefinitionList",
+		attributeDefinitionList = new AttributeDefinitionListInput("AttributeDefinitionList",
 				KEY_INPUTS, new ArrayList<AttributeHandle>());
 		attributeDefinitionList.setHidden(false);
 		this.addInput(attributeDefinitionList);
 
-		namedExpressionInput = new NamedExpressionListInput(this, "CustomOutputList",
+		namedExpressionInput = new NamedExpressionListInput("CustomOutputList",
 				KEY_INPUTS, new ArrayList<NamedExpression>());
 		namedExpressionInput.setHidden(false);
 		this.addInput(namedExpressionInput);
