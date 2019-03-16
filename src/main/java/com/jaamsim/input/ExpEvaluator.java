@@ -140,7 +140,7 @@ public class ExpEvaluator {
 
 		@Override
 		public ExpParser.UnitData getUnitByName(String name) {
-			Unit unit = Input.tryParseUnit(name, Unit.class);
+			Unit unit = Input.tryParseUnit(thisEnt.getJaamSimModel(), name, Unit.class);
 			if (unit == null) {
 				return null;
 			}

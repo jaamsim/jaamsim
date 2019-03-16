@@ -1098,7 +1098,7 @@ public abstract class Input<T> {
 
 		// Parse the unit portion of the input
 		String unitName = Parser.removeEnclosure("[", kw.getArg(numArgs-1), "]");
-		Unit unit = Input.tryParseUnit(unitName, unitType);
+		Unit unit = Input.tryParseUnit(simModel, unitName, unitType);
 
 
 		// A unit is mandatory except for dimensionless values and time values in RFC8601 date/time format
@@ -1268,16 +1268,16 @@ public abstract class Input<T> {
 	}
 
 	public static <T extends Entity> T tryParseEntity(JaamSimModel simModel, String choice, Class<T> aClass) {
-		return Input.castEntity(Entity.getNamedEntity(choice), aClass);
+		return Input.castEntity(simModel.getNamedEntity(choice), aClass);
 	}
 
-	public static <T extends Unit> T tryParseUnit(String choice, Class<T> aClass) {
-		return Input.castEntity(Entity.getNamedEntity(choice), aClass);
+	public static <T extends Unit> T tryParseUnit(JaamSimModel simModel, String choice, Class<T> aClass) {
+		return Input.castEntity(simModel.getNamedEntity(choice), aClass);
 	}
 
 	public static Unit parseUnit(JaamSimModel simModel, String str)
 	throws InputErrorException {
-		Unit u = Input.tryParseUnit(str, Unit.class);
+		Unit u = Input.tryParseUnit(simModel, str, Unit.class);
 		if (u == null)
 			throw new InputErrorException("Could not find a unit named: %s", str);
 
