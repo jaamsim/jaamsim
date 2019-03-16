@@ -1534,6 +1534,115 @@ public class InputAgent {
 		}
 	}
 
+
+	private static final String OUTPUT_FORMAT = "%s\t%s\t%s\t%s%n";
+	private static final String LIST_OUTPUT_FORMAT = "%s\t%s[%s]\t%s\t%s%n";
+
+	/**
+	 * Writes the entry in the output report for this entity.
+	 * @param file - the file in which the outputs are written
+	 * @param simTime - simulation time at which the outputs are evaluated
+	 */
+	public static void printReport(Entity ent, FileEntity file, double simTime) {
+
+		// Loop through the outputs
+		ArrayList<OutputHandle> handles = OutputHandle.getOutputHandleList(ent);
+		for (OutputHandle out : handles) {
+
+			// Should this output appear in the report?
+			if (!out.isReportable())
+				continue;
+
+			// Determine the preferred unit for this output
+			Class<? extends Unit> ut = out.getUnitType();
+			double factor = Unit.getDisplayedUnitFactor(ut);
+			String unitString = Unit.getDisplayedUnit(ut);
+			if (ut == Unit.class || ut == DimensionlessUnit.class)
+				unitString = "-";
+
+			// Numerical output
+			if (out.isNumericValue()) {
+				try {
+					double val = out.getValueAsDouble(simTime, Double.NaN)/factor;
+					file.format(OUTPUT_FORMAT,
+							ent.getName(), out.getName(), val, unitString);
+				}
+				catch (Exception e) {
+					file.format(OUTPUT_FORMAT,
+							ent.getName(), out.getName(), Double.NaN, unitString);
+				}
+			}
+
+			// double[] output
+			else if (out.getReturnType() == double[].class) {
+				double[] vec = out.getValue(simTime, double[].class);
+				for (int i = 0; i < vec.length; i++) {
+					file.format(LIST_OUTPUT_FORMAT,
+							ent.getName(), out.getName(), i, vec[i]/factor, unitString);
+				}
+			}
+
+			// DoubleVector output
+			else if (out.getReturnType() == DoubleVector.class) {
+				DoubleVector vec = out.getValue(simTime, DoubleVector.class);
+				for (int i=0; i<vec.size(); i++) {
+					double val = vec.get(i);
+					file.format(LIST_OUTPUT_FORMAT,
+							ent.getName(), out.getName(), i, val/factor, unitString);
+				}
+			}
+
+			// ArrayList output
+			else if (out.getReturnType() == ArrayList.class) {
+				ArrayList<?> array = out.getValue(simTime, ArrayList.class);
+				for (int i=0; i<array.size(); i++) {
+					Object obj = array.get(i);
+					if (obj instanceof Double) {
+						double val = (Double)obj;
+						file.format(LIST_OUTPUT_FORMAT,
+								ent.getName(), out.getName(), i, val/factor, unitString);
+					}
+					else {
+						file.format(LIST_OUTPUT_FORMAT,
+							ent.getName(), out.getName(), i, obj, unitString);
+					}
+				}
+			}
+
+			// Keyed output
+			else if (out.getReturnType() == LinkedHashMap.class) {
+				LinkedHashMap<?, ?> map = out.getValue(simTime, LinkedHashMap.class);
+				for (Entry<?, ?> mapEntry : map.entrySet()) {
+					Object obj = mapEntry.getValue();
+					if (obj instanceof Double) {
+						double val = (Double)obj;
+						file.format(LIST_OUTPUT_FORMAT,
+								ent.getName(), out.getName(), mapEntry.getKey(), val/factor, unitString);
+					}
+					else {
+						file.format(LIST_OUTPUT_FORMAT,
+								ent.getName(), out.getName(), mapEntry.getKey(), obj, unitString);
+					}
+				}
+			}
+			// Expression based custom outputs
+			else if (out.getReturnType() == ExpResult.class) {
+				String val = InputAgent.getValueAsString(out, simTime, "%s", factor);
+				file.format(OUTPUT_FORMAT,
+						ent.getName(), out.getName(), val, unitString);
+			}
+
+			// All other outputs
+			else {
+				if (ut != Unit.class && ut != DimensionlessUnit.class)
+					unitString = Unit.getSIUnit(ut);  // other outputs are not converted to preferred units
+				String str = out.getValue(simTime, out.getReturnType()).toString();
+				file.format(OUTPUT_FORMAT,
+						ent.getName(), out.getName(), str, unitString);
+			}
+		}
+	}
+
 	/**
 	 * Prints the output report for the simulation run.
 	 * @param simTime - simulation time at which the report is printed.
@@ -1580,7 +1689,7 @@ public class InputAgent {
 			}
 
 			// Print the report for the entity
-			Entity.printReport(ent, reportFile, simTime);
+			InputAgent.printReport(ent, reportFile, simTime);
 			reportFile.format("%n");
 		}
 
