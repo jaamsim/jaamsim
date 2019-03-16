@@ -25,7 +25,6 @@ import com.jaamsim.Samples.TimeSeriesProvider;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.datatypes.DoubleVector;
-import com.jaamsim.ui.GUIFrame;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
@@ -71,7 +70,7 @@ public class TimeSeriesInput extends Input<TimeSeriesProvider> {
 	@Override
 	public ArrayList<String> getValidOptions(Entity ent) {
 		ArrayList<String> list = new ArrayList<>();
-		JaamSimModel simModel = GUIFrame.getJaamSimModel();
+		JaamSimModel simModel = ent.getJaamSimModel();
 		for (Entity each : simModel.getClonesOfIterator(Entity.class, TimeSeriesProvider.class)) {
 			TimeSeriesProvider tsp = (TimeSeriesProvider)each;
 			if (tsp.getUnitType() == unitType)

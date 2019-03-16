@@ -21,7 +21,6 @@ import java.util.Collections;
 
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.JaamSimModel;
-import com.jaamsim.ui.GUIFrame;
 
 public class InterfaceEntityInput<T> extends Input<T> {
 
@@ -47,7 +46,7 @@ public class InterfaceEntityInput<T> extends Input<T> {
 	@Override
 	public ArrayList<String> getValidOptions(Entity ent) {
 		ArrayList<String> list = new ArrayList<>();
-		JaamSimModel simModel = GUIFrame.getJaamSimModel();
+		JaamSimModel simModel = ent.getJaamSimModel();
 		for (Entity each: simModel.getClonesOfIterator(Entity.class, entClass)) {
 			if (each.testFlag(Entity.FLAG_GENERATED))
 				continue;

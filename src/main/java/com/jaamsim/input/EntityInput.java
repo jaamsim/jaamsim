@@ -22,7 +22,6 @@ import java.util.Collections;
 
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.basicsim.Entity;
-import com.jaamsim.ui.GUIFrame;
 
 public class EntityInput<T extends Entity> extends Input<T> {
 
@@ -69,7 +68,7 @@ public class EntityInput<T extends Entity> extends Input<T> {
 		if (entSubClass == null)
 			return list;
 
-		for (T each: GUIFrame.getJaamSimModel().getClonesOfIterator(entSubClass)) {
+		for (T each: ent.getJaamSimModel().getClonesOfIterator(entSubClass)) {
 			if (each.testFlag(Entity.FLAG_GENERATED))
 				continue;
 
