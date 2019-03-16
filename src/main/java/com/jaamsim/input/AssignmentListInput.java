@@ -24,15 +24,10 @@ import com.jaamsim.basicsim.Entity;
 
 public class AssignmentListInput extends ListInput<ArrayList<ExpParser.Assignment>> {
 
-	private Entity thisEnt;
 	private ArrayList<ExpEvaluator.EntityParseContext> parseContextList;
 
 	public AssignmentListInput(String key, String cat, ArrayList<ExpParser.Assignment> def){
 		super(key, cat, def);
-	}
-
-	public void setEntity(Entity ent) {
-		thisEnt = ent;
 	}
 
 	@Override

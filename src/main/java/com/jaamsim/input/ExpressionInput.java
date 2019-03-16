@@ -25,7 +25,6 @@ import com.jaamsim.units.Unit;
 
 public class ExpressionInput extends Input<ExpParser.Expression> {
 	private Class<? extends Unit> unitType;
-	private Entity thisEnt;
 	private ExpEvaluator.EntityParseContext parseContext;
 
 	public ExpressionInput(String key, String cat, ExpParser.Expression def) {
@@ -42,10 +41,6 @@ public class ExpressionInput extends Input<ExpParser.Expression> {
 
 	public Class<? extends Unit> getUnitType() {
 		return unitType;
-	}
-
-	public void setEntity(Entity ent) {
-		thisEnt = ent;
 	}
 
 	@Override

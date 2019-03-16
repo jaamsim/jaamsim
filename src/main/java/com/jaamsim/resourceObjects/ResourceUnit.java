@@ -90,12 +90,10 @@ public class ResourceUnit extends StateUserEntity implements Seizable, ResourceP
 		this.addInput(resourcePool);
 
 		assignmentCondition = new ExpressionInput("AssignmentCondition", KEY_INPUTS, null);
-		assignmentCondition.setEntity(this);
 		assignmentCondition.setUnitType(DimensionlessUnit.class);
 		this.addInput(assignmentCondition);
 
 		assignmentPriority = new ExpressionInput("AssignmentPriority", KEY_INPUTS, null);
-		assignmentPriority.setEntity(this);
 		assignmentPriority.setUnitType(DimensionlessUnit.class);
 		assignmentPriority.setDefaultText("1");
 		this.addInput(assignmentPriority);

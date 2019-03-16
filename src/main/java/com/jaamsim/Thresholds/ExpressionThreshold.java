@@ -78,13 +78,11 @@ public class ExpressionThreshold extends Threshold {
 		attributeDefinitionList.setHidden(false);
 
 		openCondition = new ExpressionInput("OpenCondition", KEY_INPUTS, null);
-		openCondition.setEntity(this);
 		openCondition.setUnitType(DimensionlessUnit.class);
 		openCondition.setRequired(true);
 		this.addInput(openCondition);
 
 		closeCondition = new ExpressionInput("CloseCondition", KEY_INPUTS, null);
-		closeCondition.setEntity(this);
 		closeCondition.setUnitType(DimensionlessUnit.class);
 		this.addInput(closeCondition);
 
