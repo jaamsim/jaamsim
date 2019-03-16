@@ -456,7 +456,7 @@ public class ExpressionBox extends JDialog {
 
 					// Loop through the unit types that have been defined
 					for (String utName : Unit.getUnitTypeList()) {
-						final Class<? extends Unit> ut = Input.parseUnitType(utName);
+						final Class<? extends Unit> ut = Input.parseUnitType(GUIFrame.getJaamSimModel(), utName);
 						ArrayList<? extends Unit> unitList = Unit.getUnitList(GUIFrame.getJaamSimModel(), ut);
 						if (unitList.isEmpty())
 							continue;
@@ -509,7 +509,7 @@ public class ExpressionBox extends JDialog {
 
 					// Loop through the unit types that have been defined
 					for (String utName : Unit.getUnitTypeList()) {
-						final Class<? extends Unit> ut = Input.parseUnitType(utName);
+						final Class<? extends Unit> ut = Input.parseUnitType(GUIFrame.getJaamSimModel(), utName);
 						JMenuItem item = new JMenuItem(ut.getSimpleName());
 						item.addActionListener( new ActionListener() {
 

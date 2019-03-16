@@ -59,7 +59,7 @@ public class NamedExpressionListInput extends ListInput<ArrayList<NamedExpressio
 
 				Class<? extends Unit> unitType = DimensionlessUnit.class;
 				if (subArg.numArgs() == 3) {
-					unitType = Input.parseUnitType(subArg.getArg(2));
+					unitType = Input.parseUnitType(thisEnt.getJaamSimModel(), subArg.getArg(2));
 				}
 
 				// Save the data for this expression

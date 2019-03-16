@@ -641,7 +641,7 @@ public class Simulation extends Entity {
 		}
 
 		if (in == displayedUnits) {
-			Unit.setPreferredUnitList(displayedUnits.getValue());
+			Unit.setPreferredUnitList(this.getJaamSimModel(), displayedUnits.getValue());
 			return;
 		}
 

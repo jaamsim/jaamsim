@@ -1284,7 +1284,7 @@ public abstract class Input<T> {
 		return u;
 	}
 
-	public static Class<? extends Unit> parseUnitType(String utName) {
+	public static Class<? extends Unit> parseUnitType(JaamSimModel simModel, String utName) {
 		ObjectType ot = Input.parseEntity(utName, ObjectType.class);
 		Class<? extends Unit> ut = Input.checkCast(ot.getJavaClass(), Unit.class);
 		return ut;

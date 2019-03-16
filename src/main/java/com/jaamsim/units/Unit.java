@@ -68,7 +68,7 @@ public abstract class Unit extends Entity {
 		return "SI";
 	}
 
-	public static final void setPreferredUnitList(ArrayList<? extends Unit> list) {
+	public static final void setPreferredUnitList(JaamSimModel simModel, ArrayList<? extends Unit> list) {
 		ArrayList<String> utList = Unit.getUnitTypeList();
 
 		// Set the preferred units in the list
@@ -80,7 +80,7 @@ public abstract class Unit extends Entity {
 
 		// Clear the entries for unit types that were not in the list
 		for (String utName : utList) {
-			Class<? extends Unit> ut = Input.parseUnitType(utName);
+			Class<? extends Unit> ut = Input.parseUnitType(simModel, utName);
 			preferredUnit.remove(ut);
 		}
 	}
