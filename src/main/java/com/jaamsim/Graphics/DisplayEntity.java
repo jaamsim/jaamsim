@@ -190,7 +190,6 @@ public class DisplayEntity extends Entity {
 		this.addInput(regionInput);
 
 		relativeEntity = new RelativeEntityInput("RelativeEntity", GRAPHICS, null);
-		relativeEntity.setEntity(this);
 		this.addInput(relativeEntity);
 
 		displayModelListInput = new EntityListInput<>( DisplayModel.class, "DisplayModel", GRAPHICS, null);

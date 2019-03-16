@@ -133,7 +133,6 @@ public class OverlayText extends OverlayEntity implements TextEntity, EditableTe
 
 		dataSource = new StringProvInput("DataSource", KEY_INPUTS, new StringProvConstant(""));
 		dataSource.setUnitType(DimensionlessUnit.class);
-		dataSource.setEntity(this);
 		this.addInput(dataSource);
 		this.addSynonym(dataSource, "OutputName");
 

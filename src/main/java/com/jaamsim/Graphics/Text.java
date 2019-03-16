@@ -86,7 +86,6 @@ public class Text extends TextBasics {
 
 		dataSource = new StringProvInput("DataSource", KEY_INPUTS, new StringProvConstant(""));
 		dataSource.setUnitType(DimensionlessUnit.class);
-		dataSource.setEntity(this);
 		this.addInput(dataSource);
 		this.addSynonym(dataSource, "OutputName");
 

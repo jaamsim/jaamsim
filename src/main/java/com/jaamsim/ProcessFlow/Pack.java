@@ -87,7 +87,6 @@ public class Pack extends LinkedService {
 
 		containerStateAssignment = new StringProvInput("ContainerStateAssignment", KEY_INPUTS, null);
 		containerStateAssignment.setUnitType(DimensionlessUnit.class);
-		containerStateAssignment.setEntity(this);
 		this.addInput(containerStateAssignment);
 	}
 

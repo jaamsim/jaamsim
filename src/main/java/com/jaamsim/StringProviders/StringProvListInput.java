@@ -34,7 +34,6 @@ import com.jaamsim.units.UserSpecifiedUnit;
 public class StringProvListInput extends ListInput<ArrayList<StringProvider>> {
 
 	private ArrayList<Class<? extends Unit>> unitTypeList;
-	private Entity thisEnt;
 
 	public StringProvListInput(String key, String cat, ArrayList<StringProvider> def) {
 		super(key, cat, def);
@@ -68,10 +67,6 @@ public class StringProvListInput extends ListInput<ArrayList<StringProvider>> {
 			return null;
 		int k = Math.min(i, unitTypeList.size()-1);
 		return unitTypeList.get(k);
-	}
-
-	public void setEntity(Entity ent) {
-		thisEnt = ent;
 	}
 
 	@Override
@@ -119,7 +114,7 @@ public class StringProvListInput extends ListInput<ArrayList<StringProvider>> {
 	@Override
 	public ArrayList<String> getValidOptions(Entity ent) {
 		ArrayList<String> list = new ArrayList<>();
-		JaamSimModel simModel = thisEnt.getJaamSimModel();
+		JaamSimModel simModel = ent.getJaamSimModel();
 		for (Entity each : simModel.getClonesOfIterator(Entity.class, SampleProvider.class)) {
 			SampleProvider samp = (SampleProvider)each;
 			if (unitTypeList.contains(samp.getUnitType()))

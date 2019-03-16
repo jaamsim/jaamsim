@@ -112,7 +112,6 @@ public class ExpressionLogger extends Logger implements StateEntityListener {
 		valueTraceList = new StringProvListInput("ValueTraceList", TRACING,
 				new ArrayList<StringProvider>());
 		valueTraceList.setUnitType(DimensionlessUnit.class);
-		valueTraceList.setEntity(this);
 		this.addInput(valueTraceList);
 
 		valuePrecisionList = new IntegerListInput("ValuePrecisionList", TRACING, new IntegerVector());

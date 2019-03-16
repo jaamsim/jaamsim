@@ -368,7 +368,6 @@ public class Simulation extends Entity {
 		this.addInput(unitTypeList);
 
 		runOutputList = new StringProvListInput("RunOutputList", KEY_INPUTS, null);
-		runOutputList.setEntity(this);
 		runOutputList.setUnitType(DimensionlessUnit.class);
 		this.addInput(runOutputList);
 

@@ -48,7 +48,6 @@ public class Unpack extends LinkedService {
 	{
 		matchForEntities = new StringProvInput("MatchForEntities", KEY_INPUTS, null);
 		matchForEntities.setUnitType(DimensionlessUnit.class);
-		matchForEntities.setEntity(this);
 		this.addInput(matchForEntities);
 
 		serviceTime = new SampleInput("ServiceTime", KEY_INPUTS, new SampleConstant(TimeUnit.class, 0.0));

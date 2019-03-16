@@ -123,7 +123,6 @@ public class Queue extends LinkedComponent {
 
 		match = new StringProvInput("Match", KEY_INPUTS, null);
 		match.setUnitType(DimensionlessUnit.class);
-		match.setEntity(this);
 		this.addInput(match);
 
 		fifo = new BooleanInput("FIFO", KEY_INPUTS, true);

@@ -70,7 +70,6 @@ public abstract class LinkedService extends LinkedDevice implements QueueUser {
 
 		match = new StringProvInput("Match", KEY_INPUTS, null);
 		match.setUnitType(DimensionlessUnit.class);
-		match.setEntity(this);
 		this.addInput(match);
 	}
 
