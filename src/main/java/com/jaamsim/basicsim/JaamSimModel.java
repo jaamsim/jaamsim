@@ -47,7 +47,6 @@ public class JaamSimModel {
 	private final HashMap<String, Entity> namedEntities = new HashMap<>(100);
 
 	public JaamSimModel() {
-		Entity.setJaamSimModel(this);
 		eventManager = new EventManager("DefaultEventManager");
 		simulation = null;
 		runNumber = 1;

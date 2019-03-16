@@ -59,7 +59,6 @@ import com.jaamsim.units.UserSpecifiedUnit;
  * event execution.
  */
 public class Entity {
-	private static JaamSimModel sim;
 	private final JaamSimModel simModel;
 
 	String entityName;
@@ -164,48 +163,6 @@ public class Entity {
 
 	public Simulation getSimulation() {
 		return simModel.getSimulation();
-	}
-
-	static void setJaamSimModel(JaamSimModel sim) {
-		Entity.sim = sim;
-	}
-
-	public static ArrayList<? extends Entity> getAll() {
-		return sim.getEntities();
-	}
-
-	/**
-	 * Returns an Iterator that loops over the instances of the specified class. It does not
-	 * include instances of any sub-classes of the class.
-	 * The specified class must be a sub-class of Entity.
-	 * @param proto - specified class
-	 * @return Iterator for instances of the class
-	 */
-	public static <T extends Entity> InstanceIterable<T> getInstanceIterator(Class<T> proto){
-		return new InstanceIterable<>(sim, proto);
-	}
-
-	/**
-	 * Returns an Iterator that loops over the instances of the specified class and its
-	 * sub-classes.
-	 * The specified class must be a sub-class of Entity.
-	 * @param proto - specified class
-	 * @return Iterator for instances of the class and its sub-classes
-	 */
-	public static <T extends Entity> ClonesOfIterable<T> getClonesOfIterator(Class<T> proto){
-		return new ClonesOfIterable<>(sim, proto);
-	}
-
-	/**
-	 * Returns an iterator that loops over the instances of the specified class and its
-	 * sub-classes, but of only those classes that implement the specified interface.
-	 * The specified class must be a sub-class of Entity.
-	 * @param proto - specified class
-	 * @param iface - specified interface
-	 * @return Iterator for instances of the class and its sub-classes that implement the specified interface
-	 */
-	public static <T extends Entity> ClonesOfIterableInterface<T> getClonesOfIterator(Class<T> proto, Class<?> iface){
-		return new ClonesOfIterableInterface<>(sim, proto, iface);
 	}
 
 	public void validate() throws InputErrorException {
