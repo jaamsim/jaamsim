@@ -40,7 +40,7 @@ public class BooleanInput extends Input<Boolean> {
 	}
 
 	@Override
-	public void parse(KeywordIndex kw)
+	public void parse(Entity thisEnt, KeywordIndex kw)
 	throws InputErrorException {
 		Input.assertCount(kw, 1);
 		value = Boolean.valueOf(Input.parseBoolean(kw.getArg(0)));

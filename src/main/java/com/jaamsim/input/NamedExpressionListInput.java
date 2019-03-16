@@ -42,7 +42,7 @@ public class NamedExpressionListInput extends ListInput<ArrayList<NamedExpressio
 	}
 
 	@Override
-	public void parse(KeywordIndex kw) throws InputErrorException {
+	public void parse(Entity thisEnt, KeywordIndex kw) throws InputErrorException {
 
 		// Divide up the inputs by the inner braces
 		ArrayList<KeywordIndex> subArgs = kw.getSubArgs();
@@ -88,11 +88,11 @@ public class NamedExpressionListInput extends ListInput<ArrayList<NamedExpressio
 	}
 
 	@Override
-	public void copyFrom(Input<?> in) {
-		super.copyFrom(in);
+	public void copyFrom(Entity thisEnt, Input<?> in) {
+		super.copyFrom(thisEnt, in);
 
 		// An expression input must be re-parsed to reset the entity referred to by "this"
-		parseFrom(in);
+		parseFrom(thisEnt, in);
 	}
 
 	@Override

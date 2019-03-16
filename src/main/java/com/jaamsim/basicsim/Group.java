@@ -76,7 +76,7 @@ public class Group extends Entity {
 		}
 
 		@Override
-		public void parse(KeywordIndex kw) {
+		public void parse(Entity thisEnt, KeywordIndex kw) {
 			// If adding to the list
 			if( kw.getArg( 0 ).equals( "++" ) ) {
 				KeywordIndex subKw = new KeywordIndex(kw, 1);
@@ -149,7 +149,7 @@ public class Group extends Entity {
 		}
 
 		@Override
-		public void parse(KeywordIndex kw) {
+		public void parse(Entity thisEnt, KeywordIndex kw) {
 			int originalListSize = list.size();
 			ArrayList<Entity> temp = Input.parseEntityList(kw, Entity.class, true);
 			for (Entity each : temp) {
@@ -176,7 +176,7 @@ public class Group extends Entity {
 		}
 
 		@Override
-		public void parse(KeywordIndex kw) {
+		public void parse(Entity thisEnt, KeywordIndex kw) {
 			Input.assertCount(kw, 1);
 			type = Input.parseEntityType(kw.getArg(0));
 			Group.this.checkType();

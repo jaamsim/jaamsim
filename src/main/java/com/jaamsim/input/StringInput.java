@@ -17,6 +17,7 @@
  */
 package com.jaamsim.input;
 
+import com.jaamsim.basicsim.Entity;
 
 public class StringInput extends Input<String> {
 
@@ -30,7 +31,7 @@ public class StringInput extends Input<String> {
 	}
 
 	@Override
-	public void parse(KeywordIndex kw) throws InputErrorException {
+	public void parse(Entity thisEnt, KeywordIndex kw) throws InputErrorException {
 		Input.assertCount(kw, 1);
 		value = kw.getArg(0);
 	}

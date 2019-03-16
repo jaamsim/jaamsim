@@ -30,7 +30,7 @@ public class EnumInput<T extends Enum<T>> extends Input<T> {
 	}
 
 	@Override
-	public void parse(KeywordIndex kw)
+	public void parse(Entity thisEnt, KeywordIndex kw)
 	throws InputErrorException {
 		Input.assertCount(kw, 1);
 		value = Input.parseEnum(type, kw.getArg(0));

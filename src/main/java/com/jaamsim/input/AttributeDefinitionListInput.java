@@ -39,7 +39,7 @@ public class AttributeDefinitionListInput extends ListInput<ArrayList<AttributeH
 	}
 
 	@Override
-	public void parse(KeywordIndex kw) throws InputErrorException {
+	public void parse(Entity thisEnt, KeywordIndex kw) throws InputErrorException {
 
 		// Divide up the inputs by the inner braces
 		ArrayList<KeywordIndex> subArgs = kw.getSubArgs();
@@ -113,8 +113,8 @@ public class AttributeDefinitionListInput extends ListInput<ArrayList<AttributeH
 	}
 
 	@Override
-	public void copyFrom(Input<?> in) {
-		super.copyFrom(in);
+	public void copyFrom(Entity thisEnt, Input<?> in) {
+		super.copyFrom(thisEnt, in);
 		value = new ArrayList<>();
 		@SuppressWarnings("unchecked")
 		ArrayList<AttributeHandle> inValue = (ArrayList<AttributeHandle>) (in.value);

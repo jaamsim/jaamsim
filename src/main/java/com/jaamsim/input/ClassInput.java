@@ -25,7 +25,7 @@ public class ClassInput extends Input<Class<? extends Entity>>{
 	}
 
 	@Override
-	public void parse(KeywordIndex kw)
+	public void parse(Entity thisEnt, KeywordIndex kw)
 	throws InputErrorException {
 		Input.assertCount(kw, 1);
 		value = Input.parseClass(kw.getArg(0));

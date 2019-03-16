@@ -44,12 +44,12 @@ public class EntityProvInput<T extends Entity> extends Input<EntityProvider<T>> 
 	}
 
 	@Override
-	public void copyFrom(Input<?> in) {
-		super.copyFrom(in);
+	public void copyFrom(Entity thisEnt, Input<?> in) {
+		super.copyFrom(thisEnt, in);
 
 		// An expression input must be re-parsed to reset the entity referred to by "this"
 		if (value instanceof EntityProvExpression<?>) {
-			parseFrom(in);
+			parseFrom(thisEnt, in);
 		}
 	}
 
@@ -59,7 +59,7 @@ public class EntityProvInput<T extends Entity> extends Input<EntityProvider<T>> 
 	}
 
 	@Override
-	public void parse(KeywordIndex kw) throws InputErrorException {
+	public void parse(Entity thisEnt, KeywordIndex kw) throws InputErrorException {
 		value = Input.parseEntityProvider(kw, thisEnt, entClass);
 		this.setValid(true);
 	}

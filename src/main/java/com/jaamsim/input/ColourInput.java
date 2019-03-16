@@ -70,7 +70,7 @@ static {
 	}
 
 	@Override
-	public void parse(KeywordIndex kw)
+	public void parse(Entity thisEnt, KeywordIndex kw)
 	throws InputErrorException {
 		value = Input.parseColour(kw);
 	}

@@ -21,6 +21,8 @@ import java.net.URI;
 
 import javax.imageio.ImageIO;
 
+import com.jaamsim.basicsim.Entity;
+
 public class ImageInput extends Input<BufferedImage> {
 
 	public ImageInput(String key, String cat, BufferedImage def) {
@@ -28,7 +30,7 @@ public class ImageInput extends Input<BufferedImage> {
 	}
 
 	@Override
-	public void parse(KeywordIndex kw) throws InputErrorException {
+	public void parse(Entity thisEnt, KeywordIndex kw) throws InputErrorException {
 		BufferedImage temp;
 		URI uri = Input.parseURI(kw);
 

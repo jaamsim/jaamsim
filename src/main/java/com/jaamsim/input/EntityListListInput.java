@@ -33,7 +33,7 @@ public class EntityListListInput<T extends Entity> extends ListInput<ArrayList<A
 	}
 
 	@Override
-	public void parse(KeywordIndex kw)
+	public void parse(Entity thisEnt, KeywordIndex kw)
 	throws InputErrorException {
 		ArrayList<KeywordIndex> subArgs = kw.getSubArgs();
 		// Check if number of outer lists violate minCount or maxCount

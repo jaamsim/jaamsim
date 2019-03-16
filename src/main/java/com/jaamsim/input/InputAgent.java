@@ -821,7 +821,7 @@ public class InputAgent {
 			in.reset();
 		}
 		else {
-			in.parse(kw);
+			in.parse(ent, kw);
 			in.setTokens(kw);
 		}
 

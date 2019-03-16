@@ -63,17 +63,17 @@ public class SampleInput extends Input<SampleProvider> {
 	}
 
 	@Override
-	public void copyFrom(Input<?> in) {
-		super.copyFrom(in);
+	public void copyFrom(Entity thisEnt, Input<?> in) {
+		super.copyFrom(thisEnt, in);
 
 		// SampleExpressions must be re-parsed to reset the entity referred to by "this"
 		if (value instanceof SampleExpression) {
-			parseFrom(in);
+			parseFrom(thisEnt, in);
 		}
 	}
 
 	@Override
-	public void parse(KeywordIndex kw)
+	public void parse(Entity thisEnt, KeywordIndex kw)
 	throws InputErrorException {
 		value = Input.parseSampleExp(kw, thisEnt, minValue, maxValue, unitType);
 		this.setValid(true);

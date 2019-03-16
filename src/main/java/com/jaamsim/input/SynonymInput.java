@@ -16,6 +16,8 @@
  */
 package com.jaamsim.input;
 
+import com.jaamsim.basicsim.Entity;
+
 public class SynonymInput extends Input<Object> {
 	public final Input<?> input;
 
@@ -30,7 +32,7 @@ public class SynonymInput extends Input<Object> {
 	}
 
 	@Override
-	public void parse(KeywordIndex kw) throws InputErrorException {
-		input.parse(kw);
+	public void parse(Entity thisEnt, KeywordIndex kw) throws InputErrorException {
+		input.parse(thisEnt, kw);
 	}
 }

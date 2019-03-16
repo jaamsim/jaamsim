@@ -37,7 +37,7 @@ public class InterfaceEntityListInput<T> extends ListInput<ArrayList<T>> {
 	}
 
 	@Override
-	public void parse(KeywordIndex kw)
+	public void parse(Entity thisEnt, KeywordIndex kw)
 	throws InputErrorException {
 		Input.assertCountRange(kw, minCount, maxCount);
 		if( even )

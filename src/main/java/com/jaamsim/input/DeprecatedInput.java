@@ -16,6 +16,7 @@
  */
 package com.jaamsim.input;
 
+import com.jaamsim.basicsim.Entity;
 
 public class DeprecatedInput extends Input<String> {
 	private boolean fatal;
@@ -31,7 +32,7 @@ public class DeprecatedInput extends Input<String> {
 	}
 
 	@Override
-	public void parse(KeywordIndex kw)
+	public void parse(Entity thisEnt, KeywordIndex kw)
 	throws InputErrorException {
 		if (fatal)
 			throw new InputErrorException(value);

@@ -16,13 +16,15 @@
  */
 package com.jaamsim.input;
 
+import com.jaamsim.basicsim.Entity;
+
 public class FormatInput extends StringInput {
 	public FormatInput(String key, String cat, String def) {
 		super(key, cat, def);
 	}
 
 	@Override
-	public void parse(KeywordIndex kw) throws InputErrorException {
+	public void parse(Entity thisEnt, KeywordIndex kw) throws InputErrorException {
 		Input.assertCount(kw, 1);
 		String temp = kw.getArg(0);
 		try {

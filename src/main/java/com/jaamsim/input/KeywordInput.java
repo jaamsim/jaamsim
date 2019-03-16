@@ -19,6 +19,7 @@ package com.jaamsim.input;
 import java.util.ArrayList;
 
 import com.jaamsim.Graphics.DisplayEntity;
+import com.jaamsim.basicsim.Entity;
 
 public class KeywordInput extends Input<String> {
 	private DisplayEntity targetEntity;
@@ -31,15 +32,15 @@ public class KeywordInput extends Input<String> {
 	}
 
 	@Override
-	public void copyFrom(Input<?> in) {
-		super.copyFrom(in);
+	public void copyFrom(Entity thisEnt, Input<?> in) {
+		super.copyFrom(thisEnt, in);
 		KeywordInput inp = (KeywordInput) in;
 		targetEntity = inp.targetEntity;
 		targetInput = inp.targetInput;
 	}
 
 	@Override
-	public void parse(KeywordIndex kw) throws InputErrorException {
+	public void parse(Entity thisEnt, KeywordIndex kw) throws InputErrorException {
 		Input.assertCount(kw, 2);
 		try {
 			DisplayEntity ent = Input.parseEntity(kw.getArg(0), DisplayEntity.class);

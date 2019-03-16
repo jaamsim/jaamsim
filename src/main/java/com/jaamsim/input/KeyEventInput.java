@@ -19,6 +19,7 @@ package com.jaamsim.input;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import com.jaamsim.basicsim.Entity;
 import com.jogamp.newt.event.KeyEvent;
 
 public class KeyEventInput extends Input<Integer> {
@@ -37,7 +38,7 @@ public class KeyEventInput extends Input<Integer> {
 	}
 
 	@Override
-	public void parse(KeywordIndex kw) throws InputErrorException {
+	public void parse(Entity thisEnt, KeywordIndex kw) throws InputErrorException {
 		Input.assertCount(kw, 1);
 
 		// Many keys are represented by a name

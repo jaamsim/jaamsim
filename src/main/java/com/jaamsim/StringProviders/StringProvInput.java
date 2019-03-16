@@ -57,12 +57,12 @@ public class StringProvInput extends Input<StringProvider> {
 	}
 
 	@Override
-	public void copyFrom(Input<?> in) {
-		super.copyFrom(in);
+	public void copyFrom(Entity thisEnt, Input<?> in) {
+		super.copyFrom(thisEnt, in);
 
 		// An expression input must be re-parsed to reset the entity referred to by "this"
 		if (value instanceof StringProvExpression) {
-			parseFrom(in);
+			parseFrom(thisEnt, in);
 		}
 	}
 
@@ -72,7 +72,7 @@ public class StringProvInput extends Input<StringProvider> {
 	}
 
 	@Override
-	public void parse(KeywordIndex kw) throws InputErrorException {
+	public void parse(Entity thisEnt, KeywordIndex kw) throws InputErrorException {
 		value = Input.parseStringProvider(kw, thisEnt, unitType);
 		this.setValid(true);
 	}

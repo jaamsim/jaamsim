@@ -16,6 +16,7 @@
  */
 package com.jaamsim.input;
 
+import com.jaamsim.basicsim.Entity;
 
 public class IntegerInput extends Input<Integer> {
 	private int minValue = Integer.MIN_VALUE;
@@ -26,7 +27,7 @@ public class IntegerInput extends Input<Integer> {
 	}
 
 	@Override
-	public void parse(KeywordIndex kw)
+	public void parse(Entity thisEnt, KeywordIndex kw)
 	throws InputErrorException {
 		Input.assertCount(kw, 1);
 		value = Input.parseInteger(kw.getArg(0), minValue, maxValue);

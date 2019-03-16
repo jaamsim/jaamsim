@@ -16,6 +16,7 @@
  */
 package com.jaamsim.input;
 
+import com.jaamsim.basicsim.Entity;
 import com.jaamsim.datatypes.BooleanVector;
 
 public class BooleanListInput extends ListInput<BooleanVector> {
@@ -25,7 +26,7 @@ public class BooleanListInput extends ListInput<BooleanVector> {
 	}
 
 	@Override
-	public void parse(KeywordIndex kw)
+	public void parse(Entity thisEnt, KeywordIndex kw)
 	throws InputErrorException {
 		Input.assertCountRange(kw, minCount, maxCount);
 		value = Input.parseBooleanVector(kw);

@@ -178,9 +178,10 @@ public abstract class Input<T> {
 	/**
 	 * Assigns the internal state for this input to the same values as the
 	 * specified input.
+	 * @param thisEnt TODO
 	 * @param in - input object to be copied.
 	 */
-	public void copyFrom(Input<?> in) {
+	public void copyFrom(Entity thisEnt, Input<?> in) {
 
 		@SuppressWarnings("unchecked")
 		Input<T> inp = (Input<T>) in;
@@ -200,12 +201,13 @@ public abstract class Input<T> {
 	 * This method provides the same function as copyFrom by re-parsing the input data instead of
 	 * copying the internal variables. This operation is much slower, but is needed for inputs that
 	 * cannot be copied successfully using copyFrom, such as inputs that accept an expression.
+	 * @param thisEnt TODO
 	 * @param in - input object to be copied.
 	 */
-	public void parseFrom(Input<?> in) {
+	public void parseFrom(Entity thisEnt, Input<?> in) {
 		ArrayList<String> toks = new ArrayList<>(Arrays.asList(valueTokens));
 		KeywordIndex kw = new KeywordIndex(in.getKeyword(), toks, null);
-		parse(kw);
+		parse(thisEnt, kw);
 	}
 
 	/**
@@ -536,7 +538,7 @@ public abstract class Input<T> {
 		return sb.toString();
 	}
 
-	public abstract void parse(KeywordIndex kw) throws InputErrorException;
+	public abstract void parse(Entity thisEnt, KeywordIndex kw) throws InputErrorException;
 
 
 	public static void assertCount(DoubleVector input, int... counts)

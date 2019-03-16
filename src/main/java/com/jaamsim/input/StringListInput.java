@@ -34,7 +34,7 @@ public class StringListInput extends ListInput<ArrayList<String>> {
 	}
 
 	@Override
-	public void parse(KeywordIndex kw)
+	public void parse(Entity thisEnt, KeywordIndex kw)
 	throws InputErrorException {
 
 		// If adding to the list

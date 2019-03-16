@@ -33,7 +33,7 @@ public class StringChoiceInput extends IntegerInput {
 	}
 
 	@Override
-	public void parse(KeywordIndex kw)
+	public void parse(Entity thisEnt, KeywordIndex kw)
 	throws InputErrorException {
 		Input.assertCount(kw, 1);
 		String temp = Input.parseString(kw.getArg(0), choices);

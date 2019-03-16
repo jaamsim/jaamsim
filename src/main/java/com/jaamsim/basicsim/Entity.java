@@ -427,7 +427,7 @@ public class Entity {
 			Input<?> targetInput = target.getEditableInputs().get(i);
 
 			// Assign the value to the copied entity's input
-			targetInput.copyFrom(sourceInput);
+			targetInput.copyFrom(target, sourceInput);
 
 			// Further processing related to this input
 			target.updateForInput(targetInput);

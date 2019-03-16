@@ -30,7 +30,7 @@ public class EnumListInput<T extends Enum<T>> extends ListInput<ArrayList<T>> {
 	}
 
 	@Override
-	public void parse(KeywordIndex kw)
+	public void parse(Entity thisEnt, KeywordIndex kw)
 	throws InputErrorException {
 		value = Input.parseEnumList(type, kw);
 	}

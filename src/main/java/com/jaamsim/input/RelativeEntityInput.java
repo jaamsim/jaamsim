@@ -42,7 +42,7 @@ public class RelativeEntityInput extends EntityInput<DisplayEntity> {
 	}
 
 	@Override
-	public void parse(KeywordIndex kw) throws InputErrorException {
+	public void parse(Entity thisEnt, KeywordIndex kw) throws InputErrorException {
 		Input.assertCount(kw, 1);
 		DisplayEntity ent = Input.parseEntity(kw.getArg(0), DisplayEntity.class);
 		if (isCircular(ent))

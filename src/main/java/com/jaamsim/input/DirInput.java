@@ -19,6 +19,8 @@ package com.jaamsim.input;
 import java.io.File;
 import java.net.URI;
 
+import com.jaamsim.basicsim.Entity;
+
 public class DirInput extends StringInput {
 	private URI dir;
 
@@ -28,7 +30,7 @@ public class DirInput extends StringInput {
 	}
 
 	@Override
-	public void parse(KeywordIndex kw)
+	public void parse(Entity thisEnt, KeywordIndex kw)
 	throws InputErrorException {
 		Input.assertCount(kw, 1);
 

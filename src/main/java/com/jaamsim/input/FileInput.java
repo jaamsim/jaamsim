@@ -28,6 +28,8 @@ import java.util.Arrays;
 
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import com.jaamsim.basicsim.Entity;
+
 
 public class FileInput extends Input<URI> {
 	private String fileType;  // the type of file, e.g. "Image" or "3D"
@@ -47,7 +49,7 @@ public class FileInput extends Input<URI> {
 	}
 
 	@Override
-	public void parse(KeywordIndex kw)
+	public void parse(Entity thisEnt, KeywordIndex kw)
 	throws InputErrorException {
 		URI temp = Input.parseURI(kw);
 

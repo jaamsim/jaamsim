@@ -31,7 +31,7 @@ public class StringKeyInput<T extends Entity> extends Input<HashMap<String,T>> {
 	}
 
 	@Override
-	public void parse(KeywordIndex kw) throws InputErrorException {
+	public void parse(Entity thisEnt, KeywordIndex kw) throws InputErrorException {
 		HashMap<String,T> hashMap = new HashMap<>();
 		ArrayList<KeywordIndex> subArgs = kw.getSubArgs();
 		for (int i = 0; i < subArgs.size(); i++) {

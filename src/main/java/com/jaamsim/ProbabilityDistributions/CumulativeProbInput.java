@@ -16,6 +16,7 @@
  */
 package com.jaamsim.ProbabilityDistributions;
 
+import com.jaamsim.basicsim.Entity;
 import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputErrorException;
@@ -28,7 +29,7 @@ public class CumulativeProbInput extends Input<DoubleVector>{
 	}
 
 	@Override
-	public void parse(KeywordIndex kw)
+	public void parse(Entity thisEnt, KeywordIndex kw)
 	throws InputErrorException {
 		DoubleVector temp = Input.parseDoubles(kw, 0.0d, 1.0d, DimensionlessUnit.class);
 		if (temp.get(0) != 0.0d)
