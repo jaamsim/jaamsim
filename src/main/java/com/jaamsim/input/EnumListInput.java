@@ -18,6 +18,8 @@ package com.jaamsim.input;
 
 import java.util.ArrayList;
 
+import com.jaamsim.basicsim.Entity;
+
 public class EnumListInput<T extends Enum<T>> extends ListInput<ArrayList<T>> {
 
 	private final Class<T> type;
@@ -42,7 +44,7 @@ public class EnumListInput<T extends Enum<T>> extends ListInput<ArrayList<T>> {
 	}
 
 	@Override
-	public ArrayList<String> getValidOptions() {
+	public ArrayList<String> getValidOptions(Entity ent) {
 		ArrayList<String> tmp = new ArrayList<>();
 		for (T each : type.getEnumConstants())
 			tmp.add(each.name());

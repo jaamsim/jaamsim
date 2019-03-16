@@ -130,7 +130,7 @@ public class EntityListInput<T extends Entity> extends ListInput<ArrayList<T>> {
 	}
 
 	@Override
-	public ArrayList<String> getValidOptions() {
+	public ArrayList<String> getValidOptions(Entity ent) {
 		ArrayList<String> list = new ArrayList<>();
 		for(T each: GUIFrame.getJaamSimModel().getClonesOfIterator(entClass) ) {
 			if(each.testFlag(Entity.FLAG_GENERATED))

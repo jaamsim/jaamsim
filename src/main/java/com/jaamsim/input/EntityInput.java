@@ -64,7 +64,7 @@ public class EntityInput<T extends Entity> extends Input<T> {
 	}
 
 	@Override
-	public ArrayList<String> getValidOptions() {
+	public ArrayList<String> getValidOptions(Entity ent) {
 		ArrayList<String> list = new ArrayList<>();
 		if (entSubClass == null)
 			return list;

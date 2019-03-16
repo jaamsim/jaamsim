@@ -83,7 +83,7 @@ public class StringProvInput extends Input<StringProvider> {
 	}
 
 	@Override
-	public ArrayList<String> getValidOptions() {
+	public ArrayList<String> getValidOptions(Entity ent) {
 		ArrayList<String> list = new ArrayList<>();
 		JaamSimModel simModel = thisEnt.getJaamSimModel();
 		for (Entity each : simModel.getClonesOfIterator(Entity.class, SampleProvider.class)) {

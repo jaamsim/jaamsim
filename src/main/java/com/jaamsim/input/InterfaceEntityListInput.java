@@ -62,7 +62,7 @@ public class InterfaceEntityListInput<T> extends ListInput<ArrayList<T>> {
 	}
 
 	@Override
-	public ArrayList<String> getValidOptions() {
+	public ArrayList<String> getValidOptions(Entity ent) {
 		ArrayList<String> list = new ArrayList<>();
 		JaamSimModel simModel = GUIFrame.getJaamSimModel();
 		for(Entity each: simModel.getClonesOfIterator(Entity.class, entClass) ) {

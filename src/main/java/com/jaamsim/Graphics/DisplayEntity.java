@@ -516,11 +516,11 @@ public class DisplayEntity extends Entity {
 	}
 
 	public ArrayList<String> getRelativeEntityOptions() {
-		return relativeEntity.getValidOptions();
+		return relativeEntity.getValidOptions(this);
 	}
 
 	public ArrayList<String> getRegionOptions() {
-		return regionInput.getValidOptions();
+		return regionInput.getValidOptions(this);
 	}
 
 	public Region getCurrentRegion() {

@@ -18,6 +18,8 @@ package com.jaamsim.input;
 
 import java.util.ArrayList;
 
+import com.jaamsim.basicsim.Entity;
+
 
 public class BooleanInput extends Input<Boolean> {
 
@@ -50,7 +52,7 @@ public class BooleanInput extends Input<Boolean> {
 	}
 
 	@Override
-	public ArrayList<String> getValidOptions() {
+	public ArrayList<String> getValidOptions(Entity ent) {
 		return validOptions;
 	}
 

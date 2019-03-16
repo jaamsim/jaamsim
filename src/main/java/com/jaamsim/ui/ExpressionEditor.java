@@ -42,7 +42,7 @@ public class ExpressionEditor extends ChooserEditor {
 		if ("button".equals(e.getActionCommand())) {
 
 			// Launch the Expression Builder if there are no other options
-			ArrayList<String> array = input.getValidOptions();
+			ArrayList<String> array = input.getValidOptions(EditBox.getInstance().getCurrentEntity());
 			if (array == null || array.isEmpty()) {
 				launchExpressionBox();
 				return;

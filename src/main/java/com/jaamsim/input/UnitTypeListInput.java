@@ -91,7 +91,7 @@ public class UnitTypeListInput extends ListInput<ArrayList<ObjectType>> {
 	}
 
 	@Override
-	public ArrayList<String> getValidOptions() {
+	public ArrayList<String> getValidOptions(Entity ent) {
 		ArrayList<String> list = new ArrayList<>();
 		for (ObjectType each: GUIFrame.getJaamSimModel().getClonesOfIterator(ObjectType.class)) {
 			Class<? extends Entity> klass = each.getJavaClass();

@@ -60,7 +60,7 @@ public class RelativeEntityInput extends EntityInput<DisplayEntity> {
 	}
 
 	@Override
-	public ArrayList<String> getValidOptions() {
+	public ArrayList<String> getValidOptions(Entity ent) {
 		ArrayList<String> list = new ArrayList<>();
 		JaamSimModel simModel = thisEnt.getJaamSimModel();
 		for (DisplayEntity each: simModel.getClonesOfIterator(DisplayEntity.class)) {

@@ -384,7 +384,7 @@ private static void initColors() {
 	}
 
 	@Override
-	public ArrayList<String> getValidOptions() {
+	public ArrayList<String> getValidOptions(Entity ent) {
 		ArrayList<String> list = new ArrayList<>(colorMap.keySet());
 		Collections.sort(list, Input.uiSortOrder);
 		return list;

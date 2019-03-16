@@ -18,6 +18,8 @@ package com.jaamsim.input;
 
 import java.util.ArrayList;
 
+import com.jaamsim.basicsim.Entity;
+
 
 public class StringListInput extends ListInput<ArrayList<String>> {
 	private ArrayList<String> validOptions;
@@ -138,7 +140,7 @@ public class StringListInput extends ListInput<ArrayList<String>> {
 	}
 
 	@Override
-	public ArrayList<String> getValidOptions() {
+	public ArrayList<String> getValidOptions(Entity ent) {
 		return validOptions;
 	}
 

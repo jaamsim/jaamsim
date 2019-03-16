@@ -1598,16 +1598,10 @@ public abstract class Input<T> {
 	 * <p>
 	 * This method must be overridden for an input to be shown with a drop-down
 	 * menu in the Input Editor.
+	 * @param ent TODO
 	 */
-	public ArrayList<String> getValidOptions() {
-		if (defValue != null && defValue.getClass() == Boolean.class) {
-			ArrayList<String> validOptions = new ArrayList<>();
-			validOptions.add("TRUE");
-			validOptions.add("FALSE");
-			return validOptions;
-		}
-		else
-			return null;
+	public ArrayList<String> getValidOptions(Entity ent) {
+		return null;
 	}
 
 	public String getDefaultStringForKeyInputs(Class<? extends Unit> unitType) {

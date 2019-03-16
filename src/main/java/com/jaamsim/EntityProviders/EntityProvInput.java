@@ -73,7 +73,7 @@ public class EntityProvInput<T extends Entity> extends Input<EntityProvider<T>> 
 	}
 
 	@Override
-	public ArrayList<String> getValidOptions() {
+	public ArrayList<String> getValidOptions(Entity ent) {
 		ArrayList<String> list = new ArrayList<>();
 
 		for (T each: thisEnt.getJaamSimModel().getClonesOfIterator(entClass)) {

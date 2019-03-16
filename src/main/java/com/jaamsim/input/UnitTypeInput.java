@@ -18,6 +18,7 @@ package com.jaamsim.input;
 
 import java.util.ArrayList;
 
+import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ObjectType;
 import com.jaamsim.units.Unit;
 
@@ -65,7 +66,7 @@ public class UnitTypeInput extends Input<ObjectType> {
 	}
 
 	@Override
-	public ArrayList<String> getValidOptions() {
+	public ArrayList<String> getValidOptions(Entity ent) {
 		return Unit.getUnitTypeList();
 	}
 

@@ -388,7 +388,7 @@ public static class EditTable extends JTable {
 
 		CellEditor ret;
 
-		ArrayList<String> array = in.getValidOptions();
+		ArrayList<String> array = in.getValidOptions(entity);
 
 		// 1) Colour input
 		if (in instanceof ColourInput) {

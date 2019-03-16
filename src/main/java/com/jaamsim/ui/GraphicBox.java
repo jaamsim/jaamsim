@@ -375,7 +375,7 @@ public class GraphicBox extends JDialog {
 	}
 
 	private void refresh() {
-		modelList = currentEntity.getInput("DisplayModel").getValidOptions();
+		modelList = currentEntity.getInput("DisplayModel").getValidOptions(currentEntity);
 		String[] models = new String[modelList.size()];
 		models = modelList.toArray(models);
 		displayModelList.setListData(models);
