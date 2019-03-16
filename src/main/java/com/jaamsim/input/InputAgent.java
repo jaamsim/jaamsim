@@ -570,17 +570,17 @@ public class InputAgent {
 		return ent;
 	}
 
-	public static String getUniqueName(String name, String sep) {
+	public static String getUniqueName(JaamSimModel sim, String name, String sep) {
 
 		// Is the provided name unused?
-		if (Entity.getNamedEntity(name) == null)
+		if (sim.getNamedEntity(name) == null)
 			return name;
 
 		// Try the provided name plus "1", "2", etc. until an unused name is found
 		int entityNum = 1;
 		while(true) {
 			String ret = String.format("%s%s%d", name, sep, entityNum);
-			if (Entity.getNamedEntity(ret) == null) {
+			if (sim.getNamedEntity(ret) == null) {
 				return ret;
 			}
 			entityNum++;
@@ -596,7 +596,7 @@ public class InputAgent {
 	 * @return
 	 */
 	public static <T extends Entity> T defineEntityWithUniqueName(JaamSimModel simModel, Class<T> proto, String key, String sep, boolean addedEntity) {
-		String name = getUniqueName(key, sep);
+		String name = getUniqueName(simModel, key, sep);
 		return defineEntity(simModel, proto, name, addedEntity);
 	}
 

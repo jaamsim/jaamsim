@@ -26,8 +26,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
 
-import com.jaamsim.Commands.DefineCommand;
 import com.jaamsim.Commands.CoordinateCommand;
+import com.jaamsim.Commands.DefineCommand;
 import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.EntityLabel;
@@ -128,7 +128,7 @@ public class ContextMenu {
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				String name = InputAgent.getUniqueName(ent.getName(), "_Copy");
+				String name = InputAgent.getUniqueName(ent.getJaamSimModel(), ent.getName(), "_Copy");
 				InputAgent.storeAndExecute(new DefineCommand(ent.getClass(), name));
 				Entity copiedEntity = GUIFrame.getJaamSimModel().getNamedEntity(name);
 
@@ -225,7 +225,7 @@ public class ContextMenu {
 
 					// If required, create the EntityLabel object
 					if (label == null) {
-						String name = InputAgent.getUniqueName(ent.getName(), "_Label");
+						String name = InputAgent.getUniqueName(ent.getJaamSimModel(), ent.getName(), "_Label");
 						InputAgent.storeAndExecute(new DefineCommand(EntityLabel.class, name));
 						EntityLabel newLabel = (EntityLabel)GUIFrame.getJaamSimModel().getNamedEntity(name);
 
@@ -394,7 +394,7 @@ public class ContextMenu {
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				String name = InputAgent.getUniqueName(ent.getName(), "_Split");
+				String name = InputAgent.getUniqueName(ent.getJaamSimModel(), ent.getName(), "_Split");
 				InputAgent.storeAndExecute(new DefineCommand(ent.getClass(), name));
 				DisplayEntity splitEnt = (DisplayEntity) GUIFrame.getJaamSimModel().getNamedEntity(name);
 

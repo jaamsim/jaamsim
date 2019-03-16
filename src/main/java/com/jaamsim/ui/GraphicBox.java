@@ -53,6 +53,7 @@ import com.jaamsim.DisplayModels.ColladaModel;
 import com.jaamsim.DisplayModels.DisplayModel;
 import com.jaamsim.DisplayModels.ImageModel;
 import com.jaamsim.Graphics.DisplayEntity;
+import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.KeywordIndex;
@@ -187,22 +188,24 @@ public class GraphicBox extends JDialog {
 					}
 					String extension = fileName.substring(i+1).toLowerCase();
 
+					JaamSimModel simModel = GUIFrame.getJaamSimModel();
+
 					// Set the entity name
 					String entityName = fileName.substring(0, i);
 					entityName = entityName.replaceAll(" ", "_"); // Space is not allowed for Entity Name
-					entityName = InputAgent.getUniqueName(entityName, "");
-					String modelName = InputAgent.getUniqueName(entityName + "-model", "");
+					entityName = InputAgent.getUniqueName(simModel, entityName, "");
+					String modelName = InputAgent.getUniqueName(simModel, entityName + "-model", "");
 
 					// Create the DisplayModel
 					DisplayModel dm = null;
 					if (ColladaModel.isValidExtension(extension)) {
 						InputAgent.storeAndExecute(new DefineCommand(ColladaModel.class, modelName));
-						dm = (DisplayModel) GUIFrame.getJaamSimModel().getNamedEntity(modelName);
+						dm = (DisplayModel) simModel.getNamedEntity(modelName);
 						InputAgent.applyArgs(dm, "ColladaFile", f.getPath());
 					}
 					else if (ImageModel.isValidExtension(extension)) {
 						InputAgent.storeAndExecute(new DefineCommand(ImageModel.class, modelName));
-						dm = (DisplayModel) GUIFrame.getJaamSimModel().getNamedEntity(modelName);
+						dm = (DisplayModel) simModel.getNamedEntity(modelName);
 						InputAgent.applyArgs(dm, "ImageFile", f.getPath());
 					}
 					else {

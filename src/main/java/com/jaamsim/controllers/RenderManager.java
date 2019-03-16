@@ -1560,7 +1560,7 @@ public class RenderManager implements DragSourceListener {
 
 		// Create a new instance
 		Class<? extends Entity> proto  = dndObjectType.getJavaClass();
-		String name = InputAgent.getUniqueName(proto.getSimpleName(), "");
+		String name = InputAgent.getUniqueName(dndObjectType.getJaamSimModel(), proto.getSimpleName(), "");
 		InputAgent.storeAndExecute(new DefineCommand(proto, name));
 		Entity ent = GUIFrame.getJaamSimModel().getNamedEntity(name);
 

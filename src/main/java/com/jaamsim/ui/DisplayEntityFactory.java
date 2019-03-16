@@ -174,10 +174,10 @@ public class DisplayEntityFactory extends Entity {
 			// Set the entity name
 			String entityName = fileName.substring(0, i);
 			entityName = entityName.replaceAll(" ", "_"); // Space is not allowed for Entity Name
-			entityName = InputAgent.getUniqueName(entityName, "");
+			entityName = InputAgent.getUniqueName(simModel, entityName, "");
 
 			// Create the ImageModel
-			String modelName = InputAgent.getUniqueName(entityName + "-model", "");
+			String modelName = InputAgent.getUniqueName(simModel,entityName + "-model", "");
 			InputAgent.storeAndExecute(new DefineCommand(ImageModel.class, modelName));
 			ImageModel dm = (ImageModel) simModel.getNamedEntity(modelName);
 
@@ -235,10 +235,10 @@ public class DisplayEntityFactory extends Entity {
 			// Set the entity name
 			String entityName = fileName.substring(0, i);
 			entityName = entityName.replaceAll(" ", "_"); // Space is not allowed for Entity Name
-			entityName = InputAgent.getUniqueName(entityName, "");
+			entityName = InputAgent.getUniqueName(simModel, entityName, "");
 
 			// Create the ColladaModel
-			String modelName = InputAgent.getUniqueName(entityName + "-model", "");
+			String modelName = InputAgent.getUniqueName(simModel, entityName + "-model", "");
 			InputAgent.storeAndExecute(new DefineCommand(ColladaModel.class, modelName));
 			ColladaModel dm = (ColladaModel) simModel.getNamedEntity(modelName);
 

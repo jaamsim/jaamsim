@@ -2488,7 +2488,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 				}
 			}
 
-			String name = InputAgent.getUniqueName("View", "");
+			String name = InputAgent.getUniqueName(getJaamSimModel(), "View", "");
 			IntegerVector winPos = null;
 			Vec3d pos = null;
 			Vec3d center = null;
