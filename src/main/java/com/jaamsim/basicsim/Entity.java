@@ -694,10 +694,10 @@ public class Entity {
 	 * @param file - the file in which the outputs are written
 	 * @param simTime - simulation time at which the outputs are evaluated
 	 */
-	public void printReport(FileEntity file, double simTime) {
+	public static void printReport(Entity ent, FileEntity file, double simTime) {
 
 		// Loop through the outputs
-		ArrayList<OutputHandle> handles = OutputHandle.getOutputHandleList(this);
+		ArrayList<OutputHandle> handles = OutputHandle.getOutputHandleList(ent);
 		for (OutputHandle out : handles) {
 
 			// Should this output appear in the report?
@@ -716,11 +716,11 @@ public class Entity {
 				try {
 					double val = out.getValueAsDouble(simTime, Double.NaN)/factor;
 					file.format(OUTPUT_FORMAT,
-							this.getName(), out.getName(), val, unitString);
+							ent.getName(), out.getName(), val, unitString);
 				}
 				catch (Exception e) {
 					file.format(OUTPUT_FORMAT,
-							this.getName(), out.getName(), Double.NaN, unitString);
+							ent.getName(), out.getName(), Double.NaN, unitString);
 				}
 			}
 
@@ -729,7 +729,7 @@ public class Entity {
 				double[] vec = out.getValue(simTime, double[].class);
 				for (int i = 0; i < vec.length; i++) {
 					file.format(LIST_OUTPUT_FORMAT,
-							this.getName(), out.getName(), i, vec[i]/factor, unitString);
+							ent.getName(), out.getName(), i, vec[i]/factor, unitString);
 				}
 			}
 
@@ -739,7 +739,7 @@ public class Entity {
 				for (int i=0; i<vec.size(); i++) {
 					double val = vec.get(i);
 					file.format(LIST_OUTPUT_FORMAT,
-							this.getName(), out.getName(), i, val/factor, unitString);
+							ent.getName(), out.getName(), i, val/factor, unitString);
 				}
 			}
 
@@ -751,11 +751,11 @@ public class Entity {
 					if (obj instanceof Double) {
 						double val = (Double)obj;
 						file.format(LIST_OUTPUT_FORMAT,
-								this.getName(), out.getName(), i, val/factor, unitString);
+								ent.getName(), out.getName(), i, val/factor, unitString);
 					}
 					else {
 						file.format(LIST_OUTPUT_FORMAT,
-							this.getName(), out.getName(), i, obj, unitString);
+							ent.getName(), out.getName(), i, obj, unitString);
 					}
 				}
 			}
@@ -768,11 +768,11 @@ public class Entity {
 					if (obj instanceof Double) {
 						double val = (Double)obj;
 						file.format(LIST_OUTPUT_FORMAT,
-								this.getName(), out.getName(), mapEntry.getKey(), val/factor, unitString);
+								ent.getName(), out.getName(), mapEntry.getKey(), val/factor, unitString);
 					}
 					else {
 						file.format(LIST_OUTPUT_FORMAT,
-								this.getName(), out.getName(), mapEntry.getKey(), obj, unitString);
+								ent.getName(), out.getName(), mapEntry.getKey(), obj, unitString);
 					}
 				}
 			}
@@ -780,7 +780,7 @@ public class Entity {
 			else if (out.getReturnType() == ExpResult.class) {
 				String val = InputAgent.getValueAsString(out, simTime, "%s", factor);
 				file.format(OUTPUT_FORMAT,
-						this.getName(), out.getName(), val, unitString);
+						ent.getName(), out.getName(), val, unitString);
 			}
 
 			// All other outputs
@@ -789,7 +789,7 @@ public class Entity {
 					unitString = Unit.getSIUnit(ut);  // other outputs are not converted to preferred units
 				String str = out.getValue(simTime, out.getReturnType()).toString();
 				file.format(OUTPUT_FORMAT,
-						this.getName(), out.getName(), str, unitString);
+						ent.getName(), out.getName(), str, unitString);
 			}
 		}
 	}

@@ -1580,7 +1580,7 @@ public class InputAgent {
 			}
 
 			// Print the report for the entity
-			ent.printReport(reportFile, simTime);
+			Entity.printReport(ent, reportFile, simTime);
 			reportFile.format("%n");
 		}
 

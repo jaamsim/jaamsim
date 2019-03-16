@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.StringProviders.StringProvListInput;
 import com.jaamsim.StringProviders.StringProvider;
+import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.FileEntity;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.Input;
@@ -141,7 +142,7 @@ public abstract class Logger extends DisplayEntity {
 
 		// Print the detailed run information to the file
 		if (getJaamSimModel().isFirstRun())
-			getSimulation().printReport(file, 0.0d);
+			Entity.printReport(getSimulation(), file, 0.0d);
 
 		// Print run number header if multiple runs are to be performed
 		if (getJaamSimModel().isMultipleRuns()) {
