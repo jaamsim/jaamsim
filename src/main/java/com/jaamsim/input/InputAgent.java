@@ -528,7 +528,7 @@ public class InputAgent {
 				proto = ObjectType.class;
 			}
 			else {
-				proto = Input.parseEntityType(record.get(1));
+				proto = Input.parseEntityType(simModel, record.get(1));
 			}
 		}
 		catch (InputErrorException e) {

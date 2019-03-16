@@ -37,6 +37,7 @@ import com.jaamsim.StringProviders.StringProvSample;
 import com.jaamsim.StringProviders.StringProvider;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.Group;
+import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.basicsim.ObjectType;
 import com.jaamsim.datatypes.BooleanVector;
 import com.jaamsim.datatypes.DoubleVector;
@@ -1205,7 +1206,7 @@ public abstract class Input<T> {
 		return ret;
 	}
 
-	public static Class<? extends Entity> parseEntityType(String input)
+	public static Class<? extends Entity> parseEntityType(JaamSimModel simModel, String input)
 	throws InputErrorException {
 		ObjectType type = Input.tryParseEntity( input, ObjectType.class );
 		if (type == null)

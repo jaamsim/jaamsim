@@ -49,7 +49,7 @@ public class TestSimulation {
 	public void testAllDefineableTypes() {
 		// Define an instance of every drag-and-drop type
 		for (ObjectType each: simModel.getClonesOfIterator(ObjectType.class)) {
-			Class<? extends Entity> proto = Input.parseEntityType(each.getName());
+			Class<? extends Entity> proto = Input.parseEntityType(simModel, each.getName());
 			@SuppressWarnings("unused")
 			Entity ent = InputAgent.defineEntityWithUniqueName(simModel, proto, each.getName(), "-", true);
 		}
@@ -60,7 +60,7 @@ public class TestSimulation {
 		int numErrors = 0;
 		// Define an instance of every drag-and-drop type
 		for (ObjectType each: simModel.getClonesOfIterator(ObjectType.class)) {
-			Class<? extends Entity> proto = Input.parseEntityType(each.getName());
+			Class<? extends Entity> proto = Input.parseEntityType(simModel, each.getName());
 			Entity ent = InputAgent.defineEntityWithUniqueName(simModel, proto, each.getName(), "-", true);
 
 			KeywordIndex kw = new KeywordIndex("none", new ArrayList<String>(0), null);

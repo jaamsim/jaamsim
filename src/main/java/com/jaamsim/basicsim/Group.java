@@ -178,7 +178,7 @@ public class Group extends Entity {
 		@Override
 		public void parse(Entity thisEnt, KeywordIndex kw) {
 			Input.assertCount(kw, 1);
-			type = Input.parseEntityType(kw.getArg(0));
+			type = Input.parseEntityType(thisEnt.getJaamSimModel(), kw.getArg(0));
 			Group.this.checkType();
 		}
 	}
