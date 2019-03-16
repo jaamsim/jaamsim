@@ -22,16 +22,14 @@ import java.util.Collections;
 import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.math.Color4d;
-import com.jaamsim.ui.GUIFrame;
 
 public interface FillEntity {
 	public JaamSimModel getJaamSimModel();
 	public boolean isFilled();
 	public Color4d getFillColour();
 
-	public static ArrayList<Color4d> getFillColoursInUse() {
+	public static ArrayList<Color4d> getFillColoursInUse(JaamSimModel simModel) {
 		ArrayList<Color4d> ret = new ArrayList<>();
-		JaamSimModel simModel = GUIFrame.getJaamSimModel();
 		for (DisplayEntity ent : simModel.getClonesOfIterator(DisplayEntity.class, FillEntity.class)) {
 			FillEntity fillEnt = (FillEntity) ent;
 			if (ret.contains(fillEnt.getFillColour()))

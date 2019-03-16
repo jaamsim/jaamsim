@@ -67,7 +67,7 @@ public class UnitTypeInput extends Input<ObjectType> {
 
 	@Override
 	public ArrayList<String> getValidOptions(Entity ent) {
-		return Unit.getUnitTypeList();
+		return Unit.getUnitTypeList(ent.getJaamSimModel());
 	}
 
 	public Class<? extends Unit> getUnitType() {

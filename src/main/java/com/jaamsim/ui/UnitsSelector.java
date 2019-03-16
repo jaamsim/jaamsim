@@ -34,7 +34,7 @@ public class UnitsSelector {
 	public static void populateMenu(JMenu menu) {
 
 		// Loop through the unit types that have been defined
-		for (String utName : Unit.getUnitTypeList()) {
+		for (String utName : Unit.getUnitTypeList(GUIFrame.getJaamSimModel())) {
 			final Class<? extends Unit> ut = Input.parseUnitType(GUIFrame.getJaamSimModel(), utName);
 			ArrayList<? extends Unit> unitList = Unit.getUnitList(GUIFrame.getJaamSimModel(), ut);
 			if (unitList.isEmpty())

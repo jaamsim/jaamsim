@@ -27,7 +27,6 @@ import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.basicsim.ObjectType;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.Keyword;
-import com.jaamsim.ui.GUIFrame;
 
 public abstract class Unit extends Entity {
 	@Keyword(description = "Factor to convert from the specified unit to the System International "
@@ -69,7 +68,7 @@ public abstract class Unit extends Entity {
 	}
 
 	public static final void setPreferredUnitList(JaamSimModel simModel, ArrayList<? extends Unit> list) {
-		ArrayList<String> utList = Unit.getUnitTypeList();
+		ArrayList<String> utList = Unit.getUnitTypeList(simModel);
 
 		// Set the preferred units in the list
 		for (Unit u : list) {
@@ -131,9 +130,9 @@ public abstract class Unit extends Entity {
 		return f1 / f2 ;
 	}
 
-	public static ArrayList<String> getUnitTypeList() {
+	public static ArrayList<String> getUnitTypeList(JaamSimModel simModel) {
 		ArrayList<String> list = new ArrayList<>();
-		for (ObjectType each: GUIFrame.getJaamSimModel().getClonesOfIterator(ObjectType.class)) {
+		for (ObjectType each: simModel.getClonesOfIterator(ObjectType.class)) {
 			Class<? extends Entity> klass = each.getJavaClass();
 			if (klass == null)
 				continue;

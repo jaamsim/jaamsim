@@ -22,7 +22,6 @@ import java.util.Collections;
 import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.math.Color4d;
-import com.jaamsim.ui.GUIFrame;
 
 public interface LineEntity {
 	public JaamSimModel getJaamSimModel();
@@ -30,9 +29,8 @@ public interface LineEntity {
 	public int getLineWidth();
 	public Color4d getLineColour();
 
-	public static ArrayList<Color4d> getLineColoursInUse() {
+	public static ArrayList<Color4d> getLineColoursInUse(JaamSimModel simModel) {
 		ArrayList<Color4d> ret = new ArrayList<>();
-		JaamSimModel simModel = GUIFrame.getJaamSimModel();
 		for (DisplayEntity ent : simModel.getClonesOfIterator(DisplayEntity.class, LineEntity.class)) {
 			LineEntity lineEnt = (LineEntity) ent;
 			if (ret.contains(lineEnt.getLineColour()))

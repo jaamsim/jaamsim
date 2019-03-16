@@ -23,8 +23,8 @@ import java.util.Comparator;
 import java.util.HashMap;
 
 import com.jaamsim.basicsim.Entity;
+import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.math.Color4d;
-import com.jaamsim.ui.GUIFrame;
 
 public class ColourInput extends Input<Color4d> {
 
@@ -395,9 +395,9 @@ private static void initColors() {
 		return toString(value);
 	}
 
-	public static ArrayList<Color4d> getColoursInUse() {
+	public static ArrayList<Color4d> getColoursInUse(JaamSimModel simModel) {
 		ArrayList<Color4d> ret = new ArrayList<>();
-		for (Entity ent : GUIFrame.getJaamSimModel().getClonesOfIterator(Entity.class)) {
+		for (Entity ent : simModel.getClonesOfIterator(Entity.class)) {
 			for (Input<?> in : ent.getEditableInputs()) {
 				if (!(in instanceof ColourInput))
 					continue;

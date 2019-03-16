@@ -1387,7 +1387,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 				JMenuItem selectedItem = null;
 				int selectedIndex = -1;
 				int ind = 0;
-				for (final String fontName : TextEntity.getFontsInUse()) {
+				for (final String fontName : TextEntity.getFontsInUse(GUIFrame.getJaamSimModel())) {
 					JMenuItem item = new JMenuItem(fontName);
 					if (selectedItem == null && fontName.equals(textEnt.getFontName())) {
 						selectedItem = item;
@@ -1574,7 +1574,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 				JMenuItem selectedItem = null;
 				int selectedIndex = -1;
 				int ind = 0;
-				for (Color4d col : TextEntity.getFontColoursInUse()) {
+				for (Color4d col : TextEntity.getFontColoursInUse(GUIFrame.getJaamSimModel())) {
 					String colourName = ColourInput.toString(col);
 					JMenuItem item = new JMenuItem(colourName);
 					ColorIcon icon = new ColorIcon(16, 16);
@@ -1831,7 +1831,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 				JMenuItem selectedItem = null;
 				int selectedIndex = -1;
 				int ind = 0;
-				for (Color4d col : LineEntity.getLineColoursInUse()) {
+				for (Color4d col : LineEntity.getLineColoursInUse(GUIFrame.getJaamSimModel())) {
 					String colourName = ColourInput.toString(col);
 					JMenuItem item = new JMenuItem(colourName);
 					ColorIcon icon = new ColorIcon(16, 16);
@@ -2005,7 +2005,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 				JMenuItem selectedItem = null;
 				int selectedIndex = -1;
 				int ind = 0;
-				for (Color4d col : FillEntity.getFillColoursInUse()) {
+				for (Color4d col : FillEntity.getFillColoursInUse(GUIFrame.getJaamSimModel())) {
 					String colourName = ColourInput.toString(col);
 					JMenuItem item = new JMenuItem(colourName);
 					ColorIcon icon = new ColorIcon(16, 16);
