@@ -43,7 +43,7 @@ public class InterfaceEntityListInput<T> extends ListInput<ArrayList<T>> {
 		if( even )
 			Input.assertCountEven(kw);
 
-		value = Input.parseInterfaceEntityList(kw, entClass, unique);
+		value = Input.parseInterfaceEntityList(thisEnt.getJaamSimModel(), kw, entClass, unique);
 	}
 
 	@Override

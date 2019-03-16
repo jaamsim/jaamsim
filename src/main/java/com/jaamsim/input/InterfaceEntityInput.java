@@ -35,7 +35,7 @@ public class InterfaceEntityInput<T> extends Input<T> {
 	@Override
 	public void parse(Entity thisEnt, KeywordIndex kw) throws InputErrorException {
 		Input.assertCount(kw, 1);
-		T tmp = Input.parseInterfaceEntity(kw.getArg(0), entClass);
+		T tmp = Input.parseInterfaceEntity(thisEnt.getJaamSimModel(), kw.getArg(0), entClass);
 		value = tmp;
 	}
 

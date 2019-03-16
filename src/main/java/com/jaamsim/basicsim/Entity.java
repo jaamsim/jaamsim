@@ -483,10 +483,6 @@ public class Entity {
 		return getName();
 	}
 
-	public static Entity getNamedEntity(String name) {
-		return sim.getNamedEntity(name);
-	}
-
 	/**
 	 * Method to set the input name of the entity.
 	 */

@@ -1341,9 +1341,9 @@ public abstract class Input<T> {
 		return temp;
 	}
 
-	public static <T> T parseInterfaceEntity(String choice, Class<T> aClass) {
+	public static <T> T parseInterfaceEntity(JaamSimModel simModel, String choice, Class<T> aClass) {
 
-		Entity ent = Entity.getNamedEntity(choice);
+		Entity ent = simModel.getNamedEntity(choice);
 		if (ent == null) {
 			throw new InputErrorException(INP_ERR_ENTNAME, choice);
 		}
@@ -1356,12 +1356,12 @@ public abstract class Input<T> {
 		return temp;
 	}
 
-	public static <T> ArrayList<T> parseInterfaceEntityList(KeywordIndex kw, Class<T> aClass, boolean unique)
+	public static <T> ArrayList<T> parseInterfaceEntityList(JaamSimModel simModel, KeywordIndex kw, Class<T> aClass, boolean unique)
 	throws InputErrorException {
 		ArrayList<T> temp = new ArrayList<>(kw.numArgs());
 
 		for (int i = 0; i < kw.numArgs(); i++) {
-			Entity ent = Entity.getNamedEntity(kw.getArg(i));
+			Entity ent = simModel.getNamedEntity(kw.getArg(i));
 			if (ent == null) {
 				throw new InputErrorException(INP_ERR_ENTNAME, kw.getArg(i));
 			}
