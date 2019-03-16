@@ -36,7 +36,7 @@ public class RelativeEntityInput extends EntityInput<DisplayEntity> {
 	@Override
 	public void parse(Entity thisEnt, KeywordIndex kw) throws InputErrorException {
 		Input.assertCount(kw, 1);
-		DisplayEntity ent = Input.parseEntity(kw.getArg(0), DisplayEntity.class);
+		DisplayEntity ent = Input.parseEntity(thisEnt.getJaamSimModel(), kw.getArg(0), DisplayEntity.class);
 		if (isCircular(thisEnt, ent))
 			throw new InputErrorException("The assignment of %s to RelativeEntity would create a circular loop.", ent);
 		value = ent;

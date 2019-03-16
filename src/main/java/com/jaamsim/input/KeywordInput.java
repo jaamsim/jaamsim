@@ -43,7 +43,7 @@ public class KeywordInput extends Input<String> {
 	public void parse(Entity thisEnt, KeywordIndex kw) throws InputErrorException {
 		Input.assertCount(kw, 2);
 		try {
-			DisplayEntity ent = Input.parseEntity(kw.getArg(0), DisplayEntity.class);
+			DisplayEntity ent = Input.parseEntity(thisEnt.getJaamSimModel(), kw.getArg(0), DisplayEntity.class);
 
 			String key = kw.getArg(1);
 			Input<?> in = ent.getInput(key);

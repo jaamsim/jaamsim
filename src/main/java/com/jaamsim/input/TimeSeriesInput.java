@@ -61,7 +61,7 @@ public class TimeSeriesInput extends Input<TimeSeriesProvider> {
 
 		// If not a constant, try parsing a TimeSeriesProvider
 		Input.assertCount(kw, 1);
-		Entity ent = Input.parseEntity(kw.getArg(0), Entity.class);
+		Entity ent = Input.parseEntity(thisEnt.getJaamSimModel(), kw.getArg(0), Entity.class);
 		TimeSeriesProvider s = Input.castImplements(ent, TimeSeriesProvider.class);
 		if( s.getUnitType() != UserSpecifiedUnit.class )
 			Input.assertUnitsMatch(unitType, s.getUnitType());

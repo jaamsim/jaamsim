@@ -1254,9 +1254,9 @@ public abstract class Input<T> {
 		}
 	}
 
-	public static <T extends Entity> T parseEntity(String choice, Class<T> aClass)
+	public static <T extends Entity> T parseEntity(JaamSimModel simModel, String choice, Class<T> aClass)
 	throws InputErrorException {
-		Entity ent = Entity.getNamedEntity(choice);
+		Entity ent = simModel.getNamedEntity(choice);
 		if (ent == null) {
 			throw new InputErrorException(INP_ERR_ENTNAME, choice);
 		}
@@ -1285,7 +1285,7 @@ public abstract class Input<T> {
 	}
 
 	public static Class<? extends Unit> parseUnitType(JaamSimModel simModel, String utName) {
-		ObjectType ot = Input.parseEntity(utName, ObjectType.class);
+		ObjectType ot = Input.parseEntity(simModel, utName, ObjectType.class);
 		Class<? extends Unit> ut = Input.checkCast(ot.getJavaClass(), Unit.class);
 		return ut;
 	}
@@ -1438,7 +1438,7 @@ public abstract class Input<T> {
 
 		// Parse the input as an Entity
 		try {
-			T ent = parseEntity(kw.getArg(0), entClass);
+			T ent = parseEntity(thisEnt.getJaamSimModel(), kw.getArg(0), entClass);
 			return new EntityProvConstant<>(ent);
 		}
 		catch (InputErrorException e) {}
@@ -1494,7 +1494,7 @@ public abstract class Input<T> {
 		// 1) Try parsing a SampleProvider object
 		SampleProvider s = null;
 		try {
-			Entity ent = Input.parseEntity(kw.getArg(0), Entity.class);
+			Entity ent = Input.parseEntity(thisEnt.getJaamSimModel(), kw.getArg(0), Entity.class);
 			s = Input.castImplements(ent, SampleProvider.class);
 		}
 		catch (InputErrorException e) {}

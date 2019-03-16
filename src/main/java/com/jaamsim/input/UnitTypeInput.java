@@ -58,7 +58,7 @@ public class UnitTypeInput extends Input<ObjectType> {
 	public void parse(Entity thisEnt, KeywordIndex kw)
 	throws InputErrorException {
 		Input.assertCount(kw, 1);
-		ObjectType t = Input.parseEntity(kw.getArg(0), ObjectType.class);
+		ObjectType t = Input.parseEntity(thisEnt.getJaamSimModel(), kw.getArg(0), ObjectType.class);
 		Class<? extends Unit> type = Input.checkCast(t.getJavaClass(), Unit.class);
 
 		value = t;

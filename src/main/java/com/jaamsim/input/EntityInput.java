@@ -49,7 +49,7 @@ public class EntityInput<T extends Entity> extends Input<T> {
 	public void parse(Entity thisEnt, KeywordIndex kw)
 	throws InputErrorException {
 		Input.assertCount(kw, 1);
-		T tmp = Input.parseEntity(kw.getArg(0), entClass);
+		T tmp = Input.parseEntity(thisEnt.getJaamSimModel(), kw.getArg(0), entClass);
 		if (!isValid(tmp))
 			throw new InputErrorException("%s is not a valid entity", tmp.getName());
 		value = tmp;
