@@ -53,7 +53,6 @@ public class EntityLauncher extends GameEntity implements LinkDisplayable {
 
 	{
 		prototypeEntity = new EntityProvInput<>(DisplayEntity.class, "PrototypeEntity", KEY_INPUTS, null);
-		prototypeEntity.setEntity(this);
 		prototypeEntity.setRequired(true);
 		prototypeEntity.addInvalidClass(TextBasics.class);
 		prototypeEntity.addInvalidClass(OverlayEntity.class);

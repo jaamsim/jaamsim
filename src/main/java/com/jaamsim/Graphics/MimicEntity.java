@@ -34,7 +34,6 @@ public class MimicEntity extends DisplayEntity {
 
 	{
 		sourceEntity = new EntityProvInput<>(DisplayEntity.class, "SourceEntity", KEY_INPUTS, null);
-		sourceEntity.setEntity(this);
 		sourceEntity.addInvalidClass(MimicEntity.class);
 		sourceEntity.addInvalidClass(TextBasics.class);
 		sourceEntity.addInvalidClass(OverlayEntity.class);

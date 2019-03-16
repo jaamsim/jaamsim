@@ -28,19 +28,13 @@ import com.jaamsim.input.Parser;
 
 public class EntityProvInput<T extends Entity> extends Input<EntityProvider<T>> {
 
-	private Entity thisEnt;
 	private Class<T> entClass;
 	private ArrayList<Class<? extends Entity>> invalidClasses;
 
 	public EntityProvInput(Class<T> aClass, String key, String cat, EntityProvider<T> def) {
 		super(key, cat, def);
 		entClass = aClass;
-		thisEnt = null;
 		invalidClasses = new ArrayList<>();
-	}
-
-	public void setEntity(Entity ent) {
-		thisEnt = ent;
 	}
 
 	@Override
@@ -76,7 +70,7 @@ public class EntityProvInput<T extends Entity> extends Input<EntityProvider<T>> 
 	public ArrayList<String> getValidOptions(Entity ent) {
 		ArrayList<String> list = new ArrayList<>();
 
-		for (T each: thisEnt.getJaamSimModel().getClonesOfIterator(entClass)) {
+		for (T each: ent.getJaamSimModel().getClonesOfIterator(entClass)) {
 			if (each.testFlag(Entity.FLAG_GENERATED))
 				continue;
 

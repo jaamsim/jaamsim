@@ -98,7 +98,6 @@ public class EntityGenerator extends LinkedService {
 		this.addInput(entitiesPerArrival);
 
 		prototypeEntity = new EntityProvInput<>(DisplayEntity.class, "PrototypeEntity", KEY_INPUTS, null);
-		prototypeEntity.setEntity(this);
 		prototypeEntity.setRequired(true);
 		prototypeEntity.addInvalidClass(TextBasics.class);
 		prototypeEntity.addInvalidClass(OverlayEntity.class);

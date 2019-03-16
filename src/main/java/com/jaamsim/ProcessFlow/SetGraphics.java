@@ -49,7 +49,6 @@ public class SetGraphics extends LinkedComponent {
 	{
 		targetEntity = new EntityProvInput<>(DisplayEntity.class, "TargetEntity", KEY_INPUTS, null);
 		targetEntity.setDefaultText("this.obj");
-		targetEntity.setEntity(this);
 		targetEntity.addInvalidClass(TextBasics.class);
 		targetEntity.addInvalidClass(OverlayEntity.class);
 		this.addInput(targetEntity);
