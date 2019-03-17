@@ -425,6 +425,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		// Read the autoload configuration file
 		InputAgent.clear();
 		sim.autoLoad();
+		sim.getSimulation().setWindowDefaults();
 
 		updateForUndo();
 	}
@@ -3544,7 +3545,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		Throwable ret = null;
 		try {
 			sim.configure(file);
-			sim.getSimulation().setWindowDefaults();
 		}
 		catch (Throwable t) {
 			ret = t;
