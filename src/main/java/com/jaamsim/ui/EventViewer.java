@@ -228,7 +228,7 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 		evtMan.setTraceListener(null);
 	}
 
-	private class EventTable extends JTable {
+	private static class EventTable extends JTable {
 		public EventTable(TableModel model) {
 			super(model);
 
