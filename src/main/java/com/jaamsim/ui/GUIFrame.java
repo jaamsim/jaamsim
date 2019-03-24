@@ -354,7 +354,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 
 			// Re-open the tools
 			sim.getSimulation().showActiveTools();
-			FrameBox.reSelectEntity();
+			updateUI();
 		}
 
 		@Override
@@ -384,7 +384,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 
 			// Re-open the tools
 			sim.getSimulation().showActiveTools();
-			FrameBox.reSelectEntity();
+			updateUI();
 		}
 	}
 

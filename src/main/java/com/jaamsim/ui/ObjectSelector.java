@@ -491,7 +491,7 @@ public class ObjectSelector extends FrameBox {
 			}
 			finally {
 				node.setUserObject(currentEntity);
-				FrameBox.reSelectEntity();
+				GUIFrame.updateUI();
 			}
 		}
 

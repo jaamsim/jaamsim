@@ -20,7 +20,7 @@ import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.EntityLabel;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.input.InputAgent;
-import com.jaamsim.ui.FrameBox;
+import com.jaamsim.ui.GUIFrame;
 import com.jaamsim.ui.ObjectSelector;
 
 public class RenameCommand implements Command {
@@ -54,7 +54,7 @@ public class RenameCommand implements Command {
 
 		// Update the entries in the Object Selector
 		ObjectSelector.allowUpdate();
-		FrameBox.reSelectEntity();
+		GUIFrame.updateUI();
 	}
 
 	@Override
