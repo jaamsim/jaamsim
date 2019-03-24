@@ -124,11 +124,6 @@ public class FrameBox extends OSFixJFrame {
 		GUIFrame.updateUI();
 	}
 
-	// This is equivalent to calling setSelectedEntity again with the same entity as used previously
-	public static final void reSelectEntity() {
-		GUIFrame.updateUI();
-	}
-
 	public static final boolean isSelected(Entity ent) {
 		return (ent == selectedEntity);
 	}
