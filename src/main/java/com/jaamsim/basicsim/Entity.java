@@ -608,6 +608,9 @@ public class Entity {
 	 */
 	public void error(String fmt, Object... args)
 	throws ErrorException {
+		if (fmt == null)
+			throw new ErrorException(this, "null");
+
 		throw new ErrorException(this, String.format(fmt, args));
 	}
 
