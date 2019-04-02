@@ -824,6 +824,15 @@ public class ExpressionBox extends JDialog {
 				"'[Simulation].RunNumber' returns the sequence number for the present "
 						+ "simulation run."));
 
+		simObjects.add(new ButtonDesc("null", "Entity 'null'",
+				"The null entity can be used to test whether an output that returns an object "
+						+ "has been set.",
+				null,
+				"null",
+				0,
+				"'[Server1].obj != null' returns TRUE (i.e. 1) if the output 'obj' for Server1 "
+						+ "has been set."));
+
 		// EXPRESSION OBJECTS
 
 		expObjects.add(new ButtonDesc("String", "String",
