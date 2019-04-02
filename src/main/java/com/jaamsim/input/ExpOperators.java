@@ -1268,7 +1268,7 @@ public class ExpOperators {
 
 				ExpResult.Iterator it = col.getIter();
 				if (!it.hasNext()) {
-					throw new ExpError(source, pos, "Can not get index of empty collection.");
+					return ExpResult.makeNumResult(0.0d, DimensionlessUnit.class);
 				}
 
 				while (it.hasNext()) {
@@ -1278,7 +1278,7 @@ public class ExpOperators {
 						return key;
 					}
 				}
-				throw new ExpError(source, pos, "'indexof' failed. Value is not in collection.");
+				return ExpResult.makeNumResult(0.0d, DimensionlessUnit.class);
 			}
 
 			@Override
