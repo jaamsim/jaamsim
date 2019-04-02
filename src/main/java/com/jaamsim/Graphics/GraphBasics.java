@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2009-2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2017-2018 JaamSim Software Inc.
+ * Copyright (C) 2017-2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,7 +31,6 @@ import com.jaamsim.input.StringInput;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.input.ValueListInput;
 import com.jaamsim.math.Color4d;
-import com.jaamsim.ui.GUIFrame;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
 
@@ -293,7 +292,6 @@ public abstract class GraphBasics extends DisplayEntity {
 		xAxisEnd.setUnitType(unitType);
 		xAxisInterval.setUnitType(unitType);
 		xLines.setUnitType(unitType);
-		GUIFrame.updateUI();  // show the new units in the Input Editor
 	}
 
 	protected void setYAxisUnit(Class<? extends Unit> unitType) {
@@ -302,7 +300,6 @@ public abstract class GraphBasics extends DisplayEntity {
 		yAxisEnd.setUnitType(unitType);
 		yAxisInterval.setUnitType(unitType);
 		yLines.setUnitType(unitType);
-		GUIFrame.updateUI();  // show the new units in the Input Editor
 	}
 
 	protected void setSecondaryYAxisUnit(Class<? extends Unit> unitType) {
@@ -310,7 +307,6 @@ public abstract class GraphBasics extends DisplayEntity {
 		secondaryYAxisStart.setUnitType(unitType);
 		secondaryYAxisEnd.setUnitType(unitType);
 		secondaryYAxisInterval.setUnitType(unitType);
-		GUIFrame.updateUI();  // show the new units in the Input Editor
 	}
 
 	public String getTitle() {
