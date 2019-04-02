@@ -1316,6 +1316,20 @@ public class ExpressionBox extends JDialog {
 				-1,
 				"'indexOfMaxCol( {5, -1, 2} )' returns 1."));
 
+		functions.add(new ButtonDesc("indexOf", "IndexOf function ('indexOf')",
+				"Returns the index or key for the entry in an array or map that is equal to a "
+						+ "specified value.",
+				"Accepts an array or map of numbers, strings, or objects followed by a number, "
+						+ "string, or object. "
+						+ "Returns a dimensionless integer or key. "
+						+ "Zero is returned if the value is not included in the array or map.",
+				"indexOf()",
+				-1,
+				"'indexOf( {2, 1, 3}, 1 )' returns 2",
+				"'indexOf( {2, 1, 3}, 5 )' returns 0",
+				"'indexOf( {2[s], 1[s], 3[s]}, 1[s] )' returns 2",
+				"'indexOf( {[Object2], [Object1], [Object3]}, [Object1] )' returns 2"));
+
 		functions.add(new ButtonDesc("indexOfNearest", "indexOfNearest function for a Collection "
 						+ "('indexOfNearest')",
 				"Returns index or key for the entry in an array or map that is closest to a "
