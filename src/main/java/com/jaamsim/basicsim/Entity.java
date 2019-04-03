@@ -80,6 +80,7 @@ public class Entity {
 	private final HashMap<String, ExpressionHandle> customOutputMap = new LinkedHashMap<>();
 
 	public static final String KEY_INPUTS = "Key Inputs";
+	public static final String OPTIONS = "Options";
 	public static final String GRAPHICS = "Graphics";
 	public static final String THRESHOLDS = "Thresholds";
 	public static final String MAINTENANCE = "Maintenance";
