@@ -16,28 +16,11 @@
  */
 package com.jaamsim.Graphics;
 
-import java.util.ArrayList;
-import java.util.Collections;
-
 import com.jaamsim.basicsim.JaamSimModel;
-import com.jaamsim.input.ColourInput;
 import com.jaamsim.math.Color4d;
 
 public interface FillEntity {
 	public JaamSimModel getJaamSimModel();
 	public boolean isFilled();
 	public Color4d getFillColour();
-
-	public static ArrayList<Color4d> getFillColoursInUse(JaamSimModel simModel) {
-		ArrayList<Color4d> ret = new ArrayList<>();
-		for (DisplayEntity ent : simModel.getClonesOfIterator(DisplayEntity.class, FillEntity.class)) {
-			FillEntity fillEnt = (FillEntity) ent;
-			if (ret.contains(fillEnt.getFillColour()))
-				continue;
-			ret.add(fillEnt.getFillColour());
-		}
-		Collections.sort(ret, ColourInput.colourComparator);
-		return ret;
-	}
-
 }
