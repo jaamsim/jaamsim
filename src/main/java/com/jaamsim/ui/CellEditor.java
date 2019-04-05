@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2005-2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2018 JaamSim Software Inc.
+ * Copyright (C) 2016-2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,11 +17,21 @@
  */
 package com.jaamsim.ui;
 
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.event.ActionListener;
+
 import javax.swing.AbstractCellEditor;
+import javax.swing.JButton;
+import javax.swing.JPanel;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 import javax.swing.event.CellEditorListener;
 import javax.swing.event.ChangeEvent;
+import javax.swing.plaf.basic.BasicArrowButton;
 import javax.swing.table.TableCellEditor;
 
 import com.jaamsim.Commands.KeywordCommand;
@@ -32,18 +42,52 @@ import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.ui.EditBox.EditTable;
 
-public abstract class CellEditor extends AbstractCellEditor implements TableCellEditor {
+public abstract class CellEditor extends AbstractCellEditor implements TableCellEditor, ActionListener {
 	protected final EditTable propTable;
 	protected Input<?> input;
+
+	private final JPanel jPanel;
+	private final JTextField text;
+	private final JButton button;
 
 	private int row;
 	private int col;
 	private EditTable table;
 	protected String retryString;
 
-	public CellEditor(EditTable table) {
+	public CellEditor(EditTable table, boolean showButton) {
 		propTable = table;
 		this.addCellEditorListener(new CellListener());
+
+		// Table cell
+		jPanel = new JPanel(new BorderLayout());
+		int height = table.getRowHeight();
+		int width = table.getColumnModel().getColumn(EditBox.VALUE_COLUMN).getWidth() -
+				table.getColumnModel().getColumnMargin();
+		jPanel.setPreferredSize(new Dimension(width, height));
+
+		// Editable text
+		text = new JTextField();
+		jPanel.add(text, BorderLayout.WEST);
+
+		// Dropdown button
+		int buttonWidth = 0;
+		if (showButton) {
+			button = new BasicArrowButton(BasicArrowButton.SOUTH,
+					UIManager.getColor("ComboBox.buttonBackground"),  // FIXME does not respect look and feel
+					UIManager.getColor("ComboBox.buttonBackground"),  // "ComboBox.buttonShadow"
+					UIManager.getColor("ComboBox.buttonDarkShadow"),
+					UIManager.getColor("ComboBox.buttonBackground")); // "ComboBox.buttonHighlight"
+			button.addActionListener(this);
+			button.setActionCommand("button");
+			buttonWidth = button.getPreferredSize().width;
+			jPanel.add(button, BorderLayout.EAST);
+		}
+		else {
+			button = null;
+		}
+
+		text.setPreferredSize(new Dimension(width - buttonWidth, height));
 	}
 
 	@Override
@@ -51,12 +95,33 @@ public abstract class CellEditor extends AbstractCellEditor implements TableCell
 		return input;
 	}
 
+	public void setValue(String str) {
+		text.setText(str);
+	}
+
 	public String getValue() {
-		return "";
+		return text.getText();
 	}
 
 	public boolean canRetry() {
 		return false;
+	}
+
+	@Override
+	public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+
+		setTableInfo(table, row, column);
+
+		// set the value
+		input = (Input<?>)value;
+		String val = input.getValueString();
+		if (canRetry() && retryString != null) {
+			val = retryString;
+			retryString = null;
+		}
+		text.setText(val);
+
+		return jPanel;
 	}
 
 	final public int getRow() { return row; }
