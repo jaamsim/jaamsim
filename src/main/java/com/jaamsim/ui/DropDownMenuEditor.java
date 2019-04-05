@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2005-2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2018 JaamSim Software Inc.
+ * Copyright (C) 2016-2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,77 +22,57 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JComboBox;
-import javax.swing.JTable;
+import javax.swing.JMenuItem;
 
-import com.jaamsim.input.Input;
 import com.jaamsim.ui.EditBox.EditTable;
 
 /**
  * Handles inputs with drop-down menus.
  *
  */
-public class DropDownMenuEditor extends CellEditor
-implements ActionListener {
+public class DropDownMenuEditor extends ChooserEditor {
 
-	private final JComboBox<String> dropDown;
-
-	private boolean retrying;
+	private ArrayList<String> options;
 
 	public DropDownMenuEditor(EditTable table, ArrayList<String> aList) {
-		super(table);
-
-		dropDown = new JComboBox<>();
-		dropDown.setEditable(true);
-		DefaultComboBoxModel<String> model = (DefaultComboBoxModel<String>) dropDown.getModel();
-
-		// Populate the items in the combo box
-		for(String each: aList) {
-
-			// Space inside the font name
-			if( each.contains(" ") )
-				each = String.format("'%s'", each);
-			model.addElement(each);
-		}
-
-		dropDown.setActionCommand("comboBoxChanged");
-		dropDown.addActionListener(this); // Now it is safe to listen
+		super(table, true);
+		options = aList;
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 
-		// If combo box is edited, this method invokes twice
-		if(e.getActionCommand().equals("comboBoxChanged") && !retrying)
-			stopCellEditing();
-	}
+		if ("button".equals(e.getActionCommand())) {
 
-	@Override
-	public Component getTableCellEditorComponent(JTable table,
-			Object value, boolean isSelected, int row, int column) {
+			String valStr = input.getValueString();
+			ScrollablePopupMenu menu = new ScrollablePopupMenu();
+			Component button = (Component)e.getSource();
+			Component panel = button.getParent();
+			for (final String option : options) {
+				JMenuItem item = new JMenuItem(option);
+				item.setPreferredSize(panel.getPreferredSize());
+				item.addActionListener( new ActionListener() {
 
-		setTableInfo(table, row, column);
+					@Override
+					public void actionPerformed( ActionEvent event ) {
+						setValue(option);
+						stopCellEditing();
+						propTable.requestFocusInWindow();
+					}
+				} );
+				menu.add(item);
+			}
+			menu.show(panel, 0, panel.getHeight());
 
-		input = (Input<?>)value;
-		String text = input.getValueString();
-
-		if (retryString != null) {
-			text = retryString;
-			retrying = true;
+			// Scroll to show the present value
+			if (input.isDefault())
+				return;
+			int index = options.indexOf(valStr);
+			if (index != -1) {
+				menu.ensureIndexIsVisible(index);
+			}
+			return;
 		}
-		retryString = null;
-
-		dropDown.setSelectedItem(text);
-		retrying = false;
-
-		return dropDown;
-	}
-
-	@Override
-	public String getValue() {
-		// dropDown.getSelectedItem() returns blank with a typed entry until Enter is pressed
-		return dropDown.getEditor().getItem().toString();
 	}
 
 	@Override
