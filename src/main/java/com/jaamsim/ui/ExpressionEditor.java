@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2018 JaamSim Software Inc.
+ * Copyright (C) 2018-2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ import javax.swing.JMenuItem;
 
 import com.jaamsim.ui.EditBox.EditTable;
 
-public class ExpressionEditor extends ChooserEditor {
+public class ExpressionEditor extends CellEditor {
 
 	public ExpressionEditor(EditTable table) {
 		super(table, true);

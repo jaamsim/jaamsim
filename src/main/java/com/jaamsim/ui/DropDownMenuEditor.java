@@ -30,7 +30,7 @@ import com.jaamsim.ui.EditBox.EditTable;
  * Handles inputs with drop-down menus.
  *
  */
-public class DropDownMenuEditor extends ChooserEditor {
+public class DropDownMenuEditor extends CellEditor {
 
 	private ArrayList<String> options;
 
