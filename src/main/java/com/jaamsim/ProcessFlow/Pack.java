@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2018 JaamSim Software Inc.
+ * Copyright (C) 2016-2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -108,6 +108,14 @@ public class Pack extends LinkedService {
 		return (EntContainer)ret;
 	}
 
+	private void setContainerState() {
+		if (!containerStateAssignment.isDefault()) {
+			double simTime = getSimTime();
+			String state = containerStateAssignment.getValue().getNextString(simTime);
+			container.setPresentState(state);
+		}
+	}
+
 	@Override
 	protected boolean startProcessing(double simTime) {
 
@@ -115,12 +123,7 @@ public class Pack extends LinkedService {
 		if (container == null) {
 			container = this.getNextContainer();
 			numberInserted = 0;
-
-			// Set the state for the container and its contents
-			if (!containerStateAssignment.isDefault()) {
-				String state = containerStateAssignment.getValue().getNextString(simTime);
-				container.setPresentState(state);
-			}
+			setContainerState();
 		}
 
 		// Are there sufficient entities in the queue to start packing?
