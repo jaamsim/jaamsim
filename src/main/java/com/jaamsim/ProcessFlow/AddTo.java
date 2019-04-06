@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018 JaamSim Software Inc.
+ * Copyright (C) 2018-2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,6 +53,11 @@ public class AddTo extends Pack {
 		ret.add(waitQueue.getValue());
 		ret.add(containerQueue.getValue());
 		return ret;
+	}
+
+	@Override
+	protected boolean isContainerAvailable() {
+		return !containerQueue.getValue().isEmpty();
 	}
 
 	@Override

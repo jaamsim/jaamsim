@@ -97,6 +97,10 @@ public class Pack extends LinkedService {
 		packedEntity = null;
 	}
 
+	protected boolean isContainerAvailable() {
+		return true;
+	}
+
 	protected EntContainer getNextContainer() {
 		numberGenerated++;
 		DisplayEntity proto = (DisplayEntity)prototypeEntityContainer.getValue();
