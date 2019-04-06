@@ -22,6 +22,7 @@ import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.StringProviders.StringProvInput;
 import com.jaamsim.basicsim.Entity;
+import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InterfaceEntityInput;
 import com.jaamsim.input.Keyword;
@@ -54,6 +55,11 @@ public class Pack extends LinkedService {
 	         exampleList = {"Service"})
 	protected final StringProvInput containerStateAssignment;
 
+	@Keyword(description = "If TRUE, the EntityContainer will be held in its queue until "
+	                     + "sufficient entities are available to start packing.",
+	         exampleList = {"TRUE"})
+	private final BooleanInput waitForEntities;
+
 	protected EntContainer container;	// the generated EntityContainer
 	private int numberGenerated;  // Number of EntityContainers generated so far
 	private int numberInserted;   // Number of entities inserted to the EntityContainer
@@ -85,6 +91,9 @@ public class Pack extends LinkedService {
 		containerStateAssignment = new StringProvInput("ContainerStateAssignment", KEY_INPUTS, null);
 		containerStateAssignment.setUnitType(DimensionlessUnit.class);
 		this.addInput(containerStateAssignment);
+
+		waitForEntities = new BooleanInput("WaitForEntities", KEY_INPUTS, false);
+		this.addInput(waitForEntities);
 	}
 
 	@Override
@@ -124,7 +133,7 @@ public class Pack extends LinkedService {
 	protected boolean startProcessing(double simTime) {
 
 		// If necessary, get a new container
-		if (container == null) {
+		if (container == null && !waitForEntities.getValue() && isContainerAvailable()) {
 			container = this.getNextContainer();
 			numberInserted = 0;
 			setContainerState();
@@ -136,6 +145,15 @@ public class Pack extends LinkedService {
 			numberToInsert = this.getNumberToInsert(simTime);
 			if (waitQueue.getValue().getMatchCount(m) < getNumberToStart(simTime)) {
 				return false;
+			}
+
+			// If necessary, get a new container
+			if (container == null) {
+				if (!isContainerAvailable())
+					return false;
+				container = this.getNextContainer();
+				numberInserted = 0;
+				setContainerState();
 			}
 			startedPacking = true;
 			this.setMatchValue(m);
