@@ -33,12 +33,14 @@ import com.jaamsim.ui.EventViewer;
 import com.jaamsim.ui.GUIFrame;
 import com.jaamsim.ui.LogBox;
 
-public class JaamSimModel {
+public class JaamSimModel implements EventTimeListener {
 	private static final Object createLock = new Object();
 	private static JaamSimModel createModel = null;
 
 	private final EventManager eventManager;
 	private Simulation simulation;
+	private volatile long simTicks;
+	private boolean running;
 	private int runNumber;    // labels each run when multiple runs are being made
 	private IntegerVector runIndexList;
 	private InputErrorListener inputErrorListener;
@@ -49,9 +51,12 @@ public class JaamSimModel {
 	public JaamSimModel() {
 		eventManager = new EventManager("DefaultEventManager");
 		simulation = null;
+		simTicks = 0L;
+		running = false;
 		runNumber = 1;
 		runIndexList = new IntegerVector();
 		runIndexList.add(1);
+		setTimeListener(this);
 	}
 
 	public final void setTimeListener(EventTimeListener l) {
@@ -64,6 +69,16 @@ public class JaamSimModel {
 
 	public void setInputErrorListener(InputErrorListener l) {
 		inputErrorListener = l;
+	}
+
+	@Override
+	public void tickUpdate(long tick) {
+		simTicks = tick;
+	}
+
+	@Override
+	public void timeRunning(long tick, boolean running) {
+		this.running = running;
 	}
 
 	public void clear() {

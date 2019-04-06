@@ -3403,6 +3403,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 
 	@Override
 	public void tickUpdate(long tick) {
+		sim.tickUpdate(tick);
 		if (tick == simTicks)
 			return;
 
@@ -3413,6 +3414,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 
 	@Override
 	public void timeRunning(long tick, boolean running) {
+		sim.timeRunning(tick, running);
 		if (running) {
 			initSpeedUp(EventManager.ticksToSecs(tick));
 			updateForSimulationState(SIM_STATE_RUNNING);
