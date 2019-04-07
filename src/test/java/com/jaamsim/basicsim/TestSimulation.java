@@ -93,4 +93,28 @@ public class TestSimulation {
 		simModel.initRun();
 		TestFrameworkHelpers.runEventsToTick(simModel.getEventManager(), Long.MAX_VALUE, 1000);
 	}
+
+	@Test
+	public void testAPI() {
+		// Definitions
+		simModel.defineEntity("SimEntity", "Proto");
+		simModel.defineEntity("EntityGenerator", "Gen");
+		simModel.defineEntity("EntitySink", "Sink");
+
+		// Inputs
+		simModel.setInput("Gen", "PrototypeEntity", "Proto");
+		simModel.setInput("Gen", "NextComponent", "Sink");
+		simModel.setInput("Gen", "InterArrivalTime", "2 s");
+		simModel.setInput("Simulation", "RunDuration", "9 s");
+
+		// Perform the simulation run
+		simModel.start();
+		simModel.waitForPause(1000L);
+
+		// Test the results
+		assert(simModel.getSimTime() == 9.0d);
+		assert(simModel.getDoubleValue("[Gen].NumberGenerated") == 5.0d);
+		assert(simModel.getDoubleValue("[Sink].NumberAdded") == 5.0d);
+	}
+
 }
