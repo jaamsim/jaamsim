@@ -22,16 +22,21 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
+import com.jaamsim.Samples.SampleExpression;
+import com.jaamsim.StringProviders.StringProvExpression;
 import com.jaamsim.datatypes.IntegerVector;
 import com.jaamsim.events.Conditional;
 import com.jaamsim.events.EventErrorListener;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.events.EventTimeListener;
+import com.jaamsim.input.ExpError;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.states.StateEntity;
 import com.jaamsim.ui.EventViewer;
 import com.jaamsim.ui.GUIFrame;
 import com.jaamsim.ui.LogBox;
+import com.jaamsim.units.DimensionlessUnit;
+import com.jaamsim.units.Unit;
 
 public class JaamSimModel implements EventTimeListener {
 	private static final Object createLock = new Object();
@@ -382,6 +387,46 @@ public class JaamSimModel implements EventTimeListener {
 	 */
 	public double getSimTime() {
 		return EventManager.ticksToSecs(simTicks);
+	}
+
+	/**
+	 * Evaluates the specified expression and returns its value as a string.
+	 * Any type of result can be returned by the expression, including an entity or an array.
+	 * If it returns a number, it must be dimensionless.
+	 * @param expString - expression to be evaluated
+	 * @return expression value as a string
+	 */
+	public String getStringValue(String expString) {
+		double simTime = getSimTime();
+		try {
+			Class<? extends Unit> unitType = DimensionlessUnit.class;
+			Entity thisEnt = getSimulation();
+			StringProvExpression strProv = new StringProvExpression(expString, thisEnt, unitType);
+			return strProv.getNextString(simTime);
+		}
+		catch (ExpError e) {
+			return "Cannot evaluate";
+		}
+	}
+
+	/**
+	 * Evaluates the specified expression and returns its value.
+	 * The expression must return a dimensionless number.
+	 * All other types of expressions return NaN.
+	 * @param expString - expression to be evaluated
+	 * @return expression value
+	 */
+	public double getDoubleValue(String expString) {
+		double simTime = getSimTime();
+		try {
+			Class<? extends Unit> unitType = DimensionlessUnit.class;
+			Entity thisEnt = getSimulation();
+			SampleExpression sampleExp = new SampleExpression(expString, thisEnt, unitType);
+			return sampleExp.getNextSample(simTime);
+		}
+		catch (ExpError e) {
+			return Double.NaN;
+		}
 	}
 
 	public EventManager getEventManager() {
