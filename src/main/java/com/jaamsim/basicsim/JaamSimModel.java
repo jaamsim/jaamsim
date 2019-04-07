@@ -30,7 +30,10 @@ import com.jaamsim.events.EventErrorListener;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.events.EventTimeListener;
 import com.jaamsim.input.ExpError;
+import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
+import com.jaamsim.input.InputErrorException;
+import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.states.StateEntity;
 import com.jaamsim.ui.EventViewer;
 import com.jaamsim.ui.GUIFrame;
@@ -427,6 +430,45 @@ public class JaamSimModel implements EventTimeListener {
 		catch (ExpError e) {
 			return Double.NaN;
 		}
+	}
+
+	/**
+	 * Creates a new entity for the specified class with the specified name.
+	 * If the name already used, "_1", "_2", etc. will be appended to the name until an unused
+	 * name is found.
+	 * @param type - type of entity to be created
+	 * @param name - name for the created entity
+	 */
+	public void defineEntity(String type, String name) {
+		try {
+			Class<? extends Entity> klass = Input.parseEntityType(this, type);
+			InputAgent.defineEntityWithUniqueName(this, klass, name, "_", true);
+		}
+		catch (InputErrorException e) {
+			return;
+		}
+	}
+
+	/**
+	 * Sets the input for the specified entity and keyword to the specified string.
+	 * @param entName - name of the entity whose input is to be set
+	 * @param keyword - input keyword whose value is to be set
+	 * @param arg - input string as it would appear in the Input Editor
+	 */
+	public void setInput(String entName, String keyword, String arg) {
+		InputAgent.setRecordEdits(true);
+		Entity ent = getNamedEntity(entName);
+		KeywordIndex kw = InputAgent.formatInput(keyword, arg);
+		InputAgent.apply(ent, kw);
+	}
+
+	/**
+	 * Writes the inputs for the simulation model to the specified file.
+	 * @param file - file to which the model inputs are to be saved
+	 */
+	public void save(File file) {
+		InputAgent.printNewConfigurationFileWithName(this, file.getName());
+		InputAgent.setConfigFile(file);
 	}
 
 	public EventManager getEventManager() {
