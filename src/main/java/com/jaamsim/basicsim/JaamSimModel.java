@@ -368,6 +368,22 @@ public class JaamSimModel implements EventTimeListener {
 		pause();
 	}
 
+	/**
+	 * Returns whether events are being executed.
+	 * @return true if the events are being executed
+	 */
+	public boolean isRunning() {
+		return running;
+	}
+
+	/**
+	 * Returns the present simulation time in seconds.
+	 * @return simulation time
+	 */
+	public double getSimTime() {
+		return EventManager.ticksToSecs(simTicks);
+	}
+
 	public EventManager getEventManager() {
 		return eventManager;
 	}
