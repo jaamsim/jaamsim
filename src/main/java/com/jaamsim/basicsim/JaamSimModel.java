@@ -133,23 +133,23 @@ public class JaamSimModel {
 
 		// Set up any tracing to be performed
 		eventManager.setTraceListener(null);
-		if (simulation.traceEvents()) {
+		if (getSimulation().traceEvents()) {
 			String evtName = InputAgent.getConfigFile().getParentFile() + File.separator + InputAgent.getRunName() + ".evt";
 			EventRecorder rec = new EventRecorder(evtName);
 			eventManager.setTraceListener(rec);
 		}
-		else if (simulation.verifyEvents()) {
+		else if (getSimulation().verifyEvents()) {
 			String evtName = InputAgent.getConfigFile().getParentFile() + File.separator + InputAgent.getRunName() + ".evt";
 			EventTracer trc = new EventTracer(evtName);
 			eventManager.setTraceListener(trc);
 		}
-		else if (simulation.showEventViewer()) {
+		else if (getSimulation().showEventViewer()) {
 			eventManager.setTraceListener(EventViewer.getInstance());
 		}
 
-		eventManager.setTickLength(simulation.getTickLength());
+		eventManager.setTickLength(getSimulation().getTickLength());
 
-		runNumber = simulation.getStartingRunNumber();
+		runNumber = getSimulation().getStartingRunNumber();
 		setRunIndexList();
 		startRun();
 	}
@@ -163,7 +163,8 @@ public class JaamSimModel {
 	 */
 	public void startRun() {
 		initRun();
-		eventManager.resume(eventManager.secondsToNearestTick(simulation.getPauseTime()));
+		double pauseTime = getSimulation().getPauseTime();
+		eventManager.resume(eventManager.secondsToNearestTick(pauseTime));
 	}
 
 	/**
@@ -188,7 +189,8 @@ public class JaamSimModel {
 	 * Performs the start-up procedure for each entity.
 	 */
 	public void startUp() {
-		long startTicks = eventManager.secondsToNearestTick(simulation.getStartTime());
+		double startTime = getSimulation().getStartTime();
+		long startTicks = eventManager.secondsToNearestTick(startTime);
 		for (Entity each : getClonesOfIterator(Entity.class)) {
 			if (!each.isActive())
 				continue;
@@ -197,7 +199,7 @@ public class JaamSimModel {
 	}
 
 	public void doPauseCondition() {
-		if (simulation.isPauseConditionSet())
+		if (getSimulation().isPauseConditionSet())
 			EventManager.scheduleUntil(pauseModelTarget, pauseCondition, null);
 	}
 
@@ -207,7 +209,7 @@ public class JaamSimModel {
 		@Override
 		public boolean evaluate() {
 			double simTime = EventManager.simSeconds();
-			return simulation.isPauseConditionSatisfied(simTime);
+			return getSimulation().isPauseConditionSatisfied(simTime);
 		}
 	};
 
@@ -272,7 +274,7 @@ public class JaamSimModel {
 		}
 
 		// Reset the run number and run indices
-		runNumber = simulation.getStartingRunNumber();
+		runNumber = getSimulation().getStartingRunNumber();
 		setRunIndexList();
 
 		// Close the output reports
@@ -292,11 +294,11 @@ public class JaamSimModel {
 		}
 
 		// Print the output report
-		if (simulation.getPrintReport())
+		if (getSimulation().getPrintReport())
 			InputAgent.printReport(this, EventManager.simSeconds());
 
 		// Print the selected outputs
-		if (simulation.getRunOutputList().getValue() != null) {
+		if (getSimulation().getRunOutputList().getValue() != null) {
 			InputAgent.printRunOutputs(this, EventManager.simSeconds());
 		}
 
@@ -345,7 +347,7 @@ public class JaamSimModel {
 		InputAgent.closeLogFile();
 
 		// Always terminate the run when in batch mode
-		if (InputAgent.getBatch() || simulation.getExitAtStop())
+		if (InputAgent.getBatch() || getSimulation().getExitAtStop())
 			GUIFrame.shutdown(0);
 
 		pause();
