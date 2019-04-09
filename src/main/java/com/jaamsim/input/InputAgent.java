@@ -875,7 +875,7 @@ public class InputAgent {
 		inputReportFile.flush();
 
 		ArrayList<ObjectType> objectTypes = new ArrayList<>();
-		for (ObjectType type : ObjectType.getAll())
+		for (ObjectType type : simModel.getObjectTypes())
 			objectTypes.add( type );
 
 		// Sort ObjectTypes by Units, Simulation, and then alphabetically by palette name

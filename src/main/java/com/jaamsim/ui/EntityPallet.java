@@ -42,6 +42,7 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
+import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.basicsim.ObjectType;
 import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.controllers.RenderManager;
@@ -139,7 +140,8 @@ public class EntityPallet extends OSFixJFrame implements DragGestureListener {
 		// Create a tree that allows one selection at a time
 		top.removeAllChildren();
 		HashMap<String, DefaultMutableTreeNode> paletteNodes = new HashMap<>();
-		for (ObjectType type : ObjectType.getAll()) {
+		JaamSimModel simModel = GUIFrame.getJaamSimModel();
+		for (ObjectType type : simModel.getObjectTypes()) {
 			if (!type.isDragAndDrop())
 				continue;
 

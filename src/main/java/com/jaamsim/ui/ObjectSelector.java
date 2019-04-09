@@ -47,6 +47,7 @@ import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.EntityLabel;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ErrorException;
+import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.basicsim.ObjectType;
 import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.input.Input;
@@ -213,7 +214,8 @@ public class ObjectSelector extends FrameBox {
 		top.removeAllChildren();
 
 		// Add the instance for Simulation to the top of the tree as a single leaf node
-		Simulation simulation = GUIFrame.getJaamSimModel().getSimulation();
+		JaamSimModel simModel = GUIFrame.getJaamSimModel();
+		Simulation simulation = simModel.getSimulation();
 		top.add(new DefaultMutableTreeNode(simulation, false));
 
 		// Add the instance for TLS if present
@@ -222,9 +224,9 @@ public class ObjectSelector extends FrameBox {
 			top.add(new DefaultMutableTreeNode(tls, false));
 
 		// Create the tree structure for palettes and object types in the correct order
-		for (int i = 0; i < ObjectType.getAll().size(); i++) {
+		for (int i = 0; i < simModel.getObjectTypes().size(); i++) {
 			try {
-				final ObjectType type = ObjectType.getAll().get(i);
+				final ObjectType type = simModel.getObjectTypes().get(i);
 				if (type == null)
 					continue;
 				String paletteName = type.getPaletteName();
