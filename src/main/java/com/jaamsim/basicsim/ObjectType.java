@@ -34,7 +34,6 @@ import com.jaamsim.math.Vec3d;
 import com.jaamsim.units.DistanceUnit;
 
 public class ObjectType extends Entity {
-	private static final ArrayList<ObjectType> allInstances;
 	private static final HashMap<Class<? extends Entity>, ObjectType> objectTypeMap;
 
 	@Keyword(description = "The java class of the object type",
@@ -69,7 +68,6 @@ public class ObjectType extends Entity {
 	private final ArrayList<DisplayModel> displayEntityDefault = new ArrayList<>(1);
 
 	static {
-		allInstances = new ArrayList<>();
 		objectTypeMap = new HashMap<>();
 	}
 
@@ -97,11 +95,7 @@ public class ObjectType extends Entity {
 		this.addInput(defaultAlignment);
 	}
 
-	public ObjectType() {
-		synchronized (allInstances) {
-			allInstances.add(this);
-		}
-	}
+	public ObjectType() {}
 
 	@Override
 	public void updateForInput(Input<?> in) {
@@ -123,12 +117,6 @@ public class ObjectType extends Entity {
 		super.updateForInput(in);
 	}
 
-	public static ArrayList<ObjectType> getAll() {
-		synchronized (allInstances) {
-			return allInstances;
-		}
-	}
-
 	public static ObjectType getObjectTypeForClass(Class<? extends Entity> klass) {
 		synchronized (objectTypeMap) {
 			return objectTypeMap.get(klass);
@@ -139,7 +127,6 @@ public class ObjectType extends Entity {
 	public void kill() {
 		super.kill();
 		getJaamSimModel().removeObjectType(this);
-		allInstances.remove(this);
 		objectTypeMap.remove(javaClass.getValue());
 	}
 
