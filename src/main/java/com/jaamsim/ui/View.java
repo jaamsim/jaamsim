@@ -49,7 +49,6 @@ import com.jaamsim.math.Vec4d;
 import com.jaamsim.units.DistanceUnit;
 
 public class View extends Entity {
-	private static final ArrayList<View> allInstances;
 
 	public static final int OMNI_VIEW_ID = -1;
 	public static final int NO_VIEW_ID = 0;
@@ -119,10 +118,6 @@ public class View extends Entity {
 
 	private double cachedSimTime = 0;
 
-	static {
-		allInstances = new ArrayList<>();
-	}
-
 	{
 		attributeDefinitionList.setHidden(true);
 		namedExpressionInput.setHidden(true);
@@ -189,19 +184,13 @@ public class View extends Entity {
 
 	public View() {
 		getJaamSimModel().addView(this);
-		allInstances.add(this);
 		viewID = getJaamSimModel().getNextViewID();
-	}
-
-	public static ArrayList<View> getAll() {
-		return allInstances;
 	}
 
 	@Override
 	public void kill() {
 		super.kill();
 		getJaamSimModel().removeView(this);
-		allInstances.remove(this);
 		if (RenderManager.isGood()) {
 			RenderManager.inst().closeWindow(this);
 		}
@@ -211,7 +200,6 @@ public class View extends Entity {
 	public void restore(String name) {
 		super.restore(name);
 		getJaamSimModel().addView(this);
-		allInstances.add(this);
 		if (RenderManager.isGood()) {
 			RenderManager.inst().createWindow(this);
 		}
