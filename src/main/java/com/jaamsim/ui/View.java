@@ -53,7 +53,6 @@ public class View extends Entity {
 
 	public static final int OMNI_VIEW_ID = -1;
 	public static final int NO_VIEW_ID = 0;
-	private static int nextID = 1;
 
 	private final int viewID;
 
@@ -190,7 +189,7 @@ public class View extends Entity {
 
 	public View() {
 		allInstances.add(this);
-		viewID = nextID++;
+		viewID = getJaamSimModel().getNextViewID();
 	}
 
 	public static ArrayList<View> getAll() {
