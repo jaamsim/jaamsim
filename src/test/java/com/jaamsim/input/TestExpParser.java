@@ -841,7 +841,7 @@ public class TestExpParser {
 		} catch (ExpError e) {
 			threw = true;
 		}
-		assert(threw);
+		assertTrue(threw);
 
 
 	}
@@ -996,17 +996,17 @@ public class TestExpParser {
 
 		ExpParser.Assignment assign = ExpParser.parseAssignment(apc, "[foo].arg = 40 + 2");
 		ExpResult res = assign.evaluate(ec);
-		assert(res.value == 42.0);
-		assert(cont.res.type == ExpResType.NUMBER);
-		assert(cont.res.value == 42.0);
-		assert(cont.lastAttribName.equals("arg"));
+		assertTrue(res.value == 42.0);
+		assertTrue(cont.res.type == ExpResType.NUMBER);
+		assertTrue(cont.res.value == 42.0);
+		assertTrue(cont.lastAttribName.equals("arg"));
 
 		assign = ExpParser.parseAssignment(apc, "[foo].blarg(42) = 40 + 5");
 		res = assign.evaluate(ec);
 		ExpResult contained = cont.col.index(ExpResult.makeNumResult(42, DimensionlessUnit.class));
-		assert(res.value == 45.0);
-		assert(contained.type == ExpResType.NUMBER);
-		assert(contained.value == 45.0);
-		assert(cont.lastAttribName.equals("blarg"));
+		assertTrue(res.value == 45.0);
+		assertTrue(contained.type == ExpResType.NUMBER);
+		assertTrue(contained.value == 45.0);
+		assertTrue(cont.lastAttribName.equals("blarg"));
 	}
 }
