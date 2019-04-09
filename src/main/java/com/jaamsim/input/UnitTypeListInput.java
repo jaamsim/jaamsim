@@ -34,14 +34,7 @@ public class UnitTypeListInput extends ListInput<ArrayList<ObjectType>> {
 	}
 
 	public void setDefaultValue(ArrayList<Class<? extends Unit>> utList) {
-		ArrayList<ObjectType> otList = null;
-		if (utList != null) {
-			otList = new ArrayList<>(utList.size());
-			for (Class<? extends Unit> ut : utList) {
-				otList.add(ObjectType.getObjectTypeForClass(ut));
-			}
-		}
-		super.setDefaultValue(otList);
+		super.setDefaultValue(null);  // getValue is never used
 		unitTypeList = utList;
 		defaultUnitTypeList = utList;
 	}
