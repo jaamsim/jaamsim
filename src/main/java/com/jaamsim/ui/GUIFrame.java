@@ -347,7 +347,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		public void windowDeiconified(WindowEvent e) {
 
 			// Re-open the view windows
-			for (View v : View.getAll()) {
+			for (View v : sim.getViews()) {
 				if (v.showWindow())
 					RenderManager.inst().createWindow(v);
 			}
@@ -364,7 +364,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 			sim.getSimulation().closeAllTools();
 
 			// Save whether each window is open or closed
-			for (View v : View.getAll()) {
+			for (View v : sim.getViews()) {
 				v.setKeepWindowOpen(v.showWindow());
 			}
 
@@ -376,8 +376,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		public void windowActivated(WindowEvent e) {
 
 			// Re-open the view windows
-			for (int i=0; i<View.getAll().size(); i++) {
-				View v = View.getAll().get(i);
+			for (int i = 0; i < sim.getViews().size(); i++) {
+				View v = sim.getViews().get(i);
 				if (v != null && v.showWindow())
 					RenderManager.inst().createWindow(v);
 			}
@@ -2412,7 +2412,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		public void menuSelected(MenuEvent e) {
 
 			// 1) Select from the available view windows
-			for (View view : View.getAll()) {
+			for (View view : sim.getViews()) {
 				this.add(new NewRenderWindowLauncher(view));
 			}
 
@@ -2426,7 +2426,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 			resetItem.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed( ActionEvent e ) {
-					for (View v : View.getAll()) {
+					for (View v : sim.getViews()) {
 						InputAgent.applyArgs(v, "WindowPosition");
 						InputAgent.applyArgs(v, "WindowSize");
 					}
@@ -2491,7 +2491,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 			IntegerVector winPos = null;
 			Vec3d pos = null;
 			Vec3d center = null;
-			ArrayList<View> viewList = View.getAll();
+			ArrayList<View> viewList = sim.getViews();
 			if (!viewList.isEmpty()) {
 				View lastView = viewList.get(viewList.size()-1);
 				winPos = lastView.getWindowPos();
@@ -3117,7 +3117,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 	public static void displayWindows() {
 
 		// Show the view windows specified in the configuration file
-		for (View v : View.getAll()) {
+		for (View v : sim.getViews()) {
 			if (v.showWindow())
 				RenderManager.inst().createWindow(v);
 		}

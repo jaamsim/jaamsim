@@ -358,8 +358,9 @@ public class RenderManager implements DragSourceListener {
 				double renderTime = EventManager.ticksToSecs(simTick);
 				redraw.set(false);
 
-				for (int i = 0; i < View.getAll().size(); i++) {
-					View v = View.getAll().get(i);
+				ArrayList<View> views = GUIFrame.getJaamSimModel().getViews();
+				for (int i = 0; i < views.size(); i++) {
+					View v = views.get(i);
 					v.update(renderTime);
 				}
 
