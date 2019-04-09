@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2017 JaamSim Software Inc.
+ * Copyright (C) 2017-2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
-import com.jaamsim.basicsim.ObjectType;
 import com.jaamsim.input.ExpParser.BinOpFunc;
 import com.jaamsim.input.ExpParser.CallableFunc;
 import com.jaamsim.input.ExpParser.EvalContext;
@@ -280,10 +279,7 @@ public class ExpOperators {
 
 
 	private static String unitToString(Class<? extends Unit> unit) {
-		ObjectType type = ObjectType.getObjectTypeForClass(unit);
-		if (type == null)
-			return "Unknown Unit";
-		return type.getName();
+		return unit.getSimpleName();
 	}
 
 	private static String getUnitMismatchString(Class<? extends Unit> u0, Class<? extends Unit> u1) {
