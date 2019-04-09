@@ -709,11 +709,16 @@ public class Entity {
 		return h.getUnitType();
 	}
 
-	public void setAttribute(String name, ExpResult index, ExpResult value) {
+	public void setAttribute(String name, ExpResult[] indices, ExpResult value) {
 		AttributeHandle h = attributeMap.get(name);
 		if (h == null)
 			this.error("Invalid attribute name: %s", name);
 
+		ExpResult index = null;
+		//////////////// Temporary placeholder code
+		if (indices != null) {
+			index = indices[0];
+		}
 		if (index != null) {
 			ExpResult attribValue = h.getValue(getSimTime(), ExpResult.class);
 			if (attribValue.type != ExpResType.COLLECTION) {

@@ -955,12 +955,16 @@ public class TestExpParser {
 			this.attribName = attribName;
 		}
 		@Override
-		public void assign(ExpResult ent, ExpResult index, ExpResult val)
+		public void assign(ExpResult ent, ExpResult[] indices, ExpResult val)
 				throws ExpError {
-			if (index == null) {
+			if (indices == null) {
 				cont.res = val;
 			} else {
-				cont.col = cont.col.assign(index, val);
+				cont.col = cont.col.assign(indices[0], val);
+				if (indices.length > 1) {
+					assertTrue(indices[1].type == ExpResType.NUMBER);
+					assertTrue(indices[1].value == 42.0);
+				}
 			}
 			cont.lastAttribName = attribName;
 		}
@@ -1001,9 +1005,9 @@ public class TestExpParser {
 		assertTrue(cont.res.value == 42.0);
 		assertTrue(cont.lastAttribName.equals("arg"));
 
-		assign = ExpParser.parseAssignment(apc, "[foo].blarg(42) = 40 + 5");
+		assign = ExpParser.parseAssignment(apc, "[foo].blarg(4)(23+19) = 40 + 5");
 		res = assign.evaluate(ec);
-		ExpResult contained = cont.col.index(ExpResult.makeNumResult(42, DimensionlessUnit.class));
+		ExpResult contained = cont.col.index(ExpResult.makeNumResult(4, DimensionlessUnit.class));
 		assertTrue(res.value == 45.0);
 		assertTrue(contained.type == ExpResType.NUMBER);
 		assertTrue(contained.value == 45.0);
