@@ -188,6 +188,7 @@ public class View extends Entity {
 	}
 
 	public View() {
+		getJaamSimModel().addView(this);
 		allInstances.add(this);
 		viewID = getJaamSimModel().getNextViewID();
 	}
@@ -199,6 +200,7 @@ public class View extends Entity {
 	@Override
 	public void kill() {
 		super.kill();
+		getJaamSimModel().removeView(this);
 		allInstances.remove(this);
 		if (RenderManager.isGood()) {
 			RenderManager.inst().closeWindow(this);
@@ -208,6 +210,7 @@ public class View extends Entity {
 	@Override
 	public void restore(String name) {
 		super.restore(name);
+		getJaamSimModel().addView(this);
 		allInstances.add(this);
 		if (RenderManager.isGood()) {
 			RenderManager.inst().createWindow(this);
