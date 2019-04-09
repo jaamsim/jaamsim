@@ -756,7 +756,7 @@ public class Entity {
 
 
 	public ObjectType getObjectType() {
-		return ObjectType.getObjectTypeForClass(this.getClass());
+		return simModel.getObjectTypeForClass(this.getClass());
 	}
 
 	@Output(name = "Name",

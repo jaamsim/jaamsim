@@ -1284,7 +1284,7 @@ public class InputAgent {
 
 				// Start the new Define statement
 				entClass = ent.getClass();
-				ObjectType ot = ObjectType.getObjectTypeForClass(entClass);
+				ObjectType ot = simModel.getObjectTypeForClass(entClass);
 				file.format("Define %s {", ot.getName());
 			}
 
@@ -1350,7 +1350,7 @@ public class InputAgent {
 			if (ent.getClass() != entClass) {
 				entClass = ent.getClass();
 				if (entClass != Simulation.class) {
-					ObjectType ot = ObjectType.getObjectTypeForClass(entClass);
+					ObjectType ot = simModel.getObjectTypeForClass(entClass);
 					file.format("%n");
 					file.format("# *** %s ***%n", ot);
 				}
@@ -1389,7 +1389,7 @@ public class InputAgent {
 			if (ent.getClass() != entClass) {
 				entClass = ent.getClass();
 				if (entClass != Simulation.class) {
-					ObjectType ot = ObjectType.getObjectTypeForClass(entClass);
+					ObjectType ot = simModel.getObjectTypeForClass(entClass);
 					file.format("%n");
 					file.format("# *** %s ***%n", ot);
 				}
@@ -1683,7 +1683,7 @@ public class InputAgent {
 			if (ent.getClass() != entClass) {
 				entClass = ent.getClass();
 				if (entClass != Simulation.class) {
-					ObjectType ot = ObjectType.getObjectTypeForClass(entClass);
+					ObjectType ot = simModel.getObjectTypeForClass(entClass);
 					reportFile.format("*** %s ***%n%n", ot);
 				}
 			}
@@ -1713,8 +1713,8 @@ public class InputAgent {
 			if (ret != 0)
 				return ret;
 
-			ObjectType ot0 = ObjectType.getObjectTypeForClass(class0);
-			ObjectType ot1 = ObjectType.getObjectTypeForClass(class1);
+			ObjectType ot0 = ent0.getJaamSimModel().getObjectTypeForClass(class0);
+			ObjectType ot1 = ent1.getJaamSimModel().getObjectTypeForClass(class1);
 			String pal0 = ot0.getPaletteName();
 			String pal1 = ot1.getPaletteName();
 

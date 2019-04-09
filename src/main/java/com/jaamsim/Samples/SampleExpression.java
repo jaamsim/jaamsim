@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2018 JaamSim Software Inc.
+ * Copyright (C) 2016-2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ package com.jaamsim.Samples;
 
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ErrorException;
-import com.jaamsim.basicsim.ObjectType;
 import com.jaamsim.input.ExpError;
 import com.jaamsim.input.ExpEvaluator;
 import com.jaamsim.input.ExpParser;
@@ -63,8 +62,8 @@ public class SampleExpression implements SampleProvider {
 			if (res.unitType != unitType)
 				thisEnt.error("Invalid unit returned by an expression: '%s'%n"
 						+ "Received: %s, expected: %s",
-						exp, ObjectType.getObjectTypeForClass(res.unitType),
-						ObjectType.getObjectTypeForClass(unitType));
+						exp, thisEnt.getJaamSimModel().getObjectTypeForClass(res.unitType),
+						thisEnt.getJaamSimModel().getObjectTypeForClass(unitType));
 
 			ret = res.value;
 		}
