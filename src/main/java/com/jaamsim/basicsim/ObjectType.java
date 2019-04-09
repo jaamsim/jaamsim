@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2011 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -113,6 +114,7 @@ public class ObjectType extends Entity {
 		}
 
 		if (in == javaClass) {
+			getJaamSimModel().addObjectType(this);
 			synchronized (objectTypeMap) {
 				objectTypeMap.put(javaClass.getValue(), this);
 			}
@@ -136,6 +138,7 @@ public class ObjectType extends Entity {
 	@Override
 	public void kill() {
 		super.kill();
+		getJaamSimModel().removeObjectType(this);
 		allInstances.remove(this);
 		objectTypeMap.remove(javaClass.getValue());
 	}

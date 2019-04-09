@@ -57,6 +57,9 @@ public class JaamSimModel implements EventTimeListener {
 	private final ArrayList<Entity> allInstances = new ArrayList<>(100);
 	private final HashMap<String, Entity> namedEntities = new HashMap<>(100);
 
+	private final ArrayList<ObjectType> objectTypes = new ArrayList<>();
+	private final HashMap<Class<? extends Entity>, ObjectType> objectTypeMap = new HashMap<>();
+
 	public JaamSimModel() {
 		eventManager = new EventManager("DefaultEventManager");
 		simulation = null;
@@ -764,6 +767,32 @@ public class JaamSimModel implements EventTimeListener {
 	 */
 	public <T extends Entity> ClonesOfIterableInterface<T> getClonesOfIterator(Class<T> proto, Class<?> iface){
 		return new ClonesOfIterableInterface<>(this, proto, iface);
+	}
+
+	public void addObjectType(ObjectType ot) {
+		synchronized (objectTypes) {
+			objectTypes.add(ot);
+			objectTypeMap.put(ot.getJavaClass(), ot);
+		}
+	}
+
+	public void removeObjectType(ObjectType ot) {
+		synchronized (objectTypes) {
+			objectTypes.remove(ot);
+			objectTypeMap.remove(ot.getJavaClass());
+		}
+	}
+
+	public ArrayList<ObjectType> getObjectTypes() {
+		synchronized (objectTypes) {
+			return objectTypes;
+		}
+	}
+
+	public ObjectType getObjectTypeForClass(Class<? extends Entity> klass) {
+		synchronized (objectTypes) {
+			return objectTypeMap.get(klass);
+		}
 	}
 
 }
