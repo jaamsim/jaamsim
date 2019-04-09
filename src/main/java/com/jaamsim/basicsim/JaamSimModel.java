@@ -38,6 +38,7 @@ import com.jaamsim.states.StateEntity;
 import com.jaamsim.ui.EventViewer;
 import com.jaamsim.ui.GUIFrame;
 import com.jaamsim.ui.LogBox;
+import com.jaamsim.ui.View;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 
@@ -59,6 +60,9 @@ public class JaamSimModel implements EventTimeListener {
 
 	private final ArrayList<ObjectType> objectTypes = new ArrayList<>();
 	private final HashMap<Class<? extends Entity>, ObjectType> objectTypeMap = new HashMap<>();
+
+	private final ArrayList<View> views = new ArrayList<>();
+	private int nextViewID = 1;
 
 	public JaamSimModel() {
 		eventManager = new EventManager("DefaultEventManager");
@@ -793,6 +797,29 @@ public class JaamSimModel implements EventTimeListener {
 		synchronized (objectTypes) {
 			return objectTypeMap.get(klass);
 		}
+	}
+
+	public void addView(View v) {
+		synchronized (views) {
+			views.add(v);
+		}
+	}
+
+	public void removeView(View v) {
+		synchronized (views) {
+			views.remove(v);
+		}
+	}
+
+	public ArrayList<View> getViews() {
+		synchronized (views) {
+			return views;
+		}
+	}
+
+	public int getNextViewID() {
+		nextViewID++;
+		return nextViewID;
 	}
 
 }
