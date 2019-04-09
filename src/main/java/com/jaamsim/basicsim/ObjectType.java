@@ -19,7 +19,6 @@ package com.jaamsim.basicsim;
 
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import com.jaamsim.DisplayModels.DisplayModel;
 import com.jaamsim.input.BooleanInput;
@@ -34,7 +33,6 @@ import com.jaamsim.math.Vec3d;
 import com.jaamsim.units.DistanceUnit;
 
 public class ObjectType extends Entity {
-	private static final HashMap<Class<? extends Entity>, ObjectType> objectTypeMap;
 
 	@Keyword(description = "The java class of the object type",
 	         exampleList = {"This is placeholder example text"})
@@ -66,10 +64,6 @@ public class ObjectType extends Entity {
 	private final Vec3dInput defaultAlignment;
 
 	private final ArrayList<DisplayModel> displayEntityDefault = new ArrayList<>(1);
-
-	static {
-		objectTypeMap = new HashMap<>();
-	}
 
 	{
 		javaClass = new ClassInput( "JavaClass", KEY_INPUTS, null );
@@ -109,25 +103,15 @@ public class ObjectType extends Entity {
 
 		if (in == javaClass) {
 			getJaamSimModel().addObjectType(this);
-			synchronized (objectTypeMap) {
-				objectTypeMap.put(javaClass.getValue(), this);
-			}
 		}
 
 		super.updateForInput(in);
-	}
-
-	public static ObjectType getObjectTypeForClass(Class<? extends Entity> klass) {
-		synchronized (objectTypeMap) {
-			return objectTypeMap.get(klass);
-		}
 	}
 
 	@Override
 	public void kill() {
 		super.kill();
 		getJaamSimModel().removeObjectType(this);
-		objectTypeMap.remove(javaClass.getValue());
 	}
 
 	public Class<? extends Entity> getJavaClass() {
