@@ -137,18 +137,6 @@ public class InputAgent {
 		preDefinedEntityCount = count;
 	}
 
-	public static void setReportDirectory(File dir) {
-		reportDir = dir;
-		if (reportDir == null)
-			return;
-		if (!reportDir.exists() && !reportDir.mkdirs())
-			throw new InputErrorException("Was unable to create the Report Directory: %s", reportDir.toString());
-	}
-
-	public static void prepareReportDirectory() {
-		if (reportDir != null) reportDir.mkdirs();
-	}
-
 	/**
 	 * Specifies whether a RecordEdits marker was found in the present configuration file.
 	 *

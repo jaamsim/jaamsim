@@ -170,7 +170,7 @@ public class JaamSimModel implements EventTimeListener {
 	 */
 	public void start() {
 		validate();
-		InputAgent.prepareReportDirectory();
+		prepareReportDirectory();
 		eventManager.clear();
 
 		// Set up any tracing to be performed
@@ -877,7 +877,6 @@ public class JaamSimModel implements EventTimeListener {
 	}
 
 	public void setReportDirectory(File dir) {
-		InputAgent.setReportDirectory(dir);
 		reportDir = dir;
 		if (reportDir == null)
 			return;
