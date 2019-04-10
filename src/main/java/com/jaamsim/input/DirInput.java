@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,8 +39,8 @@ public class DirInput extends StringInput {
 
 		// If there is no context (e.g. reading from Input Editor),
 		// and a config file exists, then resolve the config file uri against this one
-		if( kw.context == null && InputAgent.getConfigFile() != null ) {
-			URI configDirURI = InputAgent.getConfigFile().getParentFile().toURI();
+		if( kw.context == null && thisEnt.getJaamSimModel().getConfigFile() != null ) {
+			URI configDirURI = thisEnt.getJaamSimModel().getConfigFile().getParentFile().toURI();
 			temp = configDirURI.resolve(temp.getSchemeSpecificPart());
 		}
 

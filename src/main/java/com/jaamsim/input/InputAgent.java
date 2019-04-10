@@ -1226,9 +1226,9 @@ public class InputAgent {
 		// Copy the original configuration file up to the "RecordEdits" marker (if present)
 		// Temporary storage for the copied lines is needed in case the original file is to be overwritten
 		ArrayList<String> preAddedRecordLines = new ArrayList<>();
-		if( InputAgent.getConfigFile() != null ) {
+		if( simModel.getConfigFile() != null ) {
 			try {
-				BufferedReader in = new BufferedReader( new FileReader(InputAgent.getConfigFile()) );
+				BufferedReader in = new BufferedReader( new FileReader(simModel.getConfigFile()) );
 				String line;
 				while ( ( line = in.readLine() ) != null ) {
 					preAddedRecordLines.add( line );

@@ -3609,8 +3609,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 
 	boolean save() {
 		LogBox.logLine("Saving...");
-		if( InputAgent.getConfigFile() != null ) {
-			setSaveFile(InputAgent.getConfigFile().getPath());
+		if( sim.getConfigFile() != null ) {
+			setSaveFile(sim.getConfigFile().getPath());
 			return true;
 		}
 
@@ -3633,7 +3633,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 				new FileNameExtensionFilter("JaamSim Configuration File (*.cfg)", "CFG");
 		chooser.addChoosableFileFilter(cfgFilter);
 		chooser.setFileFilter(cfgFilter);
-		chooser.setSelectedFile(InputAgent.getConfigFile());
+		chooser.setSelectedFile(sim.getConfigFile());
 
 		// Show the file chooser and wait for selection
 		int returnVal = chooser.showSaveDialog(this);
@@ -3727,10 +3727,10 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 	public static boolean showSaveChangesDialog(GUIFrame gui) {
 
 		String message;
-		if (InputAgent.getConfigFile() == null)
+		if (sim.getConfigFile() == null)
 			message = "Do you want to save the changes you made?";
 		else
-			message = String.format("Do you want to save the changes you made to '%s'?", InputAgent.getConfigFile().getName());
+			message = String.format("Do you want to save the changes you made to '%s'?", sim.getConfigFile().getName());
 
 		Object[] options = {"Save", "Don't Save", "Cancel"};
 		int userOption = JOptionPane.showOptionDialog( null,

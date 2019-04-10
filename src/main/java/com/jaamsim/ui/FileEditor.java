@@ -24,7 +24,6 @@ import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import com.jaamsim.input.FileInput;
-import com.jaamsim.input.InputAgent;
 import com.jaamsim.ui.EditBox.EditTable;
 
 /**
@@ -45,7 +44,7 @@ public class FileEditor extends CellEditor {
 
 			// Create a file chooser
 			if (lastDir == null)
-				lastDir = InputAgent.getConfigFile();
+				lastDir = GUIFrame.getJaamSimModel().getConfigFile();
 			JFileChooser fileChooser = new JFileChooser(lastDir);
 
 			// Set the file extension filters

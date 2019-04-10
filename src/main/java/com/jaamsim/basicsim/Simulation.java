@@ -1260,8 +1260,8 @@ public class Simulation extends Entity {
 	  reportable = true,
 	    sequence = 2)
 	public String getConfigFileName(double simTime) {
-		if (InputAgent.getConfigFile() != null)
-			return InputAgent.getConfigFile().getPath();
+		if (getJaamSimModel().getConfigFile() != null)
+			return getJaamSimModel().getConfigFile().getPath();
 
 		return "";
 	}
