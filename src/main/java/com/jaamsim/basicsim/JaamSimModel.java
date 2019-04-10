@@ -138,7 +138,7 @@ public class JaamSimModel implements EventTimeListener {
 	 * @throws URISyntaxException
 	 */
 	public void configure(File file) throws URISyntaxException {
-		InputAgent.setConfigFile(file);
+		configFile = file;
 		InputAgent.loadConfigurationFile(this, file);
 	}
 
@@ -507,7 +507,7 @@ public class JaamSimModel implements EventTimeListener {
 	 */
 	public void save(File file) {
 		InputAgent.printNewConfigurationFileWithName(this, file.getName());
-		InputAgent.setConfigFile(file);
+		configFile = file;
 	}
 
 	public EventManager getEventManager() {
