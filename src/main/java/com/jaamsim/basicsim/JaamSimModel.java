@@ -834,7 +834,6 @@ public class JaamSimModel implements EventTimeListener {
 	 */
 	public void setConfigFile(File file) {
 		configFile = file;
-		InputAgent.setConfigFile(file);
 	}
 
 	/**

@@ -69,7 +69,6 @@ public class InputAgent {
 
 	private static long lastTickForTrace;
 
-	private static File configFile;           // present configuration file
 	private static boolean batchRun;
 	private static boolean scriptMode;        // TRUE if script mode (command line) is specified
 	private static boolean sessionEdited;     // TRUE if any inputs have been changed after loading a configuration file
@@ -94,7 +93,6 @@ public class InputAgent {
 		recordEditsFound = false;
 		sessionEdited = false;
 		batchRun = false;
-		configFile = null;
 		reportDir = null;
 		reportFile = null;
 		outStream = null;
@@ -112,7 +110,6 @@ public class InputAgent {
 		numWarnings = 0;
 		recordEditsFound = false;
 		setSessionEdited(false);
-		configFile = null;
 		reportDir = null;
 		lastTickForTrace = -1l;
 		setReportDirectory(null);
@@ -150,15 +147,6 @@ public class InputAgent {
 
 	public static void prepareReportDirectory() {
 		if (reportDir != null) reportDir.mkdirs();
-	}
-
-	/**
-	 * Sets the present configuration file.
-	 *
-	 * @param file - the present configuration file.
-	 */
-	public static void setConfigFile(File file) {
-		configFile = file;
 	}
 
 	/**
