@@ -22,6 +22,7 @@ import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.StringProviders.StringProvListInput;
 import com.jaamsim.StringProviders.StringProvider;
 import com.jaamsim.basicsim.FileEntity;
+import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
@@ -121,14 +122,16 @@ public abstract class Logger extends DisplayEntity {
 		logTime = 0.0d;
 
 		// Close the file if it is already open
-		if (file != null && getJaamSimModel().isFirstRun()) {
+		JaamSimModel simModel = getJaamSimModel();
+		if (file != null && simModel.isFirstRun()) {
 			file.close();
 			file = null;
 		}
 
 		// Create the report file
 		if (file == null && isActive()) {
-			StringBuilder tmp = new StringBuilder(InputAgent.getReportFileName(getJaamSimModel().getRunName()));
+			StringBuilder tmp = new StringBuilder(
+					simModel.getReportFileName(simModel.getRunName()));
 			tmp.append("-").append(this.getName());
 			tmp.append(".log");
 			file = new FileEntity(tmp.toString());

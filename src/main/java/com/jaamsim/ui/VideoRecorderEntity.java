@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import javax.swing.JOptionPane;
 
 import com.jaamsim.Graphics.DisplayEntity;
+import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.controllers.VideoRecorder;
 import com.jaamsim.datatypes.IntegerVector;
@@ -32,7 +33,6 @@ import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.EntityListInput;
 import com.jaamsim.input.Input;
-import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.IntegerListInput;
@@ -222,8 +222,9 @@ public class VideoRecorderEntity extends DisplayEntity {
 
 		ArrayList<View> views = captureViews.getValue();
 
-		String videoFileName = String.format("%s_%s", getJaamSimModel().getRunName(), videoName.getValue());
-		String fullVideoFile = InputAgent.getReportFileName(videoFileName); // getReportFileName() prepends the report directory onto a filename
+		JaamSimModel simModel = getJaamSimModel();
+		String videoFileName = String.format("%s_%s", simModel.getRunName(), videoName.getValue());
+		String fullVideoFile = simModel.getReportFileName(videoFileName); // getReportFileName() prepends the report directory onto a filename
 
 		VideoRecorder recorder = new VideoRecorder(views, fullVideoFile, width, height, captureFrames.getDefaultValue(),
 		                             saveImages.getValue(), saveVideo.getValue(), videoBGColor.getValue());

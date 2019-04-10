@@ -150,10 +150,6 @@ public class InputAgent {
 		return null;
 	}
 
-	public static String getReportFileName(String name) {
-		return getReportDirectory() + name;
-	}
-
 	public static void setReportDirectory(File dir) {
 		reportDir = dir;
 		if (reportDir == null)
@@ -837,7 +833,7 @@ public class InputAgent {
 	 */
 	public static void printInputFileKeywords(JaamSimModel simModel) {
 		// Create report file for the inputs
-		String inputReportFileName = InputAgent.getReportFileName(simModel.getRunName() + ".inp");
+		String inputReportFileName = simModel.getReportFileName(simModel.getRunName() + ".inp");
 
 		FileEntity inputReportFile = new FileEntity( inputReportFileName);
 		inputReportFile.flush();
@@ -1434,7 +1430,7 @@ public class InputAgent {
 			outStream = System.out;
 			if (!InputAgent.isScriptMode()) {
 				StringBuilder sb = new StringBuilder();
-				sb.append(InputAgent.getReportFileName(simModel.getRunName()));
+				sb.append(simModel.getReportFileName(simModel.getRunName()));
 				sb.append(".dat");
 				try {
 					outStream = new PrintStream(sb.toString());
@@ -1620,7 +1616,7 @@ public class InputAgent {
 		// Create the report file
 		if (reportFile == null) {
 			StringBuilder tmp = new StringBuilder("");
-			tmp.append(InputAgent.getReportFileName(simModel.getRunName()));
+			tmp.append(simModel.getReportFileName(simModel.getRunName()));
 			tmp.append(".rep");
 			reportFile = new FileEntity(tmp.toString());
 		}

@@ -28,10 +28,10 @@ import java.util.Map.Entry;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.FileEntity;
+import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.ColourInput;
-import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.StringKeyInput;
@@ -102,7 +102,8 @@ public abstract class StateEntity extends DisplayEntity implements StateUser {
 
 		// Create state trace file if required
 		if (traceState.getValue()) {
-			String fileName = InputAgent.getReportFileName(getJaamSimModel().getRunName() + "-" + this.getName() + ".trc");
+			JaamSimModel simModel = getJaamSimModel();
+			String fileName = simModel.getReportFileName(simModel.getRunName() + "-" + this.getName() + ".trc");
 			stateReportFile = new FileEntity( fileName);
 		}
 	}
