@@ -80,7 +80,6 @@ public class InputAgent {
 	private static final String[] GRAPHICS_PALETTES = {"Graphics Objects", "View", "Display Models"};
 	private static final String[] GRAPHICS_CATEGORIES = {Entity.GRAPHICS, Entity.FONT, Entity.FORMAT, Entity.GUI};
 
-	private static File reportDir;
 	private static FileEntity reportFile;     // file to which the output report will be written
 	private static PrintStream outStream;  // location where the selected outputs will be written
 
@@ -93,7 +92,6 @@ public class InputAgent {
 		recordEditsFound = false;
 		sessionEdited = false;
 		batchRun = false;
-		reportDir = null;
 		reportFile = null;
 		outStream = null;
 		lastTickForTrace = -1l;
@@ -110,9 +108,7 @@ public class InputAgent {
 		numWarnings = 0;
 		recordEditsFound = false;
 		setSessionEdited(false);
-		reportDir = null;
 		lastTickForTrace = -1l;
-		setReportDirectory(null);
 		stop();
 		undoList.clear();
 		redoList.clear();
