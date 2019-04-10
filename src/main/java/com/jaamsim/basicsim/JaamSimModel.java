@@ -58,6 +58,7 @@ public class JaamSimModel implements EventTimeListener {
 	private final ArrayList<Entity> allInstances = new ArrayList<>(100);
 	private final HashMap<String, Entity> namedEntities = new HashMap<>(100);
 
+	private File configFile;           // present configuration file
 	private final ArrayList<ObjectType> objectTypes = new ArrayList<>();
 	private final HashMap<Class<? extends Entity>, ObjectType> objectTypeMap = new HashMap<>();
 
@@ -118,6 +119,8 @@ public class JaamSimModel implements EventTimeListener {
 
 		// Reset the run number and run indices
 		runNumber = 1;
+
+		configFile = null;
 	}
 
 	/**
@@ -820,6 +823,24 @@ public class JaamSimModel implements EventTimeListener {
 	public int getNextViewID() {
 		nextViewID++;
 		return nextViewID;
+	}
+
+	/**
+	 * Sets the present configuration file.
+	 * @param file - the present configuration file.
+	 */
+	public void setConfigFile(File file) {
+		configFile = file;
+		InputAgent.setConfigFile(file);
+	}
+
+	/**
+	 * Returns the present configuration file.
+	 * Null is returned if no configuration file has been loaded or saved yet.
+	 * @return present configuration file
+	 */
+	public File getConfigFile() {
+		return configFile;
 	}
 
 }
