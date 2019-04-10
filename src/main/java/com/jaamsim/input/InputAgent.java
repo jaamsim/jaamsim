@@ -176,17 +176,6 @@ public class InputAgent {
 	}
 
 	/**
-	 * Returns the present configuration file.
-	 * <p>
-	 * Null is returned if no configuration file has been loaded or saved yet.
-	 * <p>
-	 * @return the present configuration file.
-	 */
-	public static File getConfigFile() {
-		return configFile;
-	}
-
-	/**
 	 * Specifies whether a RecordEdits marker was found in the present configuration file.
 	 *
 	 * @param bool - TRUE if a RecordEdits marker was found.
@@ -1932,7 +1921,7 @@ public class InputAgent {
 	 * @param uri - the URI to be relativized.
 	 * @return the relative file path.
 	 */
-	static public String getRelativeFilePath(URI uri) {
+	static public String getRelativeFilePath(JaamSimModel simModel, URI uri) {
 
 		// Relativize the file path against the resources folder
 		String resString = resRoot.toString();
@@ -1943,7 +1932,7 @@ public class InputAgent {
 
 		// Relativize the file path against the configuration file
 		try {
-			URI configDirURI = InputAgent.getConfigFile().getParentFile().toURI();
+			URI configDirURI = simModel.getConfigFile().getParentFile().toURI();
 			return String.format("%s", configDirURI.relativize(uri).getPath());
 		}
 		catch (Exception ex) {

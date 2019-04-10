@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018 JaamSim Software Inc.
+ * Copyright (C) 2018-2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,6 +35,7 @@ public class FileInput extends Input<URI> {
 	private String fileType;  // the type of file, e.g. "Image" or "3D"
 	private String[] validFileExtensions;  // supported file extensions
 	private String[] validFileDescriptions;  // description of each supported file extension
+	private Entity ent;
 
 	public FileInput(String key, String cat, URI def) {
 		super(key, cat, def);
@@ -62,6 +63,7 @@ public class FileInput extends Input<URI> {
 			throw new InputErrorException("Invalid file extension: %s.\nValid extensions are: %s",
 					temp.getPath(), Arrays.toString(validFileExtensions));
 
+		ent = thisEnt;
 		value = temp;
 	}
 
@@ -72,9 +74,9 @@ public class FileInput extends Input<URI> {
 
 	@Override
 	public void getValueTokens(ArrayList<String> toks) {
-		if (value == null) return;
+		if (value == null || ent == null) return;
 
-		toks.add(InputAgent.getRelativeFilePath(value));
+		toks.add(InputAgent.getRelativeFilePath(ent.getJaamSimModel(), value));
 	}
 
 	public static ArrayList<ArrayList<String>> getTokensFromURI(URI uri){
