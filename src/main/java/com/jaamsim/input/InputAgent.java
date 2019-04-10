@@ -140,16 +140,6 @@ public class InputAgent {
 		preDefinedEntityCount = count;
 	}
 
-	private static String getReportDirectory() {
-		if (reportDir != null)
-			return reportDir.getPath() + File.separator;
-
-		if (configFile != null)
-			return configFile.getParentFile().getPath() + File.separator;
-
-		return null;
-	}
-
 	public static void setReportDirectory(File dir) {
 		reportDir = dir;
 		if (reportDir == null)
