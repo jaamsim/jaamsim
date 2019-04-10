@@ -843,4 +843,21 @@ public class JaamSimModel implements EventTimeListener {
 		return configFile;
 	}
 
+	/**
+	 * Returns the name of the simulation run.
+	 * For example, if the configuration file name is "case1.cfg", then the run name is "case1".
+	 * @return name of the simulation run
+	 */
+	public String getRunName() {
+		if (configFile == null)
+			return "";
+
+		String name = configFile.getName();
+		int index = name.lastIndexOf('.');
+		if (index == -1)
+			return name;
+
+		return name.substring(0, index);
+	}
+
 }
