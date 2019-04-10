@@ -173,12 +173,12 @@ public class JaamSimModel implements EventTimeListener {
 		// Set up any tracing to be performed
 		eventManager.setTraceListener(null);
 		if (getSimulation().traceEvents()) {
-			String evtName = configFile.getParentFile() + File.separator + InputAgent.getRunName() + ".evt";
+			String evtName = configFile.getParentFile() + File.separator + getRunName() + ".evt";
 			EventRecorder rec = new EventRecorder(evtName);
 			eventManager.setTraceListener(rec);
 		}
 		else if (getSimulation().verifyEvents()) {
-			String evtName = configFile.getParentFile() + File.separator + InputAgent.getRunName() + ".evt";
+			String evtName = configFile.getParentFile() + File.separator + getRunName() + ".evt";
 			EventTracer trc = new EventTracer(evtName);
 			eventManager.setTraceListener(trc);
 		}

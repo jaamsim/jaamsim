@@ -102,7 +102,7 @@ public abstract class StateEntity extends DisplayEntity implements StateUser {
 
 		// Create state trace file if required
 		if (traceState.getValue()) {
-			String fileName = InputAgent.getReportFileName(InputAgent.getRunName() + "-" + this.getName() + ".trc");
+			String fileName = InputAgent.getReportFileName(getJaamSimModel().getRunName() + "-" + this.getName() + ".trc");
 			stateReportFile = new FileEntity( fileName);
 		}
 	}

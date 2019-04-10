@@ -187,27 +187,6 @@ public class InputAgent {
 	}
 
 	/**
-	 * Returns the name of the simulation run.
-	 * <p>
-	 * For example, if the configuration file name is "case1.cfg", then the
-	 * run name is "case1".
-	 * <p>
-	 * @return the name of simulation run.
-	 */
-	public static String getRunName() {
-
-		if( InputAgent.getConfigFile() == null )
-			return "";
-
-		String name = InputAgent.getConfigFile().getName();
-		int index = name.lastIndexOf('.');
-		if( index == -1 )
-			return name;
-
-		return name.substring( 0, index );
-	}
-
-	/**
 	 * Specifies whether a RecordEdits marker was found in the present configuration file.
 	 *
 	 * @param bool - TRUE if a RecordEdits marker was found.
@@ -729,7 +708,7 @@ public class InputAgent {
 	// Load the run file
 	public static void loadConfigurationFile(JaamSimModel simModel, File file) throws URISyntaxException {
 
-		String inputTraceFileName = InputAgent.getRunName() + ".log";
+		String inputTraceFileName = simModel.getRunName() + ".log";
 		// Initializing the tracing for the model
 		URI logURI = null;
 		try {
@@ -869,7 +848,7 @@ public class InputAgent {
 	 */
 	public static void printInputFileKeywords(JaamSimModel simModel) {
 		// Create report file for the inputs
-		String inputReportFileName = InputAgent.getReportFileName(InputAgent.getRunName() + ".inp");
+		String inputReportFileName = InputAgent.getReportFileName(simModel.getRunName() + ".inp");
 
 		FileEntity inputReportFile = new FileEntity( inputReportFileName);
 		inputReportFile.flush();
@@ -1466,7 +1445,7 @@ public class InputAgent {
 			outStream = System.out;
 			if (!InputAgent.isScriptMode()) {
 				StringBuilder sb = new StringBuilder();
-				sb.append(InputAgent.getReportFileName(InputAgent.getRunName()));
+				sb.append(InputAgent.getReportFileName(simModel.getRunName()));
 				sb.append(".dat");
 				try {
 					outStream = new PrintStream(sb.toString());
@@ -1652,7 +1631,7 @@ public class InputAgent {
 		// Create the report file
 		if (reportFile == null) {
 			StringBuilder tmp = new StringBuilder("");
-			tmp.append(InputAgent.getReportFileName(InputAgent.getRunName()));
+			tmp.append(InputAgent.getReportFileName(simModel.getRunName()));
 			tmp.append(".rep");
 			reportFile = new FileEntity(tmp.toString());
 		}

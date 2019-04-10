@@ -128,7 +128,7 @@ public abstract class Logger extends DisplayEntity {
 
 		// Create the report file
 		if (file == null && isActive()) {
-			StringBuilder tmp = new StringBuilder(InputAgent.getReportFileName(InputAgent.getRunName()));
+			StringBuilder tmp = new StringBuilder(InputAgent.getReportFileName(getJaamSimModel().getRunName()));
 			tmp.append("-").append(this.getName());
 			tmp.append(".log");
 			file = new FileEntity(tmp.toString());

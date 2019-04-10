@@ -2585,7 +2585,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 
 		if (getSimState() >= SIM_STATE_CONFIGURED) {
 			String name = sim.getSimulation().getModelName();
-			String title = String.format("%d%% %s - %s", val, name, InputAgent.getRunName());
+			String title = String.format("%d%% %s - %s", val, name, sim.getRunName());
 			setTitle(title);
 		}
 	}
@@ -3561,7 +3561,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		GUIFrame gui = GUIFrame.getInstance();
 		if (gui != null) {
 			gui.setProgress(0);
-			gui.setTitle( sim.getSimulation().getModelName() + " - " + InputAgent.getRunName() );
+			gui.setTitle( sim.getSimulation().getModelName() + " - " + sim.getRunName() );
 			gui.updateForSimulationState(GUIFrame.SIM_STATE_CONFIGURED);
 			gui.enableSave(InputAgent.getRecordEditsFound());
 		}
@@ -3574,7 +3574,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 			GUIFrame.showErrorOptionDialog("Input Error",
 			                         "Input errors were detected while loading file: '%s'\n\n%s\n\n" +
 			                         "Open '%s' with Log Viewer?",
-			                         file.getName(), t.getMessage(), InputAgent.getRunName() + ".log");
+			                         file.getName(), t.getMessage(), sim.getRunName() + ".log");
 			return;
 		}
 
@@ -3600,7 +3600,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 			sim.setConfigFile(temp);
 
 			// Set the title bar to match the new run name
-			this.setTitle( sim.getSimulation().getModelName() + " - " + InputAgent.getRunName() );
+			this.setTitle( sim.getSimulation().getModelName() + " - " + sim.getRunName() );
 		}
 		catch (Exception e) {
 			GUIFrame.showErrorDialog("File Error", e.getMessage());
