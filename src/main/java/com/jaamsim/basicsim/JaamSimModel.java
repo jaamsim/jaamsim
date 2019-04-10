@@ -59,6 +59,8 @@ public class JaamSimModel implements EventTimeListener {
 	private final HashMap<String, Entity> namedEntities = new HashMap<>(100);
 
 	private File configFile;           // present configuration file
+	private File reportDir;         // directory for the output reports
+
 	private final ArrayList<ObjectType> objectTypes = new ArrayList<>();
 	private final HashMap<Class<? extends Entity>, ObjectType> objectTypeMap = new HashMap<>();
 
@@ -121,6 +123,7 @@ public class JaamSimModel implements EventTimeListener {
 		runNumber = 1;
 
 		configFile = null;
+		reportDir = null;
 	}
 
 	/**
@@ -858,6 +861,32 @@ public class JaamSimModel implements EventTimeListener {
 			return name;
 
 		return name.substring(0, index);
+	}
+
+	private String getReportDirectory() {
+		if (reportDir != null)
+			return reportDir.getPath() + File.separator;
+
+		if (configFile != null)
+			return configFile.getParentFile().getPath() + File.separator;
+
+		return null;
+	}
+
+	public String getReportFileName(String name) {
+		return getReportDirectory() + name;
+	}
+
+	public void setReportDirectory(File dir) {
+		reportDir = dir;
+		if (reportDir == null)
+			return;
+		if (!reportDir.exists() && !reportDir.mkdirs())
+			throw new InputErrorException("Was unable to create the Report Directory: %s", reportDir.toString());
+	}
+
+	public void prepareReportDirectory() {
+		if (reportDir != null) reportDir.mkdirs();
 	}
 
 }
