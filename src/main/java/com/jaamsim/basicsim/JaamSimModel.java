@@ -878,6 +878,7 @@ public class JaamSimModel implements EventTimeListener {
 	}
 
 	public void setReportDirectory(File dir) {
+		InputAgent.setReportDirectory(dir);
 		reportDir = dir;
 		if (reportDir == null)
 			return;

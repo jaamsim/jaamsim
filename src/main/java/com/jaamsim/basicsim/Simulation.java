@@ -604,7 +604,7 @@ public class Simulation extends Entity {
 		super.updateForInput( in );
 
 		if (in == reportDirectory) {
-			InputAgent.setReportDirectory(reportDirectory.getDir());
+			getJaamSimModel().setReportDirectory(reportDirectory.getDir());
 			return;
 		}
 
