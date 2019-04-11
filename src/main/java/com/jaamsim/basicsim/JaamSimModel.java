@@ -68,6 +68,8 @@ public class JaamSimModel implements EventTimeListener {
 	private boolean batchRun;       // true if the run is to be terminated automatically
 	private boolean scriptMode;     // TRUE if script mode (command line) is specified
 	private boolean sessionEdited;  // TRUE if any inputs have been changed after loading a configuration file
+	private boolean recordEditsFound;  // TRUE if the "RecordEdits" marker is found in the configuration file
+	private boolean recordEdits;       // TRUE if input changes are to be marked as edited
 
 	private final ArrayList<ObjectType> objectTypes = new ArrayList<>();
 	private final HashMap<Class<? extends Entity>, ObjectType> objectTypeMap = new HashMap<>();
@@ -141,6 +143,7 @@ public class JaamSimModel implements EventTimeListener {
 			outStream = null;
 		}
 		setSessionEdited(false);
+		recordEditsFound = false;
 	}
 
 	/**
@@ -977,6 +980,49 @@ public class JaamSimModel implements EventTimeListener {
 
 	public boolean isSessionEdited() {
 		return sessionEdited;
+	}
+
+	/**
+	 * Specifies whether a RecordEdits marker was found in the present configuration file.
+	 * @param bool - TRUE if a RecordEdits marker was found.
+	 */
+	public void setRecordEditsFound(boolean bool) {
+		recordEditsFound = bool;
+	}
+
+	/**
+	 * Indicates whether a RecordEdits marker was found in the present configuration file.
+	 * @return - TRUE if a RecordEdits marker was found.
+	 */
+	public boolean isRecordEditsFound() {
+		return recordEditsFound;
+	}
+
+	/**
+	 * Sets the "RecordEdits" mode for the InputAgent.
+	 * @param bool - boolean value for the RecordEdits mode
+	 */
+	public void setRecordEdits(boolean bool) {
+		recordEdits = bool;
+	}
+
+	/**
+	 * Returns the "RecordEdits" mode for the InputAgent.
+	 * <p>
+	 * When RecordEdits is TRUE, any model inputs that are changed and any objects that
+	 * are defined are marked as "edited". When FALSE, model inputs and object
+	 * definitions are marked as "unedited".
+	 * <p>
+	 * RecordEdits mode is used to determine the way JaamSim saves a configuration file
+	 * through the graphical user interface. Object definitions and model inputs
+	 * that are marked as unedited will be copied exactly as they appear in the original
+	 * configuration file that was first loaded.  Object definitions and model inputs
+	 * that are marked as edited will be generated automatically by the program.
+	 *
+	 * @return the RecordEdits mode for the InputAgent.
+	 */
+	public boolean isRecordEdits() {
+		return recordEdits;
 	}
 
 }
