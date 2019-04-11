@@ -17,6 +17,7 @@
 package com.jaamsim.basicsim;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -352,7 +353,11 @@ public class JaamSimModel implements EventTimeListener {
 
 		// Print the selected outputs
 		if (getSimulation().getRunOutputList().getValue() != null) {
-			InputAgent.printRunOutputs(this, EventManager.simSeconds());
+			if (outStream == null) {
+				outStream = getOutStream();
+				InputAgent.printRunOutputHeaders(this, outStream);
+			}
+			InputAgent.printRunOutputs(this, outStream, EventManager.simSeconds());
 		}
 
 		// Increment the run number and check for last run
@@ -910,6 +915,27 @@ public class JaamSimModel implements EventTimeListener {
 	}
 
 	public PrintStream getOutStream() {
+		if (outStream == null) {
+
+			// Select either standard out or a file for the outputs
+			outStream = System.out;
+			if (!InputAgent.isScriptMode()) {
+				StringBuilder sb = new StringBuilder();
+				sb.append(getReportFileName(getRunName()));
+				sb.append(".dat");
+				try {
+					outStream = new PrintStream(sb.toString());
+				}
+				catch (FileNotFoundException e) {
+					throw new InputErrorException(
+							"FileNotFoundException thrown trying to open PrintStream: " + e );
+				}
+				catch (SecurityException e) {
+					throw new InputErrorException(
+							"SecurityException thrown trying to open PrintStream: " + e );
+				}
+			}
+		}
 		return outStream;
 	}
 

@@ -19,7 +19,6 @@ package com.jaamsim.input;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -1371,62 +1370,43 @@ public class InputAgent {
 	            ent.getName(), in.getKeyword(), sb.toString());
 	}
 
+	public static void printRunOutputHeaders(JaamSimModel simModel, PrintStream outStream) {
+		Simulation simulation = simModel.getSimulation();
+
+		// Write the header line for the expressions
+		StringBuilder sb = new StringBuilder();
+		ArrayList<String> toks = new ArrayList<>();
+		simulation.getRunOutputList().getValueTokens(toks);
+		boolean first = true;
+		for (String str : toks) {
+			if (str.equals("{") || str.equals("}"))
+				continue;
+			if (first)
+				first = false;
+			else
+				sb.append("\t");
+			sb.append(str);
+		}
+		outStream.println(sb.toString());
+
+		// Write the header line for the units
+		sb = new StringBuilder();
+		for (int i = 0; i < simulation.getRunOutputList().getListSize(); i++) {
+			Class<? extends Unit> ut = simulation.getRunOutputList().getUnitType(i);
+			String unit = Unit.getDisplayedUnit(ut);
+			if (i > 0)
+				sb.append("\t");
+			sb.append(unit);
+		}
+		outStream.println(sb.toString());
+	}
+
 	/**
 	 * Prints selected outputs for the simulation run to stdout or a file.
 	 * @param simTime - simulation time at which the outputs are printed.
 	 */
-	public static void printRunOutputs(JaamSimModel simModel, double simTime) {
+	public static void printRunOutputs(JaamSimModel simModel, PrintStream outStream, double simTime) {
 		Simulation simulation = simModel.getSimulation();
-
-		// Set up the custom outputs
-		if (outStream == null) {
-
-			// Select either standard out or a file for the outputs
-			outStream = System.out;
-			if (!InputAgent.isScriptMode()) {
-				StringBuilder sb = new StringBuilder();
-				sb.append(simModel.getReportFileName(simModel.getRunName()));
-				sb.append(".dat");
-				try {
-					outStream = new PrintStream(sb.toString());
-				}
-				catch (FileNotFoundException e) {
-					throw new InputErrorException(
-							"FileNotFoundException thrown trying to open PrintStream: " + e );
-				}
-				catch (SecurityException e) {
-					throw new InputErrorException(
-							"SecurityException thrown trying to open PrintStream: " + e );
-				}
-			}
-
-			// Write the header line for the expressions
-			StringBuilder sb = new StringBuilder();
-			ArrayList<String> toks = new ArrayList<>();
-			simulation.getRunOutputList().getValueTokens(toks);
-			boolean first = true;
-			for (String str : toks) {
-				if (str.equals("{") || str.equals("}"))
-					continue;
-				if (first)
-					first = false;
-				else
-					sb.append("\t");
-				sb.append(str);
-			}
-			outStream.println(sb.toString());
-
-			// Write the header line for the units
-			sb = new StringBuilder();
-			for (int i = 0; i < simulation.getRunOutputList().getListSize(); i++) {
-				Class<? extends Unit> ut = simulation.getRunOutputList().getUnitType(i);
-				String unit = Unit.getDisplayedUnit(ut);
-				if (i > 0)
-					sb.append("\t");
-				sb.append(unit);
-			}
-			outStream.println(sb.toString());
-		}
 
 		// Write the selected outputs
 		StringBuilder sb = new StringBuilder();
