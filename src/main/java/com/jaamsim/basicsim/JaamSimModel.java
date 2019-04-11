@@ -60,6 +60,7 @@ public class JaamSimModel implements EventTimeListener {
 
 	private File configFile;           // present configuration file
 	private File reportDir;         // directory for the output reports
+	private FileEntity reportFile;  // file to which the output report will be written
 
 	private final ArrayList<ObjectType> objectTypes = new ArrayList<>();
 	private final HashMap<Class<? extends Entity>, ObjectType> objectTypeMap = new HashMap<>();
@@ -886,6 +887,10 @@ public class JaamSimModel implements EventTimeListener {
 
 	public void prepareReportDirectory() {
 		if (reportDir != null) reportDir.mkdirs();
+	}
+
+	public FileEntity getReportFile() {
+		return reportFile;
 	}
 
 }
