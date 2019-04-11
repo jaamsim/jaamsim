@@ -34,6 +34,7 @@ import com.jaamsim.input.ExpError;
 import com.jaamsim.input.ExpParser.Expression;
 import com.jaamsim.input.ExpResType;
 import com.jaamsim.input.ExpResult;
+import com.jaamsim.input.ExpValResult;
 import com.jaamsim.input.ExpressionHandle;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
@@ -709,35 +710,56 @@ public class Entity {
 		return h.getUnitType();
 	}
 
+	// Utility function to help set attribute values for nested indices
+	private ExpResult setAttribIndices(ExpResult.Collection coll, ExpResult[] indices, int indNum, ExpResult value) throws ExpError {
+		assert(indNum < indices.length);
+		if (indices[indNum].type != ExpResType.NUMBER) {
+			this.error("Assigning to attributes must have numeric indices. Index #%d is %s",
+			           indNum, ExpValResult.typeString(indices[indNum].type));
+		}
+		if (indNum == indices.length-1) {
+			// Last index, assign the value
+			ExpResult.Collection newCol = coll.assign(indices[indNum], value.getCopy());
+			return ExpResult.makeCollectionResult(newCol);
+		}
+		// Otherwise, recurse one level deeper
+		ExpResult nestedColl = coll.index(indices[indNum]);
+		if (nestedColl.type != ExpResType.COLLECTION)
+		{
+			this.error("Assigning to value that is not a collection. Value is a %s", ExpValResult.typeString(nestedColl.type));
+		}
+		ExpResult recurseRes = setAttribIndices(nestedColl.colVal, indices, indNum+1, value);
+		ExpResult.Collection newCol = coll.assign(indices[indNum], recurseRes);
+		return ExpResult.makeCollectionResult(newCol);
+	}
+
 	public void setAttribute(String name, ExpResult[] indices, ExpResult value) {
 		AttributeHandle h = attributeMap.get(name);
 		if (h == null)
 			this.error("Invalid attribute name: %s", name);
 
-		ExpResult index = null;
-		//////////////// Temporary placeholder code
+		ExpResult assignValue = null;
 		if (indices != null) {
-			index = indices[0];
-		}
-		if (index != null) {
 			ExpResult attribValue = h.getValue(getSimTime(), ExpResult.class);
 			if (attribValue.type != ExpResType.COLLECTION) {
 				this.error("Trying to set attribute: %s with an index, but it is not a collection", name);
 			}
+
 			try {
-				ExpResult.Collection newCol = attribValue.colVal.assign(index, value.getCopy());
-				h.setValue(ExpResult.makeCollectionResult(newCol));
+				assignValue = setAttribIndices(attribValue.colVal, indices, 0, value);
+
 			} catch (ExpError err) {
 				this.error("Error during assignment: %s", err.getMessage());
 			}
-			return;
+		} else {
+			assignValue = value.getCopy();
 		}
 
 		if (value.type == ExpResType.NUMBER && h.getUnitType() != value.unitType)
 			this.error("Invalid unit returned by an expression. Received: %s, expected: %s",
 					value.unitType.getSimpleName(), h.getUnitType().getSimpleName(), "");
 
-		h.setValue(value.getCopy());
+		h.setValue(assignValue);
 	}
 
 	public ArrayList<String> getAttributeNames(){
