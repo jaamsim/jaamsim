@@ -80,7 +80,6 @@ public class InputAgent {
 	private static final String[] GRAPHICS_PALETTES = {"Graphics Objects", "View", "Display Models"};
 	private static final String[] GRAPHICS_CATEGORIES = {Entity.GRAPHICS, Entity.FONT, Entity.FORMAT, Entity.GUI};
 
-	private static FileEntity reportFile;     // file to which the output report will be written
 	private static PrintStream outStream;  // location where the selected outputs will be written
 
 	private static long preDefinedEntityCount; // Number of Entities after loading autoload.cfg
@@ -92,7 +91,6 @@ public class InputAgent {
 		recordEditsFound = false;
 		sessionEdited = false;
 		batchRun = false;
-		reportFile = null;
 		outStream = null;
 		lastTickForTrace = -1l;
 		undoList = new ArrayList<>();
