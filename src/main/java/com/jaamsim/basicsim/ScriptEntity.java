@@ -65,7 +65,7 @@ public class ScriptEntity extends Entity {
 		// Open the script file
 		tokens = FileInput.getTokensFromURI(scriptFileName.getValue());
 		boolean record = InputAgent.recordEdits();
-		InputAgent.setRecordEdits(false);
+		getJaamSimModel().setRecordEdits(false);
 		// Read records until a Time record is read
 		// Restarts will work for simple scripts with a record at Time 0
 		// Restarts should work for all scripts provided the script has initial inputs before the first Time record
@@ -74,7 +74,7 @@ public class ScriptEntity extends Entity {
 			if( tokens.get(lastTokenIdx).get( 0 ).equals( this.getName() ) ) {
 				if( tokens.get( lastTokenIdx ).get( 1 ).equals( "Time" ) ) {
 					lastTokenIdx--;
-					InputAgent.setRecordEdits(record);
+					getJaamSimModel().setRecordEdits(record);
 					return;
 				}
 			}
@@ -110,7 +110,7 @@ public class ScriptEntity extends Entity {
 	 */
 	public void doScript() {
 		boolean record = InputAgent.recordEdits();
-		InputAgent.setRecordEdits(false);
+		getJaamSimModel().setRecordEdits(false);
 		for (lastTokenIdx++; lastTokenIdx < tokens.size(); lastTokenIdx++) {
 			InputAgent.processKeywordRecord(this.getJaamSimModel(), tokens.get(lastTokenIdx), null);
 			// If a "Time" record was read, then wait until the time
@@ -120,6 +120,6 @@ public class ScriptEntity extends Entity {
 				break;
 			}
 		}
-		InputAgent.setRecordEdits(record);
+		getJaamSimModel().setRecordEdits(record);
 	}
 }

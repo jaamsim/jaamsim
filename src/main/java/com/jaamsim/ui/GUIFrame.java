@@ -3289,7 +3289,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 
 		// If no configuration files were specified on the command line, then load the default configuration file
 		if (configFiles.size() == 0 && !scriptMode) {
-			InputAgent.setRecordEdits(true);
+			sim.setRecordEdits(true);
 			InputAgent.loadDefault(sim);
 			GUIFrame.updateForSimState(GUIFrame.SIM_STATE_CONFIGURED);
 		}
@@ -3304,7 +3304,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 			sim.getSimulation().closeAllTools();
 
 		// Set RecordEdits mode (if it has not already been set in the configuration file)
-		InputAgent.setRecordEdits(true);
+		sim.setRecordEdits(true);
 
 		// Start the model if in batch mode
 		if (batch) {
@@ -3479,7 +3479,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		}
 
 		clear();
-		InputAgent.setRecordEdits(true);
+		sim.setRecordEdits(true);
 		InputAgent.loadDefault(sim);
 		displayWindows();
 		FrameBox.setSelectedEntity(sim.getSimulation(), false);
@@ -3522,13 +3522,13 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 			new Thread(new Runnable() {
 				@Override
 				public void run() {
-					InputAgent.setRecordEdits(false);
+					sim.setRecordEdits(false);
 					gui1.clear();
 					Throwable ret = GUIFrame.configure(chosenfile);
 					if (ret != null)
 						handleConfigError(ret, chosenfile);
 
-					InputAgent.setRecordEdits(true);
+					sim.setRecordEdits(true);
 
 					GUIFrame.displayWindows();
 					FrameBox.setSelectedEntity(sim.getSimulation(), false);

@@ -41,7 +41,7 @@ public class TestSimulation {
 		simModel.setBatchRun(false);
 
 		// Load the autoload file
-		InputAgent.setRecordEdits(false);
+		simModel.setRecordEdits(false);
 		InputAgent.readResource(simModel, "<res>/inputs/autoload.cfg");
 	}
 

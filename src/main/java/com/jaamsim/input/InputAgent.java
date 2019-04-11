@@ -354,8 +354,8 @@ public class InputAgent {
 				}
 
 				if ("RECORDEDITS".equalsIgnoreCase(record.get(0))) {
-					InputAgent.setRecordEditsFound(true);
-					InputAgent.setRecordEdits(true);
+					simModel.setRecordEditsFound(true);
+					simModel.setRecordEdits(true);
 					record.clear();
 					continue;
 				}
@@ -1122,7 +1122,7 @@ public class InputAgent {
 		// If not already present, insert the "RecordEdits" marker at the end of the original configuration file
 		if( ! InputAgent.getRecordEditsFound() ) {
 			file.format("%n%s%n", recordEditsMarker);
-			InputAgent.setRecordEditsFound(true);
+			simModel.setRecordEditsFound(true);
 		}
 
 		// 2) WRITE THE DEFINITION STATEMENTS FOR NEW OBJECTS
@@ -1827,7 +1827,7 @@ public class InputAgent {
 		InputAgent.readResource(simModel, "<res>/inputs/default.cfg");
 
 		// A RecordEdits marker in the default configuration must be ignored
-		InputAgent.setRecordEditsFound(false);
+		simModel.setRecordEditsFound(false);
 
 		// Set the model state to unedited
 		simModel.setSessionEdited(false);

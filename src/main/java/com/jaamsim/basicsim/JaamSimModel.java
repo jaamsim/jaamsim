@@ -150,7 +150,7 @@ public class JaamSimModel implements EventTimeListener {
 	 * Pre-loads the simulation model with basic objects such as DisplayModels and Units.
 	 */
 	public void autoLoad() {
-		InputAgent.setRecordEdits(false);
+		setRecordEdits(false);
 		InputAgent.readResource(this, "<res>/inputs/autoload.cfg");
 		InputAgent.setPreDefinedEntityCount( allInstances.get( allInstances.size() - 1 ).getEntityNumber());
 	}
@@ -529,7 +529,7 @@ public class JaamSimModel implements EventTimeListener {
 	 * @param arg - input string as it would appear in the Input Editor
 	 */
 	public void setInput(String entName, String keyword, String arg) {
-		InputAgent.setRecordEdits(true);
+		setRecordEdits(true);
 		Entity ent = getNamedEntity(entName);
 		KeywordIndex kw = InputAgent.formatInput(keyword, arg);
 		InputAgent.apply(ent, kw);
@@ -987,6 +987,7 @@ public class JaamSimModel implements EventTimeListener {
 	 * @param bool - TRUE if a RecordEdits marker was found.
 	 */
 	public void setRecordEditsFound(boolean bool) {
+		InputAgent.setRecordEditsFound(bool);
 		recordEditsFound = bool;
 	}
 
@@ -1003,6 +1004,7 @@ public class JaamSimModel implements EventTimeListener {
 	 * @param bool - boolean value for the RecordEdits mode
 	 */
 	public void setRecordEdits(boolean bool) {
+		InputAgent.setRecordEdits(bool);
 		recordEdits = bool;
 	}
 
