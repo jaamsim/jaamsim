@@ -68,7 +68,6 @@ public class InputAgent {
 
 	private static long lastTickForTrace;
 
-	private static boolean sessionEdited;     // TRUE if any inputs have been changed after loading a configuration file
 	private static boolean recordEditsFound;  // TRUE if the "RecordEdits" marker is found in the configuration file
 	private static boolean recordEdits;       // TRUE if input changes are to be marked as edited.
 
@@ -84,7 +83,6 @@ public class InputAgent {
 
 	static {
 		recordEditsFound = false;
-		sessionEdited = false;
 		lastTickForTrace = -1l;
 		undoList = new ArrayList<>();
 		redoList = new ArrayList<>();
@@ -98,7 +96,6 @@ public class InputAgent {
 		numErrors = 0;
 		numWarnings = 0;
 		recordEditsFound = false;
-		setSessionEdited(false);
 		lastTickForTrace = -1l;
 		undoList.clear();
 		redoList.clear();
@@ -162,14 +159,6 @@ public class InputAgent {
 	 */
 	public static void setRecordEdits(boolean b) {
 		recordEdits = b;
-	}
-
-	public static void setSessionEdited(boolean bool) {
-		if (bool == sessionEdited)
-			return;
-		sessionEdited = bool;
-		if (GUIFrame.getInstance() != null)
-			GUIFrame.getInstance().updateSaveButton();
 	}
 
 	public static void storeAndExecute(Command cmd) {

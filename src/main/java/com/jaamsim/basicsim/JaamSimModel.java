@@ -968,7 +968,6 @@ public class JaamSimModel implements EventTimeListener {
 	}
 
 	public void setSessionEdited(boolean bool) {
-		InputAgent.setSessionEdited(bool);
 		if (bool == sessionEdited)
 			return;
 		sessionEdited = bool;
