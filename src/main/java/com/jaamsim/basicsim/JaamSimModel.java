@@ -65,6 +65,8 @@ public class JaamSimModel implements EventTimeListener {
 	private FileEntity reportFile;  // file to which the output report will be written
 	private PrintStream outStream;  // location where the custom outputs will be written
 
+	private boolean batchRun;       // true if the run is to be terminated automatically
+
 	private final ArrayList<ObjectType> objectTypes = new ArrayList<>();
 	private final HashMap<Class<? extends Entity>, ObjectType> objectTypeMap = new HashMap<>();
 
@@ -944,6 +946,14 @@ public class JaamSimModel implements EventTimeListener {
 			}
 		}
 		return outStream;
+	}
+
+	public void setBatchRun(boolean bool) {
+		batchRun = bool;
+	}
+
+	public boolean isBatchRun() {
+		return batchRun;
 	}
 
 }
