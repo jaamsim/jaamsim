@@ -17,6 +17,7 @@
 package com.jaamsim.basicsim;
 
 import java.io.File;
+import java.io.PrintStream;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -61,6 +62,7 @@ public class JaamSimModel implements EventTimeListener {
 	private File configFile;           // present configuration file
 	private File reportDir;         // directory for the output reports
 	private FileEntity reportFile;  // file to which the output report will be written
+	private PrintStream outStream;  // location where the custom outputs will be written
 
 	private final ArrayList<ObjectType> objectTypes = new ArrayList<>();
 	private final HashMap<Class<? extends Entity>, ObjectType> objectTypeMap = new HashMap<>();
@@ -905,6 +907,10 @@ public class JaamSimModel implements EventTimeListener {
 			reportFile = new FileEntity(tmp.toString());
 		}
 		return reportFile;
+	}
+
+	public PrintStream getOutStream() {
+		return outStream;
 	}
 
 }
