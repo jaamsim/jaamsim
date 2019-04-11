@@ -125,6 +125,10 @@ public class JaamSimModel implements EventTimeListener {
 
 		configFile = null;
 		reportDir = null;
+		if (reportFile != null) {
+			reportFile.close();
+			reportFile = null;
+		}
 	}
 
 	/**
@@ -321,6 +325,10 @@ public class JaamSimModel implements EventTimeListener {
 		setRunIndexList();
 
 		// Close the output reports
+		if (reportFile != null) {
+			reportFile.close();
+			reportFile = null;
+		}
 		InputAgent.stop();
 	}
 

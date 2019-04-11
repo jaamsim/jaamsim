@@ -118,11 +118,6 @@ public class InputAgent {
 	 * Resets the InputAgent when a run is stopped and reset to zero simulation time.
 	 */
 	public static void stop() {
-
-		if (reportFile != null) {
-			reportFile.close();
-			reportFile = null;
-		}
 		if (outStream != null) {
 			outStream.close();
 			outStream = null;
