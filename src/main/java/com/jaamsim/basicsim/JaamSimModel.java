@@ -890,6 +890,12 @@ public class JaamSimModel implements EventTimeListener {
 	}
 
 	public FileEntity getReportFile() {
+		if (reportFile == null) {
+			StringBuilder tmp = new StringBuilder("");
+			tmp.append(getReportFileName(getRunName()));
+			tmp.append(".rep");
+			reportFile = new FileEntity(tmp.toString());
+		}
 		return reportFile;
 	}
 

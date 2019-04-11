@@ -1576,12 +1576,7 @@ public class InputAgent {
 	public static void printReport(JaamSimModel simModel, double simTime) {
 
 		// Create the report file
-		if (reportFile == null) {
-			StringBuilder tmp = new StringBuilder("");
-			tmp.append(simModel.getReportFileName(simModel.getRunName()));
-			tmp.append(".rep");
-			reportFile = new FileEntity(tmp.toString());
-		}
+		FileEntity reportFile = simModel.getReportFile();
 
 		// Print run number header when multiple runs are to be performed
 		if (simModel.isMultipleRuns())
