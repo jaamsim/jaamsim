@@ -68,7 +68,6 @@ public class InputAgent {
 
 	private static long lastTickForTrace;
 
-	private static boolean batchRun;
 	private static boolean scriptMode;        // TRUE if script mode (command line) is specified
 	private static boolean sessionEdited;     // TRUE if any inputs have been changed after loading a configuration file
 	private static boolean recordEditsFound;  // TRUE if the "RecordEdits" marker is found in the configuration file
@@ -87,7 +86,6 @@ public class InputAgent {
 	static {
 		recordEditsFound = false;
 		sessionEdited = false;
-		batchRun = false;
 		lastTickForTrace = -1l;
 		undoList = new ArrayList<>();
 		redoList = new ArrayList<>();
@@ -177,10 +175,6 @@ public class InputAgent {
 
 	public static boolean isSessionEdited() {
 		return sessionEdited;
-	}
-
-	public static void setBatch(boolean batch) {
-		batchRun = batch;
 	}
 
 	public static void setScriptMode(boolean bool) {
