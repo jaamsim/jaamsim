@@ -393,7 +393,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 	 */
 	void close() {
 		// check for unsaved changes
-		if (InputAgent.isSessionEdited()) {
+		if (sim.isSessionEdited()) {
 			boolean confirmed = GUIFrame.showSaveChangesDialog(this);
 			if (!confirmed)
 				return;
@@ -2638,7 +2638,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 	public boolean startSimulation() {
 		if( getSimState() <= SIM_STATE_CONFIGURED ) {
 			boolean confirmed = true;
-			if (InputAgent.isSessionEdited()) {
+			if (sim.isSessionEdited()) {
 				confirmed = GUIFrame.showSaveChangesDialog(this);
 			}
 			if (confirmed) {
@@ -2821,7 +2821,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 	}
 
 	public void updateSaveButton() {
-		fileSave.setEnabled(InputAgent.isSessionEdited());
+		fileSave.setEnabled(sim.isSessionEdited());
 	}
 
 	public static synchronized void updateForRealTime(boolean executeRT, double factorRT) {
@@ -3471,7 +3471,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		sim.pause();
 
 		// check for unsaved changes
-		if (InputAgent.isSessionEdited()) {
+		if (sim.isSessionEdited()) {
 			boolean confirmed = GUIFrame.showSaveChangesDialog(GUIFrame.this);
 			if (!confirmed) {
 				return;
@@ -3489,7 +3489,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		sim.pause();
 
 		// check for unsaved changes
-		if (InputAgent.isSessionEdited()) {
+		if (sim.isSessionEdited()) {
 			boolean confirmed = GUIFrame.showSaveChangesDialog(GUIFrame.this);
 			if (!confirmed) {
 				return;

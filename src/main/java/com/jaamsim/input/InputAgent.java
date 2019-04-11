@@ -172,10 +172,6 @@ public class InputAgent {
 			GUIFrame.getInstance().updateSaveButton();
 	}
 
-	public static boolean isSessionEdited() {
-		return sessionEdited;
-	}
-
 	public static void storeAndExecute(Command cmd) {
 		Command mergedCmd = null;
 		if (!undoList.isEmpty()) {
