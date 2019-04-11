@@ -233,7 +233,7 @@ public abstract class Logger extends DisplayEntity {
 		}
 
 		// If running in real time mode, empty the file buffer after each entity is logged
-		if (!InputAgent.getBatch() && getSimulation().isRealTime())
+		if (!getJaamSimModel().isBatchRun() && getSimulation().isRealTime())
 			file.flush();
 	}
 

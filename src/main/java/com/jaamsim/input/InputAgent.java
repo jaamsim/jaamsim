@@ -183,10 +183,6 @@ public class InputAgent {
 		batchRun = batch;
 	}
 
-	public static boolean getBatch() {
-		return batchRun;
-	}
-
 	public static void setScriptMode(boolean bool) {
 		scriptMode = bool;
 	}

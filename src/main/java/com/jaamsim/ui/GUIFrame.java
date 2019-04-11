@@ -3795,7 +3795,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 	 * @param post - text to appear after the error message
 	 */
 	public static void showErrorDialog(String title, String source, int position, String pre, String message, String post) {
-		if (InputAgent.getBatch()) GUIFrame.shutdown(1);
+		if (sim == null || sim.isBatchRun())
+			GUIFrame.shutdown(1);
 		String msg = GUIFrame.getErrorMessage(source, position, pre, message, post);
 		JOptionPane.showMessageDialog(null, msg, title, JOptionPane.ERROR_MESSAGE);
 	}
@@ -3858,7 +3859,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 	 * @param args - inputs to the error message
 	 */
 	public static void showErrorOptionDialog(String title, String fmt, Object... args) {
-		if (InputAgent.getBatch()) GUIFrame.shutdown(1);
+		if (sim == null || sim.isBatchRun())
+			GUIFrame.shutdown(1);
 
 		final String msg = String.format(fmt,  args);
 

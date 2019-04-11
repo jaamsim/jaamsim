@@ -414,7 +414,7 @@ public class JaamSimModel implements EventTimeListener {
 		InputAgent.closeLogFile();
 
 		// Always terminate the run when in batch mode
-		if (InputAgent.getBatch() || getSimulation().getExitAtStop())
+		if (isBatchRun() || getSimulation().getExitAtStop())
 			GUIFrame.shutdown(0);
 
 		pause();
