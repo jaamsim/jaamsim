@@ -3244,8 +3244,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 
 		LogBox.logLine("Simulation Environment Loaded");
 
-		if (batch)
-			InputAgent.setBatch(true);
+		sim.setBatchRun(batch);
 
 		// Load the autoload file
 		sim.autoLoad();

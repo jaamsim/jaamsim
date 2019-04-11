@@ -38,7 +38,7 @@ public class TestSimulation {
 		simModel = new JaamSimModel();
 		if (simModel.getSimulation() != null)
 			simModel.clear();
-		InputAgent.setBatch(false);
+		simModel.setBatchRun(false);
 
 		// Load the autoload file
 		InputAgent.setRecordEdits(false);

@@ -949,6 +949,7 @@ public class JaamSimModel implements EventTimeListener {
 	}
 
 	public void setBatchRun(boolean bool) {
+		InputAgent.setBatch(bool);
 		batchRun = bool;
 	}
 
