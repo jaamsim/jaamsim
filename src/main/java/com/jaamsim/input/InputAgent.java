@@ -68,7 +68,6 @@ public class InputAgent {
 
 	private static long lastTickForTrace;
 
-	private static boolean scriptMode;        // TRUE if script mode (command line) is specified
 	private static boolean sessionEdited;     // TRUE if any inputs have been changed after loading a configuration file
 	private static boolean recordEditsFound;  // TRUE if the "RecordEdits" marker is found in the configuration file
 	private static boolean recordEdits;       // TRUE if input changes are to be marked as edited.
@@ -175,14 +174,6 @@ public class InputAgent {
 
 	public static boolean isSessionEdited() {
 		return sessionEdited;
-	}
-
-	public static void setScriptMode(boolean bool) {
-		scriptMode = bool;
-	}
-
-	public static boolean isScriptMode() {
-		return scriptMode;
 	}
 
 	public static void storeAndExecute(Command cmd) {

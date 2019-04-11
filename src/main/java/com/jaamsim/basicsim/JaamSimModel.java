@@ -66,6 +66,7 @@ public class JaamSimModel implements EventTimeListener {
 	private PrintStream outStream;  // location where the custom outputs will be written
 
 	private boolean batchRun;       // true if the run is to be terminated automatically
+	private boolean scriptMode;     // TRUE if script mode (command line) is specified
 
 	private final ArrayList<ObjectType> objectTypes = new ArrayList<>();
 	private final HashMap<Class<? extends Entity>, ObjectType> objectTypeMap = new HashMap<>();
@@ -928,7 +929,7 @@ public class JaamSimModel implements EventTimeListener {
 
 			// Select either standard out or a file for the outputs
 			outStream = System.out;
-			if (!InputAgent.isScriptMode()) {
+			if (!isScriptMode()) {
 				StringBuilder sb = new StringBuilder();
 				sb.append(getReportFileName(getRunName()));
 				sb.append(".dat");
@@ -954,6 +955,14 @@ public class JaamSimModel implements EventTimeListener {
 
 	public boolean isBatchRun() {
 		return batchRun;
+	}
+
+	public void setScriptMode(boolean bool) {
+		scriptMode = bool;
+	}
+
+	public boolean isScriptMode() {
+		return scriptMode;
 	}
 
 }

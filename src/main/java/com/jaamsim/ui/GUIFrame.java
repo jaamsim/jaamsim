@@ -3198,8 +3198,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 			configFiles.add(each);
 		}
 
-		InputAgent.setScriptMode(scriptMode);
-
 		// If not running in batch mode, create the splash screen
 		JWindow splashScreen = null;
 		if (!batch) {
@@ -3245,6 +3243,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		LogBox.logLine("Simulation Environment Loaded");
 
 		sim.setBatchRun(batch);
+		sim.setScriptMode(scriptMode);
 
 		// Load the autoload file
 		sim.autoLoad();
