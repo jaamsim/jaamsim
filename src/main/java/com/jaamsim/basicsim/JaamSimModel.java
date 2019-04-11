@@ -67,6 +67,7 @@ public class JaamSimModel implements EventTimeListener {
 
 	private boolean batchRun;       // true if the run is to be terminated automatically
 	private boolean scriptMode;     // TRUE if script mode (command line) is specified
+	private boolean sessionEdited;  // TRUE if any inputs have been changed after loading a configuration file
 
 	private final ArrayList<ObjectType> objectTypes = new ArrayList<>();
 	private final HashMap<Class<? extends Entity>, ObjectType> objectTypeMap = new HashMap<>();
@@ -139,6 +140,7 @@ public class JaamSimModel implements EventTimeListener {
 			outStream.close();
 			outStream = null;
 		}
+		setSessionEdited(false);
 	}
 
 	/**
@@ -963,6 +965,19 @@ public class JaamSimModel implements EventTimeListener {
 
 	public boolean isScriptMode() {
 		return scriptMode;
+	}
+
+	public void setSessionEdited(boolean bool) {
+		InputAgent.setSessionEdited(bool);
+		if (bool == sessionEdited)
+			return;
+		sessionEdited = bool;
+		if (GUIFrame.getInstance() != null)
+			GUIFrame.getInstance().updateSaveButton();
+	}
+
+	public boolean isSessionEdited() {
+		return sessionEdited;
 	}
 
 }
