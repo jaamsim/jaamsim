@@ -115,34 +115,6 @@ public class InputAgent {
 	}
 
 	/**
-	 * Indicates whether a RecordEdits marker was found in the present configuration file.
-	 *
-	 * @return - TRUE if a RecordEdits marker was found.
-	 */
-	public static boolean getRecordEditsFound() {
-		return recordEditsFound;
-	}
-
-	/**
-	 * Returns the "RecordEdits" mode for the InputAgent.
-	 * <p>
-	 * When RecordEdits is TRUE, any model inputs that are changed and any objects that
-	 * are defined are marked as "edited". When FALSE, model inputs and object
-	 * definitions are marked as "unedited".
-	 * <p>
-	 * RecordEdits mode is used to determine the way JaamSim saves a configuration file
-	 * through the graphical user interface. Object definitions and model inputs
-	 * that are marked as unedited will be copied exactly as they appear in the original
-	 * configuration file that was first loaded.  Object definitions and model inputs
-	 * that are marked as edited will be generated automatically by the program.
-	 *
-	 * @return the RecordEdits mode for the InputAgent.
-	 */
-	public static boolean recordEdits() {
-		return recordEdits;
-	}
-
-	/**
 	 * Sets the "RecordEdits" mode for the InputAgent.
 	 * <p>
 	 * When RecordEdits is TRUE, any model inputs that are changed and any objects that
@@ -408,7 +380,7 @@ public class InputAgent {
 
 		// Loop over all the new Entity names
 		for (int i = 3; i < record.size() - 1; i++) {
-			InputAgent.defineEntity(simModel, proto, record.get(i), InputAgent.recordEdits());
+			InputAgent.defineEntity(simModel, proto, record.get(i), simModel.isRecordEdits());
 		}
 	}
 
@@ -696,11 +668,12 @@ public class InputAgent {
 		}
 
 		// Only mark the keyword edited if we have finished initial configuration
-		if (InputAgent.recordEdits()) {
+		JaamSimModel simModel = ent.getJaamSimModel();
+		if (simModel.isRecordEdits()) {
 			in.setEdited(true);
 			ent.setFlag(Entity.FLAG_EDITED);
 			if (!ent.testFlag(Entity.FLAG_GENERATED) && in.isPromptReqd())
-				ent.getJaamSimModel().setSessionEdited(true);
+				simModel.setSessionEdited(true);
 		}
 
 		ent.updateForInput(in);
@@ -1120,7 +1093,7 @@ public class InputAgent {
 		}
 
 		// If not already present, insert the "RecordEdits" marker at the end of the original configuration file
-		if( ! InputAgent.getRecordEditsFound() ) {
+		if (!simModel.isRecordEditsFound()) {
 			file.format("%n%s%n", recordEditsMarker);
 			simModel.setRecordEditsFound(true);
 		}

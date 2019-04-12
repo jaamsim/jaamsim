@@ -64,17 +64,18 @@ public class ScriptEntity extends Entity {
 
 		// Open the script file
 		tokens = FileInput.getTokensFromURI(scriptFileName.getValue());
-		boolean record = InputAgent.recordEdits();
-		getJaamSimModel().setRecordEdits(false);
+		JaamSimModel simModel = getJaamSimModel();
+		boolean record = simModel.isRecordEdits();
+		simModel.setRecordEdits(false);
 		// Read records until a Time record is read
 		// Restarts will work for simple scripts with a record at Time 0
 		// Restarts should work for all scripts provided the script has initial inputs before the first Time record
 		for (lastTokenIdx++; lastTokenIdx < tokens.size(); lastTokenIdx++) {
-			InputAgent.processKeywordRecord(this.getJaamSimModel(), tokens.get(lastTokenIdx), null);
+			InputAgent.processKeywordRecord(simModel, tokens.get(lastTokenIdx), null);
 			if( tokens.get(lastTokenIdx).get( 0 ).equals( this.getName() ) ) {
 				if( tokens.get( lastTokenIdx ).get( 1 ).equals( "Time" ) ) {
 					lastTokenIdx--;
-					getJaamSimModel().setRecordEdits(record);
+					simModel.setRecordEdits(record);
 					return;
 				}
 			}
@@ -109,10 +110,11 @@ public class ScriptEntity extends Entity {
 	 * Read the script
 	 */
 	public void doScript() {
-		boolean record = InputAgent.recordEdits();
-		getJaamSimModel().setRecordEdits(false);
+		JaamSimModel simModel = getJaamSimModel();
+		boolean record = simModel.isRecordEdits();
+		simModel.setRecordEdits(false);
 		for (lastTokenIdx++; lastTokenIdx < tokens.size(); lastTokenIdx++) {
-			InputAgent.processKeywordRecord(this.getJaamSimModel(), tokens.get(lastTokenIdx), null);
+			InputAgent.processKeywordRecord(simModel, tokens.get(lastTokenIdx), null);
 			// If a "Time" record was read, then wait until the time
 			long delayTicks = EventManager.current().secondsToNearestTick(scriptTime.getValue()) - getSimTicks();
 			if (delayTicks > 0) {
@@ -120,6 +122,6 @@ public class ScriptEntity extends Entity {
 				break;
 			}
 		}
-		getJaamSimModel().setRecordEdits(record);
+		simModel.setRecordEdits(record);
 	}
 }
