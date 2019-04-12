@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2011 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -73,7 +74,8 @@ public class StringListInput extends ListInput<ArrayList<String>> {
 			ArrayList<String> newValue = new ArrayList<>( value );
 			for (String val : input) {
 				if (! newValue.contains( val ))
-					InputAgent.logWarning( "Could not remove " + val + " from " + this.getKeyword() );
+					InputAgent.logWarning(thisEnt.getJaamSimModel(),
+							"Could not remove " + val + " from " + this.getKeyword() );
 				newValue.remove( val );
 			}
 			value = newValue;

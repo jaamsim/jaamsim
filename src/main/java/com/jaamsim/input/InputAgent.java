@@ -641,7 +641,7 @@ public class InputAgent {
 			throw new InputErrorException("Not a valid keyword");
 
 		Group grp = (Group)entity;
-		grp.saveGroupKeyword(key);
+		grp.saveGroupKeyword(entity.getJaamSimModel(), key);
 
 		// Store the keyword data for use in the edit table
 		for( int i = 0; i < grp.getList().size(); i++ ) {
@@ -966,7 +966,7 @@ public class InputAgent {
 	 * @param fmt - format string for the warning message
 	 * @param args - objects used by the format string
 	 */
-	public static void logWarning(String fmt, Object... args) {
+	public static void logWarning(JaamSimModel simModel, String fmt, Object... args) {
 		numWarnings++;
 		String msg = String.format(fmt, args);
 		InputAgent.logMessage(wrnPrefix, msg);

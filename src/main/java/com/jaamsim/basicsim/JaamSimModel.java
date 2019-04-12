@@ -1053,7 +1053,7 @@ public class JaamSimModel implements EventTimeListener {
 			logFile = new FileEntity(logURI.getPath());
 		}
 		catch( Exception e ) {
-			InputAgent.logWarning("Could not create log file.%n%s", e.getMessage());
+			InputAgent.logWarning(this, "Could not create log file.%n%s", e.getMessage());
 		}
 	}
 

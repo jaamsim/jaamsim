@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2002-2011 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -103,7 +104,8 @@ public class Group extends Entity {
 				ArrayList<Entity> removedValues = Input.parseEntityList(thisEnt.getJaamSimModel(), subKw, Entity.class, true);
 				for( Entity ent : removedValues ) {
 					if( ! list.contains( ent ) )
-						InputAgent.logWarning( "Could not remove " + ent + " from " + this.getKeyword() );
+						InputAgent.logWarning(thisEnt.getJaamSimModel(),
+								"Could not remove " + ent + " from " + this.getKeyword() );
 					list.remove( ent );
 				}
 			}
@@ -184,7 +186,7 @@ public class Group extends Entity {
 	}
 
 
-	public void saveGroupKeyword(KeywordIndex kw) {
+	public void saveGroupKeyword(JaamSimModel simModel, KeywordIndex kw) {
 		ArrayList<String> toks = new ArrayList<>(kw.numArgs());
 		for (int i = 0; i < kw.numArgs(); i++)
 			toks.add(kw.getArg(i));
@@ -194,7 +196,8 @@ public class Group extends Entity {
 
 		// If there can never be elements in the group, throw a warning
 		if( type == null && list.size() == 0 ) {
-			InputAgent.logWarning("The group %s has no elements to apply keyword: %s", this, kw.keyword);
+			InputAgent.logWarning(simModel,
+					"The group %s has no elements to apply keyword: %s", this, kw.keyword);
 		}
 	}
 

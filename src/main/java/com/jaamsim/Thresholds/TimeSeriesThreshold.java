@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -126,11 +127,13 @@ public class TimeSeriesThreshold extends Threshold {
 					timeSeries.getValue().getUnitType(), this.getUnitType());
 
 		if (timeSeries.getValue().getMinValue() > maxOpenLimit.getValue().getMaxValue())
-			InputAgent.logWarning("Threshold %s is closed forever.  MaxOpenLimit = %f Max TimeSeries Value = %f",
+			InputAgent.logWarning(getJaamSimModel(),
+					"Threshold %s is closed forever.  MaxOpenLimit = %f Max TimeSeries Value = %f",
 					this, maxOpenLimit.getValue().getMaxValue(), timeSeries.getValue().getMaxValue());
 
 		if (timeSeries.getValue().getMaxValue() < minOpenLimit.getValue().getMaxValue())
-			InputAgent.logWarning("Threshold %s is closed forever.  MinOpenLimit = %f Min TimeSeries Value = %f",
+			InputAgent.logWarning(getJaamSimModel(),
+					"Threshold %s is closed forever.  MinOpenLimit = %f Min TimeSeries Value = %f",
 					this, minOpenLimit.getValue().getMaxValue(), timeSeries.getValue().getMinValue());
 	}
 

@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2010-2011 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,6 +38,6 @@ public class DeprecatedInput extends Input<String> {
 		if (fatal)
 			throw new InputErrorException(value);
 
-		InputAgent.logWarning("%s - %s", this.getKeyword(), value);
+		InputAgent.logWarning(thisEnt.getJaamSimModel(), "%s - %s", this.getKeyword(), value);
 	}
 }
