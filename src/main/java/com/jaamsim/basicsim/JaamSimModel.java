@@ -1071,4 +1071,13 @@ public class JaamSimModel implements EventTimeListener {
 		logFile = null;
 	}
 
+	public void logMessage(String msg) {
+		if (logFile == null)
+			return;
+
+		logFile.write(msg);
+		logFile.newLine();
+		logFile.flush();
+	}
+
 }
