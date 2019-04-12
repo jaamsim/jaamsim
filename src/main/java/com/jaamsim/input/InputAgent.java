@@ -504,7 +504,8 @@ public class InputAgent {
 				InputAgent.processKeyword(ent, keyword);
 			}
 			catch (Throwable e) {
-				InputAgent.logInpError("Entity: %s, Keyword: %s - %s", ent.getName(), keyword.keyword, e.getMessage());
+				InputAgent.logInpError(simModel,
+						"Entity: %s, Keyword: %s - %s", ent.getName(), keyword.keyword, e.getMessage());
 				if (e.getMessage() == null) {
 					for (StackTraceElement each : e.getStackTrace())
 						InputAgent.logMessage(each.toString());
@@ -988,7 +989,7 @@ public class InputAgent {
 	 * @param fmt - format string for the error message
 	 * @param args - objects used by the format string
 	 */
-	public static void logInpError(String fmt, Object... args) {
+	public static void logInpError(JaamSimModel simModel, String fmt, Object... args) {
 		numErrors++;
 		String msg = String.format(fmt, args);
 		InputAgent.logMessage(inpErrPrefix, msg);
