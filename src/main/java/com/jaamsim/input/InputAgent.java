@@ -908,22 +908,22 @@ public class InputAgent {
 		InputAgent.logError(simModel, "%s", msg);
 	}
 
+	public static void logMessage(String fmt, Object... args) {  //FIXME delete when possible
+		logMessage(null, fmt, args);
+	}
+
 	/**
 	 * Writes an error or warning message to standard error, the Log Viewer, and the Log File.
 	 * @param fmt - format for the message
 	 * @param args - objects to be printed in the message
 	 */
-	public static void logMessage(String fmt, Object... args) {
+	public static void logMessage(JaamSimModel simModel, String fmt, Object... args) {
 		String msg = String.format(fmt, args);
 		LogBox.logLine(msg);
 		System.err.println(msg);
-
-		if (logFile == null)
+		if (simModel == null)  //FIXME delete when possible
 			return;
-
-		logFile.write(msg);
-		logFile.newLine();
-		logFile.flush();
+		simModel.logMessage(msg);
 	}
 
 	/**
