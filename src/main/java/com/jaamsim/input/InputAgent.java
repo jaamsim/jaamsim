@@ -538,22 +538,6 @@ public class InputAgent {
 	// Load the run file
 	public static void loadConfigurationFile(JaamSimModel simModel, File file) throws URISyntaxException {
 
-		String inputTraceFileName = simModel.getRunName() + ".log";
-		// Initializing the tracing for the model
-		URI logURI = null;
-		try {
-			LogBox.logLine( "Creating trace file" );
-
-			URI confURI = file.toURI();
-			logURI = confURI.resolve(new URI(null, inputTraceFileName, null)); // The new URI here effectively escapes the file name
-
-			// Set and open the input trace file name
-			logFile = new FileEntity( logURI.getPath());
-		}
-		catch( Exception e ) {
-			InputAgent.logWarning("Could not create trace file.%n%s", e.getMessage());
-		}
-
 		// Load the input file
 		URI dirURI = file.getParentFile().toURI();
 		InputAgent.readStream(simModel, "", dirURI, file.getName());
@@ -566,19 +550,6 @@ public class InputAgent {
 			catch (Throwable e) {
 				numErrors++;
 				InputAgent.logMessage("Validation Error - %s: %s", each, e.getMessage());
-			}
-		}
-
-		// The session is not considered to be edited after loading a configuration file
-		simModel.setSessionEdited(false);
-
-		// Save and close the input trace file
-		if (logFile != null) {
-			if (InputAgent.numWarnings == 0 && InputAgent.numErrors == 0) {
-				logFile.close();
-				logFile.delete();
-				if (logURI != null)
-					logFile = new FileEntity( logURI.getPath() );
 			}
 		}
 

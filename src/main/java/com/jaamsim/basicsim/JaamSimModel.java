@@ -165,7 +165,19 @@ public class JaamSimModel implements EventTimeListener {
 	 */
 	public void configure(File file) throws URISyntaxException {
 		configFile = file;
+		openLogFile();
 		InputAgent.loadConfigurationFile(this, file);
+
+		// The session is not considered to be edited after loading a configuration file
+		setSessionEdited(false);
+
+		// Save and close the input trace file
+		if (InputAgent.numWarnings() == 0 && InputAgent.numErrors() == 0) {
+			closeLogFile();
+
+			// Open a fresh log file for the simulation run
+			openLogFile();
+		}
 	}
 
 	/**
@@ -1048,6 +1060,7 @@ public class JaamSimModel implements EventTimeListener {
 	public void closeLogFile() {
 		if (logFile == null)
 			return;
+
 		logFile.close();
 
 		// Delete the log file if no errors or warnings were recorded
