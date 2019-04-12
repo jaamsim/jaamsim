@@ -163,7 +163,7 @@ public class InputAgent {
 		}
 	}
 
-	private static int getBraceDepth(ArrayList<String> tokens, int startingBraceDepth, int startingIndex) {
+	private static int getBraceDepth(JaamSimModel simModel, ArrayList<String> tokens, int startingBraceDepth, int startingIndex) {
 		int braceDepth = startingBraceDepth;
 		for (int i = startingIndex; i < tokens.size(); i++) {
 			String token = tokens.get(i);
@@ -175,12 +175,12 @@ public class InputAgent {
 				braceDepth--;
 
 			if (braceDepth < 0) {
-				InputAgent.logBadInput(tokens, "Extra closing braces found");
+				InputAgent.logBadInput(simModel, tokens, "Extra closing braces found");
 				tokens.clear();
 			}
 
 			if (braceDepth > 3) {
-				InputAgent.logBadInput(tokens, "Maximum brace depth (3) exceeded");
+				InputAgent.logBadInput(simModel, tokens, "Maximum brace depth (3) exceeded");
 				tokens.clear();
 			}
 		}
@@ -233,7 +233,8 @@ public class InputAgent {
 		}
 
 		if (url == null) {
-			InputAgent.logError("Unable to resolve path %s%s - %s", root, path.toString(), file);
+			InputAgent.logError(simModel,
+					"Unable to resolve path %s%s - %s", root, path.toString(), file);
 			return false;
 		}
 
@@ -242,7 +243,8 @@ public class InputAgent {
 			InputStream in = url.openStream();
 			buf = new BufferedReader(new InputStreamReader(in));
 		} catch (IOException e) {
-			InputAgent.logError("Could not read from url: '%s'%n%s", url.toString(), e.getMessage());
+			InputAgent.logError(simModel,
+					"Could not read from url: '%s'%n%s", url.toString(), e.getMessage());
 			return false;
 		}
 
@@ -266,7 +268,7 @@ public class InputAgent {
 
 				int previousRecordSize = record.size();
 				Parser.tokenize(record, line, true);
-				braceDepth = InputAgent.getBraceDepth(record, braceDepth, previousRecordSize);
+				braceDepth = InputAgent.getBraceDepth(simModel, record, braceDepth, previousRecordSize);
 				if( braceDepth != 0 )
 					continue;
 
@@ -306,7 +308,7 @@ public class InputAgent {
 
 			// Leftover Input at end of file
 			if (record.size() > 0)
-				InputAgent.logBadInput(record, "Leftover input at end of file");
+				InputAgent.logBadInput(simModel, record, "Leftover input at end of file");
 			buf.close();
 		}
 		catch (IOException e) {
@@ -317,7 +319,8 @@ public class InputAgent {
 
 	private static void processIncludeRecord(JaamSimModel simModel, ParseContext pc, ArrayList<String> record) throws URISyntaxException {
 		if (record.size() != 2) {
-			InputAgent.logError("Bad Include record, should be: Include <File>");
+			InputAgent.logError(simModel,
+					"Bad Include record, should be: Include <File>");
 			return;
 		}
 		InputAgent.readStream(simModel, pc.jail, pc.context, record.get(1).replaceAll("\\\\", "/"));
@@ -327,7 +330,8 @@ public class InputAgent {
 		if (record.size() < 5 ||
 		    !record.get(2).equals("{") ||
 		    !record.get(record.size() - 1).equals("}")) {
-			InputAgent.logError("Bad Define record, should be: Define <Type> { <names>... }");
+			InputAgent.logError(simModel,
+					"Bad Define record, should be: Define <Type> { <names>... }");
 			return;
 		}
 
@@ -341,7 +345,8 @@ public class InputAgent {
 			}
 		}
 		catch (InputErrorException e) {
-			InputAgent.logError("%s", e.getMessage());
+			InputAgent.logError(simModel,
+					"%s", e.getMessage());
 			return;
 		}
 
@@ -360,13 +365,15 @@ public class InputAgent {
 			throw new ErrorException("Must provide a name for generated Entities");
 
 		if (!isValidName(key)) {
-			InputAgent.logError("Entity names cannot contain spaces, tabs, { or }: %s", key);
+			InputAgent.logError(simModel,
+					"Entity names cannot contain spaces, tabs, { or }: %s", key);
 			return null;
 		}
 
 		T ent = simModel.createInstance(proto);
 		if (ent == null) {
-			InputAgent.logError("Could not create new Entity: %s", key);
+			InputAgent.logError(simModel,
+					"Could not create new Entity: %s", key);
 			return null;
 		}
 
@@ -430,19 +437,22 @@ public class InputAgent {
 	private static <T extends Entity> T defineEntity(JaamSimModel simModel, Class<T> proto, String key, boolean addedEntity) {
 		Entity existingEnt = Input.tryParseEntity(simModel, key, Entity.class);
 		if (existingEnt != null) {
-			InputAgent.logError(INP_ERR_DEFINEUSED, key, existingEnt.getClass().getSimpleName());
+			InputAgent.logError(simModel,
+					INP_ERR_DEFINEUSED, key, existingEnt.getClass().getSimpleName());
 			return null;
 		}
 
 		if (!isValidName(key)) {
-			InputAgent.logError("Entity names cannot contain spaces, tabs, { or }: %s", key);
+			InputAgent.logError(simModel,
+					"Entity names cannot contain spaces, tabs, { or }: %s", key);
 			return null;
 		}
 
 		T ent = simModel.createInstance(proto);
 
 		if (ent == null) {
-			InputAgent.logError("Could not create new Entity: %s", key);
+			InputAgent.logError(simModel,
+					"Could not create new Entity: %s", key);
 			return null;
 		}
 
@@ -482,7 +492,8 @@ public class InputAgent {
 	public static void processKeywordRecord(JaamSimModel simModel, ArrayList<String> record, ParseContext context) {
 		Entity ent = Input.tryParseEntity(simModel, record.get(0), Entity.class);
 		if (ent == null) {
-			InputAgent.logError("Could not find Entity: %s", record.get(0));
+			InputAgent.logError(simModel,
+					"Could not find Entity: %s", record.get(0));
 			return;
 		}
 
@@ -586,7 +597,8 @@ public class InputAgent {
 	public static final void apply(Entity ent, KeywordIndex kw) {
 		Input<?> in = ent.getInput(kw.keyword);
 		if (in == null) {
-			InputAgent.logError("Keyword %s could not be found for Entity %s.", kw.keyword, ent.getName());
+			InputAgent.logError(ent.getJaamSimModel(),
+					"Keyword %s could not be found for Entity %s.", kw.keyword, ent.getName());
 			return;
 		}
 
@@ -890,9 +902,9 @@ public class InputAgent {
 		logFile.flush();
 	}
 
-	private static void logBadInput(ArrayList<String> tokens, String msg) {
+	private static void logBadInput(JaamSimModel simModel, ArrayList<String> tokens, String msg) {
 		InputAgent.echoInputRecord(tokens);
-		InputAgent.logError("%s", msg);
+		InputAgent.logError(simModel, "%s", msg);
 	}
 
 	/**
@@ -965,7 +977,7 @@ public class InputAgent {
 	 * @param fmt - format string for the error message
 	 * @param args - objects used by the format string
 	 */
-	public static void logError(String fmt, Object... args) {
+	public static void logError(JaamSimModel simModel, String fmt, Object... args) {
 		numErrors++;
 		String msg = String.format(fmt, args);
 		InputAgent.logMessage(errPrefix, msg);
