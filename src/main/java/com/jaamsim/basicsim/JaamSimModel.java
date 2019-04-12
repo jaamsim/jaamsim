@@ -71,6 +71,8 @@ public class JaamSimModel implements EventTimeListener {
 	private boolean recordEditsFound;  // TRUE if the "RecordEdits" marker is found in the configuration file
 	private boolean recordEdits;       // TRUE if input changes are to be marked as edited
 
+	private FileEntity logFile;
+
 	private final ArrayList<ObjectType> objectTypes = new ArrayList<>();
 	private final HashMap<Class<? extends Entity>, ObjectType> objectTypeMap = new HashMap<>();
 
@@ -1023,6 +1025,10 @@ public class JaamSimModel implements EventTimeListener {
 	 */
 	public boolean isRecordEdits() {
 		return recordEdits;
+	}
+
+	public FileEntity getLogFile() {
+		return logFile;
 	}
 
 }
