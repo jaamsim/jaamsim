@@ -68,9 +68,6 @@ public class InputAgent {
 
 	private static long lastTickForTrace;
 
-	private static boolean recordEditsFound;  // TRUE if the "RecordEdits" marker is found in the configuration file
-	private static boolean recordEdits;       // TRUE if input changes are to be marked as edited.
-
 	private static final String INP_ERR_DEFINEUSED = "The name: %s has already been used and is a %s";
 	private static final String[] EARLY_KEYWORDS = {"UnitType", "UnitTypeList", "DataFile", "AttributeDefinitionList", "CustomOutputList"};
 	private static final String[] GRAPHICS_PALETTES = {"Graphics Objects", "View", "Display Models"};
@@ -82,7 +79,6 @@ public class InputAgent {
 	private static ArrayList<Command> redoList;
 
 	static {
-		recordEditsFound = false;
 		lastTickForTrace = -1l;
 		undoList = new ArrayList<>();
 		redoList = new ArrayList<>();
@@ -95,7 +91,6 @@ public class InputAgent {
 		logFile = null;
 		numErrors = 0;
 		numWarnings = 0;
-		recordEditsFound = false;
 		lastTickForTrace = -1l;
 		undoList.clear();
 		redoList.clear();
@@ -103,34 +98,6 @@ public class InputAgent {
 
 	public static void setPreDefinedEntityCount(long count) {
 		preDefinedEntityCount = count;
-	}
-
-	/**
-	 * Specifies whether a RecordEdits marker was found in the present configuration file.
-	 *
-	 * @param bool - TRUE if a RecordEdits marker was found.
-	 */
-	public static void setRecordEditsFound(boolean bool) {
-		recordEditsFound = bool;
-	}
-
-	/**
-	 * Sets the "RecordEdits" mode for the InputAgent.
-	 * <p>
-	 * When RecordEdits is TRUE, any model inputs that are changed and any objects that
-	 * are defined are marked as "edited". When FALSE, model inputs and object
-	 * definitions are marked as "unedited".
-	 * <p>
-	 * RecordEdits mode is used to determine the way JaamSim saves a configuration file
-	 * through the graphical user interface. Object definitions and model inputs
-	 * that are marked as unedited will be copied exactly as they appear in the original
-	 * configuration file that was first loaded.  Object definitions and model inputs
-	 * that are marked as edited will be generated automatically by the program.
-	 *
-	 * @param b - boolean value for the RecordEdits mode
-	 */
-	public static void setRecordEdits(boolean b) {
-		recordEdits = b;
 	}
 
 	public static void storeAndExecute(Command cmd) {

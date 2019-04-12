@@ -987,7 +987,6 @@ public class JaamSimModel implements EventTimeListener {
 	 * @param bool - TRUE if a RecordEdits marker was found.
 	 */
 	public void setRecordEditsFound(boolean bool) {
-		InputAgent.setRecordEditsFound(bool);
 		recordEditsFound = bool;
 	}
 
@@ -1004,7 +1003,6 @@ public class JaamSimModel implements EventTimeListener {
 	 * @param bool - boolean value for the RecordEdits mode
 	 */
 	public void setRecordEdits(boolean bool) {
-		InputAgent.setRecordEdits(bool);
 		recordEdits = bool;
 	}
 
