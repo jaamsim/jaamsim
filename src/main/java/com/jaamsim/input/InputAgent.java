@@ -508,7 +508,7 @@ public class InputAgent {
 						"Entity: %s, Keyword: %s - %s", ent.getName(), keyword.keyword, e.getMessage());
 				if (e.getMessage() == null) {
 					for (StackTraceElement each : e.getStackTrace())
-						InputAgent.logMessage(each.toString());
+						InputAgent.logMessage(simModel, each.toString());
 				}
 			}
 		}
@@ -561,7 +561,8 @@ public class InputAgent {
 			}
 			catch (Throwable e) {
 				numErrors++;
-				InputAgent.logMessage("Validation Error - %s: %s", each, e.getMessage());
+				InputAgent.logMessage(simModel,
+						"Validation Error - %s: %s", each, e.getMessage());
 			}
 		}
 
@@ -970,7 +971,7 @@ public class InputAgent {
 	public static void logWarning(JaamSimModel simModel, String fmt, Object... args) {
 		numWarnings++;
 		String msg = String.format(fmt, args);
-		InputAgent.logMessage(wrnPrefix, msg);
+		InputAgent.logMessage(simModel, wrnPrefix, msg);
 	}
 
 	/**
@@ -981,7 +982,7 @@ public class InputAgent {
 	public static void logError(JaamSimModel simModel, String fmt, Object... args) {
 		numErrors++;
 		String msg = String.format(fmt, args);
-		InputAgent.logMessage(errPrefix, msg);
+		InputAgent.logMessage(simModel, errPrefix, msg);
 	}
 
 	/**
@@ -992,7 +993,7 @@ public class InputAgent {
 	public static void logInpError(JaamSimModel simModel, String fmt, Object... args) {
 		numErrors++;
 		String msg = String.format(fmt, args);
-		InputAgent.logMessage(inpErrPrefix, msg);
+		InputAgent.logMessage(simModel, inpErrPrefix, msg);
 	}
 
 	/**

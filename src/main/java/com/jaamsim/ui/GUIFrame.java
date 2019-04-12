@@ -3427,7 +3427,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 
 	@Override
 	public void handleInputError(Throwable t, Entity ent) {
-		InputAgent.logMessage("Validation Error - %s: %s", ent.getName(), t.getMessage());
+		InputAgent.logMessage(sim, "Validation Error - %s: %s", ent.getName(), t.getMessage());
 		GUIFrame.showErrorDialog("Input Error",
 				"JaamSim has detected the following input error during validation:",
 				String.format("%s: %-70s", ent.getName(), t.getMessage()),
@@ -3440,22 +3440,22 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 	public void handleError(EventManager evt, Throwable t, long currentTick) {
 		if (t instanceof OutOfMemoryError) {
 			OutOfMemoryError e = (OutOfMemoryError)t;
-			InputAgent.logMessage("Out of Memory use the -Xmx flag during execution for more memory");
-			InputAgent.logMessage("Further debug information:");
-			InputAgent.logMessage("%s", e.getMessage());
+			InputAgent.logMessage(sim, "Out of Memory use the -Xmx flag during execution for more memory");
+			InputAgent.logMessage(sim, "Further debug information:");
+			InputAgent.logMessage(sim, "%s", e.getMessage());
 			InputAgent.logStackTrace(t);
 			GUIFrame.shutdown(1);
 			return;
 		}
 		else {
 			double curSec = evt.ticksToSeconds(currentTick);
-			InputAgent.logMessage("EXCEPTION AT TIME: %f s", curSec);
-			InputAgent.logMessage("%s", t.getMessage());
+			InputAgent.logMessage(sim, "EXCEPTION AT TIME: %f s", curSec);
+			InputAgent.logMessage(sim, "%s", t.getMessage());
 			if (t.getCause() != null) {
-				InputAgent.logMessage("Call Stack of original exception:");
+				InputAgent.logMessage(sim, "Call Stack of original exception:");
 				InputAgent.logStackTrace(t.getCause());
 			}
-			InputAgent.logMessage("Thrown exception call stack:");
+			InputAgent.logMessage(sim, "Thrown exception call stack:");
 			InputAgent.logStackTrace(t);
 		}
 
@@ -3568,7 +3568,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 
 	static void handleConfigError(Throwable t, File file) {
 		if (t instanceof InputErrorException) {
-			InputAgent.logMessage("Input Error: %s", t.getMessage());
+			InputAgent.logMessage(sim, "Input Error: %s", t.getMessage());
 			GUIFrame.showErrorOptionDialog("Input Error",
 			                         "Input errors were detected while loading file: '%s'\n\n%s\n\n" +
 			                         "Open '%s' with Log Viewer?",
@@ -3576,7 +3576,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 			return;
 		}
 
-		InputAgent.logMessage("Fatal Error while loading file '%s': %s\n", file.getName(), t.getMessage());
+		InputAgent.logMessage(sim, "Fatal Error while loading file '%s': %s\n", file.getName(), t.getMessage());
 		GUIFrame.showErrorDialog("Fatal Error",
 				String.format("A fatal error has occured while loading the file '%s':", file.getName()),
 				t.getMessage(),
