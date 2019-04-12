@@ -19,6 +19,7 @@ package com.jaamsim.basicsim;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -1029,6 +1030,32 @@ public class JaamSimModel implements EventTimeListener {
 
 	public FileEntity getLogFile() {
 		return logFile;
+	}
+
+	public void openLogFile() {
+		String logFileName = getRunName() + ".log";
+		URI logURI = null;
+		try {
+			URI confURI = configFile.toURI();
+			logURI = confURI.resolve(new URI(null, logFileName, null)); // The new URI here effectively escapes the file name
+			logFile = new FileEntity(logURI.getPath());
+		}
+		catch( Exception e ) {
+			InputAgent.logWarning("Could not create log file.%n%s", e.getMessage());
+		}
+	}
+
+	public void closeLogFile() {
+		if (logFile == null)
+			return;
+		logFile.close();
+
+		// Delete the log file if no errors or warnings were recorded
+		if (InputAgent.numErrors() == 0 && InputAgent.numWarnings() == 0) {
+			logFile.delete();
+		}
+
+		logFile = null;
 	}
 
 }
