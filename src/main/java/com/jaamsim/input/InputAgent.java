@@ -859,19 +859,6 @@ public class InputAgent {
 
 	}
 
-	public static void closeLogFile() {
-		if (logFile == null)
-			return;
-
-		logFile.flush();
-		logFile.close();
-
-		if (numErrors ==0 && numWarnings == 0) {
-			logFile.delete();
-		}
-		logFile = null;
-	}
-
 	private static final String errPrefix = "*** ERROR *** %s%n";
 	private static final String inpErrPrefix = "*** INPUT ERROR *** %s%n";
 	private static final String wrnPrefix = "***WARNING*** %s%n";

@@ -398,7 +398,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 			if (!confirmed)
 				return;
 		}
-		InputAgent.closeLogFile();
+		sim.closeLogFile();
 		GUIFrame.shutdown(0);
 	}
 

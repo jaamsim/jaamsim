@@ -130,7 +130,7 @@ public class JaamSimModel implements EventTimeListener {
 		}
 
 		// close warning/error trace file
-		InputAgent.closeLogFile();
+		closeLogFile();
 
 		// Reset the run number and run indices
 		runNumber = 1;
@@ -432,7 +432,7 @@ public class JaamSimModel implements EventTimeListener {
 
 		// Close warning/error trace file
 		LogBox.logLine("Made it to do end at");
-		InputAgent.closeLogFile();
+		closeLogFile();
 
 		// Always terminate the run when in batch mode
 		if (isBatchRun() || getSimulation().getExitAtStop())
