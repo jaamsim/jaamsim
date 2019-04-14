@@ -67,83 +67,12 @@ public class InputAgent {
 	private static final String[] GRAPHICS_PALETTES = {"Graphics Objects", "View", "Display Models"};
 	private static final String[] GRAPHICS_CATEGORIES = {Entity.GRAPHICS, Entity.FONT, Entity.FORMAT, Entity.GUI};
 
-	private static ArrayList<Command> undoList;
-	private static ArrayList<Command> redoList;
-
-	static {
-		undoList = new ArrayList<>();
-		redoList = new ArrayList<>();
-	}
-
-	/**
-	 * Clears the InputAgent prior to loading a new model.
-	 */
-	public static void clear() {
-		undoList.clear();
-		redoList.clear();
-	}
-
 	public static void storeAndExecute(Command cmd) {
-		Command mergedCmd = null;
-		if (!undoList.isEmpty()) {
-			Command lastCmd = undoList.get(undoList.size() - 1);
-			mergedCmd = lastCmd.tryMerge(cmd);
-		}
-		if (mergedCmd != null) {
-			undoList.set(undoList.size() - 1, mergedCmd);
-		}
-		else {
-			undoList.add(cmd);
-		}
-		cmd.execute();
-		redoList.clear();
-		GUIFrame.getInstance().updateForUndo();
-	}
-
-	public static void undo() {
-		if (undoList.isEmpty())
+		if (GUIFrame.getInstance() == null) {
+			cmd.execute();
 			return;
-		Command cmd = undoList.remove(undoList.size() - 1);
-		redoList.add(cmd);
-		cmd.undo();
-		GUIFrame.getInstance().updateForUndo();
-	}
-
-	public static void redo() {
-		if (redoList.isEmpty())
-			return;
-		Command cmd = redoList.remove(redoList.size() - 1);
-		undoList.add(cmd);
-		cmd.execute();
-		GUIFrame.getInstance().updateForUndo();
-	}
-
-	public static boolean hasUndo() {
-		return !undoList.isEmpty();
-	}
-
-	public static boolean hasRedo() {
-		return !redoList.isEmpty();
-	}
-
-	public static ArrayList<Command> getUndoList() {
-		return undoList;
-	}
-
-	public static ArrayList<Command> getRedoList() {
-		return redoList;
-	}
-
-	public static void undo(int n) {
-		for (int i = 0; i < n; i++) {
-			InputAgent.undo();
 		}
-	}
-
-	public static void redo(int n) {
-		for (int i = 0; i < n; i++) {
-			InputAgent.redo();
-		}
+		GUIFrame.getInstance().storeAndExecute(cmd);
 	}
 
 	private static int getBraceDepth(JaamSimModel simModel, ArrayList<String> tokens, int startingBraceDepth, int startingIndex) {

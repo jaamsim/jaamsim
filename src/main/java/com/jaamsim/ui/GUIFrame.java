@@ -159,6 +159,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 	private JButton redo;
 	private JButton undoDropdown;
 	private JButton redoDropdown;
+	private final ArrayList<Command> undoList = new ArrayList<>();
+	private final ArrayList<Command> redoList = new ArrayList<>();
 
 	private JToggleButton showLinks;
 	private JToggleButton createLinks;
@@ -423,10 +425,11 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		locatorPos.setText( "-" );
 
 		// Read the autoload configuration file
-		InputAgent.clear();
 		sim.autoLoad();
 		sim.getSimulation().setWindowDefaults();
 
+		undoList.clear();
+		redoList.clear();
 		updateForUndo();
 	}
 
@@ -937,12 +940,12 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		undo.setFocusPainted(false);
 		undo.setRequestFocusEnabled(false);
 		undo.setToolTipText(formatToolTip("Undo", "Reverses the last change to the model."));
-		undo.setEnabled(InputAgent.hasUndo());
+		undo.setEnabled(!undoList.isEmpty());
 		undo.addActionListener( new ActionListener() {
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				InputAgent.undo();
+				undo();
 			}
 		} );
 		buttonBar.add( undo );
@@ -953,22 +956,21 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		undoDropdown.setMargin(margin);
 		undoDropdown.setFocusPainted(false);
 		undoDropdown.setRequestFocusEnabled(false);
-		undoDropdown.setEnabled(InputAgent.hasUndo());
+		undoDropdown.setEnabled(!undoList.isEmpty());
 		undoDropdown.addActionListener( new ActionListener() {
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
 				ScrollablePopupMenu menu = new ScrollablePopupMenu("UndoMenu");
-				ArrayList<Command> list = InputAgent.getUndoList();
-				for (int i = 1; i <= list.size(); i++) {
-					Command cmd = list.get(list.size() - i);
+				for (int i = 1; i <= undoList.size(); i++) {
+					Command cmd = undoList.get(undoList.size() - i);
 					final int num = i;
 					JMenuItem item = new JMenuItem(cmd.toString());
 					item.addActionListener( new ActionListener() {
 
 						@Override
 						public void actionPerformed( ActionEvent event ) {
-							InputAgent.undo(num);
+							undo(num);
 						}
 					} );
 					menu.add(item);
@@ -985,12 +987,12 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		redo.setFocusPainted(false);
 		redo.setRequestFocusEnabled(false);
 		redo.setToolTipText(formatToolTip("Redo", "Re-performs the last change to the model that was undone."));
-		redo.setEnabled(InputAgent.hasRedo());
+		redo.setEnabled(!redoList.isEmpty());
 		redo.addActionListener( new ActionListener() {
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				InputAgent.redo();
+				redo();
 			}
 		} );
 		buttonBar.add( redo );
@@ -1001,22 +1003,21 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		redoDropdown.setMargin(margin);
 		redoDropdown.setFocusPainted(false);
 		redoDropdown.setRequestFocusEnabled(false);
-		redoDropdown.setEnabled(InputAgent.hasRedo());
+		redoDropdown.setEnabled(!redoList.isEmpty());
 		redoDropdown.addActionListener( new ActionListener() {
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
 				ScrollablePopupMenu menu = new ScrollablePopupMenu("RedoMenu");
-				ArrayList<Command> list = InputAgent.getRedoList();
-				for (int i = 1; i <= list.size(); i++) {
-					Command cmd = list.get(list.size() - i);
+				for (int i = 1; i <= redoList.size(); i++) {
+					Command cmd = redoList.get(redoList.size() - i);
 					final int num = i;
 					JMenuItem item = new JMenuItem(cmd.toString());
 					item.addActionListener( new ActionListener() {
 
 						@Override
 						public void actionPerformed( ActionEvent event ) {
-							InputAgent.redo(num);
+							redo(num);
 						}
 					} );
 					menu.add(item);
@@ -2884,11 +2885,58 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		}
 	}
 
+	public void storeAndExecute(Command cmd) {
+		Command mergedCmd = null;
+		if (!undoList.isEmpty()) {
+			Command lastCmd = undoList.get(undoList.size() - 1);
+			mergedCmd = lastCmd.tryMerge(cmd);
+		}
+		if (mergedCmd != null) {
+			undoList.set(undoList.size() - 1, mergedCmd);
+		}
+		else {
+			undoList.add(cmd);
+		}
+		cmd.execute();
+		redoList.clear();
+		updateForUndo();
+	}
+
+	public void undo() {
+		if (undoList.isEmpty())
+			return;
+		Command cmd = undoList.remove(undoList.size() - 1);
+		redoList.add(cmd);
+		cmd.undo();
+		updateForUndo();
+	}
+
+	public void redo() {
+		if (redoList.isEmpty())
+			return;
+		Command cmd = redoList.remove(redoList.size() - 1);
+		undoList.add(cmd);
+		cmd.execute();
+		updateForUndo();
+	}
+
+	public void undo(int n) {
+		for (int i = 0; i < n; i++) {
+			undo();
+		}
+	}
+
+	public void redo(int n) {
+		for (int i = 0; i < n; i++) {
+			redo();
+		}
+	}
+
 	public void updateForUndo() {
-		undo.setEnabled(InputAgent.hasUndo());
-		undoDropdown.setEnabled(InputAgent.hasUndo());
-		redo.setEnabled(InputAgent.hasRedo());
-		redoDropdown.setEnabled(InputAgent.hasRedo());
+		undo.setEnabled(!undoList.isEmpty());
+		undoDropdown.setEnabled(!undoList.isEmpty());
+		redo.setEnabled(!redoList.isEmpty());
+		redoDropdown.setEnabled(!redoList.isEmpty());
 		GUIFrame.updateUI();
 	}
 

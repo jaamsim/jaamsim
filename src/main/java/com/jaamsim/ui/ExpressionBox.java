@@ -290,7 +290,7 @@ public class ExpressionBox extends JDialog {
 	}
 
 	private void undoEdits() {
-		InputAgent.undo();
+		GUIFrame.getInstance().undo();
 	}
 
 	public int showDialog() {
