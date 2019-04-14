@@ -62,9 +62,6 @@ import com.jaamsim.units.Unit;
 public class InputAgent {
 	private static final String recordEditsMarker = "RecordEdits";
 
-	private static int numErrors = 0;
-	private static int numWarnings = 0;
-
 	private static long lastTickForTrace;
 
 	private static final String INP_ERR_DEFINEUSED = "The name: %s has already been used and is a %s";
@@ -87,8 +84,6 @@ public class InputAgent {
 	 * Clears the InputAgent prior to loading a new model.
 	 */
 	public static void clear() {
-		numErrors = 0;
-		numWarnings = 0;
 		lastTickForTrace = -1l;
 		undoList.clear();
 		redoList.clear();
@@ -875,14 +870,6 @@ public class InputAgent {
 	private static final String errPrefix = "*** ERROR *** %s%n";
 	private static final String inpErrPrefix = "*** INPUT ERROR *** %s%n";
 	private static final String wrnPrefix = "***WARNING*** %s%n";
-
-	public static int numErrors() {
-		return numErrors;
-	}
-
-	public static int numWarnings() {
-		return numWarnings;
-	}
 
 	private static void echoInputRecord(JaamSimModel simModel, ArrayList<String> tokens) {
 		FileEntity logFile = simModel.getLogFile();
