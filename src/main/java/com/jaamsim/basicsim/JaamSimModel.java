@@ -73,6 +73,8 @@ public class JaamSimModel implements EventTimeListener {
 	private boolean recordEdits;       // TRUE if input changes are to be marked as edited
 
 	private FileEntity logFile;
+	private int numErrors = 0;
+	private int numWarnings = 0;
 
 	private final ArrayList<ObjectType> objectTypes = new ArrayList<>();
 	private final HashMap<Class<? extends Entity>, ObjectType> objectTypeMap = new HashMap<>();
@@ -147,6 +149,8 @@ public class JaamSimModel implements EventTimeListener {
 		}
 		setSessionEdited(false);
 		recordEditsFound = false;
+		numErrors = 0;
+		numWarnings = 0;
 	}
 
 	/**
@@ -1078,6 +1082,22 @@ public class JaamSimModel implements EventTimeListener {
 		logFile.write(msg);
 		logFile.newLine();
 		logFile.flush();
+	}
+
+	public void recordError() {
+		numErrors++;
+	}
+
+	public int getNumErrors() {
+		return numErrors;
+	}
+
+	public void recordWarning() {
+		numWarnings++;
+	}
+
+	public int getNumWarnings() {
+		return numWarnings;
 	}
 
 }
