@@ -176,7 +176,7 @@ public class JaamSimModel implements EventTimeListener {
 		setSessionEdited(false);
 
 		// Save and close the input trace file
-		if (InputAgent.numWarnings() == 0 && InputAgent.numErrors() == 0) {
+		if (numWarnings == 0 && numErrors == 0) {
 			closeLogFile();
 
 			// Open a fresh log file for the simulation run
@@ -1068,7 +1068,7 @@ public class JaamSimModel implements EventTimeListener {
 		logFile.close();
 
 		// Delete the log file if no errors or warnings were recorded
-		if (InputAgent.numErrors() == 0 && InputAgent.numWarnings() == 0) {
+		if (numErrors == 0 && numWarnings == 0) {
 			logFile.delete();
 		}
 

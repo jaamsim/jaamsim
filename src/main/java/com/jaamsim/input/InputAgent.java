@@ -558,15 +558,16 @@ public class InputAgent {
 				each.validate();
 			}
 			catch (Throwable e) {
-				numErrors++;
+				simModel.recordError();
 				InputAgent.logMessage(simModel,
 						"Validation Error - %s: %s", each, e.getMessage());
 			}
 		}
 
 		//  Check for found errors
-		if( InputAgent.numErrors > 0 )
-			throw new InputErrorException("%d input errors and %d warnings found", InputAgent.numErrors, InputAgent.numWarnings);
+		if (simModel.getNumErrors() > 0 )
+			throw new InputErrorException("%d input errors and %d warnings found",
+					simModel.getNumErrors(), simModel.getNumWarnings());
 
 		if (simModel.getSimulation().getPrintInputReport())
 			InputAgent.printInputFileKeywords(simModel);
@@ -972,7 +973,7 @@ public class InputAgent {
 	 * @param args - objects used by the format string
 	 */
 	public static void logWarning(JaamSimModel simModel, String fmt, Object... args) {
-		numWarnings++;
+		simModel.recordWarning();
 		String msg = String.format(fmt, args);
 		InputAgent.logMessage(simModel, wrnPrefix, msg);
 	}
@@ -983,7 +984,7 @@ public class InputAgent {
 	 * @param args - objects used by the format string
 	 */
 	public static void logError(JaamSimModel simModel, String fmt, Object... args) {
-		numErrors++;
+		simModel.recordError();
 		String msg = String.format(fmt, args);
 		InputAgent.logMessage(simModel, errPrefix, msg);
 	}
@@ -994,7 +995,7 @@ public class InputAgent {
 	 * @param args - objects used by the format string
 	 */
 	public static void logInpError(JaamSimModel simModel, String fmt, Object... args) {
-		numErrors++;
+		simModel.recordError();
 		String msg = String.format(fmt, args);
 		InputAgent.logMessage(simModel, inpErrPrefix, msg);
 	}

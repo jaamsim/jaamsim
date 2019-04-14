@@ -3308,7 +3308,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 
 		// Start the model if in batch mode
 		if (batch) {
-			if (InputAgent.numErrors() > 0)
+			if (sim.getNumErrors() > 0)
 				GUIFrame.shutdown(0);
 			sim.start();
 			return;
