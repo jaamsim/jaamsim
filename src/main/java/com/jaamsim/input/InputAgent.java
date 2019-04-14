@@ -64,7 +64,6 @@ public class InputAgent {
 
 	private static int numErrors = 0;
 	private static int numWarnings = 0;
-	private static FileEntity logFile;
 
 	private static long lastTickForTrace;
 
@@ -88,7 +87,6 @@ public class InputAgent {
 	 * Clears the InputAgent prior to loading a new model.
 	 */
 	public static void clear() {
-		logFile = null;
 		numErrors = 0;
 		numWarnings = 0;
 		lastTickForTrace = -1l;
