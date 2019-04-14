@@ -927,13 +927,17 @@ public class InputAgent {
 		simModel.logMessage(msg);
 	}
 
+	public static void logStackTrace(Throwable t) {  //FIXME delete when possible
+		logStackTrace(null, t);
+	}
+
 	/**
 	 * Writes a stack trace to standard error, the Log Viewer, and the Log File.
 	 * @param e - exception to be traced
 	 */
-	public static void logStackTrace(Throwable t) {
+	public static void logStackTrace(JaamSimModel simModel, Throwable t) {
 		for (StackTraceElement each : t.getStackTrace()) {
-			InputAgent.logMessage(each.toString());
+			InputAgent.logMessage(simModel, each.toString());
 		}
 	}
 

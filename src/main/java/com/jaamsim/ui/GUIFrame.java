@@ -3443,7 +3443,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 			InputAgent.logMessage(sim, "Out of Memory use the -Xmx flag during execution for more memory");
 			InputAgent.logMessage(sim, "Further debug information:");
 			InputAgent.logMessage(sim, "%s", e.getMessage());
-			InputAgent.logStackTrace(t);
+			InputAgent.logStackTrace(sim, t);
 			GUIFrame.shutdown(1);
 			return;
 		}
@@ -3453,10 +3453,10 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 			InputAgent.logMessage(sim, "%s", t.getMessage());
 			if (t.getCause() != null) {
 				InputAgent.logMessage(sim, "Call Stack of original exception:");
-				InputAgent.logStackTrace(t.getCause());
+				InputAgent.logStackTrace(sim, t.getCause());
 			}
 			InputAgent.logMessage(sim, "Thrown exception call stack:");
-			InputAgent.logStackTrace(t);
+			InputAgent.logStackTrace(sim, t);
 		}
 
 		GUIFrame.showErrorDialog("Runtime Error",
