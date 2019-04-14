@@ -62,8 +62,6 @@ import com.jaamsim.units.Unit;
 public class InputAgent {
 	private static final String recordEditsMarker = "RecordEdits";
 
-	private static long lastTickForTrace;
-
 	private static final String INP_ERR_DEFINEUSED = "The name: %s has already been used and is a %s";
 	private static final String[] EARLY_KEYWORDS = {"UnitType", "UnitTypeList", "DataFile", "AttributeDefinitionList", "CustomOutputList"};
 	private static final String[] GRAPHICS_PALETTES = {"Graphics Objects", "View", "Display Models"};
@@ -75,7 +73,6 @@ public class InputAgent {
 	private static ArrayList<Command> redoList;
 
 	static {
-		lastTickForTrace = -1l;
 		undoList = new ArrayList<>();
 		redoList = new ArrayList<>();
 	}
@@ -84,7 +81,6 @@ public class InputAgent {
 	 * Clears the InputAgent prior to loading a new model.
 	 */
 	public static void clear() {
-		lastTickForTrace = -1l;
 		undoList.clear();
 		redoList.clear();
 	}
