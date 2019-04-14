@@ -929,15 +929,16 @@ public class InputAgent {
 	}
 
 	public static final void trace(int indent, Entity ent, String fmt, Object... args) {
+		JaamSimModel simModel = ent.getJaamSimModel();
 		// Print a TIME header every time time has advanced
 		long traceTick = EventManager.simTicks();
-		if (lastTickForTrace != traceTick) {
+		if (simModel.getLastTickForTrace() != traceTick) {
 			double unitFactor = Unit.getDisplayedUnitFactor(TimeUnit.class);
 			String unitString = Unit.getDisplayedUnit(TimeUnit.class);
 			System.out.format(" \nTIME = %.6f %s,  TICKS = %d\n",
 					EventManager.current().ticksToSeconds(traceTick) / unitFactor, unitString,
 					traceTick);
-			lastTickForTrace = traceTick;
+			simModel.setLastTickForTrace(traceTick);
 		}
 
 		// Create an indent string to space the lines
