@@ -19,7 +19,6 @@ package com.jaamsim.Commands;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.EntityLabel;
 import com.jaamsim.basicsim.Entity;
-import com.jaamsim.input.InputAgent;
 import com.jaamsim.ui.GUIFrame;
 import com.jaamsim.ui.ObjectSelector;
 
@@ -61,7 +60,7 @@ public class RenameCommand implements Command {
 	public void execute() {
 		rename(entity, newName);
 		if (!entity.testFlag(Entity.FLAG_GENERATED)) {
-			InputAgent.setSessionEdited(true);
+			entity.getJaamSimModel().setSessionEdited(true);
 		}
 	}
 

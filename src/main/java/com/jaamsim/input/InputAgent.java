@@ -524,7 +524,7 @@ public class InputAgent {
 
 		if (addedEntity) {
 			ent.setFlag(Entity.FLAG_ADDED);
-			setSessionEdited(true);
+			ent.getJaamSimModel().setSessionEdited(true);
 		}
 		ent.setFlag(Entity.FLAG_REGISTERED);
 
@@ -646,7 +646,7 @@ public class InputAgent {
 		}
 
 		// The session is not considered to be edited after loading a configuration file
-		setSessionEdited(false);
+		simModel.setSessionEdited(false);
 
 		// Save and close the input trace file
 		if (logFile != null) {
@@ -715,7 +715,7 @@ public class InputAgent {
 			in.setEdited(true);
 			ent.setFlag(Entity.FLAG_EDITED);
 			if (!ent.testFlag(Entity.FLAG_GENERATED) && in.isPromptReqd())
-				setSessionEdited(true);
+				ent.getJaamSimModel().setSessionEdited(true);
 		}
 
 		ent.updateForInput(in);
@@ -1292,7 +1292,7 @@ public class InputAgent {
 		file.flush();
 		file.close();
 
-		setSessionEdited(false);
+		simModel.setSessionEdited(false);
 	}
 
 	public static boolean isEarlyInput(Input<?> in) {
@@ -1845,7 +1845,7 @@ public class InputAgent {
 		InputAgent.setRecordEditsFound(false);
 
 		// Set the model state to unedited
-		setSessionEdited(false);
+		simModel.setSessionEdited(false);
 	}
 
 	private static final DecimalFormat coordFormat = (DecimalFormat)NumberFormat.getNumberInstance(Locale.US);
