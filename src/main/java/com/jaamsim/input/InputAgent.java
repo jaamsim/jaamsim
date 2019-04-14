@@ -67,8 +67,6 @@ public class InputAgent {
 	private static final String[] GRAPHICS_PALETTES = {"Graphics Objects", "View", "Display Models"};
 	private static final String[] GRAPHICS_CATEGORIES = {Entity.GRAPHICS, Entity.FONT, Entity.FORMAT, Entity.GUI};
 
-	private static long preDefinedEntityCount; // Number of Entities after loading autoload.cfg
-
 	private static ArrayList<Command> undoList;
 	private static ArrayList<Command> redoList;
 
@@ -83,10 +81,6 @@ public class InputAgent {
 	public static void clear() {
 		undoList.clear();
 		redoList.clear();
-	}
-
-	public static void setPreDefinedEntityCount(long count) {
-		preDefinedEntityCount = count;
 	}
 
 	public static void storeAndExecute(Command cmd) {
