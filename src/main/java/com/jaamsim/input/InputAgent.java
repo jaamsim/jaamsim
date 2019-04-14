@@ -275,7 +275,7 @@ public class InputAgent {
 				if (record.size() == 0)
 					continue;
 
-				InputAgent.echoInputRecord(record);
+				InputAgent.echoInputRecord(simModel, record);
 
 				if ("DEFINE".equalsIgnoreCase(record.get(0))) {
 					InputAgent.processDefineRecord(simModel, record);
@@ -885,7 +885,8 @@ public class InputAgent {
 		return numWarnings;
 	}
 
-	private static void echoInputRecord(ArrayList<String> tokens) {
+	private static void echoInputRecord(JaamSimModel simModel, ArrayList<String> tokens) {
+		FileEntity logFile = simModel.getLogFile();
 		if (logFile == null)
 			return;
 
@@ -905,7 +906,7 @@ public class InputAgent {
 	}
 
 	private static void logBadInput(JaamSimModel simModel, ArrayList<String> tokens, String msg) {
-		InputAgent.echoInputRecord(tokens);
+		InputAgent.echoInputRecord(simModel, tokens);
 		InputAgent.logError(simModel, "%s", msg);
 	}
 
