@@ -702,7 +702,7 @@ public class InputAgent {
 			// Loop through the instances for this entity class
 			int count = 0;
 			for (Entity ent : simModel.getInstanceIterator(each)) {
-				if (ent.getEntityNumber() <= preDefinedEntityCount)
+				if (simModel.isPreDefinedEntity(ent))
 					continue;
 
 				count++;
@@ -741,7 +741,7 @@ public class InputAgent {
 			// sort the list alphabetically
 			ArrayList<Entity> cloneList = new ArrayList<>();
 			for (Entity ent : simModel.getInstanceIterator(each)) {
-				if (ent.getEntityNumber() <= preDefinedEntityCount) {
+				if (simModel.isPreDefinedEntity(ent)) {
 					if (! (ent instanceof Simulation) ) {
 						continue;
 					}

@@ -163,7 +163,7 @@ public class JaamSimModel implements EventTimeListener {
 	public void autoLoad() {
 		setRecordEdits(false);
 		InputAgent.readResource(this, "<res>/inputs/autoload.cfg");
-		InputAgent.setPreDefinedEntityCount( allInstances.get( allInstances.size() - 1 ).getEntityNumber());
+		preDefinedEntityCount = allInstances.get( allInstances.size() - 1 ).getEntityNumber();
 	}
 
 	/**
