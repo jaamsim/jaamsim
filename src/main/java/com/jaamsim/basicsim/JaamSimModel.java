@@ -76,6 +76,8 @@ public class JaamSimModel implements EventTimeListener {
 	private int numErrors = 0;
 	private int numWarnings = 0;
 
+	private long lastTickForTrace = -1L;
+
 	private final ArrayList<ObjectType> objectTypes = new ArrayList<>();
 	private final HashMap<Class<? extends Entity>, ObjectType> objectTypeMap = new HashMap<>();
 
@@ -151,6 +153,7 @@ public class JaamSimModel implements EventTimeListener {
 		recordEditsFound = false;
 		numErrors = 0;
 		numWarnings = 0;
+		lastTickForTrace = -1L;
 	}
 
 	/**
@@ -1098,6 +1101,14 @@ public class JaamSimModel implements EventTimeListener {
 
 	public int getNumWarnings() {
 		return numWarnings;
+	}
+
+	public void setLastTickForTrace(long tick) {
+		lastTickForTrace = tick;
+	}
+
+	public long getLastTickForTrace() {
+		return lastTickForTrace;
 	}
 
 }
