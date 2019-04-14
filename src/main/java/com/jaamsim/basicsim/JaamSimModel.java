@@ -132,6 +132,10 @@ public class JaamSimModel implements EventTimeListener {
 			reportFile.close();
 			reportFile = null;
 		}
+		if (outStream != null) {
+			outStream.close();
+			outStream = null;
+		}
 	}
 
 	/**
@@ -332,7 +336,10 @@ public class JaamSimModel implements EventTimeListener {
 			reportFile.close();
 			reportFile = null;
 		}
-		InputAgent.stop();
+		if (outStream != null) {
+			outStream.close();
+			outStream = null;
+		}
 	}
 
 	/**

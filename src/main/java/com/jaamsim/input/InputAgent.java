@@ -106,19 +106,8 @@ public class InputAgent {
 		recordEditsFound = false;
 		setSessionEdited(false);
 		lastTickForTrace = -1l;
-		stop();
 		undoList.clear();
 		redoList.clear();
-	}
-
-	/**
-	 * Resets the InputAgent when a run is stopped and reset to zero simulation time.
-	 */
-	public static void stop() {
-		if (outStream != null) {
-			outStream.close();
-			outStream = null;
-		}
 	}
 
 	public static void setPreDefinedEntityCount(long count) {
