@@ -51,6 +51,7 @@ public class JaamSimModel implements EventTimeListener {
 
 	private final EventManager eventManager;
 	private Simulation simulation;
+	private String name;
 	private Thread waitThread = null;
 	private volatile long simTicks;
 	private boolean running;
@@ -86,8 +87,13 @@ public class JaamSimModel implements EventTimeListener {
 	private int nextViewID = 1;
 
 	public JaamSimModel() {
+		this("");
+	}
+
+	public JaamSimModel(String name) {
 		eventManager = new EventManager("DefaultEventManager");
 		simulation = null;
+		this.name = name;
 		simTicks = 0L;
 		running = false;
 		runNumber = 1;
@@ -1114,6 +1120,11 @@ public class JaamSimModel implements EventTimeListener {
 
 	public boolean isPreDefinedEntity(Entity ent) {
 		return ent.getEntityNumber() <= preDefinedEntityCount;
+	}
+
+	@Override
+	public String toString() {
+		return name;
 	}
 
 }
