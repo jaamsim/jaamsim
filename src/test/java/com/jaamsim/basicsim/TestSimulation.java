@@ -20,7 +20,6 @@ import java.net.URL;
 import java.util.ArrayList;
 
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 
 import com.jaamsim.events.TestFrameworkHelpers;
@@ -33,20 +32,11 @@ public class TestSimulation {
 
 	JaamSimModel simModel;
 
-	@Before
-	public void setupTests() {
-		simModel = new JaamSimModel();
-		if (simModel.getSimulation() != null)
-			simModel.clear();
-		simModel.setBatchRun(false);
-
-		// Load the autoload file
-		simModel.setRecordEdits(false);
-		InputAgent.readResource(simModel, "<res>/inputs/autoload.cfg");
-	}
-
 	@Test
 	public void testAllDefineableTypes() {
+		JaamSimModel simModel = new JaamSimModel();
+		simModel.autoLoad();
+
 		// Define an instance of every drag-and-drop type
 		for (ObjectType each: simModel.getClonesOfIterator(ObjectType.class)) {
 			Class<? extends Entity> proto = Input.parseEntityType(simModel, each.getName());
@@ -57,6 +47,9 @@ public class TestSimulation {
 
 	@Test
 	public void testAllEditableInputs() {
+		JaamSimModel simModel = new JaamSimModel();
+		simModel.autoLoad();
+
 		int numErrors = 0;
 		// Define an instance of every drag-and-drop type
 		for (ObjectType each: simModel.getClonesOfIterator(ObjectType.class)) {
@@ -87,6 +80,9 @@ public class TestSimulation {
 
 	@Test
 	public void testSimpleInputFile() {
+		JaamSimModel simModel = new JaamSimModel();
+		simModel.autoLoad();
+
 		URL url = TestSimulation.class.getResource("Test0001.cfg");
 		InputAgent.readResource(simModel, url.toString());
 
@@ -96,6 +92,9 @@ public class TestSimulation {
 
 	@Test
 	public void testAPI() {
+		JaamSimModel simModel = new JaamSimModel();
+		simModel.autoLoad();
+
 		// Definitions
 		simModel.defineEntity("SimEntity", "Proto");
 		simModel.defineEntity("EntityGenerator", "Gen");
