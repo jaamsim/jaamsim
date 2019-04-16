@@ -116,11 +116,13 @@ public class JaamSimModel implements EventTimeListener {
 
 	@Override
 	public void tickUpdate(long tick) {
+		//System.out.format("%s.tickUpdate(%s)%n", this, tick);
 		simTicks = tick;
 	}
 
 	@Override
 	public void timeRunning(long tick, boolean running) {
+		//System.out.format("%s.timeRunning(%s, %s)%n", this, tick, running);
 		this.running = running;
 		if (running)
 			return;
@@ -218,6 +220,7 @@ public class JaamSimModel implements EventTimeListener {
 	 * Starts the simulation model on a new thread.
 	 */
 	public void start() {
+		//System.out.format("%s.start%n", this);
 		validate();
 		prepareReportDirectory();
 		eventManager.clear();
@@ -253,6 +256,7 @@ public class JaamSimModel implements EventTimeListener {
 	 * Starts a single simulation run.
 	 */
 	public void startRun() {
+		//System.out.format("%s.startRun%n", this);
 		initRun();
 		double pauseTime = getSimulation().getPauseTime();
 		eventManager.resume(eventManager.secondsToNearestTick(pauseTime));
@@ -326,6 +330,7 @@ public class JaamSimModel implements EventTimeListener {
 	 * Temporarily stops the simulation model at the present simulation time.
 	 */
 	public void pause() {
+		//System.out.format("%s.pause%n", this);
 		eventManager.pause();
 	}
 
@@ -461,6 +466,8 @@ public class JaamSimModel implements EventTimeListener {
 	 */
 	public void waitForPause(long timeoutMS) {
 		synchronized (this) {
+			//System.out.format("%s.waitForPause(%s)%n", this, timeoutMS);
+
 			waitThread = Thread.currentThread();
 
 			try {
@@ -468,6 +475,7 @@ public class JaamSimModel implements EventTimeListener {
 			}
 			catch (InterruptedException e) {
 				waitThread = null;
+				//System.out.format("%s.waitForPause - finished%n", this);
 				return;
 			}
 			waitThread = null;
