@@ -116,4 +116,56 @@ public class TestSimulation {
 		assert(simModel.getDoubleValue("[Sink].NumberAdded") == 5.0d);
 	}
 
+	@Test
+	public void testSimultaneousRuns() {
+
+		// Model #1
+		JaamSimModel simModel = new JaamSimModel("Model1");
+		simModel.autoLoad();
+
+		simModel.defineEntity("SimEntity", "Proto");
+		simModel.defineEntity("EntityGenerator", "Gen");
+		simModel.defineEntity("EntitySink", "Sink");
+
+		simModel.setInput("Gen", "PrototypeEntity", "Proto");
+		simModel.setInput("Gen", "NextComponent", "Sink");
+		simModel.setInput("Gen", "InterArrivalTime", "2 s");
+		simModel.setInput("Simulation", "RunDuration", "1000 s");
+
+		// Model #2
+		JaamSimModel simModel2 = new JaamSimModel("Model2");
+		simModel2.autoLoad();
+
+		simModel2.defineEntity("SimEntity", "Proto");
+		simModel2.defineEntity("EntityGenerator", "Gen");
+		simModel2.defineEntity("EntitySink", "Sink");
+
+		simModel2.setInput("Gen", "PrototypeEntity", "Proto");
+		simModel2.setInput("Gen", "NextComponent", "Sink");
+		simModel2.setInput("Gen", "InterArrivalTime", "2 s");
+		simModel2.setInput("Simulation", "RunDuration", "1000 s");
+
+		// Start both runs
+		simModel.start();
+		simModel2.start();
+
+		// Wait for both runs to finish
+		if (simModel.isRunning() && simModel.getSimTime() > 0.0d)
+			simModel.waitForPause(1000L);
+
+		//System.out.format("%s.getSimTime=%s%n", simModel2, simModel2.getSimTime());
+		assert(simModel2.getSimTime() > 0.0d);
+		if (simModel2.isRunning())
+			simModel2.waitForPause(1000L);
+
+		// Test the results
+		assert(simModel.getSimTime() == 1000.0d);
+		assert(simModel.getDoubleValue("[Gen].NumberGenerated") == 500.0d);
+		assert(simModel.getDoubleValue("[Sink].NumberAdded") == 500.0d);
+
+		assert(simModel2.getSimTime() == 1000.0d);
+		assert(simModel2.getDoubleValue("[Gen].NumberGenerated") == 500.0d);
+		assert(simModel2.getDoubleValue("[Sink].NumberAdded") == 500.0d);
+	}
+
 }
