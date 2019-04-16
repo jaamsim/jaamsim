@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2017 JaamSim Software Inc.
+ * Copyright (C) 2016-2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,10 +17,13 @@
  */
 package com.jaamsim.ProcessFlow;
 
+import com.jaamsim.BasicObjects.DowntimeEntity;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.input.Keyword;
+import com.jaamsim.input.Output;
+import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
 
 public class EntityGate extends LinkedService {
@@ -30,13 +33,24 @@ public class EntityGate extends LinkedService {
 	         exampleList = {"3.0 h", "ExponentialDistribution1", "'1[s] + 0.5*[TimeSeries1].PresentValue'"})
 	private final SampleInput releaseDelay;
 
+	@Keyword(description = "Maximum number of entites to release each time the gate is opened.",
+	         exampleList = {"3", "[InputValue1].Value"})
+	private final SampleInput numberToRelease;
+
 	private DisplayEntity servedEntity; // the entity about to be released from the queue
+	private int num = 0;  // number released since the gate opened
 
 	{
 		releaseDelay = new SampleInput("ReleaseDelay", KEY_INPUTS, new SampleConstant(0.0));
 		releaseDelay.setUnitType(TimeUnit.class);
 		releaseDelay.setValidRange(0.0, Double.POSITIVE_INFINITY);
 		this.addInput(releaseDelay);
+
+		SampleConstant def = new SampleConstant(Double.POSITIVE_INFINITY);
+		numberToRelease = new SampleInput("NumberToRelease", KEY_INPUTS, def);
+		numberToRelease.setUnitType(DimensionlessUnit.class);
+		numberToRelease.setValidRange(0.0, Double.POSITIVE_INFINITY);
+		this.addInput(numberToRelease);
 	}
 
 	public EntityGate() {}
@@ -45,6 +59,7 @@ public class EntityGate extends LinkedService {
 	public void earlyInit() {
 		super.earlyInit();
 		servedEntity = null;
+		num = 0;
 	}
 
 	@Override
@@ -53,18 +68,23 @@ public class EntityGate extends LinkedService {
 		// If the gate is closed, in maintenance or breakdown, or other entities are already
 		// queued, then add the entity to the queue
 		Queue queue = waitQueue.getValue();
-		if (!queue.isEmpty() || !this.isIdle()) {
+		if (!queue.isEmpty() || !this.isIdle() || num >= getNumberToRelease(getSimTime())) {
 			queue.addEntity(ent);
 			return;
 		}
 
-		// If the gate is open and there are no other entities still in the queue, then send the entity to the next component
+		// If the gate is open and there are no other entities still in the queue,
+		// then send the entity to the next component
+		num++;
 		this.registerEntity(ent);
 		this.sendToNextComponent(ent);
 	}
 
 	@Override
 	protected boolean startProcessing(double simTime) {
+
+		if (num >= getNumberToRelease(simTime))
+			return false;
 
 		// Determine the match value
 		String m = this.getNextMatchValue(getSimTime());
@@ -77,6 +97,7 @@ public class EntityGate extends LinkedService {
 
 		// Select the next entity to release
 		servedEntity = this.getNextEntityForMatch(m);
+		num++;
 
 		return true;
 	}
@@ -96,12 +117,38 @@ public class EntityGate extends LinkedService {
 	protected double getStepDuration(double simTime) {
 		return releaseDelay.getValue().getNextSample(simTime);
 	}
+	@Override
+	public void thresholdChanged() {
+		super.thresholdChanged();
+		if (!isOpen()) {
+			num = 0;
+		}
+	}
+
+	@Override
+	public void startDowntime(DowntimeEntity down) {
+		super.startDowntime(down);
+		num = 0;
+	}
+
+	public int getNumberToRelease(double simTime) {
+		return (int) numberToRelease.getValue().getNextSample(simTime);
+	}
 
 	@Override
 	public void updateGraphics(double simTime) {
 		if (servedEntity == null)
 			return;
 		moveToProcessPosition(servedEntity);
+	}
+
+	@Output(name = "NumberReleased",
+	 description = "Number of entities released during the present opening of the gate. "
+	             + "Zero is returned if the gate is closed.",
+	    unitType = DimensionlessUnit.class,
+	    sequence = 0)
+	public int getNumberReleased(double simTime) {
+		return num;
 	}
 
 }
