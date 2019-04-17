@@ -56,12 +56,7 @@ public abstract class LinkedDevice extends Device implements Linkable, LinkDispl
 	         exampleList = {"Service"})
 	protected final StringProvInput stateAssignment;
 
-	private long numberAdded;     // Number of entities added to this component from upstream after initialisation
-	private long numberProcessed; // Number of entities processed by this component after initialisation
-	private long initialNumberAdded;     // Number of entities added to this component from upstream during initialisation
-	private long initialNumberProcessed; // Number of entities processed by this component during initialisation
-	private DisplayEntity receivedEntity; // Entity most recently received by this component
-	private double releaseTime = Double.NaN;
+	private ProcessorData processor = new ProcessorData();
 
 	{
 		attributeDefinitionList.setHidden(false);
@@ -86,7 +81,7 @@ public abstract class LinkedDevice extends Device implements Linkable, LinkDispl
 		super.updateForInput(in);
 
 		if (in == defaultEntity) {
-			receivedEntity = defaultEntity.getValue();
+			processor.setReceivedEntity(defaultEntity.getValue());
 			return;
 		}
 	}
@@ -106,12 +101,7 @@ public abstract class LinkedDevice extends Device implements Linkable, LinkDispl
 	@Override
 	public void earlyInit() {
 		super.earlyInit();
-		numberAdded = 0;
-		numberProcessed = 0;
-		initialNumberAdded = 0;
-		initialNumberProcessed = 0;
-		receivedEntity = defaultEntity.getValue();
-		releaseTime = Double.NaN;
+		processor.clear();
 	}
 
 	@Override
@@ -125,9 +115,7 @@ public abstract class LinkedDevice extends Device implements Linkable, LinkDispl
 	}
 
 	protected void registerEntity(DisplayEntity ent) {
-
-		receivedEntity = ent;
-		numberAdded++;
+		processor.receiveEntity(ent);
 
 		// Assign a new state to the received entity
 		if (!stateAssignment.isDefault() && ent instanceof StateEntity) {
@@ -137,7 +125,7 @@ public abstract class LinkedDevice extends Device implements Linkable, LinkDispl
 	}
 
 	protected void setReceivedEntity(DisplayEntity ent) {
-		receivedEntity = ent;
+		processor.setReceivedEntity(ent);
 	}
 
 	/**
@@ -145,8 +133,7 @@ public abstract class LinkedDevice extends Device implements Linkable, LinkDispl
 	 * @param ent - the entity to be sent downstream.
 	 */
 	public void sendToNextComponent(DisplayEntity ent) {
-		numberProcessed++;
-		releaseTime = this.getSimTime();
+		processor.releaseEntity(getSimTime());
 		if( nextComponent.getValue() != null )
 			nextComponent.getValue().addEntity(ent);
 	}
@@ -156,7 +143,7 @@ public abstract class LinkedDevice extends Device implements Linkable, LinkDispl
 	 * simulation run, including the initialisation period.
 	 */
 	public long getTotalNumberAdded() {
-		return initialNumberAdded + numberAdded;
+		return processor.getTotalNumberReceived();
 	}
 
 	/**
@@ -164,7 +151,7 @@ public abstract class LinkedDevice extends Device implements Linkable, LinkDispl
 	 * simulation run, including the initialisation period.
 	 */
 	public long getTotalNumberProcessed() {
-		return initialNumberProcessed + numberProcessed;
+		return processor.getTotalNumberProcessed();
 	}
 
 	/**
@@ -173,11 +160,7 @@ public abstract class LinkedDevice extends Device implements Linkable, LinkDispl
 	 * @return
 	 */
 	public long getNumberAdded() {
-		return numberAdded;
-	}
-
-	public void incrementNumberProcessed() {
-		numberProcessed++;
+		return processor.getNumberReceived();
 	}
 
 	/**
@@ -185,16 +168,13 @@ public abstract class LinkedDevice extends Device implements Linkable, LinkDispl
 	 * completed yet.
 	 */
 	public long getNumberInProgress() {
-		return  initialNumberAdded + numberAdded - initialNumberProcessed - numberProcessed;
+		return  processor.getNumberInProgress();
 	}
 
 	@Override
 	public void clearStatistics() {
 		super.clearStatistics();
-		initialNumberAdded = numberAdded;
-		initialNumberProcessed = numberProcessed;
-		numberAdded = 0;
-		numberProcessed = 0;
+		processor.clearStatistics();
 	}
 
 	@Override
@@ -248,7 +228,7 @@ public abstract class LinkedDevice extends Device implements Linkable, LinkDispl
 	 description = "The entity that was received most recently.",
 	    sequence = 0)
 	public DisplayEntity getReceivedEntity(double simTime) {
-		return receivedEntity;
+		return processor.getReceivedEntity();
 	}
 
 	@Output(name = "NumberAdded",
@@ -257,7 +237,7 @@ public abstract class LinkedDevice extends Device implements Linkable, LinkDispl
 	  reportable = true,
 	    sequence = 1)
 	public long getNumberAdded(double simTime) {
-		return numberAdded;
+		return processor.getNumberReceived();
 	}
 
 	@Output(name = "NumberProcessed",
@@ -266,7 +246,7 @@ public abstract class LinkedDevice extends Device implements Linkable, LinkDispl
 	  reportable = true,
 	    sequence = 2)
 	public long getNumberProcessed(double simTime) {
-		return numberProcessed;
+		return processor.getNumberProcessed();
 	}
 
 	@Output(name = "NumberInProgress",
@@ -274,7 +254,7 @@ public abstract class LinkedDevice extends Device implements Linkable, LinkDispl
 	    unitType = DimensionlessUnit.class,
 	    sequence = 3)
 	public long getNumberInProgress(double simTime) {
-		return  this.getNumberInProgress();
+		return  processor.getNumberInProgress();
 	}
 
 	@Output(name = "ProcessingRate",
@@ -285,7 +265,7 @@ public abstract class LinkedDevice extends Device implements Linkable, LinkDispl
 		double dur = simTime - getSimulation().getInitializationTime();
 		if (dur <= 0.0)
 			return 0.0;
-		return numberProcessed/dur;
+		return processor.getNumberProcessed()/dur;
 	}
 
 	@Output(name = "ReleaseTime",
@@ -293,7 +273,7 @@ public abstract class LinkedDevice extends Device implements Linkable, LinkDispl
 	    unitType = TimeUnit.class,
 	    sequence = 5)
 	public double getReleaseTime(double simTime) {
-		return releaseTime;
+		return processor.getReleaseTime();
 	}
 
 }
