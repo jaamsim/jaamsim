@@ -466,30 +466,6 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 		return false;
 	}
 
-	/**
-	 * Return the amount of time in seconds (from the current time) that the next downtime event is due
-	 * @return
-	 */
-	public double getTimeUntilNextEvent() {
-
-		// 1) Calendar time
-		if( iatWorkingEntity.getValue() == null ) {
-			double workingSecs = this.getSimTime();
-			double waitSecs = secondsForNextFailure - workingSecs;
-			return waitSecs;
-		}
-		// 2) Working time
-		else {
-			if (iatWorkingEntity.getValue().isWorking()) {
-				double workingSecs = iatWorkingEntity.getValue().getWorkingTime();
-				double waitSecs = secondsForNextFailure - workingSecs;
-				return waitSecs;
-			}
-		}
-
-		return Double.POSITIVE_INFINITY;
-	}
-
 	@Override
 	public void updateForStateChange(StateEntity ent, StateRecord prev, StateRecord next) {
 		this.checkProcessNetwork();
