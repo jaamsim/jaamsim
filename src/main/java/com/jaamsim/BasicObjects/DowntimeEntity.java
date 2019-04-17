@@ -527,10 +527,31 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 		return endTime;
 	}
 
+	@Output(name = "NextStartTime",
+	 description = "The time at which the next downtime event will begin. "
+	             + "If downtime is based on the working time for an entity, then the next start "
+	             + "time is estimated assuming that it will work continuously until the downtime "
+	             + "event occurs.",
+	    unitType = TimeUnit.class,
+	    sequence = 3)
+	public double getNextStartTime(double simTime) {
+		StateEntity ent = iatWorkingEntity.getValue();
+
+		// 1) Calendar time
+		if (ent == null) {
+			return secondsForNextFailure;
+		}
+
+		// 2) Working time
+		if (isDown())
+			return endTime + (secondsForNextFailure - ent.getWorkingTime(simTime));
+		return simTime + (secondsForNextFailure - ent.getWorkingTime(simTime));
+	}
+
 	@Output(name = "CalculatedDowntimeRatio",
 	 description = "The value calculated directly from model inputs for:\n"
 	             + "(avg. downtime duration)/(avg. downtime interval)",
-	    sequence = 3)
+	    sequence = 4)
 	public double getCalculatedDowntimeRatio(double simTime) {
 		if (downtimeDurationDistribution.getValue() == null
 				|| downtimeIATDistribution.getValue() == null)
@@ -543,7 +564,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 	@Output(name = "Availability",
 	 description = "The fraction of calendar time (excluding the initialisation period) during "
 	             + "which this type of downtime did not occur.",
-	    sequence = 4)
+	    sequence = 5)
 	public double getAvailability(double simTime) {
 		double total = simTime;
 		if (simTime > getSimulation().getInitializationTime())
