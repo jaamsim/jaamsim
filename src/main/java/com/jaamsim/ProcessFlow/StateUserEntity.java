@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2016-2018 JaamSim Software Inc.
+ * Copyright (C) 2016-2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -482,6 +482,42 @@ public abstract class StateUserEntity extends StateEntity implements ThresholdUs
 		double working = getTimeInState_Working(simTime);
 		double breakdown = getTimeInState_Breakdown(simTime);
 		return working / (working + breakdown);
+	}
+
+	@Output(name = "NextMaintenanceTime",
+	 description = "The estimated time at which the next maintenance activity will start.",
+	  reportable = false,
+	    sequence = 9)
+	public double getNextMaintenanceTime(double simTime) {
+		double ret = Double.POSITIVE_INFINITY;
+		for (DowntimeEntity down : immediateMaintenanceList.getValue()) {
+			ret = Math.min(ret, down.getNextStartTime(simTime));
+		}
+		for (DowntimeEntity down : forcedMaintenanceList.getValue()) {
+			ret = Math.min(ret, down.getNextStartTime(simTime));
+		}
+		for (DowntimeEntity down : opportunisticMaintenanceList.getValue()) {
+			ret = Math.min(ret, down.getNextStartTime(simTime));
+		}
+		return ret;
+	}
+
+	@Output(name = "NextBreakdownTime",
+	 description = "The estimated time at which the next breakdown will occur.",
+	  reportable = false,
+	    sequence = 10)
+	public double getNextBreakdownTime(double simTime) {
+		double ret = Double.POSITIVE_INFINITY;
+		for (DowntimeEntity down : immediateBreakdownList.getValue()) {
+			ret = Math.min(ret, down.getNextStartTime(simTime));
+		}
+		for (DowntimeEntity down : forcedBreakdownList.getValue()) {
+			ret = Math.min(ret, down.getNextStartTime(simTime));
+		}
+		for (DowntimeEntity down : opportunisticBreakdownList.getValue()) {
+			ret = Math.min(ret, down.getNextStartTime(simTime));
+		}
+		return ret;
 	}
 
 }

@@ -470,4 +470,29 @@ public class TimeSeriesThreshold extends Threshold {
 			return Double.NaN;
 		return ((TimeSeries)timeSeries.getValue()).getPresentValue(simTime + offset.getValue());
 	}
+
+	@Output(name = "NextOpenTime",
+	 description = "The next time at which the threshold will be open.",
+	    unitType = TimeUnit.class,
+	    sequence = 6)
+	public double getNextOpenTime(double simTime) {
+		if (timeSeries.getValue() == null)
+			return Double.NaN;
+		long simTicks = EventManager.secsToNearestTick(simTime);
+		long ticks = simTicks + calcClosedTicksFromTicks(simTicks);
+		return EventManager.ticksToSecs(ticks);
+	}
+
+	@Output(name = "NextCloseTime",
+	 description = "The next time at which the threshold will be closed.",
+	    unitType = TimeUnit.class,
+	    sequence = 7)
+	public double getNextCloseTime(double simTime) {
+		if (timeSeries.getValue() == null)
+			return Double.NaN;
+		long simTicks = EventManager.secsToNearestTick(simTime);
+		long ticks = simTicks + calcOpenTicksFromTicks(simTicks);
+		return EventManager.ticksToSecs(ticks);
+	}
+
 }
