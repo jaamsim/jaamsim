@@ -3270,7 +3270,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 
 		// create a graphic simulation
 		LogBox.logLine("Loading Simulation Environment ... ");
-		sim = new JaamSimModel();
+		sim = new JaamSimModel("GUI_Model");
 
 		GUIFrame gui = null;
 		if (!headless) {
