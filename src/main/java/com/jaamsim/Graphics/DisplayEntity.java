@@ -619,6 +619,19 @@ public class DisplayEntity extends Entity {
 		return temp;
 	}
 
+	public Vec3d getGlobalPositionForPosition(Vec3d pos) {
+		Vec3d temp = new Vec3d(pos);
+		synchronized (position) {
+			Vec3d scaledAlign = new Vec3d(align);
+			scaledAlign.mul3(size);
+			temp.sub3(scaledAlign);
+			calculateEulerRotation(temp, orient);
+			temp.add3(this.getGlobalPosition());
+		}
+
+		return temp;
+	}
+
 	/**
 	 * Returns the transformation that converts a point in the entity's
 	 * coordinates to the global coordinate system.
