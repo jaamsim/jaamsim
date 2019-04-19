@@ -101,6 +101,10 @@ public class Queue extends LinkedComponent {
 			exampleList = {"4"})
 	protected final IntegerInput maxPerLine; // maximum items per sub line-up of queue
 
+	@Keyword(description = "The number of rows in each level of the entity queue.",
+			exampleList = {"4"})
+	protected final IntegerInput maxRows;
+
 	@Keyword(description = "If TRUE, the entities in the Queue are displayed.",
 			exampleList = {"FALSE"})
 	protected final BooleanInput showEntities;
@@ -147,6 +151,10 @@ public class Queue extends LinkedComponent {
 		maxPerLine = new IntegerInput("MaxPerLine", FORMAT, Integer.MAX_VALUE);
 		maxPerLine.setValidRange(1, Integer.MAX_VALUE);
 		this.addInput(maxPerLine);
+
+		maxRows = new IntegerInput("MaxRows", FORMAT, Integer.MAX_VALUE);
+		maxRows.setValidRange(1, Integer.MAX_VALUE);
+		this.addInput(maxRows);
 
 		showEntities = new BooleanInput("ShowEntities", FORMAT, true);
 		this.addInput(showEntities);
@@ -553,18 +561,19 @@ public class Queue extends LinkedComponent {
 		Vec3d tmp = new Vec3d();
 
 		double distanceX = 0.5d * qSize.x;
-		double distanceY = 0;
 		double maxWidth = 0;
+		double maxHeight = 0;
 
 		// Copy the storage entries to avoid some concurrent modification exceptions
 		TreeSet<StorageEntry> entries = new TreeSet<>(storage.getEntries());
 
-		// find widest entity
+		// Find the maximum width and height of the entities
 		if (entries.size() >  maxPerLine.getValue()){
 			Iterator<StorageEntry> itr = entries.iterator();
 			while (itr.hasNext()) {
 				QueueEntry entry = (QueueEntry) itr.next();
 				maxWidth = Math.max(maxWidth, entry.entity.getGlobalSize().y);
+				maxHeight = Math.max(maxHeight, entry.entity.getGlobalSize().z);
 			 }
 		}
 
@@ -575,20 +584,30 @@ public class Queue extends LinkedComponent {
 			QueueEntry entry = (QueueEntry) itr.next();
 			DisplayEntity item = entry.entity;
 
-			// if new row is required, set reset distanceX and move distanceY up one row
-			if( i > 0 && i % maxPerLine.getValue() == 0 ){
-				 distanceX = 0.5d * qSize.x;
-				 distanceY += spacing.getValue() + maxWidth;
+			// Calculate the row and level number for the entity
+			int ind = i % maxPerLine.getValue();
+			int row = (i / maxPerLine.getValue()) % maxRows.getValue();
+			int level = (i / maxPerLine.getValue()) / maxRows.getValue();
+
+			// Reset the x-position for the first entity in a row
+			if( i > 0 && ind == 0 ){
+				distanceX = 0.5d * qSize.x;
 			}
+
 			i++;
 
 			// Rotate each transporter about its center so it points to the right direction
 			item.setRelativeOrientation(queueOrientation);
 			item.setShow(visible);
 
+			// Calculate the y- and z- coordinates
+			double distanceY = row * (spacing.getValue() + maxWidth);
+			double distanceZ = level * (spacing.getValue() + maxHeight);
+
+			// Calculate the x-coordinate
 			double length = entry.entity.getGlobalSize().x;
 			distanceX += 0.5d * length;
-			tmp.set3(-distanceX, distanceY, 0.0d);
+			tmp.set3(-distanceX, distanceY, distanceZ);
 
 			// increment total distance
 			distanceX += 0.5d * length + spacing.getValue();
