@@ -588,13 +588,13 @@ public class Queue extends LinkedComponent {
 
 			double length = entry.entity.getGlobalSize().x;
 			distanceX += 0.5d * length;
-			tmp.set3(-distanceX / qSize.x, distanceY/qSize.y, 0.0d);
+			tmp.set3(-distanceX, distanceY, 0.0d);
 
 			// increment total distance
 			distanceX += 0.5d * length + spacing.getValue();
 
 			// Set Position
-			Vec3d itemCenter = this.getGlobalPositionForAlignment(tmp);
+			Vec3d itemCenter = this.getGlobalPositionForPosition(tmp);
 			item.setGlobalPositionForAlignment(item.getAlignment(), itemCenter);
 		}
 	}
