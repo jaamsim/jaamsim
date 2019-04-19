@@ -244,8 +244,8 @@ public class EntityContainer extends SimEntity implements EntContainer {
 			// Set Position
 			Vec3d itemSize = item.getGlobalSize();
 			distanceX += 0.5*itemSize.x;
-			tmp.set3(distanceX/size.x, distanceY/size.y, 0.0d);
-			Vec3d itemCenter = this.getGlobalPositionForAlignment(tmp);
+			tmp.set3(distanceX, distanceY, 0.0d);
+			Vec3d itemCenter = this.getGlobalPositionForPosition(tmp);
 			itemCenter.add3(positionOffset.getValue());
 			item.setGlobalPositionForAlignment(new Vec3d(), itemCenter);
 
