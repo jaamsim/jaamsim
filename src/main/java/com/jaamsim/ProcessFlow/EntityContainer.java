@@ -83,6 +83,10 @@ public class EntityContainer extends SimEntity implements EntContainer {
 			exampleList = {"4"})
 	protected final IntegerInput maxPerLineInput;
 
+	@Keyword(description = "The number of rows in each level of entities inside the container.",
+			exampleList = {"4"})
+	protected final IntegerInput maxRows;
+
 	@Keyword(description = "If TRUE, the entities in the EntityContainer are displayed.",
 			exampleList = {"FALSE"})
 	protected final BooleanInput showEntities;
@@ -116,6 +120,10 @@ public class EntityContainer extends SimEntity implements EntContainer {
 		maxPerLineInput = new IntegerInput("MaxPerLine", FORMAT, Integer.MAX_VALUE);
 		maxPerLineInput.setValidRange( 1, Integer.MAX_VALUE);
 		this.addInput(maxPerLineInput);
+
+		maxRows = new IntegerInput("MaxRows", FORMAT, Integer.MAX_VALUE);
+		maxRows.setValidRange(1, Integer.MAX_VALUE);
+		this.addInput(maxRows);
 
 		showEntities = new BooleanInput("ShowEntities", FORMAT, true);
 		this.addInput(showEntities);
@@ -215,36 +223,45 @@ public class EntityContainer extends SimEntity implements EntContainer {
 		Vec3d size = this.getSize();
 		Vec3d tmp = new Vec3d();
 
-		// Find widest entity
+		// Find the maximum width and height of the entities
 		double maxWidth = 0;
+		double maxHeight = 0;
 		Iterator<DisplayEntity> itr = container.iterator();
 		while (itr.hasNext()) {
 			DisplayEntity ent = itr.next();
 			maxWidth = Math.max(maxWidth, ent.getGlobalSize().y);
+			maxHeight = Math.max(maxHeight, ent.getGlobalSize().z);
 		}
 
 		// Update the position of each entity (start at the bottom left of the container)
 		double distanceX = -0.5*size.x;
-		double distanceY = -0.5*size.y + 0.5*maxWidth;
 		itr = container.iterator();
 		int i = 0;
 		while (itr.hasNext()) {
 			DisplayEntity item = itr.next();
 
-			// if new row is required, reset distanceX and move distanceY up one row
-			if (i > 0 && i % maxPerLineInput.getValue() == 0){
-				 distanceX = -0.5*size.x;
-				 distanceY += spacingInput.getValue() + maxWidth;
+			// Calculate the row and level number for the entity
+			int ind = i % maxPerLineInput.getValue();
+			int row = (i / maxPerLineInput.getValue()) % maxRows.getValue();
+			int level = (i / maxPerLineInput.getValue()) / maxRows.getValue();
+
+			// Reset the x-position for the first entity in a row
+			if( i > 0 && ind == 0 ){
+				distanceX = -0.5d*size.x;
 			}
 
 			// Rotate each entity about its center so it points to the right direction
 			item.setShow(visible);
 			item.setRelativeOrientation(orient);
 
+			// Calculate the y- and z- coordinates
+			double distanceY = row * (spacingInput.getValue() + maxWidth);
+			double distanceZ = level * (spacingInput.getValue() + maxHeight);
+
 			// Set Position
 			Vec3d itemSize = item.getGlobalSize();
 			distanceX += 0.5*itemSize.x;
-			tmp.set3(distanceX, distanceY, 0.0d);
+			tmp.set3(distanceX, distanceY, distanceZ);
 			Vec3d itemCenter = this.getGlobalPositionForPosition(tmp);
 			itemCenter.add3(positionOffset.getValue());
 			item.setGlobalPositionForAlignment(new Vec3d(), itemCenter);
