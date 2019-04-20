@@ -99,10 +99,10 @@ public class ResourceUnit extends StateUserEntity implements Seizable, ResourceP
 		this.addInput(assignmentPriority);
 		this.addSynonym(assignmentPriority, "Priority");
 
-		followAssignment = new BooleanInput("FollowAssignment", GRAPHICS, false);
+		followAssignment = new BooleanInput("FollowAssignment", FORMAT, false);
 		this.addInput(followAssignment);
 
-		assignmentOffset = new Vec3dInput("AssignmentOffset", GRAPHICS, new Vec3d());
+		assignmentOffset = new Vec3dInput("AssignmentOffset", FORMAT, new Vec3d());
 		assignmentOffset.setUnitType(DistanceUnit.class);
 		this.addInput(assignmentOffset);
 	}
