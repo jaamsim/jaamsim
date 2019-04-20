@@ -77,7 +77,7 @@ public class Pack extends LinkedService {
 		numberOfEntities.setValidRange(0, Double.POSITIVE_INFINITY);
 		this.addInput(numberOfEntities);
 
-		numberToStart = new SampleInput("NumberToStart", KEY_INPUTS, null);
+		numberToStart = new SampleInput("NumberToStart", OPTIONS, null);
 		numberToStart.setUnitType(DimensionlessUnit.class);
 		numberToStart.setDefaultText("NumberOfEntities Input");
 		numberToStart.setValidRange(0, Double.POSITIVE_INFINITY);
@@ -88,11 +88,11 @@ public class Pack extends LinkedService {
 		serviceTime.setValidRange(0, Double.POSITIVE_INFINITY);
 		this.addInput(serviceTime);
 
-		containerStateAssignment = new StringProvInput("ContainerStateAssignment", KEY_INPUTS, null);
+		containerStateAssignment = new StringProvInput("ContainerStateAssignment", OPTIONS, null);
 		containerStateAssignment.setUnitType(DimensionlessUnit.class);
 		this.addInput(containerStateAssignment);
 
-		waitForEntities = new BooleanInput("WaitForEntities", KEY_INPUTS, false);
+		waitForEntities = new BooleanInput("WaitForEntities", OPTIONS, false);
 		this.addInput(waitForEntities);
 	}
 
