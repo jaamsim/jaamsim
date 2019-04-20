@@ -339,7 +339,7 @@ public class ExpEvaluator {
 		}
 
 		@Override
-		public void assign(ExpResult ent, ExpResult index, ExpResult val) throws ExpError {
+		public void assign(ExpResult ent, ExpResult[] indices, ExpResult val) throws ExpError {
 			if (ent.type != ExpResType.ENTITY) {
 				throw new ExpError(null, 0, "Can not execute assignment, not assigning to an entity");
 			}
@@ -348,7 +348,7 @@ public class ExpEvaluator {
 				throw new ExpError(null, 0, "Trying to assign to a null entity");
 			}
 
-			assignEnt.setAttribute(attribName, index, val);
+			assignEnt.setAttribute(attribName, indices, val);
 		}
 
 	}

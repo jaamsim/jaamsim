@@ -20,6 +20,7 @@ package com.jaamsim.input;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
@@ -59,7 +60,7 @@ public class ExpParser {
 		public ExpValResult validate(ExpValResult entValRes);
 	}
 	public interface Assigner {
-		public void assign(ExpResult ent, ExpResult index, ExpResult val) throws ExpError;
+		public void assign(ExpResult ent, ExpResult[] indices, ExpResult val) throws ExpError;
 	}
 
 	private static class ParseClosure {
@@ -230,7 +231,7 @@ public class ExpParser {
 
 	public static class Assignment extends Expression {
 		public ExpNode entExp;
-		public ExpNode attribIndex;
+		public ExpNode[] attribIndices;
 		public ExpNode valueExp;
 		public Assigner assigner;
 		public Assignment(String source) {
@@ -248,11 +249,14 @@ public class ExpParser {
 			try {
 				ExpResult ent = entExp.evaluate(ec);
 				ExpResult value = valueExp.evaluate(ec);
-				ExpResult index = null;
-				if (attribIndex != null) {
-					index = attribIndex.evaluate(ec);
+				ExpResult[] indices = null;
+				if (attribIndices != null) {
+					indices = new ExpResult[attribIndices.length];
+					for (int i = 0; i < attribIndices.length; ++i) {
+						indices[i] = attribIndices[i].evaluate(ec);
+					}
 				}
-				assigner.assign(ent, index, value);
+				assigner.assign(ent, indices, value);
 
 				return value;
 
@@ -1348,25 +1352,34 @@ public class ExpParser {
 		ret.valueExp = rhsNode;
 
 		// Parsing is done, now we need to unwind the lhs expression to get the necessary components
-		ExpNode indexExp = null;
+
+		// Note we use a linked list here, as we will be adding nodes in reverse order
+		LinkedList<ExpNode> indexExps = new LinkedList<>();
 
 		// Check for an optional index at the end
-		if (lhsNode instanceof IndexCollection) {
+		while(lhsNode instanceof IndexCollection) {
 			// the lhs ended with an index, split that off
 			IndexCollection ind = (IndexCollection)lhsNode;
 			if (ind.indices.size() != 1)
 				throw new ExpError(input, lhsNode.tokenPos, "Assignment to collections can only take a single index");
 
-			indexExp = ind.indices.get(0);
+			ExpNode indexExp = ind.indices.get(0);
+			indexExp = optimizeAndValidateExpression(input, indexExp, ret);
+
+			indexExps.push(indexExp);
 			lhsNode = ind.collection;
 
-			indexExp = optimizeAndValidateExpression(input, indexExp, ret);
 		}
-		ret.attribIndex = indexExp;
+		if (indexExps.size() > 0) {
+
+			ret.attribIndices = indexExps.toArray(new ExpNode[indexExps.size()]);
+		} else {
+			ret.attribIndices = null;
+		}
 
 		// Now make sure the last node of the lhs ends with a output resolve
 		if (!(lhsNode instanceof ResolveOutput)) {
-			throw new ExpError(input, lhsNode.tokenPos, "Assignment left side must end with an output");
+			throw new ExpError(input, lhsNode.tokenPos, "Assignment left side must end with an output, followed by optional indices");
 		}
 
 		ResolveOutput lhsResolve = (ResolveOutput)lhsNode;
