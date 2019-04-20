@@ -109,7 +109,7 @@ public class EntityContainer extends SimEntity implements EntContainer {
 		setEntityState = new BooleanInput("SetEntityState", KEY_INPUTS, true);
 		this.addInput(setEntityState);
 
-		positionOffset = new Vec3dInput("PositionOffset", GRAPHICS, new Vec3d(0.0d, 0.0d, 0.01d));
+		positionOffset = new Vec3dInput("PositionOffset", FORMAT, new Vec3d(0.0d, 0.0d, 0.01d));
 		positionOffset.setUnitType(DistanceUnit.class);
 		this.addInput(positionOffset);
 
