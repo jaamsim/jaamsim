@@ -264,7 +264,7 @@ public class TextModel extends DisplayModel {
 	// ********************************************************************************************
 	// Binding
 	// ********************************************************************************************
-	private class Binding extends DisplayModelBinding {
+	private static class Binding extends DisplayModelBinding {
 
 		private TextBasics labelObservee;
 
@@ -418,7 +418,7 @@ public class TextModel extends DisplayModel {
 	// ********************************************************************************************
 	// OverlayBinding
 	// ********************************************************************************************
-	private class OverlayBinding extends DisplayModelBinding {
+	private static class OverlayBinding extends DisplayModelBinding {
 
 		private OverlayText labelObservee;
 
@@ -608,7 +608,7 @@ public class TextModel extends DisplayModel {
 	// ********************************************************************************************
 	// BillboardBinding
 	// ********************************************************************************************
-	private class BillboardBinding extends DisplayModelBinding {
+	private static class BillboardBinding extends DisplayModelBinding {
 
 		private BillboardText labelObservee;
 

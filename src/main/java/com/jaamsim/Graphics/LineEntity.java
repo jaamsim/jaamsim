@@ -16,11 +16,7 @@
  */
 package com.jaamsim.Graphics;
 
-import java.util.ArrayList;
-import java.util.Collections;
-
 import com.jaamsim.basicsim.JaamSimModel;
-import com.jaamsim.input.ColourInput;
 import com.jaamsim.math.Color4d;
 
 public interface LineEntity {
@@ -28,17 +24,4 @@ public interface LineEntity {
 	public boolean isOutlined();
 	public int getLineWidth();
 	public Color4d getLineColour();
-
-	public static ArrayList<Color4d> getLineColoursInUse(JaamSimModel simModel) {
-		ArrayList<Color4d> ret = new ArrayList<>();
-		for (DisplayEntity ent : simModel.getClonesOfIterator(DisplayEntity.class, LineEntity.class)) {
-			LineEntity lineEnt = (LineEntity) ent;
-			if (ret.contains(lineEnt.getLineColour()))
-				continue;
-			ret.add(lineEnt.getLineColour());
-		}
-		Collections.sort(ret, ColourInput.colourComparator);
-		return ret;
-	}
-
 }

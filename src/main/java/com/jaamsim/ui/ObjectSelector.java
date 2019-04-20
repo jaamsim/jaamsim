@@ -62,11 +62,11 @@ public class ObjectSelector extends FrameBox {
 	private final DefaultTreeModel treeModel;
 	private final JTree tree;
 	private final JScrollPane treeView;
-	public static Entity currentEntity;
+	static Entity currentEntity;
 
 	private long entSequence;
 
-	private final int MAX_GENERATED_ENTITIES = 10000;
+	private static final int MAX_GENERATED_ENTITIES = 10000;
 
 	public ObjectSelector() {
 		super( "Object Selector" );

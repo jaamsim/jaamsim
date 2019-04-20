@@ -48,6 +48,7 @@ import java.net.URL;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.prefs.Preferences;
@@ -1387,7 +1388,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 				JMenuItem selectedItem = null;
 				int selectedIndex = -1;
 				int ind = 0;
-				for (final String fontName : TextEntity.getFontsInUse(GUIFrame.getJaamSimModel())) {
+				for (final String fontName : GUIFrame.getFontsInUse(GUIFrame.getJaamSimModel())) {
 					JMenuItem item = new JMenuItem(fontName);
 					if (selectedItem == null && fontName.equals(textEnt.getFontName())) {
 						selectedItem = item;
@@ -1574,7 +1575,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 				JMenuItem selectedItem = null;
 				int selectedIndex = -1;
 				int ind = 0;
-				for (Color4d col : TextEntity.getFontColoursInUse(GUIFrame.getJaamSimModel())) {
+				for (Color4d col : GUIFrame.getFontColoursInUse(GUIFrame.getJaamSimModel())) {
 					String colourName = ColourInput.toString(col);
 					JMenuItem item = new JMenuItem(colourName);
 					ColorIcon icon = new ColorIcon(16, 16);
@@ -1831,7 +1832,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 				JMenuItem selectedItem = null;
 				int selectedIndex = -1;
 				int ind = 0;
-				for (Color4d col : LineEntity.getLineColoursInUse(GUIFrame.getJaamSimModel())) {
+				for (Color4d col : GUIFrame.getLineColoursInUse(GUIFrame.getJaamSimModel())) {
 					String colourName = ColourInput.toString(col);
 					JMenuItem item = new JMenuItem(colourName);
 					ColorIcon icon = new ColorIcon(16, 16);
@@ -2005,7 +2006,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 				JMenuItem selectedItem = null;
 				int selectedIndex = -1;
 				int ind = 0;
-				for (Color4d col : FillEntity.getFillColoursInUse(GUIFrame.getJaamSimModel())) {
+				for (Color4d col : GUIFrame.getFillColoursInUse(GUIFrame.getJaamSimModel())) {
 					String colourName = ColourInput.toString(col);
 					JMenuItem item = new JMenuItem(colourName);
 					ColorIcon icon = new ColorIcon(16, 16);
@@ -4024,4 +4025,52 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 				name, desc);
 	}
 
+
+	static ArrayList<Color4d> getFillColoursInUse(JaamSimModel simModel) {
+		ArrayList<Color4d> ret = new ArrayList<>();
+		for (DisplayEntity ent : simModel.getClonesOfIterator(DisplayEntity.class, FillEntity.class)) {
+			FillEntity fillEnt = (FillEntity) ent;
+			if (ret.contains(fillEnt.getFillColour()))
+				continue;
+			ret.add(fillEnt.getFillColour());
+		}
+		Collections.sort(ret, ColourInput.colourComparator);
+		return ret;
+	}
+
+	static ArrayList<Color4d> getLineColoursInUse(JaamSimModel simModel) {
+		ArrayList<Color4d> ret = new ArrayList<>();
+		for (DisplayEntity ent : simModel.getClonesOfIterator(DisplayEntity.class, LineEntity.class)) {
+			LineEntity lineEnt = (LineEntity) ent;
+			if (ret.contains(lineEnt.getLineColour()))
+				continue;
+			ret.add(lineEnt.getLineColour());
+		}
+		Collections.sort(ret, ColourInput.colourComparator);
+		return ret;
+	}
+
+	static ArrayList<String> getFontsInUse(JaamSimModel simModel) {
+		ArrayList<String> ret = new ArrayList<>();
+		for (DisplayEntity ent : simModel.getClonesOfIterator(DisplayEntity.class, TextEntity.class)) {
+			TextEntity textEnt = (TextEntity) ent;
+			if (ret.contains(textEnt.getFontName()))
+				continue;
+			ret.add(textEnt.getFontName());
+		}
+		Collections.sort(ret);
+		return ret;
+	}
+
+	static ArrayList<Color4d> getFontColoursInUse(JaamSimModel simModel) {
+		ArrayList<Color4d> ret = new ArrayList<>();
+		for (DisplayEntity ent : simModel.getClonesOfIterator(DisplayEntity.class, TextEntity.class)) {
+			TextEntity textEnt = (TextEntity) ent;
+			if (ret.contains(textEnt.getFontColor()))
+				continue;
+			ret.add(textEnt.getFontColor());
+		}
+		Collections.sort(ret, ColourInput.colourComparator);
+		return ret;
+	}
 }
