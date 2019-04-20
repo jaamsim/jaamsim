@@ -42,10 +42,6 @@ public class Pack extends LinkedService {
 	         exampleList = {"2", "DiscreteDistribution1", "'1 + [TimeSeries1].PresentValue'"})
 	protected final SampleInput numberOfEntities;
 
-	@Keyword(description = "The minimum number of entities required to start packing.",
-	         exampleList = {"2", "DiscreteDistribution1", "'1 + [TimeSeries1].PresentValue'"})
-	private final SampleInput numberToStart;
-
 	@Keyword(description = "The service time required to pack each entity in the container.",
 	         exampleList = { "3.0 h", "ExponentialDistribution1", "'1[s] + 0.5*[TimeSeries1].PresentValue'" })
 	private final SampleInput serviceTime;
@@ -54,6 +50,10 @@ public class Pack extends LinkedService {
                          + "No state is assigned if the entry is blank.",
 	         exampleList = {"Service"})
 	protected final StringProvInput containerStateAssignment;
+
+	@Keyword(description = "The minimum number of entities required to start packing.",
+	         exampleList = {"2", "DiscreteDistribution1", "'1 + [TimeSeries1].PresentValue'"})
+	private final SampleInput numberToStart;
 
 	@Keyword(description = "If TRUE, the EntityContainer will be held in its queue until "
 	                     + "sufficient entities are available to start packing.",
@@ -77,12 +77,6 @@ public class Pack extends LinkedService {
 		numberOfEntities.setValidRange(0, Double.POSITIVE_INFINITY);
 		this.addInput(numberOfEntities);
 
-		numberToStart = new SampleInput("NumberToStart", OPTIONS, null);
-		numberToStart.setUnitType(DimensionlessUnit.class);
-		numberToStart.setDefaultText("NumberOfEntities Input");
-		numberToStart.setValidRange(0, Double.POSITIVE_INFINITY);
-		this.addInput(numberToStart);
-
 		serviceTime = new SampleInput("ServiceTime", KEY_INPUTS, new SampleConstant(TimeUnit.class, 0.0));
 		serviceTime.setUnitType(TimeUnit.class);
 		serviceTime.setValidRange(0, Double.POSITIVE_INFINITY);
@@ -91,6 +85,12 @@ public class Pack extends LinkedService {
 		containerStateAssignment = new StringProvInput("ContainerStateAssignment", OPTIONS, null);
 		containerStateAssignment.setUnitType(DimensionlessUnit.class);
 		this.addInput(containerStateAssignment);
+
+		numberToStart = new SampleInput("NumberToStart", OPTIONS, null);
+		numberToStart.setUnitType(DimensionlessUnit.class);
+		numberToStart.setDefaultText("NumberOfEntities Input");
+		numberToStart.setValidRange(0, Double.POSITIVE_INFINITY);
+		this.addInput(numberToStart);
 
 		waitForEntities = new BooleanInput("WaitForEntities", OPTIONS, false);
 		this.addInput(waitForEntities);
