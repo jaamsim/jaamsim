@@ -60,7 +60,7 @@ public abstract class LinkedService extends LinkedDevice implements QueueUser {
 		stateGraphics.setHidden(false);
 		workingStateListInput.setHidden(false);
 
-		processPosition = new Vec3dInput("ProcessPosition", KEY_INPUTS, new Vec3d(0.0d, 0.0d, 0.01d));
+		processPosition = new Vec3dInput("ProcessPosition", FORMAT, new Vec3d(0.0d, 0.0d, 0.01d));
 		processPosition.setUnitType(DistanceUnit.class);
 		this.addInput(processPosition);
 
