@@ -74,7 +74,7 @@ public abstract class StateEntity extends DisplayEntity implements StateUser {
 	protected static final Color4d COL_INACTIVE = ColourInput.WHITE;
 
 	{
-		stateGraphics = new StringKeyInput<>(DisplayEntity.class, "StateGraphics", GRAPHICS);
+		stateGraphics = new StringKeyInput<>(DisplayEntity.class, "StateGraphics", FORMAT);
 		stateGraphics.setHidden(true);
 		this.addInput(stateGraphics);
 
