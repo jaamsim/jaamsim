@@ -89,15 +89,15 @@ public class ExpressionThreshold extends Threshold {
 		initialOpenValue = new BooleanInput("InitialOpenValue", KEY_INPUTS, false);
 		this.addInput(initialOpenValue);
 
-		pendingOpenColour = new ColourInput("PendingOpenColour", GRAPHICS, ColourInput.YELLOW);
+		pendingOpenColour = new ColourInput("PendingOpenColour", FORMAT, ColourInput.YELLOW);
 		this.addInput(pendingOpenColour);
 		this.addSynonym(pendingOpenColour, "PendingOpenColor");
 
-		pendingClosedColour = new ColourInput("PendingClosedColour", GRAPHICS, ColourInput.PURPLE);
+		pendingClosedColour = new ColourInput("PendingClosedColour", FORMAT, ColourInput.PURPLE);
 		this.addInput(pendingClosedColour);
 		this.addSynonym(pendingClosedColour, "PendingClosedColor");
 
-		showPendingStates = new BooleanInput("ShowPendingStates", GRAPHICS, true);
+		showPendingStates = new BooleanInput("ShowPendingStates", FORMAT, true);
 		this.addInput(showPendingStates);
 	}
 

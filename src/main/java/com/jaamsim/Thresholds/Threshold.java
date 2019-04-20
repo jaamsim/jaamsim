@@ -59,18 +59,18 @@ public class Threshold extends StateEntity {
 	{
 		workingStateListInput.setHidden(true);
 
-		openColour = new ColourInput("OpenColour", GRAPHICS, ColourInput.GREEN);
+		openColour = new ColourInput("OpenColour", FORMAT, ColourInput.GREEN);
 		this.addInput(openColour);
 		this.addSynonym(openColour, "OpenColor");
 
-		closedColour = new ColourInput("ClosedColour", GRAPHICS, ColourInput.RED);
+		closedColour = new ColourInput("ClosedColour", FORMAT, ColourInput.RED);
 		this.addInput(closedColour);
 		this.addSynonym(closedColour, "ClosedColor");
 
-		showWhenOpen = new BooleanInput("ShowWhenOpen", GRAPHICS, true);
+		showWhenOpen = new BooleanInput("ShowWhenOpen", FORMAT, true);
 		this.addInput(showWhenOpen);
 
-		showWhenClosed = new BooleanInput("ShowWhenClosed", GRAPHICS, true);
+		showWhenClosed = new BooleanInput("ShowWhenClosed", FORMAT, true);
 		this.addInput(showWhenClosed);
 	}
 
