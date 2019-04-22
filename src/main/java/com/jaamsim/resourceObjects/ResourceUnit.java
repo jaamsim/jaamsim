@@ -260,6 +260,7 @@ public class ResourceUnit extends StateUserEntity implements Seizable, ResourceP
 	public void thresholdChanged() {
 		if (isTraceFlag())
 			trace(0, "thresholdChanged");
+		setPresentState();
 
 		// If the resource unit is available, try to put it to work
 		if (isAvailable()) {
