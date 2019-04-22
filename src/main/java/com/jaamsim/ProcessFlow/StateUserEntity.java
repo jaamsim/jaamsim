@@ -87,8 +87,6 @@ public abstract class StateUserEntity extends StateEntity implements ThresholdUs
 	         exampleList = {"DowntimeEntity1 DowntimeEntity2 DowntimeEntity3"})
 	protected final EntityListInput<DowntimeEntity> opportunisticBreakdownList;
 
-	private boolean busy;  // indicates that work is being performed
-
 	protected static final String STATE_MAINTENANCE = "Maintenance";
 	protected static final String STATE_BREAKDOWN = "Breakdown";
 	protected static final String STATE_STOPPED = "Stopped";
@@ -139,7 +137,6 @@ public abstract class StateUserEntity extends StateEntity implements ThresholdUs
 	@Override
 	public void earlyInit() {
 		super.earlyInit();
-		busy = false;
 		initStates();
 	}
 
@@ -194,13 +191,7 @@ public abstract class StateUserEntity extends StateEntity implements ThresholdUs
 	// PRESENT STATE
 	// ********************************************************************************************
 
-	public void setBusy(boolean bool) {
-		busy = bool;
-	}
-
-	public boolean isBusy() {
-		return busy;
-	}
+	public abstract boolean isBusy();
 
 	/**
 	 * Tests whether all the thresholds are open.
