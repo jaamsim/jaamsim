@@ -113,7 +113,7 @@ public class Server extends LinkedService {
 			return 0.0d;
 		}
 		double ret = serviceDuration - getRemainingDuration();
-		if (isWorking()) {
+		if (isBusy()) {
 			ret += simTime - getLastUpdateTime();
 		}
 		return ret;
