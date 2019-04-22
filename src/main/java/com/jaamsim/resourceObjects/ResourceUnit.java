@@ -193,6 +193,11 @@ public class ResourceUnit extends StateUserEntity implements Seizable, ResourceP
 	}
 
 	@Override
+	public boolean isBusy() {
+		return presentAssignment != null;
+	}
+
+	@Override
 	public DisplayEntity getAssignment() {
 		return presentAssignment;
 	}
