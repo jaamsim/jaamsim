@@ -59,11 +59,16 @@ public abstract class Device extends StateUserEntity {
 			setPresentState();
 			return;
 		}
+		setBusy(true);
 		processing = true;
 		startUpTicks = getSimTicks();
 		lastUpdateTime = getSimTime();
-		setBusy(true);
 		startStep();
+	}
+
+	@Override
+	public boolean isBusy() {
+		return processing;
 	}
 
 	/**
@@ -201,8 +206,8 @@ public abstract class Device extends StateUserEntity {
 		if (isTraceFlag()) trace(0, "stopProcessing");
 
 		// Update the state
-		processing = false;
 		this.setBusy(false);
+		processing = false;
 		this.setPresentState();
 
 		// Notify other processes that are dependent on this one
