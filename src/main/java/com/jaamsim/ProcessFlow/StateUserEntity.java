@@ -198,7 +198,7 @@ public abstract class StateUserEntity extends StateEntity implements ThresholdUs
 		busy = bool;
 	}
 
-	public final boolean isBusy() {
+	public boolean isBusy() {
 		return busy;
 	}
 
