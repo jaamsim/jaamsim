@@ -59,7 +59,6 @@ public abstract class Device extends StateUserEntity {
 			setPresentState();
 			return;
 		}
-		setBusy(true);
 		processing = true;
 		startUpTicks = getSimTicks();
 		lastUpdateTime = getSimTime();
@@ -206,7 +205,6 @@ public abstract class Device extends StateUserEntity {
 		if (isTraceFlag()) trace(0, "stopProcessing");
 
 		// Update the state
-		this.setBusy(false);
 		processing = false;
 		this.setPresentState();
 
