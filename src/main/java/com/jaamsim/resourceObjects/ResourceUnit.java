@@ -176,9 +176,6 @@ public class ResourceUnit extends StateUserEntity implements Seizable, ResourceP
 			error("Unit is already in use: assignment=%s, entity=%s", presentAssignment, ent);
 		}
 		presentAssignment = ent;
-
-		// Set the new state
-		setBusy(true);
 		setPresentState();
 	}
 
@@ -186,9 +183,6 @@ public class ResourceUnit extends StateUserEntity implements Seizable, ResourceP
 	public void release() {
 		presentAssignment = null;
 		lastReleaseTicks = getSimTicks();
-
-		// Set the new state
-		setBusy(false);
 		setPresentState();
 	}
 
