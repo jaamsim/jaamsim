@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2016-2018 JaamSim Software Inc.
+ * Copyright (C) 2016-2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -204,9 +204,7 @@ public abstract class Device extends StateUserEntity {
 	private final void stopProcessing() {
 		if (isTraceFlag()) trace(0, "stopProcessing");
 
-		// Update the state
 		processing = false;
-		this.setPresentState();
 
 		// Notify other processes that are dependent on this one
 		if (getSimTicks() > startUpTicks)
@@ -214,6 +212,9 @@ public abstract class Device extends StateUserEntity {
 
 		// Set the process to its stopped condition
 		this.setProcessStopped();
+
+		// Update the state
+		this.setPresentState();
 		startUpTicks = -1L;
 	}
 
