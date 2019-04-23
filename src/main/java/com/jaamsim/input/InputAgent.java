@@ -847,8 +847,7 @@ public class InputAgent {
 		}
 	}
 
-	public static final void trace(int indent, Entity ent, String fmt, Object... args) {
-		JaamSimModel simModel = ent.getJaamSimModel();
+	public static final void trace(JaamSimModel simModel, int indent, Entity ent, String fmt, Object... args) {
 		// Print a TIME header every time time has advanced
 		long traceTick = EventManager.simTicks();
 		if (simModel.getLastTickForTrace() != traceTick) {
