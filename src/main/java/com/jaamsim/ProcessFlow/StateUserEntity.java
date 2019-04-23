@@ -197,7 +197,7 @@ public abstract class StateUserEntity extends StateEntity implements ThresholdUs
 	 * Tests whether all the thresholds are open.
 	 * @return true if all the thresholds are open.
 	 */
-	public final boolean isOpen() {
+	public boolean isOpen() {
 		for (Threshold thr : immediateThresholdList.getValue()) {
 			if (!thr.isOpen())
 				return false;
