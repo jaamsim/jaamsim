@@ -245,7 +245,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 			}
 			// 2) Working time
 			else {
-				if (iatWorkingEntity.getValue().isWorking()) {
+				if (iatWorkingEntity.getValue().isWorkingState()) {
 					double workingSecs = iatWorkingEntity.getValue().getWorkingTime();
 					double waitSecs = secondsForNextFailure - workingSecs;
 					scheduleProcess(Math.max(waitSecs, 0.0), 5, scheduleDowntime, scheduleDowntimeHandle);
@@ -254,7 +254,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 		}
 		// the next event is already scheduled.  If the working entity has stopped working, need to cancel the event
 		else {
-			if (iatWorkingEntity.getValue() != null && !iatWorkingEntity.getValue().isWorking()) {
+			if (iatWorkingEntity.getValue() != null && !iatWorkingEntity.getValue().isWorkingState()) {
 				EventManager.killEvent(scheduleDowntimeHandle);
 			}
 		}
@@ -275,7 +275,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 			}
 
 			// The Entity is working, schedule the end of the downtime event
-			if (durationWorkingEntity.getValue().isWorking()) {
+			if (durationWorkingEntity.getValue().isWorkingState()) {
 
 				if (endDowntimeHandle.isScheduled())
 					return;

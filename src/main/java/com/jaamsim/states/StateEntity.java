@@ -335,7 +335,7 @@ public abstract class StateEntity extends DisplayEntity implements StateUser {
 	}
 
 	@Override
-	public boolean isWorking() {
+	public boolean isWorkingState() {
 		return presentState.isWorking();
 	}
 
