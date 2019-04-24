@@ -54,7 +54,6 @@ public class JaamSimModel implements EventTimeListener {
 	private String name;
 	private Thread waitThread = null;
 	private volatile long simTicks;
-	private boolean running;
 	private int runNumber;    // labels each run when multiple runs are being made
 	private IntegerVector runIndexList;
 	private InputErrorListener inputErrorListener;
@@ -95,7 +94,6 @@ public class JaamSimModel implements EventTimeListener {
 		simulation = null;
 		this.name = name;
 		simTicks = 0L;
-		running = false;
 		runNumber = 1;
 		runIndexList = new IntegerVector();
 		runIndexList.add(1);
@@ -123,7 +121,6 @@ public class JaamSimModel implements EventTimeListener {
 	@Override
 	public void timeRunning(long tick, boolean running) {
 		//System.out.format("%s.timeRunning(%s, %s)%n", this, tick, running);
-		this.running = running;
 		if (running)
 			return;
 
@@ -491,7 +488,7 @@ public class JaamSimModel implements EventTimeListener {
 	 * @return true if the events are being executed
 	 */
 	public boolean isRunning() {
-		return running;
+		return eventManager.isRunning();
 	}
 
 	/**
