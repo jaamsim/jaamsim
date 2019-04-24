@@ -18,6 +18,7 @@
 package com.jaamsim.events;
 
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.jaamsim.ui.EventData;
 
@@ -46,6 +47,7 @@ public final class EventManager {
 
 	private final EventTree eventTree;
 
+	private final AtomicBoolean isRunning;
 	private volatile boolean executeEvents;
 	private boolean processRunning;
 
@@ -94,6 +96,7 @@ public final class EventManager {
 		eventTree = new EventTree();
 		condEvents = new ArrayList<>();
 
+		isRunning = new AtomicBoolean(false);
 		executeEvents = false;
 		processRunning = false;
 		executeRealTime = false;
@@ -207,6 +210,7 @@ public final class EventManager {
 			}
 			executeEvents = false;
 			processRunning = false;
+			isRunning.set(false);
 			errListener.handleError(this, e, currentTick);
 			return false;
 		}
@@ -229,6 +233,7 @@ public final class EventManager {
 				return;
 
 			processRunning = true;
+			isRunning.set(true);
 			timelistener.timeRunning(currentTick, true);
 
 			// Loop continuously
@@ -241,6 +246,7 @@ public final class EventManager {
 
 				if (!executeEvents) {
 					processRunning = false;
+					isRunning.set(false);
 					timelistener.timeRunning(currentTick, false);
 					return;
 				}
@@ -327,6 +333,10 @@ public final class EventManager {
 		resume(this.secondsToNearestTick(simTime));
 	}
 
+	public final boolean isRunning() {
+		return isRunning.get();
+	}
+
 	private void evaluateConditions(Process cur) {
 		// Protecting the conditional evaluate() callbacks and the traceWaitUntilEnded callback
 		cur.beginCallbacks();
@@ -355,6 +365,7 @@ public final class EventManager {
 		catch (Throwable e) {
 			executeEvents = false;
 			processRunning = false;
+			isRunning.set(false);
 			errListener.handleError(this, e, currentTick);
 		}
 
