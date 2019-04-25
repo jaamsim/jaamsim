@@ -53,7 +53,6 @@ public class JaamSimModel implements EventTimeListener {
 	private Simulation simulation;
 	private String name;
 	private Thread waitThread = null;
-	private volatile long simTicks;
 	private int runNumber;    // labels each run when multiple runs are being made
 	private IntegerVector runIndexList;
 	private InputErrorListener inputErrorListener;
@@ -93,7 +92,6 @@ public class JaamSimModel implements EventTimeListener {
 		eventManager = new EventManager("DefaultEventManager");
 		simulation = null;
 		this.name = name;
-		simTicks = 0L;
 		runNumber = 1;
 		runIndexList = new IntegerVector();
 		runIndexList.add(1);
@@ -114,8 +112,6 @@ public class JaamSimModel implements EventTimeListener {
 
 	@Override
 	public void tickUpdate(long tick) {
-		//System.out.format("%s.tickUpdate(%s)%n", this, tick);
-		simTicks = tick;
 	}
 
 	@Override
@@ -496,7 +492,7 @@ public class JaamSimModel implements EventTimeListener {
 	 * @return simulation time
 	 */
 	public double getSimTime() {
-		return EventManager.ticksToSecs(simTicks);
+		return eventManager.ticksToSeconds(eventManager.getTicks());
 	}
 
 	/**
