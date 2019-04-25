@@ -19,6 +19,7 @@ package com.jaamsim.events;
 
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 
 import com.jaamsim.ui.EventData;
 
@@ -48,12 +49,12 @@ public final class EventManager {
 	private final EventTree eventTree;
 
 	private final AtomicBoolean isRunning;
+	private final AtomicLong currentTick;
 	private volatile boolean executeEvents;
 	private boolean processRunning;
 
 	private final ArrayList<ConditionalEvent> condEvents;
 
-	private long currentTick; // Master simulation time (long)
 	private long nextTick; // The next tick to execute events at
 	private long targetTick; // the largest time we will execute events for (run to time)
 	private boolean oneEvent; // execute a single event
@@ -86,7 +87,7 @@ public final class EventManager {
 		lockObject = new Object();
 
 		// Initialize and event lists and timekeeping variables
-		currentTick = 0;
+		currentTick = new AtomicLong(0);
 		nextTick = 0;
 		oneEvent = false;
 		oneSimTime = false;
@@ -113,7 +114,7 @@ public final class EventManager {
 			else
 				timelistener = new NoopListener();
 
-			timelistener.tickUpdate(currentTick);
+			timelistener.tickUpdate(currentTick.get());
 		}
 	}
 
@@ -134,10 +135,10 @@ public final class EventManager {
 
 	public void clear() {
 		synchronized (lockObject) {
-			currentTick = 0;
+			currentTick.set(0);
 			nextTick = 0;
 			targetTick = Long.MAX_VALUE;
-			timelistener.tickUpdate(currentTick);
+			timelistener.tickUpdate(currentTick.get());
 			rebaseRealTime = true;
 
 			eventTree.runOnAllNodes(new KillAllEvents());
@@ -187,7 +188,7 @@ public final class EventManager {
 			// Notify the event manager that the process has been completed
 			if (trcListener != null) {
 				cur.beginCallbacks();
-				trcListener.traceProcessEnd(this, currentTick);
+				trcListener.traceProcessEnd(this, currentTick.get());
 				cur.endCallbacks();
 			}
 			if (cur.hasNext()) {
@@ -211,7 +212,7 @@ public final class EventManager {
 			executeEvents = false;
 			processRunning = false;
 			isRunning.set(false);
-			errListener.handleError(this, e, currentTick);
+			errListener.handleError(this, e, currentTick.get());
 			return false;
 		}
 	}
@@ -234,31 +235,31 @@ public final class EventManager {
 
 			processRunning = true;
 			isRunning.set(true);
-			timelistener.timeRunning(currentTick, true);
+			timelistener.timeRunning(currentTick.get(), true);
 
 			// Loop continuously
 			while (true) {
 				EventNode nextNode = eventTree.getNextNode();
 				if (nextNode == null ||
-				    currentTick >= targetTick) {
+				    currentTick.get() >= targetTick) {
 					executeEvents = false;
 				}
 
 				if (!executeEvents) {
 					processRunning = false;
 					isRunning.set(false);
-					timelistener.timeRunning(currentTick, false);
+					timelistener.timeRunning(currentTick.get(), false);
 					return;
 				}
 
 				// If the next event is at the current tick, execute it
-				if (nextNode.schedTick == currentTick) {
+				if (nextNode.schedTick == currentTick.get()) {
 					// Remove the event from the future events
 					Event nextEvent = nextNode.head;
 					ProcessTarget nextTarget = nextEvent.target;
 					if (trcListener != null) {
 						cur.beginCallbacks();
-						trcListener.traceEvent(this, currentTick, nextNode.schedTick, nextNode.priority, nextTarget);
+						trcListener.traceEvent(this, currentTick.get(), nextNode.schedTick, nextNode.priority, nextTarget);
 						cur.endCallbacks();
 					}
 
@@ -289,7 +290,7 @@ public final class EventManager {
 					// beginning of the eventStack for the current tick, go back to the
 					// beginning, otherwise fall through to the time-advance
 					nextTick = eventTree.getNextNode().schedTick;
-					if (nextTick == currentTick)
+					if (nextTick == currentTick.get())
 						continue;
 				}
 
@@ -299,8 +300,8 @@ public final class EventManager {
 					long realTick = this.calcRealTimeTick();
 					if (realTick < nextTick && realTick < targetTick) {
 						// Update the displayed simulation time
-						currentTick = realTick;
-						timelistener.tickUpdate(currentTick);
+						currentTick.set(realTick);
+						timelistener.tickUpdate(currentTick.get());
 						//Halt the thread for 20ms and then reevaluate the loop
 						try { lockObject.wait(20); } catch( InterruptedException e ) {}
 						continue;
@@ -309,11 +310,11 @@ public final class EventManager {
 
 				// advance time
 				if (targetTick < nextTick)
-					currentTick = targetTick;
+					currentTick.set(targetTick);
 				else
-					currentTick = nextTick;
+					currentTick.set(nextTick);
 
-				timelistener.tickUpdate(currentTick);
+				timelistener.tickUpdate(currentTick.get());
 
 				if (oneSimTime) {
 					executeEvents = false;
@@ -333,6 +334,10 @@ public final class EventManager {
 		resume(this.secondsToNearestTick(simTime));
 	}
 
+	public final long getTicks() {
+		return currentTick.get();
+	}
+
 	public final boolean isRunning() {
 		return isRunning.get();
 	}
@@ -345,7 +350,7 @@ public final class EventManager {
 				ConditionalEvent c = condEvents.get(i);
 				if (c.c.evaluate()) {
 					condEvents.remove(i);
-					EventNode node = getEventNode(currentTick, 0);
+					EventNode node = getEventNode(currentTick.get(), 0);
 					Event evt = getEvent();
 					evt.node = node;
 					evt.target = c.target;
@@ -355,7 +360,7 @@ public final class EventManager {
 						// and we immediately switch it to this event
 						evt.handle.event = evt;
 					}
-					if (trcListener != null) trcListener.traceWaitUntilEnded(this, currentTick, c.target);
+					if (trcListener != null) trcListener.traceWaitUntilEnded(this, currentTick.get(), c.target);
 					node.addEvent(evt, true);
 					continue;
 				}
@@ -366,7 +371,7 @@ public final class EventManager {
 			executeEvents = false;
 			processRunning = false;
 			isRunning.set(false);
-			errListener.handleError(this, e, currentTick);
+			errListener.handleError(this, e, currentTick.get());
 		}
 
 		cur.endCallbacks();
@@ -380,7 +385,7 @@ public final class EventManager {
 	private long calcRealTimeTick() {
 		long curMS = System.currentTimeMillis();
 		if (rebaseRealTime) {
-			realTimeTick = currentTick;
+			realTimeTick = currentTick.get();
 			realTimeMillis = curMS;
 			rebaseRealTime = false;
 		}
@@ -424,7 +429,7 @@ public final class EventManager {
 			throw new ProcessError("Negative duration wait is invalid, waitLength = " + waitLength);
 
 		// Check for numeric overflow of internal time
-		long nextEventTime = currentTick + waitLength;
+		long nextEventTime = currentTick.get() + waitLength;
 		if (nextEventTime < 0)
 			nextEventTime = Long.MAX_VALUE;
 
@@ -489,7 +494,7 @@ public final class EventManager {
 
 			if (trcListener != null) {
 				cur.beginCallbacks();
-				trcListener.traceWait(this, currentTick, nextEventTime, priority, t);
+				trcListener.traceWait(this, currentTick.get(), nextEventTime, priority, t);
 				cur.endCallbacks();
 			}
 			node.addEvent(evt, fifo);
@@ -543,7 +548,7 @@ public final class EventManager {
 			condEvents.add(evt);
 			if (trcListener != null) {
 				cur.beginCallbacks();
-				trcListener.traceWaitUntil(this, currentTick);
+				trcListener.traceWaitUntil(this, currentTick.get());
 				cur.endCallbacks();
 			}
 			captureProcess(cur);
@@ -567,7 +572,7 @@ public final class EventManager {
 			condEvents.add(evt);
 			if (trcListener != null) {
 				cur.beginCallbacks();
-				trcListener.traceWaitUntil(this, currentTick);
+				trcListener.traceWaitUntil(this, currentTick.get());
 				cur.endCallbacks();
 			}
 		}
@@ -585,7 +590,7 @@ public final class EventManager {
 			cur.checkCallback();
 			if (trcListener != null) {
 				cur.beginCallbacks();
-				trcListener.traceProcessStart(this, t, currentTick);
+				trcListener.traceProcessStart(this, t, currentTick.get());
 				cur.endCallbacks();
 			}
 			// Transfer control to the new process
@@ -668,10 +673,10 @@ public final class EventManager {
 	private void trcKill(BaseEvent event) {
 		if (event instanceof Event) {
 			EventNode node = ((Event)event).node;
-			trcListener.traceKill(this, currentTick, node.schedTick, node.priority, event.target);
+			trcListener.traceKill(this, currentTick.get(), node.schedTick, node.priority, event.target);
 		}
 		else {
-			trcListener.traceKill(this, currentTick, -1, -1, event.target);
+			trcListener.traceKill(this, currentTick.get(), -1, -1, event.target);
 		}
 	}
 
@@ -715,10 +720,10 @@ public final class EventManager {
 	private void trcInterrupt(BaseEvent event) {
 		if (event instanceof Event) {
 			EventNode node = ((Event)event).node;
-			trcListener.traceInterrupt(this, currentTick, node.schedTick, node.priority, event.target);
+			trcListener.traceInterrupt(this, currentTick.get(), node.schedTick, node.priority, event.target);
 		}
 		else {
-			trcListener.traceInterrupt(this, currentTick, -1, -1, event.target);
+			trcListener.traceInterrupt(this, currentTick.get(), -1, -1, event.target);
 		}
 	}
 
@@ -774,7 +779,7 @@ public final class EventManager {
 				handle.event = evt;
 			}
 			if (trcListener != null)
-				trcListener.traceSchedProcess(this, currentTick, schedTick, eventPriority, t);
+				trcListener.traceSchedProcess(this, currentTick.get(), schedTick, eventPriority, t);
 			node.addEvent(evt, fifo);
 
 			// During real-time waits an event can be inserted becoming the next event to execute
@@ -831,7 +836,7 @@ public final class EventManager {
 		}
 		if (trcListener != null) {
 			cur.beginCallbacks();
-			trcListener.traceSchedProcess(this, currentTick, schedTick, eventPriority, t);
+			trcListener.traceSchedProcess(this, currentTick.get(), schedTick, eventPriority, t);
 			cur.endCallbacks();
 		}
 		node.addEvent(evt, fifo);
@@ -860,7 +865,7 @@ public final class EventManager {
 		synchronized (lockObject) {
 
 			// Ignore the pause time if it has already been reached
-			if (currentTick < targetTicks)
+			if (currentTick.get() < targetTicks)
 				targetTick = targetTicks;
 			else
 				targetTick = Long.MAX_VALUE;
@@ -901,7 +906,7 @@ public final class EventManager {
 	 * @throws ProcessError if called outside of a Process context
 	 */
 	public static final long simTicks() {
-		return Process.current().evt().currentTick;
+		return Process.current().evt().currentTick.get();
 	}
 
 	/**
@@ -913,7 +918,7 @@ public final class EventManager {
 	}
 
 	private double _simSeconds() {
-		return currentTick * secsPerTick;
+		return currentTick.get() * secsPerTick;
 	}
 
 	public final void setTickLength(double tickLength) {
