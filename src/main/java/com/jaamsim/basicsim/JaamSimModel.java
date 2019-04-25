@@ -45,7 +45,7 @@ import com.jaamsim.ui.View;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 
-public class JaamSimModel implements EventTimeListener {
+public class JaamSimModel {
 	private static final Object createLock = new Object();
 	private static JaamSimModel createModel = null;
 
@@ -94,7 +94,6 @@ public class JaamSimModel implements EventTimeListener {
 		runNumber = 1;
 		runIndexList = new IntegerVector();
 		runIndexList.add(1);
-		setTimeListener(this);
 	}
 
 	public final void setTimeListener(EventTimeListener l) {
@@ -107,14 +106,6 @@ public class JaamSimModel implements EventTimeListener {
 
 	public void setInputErrorListener(InputErrorListener l) {
 		inputErrorListener = l;
-	}
-
-	@Override
-	public void tickUpdate(long tick) {
-	}
-
-	@Override
-	public void timeRunning(long tick, boolean running) {
 	}
 
 	public void clear() {
