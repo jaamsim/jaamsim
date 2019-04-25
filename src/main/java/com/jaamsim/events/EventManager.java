@@ -113,8 +113,6 @@ public final class EventManager {
 				timelistener = l;
 			else
 				timelistener = new NoopListener();
-
-			timelistener.tickUpdate(currentTick.get());
 		}
 	}
 
@@ -138,7 +136,6 @@ public final class EventManager {
 			currentTick.set(0);
 			nextTick = 0;
 			targetTick = Long.MAX_VALUE;
-			timelistener.tickUpdate(currentTick.get());
 			rebaseRealTime = true;
 
 			eventTree.runOnAllNodes(new KillAllEvents());
