@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import org.junit.Assert;
 import org.junit.Test;
 
+import com.jaamsim.events.EventTimeListener;
 import com.jaamsim.events.TestFrameworkHelpers;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
@@ -107,8 +108,10 @@ public class TestSimulation {
 		simModel.setInput("Simulation", "RunDuration", "9 s");
 
 		// Perform the simulation run
+		WaitForPauseListener listener = new WaitForPauseListener(simModel);
+		simModel.setTimeListener(listener);
 		simModel.start();
-		simModel.waitForPause(1000L);
+		listener.waitForPause(1000L);
 
 		// Test the results
 		assert(simModel.getSimTime() == 9.0d);
@@ -145,18 +148,24 @@ public class TestSimulation {
 		simModel2.setInput("Gen", "InterArrivalTime", "2 s");
 		simModel2.setInput("Simulation", "RunDuration", "1000 s");
 
+		WaitForPauseListener listener = new WaitForPauseListener(simModel);
+		simModel.setTimeListener(listener);
+
+		WaitForPauseListener listener2 = new WaitForPauseListener(simModel2);
+		simModel2.setTimeListener(listener2);
+
 		// Start both runs
 		simModel.start();
 		simModel2.start();
 
 		// Wait for both runs to finish
 		if (simModel.isRunning() && simModel.getSimTime() > 0.0d)
-			simModel.waitForPause(1000L);
+			listener.waitForPause(1000L);
 
 		//System.out.format("%s.getSimTime=%s%n", simModel2, simModel2.getSimTime());
 		assert(simModel2.getSimTime() > 0.0d);
 		if (simModel2.isRunning())
-			simModel2.waitForPause(1000L);
+			listener2.waitForPause(1000L);
 
 		// Test the results
 		assert(simModel.getSimTime() == 1000.0d);
@@ -168,4 +177,54 @@ public class TestSimulation {
 		assert(simModel2.getDoubleValue("[Sink].NumberAdded") == 500.0d);
 	}
 
+	static class WaitForPauseListener implements EventTimeListener {
+		private final JaamSimModel simModel;
+		private Thread waitThread = null;
+
+		public WaitForPauseListener(JaamSimModel mod) {
+			simModel = mod;
+		}
+
+		@Override
+		public void tickUpdate(long tick) {
+		}
+
+		@Override
+		public void timeRunning(long tick, boolean running) {
+			//System.out.format("%s.timeRunning(%s, %s)%n", this, tick, running);
+			if (running)
+				return;
+
+			synchronized (this) {
+				if (waitThread != null)
+					waitThread.interrupt();
+			}
+		}
+
+		/**
+		 * Delays the current thread until the simulation model is paused.
+		 * @param timeoutMS - maximum time to wait in milliseconds
+		 */
+		public void waitForPause(long timeoutMS) {
+			synchronized (this) {
+				//System.out.format("%s.waitForPause(%s)%n", this, timeoutMS);
+
+				waitThread = Thread.currentThread();
+
+				try {
+					this.wait(timeoutMS);
+				}
+				catch (InterruptedException e) {
+					waitThread = null;
+					//System.out.format("%s.waitForPause - finished%n", this);
+					return;
+				}
+				waitThread = null;
+			}
+
+			simModel.pause();
+			throw new RuntimeException(
+					String.format("Timeout at %s milliseconds. Model not completed.", timeoutMS));
+		}
+	}
 }

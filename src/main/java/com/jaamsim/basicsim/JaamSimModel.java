@@ -52,7 +52,6 @@ public class JaamSimModel implements EventTimeListener {
 	private final EventManager eventManager;
 	private Simulation simulation;
 	private String name;
-	private Thread waitThread = null;
 	private int runNumber;    // labels each run when multiple runs are being made
 	private IntegerVector runIndexList;
 	private InputErrorListener inputErrorListener;
@@ -116,12 +115,6 @@ public class JaamSimModel implements EventTimeListener {
 
 	@Override
 	public void timeRunning(long tick, boolean running) {
-		//System.out.format("%s.timeRunning(%s, %s)%n", this, tick, running);
-		if (running)
-			return;
-
-		if (waitThread != null)
-			waitThread.interrupt();
 	}
 
 	public void clear() {
@@ -451,32 +444,6 @@ public class JaamSimModel implements EventTimeListener {
 			GUIFrame.shutdown(0);
 
 		pause();
-	}
-
-	/**
-	 * Delays the current thread until the simulation model is paused.
-	 * @param timeoutMS - maximum time to wait in milliseconds
-	 */
-	public void waitForPause(long timeoutMS) {
-		synchronized (this) {
-			//System.out.format("%s.waitForPause(%s)%n", this, timeoutMS);
-
-			waitThread = Thread.currentThread();
-
-			try {
-				this.wait(timeoutMS);
-			}
-			catch (InterruptedException e) {
-				waitThread = null;
-				//System.out.format("%s.waitForPause - finished%n", this);
-				return;
-			}
-			waitThread = null;
-		}
-
-		pause();
-		throw new RuntimeException(
-				String.format("Timeout at %s milliseconds. Model not completed.", timeoutMS));
 	}
 
 	/**
