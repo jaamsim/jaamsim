@@ -129,7 +129,7 @@ public class ObjectSelector extends FrameBox {
 		long curSequence = simModel.getEntitySequence();
 		if (entSequence != curSequence) {
 			entSequence = curSequence;
-			updateTree();
+			updateTree(simModel);
 		}
 
 		if (currentEntity == null) {
@@ -170,7 +170,7 @@ public class ObjectSelector extends FrameBox {
 		long curSequence = simModel.getEntitySequence();
 		if (entSequence != curSequence) {
 			entSequence = curSequence;
-			updateTree();
+			updateTree(simModel);
 		}
 	}
 
@@ -201,7 +201,7 @@ public class ObjectSelector extends FrameBox {
 		super.dispose();
 	}
 
-	private void updateTree() {
+	private void updateTree(JaamSimModel simModel) {
 
 		if (tree == null || top == null)
 			return;
@@ -222,7 +222,6 @@ public class ObjectSelector extends FrameBox {
 		top.removeAllChildren();
 
 		// Add the instance for Simulation to the top of the tree as a single leaf node
-		JaamSimModel simModel = GUIFrame.getJaamSimModel();
 		Simulation simulation = simModel.getSimulation();
 		top.add(new DefaultMutableTreeNode(simulation, false));
 
