@@ -625,6 +625,13 @@ public class Simulation extends Entity {
 			return;
 		}
 
+		if (in == displayedUnits) {
+			Unit.setPreferredUnitList(this.getJaamSimModel(), displayedUnits.getValue());
+			return;
+		}
+
+		// ****************************************************************************************
+
 		// GUI keywords that require an instance of GUIFrame
 		if (GUIFrame.getInstance() == null)
 			return;
@@ -637,11 +644,6 @@ public class Simulation extends Entity {
 
 		if (in == pauseTime) {
 			gui.updateForPauseTime(pauseTime.getValueString());
-			return;
-		}
-
-		if (in == displayedUnits) {
-			Unit.setPreferredUnitList(this.getJaamSimModel(), displayedUnits.getValue());
 			return;
 		}
 
