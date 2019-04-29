@@ -225,7 +225,6 @@ public class RenderManager implements DragSourceListener {
 			return;
 
 		RenderManager.inst().simTick = simTick;
-		GUIFrame.updateUI();
 	}
 
 	public static final void redraw() {
