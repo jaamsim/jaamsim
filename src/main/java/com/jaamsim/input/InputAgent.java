@@ -497,6 +497,11 @@ public class InputAgent {
 		InputAgent.apply(ent, kw);
 	}
 
+	public static void applyVec3d(Entity ent, String keyword, Vec3d point, Class<? extends Unit> ut) {
+		KeywordIndex kw = formatVec3dInput(keyword, point, ut);
+		InputAgent.apply(ent, kw);
+	}
+
 	public static void applyBoolean(Entity ent, String keyword, boolean bool) {
 		KeywordIndex kw = formatBoolean(keyword, bool);
 		InputAgent.apply(ent, kw);
