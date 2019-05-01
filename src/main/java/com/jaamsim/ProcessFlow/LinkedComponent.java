@@ -135,6 +135,10 @@ public abstract class LinkedComponent extends StateEntity implements Linkable, L
 		processor.setReceivedEntity(ent);
 	}
 
+	public void releaseEntity(double simTime) {
+		processor.releaseEntity(simTime);
+	}
+
 	/**
 	 * Sends the specified entity to the next component downstream.
 	 * @param ent - the entity to be sent downstream.

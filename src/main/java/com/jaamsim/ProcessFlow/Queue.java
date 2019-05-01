@@ -335,8 +335,7 @@ public class Queue extends LinkedComponent {
 		// Reset the entity's orientation to its original value
 		entry.entity.setShow(true);
 
-		this.incrementNumberProcessed();
-		this.setReleaseTime(simTime);
+		this.releaseEntity(simTime);
 		return entry.entity;
 	}
 
