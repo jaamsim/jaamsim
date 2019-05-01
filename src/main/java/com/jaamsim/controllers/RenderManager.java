@@ -139,6 +139,7 @@ public class RenderManager implements DragSourceListener {
 	private int activeWindowID = -1;
 
 	private final Object popupLock;
+	private final Object sceneDragLock;
 	private JPopupMenu lastPopup;
 
 	/**
@@ -218,6 +219,7 @@ public class RenderManager implements DragSourceListener {
 		});
 
 		popupLock = new Object();
+		sceneDragLock = new Object();
 	}
 
 	public static final void updateTime(long simTick) {
@@ -368,88 +370,92 @@ public class RenderManager implements DragSourceListener {
 					cc.checkForUpdate();
 				}
 
-				cachedScene = new ArrayList<>();
-				DisplayModelBinding.clearCacheCounters();
-				DisplayModelBinding.clearCacheMissData();
-
 				boolean screenShotThisFrame = screenshot.get();
 
-				long startNanos = System.nanoTime();
-
-				ArrayList<DisplayModelBinding> selectedBindings = new ArrayList<>();
-
-				// Update all graphical entities in the simulation
-				final ArrayList<? extends Entity> allEnts = GUIFrame.getJaamSimModel().getEntities();
-				for (int i = 0; i < allEnts.size(); i++) {
-					DisplayEntity de;
-					try {
-						Entity e = allEnts.get(i);
-						if (e instanceof DisplayEntity)
-							de = (DisplayEntity)e;
-						else
-							continue;
-					}
-					catch (IndexOutOfBoundsException e) {
-						break;
-					}
-
-					try {
-						de.updateGraphics(renderTime);
-					}
-					// Catch everything so we don't screw up the behavior handling
-					catch (Throwable e) {
-						logException(e);
-					}
-				}
-
-				long updateNanos = System.nanoTime();
-
-				// Collect the render proxies for each entity
 				int totalBindings = 0;
-				for (int i = 0; i < allEnts.size(); i++) {
-					DisplayEntity de;
-					try {
-						Entity e = allEnts.get(i);
-						if (e instanceof DisplayEntity)
-							de = (DisplayEntity)e;
-						else
-							continue;
-					}
-					catch (IndexOutOfBoundsException e) {
-						break;
+				long startNanos = System.nanoTime();;
+				long updateNanos = 0;
+				long endNanos = 0;
+				synchronized (sceneDragLock) {
+
+					cachedScene = new ArrayList<>();
+					DisplayModelBinding.clearCacheCounters();
+					DisplayModelBinding.clearCacheMissData();
+
+					ArrayList<DisplayModelBinding> selectedBindings = new ArrayList<>();
+
+					// Update all graphical entities in the simulation
+					final ArrayList<? extends Entity> allEnts = GUIFrame.getJaamSimModel().getEntities();
+					for (int i = 0; i < allEnts.size(); i++) {
+						DisplayEntity de;
+						try {
+							Entity e = allEnts.get(i);
+							if (e instanceof DisplayEntity)
+								de = (DisplayEntity)e;
+							else
+								continue;
+						}
+						catch (IndexOutOfBoundsException e) {
+							break;
+						}
+
+						try {
+							de.updateGraphics(renderTime);
+						}
+						// Catch everything so we don't screw up the behavior handling
+						catch (Throwable e) {
+							logException(e);
+						}
 					}
 
-					for (DisplayModelBinding binding : de.getDisplayBindings()) {
+					updateNanos = System.nanoTime();
+
+					// Collect the render proxies for each entity
+					for (int i = 0; i < allEnts.size(); i++) {
+						DisplayEntity de;
 						try {
-							totalBindings++;
-							binding.collectProxies(renderTime, cachedScene);
-							if (binding.isBoundTo(selectedEntity)) {
-								selectedBindings.add(binding);
+							Entity e = allEnts.get(i);
+							if (e instanceof DisplayEntity)
+								de = (DisplayEntity)e;
+							else
+								continue;
+						}
+						catch (IndexOutOfBoundsException e) {
+							break;
+						}
+
+						for (DisplayModelBinding binding : de.getDisplayBindings()) {
+							try {
+								totalBindings++;
+								binding.collectProxies(renderTime, cachedScene);
+								if (binding.isBoundTo(selectedEntity)) {
+									selectedBindings.add(binding);
+								}
+							} catch (Throwable t) {
+								// Log the exception in the exception list
+								logException(t);
 							}
+						}
+					}
+
+					// Collect the proxies for the green box that is shown around the selected entity
+					// (collected second so they always appear on top)
+					for (DisplayModelBinding binding : selectedBindings) {
+						try {
+							binding.collectSelectionProxies(renderTime, cachedScene);
 						} catch (Throwable t) {
 							// Log the exception in the exception list
 							logException(t);
 						}
 					}
-				}
 
-				// Collect the proxies for the green box that is shown around the selected entity
-				// (collected second so they always appear on top)
-				for (DisplayModelBinding binding : selectedBindings) {
-					try {
-						binding.collectSelectionProxies(renderTime, cachedScene);
-					} catch (Throwable t) {
-						// Log the exception in the exception list
-						logException(t);
+					// Finally include the displayable links for linked entities
+					if (showLinks.get()) {
+						addLinkDisplays(cachedScene);
 					}
-				}
 
-				// Finally include the displayable links for linked entities
-				if (showLinks.get()) {
-					addLinkDisplays(cachedScene);
-				}
-
-				long endNanos = System.nanoTime();
+					endNanos = System.nanoTime();
+				} // sceneDragLock
 
 				renderer.setScene(cachedScene);
 
@@ -970,6 +976,8 @@ public class RenderManager implements DragSourceListener {
 	 */
 	public boolean handleDrag(WindowInteractionListener.DragInfo dragInfo) {
 
+		synchronized(sceneDragLock) {
+
 		// If control key is pressed and there is no object to move then do nothing (return true)
 		// If control key is not pressed, then move the camera (return false)
 		if (selectedEntity == null || !selectedEntity.isMovable()
@@ -1036,6 +1044,8 @@ public class RenderManager implements DragSourceListener {
 			return handleLineNodeMove(currentRay, firstRay, currentDist, firstDist, dragInfo.shiftDown());
 
 		return false;
+
+		} // sceneDragLock
 	}
 
 	// Moves an overlay entity to a new position in the windows
