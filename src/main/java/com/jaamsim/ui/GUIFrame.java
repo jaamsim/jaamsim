@@ -3457,9 +3457,12 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, InputErr
 	}
 
 	@Override
-	public void timeRunning(long tick, boolean running) {
+	public void timeRunning() {
+		EventManager evt = EventManager.current();
+		long tick = evt.getTicks();
+		boolean running = evt.isRunning();
 		if (running) {
-			initSpeedUp(EventManager.ticksToSecs(tick));
+			initSpeedUp(evt.ticksToSeconds(tick));
 			updateForSimulationState(SIM_STATE_RUNNING);
 		}
 		else {

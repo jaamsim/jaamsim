@@ -29,9 +29,9 @@ public class TestFrameworkHelpers {
 		@Override
 		public void tickUpdate(long tick) {}
 		@Override
-		public void timeRunning(long tick, boolean running) {
+		public void timeRunning() {
 			synchronized (this) {
-				if (running) return;
+				if (EventManager.current().isRunning()) return;
 
 				if (waitThread != null)
 					waitThread.interrupt();

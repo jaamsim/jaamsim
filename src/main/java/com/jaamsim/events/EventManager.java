@@ -221,7 +221,7 @@ public final class EventManager {
 
 			processRunning = true;
 			isRunning.set(true);
-			timelistener.timeRunning(currentTick.get(), true);
+			timelistener.timeRunning();
 
 			// Loop continuously
 			while (true) {
@@ -234,7 +234,7 @@ public final class EventManager {
 				if (!executeEvents) {
 					processRunning = false;
 					isRunning.set(false);
-					timelistener.timeRunning(currentTick.get(), false);
+					timelistener.timeRunning();
 					return;
 				}
 

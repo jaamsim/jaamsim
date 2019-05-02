@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import org.junit.Assert;
 import org.junit.Test;
 
+import com.jaamsim.events.EventManager;
 import com.jaamsim.events.EventTimeListener;
 import com.jaamsim.events.TestFrameworkHelpers;
 import com.jaamsim.input.Input;
@@ -190,9 +191,9 @@ public class TestSimulation {
 		}
 
 		@Override
-		public void timeRunning(long tick, boolean running) {
+		public void timeRunning() {
 			//System.out.format("%s.timeRunning(%s, %s)%n", this, tick, running);
-			if (running)
+			if (EventManager.current().isRunning())
 				return;
 
 			synchronized (this) {

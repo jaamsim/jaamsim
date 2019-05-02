@@ -19,7 +19,7 @@ package com.jaamsim.events;
 public interface EventTimeListener {
 
 public void tickUpdate(long tick);
-public void timeRunning(long tick, boolean running);
+public void timeRunning();
 public void handleError(Throwable t);
 
 }
