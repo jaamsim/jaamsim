@@ -59,7 +59,7 @@ public class TestFrameworkHelpers {
 		}
 
 		@Override
-		public void handleError(EventManager evt, Throwable t, long currentTick) {
+		public void handleError(Throwable t) {
 			synchronized (this) {
 				if (waitThread != null)
 					waitThread.interrupt();

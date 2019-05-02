@@ -20,6 +20,6 @@ public interface EventTimeListener {
 
 public void tickUpdate(long tick);
 public void timeRunning(long tick, boolean running);
-public void handleError(EventManager evt, Throwable t, long currentTick);
+public void handleError(Throwable t);
 
 }

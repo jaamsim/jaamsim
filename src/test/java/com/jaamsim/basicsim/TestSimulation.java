@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.jaamsim.events.EventManager;
 import com.jaamsim.events.EventTimeListener;
 import com.jaamsim.events.TestFrameworkHelpers;
 import com.jaamsim.input.Input;
@@ -203,7 +202,7 @@ public class TestSimulation {
 		}
 
 		@Override
-		public void handleError(EventManager evt, Throwable t, long currentTick) {
+		public void handleError(Throwable t) {
 			synchronized (this) {
 				if (waitThread != null)
 					waitThread.interrupt();

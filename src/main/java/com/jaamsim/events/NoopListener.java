@@ -24,5 +24,5 @@ class NoopListener implements EventTimeListener {
 	public void timeRunning(long tick, boolean running) {}
 
 	@Override
-	public void handleError(EventManager evt, Throwable t, long currentTick) {}
+	public void handleError(Throwable t) {}
 }

@@ -198,7 +198,7 @@ public final class EventManager {
 			executeEvents = false;
 			processRunning = false;
 			isRunning.set(false);
-			timelistener.handleError(this, e, currentTick.get());
+			timelistener.handleError(e);
 			return false;
 		}
 	}
@@ -357,7 +357,7 @@ public final class EventManager {
 			executeEvents = false;
 			processRunning = false;
 			isRunning.set(false);
-			timelistener.handleError(this, e, currentTick.get());
+			timelistener.handleError(e);
 		}
 
 		cur.endCallbacks();

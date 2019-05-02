@@ -3482,7 +3482,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, InputErr
 	}
 
 	@Override
-	public void handleError(EventManager evt, Throwable t, long currentTick) {
+	public void handleError(Throwable t) {
 		if (t instanceof OutOfMemoryError) {
 			OutOfMemoryError e = (OutOfMemoryError)t;
 			InputAgent.logMessage(sim, "Out of Memory use the -Xmx flag during execution for more memory");
@@ -3493,6 +3493,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, InputErr
 			return;
 		}
 		else {
+			EventManager evt = EventManager.current();
+			long currentTick = evt.getTicks();
 			double curSec = evt.ticksToSeconds(currentTick);
 			InputAgent.logMessage(sim, "EXCEPTION AT TIME: %f s", curSec);
 			InputAgent.logMessage(sim, "%s", t.getMessage());
