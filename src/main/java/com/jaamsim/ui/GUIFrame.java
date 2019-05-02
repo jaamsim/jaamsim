@@ -106,7 +106,6 @@ import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.controllers.RateLimiter;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.datatypes.IntegerVector;
-import com.jaamsim.events.EventErrorListener;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.events.EventTimeListener;
 import com.jaamsim.input.ColourInput;
@@ -126,7 +125,7 @@ import com.jaamsim.units.Unit;
  * The main window for a Graphical Simulation.  It provides the controls for managing then
  * EventManager (run, pause, ...) and the graphics (zoom, pan, ...)
  */
-public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErrorListener, InputErrorListener {
+public class GUIFrame extends OSFixJFrame implements EventTimeListener, InputErrorListener {
 	private static GUIFrame instance;
 
 	private static JaamSimModel sim;
@@ -3277,7 +3276,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 			gui = GUIFrame.createInstance();
 			gui.updateForSimulationState(SIM_STATE_LOADED);
 			sim.setTimeListener(gui);
-			sim.setErrorListener(gui);
 			sim.setInputErrorListener(gui);
 
 			if (minimize)

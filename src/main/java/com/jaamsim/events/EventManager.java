@@ -72,7 +72,6 @@ public final class EventManager {
 	private volatile double realTimeFactor;    // target ratio of elapsed simulation time to elapsed wall clock time
 
 	private EventTimeListener timelistener;
-	private EventErrorListener errListener;
 	private EventTraceListener trcListener;
 
 	/**
@@ -104,7 +103,6 @@ public final class EventManager {
 		realTimeFactor = 1;
 		rebaseRealTime = true;
 		setTimeListener(null);
-		setErrorListener(null);
 	}
 
 	public final void setTimeListener(EventTimeListener l) {
@@ -113,15 +111,6 @@ public final class EventManager {
 				timelistener = l;
 			else
 				timelistener = new NoopListener();
-		}
-	}
-
-	public final void setErrorListener(EventErrorListener l) {
-		synchronized (lockObject) {
-			if (l != null)
-				errListener = l;
-			else
-				errListener = new NoopListener();
 		}
 	}
 
@@ -209,7 +198,7 @@ public final class EventManager {
 			executeEvents = false;
 			processRunning = false;
 			isRunning.set(false);
-			errListener.handleError(this, e, currentTick.get());
+			timelistener.handleError(this, e, currentTick.get());
 			return false;
 		}
 	}
@@ -368,7 +357,7 @@ public final class EventManager {
 			executeEvents = false;
 			processRunning = false;
 			isRunning.set(false);
-			errListener.handleError(this, e, currentTick.get());
+			timelistener.handleError(this, e, currentTick.get());
 		}
 
 		cur.endCallbacks();

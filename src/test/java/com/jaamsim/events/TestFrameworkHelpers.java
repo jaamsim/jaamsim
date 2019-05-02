@@ -57,5 +57,13 @@ public class TestFrameworkHelpers {
 			evt.setTimeListener(null);
 			throw new RuntimeException("Test not complete before timeout");
 		}
+
+		@Override
+		public void handleError(EventManager evt, Throwable t, long currentTick) {
+			synchronized (this) {
+				if (waitThread != null)
+					waitThread.interrupt();
+			}
+		}
 	}
 }

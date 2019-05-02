@@ -29,7 +29,6 @@ import com.jaamsim.Samples.SampleExpression;
 import com.jaamsim.StringProviders.StringProvExpression;
 import com.jaamsim.datatypes.IntegerVector;
 import com.jaamsim.events.Conditional;
-import com.jaamsim.events.EventErrorListener;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.events.EventTimeListener;
 import com.jaamsim.input.ExpError;
@@ -98,10 +97,6 @@ public class JaamSimModel {
 
 	public final void setTimeListener(EventTimeListener l) {
 		eventManager.setTimeListener(l);
-	}
-
-	public final void setErrorListener(EventErrorListener l) {
-		eventManager.setErrorListener(l);
 	}
 
 	public void setInputErrorListener(InputErrorListener l) {

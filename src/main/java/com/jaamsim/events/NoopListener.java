@@ -16,7 +16,7 @@
  */
 package com.jaamsim.events;
 
-class NoopListener implements EventTimeListener, EventErrorListener {
+class NoopListener implements EventTimeListener {
 	@Override
 	public void tickUpdate(long tick) {}
 
