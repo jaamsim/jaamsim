@@ -732,6 +732,7 @@ public class JaamSimModel {
 			ent.setFlag(Entity.FLAG_RETAINED);
 
 		ent.setName(name);
+		ent.postDefine();
 		return ent;
 	}
 

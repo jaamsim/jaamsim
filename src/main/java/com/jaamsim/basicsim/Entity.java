@@ -157,6 +157,11 @@ public class Entity {
 		flags = 0;
 	}
 
+	/**
+	 * Performs any initialization that must occur after the constructor has finished.
+	 */
+	public void postDefine() {}
+
 	public JaamSimModel getJaamSimModel() {
 		return simModel;
 	}
