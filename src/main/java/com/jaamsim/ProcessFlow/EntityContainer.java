@@ -235,6 +235,7 @@ public class EntityContainer extends SimEntity implements EntContainer {
 
 		// Update the position of each entity (start at the bottom left of the container)
 		double distanceX = -0.5*size.x;
+		double distanceY0 = -0.5*size.y + 0.5*maxWidth;
 		itr = container.iterator();
 		int i = 0;
 		while (itr.hasNext()) {
@@ -255,7 +256,7 @@ public class EntityContainer extends SimEntity implements EntContainer {
 			item.setRelativeOrientation(orient);
 
 			// Calculate the y- and z- coordinates
-			double distanceY = row * (spacingInput.getValue() + maxWidth);
+			double distanceY = distanceY0 + row * (spacingInput.getValue() + maxWidth);
 			double distanceZ = level * (spacingInput.getValue() + maxHeight);
 
 			// Set Position
