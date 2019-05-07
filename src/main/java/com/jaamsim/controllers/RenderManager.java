@@ -1320,12 +1320,13 @@ public class RenderManager implements DragSourceListener {
 			diff.z = 0.0d;
 		}
 		point.add3(diff);
+		Vec3d localPos = selectedEntity.getLocalPosition(point);
 
 		// Align the node to snap grid
 		Simulation simulation = GUIFrame.getJaamSimModel().getSimulation();
 		if (simulation.isSnapToGrid()) {
-			Vec3d oldPos = selectedEntity.getGlobalPosition(screenPoints.get(nodeIndex));
-			point = simulation.getSnapGridPosition(point, oldPos, shift);
+			Vec3d oldPos = screenPoints.get(nodeIndex);
+			localPos = simulation.getSnapGridPosition(localPos, oldPos, shift);
 		}
 
 		ArrayList<Vec3d> newPoints = new ArrayList<>();
@@ -1334,7 +1335,7 @@ public class RenderManager implements DragSourceListener {
 		}
 
 		// Set the new position for the node
-		newPoints.set(nodeIndex, new Vec3d(selectedEntity.getLocalPosition(point)));
+		newPoints.set(nodeIndex, localPos);
 
 		KeywordIndex ptsKw = InputAgent.formatPointsInputs("Points", newPoints, new Vec3d());
 		InputAgent.storeAndExecute(new KeywordCommand(selectedEntity, nodeIndex, ptsKw));
