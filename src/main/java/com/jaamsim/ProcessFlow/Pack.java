@@ -212,6 +212,16 @@ public class Pack extends LinkedService {
 	}
 
 	@Override
+	public void thresholdChanged() {
+
+		// If an immediate release closure, stop packing and release the container
+		if (isImmediateReleaseThresholdClosure())
+			numberToInsert = 0;
+
+		super.thresholdChanged();
+	}
+
+	@Override
 	public void updateGraphics(double simTime) {
 		if (container != null)
 			moveToProcessPosition((DisplayEntity)container);
