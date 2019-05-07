@@ -1089,10 +1089,10 @@ public class RenderManager implements DragSourceListener {
 			pos.add3(del);
 		}
 
+		Vec3d localPos = selectedEntity.getLocalPosition(pos);
 		Simulation simulation = GUIFrame.getJaamSimModel().getSimulation();
 		if (simulation.isSnapToGrid())
-			pos = simulation.getSnapGridPosition(pos, selectedEntity.getGlobalPosition(), shift);
-		Vec3d localPos = selectedEntity.getLocalPosition(pos);
+			localPos = simulation.getSnapGridPosition(localPos, selectedEntity.getPosition(), shift);
 		KeywordIndex kw = InputAgent.formatVec3dInput("Position", localPos, DistanceUnit.class);
 
 		ArrayList<Vec3d> points = selectedEntity.getPoints();
