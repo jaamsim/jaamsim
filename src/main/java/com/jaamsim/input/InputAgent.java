@@ -63,6 +63,8 @@ public class InputAgent {
 	private static final String recordEditsMarker = "RecordEdits";
 
 	private static final String INP_ERR_DEFINEUSED = "The name: %s has already been used and is a %s";
+	private static final String INP_ERR_BADNAME = "An entity name cannot be blank or contain spaces, tabs, or braces.";
+
 	private static final String[] EARLY_KEYWORDS = {"UnitType", "UnitTypeList", "DataFile", "AttributeDefinitionList", "CustomOutputList"};
 	private static final String[] GRAPHICS_PALETTES = {"Graphics Objects", "View", "Display Models"};
 	private static final String[] GRAPHICS_CATEGORIES = {Entity.GRAPHICS, Entity.FONT, Entity.FORMAT, Entity.GUI};
@@ -279,8 +281,7 @@ public class InputAgent {
 			throw new ErrorException("Must provide a name for generated Entities");
 
 		if (!isValidName(key)) {
-			InputAgent.logError(simModel,
-					"Entity names cannot contain spaces, tabs, { or }: %s", key);
+			InputAgent.logError(simModel, INP_ERR_BADNAME);
 			return null;
 		}
 
@@ -359,8 +360,7 @@ public class InputAgent {
 		}
 
 		if (!isValidName(key)) {
-			InputAgent.logError(simModel,
-					"Entity names cannot contain spaces, tabs, { or }: %s", key);
+			InputAgent.logError(simModel, INP_ERR_BADNAME);
 			return null;
 		}
 
@@ -399,7 +399,7 @@ public class InputAgent {
 
 		// Check that the new name is valid
 		if (!isValidName(newName))
-			throw new ErrorException("Entity names cannot contain spaces, tabs, or braces ({}).");
+			throw new ErrorException(INP_ERR_BADNAME);
 
 		// Rename the entity
 		InputAgent.storeAndExecute(new RenameCommand(ent, newName));
