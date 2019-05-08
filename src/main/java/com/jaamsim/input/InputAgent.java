@@ -331,6 +331,8 @@ public class InputAgent {
 	}
 
 	private static boolean isValidName(String key) {
+		if (key.isEmpty())
+			return false;
 		for (int i = 0; i < key.length(); ++i) {
 			final char c = key.charAt(i);
 			if (c == ' ' || c == '\t' || c == '{' || c == '}')
