@@ -89,11 +89,13 @@ public class InputAgent {
 			if (braceDepth < 0) {
 				InputAgent.logBadInput(simModel, tokens, "Extra closing braces found");
 				tokens.clear();
+				braceDepth = 0;
 			}
 
 			if (braceDepth > 3) {
 				InputAgent.logBadInput(simModel, tokens, "Maximum brace depth (3) exceeded");
 				tokens.clear();
+				braceDepth = 0;
 			}
 		}
 
