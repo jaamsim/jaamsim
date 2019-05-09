@@ -372,7 +372,7 @@ public class RenderManager implements DragSourceListener {
 				boolean screenShotThisFrame = screenshot.get();
 
 				int totalBindings = 0;
-				long startNanos = System.nanoTime();;
+				long startNanos = System.nanoTime();
 				long updateNanos = 0;
 				long endNanos = 0;
 				synchronized (sceneDragLock) {
