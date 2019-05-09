@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -76,6 +77,7 @@ public class KeywordIndex {
 	}
 
 	public ArrayList<KeywordIndex> getSubArgs() {
+		Input.assertBracesMatch(this);
 		ArrayList<KeywordIndex> subArgs = new ArrayList<>();
 		for (int i= 0; i < this.numArgs(); i++) {
 			//skip over opening brace if present

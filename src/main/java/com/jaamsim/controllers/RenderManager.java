@@ -1088,10 +1088,10 @@ public class RenderManager implements DragSourceListener {
 			pos.add3(del);
 		}
 
+		Vec3d localPos = selectedEntity.getLocalPosition(pos);
 		Simulation simulation = GUIFrame.getJaamSimModel().getSimulation();
 		if (simulation.isSnapToGrid())
-			pos = simulation.getSnapGridPosition(pos, selectedEntity.getGlobalPosition(), shift);
-		Vec3d localPos = selectedEntity.getLocalPosition(pos);
+			localPos = simulation.getSnapGridPosition(localPos, selectedEntity.getPosition(), shift);
 		KeywordIndex kw = InputAgent.formatVec3dInput("Position", localPos, DistanceUnit.class);
 
 		ArrayList<Vec3d> points = selectedEntity.getPoints();
@@ -1277,7 +1277,9 @@ public class RenderManager implements DragSourceListener {
 		if (simulation.isSnapToGrid()) {
 			Vec3d point = new Vec3d();
 			point.add3(globalPts.get(0), delta);
-			point = simulation.getSnapGridPosition(point, globalPts.get(0), shift);
+			Vec3d localPos = selectedEntity.getLocalPosition(point);
+			localPos = simulation.getSnapGridPosition(localPos, dragEntityPoints.get(0), shift);
+			point = selectedEntity.getGlobalPosition(localPos);
 			delta.sub3(point, globalPts.get(0));
 		}
 
@@ -1319,12 +1321,13 @@ public class RenderManager implements DragSourceListener {
 			diff.z = 0.0d;
 		}
 		point.add3(diff);
+		Vec3d localPos = selectedEntity.getLocalPosition(point);
 
 		// Align the node to snap grid
 		Simulation simulation = GUIFrame.getJaamSimModel().getSimulation();
 		if (simulation.isSnapToGrid()) {
-			Vec3d oldPos = selectedEntity.getGlobalPosition(screenPoints.get(nodeIndex));
-			point = simulation.getSnapGridPosition(point, oldPos, shift);
+			Vec3d oldPos = screenPoints.get(nodeIndex);
+			localPos = simulation.getSnapGridPosition(localPos, oldPos, shift);
 		}
 
 		ArrayList<Vec3d> newPoints = new ArrayList<>();
@@ -1333,7 +1336,7 @@ public class RenderManager implements DragSourceListener {
 		}
 
 		// Set the new position for the node
-		newPoints.set(nodeIndex, new Vec3d(selectedEntity.getLocalPosition(point)));
+		newPoints.set(nodeIndex, localPos);
 
 		KeywordIndex ptsKw = InputAgent.formatPointsInputs("Points", newPoints, new Vec3d());
 		InputAgent.storeAndExecute(new KeywordCommand(selectedEntity, nodeIndex, ptsKw));

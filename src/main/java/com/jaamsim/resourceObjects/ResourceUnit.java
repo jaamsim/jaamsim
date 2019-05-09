@@ -176,9 +176,6 @@ public class ResourceUnit extends StateUserEntity implements Seizable, ResourceP
 			error("Unit is already in use: assignment=%s, entity=%s", presentAssignment, ent);
 		}
 		presentAssignment = ent;
-
-		// Set the new state
-		setBusy(true);
 		setPresentState();
 	}
 
@@ -186,10 +183,12 @@ public class ResourceUnit extends StateUserEntity implements Seizable, ResourceP
 	public void release() {
 		presentAssignment = null;
 		lastReleaseTicks = getSimTicks();
-
-		// Set the new state
-		setBusy(false);
 		setPresentState();
+	}
+
+	@Override
+	public boolean isBusy() {
+		return presentAssignment != null;
 	}
 
 	@Override
@@ -261,6 +260,7 @@ public class ResourceUnit extends StateUserEntity implements Seizable, ResourceP
 	public void thresholdChanged() {
 		if (isTraceFlag())
 			trace(0, "thresholdChanged");
+		setPresentState();
 
 		// If the resource unit is available, try to put it to work
 		if (isAvailable()) {

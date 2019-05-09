@@ -119,6 +119,16 @@ public class Unpack extends LinkedService {
 	}
 
 	@Override
+	public void thresholdChanged() {
+
+		// If an immediate release closure, stop packing and release the container
+		if (isImmediateReleaseThresholdClosure())
+			numberToRemove = 0;
+
+		super.thresholdChanged();
+	}
+
+	@Override
 	public void updateGraphics(double simTime) {
 		if (container == null)
 			return;

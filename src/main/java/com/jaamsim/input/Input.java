@@ -80,6 +80,7 @@ public abstract class Input<T> {
 	protected static final String INP_ERR_BADEXP = "Error parsing expression: %s";
 	protected static final String INP_VAL_LISTSET = "Values found for %s without %s being set";
 	protected static final String INP_VAL_LISTSIZE = "%s and %s must be of equal size";
+	protected static final String INP_ERR_BRACES = "List must contain equal numbers of opening and closing braces";
 
 	protected static final String VALID_SAMPLE_PROV = "Accepts a number with units of type %s, an object that returns such a number, or an expression that returns such a number.";
 	protected static final String VALID_SAMPLE_PROV_DIMLESS = "Accepts a dimensionless number, an object that returns such a number, or an expression that returns such a number.";
@@ -699,6 +700,23 @@ public abstract class Input<T> {
 			if (direction < 0 && diff > 0.0)
 				throw new InputErrorException(INP_ERR_MONOTONIC, "decrease", i-1, vec.get(i-1), vec.get(i));
 		}
+	}
+
+	public static void assertBracesMatch(KeywordIndex kw)
+	throws InputErrorException {
+		int depth = 0;
+		for (int i= 0; i < kw.numArgs(); i++) {
+			if (kw.getArg(i).equals("{")) {
+				depth++;
+				continue;
+			}
+			if (kw.getArg(i).equals("}")) {
+				depth--;
+				continue;
+			}
+		}
+		if (depth != 0)
+			throw new InputErrorException(INP_ERR_BRACES);
 	}
 
 	/**

@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2002-2011 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +17,17 @@
  */
 package com.jaamsim.Graphics;
 
+import com.jaamsim.input.Keyword;
+import com.jaamsim.input.ValueInput;
 import com.jaamsim.math.Quaternion;
 import com.jaamsim.math.Transform;
+import com.jaamsim.units.DimensionlessUnit;
 
 public class Region extends DisplayEntity {
+
+	@Keyword(description = "If TRUE, the object is displayed in the View windows.",
+	         exampleList = {"FALSE"})
+	private final ValueInput scale;
 
 	{
 		this.addSynonym(positionInput, "Origin");
@@ -27,12 +35,20 @@ public class Region extends DisplayEntity {
 		desc.setHidden(true);
 		regionInput.setHidden(true);
 		relativeEntity.setHidden(true);
+
+		scale = new ValueInput("Scale", KEY_INPUTS, 1.0d);
+		scale.setUnitType(DimensionlessUnit.class);
+		this.addInput(scale);
 	}
 
 	public Region() {}
 
 	@Override
 	public void setInputsForDragAndDrop() {}
+
+	public double getScale() {
+		return scale.getValue();
+	}
 
 	/**
 	 * Return the transformation that converts the local coordinates for a
@@ -42,7 +58,7 @@ public class Region extends DisplayEntity {
 	public Transform getRegionTrans() {
 		Quaternion rot = new Quaternion();
 		rot.setEuler3(getOrientation());
-		return new Transform(getPosition(), rot, 1.0d);
+		return new Transform(getPosition(), rot, getScale());
 	}
 
 	/**
@@ -53,7 +69,7 @@ public class Region extends DisplayEntity {
 	public Transform getRegionTransForVectors() {
 		Quaternion rot = new Quaternion();
 		rot.setEuler3(getOrientation());
-		return new Transform(null, rot, 1.0d);
+		return new Transform(null, rot, getScale());
 	}
 
 	/**
