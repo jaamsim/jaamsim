@@ -1131,7 +1131,6 @@ public class RenderManager implements DragSourceListener {
 		Vec3d entSpaceDelta = new Vec3d();
 		entSpaceDelta.sub3(entSpaceCurrent, entSpaceFirst);
 
-		Vec3d pos = dragEntityPosition;
 		Vec3d scale = new Vec3d(size);
 		Vec4d fixedPoint = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
 
@@ -1213,6 +1212,7 @@ public class RenderManager implements DragSourceListener {
 
 		Vec4d posAdjust = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
 		posAdjust.sub3(oldFixed, newFixed);
+		Vec3d pos = selectedEntity.getGlobalPosition();
 		pos.add3(posAdjust);
 
 		Vec3d localPos = selectedEntity.getLocalPosition(pos);
