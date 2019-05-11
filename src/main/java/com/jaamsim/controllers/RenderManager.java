@@ -1120,13 +1120,12 @@ public class RenderManager implements DragSourceListener {
 
 		Vec3d size = dragEntitySize;
 		Mat4d transMat = dragEntityTransMat;
-		Mat4d invTransMat = dragEntityInvTransMat;
 
 		Vec3d entSpaceCurrent = new Vec3d(); // entSpacePoint is the current point in model space
-		entSpaceCurrent.multAndTrans3(invTransMat, currentPoint);
+		entSpaceCurrent.multAndTrans3(dragEntityInvTransMat, currentPoint);
 
 		Vec3d entSpaceFirst = new Vec3d(); // entSpaceLast is the last point in model space
-		entSpaceFirst.multAndTrans3(invTransMat, firstPoint);
+		entSpaceFirst.multAndTrans3(dragEntityInvTransMat, firstPoint);
 
 		Vec3d entSpaceDelta = new Vec3d();
 		entSpaceDelta.sub3(entSpaceCurrent, entSpaceFirst);
@@ -1226,8 +1225,6 @@ public class RenderManager implements DragSourceListener {
 
 	private boolean handleRotate(Ray currentRay, Ray firstRay, double currentDist, double firstDist) {
 
-		Mat4d transMat = dragEntityTransMat;
-
 		// The points where the previous pick ended and current position. Collision is with the entity's XY plane
 		Vec3d currentPoint = currentRay.getPointAtDist(currentDist);
 		Vec3d firstPoint = firstRay.getPointAtDist(firstDist);
@@ -1235,7 +1232,7 @@ public class RenderManager implements DragSourceListener {
 		Vec3d align = selectedEntity.getAlignment();
 
 		Vec4d rotateCenter = new Vec4d(align.x, align.y, align.z, 1.0d);
-		rotateCenter.mult4(transMat, rotateCenter);
+		rotateCenter.mult4(dragEntityTransMat, rotateCenter);
 
 		Vec4d a = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
 		a.sub3(firstPoint, rotateCenter);
