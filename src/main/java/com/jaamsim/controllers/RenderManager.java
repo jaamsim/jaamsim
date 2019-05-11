@@ -1118,8 +1118,6 @@ public class RenderManager implements DragSourceListener {
 		Vec3d currentPoint = currentRay.getPointAtDist(currentDist);
 		Vec3d firstPoint = firstRay.getPointAtDist(firstDist);
 
-		Mat4d transMat = dragEntityTransMat;
-
 		Vec3d entSpaceCurrent = new Vec3d(); // entSpacePoint is the current point in model space
 		entSpaceCurrent.multAndTrans3(dragEntityInvTransMat, currentPoint);
 
@@ -1200,12 +1198,11 @@ public class RenderManager implements DragSourceListener {
 		}
 
 		Vec4d oldFixed = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
-		oldFixed.mult4(transMat, fixedPoint);
+		oldFixed.mult4(dragEntityTransMat, fixedPoint);
 		selectedEntity.setSize(scale);
 
-		transMat = selectedEntity.getTransMatrix(); // Get the new matrix
-
 		Vec4d newFixed = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
+		Mat4d transMat = selectedEntity.getTransMatrix(); // Get the new matrix
 		newFixed.mult4(transMat, fixedPoint);
 
 		Vec4d posAdjust = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
