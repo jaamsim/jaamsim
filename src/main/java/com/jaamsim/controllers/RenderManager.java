@@ -1118,7 +1118,6 @@ public class RenderManager implements DragSourceListener {
 		Vec3d currentPoint = currentRay.getPointAtDist(currentDist);
 		Vec3d firstPoint = firstRay.getPointAtDist(firstDist);
 
-		Vec3d size = dragEntitySize;
 		Mat4d transMat = dragEntityTransMat;
 
 		Vec3d entSpaceCurrent = new Vec3d(); // entSpacePoint is the current point in model space
@@ -1130,45 +1129,45 @@ public class RenderManager implements DragSourceListener {
 		Vec3d entSpaceDelta = new Vec3d();
 		entSpaceDelta.sub3(entSpaceCurrent, entSpaceFirst);
 
-		Vec3d scale = new Vec3d(size);
+		Vec3d scale = new Vec3d(dragEntitySize);
 		Vec4d fixedPoint = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
 
 		if (dragHandleID == RESIZE_POSX_PICK_ID) {
 			//scale.x = 2*entSpaceCurrent.x() * size.x();
-			scale.x += entSpaceDelta.x * size.x;
+			scale.x += entSpaceDelta.x * dragEntitySize.x;
 			fixedPoint = new Vec4d(-0.5,  0.0, 0.0, 1.0d);
 		}
 		if (dragHandleID == RESIZE_POSY_PICK_ID) {
-			scale.y += entSpaceDelta.y * size.y;
+			scale.y += entSpaceDelta.y * dragEntitySize.y;
 			fixedPoint = new Vec4d( 0.0, -0.5, 0.0, 1.0d);
 		}
 		if (dragHandleID == RESIZE_NEGX_PICK_ID) {
-			scale.x -= entSpaceDelta.x * size.x;
+			scale.x -= entSpaceDelta.x * dragEntitySize.x;
 			fixedPoint = new Vec4d( 0.5,  0.0, 0.0, 1.0d);
 		}
 		if (dragHandleID == RESIZE_NEGY_PICK_ID) {
-			scale.y -= entSpaceDelta.y * size.y;
+			scale.y -= entSpaceDelta.y * dragEntitySize.y;
 			fixedPoint = new Vec4d( 0.0,  0.5, 0.0, 1.0d);
 		}
 
 		if (dragHandleID == RESIZE_PXPY_PICK_ID) {
-			scale.x += entSpaceDelta.x * size.x;
-			scale.y += entSpaceDelta.y * size.y;
+			scale.x += entSpaceDelta.x * dragEntitySize.x;
+			scale.y += entSpaceDelta.y * dragEntitySize.y;
 			fixedPoint = new Vec4d(-0.5, -0.5, 0.0, 1.0d);
 		}
 		if (dragHandleID == RESIZE_PXNY_PICK_ID) {
-			scale.x += entSpaceDelta.x * size.x;
-			scale.y -= entSpaceDelta.y * size.y;
+			scale.x += entSpaceDelta.x * dragEntitySize.x;
+			scale.y -= entSpaceDelta.y * dragEntitySize.y;
 			fixedPoint = new Vec4d(-0.5,  0.5, 0.0, 1.0d);
 		}
 		if (dragHandleID == RESIZE_NXPY_PICK_ID) {
-			scale.x -= entSpaceDelta.x * size.x;
-			scale.y += entSpaceDelta.y * size.y;
+			scale.x -= entSpaceDelta.x * dragEntitySize.x;
+			scale.y += entSpaceDelta.y * dragEntitySize.y;
 			fixedPoint = new Vec4d( 0.5, -0.5, 0.0, 1.0d);
 		}
 		if (dragHandleID == RESIZE_NXNY_PICK_ID) {
-			scale.x -= entSpaceDelta.x * size.x;
-			scale.y -= entSpaceDelta.y * size.y;
+			scale.x -= entSpaceDelta.x * dragEntitySize.x;
+			scale.y -= entSpaceDelta.y * dragEntitySize.y;
 			fixedPoint = new Vec4d( 0.5,  0.5, 0.0, 1.0d);
 		}
 
