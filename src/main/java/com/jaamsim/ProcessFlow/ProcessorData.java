@@ -59,14 +59,6 @@ public class ProcessorData {
 		receivedEntity = ent;
 	}
 
-	public void setReleaseTime(double simTime) {
-		releaseTime = simTime;
-	}
-
-	public void incrementNumberProcessed() {
-		numberProcessed++;
-	}
-
 	/**
 	 * Returns the last entity that was received.
 	 * @return last entity received

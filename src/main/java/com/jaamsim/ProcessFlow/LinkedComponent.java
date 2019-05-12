@@ -149,10 +149,6 @@ public abstract class LinkedComponent extends StateEntity implements Linkable, L
 			nextComponent.getValue().addEntity(ent);
 	}
 
-	public void setReleaseTime(double simTime) {
-		processor.setReleaseTime(simTime);
-	}
-
 	/**
 	 * Returns the number of entities that have been received from upstream during the entire
 	 * simulation run, including the initialisation period.
@@ -176,10 +172,6 @@ public abstract class LinkedComponent extends StateEntity implements Linkable, L
 	 */
 	public long getNumberAdded() {
 		return processor.getNumberReceived();
-	}
-
-	public void incrementNumberProcessed() {
-		processor.incrementNumberProcessed();
 	}
 
 	/**
