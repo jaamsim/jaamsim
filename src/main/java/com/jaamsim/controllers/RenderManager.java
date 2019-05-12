@@ -1131,7 +1131,6 @@ public class RenderManager implements DragSourceListener {
 		Vec4d fixedPoint = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
 
 		if (dragHandleID == RESIZE_POSX_PICK_ID) {
-			//scale.x = 2*entSpaceCurrent.x() * size.x();
 			scale.x += entSpaceDelta.x * dragEntitySize.x;
 			fixedPoint = new Vec4d(-0.5,  0.0, 0.0, 1.0d);
 		}
@@ -1197,11 +1196,12 @@ public class RenderManager implements DragSourceListener {
 			else if (dragHandleID == RESIZE_NXNY_PICK_ID) { dragHandleID = RESIZE_NXPY_PICK_ID; }
 		}
 
+		// Determine the new position for the entity
 		Vec4d oldFixed = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
 		oldFixed.mult4(dragEntityTransMat, fixedPoint);
-		selectedEntity.setSize(scale);
 
 		Vec4d newFixed = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
+		selectedEntity.setSize(scale);
 		Mat4d transMat = selectedEntity.getTransMatrix(); // Get the new matrix
 		newFixed.mult4(transMat, fixedPoint);
 
@@ -1209,8 +1209,8 @@ public class RenderManager implements DragSourceListener {
 		posAdjust.sub3(oldFixed, newFixed);
 		Vec3d pos = selectedEntity.getGlobalPosition();
 		pos.add3(posAdjust);
-
 		Vec3d localPos = selectedEntity.getLocalPosition(pos);
+
 		KeywordIndex sizeKw = InputAgent.formatVec3dInput("Size", scale, DistanceUnit.class);
 		KeywordIndex posKw = InputAgent.formatVec3dInput("Position", localPos, DistanceUnit.class);
 		InputAgent.storeAndExecute(new KeywordCommand(selectedEntity, sizeKw, posKw));
