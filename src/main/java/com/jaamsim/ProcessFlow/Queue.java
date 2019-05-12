@@ -752,7 +752,7 @@ public class Queue extends LinkedComponent {
 	  reportable = true,
 	    sequence = 10)
 	public double getAverageQueueTime(double simTime) {
-		return stats.getSum(simTime) / getNumberAdded();
+		return stats.getSum(simTime) / getNumberAdded(simTime);
 	}
 
 	@Output(name = "MatchValueCount",
