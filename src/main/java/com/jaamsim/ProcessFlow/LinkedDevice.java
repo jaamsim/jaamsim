@@ -138,39 +138,6 @@ public abstract class LinkedDevice extends Device implements Linkable, LinkDispl
 			nextComponent.getValue().addEntity(ent);
 	}
 
-	/**
-	 * Returns the number of entities that have been received from upstream during the entire
-	 * simulation run, including the initialisation period.
-	 */
-	public long getTotalNumberAdded() {
-		return processor.getTotalNumberReceived();
-	}
-
-	/**
-	 * Returns the number of entities that have been passed downstream during the entire
-	 * simulation run, including the initialisation period.
-	 */
-	public long getTotalNumberProcessed() {
-		return processor.getTotalNumberProcessed();
-	}
-
-	/**
-	 * Returns the number of entities that have been received from upstream after the
-	 * initialisation period.
-	 * @return
-	 */
-	public long getNumberAdded() {
-		return processor.getNumberReceived();
-	}
-
-	/**
-	 * Returns the number of entities that have been received but whose processing has not been
-	 * completed yet.
-	 */
-	public long getNumberInProgress() {
-		return  processor.getNumberInProgress();
-	}
-
 	@Override
 	public void clearStatistics() {
 		super.clearStatistics();
