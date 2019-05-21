@@ -56,6 +56,7 @@ public class Resource extends AbstractResourceProvider {
 	protected int unitsReleased;  // number of units that have been released
 
 	{
+		trace.setHidden(false);
 		attributeDefinitionList.setHidden(false);
 
 		capacity = new SampleInput("Capacity", KEY_INPUTS, new SampleConstant(1.0));
@@ -120,6 +121,7 @@ public class Resource extends AbstractResourceProvider {
 
 	@Override
 	public void seize(int n, DisplayEntity ent) {
+		if (isTraceFlag()) trace(1, "seize(%s, %s)", n, ent);
 		double simTime = getSimTime();
 		if (getAvailableUnits(simTime) < n)
 			error(ERR_CAPACITY, getCapacity(simTime), n);
@@ -132,6 +134,7 @@ public class Resource extends AbstractResourceProvider {
 
 	@Override
 	public void release(int m, DisplayEntity ent) {
+		if (isTraceFlag()) trace(1, "release(%s, %s)", m, ent);
 		int n = Math.min(m, unitsInUse);
 		unitsInUse -= n;
 		unitsReleased += n;
