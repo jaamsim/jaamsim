@@ -160,11 +160,8 @@ public class TestSimulation {
 		simModel2.start();
 
 		// Wait for both runs to finish
-		if (simModel.isRunning() && simModel.getSimTime() > 0.0d)
+		if (simModel.isRunning())
 			listener.waitForPause(1000L);
-
-		//System.out.format("%s.getSimTime=%s%n", simModel2, simModel2.getSimTime());
-		assert(simModel2.getSimTime() > 0.0d);
 		if (simModel2.isRunning())
 			listener2.waitForPause(1000L);
 
