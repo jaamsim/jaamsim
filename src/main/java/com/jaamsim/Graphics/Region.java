@@ -17,7 +17,10 @@
  */
 package com.jaamsim.Graphics;
 
+import com.jaamsim.Commands.CoordinateCommand;
+import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
+import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.math.Quaternion;
 import com.jaamsim.math.Transform;
@@ -48,6 +51,20 @@ public class Region extends DisplayEntity {
 
 	public double getScale() {
 		return scale.getValue();
+	}
+
+	@Override
+	public void delete() {
+
+		// Reset the Region input for the entities in this region
+		KeywordIndex kw = InputAgent.formatArgs("Region");
+		for (DisplayEntity ent : getJaamSimModel().getClonesOfIterator(DisplayEntity.class)) {
+			if (ent == this || ent.getInput("Region").getValue() != this)
+				continue;
+			InputAgent.storeAndExecute(new CoordinateCommand(ent, kw));
+		}
+
+		super.delete();
 	}
 
 	/**
