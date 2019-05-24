@@ -2217,6 +2217,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, InputErr
 
 				GUIFrame.this.stopSimulation();
 				initSpeedUp(0.0d);
+				tickUpdate(0L);
 			}
 		} );
 		mainToolBar.add( controlStop );
