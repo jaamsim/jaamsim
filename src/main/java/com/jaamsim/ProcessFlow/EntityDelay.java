@@ -28,6 +28,7 @@ import com.jaamsim.Graphics.PolylineInfo;
 import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.basicsim.EntityTarget;
+import com.jaamsim.events.EventManager;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.Input;
@@ -78,7 +79,7 @@ public class EntityDelay extends LinkedComponent implements LineEntity {
 	         exampleList = {"red"})
 	private final ColourInput colorInput;
 
-	private double exitTime;  // time at which the previous entity will leave the path
+	private long exitTicks;  // ticks at which the previous entity will leave the path
 	private final LinkedHashMap<Long, EntityDelayEntry> entityMap = new LinkedHashMap<>();  // Entities being handled
 
 	{
@@ -140,7 +141,7 @@ public class EntityDelay extends LinkedComponent implements LineEntity {
 	@Override
 	public void earlyInit() {
 		super.earlyInit();
-		exitTime = Double.NEGATIVE_INFINITY;
+		exitTicks = -1L;
 		entityMap.clear();
 	}
 
@@ -168,16 +169,20 @@ public class EntityDelay extends LinkedComponent implements LineEntity {
 		// Select the delay time for this entity
 		double simTime = this.getSimTime();
 		double dur = duration.getValue().getNextSample(simTime);
+		long durTicks = EventManager.secsToNearestTick(dur);
 
 		// Adjust the duration for the previous entity's exit time
 		if (!allowOvertaking.getValue()) {
 			double sep = minSeparation.getValue().getNextSample(simTime);
-			dur = Math.max(dur, exitTime - simTime + sep);
-			exitTime = simTime + dur;
+			long sepTicks = EventManager.secsToNearestTick(sep);
+			long simTicks = getSimTicks();
+			durTicks = Math.max(durTicks, exitTicks - simTicks + sepTicks);
+			exitTicks = simTicks + durTicks;
 		}
 
 		// Add the entity to the list of entities being delayed
 		if (animation.getValue()) {
+			dur = EventManager.ticksToSecs(durTicks);
 			EntityDelayEntry entry = new EntityDelayEntry(ent, simTime, dur);
 			entityMap.put(ent.getEntityNumber(), entry);
 		}
@@ -185,7 +190,8 @@ public class EntityDelay extends LinkedComponent implements LineEntity {
 			ent.setGlobalPosition(this.getGlobalPosition());
 		}
 
-		scheduleProcess(dur, 5, true, new RemoveDisplayEntityTarget(this, ent), null); // FIFO
+		RemoveDisplayEntityTarget target = new RemoveDisplayEntityTarget(this, ent);
+		scheduleProcessTicks(durTicks, 5, true, target, null); // FIFO
 
 		// Set the present state to Working
 		this.setPresentState();
