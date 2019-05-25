@@ -981,6 +981,22 @@ public class ExpOperators {
 			}
 		});
 
+		addFunction("round", 1, 1, new CallableFunc() {
+			@Override
+			public void checkUnits(ParseContext context, ExpResult[] args,
+					String source, int pos) throws ExpError {
+				// N/A
+			}
+			@Override
+			public ExpResult call(EvalContext context, ExpResult[] args, String source, int pos) {
+				return ExpResult.makeNumResult(Math.round(args[0].value), args[0].unitType);
+			}
+			@Override
+			public ExpValResult validate(ParseContext context, ExpValResult[] args, String source, int pos) {
+				return args[0];
+			}
+		});
+
 		addFunction("signum", 1, 1, new CallableFunc() {
 			@Override
 			public void checkUnits(ParseContext context, ExpResult[] args,

@@ -1145,6 +1145,17 @@ public class ExpressionBox extends JDialog {
 				"'floor(-2.4)' returns -3",
 				"'floor(2.4[s])' returns 2[s]"));
 
+		functions.add(new ButtonDesc("round", "Round function ('round')",
+				"Returns the closest integer to the argument, with ties rounding to positive infinity.",
+				"Accepts a number with or without units. Returns an integer with the same units.",
+				"round()",
+				-1,
+				"'round(2.4)' returns 2",
+				"'round(2.5)' returns 3",
+				"'round(-2.4)' returns -2",
+				"'round(-2.5)' returns -2",
+				"'round(2.4[s])' returns 2[s]"));
+
 		functions.add(new ButtonDesc("signum", "Signum function ('signum')",
 				"Returns zero if the argument is zero, 1.0 if the argument is greater than zero, "
 						+ "and -1.0 if the argument is less than zero.",
