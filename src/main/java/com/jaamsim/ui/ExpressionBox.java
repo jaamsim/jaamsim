@@ -95,7 +95,6 @@ public class ExpressionBox extends JDialog {
 		getContentPane().setLayout( new BorderLayout() );
 		setPreferredSize(new Dimension(900, 300));
 		setIconImage(GUIFrame.getWindowIcon());
-		setAlwaysOnTop(true);
 
 		// Initial text
 		input = in;
