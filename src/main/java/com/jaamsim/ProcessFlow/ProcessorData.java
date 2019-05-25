@@ -120,4 +120,11 @@ public class ProcessorData {
 		return  initialNumberReceived + numberReceived - initialNumberProcessed - numberProcessed;
 	}
 
+	@Override
+	public String toString() {
+		return String.format("(%s, %s, %s, %s, [%s], %.6f[s])",
+				numberReceived, numberProcessed, initialNumberReceived, initialNumberProcessed,
+				receivedEntity, releaseTime);
+	}
+
 }
