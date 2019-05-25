@@ -345,6 +345,9 @@ public class EntityProcessor extends Seize {
 		for (ProcessorEntry entry : entryList) {
 			moveToProcessPosition(entry.entity);
 		}
+		for (ProcessorEntry entry : newEntryList) {
+			moveToProcessPosition(entry.entity);
+		}
 	}
 
 	@Output(name = "Capacity",
