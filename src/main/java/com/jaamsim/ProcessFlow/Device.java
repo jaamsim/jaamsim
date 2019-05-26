@@ -196,6 +196,14 @@ public abstract class Device extends StateUserEntity {
 		lastUpdateTime = simTime;
 	}
 
+	/**
+	 * Return whether all work in progress has been completed.
+	 * @return true if there is no work in progress
+	 */
+	public boolean isFinished() {
+		return true;
+	}
+
 	public boolean isReadyToStop() {
 		return !isAvailable() || isReadyForDowntime();
 	}
