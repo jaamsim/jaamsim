@@ -106,8 +106,6 @@ public abstract class Device extends StateUserEntity {
 		// Stop if any of the thresholds, maintenance, or breakdowns close the operation
 		// or if a forced downtime is about to begin
 		if (isReadyToStop()) {
-			forcedDowntimePending = false;
-			immediateDowntimePending = false;
 			this.stopProcessing();
 			return;
 		}
@@ -209,6 +207,8 @@ public abstract class Device extends StateUserEntity {
 		if (isTraceFlag()) trace(0, "stopProcessing");
 
 		processing = false;
+		forcedDowntimePending = false;
+		immediateDowntimePending = false;
 
 		// Notify other processes that are dependent on this one
 		if (getSimTicks() > startUpTicks)
