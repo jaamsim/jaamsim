@@ -187,6 +187,14 @@ public abstract class StateUserEntity extends StateEntity implements ThresholdUs
 		return false;
 	}
 
+	public boolean isOperatingThresholdClosure() {
+		for (Threshold thr : operatingThresholdList.getValue()) {
+			if (!thr.isOpen())
+				return true;
+		}
+		return false;
+	}
+
 	// ********************************************************************************************
 	// PRESENT STATE
 	// ********************************************************************************************
