@@ -105,7 +105,7 @@ public abstract class Device extends StateUserEntity {
 
 		// Stop if any of the thresholds, maintenance, or breakdowns close the operation
 		// or if a forced downtime is about to begin
-		if (!isAvailable() || isReadyForDowntime()) {
+		if (isReadyToStop()) {
 			forcedDowntimePending = false;
 			immediateDowntimePending = false;
 			this.stopProcessing();
@@ -196,6 +196,10 @@ public abstract class Device extends StateUserEntity {
 			this.updateProgress(dt);
 		}
 		lastUpdateTime = simTime;
+	}
+
+	public boolean isReadyToStop() {
+		return !isAvailable() || isReadyForDowntime();
 	}
 
 	/**
