@@ -205,7 +205,10 @@ public abstract class Device extends StateUserEntity {
 	}
 
 	public boolean isReadyToStop() {
-		return !isAvailable() || isReadyForDowntime();
+		return !isActive() || isMaintenance() || isBreakdown()
+				|| isImmediateThresholdClosure() || isImmediateReleaseThresholdClosure()
+				|| (isOperatingThresholdClosure() && isFinished())
+				|| immediateDowntimePending || (forcedDowntimePending && isFinished());
 	}
 
 	/**
