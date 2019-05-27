@@ -256,7 +256,7 @@ public class EntityProcessor extends Seize {
 
 	@Override
 	public boolean isFinished() {
-		return entryList.isEmpty();
+		return entryList.isEmpty() && newEntryList.isEmpty();
 	}
 
 	@Override
