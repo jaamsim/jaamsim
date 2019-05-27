@@ -406,10 +406,6 @@ public abstract class Device extends StateUserEntity {
 		return immediateDowntimePending;
 	}
 
-	public boolean isReadyForDowntime() {
-		return immediateDowntimePending || forcedDowntimePending;
-	}
-
 	@Override
 	public boolean canStartDowntime(DowntimeEntity down) {
 

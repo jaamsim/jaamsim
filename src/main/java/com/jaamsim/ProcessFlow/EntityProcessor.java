@@ -260,11 +260,6 @@ public class EntityProcessor extends Seize {
 	}
 
 	@Override
-	public boolean isReadyForDowntime() {
-		return isImmediateDowntimePending() || (isForcedDowntimePending() && entryList.isEmpty());
-	}
-
-	@Override
 	public void endDowntime(DowntimeEntity down) {
 		if (isReadyToStart()) {
 			AbstractResourceProvider.notifyResourceUsers(getResourceList());
