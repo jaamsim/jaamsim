@@ -375,17 +375,8 @@ public abstract class Device extends StateUserEntity {
 				isImmediateReleaseThresholdClosure(), isImmediateThresholdClosure());
 		}
 
-		// If an interrupt closure, interrupt the present activity and release the entity
-		if (isImmediateReleaseThresholdClosure()) {
-			if (endStepHandle.isScheduled()) {
-				EventManager.killEvent(endStepHandle);
-				EventManager.scheduleTicks(0L, 5, true, endStepTarget, endStepHandle);  // FIFO order
-			}
-			return;
-		}
-
 		// If an immediate closure, interrupt the present activity and hold the entity
-		if (isImmediateThresholdClosure()) {
+		if (isImmediateThresholdClosure() || isImmediateReleaseThresholdClosure()) {
 			this.performUnscheduledUpdate();
 			return;
 		}
