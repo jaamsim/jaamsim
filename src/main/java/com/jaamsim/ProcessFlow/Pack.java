@@ -212,6 +212,11 @@ public class Pack extends LinkedService {
 	}
 
 	@Override
+	public boolean isFinished() {
+		return container == null;
+	}
+
+	@Override
 	public void thresholdChanged() {
 
 		// If an immediate release closure, stop packing and release the container
