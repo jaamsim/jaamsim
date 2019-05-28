@@ -226,6 +226,11 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 		super.thresholdChanged();
 	}
 
+	@Override
+	public boolean isFinished() {
+		return entryList.isEmpty();
+	}
+
 	// ********************************************************************************************
 	// GRAPHICS
 	// ********************************************************************************************

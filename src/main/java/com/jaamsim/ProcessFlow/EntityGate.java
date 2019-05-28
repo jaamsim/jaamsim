@@ -136,6 +136,11 @@ public class EntityGate extends LinkedService {
 	}
 
 	@Override
+	public boolean isFinished() {
+		return servedEntity == null;
+	}
+
+	@Override
 	public void updateGraphics(double simTime) {
 		if (servedEntity == null)
 			return;

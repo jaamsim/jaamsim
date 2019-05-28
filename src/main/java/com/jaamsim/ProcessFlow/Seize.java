@@ -119,6 +119,11 @@ public class Seize extends LinkedService implements ResourceUser {
 	protected void processStep(double simTime) {}
 
 	@Override
+	public boolean isFinished() {
+		return true;  // can always stop when isFinished is called in startStep
+	}
+
+	@Override
 	public boolean hasWaitingEntity() {
 		return !getQueue().isEmpty();
 	}
