@@ -220,8 +220,13 @@ public class Pack extends LinkedService {
 	public void thresholdChanged() {
 
 		// If an immediate release closure, stop packing and release the container
-		if (isImmediateReleaseThresholdClosure())
+		if (isImmediateReleaseThresholdClosure()) {
 			numberToInsert = 0;
+			if (!isBusy() && !isFinished()) {
+				processStep(getSimTime());
+				return;
+			}
+		}
 
 		super.thresholdChanged();
 	}
