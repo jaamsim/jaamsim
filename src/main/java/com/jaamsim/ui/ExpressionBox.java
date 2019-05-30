@@ -93,7 +93,7 @@ public class ExpressionBox extends JDialog {
 		super((JDialog)null, DIALOG_NAME, true);
 
 		getContentPane().setLayout( new BorderLayout() );
-		setPreferredSize(new Dimension(900, 300));
+		setMinimumSize(new Dimension(900, 300));
 		setIconImage(GUIFrame.getWindowIcon());
 
 		// Initial text
