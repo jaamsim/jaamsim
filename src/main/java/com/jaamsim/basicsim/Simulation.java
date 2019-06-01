@@ -806,6 +806,17 @@ public class Simulation extends Entity {
 	}
 
 	/**
+	 * Clears the Simulation prior to loading a new model
+	 */
+	public void clear() {
+
+		// Reset all Simulation inputs to their default values
+		for (Input<?> inp : getEditableInputs()) {
+			InputAgent.applyArgs(this, inp.getKeyword());
+		}
+	}
+
+	/**
 	 * Returns whether a paused simulation can be resumed.
 	 * @param simTicks - present simulation time in clock ticks
 	 * @return true if the simulation can be resumed
