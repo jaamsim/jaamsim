@@ -1230,7 +1230,7 @@ public class Simulation extends Entity {
 		return showLogViewer.getValue();
 	}
 
-	public boolean showEventViewer() {
+	public boolean isEventViewerVisible() {
 		return showEventViewer.getValue();
 	}
 

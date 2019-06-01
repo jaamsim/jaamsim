@@ -212,7 +212,7 @@ public class JaamSimModel {
 			EventTracer trc = new EventTracer(evtName);
 			eventManager.setTraceListener(trc);
 		}
-		else if (getSimulation().showEventViewer()) {
+		else if (getSimulation().isEventViewerVisible()) {
 			eventManager.setTraceListener(EventViewer.getInstance());
 		}
 
