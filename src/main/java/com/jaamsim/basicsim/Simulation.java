@@ -1206,6 +1206,30 @@ public class Simulation extends Entity {
 		InputAgent.applyIntegers(this, controlPanelWidth.getKeyword(), width);
 	}
 
+	public boolean isModelBuilderVisible() {
+		return showModelBuilder.getValue();
+	}
+
+	public boolean isObjectSelectorVisible() {
+		return showObjectSelector.getValue();
+	}
+
+	public boolean isInputEditorVisible() {
+		return showInputEditor.getValue();
+	}
+
+	public boolean isOutputViewerVisible() {
+		return showOutputViewer.getValue();
+	}
+
+	public boolean isPropertyViewerVisible() {
+		return showPropertyViewer.getValue();
+	}
+
+	public boolean isLogViewerVisible() {
+		return showLogViewer.getValue();
+	}
+
 	public boolean showEventViewer() {
 		return showEventViewer.getValue();
 	}
