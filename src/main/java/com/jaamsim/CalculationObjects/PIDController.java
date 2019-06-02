@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016 JaamSim Software Inc.
+ * Copyright (C) 2016-2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -135,7 +135,7 @@ public class PIDController extends DoubleCalculation {
 		super.updateForInput( in );
 
 		if (in == outputUnitType) {
-			outUnitType = outputUnitType.getUnitType();
+			Class<? extends Unit> outUnitType = outputUnitType.getUnitType();
 			outputLow.setUnitType(outUnitType);
 			outputHigh.setUnitType(outUnitType);
 			proportionalGain.setUnitType(outUnitType);
@@ -149,6 +149,16 @@ public class PIDController extends DoubleCalculation {
 		setPoint.setUnitType(ut);
 		processVariable.setUnitType(ut);
 		processVariableScale.setUnitType(ut);
+	}
+
+	@Override
+	public Class<? extends Unit> getUnitType() {
+		return outputUnitType.getUnitType();
+	}
+
+	@Override
+	public Class<? extends Unit> getUserUnitType() {
+		return outputUnitType.getUnitType();
 	}
 
 	@Override

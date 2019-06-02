@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016 JaamSim Software Inc.
+ * Copyright (C) 2016-2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,7 +47,6 @@ implements SampleProvider {
 	private double lastUpdateTime;  // The time at which the last update was performed
 	private double lastInputValue;  // Input to this object evaluated at the last update time
 	private double lastValue;       // Output from this object evaluated at the last update time
-	protected Class<? extends Unit> outUnitType;  // Unit type for the output from this calculation
 
 	{
 		unitType = new UnitTypeInput("UnitType", KEY_INPUTS, UserSpecifiedUnit.class);
@@ -75,17 +74,16 @@ implements SampleProvider {
 
 	protected void setUnitType(Class<? extends Unit> ut) {
 		inputValue.setUnitType(ut);
-		outUnitType = ut;
 	}
 
 	@Override
 	public Class<? extends Unit> getUnitType() {
-		return outUnitType;
+		return unitType.getUnitType();
 	}
 
 	@Override
 	public Class<? extends Unit> getUserUnitType() {
-		return outUnitType;
+		return unitType.getUnitType();
 	}
 
 	@Override

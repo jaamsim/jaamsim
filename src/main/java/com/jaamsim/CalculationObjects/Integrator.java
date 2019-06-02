@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016 JaamSim Software Inc.
+ * Copyright (C) 2016-2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,6 +36,8 @@ public class Integrator extends DoubleCalculation {
 	         exampleList = {"5.5 m/s", "[InputValue1].Value"})
 	private final SampleInput initialValue;
 
+	protected Class<? extends Unit> outUnitType;  // Unit type for the output from this calculation
+
 	{
 		initialValue = new SampleInput("InitialValue", KEY_INPUTS, new SampleConstant(0.0));
 		initialValue.setUnitType(UserSpecifiedUnit.class);
@@ -52,6 +54,16 @@ public class Integrator extends DoubleCalculation {
 		if (outUnitType == null)
 			outUnitType = DimensionlessUnit.class;
 		initialValue.setUnitType(outUnitType);
+	}
+
+	@Override
+	public Class<? extends Unit> getUnitType() {
+		return outUnitType;
+	}
+
+	@Override
+	public Class<? extends Unit> getUserUnitType() {
+		return outUnitType;
 	}
 
 	@Override

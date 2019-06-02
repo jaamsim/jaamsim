@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016 JaamSim Software Inc.
+ * Copyright (C) 2016-2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +28,8 @@ import com.jaamsim.units.Unit;
  */
 public class Differentiator extends DoubleCalculation {
 
+	protected Class<? extends Unit> outUnitType;  // Unit type for the output from this calculation
+
 	public Differentiator() {}
 
 	@Override
@@ -37,6 +39,16 @@ public class Differentiator extends DoubleCalculation {
 		outUnitType = Unit.getDivUnitType(ut, TimeUnit.class);
 		if (outUnitType == null)
 			outUnitType = DimensionlessUnit.class;
+	}
+
+	@Override
+	public Class<? extends Unit> getUnitType() {
+		return outUnitType;
+	}
+
+	@Override
+	public Class<? extends Unit> getUserUnitType() {
+		return outUnitType;
 	}
 
 	@Override
