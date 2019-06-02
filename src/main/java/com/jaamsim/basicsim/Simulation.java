@@ -41,14 +41,7 @@ import com.jaamsim.input.UnitTypeListInput;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.ui.AboutBox;
-import com.jaamsim.ui.EditBox;
-import com.jaamsim.ui.EntityPallet;
-import com.jaamsim.ui.EventViewer;
 import com.jaamsim.ui.GUIFrame;
-import com.jaamsim.ui.LogBox;
-import com.jaamsim.ui.ObjectSelector;
-import com.jaamsim.ui.OutputBox;
-import com.jaamsim.ui.PropertyBox;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.DistanceUnit;
 import com.jaamsim.units.TimeUnit;
@@ -692,89 +685,85 @@ public class Simulation extends Entity {
 
 		if (in == modelBuilderPos) {
 			IntegerVector pos = modelBuilderPos.getValue();
-			EntityPallet.getInstance().setLocation(pos.get(0), pos.get(1));
+			gui.setToolLocation("ModelBuilder", pos.get(0), pos.get(1));
 			return;
 		}
 
 		if (in == modelBuilderSize) {
 			IntegerVector size = modelBuilderSize.getValue();
-			EntityPallet.getInstance().setSize(size.get(0), size.get(1));
+			gui.setToolSize("ModelBuilder", size.get(0), size.get(1));
 			return;
 		}
 
 		if (in == objectSelectorPos) {
 			IntegerVector pos = objectSelectorPos.getValue();
-			ObjectSelector.getInstance().setLocation(pos.get(0), pos.get(1));
+			gui.setToolLocation("ObjectSelector", pos.get(0), pos.get(1));
 			return;
 		}
 
 		if (in == objectSelectorSize) {
 			IntegerVector size = objectSelectorSize.getValue();
-			ObjectSelector.getInstance().setSize(size.get(0), size.get(1));
+			gui.setToolSize("ObjectSelector", size.get(0), size.get(1));
 			return;
 		}
 
 		if (in == inputEditorPos) {
 			IntegerVector pos = inputEditorPos.getValue();
-			EditBox.getInstance().setLocation(pos.get(0), pos.get(1));
+			gui.setToolLocation("InputEditor", pos.get(0), pos.get(1));
 			return;
 		}
 
 		if (in == inputEditorSize) {
 			IntegerVector size = inputEditorSize.getValue();
-			EditBox.getInstance().setSize(size.get(0), size.get(1));
+			gui.setToolSize("InputEditor", size.get(0), size.get(1));
 			return;
 		}
 
 		if (in == outputViewerPos) {
 			IntegerVector pos = outputViewerPos.getValue();
-			OutputBox.getInstance().setLocation(pos.get(0), pos.get(1));
+			gui.setToolLocation("OutputViewer", pos.get(0), pos.get(1));
 			return;
 		}
 
 		if (in == outputViewerSize) {
 			IntegerVector size = outputViewerSize.getValue();
-			OutputBox.getInstance().setSize(size.get(0), size.get(1));
+			gui.setToolSize("OutputViewer", size.get(0), size.get(1));
 			return;
 		}
 
 		if (in == propertyViewerPos) {
 			IntegerVector pos = propertyViewerPos.getValue();
-			PropertyBox.getInstance().setLocation(pos.get(0), pos.get(1));
+			gui.setToolLocation("PropertyViewer", pos.get(0), pos.get(1));
 			return;
 		}
 
 		if (in == propertyViewerSize) {
 			IntegerVector size = propertyViewerSize.getValue();
-			PropertyBox.getInstance().setSize(size.get(0), size.get(1));
+			gui.setToolSize("PropertyViewer", size.get(0), size.get(1));
 			return;
 		}
 
 		if (in == logViewerPos) {
 			IntegerVector pos = logViewerPos.getValue();
-			LogBox.getInstance().setLocation(pos.get(0), pos.get(1));
+			gui.setToolLocation("LogViewer", pos.get(0), pos.get(1));
 			return;
 		}
 
 		if (in == logViewerSize) {
 			IntegerVector size = logViewerSize.getValue();
-			LogBox.getInstance().setSize(size.get(0), size.get(1));
+			gui.setToolSize("LogViewer", size.get(0), size.get(1));
 			return;
 		}
 
 		if (in == eventViewerPos) {
-			if (EventViewer.hasInstance()) {
-				IntegerVector pos = eventViewerPos.getValue();
-				EventViewer.getInstance().setLocation(pos.get(0), pos.get(1));
-			}
+			IntegerVector pos = eventViewerPos.getValue();
+			gui.setToolLocation("EventViewer", pos.get(0), pos.get(1));
 			return;
 		}
 
 		if (in == eventViewerSize) {
-			if (EventViewer.hasInstance()) {
-				IntegerVector size = eventViewerSize.getValue();
-				EventViewer.getInstance().setSize(size.get(0), size.get(1));
-			}
+			IntegerVector size = eventViewerSize.getValue();
+			gui.setToolSize("EventViewer", size.get(0), size.get(1));
 			return;
 		}
 
