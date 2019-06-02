@@ -21,8 +21,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-import javax.swing.JFrame;
-
 import com.jaamsim.ProbabilityDistributions.RandomStreamUser;
 import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
@@ -658,40 +656,37 @@ public class Simulation extends Entity {
 		}
 
 		if (in == showModelBuilder) {
-			setWindowVisible(EntityPallet.getInstance(), showModelBuilder.getValue());
+			gui.showTool("ModelBuilder", showModelBuilder.getValue());
 			return;
 		}
 
 		if (in == showObjectSelector) {
-			setWindowVisible(ObjectSelector.getInstance(), showObjectSelector.getValue());
+			gui.showTool("ObjectSelector", showObjectSelector.getValue());
 			return;
 		}
 
 		if (in == showInputEditor) {
-			setWindowVisible(EditBox.getInstance(), showInputEditor.getValue());
+			gui.showTool("InputEditor", showInputEditor.getValue());
 			return;
 		}
 
 		if (in == showOutputViewer) {
-			setWindowVisible(OutputBox.getInstance(), showOutputViewer.getValue());
+			gui.showTool("OutputViewer", showOutputViewer.getValue());
 			return;
 		}
 
 		if (in == showPropertyViewer) {
-			setWindowVisible(PropertyBox.getInstance(), showPropertyViewer.getValue());
+			gui.showTool("PropertyViewer", showPropertyViewer.getValue());
 			return;
 		}
 
 		if (in == showLogViewer) {
-			setWindowVisible(LogBox.getInstance(), showLogViewer.getValue());
+			gui.showTool("LogViewer", showLogViewer.getValue());
 			return;
 		}
 
 		if (in == showEventViewer) {
-			if (showEventViewer.getValue())
-				setWindowVisible(EventViewer.getInstance(), true);
-			else if (EventViewer.hasInstance())
-				EventViewer.getInstance().dispose();
+			gui.showTool("EventViewer", showEventViewer.getValue());
 			return;
 		}
 
@@ -1018,12 +1013,6 @@ public class Simulation extends Entity {
 		return realTime.getValue();
 	}
 
-	public static void setWindowVisible(JFrame f, boolean visible) {
-		f.setVisible(visible);
-		if (visible)
-			f.toFront();
-	}
-
 	public void setWindowDefaults() {
 		modelBuilderPos.setDefaultValue(GUIFrame.COL1_START, GUIFrame.TOP_START);
 		modelBuilderSize.setDefaultValue(GUIFrame.COL1_WIDTH, GUIFrame.HALF_TOP);
@@ -1232,36 +1221,6 @@ public class Simulation extends Entity {
 
 	public boolean isEventViewerVisible() {
 		return showEventViewer.getValue();
-	}
-
-	/**
-	 * Re-open any Tools windows that have been closed temporarily.
-	 */
-	public void showActiveTools() {
-		setWindowVisible(EntityPallet.getInstance(), showModelBuilder.getValue());
-		setWindowVisible(ObjectSelector.getInstance(), showObjectSelector.getValue());
-		setWindowVisible(EditBox.getInstance(), showInputEditor.getValue());
-		setWindowVisible(OutputBox.getInstance(), showOutputViewer.getValue());
-		setWindowVisible(PropertyBox.getInstance(), showPropertyViewer.getValue());
-		setWindowVisible(LogBox.getInstance(), showLogViewer.getValue());
-		if (EventViewer.hasInstance())
-			setWindowVisible(EventViewer.getInstance(), showEventViewer.getValue());
-	}
-
-	/**
-	 * Closes all the Tools windows temporarily.
-	 */
-	public void closeAllTools() {
-		if (GUIFrame.getInstance() == null)
-			return;
-		setWindowVisible(EntityPallet.getInstance(), false);
-		setWindowVisible(ObjectSelector.getInstance(), false);
-		setWindowVisible(EditBox.getInstance(), false);
-		setWindowVisible(OutputBox.getInstance(), false);
-		setWindowVisible(PropertyBox.getInstance(), false);
-		setWindowVisible(LogBox.getInstance(), false);
-		if (EventViewer.hasInstance())
-			setWindowVisible(EventViewer.getInstance(), false);
 	}
 
 	public int getStartingRunNumber() {

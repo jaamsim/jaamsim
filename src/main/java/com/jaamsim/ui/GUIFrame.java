@@ -355,7 +355,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, InputErr
 			}
 
 			// Re-open the tools
-			sim.getSimulation().showActiveTools();
+			showActiveTools();
 			updateUI();
 		}
 
@@ -363,7 +363,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, InputErr
 		public void windowIconified(WindowEvent e) {
 
 			// Close all the tools
-			sim.getSimulation().closeAllTools();
+			closeAllTools();
 
 			// Save whether each window is open or closed
 			for (View v : sim.getViews()) {
@@ -385,7 +385,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, InputErr
 			}
 
 			// Re-open the tools
-			sim.getSimulation().showActiveTools();
+			showActiveTools();
 			updateUI();
 		}
 	}
@@ -3188,6 +3188,74 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, InputErr
 		grid.setSelected(ent != null && ent.getShow());
 	}
 
+	public JFrame getTool(String name) {
+		JFrame ret;
+		switch (name) {
+		case "ModelBuilder":
+			ret = EntityPallet.getInstance();
+			break;
+		case "ObjectSelector":
+			ret = ObjectSelector.getInstance();
+			break;
+		case "InputEditor":
+			ret = EditBox.getInstance();
+			break;
+		case "OutputViewer":
+			ret = OutputBox.getInstance();
+			break;
+		case "PropertyViewer":
+			ret = PropertyBox.getInstance();
+			break;
+		case "LogViewer":
+			ret = LogBox.getInstance();
+			break;
+		case "EventViewer":
+			ret = EventViewer.getInstance();
+			break;
+		default:
+			throw new ErrorException("UI tool not found");
+		}
+		return ret;
+	}
+
+	public void showTool(String name, boolean bool) {
+		if (name.equals("EventViewer") && !bool) {
+			if (EventViewer.hasInstance())
+				EventViewer.getInstance().dispose();
+			return;
+		}
+		JFrame tool = getTool(name);
+		tool.setVisible(bool);
+		if (bool)
+			tool.toFront();
+	}
+
+	/**
+	 * Re-open any Tools windows that have been closed temporarily.
+	 */
+	public void showActiveTools() {
+		showTool("ModelBuilder", sim.getSimulation().isModelBuilderVisible());
+		showTool("ObjectSelector", sim.getSimulation().isObjectSelectorVisible());
+		showTool("InputEditor", sim.getSimulation().isInputEditorVisible());
+		showTool("OutputViewer", sim.getSimulation().isOutputViewerVisible());
+		showTool("PropertyViewer", sim.getSimulation().isPropertyViewerVisible());
+		showTool("LogViewer", sim.getSimulation().isLogViewerVisible());
+		showTool("EventViewer", sim.getSimulation().isEventViewerVisible());
+	}
+
+	/**
+	 * Closes all the Tools windows temporarily.
+	 */
+	public void closeAllTools() {
+		showTool("ModelBuilder", false);
+		showTool("ObjectSelector", false);
+		showTool("InputEditor", false);
+		showTool("OutputViewer", false);
+		showTool("PropertyViewer", false);
+		showTool("LogViewer", false);
+		showTool("EventViewer", false);
+	}
+
 	// ******************************************************************************************************
 	// MAIN
 	// ******************************************************************************************************
@@ -3350,8 +3418,10 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, InputErr
 		}
 
 		// If in batch or quiet mode, close the any tools that were opened
-		if (quiet || batch)
-			sim.getSimulation().closeAllTools();
+		if (quiet || batch) {
+			if (gui != null)
+				gui.closeAllTools();
+		}
 
 		// Set RecordEdits mode (if it has not already been set in the configuration file)
 		sim.setRecordEdits(true);
