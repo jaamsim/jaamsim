@@ -20,7 +20,6 @@ import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.input.InputAgent;
-import com.jaamsim.ui.GUIFrame;
 
 public class DefineCommand implements Command {
 
@@ -28,10 +27,6 @@ public class DefineCommand implements Command {
 	private final Class<? extends Entity> klass;
 	private Entity entity;
 	private final String entityName;
-
-	public DefineCommand(Class<? extends Entity> cls, String name) {
-		this(GUIFrame.getJaamSimModel(), cls, name);
-	}
 
 	public DefineCommand(JaamSimModel sim, Class<? extends Entity> cls, String name) {
 		simModel = sim;
