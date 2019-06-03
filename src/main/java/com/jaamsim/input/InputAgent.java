@@ -53,7 +53,6 @@ import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.math.Vec3d;
-import com.jaamsim.ui.GUIFrame;
 import com.jaamsim.ui.LogBox;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.DistanceUnit;
@@ -548,7 +547,9 @@ public class InputAgent {
 		}
 
 		ent.updateForInput(in);
-		GUIFrame.updateUI();
+		GUIListener gui = ent.getJaamSimModel().getGUIListener();
+		if (gui != null)
+			gui.updateAll();
 	}
 
 	public static void processKeyword(Entity entity, KeywordIndex key) {
