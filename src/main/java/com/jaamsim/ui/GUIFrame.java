@@ -3234,6 +3234,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		return ret;
 	}
 
+	@Override
 	public void showTool(String name, boolean bool) {
 		if (name.equals("EventViewer") && !bool) {
 			if (EventViewer.hasInstance())
@@ -3272,16 +3273,23 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		showTool("EventViewer", false);
 	}
 
+	@Override
 	public void setToolLocation(String name, int x, int y) {
 		if (name.equals("EventViewer") && !EventViewer.hasInstance())
 			return;
 		getTool(name).setLocation(x, y);
 	}
 
+	@Override
 	public void setToolSize(String name, int width, int height) {
 		if (name.equals("EventViewer") && !EventViewer.hasInstance())
 			return;
 		getTool(name).setSize(width, height);
+	}
+
+	@Override
+	public void setControlPanelWidth(int width) {
+		setSize(width, getHeight());
 	}
 
 	public void setWindowDefaults() {
