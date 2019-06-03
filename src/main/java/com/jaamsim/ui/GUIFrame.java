@@ -2824,6 +2824,11 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	}
 
 	@Override
+	public void updateAll() {
+		GUIFrame.updateUI();
+	}
+
+	@Override
 	public void updateObjectSelector() {
 		ObjectSelector.allowUpdate();
 		GUIFrame.updateUI();
