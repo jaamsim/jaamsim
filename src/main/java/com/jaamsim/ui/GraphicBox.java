@@ -158,7 +158,8 @@ public class GraphicBox extends JDialog {
 
 				// Set the file extension filters
 				chooser.setAcceptAllFileFilterUsed(false);
-				FileNameExtensionFilter[] colFilters = ColladaModel.getFileNameExtensionFilters();
+				FileNameExtensionFilter[] colFilters = FileInput.getFileNameExtensionFilters("3D",
+						ColladaModel.VALID_FILE_EXTENSIONS, ColladaModel.VALID_FILE_DESCRIPTIONS);
 				FileNameExtensionFilter[] imgFilters = ImageModel.getFileNameExtensionFilters();
 				chooser.addChoosableFileFilter(colFilters[0]);
 				chooser.addChoosableFileFilter(imgFilters[0]);

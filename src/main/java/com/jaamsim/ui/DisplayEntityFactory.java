@@ -89,7 +89,8 @@ public class DisplayEntityFactory extends Entity {
 
 		// Set the file extension filters
 		chooser.setAcceptAllFileFilterUsed(false);
-		FileNameExtensionFilter[] colFilters = ColladaModel.getFileNameExtensionFilters();
+		FileNameExtensionFilter[] colFilters = FileInput.getFileNameExtensionFilters("3D",
+				ColladaModel.VALID_FILE_EXTENSIONS, ColladaModel.VALID_FILE_DESCRIPTIONS);
 		chooser.addChoosableFileFilter(colFilters[0]);
 		for (int i = 1; i < colFilters.length; i++) {
 			chooser.addChoosableFileFilter(colFilters[i]);
