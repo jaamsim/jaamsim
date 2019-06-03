@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018 JaamSim Software Inc.
+ * Copyright (C) 2018-2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.DisplayModels.TextModel;
 import com.jaamsim.StringProviders.StringProvConstant;
 import com.jaamsim.StringProviders.StringProvInput;
+import com.jaamsim.basicsim.GUIListener;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.datatypes.IntegerVector;
 import com.jaamsim.input.BooleanInput;
@@ -41,7 +42,6 @@ import com.jaamsim.input.Vec3dInput;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.render.TessFontKey;
-import com.jaamsim.ui.GUIFrame;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 import com.jogamp.newt.event.KeyEvent;
@@ -195,9 +195,9 @@ public class OverlayText extends OverlayEntity implements TextEntity, EditableTe
 		}
 
 		if (in == fontName || in == textHeight || in == fontColor || in == fontStyle) {
-			if (GUIFrame.getInstance() == null)
-				return;
-			GUIFrame.getInstance().updateTextButtons();
+			GUIListener gui = getJaamSimModel().getGUIListener();
+			if (gui != null)
+				gui.updateControls();
 			return;
 		}
 	}

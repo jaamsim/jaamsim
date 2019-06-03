@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2015 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018 JaamSim Software Inc.
+ * Copyright (C) 2018-2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ package com.jaamsim.Graphics;
 import java.util.ArrayList;
 
 import com.jaamsim.DisplayModels.TextModel;
+import com.jaamsim.basicsim.GUIListener;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.ColourInput;
@@ -34,7 +35,6 @@ import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Transform;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.render.TessFontKey;
-import com.jaamsim.ui.GUIFrame;
 import com.jaamsim.units.DistanceUnit;
 import com.jogamp.newt.event.KeyEvent;
 
@@ -124,9 +124,9 @@ public abstract class TextBasics extends DisplayEntity implements TextEntity, Ed
 		super.updateForInput( in );
 
 		if (in == fontName || in == textHeight || in == fontColor || in == fontStyle) {
-			if (GUIFrame.getInstance() == null)
-				return;
-			GUIFrame.getInstance().updateTextButtons();
+			GUIListener gui = getJaamSimModel().getGUIListener();
+			if (gui != null)
+				gui.updateControls();
 			return;
 		}
 	}

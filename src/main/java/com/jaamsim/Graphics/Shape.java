@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2018 JaamSim Software Inc.
+ * Copyright (C) 2018-2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,13 +17,13 @@
 package com.jaamsim.Graphics;
 
 import com.jaamsim.DisplayModels.ShapeModel;
+import com.jaamsim.basicsim.GUIListener;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.math.Color4d;
-import com.jaamsim.ui.GUIFrame;
 
 public class Shape extends DisplayEntity implements LineEntity, FillEntity {
 
@@ -85,10 +85,9 @@ public class Shape extends DisplayEntity implements LineEntity, FillEntity {
 
 		if (in == lineColour || in == outlined || in == lineWidth
 				|| in == fillColour || in == filled) {
-			if (GUIFrame.getInstance() == null)
-				return;
-			GUIFrame.getInstance().updateLineButtons();
-			GUIFrame.getInstance().updateFillButtons();
+			GUIListener gui = getJaamSimModel().getGUIListener();
+			if (gui != null)
+				gui.updateControls();
 			return;
 		}
 	}

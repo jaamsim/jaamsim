@@ -26,6 +26,7 @@ import com.jaamsim.Graphics.LineEntity;
 import com.jaamsim.Graphics.PolylineInfo;
 import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
+import com.jaamsim.basicsim.GUIListener;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.Input;
@@ -35,7 +36,6 @@ import com.jaamsim.input.Output;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.MathUtils;
 import com.jaamsim.math.Vec3d;
-import com.jaamsim.ui.GUIFrame;
 import com.jaamsim.units.TimeUnit;
 
 /**
@@ -240,9 +240,9 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 		super.updateForInput(in);
 
 		if (in == colorInput || in == widthInput) {
-			if (GUIFrame.getInstance() == null)
-				return;
-			GUIFrame.getInstance().updateLineButtons();
+			GUIListener gui = getJaamSimModel().getGUIListener();
+			if (gui != null)
+				gui.updateControls();
 			return;
 		}
 	}
