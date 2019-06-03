@@ -100,7 +100,7 @@ import com.jaamsim.Graphics.TextBasics;
 import com.jaamsim.Graphics.TextEntity;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ErrorException;
-import com.jaamsim.basicsim.InputErrorListener;
+import com.jaamsim.basicsim.GUIListener;
 import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.controllers.RateLimiter;
@@ -125,7 +125,7 @@ import com.jaamsim.units.Unit;
  * The main window for a Graphical Simulation.  It provides the controls for managing then
  * EventManager (run, pause, ...) and the graphics (zoom, pan, ...)
  */
-public class GUIFrame extends OSFixJFrame implements EventTimeListener, InputErrorListener {
+public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListener {
 	private static GUIFrame instance;
 
 	private static JaamSimModel sim;
@@ -3370,7 +3370,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, InputErr
 			gui = GUIFrame.createInstance();
 			gui.updateForSimulationState(SIM_STATE_LOADED);
 			sim.setTimeListener(gui);
-			sim.setInputErrorListener(gui);
+			sim.setGUIListener(gui);
 
 			if (minimize)
 				gui.setExtendedState(JFrame.ICONIFIED);

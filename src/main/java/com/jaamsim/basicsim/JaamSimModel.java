@@ -53,7 +53,7 @@ public class JaamSimModel {
 	private String name;
 	private int runNumber;    // labels each run when multiple runs are being made
 	private IntegerVector runIndexList;
-	private InputErrorListener inputErrorListener;
+	private GUIListener gui;
 	private final AtomicLong entityCount = new AtomicLong(0);
 	private final ArrayList<Entity> allInstances = new ArrayList<>(100);
 	private final HashMap<String, Entity> namedEntities = new HashMap<>(100);
@@ -99,8 +99,8 @@ public class JaamSimModel {
 		eventManager.setTimeListener(l);
 	}
 
-	public void setInputErrorListener(InputErrorListener l) {
-		inputErrorListener = l;
+	public void setGUIListener(GUIListener l) {
+		gui = l;
 	}
 
 	public void clear() {
@@ -180,8 +180,8 @@ public class JaamSimModel {
 				each.validate();
 			}
 			catch (Throwable t) {
-				if (inputErrorListener != null) {
-					inputErrorListener.handleInputError(t, each);
+				if (gui != null) {
+					gui.handleInputError(t, each);
 				}
 				else {
 					System.out.format("Validation Error - %s: %s%n", each.getName(), t.getMessage());
