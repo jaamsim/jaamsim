@@ -102,6 +102,10 @@ public class JaamSimModel {
 		gui = l;
 	}
 
+	public GUIListener getGUIListener() {
+		return gui;
+	}
+
 	public void clear() {
 		eventManager.clear();
 		eventManager.setTraceListener(null);

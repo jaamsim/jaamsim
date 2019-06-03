@@ -620,27 +620,13 @@ public class Simulation extends Entity {
 		// ****************************************************************************************
 
 		// GUI keywords that require an instance of GUIFrame
-		if (GUIFrame.getInstance() == null)
+		GUIListener gui = getJaamSimModel().getGUIListener();
+		if (gui == null)
 			return;
-		GUIFrame gui = GUIFrame.getInstance();
 
-		if (in == realTimeFactor || in == realTime) {
-			updateRealTime();
-			return;
-		}
-
-		if (in == pauseTime) {
-			gui.updateForPauseTime(pauseTime.getValueString());
-			return;
-		}
-
-		if (in == snapGridSpacing) {
-			gui.updateForSnapGridSpacing(snapGridSpacing.getValueString());
-			return;
-		}
-
-		if (in == snapToGrid) {
-			gui.updateForSnapToGrid();
+		if (in == realTimeFactor || in == realTime || in == pauseTime
+				|| in == snapToGrid || in == snapGridSpacing) {
+			gui.updateControls();
 			return;
 		}
 
@@ -765,8 +751,7 @@ public class Simulation extends Entity {
 
 		if (in == controlPanelWidth) {
 			int width = controlPanelWidth.getValue();
-			int height = gui.getSize().height;
-			gui.setSize(width, height);
+			gui.setControlPanelWidth(width);
 			return;
 		}
 	}
