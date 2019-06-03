@@ -41,7 +41,6 @@ import com.jaamsim.input.UnitTypeListInput;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.ui.AboutBox;
-import com.jaamsim.ui.GUIFrame;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.DistanceUnit;
 import com.jaamsim.units.TimeUnit;
@@ -967,10 +966,6 @@ public class Simulation extends Entity {
 			ret.z = oldPos.z;
 		}
 		return ret;
-	}
-
-	public void updateRealTime() {
-		GUIFrame.updateForRealTime(realTime.getValue(), realTimeFactor.getValue());
 	}
 
 	public void setModelName(String newModelName) {
