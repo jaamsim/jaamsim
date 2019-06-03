@@ -863,6 +863,10 @@ public class Simulation extends Entity {
 		return pauseTime.getValue();
 	}
 
+	public String getPauseTimeString() {
+		return pauseTime.getValueString();
+	}
+
 	/**
 	 * Returns the start time of the run.
 	 * @return - simulation time in seconds for the start of the run.
@@ -909,6 +913,12 @@ public class Simulation extends Entity {
 
 	public double getSnapGridSpacing() {
 		return snapGridSpacing.getValue();
+	}
+
+	public String getSnapGridSpacingString() {
+		if (snapGridSpacing.isDefault())
+			return snapGridSpacing.getDefaultString();
+		return snapGridSpacing.getValueString();
 	}
 
 	public boolean getExitAtPauseCondition() {
@@ -1000,6 +1010,10 @@ public class Simulation extends Entity {
 
 	public boolean isRealTime() {
 		return realTime.getValue();
+	}
+
+	public double getRealTimeFactor() {
+		return realTimeFactor.getValue();
 	}
 
 	public void resetWindowPositionsAndSizes() {

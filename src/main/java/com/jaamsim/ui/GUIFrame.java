@@ -2823,6 +2823,22 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		fileMenu.setEnabled( true );
 	}
 
+	@Override
+	public void updateControls() {
+		Simulation simulation = sim.getSimulation();
+		if (simulation == null)
+			return;
+		updateSaveButton();
+		updateForRealTime(simulation.isRealTime(), simulation.getRealTimeFactor());
+		updateForPauseTime(simulation.getPauseTimeString());
+		updateTextButtons();
+		updateLineButtons();
+		updateFillButtons();
+		updateZButtons();
+		updateForSnapToGrid();
+		updateForSnapGridSpacing(simulation.getSnapGridSpacingString());
+	}
+
 	public void updateSaveButton() {
 		fileSave.setEnabled(sim.isSessionEdited());
 	}
