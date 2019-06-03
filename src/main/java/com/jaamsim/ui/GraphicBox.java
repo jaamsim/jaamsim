@@ -199,12 +199,12 @@ public class GraphicBox extends JDialog {
 					// Create the DisplayModel
 					DisplayModel dm = null;
 					if (ColladaModel.isValidExtension(extension)) {
-						InputAgent.storeAndExecute(new DefineCommand(ColladaModel.class, modelName));
+						InputAgent.storeAndExecute(new DefineCommand(simModel, ColladaModel.class, modelName));
 						dm = (DisplayModel) simModel.getNamedEntity(modelName);
 						InputAgent.applyArgs(dm, "ColladaFile", f.getPath());
 					}
 					else if (ImageModel.isValidExtension(extension)) {
-						InputAgent.storeAndExecute(new DefineCommand(ImageModel.class, modelName));
+						InputAgent.storeAndExecute(new DefineCommand(simModel, ImageModel.class, modelName));
 						dm = (DisplayModel) simModel.getNamedEntity(modelName);
 						InputAgent.applyArgs(dm, "ImageFile", f.getPath());
 					}

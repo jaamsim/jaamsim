@@ -1090,7 +1090,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			public void actionPerformed( ActionEvent event ) {
 				DisplayEntity ent = (DisplayEntity) sim.getNamedEntity("XY-Grid");
 				if (ent == null && sim.getNamedEntity("Grid100x100") != null) {
-					InputAgent.storeAndExecute(new DefineCommand(DisplayEntity.class, "XY-Grid"));
+					InputAgent.storeAndExecute(new DefineCommand(sim, DisplayEntity.class, "XY-Grid"));
 					ent = (DisplayEntity) sim.getNamedEntity("XY-Grid");
 					KeywordIndex dmKw = InputAgent.formatArgs("DisplayModel", "Grid100x100");
 					KeywordIndex sizeKw = InputAgent.formatArgs("Size", "100", "100", "0", "m");

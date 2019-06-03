@@ -178,14 +178,14 @@ public class DisplayEntityFactory extends Entity {
 
 			// Create the ImageModel
 			String modelName = InputAgent.getUniqueName(simModel,entityName + "-model", "");
-			InputAgent.storeAndExecute(new DefineCommand(ImageModel.class, modelName));
+			InputAgent.storeAndExecute(new DefineCommand(simModel, ImageModel.class, modelName));
 			ImageModel dm = (ImageModel) simModel.getNamedEntity(modelName);
 
 			// Load the image to the ImageModel
 			InputAgent.applyArgs(dm, "ImageFile", f.getPath());
 
 			// Create the DisplayEntity
-			InputAgent.storeAndExecute(new DefineCommand(DisplayEntity.class, entityName));
+			InputAgent.storeAndExecute(new DefineCommand(simModel, DisplayEntity.class, entityName));
 			DisplayEntity de = (DisplayEntity) simModel.getNamedEntity(entityName);
 
 			// Assign the ImageModel to the new DisplayEntity
@@ -239,14 +239,14 @@ public class DisplayEntityFactory extends Entity {
 
 			// Create the ColladaModel
 			String modelName = InputAgent.getUniqueName(simModel, entityName + "-model", "");
-			InputAgent.storeAndExecute(new DefineCommand(ColladaModel.class, modelName));
+			InputAgent.storeAndExecute(new DefineCommand(simModel, ColladaModel.class, modelName));
 			ColladaModel dm = (ColladaModel) simModel.getNamedEntity(modelName);
 
 			// Load the 3D content to the ColladaModel
 			InputAgent.applyArgs(dm, "ColladaFile", f.getPath());
 
 			// Create the DisplayEntity
-			InputAgent.storeAndExecute(new DefineCommand(DisplayEntity.class, entityName));
+			InputAgent.storeAndExecute(new DefineCommand(simModel, DisplayEntity.class, entityName));
 			DisplayEntity de = (DisplayEntity) simModel.getNamedEntity(entityName);
 
 			// Assign the ColladaModel to the new DisplayEntity

@@ -50,6 +50,7 @@ import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.LinkDisplayable;
 import com.jaamsim.Graphics.OverlayEntity;
 import com.jaamsim.basicsim.Entity;
+import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.basicsim.ObjectType;
 import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.datatypes.IntegerVector;
@@ -1529,6 +1530,7 @@ public class RenderManager implements DragSourceListener {
 
 
 	public void createDNDObject(int windowID, int x, int y) {
+		JaamSimModel simModel = dndObjectType.getJaamSimModel();
 		Ray currentRay = getRayForMouse(windowID, x, y);
 		double dist = RenderManager.XY_PLANE.collisionDist(currentRay);
 
@@ -1538,16 +1540,16 @@ public class RenderManager implements DragSourceListener {
 		}
 
 		Vec3d creationPoint = currentRay.getPointAtDist(dist);
-		Simulation simulation = GUIFrame.getJaamSimModel().getSimulation();
+		Simulation simulation = simModel.getSimulation();
 		if (simulation.isSnapToGrid()) {
 			creationPoint = simulation.getSnapGridPosition(creationPoint);
 		}
 
 		// Create a new instance
 		Class<? extends Entity> proto  = dndObjectType.getJavaClass();
-		String name = InputAgent.getUniqueName(dndObjectType.getJaamSimModel(), proto.getSimpleName(), "");
-		InputAgent.storeAndExecute(new DefineCommand(proto, name));
-		Entity ent = GUIFrame.getJaamSimModel().getNamedEntity(name);
+		String name = InputAgent.getUniqueName(simModel, proto.getSimpleName(), "");
+		InputAgent.storeAndExecute(new DefineCommand(simModel, proto, name));
+		Entity ent = simModel.getNamedEntity(name);
 
 		// Set input values for a dragged and dropped entity
 		ent.setInputsForDragAndDrop();

@@ -34,6 +34,7 @@ import com.jaamsim.Graphics.EntityLabel;
 import com.jaamsim.Graphics.OverlayEntity;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ErrorException;
+import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.input.InputAgent;
@@ -128,9 +129,10 @@ public class ContextMenu {
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				String name = InputAgent.getUniqueName(ent.getJaamSimModel(), ent.getName(), "_Copy");
-				InputAgent.storeAndExecute(new DefineCommand(ent.getClass(), name));
-				Entity copiedEntity = GUIFrame.getJaamSimModel().getNamedEntity(name);
+				JaamSimModel simModel = ent.getJaamSimModel();
+				String name = InputAgent.getUniqueName(simModel, ent.getName(), "_Copy");
+				InputAgent.storeAndExecute(new DefineCommand(simModel, ent.getClass(), name));
+				Entity copiedEntity = simModel.getNamedEntity(name);
 
 				// Match all the inputs
 				copiedEntity.copyInputs(ent);
@@ -225,9 +227,10 @@ public class ContextMenu {
 
 					// If required, create the EntityLabel object
 					if (label == null) {
-						String name = InputAgent.getUniqueName(ent.getJaamSimModel(), ent.getName(), "_Label");
-						InputAgent.storeAndExecute(new DefineCommand(EntityLabel.class, name));
-						EntityLabel newLabel = (EntityLabel)GUIFrame.getJaamSimModel().getNamedEntity(name);
+						JaamSimModel simModel = ent.getJaamSimModel();
+						String name = InputAgent.getUniqueName(simModel, ent.getName(), "_Label");
+						InputAgent.storeAndExecute(new DefineCommand(simModel, EntityLabel.class, name));
+						EntityLabel newLabel = (EntityLabel)simModel.getNamedEntity(name);
 
 						// Assign inputs that link the label to its target entity
 						InputAgent.applyArgs(newLabel, "TargetEntity", ent.getName());
@@ -394,9 +397,10 @@ public class ContextMenu {
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				String name = InputAgent.getUniqueName(ent.getJaamSimModel(), ent.getName(), "_Split");
-				InputAgent.storeAndExecute(new DefineCommand(ent.getClass(), name));
-				DisplayEntity splitEnt = (DisplayEntity) GUIFrame.getJaamSimModel().getNamedEntity(name);
+				JaamSimModel simModel = ent.getJaamSimModel();
+				String name = InputAgent.getUniqueName(simModel, ent.getName(), "_Split");
+				InputAgent.storeAndExecute(new DefineCommand(simModel, ent.getClass(), name));
+				DisplayEntity splitEnt = (DisplayEntity) simModel.getNamedEntity(name);
 
 				// Match all the inputs
 				splitEnt.copyInputs(ent);
