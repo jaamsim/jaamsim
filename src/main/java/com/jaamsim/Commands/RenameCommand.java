@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2017 JaamSim Software Inc.
+ * Copyright (C) 2017-2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,8 +19,7 @@ package com.jaamsim.Commands;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.EntityLabel;
 import com.jaamsim.basicsim.Entity;
-import com.jaamsim.ui.GUIFrame;
-import com.jaamsim.ui.ObjectSelector;
+import com.jaamsim.basicsim.GUIListener;
 
 public class RenameCommand implements Command {
 
@@ -52,8 +51,9 @@ public class RenameCommand implements Command {
 		}
 
 		// Update the entries in the Object Selector
-		ObjectSelector.allowUpdate();
-		GUIFrame.updateUI();
+		GUIListener gui = ent.getJaamSimModel().getGUIListener();
+		if (gui != null)
+			gui.updateObjectSelector();
 	}
 
 	@Override
