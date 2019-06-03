@@ -44,7 +44,12 @@ import com.jaamsim.math.Vec3d;
 import com.jaamsim.units.DistanceUnit;
 
 public class ContextMenu {
+
 	private static final ArrayList<ContextMenuItem> menuItems = new ArrayList<>();
+
+	static {
+		ContextMenu.addCustomMenuHandler(new ExportColladaModelHandler());
+	}
 
 	private ContextMenu() {}
 
