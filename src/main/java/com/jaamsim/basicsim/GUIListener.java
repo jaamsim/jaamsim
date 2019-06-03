@@ -16,6 +16,8 @@
  */
 package com.jaamsim.basicsim;
 
+import com.jaamsim.Commands.Command;
+
 public interface GUIListener {
 
 	public void handleInputError(Throwable t, Entity ent);
@@ -27,5 +29,6 @@ public interface GUIListener {
 	public void setControlPanelWidth(int width);
 	public void invokeErrorDialogBox(String title, String fmt, Object... args);
 	public void updateObjectSelector();
+	public void storeAndExecute(Command cmd);
 
 }

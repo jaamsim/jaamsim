@@ -2898,6 +2898,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		}
 	}
 
+	@Override
 	public void storeAndExecute(Command cmd) {
 		Command mergedCmd = null;
 		if (!undoList.isEmpty()) {
