@@ -45,6 +45,7 @@ import com.jaamsim.StringProviders.StringProvider;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.basicsim.FileEntity;
+import com.jaamsim.basicsim.GUIListener;
 import com.jaamsim.basicsim.Group;
 import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.basicsim.ObjectType;
@@ -70,11 +71,12 @@ public class InputAgent {
 	private static final String[] GRAPHICS_CATEGORIES = {Entity.GRAPHICS, Entity.FONT, Entity.FORMAT, Entity.GUI};
 
 	public static void storeAndExecute(Command cmd) {
-		if (GUIFrame.getInstance() == null) {
+		GUIListener gui = cmd.getJaamSimModel().getGUIListener();
+		if (gui == null) {
 			cmd.execute();
 			return;
 		}
-		GUIFrame.getInstance().storeAndExecute(cmd);
+		gui.storeAndExecute(cmd);
 	}
 
 	private static int getBraceDepth(JaamSimModel simModel, ArrayList<String> tokens, int startingBraceDepth, int startingIndex) {
