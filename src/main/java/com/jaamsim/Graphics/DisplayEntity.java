@@ -30,6 +30,7 @@ import com.jaamsim.DisplayModels.ShapeModel;
 import com.jaamsim.DisplayModels.TextModel;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ErrorException;
+import com.jaamsim.basicsim.GUIListener;
 import com.jaamsim.basicsim.ObjectType;
 import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.input.BooleanInput;
@@ -56,7 +57,6 @@ import com.jaamsim.render.RenderUtils;
 import com.jaamsim.render.VisibilityInfo;
 import com.jaamsim.ui.EditBox;
 import com.jaamsim.ui.FrameBox;
-import com.jaamsim.ui.GUIFrame;
 import com.jaamsim.ui.View;
 import com.jaamsim.units.AngleUnit;
 import com.jaamsim.units.DimensionlessUnit;
@@ -986,7 +986,9 @@ public class DisplayEntity extends Entity {
 				FrameBox.setSelectedEntity(null, false);
 			}
 			catch (ErrorException e) {
-				GUIFrame.invokeErrorDialog("User Error", e.getMessage());
+				GUIListener gui = getJaamSimModel().getGUIListener();
+				if (gui != null)
+					gui.invokeErrorDialogBox("User Error", e.getMessage());
 			}
 			return;
 		}

@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2015 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018 JaamSim Software Inc.
+ * Copyright (C) 2018-2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ package com.jaamsim.BasicObjects;
 import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.Graphics.TextBasics;
 import com.jaamsim.Samples.SampleProvider;
+import com.jaamsim.basicsim.GUIListener;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InputErrorException;
@@ -28,7 +29,6 @@ import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.UnitTypeInput;
 import com.jaamsim.input.ValueInput;
-import com.jaamsim.ui.GUIFrame;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
 
@@ -92,7 +92,9 @@ public class InputValue extends TextBasics implements SampleProvider {
 			super.acceptEdits();
 		}
 		catch (InputErrorException e) {
-			GUIFrame.invokeErrorDialog("Input Error", e.getMessage());
+			GUIListener gui = getJaamSimModel().getGUIListener();
+			if (gui != null)
+				gui.invokeErrorDialogBox("Input Error", e.getMessage());
 			suppressUpdate = false;
 		}
 	}

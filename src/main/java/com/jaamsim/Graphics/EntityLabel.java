@@ -18,11 +18,11 @@
 package com.jaamsim.Graphics;
 
 import com.jaamsim.basicsim.ErrorException;
+import com.jaamsim.basicsim.GUIListener;
 import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
-import com.jaamsim.ui.GUIFrame;
 
 public class EntityLabel extends TextBasics {
 
@@ -81,7 +81,9 @@ public class EntityLabel extends TextBasics {
 		}
 		catch (ErrorException e) {
 			super.cancelEdits();
-			GUIFrame.invokeErrorDialog("Input Error", e.getMessage());
+			GUIListener gui = getJaamSimModel().getGUIListener();
+			if (gui != null)
+				gui.invokeErrorDialogBox("Input Error", e.getMessage());
 		}
 	}
 
