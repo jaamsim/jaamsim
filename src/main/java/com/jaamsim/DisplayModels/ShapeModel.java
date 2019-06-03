@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018 JaamSim Software Inc.
+ * Copyright (C) 2018-2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ import com.jaamsim.Graphics.FillEntity;
 import com.jaamsim.Graphics.LineEntity;
 import com.jaamsim.Graphics.Tag;
 import com.jaamsim.basicsim.Entity;
+import com.jaamsim.basicsim.GUIListener;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.EnumInput;
@@ -41,7 +42,6 @@ import com.jaamsim.render.PolygonProxy;
 import com.jaamsim.render.RenderProxy;
 import com.jaamsim.render.RenderUtils;
 import com.jaamsim.render.VisibilityInfo;
-import com.jaamsim.ui.GUIFrame;
 
 public class ShapeModel extends DisplayModel implements LineEntity, FillEntity {
 
@@ -133,9 +133,9 @@ public class ShapeModel extends DisplayModel implements LineEntity, FillEntity {
 
 		if (in == lineColour || in == outlined || in == lineWidth
 				|| in == fillColour || in == filled) {
-			if (GUIFrame.getInstance() == null)
-				return;
-			GUIFrame.getInstance().updateLineButtons();
+			GUIListener gui = getJaamSimModel().getGUIListener();
+			if (gui != null)
+				gui.updateControls();
 			return;
 		}
 	}
