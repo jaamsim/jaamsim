@@ -429,8 +429,11 @@ public class JaamSimModel {
 		closeLogFile();
 
 		// Always terminate the run when in batch mode
-		if (isBatchRun() || getSimulation().getExitAtStop())
-			GUIFrame.shutdown(0);
+		if (isBatchRun() || getSimulation().getExitAtStop()) {
+			if (gui != null)
+				gui.exit(0);
+			System.exit(0);
+		}
 
 		pause();
 	}

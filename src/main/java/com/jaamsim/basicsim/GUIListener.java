@@ -19,5 +19,6 @@ package com.jaamsim.basicsim;
 public interface GUIListener {
 
 	public void handleInputError(Throwable t, Entity ent);
+	public void exit(int errorCode);
 
 }
