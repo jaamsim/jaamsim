@@ -38,7 +38,6 @@ import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.states.StateEntity;
 import com.jaamsim.ui.EventViewer;
-import com.jaamsim.ui.GUIFrame;
 import com.jaamsim.ui.LogBox;
 import com.jaamsim.ui.View;
 import com.jaamsim.units.DimensionlessUnit;
@@ -963,8 +962,8 @@ public class JaamSimModel {
 		if (bool == sessionEdited)
 			return;
 		sessionEdited = bool;
-		if (GUIFrame.getInstance() != null)
-			GUIFrame.getInstance().updateSaveButton();
+		if (gui != null)
+			gui.updateControls();
 	}
 
 	public boolean isSessionEdited() {
