@@ -2843,25 +2843,14 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		fileSave.setEnabled(sim.isSessionEdited());
 	}
 
-	public static synchronized void updateForRealTime(boolean executeRT, double factorRT) {
-		GUIFrame inst = GUIFrame.getInstance();
-		if (inst == null)
-			return;
-
-		inst.updateForRT(executeRT, factorRT);
-	}
-
 	/**
 	 * updates RealTime button and Spinner
 	 */
-	private void updateForRT(boolean executeRT, double factorRT) {
+	private synchronized void updateForRealTime(boolean executeRT, double factorRT) {
 		sim.getEventManager().setExecuteRealTime(executeRT, factorRT);
 		controlRealTime.setSelected(executeRT);
 		spinner.setValue(factorRT);
-		if (executeRT)
-			spinner.setEnabled(true);
-		else
-			spinner.setEnabled(false);
+		spinner.setEnabled(executeRT);
 	}
 
 	/**
