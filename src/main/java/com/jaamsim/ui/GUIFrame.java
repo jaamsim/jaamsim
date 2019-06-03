@@ -2502,7 +2502,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				pos = lastView.getViewPosition();
 				center = lastView.getViewCenter();
 			}
-			InputAgent.storeAndExecute(new DefineViewCommand(name, pos, center, winPos));
+			InputAgent.storeAndExecute(new DefineViewCommand(sim, name, pos, center, winPos));
 		}
 	}
 

@@ -23,19 +23,20 @@ import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.ui.FrameBox;
-import com.jaamsim.ui.GUIFrame;
 import com.jaamsim.ui.View;
 import com.jaamsim.units.DistanceUnit;
 
 public class DefineViewCommand implements Command {
 
+	private final JaamSimModel simModel;
 	private View view;
 	private final String viewName;
 	private final Vec3d viewPosition;
 	private final Vec3d viewCenter;
 	private final IntegerVector windowPos;
 
-	public DefineViewCommand(String str, Vec3d viewPos, Vec3d viewCntr, IntegerVector winPos) {
+	public DefineViewCommand(JaamSimModel sim, String str, Vec3d viewPos, Vec3d viewCntr, IntegerVector winPos) {
+		simModel = sim;
 		view = null;
 		viewName = str;
 		viewPosition = viewPos;
@@ -47,7 +48,6 @@ public class DefineViewCommand implements Command {
 	public void execute() {
 
 		// Create the new view
-		JaamSimModel simModel = GUIFrame.getJaamSimModel();
 		view = InputAgent.defineEntityWithUniqueName(simModel, View.class, viewName, "", true);
 
 		// Position the window on the screen
