@@ -2839,7 +2839,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		updateForSnapGridSpacing(simulation.getSnapGridSpacingString());
 	}
 
-	public void updateSaveButton() {
+	private void updateSaveButton() {
 		fileSave.setEnabled(sim.isSessionEdited());
 	}
 
@@ -2856,7 +2856,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	/**
 	 * updates PauseTime entry
 	 */
-	public void updateForPauseTime(String str) {
+	private void updateForPauseTime(String str) {
 		pauseTime.setText(str);
 	}
 
@@ -2947,7 +2947,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		GUIFrame.updateUI();
 	}
 
-	public void updateForSnapGridSpacing(String str) {
+	private void updateForSnapGridSpacing(String str) {
 		gridSpacing.setText(str);
 	}
 
@@ -2972,7 +2972,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		}
 	}
 
-	public void updateForSnapToGrid() {
+	private void updateForSnapToGrid() {
 		snapToGrid.setSelected(sim.getSimulation().isSnapToGrid());
 		gridSpacing.setEnabled(sim.getSimulation().isSnapToGrid());
 	}
@@ -2991,7 +2991,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		updateFillButtons();
 	}
 
-	public void updateTextButtons() {
+	private void updateTextButtons() {
 		boolean bool = selectedEntity instanceof TextEntity;
 
 		boolean isAlignable = bool && !(selectedEntity instanceof OverlayText)
@@ -3032,7 +3032,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		fontColour.repaint();
 	}
 
-	public void updateZButtons() {
+	private void updateZButtons() {
 		boolean bool = selectedEntity instanceof DisplayEntity;
 		bool = bool && !(selectedEntity instanceof OverlayEntity);
 		bool = bool && !(selectedEntity instanceof BillboardText);
@@ -3040,7 +3040,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		decreaseZ.setEnabled(bool);
 	}
 
-	public void updateLineButtons() {
+	private void updateLineButtons() {
 		boolean bool = selectedEntity instanceof LineEntity;
 		outline.setEnabled(bool && selectedEntity instanceof FillEntity);
 		lineWidth.setEnabled(bool);
@@ -3065,7 +3065,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		lineColour.repaint();
 	}
 
-	public void updateFillButtons() {
+	private void updateFillButtons() {
 		boolean bool = selectedEntity instanceof FillEntity;
 		fill.setEnabled(bool);
 		fillColour.setEnabled(bool);
