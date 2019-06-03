@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2017-2018 JaamSim Software Inc.
+ * Copyright (C) 2017-2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package com.jaamsim.Commands;
 import java.util.ArrayList;
 
 import com.jaamsim.Graphics.DisplayEntity;
+import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.math.Vec3d;
@@ -53,6 +54,11 @@ public class CoordinateCommand extends KeywordCommand {
 	public void undo() {
 		super.undo();
 		resetPosition();
+	}
+
+	@Override
+	public JaamSimModel getJaamSimModel() {
+		return dispEnt.getJaamSimModel();
 	}
 
 	private void resetPosition() {

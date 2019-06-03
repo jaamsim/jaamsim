@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2017 JaamSim Software Inc.
+ * Copyright (C) 2017-2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 package com.jaamsim.Commands;
+
+import com.jaamsim.basicsim.JaamSimModel;
 
 public interface Command {
 
@@ -34,4 +36,10 @@ public interface Command {
 	 * @return merged command or null if commands are incompatible
 	 */
 	public Command tryMerge(Command cmd);
+
+	/**
+	 * Returns the JaamSimModel to which to command applies.
+	 * @return target JaamSimModel
+	 */
+	public JaamSimModel getJaamSimModel();
 }

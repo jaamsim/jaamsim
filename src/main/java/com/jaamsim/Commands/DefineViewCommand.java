@@ -82,6 +82,11 @@ public class DefineViewCommand implements Command {
 	}
 
 	@Override
+	public JaamSimModel getJaamSimModel() {
+		return simModel;
+	}
+
+	@Override
 	public String toString() {
 		return String.format("New View: '%s'", viewName);
 	}

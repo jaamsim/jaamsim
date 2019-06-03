@@ -62,6 +62,11 @@ public class DefineCommand implements Command {
 	}
 
 	@Override
+	public JaamSimModel getJaamSimModel() {
+		return simModel;
+	}
+
+	@Override
 	public String toString() {
 		return String.format("Create: '%s'", entityName);
 	}

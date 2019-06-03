@@ -20,6 +20,7 @@ import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.EntityLabel;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.GUIListener;
+import com.jaamsim.basicsim.JaamSimModel;
 
 public class RenameCommand implements Command {
 
@@ -79,6 +80,11 @@ public class RenameCommand implements Command {
 			return null;
 		}
 		return new RenameCommand(entity, oldName, renameCmd.newName);
+	}
+
+	@Override
+	public JaamSimModel getJaamSimModel() {
+		return entity.getJaamSimModel();
 	}
 
 	@Override
