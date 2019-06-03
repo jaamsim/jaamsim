@@ -26,5 +26,6 @@ public interface GUIListener {
 	public void setToolSize(String name, int width, int height);
 	public void setControlPanelWidth(int width);
 	public void invokeErrorDialogBox(String title, String fmt, Object... args);
+	public void updateObjectSelector();
 
 }

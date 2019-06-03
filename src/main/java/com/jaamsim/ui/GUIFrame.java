@@ -2824,6 +2824,12 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	}
 
 	@Override
+	public void updateObjectSelector() {
+		ObjectSelector.allowUpdate();
+		GUIFrame.updateUI();
+	}
+
+	@Override
 	public void updateControls() {
 		Simulation simulation = sim.getSimulation();
 		if (simulation == null)
