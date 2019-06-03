@@ -55,6 +55,7 @@ import com.jaamsim.DisplayModels.ImageModel;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.controllers.RenderManager;
+import com.jaamsim.input.FileInput;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.math.AABB;
@@ -160,7 +161,8 @@ public class GraphicBox extends JDialog {
 				chooser.setAcceptAllFileFilterUsed(false);
 				FileNameExtensionFilter[] colFilters = FileInput.getFileNameExtensionFilters("3D",
 						ColladaModel.VALID_FILE_EXTENSIONS, ColladaModel.VALID_FILE_DESCRIPTIONS);
-				FileNameExtensionFilter[] imgFilters = ImageModel.getFileNameExtensionFilters();
+				FileNameExtensionFilter[] imgFilters = FileInput.getFileNameExtensionFilters("Image",
+						ImageModel.VALID_FILE_EXTENSIONS, ImageModel.VALID_FILE_DESCRIPTIONS);
 				chooser.addChoosableFileFilter(colFilters[0]);
 				chooser.addChoosableFileFilter(imgFilters[0]);
 				for (int i = 1; i < colFilters.length; i++) {

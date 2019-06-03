@@ -29,6 +29,7 @@ import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.controllers.RenderManager;
+import com.jaamsim.input.FileInput;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.math.AABB;
 import com.jaamsim.math.Vec2d;
@@ -59,7 +60,8 @@ public class DisplayEntityFactory extends Entity {
 
 		// Set the file extension filters
 		chooser.setAcceptAllFileFilterUsed(false);
-		FileNameExtensionFilter[] imgFilters = ImageModel.getFileNameExtensionFilters();
+		FileNameExtensionFilter[] imgFilters = FileInput.getFileNameExtensionFilters("Image",
+				ImageModel.VALID_FILE_EXTENSIONS, ImageModel.VALID_FILE_DESCRIPTIONS);
 		for (int i = 0; i < imgFilters.length; i++) {
 			chooser.addChoosableFileFilter(imgFilters[i]);
 		}

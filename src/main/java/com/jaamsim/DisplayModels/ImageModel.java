@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018 JaamSim Software Inc.
+ * Copyright (C) 2018-2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,8 +19,6 @@ package com.jaamsim.DisplayModels;
 
 import java.net.URI;
 import java.util.ArrayList;
-
-import javax.swing.filechooser.FileNameExtensionFilter;
 
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.OverlayImage;
@@ -56,30 +54,19 @@ public class ImageModel extends DisplayModel {
 	         exampleList = {"TRUE"})
 	private final BooleanInput compressedTexture;
 
-	private static final String[] validFileExtensions;
-	private static final String[] validFileDescriptions;
-	static {
-		validFileExtensions = new String[5];
-		validFileDescriptions = new String[5];
-
-		validFileExtensions[0] = "JPG";
-		validFileExtensions[1] = "PNG";
-		validFileExtensions[2] = "GIF";
-		validFileExtensions[3] = "BMP";
-		validFileExtensions[4] = "PCX";
-
-		validFileDescriptions[0] = "JPEG Image (*.jpg)";
-		validFileDescriptions[1] = "Portable Network Graphics (*.png)";
-		validFileDescriptions[2] = "Graphics Interchange Format (*.gif)";
-		validFileDescriptions[3] = "Windows Bitmap (*.bmp)";
-		validFileDescriptions[4] = "Personal Computer Exchange (*.pcx)";
-	}
+	public static final String[] VALID_FILE_EXTENSIONS = {"JPG", "PNG", "GIF", "BMP", "PCX"};
+	public static final String[] VALID_FILE_DESCRIPTIONS = {
+			"JPEG Image (*.jpg)",
+			"Portable Network Graphics (*.png)",
+			"Graphics Interchange Format (*.gif)",
+			"Windows Bitmap (*.bmp)",
+			"Personal Computer Exchange (*.pcx)"};
 
 	{
 		imageFile = new FileInput( "ImageFile", GRAPHICS, null );
 		imageFile.setFileType("Image");
-		imageFile.setValidFileExtensions(validFileExtensions);
-		imageFile.setValidFileDescriptions(validFileDescriptions);
+		imageFile.setValidFileExtensions(VALID_FILE_EXTENSIONS);
+		imageFile.setValidFileDescriptions(VALID_FILE_DESCRIPTIONS);
 		this.addInput( imageFile);
 
 		transparent = new BooleanInput("Transparent", GRAPHICS, false);
@@ -117,20 +104,11 @@ public class ImageModel extends DisplayModel {
 	 */
 	public static boolean isValidExtension(String str) {
 
-		for (String ext : validFileExtensions) {
+		for (String ext : VALID_FILE_EXTENSIONS) {
 			if (str.equalsIgnoreCase(ext))
 				return true;
 		}
 		return false;
-	}
-
-	/**
-	 * Returns a file name extension filter for each of the supported file types.
-	 *
-	 * @return an array of file name extension filters.
-	 */
-	public static FileNameExtensionFilter[] getFileNameExtensionFilters() {
-		return FileInput.getFileNameExtensionFilters("Image", validFileExtensions, validFileDescriptions);
 	}
 
 	private class Binding extends DisplayModelBinding {
