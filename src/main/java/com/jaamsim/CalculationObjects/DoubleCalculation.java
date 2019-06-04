@@ -93,6 +93,12 @@ implements SampleProvider {
 		lastValue = this.getInitialValue();
 	}
 
+	@Override
+	public void lateInit() {
+		super.lateInit();
+		lastInputValue = getInputValue(0.0d);
+	}
+
 	public double getInitialValue() {
 		return 0.0;
 	}
