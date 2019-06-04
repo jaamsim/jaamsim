@@ -80,7 +80,6 @@ public class PIDController extends DoubleCalculation {
 	private double lastUpdateTime;  // The time at which the last update was performed
 	private double lastError;  // The previous value for the error signal
 	private double integral;  // The integral of the error signal
-	private double derivative;  // The derivative of the error signal
 
 	{
 		inputValue.setHidden(true);
@@ -166,7 +165,6 @@ public class PIDController extends DoubleCalculation {
 		super.earlyInit();
 		lastError = 0.0;
 		integral = 0.0;
-		derivative = 0.0;
 		lastUpdateTime = 0.0;
 	}
 
@@ -237,8 +235,12 @@ public class PIDController extends DoubleCalculation {
 	    unitType = UserSpecifiedUnit.class,
 	    sequence = 2)
 	public double getDifferentialValue(double simTime) {
+		double derivative = 0.0;
+		double dt = simTime - lastUpdateTime;
+		if (dt > 0.0)
+			derivative = (getError(simTime) - lastError)/dt;
 		return derivativeTime.getValue() * derivative
-				* proportionalGain.getValue()/ processVariableScale.getValue();
+				* proportionalGain.getValue() / processVariableScale.getValue();
 	}
 
 }
