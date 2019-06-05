@@ -29,8 +29,8 @@ import com.jaamsim.units.UserSpecifiedUnit;
 
 /**
  * The PIDController simulates a Proportional-Integral-Differential type Controller.
- * Error = SetPoint - ProcessVariable
- * Output =  (ProportionalGain / ProcessVariableScale) * [ Error + (Integral/IntegralTime) + (DerivativeTime*Derivative) ]
+ * Error = (SetPoint - ProcessVariable) / ProcessVariableScale
+ * Output =  ProportionalGain * [ Error + (Integral/IntegralTime) + (DerivativeTime*Derivative) ]
  * @author Harry King
  *
  */
@@ -171,7 +171,9 @@ public class PIDController extends DoubleCalculation {
 	public double getError(double simTime) {
 		if (setPoint.getValue() == null || processVariable.getValue() == null)
 			return Double.NaN;
-		return setPoint.getValue().getNextSample(simTime) - processVariable.getValue().getNextSample(simTime);
+		double diff = setPoint.getValue().getNextSample(simTime)
+				- processVariable.getValue().getNextSample(simTime);
+		return diff/processVariableScale.getValue();
 	}
 
 	@Override
@@ -190,10 +192,8 @@ public class PIDController extends DoubleCalculation {
 			deriv = (error - lastError)/dt;
 
 		// Calculate the output value
-		double val = error;
-		val += intgrl / integralTime.getValue();
-		val += derivativeTime.getValue() * deriv;
-		val *= proportionalGain.getValue() / processVariableScale.getValue();
+		double val = (error +  intgrl/integralTime.getValue() + deriv*derivativeTime.getValue());
+		val *= proportionalGain.getValue();
 
 		// Condition the output value
 		val = Math.max(val, outputLow.getValue());
@@ -218,7 +218,7 @@ public class PIDController extends DoubleCalculation {
 	    unitType = UserSpecifiedUnit.class,
 	    sequence = 0)
 	public double getProportionalValue(double simTime) {
-		return this.getError(simTime) * proportionalGain.getValue() / processVariableScale.getValue();
+		return getError(simTime) * proportionalGain.getValue();
 	}
 
 	@Output(name = "IntegralValue",
@@ -226,8 +226,7 @@ public class PIDController extends DoubleCalculation {
 	    unitType = UserSpecifiedUnit.class,
 	    sequence = 1)
 	public double getIntegralValue(double simTime) {
-		return integral / integralTime.getValue()
-				* proportionalGain.getValue() / processVariableScale.getValue();
+		return (integral / integralTime.getValue()) * proportionalGain.getValue();
 	}
 
 	@Output(name = "DerivativeValue",
@@ -239,8 +238,7 @@ public class PIDController extends DoubleCalculation {
 		double dt = simTime - lastUpdateTime;
 		if (dt > 0.0)
 			derivative = (getError(simTime) - lastError)/dt;
-		return derivativeTime.getValue() * derivative
-				* proportionalGain.getValue() / processVariableScale.getValue();
+		return derivative * derivativeTime.getValue() * proportionalGain.getValue();
 	}
 
 }
