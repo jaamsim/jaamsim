@@ -290,7 +290,7 @@ public class EntityDelay extends LinkedComponent implements LineEntity {
 		if (points.size() == 0) {
 			return getGlobalPosition();
 		}
-		return new Vec3d(points.get(points.size()-1));
+		return getGlobalPosition(points.get(points.size()-1));
 	}
 
 	@Override
@@ -299,7 +299,7 @@ public class EntityDelay extends LinkedComponent implements LineEntity {
 		if (points.size() == 0) {
 			return getGlobalPosition();
 		}
-		return new Vec3d(points.get(0));
+		return getGlobalPosition(points.get(0));
 	}
 
 	@Override
