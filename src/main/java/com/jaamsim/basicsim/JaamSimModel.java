@@ -176,8 +176,9 @@ public class JaamSimModel {
 
 	/**
 	 * Performs consistency checks on the model inputs.
+	 * @return true if no validation errors were found
 	 */
-	public void validate() {
+	public boolean validate() {
 		for (Entity each : getClonesOfIterator(Entity.class)) {
 			try {
 				each.validate();
@@ -189,9 +190,10 @@ public class JaamSimModel {
 				else {
 					System.out.format("Validation Error - %s: %s%n", each.getName(), t.getMessage());
 				}
-				return;
+				return false;
 			}
 		}
+		return true;
 	}
 
 	/**
@@ -199,7 +201,9 @@ public class JaamSimModel {
 	 */
 	public void start() {
 		//System.out.format("%s.start%n", this);
-		validate();
+		boolean bool = validate();
+		if (!bool)
+			return;
 		prepareReportDirectory();
 		eventManager.clear();
 
