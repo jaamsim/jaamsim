@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018 JaamSim Software Inc.
+ * Copyright (C) 2018-2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,7 +37,9 @@ public class Release extends LinkedComponent {
 	private final InterfaceEntityListInput<ResourceProvider> resourceList;
 
 	@Keyword(description = "The number of units to release from the Resources specified by the "
-	                     + "'ResourceList' keyword.",
+	                     + "'ResourceList' keyword. "
+	                     + "Only an integer number of resource units can be released. "
+	                     + "A decimal value will be truncated to an integer.",
 	         exampleList = {"{ 2 } { 1 }", "{ DiscreteDistribution1 } { 'this.obj.attrib1 + 1' }"})
 	private final SampleListInput numberOfUnitsList;
 

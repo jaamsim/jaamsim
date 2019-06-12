@@ -38,7 +38,9 @@ import com.jaamsim.units.TimeUnit;
 
 public class Resource extends AbstractResourceProvider {
 
-	@Keyword(description = "The number of equivalent resource units that are available.\n"
+	@Keyword(description = "The number of equivalent resource units that are available. "
+	                     + "Only an integer number of resource units can be specified. "
+	                     + "A decimal value will be truncated to an integer.\n"
 	                     + "If the capacity changes during the simulation run, the Resource will "
 	                     + "attempt to use an increase in capacity as soon as it occurs. "
 	                     + "However, a decrease in capacity will have no affect on entities that "
