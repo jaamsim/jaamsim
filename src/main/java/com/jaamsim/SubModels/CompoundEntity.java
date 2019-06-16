@@ -24,11 +24,19 @@ import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.input.ExpError;
 import com.jaamsim.input.ExpEvaluator;
 import com.jaamsim.input.ExpParser;
+import com.jaamsim.input.Input;
+import com.jaamsim.input.BooleanInput;
+import com.jaamsim.input.InputAgent;
+import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.ExpParser.Expression;
 import com.jaamsim.units.DimensionlessUnit;
 
 public abstract class CompoundEntity extends LinkedComponent {
+
+	@Keyword(description = "Determines whether to display the sub-model's components.",
+	         exampleList = {"FALSE"})
+	protected final BooleanInput showComponents;
 
 	protected ArrayList<DisplayEntity> componentList;
 	private SubModelStart smStart;
@@ -36,10 +44,23 @@ public abstract class CompoundEntity extends LinkedComponent {
 	{
 		namedExpressionInput.setHidden(true); // FIXME CustomOutputList conflicts with the component outputs
 		nextComponent.setRequired(false);
+
+		showComponents = new BooleanInput("ShowComponents", FORMAT, true);
+		this.addInput(showComponents);
 	}
 
 	public CompoundEntity() {
 		componentList = new ArrayList<>();
+	}
+
+	@Override
+	public void updateForInput(Input<?> in) {
+		super.updateForInput(in);
+
+		if (in == showComponents) {
+			showComponents(showComponents.getValue());
+			return;
+		}
 	}
 
 	@Override
@@ -61,6 +82,20 @@ public abstract class CompoundEntity extends LinkedComponent {
 
 	public ArrayList<DisplayEntity> getComponentList() {
 		return componentList;
+	}
+
+	/**
+	 * Displays or hides the sub-model's components.
+	 * @param bool - if true, the components are displayed; if false, they are hidden.
+	 */
+	public void showComponents(boolean bool) {
+		for (DisplayEntity comp : componentList) {
+			InputAgent.applyBoolean(comp, "Show", showComponents.getValue());
+		}
+	}
+
+	public boolean getShowComponents() {
+		return showComponents.getValue();
 	}
 
 	public void updateOutputs(ArrayList<DisplayEntity> oldCompList, ArrayList<DisplayEntity> newCompList) {
