@@ -87,6 +87,13 @@ public abstract class CompoundEntity extends LinkedComponent {
 				break;
 			}
 		}
+
+		// Find the last component in the sub-model
+		for (DisplayEntity comp : componentList) {
+			if (comp instanceof SubModelEnd) {
+				((SubModelEnd)comp).setSubModel(this);
+			}
+		}
 	}
 
 	public void updateRegion() {
