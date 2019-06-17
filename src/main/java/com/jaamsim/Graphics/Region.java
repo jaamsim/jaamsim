@@ -36,8 +36,6 @@ public class Region extends DisplayEntity {
 		this.addSynonym(positionInput, "Origin");
 
 		desc.setHidden(true);
-		regionInput.setHidden(true);
-		relativeEntity.setHidden(true);
 
 		scale = new ValueInput("Scale", KEY_INPUTS, 1.0d);
 		scale.setUnitType(DimensionlessUnit.class);
@@ -75,7 +73,7 @@ public class Region extends DisplayEntity {
 	public Transform getRegionTrans() {
 		Quaternion rot = new Quaternion();
 		rot.setEuler3(getOrientation());
-		return new Transform(getPosition(), rot, getScale());
+		return new Transform(getGlobalPosition(), rot, getScale());
 	}
 
 	/**
