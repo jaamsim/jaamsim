@@ -28,6 +28,7 @@ Define ShapeModel {
                     Heptagram
                     Octagram
                     BarGauge2D
+                    RegionRectangle
                   }
 
 Rectangle       Shape { RECTANGLE  }
@@ -41,6 +42,7 @@ Octagon         Shape { OCTAGON    }
 Pentagram       Shape { PENTAGRAM  }
 Heptagram       Shape { HEPTAGRAM  }
 Octagram        Shape { OCTAGRAM   }
+RegionRectangle Shape { RECTANGLE  }  FillColour { beige }
 
 Define ColladaModel {
                       Cube
