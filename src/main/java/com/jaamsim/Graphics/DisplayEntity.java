@@ -43,6 +43,7 @@ import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.Output;
+import com.jaamsim.input.RegionInput;
 import com.jaamsim.input.RelativeEntityInput;
 import com.jaamsim.input.ValueListInput;
 import com.jaamsim.input.Vec3dInput;
@@ -186,7 +187,7 @@ public class DisplayEntity extends Entity {
 		curveTypeInput = new EnumInput<>(PolylineInfo.CurveType.class, "CurveType", GRAPHICS, PolylineInfo.CurveType.LINEAR);
 		this.addInput(curveTypeInput);
 
-		regionInput = new EntityInput<>(Region.class, "Region", GRAPHICS, null);
+		regionInput = new RegionInput("Region", GRAPHICS, null);
 		this.addInput(regionInput);
 
 		relativeEntity = new RelativeEntityInput("RelativeEntity", GRAPHICS, null);
