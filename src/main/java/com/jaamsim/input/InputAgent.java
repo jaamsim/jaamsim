@@ -286,19 +286,13 @@ public class InputAgent {
 			return null;
 		}
 
-		T ent = simModel.createInstance(proto);
+		T ent = simModel.createInstance(proto, key, false, true, reg);
 		if (ent == null) {
 			InputAgent.logError(simModel,
 					"Could not create new Entity: %s", key);
 			return null;
 		}
 
-		ent.setFlag(Entity.FLAG_GENERATED);
-		if (reg) {
-			ent.setFlag(Entity.FLAG_REGISTERED);
-		}
-
-		ent.setName(key);
 		return ent;
 	}
 
@@ -365,7 +359,7 @@ public class InputAgent {
 			return null;
 		}
 
-		T ent = simModel.createInstance(proto);
+		T ent = simModel.createInstance(proto, key, addedEntity, false, true);
 
 		if (ent == null) {
 			InputAgent.logError(simModel,
@@ -373,13 +367,6 @@ public class InputAgent {
 			return null;
 		}
 
-		if (addedEntity) {
-			ent.setFlag(Entity.FLAG_ADDED);
-			ent.getJaamSimModel().setSessionEdited(true);
-		}
-		ent.setFlag(Entity.FLAG_REGISTERED);
-
-		ent.setName(key);
 		return ent;
 	}
 

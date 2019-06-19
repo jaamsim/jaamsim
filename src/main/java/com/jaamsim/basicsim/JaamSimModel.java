@@ -703,6 +703,36 @@ public class JaamSimModel {
 		}
 	}
 
+	/**
+	 * Creates a new entity.
+	 * @param proto - class for the entity
+	 * @param name - entity name
+	 * @param added - true if the entity was defined after the 'RecordEdits' flag
+	 * @param gen - true if the entity was created during the execution of the simulation
+	 * @param reg - true if the entity is included in the namedEntities HashMap
+	 * @param retain - true if the entity is retained when the model is reset between runs
+	 * @return new entity
+	 */
+	public final <T extends Entity> T createInstance(Class<T> proto, String name,
+			boolean added, boolean gen, boolean reg) {
+		T ent = createInstance(proto);
+		if (ent == null)
+			return null;
+
+		// Set the entity type
+		if (added) {
+			ent.setFlag(Entity.FLAG_ADDED);
+			setSessionEdited(true);
+		}
+		if (gen)
+			ent.setFlag(Entity.FLAG_GENERATED);
+		if (reg)
+			ent.setFlag(Entity.FLAG_REGISTERED);
+
+		ent.setName(name);
+		return ent;
+	}
+
 	public final <T extends Entity> T createInstance(Class<T> proto) {
 		T ent = null;
 		try {
