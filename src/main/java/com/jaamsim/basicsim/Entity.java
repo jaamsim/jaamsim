@@ -73,6 +73,7 @@ public class Entity {
 	public static final int FLAG_GENERATED = 0x80;  // entity was created during the execution of the simulation
 	public static final int FLAG_DEAD = 0x0100;  // entity has been deleted
 	public static final int FLAG_REGISTERED = 0x0200;  // entity is included in the namedEntities HashMap
+	public static final int FLAG_RETAINED = 0x0400;  // entity is retained when the model is reset between runs
 	private int flags;
 
 	private final ArrayList<Input<?>> inpList = new ArrayList<>();

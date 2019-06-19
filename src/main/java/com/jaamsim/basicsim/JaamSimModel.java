@@ -419,7 +419,7 @@ public class JaamSimModel {
 	public void killGeneratedEntities() {
 		for (int i = 0; i < allInstances.size();) {
 			Entity ent = allInstances.get(i);
-			if (ent.testFlag(Entity.FLAG_GENERATED))
+			if (!ent.testFlag(Entity.FLAG_RETAINED))
 				ent.kill();
 			else
 				i++;
@@ -714,7 +714,7 @@ public class JaamSimModel {
 	 * @return new entity
 	 */
 	public final <T extends Entity> T createInstance(Class<T> proto, String name,
-			boolean added, boolean gen, boolean reg) {
+			boolean added, boolean gen, boolean reg, boolean retain) {
 		T ent = createInstance(proto);
 		if (ent == null)
 			return null;
@@ -728,6 +728,8 @@ public class JaamSimModel {
 			ent.setFlag(Entity.FLAG_GENERATED);
 		if (reg)
 			ent.setFlag(Entity.FLAG_REGISTERED);
+		if (retain)
+			ent.setFlag(Entity.FLAG_RETAINED);
 
 		ent.setName(name);
 		return ent;
