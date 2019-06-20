@@ -426,7 +426,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, InputErr
 
 		// Read the autoload configuration file
 		sim.autoLoad();
-		sim.getSimulation().setWindowDefaults();
+		setWindowDefaults();
 		EntityPallet.update();
 
 		undoList.clear();
@@ -3268,6 +3268,18 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, InputErr
 		getTool(name).setSize(width, height);
 	}
 
+	public void setWindowDefaults() {
+		Simulation simulation = sim.getSimulation();
+		simulation.setModelBuilderDefaults(   COL1_START, TOP_START,     COL1_WIDTH, HALF_TOP    );
+		simulation.setObjectSelectorDefaults( COL1_START, BOTTOM_START,  COL1_WIDTH, HALF_BOTTOM );
+		simulation.setInputEditorDefaults(    COL2_START, LOWER_START,   COL2_WIDTH, LOWER_HEIGHT);
+		simulation.setOutputViewerDefaults(   COL3_START, LOWER_START,   COL3_WIDTH, LOWER_HEIGHT);
+		simulation.setPropertyViewerDefaults( COL4_START, TOP_START,     COL4_WIDTH, HALF_TOP    );
+		simulation.setLogViewerDefaults(      COL4_START, BOTTOM_START,  COL4_WIDTH, HALF_BOTTOM );
+		simulation.setEventViewerDefaults(    COL4_START, BOTTOM_START,  COL4_WIDTH, HALF_BOTTOM );
+		simulation.setControlPanelWidthDefault(DEFAULT_GUI_WIDTH);
+	}
+
 	// ******************************************************************************************************
 	// MAIN
 	// ******************************************************************************************************
@@ -3383,7 +3395,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, InputErr
 			gui.setVisible(true);
 			gui.calcWindowDefaults();
 			gui.setLocation(gui.getX(), gui.getY());  //FIXME remove when setLocation is fixed for Windows 10
-			sim.getSimulation().setWindowDefaults();
+			gui.setWindowDefaults();
 			EntityPallet.update();
 		}
 

@@ -1002,24 +1002,6 @@ public class Simulation extends Entity {
 		return realTime.getValue();
 	}
 
-	public void setWindowDefaults() {
-		modelBuilderPos.setDefaultValue(GUIFrame.COL1_START, GUIFrame.TOP_START);
-		modelBuilderSize.setDefaultValue(GUIFrame.COL1_WIDTH, GUIFrame.HALF_TOP);
-		objectSelectorPos.setDefaultValue(GUIFrame.COL1_START, GUIFrame.BOTTOM_START);
-		objectSelectorSize.setDefaultValue(GUIFrame.COL1_WIDTH, GUIFrame.HALF_BOTTOM);
-		inputEditorPos.setDefaultValue(GUIFrame.COL2_START, GUIFrame.LOWER_START);
-		inputEditorSize.setDefaultValue(GUIFrame.COL2_WIDTH, GUIFrame.LOWER_HEIGHT);
-		outputViewerPos.setDefaultValue(GUIFrame.COL3_START, GUIFrame.LOWER_START);
-		outputViewerSize.setDefaultValue(GUIFrame.COL3_WIDTH, GUIFrame.LOWER_HEIGHT);
-		propertyViewerPos.setDefaultValue(GUIFrame.COL4_START, GUIFrame.TOP_START);
-		propertyViewerSize.setDefaultValue(GUIFrame.COL4_WIDTH, GUIFrame.HALF_TOP);
-		logViewerPos.setDefaultValue(GUIFrame.COL4_START, GUIFrame.BOTTOM_START);
-		logViewerSize.setDefaultValue(GUIFrame.COL4_WIDTH, GUIFrame.HALF_BOTTOM);
-		eventViewerPos.setDefaultValue(GUIFrame.COL4_START, GUIFrame.BOTTOM_START);
-		eventViewerSize.setDefaultValue(GUIFrame.COL4_WIDTH, GUIFrame.HALF_BOTTOM);
-		controlPanelWidth.setDefaultValue(GUIFrame.DEFAULT_GUI_WIDTH);
-	}
-
 	public void resetWindowPositionsAndSizes() {
 		InputAgent.applyArgs(this, modelBuilderPos.getKeyword());
 		InputAgent.applyArgs(this, modelBuilderSize.getKeyword());
@@ -1210,6 +1192,45 @@ public class Simulation extends Entity {
 
 	public boolean isEventViewerVisible() {
 		return showEventViewer.getValue();
+	}
+
+	public void setModelBuilderDefaults(int x, int y, int width, int height) {
+		modelBuilderPos.setDefaultValue(x, y);
+		modelBuilderSize.setDefaultValue(width, height);
+	}
+
+	public void setObjectSelectorDefaults(int x, int y, int width, int height) {
+		objectSelectorPos.setDefaultValue(x, y);
+		objectSelectorSize.setDefaultValue(width, height);
+	}
+
+	public void setInputEditorDefaults(int x, int y, int width, int height) {
+		inputEditorPos.setDefaultValue(x, y);
+		inputEditorSize.setDefaultValue(width, height);
+	}
+
+	public void setOutputViewerDefaults(int x, int y, int width, int height) {
+		outputViewerPos.setDefaultValue(x, y);
+		outputViewerSize.setDefaultValue(width, height);
+	}
+
+	public void setPropertyViewerDefaults(int x, int y, int width, int height) {
+		propertyViewerPos.setDefaultValue(x, y);
+		propertyViewerSize.setDefaultValue(width, height);
+	}
+
+	public void setLogViewerDefaults(int x, int y, int width, int height) {
+		logViewerPos.setDefaultValue(x, y);
+		logViewerSize.setDefaultValue(width, height);
+	}
+
+	public void setEventViewerDefaults(int x, int y, int width, int height) {
+		eventViewerPos.setDefaultValue(x, y);
+		eventViewerSize.setDefaultValue(width, height);
+	}
+
+	public void setControlPanelWidthDefault(int width) {
+		controlPanelWidth.setDefaultValue(width);
 	}
 
 	public int getStartingRunNumber() {
