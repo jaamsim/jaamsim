@@ -20,7 +20,11 @@ import java.util.ArrayList;
 
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.ProcessFlow.LinkedComponent;
+import com.jaamsim.Graphics.Region;
+import com.jaamsim.SubModels.SubModelEnd;
+import com.jaamsim.SubModels.SubModelStart;
 import com.jaamsim.basicsim.ErrorException;
+import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.input.ExpError;
 import com.jaamsim.input.ExpEvaluator;
 import com.jaamsim.input.ExpParser;
@@ -30,7 +34,9 @@ import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.ExpParser.Expression;
+import com.jaamsim.math.Vec3d;
 import com.jaamsim.units.DimensionlessUnit;
+import com.jaamsim.units.DistanceUnit;
 
 public abstract class CompoundEntity extends LinkedComponent {
 
@@ -40,6 +46,7 @@ public abstract class CompoundEntity extends LinkedComponent {
 
 	protected ArrayList<DisplayEntity> componentList;
 	private SubModelStart smStart;
+	private Region smRegion;
 
 	{
 		namedExpressionInput.setHidden(true); // FIXME CustomOutputList conflicts with the component outputs
@@ -51,6 +58,12 @@ public abstract class CompoundEntity extends LinkedComponent {
 
 	public CompoundEntity() {
 		componentList = new ArrayList<>();
+	}
+
+	@Override
+	public void postDefine() {
+		super.postDefine();
+		updateRegion();
 	}
 
 	@Override
@@ -76,6 +89,19 @@ public abstract class CompoundEntity extends LinkedComponent {
 		}
 	}
 
+	public void updateRegion() {
+		JaamSimModel simModel = getJaamSimModel();
+		if (smRegion == null) {
+			String name = getComponentName("Region");
+			smRegion = InputAgent.generateEntityWithName(simModel, Region.class, name, true, true);
+		}
+		InputAgent.applyArgs(smRegion, "DisplayModel", "RegionRectangle");
+		InputAgent.applyArgs(smRegion, "RelativeEntity", this.getName());
+		InputAgent.applyVec3d(smRegion, "Size", new Vec3d(2.0d, 1.0d, 0.0d), DistanceUnit.class);
+		InputAgent.applyVec3d(smRegion, "Position", new Vec3d(0.0d, -1.5d, 0.0d), DistanceUnit.class);
+		InputAgent.applyVec3d(smRegion, "Alignment", new Vec3d(0.0d, 0.0d, 0.0d), DimensionlessUnit.class);
+	}
+
 	public void setComponentList(ArrayList<DisplayEntity> list) {
 		componentList = new ArrayList<>(list);
 	}
@@ -84,11 +110,16 @@ public abstract class CompoundEntity extends LinkedComponent {
 		return componentList;
 	}
 
+	public Region getSubModelRegion() {
+		return smRegion;
+	}
+
 	/**
 	 * Displays or hides the sub-model's components.
 	 * @param bool - if true, the components are displayed; if false, they are hidden.
 	 */
 	public void showComponents(boolean bool) {
+		InputAgent.applyBoolean(smRegion, "Show", showComponents.getValue());
 		for (DisplayEntity comp : componentList) {
 			InputAgent.applyBoolean(comp, "Show", showComponents.getValue());
 		}
@@ -105,6 +136,10 @@ public abstract class CompoundEntity extends LinkedComponent {
 	}
 
 	public void renameComponents(String newName) {
+		if (smRegion != null) {
+			String name = getComponentName(newName, smRegion.getName());
+			smRegion.setName(name);
+		}
 		for (DisplayEntity comp : componentList) {
 			if (comp == null)
 				continue;
