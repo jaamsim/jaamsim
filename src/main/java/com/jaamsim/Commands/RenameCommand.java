@@ -53,8 +53,10 @@ public class RenameCommand implements Command {
 
 		// Update the entries in the Object Selector
 		GUIListener gui = ent.getJaamSimModel().getGUIListener();
-		if (gui != null)
+		if (gui != null) {
 			gui.updateObjectSelector();
+			gui.updateModelBuilder();
+		}
 	}
 
 	@Override

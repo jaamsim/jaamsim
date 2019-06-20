@@ -29,6 +29,7 @@ public interface GUIListener {
 	public void setControlPanelWidth(int width);
 	public void invokeErrorDialogBox(String title, String fmt, Object... args);
 	public void updateObjectSelector();
+	public void updateModelBuilder();
 	public void storeAndExecute(Command cmd);
 	public void updateAll();
 
