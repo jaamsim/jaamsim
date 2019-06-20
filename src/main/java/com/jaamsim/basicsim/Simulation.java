@@ -582,10 +582,6 @@ public class Simulation extends Entity {
 		printInputReport = new BooleanInput("PrintInputReport", KEY_INPUTS, false);
 		printInputReport.setHidden(true);
 		this.addInput(printInputReport);
-
-		// Set the initial value for snap grid spacing
-		if (GUIFrame.getInstance() != null)
-			GUIFrame.getInstance().updateForSnapGridSpacing(snapGridSpacing.getDefaultString());
 	}
 
 	public Simulation() {}
