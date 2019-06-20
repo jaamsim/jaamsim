@@ -186,7 +186,7 @@ public class GraphicBox extends JDialog {
 					int i = fileName.lastIndexOf('.');
 					if (i <= 0 || i >= fileName.length() - 1) {
 						GUIFrame.invokeErrorDialog("Input Error",
-								"File name: %s is invalid.", f.getName());
+								String.format("File name: %s is invalid.", fileName));
 						return;
 					}
 					String extension = fileName.substring(i+1).toLowerCase();
@@ -213,8 +213,8 @@ public class GraphicBox extends JDialog {
 					}
 					else {
 						GUIFrame.invokeErrorDialog("Input Error",
-								"The extension for file: %s is invalid for both an image and "
-								+ "a 3D asset.", fileName);
+								String.format("The extension for file: %s is invalid for both an "
+										+ "image and a 3D asset.", fileName));
 					}
 
 					 // Add the new DisplayModel to the List

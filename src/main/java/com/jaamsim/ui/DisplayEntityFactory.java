@@ -164,13 +164,14 @@ public class DisplayEntityFactory extends Entity {
 			int i = fileName.lastIndexOf('.');
 			if (i <= 0 || i >= fileName.length() - 1) {
 				GUIFrame.invokeErrorDialog("Input Error",
-						"File name: %s is invalid.", f.getName());
+						String.format("File name: %s is invalid.", fileName));
 				continue;
 			}
 			String extension = fileName.substring(i+1).toLowerCase();
 			if (!ImageModel.isValidExtension(extension)) {
 				GUIFrame.invokeErrorDialog("Input Error",
-						"The extension for file: %s is invalid for an image.", fileName);
+						String.format("The extension for file: %s is invalid for an image.",
+								fileName));
 				continue;
 			}
 
@@ -225,13 +226,14 @@ public class DisplayEntityFactory extends Entity {
 			int i = fileName.lastIndexOf('.');
 			if (i <= 0 || i >= fileName.length() - 1) {
 				GUIFrame.invokeErrorDialog("Input Error",
-						"File name: %s is invalid.", f.getName());
+						String.format("File name: %s is invalid.", fileName));
 				continue;
 			}
 			String extension = fileName.substring(i+1).toLowerCase();
 			if (!ColladaModel.isValidExtension(extension)) {
 				GUIFrame.invokeErrorDialog("Input Error",
-						"The extension for file: %s is invalid for a 3D asset.", fileName);
+						String.format("The extension for file: %s is invalid for a 3D asset.",
+								fileName));
 				continue;
 			}
 

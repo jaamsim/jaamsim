@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -101,8 +102,8 @@ public class MeshDataCache {
 		} catch (Exception ex) {
 			String path = Paths.get(key.getURI()).toString();  // decode %20 as blank character
 			GUIFrame.invokeErrorDialog("3D Loader Error",
-					"Could not load 3D data file:\n %s \n\n %s",
-					path, ex.getMessage());
+					String.format("Could not load 3D data file:\n %s \n\n %s",
+							path, ex.getMessage()));
 			LogBox.formatRenderLog("Could not load 3D data file: %s\nError: %s\n", path, ex.getMessage());
 			synchronized (badMeshSet) {
 				badMeshSet.add(key);

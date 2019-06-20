@@ -27,7 +27,7 @@ public interface GUIListener {
 	public void setToolLocation(String name, int x, int y);
 	public void setToolSize(String name, int width, int height);
 	public void setControlPanelWidth(int width);
-	public void invokeErrorDialogBox(String title, String fmt, Object... args);
+	public void invokeErrorDialogBox(String title, String msg);
 	public void updateObjectSelector();
 	public void updateModelBuilder();
 	public void storeAndExecute(Command cmd);

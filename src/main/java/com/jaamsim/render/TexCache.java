@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2012 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -201,7 +202,7 @@ public class TexCache {
 			// Could not load image
 			String path = Paths.get(imageURI).toString();  // decode %20 as blank character
 			GUIFrame.invokeErrorDialog("3D Loader Error",
-					"Could not load texture file:\n %s", path);
+					String.format("Could not load texture file:\n %s", path));
 			LogBox.formatRenderLog("Could not load texture file: %s\n", path);
 			return null;
 		}

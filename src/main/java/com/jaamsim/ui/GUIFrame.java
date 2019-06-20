@@ -4010,18 +4010,16 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	}
 
 	@Override
-	public void invokeErrorDialogBox(String title, String fmt, Object... args) {
-		GUIFrame.invokeErrorDialog(title, fmt, args);
+	public void invokeErrorDialogBox(String title, String msg) {
+		GUIFrame.invokeErrorDialog(title, msg);
 	}
 
 	/**
 	 * Shows the Error Message dialog box from a non-Swing thread
 	 * @param title - text for the dialog box name
-	 * @param fmt - format string for the error message
-	 * @param args - inputs to the error message
+	 * @param msg - error message
 	 */
-	public static void invokeErrorDialog(String title, String fmt, Object... args) {
-		final String msg = String.format(fmt,  args);
+	public static void invokeErrorDialog(String title, String msg) {
 		SwingUtilities.invokeLater(new RunnableError(title, msg));
 	}
 
