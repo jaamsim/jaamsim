@@ -174,8 +174,12 @@ public abstract class CompoundEntity extends LinkedComponent {
 		return sb.toString();
 	}
 
+	protected String getComponentName(String name) {
+		return getComponentName(this.getName(), name);
+	}
+
 	public boolean isComponentName(String name) {
-		String compName = getComponentName(this.getName(), name);
+		String compName = getComponentName(name);
 		return name.equals(compName);
 	}
 
