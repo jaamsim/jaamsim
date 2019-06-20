@@ -35,6 +35,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
+import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
@@ -132,6 +133,18 @@ public class EntityPallet extends OSFixJFrame implements DragGestureListener {
 					}
 				}
 			}
+		}
+	}
+
+	public static void update() {
+		SwingUtilities.invokeLater(new RunnableUpdater());
+	}
+
+	private static class RunnableUpdater implements Runnable {
+
+		@Override
+		public void run() {
+			EntityPallet.getInstance().updateTree();
 		}
 	}
 

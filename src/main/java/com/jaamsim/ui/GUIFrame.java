@@ -427,6 +427,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, InputErr
 		// Read the autoload configuration file
 		sim.autoLoad();
 		sim.getSimulation().setWindowDefaults();
+		EntityPallet.update();
 
 		undoList.clear();
 		redoList.clear();
@@ -3303,6 +3304,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, InputErr
 			gui.calcWindowDefaults();
 			gui.setLocation(gui.getX(), gui.getY());  //FIXME remove when setLocation is fixed for Windows 10
 			sim.getSimulation().setWindowDefaults();
+			EntityPallet.update();
 		}
 
 		// Resolve all input arguments against the current working directory
