@@ -419,6 +419,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		sim.clear();
 
 		// Clear the status bar
+		tickUpdate(0L);
 		setProgress( 0 );
 		speedUpDisplay.setText("0");
 		remainingDisplay.setText("-");
