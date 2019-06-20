@@ -63,7 +63,10 @@ public class InputAgent {
 	private static final String recordEditsMarker = "RecordEdits";
 
 	private static final String INP_ERR_DEFINEUSED = "The name: %s has already been used and is a %s";
-	private static final String INP_ERR_BADNAME = "An entity name cannot be blank or contain spaces, tabs, or braces.";
+	private static final String INP_ERR_BADNAME = "An entity name cannot be blank or contain "
+	                                            + "spaces, tabs, braces, single or double quotes, "
+	                                            + "square brackets, or the hash character.";
+	private static final char[] INVALID_CHARS = new char[]{' ', '\t', '{', '}', '\'', '"', '[', ']', '#'};
 
 	private static final String[] EARLY_KEYWORDS = {"UnitType", "UnitTypeList", "OutputUnitType", "SecondaryUnitType", "DataFile", "AttributeDefinitionList", "CustomOutputList"};
 	private static final String[] GRAPHICS_PALETTES = {"Graphics Objects", "View", "Display Models"};
@@ -337,8 +340,10 @@ public class InputAgent {
 			return false;
 		for (int i = 0; i < key.length(); ++i) {
 			final char c = key.charAt(i);
-			if (c == ' ' || c == '\t' || c == '{' || c == '}')
-				return false;
+			for (char invChar : INVALID_CHARS) {
+				if (c == invChar)
+					return false;
+			}
 		}
 		return true;
 	}
