@@ -32,6 +32,7 @@ import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.EntityLabel;
 import com.jaamsim.Graphics.OverlayEntity;
+import com.jaamsim.SubModels.CompoundEntity;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.basicsim.JaamSimModel;
@@ -189,6 +190,11 @@ public class ContextMenu {
 		// DisplayEntity menu items
 		if (ent instanceof DisplayEntity) {
 			ContextMenu.populateDisplayEntityMenu(menu, (DisplayEntity)ent, nodeIndex, c, x, y);
+		}
+
+		// CompoundEntity menu items
+		if (ent instanceof CompoundEntity) {
+			ContextMenu.populateCompoundEntityMenu(menu, (CompoundEntity)ent, nodeIndex, c, x, y);
 		}
 
 		synchronized (menuItems) {
@@ -461,6 +467,27 @@ public class ContextMenu {
 		if (ent.usePointsInput()) {
 			menu.add( deleteNodeItem );
 		}
+	}
+
+	public static void populateCompoundEntityMenu(JPopupMenu menu, final CompoundEntity ent, final int nodeIndex,
+			final Component c, final int x, final int y) {
+
+		if (!RenderManager.isGood())
+			return;
+
+		// Show Components
+		boolean show = ent.getShowComponents();
+		final JMenuItem showComponentsMenuItem = new JCheckBoxMenuItem( "Show Components", show );
+		showComponentsMenuItem.addActionListener( new ActionListener() {
+
+			@Override
+			public void actionPerformed( ActionEvent event ) {
+				boolean bool = showComponentsMenuItem.isSelected();
+				KeywordIndex kw = InputAgent.formatBoolean("ShowComponents", bool);
+				InputAgent.storeAndExecute(new KeywordCommand(ent, kw));
+			}
+		});
+		menu.add( showComponentsMenuItem );
 	}
 
 }
