@@ -128,7 +128,16 @@ public abstract class CompoundEntity extends LinkedComponent {
 	}
 
 	public void setComponentList(ArrayList<DisplayEntity> list) {
+		ArrayList<DisplayEntity> oldList = new ArrayList<>(componentList);
 		componentList = new ArrayList<>(list);
+
+		// Place the components in the sub-model region
+		for (DisplayEntity comp : componentList) {
+			InputAgent.applyArgs(comp, "Region", smRegion.getName());
+		}
+
+		// Set the outputs for the sub-model
+		updateOutputs(oldList, componentList);
 	}
 
 	public ArrayList<DisplayEntity> getComponentList() {
