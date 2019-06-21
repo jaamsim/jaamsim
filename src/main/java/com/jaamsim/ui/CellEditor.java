@@ -201,8 +201,10 @@ public abstract class CellEditor extends AbstractCellEditor implements TableCell
 				}
 
 				GUIFrame.showErrorDialog("Input Error",
+						exep.source,
+						exep.position,
 						"Input error:",
-						exep,
+						exep.getMessage(),
 						"Value will be cleared.");
 
 				GUIFrame.updateUI();

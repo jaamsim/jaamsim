@@ -3643,9 +3643,24 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			InputAgent.logStackTrace(sim, t);
 		}
 
+		String msg = t.getMessage();
+		if (msg == null)
+			msg = "null";
+		String source = "";
+		int pos = -1;
+		if (t instanceof InputErrorException) {
+			source = ((InputErrorException) t).source;
+			pos = ((InputErrorException) t).position;
+		}
+		if (t instanceof ErrorException) {
+			source = ((ErrorException) t).source;
+			pos = ((ErrorException) t).position;
+		}
 		GUIFrame.showErrorDialog("Runtime Error",
+				source,
+				pos,
 				"JaamSim has detected the following runtime error condition:",
-				t,
+				msg,
 				"Programmers can find more information by opening the Log Viewer.\n"
 						+ "The simulation run must be reset to zero simulation time before it "
 						+ "can be restarted.");
@@ -3990,23 +4005,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 	public static void showErrorDialog(String title, String message) {
 		GUIFrame.showErrorDialog(title, "", -1, "", message, "");
-	}
-
-	public static void showErrorDialog(String title, String pre, Throwable t, String post) {
-		if (t instanceof InputErrorException) {
-			InputErrorException e = (InputErrorException)t;
-			GUIFrame.showErrorDialog(title, e.source, e.position, pre, e.getMessage(), post);
-			return;
-		}
-		if (t instanceof ErrorException) {
-			ErrorException e = (ErrorException)t;
-			GUIFrame.showErrorDialog(title, e.source, e.position, pre, e.getMessage(), post);
-			return;
-		}
-		String message = t.getMessage();
-		if (message == null)
-			message = "null";
-		GUIFrame.showErrorDialog(title, "", -1, pre, message, post);
 	}
 
 	@Override
