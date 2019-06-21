@@ -141,9 +141,9 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	private JMenu optionMenu;
 	private JMenu unitsMenu;
 	private JMenu helpMenu;
-	private static JToggleButton snapToGrid;
-	private static JToggleButton xyzAxis;
-	private static JToggleButton grid;
+	private JToggleButton snapToGrid;
+	private JToggleButton xyzAxis;
+	private JToggleButton grid;
 	private JCheckBoxMenuItem alwaysTop;
 	private JCheckBoxMenuItem graphicsDebug;
 	private JMenuItem printInputItem;
@@ -3211,7 +3211,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	/**
 	 * Displays the view windows and tools on startup.
 	 */
-	public static void displayWindows() {
+	public void displayWindows() {
 
 		// Show the view windows specified in the configuration file
 		for (View v : sim.getViews()) {
@@ -3530,7 +3530,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 		// Show the view windows
 		if(!quiet && !batch) {
-			displayWindows();
+			if (gui != null)
+				gui.displayWindows();
 		}
 
 		// If in batch or quiet mode, close the any tools that were opened
@@ -3789,7 +3790,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 					sim.setRecordEdits(true);
 
-					GUIFrame.displayWindows();
+					gui1.displayWindows();
 					FrameBox.setSelectedEntity(sim.getSimulation(), false);
 				}
 			}).start();
