@@ -517,6 +517,11 @@ public class InputAgent {
 		InputAgent.apply(ent, kw);
 	}
 
+	public static void applyValue(Entity ent, String keyword, double val, String unit){
+		KeywordIndex kw = formatDoubleInput(keyword, val, unit);
+		InputAgent.apply(ent, kw);
+	}
+
 	public static final void apply(Entity ent, KeywordIndex kw) {
 		Input<?> in = ent.getInput(kw.keyword);
 		if (in == null) {
@@ -1724,7 +1729,7 @@ public class InputAgent {
 	public static KeywordIndex formatDoubleInput(String keyword, double val, String unit) {
 		ArrayList<String> tokens = new ArrayList<>(2);
 		tokens.add(String.format((Locale)null, "%s", val));
-		if (unit != null)
+		if (unit != null && !unit.isEmpty())
 			tokens.add(unit);
 		return new KeywordIndex(keyword, tokens, null);
 	}
