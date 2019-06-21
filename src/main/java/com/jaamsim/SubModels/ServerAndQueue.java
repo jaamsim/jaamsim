@@ -32,9 +32,6 @@ import com.jaamsim.units.DistanceUnit;
 
 public class ServerAndQueue extends CompoundEntity {
 
-	private Server server;
-	private Queue queue;
-
 	@Keyword(description = "The service time required to process an entity.",
 	         exampleList = { "3.0 h", "NormalDistribution1", "'1[s] + 0.5*[TimeSeries1].PresentValue'" })
 	private SampleInput serviceTime;
@@ -48,8 +45,8 @@ public class ServerAndQueue extends CompoundEntity {
 		// Create the sub-model components
 		JaamSimModel simModel = getJaamSimModel();
 		SubModelStart start = InputAgent.generateEntityWithName(simModel, SubModelStart.class, getComponentName("Start"), true, true);
-		queue = InputAgent.generateEntityWithName(simModel, Queue.class, getComponentName("Queue"), true, true);
-		server = InputAgent.generateEntityWithName(simModel, Server.class, getComponentName("Server"), true, true);
+		Queue queue = InputAgent.generateEntityWithName(simModel, Queue.class, getComponentName("Queue"), true, true);
+		Server server = InputAgent.generateEntityWithName(simModel, Server.class, getComponentName("Server"), true, true);
 		SubModelEnd end = InputAgent.generateEntityWithName(simModel, SubModelEnd.class, getComponentName("End"), true, true);
 
 		// Add component inputs to the sub-model
