@@ -3769,9 +3769,10 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		if (t instanceof InputErrorException) {
 			InputAgent.logMessage(sim, "Input Error: %s", t.getMessage());
 			GUIFrame.showErrorOptionDialog("Input Error",
-			                         "Input errors were detected while loading file: '%s'\n\n%s\n\n" +
-			                         "Open '%s' with Log Viewer?",
-			                         file.getName(), t.getMessage(), sim.getRunName() + ".log");
+					String.format("Input errors were detected while loading file: '%s'\n\n"
+							+ "%s\n\n"
+							+ "Open '%s' with Log Viewer?",
+							file.getName(), t.getMessage(), sim.getRunName() + ".log"));
 			return;
 		}
 
@@ -4039,14 +4040,11 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	/**
 	 * Shows the Error Message dialog box with option to open the Log Viewer
 	 * @param title - text for the dialog box name
-	 * @param fmt - format string for the error message
-	 * @param args - inputs to the error message
+	 * @param msg - error message
 	 */
-	public static void showErrorOptionDialog(String title, String fmt, Object... args) {
+	public static void showErrorOptionDialog(String title, String msg) {
 		if (sim == null || sim.isBatchRun())
 			GUIFrame.shutdown(1);
-
-		final String msg = String.format(fmt,  args);
 
 		Object[] options = {"Yes", "No"};
 		int userOption = JOptionPane.showOptionDialog(null,
