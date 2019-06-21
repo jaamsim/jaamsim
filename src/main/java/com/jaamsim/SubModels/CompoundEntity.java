@@ -96,6 +96,24 @@ public abstract class CompoundEntity extends LinkedComponent {
 		}
 	}
 
+	@Override
+	public void kill() {
+		for (DisplayEntity comp : componentList) {
+			comp.kill();
+		}
+		componentList.clear();
+		smStart = null;
+		smRegion.kill();
+		smRegion = null;
+		super.kill();
+	}
+
+	@Override
+	public void restore(String name) {
+		super.restore(name);
+		postDefine();
+	}
+
 	public void updateRegion() {
 		JaamSimModel simModel = getJaamSimModel();
 		if (smRegion == null) {
