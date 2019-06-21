@@ -179,8 +179,10 @@ public abstract class CellEditor extends AbstractCellEditor implements TableCell
 
 				if (editor.canRetry() && !entityChanged) {
 					boolean editSelected = GUIFrame.showErrorEditDialog("Input Error",
+							exep.source,
+							exep.position,
 							"Input error:",
-							exep,
+							exep.getMessage(),
 							"Do you want to continue editing, or reset the input?");
 					if (editSelected) {
 						// Any editor that supports retry should implement the following

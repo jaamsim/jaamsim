@@ -4064,19 +4064,24 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	/**
 	 * Shows the Error Message dialog box for the Input Editor
 	 * @param title - text for the dialog box name
+	 * @param source - input text
+	 * @param pos - index of the error in the input text
 	 * @param pre - text to appear before the error message
-	 * @param e - input error object
+	 * @param msg - error message
 	 * @param post - text to appear after the error message
 	 * @return true if the input is to be re-edited
 	 */
-	public static boolean showErrorEditDialog(String title, String pre, InputErrorException e, String post) {
-		String msg = GUIFrame.getErrorMessage(e.source, e.position,
-				"Input error:",
-				e.getMessage(),
-				"Do you want to continue editing, or reset the input?");
+	public static boolean showErrorEditDialog(String title, String source, int pos, String pre, String msg, String post) {
+		String message = GUIFrame.getErrorMessage(source, pos, pre, msg, post);
 		String[] options = { "Edit", "Reset" };
-		int reply = JOptionPane.showOptionDialog(null, msg, "Input Error", JOptionPane.OK_CANCEL_OPTION,
-				JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+		int reply = JOptionPane.showOptionDialog(null,
+				message,
+				title,
+				JOptionPane.OK_CANCEL_OPTION,
+				JOptionPane.ERROR_MESSAGE,
+				null,
+				options,
+				options[0]);
 		return (reply == JOptionPane.OK_OPTION);
 	}
 
