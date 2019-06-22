@@ -163,6 +163,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	private final ArrayList<Command> undoList = new ArrayList<>();
 	private final ArrayList<Command> redoList = new ArrayList<>();
 
+	private JToggleButton showLabels;
+
 	private JToggleButton showLinks;
 	private JToggleButton createLinks;
 
@@ -854,6 +856,10 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		buttonBar.add(Box.createRigidArea(gapDim));
 		addShowGridButton(buttonBar, noMargin);
 
+		// Show labels button
+		buttonBar.add(Box.createRigidArea(gapDim));
+		addShowLabelsButton(buttonBar, noMargin);
+
 		// Snap-to-grid button and field
 		buttonBar.addSeparator(separatorDim);
 		addSnapToGridButton(buttonBar, noMargin);
@@ -1126,6 +1132,24 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			}
 		} );
 		buttonBar.add( grid );
+	}
+
+	private void addShowLabelsButton(JToolBar buttonBar, Insets margin) {
+		showLabels = new JToggleButton( new ImageIcon(
+				GUIFrame.class.getResource("/resources/images/ShowLabels-16.png")) );
+		showLabels.setMargin(margin);
+		showLabels.setFocusPainted(false);
+		showLabels.setRequestFocusEnabled(false);
+		showLabels.setToolTipText(formatToolTip("Show Labels",
+				"Displays the label for every entity in the model."));
+		showLabels.addActionListener( new ActionListener() {
+
+			@Override
+			public void actionPerformed( ActionEvent event ) {
+				fileSave.requestFocusInWindow();
+			}
+		} );
+		buttonBar.add( showLabels );
 	}
 
 	private void addSnapToGridButton(JToolBar buttonBar, Insets margin) {
