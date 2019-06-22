@@ -17,12 +17,20 @@
  */
 package com.jaamsim.Graphics;
 
+import java.util.ArrayList;
+
+import com.jaamsim.Commands.DefineCommand;
 import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.basicsim.GUIListener;
+import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
+import com.jaamsim.input.KeywordIndex;
+import com.jaamsim.math.Vec3d;
+import com.jaamsim.ui.View;
+import com.jaamsim.units.DistanceUnit;
 
 public class EntityLabel extends TextBasics {
 
@@ -95,6 +103,43 @@ public class EntityLabel extends TextBasics {
 		String targetName = targetEntity.getValue().getName();
 		setText(targetName);
 		this.resizeForText();
+	}
+
+	public static EntityLabel createLabel(DisplayEntity ent) {
+		EntityLabel label = getLabel(ent);
+		if (label != null)
+			return label;
+
+		// Create the EntityLabel object
+		JaamSimModel simModel = ent.getJaamSimModel();
+		String name = InputAgent.getUniqueName(simModel, ent.getName(), "_Label");
+		InputAgent.storeAndExecute(new DefineCommand(simModel, EntityLabel.class, name));
+		label = (EntityLabel)simModel.getNamedEntity(name);
+
+		// Assign inputs that link the label to its target entity
+		InputAgent.applyArgs(label, "TargetEntity", ent.getName());
+		InputAgent.applyArgs(label, "RelativeEntity", ent.getName());
+		if (ent.getCurrentRegion() != null)
+			InputAgent.applyArgs(label, "Region", ent.getCurrentRegion().getName());
+
+		// Set the visible views to match its target entity
+		if (ent.getVisibleViews() != null) {
+			ArrayList<String> tokens = new ArrayList<>(ent.getVisibleViews().size());
+			for (View v : ent.getVisibleViews()) {
+				tokens.add(v.getName());
+			}
+			KeywordIndex kw = new KeywordIndex("VisibleViews", tokens, null);
+			InputAgent.apply(label, kw);
+		}
+
+		// Set the label's position
+		double ypos = -0.15 - 0.5*ent.getSize().y;
+		InputAgent.apply(label, InputAgent.formatVec3dInput("Position", new Vec3d(0.0, ypos, 0.0), DistanceUnit.class));
+
+		// Set the label's size
+		label.resizeForText();
+
+		return label;
 	}
 
 }
