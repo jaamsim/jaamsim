@@ -133,13 +133,18 @@ public class EntityLabel extends TextBasics {
 		}
 
 		// Set the label's position
-		double ypos = -0.15 - 0.5*ent.getSize().y;
-		InputAgent.apply(label, InputAgent.formatVec3dInput("Position", new Vec3d(0.0, ypos, 0.0), DistanceUnit.class));
+		Vec3d pos = getNominalPosition(ent);
+		InputAgent.apply(label, InputAgent.formatVec3dInput("Position", pos, DistanceUnit.class));
 
 		// Set the label's size
 		label.resizeForText();
 
 		return label;
+	}
+
+	public static Vec3d getNominalPosition(DisplayEntity ent) {
+		double ypos = -0.15d - 0.5d*ent.getSize().y;
+		return new Vec3d(0.0d, ypos, 0.0d);
 	}
 
 }
