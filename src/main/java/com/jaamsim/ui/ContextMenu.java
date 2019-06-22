@@ -234,49 +234,7 @@ public class ContextMenu {
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				if (showLabelMenuItem.isSelected()) {
-
-					// If required, create the EntityLabel object
-					if (label == null) {
-						JaamSimModel simModel = ent.getJaamSimModel();
-						String name = InputAgent.getUniqueName(simModel, ent.getName(), "_Label");
-						InputAgent.storeAndExecute(new DefineCommand(simModel, EntityLabel.class, name));
-						EntityLabel newLabel = (EntityLabel)simModel.getNamedEntity(name);
-
-						// Assign inputs that link the label to its target entity
-						InputAgent.applyArgs(newLabel, "TargetEntity", ent.getName());
-						InputAgent.applyArgs(newLabel, "RelativeEntity", ent.getName());
-						if (ent.getCurrentRegion() != null)
-							InputAgent.applyArgs(newLabel, "Region", ent.getCurrentRegion().getName());
-
-						// Set the visible views to match its target entity
-						if (ent.getVisibleViews() != null) {
-							ArrayList<String> tokens = new ArrayList<>(ent.getVisibleViews().size());
-							for (View v : ent.getVisibleViews()) {
-								tokens.add(v.getName());
-							}
-							KeywordIndex kw = new KeywordIndex("VisibleViews", tokens, null);
-							InputAgent.apply(newLabel, kw);
-						}
-
-						// Set the label's position
-						double ypos = -0.15 - 0.5*ent.getSize().y;
-						InputAgent.apply(newLabel, InputAgent.formatVec3dInput("Position", new Vec3d(0.0, ypos, 0.0), DistanceUnit.class));
-
-						// Set the label's size
-						newLabel.resizeForText();
-						return;
-					}
-
-					// Show the label
-					InputAgent.applyBoolean(label, "Show", true);
-				}
-				else {
-
-					// Hide the label if it already exists
-					if (label != null)
-						InputAgent.applyBoolean(label, "Show", false);
-				}
+				EntityLabel.showLabel(ent, showLabelMenuItem.isSelected());
 			}
 		} );
 		if (ent instanceof EntityLabel || ent.testFlag(Entity.FLAG_GENERATED)) {
