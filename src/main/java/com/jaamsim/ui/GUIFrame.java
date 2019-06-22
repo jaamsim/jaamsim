@@ -164,6 +164,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	private final ArrayList<Command> redoList = new ArrayList<>();
 
 	private JToggleButton showLabels;
+	private JToggleButton showSubModels;
 
 	private JToggleButton showLinks;
 	private JToggleButton createLinks;
@@ -860,6 +861,10 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		buttonBar.add(Box.createRigidArea(gapDim));
 		addShowLabelsButton(buttonBar, noMargin);
 
+		// Show sub-models button
+		buttonBar.add(Box.createRigidArea(gapDim));
+		addShowSubModelsButton(buttonBar, noMargin);
+
 		// Snap-to-grid button and field
 		buttonBar.addSeparator(separatorDim);
 		addSnapToGridButton(buttonBar, noMargin);
@@ -1150,6 +1155,24 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			}
 		} );
 		buttonBar.add( showLabels );
+	}
+
+	private void addShowSubModelsButton(JToolBar buttonBar, Insets margin) {
+		showSubModels = new JToggleButton( new ImageIcon(
+				GUIFrame.class.getResource("/resources/images/ShowSubModels-16.png")) );
+		showSubModels.setMargin(margin);
+		showSubModels.setFocusPainted(false);
+		showSubModels.setRequestFocusEnabled(false);
+		showSubModels.setToolTipText(formatToolTip("Show SubModels",
+				"Displays the components of each sub-model."));
+		showSubModels.addActionListener( new ActionListener() {
+
+			@Override
+			public void actionPerformed( ActionEvent event ) {
+				fileSave.requestFocusInWindow();
+			}
+		} );
+		buttonBar.add( showSubModels );
 	}
 
 	private void addSnapToGridButton(JToolBar buttonBar, Insets margin) {
