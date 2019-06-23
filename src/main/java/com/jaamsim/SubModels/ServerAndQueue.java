@@ -61,14 +61,14 @@ public class ServerAndQueue extends CompoundEntity {
 		InputAgent.applyArgs(server, "NextComponent", end.getName());
 
 		// Set the component positions within the sub-model region
-		InputAgent.applyVec3d(start, "Position", new Vec3d(-1.5d, 0.0d, 0.0d), DistanceUnit.class);
-		InputAgent.applyVec3d(queue, "Position", new Vec3d(-0.5d, 0.0d, 0.0d), DistanceUnit.class);
-		InputAgent.applyVec3d(server, "Position", new Vec3d(0.5d, 0.0d, 0.0d), DistanceUnit.class);
-		InputAgent.applyVec3d(end, "Position", new Vec3d(1.5d, 0.0d, 0.0d), DistanceUnit.class);
+		InputAgent.applyVec3d(start,  "Position", new Vec3d(-1.0d, -0.4d, 0.0d), DistanceUnit.class);
+		InputAgent.applyVec3d(queue,  "Position", new Vec3d(-0.5d,  0.4d, 0.0d), DistanceUnit.class);
+		InputAgent.applyVec3d(server, "Position", new Vec3d( 0.0d, -0.4d, 0.0d), DistanceUnit.class);
+		InputAgent.applyVec3d(end,    "Position", new Vec3d( 1.0d, -0.4d, 0.0d), DistanceUnit.class);
 
 		// Set the scale, size, and position of the sub-model region
-		setDefaultRegionScale(1.0d);
-		setDefaultRegionSize(new Vec3d(4.5d, 1.5d, 0.0d));
+		setDefaultRegionScale(0.5d);
+		setDefaultRegionSize(new Vec3d(3.0d, 2.0d, 0.0d));
 		setDefaultRegionPosition(new Vec3d(0.0d, -1.5d, 0.0d));
 
 		// Set the component list
