@@ -32,7 +32,7 @@ public class Region extends DisplayEntity {
 
 	@Keyword(description = "If TRUE, the object is displayed in the View windows.",
 	         exampleList = {"FALSE"})
-	private final ValueInput scaleInput;
+	protected final ValueInput scaleInput;
 
 	private double scale = 1.0d;
 

@@ -87,7 +87,8 @@ public class DisplayEntity extends Entity {
 
 	@Keyword(description = "Euler angles defining the rotation of the object.",
 	         exampleList = {"0 0 90 deg"})
-	private final Vec3dInput orientationInput;
+
+	protected final Vec3dInput orientationInput;
 
 	@Keyword(description = "A list of points in {x, y, z} coordinates that defines a polyline.",
 	         exampleList = {"{ 1.0 1.0 0.0 m } { 2.0 2.0 0.0 m } { 3.0 3.0 0.0 m }",
