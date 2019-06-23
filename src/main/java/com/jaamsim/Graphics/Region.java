@@ -18,6 +18,7 @@
 package com.jaamsim.Graphics;
 
 import com.jaamsim.Commands.CoordinateCommand;
+import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.KeywordIndex;
@@ -30,16 +31,18 @@ public class Region extends DisplayEntity {
 
 	@Keyword(description = "If TRUE, the object is displayed in the View windows.",
 	         exampleList = {"FALSE"})
-	private final ValueInput scale;
+	private final ValueInput scaleInput;
+
+	private double scale = 1.0d;
 
 	{
 		this.addSynonym(positionInput, "Origin");
 
 		desc.setHidden(true);
 
-		scale = new ValueInput("Scale", KEY_INPUTS, 1.0d);
-		scale.setUnitType(DimensionlessUnit.class);
-		this.addInput(scale);
+		scaleInput = new ValueInput("Scale", KEY_INPUTS, 1.0d);
+		scaleInput.setUnitType(DimensionlessUnit.class);
+		this.addInput(scaleInput);
 	}
 
 	public Region() {}
@@ -47,8 +50,32 @@ public class Region extends DisplayEntity {
 	@Override
 	public void setInputsForDragAndDrop() {}
 
+	@Override
+	public void updateForInput( Input<?> in ) {
+		super.updateForInput( in );
+
+		if (in == scaleInput) {
+			this.setScale(scaleInput.getValue());
+			return;
+		}
+	}
+
+	@Override
+	public void resetGraphics() {
+		super.resetGraphics();
+		setScale(scaleInput.getValue());
+	}
+
+	public void setScale(double val) {
+		synchronized (scaleInput) {
+			scale = val;
+		}
+	}
+
 	public double getScale() {
-		return scale.getValue();
+		synchronized (scaleInput) {
+			return scale;
+		}
 	}
 
 	@Override
