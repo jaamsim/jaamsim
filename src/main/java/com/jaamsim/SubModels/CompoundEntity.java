@@ -33,6 +33,8 @@ import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
+import com.jaamsim.input.ValueInput;
+import com.jaamsim.input.Vec3dInput;
 import com.jaamsim.input.ExpParser.Expression;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.units.DimensionlessUnit;
@@ -44,6 +46,20 @@ public abstract class CompoundEntity extends LinkedComponent {
 	         exampleList = {"FALSE"})
 	protected final BooleanInput showComponents;
 
+	@Keyword(description = "A factor applied to sub-model's internal coordinates when "
+	                     + "calculating the external coordinates.",
+	         exampleList = {"0.5"})
+	protected final ValueInput regionScale;
+
+	@Keyword(description = "The dimensions of the sub-model region in the scaled internal "
+	                     + "coordinates.",
+	         exampleList = {"4.0 -2.0  0.0 m"})
+	protected final Vec3dInput regionSize;
+
+	@Keyword(description = "The position of the sub-model region relative to the sub-model.",
+	         exampleList = {"0.0 -2.0  0.0 m"})
+	protected final Vec3dInput regionPosition;
+
 	protected ArrayList<DisplayEntity> componentList;
 	private SubModelStart smStart;
 	private Region smRegion;
@@ -54,6 +70,18 @@ public abstract class CompoundEntity extends LinkedComponent {
 
 		showComponents = new BooleanInput("ShowComponents", FORMAT, true);
 		this.addInput(showComponents);
+
+		regionScale = new ValueInput("RegionScale", FORMAT, 1.0d);
+		regionScale.setUnitType(DimensionlessUnit.class);
+		this.addInput(regionScale);
+
+		regionSize = new Vec3dInput("RegionSize", FORMAT, new Vec3d(1.0d, 1.0d, 0.0d));
+		regionSize.setUnitType(DistanceUnit.class);
+		this.addInput(regionSize);
+
+		regionPosition = new Vec3dInput("RegionPosition", FORMAT, new Vec3d());
+		regionPosition.setUnitType(DistanceUnit.class);
+		this.addInput(regionPosition);
 	}
 
 	public CompoundEntity() {
@@ -72,6 +100,21 @@ public abstract class CompoundEntity extends LinkedComponent {
 
 		if (in == showComponents) {
 			showComponents(showComponents.getValue());
+			return;
+		}
+
+		if (in == regionScale) {
+			smRegion.setScaleAndSize(regionScale.getValue(), smRegion.getInternalSize());
+			return;
+		}
+
+		if (in == regionSize) {
+			smRegion.setScaleAndSize(smRegion.getScale(), regionSize.getValue());
+			return;
+		}
+
+		if (in == regionPosition) {
+			smRegion.setPosition(regionPosition.getValue());
 			return;
 		}
 	}
@@ -114,6 +157,21 @@ public abstract class CompoundEntity extends LinkedComponent {
 		postDefine();
 	}
 
+	public void setDefaultRegionScale(double scale) {
+		regionScale.setDefaultValue(scale);
+		smRegion.setScaleAndSize(scale, smRegion.getInternalSize());
+	}
+
+	public void setDefaultRegionSize(Vec3d size) {
+		regionSize.setDefaultValue(size);
+		smRegion.setScaleAndSize(smRegion.getScale(), size);
+	}
+
+	public void setDefaultRegionPosition(Vec3d pos) {
+		regionPosition.setDefaultValue(pos);
+		smRegion.setPosition(pos);
+	}
+
 	public void updateRegion() {
 		JaamSimModel simModel = getJaamSimModel();
 		if (smRegion == null) {
@@ -122,8 +180,6 @@ public abstract class CompoundEntity extends LinkedComponent {
 		}
 		InputAgent.applyArgs(smRegion, "DisplayModel", "RegionRectangle");
 		InputAgent.applyArgs(smRegion, "RelativeEntity", this.getName());
-		InputAgent.applyVec3d(smRegion, "Size", new Vec3d(2.0d, 1.0d, 0.0d), DistanceUnit.class);
-		InputAgent.applyVec3d(smRegion, "Position", new Vec3d(0.0d, -1.5d, 0.0d), DistanceUnit.class);
 		InputAgent.applyVec3d(smRegion, "Alignment", new Vec3d(0.0d, 0.0d, 0.0d), DimensionlessUnit.class);
 	}
 
