@@ -25,6 +25,7 @@ import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.math.Quaternion;
 import com.jaamsim.math.Transform;
+import com.jaamsim.math.Vec3d;
 import com.jaamsim.units.DimensionlessUnit;
 
 public class Region extends DisplayEntity {
@@ -76,6 +77,24 @@ public class Region extends DisplayEntity {
 		synchronized (scaleInput) {
 			return scale;
 		}
+	}
+
+	public Vec3d getInternalSize() {
+		Vec3d ret = getSize();
+		ret.scale3(1.0d/getScale());
+		return ret;
+	}
+
+	/**
+	 * Sets the scale factor and internal dimensions for the region.
+	 * @param scale - ratio between external and internal coordinates
+	 * @param internalSize - size of the region measured in its internal coordinate system
+	 */
+	public void setScaleAndSize(double scale, Vec3d internalSize) {
+		setScale(scale);
+		Vec3d size = new Vec3d(internalSize);
+		size.scale3(scale);
+		setSize(size);
 	}
 
 	@Override
