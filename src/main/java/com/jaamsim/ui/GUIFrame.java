@@ -294,6 +294,14 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 					return;
 				sim.getSimulation().setControlPanelWidth(getSize().width);
 			}
+
+			@Override
+			public void componentMoved(ComponentEvent e) {
+				Simulation simulation = sim.getSimulation();
+				if (simulation == null)
+					return;
+				updateToolLocations();
+			}
 		});
 	}
 
@@ -3279,6 +3287,24 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		showTool("PropertyViewer", false);
 		showTool("LogViewer", false);
 		showTool("EventViewer", false);
+	}
+
+	public void updateToolLocations() {
+		Simulation simulation = sim.getSimulation();
+		setToolLocation("ModelBuilder", simulation.getModelBuilderPos().get(0),
+				simulation.getModelBuilderPos().get(1));
+		setToolLocation("ObjectSelector", simulation.getObjectSelectorPos().get(0),
+				simulation.getObjectSelectorPos().get(1));
+		setToolLocation("InputEditor", simulation.getInputEditorPos().get(0),
+				simulation.getInputEditorPos().get(1));
+		setToolLocation("OutputViewer", simulation.getOutputViewerPos().get(0),
+				simulation.getOutputViewerPos().get(1));
+		setToolLocation("PropertyViewer", simulation.getPropertyViewerPos().get(0),
+				simulation.getPropertyViewerPos().get(1));
+		setToolLocation("LogViewer", simulation.getLogViewerPos().get(0),
+				simulation.getLogViewerPos().get(1));
+		setToolLocation("EventViewer", simulation.getEventViewerPos().get(0),
+				simulation.getEventViewerPos().get(1));
 	}
 
 	@Override
