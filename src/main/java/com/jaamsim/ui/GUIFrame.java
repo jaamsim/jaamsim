@@ -2848,10 +2848,10 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		updateSaveButton();
 		updateForRealTime(simulation.isRealTime(), simulation.getRealTimeFactor());
 		updateForPauseTime(simulation.getPauseTimeString());
-		updateTextButtons();
-		updateLineButtons();
-		updateFillButtons();
-		updateZButtons();
+		updateTextButtons(selectedEntity);
+		updateLineButtons(selectedEntity);
+		updateFillButtons(selectedEntity);
+		updateZButtons(selectedEntity);
 		updateForSnapToGrid();
 		updateForSnapGridSpacing(simulation.getSnapGridSpacingString());
 	}
@@ -3003,17 +3003,17 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 	public void setSelectedEnt(Entity ent) {
 		selectedEntity = ent;
-		updateTextButtons();
-		updateZButtons();
-		updateLineButtons();
-		updateFillButtons();
+		updateTextButtons(ent);
+		updateZButtons(ent);
+		updateLineButtons(ent);
+		updateFillButtons(ent);
 	}
 
-	private void updateTextButtons() {
-		boolean bool = selectedEntity instanceof TextEntity;
+	private void updateTextButtons(Entity ent) {
+		boolean bool = ent instanceof TextEntity;
 
-		boolean isAlignable = bool && !(selectedEntity instanceof OverlayText)
-				&& !(selectedEntity instanceof BillboardText);
+		boolean isAlignable = bool && !(ent instanceof OverlayText)
+				&& !(ent instanceof BillboardText);
 		alignLeft.setEnabled(isAlignable);
 		alignCentre.setEnabled(isAlignable);
 		alignRight.setEnabled(isAlignable);
@@ -3033,7 +3033,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			return;
 		}
 
-		TextEntity textEnt = (TextEntity) selectedEntity;
+		TextEntity textEnt = (TextEntity) ent;
 		int val = (int) Math.signum(((DisplayEntity) textEnt).getAlignment().x);
 		alignLeft.setSelected(val == -1);
 		alignCentre.setSelected(val == 0);
@@ -3050,17 +3050,17 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		fontColour.repaint();
 	}
 
-	private void updateZButtons() {
-		boolean bool = selectedEntity instanceof DisplayEntity;
-		bool = bool && !(selectedEntity instanceof OverlayEntity);
-		bool = bool && !(selectedEntity instanceof BillboardText);
+	private void updateZButtons(Entity ent) {
+		boolean bool = ent instanceof DisplayEntity;
+		bool = bool && !(ent instanceof OverlayEntity);
+		bool = bool && !(ent instanceof BillboardText);
 		increaseZ.setEnabled(bool);
 		decreaseZ.setEnabled(bool);
 	}
 
-	private void updateLineButtons() {
-		boolean bool = selectedEntity instanceof LineEntity;
-		outline.setEnabled(bool && selectedEntity instanceof FillEntity);
+	private void updateLineButtons(Entity ent) {
+		boolean bool = ent instanceof LineEntity;
+		outline.setEnabled(bool && ent instanceof FillEntity);
 		lineWidth.setEnabled(bool);
 		lineColour.setEnabled(bool);
 		if (!bool) {
@@ -3070,7 +3070,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			return;
 		}
 
-		LineEntity lineEnt = (LineEntity) selectedEntity;
+		LineEntity lineEnt = (LineEntity) ent;
 		outline.setSelected(lineEnt.isOutlined());
 		lineWidth.setEnabled(lineEnt.isOutlined());
 		lineColour.setEnabled(lineEnt.isOutlined());
@@ -3083,8 +3083,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		lineColour.repaint();
 	}
 
-	private void updateFillButtons() {
-		boolean bool = selectedEntity instanceof FillEntity;
+	private void updateFillButtons(Entity ent) {
+		boolean bool = ent instanceof FillEntity;
 		fill.setEnabled(bool);
 		fillColour.setEnabled(bool);
 		if (!bool) {
@@ -3093,7 +3093,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			return;
 		}
 
-		FillEntity fillEnt = (FillEntity) selectedEntity;
+		FillEntity fillEnt = (FillEntity) ent;
 		fill.setSelected(fillEnt.isFilled());
 		fillColour.setEnabled(fillEnt.isFilled());
 
