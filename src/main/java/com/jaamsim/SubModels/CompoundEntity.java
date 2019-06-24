@@ -62,7 +62,7 @@ public abstract class CompoundEntity extends LinkedComponent {
 
 	protected ArrayList<DisplayEntity> componentList;
 	private SubModelStart smStart;
-	private Region smRegion;
+	private SubModelRegion smRegion;
 
 	{
 		namedExpressionInput.setHidden(true); // FIXME CustomOutputList conflicts with the component outputs
@@ -176,11 +176,9 @@ public abstract class CompoundEntity extends LinkedComponent {
 		JaamSimModel simModel = getJaamSimModel();
 		if (smRegion == null) {
 			String name = getComponentName("Region");
-			smRegion = InputAgent.generateEntityWithName(simModel, Region.class, name, true, true);
+			smRegion = InputAgent.generateEntityWithName(simModel, SubModelRegion.class, name, true, true);
+			smRegion.setSubModel(this);
 		}
-		InputAgent.applyArgs(smRegion, "DisplayModel", "RegionRectangle");
-		InputAgent.applyArgs(smRegion, "RelativeEntity", this.getName());
-		InputAgent.applyVec3d(smRegion, "Alignment", new Vec3d(0.0d, 0.0d, 0.0d), DimensionlessUnit.class);
 	}
 
 	public void setComponentList(ArrayList<DisplayEntity> list) {
