@@ -3297,7 +3297,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 	@Override
 	public void setControlPanelWidth(int width) {
-		setSize(width, getHeight());
+		int height = getSize().height;
+		setSize(width, height);
 	}
 
 	public void setWindowDefaults() {
