@@ -24,6 +24,7 @@ import com.jaamsim.math.AABB;
 import com.jaamsim.math.Mat4d;
 import com.jaamsim.math.Ray;
 import com.jaamsim.math.Transform;
+import com.jaamsim.math.Vec2d;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.math.Vec4d;
 import com.jogamp.opengl.GL2GL3;
@@ -40,6 +41,8 @@ public class TextureView implements Renderable {
 	private final Transform _trans;
 	private final Vec3d _scale;
 	private final long _pickingID;
+	private ArrayList<Vec2d> _texCoords;
+	private GraphicsMemManager.BufferHandle _texCoordHandle;
 
 	private final AABB _bounds;
 
@@ -84,8 +87,8 @@ public class TextureView implements Renderable {
 		identMat[ 3] = 0.0f; identMat[ 7] = 0.0f; identMat[11] = 0.0f; identMat[15] = 1.0f;
 	}
 
-	public TextureView(TexLoader loader, Transform trans, Vec3d scale,
-	                   VisibilityInfo visInfo, long pickingID) {
+	public TextureView(TexLoader loader, ArrayList<Vec2d> texCoords, Transform trans, Vec3d scale,
+            VisibilityInfo visInfo, long pickingID) {
 		_texLoader = loader;
 		_trans = trans;
 		_scale = scale;
@@ -93,6 +96,7 @@ public class TextureView implements Renderable {
 		_pickingID = pickingID;
 		_visInfo = visInfo;
 
+		_texCoords = texCoords;
 
 		Mat4d modelMat = RenderUtils.mergeTransAndScale(_trans, _scale);
 
@@ -205,18 +209,42 @@ public class TextureView implements Renderable {
 		gl.glVertexAttribPointer(normalVar, 3, GL2GL3.GL_FLOAT, false, 0, 0);
 
 		// TexCoords
-		int texCoordVar = gl.glGetAttribLocation(progHandle, "texCoord");
-		gl.glEnableVertexAttribArray(texCoordVar);
+		if (_texCoords == null) {
+			// Use default buffer if custom coords have not been included
+			int texCoordVar = gl.glGetAttribLocation(progHandle, "texCoord");
+			gl.glEnableVertexAttribArray(texCoordVar);
 
-		gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, texCoordBuff);
-		gl.glVertexAttribPointer(texCoordVar, 2, GL2GL3.GL_FLOAT, false, 0, 0);
+			gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, texCoordBuff);
+			gl.glVertexAttribPointer(texCoordVar, 2, GL2GL3.GL_FLOAT, false, 0, 0);
 
-		gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, 0);
-
+			gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, 0);
+		}
 		gl.glBindVertexArray(0);
 
 	}
 
+	private void updateTexCoordBuffer(Renderer renderer) {
+		GL2GL3 gl = renderer.getGL();
+		int texCoordBuffSize = _texCoords.size()*2*4;
+		_texCoordHandle = renderer.getTexMemManager().allocateBuffer(texCoordBuffSize, gl);
+		int buffID = _texCoordHandle.bind();
+
+		FloatBuffer texData = FloatBuffer.allocate(_texCoords.size()*2);
+
+		for (Vec2d v : _texCoords) {
+			texData.put((float)v.x); texData.put((float)v.y);
+		}
+		texData.flip();
+		gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, buffID);
+		gl.glBufferData(GL2GL3.GL_ARRAY_BUFFER, texCoordBuffSize, texData, GL2GL3.GL_STATIC_DRAW);
+
+		int texCoordVar = gl.glGetAttribLocation(progHandle, "texCoord");
+		gl.glEnableVertexAttribArray(texCoordVar);
+
+		gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, buffID);
+		gl.glVertexAttribPointer(texCoordVar, 2, GL2GL3.GL_FLOAT, false, 0, 0);
+
+	}
 
 	@Override
 	public void render(int contextID, Renderer renderer, Camera cam, Ray pickRay) {
@@ -249,6 +277,10 @@ public class TextureView implements Renderable {
 		int vao = VAOMap.get(contextID);
 		gl.glBindVertexArray(vao);
 
+		if (	_texCoords != null &&
+				(_texCoordHandle == null || !_texCoordHandle.isValid()) ) {
+			updateTexCoordBuffer(renderer);
+		}
 
 		Mat4d modelViewMat = new Mat4d();
 

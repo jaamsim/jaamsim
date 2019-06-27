@@ -19,6 +19,7 @@ package com.jaamsim.render;
 import java.util.ArrayList;
 
 import com.jaamsim.math.Transform;
+import com.jaamsim.math.Vec2d;
 import com.jaamsim.math.Vec3d;
 
 public class ImageProxy implements RenderProxy {
@@ -28,23 +29,29 @@ public class ImageProxy implements RenderProxy {
 	private final Vec3d _scale;
 	private final long _pickingID;
 	private final VisibilityInfo _visInfo;
+	private final ArrayList<Vec2d> _texCoords;
 
 	private TextureView cached;
 
-	public ImageProxy(TexLoader loader, Transform trans, Vec3d scale,
+	public ImageProxy(TexLoader loader, ArrayList<Vec2d> texCoords, Transform trans, Vec3d scale,
 	                  VisibilityInfo visInfo, long pickingID) {
 		_texLoader = loader;
 		_trans = trans;
 		_scale = RenderUtils.fixupScale(scale);
 		_pickingID = pickingID;
 		_visInfo = visInfo;
+		_texCoords = texCoords;
 	}
 
+	public ImageProxy(TexLoader loader, Transform trans, Vec3d scale,
+            VisibilityInfo visInfo, long pickingID){
+		this(loader, null, trans, scale, visInfo, pickingID);
+	}
 
 	@Override
 	public void collectRenderables(Renderer r, ArrayList<Renderable> outList) {
 		if (cached == null) {
-			cached = new TextureView(_texLoader, _trans, _scale, _visInfo, _pickingID);
+			cached = new TextureView(_texLoader, _texCoords, _trans, _scale, _visInfo, _pickingID);
 		}
 		outList.add(cached);
 
