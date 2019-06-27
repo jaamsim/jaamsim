@@ -2848,10 +2848,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		updateSaveButton();
 		updateForRealTime(simulation.isRealTime(), simulation.getRealTimeFactor());
 		updateForPauseTime(simulation.getPauseTimeString());
-		updateTextButtons(selectedEntity);
-		updateLineButtons(selectedEntity);
-		updateFillButtons(selectedEntity);
-		updateZButtons(selectedEntity);
+		updateFormatButtons(selectedEntity);
 		updateForSnapToGrid();
 		updateForSnapGridSpacing(simulation.getSnapGridSpacingString());
 	}
@@ -3003,6 +3000,10 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 	public void setSelectedEnt(Entity ent) {
 		selectedEntity = ent;
+		updateFormatButtons(ent);
+	}
+
+	private void updateFormatButtons(Entity ent) {
 		updateTextButtons(ent);
 		updateZButtons(ent);
 		updateLineButtons(ent);
