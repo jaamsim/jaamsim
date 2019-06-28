@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018 JaamSim Software Inc.
+ * Copyright (C) 2018-2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -221,7 +221,8 @@ public class View extends Entity {
 		public void run() {
 			if (pos != null) {
 				Point fix = OSFix.getLocationAdustment();
-				window.setLocation(pos.get(0)+fix.x, pos.get(1)+fix.y);
+				Point pt = GUIFrame.getInstance().getGlobalLocation(pos.get(0), pos.get(1));
+				window.setLocation(pt.x + fix.x, pt.y + fix.y);
 			}
 
 			if (size != null) {
@@ -385,10 +386,11 @@ public class View extends Entity {
 
 		IntegerVector pos = windowPos.getValue();
 		Point posFix = OSFix.getLocationAdustment();
-		if (pos.get(0) != x - posFix.x || pos.get(1) != y - posFix.y) {
+		Point pt = GUIFrame.getInstance().getRelativeLocation(x - posFix.x, y - posFix.y);
+		if (pos.get(0) != pt.x || pos.get(1) != pt.y) {
 			ArrayList<String> tokens = new ArrayList<>(2);
-			tokens.add(String.format((Locale)null, "%d", x - posFix.x));
-			tokens.add(String.format((Locale)null, "%d", y - posFix.y));
+			tokens.add(String.format((Locale)null, "%d", pt.x));
+			tokens.add(String.format((Locale)null, "%d", pt.y));
 			KeywordIndex posKw = new KeywordIndex(this.windowPos.getKeyword(), tokens, null);
 			kwList.add(posKw);
 		}
@@ -414,8 +416,9 @@ public class View extends Entity {
 	public IntegerVector getWindowPos() {
 		Point fix = OSFix.getLocationAdustment();  //FIXME
 		IntegerVector ret = new IntegerVector(windowPos.getValue());
-		ret.addAt(fix.x, 0);
-		ret.addAt(fix.y, 1);
+		Point pt = GUIFrame.getInstance().getGlobalLocation(ret.get(0), ret.get(1));
+		ret.set(0, pt.x + fix.x);
+		ret.set(1, pt.y + fix.y);
 		return ret;
 	}
 
