@@ -2519,7 +2519,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			ArrayList<View> viewList = sim.getViews();
 			if (!viewList.isEmpty()) {
 				View lastView = viewList.get(viewList.size()-1);
-				winPos = lastView.getWindowPos();
+				winPos = (IntegerVector) lastView.getInput("WindowPosition").getValue();
+				winPos = new IntegerVector(winPos);
 				winPos.set(0, winPos.get(0) + VIEW_OFFSET);
 				pos = lastView.getViewPosition();
 				center = lastView.getViewCenter();
