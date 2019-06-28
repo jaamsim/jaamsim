@@ -2452,8 +2452,9 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				@Override
 				public void actionPerformed( ActionEvent e ) {
 					for (View v : sim.getViews()) {
-						InputAgent.applyArgs(v, "WindowPosition");
-						InputAgent.applyArgs(v, "WindowSize");
+						KeywordIndex posKw = InputAgent.formatArgs("WindowPosition");
+						KeywordIndex sizeKw = InputAgent.formatArgs("WindowSize");
+						InputAgent.storeAndExecute(new KeywordCommand(v, posKw, sizeKw));
 					}
 				}
 			} );
