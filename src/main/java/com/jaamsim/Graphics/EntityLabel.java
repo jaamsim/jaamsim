@@ -170,4 +170,11 @@ public class EntityLabel extends TextBasics {
 				&& !ent.getName().equals("XY-Grid") && !ent.getName().equals("XYZ-Axis");
 	}
 
+	@Override
+	public boolean isDefault() {
+		DisplayEntity ent = getTarget();
+		Vec3d pos = getNominalPosition(ent);
+		return getPosition().equals3(pos) && super.isDefault();
+	}
+
 }

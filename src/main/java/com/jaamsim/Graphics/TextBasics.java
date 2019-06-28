@@ -317,6 +317,12 @@ public abstract class TextBasics extends DisplayEntity implements TextEntity, Ed
 		return (TextModel) getDisplayModel();
 	}
 
+	public boolean isDefault() {
+		return fontName.isDefault() && textHeight.isDefault() && fontStyle.isDefault()
+				&& fontColor.isDefault() && dropShadow.isDefault() && dropShadowColor.isDefault()
+				&& dropShadowOffset.isDefault();
+	}
+
 	@Override
 	public String getFontName() {
 		if (fontName.isDefault()) {
