@@ -237,9 +237,7 @@ public class ContextMenu {
 				EntityLabel.showLabel(ent, showLabelMenuItem.isSelected());
 			}
 		} );
-		if (ent instanceof EntityLabel || ent.testFlag(Entity.FLAG_GENERATED)) {
-			showLabelMenuItem.setEnabled(false);
-		}
+		showLabelMenuItem.setEnabled(EntityLabel.canLabel(ent));
 		menu.add( showLabelMenuItem );
 
 		// 3) Set RelativeEntity

@@ -20,6 +20,7 @@ package com.jaamsim.Graphics;
 import java.util.ArrayList;
 
 import com.jaamsim.Commands.DefineCommand;
+import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.basicsim.GUIListener;
 import com.jaamsim.basicsim.JaamSimModel;
@@ -161,6 +162,12 @@ public class EntityLabel extends TextBasics {
 		if (label.getShow() == bool)
 			return;
 		InputAgent.applyBoolean(label, "Show", bool);
+	}
+
+	public static boolean canLabel(DisplayEntity ent) {
+		return !(ent instanceof TextEntity) && !(ent instanceof OverlayEntity)
+				&& !ent.testFlag(Entity.FLAG_GENERATED)
+				&& !ent.getName().equals("XY-Grid") && !ent.getName().equals("XYZ-Axis");
 	}
 
 }
