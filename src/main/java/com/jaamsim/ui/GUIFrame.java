@@ -23,6 +23,7 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.FontMetrics;
+import java.awt.Frame;
 import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.Insets;
@@ -302,6 +303,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 					return;
 				windowOffset = getLocation();
 				updateToolLocations();
+				updateViewLocations();
 			}
 		});
 	}
@@ -3337,6 +3339,16 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		if (name.equals("EventViewer") && !EventViewer.hasInstance())
 			return;
 		getTool(name).setSize(width, height);
+	}
+
+	public void updateViewLocations() {
+		for (View v : sim.getViews()) {
+			final Frame window = RenderManager.getOpenWindowForView(v);
+			if (window == null)
+				return;
+			IntegerVector pos = v.getWindowPos();
+			window.setLocation(pos.get(0), pos.get(1));
+		}
 	}
 
 	@Override
