@@ -41,6 +41,7 @@ import java.util.Map.Entry;
 
 import com.jaamsim.Commands.Command;
 import com.jaamsim.Commands.RenameCommand;
+import com.jaamsim.Graphics.EntityLabel;
 import com.jaamsim.StringProviders.StringProvider;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ErrorException;
@@ -969,6 +970,9 @@ public class InputAgent {
 		for (Entity ent : simModel.getClonesOfIterator(Entity.class)) {
 			if (!ent.testFlag(Entity.FLAG_ADDED) || ent.testFlag(Entity.FLAG_GENERATED))
 				continue;
+			if (ent instanceof EntityLabel && !((EntityLabel) ent).getShow()
+					&& ((EntityLabel) ent).isDefault())
+				continue;
 			newEntities.add(ent);
 		}
 		Collections.sort(newEntities, uiEntitySortOrder);
@@ -1009,6 +1013,9 @@ public class InputAgent {
 		ArrayList<Entity> entityList = new ArrayList<>();
 		for (Entity ent : simModel.getClonesOfIterator(Entity.class)) {
 			if (!ent.testFlag(Entity.FLAG_EDITED) || ent.testFlag(Entity.FLAG_GENERATED))
+				continue;
+			if (ent instanceof EntityLabel && !((EntityLabel) ent).getShow()
+					&& ((EntityLabel) ent).isDefault())
 				continue;
 			entityList.add(ent);
 		}
