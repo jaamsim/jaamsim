@@ -3322,7 +3322,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	public void setToolLocation(String name, int x, int y) {
 		if (name.equals("EventViewer") && !EventViewer.hasInstance())
 			return;
-		getTool(name).setLocation(x, y);
+		Point pt = getGlobalLocation(x, y);
+		getTool(name).setLocation(pt);
 	}
 
 	@Override

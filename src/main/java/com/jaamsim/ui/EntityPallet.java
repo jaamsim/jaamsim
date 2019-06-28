@@ -19,6 +19,7 @@ package com.jaamsim.ui;
 
 import java.awt.Component;
 import java.awt.Cursor;
+import java.awt.Point;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
@@ -88,14 +89,18 @@ public class EntityPallet extends OSFixJFrame implements DragGestureListener {
 		ToolTipManager.sharedInstance().setDismissDelay(600000);
 
 		Simulation simulation = GUIFrame.getJaamSimModel().getSimulation();
-		setLocation(simulation.getModelBuilderPos().get(0), simulation.getModelBuilderPos().get(1));
+		GUIFrame gui = GUIFrame.getInstance();
+		Point pt = gui.getGlobalLocation(simulation.getModelBuilderPos().get(0),
+				simulation.getModelBuilderPos().get(1));
+		setLocation(pt);
 		setSize(simulation.getModelBuilderSize().get(0), simulation.getModelBuilderSize().get(1));
 
 		addComponentListener(new ComponentAdapter() {
 
 			@Override
 			public void componentMoved(ComponentEvent e) {
-				simulation.setModelBuilderPos(getLocation().x, getLocation().y);
+				Point pt = gui.getRelativeLocation(getLocation().x, getLocation().y);
+				simulation.setModelBuilderPos(pt.x, pt.y);
 			}
 
 			@Override

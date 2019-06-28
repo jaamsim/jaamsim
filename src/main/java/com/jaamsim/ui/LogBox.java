@@ -17,6 +17,7 @@
  */
 package com.jaamsim.ui;
 
+import java.awt.Point;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.io.PrintWriter;
@@ -53,14 +54,18 @@ public class LogBox extends FrameBox {
 		getContentPane().add( scrollPane );
 
 		Simulation simulation = GUIFrame.getJaamSimModel().getSimulation();
-		setLocation(simulation.getLogViewerPos().get(0), simulation.getLogViewerPos().get(1));
+		GUIFrame gui = GUIFrame.getInstance();
+		Point pt = gui.getGlobalLocation(simulation.getLogViewerPos().get(0),
+				simulation.getLogViewerPos().get(1));
+		setLocation(pt);
 		setSize(simulation.getLogViewerSize().get(0), simulation.getLogViewerSize().get(1));
 
 		addComponentListener(new ComponentAdapter() {
 
 			@Override
 			public void componentMoved(ComponentEvent e) {
-				simulation.setLogViewerPos(getLocation().x, getLocation().y);
+				Point pt = gui.getRelativeLocation(getLocation().x, getLocation().y);
+				simulation.setLogViewerPos(pt.x, pt.y);
 			}
 
 			@Override

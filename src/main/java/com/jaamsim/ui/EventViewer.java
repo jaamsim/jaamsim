@@ -21,6 +21,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
@@ -175,14 +176,18 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 		// Size and position of the viewer
 		pack();
 		Simulation simulation = GUIFrame.getJaamSimModel().getSimulation();
-		setLocation(simulation.getEventViewerPos().get(0), simulation.getEventViewerPos().get(1));
+		GUIFrame gui = GUIFrame.getInstance();
+		Point pt = gui.getGlobalLocation(simulation.getEventViewerPos().get(0),
+				simulation.getEventViewerPos().get(1));
+		setLocation(pt);
 		setSize(simulation.getEventViewerSize().get(0), simulation.getEventViewerSize().get(1));
 
 		addComponentListener(new ComponentAdapter() {
 
 			@Override
 			public void componentMoved(ComponentEvent e) {
-				simulation.setEventViewerPos(getLocation().x, getLocation().y);
+				Point pt = gui.getRelativeLocation(getLocation().x, getLocation().y);
+				simulation.setEventViewerPos(pt.x, pt.y);
 			}
 
 			@Override

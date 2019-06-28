@@ -17,6 +17,7 @@
  */
 package com.jaamsim.ui;
 
+import java.awt.Point;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.lang.reflect.Field;
@@ -57,14 +58,18 @@ public class PropertyBox extends FrameBox {
 		getContentPane().add(jTabbedFrame);
 
 		Simulation simulation = GUIFrame.getJaamSimModel().getSimulation();
-		setLocation(simulation.getPropertyViewerPos().get(0), simulation.getPropertyViewerPos().get(1));
+		GUIFrame gui = GUIFrame.getInstance();
+		Point pt = gui.getGlobalLocation(simulation.getPropertyViewerPos().get(0),
+				simulation.getPropertyViewerPos().get(1));
+		setLocation(pt);
 		setSize(simulation.getPropertyViewerSize().get(0), simulation.getPropertyViewerSize().get(1));
 
 		addComponentListener(new ComponentAdapter() {
 
 			@Override
 			public void componentMoved(ComponentEvent e) {
-				simulation.setPropertyViewerPos(getLocation().x, getLocation().y);
+				Point pt = gui.getRelativeLocation(getLocation().x, getLocation().y);
+				simulation.setPropertyViewerPos(pt.x, pt.y);
 			}
 
 			@Override

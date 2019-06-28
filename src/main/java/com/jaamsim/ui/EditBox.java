@@ -17,6 +17,7 @@
  */
 package com.jaamsim.ui;
 
+import java.awt.Point;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseEvent;
@@ -102,7 +103,10 @@ public class EditBox extends FrameBox {
 
 		// Set the size and position of the editor
 		Simulation simulation = GUIFrame.getJaamSimModel().getSimulation();
-		setLocation(simulation.getInputEditorPos().get(0), simulation.getInputEditorPos().get(1));
+		GUIFrame gui = GUIFrame.getInstance();
+		Point pt = gui.getGlobalLocation(simulation.getInputEditorPos().get(0),
+				simulation.getInputEditorPos().get(1));
+		setLocation(pt);
 		setSize(simulation.getInputEditorSize().get(0), simulation.getInputEditorSize().get(1));
 
 		// Save changes to the editor's size and position
@@ -110,7 +114,8 @@ public class EditBox extends FrameBox {
 
 			@Override
 			public void componentMoved(ComponentEvent e) {
-				simulation.setInputEditorPos(getLocation().x, getLocation().y);
+				Point pt = gui.getRelativeLocation(getLocation().x, getLocation().y);
+				simulation.setInputEditorPos(pt.x, pt.y);
 			}
 
 			@Override

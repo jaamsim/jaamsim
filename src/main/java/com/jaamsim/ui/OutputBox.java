@@ -55,14 +55,18 @@ public class OutputBox extends FrameBox {
 		getContentPane().add( scrollPane );
 
 		Simulation simulation = GUIFrame.getJaamSimModel().getSimulation();
-		setLocation(simulation.getOutputViewerPos().get(0), simulation.getOutputViewerPos().get(1));
+		GUIFrame gui = GUIFrame.getInstance();
+		Point pt = gui.getGlobalLocation(simulation.getOutputViewerPos().get(0),
+				simulation.getOutputViewerPos().get(1));
+		setLocation(pt);
 		setSize(simulation.getOutputViewerSize().get(0), simulation.getOutputViewerSize().get(1));
 
 		addComponentListener(new ComponentAdapter() {
 
 			@Override
 			public void componentMoved(ComponentEvent e) {
-				simulation.setOutputViewerPos(getLocation().x, getLocation().y);
+				Point pt = gui.getRelativeLocation(getLocation().x, getLocation().y);
+				simulation.setOutputViewerPos(pt.x, pt.y);
 			}
 
 			@Override
