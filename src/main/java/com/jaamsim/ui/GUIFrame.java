@@ -3302,28 +3302,34 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 	public void updateToolLocations() {
 		Simulation simulation = sim.getSimulation();
-		setToolLocation("ModelBuilder", simulation.getModelBuilderPos().get(0),
+		setToolLocation(EntityPallet.getInstance(), simulation.getModelBuilderPos().get(0),
 				simulation.getModelBuilderPos().get(1));
-		setToolLocation("ObjectSelector", simulation.getObjectSelectorPos().get(0),
+		setToolLocation(ObjectSelector.getInstance(), simulation.getObjectSelectorPos().get(0),
 				simulation.getObjectSelectorPos().get(1));
-		setToolLocation("InputEditor", simulation.getInputEditorPos().get(0),
+		setToolLocation(EditBox.getInstance(), simulation.getInputEditorPos().get(0),
 				simulation.getInputEditorPos().get(1));
-		setToolLocation("OutputViewer", simulation.getOutputViewerPos().get(0),
+		setToolLocation(OutputBox.getInstance(), simulation.getOutputViewerPos().get(0),
 				simulation.getOutputViewerPos().get(1));
-		setToolLocation("PropertyViewer", simulation.getPropertyViewerPos().get(0),
+		setToolLocation(PropertyBox.getInstance(), simulation.getPropertyViewerPos().get(0),
 				simulation.getPropertyViewerPos().get(1));
-		setToolLocation("LogViewer", simulation.getLogViewerPos().get(0),
+		setToolLocation(LogBox.getInstance(), simulation.getLogViewerPos().get(0),
 				simulation.getLogViewerPos().get(1));
-		setToolLocation("EventViewer", simulation.getEventViewerPos().get(0),
-				simulation.getEventViewerPos().get(1));
+		if (EventViewer.hasInstance()) {
+			setToolLocation(EventViewer.getInstance(), simulation.getEventViewerPos().get(0),
+					simulation.getEventViewerPos().get(1));
+		}
 	}
 
 	@Override
 	public void setToolLocation(String name, int x, int y) {
 		if (name.equals("EventViewer") && !EventViewer.hasInstance())
 			return;
+		setToolLocation(getTool(name), x, y);
+	}
+
+	public void setToolLocation(JFrame tool, int x, int y) {
 		Point pt = getGlobalLocation(x, y);
-		getTool(name).setLocation(pt);
+		tool.setLocation(pt);
 	}
 
 	@Override
