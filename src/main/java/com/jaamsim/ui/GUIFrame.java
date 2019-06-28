@@ -300,9 +300,20 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				Simulation simulation = sim.getSimulation();
 				if (simulation == null)
 					return;
+				windowOffset = getLocation();
 				updateToolLocations();
 			}
 		});
+	}
+
+	private Point windowOffset = new Point();
+
+	public Point getRelativeLocation(int x, int y) {
+		return new Point(x - windowOffset.x, y - windowOffset.y);
+	}
+
+	public Point getGlobalLocation(int x, int y) {
+		return new Point(x + windowOffset.x, y + windowOffset.y);
 	}
 
 	public static JaamSimModel getJaamSimModel() {
