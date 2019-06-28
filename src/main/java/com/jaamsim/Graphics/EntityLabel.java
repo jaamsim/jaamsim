@@ -147,4 +147,20 @@ public class EntityLabel extends TextBasics {
 		return new Vec3d(0.0d, ypos, 0.0d);
 	}
 
+	public static void showLabel(DisplayEntity ent, boolean bool) {
+		EntityLabel label = getLabel(ent);
+
+		// Does the label exist yet?
+		if (label == null) {
+			if (!bool)
+				return;
+			label = EntityLabel.createLabel(ent);
+		}
+
+		// Show or hide the label
+		if (label.getShow() == bool)
+			return;
+		InputAgent.applyBoolean(label, "Show", bool);
+	}
+
 }
