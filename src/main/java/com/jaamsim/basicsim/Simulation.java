@@ -995,21 +995,23 @@ public class Simulation extends Entity {
 	}
 
 	public void resetWindowPositionsAndSizes() {
-		InputAgent.applyArgs(this, modelBuilderPos.getKeyword());
-		InputAgent.applyArgs(this, modelBuilderSize.getKeyword());
-		InputAgent.applyArgs(this, objectSelectorPos.getKeyword());
-		InputAgent.applyArgs(this, objectSelectorSize.getKeyword());
-		InputAgent.applyArgs(this, inputEditorPos.getKeyword());
-		InputAgent.applyArgs(this, inputEditorSize.getKeyword());
-		InputAgent.applyArgs(this, outputViewerPos.getKeyword());
-		InputAgent.applyArgs(this, outputViewerSize.getKeyword());
-		InputAgent.applyArgs(this, propertyViewerPos.getKeyword());
-		InputAgent.applyArgs(this, propertyViewerSize.getKeyword());
-		InputAgent.applyArgs(this, logViewerPos.getKeyword());
-		InputAgent.applyArgs(this, logViewerSize.getKeyword());
-		InputAgent.applyArgs(this, eventViewerPos.getKeyword());
-		InputAgent.applyArgs(this, eventViewerSize.getKeyword());
-		InputAgent.applyArgs(this, controlPanelWidth.getKeyword());
+		KeywordIndex[] kws = new KeywordIndex[15];
+		kws[0] = InputAgent.formatArgs(modelBuilderPos.getKeyword());
+		kws[1] = InputAgent.formatArgs(modelBuilderSize.getKeyword());
+		kws[2] = InputAgent.formatArgs(objectSelectorPos.getKeyword());
+		kws[3] = InputAgent.formatArgs(objectSelectorSize.getKeyword());
+		kws[4] = InputAgent.formatArgs(inputEditorPos.getKeyword());
+		kws[5] = InputAgent.formatArgs(inputEditorSize.getKeyword());
+		kws[6] = InputAgent.formatArgs(outputViewerPos.getKeyword());
+		kws[7] = InputAgent.formatArgs(outputViewerSize.getKeyword());
+		kws[8] = InputAgent.formatArgs(propertyViewerPos.getKeyword());
+		kws[9] = InputAgent.formatArgs(propertyViewerSize.getKeyword());
+		kws[10] = InputAgent.formatArgs(logViewerPos.getKeyword());
+		kws[11] = InputAgent.formatArgs(logViewerSize.getKeyword());
+		kws[12] = InputAgent.formatArgs(eventViewerPos.getKeyword());
+		kws[13] = InputAgent.formatArgs(eventViewerSize.getKeyword());
+		kws[14] = InputAgent.formatArgs(controlPanelWidth.getKeyword());
+		InputAgent.storeAndExecute(new KeywordCommand(this, kws));
 	}
 
 	public IntegerVector getModelBuilderPos() {
