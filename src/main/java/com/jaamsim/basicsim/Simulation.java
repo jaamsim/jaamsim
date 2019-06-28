@@ -21,6 +21,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.ProbabilityDistributions.RandomStreamUser;
 import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
@@ -35,6 +36,7 @@ import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.IntegerListInput;
 import com.jaamsim.input.Keyword;
+import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.RunNumberInput;
 import com.jaamsim.input.UnitTypeListInput;
@@ -1069,91 +1071,106 @@ public class Simulation extends Entity {
 	public void setModelBuilderPos(int x, int y) {
 		if (modelBuilderPos.getValue().get(0) == x && modelBuilderPos.getValue().get(1) == y)
 			return;
-		InputAgent.applyIntegers(this, modelBuilderPos.getKeyword(), x, y);
+		KeywordIndex kw = InputAgent.formatIntegers(modelBuilderPos.getKeyword(), x, y);
+		InputAgent.storeAndExecute(new KeywordCommand(this, kw));
 	}
 
 	public void setModelBuilderSize(int x, int y) {
 		if (modelBuilderSize.getValue().get(0) == x && modelBuilderSize.getValue().get(1) == y)
 			return;
-		InputAgent.applyIntegers(this, modelBuilderSize.getKeyword(), x, y);
+		KeywordIndex kw = InputAgent.formatIntegers(modelBuilderSize.getKeyword(), x, y);
+		InputAgent.storeAndExecute(new KeywordCommand(this, kw));
 	}
 
 	public void setObjectSelectorPos(int x, int y) {
 		if (objectSelectorPos.getValue().get(0) == x && objectSelectorPos.getValue().get(1) == y)
 			return;
-		InputAgent.applyIntegers(this, objectSelectorPos.getKeyword(), x, y);
+		KeywordIndex kw = InputAgent.formatIntegers(objectSelectorPos.getKeyword(), x, y);
+		InputAgent.storeAndExecute(new KeywordCommand(this, kw));
 	}
 
 	public void setObjectSelectorSize(int x, int y) {
 		if (objectSelectorSize.getValue().get(0) == x && objectSelectorSize.getValue().get(1) == y)
 			return;
-		InputAgent.applyIntegers(this, objectSelectorSize.getKeyword(), x, y);
+		KeywordIndex kw = InputAgent.formatIntegers(objectSelectorSize.getKeyword(), x, y);
+		InputAgent.storeAndExecute(new KeywordCommand(this, kw));
 	}
 
 	public void setInputEditorPos(int x, int y) {
 		if (inputEditorPos.getValue().get(0) == x && inputEditorPos.getValue().get(1) == y)
 			return;
-		InputAgent.applyIntegers(this, inputEditorPos.getKeyword(), x, y);
+		KeywordIndex kw = InputAgent.formatIntegers(inputEditorPos.getKeyword(), x, y);
+		InputAgent.storeAndExecute(new KeywordCommand(this, kw));
 	}
 
 	public void setInputEditorSize(int x, int y) {
 		if (inputEditorSize.getValue().get(0) == x && inputEditorSize.getValue().get(1) == y)
 			return;
-		InputAgent.applyIntegers(this, inputEditorSize.getKeyword(), x, y);
+		KeywordIndex kw = InputAgent.formatIntegers(inputEditorSize.getKeyword(), x, y);
+		InputAgent.storeAndExecute(new KeywordCommand(this, kw));
 	}
 
 	public void setOutputViewerPos(int x, int y) {
 		if (outputViewerPos.getValue().get(0) == x && outputViewerPos.getValue().get(1) == y)
 			return;
-		InputAgent.applyIntegers(this, outputViewerPos.getKeyword(), x, y);
+		KeywordIndex kw = InputAgent.formatIntegers(outputViewerPos.getKeyword(), x, y);
+		InputAgent.storeAndExecute(new KeywordCommand(this, kw));
 	}
 
 	public void setOutputViewerSize(int x, int y) {
 		if (outputViewerSize.getValue().get(0) == x && outputViewerSize.getValue().get(1) == y)
 			return;
-		InputAgent.applyIntegers(this, outputViewerSize.getKeyword(), x, y);
+		KeywordIndex kw = InputAgent.formatIntegers(outputViewerSize.getKeyword(), x, y);
+		InputAgent.storeAndExecute(new KeywordCommand(this, kw));
 	}
 
 	public void setPropertyViewerPos(int x, int y) {
 		if (propertyViewerPos.getValue().get(0) == x && propertyViewerPos.getValue().get(1) == y)
 			return;
-		InputAgent.applyIntegers(this, propertyViewerPos.getKeyword(), x, y);
+		KeywordIndex kw = InputAgent.formatIntegers(propertyViewerPos.getKeyword(), x, y);
+		InputAgent.storeAndExecute(new KeywordCommand(this, kw));
 	}
 
 	public void setPropertyViewerSize(int x, int y) {
 		if (propertyViewerSize.getValue().get(0) == x && propertyViewerSize.getValue().get(1) == y)
 			return;
-		InputAgent.applyIntegers(this, propertyViewerSize.getKeyword(), x, y);
+		KeywordIndex kw = InputAgent.formatIntegers(propertyViewerSize.getKeyword(), x, y);
+		InputAgent.storeAndExecute(new KeywordCommand(this, kw));
 	}
 
 	public void setLogViewerPos(int x, int y) {
 		if (logViewerPos.getValue().get(0) == x && logViewerPos.getValue().get(1) == y)
 			return;
-		InputAgent.applyIntegers(this, logViewerPos.getKeyword(), x, y);
+		KeywordIndex kw = InputAgent.formatIntegers(logViewerPos.getKeyword(), x, y);
+		InputAgent.storeAndExecute(new KeywordCommand(this, kw));
 	}
 
 	public void setLogViewerSize(int x, int y) {
 		if (logViewerSize.getValue().get(0) == x && logViewerSize.getValue().get(1) == y)
 			return;
-		InputAgent.applyIntegers(this, logViewerSize.getKeyword(), x, y);
+		KeywordIndex kw = InputAgent.formatIntegers(logViewerSize.getKeyword(), x, y);
+		InputAgent.storeAndExecute(new KeywordCommand(this, kw));
 	}
 
 	public void setEventViewerPos(int x, int y) {
 		if (eventViewerPos.getValue().get(0) == x && eventViewerPos.getValue().get(1) == y)
 			return;
-		InputAgent.applyIntegers(this, eventViewerPos.getKeyword(), x, y);
+		KeywordIndex kw = InputAgent.formatIntegers(eventViewerPos.getKeyword(), x, y);
+		InputAgent.storeAndExecute(new KeywordCommand(this, kw));
 	}
 
 	public void setEventViewerSize(int x, int y) {
 		if (eventViewerSize.getValue().get(0) == x && eventViewerSize.getValue().get(1) == y)
 			return;
-		InputAgent.applyIntegers(this, eventViewerSize.getKeyword(), x, y);
+		KeywordIndex kw = InputAgent.formatIntegers(eventViewerSize.getKeyword(), x, y);
+		InputAgent.storeAndExecute(new KeywordCommand(this, kw));
 	}
 
 	public void setControlPanelWidth(int width) {
 		if (controlPanelWidth.getValue() == width)
 			return;
-		InputAgent.applyIntegers(this, controlPanelWidth.getKeyword(), width);
+		KeywordIndex kw = InputAgent.formatIntegers(controlPanelWidth.getKeyword(), width);
+		InputAgent.storeAndExecute(new KeywordCommand(this, kw));
 	}
 
 	public boolean isModelBuilderVisible() {
