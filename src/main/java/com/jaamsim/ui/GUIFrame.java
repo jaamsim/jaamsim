@@ -3241,9 +3241,10 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 		DEFAULT_GUI_WIDTH = winSize.width;
 		COL1_WIDTH = 220;
-		COL2_WIDTH = Math.min(520, (winSize.width - COL1_WIDTH) / 2);
-		COL3_WIDTH = Math.min(420, winSize.width - COL1_WIDTH - COL2_WIDTH);
 		COL4_WIDTH = 520;
+		int middleWidth = DEFAULT_GUI_WIDTH - COL1_WIDTH - COL4_WIDTH;
+		COL2_WIDTH = Math.max(520, middleWidth / 2);
+		COL3_WIDTH = Math.max(420, middleWidth - COL2_WIDTH);
 		VIEW_WIDTH = DEFAULT_GUI_WIDTH - COL1_WIDTH;
 
 		COL1_START = this.getX();
