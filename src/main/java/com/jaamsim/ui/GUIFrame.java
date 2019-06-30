@@ -3254,7 +3254,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 		HALF_TOP = (winSize.height - guiSize.height) / 2;
 		HALF_BOTTOM = (winSize.height - guiSize.height - HALF_TOP);
-		LOWER_HEIGHT = (winSize.height - guiSize.height) / 3;
+		LOWER_HEIGHT = Math.min(250, (winSize.height - guiSize.height) / 3);
 		VIEW_HEIGHT = winSize.height - guiSize.height - LOWER_HEIGHT;
 
 		TOP_START = this.getY() + guiSize.height;
