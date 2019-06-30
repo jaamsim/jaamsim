@@ -130,7 +130,7 @@ public class View extends Entity {
 		center.setPromptReqd(false);
 		this.addInput(center);
 
-		position = new Vec3dInput("ViewPosition", GRAPHICS, new Vec3d(5.0d, -5.0d, 5.0d));
+		position = new Vec3dInput("ViewPosition", GRAPHICS, new Vec3d(10.0d, -10.0d, 10.0d));
 		position.setUnitType(DistanceUnit.class);
 		position.setPromptReqd(false);
 		this.addInput(position);
