@@ -498,6 +498,10 @@ public class DisplayEntity extends Entity {
 		}
 	}
 
+	public boolean getShowInput() {
+		return showInput.getValue();
+	}
+
 	public boolean getShow() {
 		synchronized (position) {
 			return show;
