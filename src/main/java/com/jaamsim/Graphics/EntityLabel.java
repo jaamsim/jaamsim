@@ -54,11 +54,12 @@ public class EntityLabel extends TextBasics {
 	public EntityLabel() {}
 
 	public static EntityLabel getLabel(DisplayEntity ent) {
-		for (EntityLabel label : ent.getJaamSimModel().getClonesOfIterator(EntityLabel.class)) {
-			if (label.getTarget() == ent)
-				return label;
-		}
-		return null;
+		Entity label = ent.getJaamSimModel().getNamedEntity(ent.getName() + "_Label");
+		if (label == null) // FIXME - remove when all labels have the correct name
+			label = ent.getJaamSimModel().getNamedEntity(ent.getName() + "_Label1");
+		if (label != null && !(label instanceof EntityLabel))
+			throw new ErrorException("Entity %s is not an EntityLabel", label);
+		return (EntityLabel) label;
 	}
 
 	@Override
