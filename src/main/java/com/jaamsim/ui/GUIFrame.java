@@ -93,12 +93,14 @@ import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.DisplayModels.TextModel;
 import com.jaamsim.Graphics.BillboardText;
 import com.jaamsim.Graphics.DisplayEntity;
+import com.jaamsim.Graphics.EntityLabel;
 import com.jaamsim.Graphics.FillEntity;
 import com.jaamsim.Graphics.LineEntity;
 import com.jaamsim.Graphics.OverlayEntity;
 import com.jaamsim.Graphics.OverlayText;
 import com.jaamsim.Graphics.TextBasics;
 import com.jaamsim.Graphics.TextEntity;
+import com.jaamsim.SubModels.CompoundEntity;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.basicsim.GUIListener;
@@ -3284,6 +3286,39 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		// Set the initial state for the "Show Grid" check box
 		ent = (DisplayEntity) sim.getNamedEntity("XY-Grid");
 		grid.setSelected(ent != null && ent.getShow());
+	}
+
+	public void setShowLabels(boolean bool) {
+		showLabels.setSelected(bool);
+		for (DisplayEntity ent : sim.getClonesOfIterator(DisplayEntity.class)) {
+			if (!EntityLabel.canLabel(ent))
+				continue;
+			EntityLabel.showLabel(ent, bool);
+		}
+	}
+
+	public void setShowSubModels(boolean bool) {
+		showSubModels.setSelected(bool);
+		for (CompoundEntity submodel : sim.getClonesOfIterator(CompoundEntity.class)) {
+			InputAgent.applyBoolean(submodel, "ShowComponents", bool);
+		}
+	}
+
+	@Override
+	public void setButton(String name, boolean bool) {
+		switch (name) {
+
+		case "ShowLabels":
+			setShowLabels(bool);
+			break;
+
+		case "ShowSubModels":
+			setShowSubModels(bool);
+			break;
+
+		default:
+			throw new ErrorException("UI button not found");
+		}
 	}
 
 	public JFrame getTool(String name) {
