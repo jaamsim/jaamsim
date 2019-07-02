@@ -95,6 +95,13 @@ public abstract class CompoundEntity extends LinkedComponent {
 	}
 
 	@Override
+	public void setInputsForDragAndDrop() {
+		super.setInputsForDragAndDrop();
+		boolean bool = getJaamSimModel().getSimulation().isShowSubModels();
+		InputAgent.applyBoolean(this, showComponents.getKeyword(), bool);
+	}
+
+	@Override
 	public void updateForInput(Input<?> in) {
 		super.updateForInput(in);
 
