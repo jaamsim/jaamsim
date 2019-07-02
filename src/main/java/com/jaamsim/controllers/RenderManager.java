@@ -47,6 +47,7 @@ import com.jaamsim.Commands.DefineCommand;
 import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.DisplayModels.DisplayModel;
 import com.jaamsim.Graphics.DisplayEntity;
+import com.jaamsim.Graphics.EntityLabel;
 import com.jaamsim.Graphics.LinkDisplayable;
 import com.jaamsim.Graphics.OverlayEntity;
 import com.jaamsim.basicsim.Entity;
@@ -1560,10 +1561,15 @@ public class RenderManager implements DragSourceListener {
 
 		// Set the position for the entity
 		if (ent instanceof DisplayEntity) {
+			DisplayEntity dispEnt = (DisplayEntity) ent;
 			try {
-				((DisplayEntity)ent).dragged(x, y, creationPoint);
+				dispEnt.dragged(x, y, creationPoint);
 			}
 			catch (InputErrorException e) {}
+
+			// Add the label
+			if (simulation.isShowLabels() && EntityLabel.canLabel(dispEnt))
+				EntityLabel.showLabel(dispEnt, true);
 
 			// Set the focus on the window that received the entity
 			Frame awtRef = renderer.getAWTFrame(windowID);
