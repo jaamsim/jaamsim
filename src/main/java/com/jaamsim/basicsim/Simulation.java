@@ -201,6 +201,14 @@ public class Simulation extends Entity {
 	         exampleList = {"200 h"})
 	private final ValueInput pauseTime;
 
+	@Keyword(description = "The state of the 'Show Labels' button on the Control Panel.",
+	         exampleList = {"TRUE"})
+	private final BooleanInput showLabels;
+
+	@Keyword(description = "The state of the 'Show SubModels' button on the Control Panel.",
+	         exampleList = {"TRUE"})
+	private final BooleanInput showSubModels;
+
 	@Keyword(description = "If TRUE, the Model Builder tool is shown on startup.",
 	         exampleList = {"TRUE"})
 	private final BooleanInput showModelBuilder;
@@ -421,6 +429,16 @@ public class Simulation extends Entity {
 		pauseTime.setPromptReqd(false);
 		pauseTime.setHidden(true);
 		this.addInput(pauseTime);
+
+		showLabels = new BooleanInput("ShowLabels", GUI, false);
+		showLabels.setPromptReqd(false);
+		showLabels.setHidden(true);
+		this.addInput(showLabels);
+
+		showSubModels = new BooleanInput("ShowSubModels", GUI, false);
+		showSubModels.setPromptReqd(false);
+		showSubModels.setHidden(true);
+		this.addInput(showSubModels);
 
 		showModelBuilder = new BooleanInput("ShowModelBuilder", GUI, false);
 		showModelBuilder.setPromptReqd(false);
@@ -881,6 +899,14 @@ public class Simulation extends Entity {
 
 	public StringProvListInput getRunOutputList() {
 		return runOutputList;
+	}
+
+	public boolean isShowLabels() {
+		return showLabels.getValue();
+	}
+
+	public boolean isShowSubModels() {
+		return showSubModels.getValue();
 	}
 
 	public double getIncrementSize() {
