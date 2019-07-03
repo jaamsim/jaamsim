@@ -53,6 +53,13 @@ public abstract class StateUserEntity extends StateEntity implements ThresholdUs
 	         exampleList = {"ExpressionThreshold1 TimeSeriesThreshold1 SignalThreshold1"})
 	protected final EntityListInput<Threshold> operatingThresholdList;
 
+	@Keyword(description = "A list of thresholds that must be satisfied for the object to "
+	                     + "operate. If a threshold closes part way though processing an entity, "
+	                     + "the remaining work is completed, but the entity cannot be released "
+	                     + "until the threshold re-opens.",
+	         exampleList = {"ExpressionThreshold1 TimeSeriesThreshold1 SignalThreshold1"})
+	protected final EntityListInput<Threshold> releaseThresholdList;
+
 	@Keyword(description = "A list of DowntimeEntities representing planned maintenance that "
 	                     + "must be performed immediately, interrupting any work underway at "
 	                     + "present.",
@@ -106,6 +113,10 @@ public abstract class StateUserEntity extends StateEntity implements ThresholdUs
 
 		operatingThresholdList = new EntityListInput<>(Threshold.class, "OperatingThresholdList", THRESHOLDS, new ArrayList<Threshold>());
 		this.addInput(operatingThresholdList);
+
+		releaseThresholdList = new EntityListInput<>(Threshold.class, "ReleaseThresholdList", THRESHOLDS, new ArrayList<Threshold>());
+		releaseThresholdList.setHidden(true);
+		this.addInput(releaseThresholdList);
 
 		immediateMaintenanceList =  new EntityListInput<>(DowntimeEntity.class,
 				"ImmediateMaintenanceList", MAINTENANCE, new ArrayList<DowntimeEntity>());
@@ -166,6 +177,7 @@ public abstract class StateUserEntity extends StateEntity implements ThresholdUs
 	@Override
 	public ArrayList<Threshold> getThresholds() {
 		ArrayList<Threshold> ret = new ArrayList<>(operatingThresholdList.getValue());
+		ret.addAll(releaseThresholdList.getValue());
 		ret.addAll(immediateThresholdList.getValue());
 		ret.addAll(immediateReleaseThresholdList.getValue());
 		return ret;
@@ -195,6 +207,14 @@ public abstract class StateUserEntity extends StateEntity implements ThresholdUs
 		return false;
 	}
 
+	public boolean isReleaseThresholdClosure() {
+		for (Threshold thr : releaseThresholdList.getValue()) {
+			if (!thr.isOpen())
+				return true;
+		}
+		return false;
+	}
+
 	// ********************************************************************************************
 	// PRESENT STATE
 	// ********************************************************************************************
@@ -206,19 +226,8 @@ public abstract class StateUserEntity extends StateEntity implements ThresholdUs
 	 * @return true if all the thresholds are open.
 	 */
 	public boolean isOpen() {
-		for (Threshold thr : immediateThresholdList.getValue()) {
-			if (!thr.isOpen())
-				return false;
-		}
-		for (Threshold thr : immediateReleaseThresholdList.getValue()) {
-			if (!thr.isOpen())
-				return false;
-		}
-		for (Threshold thr : operatingThresholdList.getValue()) {
-			if (!thr.isOpen())
-				return false;
-		}
-		return true;
+		return !isImmediateThresholdClosure() && !isImmediateReleaseThresholdClosure()
+				&& !isOperatingThresholdClosure() && !isReleaseThresholdClosure();
 	}
 
 	public boolean isMaintenance() {
