@@ -54,6 +54,7 @@ import com.jaamsim.input.ColourInput;
 import com.jaamsim.math.AABB;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Ray;
+import com.jaamsim.math.Transform;
 import com.jaamsim.math.Vec2d;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.math.Vec4d;
@@ -548,7 +549,8 @@ public class Renderer implements GLAnimatorControl {
 		                                       message.listener);
 		listener.setWindow(window);
 
-		Camera camera = new Camera(Math.PI/3.0, 1, 0.1, 1000);
+		CameraInfo ci = new CameraInfo(Math.PI/3.0, Transform.ident, null);
+		Camera camera = new Camera(ci, 1);
 
 		synchronized (openWindows) {
 			openWindows.put(message.windowID, window);

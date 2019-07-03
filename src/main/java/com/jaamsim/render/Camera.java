@@ -70,24 +70,6 @@ private boolean _frustumDirty = true;
 		_frustum[i] = new Plane();
 }
 
-/**
- * Construct a new camera, the parameters provided are needed to determine the view frustum and the
- * project matrix. Default camera is the openGL camera, at the origin looking in the -Z direction
- * @param FOV
- * @param aspectRatio
- * @param near
- * @param far
- */
-public Camera(double FOV, double aspectRatio, double near, double far) {
-	_info = new CameraInfo(FOV, Transform.ident, null);
-
-	_aspectRatio = aspectRatio;
-	_info.trans.inverse(invTrans);
-
-	_frustumDirty = true;
-	_projMatDirty = true;
-}
-
 public Camera(CameraInfo camInfo, double aspectRatio) {
 	_info = camInfo;
 
