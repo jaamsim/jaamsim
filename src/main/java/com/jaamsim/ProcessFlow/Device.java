@@ -30,6 +30,7 @@ public abstract class Device extends StateUserEntity {
 	private long endTicks;  // planned simulation time in ticks at the end of the next process step
 	private boolean forcedDowntimePending;  // indicates that a forced downtime event is ready to start
 	private boolean immediateDowntimePending;  // indicates that an immediate downtime event is ready to start
+	private boolean readyToRelease;  // indicates that an entity was prevented from being released by a ReleaseThreshold
 	private boolean stepCompleted;  // indicates that the last process time step was completed
 	private boolean processing;  // indicates that the process loop is active
 	private long startUpTicks;  // clock ticks at which device was started most recently
@@ -45,6 +46,7 @@ public abstract class Device extends StateUserEntity {
 		lastUpdateTime = 0.0d;
 		forcedDowntimePending = false;
 		immediateDowntimePending = false;
+		readyToRelease = false;
 		stepCompleted = true;
 		processing = false;
 		startUpTicks = -1L;
@@ -204,10 +206,15 @@ public abstract class Device extends StateUserEntity {
 		return true;
 	}
 
+	public void setReadyToRelease(boolean bool) {
+		readyToRelease = bool;
+	}
+
 	public boolean isReadyToStop() {
 		return !isActive() || isMaintenance() || isBreakdown()
 				|| isImmediateThresholdClosure() || isImmediateReleaseThresholdClosure()
 				|| (isOperatingThresholdClosure() && isFinished())
+				|| (isReleaseThresholdClosure() && readyToRelease)
 				|| immediateDowntimePending || (forcedDowntimePending && isFinished());
 	}
 
@@ -220,6 +227,7 @@ public abstract class Device extends StateUserEntity {
 		processing = false;
 		forcedDowntimePending = false;
 		immediateDowntimePending = false;
+		setReadyToRelease(false);
 
 		// Notify other processes that are dependent on this one
 		if (getSimTicks() > startUpTicks)
