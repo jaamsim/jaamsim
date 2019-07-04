@@ -63,6 +63,7 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 	private double presentTravelTime;
 
 	{
+		releaseThresholdList.setHidden(false);
 		operatingThresholdList.setHidden(true);
 		waitQueue.setHidden(true);
 		match.setHidden(true);
@@ -150,6 +151,12 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 	@Override
 	protected void processStep(double simTime) {
 
+		// Check for a release threshold closure
+		if (isReleaseThresholdClosure()) {
+			setReadyToRelease(true);
+			return;
+		}
+
 		// Remove the first entity from the conveyor and send it to the next component
 		ConveyorEntry entry = entryList.remove(0);
 		DisplayEntity ent = entry.entity;
@@ -158,6 +165,10 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 		// Remove any other entities that have also reached the end
 		double maxPos = Math.min(entry.position, 1.0d);
 		while (!entryList.isEmpty() && entryList.get(0).position >= maxPos) {
+			if (isReleaseThresholdClosure()) {
+				setReadyToRelease(true);
+				return;
+			}
 			ent = entryList.remove(0).entity;
 			this.sendToNextComponent(ent);
 		}
