@@ -38,6 +38,15 @@ public static boolean near(double a, double b) {
 	return isSmall(diff);
 }
 
+// A greater-than comparison with an EPSILON of looseness
+public static boolean nearGT(double a, double b) {
+	return a+EPSILON > b;
+}
+
+//A less-than comparison with an EPSILON of looseness
+public static boolean nearLT(double a, double b) {
+	return a < b+EPSILON;
+}
 /**
  * Checks for line segment overlap
  * @param a0
@@ -256,7 +265,7 @@ public static double collisionDistLines(Mat4d rayMat, Vec4d[] lines, double coll
 }
 
 /**
- * Get the point where 3 planes intesect, or null if any are parallel
+ * Get the point where 3 planes intersect, or null if any are parallel
  * @param p0
  * @param p1
  * @param p2
