@@ -39,6 +39,8 @@ public class Server extends LinkedService {
 	private double serviceDuration;  // total duration for the present service
 
 	{
+		releaseThresholdList.setHidden(false);
+
 		serviceTime = new SampleInput("ServiceTime", KEY_INPUTS, new SampleConstant(TimeUnit.class, 0.0));
 		serviceTime.setUnitType(TimeUnit.class);
 		serviceTime.setValidRange(0, Double.POSITIVE_INFINITY);
@@ -78,6 +80,12 @@ public class Server extends LinkedService {
 	@Override
 	protected void processStep(double simTime) {
 
+		// Check for a release threshold closure
+		if (isReleaseThresholdClosure()) {
+			setReadyToRelease(true);
+			return;
+		}
+
 		// Send the entity to the next component in the chain
 		this.sendToNextComponent(servedEntity);
 		servedEntity = null;
@@ -87,6 +95,11 @@ public class Server extends LinkedService {
 	@Override
 	protected double getStepDuration(double simTime) {
 		return serviceDuration;
+	}
+
+	@Override
+	protected boolean isNewStepReqd(boolean completed) {
+		return completed && servedEntity == null;
 	}
 
 	@Override
