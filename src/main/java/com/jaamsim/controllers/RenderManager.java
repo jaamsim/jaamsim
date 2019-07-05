@@ -878,6 +878,19 @@ public class RenderManager implements DragSourceListener {
 		return RenderUtils.getPickRayForPosition(mouseInfo.cameraInfo, x, y, mouseInfo.width, mouseInfo.height);
 	}
 
+	public static CameraInfo getCameraInfoForView(View view) {
+		if (!isGood()) return null;
+
+		RenderManager rman = RenderManager.inst();
+		int winID = rman.getWindowID(view);
+		Renderer.WindowMouseInfo mouseInfo = rman.renderer.getMouseInfo(winID);
+
+		if (mouseInfo == null)
+			return null;
+
+		return mouseInfo.cameraInfo;
+	}
+
 	/**
 	 * Returns the global coordinates for the given entity corresponding
 	 * to given screen coordinates.
