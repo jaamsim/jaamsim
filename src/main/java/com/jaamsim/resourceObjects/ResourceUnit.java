@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2018 JaamSim Software Inc.
+ * Copyright (C) 2018-2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -272,31 +272,8 @@ public class ResourceUnit extends StateUserEntity implements Seizable, ResourceP
 	}
 
 	@Override
-	public boolean canStartDowntime(DowntimeEntity down) {
-
-		// Downtime can start when any work in progress has been interrupted and there are no
-		// other maintenance or breakdown activities that are being performed. It is okay to start
-		// downtime when one or more thresholds are closed.
-		return !isBusy() && !isMaintenance() && !isBreakdown();
-	}
-
-	@Override
-	public void prepareForDowntime(DowntimeEntity down) {
-		if (isTraceFlag())
-			trace(0, "prepareForDowntime(%s)", down);
-		// Do nothing - a breakdown can only start after the ResourceUnit has been released
-	}
-
-	@Override
-	public void startDowntime(DowntimeEntity down) {
-		if (isTraceFlag()) trace(0, "startDowntime(%s)", down);
-		setPresentState();
-	}
-
-	@Override
 	public void endDowntime(DowntimeEntity down) {
-		if (isTraceFlag()) trace(0, "endDowntime(%s)", down);
-		setPresentState();
+		super.endDowntime(down);
 
 		// If the resource unit is available, try to put it to work
 		if (isAvailable()) {
