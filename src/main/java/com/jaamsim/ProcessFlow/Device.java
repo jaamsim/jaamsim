@@ -73,7 +73,7 @@ public abstract class Device extends StateUserEntity {
 	 * @return true if the caller can be started
 	 */
 	public boolean isAbleToRestart() {
-		return isAvailable();
+		return isAvailable() && !isForcedDowntimePending() && !isImmediateDowntimePending();
 	}
 
 	/**
