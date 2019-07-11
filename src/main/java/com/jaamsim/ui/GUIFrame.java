@@ -218,7 +218,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	private static boolean SAFE_GRAPHICS;
 
 	// Collection of default window parameters
-	public static int DEFAULT_GUI_WIDTH = 1160;
+	public static int DEFAULT_GUI_WIDTH = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds().width;
 	public static int COL1_WIDTH;
 	public static int COL2_WIDTH;
 	public static int COL3_WIDTH;
