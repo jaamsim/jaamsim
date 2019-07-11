@@ -3240,7 +3240,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		Dimension guiSize = this.getSize();
 		Rectangle winSize = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
 
-		DEFAULT_GUI_WIDTH = winSize.width;
 		COL1_WIDTH = 220;
 		COL4_WIDTH = 520;
 		int middleWidth = DEFAULT_GUI_WIDTH - COL1_WIDTH - COL4_WIDTH;
@@ -3575,7 +3574,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			gui.calcWindowDefaults();
 			gui.setLocation(gui.getX(), gui.getY());  //FIXME remove when setLocation is fixed for Windows 10
 			gui.setWindowDefaults();
-			gui.setControlPanelWidth(DEFAULT_GUI_WIDTH);
 			gui.updateControls();
 			EntityPallet.update();
 		}
