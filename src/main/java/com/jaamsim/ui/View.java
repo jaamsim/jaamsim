@@ -29,6 +29,7 @@ import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.Region;
 import com.jaamsim.basicsim.Entity;
+import com.jaamsim.basicsim.GUIListener;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.datatypes.IntegerVector;
 import com.jaamsim.input.BooleanInput;
@@ -273,6 +274,12 @@ public class View extends Entity {
 			}
 			return;
 		}
+		if (in == lock2D) {
+			GUIListener gui = getJaamSimModel().getGUIListener();
+			if (gui != null)
+				gui.updateControls();
+			return;
+		}
 	}
 
 	public Vec3d getViewCenter() {
@@ -461,7 +468,6 @@ public class View extends Entity {
 			KeywordIndex kw = new KeywordIndex(lock2D.getKeyword(), toks, null);
 			InputAgent.apply(this, kw);
 		}
-
 	}
 
 	public boolean is2DLocked() {
