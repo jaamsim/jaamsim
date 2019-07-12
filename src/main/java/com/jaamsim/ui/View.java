@@ -463,9 +463,7 @@ public class View extends Entity {
 
 	public void setLock2D(boolean bLock2D) {
 		synchronized (setLock) {
-			ArrayList<String> toks = new ArrayList<>();
-			toks.add(bLock2D ? "TRUE" : "FALSE");
-			KeywordIndex kw = new KeywordIndex(lock2D.getKeyword(), toks, null);
+			KeywordIndex kw = InputAgent.formatBoolean(lock2D.getKeyword(), bLock2D);
 			InputAgent.apply(this, kw);
 		}
 	}
