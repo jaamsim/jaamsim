@@ -2583,11 +2583,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		}
 	}
 
-	public static void setActiveView(View activeView) {
-		boolean lock2D = activeView.is2DLocked();
-		instance.lockViewXYPlane.setSelected(lock2D);
-	}
-
 	// ******************************************************************************************************
 	// RUN STATUS UPDATES
 	// ******************************************************************************************************

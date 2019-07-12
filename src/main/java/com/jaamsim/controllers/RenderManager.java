@@ -307,7 +307,7 @@ public class RenderManager implements DragSourceListener {
 			EventQueue.invokeLater(new Runnable() {
 				@Override
 				public void run() {
-					GUIFrame.setActiveView(activeView);
+					GUIFrame.getInstance().updateControls();
 				}
 			});
 
