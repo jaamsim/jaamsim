@@ -290,6 +290,24 @@ public class View extends Entity {
 		return position.getValue();
 	}
 
+	/**
+	 * Returns the point on the x-y plane at which the camera is aimed.
+	 * @return point on the x-y plane
+	 */
+	public Vec3d getEffViewCenter() {
+		Vec3d camPos = getViewPosition();
+		if (camPos.z == 0.0d)
+			return camPos;
+		Vec3d center = getViewCenter();
+		Vec3d vec = new Vec3d();
+		vec.sub3(camPos, center);
+		double factor = camPos.z/vec.z;
+		vec.scale3(factor);
+		Vec3d ret = new Vec3d(camPos);
+		ret.sub3(vec);
+		return ret;
+	}
+
 	public Vec3d getGlobalPosition() {
 		synchronized (setLock) {
 
@@ -463,8 +481,30 @@ public class View extends Entity {
 
 	public void setLock2D(boolean bLock2D) {
 		synchronized (setLock) {
+
+			// Set the Lock2D keyword
 			KeywordIndex kw = InputAgent.formatBoolean(lock2D.getKeyword(), bLock2D);
-			InputAgent.apply(this, kw);
+
+			// Set the camera position
+			Vec3d viewCenter = new Vec3d(getEffViewCenter());
+			Vec3d camPos = new Vec3d(getViewPosition());
+			Vec3d vec = new Vec3d();
+			vec.sub3(viewCenter, camPos);
+			double dist = vec.mag3();
+			Vec3d pos = new Vec3d(viewCenter);
+			if (bLock2D) {
+				pos.z += dist;
+			}
+			else {
+				dist = dist/Math.sqrt(3);
+				pos.x += dist;
+				pos.y -= dist;
+				pos.z += dist;
+			}
+			KeywordIndex posKw = InputAgent.formatVec3dInput(position.getKeyword(), pos, DistanceUnit.class);
+			KeywordIndex ctrKw = InputAgent.formatVec3dInput(center.getKeyword(), viewCenter, DistanceUnit.class);
+
+			InputAgent.storeAndExecute(new KeywordCommand(this, kw, posKw, ctrKw));
 		}
 	}
 
