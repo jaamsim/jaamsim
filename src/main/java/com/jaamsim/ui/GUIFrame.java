@@ -3918,6 +3918,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			gui.setTitle( sim.getSimulation().getModelName() + " - " + sim.getRunName() );
 			gui.updateForSimulationState(GUIFrame.SIM_STATE_CONFIGURED);
 			gui.enableSave(sim.isRecordEditsFound());
+			gui.setShowLabels(sim.getSimulation().isShowLabels());
 		}
 		return ret;
 	}
