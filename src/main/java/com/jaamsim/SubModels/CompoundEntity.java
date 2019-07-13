@@ -220,6 +220,14 @@ public abstract class CompoundEntity extends LinkedComponent {
 		}
 	}
 
+	public void showTemporaryComponents(boolean bool) {
+		bool = bool || getShowComponents();
+		smRegion.setShow(bool);
+		for (DisplayEntity comp : componentList) {
+			comp.setShow(bool);
+		}
+	}
+
 	public boolean getShowComponents() {
 		return showComponents.getValue();
 	}
