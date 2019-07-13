@@ -3303,7 +3303,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		for (DisplayEntity ent : sim.getClonesOfIterator(DisplayEntity.class)) {
 			if (!EntityLabel.canLabel(ent))
 				continue;
-			EntityLabel.showLabel(ent, bool);
+			EntityLabel.showTemporaryLabel(ent, bool);
 		}
 	}
 

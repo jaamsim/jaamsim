@@ -165,6 +165,23 @@ public class EntityLabel extends TextBasics {
 		InputAgent.applyBoolean(label, "Show", bool);
 	}
 
+	public static void showTemporaryLabel(DisplayEntity ent, boolean bool) {
+		EntityLabel label = getLabel(ent);
+
+		// Does the label exist yet?
+		if (label == null) {
+			if (!bool)
+				return;
+			label = EntityLabel.createLabel(ent);
+			InputAgent.applyBoolean(label, "Show", false);
+			label.setShow(true);
+			return;
+		}
+
+		// Show or hide the label
+		label.setShow(bool || label.getShowInput());
+	}
+
 	public static boolean canLabel(DisplayEntity ent) {
 		return !(ent instanceof TextEntity) && !(ent instanceof OverlayEntity)
 				&& !ent.testFlag(Entity.FLAG_GENERATED)
