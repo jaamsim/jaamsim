@@ -1853,6 +1853,10 @@ public class RenderManager implements DragSourceListener {
 			GUIFrame.getInstance().invokeRedo();
 			return true;
 		}
+		if (control && keyCode == KeyEvent.VK_S) {
+			GUIFrame.getInstance().invokeSave();
+			return true;
+		}
 
 		// Selected entity not in edit mode
 		if (selectedEntity != null) {

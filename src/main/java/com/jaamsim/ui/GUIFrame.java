@@ -959,7 +959,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				GUIFrame.class.getResource("/resources/images/Save-16.png")) );
 		fileSave.setMargin(margin);
 		fileSave.setFocusPainted(false);
-		fileSave.setToolTipText(formatToolTip("Save", "Saves the present model."));
+		fileSave.setToolTipText(formatToolTip("Save (Ctrl+S)", "Saves the present model."));
 		fileSave.setEnabled(false);
 		fileSave.addActionListener( new ActionListener() {
 
@@ -4038,6 +4038,15 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 		prefs.put(LAST_USED_FOLDER, file.getParent());
 		return true;
+	}
+
+	public void invokeSave() {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				save();
+			}
+		});
 	}
 
 	public static String getImageFolder() {
