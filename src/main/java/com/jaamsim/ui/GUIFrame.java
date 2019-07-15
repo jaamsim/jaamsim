@@ -373,16 +373,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 		@Override
 		public void windowDeiconified(WindowEvent e) {
-
-			// Re-open the view windows
-			for (View v : sim.getViews()) {
-				if (v.showWindow())
-					RenderManager.inst().createWindow(v);
-			}
-
-			// Re-open the tools
-			showActiveTools();
-			updateUI();
+			showWindows();
 		}
 
 		@Override
@@ -402,17 +393,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 		@Override
 		public void windowActivated(WindowEvent e) {
-
-			// Re-open the view windows
-			for (int i = 0; i < sim.getViews().size(); i++) {
-				View v = sim.getViews().get(i);
-				if (v != null && v.showWindow())
-					RenderManager.inst().createWindow(v);
-			}
-
-			// Re-open the tools
-			showActiveTools();
-			updateUI();
+			showWindows();
 		}
 	}
 
