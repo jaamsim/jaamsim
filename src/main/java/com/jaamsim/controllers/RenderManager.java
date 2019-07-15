@@ -47,6 +47,7 @@ import com.jaamsim.Commands.DefineCommand;
 import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.DisplayModels.DisplayModel;
 import com.jaamsim.Graphics.DisplayEntity;
+import com.jaamsim.Graphics.Editable;
 import com.jaamsim.Graphics.EntityLabel;
 import com.jaamsim.Graphics.LinkDisplayable;
 import com.jaamsim.Graphics.OverlayEntity;
@@ -94,6 +95,7 @@ import com.jaamsim.ui.LogBox;
 import com.jaamsim.ui.View;
 import com.jaamsim.units.AngleUnit;
 import com.jaamsim.units.DistanceUnit;
+import com.jogamp.newt.event.KeyEvent;
 
 /**
  * Top level owner of the JaamSim renderer. This class both owns and drives the Renderer object, but is also
@@ -1835,6 +1837,24 @@ public class RenderManager implements DragSourceListener {
 	}
 
 	public boolean handleKeyPressed(int keyCode, char keyChar, boolean shift, boolean control, boolean alt) {
+
+		// Selected entity in edit mode
+		if (selectedEntity instanceof Editable && ((Editable) selectedEntity).isEditMode()) {
+			selectedEntity.handleKeyPressed(keyCode, keyChar, shift, control, alt);
+			return true;
+		}
+
+		// Key combinations for Control panel buttons
+		if (control && keyCode == KeyEvent.VK_Z) {
+			GUIFrame.getInstance().invokeUndo();
+			return true;
+		}
+		if (control && keyCode == KeyEvent.VK_Y) {
+			GUIFrame.getInstance().invokeRedo();
+			return true;
+		}
+
+		// Selected entity not in edit mode
 		if (selectedEntity != null) {
 			selectedEntity.handleKeyPressed(keyCode, keyChar, shift, control, alt);
 			return true;

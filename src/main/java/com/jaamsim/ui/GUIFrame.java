@@ -979,7 +979,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		undo.setMargin(margin);
 		undo.setFocusPainted(false);
 		undo.setRequestFocusEnabled(false);
-		undo.setToolTipText(formatToolTip("Undo", "Reverses the last change to the model."));
+		undo.setToolTipText(formatToolTip("Undo (Ctrl+Z)", "Reverses the last change to the model."));
 		undo.setEnabled(!undoList.isEmpty());
 		undo.addActionListener( new ActionListener() {
 
@@ -1026,7 +1026,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		redo.setMargin(margin);
 		redo.setFocusPainted(false);
 		redo.setRequestFocusEnabled(false);
-		redo.setToolTipText(formatToolTip("Redo", "Re-performs the last change to the model that was undone."));
+		redo.setToolTipText(formatToolTip("Redo (Ctrl+Y)", "Re-performs the last change to the model that was undone."));
 		redo.setEnabled(!redoList.isEmpty());
 		redo.addActionListener( new ActionListener() {
 
@@ -3028,6 +3028,24 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		for (int i = 0; i < n; i++) {
 			redo();
 		}
+	}
+
+	public void invokeUndo() {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				undo();
+			}
+		});
+	}
+
+	public void invokeRedo() {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				redo();
+			}
+		});
 	}
 
 	public void updateForUndo() {
