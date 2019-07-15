@@ -416,6 +416,29 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		}
 	}
 
+	public void showWindows() {
+		if (!RenderManager.isGood())
+			return;
+
+		// Identity the view window that is active
+		View activeView = RenderManager.inst().getActiveView();
+
+		// Re-open the view windows
+		for (int i = 0; i < sim.getViews().size(); i++) {
+			View v = sim.getViews().get(i);
+			if (v != null && v.showWindow() && v != activeView)
+				RenderManager.inst().createWindow(v);
+		}
+
+		// Re-open the active view window last
+		if (activeView != null)
+			RenderManager.inst().createWindow(activeView);
+
+		// Re-open the tools
+		showActiveTools();
+		updateUI();
+	}
+
 	/**
 	 * Perform exit window duties
 	 */
