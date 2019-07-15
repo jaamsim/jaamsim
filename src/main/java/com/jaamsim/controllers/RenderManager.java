@@ -1834,8 +1834,12 @@ public class RenderManager implements DragSourceListener {
 		}
 	}
 
-	public void handleKeyPressed(int keyCode, char keyChar, boolean shift, boolean control, boolean alt) {
-		selectedEntity.handleKeyPressed(keyCode, keyChar, shift, control, alt);
+	public boolean handleKeyPressed(int keyCode, char keyChar, boolean shift, boolean control, boolean alt) {
+		if (selectedEntity != null) {
+			selectedEntity.handleKeyPressed(keyCode, keyChar, shift, control, alt);
+			return true;
+		}
+		return false;
 	}
 
 	public void handleKeyReleased(int keyCode, char keyChar, boolean shift, boolean control, boolean alt) {

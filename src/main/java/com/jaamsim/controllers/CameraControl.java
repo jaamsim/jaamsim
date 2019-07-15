@@ -513,11 +513,10 @@ public class CameraControl implements WindowInteractionListener {
 	public void keyPressed(KeyEvent e) {
 
 		// If an entity has been selected, pass the key event to it
-		if (RenderManager.inst().isEntitySelected()) {
-			RenderManager.inst().handleKeyPressed(e.getKeyCode(), e.getKeyChar(),
-					e.isShiftDown(), e.isControlDown(), e.isAltDown());
+		boolean bool = RenderManager.inst().handleKeyPressed(e.getKeyCode(), e.getKeyChar(),
+				e.isShiftDown(), e.isControlDown(), e.isAltDown());
+		if (bool)
 			return;
-		}
 
 		// If no entity has been selected, the camera will handle the key event
 		Vec3d pos = _updateView.getGlobalPosition();
