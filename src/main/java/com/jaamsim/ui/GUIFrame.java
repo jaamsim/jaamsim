@@ -271,7 +271,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 		getContentPane().setLayout( new BorderLayout() );
 		setDefaultCloseOperation( JFrame.DO_NOTHING_ON_CLOSE );
-		this.addWindowListener(new CloseListener());
 
 		// Initialize the working environment
 		initializeMenus();
@@ -292,6 +291,28 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		setProgress( 0 );
 		ToolTipManager.sharedInstance().setLightWeightPopupEnabled( false );
 		JPopupMenu.setDefaultLightWeightPopupEnabled( false );
+
+		this.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				close();
+			}
+
+			@Override
+			public void windowDeiconified(WindowEvent e) {
+				showWindows();
+			}
+
+			@Override
+			public void windowIconified(WindowEvent e) {
+				closeWindows();
+			}
+
+			@Override
+			public void windowActivated(WindowEvent e) {
+				showWindows();
+			}
+		});
 
 		addComponentListener(new ComponentAdapter() {
 			@Override
@@ -354,37 +375,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 	public static final void updateUI() {
 		rateLimiter.queueUpdate();
-	}
-
-	/**
-	 * Listens for window events for the GUI.
-	 *
-	 */
-	private class CloseListener extends WindowAdapter implements ActionListener {
-		@Override
-		public void windowClosing(WindowEvent e) {
-			GUIFrame.this.close();
-		}
-
-		@Override
-		public void actionPerformed( ActionEvent event ) {
-			GUIFrame.this.close();
-		}
-
-		@Override
-		public void windowDeiconified(WindowEvent e) {
-			showWindows();
-		}
-
-		@Override
-		public void windowIconified(WindowEvent e) {
-			closeWindows();
-		}
-
-		@Override
-		public void windowActivated(WindowEvent e) {
-			showWindows();
-		}
 	}
 
 	public void closeWindows() {
@@ -599,7 +589,13 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		// 7) "Exit" menu item
 		JMenuItem exitMenuItem = new JMenuItem( "Exit" );
 		exitMenuItem.setMnemonic( 'x' );
-		exitMenuItem.addActionListener(new CloseListener());
+		exitMenuItem.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed( ActionEvent event ) {
+				close();
+			}
+		});
 		fileMenu.add( exitMenuItem );
 	}
 
