@@ -378,23 +378,27 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 		@Override
 		public void windowIconified(WindowEvent e) {
-
-			// Close all the tools
-			closeAllTools();
-
-			// Save whether each window is open or closed
-			for (View v : sim.getViews()) {
-				v.setKeepWindowOpen(v.showWindow());
-			}
-
-			// Close all the view windows
-			RenderManager.clear();
+			closeWindows();
 		}
 
 		@Override
 		public void windowActivated(WindowEvent e) {
 			showWindows();
 		}
+	}
+
+	public void closeWindows() {
+
+		// Close all the tools
+		closeAllTools();
+
+		// Save whether each window is open or closed
+		for (View v : sim.getViews()) {
+			v.setKeepWindowOpen(v.showWindow());
+		}
+
+		// Close all the view windows
+		RenderManager.clear();
 	}
 
 	public void showWindows() {
