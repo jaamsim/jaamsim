@@ -344,12 +344,15 @@ public class ContextMenu {
 			@Override
 			public void actionPerformed( ActionEvent event ) {
 				// Move the camera position so that the entity is in the centre of the screen
-				Vec3d viewPos = new Vec3d(v.getGlobalPosition());
-				viewPos.sub3(v.getGlobalCenter());
-				viewPos.add3(ent.getPosition());
+				Vec3d viewPos = new Vec3d(v.getViewPosition());
+				Vec3d viewCenter = new Vec3d(v.getEffViewCenter());
+				Vec3d diff = new Vec3d();
+				diff.sub3(ent.getGlobalPosition(), viewCenter);
+				viewPos.add3(diff);
+				viewCenter.add3(diff);
 
 				KeywordIndex posKw = InputAgent.formatVec3dInput("ViewPosition", viewPos, DistanceUnit.class);
-				KeywordIndex ctrKw = InputAgent.formatVec3dInput("ViewCenter", ent.getPosition(), DistanceUnit.class);
+				KeywordIndex ctrKw = InputAgent.formatVec3dInput("ViewCenter", viewCenter, DistanceUnit.class);
 				InputAgent.storeAndExecute(new KeywordCommand(v, posKw, ctrKw));
 			}
 		} );
