@@ -3310,7 +3310,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	public void setShowSubModels(boolean bool) {
 		showSubModels.setSelected(bool);
 		for (CompoundEntity submodel : sim.getClonesOfIterator(CompoundEntity.class)) {
-			InputAgent.applyBoolean(submodel, "ShowComponents", bool);
+			submodel.showTemporaryComponents(bool);
 		}
 	}
 
