@@ -351,6 +351,7 @@ public class ContextMenu {
 				viewPos.add3(diff);
 				viewCenter.add3(diff);
 
+				RenderManager.inst().setPOI(v, viewCenter);
 				KeywordIndex posKw = InputAgent.formatVec3dInput("ViewPosition", viewPos, DistanceUnit.class);
 				KeywordIndex ctrKw = InputAgent.formatVec3dInput("ViewCenter", viewCenter, DistanceUnit.class);
 				InputAgent.storeAndExecute(new KeywordCommand(v, posKw, ctrKw));
