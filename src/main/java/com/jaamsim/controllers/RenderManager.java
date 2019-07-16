@@ -1705,6 +1705,14 @@ public class RenderManager implements DragSourceListener {
 		return rman.renderer.getAWTFrame(winID);
 	}
 
+	public void setPOI(View view, Vec3d pt) {
+		int winID = getWindowID(view);
+		CameraControl control = windowControls.get(winID);
+		if (control == null)
+			return;
+		control.setPOI(pt);
+	}
+
 	public Vec3d getPOI(View view) {
 		int winID = getWindowID(view);
 		CameraControl control = windowControls.get(winID);

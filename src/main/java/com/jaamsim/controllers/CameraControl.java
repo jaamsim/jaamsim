@@ -76,7 +76,7 @@ public class CameraControl implements WindowInteractionListener {
 		_renderer = renderer;
 		_updateView = updateView;
 
-		POI.set3(_updateView.getGlobalCenter());
+		setPOI(_updateView.getGlobalCenter());
 	}
 
 	@Override
@@ -414,7 +414,7 @@ public class CameraControl implements WindowInteractionListener {
 		if (button == 1 && isDown) {
 			Vec3d clickPoint = RenderManager.inst().getNearestPick(_windowID);
 			if (clickPoint != null) {
-				POI.set3(clickPoint);
+				setPOI(clickPoint);
 				//dragPlane = new Plane(Vec4d.Z_AXIS, clickPoint.z);
 			} else {
 				// Set the drag plane to the XY_PLANE
@@ -427,7 +427,7 @@ public class CameraControl implements WindowInteractionListener {
 				if (dist < 0) {
 					return;
 				}
-				POI.set3(mouseRay.getPointAtDist(dist));
+				setPOI(mouseRay.getPointAtDist(dist));
 				//dragPlane = Plane.XY_PLANE;
 
 			}
@@ -470,8 +470,16 @@ public class CameraControl implements WindowInteractionListener {
 		return _updateView;
 	}
 
+	public void setPOI(Vec3d pt) {
+		synchronized (POI) {
+			POI.set3(pt);
+		}
+	}
+
 	public Vec3d getPOI() {
-		return POI;
+		synchronized (POI) {
+			return POI;
+		}
 	}
 
 	private PolarInfo getPolarFrom(Vec3d center, Vec3d pos) {
