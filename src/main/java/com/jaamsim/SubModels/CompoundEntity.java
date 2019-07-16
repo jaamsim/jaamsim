@@ -214,9 +214,9 @@ public abstract class CompoundEntity extends LinkedComponent {
 	 * @param bool - if true, the components are displayed; if false, they are hidden.
 	 */
 	public void showComponents(boolean bool) {
-		InputAgent.applyBoolean(smRegion, "Show", showComponents.getValue());
+		InputAgent.applyBoolean(smRegion, "Show", bool);
 		for (DisplayEntity comp : componentList) {
-			InputAgent.applyBoolean(comp, "Show", showComponents.getValue());
+			InputAgent.applyBoolean(comp, "Show", bool);
 		}
 	}
 
