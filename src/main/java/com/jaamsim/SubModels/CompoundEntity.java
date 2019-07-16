@@ -68,7 +68,7 @@ public abstract class CompoundEntity extends LinkedComponent {
 		namedExpressionInput.setHidden(true); // FIXME CustomOutputList conflicts with the component outputs
 		nextComponent.setRequired(false);
 
-		showComponents = new BooleanInput("ShowComponents", FORMAT, true);
+		showComponents = new BooleanInput("ShowComponents", FORMAT, false);
 		this.addInput(showComponents);
 
 		regionScale = new ValueInput("RegionScale", FORMAT, 1.0d);
