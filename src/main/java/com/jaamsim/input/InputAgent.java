@@ -324,12 +324,16 @@ public class InputAgent {
 	}
 
 	/**
-	 * Like defineEntity(), but will generate a unique name if a name collision exists
-	 * @param proto
-	 * @param key
-	 * @param sep
-	 * @param addedEntity
-	 * @return
+	 * Creates a new entity with a unique name. If an entity already exists with the specified
+	 * base name, a separator will be appended followed by the smallest integer required to make
+	 * the name unique. If addedEntity is true then this is an entity defined by user interaction
+	 * or after the 'AddedRecord' flag is found in the configuration file.
+	 * @param simModel - JaamSimModel in which to create the entity
+	 * @param proto - class for the entity to be created
+	 * @param key - base name for the entity to be created
+	 * @param sep - string to append to the name if it is already in use
+	 * @param addedEntity - true if the entity is new to the model
+	 * @return new entity
 	 */
 	public static <T extends Entity> T defineEntityWithUniqueName(JaamSimModel simModel, Class<T> proto, String key, String sep, boolean addedEntity) {
 		String name = getUniqueName(simModel, key, sep);
@@ -350,13 +354,14 @@ public class InputAgent {
 	}
 
 	/**
-	 * if addedEntity is true then this is an entity defined
-	 * by user interaction or after added record flag is found;
-	 * otherwise, it is from an input file define statement
-	 * before the model is configured
-	 * @param proto
-	 * @param key
-	 * @param addedEntity
+	 * Creates a new entity with the specified name. If addedEntity is true then this is an entity
+	 * defined by user interaction or after the 'AddedRecord' flag is found in the configuration
+	 * file.
+	 * @param simModel - JaamSimModel in which to create the entity
+	 * @param proto - class for the entity to be created
+	 * @param key - name for the entity to be created
+	 * @param addedEntity - true if the entity is new to the model
+	 * @return new entity
 	 */
 	private static <T extends Entity> T defineEntity(JaamSimModel simModel, Class<T> proto, String key, boolean addedEntity) {
 		Entity existingEnt = Input.tryParseEntity(simModel, key, Entity.class);
