@@ -240,7 +240,10 @@ public class Polygon implements Renderable {
 		trans.inverse(invTrans);
 		Ray localRay = r.transform(invTrans);
 
-		return MathUtils.collisionDistPoly(localRay, _points);
+		double localDist =  MathUtils.collisionDistPoly(localRay, _points);
+
+		// Scale the local distance back to global
+		return localDist*trans.getScale();
 	}
 
 	// This should be called from the renderer at initialization

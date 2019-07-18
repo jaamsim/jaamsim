@@ -493,7 +493,14 @@ public class ConvexHull {
 			return 0.0;
 		}
 
-		return front;
+		// Scale the distance back to global coords
+		Vec3d collisionPoint = hullRay.getPointAtDist(front);
+		// Convert to global space
+		collisionPoint.multAndTrans3(mat, collisionPoint);
+		Vec3d diff = new Vec3d();
+		diff.sub3(r.getStartRef(), collisionPoint);
+
+		return diff.mag3();
 	}
 
 	/**
