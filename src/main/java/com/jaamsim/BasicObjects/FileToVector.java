@@ -19,6 +19,7 @@ package com.jaamsim.BasicObjects;
 import java.net.URI;
 import java.util.ArrayList;
 
+import com.jaamsim.input.ExpError;
 import com.jaamsim.input.ExpResult;
 import com.jaamsim.input.FileInput;
 import com.jaamsim.input.Output;
@@ -53,6 +54,17 @@ public class FileToVector extends FileToArray {
 			ret.addAll(expRecord);
 		}
 		return ret;
+	}
+
+	/**
+	 * Sets the data for the FileToVector directly from a Java data structure, without the use
+	 * of the DataFile input which can be left blank. The list input can contain the following
+	 * Java classes and their sub-classes: Double, Integer, String, Entity, List, Map, and Array.
+	 * @param list - List of Java objects containing the input data.
+	 * @throws Exception
+	 */
+	public void setValue(ArrayList<Object> list) throws ExpError {
+		value = getExpResultList(list);
 	}
 
 	@Output(name = "Value",
