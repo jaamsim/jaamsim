@@ -17,6 +17,7 @@
 package com.jaamsim.BasicObjects;
 
 import java.net.URI;
+import java.util.ArrayList;
 
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.ProcessFlow.LinkedComponent;
@@ -89,6 +90,10 @@ public abstract class FileToArray extends LinkedComponent {
 	}
 
 	protected ExpResult getExpResult(int i, String str, double simTime) {
+		return getExpResult(str, simTime);
+	}
+
+	protected ExpResult getExpResult(String str, double simTime) {
 
 		// Is the entry a time stamp?
 		if (Input.isRFC8601DateTime(str)) {
