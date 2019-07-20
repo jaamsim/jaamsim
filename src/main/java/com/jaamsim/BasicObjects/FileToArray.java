@@ -49,7 +49,10 @@ public abstract class FileToArray extends LinkedComponent {
 	                     + "- Arrays of numbers, entities, strings, or arrays, specified in expression format "
 	                     + "(e.g. '{ 5[m], \"abc\", [DisplayEntity1] }'\n"
 	                     + "- Expressions. A valid expression is executed and saved when the file is read "
-	                     + "(e.g. 1[m]/2[s] is saved as 1.0[m/s]). An invalid expression is saved as a string.",
+	                     + "(e.g. 1[m]/2[s] is saved as 1.0[m/s]). An invalid expression is saved as a string.\n\n"
+	                     + "When JaamSim is executed from the API, the DataFile input can be "
+	                     + "replaced by a call to the setValue method for this object, which "
+	                     + "populates the data directly.",
 	         exampleList = {"'c:/test/data.txt'"})
 	private final FileInput dataFile;
 
