@@ -64,5 +64,6 @@ import org.junit.runners.Suite.SuiteClasses;
 	com.jaamsim.MeshFiles.TestDataBlocks.class,
 	com.jaamsim.Statistics.TestStatistics.class,
 	com.jaamsim.BasicObjects.TestFileToVector.class,
+	com.jaamsim.BasicObjects.TestFileToMatrix.class,
 })
 public class AllTests {}
