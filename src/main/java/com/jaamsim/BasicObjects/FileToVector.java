@@ -49,10 +49,8 @@ public class FileToVector extends FileToArray {
 		}
 		ArrayList<ExpResult> ret = new ArrayList<>(n);
 		for (ArrayList<String> record : tokens) {
-			for (int i=0; i<record.size(); i++) {
-				String str = record.get(i);
-				ret.add(getExpResult(i, str, simTime));
-			}
+			ArrayList<ExpResult> expRecord = getExpResultList(record, simTime);
+			ret.addAll(expRecord);
 		}
 		return ret;
 	}

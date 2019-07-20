@@ -89,10 +89,6 @@ public abstract class FileToArray extends LinkedComponent {
 		sendToNextComponent(ent);
 	}
 
-	protected ExpResult getExpResult(int i, String str, double simTime) {
-		return getExpResult(str, simTime);
-	}
-
 	protected ExpResult getExpResult(String str, double simTime) {
 
 		// Is the entry a time stamp?

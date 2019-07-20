@@ -45,11 +45,7 @@ public class FileToMatrix extends FileToArray {
 		ArrayList<ArrayList<String>> tokens = FileInput.getTokensFromURI(uri);
 		ArrayList<ArrayList<ExpResult>> ret = new ArrayList<>(tokens.size());
 		for (ArrayList<String> strRecord : tokens) {
-			ArrayList<ExpResult> record = new ArrayList<>(strRecord.size());
-			for (int i=0; i<strRecord.size(); i++) {
-				String str = strRecord.get(i);
-				record.add(getExpResult(i, str, simTime));
-			}
+			ArrayList<ExpResult> record = getExpResultList(strRecord, simTime);
 			ret.add(record);
 		}
 		return ret;
