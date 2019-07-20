@@ -57,7 +57,6 @@ public abstract class FileToArray extends LinkedComponent {
 		nextComponent.setRequired(false);
 
 		dataFile = new FileInput("DataFile", KEY_INPUTS, null);
-		dataFile.setRequired(true);
 		this.addInput(dataFile);
 	}
 
