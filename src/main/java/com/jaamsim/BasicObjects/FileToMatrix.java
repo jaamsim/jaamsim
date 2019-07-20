@@ -19,6 +19,7 @@ package com.jaamsim.BasicObjects;
 import java.net.URI;
 import java.util.ArrayList;
 
+import com.jaamsim.input.ExpError;
 import com.jaamsim.input.ExpResult;
 import com.jaamsim.input.FileInput;
 import com.jaamsim.input.Output;
@@ -49,6 +50,22 @@ public class FileToMatrix extends FileToArray {
 			ret.add(record);
 		}
 		return ret;
+	}
+
+	/**
+	 * Sets the data for the FileToMatrix directly from a Java data structure, without the use
+	 * of the DataFile input which can be left blank. The matrix input can contain the following
+	 * Java classes and their sub-classes: Double, Integer, String, Entity, List, Map, and Array.
+	 * @param matrix - List of lists of Java objects containing the input data.
+	 * @throws ExpError
+	 */
+	public void setValue(ArrayList<ArrayList<Object>> matrix) throws ExpError {
+		ArrayList<ArrayList<ExpResult>> temp = new ArrayList<>(matrix.size());
+		for (ArrayList<Object> row : matrix) {
+			ArrayList<ExpResult> resRow = getExpResultList(row);
+			temp.add(resRow);
+		}
+		value = temp;
 	}
 
 	@Output(name = "Value",
