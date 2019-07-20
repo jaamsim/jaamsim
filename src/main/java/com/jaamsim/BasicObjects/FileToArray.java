@@ -29,6 +29,7 @@ import com.jaamsim.input.ExpResult;
 import com.jaamsim.input.FileInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.Keyword;
+import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
 import com.jaamsim.input.ExpParser.Expression;
 
@@ -122,6 +123,15 @@ public abstract class FileToArray extends LinkedComponent {
 		ArrayList<ExpResult> ret = new ArrayList<>(list.size());
 		for (String str : list) {
 			ret.add(getExpResult(str, simTime));
+		}
+		return ret;
+	}
+
+	protected ArrayList<ExpResult> getExpResultList(ArrayList<Object> list) throws ExpError {
+		ArrayList<ExpResult> ret = new ArrayList<>(list.size());
+		for (Object obj : list) {
+			ExpResult res = ExpEvaluator.getResultFromObject(obj, DimensionlessUnit.class);
+			ret.add(res);
 		}
 		return ret;
 	}
