@@ -122,6 +122,14 @@ public abstract class FileToArray extends LinkedComponent {
 		return ExpResult.makeStringResult(str);
 	}
 
+	protected ArrayList<ExpResult> getExpResultList(ArrayList<String> list, double simTime) {
+		ArrayList<ExpResult> ret = new ArrayList<>(list.size());
+		for (String str : list) {
+			ret.add(getExpResult(str, simTime));
+		}
+		return ret;
+	}
+
 	protected abstract void setValueForURI(URI uri, double simTime);
 	protected abstract void clearValue();
 
