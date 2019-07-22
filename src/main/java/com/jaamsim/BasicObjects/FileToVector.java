@@ -20,16 +20,18 @@ import java.net.URI;
 import java.util.ArrayList;
 
 import com.jaamsim.input.ExpError;
+import com.jaamsim.input.ExpCollections;
 import com.jaamsim.input.ExpResult;
 import com.jaamsim.input.FileInput;
 import com.jaamsim.input.Output;
+import com.jaamsim.units.DimensionlessUnit;
 
 public class FileToVector extends FileToArray {
 
-	ArrayList<ExpResult> value;
+	ExpResult value;
 
 	public FileToVector() {
-		value = new ArrayList<>();
+		clearValue();
 	}
 
 	@Override
@@ -39,10 +41,11 @@ public class FileToVector extends FileToArray {
 
 	@Override
 	protected void clearValue() {
-		value = new ArrayList<>();
+		ArrayList<ExpResult> resList = new ArrayList<>();
+		value = ExpCollections.getCollection(resList, DimensionlessUnit.class);
 	}
 
-	private ArrayList<ExpResult> getVectorForURI(URI uri, double simTime) {
+	private ExpResult getVectorForURI(URI uri, double simTime) {
 		ArrayList<ArrayList<String>> tokens = FileInput.getTokensFromURI(uri);
 		int n = 0;
 		for (ArrayList<String> record : tokens) {
@@ -53,7 +56,7 @@ public class FileToVector extends FileToArray {
 			ArrayList<ExpResult> expRecord = getExpResultList(record, simTime);
 			ret.addAll(expRecord);
 		}
-		return ret;
+		return ExpCollections.getCollection(ret, DimensionlessUnit.class);
 	}
 
 	/**
@@ -64,13 +67,14 @@ public class FileToVector extends FileToArray {
 	 * @throws Exception
 	 */
 	public void setValue(ArrayList<Object> list) throws ExpError {
-		value = getExpResultList(list);
+		ArrayList<ExpResult> resList = getExpResultList(list);
+		value = ExpCollections.getCollection(resList, DimensionlessUnit.class);
 	}
 
 	@Output(name = "Value",
 	 description = "A vector containing the data from the input file.",
 	    sequence = 1)
-	public ArrayList<ExpResult> getValue(double simTime) {
+	public ExpResult getValue(double simTime) {
 		return value;
 	}
 
