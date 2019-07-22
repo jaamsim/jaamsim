@@ -65,5 +65,6 @@ import org.junit.runners.Suite.SuiteClasses;
 	com.jaamsim.Statistics.TestStatistics.class,
 	com.jaamsim.BasicObjects.TestFileToVector.class,
 	com.jaamsim.BasicObjects.TestFileToMatrix.class,
+	com.jaamsim.BasicObjects.TestFileToHashMap.class,
 })
 public class AllTests {}
