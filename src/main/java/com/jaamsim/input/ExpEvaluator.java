@@ -35,6 +35,7 @@ import com.jaamsim.units.Unit;
 public class ExpEvaluator {
 
 	private static ExpResType getTypeForClass(Class<?> klass) {
+
 		if (klass == String.class) {
 			return ExpResType.STRING;
 		} else if (Entity.class.isAssignableFrom(klass)){
@@ -222,17 +223,23 @@ public class ExpEvaluator {
 
 		private final OutputHandle handle;
 		private final ExpResType type;
+		private final boolean isExpResult;
 
 		public CachedResolver(OutputHandle oh) throws ExpError {
 
 			handle = oh;
 
 			Class<?> retType = oh.getReturnType();
-
-			type = getTypeForClass(retType);
-			if (type == null) {
-				throw new ExpError(null, 0, "Output '%s' on entity '%s does not return a type compatible with the expression engine'",
-				                   oh.getName(), oh.ent.getName());
+			if (retType == ExpResult.class) {
+				isExpResult = true;
+				type = null;
+			} else {
+				isExpResult = false;
+				type = getTypeForClass(retType);
+				if (type == null) {
+					throw new ExpError(null, 0, "Output '%s' on entity '%s does not return a type compatible with the expression engine'",
+					                   oh.getName(), oh.ent.getName());
+				}
 			}
 		}
 
@@ -243,6 +250,10 @@ public class ExpEvaluator {
 			if (ec != null) {
 				EntityEvalContext eec = (EntityEvalContext)ec;
 				simTime = eec.simTime;
+			}
+
+			if (isExpResult) {
+				return handle.getValue(simTime, ExpResult.class);
 			}
 
 			switch (type) {
@@ -271,6 +282,10 @@ public class ExpEvaluator {
 			Class<? extends Unit> ut = DimensionlessUnit.class;
 			if (type == ExpResType.NUMBER)
 				ut = handle.getUnitType();
+
+			if (isExpResult) {
+				return ExpValResult.makeUndecidableRes();
+			}
 
 			return ExpValResult.makeValidRes(type, ut);
 
