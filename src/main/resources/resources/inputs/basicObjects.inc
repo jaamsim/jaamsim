@@ -15,6 +15,7 @@ Define ObjectType {
                     EventSchedule
                     FileToVector
                     FileToMatrix
+                    FileToHashMap
                   }
 
 Define TextModel  {
@@ -31,6 +32,7 @@ Define IconModel  {
                     EventScheduleIconModel
                     FileToVectorIconModel
                     FileToMatrixIconModel
+                    FileToHashMapIconModel
                   }
 
 TimeSeriesIconModel     ImageFile { '<res>/images/TimeSeries-256.png'   }  Transparent { TRUE }
@@ -42,6 +44,7 @@ ValueSequenceIconModel  ImageFile { '<res>/images/ValueSequence-256.png'}  Trans
 EventScheduleIconModel  ImageFile { '<res>/images/EventSchedule-256.png'}  Transparent { TRUE }
 FileToVectorIconModel   ImageFile { '<res>/images/FileToVector-256.png' }  Transparent { TRUE }
 FileToMatrixIconModel   ImageFile { '<res>/images/FileToMatrix-256.png' }  Transparent { TRUE }
+FileToHashMapIconModel  ImageFile { '<res>/images/FileToHashMap-256.png' }  Transparent { TRUE }
 
 Group                   JavaClass { com.jaamsim.basicsim.Group                          } Palette { 'Basic Objects' } DragAndDrop { FALSE }
 ScriptEntity            JavaClass { com.jaamsim.basicsim.ScriptEntity                   } Palette { 'Basic Objects' } DragAndDrop { FALSE }
@@ -59,6 +62,7 @@ ValueSequence           JavaClass { com.jaamsim.BasicObjects.ValueSequence      
 EventSchedule           JavaClass { com.jaamsim.BasicObjects.EventSchedule              } Palette { 'Basic Objects' } DefaultDisplayModel { EventScheduleIconModel } IconFile { '<res>/images/EventSchedule-24.png' }
 FileToVector            JavaClass { com.jaamsim.BasicObjects.FileToVector               } Palette { 'Basic Objects' } DefaultDisplayModel { FileToVectorIconModel  } IconFile { '<res>/images/FileToVector-24.png'  }
 FileToMatrix            JavaClass { com.jaamsim.BasicObjects.FileToMatrix               } Palette { 'Basic Objects' } DefaultDisplayModel { FileToMatrixIconModel  } IconFile { '<res>/images/FileToMatrix-24.png'  }
+FileToHashMap           JavaClass { com.jaamsim.BasicObjects.FileToHashMap              } Palette { 'Basic Objects' } DefaultDisplayModel { FileToHashMapIconModel } IconFile { '<res>/images/FileToHashMap-24.png'  }
 
 Group               Description { 'Collection of entities used as an convenience for specifying model inputs.' }
 ScriptEntity        Description { 'Executes a series of commands in simulated time. Used primarily for recording videos.' }
@@ -76,3 +80,4 @@ ValueSequence       Description { 'Generates a repeating sequence of numerical v
 EventSchedule       Description { 'Generates a sequence inter-arrival times from a list of event times.' }
 FileToVector        Description { 'Populates a one-dimensional array with data from a specified file.' }
 FileToMatrix        Description { 'Populates a two-dimensional array with data from a specified file.' }
+FileToHashMap       Description { 'Populates a hashmap with data from a specified file.' }
