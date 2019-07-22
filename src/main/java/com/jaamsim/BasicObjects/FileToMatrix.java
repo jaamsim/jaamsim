@@ -19,17 +19,19 @@ package com.jaamsim.BasicObjects;
 import java.net.URI;
 import java.util.ArrayList;
 
+import com.jaamsim.input.ExpCollections;
 import com.jaamsim.input.ExpError;
 import com.jaamsim.input.ExpResult;
 import com.jaamsim.input.FileInput;
 import com.jaamsim.input.Output;
+import com.jaamsim.units.DimensionlessUnit;
 
 public class FileToMatrix extends FileToArray {
 
-	ArrayList<ArrayList<ExpResult>> value;
+	ExpResult value;
 
 	public FileToMatrix() {
-		value = new ArrayList<>();
+		clearValue();
 	}
 
 	@Override
@@ -39,17 +41,19 @@ public class FileToMatrix extends FileToArray {
 
 	@Override
 	protected void clearValue() {
-		value = new ArrayList<>();
+		ArrayList<ExpResult> resList = new ArrayList<>();
+		value = ExpCollections.getCollection(resList, DimensionlessUnit.class);
 	}
 
-	private ArrayList<ArrayList<ExpResult>> getMatrixForURI(URI uri, double simTime) {
+	private ExpResult getMatrixForURI(URI uri, double simTime) {
 		ArrayList<ArrayList<String>> tokens = FileInput.getTokensFromURI(uri);
-		ArrayList<ArrayList<ExpResult>> ret = new ArrayList<>(tokens.size());
+		ArrayList<ExpResult> ret = new ArrayList<>(tokens.size());
 		for (ArrayList<String> strRecord : tokens) {
 			ArrayList<ExpResult> record = getExpResultList(strRecord, simTime);
-			ret.add(record);
+			ExpResult colRow = ExpCollections.getCollection(record, DimensionlessUnit.class);
+			ret.add(colRow);
 		}
-		return ret;
+		return ExpCollections.getCollection(ret, DimensionlessUnit.class);
 	}
 
 	/**
@@ -60,18 +64,19 @@ public class FileToMatrix extends FileToArray {
 	 * @throws ExpError
 	 */
 	public void setValue(ArrayList<ArrayList<Object>> matrix) throws ExpError {
-		ArrayList<ArrayList<ExpResult>> temp = new ArrayList<>(matrix.size());
+		ArrayList<ExpResult> temp = new ArrayList<>(matrix.size());
 		for (ArrayList<Object> row : matrix) {
 			ArrayList<ExpResult> resRow = getExpResultList(row);
-			temp.add(resRow);
+			ExpResult colRow = ExpCollections.getCollection(resRow, DimensionlessUnit.class);
+			temp.add(colRow);
 		}
-		value = temp;
+		value = ExpCollections.getCollection(temp, DimensionlessUnit.class);
 	}
 
 	@Output(name = "Value",
 	 description = "A matrix containing the data from the input file.",
 	    sequence = 1)
-	public ArrayList<ArrayList<ExpResult>> getValue(double simTime) {
+	public ExpResult getValue(double simTime) {
 		return value;
 	}
 
