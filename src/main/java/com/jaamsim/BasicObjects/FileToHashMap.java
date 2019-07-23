@@ -27,26 +27,15 @@ import com.jaamsim.input.ExpError;
 import com.jaamsim.input.ExpResType;
 import com.jaamsim.input.ExpResult;
 import com.jaamsim.input.FileInput;
-import com.jaamsim.input.Output;
 import com.jaamsim.units.DimensionlessUnit;
 
 public class FileToHashMap extends FileToArray {
 
-	ExpResult value;
-
-	public FileToHashMap() {
-		clearValue();
-	}
+	public FileToHashMap() {}
 
 	@Override
 	protected void setValueForURI(URI uri, double simTime) {
 		value = getHashMapForURI(uri, simTime);
-	}
-
-	@Override
-	protected void clearValue() {
-		ArrayList<ExpResult> resList = new ArrayList<>();
-		value = ExpCollections.getCollection(resList, DimensionlessUnit.class);
 	}
 
 	private ExpResult getHashMapForURI(URI uri, double simTime) {
@@ -87,14 +76,6 @@ public class FileToHashMap extends FileToArray {
 			temp.put(key, colRow);
 		}
 		value = ExpCollections.getCollection(temp, DimensionlessUnit.class);
-	}
-
-	@Output(name = "Value",
-	 description = "A HashMap with a string-valued key that contains the data from the input "
-	             + "file.",
-	    sequence = 1)
-	public ExpResult getValue(double simTime) {
-		return value;
 	}
 
 }

@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.ProcessFlow.LinkedComponent;
 import com.jaamsim.basicsim.Entity;
+import com.jaamsim.input.ExpCollections;
 import com.jaamsim.input.ExpError;
 import com.jaamsim.input.ExpEvaluator;
 import com.jaamsim.input.ExpParser;
@@ -29,6 +30,7 @@ import com.jaamsim.input.ExpResult;
 import com.jaamsim.input.FileInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.Keyword;
+import com.jaamsim.input.Output;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
 import com.jaamsim.input.ExpParser.Expression;
@@ -56,6 +58,8 @@ public abstract class FileToArray extends LinkedComponent {
 	         exampleList = {"'c:/test/data.txt'"})
 	private final FileInput dataFile;
 
+	protected ExpResult value;
+
 	{
 		nextComponent.setRequired(false);
 
@@ -63,7 +67,14 @@ public abstract class FileToArray extends LinkedComponent {
 		this.addInput(dataFile);
 	}
 
-	public FileToArray() {}
+	public FileToArray() {
+		clearValue();
+	}
+
+	protected void clearValue() {
+		ArrayList<ExpResult> resList = new ArrayList<>();
+		value = ExpCollections.getCollection(resList, DimensionlessUnit.class);
+	}
 
 	@Override
 	public void updateForInput(Input<?> in) {
@@ -139,6 +150,12 @@ public abstract class FileToArray extends LinkedComponent {
 	}
 
 	protected abstract void setValueForURI(URI uri, double simTime);
-	protected abstract void clearValue();
+
+	@Output(name = "Value",
+	 description = "An array or map containing the data from the input file.",
+	    sequence = 1)
+	public ExpResult getValue(double simTime) {
+		return value;
+	}
 
 }

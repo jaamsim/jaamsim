@@ -23,26 +23,15 @@ import com.jaamsim.input.ExpCollections;
 import com.jaamsim.input.ExpError;
 import com.jaamsim.input.ExpResult;
 import com.jaamsim.input.FileInput;
-import com.jaamsim.input.Output;
 import com.jaamsim.units.DimensionlessUnit;
 
 public class FileToMatrix extends FileToArray {
 
-	ExpResult value;
-
-	public FileToMatrix() {
-		clearValue();
-	}
+	public FileToMatrix() {}
 
 	@Override
 	protected void setValueForURI(URI uri, double simTime) {
 		value = getMatrixForURI(uri, simTime);
-	}
-
-	@Override
-	protected void clearValue() {
-		ArrayList<ExpResult> resList = new ArrayList<>();
-		value = ExpCollections.getCollection(resList, DimensionlessUnit.class);
 	}
 
 	private ExpResult getMatrixForURI(URI uri, double simTime) {
@@ -71,13 +60,6 @@ public class FileToMatrix extends FileToArray {
 			temp.add(colRow);
 		}
 		value = ExpCollections.getCollection(temp, DimensionlessUnit.class);
-	}
-
-	@Output(name = "Value",
-	 description = "A matrix containing the data from the input file.",
-	    sequence = 1)
-	public ExpResult getValue(double simTime) {
-		return value;
 	}
 
 }

@@ -23,26 +23,15 @@ import com.jaamsim.input.ExpError;
 import com.jaamsim.input.ExpCollections;
 import com.jaamsim.input.ExpResult;
 import com.jaamsim.input.FileInput;
-import com.jaamsim.input.Output;
 import com.jaamsim.units.DimensionlessUnit;
 
 public class FileToVector extends FileToArray {
 
-	ExpResult value;
-
-	public FileToVector() {
-		clearValue();
-	}
+	public FileToVector() {}
 
 	@Override
 	protected void setValueForURI(URI uri, double simTime) {
 		value = getVectorForURI(uri, simTime);
-	}
-
-	@Override
-	protected void clearValue() {
-		ArrayList<ExpResult> resList = new ArrayList<>();
-		value = ExpCollections.getCollection(resList, DimensionlessUnit.class);
 	}
 
 	private ExpResult getVectorForURI(URI uri, double simTime) {
@@ -69,13 +58,6 @@ public class FileToVector extends FileToArray {
 	public void setValue(ArrayList<Object> list) throws ExpError {
 		ArrayList<ExpResult> resList = getExpResultList(list);
 		value = ExpCollections.getCollection(resList, DimensionlessUnit.class);
-	}
-
-	@Output(name = "Value",
-	 description = "A vector containing the data from the input file.",
-	    sequence = 1)
-	public ExpResult getValue(double simTime) {
-		return value;
 	}
 
 }
