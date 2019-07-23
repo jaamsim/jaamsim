@@ -19,20 +19,23 @@ package com.jaamsim.BasicObjects;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
+import com.jaamsim.input.ExpCollections;
 import com.jaamsim.input.ExpError;
 import com.jaamsim.input.ExpResType;
 import com.jaamsim.input.ExpResult;
 import com.jaamsim.input.FileInput;
 import com.jaamsim.input.Output;
+import com.jaamsim.units.DimensionlessUnit;
 
 public class FileToHashMap extends FileToArray {
 
-	LinkedHashMap<String, ArrayList<ExpResult>> value;
+	ExpResult value;
 
 	public FileToHashMap() {
-		value = new LinkedHashMap<>();
+		clearValue();
 	}
 
 	@Override
@@ -42,12 +45,13 @@ public class FileToHashMap extends FileToArray {
 
 	@Override
 	protected void clearValue() {
-		value = new LinkedHashMap<>();
+		ArrayList<ExpResult> resList = new ArrayList<>();
+		value = ExpCollections.getCollection(resList, DimensionlessUnit.class);
 	}
 
-	private LinkedHashMap<String, ArrayList<ExpResult>> getHashMapForURI(URI uri, double simTime) {
+	private ExpResult getHashMapForURI(URI uri, double simTime) {
 		ArrayList<ArrayList<String>> tokens = FileInput.getTokensFromURI(uri);
-		LinkedHashMap<String, ArrayList<ExpResult>> ret = new LinkedHashMap<>(tokens.size());
+		LinkedHashMap<String, ExpResult> ret = new LinkedHashMap<>(tokens.size());
 
 		// Process each record from the file
 		for (ArrayList<String> strRecord : tokens) {
@@ -60,10 +64,11 @@ public class FileToHashMap extends FileToArray {
 
 			// Add the entry to the hashmap
 			String key = record.get(0).stringVal;
-			ArrayList<ExpResult> list = new ArrayList<>(record.subList(1, record.size()));
-			ret.put(key, list);
+			List<ExpResult> list = record.subList(1, record.size());
+			ExpResult colList = ExpCollections.getCollection(list, DimensionlessUnit.class);
+			ret.put(key, colList);
 		}
-		return ret;
+		return ExpCollections.getCollection(ret, DimensionlessUnit.class);
 	}
 
 	/**
@@ -74,20 +79,21 @@ public class FileToHashMap extends FileToArray {
 	 * @throws ExpError
 	 */
 	public void setValue(Map<String, ArrayList<Object>> map) throws ExpError {
-		LinkedHashMap<String, ArrayList<ExpResult>> temp = new LinkedHashMap<>(map.size());
+		LinkedHashMap<String, ExpResult> temp = new LinkedHashMap<>(map.size());
 		for (Map.Entry<String, ArrayList<Object>> entry : map.entrySet()) {
 			String key = entry.getKey();
 			ArrayList<ExpResult> resRow = getExpResultList(entry.getValue());
-			temp.put(key, resRow);
+			ExpResult colRow = ExpCollections.getCollection(resRow, DimensionlessUnit.class);
+			temp.put(key, colRow);
 		}
-		value = temp;
+		value = ExpCollections.getCollection(temp, DimensionlessUnit.class);
 	}
 
 	@Output(name = "Value",
 	 description = "A HashMap with a string-valued key that contains the data from the input "
 	             + "file.",
 	    sequence = 1)
-	public LinkedHashMap<String, ArrayList<ExpResult>> getValue(double simTime) {
+	public ExpResult getValue(double simTime) {
 		return value;
 	}
 
