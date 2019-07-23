@@ -107,6 +107,13 @@ public abstract class FileToArray extends LinkedComponent {
 		value = val;
 	}
 
+	private void setValueForURI(URI uri, double simTime) {
+		ArrayList<ArrayList<String>> tokens = FileInput.getTokensFromURI(uri);
+		value = getValueForTokens(tokens, simTime);
+	}
+
+	protected abstract ExpResult getValueForTokens(ArrayList<ArrayList<String>> tokens, double simTime);
+
 	protected ExpResult getExpResult(String str, double simTime) {
 
 		// Is the entry a time stamp?
@@ -152,8 +159,6 @@ public abstract class FileToArray extends LinkedComponent {
 		}
 		return ret;
 	}
-
-	protected abstract void setValueForURI(URI uri, double simTime);
 
 	@Output(name = "Value",
 	 description = "An array or map containing the data from the input file.",

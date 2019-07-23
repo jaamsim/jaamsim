@@ -16,7 +16,6 @@
  */
 package com.jaamsim.BasicObjects;
 
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -26,7 +25,6 @@ import com.jaamsim.input.ExpCollections;
 import com.jaamsim.input.ExpError;
 import com.jaamsim.input.ExpResType;
 import com.jaamsim.input.ExpResult;
-import com.jaamsim.input.FileInput;
 import com.jaamsim.units.DimensionlessUnit;
 
 public class FileToHashMap extends FileToArray {
@@ -34,12 +32,7 @@ public class FileToHashMap extends FileToArray {
 	public FileToHashMap() {}
 
 	@Override
-	protected void setValueForURI(URI uri, double simTime) {
-		value = getHashMapForURI(uri, simTime);
-	}
-
-	private ExpResult getHashMapForURI(URI uri, double simTime) {
-		ArrayList<ArrayList<String>> tokens = FileInput.getTokensFromURI(uri);
+	protected ExpResult getValueForTokens(ArrayList<ArrayList<String>> tokens, double simTime) {
 		LinkedHashMap<String, ExpResult> ret = new LinkedHashMap<>(tokens.size());
 
 		// Process each record from the file

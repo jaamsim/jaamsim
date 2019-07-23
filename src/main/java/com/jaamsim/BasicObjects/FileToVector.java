@@ -16,13 +16,11 @@
  */
 package com.jaamsim.BasicObjects;
 
-import java.net.URI;
 import java.util.ArrayList;
 
 import com.jaamsim.input.ExpError;
 import com.jaamsim.input.ExpCollections;
 import com.jaamsim.input.ExpResult;
-import com.jaamsim.input.FileInput;
 import com.jaamsim.units.DimensionlessUnit;
 
 public class FileToVector extends FileToArray {
@@ -30,12 +28,7 @@ public class FileToVector extends FileToArray {
 	public FileToVector() {}
 
 	@Override
-	protected void setValueForURI(URI uri, double simTime) {
-		value = getVectorForURI(uri, simTime);
-	}
-
-	private ExpResult getVectorForURI(URI uri, double simTime) {
-		ArrayList<ArrayList<String>> tokens = FileInput.getTokensFromURI(uri);
+	protected ExpResult getValueForTokens(ArrayList<ArrayList<String>> tokens, double simTime) {
 		int n = 0;
 		for (ArrayList<String> record : tokens) {
 			n += record.size();
