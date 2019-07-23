@@ -58,7 +58,7 @@ public abstract class FileToArray extends LinkedComponent {
 	         exampleList = {"'c:/test/data.txt'"})
 	private final FileInput dataFile;
 
-	protected ExpResult value;
+	private ExpResult value;
 
 	{
 		nextComponent.setRequired(false);
@@ -101,6 +101,10 @@ public abstract class FileToArray extends LinkedComponent {
 		super.addEntity(ent);
 		setValueForURI(dataFile.getValue(), getSimTime());
 		sendToNextComponent(ent);
+	}
+
+	protected void setValue(ExpResult val) {
+		value = val;
 	}
 
 	protected ExpResult getExpResult(String str, double simTime) {

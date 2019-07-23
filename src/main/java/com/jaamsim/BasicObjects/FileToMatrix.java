@@ -59,7 +59,8 @@ public class FileToMatrix extends FileToArray {
 			ExpResult colRow = ExpCollections.getCollection(resRow, DimensionlessUnit.class);
 			temp.add(colRow);
 		}
-		value = ExpCollections.getCollection(temp, DimensionlessUnit.class);
+		ExpResult val = ExpCollections.getCollection(temp, DimensionlessUnit.class);
+		setValue(val);
 	}
 
 }

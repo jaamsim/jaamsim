@@ -75,7 +75,8 @@ public class FileToHashMap extends FileToArray {
 			ExpResult colRow = ExpCollections.getCollection(resRow, DimensionlessUnit.class);
 			temp.put(key, colRow);
 		}
-		value = ExpCollections.getCollection(temp, DimensionlessUnit.class);
+		ExpResult val = ExpCollections.getCollection(temp, DimensionlessUnit.class);
+		setValue(val);
 	}
 
 }

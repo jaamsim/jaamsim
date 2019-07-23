@@ -57,7 +57,8 @@ public class FileToVector extends FileToArray {
 	 */
 	public void setValue(ArrayList<Object> list) throws ExpError {
 		ArrayList<ExpResult> resList = getExpResultList(list);
-		value = ExpCollections.getCollection(resList, DimensionlessUnit.class);
+		ExpResult val = ExpCollections.getCollection(resList, DimensionlessUnit.class);
+		setValue(val);
 	}
 
 }
