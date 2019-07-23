@@ -54,12 +54,24 @@ public class EntityLabel extends TextBasics {
 	public EntityLabel() {}
 
 	public static EntityLabel getLabel(DisplayEntity ent) {
+
+		// Is there a label with the correct name?
 		Entity label = ent.getJaamSimModel().getNamedEntity(ent.getName() + "_Label");
 		if (label == null) // FIXME - remove when all labels have the correct name
 			label = ent.getJaamSimModel().getNamedEntity(ent.getName() + "_Label1");
-		if (label != null && !(label instanceof EntityLabel))
-			throw new ErrorException("Entity %s is not an EntityLabel", label);
-		return (EntityLabel) label;
+		if (label != null) {
+			if (!(label instanceof EntityLabel))
+				throw new ErrorException("Entity %s is not an EntityLabel", label);
+			return (EntityLabel) label;
+		}
+
+		// Otherwise, search for a label with the correct target entity
+		// (Required when the entity's name has been changed)
+		for (EntityLabel lab : ent.getJaamSimModel().getClonesOfIterator(EntityLabel.class)) {
+			if (lab.getTarget() == ent)
+				return lab;
+		}
+		return null;
 	}
 
 	@Override
