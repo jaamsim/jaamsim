@@ -595,6 +595,9 @@ public class Queue extends LinkedComponent {
 
 			i++;
 
+			// Set the region
+			item.setRegion(this.getCurrentRegion());
+
 			// Rotate each transporter about its center so it points to the right direction
 			item.setRelativeOrientation(queueOrientation);
 			item.setShow(visible);

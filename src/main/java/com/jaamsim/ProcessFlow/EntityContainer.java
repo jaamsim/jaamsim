@@ -251,6 +251,9 @@ public class EntityContainer extends SimEntity implements EntContainer {
 				distanceX = -0.5d*size.x;
 			}
 
+			// Set the region
+			item.setRegion(this.getCurrentRegion());
+
 			// Rotate each entity about its center so it points to the right direction
 			item.setShow(visible);
 			item.setRelativeOrientation(orient);
