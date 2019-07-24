@@ -615,8 +615,8 @@ public class Queue extends LinkedComponent {
 			distanceX += 0.5d * length + spacing.getValue();
 
 			// Set Position
-			Vec3d itemCenter = this.getGlobalPositionForPosition(tmp);
-			item.setGlobalPositionForAlignment(item.getAlignment(), itemCenter);
+			Vec3d pos = this.getGlobalPositionForPosition(tmp);
+			item.setGlobalPosition(pos);
 		}
 	}
 
