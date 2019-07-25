@@ -603,30 +603,6 @@ public class DisplayEntity extends Entity {
 		val.set3(x, y, z);
 	}
 
-	public Vec3d getPositionForAlignment(Vec3d alignment) {
-		Vec3d temp = new Vec3d(alignment);
-		synchronized (position) {
-			temp.sub3(align);
-			temp.mul3(size);
-			calculateEulerRotation(temp, orient);
-			temp.add3(position);
-		}
-
-		return temp;
-	}
-
-	public Vec3d getGlobalPositionForAlignment(Vec3d alignment) {
-		Vec3d temp = new Vec3d(alignment);
-		synchronized (position) {
-			temp.sub3(align);
-			temp.mul3(size);
-			calculateEulerRotation(temp, orient);
-			temp.add3(this.getGlobalPosition());
-		}
-
-		return temp;
-	}
-
 	/**
 	 * Returns the global coordinates for the given position in the entity's internal coordinate
 	 * system, relative to its centre.
@@ -793,18 +769,6 @@ public class DisplayEntity extends Entity {
 		return ret;
 	}
 
-	/*
-	 * Returns the center relative to the origin
-	 */
-	public Vec3d getAbsoluteCenter() {
-		Vec3d cent = this.getPositionForAlignment(new Vec3d());
-		DisplayEntity ent = this.getRelativeEntity();
-		if (ent != null)
-			cent.add3(ent.getGlobalPosition());
-
-		return cent;
-	}
-
 	public void setGlobalPosition(Vec3d pos) {
 		setPosition(getLocalPosition(pos));
 	}
@@ -832,31 +796,6 @@ public class DisplayEntity extends Entity {
 			currentRegion.getInverseRegionTrans().multAndTrans(pos, localPos);
 
 		return localPos;
-	}
-
-	/*
-	 * move object to argument point based on alignment
-	 */
-	public void setPositionForAlignment(Vec3d alignment, Vec3d position) {
-		// Calculate the difference between the desired point and the current aligned position
-		Vec3d diff = this.getPositionForAlignment(alignment);
-		diff.sub3(position);
-		diff.scale3(-1.0d);
-
-		// add the difference to the current position and set the new position
-		diff.add3(getPosition());
-		setPosition(diff);
-	}
-
-	public void setGlobalPositionForAlignment(Vec3d alignment, Vec3d position) {
-		// Calculate the difference between the desired point and the current aligned position
-		Vec3d diff = this.getGlobalPositionForAlignment(alignment);
-		diff.sub3(position);
-		diff.scale3(-1.0d);
-
-		// add the difference to the current position and set the new position
-		diff.add3(getPosition());
-		setPosition(diff);
 	}
 
 	/**
