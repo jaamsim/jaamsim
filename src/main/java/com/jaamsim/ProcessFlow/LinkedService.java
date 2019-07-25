@@ -185,6 +185,7 @@ public abstract class LinkedService extends LinkedDevice implements QueueUser {
 	// ********************************************************************************************
 
 	protected final void moveToProcessPosition(DisplayEntity ent) {
+		ent.setRegion(this.getCurrentRegion());
 		Vec3d pos = this.getGlobalPosition();
 		pos.add3(processPosition.getValue());
 		ent.setGlobalPosition(pos);
