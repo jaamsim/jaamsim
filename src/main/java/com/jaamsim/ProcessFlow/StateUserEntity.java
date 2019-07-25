@@ -278,6 +278,30 @@ public abstract class StateUserEntity extends StateEntity implements ThresholdUs
 		return false;
 	}
 
+	public boolean isForcedDowntimePending() {
+		for (DowntimeEntity de : forcedMaintenanceList.getValue()) {
+			if (de.isDowntimePending())
+				return true;
+		}
+		for (DowntimeEntity de : forcedBreakdownList.getValue()) {
+			if (de.isDowntimePending())
+				return true;
+		}
+		return false;
+	}
+
+	public boolean isImmediateDowntimePending() {
+		for (DowntimeEntity de : immediateMaintenanceList.getValue()) {
+			if (de.isDowntimePending())
+				return true;
+		}
+		for (DowntimeEntity de : immediateBreakdownList.getValue()) {
+			if (de.isDowntimePending())
+				return true;
+		}
+		return false;
+	}
+
 	public boolean isAvailable() {
 		return isOpen() && !isMaintenance() && !isBreakdown() && isActive();
 	}
