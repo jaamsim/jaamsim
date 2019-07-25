@@ -95,7 +95,7 @@ public abstract class Device extends StateUserEntity {
 		if (isTraceFlag()) {
 			trace(0, "startStep");
 			traceLine(1, "isAvailable=%s, forcedDowntimePending=%s, immediateDowntimePending=%s",
-					isAvailable(), forcedDowntimePending, immediateDowntimePending);
+					isAvailable(), isForcedDowntimePending(), isImmediateDowntimePending());
 		}
 
 		double simTime = this.getSimTime();
@@ -215,7 +215,7 @@ public abstract class Device extends StateUserEntity {
 				|| isImmediateThresholdClosure() || isImmediateReleaseThresholdClosure()
 				|| (isOperatingThresholdClosure() && isFinished())
 				|| (isReleaseThresholdClosure() && readyToRelease)
-				|| immediateDowntimePending || (forcedDowntimePending && isFinished());
+				|| isImmediateDowntimePending() || (isForcedDowntimePending() && isFinished());
 	}
 
 	/**
@@ -397,14 +397,6 @@ public abstract class Device extends StateUserEntity {
 	// MAINTENANCE AND BREAKDOWNS
 	// ********************************************************************************************
 
-	public boolean isForcedDowntimePending() {
-		return forcedDowntimePending;
-	}
-
-	public boolean isImmediateDowntimePending() {
-		return immediateDowntimePending;
-	}
-
 	@Override
 	public boolean canStartDowntime(DowntimeEntity down) {
 
@@ -426,20 +418,8 @@ public abstract class Device extends StateUserEntity {
 		if (!this.isBusy())
 			return;
 
-		// For an opportunistic downtime, do nothing and wait for the process to finish
-		if (isOpportunisticDowntime(down)) {
-			return;
-		}
-
-		// For a forced downtime, set the flag to stop further processing
-		if (isForcedDowntime(down)) {
-			forcedDowntimePending = true;
-			return;
-		}
-
-		// For an immediate downtime, set the flag and interrupt the present process
+		// For an immediate downtime, interrupt the present process
 		if (isImmediateDowntime(down)) {
-			immediateDowntimePending = true;
 			this.performUnscheduledUpdate();
 			return;
 		}
