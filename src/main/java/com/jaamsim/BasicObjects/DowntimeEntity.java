@@ -445,7 +445,11 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 		return down;
 	}
 
-	public boolean downtimePending() {
+	/**
+	 * Returns whether the downtime event is ready to begin.
+	 * @return true if downtime can begin
+	 */
+	public boolean isDowntimePending() {
 		return downtimePendings > 0;
 	}
 
