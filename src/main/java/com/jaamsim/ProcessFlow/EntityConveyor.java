@@ -300,6 +300,8 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 		for (int i=0; i<entryList.size(); i++) {
 			ConveyorEntry entry = entryList.get(i);
 
+			entry.entity.setRegion(this.getCurrentRegion());
+
 			Vec3d localPos = PolylineInfo.getPositionOnPolyline(getCurvePoints(), entry.position + frac);
 			entry.entity.setGlobalPosition(this.getGlobalPosition(localPos));
 

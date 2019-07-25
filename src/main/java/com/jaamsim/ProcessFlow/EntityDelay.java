@@ -270,6 +270,9 @@ public class EntityDelay extends LinkedComponent implements LineEntity {
 			// Calculate the distance travelled by this entity
 			double frac = ( simTime - entry.startTime ) / entry.duration;
 
+			// Set the region for the entity
+			entry.ent.setRegion(this.getCurrentRegion());
+
 			// Set the position for the entity
 			Vec3d localPos = PolylineInfo.getPositionOnPolyline(getCurvePoints(), frac);
 			entry.ent.setGlobalPosition(this.getGlobalPosition(localPos));
