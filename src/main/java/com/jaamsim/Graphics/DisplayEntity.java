@@ -627,6 +627,12 @@ public class DisplayEntity extends Entity {
 		return temp;
 	}
 
+	/**
+	 * Returns the global coordinates for the given position in the entity's internal coordinate
+	 * system, relative to its centre.
+	 * @param pos - position in internal coordinates
+	 * @return position in global coordinates
+	 */
 	public Vec3d getGlobalPositionForPosition(Vec3d pos) {
 		Vec3d temp = new Vec3d(pos);
 		synchronized (position) {
@@ -634,9 +640,9 @@ public class DisplayEntity extends Entity {
 			scaledAlign.mul3(size);
 			temp.sub3(scaledAlign);
 			calculateEulerRotation(temp, orient);
-			temp.add3(this.getGlobalPosition());
+			temp.add3(getPosition());
+			temp = getGlobalPosition(temp);
 		}
-
 		return temp;
 	}
 
