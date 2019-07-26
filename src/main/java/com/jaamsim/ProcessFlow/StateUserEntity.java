@@ -402,6 +402,43 @@ public abstract class StateUserEntity extends StateEntity implements ThresholdUs
 				|| opportunisticBreakdownList.getValue().contains(down);
 	}
 
+	@Override
+	public boolean canStartDowntime(DowntimeEntity down) {
+
+		// Downtime can start when any work in progress has been interrupted and there are no
+		// other maintenance or breakdown activities that are being performed. It is okay to start
+		// downtime when one or more thresholds are closed.
+		return !isBusy() && !isMaintenance() && !isBreakdown();
+	}
+
+	@Override
+	public void prepareForDowntime(DowntimeEntity down) {
+		if (isTraceFlag()) trace(0, "prepareForDowntime(%s) - type=%s, busy=%s",
+				down, getDowntimeType(down), isBusy());
+	}
+
+	@Override
+	public void startDowntime(DowntimeEntity down) {
+		if (isTraceFlag()) trace(0, "startDowntime(%s)", down);
+		setPresentState();
+	}
+
+	@Override
+	public void endDowntime(DowntimeEntity down) {
+		if (isTraceFlag()) trace(0, "endDowntime(%s)", down);
+		setPresentState();
+	}
+
+	public String getDowntimeType(DowntimeEntity down) {
+		if (isImmediateDowntime(down))
+			return "Immediate";
+		if (isForcedDowntime(down))
+			return "Forced";
+		if (isOpportunisticDowntime(down))
+			return "Opportunistic";
+		return "Unknown";
+	}
+
 	public boolean isImmediateDowntime(DowntimeEntity down) {
 		return immediateMaintenanceList.getValue().contains(down)
 				|| immediateBreakdownList.getValue().contains(down);
