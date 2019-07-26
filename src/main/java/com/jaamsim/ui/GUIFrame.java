@@ -454,9 +454,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		setWindowDefaults();
 		EntityPallet.update();
 
-		undoList.clear();
-		redoList.clear();
-		updateForUndo();
+		clearUndoRedo();
 	}
 
 	/**
@@ -1002,20 +1000,22 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			@Override
 			public void actionPerformed( ActionEvent event ) {
 				ScrollablePopupMenu menu = new ScrollablePopupMenu("UndoMenu");
-				for (int i = 1; i <= undoList.size(); i++) {
-					Command cmd = undoList.get(undoList.size() - i);
-					final int num = i;
-					JMenuItem item = new JMenuItem(cmd.toString());
-					item.addActionListener( new ActionListener() {
+				synchronized (undoList) {
+					for (int i = 1; i <= undoList.size(); i++) {
+						Command cmd = undoList.get(undoList.size() - i);
+						final int num = i;
+						JMenuItem item = new JMenuItem(cmd.toString());
+						item.addActionListener( new ActionListener() {
 
-						@Override
-						public void actionPerformed( ActionEvent event ) {
-							undo(num);
-						}
-					} );
-					menu.add(item);
+							@Override
+							public void actionPerformed( ActionEvent event ) {
+								undo(num);
+							}
+						} );
+						menu.add(item);
+					}
+					menu.show(undoDropdown, 0, undoDropdown.getHeight());
 				}
-				menu.show(undoDropdown, 0, undoDropdown.getHeight());
 			}
 		} );
 		buttonBar.add( undoDropdown );
@@ -1049,20 +1049,22 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			@Override
 			public void actionPerformed( ActionEvent event ) {
 				ScrollablePopupMenu menu = new ScrollablePopupMenu("RedoMenu");
-				for (int i = 1; i <= redoList.size(); i++) {
-					Command cmd = redoList.get(redoList.size() - i);
-					final int num = i;
-					JMenuItem item = new JMenuItem(cmd.toString());
-					item.addActionListener( new ActionListener() {
+				synchronized (undoList) {
+					for (int i = 1; i <= redoList.size(); i++) {
+						Command cmd = redoList.get(redoList.size() - i);
+						final int num = i;
+						JMenuItem item = new JMenuItem(cmd.toString());
+						item.addActionListener( new ActionListener() {
 
-						@Override
-						public void actionPerformed( ActionEvent event ) {
-							redo(num);
-						}
-					} );
-					menu.add(item);
+							@Override
+							public void actionPerformed( ActionEvent event ) {
+								redo(num);
+							}
+						} );
+						menu.add(item);
+					}
+					menu.show(redoDropdown, 0, redoDropdown.getHeight());
 				}
-				menu.show(redoDropdown, 0, redoDropdown.getHeight());
 			}
 		} );
 		buttonBar.add( redoDropdown );
@@ -2984,49 +2986,59 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 	@Override
 	public void storeAndExecute(Command cmd) {
-		Command mergedCmd = null;
-		if (!undoList.isEmpty()) {
-			Command lastCmd = undoList.get(undoList.size() - 1);
-			mergedCmd = lastCmd.tryMerge(cmd);
+		synchronized (undoList) {
+			Command mergedCmd = null;
+			if (!undoList.isEmpty()) {
+				Command lastCmd = undoList.get(undoList.size() - 1);
+				mergedCmd = lastCmd.tryMerge(cmd);
+			}
+			if (mergedCmd != null) {
+				undoList.set(undoList.size() - 1, mergedCmd);
+			}
+			else {
+				undoList.add(cmd);
+			}
+			cmd.execute();
+			redoList.clear();
 		}
-		if (mergedCmd != null) {
-			undoList.set(undoList.size() - 1, mergedCmd);
-		}
-		else {
-			undoList.add(cmd);
-		}
-		cmd.execute();
-		redoList.clear();
 		updateForUndo();
 	}
 
 	public void undo() {
-		if (undoList.isEmpty())
-			return;
-		Command cmd = undoList.remove(undoList.size() - 1);
-		redoList.add(cmd);
-		cmd.undo();
+		synchronized (undoList) {
+			if (undoList.isEmpty())
+				return;
+			Command cmd = undoList.remove(undoList.size() - 1);
+			redoList.add(cmd);
+			cmd.undo();
+		}
 		updateForUndo();
 	}
 
 	public void redo() {
-		if (redoList.isEmpty())
-			return;
-		Command cmd = redoList.remove(redoList.size() - 1);
-		undoList.add(cmd);
-		cmd.execute();
+		synchronized (undoList) {
+			if (redoList.isEmpty())
+				return;
+			Command cmd = redoList.remove(redoList.size() - 1);
+			undoList.add(cmd);
+			cmd.execute();
+		}
 		updateForUndo();
 	}
 
 	public void undo(int n) {
-		for (int i = 0; i < n; i++) {
-			undo();
+		synchronized (undoList) {
+			for (int i = 0; i < n; i++) {
+				undo();
+			}
 		}
 	}
 
 	public void redo(int n) {
-		for (int i = 0; i < n; i++) {
-			redo();
+		synchronized (undoList) {
+			for (int i = 0; i < n; i++) {
+				redo();
+			}
 		}
 	}
 
@@ -3049,11 +3061,21 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	}
 
 	public void updateForUndo() {
-		undo.setEnabled(!undoList.isEmpty());
-		undoDropdown.setEnabled(!undoList.isEmpty());
-		redo.setEnabled(!redoList.isEmpty());
-		redoDropdown.setEnabled(!redoList.isEmpty());
+		synchronized (undoList) {
+			undo.setEnabled(!undoList.isEmpty());
+			undoDropdown.setEnabled(!undoList.isEmpty());
+			redo.setEnabled(!redoList.isEmpty());
+			redoDropdown.setEnabled(!redoList.isEmpty());
+		}
 		GUIFrame.updateUI();
+	}
+
+	public void clearUndoRedo() {
+		synchronized (undoList) {
+			undoList.clear();
+			redoList.clear();
+		}
+		updateForUndo();
 	}
 
 	private void updateForSnapGridSpacing(String str) {
