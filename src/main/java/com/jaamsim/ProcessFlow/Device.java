@@ -16,7 +16,6 @@
  */
 package com.jaamsim.ProcessFlow;
 
-
 import com.jaamsim.BasicObjects.DowntimeEntity;
 import com.jaamsim.basicsim.EntityTarget;
 import com.jaamsim.events.EventHandle;
@@ -392,21 +391,8 @@ public abstract class Device extends StateUserEntity {
 	// ********************************************************************************************
 
 	@Override
-	public boolean canStartDowntime(DowntimeEntity down) {
-
-		// Downtime can start when any work in progress has been interrupted and there are no
-		// other maintenance or breakdown activities that are being performed. It is okay to start
-		// downtime when one or more thresholds are closed.
-		return !isBusy() && !isMaintenance() && !isBreakdown();
-	}
-
-	@Override
 	public void prepareForDowntime(DowntimeEntity down) {
-		if (isTraceFlag()) {
-			trace(0, "prepareForDowntime(%s)", down);
-			traceLine(1, "isImmediateDowntime=%s, isForcedDowntime=%s, isBusy=%s",
-				isImmediateDowntime(down), isForcedDowntime(down), isBusy());
-		}
+		super.prepareForDowntime(down);
 
 		// If the device is idle already, then downtime can start right away
 		if (!this.isBusy())
@@ -420,14 +406,8 @@ public abstract class Device extends StateUserEntity {
 	}
 
 	@Override
-	public void startDowntime(DowntimeEntity down) {
-		if (isTraceFlag()) trace(0, "startDowntime(%s)", down);
-		this.setPresentState();
-	}
-
-	@Override
 	public void endDowntime(DowntimeEntity down) {
-		if (isTraceFlag()) trace(0, "endDowntime(%s)", down);
+		super.endDowntime(down);
 		this.restart();
 	}
 
