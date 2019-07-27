@@ -115,11 +115,13 @@ public class EditBox extends FrameBox {
 			@Override
 			public void componentMoved(ComponentEvent e) {
 				Point pt = gui.getRelativeLocation(getLocation().x, getLocation().y);
+				Simulation simulation = GUIFrame.getJaamSimModel().getSimulation();
 				simulation.setInputEditorPos(pt.x, pt.y);
 			}
 
 			@Override
 			public void componentResized(ComponentEvent e) {
+				Simulation simulation = GUIFrame.getJaamSimModel().getSimulation();
 				simulation.setInputEditorSize(getSize().width, getSize().height);
 			}
 		});

@@ -187,11 +187,13 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 			@Override
 			public void componentMoved(ComponentEvent e) {
 				Point pt = gui.getRelativeLocation(getLocation().x, getLocation().y);
+				Simulation simulation = GUIFrame.getJaamSimModel().getSimulation();
 				simulation.setEventViewerPos(pt.x, pt.y);
 			}
 
 			@Override
 			public void componentResized(ComponentEvent e) {
+				Simulation simulation = GUIFrame.getJaamSimModel().getSimulation();
 				simulation.setEventViewerSize(getSize().width, getSize().height);
 			}
 		});

@@ -69,11 +69,13 @@ public class PropertyBox extends FrameBox {
 			@Override
 			public void componentMoved(ComponentEvent e) {
 				Point pt = gui.getRelativeLocation(getLocation().x, getLocation().y);
+				Simulation simulation = GUIFrame.getJaamSimModel().getSimulation();
 				simulation.setPropertyViewerPos(pt.x, pt.y);
 			}
 
 			@Override
 			public void componentResized(ComponentEvent e) {
+				Simulation simulation = GUIFrame.getJaamSimModel().getSimulation();
 				simulation.setPropertyViewerSize(getSize().width, getSize().height);
 			}
 		});

@@ -66,11 +66,13 @@ public class OutputBox extends FrameBox {
 			@Override
 			public void componentMoved(ComponentEvent e) {
 				Point pt = gui.getRelativeLocation(getLocation().x, getLocation().y);
+				Simulation simulation = GUIFrame.getJaamSimModel().getSimulation();
 				simulation.setOutputViewerPos(pt.x, pt.y);
 			}
 
 			@Override
 			public void componentResized(ComponentEvent e) {
+				Simulation simulation = GUIFrame.getJaamSimModel().getSimulation();
 				simulation.setOutputViewerSize(getSize().width, getSize().height);
 			}
 		});

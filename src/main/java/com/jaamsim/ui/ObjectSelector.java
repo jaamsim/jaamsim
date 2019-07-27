@@ -101,11 +101,13 @@ public class ObjectSelector extends FrameBox {
 			@Override
 			public void componentMoved(ComponentEvent e) {
 				Point pt = gui.getRelativeLocation(getLocation().x, getLocation().y);
+				Simulation simulation = GUIFrame.getJaamSimModel().getSimulation();
 				simulation.setObjectSelectorPos(pt.x, pt.y);
 			}
 
 			@Override
 			public void componentResized(ComponentEvent e) {
+				Simulation simulation = GUIFrame.getJaamSimModel().getSimulation();
 				simulation.setObjectSelectorSize(getSize().width, getSize().height);
 			}
 		});
