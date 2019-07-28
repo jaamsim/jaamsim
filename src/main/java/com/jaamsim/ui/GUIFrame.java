@@ -1338,7 +1338,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			public void actionPerformed( ActionEvent event ) {
 				DisplayEntity ent = (DisplayEntity) sim.getNamedEntity("XYZ-Axis");
 				if (ent != null) {
-					InputAgent.applyBoolean(ent, "Show", xyzAxis.isSelected());
+					KeywordIndex kw = InputAgent.formatBoolean("Show", xyzAxis.isSelected());
+					InputAgent.storeAndExecute(new KeywordCommand(ent, kw));
 				}
 				controlStartResume.requestFocusInWindow();
 			}
