@@ -1434,7 +1434,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				InputAgent.applyBoolean(sim.getSimulation(), "SnapToGrid", snapToGrid.isSelected());
+				KeywordIndex kw = InputAgent.formatBoolean("SnapToGrid", snapToGrid.isSelected());
+				InputAgent.storeAndExecute(new KeywordCommand(sim.getSimulation(), kw));
 				gridSpacing.setEnabled(snapToGrid.isSelected());
 				controlStartResume.requestFocusInWindow();
 			}
