@@ -2304,7 +2304,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				int val = (int) lineWidth.getValue();
 				if (val == lineEnt.getLineWidth())
 					return;
-				InputAgent.applyIntegers((Entity)lineEnt, "LineWidth", val);
+				KeywordIndex kw = InputAgent.formatIntegers("LineWidth", val);
+				InputAgent.storeAndExecute(new KeywordCommand((Entity)lineEnt, kw));
 			}
 		});
 
