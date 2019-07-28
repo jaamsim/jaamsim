@@ -432,6 +432,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	 * Clears the simulation and user interface prior to loading a new model
 	 */
 	public void clear() {
+
+		// Close the tool and view windows
 		FrameBox.clear();
 		EntityPallet.clear();
 		RenderManager.clear();
@@ -440,7 +442,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 		// Clear the title bar
 		setTitle(sim.getSimulation().getModelName());
-		sim.clear();
 
 		// Clear the status bar
 		tickUpdate(0L);
@@ -449,9 +450,11 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		remainingDisplay.setText("-");
 		locatorPos.setText( "-" );
 
-		// Read the autoload configuration file
+		// Build a completely new simulation model
+		sim.clear();
 		sim.autoLoad();
 		setWindowDefaults();
+
 		EntityPallet.update();
 
 		clearUndoRedo();
