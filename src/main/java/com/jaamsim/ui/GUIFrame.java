@@ -1369,7 +1369,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 					grid.setSelected(true);
 				}
 				if (ent != null) {
-					InputAgent.applyBoolean(ent, "Show", grid.isSelected());
+					KeywordIndex kw = InputAgent.formatBoolean("Show", grid.isSelected());
+					InputAgent.storeAndExecute(new KeywordCommand(ent, kw));
 				}
 				controlStartResume.requestFocusInWindow();
 			}
