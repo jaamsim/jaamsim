@@ -5196,7 +5196,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				options[0]);
 
 		if (userOption == JOptionPane.YES_OPTION) {
-			InputAgent.applyBoolean(sim.getSimulation(), "ShowLogViewer", true);
+			KeywordIndex kw = InputAgent.formatBoolean("ShowLogViewer", true);
+			InputAgent.storeAndExecute(new KeywordCommand(sim.getSimulation(), kw));
 		}
 	}
 
