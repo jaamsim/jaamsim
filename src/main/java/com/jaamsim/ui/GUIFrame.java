@@ -3483,7 +3483,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		try {
 			// Parse the keyword inputs
 			KeywordIndex kw = new KeywordIndex("PauseTime", tokens, null);
-			InputAgent.apply(sim.getSimulation(), kw);
+			InputAgent.storeAndExecute(new KeywordCommand(sim.getSimulation(), kw));
 		}
 		catch (InputErrorException e) {
 			pauseTime.setText(prevVal);
