@@ -667,6 +667,11 @@ public class TestExpParser {
 		assertTrue(res.type == ExpResType.NUMBER);
 		assertTrue(res.value == 2);
 
+		exp = ExpParser.parseExpression(pc, "{\"foo\" = 10, \"bar\" = 42}(\"bar\")");
+		res = exp.evaluate(ec);
+		assertTrue(res.type == ExpResType.NUMBER);
+		assertTrue(res.value == 42);
+
 		exp = ExpParser.parseExpression(pc, "{\"foo\", \"bar\", \"baz\"}(3)");
 		res = exp.evaluate(ec);
 		assertTrue(res.type == ExpResType.STRING);

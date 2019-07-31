@@ -554,11 +554,13 @@ public class ExpParser {
 
 	private static class BuildArray extends ExpNode {
 		public ArrayList<ExpNode> values;
+		public ArrayList<String> keys;
 
-		public BuildArray(ParseContext context, ArrayList<ExpNode> valueExps, Expression exp, int pos) throws ExpError {
+		public BuildArray(ParseContext context, ArrayList<ExpNode> valueExps, ArrayList<String> keys, Expression exp, int pos) throws ExpError {
 			super(context, exp, pos);
 
 			this.values = valueExps;
+			this.keys = keys;
 		}
 
 		@Override
@@ -568,10 +570,23 @@ public class ExpParser {
 				for (ExpNode e : values) {
 					res.add(e.evaluate(ec));
 				}
-				// Using the heuristic that if the eval context is null, this is probably an evaluation as part of constant folding
-				// even if this is wrong, the behavior will be correct, but possibly a bit slower
-				boolean isConstant = ec == null;
-				return ExpCollections.makeExpressionCollection(res, isConstant);
+				if (keys == null) {
+					// This is an array literal
+
+					// Using the heuristic that if the eval context is null, this is probably an evaluation as part of constant folding
+					// even if this is wrong, the behavior will be correct, but possibly a bit slower
+					boolean isConstant = ec == null;
+					return ExpCollections.makeExpressionCollection(res, isConstant);
+				} else {
+					// This is a map literal
+					assert(keys.size() == res.size());
+					HashMap<String, ExpResult> map = new HashMap<>();
+					for (int i = 0; i < keys.size(); ++i) {
+						map.put(keys.get(i), res.get(i));
+					}
+					Class<? extends Unit> unitType = res.size() == 0 ? DimensionlessUnit.class : res.get(0).unitType;
+					return ExpCollections.getCollection(map, unitType);
+				}
 			} catch (ExpError ex) {
 				throw fixError(ex, exp.source, tokenPos);
 			}
@@ -1534,7 +1549,11 @@ public class ExpParser {
 	private static ExpNode parseArray(ParseContext context, TokenList tokens, Expression exp, int pos) throws ExpError {
 		boolean foundComma = true;
 
+		boolean isArray = false;
+		boolean isMap = false;
+
 		ArrayList<ExpNode> exps = new ArrayList<>();
+		ArrayList<String> keys = null;
 		while(true) {
 		// Parse an array
 			ExpTokenizer.Token peeked = tokens.peek();
@@ -1548,14 +1567,54 @@ public class ExpParser {
 			}
 			foundComma = false;
 
-			exps.add(parseExp(context, tokens, 0, exp));
-			peeked = tokens.peek();
+			// We do not know if this is an array or map, so parse the first value,
+			if (!isArray && !isMap) {
+				ExpNode key = parseExp(context, tokens, 0, exp);
+				peeked = tokens.peek();
+
+				// Check if the next token is an equals sign, and the first expression is a string literal
+				// if so, this is a map
+				if (peeked.value.equals("=")) {
+					isMap = true;
+					keys = new ArrayList<>();
+
+					if (!(key instanceof Constant) || (((Constant)key).val.type != ExpResType.STRING)) {
+						throw new ExpError(exp.source, peeked.pos, "Map literals must use strings as keys.");
+					}
+					keys.add(((Constant)key).val.stringVal);
+					tokens.next(); // skip "="
+					exps.add(parseExp(context, tokens, 0, exp));
+					peeked = tokens.peek();
+				} else {
+					isArray = true;
+					exps.add(key);
+				}
+			} else {
+				// Regular iterations
+				if (isArray) {
+					exps.add(parseExp(context, tokens, 0, exp));
+					peeked = tokens.peek();
+				}
+				if (isMap) {
+					ExpNode key = parseExp(context, tokens, 0, exp);
+
+					if (!(key instanceof Constant) || (((Constant)key).val.type != ExpResType.STRING)) {
+						throw new ExpError(exp.source, peeked.pos, "Map literals must use strings as keys.");
+					}
+
+					keys.add(((Constant)key).val.stringVal);
+					tokens.expect(ExpTokenizer.SYM_TYPE, "=", exp.source);
+					exps.add(parseExp(context, tokens, 0, exp));
+					peeked = tokens.peek();
+				}
+			}
+
 			if (peeked != null && peeked.value.equals(",")) {
 				tokens.next();
 				foundComma = true;
 			}
 		}
-		return new BuildArray(context, exps, exp, pos);
+		return new BuildArray(context, exps, keys, exp, pos);
 
 	}
 
