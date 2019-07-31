@@ -1450,30 +1450,7 @@ public class ExpParser {
 		// The next token must be a symbol
 		if (nextTok.value.equals("{")) {
 
-			boolean foundComma = true;
-
-			ArrayList<ExpNode> exps = new ArrayList<>();
-			while(true) {
-			// Parse an array
-				ExpTokenizer.Token peeked = tokens.peek();
-				if (peeked != null && peeked.value.equals("}")) {
-					tokens.next(); // consume
-					break;
-				}
-
-				if (!foundComma) {
-					throw new ExpError(exp.source, peeked.pos, "Expected ',' or '}' in literal array.");
-				}
-				foundComma = false;
-
-				exps.add(parseExp(context, tokens, 0, exp));
-				peeked = tokens.peek();
-				if (peeked != null && peeked.value.equals(",")) {
-					tokens.next();
-					foundComma = true;
-				}
-			}
-			return new BuildArray(context, exps, exp, nextTok.pos);
+			return parseArray(context, tokens, exp, nextTok.pos);
 		}
 
 		if (nextTok.value.equals("|")) {
@@ -1552,6 +1529,34 @@ public class ExpParser {
 
 		tokens.expect(ExpTokenizer.SYM_TYPE, ")", exp.source);
 		return indices;
+	}
+
+	private static ExpNode parseArray(ParseContext context, TokenList tokens, Expression exp, int pos) throws ExpError {
+		boolean foundComma = true;
+
+		ArrayList<ExpNode> exps = new ArrayList<>();
+		while(true) {
+		// Parse an array
+			ExpTokenizer.Token peeked = tokens.peek();
+			if (peeked != null && peeked.value.equals("}")) {
+				tokens.next(); // consume
+				break;
+			}
+
+			if (!foundComma) {
+				throw new ExpError(exp.source, peeked.pos, "Expected ',' or '}' in literal array.");
+			}
+			foundComma = false;
+
+			exps.add(parseExp(context, tokens, 0, exp));
+			peeked = tokens.peek();
+			if (peeked != null && peeked.value.equals(",")) {
+				tokens.next();
+				foundComma = true;
+			}
+		}
+		return new BuildArray(context, exps, exp, pos);
+
 	}
 
 	private static ExpNode parseLambda(ParseContext context, TokenList tokens, Expression exp, int pos) throws ExpError {
