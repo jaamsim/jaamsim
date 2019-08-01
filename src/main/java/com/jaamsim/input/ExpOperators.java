@@ -1356,7 +1356,7 @@ public class ExpOperators {
 					}
 					results.add(result);
 				}
-				return ExpCollections.getCollection(results, unitType);
+				return ExpCollections.wrapCollection(results, unitType);
 			}
 
 			@Override
@@ -1422,7 +1422,7 @@ public class ExpOperators {
 						unitType = resUnitType;
 					}
 				}
-				return ExpCollections.getCollection(results, unitType);
+				return ExpCollections.wrapCollection(results, unitType);
 			}
 
 			@Override
@@ -1557,7 +1557,7 @@ public class ExpOperators {
 						throw e;
 					}
 				}
-				return ExpCollections.getCollection(results, unitType);
+				return ExpCollections.wrapCollection(results, unitType);
 			}
 
 			@Override
@@ -1625,7 +1625,7 @@ public class ExpOperators {
 				}
 
 				if (startVal > endVal) {
-					return ExpCollections.getCollection(new ArrayList<ExpResult>(), args[0].unitType);
+					return ExpCollections.wrapCollection(new ArrayList<ExpResult>(), args[0].unitType);
 				}
 
 				double inc = 1;
@@ -1638,7 +1638,7 @@ public class ExpOperators {
 					res.add(ExpResult.makeNumResult(val, args[0].unitType));
 					val += inc;
 				}
-				return ExpCollections.getCollection(res, args[0].unitType);
+				return ExpCollections.wrapCollection(res, args[0].unitType);
 
 			}
 

@@ -50,7 +50,13 @@ public class ExpCollections {
 	}
 
 
-	public static ExpResult getCollection(Object obj, Class<? extends Unit> ut) {
+	/**
+	 * Wrap an existing Java collection in an expression collection
+	 * @param obj - collection object to be wrapped
+	 * @param ut - unit type
+	 * @return - Read-only ExpResult representing the collection
+	 */
+	public static ExpResult wrapCollection(Object obj, Class<? extends Unit> ut) {
 		if (obj instanceof Map) {
 			MapCollection col = new MapCollection((Map<?,?>)obj, ut);
 			return ExpResult.makeCollectionResult(col);

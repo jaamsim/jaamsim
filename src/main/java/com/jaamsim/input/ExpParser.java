@@ -585,7 +585,7 @@ public class ExpParser {
 						map.put(keys.get(i), res.get(i));
 					}
 					Class<? extends Unit> unitType = res.size() == 0 ? DimensionlessUnit.class : res.get(0).unitType;
-					return ExpCollections.getCollection(map, unitType);
+					return ExpCollections.wrapCollection(map, unitType);
 				}
 			} catch (ExpError ex) {
 				throw fixError(ex, exp.source, tokenPos);

@@ -514,31 +514,31 @@ public class TestExpParser {
 				throws ExpError {
 			if (ent.type == ExpResType.ENTITY && ent.entVal == mapEnt) {
 				if (name.equals("map0")) {
-					return ExpCollections.getCollection(map0, DimensionlessUnit.class);
+					return ExpCollections.wrapCollection(map0, DimensionlessUnit.class);
 				}
 				if (name.equals("map1")) {
-					return ExpCollections.getCollection(map1, DimensionlessUnit.class);
+					return ExpCollections.wrapCollection(map1, DimensionlessUnit.class);
 				}
 				if (name.equals("entMap")) {
-					return ExpCollections.getCollection(entMap, DimensionlessUnit.class);
+					return ExpCollections.wrapCollection(entMap, DimensionlessUnit.class);
 				}
 				if (name.equals("distances")) {
-					return ExpCollections.getCollection(distanceMap, DistanceUnit.class);
+					return ExpCollections.wrapCollection(distanceMap, DistanceUnit.class);
 				}
 			}
 
 			if (ent.type == ExpResType.ENTITY && ent.entVal == arrayEnt) {
 				if (name.equals("intArray")) {
-					return ExpCollections.getCollection(intArray, DimensionlessUnit.class);
+					return ExpCollections.wrapCollection(intArray, DimensionlessUnit.class);
 				}
 				if (name.equals("doubleArray")) {
-					return ExpCollections.getCollection(doubleArray, DimensionlessUnit.class);
+					return ExpCollections.wrapCollection(doubleArray, DimensionlessUnit.class);
 				}
 				if (name.equals("entArray")) {
-					return ExpCollections.getCollection(entArray, DimensionlessUnit.class);
+					return ExpCollections.wrapCollection(entArray, DimensionlessUnit.class);
 				}
 				if (name.equals("stringArray")) {
-					return ExpCollections.getCollection(stringArray, DimensionlessUnit.class);
+					return ExpCollections.wrapCollection(stringArray, DimensionlessUnit.class);
 				}
 			}
 
