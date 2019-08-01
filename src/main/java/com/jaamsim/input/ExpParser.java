@@ -576,7 +576,7 @@ public class ExpParser {
 					// Using the heuristic that if the eval context is null, this is probably an evaluation as part of constant folding
 					// even if this is wrong, the behavior will be correct, but possibly a bit slower
 					boolean isConstant = ec == null;
-					return ExpCollections.makeExpressionCollection(res, isConstant);
+					return ExpCollections.makeAssignableCollection(res, isConstant);
 				} else {
 					// This is a map literal
 					assert(keys.size() == res.size());
