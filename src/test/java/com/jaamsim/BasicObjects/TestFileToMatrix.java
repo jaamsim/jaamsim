@@ -25,8 +25,11 @@ import org.junit.Test;
 
 import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.basicsim.Simulation;
+import com.jaamsim.input.ExpError;
 import com.jaamsim.input.ExpResult;
 import com.jaamsim.input.InputAgent;
+import com.jaamsim.units.DimensionlessUnit;
+import com.jaamsim.units.Unit;
 
 public class TestFileToMatrix {
 
@@ -54,17 +57,25 @@ public class TestFileToMatrix {
 		data.add(list2);
 		try {
 			fileToMatrix.setValue(data);
+
+			ExpResult val = fileToMatrix.getOutputHandle("Value").getValue(0.0d, ExpResult.class);
+			//System.out.println(val);
+
+			Class<? extends Unit> ut = DimensionlessUnit.class;
+			ExpResult ind1 = ExpResult.makeNumResult(1, ut);
+			ExpResult ind2 = ExpResult.makeNumResult(2, ut);
+
+			ExpResult row1 = val.colVal.index(ind1);
+			assertTrue( row1.colVal.index(ind1).value == 1.5d );
+			assertTrue( row1.colVal.index(ind2).stringVal.equals("abc") );
+
+			ExpResult row2 = val.colVal.index(ind2);
+			assertTrue( row2.colVal.index(ind1).value == 2.5d );
+			assertTrue( row2.colVal.index(ind2).stringVal.equals("def") );
 		}
-		catch (Exception e) {
+		catch (ExpError e) {
 			System.out.println(e.getMessage());
 		}
-
-		ArrayList<ArrayList<ExpResult>> val = fileToMatrix.getOutputHandle("Value").getValue(0.0d, ArrayList.class);
-		//System.out.println(val);
-		assertTrue( val.get(0).get(0).value == 1.5d );
-		assertTrue( val.get(0).get(1).stringVal.equals("abc") );
-		assertTrue( val.get(1).get(0).value == 2.5d );
-		assertTrue( val.get(1).get(1).stringVal.equals("def") );
 	}
 
 }
