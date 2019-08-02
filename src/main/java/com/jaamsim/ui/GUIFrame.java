@@ -1912,7 +1912,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				JMenuItem selectedItem = null;
 				int selectedIndex = -1;
 				int ind = 0;
-				for (final String fontName : GUIFrame.getFontsInUse(GUIFrame.getJaamSimModel())) {
+				for (final String fontName : GUIFrame.getFontsInUse(sim)) {
 					JMenuItem item = new JMenuItem(fontName);
 					if (selectedItem == null && fontName.equals(textEnt.getFontName())) {
 						selectedItem = item;
@@ -2100,7 +2100,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				JMenuItem selectedItem = null;
 				int selectedIndex = -1;
 				int ind = 0;
-				for (Color4d col : GUIFrame.getFontColoursInUse(GUIFrame.getJaamSimModel())) {
+				for (Color4d col : GUIFrame.getFontColoursInUse(sim)) {
 					String colourName = ColourInput.toString(col);
 					JMenuItem item = new JMenuItem(colourName);
 					ColorIcon icon = new ColorIcon(16, 16);
@@ -2168,7 +2168,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 	private static void setFontColour(TextEntity textEnt, String colName) {
 		KeywordIndex kw = InputAgent.formatInput("FontColour", colName);
-		Color4d col = Input.parseColour(textEnt.getJaamSimModel(), kw);
+		Color4d col = Input.parseColour(sim, kw);
 		setFontColour(textEnt, col);
 	}
 
@@ -2365,7 +2365,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				JMenuItem selectedItem = null;
 				int selectedIndex = -1;
 				int ind = 0;
-				for (Color4d col : GUIFrame.getLineColoursInUse(GUIFrame.getJaamSimModel())) {
+				for (Color4d col : GUIFrame.getLineColoursInUse(sim)) {
 					String colourName = ColourInput.toString(col);
 					JMenuItem item = new JMenuItem(colourName);
 					ColorIcon icon = new ColorIcon(16, 16);
@@ -2433,7 +2433,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 	private static void setLineColour(LineEntity lineEnt, String colName) {
 		KeywordIndex kw = InputAgent.formatInput("LineColour", colName);
-		Color4d col = Input.parseColour(lineEnt.getJaamSimModel(), kw);
+		Color4d col = Input.parseColour(sim, kw);
 		setLineColour(lineEnt, col);
 	}
 
@@ -2539,7 +2539,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				JMenuItem selectedItem = null;
 				int selectedIndex = -1;
 				int ind = 0;
-				for (Color4d col : GUIFrame.getFillColoursInUse(GUIFrame.getJaamSimModel())) {
+				for (Color4d col : GUIFrame.getFillColoursInUse(sim)) {
 					String colourName = ColourInput.toString(col);
 					JMenuItem item = new JMenuItem(colourName);
 					ColorIcon icon = new ColorIcon(16, 16);
@@ -2607,7 +2607,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 	private static void setFillColour(FillEntity fillEnt, String colName) {
 		KeywordIndex kw = InputAgent.formatInput("FillColour", colName);
-		Color4d col = Input.parseColour(fillEnt.getJaamSimModel(), kw);
+		Color4d col = Input.parseColour(sim, kw);
 		setFillColour(fillEnt, col);
 	}
 
@@ -3050,7 +3050,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				}
 			}
 
-			String name = InputAgent.getUniqueName(getJaamSimModel(), "View", "");
+			String name = InputAgent.getUniqueName(sim, "View", "");
 			IntegerVector winPos = null;
 			Vec3d pos = null;
 			Vec3d center = null;
@@ -3534,7 +3534,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 			// Reset the Region input for the entities in this region
 			KeywordIndex kw = InputAgent.formatArgs("Region");
-			for (DisplayEntity e : getJaamSimModel().getClonesOfIterator(DisplayEntity.class)) {
+			for (DisplayEntity e : sim.getClonesOfIterator(DisplayEntity.class)) {
 				if (e == ent || e.getInput("Region").getValue() != ent)
 					continue;
 				InputAgent.storeAndExecute(new CoordinateCommand(e, kw));
@@ -3552,7 +3552,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 			// Reset the RelativeEntity input for entities
 			KeywordIndex kw = InputAgent.formatArgs("RelativeEntity");
-			for (DisplayEntity e : getJaamSimModel().getClonesOfIterator(DisplayEntity.class)) {
+			for (DisplayEntity e : sim.getClonesOfIterator(DisplayEntity.class)) {
 				if (e == ent || e.getInput("RelativeEntity").getValue() != ent)
 					continue;
 				InputAgent.storeAndExecute(new CoordinateCommand(e, kw));
@@ -3560,7 +3560,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		}
 
 		// Delete any references to this entity in the inputs to other entities
-		for (Entity e : getJaamSimModel().getClonesOfIterator(Entity.class)) {
+		for (Entity e : sim.getClonesOfIterator(Entity.class)) {
 			if (e == ent)
 				continue;
 			ArrayList<KeywordIndex> oldKwList = new ArrayList<>();
