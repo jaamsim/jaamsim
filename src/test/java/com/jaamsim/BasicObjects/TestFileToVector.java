@@ -26,8 +26,11 @@ import org.junit.Test;
 import com.jaamsim.ProcessFlow.Server;
 import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.basicsim.Simulation;
+import com.jaamsim.input.ExpError;
 import com.jaamsim.input.ExpResult;
 import com.jaamsim.input.InputAgent;
+import com.jaamsim.units.DimensionlessUnit;
+import com.jaamsim.units.Unit;
 
 public class TestFileToVector {
 
@@ -56,17 +59,24 @@ public class TestFileToVector {
 		data.add(list);
 		try {
 			fileToVector.setValue(data);
+
+			ExpResult val = fileToVector.getOutputHandle("Value").getValue(0.0d, ExpResult.class);
+			//System.out.println(val);
+
+			Class<? extends Unit> ut = DimensionlessUnit.class;
+			ExpResult ind1 = ExpResult.makeNumResult(1, ut);
+			ExpResult ind2 = ExpResult.makeNumResult(2, ut);
+			ExpResult ind3 = ExpResult.makeNumResult(3, ut);
+			ExpResult ind4 = ExpResult.makeNumResult(4, ut);
+
+			assertTrue( val.colVal.index(ind1).value == 1.5d );
+			assertTrue( val.colVal.index(ind2).stringVal.equals(str) );
+			assertTrue( val.colVal.index(ind3).entVal == ent );
+			assertTrue( val.colVal.index(ind4).colVal.getSize() == 2 );
 		}
-		catch (Exception e) {
+		catch (ExpError e) {
 			System.out.println(e.getMessage());
 		}
-
-		ArrayList<ExpResult> val = fileToVector.getOutputHandle("Value").getValue(0.0d, ArrayList.class);
-		//System.out.println(val);
-		assertTrue( val.get(0).value == 1.5d );
-		assertTrue( val.get(1).stringVal.equals(str) );
-		assertTrue( val.get(2).entVal == ent );
-		assertTrue( val.get(3).colVal.getSize() == 2 );
 	}
 
 }
