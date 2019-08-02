@@ -56,12 +56,16 @@ public class SubModelRegion extends Region {
 		super.updateForInput( in );
 
 		if (in == positionInput) {
-			InputAgent.applyVec3d(subModel, "RegionPosition", positionInput.getValue(), DistanceUnit.class);
+			Vec3d pos = positionInput.getValue();
+			if (subModel != null)
+				InputAgent.applyVec3d(subModel, "RegionPosition", pos, DistanceUnit.class);
 			return;
 		}
 
 		if (in == sizeInput) {
-			InputAgent.applyVec3d(subModel, "RegionSize", getInternalSize(), DistanceUnit.class);
+			Vec3d size = getInternalSize();
+			if (subModel != null)
+				InputAgent.applyVec3d(subModel, "RegionSize", size, DistanceUnit.class);
 			return;
 		}
 	}
