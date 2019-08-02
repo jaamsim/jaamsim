@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2017-2019 JaamSim Software Inc.
+ * Copyright (C) 2017-2020 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -62,6 +62,11 @@ public class DefineCommand implements Command {
 	@Override
 	public Command tryMerge(Command cmd) {
 		return null;
+	}
+
+	@Override
+	public boolean isChange() {
+		return true;
 	}
 
 	@Override
