@@ -3604,10 +3604,15 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				mergedCmd = lastCmd.tryMerge(cmd);
 			}
 
-			// Store the command on the undo list
+			// If the new command can be combined, then change the entry for previous command
 			if (mergedCmd != null) {
-				undoList.set(undoList.size() - 1, mergedCmd);
+				if (mergedCmd.isChange())
+					undoList.set(undoList.size() - 1, mergedCmd);
+				else
+					undoList.remove(undoList.size() - 1);
 			}
+
+			// If the new command cannot be combined, then add it to the undo list
 			else {
 				undoList.add(cmd);
 			}
