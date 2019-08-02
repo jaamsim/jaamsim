@@ -28,6 +28,8 @@ import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.input.ExpResult;
 import com.jaamsim.input.InputAgent;
+import com.jaamsim.units.DimensionlessUnit;
+import com.jaamsim.units.Unit;
 
 public class TestFileToHashMap {
 
@@ -55,17 +57,25 @@ public class TestFileToHashMap {
 		data.put("George", list2);
 		try {
 			fileToHashMap.setValue(data);
+
+			ExpResult val = fileToHashMap.getOutputHandle("Value").getValue(0.0d, ExpResult.class);
+			//System.out.println(val);
+
+			Class<? extends Unit> ut = DimensionlessUnit.class;
+			ExpResult ind1 = ExpResult.makeNumResult(1, ut);
+			ExpResult ind2 = ExpResult.makeNumResult(2, ut);
+
+			ExpResult fred = val.colVal.index(ExpResult.makeStringResult("Fred"));
+			assertTrue( fred.colVal.index(ind1).value == 1.5d );
+			assertTrue( fred.colVal.index(ind2).value == 2.5d );
+
+			ExpResult george = val.colVal.index(ExpResult.makeStringResult("George"));
+			assertTrue( george.colVal.index(ind1).value == 3.5d );
+			assertTrue( george.colVal.index(ind2).value == 4.5d );
 		}
 		catch (Exception e) {
 			System.out.println(e.getMessage());
 		}
-
-		LinkedHashMap<String, ArrayList<ExpResult>> val = fileToHashMap.getOutputHandle("Value").getValue(0.0d, LinkedHashMap.class);
-		//System.out.println(val);
-		assertTrue( val.get("Fred").get(0).value == 1.5d );
-		assertTrue( val.get("Fred").get(1).value == 2.5d );
-		assertTrue( val.get("George").get(0).value == 3.5d );
-		assertTrue( val.get("George").get(1).value == 4.5d );
 	}
 
 }
