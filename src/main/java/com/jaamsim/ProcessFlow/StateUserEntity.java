@@ -104,6 +104,7 @@ public abstract class StateUserEntity extends StateEntity implements ThresholdUs
 	protected static final Color4d COL_BREAKDOWN = ColourInput.RED;
 	protected static final Color4d COL_STOPPED = ColourInput.getColorWithName("gray25");
 	protected static final Color4d COL_BLOCKED = ColourInput.getColorWithName("gray25");
+	protected static final Color4d COL_SETUP = ColourInput.getColorWithName("gray25");
 
 	{
 		immediateThresholdList = new EntityListInput<>(Threshold.class, "ImmediateThresholdList", THRESHOLDS, new ArrayList<Threshold>());
@@ -393,6 +394,11 @@ public abstract class StateUserEntity extends StateEntity implements ThresholdUs
 		}
 		if (!this.isOpen()) {
 			return COL_STOPPED;
+		}
+
+		// Setup
+		if (this.isSetup()) {
+			return COL_SETUP;
 		}
 
 		// Not working because there is nothing to do (Idle)
