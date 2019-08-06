@@ -504,16 +504,23 @@ public abstract class StateUserEntity extends StateEntity implements ThresholdUs
 		return isBusy();
 	}
 
+	@Output(name = "Setup",
+	 description = "Returns TRUE if setup is being performed.",
+	    sequence = 3)
+	public boolean isSetup(double simTime) {
+		return isSetup();
+	}
+
 	@Output(name = "Maintenance",
 	 description = "Returns TRUE if maintenance is being performed.",
-	    sequence = 3)
+	    sequence = 4)
 	public boolean isMaintenance(double simTime) {
 		return isMaintenance();
 	}
 
 	@Output(name = "Breakdown",
 	 description = "Returns TRUE if a breakdown is being repaired.",
-	    sequence = 4)
+	    sequence = 5)
 	public boolean isBreakdown(double simTime) {
 		return isBreakdown();
 	}
@@ -522,7 +529,7 @@ public abstract class StateUserEntity extends StateEntity implements ThresholdUs
 	 description = "The fraction of calendar time (excluding the initialisation period) that "
 	             + "this object is in the Working state. Includes any completed cycles.",
 	  reportable = true,
-	    sequence = 5)
+	    sequence = 6)
 	public double getUtilisation(double simTime) {
 		double total = this.getTotalTime(simTime);
 		double working = getTimeInState_Working(simTime);
@@ -533,7 +540,7 @@ public abstract class StateUserEntity extends StateEntity implements ThresholdUs
 	 description = "The fraction of calendar time (excluding the initialisation period) that "
 	             + "this object is in any state other than Idle. Includes any completed cycles.",
 	  reportable = true,
-	    sequence = 6)
+	    sequence = 7)
 	public double getCommitment(double simTime) {
 		double total = this.getTotalTime(simTime);
 		double idle = getTimeInState_Idle(simTime);
@@ -545,7 +552,7 @@ public abstract class StateUserEntity extends StateEntity implements ThresholdUs
 	             + "this object is in any state other than Maintenance or Breakdown. "
 	             + "Includes any completed cycles.",
 	  reportable = true,
-	    sequence = 7)
+	    sequence = 8)
 	public double getAvailability(double simTime) {
 		double total = this.getTotalTime(simTime);
 		double maintenance = getTimeInState_Maintenance(simTime);
@@ -557,7 +564,7 @@ public abstract class StateUserEntity extends StateEntity implements ThresholdUs
 	 description = "The ratio of Working time to the sum of Working time and Breakdown time. "
 	             + "All times exclude the initialisation period and include any completed cycles.",
 	  reportable = true,
-	    sequence = 8)
+	    sequence = 9)
 	public double getReliability(double simTime) {
 		double working = getTimeInState_Working(simTime);
 		double breakdown = getTimeInState_Breakdown(simTime);
@@ -567,7 +574,7 @@ public abstract class StateUserEntity extends StateEntity implements ThresholdUs
 	@Output(name = "NextMaintenanceTime",
 	 description = "The estimated time at which the next maintenance activity will start.",
 	  reportable = false,
-	    sequence = 9)
+	    sequence = 10)
 	public double getNextMaintenanceTime(double simTime) {
 		double ret = Double.POSITIVE_INFINITY;
 		for (DowntimeEntity down : immediateMaintenanceList.getValue()) {
@@ -585,7 +592,7 @@ public abstract class StateUserEntity extends StateEntity implements ThresholdUs
 	@Output(name = "NextBreakdownTime",
 	 description = "The estimated time at which the next breakdown will occur.",
 	  reportable = false,
-	    sequence = 10)
+	    sequence = 11)
 	public double getNextBreakdownTime(double simTime) {
 		double ret = Double.POSITIVE_INFINITY;
 		for (DowntimeEntity down : immediateBreakdownList.getValue()) {
