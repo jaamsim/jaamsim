@@ -98,6 +98,7 @@ public abstract class StateUserEntity extends StateEntity implements ThresholdUs
 	protected static final String STATE_BREAKDOWN = "Breakdown";
 	protected static final String STATE_STOPPED = "Stopped";
 	protected static final String STATE_BLOCKED = "Blocked";
+	protected static final String STATE_SETUP = "Setup";
 
 	protected static final Color4d COL_MAINTENANCE = ColourInput.RED;
 	protected static final Color4d COL_BREAKDOWN = ColourInput.RED;
@@ -221,6 +222,10 @@ public abstract class StateUserEntity extends StateEntity implements ThresholdUs
 
 	public abstract boolean isBusy();
 
+	public boolean isSetup() {
+		return false;
+	}
+
 	/**
 	 * Tests whether all the thresholds are open.
 	 * @return true if all the thresholds are open.
@@ -314,7 +319,7 @@ public abstract class StateUserEntity extends StateEntity implements ThresholdUs
 	 * @return true if the LinkedService is available for work
 	 */
 	public boolean isIdle() {
-		return !isBusy() && isAvailable();
+		return !isBusy() && isAvailable() && !isSetup();
 	}
 
 	/**
@@ -325,7 +330,7 @@ public abstract class StateUserEntity extends StateEntity implements ThresholdUs
 	 * @return true if something is preventing work from being performed
 	 */
 	public boolean isUnableToWork() {
-		return !isBusy() && !isAvailable();
+		return !isBusy() && !isAvailable() && !isSetup();
 	}
 
 	public void setPresentState() {
@@ -353,6 +358,12 @@ public abstract class StateUserEntity extends StateEntity implements ThresholdUs
 		}
 		if (!this.isOpen()) {
 			this.setPresentState(STATE_STOPPED);
+			return;
+		}
+
+		// Setup
+		if (this.isSetup()) {
+			this.setPresentState(STATE_SETUP);
 			return;
 		}
 
