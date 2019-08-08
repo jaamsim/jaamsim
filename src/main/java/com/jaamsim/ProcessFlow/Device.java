@@ -52,10 +52,21 @@ public abstract class Device extends StateUserEntity {
 	 */
 	public final void restart() {
 		if (isTraceFlag()) trace(0, "restart");
-		if (processing || !isAbleToRestart()) {
+
+		// If already working, do nothing
+		if (processing) {
 			setPresentState();
 			return;
 		}
+
+		// If cannot restart, clear any setup that has already taken place
+		if (!isAbleToRestart()) {
+			setProcessStopped();
+			setPresentState();
+			return;
+		}
+
+		// Start work
 		processing = true;
 		startUpTicks = getSimTicks();
 		lastUpdateTime = getSimTime();
@@ -240,6 +251,11 @@ public abstract class Device extends StateUserEntity {
 	 */
 	final void unscheduledUpdate() {
 		if (isTraceFlag()) trace(0, "unscheduledUpdate");
+
+		// If process is being set up, wait for it to complete
+		if (isSetup()) {
+			return;
+		}
 
 		// If the process is working, perform its next update immediately
 		if (endStepHandle.isScheduled()) {
