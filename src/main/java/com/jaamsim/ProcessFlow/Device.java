@@ -51,22 +51,24 @@ public abstract class Device extends StateUserEntity {
 	 * Restarts the processing loop.
 	 */
 	public final void restart() {
-		if (isTraceFlag()) trace(0, "restart");
 
 		// If already working, do nothing
 		if (processing) {
+			if (isTraceFlag()) trace(0, "restart - ALREADY WORKING");
 			setPresentState();
 			return;
 		}
 
 		// If cannot restart, clear any setup that has already taken place
 		if (!isAbleToRestart()) {
+			if (isTraceFlag()) trace(0, "restart - UNABLE TO RESTART");
 			setProcessStopped();
 			setPresentState();
 			return;
 		}
 
 		// Start work
+		if (isTraceFlag()) trace(0, "restart - START WORK");
 		processing = true;
 		startUpTicks = getSimTicks();
 		lastUpdateTime = getSimTime();
@@ -250,21 +252,23 @@ public abstract class Device extends StateUserEntity {
 	 * new conditions.
 	 */
 	final void unscheduledUpdate() {
-		if (isTraceFlag()) trace(0, "unscheduledUpdate");
 
 		// If process is being set up, wait for it to complete
 		if (isSetup()) {
+			if (isTraceFlag()) trace(0, "unscheduledUpdate - SETUP IN PROGRESS");
 			return;
 		}
 
 		// If the process is working, perform its next update immediately
 		if (endStepHandle.isScheduled()) {
+			if (isTraceFlag()) trace(0, "unscheduledUpdate - WORK IN PROGRESS");
 			EventManager.killEvent(endStepHandle);
 			EventManager.scheduleTicks(0L, 5, true, endStepTarget, endStepHandle);  // FIFO order
 			return;
 		}
 
 		// If the process is stopped, then restart it
+		if (isTraceFlag()) trace(0, "unscheduledUpdate - RESTART");
 		this.restart();
 	}
 
