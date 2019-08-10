@@ -62,6 +62,8 @@ public class Entity {
 
 	String entityName;
 	private final long entityNumber;
+	// Package private so it can be accessed by EntityIterator
+	Entity nextEnt;
 
 	private static final int FLAG_TRACE = 0x01;
 	//public static final int FLAG_TRACEREQUIRED = 0x02;

@@ -17,60 +17,81 @@
  */
 package com.jaamsim.basicsim;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 
 public abstract class EntityIterator<T extends Entity> implements Iterable<T>, Iterator<T> {
-	private final ArrayList<? extends Entity> allInstances;
+	// A "struct" to mimic a pointer-to-pointer like relationship
+	public static class ListData {
+		public Entity firstEnt;
+		public Entity lastEnt;
+		public int numLiveEnts;
+	}
+
+	//private final ArrayList<? extends Entity> allInstances;
+	private final ListData listData;
+	private boolean firstRead = true;
 	protected final Class<T> entClass;
-	private int curPos;
-	private int nextPos;
+	private Entity curEnt;
 
 	public EntityIterator(JaamSimModel simModel, Class<T> aClass) {
-		allInstances = simModel.getEntities();
+		listData = simModel.getListData();
 		entClass = aClass;
-		curPos = -1;
-		nextPos = -1;
 	}
 
 	abstract boolean matches(Class<?> entklass);
 
-	private void updatePos() {
-		if (nextPos >= allInstances.size())
-			return;
+	private Entity peekNext() {
 
-		while (++nextPos < allInstances.size()) {
-			// If we find a match, break out
-			if (matches(allInstances.get(nextPos).getClass()))
-				break;
+		if (curEnt == null && !firstRead)
+			return null;
+
+		Entity nextEnt = firstRead ? listData.firstEnt : curEnt.nextEnt;
+		Entity prevEnt = curEnt; // prevEnt will be null at the beginning of the list
+
+		// Advance until the end of the list or the next live entity that matches the
+		// entity class we are looking for
+		while(true) {
+			if (nextEnt == null) {
+				return null;
+			}
+			// Return a valid match
+			if (!nextEnt.testFlag(Entity.FLAG_DEAD) && matches(nextEnt.getClass())) {
+				return nextEnt;
+			}
+			if (nextEnt.testFlag(Entity.FLAG_DEAD)) {
+				// Fix-up the linked list to skip over dead entities
+				if (prevEnt == null) { // This is the beginning of the list
+					listData.firstEnt = nextEnt.nextEnt;
+				} else {
+					prevEnt.nextEnt = nextEnt.nextEnt;
+				}
+			}
+
+			// Advance
+			prevEnt = nextEnt;
+			nextEnt = nextEnt.nextEnt;
 		}
 	}
 
 	@Override
 	public boolean hasNext() {
-		if (curPos == nextPos)
-			updatePos();
-
-		if (nextPos < allInstances.size())
-			return true;
-		else
-			return false;
+		return peekNext() != null;
 	}
 
+	// Note, this warning is suppressed because the cast is effectively checked by match()
+	@SuppressWarnings("unchecked")
 	@Override
 	public T next() {
-		if (curPos == nextPos)
-			updatePos();
-
-		if (nextPos < allInstances.size()) {
-			curPos = nextPos;
-			return entClass.cast(allInstances.get(curPos));
-		}
-		else {
+		Entity nextEnt = peekNext();
+		if (nextEnt == null) {
 			throw new NoSuchElementException();
 		}
+
+		curEnt = nextEnt;
+		firstRead = false;
+		return (T)curEnt;
 	}
 
 	@Override

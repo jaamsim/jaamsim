@@ -388,19 +388,7 @@ public class RenderManager implements DragSourceListener {
 					ArrayList<DisplayModelBinding> selectedBindings = new ArrayList<>();
 
 					// Update all graphical entities in the simulation
-					final ArrayList<? extends Entity> allEnts = GUIFrame.getJaamSimModel().getEntities();
-					for (int i = 0; i < allEnts.size(); i++) {
-						DisplayEntity de;
-						try {
-							Entity e = allEnts.get(i);
-							if (e instanceof DisplayEntity)
-								de = (DisplayEntity)e;
-							else
-								continue;
-						}
-						catch (IndexOutOfBoundsException e) {
-							break;
-						}
+					for (DisplayEntity de : GUIFrame.getJaamSimModel().getClonesOfIterator(DisplayEntity.class)) {
 
 						try {
 							de.updateGraphics(renderTime);
@@ -414,18 +402,7 @@ public class RenderManager implements DragSourceListener {
 					updateNanos = System.nanoTime();
 
 					// Collect the render proxies for each entity
-					for (int i = 0; i < allEnts.size(); i++) {
-						DisplayEntity de;
-						try {
-							Entity e = allEnts.get(i);
-							if (e instanceof DisplayEntity)
-								de = (DisplayEntity)e;
-							else
-								continue;
-						}
-						catch (IndexOutOfBoundsException e) {
-							break;
-						}
+					for (DisplayEntity de : GUIFrame.getJaamSimModel().getClonesOfIterator(DisplayEntity.class)) {
 
 						for (DisplayModelBinding binding : de.getDisplayBindings()) {
 							try {
@@ -1938,13 +1915,9 @@ public class RenderManager implements DragSourceListener {
 	}
 
 	private void addLinkDisplays(ArrayList<RenderProxy> scene) {
-		ArrayList<? extends Entity> allEnts = GUIFrame.getJaamSimModel().getEntities();
 
-		for (int i = 0; i < allEnts.size(); i++) {
-			try {
-				Entity e = allEnts.get(i);
-				if (!(e instanceof LinkDisplayable))
-					continue;
+		for (Entity e : GUIFrame.getJaamSimModel().getClonesOfIterator(
+				Entity.class, LinkDisplayable.class)) {
 
 				LinkDisplayable ld = (LinkDisplayable)e;
 				ArrayList<Entity> dests = ld.getDestinationEntities();
@@ -1967,10 +1940,6 @@ public class RenderManager implements DragSourceListener {
 					addLink(sourceLD, ld, scene);
 				}
 
-			} catch (Throwable t) {
-				// Log the exception in the exception list
-				logException(t);
-			}
 		}
 
 	}
