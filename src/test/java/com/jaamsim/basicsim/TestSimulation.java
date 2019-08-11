@@ -18,6 +18,8 @@ package com.jaamsim.basicsim;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -177,10 +179,11 @@ public class TestSimulation {
 
 	static class WaitForPauseListener implements EventTimeListener {
 		private final JaamSimModel simModel;
-		private Thread waitThread = null;
+		private final CountDownLatch countDownLatch;
 
 		public WaitForPauseListener(JaamSimModel mod) {
 			simModel = mod;
+			countDownLatch = new CountDownLatch(1);
 		}
 
 		@Override
@@ -189,22 +192,14 @@ public class TestSimulation {
 
 		@Override
 		public void timeRunning() {
-			//System.out.format("%s.timeRunning(%s, %s)%n", this, tick, running);
 			if (EventManager.current().isRunning())
 				return;
-
-			synchronized (this) {
-				if (waitThread != null)
-					waitThread.interrupt();
-			}
+			countDownLatch.countDown();
 		}
 
 		@Override
 		public void handleError(Throwable t) {
-			synchronized (this) {
-				if (waitThread != null)
-					waitThread.interrupt();
-			}
+			countDownLatch.countDown();
 		}
 
 		/**
@@ -212,25 +207,17 @@ public class TestSimulation {
 		 * @param timeoutMS - maximum time to wait in milliseconds
 		 */
 		public void waitForPause(long timeoutMS) {
-			synchronized (this) {
-				//System.out.format("%s.waitForPause(%s)%n", this, timeoutMS);
-
-				waitThread = Thread.currentThread();
-
-				try {
-					this.wait(timeoutMS);
+			try {
+				boolean bool = countDownLatch.await(timeoutMS, TimeUnit.MILLISECONDS);
+				if (!bool) {
+					simModel.pause();
+					throw new RuntimeException(
+							String.format("%s - Timeout at %s milliseconds. Model not completed.",
+									simModel, timeoutMS));
 				}
-				catch (InterruptedException e) {
-					waitThread = null;
-					//System.out.format("%s.waitForPause - finished%n", this);
-					return;
-				}
-				waitThread = null;
+			} catch (InterruptedException e) {
+				e.printStackTrace();
 			}
-
-			simModel.pause();
-			throw new RuntimeException(
-					String.format("Timeout at %s milliseconds. Model not completed.", timeoutMS));
 		}
 	}
 }
