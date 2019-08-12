@@ -44,6 +44,8 @@ import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 
 public class JaamSimModel {
+	private static final boolean VALIDATE_ENT_LIST = false;
+
 	private static final Object createLock = new Object();
 	private static JaamSimModel createModel = null;
 
@@ -756,25 +758,67 @@ public class JaamSimModel {
 		}
 	}
 
+	private void validateEntList() {
+		if (!VALIDATE_ENT_LIST) {
+			return;
+		}
+		synchronized(listData) {
+			// Count the number of live entities and make sure all entity numbers are increasing
+			// Also, check that the lastEnt reference is correct
+			int numEntities = 0;
+			long lastEntNum = -1;
+			Entity curEnt = listData.firstEnt;
+			Entity lastEnt = null;
+			while (curEnt != null) {
+				if (!curEnt.testFlag(Entity.FLAG_DEAD)) {
+					numEntities++;
+				}
+				if (curEnt.getEntityNumber() <= lastEntNum) {
+					assert(false);
+					throw new ErrorException("Entity List Validation Error!");
+				}
+				lastEntNum = curEnt.getEntityNumber();
+				lastEnt = curEnt;
+				curEnt = curEnt.nextEnt;
+
+			}
+			if (numEntities != listData.numLiveEnts) {
+				assert(false);
+				throw new ErrorException("Entity List Validation Error!");
+			}
+			if (listData.lastEnt != lastEnt) {
+				assert(false);
+				throw new ErrorException("Entity List Validation Error!");
+			}
+		}
+	}
+
 	final void addInstance(Entity e) {
 		synchronized(listData) {
+			validateEntList();
+
 			listData.numLiveEnts++;
 			if (listData.firstEnt == null) {
 				// Empty list
 				listData.firstEnt = e;
 				listData.lastEnt = e;
 				e.nextEnt = null;
+				validateEntList();
 				return;
 			}
 
-			listData.lastEnt.nextEnt = e;
+			Entity oldLast = listData.lastEnt;
+
 			listData.lastEnt = e;
+			oldLast.nextEnt = e;
 			e.nextEnt = null;
+			validateEntList();
 		}
 	}
 
 	final void restoreInstance(Entity e) {
 		synchronized (listData) {
+			validateEntList();
 			listData.numLiveEnts++;
 			// Scan through the linked list to find the place to insert this entity
 			// This is slow, but should only happen due to user actions
@@ -785,6 +829,7 @@ public class JaamSimModel {
 				listData.firstEnt = e;
 				listData.lastEnt = e;
 				e.nextEnt = null;
+				validateEntList();
 				return;
 			}
 			while(true) {
@@ -795,12 +840,14 @@ public class JaamSimModel {
 					curEnt.nextEnt = e;
 					listData.lastEnt = e;
 					e.nextEnt = null;
+					validateEntList();
 					return;
 				}
 
 				if (nextEnt.getEntityNumber() > entNum) {
 					curEnt.nextEnt = e;
 					e.nextEnt = nextEnt;
+					validateEntList();
 					return;
 				}
 			}
@@ -809,6 +856,7 @@ public class JaamSimModel {
 
 	final void removeInstance(Entity e) {
 		synchronized (listData) {
+			validateEntList();
 			listData.numLiveEnts--;
 			if (e.testFlag(Entity.FLAG_REGISTERED)) {
 				if (e != namedEntities.remove(e.entityName))
@@ -817,6 +865,7 @@ public class JaamSimModel {
 
 			e.entityName = null;
 			e.setFlag(Entity.FLAG_DEAD);
+			validateEntList();
 		}
 	}
 
