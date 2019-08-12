@@ -27,10 +27,13 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import com.jaamsim.Samples.SampleExpression;
 import com.jaamsim.StringProviders.StringProvExpression;
+import com.jaamsim.Thresholds.ThresholdUser;
 import com.jaamsim.datatypes.IntegerVector;
 import com.jaamsim.events.Conditional;
+import com.jaamsim.events.EventHandle;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.events.EventTimeListener;
+import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.ExpError;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
@@ -256,6 +259,7 @@ public class JaamSimModel {
 	 * Performs the first stage of initialization for each entity.
 	 */
 	public void earlyInit() {
+		thresholdChangedTarget.users.clear();
 		for (Entity each : getClonesOfIterator(Entity.class)) {
 			each.earlyInit();
 		}
@@ -894,6 +898,37 @@ public class JaamSimModel {
 	public int getNextViewID() {
 		nextViewID++;
 		return nextViewID;
+	}
+
+	private final EventHandle thresholdChangedHandle = new EventHandle();
+	private final ThresholdChangedTarget thresholdChangedTarget = new ThresholdChangedTarget();
+
+	private static class ThresholdChangedTarget extends ProcessTarget {
+		public final ArrayList<ThresholdUser> users = new ArrayList<>();
+
+		public ThresholdChangedTarget() {}
+
+		@Override
+		public void process() {
+			for (int i = 0; i < users.size(); i++) {
+				users.get(i).thresholdChanged();
+			}
+			users.clear();
+		}
+
+		@Override
+		public String getDescription() {
+			return "UpdateAllThresholdUsers";
+		}
+	}
+
+	public void updateThresholdUsers(ArrayList<ThresholdUser> userList) {
+		for (ThresholdUser user : userList) {
+			if (!thresholdChangedTarget.users.contains(user))
+				thresholdChangedTarget.users.add(user);
+		}
+		if (!thresholdChangedTarget.users.isEmpty() && !thresholdChangedHandle.isScheduled())
+			EventManager.scheduleTicks(0, 2, false, thresholdChangedTarget, thresholdChangedHandle);
 	}
 
 	/**

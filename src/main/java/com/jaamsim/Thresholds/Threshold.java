@@ -21,9 +21,7 @@ import java.util.ArrayList;
 
 import com.jaamsim.DisplayModels.ShapeModel;
 import com.jaamsim.basicsim.Entity;
-import com.jaamsim.events.EventHandle;
 import com.jaamsim.events.EventManager;
-import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.Keyword;
@@ -83,7 +81,6 @@ public class Threshold extends StateEntity {
 	@Override
 	public void earlyInit() {
 		super.earlyInit();
-		thresholdChangedTarget.users.clear();
 		open = initialOpenValue;
 		openCount = 0L;
 		closedCount = 0L;
@@ -120,28 +117,6 @@ public class Threshold extends StateEntity {
 		return "Open".equals(state);
 	}
 
-	private static final EventHandle thresholdChangedHandle = new EventHandle();
-	private static final ThresholdChangedTarget thresholdChangedTarget = new ThresholdChangedTarget();
-
-	private static class ThresholdChangedTarget extends ProcessTarget {
-		public final ArrayList<ThresholdUser> users = new ArrayList<>();
-
-		public ThresholdChangedTarget() {}
-
-		@Override
-		public void process() {
-			for( int i = 0; i < users.size(); i++ )
-				users.get( i ).thresholdChanged();
-
-			users.clear();
-		}
-
-		@Override
-		public String getDescription() {
-			return "UpdateAllThresholdUsers";
-		}
-	}
-
 	public boolean isOpen() {
 		return open;
 	}
@@ -163,12 +138,7 @@ public class Threshold extends StateEntity {
 			closedCount++;
 		}
 
-		for (ThresholdUser user : this.userList) {
-			if (!thresholdChangedTarget.users.contains(user))
-				thresholdChangedTarget.users.add(user);
-		}
-		if (!thresholdChangedTarget.users.isEmpty() && !thresholdChangedHandle.isScheduled())
-			this.scheduleProcessTicks(0, 2, false, thresholdChangedTarget, thresholdChangedHandle);
+		getJaamSimModel().updateThresholdUsers(userList);
 	}
 
 	@Override
