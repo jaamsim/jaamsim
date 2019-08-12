@@ -192,6 +192,8 @@ public class TestSimulation {
 
 		@Override
 		public void timeRunning() {
+			//System.out.format("%s.timeRunning() - simTicks=%s, isRunning=%s%n",
+			//		simModel, EventManager.current().getTicks(), EventManager.current().isRunning());
 			if (EventManager.current().isRunning())
 				return;
 			countDownLatch.countDown();
@@ -200,6 +202,8 @@ public class TestSimulation {
 		@Override
 		public void handleError(Throwable t) {
 			countDownLatch.countDown();
+			System.out.format("%s.handleError: %s%n", simModel, t.getMessage());
+			t.printStackTrace();
 		}
 
 		/**
@@ -207,6 +211,7 @@ public class TestSimulation {
 		 * @param timeoutMS - maximum time to wait in milliseconds
 		 */
 		public void waitForPause(long timeoutMS) {
+			//System.out.format("%s.waitForPause(%s)%n", simModel, timeOut);
 			try {
 				boolean bool = countDownLatch.await(timeoutMS, TimeUnit.MILLISECONDS);
 				if (!bool) {
@@ -215,6 +220,7 @@ public class TestSimulation {
 							String.format("%s - Timeout at %s milliseconds. Model not completed.",
 									simModel, timeoutMS));
 				}
+				//System.out.format("%s.waitForPause - finished%n", simModel);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
