@@ -27,6 +27,7 @@ public abstract class EntityIterator<T extends Entity> implements Iterable<T>, I
 		public Entity firstEnt;
 		public Entity lastEnt;
 		public int numLiveEnts;
+		public int killsSincePurge = 0;
 	}
 
 	private final ListData listData;
@@ -47,6 +48,7 @@ public abstract class EntityIterator<T extends Entity> implements Iterable<T>, I
 	private Entity validateNext(Entity nextEnt, Entity prevEnt) {
 		while(true) {
 			if (nextEnt == null) {
+				listData.killsSincePurge = 0;
 				return null;
 			}
 			// Return a valid match

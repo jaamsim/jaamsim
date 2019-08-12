@@ -44,7 +44,12 @@ import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 
 public class JaamSimModel {
+	// Perform debug only entity list validation logic
 	private static final boolean VALIDATE_ENT_LIST = false;
+	// Because the entity list cleans itself lazily during iteration, it is possible for the list
+	// to be full of dead entities. This is the number of zombie entities that need
+	// to be present before the system cleans itself automatically
+	private static final int KILLS_UNTIL_PURGE = 10000;
 
 	private static final Object createLock = new Object();
 	private static JaamSimModel createModel = null;
@@ -767,11 +772,14 @@ public class JaamSimModel {
 			// Also, check that the lastEnt reference is correct
 			int numEntities = 0;
 			long lastEntNum = -1;
+			int numDeadEntities = 0;
 			Entity curEnt = listData.firstEnt;
 			Entity lastEnt = null;
 			while (curEnt != null) {
 				if (!curEnt.testFlag(Entity.FLAG_DEAD)) {
 					numEntities++;
+				} else {
+					numDeadEntities++;
 				}
 				if (curEnt.getEntityNumber() <= lastEntNum) {
 					assert(false);
@@ -787,6 +795,10 @@ public class JaamSimModel {
 				throw new ErrorException("Entity List Validation Error!");
 			}
 			if (listData.lastEnt != lastEnt) {
+				assert(false);
+				throw new ErrorException("Entity List Validation Error!");
+			}
+			if (numDeadEntities > KILLS_UNTIL_PURGE +10) {
 				assert(false);
 				throw new ErrorException("Entity List Validation Error!");
 			}
@@ -865,6 +877,14 @@ public class JaamSimModel {
 
 			e.entityName = null;
 			e.setFlag(Entity.FLAG_DEAD);
+			listData.killsSincePurge++;
+			if (listData.killsSincePurge > KILLS_UNTIL_PURGE) {
+				// Do a pointless iteration to kill zombie entities
+				for (Entity dummy : getInstanceIterator(Entity.class)) {
+					@SuppressWarnings("unused")
+					long d = dummy.getEntityNumber();
+				}
+			}
 			validateEntList();
 		}
 	}
