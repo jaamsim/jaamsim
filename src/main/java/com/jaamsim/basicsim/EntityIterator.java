@@ -29,7 +29,6 @@ public abstract class EntityIterator<T extends Entity> implements Iterable<T>, I
 		public int numLiveEnts;
 	}
 
-	//private final ArrayList<? extends Entity> allInstances;
 	private final ListData listData;
 	private boolean firstRead = true;
 	protected final Class<T> entClass;
@@ -37,21 +36,15 @@ public abstract class EntityIterator<T extends Entity> implements Iterable<T>, I
 
 	public EntityIterator(JaamSimModel simModel, Class<T> aClass) {
 		listData = simModel.getListData();
+		curEnt = listData.firstEnt;
 		entClass = aClass;
 	}
 
 	abstract boolean matches(Class<?> entklass);
 
-	private Entity peekNext() {
-
-		if (curEnt == null && !firstRead)
-			return null;
-
-		Entity nextEnt = firstRead ? listData.firstEnt : curEnt.nextEnt;
-		Entity prevEnt = curEnt; // prevEnt will be null at the beginning of the list
-
-		// Advance until the end of the list or the next live entity that matches the
-		// entity class we are looking for
+	// Advance the current pointer past any dead entities, or entities that do not match
+	// Also update the list to bypass dead entities
+	private Entity validateNext(Entity nextEnt, Entity prevEnt) {
 		while(true) {
 			if (nextEnt == null) {
 				return null;
@@ -60,38 +53,58 @@ public abstract class EntityIterator<T extends Entity> implements Iterable<T>, I
 			if (!nextEnt.testFlag(Entity.FLAG_DEAD) && matches(nextEnt.getClass())) {
 				return nextEnt;
 			}
-			if (nextEnt.testFlag(Entity.FLAG_DEAD)) {
+			boolean skipPrevAdvance = false;
+			if (nextEnt.testFlag(Entity.FLAG_DEAD) && nextEnt != listData.lastEnt) {
 				// Fix-up the linked list to skip over dead entities
+
+				// It is important to not skip the last element, because different iterators can
+				// race to update the lastEnt pointer
+
 				if (prevEnt == null) { // This is the beginning of the list
-					listData.firstEnt = nextEnt.nextEnt;
+					synchronized(listData) {
+						listData.firstEnt = nextEnt.nextEnt;
+					}
 				} else {
-					prevEnt.nextEnt = nextEnt.nextEnt;
+					// Safeguard, this can only happen due to races, but it has happened
+					if (nextEnt.nextEnt != null) {
+						prevEnt.nextEnt = nextEnt.nextEnt;
+						skipPrevAdvance = true;
+					}
 				}
 			}
 
 			// Advance
-			prevEnt = nextEnt;
+			if (!skipPrevAdvance) {
+				prevEnt = nextEnt;
+			}
 			nextEnt = nextEnt.nextEnt;
 		}
 	}
 
 	@Override
 	public boolean hasNext() {
-		return peekNext() != null;
+		if (firstRead) {
+			curEnt = validateNext(curEnt, null);
+			firstRead = false;
+		}
+		return curEnt != null;
 	}
 
 	// Note, this warning is suppressed because the cast is effectively checked by match()
 	@SuppressWarnings("unchecked")
 	@Override
 	public T next() {
-		Entity nextEnt = peekNext();
+		if (firstRead) {
+			curEnt = validateNext(curEnt, null);
+			firstRead = false;
+		}
+		Entity nextEnt = curEnt;
 		if (nextEnt == null) {
 			throw new NoSuchElementException();
 		}
 
-		curEnt = nextEnt;
-		firstRead = false;
-		return (T)curEnt;
+		curEnt =  validateNext(curEnt.nextEnt, curEnt);
+		return (T)nextEnt;
 	}
 
 	@Override
