@@ -973,8 +973,8 @@ public class JaamSimModel {
 		return new ClonesOfIterableInterface<>(this, proto, iface);
 	}
 
-	// Note, this is intentionally package-private because it should only ever be called by EntityIterator
-	EntityIterator.ListData getListData() {
+	// Note, this should only be called by EntityIterator and some unit tests
+	public EntityIterator.ListData getListData() {
 		return listData;
 	}
 

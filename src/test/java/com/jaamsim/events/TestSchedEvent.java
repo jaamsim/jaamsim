@@ -52,14 +52,14 @@ public class TestSchedEvent {
 			simModel.createInstance(Entity.class);
 		}
 
-		EntityIterator<Entity> it = simModel.getClonesOfIterator(Entity.class);
+		EntityIterator.ListData listData = simModel.getListData();
 		long[] nanoStamps = new long[11];
 		for (int i = 0; i <= 1000000; i++) {
 			if (i % 100000 == 0) {
 				int idx = i / 100000;
 				nanoStamps[idx] = System.nanoTime();
 			}
-			it.next().kill();
+			listData.firstEnt.kill();
 		}
 		long endSchedNanos = System.nanoTime();
 
@@ -68,7 +68,6 @@ public class TestSchedEvent {
 		outputResults("Entity Kill First", nanoStamps, endSchedNanos, endExecNanos);
 	}
 
-	/* This test can not be effectively run on a singly-linked list of entities
 	@Test
 	public void testEntityKillLast() {
 		JaamSimModel simModel = new JaamSimModel();
@@ -77,14 +76,14 @@ public class TestSchedEvent {
 			simModel.createInstance(Entity.class);
 		}
 
-		ArrayList<? extends Entity> ents = simModel.getEntities();
+		EntityIterator.ListData listData = simModel.getListData();
 		long[] nanoStamps = new long[11];
 		for (int i = 0; i <= 1000000; i++) {
 			if (i % 100000 == 0) {
 				int idx = i / 100000;
 				nanoStamps[idx] = System.nanoTime();
 			}
-			ents.get(ents.size() - 1).kill();
+			listData.lastEnt.kill();
 		}
 		long endSchedNanos = System.nanoTime();
 
@@ -92,7 +91,7 @@ public class TestSchedEvent {
 
 		outputResults("Entity Kill Last", nanoStamps, endSchedNanos, endExecNanos);
 	}
-*/
+
 	@Test
 	public void testLIFOEvents() {
 		EventManager evt = new EventManager("TestEVT");
