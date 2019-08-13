@@ -46,10 +46,6 @@ import com.jaamsim.units.Unit;
 public class JaamSimModel {
 	// Perform debug only entity list validation logic
 	private static final boolean VALIDATE_ENT_LIST = false;
-	// Because the entity list cleans itself lazily during iteration, it is possible for the list
-	// to be full of dead entities. This is the number of zombie entities that need
-	// to be present before the system cleans itself automatically
-	private static final int KILLS_UNTIL_PURGE = 10000;
 
 	private static final Object createLock = new Object();
 	private static JaamSimModel createModel = null;
@@ -785,6 +781,10 @@ public class JaamSimModel {
 					assert(false);
 					throw new ErrorException("Entity List Validation Error!");
 				}
+				if (curEnt.prevEnt != lastEnt) {
+					assert(false);
+					throw new ErrorException("Entity List Validation Error!");
+				}
 				lastEntNum = curEnt.getEntityNumber();
 				lastEnt = curEnt;
 				curEnt = curEnt.nextEnt;
@@ -798,7 +798,43 @@ public class JaamSimModel {
 				assert(false);
 				throw new ErrorException("Entity List Validation Error!");
 			}
-			if (numDeadEntities > KILLS_UNTIL_PURGE +10) {
+			if (numDeadEntities > 0) {
+				assert(false);
+				throw new ErrorException("Entity List Validation Error!");
+			}
+
+			// Scan the list backwards
+			curEnt = listData.lastEnt;
+			lastEnt = null;
+			numEntities = 0;
+			lastEntNum = Long.MAX_VALUE;
+			while(curEnt != null) {
+				if (!curEnt.testFlag(Entity.FLAG_DEAD)) {
+					numEntities++;
+				} else {
+					numDeadEntities++;
+				}
+				if (curEnt.getEntityNumber() >= lastEntNum) {
+					assert(false);
+					throw new ErrorException("Entity List Validation Error!");
+				}
+				if (curEnt.nextEnt != lastEnt) {
+					assert(false);
+					throw new ErrorException("Entity List Validation Error!");
+				}
+				lastEntNum = curEnt.getEntityNumber();
+				lastEnt = curEnt;
+				curEnt = curEnt.prevEnt;
+			}
+			if (numEntities != listData.numLiveEnts) {
+				assert(false);
+				throw new ErrorException("Entity List Validation Error!");
+			}
+			if (listData.firstEnt != lastEnt) {
+				assert(false);
+				throw new ErrorException("Entity List Validation Error!");
+			}
+			if (numDeadEntities > 0) {
 				assert(false);
 				throw new ErrorException("Entity List Validation Error!");
 			}
@@ -824,6 +860,7 @@ public class JaamSimModel {
 			listData.lastEnt = e;
 			oldLast.nextEnt = e;
 			e.nextEnt = null;
+			e.prevEnt = oldLast;
 			validateEntList();
 		}
 	}
@@ -841,6 +878,7 @@ public class JaamSimModel {
 				listData.firstEnt = e;
 				listData.lastEnt = e;
 				e.nextEnt = null;
+				e.prevEnt = null;
 				validateEntList();
 				return;
 			}
@@ -852,6 +890,7 @@ public class JaamSimModel {
 					curEnt.nextEnt = e;
 					listData.lastEnt = e;
 					e.nextEnt = null;
+					e.prevEnt = curEnt;
 					validateEntList();
 					return;
 				}
@@ -859,6 +898,7 @@ public class JaamSimModel {
 				if (nextEnt.getEntityNumber() > entNum) {
 					curEnt.nextEnt = e;
 					e.nextEnt = nextEnt;
+					e.prevEnt = curEnt;
 					validateEntList();
 					return;
 				}
@@ -877,14 +917,24 @@ public class JaamSimModel {
 
 			e.entityName = null;
 			e.setFlag(Entity.FLAG_DEAD);
-			listData.killsSincePurge++;
-			if (listData.killsSincePurge > KILLS_UNTIL_PURGE) {
-				// Do a pointless iteration to kill zombie entities
-				for (Entity dummy : getInstanceIterator(Entity.class)) {
-					@SuppressWarnings("unused")
-					long d = dummy.getEntityNumber();
-				}
+			Entity prev = e.prevEnt;
+			Entity next = e.nextEnt;
+			if (prev != null) {
+				prev.nextEnt = next;
+			} else {
+				// First entity
+				listData.firstEnt = next;
 			}
+			if (next != null) {
+				next.prevEnt = prev;
+			} else {
+				// Last ent
+				listData.lastEnt = prev;
+			}
+
+			// Note, leaving e's next and prev pointers intact so that any outstanding iterators
+			// can finish traversing the list
+
 			validateEntList();
 		}
 	}
