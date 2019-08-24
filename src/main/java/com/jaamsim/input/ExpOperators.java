@@ -2032,6 +2032,37 @@ public class ExpOperators {
 			}
 		});
 
+		addFunction("parseNumber", 1, 1, new CallableFunc() {
+			@Override
+			public void checkUnits(ParseContext context, ExpResult[] args,
+					String source, int pos) throws ExpError {
+				if (args[0].type != ExpResType.STRING) {
+					throw new ExpError(source, pos, "parseNumber requires string as argument");
+				}
+			}
+			@Override
+			public ExpResult call(EvalContext context, ExpResult[] args, String source, int pos) throws ExpError {
+				double val;
+				try {
+					val = Double.parseDouble(args[0].stringVal);
+				}
+				catch (Exception e) {
+					val = Double.NaN;
+				}
+				return ExpResult.makeNumResult(val, DimensionlessUnit.class);
+			}
+			@Override
+			public ExpValResult validate(ParseContext context, ExpValResult[] args, String source, int pos) {
+				if (	args[0].state == ExpValResult.State.ERROR ||
+						args[0].state == ExpValResult.State.UNDECIDABLE)
+					return args[0];
+				if (args[0].type != ExpResType.STRING) {
+					ExpError error = new ExpError(source, pos, "Argument must be a string");
+					return ExpValResult.makeErrorRes(error);
+				}
+				return ExpValResult.makeValidRes(ExpResType.NUMBER, DimensionlessUnit.class);
+			}
+		});
 
 	}
 }
