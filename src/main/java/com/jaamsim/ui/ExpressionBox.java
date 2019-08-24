@@ -1422,6 +1422,14 @@ public class ExpressionBox extends JDialog {
 				"sort()",
 				-1,
 				"'sort(|x, y|(x > y),{2, 3, 1})' returns {3, 2, 1}."));
+
+		functions.add(new ButtonDesc("parseNumber", "Parse number function ('parseNumber')",
+				"Converts a string to a floating point number.",
+				"Accepts a string that represents a valid floating point number. "
+						+ "Returns the dimensionless number represented by the string.",
+				"parseNumber()",
+				-1,
+				"'parseNumber(\"1.5\")' returns 1.5"));
 	}
 
 }
