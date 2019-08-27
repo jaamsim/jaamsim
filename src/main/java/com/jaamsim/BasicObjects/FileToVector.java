@@ -35,7 +35,7 @@ public class FileToVector extends FileToArray {
 		}
 		ArrayList<ExpResult> ret = new ArrayList<>(n);
 		for (ArrayList<String> record : tokens) {
-			ArrayList<ExpResult> expRecord = getExpResultList(record, simTime);
+			ArrayList<ExpResult> expRecord = getExpResultList(record, this, simTime);
 			ret.addAll(expRecord);
 		}
 		return ExpCollections.getCollection(ret, DimensionlessUnit.class);

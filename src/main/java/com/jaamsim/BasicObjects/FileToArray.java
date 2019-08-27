@@ -114,7 +114,7 @@ public abstract class FileToArray extends LinkedComponent {
 
 	protected abstract ExpResult getValueForTokens(ArrayList<ArrayList<String>> tokens, double simTime);
 
-	protected ExpResult getExpResult(String str, double simTime) {
+	public static ExpResult getExpResult(String str, Entity thisEnt, double simTime) {
 
 		// Is the entry a time stamp?
 		if (Input.isRFC8601DateTime(str)) {
@@ -126,14 +126,14 @@ public abstract class FileToArray extends LinkedComponent {
 		}
 
 		// Is the entry an entity?
-		Entity ent = getJaamSimModel().getNamedEntity(str);
+		Entity ent = thisEnt.getJaamSimModel().getNamedEntity(str);
 		if (ent != null) {
 			return ExpResult.makeEntityResult(ent);
 		}
 
 		// Is the entry a valid expression?
 		try {
-			ExpEvaluator.EntityParseContext pc = ExpEvaluator.getParseContext(this, str);
+			ExpEvaluator.EntityParseContext pc = ExpEvaluator.getParseContext(thisEnt, str);
 			Expression exp = ExpParser.parseExpression(pc, str);
 			return ExpEvaluator.evaluateExpression(exp, simTime);
 		}
@@ -143,15 +143,15 @@ public abstract class FileToArray extends LinkedComponent {
 		return ExpResult.makeStringResult(str);
 	}
 
-	protected ArrayList<ExpResult> getExpResultList(ArrayList<String> list, double simTime) {
+	public static ArrayList<ExpResult> getExpResultList(ArrayList<String> list, Entity thisEnt, double simTime) {
 		ArrayList<ExpResult> ret = new ArrayList<>(list.size());
 		for (String str : list) {
-			ret.add(getExpResult(str, simTime));
+			ret.add(getExpResult(str, thisEnt, simTime));
 		}
 		return ret;
 	}
 
-	protected ArrayList<ExpResult> getExpResultList(ArrayList<Object> list) throws ExpError {
+	public static ArrayList<ExpResult> getExpResultList(ArrayList<Object> list) throws ExpError {
 		ArrayList<ExpResult> ret = new ArrayList<>(list.size());
 		for (Object obj : list) {
 			ExpResult res = ExpEvaluator.getResultFromObject(obj, DimensionlessUnit.class);

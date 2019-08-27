@@ -37,7 +37,7 @@ public class FileToHashMap extends FileToArray {
 
 		// Process each record from the file
 		for (ArrayList<String> strRecord : tokens) {
-			ArrayList<ExpResult> record = getExpResultList(strRecord, simTime);
+			ArrayList<ExpResult> record = getExpResultList(strRecord, this, simTime);
 			if (record.size() < 1)
 				error("Entry has no key: %s", strRecord);
 

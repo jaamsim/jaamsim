@@ -31,7 +31,7 @@ public class FileToMatrix extends FileToArray {
 	protected ExpResult getValueForTokens(ArrayList<ArrayList<String>> tokens, double simTime) {
 		ArrayList<ExpResult> ret = new ArrayList<>(tokens.size());
 		for (ArrayList<String> strRecord : tokens) {
-			ArrayList<ExpResult> record = getExpResultList(strRecord, simTime);
+			ArrayList<ExpResult> record = getExpResultList(strRecord, this, simTime);
 			ExpResult colRow = ExpCollections.getCollection(record, DimensionlessUnit.class);
 			ret.add(colRow);
 		}
