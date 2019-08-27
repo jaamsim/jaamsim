@@ -3897,11 +3897,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 		LogBox.logLine("Loading...");
 
-		Preferences prefs = Preferences.userRoot().node(getClass().getName());
-
 		// Create a file chooser
-		final JFileChooser chooser = new JFileChooser(prefs.get(LAST_USED_FOLDER,
-				new File(".").getAbsolutePath()));
+		final JFileChooser chooser = new JFileChooser(getConfigFolder());
 
 		// Set the file extension filters
 		chooser.setAcceptAllFileFilterUsed(true);
@@ -3934,7 +3931,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				}
 			}).start();
 
-			prefs.put(LAST_USED_FOLDER, chosenfile.getParent());
+			setConfigFolder(chosenfile.getParent());
         }
 	}
 
@@ -4020,11 +4017,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	boolean saveAs() {
 		LogBox.logLine("Save As...");
 
-		Preferences prefs = Preferences.userRoot().node(getClass().getName());
-
 		// Create a file chooser
-		final JFileChooser chooser = new JFileChooser(prefs.get(LAST_USED_FOLDER,
-				new File(".").getAbsolutePath()));
+		final JFileChooser chooser = new JFileChooser(getConfigFolder());
 
 		// Set the file extension filters
 		chooser.setAcceptAllFileFilterUsed(true);
@@ -4061,7 +4055,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		// Save the configuration file
 		setSaveFile(filePath);
 
-		prefs.put(LAST_USED_FOLDER, file.getParent());
+		setConfigFolder(file.getParent());
 		return true;
 	}
 
@@ -4086,8 +4080,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 	public static String getImageFolder() {
 		Preferences prefs = Preferences.userRoot().node(instance.getClass().getName());
-		String def = prefs.get(LAST_USED_FOLDER, new File(".").getAbsolutePath());
-		return prefs.get(LAST_USED_IMAGE_FOLDER, def);
+		return prefs.get(LAST_USED_IMAGE_FOLDER, getConfigFolder());
 	}
 
 	public static void setImageFolder(String path) {
@@ -4097,8 +4090,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 	public static String get3DFolder() {
 		Preferences prefs = Preferences.userRoot().node(instance.getClass().getName());
-		String def = prefs.get(LAST_USED_FOLDER, new File(".").getAbsolutePath());
-		return prefs.get(LAST_USED_3D_FOLDER, def);
+		return prefs.get(LAST_USED_3D_FOLDER, getConfigFolder());
 	}
 
 	public static void set3DFolder(String path) {
