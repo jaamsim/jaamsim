@@ -32,8 +32,6 @@ import com.jaamsim.ui.EditBox.EditTable;
  */
 public class FileEditor extends CellEditor {
 
-	private static File lastDir;  // last directory accessed by the file chooser
-
 	public FileEditor(EditTable table) {
 		super(table, true);
 	}
@@ -43,9 +41,7 @@ public class FileEditor extends CellEditor {
 		if("button".equals(e.getActionCommand())) {
 
 			// Create a file chooser
-			if (lastDir == null)
-				lastDir = GUIFrame.getJaamSimModel().getConfigFile();
-			JFileChooser fileChooser = new JFileChooser(lastDir);
+			JFileChooser fileChooser = new JFileChooser(GUIFrame.getConfigFolder());
 
 			// Set the file extension filters
 			FileNameExtensionFilter[] filters = ((FileInput)input).getFileNameExtensionFilters();
@@ -64,7 +60,6 @@ public class FileEditor extends CellEditor {
 			// Process the selected file
 			if (returnVal == JFileChooser.APPROVE_OPTION) {
 	            File file = fileChooser.getSelectedFile();
-				lastDir = fileChooser.getCurrentDirectory();
 				setValue(file.getPath());
 	        }
 
