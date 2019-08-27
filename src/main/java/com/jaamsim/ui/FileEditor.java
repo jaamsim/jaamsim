@@ -19,11 +19,13 @@ package com.jaamsim.ui;
 
 import java.awt.event.ActionEvent;
 import java.io.File;
+import java.net.URI;
 
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import com.jaamsim.input.FileInput;
+import com.jaamsim.input.Input;
 import com.jaamsim.ui.EditBox.EditTable;
 
 /**
@@ -42,6 +44,14 @@ public class FileEditor extends CellEditor {
 
 			// Create a file chooser
 			JFileChooser fileChooser = new JFileChooser(GUIFrame.getConfigFolder());
+
+			// Select the present file
+			@SuppressWarnings("unchecked")
+			URI uri = ((Input<URI>) getCellEditorValue()).getValue();
+			if (uri != null) {
+				File lastFile = new File(uri);
+				fileChooser.setSelectedFile(lastFile);
+			}
 
 			// Set the file extension filters
 			FileNameExtensionFilter[] filters = ((FileInput)input).getFileNameExtensionFilters();
