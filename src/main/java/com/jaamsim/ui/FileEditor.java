@@ -65,7 +65,7 @@ public class FileEditor extends CellEditor {
 			}
 
 			// Show the file chooser and wait for selection
-			int returnVal = fileChooser.showDialog(null, "Load");
+			int returnVal = fileChooser.showDialog(GUIFrame.getInstance(), "Load");
 
 			// Process the selected file
 			if (returnVal == JFileChooser.APPROVE_OPTION) {
