@@ -4074,6 +4074,16 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		});
 	}
 
+	public static String getConfigFolder() {
+		Preferences prefs = Preferences.userRoot().node(instance.getClass().getName());
+		return prefs.get(LAST_USED_FOLDER, new File(".").getAbsolutePath());
+	}
+
+	public static void setConfigFolder(String path) {
+		Preferences prefs = Preferences.userRoot().node(instance.getClass().getName());
+		prefs.put(LAST_USED_FOLDER, path);
+	}
+
 	public static String getImageFolder() {
 		Preferences prefs = Preferences.userRoot().node(instance.getClass().getName());
 		String def = prefs.get(LAST_USED_FOLDER, new File(".").getAbsolutePath());
