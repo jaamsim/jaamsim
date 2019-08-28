@@ -1496,14 +1496,13 @@ public abstract class Input<T> {
 		if (unitType == UserSpecifiedUnit.class)
 			throw new InputErrorException(INP_ERR_UNITUNSPECIFIED);
 
-		// More than two inputs is an error
-		if (kw.numArgs() > 2)
-			throw new InputErrorException(INP_ERR_RANGECOUNT, 1, 2, kw.argString());
+		if (unitType == DimensionlessUnit.class)
+			assertCount(kw, 1);
+		else
+			assertCountRange(kw, 1, 2);
 
 		// If there are exactly two inputs, then it must be a number and its unit
 		if (kw.numArgs() == 2) {
-			if (unitType == DimensionlessUnit.class)
-				throw new InputErrorException(INP_ERR_COUNT, 1, kw.argString());
 			DoubleVector tmp = Input.parseDoubles(thisEnt.getJaamSimModel(), kw, minValue, maxValue, unitType);
 			return new SampleConstant(unitType, tmp.get(0));
 		}
