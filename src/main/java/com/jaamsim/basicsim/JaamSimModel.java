@@ -57,8 +57,11 @@ public class JaamSimModel {
 	private IntegerVector runIndexList;
 	private GUIListener gui;
 	private final AtomicLong entityCount = new AtomicLong(0);
-	private final JaamSimModel.ListData listData = new JaamSimModel.ListData();
+
 	private final HashMap<String, Entity> namedEntities = new HashMap<>(100);
+	private Entity firstEnt;
+	private Entity lastEnt;
+	private int numLiveEnts;
 
 	private File configFile;           // present configuration file
 	private File reportDir;         // directory for the output reports
@@ -118,7 +121,7 @@ public class JaamSimModel {
 			getSimulation().clear();
 		}
 
-		Entity curEnt = listData.firstEnt;
+		Entity curEnt = getHeadEntity();
 		while(curEnt != null) {
 			if (!curEnt.testFlag(Entity.FLAG_DEAD)) {
 				curEnt.kill();
@@ -162,7 +165,7 @@ public class JaamSimModel {
 	public void autoLoad() {
 		setRecordEdits(false);
 		InputAgent.readResource(this, "<res>/inputs/autoload.cfg");
-		preDefinedEntityCount = listData.lastEnt.getEntityNumber();
+		preDefinedEntityCount = getTailEntity().getEntityNumber();
 	}
 
 	/**
@@ -430,7 +433,7 @@ public class JaamSimModel {
 	 * Destroys the entities that were generated during the present simulation run.
 	 */
 	public void killGeneratedEntities() {
-		Entity curEnt = listData.firstEnt;
+		Entity curEnt = getHeadEntity();
 		while(curEnt != null) {
 			if (!curEnt.testFlag(Entity.FLAG_DEAD) && !curEnt.testFlag(Entity.FLAG_RETAINED)) {
 				curEnt.kill();
@@ -657,21 +660,21 @@ public class JaamSimModel {
 	}
 
 	public final Entity getNamedEntity(String name) {
-		synchronized (listData) {
+		synchronized (namedEntities) {
 			return namedEntities.get(name);
 		}
 	}
 
 	public final long getEntitySequence() {
-		long seq = (long)listData.numLiveEnts << 32;
+		long seq = (long)numLiveEnts << 32;
 		seq += entityCount.get();
 		return seq;
 	}
 
 	public final Entity idToEntity(long id) {
-		synchronized (listData) {
+		synchronized (namedEntities) {
 
-			Entity ent = listData.firstEnt;
+			Entity ent = getHeadEntity();
 			while(true) {
 				if (ent == null) {
 					return null;
@@ -740,7 +743,7 @@ public class JaamSimModel {
 	}
 
 	final void renameEntity(Entity e, String newName) {
-		synchronized(listData) {
+		synchronized(namedEntities) {
 			// Unregistered entities do not appear in the named entity hashmap, no consistency checks needed
 			if (!e.testFlag(Entity.FLAG_REGISTERED)) {
 				e.entityName = newName;
@@ -763,13 +766,13 @@ public class JaamSimModel {
 		if (!VALIDATE_ENT_LIST) {
 			return;
 		}
-		synchronized(listData) {
+		synchronized(namedEntities) {
 			// Count the number of live entities and make sure all entity numbers are increasing
 			// Also, check that the lastEnt reference is correct
 			int numEntities = 0;
 			long lastEntNum = -1;
 			int numDeadEntities = 0;
-			Entity curEnt = listData.firstEnt;
+			Entity curEnt = firstEnt;
 			Entity lastEnt = null;
 			while (curEnt != null) {
 				if (!curEnt.testFlag(Entity.FLAG_DEAD)) {
@@ -790,11 +793,11 @@ public class JaamSimModel {
 				curEnt = curEnt.nextEnt;
 
 			}
-			if (numEntities != listData.numLiveEnts) {
+			if (numEntities != numLiveEnts) {
 				assert(false);
 				throw new ErrorException("Entity List Validation Error!");
 			}
-			if (listData.lastEnt != lastEnt) {
+			if (this.lastEnt != lastEnt) {
 				assert(false);
 				throw new ErrorException("Entity List Validation Error!");
 			}
@@ -804,7 +807,7 @@ public class JaamSimModel {
 			}
 
 			// Scan the list backwards
-			curEnt = listData.lastEnt;
+			curEnt = this.lastEnt;
 			lastEnt = null;
 			numEntities = 0;
 			lastEntNum = Long.MAX_VALUE;
@@ -826,11 +829,11 @@ public class JaamSimModel {
 				lastEnt = curEnt;
 				curEnt = curEnt.prevEnt;
 			}
-			if (numEntities != listData.numLiveEnts) {
+			if (numEntities != numLiveEnts) {
 				assert(false);
 				throw new ErrorException("Entity List Validation Error!");
 			}
-			if (listData.firstEnt != lastEnt) {
+			if (this.firstEnt != lastEnt) {
 				assert(false);
 				throw new ErrorException("Entity List Validation Error!");
 			}
@@ -842,22 +845,21 @@ public class JaamSimModel {
 	}
 
 	final void addInstance(Entity e) {
-		synchronized(listData) {
+		synchronized(namedEntities) {
 			validateEntList();
 
-			listData.numLiveEnts++;
-			if (listData.firstEnt == null) {
+			numLiveEnts++;
+			if (firstEnt == null) {
 				// Empty list
-				listData.firstEnt = e;
-				listData.lastEnt = e;
+				firstEnt = e;
+				lastEnt = e;
 				e.nextEnt = null;
 				validateEntList();
 				return;
 			}
 
-			Entity oldLast = listData.lastEnt;
-
-			listData.lastEnt = e;
+			Entity oldLast = lastEnt;
+			lastEnt = e;
 			oldLast.nextEnt = e;
 			e.nextEnt = null;
 			e.prevEnt = oldLast;
@@ -866,17 +868,17 @@ public class JaamSimModel {
 	}
 
 	final void restoreInstance(Entity e) {
-		synchronized (listData) {
+		synchronized (namedEntities) {
 			validateEntList();
-			listData.numLiveEnts++;
+			numLiveEnts++;
 			// Scan through the linked list to find the place to insert this entity
 			// This is slow, but should only happen due to user actions
 			long entNum = e.getEntityNumber();
-			Entity curEnt = listData.firstEnt;
+			Entity curEnt = firstEnt;
 			if (curEnt == null) {
 				// Special case of empty list
-				listData.firstEnt = e;
-				listData.lastEnt = e;
+				firstEnt = e;
+				lastEnt = e;
 				e.nextEnt = null;
 				e.prevEnt = null;
 				validateEntList();
@@ -888,7 +890,7 @@ public class JaamSimModel {
 					// End of the list
 					assert(curEnt.getEntityNumber() < entNum);
 					curEnt.nextEnt = e;
-					listData.lastEnt = e;
+					lastEnt = e;
 					e.nextEnt = null;
 					e.prevEnt = curEnt;
 					validateEntList();
@@ -907,9 +909,9 @@ public class JaamSimModel {
 	}
 
 	final void removeInstance(Entity e) {
-		synchronized (listData) {
+		synchronized (namedEntities) {
 			validateEntList();
-			listData.numLiveEnts--;
+			numLiveEnts--;
 			if (e.testFlag(Entity.FLAG_REGISTERED)) {
 				if (e != namedEntities.remove(e.entityName))
 					throw new ErrorException("Named Entities Internal Consistency error: %s", e);
@@ -923,13 +925,13 @@ public class JaamSimModel {
 				prev.nextEnt = next;
 			} else {
 				// First entity
-				listData.firstEnt = next;
+				firstEnt = next;
 			}
 			if (next != null) {
 				next.prevEnt = prev;
 			} else {
 				// Last ent
-				listData.lastEnt = prev;
+				lastEnt = prev;
 			}
 
 			// Note, leaving e's next and prev pointers intact so that any outstanding iterators
@@ -973,20 +975,17 @@ public class JaamSimModel {
 		return new ClonesOfIterableInterface<>(this, proto, iface);
 	}
 
-	// A "struct" to mimic a pointer-to-pointer like relationship
-	private static class ListData {
-		public Entity firstEnt;
-		public Entity lastEnt;
-		public int numLiveEnts;
-	}
-
 	// Note, this should only be called by EntityIterator and some unit tests
-	public Entity getHeadEntity() {
-		return listData.firstEnt;
+	public final Entity getHeadEntity() {
+		synchronized (namedEntities) {
+			return firstEnt;
+		}
 	}
 
-	public Entity getTailEntity() {
-		return listData.lastEnt;
+	public final Entity getTailEntity() {
+		synchronized (namedEntities) {
+			return lastEnt;
+		}
 	}
 
 	public void addObjectType(ObjectType ot) {
