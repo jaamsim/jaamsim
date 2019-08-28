@@ -57,7 +57,7 @@ public class JaamSimModel {
 	private IntegerVector runIndexList;
 	private GUIListener gui;
 	private final AtomicLong entityCount = new AtomicLong(0);
-	private final EntityIterator.ListData listData = new EntityIterator.ListData();
+	private final JaamSimModel.ListData listData = new JaamSimModel.ListData();
 	private final HashMap<String, Entity> namedEntities = new HashMap<>(100);
 
 	private File configFile;           // present configuration file
@@ -973,9 +973,20 @@ public class JaamSimModel {
 		return new ClonesOfIterableInterface<>(this, proto, iface);
 	}
 
+	// A "struct" to mimic a pointer-to-pointer like relationship
+	private static class ListData {
+		public Entity firstEnt;
+		public Entity lastEnt;
+		public int numLiveEnts;
+	}
+
 	// Note, this should only be called by EntityIterator and some unit tests
-	public EntityIterator.ListData getListData() {
-		return listData;
+	public Entity getHeadEntity() {
+		return listData.firstEnt;
+	}
+
+	public Entity getTailEntity() {
+		return listData.lastEnt;
 	}
 
 	public void addObjectType(ObjectType ot) {

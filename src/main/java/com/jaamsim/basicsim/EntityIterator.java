@@ -22,21 +22,12 @@ import java.util.NoSuchElementException;
 
 
 public abstract class EntityIterator<T extends Entity> implements Iterable<T>, Iterator<T> {
-	// A "struct" to mimic a pointer-to-pointer like relationship
-	public static class ListData {
-		public Entity firstEnt;
-		public Entity lastEnt;
-		public int numLiveEnts;
-	}
-
-	private final ListData listData;
 	private boolean firstRead = true;
 	protected final Class<T> entClass;
 	private Entity curEnt;
 
 	public EntityIterator(JaamSimModel simModel, Class<T> aClass) {
-		listData = simModel.getListData();
-		curEnt = listData.firstEnt;
+		curEnt = simModel.getHeadEntity();
 		entClass = aClass;
 	}
 
