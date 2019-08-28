@@ -1486,6 +1486,7 @@ public abstract class Input<T> {
 		} catch (InputErrorException e) {}
 
 		// If nothing else works, return the constant string
+		assertCount(kw, 1);
 		return new StringProvConstant(kw.getArg(0));
 	}
 
