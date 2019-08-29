@@ -16,11 +16,10 @@
  */
 package com.jaamsim.events;
 
-import java.util.ArrayList;
-
 import org.junit.Test;
 
 import com.jaamsim.basicsim.Entity;
+import com.jaamsim.basicsim.EntityIterator;
 import com.jaamsim.basicsim.JaamSimModel;
 
 public class TestSchedEvent {
@@ -53,14 +52,14 @@ public class TestSchedEvent {
 			simModel.createInstance(Entity.class);
 		}
 
-		ArrayList<? extends Entity> ents = simModel.getEntities();
+		EntityIterator.ListData listData = simModel.getListData();
 		long[] nanoStamps = new long[11];
 		for (int i = 0; i <= 1000000; i++) {
 			if (i % 100000 == 0) {
 				int idx = i / 100000;
 				nanoStamps[idx] = System.nanoTime();
 			}
-			ents.get(0).kill();
+			listData.firstEnt.kill();
 		}
 		long endSchedNanos = System.nanoTime();
 
@@ -77,14 +76,14 @@ public class TestSchedEvent {
 			simModel.createInstance(Entity.class);
 		}
 
-		ArrayList<? extends Entity> ents = simModel.getEntities();
+		EntityIterator.ListData listData = simModel.getListData();
 		long[] nanoStamps = new long[11];
 		for (int i = 0; i <= 1000000; i++) {
 			if (i % 100000 == 0) {
 				int idx = i / 100000;
 				nanoStamps[idx] = System.nanoTime();
 			}
-			ents.get(ents.size() - 1).kill();
+			listData.lastEnt.kill();
 		}
 		long endSchedNanos = System.nanoTime();
 

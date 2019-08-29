@@ -70,7 +70,7 @@ public class ExpEvaluator {
 		}
 
 		if (ExpCollections.isCollectionClass(retType)) {
-			return ExpCollections.getCollection(oh.getValue(simTime, retType), oh.getUnitType());
+			return ExpCollections.wrapCollection(oh.getValue(simTime, retType), oh.getUnitType());
 		}
 
 		// No known type
@@ -97,7 +97,7 @@ public class ExpEvaluator {
 			return ExpResult.makeNumResult((Integer)val, unitType);
 		}
 		if (ExpCollections.isCollectionClass(val.getClass())) {
-			return ExpCollections.getCollection(val, unitType);
+			return ExpCollections.wrapCollection(val, unitType);
 		}
 		throw new ExpError(null, 0, "Unknown type in expression: %s", val.getClass().getSimpleName());
 	}
@@ -265,7 +265,7 @@ public class ExpEvaluator {
 			case STRING:
 				return ExpResult.makeStringResult(handle.getValue(simTime, String.class));
 			case COLLECTION:
-				return ExpCollections.getCollection(handle.getValue(simTime, handle.getReturnType()), handle.getUnitType());
+				return ExpCollections.wrapCollection(handle.getValue(simTime, handle.getReturnType()), handle.getUnitType());
 			default:
 				assert(false);
 				return ExpResult.makeNumResult(handle.getValueAsDouble(simTime, 0), handle.getUnitType());

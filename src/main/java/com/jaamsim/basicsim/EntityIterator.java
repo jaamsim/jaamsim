@@ -17,60 +17,69 @@
  */
 package com.jaamsim.basicsim;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 
 public abstract class EntityIterator<T extends Entity> implements Iterable<T>, Iterator<T> {
-	private final ArrayList<? extends Entity> allInstances;
+	// A "struct" to mimic a pointer-to-pointer like relationship
+	public static class ListData {
+		public Entity firstEnt;
+		public Entity lastEnt;
+		public int numLiveEnts;
+	}
+
+	private final ListData listData;
+	private boolean firstRead = true;
 	protected final Class<T> entClass;
-	private int curPos;
-	private int nextPos;
+	private Entity curEnt;
 
 	public EntityIterator(JaamSimModel simModel, Class<T> aClass) {
-		allInstances = simModel.getEntities();
+		listData = simModel.getListData();
+		curEnt = listData.firstEnt;
 		entClass = aClass;
-		curPos = -1;
-		nextPos = -1;
 	}
 
 	abstract boolean matches(Class<?> entklass);
 
-	private void updatePos() {
-		if (nextPos >= allInstances.size())
-			return;
-
-		while (++nextPos < allInstances.size()) {
-			// If we find a match, break out
-			if (matches(allInstances.get(nextPos).getClass()))
-				break;
+	// Advance the current pointer past any dead entities, or entities that do not match
+	private Entity validateNext(Entity nextEnt) {
+		while(true) {
+			if (nextEnt == null) {
+				return null;
+			}
+			// Return a valid match
+			if (!nextEnt.testFlag(Entity.FLAG_DEAD) && matches(nextEnt.getClass())) {
+				return nextEnt;
+			}
+			nextEnt = nextEnt.nextEnt;
 		}
 	}
 
 	@Override
 	public boolean hasNext() {
-		if (curPos == nextPos)
-			updatePos();
-
-		if (nextPos < allInstances.size())
-			return true;
-		else
-			return false;
+		if (firstRead) {
+			curEnt = validateNext(curEnt);
+			firstRead = false;
+		}
+		return curEnt != null;
 	}
 
+	// Note, this warning is suppressed because the cast is effectively checked by match()
+	@SuppressWarnings("unchecked")
 	@Override
 	public T next() {
-		if (curPos == nextPos)
-			updatePos();
-
-		if (nextPos < allInstances.size()) {
-			curPos = nextPos;
-			return entClass.cast(allInstances.get(curPos));
+		if (firstRead) {
+			curEnt = validateNext(curEnt);
+			firstRead = false;
 		}
-		else {
+		Entity nextEnt = curEnt;
+		if (nextEnt == null) {
 			throw new NoSuchElementException();
 		}
+
+		curEnt =  validateNext(curEnt.nextEnt);
+		return (T)nextEnt;
 	}
 
 	@Override

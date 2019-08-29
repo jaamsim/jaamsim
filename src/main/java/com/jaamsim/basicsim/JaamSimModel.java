@@ -47,6 +47,9 @@ import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 
 public class JaamSimModel {
+	// Perform debug only entity list validation logic
+	private static final boolean VALIDATE_ENT_LIST = false;
+
 	private static final Object createLock = new Object();
 	private static JaamSimModel createModel = null;
 
@@ -57,7 +60,7 @@ public class JaamSimModel {
 	private IntegerVector runIndexList;
 	private GUIListener gui;
 	private final AtomicLong entityCount = new AtomicLong(0);
-	private final ArrayList<Entity> allInstances = new ArrayList<>(100);
+	private final EntityIterator.ListData listData = new EntityIterator.ListData();
 	private final HashMap<String, Entity> namedEntities = new HashMap<>(100);
 
 	private File configFile;           // present configuration file
@@ -118,10 +121,12 @@ public class JaamSimModel {
 			getSimulation().clear();
 		}
 
-		// Kill all entities
-		while (allInstances.size() > 0) {
-			Entity ent = allInstances.get(allInstances.size() - 1);
-			ent.kill();
+		Entity curEnt = listData.firstEnt;
+		while(curEnt != null) {
+			if (!curEnt.testFlag(Entity.FLAG_DEAD)) {
+				curEnt.kill();
+			}
+			curEnt = curEnt.nextEnt;
 		}
 
 		// Clear the 'simulation' property
@@ -160,7 +165,7 @@ public class JaamSimModel {
 	public void autoLoad() {
 		setRecordEdits(false);
 		InputAgent.readResource(this, "<res>/inputs/autoload.cfg");
-		preDefinedEntityCount = allInstances.get( allInstances.size() - 1 ).getEntityNumber();
+		preDefinedEntityCount = listData.lastEnt.getEntityNumber();
 	}
 
 	/**
@@ -429,13 +434,14 @@ public class JaamSimModel {
 	 * Destroys the entities that were generated during the present simulation run.
 	 */
 	public void killGeneratedEntities() {
-		for (int i = 0; i < allInstances.size();) {
-			Entity ent = allInstances.get(i);
-			if (!ent.testFlag(Entity.FLAG_RETAINED))
-				ent.kill();
-			else
-				i++;
+		Entity curEnt = listData.firstEnt;
+		while(curEnt != null) {
+			if (!curEnt.testFlag(Entity.FLAG_DEAD) && !curEnt.testFlag(Entity.FLAG_RETAINED)) {
+				curEnt.kill();
+			}
+			curEnt = curEnt.nextEnt;
 		}
+
 	}
 
 	/**
@@ -655,55 +661,30 @@ public class JaamSimModel {
 	}
 
 	public final Entity getNamedEntity(String name) {
-		synchronized (allInstances) {
+		synchronized (listData) {
 			return namedEntities.get(name);
 		}
 	}
 
 	public final long getEntitySequence() {
-		long seq = (long)allInstances.size() << 32;
+		long seq = (long)listData.numLiveEnts << 32;
 		seq += entityCount.get();
 		return seq;
 	}
 
-	private final int idToIndex(long id) {
-		int lowIdx = 0;
-		int highIdx = allInstances.size() - 1;
-
-		while (lowIdx <= highIdx) {
-			int testIdx = (lowIdx + highIdx) >>> 1; // Avoid sign extension
-			long testNum = allInstances.get(testIdx).getEntityNumber();
-
-			if (testNum < id) {
-				lowIdx = testIdx + 1;
-				continue;
-			}
-
-			if (testNum > id) {
-				highIdx = testIdx - 1;
-				continue;
-			}
-
-			return testIdx;
-		}
-
-		// Entity number not found
-		return -(lowIdx + 1);
-	}
-
 	public final Entity idToEntity(long id) {
-		synchronized (allInstances) {
-			int idx = this.idToIndex(id);
-			if (idx < 0)
-				return null;
+		synchronized (listData) {
 
-			return allInstances.get(idx);
-		}
-	}
-
-	public final ArrayList<? extends Entity> getEntities() {
-		synchronized(allInstances) {
-			return allInstances;
+			Entity ent = listData.firstEnt;
+			while(true) {
+				if (ent == null) {
+					return null;
+				}
+				if (ent.getEntityNumber() == id) {
+					return ent;
+				}
+				ent = ent.nextEnt;
+			}
 		}
 	}
 
@@ -763,7 +744,7 @@ public class JaamSimModel {
 	}
 
 	final void renameEntity(Entity e, String newName) {
-		synchronized (allInstances) {
+		synchronized(listData) {
 			// Unregistered entities do not appear in the named entity hashmap, no consistency checks needed
 			if (!e.testFlag(Entity.FLAG_REGISTERED)) {
 				e.entityName = newName;
@@ -782,31 +763,157 @@ public class JaamSimModel {
 		}
 	}
 
+	private void validateEntList() {
+		if (!VALIDATE_ENT_LIST) {
+			return;
+		}
+		synchronized(listData) {
+			// Count the number of live entities and make sure all entity numbers are increasing
+			// Also, check that the lastEnt reference is correct
+			int numEntities = 0;
+			long lastEntNum = -1;
+			int numDeadEntities = 0;
+			Entity curEnt = listData.firstEnt;
+			Entity lastEnt = null;
+			while (curEnt != null) {
+				if (!curEnt.testFlag(Entity.FLAG_DEAD)) {
+					numEntities++;
+				} else {
+					numDeadEntities++;
+				}
+				if (curEnt.getEntityNumber() <= lastEntNum) {
+					assert(false);
+					throw new ErrorException("Entity List Validation Error!");
+				}
+				if (curEnt.prevEnt != lastEnt) {
+					assert(false);
+					throw new ErrorException("Entity List Validation Error!");
+				}
+				lastEntNum = curEnt.getEntityNumber();
+				lastEnt = curEnt;
+				curEnt = curEnt.nextEnt;
+
+			}
+			if (numEntities != listData.numLiveEnts) {
+				assert(false);
+				throw new ErrorException("Entity List Validation Error!");
+			}
+			if (listData.lastEnt != lastEnt) {
+				assert(false);
+				throw new ErrorException("Entity List Validation Error!");
+			}
+			if (numDeadEntities > 0) {
+				assert(false);
+				throw new ErrorException("Entity List Validation Error!");
+			}
+
+			// Scan the list backwards
+			curEnt = listData.lastEnt;
+			lastEnt = null;
+			numEntities = 0;
+			lastEntNum = Long.MAX_VALUE;
+			while(curEnt != null) {
+				if (!curEnt.testFlag(Entity.FLAG_DEAD)) {
+					numEntities++;
+				} else {
+					numDeadEntities++;
+				}
+				if (curEnt.getEntityNumber() >= lastEntNum) {
+					assert(false);
+					throw new ErrorException("Entity List Validation Error!");
+				}
+				if (curEnt.nextEnt != lastEnt) {
+					assert(false);
+					throw new ErrorException("Entity List Validation Error!");
+				}
+				lastEntNum = curEnt.getEntityNumber();
+				lastEnt = curEnt;
+				curEnt = curEnt.prevEnt;
+			}
+			if (numEntities != listData.numLiveEnts) {
+				assert(false);
+				throw new ErrorException("Entity List Validation Error!");
+			}
+			if (listData.firstEnt != lastEnt) {
+				assert(false);
+				throw new ErrorException("Entity List Validation Error!");
+			}
+			if (numDeadEntities > 0) {
+				assert(false);
+				throw new ErrorException("Entity List Validation Error!");
+			}
+		}
+	}
+
 	final void addInstance(Entity e) {
-		synchronized(allInstances) {
-			allInstances.add(e);
+		synchronized(listData) {
+			validateEntList();
+
+			listData.numLiveEnts++;
+			if (listData.firstEnt == null) {
+				// Empty list
+				listData.firstEnt = e;
+				listData.lastEnt = e;
+				e.nextEnt = null;
+				validateEntList();
+				return;
+			}
+
+			Entity oldLast = listData.lastEnt;
+
+			listData.lastEnt = e;
+			oldLast.nextEnt = e;
+			e.nextEnt = null;
+			e.prevEnt = oldLast;
+			validateEntList();
 		}
 	}
 
 	final void restoreInstance(Entity e) {
-		synchronized(allInstances) {
-			int index = idToIndex(e.getEntityNumber());
-			if (index >= 0) {
-				throw new ErrorException("Entity already included in allInstances: %s", e);
+		synchronized (listData) {
+			validateEntList();
+			listData.numLiveEnts++;
+			// Scan through the linked list to find the place to insert this entity
+			// This is slow, but should only happen due to user actions
+			long entNum = e.getEntityNumber();
+			Entity curEnt = listData.firstEnt;
+			if (curEnt == null) {
+				// Special case of empty list
+				listData.firstEnt = e;
+				listData.lastEnt = e;
+				e.nextEnt = null;
+				e.prevEnt = null;
+				validateEntList();
+				return;
 			}
-			allInstances.add(-index - 1, e);
+			while(true) {
+				Entity nextEnt = curEnt.nextEnt;
+				if (nextEnt == null) {
+					// End of the list
+					assert(curEnt.getEntityNumber() < entNum);
+					curEnt.nextEnt = e;
+					listData.lastEnt = e;
+					e.nextEnt = null;
+					e.prevEnt = curEnt;
+					validateEntList();
+					return;
+				}
+
+				if (nextEnt.getEntityNumber() > entNum) {
+					curEnt.nextEnt = e;
+					e.nextEnt = nextEnt;
+					e.prevEnt = curEnt;
+					validateEntList();
+					return;
+				}
+			}
 		}
 	}
 
 	final void removeInstance(Entity e) {
-		synchronized (allInstances) {
-			int index = idToIndex(e.getEntityNumber());
-			if (index < 0)
-				return;
-
-			if (e != allInstances.remove(index))
-				throw new ErrorException("Internal Consistency Error - Entity List");
-
+		synchronized (listData) {
+			validateEntList();
+			listData.numLiveEnts--;
 			if (e.testFlag(Entity.FLAG_REGISTERED)) {
 				if (e != namedEntities.remove(e.entityName))
 					throw new ErrorException("Named Entities Internal Consistency error: %s", e);
@@ -814,6 +921,25 @@ public class JaamSimModel {
 
 			e.entityName = null;
 			e.setFlag(Entity.FLAG_DEAD);
+			Entity prev = e.prevEnt;
+			Entity next = e.nextEnt;
+			if (prev != null) {
+				prev.nextEnt = next;
+			} else {
+				// First entity
+				listData.firstEnt = next;
+			}
+			if (next != null) {
+				next.prevEnt = prev;
+			} else {
+				// Last ent
+				listData.lastEnt = prev;
+			}
+
+			// Note, leaving e's next and prev pointers intact so that any outstanding iterators
+			// can finish traversing the list
+
+			validateEntList();
 		}
 	}
 
@@ -849,6 +975,11 @@ public class JaamSimModel {
 	 */
 	public <T extends Entity> ClonesOfIterableInterface<T> getClonesOfIterator(Class<T> proto, Class<?> iface){
 		return new ClonesOfIterableInterface<>(this, proto, iface);
+	}
+
+	// Note, this should only be called by EntityIterator and some unit tests
+	public EntityIterator.ListData getListData() {
+		return listData;
 	}
 
 	public void addObjectType(ObjectType ot) {

@@ -18,8 +18,8 @@ package com.jaamsim.BasicObjects;
 
 import java.util.ArrayList;
 
-import com.jaamsim.input.ExpError;
 import com.jaamsim.input.ExpCollections;
+import com.jaamsim.input.ExpError;
 import com.jaamsim.input.ExpResult;
 import com.jaamsim.units.DimensionlessUnit;
 
@@ -38,7 +38,7 @@ public class FileToVector extends FileToArray {
 			ArrayList<ExpResult> expRecord = getExpResultList(record, this, simTime);
 			ret.addAll(expRecord);
 		}
-		return ExpCollections.getCollection(ret, DimensionlessUnit.class);
+		return ExpCollections.wrapCollection(ret, DimensionlessUnit.class);
 	}
 
 	/**
@@ -50,7 +50,7 @@ public class FileToVector extends FileToArray {
 	 */
 	public void setValue(ArrayList<Object> list) throws ExpError {
 		ArrayList<ExpResult> resList = getExpResultList(list);
-		ExpResult val = ExpCollections.getCollection(resList, DimensionlessUnit.class);
+		ExpResult val = ExpCollections.wrapCollection(resList, DimensionlessUnit.class);
 		setValue(val);
 	}
 

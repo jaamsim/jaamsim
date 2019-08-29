@@ -50,7 +50,13 @@ public class ExpCollections {
 	}
 
 
-	public static ExpResult getCollection(Object obj, Class<? extends Unit> ut) {
+	/**
+	 * Wrap an existing Java collection in an expression collection
+	 * @param obj - collection object to be wrapped
+	 * @param ut - unit type
+	 * @return - Read-only ExpResult representing the collection
+	 */
+	public static ExpResult wrapCollection(Object obj, Class<? extends Unit> ut) {
 		if (obj instanceof Map) {
 			MapCollection col = new MapCollection((Map<?,?>)obj, ut);
 			return ExpResult.makeCollectionResult(col);
@@ -80,7 +86,14 @@ public class ExpCollections {
 		return null;
 	}
 
-	public static ExpResult makeExpressionCollection(ArrayList<ExpResult> vals, boolean constExp) {
+	/**
+	 * Create an expression collection that may be assigned into (aka: written).
+	 * This obeys a single level of copy-on-write semantics if the original object is marked as constant
+	 * @param vals - The original values for the collection (may be an ArrayList or Map)
+	 * @param constExp - Is the original a constant?
+	 * @return
+	 */
+	public static ExpResult makeAssignableCollection(ArrayList<ExpResult> vals, boolean constExp) {
 		return ExpResult.makeCollectionResult(new AssignableArrayCollection(vals, constExp));
 	}
 
@@ -579,8 +592,12 @@ public class ExpCollections {
 		private final boolean isConstExp;
 
 		public AssignableArrayCollection(ArrayList<ExpResult> vals, boolean constExp) {
-			list = new ArrayList<>(vals);
 			isConstExp = constExp;
+			if (isConstExp) {
+				list = vals;
+			} else {
+				list = new ArrayList<>(vals);
+			}
 		}
 
 		@Override

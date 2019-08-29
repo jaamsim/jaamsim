@@ -47,6 +47,7 @@ import javax.swing.tree.TreeSelectionModel;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.EntityLabel;
 import com.jaamsim.basicsim.Entity;
+import com.jaamsim.basicsim.EntityIterator;
 import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.basicsim.ObjectType;
@@ -264,11 +265,10 @@ public class ObjectSelector extends FrameBox {
 
 		// Prepare a sorted list of entities
 		int numGenerated = 0;
-		final ArrayList<? extends Entity> allEnts = GUIFrame.getJaamSimModel().getEntities();
+		EntityIterator<Entity> entIt = GUIFrame.getJaamSimModel().getClonesOfIterator(Entity.class);
 		ArrayList<Entity> entityList = new ArrayList<>();
-		for (int i = 0; i < allEnts.size(); i++) {
+		for (Entity ent : entIt) {
 			try {
-				final Entity ent = allEnts.get(i);
 
 				// The instance for Simulation has already been added
 				if (ent == simulation)

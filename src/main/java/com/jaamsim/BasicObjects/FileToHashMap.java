@@ -47,10 +47,10 @@ public class FileToHashMap extends FileToArray {
 			// Add the entry to the hashmap
 			String key = record.get(0).stringVal;
 			List<ExpResult> list = record.subList(1, record.size());
-			ExpResult colList = ExpCollections.getCollection(list, DimensionlessUnit.class);
+			ExpResult colList = ExpCollections.wrapCollection(list, DimensionlessUnit.class);
 			ret.put(key, colList);
 		}
-		return ExpCollections.getCollection(ret, DimensionlessUnit.class);
+		return ExpCollections.wrapCollection(ret, DimensionlessUnit.class);
 	}
 
 	/**
@@ -65,10 +65,10 @@ public class FileToHashMap extends FileToArray {
 		for (Map.Entry<String, ArrayList<Object>> entry : map.entrySet()) {
 			String key = entry.getKey();
 			ArrayList<ExpResult> resRow = getExpResultList(entry.getValue());
-			ExpResult colRow = ExpCollections.getCollection(resRow, DimensionlessUnit.class);
+			ExpResult colRow = ExpCollections.wrapCollection(resRow, DimensionlessUnit.class);
 			temp.put(key, colRow);
 		}
-		ExpResult val = ExpCollections.getCollection(temp, DimensionlessUnit.class);
+		ExpResult val = ExpCollections.wrapCollection(temp, DimensionlessUnit.class);
 		setValue(val);
 	}
 

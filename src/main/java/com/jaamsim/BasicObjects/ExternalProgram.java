@@ -90,7 +90,7 @@ public class ExternalProgram extends LinkedComponent {
 	}
 
 	public ExternalProgram() {
-		value = ExpCollections.getCollection(new ArrayList<ExpResult>(), DimensionlessUnit.class);
+		value = ExpCollections.wrapCollection(new ArrayList<ExpResult>(), DimensionlessUnit.class);
 	}
 
 	@Override
@@ -113,7 +113,7 @@ public class ExternalProgram extends LinkedComponent {
 			list.add(initialValue.getValue().get(i).getNextString(0.0d));
 		}
 		ArrayList<ExpResult> resList = FileToArray.getExpResultList(list, this, 0.0d);
-		return ExpCollections.getCollection(resList, DimensionlessUnit.class);
+		return ExpCollections.wrapCollection(resList, DimensionlessUnit.class);
 	}
 
 	@Override
@@ -176,7 +176,7 @@ public class ExternalProgram extends LinkedComponent {
 
 			// Set the new output value
 			ArrayList<ExpResult> resList = FileToArray.getExpResultList(list, this, simTime);
-			value = ExpCollections.getCollection(resList, DimensionlessUnit.class);
+			value = ExpCollections.wrapCollection(resList, DimensionlessUnit.class);
 		}
 		catch (Exception e) {
 			error(e.getMessage());

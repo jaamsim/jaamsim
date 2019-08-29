@@ -32,10 +32,10 @@ public class FileToMatrix extends FileToArray {
 		ArrayList<ExpResult> ret = new ArrayList<>(tokens.size());
 		for (ArrayList<String> strRecord : tokens) {
 			ArrayList<ExpResult> record = getExpResultList(strRecord, this, simTime);
-			ExpResult colRow = ExpCollections.getCollection(record, DimensionlessUnit.class);
+			ExpResult colRow = ExpCollections.wrapCollection(record, DimensionlessUnit.class);
 			ret.add(colRow);
 		}
-		return ExpCollections.getCollection(ret, DimensionlessUnit.class);
+		return ExpCollections.wrapCollection(ret, DimensionlessUnit.class);
 	}
 
 	/**
@@ -49,10 +49,10 @@ public class FileToMatrix extends FileToArray {
 		ArrayList<ExpResult> temp = new ArrayList<>(matrix.size());
 		for (ArrayList<Object> row : matrix) {
 			ArrayList<ExpResult> resRow = getExpResultList(row);
-			ExpResult colRow = ExpCollections.getCollection(resRow, DimensionlessUnit.class);
+			ExpResult colRow = ExpCollections.wrapCollection(resRow, DimensionlessUnit.class);
 			temp.add(colRow);
 		}
-		ExpResult val = ExpCollections.getCollection(temp, DimensionlessUnit.class);
+		ExpResult val = ExpCollections.wrapCollection(temp, DimensionlessUnit.class);
 		setValue(val);
 	}
 

@@ -24,6 +24,7 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses({
 	com.jaamsim.events.TestEventManager.class,
 	com.jaamsim.events.TestEventTree.class,
+	com.jaamsim.events.TestSchedEvent.class,
 	com.jaamsim.math.TestAABB.class,
 	com.jaamsim.math.TestColor4d.class,
 	com.jaamsim.math.TestQuaternion.class,
