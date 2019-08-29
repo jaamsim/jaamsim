@@ -864,12 +864,12 @@ public class ExpressionBox extends JDialog {
 						+ "numbers, strings, entities, arrays, or maps. "
 						+ "An entry in a map is referenced by specifying its key "
 						+ "(usually a string) enclosed by round brackets.",
-				"At present, maps are used only for certain outputs such as 'StateTimes' and a "
-						+ "new map cannot be created in an expression. This button is provided "
-						+ "only for the purpose of documentation and has no effect other than "
-						+ "this pop-up.",
-				"",
-				0,
+				"Maps are enclosed by curly braces with individual entries separated by commas. "
+						+ "Each entry consists of a string (the key) followed an equal sign and "
+						+ "the value for that key.",
+				"{\"a\"=}",
+				-1,
+				"'{ \"a\"=1, \"b\"=2 }(\"a\")' returns 1.0",
 				"'[Server1].StateTimes(\"Idle\")' returns the total time that Server1 has been in "
 						+ "the state \"Idle\""));
 
