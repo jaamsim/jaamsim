@@ -3776,6 +3776,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			double callBackTime = EventManager.ticksToSecs(frame.simTicks);
 
 			frame.setClock(callBackTime);
+			frame.updateControls();
 			FrameBox.updateEntityValues(callBackTime);
 		}
 	}

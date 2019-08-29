@@ -643,12 +643,6 @@ public class Simulation extends Entity {
 		if (gui == null)
 			return;
 
-		if (in == realTimeFactor || in == realTime || in == pauseTime
-				|| in == snapToGrid || in == snapGridSpacing) {
-			gui.updateControls();
-			return;
-		}
-
 		if (in == showLabels) {
 			gui.setButton("ShowLabels", showLabels.getValue());
 			return;
