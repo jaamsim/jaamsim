@@ -17,10 +17,8 @@
 package com.jaamsim.Graphics;
 
 import com.jaamsim.DisplayModels.ShapeModel;
-import com.jaamsim.basicsim.GUIListener;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.ColourInput;
-import com.jaamsim.input.Input;
 import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.math.Color4d;
@@ -78,19 +76,6 @@ public class Shape extends DisplayEntity implements LineEntity, FillEntity {
 	}
 
 	public Shape() {}
-
-	@Override
-	public void updateForInput( Input<?> in ) {
-		super.updateForInput( in );
-
-		if (in == lineColour || in == outlined || in == lineWidth
-				|| in == fillColour || in == filled) {
-			GUIListener gui = getJaamSimModel().getGUIListener();
-			if (gui != null)
-				gui.updateControls();
-			return;
-		}
-	}
 
 	public ShapeModel getShapeModel() {
 		return (ShapeModel) getDisplayModel();

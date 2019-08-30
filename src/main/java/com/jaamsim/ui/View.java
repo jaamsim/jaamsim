@@ -29,7 +29,6 @@ import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.Region;
 import com.jaamsim.basicsim.Entity;
-import com.jaamsim.basicsim.GUIListener;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.datatypes.IntegerVector;
 import com.jaamsim.input.BooleanInput;
@@ -272,12 +271,6 @@ public class View extends Entity {
 			else {
 				RenderManager.inst().closeWindow(this);
 			}
-			return;
-		}
-		if (in == lock2D) {
-			GUIListener gui = getJaamSimModel().getGUIListener();
-			if (gui != null)
-				gui.updateControls();
 			return;
 		}
 	}

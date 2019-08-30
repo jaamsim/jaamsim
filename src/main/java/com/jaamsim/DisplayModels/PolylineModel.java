@@ -25,11 +25,9 @@ import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.LineEntity;
 import com.jaamsim.Graphics.PolylineInfo;
 import com.jaamsim.basicsim.Entity;
-import com.jaamsim.basicsim.GUIListener;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.ColourInput;
-import com.jaamsim.input.Input;
 import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Vec3dInput;
@@ -86,18 +84,6 @@ public class PolylineModel extends DisplayModel implements LineEntity {
 	}
 
 	public PolylineModel() {}
-
-	@Override
-	public void updateForInput( Input<?> in ) {
-		super.updateForInput( in );
-
-		if (in == colour || in == width) {
-			GUIListener gui = getJaamSimModel().getGUIListener();
-			if (gui != null)
-				gui.updateControls();
-			return;
-		}
-	}
 
 	private static final Color4d MINT = ColourInput.getColorWithName("mint");
 	protected static List<Vec4d> arrowHeadVerts;

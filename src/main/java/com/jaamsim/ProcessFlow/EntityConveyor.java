@@ -26,10 +26,8 @@ import com.jaamsim.Graphics.LineEntity;
 import com.jaamsim.Graphics.PolylineInfo;
 import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
-import com.jaamsim.basicsim.GUIListener;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.ColourInput;
-import com.jaamsim.input.Input;
 import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
@@ -245,18 +243,6 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 	// ********************************************************************************************
 	// GRAPHICS
 	// ********************************************************************************************
-
-	@Override
-	public void updateForInput(Input<?> in) {
-		super.updateForInput(in);
-
-		if (in == colorInput || in == widthInput) {
-			GUIListener gui = getJaamSimModel().getGUIListener();
-			if (gui != null)
-				gui.updateControls();
-			return;
-		}
-	}
 
 	public PolylineModel getPolylineModel() {
 		DisplayModel dm = getDisplayModel();

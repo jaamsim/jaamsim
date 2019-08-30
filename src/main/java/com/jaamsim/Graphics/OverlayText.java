@@ -23,7 +23,6 @@ import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.DisplayModels.TextModel;
 import com.jaamsim.StringProviders.StringProvConstant;
 import com.jaamsim.StringProviders.StringProvInput;
-import com.jaamsim.basicsim.GUIListener;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.datatypes.IntegerVector;
 import com.jaamsim.input.BooleanInput;
@@ -191,13 +190,6 @@ public class OverlayText extends OverlayEntity implements TextEntity, EditableTe
 			Class<? extends Unit> ut = unitType.getUnitType();
 			dataSource.setUnitType(ut);
 			unit.setSubClass(ut);
-			return;
-		}
-
-		if (in == fontName || in == textHeight || in == fontColor || in == fontStyle) {
-			GUIListener gui = getJaamSimModel().getGUIListener();
-			if (gui != null)
-				gui.updateControls();
 			return;
 		}
 	}

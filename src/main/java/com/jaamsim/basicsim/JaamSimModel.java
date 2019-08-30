@@ -1176,11 +1176,7 @@ public class JaamSimModel {
 	}
 
 	public void setSessionEdited(boolean bool) {
-		if (bool == sessionEdited)
-			return;
 		sessionEdited = bool;
-		if (gui != null)
-			gui.updateControls();
 	}
 
 	public boolean isSessionEdited() {

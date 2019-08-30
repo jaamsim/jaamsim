@@ -28,7 +28,6 @@ import com.jaamsim.Graphics.PolylineInfo;
 import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.basicsim.EntityTarget;
-import com.jaamsim.basicsim.GUIListener;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.ColourInput;
@@ -128,12 +127,6 @@ public class EntityDelay extends LinkedComponent implements LineEntity {
 		if (in == animation) {
 			if (!animation.getValue())
 				entityMap.clear();
-			return;
-		}
-		if (in == colorInput || in == widthInput) {
-			GUIListener gui = getJaamSimModel().getGUIListener();
-			if (gui != null)
-				gui.updateControls();
 			return;
 		}
 	}

@@ -20,11 +20,9 @@ package com.jaamsim.Graphics;
 import java.util.ArrayList;
 
 import com.jaamsim.DisplayModels.TextModel;
-import com.jaamsim.basicsim.GUIListener;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.ColourInput;
-import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.StringChoiceInput;
@@ -117,18 +115,6 @@ public abstract class TextBasics extends DisplayEntity implements TextEntity, Ed
 
 	public TextBasics() {
 		editableText = new EditableTextDelegate();
-	}
-
-	@Override
-	public void updateForInput( Input<?> in ) {
-		super.updateForInput( in );
-
-		if (in == fontName || in == textHeight || in == fontColor || in == fontStyle) {
-			GUIListener gui = getJaamSimModel().getGUIListener();
-			if (gui != null)
-				gui.updateControls();
-			return;
-		}
 	}
 
 	@Override

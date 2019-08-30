@@ -19,9 +19,7 @@ package com.jaamsim.Graphics;
 
 import com.jaamsim.DisplayModels.DisplayModel;
 import com.jaamsim.DisplayModels.PolylineModel;
-import com.jaamsim.basicsim.GUIListener;
 import com.jaamsim.input.ColourInput;
-import com.jaamsim.input.Input;
 import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Vec3dInput;
@@ -66,18 +64,6 @@ public class Arrow extends DisplayEntity implements LineEntity {
 	}
 
 	public Arrow() {}
-
-	@Override
-	public void updateForInput( Input<?> in ) {
-		super.updateForInput(in);
-
-		if (in == color || in == width) {
-			GUIListener gui = getJaamSimModel().getGUIListener();
-			if (gui != null)
-				gui.updateControls();
-			return;
-		}
-	}
 
 	public PolylineModel getPolylineModel() {
 		DisplayModel dm = getDisplayModel();

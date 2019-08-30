@@ -20,9 +20,7 @@ package com.jaamsim.FluidObjects;
 import com.jaamsim.DisplayModels.DisplayModel;
 import com.jaamsim.DisplayModels.PolylineModel;
 import com.jaamsim.Graphics.LineEntity;
-import com.jaamsim.basicsim.GUIListener;
 import com.jaamsim.input.ColourInput;
-import com.jaamsim.input.Input;
 import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
@@ -173,18 +171,6 @@ public class FluidPipe extends FluidComponent implements LineEntity {
 		}
 
 		return 1.0 / ( x * x );
-	}
-
-	@Override
-	public void updateForInput( Input<?> in ) {
-		super.updateForInput(in);
-
-		if (in == colourInput || in == widthInput) {
-			GUIListener gui = getJaamSimModel().getGUIListener();
-			if (gui != null)
-				gui.updateControls();
-			return;
-		}
 	}
 
 	public PolylineModel getPolylineModel() {
