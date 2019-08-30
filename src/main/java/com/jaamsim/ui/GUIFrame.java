@@ -644,44 +644,86 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		// 3) "Model Builder" menu item
 		JMenuItem objectPalletMenuItem = new JMenuItem( "Model Builder" );
 		objectPalletMenuItem.setMnemonic( 'O' );
-		objectPalletMenuItem.addActionListener(new SimulationMenuAction("ShowModelBuilder", "TRUE"));
+		objectPalletMenuItem.addActionListener( new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				InputAgent.applyBoolean(sim.getSimulation(), "ShowModelBuilder", true);
+			}
+		} );
 		viewMenu.addSeparator();
 		viewMenu.add( objectPalletMenuItem );
 
 		// 4) "Object Selector" menu item
 		JMenuItem objectSelectorMenuItem = new JMenuItem( "Object Selector" );
 		objectSelectorMenuItem.setMnemonic( 'S' );
-		objectSelectorMenuItem.addActionListener(new SimulationMenuAction("ShowObjectSelector", "TRUE"));
+		objectSelectorMenuItem.addActionListener( new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				InputAgent.applyBoolean(sim.getSimulation(), "ShowObjectSelector", true);
+			}
+		} );
 		viewMenu.add( objectSelectorMenuItem );
 
 		// 5) "Input Editor" menu item
 		JMenuItem inputEditorMenuItem = new JMenuItem( "Input Editor" );
 		inputEditorMenuItem.setMnemonic( 'I' );
-		inputEditorMenuItem.addActionListener(new SimulationMenuAction("ShowInputEditor", "TRUE"));
+		inputEditorMenuItem.addActionListener( new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				InputAgent.applyBoolean(sim.getSimulation(), "ShowInputEditor", true);
+			}
+		} );
 		viewMenu.add( inputEditorMenuItem );
 
 		// 6) "Output Viewer" menu item
 		JMenuItem outputMenuItem = new JMenuItem( "Output Viewer" );
 		outputMenuItem.setMnemonic( 'U' );
-		outputMenuItem.addActionListener(new SimulationMenuAction("ShowOutputViewer", "TRUE"));
+		outputMenuItem.addActionListener( new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				InputAgent.applyBoolean(sim.getSimulation(), "ShowOutputViewer", true);
+			}
+		} );
 		viewMenu.add( outputMenuItem );
 
 		// 7) "Property Viewer" menu item
 		JMenuItem propertiesMenuItem = new JMenuItem( "Property Viewer" );
 		propertiesMenuItem.setMnemonic( 'P' );
-		propertiesMenuItem.addActionListener(new SimulationMenuAction("ShowPropertyViewer", "TRUE"));
+		propertiesMenuItem.addActionListener( new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				InputAgent.applyBoolean(sim.getSimulation(), "ShowPropertyViewer", true);
+			}
+		} );
 		viewMenu.add( propertiesMenuItem );
 
 		// 8) "Log Viewer" menu item
 		JMenuItem logMenuItem = new JMenuItem( "Log Viewer" );
 		logMenuItem.setMnemonic( 'L' );
-		logMenuItem.addActionListener(new SimulationMenuAction("ShowLogViewer", "TRUE"));
+		logMenuItem.addActionListener( new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				InputAgent.applyBoolean(sim.getSimulation(), "ShowLogViewer", true);
+			}
+		} );
 		viewMenu.add( logMenuItem );
 
 		// 9) "Event Viewer" menu item
 		JMenuItem eventsMenuItem = new JMenuItem( "Event Viewer" );
 		eventsMenuItem.setMnemonic( 'E' );
-		eventsMenuItem.addActionListener(new SimulationMenuAction("ShowEventViewer", "TRUE"));
+		eventsMenuItem.addActionListener( new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				InputAgent.applyBoolean(sim.getSimulation(), "ShowEventViewer", true);
+			}
+		} );
 		viewMenu.add( eventsMenuItem );
 
 		// 10) "Reset Positions and Sizes" menu item
@@ -695,21 +737,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		} );
 		viewMenu.addSeparator();
 		viewMenu.add( resetItem );
-	}
-
-	private static final class SimulationMenuAction implements ActionListener {
-		final String keyword;
-		final String args;
-
-		SimulationMenuAction(String k, String a) {
-			keyword = k;
-			args = a;
-		}
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			InputAgent.applyArgs(sim.getSimulation(), keyword, args);
-		}
 	}
 
 	/**
