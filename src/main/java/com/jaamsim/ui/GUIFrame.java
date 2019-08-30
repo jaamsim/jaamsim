@@ -4077,36 +4077,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		updateUI();
 	}
 
-	public JFrame getTool(String name) {
-		JFrame ret;
-		switch (name) {
-		case "ModelBuilder":
-			ret = EntityPallet.getInstance();
-			break;
-		case "ObjectSelector":
-			ret = ObjectSelector.getInstance();
-			break;
-		case "InputEditor":
-			ret = EditBox.getInstance();
-			break;
-		case "OutputViewer":
-			ret = OutputBox.getInstance();
-			break;
-		case "PropertyViewer":
-			ret = PropertyBox.getInstance();
-			break;
-		case "LogViewer":
-			ret = LogBox.getInstance();
-			break;
-		case "EventViewer":
-			ret = EventViewer.getInstance();
-			break;
-		default:
-			throw new ErrorException("UI tool not found");
-		}
-		return ret;
-	}
-
 	/**
 	 * Re-open any Tools windows that have been closed temporarily.
 	 */
