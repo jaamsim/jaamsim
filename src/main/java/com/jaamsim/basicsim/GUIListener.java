@@ -22,7 +22,6 @@ public interface GUIListener {
 
 	public void handleInputError(Throwable t, Entity ent);
 	public void exit(int errorCode);
-	public void setButton(String name, boolean bool);
 	public void showTool(String name, boolean bool);
 	public void setToolLocation(String name, int x, int y);
 	public void setToolSize(String name, int width, int height);

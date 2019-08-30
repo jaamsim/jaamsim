@@ -3366,23 +3366,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		showSubModels.setSelected(bool);
 	}
 
-	@Override
-	public void setButton(String name, boolean bool) {
-		switch (name) {
-
-		case "ShowLabels":
-			setShowLabels(bool);
-			break;
-
-		case "ShowSubModels":
-			setShowSubModels(bool);
-			break;
-
-		default:
-			throw new ErrorException("UI button not found");
-		}
-	}
-
 	public JFrame getTool(String name) {
 		JFrame ret;
 		switch (name) {
