@@ -1164,6 +1164,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			public void actionPerformed( ActionEvent event ) {
 				boolean bool = showLabels.isSelected();
 				InputAgent.applyBoolean(sim.getSimulation(), "ShowLabels", bool);
+				setShowLabels(bool);
 				fileSave.requestFocusInWindow();
 			}
 		} );
@@ -1184,6 +1185,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			public void actionPerformed( ActionEvent event ) {
 				boolean bool = showSubModels.isSelected();
 				InputAgent.applyBoolean(sim.getSimulation(), "ShowSubModels", bool);
+				setShowSubModels(bool);
 				fileSave.requestFocusInWindow();
 			}
 		} );

@@ -643,16 +643,6 @@ public class Simulation extends Entity {
 		if (gui == null)
 			return;
 
-		if (in == showLabels) {
-			gui.setButton("ShowLabels", showLabels.getValue());
-			return;
-		}
-
-		if (in == showSubModels) {
-			gui.setButton("ShowSubModels", showSubModels.getValue());
-			return;
-		}
-
 		if (in == showModelBuilder) {
 			gui.showTool("ModelBuilder", showModelBuilder.getValue());
 			return;
