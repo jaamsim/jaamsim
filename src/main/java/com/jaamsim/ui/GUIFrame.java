@@ -2920,7 +2920,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		EntityPallet.update();
 	}
 
-	@Override
 	public void updateControls() {
 		Simulation simulation = sim.getSimulation();
 		if (simulation == null)
