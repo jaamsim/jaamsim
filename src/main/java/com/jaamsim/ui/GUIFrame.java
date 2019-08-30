@@ -3462,6 +3462,14 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		showTool("EventViewer", false);
 	}
 
+	private void updateToolWindows() {
+		if (sim.getSimulation() == null)
+			return;
+		showActiveTools();
+		updateToolSizes();
+		updateToolLocations();
+	}
+
 	public void updateToolSizes() {
 		Simulation simulation = sim.getSimulation();
 		EntityPallet.getInstance().setSize(simulation.getModelBuilderSize().get(0),
@@ -3998,6 +4006,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			gui.setTitle( sim.getSimulation().getModelName() + " - " + sim.getRunName() );
 			gui.updateForSimulationState(GUIFrame.SIM_STATE_CONFIGURED);
 			gui.enableSave(sim.isRecordEditsFound());
+
+			gui.updateToolWindows();
 			gui.setShowLabels(sim.getSimulation().isShowLabels());
 		}
 		return ret;
