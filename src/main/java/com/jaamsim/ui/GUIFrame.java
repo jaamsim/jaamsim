@@ -2931,6 +2931,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		updateFormatButtons(selectedEntity);
 		updateForSnapToGrid();
 		updateForSnapGridSpacing(simulation.getSnapGridSpacingString());
+		updateShowLabelsButton(simulation.isShowLabels());
+		updateShowSubModelsButton(simulation.isShowSubModels());
 	}
 
 	private void updateSaveButton() {
@@ -3341,7 +3343,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	}
 
 	public void setShowLabels(boolean bool) {
-		showLabels.setSelected(bool);
 		for (DisplayEntity ent : sim.getClonesOfIterator(DisplayEntity.class)) {
 			if (!EntityLabel.canLabel(ent))
 				continue;
@@ -3350,10 +3351,17 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	}
 
 	public void setShowSubModels(boolean bool) {
-		showSubModels.setSelected(bool);
 		for (CompoundEntity submodel : sim.getClonesOfIterator(CompoundEntity.class)) {
 			submodel.showTemporaryComponents(bool);
 		}
+	}
+
+	private void updateShowLabelsButton(boolean bool) {
+		showLabels.setSelected(bool);
+	}
+
+	private void updateShowSubModelsButton(boolean bool) {
+		showSubModels.setSelected(bool);
 	}
 
 	@Override
