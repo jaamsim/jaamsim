@@ -3440,26 +3440,34 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	 * Re-open any Tools windows that have been closed temporarily.
 	 */
 	public void showActiveTools() {
-		showTool("ModelBuilder", sim.getSimulation().isModelBuilderVisible());
-		showTool("ObjectSelector", sim.getSimulation().isObjectSelectorVisible());
-		showTool("InputEditor", sim.getSimulation().isInputEditorVisible());
-		showTool("OutputViewer", sim.getSimulation().isOutputViewerVisible());
-		showTool("PropertyViewer", sim.getSimulation().isPropertyViewerVisible());
-		showTool("LogViewer", sim.getSimulation().isLogViewerVisible());
-		showTool("EventViewer", sim.getSimulation().isEventViewerVisible());
+		Simulation simulation = sim.getSimulation();
+		EntityPallet.getInstance().setVisible(simulation.isModelBuilderVisible());
+		ObjectSelector.getInstance().setVisible(simulation.isObjectSelectorVisible());
+		EditBox.getInstance().setVisible(simulation.isInputEditorVisible());
+		OutputBox.getInstance().setVisible(simulation.isOutputViewerVisible());
+		PropertyBox.getInstance().setVisible(simulation.isPropertyViewerVisible());
+		LogBox.getInstance().setVisible(simulation.isLogViewerVisible());
+
+		if (!simulation.isEventViewerVisible()) {
+			if (EventViewer.hasInstance())
+				EventViewer.getInstance().dispose();
+			return;
+		}
+		EventViewer.getInstance().setVisible(true);
 	}
 
 	/**
 	 * Closes all the Tools windows temporarily.
 	 */
 	public void closeAllTools() {
-		showTool("ModelBuilder", false);
-		showTool("ObjectSelector", false);
-		showTool("InputEditor", false);
-		showTool("OutputViewer", false);
-		showTool("PropertyViewer", false);
-		showTool("LogViewer", false);
-		showTool("EventViewer", false);
+		EntityPallet.getInstance().setVisible(false);
+		ObjectSelector.getInstance().setVisible(false);
+		EditBox.getInstance().setVisible(false);
+		OutputBox.getInstance().setVisible(false);
+		PropertyBox.getInstance().setVisible(false);
+		LogBox.getInstance().setVisible(false);
+		if (EventViewer.hasInstance())
+			EventViewer.getInstance().dispose();
 	}
 
 	private void updateToolWindows() {
