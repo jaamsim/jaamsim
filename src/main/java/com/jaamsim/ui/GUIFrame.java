@@ -3462,6 +3462,26 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		showTool("EventViewer", false);
 	}
 
+	public void updateToolSizes() {
+		Simulation simulation = sim.getSimulation();
+		EntityPallet.getInstance().setSize(simulation.getModelBuilderSize().get(0),
+				simulation.getModelBuilderSize().get(1));
+		ObjectSelector.getInstance().setSize(simulation.getObjectSelectorSize().get(0),
+				simulation.getObjectSelectorSize().get(1));
+		EditBox.getInstance().setSize(simulation.getInputEditorSize().get(0),
+				simulation.getInputEditorSize().get(1));
+		OutputBox.getInstance().setSize(simulation.getOutputViewerSize().get(0),
+				simulation.getOutputViewerSize().get(1));
+		PropertyBox.getInstance().setSize(simulation.getPropertyViewerSize().get(0),
+				simulation.getPropertyViewerSize().get(1));
+		LogBox.getInstance().setSize(simulation.getLogViewerSize().get(0),
+				simulation.getLogViewerSize().get(1));
+		if (EventViewer.hasInstance()) {
+			EventViewer.getInstance().setSize(simulation.getEventViewerSize().get(0),
+					simulation.getEventViewerSize().get(1));
+		}
+	}
+
 	public void updateToolLocations() {
 		Simulation simulation = sim.getSimulation();
 		setToolLocation(EntityPallet.getInstance(), simulation.getModelBuilderPos().get(0),
