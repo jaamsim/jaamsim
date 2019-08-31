@@ -637,6 +637,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				InputAgent.applyBoolean(sim.getSimulation(), "ShowOutputViewer", false);
 				InputAgent.applyBoolean(sim.getSimulation(), "ShowPropertyViewer", false);
 				InputAgent.applyBoolean(sim.getSimulation(), "ShowLogViewer", false);
+				InputAgent.applyBoolean(sim.getSimulation(), "ShowEventViewer", false);
 			}
 		} );
 		viewMenu.add( closeAllToolsMenuItem );
