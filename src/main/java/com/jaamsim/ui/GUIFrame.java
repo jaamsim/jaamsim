@@ -3468,7 +3468,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		PropertyBox.getInstance().setVisible(false);
 		LogBox.getInstance().setVisible(false);
 		if (EventViewer.hasInstance())
-			EventViewer.getInstance().dispose();
+			EventViewer.getInstance().setVisible(false);
 	}
 
 	private void updateToolWindows() {
