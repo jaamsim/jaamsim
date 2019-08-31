@@ -2954,6 +2954,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		if (simulation == null)
 			return;
 		updateSaveButton();
+		updateUndoButtons();
 		updateForRealTime(simulation.isRealTime(), simulation.getRealTimeFactor());
 		updateForPauseTime(simulation.getPauseTimeString());
 		update2dButton();
@@ -3034,7 +3035,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			cmd.execute();
 			redoList.clear();
 		}
-		updateForUndo();
+		updateUI();
 	}
 
 	public void undo() {
@@ -3045,7 +3046,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			redoList.add(cmd);
 			cmd.undo();
 		}
-		updateForUndo();
+		updateUI();
 	}
 
 	public void redo() {
@@ -3056,7 +3057,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			undoList.add(cmd);
 			cmd.execute();
 		}
-		updateForUndo();
+		updateUI();
 	}
 
 	public void undo(int n) {
@@ -3093,14 +3094,13 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		});
 	}
 
-	public void updateForUndo() {
+	public void updateUndoButtons() {
 		synchronized (undoList) {
 			undo.setEnabled(!undoList.isEmpty());
 			undoDropdown.setEnabled(!undoList.isEmpty());
 			redo.setEnabled(!redoList.isEmpty());
 			redoDropdown.setEnabled(!redoList.isEmpty());
 		}
-		GUIFrame.updateUI();
 	}
 
 	public void clearUndoRedo() {
@@ -3108,7 +3108,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			undoList.clear();
 			redoList.clear();
 		}
-		updateForUndo();
+		updateUI();
 	}
 
 	private void updateForSnapGridSpacing(String str) {
