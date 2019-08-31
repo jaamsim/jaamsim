@@ -906,6 +906,8 @@ public class JaamSimModel {
 					validateEntList();
 					return;
 				}
+
+				curEnt = nextEnt;
 			}
 		}
 	}
