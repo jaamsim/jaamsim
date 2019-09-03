@@ -4066,6 +4066,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		LogBox.logLine("Saving...");
 		if( sim.getConfigFile() != null ) {
 			setSaveFile(sim.getConfigFile().getPath());
+			updateUI();
 			return true;
 		}
 
@@ -4115,6 +4116,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		setSaveFile(filePath);
 
 		setConfigFolder(file.getParent());
+		updateUI();
 		return true;
 	}
 
