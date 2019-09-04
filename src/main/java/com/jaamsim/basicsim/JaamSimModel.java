@@ -713,10 +713,8 @@ public class JaamSimModel {
 			return null;
 
 		// Set the entity type
-		if (added) {
+		if (added)
 			ent.setFlag(Entity.FLAG_ADDED);
-			setSessionEdited(true);
-		}
 		if (gen)
 			ent.setFlag(Entity.FLAG_GENERATED);
 		if (reg)
