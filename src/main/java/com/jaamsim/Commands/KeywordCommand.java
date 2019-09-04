@@ -56,18 +56,29 @@ public class KeywordCommand implements Command {
 		return ret;
 	}
 
+	private static void applyKeywords(Entity ent, KeywordIndex[] kws) {
+		for (int i = 0; i < kws.length; i++) {
+			InputAgent.processKeyword(ent, kws[i]);
+		}
+
+		// If necessary, set sessionEdited
+		boolean bool = false;
+		for (int i = 0; i < kws.length; i++) {
+			Input<?> in = ent.getInput(kws[i].keyword);
+			bool = bool || in.isPromptReqd();
+		}
+		if (bool)
+			ent.getJaamSimModel().setSessionEdited(true);
+	}
+
 	@Override
 	public void execute() {
-		for (int i = 0; i < newKws.length; i++) {
-			InputAgent.processKeyword(entity, newKws[i]);
-		}
+		applyKeywords(entity, newKws);
 	}
 
 	@Override
 	public void undo() {
-		for (int i = 0; i < oldKws.length; i++) {
-			InputAgent.processKeyword(entity, oldKws[i]);
-		}
+		applyKeywords(entity, oldKws);
 	}
 
 	@Override

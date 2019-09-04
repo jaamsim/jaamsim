@@ -556,8 +556,6 @@ public class InputAgent {
 		if (simModel.isRecordEdits()) {
 			in.setEdited(true);
 			ent.setFlag(Entity.FLAG_EDITED);
-			if (!ent.testFlag(Entity.FLAG_GENERATED) && in.isPromptReqd())
-				simModel.setSessionEdited(true);
 		}
 
 		ent.updateForInput(in);
