@@ -32,11 +32,13 @@ public class DeleteCommand implements Command {
 	@Override
 	public void execute() {
 		entity.kill();
+		entity.getJaamSimModel().setSessionEdited(true);
 	}
 
 	@Override
 	public void undo() {
 		entity.restore(entityName);
+		entity.getJaamSimModel().setSessionEdited(true);
 	}
 
 	@Override

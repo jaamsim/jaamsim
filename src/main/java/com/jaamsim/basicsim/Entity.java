@@ -283,9 +283,6 @@ public class Entity {
 
 		// Execute the delete command
 		InputAgent.storeAndExecute(new DeleteCommand(this));
-
-		// Record that the model has changed
-		getJaamSimModel().setSessionEdited(true);
 	}
 
 	/**
