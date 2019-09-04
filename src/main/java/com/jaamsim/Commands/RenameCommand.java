@@ -40,6 +40,7 @@ public class RenameCommand implements Command {
 
 	private static void rename(Entity ent, String name) {
 		ent.setName(name);
+		ent.getJaamSimModel().setSessionEdited(true);
 
 		// Update the entity's label
 		if (ent instanceof DisplayEntity) {
@@ -62,9 +63,6 @@ public class RenameCommand implements Command {
 	@Override
 	public void execute() {
 		rename(entity, newName);
-		if (!entity.testFlag(Entity.FLAG_GENERATED)) {
-			entity.getJaamSimModel().setSessionEdited(true);
-		}
 	}
 
 	@Override
