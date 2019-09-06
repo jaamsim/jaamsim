@@ -59,8 +59,10 @@ public class JaamSimModel {
 	private final AtomicLong entityCount = new AtomicLong(0);
 
 	private final HashMap<String, Entity> namedEntities = new HashMap<>(100);
-	private Entity firstEnt;
-	private Entity lastEnt;
+
+	// Note, entityList is an empty list node used to identify the end of the list
+	// The first real entity is at entityList.next.ent
+	private final EntityListNode entityList = new EntityListNode();
 	private int numLiveEnts;
 
 	private File configFile;           // present configuration file
@@ -121,12 +123,13 @@ public class JaamSimModel {
 			getSimulation().clear();
 		}
 
-		Entity curEnt = getHeadEntity();
-		while(curEnt != null) {
+		EntityListNode listNode = entityList.next;
+		while(listNode != entityList) {
+			Entity curEnt = listNode.ent;
 			if (!curEnt.testFlag(Entity.FLAG_DEAD)) {
 				curEnt.kill();
 			}
-			curEnt = curEnt.nextEnt;
+			listNode = listNode.next;
 		}
 
 		// Clear the 'simulation' property
@@ -433,12 +436,13 @@ public class JaamSimModel {
 	 * Destroys the entities that were generated during the present simulation run.
 	 */
 	public void killGeneratedEntities() {
-		Entity curEnt = getHeadEntity();
-		while(curEnt != null) {
+		EntityListNode curNode = entityList.next;
+		while(curNode != entityList) {
+			Entity curEnt = curNode.ent;
 			if (!curEnt.testFlag(Entity.FLAG_DEAD) && !curEnt.testFlag(Entity.FLAG_RETAINED)) {
 				curEnt.kill();
 			}
-			curEnt = curEnt.nextEnt;
+			curNode = curNode.next;
 		}
 
 	}
@@ -674,15 +678,16 @@ public class JaamSimModel {
 	public final Entity idToEntity(long id) {
 		synchronized (namedEntities) {
 
-			Entity ent = getHeadEntity();
+			EntityListNode curNode = entityList.next;
 			while(true) {
-				if (ent == null) {
+				if (curNode == entityList) {
 					return null;
 				}
-				if (ent.getEntityNumber() == id) {
-					return ent;
+				Entity curEnt = curNode.ent;
+				if (curEnt != null && curEnt.getEntityNumber() == id) {
+					return curEnt;
 				}
-				ent = ent.nextEnt;
+				curNode = curNode.next;
 			}
 		}
 	}
@@ -772,9 +777,15 @@ public class JaamSimModel {
 			int numEntities = 0;
 			long lastEntNum = -1;
 			int numDeadEntities = 0;
-			Entity curEnt = firstEnt;
-			Entity lastEnt = null;
-			while (curEnt != null) {
+			if (entityList.ent != null) {
+				assert(false);
+				throw new ErrorException("Entity List Validation Error!");
+			}
+
+			EntityListNode curNode = entityList.next;
+			EntityListNode lastNode = entityList;
+			while (curNode != null && curNode != entityList) {
+				Entity curEnt = curNode.ent;
 				if (!curEnt.testFlag(Entity.FLAG_DEAD)) {
 					numEntities++;
 				} else {
@@ -784,20 +795,19 @@ public class JaamSimModel {
 					assert(false);
 					throw new ErrorException("Entity List Validation Error!");
 				}
-				if (curEnt.prevEnt != lastEnt) {
+				if (curNode.prev != lastNode) {
 					assert(false);
 					throw new ErrorException("Entity List Validation Error!");
 				}
 				lastEntNum = curEnt.getEntityNumber();
-				lastEnt = curEnt;
-				curEnt = curEnt.nextEnt;
-
+				lastNode = curNode;
+				curNode = curNode.next;
 			}
 			if (numEntities != numLiveEnts) {
 				assert(false);
 				throw new ErrorException("Entity List Validation Error!");
 			}
-			if (this.lastEnt != lastEnt) {
+			if (this.entityList.prev != lastNode) {
 				assert(false);
 				throw new ErrorException("Entity List Validation Error!");
 			}
@@ -805,13 +815,18 @@ public class JaamSimModel {
 				assert(false);
 				throw new ErrorException("Entity List Validation Error!");
 			}
+			if (curNode == null) {
+				assert(false);
+				throw new ErrorException("Entity List Validation Error!");
+			}
 
 			// Scan the list backwards
-			curEnt = this.lastEnt;
-			lastEnt = null;
+			curNode = entityList.prev;
+			lastNode = entityList;
 			numEntities = 0;
 			lastEntNum = Long.MAX_VALUE;
-			while(curEnt != null) {
+			while (curNode != null && curNode != entityList) {
+				Entity curEnt = curNode.ent;
 				if (!curEnt.testFlag(Entity.FLAG_DEAD)) {
 					numEntities++;
 				} else {
@@ -821,19 +836,19 @@ public class JaamSimModel {
 					assert(false);
 					throw new ErrorException("Entity List Validation Error!");
 				}
-				if (curEnt.nextEnt != lastEnt) {
+				if (curNode.next != lastNode) {
 					assert(false);
 					throw new ErrorException("Entity List Validation Error!");
 				}
 				lastEntNum = curEnt.getEntityNumber();
-				lastEnt = curEnt;
-				curEnt = curEnt.prevEnt;
+				lastNode = curNode;
+				curNode = curNode.prev;
 			}
 			if (numEntities != numLiveEnts) {
 				assert(false);
 				throw new ErrorException("Entity List Validation Error!");
 			}
-			if (this.firstEnt != lastEnt) {
+			if (this.entityList.next != lastNode) {
 				assert(false);
 				throw new ErrorException("Entity List Validation Error!");
 			}
@@ -841,7 +856,11 @@ public class JaamSimModel {
 				assert(false);
 				throw new ErrorException("Entity List Validation Error!");
 			}
-		}
+			if (curNode == null) {
+				assert(false);
+				throw new ErrorException("Entity List Validation Error!");
+			}
+		} // synchronized(namedEntities)
 	}
 
 	final void addInstance(Entity e) {
@@ -849,20 +868,14 @@ public class JaamSimModel {
 			validateEntList();
 
 			numLiveEnts++;
-			if (firstEnt == null) {
-				// Empty list
-				firstEnt = e;
-				lastEnt = e;
-				e.nextEnt = null;
-				validateEntList();
-				return;
-			}
 
-			Entity oldLast = lastEnt;
-			lastEnt = e;
-			oldLast.nextEnt = e;
-			e.nextEnt = null;
-			e.prevEnt = oldLast;
+			EntityListNode newNode = new EntityListNode(e);
+
+			EntityListNode oldLast = entityList.prev;
+			newNode.prev = oldLast;
+			newNode.next = entityList;
+			oldLast.next = newNode;
+			entityList.prev = newNode;
 			validateEntList();
 		}
 	}
@@ -874,36 +887,25 @@ public class JaamSimModel {
 			// Scan through the linked list to find the place to insert this entity
 			// This is slow, but should only happen due to user actions
 			long entNum = e.getEntityNumber();
-			Entity curEnt = firstEnt;
-			if (curEnt == null) {
-				// Special case of empty list
-				firstEnt = e;
-				lastEnt = e;
-				e.nextEnt = null;
-				e.prevEnt = null;
-				validateEntList();
-				return;
-			}
+			EntityListNode curNode = entityList.next;
+
 			while(true) {
-				Entity nextEnt = curEnt.nextEnt;
-				if (nextEnt == null) {
-					// End of the list
-					assert(curEnt.getEntityNumber() < entNum);
-					curEnt.nextEnt = e;
-					lastEnt = e;
-					e.nextEnt = null;
-					e.prevEnt = curEnt;
+				Entity nextEnt = curNode.next.ent;
+				if (nextEnt == null || nextEnt.getEntityNumber() > entNum) {
+					// End of the list or at the correct location
+
+					// Insert a new node after curNode
+					EntityListNode newNode = new EntityListNode(e);
+
+					newNode.next = curNode.next;
+					newNode.prev = curNode;
+					curNode.next = newNode;
+					newNode.next.prev = newNode;
 					validateEntList();
 					return;
 				}
 
-				if (nextEnt.getEntityNumber() > entNum) {
-					curEnt.nextEnt = e;
-					e.nextEnt = nextEnt;
-					e.prevEnt = curEnt;
-					validateEntList();
-					return;
-				}
+				curNode = curNode.next;
 			}
 		}
 	}
@@ -919,24 +921,17 @@ public class JaamSimModel {
 
 			e.entityName = null;
 			e.setFlag(Entity.FLAG_DEAD);
-			Entity prev = e.prevEnt;
-			Entity next = e.nextEnt;
-			if (prev != null) {
-				prev.nextEnt = next;
-			} else {
-				// First entity
-				firstEnt = next;
-			}
-			if (next != null) {
-				next.prevEnt = prev;
-			} else {
-				// Last ent
-				lastEnt = prev;
-			}
+			EntityListNode listNode = e.listNode;
 
-			// Note, leaving e's next and prev pointers intact so that any outstanding iterators
+			// Break the link to the list
+			e.listNode = null;
+			listNode.ent = null;
+
+			listNode.next.prev = listNode.prev;
+			listNode.prev.next = listNode.next;
+
+			// Note, leaving the nodes next and prev pointers intact so that any outstanding iterators
 			// can finish traversing the list
-
 			validateEntList();
 		}
 	}
@@ -975,18 +970,17 @@ public class JaamSimModel {
 		return new ClonesOfIterableInterface<>(this, proto, iface);
 	}
 
-	// Note, this should only be called by EntityIterator and some unit tests
+	// Note, these methods should only be called by EntityIterator and some unit tests
 	public final Entity getHeadEntity() {
-		synchronized (namedEntities) {
-			return firstEnt;
-		}
+		return entityList.next.ent;
+	}
+	public final Entity getTailEntity() {
+		return entityList.prev.ent;
+	}
+	public final EntityListNode getEntityList() {
+		return entityList;
 	}
 
-	public final Entity getTailEntity() {
-		synchronized (namedEntities) {
-			return lastEnt;
-		}
-	}
 
 	public void addObjectType(ObjectType ot) {
 		synchronized (objectTypes) {
