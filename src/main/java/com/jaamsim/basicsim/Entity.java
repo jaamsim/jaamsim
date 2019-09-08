@@ -62,9 +62,9 @@ public class Entity {
 
 	String entityName;
 	private final long entityNumber;
-	// Package private so it can be accessed by EntityIterator
-	Entity nextEnt;
-	Entity prevEnt;
+
+	// Package private so it can be accessed by JaamSimModel and EntityListNode
+	EntityListNode listNode;
 
 	private static final int FLAG_TRACE = 0x01;
 	//public static final int FLAG_TRACEREQUIRED = 0x02;

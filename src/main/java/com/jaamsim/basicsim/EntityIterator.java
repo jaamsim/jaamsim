@@ -22,63 +22,61 @@ import java.util.NoSuchElementException;
 
 
 public abstract class EntityIterator<T extends Entity> implements Iterable<T>, Iterator<T> {
-	// A "struct" to mimic a pointer-to-pointer like relationship
-	public static class ListData {
-		public Entity firstEnt;
-		public Entity lastEnt;
-		public int numLiveEnts;
-	}
-
-	private final ListData listData;
-	private boolean firstRead = true;
+	private boolean needAdvance = true;
 	protected final Class<T> entClass;
-	private Entity curEnt;
+	private EntityListNode curNode;
+	private EntityListNode endNode;
 
 	public EntityIterator(JaamSimModel simModel, Class<T> aClass) {
-		listData = simModel.getListData();
-		curEnt = listData.firstEnt;
+		endNode = simModel.getEntityList();
+		curNode = endNode;
 		entClass = aClass;
 	}
 
 	abstract boolean matches(Class<?> entklass);
 
 	// Advance the current pointer past any dead entities, or entities that do not match
-	private Entity validateNext(Entity nextEnt) {
-		while(true) {
-			if (nextEnt == null) {
-				return null;
+	private void advance() {
+		if (!needAdvance) {
+			return;
+		}
+		curNode = curNode.next;
+		needAdvance = false;
+
+		while (true) {
+			if (curNode == endNode) {
+				return;
 			}
-			// Return a valid match
-			if (!nextEnt.testFlag(Entity.FLAG_DEAD) && matches(nextEnt.getClass())) {
-				return nextEnt;
+			if (curNode == null) {
+				// This is likely a race condition but unrecoverable
+				// Terminate iteration
+				return;
 			}
-			nextEnt = nextEnt.nextEnt;
+
+			if (matches(curNode.entClass) && curNode.ent != null) {
+				return;
+			}
+			curNode = curNode.next;
 		}
 	}
 
 	@Override
 	public boolean hasNext() {
-		if (firstRead) {
-			curEnt = validateNext(curEnt);
-			firstRead = false;
-		}
-		return curEnt != null;
+		advance();
+		return curNode != null && curNode != endNode;
 	}
 
 	// Note, this warning is suppressed because the cast is effectively checked by match()
 	@SuppressWarnings("unchecked")
 	@Override
 	public T next() {
-		if (firstRead) {
-			curEnt = validateNext(curEnt);
-			firstRead = false;
-		}
-		Entity nextEnt = curEnt;
-		if (nextEnt == null) {
+		advance();
+		Entity nextEnt = curNode.ent;
+		if (nextEnt == null || curNode == endNode) {
 			throw new NoSuchElementException();
 		}
 
-		curEnt =  validateNext(curEnt.nextEnt);
+		needAdvance = true;
 		return (T)nextEnt;
 	}
 
