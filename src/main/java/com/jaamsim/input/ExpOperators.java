@@ -932,6 +932,50 @@ public class ExpOperators {
 			}
 		});
 
+		addFunction("sum", 1, 1, new CallableFunc() {
+			@Override
+			public void checkUnits(ParseContext context, ExpResult[] args,
+					String source, int pos) throws ExpError {
+			}
+
+			@Override
+			public ExpResult call(EvalContext context, ExpResult[] args, String source, int pos) throws ExpError {
+				if (args[0].type != ExpResType.COLLECTION) {
+					throw new ExpError(source, pos, "Expected Collection type argument");
+				}
+
+				ExpResult.Collection col = args[0].colVal;
+				ExpResult.Iterator it = col.getIter();
+				if (!it.hasNext()) {
+					return ExpResult.makeNumResult(0.0d, DimensionlessUnit.class);
+				}
+				ExpResult comp = col.index(it.nextKey());
+				Class<? extends Unit> ut = comp.unitType;
+				if (comp.type != ExpResType.NUMBER) {
+					throw new ExpError(source, pos, "Can not sum non-numeric type in collection");
+				}
+				double ret = comp.value;
+
+				while (it.hasNext()) {
+					comp = col.index(it.nextKey());
+					if (comp.unitType != ut) {
+						throw new ExpError(source, pos, "Unmatched Unit types in collection: %s, %s",
+						                   ut.getSimpleName(), comp.unitType.getSimpleName());
+					}
+					if (comp.type != ExpResType.NUMBER) {
+						throw new ExpError(source, pos, "Can not sum non-numeric type in collection");
+					}
+					ret += comp.value;
+				}
+				return ExpResult.makeNumResult(ret, ut);
+			}
+
+			@Override
+			public ExpValResult validate(ParseContext context, ExpValResult[] args, String source, int pos) {
+				return validateCollection(context, args[0], source, pos);
+			}
+		});
+
 		addFunction("abs", 1, 1, new CallableFunc() {
 			@Override
 			public void checkUnits(ParseContext context, ExpResult[] args,
