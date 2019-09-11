@@ -95,6 +95,10 @@ public class Entity {
 	public static final String GUI = "GUI";
 	public static final String MULTIPLE_RUNS = "Multiple Runs";
 
+	@Keyword(description = "A free form string describing the Entity",
+	         exampleList = {"'A very useful entity'"})
+	protected final StringInput desc;
+
 	@Keyword(description = "Provides the programmer with a detailed trace of the logic executed "
 	                     + "by the entity. Trace information is sent to standard out.",
 	         exampleList = {"TRUE"})
@@ -103,10 +107,6 @@ public class Entity {
 	@Keyword(description = "If TRUE, the object is used in the simulation run.",
 	         exampleList = {"FALSE"})
 	protected final BooleanInput active;
-
-	@Keyword(description = "A free form string describing the Entity",
-	         exampleList = {"'A very useful entity'"})
-	protected final StringInput desc;
 
 	@Keyword(description = "Defines one or more attributes for this entity. "
 	                     + "An attribute's value can be a number with or without units, "
@@ -127,6 +127,9 @@ public class Entity {
 	public final NamedExpressionListInput namedExpressionInput;
 
 	{
+		desc = new StringInput("Description", KEY_INPUTS, "");
+		this.addInput(desc);
+
 		trace = new BooleanInput("Trace", KEY_INPUTS, false);
 		trace.setHidden(true);
 		this.addInput(trace);
@@ -134,10 +137,6 @@ public class Entity {
 		active = new BooleanInput("Active", KEY_INPUTS, true);
 		active.setHidden(true);
 		this.addInput(active);
-
-		desc = new StringInput("Description", KEY_INPUTS, "");
-		desc.setHidden(true);
-		this.addInput(desc);
 
 		attributeDefinitionList = new AttributeDefinitionListInput("AttributeDefinitionList",
 				KEY_INPUTS, new ArrayList<AttributeHandle>());
