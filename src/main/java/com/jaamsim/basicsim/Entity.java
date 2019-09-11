@@ -130,21 +130,21 @@ public class Entity {
 		desc = new StringInput("Description", KEY_INPUTS, "");
 		this.addInput(desc);
 
-		trace = new BooleanInput("Trace", KEY_INPUTS, false);
+		trace = new BooleanInput("Trace", OPTIONS, false);
 		trace.setHidden(true);
 		this.addInput(trace);
 
-		active = new BooleanInput("Active", KEY_INPUTS, true);
+		active = new BooleanInput("Active", OPTIONS, true);
 		active.setHidden(true);
 		this.addInput(active);
 
 		attributeDefinitionList = new AttributeDefinitionListInput("AttributeDefinitionList",
-				KEY_INPUTS, new ArrayList<AttributeHandle>());
+				OPTIONS, new ArrayList<AttributeHandle>());
 		attributeDefinitionList.setHidden(false);
 		this.addInput(attributeDefinitionList);
 
 		namedExpressionInput = new NamedExpressionListInput("CustomOutputList",
-				KEY_INPUTS, new ArrayList<NamedExpression>());
+				OPTIONS, new ArrayList<NamedExpression>());
 		namedExpressionInput.setHidden(false);
 		this.addInput(namedExpressionInput);
 
