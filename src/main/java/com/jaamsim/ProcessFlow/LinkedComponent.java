@@ -76,7 +76,7 @@ public abstract class LinkedComponent extends StateEntity implements Linkable, L
 		nextComponent.setRequired(true);
 		this.addInput(nextComponent);
 
-		stateAssignment = new StringProvInput("StateAssignment", KEY_INPUTS, null);
+		stateAssignment = new StringProvInput("StateAssignment", OPTIONS, null);
 		stateAssignment.setUnitType(DimensionlessUnit.class);
 		this.addInput(stateAssignment);
 	}

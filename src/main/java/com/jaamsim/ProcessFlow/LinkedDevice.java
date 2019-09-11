@@ -71,7 +71,7 @@ public abstract class LinkedDevice extends Device implements Linkable, LinkDispl
 		nextComponent.setRequired(true);
 		this.addInput(nextComponent);
 
-		stateAssignment = new StringProvInput("StateAssignment", KEY_INPUTS, null);
+		stateAssignment = new StringProvInput("StateAssignment", OPTIONS, null);
 		stateAssignment.setUnitType(DimensionlessUnit.class);
 		this.addInput(stateAssignment);
 	}
