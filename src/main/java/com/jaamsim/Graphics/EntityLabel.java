@@ -40,6 +40,7 @@ public class EntityLabel extends TextBasics {
 	protected final EntityInput<DisplayEntity> targetEntity;
 
 	{
+		desc.setHidden(true);
 		attributeDefinitionList.setHidden(true);
 		namedExpressionInput.setHidden(true);
 
