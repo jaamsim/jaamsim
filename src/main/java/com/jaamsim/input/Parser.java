@@ -29,8 +29,9 @@ public class Parser {
  * @param tokens list of String tokens to append to
  * @param rec record to tokenize and append
  * @param stripComments if true, do not append any commented tokens
+ * @return true if in quoted context
  */
-public static final void tokenize(ArrayList<String> tokens, String rec, boolean stripComments) {
+public static final boolean tokenize(ArrayList<String> tokens, String rec, boolean stripComments) {
 	// Records can be divided into two pieces, the contents portion and possibly
 	// a commented portion, the division point is the first " character, if no
 	// quoting in a record, the entire line is contents for tokenizing
@@ -98,6 +99,8 @@ public static final void tokenize(ArrayList<String> tokens, String rec, boolean 
 	// add comments if they exist including the leading # to denote it as commented
 	if (!stripComments && cIndex > -1)
 		tokens.add(rec.substring(cIndex, rec.length()));
+
+	return quoteStart != -1;
 }
 
 public static final boolean needsQuoting(CharSequence s) {

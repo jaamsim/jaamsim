@@ -188,7 +188,21 @@ public class InputAgent {
 					break;
 
 				int previousRecordSize = record.size();
-				Parser.tokenize(record, line, true);
+				boolean quoted = Parser.tokenize(record, line, true);
+
+				// Keep reading lines if the end of line was hit while in quoted context
+				while (quoted) {
+
+					// Append the next line to the line
+					StringBuilder sb = new StringBuilder(line);
+					sb.append(buf.readLine());
+					line = sb.toString();
+
+					// Clear the record and tokenize the now longer line
+					record.clear();
+					quoted = Parser.tokenize(record, line, true);
+				}
+
 				braceDepth = InputAgent.getBraceDepth(simModel, record, braceDepth, previousRecordSize);
 				if( braceDepth != 0 )
 					continue;
