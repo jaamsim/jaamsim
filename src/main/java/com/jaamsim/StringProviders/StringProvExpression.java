@@ -37,7 +37,6 @@ public class StringProvExpression implements StringProvider {
 		unitType = ut;
 		parseContext = ExpEvaluator.getParseContext(thisEnt, expString);
 		exp = ExpParser.parseExpression(parseContext, expString);
-		ExpParser.assertUnitType(exp, unitType);
 	}
 
 	@Override
@@ -66,10 +65,8 @@ public class StringProvExpression implements StringProvider {
 				break;
 			case NUMBER:
 				if (result.unitType != unitType) {
-					thisEnt.error("Invalid unit returned by an expression: '%s'%n"
-							+ "Received: %s, expected: %s",
-							exp, thisEnt.getJaamSimModel().getObjectTypeForClass(result.unitType),
-							thisEnt.getJaamSimModel().getObjectTypeForClass(unitType));
+					ret = result.toString();
+					break;
 				}
 				if (integerValue) {
 					ret = Double.toString((int)(result.value/siFactor));
