@@ -1317,6 +1317,14 @@ public class ExpressionBox extends JDialog {
 				-1,
 				"'maxCol( {5, -1, 2} )' returns 5."));
 
+		functions.add(new ButtonDesc("sum", "Sum function for a Collection ('sum')",
+				"Returns the sum of the entries in an array or map.",
+				"Accepts an array or map of numbers with or without units. "
+						+ "Returns a number in the same units.",
+				"sum()",
+				-1,
+				"'sum( {5, -1, 2} )' returns 6."));
+
 		functions.add(new ButtonDesc("indexOfMinCol", "IndexOfMin function for a Collection "
 						+ "('indexOfMinCol')",
 				"Returns index or key for the smallest entry in an array or map.",
