@@ -338,11 +338,11 @@ public class Simulation extends Entity {
 		initializationTime.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		this.addInput(initializationTime);
 
-		pauseConditionInput = new SampleInput("PauseCondition", KEY_INPUTS, null);
+		pauseConditionInput = new SampleInput("PauseCondition", OPTIONS, null);
 		pauseConditionInput.setUnitType(DimensionlessUnit.class);
 		this.addInput(pauseConditionInput);
 
-		exitAtPauseCondition = new BooleanInput("ExitAtPauseCondition", KEY_INPUTS, false);
+		exitAtPauseCondition = new BooleanInput("ExitAtPauseCondition", OPTIONS, false);
 		this.addInput(exitAtPauseCondition);
 
 		exitAtStop = new BooleanInput("ExitAtStop", KEY_INPUTS, false);
@@ -369,7 +369,7 @@ public class Simulation extends Entity {
 		runOutputList.setUnitType(DimensionlessUnit.class);
 		this.addInput(runOutputList);
 
-		tickLengthInput = new ValueInput("TickLength", KEY_INPUTS, 1e-6d);
+		tickLengthInput = new ValueInput("TickLength", OPTIONS, 1e-6d);
 		tickLengthInput.setUnitType(TimeUnit.class);
 		tickLengthInput.setValidRange(1e-12d, Double.POSITIVE_INFINITY);
 		this.addInput(tickLengthInput);
