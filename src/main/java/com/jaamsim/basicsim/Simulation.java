@@ -29,6 +29,7 @@ import com.jaamsim.StringProviders.StringProvListInput;
 import com.jaamsim.datatypes.IntegerVector;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.input.BooleanInput;
+import com.jaamsim.input.DateInput;
 import com.jaamsim.input.DirInput;
 import com.jaamsim.input.EntityListInput;
 import com.jaamsim.input.Input;
@@ -68,6 +69,10 @@ public class Simulation extends Entity {
 	                     + "InitializationDuration and RunDuration inputs.",
 	         exampleList = {"720 h"})
 	private final ValueInput initializationTime;
+
+	@Keyword(description = "The calendar date and time that corresponds to zero simulation time.",
+	         exampleList = {"'2000-09-01", "'2000-09-01 00:08:00'"} )
+	private final DateInput startDate;
 
 	@Keyword(description = "An optional expression that pauses the run when TRUE is returned.",
 	         exampleList = {"'[Queue1].QueueLength > 20'"})
@@ -326,7 +331,6 @@ public class Simulation extends Entity {
 	private String modelName = "JaamSim";
 
 	{
-
 		// Key Inputs tab
 		runDuration = new ValueInput("RunDuration", KEY_INPUTS, 31536000.0d);
 		runDuration.setUnitType(TimeUnit.class);
@@ -337,6 +341,9 @@ public class Simulation extends Entity {
 		initializationTime.setUnitType(TimeUnit.class);
 		initializationTime.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		this.addInput(initializationTime);
+
+		startDate = new DateInput("StartDate", OPTIONS, new SimDate(1970, 1, 1));
+		this.addInput(startDate);
 
 		pauseConditionInput = new SampleInput("PauseCondition", OPTIONS, null);
 		pauseConditionInput.setUnitType(DimensionlessUnit.class);
@@ -889,6 +896,13 @@ public class Simulation extends Entity {
 	 */
 	public double getInitializationTime() {
 		return initializationTime.getValue();
+	}
+
+	/**
+	 * Returns the calendar date corresponding to zero simulation time.
+	 */
+	public SimDate getStartDate() {
+		return startDate.getValue();
 	}
 
 	public StringProvListInput getRunOutputList() {
