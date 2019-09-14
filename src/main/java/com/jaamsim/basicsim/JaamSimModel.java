@@ -22,6 +22,7 @@ import java.io.PrintStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -91,6 +92,8 @@ public class JaamSimModel {
 
 	private final ArrayList<View> views = new ArrayList<>();
 	private int nextViewID = 1;
+
+	private final SimCalendar calendar = new SimCalendar();
 
 	public JaamSimModel() {
 		this("");
@@ -1292,6 +1295,30 @@ public class JaamSimModel {
 
 	public boolean isPreDefinedEntity(Entity ent) {
 		return ent.getEntityNumber() <= preDefinedEntityCount;
+	}
+
+	/**
+	 * Returns the simulation time corresponding to the specified date.
+	 * @param year - year
+	 * @param month - month (0 - 11)
+	 * @param dayOfMonth - day of the month (1 - 31)
+	 * @param hourOfDay - hour of the day (0 - 23)
+	 * @param minute - minutes (0 - 59)
+	 * @param second - seconds (0 - 59)
+	 * @param ms - millisecond (0 - 999)
+	 * @return time in milliseconds from the epoch
+	 */
+	public long getCalendarMillis(int year, int month, int dayOfMonth, int hourOfDay, int minute, int second, int ms) {
+		return calendar.getTimeInMillis(year, month, dayOfMonth, hourOfDay, minute, second, ms);
+	}
+
+	/**
+	 * Returns the date corresponding to the specified time in milliseconds from the epoch.
+	 * @param millis - time is milliseconds from the epoch
+	 * @return date for the specified time
+	 */
+	public Date getCalendarDate(long millis) {
+		return calendar.getDate(millis);
 	}
 
 	@Override
