@@ -47,6 +47,7 @@ import org.junit.runners.Suite.SuiteClasses;
 	com.jaamsim.input.TestParser.class,
 	com.jaamsim.input.TestOutput.class,
 	com.jaamsim.basicsim.TestSimulation.class,
+	com.jaamsim.basicsim.TestSimCalendar.class,
 	com.jaamsim.probability.TestContinuousDistribution.class,
 	com.jaamsim.probability.TestDiscreteDistribution.class,
 	com.jaamsim.probability.TestErlangDistribution.class,
