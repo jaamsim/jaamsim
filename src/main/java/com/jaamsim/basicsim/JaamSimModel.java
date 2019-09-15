@@ -1321,6 +1321,26 @@ public class JaamSimModel {
 		return calendar.getDate(millis);
 	}
 
+	/**
+	 * Returns the simulation time in seconds that corresponds to the specified time in
+	 * milliseconds from the epoch.
+	 * @param millis - milliseconds from the epoch
+	 * @return simulation time in seconds
+	 */
+	public double calendarMillisToSimTime(long millis) {
+		return millis / 1000.0d;  // assumes the start time is 1970
+	}
+
+	/**
+	 * Returns the time in milliseconds from the epoch that corresponds to the specified
+	 * simulation time.
+	 * @param simTime - simulation time in seconds
+	 * @return milliseconds from the epoch
+	 */
+	public long simTimeToCalendarMillis(double simTime) {
+		return Math.round(simTime * 1000.0d);  // assumes the start time is 1970
+	}
+
 	@Override
 	public String toString() {
 		return name;
