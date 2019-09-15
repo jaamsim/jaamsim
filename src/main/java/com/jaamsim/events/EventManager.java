@@ -714,6 +714,8 @@ public final class EventManager {
 	}
 
 	public void setExecuteRealTime(boolean useRealTime, double factor) {
+		if (useRealTime == executeRealTime && factor == realTimeFactor)
+			return;
 		executeRealTime = useRealTime;
 		realTimeFactor = factor;
 		if (useRealTime)
