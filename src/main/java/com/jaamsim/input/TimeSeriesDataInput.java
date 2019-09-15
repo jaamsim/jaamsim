@@ -21,6 +21,7 @@ import java.util.ArrayList;
 
 import com.jaamsim.Samples.TimeSeriesData;
 import com.jaamsim.basicsim.Entity;
+import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
@@ -40,6 +41,7 @@ public class TimeSeriesDataInput extends Input<TimeSeriesData> {
 
 	@Override
 	public void parse(Entity thisEnt, KeywordIndex kw) throws InputErrorException {
+		JaamSimModel simModel = thisEnt.getJaamSimModel();
 
 		boolean braceOpened = false;
 
@@ -83,7 +85,7 @@ public class TimeSeriesDataInput extends Input<TimeSeriesData> {
 			long recordus;
 			if (Input.isRFC8601DateTime(each.get(0))) {
 				Input.assertCountRange(each, 2, 3);
-				recordus = Input.parseRFC8601DateTime(each.get(0));
+				recordus = Input.parseRFC8601DateTime(simModel, each.get(0));
 				each.remove(0);
 			}
 			// Time input in number/unit format

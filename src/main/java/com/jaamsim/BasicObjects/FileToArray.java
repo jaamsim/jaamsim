@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.ProcessFlow.LinkedComponent;
 import com.jaamsim.basicsim.Entity;
+import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.input.ExpCollections;
 import com.jaamsim.input.ExpError;
 import com.jaamsim.input.ExpEvaluator;
@@ -115,18 +116,19 @@ public abstract class FileToArray extends LinkedComponent {
 	protected abstract ExpResult getValueForTokens(ArrayList<ArrayList<String>> tokens, double simTime);
 
 	public static ExpResult getExpResult(String str, Entity thisEnt, double simTime) {
+		JaamSimModel simModel = thisEnt.getJaamSimModel();
 
 		// Is the entry a time stamp?
 		if (Input.isRFC8601DateTime(str)) {
 			try {
-				double time = Input.parseRFC8601DateTime(str)/1e6;
+				double time = Input.parseRFC8601DateTime(simModel, str)/1e6;
 				return ExpResult.makeNumResult(time, TimeUnit.class);
 			}
 			catch (Exception e) {}
 		}
 
 		// Is the entry an entity?
-		Entity ent = thisEnt.getJaamSimModel().getNamedEntity(str);
+		Entity ent = simModel.getNamedEntity(str);
 		if (ent != null) {
 			return ExpResult.makeEntityResult(ent);
 		}

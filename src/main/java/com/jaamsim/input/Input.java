@@ -42,6 +42,7 @@ import com.jaamsim.basicsim.ObjectType;
 import com.jaamsim.datatypes.BooleanVector;
 import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.datatypes.IntegerVector;
+import com.jaamsim.events.EventManager;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.ui.NaturalOrderComparator;
 import com.jaamsim.units.DimensionlessUnit;
@@ -933,7 +934,7 @@ public abstract class Input<T> {
 	 * @param datumYear
 	 * @return
 	 */
-	public static long parseRFC8601DateTime(String input) {
+	public static long parseRFC8601DateTime(JaamSimModel simModel, String input) {
 		if (is8601time.matcher(input).matches()) {
 			int YY = Integer.parseInt(input.substring(0, 4));
 			int MM = Integer.parseInt(input.substring(5, 7));
@@ -941,7 +942,7 @@ public abstract class Input<T> {
 			int hh = Integer.parseInt(input.substring(11, 13));
 			int mm = Integer.parseInt(input.substring(14, 16));
 			int ss = Integer.parseInt(input.substring(17, 19));
-			return getUS(input, YY, MM, DD, hh, mm, ss, 0);
+			return getUS(simModel, input, YY, MM, DD, hh, mm, ss, 0);
 		}
 
 		if (is8601full.matcher(input).matches()) {
@@ -963,14 +964,14 @@ public abstract class Input<T> {
 			case 5: us =  Integer.parseInt(usChars) *     10; break;
 			case 6: us =  Integer.parseInt(usChars) *      1; break;
 			}
-			return getUS(input, YY, MM, DD, hh, mm, ss, us);
+			return getUS(simModel, input, YY, MM, DD, hh, mm, ss, us);
 		}
 
 		if (is8601date.matcher(input).matches()) {
 			int YY = Integer.parseInt(input.substring(0, 4));
 			int MM = Integer.parseInt(input.substring(5, 7));
 			int DD = Integer.parseInt(input.substring(8, 10));
-			return getUS(input, YY, MM, DD, 0, 0, 0, 0);
+			return getUS(simModel, input, YY, MM, DD, 0, 0, 0, 0);
 		}
 
 		if (isextendtime.matcher(input).matches()) {
@@ -1045,7 +1046,7 @@ public abstract class Input<T> {
 		}
 	}
 
-	private static final long getUS(String input, int YY, int MM, int DD, int hh, int mm, int ss, int us) {
+	private static final long getUS(JaamSimModel simModel, String input, int YY, int MM, int DD, int hh, int mm, int ss, int us) {
 		// Validate ranges
 		if (MM <= 0 || MM > 12)
 			throw new InputErrorException(INP_ERR_BADDATE, input);
@@ -1059,16 +1060,9 @@ public abstract class Input<T> {
 		if (mm < 0 || mm > 59 || ss < 0 || ss > 59)
 			throw new InputErrorException(INP_ERR_BADDATE, input);
 
-		long ret = 0;
-		ret += YY * usPerYr;
-		ret += (firstDayOfMonth[MM - 1] - 1) * usPerDay;
-		ret += (DD - 1) * usPerDay;
-		ret += hh * usPerHr;
-		ret += mm * usPerMin;
-		ret += ss * usPerSec;
-		ret += us;
-
-		return ret;
+		long millis = simModel.getCalendarMillis(YY, MM - 1, DD, hh, mm, ss, 0);
+		double simTime = simModel.calendarMillisToSimTime(millis) + us/1e6d;
+		return EventManager.secsToNearestTick(simTime);
 	}
 
 	public static double parseDouble(String data)
@@ -1137,7 +1131,7 @@ public abstract class Input<T> {
 
 					// RFC8601 date/time format
 					if (Input.isRFC8601DateTime(kw.getArg(i))) {
-						double element = Input.parseRFC8601DateTime(kw.getArg(i))/1e6;
+						double element = Input.parseRFC8601DateTime(simModel, kw.getArg(i))/1e6;
 						if (element < minValue || element > maxValue)
 							throw new InputErrorException(INP_ERR_DOUBLERANGE, minValue, maxValue, temp);
 						temp.add(element);
