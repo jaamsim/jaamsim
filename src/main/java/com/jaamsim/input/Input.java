@@ -1022,7 +1022,6 @@ public abstract class Input<T> {
 	}
 
 	private static final int[] daysInMonth;
-	private static final int[] firstDayOfMonth;
 
 	static {
 		daysInMonth = new int[12];
@@ -1038,12 +1037,6 @@ public abstract class Input<T> {
 		daysInMonth[9] = 31;
 		daysInMonth[10] = 30;
 		daysInMonth[11] = 31;
-
-		firstDayOfMonth = new int[12];
-		firstDayOfMonth[0] = 1;
-		for (int i = 1; i < firstDayOfMonth.length; i++) {
-			firstDayOfMonth[i] = firstDayOfMonth[i - 1] + daysInMonth[i - 1];
-		}
 	}
 
 	private static final long getUS(JaamSimModel simModel, String input, int YY, int MM, int DD, int hh, int mm, int ss, int us) {
