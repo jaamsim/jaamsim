@@ -914,11 +914,16 @@ public abstract class Input<T> {
 	public static final long usPerYr  = 365 * usPerDay;
 
 	public static boolean isRFC8601DateTime(String input) {
+		if (isRFC8601Date(input)) return true;
+		if (isextendtime.matcher(input).matches()) return true;
+		if (isextendfull.matcher(input).matches()) return true;
+		return false;
+	}
+
+	public static boolean isRFC8601Date(String input) {
 		if (is8601time.matcher(input).matches()) return true;
 		if (is8601full.matcher(input).matches()) return true;
 		if (is8601date.matcher(input).matches()) return true;
-		if (isextendtime.matcher(input).matches()) return true;
-		if (isextendfull.matcher(input).matches()) return true;
 		return false;
 	}
 
