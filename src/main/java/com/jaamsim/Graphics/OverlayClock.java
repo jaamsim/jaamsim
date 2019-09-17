@@ -51,6 +51,7 @@ public class OverlayClock extends OverlayText {
 		unit.setHidden(true);
 
 		startingYear = new IntegerInput("StartingYear", KEY_INPUTS, 2000);
+		startingYear.setHidden(true);  // not used
 		this.addInput(startingYear);
 
 		dateFormatInput = new StringInput("DateFormat", KEY_INPUTS, "yyyy-MMM-dd HH:mm:ss.SSS");
@@ -74,8 +75,7 @@ public class OverlayClock extends OverlayText {
 
 	@Override
 	public String getRenderText(double simTime) {
-		double startTime = (startingYear.getValue() - 1970) * 8760.0d * 3600.0d;
-		long millis = getJaamSimModel().simTimeToCalendarMillis(startTime + simTime);
+		long millis = getJaamSimModel().simTimeToCalendarMillis(simTime);
 		Date date = getJaamSimModel().getCalendarDate(millis);
 		return dateFormat.format(date);
 	}
