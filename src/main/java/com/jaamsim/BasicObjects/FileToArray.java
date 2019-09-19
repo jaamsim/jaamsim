@@ -121,7 +121,7 @@ public abstract class FileToArray extends LinkedComponent {
 		// Is the entry a time stamp?
 		if (Input.isRFC8601DateTime(str)) {
 			try {
-				double time = Input.parseRFC8601DateTime(simModel, str)/1e6;
+				double time = Input.parseRFC8601DateTime(simModel, str);
 				return ExpResult.makeNumResult(time, TimeUnit.class);
 			}
 			catch (Exception e) {}

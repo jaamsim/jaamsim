@@ -23,6 +23,7 @@ import com.jaamsim.Samples.TimeSeriesData;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.datatypes.DoubleVector;
+import com.jaamsim.events.EventManager;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
 import com.jaamsim.units.Unit;
@@ -85,7 +86,8 @@ public class TimeSeriesDataInput extends Input<TimeSeriesData> {
 			long recordus;
 			if (Input.isRFC8601DateTime(each.get(0))) {
 				Input.assertCountRange(each, 2, 3);
-				recordus = Input.parseRFC8601DateTime(simModel, each.get(0));
+				double simTime = Input.parseRFC8601DateTime(simModel, each.get(0));
+				recordus = EventManager.secsToNearestTick(simTime);
 				each.remove(0);
 			}
 			// Time input in number/unit format

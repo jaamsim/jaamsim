@@ -42,7 +42,6 @@ import com.jaamsim.basicsim.ObjectType;
 import com.jaamsim.datatypes.BooleanVector;
 import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.datatypes.IntegerVector;
-import com.jaamsim.events.EventManager;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.ui.NaturalOrderComparator;
 import com.jaamsim.units.DimensionlessUnit;
@@ -924,17 +923,14 @@ public abstract class Input<T> {
 	}
 
 	/**
-	 * Parse an RFC8601 date time and return it as an offset in microseconds from
-	 * 0AD. This assumes a very simple concept of a 365 day year with no leap years
-	 * and no leap seconds.
-	 *
+	 * Parse an RFC8601 date time and returns the corresponding simulation time in seconds from the
+	 * start of the simulation run.
 	 * An RFC8601 date time looks like YYYY-MM-DD HH:MM:SS.mmm or YYYY-MM-DDTHH:MM:SS.mmm
-	 *
-	 * @param input
-	 * @param datumYear
-	 * @return
+	 * @param simModel - JaamSimModel
+	 * @param input - date string
+	 * @return simulation time in seconds
 	 */
-	public static long parseRFC8601DateTime(JaamSimModel simModel, String input) {
+	public static double parseRFC8601DateTime(JaamSimModel simModel, String input) {
 		if (is8601time.matcher(input).matches()) {
 			int YY = Integer.parseInt(input.substring(0, 4));
 			int MM = Integer.parseInt(input.substring(5, 7));
@@ -1039,7 +1035,7 @@ public abstract class Input<T> {
 		daysInMonth[11] = 31;
 	}
 
-	private static final long getUS(JaamSimModel simModel, String input, int YY, int MM, int DD, int hh, int mm, int ss, int us) {
+	private static final double getUS(JaamSimModel simModel, String input, int YY, int MM, int DD, int hh, int mm, int ss, int us) {
 		// Validate ranges
 		if (MM <= 0 || MM > 12)
 			throw new InputErrorException(INP_ERR_BADDATE, input);
@@ -1054,8 +1050,7 @@ public abstract class Input<T> {
 			throw new InputErrorException(INP_ERR_BADDATE, input);
 
 		long millis = simModel.getCalendarMillis(YY, MM - 1, DD, hh, mm, ss, 0);
-		double simTime = simModel.calendarMillisToSimTime(millis) + us/1e6d;
-		return EventManager.secsToNearestTick(simTime);
+		return simModel.calendarMillisToSimTime(millis) + us/1e6d;
 	}
 
 	public static double parseDouble(String data)
@@ -1124,7 +1119,7 @@ public abstract class Input<T> {
 
 					// RFC8601 date/time format
 					if (Input.isRFC8601DateTime(kw.getArg(i))) {
-						double element = Input.parseRFC8601DateTime(simModel, kw.getArg(i))/1e6;
+						double element = Input.parseRFC8601DateTime(simModel, kw.getArg(i));
 						if (element < minValue || element > maxValue)
 							throw new InputErrorException(INP_ERR_DOUBLERANGE, minValue, maxValue, temp);
 						temp.add(element);
