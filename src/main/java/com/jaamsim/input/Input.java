@@ -936,43 +936,10 @@ public abstract class Input<T> {
 	 * @return simulation time in seconds
 	 */
 	public static double parseRFC8601DateTime(JaamSimModel simModel, String input) {
-		if (is8601time.matcher(input).matches()) {
-			int YY = Integer.parseInt(input.substring(0, 4));
-			int MM = Integer.parseInt(input.substring(5, 7));
-			int DD = Integer.parseInt(input.substring(8, 10));
-			int hh = Integer.parseInt(input.substring(11, 13));
-			int mm = Integer.parseInt(input.substring(14, 16));
-			int ss = Integer.parseInt(input.substring(17, 19));
-			return getUS(simModel, input, YY, MM, DD, hh, mm, ss, 0);
-		}
-
-		if (is8601full.matcher(input).matches()) {
-			int YY = Integer.parseInt(input.substring(0, 4));
-			int MM = Integer.parseInt(input.substring(5, 7));
-			int DD = Integer.parseInt(input.substring(8, 10));
-			int hh = Integer.parseInt(input.substring(11, 13));
-			int mm = Integer.parseInt(input.substring(14, 16));
-			int ss = Integer.parseInt(input.substring(17, 19));
-
-			// grab the us values and zero-pad to a full 6-digit number
-			String usChars =  input.substring(20, input.length());
-			int us = 0;
-			switch (usChars.length()) {
-			case 1: us =  Integer.parseInt(usChars) * 100000; break;
-			case 2: us =  Integer.parseInt(usChars) *  10000; break;
-			case 3: us =  Integer.parseInt(usChars) *   1000; break;
-			case 4: us =  Integer.parseInt(usChars) *    100; break;
-			case 5: us =  Integer.parseInt(usChars) *     10; break;
-			case 6: us =  Integer.parseInt(usChars) *      1; break;
-			}
-			return getUS(simModel, input, YY, MM, DD, hh, mm, ss, us);
-		}
-
-		if (is8601date.matcher(input).matches()) {
-			int YY = Integer.parseInt(input.substring(0, 4));
-			int MM = Integer.parseInt(input.substring(5, 7));
-			int DD = Integer.parseInt(input.substring(8, 10));
-			return getUS(simModel, input, YY, MM, DD, 0, 0, 0, 0);
+		if (isRFC8601Date(input)) {
+			int[] date = parseRFC8601Date(input);
+			long millis = simModel.getCalendarMillis(date[0], date[1] - 1, date[2], date[3], date[4], date[5], date[6]);
+			return simModel.calendarMillisToSimTime(millis);
 		}
 
 		if (isextendtime.matcher(input).matches()) {
@@ -1020,6 +987,68 @@ public abstract class Input<T> {
 		}
 
 		throw new InputErrorException(INP_ERR_BADDATE, input);
+	}
+
+	/**
+	 * Parse an RFC8601 date time and return an array containing the date numbers.
+	 * An RFC8601 date time looks like YYYY-MM-DD HH:MM:SS.mmm or YYYY-MM-DDTHH:MM:SS.mmm
+	 * @param input - date string
+	 * @return integer array containing the year, month (0 - 11), day of month (1 - 31),
+	 *         hour of day (0 - 23), minute (0 - 59), second (0 - 59), millisecond (0 - 999)
+	 */
+	public static int[] parseRFC8601Date(String input) {
+		int YY = 0, MM = 0, DD = 0, hh = 0, mm = 0, ss = 0, ms = 0;
+
+		// YY-MM-DD hh:mm:ss format
+		if (is8601time.matcher(input).matches()) {
+			YY = Integer.parseInt(input.substring(0, 4));
+			MM = Integer.parseInt(input.substring(5, 7));
+			DD = Integer.parseInt(input.substring(8, 10));
+			hh = Integer.parseInt(input.substring(11, 13));
+			mm = Integer.parseInt(input.substring(14, 16));
+			ss = Integer.parseInt(input.substring(17, 19));
+		}
+
+		// YY-MM-DD hh:mm:ss.sss format
+		else if (is8601full.matcher(input).matches()) {
+			YY = Integer.parseInt(input.substring(0, 4));
+			MM = Integer.parseInt(input.substring(5, 7));
+			DD = Integer.parseInt(input.substring(8, 10));
+			hh = Integer.parseInt(input.substring(11, 13));
+			mm = Integer.parseInt(input.substring(14, 16));
+			ss = Integer.parseInt(input.substring(17, 19));
+
+			// grab the us values and zero-pad to a full 6-digit number
+			String usChars =  input.substring(20, input.length());
+			int us = 0;
+			switch (usChars.length()) {
+			case 1: us =  Integer.parseInt(usChars) * 100000; break;
+			case 2: us =  Integer.parseInt(usChars) *  10000; break;
+			case 3: us =  Integer.parseInt(usChars) *   1000; break;
+			case 4: us =  Integer.parseInt(usChars) *    100; break;
+			case 5: us =  Integer.parseInt(usChars) *     10; break;
+			case 6: us =  Integer.parseInt(usChars) *      1; break;
+			}
+			ms = us/1000;
+		}
+
+		// YY-MM-DD format
+		else if (is8601date.matcher(input).matches()) {
+			YY = Integer.parseInt(input.substring(0, 4));
+			MM = Integer.parseInt(input.substring(5, 7));
+			DD = Integer.parseInt(input.substring(8, 10));
+		}
+
+		else {
+			throw new InputErrorException(INP_ERR_BADDATE, input);
+		}
+
+		if (MM < 1 || MM > 12 || DD < 1 || DD > daysInMonth[MM - 1]
+				|| hh < 0 || hh > 23 || mm < 0 || mm > 59
+				|| ss < 0 || ss > 59 || ms < 0 || ms > 999)
+			throw new InputErrorException(INP_ERR_BADDATE, input);
+
+		return new int[]{YY, MM, DD, hh, mm, ss, ms};
 	}
 
 	private static final int[] daysInMonth;
