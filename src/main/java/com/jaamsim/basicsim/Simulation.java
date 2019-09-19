@@ -70,6 +70,13 @@ public class Simulation extends Entity {
 	         exampleList = {"720 h"})
 	private final ValueInput initializationTime;
 
+	@Keyword(description = "If TRUE, the simulation uses the standard Gregorian calendar that "
+	                     + "includes leap years. "
+	                     + "If FALSE, the simulation uses a simplified calendar that has a fixed "
+	                     + "365 days per year.",
+	         exampleList = {"TRUE"} )
+	private final BooleanInput gregorianCalendar;
+
 	@Keyword(description = "The calendar date and time that corresponds to zero simulation time.",
 	         exampleList = {"'2000-09-01", "'2000-09-01 00:08:00'"} )
 	private final DateInput startDate;
@@ -341,6 +348,9 @@ public class Simulation extends Entity {
 		initializationTime.setUnitType(TimeUnit.class);
 		initializationTime.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		this.addInput(initializationTime);
+
+		gregorianCalendar = new BooleanInput("GregorianCalendar", OPTIONS, false);
+		this.addInput(gregorianCalendar);
 
 		startDate = new DateInput("StartDate", OPTIONS, new SimDate(1970, 1, 1));
 		this.addInput(startDate);
@@ -896,6 +906,14 @@ public class Simulation extends Entity {
 	 */
 	public double getInitializationTime() {
 		return initializationTime.getValue();
+	}
+
+	/**
+	 * Returns whether a Gregorian calendar with leap years and leap seconds is used.
+	 * @return true if the calendar is Gregorian
+	 */
+	public boolean isGregorianCalendar() {
+		return gregorianCalendar.getValue();
 	}
 
 	/**
