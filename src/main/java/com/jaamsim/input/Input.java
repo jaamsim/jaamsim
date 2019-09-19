@@ -1069,24 +1069,6 @@ public abstract class Input<T> {
 		daysInMonth[11] = 31;
 	}
 
-	private static final double getUS(JaamSimModel simModel, String input, int YY, int MM, int DD, int hh, int mm, int ss, int us) {
-		// Validate ranges
-		if (MM <= 0 || MM > 12)
-			throw new InputErrorException(INP_ERR_BADDATE, input);
-
-		if (DD <= 0 || DD > daysInMonth[MM - 1])
-			throw new InputErrorException(INP_ERR_BADDATE, input);
-
-		if (hh < 0 || hh > 23)
-			throw new InputErrorException(INP_ERR_BADDATE, input);
-
-		if (mm < 0 || mm > 59 || ss < 0 || ss > 59)
-			throw new InputErrorException(INP_ERR_BADDATE, input);
-
-		long millis = simModel.getCalendarMillis(YY, MM - 1, DD, hh, mm, ss, 0);
-		return simModel.calendarMillisToSimTime(millis) + us/1e6d;
-	}
-
 	public static double parseDouble(String data)
 	throws InputErrorException {
 		return Input.parseDouble(data, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
