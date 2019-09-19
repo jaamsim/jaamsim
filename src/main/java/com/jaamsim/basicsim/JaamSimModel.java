@@ -1345,7 +1345,7 @@ public class JaamSimModel {
 	 * @return simulation time in seconds
 	 */
 	public double calendarMillisToSimTime(long millis) {
-		return millis / 1000.0d;  // assumes the start time is 1970
+		return (millis - startMillis) / 1000.0d;
 	}
 
 	/**
@@ -1355,7 +1355,7 @@ public class JaamSimModel {
 	 * @return milliseconds from the epoch
 	 */
 	public long simTimeToCalendarMillis(double simTime) {
-		return Math.round(simTime * 1000.0d);  // assumes the start time is 1970
+		return Math.round(simTime * 1000.0d) + startMillis;
 	}
 
 	@Override
