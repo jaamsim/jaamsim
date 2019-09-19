@@ -626,6 +626,11 @@ public class Simulation extends Entity {
 	public void updateForInput( Input<?> in ) {
 		super.updateForInput( in );
 
+		if (in == gregorianCalendar || in == startDate) {
+			getJaamSimModel().setCalendar(isGregorianCalendar(), getStartDate());
+			return;
+		}
+
 		if (in == reportDirectory) {
 			getJaamSimModel().setReportDirectory(reportDirectory.getDir());
 			return;

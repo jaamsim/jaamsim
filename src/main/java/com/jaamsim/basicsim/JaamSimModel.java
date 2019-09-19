@@ -94,6 +94,7 @@ public class JaamSimModel {
 	private int nextViewID = 1;
 
 	private final SimCalendar calendar = new SimCalendar();
+	private long startMillis;  // start time in milliseonds from the epoch
 
 	public JaamSimModel() {
 		this("");
@@ -137,6 +138,10 @@ public class JaamSimModel {
 			}
 			listNode = listNode.next;
 		}
+
+		// Reset calendar
+		calendar.setGregorian(false);
+		startMillis = 0L;
 
 		// Clear the 'simulation' property
 		// This action must be performed AFTER the Simulation entity has been killed, otherwise a
@@ -1295,6 +1300,18 @@ public class JaamSimModel {
 
 	public boolean isPreDefinedEntity(Entity ent) {
 		return ent.getEntityNumber() <= preDefinedEntityCount;
+	}
+
+	/**
+	 * Sets the inputs for the calendar. The simulation can use the usual Gregorian calendar with
+	 * leap years or it can use a simplified calendar with a fixed 365 days per year.
+	 * @param bool - true for the Gregorian calendar, false for the simple calendar
+	 * @param date - calendar date corresponding to zero simulation time
+	 */
+	public void setCalendar(boolean bool, SimDate date) {
+		calendar.setGregorian(bool);
+		startMillis = calendar.getTimeInMillis(date.year, date.month - 1, date.dayOfMonth,
+				date.hourOfDay, date.minute, date.second, date.millisecond);
 	}
 
 	/**
