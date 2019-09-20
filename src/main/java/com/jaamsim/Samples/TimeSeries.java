@@ -23,6 +23,7 @@ import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.basicsim.EntityTarget;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.events.ProcessTarget;
+import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Keyword;
@@ -35,6 +36,13 @@ import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
 
 public class TimeSeries extends DisplayEntity implements TimeSeriesProvider {
+
+	@Keyword(description = "If TRUE, the simulation times corresponding to the time stamps "
+	                     + "entered to the 'Value' keyword are calculated relative time for the "
+	                     + "first time stamp. This offset sets the simulation time for the first "
+	                     + "time stamp to zero seconds.",
+	         exampleList = {"TRUE"})
+	private final BooleanInput offsetToFirst;
 
 	@Keyword(description = "The unit type for the time series. The UnitType input must be "
 	                     + "specified before the Value input.",
@@ -61,6 +69,9 @@ public class TimeSeries extends DisplayEntity implements TimeSeriesProvider {
 	private final ValueInput cycleTime;
 
 	{
+		offsetToFirst = new BooleanInput("OffsetToFirst", KEY_INPUTS, true);
+		this.addInput(offsetToFirst);
+
 		unitType = new UnitTypeInput("UnitType", KEY_INPUTS, UserSpecifiedUnit.class);
 		unitType.setRequired(true);
 		this.addInput(unitType);
@@ -106,6 +117,10 @@ public class TimeSeries extends DisplayEntity implements TimeSeriesProvider {
 	public void startUp() {
 		super.startUp();
 		this.waitForNextValue();
+	}
+
+	public boolean isOffsetToFirst() {
+		return offsetToFirst.getValue();
 	}
 
 	/**
