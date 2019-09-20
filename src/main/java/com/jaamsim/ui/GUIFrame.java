@@ -2984,7 +2984,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	 * updates PauseTime entry
 	 */
 	private void updateForPauseTime(String str) {
-		if (pauseTime.getText().equals(str))
+		if (pauseTime.getText().equals(str) || pauseTime.isFocusOwner())
 			return;
 		pauseTime.setText(str);
 	}
