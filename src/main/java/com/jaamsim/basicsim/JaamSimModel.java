@@ -95,6 +95,8 @@ public class JaamSimModel {
 
 	private final SimCalendar calendar = new SimCalendar();
 	private long startMillis;  // start time in milliseonds from the epoch
+	private boolean calendarUsed;  // records whether the calendar has been used
+	private boolean reloadReqd;  // indicates that the simulation must be saved and reloaded
 
 	public JaamSimModel() {
 		this("");
@@ -142,6 +144,8 @@ public class JaamSimModel {
 		// Reset calendar
 		calendar.setGregorian(false);
 		startMillis = 0L;
+		calendarUsed = false;
+		reloadReqd = false;
 
 		// Clear the 'simulation' property
 		// This action must be performed AFTER the Simulation entity has been killed, otherwise a
@@ -1309,9 +1313,23 @@ public class JaamSimModel {
 	 * @param date - calendar date corresponding to zero simulation time
 	 */
 	public void setCalendar(boolean bool, SimDate date) {
+		if (calendarUsed)
+			reloadReqd = true;
+
 		calendar.setGregorian(bool);
 		startMillis = calendar.getTimeInMillis(date.year, date.month - 1, date.dayOfMonth,
 				date.hourOfDay, date.minute, date.second, date.millisecond);
+	}
+
+	/**
+	 * Returns whether the model must be saved and reloaded before it can be executed.
+	 * This can occur when the calendar type (simple vs. Gregorian) or start date has
+	 * been changed AFTER one or more calendar date inputs has been converted to simulation
+	 * time using the previous calendar inputs.
+	 * @return true if the model must be saved and reloaded
+	 */
+	public boolean isReloadReqd() {
+		return reloadReqd;
 	}
 
 	/**
@@ -1326,6 +1344,7 @@ public class JaamSimModel {
 	 * @return time in milliseconds from the epoch
 	 */
 	public long getCalendarMillis(int year, int month, int dayOfMonth, int hourOfDay, int minute, int second, int ms) {
+		calendarUsed = true;
 		return calendar.getTimeInMillis(year, month, dayOfMonth, hourOfDay, minute, second, ms);
 	}
 
