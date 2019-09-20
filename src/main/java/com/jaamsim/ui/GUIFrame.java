@@ -2994,18 +2994,17 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	 * @param str - value to assign.
 	 */
 	private void setPauseTime(String str) {
-		Input<?> pause = sim.getSimulation().getInput("PauseTime");
-		String prevVal = pause.getValueString();
+		String prevVal = sim.getSimulation().getPauseTimeString();
 		if (prevVal.equals(str))
 			return;
 
 		// If the time is in RFC8601 format, enclose in single quotes
 		if (str.contains("-") || str.contains(":"))
-			if (Parser.needsQuoting(str) && !Parser.isQuoted(str))
-				str = Parser.addQuotes(str);
+			Parser.addQuotesIfNeeded(str);
 
 		ArrayList<String> tokens = new ArrayList<>();
 		Parser.tokenize(tokens, str, true);
+
 		// if we only got one token, and it isn't RFC8601 - add a unit
 		if (tokens.size() == 1 && !tokens.get(0).contains("-") && !tokens.get(0).contains(":"))
 			tokens.add(Unit.getDisplayedUnit(TimeUnit.class));
