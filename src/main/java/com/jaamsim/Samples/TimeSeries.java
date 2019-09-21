@@ -53,12 +53,7 @@ public class TimeSeries extends DisplayEntity implements TimeSeriesProvider {
 	                     + "'time' is the time stamp for the record and 'value' is the time "
 	                     + "series value. Records are entered in order of increasing simulation "
 	                     + "time. The appropriate units should be included with both the time "
-	                     + "and value inputs.\n\n"
-	                     + "The first time stamp MUST be zero simulation time or "
-	                     + "January 1 00:00:00 of an arbitrary year. If a non-zero year is "
-	                     + "entered, e.g. '2010-01-01 00:00:00', then the TimeSeries considers "
-	                     + "this date to be time zero of the simulation and all other timestamps "
-	                     + "are offset accordingly.",
+	                     + "and value inputs.",
 	         exampleList = {"{ 0 h 1 } { 3 h 0 }",
 	                        "{ 0 h 0.5 m } { 3 h 1.5 m }",
 	                        "{ '2010-01-01 00:00:00' 0.5 m } { '2010-01-01 03:00:00' 1.5 m }"} )
