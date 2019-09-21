@@ -795,6 +795,11 @@ public class Simulation extends Entity {
 	public void validate() {
 		super.validate();
 
+		if (getJaamSimModel().isReloadReqd())
+			throw new ErrorException("Inputs to GregorianCalendar or StartDate have changed "
+					+ "AFTER the simulation calendar has been used to process another input.%n"
+					+ "Re-open the model to process these inputs in the correct order.");
+
 		double maxRunDuration = Long.MAX_VALUE*tickLengthInput.getValue();
 		if (runDuration.getValue() > maxRunDuration) {
 			throw new ErrorException("RunDuration exceeds the maximum value of %g seconds.\n"
