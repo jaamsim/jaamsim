@@ -19,6 +19,7 @@ package com.jaamsim.input;
 
 import java.util.ArrayList;
 
+import com.jaamsim.Samples.TimeSeries;
 import com.jaamsim.Samples.TimeSeriesData;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.JaamSimModel;
@@ -43,13 +44,17 @@ public class TimeSeriesDataInput extends Input<TimeSeriesData> {
 	@Override
 	public void parse(Entity thisEnt, KeywordIndex kw) throws InputErrorException {
 		JaamSimModel simModel = thisEnt.getJaamSimModel();
+		TimeSeries ts = (TimeSeries) thisEnt;
 
 		boolean braceOpened = false;
 
 		if (unitType == UserSpecifiedUnit.class)
 			throw new InputErrorException(INP_ERR_UNITUNSPECIFIED);
 
-		long startingYearOffset = -1;
+		long offset = 0L;
+		if (ts.isOffsetToFirst())
+			offset = -1L;
+
 		long lastTime = -1;
 
 		DoubleVector times = new DoubleVector(kw.numArgs()/4);
@@ -113,12 +118,10 @@ public class TimeSeriesDataInput extends Input<TimeSeriesData> {
 			lastTime = recordus;
 
 			// set the offset to the number of whole years from the first record
-			if (startingYearOffset == -1) {
-				startingYearOffset = recordus / Input.usPerYr;
-				startingYearOffset *= Input.usPerYr;
-			}
+			if (offset == -1)
+				offset = recordus;
 
-			long usOffset = recordus - startingYearOffset;
+			long usOffset = recordus - offset;
 
 			// Value portion of the record
 			KeywordIndex valKw = new KeywordIndex("", each, null);
