@@ -55,7 +55,7 @@ public class TimeSeriesDataInput extends Input<TimeSeriesData> {
 		if (ts.isOffsetToFirst())
 			offset = -1L;
 
-		long lastTime = -1;
+		long lastTime = Long.MIN_VALUE;
 
 		DoubleVector times = new DoubleVector(kw.numArgs()/4);
 		DoubleVector values = new DoubleVector(kw.numArgs()/4);
@@ -106,7 +106,7 @@ public class TimeSeriesDataInput extends Input<TimeSeriesData> {
 
 				// Parse the numeric portion of the time input
 				double factor = unit.getConversionFactorToSI();
-				recordus = (long) (Input.parseDouble(each.get(0), 0.0, Double.POSITIVE_INFINITY, factor)*1e6);
+				recordus = (long) (Input.parseDouble(each.get(0), Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, factor)*1e6);
 				each.remove(0);
 				each.remove(0);
 			}
@@ -135,9 +135,10 @@ public class TimeSeriesDataInput extends Input<TimeSeriesData> {
 		if (braceOpened)
 			throw new InputErrorException("Final closing brace ( } ) is missing.");
 
-		// Confirm that the first entry is for time zero
-		if (times.get(0) != 0.0d)
-			throw new InputErrorException("First entry must be for zero simulation time.");
+		// Confirm that the first simulation time is less than or equal to zero
+		if (times.get(0) > 0.0d)
+			throw new InputErrorException("First simulation time must be less than or equal to "
+					+ "zero. Received %s seconds.", times.get(0));
 
 		// Set the value to a new time series data object
 		value = new TimeSeriesData( times, values );
