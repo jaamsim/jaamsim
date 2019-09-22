@@ -94,8 +94,9 @@ public class TimeSeries extends DisplayEntity implements TimeSeriesProvider {
 					"The configuration file must be saved and reloaded before the simulation can be executed.");
 
 		long[] ticksList = value.getValue().ticksList;
-		if (getTicks(cycleTime.getValue()) < ticksList[ticksList.length - 1])
-			throw new InputErrorException( "CycleTime must be larger than the last time in the series" );
+		if (getTicks(cycleTime.getValue()) < ticksList[ticksList.length - 1] - ticksList[0])
+			throw new InputErrorException( "CycleTime must be larger than the difference between "
+					+ "the first and last times in the series." );
 	}
 
 	@Override
@@ -229,8 +230,8 @@ public class TimeSeries extends DisplayEntity implements TimeSeriesProvider {
 	 * @return position in the TimeSeries.
 	 */
 	private TSPoint getTSPointForTicks(long ticks) {
-
 		long[] ticksList = value.getValue().ticksList;
+
 		if (ticks == Long.MAX_VALUE) {
 			if (cycleTime.getValue() == Double.POSITIVE_INFINITY)
 				return new TSPoint(ticksList.length - 1, 0);
@@ -239,8 +240,8 @@ public class TimeSeries extends DisplayEntity implements TimeSeriesProvider {
 
 		// Find the time within the present cycle
 		final long cycleTicks = getTicks(cycleTime.getValue());
-		long numberOfCycles = ticks / cycleTicks;
-		long ticksInCycle = ticks % cycleTicks;
+		long numberOfCycles = (ticks - ticksList[0]) / cycleTicks;
+		long ticksInCycle = (ticks - ticksList[0]) % cycleTicks + ticksList[0];
 
 		// If the time in the cycle is greater than the last time, return the last value
 		if (ticksInCycle >= ticksList[ticksList.length - 1]) {
