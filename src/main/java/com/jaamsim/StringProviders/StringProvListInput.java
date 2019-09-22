@@ -27,9 +27,7 @@ import com.jaamsim.input.Input;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.ListInput;
-import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
-import com.jaamsim.units.UserSpecifiedUnit;
 
 public class StringProvListInput extends ListInput<ArrayList<StringProvider>> {
 
@@ -193,16 +191,7 @@ public class StringProvListInput extends ListInput<ArrayList<StringProvider>> {
 				sb.append(Input.SEPARATOR);
 			}
 			sb.append("{").append(Input.BRACE_SEPARATOR);
-			Class<? extends Unit> ut = getUnitType(i);
-			if (ut == DimensionlessUnit.class || ut == UserSpecifiedUnit.class) {
-				sb.append(prov.getNextString(simTime));
-			}
-			else {
-				String unitString = Unit.getDisplayedUnit(ut);
-				double sifactor = Unit.getDisplayedUnitFactor(ut);
-				sb.append(prov.getNextString(simTime, sifactor));
-				sb.append("[").append(unitString).append("]");
-			}
+			sb.append(prov.getNextString(simTime));
 			sb.append(Input.BRACE_SEPARATOR).append("}");
 		}
 		return sb.toString();
