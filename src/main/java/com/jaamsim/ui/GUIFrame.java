@@ -3205,12 +3205,18 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		bold.setSelected(textEnt.isBold());
 		italic.setSelected(textEnt.isItalic());
 		fontSelector.setText(textEnt.getFontName());
-		textHeight.setText(textEnt.getTextHeightString());
+		updateTextHeight(textEnt.getTextHeightString());
 
 		Color4d col = textEnt.getFontColor();
 		colourIcon.setFillColor(new Color((float)col.r, (float)col.g, (float)col.b, (float)col.a));
 		colourIcon.setOutlineColor(Color.DARK_GRAY);
 		fontColour.repaint();
+	}
+
+	private void updateTextHeight(String str) {
+		if (textHeight.getText().equals(str) || textHeight.hasFocus())
+			return;
+		textHeight.setText(str);
 	}
 
 	private void updateZButtons(Entity ent) {
