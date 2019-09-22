@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2015 Ausenco Engineering Canada Inc.
- * Copyright (C) 2015-2018 JaamSim Software Inc.
+ * Copyright (C) 2015-2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,13 +23,11 @@ import com.jaamsim.StringProviders.StringProvListInput;
 import com.jaamsim.StringProviders.StringProvider;
 import com.jaamsim.basicsim.EntityTarget;
 import com.jaamsim.basicsim.FileEntity;
-import com.jaamsim.datatypes.IntegerVector;
 import com.jaamsim.events.Conditional;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.EntityListInput;
 import com.jaamsim.input.Input;
-import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.IntegerListInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.UnitTypeListInput;
@@ -39,7 +37,6 @@ import com.jaamsim.states.StateEntityListener;
 import com.jaamsim.states.StateRecord;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
-import com.jaamsim.units.Unit;
 
 public class ExpressionLogger extends Logger implements StateEntityListener {
 
@@ -56,14 +53,7 @@ public class ExpressionLogger extends Logger implements StateEntityListener {
 	         exampleList = { "Server1 ExpressionThreshold1" })
 	private final EntityListInput<StateEntity> stateTraceList;
 
-	@Keyword(description = "The unit types for the sources of data specified by the "
-	                     + "'ValueTraceList' keyword. "
-	                     + "If the ValueTraceList keyword has more entries than the "
-	                     + "ValueUnitTypesList keyword, then the last unit type in the list is "
-	                     + "applied to the remaining ValueTraceList entries.\n\n"
-	                     + "It is best to leave this input blank and use only dimensionless "
-	                     + "quantities and non-numeric outputs in the ValueTraceList input.",
-	         exampleList = {"DistanceUnit  SpeedUnit"})
+	@Keyword(description = "Not Used")
 	private final UnitTypeListInput valueUnitTypeList;
 
 	@Keyword(description = "One or more sources of data whose values will be traced. "
@@ -74,22 +64,15 @@ public class ExpressionLogger extends Logger implements StateEntityListener {
 	                     + "outputs in the ValueTraceList input. "
 	                     + "An output with dimensions can be made non-dimensional by dividing it "
 	                     + "by 1 in the desired unit, e.g. '[Queue1].AverageQueueTime / 1[h]' is "
-	                     + "the average queue time in hours.\n\n"
-	                     + "If a number with dimensions is to be recorded, its unit type must "
-	                     + "first be entered in the correct position in the input to the "
-	                     + "UnitTypeList keyword.",
+	                     + "the average queue time in hours."
+	                     + "A dimensional number will be displayed along with its unit. "
+	                     + "The 'format' function can be used if a fixed number of decimal places "
+	                     + "is required.",
 	         exampleList = {"{ [Queue1].QueueLengthAverage }"
 	                     + " { '[Queue1].AverageQueueTime / 1[h]' }"})
 	private final StringProvListInput valueTraceList;
 
-	@Keyword(description = "The number of decimal places to show for each value specified by the "
-	                     + "input to the 'ValueTraceList' keyword. "
-	                     + "If the ValueTraceList keyword has more entries than the "
-	                     + "ValuePrecisionList keyword, then the last unit type in the list is "
-	                     + "applied to the remaining ValueTraceList entries.\n\n"
-	                     + "It is best to leave this input blank and do any formating of "
-	                     + "numerical values in the ValueTraceList input.",
-	         exampleList = "1 1")
+	@Keyword(description = "Not Used")
 	private final IntegerListInput valuePrecisionList;
 
 	private final ArrayList<String> lastValueList = new ArrayList<>();
@@ -104,9 +87,8 @@ public class ExpressionLogger extends Logger implements StateEntityListener {
 				new ArrayList<StateEntity>());
 		this.addInput(stateTraceList);
 
-		ArrayList<Class<? extends Unit>> valDefList = new ArrayList<>();
-		valueUnitTypeList = new UnitTypeListInput("ValueUnitTypeList", TRACING,
-				valDefList);
+		valueUnitTypeList = new UnitTypeListInput("ValueUnitTypeList", TRACING,	null);
+		valueUnitTypeList.setHidden(true);
 		this.addInput(valueUnitTypeList);
 
 		valueTraceList = new StringProvListInput("ValueTraceList", TRACING,
@@ -114,7 +96,8 @@ public class ExpressionLogger extends Logger implements StateEntityListener {
 		valueTraceList.setUnitType(DimensionlessUnit.class);
 		this.addInput(valueTraceList);
 
-		valuePrecisionList = new IntegerListInput("ValuePrecisionList", TRACING, new IntegerVector());
+		valuePrecisionList = new IntegerListInput("ValuePrecisionList", TRACING, null);
+		valuePrecisionList.setHidden(true);
 		this.addInput(valuePrecisionList);
 	}
 
@@ -124,27 +107,12 @@ public class ExpressionLogger extends Logger implements StateEntityListener {
 	public void updateForInput(Input<?> in) {
 		super.updateForInput(in);
 
-		if (in == valueUnitTypeList) {
-			valueTraceList.setUnitTypeList(valueUnitTypeList.getUnitTypeList());
-			return;
-		}
-
 		if (in == valueTraceList) {
 			lastValueList.clear();
 			for (int i=0; i<valueTraceList.getListSize(); i++) {
 				lastValueList.add("");
 			}
 			return;
-		}
-	}
-
-	@Override
-	public void validate() {
-		super.validate();
-		if (valuePrecisionList.getValue().size() > 1) {
-			if (valuePrecisionList.getValue().size() != valueTraceList.getValue().size()) {
-				throw new InputErrorException( "There must be the same number of entries in ValueTraceList and ValuePrecisionList" );
-			}
 		}
 	}
 
@@ -186,17 +154,6 @@ public class ExpressionLogger extends Logger implements StateEntityListener {
 
 	@Override
 	protected void printColumnUnits(FileEntity file) {
-
-		// Traced entities
-		for (int i=0; i<stateTraceList.getValue().size(); i++) {
-			file.format("\tState");
-		}
-
-		// Traced values
-		for (int i=0; i<valueTraceList.getListSize(); i++) {
-			String unit = Unit.getDisplayedUnit(valueTraceList.getUnitType(i));
-			file.format("\t%s", unit);
-		}
 	}
 
 	private void startAction() {
@@ -243,17 +200,8 @@ public class ExpressionLogger extends Logger implements StateEntityListener {
 		try {
 			// Write the traced expression values
 			for (int i=0; i<valueTraceList.getListSize(); i++) {
-
-				String fmt = "\t%s";
-				if (!valuePrecisionList.isDefault()) {
-				int k = Math.min(i, valuePrecisionList.getListSize() - 1);
-					int precision = valuePrecisionList.getValue().get(k);
-					fmt = "\t%." + precision + "f";
-				}
-
-				double factor = Unit.getDisplayedUnitFactor(valueTraceList.getUnitType(i));
-				String str = valueTraceList.getValue().get(i).getNextString(simTime, fmt, factor);
-				file.write(str);
+				String str = valueTraceList.getValue().get(i).getNextString(simTime);
+				file.format("\t%s", str);
 			}
 		}
 		catch (Exception e) {
