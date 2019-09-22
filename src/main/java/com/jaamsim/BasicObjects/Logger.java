@@ -178,8 +178,9 @@ public abstract class Logger extends DisplayEntity {
 		logTime = simTime;
 
 		// Write the time for the log entry
+		String timeUnit = Unit.getDisplayedUnit(TimeUnit.class);
 		double factor = Unit.getDisplayedUnitFactor(TimeUnit.class);
-		file.format("%n%s", simTime/factor);
+		file.format("%n%s[%s]", simTime/factor, timeUnit);
 
 		// Write any additional columns for the log entry
 		this.recordEntry(file, simTime);
