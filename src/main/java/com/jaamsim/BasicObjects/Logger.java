@@ -24,7 +24,6 @@ import com.jaamsim.StringProviders.StringProvider;
 import com.jaamsim.basicsim.FileEntity;
 import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.input.BooleanInput;
-import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
@@ -36,15 +35,7 @@ import com.jaamsim.units.Unit;
 
 public abstract class Logger extends DisplayEntity {
 
-	@Keyword(description = "The unit types for the outputs specified by the DataSource keyword. "
-	                     + "Use DimensionlessUnit for non-numeric outputs such as strings, "
-	                     + "entities, and arrays. "
-	                     + "If the DataSource keyword has more entries than the UnitTypesList "
-	                     + "keyword, then the last unit type in the list is applied to the "
-	                     + "remaining DataSource entries.\n\n"
-	                     + "It is best to leave this input blank and use only dimensionless "
-	                     + "quantities and non-numeric outputs in the DataSource input.",
-	         exampleList = {"DistanceUnit  SpeedUnit"})
+	@Keyword(description = "Not Used")
 	private final UnitTypeListInput unitTypeListInput;
 
 	@Keyword(description = "One or more selected outputs to be logged. Each output is specified "
@@ -53,10 +44,10 @@ public abstract class Logger extends DisplayEntity {
 	                     + "outputs in the DataSource input. "
 	                     + "An output with dimensions can be made non-dimensional by dividing it "
 	                     + "by 1 in the desired unit, e.g. '[Queue1].AverageQueueTime / 1[h]' is "
-	                     + "the average queue time in hours.\n\n"
-	                     + "If a number with dimensions is to be recorded, its unit type must "
-	                     + "first be entered in the correct position in the input to the "
-	                     + "UnitTypeList keyword.",
+	                     + "the average queue time in hours. "
+	                     + "A dimensional number will be displayed along with its unit. "
+	                     + "The 'format' function can be used if a fixed number of decimal places "
+	                     + "is required.",
 	         exampleList = {"{ [Queue1].QueueLengthAverage }"
 	                     + " { '[Queue1].AverageQueueTime / 1[h]' }"})
 	private final StringProvListInput dataSource;
@@ -79,9 +70,8 @@ public abstract class Logger extends DisplayEntity {
 	{
 		active.setHidden(false);
 
-		ArrayList<Class<? extends Unit>> defList = new ArrayList<>();
-		defList.add(DimensionlessUnit.class);
-		unitTypeListInput = new UnitTypeListInput("UnitTypeList", KEY_INPUTS, defList);
+		unitTypeListInput = new UnitTypeListInput("UnitTypeList", KEY_INPUTS, null);
+		unitTypeListInput.setHidden(true);
 		this.addInput(unitTypeListInput);
 
 		dataSource = new StringProvListInput("DataSource", KEY_INPUTS,
@@ -104,16 +94,6 @@ public abstract class Logger extends DisplayEntity {
 	}
 
 	public Logger() {}
-
-	@Override
-	public void updateForInput(Input<?> in) {
-		super.updateForInput(in);
-
-		if (in == unitTypeListInput) {
-			dataSource.setUnitTypeList(unitTypeListInput.getUnitTypeList());
-			return;
-		}
-	}
 
 	@Override
 	public void earlyInit() {
@@ -170,20 +150,6 @@ public abstract class Logger extends DisplayEntity {
 			file.format("\t%s", str);
 		}
 
-		// Print the units for each column
-		// (a) Simulation time units
-		String unit = Unit.getDisplayedUnit(TimeUnit.class);
-		file.format("%n%s", unit);
-
-		// (b) Print the units for any additional columns
-		this.printColumnUnits(file);
-
-		// (c) Print the units for the mathematical expressions
-		for (int i=0; i<dataSource.getListSize(); i++) {
-			unit = Unit.getDisplayedUnit(dataSource.getUnitType(i));
-			file.format("\t%s", unit);
-		}
-
 		// Empty the output buffer
 		file.flush();
 	}
@@ -223,8 +189,7 @@ public abstract class Logger extends DisplayEntity {
 			String str;
 			try {
 				StringProvider samp = dataSource.getValue().get(i);
-				factor = Unit.getDisplayedUnitFactor(dataSource.getUnitType(i));
-				str = samp.getNextString(simTime, factor);
+				str = samp.getNextString(simTime);
 			}
 			catch (Exception e) {
 				str = e.getMessage();
