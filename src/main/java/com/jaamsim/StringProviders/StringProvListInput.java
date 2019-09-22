@@ -27,6 +27,7 @@ import com.jaamsim.input.Input;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.ListInput;
+import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 
 public class StringProvListInput extends ListInput<ArrayList<StringProvider>> {
@@ -52,21 +53,6 @@ public class StringProvListInput extends ListInput<ArrayList<StringProvider>> {
 		this.setUnitTypeList(utList);
 	}
 
-	/**
-	 * Returns the unit type for the specified expression.
-	 * <p>
-	 * If the number of expressions exceeds the number of unit types
-	 * then the last unit type in the list is returned.
-	 * @param i - index of the expression
-	 * @return unit type for the expression
-	 */
-	public Class<? extends Unit> getUnitType(int i) {
-		if (unitTypeList.isEmpty())
-			return null;
-		int k = Math.min(i, unitTypeList.size()-1);
-		return unitTypeList.get(k);
-	}
-
 	@Override
 	public int getListSize() {
 		if (value == null)
@@ -90,7 +76,7 @@ public class StringProvListInput extends ListInput<ArrayList<StringProvider>> {
 		for (int i = 0; i < subArgs.size(); i++) {
 			KeywordIndex subArg = subArgs.get(i);
 			try {
-				StringProvider sp = Input.parseStringProvider(subArg, thisEnt, getUnitType(i));
+				StringProvider sp = Input.parseStringProvider(subArg, thisEnt, DimensionlessUnit.class);
 				temp.add(sp);
 			}
 			catch (InputErrorException e) {
@@ -115,7 +101,7 @@ public class StringProvListInput extends ListInput<ArrayList<StringProvider>> {
 		JaamSimModel simModel = ent.getJaamSimModel();
 		for (Entity each : simModel.getClonesOfIterator(Entity.class, SampleProvider.class)) {
 			SampleProvider samp = (SampleProvider)each;
-			if (unitTypeList.contains(samp.getUnitType()))
+			if (samp.getUnitType() == DimensionlessUnit.class)
 				list.add(each.getName());
 		}
 		Collections.sort(list, Input.uiSortOrder);
