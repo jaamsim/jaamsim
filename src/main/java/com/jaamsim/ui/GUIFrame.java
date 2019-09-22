@@ -3114,6 +3114,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	}
 
 	private void updateForSnapGridSpacing(String str) {
+		if (gridSpacing.getText().equals(str) || gridSpacing.hasFocus())
+			return;
 		gridSpacing.setText(str);
 	}
 
