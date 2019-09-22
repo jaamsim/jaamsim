@@ -77,11 +77,9 @@ public class ExternalProgram extends LinkedComponent {
 		this.addInput(inFile);
 
 		dataSource = new StringProvListInput("DataSource", KEY_INPUTS, null);
-		dataSource.setUnitType(DimensionlessUnit.class);
 		this.addInput(dataSource);
 
 		initialValue = new StringProvListInput("InitialValue", KEY_INPUTS, null);
-		initialValue.setUnitType(DimensionlessUnit.class);
 		this.addInput(initialValue);
 
 		timeOut = new IntegerInput("TimeOut", KEY_INPUTS, 1000);

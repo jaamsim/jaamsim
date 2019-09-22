@@ -29,7 +29,6 @@ import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.UnitTypeListInput;
 import com.jaamsim.input.ValueInput;
-import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
 import com.jaamsim.units.Unit;
 
@@ -76,7 +75,6 @@ public abstract class Logger extends DisplayEntity {
 
 		dataSource = new StringProvListInput("DataSource", KEY_INPUTS,
 				new ArrayList<StringProvider>());
-		dataSource.setUnitType(DimensionlessUnit.class);
 		this.addInput(dataSource);
 
 		includeInitialization = new BooleanInput("IncludeInitialization", KEY_INPUTS, true);

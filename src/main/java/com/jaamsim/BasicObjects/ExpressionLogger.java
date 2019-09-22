@@ -35,7 +35,6 @@ import com.jaamsim.input.ValueInput;
 import com.jaamsim.states.StateEntity;
 import com.jaamsim.states.StateEntityListener;
 import com.jaamsim.states.StateRecord;
-import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
 
 public class ExpressionLogger extends Logger implements StateEntityListener {
@@ -93,7 +92,6 @@ public class ExpressionLogger extends Logger implements StateEntityListener {
 
 		valueTraceList = new StringProvListInput("ValueTraceList", TRACING,
 				new ArrayList<StringProvider>());
-		valueTraceList.setUnitType(DimensionlessUnit.class);
 		this.addInput(valueTraceList);
 
 		valuePrecisionList = new IntegerListInput("ValuePrecisionList", TRACING, null);

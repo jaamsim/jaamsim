@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2015 Ausenco Engineering Canada Inc.
- * Copyright (C) 2017-2018 JaamSim Software Inc.
+ * Copyright (C) 2017-2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,29 +28,11 @@ import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.ListInput;
 import com.jaamsim.units.DimensionlessUnit;
-import com.jaamsim.units.Unit;
 
 public class StringProvListInput extends ListInput<ArrayList<StringProvider>> {
 
-	private ArrayList<Class<? extends Unit>> unitTypeList;
-
 	public StringProvListInput(String key, String cat, ArrayList<StringProvider> def) {
 		super(key, cat, def);
-	}
-
-	public void setUnitTypeList(ArrayList<Class<? extends Unit>> utList) {
-
-		if (utList.equals(unitTypeList))
-			return;
-
-		unitTypeList = new ArrayList<>(utList);
-		this.setValid(false);
-	}
-
-	public void setUnitType(Class<? extends Unit> u) {
-		ArrayList<Class<? extends Unit>> utList = new ArrayList<>(1);
-		utList.add(u);
-		this.setUnitTypeList(utList);
 	}
 
 	@Override
