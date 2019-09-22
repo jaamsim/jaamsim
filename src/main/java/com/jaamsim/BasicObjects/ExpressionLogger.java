@@ -152,10 +152,6 @@ public class ExpressionLogger extends Logger implements StateEntityListener {
 		}
 	}
 
-	@Override
-	protected void printColumnUnits(FileEntity file) {
-	}
-
 	private void startAction() {
 
 		// Schedule the next time an entry in the log file will be written

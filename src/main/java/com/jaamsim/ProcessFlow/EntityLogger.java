@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2015 JaamSim Software Inc.
+ * Copyright (C) 2015-2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -69,11 +69,6 @@ public class EntityLogger extends Logger implements Linkable, LinkDisplayable {
 	@Override
 	protected void printColumnTitles(FileEntity file) {
 		file.format("\t%s", "this.obj");
-	}
-
-	@Override
-	protected void printColumnUnits(FileEntity file) {
-		file.format("\t%s", "");
 	}
 
 	@Override

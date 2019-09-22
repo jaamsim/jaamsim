@@ -212,8 +212,6 @@ public abstract class Logger extends DisplayEntity {
 
 	protected abstract void printColumnTitles(FileEntity file);
 
-	protected abstract void printColumnUnits(FileEntity file);
-
 	protected abstract void recordEntry(FileEntity file, double simTime);
 
 	@Override
