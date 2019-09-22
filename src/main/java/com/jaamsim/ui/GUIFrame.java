@@ -1593,6 +1593,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				if (textEnt instanceof OverlayText || textEnt instanceof BillboardText)
 					format = "%.0f";
 				String str = String.format(format, height);
+				textHeight.setText(str);
 				KeywordIndex kw = InputAgent.formatInput("TextHeight", str);
 				InputAgent.storeAndExecute(new KeywordCommand((Entity)textEnt, kw));
 				fileSave.requestFocusInWindow();
