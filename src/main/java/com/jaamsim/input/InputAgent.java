@@ -1201,17 +1201,6 @@ public class InputAgent {
 			sb.append(str);
 		}
 		outStream.println(sb.toString());
-
-		// Write the header line for the units
-		sb = new StringBuilder();
-		for (int i = 0; i < simulation.getRunOutputList().getListSize(); i++) {
-			Class<? extends Unit> ut = simulation.getRunOutputList().getUnitType(i);
-			String unit = Unit.getDisplayedUnit(ut);
-			if (i > 0)
-				sb.append("\t");
-			sb.append(unit);
-		}
-		outStream.println(sb.toString());
 	}
 
 	/**
@@ -1225,11 +1214,9 @@ public class InputAgent {
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < simulation.getRunOutputList().getListSize(); i++) {
 			StringProvider samp = simulation.getRunOutputList().getValue().get(i);
-			Class<? extends Unit> ut = simulation.getRunOutputList().getUnitType(i);
-			double factor = Unit.getDisplayedUnitFactor(ut);
 			String str;
 			try {
-				str = samp.getNextString(simTime, factor);
+				str = samp.getNextString(simTime);
 			} catch (Exception e) {
 				str = e.getMessage();
 			}

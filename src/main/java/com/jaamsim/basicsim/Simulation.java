@@ -119,15 +119,7 @@ public class Simulation extends Entity {
 	         exampleList = {"'c:/reports/'"})
 	private final DirInput reportDirectory;
 
-	@Keyword(description = "The unit types for the selected outputs for the simulation run. "
-	                     + "Use DimensionlessUnit for non-numeric outputs such as strings, "
-	                     + "entities, and arrays. "
-	                     + "If the RunOutputList keyword has more entries than the UnitTypesList "
-	                     + "keyword, then the last unit type in the list is applied to the "
-	                     + "remaining RunOutputList entries.\n\n"
-	                     + "It is best to leave this input blank and use only dimensionless "
-	                     + "quantities and non-numeric outputs in the RunOutputList.",
-	         exampleList = {"DistanceUnit  SpeedUnit"})
+	@Keyword(description = "Not Used")
 	private final UnitTypeListInput unitTypeList;
 
 	@Keyword(description = "One or more selected outputs to be printed at the end of each "
@@ -139,10 +131,10 @@ public class Simulation extends Entity {
 	                     + "outputs in the RunOutputList. "
 	                     + "An output with dimensions can be made non-dimensional by dividing it "
 	                     + "by 1 in the desired unit, e.g. '[Queue1].AverageQueueTime / 1[h]' is "
-	                     + "the average queue time in hours.\n\n"
-	                     + "If a number with dimensions is to be recorded, its unit type must "
-	                     + "first be entered in the correct position in the input to the "
-	                     + "UnitTypeList keyword.",
+	                     + "the average queue time in hours. "
+	                     + "A dimensional number will be displayed along with its unit. "
+	                     + "The 'format' function can be used if a fixed number of decimal places "
+	                     + "is required.",
 	         exampleList = {"{ [Simulation].RunNumber } { '[Queue1].AverageQueueTime / 1[h]' }"})
 	protected final StringProvListInput runOutputList;
 
@@ -377,9 +369,8 @@ public class Simulation extends Entity {
 		reportDirectory.setDefaultText("Configuration File Directory");
 		this.addInput(reportDirectory);
 
-		ArrayList<Class<? extends Unit>> defList = new ArrayList<>();
-		defList.add(DimensionlessUnit.class);
-		unitTypeList = new UnitTypeListInput("UnitTypeList", KEY_INPUTS, defList);
+		unitTypeList = new UnitTypeListInput("UnitTypeList", KEY_INPUTS, null);
+		unitTypeList.setHidden(true);
 		this.addInput(unitTypeList);
 
 		runOutputList = new StringProvListInput("RunOutputList", KEY_INPUTS, null);
@@ -633,11 +624,6 @@ public class Simulation extends Entity {
 
 		if (in == reportDirectory) {
 			getJaamSimModel().setReportDirectory(reportDirectory.getDir());
-			return;
-		}
-
-		if (in == unitTypeList) {
-			runOutputList.setUnitTypeList(unitTypeList.getUnitTypeList());
 			return;
 		}
 
