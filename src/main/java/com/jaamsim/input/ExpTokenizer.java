@@ -82,6 +82,10 @@ public class ExpTokenizer {
 				continue;
 			}
 
+			if (c == '#') {
+				pos = skipComment(pos, input);
+				continue;
+			}
 			if (c == '[') {
 				// This is the beginning of a square quoted string
 				pos = getSQToken(res, pos, input);
@@ -136,6 +140,19 @@ public class ExpTokenizer {
 		return pos;
 	}
 
+	private static int skipComment(int startPos, String input) throws ExpError {
+		int closePos = startPos + 1;
+
+		while (closePos < input.length()) {
+			char c = input.charAt(closePos);
+			if (c == '#')
+				return closePos + 1;
+
+			closePos++;
+		}
+		// Made it to the end of the input
+		throw new ExpError(input, startPos, "No closing mark for comment");
+	}
 
 	private static int getSQToken(ArrayList<Token> res, int startPos, String input) throws ExpError {
 
