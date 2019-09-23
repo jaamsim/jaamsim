@@ -82,19 +82,19 @@ public class ExpressionLogger extends Logger implements StateEntityListener {
 		interval.setValidRange(1.0e-10, Double.POSITIVE_INFINITY);
 		this.addInput(interval);
 
-		stateTraceList = new EntityListInput<>(StateEntity.class, "StateTraceList", TRACING,
+		stateTraceList = new EntityListInput<>(StateEntity.class, "StateTraceList", KEY_INPUTS,
 				new ArrayList<StateEntity>());
 		this.addInput(stateTraceList);
 
-		valueUnitTypeList = new UnitTypeListInput("ValueUnitTypeList", TRACING,	null);
+		valueUnitTypeList = new UnitTypeListInput("ValueUnitTypeList", KEY_INPUTS,	null);
 		valueUnitTypeList.setHidden(true);
 		this.addInput(valueUnitTypeList);
 
-		valueTraceList = new StringProvListInput("ValueTraceList", TRACING,
+		valueTraceList = new StringProvListInput("ValueTraceList", KEY_INPUTS,
 				new ArrayList<StringProvider>());
 		this.addInput(valueTraceList);
 
-		valuePrecisionList = new IntegerListInput("ValuePrecisionList", TRACING, null);
+		valuePrecisionList = new IntegerListInput("ValuePrecisionList", KEY_INPUTS, null);
 		valuePrecisionList.setHidden(true);
 		this.addInput(valuePrecisionList);
 	}
