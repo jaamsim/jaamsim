@@ -79,7 +79,6 @@ public class ExpressionBox extends JDialog {
 	private static final int EDIT_MODE_ENTITY = 1;
 	private static final int EDIT_MODE_OUTPUT = 2;
 
-	private static final char[] invalidEntityChars = {']', ' ', '\t', '\n', '{', '}'};
 	private static final char[] controlChars = {' ', '.', ',', ';', '(', ')', '{', '}', '[', ']', '"', '\'', '\t', '\n'};
 	private static final char[] mathChars = { '+', '-', '*', '/', '^', '%', '?', '=', '>', '<', '!', '&', '|'};
 
@@ -601,7 +600,7 @@ public class ExpressionBox extends JDialog {
 
 			// Does the name contain any invalid characters?
 			for (char c : name.toCharArray()) {
-				if (Arrays.asList(invalidEntityChars).contains(c)) {
+				if (Arrays.asList(InputAgent.INVALID_ENTITY_CHARS).contains(c)) {
 					setEditMode(EDIT_MODE_NORMAL);
 					return;
 				}
