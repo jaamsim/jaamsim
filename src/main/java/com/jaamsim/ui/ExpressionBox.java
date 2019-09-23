@@ -917,6 +917,14 @@ public class ExpressionBox extends JDialog {
 				"'2 * 3 ^ 2' returns 18",
 				"{5, 6, 7}(2) returns 6"));
 
+		basicOperators.add(new ButtonDesc("##", "Comment ('##')",
+				"One or more comments can be added to an expression to improve readability. "
+						+ "Any text enclosed by two hash marks is interpreted as a comment.",
+				"An expression containing a comment must be enclosed by single quotes.",
+				"##",
+				-1,
+				"'1 #Comment A# + 2 * 3 #Comment B#' returns 7."));
+
 		basicOperators.add(new ButtonDesc("+", "Addition/Concatenation operator ('+')",
 				"For numbers, the second number is added to the first. "
 						+ "For strings, the second string is concatenated to the first. "
