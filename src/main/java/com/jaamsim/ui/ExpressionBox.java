@@ -79,7 +79,7 @@ public class ExpressionBox extends JDialog {
 	private static final int EDIT_MODE_ENTITY = 1;
 	private static final int EDIT_MODE_OUTPUT = 2;
 
-	private static final char[] controlChars = {' ', '.', ',', ';', '(', ')', '{', '}', '[', ']', '"', '\'', '\t', '\n'};
+	private static final char[] controlChars = {' ', '.', ',', ';', '(', ')', '{', '}', '[', ']', '"', '\'', '#', '\t', '\n'};
 	private static final char[] mathChars = { '+', '-', '*', '/', '^', '%', '?', '=', '>', '<', '!', '&', '|'};
 
 	public static final int CANCEL_OPTION = 1;  // Cancel button is clicked
