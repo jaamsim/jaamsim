@@ -27,7 +27,7 @@ public class ExpError extends Exception {
 		this.pos = pos;
 	}
 
-	ExpError(String source, int pos, String fmt, Object... args) {
+	public ExpError(String source, int pos, String fmt, Object... args) {
 		this(source, pos, String.format(fmt, args));
 	}
 
