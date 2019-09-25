@@ -266,7 +266,8 @@ public class ExpressionBox extends JDialog {
 			// Load the input
 			Entity ent = EditBox.getInstance().getCurrentEntity();
 			String str = editArea.getText().replace("\n", " ");
-			str = input.applyConditioning(str);
+			if (!str.isEmpty())
+				str = input.applyConditioning(str);
 			KeywordIndex kw = InputAgent.formatInput(input.getKeyword(), str);
 			InputAgent.storeAndExecute(new KeywordCommand(ent, kw));
 

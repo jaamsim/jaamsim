@@ -160,7 +160,8 @@ public abstract class CellEditor extends AbstractCellEditor implements TableCell
 
 			// Adjust the user's entry to standardise the syntax
 			String str = newValue.trim();
-			str = in.applyConditioning(str);
+			if (!str.isEmpty())
+				str = in.applyConditioning(str);
 
 			try {
 				// Parse the keyword inputs
