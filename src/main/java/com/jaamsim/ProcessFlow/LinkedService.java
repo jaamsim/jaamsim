@@ -50,7 +50,10 @@ public abstract class LinkedService extends LinkedDevice implements QueueUser {
 	                     + "the expression entered for this Match keyword. "
 	                     + "Expressions that return a dimensionless integer or an object are also "
 	                     + "valid. The returned number or object is converted to a string "
-	                     + "automatically. A floating point number is truncated to an integer.",
+	                     + "automatically. A floating point number is truncated to an integer."
+	                     + "\n\n"
+	                     + "Note that a change in the Match value does not trigger the processor "
+	                     + "to re-check the Queue.",
 	         exampleList = {"this.obj.Attrib1"})
 	protected final StringProvInput match;
 
