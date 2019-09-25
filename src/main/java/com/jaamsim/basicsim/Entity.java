@@ -733,31 +733,33 @@ public class Entity {
 		return ExpResult.makeCollectionResult(newCol);
 	}
 
-	public void setAttribute(String name, ExpResult[] indices, ExpResult value) {
+	public void setAttribute(String name, ExpResult[] indices, ExpResult value) throws ExpError {
 		AttributeHandle h = attributeMap.get(name);
 		if (h == null)
-			this.error("Invalid attribute name: %s", name);
+			throw new ExpError(null, -1, "Invalid attribute name for %s: %s", this, name);
 
 		ExpResult assignValue = null;
 		if (indices != null) {
 			ExpResult attribValue = h.getValue(getSimTime(), ExpResult.class);
 			if (attribValue.type != ExpResType.COLLECTION) {
-				this.error("Trying to set attribute: %s with an index, but it is not a collection", name);
+				throw new ExpError(null, -1, "Trying to set %s attribute: %s with an index, "
+						+ "but it is not a collection", this, name);
 			}
 
 			try {
 				assignValue = setAttribIndices(attribValue.colVal, indices, 0, value);
 
 			} catch (ExpError err) {
-				this.error("Error during assignment: %s", err.getMessage());
+				throw new ExpError(err.source, err.pos, "Error during assignment to %s: %s",
+						this, err.getMessage());
 			}
 		} else {
 			assignValue = value.getCopy();
 		}
 
 		if (value.type == ExpResType.NUMBER && h.getUnitType() != value.unitType)
-			this.error("Invalid unit returned by an expression. Received: %s, expected: %s",
-					value.unitType.getSimpleName(), h.getUnitType().getSimpleName(), "");
+			throw new ExpError(null, -1, "Invalid unit returned by an expression. Received: %s, expected: %s",
+					value.unitType.getSimpleName(), h.getUnitType().getSimpleName());
 
 		h.setValue(assignValue);
 	}
