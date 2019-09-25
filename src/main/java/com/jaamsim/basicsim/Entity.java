@@ -714,8 +714,9 @@ public class Entity {
 	// Utility function to help set attribute values for nested indices
 	private ExpResult setAttribIndices(ExpResult.Collection coll, ExpResult[] indices, int indNum, ExpResult value) throws ExpError {
 		assert(indNum < indices.length);
-		if (indices[indNum].type != ExpResType.NUMBER) {
-			this.error("Assigning to attributes must have numeric indices. Index #%d is %s",
+		ExpResType indType = indices[indNum].type;
+		if (indType != ExpResType.NUMBER && indType != ExpResType.STRING) {
+			this.error("Assigning to attributes must have numeric or string indices. Index #%d is %s",
 			           indNum, ExpValResult.typeString(indices[indNum].type));
 		}
 		if (indNum == indices.length-1) {
