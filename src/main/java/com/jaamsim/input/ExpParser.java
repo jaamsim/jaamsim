@@ -576,7 +576,7 @@ public class ExpParser {
 					// Using the heuristic that if the eval context is null, this is probably an evaluation as part of constant folding
 					// even if this is wrong, the behavior will be correct, but possibly a bit slower
 					boolean isConstant = ec == null;
-					return ExpCollections.makeAssignableCollection(res, isConstant);
+					return ExpCollections.makeAssignableArrrayCollection(res, isConstant);
 				} else {
 					// This is a map literal
 					assert(keys.size() == res.size());
@@ -584,8 +584,8 @@ public class ExpParser {
 					for (int i = 0; i < keys.size(); ++i) {
 						map.put(keys.get(i), res.get(i));
 					}
-					Class<? extends Unit> unitType = res.size() == 0 ? DimensionlessUnit.class : res.get(0).unitType;
-					return ExpCollections.wrapCollection(map, unitType);
+					boolean isConstant = ec == null;
+					return ExpCollections.makeAssignableMapCollection(map, isConstant);
 				}
 			} catch (ExpError ex) {
 				throw fixError(ex, exp.source, tokenPos);

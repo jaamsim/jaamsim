@@ -1000,7 +1000,7 @@ public class TestExpParser {
 
 		ArrayList<ExpResult> initialRes = new ArrayList<>();
 		initialRes.add(ExpResult.makeNumResult(42, DimensionlessUnit.class));
-		cont.col = ExpCollections.makeAssignableCollection(initialRes, false).colVal;
+		cont.col = ExpCollections.makeAssignableArrrayCollection(initialRes, false).colVal;
 		AssignPC apc = new AssignPC(cont);
 
 		ExpParser.Assignment assign = ExpParser.parseAssignment(apc, "[foo].arg = 40 + 2");
@@ -1017,5 +1017,21 @@ public class TestExpParser {
 		assertTrue(contained.type == ExpResType.NUMBER);
 		assertTrue(contained.value == 45.0);
 		assertTrue(cont.lastAttribName.equals("blarg"));
+
+
+		// Test assigning to maps
+		HashMap<String, ExpResult> initialMap = new HashMap<>();
+		initialMap.put("bar", ExpResult.makeNumResult(2, DimensionlessUnit.class));
+		cont.col = ExpCollections.makeAssignableMapCollection(initialMap, false).colVal;
+
+		assign = ExpParser.parseAssignment(apc, "[foo].map(\"bar\") = 42");
+		res = assign.evaluate(ec);
+
+		contained = cont.col.index(ExpResult.makeStringResult("bar"));
+		assertTrue(res.value == 42.0);
+		assertTrue(contained.type == ExpResType.NUMBER);
+		assertTrue(contained.value == 42.0);
+		assertTrue(cont.lastAttribName.equals("map"));
+
 	}
 }

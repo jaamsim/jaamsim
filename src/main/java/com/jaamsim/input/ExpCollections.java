@@ -18,6 +18,7 @@ package com.jaamsim.input;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -93,8 +94,12 @@ public class ExpCollections {
 	 * @param constExp - Is the original a constant?
 	 * @return
 	 */
-	public static ExpResult makeAssignableCollection(ArrayList<ExpResult> vals, boolean constExp) {
+	public static ExpResult makeAssignableArrrayCollection(ArrayList<ExpResult> vals, boolean constExp) {
 		return ExpResult.makeCollectionResult(new AssignableArrayCollection(vals, constExp));
+	}
+
+	public static ExpResult makeAssignableMapCollection(Map<String, ExpResult> vals, boolean constExp) {
+		return ExpResult.makeCollectionResult(new AssignableMapCollection(vals, constExp));
 	}
 
 	public static ExpResult appendCollections(ExpResult.Collection c0, ExpResult.Collection c1) throws ExpError {
@@ -698,4 +703,112 @@ public class ExpCollections {
 		}
 
 	}
+	private static class AssignableMapCollection implements ExpResult.Collection {
+
+		private final Map<String, ExpResult> map;
+		private final boolean isConstExp;
+
+		public AssignableMapCollection(Map<String, ExpResult> initMap, boolean constExp) {
+			isConstExp = constExp;
+			if (isConstExp) {
+				map = initMap;
+			} else {
+				map = new HashMap<>(initMap);
+			}
+		}
+
+		@Override
+		public ExpResult index(ExpResult index) throws ExpError {
+			if (index.type != ExpResType.STRING) {
+				throw new ExpError(null, 0, "Map is not being indexed by a string");
+			}
+
+			String indexVal = index.stringVal;
+
+			ExpResult res = map.get(indexVal);
+
+			if (res == null) {
+				return ExpResult.makeNumResult(0, DimensionlessUnit.class); // TODO: Is this how we want to handle this case?
+			}
+			return res;
+		}
+
+		@Override
+		public ExpResult.Collection assign(ExpResult index, ExpResult value) throws ExpError {
+
+			if (isConstExp) {
+				// This version is a constant, and therefore shareable. Create a new modifiable copy.
+				ExpResult.Collection copy = getCopy();
+				return copy.assign(index,  value);
+			}
+
+			if (index.type != ExpResType.STRING) {
+				throw new ExpError(null, 0, "Assignment is not being indexed by a string");
+			}
+
+			String indexVal = index.stringVal;
+
+			map.put(indexVal, value);
+			return this;
+		}
+
+		private static class Iter implements ExpResult.Iterator {
+
+			java.util.Iterator<?> keySetIt;
+			public Iter(Map<?,?> map) {
+				keySetIt = map.keySet().iterator();
+			}
+
+			@Override
+			public boolean hasNext() {
+				return keySetIt.hasNext();
+			}
+
+			@Override
+			public ExpResult nextKey() throws ExpError {
+				Object mapKey = keySetIt.next();
+
+				return ExpEvaluator.getResultFromObject(mapKey, DimensionlessUnit.class);
+			}
+		}
+
+		@Override
+		public Iterator getIter() {
+			return new Iter(map);
+		}
+
+		@Override
+		public int getSize() {
+			return map.size();
+		}
+		@Override
+		public String getOutputString() {
+			try {
+				StringBuilder sb = new StringBuilder();
+				sb.append("{");
+				Iterator it = getIter();
+				while(it.hasNext()) {
+					ExpResult index = it.nextKey();
+					sb.append(index.getOutputString());
+					sb.append(" = ");
+					sb.append(index(index).getOutputString());
+					if (it.hasNext()) {
+						sb.append(", ");
+					}
+				}
+				sb.append("}");
+				return sb.toString();
+
+			} catch (ExpError err) {
+				return String.format("An error occurred: %s", err.getMessage());
+			}
+		}
+
+		@Override
+		public ExpResult.Collection getCopy() {
+			return new AssignableMapCollection(map, false);
+		}
+
+	}
+
 }
