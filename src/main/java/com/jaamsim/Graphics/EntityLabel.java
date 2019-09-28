@@ -76,6 +76,9 @@ public class EntityLabel extends TextBasics {
 	}
 
 	@Override
+	public void resetGraphics() {}
+
+	@Override
 	public void updateForInput(Input<?> in) {
 		super.updateForInput(in);
 
