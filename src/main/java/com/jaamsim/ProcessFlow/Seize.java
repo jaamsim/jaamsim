@@ -35,7 +35,19 @@ import com.jaamsim.units.DimensionlessUnit;
 
 public class Seize extends LinkedService implements ResourceUser {
 
-	@Keyword(description = "The Resources from which units are to be seized.",
+	@Keyword(description = "The Resources from which units are to be seized. "
+	                     + "All the resource units must be available to be seized before any one "
+	                     + "unit is seized.\n\n"
+	                     + "When more than one object attempts to seize the same resource, the "
+	                     + "resource is assigned based on the priorities and arrival times of "
+	                     + "entities waiting in the objects' Queues. "
+	                     + "An entity's priority is determined by the 'Priority' input for its "
+	                     + "Queue, and is assigned to the entity when it first arrives to the "
+	                     + "Queue. "
+	                     + "This priority determines both the position of the entity in the queue "
+	                     + "and its priority for seizing a resource. "
+	                     + "If several entities have the same priority, the resource is assigned "
+	                     + "to entity that arrived first to its Queue.",
 	         exampleList = {"Resource1 Resource2"})
 	protected final InterfaceEntityListInput<ResourceProvider> resourceList;
 
