@@ -253,6 +253,11 @@ public class EntityProcessor extends Seize {
 				entry.remainingTicks = 0L;
 			}
 		}
+
+		// If no resources are required, start as many entities as possible
+		if (getResourceList().isEmpty())
+			startNextEntities();
+
 		super.thresholdChanged();
 	}
 
