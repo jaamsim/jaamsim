@@ -305,9 +305,16 @@ public class ResourceUnit extends StateUserEntity implements Seizable, ResourceP
 		setTagColour(ShapeModel.TAG_OUTLINES, COL_OUTLINE);
 	}
 
+	@Output(name = "UserList",
+	 description = "The objects that can seize this resource unit.",
+	    sequence = 1)
+	public ArrayList<ResourceUser> getUserList(double simTime) {
+		return getResourceProvider().getUserList();
+	}
+
 	@Output(name = "Assignment",
 	 description = "The entity to which this unit is assigned.",
-	    sequence = 0)
+	    sequence = 2)
 	public DisplayEntity getAssignment(double simTime) {
 		return presentAssignment;
 	}
