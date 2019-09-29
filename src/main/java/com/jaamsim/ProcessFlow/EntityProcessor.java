@@ -123,9 +123,7 @@ public class EntityProcessor extends Seize {
 	@Override
 	public void queueChanged() {
 		if (getResourceList().isEmpty()) {
-			while (isReadyToStart()) {
-				startNextEntity();
-			}
+			startNextEntities();
 		}
 		else {
 			super.queueChanged();
@@ -225,9 +223,7 @@ public class EntityProcessor extends Seize {
 
 		// Notify any resource users that are waiting for these Resources
 		if (getResourceList().isEmpty()) {
-			while (isReadyToStart()) {
-				startNextEntity();
-			}
+			startNextEntities();
 		}
 		else {
 			AbstractResourceProvider.notifyResourceUsers(getResourceList());
@@ -236,6 +232,12 @@ public class EntityProcessor extends Seize {
 		// Pass the entities to the next component
 		for (ProcessorEntry entry : completedEntries) {
 			this.sendToNextComponent(entry.entity);
+		}
+	}
+
+	protected void startNextEntities() {
+		while (isReadyToStart()) {
+			startNextEntity();
 		}
 	}
 
@@ -304,9 +306,7 @@ public class EntityProcessor extends Seize {
 		// Select the resource users to notify
 		if (getCapacity(getSimTime()) > lastCapacity) {
 			if (getResourceList().isEmpty()) {
-				while (isReadyToStart()) {
-					startNextEntity();
-				}
+				startNextEntities();
 			}
 			else {
 				AbstractResourceProvider.notifyResourceUsers(getResourceList());
