@@ -268,6 +268,11 @@ public class EntityProcessor extends Seize {
 
 	@Override
 	public void endDowntime(DowntimeEntity down) {
+
+		// If no resources are required, start as many entities as possible
+		if (getResourceList().isEmpty())
+			startNextEntities();
+
 		if (isReadyToStart()) {
 			AbstractResourceProvider.notifyResourceUsers(getResourceList());
 		}
