@@ -26,6 +26,7 @@ import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.Keyword;
+import com.jaamsim.input.Output;
 
 public abstract class AbstractResourceProvider extends DisplayEntity implements ResourceProvider {
 
@@ -161,5 +162,12 @@ public abstract class AbstractResourceProvider extends DisplayEntity implements 
 		}
 	}
 	private static UserCompare userCompare = new UserCompare();
+
+	@Output(name = "UserList",
+	 description = "The objects that can seize units from this resource.",
+	    sequence = 1)
+	public ArrayList<ResourceUser> getUserList(double simTime) {
+		return userList;
+	}
 
 }
