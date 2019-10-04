@@ -685,6 +685,18 @@ public class JaamSimModel {
 		}
 	}
 
+	public final Entity getEntity(String name) {
+		Entity ret = getNamedEntity(name);
+		if (ret != null)
+			return ret;
+		for (Entity ent: getClonesOfIterator(Entity.class)) {
+			if (ent.getName().equals(name)) {
+				return ent;
+			}
+		}
+		return null;
+	}
+
 	public final long getEntitySequence() {
 		long seq = (long)numLiveEnts << 32;
 		seq += entityCount.get();
