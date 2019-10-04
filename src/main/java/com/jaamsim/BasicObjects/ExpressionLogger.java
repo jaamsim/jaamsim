@@ -137,7 +137,7 @@ public class ExpressionLogger extends Logger implements StateEntityListener {
 
 		// Traced entities
 		for (StateEntity ent : stateTraceList.getValue()) {
-			file.format("\t%s", ent.getName());
+			file.format("\t[%s].State", ent.getName());
 		}
 
 		// Traced values
