@@ -272,7 +272,8 @@ public class ExpressionBox extends JDialog {
 			InputAgent.storeAndExecute(new KeywordCommand(ent, kw));
 
 			// If successful, show the result
-			msgText.setText(formatMessage(true, input.getPresentValueString(0.0d)));
+			double simTime = GUIFrame.getJaamSimModel().getSimTime();
+			msgText.setText(formatMessage(true, input.getPresentValueString(simTime)));
 			acceptButton.setEnabled(true);
 		}
 		catch (Exception e) {
