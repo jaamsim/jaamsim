@@ -139,6 +139,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	static private AtomicBoolean shuttingDown;
 
 	private JMenu fileMenu;
+	private JMenu editMenu;
 	private JMenu viewMenu;
 	private JMenu windowMenu;
 	private JMenu windowList;
@@ -155,6 +156,9 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	private JLabel clockDisplay;
 	private JLabel speedUpDisplay;
 	private JLabel remainingDisplay;
+
+	private JMenuItem undoMenuItem;
+	private JMenuItem redoMenuItem;
 
 	private JToggleButton controlRealTime;
 	private JSpinner spinner;
@@ -471,6 +475,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 		// Set up the individual menus
 		this.initializeFileMenu();
+		this.initializeEditMenu();
 		this.initializeViewMenu();
 		this.initializeWindowMenu();
 		this.initializeOptionsMenu();
@@ -480,6 +485,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		// Add the individual menu to the main menu
 		JMenuBar mainMenuBar = new JMenuBar();
 		mainMenuBar.add( fileMenu );
+		mainMenuBar.add( editMenu );
 		mainMenuBar.add( viewMenu );
 		mainMenuBar.add( windowMenu );
 		mainMenuBar.add( optionMenu );
@@ -613,6 +619,65 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			}
 		});
 		fileMenu.add( exitMenuItem );
+	}
+
+	/**
+	 * Sets up the Edit menu in the Control Panel's menu bar.
+	 */
+	private void initializeEditMenu() {
+
+		// Edit menu creation
+		editMenu = new JMenu( "Edit" );
+		editMenu.setMnemonic(KeyEvent.VK_E);
+
+		// 1) "Undo" menu item
+		undoMenuItem = new JMenuItem("Undo");
+		undoMenuItem.setIcon( new ImageIcon(
+				GUIFrame.class.getResource("/resources/images/Undo-16.png")) );
+		undoMenuItem.setMnemonic(KeyEvent.VK_U);
+		undoMenuItem.setAccelerator(KeyStroke.getKeyStroke(
+		        KeyEvent.VK_Z, ActionEvent.CTRL_MASK));
+		undoMenuItem.addActionListener( new ActionListener() {
+
+			@Override
+			public void actionPerformed( ActionEvent event ) {
+				undo();
+			}
+		} );
+		editMenu.add( undoMenuItem );
+
+		// 2) "Redo" menu item
+		redoMenuItem = new JMenuItem("Redo");
+		redoMenuItem.setIcon( new ImageIcon(
+				GUIFrame.class.getResource("/resources/images/Redo-16.png")) );
+		redoMenuItem.setMnemonic(KeyEvent.VK_R);
+		redoMenuItem.setAccelerator(KeyStroke.getKeyStroke(
+		        KeyEvent.VK_Y, ActionEvent.CTRL_MASK));
+		redoMenuItem.addActionListener( new ActionListener() {
+
+			@Override
+			public void actionPerformed( ActionEvent event ) {
+				redo();
+			}
+		} );
+		editMenu.add( redoMenuItem );
+		editMenu.addSeparator();
+
+		// 3) "Find" menu item
+		JMenuItem findMenuItem = new JMenuItem("Find");
+		findMenuItem.setIcon( new ImageIcon(
+				GUIFrame.class.getResource("/resources/images/Find-16.png")) );
+		findMenuItem.setMnemonic(KeyEvent.VK_F);
+		findMenuItem.setAccelerator(KeyStroke.getKeyStroke(
+		        KeyEvent.VK_F, ActionEvent.CTRL_MASK));
+		findMenuItem.addActionListener( new ActionListener() {
+
+			@Override
+			public void actionPerformed( ActionEvent event ) {
+				FindBox.getInstance().showDialog();
+			}
+		} );
+		editMenu.add( findMenuItem );
 	}
 
 	/**
@@ -3144,8 +3209,11 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		synchronized (undoList) {
 			undo.setEnabled(!undoList.isEmpty());
 			undoDropdown.setEnabled(!undoList.isEmpty());
+			undoMenuItem.setEnabled(!undoList.isEmpty());
+
 			redo.setEnabled(!redoList.isEmpty());
 			redoDropdown.setEnabled(!redoList.isEmpty());
+			redoMenuItem.setEnabled(!redoList.isEmpty());
 		}
 	}
 
