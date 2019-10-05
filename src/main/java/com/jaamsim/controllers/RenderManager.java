@@ -1863,6 +1863,10 @@ public class RenderManager implements DragSourceListener {
 			GUIFrame.getInstance().invokeSave();
 			return true;
 		}
+		if (control && keyCode == KeyEvent.VK_F) {
+			GUIFrame.getInstance().invokeFind();
+			return true;
+		}
 
 		// Selected entity not in edit mode
 		if (selectedEntity != null) {
