@@ -171,6 +171,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	private JToggleButton showLinks;
 	private JToggleButton createLinks;
 
+	private JToggleButton find;
+
 	private Entity selectedEntity;
 	private JToggleButton alignLeft;
 	private JToggleButton alignCentre;
@@ -914,6 +916,10 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		buttonBar.add(Box.createRigidArea(gapDim));
 		addCreateLinksButton(buttonBar, noMargin);
 
+		// Show Entity Finder button
+		buttonBar.addSeparator(separatorDim);
+		addEntityFinderButton(buttonBar, noMargin);
+
 		// Font selector and text height field
 		buttonBar.addSeparator(separatorDim);
 		addFontSelector(buttonBar, smallMargin);
@@ -1324,6 +1330,29 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 		});
 		buttonBar.add( createLinks );
+	}
+
+	private void addEntityFinderButton(JToolBar buttonBar, Insets margin) {
+		find = new JToggleButton(new ImageIcon(GUIFrame.class.getResource("/resources/images/Find-16.png")));
+		find.setToolTipText(formatToolTip("Entity Finder (Ctrl+F)",
+				"Searches for an entity with a given name."));
+		find.setMargin(margin);
+		find.setFocusPainted(false);
+		find.setRequestFocusEnabled(false);
+		find.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed( ActionEvent event ) {
+				if (find.isSelected()) {
+					FindBox.getInstance().showDialog();
+				}
+				else {
+					FindBox.getInstance().setVisible(false);
+					FindBox.getInstance().dispose();
+				}
+				fileSave.requestFocusInWindow();
+			}
+		});
+		buttonBar.add( find );
 	}
 
 	private void addTextAlignmentButtons(JToolBar buttonBar, Insets margin) {
@@ -2960,6 +2989,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		updateForRealTime(simulation.isRealTime(), simulation.getRealTimeFactor());
 		updateForPauseTime(simulation.getPauseTimeString());
 		update2dButton();
+		updateFindButton();
 		updateFormatButtons(selectedEntity);
 		updateForSnapToGrid(simulation.isSnapToGrid());
 		updateForSnapGridSpacing(simulation.getSnapGridSpacingString());
@@ -3153,6 +3183,11 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		if (view == null)
 			return;
 		lockViewXYPlane.setSelected(view.is2DLocked());
+	}
+
+	private void updateFindButton() {
+		boolean bool = FindBox.getInstance().isVisible();
+		find.setSelected(bool);
 	}
 
 	public static void setSelectedEntity(Entity ent) {
