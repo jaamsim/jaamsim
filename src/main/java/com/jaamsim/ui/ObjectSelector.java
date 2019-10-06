@@ -233,11 +233,6 @@ public class ObjectSelector extends FrameBox {
 		Simulation simulation = simModel.getSimulation();
 		top.add(new DefaultMutableTreeNode(simulation, false));
 
-		// Add the instance for TLS if present
-		Entity tls = GUIFrame.getJaamSimModel().getNamedEntity("TLS");
-		if (tls != null)
-			top.add(new DefaultMutableTreeNode(tls, false));
-
 		// Create the tree structure for palettes and object types in the correct order
 		for (int i = 0; i < simModel.getObjectTypes().size(); i++) {
 			try {
@@ -272,10 +267,6 @@ public class ObjectSelector extends FrameBox {
 
 				// The instance for Simulation has already been added
 				if (ent == simulation)
-					continue;
-
-				// The instance for TLS has already been added
-				if (ent == tls)
 					continue;
 
 				// Do not include the units
