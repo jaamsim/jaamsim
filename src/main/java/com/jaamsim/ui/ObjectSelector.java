@@ -68,8 +68,6 @@ public class ObjectSelector extends FrameBox {
 
 	private long entSequence;
 
-	private static final int MAX_GENERATED_ENTITIES = 10000;
-
 	public ObjectSelector() {
 		super( "Object Selector" );
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -259,7 +257,6 @@ public class ObjectSelector extends FrameBox {
 		}
 
 		// Prepare a sorted list of entities
-		int numGenerated = 0;
 		EntityIterator<Entity> entIt = GUIFrame.getJaamSimModel().getClonesOfIterator(Entity.class);
 		ArrayList<Entity> entityList = new ArrayList<>();
 		for (Entity ent : entIt) {
@@ -272,13 +269,6 @@ public class ObjectSelector extends FrameBox {
 				// Do not include the units
 				if (ent instanceof Unit)
 					continue;
-
-				// Apply an upper bound on the number of generated entities to display
-				if (ent.testFlag(Entity.FLAG_GENERATED)) {
-					if (numGenerated > MAX_GENERATED_ENTITIES)
-						continue;
-					numGenerated++;
-				}
 
 				entityList.add(ent);
 			}
