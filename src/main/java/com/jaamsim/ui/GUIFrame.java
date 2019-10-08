@@ -77,6 +77,7 @@ import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.JWindow;
+import javax.swing.KeyStroke;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
@@ -506,6 +507,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		// 1) "New" menu item
 		JMenuItem newMenuItem = new JMenuItem( "New" );
 		newMenuItem.setMnemonic(KeyEvent.VK_N);
+		newMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, ActionEvent.CTRL_MASK));
 		newMenuItem.addActionListener( new ActionListener() {
 
 			@Override
@@ -518,6 +520,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		// 2) "Open" menu item
 		JMenuItem configMenuItem = new JMenuItem( "Open..." );
 		configMenuItem.setMnemonic(KeyEvent.VK_O);
+		configMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, ActionEvent.CTRL_MASK));
 		configMenuItem.addActionListener( new ActionListener() {
 
 			@Override
@@ -530,6 +533,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		// 3) "Save" menu item
 		saveConfigurationMenuItem = new JMenuItem( "Save" );
 		saveConfigurationMenuItem.setMnemonic(KeyEvent.VK_S);
+		saveConfigurationMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK));
 		saveConfigurationMenuItem.addActionListener( new ActionListener() {
 
 			@Override
@@ -542,6 +546,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		// 4) "Save As..." menu item
 		JMenuItem saveConfigurationAsMenuItem = new JMenuItem( "Save As..." );
 		saveConfigurationAsMenuItem.setMnemonic(KeyEvent.VK_V);
+		saveConfigurationAsMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.ALT_MASK + ActionEvent.CTRL_MASK));
 		saveConfigurationAsMenuItem.addActionListener( new ActionListener() {
 
 			@Override
@@ -593,6 +598,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		// 7) "Exit" menu item
 		JMenuItem exitMenuItem = new JMenuItem( "Exit" );
 		exitMenuItem.setMnemonic(KeyEvent.VK_X);
+		exitMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F4, ActionEvent.ALT_MASK));
 		exitMenuItem.addActionListener(new ActionListener() {
 
 			@Override
