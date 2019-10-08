@@ -1859,8 +1859,24 @@ public class RenderManager implements DragSourceListener {
 			GUIFrame.getInstance().invokeRedo();
 			return true;
 		}
+		if (control && keyCode == KeyEvent.VK_N) {
+			GUIFrame.getInstance().invokeNew();
+			return true;
+		}
+		if (control && keyCode == KeyEvent.VK_O) {
+			GUIFrame.getInstance().invokeOpen();
+			return true;
+		}
 		if (control && keyCode == KeyEvent.VK_S) {
 			GUIFrame.getInstance().invokeSave();
+			return true;
+		}
+		if (control && alt && keyCode == KeyEvent.VK_S) {
+			GUIFrame.getInstance().invokeSaveAs();
+			return true;
+		}
+		if (alt && keyCode == KeyEvent.VK_F4) {
+			GUIFrame.getInstance().invokeExit();
 			return true;
 		}
 		if (control && keyCode == KeyEvent.VK_F) {
