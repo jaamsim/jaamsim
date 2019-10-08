@@ -37,6 +37,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.FocusEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
@@ -499,12 +500,12 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 		// File menu creation
 		fileMenu = new JMenu( "File" );
-		fileMenu.setMnemonic( 'F' );
+		fileMenu.setMnemonic(KeyEvent.VK_F);
 		fileMenu.setEnabled( false );
 
 		// 1) "New" menu item
 		JMenuItem newMenuItem = new JMenuItem( "New" );
-		newMenuItem.setMnemonic( 'N' );
+		newMenuItem.setMnemonic(KeyEvent.VK_N);
 		newMenuItem.addActionListener( new ActionListener() {
 
 			@Override
@@ -516,7 +517,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 		// 2) "Open" menu item
 		JMenuItem configMenuItem = new JMenuItem( "Open..." );
-		configMenuItem.setMnemonic( 'O' );
+		configMenuItem.setMnemonic(KeyEvent.VK_O);
 		configMenuItem.addActionListener( new ActionListener() {
 
 			@Override
@@ -528,7 +529,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 		// 3) "Save" menu item
 		saveConfigurationMenuItem = new JMenuItem( "Save" );
-		saveConfigurationMenuItem.setMnemonic( 'S' );
+		saveConfigurationMenuItem.setMnemonic(KeyEvent.VK_S);
 		saveConfigurationMenuItem.addActionListener( new ActionListener() {
 
 			@Override
@@ -540,7 +541,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 		// 4) "Save As..." menu item
 		JMenuItem saveConfigurationAsMenuItem = new JMenuItem( "Save As..." );
-		saveConfigurationAsMenuItem.setMnemonic( 'V' );
+		saveConfigurationAsMenuItem.setMnemonic(KeyEvent.VK_V);
 		saveConfigurationAsMenuItem.addActionListener( new ActionListener() {
 
 			@Override
@@ -553,7 +554,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 		// 5) "Import..." menu item
 		JMenu importGraphicsMenuItem = new JMenu( "Import..." );
-		importGraphicsMenuItem.setMnemonic( 'I' );
+		importGraphicsMenuItem.setMnemonic(KeyEvent.VK_I);
 
 		JMenuItem importImages = new JMenuItem( "Images..." );
 		importImages.addActionListener(new ActionListener() {
@@ -579,7 +580,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 		// 6) "Print Input Report" menu item
 		printInputItem = new JMenuItem( "Print Input Report" );
-		printInputItem.setMnemonic( 'I' );
+		printInputItem.setMnemonic(KeyEvent.VK_I);
 		printInputItem.addActionListener( new ActionListener() {
 
 			@Override
@@ -591,7 +592,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 		// 7) "Exit" menu item
 		JMenuItem exitMenuItem = new JMenuItem( "Exit" );
-		exitMenuItem.setMnemonic( 'x' );
+		exitMenuItem.setMnemonic(KeyEvent.VK_X);
 		exitMenuItem.addActionListener(new ActionListener() {
 
 			@Override
@@ -609,11 +610,11 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 		// View menu creation
 		viewMenu = new JMenu( "Tools" );
-		viewMenu.setMnemonic( 'T' );
+		viewMenu.setMnemonic(KeyEvent.VK_T);
 
 		// 1) "Show Basic Tools" menu item
 		JMenuItem showBasicToolsMenuItem = new JMenuItem( "Show Basic Tools" );
-		showBasicToolsMenuItem.setMnemonic( 'B' );
+		showBasicToolsMenuItem.setMnemonic(KeyEvent.VK_B);
 		showBasicToolsMenuItem.addActionListener( new ActionListener() {
 
 			@Override
@@ -628,7 +629,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 		// 2) "Close All Tools" menu item
 		JMenuItem closeAllToolsMenuItem = new JMenuItem( "Close All Tools" );
-		closeAllToolsMenuItem.setMnemonic( 'C' );
+		closeAllToolsMenuItem.setMnemonic(KeyEvent.VK_C);
 		closeAllToolsMenuItem.addActionListener( new ActionListener() {
 
 			@Override
@@ -646,7 +647,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 		// 3) "Model Builder" menu item
 		JMenuItem objectPalletMenuItem = new JMenuItem( "Model Builder" );
-		objectPalletMenuItem.setMnemonic( 'O' );
+		objectPalletMenuItem.setMnemonic(KeyEvent.VK_O);
 		objectPalletMenuItem.addActionListener( new ActionListener() {
 
 			@Override
@@ -659,7 +660,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 		// 4) "Object Selector" menu item
 		JMenuItem objectSelectorMenuItem = new JMenuItem( "Object Selector" );
-		objectSelectorMenuItem.setMnemonic( 'S' );
+		objectSelectorMenuItem.setMnemonic(KeyEvent.VK_S);
 		objectSelectorMenuItem.addActionListener( new ActionListener() {
 
 			@Override
@@ -671,7 +672,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 		// 5) "Input Editor" menu item
 		JMenuItem inputEditorMenuItem = new JMenuItem( "Input Editor" );
-		inputEditorMenuItem.setMnemonic( 'I' );
+		inputEditorMenuItem.setMnemonic(KeyEvent.VK_I);
 		inputEditorMenuItem.addActionListener( new ActionListener() {
 
 			@Override
@@ -683,7 +684,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 		// 6) "Output Viewer" menu item
 		JMenuItem outputMenuItem = new JMenuItem( "Output Viewer" );
-		outputMenuItem.setMnemonic( 'U' );
+		outputMenuItem.setMnemonic(KeyEvent.VK_U);
 		outputMenuItem.addActionListener( new ActionListener() {
 
 			@Override
@@ -695,7 +696,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 		// 7) "Property Viewer" menu item
 		JMenuItem propertiesMenuItem = new JMenuItem( "Property Viewer" );
-		propertiesMenuItem.setMnemonic( 'P' );
+		propertiesMenuItem.setMnemonic(KeyEvent.VK_P);
 		propertiesMenuItem.addActionListener( new ActionListener() {
 
 			@Override
@@ -707,7 +708,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 		// 8) "Log Viewer" menu item
 		JMenuItem logMenuItem = new JMenuItem( "Log Viewer" );
-		logMenuItem.setMnemonic( 'L' );
+		logMenuItem.setMnemonic(KeyEvent.VK_L);
 		logMenuItem.addActionListener( new ActionListener() {
 
 			@Override
@@ -719,7 +720,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 		// 9) "Event Viewer" menu item
 		JMenuItem eventsMenuItem = new JMenuItem( "Event Viewer" );
-		eventsMenuItem.setMnemonic( 'E' );
+		eventsMenuItem.setMnemonic(KeyEvent.VK_E);
 		eventsMenuItem.addActionListener( new ActionListener() {
 
 			@Override
@@ -731,7 +732,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 		// 10) "Reset Positions and Sizes" menu item
 		JMenuItem resetItem = new JMenuItem( "Reset Positions and Sizes" );
-		resetItem.setMnemonic( 'R' );
+		resetItem.setMnemonic(KeyEvent.VK_R);
 		resetItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed( ActionEvent e ) {
@@ -749,11 +750,11 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 		// Window menu creation
 		windowMenu = new NewRenderWindowMenu("Views");
-		windowMenu.setMnemonic( 'V' );
+		windowMenu.setMnemonic(KeyEvent.VK_V);
 
 		// Initialize list of windows
 		windowList = new WindowMenu("Select Window");
-		windowList.setMnemonic( 'S' );
+		windowList.setMnemonic(KeyEvent.VK_S);
 	}
 
 	/**
@@ -762,11 +763,11 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	private void initializeOptionsMenu() {
 
 		optionMenu = new JMenu( "Options" );
-		optionMenu.setMnemonic( 'O' );
+		optionMenu.setMnemonic(KeyEvent.VK_O);
 
 		// 1) "Always on top" check box
 		alwaysTop = new JCheckBoxMenuItem( "Always on top", false );
-		alwaysTop.setMnemonic( 'A' );
+		alwaysTop.setMnemonic(KeyEvent.VK_A);
 		optionMenu.add( alwaysTop );
 		alwaysTop.addActionListener( new ActionListener() {
 			@Override
@@ -782,7 +783,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 		// 2) "Graphics Debug Info" check box
 		graphicsDebug = new JCheckBoxMenuItem( "Graphics Debug Info", false );
-		graphicsDebug.setMnemonic( 'D' );
+		graphicsDebug.setMnemonic(KeyEvent.VK_D);
 		optionMenu.add( graphicsDebug );
 		graphicsDebug.addActionListener(new ActionListener() {
 			@Override
@@ -798,7 +799,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	private void initializeUnitsMenu() {
 
 		unitsMenu = new JMenu( "Units" );
-		unitsMenu.setMnemonic( 'U' );
+		unitsMenu.setMnemonic(KeyEvent.VK_U);
 
 		unitsMenu.addMenuListener( new MenuListener() {
 
@@ -825,11 +826,11 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 		// Help menu creation
 		helpMenu = new JMenu( "Help" );
-		helpMenu.setMnemonic( 'H' );
+		helpMenu.setMnemonic(KeyEvent.VK_H);
 
 		// 1) "About" menu item
 		JMenuItem aboutMenu = new JMenuItem( "About" );
-		aboutMenu.setMnemonic( 'A' );
+		aboutMenu.setMnemonic(KeyEvent.VK_A);
 		aboutMenu.addActionListener( new ActionListener() {
 
 			@Override
@@ -2569,7 +2570,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 			// 3) "Reset Positions and Sizes" menu item
 			JMenuItem resetItem = new JMenuItem( "Reset Positions and Sizes" );
-			resetItem.setMnemonic( 'R' );
+			resetItem.setMnemonic(KeyEvent.VK_R);
 			resetItem.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed( ActionEvent e ) {
