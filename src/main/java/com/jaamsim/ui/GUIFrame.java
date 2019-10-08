@@ -969,7 +969,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				GUIFrame.class.getResource("/resources/images/New-16.png")) );
 		fileNew.setMargin(margin);
 		fileNew.setFocusPainted(false);
-		fileNew.setToolTipText(formatToolTip("New", "Starts a new model."));
+		fileNew.setToolTipText(formatToolTip("New (Ctrl+N)", "Starts a new model."));
 		fileNew.addActionListener( new ActionListener() {
 
 			@Override
@@ -985,7 +985,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				GUIFrame.class.getResource("/resources/images/Open-16.png")) );
 		fileOpen.setMargin(margin);
 		fileOpen.setFocusPainted(false);
-		fileOpen.setToolTipText(formatToolTip("Open...", "Opens a model."));
+		fileOpen.setToolTipText(formatToolTip("Open... (Ctrl+O)", "Opens a model."));
 		fileOpen.addActionListener( new ActionListener() {
 
 			@Override
