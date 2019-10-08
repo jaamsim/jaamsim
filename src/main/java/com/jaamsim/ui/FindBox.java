@@ -157,12 +157,17 @@ public class FindBox extends JDialog {
 	}
 
 	public void showDialog() {
+		showDialog("");
+	}
+
+	public void showDialog(String str) {
 
 		// Position the finder at the centre of the screen
 		Rectangle winSize = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
 		setLocation((winSize.width - getWidth())/2, (winSize.height - getHeight())/2);
 
 		// Show the dialog box and wait for editing to finish
+		searchText.setText(str);
 		this.setVisible(true);
 	}
 

@@ -21,6 +21,8 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
 import javax.swing.AbstractCellEditor;
 import javax.swing.JButton;
@@ -69,6 +71,22 @@ public abstract class CellEditor extends AbstractCellEditor implements TableCell
 		// Editable text
 		text = new JTextField();
 		jPanel.add(text, BorderLayout.WEST);
+
+		// Launch Entity Finder on Cntrl+F
+		text.addKeyListener(new KeyListener() {
+			@Override
+			public void keyTyped(KeyEvent e) {}
+			@Override
+			public void keyPressed(KeyEvent e) {
+				// Cntrl+F
+				if (e.isControlDown() && e.getKeyCode() == KeyEvent.VK_F) {
+					FindBox.getInstance().showDialog(text.getSelectedText());
+					return;
+				}
+			}
+			@Override
+			public void keyReleased(KeyEvent e) {}
+		});
 
 		// Dropdown button
 		int buttonWidth = 0;
