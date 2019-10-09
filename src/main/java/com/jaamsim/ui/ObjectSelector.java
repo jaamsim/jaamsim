@@ -44,6 +44,7 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
+import com.jaamsim.DisplayModels.IconModel;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.EntityLabel;
 import com.jaamsim.basicsim.Entity;
@@ -268,6 +269,10 @@ public class ObjectSelector extends FrameBox {
 
 				// Do not include the units
 				if (ent instanceof Unit)
+					continue;
+
+				// Do not include the icons for objects
+				if (ent instanceof IconModel)
 					continue;
 
 				entityList.add(ent);
