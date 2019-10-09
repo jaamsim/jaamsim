@@ -1887,6 +1887,14 @@ public class RenderManager implements DragSourceListener {
 			GUIFrame.getInstance().invokeRunPause();
 			return true;
 		}
+		if (keyCode == KeyEvent.VK_PERIOD) {   // same as the '>' key
+			GUIFrame.getInstance().invokeSimSpeedUp();
+			return true;
+		}
+		if (keyCode == KeyEvent.VK_COMMA) {    // same as the '<' key
+			GUIFrame.getInstance().invokeSimSpeedDown();
+			return true;
+		}
 
 		// Selected entity not in edit mode
 		if (selectedEntity != null) {

@@ -4321,6 +4321,28 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		});
 	}
 
+	public void invokeSimSpeedUp() {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				if (!spinner.isEnabled())
+					return;
+				spinner.setValue(spinner.getNextValue());
+			}
+		});
+	}
+
+	public void invokeSimSpeedDown() {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				if (!spinner.isEnabled())
+					return;
+				spinner.setValue(spinner.getPreviousValue());
+			}
+		});
+	}
+
 	public static String getConfigFolder() {
 		Preferences prefs = Preferences.userRoot().node(instance.getClass().getName());
 		return prefs.get(LAST_USED_FOLDER, new File(".").getAbsolutePath());
