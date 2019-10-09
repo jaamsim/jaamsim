@@ -1204,7 +1204,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 						currentView.setLock2D(bLock2D);
 					}
 				}
-				fileSave.requestFocusInWindow();
+				controlStartResume.requestFocusInWindow();
 			}
 		} );
 		buttonBar.add( lockViewXYPlane );
@@ -1226,7 +1226,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				if (ent != null) {
 					InputAgent.applyBoolean(ent, "Show", xyzAxis.isSelected());
 				}
-				fileSave.requestFocusInWindow();
+				controlStartResume.requestFocusInWindow();
 			}
 		} );
 		buttonBar.add( xyzAxis );
@@ -1256,7 +1256,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				if (ent != null) {
 					InputAgent.applyBoolean(ent, "Show", grid.isSelected());
 				}
-				fileSave.requestFocusInWindow();
+				controlStartResume.requestFocusInWindow();
 			}
 		} );
 		buttonBar.add( grid );
@@ -1277,7 +1277,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				boolean bool = showLabels.isSelected();
 				InputAgent.applyBoolean(sim.getSimulation(), "ShowLabels", bool);
 				setShowLabels(bool);
-				fileSave.requestFocusInWindow();
+				controlStartResume.requestFocusInWindow();
 			}
 		} );
 		buttonBar.add( showLabels );
@@ -1298,7 +1298,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				boolean bool = showSubModels.isSelected();
 				InputAgent.applyBoolean(sim.getSimulation(), "ShowSubModels", bool);
 				setShowSubModels(bool);
-				fileSave.requestFocusInWindow();
+				controlStartResume.requestFocusInWindow();
 			}
 		} );
 		buttonBar.add( showSubModels );
@@ -1318,7 +1318,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			public void actionPerformed( ActionEvent event ) {
 				InputAgent.applyBoolean(sim.getSimulation(), "SnapToGrid", snapToGrid.isSelected());
 				gridSpacing.setEnabled(snapToGrid.isSelected());
-				fileSave.requestFocusInWindow();
+				controlStartResume.requestFocusInWindow();
 			}
 		} );
 
@@ -1344,7 +1344,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			@Override
 			public void actionPerformed(ActionEvent evt) {
 				GUIFrame.this.setSnapGridSpacing(gridSpacing.getText().trim());
-				fileSave.requestFocusInWindow();
+				controlStartResume.requestFocusInWindow();
 			}
 		});
 
@@ -1377,7 +1377,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 					RenderManager.inst().setShowLinks(bShow);
 					RenderManager.redraw();
 				}
-				fileSave.requestFocusInWindow();
+				controlStartResume.requestFocusInWindow();
 			}
 
 		});
@@ -1403,7 +1403,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 					RenderManager.inst().setCreateLinks(bCreate);
 					RenderManager.redraw();
 				}
-				fileSave.requestFocusInWindow();
+				controlStartResume.requestFocusInWindow();
 			}
 
 		});
@@ -1427,7 +1427,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 					FindBox.getInstance().setVisible(false);
 					FindBox.getInstance().dispose();
 				}
-				fileSave.requestFocusInWindow();
+				controlStartResume.requestFocusInWindow();
 			}
 		});
 		buttonBar.add( find );
@@ -1457,7 +1457,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				KeywordIndex posKw = InputAgent.formatVec3dInput("Position", pos, DistanceUnit.class);
 
 				InputAgent.storeAndExecute(new KeywordCommand(textEnt, kw, posKw));
-				fileSave.requestFocusInWindow();
+				controlStartResume.requestFocusInWindow();
 			}
 		};
 
@@ -1518,7 +1518,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				String[] styles = stylesList.toArray(new String[stylesList.size()]);
 				KeywordIndex kw = InputAgent.formatArgs("FontStyle", styles);
 				InputAgent.storeAndExecute(new KeywordCommand((Entity)textEnt, kw));
-				fileSave.requestFocusInWindow();
+				controlStartResume.requestFocusInWindow();
 			}
 		};
 
@@ -1572,7 +1572,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 							KeywordIndex kw = InputAgent.formatInput("FontName", name);
 							InputAgent.storeAndExecute(new KeywordCommand((Entity)textEnt, kw));
 						}
-						fileSave.requestFocusInWindow();
+						controlStartResume.requestFocusInWindow();
 					}
 				};
 
@@ -1657,7 +1657,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			@Override
 			public void actionPerformed(ActionEvent evt) {
 				GUIFrame.this.setTextHeight(textHeight.getText().trim());
-				fileSave.requestFocusInWindow();
+				controlStartResume.requestFocusInWindow();
 			}
 		});
 
@@ -1703,7 +1703,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				textHeight.setText(str);
 				KeywordIndex kw = InputAgent.formatInput("TextHeight", str);
 				InputAgent.storeAndExecute(new KeywordCommand((Entity)textEnt, kw));
-				fileSave.requestFocusInWindow();
+				controlStartResume.requestFocusInWindow();
 			}
 		};
 
@@ -1758,7 +1758,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 							return;
 						JMenuItem item = (JMenuItem) event.getSource();
 						setFontColour(textEnt, item.getText());
-						fileSave.requestFocusInWindow();
+						controlStartResume.requestFocusInWindow();
 					}
 				};
 
@@ -1789,7 +1789,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 						Color4d newColour = new Color4d(clr.getRed(), clr.getGreen(),
 								clr.getBlue(), clr.getAlpha());
 						setFontColour(textEnt, newColour);
-						fileSave.requestFocusInWindow();
+						controlStartResume.requestFocusInWindow();
 					}
 				};
 
@@ -1905,7 +1905,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				KeywordIndex posKw = InputAgent.formatVec3dInput("Position", pos, DistanceUnit.class);
 				KeywordIndex ptsKw = InputAgent.formatPointsInputs("Points", points, offset);
 				InputAgent.storeAndExecute(new KeywordCommand(dispEnt, posKw, ptsKw));
-				fileSave.requestFocusInWindow();
+				controlStartResume.requestFocusInWindow();
 			}
 		};
 
@@ -1957,7 +1957,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 					return;
 				KeywordIndex kw = InputAgent.formatBoolean("Outlined", outline.isSelected());
 				InputAgent.storeAndExecute(new KeywordCommand((Entity)lineEnt, kw));
-				fileSave.requestFocusInWindow();
+				controlStartResume.requestFocusInWindow();
 			}
 		});
 
@@ -2015,7 +2015,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 							return;
 						JMenuItem item = (JMenuItem) event.getSource();
 						setLineColour(lineEnt, item.getText());
-						fileSave.requestFocusInWindow();
+						controlStartResume.requestFocusInWindow();
 					}
 				};
 
@@ -2046,7 +2046,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 						Color4d newColour = new Color4d(clr.getRed(), clr.getGreen(),
 								clr.getBlue(), clr.getAlpha());
 						setLineColour(lineEnt, newColour);
-						fileSave.requestFocusInWindow();
+						controlStartResume.requestFocusInWindow();
 					}
 				};
 
@@ -2154,7 +2154,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 					return;
 				KeywordIndex kw = InputAgent.formatBoolean("Filled", fill.isSelected());
 				InputAgent.storeAndExecute(new KeywordCommand((Entity)fillEnt, kw));
-				fileSave.requestFocusInWindow();
+				controlStartResume.requestFocusInWindow();
 			}
 		});
 
@@ -2189,7 +2189,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 							return;
 						JMenuItem item = (JMenuItem) event.getSource();
 						setFillColour(fillEnt, item.getText());
-						fileSave.requestFocusInWindow();
+						controlStartResume.requestFocusInWindow();
 					}
 				};
 
@@ -2220,7 +2220,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 						Color4d newColour = new Color4d(clr.getRed(), clr.getGreen(),
 								clr.getBlue(), clr.getAlpha());
 						setFillColour(fillEnt, newColour);
-						fileSave.requestFocusInWindow();
+						controlStartResume.requestFocusInWindow();
 					}
 				};
 
