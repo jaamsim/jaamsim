@@ -1046,6 +1046,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			@Override
 			public void actionPerformed( ActionEvent event ) {
 				GUIFrame.this.newModel();
+				controlStartResume.requestFocusInWindow();
 			}
 		} );
 		buttonBar.add( fileNew );
@@ -1062,6 +1063,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			@Override
 			public void actionPerformed( ActionEvent event ) {
 				GUIFrame.this.load();
+				controlStartResume.requestFocusInWindow();
 			}
 		} );
 		buttonBar.add( fileOpen );
@@ -1079,6 +1081,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			@Override
 			public void actionPerformed( ActionEvent event ) {
 				GUIFrame.this.save();
+				controlStartResume.requestFocusInWindow();
 			}
 		} );
 		buttonBar.add( fileSave );
@@ -1099,6 +1102,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			@Override
 			public void actionPerformed( ActionEvent event ) {
 				undo();
+				controlStartResume.requestFocusInWindow();
 			}
 		} );
 		buttonBar.add( undo );
@@ -1125,6 +1129,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 							@Override
 							public void actionPerformed( ActionEvent event ) {
 								undo(num);
+								controlStartResume.requestFocusInWindow();
 							}
 						} );
 						menu.add(item);
@@ -1148,6 +1153,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			@Override
 			public void actionPerformed( ActionEvent event ) {
 				redo();
+				controlStartResume.requestFocusInWindow();
 			}
 		} );
 		buttonBar.add( redo );
@@ -1174,6 +1180,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 							@Override
 							public void actionPerformed( ActionEvent event ) {
 								redo(num);
+								controlStartResume.requestFocusInWindow();
 							}
 						} );
 						menu.add(item);
@@ -2434,6 +2441,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				if( getSimState() == SIM_STATE_RUNNING ) {
 					GUIFrame.this.pauseSimulation();
 				}
+				controlStartResume.requestFocusInWindow();
 				boolean confirmed = GUIFrame.showConfirmStopDialog();
 				if (!confirmed)
 					return;
@@ -2459,6 +2467,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			public void actionPerformed( ActionEvent event ) {
 				boolean bool = ((JToggleButton)event.getSource()).isSelected();
 				InputAgent.applyBoolean(sim.getSimulation(), "RealTime", bool);
+				controlStartResume.requestFocusInWindow();
 			}
 		});
 		mainToolBar.add( controlRealTime );
@@ -2490,6 +2499,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				DecimalFormat df = (DecimalFormat)nf;
 				df.applyPattern("0.######");
 				InputAgent.applyArgs(sim.getSimulation(), "RealTimeFactor", df.format(val));
+				controlStartResume.requestFocusInWindow();
 			}
 		});
 
