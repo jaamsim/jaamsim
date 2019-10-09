@@ -38,6 +38,7 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.FocusEvent;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
@@ -2425,6 +2426,29 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			}
 		} );
 		mainToolBar.add( controlStartResume );
+
+		// Listen for keyboard shortcuts for simulation speed
+		controlStartResume.addKeyListener(new KeyListener() {
+			@Override
+			public void keyTyped(KeyEvent e) {}
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if (e.getKeyCode() == KeyEvent.VK_PERIOD) {   // same as the '>' key
+					if (!spinner.isEnabled())
+						return;
+					spinner.setValue(spinner.getNextValue());
+					return;
+				}
+				if (e.getKeyCode() == KeyEvent.VK_COMMA) {    // same as the '<' key
+					if (!spinner.isEnabled())
+						return;
+					spinner.setValue(spinner.getPreviousValue());
+					return;
+				}
+			}
+			@Override
+			public void keyReleased(KeyEvent e) {}
+		});
 	}
 
 	private void addResetButton(JToolBar mainToolBar, Insets margin) {
