@@ -292,6 +292,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		                       //      and positioned incorrectly in the Windows 7 Aero theme
 		pack();
 
+		controlStartResume.requestFocusInWindow();
+
 		controlStartResume.setSelected( false );
 		controlStartResume.setEnabled( false );
 		controlStop.setSelected( false );
