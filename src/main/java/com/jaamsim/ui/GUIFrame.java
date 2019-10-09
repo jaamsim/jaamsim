@@ -506,6 +506,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 		// 1) "New" menu item
 		JMenuItem newMenuItem = new JMenuItem( "New" );
+		newMenuItem.setIcon( new ImageIcon(
+				GUIFrame.class.getResource("/resources/images/New-16.png")) );
 		newMenuItem.setMnemonic(KeyEvent.VK_N);
 		newMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, ActionEvent.CTRL_MASK));
 		newMenuItem.addActionListener( new ActionListener() {
@@ -519,6 +521,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 		// 2) "Open" menu item
 		JMenuItem configMenuItem = new JMenuItem( "Open..." );
+		configMenuItem.setIcon( new ImageIcon(
+				GUIFrame.class.getResource("/resources/images/Open-16.png")) );
 		configMenuItem.setMnemonic(KeyEvent.VK_O);
 		configMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, ActionEvent.CTRL_MASK));
 		configMenuItem.addActionListener( new ActionListener() {
@@ -532,6 +536,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 		// 3) "Save" menu item
 		saveConfigurationMenuItem = new JMenuItem( "Save" );
+		saveConfigurationMenuItem.setIcon( new ImageIcon(
+				GUIFrame.class.getResource("/resources/images/Save-16.png")) );
 		saveConfigurationMenuItem.setMnemonic(KeyEvent.VK_S);
 		saveConfigurationMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK));
 		saveConfigurationMenuItem.addActionListener( new ActionListener() {
