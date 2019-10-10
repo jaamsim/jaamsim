@@ -1895,6 +1895,12 @@ public class RenderManager implements DragSourceListener {
 			GUIFrame.getInstance().invokeSimSpeedDown();
 			return true;
 		}
+		if (control && keyCode == KeyEvent.VK_C) {
+			if (selectedEntity != null) {
+				GUIFrame.getInstance().copyToClipboard(selectedEntity);
+				return true;
+			}
+		}
 
 		// Selected entity not in edit mode
 		if (selectedEntity != null) {
