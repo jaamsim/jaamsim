@@ -209,7 +209,7 @@ public class ContextMenu {
 		menu.add( deleteMenuItem );
 
 		// DisplayEntity menu items
-		if (ent instanceof DisplayEntity) {
+		if (ent instanceof DisplayEntity && !(ent instanceof OverlayEntity)) {
 			menu.addSeparator();
 			ContextMenu.populateDisplayEntityMenu(menu, (DisplayEntity)ent, nodeIndex, c, x, y);
 		}
