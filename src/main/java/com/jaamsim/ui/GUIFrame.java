@@ -251,7 +251,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	private static final String LAST_USED_3D_FOLDER = "3D_FOLDER";
 	private static final String LAST_USED_IMAGE_FOLDER = "IMAGE_FOLDER";
 
-	private static final String RUN_TOOLTIP = GUIFrame.formatToolTip("Run", "Starts or resumes the simulation run.");
+	private static final String RUN_TOOLTIP = GUIFrame.formatToolTip("Run (space key)", "Starts or resumes the simulation run.");
 	private static final String PAUSE_TOOLTIP = "<html><b>Pause</b></html>";  // Use a small tooltip for Pause so that it does not block the simulation time display
 
 	static {
@@ -2529,7 +2529,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			}
 		});
 
-		spinner.setToolTipText(formatToolTip("Speed Multiplier (up/down key)",
+		spinner.setToolTipText(formatToolTip("Speed Multiplier (&lt and &gt keys)",
 				"Target ratio of simulation time to wall clock time when Real Time mode is selected."));
 		spinner.setEnabled(false);
 		mainToolBar.add( spinner );
