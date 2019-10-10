@@ -192,6 +192,8 @@ public class ContextMenu {
 
 		// 5) Delete
 		JMenuItem deleteMenuItem = new JMenuItem( "Delete" );
+		deleteMenuItem.setAccelerator(KeyStroke.getKeyStroke(
+		        KeyEvent.VK_DELETE, 0));
 		deleteMenuItem.addActionListener( new ActionListener() {
 			@Override
 			public void actionPerformed( ActionEvent event ) {
