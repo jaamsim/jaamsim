@@ -19,12 +19,14 @@ package com.jaamsim.ui;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
+import javax.swing.KeyStroke;
 
 import com.jaamsim.Commands.CoordinateCommand;
 import com.jaamsim.Commands.DefineCommand;
@@ -129,6 +131,22 @@ public class ContextMenu {
 		} );
 		menu.add( propertyViewerMenuItem );
 		menu.addSeparator();
+
+		// 4) Copy
+		JMenuItem copyMenuItem = new JMenuItem( "Copy" );
+		copyMenuItem.setAccelerator(KeyStroke.getKeyStroke(
+		        KeyEvent.VK_C, ActionEvent.CTRL_MASK));
+		copyMenuItem.addActionListener( new ActionListener() {
+
+			@Override
+			public void actionPerformed( ActionEvent event ) {
+				GUIFrame.getInstance().copyToClipboard(ent);
+			}
+		} );
+		if (ent.testFlag(Entity.FLAG_GENERATED)) {
+			copyMenuItem.setEnabled(false);
+		}
+		menu.add( copyMenuItem );
 
 		// 4) Duplicate
 		JMenuItem duplicateMenuItem = new JMenuItem( "Duplicate" );

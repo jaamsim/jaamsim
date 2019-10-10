@@ -4290,6 +4290,11 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		return true;
 	}
 
+	public void copyToClipboard(Entity ent) {
+		Clipboard clpbrd = Toolkit.getDefaultToolkit().getSystemClipboard();
+		clpbrd.setContents(new StringSelection(ent.getName()), null);
+	}
+
 	public void invokeNew() {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
