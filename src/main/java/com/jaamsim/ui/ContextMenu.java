@@ -128,6 +128,7 @@ public class ContextMenu {
 			}
 		} );
 		menu.add( propertyViewerMenuItem );
+		menu.addSeparator();
 
 		// 4) Duplicate
 		JMenuItem duplicateMenuItem = new JMenuItem( "Duplicate" );
@@ -189,11 +190,13 @@ public class ContextMenu {
 
 		// DisplayEntity menu items
 		if (ent instanceof DisplayEntity) {
+			menu.addSeparator();
 			ContextMenu.populateDisplayEntityMenu(menu, (DisplayEntity)ent, nodeIndex, c, x, y);
 		}
 
 		// CompoundEntity menu items
 		if (ent instanceof CompoundEntity) {
+			menu.addSeparator();
 			ContextMenu.populateCompoundEntityMenu(menu, (CompoundEntity)ent, nodeIndex, c, x, y);
 		}
 
