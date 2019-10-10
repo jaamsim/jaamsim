@@ -571,6 +571,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			}
 		} );
 		fileMenu.add( saveConfigurationAsMenuItem );
+		fileMenu.addSeparator();
 
 		// 5) "Import..." menu item
 		JMenu importGraphicsMenuItem = new JMenu( "Import..." );
@@ -621,6 +622,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				close();
 			}
 		});
+		fileMenu.addSeparator();
 		fileMenu.add( exitMenuItem );
 	}
 
@@ -2974,6 +2976,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		switch( getSimState() ) {
 			case SIM_STATE_LOADED:
 				for( int i = 0; i < fileMenu.getItemCount() - 1; i++ ) {
+					if (fileMenu.getItem(i) == null)
+						continue;
 					fileMenu.getItem(i).setEnabled(true);
 				}
 				for( int i = 0; i < viewMenu.getItemCount(); i++ ) {
@@ -2999,6 +3003,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 			case SIM_STATE_UNCONFIGURED:
 				for( int i = 0; i < fileMenu.getItemCount() - 1; i++ ) {
+					if (fileMenu.getItem(i) == null)
+						continue;
 					fileMenu.getItem(i).setEnabled(true);
 				}
 				for( int i = 0; i < viewMenu.getItemCount(); i++ ) {
@@ -3023,6 +3029,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 			case SIM_STATE_CONFIGURED:
 				for( int i = 0; i < fileMenu.getItemCount() - 1; i++ ) {
+					if (fileMenu.getItem(i) == null)
+						continue;
 					fileMenu.getItem(i).setEnabled(true);
 				}
 				for( int i = 0; i < viewMenu.getItemCount(); i++ ) {
