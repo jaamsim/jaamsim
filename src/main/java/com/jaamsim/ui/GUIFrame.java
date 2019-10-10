@@ -161,6 +161,9 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 	private JMenuItem undoMenuItem;
 	private JMenuItem redoMenuItem;
+	private JMenuItem copyMenuItem;
+	private JMenuItem pasteMenuItem;
+	private JMenuItem deleteMenuItem;
 
 	private JToggleButton controlRealTime;
 	private JSpinner spinner;
@@ -669,7 +672,60 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		editMenu.add( redoMenuItem );
 		editMenu.addSeparator();
 
-		// 3) "Find" menu item
+		// 3) "Copy" menu item
+		copyMenuItem = new JMenuItem("Copy");
+		copyMenuItem.setMnemonic(KeyEvent.VK_C);
+		copyMenuItem.setAccelerator(KeyStroke.getKeyStroke(
+		        KeyEvent.VK_C, ActionEvent.CTRL_MASK));
+		copyMenuItem.addActionListener( new ActionListener() {
+
+			@Override
+			public void actionPerformed( ActionEvent event ) {
+				if (selectedEntity == null)
+					return;
+				copyToClipboard(selectedEntity);
+			}
+		} );
+		editMenu.add( copyMenuItem );
+
+		// 4) "Paste" menu item
+		pasteMenuItem = new JMenuItem("Paste");
+		pasteMenuItem.setMnemonic(KeyEvent.VK_P);
+		pasteMenuItem.setAccelerator(KeyStroke.getKeyStroke(
+		        KeyEvent.VK_V, ActionEvent.CTRL_MASK));
+		pasteMenuItem.addActionListener( new ActionListener() {
+
+			@Override
+			public void actionPerformed( ActionEvent event ) {
+				pasteEntityFromClipboard();
+			}
+		} );
+		editMenu.add( pasteMenuItem );
+
+		// 5) "Delete" menu item
+		deleteMenuItem = new JMenuItem("Delete");
+		deleteMenuItem.setMnemonic(KeyEvent.VK_D);
+		deleteMenuItem.setAccelerator(KeyStroke.getKeyStroke(
+		        KeyEvent.VK_DELETE, 0));
+		deleteMenuItem.addActionListener( new ActionListener() {
+
+			@Override
+			public void actionPerformed( ActionEvent event ) {
+				if (selectedEntity == null)
+					return;
+				try {
+					selectedEntity.delete();
+					FrameBox.setSelectedEntity(null, false);
+				}
+				catch (ErrorException e) {
+					GUIFrame.showErrorDialog("User Error", e.getMessage());
+				}
+			}
+		} );
+		editMenu.add( deleteMenuItem );
+		editMenu.addSeparator();
+
+		// 6) "Find" menu item
 		JMenuItem findMenuItem = new JMenuItem("Find");
 		findMenuItem.setIcon( new ImageIcon(
 				GUIFrame.class.getResource("/resources/images/Find-16.png")) );
