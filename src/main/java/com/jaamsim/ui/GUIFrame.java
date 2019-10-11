@@ -182,6 +182,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	private JToggleButton showLinks;
 	private JToggleButton createLinks;
 
+	private JButton copyButton;
+	private JButton pasteButton;
 	private JToggleButton find;
 
 	private Entity selectedEntity;
@@ -1056,8 +1058,13 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		buttonBar.add(Box.createRigidArea(gapDim));
 		addCreateLinksButton(buttonBar, noMargin);
 
-		// Show Entity Finder button
+		// Show Copy and Paste buttons
 		buttonBar.addSeparator(separatorDim);
+		addCopyButton(buttonBar, noMargin);
+		addPasteButton(buttonBar, noMargin);
+
+		// Show Entity Finder button
+		buttonBar.add(Box.createRigidArea(gapDim));
 		addEntityFinderButton(buttonBar, noMargin);
 
 		// Font selector and text height field
@@ -1477,6 +1484,42 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 		});
 		buttonBar.add( createLinks );
+	}
+
+	private void addCopyButton(JToolBar buttonBar, Insets margin) {
+		copyButton = new JButton(new ImageIcon(GUIFrame.class.getResource("/resources/images/Copy-16.png")));
+		copyButton.setToolTipText(formatToolTip("Copy (Ctrl+C)",
+				"Copies the selected entity to the clipboard."));
+		copyButton.setMargin(margin);
+		copyButton.setFocusPainted(false);
+		copyButton.setRequestFocusEnabled(false);
+		copyButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed( ActionEvent event ) {
+				if (selectedEntity != null)
+					copyToClipboard(selectedEntity);
+				controlStartResume.requestFocusInWindow();
+			}
+		});
+		buttonBar.add( copyButton );
+	}
+
+	private void addPasteButton(JToolBar buttonBar, Insets margin) {
+		pasteButton = new JButton(new ImageIcon(GUIFrame.class.getResource("/resources/images/Paste-16.png")));
+		pasteButton.setToolTipText(formatToolTip("Paste (Ctrl+V)",
+				"Pastes a copy of an entity from the clipboard to the location of the most recent "
+				+ "mouse click."));
+		pasteButton.setMargin(margin);
+		pasteButton.setFocusPainted(false);
+		pasteButton.setRequestFocusEnabled(false);
+		pasteButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed( ActionEvent event ) {
+				pasteEntityFromClipboard();
+				controlStartResume.requestFocusInWindow();
+			}
+		});
+		buttonBar.add( pasteButton );
 	}
 
 	private void addEntityFinderButton(JToolBar buttonBar, Insets margin) {
@@ -3393,6 +3436,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 	private void updateEditButtons(Entity ent) {
 		boolean bool = (ent != null);
+		copyButton.setEnabled(bool);
 		copyMenuItem.setEnabled(bool);
 		deleteMenuItem.setEnabled(bool);
 	}
