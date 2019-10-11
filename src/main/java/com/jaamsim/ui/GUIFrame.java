@@ -31,6 +31,7 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -4293,6 +4294,62 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	public void copyToClipboard(Entity ent) {
 		Clipboard clpbrd = Toolkit.getDefaultToolkit().getSystemClipboard();
 		clpbrd.setContents(new StringSelection(ent.getName()), null);
+	}
+
+	public Entity getEntityFromClipboard() {
+		Clipboard clpbrd = Toolkit.getDefaultToolkit().getSystemClipboard();
+		try {
+			String name = (String)clpbrd.getData(DataFlavor.stringFlavor);
+			return sim.getNamedEntity(name);
+		}
+		catch (Throwable err) {
+			return null;
+		}
+	}
+
+	public void pasteEntityFromClipboard() {
+		Entity ent = getEntityFromClipboard();
+		if (ent == null)
+			return;
+		String copyName = InputAgent.getUniqueName(sim, ent.getName(), "_Copy");
+		InputAgent.storeAndExecute(new DefineCommand(sim, ent.getClass(), copyName));
+		Entity copiedEnt = sim.getNamedEntity(copyName);
+		copiedEnt.copyInputs(ent);
+		if (ent instanceof DisplayEntity) {
+			DisplayEntity dEnt = (DisplayEntity) copiedEnt;
+
+			// If an entity is not selected, paste the new entity at the point of interest
+			if (selectedEntity == null || !(selectedEntity instanceof DisplayEntity)) {
+				if (RenderManager.isGood())
+					RenderManager.inst().dragEntityToMousePosition(dEnt);
+			}
+
+			// If an entity is selected, paste the new entity next to the selected one
+			else {
+				int x = 0;
+				int y = 0;
+				if (selectedEntity instanceof OverlayEntity) {
+					OverlayEntity olEnt = (OverlayEntity) selectedEntity;
+					x = olEnt.getScreenPosition().get(0) + 10;
+					y = olEnt.getScreenPosition().get(1) + 10;
+				}
+				DisplayEntity selectedDispEnt = (DisplayEntity) selectedEntity;
+				Vec3d pos = selectedDispEnt.getPosition();
+				pos.x += 0.5d * selectedDispEnt.getSize().x;
+				pos.y -= 0.5d * selectedDispEnt.getSize().y;
+				try {
+					dEnt.dragged(x, y, pos);
+				}
+				catch (InputErrorException e) {}
+			}
+
+			// Add a label if required
+			if (sim.getSimulation().isShowLabels() && EntityLabel.canLabel(dEnt))
+				EntityLabel.showTemporaryLabel(dEnt, true);
+		}
+
+		// Select the new entity
+		FrameBox.setSelectedEntity(copiedEnt, false);
 	}
 
 	public void invokeNew() {

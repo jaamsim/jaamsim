@@ -1901,6 +1901,10 @@ public class RenderManager implements DragSourceListener {
 				return true;
 			}
 		}
+		if (control && keyCode == KeyEvent.VK_V) {
+			GUIFrame.getInstance().pasteEntityFromClipboard();
+			return true;
+		}
 
 		// Selected entity not in edit mode
 		if (selectedEntity != null) {
@@ -1912,6 +1916,22 @@ public class RenderManager implements DragSourceListener {
 
 	public void handleKeyReleased(int keyCode, char keyChar, boolean shift, boolean control, boolean alt) {
 		selectedEntity.handleKeyReleased(keyCode, keyChar, shift, control, alt);
+	}
+
+	/**
+	 * Moves the entity to the last place at which the mouse was clicked.
+	 * @param ent - entity to be positioned
+	 */
+	public void dragEntityToMousePosition(DisplayEntity ent) {
+		CameraControl cam = windowControls.get(activeWindowID);
+		if (cam == null)
+			return;
+		Vec3d pos = cam.getPOI();
+		Renderer.WindowMouseInfo mouseInfo = renderer.getMouseInfo(activeWindowID);
+		try {
+			ent.dragged(mouseInfo.x, mouseInfo.y, pos);
+		}
+		catch (InputErrorException e) {}
 	}
 
 	public void setShowLinks(boolean bShow) {
