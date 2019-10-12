@@ -676,6 +676,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 		// 3) "Copy" menu item
 		copyMenuItem = new JMenuItem("Copy");
+		copyMenuItem.setIcon( new ImageIcon(
+				GUIFrame.class.getResource("/resources/images/Copy-16.png")) );
 		copyMenuItem.setMnemonic(KeyEvent.VK_C);
 		copyMenuItem.setAccelerator(KeyStroke.getKeyStroke(
 		        KeyEvent.VK_C, ActionEvent.CTRL_MASK));
@@ -692,6 +694,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 		// 4) "Paste" menu item
 		pasteMenuItem = new JMenuItem("Paste");
+		pasteMenuItem.setIcon( new ImageIcon(
+				GUIFrame.class.getResource("/resources/images/Paste-16.png")) );
 		pasteMenuItem.setMnemonic(KeyEvent.VK_P);
 		pasteMenuItem.setAccelerator(KeyStroke.getKeyStroke(
 		        KeyEvent.VK_V, ActionEvent.CTRL_MASK));
