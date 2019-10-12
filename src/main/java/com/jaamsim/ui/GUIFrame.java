@@ -3439,7 +3439,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	}
 
 	private void updateEditButtons(Entity ent) {
-		boolean bool = (ent != null);
+		boolean bool = (ent != null && ent != sim.getSimulation());
 		copyButton.setEnabled(bool);
 		copyMenuItem.setEnabled(bool);
 		deleteMenuItem.setEnabled(bool);
@@ -4403,6 +4403,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	}
 
 	public void copyToClipboard(Entity ent) {
+		if (ent == sim.getSimulation())
+			return;
 		Clipboard clpbrd = Toolkit.getDefaultToolkit().getSystemClipboard();
 		clpbrd.setContents(new StringSelection(ent.getName()), null);
 	}
@@ -4420,7 +4422,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 	public void pasteEntityFromClipboard() {
 		Entity ent = getEntityFromClipboard();
-		if (ent == null)
+		if (ent == null || ent == sim.getSimulation())
 			return;
 		String copyName = InputAgent.getUniqueName(sim, ent.getName(), "_Copy");
 		InputAgent.storeAndExecute(new DefineCommand(sim, ent.getClass(), copyName));

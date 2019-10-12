@@ -145,7 +145,7 @@ public class ContextMenu {
 				GUIFrame.getInstance().copyToClipboard(ent);
 			}
 		} );
-		if (ent.testFlag(Entity.FLAG_GENERATED)) {
+		if (ent.testFlag(Entity.FLAG_GENERATED) || ent == ent.getSimulation()) {
 			copyMenuItem.setEnabled(false);
 		}
 		menu.add( copyMenuItem );
