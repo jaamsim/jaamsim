@@ -533,6 +533,7 @@ public class ObjectSelector extends FrameBox {
 	}
 
 	static class MyKeyListener implements KeyListener {
+
 		@Override
 		public void keyReleased(KeyEvent e) {
 			if (e.getKeyCode() != KeyEvent.VK_DELETE)
@@ -546,8 +547,21 @@ public class ObjectSelector extends FrameBox {
 				GUIFrame.invokeErrorDialog("User Error", err.getMessage());
 			}
 		}
+
 		@Override
-		public void keyPressed(KeyEvent e) {}
+		public void keyPressed(KeyEvent e) {
+			int keyCode = e.getKeyCode();
+			boolean control = e.isControlDown();
+			if (control && keyCode == KeyEvent.VK_C) {
+				if (currentEntity != null) {
+					GUIFrame.getInstance().copyToClipboard(currentEntity);
+				}
+			}
+			if (control && keyCode == KeyEvent.VK_V) {
+				GUIFrame.getInstance().pasteEntityFromClipboard();
+			}
+		}
+
 		@Override
 		public void keyTyped(KeyEvent e) {}
 	}
