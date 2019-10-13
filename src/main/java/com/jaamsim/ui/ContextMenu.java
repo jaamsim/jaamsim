@@ -22,6 +22,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
+import javax.swing.ImageIcon;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
@@ -133,6 +134,8 @@ public class ContextMenu {
 
 		// 4) Copy
 		JMenuItem copyMenuItem = new JMenuItem( "Copy" );
+		copyMenuItem.setIcon( new ImageIcon(
+				GUIFrame.class.getResource("/resources/images/Copy-16.png")) );
 		copyMenuItem.setAccelerator(KeyStroke.getKeyStroke(
 		        KeyEvent.VK_C, ActionEvent.CTRL_MASK));
 		copyMenuItem.addActionListener( new ActionListener() {
@@ -149,6 +152,8 @@ public class ContextMenu {
 
 		// 4) Paste
 		JMenuItem pasteMenuItem = new JMenuItem( "Paste" );
+		pasteMenuItem.setIcon( new ImageIcon(
+				GUIFrame.class.getResource("/resources/images/Paste-16.png")) );
 		pasteMenuItem.setAccelerator(KeyStroke.getKeyStroke(
 		        KeyEvent.VK_V, ActionEvent.CTRL_MASK));
 		pasteMenuItem.addActionListener( new ActionListener() {
