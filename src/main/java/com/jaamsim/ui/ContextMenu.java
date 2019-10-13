@@ -148,6 +148,19 @@ public class ContextMenu {
 		}
 		menu.add( copyMenuItem );
 
+		// 4) Paste
+		JMenuItem pasteMenuItem = new JMenuItem( "Paste" );
+		pasteMenuItem.setAccelerator(KeyStroke.getKeyStroke(
+		        KeyEvent.VK_V, ActionEvent.CTRL_MASK));
+		pasteMenuItem.addActionListener( new ActionListener() {
+
+			@Override
+			public void actionPerformed( ActionEvent event ) {
+				GUIFrame.getInstance().pasteEntityFromClipboard();
+			}
+		} );
+		menu.add( pasteMenuItem );
+
 		// 4) Duplicate
 		JMenuItem duplicateMenuItem = new JMenuItem( "Duplicate" );
 		duplicateMenuItem.addActionListener( new ActionListener() {
