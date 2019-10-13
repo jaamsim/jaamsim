@@ -4510,6 +4510,24 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		});
 	}
 
+	public void invokeCopy(Entity ent) {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				copyToClipboard(ent);
+			}
+		});
+	}
+
+	public void invokePaste() {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				pasteEntityFromClipboard();
+			}
+		});
+	}
+
 	public void invokeFind() {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override

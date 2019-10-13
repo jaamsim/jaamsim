@@ -1897,12 +1897,12 @@ public class RenderManager implements DragSourceListener {
 		}
 		if (control && keyCode == KeyEvent.VK_C) {
 			if (selectedEntity != null) {
-				GUIFrame.getInstance().copyToClipboard(selectedEntity);
+				GUIFrame.getInstance().invokeCopy(selectedEntity);
 				return true;
 			}
 		}
 		if (control && keyCode == KeyEvent.VK_V) {
-			GUIFrame.getInstance().pasteEntityFromClipboard();
+			GUIFrame.getInstance().invokePaste();
 			return true;
 		}
 
