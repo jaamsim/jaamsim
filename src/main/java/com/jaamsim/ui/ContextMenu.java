@@ -41,7 +41,6 @@ import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.input.InputAgent;
-import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.units.DistanceUnit;
@@ -160,48 +159,6 @@ public class ContextMenu {
 			}
 		} );
 		menu.add( pasteMenuItem );
-
-		// 4) Duplicate
-		JMenuItem duplicateMenuItem = new JMenuItem( "Duplicate" );
-		duplicateMenuItem.addActionListener( new ActionListener() {
-
-			@Override
-			public void actionPerformed( ActionEvent event ) {
-				JaamSimModel simModel = ent.getJaamSimModel();
-				String name = InputAgent.getUniqueName(simModel, ent.getName(), "_Copy");
-				InputAgent.storeAndExecute(new DefineCommand(simModel, ent.getClass(), name));
-				Entity copiedEntity = simModel.getNamedEntity(name);
-
-				// Match all the inputs
-				copiedEntity.copyInputs(ent);
-
-				// Position the duplicated entity next to the original
-				if (copiedEntity instanceof DisplayEntity) {
-					int x = 0;
-					int y = 0;
-					if (copiedEntity instanceof OverlayEntity) {
-						OverlayEntity olEnt = (OverlayEntity) copiedEntity;
-						x = olEnt.getScreenPosition().get(0) + 10;
-						y = olEnt.getScreenPosition().get(1) + 10;
-					}
-					DisplayEntity dEnt = (DisplayEntity)copiedEntity;
-					Vec3d pos = dEnt.getPosition();
-					pos.x += 0.5d * dEnt.getSize().x;
-					pos.y -= 0.5d * dEnt.getSize().y;
-					try {
-						dEnt.dragged(x, y, pos);
-					}
-					catch (InputErrorException e) {}
-				}
-
-				// Show the duplicated entity in the editors and viewers
-				FrameBox.setSelectedEntity(copiedEntity, false);
-			}
-		} );
-		if (ent.testFlag(Entity.FLAG_GENERATED)) {
-			duplicateMenuItem.setEnabled(false);
-		}
-		menu.add( duplicateMenuItem );
 
 		// 5) Delete
 		JMenuItem deleteMenuItem = new JMenuItem( "Delete" );
