@@ -3280,18 +3280,26 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	@Override
 	public void storeAndExecute(Command cmd) {
 		synchronized (undoList) {
+
+			// Execute the command and catch an error if it occurs
+			cmd.execute();
+
+			// Attempt to merge the command with the previous one
 			Command mergedCmd = null;
 			if (!undoList.isEmpty()) {
 				Command lastCmd = undoList.get(undoList.size() - 1);
 				mergedCmd = lastCmd.tryMerge(cmd);
 			}
+
+			// Store the command on the undo list
 			if (mergedCmd != null) {
 				undoList.set(undoList.size() - 1, mergedCmd);
 			}
 			else {
 				undoList.add(cmd);
 			}
-			cmd.execute();
+
+			// Clear the re-do list
 			redoList.clear();
 		}
 		updateUI();
