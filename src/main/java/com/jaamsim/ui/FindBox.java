@@ -32,8 +32,10 @@ import javax.swing.JDialog;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.plaf.basic.BasicArrowButton;
 
 import com.jaamsim.DisplayModels.IconModel;
 import com.jaamsim.basicsim.Entity;
@@ -45,6 +47,7 @@ import com.jaamsim.units.Unit;
 public class FindBox extends JDialog {
 
 	private JTextField searchText;
+	private final ArrayList<String> prevNames = new ArrayList<>();  // previous entities found
 
 	private static FindBox myInstance;
 	public static final String DIALOG_NAME = "Entity Finder";
@@ -60,9 +63,16 @@ public class FindBox extends JDialog {
 		searchText.setToolTipText(GUIFrame.formatToolTip("Entity Name Search.",
 				"Entity name to find."));
 
+		// Recent searches
+		JButton dropdown = new BasicArrowButton(BasicArrowButton.SOUTH);
+		dropdown.setToolTipText(GUIFrame.formatToolTip("Previous Entities",
+				"Entities that have been found previously."));
+
 		JPanel textPanel = new JPanel();
-		textPanel.setLayout( new FlowLayout(FlowLayout.CENTER) );
-		textPanel.add(searchText);
+		textPanel.setLayout( new BorderLayout() );
+		textPanel.add(searchText, BorderLayout.WEST);
+		textPanel.add(dropdown, BorderLayout.EAST);
+		textPanel.setBorder(new EmptyBorder(10, 10, 0, 10));
 		getContentPane().add(textPanel, BorderLayout.NORTH);
 
 		// Buttons
@@ -75,6 +85,27 @@ public class FindBox extends JDialog {
 		buttonPanel.add(closeButton);
 		getContentPane().add(buttonPanel, BorderLayout.CENTER);
 		pack();
+
+		// Dropdown button pressed
+		dropdown.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				ScrollablePopupMenu entityMenu = new ScrollablePopupMenu();
+				for (final String name : prevNames) {
+					JMenuItem item = new JMenuItem(name);
+					item.addActionListener( new ActionListener() {
+
+						@Override
+						public void actionPerformed( ActionEvent event ) {
+							searchText.setText(name);
+							findEntity(name);
+						}
+					} );
+					entityMenu.add(item);
+				}
+				entityMenu.show(searchText, 0, searchText.getHeight());
+			}
+		});
 
 		// Find button pressed
 		findButton.addActionListener( new ActionListener() {
@@ -179,6 +210,8 @@ public class FindBox extends JDialog {
 			GUIFrame.showErrorDialog("Error", msg);
 			return;
 		}
+		prevNames.remove(name);
+		prevNames.add(0, name);
 		FrameBox.setSelectedEntity(ent, false);
 	}
 
