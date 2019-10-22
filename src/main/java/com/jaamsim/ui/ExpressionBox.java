@@ -1000,7 +1000,7 @@ public class ExpressionBox extends JDialog {
 				"Accepts two numbers with or without units. If the numbers have units, the units "
 						+ "must be the same, and the number returned will have that unit.",
 				"'5 % 2' returns 1.",
-				"'5[m] / 2[m]' returns 1[m]"));
+				"'5[m] % 2[m]' returns 1[m]"));
 
 		// LOGICAL OPERATORS
 
