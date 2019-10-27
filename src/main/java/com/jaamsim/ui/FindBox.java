@@ -17,6 +17,7 @@
 package com.jaamsim.ui;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
@@ -48,6 +49,7 @@ public class FindBox extends JDialog {
 
 	private JTextField searchText;
 	private final ArrayList<String> prevNames = new ArrayList<>();  // previous entities found
+	private final Dimension itemSize;
 
 	private static FindBox myInstance;
 	public static final String DIALOG_NAME = "Entity Finder";
@@ -75,6 +77,9 @@ public class FindBox extends JDialog {
 		textPanel.setBorder(new EmptyBorder(10, 10, 0, 10));
 		getContentPane().add(textPanel, BorderLayout.NORTH);
 
+		itemSize = searchText.getPreferredSize();
+		itemSize.width += dropdown.getPreferredSize().width;
+
 		// Buttons
 		JButton findButton = new JButton("Find");
 		JButton closeButton = new JButton("Close");
@@ -93,6 +98,7 @@ public class FindBox extends JDialog {
 				ScrollablePopupMenu entityMenu = new ScrollablePopupMenu();
 				for (final String name : prevNames) {
 					JMenuItem item = new JMenuItem(name);
+					item.setPreferredSize(itemSize);
 					item.addActionListener( new ActionListener() {
 
 						@Override
@@ -228,6 +234,7 @@ public class FindBox extends JDialog {
 
 		for (final String entName : nameList) {
 			JMenuItem item = new JMenuItem(entName);
+			item.setPreferredSize(itemSize);
 			item.addActionListener( new ActionListener() {
 				@Override
 				public void actionPerformed( ActionEvent event ) {
