@@ -123,7 +123,6 @@ public class FindBox extends JDialog {
 			@Override
 			public void actionPerformed( ActionEvent e ) {
 				setVisible(false);
-				dispose();
 			}
 		} );
 
@@ -166,7 +165,6 @@ public class FindBox extends JDialog {
 			@Override
 			public void windowClosing( WindowEvent e ) {
 				setVisible(false);
-				dispose();
 			}
 		} );
 	}

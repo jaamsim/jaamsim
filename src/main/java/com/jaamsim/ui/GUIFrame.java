@@ -1541,7 +1541,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				}
 				else {
 					FindBox.getInstance().setVisible(false);
-					FindBox.getInstance().dispose();
 				}
 				controlStartResume.requestFocusInWindow();
 			}
