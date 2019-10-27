@@ -62,8 +62,8 @@ public class FindBox extends JDialog {
 
 		// Search text
 		searchText = new JTextField("", 30);
-		searchText.setToolTipText(GUIFrame.formatToolTip("Entity Name Search.",
-				"Entity name to find."));
+		searchText.setToolTipText(GUIFrame.formatToolTip("Entity Name",
+				"Name of the entity to find."));
 
 		// Recent searches
 		JButton dropdown = new BasicArrowButton(BasicArrowButton.SOUTH);
