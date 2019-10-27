@@ -107,8 +107,6 @@ public class RenderManager implements DragSourceListener {
 	private final static int EXCEPTION_STACK_THRESHOLD = 10; // The number of recoverable exceptions until a stack trace is output
 	private final static int EXCEPTION_PRINT_RATE = 30; // The number of total exceptions until the overall log is printed
 
-	private final static int MAX_RENDERABLE_ENTITIES = 10000; // The maximum number of entities to try render in a scene
-
 	/**
 	 * Default plane used for Mouse click intersections.
 	 */
@@ -381,6 +379,9 @@ public class RenderManager implements DragSourceListener {
 				long startNanos = System.nanoTime();
 				long updateNanos = 0;
 				long endNanos = 0;
+
+				int maxRenderableEntities = GUIFrame.getJaamSimModel().getSimulation().getMaxEntitiesToDisplay();
+
 				synchronized (sceneDragLock) {
 
 					cachedScene = new ArrayList<>();
@@ -396,7 +397,7 @@ public class RenderManager implements DragSourceListener {
 
 						numEnts++;
 						// There is an upper limit on number of entities
-						if (numEnts > MAX_RENDERABLE_ENTITIES) {
+						if (numEnts > maxRenderableEntities) {
 							break;
 						}
 
@@ -417,7 +418,7 @@ public class RenderManager implements DragSourceListener {
 
 						numEnts++;
 						// There is an upper limit on number of entities
-						if (numEnts > MAX_RENDERABLE_ENTITIES) {
+						if (numEnts > maxRenderableEntities) {
 							break;
 						}
 						for (DisplayModelBinding binding : de.getDisplayBindings()) {

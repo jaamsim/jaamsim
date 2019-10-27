@@ -138,6 +138,12 @@ public class Simulation extends Entity {
 	         exampleList = {"{ [Simulation].RunNumber } { '[Queue1].AverageQueueTime / 1[h]' }"})
 	protected final StringProvListInput runOutputList;
 
+	@Keyword(description = "The maximum number of entities to display in the view windows. "
+	                     + "A model can contain more than this number of entities, but only this "
+	                     + "number will be displayed.",
+	         exampleList = {"100000"})
+	private final IntegerInput maxEntitiesToDisplay;
+
 	@Keyword(description = "The length of time represented by one simulation tick.",
 	         exampleList = {"1e-6 s"})
 	private final ValueInput tickLengthInput;
@@ -375,6 +381,10 @@ public class Simulation extends Entity {
 
 		runOutputList = new StringProvListInput("RunOutputList", KEY_INPUTS, null);
 		this.addInput(runOutputList);
+
+		maxEntitiesToDisplay = new IntegerInput("MaxEntitiesToDisplay", OPTIONS, 10000);
+		maxEntitiesToDisplay.setValidRange(0, Integer.MAX_VALUE);
+		this.addInput(maxEntitiesToDisplay);
 
 		tickLengthInput = new ValueInput("TickLength", OPTIONS, 1e-6d);
 		tickLengthInput.setUnitType(TimeUnit.class);
@@ -920,6 +930,10 @@ public class Simulation extends Entity {
 
 	public StringProvListInput getRunOutputList() {
 		return runOutputList;
+	}
+
+	public int getMaxEntitiesToDisplay() {
+		return maxEntitiesToDisplay.getValue();
 	}
 
 	public boolean isShowLabels() {
