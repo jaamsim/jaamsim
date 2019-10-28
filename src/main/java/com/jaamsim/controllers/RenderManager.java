@@ -394,6 +394,8 @@ public class RenderManager implements DragSourceListener {
 
 					// Update all graphical entities in the simulation
 					for (DisplayEntity de : GUIFrame.getJaamSimModel().getClonesOfIterator(DisplayEntity.class)) {
+						if (!de.getShow())
+							continue;
 
 						numEnts++;
 						// There is an upper limit on number of entities
@@ -415,6 +417,8 @@ public class RenderManager implements DragSourceListener {
 					numEnts = 0;
 					// Collect the render proxies for each entity
 					for (DisplayEntity de : GUIFrame.getJaamSimModel().getClonesOfIterator(DisplayEntity.class)) {
+						if (!de.getShow())
+							continue;
 
 						numEnts++;
 						// There is an upper limit on number of entities
