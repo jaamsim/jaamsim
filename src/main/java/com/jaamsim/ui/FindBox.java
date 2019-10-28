@@ -54,6 +54,7 @@ public class FindBox extends JDialog {
 
 	private static FindBox myInstance;
 	public static final String DIALOG_NAME = "Entity Finder";
+	public static final int MAX_LIST_SIZE = 1000;  // max size of the entity list pop-up
 
 	public FindBox() {
 		super((JDialog)null, DIALOG_NAME, false);
@@ -238,6 +239,8 @@ public class FindBox extends JDialog {
 			if (!ent.getName().toUpperCase().contains(name.toUpperCase()))
 				continue;
 			nameList.add(ent.getName());
+			if (nameList.size() >= MAX_LIST_SIZE)
+				break;
 		}
 		Collections.sort(nameList, Input.uiSortOrder);
 
@@ -252,6 +255,11 @@ public class FindBox extends JDialog {
 					findEntity(entName);
 				}
 			} );
+			entityMenu.add(item);
+		}
+		if (nameList.size() >= MAX_LIST_SIZE) {
+			JMenuItem item = new JMenuItem("more ...");
+			item.setPreferredSize(itemSize);
 			entityMenu.add(item);
 		}
 		entityMenu.show(searchText, 0, searchText.getHeight());
