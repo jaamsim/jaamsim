@@ -118,8 +118,6 @@ public class FindBox extends JDialog {
 			@Override
 			public void actionPerformed( ActionEvent e ) {
 				String name = searchText.getText().trim();
-				if (name.isEmpty())
-					return;
 				findEntity(name);
 			}
 		} );
@@ -137,8 +135,6 @@ public class FindBox extends JDialog {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				String name = searchText.getText().trim();
-				if (name.isEmpty())
-					return;
 				findEntity(name);
 			}
 		});
@@ -157,8 +153,6 @@ public class FindBox extends JDialog {
 			@Override
 			public void removeUpdate(DocumentEvent e) {
 				String name = searchText.getText().trim();
-				if (name.isEmpty())
-					return;
 				myInstance.showEntityMenu(name);
 			}
 
@@ -207,6 +201,8 @@ public class FindBox extends JDialog {
 	}
 
 	private void findEntity(String name) {
+		if (name.isEmpty())
+			return;
 		Entity ent = GUIFrame.getJaamSimModel().getEntity(name);
 		if (ent == null || ent instanceof ObjectType || ent instanceof Unit ||
 				ent instanceof IconModel) {
@@ -220,6 +216,8 @@ public class FindBox extends JDialog {
 	}
 
 	private void showEntityMenu(String name) {
+		if (name.isEmpty())
+			return;
 		ScrollablePopupMenu entityMenu = new ScrollablePopupMenu();
 		ArrayList<String> nameList = new ArrayList<>();
 		JaamSimModel simModel = GUIFrame.getJaamSimModel();
