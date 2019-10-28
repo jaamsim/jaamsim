@@ -217,8 +217,9 @@ public class Entity {
 	 */
 	public void setInputsForDragAndDrop() {}
 
-
 	public void kill() {
+		if (testFlag(Entity.FLAG_DEAD))
+			return;
 		simModel.removeInstance(this);
 	}
 
