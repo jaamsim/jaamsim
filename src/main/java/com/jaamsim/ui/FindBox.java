@@ -50,6 +50,7 @@ public class FindBox extends JDialog {
 	private JTextField searchText;
 	private final ArrayList<String> prevNames = new ArrayList<>();  // previous entities found
 	private final Dimension itemSize;
+	private ScrollablePopupMenu entityMenu;
 
 	private static FindBox myInstance;
 	public static final String DIALOG_NAME = "Entity Finder";
@@ -95,7 +96,7 @@ public class FindBox extends JDialog {
 		dropdown.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				ScrollablePopupMenu entityMenu = new ScrollablePopupMenu();
+				entityMenu = new ScrollablePopupMenu();
 				for (final String name : prevNames) {
 					JMenuItem item = new JMenuItem(name);
 					item.setPreferredSize(itemSize);
@@ -103,6 +104,7 @@ public class FindBox extends JDialog {
 
 						@Override
 						public void actionPerformed( ActionEvent event ) {
+							entityMenu = null;
 							searchText.setText(name);
 							findEntity(name);
 						}
@@ -201,6 +203,10 @@ public class FindBox extends JDialog {
 	}
 
 	private void findEntity(String name) {
+		if (entityMenu != null) {
+			entityMenu.setVisible(false);
+			entityMenu = null;
+		}
 		if (name.isEmpty())
 			return;
 		Entity ent = GUIFrame.getJaamSimModel().getEntity(name);
@@ -216,9 +222,14 @@ public class FindBox extends JDialog {
 	}
 
 	private void showEntityMenu(String name) {
-		if (name.isEmpty())
+		if (name.isEmpty()) {
+			if (entityMenu != null) {
+				entityMenu.setVisible(false);
+				entityMenu = null;
+			}
 			return;
-		ScrollablePopupMenu entityMenu = new ScrollablePopupMenu();
+		}
+		entityMenu = new ScrollablePopupMenu();
 		ArrayList<String> nameList = new ArrayList<>();
 		JaamSimModel simModel = GUIFrame.getJaamSimModel();
 		for (Entity ent: simModel.getClonesOfIterator(Entity.class)) {
@@ -236,6 +247,7 @@ public class FindBox extends JDialog {
 			item.addActionListener( new ActionListener() {
 				@Override
 				public void actionPerformed( ActionEvent event ) {
+					entityMenu = null;
 					searchText.setText(entName);
 					findEntity(entName);
 				}
