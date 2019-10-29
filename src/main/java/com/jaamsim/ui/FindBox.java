@@ -262,8 +262,8 @@ public class FindBox extends JDialog {
 			item.setPreferredSize(itemSize);
 			entityMenu.add(item);
 		}
+		entityMenu.setFocusable(false);
 		entityMenu.show(searchText, 0, searchText.getHeight());
-		searchText.requestFocusInWindow();
 	}
 
 }
