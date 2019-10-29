@@ -696,8 +696,8 @@ public class ExpressionBox extends JDialog {
 		if (p == null)
 			p = new Point();  // p is null after text is selected and the '[' key is pressed
 		int height = editArea.getFontMetrics(editArea.getFont()).getHeight();
+		entityMenu.setFocusable(false);
 		entityMenu.show(editArea, p.x, p.y + height);
-		editArea.requestFocusInWindow();
 	}
 
 	private void showOutputMenu(Entity ent, String name, final int ind0, final int ind1) {
@@ -735,8 +735,8 @@ public class ExpressionBox extends JDialog {
 		if (p == null)
 			p = new Point();
 		int height = editArea.getFontMetrics(editArea.getFont()).getHeight();
+		outputMenu.setFocusable(false);
 		outputMenu.show(editArea, p.x, p.y + height);
-		editArea.requestFocusInWindow();
 	}
 
 	private static class ButtonDesc {
