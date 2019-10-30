@@ -255,9 +255,11 @@ public class ExpressionBox extends JDialog {
 		editMode = mode;
 		if (mode != EDIT_MODE_ENTITY && entityMenu != null) {
 			entityMenu.setVisible(false);
+			entityMenu = null;
 		}
 		if (mode != EDIT_MODE_OUTPUT && outputMenu != null) {
 			outputMenu.setVisible(false);
+			outputMenu = null;
 		}
 	}
 
@@ -656,6 +658,8 @@ public class ExpressionBox extends JDialog {
 	}
 
 	private void showEntityMenu(String name, final int ind0, final int ind1) {
+		if (entityMenu != null)
+			entityMenu.setVisible(false);
 		entityMenu = new ScrollablePopupMenu();
 		ArrayList<String> nameList = new ArrayList<>();
 		JaamSimModel simModel = GUIFrame.getJaamSimModel();
@@ -684,6 +688,7 @@ public class ExpressionBox extends JDialog {
 
 				@Override
 				public void actionPerformed( ActionEvent event ) {
+					entityMenu = null;
 					String str = String.format("[%s]", entName);
 					editArea.replaceRange(str, ind0, ind1 + 1);
 					editArea.requestFocusInWindow();
@@ -701,6 +706,8 @@ public class ExpressionBox extends JDialog {
 	}
 
 	private void showOutputMenu(Entity ent, String name, final int ind0, final int ind1) {
+		if (outputMenu != null)
+			outputMenu.setVisible(false);
 		outputMenu = new ScrollablePopupMenu();
 
 		ArrayList<OutputHandle> handles = new ArrayList<>();
@@ -724,6 +731,7 @@ public class ExpressionBox extends JDialog {
 
 				@Override
 				public void actionPerformed( ActionEvent event ) {
+					outputMenu = null;
 					editArea.replaceRange(hand.getName(), ind0 + 1, ind1 + 1);
 					editArea.requestFocusInWindow();
 					setEditMode(EDIT_MODE_NORMAL);
