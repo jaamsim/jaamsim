@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2010-2012 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2018 JaamSim Software Inc.
+ * Copyright (C) 2016-2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,6 +43,7 @@ import com.jaamsim.datatypes.BooleanVector;
 import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.datatypes.IntegerVector;
 import com.jaamsim.math.Color4d;
+import com.jaamsim.math.MathUtils;
 import com.jaamsim.ui.NaturalOrderComparator;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
@@ -63,6 +64,7 @@ public abstract class Input<T> {
 	protected static final String INP_ERR_TIME = "Expected a time value (hh:mm or hh:mm:ss), received: %s";
 	protected static final String INP_ERR_TIMEVALUE = "Expected a numeric value, 12 numeric values, or a probabilty distribution, received: %s";
 	protected static final String INP_ERR_BADSUM = "List must sum to %f, received:%f";
+	protected static final String INP_ERR_SUMRANGE = "Sum of list must be between %s and %s, sum: %s";
 	protected static final String INP_ERR_MONOTONIC = "List must %s monotonically. Values starting at index %s are %s s, %s s, ...";
 	protected static final String INP_ERR_BADCHOICE = "Expected one of %s, received: %s";
 	protected static final String INP_ERR_ELEMENT = "Error parsing element %d: %s";
@@ -685,6 +687,15 @@ public abstract class Input<T> {
 			return;
 
 		throw new InputErrorException(INP_ERR_BADSUM, sum, vec.sum());
+	}
+
+	public static void assertSumRange(DoubleVector vec, double min, double max)
+	throws InputErrorException {
+		double sum = vec.sum();
+		if (MathUtils.nearGT(sum, min) && MathUtils.nearLT(sum, max))
+			return;
+
+		throw new InputErrorException(INP_ERR_SUMRANGE, min, max, sum);
 	}
 
 	public static void assertMonotonic(DoubleVector vec, int direction)
