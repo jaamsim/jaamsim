@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2012 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,24 +30,46 @@ public class MathUtils {
 	final static double EPSILON = 0.000000001; // one billionth
 
 
+/**
+ * Test whether a double value is zero within a tolerance
+ * @param a - double value to be tested
+ * @return true if a == 0 within a tolerance of EPSILON
+ */
 public static final boolean isSmall(double a) {
 	return a < EPSILON;
 }
 
+/**
+ * Compares two doubles for equality within a tolerance.
+ * @param a - first double
+ * @param b - second double
+ * @return true if a == b within a tolerance of EPSILON
+ */
 public static boolean near(double a, double b) {
 	double diff = Math.abs(a - b);
 	return isSmall(diff);
 }
 
-// A greater-than comparison with an EPSILON of looseness
+/**
+ * Performs a greater-than-or-equal-to comparison of two doubles within a tolerance.
+ * @param a - first double
+ * @param b - second double
+ * @return true if a >= b within a tolerance of EPSILON
+ */
 public static boolean nearGT(double a, double b) {
 	return a+EPSILON > b;
 }
 
-//A less-than comparison with an EPSILON of looseness
+/**
+ * Performs a less-than-or-equal-to comparison of two doubles within a tolerance.
+ * @param a - first double
+ * @param b - second double
+ * @return true if a <= b within a tolerance of EPSILON
+ */
 public static boolean nearLT(double a, double b) {
 	return a < b+EPSILON;
 }
+
 /**
  * Checks for line segment overlap
  * @param a0
