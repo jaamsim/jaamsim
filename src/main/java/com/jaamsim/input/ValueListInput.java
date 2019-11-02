@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2017 JaamSim Software Inc.
+ * Copyright (C) 2017-2019 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +28,8 @@ public class ValueListInput extends ListInput<DoubleVector> {
 	private double maxValue = Double.POSITIVE_INFINITY;
 	private double sumValue = Double.NaN;
 	private double sumTolerance = 1e-10d;
+	private double sumMin = Double.NEGATIVE_INFINITY;
+	private double sumMax = Double.POSITIVE_INFINITY;
 	private int[] validCounts = null; // valid list sizes not including units
 	private int monotonic = 0;  // -1 = monotonically decreasing, +1 = monotonically increasing
 
@@ -50,6 +52,7 @@ public class ValueListInput extends ListInput<DoubleVector> {
 		Input.assertMonotonic(temp, monotonic);
 		if (!Double.isNaN(sumValue))
 			Input.assertSumTolerance(temp, sumValue, sumTolerance);
+		Input.assertSumRange(temp, sumMin, sumMax);
 
 		value = temp;
 	}
@@ -78,6 +81,11 @@ public class ValueListInput extends ListInput<DoubleVector> {
 	public void setValidSum(double sum, double tol) {
 		sumValue = sum;
 		sumTolerance = tol;
+	}
+
+	public void setValidSumRange(double min, double max) {
+		sumMin = min;
+		sumMax = max;
 	}
 
 	public void setValidCounts(int... list) {
