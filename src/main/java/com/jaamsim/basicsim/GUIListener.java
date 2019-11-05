@@ -31,5 +31,6 @@ public interface GUIListener {
 	public void updateModelBuilder();
 	public void storeAndExecute(Command cmd);
 	public void updateAll();
+	public void deleteEntity(Entity ent);
 
 }
