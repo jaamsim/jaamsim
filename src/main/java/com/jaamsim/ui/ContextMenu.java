@@ -173,7 +173,7 @@ public class ContextMenu {
 			@Override
 			public void actionPerformed( ActionEvent event ) {
 				try {
-					ent.delete();
+					GUIFrame.getInstance().deleteEntity(ent);
 					FrameBox.setSelectedEntity(null, false);
 				}
 				catch (ErrorException e) {

@@ -723,7 +723,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				if (selectedEntity == null)
 					return;
 				try {
-					selectedEntity.delete();
+					deleteEntity(selectedEntity);
 					FrameBox.setSelectedEntity(null, false);
 				}
 				catch (ErrorException e) {

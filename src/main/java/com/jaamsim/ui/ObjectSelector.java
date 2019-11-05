@@ -540,7 +540,7 @@ public class ObjectSelector extends FrameBox {
 				return;
 
 			try {
-				currentEntity.delete();
+				GUIFrame.getInstance().deleteEntity(currentEntity);
 				FrameBox.setSelectedEntity(null, false);
 			}
 			catch (ErrorException err) {

@@ -934,16 +934,16 @@ public class DisplayEntity extends Entity {
 
 	public void handleKeyReleased(int keyCode, char keyChar, boolean shift, boolean control, boolean alt) {
 		if (keyCode == KeyEvent.VK_DELETE) {
+			GUIListener gui = getJaamSimModel().getGUIListener();
+			if (gui == null)
+				return;
 			try {
-				delete();
+				gui.deleteEntity(this);
 				FrameBox.setSelectedEntity(null, false);
 			}
 			catch (ErrorException e) {
-				GUIListener gui = getJaamSimModel().getGUIListener();
-				if (gui != null)
-					gui.invokeErrorDialogBox("User Error", e.getMessage());
+				gui.invokeErrorDialogBox("User Error", e.getMessage());
 			}
-			return;
 		}
 	}
 
