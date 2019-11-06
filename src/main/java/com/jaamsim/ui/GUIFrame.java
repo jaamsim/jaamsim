@@ -3313,6 +3313,14 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			EntityLabel label = EntityLabel.getLabel(dEnt);
 			if (label != null)
 				deleteEntity(label);
+
+			// Reset the RelativeEntity input for entities
+			KeywordIndex kw = InputAgent.formatArgs("RelativeEntity");
+			for (DisplayEntity e : getJaamSimModel().getClonesOfIterator(DisplayEntity.class)) {
+				if (e == ent || e.getInput("RelativeEntity").getValue() != ent)
+					continue;
+				InputAgent.storeAndExecute(new CoordinateCommand(e, kw));
+			}
 		}
 
 		// Delete any references to this entity in the inputs to other entities
