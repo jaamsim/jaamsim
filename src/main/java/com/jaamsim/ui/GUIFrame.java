@@ -3315,12 +3315,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				deleteEntity(label);
 		}
 
-		// Unregistered entities do not appear in the inputs to any other objects
-		if (!ent.testFlag(Entity.FLAG_REGISTERED)) {
-			ent.kill();
-			return;
-		}
-
 		// Delete any references to this entity in the inputs to other entities
 		for (Entity e : getJaamSimModel().getClonesOfIterator(Entity.class)) {
 			if (e == ent)
