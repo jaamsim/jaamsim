@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 
+import com.jaamsim.basicsim.Entity;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 
@@ -455,6 +456,54 @@ public class ExpParser {
 			ExpValResult res =  resolver.validate(entValRes);
 			fixValidationErrors(res, exp.source, tokenPos);
 			return res;
+		}
+
+		@Override
+		void walk(ExpressionWalker w) throws ExpError {
+			entNode.walk(w);
+			entNode = w.updateRef(entNode);
+
+			w.visit(this);
+		}
+	}
+
+	private static class ResolveChild extends ExpNode {
+		public ExpNode entNode;
+		public String childName;
+
+		public ResolveChild(ParseContext context, String outputName, ExpNode entNode, Expression exp, int pos) throws ExpError {
+			super(context, exp, pos);
+
+			this.entNode = entNode;
+			this.childName = outputName;
+		}
+
+		@Override
+		public ExpResult evaluate(EvalContext ec) throws ExpError {
+			ExpResult ent = entNode.evaluate(ec);
+			if (ent.type != ExpResType.ENTITY) {
+				throw new ExpError(exp.source, tokenPos, "Can only get children from entities");
+			}
+
+			Entity child = ent.entVal.getChild(childName);
+			return ExpResult.makeEntityResult(child);
+		}
+
+		@Override
+		public ExpValResult validate() {
+			ExpValResult entValRes = entNode.validate();
+
+			if (    entValRes.state == ExpValResult.State.ERROR ||
+			        entValRes.state == ExpValResult.State.UNDECIDABLE) {
+				fixValidationErrors(entValRes, exp.source, tokenPos);
+				return entValRes;
+			}
+
+			if (entValRes.type != ExpResType.ENTITY) {
+				return ExpValResult.makeErrorRes(new ExpError(exp.source, tokenPos, "Can only get children from entities"));
+			}
+			// Child resolution can only return entities
+			return ExpValResult.makeValidRes(ExpResType.ENTITY, DimensionlessUnit.class);
 		}
 
 		@Override
@@ -1275,12 +1324,18 @@ public class ExpParser {
 			if (peeked.value.equals(".")) {
 				tokens.next(); // consume
 				ExpTokenizer.Token outputName = tokens.next();
-				if (outputName == null || outputName.type != ExpTokenizer.VAR_TYPE) {
+				if (outputName == null) {
 					throw new ExpError(exp.source, peeked.pos, "Expected Identifier after '.'");
 				}
-
-				lhs = new ResolveOutput(context, outputName.value, lhs, exp, peeked.pos);
-				continue;
+				if (outputName.type == ExpTokenizer.VAR_TYPE) {
+					lhs = new ResolveOutput(context, outputName.value, lhs, exp, peeked.pos);
+					continue;
+				}
+				if (outputName.type == ExpTokenizer.SQ_TYPE) {
+					lhs = new ResolveChild(context, outputName.value, lhs, exp, peeked.pos);
+					continue;
+				}
+				throw new ExpError(exp.source, peeked.pos, "Value after '.' must be an entity name or output");
 			}
 
 			if (peeked.value.equals("(")) {

@@ -381,7 +381,10 @@ public class ExpEvaluator {
 
 	public static EntityParseContext getParseContext(Entity thisEnt, String source) {
 		HashMap<String, ExpResult> constants = new HashMap<>();
+		Entity parent = thisEnt.getParent();
 		constants.put("this", ExpResult.makeEntityResult(thisEnt));
+		constants.put("parent", ExpResult.makeEntityResult(parent));
+		constants.put("sub", ExpResult.makeEntityResult(parent));
 
 		return new EntityParseContext(thisEnt, constants, source);
 	}
