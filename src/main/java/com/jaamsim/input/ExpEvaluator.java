@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.jaamsim.basicsim.Entity;
+import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.input.ExpParser.Assigner;
 import com.jaamsim.input.ExpParser.EvalContext;
 import com.jaamsim.input.ExpParser.OutputResolver;
@@ -103,7 +104,7 @@ public class ExpEvaluator {
 	}
 
 	public static class EntityParseContext extends ExpParser.ParseContext {
-		private final Entity thisEnt;
+		private final JaamSimModel model;
 		private final String source;
 
 		private final HashMap<Entity, String> entityReferences = new HashMap<>();
@@ -135,13 +136,13 @@ public class ExpEvaluator {
 
 		public EntityParseContext(Entity ent, HashMap<String, ExpResult> constants, String source) {
 			super(constants);
-			this.thisEnt = ent;
+			this.model = ent.getJaamSimModel();
 			this.source = source;
 		}
 
 		@Override
 		public ExpParser.UnitData getUnitByName(String name) {
-			Unit unit = Input.tryParseUnit(thisEnt.getJaamSimModel(), name, Unit.class);
+			Unit unit = Input.tryParseUnit(model, name, Unit.class);
 			if (unit == null) {
 				return null;
 			}
@@ -168,7 +169,7 @@ public class ExpEvaluator {
 
 		@Override
 		public ExpResult getValFromLitName(String name, String source, int pos) throws ExpError {
-			Entity ent = thisEnt.getJaamSimModel().getNamedEntity(name);
+			Entity ent = model.getNamedEntity(name);
 			if (ent == null) {
 				throw new ExpError(source, pos, "Could not find entity: %s", name);
 			}
