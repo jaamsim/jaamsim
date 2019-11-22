@@ -389,6 +389,17 @@ public class Entity {
 		simModel.renameEntity(this, newName);
 	}
 
+
+	/**
+	 * Gets a named child from this entity.
+	 * Default behaviour always returns null, only specific entities may have children
+	 * @param name - the local name of the child, implementers must split the name on '.' characters and recursively call getChild()
+	 * @return the descendant named or null if no such entity exists
+	 */
+	public Entity getChild(String name) {
+		return null;
+	}
+
 	/**
 	 * This method updates the Entity for changes in the given input
 	 */

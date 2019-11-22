@@ -680,6 +680,11 @@ public class JaamSimModel {
 	}
 
 	public final Entity getNamedEntity(String name) {
+		if (name.contains(".")) {
+			String[] names = name.split("\\.");
+			return getEntityFromNames(names);
+		}
+
 		synchronized (namedEntities) {
 			return namedEntities.get(name);
 		}
@@ -695,6 +700,18 @@ public class JaamSimModel {
 			}
 		}
 		return null;
+	}
+
+	// Get an entity from a chain of names, descending into the tree of children
+	public final Entity getEntityFromNames(String[] names) {
+		Entity currEnt = getSimulation();
+		for (String name: names) {
+			if (currEnt == null) {
+				return null;
+			}
+			currEnt = currEnt.getChild(name);
+		}
+		return currEnt;
 	}
 
 	public final long getEntitySequence() {

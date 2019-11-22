@@ -67,7 +67,7 @@ public class InputAgent {
 	private static final String INP_ERR_BADNAME = "An entity name cannot be blank or contain "
 	                                            + "spaces, tabs, braces, single or double quotes, "
 	                                            + "square brackets, or the hash character.";
-	public static final char[] INVALID_ENTITY_CHARS = new char[]{' ', '\t', '\n', '{', '}', '\'', '"', '[', ']', '#'};
+	public static final char[] INVALID_ENTITY_CHARS = new char[]{' ', '\t', '\n', '{', '}', '\'', '"', '[', ']', '#','.'};
 
 	private static final String[] EARLY_KEYWORDS = {"UnitType", "UnitTypeList", "OutputUnitType", "SecondaryUnitType", "DataFile", "AttributeDefinitionList", "CustomOutputList"};
 	private static final String[] GRAPHICS_PALETTES = {"Graphics Objects", "View", "Display Models"};

@@ -816,6 +816,11 @@ public class Simulation extends Entity {
 		}
 	}
 
+	@Override
+	public Entity getChild(String name) {
+		return getJaamSimModel().getNamedEntity(name);
+	}
+
 	/**
 	 * Returns whether a paused simulation can be resumed.
 	 * @param simTicks - present simulation time in clock ticks
