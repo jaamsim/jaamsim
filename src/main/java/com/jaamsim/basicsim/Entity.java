@@ -77,6 +77,8 @@ public class Entity {
 	public static final int FLAG_RETAINED = 0x0400;  // entity is retained when the model is reset between runs
 	private int flags;
 
+	private Entity parent;
+
 	private final ArrayList<Input<?>> inpList = new ArrayList<>();
 
 	private final HashMap<String, AttributeHandle> attributeMap = new LinkedHashMap<>();
@@ -389,6 +391,29 @@ public class Entity {
 		simModel.renameEntity(this, newName);
 	}
 
+	public void setParent(Entity p) {
+		// Validate that the parent is set correctly and only once
+		if (this.parent != null) {
+			error("Entity [%s] had parent set twice", entityName);
+		}
+		if (p == null) {
+			error("Entity [%s] had parent set to 'null'", entityName);
+		}
+
+		// Validate that this parent is correct
+		if (p.getChild(entityName) != this) {
+			error("Entity [%s] had parent incorrectly set to: [%s]", entityName, p.getName());
+		}
+		parent = p;
+	}
+	/**
+	 * Returns the parent entity for this entity
+	 */
+	public Entity getParent() {
+		if (parent != null)
+			return parent;
+		return simModel.getSimulation();
+	}
 
 	/**
 	 * Gets a named child from this entity.
