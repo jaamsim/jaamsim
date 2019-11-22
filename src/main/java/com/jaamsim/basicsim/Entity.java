@@ -794,4 +794,11 @@ public class Entity {
 		return simTime;
 	}
 
+	@Output(name = "Parent",
+	 description = "The parent entity of this entity.",
+	    sequence = 3)
+	public Entity getParentOutput(double simTime) {
+		return getParent();
+	}
+
 }
