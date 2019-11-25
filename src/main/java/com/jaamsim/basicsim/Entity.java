@@ -18,6 +18,7 @@
 package com.jaamsim.basicsim;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
@@ -364,7 +365,30 @@ public class Entity {
 	 * Note that the name of the entity may not be the unique identifier used in the namedEntityHashMap; see Entity.toString()
 	 */
 	public final String getName() {
-		return entityName;
+		if (!this.testFlag(FLAG_REGISTERED) || parent == null) {
+			return entityName;
+		}
+
+		// Build up the name based on the chain of parents
+		ArrayList<String> revNames = new ArrayList<>();
+		revNames.add(entityName);
+		Entity curEnt = this.getParent();
+		JaamSimModel model = getJaamSimModel();
+		while(curEnt != model.getSimulation()) {
+			revNames.add(curEnt.entityName);
+			curEnt = curEnt.getParent();
+		}
+
+		// Build up the name back to front
+		StringBuilder sb = new StringBuilder();
+		Collections.reverse(revNames);
+		for (int i = 0; i < revNames.size(); ++i) {
+			sb.append(revNames.get(i));
+			if (i < revNames.size()-1) {
+				sb.append('.');
+			}
+		}
+		return sb.toString();
 	}
 
 	/**
