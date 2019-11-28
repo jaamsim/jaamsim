@@ -271,38 +271,6 @@ public abstract class CompoundEntity extends LinkedComponent {
 		return showComponents.getValue();
 	}
 
-	/**
-	 * Returns the component name without the sub-model's prefix.
-	 * @param name - component name
-	 * @return name with the prefix removed
-	 */
-	protected static String getComponentRootName(String name) {
-		int percentIndex = name.indexOf('%', 1);
-		return name.substring(percentIndex + 1);
-	}
-
-	/**
-	 * Returns the name for a component entity based on the name of its sub-model.
-	 * @param name - name of the sub-model.
-	 * @param compName - present name of the component.
-	 * @return new name for the component.
-	 */
-	protected static String getComponentName(String name, String compName) {
-		StringBuilder sb = new StringBuilder();
-		sb.append("%").append(name).append("%");
-		sb.append(getComponentRootName(compName));
-		return sb.toString();
-	}
-
-	protected String getComponentName(String name) {
-		return getComponentName(this.getName(), name);
-	}
-
-	public boolean isComponentName(String name) {
-		String compName = getComponentName(name);
-		return name.equals(compName);
-	}
-
 	@Override
 	public void addEntity(DisplayEntity ent) {
 		super.addEntity(ent);
