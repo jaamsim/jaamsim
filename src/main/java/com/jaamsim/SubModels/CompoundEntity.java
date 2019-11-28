@@ -27,9 +27,6 @@ import com.jaamsim.SubModels.SubModelStart;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.basicsim.JaamSimModel;
-import com.jaamsim.input.ExpError;
-import com.jaamsim.input.ExpEvaluator;
-import com.jaamsim.input.ExpParser;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.InputAgent;
@@ -37,7 +34,6 @@ import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.input.Vec3dInput;
-import com.jaamsim.input.ExpParser.Expression;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.DistanceUnit;
@@ -232,16 +228,12 @@ public abstract class CompoundEntity extends LinkedComponent {
 	}
 
 	public void setComponentList(ArrayList<DisplayEntity> list) {
-		ArrayList<DisplayEntity> oldList = new ArrayList<>(componentList);
 		componentList = new ArrayList<>(list);
 
 		// Place the components in the sub-model region
 		for (DisplayEntity comp : componentList) {
 			InputAgent.applyArgs(comp, "Region", smRegion.getName());
 		}
-
-		// Set the outputs for the sub-model
-		updateOutputs(oldList, componentList);
 	}
 
 	public ArrayList<DisplayEntity> getComponentList() {
@@ -277,44 +269,6 @@ public abstract class CompoundEntity extends LinkedComponent {
 
 	public boolean getShowComponents() {
 		return showComponents.getValue();
-	}
-
-	public void updateOutputs(ArrayList<DisplayEntity> oldCompList, ArrayList<DisplayEntity> newCompList) {
-
-		// Do nothing if the components are unchanged
-		if (newCompList.equals(oldCompList))
-			return;
-
-		// Delete the old outputs
-		for (DisplayEntity comp : oldCompList) {
-			if (comp == null || comp.getName() == null)
-				continue;
-			String outName = getComponentRootName(comp.getName());
-			removeCustomOutput(outName);
-		}
-
-		// Build the new outputs
-		for (int i = 0; i < newCompList.size(); i++) {
-			DisplayEntity comp = newCompList.get(i);
-			if (comp instanceof SubModelStart || comp instanceof SubModelEnd)
-				continue;
-
-			// Build a string for the output expression
-			StringBuilder sb = new StringBuilder();
-			sb.append("this.ComponentList(").append(i + 1).append(")");
-			String expString = sb.toString();
-
-			// Parse the expression string and add the output
-			String outName = getComponentRootName(comp.getName());
-			try {
-				ExpEvaluator.EntityParseContext parseContext = ExpEvaluator.getParseContext(this, expString);
-				Expression exp = ExpParser.parseExpression(parseContext, expString);
-				addCustomOutput(outName, exp, DimensionlessUnit.class);
-			}
-			catch (ExpError e) {
-				throw new ErrorException("Cannot create output '%s': " + e.getMessage(), outName);
-			}
-		}
 	}
 
 	/**
