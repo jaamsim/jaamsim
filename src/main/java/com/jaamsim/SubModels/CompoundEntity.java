@@ -276,12 +276,6 @@ public abstract class CompoundEntity extends LinkedComponent {
 		return showComponents.getValue();
 	}
 
-	@Override
-	public void setName(String newName) {
-		super.setName(newName);
-		renameComponents(newName);
-	}
-
 	public void renameComponents(String newName) {
 		if (smRegion != null) {
 			String name = getComponentName(newName, smRegion.getName());
