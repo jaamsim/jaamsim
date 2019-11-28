@@ -134,7 +134,7 @@ public abstract class CompoundEntity extends LinkedComponent {
 		super.earlyInit();
 
 		// Find the first component in the sub-model
-		for (DisplayEntity comp : componentList) {
+		for (Entity comp : getChildren()) {
 			if (comp instanceof SubModelStart) {
 				smStart = (SubModelStart)comp;
 				break;
@@ -142,7 +142,7 @@ public abstract class CompoundEntity extends LinkedComponent {
 		}
 
 		// Find the last component in the sub-model
-		for (DisplayEntity comp : componentList) {
+		for (Entity comp : getChildren()) {
 			if (comp instanceof SubModelEnd) {
 				((SubModelEnd)comp).setSubModel(this);
 			}
@@ -151,13 +151,12 @@ public abstract class CompoundEntity extends LinkedComponent {
 
 	@Override
 	public void kill() {
-		for (DisplayEntity comp : componentList) {
+		for (Entity comp : getChildren()) {
 			comp.kill();
 		}
 		namedChildren.clear();
 		componentList.clear();
 		smStart = null;
-		smRegion.kill();
 		smRegion = null;
 		super.kill();
 	}
