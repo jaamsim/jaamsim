@@ -258,16 +258,20 @@ public abstract class CompoundEntity extends LinkedComponent {
 	 * @param bool - if true, the components are displayed; if false, they are hidden.
 	 */
 	public void showComponents(boolean bool) {
-		InputAgent.applyBoolean(smRegion, "Show", bool);
-		for (DisplayEntity comp : componentList) {
+		for (Entity ent : getChildren()) {
+			if (!(ent instanceof DisplayEntity))
+				continue;
+			DisplayEntity comp = (DisplayEntity) ent;
 			InputAgent.applyBoolean(comp, "Show", bool);
 		}
 	}
 
 	public void showTemporaryComponents(boolean bool) {
 		bool = bool || getShowComponents();
-		smRegion.setShow(bool);
-		for (DisplayEntity comp : componentList) {
+		for (Entity ent : getChildren()) {
+			if (!(ent instanceof DisplayEntity))
+				continue;
+			DisplayEntity comp = (DisplayEntity) ent;
 			comp.setShow(bool);
 		}
 	}
