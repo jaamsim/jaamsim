@@ -17,12 +17,14 @@
 package com.jaamsim.SubModels;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.ProcessFlow.LinkedComponent;
 import com.jaamsim.Graphics.Region;
 import com.jaamsim.SubModels.SubModelEnd;
 import com.jaamsim.SubModels.SubModelStart;
+import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.input.ExpError;
@@ -60,6 +62,7 @@ public abstract class CompoundEntity extends LinkedComponent {
 	         exampleList = {"0.0 -2.0  0.0 m"})
 	protected final Vec3dInput regionPosition;
 
+	private final HashMap<String, Entity> namedChildren = new HashMap<>();
 	protected ArrayList<DisplayEntity> componentList;
 	private SubModelStart smStart;
 	private SubModelRegion smRegion;
@@ -151,6 +154,7 @@ public abstract class CompoundEntity extends LinkedComponent {
 		for (DisplayEntity comp : componentList) {
 			comp.kill();
 		}
+		namedChildren.clear();
 		componentList.clear();
 		smStart = null;
 		smRegion.kill();
@@ -162,6 +166,47 @@ public abstract class CompoundEntity extends LinkedComponent {
 	public void restore(String name) {
 		super.restore(name);
 		postDefine();
+	}
+
+	@Override
+	public Entity getChild(String name) {
+		synchronized (namedChildren) {
+			return namedChildren.get(name);
+		}
+	}
+
+	@Override
+	public void addChild(Entity ent) {
+		synchronized (namedChildren) {
+			namedChildren.put(ent.getLocalName(), ent);
+		}
+	}
+
+	@Override
+	public void removeChild(Entity ent) {
+		synchronized (namedChildren) {
+			if (ent != namedChildren.remove(ent.getLocalName()))
+				throw new ErrorException("Named Children Internal Consistency error: %s", ent);
+		}
+	}
+
+	@Override
+	public void renameChild(Entity ent, String oldName, String newName) {
+		synchronized (namedChildren) {
+			if (namedChildren.get(newName) != null)
+				throw new ErrorException("Child name: %s is already in use.", newName);
+
+			if (namedChildren.remove(oldName) != ent)
+				throw new ErrorException("Named Children Internal Consistency error");
+
+			namedChildren.put(newName, ent);
+		}
+	}
+
+	public ArrayList<Entity> getChildren() {
+		synchronized (namedChildren) {
+			return new ArrayList<>(namedChildren.values());
+		}
 	}
 
 	public void setDefaultRegionScale(double scale) {

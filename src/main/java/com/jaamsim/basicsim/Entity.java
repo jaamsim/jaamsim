@@ -400,7 +400,7 @@ public class Entity {
 	 * Add a child to this entity, should only be called from JaamSimModel
 	 * @param child
 	 */
-	void addChild(Entity child) {
+	public void addChild(Entity child) {
 		error("Entity [%s] may not have children", getName());
 	}
 
@@ -415,7 +415,7 @@ public class Entity {
 	 * @param oldName
 	 * @param newName
 	 */
-	void renameChild(Entity e, String oldName, String newName) {
+	public void renameChild(Entity e, String oldName, String newName) {
 		error("Entity [%s] may not have children", getName());
 	}
 
