@@ -227,8 +227,7 @@ public abstract class CompoundEntity extends LinkedComponent {
 	public void updateRegion() {
 		JaamSimModel simModel = getJaamSimModel();
 		if (smRegion == null) {
-			String name = getComponentName("Region");
-			smRegion = InputAgent.generateEntityWithName(simModel, SubModelRegion.class, name, true, true);
+			smRegion = InputAgent.generateEntityWithName(simModel, SubModelRegion.class, "Region", this, true, true);
 			smRegion.setSubModel(this);
 		}
 	}
