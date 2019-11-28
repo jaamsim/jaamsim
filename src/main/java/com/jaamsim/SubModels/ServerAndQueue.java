@@ -60,11 +60,11 @@ public class ServerAndQueue extends CompoundEntity {
 
 		// Create the sub-model components
 		JaamSimModel simModel = getJaamSimModel();
-		SubModelStart start = InputAgent.generateEntityWithName(simModel, SubModelStart.class, getComponentName("Start"), true, true);
-		Queue queue = InputAgent.generateEntityWithName(simModel, Queue.class, getComponentName("Queue"), true, true);
-		ExpressionThreshold threshold = InputAgent.generateEntityWithName(simModel, ExpressionThreshold.class, getComponentName("Threshold"), true, true);
-		Server server = InputAgent.generateEntityWithName(simModel, Server.class, getComponentName("Server"), true, true);
-		SubModelEnd end = InputAgent.generateEntityWithName(simModel, SubModelEnd.class, getComponentName("End"), true, true);
+		SubModelStart start = InputAgent.generateEntityWithName(simModel, SubModelStart.class, "Start", this, true, true);
+		Queue queue = InputAgent.generateEntityWithName(simModel, Queue.class, "Queue", this, true, true);
+		ExpressionThreshold threshold = InputAgent.generateEntityWithName(simModel, ExpressionThreshold.class, "Threshold", this, true, true);
+		Server server = InputAgent.generateEntityWithName(simModel, Server.class, "Server", this, true, true);
+		SubModelEnd end = InputAgent.generateEntityWithName(simModel, SubModelEnd.class, "End", this, true, true);
 
 		// Add component inputs to the sub-model
 		serviceTime = (SampleInput) server.getInput("ServiceTime");
@@ -78,7 +78,7 @@ public class ServerAndQueue extends CompoundEntity {
 		InputAgent.applyArgs(server, "NextComponent", end.getName());
 
 		// Threshold inputs
-		String expString = String.format("[%s].QueueLength < [%s].MaxQueueLength", queue, this);
+		String expString = "sub.[Queue].QueueLength < sub.MaxQueueLength";
 		InputAgent.applyArgs(threshold, "OpenCondition", expString);
 
 		// Set the component positions within the sub-model region
