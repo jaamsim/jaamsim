@@ -31,7 +31,6 @@ import com.jaamsim.input.Input;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
-import com.jaamsim.input.Output;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.input.Vec3dInput;
 import com.jaamsim.math.Vec3d;
@@ -279,13 +278,6 @@ public abstract class CompoundEntity extends LinkedComponent {
 
 	public void addReturnedEntity(DisplayEntity ent) {
 		sendToNextComponent(ent);
-	}
-
-	@Output(name = "ComponentList",
-	 description = "The objects contained in the sub-model.",
-	    sequence = 0)
-	public ArrayList<DisplayEntity> getComponentList(double simTime) {
-		return componentList;
 	}
 
 }
