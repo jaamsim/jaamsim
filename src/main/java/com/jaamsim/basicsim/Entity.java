@@ -362,7 +362,8 @@ public class Entity {
 
 	/**
 	 * Method to return the name of the entity.
-	 * Note that the name of the entity may not be the unique identifier used in the namedEntityHashMap; see Entity.toString()
+	 * This returns the "absolute" name for entities that are the child of other entities.
+	 * Use getLocalName() for the name relative to this entity's parent
 	 */
 	public final String getName() {
 		if (!this.testFlag(FLAG_REGISTERED) || parent == null) {
@@ -389,6 +390,10 @@ public class Entity {
 			}
 		}
 		return sb.toString();
+	}
+
+	public final String getLocalName() {
+		return entityName;
 	}
 
 	/**
