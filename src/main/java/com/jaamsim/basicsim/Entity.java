@@ -78,7 +78,7 @@ public class Entity {
 	public static final int FLAG_RETAINED = 0x0400;  // entity is retained when the model is reset between runs
 	private int flags;
 
-	private Entity parent;
+	Entity parent;
 
 	private final ArrayList<Input<?>> inpList = new ArrayList<>();
 
@@ -397,6 +397,25 @@ public class Entity {
 	}
 
 	/**
+	 * Add a child to this entity, should only be called from JaamSimModel
+	 * @param child
+	 */
+	void addChild(Entity child) {
+		error("Entity [%s] may not have children", getName());
+	}
+
+	/**
+	 * Called when an entity which is a child of this entity has been renamed
+	 * Note: Should only be called from JaamSimModel.renameEntity()
+	 * @param e
+	 * @param oldName
+	 * @param newName
+	 */
+	void renameChild(Entity e, String oldName, String newName) {
+		error("Entity [%s] may not have children", getName());
+	}
+
+	/**
 	 * Get the unique number for this entity
 	 * @return
 	 */
@@ -414,27 +433,12 @@ public class Entity {
 	}
 
 	/**
-	 * Method to set the input name of the entity.
+	 * Method to set the local name of the entity.
 	 */
 	public void setName(String newName) {
 		simModel.renameEntity(this, newName);
 	}
 
-	public void setParent(Entity p) {
-		// Validate that the parent is set correctly and only once
-		if (this.parent != null) {
-			error("Entity [%s] had parent set twice", entityName);
-		}
-		if (p == null) {
-			error("Entity [%s] had parent set to 'null'", entityName);
-		}
-
-		// Validate that this parent is correct
-		if (p.getChild(entityName) != this) {
-			error("Entity [%s] had parent incorrectly set to: [%s]", entityName, p.getName());
-		}
-		parent = p;
-	}
 	/**
 	 * Returns the parent entity for this entity
 	 */

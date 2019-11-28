@@ -310,7 +310,7 @@ public class InputAgent {
 			return null;
 		}
 
-		T ent = simModel.createInstance(proto, key, false, true, reg, retain);
+		T ent = simModel.createInstance(proto, key, null, false, true, reg, retain);
 		if (ent == null) {
 			InputAgent.logError(simModel,
 					"Could not create new Entity: %s", key);
@@ -390,7 +390,7 @@ public class InputAgent {
 			return null;
 		}
 
-		T ent = simModel.createInstance(proto, key, addedEntity, false, true, true);
+		T ent = simModel.createInstance(proto, key, null, addedEntity, false, true, true);
 
 		if (ent == null) {
 			InputAgent.logError(simModel,

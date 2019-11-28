@@ -755,7 +755,7 @@ public class JaamSimModel {
 	 * @param retain - true if the entity is retained when the model is reset between runs
 	 * @return new entity
 	 */
-	public final <T extends Entity> T createInstance(Class<T> proto, String name,
+	public final <T extends Entity> T createInstance(Class<T> proto, String name, Entity parent,
 			boolean added, boolean gen, boolean reg, boolean retain) {
 		T ent = createInstance(proto);
 		if (ent == null)
@@ -771,7 +771,10 @@ public class JaamSimModel {
 		if (retain)
 			ent.setFlag(Entity.FLAG_RETAINED);
 
-		ent.setName(name);
+		ent.parent = parent;
+
+		ent.setName(name); // Note: child entities will be added to its parent during this call
+
 		ent.postDefine();
 		return ent;
 	}
@@ -798,6 +801,24 @@ public class JaamSimModel {
 				return;
 			}
 
+			if (e.getParent() != getSimulation()) {
+				// This entity is part of a submodel
+				Entity parent = e.getParent();
+
+				String oldName = e.getLocalName();
+				e.entityName = newName;
+
+				if (oldName == null) {
+					// Newly created entity
+					parent.addChild(e);
+				} else {
+					// Genuine renaming
+					parent.renameChild(e, oldName, newName);
+				}
+				return;
+			}
+
+			// This is a top-level entity
 			if (namedEntities.get(newName) != null)
 				throw new ErrorException("Entity name: %s is already in use.", newName);
 
