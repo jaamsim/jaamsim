@@ -58,7 +58,6 @@ public abstract class CompoundEntity extends LinkedComponent {
 	protected final Vec3dInput regionPosition;
 
 	private final HashMap<String, Entity> namedChildren = new HashMap<>();
-	protected ArrayList<DisplayEntity> componentList;
 	private SubModelStart smStart;
 	private SubModelRegion smRegion;
 
@@ -82,9 +81,7 @@ public abstract class CompoundEntity extends LinkedComponent {
 		this.addInput(regionPosition);
 	}
 
-	public CompoundEntity() {
-		componentList = new ArrayList<>();
-	}
+	public CompoundEntity() {}
 
 	@Override
 	public void postDefine() {
@@ -150,7 +147,6 @@ public abstract class CompoundEntity extends LinkedComponent {
 			comp.kill();
 		}
 		namedChildren.clear();
-		componentList.clear();
 		smStart = null;
 		smRegion = null;
 		super.kill();
@@ -227,16 +223,9 @@ public abstract class CompoundEntity extends LinkedComponent {
 	}
 
 	public void setComponentList(ArrayList<DisplayEntity> list) {
-		componentList = new ArrayList<>(list);
-
-		// Place the components in the sub-model region
-		for (DisplayEntity comp : componentList) {
+		for (DisplayEntity comp : list) {
 			InputAgent.applyArgs(comp, "Region", smRegion.getName());
 		}
-	}
-
-	public ArrayList<DisplayEntity> getComponentList() {
-		return componentList;
 	}
 
 	public Region getSubModelRegion() {
