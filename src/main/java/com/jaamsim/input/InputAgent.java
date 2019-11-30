@@ -67,6 +67,7 @@ public class InputAgent {
 	private static final String INP_ERR_BADNAME = "An entity name cannot be blank or contain "
 	                                            + "spaces, tabs, braces, single or double quotes, "
 	                                            + "square brackets, the hash character, or a period.";
+	private static final String INP_ERR_BADPARENT = "The parent entity [%s] has not been defined.";
 	public static final char[] INVALID_ENTITY_CHARS = new char[]{' ', '\t', '\n', '{', '}', '\'', '"', '[', ']', '#','.'};
 
 	private static final String[] EARLY_KEYWORDS = {"UnitType", "UnitTypeList", "OutputUnitType", "SecondaryUnitType", "DataFile", "AttributeDefinitionList", "CustomOutputList"};
@@ -349,7 +350,7 @@ public class InputAgent {
 	 * or after the 'AddedRecord' flag is found in the configuration file.
 	 * @param simModel - JaamSimModel in which to create the entity
 	 * @param proto - class for the entity to be created
-	 * @param key - base name for the entity to be created
+	 * @param key - base absolute name for the entity to be created
 	 * @param sep - string to append to the name if it is already in use
 	 * @param addedEntity - true if the entity is new to the model
 	 * @return new entity
@@ -378,7 +379,7 @@ public class InputAgent {
 	 * file.
 	 * @param simModel - JaamSimModel in which to create the entity
 	 * @param proto - class for the entity to be created
-	 * @param key - name for the entity to be created
+	 * @param key - absolute name for the entity to be created
 	 * @param addedEntity - true if the entity is new to the model
 	 * @return new entity
 	 */
@@ -390,16 +391,36 @@ public class InputAgent {
 			return null;
 		}
 
-		if (!isValidName(key)) {
+		Entity parent = null;
+		String localName = key;
+
+		if (key.contains(".")) {
+			String[] names = key.split("\\.");
+			localName = names[names.length - 1];
+			names = Arrays.copyOf(names, names.length - 1);
+			parent = simModel.getEntityFromNames(names);
+			if (parent == null) {
+				String parentName = key.substring(0, key.length() - localName.length() - 1);
+				InputAgent.logError(simModel, INP_ERR_BADPARENT, parentName);
+				return null;
+			}
+		}
+
+		return defineEntity(simModel, proto, localName, parent, addedEntity);
+	}
+
+	private static <T extends Entity> T defineEntity(JaamSimModel simModel, Class<T> proto, String localName, Entity parent, boolean addedEntity) {
+
+		if (!isValidName(localName)) {
 			InputAgent.logError(simModel, INP_ERR_BADNAME);
 			return null;
 		}
 
-		T ent = simModel.createInstance(proto, key, null, addedEntity, false, true, true);
+		T ent = simModel.createInstance(proto, localName, parent, addedEntity, false, true, true);
 
 		if (ent == null) {
 			InputAgent.logError(simModel,
-					"Could not create new Entity: %s", key);
+					"Could not create new child Entity: %s for parent: %s", localName, parent);
 			return null;
 		}
 

@@ -543,7 +543,7 @@ public class JaamSimModel {
 	 * If the name already used, "_1", "_2", etc. will be appended to the name until an unused
 	 * name is found.
 	 * @param type - type of entity to be created
-	 * @param name - name for the created entity
+	 * @param name - absolute name for the created entity
 	 */
 	public void defineEntity(String type, String name) {
 		try {
