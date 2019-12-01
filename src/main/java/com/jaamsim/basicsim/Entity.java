@@ -404,6 +404,10 @@ public class Entity {
 		error("Entity [%s] may not have children", getName());
 	}
 
+	public void removeChild(Entity child) {
+		error("Entity [%s] may not have children", getName());
+	}
+
 	/**
 	 * Called when an entity which is a child of this entity has been renamed
 	 * Note: Should only be called from JaamSimModel.renameEntity()
