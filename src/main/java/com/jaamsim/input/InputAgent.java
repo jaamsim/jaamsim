@@ -430,7 +430,7 @@ public class InputAgent {
 	/**
 	 * Assigns a new name to the given entity.
 	 * @param ent - entity to be renamed
-	 * @param newName - new name for the entity
+	 * @param newName - new absolute name for the entity
 	 */
 	public static void renameEntity(Entity ent, String newName) {
 
@@ -442,12 +442,23 @@ public class InputAgent {
 		if (!ent.testFlag(Entity.FLAG_ADDED))
 			throw new ErrorException("Cannot rename an entity that was defined before the RecordEdits command.");
 
+		// Get the new local name
+		String localName = newName;
+		if (newName.contains(".")) {
+			String[] names = newName.split("\\.");
+			localName = names[names.length - 1];
+			names = Arrays.copyOf(names, names.length - 1);
+			Entity parent = ent.getJaamSimModel().getEntityFromNames(names);
+			if (parent != ent.getParent())
+				throw new ErrorException("Cannot rename the entity's parent");
+		}
+
 		// Check that the new name is valid
-		if (!isValidName(newName))
+		if (!isValidName(localName))
 			throw new ErrorException(INP_ERR_BADNAME);
 
 		// Rename the entity
-		InputAgent.storeAndExecute(new RenameCommand(ent, newName));
+		InputAgent.storeAndExecute(new RenameCommand(ent, localName));
 	}
 
 	public static void processKeywordRecord(JaamSimModel simModel, ArrayList<String> record, ParseContext context) {

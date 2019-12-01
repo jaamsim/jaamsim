@@ -793,6 +793,11 @@ public class JaamSimModel {
 		return ent;
 	}
 
+	/**
+	 * Changes the specified entity's name.
+	 * @param e - entity to be renamed
+	 * @param newName - new local name for the entity
+	 */
 	final void renameEntity(Entity e, String newName) {
 		synchronized(namedEntities) {
 			// Unregistered entities do not appear in the named entity hashmap, no consistency checks needed
