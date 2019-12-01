@@ -462,6 +462,16 @@ public class Entity {
 		return null;
 	}
 
+	public int getSubModelLevel() {
+		int ret = 0;
+		Entity ent = parent;
+		while (ent != null) {
+			ret++;
+			ent = ent.parent;
+		}
+		return ret;
+	}
+
 	/**
 	 * This method updates the Entity for changes in the given input
 	 */

@@ -1444,12 +1444,19 @@ public class InputAgent {
 			if (ret != 0)
 				return ret;
 
+			// First sort by sub-model level
+			int sub0 = ent0.getSubModelLevel();
+			int sub1 = ent1.getSubModelLevel();
+			ret = Integer.compare(sub0, sub1);
+			if (ret != 0)
+				return ret;
+
 			ObjectType ot0 = ent0.getJaamSimModel().getObjectTypeForClass(class0);
 			ObjectType ot1 = ent1.getJaamSimModel().getObjectTypeForClass(class1);
 			String pal0 = ot0.getPaletteName();
 			String pal1 = ot1.getPaletteName();
 
-			// Otherwise, first sort by graphics vs non-graphics palettes
+			// If the levels are the same, then sort by graphics vs non-graphics palettes
 			boolean isGraf0 = Arrays.asList(GRAPHICS_PALETTES).contains(pal0);
 			boolean isGraf1 = Arrays.asList(GRAPHICS_PALETTES).contains(pal1);
 			ret = Boolean.compare(isGraf0, isGraf1);  // Non-graphics goes first
