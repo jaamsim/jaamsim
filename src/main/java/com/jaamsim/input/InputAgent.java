@@ -1037,6 +1037,7 @@ public class InputAgent {
 
 		// Print the first part of the "Define" statement for this object type
 		Class<? extends Entity> entClass = null;
+		int level = 0;
 		for (Entity ent : newEntities) {
 
 			// Is the class different from the last one
@@ -1045,6 +1046,12 @@ public class InputAgent {
 				// Close the previous Define statement
 				if (entClass != null) {
 					file.format("}%n");
+				}
+
+				// Add a blank line between sub-model levels
+				if (ent.getSubModelLevel() != level) {
+					level = ent.getSubModelLevel();
+					file.format("%n");
 				}
 
 				// Start the new Define statement
