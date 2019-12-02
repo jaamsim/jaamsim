@@ -51,6 +51,7 @@ import com.jaamsim.Graphics.Editable;
 import com.jaamsim.Graphics.EntityLabel;
 import com.jaamsim.Graphics.LinkDisplayable;
 import com.jaamsim.Graphics.OverlayEntity;
+import com.jaamsim.Graphics.Region;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.basicsim.ObjectType;
@@ -1553,15 +1554,34 @@ public class RenderManager implements DragSourceListener {
 			return;
 		}
 
-		Vec3d creationPoint = currentRay.getPointAtDist(dist);
-		Simulation simulation = simModel.getSimulation();
-		if (simulation.isSnapToGrid()) {
-			creationPoint = simulation.getSnapGridPosition(creationPoint);
+		// Find the region for this location
+		Region region = null;
+		View view = windowToViewMap.get(windowID);
+		List<PickData> picks = pickForRay(currentRay, view.getID(), false);
+		Collections.sort(picks, new SelectionSorter());
+		for (PickData pd : picks) {
+			if (pd.isEntity) {
+				DisplayEntity ent = (DisplayEntity) simModel.idToEntity(pd.id);
+				if (ent instanceof Region) {
+					region = (Region) ent;
+					break;
+				}
+			}
+		}
+
+		// Set the sub-model for this location
+		Entity parent = null;
+		if (region != null && region.getParent() != simModel.getSimulation()) {
+			parent = region.getParent();
 		}
 
 		// Create a new instance
 		Class<? extends Entity> proto  = dndObjectType.getJavaClass();
-		String name = InputAgent.getUniqueName(simModel, proto.getSimpleName(), "");
+		String name = proto.getSimpleName();
+		if (parent != null && !(OverlayEntity.class.isAssignableFrom(proto))) {
+			name = parent.getName() + "." + name;
+		}
+		name = InputAgent.getUniqueName(simModel, name, "");
 		InputAgent.storeAndExecute(new DefineCommand(simModel, proto, name));
 		Entity ent = simModel.getNamedEntity(name);
 
@@ -1575,6 +1595,19 @@ public class RenderManager implements DragSourceListener {
 		// Set the position for the entity
 		if (ent instanceof DisplayEntity) {
 			DisplayEntity dispEnt = (DisplayEntity) ent;
+
+			// Set the region
+			if (region != null && !(ent instanceof OverlayEntity))
+				InputAgent.applyArgs(ent, "Region", region.getName());
+
+			// Set the location
+			Vec3d creationPoint = currentRay.getPointAtDist(dist);
+			creationPoint = dispEnt.getLocalPosition(creationPoint);
+			Simulation simulation = simModel.getSimulation();
+			if (simulation.isSnapToGrid()) {
+				creationPoint = simulation.getSnapGridPosition(creationPoint);
+			}
+
 			try {
 				dispEnt.dragged(x, y, creationPoint);
 			}
