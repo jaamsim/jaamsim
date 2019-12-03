@@ -279,19 +279,6 @@ public abstract class CompoundEntity extends LinkedComponent {
 		return showComponents.getValue();
 	}
 
-	public void renameComponents(String newName) {
-		if (smRegion != null) {
-			String name = getComponentName(newName, smRegion.getName());
-			smRegion.setName(name);
-		}
-		for (DisplayEntity comp : componentList) {
-			if (comp == null)
-				continue;
-			String name = getComponentName(newName, comp.getName());
-			comp.setName(name);
-		}
-	}
-
 	public void updateOutputs(ArrayList<DisplayEntity> oldCompList, ArrayList<DisplayEntity> newCompList) {
 
 		// Do nothing if the components are unchanged
