@@ -209,6 +209,16 @@ public class JaamSimModel {
 	}
 
 	/**
+	 * Performs any additional actions that are required for each entity after a new configuration
+	 * file has been loaded. Performed prior to validation.
+	 */
+	public void postLoad() {
+		for (Entity each : getClonesOfIterator(Entity.class)) {
+			each.postLoad();
+		}
+	}
+
+	/**
 	 * Performs consistency checks on the model inputs.
 	 * @return true if no validation errors were found
 	 */

@@ -172,6 +172,12 @@ public class Entity {
 		return simModel.getSimulation();
 	}
 
+	/**
+	 * Performs any additional actions that are required after a new configuration file has been
+	 * loaded. Performed prior to validation.
+	 */
+	public void postLoad() {}
+
 	public void validate() throws InputErrorException {
 		for (Input<?> in : inpList) {
 			in.validate();

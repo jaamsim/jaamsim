@@ -526,6 +526,9 @@ public class InputAgent {
 		URI dirURI = file.getParentFile().toURI();
 		InputAgent.readStream(simModel, "", dirURI, file.getName());
 
+		// Perform any actions that are required after loading the input file
+		simModel.postLoad();
+
 		// Validate the inputs
 		for (Entity each : simModel.getClonesOfIterator(Entity.class)) {
 			try {
