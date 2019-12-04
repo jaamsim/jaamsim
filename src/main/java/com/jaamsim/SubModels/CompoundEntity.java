@@ -86,7 +86,11 @@ public abstract class CompoundEntity extends LinkedComponent {
 	@Override
 	public void postDefine() {
 		super.postDefine();
-		updateRegion();
+
+		// Create the region
+		JaamSimModel simModel = getJaamSimModel();
+		smRegion = InputAgent.generateEntityWithName(simModel, SubModelRegion.class, "Region", this, true, true);
+		smRegion.setSubModel(this);
 	}
 
 	@Override
@@ -212,14 +216,6 @@ public abstract class CompoundEntity extends LinkedComponent {
 	public void setDefaultRegionPosition(Vec3d pos) {
 		regionPosition.setDefaultValue(pos);
 		smRegion.setPosition(pos);
-	}
-
-	public void updateRegion() {
-		JaamSimModel simModel = getJaamSimModel();
-		if (smRegion == null) {
-			smRegion = InputAgent.generateEntityWithName(simModel, SubModelRegion.class, "Region", this, true, true);
-			smRegion.setSubModel(this);
-		}
 	}
 
 	public void setComponentList(ArrayList<DisplayEntity> list) {
