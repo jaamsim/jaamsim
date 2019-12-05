@@ -146,23 +146,6 @@ public abstract class CompoundEntity extends LinkedComponent {
 	}
 
 	@Override
-	public void kill() {
-		for (Entity comp : getChildren()) {
-			comp.kill();
-		}
-		namedChildren.clear();
-		smStart = null;
-		smRegion = null;
-		super.kill();
-	}
-
-	@Override
-	public void restore(String name) {
-		super.restore(name);
-		postDefine();
-	}
-
-	@Override
 	public Entity getChild(String name) {
 		synchronized (namedChildren) {
 			return namedChildren.get(name);

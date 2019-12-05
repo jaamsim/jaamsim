@@ -225,6 +225,9 @@ public class Entity {
 	public void setInputsForDragAndDrop() {}
 
 	public void kill() {
+		for (Entity ent : getChildren()) {
+			ent.kill();
+		}
 		if (testFlag(Entity.FLAG_DEAD))
 			return;
 		simModel.removeInstance(this);
@@ -238,6 +241,7 @@ public class Entity {
 		simModel.restoreInstance(this);
 		this.setName(name);
 		this.clearFlag(Entity.FLAG_DEAD);
+		postDefine();
 	}
 
 	/**
