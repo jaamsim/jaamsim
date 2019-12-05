@@ -16,9 +16,6 @@
  */
 package com.jaamsim.SubModels;
 
-import java.util.ArrayList;
-
-import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.ProcessFlow.Queue;
 import com.jaamsim.ProcessFlow.Server;
 import com.jaamsim.Samples.SampleConstant;
@@ -93,14 +90,13 @@ public class ServerAndQueue extends CompoundEntity {
 		setDefaultRegionSize(new Vec3d(3.0d, 2.0d, 0.0d));
 		setDefaultRegionPosition(new Vec3d(0.0d, -1.5d, 0.0d));
 
-		// Set the component list
-		ArrayList<DisplayEntity> compList = new ArrayList<>();
-		compList.add(start);
-		compList.add(queue);
-		compList.add(threshold);
-		compList.add(server);
-		compList.add(end);
-		setComponentList(compList);
+		// Set the region
+		String regionName = getSubModelRegion().getName();
+		InputAgent.applyArgs(start,     "Region", regionName);
+		InputAgent.applyArgs(queue,     "Region", regionName);
+		InputAgent.applyArgs(threshold, "Region", regionName);
+		InputAgent.applyArgs(server,    "Region", regionName);
+		InputAgent.applyArgs(end,       "Region", regionName);
 	}
 
 	@Output(name = "MaxQueueLength",
