@@ -197,6 +197,7 @@ public abstract class CompoundEntity extends LinkedComponent {
 		}
 	}
 
+	@Override
 	public ArrayList<Entity> getChildren() {
 		synchronized (namedChildren) {
 			return new ArrayList<>(namedChildren.values());

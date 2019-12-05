@@ -468,6 +468,14 @@ public class Entity {
 		return null;
 	}
 
+	/**
+	 * Returns the named child entities for this entity.
+	 * @return array of child entities
+	 */
+	public ArrayList<Entity> getChildren() {
+		return new ArrayList<>();
+	}
+
 	public int getSubModelLevel() {
 		int ret = 0;
 		Entity ent = parent;
