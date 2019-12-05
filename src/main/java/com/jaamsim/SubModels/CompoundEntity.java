@@ -218,12 +218,6 @@ public abstract class CompoundEntity extends LinkedComponent {
 		smRegion.setPosition(pos);
 	}
 
-	public void setComponentList(ArrayList<DisplayEntity> list) {
-		for (DisplayEntity comp : list) {
-			InputAgent.applyArgs(comp, "Region", smRegion.getName());
-		}
-	}
-
 	public Region getSubModelRegion() {
 		return smRegion;
 	}
