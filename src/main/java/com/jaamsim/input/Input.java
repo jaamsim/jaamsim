@@ -154,6 +154,7 @@ public abstract class Input<T> {
 	private String defText; // special text to show in the default column of the Input Editor
 	private boolean isReqd;     // indicates whether this input must be provided by the user
 	private boolean isValid;  // if false, the input is no longer valid and must be re-entered
+	private boolean isOutput; // True if this input should also appear on the entity's output list
 
 	public static final Comparator<Object> uiSortOrder = new NaturalOrderComparator();
 
@@ -170,6 +171,7 @@ public abstract class Input<T> {
 		defText = null;
 		isReqd = false;
 		isValid = true;
+		isOutput = false;
 	}
 
 	public void reset() {
@@ -327,6 +329,13 @@ public abstract class Input<T> {
 
 	public boolean isValid() {
 		return isValid;
+	}
+
+	public void setOutput(boolean bool) {
+		isOutput = bool;
+	}
+	public boolean isOutput() {
+		return isOutput;
 	}
 
 	public boolean useExpressionBuilder() {

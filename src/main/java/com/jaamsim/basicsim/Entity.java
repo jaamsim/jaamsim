@@ -35,6 +35,7 @@ import com.jaamsim.input.ExpResType;
 import com.jaamsim.input.ExpResult;
 import com.jaamsim.input.ExpValResult;
 import com.jaamsim.input.ExpressionHandle;
+import com.jaamsim.input.InOutHandle;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InputErrorException;
@@ -84,6 +85,7 @@ public class Entity {
 
 	private final HashMap<String, AttributeHandle> attributeMap = new LinkedHashMap<>();
 	private final HashMap<String, ExpressionHandle> customOutputMap = new LinkedHashMap<>();
+	private final HashMap<String, InOutHandle> inputOutputMap = new LinkedHashMap<>();
 
 	public static final String KEY_INPUTS = "Key Inputs";
 	public static final String OPTIONS = "Options";
@@ -265,6 +267,10 @@ public class Entity {
 
 	protected void addInput(Input<?> in) {
 		inpList.add(in);
+
+		if (in.isOutput()) {
+			inputOutputMap.put(in.getKeyword(), new InOutHandle(this, in));
+		}
 	}
 
 	protected void removeInput(Input<?> in) {
@@ -645,6 +651,9 @@ public class Entity {
 		if (customOutputMap.containsKey(outputName))
 			return customOutputMap.get(outputName);
 
+		if (inputOutputMap.containsKey(outputName))
+			return inputOutputMap.get(outputName);
+
 		if (hasOutput(outputName)) {
 			OutputHandle ret = new OutputHandle(this, outputName);
 			if (ret.getUnitType() == UserSpecifiedUnit.class)
@@ -668,6 +677,9 @@ public class Entity {
 		if (customOutputMap.containsKey(outputName))
 			return customOutputMap.get(outputName);
 
+		if (inputOutputMap.containsKey(outputName))
+			return inputOutputMap.get(outputName);
+
 		if (OutputHandle.hasOutputInterned(this.getClass(), outputName)) {
 			OutputHandle ret = new OutputHandle(this, outputName);
 			if (ret.getUnitType() == UserSpecifiedUnit.class)
@@ -685,6 +697,8 @@ public class Entity {
 		if (attributeMap.containsKey(outputName))
 			return true;
 		if (customOutputMap.containsKey(outputName))
+			return true;
+		if (inputOutputMap.containsKey(outputName))
 			return true;
 
 		return false;
@@ -792,6 +806,13 @@ public class Entity {
 	public ArrayList<String> getCustomOutputNames(){
 		ArrayList<String> ret = new ArrayList<>();
 		for (String name : customOutputMap.keySet()) {
+			ret.add(name);
+		}
+		return ret;
+	}
+	public ArrayList<String> getInputOutputNames(){
+		ArrayList<String> ret = new ArrayList<>();
+		for (String name : inputOutputMap.keySet()) {
 			ret.add(name);
 		}
 		return ret;
