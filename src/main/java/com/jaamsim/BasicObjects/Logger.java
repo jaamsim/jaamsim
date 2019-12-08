@@ -106,19 +106,17 @@ public abstract class Logger extends DisplayEntity {
 			file = null;
 		}
 
+		if (!isActive())
+			return;
+
 		// Create the report file
-		if (file == null && isActive()) {
+		if (file == null) {
 			StringBuilder tmp = new StringBuilder(
 					simModel.getReportFileName(simModel.getRunName()));
 			tmp.append("-").append(this.getName());
 			tmp.append(".log");
 			file = new FileEntity(tmp.toString());
 		}
-	}
-
-	@Override
-	public void startUp() {
-		super.startUp();
 
 		// Print the detailed run information to the file
 		if (getJaamSimModel().isFirstRun())
