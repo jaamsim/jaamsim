@@ -158,8 +158,16 @@ public class ExternalProgram extends LinkedComponent {
 			InputStream es = process.getErrorStream();
 			BufferedReader er = new BufferedReader(new InputStreamReader(es));
 			String str = er.readLine();
-			if (str != null)
-				throw new Exception(str);
+			if (str != null) {
+				StringBuilder sb = new StringBuilder(str);
+				while (true) {
+					String line = er.readLine();
+					if (line == null)
+						break;
+					sb.append("\n").append(line);
+				}
+				throw new Exception(sb.toString());
+			}
 
 			// Collect the outputs from the program
 			InputStream is = process.getInputStream();
