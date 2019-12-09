@@ -163,8 +163,10 @@ public class EntityGenerator extends LinkedService {
 
 		// Set the name for the entities
 		String name = baseName.getValue();
-		if (name == null)
+		if (name == null) {
 			name = this.getName() + "_";
+			name = name.replace(".", "_");
+		}
 
 		// Create the new entities
 		int num = (int) entitiesPerArrival.getValue().getNextSample(getSimTime());
