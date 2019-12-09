@@ -66,7 +66,9 @@ public class InputAgent {
 	private static final String INP_ERR_DEFINEUSED = "The name: %s has already been used and is a %s";
 	private static final String INP_ERR_BADNAME = "An entity name cannot be blank or contain "
 	                                            + "spaces, tabs, braces, single or double quotes, "
-	                                            + "square brackets, the hash character, or a period.";
+	                                            + "square brackets, the hash character, or a "
+	                                            + "period.\n "
+	                                            + "Name: %s";
 	private static final String INP_ERR_BADPARENT = "The parent entity [%s] has not been defined.";
 	public static final char[] INVALID_ENTITY_CHARS = new char[]{' ', '\t', '\n', '{', '}', '\'', '"', '[', ']', '#','.'};
 
@@ -311,17 +313,12 @@ public class InputAgent {
 		if (key == null)
 			throw new ErrorException("Must provide a name for generated Entities");
 
-		if (!isValidName(key)) {
-			InputAgent.logError(simModel, INP_ERR_BADNAME);
-			return null;
-		}
+		if (!isValidName(key))
+			throw new ErrorException(INP_ERR_BADNAME, key);
 
 		T ent = simModel.createInstance(proto, key, parent, false, true, reg, retain);
-		if (ent == null) {
-			InputAgent.logError(simModel,
-					"Could not create new Entity: %s", key);
-			return null;
-		}
+		if (ent == null)
+			throw new ErrorException("Could not create new Entity: %s", key);
 
 		return ent;
 	}
@@ -412,7 +409,7 @@ public class InputAgent {
 	private static <T extends Entity> T defineEntity(JaamSimModel simModel, Class<T> proto, String localName, Entity parent, boolean addedEntity) {
 
 		if (!isValidName(localName)) {
-			InputAgent.logError(simModel, INP_ERR_BADNAME);
+			InputAgent.logError(simModel, INP_ERR_BADNAME, localName);
 			return null;
 		}
 
@@ -455,7 +452,7 @@ public class InputAgent {
 
 		// Check that the new name is valid
 		if (!isValidName(localName))
-			throw new ErrorException(INP_ERR_BADNAME);
+			throw new ErrorException(INP_ERR_BADNAME, localName);
 
 		// Rename the entity
 		InputAgent.storeAndExecute(new RenameCommand(ent, newName));
