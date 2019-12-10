@@ -4554,8 +4554,47 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				EntityLabel.showTemporaryLabel(dEnt, true);
 		}
 
+		// Copy the children
+		copyChildren(ent, copiedEnt);
+
 		// Select the new entity
 		FrameBox.setSelectedEntity(copiedEnt, false);
+	}
+
+	public void copyChildren(Entity parent0, Entity parent1) {
+		for (Entity child : parent0.getChildren()) {
+			if (child.testFlag(Entity.FLAG_GENERATED) || child instanceof EntityLabel)
+				continue;
+
+			// Construct the new child's name
+			String name = child.getLocalName();
+			name = parent1.getName() + "." + name;
+
+			// Create the new child and copy the inputs
+			InputAgent.storeAndExecute(new DefineCommand(sim, child.getClass(), name));
+			Entity copiedChild = sim.getNamedEntity(name);
+			copiedChild.copyInputs(child);
+
+			if (child instanceof DisplayEntity) {
+
+				// Set the region
+				if (parent1 instanceof CompoundEntity) {
+					Region region = ((CompoundEntity) parent1).getSubModelRegion();
+					InputAgent.applyArgs(copiedChild, "Region", region.getName());
+				}
+
+				// Add a label if necessary
+				EntityLabel label = EntityLabel.getLabel((DisplayEntity) child);
+				if (label != null) {
+					EntityLabel newLabel = EntityLabel.createLabel((DisplayEntity) copiedChild);
+					InputAgent.applyBoolean(newLabel, "Show", label.getShowInput());
+					newLabel.setShow(label.getShow());
+				}
+			}
+
+			// Copy the child's children
+			copyChildren(child, copiedChild);
+		}
 	}
 
 	public void invokeNew() {
