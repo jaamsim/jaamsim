@@ -3293,6 +3293,14 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		if (ent instanceof DisplayEntity && !((DisplayEntity) ent).isMovable())
 			throw new ErrorException("Cannot delete an entity that is not movable.");
 
+		// Delete any child entities
+		for (Entity child : ent.getChildren()) {
+			if (child.testFlag(Entity.FLAG_GENERATED) || child instanceof EntityLabel)
+				child.kill();
+			else
+				deleteEntity(child);
+		}
+
 		// Region
 		if (ent instanceof Region) {
 
