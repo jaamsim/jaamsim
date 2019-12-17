@@ -458,7 +458,7 @@ public class InputAgent {
 			throw new ErrorException(INP_ERR_BADNAME);
 
 		// Rename the entity
-		InputAgent.storeAndExecute(new RenameCommand(ent, localName));
+		InputAgent.storeAndExecute(new RenameCommand(ent, newName));
 	}
 
 	public static void processKeywordRecord(JaamSimModel simModel, ArrayList<String> record, ParseContext context) {
