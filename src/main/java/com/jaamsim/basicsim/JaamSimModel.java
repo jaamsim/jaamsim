@@ -758,7 +758,8 @@ public class JaamSimModel {
 	/**
 	 * Creates a new entity.
 	 * @param proto - class for the entity
-	 * @param name - entity name
+	 * @param name - entity local name
+	 * @param parent - entity's parent
 	 * @param added - true if the entity was defined after the 'RecordEdits' flag
 	 * @param gen - true if the entity was created during the execution of the simulation
 	 * @param reg - true if the entity is included in the namedEntities HashMap
@@ -782,8 +783,7 @@ public class JaamSimModel {
 			ent.setFlag(Entity.FLAG_RETAINED);
 
 		ent.parent = parent;
-
-		ent.setName(name); // Note: child entities will be added to its parent during this call
+		ent.setLocalName(name); // Note: child entities will be added to its parent during this call
 
 		ent.postDefine();
 		return ent;
