@@ -235,7 +235,7 @@ public class Entity {
 
 	/**
 	 * Reverses the actions taken by the kill method.
-	 * @param name - entity's name before it was deleted
+	 * @param name - entity's absolute name before it was deleted
 	 */
 	public void restore(String name) {
 		simModel.restoreInstance(this);
@@ -447,9 +447,23 @@ public class Entity {
 	}
 
 	/**
-	 * Method to set the local name of the entity.
+	 * Sets the absolute name of the entity.
+	 * @param newName - new absolute name
 	 */
 	public void setName(String newName) {
+		String localName = newName;
+		if (newName.contains(".")) {
+			String[] names = newName.split("\\.");
+			localName = names[names.length - 1];
+		}
+		setLocalName(localName);
+	}
+
+	/**
+	 * Sets the local name of the entity.
+	 * @param newName - new local name
+	 */
+	public void setLocalName(String newName) {
 		simModel.renameEntity(this, newName);
 	}
 
