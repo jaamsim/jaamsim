@@ -2,6 +2,7 @@ Define ObjectType {
                     Region
                     DisplayEntity
                     Shape
+                    Polyline
                     Text
                     EntityLabel
                     BarGauge
@@ -22,6 +23,7 @@ MimicEntityIconModel   ImageFile { '<res>/images/MimicEntity-256.png' }  Transpa
 Region                JavaClass { com.jaamsim.Graphics.Region                        } Palette { 'Graphics Objects' } DefaultDisplayModel { RegionModelDefault       } IconFile { '<res>/images/Region-24.png' } DefaultSize { 1.125000 1.1568242 1.1266404 m } DefaultAlignment { -0.4393409 -0.4410096 -0.4394292 }
 DisplayEntity         JavaClass { com.jaamsim.Graphics.DisplayEntity                 } Palette { 'Graphics Objects' } DefaultDisplayModel { Cube                     } IconFile { '<res>/images/DisplayEntity-24.png' }
 Shape                 JavaClass { com.jaamsim.Graphics.Shape                         } Palette { 'Graphics Objects' } DefaultDisplayModel { Rectangle                } IconFile { '<res>/images/Shape-24.png' }
+Polyline              JavaClass { com.jaamsim.Graphics.Polyline                      } Palette { 'Graphics Objects' } DefaultDisplayModel { PolylineModelDefault     } IconFile { '<res>/images/Polyline-24.png' }
 Text                  JavaClass { com.jaamsim.Graphics.Text                          } Palette { 'Graphics Objects' } DefaultDisplayModel { TextModelDefault         } IconFile { '<res>/images/Text-24.png' }
 EntityLabel           JavaClass { com.jaamsim.Graphics.EntityLabel                   } Palette { 'Graphics Objects' } DefaultDisplayModel { EntityLabelModel         } DragAndDrop { FALSE }
 BarGauge              JavaClass { com.jaamsim.Graphics.BarGauge                      } Palette { 'Graphics Objects' } DefaultDisplayModel { BarGauge2D               } IconFile { '<res>/images/BarGauge-24.png' } DefaultSize { 0.5 1.0 0.0 m }
@@ -38,6 +40,7 @@ VideoRecorder         JavaClass { com.jaamsim.ui.VideoRecorderEntity            
 Region        Description { 'Local coordinate system.' }
 DisplayEntity Description { 'Graphical object displaying either a 3D shape or a 2D picture.' }
 Shape         Description { 'Two dimensional graphical object whose shape and colour can be selected.' }
+Polyline      Description { 'Straight or curved line segments.' }
 Text          Description { 'Text that appears in the 3D model universe.' }
 BarGauge      Description { 'Gauge that displays the value of an expression.' }
 BooleanIndicator  Description { 'Circular entity that changes color to indicate TRUE and FALSE' }
