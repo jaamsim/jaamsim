@@ -159,6 +159,7 @@ public class PolylineModel extends DisplayModel implements LineEntity, FillEntit
 
 		private Arrow arrowObservee;
 		private LineEntity lineEnt;
+		private FillEntity fillEnt;
 
 		private ArrayList<Vec4d> headPoints = null;
 		private Vec3d arrowSizeCache;
@@ -192,6 +193,8 @@ public class PolylineModel extends DisplayModel implements LineEntity, FillEntit
 				arrowObservee = (Arrow)observee;
 			if (observee instanceof LineEntity)
 				lineEnt = (LineEntity) observee;
+			if (ent instanceof FillEntity)
+				fillEnt = (FillEntity) ent;
 		}
 
 		/**
@@ -211,8 +214,8 @@ public class PolylineModel extends DisplayModel implements LineEntity, FillEntit
 			Color4d lineColour = lineEnt == null ? getLineColour() : lineEnt.getLineColour();
 			int lineWidth = lineEnt == null ? getLineWidth() : lineEnt.getLineWidth();
 
-			boolean fill = filled.getValue();
-			Color4d fc = fillColour.getValue();
+			boolean fill = fillEnt == null ? filled.getValue() : fillEnt.isFilled();
+			Color4d fc = fillEnt == null ? fillColour.getValue() : fillEnt.getFillColour();
 
 			Vec3d arrowSize = getArrowHeadSize();
 			if (arrowObservee != null)
