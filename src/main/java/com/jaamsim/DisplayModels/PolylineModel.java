@@ -22,6 +22,7 @@ import java.util.List;
 
 import com.jaamsim.Graphics.Arrow;
 import com.jaamsim.Graphics.DisplayEntity;
+import com.jaamsim.Graphics.FillEntity;
 import com.jaamsim.Graphics.LineEntity;
 import com.jaamsim.Graphics.PolylineInfo;
 import com.jaamsim.basicsim.Entity;
@@ -45,7 +46,7 @@ import com.jaamsim.render.RenderUtils;
 import com.jaamsim.render.VisibilityInfo;
 import com.jaamsim.units.DistanceUnit;
 
-public class PolylineModel extends DisplayModel implements LineEntity {
+public class PolylineModel extends DisplayModel implements LineEntity, FillEntity {
 
 	@Keyword(description = "The colour of the polyline.",
 	         exampleList = {"red"})
@@ -134,6 +135,16 @@ public class PolylineModel extends DisplayModel implements LineEntity {
 	@Override
 	public int getLineWidth() {
 		return Math.max(1, width.getValue());
+	}
+
+	@Override
+	public boolean isFilled() {
+		return filled.getValue();
+	}
+
+	@Override
+	public Color4d getFillColour() {
+		return fillColour.getValue();
 	}
 
 	public boolean getShowArrowHead() {
