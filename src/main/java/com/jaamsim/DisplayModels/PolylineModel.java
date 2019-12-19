@@ -48,6 +48,12 @@ import com.jaamsim.units.DistanceUnit;
 
 public class PolylineModel extends DisplayModel implements LineEntity, FillEntity {
 
+	@Keyword(description = "Determines whether or not the polyline is outlined. "
+	                     + "If TRUE, it is outlined with a uniform colour. "
+	                     + "If FALSE, it is drawn without an outline.",
+	         exampleList = {"FALSE"})
+	private final BooleanInput outlined;
+
 	@Keyword(description = "The colour of the polyline.",
 	         exampleList = {"red"})
 	private final ColourInput colour;
@@ -74,6 +80,9 @@ public class PolylineModel extends DisplayModel implements LineEntity, FillEntit
 	protected final Vec3dInput arrowHeadSize;
 
 	{
+		outlined = new BooleanInput("Outlined", FORMAT, true);
+		this.addInput(outlined);
+
 		colour = new ColourInput("LineColour", FORMAT, ColourInput.BLACK);
 		this.addInput(colour);
 		this.addSynonym(colour, "Color");
@@ -124,7 +133,7 @@ public class PolylineModel extends DisplayModel implements LineEntity, FillEntit
 
 	@Override
 	public boolean isOutlined() {
-		return true;
+		return outlined.getValue();
 	}
 
 	@Override
@@ -165,6 +174,7 @@ public class PolylineModel extends DisplayModel implements LineEntity, FillEntit
 		private Vec3d arrowSizeCache;
 		private int lineWidthCache;
 		private Color4d lineColourCache;
+		private boolean outlinedCache;
 		private boolean filledCache;
 		private Color4d fillColourCache;
 		private boolean showArrowHeadCache;
@@ -211,6 +221,7 @@ public class PolylineModel extends DisplayModel implements LineEntity, FillEntit
 				globalTrans = displayObservee.getGlobalPositionTransform();
 			}
 
+			boolean outln = lineEnt == null ? outlined.getValue() : lineEnt.isOutlined();
 			Color4d lineColour = lineEnt == null ? getLineColour() : lineEnt.getLineColour();
 			int lineWidth = lineEnt == null ? getLineWidth() : lineEnt.getLineWidth();
 
@@ -228,6 +239,7 @@ public class PolylineModel extends DisplayModel implements LineEntity, FillEntit
 			dirty = dirty || !compareArray(pisCache, pis);
 			dirty = dirty || lineWidthCache != lineWidth;
 			dirty = dirty || dirty_col4d(lineColourCache, lineColour);
+			dirty = dirty || outlinedCache != outln;
 			dirty = dirty || filledCache != fill;
 			dirty = dirty || fillColourCache != fc;
 			dirty = dirty || showArrowHeadCache != getShowArrowHead();
@@ -238,6 +250,7 @@ public class PolylineModel extends DisplayModel implements LineEntity, FillEntit
 			pisCache = pis;
 			lineWidthCache = lineWidth;
 			lineColourCache = lineColour;
+			outlinedCache = outln;
 			filledCache = fill;
 			fillColourCache = fc;
 			showArrowHeadCache = getShowArrowHead();
@@ -300,16 +313,19 @@ public class PolylineModel extends DisplayModel implements LineEntity, FillEntit
 					RenderUtils.transformPointsLocal(globalTrans, points, 0);
 				}
 
-				int wid = pi.getWidth();
-				if (wid == -1)
-					wid = lineWidth;
+				// Draw the outline
+				if (outln) {
+					int wid = pi.getWidth();
+					if (wid == -1)
+						wid = lineWidth;
 
-				Color4d col = pi.getColor();
-				if (col == null)
-					col = lineColour;
+					Color4d col = pi.getColor();
+					if (col == null)
+						col = lineColour;
+					cachedProxies.add(new LineProxy(points, col, wid, vi, displayObservee.getEntityNumber()));
+				}
 
-				cachedProxies.add(new LineProxy(points, col, wid, vi, displayObservee.getEntityNumber()));
-
+				// Draw the fill
 				if (fill) {
 					Vec3d scale = new Vec3d(1.0d, 1.0d, 1.0d);
 					Transform trans = new Transform();
