@@ -52,6 +52,7 @@ import java.net.URL;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -96,6 +97,7 @@ import com.jaamsim.Commands.DefineCommand;
 import com.jaamsim.Commands.DefineViewCommand;
 import com.jaamsim.Commands.DeleteCommand;
 import com.jaamsim.Commands.KeywordCommand;
+import com.jaamsim.Commands.RenameCommand;
 import com.jaamsim.DisplayModels.TextModel;
 import com.jaamsim.Graphics.BillboardText;
 import com.jaamsim.Graphics.DisplayEntity;
@@ -3277,6 +3279,40 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			pauseTime.setText(prevVal);
 			GUIFrame.showErrorDialog("Input Error", e.getMessage());
 		}
+	}
+
+	/**
+	 * Assigns a new name to the given entity.
+	 * @param ent - entity to be renamed
+	 * @param newName - new absolute name for the entity
+	 */
+	public void renameEntity(Entity ent, String newName) {
+
+		// If the name has not changed, do nothing
+		if (ent.getName().equals(newName))
+			return;
+
+		// Check that the entity was defined AFTER the RecordEdits command
+		if (!ent.testFlag(Entity.FLAG_ADDED))
+			throw new ErrorException("Cannot rename an entity that was defined before the RecordEdits command.");
+
+		// Get the new local name
+		String localName = newName;
+		if (newName.contains(".")) {
+			String[] names = newName.split("\\.");
+			localName = names[names.length - 1];
+			names = Arrays.copyOf(names, names.length - 1);
+			Entity parent = sim.getEntityFromNames(names);
+			if (parent != ent.getParent())
+				throw new ErrorException("Cannot rename the entity's parent");
+		}
+
+		// Check that the new name is valid
+		if (!InputAgent.isValidName(localName))
+			throw new ErrorException(InputAgent.INP_ERR_BADNAME, localName);
+
+		// Rename the entity
+		InputAgent.storeAndExecute(new RenameCommand(ent, newName));
 	}
 
 	@Override

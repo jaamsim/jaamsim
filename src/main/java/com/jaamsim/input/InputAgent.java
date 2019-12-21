@@ -64,7 +64,7 @@ public class InputAgent {
 	private static final String recordEditsMarker = "RecordEdits";
 
 	private static final String INP_ERR_DEFINEUSED = "The name: %s has already been used and is a %s";
-	private static final String INP_ERR_BADNAME = "An entity name cannot be blank or contain "
+	public static final String INP_ERR_BADNAME = "An entity name cannot be blank or contain "
 	                                            + "spaces, tabs, braces, single or double quotes, "
 	                                            + "square brackets, the hash character, or a "
 	                                            + "period.\n "
@@ -357,7 +357,7 @@ public class InputAgent {
 		return defineEntity(simModel, proto, name, addedEntity);
 	}
 
-	private static boolean isValidName(String key) {
+	public static boolean isValidName(String key) {
 		if (key.isEmpty())
 			return false;
 		for (int i = 0; i < key.length(); ++i) {
