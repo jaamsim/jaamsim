@@ -13,7 +13,7 @@ Define ObjectType {
                     OverlayText
                     OverlayClock
                     BillboardText
-					MimicEntity
+                    MimicEntity
                     VideoRecorder
                     }
 
