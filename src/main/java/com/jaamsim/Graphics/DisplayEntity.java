@@ -185,7 +185,8 @@ public class DisplayEntity extends Entity {
 		pointsInput.setUnitType(DistanceUnit.class);
 		this.addInput(pointsInput);
 
-		curveTypeInput = new EnumInput<>(PolylineInfo.CurveType.class, "CurveType", GRAPHICS, PolylineInfo.CurveType.LINEAR);
+		curveTypeInput = new EnumInput<>(PolylineInfo.CurveType.class, "CurveType", FORMAT,
+				PolylineInfo.CurveType.LINEAR);
 		this.addInput(curveTypeInput);
 
 		regionInput = new RegionInput("Region", GRAPHICS, null);
