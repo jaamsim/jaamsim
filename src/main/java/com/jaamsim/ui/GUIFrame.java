@@ -198,6 +198,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 	private JToggleButton bold;
 	private JToggleButton italic;
+	private JTextField font;
 	private JButton fontSelector;
 	private JTextField textHeight;
 	private JButton largerText;
@@ -1078,7 +1079,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 		// Font selector and text height field
 		buttonBar.addSeparator(separatorDim);
-		addFontSelector(buttonBar, smallMargin);
+		addFontSelector(buttonBar, noMargin);
+		buttonBar.add(Box.createRigidArea(gapDim));
 		addTextHeightField(buttonBar, noMargin);
 
 		// Larger and smaller text height buttons
@@ -1664,12 +1666,18 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 	private void addFontSelector(JToolBar buttonBar, Insets margin) {
 
-		fontSelector = new JButton("");
+		font = new JTextField("");
+		font.setEditable(false);
+		font.setHorizontalAlignment(JTextField.CENTER);
+		font.setPreferredSize(new Dimension(100, fileSave.getPreferredSize().height));
+		font.setToolTipText(formatToolTip("Font", "Sets the font for the text."));
+		buttonBar.add(font);
+
+		fontSelector = new JButton(new ImageIcon(
+				GUIFrame.class.getResource("/resources/images/dropdown.png")));
 		fontSelector.setMargin(margin);
 		fontSelector.setFocusPainted(false);
 		fontSelector.setRequestFocusEnabled(false);
-		fontSelector.setPreferredSize(new Dimension(100, fileSave.getPreferredSize().height));
-		fontSelector.setToolTipText(formatToolTip("Font", "Sets the font for the text."));
 		fontSelector.addActionListener(new ActionListener() {
 
 			@Override
@@ -1688,6 +1696,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 						JMenuItem item = (JMenuItem) event.getSource();
 						String fontName = item.getText();
 						if (!fontName.equals(textEnt.getFontName())) {
+							font.setText(fontName);
 							String name = Parser.addQuotesIfNeeded(fontName);
 							KeywordIndex kw = InputAgent.formatInput("FontName", name);
 							InputAgent.storeAndExecute(new KeywordCommand((Entity)textEnt, kw));
@@ -1710,6 +1719,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 						JMenuItem item = (JMenuItem) e.getSource();
 						String fontName = item.getText();
 						if (!fontName.equals(textEnt.getFontName())) {
+							font.setText(fontName);
 							String name = Parser.addQuotesIfNeeded(fontName);
 							KeywordIndex kw = InputAgent.formatInput("FontName", name);
 							InputAgent.storeAndExecute(new KeywordCommand((Entity)textEnt, kw));
@@ -1718,6 +1728,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 					@Override
 					public void mouseExited(MouseEvent e) {
 						if (!presentFontName.equals(textEnt.getFontName())) {
+							font.setText(presentFontName);
 							String name = Parser.addQuotesIfNeeded(presentFontName);
 							KeywordIndex kw = InputAgent.formatInput("FontName", name);
 							InputAgent.storeAndExecute(new KeywordCommand((Entity)textEnt, kw));
@@ -1750,7 +1761,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 					fontMenu.add(item);
 				}
 
-				fontMenu.show(fontSelector, 0, fontSelector.getPreferredSize().height);
+				fontMenu.show(font, 0, font.getPreferredSize().height);
 				if (selectedItem != null) {
 					fontMenu.ensureIndexIsVisible(selectedIndex);
 					selectedItem.setArmed(true);
@@ -1783,7 +1794,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 		textHeight.setMaximumSize(textHeight.getPreferredSize());
 		textHeight.setPreferredSize(new Dimension(textHeight.getPreferredSize().width,
-				fontSelector.getPreferredSize().height));
+				fileSave.getPreferredSize().height));
 
 		textHeight.setHorizontalAlignment(JTextField.RIGHT);
 		textHeight.setToolTipText(formatToolTip("Text Height",
@@ -3586,13 +3597,14 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 		bold.setEnabled(bool);
 		italic.setEnabled(bool);
+		font.setEnabled(bool);
 		fontSelector.setEnabled(bool);
 		textHeight.setEnabled(bool);
 		largerText.setEnabled(bool);
 		smallerText.setEnabled(bool);
 		fontColour.setEnabled(bool);
 		if (!bool) {
-			fontSelector.setText("-");
+			font.setText("");
 			textHeight.setText(null);
 			colourIcon.setFillColor(Color.LIGHT_GRAY);
 			colourIcon.setOutlineColor(Color.LIGHT_GRAY);
@@ -3607,7 +3619,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 		bold.setSelected(textEnt.isBold());
 		italic.setSelected(textEnt.isItalic());
-		fontSelector.setText(textEnt.getFontName());
+		font.setText(textEnt.getFontName());
 		updateTextHeight(textEnt.getTextHeightString());
 
 		Color4d col = textEnt.getFontColor();
