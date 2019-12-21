@@ -191,6 +191,9 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	private JButton pasteButton;
 	private JToggleButton find;
 
+	private JTextField dispModel;
+	private JButton modelSelector;
+
 	private Entity selectedEntity;
 	private JToggleButton alignLeft;
 	private JToggleButton alignCentre;
@@ -1077,6 +1080,10 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		buttonBar.add(Box.createRigidArea(gapDim));
 		addEntityFinderButton(buttonBar, noMargin);
 
+		// DisplayModel field and button
+		buttonBar.addSeparator(separatorDim);
+		addDisplayModelSelector(buttonBar, noMargin);
+
 		// Font selector and text height field
 		buttonBar.addSeparator(separatorDim);
 		addFontSelector(buttonBar, noMargin);
@@ -1553,6 +1560,106 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			}
 		});
 		buttonBar.add( find );
+	}
+
+	private void addDisplayModelSelector(JToolBar buttonBar, Insets margin) {
+
+		dispModel = new JTextField("");
+		dispModel.setEditable(false);
+		dispModel.setHorizontalAlignment(JTextField.CENTER);
+		dispModel.setPreferredSize(new Dimension(100, fileSave.getPreferredSize().height));
+		dispModel.setToolTipText(formatToolTip("DisplayModel", "Sets the default appearance of the entity. "
+				+ "A DisplayModel is analogous to a text style in a word processor."));
+		buttonBar.add(dispModel);
+
+		modelSelector = new JButton(new ImageIcon(
+				GUIFrame.class.getResource("/resources/images/dropdown.png")));
+		modelSelector.setMargin(margin);
+		modelSelector.setFocusPainted(false);
+		modelSelector.setRequestFocusEnabled(false);
+		modelSelector.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed( ActionEvent event ) {
+				if (!(selectedEntity instanceof DisplayEntity))
+					return;
+				DisplayEntity dispEnt = (DisplayEntity) selectedEntity;
+				if (!dispEnt.isGraphicsNominal() || dispEnt.getDisplayModelList().size() != 1)
+					return;
+				final String presentModelName = dispEnt.getDisplayModelList().get(0).getName();
+				ScrollablePopupMenu menu = new ScrollablePopupMenu();
+
+				ActionListener actionListener = new ActionListener() {
+					@Override
+					public void actionPerformed( ActionEvent event ) {
+						if (!(event.getSource() instanceof JMenuItem))
+							return;
+						JMenuItem item = (JMenuItem) event.getSource();
+						String modelName = item.getText();
+						if (!modelName.equals(dispEnt.getDisplayModelList().get(0).getName())) {
+							dispModel.setText(modelName);
+							KeywordIndex kw = InputAgent.formatArgs("DisplayModel", modelName);
+							InputAgent.storeAndExecute(new KeywordCommand(dispEnt, kw));
+						}
+						controlStartResume.requestFocusInWindow();
+					}
+				};
+
+				MouseListener mouseListener = new MouseListener() {
+					@Override
+					public void mouseClicked(MouseEvent e) {}
+					@Override
+					public void mousePressed(MouseEvent e) {}
+					@Override
+					public void mouseReleased(MouseEvent e) {}
+					@Override
+					public void mouseEntered(MouseEvent e) {
+						if (!(e.getSource() instanceof JMenuItem))
+							return;
+						JMenuItem item = (JMenuItem) e.getSource();
+						String modelName = item.getText();
+						if (!modelName.equals(dispEnt.getDisplayModelList().get(0).getName())) {
+							dispModel.setText(modelName);
+							KeywordIndex kw = InputAgent.formatArgs("DisplayModel", modelName);
+							InputAgent.storeAndExecute(new KeywordCommand(dispEnt, kw));
+						}
+					}
+					@Override
+					public void mouseExited(MouseEvent e) {
+						if (!presentModelName.equals(dispEnt.getDisplayModelList().get(0).getName())) {
+							dispModel.setText(presentModelName);
+							KeywordIndex kw = InputAgent.formatArgs("DisplayModel", presentModelName);
+							InputAgent.storeAndExecute(new KeywordCommand(dispEnt, kw));
+						}
+					}
+				};
+
+				// All valid display models
+				JMenuItem selectedItem = null;
+				int selectedIndex = -1;
+				int ind = 0;
+				Input<?> in = dispEnt.getInput("DisplayModel");
+				for (String modelName : in.getValidOptions(selectedEntity)) {
+					JMenuItem item = new JMenuItem(modelName);
+					if (selectedItem == null && modelName.equals(dispEnt.getDisplayModelList().get(0).getName())) {
+						selectedItem = item;
+						selectedIndex = ind;
+					}
+					ind++;
+					item.addActionListener(actionListener);
+					item.addMouseListener(mouseListener);
+					menu.add(item);
+				}
+
+				menu.show(dispModel, 0, dispModel.getPreferredSize().height);
+				if (selectedItem != null) {
+					menu.ensureIndexIsVisible(selectedIndex);
+					selectedItem.setArmed(true);
+				}
+			}
+		});
+
+		buttonBar.add(modelSelector);
 	}
 
 	private void addTextAlignmentButtons(JToolBar buttonBar, Insets margin) {
@@ -3573,6 +3680,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 	private void updateFormatButtons(Entity ent) {
 		updateEditButtons(ent);
+		updateDisplayModelButtons(ent);
 		updateTextButtons(ent);
 		updateZButtons(ent);
 		updateLineButtons(ent);
@@ -3584,6 +3692,22 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		copyButton.setEnabled(bool);
 		copyMenuItem.setEnabled(bool);
 		deleteMenuItem.setEnabled(bool);
+	}
+
+	public void updateDisplayModelButtons(Entity ent) {
+		boolean bool = ent instanceof DisplayEntity
+				&& ((DisplayEntity)ent).isGraphicsNominal()
+				&& ((DisplayEntity)ent).getDisplayModelList().size() == 1;
+
+		dispModel.setEnabled(bool);
+		modelSelector.setEnabled(bool);
+		if (!bool) {
+			dispModel.setText("");
+			return;
+		}
+
+		DisplayEntity dispEnt = (DisplayEntity) ent;
+		dispModel.setText(dispEnt.getDisplayModelList().get(0).getName());
 	}
 
 	private void updateTextButtons(Entity ent) {
