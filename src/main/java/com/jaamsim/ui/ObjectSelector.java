@@ -54,7 +54,6 @@ import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.basicsim.ObjectType;
 import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.input.Input;
-import com.jaamsim.input.InputAgent;
 import com.jaamsim.units.Unit;
 
 public class ObjectSelector extends FrameBox {
@@ -480,7 +479,7 @@ public class ObjectSelector extends FrameBox {
 			DefaultMutableTreeNode node = (DefaultMutableTreeNode)tree.getLastSelectedPathComponent();
 			String newName = ((String)node.getUserObject()).trim();
 			try {
-				InputAgent.renameEntity(currentEntity, newName);
+				GUIFrame.getInstance().renameEntity(currentEntity, newName);
 				if (currentEntity instanceof DisplayEntity) {
 					DisplayEntity dEnt = (DisplayEntity) currentEntity;
 					EntityLabel label = EntityLabel.getLabel(dEnt);
