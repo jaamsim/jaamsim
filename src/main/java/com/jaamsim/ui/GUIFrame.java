@@ -3286,6 +3286,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	 * @param ent - entity to be renamed
 	 * @param newName - new absolute name for the entity
 	 */
+	@Override
 	public void renameEntity(Entity ent, String newName) {
 
 		// If the name has not changed, do nothing

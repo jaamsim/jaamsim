@@ -32,5 +32,6 @@ public interface GUIListener {
 	public void storeAndExecute(Command cmd);
 	public void updateAll();
 	public void deleteEntity(Entity ent);
+	public void renameEntity(Entity ent, String newName);
 
 }
