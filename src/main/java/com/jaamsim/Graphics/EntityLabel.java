@@ -99,6 +99,11 @@ public class EntityLabel extends TextBasics {
 	}
 
 	@Override
+	public boolean isGraphicsNominal() {
+		return true;
+	}
+
+	@Override
 	public void acceptEdits() {
 		GUIListener gui = getJaamSimModel().getGUIListener();
 		if (gui == null)
