@@ -3734,7 +3734,9 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		}
 
 		DisplayEntity dispEnt = (DisplayEntity) ent;
-		dispModel.setText(dispEnt.getDisplayModelList().get(0).getName());
+		String name = dispEnt.getDisplayModelList().get(0).getName();
+		if (!dispModel.getText().equals(name))
+			dispModel.setText(name);
 	}
 
 	private void updateTextButtons(Entity ent) {
@@ -3770,7 +3772,9 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 		bold.setSelected(textEnt.isBold());
 		italic.setSelected(textEnt.isItalic());
-		font.setText(textEnt.getFontName());
+		String fontName = textEnt.getFontName();
+		if (!font.getText().equals(fontName))
+			font.setText(fontName);
 		updateTextHeight(textEnt.getTextHeightString());
 
 		Color4d col = textEnt.getFontColor();
