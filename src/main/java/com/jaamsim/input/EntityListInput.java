@@ -151,6 +151,17 @@ public class EntityListInput<T extends Entity> extends ListInput<ArrayList<T>> {
 
 			list.add(each.getName());
 		}
+
+		// Include the default values
+		if (getDefaultValue() != null) {
+			for (Entity def : getDefaultValue()) {
+				String name = def.getName();
+				if (list.contains(name))
+					continue;
+				list.add(name);
+			}
+		}
+
 		Collections.sort(list, Input.uiSortOrder);
 		return list;
 	}
