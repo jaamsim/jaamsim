@@ -42,6 +42,7 @@ public class Arrow extends DisplayEntity implements LineEntity {
 	private final Vec3dInput arrowHeadSize;
 
 	{
+		displayModelListInput.clearValidClasses();
 		displayModelListInput.addValidClass(PolylineModel.class);
 
 		color = new ColourInput("LineColour", FORMAT, ColourInput.BLACK);

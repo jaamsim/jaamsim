@@ -49,6 +49,9 @@ public class FluidFixedFlow extends FluidFlowCalculation implements LineEntity {
 	private final ColourInput colourInput;
 
 	{
+		displayModelListInput.clearValidClasses();
+		displayModelListInput.addValidClass(PolylineModel.class);
+
 		flowRateInput = new ValueInput( "FlowRate", KEY_INPUTS, 0.0d);
 		flowRateInput.setValidRange( 0.0d, Double.POSITIVE_INFINITY);
 		flowRateInput.setUnitType( VolumeFlowUnit.class );

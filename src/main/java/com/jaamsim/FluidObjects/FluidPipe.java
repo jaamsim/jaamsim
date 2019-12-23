@@ -67,6 +67,9 @@ public class FluidPipe extends FluidComponent implements LineEntity {
 	private double darcyFrictionFactor;  // The Darcy Friction Factor for the pipe flow.
 
 	{
+		displayModelListInput.clearValidClasses();
+		displayModelListInput.addValidClass(PolylineModel.class);
+
 		lengthInput = new ValueInput( "Length", KEY_INPUTS, 1.0d);
 		lengthInput.setValidRange( 0.0, Double.POSITIVE_INFINITY);
 		lengthInput.setUnitType( DistanceUnit.class );

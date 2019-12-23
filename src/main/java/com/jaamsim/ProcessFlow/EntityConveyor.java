@@ -61,6 +61,9 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 	private double presentTravelTime;
 
 	{
+		displayModelListInput.clearValidClasses();
+		displayModelListInput.addValidClass(PolylineModel.class);
+
 		releaseThresholdList.setHidden(false);
 		operatingThresholdList.setHidden(true);
 		waitQueue.setHidden(true);

@@ -82,6 +82,9 @@ public class EntityDelay extends LinkedComponent implements LineEntity {
 	private final LinkedHashMap<Long, EntityDelayEntry> entityMap = new LinkedHashMap<>();  // Entities being handled
 
 	{
+		displayModelListInput.clearValidClasses();
+		displayModelListInput.addValidClass(PolylineModel.class);
+
 		stateGraphics.setHidden(false);
 
 		duration = new SampleInput("Duration", KEY_INPUTS, null);
