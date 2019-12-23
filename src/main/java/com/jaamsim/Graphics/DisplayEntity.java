@@ -874,6 +874,7 @@ public class DisplayEntity extends Entity {
 		double inc = getSimulation().getIncrementSize();
 		if (getSimulation().isSnapToGrid())
 			inc = Math.max(inc, getSimulation().getSnapGridSpacing());
+
 		switch (keyCode) {
 
 			case KeyEvent.VK_LEFT:
@@ -881,7 +882,7 @@ public class DisplayEntity extends Entity {
 				break;
 
 			case KeyEvent.VK_RIGHT:
-				pos.x +=inc;
+				pos.x += inc;
 				break;
 
 			case KeyEvent.VK_UP:
@@ -904,8 +905,17 @@ public class DisplayEntity extends Entity {
 		if (getSimulation().isSnapToGrid())
 			pos = getSimulation().getSnapGridPosition(pos, pos, shift);
 
-		KeywordIndex kw = InputAgent.formatVec3dInput(positionInput.getKeyword(), pos, DistanceUnit.class);
-		InputAgent.storeAndExecute(new KeywordCommand(this, kw));
+		// Normal object
+		String posKey = positionInput.getKeyword();
+		KeywordIndex posKw = InputAgent.formatVec3dInput(posKey, pos, DistanceUnit.class);
+
+		// Polyline object
+		Vec3d offset = new Vec3d(pos);
+		offset.sub3(getPoints().get(0));
+		String ptsKey = pointsInput.getKeyword();
+		KeywordIndex ptsKw = InputAgent.formatPointsInputs(ptsKey, getPoints(), offset);
+
+		InputAgent.storeAndExecute(new KeywordCommand(this, posKw, ptsKw));
 	}
 
 	public void handleKeyReleased(int keyCode, char keyChar, boolean shift, boolean control, boolean alt) {
