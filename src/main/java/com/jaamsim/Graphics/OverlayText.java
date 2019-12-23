@@ -118,6 +118,7 @@ public class OverlayText extends OverlayEntity implements TextEntity, EditableTe
 	private final EditableTextDelegate editableText;
 
 	{
+		displayModelListInput.clearValidClasses();
 		displayModelListInput.addValidClass(TextModel.class);
 
 		formatText = new StringInput("Format", KEY_INPUTS, "%s");

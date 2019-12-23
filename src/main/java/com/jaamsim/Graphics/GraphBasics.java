@@ -167,6 +167,7 @@ public abstract class GraphBasics extends DisplayEntity {
 	public static final String SEC_Y_AXIS = "Secondary Y-Axis";
 
 	{
+		displayModelListInput.clearValidClasses();
 		displayModelListInput.addValidClass(GraphModel.class);
 
 		// Key Inputs category

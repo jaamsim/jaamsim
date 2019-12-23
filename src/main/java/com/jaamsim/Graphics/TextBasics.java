@@ -75,6 +75,7 @@ public abstract class TextBasics extends DisplayEntity implements TextEntity, Ed
 	private final EditableTextDelegate editableText;
 
 	{
+		displayModelListInput.clearValidClasses();
 		displayModelListInput.addValidClass(TextModel.class);
 
 		fontName = new StringChoiceInput("FontName", FONT, -1);

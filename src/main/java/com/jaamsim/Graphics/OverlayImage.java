@@ -34,6 +34,7 @@ public class OverlayImage extends OverlayEntity {
 	private final IntegerListInput size;
 
 	{
+		displayModelListInput.clearValidClasses();
 		displayModelListInput.addValidClass(ImageModel.class);
 
 		IntegerVector defSize = new IntegerVector(2);
