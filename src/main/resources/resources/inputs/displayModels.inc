@@ -60,8 +60,6 @@ Define GraphModel     { GraphModelDefault          }
 
 Define TextModel      { TextModelDefault  EntityLabelModel  InputBoxModel  BillboardTextModel OverlayTextModel }
 EntityLabelModel  TextHeight { 0.15 m }
-BillboardTextModel  TextHeight { 10 m }
-OverlayTextModel    TextHeight { 15 m }
 
 Define PolylineModel  { PolylineModelDefault  ArrowModelDefault }
 ArrowModelDefault ShowArrowHead { TRUE }
