@@ -195,6 +195,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	private JButton modelSelector;
 	private JButton editDmButton;
 
+	private JButton clearButton;
+
 	private Entity selectedEntity;
 	private JToggleButton alignLeft;
 	private JToggleButton alignCentre;
@@ -1087,6 +1089,10 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		buttonBar.add(Box.createRigidArea(gapDim));
 		addEditDisplayModelButton(buttonBar, noMargin);
 
+		// Clear formatting button
+		buttonBar.add(Box.createRigidArea(gapDim));
+		addClearFormattingButton(buttonBar, noMargin);
+
 		// Font selector and text height field
 		buttonBar.addSeparator(separatorDim);
 		addFontSelector(buttonBar, noMargin);
@@ -1686,6 +1692,39 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			}
 		});
 		buttonBar.add( editDmButton );
+	}
+
+	private void addClearFormattingButton(JToolBar buttonBar, Insets margin) {
+		clearButton = new JButton(new ImageIcon(
+				GUIFrame.class.getResource("/resources/images/Clear-16.png")));
+		clearButton.setToolTipText(formatToolTip("Clear Formatting",
+				"Resets the format inputs for the selected Entity or DisplayModel to their default "
+				+ "values."));
+		clearButton.setMargin(margin);
+		clearButton.setFocusPainted(false);
+		clearButton.setRequestFocusEnabled(false);
+		clearButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed( ActionEvent event ) {
+				if (selectedEntity == null)
+					return;
+				ArrayList<KeywordIndex> kwList = new ArrayList<>();
+				for (Input<?> in : selectedEntity.getEditableInputs()) {
+					String cat = in.getCategory();
+					if (in.isDefault() || !cat.equals(Entity.FORMAT) && !cat.equals(Entity.FONT))
+						continue;
+					KeywordIndex kw = InputAgent.formatArgs(in.getKeyword());
+					kwList.add(kw);
+				}
+				if (kwList.isEmpty())
+					return;
+				KeywordIndex[] kws = new KeywordIndex[kwList.size()];
+				kwList.toArray(kws);
+				InputAgent.storeAndExecute(new KeywordCommand(selectedEntity, kws));
+				controlStartResume.requestFocusInWindow();
+			}
+		});
+		buttonBar.add( clearButton );
 	}
 
 	private void addTextAlignmentButtons(JToolBar buttonBar, Insets margin) {
@@ -3707,6 +3746,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	private void updateFormatButtons(Entity ent) {
 		updateEditButtons(ent);
 		updateDisplayModelButtons(ent);
+		updateClearFormattingButton(ent);
 		updateTextButtons(ent);
 		updateZButtons(ent);
 		updateLineButtons(ent);
@@ -3737,6 +3777,24 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		String name = dispEnt.getDisplayModelList().get(0).getName();
 		if (!dispModel.getText().equals(name))
 			dispModel.setText(name);
+	}
+
+	public void updateClearFormattingButton(Entity ent) {
+		if (ent == null) {
+			clearButton.setEnabled(false);
+			return;
+		}
+		boolean bool = false;
+		for (Input<?> in : ent.getEditableInputs()) {
+			String cat = in.getCategory();
+			if (!cat.equals(Entity.FORMAT) && !cat.equals(Entity.FONT))
+				continue;
+			if (!in.isDefault()) {
+				bool = true;
+				break;
+			}
+		}
+		clearButton.setEnabled(bool);
 	}
 
 	private void updateTextButtons(Entity ent) {
