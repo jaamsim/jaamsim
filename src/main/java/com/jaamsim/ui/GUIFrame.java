@@ -193,6 +193,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 	private JTextField dispModel;
 	private JButton modelSelector;
+	private JButton editDmButton;
 
 	private Entity selectedEntity;
 	private JToggleButton alignLeft;
@@ -1083,6 +1084,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		// DisplayModel field and button
 		buttonBar.addSeparator(separatorDim);
 		addDisplayModelSelector(buttonBar, noMargin);
+		buttonBar.add(Box.createRigidArea(gapDim));
+		addEditDisplayModelButton(buttonBar, noMargin);
 
 		// Font selector and text height field
 		buttonBar.addSeparator(separatorDim);
@@ -1660,6 +1663,29 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		});
 
 		buttonBar.add(modelSelector);
+	}
+
+	private void addEditDisplayModelButton(JToolBar buttonBar, Insets margin) {
+		editDmButton = new JButton(new ImageIcon(
+				GUIFrame.class.getResource("/resources/images/Edit-16.png")));
+		editDmButton.setToolTipText(formatToolTip("Edit DisplayModel",
+				"Selects the present DisplayModel so that its inputs can be edited."));
+		editDmButton.setMargin(margin);
+		editDmButton.setFocusPainted(false);
+		editDmButton.setRequestFocusEnabled(false);
+		editDmButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed( ActionEvent event ) {
+				if (!(selectedEntity instanceof DisplayEntity))
+					return;
+				DisplayEntity dEnt = (DisplayEntity) selectedEntity;
+				if (dEnt.getDisplayModelList().size() != 1)
+					return;
+				FrameBox.setSelectedEntity(dEnt.getDisplayModelList().get(0), false);
+				controlStartResume.requestFocusInWindow();
+			}
+		});
+		buttonBar.add( editDmButton );
 	}
 
 	private void addTextAlignmentButtons(JToolBar buttonBar, Insets margin) {
@@ -3701,6 +3727,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 		dispModel.setEnabled(bool);
 		modelSelector.setEnabled(bool);
+		editDmButton.setEnabled(bool);
 		if (!bool) {
 			dispModel.setText("");
 			return;
