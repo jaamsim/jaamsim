@@ -26,6 +26,7 @@ import com.jaamsim.Graphics.BillboardText;
 import com.jaamsim.Graphics.EntityLabel;
 import com.jaamsim.Graphics.OverlayText;
 import com.jaamsim.Graphics.TextBasics;
+import com.jaamsim.Graphics.TextEntity;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.datatypes.IntegerVector;
@@ -57,7 +58,7 @@ import com.jaamsim.render.TessFontKey;
 import com.jaamsim.render.VisibilityInfo;
 import com.jaamsim.units.DistanceUnit;
 
-public class TextModel extends DisplayModel {
+public class TextModel extends DisplayModel implements TextEntity {
 
 	@Keyword(description = "The font to be used for the text.",
 	         exampleList = { "Arial" })
@@ -217,10 +218,12 @@ public class TextModel extends DisplayModel {
 		return new TessFontKey("Verdana", Font.PLAIN);
 	}
 
+	@Override
 	public Color4d getFontColor() {
 		return fontColor.getValue();
 	}
 
+	@Override
 	public double getTextHeight() {
 		return textHeight.getValue();
 	}
@@ -229,6 +232,7 @@ public class TextModel extends DisplayModel {
 		return textHeightInPixels.getValue();
 	}
 
+	@Override
 	public String getTextHeightString() {
 		if (textHeight.isDefault())
 			return textHeight.getDefaultString();
@@ -241,22 +245,37 @@ public class TextModel extends DisplayModel {
 		return textHeightInPixels.getValueString();
 	}
 
+	@Override
 	public String getFontName() {
 		return fontName.getChoice();
 	}
 
+	@Override
 	public int getStyle() {
 		return getStyle(fontStyle.getValue());
 	}
 
+	@Override
+	public boolean isBold() {
+		return isBold(getStyle());
+	}
+
+	@Override
+	public boolean isItalic() {
+		return isItalic(getStyle());
+	}
+
+	@Override
 	public boolean getDropShadow() {
 		return dropShadow.getValue();
 	}
 
+	@Override
 	public Color4d getDropShadowColor() {
 		return dropShadowColor.getValue();
 	}
 
+	@Override
 	public Vec3d getDropShadowOffset() {
 		return dropShadowOffset.getValue();
 	}
