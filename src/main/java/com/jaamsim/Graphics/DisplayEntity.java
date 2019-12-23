@@ -855,12 +855,20 @@ public class DisplayEntity extends Entity {
 	}
 
 	public void dragged(int x, int y, Vec3d newPos) {
+
+		// Normal objects
 		KeywordIndex kw = InputAgent.formatVec3dInput(positionInput.getKeyword(), newPos, DistanceUnit.class);
 		InputAgent.apply(this, kw);
 
 		ArrayList<Vec3d> points = pointsInput.getValue();
 		if (points == null || points.isEmpty())
 			return;
+		if (!usePointsInput()) {
+			setPoints(points);
+			return;
+		}
+
+		// Polyline objects
 		Vec3d dist = new Vec3d(newPos);
 		dist.sub3(points.get(0));
 		kw = InputAgent.formatPointsInputs(pointsInput.getKeyword(), pointsInput.getValue(), dist);
