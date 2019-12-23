@@ -3742,8 +3742,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	private void updateTextButtons(Entity ent) {
 		boolean bool = ent instanceof TextEntity;
 
-		boolean isAlignable = bool && !(ent instanceof OverlayText)
-				&& !(ent instanceof BillboardText);
+		boolean isAlignable = bool && ent instanceof DisplayEntity
+				&& !(ent instanceof OverlayText) && !(ent instanceof BillboardText);
 		alignLeft.setEnabled(isAlignable);
 		alignCentre.setEnabled(isAlignable);
 		alignRight.setEnabled(isAlignable);
@@ -3764,12 +3764,14 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			return;
 		}
 
-		TextEntity textEnt = (TextEntity) ent;
-		int val = (int) Math.signum(((DisplayEntity) textEnt).getAlignment().x);
-		alignLeft.setSelected(val == -1);
-		alignCentre.setSelected(val == 0);
-		alignRight.setSelected(val == 1);
+		if (isAlignable) {
+			int val = (int) Math.signum(((DisplayEntity) ent).getAlignment().x);
+			alignLeft.setSelected(val == -1);
+			alignCentre.setSelected(val == 0);
+			alignRight.setSelected(val == 1);
+		}
 
+		TextEntity textEnt = (TextEntity) ent;
 		bold.setSelected(textEnt.isBold());
 		italic.setSelected(textEnt.isItalic());
 		String fontName = textEnt.getFontName();
