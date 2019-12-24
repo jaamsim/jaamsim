@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2017-2019 JaamSim Software Inc.
+ * Copyright (C) 2017-2020 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -62,11 +62,14 @@ public class CoordinateCommand extends KeywordCommand {
 	}
 
 	private void resetPosition() {
+
+		// Normal object
 		Vec3d localPos = dispEnt.getLocalPosition(globalPos);
 		KeywordIndex posKw = InputAgent.formatVec3dInput("Position", localPos, DistanceUnit.class);
 		InputAgent.apply(dispEnt, posKw);
 
-		if (globalPts != null) {
+		// Polyline object
+		if (dispEnt.usePointsInput() && globalPts != null) {
 			ArrayList<Vec3d> localPts = dispEnt.getLocalPosition(globalPts);
 			KeywordIndex ptsKw = InputAgent.formatPointsInputs("Points", localPts, new Vec3d());
 			InputAgent.apply(dispEnt, ptsKw);
