@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2012 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2019 JaamSim Software Inc.
+ * Copyright (C) 2016-2020 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -1114,12 +1114,19 @@ public class RenderManager implements DragSourceListener {
 			pos.add3(del);
 		}
 
+		// Normal objects
 		Vec3d localPos = selectedEntity.getLocalPosition(pos);
 		Simulation simulation = GUIFrame.getJaamSimModel().getSimulation();
 		if (simulation.isSnapToGrid())
 			localPos = simulation.getSnapGridPosition(localPos, selectedEntity.getPosition(), shift);
 		KeywordIndex kw = InputAgent.formatVec3dInput("Position", localPos, DistanceUnit.class);
 
+		if (!selectedEntity.usePointsInput()) {
+			InputAgent.storeAndExecute(new KeywordCommand(selectedEntity, kw));
+			return true;
+		}
+
+		// Polyline objects
 		ArrayList<Vec3d> points = selectedEntity.getPoints();
 		Vec3d offset = new Vec3d(localPos);
 		offset.sub3(selectedEntity.getPosition());
