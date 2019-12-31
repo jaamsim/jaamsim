@@ -39,7 +39,7 @@ import com.jaamsim.units.TimeUnit;
 /**
  * EntityGenerator creates sequence of DisplayEntities at random intervals, which are placed in a target Queue.
  */
-public class EntityGenerator extends LinkedService {
+public class EntityGenerator extends LinkedService implements EntityGen {
 
 	@Keyword(description = "The arrival time for the first generated entity.",
 	         exampleList = { "3.0 h", "ExponentialDistribution1", "'1[s] + 0.5*[TimeSeries1].PresentValue'" })
@@ -197,6 +197,7 @@ public class EntityGenerator extends LinkedService {
 		return true;  // can always stop when isFinished is called in startStep
 	}
 
+	@Override
 	public void setPrototypeEntity(DisplayEntity proto) {
 		ArrayList<String> toks = new ArrayList<>();
 		toks.add(proto.getName());

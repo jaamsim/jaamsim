@@ -81,11 +81,10 @@ public class SimEntity extends StateEntity implements LinkDisplayable {
 
 	@Override
 	public void linkTo(DisplayEntity nextEnt) {
-		if (!(nextEnt instanceof EntityGenerator)) {
+		if (!(nextEnt instanceof EntityGen))
 			return;
-		}
 
-		EntityGenerator gen = (EntityGenerator)nextEnt;
+		EntityGen gen = (EntityGen) nextEnt;
 		gen.setPrototypeEntity(this);
 	}
 
