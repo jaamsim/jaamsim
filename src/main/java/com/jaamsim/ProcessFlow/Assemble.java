@@ -74,7 +74,7 @@ public class Assemble extends LinkedService implements EntityGen {
 		serviceTime.setValidRange(0, Double.POSITIVE_INFINITY);
 		this.addInput(serviceTime);
 
-		waitQueueList = new EntityListInput<>(Queue.class, "WaitQueueList", KEY_INPUTS, null);
+		waitQueueList = new EntityListInput<>(Queue.class, "WaitQueueList", KEY_INPUTS, new ArrayList<Queue>());
 		waitQueueList.setRequired(true);
 		this.addInput(waitQueueList);
 
