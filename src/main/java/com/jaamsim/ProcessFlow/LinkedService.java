@@ -198,10 +198,7 @@ public abstract class LinkedService extends LinkedDevice implements QueueUser {
 	@Override
 	public ArrayList<Entity> getSourceEntities() {
 		ArrayList<Entity> ret = super.getSourceEntities();
-		ArrayList<Queue> queues = getQueues();
-
-		ret.addAll(queues);
-
+		ret.addAll(getQueues());
 		return ret;
 	}
 
