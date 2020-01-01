@@ -33,7 +33,7 @@ import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.StringInput;
 import com.jaamsim.math.Vec3d;
 
-public class EntityLauncher extends GameEntity implements LinkDisplayable {
+public class EntityLauncher extends GameEntity implements LinkDisplayable, EntityGen {
 
 	@Keyword(description = "The prototype for entities to be generated. "
 	                     + "The generated entities will be copies of this entity.",
@@ -96,6 +96,12 @@ public class EntityLauncher extends GameEntity implements LinkDisplayable {
 	}
 
 	@Override
+	public void setPrototypeEntity(DisplayEntity proto) {
+		KeywordIndex kw = InputAgent.formatArgs(prototypeEntity.getKeyword(), proto.getName());
+		InputAgent.storeAndExecute(new KeywordCommand(this, kw));
+	}
+
+	@Override
 	public void linkTo(DisplayEntity nextEnt) {
 		if (nextComponent.getHidden() || !(nextEnt instanceof Linkable)
 				|| nextEnt instanceof EntityGenerator) {
@@ -121,7 +127,14 @@ public class EntityLauncher extends GameEntity implements LinkDisplayable {
 
 	@Override
 	public ArrayList<Entity> getSourceEntities() {
-		return new ArrayList<>();
+		ArrayList<Entity> ret = new ArrayList<>();
+		if (prototypeEntity.getValue() == null)
+			return ret;
+		DisplayEntity ent = prototypeEntity.getValue().getNextEntity(0.0d);
+		if (ent != null) {
+			ret.add(ent);
+		}
+		return ret;
 	}
 
 	@Override
