@@ -199,9 +199,7 @@ public class EntityGenerator extends LinkedService implements EntityGen {
 
 	@Override
 	public void setPrototypeEntity(DisplayEntity proto) {
-		ArrayList<String> toks = new ArrayList<>();
-		toks.add(proto.getName());
-		KeywordIndex kw = new KeywordIndex(prototypeEntity.getKeyword(), toks, null);
+		KeywordIndex kw = InputAgent.formatArgs(prototypeEntity.getKeyword(), proto.getName());
 		InputAgent.storeAndExecute(new KeywordCommand(this, kw));
 	}
 
