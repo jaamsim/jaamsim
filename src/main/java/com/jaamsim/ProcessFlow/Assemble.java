@@ -37,7 +37,7 @@ import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.states.StateEntity;
 import com.jaamsim.units.TimeUnit;
 
-public class Assemble extends LinkedService {
+public class Assemble extends LinkedService implements EntityGen {
 
 	@Keyword(description = "The service time required to perform the assembly process.",
 	         exampleList = { "3.0 h", "ExponentialDistribution1", "'1[s] + 0.5*[TimeSeries1].PresentValue'" })
@@ -195,6 +195,20 @@ public class Assemble extends LinkedService {
 	@Override
 	public boolean isFinished() {
 		return assembledEntity == null;
+	}
+
+	@Override
+	public void setPrototypeEntity(DisplayEntity proto) {
+		KeywordIndex kw = InputAgent.formatArgs(prototypeEntity.getKeyword(), proto.getName());
+		InputAgent.storeAndExecute(new KeywordCommand(this, kw));
+	}
+
+	@Override
+	public ArrayList<Entity> getSourceEntities() {
+		ArrayList<Entity> ret = super.getSourceEntities();
+		if (prototypeEntity.getValue() != null)
+			ret.add(prototypeEntity.getValue());
+		return ret;
 	}
 
 	@Override
