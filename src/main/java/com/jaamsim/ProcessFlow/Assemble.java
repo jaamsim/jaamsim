@@ -34,6 +34,7 @@ import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.IntegerListInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.KeywordIndex;
+import com.jaamsim.input.StringInput;
 import com.jaamsim.states.StateEntity;
 import com.jaamsim.units.TimeUnit;
 
@@ -61,6 +62,11 @@ public class Assemble extends LinkedService implements EntityGen {
 	@Keyword(description = "The prototype for entities representing the assembled part.",
 	         exampleList = {"Proto"})
 	private final EntityInput<DisplayEntity> prototypeEntity;
+
+	@Keyword(description = "The base for the names assigned to the generated entities. "
+	                     + "The generated entities will be named Name1, Name2, etc.",
+	         exampleList = {"Customer", "Package"})
+	private final StringInput baseName;
 
 	private DisplayEntity assembledEntity;	// the generated entity representing the assembled part
 	private int numberGenerated = 0;  // Number of entities generated so far
@@ -91,6 +97,10 @@ public class Assemble extends LinkedService implements EntityGen {
 		prototypeEntity.addInvalidClass(TextBasics.class);
 		prototypeEntity.addInvalidClass(OverlayEntity.class);
 		this.addInput(prototypeEntity);
+
+		baseName = new StringInput("BaseName", KEY_INPUTS, null);
+		baseName.setDefaultText("Assemble Name");
+		this.addInput(baseName);
 	}
 
 	public Assemble() {}
@@ -160,11 +170,13 @@ public class Assemble extends LinkedService implements EntityGen {
 		// Create the entity representing the assembled part
 		numberGenerated++;
 		DisplayEntity proto = prototypeEntity.getValue();
-		StringBuilder sb = new StringBuilder();
-		sb.append(this.getName()).append("_").append(numberGenerated);
+		String name = baseName.getValue();
+		if (name == null)
+			name = this.getName() + "_";
+		name = name + numberGenerated;
 
 		// Create the new entity
-		assembledEntity = InputAgent.generateEntityWithName(getJaamSimModel(), proto.getClass(), sb.toString());
+		assembledEntity = InputAgent.generateEntityWithName(getJaamSimModel(), proto.getClass(), name);
 		Entity.fastCopyInputs(proto, assembledEntity);
 		assembledEntity.earlyInit();
 
