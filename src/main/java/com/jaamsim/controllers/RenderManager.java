@@ -2035,7 +2035,7 @@ public class RenderManager implements DragSourceListener {
 		segments.add(sink4);
 		segments.add(ap1);
 
-		scene.add(new LineProxy(segments, ColourInput.BLACK, 1, DisplayModel.ALWAYS, 0));
+		scene.add(new LineProxy(segments, ColourInput.BLUE, 1, DisplayModel.ALWAYS, 0));
 
 	}
 
