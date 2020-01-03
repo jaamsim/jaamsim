@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2017 JaamSim Software Inc.
+ * Copyright (C) 2017-2020 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,7 +31,6 @@ import com.jaamsim.input.InterfaceEntityInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.StringInput;
-import com.jaamsim.math.Vec3d;
 
 public class EntityLauncher extends GameEntity implements LinkDisplayable, EntityGen {
 
@@ -135,20 +134,6 @@ public class EntityLauncher extends GameEntity implements LinkDisplayable, Entit
 			ret.add(ent);
 		}
 		return ret;
-	}
-
-	@Override
-	public Vec3d getSourcePoint() {
-		return getGlobalPosition();
-	}
-	@Override
-	public Vec3d getSinkPoint() {
-		return getGlobalPosition();
-	}
-
-	@Override
-	public double getRadius() {
-		return getSize().mag2()/2.0;
 	}
 
 }

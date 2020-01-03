@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2019 JaamSim Software Inc.
+ * Copyright (C) 2019-2020 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -280,30 +280,6 @@ public class EntityDelay extends LinkedComponent implements LineEntity {
 			}
 			entry.ent.setRelativeOrientation(orient);
 		}
-	}
-
-	// LinkDisplayable overrides
-	@Override
-	public Vec3d getSourcePoint() {
-		ArrayList<Vec3d> points = pointsInput.getValue();
-		if (points.size() == 0) {
-			return getGlobalPosition();
-		}
-		return getGlobalPosition(points.get(points.size()-1));
-	}
-
-	@Override
-	public Vec3d getSinkPoint() {
-		ArrayList<Vec3d> points = pointsInput.getValue();
-		if (points.size() == 0) {
-			return getGlobalPosition();
-		}
-		return getGlobalPosition(points.get(0));
-	}
-
-	@Override
-	public double getRadius() {
-		return 0.2; // TODO: make this a tunable parameter
 	}
 
 	@Output(name = "EntityList",
