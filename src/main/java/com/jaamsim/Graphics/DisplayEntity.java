@@ -1133,8 +1133,8 @@ public class DisplayEntity extends Entity {
 	 */
 	public double getRadius() {
 		if (usePointsInput())
-			return 0.2d;
-		return getSize().mag2()/2.0;
+			return 0.05d;
+		return Math.max(getSize().x, getSize().y)/2.0 + 0.05d;
 	}
 
 	////////////////////////////////////////////////////////////////////////
