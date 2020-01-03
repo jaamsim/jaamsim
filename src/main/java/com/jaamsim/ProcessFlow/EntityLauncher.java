@@ -115,18 +115,18 @@ public class EntityLauncher extends GameEntity implements LinkDisplayable, Entit
 
 	// LinkDisplayable
 	@Override
-	public ArrayList<Entity> getDestinationEntities() {
-		ArrayList<Entity> ret = new ArrayList<>();
+	public ArrayList<DisplayEntity> getDestinationEntities() {
+		ArrayList<DisplayEntity> ret = new ArrayList<>();
 		Linkable l = nextComponent.getValue();
-		if (l != null && (l instanceof Entity)) {
-			ret.add((Entity)l);
+		if (l != null && (l instanceof DisplayEntity)) {
+			ret.add((DisplayEntity)l);
 		}
 		return ret;
 	}
 
 	@Override
-	public ArrayList<Entity> getSourceEntities() {
-		ArrayList<Entity> ret = new ArrayList<>();
+	public ArrayList<DisplayEntity> getSourceEntities() {
+		ArrayList<DisplayEntity> ret = new ArrayList<>();
 		if (prototypeEntity.getValue() == null)
 			return ret;
 		DisplayEntity ent = prototypeEntity.getValue().getNextEntity(0.0d);

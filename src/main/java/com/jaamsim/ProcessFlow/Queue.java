@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2003-2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2019 JaamSim Software Inc.
+ * Copyright (C) 2016-2020 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -646,11 +646,11 @@ public class Queue extends LinkedComponent {
 
 	// LinkDisplayable
 	@Override
-	public ArrayList<Entity> getDestinationEntities() {
-		ArrayList<Entity> ret = super.getDestinationEntities();
+	public ArrayList<DisplayEntity> getDestinationEntities() {
+		ArrayList<DisplayEntity> ret = super.getDestinationEntities();
 		Linkable l = renegeDestination.getValue();
-		if (l != null && (l instanceof Entity)) {
-			ret.add((Entity)l);
+		if (l != null && (l instanceof DisplayEntity)) {
+			ret.add((DisplayEntity)l);
 		}
 		return ret;
 	}

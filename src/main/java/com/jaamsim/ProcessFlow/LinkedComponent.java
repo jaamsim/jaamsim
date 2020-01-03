@@ -23,7 +23,6 @@ import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.LinkDisplayable;
 import com.jaamsim.StringProviders.StringProvInput;
-import com.jaamsim.basicsim.Entity;
 import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
@@ -185,17 +184,17 @@ public abstract class LinkedComponent extends StateEntity implements Linkable, L
 
 	// LinkDisplayable
 	@Override
-	public ArrayList<Entity> getDestinationEntities() {
-		ArrayList<Entity> ret = new ArrayList<>();
+	public ArrayList<DisplayEntity> getDestinationEntities() {
+		ArrayList<DisplayEntity> ret = new ArrayList<>();
 		Linkable l = nextComponent.getValue();
-		if (l != null && (l instanceof Entity)) {
-			ret.add((Entity)l);
+		if (l != null && (l instanceof DisplayEntity)) {
+			ret.add((DisplayEntity)l);
 		}
 		return ret;
 	}
 
 	@Override
-	public ArrayList<Entity> getSourceEntities() {
+	public ArrayList<DisplayEntity> getSourceEntities() {
 		return new ArrayList<>();
 	}
 

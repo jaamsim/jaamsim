@@ -23,7 +23,6 @@ import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.LinkDisplayable;
 import com.jaamsim.ProcessFlow.EntityGenerator;
 import com.jaamsim.ProcessFlow.Linkable;
-import com.jaamsim.basicsim.Entity;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InterfaceEntityInput;
 import com.jaamsim.input.Keyword;
@@ -62,17 +61,17 @@ public class SubModelStart extends DisplayEntity implements Linkable, LinkDispla
 
 	// LinkDisplayable
 	@Override
-	public ArrayList<Entity> getDestinationEntities() {
-		ArrayList<Entity> ret = new ArrayList<>();
+	public ArrayList<DisplayEntity> getDestinationEntities() {
+		ArrayList<DisplayEntity> ret = new ArrayList<>();
 		Linkable l = nextComponent.getValue();
-		if (l != null && (l instanceof Entity)) {
-			ret.add((Entity)l);
+		if (l != null && (l instanceof DisplayEntity)) {
+			ret.add((DisplayEntity)l);
 		}
 		return ret;
 	}
 
 	@Override
-	public ArrayList<Entity> getSourceEntities() {
+	public ArrayList<DisplayEntity> getSourceEntities() {
 		return new ArrayList<>();
 	}
 

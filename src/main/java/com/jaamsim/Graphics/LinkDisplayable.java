@@ -19,11 +19,9 @@ package com.jaamsim.Graphics;
 
 import java.util.ArrayList;
 
-import com.jaamsim.basicsim.Entity;
-
 public interface LinkDisplayable {
 	// Each link should only be registered once, so if an entity refers to another as a destination
 	// that entity should NOT refer back to the first as a source
-	public ArrayList<Entity> getDestinationEntities();
-	public ArrayList<Entity> getSourceEntities();
+	public ArrayList<DisplayEntity> getDestinationEntities();
+	public ArrayList<DisplayEntity> getSourceEntities();
 }

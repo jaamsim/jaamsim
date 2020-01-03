@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016 JaamSim Software Inc.
+ * Copyright (C) 2016-2020 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -82,15 +82,15 @@ public class Duplicate extends LinkedComponent {
 
 	// LinkDisplayable
 	@Override
-	public ArrayList<Entity> getDestinationEntities() {
-		ArrayList<Entity> ret = new ArrayList<>();
+	public ArrayList<DisplayEntity> getDestinationEntities() {
+		ArrayList<DisplayEntity> ret = new ArrayList<>();
 		ArrayList<Linkable> ls = targetComponentList.getValue();
 		if (ls == null)
 			return ret;
 
 		for (Linkable l : ls) {
-			if (l != null && (l instanceof Entity)) {
-				ret.add((Entity)l);
+			if (l != null && (l instanceof DisplayEntity)) {
+				ret.add((DisplayEntity)l);
 			}
 		}
 		return ret;

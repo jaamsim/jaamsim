@@ -89,12 +89,12 @@ public class SimEntity extends StateEntity implements LinkDisplayable {
 
 	// LinkDisplayable
 	@Override
-	public ArrayList<Entity> getDestinationEntities() {
+	public ArrayList<DisplayEntity> getDestinationEntities() {
 		return new ArrayList<>();
 	}
 
 	@Override
-	public ArrayList<Entity> getSourceEntities() {
+	public ArrayList<DisplayEntity> getSourceEntities() {
 		return new ArrayList<>();
 	}
 

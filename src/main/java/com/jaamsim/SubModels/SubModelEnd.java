@@ -24,7 +24,6 @@ import com.jaamsim.Graphics.LinkDisplayable;
 import com.jaamsim.Graphics.OverlayEntity;
 import com.jaamsim.Graphics.TextBasics;
 import com.jaamsim.ProcessFlow.Linkable;
-import com.jaamsim.basicsim.Entity;
 import com.jaamsim.input.Keyword;
 
 public class SubModelEnd extends DisplayEntity implements Linkable, LinkDisplayable {
@@ -70,11 +69,11 @@ public class SubModelEnd extends DisplayEntity implements Linkable, LinkDisplaya
 
 	// LinkDisplayable
 	@Override
-	public ArrayList<Entity> getDestinationEntities() {
+	public ArrayList<DisplayEntity> getDestinationEntities() {
 		return new ArrayList<>();	}
 
 	@Override
-	public ArrayList<Entity> getSourceEntities() {
+	public ArrayList<DisplayEntity> getSourceEntities() {
 		return new ArrayList<>();
 	}
 

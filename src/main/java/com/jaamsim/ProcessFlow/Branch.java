@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016 JaamSim Software Inc.
+ * Copyright (C) 2016-2020 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleInput;
-import com.jaamsim.basicsim.Entity;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InterfaceEntityListInput;
 import com.jaamsim.input.Keyword;
@@ -72,15 +71,15 @@ public class Branch extends LinkedComponent {
 	}
 
 	@Override
-	public ArrayList<Entity> getDestinationEntities() {
-		ArrayList<Entity> ret = new ArrayList<>();
+	public ArrayList<DisplayEntity> getDestinationEntities() {
+		ArrayList<DisplayEntity> ret = new ArrayList<>();
 		ArrayList<Linkable> ls = nextComponentList.getValue();
 		if (ls == null)
 			return ret;
 
 		for (Linkable l : ls) {
-			if (l != null && (l instanceof Entity)) {
-				ret.add((Entity)l);
+			if (l != null && (l instanceof DisplayEntity)) {
+				ret.add((DisplayEntity)l);
 			}
 		}
 		return ret;

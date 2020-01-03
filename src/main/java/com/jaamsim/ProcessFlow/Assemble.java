@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2019 JaamSim Software Inc.
+ * Copyright (C) 2016-2020 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -216,8 +216,8 @@ public class Assemble extends LinkedService implements EntityGen {
 	}
 
 	@Override
-	public ArrayList<Entity> getSourceEntities() {
-		ArrayList<Entity> ret = super.getSourceEntities();
+	public ArrayList<DisplayEntity> getSourceEntities() {
+		ArrayList<DisplayEntity> ret = super.getSourceEntities();
 		if (prototypeEntity.getValue() != null)
 			ret.add(prototypeEntity.getValue());
 		return ret;

@@ -2045,24 +2045,14 @@ public class RenderManager implements DragSourceListener {
 				Entity.class, LinkDisplayable.class)) {
 
 				LinkDisplayable ld = (LinkDisplayable)e;
-				ArrayList<Entity> dests = ld.getDestinationEntities();
-				// Now scan the destinations
-				for (Entity dest : dests) {
-					if (!(dest instanceof DisplayEntity))
-						continue;
-					DisplayEntity destLD = (DisplayEntity)dest;
-
-					addLink((DisplayEntity) ld, destLD, scene);
+				ArrayList<DisplayEntity> dests = ld.getDestinationEntities();
+				for (DisplayEntity dest : dests) {
+					addLink((DisplayEntity) ld, dest, scene);
 				}
 
-				ArrayList<Entity> sources = ld.getSourceEntities();
-				// Now scan the destinations
-				for (Entity source : sources) {
-					if (!(source instanceof DisplayEntity))
-						continue;
-					DisplayEntity sourceLD = (DisplayEntity)source;
-
-					addLink(sourceLD, (DisplayEntity) ld, scene);
+				ArrayList<DisplayEntity> sources = ld.getSourceEntities();
+				for (DisplayEntity source : sources) {
+					addLink(source, (DisplayEntity) ld, scene);
 				}
 
 		}
