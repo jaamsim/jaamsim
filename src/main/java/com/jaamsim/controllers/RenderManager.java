@@ -1979,7 +1979,7 @@ public class RenderManager implements DragSourceListener {
 		createLinks.set(bCreate);
 	}
 
-	private void addLink(LinkDisplayable sourceLD, LinkDisplayable destLD, ArrayList<RenderProxy> scene) {
+	private void addLink(DisplayEntity sourceLD, DisplayEntity destLD, ArrayList<RenderProxy> scene) {
 		Vec3d source = sourceLD.getSourcePoint();
 		Vec3d sink = destLD.getSinkPoint();
 		double sourceRadius = sourceLD.getRadius();
@@ -2048,21 +2048,21 @@ public class RenderManager implements DragSourceListener {
 				ArrayList<Entity> dests = ld.getDestinationEntities();
 				// Now scan the destinations
 				for (Entity dest : dests) {
-					if (!(dest instanceof LinkDisplayable))
+					if (!(dest instanceof DisplayEntity))
 						continue;
-					LinkDisplayable destLD = (LinkDisplayable)dest;
+					DisplayEntity destLD = (DisplayEntity)dest;
 
-					addLink(ld, destLD, scene);
+					addLink((DisplayEntity) ld, destLD, scene);
 				}
 
 				ArrayList<Entity> sources = ld.getSourceEntities();
 				// Now scan the destinations
 				for (Entity source : sources) {
-					if (!(source instanceof LinkDisplayable))
+					if (!(source instanceof DisplayEntity))
 						continue;
-					LinkDisplayable sourceLD = (LinkDisplayable)source;
+					DisplayEntity sourceLD = (DisplayEntity)source;
 
-					addLink(sourceLD, ld, scene);
+					addLink(sourceLD, (DisplayEntity) ld, scene);
 				}
 
 		}
