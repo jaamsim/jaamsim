@@ -1102,6 +1102,41 @@ public class DisplayEntity extends Entity {
 		return tagMap;
 	}
 
+	/**
+	 * Returns the location at which entities arrive at this entity, if relevant.
+	 * @return arrival location
+	 */
+	public Vec3d getSourcePoint() {
+		if (usePointsInput() && !pointsInput.getValue().isEmpty()) {
+			ArrayList<Vec3d> points = pointsInput.getValue();
+			return getGlobalPosition(points.get(points.size() - 1));
+		}
+		return getGlobalPosition();
+	}
+
+	/**
+	 * Returns the location at which entities depart from this entity, if relevant.
+	 * @return departure location
+	 */
+	public Vec3d getSinkPoint() {
+		if (usePointsInput() && !pointsInput.getValue().isEmpty()) {
+			ArrayList<Vec3d> points = pointsInput.getValue();
+			return getGlobalPosition(points.get(0));
+		}
+		return getGlobalPosition();
+	}
+
+	/**
+	 * Returns the distance from the arrival/departure location at which an entity flow arrow
+	 * begins or ends.
+	 * @return distance from the arrival/departure location
+	 */
+	public double getRadius() {
+		if (usePointsInput())
+			return 0.2d;
+		return getSize().mag2()/2.0;
+	}
+
 	////////////////////////////////////////////////////////////////////////
 	// Outputs
 	////////////////////////////////////////////////////////////////////////
