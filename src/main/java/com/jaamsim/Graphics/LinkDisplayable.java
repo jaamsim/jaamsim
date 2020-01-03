@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2016 JaamSim Software Inc.
+ * Copyright (C) 2016-2020 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,16 +20,10 @@ package com.jaamsim.Graphics;
 import java.util.ArrayList;
 
 import com.jaamsim.basicsim.Entity;
-import com.jaamsim.math.Vec3d;
 
 public interface LinkDisplayable {
 	// Each link should only be registered once, so if an entity refers to another as a destination
 	// that entity should NOT refer back to the first as a source
 	public ArrayList<Entity> getDestinationEntities();
 	public ArrayList<Entity> getSourceEntities();
-
-	public Vec3d getSourcePoint();
-	public Vec3d getSinkPoint();
-
-	public double getRadius();
 }
