@@ -56,7 +56,6 @@ public class Polygon implements Renderable {
 	private static boolean _hasInitialized;
 
 	private final ArrayList<Vec3d> _points;
-	private final List<Vec4d> origPoints;
 	private List<Vec4d> _tessPoints;
 
 	private final VisibilityInfo _visInfo;
@@ -82,8 +81,6 @@ public class Polygon implements Renderable {
 		this.pickingID = pickingID;
 		this.trans = trans;
 		this._visInfo = visInfo;
-
-		this.origPoints = points;
 
 		// Points includes the scale, but not the transform
 		_points = new ArrayList<>(points.size());
@@ -200,7 +197,7 @@ public class Polygon implements Renderable {
 
 	private void renderFill(GL2GL3 gl) {
 		if (_tessPoints == null) {
-			_tessPoints = SimpleTess.tesselate(origPoints);
+			_tessPoints = SimpleTess.tesselate(_points);
 
 			fb = FloatBuffer.allocate(3 * _tessPoints.size());
 			for (Vec3d vert : _tessPoints) {
@@ -243,7 +240,25 @@ public class Polygon implements Renderable {
 		trans.inverse(invTrans);
 		Ray localRay = r.transform(invTrans);
 
-		double localDist =  MathUtils.collisionDistPoly(localRay, _points);
+		double localDist = Double.POSITIVE_INFINITY;
+		if (_tessPoints != null) {
+			for (int i = 0; i < _tessPoints.size(); i+=3) {
+				Vec3d[] tri = new Vec3d[3];
+				tri[0] = _tessPoints.get(i+0);
+				tri[1] = _tessPoints.get(i+1);
+				tri[2] = _tessPoints.get(i+2);
+				double triDist = MathUtils.collisionDistPoly(r, tri);
+				if (triDist > 0 && triDist < localDist) {
+					localDist = triDist;
+				}
+			}
+			if (localDist == Double.POSITIVE_INFINITY) {
+				localDist = -1; // No collision
+			}
+
+		} else {
+			localDist =  MathUtils.collisionDistPoly(localRay, _points);
+		}
 
 		// Scale the local distance back to global
 		return localDist*trans.getScale();

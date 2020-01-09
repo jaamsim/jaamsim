@@ -151,7 +151,7 @@ private static class Tess extends GLUtessellatorCallbackAdapter {
 		verts = new ArrayList<Vec4d>();
 	}
 
-	public List<Vec4d> tesselate(List<Vec4d> outline) {
+	public List<Vec4d> tesselate(List<? extends Vec3d> outline) {
 		reset();
 
 		GLU.gluTessBeginPolygon(gluTess, null);
@@ -181,7 +181,7 @@ private static void init() {
 	}
 }
 
-public static List<Vec4d> tesselate(List<Vec4d> outline) {
+public static List<Vec4d> tesselate(List<? extends Vec3d> outline) {
 
 	if (outline.size() < 3) {
 		return new ArrayList<Vec4d>();
