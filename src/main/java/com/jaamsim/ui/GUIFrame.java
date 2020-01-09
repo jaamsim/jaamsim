@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2002-2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2019 JaamSim Software Inc.
+ * Copyright (C) 2016-2020 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -2205,7 +2205,15 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 					offset.z -= delta;
 				}
 
+				// Normal object
 				KeywordIndex posKw = InputAgent.formatVec3dInput("Position", pos, DistanceUnit.class);
+				if (!dispEnt.usePointsInput()) {
+					InputAgent.storeAndExecute(new KeywordCommand(dispEnt, posKw));
+					controlStartResume.requestFocusInWindow();
+					return;
+				}
+
+				// Polyline object
 				KeywordIndex ptsKw = InputAgent.formatPointsInputs("Points", points, offset);
 				InputAgent.storeAndExecute(new KeywordCommand(dispEnt, posKw, ptsKw));
 				controlStartResume.requestFocusInWindow();
