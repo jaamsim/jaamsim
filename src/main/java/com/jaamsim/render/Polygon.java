@@ -56,6 +56,9 @@ public class Polygon implements Renderable {
 	private static boolean _hasInitialized;
 
 	private final ArrayList<Vec3d> _points;
+	private final List<Vec4d> origPoints;
+	private List<Vec4d> _tessPoints;
+
 	private final VisibilityInfo _visInfo;
 
 	private final float[] colour;
@@ -80,8 +83,11 @@ public class Polygon implements Renderable {
 		this.trans = trans;
 		this._visInfo = visInfo;
 
+		this.origPoints = points;
+
 		// Points includes the scale, but not the transform
 		_points = new ArrayList<>(points.size());
+
 		ArrayList<Vec3d> boundsPoints = new ArrayList<>(points.size());
 		for (Vec4d p : points) {
 			Vec3d temp = new Vec3d(p);
@@ -100,25 +106,11 @@ public class Polygon implements Renderable {
 			for (Vec3d vert : _points) {
 				RenderUtils.putPointXYZ(fb, vert);
 			}
+			fb.flip();
 		} else {
-			// Otherwise make a triangle fan c
-			Vec3d center = new Vec3d();
-			for (Vec3d vert : _points) {
-				center.add3(vert);
-			}
-			center.scale3(1.0/_points.size());
-
-			// The vertex list is just the closed loop of points
-			int buffSize = 3 * (_points.size() + 2);
-			fb = FloatBuffer.allocate(buffSize);
-			// Put the center to start the triangle fan
-			RenderUtils.putPointXYZ(fb, center);
-			for (Vec3d vert : _points) {
-				RenderUtils.putPointXYZ(fb, vert);
-			}
-			RenderUtils.putPointXYZ(fb, _points.get(0));
+			// Filled polygons are tesselated at render time because
+			// we use the GLU tesselator which needs an active openGL context
 		}
-		fb.flip();
 	}
 
 	@Override
@@ -207,6 +199,15 @@ public class Polygon implements Renderable {
 	}
 
 	private void renderFill(GL2GL3 gl) {
+		if (_tessPoints == null) {
+			_tessPoints = SimpleTess.tesselate(origPoints);
+
+			fb = FloatBuffer.allocate(3 * _tessPoints.size());
+			for (Vec3d vert : _tessPoints) {
+				RenderUtils.putPointXYZ(fb, vert);
+			}
+			fb.flip();
+		}
 
 		gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, _vertBuffer);
 		gl.glBufferData(GL2GL3.GL_ARRAY_BUFFER, fb.limit() * 4, fb, GL2GL3.GL_STATIC_DRAW);
@@ -215,7 +216,9 @@ public class Polygon implements Renderable {
 
 		gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, 0);
 
-		gl.glDrawArrays(GL2GL3.GL_TRIANGLE_FAN, 0, _points.size() + 2);
+		gl.glDisable(GL2GL3.GL_CULL_FACE);
+		gl.glDrawArrays(GL2GL3.GL_TRIANGLES, 0, _tessPoints.size());
+		gl.glEnable(GL2GL3.GL_CULL_FACE);
 
 	}
 
