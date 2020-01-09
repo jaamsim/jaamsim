@@ -81,16 +81,28 @@ limitations under the License.
       <fileset dir="${res.dir}"/>
       <fileset file="LICENSE"/>
       <zipfileset src="jar/gluegen-rt.jar"     includes="jogamp/**/*,com/**/*"/>
+      <zipfileset src="jar/gluegen-rt-natives-windows-i586.jar"     includes="natives/**/*"/>
       <zipfileset src="jar/gluegen-rt-natives-windows-amd64.jar"    includes="natives/**/*"/>
+      <zipfileset src="jar/gluegen-rt-natives-linux-i586.jar"       includes="natives/**/*"/>
       <zipfileset src="jar/gluegen-rt-natives-linux-amd64.jar"      includes="natives/**/*"/>
       <zipfileset src="jar/gluegen-rt-natives-macosx-universal.jar" includes="natives/**/*"/>
       <zipfileset src="jar/jogl-all.jar"       includes="jogamp/**/*,com/**/*,newt/**/**/*"/>
+      <zipfileset src="jar/jogl-all-natives-windows-i586.jar"     includes="natives/**/*"/>
       <zipfileset src="jar/jogl-all-natives-windows-amd64.jar"    includes="natives/**/*"/>
+      <zipfileset src="jar/jogl-all-natives-linux-i586.jar"       includes="natives/**/*"/>
       <zipfileset src="jar/jogl-all-natives-linux-amd64.jar"      includes="natives/**/*"/>
       <zipfileset src="jar/jogl-all-natives-macosx-universal.jar" includes="natives/**/*"/>
     </jar>
   </target>
   <target name="exe" depends="jar">
+    <delete file="${jars.dir}/JS32.exe4j" quiet="true"/>
+    <copy file="${make.dir}/JS32.exe4j" toFile="${jars.dir}/JS32.exe4j">
+      <filterset>
+        <filter token="VERSION" value="${ver}"/>
+        <filter token="VERMAJOR" value="${ver.major}"/>
+        <filter token="VERMINOR" value="${ver.minor}"/>
+      </filterset>
+    </copy>
     <delete file="${jars.dir}/JS64.exe4j" quiet="true"/>
     <copy file="${make.dir}/JS64.exe4j" toFile="${jars.dir}/JS64.exe4j">
       <filterset>
@@ -101,6 +113,9 @@ limitations under the License.
     </copy>
     <delete file="${jars.dir}/JaamSim-48px.ico" quiet="true"/>
     <copy file="${make.dir}/JaamSim-48px.ico" toFile="${jars.dir}/JaamSim-48px.ico"/>
+    <exec dir="${jars.dir}" executable="exe4jc">
+      <arg value="JS32.exe4j"/>
+    </exec>
     <exec dir="${jars.dir}" executable="exe4jc">
       <arg value="JS64.exe4j"/>
     </exec>
