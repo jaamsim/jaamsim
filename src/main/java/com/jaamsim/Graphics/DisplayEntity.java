@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2002-2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2017-2019 JaamSim Software Inc.
+ * Copyright (C) 2017-2020 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -870,48 +870,55 @@ public class DisplayEntity extends Entity {
 	public void handleKeyPressed(int keyCode, char keyChar, boolean shift, boolean control, boolean alt) {
 		if (!isMovable())
 			return;
-		Vec3d pos = getPosition();
 		double inc = getSimulation().getIncrementSize();
 		if (getSimulation().isSnapToGrid())
 			inc = Math.max(inc, getSimulation().getSnapGridSpacing());
 
+		Vec3d offset = new Vec3d();
 		switch (keyCode) {
 
 			case KeyEvent.VK_LEFT:
-				pos.x -= inc;
+				offset.x -= inc;
 				break;
 
 			case KeyEvent.VK_RIGHT:
-				pos.x += inc;
+				offset.x += inc;
 				break;
 
 			case KeyEvent.VK_UP:
 				if (shift)
-					pos.z += inc;
+					offset.z += inc;
 				else
-					pos.y += inc;
+					offset.y += inc;
 				break;
 
 			case KeyEvent.VK_DOWN:
 				if (shift)
-					pos.z -= inc;
+					offset.z -= inc;
 				else
-					pos.y -= inc;
+					offset.y -= inc;
 				break;
 
 			default:
 				return;
 		}
-		if (getSimulation().isSnapToGrid())
-			pos = getSimulation().getSnapGridPosition(pos, pos, shift);
 
 		// Normal object
+		Vec3d pos = getPosition();
+		pos.add3(offset);
+		if (getSimulation().isSnapToGrid())
+			pos = getSimulation().getSnapGridPosition(pos, pos, shift);
 		String posKey = positionInput.getKeyword();
 		KeywordIndex posKw = InputAgent.formatVec3dInput(posKey, pos, DistanceUnit.class);
 
 		// Polyline object
-		Vec3d offset = new Vec3d(pos);
-		offset.sub3(getPoints().get(0));
+		if (getSimulation().isSnapToGrid()) {
+			Vec3d pts0 = new Vec3d(getPoints().get(0));
+			pts0.add3(offset);
+			pts0 = getSimulation().getSnapGridPosition(pts0, pts0, shift);
+			offset = new Vec3d(pts0);
+			offset.sub3(getPoints().get(0));
+		}
 		String ptsKey = pointsInput.getKeyword();
 		KeywordIndex ptsKw = InputAgent.formatPointsInputs(ptsKey, getPoints(), offset);
 
