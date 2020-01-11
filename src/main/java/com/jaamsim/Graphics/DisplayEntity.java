@@ -919,6 +919,11 @@ public class DisplayEntity extends Entity {
 		String posKey = positionInput.getKeyword();
 		KeywordIndex posKw = InputAgent.formatVec3dInput(posKey, pos, DistanceUnit.class);
 
+		if (!usePointsInput()) {
+			InputAgent.storeAndExecute(new KeywordCommand(this, posKw));
+			return;
+		}
+
 		// Polyline object
 		if (getSimulation().isSnapToGrid()) {
 			Vec3d pts0 = new Vec3d(getPoints().get(0));
