@@ -46,6 +46,7 @@ import javax.swing.JPopupMenu;
 import com.jaamsim.Commands.DefineCommand;
 import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.DisplayModels.DisplayModel;
+import com.jaamsim.GameObjects.GameEntity;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.Editable;
 import com.jaamsim.Graphics.EntityLabel;
@@ -1953,10 +1954,19 @@ public class RenderManager implements DragSourceListener {
 
 		// Selected entity not in edit mode
 		if (selectedEntity != null) {
-			selectedEntity.handleKeyPressed(keyCode, keyChar, shift, control, alt);
-			return true;
+			boolean bool = selectedEntity.handleKeyPressed(keyCode, keyChar, shift, control, alt);
+			return bool;
 		}
-		return false;
+
+		// Game entities
+		boolean bool = false;
+		if (keyCode != KeyEvent.VK_LEFT && keyCode != KeyEvent.VK_RIGHT
+				&& keyCode != KeyEvent.VK_UP && keyCode != KeyEvent.VK_DOWN) {
+			for (GameEntity gEnt : GUIFrame.getJaamSimModel().getClonesOfIterator(GameEntity.class)) {
+				bool = bool || gEnt.handleKeyPressed(keyCode, keyChar, shift, control, alt);
+			}
+		}
+		return bool;
 	}
 
 	public void handleKeyReleased(int keyCode, char keyChar, boolean shift, boolean control, boolean alt) {
