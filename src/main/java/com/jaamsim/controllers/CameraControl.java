@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2012 Ausenco Engineering Canada Inc.
- * Copyright (C) 2019 JaamSim Software Inc.
+ * Copyright (C) 2019-2020 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -531,7 +531,7 @@ public class CameraControl implements WindowInteractionListener {
 		// Trap the degenerate case where the camera look straight down on the x-y plane
 		// For this case the normalize3 method returns a unit vector in the z-direction
 		if (forward.z > 0.0)
-			forward.set3(1.0d, 0.0d, 0.0d);
+			forward.set3(0.0d, 1.0d, 0.0d);
 
 		// Construct a unit vector pointing to the left of the direction vector
 		Vec3d left = new Vec3d( -forward.y, forward.x, 0.0d);
