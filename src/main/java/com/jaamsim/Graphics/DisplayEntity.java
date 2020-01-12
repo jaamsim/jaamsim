@@ -875,9 +875,18 @@ public class DisplayEntity extends Entity {
 		InputAgent.apply(this, kw);
 	}
 
-	public void handleKeyPressed(int keyCode, char keyChar, boolean shift, boolean control, boolean alt) {
+	/**
+	 * Performs the specified keyboard event.
+	 * @param keyCode - newt key code
+	 * @param keyChar - alphanumeric character for the key (if applicable)
+	 * @param shift - true if the Shift key is held down
+	 * @param control - true if the Control key is held down
+	 * @param alt - true if the Alt key is held down
+	 * @return true if the key event was consumed by this entity
+	 */
+	public boolean handleKeyPressed(int keyCode, char keyChar, boolean shift, boolean control, boolean alt) {
 		if (!isMovable())
-			return;
+			return false;
 		double inc = getSimulation().getIncrementSize();
 		if (getSimulation().isSnapToGrid())
 			inc = Math.max(inc, getSimulation().getSnapGridSpacing());
@@ -908,7 +917,7 @@ public class DisplayEntity extends Entity {
 				break;
 
 			default:
-				return;
+				return false;
 		}
 
 		// Normal object
@@ -921,7 +930,7 @@ public class DisplayEntity extends Entity {
 
 		if (!usePointsInput()) {
 			InputAgent.storeAndExecute(new KeywordCommand(this, posKw));
-			return;
+			return true;
 		}
 
 		// Polyline object
@@ -936,6 +945,7 @@ public class DisplayEntity extends Entity {
 		KeywordIndex ptsKw = InputAgent.formatPointsInputs(ptsKey, getPoints(), offset);
 
 		InputAgent.storeAndExecute(new KeywordCommand(this, posKw, ptsKw));
+		return true;
 	}
 
 	public void handleKeyReleased(int keyCode, char keyChar, boolean shift, boolean control, boolean alt) {

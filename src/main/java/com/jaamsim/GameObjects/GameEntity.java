@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2017-2019 JaamSim Software Inc.
+ * Copyright (C) 2017-2020 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,16 +54,17 @@ public abstract class GameEntity extends DisplayEntity {
 	}
 
 	@Override
-	public void handleKeyPressed(int keyCode, char keyChar, boolean shift, boolean control, boolean alt) {
+	public boolean handleKeyPressed(int keyCode, char keyChar, boolean shift, boolean control, boolean alt) {
 
 		// Detect the specified key event
 		if (actionKey.getValue() != null && keyCode == actionKey.getValue().intValue()) {
 			scheduleAction();
-			return;
+			return true;
 		}
 
 		// Otherwise perform the normal action for the key
-		super.handleKeyPressed(keyCode, keyChar, shift, control, alt);
+		boolean ret = super.handleKeyPressed(keyCode, keyChar, shift, control, alt);
+		return ret;
 	}
 
 	@Override

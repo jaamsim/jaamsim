@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2015 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018-2019 JaamSim Software Inc.
+ * Copyright (C) 2018-2020 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -159,19 +159,19 @@ public abstract class TextBasics extends DisplayEntity implements TextEntity, Ed
 	}
 
 	@Override
-	public void handleKeyPressed(int keyCode, char keyChar, boolean shift, boolean control, boolean alt) {
+	public boolean handleKeyPressed(int keyCode, char keyChar, boolean shift, boolean control, boolean alt) {
 
 		// If F2 is pressed, set edit mode
 		if (keyCode == KeyEvent.VK_F2) {
 			setEditMode(true);
 			RenderManager.redraw();
-			return;
+			return true;
 		}
 
 		// If not in edit mode, apply the normal action for the keystroke
 		if (!isEditMode()) {
-			super.handleKeyPressed(keyCode, keyChar, shift, control, alt);
-			return;
+			boolean ret = super.handleKeyPressed(keyCode, keyChar, shift, control, alt);
+			return ret;
 		}
 
 		// If in edit mode, the apply the keystroke to the text
@@ -183,6 +183,7 @@ public abstract class TextBasics extends DisplayEntity implements TextEntity, Ed
 			cancelEdits();
 		}
 		RenderManager.redraw();
+		return true;
 	}
 
 	@Override
