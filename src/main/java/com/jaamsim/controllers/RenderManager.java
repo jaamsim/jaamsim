@@ -593,6 +593,7 @@ public class RenderManager implements DragSourceListener {
 			if (ents.size() == 0) { return; } // Nothing to show
 
 			if (ents.size() == 1) {
+				FrameBox.setSelectedEntity(ents.get(0), false);
 				ContextMenu.populateMenu(menu, ents.get(0), nodeIndex, awtFrame, menuX, menuY);
 			}
 			else {
@@ -604,6 +605,7 @@ public class RenderManager implements DragSourceListener {
 
 						@Override
 						public void actionPerformed( ActionEvent event ) {
+							FrameBox.setSelectedEntity(de, false);
 							menu.removeAll();
 							ContextMenu.populateMenu(menu, de, nodeIndex, awtFrame, menuX, menuY);
 							menu.show(awtFrame, menuX, menuY);
