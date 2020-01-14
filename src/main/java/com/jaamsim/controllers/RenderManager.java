@@ -551,7 +551,6 @@ public class RenderManager implements DragSourceListener {
 	// Note: this is intentionally package private to be called by an inner class
 	void popupMenuImp(int windowID) {
 		synchronized (popupLock) {
-
 			Renderer.WindowMouseInfo mouseInfo = renderer.getMouseInfo(windowID);
 			if (mouseInfo == null) {
 				// Somehow this window was closed along the way, just ignore this click
@@ -1411,6 +1410,8 @@ public class RenderManager implements DragSourceListener {
 	}
 
 	public int getNodeIndex(int windowID, int x, int y) {
+		if (selectedEntity == null)
+			return -1;
 
 		ArrayList<Vec3d> points = selectedEntity.getPoints();
 		if (points == null)
