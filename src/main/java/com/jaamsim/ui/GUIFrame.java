@@ -4812,9 +4812,12 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 					y = olEnt.getScreenPosition().get(1) + 10;
 				}
 				DisplayEntity selectedDispEnt = (DisplayEntity) selectedEntity;
-				Vec3d pos = selectedDispEnt.getPosition();
+				Vec3d pos = selectedDispEnt.getGlobalPosition();
 				pos.x += 0.5d * selectedDispEnt.getSize().x;
 				pos.y -= 0.5d * selectedDispEnt.getSize().y;
+				pos = dEnt.getLocalPosition(pos);
+				if (sim.getSimulation().isSnapToGrid())
+					pos = sim.getSimulation().getSnapGridPosition(pos);
 				try {
 					dEnt.dragged(x, y, pos);
 				}
