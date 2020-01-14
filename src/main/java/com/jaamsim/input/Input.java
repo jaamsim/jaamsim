@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2010-2012 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2019 JaamSim Software Inc.
+ * Copyright (C) 2016-2020 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -114,7 +114,7 @@ public abstract class Input<T> {
 	protected static final String VALID_SAMPLE_LIST = "Accepts a list containing numbers with or without units, objects that return such a number, or expressions that return such a number. "
 	                                                + "Each entry in the list must be enclosed by braces.";
 	protected static final String VALID_SAMPLE_LIST_DIMLESS = "Accepts a list containing dimensionless numbers, objects that return such a number, or expressions that return such a number. "
-	                                                        + "Each entry in the list must be enclosed by braces.";
+	                                                        + "Each entry in the list can be enclosed by braces.";
 	protected static final String VALID_UNIT_TYPE_LIST = "Accepts a list of unit types separated by spaces.";
 	protected static final String VALID_STRING_PROV_LIST = "Accepts a list of strings or expressions that return strings. "
 	                                                     + "Also accepts other types of expressions whose outputs will be converted to strings. "

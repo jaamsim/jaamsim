@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2015 Ausenco Engineering Canada Inc.
- * Copyright (C) 2017-2019 JaamSim Software Inc.
+ * Copyright (C) 2017-2020 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -102,6 +102,30 @@ public class SampleListInput extends ListInput<ArrayList<SampleProvider>> {
 	public void parse(Entity thisEnt, KeywordIndex kw)
 	throws InputErrorException {
 		ArrayList<KeywordIndex> subArgs = kw.getSubArgs();
+
+		// Simple format without inner braces
+		if (dimensionless && subArgs.size() == 1) {
+			KeywordIndex subArg = subArgs.get(0);
+			ArrayList<SampleProvider> temp = new ArrayList<>(subArg.numArgs());
+			for (int i = 0; i < subArg.numArgs(); i++) {
+				KeywordIndex argKw = new KeywordIndex(subArg, i, i + 1);
+				try {
+					SampleProvider sp = Input.parseSampleExp(argKw, thisEnt, minValue, maxValue, getUnitType(i));
+					temp.add(sp);
+				}
+				catch (InputErrorException e) {
+					if (subArg.numArgs() == 1)
+						throw new InputErrorException(e.getMessage());
+					else
+						throw new InputErrorException(INP_ERR_ELEMENT, i+1, e.getMessage());
+				}
+			}
+			value = temp;
+			this.setValid(true);
+			return;
+		}
+
+		// Normal format with inner braces
 		ArrayList<SampleProvider> temp = new ArrayList<>(subArgs.size());
 		for (int i = 0; i < subArgs.size(); i++) {
 			KeywordIndex subArg = subArgs.get(i);

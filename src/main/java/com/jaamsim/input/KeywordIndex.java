@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2019 JaamSim Software Inc.
+ * Copyright (C) 2019-2020 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,6 +33,10 @@ public class KeywordIndex {
 
 	public KeywordIndex(KeywordIndex kw, int s) {
 		this(kw.keyword, kw.input, kw.start + s, kw.end, kw.context);
+	}
+
+	public KeywordIndex(KeywordIndex kw, int s, int e) {
+		this(kw.keyword, kw.input, kw.start + s, kw.start + e, kw.context);
 	}
 
 	public KeywordIndex(String word, ArrayList<String> inp, int s, int e, ParseContext ctxt) {
@@ -100,5 +104,10 @@ public class KeywordIndex {
 		}
 
 		return subArgs;
+	}
+
+	@Override
+	public String toString() {
+		return input.subList(start, end).toString();
 	}
 }
