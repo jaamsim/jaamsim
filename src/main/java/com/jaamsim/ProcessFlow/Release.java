@@ -23,7 +23,6 @@ import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleListInput;
 import com.jaamsim.Samples.SampleProvider;
-import com.jaamsim.input.Input;
 import com.jaamsim.input.InterfaceEntityListInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.resourceObjects.AbstractResourceProvider;
@@ -38,6 +37,8 @@ public class Release extends LinkedComponent {
 
 	@Keyword(description = "The number of units to release from the Resources specified by the "
 	                     + "'ResourceList' keyword. "
+	                     + "The last value in the list is used if the number of resources is "
+	                     + "greater than the number of values. "
 	                     + "Only an integer number of resource units can be released. "
 	                     + "A decimal value will be truncated to an integer.",
 	         exampleList = {"2 1", "{ 2 } { 1 }", "{ DiscreteDistribution1 } { 'this.obj.attrib1 + 1' }"})
@@ -58,11 +59,7 @@ public class Release extends LinkedComponent {
 		this.addInput(numberOfUnitsList);
 	}
 
-	@Override
-	public void validate() {
-		super.validate();
-		Input.validateInputSize(resourceList, numberOfUnitsList);
-	}
+	public Release() {}
 
 	@Override
 	public void addEntity( DisplayEntity ent ) {
@@ -82,7 +79,8 @@ public class Release extends LinkedComponent {
 
 		// Release the Resources
 		for(int i=0; i<resList.size(); i++) {
-			int n = (int) numberList.get(i).getNextSample(simTime);
+			int ind = Math.min(i, numberList.size() - 1);
+			int n = (int) numberList.get(ind).getNextSample(simTime);
 			if (n == 0)
 				continue;
 			resList.get(i).release(n, ent);
