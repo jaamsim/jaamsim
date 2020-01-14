@@ -2001,6 +2001,10 @@ public class RenderManager implements DragSourceListener {
 		if (cam == null)
 			return;
 		Vec3d pos = cam.getPOI();
+		Simulation simulation = ent.getSimulation();
+		if (simulation.isSnapToGrid()) {
+			pos = simulation.getSnapGridPosition(pos);
+		}
 		Renderer.WindowMouseInfo mouseInfo = renderer.getMouseInfo(activeWindowID);
 		try {
 			ent.dragged(mouseInfo.x, mouseInfo.y, pos);
