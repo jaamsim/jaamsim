@@ -2001,6 +2001,7 @@ public class RenderManager implements DragSourceListener {
 		if (cam == null)
 			return;
 		Vec3d pos = cam.getPOI();
+		pos = ent.getLocalPosition(pos);
 		Simulation simulation = ent.getSimulation();
 		if (simulation.isSnapToGrid()) {
 			pos = simulation.getSnapGridPosition(pos);
