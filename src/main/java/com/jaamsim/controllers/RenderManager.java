@@ -590,12 +590,16 @@ public class RenderManager implements DragSourceListener {
 			final int menuY = mouseInfo.y + awtFrame.getInsets().top;
 			final int nodeIndex = getNodeIndex(windowID, mouseInfo.x, mouseInfo.y);
 
-			if (ents.size() == 0) { return; } // Nothing to show
+			if (ents.size() == 0) {
+				FrameBox.setSelectedEntity(null, false);
+				ContextMenu.populateMenu(menu, null, nodeIndex, awtFrame, menuX, menuY);
+			}
 
-			if (ents.size() == 1) {
+			else if (ents.size() == 1) {
 				FrameBox.setSelectedEntity(ents.get(0), false);
 				ContextMenu.populateMenu(menu, ents.get(0), nodeIndex, awtFrame, menuX, menuY);
 			}
+
 			else {
 				// Several entities, let the user pick the interesting entity first
 				Collections.sort(ents, Input.uiSortOrder);

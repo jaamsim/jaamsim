@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2016-2019 JaamSim Software Inc.
+ * Copyright (C) 2016-2020 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -105,6 +105,9 @@ public class ContextMenu {
 				FrameBox.setSelectedEntity(ent, false);
 			}
 		} );
+		if (ent == null) {
+			inputEditorMenuItem.setEnabled(false);
+		}
 		menu.add( inputEditorMenuItem );
 
 		// 2) Output Viewer
@@ -117,6 +120,9 @@ public class ContextMenu {
 				FrameBox.setSelectedEntity(ent, false);
 			}
 		} );
+		if (ent == null) {
+			outputViewerMenuItem.setEnabled(false);
+		}
 		menu.add( outputViewerMenuItem );
 
 		// 3) Property Viewer
@@ -129,6 +135,9 @@ public class ContextMenu {
 				FrameBox.setSelectedEntity(ent, false);
 			}
 		} );
+		if (ent == null) {
+			propertyViewerMenuItem.setEnabled(false);
+		}
 		menu.add( propertyViewerMenuItem );
 		menu.addSeparator();
 
@@ -145,7 +154,7 @@ public class ContextMenu {
 				GUIFrame.getInstance().copyToClipboard(ent);
 			}
 		} );
-		if (ent.testFlag(Entity.FLAG_GENERATED) || ent == ent.getSimulation()) {
+		if (ent == null || ent.testFlag(Entity.FLAG_GENERATED) || ent == ent.getSimulation()) {
 			copyMenuItem.setEnabled(false);
 		}
 		menu.add( copyMenuItem );
@@ -163,6 +172,9 @@ public class ContextMenu {
 				GUIFrame.getInstance().pasteEntityFromClipboard();
 			}
 		} );
+		if (GUIFrame.getInstance().getEntityFromClipboard() == null) {
+			pasteMenuItem.setEnabled(false);
+		}
 		menu.add( pasteMenuItem );
 
 		// 5) Delete
@@ -181,6 +193,9 @@ public class ContextMenu {
 				}
 			}
 		} );
+		if (ent == null) {
+			deleteMenuItem.setEnabled(false);
+		}
 		menu.add( deleteMenuItem );
 
 		// DisplayEntity menu items
