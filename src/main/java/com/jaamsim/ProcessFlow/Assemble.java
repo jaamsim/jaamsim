@@ -25,17 +25,19 @@ import com.jaamsim.Graphics.OverlayEntity;
 import com.jaamsim.Graphics.TextBasics;
 import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
+import com.jaamsim.Samples.SampleListInput;
+import com.jaamsim.Samples.SampleProvider;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.datatypes.IntegerVector;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.EntityListInput;
 import com.jaamsim.input.InputAgent;
-import com.jaamsim.input.IntegerListInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.StringInput;
 import com.jaamsim.states.StateEntity;
+import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
 
 public class Assemble extends LinkedService implements EntityGen {
@@ -45,13 +47,16 @@ public class Assemble extends LinkedService implements EntityGen {
 	private final SampleInput serviceTime;
 
 	@Keyword(description = "A list of Queue objects in which to place the arriving sub-component entities.",
-	         exampleList = {"Queue1 Queue2 Queue3"})
+	         exampleList = {"Queue1 Queue2"})
 	private final EntityListInput<Queue> waitQueueList;
 
 	@Keyword(description = "The number of entities required from each queue for the assembly process to begin. "
-			+ "The last value in the list is used if the number of queues is greater than the number of values.",
-	         exampleList = {"1 2 1"})
-	private final IntegerListInput numberRequired;
+	                     + "The last value in the list is used if the number of queues is greater "
+	                     + "than the number of values. "
+	                     + "Only an integer number of entities can be assembled. "
+	                     + "A decimal value will be truncated to an integer.",
+	         exampleList = {"2 1", "{ 2 } { 1 }", "{ DiscreteDistribution1 } { 'this.obj.attrib1 + 1' }"})
+	private final SampleListInput numberRequired;
 
 	@Keyword(description = "If TRUE, the all entities used in the assembly process must have the same Match value. "
 			+ "The match value for an entity determined by the Match keyword for each queue. The value is calculated "
@@ -84,9 +89,11 @@ public class Assemble extends LinkedService implements EntityGen {
 		waitQueueList.setRequired(true);
 		this.addInput(waitQueueList);
 
-		IntegerVector def = new IntegerVector();
-		def.add(1);
-		numberRequired = new IntegerListInput("NumberRequired", KEY_INPUTS, def);
+		ArrayList<SampleProvider> def = new ArrayList<>();
+		def.add(new SampleConstant(1));
+		numberRequired = new SampleListInput("NumberRequired", KEY_INPUTS, def);
+		numberRequired.setDimensionless(true);
+		numberRequired.setUnitType(DimensionlessUnit.class);
 		this.addInput(numberRequired);
 
 		matchRequired = new BooleanInput("MatchRequired", KEY_INPUTS, false);
@@ -138,17 +145,24 @@ public class Assemble extends LinkedService implements EntityGen {
 	@Override
 	protected boolean startProcessing(double simTime) {
 
+		// Determine the required numbers of entities
+		IntegerVector numList = new IntegerVector(numberRequired.getListSize());
+		for (int i = 0; i < numberRequired.getListSize(); i++) {
+			int n = (int) numberRequired.getValue().get(i).getNextSample(simTime);
+			numList.add(n);
+		}
+
 		// Do the queues have enough entities?
 		ArrayList<Queue> queueList = waitQueueList.getValue();
 		if (matchRequired.getValue()) {
-			String m = Queue.selectMatchValue(queueList, numberRequired.getValue());
+			String m = Queue.selectMatchValue(queueList, numList);
 			if (m == null) {
 				return false;
 			}
 			this.setMatchValue(m);
 		}
 		else {
-			if (!Queue.sufficientEntities(queueList, numberRequired.getValue(), null)) {
+			if (!Queue.sufficientEntities(queueList, numList, null)) {
 				return false;
 			}
 		}
@@ -156,8 +170,8 @@ public class Assemble extends LinkedService implements EntityGen {
 		// Remove the appropriate entities from each queue
 		for (int i=0; i<queueList.size(); i++) {
 			Queue que = queueList.get(i);
-			int ind = Math.min(i, numberRequired.getValue().size()-1);
-			for (int n=0; n<numberRequired.getValue().get(ind); n++) {
+			int ind = Math.min(i, numList.size() - 1);
+			for (int n = 0; n < numList.get(ind); n++) {
 				DisplayEntity ent;
 				ent = que.removeFirstForMatch(getMatchValue());
 				if (ent == null)
