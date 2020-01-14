@@ -1981,6 +1981,18 @@ public class RenderManager implements DragSourceListener {
 	}
 
 	/**
+	 * Returns the global coordinates corresponding to the specified raster position projected
+	 * onto the x-y plane.
+	 */
+	public Vec3d getMousePosition(int windowID, int x, int y) {
+		Ray currentRay = getRayForMouse(windowID, x, y);
+		double dist = RenderManager.XY_PLANE.collisionDist(currentRay);
+		if (dist == Double.POSITIVE_INFINITY)
+			return null;
+		return currentRay.getPointAtDist(dist);
+	}
+
+	/**
 	 * Moves the entity to the last place at which the mouse was clicked.
 	 * @param ent - entity to be positioned
 	 */

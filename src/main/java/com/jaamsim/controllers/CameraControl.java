@@ -302,6 +302,9 @@ public class CameraControl implements WindowInteractionListener {
 
 		RenderManager.inst().hideExistingPopups();
 		if (button  == 3) {
+			Vec3d pos = RenderManager.inst().getMousePosition(windowID, x, y);
+			if (pos != null)
+				setPOI(pos);
 			// Hand this off to the RenderManager to deal with
 			RenderManager.inst().popupMenu(windowID);
 		}
