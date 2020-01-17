@@ -1247,7 +1247,7 @@ public class ExpressionBox extends JDialog {
 				"'cos(60[deg])' returns 0.5"));
 
 		functions.add(new ButtonDesc("tan", "Tangent function ('tan')",
-				"Returns the cosine function of the input value.",
+				"Returns the tangent function of the input value.",
 				"Accepts a dimensionless number or one with the units of AngleUnit and returns a "
 						+ "dimensionless number.",
 				"tan()",
