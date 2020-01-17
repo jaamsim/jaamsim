@@ -1469,6 +1469,18 @@ public class ExpressionBox extends JDialog {
 				-1,
 				"'substring(\"abcdefg\", 3)' returns \"cdefg\"",
 				"'substring(\"abcdefg\", 3, 6)' returns \"cde\""));
+
+		functions.add(new ButtonDesc("indexOfStr", "IndexOf function for Strings ('indexOfStr')",
+				"Returns the index within the specifed string of the first occurrence of the "
+						+ "specified substring, starting at the specified index. "
+						+ "Zero is returned if the substring is not found.",
+				"Accepts a string followed by the substring and the fromIndex value. "
+						+ "If the fromIndex is omitted, the entire string is searched. "
+						+ "Returns a dimensionless number.",
+				"indexOfStr()",
+				-1,
+				"'indexOfStr(\"abcdefg\", \"cd\")' returns 3",
+				"'indexOfStr(\"ffaffbc\", \"ff\", 3)' returns 4"));
 	}
 
 }
