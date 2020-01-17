@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2018-2019 JaamSim Software Inc.
+ * Copyright (C) 2018-2020 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -1455,6 +1455,20 @@ public class ExpressionBox extends JDialog {
 				"parseNumber()",
 				-1,
 				"'parseNumber(\"1.5\")' returns 1.5"));
+
+		functions.add(new ButtonDesc("substring", "Substring function ('substring')",
+				"Returns a string that is a substring of the specified string. "
+						+ "The substring begins at the specified beginIndex and extends to the "
+						+ "character at index endIndex - 1. "
+						+ "Thus the length of the substring is endIndex-beginIndex.",
+				"Accepts a string followed by the beginIndex and the endIndex values. "
+						+ "If the endIndex is omitted, the substring extends to the end of the "
+						+ "string. Returns a string containing the specified portion of the "
+						+ "original string.",
+				"substring()",
+				-1,
+				"'substring(\"abcdefg\", 3)' returns \"cdefg\"",
+				"'substring(\"abcdefg\", 3, 6)' returns \"cde\""));
 	}
 
 }
