@@ -264,24 +264,35 @@ public class ExpressionBox extends JDialog {
 	}
 
 	private void tryParse() {
+
+		// Prepare the input string
+		Entity ent = EditBox.getInstance().getCurrentEntity();
+		String str = editArea.getText().replace("\n", " ");
+		if (!str.isEmpty())
+			str = input.applyConditioning(str);
+
+		// Load the input
 		try {
-			// Load the input
-			Entity ent = EditBox.getInstance().getCurrentEntity();
-			String str = editArea.getText().replace("\n", " ");
-			if (!str.isEmpty())
-				str = input.applyConditioning(str);
 			KeywordIndex kw = InputAgent.formatInput(input.getKeyword(), str);
 			InputAgent.storeAndExecute(new KeywordCommand(ent, kw));
-
-			// If successful, show the result
-			double simTime = GUIFrame.getJaamSimModel().getSimTime();
-			msgText.setText(formatMessage(true, input.getPresentValueString(simTime)));
 			acceptButton.setEnabled(true);
 		}
 		catch (Exception e) {
 			msgText.setText(formatMessage(false, e.getMessage()));
 			acceptButton.setEnabled(false);
+			return;
 		}
+
+		// Show the present value
+		String valStr;
+		try {
+			double simTime = GUIFrame.getJaamSimModel().getSimTime();
+			valStr = input.getPresentValueString(simTime);
+		}
+		catch (Exception e) {
+			valStr = "Cannot evaluate at this time";
+		}
+		msgText.setText(formatMessage(true, valStr));
 	}
 
 	private static String formatMessage(boolean isValid, String str) {
