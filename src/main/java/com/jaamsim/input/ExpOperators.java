@@ -277,6 +277,25 @@ public class ExpOperators {
 		return ExpValResult.makeValidRes(ExpResType.NUMBER, DimensionlessUnit.class);
 	}
 
+	private static void checkStringFunction(ExpResult arg, String source, int pos) throws ExpError {
+		if (arg.type != ExpResType.STRING) {
+			throw new ExpError(source, pos, "Argument must be a string");
+		}
+	}
+
+	private static ExpValResult validateStringFunction(ParseContext context, ExpValResult arg, String source, int pos) {
+		if (  arg.state == ExpValResult.State.ERROR ||
+		      arg.state == ExpValResult.State.UNDECIDABLE) {
+			return arg;
+		}
+		// Check that the argument is a collection
+		if (arg.type != ExpResType.STRING) {
+			ExpError error = new ExpError(source, pos, "Argument must be a string");
+			return ExpValResult.makeErrorRes(error);
+		}
+		return ExpValResult.makeValidRes(ExpResType.STRING, null);
+	}
+
 
 	private static String unitToString(Class<? extends Unit> unit) {
 		if (unit == null)
@@ -2206,6 +2225,51 @@ public class ExpOperators {
 					return ExpValResult.makeErrorRes(error);
 				}
 				return ExpValResult.makeValidRes(ExpResType.NUMBER, DimensionlessUnit.class);
+			}
+		});
+
+		addFunction("toUpperCase", 1, 1, new CallableFunc() {
+			@Override
+			public void checkUnits(ParseContext context, ExpResult[] args, String source, int pos) throws ExpError {
+				checkStringFunction(args[0], source, pos);
+			}
+			@Override
+			public ExpResult call(EvalContext context, ExpResult[] args, String source, int pos) throws ExpError {
+				return ExpResult.makeStringResult(args[0].stringVal.toUpperCase());
+			}
+			@Override
+			public ExpValResult validate(ParseContext context, ExpValResult[] args, String source, int pos) {
+				return validateStringFunction(context, args[0], source, pos);
+			}
+		});
+
+		addFunction("toLowerCase", 1, 1, new CallableFunc() {
+			@Override
+			public void checkUnits(ParseContext context, ExpResult[] args, String source, int pos) throws ExpError {
+				checkStringFunction(args[0], source, pos);
+			}
+			@Override
+			public ExpResult call(EvalContext context, ExpResult[] args, String source, int pos) throws ExpError {
+				return ExpResult.makeStringResult(args[0].stringVal.toLowerCase());
+			}
+			@Override
+			public ExpValResult validate(ParseContext context, ExpValResult[] args, String source, int pos) {
+				return validateStringFunction(context, args[0], source, pos);
+			}
+		});
+
+		addFunction("trim", 1, 1, new CallableFunc() {
+			@Override
+			public void checkUnits(ParseContext context, ExpResult[] args, String source, int pos) throws ExpError {
+				checkStringFunction(args[0], source, pos);
+			}
+			@Override
+			public ExpResult call(EvalContext context, ExpResult[] args, String source, int pos) throws ExpError {
+				return ExpResult.makeStringResult(args[0].stringVal.trim());
+			}
+			@Override
+			public ExpValResult validate(ParseContext context, ExpValResult[] args, String source, int pos) {
+				return validateStringFunction(context, args[0], source, pos);
 			}
 		});
 

@@ -1481,6 +1481,28 @@ public class ExpressionBox extends JDialog {
 				-1,
 				"'indexOfStr(\"abcdefg\", \"cd\")' returns 3",
 				"'indexOfStr(\"ffaffbc\", \"ff\", 3)' returns 4"));
+
+		functions.add(new ButtonDesc("toUpperCase", "UpperCase function ('toUpperCase')",
+				"Converts the specified string to upper case characters.",
+				"Accepts a string and returns a string.",
+				"toUpperCase()",
+				-1,
+				"'toUpperCase(\"abc\")' returns \"ABC\""));
+
+		functions.add(new ButtonDesc("toLowerCase", "LowerCase function ('toLowerCase')",
+				"Converts the specified string to lower case characters.",
+				"Accepts a string and returns a string.",
+				"toLowerCase()",
+				-1,
+				"'toLowerCase(\"ABC\")' returns \"abc\""));
+
+		functions.add(new ButtonDesc("trim", "Trim function ('trim')",
+				"Removes leading and trailing whitespace from the specified string.",
+				"Accepts a string and returns a string.",
+				"trim()",
+				-1,
+				"'trim(\"  abc  \")' returns \"abc\""));
+
 	}
 
 }
