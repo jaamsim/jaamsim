@@ -279,6 +279,8 @@ public class ExpOperators {
 
 
 	private static String unitToString(Class<? extends Unit> unit) {
+		if (unit == null)
+			return "null";
 		return unit.getSimpleName();
 	}
 
