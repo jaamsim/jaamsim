@@ -2273,5 +2273,57 @@ public class ExpOperators {
 			}
 		});
 
+		addFunction("split", 2, 3, new CallableFunc() {
+			@Override
+			public void checkUnits(ParseContext context, ExpResult[] args,
+					String source, int pos) throws ExpError {
+				if (args[0].type != ExpResType.STRING) {
+					throw new ExpError(source, pos, "First parameter must be a string");
+				}
+				if (args[1].type != ExpResType.STRING) {
+					throw new ExpError(source, pos, "Second parameter must be a string");
+				}
+				if (args.length == 3 && (args[2].type != ExpResType.NUMBER || args[2].unitType != DimensionlessUnit.class)) {
+					throw new ExpError(source, pos, "Third parameter must be a dimensionless number");
+				}
+			}
+			@Override
+			public ExpResult call(EvalContext context, ExpResult[] args, String source, int pos) throws ExpError {
+				String str = args[0].stringVal;
+				String regex = args[1].stringVal;
+				int limit = 0;
+				if (args.length == 3)
+					limit = (int) args[2].value;
+				String[] array;
+				try {
+					array = str.split(regex, limit);
+				}
+				catch(RuntimeException e) {
+					throw new ExpError(source, pos, e.getMessage());
+				}
+				return ExpCollections.wrapCollection(array, null);
+			}
+			@Override
+			public ExpValResult validate(ParseContext context, ExpValResult[] args, String source, int pos) {
+				ExpValResult mergedErrors = mergeMultipleErrors(args);
+				if (mergedErrors != null)
+					return mergedErrors;
+
+				if (args[0].type != ExpResType.STRING) {
+					ExpError error = new ExpError(source, pos, "First parameter must be a string");
+					return ExpValResult.makeErrorRes(error);
+				}
+				if (args[1].type != ExpResType.STRING) {
+					ExpError error = new ExpError(source, pos, "Second parameter must be a string");
+					return ExpValResult.makeErrorRes(error);
+				}
+				if (args.length == 3 && (args[2].type != ExpResType.NUMBER || args[2].unitType != DimensionlessUnit.class)) {
+					ExpError error = new ExpError(source, pos, "Third parameter must be a dimensionless number");
+					return ExpValResult.makeErrorRes(error);
+				}
+				return ExpValResult.makeValidRes(ExpResType.COLLECTION, null);
+			}
+		});
+
 	}
 }

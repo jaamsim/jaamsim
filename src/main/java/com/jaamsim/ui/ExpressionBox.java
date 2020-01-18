@@ -1503,6 +1503,22 @@ public class ExpressionBox extends JDialog {
 				-1,
 				"'trim(\"  abc  \")' returns \"abc\""));
 
+		functions.add(new ButtonDesc("split", "Split function ('split')",
+				"Divides the specified string into an array of substrings around matches to a "
+						+ "specified 'regex' string. "
+						+ "An optional third 'limit' argument specifies the maximum number of "
+						+ "substrings to return. "
+						+ "The function mirrors the split method provided in Java. "
+						+ "See the Java documentation for 'regex' string (regular expression).",
+				"Accepts a string followed by a 'regex' string. "
+						+ "An optional 'limit' number can be included. "
+						+ "Returns an array of strings.",
+				"split()",
+				-1,
+				"'split(\"ab:cd:ef\", \":\")' returns {\"ab\", \"cd\", \"ef\"}",
+				"'split(\"ab.cd.ef\", \"\\.\")' returns {\"ab\", \"cd\", \"ef\"}",
+				"'split(\"ab.cd.ef\", \"\\.\", 2)' returns {\"ab\", \"cd.ef\"}"));
+
 	}
 
 }
