@@ -1348,6 +1348,8 @@ public class ExpOperators {
 			}
 		});
 
+		///////////////////////////////////////////////////
+		// Higher Order Functions
 		addFunction("map", 2, 2, new CallableFunc() {
 			@Override
 			public void checkUnits(ParseContext context, ExpResult[] args,
