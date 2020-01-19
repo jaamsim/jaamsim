@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2018-2019 JaamSim Software Inc.
+ * Copyright (C) 2018-2020 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@ import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
+import com.jaamsim.units.DimensionlessUnit;
 
 public abstract class AbstractResourceProvider extends DisplayEntity implements ResourceProvider {
 
@@ -168,6 +169,30 @@ public abstract class AbstractResourceProvider extends DisplayEntity implements 
 	    sequence = 1)
 	public ArrayList<ResourceUser> getUserList(double simTime) {
 		return userList;
+	}
+
+	@Output(name = "Capacity",
+	 description = "The total number of resource units that can be used.",
+	    unitType = DimensionlessUnit.class,
+	    sequence = 2)
+	public int getPresentCapacity(double simTime) {
+		return getCapacity(simTime);
+	}
+
+	@Output(name = "UnitsInUse",
+	 description = "The present number of resource units that are in use.",
+	    unitType = DimensionlessUnit.class,
+	    sequence = 3)
+	public int getUnitsInUse(double simTime) {
+		return getUnitsInUse();
+	}
+
+	@Output(name = "AvailableUnits",
+	 description = "The number of resource units that are not in use.",
+	    unitType = DimensionlessUnit.class,
+	    sequence = 4)
+	public int getAvailableUnits(double simTime) {
+		return getCapacity(simTime) - getUnitsInUse();
 	}
 
 }

@@ -243,30 +243,6 @@ public class Resource extends AbstractResourceProvider {
 	// OUTPUT METHODS
 	// ******************************************************************************************************
 
-	@Output(name = "Capacity",
-	 description = "The total number of resource units that can be used.",
-	    unitType = DimensionlessUnit.class,
-	    sequence = 0)
-	public int getPresentCapacity(double simTime) {
-		return (int) capacity.getValue().getNextSample(simTime);
-	}
-
-	@Output(name = "UnitsInUse",
-	 description = "The present number of resource units that are in use.",
-	    unitType = DimensionlessUnit.class,
-	    sequence = 1)
-	public int getUnitsInUse(double simTime) {
-		return unitsInUse;
-	}
-
-	@Output(name = "AvailableUnits",
-	 description = "The number of resource units that are not in use.",
-	    unitType = DimensionlessUnit.class,
-	    sequence = 2)
-	public int getAvailableUnits(double simTime) {
-		return getCapacity(simTime) - unitsInUse;
-	}
-
 	@Output(name = "UnitsSeized",
 	 description = "The total number of resource units that have been seized.",
 	    unitType = DimensionlessUnit.class,
