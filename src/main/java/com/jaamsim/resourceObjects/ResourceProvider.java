@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2018 JaamSim Software Inc.
+ * Copyright (C) 2018-2020 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -63,5 +63,18 @@ public interface ResourceProvider {
 	 * @return true if resources are assigned in strict order
 	 */
 	public boolean isStrictOrder();
+
+	/**
+	 * Returns the total number of resource units that can be assigned.
+	 * @param simTime - present simulation time
+	 * @return total number of resource units
+	 */
+	public int getCapacity(double simTime);
+
+	/**
+	 * Returns the number of resource units that are assigned at the present time.
+	 * @return resource units that are assigned
+	 */
+	public int getUnitsInUse();
 
 }

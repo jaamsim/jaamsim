@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2018-2019 JaamSim Software Inc.
+ * Copyright (C) 2018-2020 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -184,6 +184,16 @@ public class ResourceUnit extends StateUserEntity implements Seizable, ResourceP
 		presentAssignment = null;
 		lastReleaseTicks = getSimTicks();
 		setPresentState();
+	}
+
+	@Override
+	public int getCapacity(double simTime) {
+		return 1;
+	}
+
+	@Override
+	public int getUnitsInUse() {
+		return presentAssignment == null ? 0 : 1;
 	}
 
 	@Override

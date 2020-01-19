@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2018-2019 JaamSim Software Inc.
+ * Copyright (C) 2018-2020 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import com.jaamsim.Graphics.DisplayEntity;
+import com.jaamsim.ProcessFlow.StateUserEntity;
 import com.jaamsim.basicsim.Entity;
 
 public class ResourcePool extends AbstractResourceProvider {
@@ -41,6 +42,28 @@ public class ResourcePool extends AbstractResourceProvider {
 				continue;
 			seizableList.add(unit);
 		}
+	}
+
+	@Override
+	public int getCapacity(double simTime) {
+		int ret = 0;
+		for (Seizable unit : seizableList) {
+			if (unit instanceof StateUserEntity && !((StateUserEntity) unit).isAvailable())
+				continue;
+			ret++;
+		}
+		return ret;
+	}
+
+	@Override
+	public int getUnitsInUse() {
+		int ret = 0;
+		for (Seizable unit : seizableList) {
+			if (unit.getAssignment() == null)
+				continue;
+			ret++;
+		}
+		return ret;
 	}
 
 	public ArrayList<Seizable> getEligibleList(DisplayEntity ent) {

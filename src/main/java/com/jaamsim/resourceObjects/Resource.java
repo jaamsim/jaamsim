@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2019 JaamSim Software Inc.
+ * Copyright (C) 2016-2020 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -113,6 +113,16 @@ public class Resource extends AbstractResourceProvider {
 
 		// Track any changes in the Resource's capacity
 		this.waitForCapacityChange();
+	}
+
+	@Override
+	public int getCapacity(double simTime) {
+		return (int) capacity.getValue().getNextSample(simTime);
+	}
+
+	@Override
+	public int getUnitsInUse() {
+		return unitsInUse;
 	}
 
 	@Override
@@ -237,7 +247,7 @@ public class Resource extends AbstractResourceProvider {
 	 description = "The total number of resource units that can be used.",
 	    unitType = DimensionlessUnit.class,
 	    sequence = 0)
-	public int getCapacity(double simTime) {
+	public int getPresentCapacity(double simTime) {
 		return (int) capacity.getValue().getNextSample(simTime);
 	}
 
