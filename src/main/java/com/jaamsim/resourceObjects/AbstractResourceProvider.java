@@ -22,12 +22,15 @@ import java.util.Collections;
 import java.util.Comparator;
 
 import com.jaamsim.Graphics.DisplayEntity;
+import com.jaamsim.Statistics.TimeBasedFrequency;
+import com.jaamsim.Statistics.TimeBasedStatistics;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.units.DimensionlessUnit;
+import com.jaamsim.units.TimeUnit;
 
 public abstract class AbstractResourceProvider extends DisplayEntity implements ResourceProvider {
 
@@ -48,6 +51,8 @@ public abstract class AbstractResourceProvider extends DisplayEntity implements 
 	//	Statistics
 	private int unitsSeized;    // number of units that have been seized
 	private int unitsReleased;  // number of units that have been released
+	private final TimeBasedStatistics stats;
+	private final TimeBasedFrequency freq;
 
 	public final static String ERR_CAPACITY = "Insufficient resource units: available=%s, req'd=%s";
 
@@ -58,6 +63,8 @@ public abstract class AbstractResourceProvider extends DisplayEntity implements 
 
 	public AbstractResourceProvider() {
 		userList = new ArrayList<>();
+		stats = new TimeBasedStatistics();
+		freq = new TimeBasedFrequency(0, 10);
 	}
 
 	@Override
@@ -67,6 +74,10 @@ public abstract class AbstractResourceProvider extends DisplayEntity implements 
 
 		unitsSeized = 0;
 		unitsReleased = 0;
+		stats.clear();
+		stats.addValue(0.0d, 0);
+		freq.clear();
+		freq.addValue(0.0d,  0);
 	}
 
 	@Override
@@ -91,11 +102,21 @@ public abstract class AbstractResourceProvider extends DisplayEntity implements 
 		unitsReleased += n;
 	}
 
+	public void collectStatistics(double simTime, int unitsInUse) {
+		stats.addValue(simTime, unitsInUse);
+		freq.addValue(simTime, unitsInUse);
+	}
+
 	@Override
 	public void clearStatistics() {
 		super.clearStatistics();
+		double simTime = this.getSimTime();
 		unitsSeized = 0;
 		unitsReleased = 0;
+		stats.clear();
+		stats.addValue(simTime, getUnitsInUse());
+		freq.clear();
+		freq.addValue(simTime, getUnitsInUse());
 	}
 
 	/**
@@ -237,6 +258,56 @@ public abstract class AbstractResourceProvider extends DisplayEntity implements 
 	    sequence = 6)
 	public int getUnitsReleased(double simTime) {
 		return unitsReleased;
+	}
+
+	@Output(name = "UnitsInUseAverage",
+	 description = "The average number of resource units that are in use.",
+	    unitType = DimensionlessUnit.class,
+	  reportable = true,
+	    sequence = 7)
+	public double getUnitsInUseAverage(double simTime) {
+		return stats.getMean(simTime);
+	}
+
+	@Output(name = "UnitsInUseStandardDeviation",
+	 description = "The standard deviation of the number of resource units that are in use.",
+	    unitType = DimensionlessUnit.class,
+	  reportable = true,
+	    sequence = 8)
+	public double getUnitsInUseStandardDeviation(double simTime) {
+		return stats.getStandardDeviation(simTime);
+	}
+
+	@Output(name = "UnitsInUseMinimum",
+	 description = "The minimum number of resource units that are in use.",
+	    unitType = DimensionlessUnit.class,
+	  reportable = true,
+	    sequence = 9)
+	public int getUnitsInUseMinimum(double simTime) {
+		return (int) stats.getMin();
+	}
+
+	@Output(name = "UnitsInUseMaximum",
+	 description = "The maximum number of resource units that are in use.",
+	    unitType = DimensionlessUnit.class,
+	  reportable = true,
+	    sequence = 10)
+	public int getUnitsInUseMaximum(double simTime) {
+		int ret = (int) stats.getMax();
+		// A unit that is seized and released immediately
+		// does not count as a non-zero maximum in use
+		if (ret == 1 && freq.getBinTime(simTime, 1) == 0.0d)
+			return 0;
+		return ret;
+	}
+
+	@Output(name = "UnitsInUseTimes",
+	 description = "The total time that the number of resource units in use was 0, 1, 2, etc.",
+	    unitType = TimeUnit.class,
+	  reportable = true,
+	    sequence = 11)
+	public double[] getUnitsInUseDistribution(double simTime) {
+		return freq.getBinTimes(simTime);
 	}
 
 }

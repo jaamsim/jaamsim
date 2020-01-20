@@ -101,6 +101,9 @@ public class ResourcePool extends AbstractResourceProvider {
 		for (int i = 0; i < n; i++) {
 			list.get(i).unit.seize(ent);
 		}
+
+		double simTime = getSimTime();
+		collectStatistics(simTime, getUnitsInUse());
 	}
 
 	@Override
@@ -111,6 +114,9 @@ public class ResourcePool extends AbstractResourceProvider {
 				continue;
 			unit.release();
 		}
+
+		double simTime = getSimTime();
+		collectStatistics(simTime, getUnitsInUse());
 	}
 
 	private static class SeizableUnit implements Comparable<SeizableUnit> {
