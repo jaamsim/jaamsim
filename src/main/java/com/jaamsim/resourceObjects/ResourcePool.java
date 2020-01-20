@@ -22,6 +22,8 @@ import java.util.Collections;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.ProcessFlow.StateUserEntity;
 import com.jaamsim.basicsim.Entity;
+import com.jaamsim.input.Output;
+import com.jaamsim.units.DimensionlessUnit;
 
 public class ResourcePool extends AbstractResourceProvider {
 
@@ -147,6 +149,43 @@ public class ResourcePool extends AbstractResourceProvider {
 		public String toString() {
 			return unit.toString();
 		}
+	}
+
+	@Output(name = "UnitsList",
+	 description = "The ResourceUnits that are members of this ResourcePool.",
+	    sequence = 1)
+	public ArrayList<Seizable> getUnitsList(double simTime) {
+		return seizableList;
+	}
+
+	@Output(name = "UnitsInUseList",
+	 description = "The present number of resource units that are in use.",
+	    unitType = DimensionlessUnit.class,
+	    sequence = 2)
+	public ArrayList<Seizable> getUnitsInUseList(double simTime) {
+		ArrayList<Seizable> ret = new ArrayList<>(seizableList.size());
+		for (Seizable unit : seizableList) {
+			if (unit.getAssignment() == null)
+				continue;
+			ret.add(unit);
+		}
+		return ret;
+	}
+
+	@Output(name = "AvailableUnitsList",
+	 description = "The number of resource units that are not in use.",
+	    unitType = DimensionlessUnit.class,
+	    sequence = 3)
+	public ArrayList<Seizable> getAvailableUnitsList(double simTime) {
+		ArrayList<Seizable> ret = new ArrayList<>(seizableList.size());
+		for (Seizable unit : seizableList) {
+			if (unit.getAssignment() != null)
+				continue;
+			if (unit instanceof StateUserEntity && !((StateUserEntity) unit).isAvailable())
+				continue;
+			ret.add(unit);
+		}
+		return ret;
 	}
 
 }
