@@ -54,8 +54,6 @@ public class Resource extends AbstractResourceProvider {
 	//	Statistics
 	private final TimeBasedStatistics stats;
 	private final TimeBasedFrequency freq;
-	protected int unitsSeized;    // number of units that have been seized
-	protected int unitsReleased;  // number of units that have been released
 
 	{
 		trace.setHidden(false);
@@ -91,7 +89,6 @@ public class Resource extends AbstractResourceProvider {
 	@Override
 	public void earlyInit() {
 		super.earlyInit();
-
 		unitsInUse = 0;
 		lastCapacity = this.getCapacity(0.0d);
 
@@ -100,8 +97,6 @@ public class Resource extends AbstractResourceProvider {
 		stats.addValue(0.0d, 0);
 		freq.clear();
 		freq.addValue(0.0d,  0);
-		unitsSeized = 0;
-		unitsReleased = 0;
 	}
 
 	@Override
@@ -133,23 +128,21 @@ public class Resource extends AbstractResourceProvider {
 
 	@Override
 	public void seize(int n, DisplayEntity ent) {
-		if (isTraceFlag()) trace(1, "seize(%s, %s)", n, ent);
+		super.seize(n, ent);
 		double simTime = getSimTime();
 		if (getAvailableUnits(simTime) < n)
 			error(ERR_CAPACITY, getCapacity(simTime), n);
 
 		unitsInUse += n;
-		unitsSeized += n;
 		stats.addValue(simTime, unitsInUse);
 		freq.addValue(simTime, unitsInUse);
 	}
 
 	@Override
 	public void release(int m, DisplayEntity ent) {
-		if (isTraceFlag()) trace(1, "release(%s, %s)", m, ent);
 		int n = Math.min(m, unitsInUse);
+		super.release(n, ent);
 		unitsInUse -= n;
-		unitsReleased += n;
 		double simTime = this.getSimTime();
 		stats.addValue(simTime, unitsInUse);
 		freq.addValue(simTime, unitsInUse);
@@ -235,31 +228,11 @@ public class Resource extends AbstractResourceProvider {
 		stats.addValue(simTime, unitsInUse);
 		freq.clear();
 		freq.addValue(simTime, unitsInUse);
-		unitsSeized = 0;
-		unitsReleased = 0;
 	}
 
 	// ******************************************************************************************************
 	// OUTPUT METHODS
 	// ******************************************************************************************************
-
-	@Output(name = "UnitsSeized",
-	 description = "The total number of resource units that have been seized.",
-	    unitType = DimensionlessUnit.class,
-	  reportable = true,
-	    sequence = 3)
-	public int getUnitsSeized(double simTime) {
-		return unitsSeized;
-	}
-
-	@Output(name = "UnitsReleased",
-	 description = "The total number of resource units that have been released.",
-	    unitType = DimensionlessUnit.class,
-	  reportable = true,
-	    sequence = 4)
-	public int getUnitsReleased(double simTime) {
-		return unitsReleased;
-	}
 
 	@Output(name = "UnitsInUseAverage",
 	 description = "The average number of resource units that are in use.",

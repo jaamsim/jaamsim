@@ -83,7 +83,7 @@ public class ResourcePool extends AbstractResourceProvider {
 
 	@Override
 	public void seize(int n, DisplayEntity ent) {
-		if (isTraceFlag()) trace(1,"seize(%s, %s)", n, ent);
+		super.seize(n, ent);
 
 		// List the units that are eligible to be seized
 		ArrayList<Seizable> eligibleList = getEligibleList(ent);
@@ -105,7 +105,7 @@ public class ResourcePool extends AbstractResourceProvider {
 
 	@Override
 	public void release(int n, DisplayEntity ent) {
-		if (isTraceFlag()) trace(1,"release(%s, %s)", n, ent);
+		super.release(n, ent);
 		for (Seizable unit : seizableList) {
 			if (unit.getAssignment() != ent)
 				continue;

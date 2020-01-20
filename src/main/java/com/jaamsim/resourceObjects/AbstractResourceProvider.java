@@ -45,6 +45,10 @@ public abstract class AbstractResourceProvider extends DisplayEntity implements 
 
 	private ArrayList<ResourceUser> userList;  // objects that can use this provider's units
 
+	//	Statistics
+	private int unitsSeized;    // number of units that have been seized
+	private int unitsReleased;  // number of units that have been released
+
 	public final static String ERR_CAPACITY = "Insufficient resource units: available=%s, req'd=%s";
 
 	{
@@ -60,6 +64,9 @@ public abstract class AbstractResourceProvider extends DisplayEntity implements 
 	public void earlyInit() {
 		super.earlyInit();
 		userList = getUserList(this);
+
+		unitsSeized = 0;
+		unitsReleased = 0;
 	}
 
 	@Override
@@ -70,6 +77,25 @@ public abstract class AbstractResourceProvider extends DisplayEntity implements 
 	@Override
 	public ArrayList<ResourceUser> getUserList() {
 		return userList;
+	}
+
+	@Override
+	public void seize(int n, DisplayEntity ent) {
+		if (isTraceFlag()) trace(1, "seize(%s, %s)", n, ent);
+		unitsSeized += n;
+	}
+
+	@Override
+	public void release(int n, DisplayEntity ent) {
+		if (isTraceFlag()) trace(1, "release(%s, %s)", n, ent);
+		unitsReleased += n;
+	}
+
+	@Override
+	public void clearStatistics() {
+		super.clearStatistics();
+		unitsSeized = 0;
+		unitsReleased = 0;
 	}
 
 	/**
@@ -193,6 +219,24 @@ public abstract class AbstractResourceProvider extends DisplayEntity implements 
 	    sequence = 4)
 	public int getAvailableUnits(double simTime) {
 		return getCapacity(simTime) - getUnitsInUse();
+	}
+
+	@Output(name = "UnitsSeized",
+	 description = "The total number of resource units that have been seized.",
+	    unitType = DimensionlessUnit.class,
+	  reportable = true,
+	    sequence = 5)
+	public int getUnitsSeized(double simTime) {
+		return unitsSeized;
+	}
+
+	@Output(name = "UnitsReleased",
+	 description = "The total number of resource units that have been released.",
+	    unitType = DimensionlessUnit.class,
+	  reportable = true,
+	    sequence = 6)
+	public int getUnitsReleased(double simTime) {
+		return unitsReleased;
 	}
 
 }
