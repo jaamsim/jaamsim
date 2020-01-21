@@ -267,10 +267,17 @@ public class Entity {
 
 	protected void addInput(Input<?> in) {
 		inpList.add(in);
+	}
 
-		if (in.isOutput()) {
-			inputOutputMap.put(in.getKeyword(), new InOutHandle(this, in));
-		}
+	protected void addInputAsOutput(Input<?> input) {
+		addInputAsOutput(input, input.getKeyword(), Integer.MAX_VALUE-1, DimensionlessUnit.class);
+	}
+
+	protected void addInputAsOutput(Input<?> input, String alias, int sequence, Class<? extends Unit> unitType) {
+
+		InOutHandle handle = new InOutHandle(this, input, alias, sequence, unitType);
+		inputOutputMap.put(alias, handle);
+
 	}
 
 	protected void removeInput(Input<?> in) {
