@@ -4,9 +4,6 @@ import com.jaamsim.basicsim.Entity;
 
 public class InOutHandle extends OutputHandle {
 
-
-//public class ExpressionHandle extends OutputHandle {
-
 	private final Input<?> in;
 	private final String name;
 	private final Class<?> returnType;
