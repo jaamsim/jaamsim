@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2012 Ausenco Engineering Canada Inc.
- * Copyright (C) 2019 JaamSim Software Inc.
+ * Copyright (C) 2019-2020 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -68,6 +68,26 @@ public static boolean nearGT(double a, double b) {
  */
 public static boolean nearLT(double a, double b) {
 	return a < b+EPSILON;
+}
+
+/**
+ * Performs a greater-than comparison of two doubles within a tolerance.
+ * @param a - first double
+ * @param b - second double
+ * @return true if a > b within a tolerance of EPSILON
+ */
+public static boolean strictGT(double a, double b) {
+	return !nearLT(a,b);
+}
+
+/**
+ * Performs a less-than comparison of two doubles within a tolerance.
+ * @param a - first double
+ * @param b - second double
+ * @return true if a < b within a tolerance of EPSILON
+ */
+public static boolean strictLT(double a, double b) {
+	return !nearGT(a,b);
 }
 
 /**
