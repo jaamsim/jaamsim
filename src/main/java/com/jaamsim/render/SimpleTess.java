@@ -172,14 +172,8 @@ private static class Tess extends GLUtessellatorCallbackAdapter {
 
 }
 
+private static final Object tessLock = new Object();
 private static Tess TESS;
-
-private static void init() {
-	if (TESS == null) {
-		TESS = new Tess();
-		TESS.init();
-	}
-}
 
 public static List<Vec4d> tesselate(List<? extends Vec3d> outline) {
 
@@ -187,8 +181,12 @@ public static List<Vec4d> tesselate(List<? extends Vec3d> outline) {
 		return new ArrayList<>();
 	}
 
-	init();
-	synchronized(TESS) {
+	synchronized (tessLock) {
+		if (TESS == null) {
+			TESS = new Tess();
+			TESS.init();
+		}
+
 		return TESS.tesselate(outline);
 	}
 }
