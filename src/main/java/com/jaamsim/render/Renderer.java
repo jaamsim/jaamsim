@@ -216,7 +216,6 @@ public class Renderer implements GLAnimatorControl {
 			dummyDrawable.display(); // triggers GLContext object creation and native realization.
 
 			sharedContext = dummyDrawable.getContext();
-			assert (sharedContext != null);
 
 			try {
 				GL3 gl3 = sharedContext.getGL().getGL3();
@@ -236,7 +235,7 @@ public class Renderer implements GLAnimatorControl {
 			// Notify the main thread we're done
 			initialized.set(true);
 
-		} catch (Exception e) {
+		} catch (Throwable e) {
 
 			fatalError.set(true);
 			errorString = e.getLocalizedMessage();
