@@ -62,6 +62,28 @@ public class MeshData {
 	public final static int RGB_ZERO_TRANS = 2;
 	public final static int DIFF_ALPHA_TRANS = 3;
 
+	// Convenient key to track Mesh/Material combinations
+	public static class MeshMatKey {
+		public final int meshIndex;
+		public final int matIndex;
+		public MeshMatKey(int meshIndex, int matIndex) {
+			this.meshIndex = meshIndex;
+			this.matIndex = matIndex;
+		}
+		@Override
+		public boolean equals(Object o) {
+			if (!(o instanceof MeshMatKey)) {
+				return false;
+			}
+			MeshMatKey other = (MeshMatKey)o;
+			return this.meshIndex == other.meshIndex && this.matIndex == other.matIndex;
+		}
+		@Override
+		public int hashCode() {
+			return meshIndex * 21 + matIndex * 61;
+		}
+	}
+
 	public static class Material {
 		public Color4d diffuseColor;
 		public Color4d ambientColor;
@@ -112,6 +134,15 @@ public class MeshData {
 		public int materialIndex;
 		public Mat4d transform;
 		public Mat4d invTrans;
+	}
+
+	public static class StaticMeshBatch {
+		public final MeshMatKey key;
+		public ArrayList<Mat4d> transform = new ArrayList<>();
+		public ArrayList<Mat4d> invTrans = new ArrayList<>();
+		public StaticMeshBatch(MeshMatKey key) {
+			this.key = key;
+		}
 	}
 
 	public static class StaticLineInstance {
@@ -446,6 +477,8 @@ public class MeshData {
 	private final ArrayList<StaticMeshInstance> _staticMeshInstances = new ArrayList<>();
 	private final ArrayList<StaticLineInstance> _staticLineInstances = new ArrayList<>();
 
+	private final HashMap<MeshMatKey, StaticMeshBatch> _staticBatches = new HashMap<>();
+
 	private final ArrayList<AnimMeshInstance> _animMeshInstances = new ArrayList<>();
 	private final ArrayList<AnimLineInstance> _animLineInstances = new ArrayList<>();
 
@@ -483,8 +516,22 @@ public class MeshData {
 		inst.materialIndex = matIndex;
 		inst.transform = trans;
 
-		inst.invTrans = trans.inverse();
+		Mat4d invTrans = trans.inverse();
+		inst.invTrans = invTrans;
 		_staticMeshInstances.add(inst);
+
+		// Add to the batches as well if it is opaque
+		Material material = _materials.get(matIndex);
+		if (material.transType == NO_TRANS) {
+			MeshMatKey key = new MeshMatKey(meshIndex, matIndex);
+			StaticMeshBatch batch = _staticBatches.get(key);
+			if (batch == null) {
+				batch = new StaticMeshBatch(key);
+				_staticBatches.put(key, batch);
+			}
+			batch.transform.add(trans);
+			batch.invTrans.add(invTrans);
+		}
 	}
 
 	public void setTree(TreeNode rootNode) {
@@ -912,6 +959,32 @@ public class MeshData {
 				System.out.printf("%d -> %d\n", i, histVal);
 			}
 		}
+
+		// Log the batch uses
+		HashMap<Integer, Integer> batchHist = new HashMap<>();
+		int maxBatch = 0;
+		for (MeshMatKey k : _staticBatches.keySet()) {
+			StaticMeshBatch b = _staticBatches.get(k);
+			int batchSize = b.transform.size();
+
+			Integer histVal = batchHist.get(batchSize);
+			if (histVal == null) {
+				histVal = new Integer(0);
+			}
+			histVal += 1;
+			batchHist.put(batchSize, histVal);
+
+			maxBatch = Math.max(maxInst, batchSize);
+
+		}
+
+		System.out.printf("BatchHistogram:\n");
+		for (int i = 0; i <= maxBatch; ++i) {
+			Integer histVal = batchHist.get(i);
+			if (histVal != null && histVal != 0) {
+				System.out.printf("%d -> %d\n", i, histVal);
+			}
+		}
 	}
 
 	private void populateActionList() {
@@ -1042,6 +1115,9 @@ public class MeshData {
 
 	public ArrayList<StaticMeshInstance> getStaticMeshInstances() {
 		return _staticMeshInstances;
+	}
+	public HashMap<MeshMatKey,StaticMeshBatch> getStaticMeshBatches() {
+		return _staticBatches;
 	}
 	public ArrayList<StaticLineInstance> getStaticLineInstances() {
 		return _staticLineInstances;
