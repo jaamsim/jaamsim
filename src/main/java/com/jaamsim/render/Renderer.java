@@ -70,6 +70,7 @@ import com.jogamp.opengl.DebugGL4bc;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2GL3;
 import com.jogamp.opengl.GL3;
+import com.jogamp.opengl.GL4;
 import com.jogamp.opengl.GL4bc;
 import com.jogamp.opengl.GLAnimatorControl;
 import com.jogamp.opengl.GLAutoDrawable;
@@ -121,11 +122,12 @@ public class Renderer implements GLAnimatorControl {
 	private GLCapabilities caps = null;
 
 	private boolean gl3Supported;
+	private boolean gl4Supported;
 
 	private final TexCache texCache = new TexCache(this);
 	private final GraphicsMemManager graphicsMemManager = new GraphicsMemManager(this);
 
-	// An initalization time flag specifying if the 'safest' graphical techniques should be used
+	// An initialization time flag specifying if the 'safest' graphical techniques should be used
 	private boolean safeGraphics;
 
 	private final Thread renderThread;
@@ -217,12 +219,9 @@ public class Renderer implements GLAnimatorControl {
 
 			sharedContext = dummyDrawable.getContext();
 
-			try {
-				GL3 gl3 = sharedContext.getGL().getGL3();
-				gl3Supported = gl3 != null;
-			} catch (GLException ex) {
-				gl3Supported = false;
-			}
+			GL gl = sharedContext.getGL();
+			gl3Supported = gl.isGL3();
+			gl4Supported = gl.isGL4();
 
 //			long endNanos = System.nanoTime();
 //			long ms = (endNanos - startNanos) /1000000L;
@@ -468,6 +467,9 @@ public class Renderer implements GLAnimatorControl {
 
 	public GL2GL3 getGL() {
 		return drawContext.getGL().getGL2GL3();
+	}
+	public GL4 getGL4() {
+		return drawContext.getGL().getGL4();
 	}
 
 	/**
@@ -849,12 +851,12 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 			throw new RenderException("OpenGL version is too low. OpenGL >= 2.1 is required.");
 		}
 		GL2GL3 gl = sharedContext.getGL().getGL2GL3();
-		if (!isCore)
+		if (!isCore && !gl3Supported)
 			initShaders(gl);
 		else
 			initCoreShaders(gl, sharedContext.getGLSLVersionString());
 
-		// Sub system specific intitializations
+		// Sub system specific initializations
 		DebugUtils.init(this, gl);
 		Polygon.init(this, gl);
 		MeshProto.init(this, gl);
@@ -1431,6 +1433,10 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 
 	public boolean isGL3Supported() {
 		return gl3Supported;
+	}
+
+	public boolean isGL4Supported() {
+		return gl4Supported;
 	}
 
 	public boolean hasFatalError() {
