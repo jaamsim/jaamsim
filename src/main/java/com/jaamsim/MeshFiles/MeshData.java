@@ -51,6 +51,8 @@ import com.jaamsim.render.Renderer;
  */
 public class MeshData {
 
+	private final static boolean LOG_DATA = false;
+
 	public final static int MAX_HULL_ATTEMPTS = 5;
 	public final static int MAX_HULL_POINTS = 100;
 	public final static int MAX_SUBINST_HULL_POINTS = 30;
@@ -73,6 +75,8 @@ public class MeshData {
 		public int transType;
 		public Color4d transColour;
 
+		public int numUses;
+
 		public int getShaderID() {
 			int ret = 0;
 			if (colorTex != null) {
@@ -93,6 +97,7 @@ public class MeshData {
 		public AABB localBounds;
 
 		public boolean keepRuntimeData;
+		public int numUses;
 	}
 
 	public static class SubLineData {
@@ -447,6 +452,8 @@ public class MeshData {
 	private TreeNode treeRoot;
 	private int numTreeNodes;
 
+	private String source;
+
 	private ConvexHull _staticHull;
 	// The AABB of this mesh with no transform applied
 	private AABB _defaultBounds;
@@ -463,6 +470,10 @@ public class MeshData {
 
 	public MeshData(boolean keepRuntimeData) {
 		this.keepRuntimeData = keepRuntimeData;
+	}
+
+	public void setSource(String source) {
+		this.source = source;
 	}
 
 	public void addStaticMeshInstance(int meshIndex, int matIndex, Mat4d mat) {
@@ -788,8 +799,14 @@ public class MeshData {
 		// Collect all the points from the hulls of the individual sub meshes
 		for (StaticMeshInstance subInst : _staticMeshInstances) {
 
-			List<Vec3d> pointsRef = _subMeshesData.get(subInst.subMeshIndex).staticHull.getVertices();
+			SubMeshData sm = _subMeshesData.get(subInst.subMeshIndex);
+			List<Vec3d> pointsRef = sm.staticHull.getVertices();
 			List<Vec3d> subPoints = RenderUtils.transformPointsWithTrans(subInst.transform, pointsRef);
+
+			sm.numUses++;
+
+			Material mat = _materials.get(subInst.materialIndex);
+			mat.numUses++;
 
 			totalHullPoints.addAll(subPoints);
 		}
@@ -861,6 +878,39 @@ public class MeshData {
 			v2Interner = null; // Drop ref to the interner to free memory
 			v3Interner = null; // Drop ref to the interner to free memory
 			v4Interner = null; // Drop ref to the interner to free memory
+		}
+		if (LOG_DATA) {
+			logUses();
+		}
+	}
+
+	private void logUses() {
+		HashMap<Integer, Integer> instHist = new HashMap<>();
+		int maxInst = 0;
+		int totalInsts = 0;
+
+		for(SubMeshData sm: _subMeshesData) {
+			int numUses = sm.numUses;
+			Integer histVal = instHist.get(numUses);
+			if (histVal == null) {
+				histVal = new Integer(0);
+			}
+			histVal += 1;
+			instHist.put(numUses, histVal);
+
+			totalInsts += numUses;
+
+			maxInst = Math.max(maxInst, numUses);
+		}
+		String s = source != null ? source : "<unknown>";
+		System.out.printf("Uses for source: %s\n", s);
+		System.out.printf("Total meshes: %d\n", _subMeshesData.size());
+		System.out.printf("Total insts: %d\n", totalInsts);
+		for (int i = 0; i <= maxInst; ++i) {
+			Integer histVal = instHist.get(i);
+			if (histVal != null && histVal != 0) {
+				System.out.printf("%d -> %d\n", i, histVal);
+			}
 		}
 	}
 
