@@ -33,6 +33,7 @@ import com.jaamsim.math.Vec3d;
 import com.jaamsim.math.Vec4d;
 import com.jaamsim.ui.LogBox;
 import com.jogamp.opengl.GL2GL3;
+import com.jogamp.opengl.GL4;
 import com.jogamp.opengl.GLException;
 
 /**
@@ -106,10 +107,42 @@ private static class SubMesh {
 	public Vec3d _center;
 
 	public int _numVerts;
+	public int[] usedShaders;
 	public final HashMap<Integer, Integer>[] vaoMaps;
 
 	@SuppressWarnings("unchecked")  // initializing the vaoMaps array
 	SubMesh(int[] usedShaders) {
+		this.usedShaders = usedShaders;
+		vaoMaps = new HashMap[Renderer.NUM_MESH_SHADERS];
+		for (int i = 0; i < usedShaders.length; ++i) {
+			int shaderID = usedShaders[i];
+			vaoMaps[shaderID] = new HashMap<>();
+		}
+	}
+}
+
+private static class MeshBatch {
+	public int meshIndex;
+	public int matIndex;
+	public int transBuffer;
+	public int normMatBuffer;
+
+	public int numInstances;
+
+	private final int[] usedShaders;
+
+	public final MeshData.StaticMeshBatch data;
+
+	// TODO: bounds
+
+	public final HashMap<Integer, Integer>[] vaoMaps;
+
+	@SuppressWarnings("unchecked")
+	MeshBatch(MeshData.StaticMeshBatch data, int[] usedShaders) {
+		this.meshIndex = data.key.meshIndex;
+		this.matIndex = data.key.matIndex;
+		this.usedShaders = usedShaders;
+		this.data = data;
 		vaoMaps = new HashMap[Renderer.NUM_MESH_SHADERS];
 		for (int i = 0; i < usedShaders.length; ++i) {
 			int shaderID = usedShaders[i];
@@ -155,6 +188,8 @@ private final MeshData data;
 private final ArrayList<SubMesh> _subMeshes;
 private final ArrayList<SubLine> _subLines;
 private final ArrayList<Material> _materials;
+private final ArrayList<MeshBatch> _batches;
+
 
 private final int[] usedShaders;
 
@@ -164,15 +199,18 @@ private final int[] usedShaders;
 private boolean _isLoadedGPU = false;
 
 private final boolean flattenBuffers;
+private final boolean canBatch;
 
-public MeshProto(MeshData data, boolean flattenBuffers) {
+public MeshProto(MeshData data, boolean flattenBuffers, boolean canBatch) {
 	this.flattenBuffers = flattenBuffers;
+	this.canBatch = canBatch && !flattenBuffers;
 	this.data = data;
 	_subMeshes = new ArrayList<>();
 	_subLines = new ArrayList<>();
 	_materials = new ArrayList<>();
+	_batches = new ArrayList<>();
 
-	usedShaders = data.getUsedMeshShaders();
+	usedShaders = data.getUsedMeshShaders(this.canBatch);
 }
 
 public void render(int contextID, Renderer renderer,
@@ -198,10 +236,18 @@ public void render(int contextID, Renderer renderer,
 
 	initUniforms(renderer, modelViewMat, cam.getProjMat4d(), viewMat, finalNorMat);
 
-	for (MeshData.StaticMeshInstance subInst : data.getStaticMeshInstances()) {
-		renderOpaqueSubMesh(contextID, renderer, subInst.subMeshIndex, subInst.materialIndex, cam,
-		                    modelMat, invModelMat, modelViewMat,
-		                    subInst.transform, subInst.invTrans);
+	if (renderer.isGL4Supported() && canBatch) {
+		// Batch render static meshes
+		for (MeshBatch batch : _batches) {
+			renderBatch(contextID, renderer, batch);
+		}
+	} else {
+		// Render individual instances of static meshes
+		for (MeshData.StaticMeshInstance subInst : data.getStaticMeshInstances()) {
+			renderOpaqueSubMesh(contextID, renderer, subInst.subMeshIndex, subInst.materialIndex, cam,
+			                    modelMat, invModelMat, modelViewMat,
+			                    subInst.transform, subInst.invTrans);
+		}
 	}
 
 	for (MeshData.AnimMeshInstance subInst : data.getAnimMeshInstances()) {
@@ -221,6 +267,59 @@ public void render(int contextID, Renderer renderer,
 		SubLine subLine = _subLines.get(subInst.lineIndex);
 		renderSubLine(subLine, contextID, renderer, modelMat, modelViewMat, pose.transforms[subInst.nodeIndex], cam);
 	}
+
+}
+
+private void renderBatch(int contextID, Renderer renderer,
+        MeshBatch batch) {
+
+	// TODO bounds
+	// TODO size culling
+
+
+	Material mat = _materials.get(batch.matIndex);
+	SubMesh subMesh = _subMeshes.get(batch.meshIndex);
+
+	int shaderID = mat.shaderID | Renderer.STATIC_BATCH_FLAG;
+
+	GL2GL3 gl = renderer.getGL();
+	GL4 gl4 = renderer.getGL4();
+
+	if (!batch.vaoMaps[shaderID].containsKey(contextID)) {
+		setupVAOForBatch(contextID, batch, renderer);
+	}
+
+	int vao = batch.vaoMaps[shaderID].get(contextID);
+	gl.glBindVertexArray(vao);
+
+	ShaderInfo si = sInfos[shaderID];
+
+	gl.glUseProgram(si.meshProgHandle);
+
+	// Setup uniforms for this object
+	if (mat._texHandle != 0) {
+		gl.glActiveTexture(GL2GL3.GL_TEXTURE0);
+		gl.glBindTexture(GL2GL3.GL_TEXTURE_2D, mat._texHandle);
+		gl.glTexParameteri(GL2GL3.GL_TEXTURE_2D, GL2GL3.GL_TEXTURE_WRAP_S, GL2GL3.GL_REPEAT);
+		gl.glTexParameteri(GL2GL3.GL_TEXTURE_2D, GL2GL3.GL_TEXTURE_WRAP_T, GL2GL3.GL_REPEAT);
+		gl.glUniform1i(si.texVar, 0);
+	} else {
+		gl.glUniform4fv(si.diffuseColorVar, 1, mat._diffuseColor.toFloats(), 0);
+	}
+
+	gl.glUniform3fv(si.ambientColorVar, 1, mat._ambientColor.toFloats(), 0);
+	gl.glUniform3fv(si.specColorVar, 1, mat._specColor.toFloats(), 0);
+	gl.glUniform1f(si.shininessVar, (float)mat._shininess);
+
+	// Actually draw it
+	gl.glDisable(GL2GL3.GL_CULL_FACE);
+
+	//gl.glDrawElements(GL2GL3.GL_TRIANGLES, subMesh._numVerts, GL2GL3.GL_UNSIGNED_INT, 0);
+	gl4.glDrawElementsInstanced(GL2GL3.GL_TRIANGLES, subMesh._numVerts, GL2GL3.GL_UNSIGNED_INT, 0, batch.numInstances);
+
+	gl.glEnable(GL2GL3.GL_CULL_FACE);
+
+	gl.glBindVertexArray(0);
 
 }
 
@@ -416,9 +515,9 @@ private void initUniforms(Renderer renderer, Mat4d modelViewMat, Mat4d projMat, 
 }
 
 private void setupVAOForSubMesh(int contextID, SubMesh sub, Renderer renderer) {
-	// Setup a VAO for each used shader for this mesh (this could be optimized for only the sub mesh...
-	for (int shaderID : usedShaders) {
-		setupVAOForSubMeshImp(contextID, shaderID, sub, renderer);
+	for (int shaderID : sub.usedShaders) {
+		if ((shaderID & Renderer.STATIC_BATCH_FLAG) == 0)
+			setupVAOForSubMeshImp(contextID, shaderID, sub, renderer);
 	}
 }
 
@@ -467,6 +566,90 @@ private void setupVAOForSubMeshImp(int contextID, int shaderID, SubMesh sub, Ren
 	gl.glBindVertexArray(0);
 
 }
+
+private void setupVAOForBatch(int contextID, MeshBatch batch, Renderer renderer) {
+	for (int shaderID : batch.usedShaders) {
+		if ((shaderID & Renderer.STATIC_BATCH_FLAG) != 0)
+			setupVAOForBatchImp(contextID, shaderID, batch, renderer);
+	}
+}
+
+private void setupVAOForBatchImp(int contextID, int shaderID, MeshBatch batch, Renderer renderer) {
+	GL4 gl = renderer.getGL4();
+
+	SubMesh sub = _subMeshes.get(batch.meshIndex);
+
+	int vao = renderer.generateVAO(contextID, gl);
+	batch.vaoMaps[shaderID].put(contextID, vao);
+	gl.glBindVertexArray(vao);
+
+	int progHandle = sInfos[shaderID].meshProgHandle;
+	gl.glUseProgram(progHandle);
+
+	int texCoordVar = gl.glGetAttribLocation(progHandle, "texCoord");
+
+	// For some shaders the texCoordVar may be optimized away
+	if (texCoordVar != -1) {
+		if (sub._texCoordBuffer != 0) {
+			// Texture coordinates
+			gl.glEnableVertexAttribArray(texCoordVar);
+
+			gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, sub._texCoordBuffer);
+			gl.glVertexAttribPointer(texCoordVar, 2, GL2GL3.GL_FLOAT, false, 0, 0);
+		} else {
+			gl.glVertexAttrib2f(texCoordVar, 0, 0);
+		}
+	}
+
+	int posVar = gl.glGetAttribLocation(progHandle, "position");
+	gl.glEnableVertexAttribArray(posVar);
+
+	gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, sub._vertexBuffer);
+	gl.glVertexAttribPointer(posVar, 3, GL2GL3.GL_FLOAT, false, 0, 0);
+
+	// Normals
+	int normalVar = gl.glGetAttribLocation(progHandle, "normal");
+	gl.glEnableVertexAttribArray(normalVar);
+
+	gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, sub._normalBuffer);
+	gl.glVertexAttribPointer(normalVar, 3, GL2GL3.GL_FLOAT, false, 0, 0);
+
+	if (!flattenBuffers) {
+		gl.glBindBuffer(GL2GL3.GL_ELEMENT_ARRAY_BUFFER, sub._indexBuffer);
+	}
+
+	int bindSpaceMatVar = gl.glGetAttribLocation(progHandle, "bindSpaceMat");
+	gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, batch.transBuffer);
+
+	for (int i = 0; i < 4; ++i) {
+		// Enable 4 variables because this is a matrix
+		int varInd = bindSpaceMatVar + i;
+
+		gl.glEnableVertexAttribArray(varInd);
+
+		gl.glVertexAttribPointer(varInd, 4, GL2GL3.GL_FLOAT, false, 16*4, i*4*4);
+		gl.glVertexAttribDivisor(varInd, 1); // Per instance
+
+	}
+
+	int bindSpaceNormMatVar = gl.glGetAttribLocation(progHandle, "bindSpaceNorMat");
+	gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, batch.normMatBuffer);
+
+	for (int i = 0; i < 4; ++i) {
+		// Enable 4 variables because this is a matrix
+		int varInd = bindSpaceNormMatVar + i;
+
+		gl.glEnableVertexAttribArray(varInd);
+
+		gl.glVertexAttribPointer(varInd, 4, GL2GL3.GL_FLOAT, false, 16*4, i*4*4);
+		gl.glVertexAttribDivisor(varInd, 1); // Per instance
+
+	}
+
+	gl.glBindVertexArray(0);
+
+}
+
 
 private void renderSubMesh(SubMesh subMesh, int materialIndex,
                            Mat4d subInstTrans,
@@ -637,6 +820,11 @@ public void loadGPUAssets(GL2GL3 gl, Renderer renderer) {
 		for (MeshData.Material mat : data.getMaterials()) {
 			loadGPUMaterial(gl, renderer, mat);
 		}
+		if (canBatch) {
+			for (MeshData.StaticMeshBatch batch : data.getStaticMeshBatches().values()) {
+				loadGPUBatch(gl, renderer, batch);
+			}
+		}
 	} catch (GLException ex) {
 		LogBox.renderLogException(ex);
 		return; // The loader will detect that this did not load cleanly
@@ -668,6 +856,49 @@ private void loadGPUMaterial(GL2GL3 gl, Renderer renderer, MeshData.Material dat
 	_materials.add(mat);
 }
 
+private void loadGPUBatch(GL2GL3 gl, Renderer renderer, MeshData.StaticMeshBatch batch) {
+
+	MeshBatch b = new MeshBatch(batch, usedShaders);
+
+	b.numInstances = batch.transform.size();
+
+	int[] is = new int[2];
+	gl.glGenBuffers(2, is, 0);
+	b.transBuffer = is[0];
+	b.normMatBuffer = is[1];
+
+	// Populate buffers
+
+	assert(b.data.transform.size() == b.data.invTrans.size());
+
+	// Init transform list
+	FloatBuffer fb = FloatBuffer.allocate(batch.transform.size() * 16); //
+	for (Mat4d m : batch.transform) {
+		RenderUtils.putMat4dCM(fb, m);
+	}
+	fb.flip();
+
+	gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, b.transBuffer);
+	gl.glBufferData(GL2GL3.GL_ARRAY_BUFFER, batch.transform.size() * 16 * 4, fb, GL2GL3.GL_STATIC_DRAW);
+	renderer.usingVRAM(batch.transform.size() * 16 * 4);
+
+	// Init inverse transform list
+	fb = FloatBuffer.allocate(batch.invTrans.size() * 16); //
+	for (Mat4d m : batch.invTrans) {
+		// Convert the inverse transform into a normal matrix
+		Mat4d normMat = new Mat4d(m);
+		normMat.transpose4();
+		RenderUtils.putMat4dCM(fb, normMat);
+	}
+	fb.flip();
+
+	gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, b.normMatBuffer);
+	gl.glBufferData(GL2GL3.GL_ARRAY_BUFFER, batch.invTrans.size() * 16 * 4, fb, GL2GL3.GL_STATIC_DRAW);
+	renderer.usingVRAM(batch.invTrans.size() * 16 * 4);
+
+	_batches.add(b);
+}
+
 public static void init(Renderer r, GL2GL3 gl) {
 	for (int i = 0; i < Renderer.NUM_MESH_SHADERS; ++i) {
 		ShaderInfo si = new ShaderInfo();
@@ -680,8 +911,6 @@ public static void init(Renderer r, GL2GL3 gl) {
 		// Bind the shader variables
 		si.modelViewMatVar = gl.glGetUniformLocation(si.meshProgHandle, "modelViewMat");
 		si.projMatVar = gl.glGetUniformLocation(si.meshProgHandle, "projMat");
-		si.bindSpaceMatVar = gl.glGetUniformLocation(si.meshProgHandle, "bindSpaceMat");
-		si.bindSpaceNorMatVar = gl.glGetUniformLocation(si.meshProgHandle, "bindSpaceNorMat");
 		si.normalMatVar = gl.glGetUniformLocation(si.meshProgHandle, "normalMat");
 		si.diffuseColorVar = gl.glGetUniformLocation(si.meshProgHandle, "diffuseColor");
 		si.ambientColorVar = gl.glGetUniformLocation(si.meshProgHandle, "ambientColor");
@@ -695,6 +924,13 @@ public static void init(Renderer r, GL2GL3 gl) {
 
 		si.cVar = gl.glGetUniformLocation(si.meshProgHandle, "C");
 		si.fcVar = gl.glGetUniformLocation(si.meshProgHandle, "FC");
+
+		if ((i & Renderer.STATIC_BATCH_FLAG) == 0) {
+			// We do not use the uniform bind space variables when batch rendering
+			si.bindSpaceMatVar = gl.glGetUniformLocation(si.meshProgHandle, "bindSpaceMat");
+			si.bindSpaceNorMatVar = gl.glGetUniformLocation(si.meshProgHandle, "bindSpaceNorMat");
+		}
+
 	}
 
 	numLights = 2;
@@ -903,6 +1139,13 @@ public void freeResources(GL2GL3 gl) {
 		int[] bufs = new int[1];
 		bufs[0] = sub._vertexBuffer;
 		gl.glDeleteBuffers(1, bufs, 0);
+	}
+
+	for (MeshBatch b : _batches) {
+		int[] bufs = new int[2];
+		bufs[0] = b.transBuffer;
+		bufs[1] = b.normMatBuffer;
+		gl.glDeleteBuffers(2, bufs, 0);
 	}
 
 	_subMeshes.clear();

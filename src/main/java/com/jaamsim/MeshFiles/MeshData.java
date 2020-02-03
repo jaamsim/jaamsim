@@ -1759,10 +1759,15 @@ public class MeshData {
 	 * Returns an array of all the used shaders for this MeshData
 	 * @return
 	 */
-	public int[] getUsedMeshShaders() {
+	public int[] getUsedMeshShaders(boolean canBatch) {
 		ArrayList<Integer> shaderIDs = new ArrayList<>();
 		for (StaticMeshInstance smi : _staticMeshInstances) {
-			int shaderID = _materials.get(smi.materialIndex).getShaderID();
+			Material mat = _materials.get(smi.materialIndex);
+			int shaderID = mat.getShaderID();
+
+			if (canBatch && mat.transType == NO_TRANS) {
+				shaderID = shaderID | Renderer.STATIC_BATCH_FLAG;
+			}
 
 			if (!shaderIDs.contains(shaderID))
 				shaderIDs.add(shaderID);

@@ -128,6 +128,11 @@ static void putPointXYZW(FloatBuffer fb, Vec4d v) {
 	fb.put((float)v.w);
 }
 
+static void putMat4dCM(FloatBuffer fb, Mat4d mat) {
+	float[] floats = MarshalMat4d(mat);
+	fb.put(floats);
+}
+
 	/**
 	 * Returns a list of points for a circle in the XY plane at the origin
 	 * @return

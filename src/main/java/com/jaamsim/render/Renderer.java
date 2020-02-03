@@ -107,7 +107,8 @@ public class Renderer implements GLAnimatorControl {
 	private static boolean USE_DEBUG_GL = true;
 
 	public static int DIFF_TEX_FLAG = 1;
-	public static int NUM_MESH_SHADERS = 2; // Should be 2^(max_flag)
+	public static int STATIC_BATCH_FLAG = 2;
+	public static int NUM_MESH_SHADERS = 4; // Should be 2^(max_flag)
 
 	public static long DEBUG_PICK_ID = Long.MIN_VALUE;
 
@@ -676,6 +677,9 @@ private String getMeshShaderDefines(int i) {
 	if ((i & DIFF_TEX_FLAG) != 0) {
 		defines.append("#define DIFF_TEX\n");
 	}
+	if ((i & STATIC_BATCH_FLAG) != 0) {
+		defines.append("#define BATCH_RENDER\n");
+	}
 	return defines.toString();
 }
 
@@ -788,8 +792,9 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 	for (int i = 0; i < NUM_MESH_SHADERS; ++i) {
 		String defines = getMeshShaderDefines(i);
 
+		String definedVertSrc = definespat.matcher(meshVertSrc).replaceAll(defines);
 		String definedFragSrc = definespat.matcher(meshFragSrc).replaceAll(defines);
-		Shader s = new Shader(meshVertSrc, definedFragSrc, gl);
+		Shader s = new Shader(definedVertSrc, definedFragSrc, gl);
 		if (!s.isGood()) {
 			String failure = s.getFailureLog();
 			throw new RenderException("Mesh Shader failed, flags: " + i + " " + failure);
@@ -864,7 +869,7 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 
 		// Load the bad mesh proto
 		badData = MeshDataCache.getBadMesh();
-		badProto = new MeshProto(badData, safeGraphics);
+		badProto = new MeshProto(badData, safeGraphics, false);
 		badProto.loadGPUAssets(gl, this);
 
 		skybox = new Skybox();
@@ -888,12 +893,13 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 		GL2GL3 gl = sharedContext.getGL().getGL2GL3();
 
 		MeshProto proto;
+		boolean canBatch = gl4Supported;
 
 		MeshData data = MeshDataCache.getMeshData(key);
 		if (data == badData) {
 			proto = badProto;
 		} else {
-			proto = new MeshProto(data, safeGraphics);
+			proto = new MeshProto(data, safeGraphics, canBatch);
 
 			assert (proto != null);
 			proto.loadGPUAssets(gl, this);

@@ -16,8 +16,17 @@
  */
 @VERSION@
 
+@DEFINES@
+
+// For batch rendering the bind space variables are per-instance
+#ifdef BATCH_RENDER
+in mat4 bindSpaceMat;
+in mat4 bindSpaceNorMat;
+#else
 uniform mat4 bindSpaceMat;
 uniform mat4 bindSpaceNorMat;
+#endif
+
 uniform mat4 modelViewMat;
 uniform mat4 projMat;
 uniform mat4 normalMat;
