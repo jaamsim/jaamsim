@@ -664,7 +664,7 @@ public class MeshData {
 			}
 		}
 
-		sub.staticHull = ConvexHull.TryBuildHull(sub.verts, MAX_HULL_ATTEMPTS, MAX_HULL_POINTS, v3Interner);
+		sub.staticHull = ConvexHull.TryBuildHull(sub.verts, MAX_HULL_ATTEMPTS, MAX_SUBINST_HULL_POINTS, v3Interner);
 		sub.localBounds = sub.staticHull.getAABB(new Mat4d());
 	}
 
@@ -684,7 +684,7 @@ public class MeshData {
 			sub.verts.add(v3Interner.intern(v));
 		}
 
-		sub.hull = ConvexHull.TryBuildHull(sub.verts, MAX_HULL_ATTEMPTS, MAX_HULL_POINTS, v3Interner);
+		sub.hull = ConvexHull.TryBuildHull(sub.verts, MAX_HULL_ATTEMPTS, MAX_SUBINST_HULL_POINTS, v3Interner);
 	}
 
 	public boolean hasTransparent() {
