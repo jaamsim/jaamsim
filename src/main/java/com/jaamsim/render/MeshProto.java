@@ -17,6 +17,7 @@
  */
 package com.jaamsim.render;
 
+import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
@@ -31,6 +32,7 @@ import com.jaamsim.math.Mat4d;
 import com.jaamsim.math.Vec2d;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.math.Vec4d;
+import com.jaamsim.render.Renderer.ShaderHandle;
 import com.jaamsim.ui.LogBox;
 import com.jogamp.opengl.GL2GL3;
 import com.jogamp.opengl.GL4;
@@ -184,11 +186,24 @@ private static class SubLine {
 	public HashMap<Integer, Integer> vaoMap = new HashMap<>();
 }
 
+private static class LineBatch {
+	public int startVert;
+	public int numVerts;
+	public int baseInst;
+	public int numInsts;
+}
+
 private final MeshData data;
 private final ArrayList<SubMesh> _subMeshes;
 private final ArrayList<SubLine> _subLines;
 private final ArrayList<Material> _materials;
 private final ArrayList<MeshBatch> _batches;
+private final ArrayList<LineBatch> _lineBatches;
+private final HashMap<Integer, Integer> _lineVAOs;
+
+private int linePosBuffer;
+private int lineColorBuffer;
+private int lineTransBuffer;
 
 
 private final int[] usedShaders;
@@ -209,6 +224,8 @@ public MeshProto(MeshData data, boolean flattenBuffers, boolean canBatch) {
 	_subLines = new ArrayList<>();
 	_materials = new ArrayList<>();
 	_batches = new ArrayList<>();
+	_lineBatches = new ArrayList<>();
+	_lineVAOs = new HashMap<>();
 
 	usedShaders = data.getUsedMeshShaders(this.canBatch);
 }
@@ -256,10 +273,14 @@ public void render(int contextID, Renderer renderer,
                 pose.transforms[subInst.nodeIndex], pose.invTransforms[subInst.nodeIndex]);
 	}
 
-	for (MeshData.StaticLineInstance subInst : data.getStaticLineInstances()) {
+	if (renderer.isGL4Supported() && canBatch) {
+		renderStaticLines(contextID, renderer, modelViewMat, cam);
+	} else {
+		for (MeshData.StaticLineInstance subInst : data.getStaticLineInstances()) {
 
-		SubLine subLine = _subLines.get(subInst.lineIndex);
-		renderSubLine(subLine, contextID, renderer, modelMat, modelViewMat, subInst.transform, cam);
+			SubLine subLine = _subLines.get(subInst.lineIndex);
+			renderSubLine(subLine, contextID, renderer, modelMat, modelViewMat, subInst.transform, cam);
+		}
 	}
 
 	for (MeshData.AnimLineInstance subInst : data.getAnimLineInstances()) {
@@ -803,6 +824,90 @@ private void renderSubLine(SubLine sub, int contextID, Renderer renderer,
 
 }
 
+private void setupVAOForStaticLines(int contextID, Renderer renderer) {
+	GL2GL3 gl = renderer.getGL();
+
+	int vao = renderer.generateVAO(contextID, gl);
+	_lineVAOs.put(contextID, vao);
+	gl.glBindVertexArray(vao);
+
+	Shader s= renderer.getShader(ShaderHandle.DEBUG_BATCH);
+	assert(s.isGood());
+	int prog = s.getProgramHandle();
+	gl.glUseProgram(prog);
+
+	int posVar = gl.glGetAttribLocation(prog, "position");
+	gl.glEnableVertexAttribArray(posVar);
+
+	gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, linePosBuffer);
+	gl.glVertexAttribPointer(posVar, 3, GL2GL3.GL_FLOAT, false, 0, 0);
+
+	int colVar = gl.glGetAttribLocation(prog, "vertColor");
+	gl.glEnableVertexAttribArray(colVar);
+
+	gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, lineColorBuffer);
+	gl.glVertexAttribPointer(colVar, 4, GL2GL3. GL_UNSIGNED_BYTE, true, 0, 0);
+
+	int instMatVar = gl.glGetAttribLocation(prog, "instMat");
+	gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, lineTransBuffer);
+
+	for (int i = 0; i < 4; ++i) {
+		// Enable 4 variables because this is a matrix
+		int varInd = instMatVar + i;
+
+		gl.glEnableVertexAttribArray(varInd);
+
+		gl.glVertexAttribPointer(varInd, 4, GL2GL3.GL_FLOAT, false, 16*4, i*4*4);
+		gl.glVertexAttribDivisor(varInd, 1); // Per instance
+	}
+
+	gl.glBindVertexArray(0);
+
+}
+
+private void renderStaticLines(int contextID, Renderer renderer, Mat4d modelViewMat, Camera cam) {
+
+	GL2GL3 gl = renderer.getGL();
+	GL4 gl4 = renderer.getGL4();
+
+	if (!_lineVAOs.containsKey(contextID)) {
+		setupVAOForStaticLines(contextID, renderer);
+	}
+
+	int vao = _lineVAOs.get(contextID);
+	gl.glBindVertexArray(vao);
+
+	Shader s = renderer.getShader(ShaderHandle.DEBUG_BATCH);
+	int progHandle = s.getProgramHandle();
+	gl.glUseProgram(progHandle);
+
+	Mat4d projMat = cam.getProjMat4d();
+
+	int modelViewMatVar = gl.glGetUniformLocation(progHandle, "modelViewMat");
+	int projMatVar = gl.glGetUniformLocation(progHandle, "projMat");
+
+	int cVar = gl.glGetUniformLocation(progHandle, "C");
+	int fcVar = gl.glGetUniformLocation(progHandle, "FC");
+
+	gl.glUniformMatrix4fv(modelViewMatVar, 1, false, RenderUtils.MarshalMat4d(modelViewMat), 0);
+	gl.glUniformMatrix4fv(projMatVar, 1, false, RenderUtils.MarshalMat4d(projMat), 0);
+
+	gl.glUniform1f(cVar, Camera.C);
+	gl.glUniform1f(fcVar, Camera.FC);
+
+	gl.glLineWidth(1);
+
+	// Actually draw it
+	for (LineBatch batch : _lineBatches) {
+		gl4.glDrawArraysInstancedBaseInstance(GL2GL3.GL_LINES, batch.startVert, batch.numVerts, batch.numInsts, batch.baseInst);
+	}
+	//gl.glDrawArrays(GL2GL3.GL_LINES, 0, sub._numVerts);
+
+	gl.glBindVertexArray(0);
+
+
+}
+
 /**
  * Push all the data to the GPU and free up CPU side ram
  * @param gl
@@ -824,6 +929,7 @@ public void loadGPUAssets(GL2GL3 gl, Renderer renderer) {
 			for (MeshData.StaticMeshBatch batch : data.getStaticMeshBatches().values()) {
 				loadGPUBatch(gl, renderer, batch);
 			}
+			loadGPULineBatches(gl, renderer);
 		}
 	} catch (GLException ex) {
 		LogBox.renderLogException(ex);
@@ -897,6 +1003,80 @@ private void loadGPUBatch(GL2GL3 gl, Renderer renderer, MeshData.StaticMeshBatch
 	renderer.usingVRAM(batch.invTrans.size() * 16 * 4);
 
 	_batches.add(b);
+}
+
+public void loadGPULineBatches(GL2GL3 gl, Renderer renderer) {
+	ArrayList<Vec3d> linePos = data.getLinePosArray();
+	ArrayList<Color4d> lineCols = data.getLineColorArray();
+
+	ArrayList<MeshData.StaticLineBatch> lineBatches = data.getLineBatches();
+	ArrayList<MeshData.SubLineData> subLines = data.getSubLineData();
+
+	int[] is = new int[2];
+	gl.glGenBuffers(2, is, 0);
+	linePosBuffer = is[0];
+	lineColorBuffer = is[1];
+
+	// Populate buffers
+
+	assert(linePos.size() == lineCols.size());
+
+	// Init pos buffer
+	FloatBuffer fb = FloatBuffer.allocate(linePos.size() * 3); //
+	for (Vec3d pos : linePos) {
+		RenderUtils.putPointXYZ(fb, pos);
+	}
+	fb.flip();
+
+	gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, linePosBuffer);
+	gl.glBufferData(GL2GL3.GL_ARRAY_BUFFER, linePos.size()*3*4, fb, GL2GL3.GL_STATIC_DRAW);
+	renderer.usingVRAM(linePos.size()*3*4);
+
+	// Init color buffer
+	ByteBuffer bb = ByteBuffer.allocate(lineCols.size() * 4); //
+	for (Color4d col : lineCols) {
+		RenderUtils.putColor4b(bb, col);
+	}
+	bb.flip();
+
+	gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, lineColorBuffer);
+	gl.glBufferData(GL2GL3.GL_ARRAY_BUFFER, lineCols.size()*4, bb, GL2GL3.GL_STATIC_DRAW);
+	renderer.usingVRAM(lineCols.size()*4);
+
+	// Populate per-instance transform buffer
+	int numInsts = 0;
+	assert(subLines.size() == lineBatches.size());
+	for (int i = 0; i < subLines.size(); ++i) {
+		MeshData.SubLineData subLine = subLines.get(i);
+		MeshData.StaticLineBatch batchData = lineBatches.get(i);
+
+		LineBatch batch = new LineBatch();
+		batch.startVert = subLine.startVert;
+		batch.numVerts = subLine.verts.size();
+		batch.baseInst = numInsts;//TODO
+		batch.numInsts = batchData.instTrans.size();
+
+		numInsts += batch.numInsts;
+		_lineBatches.add(batch);
+	}
+
+	int[] buffs = new int[1];
+	gl.glGenBuffers(1, buffs, 0);
+	lineTransBuffer = buffs[0];
+
+	fb = FloatBuffer.allocate(numInsts * 16); //
+	for (MeshData.StaticLineBatch batchData: lineBatches) {
+		for (Mat4d m : batchData.instTrans) {
+			RenderUtils.putMat4dCM(fb, m);
+		}
+	}
+
+	fb.flip();
+
+	gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, lineTransBuffer);
+	gl.glBufferData(GL2GL3.GL_ARRAY_BUFFER, numInsts * 16 * 4, fb, GL2GL3.GL_STATIC_DRAW);
+	renderer.usingVRAM(numInsts * 16 * 4);
+
 }
 
 public static void init(Renderer r, GL2GL3 gl) {

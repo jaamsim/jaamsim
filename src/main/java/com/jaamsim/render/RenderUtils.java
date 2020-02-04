@@ -24,12 +24,14 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Mat4d;
 import com.jaamsim.math.Plane;
 import com.jaamsim.math.Ray;
@@ -126,6 +128,13 @@ static void putPointXYZW(FloatBuffer fb, Vec4d v) {
 	fb.put((float)v.y);
 	fb.put((float)v.z);
 	fb.put((float)v.w);
+}
+
+static void putColor4b(ByteBuffer bb, Color4d col) {
+	bb.put((byte)(col.r * 255.0));
+	bb.put((byte)(col.g * 255.0));
+	bb.put((byte)(col.b * 255.0));
+	bb.put((byte)(col.a * 255.0));
 }
 
 static void putMat4dCM(FloatBuffer fb, Mat4d mat) {

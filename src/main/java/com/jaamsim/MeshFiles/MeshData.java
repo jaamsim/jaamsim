@@ -128,6 +128,8 @@ public class MeshData {
 
 		public ConvexHull hull;
 		public int numUses = 0;
+
+		public int startVert; // Starting index in the full line vertex array
 	}
 
 	public static class StaticMeshInstance {
@@ -151,6 +153,19 @@ public class MeshData {
 		public Mat4d transform;
 		public Mat4d invTrans;
 	}
+
+	public static class StaticLineBatch {
+		public int lineIndex;
+		public ArrayList<Mat4d> instTrans;
+		public StaticLineBatch(int i) {
+			lineIndex = i;
+			instTrans = new ArrayList<Mat4d>();
+		}
+	}
+
+	private ArrayList<Vec3d> lineBatchPos;
+	private ArrayList<Color4d> lineBatchColors;
+	private ArrayList<StaticLineBatch> lineBatches;
 
 	public static class TransVal {
 		Mat4d transform;
@@ -797,6 +812,31 @@ public class MeshData {
 		return changed;
 	}
 
+	// Build up a batchable (via the DEBUB_BATCH shader) array of all static line information
+	private void generateLineBatches() {
+		// Build up a complete list of all line vertices
+		lineBatchPos = new ArrayList<Vec3d>();
+		lineBatchColors = new ArrayList<Color4d>();
+		for (SubLineData ld: _subLinesData) {
+			ld.startVert = lineBatchPos.size();
+			lineBatchPos.addAll(ld.verts);
+			for (int i = 0; i < ld.verts.size(); ++i) {
+				lineBatchColors.add(ld.diffuseColor);
+			}
+		}
+
+		lineBatches = new ArrayList<StaticLineBatch>();
+		// Create batches
+		for (int i = 0; i < _subLinesData.size(); ++i) {
+			lineBatches.add(new StaticLineBatch(i));
+		}
+		for (int i = 0; i < _staticLineInstances.size(); ++i) {
+			StaticLineInstance inst = _staticLineInstances.get(i);
+			StaticLineBatch b = lineBatches.get(inst.lineIndex);
+			b.instTrans.add(inst.transform);
+		}
+	}
+
 	/**
 	 * Builds the convex hull of the current mesh based on all the existing sub meshes.
 	 */
@@ -868,6 +908,8 @@ public class MeshData {
 
 			totalHullPoints.addAll(subPoints);
 		}
+
+		generateLineBatches();
 
 		// Now scan the non-static part of the tree
 		TreeWalker walker = new TreeWalker() {
@@ -1154,6 +1196,16 @@ public class MeshData {
 
 	public ArrayList<Material> getMaterials() {
 		return _materials;
+	}
+
+	public ArrayList<Vec3d> getLinePosArray() {
+		return lineBatchPos;
+	}
+	public ArrayList<Color4d> getLineColorArray() {
+		return lineBatchColors;
+	}
+	public ArrayList<StaticLineBatch> getLineBatches() {
+		return lineBatches;
 	}
 
 	public int getNumTriangles() {
