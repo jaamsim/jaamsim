@@ -91,7 +91,7 @@ import com.jogamp.opengl.GLProfile;
 public class Renderer implements GLAnimatorControl {
 
 	public enum ShaderHandle {
-		FONT, HULL, OVERLAY_FONT, OVERLAY_FLAT, DEBUG, SKYBOX
+		FONT, HULL, OVERLAY_FONT, OVERLAY_FLAT, DEBUG, DEBUG_BATCH, SKYBOX
 	}
 
 	private static final AtomicInteger nextAssetID = new AtomicInteger(0);
@@ -711,6 +711,8 @@ private void initShaders(GL2GL3 gl) throws RenderException {
 	frag = "/resources/shaders/debug.frag";
 	createShader(ShaderHandle.DEBUG, vert, frag, gl);
 
+	// Note: DEBUG_BATCH is only available as a core shader
+
 	vert = "/resources/shaders/skybox.vert";
 	frag = "/resources/shaders/skybox.frag";
 	createShader(ShaderHandle.SKYBOX, vert, frag, gl);
@@ -755,7 +757,7 @@ private void initSurfaceState(GL2GL3 gl) {
 }
 
 /**
- * Create and compile all the shaders
+ * Create and compile all the shaders for gl >= 3 core profile
  */
 private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 	shaders = new EnumMap<>(ShaderHandle.class);
@@ -780,6 +782,10 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 	vert = "/resources/shaders_core/debug.vert";
 	frag = "/resources/shaders_core/debug.frag";
 	createCoreShader(ShaderHandle.DEBUG, vert, frag, gl, version);
+
+	vert = "/resources/shaders_core/debug_batch.vert";
+	frag = "/resources/shaders_core/debug_batch.frag";
+	createCoreShader(ShaderHandle.DEBUG_BATCH, vert, frag, gl, version);
 
 	vert = "/resources/shaders_core/skybox.vert";
 	frag = "/resources/shaders_core/skybox.frag";
