@@ -204,6 +204,7 @@ private final HashMap<Integer, Integer> _lineVAOs;
 private int linePosBuffer;
 private int lineColorBuffer;
 private int lineTransBuffer;
+private int lineIndirectBuffer;
 
 
 private final int[] usedShaders;
@@ -898,9 +899,9 @@ private void renderStaticLines(int contextID, Renderer renderer, Mat4d modelView
 	gl.glLineWidth(1);
 
 	// Actually draw it
-	for (LineBatch batch : _lineBatches) {
-		gl4.glDrawArraysInstancedBaseInstance(GL2GL3.GL_LINES, batch.startVert, batch.numVerts, batch.numInsts, batch.baseInst);
-	}
+	gl4.glBindBuffer(GL4.GL_DRAW_INDIRECT_BUFFER, lineIndirectBuffer);
+	gl4.glMultiDrawArraysIndirect(GL2GL3.GL_LINES, 0, _lineBatches.size(), 0);
+
 	//gl.glDrawArrays(GL2GL3.GL_LINES, 0, sub._numVerts);
 
 	gl.glBindVertexArray(0);
@@ -1012,11 +1013,12 @@ public void loadGPULineBatches(GL2GL3 gl, Renderer renderer) {
 	ArrayList<MeshData.StaticLineBatch> lineBatches = data.getLineBatches();
 	ArrayList<MeshData.SubLineData> subLines = data.getSubLineData();
 
-	int[] is = new int[2];
-	gl.glGenBuffers(2, is, 0);
+	int[] is = new int[4];
+	gl.glGenBuffers(4, is, 0);
 	linePosBuffer = is[0];
 	lineColorBuffer = is[1];
-
+	lineTransBuffer = is[2];
+	lineIndirectBuffer = is[3];
 	// Populate buffers
 
 	assert(linePos.size() == lineCols.size());
@@ -1053,16 +1055,12 @@ public void loadGPULineBatches(GL2GL3 gl, Renderer renderer) {
 		LineBatch batch = new LineBatch();
 		batch.startVert = subLine.startVert;
 		batch.numVerts = subLine.verts.size();
-		batch.baseInst = numInsts;//TODO
+		batch.baseInst = numInsts;
 		batch.numInsts = batchData.instTrans.size();
 
 		numInsts += batch.numInsts;
 		_lineBatches.add(batch);
 	}
-
-	int[] buffs = new int[1];
-	gl.glGenBuffers(1, buffs, 0);
-	lineTransBuffer = buffs[0];
 
 	fb = FloatBuffer.allocate(numInsts * 16); //
 	for (MeshData.StaticLineBatch batchData: lineBatches) {
@@ -1076,6 +1074,21 @@ public void loadGPULineBatches(GL2GL3 gl, Renderer renderer) {
 	gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, lineTransBuffer);
 	gl.glBufferData(GL2GL3.GL_ARRAY_BUFFER, numInsts * 16 * 4, fb, GL2GL3.GL_STATIC_DRAW);
 	renderer.usingVRAM(numInsts * 16 * 4);
+
+	// Load the indirect buffer
+	IntBuffer ib = IntBuffer.allocate(_lineBatches.size() * 4);
+	for (LineBatch b : _lineBatches) {
+		// To understand this order see the documentation for glMultiDrawArraysIndirect()
+		ib.put(b.numVerts);
+		ib.put(b.numInsts);
+		ib.put(b.startVert);
+		ib.put(b.baseInst);
+	}
+	ib.flip();
+
+	gl.glBindBuffer(GL4.GL_DRAW_INDIRECT_BUFFER, lineIndirectBuffer);
+	gl.glBufferData(GL4.GL_DRAW_INDIRECT_BUFFER, _lineBatches.size() * 4 * 4, ib, GL2GL3.GL_STATIC_DRAW);
+	renderer.usingVRAM(_lineBatches.size() * 4 * 4);
 
 }
 
