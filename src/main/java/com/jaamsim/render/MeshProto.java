@@ -202,9 +202,9 @@ private final ArrayList<LineBatch> _lineBatches;
 private final HashMap<Integer, Integer> _lineVAOs;
 
 private int linePosBuffer;
-private int lineColorBuffer;
 private int lineTransBuffer;
 private int lineIndirectBuffer;
+private int lineInstColorBuffer;
 
 
 private final int[] usedShaders;
@@ -846,8 +846,9 @@ private void setupVAOForStaticLines(int contextID, Renderer renderer) {
 	int colVar = gl.glGetAttribLocation(prog, "vertColor");
 	gl.glEnableVertexAttribArray(colVar);
 
-	gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, lineColorBuffer);
+	gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, lineInstColorBuffer);
 	gl.glVertexAttribPointer(colVar, 4, GL2GL3. GL_UNSIGNED_BYTE, true, 0, 0);
+	gl.glVertexAttribDivisor(colVar, 1);
 
 	int instMatVar = gl.glGetAttribLocation(prog, "instMat");
 	gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, lineTransBuffer);
@@ -1008,20 +1009,18 @@ private void loadGPUBatch(GL2GL3 gl, Renderer renderer, MeshData.StaticMeshBatch
 
 public void loadGPULineBatches(GL2GL3 gl, Renderer renderer) {
 	ArrayList<Vec3d> linePos = data.getLinePosArray();
-	ArrayList<Color4d> lineCols = data.getLineColorArray();
 
 	ArrayList<MeshData.StaticLineBatch> lineBatches = data.getLineBatches();
 	ArrayList<MeshData.SubLineData> subLines = data.getSubLineData();
 
 	int[] is = new int[4];
 	gl.glGenBuffers(4, is, 0);
-	linePosBuffer = is[0];
-	lineColorBuffer = is[1];
-	lineTransBuffer = is[2];
-	lineIndirectBuffer = is[3];
-	// Populate buffers
+	linePosBuffer =        is[0];
+	lineInstColorBuffer =  is[1];
+	lineTransBuffer =      is[2];
+	lineIndirectBuffer =   is[3];
 
-	assert(linePos.size() == lineCols.size());
+	// Populate buffers
 
 	// Init pos buffer
 	FloatBuffer fb = FloatBuffer.allocate(linePos.size() * 3); //
@@ -1033,17 +1032,6 @@ public void loadGPULineBatches(GL2GL3 gl, Renderer renderer) {
 	gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, linePosBuffer);
 	gl.glBufferData(GL2GL3.GL_ARRAY_BUFFER, linePos.size()*3*4, fb, GL2GL3.GL_STATIC_DRAW);
 	renderer.usingVRAM(linePos.size()*3*4);
-
-	// Init color buffer
-	ByteBuffer bb = ByteBuffer.allocate(lineCols.size() * 4); //
-	for (Color4d col : lineCols) {
-		RenderUtils.putColor4b(bb, col);
-	}
-	bb.flip();
-
-	gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, lineColorBuffer);
-	gl.glBufferData(GL2GL3.GL_ARRAY_BUFFER, lineCols.size()*4, bb, GL2GL3.GL_STATIC_DRAW);
-	renderer.usingVRAM(lineCols.size()*4);
 
 	// Populate per-instance transform buffer
 	int numInsts = 0;
@@ -1062,10 +1050,15 @@ public void loadGPULineBatches(GL2GL3 gl, Renderer renderer) {
 		_lineBatches.add(batch);
 	}
 
+	// Per inst buffers
 	fb = FloatBuffer.allocate(numInsts * 16); //
+	ByteBuffer bb = ByteBuffer.allocate(numInsts * 4);
 	for (MeshData.StaticLineBatch batchData: lineBatches) {
 		for (Mat4d m : batchData.instTrans) {
 			RenderUtils.putMat4dCM(fb, m);
+		}
+		for (Color4d c : batchData.instColor) {
+			RenderUtils.putColor4b(bb, c);
 		}
 	}
 
@@ -1074,6 +1067,11 @@ public void loadGPULineBatches(GL2GL3 gl, Renderer renderer) {
 	gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, lineTransBuffer);
 	gl.glBufferData(GL2GL3.GL_ARRAY_BUFFER, numInsts * 16 * 4, fb, GL2GL3.GL_STATIC_DRAW);
 	renderer.usingVRAM(numInsts * 16 * 4);
+
+	bb.flip();
+	gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, lineInstColorBuffer);
+	gl.glBufferData(GL2GL3.GL_ARRAY_BUFFER, numInsts*4, bb, GL2GL3.GL_STATIC_DRAW);
+	renderer.usingVRAM(numInsts*4);
 
 	// Load the indirect buffer
 	IntBuffer ib = IntBuffer.allocate(_lineBatches.size() * 4);

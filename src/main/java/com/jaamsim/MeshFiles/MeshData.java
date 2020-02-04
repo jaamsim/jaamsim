@@ -157,14 +157,15 @@ public class MeshData {
 	public static class StaticLineBatch {
 		public int lineIndex;
 		public ArrayList<Mat4d> instTrans;
+		public ArrayList<Color4d> instColor;
 		public StaticLineBatch(int i) {
 			lineIndex = i;
-			instTrans = new ArrayList<Mat4d>();
+			instTrans = new ArrayList<>();
+			instColor = new ArrayList<>();
 		}
 	}
 
 	private ArrayList<Vec3d> lineBatchPos;
-	private ArrayList<Color4d> lineBatchColors;
 	private ArrayList<StaticLineBatch> lineBatches;
 
 	public static class TransVal {
@@ -816,13 +817,9 @@ public class MeshData {
 	private void generateLineBatches() {
 		// Build up a complete list of all line vertices
 		lineBatchPos = new ArrayList<Vec3d>();
-		lineBatchColors = new ArrayList<Color4d>();
 		for (SubLineData ld: _subLinesData) {
 			ld.startVert = lineBatchPos.size();
 			lineBatchPos.addAll(ld.verts);
-			for (int i = 0; i < ld.verts.size(); ++i) {
-				lineBatchColors.add(ld.diffuseColor);
-			}
 		}
 
 		lineBatches = new ArrayList<StaticLineBatch>();
@@ -834,6 +831,7 @@ public class MeshData {
 			StaticLineInstance inst = _staticLineInstances.get(i);
 			StaticLineBatch b = lineBatches.get(inst.lineIndex);
 			b.instTrans.add(inst.transform);
+			b.instColor.add(_subLinesData.get(inst.lineIndex).diffuseColor);
 		}
 	}
 
@@ -1201,9 +1199,7 @@ public class MeshData {
 	public ArrayList<Vec3d> getLinePosArray() {
 		return lineBatchPos;
 	}
-	public ArrayList<Color4d> getLineColorArray() {
-		return lineBatchColors;
-	}
+
 	public ArrayList<StaticLineBatch> getLineBatches() {
 		return lineBatches;
 	}
