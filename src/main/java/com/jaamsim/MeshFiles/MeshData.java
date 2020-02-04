@@ -127,6 +127,7 @@ public class MeshData {
 		public Color4d diffuseColor;
 
 		public ConvexHull hull;
+		public int numUses = 0;
 	}
 
 	public static class StaticMeshInstance {
@@ -545,6 +546,8 @@ public class MeshData {
 		inst.transform = trans;
 		inst.invTrans = trans.inverse();
 
+		_subLinesData.get(lineIndex).numUses++;
+
 		_staticLineInstances.add(inst);
 	}
 
@@ -931,6 +934,24 @@ public class MeshData {
 		}
 	}
 
+	private void addToHist(HashMap<Integer, Integer> hist, int val) {
+		Integer histVal = hist.get(val);
+		if (histVal == null) {
+			histVal = new Integer(0);
+		}
+		histVal += 1;
+		hist.put(val, histVal);
+
+	}
+	private void printHist(HashMap<Integer, Integer> hist, int maxVal) {
+		for (int i = 0; i <= maxVal; ++i) {
+			Integer histVal = hist.get(i);
+			if (histVal != null && histVal != 0) {
+				System.out.printf("%d -> %d\n", i, histVal);
+			}
+		}
+	}
+
 	private void logUses() {
 		HashMap<Integer, Integer> instHist = new HashMap<>();
 		int maxInst = 0;
@@ -938,13 +959,8 @@ public class MeshData {
 
 		for(SubMeshData sm: _subMeshesData) {
 			int numUses = sm.numUses;
-			Integer histVal = instHist.get(numUses);
-			if (histVal == null) {
-				histVal = new Integer(0);
-			}
-			histVal += 1;
-			instHist.put(numUses, histVal);
 
+			addToHist(instHist, numUses);
 			totalInsts += numUses;
 
 			maxInst = Math.max(maxInst, numUses);
@@ -953,12 +969,8 @@ public class MeshData {
 		System.out.printf("Uses for source: %s\n", s);
 		System.out.printf("Total meshes: %d\n", _subMeshesData.size());
 		System.out.printf("Total insts: %d\n", totalInsts);
-		for (int i = 0; i <= maxInst; ++i) {
-			Integer histVal = instHist.get(i);
-			if (histVal != null && histVal != 0) {
-				System.out.printf("%d -> %d\n", i, histVal);
-			}
-		}
+
+		printHist(instHist, maxInst);
 
 		// Log the batch uses
 		HashMap<Integer, Integer> batchHist = new HashMap<>();
@@ -967,23 +979,33 @@ public class MeshData {
 			StaticMeshBatch b = _staticBatches.get(k);
 			int batchSize = b.transform.size();
 
-			Integer histVal = batchHist.get(batchSize);
-			if (histVal == null) {
-				histVal = new Integer(0);
-			}
-			histVal += 1;
-			batchHist.put(batchSize, histVal);
-
+			addToHist(batchHist, batchSize);
 			maxBatch = Math.max(maxInst, batchSize);
 
 		}
 
 		System.out.printf("BatchHistogram:\n");
-		for (int i = 0; i <= maxBatch; ++i) {
-			Integer histVal = batchHist.get(i);
-			if (histVal != null && histVal != 0) {
-				System.out.printf("%d -> %d\n", i, histVal);
+		printHist(batchHist, maxBatch);
+
+		if (_subLinesData.size() > 0) {
+			System.out.printf("Lines:\n");
+
+			HashMap<Integer, Integer> lineHist = new HashMap<>();
+			int maxLineInst = 0;
+			int totalLineInsts = 0;
+
+			for(SubLineData sl: _subLinesData) {
+				int numUses = sl.numUses;
+
+				addToHist(lineHist, numUses);
+				totalLineInsts += numUses;
+
+				maxLineInst = Math.max(maxLineInst, numUses);
 			}
+			System.out.printf("Total lines: %d\n", _subLinesData.size());
+			System.out.printf("Total insts: %d\n", totalLineInsts);
+
+			printHist(lineHist, maxLineInst);
 		}
 	}
 
