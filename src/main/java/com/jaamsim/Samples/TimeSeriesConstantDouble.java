@@ -58,6 +58,11 @@ public class TimeSeriesConstantDouble implements TimeSeriesProvider {
 	}
 
 	@Override
+	public long getLastChangeBeforeTicks(long ticks) {
+		return Long.MAX_VALUE;
+	}
+
+	@Override
 	public long getNextChangeAfterTicks(long ticks) {
 		return Long.MAX_VALUE;
 	}

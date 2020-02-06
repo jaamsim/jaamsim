@@ -172,6 +172,17 @@ public class TimeSeries extends DisplayEntity implements TimeSeriesProvider {
 	}
 
 	/**
+	 * Return the last time that the value updated, before the given
+	 * simulation time.
+	 * @param ticks - simulation time in clock ticks.
+	 * @return simulation time in clock ticks at which the time series value changed.
+	 */
+	@Override
+	public long getLastChangeBeforeTicks(long ticks) {
+		return getTicks(getTSPointBefore(getTSPointForTicks(ticks)));
+	}
+
+	/**
 	 * Return the first time that the value will be updated, after the given
 	 * simulation time.
 	 * @param ticks - simulation time in clock ticks.
@@ -341,6 +352,29 @@ public class TimeSeries extends DisplayEntity implements TimeSeriesProvider {
 		if (cycleTime.getValue() == Double.POSITIVE_INFINITY)
 			return getValue(pt);
 		return getValue(pt) + pt.numberOfCycles*getMaxValue();
+	}
+
+	/**
+	 * Returns the position in the time series that precedes the specified
+	 * position.
+	 * <p>
+	 * An index of -1 is returned if the specified position is a the start
+	 * of the time series data and a cycle time is not specified.
+	 * @param pt - specified position in the time series.
+	 * @return previous position in the time series.
+	 */
+	private TSPoint getTSPointBefore(TSPoint pt) {
+		if (pt.index == -1)
+			return new TSPoint(pt.index, pt.numberOfCycles);
+
+		if (pt.index == 0) {
+			if (cycleTime.getValue() == Double.POSITIVE_INFINITY)
+				return new TSPoint(-1, pt.numberOfCycles);
+
+			return new TSPoint(value.getValue().ticksList.length - 1, pt.numberOfCycles - 1);
+		}
+
+		return new TSPoint(pt.index - 1, pt.numberOfCycles);
 	}
 
 	/**

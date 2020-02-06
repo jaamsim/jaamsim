@@ -21,6 +21,7 @@ public interface TimeSeriesProvider extends SampleProvider {
 	public double getNextTimeAfter(double simTime);
 	public double getValueForTicks(long ticks);
 	public long getNextChangeAfterTicks(long ticks);
+	public long getLastChangeBeforeTicks(long ticks);
 	public long getMaxTicksValue();
 
 	/**
