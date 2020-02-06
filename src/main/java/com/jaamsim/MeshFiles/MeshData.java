@@ -94,6 +94,7 @@ public class MeshData {
 		// TODO Properly relativize this one day
 		public String relColorTex; // the 'relative' name for this texture, used by the binary exporter
 
+		public int texIndex;
 		public int transType;
 		public Color4d transColour;
 
@@ -120,6 +121,9 @@ public class MeshData {
 
 		public boolean keepRuntimeData;
 		public int numUses;
+
+		public int firstVert;
+		public int startInd;
 	}
 
 	public static class SubLineData {
@@ -147,6 +151,11 @@ public class MeshData {
 			this.key = key;
 		}
 	}
+
+	private ArrayList<Vec3d> meshBatchPos;
+	private ArrayList<Vec3d> meshBatchNor;
+	private ArrayList<Vec2d> meshBatchTex;
+	private ArrayList<Integer> meshBatchIndices;
 
 	public static class StaticLineInstance {
 		public int lineIndex;
@@ -487,9 +496,15 @@ public class MeshData {
 		public Mat4d[] invTransforms;
 	}
 
+	public static class Texture {
+		public URI texURI;
+		public boolean withAlpha;
+	}
+
 	private final ArrayList<SubMeshData> _subMeshesData = new ArrayList<>();
 	private final ArrayList<SubLineData> _subLinesData = new ArrayList<>();
 	private final ArrayList<Material> _materials = new ArrayList<>();
+	private final ArrayList<Texture> _textures = new ArrayList<>();
 
 	private final ArrayList<StaticMeshInstance> _staticMeshInstances = new ArrayList<>();
 	private final ArrayList<StaticLineInstance> _staticLineInstances = new ArrayList<>();
@@ -582,6 +597,9 @@ public class MeshData {
 		}
 
 		mat.diffuseColor = diffuseColor;
+		if (diffuseColor == null) {
+			mat.diffuseColor = new Color4d(0.2, 0.2, 0.2, 1.0);
+		}
 		mat.ambientColor = ambientColor;
 		mat.specColor = specColor;
 		mat.shininess = shininess;
@@ -606,8 +624,24 @@ public class MeshData {
 
 		_materials.add(mat);
 
+		boolean isTrans = false;
 		if (transType != NO_TRANS) {
+			isTrans = true;
 			_anyTransparent = true;
+		}
+		if (colorTex != null) {
+			int texIndex = _textures.indexOf(colorTex);
+			if (texIndex == -1) {
+				Texture tex = new Texture();
+				tex.texURI = colorTex;
+				_textures.add(tex);
+				texIndex = _textures.size()-1;
+			}
+			mat.texIndex = texIndex;
+			Texture tex = _textures.get(texIndex);
+			tex.withAlpha = tex.withAlpha || isTrans;
+		} else {
+			mat.texIndex = -1;
 		}
 	}
 
@@ -835,6 +869,34 @@ public class MeshData {
 		}
 	}
 
+	private void generateMeshBatches() {
+		meshBatchPos = new ArrayList<>();
+		meshBatchNor = new ArrayList<>();
+		meshBatchTex = new ArrayList<>();
+		meshBatchIndices = new ArrayList<>();
+
+		for (SubMeshData sm: _subMeshesData) {
+			sm.firstVert = meshBatchPos.size();
+			sm.startInd = meshBatchIndices.size();
+
+			meshBatchPos.addAll(sm.verts);
+			meshBatchNor.addAll(sm.normals);
+			if (sm.texCoords != null) {
+				meshBatchTex.addAll(sm.texCoords);
+			} else {
+				Vec2d defTexCoord = new Vec2d(0.0, 0.0);
+				for (int i = 0; i < sm.verts.size(); ++i) {
+					meshBatchTex.add(defTexCoord);
+				}
+			}
+
+			for (int ind: sm.indices) {
+				meshBatchIndices.add(ind);
+			}
+		}
+
+	}
+
 	/**
 	 * Builds the convex hull of the current mesh based on all the existing sub meshes.
 	 */
@@ -907,6 +969,7 @@ public class MeshData {
 			totalHullPoints.addAll(subPoints);
 		}
 
+		generateMeshBatches();
 		generateLineBatches();
 
 		// Now scan the non-static part of the tree
@@ -1191,6 +1254,9 @@ public class MeshData {
 	public ArrayList<AnimLineInstance> getAnimLineInstances() {
 		return _animLineInstances;
 	}
+	public ArrayList<Texture> getTextures() {
+		return _textures;
+	}
 
 	public ArrayList<Material> getMaterials() {
 		return _materials;
@@ -1198,6 +1264,19 @@ public class MeshData {
 
 	public ArrayList<Vec3d> getLinePosArray() {
 		return lineBatchPos;
+	}
+
+	public ArrayList<Vec3d> getMeshPosArray() {
+		return meshBatchPos;
+	}
+	public ArrayList<Vec3d> getMeshNorArray() {
+		return meshBatchNor;
+	}
+	public ArrayList<Vec2d> getMeshTexArray() {
+		return meshBatchTex;
+	}
+	public ArrayList<Integer> getMeshIndexArray() {
+		return meshBatchIndices;
 	}
 
 	public ArrayList<StaticLineBatch> getLineBatches() {

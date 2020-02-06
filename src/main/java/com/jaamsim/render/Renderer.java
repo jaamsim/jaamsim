@@ -91,7 +91,7 @@ import com.jogamp.opengl.GLProfile;
 public class Renderer implements GLAnimatorControl {
 
 	public enum ShaderHandle {
-		FONT, HULL, OVERLAY_FONT, OVERLAY_FLAT, DEBUG, DEBUG_BATCH, SKYBOX
+		FONT, HULL, OVERLAY_FONT, OVERLAY_FLAT, DEBUG, DEBUG_BATCH, SKYBOX, MESH_BATCH
 	}
 
 	private static final AtomicInteger nextAssetID = new AtomicInteger(0);
@@ -717,6 +717,8 @@ private void initShaders(GL2GL3 gl) throws RenderException {
 	frag = "/resources/shaders/skybox.frag";
 	createShader(ShaderHandle.SKYBOX, vert, frag, gl);
 
+	// Note: MESH_BATCH is only available as a core shader
+
 	String meshVertSrc = readSource("/resources/shaders/flat.vert");
 	String meshFragSrc = readSource("/resources/shaders/flat.frag");
 
@@ -790,6 +792,10 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 	vert = "/resources/shaders_core/skybox.vert";
 	frag = "/resources/shaders_core/skybox.frag";
 	createCoreShader(ShaderHandle.SKYBOX, vert, frag, gl, version);
+
+	vert = "/resources/shaders_core/mesh_batch.vert";
+	frag = "/resources/shaders_core/mesh_batch.frag";
+	createCoreShader(ShaderHandle.MESH_BATCH, vert, frag, gl, version);
 
 	String meshVertSrc = readSource("/resources/shaders_core/flat.vert").replaceAll("@VERSION@", version);
 	String meshFragSrc = readSource("/resources/shaders_core/flat.frag").replaceAll("@VERSION@", version);

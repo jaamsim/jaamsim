@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.HashMap;
 
 import com.jaamsim.MeshFiles.MeshData;
+import com.jaamsim.MeshFiles.MeshData.Material;
 import com.jaamsim.math.AABB;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.ConvexHull;
@@ -93,6 +94,38 @@ private static class ShaderInfo {
 
 private static ShaderInfo[] sInfos = new ShaderInfo[Renderer.NUM_MESH_SHADERS];
 
+private static class BatchShaderInfo {
+	private int progHandle;
+
+	private int instSpaceMatVar;
+	private int instSpaceNorMatVar;
+	private int modelViewMatVar;
+	private int projMatVar;
+	private int normalMatVar;
+
+	private int posVar;
+	private int norVar;
+	private int texCoordVar;
+
+	private int diffTexVar;
+
+	private int diffuseColorVar;
+	private int diffTexIndexVar;
+
+	private int specColorVar;
+	private int ambientColorVar;
+	private int shininessVar;
+
+	private int lightDirVar;
+	private int lightIntVar;
+	private int numLightsVar;
+
+	private int cVar;
+	private int fcVar;
+
+}
+private static BatchShaderInfo bsInfo = new BatchShaderInfo();
+
 private static Vec4d[] lightsDir = new Vec4d[2];
 private static Vec4d[] lightsDirScratch = new Vec4d[2];
 private static float[] lightsDirFloats = new float[6];
@@ -130,6 +163,7 @@ private static class MeshBatch {
 	public int normMatBuffer;
 
 	public int numInstances;
+	public int baseInstance;
 
 	private final int[] usedShaders;
 
@@ -152,9 +186,17 @@ private static class MeshBatch {
 		}
 	}
 }
+private static class IndirectData {
+	public int count;
+	public int numInstances;
+	public int firstIndex;
+	public int baseVertex;
+	public int baseInstance;
+}
 
 private static class Material {
-	public int _texHandle;
+	//public int _texHandle;
+	public int _textureIndex;
 	public Color4d _diffuseColor;
 	public Color4d _specColor  = new Color4d();
 	public Color4d _ambientColor = new Color4d();
@@ -193,13 +235,37 @@ private static class LineBatch {
 	public int numInsts;
 }
 
+// Per vertex mesh buffers
+private int meshPosBuffer;
+private int meshNorBuffer;
+private int meshTexBuffer;
+private int meshIndBuffer;
+
+// Per instance mesh buffers
+private int meshInstTransBuffer;
+private int meshInstNorBuffer;
+private int meshTexIndBuffer;
+private int meshDiffColBuffer;
+private int meshSpecColBuffer;
+private int meshAmbColBuffer;
+private int meshShininessBuffer;
+
+private int meshIndirectBuffer;
+private IntBuffer indirectBufferData;
+
+
+private final int MAX_SAMPLERS = 8; // Keep this in sync with the shaders
+
 private final MeshData data;
 private final ArrayList<SubMesh> _subMeshes;
 private final ArrayList<SubLine> _subLines;
+private final ArrayList<Integer> _textureHandles;
 private final ArrayList<Material> _materials;
 private final ArrayList<MeshBatch> _batches;
 private final ArrayList<LineBatch> _lineBatches;
 private final HashMap<Integer, Integer> _lineVAOs;
+private final HashMap<Integer, Integer> _meshVAOs;
+private final ArrayList<IndirectData> _indirectData;
 
 private int linePosBuffer;
 private int lineTransBuffer;
@@ -223,10 +289,13 @@ public MeshProto(MeshData data, boolean flattenBuffers, boolean canBatch) {
 	this.data = data;
 	_subMeshes = new ArrayList<>();
 	_subLines = new ArrayList<>();
+	_textureHandles = new ArrayList<>();
 	_materials = new ArrayList<>();
 	_batches = new ArrayList<>();
 	_lineBatches = new ArrayList<>();
 	_lineVAOs = new HashMap<>();
+	_meshVAOs = new HashMap<>();
+	_indirectData = new ArrayList<>();
 
 	usedShaders = data.getUsedMeshShaders(this.canBatch);
 }
@@ -251,14 +320,17 @@ public void render(int contextID, Renderer renderer,
 
 	Mat4d modelViewMat = new Mat4d();
 	modelViewMat.mult4(viewMat, modelMat);
+	Mat4d projMat = cam.getProjMat4d();
 
-	initUniforms(renderer, modelViewMat, cam.getProjMat4d(), viewMat, finalNorMat);
+	initUniforms(renderer, modelViewMat, projMat, viewMat, finalNorMat);
 
 	if (renderer.isGL4Supported() && canBatch) {
+		initBatchUniforms(renderer, modelViewMat, projMat, viewMat, finalNorMat);
 		// Batch render static meshes
-		for (MeshBatch batch : _batches) {
-			renderBatch(contextID, renderer, batch);
-		}
+//		for (MeshBatch batch : _batches) {
+//			renderBatch(contextID, renderer, batch);
+//		}
+		renderStaticMeshes(contextID, renderer, modelViewMat, cam);
 	} else {
 		// Render individual instances of static meshes
 		for (MeshData.StaticMeshInstance subInst : data.getStaticMeshInstances()) {
@@ -318,10 +390,11 @@ private void renderBatch(int contextID, Renderer renderer,
 
 	gl.glUseProgram(si.meshProgHandle);
 
-	// Setup uniforms for this object
-	if (mat._texHandle != 0) {
+	// Setup uniforms for this object\
+	if (mat._textureIndex != -1) {
+		int texHandle = _textureHandles.get(mat._textureIndex);
 		gl.glActiveTexture(GL2GL3.GL_TEXTURE0);
-		gl.glBindTexture(GL2GL3.GL_TEXTURE_2D, mat._texHandle);
+		gl.glBindTexture(GL2GL3.GL_TEXTURE_2D, texHandle);
 		gl.glTexParameteri(GL2GL3.GL_TEXTURE_2D, GL2GL3.GL_TEXTURE_WRAP_S, GL2GL3.GL_REPEAT);
 		gl.glTexParameteri(GL2GL3.GL_TEXTURE_2D, GL2GL3.GL_TEXTURE_WRAP_T, GL2GL3.GL_REPEAT);
 		gl.glUniform1i(si.texVar, 0);
@@ -702,9 +775,10 @@ private void renderSubMesh(SubMesh subMesh, int materialIndex,
 	gl.glUniformMatrix4fv(si.bindSpaceMatVar, 1, false, RenderUtils.MarshalMat4d(subInstTrans), 0);
 	gl.glUniformMatrix4fv(si.bindSpaceNorMatVar, 1, false, RenderUtils.MarshalMat4d(subInstNorm), 0);
 
-	if (mat._texHandle != 0) {
+	if (mat._textureIndex != -1) {
+		int texHandle = _textureHandles.get(mat._textureIndex);
 		gl.glActiveTexture(GL2GL3.GL_TEXTURE0);
-		gl.glBindTexture(GL2GL3.GL_TEXTURE_2D, mat._texHandle);
+		gl.glBindTexture(GL2GL3.GL_TEXTURE_2D, texHandle);
 		gl.glTexParameteri(GL2GL3.GL_TEXTURE_2D, GL2GL3.GL_TEXTURE_WRAP_S, GL2GL3.GL_REPEAT);
 		gl.glTexParameteri(GL2GL3.GL_TEXTURE_2D, GL2GL3.GL_TEXTURE_WRAP_T, GL2GL3.GL_REPEAT);
 		gl.glUniform1i(si.texVar, 0);
@@ -906,8 +980,138 @@ private void renderStaticLines(int contextID, Renderer renderer, Mat4d modelView
 	//gl.glDrawArrays(GL2GL3.GL_LINES, 0, sub._numVerts);
 
 	gl.glBindVertexArray(0);
+}
+
+private void setupVAOForStaticMeshes(int contextID, Renderer renderer) {
+	GL2GL3 gl = renderer.getGL();
+
+	int vao = renderer.generateVAO(contextID, gl);
+	_meshVAOs.put(contextID, vao);
+	gl.glBindVertexArray(vao);
+
+	Shader s = renderer.getShader(ShaderHandle.MESH_BATCH);
+	assert(s.isGood());
+	int prog = s.getProgramHandle();
+	gl.glUseProgram(prog);
+
+	BatchShaderInfo si = bsInfo;
+
+	gl.glBindBuffer(GL2GL3.GL_ELEMENT_ARRAY_BUFFER, meshIndBuffer);
+
+	gl.glEnableVertexAttribArray(si.posVar);
+	gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, meshPosBuffer);
+	gl.glVertexAttribPointer(si.posVar, 3, GL2GL3.GL_FLOAT, false, 0, 0);
+
+	gl.glEnableVertexAttribArray(si.norVar);
+	gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, meshNorBuffer);
+	gl.glVertexAttribPointer(si.norVar, 3, GL2GL3.GL_FLOAT, false, 0, 0);
+
+	gl.glEnableVertexAttribArray(si.texCoordVar);
+	gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, meshTexBuffer);
+	gl.glVertexAttribPointer(si.texCoordVar, 2, GL2GL3.GL_FLOAT, false, 0, 0);
+
+	gl.glEnableVertexAttribArray(si.diffuseColorVar);
+	gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, meshDiffColBuffer);
+	gl.glVertexAttribPointer(si.diffuseColorVar, 3, GL2GL3.GL_UNSIGNED_BYTE, true, 0, 0);
+	gl.glVertexAttribDivisor(si.diffuseColorVar, 1);
+
+	gl.glEnableVertexAttribArray(si.specColorVar);
+	gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, meshSpecColBuffer);
+	gl.glVertexAttribPointer(si.specColorVar, 3, GL2GL3.GL_UNSIGNED_BYTE, true, 0, 0);
+	gl.glVertexAttribDivisor(si.specColorVar, 1);
+
+	gl.glEnableVertexAttribArray(si.ambientColorVar);
+	gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, meshAmbColBuffer);
+	gl.glVertexAttribPointer(si.ambientColorVar, 3, GL2GL3.GL_UNSIGNED_BYTE, true, 0, 0);
+	gl.glVertexAttribDivisor(si.ambientColorVar, 1);
+
+	gl.glEnableVertexAttribArray(si.shininessVar);
+	gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, meshShininessBuffer);
+	gl.glVertexAttribPointer(si.shininessVar, 1, GL2GL3.GL_FLOAT, false, 0, 0);
+	gl.glVertexAttribDivisor(si.shininessVar, 1);
+
+	gl.glEnableVertexAttribArray(si.diffTexIndexVar);
+	gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, meshTexIndBuffer);
+	gl.glVertexAttribIPointer(si.diffTexIndexVar, 1, GL2GL3.GL_INT, 0, 0);
+	gl.glVertexAttribDivisor(si.diffTexIndexVar, 1);
 
 
+	gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, meshInstTransBuffer);
+	for (int i = 0; i < 4; ++i) {
+		// Enable 4 variables because this is a matrix
+		int varInd = si.instSpaceMatVar + i;
+
+		gl.glEnableVertexAttribArray(varInd);
+
+		gl.glVertexAttribPointer(varInd, 4, GL2GL3.GL_FLOAT, false, 16*4, i*4*4);
+		gl.glVertexAttribDivisor(varInd, 1); // Per instance
+	}
+
+	gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, meshInstNorBuffer);
+	for (int i = 0; i < 4; ++i) {
+		// Enable 4 variables because this is a matrix
+		int varInd = si.instSpaceNorMatVar + i;
+
+		gl.glEnableVertexAttribArray(varInd);
+
+		gl.glVertexAttribPointer(varInd, 4, GL2GL3.GL_FLOAT, false, 16*4, i*4*4);
+		gl.glVertexAttribDivisor(varInd, 1); // Per instance
+	}
+
+	gl.glBindVertexArray(0);
+
+}
+
+private void renderStaticMeshes(int contextID, Renderer renderer, Mat4d modelViewMat, Camera cam) {
+
+	if (data.getStaticMeshInstances().size() == 0) {
+		return;
+	}
+	GL2GL3 gl = renderer.getGL();
+	GL4 gl4 = renderer.getGL4();
+
+	if (!_meshVAOs.containsKey(contextID)) {
+		setupVAOForStaticMeshes(contextID, renderer);
+	}
+
+	int vao = _meshVAOs.get(contextID);
+	gl.glBindVertexArray(vao);
+
+	gl.glDisable(GL2GL3.GL_CULL_FACE);
+
+	// Actually draw it
+	gl4.glBindBuffer(GL4.GL_ELEMENT_ARRAY_BUFFER, meshIndBuffer);
+
+	// Server side indirect buffer
+	gl4.glBindBuffer(GL4.GL_DRAW_INDIRECT_BUFFER, meshIndirectBuffer);
+	gl4.glMultiDrawElementsIndirect(GL2GL3.GL_TRIANGLES, GL2GL3.GL_UNSIGNED_INT, null, _batches.size(), 0);
+
+	// Client side indirect buffer
+//	gl4.glBindBuffer(GL4.GL_DRAW_INDIRECT_BUFFER, 0);
+//	gl4.glMultiDrawElementsIndirect(GL2GL3.GL_TRIANGLES, GL2GL3.GL_UNSIGNED_INT, indirectBufferData, _indirectData.size(), 0);
+
+	// Individual indirect calls
+//	gl4.glBindBuffer(GL4.GL_DRAW_INDIRECT_BUFFER, 0);
+//	for (int i = 0; i < _batches.size(); ++i) {
+//		indirectBufferData.position(i*5);
+//		gl4.glDrawElementsIndirect(GL2GL3.GL_TRIANGLES, GL2GL3.GL_UNSIGNED_INT, indirectBufferData);
+//	}
+
+//	for (IndirectData id: _indirectData) {
+//		gl4.glDrawElementsInstancedBaseVertexBaseInstance(
+//				GL2GL3.GL_TRIANGLES,
+//				id.count,
+//				GL4.GL_UNSIGNED_INT,
+//				id.firstIndex*4,
+//				id.numInstances,
+//				id.baseVertex,
+//				id.baseInstance
+//			);
+//	}
+
+	gl.glEnable(GL2GL3.GL_CULL_FACE);
+
+	gl.glBindVertexArray(0);
 }
 
 /**
@@ -924,6 +1128,7 @@ public void loadGPUAssets(GL2GL3 gl, Renderer renderer) {
 		for (MeshData.SubLineData subData : data.getSubLineData()) {
 			loadGPUSubLine(gl, renderer, subData);
 		}
+		loadGPUTextures(gl, renderer);
 		for (MeshData.Material mat : data.getMaterials()) {
 			loadGPUMaterial(gl, renderer, mat);
 		}
@@ -932,6 +1137,7 @@ public void loadGPUAssets(GL2GL3 gl, Renderer renderer) {
 				loadGPUBatch(gl, renderer, batch);
 			}
 			loadGPULineBatches(gl, renderer);
+			loadGPUMeshBatches(gl, renderer);
 		}
 	} catch (GLException ex) {
 		LogBox.renderLogException(ex);
@@ -941,19 +1147,27 @@ public void loadGPUAssets(GL2GL3 gl, Renderer renderer) {
 	_isLoadedGPU = true;
 }
 
-private void loadGPUMaterial(GL2GL3 gl, Renderer renderer, MeshData.Material dataMat) {
+private void loadGPUTextures(GL2GL3 gl, Renderer renderer) {
+	ArrayList<MeshData.Texture> textures = data.getTextures();
 
-	boolean hasTex = dataMat.colorTex != null;
+	assert(textures.size() <= MAX_SAMPLERS);
+
+	for (MeshData.Texture tex: textures) {
+		int texHandle = renderer.getTexCache().getTexID(gl, tex.texURI, tex.withAlpha, false, true);
+		_textureHandles.add(texHandle);
+	}
+
+}
+
+private void loadGPUMaterial(GL2GL3 gl, Renderer renderer, MeshData.Material dataMat) {
 
 	Material mat = new Material();
 	mat.shaderID = dataMat.getShaderID();
 	mat._transType = dataMat.transType;
 	mat._transColour = dataMat.transColour;
 
-	if (hasTex) {
-		mat._texHandle = renderer.getTexCache().getTexID(gl, dataMat.colorTex, (dataMat.transType != MeshData.NO_TRANS), false, true);
-	} else {
-		mat._texHandle = 0;
+	mat._textureIndex = dataMat.texIndex;
+	if (dataMat.diffuseColor != null) {
 		mat._diffuseColor = new Color4d(dataMat.diffuseColor);
 	}
 
@@ -1005,6 +1219,120 @@ private void loadGPUBatch(GL2GL3 gl, Renderer renderer, MeshData.StaticMeshBatch
 	renderer.usingVRAM(batch.invTrans.size() * 16 * 4);
 
 	_batches.add(b);
+}
+
+public void loadGPUMeshBatches(GL2GL3 gl, Renderer renderer) {
+	ArrayList<Vec3d> meshPos = data.getMeshPosArray();
+	ArrayList<Vec3d> meshNor = data.getMeshNorArray();
+	ArrayList<Vec2d> meshTex = data.getMeshTexArray();
+	ArrayList<Integer> meshInd = data.getMeshIndexArray();
+
+	int[] is = new int[12];
+	gl.glGenBuffers(12, is, 0);
+	meshPosBuffer =        is[ 0];
+	meshNorBuffer =        is[ 1];
+	meshTexBuffer =        is[ 2];
+	meshIndBuffer =        is[ 3];
+	meshInstTransBuffer =  is[ 4];
+	meshInstNorBuffer =    is[ 5];
+	meshTexIndBuffer =     is[ 6];
+	meshDiffColBuffer =    is[ 7];
+	meshSpecColBuffer =    is[ 8];
+	meshAmbColBuffer =     is[ 9];
+	meshShininessBuffer =  is[10];
+	meshIndirectBuffer  =  is[11];
+
+
+	FloatBuffer posBuff = FloatBuffer.allocate(meshPos.size() * 3);
+	for (Vec3d pos : meshPos) {
+		RenderUtils.putPointXYZ(posBuff, pos);
+	}
+	RenderUtils.nioBuffToGL(gl, renderer, meshPosBuffer, 4, posBuff);
+
+	FloatBuffer norBuff = FloatBuffer.allocate(meshNor.size() * 3);
+	for (Vec3d nor : meshNor) {
+		RenderUtils.putPointXYZ(norBuff, nor);
+	}
+	RenderUtils.nioBuffToGL(gl, renderer, meshNorBuffer, 4, norBuff);
+
+	FloatBuffer texBuff = FloatBuffer.allocate(meshTex.size() * 2);
+	for (Vec2d tex: meshTex) {
+		RenderUtils.putPointXY(texBuff, tex);
+	}
+	RenderUtils.nioBuffToGL(gl, renderer, meshTexBuffer, 4, texBuff);
+
+	IntBuffer indexBuff = IntBuffer.allocate(meshInd.size());
+	for (int ind: meshInd) {
+		indexBuff.put(ind);
+	}
+	RenderUtils.nioBuffToGL(gl, renderer, meshIndBuffer, 4, indexBuff);
+
+	// Now fill the per-instance buffers
+	HashMap<MeshData.MeshMatKey,MeshData.StaticMeshBatch> batches = data.getStaticMeshBatches();
+	int totInsts = data.getStaticMeshInstances().size();
+
+	FloatBuffer transBuff = FloatBuffer.allocate(totInsts*16);
+	FloatBuffer normBuff = FloatBuffer.allocate(totInsts*16);
+	IntBuffer texIndBuff = IntBuffer.allocate(totInsts);
+	ByteBuffer diffColBuff = ByteBuffer.allocate(totInsts*3);
+	ByteBuffer specColBuff = ByteBuffer.allocate(totInsts*3);
+	ByteBuffer ambColBuff = ByteBuffer.allocate(totInsts*3);
+	FloatBuffer shininessBuff = FloatBuffer.allocate(totInsts);
+
+	indirectBufferData = IntBuffer.allocate(batches.size()*5);
+
+	int numInsts = 0;
+	for(MeshData.MeshMatKey k: batches.keySet()) {
+		MeshData.Material mat = data.getMaterials().get(k.matIndex);
+		MeshData.SubMeshData mesh = data.getSubMeshData().get(k.meshIndex);
+		MeshData.StaticMeshBatch batch = batches.get(k);
+		for (Mat4d transMat: batch.transform) {
+			RenderUtils.putMat4dCM(transBuff, transMat);
+		}
+		for (Mat4d transMat: batch.invTrans) {
+			Mat4d normMat = new Mat4d(transMat);
+			normMat.transpose4();
+			RenderUtils.putMat4dCM(normBuff, normMat);
+		}
+		// Put all the material info in once per instance
+		int batchInsts = batch.transform.size();
+		for (int i = 0; i < batchInsts; ++i) {
+			texIndBuff.put(mat.texIndex);
+			RenderUtils.putColor3b(diffColBuff, mat.diffuseColor);
+			RenderUtils.putColor3b(specColBuff, mat.specColor);
+			RenderUtils.putColor3b(ambColBuff, mat.ambientColor);
+			shininessBuff.put((float)mat.shininess);
+		}
+		// Build up the indirect buffer
+		indirectBufferData.put(mesh.indices.length);
+		indirectBufferData.put(batch.transform.size());
+		indirectBufferData.put(mesh.startInd);
+		indirectBufferData.put(mesh.firstVert);
+		indirectBufferData.put(numInsts);
+
+		// Save an explicit copy of the indirect data
+		IndirectData id = new IndirectData();
+		id.count = mesh.indices.length;
+		id.numInstances = batch.transform.size();
+		id.firstIndex = mesh.startInd;
+		id.baseVertex = mesh.firstVert;
+		id.baseInstance = numInsts;
+		_indirectData.add(id);
+
+		numInsts += batch.transform.size();
+	}
+
+	// Populate the GL buffers
+	RenderUtils.nioBuffToGL(gl, renderer, meshInstTransBuffer, 4, transBuff);
+	RenderUtils.nioBuffToGL(gl, renderer, meshInstNorBuffer, 4, normBuff);
+	RenderUtils.nioBuffToGL(gl, renderer, meshTexIndBuffer, 4, texIndBuff);
+	RenderUtils.nioBuffToGL(gl, renderer, meshDiffColBuffer, 1, diffColBuff);
+	RenderUtils.nioBuffToGL(gl, renderer, meshSpecColBuffer, 1, specColBuff);
+	RenderUtils.nioBuffToGL(gl, renderer, meshAmbColBuffer, 1, ambColBuff);
+	RenderUtils.nioBuffToGL(gl, renderer, meshShininessBuffer, 4, shininessBuff);
+
+	RenderUtils.nioBuffToGL(gl, renderer, meshIndirectBuffer, 4, indirectBufferData);
+
 }
 
 public void loadGPULineBatches(GL2GL3 gl, Renderer renderer) {
@@ -1139,6 +1467,88 @@ public static void init(Renderer r, GL2GL3 gl) {
 	lightsDirScratch[0] = new Vec4d();
 	lightsDirScratch[1] = new Vec4d();
 
+	initBSInfo(r, gl);
+}
+
+private static void initBSInfo(Renderer r, GL2GL3 gl) {
+	BatchShaderInfo si = bsInfo;
+
+	si.progHandle = r.getShader(ShaderHandle.MESH_BATCH).getProgramHandle();
+	int ph = bsInfo.progHandle;
+
+	gl.glUseProgram(ph);
+
+	si.instSpaceMatVar = gl.glGetAttribLocation(ph, "instSpaceMat");
+	si.instSpaceNorMatVar = gl.glGetAttribLocation(ph, "instSpaceNorMat");
+
+	// Bind the shader variables
+	si.modelViewMatVar = gl.glGetUniformLocation(ph, "modelViewMat");
+	si.projMatVar = gl.glGetUniformLocation(ph, "projMat");
+	si.normalMatVar = gl.glGetUniformLocation(ph, "normalMat");
+
+	si.posVar = gl.glGetAttribLocation(ph, "position");
+	si.norVar = gl.glGetAttribLocation(ph, "normal");
+	si.texCoordVar = gl.glGetAttribLocation(ph, "texCoord");
+
+	si.diffTexVar = gl.glGetUniformLocation(ph, "diffTexs");
+
+	si.diffuseColorVar = gl.glGetAttribLocation(ph, "diffuseColorV");
+	si.diffTexIndexVar = gl.glGetAttribLocation(ph, "diffTexIndexV");
+	si.ambientColorVar = gl.glGetAttribLocation(ph, "ambientColorV");
+	si.specColorVar = gl.glGetAttribLocation(ph, "specColorV");
+	si.shininessVar = gl.glGetAttribLocation(ph, "shininessV");
+
+	si.lightDirVar = gl.glGetUniformLocation(ph, "lightDir");
+	si.lightIntVar = gl.glGetUniformLocation(ph, "lightIntensity");
+	si.numLightsVar = gl.glGetUniformLocation(ph, "numLights");
+
+	si.cVar = gl.glGetUniformLocation(ph, "C");
+	si.fcVar = gl.glGetUniformLocation(ph, "FC");
+
+}
+private void initBatchUniforms(Renderer renderer, Mat4d modelViewMat, Mat4d projMat, Mat4d viewMat, Mat4d normalMat) {
+	GL2GL3 gl = renderer.getGL();
+
+	lightsDirScratch[0].mult4(viewMat, lightsDir[0]);
+	lightsDirScratch[1].mult4(viewMat, lightsDir[1]);
+
+	lightsDirFloats[0] = (float)lightsDirScratch[0].x;
+	lightsDirFloats[1] = (float)lightsDirScratch[0].y;
+	lightsDirFloats[2] = (float)lightsDirScratch[0].z;
+
+	lightsDirFloats[3] = (float)lightsDirScratch[1].x;
+	lightsDirFloats[4] = (float)lightsDirScratch[1].y;
+	lightsDirFloats[5] = (float)lightsDirScratch[1].z;
+
+	BatchShaderInfo si = bsInfo;
+
+	gl.glUseProgram(si.progHandle);
+
+	gl.glUniformMatrix4fv(si.modelViewMatVar, 1, false, RenderUtils.MarshalMat4d(modelViewMat), 0);
+	gl.glUniformMatrix4fv(si.projMatVar, 1, false, RenderUtils.MarshalMat4d(projMat), 0);
+	gl.glUniformMatrix4fv(si.normalMatVar, 1, false, RenderUtils.MarshalMat4d(normalMat), 0);
+
+	gl.glUniform3fv(si.lightDirVar, 2, lightsDirFloats, 0);
+	gl.glUniform1fv(si.lightIntVar, 2, lightsInt, 0);
+	gl.glUniform1i(si.numLightsVar, numLights);
+
+	gl.glUniform1f(si.cVar, Camera.C);
+	gl.glUniform1f(si.fcVar, Camera.FC);
+
+	int[] sampIDs = new int[_textureHandles.size()];
+	for (int i = 0; i < sampIDs.length; ++i) {
+		sampIDs[i] = i;
+	}
+	if (sampIDs.length > 0) {
+		gl.glUniform1iv(si.diffTexVar, sampIDs.length, sampIDs, 0);
+	}
+
+	for (int i = 0; i < _textureHandles.size(); ++i) {
+		gl.glActiveTexture(GL2GL3.GL_TEXTURE0+i);
+		gl.glBindTexture(GL2GL3.GL_TEXTURE_2D, _textureHandles.get(i));
+		gl.glTexParameteri(GL2GL3.GL_TEXTURE_2D, GL2GL3.GL_TEXTURE_WRAP_S, GL2GL3.GL_REPEAT);
+		gl.glTexParameteri(GL2GL3.GL_TEXTURE_2D, GL2GL3.GL_TEXTURE_WRAP_T, GL2GL3.GL_REPEAT);
+	}
 }
 
 private void loadGPUSubMesh(GL2GL3 gl, Renderer renderer, MeshData.SubMeshData data) {
