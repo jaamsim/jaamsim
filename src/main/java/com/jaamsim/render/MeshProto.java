@@ -25,7 +25,6 @@ import java.util.Collections;
 import java.util.HashMap;
 
 import com.jaamsim.MeshFiles.MeshData;
-import com.jaamsim.MeshFiles.MeshData.Material;
 import com.jaamsim.math.AABB;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.ConvexHull;
@@ -943,6 +942,10 @@ private void setupVAOForStaticLines(int contextID, Renderer renderer) {
 
 private void renderStaticLines(int contextID, Renderer renderer, Mat4d modelViewMat, Camera cam) {
 
+	if (_lineBatches.size() == 0) {
+		return;
+	}
+
 	GL2GL3 gl = renderer.getGL();
 	GL4 gl4 = renderer.getGL4();
 
@@ -1012,17 +1015,17 @@ private void setupVAOForStaticMeshes(int contextID, Renderer renderer) {
 
 	gl.glEnableVertexAttribArray(si.diffuseColorVar);
 	gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, meshDiffColBuffer);
-	gl.glVertexAttribPointer(si.diffuseColorVar, 3, GL2GL3.GL_UNSIGNED_BYTE, true, 0, 0);
+	gl.glVertexAttribPointer(si.diffuseColorVar, 4, GL2GL3.GL_UNSIGNED_BYTE, true, 0, 0);
 	gl.glVertexAttribDivisor(si.diffuseColorVar, 1);
 
 	gl.glEnableVertexAttribArray(si.specColorVar);
 	gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, meshSpecColBuffer);
-	gl.glVertexAttribPointer(si.specColorVar, 3, GL2GL3.GL_UNSIGNED_BYTE, true, 0, 0);
+	gl.glVertexAttribPointer(si.specColorVar, 4, GL2GL3.GL_UNSIGNED_BYTE, true, 0, 0);
 	gl.glVertexAttribDivisor(si.specColorVar, 1);
 
 	gl.glEnableVertexAttribArray(si.ambientColorVar);
 	gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, meshAmbColBuffer);
-	gl.glVertexAttribPointer(si.ambientColorVar, 3, GL2GL3.GL_UNSIGNED_BYTE, true, 0, 0);
+	gl.glVertexAttribPointer(si.ambientColorVar, 4, GL2GL3.GL_UNSIGNED_BYTE, true, 0, 0);
 	gl.glVertexAttribDivisor(si.ambientColorVar, 1);
 
 	gl.glEnableVertexAttribArray(si.shininessVar);
@@ -1274,9 +1277,9 @@ public void loadGPUMeshBatches(GL2GL3 gl, Renderer renderer) {
 	FloatBuffer transBuff = FloatBuffer.allocate(totInsts*16);
 	FloatBuffer normBuff = FloatBuffer.allocate(totInsts*16);
 	IntBuffer texIndBuff = IntBuffer.allocate(totInsts);
-	ByteBuffer diffColBuff = ByteBuffer.allocate(totInsts*3);
-	ByteBuffer specColBuff = ByteBuffer.allocate(totInsts*3);
-	ByteBuffer ambColBuff = ByteBuffer.allocate(totInsts*3);
+	ByteBuffer diffColBuff = ByteBuffer.allocate(totInsts*4);
+	ByteBuffer specColBuff = ByteBuffer.allocate(totInsts*4);
+	ByteBuffer ambColBuff = ByteBuffer.allocate(totInsts*4);
 	FloatBuffer shininessBuff = FloatBuffer.allocate(totInsts);
 
 	indirectBufferData = IntBuffer.allocate(batches.size()*5);
@@ -1298,9 +1301,9 @@ public void loadGPUMeshBatches(GL2GL3 gl, Renderer renderer) {
 		int batchInsts = batch.transform.size();
 		for (int i = 0; i < batchInsts; ++i) {
 			texIndBuff.put(mat.texIndex);
-			RenderUtils.putColor3b(diffColBuff, mat.diffuseColor);
-			RenderUtils.putColor3b(specColBuff, mat.specColor);
-			RenderUtils.putColor3b(ambColBuff, mat.ambientColor);
+			RenderUtils.putColor4b(diffColBuff, mat.diffuseColor);
+			RenderUtils.putColor4b(specColBuff, mat.specColor);
+			RenderUtils.putColor4b(ambColBuff, mat.ambientColor);
 			shininessBuff.put((float)mat.shininess);
 		}
 		// Build up the indirect buffer

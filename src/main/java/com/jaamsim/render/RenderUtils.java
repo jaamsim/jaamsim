@@ -139,12 +139,6 @@ static void putColor4b(ByteBuffer bb, Color4d col) {
 	bb.put((byte)(col.a * 255.0));
 }
 
-static void putColor3b(ByteBuffer bb, Color4d col) {
-	bb.put((byte)(col.r * 255.0));
-	bb.put((byte)(col.g * 255.0));
-	bb.put((byte)(col.b * 255.0));
-}
-
 static void putMat4dCM(FloatBuffer fb, Mat4d mat) {
 	float[] floats = MarshalMat4d(mat);
 	fb.put(floats);
