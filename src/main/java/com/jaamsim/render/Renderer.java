@@ -124,6 +124,8 @@ public class Renderer implements GLAnimatorControl {
 
 	private boolean gl3Supported;
 	private boolean gl4Supported;
+	private VersionNumber glVersion;
+	private boolean indirectSupported;
 
 	private final TexCache texCache = new TexCache(this);
 	private final GraphicsMemManager graphicsMemManager = new GraphicsMemManager(this);
@@ -223,6 +225,8 @@ public class Renderer implements GLAnimatorControl {
 			GL gl = sharedContext.getGL();
 			gl3Supported = gl.isGL3();
 			gl4Supported = gl.isGL4();
+			glVersion = sharedContext.getGLVersionNumber();
+			indirectSupported = checkGLVersion(4, 3);
 
 //			long endNanos = System.nanoTime();
 //			long ms = (endNanos - startNanos) /1000000L;
@@ -905,7 +909,7 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 		GL2GL3 gl = sharedContext.getGL().getGL2GL3();
 
 		MeshProto proto;
-		boolean canBatch = gl4Supported;
+		boolean canBatch = indirectSupported;
 
 		MeshData data = MeshDataCache.getMeshData(key);
 		if (data == badData) {
@@ -1449,12 +1453,25 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 		 return initialized.get() && !fatalError.get();
 	}
 
+	private boolean checkGLVersion(int majorVer, int minorVer) {
+		if (glVersion.getMajor() > majorVer)
+			return true;
+
+		if (glVersion.getMajor() == majorVer)
+			return glVersion.getMinor() >= minorVer;
+
+		return false;
+	}
+
 	public boolean isGL3Supported() {
 		return gl3Supported;
 	}
 
 	public boolean isGL4Supported() {
 		return gl4Supported;
+	}
+	public boolean isIndirectSupported() {
+		return indirectSupported;
 	}
 
 	public boolean hasFatalError() {
