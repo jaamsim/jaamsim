@@ -162,6 +162,7 @@ private static class MeshBatch {
 	public int normMatBuffer;
 
 	public int numInstances;
+	@SuppressWarnings("unused")
 	public int baseInstance;
 
 	private final int[] usedShaders;
@@ -185,6 +186,8 @@ private static class MeshBatch {
 		}
 	}
 }
+
+@SuppressWarnings("unused")
 private static class IndirectData {
 	public int count;
 	public int numInstances;
@@ -363,6 +366,7 @@ public void render(int contextID, Renderer renderer,
 
 }
 
+@SuppressWarnings("unused")
 private void renderBatch(int contextID, Renderer renderer,
         MeshBatch batch) {
 
