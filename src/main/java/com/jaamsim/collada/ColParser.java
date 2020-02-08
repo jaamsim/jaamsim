@@ -72,9 +72,12 @@ public class ColParser {
 		try {
 			ColParser colParser = new ColParser(asset.toURL());
 
+			MeshData finalData = colParser.getData();
+			finalData.setSource(asset.toString());
+
 			colParser.processContent();
 
-			return colParser.getData();
+			return finalData;
 
 		} catch (Exception e) {
 			LogBox.renderLogException(e);

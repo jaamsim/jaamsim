@@ -51,6 +51,8 @@ import com.jaamsim.render.Renderer;
  */
 public class MeshData {
 
+	private final static boolean LOG_DATA = false;
+
 	public final static int MAX_HULL_ATTEMPTS = 5;
 	public final static int MAX_HULL_POINTS = 100;
 	public final static int MAX_SUBINST_HULL_POINTS = 30;
@@ -59,6 +61,28 @@ public class MeshData {
 	public final static int A_ONE_TRANS = 1;
 	public final static int RGB_ZERO_TRANS = 2;
 	public final static int DIFF_ALPHA_TRANS = 3;
+
+	// Convenient key to track Mesh/Material combinations
+	public static class MeshMatKey {
+		public final int meshIndex;
+		public final int matIndex;
+		public MeshMatKey(int meshIndex, int matIndex) {
+			this.meshIndex = meshIndex;
+			this.matIndex = matIndex;
+		}
+		@Override
+		public boolean equals(Object o) {
+			if (!(o instanceof MeshMatKey)) {
+				return false;
+			}
+			MeshMatKey other = (MeshMatKey)o;
+			return this.meshIndex == other.meshIndex && this.matIndex == other.matIndex;
+		}
+		@Override
+		public int hashCode() {
+			return meshIndex * 21 + matIndex * 61;
+		}
+	}
 
 	public static class Material {
 		public Color4d diffuseColor;
@@ -70,8 +94,11 @@ public class MeshData {
 		// TODO Properly relativize this one day
 		public String relColorTex; // the 'relative' name for this texture, used by the binary exporter
 
+		public int texIndex;
 		public int transType;
 		public Color4d transColour;
+
+		public int numUses;
 
 		public int getShaderID() {
 			int ret = 0;
@@ -93,6 +120,10 @@ public class MeshData {
 		public AABB localBounds;
 
 		public boolean keepRuntimeData;
+		public int numUses;
+
+		public int firstVert;
+		public int startInd;
 	}
 
 	public static class SubLineData {
@@ -100,6 +131,9 @@ public class MeshData {
 		public Color4d diffuseColor;
 
 		public ConvexHull hull;
+		public int numUses = 0;
+
+		public int startVert; // Starting index in the full line vertex array
 	}
 
 	public static class StaticMeshInstance {
@@ -109,11 +143,39 @@ public class MeshData {
 		public Mat4d invTrans;
 	}
 
+	public static class StaticMeshBatch {
+		public final MeshMatKey key;
+		public ArrayList<Mat4d> transform = new ArrayList<>();
+		public ArrayList<Mat4d> invTrans = new ArrayList<>();
+		public StaticMeshBatch(MeshMatKey key) {
+			this.key = key;
+		}
+	}
+
+	private ArrayList<Vec3d> meshBatchPos;
+	private ArrayList<Vec3d> meshBatchNor;
+	private ArrayList<Vec2d> meshBatchTex;
+	private ArrayList<Integer> meshBatchIndices;
+
 	public static class StaticLineInstance {
 		public int lineIndex;
 		public Mat4d transform;
 		public Mat4d invTrans;
 	}
+
+	public static class StaticLineBatch {
+		public int lineIndex;
+		public ArrayList<Mat4d> instTrans;
+		public ArrayList<Color4d> instColor;
+		public StaticLineBatch(int i) {
+			lineIndex = i;
+			instTrans = new ArrayList<>();
+			instColor = new ArrayList<>();
+		}
+	}
+
+	private ArrayList<Vec3d> lineBatchPos;
+	private ArrayList<StaticLineBatch> lineBatches;
 
 	public static class TransVal {
 		Mat4d transform;
@@ -434,18 +496,28 @@ public class MeshData {
 		public Mat4d[] invTransforms;
 	}
 
+	public static class Texture {
+		public URI texURI;
+		public boolean withAlpha;
+	}
+
 	private final ArrayList<SubMeshData> _subMeshesData = new ArrayList<>();
 	private final ArrayList<SubLineData> _subLinesData = new ArrayList<>();
 	private final ArrayList<Material> _materials = new ArrayList<>();
+	private final ArrayList<Texture> _textures = new ArrayList<>();
 
 	private final ArrayList<StaticMeshInstance> _staticMeshInstances = new ArrayList<>();
 	private final ArrayList<StaticLineInstance> _staticLineInstances = new ArrayList<>();
+
+	private final HashMap<MeshMatKey, StaticMeshBatch> _staticBatches = new HashMap<>();
 
 	private final ArrayList<AnimMeshInstance> _animMeshInstances = new ArrayList<>();
 	private final ArrayList<AnimLineInstance> _animLineInstances = new ArrayList<>();
 
 	private TreeNode treeRoot;
 	private int numTreeNodes;
+
+	private String source;
 
 	private ConvexHull _staticHull;
 	// The AABB of this mesh with no transform applied
@@ -465,6 +537,10 @@ public class MeshData {
 		this.keepRuntimeData = keepRuntimeData;
 	}
 
+	public void setSource(String source) {
+		this.source = source;
+	}
+
 	public void addStaticMeshInstance(int meshIndex, int matIndex, Mat4d mat) {
 		Mat4d trans = new Mat4d(mat);
 		StaticMeshInstance inst = new StaticMeshInstance();
@@ -472,8 +548,22 @@ public class MeshData {
 		inst.materialIndex = matIndex;
 		inst.transform = trans;
 
-		inst.invTrans = trans.inverse();
+		Mat4d invTrans = trans.inverse();
+		inst.invTrans = invTrans;
 		_staticMeshInstances.add(inst);
+
+		// Add to the batches as well if it is opaque
+		Material material = _materials.get(matIndex);
+		if (material.transType == NO_TRANS) {
+			MeshMatKey key = new MeshMatKey(meshIndex, matIndex);
+			StaticMeshBatch batch = _staticBatches.get(key);
+			if (batch == null) {
+				batch = new StaticMeshBatch(key);
+				_staticBatches.put(key, batch);
+			}
+			batch.transform.add(trans);
+			batch.invTrans.add(invTrans);
+		}
 	}
 
 	public void setTree(TreeNode rootNode) {
@@ -486,6 +576,8 @@ public class MeshData {
 		inst.lineIndex = lineIndex;
 		inst.transform = trans;
 		inst.invTrans = trans.inverse();
+
+		_subLinesData.get(lineIndex).numUses++;
 
 		_staticLineInstances.add(inst);
 	}
@@ -505,6 +597,9 @@ public class MeshData {
 		}
 
 		mat.diffuseColor = diffuseColor;
+		if (diffuseColor == null) {
+			mat.diffuseColor = new Color4d(0.2, 0.2, 0.2, 1.0);
+		}
 		mat.ambientColor = ambientColor;
 		mat.specColor = specColor;
 		mat.shininess = shininess;
@@ -529,8 +624,24 @@ public class MeshData {
 
 		_materials.add(mat);
 
+		boolean isTrans = false;
 		if (transType != NO_TRANS) {
+			isTrans = true;
 			_anyTransparent = true;
+		}
+		if (colorTex != null) {
+			int texIndex = _textures.indexOf(colorTex);
+			if (texIndex == -1) {
+				Texture tex = new Texture();
+				tex.texURI = colorTex;
+				_textures.add(tex);
+				texIndex = _textures.size()-1;
+			}
+			mat.texIndex = texIndex;
+			Texture tex = _textures.get(texIndex);
+			tex.withAlpha = tex.withAlpha || isTrans;
+		} else {
+			mat.texIndex = -1;
 		}
 	}
 
@@ -603,7 +714,7 @@ public class MeshData {
 			}
 		}
 
-		sub.staticHull = ConvexHull.TryBuildHull(sub.verts, MAX_HULL_ATTEMPTS, MAX_HULL_POINTS, v3Interner);
+		sub.staticHull = ConvexHull.TryBuildHull(sub.verts, MAX_HULL_ATTEMPTS, MAX_SUBINST_HULL_POINTS, v3Interner);
 		sub.localBounds = sub.staticHull.getAABB(new Mat4d());
 	}
 
@@ -623,7 +734,7 @@ public class MeshData {
 			sub.verts.add(v3Interner.intern(v));
 		}
 
-		sub.hull = ConvexHull.TryBuildHull(sub.verts, MAX_HULL_ATTEMPTS, MAX_HULL_POINTS, v3Interner);
+		sub.hull = ConvexHull.TryBuildHull(sub.verts, MAX_HULL_ATTEMPTS, MAX_SUBINST_HULL_POINTS, v3Interner);
 	}
 
 	public boolean hasTransparent() {
@@ -736,6 +847,56 @@ public class MeshData {
 		return changed;
 	}
 
+	// Build up a batchable (via the DEBUB_BATCH shader) array of all static line information
+	private void generateLineBatches() {
+		// Build up a complete list of all line vertices
+		lineBatchPos = new ArrayList<Vec3d>();
+		for (SubLineData ld: _subLinesData) {
+			ld.startVert = lineBatchPos.size();
+			lineBatchPos.addAll(ld.verts);
+		}
+
+		lineBatches = new ArrayList<StaticLineBatch>();
+		// Create batches
+		for (int i = 0; i < _subLinesData.size(); ++i) {
+			lineBatches.add(new StaticLineBatch(i));
+		}
+		for (int i = 0; i < _staticLineInstances.size(); ++i) {
+			StaticLineInstance inst = _staticLineInstances.get(i);
+			StaticLineBatch b = lineBatches.get(inst.lineIndex);
+			b.instTrans.add(inst.transform);
+			b.instColor.add(_subLinesData.get(inst.lineIndex).diffuseColor);
+		}
+	}
+
+	private void generateMeshBatches() {
+		meshBatchPos = new ArrayList<>();
+		meshBatchNor = new ArrayList<>();
+		meshBatchTex = new ArrayList<>();
+		meshBatchIndices = new ArrayList<>();
+
+		for (SubMeshData sm: _subMeshesData) {
+			sm.firstVert = meshBatchPos.size();
+			sm.startInd = meshBatchIndices.size();
+
+			meshBatchPos.addAll(sm.verts);
+			meshBatchNor.addAll(sm.normals);
+			if (sm.texCoords != null) {
+				meshBatchTex.addAll(sm.texCoords);
+			} else {
+				Vec2d defTexCoord = new Vec2d(0.0, 0.0);
+				for (int i = 0; i < sm.verts.size(); ++i) {
+					meshBatchTex.add(defTexCoord);
+				}
+			}
+
+			for (int ind: sm.indices) {
+				meshBatchIndices.add(ind);
+			}
+		}
+
+	}
+
 	/**
 	 * Builds the convex hull of the current mesh based on all the existing sub meshes.
 	 */
@@ -788,8 +949,14 @@ public class MeshData {
 		// Collect all the points from the hulls of the individual sub meshes
 		for (StaticMeshInstance subInst : _staticMeshInstances) {
 
-			List<Vec3d> pointsRef = _subMeshesData.get(subInst.subMeshIndex).staticHull.getVertices();
+			SubMeshData sm = _subMeshesData.get(subInst.subMeshIndex);
+			List<Vec3d> pointsRef = sm.staticHull.getVertices();
 			List<Vec3d> subPoints = RenderUtils.transformPointsWithTrans(subInst.transform, pointsRef);
+
+			sm.numUses++;
+
+			Material mat = _materials.get(subInst.materialIndex);
+			mat.numUses++;
 
 			totalHullPoints.addAll(subPoints);
 		}
@@ -801,6 +968,9 @@ public class MeshData {
 
 			totalHullPoints.addAll(subPoints);
 		}
+
+		generateMeshBatches();
+		generateLineBatches();
 
 		// Now scan the non-static part of the tree
 		TreeWalker walker = new TreeWalker() {
@@ -861,6 +1031,84 @@ public class MeshData {
 			v2Interner = null; // Drop ref to the interner to free memory
 			v3Interner = null; // Drop ref to the interner to free memory
 			v4Interner = null; // Drop ref to the interner to free memory
+		}
+		if (LOG_DATA) {
+			logUses();
+		}
+	}
+
+	private void addToHist(HashMap<Integer, Integer> hist, int val) {
+		Integer histVal = hist.get(val);
+		if (histVal == null) {
+			histVal = new Integer(0);
+		}
+		histVal += 1;
+		hist.put(val, histVal);
+
+	}
+	private void printHist(HashMap<Integer, Integer> hist, int maxVal) {
+		for (int i = 0; i <= maxVal; ++i) {
+			Integer histVal = hist.get(i);
+			if (histVal != null && histVal != 0) {
+				System.out.printf("%d -> %d\n", i, histVal);
+			}
+		}
+	}
+
+	private void logUses() {
+		HashMap<Integer, Integer> instHist = new HashMap<>();
+		int maxInst = 0;
+		int totalInsts = 0;
+
+		for(SubMeshData sm: _subMeshesData) {
+			int numUses = sm.numUses;
+
+			addToHist(instHist, numUses);
+			totalInsts += numUses;
+
+			maxInst = Math.max(maxInst, numUses);
+		}
+		String s = source != null ? source : "<unknown>";
+		System.out.printf("Uses for source: %s\n", s);
+		System.out.printf("Total meshes: %d\n", _subMeshesData.size());
+		System.out.printf("Total insts: %d\n", totalInsts);
+
+		printHist(instHist, maxInst);
+
+		// Log the batch uses
+		HashMap<Integer, Integer> batchHist = new HashMap<>();
+		int maxBatch = 0;
+		for (MeshMatKey k : _staticBatches.keySet()) {
+			StaticMeshBatch b = _staticBatches.get(k);
+			int batchSize = b.transform.size();
+
+			addToHist(batchHist, batchSize);
+			maxBatch = Math.max(maxInst, batchSize);
+
+		}
+
+		System.out.printf("BatchHistogram:\n");
+		printHist(batchHist, maxBatch);
+
+		if (_subLinesData.size() > 0) {
+			System.out.printf("Lines:\n");
+
+			HashMap<Integer, Integer> lineHist = new HashMap<>();
+			int maxLineInst = 0;
+			int totalLineInsts = 0;
+
+			for(SubLineData sl: _subLinesData) {
+				int numUses = sl.numUses;
+
+				addToHist(lineHist, numUses);
+				totalLineInsts += numUses;
+
+				maxLineInst = Math.max(maxLineInst, numUses);
+			}
+			System.out.printf("Total lines: %d\n", _subLinesData.size());
+			System.out.printf("Total insts: %d\n", totalLineInsts);
+
+			printHist(lineHist, maxLineInst);
 		}
 	}
 
@@ -993,6 +1241,9 @@ public class MeshData {
 	public ArrayList<StaticMeshInstance> getStaticMeshInstances() {
 		return _staticMeshInstances;
 	}
+	public HashMap<MeshMatKey,StaticMeshBatch> getStaticMeshBatches() {
+		return _staticBatches;
+	}
 	public ArrayList<StaticLineInstance> getStaticLineInstances() {
 		return _staticLineInstances;
 	}
@@ -1003,9 +1254,33 @@ public class MeshData {
 	public ArrayList<AnimLineInstance> getAnimLineInstances() {
 		return _animLineInstances;
 	}
+	public ArrayList<Texture> getTextures() {
+		return _textures;
+	}
 
 	public ArrayList<Material> getMaterials() {
 		return _materials;
+	}
+
+	public ArrayList<Vec3d> getLinePosArray() {
+		return lineBatchPos;
+	}
+
+	public ArrayList<Vec3d> getMeshPosArray() {
+		return meshBatchPos;
+	}
+	public ArrayList<Vec3d> getMeshNorArray() {
+		return meshBatchNor;
+	}
+	public ArrayList<Vec2d> getMeshTexArray() {
+		return meshBatchTex;
+	}
+	public ArrayList<Integer> getMeshIndexArray() {
+		return meshBatchIndices;
+	}
+
+	public ArrayList<StaticLineBatch> getLineBatches() {
+		return lineBatches;
 	}
 
 	public int getNumTriangles() {
@@ -1633,10 +1908,15 @@ public class MeshData {
 	 * Returns an array of all the used shaders for this MeshData
 	 * @return
 	 */
-	public int[] getUsedMeshShaders() {
+	public int[] getUsedMeshShaders(boolean canBatch) {
 		ArrayList<Integer> shaderIDs = new ArrayList<>();
 		for (StaticMeshInstance smi : _staticMeshInstances) {
-			int shaderID = _materials.get(smi.materialIndex).getShaderID();
+			Material mat = _materials.get(smi.materialIndex);
+			int shaderID = mat.getShaderID();
+
+			if (canBatch && mat.transType == NO_TRANS) {
+				shaderID = shaderID | Renderer.STATIC_BATCH_FLAG;
+			}
 
 			if (!shaderIDs.contains(shaderID))
 				shaderIDs.add(shaderID);

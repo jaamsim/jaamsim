@@ -70,6 +70,7 @@ import com.jogamp.opengl.DebugGL4bc;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2GL3;
 import com.jogamp.opengl.GL3;
+import com.jogamp.opengl.GL4;
 import com.jogamp.opengl.GL4bc;
 import com.jogamp.opengl.GLAnimatorControl;
 import com.jogamp.opengl.GLAutoDrawable;
@@ -90,7 +91,7 @@ import com.jogamp.opengl.GLProfile;
 public class Renderer implements GLAnimatorControl {
 
 	public enum ShaderHandle {
-		FONT, HULL, OVERLAY_FONT, OVERLAY_FLAT, DEBUG, SKYBOX
+		FONT, HULL, OVERLAY_FONT, OVERLAY_FLAT, DEBUG, DEBUG_BATCH, SKYBOX, MESH_BATCH
 	}
 
 	private static final AtomicInteger nextAssetID = new AtomicInteger(0);
@@ -106,7 +107,8 @@ public class Renderer implements GLAnimatorControl {
 	private static boolean USE_DEBUG_GL = true;
 
 	public static int DIFF_TEX_FLAG = 1;
-	public static int NUM_MESH_SHADERS = 2; // Should be 2^(max_flag)
+	public static int STATIC_BATCH_FLAG = 2;
+	public static int NUM_MESH_SHADERS = 4; // Should be 2^(max_flag)
 
 	public static long DEBUG_PICK_ID = Long.MIN_VALUE;
 
@@ -121,11 +123,14 @@ public class Renderer implements GLAnimatorControl {
 	private GLCapabilities caps = null;
 
 	private boolean gl3Supported;
+	private boolean gl4Supported;
+	private VersionNumber glVersion;
+	private boolean indirectSupported;
 
 	private final TexCache texCache = new TexCache(this);
 	private final GraphicsMemManager graphicsMemManager = new GraphicsMemManager(this);
 
-	// An initalization time flag specifying if the 'safest' graphical techniques should be used
+	// An initialization time flag specifying if the 'safest' graphical techniques should be used
 	private boolean safeGraphics;
 
 	private final Thread renderThread;
@@ -216,14 +221,12 @@ public class Renderer implements GLAnimatorControl {
 			dummyDrawable.display(); // triggers GLContext object creation and native realization.
 
 			sharedContext = dummyDrawable.getContext();
-			assert (sharedContext != null);
 
-			try {
-				GL3 gl3 = sharedContext.getGL().getGL3();
-				gl3Supported = gl3 != null;
-			} catch (GLException ex) {
-				gl3Supported = false;
-			}
+			GL gl = sharedContext.getGL();
+			gl3Supported = gl.isGL3();
+			gl4Supported = gl.isGL4();
+			glVersion = sharedContext.getGLVersionNumber();
+			indirectSupported = checkGLVersion(4, 3);
 
 //			long endNanos = System.nanoTime();
 //			long ms = (endNanos - startNanos) /1000000L;
@@ -236,7 +239,7 @@ public class Renderer implements GLAnimatorControl {
 			// Notify the main thread we're done
 			initialized.set(true);
 
-		} catch (Exception e) {
+		} catch (Throwable e) {
 
 			fatalError.set(true);
 			errorString = e.getLocalizedMessage();
@@ -470,6 +473,9 @@ public class Renderer implements GLAnimatorControl {
 	public GL2GL3 getGL() {
 		return drawContext.getGL().getGL2GL3();
 	}
+	public GL4 getGL4() {
+		return drawContext.getGL().getGL4();
+	}
 
 	/**
 	 * Get a list of all the IDs of currently open windows
@@ -675,6 +681,9 @@ private String getMeshShaderDefines(int i) {
 	if ((i & DIFF_TEX_FLAG) != 0) {
 		defines.append("#define DIFF_TEX\n");
 	}
+	if ((i & STATIC_BATCH_FLAG) != 0) {
+		defines.append("#define BATCH_RENDER\n");
+	}
 	return defines.toString();
 }
 
@@ -706,9 +715,13 @@ private void initShaders(GL2GL3 gl) throws RenderException {
 	frag = "/resources/shaders/debug.frag";
 	createShader(ShaderHandle.DEBUG, vert, frag, gl);
 
+	// Note: DEBUG_BATCH is only available as a core shader
+
 	vert = "/resources/shaders/skybox.vert";
 	frag = "/resources/shaders/skybox.frag";
 	createShader(ShaderHandle.SKYBOX, vert, frag, gl);
+
+	// Note: MESH_BATCH is only available as a core shader
 
 	String meshVertSrc = readSource("/resources/shaders/flat.vert");
 	String meshFragSrc = readSource("/resources/shaders/flat.frag");
@@ -750,7 +763,7 @@ private void initSurfaceState(GL2GL3 gl) {
 }
 
 /**
- * Create and compile all the shaders
+ * Create and compile all the shaders for gl >= 3 core profile
  */
 private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 	shaders = new EnumMap<>(ShaderHandle.class);
@@ -776,9 +789,17 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 	frag = "/resources/shaders_core/debug.frag";
 	createCoreShader(ShaderHandle.DEBUG, vert, frag, gl, version);
 
+	vert = "/resources/shaders_core/debug_batch.vert";
+	frag = "/resources/shaders_core/debug_batch.frag";
+	createCoreShader(ShaderHandle.DEBUG_BATCH, vert, frag, gl, version);
+
 	vert = "/resources/shaders_core/skybox.vert";
 	frag = "/resources/shaders_core/skybox.frag";
 	createCoreShader(ShaderHandle.SKYBOX, vert, frag, gl, version);
+
+	vert = "/resources/shaders_core/mesh_batch.vert";
+	frag = "/resources/shaders_core/mesh_batch.frag";
+	createCoreShader(ShaderHandle.MESH_BATCH, vert, frag, gl, version);
 
 	String meshVertSrc = readSource("/resources/shaders_core/flat.vert").replaceAll("@VERSION@", version);
 	String meshFragSrc = readSource("/resources/shaders_core/flat.frag").replaceAll("@VERSION@", version);
@@ -787,8 +808,9 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 	for (int i = 0; i < NUM_MESH_SHADERS; ++i) {
 		String defines = getMeshShaderDefines(i);
 
+		String definedVertSrc = definespat.matcher(meshVertSrc).replaceAll(defines);
 		String definedFragSrc = definespat.matcher(meshFragSrc).replaceAll(defines);
-		Shader s = new Shader(meshVertSrc, definedFragSrc, gl);
+		Shader s = new Shader(definedVertSrc, definedFragSrc, gl);
 		if (!s.isGood()) {
 			String failure = s.getFailureLog();
 			throw new RenderException("Mesh Shader failed, flags: " + i + " " + failure);
@@ -850,12 +872,12 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 			throw new RenderException("OpenGL version is too low. OpenGL >= 2.1 is required.");
 		}
 		GL2GL3 gl = sharedContext.getGL().getGL2GL3();
-		if (!isCore)
+		if (!isCore && !gl3Supported)
 			initShaders(gl);
 		else
 			initCoreShaders(gl, sharedContext.getGLSLVersionString());
 
-		// Sub system specific intitializations
+		// Sub system specific initializations
 		DebugUtils.init(this, gl);
 		Polygon.init(this, gl);
 		MeshProto.init(this, gl);
@@ -863,7 +885,7 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 
 		// Load the bad mesh proto
 		badData = MeshDataCache.getBadMesh();
-		badProto = new MeshProto(badData, safeGraphics);
+		badProto = new MeshProto(badData, safeGraphics, false);
 		badProto.loadGPUAssets(gl, this);
 
 		skybox = new Skybox();
@@ -887,12 +909,13 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 		GL2GL3 gl = sharedContext.getGL().getGL2GL3();
 
 		MeshProto proto;
+		boolean canBatch = indirectSupported;
 
 		MeshData data = MeshDataCache.getMeshData(key);
 		if (data == badData) {
 			proto = badProto;
 		} else {
-			proto = new MeshProto(data, safeGraphics);
+			proto = new MeshProto(data, safeGraphics, canBatch);
 
 			assert (proto != null);
 			proto.loadGPUAssets(gl, this);
@@ -1430,8 +1453,25 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 		 return initialized.get() && !fatalError.get();
 	}
 
+	private boolean checkGLVersion(int majorVer, int minorVer) {
+		if (glVersion.getMajor() > majorVer)
+			return true;
+
+		if (glVersion.getMajor() == majorVer)
+			return glVersion.getMinor() >= minorVer;
+
+		return false;
+	}
+
 	public boolean isGL3Supported() {
 		return gl3Supported;
+	}
+
+	public boolean isGL4Supported() {
+		return gl4Supported;
+	}
+	public boolean isIndirectSupported() {
+		return indirectSupported;
 	}
 
 	public boolean hasFatalError() {
