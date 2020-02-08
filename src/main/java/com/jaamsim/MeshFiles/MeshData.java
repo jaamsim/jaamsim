@@ -850,13 +850,13 @@ public class MeshData {
 	// Build up a batchable (via the DEBUB_BATCH shader) array of all static line information
 	private void generateLineBatches() {
 		// Build up a complete list of all line vertices
-		lineBatchPos = new ArrayList<Vec3d>();
+		lineBatchPos = new ArrayList<>();
 		for (SubLineData ld: _subLinesData) {
 			ld.startVert = lineBatchPos.size();
 			lineBatchPos.addAll(ld.verts);
 		}
 
-		lineBatches = new ArrayList<StaticLineBatch>();
+		lineBatches = new ArrayList<>();
 		// Create batches
 		for (int i = 0; i < _subLinesData.size(); ++i) {
 			lineBatches.add(new StaticLineBatch(i));
