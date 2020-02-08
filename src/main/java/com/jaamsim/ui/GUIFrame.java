@@ -1576,7 +1576,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		dispModel = new JTextField("");
 		dispModel.setEditable(false);
 		dispModel.setHorizontalAlignment(JTextField.CENTER);
-		dispModel.setPreferredSize(new Dimension(100, fileSave.getPreferredSize().height));
+		dispModel.setPreferredSize(new Dimension(120, fileSave.getPreferredSize().height));
 		dispModel.setToolTipText(formatToolTip("DisplayModel", "Sets the default appearance of the entity. "
 				+ "A DisplayModel is analogous to a text style in a word processor."));
 		buttonBar.add(dispModel);
@@ -1841,7 +1841,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		font = new JTextField("");
 		font.setEditable(false);
 		font.setHorizontalAlignment(JTextField.CENTER);
-		font.setPreferredSize(new Dimension(100, fileSave.getPreferredSize().height));
+		font.setPreferredSize(new Dimension(120, fileSave.getPreferredSize().height));
 		font.setToolTipText(formatToolTip("Font", "Sets the font for the text."));
 		buttonBar.add(font);
 
