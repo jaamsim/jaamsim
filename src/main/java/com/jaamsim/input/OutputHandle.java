@@ -145,6 +145,10 @@ public class OutputHandle {
 		for (String outputName : e.getCustomOutputNames()) {
 			ret.add(e.getOutputHandle(outputName));
 		}
+		// Add the input outputs
+		for (String outputName : e.getInputOutputNames()) {
+			ret.add(e.getOutputHandle(outputName));
+		}
 
 		// And the attributes
 		for (String attribName : e.getAttributeNames()) {
