@@ -811,7 +811,7 @@ public class JaamSimModel {
 	final void renameEntity(Entity e, String newName) {
 		synchronized(namedEntities) {
 			// Unregistered entities do not appear in the named entity hashmap, no consistency checks needed
-			if (!e.testFlag(Entity.FLAG_REGISTERED)) {
+			if (!e.isRegistered()) {
 				e.entityName = newName;
 				return;
 			}
@@ -993,7 +993,7 @@ public class JaamSimModel {
 		synchronized (namedEntities) {
 			validateEntList();
 			numLiveEnts--;
-			if (e.testFlag(Entity.FLAG_REGISTERED)) {
+			if (e.isRegistered()) {
 				if (e.parent == null) {
 					if (e != namedEntities.remove(e.entityName))
 						throw new ErrorException("Named Entities Internal Consistency error: %s", e);
