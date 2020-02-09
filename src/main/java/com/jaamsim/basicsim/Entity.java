@@ -246,6 +246,18 @@ public class Entity {
 		postDefine();
 	}
 
+	public final boolean isAdded() {
+		return this.testFlag(Entity.FLAG_ADDED);
+	}
+
+	public final boolean isGenerated() {
+		return this.testFlag(Entity.FLAG_GENERATED);
+	}
+
+	public final boolean isRegistered() {
+		return this.testFlag(Entity.FLAG_REGISTERED);
+	}
+
 	/**
 	 * Returns whether the entity can participate in the simulation.
 	 * @return true if the entity can be used
