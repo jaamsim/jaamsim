@@ -987,7 +987,7 @@ public class InputAgent {
 		// Prepare a sorted list of all the entities that were added to the model
 		ArrayList<Entity> newEntities = new ArrayList<>();
 		for (Entity ent : simModel.getClonesOfIterator(Entity.class)) {
-			if (!ent.testFlag(Entity.FLAG_ADDED) || ent.testFlag(Entity.FLAG_GENERATED))
+			if (!ent.isAdded() || ent.testFlag(Entity.FLAG_GENERATED))
 				continue;
 			if (ent instanceof EntityLabel && !((EntityLabel) ent).getShow()
 					&& ((EntityLabel) ent).isDefault())
