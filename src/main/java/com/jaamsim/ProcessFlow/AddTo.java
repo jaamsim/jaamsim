@@ -49,9 +49,7 @@ public class AddTo extends Pack {
 
 	@Override
 	public ArrayList<Queue> getQueues() {
-		ArrayList<Queue> ret = new ArrayList<>();
-		if (waitQueue.getValue() != null)
-			ret.add(waitQueue.getValue());
+		ArrayList<Queue> ret = super.getQueues();
 		if (containerQueue.getValue() != null)
 			ret.add(containerQueue.getValue());
 		return ret;
