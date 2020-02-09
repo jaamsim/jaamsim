@@ -53,7 +53,7 @@ public class RegionInput extends EntityInput<Region> {
 		ArrayList<String> list = new ArrayList<>();
 		JaamSimModel simModel = ent.getJaamSimModel();
 		for (Region each: simModel.getClonesOfIterator(Region.class)) {
-			if (each.testFlag(Entity.FLAG_GENERATED))
+			if (each.isGenerated())
 				continue;
 
 			if (ent instanceof Region && isCircular((Region) ent, each))

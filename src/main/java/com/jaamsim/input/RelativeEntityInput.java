@@ -56,7 +56,7 @@ public class RelativeEntityInput extends EntityInput<DisplayEntity> {
 		ArrayList<String> list = new ArrayList<>();
 		JaamSimModel simModel = ent.getJaamSimModel();
 		for (DisplayEntity each: simModel.getClonesOfIterator(DisplayEntity.class)) {
-			if (each.testFlag(Entity.FLAG_GENERATED))
+			if (each.isGenerated())
 				continue;
 
 			if (each instanceof OverlayEntity || each instanceof Region || each instanceof EntityLabel)

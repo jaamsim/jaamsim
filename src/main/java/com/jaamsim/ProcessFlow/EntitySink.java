@@ -38,7 +38,7 @@ public class EntitySink extends LinkedComponent {
 		this.sendToNextComponent(ent);
 
 		// Kill the added entity
-		if (ent.testFlag(Entity.FLAG_GENERATED)) {
+		if (ent.isGenerated()) {
 			ent.kill();
 		}
 	}

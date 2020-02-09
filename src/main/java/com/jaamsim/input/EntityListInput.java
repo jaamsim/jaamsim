@@ -133,7 +133,7 @@ public class EntityListInput<T extends Entity> extends ListInput<ArrayList<T>> {
 	public ArrayList<String> getValidOptions(Entity ent) {
 		ArrayList<String> list = new ArrayList<>();
 		for(T each: ent.getJaamSimModel().getClonesOfIterator(entClass) ) {
-			if(each.testFlag(Entity.FLAG_GENERATED))
+			if(each.isGenerated())
 				continue;
 
 			if( ! isValidClass( each ))

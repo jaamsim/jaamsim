@@ -987,7 +987,7 @@ public class InputAgent {
 		// Prepare a sorted list of all the entities that were added to the model
 		ArrayList<Entity> newEntities = new ArrayList<>();
 		for (Entity ent : simModel.getClonesOfIterator(Entity.class)) {
-			if (!ent.isAdded() || ent.testFlag(Entity.FLAG_GENERATED))
+			if (!ent.isAdded() || ent.isGenerated())
 				continue;
 			if (ent instanceof EntityLabel && !((EntityLabel) ent).getShow()
 					&& ((EntityLabel) ent).isDefault())
@@ -1038,7 +1038,7 @@ public class InputAgent {
 		// Prepare a sorted list of all the entities that were edited
 		ArrayList<Entity> entityList = new ArrayList<>();
 		for (Entity ent : simModel.getClonesOfIterator(Entity.class)) {
-			if (!ent.testFlag(Entity.FLAG_EDITED) || ent.testFlag(Entity.FLAG_GENERATED))
+			if (!ent.testFlag(Entity.FLAG_EDITED) || ent.isGenerated())
 				continue;
 			if (ent instanceof EntityLabel && !((EntityLabel) ent).getShow()
 					&& ((EntityLabel) ent).isDefault())
@@ -1368,7 +1368,7 @@ public class InputAgent {
 		ArrayList<Entity> entList = new ArrayList<>();
 		for (Entity ent : simModel.getClonesOfIterator(Entity.class)) {
 
-			if (ent.testFlag(Entity.FLAG_GENERATED))
+			if (ent.isGenerated())
 				continue;
 
 			if (!ent.isReportable())

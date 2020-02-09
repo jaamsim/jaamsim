@@ -69,7 +69,7 @@ public class EntityInput<T extends Entity> extends Input<T> {
 			return list;
 
 		for (T each: ent.getJaamSimModel().getClonesOfIterator(entSubClass)) {
-			if (each.testFlag(Entity.FLAG_GENERATED))
+			if (each.isGenerated())
 				continue;
 
 			if (!isValid(each))

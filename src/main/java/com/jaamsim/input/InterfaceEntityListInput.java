@@ -65,7 +65,7 @@ public class InterfaceEntityListInput<T> extends ListInput<ArrayList<T>> {
 		ArrayList<String> list = new ArrayList<>();
 		JaamSimModel simModel = ent.getJaamSimModel();
 		for(Entity each: simModel.getClonesOfIterator(Entity.class, entClass) ) {
-			if(each.testFlag(Entity.FLAG_GENERATED))
+			if(each.isGenerated())
 				continue;
 
 			list.add(each.getName());

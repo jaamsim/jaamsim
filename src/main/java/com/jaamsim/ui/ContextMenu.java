@@ -154,7 +154,7 @@ public class ContextMenu {
 				GUIFrame.getInstance().copyToClipboard(ent);
 			}
 		} );
-		if (ent == null || ent.testFlag(Entity.FLAG_GENERATED) || ent == ent.getSimulation()) {
+		if (ent == null || ent.isGenerated() || ent == ent.getSimulation()) {
 			copyMenuItem.setEnabled(false);
 		}
 		menu.add( copyMenuItem );
@@ -296,7 +296,7 @@ public class ContextMenu {
 			} );
 			setRelativeEntityMenu.add(item);
 		}
-		if (ent instanceof EntityLabel	|| ent.testFlag(Entity.FLAG_GENERATED)) {
+		if (ent instanceof EntityLabel	|| ent.isGenerated()) {
 			setRelativeEntityMenu.setEnabled(false);
 		}
 		menu.add( setRelativeEntityMenu );
@@ -344,7 +344,7 @@ public class ContextMenu {
 			} );
 			setRegionMenu.add(item);
 		}
-		if (ent instanceof EntityLabel	|| ent.testFlag(Entity.FLAG_GENERATED)) {
+		if (ent instanceof EntityLabel	|| ent.isGenerated()) {
 			setRegionMenu.setEnabled(false);
 		}
 		menu.add( setRegionMenu );
@@ -413,7 +413,7 @@ public class ContextMenu {
 				FrameBox.setSelectedEntity(splitEnt, false);
 			}
 		} );
-		if (ent.testFlag(Entity.FLAG_GENERATED) || nodeIndex <= 0
+		if (ent.isGenerated() || nodeIndex <= 0
 				|| nodeIndex == ent.getPoints().size() - 1) {
 			spitMenuItem.setEnabled(false);
 		}
@@ -433,7 +433,7 @@ public class ContextMenu {
 				InputAgent.storeAndExecute(new KeywordCommand(ent, nodeIndex, ptsKw));
 			}
 		} );
-		if (ent.testFlag(Entity.FLAG_GENERATED) || nodeIndex == -1
+		if (ent.isGenerated() || nodeIndex == -1
 				|| ent.getPoints().size() <= 2) {
 			deleteNodeItem.setEnabled(false);
 		}
