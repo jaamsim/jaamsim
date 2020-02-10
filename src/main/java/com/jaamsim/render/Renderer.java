@@ -105,6 +105,9 @@ public class Renderer implements GLAnimatorControl {
 	}
 
 	private static boolean USE_DEBUG_GL = true;
+	private static boolean DEBUG_DRAW_AABBS = false;
+	private static boolean DEBUG_DRAW_HULLS = false;
+	private static boolean DEBUG_DRAW_ARMATURES = false;
 
 	public static int DIFF_TEX_FLAG = 1;
 	public static int STATIC_BATCH_FLAG = 2;
@@ -1438,15 +1441,15 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 	}
 
 	public static boolean debugDrawHulls() {
-		return false;
+		return DEBUG_DRAW_HULLS;
 	}
 
 	public static boolean debugDrawAABBs() {
-		return false;
+		return DEBUG_DRAW_AABBS;
 	}
 
 	public static boolean debugDrawArmatures() {
-		return false;
+		return DEBUG_DRAW_ARMATURES;
 	}
 
 	public boolean isInitialized() {
