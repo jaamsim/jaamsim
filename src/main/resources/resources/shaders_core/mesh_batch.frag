@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#version 330
+#version 430
 
 in vec2 texCoordFrag;
 in vec3 normalFrag;
