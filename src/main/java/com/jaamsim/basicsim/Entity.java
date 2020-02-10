@@ -401,7 +401,7 @@ public class Entity {
 	 * Use getLocalName() for the name relative to this entity's parent
 	 */
 	public final String getName() {
-		if (!this.testFlag(FLAG_REGISTERED) || parent == null) {
+		if (!this.isRegistered() || parent == null) {
 			return entityName;
 		}
 

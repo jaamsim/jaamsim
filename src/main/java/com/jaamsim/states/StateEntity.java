@@ -97,7 +97,7 @@ public abstract class StateEntity extends DisplayEntity implements StateUser {
 
 		this.initStateData();
 
-		if (testFlag(FLAG_GENERATED))
+		if (this.isGenerated())
 			return;
 
 		// Create state trace file if required
