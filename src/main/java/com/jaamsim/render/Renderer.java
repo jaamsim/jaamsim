@@ -105,6 +105,9 @@ public class Renderer implements GLAnimatorControl {
 	}
 
 	private static boolean USE_DEBUG_GL = true;
+	private static boolean DEBUG_DRAW_AABBS = false;
+	private static boolean DEBUG_DRAW_HULLS = false;
+	private static boolean DEBUG_DRAW_ARMATURES = false;
 
 	public static int DIFF_TEX_FLAG = 1;
 	public static int STATIC_BATCH_FLAG = 2;
@@ -797,9 +800,12 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 	frag = "/resources/shaders_core/skybox.frag";
 	createCoreShader(ShaderHandle.SKYBOX, vert, frag, gl, version);
 
-	vert = "/resources/shaders_core/mesh_batch.vert";
-	frag = "/resources/shaders_core/mesh_batch.frag";
-	createCoreShader(ShaderHandle.MESH_BATCH, vert, frag, gl, version);
+	if (checkGLVersion(4, 3)) {
+		// Do not compile MESH_BATCH for openGL < 4.3
+		vert = "/resources/shaders_core/mesh_batch.vert";
+		frag = "/resources/shaders_core/mesh_batch.frag";
+		createCoreShader(ShaderHandle.MESH_BATCH, vert, frag, gl, version);
+	}
 
 	String meshVertSrc = readSource("/resources/shaders_core/flat.vert").replaceAll("@VERSION@", version);
 	String meshFragSrc = readSource("/resources/shaders_core/flat.frag").replaceAll("@VERSION@", version);
@@ -1438,15 +1444,15 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 	}
 
 	public static boolean debugDrawHulls() {
-		return false;
+		return DEBUG_DRAW_HULLS;
 	}
 
 	public static boolean debugDrawAABBs() {
-		return false;
+		return DEBUG_DRAW_AABBS;
 	}
 
 	public static boolean debugDrawArmatures() {
-		return false;
+		return DEBUG_DRAW_ARMATURES;
 	}
 
 	public boolean isInitialized() {

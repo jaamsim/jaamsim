@@ -630,7 +630,14 @@ public class MeshData {
 			_anyTransparent = true;
 		}
 		if (colorTex != null) {
-			int texIndex = _textures.indexOf(colorTex);
+			int texIndex = -1;
+			for (int i = 0; i < _textures.size(); ++i) {
+				if (_textures.get(i).texURI == colorTex) {
+					texIndex = i;
+					break;
+				}
+			}
+
 			if (texIndex == -1) {
 				Texture tex = new Texture();
 				tex.texURI = colorTex;

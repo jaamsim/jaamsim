@@ -186,7 +186,7 @@ public class ConvexHull {
 			for (Iterator<TempHullFace> it = tempFaces.iterator(); it.hasNext(); ) {
 				TempHullFace tempFace = it.next();
 
-				if (tempFace.plane.getNormalDist(farVert) > -0.000000001) { // Non zero to allow a bit of floating point round off and avoid degenerate faces
+				if (tempFace.plane.getNormalDist(farVert) > -0.00001) { // Non zero to allow a bit of floating point round off and avoid degenerate faces
 					// This face can see this point, and is therefore not part of the hull
 					deadFaces.add(tempFace);
 					it.remove();
@@ -391,8 +391,6 @@ public class ConvexHull {
 				seenIndices[numSeen++] = e.ind1;
 		}
 
-
-		//assert(seenIndices.size() == edges.size());
 		return numSeen == edges.size();
 
 	}
