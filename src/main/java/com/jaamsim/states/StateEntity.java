@@ -413,7 +413,7 @@ public abstract class StateEntity extends DisplayEntity implements StateUser {
 	 */
 	public double getTimeInState(double simTime, String state) {
 		long simTicks = EventManager.secsToNearestTick(simTime);
-		StateRecord rec = states.get(state.intern());
+		StateRecord rec = states.get(state);
 		if (rec == null)
 			return 0.0;
 		long ticks = getTicksInState(simTicks, rec);
