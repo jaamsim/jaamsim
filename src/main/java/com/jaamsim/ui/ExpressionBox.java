@@ -721,6 +721,34 @@ public class ExpressionBox extends JDialog {
 			outputMenu.setVisible(false);
 		outputMenu = new ScrollablePopupMenu();
 
+		// Sub-model components
+		ArrayList<String> compList = new ArrayList<>();
+		for (Entity comp : ent.getChildren()) {
+			if (!comp.isRegistered())
+				continue;
+			if (!comp.getLocalName().toUpperCase().contains(name.toUpperCase()))
+				continue;
+			compList.add(comp.getLocalName());
+		}
+		Collections.sort(compList);
+
+		for (String compName : compList) {
+			String str = String.format("[%s]", compName);
+			JMenuItem item = new JMenuItem(str);
+			item.addActionListener( new ActionListener() {
+
+				@Override
+				public void actionPerformed( ActionEvent event ) {
+					outputMenu = null;
+					editArea.replaceRange(item.getText(), ind0 + 1, ind1 + 1);
+					editArea.requestFocusInWindow();
+					setEditMode(EDIT_MODE_NORMAL);
+				}
+			} );
+			outputMenu.add(item);
+		}
+
+		// Outputs
 		ArrayList<OutputHandle> handles = new ArrayList<>();
 		for (OutputHandle hand : OutputHandle.getOutputHandleList(ent)) {
 			if (hand.getName().contains(" "))
@@ -750,6 +778,7 @@ public class ExpressionBox extends JDialog {
 			} );
 			outputMenu.add(item);
 		}
+
 		Point p = editArea.getCaret().getMagicCaretPosition();
 		if (p == null)
 			p = new Point();
