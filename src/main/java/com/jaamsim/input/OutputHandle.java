@@ -59,7 +59,7 @@ public class OutputHandle {
 	 * A data class containing the 'static' (ie: class derived) information for a single output
 	 */
 	private static final class OutputStaticInfo {
-		public Method method;
+		public final Method method;
 		public final String name;
 		public final String desc;
 		public final boolean reportable;

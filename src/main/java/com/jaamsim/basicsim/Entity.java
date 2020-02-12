@@ -710,17 +710,21 @@ public class Entity {
 
 
 	public final OutputHandle getOutputHandle(String outputName) {
-		if (hasAttribute(outputName))
-			return attributeMap.get(outputName);
+		OutputHandle ret;
+		ret = attributeMap.get(outputName);
+		if (ret != null)
+			return ret;
 
-		if (customOutputMap.containsKey(outputName))
-			return customOutputMap.get(outputName);
+		ret = customOutputMap.get(outputName);
+		if (ret != null)
+			return ret;
 
-		if (inputOutputMap.containsKey(outputName))
-			return inputOutputMap.get(outputName);
+		ret = inputOutputMap.get(outputName);
+		if (ret != null)
+			return ret;
 
 		if (hasOutput(outputName)) {
-			OutputHandle ret = new OutputHandle(this, outputName);
+			ret = new OutputHandle(this, outputName);
 			if (ret.getUnitType() == UserSpecifiedUnit.class)
 				ret.setUnitType(getUserUnitType());
 
@@ -736,17 +740,21 @@ public class Entity {
 	 * @return
 	 */
 	public final OutputHandle getOutputHandleInterned(String outputName) {
-		if (hasAttribute(outputName))
-			return attributeMap.get(outputName);
+		OutputHandle ret;
+		ret = attributeMap.get(outputName);
+		if (ret != null)
+			return ret;
 
-		if (customOutputMap.containsKey(outputName))
-			return customOutputMap.get(outputName);
+		ret = customOutputMap.get(outputName);
+		if (ret != null)
+			return ret;
 
-		if (inputOutputMap.containsKey(outputName))
-			return inputOutputMap.get(outputName);
+		ret = inputOutputMap.get(outputName);
+		if (ret != null)
+			return ret;
 
 		if (OutputHandle.hasOutputInterned(this.getClass(), outputName)) {
-			OutputHandle ret = new OutputHandle(this, outputName);
+			ret = new OutputHandle(this, outputName);
 			if (ret.getUnitType() == UserSpecifiedUnit.class)
 				ret.setUnitType(getUserUnitType());
 
