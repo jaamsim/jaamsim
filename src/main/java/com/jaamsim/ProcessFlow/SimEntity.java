@@ -21,7 +21,6 @@ import java.util.ArrayList;
 
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.LinkDisplayable;
-import com.jaamsim.basicsim.Entity;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.StringInput;
 import com.jaamsim.input.StringListInput;
