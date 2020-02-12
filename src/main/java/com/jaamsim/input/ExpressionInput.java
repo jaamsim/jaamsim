@@ -26,6 +26,7 @@ import com.jaamsim.units.Unit;
 public class ExpressionInput extends Input<ExpParser.Expression> {
 	private Class<? extends Unit> unitType;
 	private ExpEvaluator.EntityParseContext parseContext;
+	private ExpResType resType;
 
 	public ExpressionInput(String key, String cat, ExpParser.Expression def) {
 		super(key, cat, def);
@@ -37,6 +38,10 @@ public class ExpressionInput extends Input<ExpParser.Expression> {
 		}
 		unitType = u;
 		this.setValid(false);
+	}
+
+	public void setResultType(ExpResType type) {
+		resType = type;
 	}
 
 	public Class<? extends Unit> getUnitType() {
@@ -66,6 +71,8 @@ public class ExpressionInput extends Input<ExpParser.Expression> {
 			ExpEvaluator.EntityParseContext pc = ExpEvaluator.getParseContext(thisEnt, expString);
 			Expression exp = ExpParser.parseExpression(pc, expString);
 			ExpParser.assertUnitType(exp, unitType);
+			if (resType != null)
+				ExpParser.assertResultType(exp, resType);
 
 			// Save the expression
 			parseContext = pc;
