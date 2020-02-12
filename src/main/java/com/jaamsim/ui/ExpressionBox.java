@@ -356,6 +356,7 @@ public class ExpressionBox extends JDialog {
 
 		buttonBar.addSeparator(separatorDim);
 		addButtons(buttonBar, logicalOperators, width, editArea);
+		buttonBar.add(Box.createRigidArea(gapDim));
 	}
 
 	public void addButtons(JToolBar buttonBar, ArrayList<ButtonDesc> bdList, int w, JTextArea text) {
