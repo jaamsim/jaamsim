@@ -128,7 +128,7 @@ public abstract class StateEntity extends DisplayEntity implements StateUser {
 		states.clear();
 		useCurrentCycle = false;
 
-		String initState = getInitialState().intern();
+		String initState = getJaamSimModel().internString(getInitialState());
 		StateRecord init = new StateRecord(initState, isValidWorkingState(initState));
 		init.setStartTick(lastStateCollectionTick);
 		presentState = init;
@@ -186,7 +186,7 @@ public abstract class StateEntity extends DisplayEntity implements StateUser {
 			if (!isValidState(state))
 				error("Specified state: %s is not valid", state);
 
-			String intState = state.intern();
+			String intState = getJaamSimModel().internString(state);
 			nextState = new StateRecord(intState, isValidWorkingState(intState));
 			states.put(nextState.getName(), nextState);
 		}
@@ -306,7 +306,7 @@ public abstract class StateEntity extends DisplayEntity implements StateUser {
 		if (!isValidState(str))
 			error("Specified state: %s is not valid", str);
 
-		String state = str.intern();
+		String state = getJaamSimModel().internString(str);
 		StateRecord stateRec = new StateRecord(state, isValidWorkingState(state));
 		states.put(stateRec.getName(), stateRec);
 	}

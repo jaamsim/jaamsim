@@ -87,6 +87,8 @@ public class JaamSimModel {
 	private long lastTickForTrace = -1L;
 	private long preDefinedEntityCount = 0L;  // Number of entities after loading autoload.cfg
 
+	private final HashMap<String, String> stringCache = new HashMap<>();
+
 	private final ArrayList<ObjectType> objectTypes = new ArrayList<>();
 	private final HashMap<Class<? extends Entity>, ObjectType> objectTypeMap = new HashMap<>();
 
@@ -157,6 +159,8 @@ public class JaamSimModel {
 		// close warning/error trace file
 		closeLogFile();
 
+		stringCache.clear();
+
 		// Reset the run number and run indices
 		runNumber = 1;
 
@@ -175,6 +179,17 @@ public class JaamSimModel {
 		numErrors = 0;
 		numWarnings = 0;
 		lastTickForTrace = -1L;
+	}
+
+	public final String internString(String str) {
+		synchronized (stringCache) {
+			String ret = stringCache.get(str);
+			if (ret == null) {
+				stringCache.put(str, str);
+				ret = str;
+			}
+			return ret;
+		}
 	}
 
 	/**
