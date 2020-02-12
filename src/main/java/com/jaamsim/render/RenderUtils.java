@@ -60,6 +60,7 @@ public class RenderUtils {
 	public static List<Vec4d> PENTAGRAM_POINTS;
 	public static List<Vec4d> HEPTAGRAM_POINTS;
 	public static List<Vec4d> OCTAGRAM_POINTS;
+	public static List<Vec4d> ARROW2D_POINTS;
 
 	static {
 		CIRCLE_POINTS = getCirclePoints(32);
@@ -86,6 +87,15 @@ public class RenderUtils {
 		PENTAGRAM_POINTS = getStarPoints(0.5, 5, 2);
 		HEPTAGRAM_POINTS = getStarPoints(0.5, 7, 3);
 		OCTAGRAM_POINTS = getStarPoints(0.5, 8, 3);
+
+		ARROW2D_POINTS = new ArrayList<>(7);
+		ARROW2D_POINTS.add(new Vec4d( 0.5,  0.0, 0.0, 1.0d));
+		ARROW2D_POINTS.add(new Vec4d( 0.1,  0.5, 0.0, 1.0d));
+		ARROW2D_POINTS.add(new Vec4d( 0.1,  0.2, 0.0, 1.0d));
+		ARROW2D_POINTS.add(new Vec4d(-0.5,  0.2, 0.0, 1.0d));
+		ARROW2D_POINTS.add(new Vec4d(-0.5, -0.2, 0.0, 1.0d));
+		ARROW2D_POINTS.add(new Vec4d( 0.1, -0.2, 0.0, 1.0d));
+		ARROW2D_POINTS.add(new Vec4d( 0.1, -0.5, 0.0, 1.0d));
 	}
 
 	// Transform the list of points in place

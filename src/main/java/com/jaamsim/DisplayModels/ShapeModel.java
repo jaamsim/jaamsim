@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018-2019 JaamSim Software Inc.
+ * Copyright (C) 2018-2020 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -248,8 +248,8 @@ public class ShapeModel extends DisplayModel implements LineEntity, FillEntity {
 				addBarGaugeProxies(simTime);
 				return;
 			case ARROW2D:
-				addArrowProxies(simTime);
-				return;
+				points = RenderUtils.ARROW2D_POINTS;
+				break;
 			case CIRCLE:
 				points = RenderUtils.CIRCLE_POINTS;
 				break;
@@ -343,22 +343,6 @@ public class ShapeModel extends DisplayModel implements LineEntity, FillEntity {
 				return emptyTagSet;
 			}
 			return dispEnt.getTagSet();
-		}
-
-		private void addArrowProxies(double simTime) {
-			// Gather some inputs
-			Transform trans = getTransform(simTime);
-			Vec3d scale = getScale();
-			long pickingID = getPickingID();
-
-			Color4d fillColour = getTagColor(ShapeModel.TAG_CONTENTS, ColourInput.BLACK);
-
-			cachedProxies.add(new PolygonProxy(arrowHeadVerts, trans, scale, fillColour, false, 1, getVisibilityInfo(), pickingID));
-			cachedProxies.add(new PolygonProxy(arrowTailVerts, trans, scale, fillColour, false, 1, getVisibilityInfo(), pickingID));
-
-			Color4d outlineColour= getTagColor(ShapeModel.TAG_OUTLINES, ColourInput.BLACK);
-			cachedProxies.add(new PolygonProxy(arrowOutlineVerts, trans, scale, outlineColour, true, 1, getVisibilityInfo(), pickingID));
-
 		}
 
 		private void addBarGaugeProxies(double simTime) {
@@ -456,32 +440,4 @@ public class ShapeModel extends DisplayModel implements LineEntity, FillEntity {
 	}
 
 	private static final HashMap<String, Tag> emptyTagSet = new HashMap<>(0);
-
-	// Begin static data
-	// Since Arrows aren't convex, we need some more convoluted vertices
-	private static List<Vec4d> arrowHeadVerts;
-	private static List<Vec4d> arrowTailVerts;
-	private static List<Vec4d> arrowOutlineVerts;
-
-	static {
-		arrowHeadVerts = new ArrayList<>(3);
-		arrowHeadVerts.add(new Vec4d( 0.5,  0.0, 0.0, 1.0d));
-		arrowHeadVerts.add(new Vec4d( 0.1,  0.5, 0.0, 1.0d));
-		arrowHeadVerts.add(new Vec4d( 0.1, -0.5, 0.0, 1.0d));
-
-		arrowTailVerts = new ArrayList<>(4);
-		arrowTailVerts.add(new Vec4d( 0.1,  0.2, 0.0, 1.0d));
-		arrowTailVerts.add(new Vec4d(-0.5,  0.2, 0.0, 1.0d));
-		arrowTailVerts.add(new Vec4d(-0.5, -0.2, 0.0, 1.0d));
-		arrowTailVerts.add(new Vec4d( 0.1, -0.2, 0.0, 1.0d));
-
-		arrowOutlineVerts = new ArrayList<>(7);
-		arrowOutlineVerts.add(new Vec4d( 0.5,  0.0, 0.0, 1.0d));
-		arrowOutlineVerts.add(new Vec4d( 0.1,  0.5, 0.0, 1.0d));
-		arrowOutlineVerts.add(new Vec4d( 0.1,  0.2, 0.0, 1.0d));
-		arrowOutlineVerts.add(new Vec4d(-0.5,  0.2, 0.0, 1.0d));
-		arrowOutlineVerts.add(new Vec4d(-0.5, -0.2, 0.0, 1.0d));
-		arrowOutlineVerts.add(new Vec4d( 0.1, -0.2, 0.0, 1.0d));
-		arrowOutlineVerts.add(new Vec4d( 0.1, -0.5, 0.0, 1.0d));
-	}
 }
