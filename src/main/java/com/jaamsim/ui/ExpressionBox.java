@@ -413,7 +413,7 @@ public class ExpressionBox extends JDialog {
 					ArrayList<String> entNameList = new ArrayList<>();
 					JaamSimModel simModel = GUIFrame.getJaamSimModel();
 					for (DisplayEntity each: simModel.getClonesOfIterator(DisplayEntity.class)) {
-						if (each.isGenerated())
+						if (!each.isRegistered())
 							continue;
 
 						if (each instanceof OverlayEntity || each instanceof Region
@@ -675,7 +675,7 @@ public class ExpressionBox extends JDialog {
 		ArrayList<String> nameList = new ArrayList<>();
 		JaamSimModel simModel = GUIFrame.getJaamSimModel();
 		for (DisplayEntity each: simModel.getClonesOfIterator(DisplayEntity.class)) {
-			if (each.isGenerated())
+			if (!each.isRegistered())
 				continue;
 
 			if (each instanceof OverlayEntity || each instanceof Region
