@@ -863,6 +863,15 @@ public class ExpressionBox extends JDialog {
 				0,
 				"'this.Name' returns the name of the entity."));
 
+		simObjects.add(new ButtonDesc("sub", "Entity 'sub'",
+				"If an expression is used as the input to an entity, the identifier 'sub' can "
+						+ "be used in the expression instead of the name of the sub-model "
+						+ "containing the entity. It is equivalent to entering 'this.Parent'.",
+				null,
+				"sub",
+				0,
+				"'sub.Name' returns the name of the sub-model containing the entity."));
+
 		simObjects.add(new ButtonDesc("Sim", "Entity 'Simulation'",
 				"The Simulation entity is used to store the inputs and outputs related to the "
 						+ "simulation run.",
