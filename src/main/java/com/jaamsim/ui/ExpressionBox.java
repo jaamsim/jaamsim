@@ -621,11 +621,9 @@ public class ExpressionBox extends JDialog {
 			}
 
 			// Does the name contain any invalid characters?
-			for (char c : name.toCharArray()) {
-				if (Arrays.asList(InputAgent.INVALID_ENTITY_CHARS).contains(c)) {
-					setEditMode(EDIT_MODE_NORMAL);
-					return;
-				}
+			if (!name.isEmpty() && !InputAgent.isValidName(name)) {
+				setEditMode(EDIT_MODE_NORMAL);
+				return;
 			}
 
 			// Show the entity name pop-up
