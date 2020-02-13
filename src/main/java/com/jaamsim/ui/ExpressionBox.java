@@ -54,12 +54,17 @@ import com.jaamsim.Graphics.OverlayEntity;
 import com.jaamsim.Graphics.Region;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.JaamSimModel;
+import com.jaamsim.input.ExpError;
+import com.jaamsim.input.ExpEvaluator;
 import com.jaamsim.input.ExpParser;
+import com.jaamsim.input.ExpResType;
+import com.jaamsim.input.ExpResult;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.OutputHandle;
 import com.jaamsim.input.Parser;
+import com.jaamsim.input.ExpParser.Expression;
 import com.jaamsim.units.Unit;
 
 public class ExpressionBox extends JDialog {
@@ -631,18 +636,8 @@ public class ExpressionBox extends JDialog {
 		if (editMode == EDIT_MODE_OUTPUT) {
 
 			// Find the entity name
-			Entity ent = null;
 			int dotIndex = text.lastIndexOf('.', ind1);
-			if (dotIndex >= 1 && text.charAt(dotIndex - 1) == ']') {
-				int bracketIndex = text.lastIndexOf('[', dotIndex);
-				if (bracketIndex >= 0) {
-					String entName = text.substring(bracketIndex + 1, dotIndex - 1);
-					ent = GUIFrame.getJaamSimModel().getNamedEntity(entName);
-				}
-			}
-			else if (dotIndex >= 4 && text.substring(dotIndex - 4, dotIndex).equals("this")) {
-				ent = EditBox.getInstance().getCurrentEntity();
-			}
+			Entity ent = getEntityReference(text, dotIndex);
 
 			if (ent == null) {
 				setEditMode(EDIT_MODE_NORMAL);
@@ -787,6 +782,38 @@ public class ExpressionBox extends JDialog {
 		int height = editArea.getFontMetrics(editArea.getFont()).getHeight();
 		outputMenu.setFocusable(false);
 		outputMenu.show(editArea, p.x, p.y + height);
+	}
+
+	private Entity getEntityReference(String text, int dotIndex) {
+		if (dotIndex <= 0)
+			return null;
+
+		// Find the previous part of the text that might correspond to an entity
+		int startIndex = 0;
+		for (int i = dotIndex - 1; i >= 0; i--) {
+			char c = text.charAt(i);
+			if (c == '\'' || isWhiteSpace(c) || isMathChar(c)) {
+				startIndex = i + 1;
+				break;
+			}
+		}
+		String expString = text.substring(startIndex, dotIndex);
+		//System.out.println(expString);
+
+		// Try to evaluate the string as an expression that returns an entity
+		Entity thisEnt = EditBox.getInstance().getCurrentEntity();
+		double simTime = GUIFrame.getJaamSimModel().getSimTime();
+		try {
+			ExpEvaluator.EntityParseContext pc = ExpEvaluator.getParseContext(thisEnt, expString);
+			Expression exp = ExpParser.parseExpression(pc, expString);
+			ExpParser.assertResultType(exp, ExpResType.ENTITY);
+
+			ExpResult res = ExpEvaluator.evaluateExpression(exp, simTime);
+			return res.entVal;
+		}
+		catch (ExpError e) {
+			return null;
+		}
 	}
 
 	public boolean isControlChar(char ch) {
