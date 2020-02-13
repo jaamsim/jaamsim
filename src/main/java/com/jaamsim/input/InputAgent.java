@@ -1371,7 +1371,7 @@ public class InputAgent {
 		ArrayList<Entity> entList = new ArrayList<>();
 		for (Entity ent : simModel.getClonesOfIterator(Entity.class)) {
 
-			if (ent.isGenerated())
+			if (!ent.isRegistered())
 				continue;
 
 			if (!ent.isReportable())
