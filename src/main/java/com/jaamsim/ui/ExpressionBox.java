@@ -28,7 +28,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 
 import javax.swing.Box;
@@ -650,8 +649,7 @@ public class ExpressionBox extends JDialog {
 
 			// Does the name contain any invalid characters?
 			for (char c : name.toCharArray()) {
-				if (Arrays.asList(controlChars).contains(c)
-						|| Arrays.asList(mathChars).contains(c)) {
+				if (isControlChar(c) || isMathChar(c)) {
 					setEditMode(EDIT_MODE_NORMAL);
 					return;
 				}
