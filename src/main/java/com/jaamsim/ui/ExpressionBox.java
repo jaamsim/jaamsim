@@ -81,6 +81,7 @@ public class ExpressionBox extends JDialog {
 
 	private static final char[] controlChars = {' ', '.', ',', ';', '(', ')', '{', '}', '[', ']', '"', '\'', '#', '\t', '\n'};
 	private static final char[] mathChars = { '+', '-', '*', '/', '^', '%', '?', '=', '>', '<', '!', '&', '|'};
+	private static final char[] whiteSpaceChars = { ' ', '\t', '\n' };
 
 	public static final int CANCEL_OPTION = 1;  // Cancel button is clicked
 	public static final int APPROVE_OPTION = 0; // Accept button is clicked
@@ -786,6 +787,26 @@ public class ExpressionBox extends JDialog {
 		int height = editArea.getFontMetrics(editArea.getFont()).getHeight();
 		outputMenu.setFocusable(false);
 		outputMenu.show(editArea, p.x, p.y + height);
+	}
+
+	public boolean isControlChar(char ch) {
+		return containsChar(controlChars, ch);
+	}
+
+	public boolean isMathChar(char ch) {
+		return containsChar(mathChars, ch);
+	}
+
+	public boolean isWhiteSpace(char ch) {
+		return containsChar(whiteSpaceChars, ch);
+	}
+
+	private boolean containsChar(char[] chars, char ch) {
+		for (char c : chars) {
+			if (c == ch)
+				return true;
+		}
+		return false;
 	}
 
 	private static class ButtonDesc {
