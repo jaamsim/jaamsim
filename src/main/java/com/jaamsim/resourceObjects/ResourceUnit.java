@@ -28,6 +28,7 @@ import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.ExpError;
 import com.jaamsim.input.ExpEvaluator;
+import com.jaamsim.input.ExpResType;
 import com.jaamsim.input.ExpParser.Expression;
 import com.jaamsim.input.ExpressionInput;
 import com.jaamsim.input.Keyword;
@@ -91,10 +92,12 @@ public class ResourceUnit extends StateUserEntity implements Seizable, ResourceP
 
 		assignmentCondition = new ExpressionInput("AssignmentCondition", KEY_INPUTS, null);
 		assignmentCondition.setUnitType(DimensionlessUnit.class);
+		assignmentCondition.setResultType(ExpResType.NUMBER);
 		this.addInput(assignmentCondition);
 
 		assignmentPriority = new ExpressionInput("AssignmentPriority", KEY_INPUTS, null);
 		assignmentPriority.setUnitType(DimensionlessUnit.class);
+		assignmentPriority.setResultType(ExpResType.NUMBER);
 		assignmentPriority.setDefaultText("1");
 		this.addInput(assignmentPriority);
 		this.addSynonym(assignmentPriority, "Priority");
