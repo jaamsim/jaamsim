@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2018 JaamSim Software Inc.
+ * Copyright (C) 2016-2020 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.ExpError;
 import com.jaamsim.input.ExpEvaluator;
+import com.jaamsim.input.ExpResType;
 import com.jaamsim.input.ExpressionInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.Keyword;
@@ -79,11 +80,13 @@ public class ExpressionThreshold extends Threshold {
 
 		openCondition = new ExpressionInput("OpenCondition", KEY_INPUTS, null);
 		openCondition.setUnitType(DimensionlessUnit.class);
+		openCondition.setResultType(ExpResType.NUMBER);
 		openCondition.setRequired(true);
 		this.addInput(openCondition);
 
 		closeCondition = new ExpressionInput("CloseCondition", KEY_INPUTS, null);
 		closeCondition.setUnitType(DimensionlessUnit.class);
+		closeCondition.setResultType(ExpResType.NUMBER);
 		this.addInput(closeCondition);
 
 		initialOpenValue = new BooleanInput("InitialOpenValue", KEY_INPUTS, false);
