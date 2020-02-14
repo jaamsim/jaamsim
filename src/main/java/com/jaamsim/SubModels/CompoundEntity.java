@@ -31,6 +31,9 @@ import com.jaamsim.input.Input;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
+import com.jaamsim.math.Vec3d;
+import com.jaamsim.units.DimensionlessUnit;
+import com.jaamsim.units.DistanceUnit;
 
 public abstract class CompoundEntity extends LinkedComponent {
 
@@ -40,7 +43,7 @@ public abstract class CompoundEntity extends LinkedComponent {
 
 	private final HashMap<String, Entity> namedChildren = new HashMap<>();
 	private SubModelStart smStart;
-	private SubModelRegion smRegion;
+	private Region smRegion;
 
 	{
 		namedExpressionInput.setHidden(true); // FIXME CustomOutputList conflicts with the component outputs
@@ -58,8 +61,15 @@ public abstract class CompoundEntity extends LinkedComponent {
 
 		// Create the region
 		JaamSimModel simModel = getJaamSimModel();
-		smRegion = InputAgent.generateEntityWithName(simModel, SubModelRegion.class, "Region", this, true, true);
-		smRegion.setSubModel(this);
+		smRegion = InputAgent.generateEntityWithName(simModel, Region.class, "Region", this, true, true);
+
+		// Set the default inputs for the region
+		InputAgent.applyArgs( smRegion, "RelativeEntity", this.getName());
+		InputAgent.applyArgs( smRegion, "DisplayModel",   "RegionRectangle");
+		InputAgent.applyValue(smRegion, "Scale",          0.5d, "");
+		InputAgent.applyVec3d(smRegion, "Size",           new Vec3d(2.0d,  1.0d, 0.0d), DistanceUnit.class);
+		InputAgent.applyVec3d(smRegion, "Position",       new Vec3d(0.0d, -1.5d, 0.0d), DistanceUnit.class);
+		InputAgent.applyVec3d(smRegion, "Alignment",      new Vec3d(), DimensionlessUnit.class);
 	}
 
 	@Override
