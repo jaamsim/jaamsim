@@ -800,7 +800,7 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 	frag = "/resources/shaders_core/skybox.frag";
 	createCoreShader(ShaderHandle.SKYBOX, vert, frag, gl, version);
 
-	if (checkGLVersion(4, 3)) {
+	if (isIndirectSupported()) {
 		// Do not compile MESH_BATCH for openGL < 4.3
 		vert = "/resources/shaders_core/mesh_batch.vert";
 		frag = "/resources/shaders_core/mesh_batch.frag";

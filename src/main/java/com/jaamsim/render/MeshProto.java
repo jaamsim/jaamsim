@@ -1474,7 +1474,9 @@ public static void init(Renderer r, GL2GL3 gl) {
 	lightsDirScratch[0] = new Vec4d();
 	lightsDirScratch[1] = new Vec4d();
 
-	initBSInfo(r, gl);
+	if (r.isIndirectSupported()) {
+		initBSInfo(r, gl);
+	}
 }
 
 private static void initBSInfo(Renderer r, GL2GL3 gl) {
