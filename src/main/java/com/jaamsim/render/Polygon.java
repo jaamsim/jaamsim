@@ -247,7 +247,7 @@ public class Polygon implements Renderable {
 				tri[0] = _tessPoints.get(i+0);
 				tri[1] = _tessPoints.get(i+1);
 				tri[2] = _tessPoints.get(i+2);
-				double triDist = MathUtils.collisionDistPoly(r, tri);
+				double triDist = MathUtils.collisionDistPoly(localRay, tri);
 				if (triDist > 0 && triDist < localDist) {
 					localDist = triDist;
 				}
