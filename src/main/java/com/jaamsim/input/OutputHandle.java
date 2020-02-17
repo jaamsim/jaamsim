@@ -39,7 +39,7 @@ public class OutputHandle {
 	public OutputStaticInfo outputInfo;
 	public Class<? extends Unit> unitType;
 
-	private static final HashMap<Class<? extends Entity>, ArrayList<OutputStaticInfo>> outputInfoCache;
+	private static final HashMap<Class<? extends Entity>, HashMap<String, OutputStaticInfo>> outputInfoCache;
 
 	static {
 		outputInfoCache = new HashMap<>();
@@ -70,7 +70,7 @@ public class OutputHandle {
 			method = m;
 			desc = a.description();
 			reportable = a.reportable();
-			name = a.name().intern();
+			name = a.name();
 			unitType = a.unitType();
 			sequence = a.sequence();
 		}
@@ -87,28 +87,20 @@ public class OutputHandle {
 	}
 
 	private static OutputStaticInfo getOutputInfo(Class<? extends Entity> klass, String outputName) {
-		for (OutputStaticInfo p : getOutputInfoImp(klass)) {
-			if( p.name.equals(outputName) )
-				return p;
-		}
-		return null;
+		return getOutputInfoImp(klass).get(outputName);
 	}
 
 	private static OutputStaticInfo getOutputInfoInterned(Class<? extends Entity> klass, String outputName) {
-		for (OutputStaticInfo p : getOutputInfoImp(klass)) {
-			if( p.name == outputName )
-				return p;
-		}
-		return null;
+		return getOutputInfoImp(klass).get(outputName);
 	}
 
-	private static ArrayList<OutputStaticInfo> getOutputInfoImp(Class<? extends Entity> klass) {
-		ArrayList<OutputStaticInfo> ret = outputInfoCache.get(klass);
+	private static HashMap<String, OutputStaticInfo> getOutputInfoImp(Class<? extends Entity> klass) {
+		HashMap<String, OutputStaticInfo> ret = outputInfoCache.get(klass);
 		if (ret != null)
 			return ret;
 
 		// klass has not been cached yet, generate info
-		ret = new ArrayList<>();
+		ret = new HashMap<>();
 		for (Method m : klass.getMethods()) {
 			Output a = m.getAnnotation(Output.class);
 			if (a == null)
@@ -120,8 +112,8 @@ public class OutputHandle {
 			    paramTypes[0] != double.class) {
 				continue;
 			}
-
-			ret.add(new OutputStaticInfo(m, a));
+			OutputStaticInfo info = new OutputStaticInfo(m, a);
+			ret.put(info.name, info);
 		}
 		outputInfoCache.put(klass, ret);
 		return ret;
@@ -134,9 +126,8 @@ public class OutputHandle {
 	 */
 	public static ArrayList<OutputHandle> getOutputHandleList(Entity e) {
 		Class<? extends Entity> klass = e.getClass();
-		ArrayList<OutputStaticInfo> list = getOutputInfoImp(klass);
-		ArrayList<OutputHandle> ret = new ArrayList<>(list.size());
-		for( OutputStaticInfo p : list ) {
+		ArrayList<OutputHandle> ret = new ArrayList<>();
+		for( OutputStaticInfo p : getOutputInfoImp(klass).values() ) {
 			//ret.add( new OutputHandle(e, p) );
 			ret.add( e.getOutputHandle(p.name) );  // required to get the correct unit type for the output
 		}
@@ -189,8 +180,7 @@ public class OutputHandle {
 	 * @return true if any of the outputs are reportable.
 	 */
 	public static boolean isReportable(Class<? extends Entity> klass) {
-		ArrayList<OutputStaticInfo> list = getOutputInfoImp(klass);
-		for( OutputStaticInfo p : list ) {
+		for (OutputStaticInfo p : getOutputInfoImp(klass).values()) {
 			if (p.reportable)
 				return true;
 		}
@@ -389,30 +379,10 @@ public class OutputHandle {
 		}
 
 		@SuppressWarnings("unchecked")
-		ArrayList<OutputStaticInfo> infos = getOutputInfoImp((Class<? extends Entity>)klass);
+		OutputStaticInfo info = getOutputInfoImp((Class<? extends Entity>)klass).get(outputName);
+		if (info != null)
+			return info.method.getReturnType();
 
-		for (OutputStaticInfo info : infos) {
-			if (info.name.equals(outputName)) {
-				 return info.method.getReturnType();
-			}
-		}
-		return null;
-	}
-
-	// Lookup an outputs return type from the unit type
-	public static Class<? extends Unit> getStaticOutputUnitType(Class<?> klass, String outputName) {
-		if (!Entity.class.isAssignableFrom(klass)) {
-			return null;
-		}
-
-		@SuppressWarnings("unchecked")
-		ArrayList<OutputStaticInfo> infos = getOutputInfoImp((Class<? extends Entity>)klass);
-
-		for (OutputStaticInfo info : infos) {
-			if (info.name.equals(outputName)) {
-				 return info.unitType;
-			}
-		}
 		return null;
 	}
 
