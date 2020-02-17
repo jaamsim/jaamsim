@@ -130,7 +130,7 @@ public class RenderManager implements DragSourceListener {
 	private final Renderer renderer;
 	private final AtomicBoolean finished = new AtomicBoolean(false);
 	private final AtomicBoolean fatalError = new AtomicBoolean(false);
-	private final AtomicBoolean redraw = new AtomicBoolean(false);
+	private final RedrawCallback redraw = new RedrawCallback();
 
 	private final AtomicBoolean screenshot = new AtomicBoolean(false);
 
@@ -211,21 +211,40 @@ public class RenderManager implements DragSourceListener {
 		}, "RenderManagerThread");
 		managerThread.start();
 
-		GUIFrame.registerCallback(new Runnable() {
-			@Override
-			public void run() {
-				synchronized(redraw) {
-					if (windowControls.size() == 0 && !screenshot.get()) {
-						return; // Do not queue a redraw if there are no open windows
-					}
-					redraw.set(true);
-					redraw.notifyAll();
-				}
-			}
-		});
+		GUIFrame.registerCallback(redraw);
 
 		popupLock = new Object();
 		sceneDragLock = new Object();
+	}
+
+	private class RedrawCallback implements Runnable {
+		final AtomicBoolean redraw = new AtomicBoolean(false);
+
+		@Override
+		public void run() {
+			synchronized(this) {
+				if (windowControls.size() == 0 && !screenshot.get()) {
+					return; // Do not queue a redraw if there are no open windows
+				}
+				redraw.set(true);
+				this.notifyAll();
+			}
+		}
+
+		final void beginDrawing() {
+			redraw.set(false);
+		}
+
+		final void waitForRedraw() {
+			// Wait for a redraw request
+			synchronized(this) {
+				while (!redraw.get()) {
+					try {
+						this.wait();
+					} catch (InterruptedException e) {}
+				}
+			}
+		}
 	}
 
 	public static final void updateTime(long simTick) {
@@ -363,7 +382,7 @@ public class RenderManager implements DragSourceListener {
 				}
 
 				double renderTime = EventManager.ticksToSecs(simTick);
-				redraw.set(false);
+				redraw.beginDrawing();
 
 				ArrayList<View> views = GUIFrame.getJaamSimModel().getViews();
 				for (int i = 0; i < views.size(); i++) {
@@ -516,15 +535,7 @@ public class RenderManager implements DragSourceListener {
 				logException(t);
 			}
 
-			// Wait for a redraw request
-			synchronized(redraw) {
-				while (!redraw.get()) {
-					try {
-						redraw.wait();
-					} catch (InterruptedException e) {}
-				}
-			}
-
+			redraw.waitForRedraw();
 		}
 
 		exceptionLogger.printExceptionLog();
