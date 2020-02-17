@@ -137,7 +137,7 @@ public class JaamSimModel {
 		EntityListNode listNode = entityList.next;
 		while(listNode != entityList) {
 			Entity curEnt = listNode.ent;
-			if (!curEnt.testFlag(Entity.FLAG_DEAD)) {
+			if (!curEnt.isDead()) {
 				curEnt.kill();
 			}
 			listNode = listNode.next;
@@ -480,7 +480,7 @@ public class JaamSimModel {
 		EntityListNode curNode = entityList.next;
 		while(curNode != entityList) {
 			Entity curEnt = curNode.ent;
-			if (!curEnt.testFlag(Entity.FLAG_DEAD) && !curEnt.testFlag(Entity.FLAG_RETAINED)) {
+			if (!curEnt.isDead() && !curEnt.testFlag(Entity.FLAG_RETAINED)) {
 				curEnt.kill();
 			}
 			curNode = curNode.next;
@@ -880,7 +880,7 @@ public class JaamSimModel {
 			EntityListNode lastNode = entityList;
 			while (curNode != null && curNode != entityList) {
 				Entity curEnt = curNode.ent;
-				if (!curEnt.testFlag(Entity.FLAG_DEAD)) {
+				if (!curEnt.isDead()) {
 					numEntities++;
 				} else {
 					numDeadEntities++;
@@ -921,7 +921,7 @@ public class JaamSimModel {
 			lastEntNum = Long.MAX_VALUE;
 			while (curNode != null && curNode != entityList) {
 				Entity curEnt = curNode.ent;
-				if (!curEnt.testFlag(Entity.FLAG_DEAD)) {
+				if (!curEnt.isDead()) {
 					numEntities++;
 				} else {
 					numDeadEntities++;
