@@ -734,36 +734,6 @@ public class Entity {
 		return null;
 	}
 
-	/**
-	 * Optimized version of getOutputHandle() for output names that are known to be interned
-	 * @param outputName
-	 * @return
-	 */
-	public final OutputHandle getOutputHandleInterned(String outputName) {
-		OutputHandle ret;
-		ret = attributeMap.get(outputName);
-		if (ret != null)
-			return ret;
-
-		ret = customOutputMap.get(outputName);
-		if (ret != null)
-			return ret;
-
-		ret = inputOutputMap.get(outputName);
-		if (ret != null)
-			return ret;
-
-		if (OutputHandle.hasOutputInterned(this.getClass(), outputName)) {
-			ret = new OutputHandle(this, outputName);
-			if (ret.getUnitType() == UserSpecifiedUnit.class)
-				ret.setUnitType(getUserUnitType());
-
-			return ret;
-		}
-
-		return null;
-	}
-
 	public boolean hasOutput(String outputName) {
 		if (OutputHandle.hasOutput(this.getClass(), outputName))
 			return true;

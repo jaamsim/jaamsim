@@ -82,15 +82,7 @@ public class OutputHandle {
 		return OutputHandle.getOutputInfo(klass, outputName) != null;
 	}
 
-	public static boolean hasOutputInterned(Class<? extends Entity> klass, String outputName) {
-		return OutputHandle.getOutputInfoInterned(klass, outputName) != null;
-	}
-
 	private static OutputStaticInfo getOutputInfo(Class<? extends Entity> klass, String outputName) {
-		return getOutputInfoImp(klass).get(outputName);
-	}
-
-	private static OutputStaticInfo getOutputInfoInterned(Class<? extends Entity> klass, String outputName) {
 		return getOutputInfoImp(klass).get(outputName);
 	}
 
