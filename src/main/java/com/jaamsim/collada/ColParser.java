@@ -2075,7 +2075,8 @@ public class ColParser {
 			super(transNode.getAttrib("sid"));
 
 			double[] vals = (double[])transNode.getContent();
-			parseAssert(vals != null && vals.length >= 3);
+			parseAssert(vals != null);
+			parseAssert(vals.length >= 3);
 			commonVect.set3(vals[0], vals[1], vals[2]);
 		}
 
@@ -2146,7 +2147,8 @@ public class ColParser {
 		public RotationTrans(XmlNode rotNode) {
 			super(rotNode.getAttrib("sid"));
 			double[] vals = (double[])rotNode.getContent();
-			parseAssert(vals != null && vals.length >= 4);
+			parseAssert(vals != null);
+			parseAssert(vals.length >= 4);
 
 			commonVect.set3(vals[0], vals[1], vals[2]);
 			angle = (float)Math.toRadians(vals[3]);
@@ -2239,7 +2241,8 @@ public class ColParser {
 			super(scaleNode.getAttrib("sid"));
 
 			double[] vals = (double[])scaleNode.getContent();
-			parseAssert(vals != null && vals.length >= 3);
+			parseAssert(vals != null);
+			parseAssert(vals.length >= 3);
 			commonVect.set3(vals[0], vals[1], vals[2]);
 		}
 
@@ -2318,7 +2321,8 @@ public class ColParser {
 		public MatrixTrans(XmlNode matNode) {
 			super(matNode.getAttrib("sid"));
 			double[] vals = (double[])matNode.getContent();
-			parseAssert(vals != null && vals.length >= 16);
+			parseAssert(vals != null);
+			parseAssert(vals.length >= 16);
 			matrix = new Mat4d(vals);
 		}
 
