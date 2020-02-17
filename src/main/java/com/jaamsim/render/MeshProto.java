@@ -23,6 +23,7 @@ import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map.Entry;
 
 import com.jaamsim.MeshFiles.MeshData;
 import com.jaamsim.math.AABB;
@@ -1289,10 +1290,11 @@ public void loadGPUMeshBatches(GL2GL3 gl, Renderer renderer) {
 	indirectBufferData = IntBuffer.allocate(batches.size()*5);
 
 	int numInsts = 0;
-	for(MeshData.MeshMatKey k: batches.keySet()) {
+	for(Entry<MeshData.MeshMatKey, MeshData.StaticMeshBatch> e: batches.entrySet()) {
+		MeshData.MeshMatKey k = e.getKey();
 		MeshData.Material mat = data.getMaterials().get(k.matIndex);
 		MeshData.SubMeshData mesh = data.getSubMeshData().get(k.meshIndex);
-		MeshData.StaticMeshBatch batch = batches.get(k);
+		MeshData.StaticMeshBatch batch = e.getValue();
 		for (Mat4d transMat: batch.transform) {
 			RenderUtils.putMat4dCM(transBuff, transMat);
 		}
