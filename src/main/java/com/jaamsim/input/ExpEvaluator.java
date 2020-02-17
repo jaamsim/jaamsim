@@ -299,7 +299,7 @@ public class ExpEvaluator {
 		private final String outputName;
 
 		public EntityResolver(String name) {
-			outputName = name.intern();
+			outputName = name;
 		}
 
 		@Override
