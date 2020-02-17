@@ -47,7 +47,7 @@ public class OutputHandle {
 
 	public OutputHandle(Entity e, String outputName) {
 		ent = e;
-		outputInfo = OutputHandle.getOutputInfo(e.getClass(), outputName);
+		outputInfo = OutputHandle.getOutputInfoImp(e.getClass()).get(outputName);
 		unitType = outputInfo.unitType;
 	}
 
@@ -79,11 +79,7 @@ public class OutputHandle {
 	// Note: this method will not include attributes in the list. For a complete list use
 	// Entity.hasOutput()
 	public static boolean hasOutput(Class<? extends Entity> klass, String outputName) {
-		return OutputHandle.getOutputInfo(klass, outputName) != null;
-	}
-
-	private static OutputStaticInfo getOutputInfo(Class<? extends Entity> klass, String outputName) {
-		return getOutputInfoImp(klass).get(outputName);
+		return getOutputInfoImp(klass).get(outputName) != null;
 	}
 
 	private static HashMap<String, OutputStaticInfo> getOutputInfoImp(Class<? extends Entity> klass) {
@@ -362,20 +358,6 @@ public class OutputHandle {
 
 	public int getSequence() {
 		return outputInfo.sequence;
-	}
-
-	// Lookup an outputs return type from the class and output name only
-	public static Class<?> getStaticOutputType(Class<?> klass, String outputName) {
-		if (!Entity.class.isAssignableFrom(klass)) {
-			return null;
-		}
-
-		@SuppressWarnings("unchecked")
-		OutputStaticInfo info = getOutputInfoImp((Class<? extends Entity>)klass).get(outputName);
-		if (info != null)
-			return info.method.getReturnType();
-
-		return null;
 	}
 
 	@Override
