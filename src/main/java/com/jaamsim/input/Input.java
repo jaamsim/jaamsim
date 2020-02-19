@@ -967,7 +967,7 @@ public abstract class Input<T> {
 			ret += hh * usPerHr;
 			ret += mm * usPerMin;
 			ret += ss * usPerSec;
-			return ret;
+			return ret * 1e-6;
 		}
 
 		if (isextendfull.matcher(input).matches()) {
@@ -995,7 +995,7 @@ public abstract class Input<T> {
 			ret += mm * usPerMin;
 			ret += ss * usPerSec;
 			ret += us;
-			return ret;
+			return ret * 1e-6;
 		}
 
 		throw new InputErrorException(INP_ERR_BADDATE, input);
