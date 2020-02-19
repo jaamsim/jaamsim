@@ -39,7 +39,7 @@ public class OutputHandle {
 	public OutputStaticInfo outputInfo;
 	public Class<? extends Unit> unitType;
 
-	private static final HashMap<Class<? extends Entity>, ArrayList<OutputStaticInfo>> outputInfoCache;
+	private static final HashMap<Class<? extends Entity>, HashMap<String, OutputStaticInfo>> outputInfoCache;
 
 	static {
 		outputInfoCache = new HashMap<>();
@@ -47,7 +47,7 @@ public class OutputHandle {
 
 	public OutputHandle(Entity e, String outputName) {
 		ent = e;
-		outputInfo = OutputHandle.getOutputInfo(e.getClass(), outputName);
+		outputInfo = OutputHandle.getOutputInfoImp(e.getClass()).get(outputName);
 		unitType = outputInfo.unitType;
 	}
 
@@ -59,7 +59,7 @@ public class OutputHandle {
 	 * A data class containing the 'static' (ie: class derived) information for a single output
 	 */
 	private static final class OutputStaticInfo {
-		public Method method;
+		public final Method method;
 		public final String name;
 		public final String desc;
 		public final boolean reportable;
@@ -70,7 +70,7 @@ public class OutputHandle {
 			method = m;
 			desc = a.description();
 			reportable = a.reportable();
-			name = a.name().intern();
+			name = a.name();
 			unitType = a.unitType();
 			sequence = a.sequence();
 		}
@@ -79,36 +79,16 @@ public class OutputHandle {
 	// Note: this method will not include attributes in the list. For a complete list use
 	// Entity.hasOutput()
 	public static boolean hasOutput(Class<? extends Entity> klass, String outputName) {
-		return OutputHandle.getOutputInfo(klass, outputName) != null;
+		return getOutputInfoImp(klass).get(outputName) != null;
 	}
 
-	public static boolean hasOutputInterned(Class<? extends Entity> klass, String outputName) {
-		return OutputHandle.getOutputInfoInterned(klass, outputName) != null;
-	}
-
-	private static OutputStaticInfo getOutputInfo(Class<? extends Entity> klass, String outputName) {
-		for (OutputStaticInfo p : getOutputInfoImp(klass)) {
-			if( p.name.equals(outputName) )
-				return p;
-		}
-		return null;
-	}
-
-	private static OutputStaticInfo getOutputInfoInterned(Class<? extends Entity> klass, String outputName) {
-		for (OutputStaticInfo p : getOutputInfoImp(klass)) {
-			if( p.name == outputName )
-				return p;
-		}
-		return null;
-	}
-
-	private static ArrayList<OutputStaticInfo> getOutputInfoImp(Class<? extends Entity> klass) {
-		ArrayList<OutputStaticInfo> ret = outputInfoCache.get(klass);
+	private static HashMap<String, OutputStaticInfo> getOutputInfoImp(Class<? extends Entity> klass) {
+		HashMap<String, OutputStaticInfo> ret = outputInfoCache.get(klass);
 		if (ret != null)
 			return ret;
 
 		// klass has not been cached yet, generate info
-		ret = new ArrayList<>();
+		ret = new HashMap<>();
 		for (Method m : klass.getMethods()) {
 			Output a = m.getAnnotation(Output.class);
 			if (a == null)
@@ -120,8 +100,8 @@ public class OutputHandle {
 			    paramTypes[0] != double.class) {
 				continue;
 			}
-
-			ret.add(new OutputStaticInfo(m, a));
+			OutputStaticInfo info = new OutputStaticInfo(m, a);
+			ret.put(info.name, info);
 		}
 		outputInfoCache.put(klass, ret);
 		return ret;
@@ -134,9 +114,8 @@ public class OutputHandle {
 	 */
 	public static ArrayList<OutputHandle> getOutputHandleList(Entity e) {
 		Class<? extends Entity> klass = e.getClass();
-		ArrayList<OutputStaticInfo> list = getOutputInfoImp(klass);
-		ArrayList<OutputHandle> ret = new ArrayList<>(list.size());
-		for( OutputStaticInfo p : list ) {
+		ArrayList<OutputHandle> ret = new ArrayList<>();
+		for( OutputStaticInfo p : getOutputInfoImp(klass).values() ) {
 			//ret.add( new OutputHandle(e, p) );
 			ret.add( e.getOutputHandle(p.name) );  // required to get the correct unit type for the output
 		}
@@ -189,8 +168,7 @@ public class OutputHandle {
 	 * @return true if any of the outputs are reportable.
 	 */
 	public static boolean isReportable(Class<? extends Entity> klass) {
-		ArrayList<OutputStaticInfo> list = getOutputInfoImp(klass);
-		for( OutputStaticInfo p : list ) {
+		for (OutputStaticInfo p : getOutputInfoImp(klass).values()) {
 			if (p.reportable)
 				return true;
 		}
@@ -380,40 +358,6 @@ public class OutputHandle {
 
 	public int getSequence() {
 		return outputInfo.sequence;
-	}
-
-	// Lookup an outputs return type from the class and output name only
-	public static Class<?> getStaticOutputType(Class<?> klass, String outputName) {
-		if (!Entity.class.isAssignableFrom(klass)) {
-			return null;
-		}
-
-		@SuppressWarnings("unchecked")
-		ArrayList<OutputStaticInfo> infos = getOutputInfoImp((Class<? extends Entity>)klass);
-
-		for (OutputStaticInfo info : infos) {
-			if (info.name.equals(outputName)) {
-				 return info.method.getReturnType();
-			}
-		}
-		return null;
-	}
-
-	// Lookup an outputs return type from the unit type
-	public static Class<? extends Unit> getStaticOutputUnitType(Class<?> klass, String outputName) {
-		if (!Entity.class.isAssignableFrom(klass)) {
-			return null;
-		}
-
-		@SuppressWarnings("unchecked")
-		ArrayList<OutputStaticInfo> infos = getOutputInfoImp((Class<? extends Entity>)klass);
-
-		for (OutputStaticInfo info : infos) {
-			if (info.name.equals(outputName)) {
-				 return info.unitType;
-			}
-		}
-		return null;
 	}
 
 	@Override

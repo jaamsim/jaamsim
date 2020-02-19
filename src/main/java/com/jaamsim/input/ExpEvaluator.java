@@ -299,7 +299,7 @@ public class ExpEvaluator {
 		private final String outputName;
 
 		public EntityResolver(String name) {
-			outputName = name.intern();
+			outputName = name;
 		}
 
 		@Override
@@ -320,7 +320,7 @@ public class ExpEvaluator {
 				throw new ExpError(null, 0, "Trying to resolve output on null entity");
 			}
 
-			OutputHandle oh = ent.getOutputHandleInterned(outputName);
+			OutputHandle oh = ent.getOutputHandle(outputName);
 			if (oh == null) {
 				throw new ExpError(null, 0, "Could not find output '%s' on entity '%s'", outputName, ent.getName());
 			}

@@ -71,12 +71,12 @@ public class Entity {
 	//public static final int FLAG_TRACESTATE = 0x04;
 	//public static final int FLAG_LOCKED = 0x08;
 	//public static final int FLAG_TRACKEVENTS = 0x10;
-	public static final int FLAG_ADDED = 0x20;  // entity was defined after the 'RecordEdits' flag
-	public static final int FLAG_EDITED = 0x40;  // one or more inputs were modified after the 'RecordEdits' flag
-	public static final int FLAG_GENERATED = 0x80;  // entity was created during the execution of the simulation
-	public static final int FLAG_DEAD = 0x0100;  // entity has been deleted
-	public static final int FLAG_REGISTERED = 0x0200;  // entity is included in the namedEntities HashMap
-	public static final int FLAG_RETAINED = 0x0400;  // entity is retained when the model is reset between runs
+	static final int FLAG_ADDED = 0x20;  // entity was defined after the 'RecordEdits' flag
+	static final int FLAG_EDITED = 0x40;  // one or more inputs were modified after the 'RecordEdits' flag
+	static final int FLAG_GENERATED = 0x80;  // entity was created during the execution of the simulation
+	static final int FLAG_DEAD = 0x0100;  // entity has been deleted
+	static final int FLAG_REGISTERED = 0x0200;  // entity is included in the namedEntities HashMap
+	static final int FLAG_RETAINED = 0x0400;  // entity is retained when the model is reset between runs
 	private int flags;
 
 	Entity parent;
@@ -230,7 +230,7 @@ public class Entity {
 		for (Entity ent : getChildren()) {
 			ent.kill();
 		}
-		if (testFlag(Entity.FLAG_DEAD))
+		if (this.isDead())
 			return;
 		simModel.removeInstance(this);
 	}
@@ -256,6 +256,18 @@ public class Entity {
 
 	public final boolean isRegistered() {
 		return this.testFlag(Entity.FLAG_REGISTERED);
+	}
+
+	public final boolean isDead() {
+		return this.testFlag(Entity.FLAG_DEAD);
+	}
+
+	public final boolean isEdited() {
+		return this.testFlag(Entity.FLAG_EDITED);
+	}
+
+	public final void setEdited() {
+		this.setFlag(Entity.FLAG_EDITED);
 	}
 
 	/**
@@ -371,15 +383,15 @@ public class Entity {
 		}
 	}
 
-	public void setFlag(int flag) {
+	final void setFlag(int flag) {
 		flags |= flag;
 	}
 
-	public void clearFlag(int flag) {
+	final void clearFlag(int flag) {
 		flags &= ~flag;
 	}
 
-	public boolean testFlag(int flag) {
+	final boolean testFlag(int flag) {
 		return (flags & flag) != 0;
 	}
 
@@ -710,43 +722,21 @@ public class Entity {
 
 
 	public final OutputHandle getOutputHandle(String outputName) {
-		if (hasAttribute(outputName))
-			return attributeMap.get(outputName);
+		OutputHandle ret;
+		ret = attributeMap.get(outputName);
+		if (ret != null)
+			return ret;
 
-		if (customOutputMap.containsKey(outputName))
-			return customOutputMap.get(outputName);
+		ret = customOutputMap.get(outputName);
+		if (ret != null)
+			return ret;
 
-		if (inputOutputMap.containsKey(outputName))
-			return inputOutputMap.get(outputName);
+		ret = inputOutputMap.get(outputName);
+		if (ret != null)
+			return ret;
 
 		if (hasOutput(outputName)) {
-			OutputHandle ret = new OutputHandle(this, outputName);
-			if (ret.getUnitType() == UserSpecifiedUnit.class)
-				ret.setUnitType(getUserUnitType());
-
-			return ret;
-		}
-
-		return null;
-	}
-
-	/**
-	 * Optimized version of getOutputHandle() for output names that are known to be interned
-	 * @param outputName
-	 * @return
-	 */
-	public final OutputHandle getOutputHandleInterned(String outputName) {
-		if (hasAttribute(outputName))
-			return attributeMap.get(outputName);
-
-		if (customOutputMap.containsKey(outputName))
-			return customOutputMap.get(outputName);
-
-		if (inputOutputMap.containsKey(outputName))
-			return inputOutputMap.get(outputName);
-
-		if (OutputHandle.hasOutputInterned(this.getClass(), outputName)) {
-			OutputHandle ret = new OutputHandle(this, outputName);
+			ret = new OutputHandle(this, outputName);
 			if (ret.getUnitType() == UserSpecifiedUnit.class)
 				ret.setUnitType(getUserUnitType());
 

@@ -574,7 +574,7 @@ public class InputAgent {
 		JaamSimModel simModel = ent.getJaamSimModel();
 		if (simModel.isRecordEdits()) {
 			in.setEdited(true);
-			ent.setFlag(Entity.FLAG_EDITED);
+			ent.setEdited();
 		}
 
 		ent.updateForInput(in);
@@ -1041,7 +1041,7 @@ public class InputAgent {
 		// Prepare a sorted list of all the entities that were edited
 		ArrayList<Entity> entityList = new ArrayList<>();
 		for (Entity ent : simModel.getClonesOfIterator(Entity.class)) {
-			if (!ent.testFlag(Entity.FLAG_EDITED) || ent.isGenerated())
+			if (!ent.isEdited() || ent.isGenerated())
 				continue;
 			if (ent instanceof EntityLabel && !((EntityLabel) ent).getShow()
 					&& ((EntityLabel) ent).isDefault())

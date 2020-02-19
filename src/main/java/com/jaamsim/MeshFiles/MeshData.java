@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import com.jaamsim.MeshFiles.DataBlock.Error;
 import com.jaamsim.math.AABB;
@@ -1085,9 +1086,8 @@ public class MeshData {
 		// Log the batch uses
 		HashMap<Integer, Integer> batchHist = new HashMap<>();
 		int maxBatch = 0;
-		for (MeshMatKey k : _staticBatches.keySet()) {
-			StaticMeshBatch b = _staticBatches.get(k);
-			int batchSize = b.transform.size();
+		for (Entry<MeshMatKey, StaticMeshBatch> e: _staticBatches.entrySet()) {
+			int batchSize = e.getValue().transform.size();
 
 			addToHist(batchHist, batchSize);
 			maxBatch = Math.max(maxInst, batchSize);
