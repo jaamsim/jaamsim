@@ -4689,16 +4689,11 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 	/**
 	 * Saves the configuration file.
-	 * @param fileName = absolute file path and file name for the file to be saved
+	 * @param file = file to be saved
 	 */
-	private void setSaveFile(String fileName) {
-
-		// Set root directory
-		File temp = new File(fileName);
-
-		// Save the configuration file
+	private void setSaveFile(File file) {
 		try {
-			sim.save(temp);
+			sim.save(file);
 
 			// Set the title bar to match the new run name
 			this.setTitle( sim.getSimulation().getModelName() + " - " + sim.getRunName() );
@@ -4711,7 +4706,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	boolean save() {
 		LogBox.logLine("Saving...");
 		if( sim.getConfigFile() != null ) {
-			setSaveFile(sim.getConfigFile().getPath());
+			setSaveFile(sim.getConfigFile());
 			updateUI();
 			return true;
 		}
@@ -4759,7 +4754,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		}
 
 		// Save the configuration file
-		setSaveFile(filePath);
+		setSaveFile(temp);
 
 		setConfigFolder(file.getParent());
 		updateUI();
