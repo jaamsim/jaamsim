@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2002-2011 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2020 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,7 +37,15 @@ public class FileEntity {
 	}
 
 	public FileEntity(String fileName, boolean append) {
-		backingFileObject = new File(fileName);
+		this(new File(fileName), append);
+	}
+
+	public FileEntity(File file) {
+		this(file, false);
+	}
+
+	public FileEntity(File file, boolean append) {
+		backingFileObject = file;
 
 		try {
 			backingFileObject.createNewFile();
@@ -44,16 +53,16 @@ public class FileEntity {
 		}
 		catch (IOException e) {
 			throw new InputErrorException("IOException thrown trying to open file: '%s'%n%s",
-					fileName, e.getMessage());
+					file.getPath(), e.getMessage());
 		}
 		catch (IllegalArgumentException e) {
 			throw new InputErrorException("IllegalArgumentException thrown trying to open file: "
 					+ "'%s'%n%s",
-					fileName, e.getMessage());
+					file.getPath(), e.getMessage());
 		}
 		catch (SecurityException e) {
 			throw new InputErrorException("SecurityException thrown trying to open file: '%s'%n%s",
-					fileName, e.getMessage());
+					file.getPath(), e.getMessage());
 		}
 	}
 
