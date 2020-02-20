@@ -4736,17 +4736,17 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			return false;
 
 		File file = chooser.getSelectedFile();
-		String filePath = file.getPath();
 
 		// Add the file extension ".cfg" if needed
+		String filePath = file.getPath();
 		filePath = filePath.trim();
 		if (file.getName().trim().indexOf('.') == -1) {
 			filePath = filePath.concat(".cfg");
+			file = new File(filePath);
 		}
 
 		// Confirm overwrite if file already exists
-		File temp = new File(filePath);
-		if (temp.exists()) {
+		if (file.exists()) {
 			boolean confirmed = GUIFrame.showSaveAsDialog(file.getName());
 			if (!confirmed) {
 				return false;
@@ -4754,7 +4754,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		}
 
 		// Save the configuration file
-		setSaveFile(temp);
+		setSaveFile(file);
 
 		setConfigFolder(file.getParent());
 		updateUI();
