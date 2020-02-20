@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2016-2019 JaamSim Software Inc.
+ * Copyright (C) 2016-2020 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -598,7 +598,7 @@ public class JaamSimModel {
 	 * @param file - file to which the model inputs are to be saved
 	 */
 	public void save(File file) {
-		InputAgent.printNewConfigurationFileWithName(this, file.getName());
+		InputAgent.printNewConfigurationFileWithName(this, file);
 		configFile = file;
 	}
 

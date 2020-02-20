@@ -949,7 +949,7 @@ public class InputAgent {
 	 *
 	 * @param fileName - the full path and file name for the new configuration file.
 	 */
-	public static void printNewConfigurationFileWithName(JaamSimModel simModel, String fileName) {
+	public static void printNewConfigurationFileWithName(JaamSimModel simModel, File f) {
 
 		// 1) WRITE LINES FROM THE ORIGINAL CONFIGURATION FILE
 
@@ -974,7 +974,7 @@ public class InputAgent {
 		}
 
 		// Create the new configuration file and copy the saved lines
-		FileEntity file = new FileEntity( fileName);
+		FileEntity file = new FileEntity(f);
 		for( int i=0; i < preAddedRecordLines.size(); i++ ) {
 			file.format("%s%n", preAddedRecordLines.get( i ));
 		}
