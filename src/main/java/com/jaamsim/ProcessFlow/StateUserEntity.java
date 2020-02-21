@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2016-2019 JaamSim Software Inc.
+ * Copyright (C) 2016-2020 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,15 +19,18 @@ package com.jaamsim.ProcessFlow;
 import java.util.ArrayList;
 
 import com.jaamsim.BasicObjects.DowntimeEntity;
+import com.jaamsim.BasicObjects.EntitySystem;
 import com.jaamsim.Thresholds.Threshold;
 import com.jaamsim.Thresholds.ThresholdUser;
 import com.jaamsim.input.ColourInput;
+import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.EntityListInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.states.DowntimeUser;
 import com.jaamsim.states.StateEntity;
+import com.jaamsim.states.StateRecord;
 
 public abstract class StateUserEntity extends StateEntity implements ThresholdUser, DowntimeUser {
 
@@ -94,6 +97,10 @@ public abstract class StateUserEntity extends StateEntity implements ThresholdUs
 	         exampleList = {"DowntimeEntity1 DowntimeEntity2 DowntimeEntity3"})
 	protected final EntityListInput<DowntimeEntity> opportunisticBreakdownList;
 
+	@Keyword(description = "System of modelled objects to which this object is to be added.",
+	         exampleList = {"EntitySystem1"})
+	protected final EntityInput<EntitySystem> entitySystem;
+
 	protected static final String STATE_MAINTENANCE = "Maintenance";
 	protected static final String STATE_BREAKDOWN = "Breakdown";
 	protected static final String STATE_STOPPED = "Stopped";
@@ -143,6 +150,9 @@ public abstract class StateUserEntity extends StateEntity implements ThresholdUs
 		opportunisticBreakdownList =  new EntityListInput<>(DowntimeEntity.class,
 				"OpportunisticBreakdownList", MAINTENANCE, new ArrayList<DowntimeEntity>());
 		this.addInput(opportunisticBreakdownList);
+
+		entitySystem = new EntityInput<>(EntitySystem.class, "EntitySystem", OPTIONS, null);
+		this.addInput(entitySystem);
 	}
 
 	public StateUserEntity() {}
@@ -489,6 +499,17 @@ public abstract class StateUserEntity extends StateEntity implements ThresholdUs
 
 	public double getTimeInState_Stopped(double simTime) {
 		return getTimeInState(simTime, STATE_STOPPED);
+	}
+
+	@Override
+	public void stateChanged(StateRecord prev, StateRecord next) {
+		super.stateChanged(prev, next);
+		if (!entitySystem.isDefault())
+			entitySystem.getValue().performUpdate();
+	}
+
+	public EntitySystem getEntitySystem() {
+		return entitySystem.getValue();
 	}
 
 	// ********************************************************************************************
