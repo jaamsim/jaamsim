@@ -137,6 +137,9 @@ public class MeshDataCache {
 		}
 
 		public void waitForLoading() {
+			if (loaded.get())
+				return;
+
 			// Someone already triggered a delayed load for this mesh, let's just wait for that one...
 			synchronized (this) {
 				while (!loaded.get()) {
