@@ -34,7 +34,7 @@ import com.jaamsim.ui.LogBox;
 public class MeshDataCache {
 	private static final HashMap<MeshProtoKey, MeshData> dataMap = new HashMap<>();
 
-	private static final HashMap<MeshProtoKey, AtomicBoolean> loadingMap = new HashMap<>();
+	private static final HashMap<MeshProtoKey, MeshDataLoader> loadingMap = new HashMap<>();
 
 	private static final HashSet<MeshProtoKey> badMeshSet = new HashSet<>();
 	private static MeshData badMesh = null;
@@ -63,20 +63,13 @@ public class MeshDataCache {
 			}
 		}
 
-		AtomicBoolean loadingFlag = null;
+		MeshDataLoader ml = null;
 		synchronized (loadingMap) {
-			loadingFlag = loadingMap.get(key);
+			ml = loadingMap.get(key);
 		}
 
-		if (loadingFlag != null) {
-			// Someone already triggered a delayed load for this mesh, let's just wait for that one...
-			synchronized (loadingFlag) {
-				while (!loadingFlag.get()) {
-					try {
-						loadingFlag.wait();
-					} catch (InterruptedException ex) {}
-				}
-			}
+		if (ml != null) {
+			ml.waitForLoading();
 			synchronized (dataMap) {
 				return dataMap.get(key);
 			}
@@ -123,30 +116,50 @@ public class MeshDataCache {
 		}
 	}
 
+	private static class MeshDataLoader implements Runnable {
+		final AtomicBoolean loaded = new AtomicBoolean();
+		final MeshProtoKey key;
+
+		MeshDataLoader(MeshProtoKey key) {
+			this.key = key;
+		}
+
+		@Override
+		public void run() {
+			getMeshData(key); // Cause the lazy initializer to load the mesh (or return quickly if already loaded)
+
+			loaded.set(true);
+
+			synchronized(this) {
+				this.notifyAll();
+			}
+
+		}
+
+		public void waitForLoading() {
+			// Someone already triggered a delayed load for this mesh, let's just wait for that one...
+			synchronized (this) {
+				while (!loaded.get()) {
+					try {
+						this.wait();
+					} catch (InterruptedException ex) {}
+				}
+			}
+		}
+	}
+
 	/**
 	 * Load the mesh in a new thread, then notify on 'notifier'
 	 * @param key
 	 * @param notifier
 	 */
 	public static void loadMesh(final MeshProtoKey key) {
-		final AtomicBoolean notifier = new AtomicBoolean();
+		MeshDataLoader ml = new MeshDataLoader(key);
 		synchronized (loadingMap) {
-			loadingMap.put(key, notifier);
+			loadingMap.put(key, ml);
 		}
 
-		new Thread() {
-			@Override
-			public void run() {
-
-				getMeshData(key); // Cause the lazy initializer to load the mesh (or return quickly if already loaded)
-
-				notifier.set(true);
-
-				synchronized(notifier) {
-					notifier.notifyAll();
-				}
-			}
-		}.start();
+		new Thread(ml).start();
 	}
 
 	// Lazily load the bad mesh data
