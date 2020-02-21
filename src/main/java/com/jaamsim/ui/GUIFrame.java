@@ -4698,8 +4698,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 		// Save the configuration file
 		try {
-			InputAgent.printNewConfigurationFileWithName(sim, temp);
-			sim.setConfigFile(temp);
+			sim.save(temp);
 
 			// Set the title bar to match the new run name
 			this.setTitle( sim.getSimulation().getModelName() + " - " + sim.getRunName() );
