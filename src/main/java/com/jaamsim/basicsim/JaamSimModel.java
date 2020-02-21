@@ -1162,14 +1162,6 @@ public class JaamSimModel {
 	}
 
 	/**
-	 * Sets the present configuration file.
-	 * @param file - the present configuration file.
-	 */
-	public void setConfigFile(File file) {
-		configFile = file;
-	}
-
-	/**
 	 * Returns the present configuration file.
 	 * Null is returned if no configuration file has been loaded or saved yet.
 	 * @return present configuration file
