@@ -25,6 +25,7 @@ import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.EntityTarget;
 import com.jaamsim.events.ProcessTarget;
+import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.units.TimeUnit;
@@ -44,6 +45,10 @@ public class Controller extends DisplayEntity {
 	         exampleList = {"100 ms"})
 	private final ValueInput interval;
 
+	@Keyword(description = "Maximum number of updates to perform.",
+	         exampleList = {"5"})
+	private final IntegerInput maxUpdates;
+
 	private final ArrayList<Controllable> entityList;  // Entities controlled by this Controller.
 	private int count;  // Number of update cycle completed.
 
@@ -60,6 +65,10 @@ public class Controller extends DisplayEntity {
 		interval.setValidRange(0.0, Double.POSITIVE_INFINITY);
 		this.addInput(interval);
 		this.addSynonym(interval, "SamplingTime");
+
+		maxUpdates = new IntegerInput("MaxUpdates", KEY_INPUTS, Integer.MAX_VALUE);
+		maxUpdates.setValidRange(0, Integer.MAX_VALUE);
+		this.addInput(maxUpdates);
 	}
 
 	public Controller() {
@@ -95,7 +104,8 @@ public class Controller extends DisplayEntity {
 		super.startUp();
 
 		// Schedule the first update
-		this.scheduleProcess(firstTime.getValue(), 5, doUpdate);
+		if (maxUpdates.getValue() > 0)
+			this.scheduleProcess(firstTime.getValue(), 5, doUpdate);
 	}
 
 	private static class DoUpdateTarget extends EntityTarget<Controller> {
@@ -121,7 +131,8 @@ public class Controller extends DisplayEntity {
 		count++;
 
 		// Schedule the next update
-		this.scheduleProcess(interval.getValue(), 5, doUpdate);
+		if (count < maxUpdates.getValue())
+			this.scheduleProcess(interval.getValue(), 5, doUpdate);
 	}
 
 	public int getCount() {
