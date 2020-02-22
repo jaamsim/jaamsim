@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018-2019 JaamSim Software Inc.
+ * Copyright (C) 2018-2020 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -70,15 +70,14 @@ public class Controller extends DisplayEntity {
 		}
 
 		// Sort the calculation entities into the correct sequence
-		Collections.sort(entityList, new SequenceCompare());
-	}
+		Collections.sort(entityList, new Comparator<Controllable>() {
 
-	// Sorts by increasing sequence number
-	private static class SequenceCompare implements Comparator<Controllable> {
-		@Override
-		public int compare(Controllable c1, Controllable c2) {
-			return Double.compare(c1.getSequenceNumber(), c2.getSequenceNumber());
-		}
+			@Override
+			public int compare(Controllable c1, Controllable c2) {
+				return Double.compare(c1.getSequenceNumber(), c2.getSequenceNumber());
+			}
+
+		});
 	}
 
 	@Override
