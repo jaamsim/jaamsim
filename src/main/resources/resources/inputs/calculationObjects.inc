@@ -1,5 +1,4 @@
 Define ObjectType {
-                    Controller
 					WeightedSum
 					Polynomial
 					Integrator
@@ -12,7 +11,6 @@ Define ObjectType {
 					UnitDelay
                     }
 
-Controller              JavaClass { com.jaamsim.CalculationObjects.Controller          } Palette { 'Calculation Objects' } IconFile { '<res>/images/Controller-24.png'     }
 WeightedSum             JavaClass { com.jaamsim.CalculationObjects.WeightedSum         } Palette { 'Calculation Objects' } IconFile { '<res>/images/WeightedSum-24.png'    }
 Polynomial              JavaClass { com.jaamsim.CalculationObjects.Polynomial          } Palette { 'Calculation Objects' } IconFile { '<res>/images/Polynomial-24.png'     }
 Integrator              JavaClass { com.jaamsim.CalculationObjects.Integrator          } Palette { 'Calculation Objects' } IconFile { '<res>/images/Integrator-24.png'     }
@@ -25,7 +23,6 @@ SquareWave              JavaClass { com.jaamsim.CalculationObjects.SquareWave   
 UnitDelay               JavaClass { com.jaamsim.CalculationObjects.UnitDelay           } Palette { 'Calculation Objects' } IconFile { '<res>/images/UnitDelay-24.png'      }
 
 Define	IconModel  {
-			ControllerIconModel
 			WeightedSumIconModel
 			PolynomialIconModel
 			IntegratorIconModel
@@ -38,7 +35,6 @@ Define	IconModel  {
 			UnitDelayIconModel
 		}
 
-ControllerIconModel      ImageFile { '<res>/images/Controller-256.png' }      Transparent { TRUE }
 WeightedSumIconModel     ImageFile { '<res>/images/WeightedSum-256.png' }     Transparent { TRUE }
 PolynomialIconModel      ImageFile { '<res>/images/Polynomial-256.png' }      Transparent { TRUE }
 IntegratorIconModel      ImageFile { '<res>/images/Integrator-256.png' }      Transparent { TRUE }
@@ -50,7 +46,6 @@ SineWaveIconModel        ImageFile { '<res>/images/SineWave-256.png' }        Tr
 SquareWaveIconModel      ImageFile { '<res>/images/SquareWave-256.png' }      Transparent { TRUE }
 UnitDelayIconModel       ImageFile { '<res>/images/UnitDelay-256.png' }       Transparent { TRUE }
 
-Controller              DefaultDisplayModel 	{ ControllerIconModel }
 WeightedSum             DefaultDisplayModel 	{ WeightedSumIconModel }
 Polynomial              DefaultDisplayModel 	{ PolynomialIconModel }
 Integrator              DefaultDisplayModel 	{ IntegratorIconModel }
@@ -62,7 +57,6 @@ SineWave                DefaultDisplayModel 	{ SineWaveIconModel }
 SquareWave              DefaultDisplayModel 	{ SquareWaveIconModel }
 UnitDelay               DefaultDisplayModel 	{ UnitDelayIconModel }
 
-Controller       Description { 'Signals the updating of each component in the specified sequence.' }
 WeightedSum      Description { 'Calculates the weighted sum of the input values.' }
 Polynomial       Description { 'Evaluates a polynomial function of the input value.' }
 Integrator       Description { 'Integrates the input value over time.' }
