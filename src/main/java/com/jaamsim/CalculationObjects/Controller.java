@@ -27,7 +27,9 @@ import com.jaamsim.basicsim.EntityTarget;
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
+import com.jaamsim.input.Output;
 import com.jaamsim.input.ValueInput;
+import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
 
 /**
@@ -136,6 +138,23 @@ public class Controller extends DisplayEntity {
 	}
 
 	public int getCount() {
+		return count;
+	}
+
+	@Output(name = "EntityList",
+	 description = "Objects that receive update signals from this Controller, listed in the "
+	             + "sequence in which the updates are performed.",
+	    unitType = DimensionlessUnit.class,
+	    sequence = 1)
+	public ArrayList<Controllable> getEntityList(double simTime) {
+		return entityList;
+	}
+
+	@Output(name = "Count",
+	 description = "Total number of updates that have been performed.",
+	    unitType = DimensionlessUnit.class,
+	    sequence = 1)
+	public double getCount(double simTime) {
 		return count;
 	}
 
