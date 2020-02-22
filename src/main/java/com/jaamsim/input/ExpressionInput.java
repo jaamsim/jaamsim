@@ -21,6 +21,7 @@ import java.util.ArrayList;
 
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.input.ExpParser.Expression;
+import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 
 public class ExpressionInput extends Input<ExpParser.Expression> {
@@ -86,7 +87,21 @@ public class ExpressionInput extends Input<ExpParser.Expression> {
 
 	@Override
 	public String getValidInputDesc() {
-		return Input.VALID_EXP;
+
+		if (resType == ExpResType.NUMBER) {
+			if (unitType == DimensionlessUnit.class)
+				return VALID_EXP_DIMLESS;
+			else
+				return VALID_EXP_NUM;
+		}
+
+		if (resType == ExpResType.STRING)
+			return VALID_EXP_STR;
+
+		if (resType == ExpResType.ENTITY)
+			return VALID_EXP_ENT;
+
+		return VALID_EXP;
 	}
 
 	@Override

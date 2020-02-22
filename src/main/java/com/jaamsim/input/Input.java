@@ -106,7 +106,11 @@ public abstract class Input<T> {
 	protected static final String VALID_DATE = "Accepts a calendar date and time in one of the following formats: 'YYYY-MM-DD hh:mm:ss.sss', 'YYYY-MM-DD hh:mm:ss', 'YYYY-MM-DD'";
 	protected static final String VALID_FILE = "Accepts a file path enclosed by single quotes.";
 	protected static final String VALID_DIR = "Accepts a directory path enclosed by single quotes.";
-	protected static final String VALID_EXP = "Accepts an expression that returns a dimensionless number. A value of zero implies FALSE; non-zero implies TRUE.";
+	protected static final String VALID_EXP_DIMLESS = "Accepts an expression that returns a dimensionless number. A value of zero implies FALSE; non-zero implies TRUE.";
+	protected static final String VALID_EXP_NUM = "Accepts an expression that returns a number.";
+	protected static final String VALID_EXP_STR = "Accepts an expression that returns a string.";
+	protected static final String VALID_EXP_ENT = "Accepts an expression that returns an entity.";
+	protected static final String VALID_EXP = "Accepts an expression.";
 	protected static final String VALID_KEYEVENT = "Accepts a single character representing a key on the keyboard. "
 	                                             + "For non-printing keys, enter the key's name such as HOME, ESCAPE, SPACE, F1, etc.";
 	protected static final String VALID_VALUE_LIST = "Accepts a list of numbers separated by spaces, followed by a unit for these values, if required.";
