@@ -36,6 +36,10 @@ import com.jaamsim.units.TimeUnit;
  */
 public class Controller extends DisplayEntity {
 
+	@Keyword(description = "Simulation time for the first update signal.",
+	         exampleList = {"5 s"})
+	private final ValueInput firstTime;
+
 	@Keyword(description = "Time interval between update signals.",
 	         exampleList = {"100 ms"})
 	private final ValueInput samplingTime;
@@ -46,6 +50,11 @@ public class Controller extends DisplayEntity {
 	private final ProcessTarget doUpdate = new DoUpdateTarget(this);
 
 	{
+		firstTime = new ValueInput("FirstTime", KEY_INPUTS, 0.0d);
+		firstTime.setUnitType(TimeUnit.class);
+		firstTime.setValidRange(0.0, Double.POSITIVE_INFINITY);
+		this.addInput(firstTime);
+
 		samplingTime = new ValueInput("SamplingTime", KEY_INPUTS, 1.0d);
 		samplingTime.setUnitType(TimeUnit.class);
 		samplingTime.setValidRange(0.0, Double.POSITIVE_INFINITY);
@@ -85,7 +94,7 @@ public class Controller extends DisplayEntity {
 		super.startUp();
 
 		// Schedule the first update
-		this.scheduleProcess(samplingTime.getValue(), 5, doUpdate);
+		this.scheduleProcess(firstTime.getValue(), 5, doUpdate);
 	}
 
 	private static class DoUpdateTarget extends EntityTarget<Controller> {
