@@ -42,7 +42,7 @@ public class Controller extends DisplayEntity {
 
 	@Keyword(description = "Time interval between update signals.",
 	         exampleList = {"100 ms"})
-	private final ValueInput samplingTime;
+	private final ValueInput interval;
 
 	private final ArrayList<Controllable> entityList;  // Entities controlled by this Controller.
 	private int count;  // Number of update cycle completed.
@@ -55,10 +55,11 @@ public class Controller extends DisplayEntity {
 		firstTime.setValidRange(0.0, Double.POSITIVE_INFINITY);
 		this.addInput(firstTime);
 
-		samplingTime = new ValueInput("SamplingTime", KEY_INPUTS, 1.0d);
-		samplingTime.setUnitType(TimeUnit.class);
-		samplingTime.setValidRange(0.0, Double.POSITIVE_INFINITY);
-		this.addInput(samplingTime);
+		interval = new ValueInput("Interval", KEY_INPUTS, 1.0d);
+		interval.setUnitType(TimeUnit.class);
+		interval.setValidRange(0.0, Double.POSITIVE_INFINITY);
+		this.addInput(interval);
+		this.addSynonym(interval, "SamplingTime");
 	}
 
 	public Controller() {
@@ -120,7 +121,7 @@ public class Controller extends DisplayEntity {
 		count++;
 
 		// Schedule the next update
-		this.scheduleProcess(samplingTime.getValue(), 5, doUpdate);
+		this.scheduleProcess(interval.getValue(), 5, doUpdate);
 	}
 
 	public int getCount() {
