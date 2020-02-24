@@ -30,9 +30,8 @@ import com.jaamsim.input.ExpResult;
 import com.jaamsim.input.ExpressionInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
-import com.jaamsim.states.StateEntity;
 
-public class EntitySystem extends StateEntity {
+public class EntitySystem extends AbstractStateUserEntity {
 
 	@Keyword(description = "An expression returning a string that sets this object's present "
 	                     + "state.",
@@ -80,6 +79,61 @@ public class EntitySystem extends StateEntity {
 
 	};
 
+	@Override
+	public boolean isBusy() {
+		for (AbstractStateUserEntity ent : entityList) {
+			if (ent.isWorkingState())
+				return true;
+		}
+		return false;
+	}
+
+	@Override
+	public boolean isMaintenance() {
+		for (AbstractStateUserEntity ent : entityList) {
+			if (ent.isMaintenance())
+				return true;
+		}
+		return false;
+	}
+
+	@Override
+	public boolean isBreakdown() {
+		for (AbstractStateUserEntity ent : entityList) {
+			if (ent.isBreakdown())
+				return true;
+		}
+		return false;
+	}
+
+	@Override
+	public boolean isStopped() {
+		for (AbstractStateUserEntity ent : entityList) {
+			if (ent.isStopped())
+				return true;
+		}
+		return false;
+	}
+
+	@Override
+	public boolean isSetup() {
+		for (AbstractStateUserEntity ent : entityList) {
+			if (ent.isSetup())
+				return true;
+		}
+		return false;
+	}
+
+	@Override
+	public boolean isIdle() {
+		for (AbstractStateUserEntity ent : entityList) {
+			if (!ent.isIdle())
+				return false;
+		}
+		return true;
+	}
+
+	@Override
 	public void setPresentState() {
 		double simTime = getSimTime();
 
