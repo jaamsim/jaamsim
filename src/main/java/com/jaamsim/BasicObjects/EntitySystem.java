@@ -28,6 +28,7 @@ import com.jaamsim.input.ExpEvaluator;
 import com.jaamsim.input.ExpResType;
 import com.jaamsim.input.ExpResult;
 import com.jaamsim.input.ExpressionInput;
+import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 
@@ -57,6 +58,17 @@ public class EntitySystem extends AbstractStateUserEntity {
 		for (AbstractStateUserEntity stateEnt : getJaamSimModel().getClonesOfIterator(AbstractStateUserEntity.class)) {
 			if (stateEnt.getEntitySystem() == this)
 				entityList.add(stateEnt);
+		}
+	}
+
+	@Override
+	public void validate() {
+		EntitySystem sys = getEntitySystem();
+		while(sys != null) {
+			if (sys == this)
+				throw new InputErrorException("The chain of EntitySystem inputs cannot include "
+						+ "this EntitySystem.");
+			sys = sys.getEntitySystem();
 		}
 	}
 
