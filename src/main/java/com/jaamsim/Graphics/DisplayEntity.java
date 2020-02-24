@@ -340,7 +340,8 @@ public class DisplayEntity extends Entity {
 		if (getDisplayModelList() != null) {
 			for (DisplayModel dm : getDisplayModelList()) {
 				if (!dm.canDisplayEntity(this)) {
-					error("Invalid DisplayModel: %s for this DisplayEntity", dm.getName());
+					throw new InputErrorException("Invalid DisplayModel: %s for this object",
+							dm.getName());
 				}
 			}
 		}
