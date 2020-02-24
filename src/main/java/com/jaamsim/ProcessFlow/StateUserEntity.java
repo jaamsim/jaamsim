@@ -19,20 +19,14 @@ package com.jaamsim.ProcessFlow;
 import java.util.ArrayList;
 
 import com.jaamsim.BasicObjects.DowntimeEntity;
-import com.jaamsim.BasicObjects.EntitySystem;
 import com.jaamsim.Thresholds.Threshold;
 import com.jaamsim.Thresholds.ThresholdUser;
-import com.jaamsim.input.ColourInput;
-import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.EntityListInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
-import com.jaamsim.math.Color4d;
 import com.jaamsim.states.DowntimeUser;
-import com.jaamsim.states.StateEntity;
-import com.jaamsim.states.StateRecord;
 
-public abstract class StateUserEntity extends StateEntity implements ThresholdUser, DowntimeUser {
+public abstract class StateUserEntity extends AbstractStateUserEntity implements ThresholdUser, DowntimeUser {
 
 	@Keyword(description = "A list of thresholds that must be satisfied for the object to "
 	                     + "operate. Operation is stopped immediately when one of the thresholds "
@@ -97,22 +91,6 @@ public abstract class StateUserEntity extends StateEntity implements ThresholdUs
 	         exampleList = {"DowntimeEntity1 DowntimeEntity2 DowntimeEntity3"})
 	protected final EntityListInput<DowntimeEntity> opportunisticBreakdownList;
 
-	@Keyword(description = "System of modelled objects to which this object is to be added.",
-	         exampleList = {"EntitySystem1"})
-	protected final EntityInput<EntitySystem> entitySystem;
-
-	protected static final String STATE_MAINTENANCE = "Maintenance";
-	protected static final String STATE_BREAKDOWN = "Breakdown";
-	protected static final String STATE_STOPPED = "Stopped";
-	protected static final String STATE_BLOCKED = "Blocked";
-	protected static final String STATE_SETUP = "Setup";
-
-	protected static final Color4d COL_MAINTENANCE = ColourInput.RED;
-	protected static final Color4d COL_BREAKDOWN = ColourInput.RED;
-	protected static final Color4d COL_STOPPED = ColourInput.getColorWithName("gray25");
-	protected static final Color4d COL_BLOCKED = ColourInput.getColorWithName("gray25");
-	protected static final Color4d COL_SETUP = ColourInput.getColorWithName("gray25");
-
 	{
 		immediateThresholdList = new EntityListInput<>(Threshold.class, "ImmediateThresholdList", THRESHOLDS, new ArrayList<Threshold>());
 		this.addInput(immediateThresholdList);
@@ -150,9 +128,6 @@ public abstract class StateUserEntity extends StateEntity implements ThresholdUs
 		opportunisticBreakdownList =  new EntityListInput<>(DowntimeEntity.class,
 				"OpportunisticBreakdownList", MAINTENANCE, new ArrayList<DowntimeEntity>());
 		this.addInput(opportunisticBreakdownList);
-
-		entitySystem = new EntityInput<>(EntitySystem.class, "EntitySystem", OPTIONS, null);
-		this.addInput(entitySystem);
 	}
 
 	public StateUserEntity() {}
@@ -231,8 +206,7 @@ public abstract class StateUserEntity extends StateEntity implements ThresholdUs
 	// PRESENT STATE
 	// ********************************************************************************************
 
-	public abstract boolean isBusy();
-
+	@Override
 	public boolean isSetup() {
 		return false;
 	}
@@ -242,10 +216,16 @@ public abstract class StateUserEntity extends StateEntity implements ThresholdUs
 	 * @return true if all the thresholds are open.
 	 */
 	public boolean isOpen() {
-		return !isImmediateThresholdClosure() && !isImmediateReleaseThresholdClosure()
-				&& !isOperatingThresholdClosure() && !isReleaseThresholdClosure();
+		return !isStopped();
 	}
 
+	@Override
+	public boolean isStopped() {
+		return isImmediateThresholdClosure() || isImmediateReleaseThresholdClosure()
+				|| isOperatingThresholdClosure() || isReleaseThresholdClosure();
+	}
+
+	@Override
 	public boolean isMaintenance() {
 		for (DowntimeEntity de : immediateMaintenanceList.getValue()) {
 			if (de.isDown())
@@ -270,6 +250,7 @@ public abstract class StateUserEntity extends StateEntity implements ThresholdUs
 		return false;
 	}
 
+	@Override
 	public boolean isBreakdown() {
 		for (DowntimeEntity de : immediateBreakdownList.getValue()) {
 			if (de.isDown())
@@ -316,103 +297,6 @@ public abstract class StateUserEntity extends StateEntity implements ThresholdUs
 				return true;
 		}
 		return false;
-	}
-
-	public boolean isAvailable() {
-		return isOpen() && !isMaintenance() && !isBreakdown() && isActive();
-	}
-
-	/**
-	 * Tests whether the entity is available for work.
-	 * <p>
-	 * There are three mutually exclusive states: Busy, Idle, and UnableToWork. The UnableToWork
-	 * condition is divided into three separate states: Maintenance, Breakdown, and Stopped.
-	 * @return true if the LinkedService is available for work
-	 */
-	public boolean isIdle() {
-		return !isBusy() && isAvailable() && !isSetup();
-	}
-
-	/**
-	 * Tests whether something is preventing work from being performed.
-	 * <p>
-	 * There are three mutually exclusive states: Busy, Idle, and UnableToWork. The UnableToWork
-	 * condition is divided into three separate states: Maintenance, Breakdown, and Stopped.
-	 * @return true if something is preventing work from being performed
-	 */
-	public boolean isUnableToWork() {
-		return !isBusy() && !isAvailable() && !isSetup();
-	}
-
-	public void setPresentState() {
-
-		// Inactive
-		if (!this.isActive()) {
-			this.setPresentState(STATE_INACTIVE);
-			return;
-		}
-
-		// Working (Busy)
-		if (this.isBusy()) {
-			this.setPresentState(STATE_WORKING);
-			return;
-		}
-
-		// Not working because of maintenance or a closure (UnableToWork)
-		if (this.isMaintenance()) {
-			this.setPresentState(STATE_MAINTENANCE);
-			return;
-		}
-		if (this.isBreakdown()) {
-			this.setPresentState(STATE_BREAKDOWN);
-			return;
-		}
-		if (!this.isOpen()) {
-			this.setPresentState(STATE_STOPPED);
-			return;
-		}
-
-		// Setup
-		if (this.isSetup()) {
-			this.setPresentState(STATE_SETUP);
-			return;
-		}
-
-		// Not working because there is nothing to do (Idle)
-		this.setPresentState(STATE_IDLE);
-		return;
-	}
-
-	protected Color4d getColourForPresentState() {
-
-		// Inactive
-		if (!this.isActive()) {
-			return COL_INACTIVE;
-		}
-
-		// Working (Busy)
-		if (this.isBusy()) {
-			return COL_WORKING;
-		}
-
-		// Not working because of maintenance or a closure (UnableToWork)
-		if (this.isMaintenance()) {
-			return COL_MAINTENANCE;
-		}
-		if (this.isBreakdown()) {
-			return COL_BREAKDOWN;
-		}
-		if (!this.isOpen()) {
-			return COL_STOPPED;
-		}
-
-		// Setup
-		if (this.isSetup()) {
-			return COL_SETUP;
-		}
-
-		// Not working because there is nothing to do (Idle)
-		return COL_IDLE;
 	}
 
 	// ********************************************************************************************
@@ -481,37 +365,6 @@ public abstract class StateUserEntity extends StateEntity implements ThresholdUs
 				|| opportunisticBreakdownList.getValue().contains(down);
 	}
 
-	public double getTimeInState_Idle(double simTime) {
-		return getTimeInState(simTime, STATE_IDLE);
-	}
-
-	public double getTimeInState_Working(double simTime) {
-		return getTimeInState(simTime, STATE_WORKING);
-	}
-
-	public double getTimeInState_Maintenance(double simTime) {
-		return getTimeInState(simTime, STATE_MAINTENANCE);
-	}
-
-	public double getTimeInState_Breakdown(double simTime) {
-		return getTimeInState(simTime, STATE_BREAKDOWN);
-	}
-
-	public double getTimeInState_Stopped(double simTime) {
-		return getTimeInState(simTime, STATE_STOPPED);
-	}
-
-	@Override
-	public void stateChanged(StateRecord prev, StateRecord next) {
-		super.stateChanged(prev, next);
-		if (!entitySystem.isDefault())
-			entitySystem.getValue().performUpdate();
-	}
-
-	public EntitySystem getEntitySystem() {
-		return entitySystem.getValue();
-	}
-
 	// ********************************************************************************************
 	// OUTPUTS
 	// ********************************************************************************************
@@ -524,84 +377,10 @@ public abstract class StateUserEntity extends StateEntity implements ThresholdUs
 		return isOpen();
 	}
 
-	@Output(name = "Working",
-	 description = "Returns TRUE if work is being performed.",
-	    sequence = 2)
-	public boolean isBusy(double simTime) {
-		return isBusy();
-	}
-
-	@Output(name = "Setup",
-	 description = "Returns TRUE if setup is being performed.",
-	    sequence = 3)
-	public boolean isSetup(double simTime) {
-		return isSetup();
-	}
-
-	@Output(name = "Maintenance",
-	 description = "Returns TRUE if maintenance is being performed.",
-	    sequence = 4)
-	public boolean isMaintenance(double simTime) {
-		return isMaintenance();
-	}
-
-	@Output(name = "Breakdown",
-	 description = "Returns TRUE if a breakdown is being repaired.",
-	    sequence = 5)
-	public boolean isBreakdown(double simTime) {
-		return isBreakdown();
-	}
-
-	@Output(name = "Utilisation",
-	 description = "The fraction of calendar time (excluding the initialisation period) that "
-	             + "this object is in the Working state. Includes any completed cycles.",
-	  reportable = true,
-	    sequence = 6)
-	public double getUtilisation(double simTime) {
-		double total = this.getTotalTime(simTime);
-		double working = getTimeInState_Working(simTime);
-		return working/total;
-	}
-
-	@Output(name = "Commitment",
-	 description = "The fraction of calendar time (excluding the initialisation period) that "
-	             + "this object is in any state other than Idle. Includes any completed cycles.",
-	  reportable = true,
-	    sequence = 7)
-	public double getCommitment(double simTime) {
-		double total = this.getTotalTime(simTime);
-		double idle = getTimeInState_Idle(simTime);
-		return 1.0d - idle/total;
-	}
-
-	@Output(name = "Availability",
-	 description = "The fraction of calendar time (excluding the initialisation period) that "
-	             + "this object is in any state other than Maintenance or Breakdown. "
-	             + "Includes any completed cycles.",
-	  reportable = true,
-	    sequence = 8)
-	public double getAvailability(double simTime) {
-		double total = this.getTotalTime(simTime);
-		double maintenance = getTimeInState_Maintenance(simTime);
-		double breakdown = getTimeInState_Breakdown(simTime);
-		return 1.0d - (maintenance + breakdown)/total;
-	}
-
-	@Output(name = "Reliability",
-	 description = "The ratio of Working time to the sum of Working time and Breakdown time. "
-	             + "All times exclude the initialisation period and include any completed cycles.",
-	  reportable = true,
-	    sequence = 9)
-	public double getReliability(double simTime) {
-		double working = getTimeInState_Working(simTime);
-		double breakdown = getTimeInState_Breakdown(simTime);
-		return working / (working + breakdown);
-	}
-
 	@Output(name = "NextMaintenanceTime",
 	 description = "The estimated time at which the next maintenance activity will start.",
 	  reportable = false,
-	    sequence = 10)
+	    sequence = 2)
 	public double getNextMaintenanceTime(double simTime) {
 		double ret = Double.POSITIVE_INFINITY;
 		for (DowntimeEntity down : immediateMaintenanceList.getValue()) {
@@ -619,7 +398,7 @@ public abstract class StateUserEntity extends StateEntity implements ThresholdUs
 	@Output(name = "NextBreakdownTime",
 	 description = "The estimated time at which the next breakdown will occur.",
 	  reportable = false,
-	    sequence = 11)
+	    sequence = 3)
 	public double getNextBreakdownTime(double simTime) {
 		double ret = Double.POSITIVE_INFINITY;
 		for (DowntimeEntity down : immediateBreakdownList.getValue()) {
