@@ -34,7 +34,10 @@ import com.jaamsim.input.Output;
 public class EntitySystem extends AbstractStateUserEntity {
 
 	@Keyword(description = "An expression returning a string that sets this object's present "
-	                     + "state.",
+	                     + "state. "
+	                     + "If left blank, the state will be set to Working if any of the "
+	                     + "entities in the system are working. "
+	                     + "It will be set to Idle if all of the entities in the system are idle.",
 	         exampleList = {"'[Server1].Working || [Server2].Working ? \"Working\" : \"Idle\"'"})
 	protected final ExpressionInput stateExp;
 
@@ -43,7 +46,6 @@ public class EntitySystem extends AbstractStateUserEntity {
 	{
 		stateExp = new ExpressionInput("StateExpression", KEY_INPUTS, null);
 		stateExp.setResultType(ExpResType.STRING);
-		stateExp.setRequired(true);
 		this.addInput(stateExp);
 	}
 
@@ -135,9 +137,15 @@ public class EntitySystem extends AbstractStateUserEntity {
 
 	@Override
 	public void setPresentState() {
-		double simTime = getSimTime();
+
+		// Calculate the default state if no StateExpression is provided
+		if (stateExp.isDefault()) {
+			super.setPresentState();
+			return;
+		}
 
 		// Calculate the state from the StateExpression input
+		double simTime = getSimTime();
 		try {
 			ExpResult res = ExpEvaluator.evaluateExpression(stateExp.getValue(), simTime);
 			setPresentState(res.stringVal);
