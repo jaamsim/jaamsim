@@ -207,42 +207,53 @@ public abstract class AbstractStateUserEntity extends StateEntity {
 	}
 
 	@Output(name = "Idle",
-	 description = "Returns TRUE if able to work but there is no work to perform.",
+	 description = "Returns TRUE if able to work but there is no work to perform. "
+	             + "For an EntitySystem, TRUE is returned if all the entities in the system are idle.",
 	    sequence = 1)
 	public boolean isIdle(double simTime) {
 		return isIdle();
 	}
 
 	@Output(name = "Working",
-	 description = "Returns TRUE if work is being performed.",
+	 description = "Returns TRUE if work is being performed. "
+	             + "For an EntitySystem, TRUE is returned if any of the entities in the system "
+	             + "are working.",
 	    sequence = 2)
 	public boolean isBusy(double simTime) {
 		return isBusy();
 	}
 
 	@Output(name = "Setup",
-	 description = "Returns TRUE if setup is being performed.",
+	 description = "Returns TRUE if setup is being performed. "
+	             + "For an EntitySystem, TRUE is returned if setup is being performed on any of "
+	             + "the entities in the system.",
 	    sequence = 3)
 	public boolean isSetup(double simTime) {
 		return isSetup();
 	}
 
 	@Output(name = "Maintenance",
-	 description = "Returns TRUE if maintenance is being performed.",
+	 description = "Returns TRUE if maintenance is being performed. "
+	             + "For an EntitySystem, TRUE is returned if maintenance is being performed on "
+	             + "any of the entities in the system.",
 	    sequence = 4)
 	public boolean isMaintenance(double simTime) {
 		return isMaintenance();
 	}
 
 	@Output(name = "Breakdown",
-	 description = "Returns TRUE if a breakdown is being repaired.",
+	 description = "Returns TRUE if a breakdown is being repaired. "
+	             + "For an EntitySystem, TRUE is returned if a breakdown is being repaired on "
+	             + "any of the entities in the system.",
 	    sequence = 5)
 	public boolean isBreakdown(double simTime) {
 		return isBreakdown();
 	}
 
 	@Output(name = "Stopped",
-	 description = "Returns TRUE if an operating limit prevents work from being performed.",
+	 description = "Returns TRUE if an operating limit prevents work from being performed. "
+	             + "For an EntitySystem, TRUE is returned if an operating limit prevents work "
+	             + "from being performed on any of the entities in the system.",
 	    sequence = 6)
 	public boolean isStopped(double simTime) {
 		return isStopped();
