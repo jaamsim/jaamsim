@@ -211,6 +211,7 @@ public class ContextMenu {
 		}
 
 		synchronized (menuItems) {
+			menu.addSeparator();
 			for (ContextMenuItem each : menuItems) {
 				if (each.supportsEntity(ent))
 					menu.add(new UIMenuItem(each, ent, x, y));
