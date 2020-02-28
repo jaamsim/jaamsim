@@ -18,7 +18,7 @@ package com.jaamsim.BasicObjects;
 
 import java.util.ArrayList;
 
-import com.jaamsim.ProcessFlow.StateUserEntity;
+import com.jaamsim.ProcessFlow.AbstractStateUserEntity;
 import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.events.EventHandle;
 import com.jaamsim.events.EventManager;
@@ -39,7 +39,7 @@ public class EntitySystem extends StateEntity {
 	         exampleList = {"'[Server1].Working || [Server2].Working ? \"Working\" : \"Idle\"'"})
 	protected final ExpressionInput stateExp;
 
-	private final ArrayList<StateUserEntity> entityList = new ArrayList<>();
+	private final ArrayList<AbstractStateUserEntity> entityList = new ArrayList<>();
 
 	{
 		stateExp = new ExpressionInput("StateExpression", KEY_INPUTS, null);
@@ -53,7 +53,7 @@ public class EntitySystem extends StateEntity {
 		super.earlyInit();
 
 		entityList.clear();
-		for (StateUserEntity stateEnt : getJaamSimModel().getClonesOfIterator(StateUserEntity.class)) {
+		for (AbstractStateUserEntity stateEnt : getJaamSimModel().getClonesOfIterator(AbstractStateUserEntity.class)) {
 			if (stateEnt.getEntitySystem() == this)
 				entityList.add(stateEnt);
 		}
@@ -96,7 +96,7 @@ public class EntitySystem extends StateEntity {
 	@Output(name = "EntityList",
 	 description = "Entities included in this system.",
 	    sequence = 1)
-	public ArrayList<StateUserEntity> getEntityList(double simTime) {
+	public ArrayList<AbstractStateUserEntity> getEntityList(double simTime) {
 		return entityList;
 	}
 
