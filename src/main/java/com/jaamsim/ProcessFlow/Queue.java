@@ -194,12 +194,10 @@ public class Queue extends LinkedComponent {
 
 		// Identify the objects that use this queue
 		userList.clear();
-		for (Entity each : getJaamSimModel().getClonesOfIterator(Entity.class)) {
-			if (each instanceof QueueUser) {
-				QueueUser u = (QueueUser)each;
-				if (u.getQueues().contains(this))
-					userList.add(u);
-			}
+		for (Entity each : getJaamSimModel().getClonesOfIterator(Entity.class, QueueUser.class)) {
+			QueueUser u = (QueueUser) each;
+			if (u.getQueues().contains(this))
+				userList.add(u);
 		}
 	}
 
