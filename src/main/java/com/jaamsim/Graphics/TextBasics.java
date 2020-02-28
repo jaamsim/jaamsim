@@ -20,6 +20,7 @@ package com.jaamsim.Graphics;
 import java.util.ArrayList;
 
 import com.jaamsim.DisplayModels.TextModel;
+import com.jaamsim.basicsim.GUIListener;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.ColourInput;
@@ -140,6 +141,13 @@ public abstract class TextBasics extends DisplayEntity implements TextEntity, Ed
 
 	@Override
 	public int handleEditKeyPressed(int keyCode, char keyChar, boolean shift, boolean control, boolean alt) {
+		if (keyChar == '\'') {
+			GUIListener gui = getJaamSimModel().getGUIListener();
+			if (gui != null)
+				gui.invokeErrorDialogBox("Input Error",
+						"Text cannot include a single quote or apostrophe (').");
+			return CONTINUE_EDITS;
+		}
 		return editableText.handleEditKeyPressed(keyCode, keyChar, shift, control, alt);
 	}
 

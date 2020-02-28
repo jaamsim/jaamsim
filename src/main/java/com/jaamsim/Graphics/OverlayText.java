@@ -23,6 +23,7 @@ import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.DisplayModels.TextModel;
 import com.jaamsim.StringProviders.StringProvConstant;
 import com.jaamsim.StringProviders.StringProvInput;
+import com.jaamsim.basicsim.GUIListener;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.datatypes.IntegerVector;
 import com.jaamsim.input.BooleanInput;
@@ -247,6 +248,13 @@ public class OverlayText extends OverlayEntity implements TextEntity, EditableTe
 
 	@Override
 	public int handleEditKeyPressed(int keyCode, char keyChar, boolean shift, boolean control, boolean alt) {
+		if (keyChar == '\'') {
+			GUIListener gui = getJaamSimModel().getGUIListener();
+			if (gui != null)
+				gui.invokeErrorDialogBox("Input Error",
+						"Text cannot include a single quote or apostrophe symbol (').");
+			return CONTINUE_EDITS;
+		}
 		return editableText.handleEditKeyPressed(keyCode, keyChar, shift, control, alt);
 	}
 
