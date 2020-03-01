@@ -2843,7 +2843,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				NumberFormat nf = NumberFormat.getNumberInstance(Locale.US);
 				DecimalFormat df = (DecimalFormat)nf;
 				df.applyPattern("0.######");
-				InputAgent.applyArgs(sim.getSimulation(), "RealTimeFactor", df.format(val));
+				KeywordIndex kw = InputAgent.formatArgs("RealTimeFactor", df.format(val));
+				InputAgent.storeAndExecute(new KeywordCommand(sim.getSimulation(), kw));
 				controlStartResume.requestFocusInWindow();
 			}
 		});
