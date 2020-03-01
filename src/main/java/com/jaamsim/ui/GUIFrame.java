@@ -3429,6 +3429,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		updateForRealTime(simulation.isRealTime(), simulation.getRealTimeFactor());
 		updateForPauseTime(simulation.getPauseTimeString());
 		update2dButton();
+		updateShowAxesButton();
+		updateShowGridButton();
 		updateFindButton();
 		updateFormatButtons(selectedEntity);
 		updateForSnapToGrid(simulation.isSnapToGrid());
@@ -3759,6 +3761,16 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		if (view == null)
 			return;
 		lockViewXYPlane.setSelected(view.is2DLocked());
+	}
+
+	private void updateShowAxesButton() {
+		DisplayEntity ent = (DisplayEntity) sim.getNamedEntity("XYZ-Axis");
+		xyzAxis.setSelected(ent != null && ent.getShow());
+	}
+
+	private void updateShowGridButton() {
+		DisplayEntity ent = (DisplayEntity) sim.getNamedEntity("XY-Grid");
+		grid.setSelected(ent != null && ent.getShow());
 	}
 
 	private void updateFindButton() {
