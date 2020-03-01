@@ -1424,10 +1424,6 @@ public class RenderManager implements DragSourceListener {
 		if (selectedEntity == null)
 			return -1;
 
-		if (selectedEntity == null) {
-			return -1;
-		}
-
 		ArrayList<Vec3d> points = selectedEntity.getPoints();
 		if (points == null)
 			return -1;
