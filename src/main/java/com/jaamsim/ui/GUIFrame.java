@@ -813,7 +813,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				InputAgent.applyBoolean(sim.getSimulation(), "ShowModelBuilder", true);
+				KeywordIndex kw = InputAgent.formatBoolean("ShowModelBuilder", true);
+				InputAgent.storeAndExecute(new KeywordCommand(sim.getSimulation(), kw));
 			}
 		} );
 		viewMenu.addSeparator();
@@ -826,7 +827,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				InputAgent.applyBoolean(sim.getSimulation(), "ShowObjectSelector", true);
+				KeywordIndex kw = InputAgent.formatBoolean("ShowObjectSelector", true);
+				InputAgent.storeAndExecute(new KeywordCommand(sim.getSimulation(), kw));
 			}
 		} );
 		viewMenu.add( objectSelectorMenuItem );
@@ -838,7 +840,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				InputAgent.applyBoolean(sim.getSimulation(), "ShowInputEditor", true);
+				KeywordIndex kw = InputAgent.formatBoolean("ShowInputEditor", true);
+				InputAgent.storeAndExecute(new KeywordCommand(sim.getSimulation(), kw));
 			}
 		} );
 		viewMenu.add( inputEditorMenuItem );
@@ -850,7 +853,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				InputAgent.applyBoolean(sim.getSimulation(), "ShowOutputViewer", true);
+				KeywordIndex kw = InputAgent.formatBoolean("ShowOutputViewer", true);
+				InputAgent.storeAndExecute(new KeywordCommand(sim.getSimulation(), kw));
 			}
 		} );
 		viewMenu.add( outputMenuItem );
@@ -862,7 +866,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				InputAgent.applyBoolean(sim.getSimulation(), "ShowPropertyViewer", true);
+				KeywordIndex kw = InputAgent.formatBoolean("ShowPropertyViewer", true);
+				InputAgent.storeAndExecute(new KeywordCommand(sim.getSimulation(), kw));
 			}
 		} );
 		viewMenu.add( propertiesMenuItem );
@@ -874,7 +879,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				InputAgent.applyBoolean(sim.getSimulation(), "ShowLogViewer", true);
+				KeywordIndex kw = InputAgent.formatBoolean("ShowLogViewer", true);
+				InputAgent.storeAndExecute(new KeywordCommand(sim.getSimulation(), kw));
 			}
 		} );
 		viewMenu.add( logMenuItem );
@@ -886,7 +892,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				InputAgent.applyBoolean(sim.getSimulation(), "ShowEventViewer", true);
+				KeywordIndex kw = InputAgent.formatBoolean("ShowEventViewer", true);
+				InputAgent.storeAndExecute(new KeywordCommand(sim.getSimulation(), kw));
 			}
 		} );
 		viewMenu.add( eventsMenuItem );
