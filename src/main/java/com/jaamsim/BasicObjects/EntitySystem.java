@@ -63,6 +63,8 @@ public class EntitySystem extends AbstractStateUserEntity {
 
 	@Override
 	public void validate() {
+		super.validate();
+
 		EntitySystem sys = getEntitySystem();
 		while(sys != null) {
 			if (sys == this)
