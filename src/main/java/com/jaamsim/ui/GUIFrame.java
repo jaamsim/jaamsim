@@ -2810,7 +2810,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			@Override
 			public void actionPerformed( ActionEvent event ) {
 				boolean bool = ((JToggleButton)event.getSource()).isSelected();
-				InputAgent.applyBoolean(sim.getSimulation(), "RealTime", bool);
+				KeywordIndex kw = InputAgent.formatBoolean("RealTime", bool);
+				InputAgent.storeAndExecute(new KeywordCommand(sim.getSimulation(), kw));
 				controlStartResume.requestFocusInWindow();
 			}
 		});
