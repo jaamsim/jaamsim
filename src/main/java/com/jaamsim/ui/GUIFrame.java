@@ -1413,7 +1413,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			@Override
 			public void actionPerformed( ActionEvent event ) {
 				boolean bool = showSubModels.isSelected();
-				InputAgent.applyBoolean(sim.getSimulation(), "ShowSubModels", bool);
+				KeywordIndex kw = InputAgent.formatBoolean("ShowSubModels", bool);
+				InputAgent.storeAndExecute(new KeywordCommand(sim.getSimulation(), kw));
 				setShowSubModels(bool);
 				controlStartResume.requestFocusInWindow();
 			}
