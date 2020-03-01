@@ -793,13 +793,15 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				InputAgent.applyBoolean(sim.getSimulation(), "ShowModelBuilder", false);
-				InputAgent.applyBoolean(sim.getSimulation(), "ShowObjectSelector", false);
-				InputAgent.applyBoolean(sim.getSimulation(), "ShowInputEditor", false);
-				InputAgent.applyBoolean(sim.getSimulation(), "ShowOutputViewer", false);
-				InputAgent.applyBoolean(sim.getSimulation(), "ShowPropertyViewer", false);
-				InputAgent.applyBoolean(sim.getSimulation(), "ShowLogViewer", false);
-				InputAgent.applyBoolean(sim.getSimulation(), "ShowEventViewer", false);
+				KeywordIndex[] kws = new KeywordIndex[7];
+				kws[0] = InputAgent.formatBoolean("ShowModelBuilder", false);
+				kws[1] = InputAgent.formatBoolean("ShowObjectSelector", false);
+				kws[2] = InputAgent.formatBoolean("ShowInputEditor", false);
+				kws[3] = InputAgent.formatBoolean("ShowOutputViewer", false);
+				kws[4] = InputAgent.formatBoolean("ShowPropertyViewer", false);
+				kws[5] = InputAgent.formatBoolean("ShowLogViewer", false);
+				kws[6] = InputAgent.formatBoolean("ShowEventViewer", false);
+				InputAgent.storeAndExecute(new KeywordCommand(sim.getSimulation(), kws));
 			}
 		} );
 		viewMenu.add( closeAllToolsMenuItem );
