@@ -29,6 +29,7 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
+import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.controllers.RenderManager;
@@ -87,16 +88,15 @@ public class FrameBox extends OSFixJFrame {
 	 */
 	private static class CloseListener extends WindowAdapter {
 		final KeywordIndex kw;
+
 		public CloseListener(String keyword) {
-			ArrayList<String> arg = new ArrayList<>(1);
-			arg.add("FALSE");
-			kw = new KeywordIndex(keyword, arg, null);
+			kw = InputAgent.formatBoolean(keyword, false);
 		}
 
 		@Override
 		public void windowClosing(WindowEvent e) {
 			Simulation simulation = GUIFrame.getJaamSimModel().getSimulation();
-			InputAgent.apply(simulation, kw);
+			InputAgent.storeAndExecute(new KeywordCommand(simulation, kw));
 		}
 	}
 
