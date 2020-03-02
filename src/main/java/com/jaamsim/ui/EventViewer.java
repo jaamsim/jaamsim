@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2009-2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2017-2019 JaamSim Software Inc.
+ * Copyright (C) 2017-2020 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,8 +24,6 @@ import java.awt.FlowLayout;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.util.ArrayList;
 
 import javax.swing.JButton;
@@ -182,21 +180,7 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 		setLocation(pt);
 		setSize(simulation.getEventViewerSize().get(0), simulation.getEventViewerSize().get(1));
 
-		addComponentListener(new ComponentAdapter() {
-
-			@Override
-			public void componentMoved(ComponentEvent e) {
-				Point pt = gui.getRelativeLocation(getLocation().x, getLocation().y);
-				Simulation simulation = GUIFrame.getJaamSimModel().getSimulation();
-				simulation.setEventViewerPos(pt.x, pt.y);
-			}
-
-			@Override
-			public void componentResized(ComponentEvent e) {
-				Simulation simulation = GUIFrame.getJaamSimModel().getSimulation();
-				simulation.setEventViewerSize(getSize().width, getSize().height);
-			}
-		});
+		addComponentListener(FrameBox.getSizePosAdapter(this, "EventViewerSize", "EventViewerPos"));
 
 		// Display the viewer
 		setVisible(true);

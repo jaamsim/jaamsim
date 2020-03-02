@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2019 JaamSim Software Inc.
+ * Copyright (C) 2019-2020 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,8 +18,6 @@
 package com.jaamsim.ui;
 
 import java.awt.Point;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
@@ -60,21 +58,7 @@ public class LogBox extends FrameBox {
 		setLocation(pt);
 		setSize(simulation.getLogViewerSize().get(0), simulation.getLogViewerSize().get(1));
 
-		addComponentListener(new ComponentAdapter() {
-
-			@Override
-			public void componentMoved(ComponentEvent e) {
-				Point pt = gui.getRelativeLocation(getLocation().x, getLocation().y);
-				Simulation simulation = GUIFrame.getJaamSimModel().getSimulation();
-				simulation.setLogViewerPos(pt.x, pt.y);
-			}
-
-			@Override
-			public void componentResized(ComponentEvent e) {
-				Simulation simulation = GUIFrame.getJaamSimModel().getSimulation();
-				simulation.setLogViewerSize(getSize().width, getSize().height);
-			}
-		});
+		addComponentListener(FrameBox.getSizePosAdapter(this, "LogViewerSize", "LogViewerPos"));
 	}
 
 	/**

@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2004-2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2019 JaamSim Software Inc.
+ * Copyright (C) 2019-2020 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,8 +18,6 @@
 package com.jaamsim.ui;
 
 import java.awt.Point;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -64,21 +62,7 @@ public class PropertyBox extends FrameBox {
 		setLocation(pt);
 		setSize(simulation.getPropertyViewerSize().get(0), simulation.getPropertyViewerSize().get(1));
 
-		addComponentListener(new ComponentAdapter() {
-
-			@Override
-			public void componentMoved(ComponentEvent e) {
-				Point pt = gui.getRelativeLocation(getLocation().x, getLocation().y);
-				Simulation simulation = GUIFrame.getJaamSimModel().getSimulation();
-				simulation.setPropertyViewerPos(pt.x, pt.y);
-			}
-
-			@Override
-			public void componentResized(ComponentEvent e) {
-				Simulation simulation = GUIFrame.getJaamSimModel().getSimulation();
-				simulation.setPropertyViewerSize(getSize().width, getSize().height);
-			}
-		});
+		addComponentListener(FrameBox.getSizePosAdapter(this, "PropertyViewerSize", "PropertyViewerPos"));
 	}
 
 	/**
