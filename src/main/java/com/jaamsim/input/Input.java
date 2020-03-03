@@ -696,7 +696,7 @@ public abstract class Input<T> {
 	public static void assertSumRange(DoubleVector vec, double min, double max)
 	throws InputErrorException {
 		double sum = vec.sum();
-		if (MathUtils.nearGT(sum, min) && MathUtils.nearLT(sum, max))
+		if ((MathUtils.nearGT(sum, min) || min == Double.NEGATIVE_INFINITY) && (MathUtils.nearLT(sum, max) || max == Double.POSITIVE_INFINITY))
 			return;
 
 		throw new InputErrorException(INP_ERR_SUMRANGE, min, max, sum);
