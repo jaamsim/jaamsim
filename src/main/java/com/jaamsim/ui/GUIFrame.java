@@ -3437,6 +3437,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		updateForSnapGridSpacing(simulation.getSnapGridSpacingString());
 		updateShowLabelsButton(simulation.isShowLabels());
 		updateShowSubModelsButton(simulation.isShowSubModels());
+		updateToolSizes();
+		updateToolLocations();
 	}
 
 	private void updateSaveButton() {
