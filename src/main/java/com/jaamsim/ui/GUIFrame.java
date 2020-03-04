@@ -4080,7 +4080,11 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	}
 
 	private void updateShowSubModelsButton(boolean bool) {
+		if (showSubModels.isSelected() == bool)
+			return;
 		showSubModels.setSelected(bool);
+		setShowSubModels(bool);
+		updateUI();
 	}
 
 	public JFrame getTool(String name) {
