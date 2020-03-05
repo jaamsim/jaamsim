@@ -51,6 +51,11 @@ public abstract class AbstractStateUserEntity extends StateEntity {
 	public AbstractStateUserEntity() {}
 
 	@Override
+	public boolean isValidState(String state) {
+		return true;
+	}
+
+	@Override
 	public void stateChanged(StateRecord prev, StateRecord next) {
 		super.stateChanged(prev, next);
 		if (!entitySystem.isDefault())

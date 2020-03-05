@@ -74,11 +74,6 @@ public class EntitySystem extends AbstractStateUserEntity {
 		}
 	}
 
-	@Override
-	public boolean isValidState(String state) {
-		return true;
-	}
-
 	public void performUpdate() {
 		if (updateHandle.isScheduled())
 			return;

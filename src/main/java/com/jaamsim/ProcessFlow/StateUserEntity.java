@@ -152,11 +152,6 @@ public abstract class StateUserEntity extends AbstractStateUserEntity implements
 		this.addState(STATE_STOPPED);
 	}
 
-	@Override
-	public boolean isValidState(String state) {
-		return true;
-	}
-
 	// ********************************************************************************************
 	// THRESHOLDS
 	// ********************************************************************************************
