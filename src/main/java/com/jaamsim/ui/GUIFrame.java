@@ -389,10 +389,11 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 	private static synchronized GUIFrame createInstance() {
 		instance = new GUIFrame();
+		UIUpdater updater = new UIUpdater(instance);
 		GUIFrame.registerCallback(new Runnable() {
 			@Override
 			public void run() {
-				SwingUtilities.invokeLater(new UIUpdater(instance));
+				SwingUtilities.invokeLater(updater);
 			}
 		});
 		return instance;
