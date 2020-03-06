@@ -4344,6 +4344,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			gui.setWindowDefaults();
 			gui.updateControls();
 			EntityPallet.update();
+			gui.clearUndoRedo();
 		}
 
 		// Resolve all input arguments against the current working directory
