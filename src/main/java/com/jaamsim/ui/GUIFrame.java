@@ -4630,26 +4630,24 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		// Load the selected file
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			clear();
-            File temp = chooser.getSelectedFile();
-			final GUIFrame gui1 = this;
-    		final File chosenfile = temp;
+			File chosenfile = chooser.getSelectedFile();
 			new Thread(new Runnable() {
 				@Override
 				public void run() {
 					sim.setRecordEdits(false);
+
 					Throwable ret = GUIFrame.configure(chosenfile);
 					if (ret != null)
 						handleConfigError(ret, chosenfile);
 
 					sim.setRecordEdits(true);
-
-					gui1.displayWindows();
+					displayWindows();
 					FrameBox.setSelectedEntity(sim.getSimulation(), false);
 				}
 			}).start();
 
 			setConfigFolder(chosenfile.getParent());
-        }
+		}
 	}
 
 	static Throwable configure(File file) {
