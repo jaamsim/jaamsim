@@ -17,7 +17,6 @@
  */
 package com.jaamsim.ui;
 
-import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -85,13 +84,6 @@ public class ObjectSelector extends FrameBox {
 		getContentPane().add(treeView);
 
 		entSequence = 0;
-
-		Simulation simulation = GUIFrame.getJaamSimModel().getSimulation();
-		GUIFrame gui = GUIFrame.getInstance();
-		Point pt = gui.getGlobalLocation(simulation.getObjectSelectorPos().get(0),
-				simulation.getObjectSelectorPos().get(1));
-		setLocation(pt);
-		setSize(simulation.getObjectSelectorSize().get(0), simulation.getObjectSelectorSize().get(1));
 
 		addComponentListener(FrameBox.getSizePosAdapter(this, "ObjectSelectorSize", "ObjectSelectorPos"));
 

@@ -19,7 +19,6 @@ package com.jaamsim.ui;
 
 import java.awt.Component;
 import java.awt.Cursor;
-import java.awt.Point;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
@@ -44,7 +43,6 @@ import javax.swing.tree.TreeSelectionModel;
 
 import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.basicsim.ObjectType;
-import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.controllers.RenderManager;
 
 public class EntityPallet extends OSFixJFrame implements DragGestureListener {
@@ -85,13 +83,6 @@ public class EntityPallet extends OSFixJFrame implements DragGestureListener {
 		tree.setCellRenderer(new TreeCellRenderer());
 		ToolTipManager.sharedInstance().registerComponent(tree);
 		ToolTipManager.sharedInstance().setDismissDelay(600000);
-
-		Simulation simulation = GUIFrame.getJaamSimModel().getSimulation();
-		GUIFrame gui = GUIFrame.getInstance();
-		Point pt = gui.getGlobalLocation(simulation.getModelBuilderPos().get(0),
-				simulation.getModelBuilderPos().get(1));
-		setLocation(pt);
-		setSize(simulation.getModelBuilderSize().get(0), simulation.getModelBuilderSize().get(1));
 
 		addComponentListener(FrameBox.getSizePosAdapter(this, "ModelBuilderSize", "ModelBuilderPos"));
 	}

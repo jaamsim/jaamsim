@@ -27,7 +27,6 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 
 import com.jaamsim.basicsim.Entity;
-import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.OutputHandle;
@@ -51,13 +50,6 @@ public class OutputBox extends FrameBox {
 		JScrollPane scrollPane = new JScrollPane(table);
 
 		getContentPane().add( scrollPane );
-
-		Simulation simulation = GUIFrame.getJaamSimModel().getSimulation();
-		GUIFrame gui = GUIFrame.getInstance();
-		Point pt = gui.getGlobalLocation(simulation.getOutputViewerPos().get(0),
-				simulation.getOutputViewerPos().get(1));
-		setLocation(pt);
-		setSize(simulation.getOutputViewerSize().get(0), simulation.getOutputViewerSize().get(1));
 
 		addComponentListener(FrameBox.getSizePosAdapter(this, "OutputViewerSize", "OutputViewerPos"));
 	}

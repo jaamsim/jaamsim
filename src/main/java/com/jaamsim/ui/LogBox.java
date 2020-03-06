@@ -17,7 +17,6 @@
  */
 package com.jaamsim.ui;
 
-import java.awt.Point;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
@@ -26,7 +25,6 @@ import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 
 import com.jaamsim.basicsim.JaamSimModel;
-import com.jaamsim.basicsim.Simulation;
 
 public class LogBox extends FrameBox {
 
@@ -50,13 +48,6 @@ public class LogBox extends FrameBox {
 		JScrollPane scrollPane = new JScrollPane(logArea);
 
 		getContentPane().add( scrollPane );
-
-		Simulation simulation = GUIFrame.getJaamSimModel().getSimulation();
-		GUIFrame gui = GUIFrame.getInstance();
-		Point pt = gui.getGlobalLocation(simulation.getLogViewerPos().get(0),
-				simulation.getLogViewerPos().get(1));
-		setLocation(pt);
-		setSize(simulation.getLogViewerSize().get(0), simulation.getLogViewerSize().get(1));
 
 		addComponentListener(FrameBox.getSizePosAdapter(this, "LogViewerSize", "LogViewerPos"));
 	}

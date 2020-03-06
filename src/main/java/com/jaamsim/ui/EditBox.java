@@ -17,7 +17,6 @@
  */
 package com.jaamsim.ui;
 
-import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -38,7 +37,6 @@ import javax.swing.table.TableModel;
 import com.jaamsim.Samples.SampleListInput;
 import com.jaamsim.StringProviders.StringProvListInput;
 import com.jaamsim.basicsim.Entity;
-import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.FileInput;
 import com.jaamsim.input.Input;
@@ -98,14 +96,6 @@ public class EditBox extends FrameBox {
 			}
 		});
 		getContentPane().add(jTabbedFrame);
-
-		// Set the size and position of the editor
-		Simulation simulation = GUIFrame.getJaamSimModel().getSimulation();
-		GUIFrame gui = GUIFrame.getInstance();
-		Point pt = gui.getGlobalLocation(simulation.getInputEditorPos().get(0),
-				simulation.getInputEditorPos().get(1));
-		setLocation(pt);
-		setSize(simulation.getInputEditorSize().get(0), simulation.getInputEditorSize().get(1));
 
 		// Save changes to the editor's size and position
 		addComponentListener(FrameBox.getSizePosAdapter(this, "InputEditorSize", "InputEditorPos"));

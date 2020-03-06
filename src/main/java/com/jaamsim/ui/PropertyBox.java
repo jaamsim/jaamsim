@@ -17,7 +17,6 @@
  */
 package com.jaamsim.ui;
 
-import java.awt.Point;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,7 +34,6 @@ import javax.swing.table.TableModel;
 
 import com.jaamsim.Graphics.PolylineInfo;
 import com.jaamsim.basicsim.Entity;
-import com.jaamsim.basicsim.Simulation;
 
 /**
  * Class to display information about model objects. <br>
@@ -54,13 +52,6 @@ public class PropertyBox extends FrameBox {
 
 		jTabbedFrame.addChangeListener(new TabListener());
 		getContentPane().add(jTabbedFrame);
-
-		Simulation simulation = GUIFrame.getJaamSimModel().getSimulation();
-		GUIFrame gui = GUIFrame.getInstance();
-		Point pt = gui.getGlobalLocation(simulation.getPropertyViewerPos().get(0),
-				simulation.getPropertyViewerPos().get(1));
-		setLocation(pt);
-		setSize(simulation.getPropertyViewerSize().get(0), simulation.getPropertyViewerSize().get(1));
 
 		addComponentListener(FrameBox.getSizePosAdapter(this, "PropertyViewerSize", "PropertyViewerPos"));
 	}

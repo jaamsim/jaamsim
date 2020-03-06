@@ -21,7 +21,6 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -37,7 +36,6 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
 
-import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.events.EventTraceListener;
 import com.jaamsim.events.ProcessTarget;
@@ -171,14 +169,7 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 		condSp.setPreferredSize(new Dimension( 800, 300 ));
 		jTabbedFrame.addTab("Conditional Events", null, condSp, null);
 
-		// Size and position of the viewer
 		pack();
-		Simulation simulation = GUIFrame.getJaamSimModel().getSimulation();
-		GUIFrame gui = GUIFrame.getInstance();
-		Point pt = gui.getGlobalLocation(simulation.getEventViewerPos().get(0),
-				simulation.getEventViewerPos().get(1));
-		setLocation(pt);
-		setSize(simulation.getEventViewerSize().get(0), simulation.getEventViewerSize().get(1));
 
 		addComponentListener(FrameBox.getSizePosAdapter(this, "EventViewerSize", "EventViewerPos"));
 
