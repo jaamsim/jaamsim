@@ -324,17 +324,6 @@ public class RenderManager implements DragSourceListener {
 
 	public void setActiveWindow(int windowID) {
 		activeWindowID = windowID;
-		final View activeView = windowToViewMap.get(windowID);
-		if (activeView != null)
-		{
-			EventQueue.invokeLater(new Runnable() {
-				@Override
-				public void run() {
-					GUIFrame.getInstance().updateControls();
-				}
-			});
-
-		}
 	}
 
 	public static boolean isGood() {
