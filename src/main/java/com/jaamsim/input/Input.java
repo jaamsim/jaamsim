@@ -164,16 +164,14 @@ public abstract class Input<T> {
 	public Input(String key, String cat, T def) {
 		keyword = key;
 		category = cat;
-		setDefaultValue(def);
+		defValue = def;
 
-		edited = false;
 		promptReqd = true;
-		isDef = true;
 		hidden = false;
-		valueTokens = null;
 		defText = null;
 		isReqd = false;
-		isValid = true;
+
+		reset();
 	}
 
 	/**
