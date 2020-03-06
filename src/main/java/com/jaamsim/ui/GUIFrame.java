@@ -3790,7 +3790,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 	public void setSelectedEnt(Entity ent) {
 		selectedEntity = ent;
-		updateFormatButtons(ent);
 	}
 
 	private void updateFormatButtons(Entity ent) {
