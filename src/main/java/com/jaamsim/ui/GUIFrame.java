@@ -4629,6 +4629,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 		// Load the selected file
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
+			clear();
             File temp = chooser.getSelectedFile();
 			final GUIFrame gui1 = this;
     		final File chosenfile = temp;
@@ -4636,7 +4637,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				@Override
 				public void run() {
 					sim.setRecordEdits(false);
-					gui1.clear();
 					Throwable ret = GUIFrame.configure(chosenfile);
 					if (ret != null)
 						handleConfigError(ret, chosenfile);
