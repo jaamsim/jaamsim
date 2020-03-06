@@ -4332,14 +4332,15 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 		// Load the autoload file
 		sim.autoLoad();
+		Simulation simulation = sim.getSimulation();
 
 		// Show the Control Panel
 		if (gui != null) {
-			gui.setTitle(sim.getSimulation().getModelName());
+			gui.setTitle(simulation.getModelName());
 			gui.setVisible(true);
 			gui.calcWindowDefaults();
 			gui.setLocation(gui.getX(), gui.getY());  //FIXME remove when setLocation is fixed for Windows 10
-			gui.setWindowDefaults(sim.getSimulation());
+			gui.setWindowDefaults(simulation);
 			gui.updateControls();
 			EntityPallet.update();
 			gui.clearUndoRedo();
@@ -4416,7 +4417,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			gui.toFront();
 
 		// Set the selected entity to the Simulation object
-		FrameBox.setSelectedEntity(sim.getSimulation(), false);
+		FrameBox.setSelectedEntity(simulation, false);
 	}
 
 	/*
