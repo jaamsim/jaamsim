@@ -483,7 +483,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		// Build a completely new simulation model
 		sim.clear();
 		sim.autoLoad();
-		setWindowDefaults();
+		setWindowDefaults(sim.getSimulation());
 
 		EntityPallet.update();
 
@@ -4213,8 +4213,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		setSize(width, height);
 	}
 
-	public void setWindowDefaults() {
-		Simulation simulation = sim.getSimulation();
+	public void setWindowDefaults(Simulation simulation) {
 		simulation.setModelBuilderDefaults(   COL1_START, TOP_START,     COL1_WIDTH, HALF_TOP    );
 		simulation.setObjectSelectorDefaults( COL1_START, BOTTOM_START,  COL1_WIDTH, HALF_BOTTOM );
 		simulation.setInputEditorDefaults(    COL2_START, LOWER_START,   COL2_WIDTH, LOWER_HEIGHT);
@@ -4340,7 +4339,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			gui.setVisible(true);
 			gui.calcWindowDefaults();
 			gui.setLocation(gui.getX(), gui.getY());  //FIXME remove when setLocation is fixed for Windows 10
-			gui.setWindowDefaults();
+			gui.setWindowDefaults(sim.getSimulation());
 			gui.updateControls();
 			EntityPallet.update();
 			gui.clearUndoRedo();
