@@ -127,6 +127,7 @@ import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.Parser;
 import com.jaamsim.math.Color4d;
+import com.jaamsim.math.MathUtils;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.DistanceUnit;
@@ -2841,6 +2842,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			@Override
 			public void stateChanged( ChangeEvent e ) {
 				Double val = (Double)((JSpinner)e.getSource()).getValue();
+				if (MathUtils.near(val, sim.getSimulation().getRealTimeFactor()))
+					return;
 				NumberFormat nf = NumberFormat.getNumberInstance(Locale.US);
 				DecimalFormat df = (DecimalFormat)nf;
 				df.applyPattern("0.######");
