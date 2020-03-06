@@ -275,9 +275,13 @@ public abstract class Input<T> {
 		return defText;
 	}
 
+	/**
+	 * Sets the default value and returns the input to its new default state.
+	 * @param val - new default value
+	 */
 	public void setDefaultValue(T val) {
 		defValue = val;
-		value = val;
+		reset();
 	}
 
 	public T getDefaultValue() {
