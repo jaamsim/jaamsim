@@ -4035,30 +4035,13 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	}
 
 	/**
-	 * Displays the view windows and tools on startup.
+	 * Displays the view windows specified in the configuration file.
 	 */
 	public void displayWindows() {
-
-		// Show the view windows specified in the configuration file
 		for (View v : sim.getViews()) {
 			if (v.showWindow())
 				RenderManager.inst().createWindow(v);
 		}
-
-		// Set the initial state for the "Show Axes" check box
-		DisplayEntity ent = (DisplayEntity) sim.getNamedEntity("XYZ-Axis");
-		if (ent == null) {
-			xyzAxis.setEnabled(false);
-			xyzAxis.setSelected(false);
-		}
-		else {
-			xyzAxis.setEnabled(true);
-			xyzAxis.setSelected(ent.getShow());
-		}
-
-		// Set the initial state for the "Show Grid" check box
-		ent = (DisplayEntity) sim.getNamedEntity("XY-Grid");
-		grid.setSelected(ent != null && ent.getShow());
 	}
 
 	public void setShowLabels(boolean bool) {
