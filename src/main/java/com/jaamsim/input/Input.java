@@ -176,8 +176,11 @@ public abstract class Input<T> {
 		isValid = true;
 	}
 
+	/**
+	 * Sets the input to its default value.
+	 */
 	public void reset() {
-		this.setDefaultValue( this.getDefaultValue() );
+		value = defValue;
 		valueTokens = null;
 		edited = false;
 		isDef = true;
