@@ -4110,12 +4110,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			EventViewer.getInstance().setVisible(false);
 	}
 
-	private void updateToolWindows(Simulation simulation) {
-		showActiveTools(simulation);
-		updateToolSizes(simulation);
-		updateToolLocations(simulation);
-	}
-
 	private void updateToolVisibilities(Simulation simulation) {
 		boolean iconified = (this.getExtendedState() == Frame.ICONIFIED);
 		setFrameVisibility(EntityPallet.getInstance(), !iconified && simulation.isModelBuilderVisible());
@@ -4659,8 +4653,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			gui.setTitle( sim.getSimulation().getModelName() + " - " + sim.getRunName() );
 			gui.updateForSimulationState(GUIFrame.SIM_STATE_CONFIGURED);
 			gui.enableSave(sim.isRecordEditsFound());
-
-			gui.updateToolWindows(sim.getSimulation());
 		}
 		return ret;
 	}
