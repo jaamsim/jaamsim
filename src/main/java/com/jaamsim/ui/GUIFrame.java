@@ -778,6 +778,10 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
+				EntityPallet.getInstance().toFront();
+				ObjectSelector.getInstance().toFront();
+				EditBox.getInstance().toFront();
+				OutputBox.getInstance().toFront();
 				KeywordIndex[] kws = new KeywordIndex[4];
 				kws[0] = InputAgent.formatBoolean("ShowModelBuilder", true);
 				kws[1] = InputAgent.formatBoolean("ShowObjectSelector", true);
@@ -815,6 +819,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				EntityPallet.getInstance().toFront();
 				KeywordIndex kw = InputAgent.formatBoolean("ShowModelBuilder", true);
 				InputAgent.storeAndExecute(new KeywordCommand(sim.getSimulation(), kw));
 			}
@@ -829,6 +834,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				ObjectSelector.getInstance().toFront();
 				KeywordIndex kw = InputAgent.formatBoolean("ShowObjectSelector", true);
 				InputAgent.storeAndExecute(new KeywordCommand(sim.getSimulation(), kw));
 			}
@@ -842,6 +848,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				EditBox.getInstance().toFront();
 				KeywordIndex kw = InputAgent.formatBoolean("ShowInputEditor", true);
 				InputAgent.storeAndExecute(new KeywordCommand(sim.getSimulation(), kw));
 			}
@@ -855,6 +862,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				OutputBox.getInstance().toFront();
 				KeywordIndex kw = InputAgent.formatBoolean("ShowOutputViewer", true);
 				InputAgent.storeAndExecute(new KeywordCommand(sim.getSimulation(), kw));
 			}
@@ -868,6 +876,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				PropertyBox.getInstance().toFront();
 				KeywordIndex kw = InputAgent.formatBoolean("ShowPropertyViewer", true);
 				InputAgent.storeAndExecute(new KeywordCommand(sim.getSimulation(), kw));
 			}
@@ -881,6 +890,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				LogBox.getInstance().toFront();
 				KeywordIndex kw = InputAgent.formatBoolean("ShowLogViewer", true);
 				InputAgent.storeAndExecute(new KeywordCommand(sim.getSimulation(), kw));
 			}
@@ -894,6 +904,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				EventViewer.getInstance().toFront();
 				KeywordIndex kw = InputAgent.formatBoolean("ShowEventViewer", true);
 				InputAgent.storeAndExecute(new KeywordCommand(sim.getSimulation(), kw));
 			}
