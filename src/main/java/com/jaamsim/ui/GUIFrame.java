@@ -4107,19 +4107,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		return ret;
 	}
 
-	@Override
-	public void showTool(String name, boolean bool) {
-		if (name.equals("EventViewer") && !bool) {
-			if (EventViewer.hasInstance())
-				EventViewer.getInstance().dispose();
-			return;
-		}
-		JFrame tool = getTool(name);
-		tool.setVisible(bool);
-		if (bool)
-			tool.toFront();
-	}
-
 	/**
 	 * Re-open any Tools windows that have been closed temporarily.
 	 */
