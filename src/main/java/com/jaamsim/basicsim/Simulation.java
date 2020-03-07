@@ -694,12 +694,6 @@ public class Simulation extends Entity {
 			gui.showTool("EventViewer", showEventViewer.getValue());
 			return;
 		}
-
-		if (in == controlPanelWidth) {
-			int width = controlPanelWidth.getValue();
-			gui.setControlPanelWidth(width);
-			return;
-		}
 	}
 
 	@Override
@@ -1057,6 +1051,10 @@ public class Simulation extends Entity {
 			return;
 		KeywordIndex kw = InputAgent.formatIntegers(controlPanelWidth.getKeyword(), width);
 		InputAgent.storeAndExecute(new KeywordCommand(this, kw));
+	}
+
+	public int getControlPanelWidth() {
+		return controlPanelWidth.getValue();
 	}
 
 	public boolean isModelBuilderVisible() {
