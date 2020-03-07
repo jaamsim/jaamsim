@@ -3441,6 +3441,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		updateForSnapGridSpacing(simulation.getSnapGridSpacingString());
 		updateShowLabelsButton(simulation.isShowLabels());
 		updateShowSubModelsButton(simulation.isShowSubModels());
+		updateToolVisibilities(simulation);
 		updateToolSizes(simulation);
 		updateToolLocations(simulation);
 		setControlPanelWidth(simulation.getControlPanelWidth());
@@ -4156,6 +4157,31 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		showActiveTools(simulation);
 		updateToolSizes(simulation);
 		updateToolLocations(simulation);
+	}
+
+	private void updateToolVisibilities(Simulation simulation) {
+		boolean iconified = (this.getExtendedState() == Frame.ICONIFIED);
+		setFrameVisibility(EntityPallet.getInstance(), !iconified && simulation.isModelBuilderVisible());
+		setFrameVisibility(ObjectSelector.getInstance(), !iconified && simulation.isObjectSelectorVisible());
+		setFrameVisibility(EditBox.getInstance(), !iconified && simulation.isInputEditorVisible());
+		setFrameVisibility(OutputBox.getInstance(), !iconified && simulation.isOutputViewerVisible());
+		setFrameVisibility(PropertyBox.getInstance(), !iconified && simulation.isPropertyViewerVisible());
+		setFrameVisibility(LogBox.getInstance(), !iconified && simulation.isLogViewerVisible());
+
+		if (!simulation.isEventViewerVisible()) {
+			if (EventViewer.hasInstance())
+				EventViewer.getInstance().dispose();
+			return;
+		}
+		setFrameVisibility(EventViewer.getInstance(), !iconified);
+	}
+
+	private void setFrameVisibility(JFrame frame, boolean bool) {
+		if (frame.isVisible() == bool)
+			return;
+		frame.setVisible(bool);
+		if (bool)
+			frame.toFront();
 	}
 
 	public void updateToolSizes(Simulation simulation) {

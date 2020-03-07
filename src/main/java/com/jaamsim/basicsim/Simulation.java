@@ -652,48 +652,6 @@ public class Simulation extends Entity {
 			Unit.setPreferredUnitList(this.getJaamSimModel(), displayedUnits.getValue());
 			return;
 		}
-
-		// ****************************************************************************************
-
-		// GUI keywords that require an instance of GUIFrame
-		GUIListener gui = getJaamSimModel().getGUIListener();
-		if (gui == null)
-			return;
-
-		if (in == showModelBuilder) {
-			gui.showTool("ModelBuilder", showModelBuilder.getValue());
-			return;
-		}
-
-		if (in == showObjectSelector) {
-			gui.showTool("ObjectSelector", showObjectSelector.getValue());
-			return;
-		}
-
-		if (in == showInputEditor) {
-			gui.showTool("InputEditor", showInputEditor.getValue());
-			return;
-		}
-
-		if (in == showOutputViewer) {
-			gui.showTool("OutputViewer", showOutputViewer.getValue());
-			return;
-		}
-
-		if (in == showPropertyViewer) {
-			gui.showTool("PropertyViewer", showPropertyViewer.getValue());
-			return;
-		}
-
-		if (in == showLogViewer) {
-			gui.showTool("LogViewer", showLogViewer.getValue());
-			return;
-		}
-
-		if (in == showEventViewer) {
-			gui.showTool("EventViewer", showEventViewer.getValue());
-			return;
-		}
 	}
 
 	@Override
