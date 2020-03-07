@@ -23,7 +23,6 @@ public interface GUIListener {
 	public void handleInputError(Throwable t, Entity ent);
 	public void exit(int errorCode);
 	public void showTool(String name, boolean bool);
-	public void setControlPanelWidth(int width);
 	public void invokeErrorDialogBox(String title, String msg);
 	public void updateObjectSelector();
 	public void updateModelBuilder();
