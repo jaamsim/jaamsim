@@ -357,7 +357,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				if (simulation == null)
 					return;
 				windowOffset = getLocation();
-				updateToolLocations();
+				updateToolLocations(simulation);
 				updateViewLocations();
 			}
 		});
@@ -439,7 +439,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			RenderManager.inst().createWindow(activeView);
 
 		// Re-open the tools
-		showActiveTools();
+		showActiveTools(sim.getSimulation());
 		updateUI();
 	}
 
@@ -3437,8 +3437,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		updateForSnapGridSpacing(simulation.getSnapGridSpacingString());
 		updateShowLabelsButton(simulation.isShowLabels());
 		updateShowSubModelsButton(simulation.isShowSubModels());
-		updateToolSizes();
-		updateToolLocations();
+		updateToolSizes(simulation);
+		updateToolLocations(simulation);
 		setControlPanelWidth(simulation.getControlPanelWidth());
 	}
 
@@ -4136,8 +4136,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	/**
 	 * Re-open any Tools windows that have been closed temporarily.
 	 */
-	public void showActiveTools() {
-		Simulation simulation = sim.getSimulation();
+	public void showActiveTools(Simulation simulation) {
 		EntityPallet.getInstance().setVisible(simulation.isModelBuilderVisible());
 		ObjectSelector.getInstance().setVisible(simulation.isObjectSelectorVisible());
 		EditBox.getInstance().setVisible(simulation.isInputEditorVisible());
@@ -4167,16 +4166,13 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			EventViewer.getInstance().setVisible(false);
 	}
 
-	private void updateToolWindows() {
-		if (sim.getSimulation() == null)
-			return;
-		showActiveTools();
-		updateToolSizes();
-		updateToolLocations();
+	private void updateToolWindows(Simulation simulation) {
+		showActiveTools(simulation);
+		updateToolSizes(simulation);
+		updateToolLocations(simulation);
 	}
 
-	public void updateToolSizes() {
-		Simulation simulation = sim.getSimulation();
+	public void updateToolSizes(Simulation simulation) {
 		EntityPallet.getInstance().setSize(simulation.getModelBuilderSize().get(0),
 				simulation.getModelBuilderSize().get(1));
 		ObjectSelector.getInstance().setSize(simulation.getObjectSelectorSize().get(0),
@@ -4195,8 +4191,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		}
 	}
 
-	public void updateToolLocations() {
-		Simulation simulation = sim.getSimulation();
+	public void updateToolLocations(Simulation simulation) {
 		setToolLocation(EntityPallet.getInstance(), simulation.getModelBuilderPos().get(0),
 				simulation.getModelBuilderPos().get(1));
 		setToolLocation(ObjectSelector.getInstance(), simulation.getObjectSelectorPos().get(0),
@@ -4697,7 +4692,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			gui.updateForSimulationState(GUIFrame.SIM_STATE_CONFIGURED);
 			gui.enableSave(sim.isRecordEditsFound());
 
-			gui.updateToolWindows();
+			gui.updateToolWindows(sim.getSimulation());
 			gui.setShowLabels(sim.getSimulation().isShowLabels());
 		}
 		return ret;
