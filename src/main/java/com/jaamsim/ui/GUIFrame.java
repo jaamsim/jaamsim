@@ -410,9 +410,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 	public void closeWindows() {
 
-		// Close all the tools
-		closeAllTools();
-
 		// Save whether each window is open or closed
 		for (View v : sim.getViews()) {
 			v.setKeepWindowOpen(v.showWindow());
@@ -420,6 +417,9 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 		// Close all the view windows
 		RenderManager.clear();
+
+		// Close all the tools
+		updateUI();
 	}
 
 	public void showWindows() {
