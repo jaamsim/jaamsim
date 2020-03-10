@@ -17,6 +17,7 @@
 package com.jaamsim.basicsim;
 
 import com.jaamsim.Commands.Command;
+import com.jaamsim.ui.View;
 
 public interface GUIListener {
 
@@ -29,5 +30,10 @@ public interface GUIListener {
 	public void updateAll();
 	public void deleteEntity(Entity ent);
 	public void renameEntity(Entity ent, String newName);
+	public void addView(View v);
+	public void removeView(View v);
+	public void createWindow(View v);
+	public void closeWindow(View v);
+	public int getNextViewID();
 
 }

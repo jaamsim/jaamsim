@@ -143,6 +143,9 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 	private static JaamSimModel sim;
 
+	private final ArrayList<View> views = new ArrayList<>();
+	private int nextViewID = 1;
+
 	// global shutdown flag
 	static private AtomicBoolean shuttingDown;
 
@@ -4213,6 +4216,46 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		simulation.setLogViewerDefaults(      COL4_START, LOWER_START,   COL4_WIDTH, LOWER_HEIGHT);
 		simulation.setEventViewerDefaults(    COL4_START, LOWER_START,   COL4_WIDTH, LOWER_HEIGHT);
 		simulation.setControlPanelWidthDefault(DEFAULT_GUI_WIDTH);
+	}
+
+	public ArrayList<View> getViews() {
+		synchronized (views) {
+			return views;
+		}
+	}
+
+	@Override
+	public void addView(View v) {
+		synchronized (views) {
+			views.add(v);
+		}
+	}
+
+	@Override
+	public void removeView(View v) {
+		synchronized (views) {
+			views.remove(v);
+		}
+	}
+
+	@Override
+	public void createWindow(View v) {
+		if (!RenderManager.isGood())
+			return;
+		RenderManager.inst().createWindow(v);
+	}
+
+	@Override
+	public void closeWindow(View v) {
+		if (!RenderManager.isGood())
+			return;
+		RenderManager.inst().closeWindow(v);
+	}
+
+	@Override
+	public int getNextViewID() {
+		nextViewID++;
+		return nextViewID;
 	}
 
 	// ******************************************************************************************************
