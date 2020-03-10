@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018-2019 JaamSim Software Inc.
+ * Copyright (C) 2018-2020 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,6 +29,7 @@ import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.Region;
 import com.jaamsim.basicsim.Entity;
+import com.jaamsim.basicsim.GUIListener;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.datatypes.IntegerVector;
 import com.jaamsim.input.BooleanInput;
@@ -183,26 +184,33 @@ public class View extends Entity {
 	}
 
 	public View() {
-		getJaamSimModel().addView(this);
-		viewID = getJaamSimModel().getNextViewID();
+		GUIListener gui = getJaamSimModel().getGUIListener();
+		if (gui == null) {
+			viewID = -1;
+			return;
+		}
+		gui.addView(this);
+		viewID = gui.getNextViewID();
 	}
 
 	@Override
 	public void kill() {
 		super.kill();
-		getJaamSimModel().removeView(this);
-		if (RenderManager.isGood()) {
-			RenderManager.inst().closeWindow(this);
-		}
+		GUIListener gui = getJaamSimModel().getGUIListener();
+		if (gui == null)
+			return;
+		gui.removeView(this);
+		gui.closeWindow(this);
 	}
 
 	@Override
 	public void restore(String name) {
 		super.restore(name);
-		getJaamSimModel().addView(this);
-		if (RenderManager.isGood()) {
-			RenderManager.inst().createWindow(this);
-		}
+		GUIListener gui = getJaamSimModel().getGUIListener();
+		if (gui == null)
+			return;
+		gui.addView(this);
+		gui.createWindow(this);
 	}
 
 
