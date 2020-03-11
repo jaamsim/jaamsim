@@ -84,7 +84,6 @@ public class ExpressionBox extends JDialog {
 
 	private static final char[] controlChars = {' ', '.', ',', ';', '(', ')', '{', '}', '[', ']', '"', '\'', '#', '\t', '\n'};
 	private static final char[] mathChars = { '+', '-', '*', '/', '^', '%', '?', '=', '>', '<', '!', '&', '|'};
-	private static final char[] whiteSpaceChars = { ' ', '\t', '\n' };
 
 	public static final int CANCEL_OPTION = 1;  // Cancel button is clicked
 	public static final int APPROVE_OPTION = 0; // Accept button is clicked
@@ -780,35 +779,27 @@ public class ExpressionBox extends JDialog {
 	}
 
 	private Entity getEntityReference(String text, int dotIndex) {
-		if (dotIndex <= 0)
-			return null;
 
 		// Find the previous part of the text that might correspond to an entity
-		int startIndex = 0;
 		for (int i = dotIndex - 1; i >= 0; i--) {
-			char c = text.charAt(i);
-			if (c == '\'' || isWhiteSpace(c) || isMathChar(c)) {
-				startIndex = i + 1;
-				break;
+			String expString = text.substring(i, dotIndex);
+			//System.out.println(expString);
+
+			// Try to evaluate the string as an expression that returns an entity
+			Entity thisEnt = EditBox.getInstance().getCurrentEntity();
+			double simTime = GUIFrame.getJaamSimModel().getSimTime();
+			try {
+				ExpEvaluator.EntityParseContext pc = ExpEvaluator.getParseContext(thisEnt, expString);
+				Expression exp = ExpParser.parseExpression(pc, expString);
+				ExpParser.assertResultType(exp, ExpResType.ENTITY);
+
+				ExpResult res = ExpEvaluator.evaluateExpression(exp, simTime);
+				//System.out.println(res.entVal);
+				return res.entVal;
 			}
+			catch (Throwable e) {}
 		}
-		String expString = text.substring(startIndex, dotIndex);
-		//System.out.println(expString);
-
-		// Try to evaluate the string as an expression that returns an entity
-		Entity thisEnt = EditBox.getInstance().getCurrentEntity();
-		double simTime = GUIFrame.getJaamSimModel().getSimTime();
-		try {
-			ExpEvaluator.EntityParseContext pc = ExpEvaluator.getParseContext(thisEnt, expString);
-			Expression exp = ExpParser.parseExpression(pc, expString);
-			ExpParser.assertResultType(exp, ExpResType.ENTITY);
-
-			ExpResult res = ExpEvaluator.evaluateExpression(exp, simTime);
-			return res.entVal;
-		}
-		catch (Throwable e) {
-			return null;
-		}
+		return null;
 	}
 
 	public boolean isControlChar(char ch) {
@@ -817,10 +808,6 @@ public class ExpressionBox extends JDialog {
 
 	public boolean isMathChar(char ch) {
 		return containsChar(mathChars, ch);
-	}
-
-	public boolean isWhiteSpace(char ch) {
-		return containsChar(whiteSpaceChars, ch);
 	}
 
 	private boolean containsChar(char[] chars, char ch) {
