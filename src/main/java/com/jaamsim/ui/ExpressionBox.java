@@ -53,7 +53,6 @@ import com.jaamsim.Graphics.OverlayEntity;
 import com.jaamsim.Graphics.Region;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.JaamSimModel;
-import com.jaamsim.input.ExpError;
 import com.jaamsim.input.ExpEvaluator;
 import com.jaamsim.input.ExpParser;
 import com.jaamsim.input.ExpResType;
@@ -807,7 +806,7 @@ public class ExpressionBox extends JDialog {
 			ExpResult res = ExpEvaluator.evaluateExpression(exp, simTime);
 			return res.entVal;
 		}
-		catch (ExpError e) {
+		catch (Throwable e) {
 			return null;
 		}
 	}
