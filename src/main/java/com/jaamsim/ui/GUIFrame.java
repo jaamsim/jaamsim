@@ -4275,6 +4275,13 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		return ret;
 	}
 
+	public void setWindowPos(View v, int x, int y, int width, int height) {
+		Point posFix = OSFix.getLocationAdustment();
+		Point sizeFix = OSFix.getSizeAdustment();
+		Point pt = getRelativeLocation(x - posFix.x, y - posFix.y);
+		v.setWindowPos(pt.x, pt.y, width - sizeFix.x, height - sizeFix.y);
+	}
+
 	// ******************************************************************************************************
 	// MAIN
 	// ******************************************************************************************************

@@ -23,7 +23,6 @@ import java.awt.Point;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Locale;
 
 import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.Graphics.DisplayEntity;
@@ -411,23 +410,14 @@ public class View extends Entity {
 		ArrayList<KeywordIndex> kwList = new ArrayList<>(2);
 
 		IntegerVector pos = windowPos.getValue();
-		Point posFix = OSFix.getLocationAdustment();
-		Point pt = GUIFrame.getInstance().getRelativeLocation(x - posFix.x, y - posFix.y);
-		if (pos.get(0) != pt.x || pos.get(1) != pt.y) {
-			ArrayList<String> tokens = new ArrayList<>(2);
-			tokens.add(String.format((Locale)null, "%d", pt.x));
-			tokens.add(String.format((Locale)null, "%d", pt.y));
-			KeywordIndex posKw = new KeywordIndex(this.windowPos.getKeyword(), tokens, null);
+		if (pos.get(0) != x || pos.get(1) != y) {
+			KeywordIndex posKw = InputAgent.formatIntegers(windowPos.getKeyword(), x, y);
 			kwList.add(posKw);
 		}
 
 		IntegerVector size = windowSize.getValue();
-		Point sizeFix = OSFix.getSizeAdustment();
-		if (size.get(0) != width - sizeFix.x || size.get(1) != height - sizeFix.y) {
-			ArrayList<String> tokens = new ArrayList<>(2);
-			tokens.add(String.format((Locale)null, "%d", width - sizeFix.x));
-			tokens.add(String.format((Locale)null, "%d", height - sizeFix.y));
-			KeywordIndex sizeKw = new KeywordIndex(this.windowSize.getKeyword(), tokens, null);
+		if (size.get(0) != width || size.get(1) != height) {
+			KeywordIndex sizeKw = InputAgent.formatIntegers(windowSize.getKeyword(), width, height);
 			kwList.add(sizeKw);
 		}
 
