@@ -259,12 +259,6 @@ public class View extends Entity {
 		if (!RenderManager.isGood())
 			return;
 
-		if (in == windowPos) {
-			final Frame window = RenderManager.getOpenWindowForView(this);
-			if (window != null)
-				new WindowSizePosUpdater(window, windowPos.getValue(), null).doUpdate();
-			return;
-		}
 		if (in == windowSize) {
 			final Frame window = RenderManager.getOpenWindowForView(this);
 			if (window != null)

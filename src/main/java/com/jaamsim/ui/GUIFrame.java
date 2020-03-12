@@ -3458,6 +3458,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		updateToolVisibilities(simulation);
 		updateToolSizes(simulation);
 		updateToolLocations(simulation);
+		updateViewLocations();
 		setControlPanelWidth(simulation.getControlPanelWidth());
 	}
 
