@@ -4196,7 +4196,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		for (View v : views) {
 			final Frame window = RenderManager.getOpenWindowForView(v);
 			if (window == null)
-				return;
+				continue;
 			IntegerVector pos = v.getWindowPos();
 			window.setLocation(pos.get(0), pos.get(1));
 		}
