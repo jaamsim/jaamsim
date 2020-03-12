@@ -271,8 +271,8 @@ public class RenderManager implements DragSourceListener {
 			}
 		}
 
-		IntegerVector windSize = view.getWindowSize();
-		IntegerVector windPos = view.getWindowPos();
+		IntegerVector windSize = GUIFrame.getInstance().getWindowSize(view);
+		IntegerVector windPos = GUIFrame.getInstance().getWindowPos(view);
 
 		Image icon = GUIFrame.getWindowIcon();
 

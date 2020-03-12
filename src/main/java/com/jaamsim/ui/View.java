@@ -440,20 +440,11 @@ public class View extends Entity {
 	}
 
 	public IntegerVector getWindowPos() {
-		Point fix = OSFix.getLocationAdustment();  //FIXME
-		IntegerVector ret = new IntegerVector(windowPos.getValue());
-		Point pt = GUIFrame.getInstance().getGlobalLocation(ret.get(0), ret.get(1));
-		ret.set(0, pt.x + fix.x);
-		ret.set(1, pt.y + fix.y);
-		return ret;
+		return windowPos.getValue();
 	}
 
 	public IntegerVector getWindowSize() {
-		Point fix = OSFix.getSizeAdustment();  //FIXME
-		IntegerVector ret = new IntegerVector(windowSize.getValue());
-		ret.addAt(fix.x, 0);
-		ret.addAt(fix.y, 1);
-		return ret;
+		return windowSize.getValue();
 	}
 
 	public void setKeepWindowOpen(boolean b) {

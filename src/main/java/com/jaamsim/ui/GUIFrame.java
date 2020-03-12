@@ -4197,7 +4197,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			final Frame window = RenderManager.getOpenWindowForView(v);
 			if (window == null)
 				continue;
-			IntegerVector pos = v.getWindowPos();
+			IntegerVector pos = getWindowPos(v);
 			window.setLocation(pos.get(0), pos.get(1));
 		}
 	}
@@ -4256,6 +4256,23 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	public int getNextViewID() {
 		nextViewID++;
 		return nextViewID;
+	}
+
+	public IntegerVector getWindowPos(View v) {
+		Point fix = OSFix.getLocationAdustment();  //FIXME
+		IntegerVector ret = new IntegerVector(v.getWindowPos());
+		Point pt = getGlobalLocation(ret.get(0), ret.get(1));
+		ret.set(0, pt.x + fix.x);
+		ret.set(1, pt.y + fix.y);
+		return ret;
+	}
+
+	public IntegerVector getWindowSize(View v) {
+		Point fix = OSFix.getSizeAdustment();  //FIXME
+		IntegerVector ret = new IntegerVector(v.getWindowSize());
+		ret.addAt(fix.x, 0);
+		ret.addAt(fix.y, 1);
+		return ret;
 	}
 
 	// ******************************************************************************************************
