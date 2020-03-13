@@ -338,7 +338,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 			@Override
 			public void windowIconified(WindowEvent e) {
-				closeWindows();
+				updateUI();
 			}
 
 			@Override
@@ -409,15 +409,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 	public static final void updateUI() {
 		rateLimiter.queueUpdate();
-	}
-
-	public void closeWindows() {
-
-		// Close all the view windows
-		RenderManager.clear();
-
-		// Close all the tools
-		updateUI();
 	}
 
 	public void showWindows() {
