@@ -25,7 +25,6 @@ import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.Region;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.GUIListener;
-import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.datatypes.IntegerVector;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.EntityInput;
@@ -426,9 +425,10 @@ public class View extends Entity {
 	    unitType = DistanceUnit.class,
 	    sequence = 1)
 	public Vec3d getPointOfInterest(double simTime) {
-		if (!RenderManager.isGood())
+		GUIListener gui = getJaamSimModel().getGUIListener();
+		if (gui == null)
 			return new Vec3d();
-		return RenderManager.inst().getPOI(this);
+		return gui.getPOI(this);
 	}
 
 	@Output(name = "DistanceToPOI",
@@ -436,10 +436,11 @@ public class View extends Entity {
 	    unitType = DistanceUnit.class,
 	    sequence = 2)
 	public double geDistanceToPOI(double simTime) {
-		if (!RenderManager.isGood())
+		GUIListener gui = getJaamSimModel().getGUIListener();
+		if (gui == null)
 			return Double.NaN;
 
-		Vec3d poi = RenderManager.inst().getPOI(this);
+		Vec3d poi = gui.getPOI(this);
 		if (poi == null)
 			return Double.NaN;
 
