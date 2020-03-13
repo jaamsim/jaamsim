@@ -413,11 +413,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 	public void closeWindows() {
 
-		// Save whether each window is open or closed
-		for (View v : views) {
-			v.setKeepWindowOpen(v.showWindow());
-		}
-
 		// Close all the view windows
 		RenderManager.clear();
 

@@ -50,8 +50,6 @@ public class View extends Entity {
 
 	private final int viewID;
 
-	private boolean keepWindowOpen;  // used by GUIFrame to determine whether a window is open or closed
-
 	@Keyword(description = "The region in which the view's coordinates are given.",
 	         exampleList = {"Region1"})
 	private final EntityInput<Region> region;
@@ -360,14 +358,6 @@ public class View extends Entity {
 
 	public IntegerVector getWindowSize() {
 		return windowSize.getValue();
-	}
-
-	public void setKeepWindowOpen(boolean b) {
-		keepWindowOpen = b;
-	}
-
-	public boolean getKeepWindowOpen() {
-		return keepWindowOpen;
 	}
 
 	public int getID() {
