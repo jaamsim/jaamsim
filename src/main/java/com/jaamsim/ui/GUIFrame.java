@@ -2996,8 +2996,37 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			}
 
 			// 2) "Define New View" menu item
+			JMenuItem defineItem = new JMenuItem("Define New View");
+			defineItem.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					if (!RenderManager.isGood()) {
+						if (RenderManager.canInitialize()) {
+							RenderManager.initialize(SAFE_GRAPHICS);
+						} else {
+							// A fatal error has occurred, don't try to initialize again
+							return;
+						}
+					}
+
+					String name = InputAgent.getUniqueName(sim, "View", "");
+					IntegerVector winPos = null;
+					Vec3d pos = null;
+					Vec3d center = null;
+					ArrayList<View> viewList = getInstance().getViews();
+					if (!viewList.isEmpty()) {
+						View lastView = viewList.get(viewList.size() - 1);
+						winPos = (IntegerVector) lastView.getInput("WindowPosition").getValue();
+						winPos = new IntegerVector(winPos);
+						winPos.set(0, winPos.get(0) + VIEW_OFFSET);
+						pos = lastView.getViewPosition();
+						center = lastView.getViewCenter();
+					}
+					InputAgent.storeAndExecute(new DefineViewCommand(sim, name, pos, center, winPos));
+				}
+			});
 			this.addSeparator();
-			this.add(new ViewDefiner());
+			this.add(defineItem);
 
 			// 3) "Reset Positions and Sizes" menu item
 			JMenuItem resetItem = new JMenuItem( "Reset Positions and Sizes" );
@@ -3023,40 +3052,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		@Override
 		public void menuDeselected(MenuEvent arg0) {
 			this.removeAll();
-		}
-	}
-
-	private static class ViewDefiner extends JMenuItem implements ActionListener {
-		ViewDefiner() {} {
-			this.setText("Define New View");
-			this.addActionListener(this);
-		}
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			if (!RenderManager.isGood()) {
-				if (RenderManager.canInitialize()) {
-					RenderManager.initialize(SAFE_GRAPHICS);
-				} else {
-					// A fatal error has occurred, don't try to initialize again
-					return;
-				}
-			}
-
-			String name = InputAgent.getUniqueName(sim, "View", "");
-			IntegerVector winPos = null;
-			Vec3d pos = null;
-			Vec3d center = null;
-			ArrayList<View> viewList = getInstance().getViews();
-			if (!viewList.isEmpty()) {
-				View lastView = viewList.get(viewList.size()-1);
-				winPos = (IntegerVector) lastView.getInput("WindowPosition").getValue();
-				winPos = new IntegerVector(winPos);
-				winPos.set(0, winPos.get(0) + VIEW_OFFSET);
-				pos = lastView.getViewPosition();
-				center = lastView.getViewCenter();
-			}
-			InputAgent.storeAndExecute(new DefineViewCommand(sim, name, pos, center, winPos));
 		}
 	}
 
