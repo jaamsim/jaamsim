@@ -4127,8 +4127,12 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			EventViewer.getInstance().setVisible(false);
 	}
 
+	public boolean isIconified() {
+		return getExtendedState() == Frame.ICONIFIED;
+	}
+
 	private void updateToolVisibilities(Simulation simulation) {
-		boolean iconified = (this.getExtendedState() == Frame.ICONIFIED);
+		boolean iconified = isIconified();
 		setFrameVisibility(EntityPallet.getInstance(), !iconified && simulation.isModelBuilderVisible());
 		setFrameVisibility(ObjectSelector.getInstance(), !iconified && simulation.isObjectSelectorVisible());
 		setFrameVisibility(EditBox.getInstance(), !iconified && simulation.isInputEditorVisible());
@@ -4198,7 +4202,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	private void updateViewVisibilities() {
 		if (!RenderManager.isGood())
 			return;
-		boolean iconified = (this.getExtendedState() == Frame.ICONIFIED);
+		boolean iconified = isIconified();
 		for (View v : views) {
 			boolean isVisible = RenderManager.inst().isVisible(v);
 			if (!iconified && v.showWindow()) {
