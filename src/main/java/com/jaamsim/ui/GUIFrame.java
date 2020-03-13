@@ -3458,6 +3458,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		updateToolVisibilities(simulation);
 		updateToolSizes(simulation);
 		updateToolLocations(simulation);
+		updateViewSizes();
 		updateViewLocations();
 		setControlPanelWidth(simulation.getControlPanelWidth());
 	}
@@ -4191,6 +4192,16 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	public void setToolLocation(JFrame tool, int x, int y) {
 		Point pt = getGlobalLocation(x, y);
 		tool.setLocation(pt);
+	}
+
+	private void updateViewSizes() {
+		for (View v : views) {
+			final Frame window = RenderManager.getOpenWindowForView(v);
+			if (window == null)
+				continue;
+			IntegerVector size = getWindowSize(v);
+			window.setSize(size.get(0), size.get(1));
+		}
 	}
 
 	public void updateViewLocations() {

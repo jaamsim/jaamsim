@@ -17,10 +17,6 @@
  */
 package com.jaamsim.ui;
 
-import java.awt.EventQueue;
-import java.awt.Frame;
-import java.awt.Point;
-import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.util.ArrayList;
 
@@ -212,45 +208,6 @@ public class View extends Entity {
 		gui.createWindow(this);
 	}
 
-
-	private static class WindowSizePosUpdater implements Runnable {
-		private final IntegerVector pos;
-		private final IntegerVector size;
-		private final Frame window;
-
-		public WindowSizePosUpdater(Frame w, IntegerVector p, IntegerVector s) {
-			window = w;
-			pos = p;
-			size = s;
-		}
-
-		@Override
-		public void run() {
-			if (pos != null) {
-				Point fix = OSFix.getLocationAdustment();
-				Point pt = GUIFrame.getInstance().getGlobalLocation(pos.get(0), pos.get(1));
-				window.setLocation(pt.x + fix.x, pt.y + fix.y);
-			}
-
-			if (size != null) {
-				Point fix = OSFix.getSizeAdustment();
-				window.setSize(size.get(0)+fix.x, size.get(1)+fix.y);
-			}
-		}
-
-		void doUpdate() {
-			if (EventQueue.isDispatchThread()) {
-				this.run();
-				return;
-			}
-
-			try {
-				EventQueue.invokeAndWait(this);
-			}
-			catch (InvocationTargetException | InterruptedException e) {} //ignore
-		}
-	}
-
 	@Override
 	public void updateForInput( Input<?> in ) {
 		super.updateForInput( in );
@@ -259,12 +216,6 @@ public class View extends Entity {
 		if (!RenderManager.isGood())
 			return;
 
-		if (in == windowSize) {
-			final Frame window = RenderManager.getOpenWindowForView(this);
-			if (window != null)
-				new WindowSizePosUpdater(window, null, windowSize.getValue()).doUpdate();
-			return;
-		}
 		if (in == showWindow) {
 			if (showWindow.getValue()) {
 				RenderManager.inst().createWindow(this);
