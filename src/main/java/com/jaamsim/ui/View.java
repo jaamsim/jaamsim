@@ -30,7 +30,6 @@ import com.jaamsim.datatypes.IntegerVector;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.FileInput;
-import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.IntegerListInput;
 import com.jaamsim.input.KeyedVec3dInput;
@@ -206,25 +205,6 @@ public class View extends Entity {
 			return;
 		gui.addView(this);
 		gui.createWindow(this);
-	}
-
-	@Override
-	public void updateForInput( Input<?> in ) {
-		super.updateForInput( in );
-
-		// Do nothing if the renderer has not be initialized successfully
-		if (!RenderManager.isGood())
-			return;
-
-		if (in == showWindow) {
-			if (showWindow.getValue()) {
-				RenderManager.inst().createWindow(this);
-			}
-			else {
-				RenderManager.inst().closeWindow(this);
-			}
-			return;
-		}
 	}
 
 	public Vec3d getViewCenter() {

@@ -1758,6 +1758,10 @@ public class RenderManager implements DragSourceListener {
 		return -1;
 	}
 
+	public boolean isVisible(View view) {
+		return windowToViewMap.containsValue(view);
+	}
+
 	public static Frame getOpenWindowForView(View view) {
 		if (!isGood()) return null;
 
