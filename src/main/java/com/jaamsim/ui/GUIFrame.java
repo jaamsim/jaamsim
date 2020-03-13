@@ -2975,7 +2975,24 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 			// 1) Select from the available view windows
 			for (View view : getInstance().getViews()) {
-				this.add(new NewRenderWindowLauncher(view));
+				JMenuItem item = new JMenuItem(view.getName());
+				item.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						if (!RenderManager.isGood()) {
+							if (RenderManager.canInitialize()) {
+								RenderManager.initialize(SAFE_GRAPHICS);
+							} else {
+								// A fatal error has occurred, don't try to initialize again
+								return;
+							}
+						}
+						KeywordIndex kw = InputAgent.formatBoolean("ShowWindow", true);
+						InputAgent.storeAndExecute(new KeywordCommand(view, kw));
+						FrameBox.setSelectedEntity(view, false);
+					}
+				});
+				this.add(item);
 			}
 
 			// 2) "Define New View" menu item
@@ -3006,30 +3023,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		@Override
 		public void menuDeselected(MenuEvent arg0) {
 			this.removeAll();
-		}
-	}
-	private static class NewRenderWindowLauncher extends JMenuItem implements ActionListener {
-		private final View view;
-
-		NewRenderWindowLauncher(View v) {
-			view = v;
-			this.setText(view.getName());
-			this.addActionListener(this);
-		}
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			if (!RenderManager.isGood()) {
-				if (RenderManager.canInitialize()) {
-					RenderManager.initialize(SAFE_GRAPHICS);
-				} else {
-					// A fatal error has occurred, don't try to initialize again
-					return;
-				}
-			}
-			KeywordIndex kw = InputAgent.formatArgs("ShowWindow", "TRUE");
-			InputAgent.storeAndExecute(new KeywordCommand(view, kw));
-			FrameBox.setSelectedEntity(view, false);
 		}
 	}
 
