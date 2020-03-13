@@ -4313,6 +4313,13 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		v.setWindowPos(pt.x, pt.y, width - sizeFix.x, height - sizeFix.y);
 	}
 
+	@Override
+	public Vec3d getPOI(View v) {
+		if (!RenderManager.isGood())
+			return new Vec3d();
+		return RenderManager.inst().getPOI(v);
+	}
+
 	// ******************************************************************************************************
 	// MAIN
 	// ******************************************************************************************************
