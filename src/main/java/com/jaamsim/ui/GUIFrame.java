@@ -333,7 +333,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 			@Override
 			public void windowDeiconified(WindowEvent e) {
-				showWindows();
+				updateUI();
 			}
 
 			@Override
@@ -343,7 +343,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 			@Override
 			public void windowActivated(WindowEvent e) {
-				showWindows();
+				updateUI();
 			}
 		});
 
@@ -409,29 +409,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 	public static final void updateUI() {
 		rateLimiter.queueUpdate();
-	}
-
-	public void showWindows() {
-		if (!RenderManager.isGood())
-			return;
-
-		// Identity the view window that is active
-		View activeView = RenderManager.inst().getActiveView();
-
-		// Re-open the view windows
-		for (int i = 0; i < views.size(); i++) {
-			View v = views.get(i);
-			if (v != null && v.showWindow() && v != activeView)
-				RenderManager.inst().createWindow(v);
-		}
-
-		// Re-open the active view window last
-		if (activeView != null)
-			RenderManager.inst().createWindow(activeView);
-
-		// Re-open the tools
-		showActiveTools(sim.getSimulation());
-		updateUI();
 	}
 
 	/**
