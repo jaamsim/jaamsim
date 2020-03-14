@@ -31,13 +31,13 @@ import com.jaamsim.DisplayModels.DisplayModel;
 import com.jaamsim.DisplayModels.ImageModel;
 import com.jaamsim.DisplayModels.ShapeModel;
 import com.jaamsim.Graphics.DisplayEntity;
+import com.jaamsim.Graphics.View;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.math.Quaternion;
 import com.jaamsim.math.Transform;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.math.Vec4d;
 import com.jaamsim.ui.GUIFrame;
-import com.jaamsim.ui.View;
 
 public class PreviewCache {
 

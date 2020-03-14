@@ -109,6 +109,7 @@ import com.jaamsim.Graphics.OverlayText;
 import com.jaamsim.Graphics.Region;
 import com.jaamsim.Graphics.TextBasics;
 import com.jaamsim.Graphics.TextEntity;
+import com.jaamsim.Graphics.View;
 import com.jaamsim.SubModels.CompoundEntity;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ErrorException;

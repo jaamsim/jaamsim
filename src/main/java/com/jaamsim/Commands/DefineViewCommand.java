@@ -16,6 +16,7 @@
  */
 package com.jaamsim.Commands;
 
+import com.jaamsim.Graphics.View;
 import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.datatypes.IntegerVector;
@@ -23,7 +24,6 @@ import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.ui.FrameBox;
-import com.jaamsim.ui.View;
 import com.jaamsim.units.DistanceUnit;
 
 public class DefineViewCommand implements Command {

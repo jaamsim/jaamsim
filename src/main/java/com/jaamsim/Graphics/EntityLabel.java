@@ -30,7 +30,6 @@ import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.math.Vec3d;
-import com.jaamsim.ui.View;
 import com.jaamsim.units.DistanceUnit;
 
 public class EntityLabel extends TextBasics {

@@ -58,7 +58,6 @@ import com.jaamsim.render.RenderUtils;
 import com.jaamsim.render.VisibilityInfo;
 import com.jaamsim.ui.EditBox;
 import com.jaamsim.ui.FrameBox;
-import com.jaamsim.ui.View;
 import com.jaamsim.units.AngleUnit;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.DistanceUnit;

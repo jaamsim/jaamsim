@@ -19,7 +19,7 @@ package com.jaamsim.render;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import com.jaamsim.ui.View;
+import com.jaamsim.Graphics.View;
 
 public class VisibilityInfo {
 	private static final int[] ALL_VIEWS = new int[0];

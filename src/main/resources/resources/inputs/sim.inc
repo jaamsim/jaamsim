@@ -1,6 +1,6 @@
 Define ObjectType {
                     GraphicSimulation
-					View
+                    View
                     EntityTracer
                   }
 
@@ -8,7 +8,7 @@ GraphicSimulation       JavaClass { com.jaamsim.basicsim.Simulation     } Palett
 Define GraphicSimulation { Simulation }
 Simulation DisplayedUnits { h deg }
 
-View                    JavaClass { com.jaamsim.ui.View                 } Palette { 'View'                } DragAndDrop { FALSE }
+View                    JavaClass { com.jaamsim.Graphics.View           } Palette { 'View'                } DragAndDrop { FALSE }
 View Description { 'Display window showing view of the 3D model universe.' }
 
 EntityTracer            JavaClass { com.jaamsim.basicsim.EntityTracer          } Palette { 'Simulation Controls' } DragAndDrop { FALSE }

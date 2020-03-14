@@ -15,14 +15,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.jaamsim.ui;
+package com.jaamsim.Graphics;
 
 import java.net.URI;
 import java.util.ArrayList;
 
 import com.jaamsim.Commands.KeywordCommand;
-import com.jaamsim.Graphics.DisplayEntity;
-import com.jaamsim.Graphics.Region;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.GUIListener;
 import com.jaamsim.datatypes.IntegerVector;
@@ -40,6 +38,7 @@ import com.jaamsim.input.Vec3dInput;
 import com.jaamsim.math.Transform;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.math.Vec4d;
+import com.jaamsim.ui.GUIFrame;
 import com.jaamsim.units.DistanceUnit;
 
 public class View extends Entity {

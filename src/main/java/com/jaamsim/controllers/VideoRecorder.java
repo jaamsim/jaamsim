@@ -28,13 +28,13 @@ import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 
+import com.jaamsim.Graphics.View;
 import com.jaamsim.datatypes.IntegerVector;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.render.Future;
 import com.jaamsim.render.OffscreenTarget;
 import com.jaamsim.ui.GUIFrame;
 import com.jaamsim.ui.LogBox;
-import com.jaamsim.ui.View;
 import com.jaamsim.video.AviWriter;
 import com.jaamsim.video.vp8.Encoder;
 

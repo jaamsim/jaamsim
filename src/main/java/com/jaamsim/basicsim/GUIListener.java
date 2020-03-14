@@ -17,8 +17,8 @@
 package com.jaamsim.basicsim;
 
 import com.jaamsim.Commands.Command;
+import com.jaamsim.Graphics.View;
 import com.jaamsim.math.Vec3d;
-import com.jaamsim.ui.View;
 
 public interface GUIListener {
 

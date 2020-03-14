@@ -18,6 +18,7 @@
 
 package com.jaamsim.controllers;
 
+import com.jaamsim.Graphics.View;
 import com.jaamsim.math.Mat4d;
 import com.jaamsim.math.MathUtils;
 import com.jaamsim.math.Plane;
@@ -31,7 +32,6 @@ import com.jaamsim.render.RenderUtils;
 import com.jaamsim.render.Renderer;
 import com.jaamsim.render.WindowInteractionListener;
 import com.jaamsim.ui.GUIFrame;
-import com.jaamsim.ui.View;
 import com.jogamp.newt.event.KeyEvent;
 import com.jogamp.newt.event.MouseEvent;
 
