@@ -977,7 +977,14 @@ public class RenderManager implements DragSourceListener {
 				}
 			}
 
-		} else {
+		}
+		else if (ent instanceof View) {
+			selectedEntity = null;
+			View view = (View) ent;
+			int windowID = getWindowID(view);
+			focusWindow(windowID);
+		}
+		else {
 			selectedEntity = null;
 		}
 
