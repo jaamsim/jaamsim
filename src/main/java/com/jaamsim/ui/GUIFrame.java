@@ -3942,16 +3942,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		LOWER_START = TOP_START + VIEW_HEIGHT;
 	}
 
-	/**
-	 * Displays the view windows specified in the configuration file.
-	 */
-	public void displayWindows() {
-		for (View v : views) {
-			if (v.showWindow())
-				RenderManager.inst().createWindow(v);
-		}
-	}
-
 	public void setShowLabels(boolean bool) {
 		for (DisplayEntity ent : sim.getClonesOfIterator(DisplayEntity.class)) {
 			if (!EntityLabel.canLabel(ent))
@@ -4372,12 +4362,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			GUIFrame.updateForSimState(GUIFrame.SIM_STATE_CONFIGURED);
 		}
 
-		// Show the view windows
-		if(!quiet && !batch) {
-			if (gui != null)
-				gui.displayWindows();
-		}
-
 		// If in batch or quiet mode, close the any tools that were opened
 		if (quiet || batch) {
 			if (gui != null)
@@ -4586,7 +4570,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		clear();
 		sim.setRecordEdits(true);
 		InputAgent.loadDefault(sim);
-		displayWindows();
 		FrameBox.setSelectedEntity(sim.getSimulation(), false);
 	}
 
@@ -4630,7 +4613,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 						handleConfigError(ret, chosenfile);
 
 					sim.setRecordEdits(true);
-					displayWindows();
 					FrameBox.setSelectedEntity(sim.getSimulation(), false);
 				}
 			}).start();
