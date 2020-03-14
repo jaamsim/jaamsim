@@ -16,9 +16,11 @@
  */
 package com.jaamsim.ProcessFlow;
 
+import java.util.ArrayList;
+
 import com.jaamsim.BasicObjects.EntitySystem;
 import com.jaamsim.input.ColourInput;
-import com.jaamsim.input.EntityInput;
+import com.jaamsim.input.EntityListInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.math.Color4d;
@@ -27,13 +29,17 @@ import com.jaamsim.states.StateRecord;
 
 public abstract class AbstractStateUserEntity extends StateEntity {
 
-	@Keyword(description = "System of modelled objects to which this object is to be added.",
-	         exampleList = {"EntitySystem1"})
-	protected final EntityInput<EntitySystem> entitySystem;
+	@Keyword(description = "One or more EntitySystems whose states are influenced by the state of "
+	                     + "this object. "
+	                     + "Each EntitySystem is notified to re-calculate its state whenever "
+	                     + "there is a state change for this object.",
+	         exampleList = {"EntitySystem1  EntitySystem2"})
+	protected final EntityListInput<EntitySystem> entitySystemList;
 
 	{
-		entitySystem = new EntityInput<>(EntitySystem.class, "EntitySystem", OPTIONS, null);
-		this.addInput(entitySystem);
+		entitySystemList = new EntityListInput<>(EntitySystem.class, "EntitySystemList", OPTIONS, new ArrayList<>());
+		this.addInput(entitySystemList);
+		this.addSynonym(entitySystemList, "EntitySystem");
 	}
 
 	public static final String STATE_MAINTENANCE = "Maintenance";
@@ -58,12 +64,13 @@ public abstract class AbstractStateUserEntity extends StateEntity {
 	@Override
 	public void stateChanged(StateRecord prev, StateRecord next) {
 		super.stateChanged(prev, next);
-		if (!entitySystem.isDefault())
-			entitySystem.getValue().performUpdate();
+		for (EntitySystem sys : getEntitySystemList()) {
+			sys.performUpdate();
+		}
 	}
 
-	public EntitySystem getEntitySystem() {
-		return entitySystem.getValue();
+	public ArrayList<EntitySystem> getEntitySystemList() {
+		return entitySystemList.getValue();
 	}
 
 	/**
