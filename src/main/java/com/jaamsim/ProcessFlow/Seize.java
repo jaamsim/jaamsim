@@ -151,7 +151,7 @@ public class Seize extends LinkedService implements ResourceUser {
 
 		// Remove the first entity from the queue
 		String m = this.getNextMatchValue(getSimTime());
-		DisplayEntity ent = waitQueue.getValue().removeFirstForMatch(m);
+		DisplayEntity ent = getQueue().removeFirstForMatch(m);
 		if (ent == null)
 			error("Entity not found for specified Match value: %s", m);
 		this.registerEntity(ent);
@@ -177,7 +177,7 @@ public class Seize extends LinkedService implements ResourceUser {
 			return false;
 		}
 		String m = this.getNextMatchValue(getSimTime());
-		DisplayEntity ent = waitQueue.getValue().getFirstForMatch(m);
+		DisplayEntity ent = getQueue().getFirstForMatch(m);
 		return ent != null && checkResources(ent);
 	}
 
@@ -227,10 +227,6 @@ public class Seize extends LinkedService implements ResourceUser {
 		for (int i=0; i<resList.size(); i++) {
 			resList.get(i).seize(seizedUnits[i], ent);
 		}
-	}
-
-	public Queue getQueue() {
-		return waitQueue.getValue();
 	}
 
 	public ArrayList<ResourceProvider> getResourceList() {

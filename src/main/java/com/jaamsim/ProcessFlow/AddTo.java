@@ -44,7 +44,7 @@ public class AddTo extends Pack {
 		if (ent instanceof EntContainer)
 			containerQueue.getValue().addEntity(ent);
 		else
-			waitQueue.getValue().addEntity(ent);
+			getQueue().addEntity(ent);
 	}
 
 	@Override

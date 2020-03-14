@@ -20,9 +20,9 @@ package com.jaamsim.ProcessFlow;
 import java.util.ArrayList;
 
 import com.jaamsim.Commands.KeywordCommand;
+import com.jaamsim.EntityProviders.EntityProvInput;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.StringProviders.StringProvInput;
-import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.KeywordIndex;
@@ -40,7 +40,7 @@ public abstract class LinkedService extends LinkedDevice implements QueueUser {
 
 	@Keyword(description = "The queue in which the waiting DisplayEntities will be placed.",
 	         exampleList = {"Queue1"})
-	protected final EntityInput<Queue> waitQueue;
+	protected final EntityProvInput<Queue> waitQueue;
 
 	@Keyword(description = "An expression returning a string value that determines which of the "
 	                     + "queued entities are eligible to be selected. "
@@ -66,7 +66,7 @@ public abstract class LinkedService extends LinkedDevice implements QueueUser {
 		processPosition.setUnitType(DistanceUnit.class);
 		this.addInput(processPosition);
 
-		waitQueue = new EntityInput<>(Queue.class, "WaitQueue", KEY_INPUTS, null);
+		waitQueue = new EntityProvInput<>(Queue.class, "WaitQueue", KEY_INPUTS, null);
 		waitQueue.setRequired(true);
 		this.addInput(waitQueue);
 
@@ -88,13 +88,14 @@ public abstract class LinkedService extends LinkedDevice implements QueueUser {
 		if (isTraceFlag()) trace(0, "addEntity(%s)", ent);
 
 		// If there is no queue, then process the entity immediately
-		if (waitQueue.getValue() == null) {
+		Queue queue = getQueue();
+		if (queue == null) {
 			super.addEntity(ent);
 			return;
 		}
 
 		// Add the entity to the queue
-		waitQueue.getValue().addEntity(ent);
+		queue.addEntity(ent);
 	}
 
 	// ********************************************************************************************
@@ -109,7 +110,7 @@ public abstract class LinkedService extends LinkedDevice implements QueueUser {
 	 * @return next entity for processing.
 	 */
 	protected DisplayEntity getNextEntityForMatch(String m) {
-		DisplayEntity ent = waitQueue.getValue().removeFirstForMatch(m);
+		DisplayEntity ent = getQueue().removeFirstForMatch(m);
 		this.registerEntity(ent);
 		return ent;
 	}
@@ -150,11 +151,18 @@ public abstract class LinkedService extends LinkedDevice implements QueueUser {
 		InputAgent.storeAndExecute(new KeywordCommand(this, kw));
 	}
 
+	public Queue getQueue() {
+		if (waitQueue.getValue() == null)
+			return null;
+		return waitQueue.getValue().getNextEntity(0.0d);
+	}
+
 	@Override
 	public ArrayList<Queue> getQueues() {
 		ArrayList<Queue> ret = new ArrayList<>();
-		if (waitQueue.getValue() != null)
-			ret.add(waitQueue.getValue());
+		Queue queue = getQueue();
+		if (queue != null)
+			ret.add(queue);
 		return ret;
 	}
 
