@@ -153,7 +153,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	private JMenu editMenu;
 	private JMenu viewMenu;
 	private JMenu windowMenu;
-	private JMenu windowList;
 	private JMenu optionMenu;
 	private JMenu unitsMenu;
 	private JMenu helpMenu;
@@ -894,14 +893,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	 * Sets up the Window menu in the Control Panel's menu bar.
 	 */
 	private void initializeWindowMenu() {
-
-		// Window menu creation
 		windowMenu = new NewRenderWindowMenu("Views");
 		windowMenu.setMnemonic(KeyEvent.VK_V);
-
-		// Initialize list of windows
-		windowList = new WindowMenu("Select Window");
-		windowList.setMnemonic(KeyEvent.VK_S);
 	}
 
 	/**
@@ -2915,54 +2908,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		mainToolBar.add( locatorPos );
 	}
 
-	// ******************************************************************************************************
-	// VIEW WINDOWS
-	// ******************************************************************************************************
-
-	private static class WindowMenu extends JMenu implements MenuListener {
-
-		WindowMenu(String text) {
-			super(text);
-			this.addMenuListener(this);
-		}
-
-		@Override
-		public void menuCanceled(MenuEvent arg0) {}
-
-		@Override
-		public void menuDeselected(MenuEvent arg0) {
-			this.removeAll();
-		}
-
-		@Override
-		public void menuSelected(MenuEvent arg0) {
-			if (!RenderManager.isGood()) { return; }
-
-			ArrayList<Integer> windowIDs = RenderManager.inst().getOpenWindowIDs();
-			for (int id : windowIDs) {
-				String windowName = RenderManager.inst().getWindowName(id);
-				this.add(new WindowSelector(id, windowName));
-			}
-		}
-	}
-
-	private static class WindowSelector extends JMenuItem implements ActionListener {
-		private final int windowID;
-
-		WindowSelector(int windowID, String windowName) {
-			this.windowID = windowID;
-			this.setText(windowName);
-			this.addActionListener(this);
-		}
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			if (!RenderManager.isGood()) { return; }
-
-			RenderManager.inst().focusWindow(windowID);
-		}
-	}
-
 	private static class NewRenderWindowMenu extends JMenu implements MenuListener {
 
 		NewRenderWindowMenu(String text) {
@@ -3273,7 +3218,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 					viewMenu.getItem(i).setEnabled(true);
 				}
 
-				windowList.setEnabled( true );
 				speedUpDisplay.setEnabled( false );
 				remainingDisplay.setEnabled( false );
 				setSpeedUp(0);
@@ -3300,7 +3244,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 					viewMenu.getItem(i).setEnabled(true);
 				}
 
-				windowList.setEnabled( true );
 				speedUpDisplay.setEnabled( false );
 				remainingDisplay.setEnabled( false );
 				setSpeedUp(0);
@@ -3326,7 +3269,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 					viewMenu.getItem(i).setEnabled(true);
 				}
 
-				windowList.setEnabled( true );
 				speedUpDisplay.setEnabled( false );
 				remainingDisplay.setEnabled( false );
 				setSpeedUp(0);
