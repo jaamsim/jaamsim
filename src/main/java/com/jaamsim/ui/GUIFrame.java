@@ -893,8 +893,94 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	 * Sets up the Window menu in the Control Panel's menu bar.
 	 */
 	private void initializeWindowMenu() {
-		windowMenu = new NewRenderWindowMenu("Views");
+		windowMenu = new JMenu("Views");
 		windowMenu.setMnemonic(KeyEvent.VK_V);
+		windowMenu.addMenuListener(new MenuListener() {
+
+			@Override
+			public void menuSelected(MenuEvent e) {
+
+				// 1) Select from the available view windows
+				for (View view : getInstance().getViews()) {
+					JMenuItem item = new JMenuItem(view.getName());
+					item.addActionListener(new ActionListener() {
+						@Override
+						public void actionPerformed(ActionEvent e) {
+							if (!RenderManager.isGood()) {
+								if (RenderManager.canInitialize()) {
+									RenderManager.initialize(SAFE_GRAPHICS);
+								} else {
+									// A fatal error has occurred, don't try to initialize again
+									return;
+								}
+							}
+							KeywordIndex kw = InputAgent.formatBoolean("ShowWindow", true);
+							InputAgent.storeAndExecute(new KeywordCommand(view, kw));
+							FrameBox.setSelectedEntity(view, false);
+						}
+					});
+					windowMenu.add(item);
+				}
+
+				// 2) "Define New View" menu item
+				JMenuItem defineItem = new JMenuItem("Define New View");
+				defineItem.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						if (!RenderManager.isGood()) {
+							if (RenderManager.canInitialize()) {
+								RenderManager.initialize(SAFE_GRAPHICS);
+							} else {
+								// A fatal error has occurred, don't try to initialize again
+								return;
+							}
+						}
+
+						String name = InputAgent.getUniqueName(sim, "View", "");
+						IntegerVector winPos = null;
+						Vec3d pos = null;
+						Vec3d center = null;
+						ArrayList<View> viewList = getInstance().getViews();
+						if (!viewList.isEmpty()) {
+							View lastView = viewList.get(viewList.size() - 1);
+							winPos = (IntegerVector) lastView.getInput("WindowPosition").getValue();
+							winPos = new IntegerVector(winPos);
+							winPos.set(0, winPos.get(0) + VIEW_OFFSET);
+							pos = lastView.getViewPosition();
+							center = lastView.getViewCenter();
+						}
+						InputAgent.storeAndExecute(new DefineViewCommand(sim, name, pos, center, winPos));
+					}
+				});
+				windowMenu.addSeparator();
+				windowMenu.add(defineItem);
+
+				// 3) "Reset Positions and Sizes" menu item
+				JMenuItem resetItem = new JMenuItem( "Reset Positions and Sizes" );
+				resetItem.setMnemonic(KeyEvent.VK_R);
+				resetItem.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed( ActionEvent e ) {
+						for (View v : getInstance().getViews()) {
+							KeywordIndex posKw = InputAgent.formatArgs("WindowPosition");
+							KeywordIndex sizeKw = InputAgent.formatArgs("WindowSize");
+							InputAgent.storeAndExecute(new KeywordCommand(v, posKw, sizeKw));
+						}
+					}
+				} );
+				windowMenu.addSeparator();
+				windowMenu.add(resetItem);
+			}
+
+			@Override
+			public void menuCanceled(MenuEvent arg0) {
+			}
+
+			@Override
+			public void menuDeselected(MenuEvent arg0) {
+				windowMenu.removeAll();
+			}
+		});
 	}
 
 	/**
@@ -2906,98 +2992,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		locatorPos.setToolTipText(formatToolTip("Cursor Position",
 				"The coordinates of the cursor on the x-y plane."));
 		mainToolBar.add( locatorPos );
-	}
-
-	private static class NewRenderWindowMenu extends JMenu implements MenuListener {
-
-		NewRenderWindowMenu(String text) {
-			super(text);
-			this.addMenuListener(this);
-		}
-
-		@Override
-		public void menuSelected(MenuEvent e) {
-
-			// 1) Select from the available view windows
-			for (View view : getInstance().getViews()) {
-				JMenuItem item = new JMenuItem(view.getName());
-				item.addActionListener(new ActionListener() {
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						if (!RenderManager.isGood()) {
-							if (RenderManager.canInitialize()) {
-								RenderManager.initialize(SAFE_GRAPHICS);
-							} else {
-								// A fatal error has occurred, don't try to initialize again
-								return;
-							}
-						}
-						KeywordIndex kw = InputAgent.formatBoolean("ShowWindow", true);
-						InputAgent.storeAndExecute(new KeywordCommand(view, kw));
-						FrameBox.setSelectedEntity(view, false);
-					}
-				});
-				this.add(item);
-			}
-
-			// 2) "Define New View" menu item
-			JMenuItem defineItem = new JMenuItem("Define New View");
-			defineItem.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					if (!RenderManager.isGood()) {
-						if (RenderManager.canInitialize()) {
-							RenderManager.initialize(SAFE_GRAPHICS);
-						} else {
-							// A fatal error has occurred, don't try to initialize again
-							return;
-						}
-					}
-
-					String name = InputAgent.getUniqueName(sim, "View", "");
-					IntegerVector winPos = null;
-					Vec3d pos = null;
-					Vec3d center = null;
-					ArrayList<View> viewList = getInstance().getViews();
-					if (!viewList.isEmpty()) {
-						View lastView = viewList.get(viewList.size() - 1);
-						winPos = (IntegerVector) lastView.getInput("WindowPosition").getValue();
-						winPos = new IntegerVector(winPos);
-						winPos.set(0, winPos.get(0) + VIEW_OFFSET);
-						pos = lastView.getViewPosition();
-						center = lastView.getViewCenter();
-					}
-					InputAgent.storeAndExecute(new DefineViewCommand(sim, name, pos, center, winPos));
-				}
-			});
-			this.addSeparator();
-			this.add(defineItem);
-
-			// 3) "Reset Positions and Sizes" menu item
-			JMenuItem resetItem = new JMenuItem( "Reset Positions and Sizes" );
-			resetItem.setMnemonic(KeyEvent.VK_R);
-			resetItem.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed( ActionEvent e ) {
-					for (View v : getInstance().getViews()) {
-						KeywordIndex posKw = InputAgent.formatArgs("WindowPosition");
-						KeywordIndex sizeKw = InputAgent.formatArgs("WindowSize");
-						InputAgent.storeAndExecute(new KeywordCommand(v, posKw, sizeKw));
-					}
-				}
-			} );
-			this.addSeparator();
-			this.add(resetItem);
-		}
-
-		@Override
-		public void menuCanceled(MenuEvent arg0) {
-		}
-
-		@Override
-		public void menuDeselected(MenuEvent arg0) {
-			this.removeAll();
-		}
 	}
 
 	// ******************************************************************************************************
