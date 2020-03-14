@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2015 Ausenco Engineering Canada Inc.
- * Copyright (C) 2019 JaamSim Software Inc.
+ * Copyright (C) 2019-2020 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -503,6 +503,54 @@ public class PolylineInfo {
 			ret += vec.mag3();
 		}
 		return ret;
+	}
+
+	/**
+	 * Returns the fractional position along a polyline for the location that is closest to the
+	 * specified point.
+	 * @param pts - coordinates for the polyline's nodes
+	 * @param point - specified point
+	 * @return fraction of the polyline's length
+	 */
+	public static double getNearestPosition(ArrayList<Vec3d> pts, Vec3d point) {
+
+		// Distance to the first node in the polyline
+		Vec3d vec0 = new Vec3d(point);  // vector from the node to the point
+		vec0.sub3(pts.get(0));
+		double dist = vec0.mag3();
+		double totalLength = 0.0;
+		double pos = 0.0d;
+
+		// Loop through each segment of the polyline
+		for (int i = 1; i < pts.size(); i++) {
+			Vec3d vec1 = new Vec3d(pts.get(i));  // vector along the segment
+			vec1.sub3(pts.get(i - 1));
+			double length = vec1.mag3();  // length of the segment
+
+			// Is there an intermediate point that is closest?
+			double subLength = vec0.dot3(vec1)/length;
+			if (subLength > 0.0d && subLength < length) {
+				Vec3d pt = new Vec3d();
+				pt.interpolate3(pts.get(i - 1), pts.get(i), subLength/length);
+				pt.sub3(point);
+				double newDist = pt.mag3();
+				if (newDist < dist) {
+					dist = newDist;
+					pos = totalLength + subLength;
+				}
+			}
+
+			// Try the node at end of the segment
+			totalLength += length;
+			vec0 = new Vec3d(point);
+			vec0.sub3(pts.get(i));
+			double newDist = vec0.mag3();
+			if (newDist < dist) {
+				dist = newDist;
+				pos = totalLength;
+			}
+		}
+		return pos/totalLength;
 	}
 
 }
