@@ -152,7 +152,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	private JMenu fileMenu;
 	private JMenu editMenu;
 	private JMenu toolsMenu;
-	private JMenu windowMenu;
+	private JMenu viewsMenu;
 	private JMenu optionMenu;
 	private JMenu unitsMenu;
 	private JMenu helpMenu;
@@ -475,7 +475,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		mainMenuBar.add( fileMenu );
 		mainMenuBar.add( editMenu );
 		mainMenuBar.add( toolsMenu );
-		mainMenuBar.add( windowMenu );
+		mainMenuBar.add( viewsMenu );
 		mainMenuBar.add( optionMenu );
 		mainMenuBar.add( unitsMenu );
 		mainMenuBar.add( helpMenu );
@@ -890,12 +890,12 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	}
 
 	/**
-	 * Sets up the Window menu in the Control Panel's menu bar.
+	 * Sets up the Views menu in the Control Panel's menu bar.
 	 */
 	private void initializeWindowMenu() {
-		windowMenu = new JMenu("Views");
-		windowMenu.setMnemonic(KeyEvent.VK_V);
-		windowMenu.addMenuListener(new MenuListener() {
+		viewsMenu = new JMenu("Views");
+		viewsMenu.setMnemonic(KeyEvent.VK_V);
+		viewsMenu.addMenuListener(new MenuListener() {
 
 			@Override
 			public void menuSelected(MenuEvent e) {
@@ -919,7 +919,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 							FrameBox.setSelectedEntity(view, false);
 						}
 					});
-					windowMenu.add(item);
+					viewsMenu.add(item);
 				}
 
 				// 2) "Define New View" menu item
@@ -952,8 +952,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 						InputAgent.storeAndExecute(new DefineViewCommand(sim, name, pos, center, winPos));
 					}
 				});
-				windowMenu.addSeparator();
-				windowMenu.add(defineItem);
+				viewsMenu.addSeparator();
+				viewsMenu.add(defineItem);
 
 				// 3) "Reset Positions and Sizes" menu item
 				JMenuItem resetItem = new JMenuItem( "Reset Positions and Sizes" );
@@ -968,8 +968,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 						}
 					}
 				} );
-				windowMenu.addSeparator();
-				windowMenu.add(resetItem);
+				viewsMenu.addSeparator();
+				viewsMenu.add(resetItem);
 			}
 
 			@Override
@@ -978,7 +978,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 			@Override
 			public void menuDeselected(MenuEvent arg0) {
-				windowMenu.removeAll();
+				viewsMenu.removeAll();
 			}
 		});
 	}
