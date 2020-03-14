@@ -151,7 +151,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 	private JMenu fileMenu;
 	private JMenu editMenu;
-	private JMenu viewMenu;
+	private JMenu toolsMenu;
 	private JMenu windowMenu;
 	private JMenu optionMenu;
 	private JMenu unitsMenu;
@@ -464,7 +464,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		// Set up the individual menus
 		this.initializeFileMenu();
 		this.initializeEditMenu();
-		this.initializeViewMenu();
+		this.initializeToolsMenu();
 		this.initializeWindowMenu();
 		this.initializeOptionsMenu();
 		this.initializeUnitsMenu();
@@ -474,7 +474,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		JMenuBar mainMenuBar = new JMenuBar();
 		mainMenuBar.add( fileMenu );
 		mainMenuBar.add( editMenu );
-		mainMenuBar.add( viewMenu );
+		mainMenuBar.add( toolsMenu );
 		mainMenuBar.add( windowMenu );
 		mainMenuBar.add( optionMenu );
 		mainMenuBar.add( unitsMenu );
@@ -728,13 +728,13 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	}
 
 	/**
-	 * Sets up the View menu in the Control Panel's menu bar.
+	 * Sets up the Tools menu in the Control Panel's menu bar.
 	 */
-	private void initializeViewMenu() {
+	private void initializeToolsMenu() {
 
-		// View menu creation
-		viewMenu = new JMenu( "Tools" );
-		viewMenu.setMnemonic(KeyEvent.VK_T);
+		// Tools menu creation
+		toolsMenu = new JMenu( "Tools" );
+		toolsMenu.setMnemonic(KeyEvent.VK_T);
 
 		// 1) "Show Basic Tools" menu item
 		JMenuItem showBasicToolsMenuItem = new JMenuItem( "Show Basic Tools" );
@@ -755,7 +755,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				InputAgent.storeAndExecute(new KeywordCommand(sim.getSimulation(), kws));
 			}
 		} );
-		viewMenu.add( showBasicToolsMenuItem );
+		toolsMenu.add( showBasicToolsMenuItem );
 
 		// 2) "Close All Tools" menu item
 		JMenuItem closeAllToolsMenuItem = new JMenuItem( "Close All Tools" );
@@ -775,7 +775,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				InputAgent.storeAndExecute(new KeywordCommand(sim.getSimulation(), kws));
 			}
 		} );
-		viewMenu.add( closeAllToolsMenuItem );
+		toolsMenu.add( closeAllToolsMenuItem );
 
 		// 3) "Model Builder" menu item
 		JMenuItem objectPalletMenuItem = new JMenuItem( "Model Builder" );
@@ -789,8 +789,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				InputAgent.storeAndExecute(new KeywordCommand(sim.getSimulation(), kw));
 			}
 		} );
-		viewMenu.addSeparator();
-		viewMenu.add( objectPalletMenuItem );
+		toolsMenu.addSeparator();
+		toolsMenu.add( objectPalletMenuItem );
 
 		// 4) "Object Selector" menu item
 		JMenuItem objectSelectorMenuItem = new JMenuItem( "Object Selector" );
@@ -804,7 +804,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				InputAgent.storeAndExecute(new KeywordCommand(sim.getSimulation(), kw));
 			}
 		} );
-		viewMenu.add( objectSelectorMenuItem );
+		toolsMenu.add( objectSelectorMenuItem );
 
 		// 5) "Input Editor" menu item
 		JMenuItem inputEditorMenuItem = new JMenuItem( "Input Editor" );
@@ -818,7 +818,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				InputAgent.storeAndExecute(new KeywordCommand(sim.getSimulation(), kw));
 			}
 		} );
-		viewMenu.add( inputEditorMenuItem );
+		toolsMenu.add( inputEditorMenuItem );
 
 		// 6) "Output Viewer" menu item
 		JMenuItem outputMenuItem = new JMenuItem( "Output Viewer" );
@@ -832,7 +832,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				InputAgent.storeAndExecute(new KeywordCommand(sim.getSimulation(), kw));
 			}
 		} );
-		viewMenu.add( outputMenuItem );
+		toolsMenu.add( outputMenuItem );
 
 		// 7) "Property Viewer" menu item
 		JMenuItem propertiesMenuItem = new JMenuItem( "Property Viewer" );
@@ -846,7 +846,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				InputAgent.storeAndExecute(new KeywordCommand(sim.getSimulation(), kw));
 			}
 		} );
-		viewMenu.add( propertiesMenuItem );
+		toolsMenu.add( propertiesMenuItem );
 
 		// 8) "Log Viewer" menu item
 		JMenuItem logMenuItem = new JMenuItem( "Log Viewer" );
@@ -860,7 +860,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				InputAgent.storeAndExecute(new KeywordCommand(sim.getSimulation(), kw));
 			}
 		} );
-		viewMenu.add( logMenuItem );
+		toolsMenu.add( logMenuItem );
 
 		// 9) "Event Viewer" menu item
 		JMenuItem eventsMenuItem = new JMenuItem( "Event Viewer" );
@@ -874,7 +874,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				InputAgent.storeAndExecute(new KeywordCommand(sim.getSimulation(), kw));
 			}
 		} );
-		viewMenu.add( eventsMenuItem );
+		toolsMenu.add( eventsMenuItem );
 
 		// 10) "Reset Positions and Sizes" menu item
 		JMenuItem resetItem = new JMenuItem( "Reset Positions and Sizes" );
@@ -885,8 +885,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				sim.getSimulation().resetWindowPositionsAndSizes();
 			}
 		} );
-		viewMenu.addSeparator();
-		viewMenu.add( resetItem );
+		toolsMenu.addSeparator();
+		toolsMenu.add( resetItem );
 	}
 
 	/**
@@ -3206,10 +3206,10 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 						continue;
 					fileMenu.getItem(i).setEnabled(true);
 				}
-				for( int i = 0; i < viewMenu.getItemCount(); i++ ) {
-					if (viewMenu.getItem(i) == null)
+				for( int i = 0; i < toolsMenu.getItemCount(); i++ ) {
+					if (toolsMenu.getItem(i) == null)
 						continue;
-					viewMenu.getItem(i).setEnabled(true);
+					toolsMenu.getItem(i).setEnabled(true);
 				}
 
 				speedUpDisplay.setEnabled( false );
@@ -3232,10 +3232,10 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 						continue;
 					fileMenu.getItem(i).setEnabled(true);
 				}
-				for( int i = 0; i < viewMenu.getItemCount(); i++ ) {
-					if (viewMenu.getItem(i) == null)
+				for( int i = 0; i < toolsMenu.getItemCount(); i++ ) {
+					if (toolsMenu.getItem(i) == null)
 						continue;
-					viewMenu.getItem(i).setEnabled(true);
+					toolsMenu.getItem(i).setEnabled(true);
 				}
 
 				speedUpDisplay.setEnabled( false );
@@ -3257,10 +3257,10 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 						continue;
 					fileMenu.getItem(i).setEnabled(true);
 				}
-				for( int i = 0; i < viewMenu.getItemCount(); i++ ) {
-					if (viewMenu.getItem(i) == null)
+				for( int i = 0; i < toolsMenu.getItemCount(); i++ ) {
+					if (toolsMenu.getItem(i) == null)
 						continue;
-					viewMenu.getItem(i).setEnabled(true);
+					toolsMenu.getItem(i).setEnabled(true);
 				}
 
 				speedUpDisplay.setEnabled( false );
