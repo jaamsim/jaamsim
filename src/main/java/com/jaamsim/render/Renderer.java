@@ -229,13 +229,11 @@ public class Renderer implements GLAnimatorControl {
 			gl3Supported = gl.isGL3();
 			gl4Supported = gl.isGL4();
 			glVersion = sharedContext.getGLVersionNumber();
-			indirectSupported = checkGLVersion(4, 3);
+			indirectSupported = checkGLVersion(4, 3) && !safeGraphics;
 
 //			long endNanos = System.nanoTime();
 //			long ms = (endNanos - startNanos) /1000000L;
 //			LogBox.formatRenderLog("Creating shared context at:" + ms + "ms");
-
-			checkForIntelDriver();
 
 			initSharedContext();
 
@@ -878,7 +876,7 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 			throw new RenderException("OpenGL version is too low. OpenGL >= 2.1 is required.");
 		}
 		GL2GL3 gl = sharedContext.getGL().getGL2GL3();
-		if (!isCore && !gl3Supported)
+		if (!isCore && (!gl3Supported || safeGraphics))
 			initShaders(gl);
 		else
 			initCoreShaders(gl, sharedContext.getGLSLVersionString());
@@ -1999,21 +1997,6 @@ private static class TransSortable implements Comparable<TransSortable> {
 		// Not supported
 		assert(false);
 		return false;
-	}
-
-	private void checkForIntelDriver() {
-		int res = sharedContext.makeCurrent();
-		assert (res == GLContext.CONTEXT_CURRENT);
-
-		GL2GL3 gl = sharedContext.getGL().getGL2GL3();
-		String vendorString = gl.glGetString(GL2GL3.GL_VENDOR).toLowerCase();
-		boolean intelDriver = vendorString.indexOf("intel") != -1;
-		if (intelDriver) {
-			safeGraphics = true;
-		}
-
-		sharedContext.release();
-
 	}
 
 	public void setDebugInfo(boolean showDebug) {
