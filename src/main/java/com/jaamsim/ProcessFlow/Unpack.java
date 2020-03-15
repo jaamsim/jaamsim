@@ -76,7 +76,7 @@ public class Unpack extends LinkedService {
 		this.setMatchValue(m);
 
 		// Is there a container waiting to be unpacked?
-		if (container == null && getQueue().getMatchCount(m) == 0) {
+		if (container == null && getQueue(simTime).getMatchCount(m) == 0) {
 			return false;
 		}
 

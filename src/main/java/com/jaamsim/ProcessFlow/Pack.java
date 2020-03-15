@@ -143,7 +143,7 @@ public class Pack extends LinkedService {
 		if (!startedPacking) {
 			String m = this.getNextMatchValue(simTime);
 			numberToInsert = this.getNumberToInsert(simTime);
-			if (getQueue().getMatchCount(m) < getNumberToStart(simTime)) {
+			if (getQueue(simTime).getMatchCount(m) < getNumberToStart(simTime)) {
 				return false;
 			}
 
@@ -161,7 +161,7 @@ public class Pack extends LinkedService {
 
 		// Select the next entity to pack and set its state
 		if (numberInserted < numberToInsert) {
-			if (getQueue().getMatchCount(getMatchValue()) == 0)
+			if (getQueue(simTime).getMatchCount(getMatchValue()) == 0)
 				return false;
 			packedEntity = this.getNextEntityForMatch(getMatchValue());
 			if (!stateAssignment.isDefault() && packedEntity instanceof StateEntity) {

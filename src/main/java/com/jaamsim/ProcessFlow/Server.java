@@ -64,7 +64,7 @@ public class Server extends LinkedService {
 		this.setMatchValue(m);
 
 		// Stop if the queue is empty
-		if (getQueue().getMatchCount(m) == 0) {
+		if (getQueue(simTime).getMatchCount(m) == 0) {
 			return false;
 		}
 

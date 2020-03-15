@@ -88,7 +88,8 @@ public abstract class LinkedService extends LinkedDevice implements QueueUser {
 		if (isTraceFlag()) trace(0, "addEntity(%s)", ent);
 
 		// If there is no queue, then process the entity immediately
-		Queue queue = getQueue();
+		double simTime = getSimTime();
+		Queue queue = getQueue(simTime);
 		if (queue == null) {
 			super.addEntity(ent);
 			return;
@@ -110,7 +111,8 @@ public abstract class LinkedService extends LinkedDevice implements QueueUser {
 	 * @return next entity for processing.
 	 */
 	protected DisplayEntity getNextEntityForMatch(String m) {
-		DisplayEntity ent = getQueue().removeFirstForMatch(m);
+		double simTime = getSimTime();
+		DisplayEntity ent = getQueue(simTime).removeFirstForMatch(m);
 		this.registerEntity(ent);
 		return ent;
 	}
@@ -151,16 +153,16 @@ public abstract class LinkedService extends LinkedDevice implements QueueUser {
 		InputAgent.storeAndExecute(new KeywordCommand(this, kw));
 	}
 
-	public Queue getQueue() {
+	public Queue getQueue(double simTime) {
 		if (waitQueue.getValue() == null)
 			return null;
-		return waitQueue.getValue().getNextEntity(0.0d);
+		return waitQueue.getValue().getNextEntity(simTime);
 	}
 
 	@Override
 	public ArrayList<Queue> getQueues() {
 		ArrayList<Queue> ret = new ArrayList<>();
-		Queue queue = getQueue();
+		Queue queue = getQueue(0.0d);
 		if (queue != null)
 			ret.add(queue);
 		return ret;

@@ -39,12 +39,13 @@ public class AddTo extends Pack {
 
 	@Override
 	public void addEntity(DisplayEntity ent) {
+		double simTime = getSimTime();
 
 		// Add an incoming container to its queue
 		if (ent instanceof EntContainer)
 			containerQueue.getValue().addEntity(ent);
 		else
-			getQueue().addEntity(ent);
+			getQueue(simTime).addEntity(ent);
 	}
 
 	@Override

@@ -67,7 +67,8 @@ public class EntityGate extends LinkedService {
 
 		// If the gate is closed, in maintenance or breakdown, or other entities are already
 		// queued, then add the entity to the queue
-		Queue queue = getQueue();
+		double simTime = getSimTime();
+		Queue queue = getQueue(simTime);
 		if (!queue.isEmpty() || !this.isIdle() || num >= getNumberToRelease(getSimTime())) {
 			queue.addEntity(ent);
 			return;
@@ -91,7 +92,7 @@ public class EntityGate extends LinkedService {
 		this.setMatchValue(m);
 
 		// Stop if the queue has become empty
-		if (getQueue().getMatchCount(m) == 0) {
+		if (getQueue(simTime).getMatchCount(m) == 0) {
 			return false;
 		}
 

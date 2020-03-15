@@ -132,17 +132,20 @@ public class Seize extends LinkedService implements ResourceUser {
 
 	@Override
 	public boolean hasWaitingEntity() {
-		return !getQueue().isEmpty();
+		double simTime = getSimTime();
+		return !getQueue(simTime).isEmpty();
 	}
 
 	@Override
 	public int getPriority() {
-		return getQueue().getFirstPriority();
+		double simTime = getSimTime();
+		return getQueue(simTime).getFirstPriority();
 	}
 
 	@Override
 	public double getWaitTime() {
-		return getQueue().getQueueTime();
+		double simTime = getSimTime();
+		return getQueue(simTime).getQueueTime();
 	}
 
 	@Override
@@ -150,8 +153,9 @@ public class Seize extends LinkedService implements ResourceUser {
 		if (isTraceFlag()) trace(2, "startNextEntity");
 
 		// Remove the first entity from the queue
-		String m = this.getNextMatchValue(getSimTime());
-		DisplayEntity ent = getQueue().removeFirstForMatch(m);
+		double simTime = getSimTime();
+		String m = this.getNextMatchValue(simTime);
+		DisplayEntity ent = getQueue(simTime).removeFirstForMatch(m);
 		if (ent == null)
 			error("Entity not found for specified Match value: %s", m);
 		this.registerEntity(ent);
@@ -176,8 +180,9 @@ public class Seize extends LinkedService implements ResourceUser {
 		if (!isAvailable() || isForcedDowntimePending() || isImmediateDowntimePending()) {
 			return false;
 		}
-		String m = this.getNextMatchValue(getSimTime());
-		DisplayEntity ent = getQueue().getFirstForMatch(m);
+		double simTime = getSimTime();
+		String m = this.getNextMatchValue(simTime);
+		DisplayEntity ent = getQueue(simTime).getFirstForMatch(m);
 		return ent != null && checkResources(ent);
 	}
 
