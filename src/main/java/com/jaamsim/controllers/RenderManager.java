@@ -399,19 +399,10 @@ public class RenderManager implements DragSourceListener {
 
 					ArrayList<DisplayModelBinding> selectedBindings = new ArrayList<>();
 
-					int numEnts = 0;
-
 					// Update all graphical entities in the simulation
+					// All entities are updated regardless of the number or whether 'Show' is set
+					// (required for Queue, etc.)
 					for (DisplayEntity de : GUIFrame.getJaamSimModel().getClonesOfIterator(DisplayEntity.class)) {
-						if (!de.getShow())
-							continue;
-
-						numEnts++;
-						// There is an upper limit on number of entities
-						if (numEnts > maxRenderableEntities) {
-							break;
-						}
-
 						try {
 							de.updateGraphics(renderTime);
 						}
@@ -423,7 +414,7 @@ public class RenderManager implements DragSourceListener {
 
 					updateNanos = System.nanoTime();
 
-					numEnts = 0;
+					int numEnts = 0;
 					// Collect the render proxies for each entity
 					for (DisplayEntity de : GUIFrame.getJaamSimModel().getClonesOfIterator(DisplayEntity.class)) {
 						if (!de.getShow())
