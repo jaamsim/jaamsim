@@ -38,8 +38,13 @@ public abstract class LinkedService extends LinkedDevice implements QueueUser {
 	         exampleList = {"1.0 0.0 0.01 m"})
 	protected final Vec3dInput processPosition;
 
-	@Keyword(description = "The queue in which the waiting DisplayEntities will be placed.",
-	         exampleList = {"Queue1"})
+	@Keyword(description = "Queue from which the next entity for processing will be selected.\n\n"
+	                     + "If an expression is entered that can return various Queues, it is "
+	                     + "necessary for each Queue to be included in the entry to the "
+	                     + "'WatchList' keyword. "
+	                     + "If a Queue is not included, then the arrival of an entity to that "
+	                     + "Queue will not wake up this processor.",
+	         exampleList = {"Queue1", "'this.NumberProcessed % 2 == 0 ? [Queue1] : [Queue2]'"})
 	protected final EntityProvInput<Queue> waitQueue;
 
 	@Keyword(description = "An expression returning a string value that determines which of the "
