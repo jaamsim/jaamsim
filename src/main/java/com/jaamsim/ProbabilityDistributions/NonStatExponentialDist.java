@@ -37,7 +37,7 @@ public class NonStatExponentialDist extends Distribution {
 
 	@Keyword(description = "A time series containing the expected cumulative number of arrivals "
 	                     + "as a function of time.",
-			exampleList = {"TimeSeries1"})
+	         exampleList = {"TimeSeries1"})
 	private final TimeSeriesInput expectedArrivals;
 
 	@Keyword(description = "An optional factor that multiplies the data from the "
@@ -128,7 +128,7 @@ public class NonStatExponentialDist extends Distribution {
 
 	@Override
 	protected double getStandardDev(double simTime) {
-		return 0.0d;
+		return Double.NaN;
 	}
 
 }
