@@ -27,12 +27,18 @@ public class InterfaceEntityListInput<T> extends ListInput<ArrayList<T>> {
 	private Class<T> entClass;
 	private boolean unique; // flag to determine if list must be unique or not
 	private boolean even;  // flag to determine if there must be an even number of entries
+	private boolean includeSelf; // flag to determine whether to include the calling entity in the entityList
+	private ArrayList<Class<? extends Entity>> validClasses; // list of valid classes (including subclasses).  if empty, then all classes are valid
+	private ArrayList<Class<? extends Entity>> invalidClasses; // list of invalid classes (including subclasses).
 
 	public InterfaceEntityListInput(Class<T> aClass, String key, String cat, ArrayList<T> def) {
 		super(key, cat, def);
 		entClass = aClass;
 		unique = true;
 		even = false;
+		includeSelf = true;
+		validClasses = new ArrayList<>();
+		invalidClasses = new ArrayList<>();
 	}
 
 	@Override
@@ -60,12 +66,22 @@ public class InterfaceEntityListInput<T> extends ListInput<ArrayList<T>> {
 		this.even = bool;
 	}
 
+	public void setIncludeSelf(boolean bool) {
+		this.includeSelf = bool;
+	}
+
 	@Override
 	public ArrayList<String> getValidOptions(Entity ent) {
 		ArrayList<String> list = new ArrayList<>();
 		JaamSimModel simModel = ent.getJaamSimModel();
 		for(Entity each: simModel.getClonesOfIterator(Entity.class, entClass) ) {
 			if(each.isGenerated())
+				continue;
+
+			if (!isValidClass(each))
+				continue;
+
+			if (each.getEditableInputs().contains(this) && !includeSelf)
 				continue;
 
 			list.add(each.getName());
@@ -86,6 +102,38 @@ public class InterfaceEntityListInput<T> extends ListInput<ArrayList<T>> {
 			tmp.append(((Entity)defValue.get(i)).getName());
 		}
 		return tmp.toString();
+	}
+
+	public boolean isValidClass(Entity ent) {
+		for (Class<? extends Entity> c : invalidClasses) {
+			if (c.isAssignableFrom(ent.getClass())) {
+				return false;
+			}
+		}
+
+		if (validClasses.isEmpty())
+			return true;
+		for (Class<? extends Entity> c : validClasses) {
+			if (c.isAssignableFrom(ent.getClass())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public void addValidClass(Class<? extends Entity> aClass ) {
+		invalidClasses.remove(aClass);
+		validClasses.add(aClass);
+	}
+
+	public void addInvalidClass(Class<? extends Entity> aClass ) {
+		validClasses.remove(aClass);
+		invalidClasses.add(aClass);
+	}
+
+	public void clearValidClasses() {
+		validClasses.clear();
+		invalidClasses.clear();
 	}
 
 	@Override
