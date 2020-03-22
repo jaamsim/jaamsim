@@ -180,6 +180,11 @@ public abstract class LinkedService extends LinkedDevice implements QueueUser {
 	@Override
 	public ArrayList<Queue> getQueues() {
 		ArrayList<Queue> ret = new ArrayList<>();
+
+		// Do not register the WaitQueue when the 'WatchList' input is set
+		if (!getWatchList().isEmpty())
+			return ret;
+
 		Queue queue = getQueue(0.0d);
 		if (queue != null)
 			ret.add(queue);
