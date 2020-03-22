@@ -83,4 +83,12 @@ public class AddTo extends Pack {
 		return ret;
 	}
 
+	@Override
+	public ArrayList<DisplayEntity> getSourceEntities() {
+		ArrayList<DisplayEntity> ret = super.getSourceEntities();
+		if (containerQueue.getValue() != null)
+			ret.add(containerQueue.getValue());
+		return ret;
+	}
+
 }
