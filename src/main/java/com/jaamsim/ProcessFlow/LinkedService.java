@@ -23,6 +23,7 @@ import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.EntityProviders.EntityProvInput;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.StringProviders.StringProvInput;
+import com.jaamsim.basicsim.SubjectEntity;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.KeywordIndex;
@@ -88,6 +89,16 @@ public abstract class LinkedService extends LinkedDevice implements QueueUser {
 	public void earlyInit() {
 		super.earlyInit();
 		matchValue = null;
+	}
+
+	@Override
+	public void observerUpdate(SubjectEntity subj) {
+
+		// Avoid unnecessary updates
+		if (isBusy())
+			return;
+
+		this.performUnscheduledUpdate();
 	}
 
 	@Override
