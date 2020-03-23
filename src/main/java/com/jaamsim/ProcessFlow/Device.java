@@ -20,11 +20,12 @@ import com.jaamsim.BasicObjects.DowntimeEntity;
 import com.jaamsim.basicsim.EntityTarget;
 import com.jaamsim.basicsim.ObserverEntity;
 import com.jaamsim.basicsim.SubjectEntity;
+import com.jaamsim.basicsim.SubjectEntityDelegate;
 import com.jaamsim.events.EventHandle;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.events.ProcessTarget;
 
-public abstract class Device extends StateUserEntity implements ObserverEntity {
+public abstract class Device extends StateUserEntity implements ObserverEntity, SubjectEntity {
 
 	private double lastUpdateTime; // simulation time at which the process was updated last
 	private double duration; // calculated duration of the process time step
@@ -33,6 +34,8 @@ public abstract class Device extends StateUserEntity implements ObserverEntity {
 	private boolean stepCompleted;  // indicates that the last process time step was completed
 	private boolean processing;  // indicates that the process loop is active
 	private long startUpTicks;  // clock ticks at which device was started most recently
+
+	private final SubjectEntityDelegate subject = new SubjectEntityDelegate(this);
 
 	public Device() {}
 
@@ -47,12 +50,25 @@ public abstract class Device extends StateUserEntity implements ObserverEntity {
 		stepCompleted = true;
 		processing = false;
 		startUpTicks = -1L;
+
+		// Clear the list of observers
+		subject.clear();
 	}
 
 	@Override
 	public void lateInit() {
 		super.lateInit();
 		ObserverEntity.registerWithSubjects(this, getWatchList());
+	}
+
+	@Override
+	public void registerObserver(ObserverEntity obs) {
+		subject.registerObserver(obs);
+	}
+
+	@Override
+	public void notifyObservers() {
+		subject.notifyObservers();
 	}
 
 	@Override
@@ -165,6 +181,9 @@ public abstract class Device extends StateUserEntity implements ObserverEntity {
 		if (this.isNewStepReqd(stepCompleted)) {
 			this.processChanged();
 		}
+
+		// Notify any observers
+		notifyObservers();
 	}
 
 	/**
@@ -257,6 +276,9 @@ public abstract class Device extends StateUserEntity implements ObserverEntity {
 		// Update the state
 		this.setPresentState();
 		startUpTicks = -1L;
+
+		// Notify any observers
+		notifyObservers();
 	}
 
 	/**
