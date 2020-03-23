@@ -17,8 +17,6 @@
  */
 package com.jaamsim.Thresholds;
 
-import com.jaamsim.CalculationObjects.Controllable;
-import com.jaamsim.CalculationObjects.Controller;
 import com.jaamsim.DisplayModels.ShapeModel;
 import com.jaamsim.basicsim.EntityTarget;
 import com.jaamsim.basicsim.ErrorException;
@@ -30,7 +28,6 @@ import com.jaamsim.events.EventManager;
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.ColourInput;
-import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.ExpError;
 import com.jaamsim.input.ExpEvaluator;
 import com.jaamsim.input.ExpResType;
@@ -38,11 +35,10 @@ import com.jaamsim.input.ExpressionInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
-import com.jaamsim.input.ValueInput;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.units.DimensionlessUnit;
 
-public class ExpressionThreshold extends Threshold implements Controllable, ObserverEntity {
+public class ExpressionThreshold extends Threshold implements ObserverEntity {
 
 	@Keyword(description = "The logical condition for the ExpressionThreshold to open.",
 	         exampleList = { "'[Queue1].QueueLength > 3'" })
@@ -79,19 +75,6 @@ public class ExpressionThreshold extends Threshold implements Controllable, Obse
 	         exampleList = { "FALSE" })
 	private final BooleanInput showPendingStates;
 
-	@Keyword(description = "The Controller object that signals the updating of this threshold. "
-	                     + "If specified, the threshold is opened or closed only when signalled "
-	                     + "by the Controller. "
-	                     + "Otherwise, the threshold is tested after every event time.",
-	         exampleList = {"Controller1"})
-	protected final EntityInput<Controller> controller;
-
-	@Keyword(description = "The sequence number used by the Controller to determine the order "
-	                     + "in which calculations are performed. A calculation with a lower value "
-	                     + "is executed before one with a higher value.",
-	         exampleList = {"2.1"})
-	private final ValueInput sequenceNumber;
-
 	private boolean lastOpenValue; // state of the threshold that was calculated on-demand
 
 	{
@@ -122,14 +105,6 @@ public class ExpressionThreshold extends Threshold implements Controllable, Obse
 
 		showPendingStates = new BooleanInput("ShowPendingStates", FORMAT, true);
 		this.addInput(showPendingStates);
-
-		controller = new EntityInput<>(Controller.class, "Controller", OPTIONS, null);
-		this.addInput(controller);
-
-		sequenceNumber = new ValueInput("SequenceNumber", OPTIONS, 0.0);
-		sequenceNumber.setValidRange(0.0d, Double.POSITIVE_INFINITY);
-		sequenceNumber.setUnitType(DimensionlessUnit.class);
-		this.addInput(sequenceNumber);
 	}
 
 	public ExpressionThreshold() {}
@@ -162,9 +137,8 @@ public class ExpressionThreshold extends Threshold implements Controllable, Obse
 	public void startUp() {
 		super.startUp();
 
-		// If there is no Controller or WatchList, the open/close expressions are tested after
-		// every event
-		if (controller.isDefault() && getWatchList().isEmpty())
+		// If there is no WatchList, the open/close expressions are tested after every event
+		if (getWatchList().isEmpty())
 			doOpenClose();
 	}
 
@@ -240,7 +214,7 @@ public class ExpressionThreshold extends Threshold implements Controllable, Obse
 
 		// If called from the user interface or if a Controller has been specified,
 		// then return the saved state
-		if (!EventManager.hasCurrent() || !controller.isDefault())
+		if (!EventManager.hasCurrent())
 			return super.isOpen();
 
 		// Determine the state implied by the OpenCondition and CloseCondition expressions
@@ -306,22 +280,6 @@ public class ExpressionThreshold extends Threshold implements Controllable, Obse
 	private final EventHandle setOpenHandle = new EventHandle();
 
 	@Override
-	public Controller getController() {
-		return controller.getValue();
-	}
-
-	@Override
-	public double getSequenceNumber() {
-		return sequenceNumber.getValue();
-	}
-
-	@Override
-	public void update(double simTime) {
-		boolean bool = getOpenConditionValue(simTime);
-		setOpen(bool);
-	}
-
-	@Override
 	public void observerUpdate(SubjectEntity subj) {
 		double simTime = getSimTime();
 		boolean bool = getOpenConditionValue(simTime);
@@ -334,7 +292,7 @@ public class ExpressionThreshold extends Threshold implements Controllable, Obse
 		super.updateGraphics(simTime);
 
 		// Trap the pending cases
-		if (!showPendingStates.getValue() || !controller.isDefault())
+		if (!showPendingStates.getValue())
 			return;
 
 		boolean threshOpen = super.isOpen();
