@@ -170,15 +170,6 @@ public class ExpressionThreshold extends Threshold implements ObserverEntity {
 	}
 
 	/**
-	 * Returns true if the saved state differs from the state implied by the OpenCondition
-	 * and CloseCondition
-	 * @return true if the state has changed
-	 */
-	boolean openStateChanged() {
-		return getOpenConditionValue(getSimTime()) != super.isOpen();
-	}
-
-	/**
 	 * Returns the state implied by the present values for the OpenCondition
 	 * and CloseCondition expressions.
 	 * @param simTime - present simulation time.
@@ -256,13 +247,12 @@ public class ExpressionThreshold extends Threshold implements ObserverEntity {
 	/**
 	 * Conditional that tests whether the state has changed
 	 */
-	class OpenChangedConditional extends Conditional {
+	private final Conditional openChanged = new Conditional() {
 		@Override
 		public boolean evaluate() {
-			return ExpressionThreshold.this.openStateChanged();
+			return getOpenConditionValue(getSimTime()) != ExpressionThreshold.super.isOpen();
 		}
-	}
-	private final Conditional openChanged = new OpenChangedConditional();
+	};
 
 	/**
 	 * ProcessTarget the executes the doOpenClose() method
