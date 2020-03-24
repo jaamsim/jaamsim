@@ -257,20 +257,14 @@ public class ExpressionThreshold extends Threshold implements ObserverEntity {
 	/**
 	 * ProcessTarget the executes the doOpenClose() method
 	 */
-	class DoOpenCloseTarget extends ProcessTarget {
-		@Override
-		public String getDescription() {
-			return ExpressionThreshold.this.getName() + ".doOpenClose";
-		}
-
+	private final ProcessTarget doOpenClose = new EntityTarget<ExpressionThreshold>(this, "doOpenClose") {
 		@Override
 		public void process() {
 			if (isVerifyWatchList())
 				error(ERR_WATCHLIST);
 			doOpenClose();
 		}
-	}
-	private final ProcessTarget doOpenClose = new DoOpenCloseTarget();
+	};
 
 	private static class SetOpenTarget extends EntityTarget<ExpressionThreshold> {
 		SetOpenTarget(ExpressionThreshold thresh) {
