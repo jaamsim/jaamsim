@@ -266,20 +266,15 @@ public class ExpressionThreshold extends Threshold implements ObserverEntity {
 		}
 	};
 
-	private static class SetOpenTarget extends EntityTarget<ExpressionThreshold> {
-		SetOpenTarget(ExpressionThreshold thresh) {
-			super(thresh, "setOpen");
-		}
-
+	private final EventHandle setOpenHandle = new EventHandle();
+	private final ProcessTarget setOpenTarget = new EntityTarget<ExpressionThreshold>(this, "setOpen") {
 		@Override
 		public void process() {
-			boolean bool = ent.getOpenConditionValue(ent.getSimTime());
-			if (ent.isTraceFlag()) ent.trace(0, "setOpen(%s)", bool);
-			ent.setOpen(bool);
+			boolean bool = getOpenConditionValue(getSimTime());
+			if (isTraceFlag()) trace(0, "setOpen(%s)", bool);
+			setOpen(bool);
 		}
-	}
-	private final SetOpenTarget setOpenTarget = new SetOpenTarget(this);
-	private final EventHandle setOpenHandle = new EventHandle();
+	};
 
 	@Override
 	public void observerUpdate(SubjectEntity subj) {
