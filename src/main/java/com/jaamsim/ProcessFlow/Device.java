@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2016-2019 JaamSim Software Inc.
+ * Copyright (C) 2016-2020 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,11 +18,13 @@ package com.jaamsim.ProcessFlow;
 
 import com.jaamsim.BasicObjects.DowntimeEntity;
 import com.jaamsim.basicsim.EntityTarget;
+import com.jaamsim.basicsim.ObserverEntity;
+import com.jaamsim.basicsim.SubjectEntity;
 import com.jaamsim.events.EventHandle;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.events.ProcessTarget;
 
-public abstract class Device extends StateUserEntity {
+public abstract class Device extends StateUserEntity implements ObserverEntity {
 
 	private double lastUpdateTime; // simulation time at which the process was updated last
 	private double duration; // calculated duration of the process time step
@@ -45,6 +47,17 @@ public abstract class Device extends StateUserEntity {
 		stepCompleted = true;
 		processing = false;
 		startUpTicks = -1L;
+	}
+
+	@Override
+	public void lateInit() {
+		super.lateInit();
+		ObserverEntity.registerWithSubjects(this, getWatchList());
+	}
+
+	@Override
+	public void observerUpdate(SubjectEntity subj) {
+		this.performUnscheduledUpdate();
 	}
 
 	/**
