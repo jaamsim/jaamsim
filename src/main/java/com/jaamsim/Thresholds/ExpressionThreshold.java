@@ -75,6 +75,15 @@ public class ExpressionThreshold extends Threshold implements ObserverEntity {
 	         exampleList = { "FALSE" })
 	private final BooleanInput showPendingStates;
 
+	@Keyword(description = "Allows the user to verify that the input to the 'WatchList' keyword "
+	                     + "includes all the objects that affect the ExpressionThreshold's state. "
+	                     + "When set to TRUE, the ExpressionThreshold uses both the normal logic "
+	                     + "and the WatchList logic to set its state. "
+	                     + "An error message is generated if the threshold changes state without "
+	                     + "being triggered by a WatchList object.",
+	         exampleList = { "TRUE" })
+	private final BooleanInput verifyWatchList;
+
 	private boolean lastOpenValue; // state of the threshold that was calculated on-demand
 
 	{
@@ -105,6 +114,9 @@ public class ExpressionThreshold extends Threshold implements ObserverEntity {
 
 		showPendingStates = new BooleanInput("ShowPendingStates", FORMAT, true);
 		this.addInput(showPendingStates);
+
+		verifyWatchList = new BooleanInput("VerifyWatchList", OPTIONS, false);
+		this.addInput(verifyWatchList);
 	}
 
 	public ExpressionThreshold() {}
@@ -138,8 +150,12 @@ public class ExpressionThreshold extends Threshold implements ObserverEntity {
 		super.startUp();
 
 		// If there is no WatchList, the open/close expressions are tested after every event
-		if (getWatchList().isEmpty())
+		if (getWatchList().isEmpty() || isVerifyWatchList())
 			doOpenClose();
+	}
+
+	public boolean isVerifyWatchList() {
+		return verifyWatchList.getValue();
 	}
 
 	/**
@@ -259,6 +275,8 @@ public class ExpressionThreshold extends Threshold implements ObserverEntity {
 
 		@Override
 		public void process() {
+			if (isVerifyWatchList())
+				error(ERR_WATCHLIST);
 			doOpenClose();
 		}
 	}

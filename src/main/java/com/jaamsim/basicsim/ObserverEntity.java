@@ -20,6 +20,12 @@ import java.util.ArrayList;
 
 public interface ObserverEntity {
 
+	public static String ERR_WATCHLIST = "WatchList verification error.\n\n"
+			+ "A state change has occured that was not triggered by an object in the WatchList.\n"
+			+ "Re-run the model with the Event Viewer open and review the events that occurred\n"
+			+ "at the same simulation time as this error. One of the objects associated with\n"
+			+ "these events needs to be added to the WatchList input.";
+
 	/**
 	 * Performs the necessary updates when one or more of the subject entities being monitored
 	 * has changed state.
