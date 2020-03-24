@@ -318,21 +318,13 @@ public abstract class Device extends StateUserEntity implements ObserverEntity, 
 		}
 	}
 
-	/**
-	 * ProcessTarget for the unscheduledUpdate method
-	 */
-	private static class UnscheduledUpdateTarget extends EntityTarget<Device> {
-		UnscheduledUpdateTarget(Device ent) {
-			super(ent, "unscheduledUpdate");
-		}
-
+	private final EventHandle unscheduledUpdateHandle = new EventHandle();
+	private final ProcessTarget unscheduledUpdateTarget = new EntityTarget<Device>(this, "unscheduledUpdate") {
 		@Override
 		public void process() {
-			ent.unscheduledUpdate();
+			unscheduledUpdate();
 		}
-	}
-	private final ProcessTarget unscheduledUpdateTarget = new UnscheduledUpdateTarget(this);
-	private final EventHandle unscheduledUpdateHandle = new EventHandle();
+	};
 
 	/**
 	 * Revises the time for the next event by stopping the present process and starting a new one.
