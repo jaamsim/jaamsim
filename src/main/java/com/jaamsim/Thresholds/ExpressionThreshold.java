@@ -166,8 +166,24 @@ public class ExpressionThreshold extends Threshold implements ObserverEntity {
 		setOpen(this.getOpenConditionValue(this.getSimTime()));
 
 		// Wait until the state is ready to change
-		EventManager.scheduleUntil(doOpenClose, openChanged, null);
+		EventManager.scheduleUntil(doOpenCloseTarget, openChangedConditional, null);
 	}
+
+	private final Conditional openChangedConditional = new Conditional() {
+		@Override
+		public boolean evaluate() {
+			return getOpenConditionValue(getSimTime()) != ExpressionThreshold.super.isOpen();
+		}
+	};
+
+	private final ProcessTarget doOpenCloseTarget = new EntityTarget<ExpressionThreshold>(this, "doOpenClose") {
+		@Override
+		public void process() {
+			if (isVerifyWatchList())
+				error(ERR_WATCHLIST);
+			doOpenClose();
+		}
+	};
 
 	/**
 	 * Returns the state implied by the present values for the OpenCondition
@@ -243,28 +259,6 @@ public class ExpressionThreshold extends Threshold implements ObserverEntity {
 			this.scheduleProcessTicks(0L, 2, false, setOpenTarget, setOpenHandle);  // LIFO
 		}
 	}
-
-	/**
-	 * Conditional that tests whether the state has changed
-	 */
-	private final Conditional openChanged = new Conditional() {
-		@Override
-		public boolean evaluate() {
-			return getOpenConditionValue(getSimTime()) != ExpressionThreshold.super.isOpen();
-		}
-	};
-
-	/**
-	 * ProcessTarget the executes the doOpenClose() method
-	 */
-	private final ProcessTarget doOpenClose = new EntityTarget<ExpressionThreshold>(this, "doOpenClose") {
-		@Override
-		public void process() {
-			if (isVerifyWatchList())
-				error(ERR_WATCHLIST);
-			doOpenClose();
-		}
-	};
 
 	private final EventHandle setOpenHandle = new EventHandle();
 	private final ProcessTarget setOpenTarget = new EntityTarget<ExpressionThreshold>(this, "setOpen") {
