@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018-2019 JaamSim Software Inc.
+ * Copyright (C) 2018-2020 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,9 @@ import java.util.Arrays;
 
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.basicsim.EntityTarget;
+import com.jaamsim.basicsim.ObserverEntity;
+import com.jaamsim.basicsim.SubjectEntity;
+import com.jaamsim.basicsim.SubjectEntityDelegate;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.BooleanInput;
@@ -35,7 +38,7 @@ import com.jaamsim.units.TimeUnit;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
 
-public class TimeSeries extends DisplayEntity implements TimeSeriesProvider {
+public class TimeSeries extends DisplayEntity implements TimeSeriesProvider, SubjectEntity {
 
 	@Keyword(description = "If TRUE, the simulation times corresponding to the time stamps "
 	                     + "entered to the 'Value' keyword are calculated relative time for the "
@@ -63,6 +66,8 @@ public class TimeSeries extends DisplayEntity implements TimeSeriesProvider {
 	         exampleList = {"8760.0 h"})
 	private final ValueInput cycleTime;
 
+	private final SubjectEntityDelegate subject = new SubjectEntityDelegate(this);
+
 	{
 		offsetToFirst = new BooleanInput("OffsetToFirst", KEY_INPUTS, true);
 		this.addInput(offsetToFirst);
@@ -83,6 +88,12 @@ public class TimeSeries extends DisplayEntity implements TimeSeriesProvider {
 	}
 
 	public TimeSeries() { }
+
+	@Override
+	public void earlyInit() {
+		super.earlyInit();
+		subject.clear();
+	}
 
 	@Override
 	public void validate() {
@@ -115,6 +126,16 @@ public class TimeSeries extends DisplayEntity implements TimeSeriesProvider {
 		this.waitForNextValue();
 	}
 
+	@Override
+	public void registerObserver(ObserverEntity obs) {
+		subject.registerObserver(obs);
+	}
+
+	@Override
+	public void notifyObservers() {
+		subject.notifyObservers();
+	}
+
 	public boolean isOffsetToFirst() {
 		return offsetToFirst.getValue();
 	}
@@ -130,6 +151,9 @@ public class TimeSeries extends DisplayEntity implements TimeSeriesProvider {
 		if (durTicks == 0L)
 			return;
 		this.scheduleProcessTicks(durTicks, 0, waitForNextValueTarget);
+
+		// Notify any observers
+		notifyObservers();
 	}
 
 	/**
