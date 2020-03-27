@@ -30,7 +30,6 @@ import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.math.Vec3d;
-import com.jaamsim.ui.View;
 import com.jaamsim.units.DistanceUnit;
 
 public class EntityLabel extends TextBasics {
@@ -60,11 +59,8 @@ public class EntityLabel extends TextBasics {
 		Entity label = ent.getJaamSimModel().getNamedEntity(ent.getName() + "_Label");
 		if (label == null) // FIXME - remove when all labels have the correct name
 			label = ent.getJaamSimModel().getNamedEntity(ent.getName() + "_Label1");
-		if (label != null) {
-			if (!(label instanceof EntityLabel))
-				throw new ErrorException("Entity %s is not an EntityLabel", label);
+		if (label instanceof EntityLabel)
 			return (EntityLabel) label;
-		}
 
 		// Otherwise, search for a label with the correct target entity
 		// (Required when the entity's name has been changed)

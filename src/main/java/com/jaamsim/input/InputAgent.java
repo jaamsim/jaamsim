@@ -1053,7 +1053,8 @@ public class InputAgent {
 		// Write a stub definition for the Custom Outputs for each entity
 		boolean blankLinePrinted = false;
 		for (Entity ent : entityList) {
-			if (ent.getCustomOutputNames().isEmpty())
+			Input<?> in = ent.getInput("CustomOutputList");
+			if (in == null || !in.isEdited())
 				continue;
 			if (!blankLinePrinted) {
 				file.format("%n");

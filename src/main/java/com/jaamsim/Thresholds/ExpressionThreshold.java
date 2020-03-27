@@ -17,18 +17,17 @@
  */
 package com.jaamsim.Thresholds;
 
-import com.jaamsim.CalculationObjects.Controllable;
-import com.jaamsim.CalculationObjects.Controller;
 import com.jaamsim.DisplayModels.ShapeModel;
 import com.jaamsim.basicsim.EntityTarget;
 import com.jaamsim.basicsim.ErrorException;
+import com.jaamsim.basicsim.ObserverEntity;
+import com.jaamsim.basicsim.SubjectEntity;
 import com.jaamsim.events.Conditional;
 import com.jaamsim.events.EventHandle;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.ColourInput;
-import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.ExpError;
 import com.jaamsim.input.ExpEvaluator;
 import com.jaamsim.input.ExpResType;
@@ -36,11 +35,10 @@ import com.jaamsim.input.ExpressionInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
-import com.jaamsim.input.ValueInput;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.units.DimensionlessUnit;
 
-public class ExpressionThreshold extends Threshold implements Controllable {
+public class ExpressionThreshold extends Threshold implements ObserverEntity {
 
 	@Keyword(description = "The logical condition for the ExpressionThreshold to open.",
 	         exampleList = { "'[Queue1].QueueLength > 3'" })
@@ -77,22 +75,19 @@ public class ExpressionThreshold extends Threshold implements Controllable {
 	         exampleList = { "FALSE" })
 	private final BooleanInput showPendingStates;
 
-	@Keyword(description = "The Controller object that signals the updating of this threshold. "
-	                     + "If specified, the threshold is opened or closed only when signalled "
-	                     + "by the Controller. "
-	                     + "Otherwise, the threshold is tested after every event time.",
-	         exampleList = {"Controller1"})
-	protected final EntityInput<Controller> controller;
-
-	@Keyword(description = "The sequence number used by the Controller to determine the order "
-	                     + "in which calculations are performed. A calculation with a lower value "
-	                     + "is executed before one with a higher value.",
-	         exampleList = {"2.1"})
-	private final ValueInput sequenceNumber;
+	@Keyword(description = "Allows the user to verify that the input to the 'WatchList' keyword "
+	                     + "includes all the objects that affect the ExpressionThreshold's state. "
+	                     + "When set to TRUE, the ExpressionThreshold uses both the normal logic "
+	                     + "and the WatchList logic to set its state. "
+	                     + "An error message is generated if the threshold changes state without "
+	                     + "being triggered by a WatchList object.",
+	         exampleList = { "TRUE" })
+	private final BooleanInput verifyWatchList;
 
 	private boolean lastOpenValue; // state of the threshold that was calculated on-demand
 
 	{
+		watchList.setHidden(false);
 		attributeDefinitionList.setHidden(false);
 
 		openCondition = new ExpressionInput("OpenCondition", KEY_INPUTS, null);
@@ -120,13 +115,8 @@ public class ExpressionThreshold extends Threshold implements Controllable {
 		showPendingStates = new BooleanInput("ShowPendingStates", FORMAT, true);
 		this.addInput(showPendingStates);
 
-		controller = new EntityInput<>(Controller.class, "Controller", OPTIONS, null);
-		this.addInput(controller);
-
-		sequenceNumber = new ValueInput("SequenceNumber", OPTIONS, 0.0);
-		sequenceNumber.setValidRange(0.0d, Double.POSITIVE_INFINITY);
-		sequenceNumber.setUnitType(DimensionlessUnit.class);
-		this.addInput(sequenceNumber);
+		verifyWatchList = new BooleanInput("VerifyWatchList", OPTIONS, false);
+		this.addInput(verifyWatchList);
 	}
 
 	public ExpressionThreshold() {}
@@ -136,6 +126,12 @@ public class ExpressionThreshold extends Threshold implements Controllable {
 		super.earlyInit();
 		lastOpenValue = initialOpenValue.getValue();
 		lastOpenValue = this.getOpenConditionValue(0.0);
+	}
+
+	@Override
+	public void lateInit() {
+		super.lateInit();
+		ObserverEntity.registerWithSubjects(this, getWatchList());
 	}
 
 	@Override
@@ -153,9 +149,13 @@ public class ExpressionThreshold extends Threshold implements Controllable {
 	public void startUp() {
 		super.startUp();
 
-		// If there is no Controller, the open/close expressions are tested after every event
-		if (controller.isDefault())
+		// If there is no WatchList, the open/close expressions are tested after every event
+		if (getWatchList().isEmpty() || isVerifyWatchList())
 			doOpenClose();
+	}
+
+	public boolean isVerifyWatchList() {
+		return verifyWatchList.getValue();
 	}
 
 	/**
@@ -166,17 +166,24 @@ public class ExpressionThreshold extends Threshold implements Controllable {
 		setOpen(this.getOpenConditionValue(this.getSimTime()));
 
 		// Wait until the state is ready to change
-		EventManager.scheduleUntil(doOpenClose, openChanged, null);
+		EventManager.scheduleUntil(doOpenCloseTarget, openChangedConditional, null);
 	}
 
-	/**
-	 * Returns true if the saved state differs from the state implied by the OpenCondition
-	 * and CloseCondition
-	 * @return true if the state has changed
-	 */
-	boolean openStateChanged() {
-		return getOpenConditionValue(getSimTime()) != super.isOpen();
-	}
+	private final Conditional openChangedConditional = new Conditional() {
+		@Override
+		public boolean evaluate() {
+			return getOpenConditionValue(getSimTime()) != ExpressionThreshold.super.isOpen();
+		}
+	};
+
+	private final ProcessTarget doOpenCloseTarget = new EntityTarget<ExpressionThreshold>(this, "doOpenClose") {
+		@Override
+		public void process() {
+			if (isVerifyWatchList())
+				error(ERR_WATCHLIST);
+			doOpenClose();
+		}
+	};
 
 	/**
 	 * Returns the state implied by the present values for the OpenCondition
@@ -230,80 +237,45 @@ public class ExpressionThreshold extends Threshold implements Controllable {
 
 		// If called from the user interface or if a Controller has been specified,
 		// then return the saved state
-		if (!EventManager.hasCurrent() || !controller.isDefault())
+		if (!EventManager.hasCurrent())
 			return super.isOpen();
 
 		// Determine the state implied by the OpenCondition and CloseCondition expressions
 		boolean ret = this.getOpenConditionValue(getSimTime());
 
 		// If necessary, schedule an event to change the saved state
-		// The event is scheduled LIFO so it is performed as soon as possible, before the condition
-		// can change again.
-		if (ret != super.isOpen() && !setOpenHandle.isScheduled()) {
-			if (isTraceFlag()) trace(0, "isOpen()=%s, super.isOpen()=%s", ret, super.isOpen());
-			this.scheduleProcessTicks(0L, 2, false, setOpenTarget, setOpenHandle);  // LIFO
-		}
+		if (ret != super.isOpen())
+			performSetOpen();
 
 		// Return the value calculated on demand
 		return ret;
 	}
 
-	/**
-	 * Conditional that tests whether the state has changed
-	 */
-	class OpenChangedConditional extends Conditional {
-		@Override
-		public boolean evaluate() {
-			return ExpressionThreshold.this.openStateChanged();
+	private void performSetOpen() {
+		// The event is scheduled LIFO so it is performed as soon as possible, before the condition
+		// can change again.
+		if (!setOpenHandle.isScheduled()) {
+			if (isTraceFlag()) trace(0, "performSetOpen()");
+			this.scheduleProcessTicks(0L, 2, false, setOpenTarget, setOpenHandle);  // LIFO
 		}
 	}
-	private final Conditional openChanged = new OpenChangedConditional();
 
-	/**
-	 * ProcessTarget the executes the doOpenClose() method
-	 */
-	class DoOpenCloseTarget extends ProcessTarget {
-		@Override
-		public String getDescription() {
-			return ExpressionThreshold.this.getName() + ".doOpenClose";
-		}
-
-		@Override
-		public void process() {
-			doOpenClose();
-		}
-	}
-	private final ProcessTarget doOpenClose = new DoOpenCloseTarget();
-
-	private static class SetOpenTarget extends EntityTarget<ExpressionThreshold> {
-		SetOpenTarget(ExpressionThreshold thresh) {
-			super(thresh, "setOpen");
-		}
-
-		@Override
-		public void process() {
-			boolean bool = ent.getOpenConditionValue(ent.getSimTime());
-			if (ent.isTraceFlag()) ent.trace(0, "setOpen(%s)", bool);
-			ent.setOpen(bool);
-		}
-	}
-	private final SetOpenTarget setOpenTarget = new SetOpenTarget(this);
 	private final EventHandle setOpenHandle = new EventHandle();
+	private final ProcessTarget setOpenTarget = new EntityTarget<ExpressionThreshold>(this, "setOpen") {
+		@Override
+		public void process() {
+			boolean bool = getOpenConditionValue(getSimTime());
+			if (isTraceFlag()) trace(0, "setOpen(%s)", bool);
+			setOpen(bool);
+		}
+	};
 
 	@Override
-	public Controller getController() {
-		return controller.getValue();
-	}
-
-	@Override
-	public double getSequenceNumber() {
-		return sequenceNumber.getValue();
-	}
-
-	@Override
-	public void update(double simTime) {
+	public void observerUpdate(SubjectEntity subj) {
+		double simTime = getSimTime();
 		boolean bool = getOpenConditionValue(simTime);
-		setOpen(bool);
+		if (bool != super.isOpen())
+			performSetOpen();
 	}
 
 	@Override
@@ -311,7 +283,7 @@ public class ExpressionThreshold extends Threshold implements Controllable {
 		super.updateGraphics(simTime);
 
 		// Trap the pending cases
-		if (!showPendingStates.getValue() || !controller.isDefault())
+		if (!showPendingStates.getValue())
 			return;
 
 		boolean threshOpen = super.isOpen();

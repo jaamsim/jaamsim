@@ -53,6 +53,7 @@ import com.jaamsim.Graphics.EntityLabel;
 import com.jaamsim.Graphics.LinkDisplayable;
 import com.jaamsim.Graphics.OverlayEntity;
 import com.jaamsim.Graphics.Region;
+import com.jaamsim.Graphics.View;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.basicsim.ObjectType;
@@ -94,7 +95,6 @@ import com.jaamsim.ui.ContextMenu;
 import com.jaamsim.ui.FrameBox;
 import com.jaamsim.ui.GUIFrame;
 import com.jaamsim.ui.LogBox;
-import com.jaamsim.ui.View;
 import com.jaamsim.units.AngleUnit;
 import com.jaamsim.units.DistanceUnit;
 import com.jogamp.newt.event.KeyEvent;
@@ -271,8 +271,8 @@ public class RenderManager implements DragSourceListener {
 			}
 		}
 
-		IntegerVector windSize = view.getWindowSize();
-		IntegerVector windPos = view.getWindowPos();
+		IntegerVector windSize = GUIFrame.getInstance().getWindowSize(view);
+		IntegerVector windPos = GUIFrame.getInstance().getWindowPos(view);
 
 		Image icon = GUIFrame.getWindowIcon();
 
@@ -312,11 +312,10 @@ public class RenderManager implements DragSourceListener {
 
 		// Update the state of the window in the input file
 		View v = windowToViewMap.get(windowID);
-		if (!v.getKeepWindowOpen() && v.showWindow() && !v.isDead()) {
-			KeywordIndex kw = InputAgent.formatArgs("ShowWindow", "FALSE");
+		if (!GUIFrame.getInstance().isIconified() && v.showWindow() && !v.isDead()) {
+			KeywordIndex kw = InputAgent.formatBoolean("ShowWindow", false);
 			InputAgent.storeAndExecute(new KeywordCommand(v, kw));
 		}
-		v.setKeepWindowOpen(false);
 
 		windowControls.remove(windowID);
 		windowToViewMap.remove(windowID);
@@ -324,17 +323,6 @@ public class RenderManager implements DragSourceListener {
 
 	public void setActiveWindow(int windowID) {
 		activeWindowID = windowID;
-		final View activeView = windowToViewMap.get(windowID);
-		if (activeView != null)
-		{
-			EventQueue.invokeLater(new Runnable() {
-				@Override
-				public void run() {
-					GUIFrame.getInstance().updateControls();
-				}
-			});
-
-		}
 	}
 
 	public static boolean isGood() {
@@ -384,7 +372,7 @@ public class RenderManager implements DragSourceListener {
 				double renderTime = EventManager.ticksToSecs(simTick);
 				redraw.beginDrawing();
 
-				ArrayList<View> views = GUIFrame.getJaamSimModel().getViews();
+				ArrayList<View> views = GUIFrame.getInstance().getViews();
 				for (int i = 0; i < views.size(); i++) {
 					View v = views.get(i);
 					v.update(renderTime);
@@ -411,19 +399,10 @@ public class RenderManager implements DragSourceListener {
 
 					ArrayList<DisplayModelBinding> selectedBindings = new ArrayList<>();
 
-					int numEnts = 0;
-
 					// Update all graphical entities in the simulation
+					// All entities are updated regardless of the number or whether 'Show' is set
+					// (required for Queue, etc.)
 					for (DisplayEntity de : GUIFrame.getJaamSimModel().getClonesOfIterator(DisplayEntity.class)) {
-						if (!de.getShow())
-							continue;
-
-						numEnts++;
-						// There is an upper limit on number of entities
-						if (numEnts > maxRenderableEntities) {
-							break;
-						}
-
 						try {
 							de.updateGraphics(renderTime);
 						}
@@ -435,7 +414,7 @@ public class RenderManager implements DragSourceListener {
 
 					updateNanos = System.nanoTime();
 
-					numEnts = 0;
+					int numEnts = 0;
 					// Collect the render proxies for each entity
 					for (DisplayEntity de : GUIFrame.getJaamSimModel().getClonesOfIterator(DisplayEntity.class)) {
 						if (!de.getShow())
@@ -989,7 +968,14 @@ public class RenderManager implements DragSourceListener {
 				}
 			}
 
-		} else {
+		}
+		else if (ent instanceof View) {
+			selectedEntity = null;
+			View view = (View) ent;
+			int windowID = getWindowID(view);
+			focusWindow(windowID);
+		}
+		else {
 			selectedEntity = null;
 		}
 
@@ -1424,10 +1410,6 @@ public class RenderManager implements DragSourceListener {
 		if (selectedEntity == null)
 			return -1;
 
-		if (selectedEntity == null) {
-			return -1;
-		}
-
 		ArrayList<Vec3d> points = selectedEntity.getPoints();
 		if (points == null)
 			return -1;
@@ -1771,6 +1753,10 @@ public class RenderManager implements DragSourceListener {
 			}
 		}
 		return -1;
+	}
+
+	public boolean isVisible(View view) {
+		return windowToViewMap.containsValue(view);
 	}
 
 	public static Frame getOpenWindowForView(View view) {

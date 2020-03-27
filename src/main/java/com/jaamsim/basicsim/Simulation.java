@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2002-2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2019 JaamSim Software Inc.
+ * Copyright (C) 2016-2020 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -652,138 +652,6 @@ public class Simulation extends Entity {
 			Unit.setPreferredUnitList(this.getJaamSimModel(), displayedUnits.getValue());
 			return;
 		}
-
-		// ****************************************************************************************
-
-		// GUI keywords that require an instance of GUIFrame
-		GUIListener gui = getJaamSimModel().getGUIListener();
-		if (gui == null)
-			return;
-
-		if (in == showModelBuilder) {
-			gui.showTool("ModelBuilder", showModelBuilder.getValue());
-			return;
-		}
-
-		if (in == showObjectSelector) {
-			gui.showTool("ObjectSelector", showObjectSelector.getValue());
-			return;
-		}
-
-		if (in == showInputEditor) {
-			gui.showTool("InputEditor", showInputEditor.getValue());
-			return;
-		}
-
-		if (in == showOutputViewer) {
-			gui.showTool("OutputViewer", showOutputViewer.getValue());
-			return;
-		}
-
-		if (in == showPropertyViewer) {
-			gui.showTool("PropertyViewer", showPropertyViewer.getValue());
-			return;
-		}
-
-		if (in == showLogViewer) {
-			gui.showTool("LogViewer", showLogViewer.getValue());
-			return;
-		}
-
-		if (in == showEventViewer) {
-			gui.showTool("EventViewer", showEventViewer.getValue());
-			return;
-		}
-
-		if (in == modelBuilderPos) {
-			IntegerVector pos = modelBuilderPos.getValue();
-			gui.setToolLocation("ModelBuilder", pos.get(0), pos.get(1));
-			return;
-		}
-
-		if (in == modelBuilderSize) {
-			IntegerVector size = modelBuilderSize.getValue();
-			gui.setToolSize("ModelBuilder", size.get(0), size.get(1));
-			return;
-		}
-
-		if (in == objectSelectorPos) {
-			IntegerVector pos = objectSelectorPos.getValue();
-			gui.setToolLocation("ObjectSelector", pos.get(0), pos.get(1));
-			return;
-		}
-
-		if (in == objectSelectorSize) {
-			IntegerVector size = objectSelectorSize.getValue();
-			gui.setToolSize("ObjectSelector", size.get(0), size.get(1));
-			return;
-		}
-
-		if (in == inputEditorPos) {
-			IntegerVector pos = inputEditorPos.getValue();
-			gui.setToolLocation("InputEditor", pos.get(0), pos.get(1));
-			return;
-		}
-
-		if (in == inputEditorSize) {
-			IntegerVector size = inputEditorSize.getValue();
-			gui.setToolSize("InputEditor", size.get(0), size.get(1));
-			return;
-		}
-
-		if (in == outputViewerPos) {
-			IntegerVector pos = outputViewerPos.getValue();
-			gui.setToolLocation("OutputViewer", pos.get(0), pos.get(1));
-			return;
-		}
-
-		if (in == outputViewerSize) {
-			IntegerVector size = outputViewerSize.getValue();
-			gui.setToolSize("OutputViewer", size.get(0), size.get(1));
-			return;
-		}
-
-		if (in == propertyViewerPos) {
-			IntegerVector pos = propertyViewerPos.getValue();
-			gui.setToolLocation("PropertyViewer", pos.get(0), pos.get(1));
-			return;
-		}
-
-		if (in == propertyViewerSize) {
-			IntegerVector size = propertyViewerSize.getValue();
-			gui.setToolSize("PropertyViewer", size.get(0), size.get(1));
-			return;
-		}
-
-		if (in == logViewerPos) {
-			IntegerVector pos = logViewerPos.getValue();
-			gui.setToolLocation("LogViewer", pos.get(0), pos.get(1));
-			return;
-		}
-
-		if (in == logViewerSize) {
-			IntegerVector size = logViewerSize.getValue();
-			gui.setToolSize("LogViewer", size.get(0), size.get(1));
-			return;
-		}
-
-		if (in == eventViewerPos) {
-			IntegerVector pos = eventViewerPos.getValue();
-			gui.setToolLocation("EventViewer", pos.get(0), pos.get(1));
-			return;
-		}
-
-		if (in == eventViewerSize) {
-			IntegerVector size = eventViewerSize.getValue();
-			gui.setToolSize("EventViewer", size.get(0), size.get(1));
-			return;
-		}
-
-		if (in == controlPanelWidth) {
-			int width = controlPanelWidth.getValue();
-			gui.setControlPanelWidth(width);
-			return;
-		}
 	}
 
 	@Override
@@ -1136,109 +1004,15 @@ public class Simulation extends Entity {
 		return eventViewerSize.getValue();
 	}
 
-	public void setModelBuilderPos(int x, int y) {
-		if (modelBuilderPos.getValue().get(0) == x && modelBuilderPos.getValue().get(1) == y)
-			return;
-		KeywordIndex kw = InputAgent.formatIntegers(modelBuilderPos.getKeyword(), x, y);
-		InputAgent.storeAndExecute(new KeywordCommand(this, kw));
-	}
-
-	public void setModelBuilderSize(int x, int y) {
-		if (modelBuilderSize.getValue().get(0) == x && modelBuilderSize.getValue().get(1) == y)
-			return;
-		KeywordIndex kw = InputAgent.formatIntegers(modelBuilderSize.getKeyword(), x, y);
-		InputAgent.storeAndExecute(new KeywordCommand(this, kw));
-	}
-
-	public void setObjectSelectorPos(int x, int y) {
-		if (objectSelectorPos.getValue().get(0) == x && objectSelectorPos.getValue().get(1) == y)
-			return;
-		KeywordIndex kw = InputAgent.formatIntegers(objectSelectorPos.getKeyword(), x, y);
-		InputAgent.storeAndExecute(new KeywordCommand(this, kw));
-	}
-
-	public void setObjectSelectorSize(int x, int y) {
-		if (objectSelectorSize.getValue().get(0) == x && objectSelectorSize.getValue().get(1) == y)
-			return;
-		KeywordIndex kw = InputAgent.formatIntegers(objectSelectorSize.getKeyword(), x, y);
-		InputAgent.storeAndExecute(new KeywordCommand(this, kw));
-	}
-
-	public void setInputEditorPos(int x, int y) {
-		if (inputEditorPos.getValue().get(0) == x && inputEditorPos.getValue().get(1) == y)
-			return;
-		KeywordIndex kw = InputAgent.formatIntegers(inputEditorPos.getKeyword(), x, y);
-		InputAgent.storeAndExecute(new KeywordCommand(this, kw));
-	}
-
-	public void setInputEditorSize(int x, int y) {
-		if (inputEditorSize.getValue().get(0) == x && inputEditorSize.getValue().get(1) == y)
-			return;
-		KeywordIndex kw = InputAgent.formatIntegers(inputEditorSize.getKeyword(), x, y);
-		InputAgent.storeAndExecute(new KeywordCommand(this, kw));
-	}
-
-	public void setOutputViewerPos(int x, int y) {
-		if (outputViewerPos.getValue().get(0) == x && outputViewerPos.getValue().get(1) == y)
-			return;
-		KeywordIndex kw = InputAgent.formatIntegers(outputViewerPos.getKeyword(), x, y);
-		InputAgent.storeAndExecute(new KeywordCommand(this, kw));
-	}
-
-	public void setOutputViewerSize(int x, int y) {
-		if (outputViewerSize.getValue().get(0) == x && outputViewerSize.getValue().get(1) == y)
-			return;
-		KeywordIndex kw = InputAgent.formatIntegers(outputViewerSize.getKeyword(), x, y);
-		InputAgent.storeAndExecute(new KeywordCommand(this, kw));
-	}
-
-	public void setPropertyViewerPos(int x, int y) {
-		if (propertyViewerPos.getValue().get(0) == x && propertyViewerPos.getValue().get(1) == y)
-			return;
-		KeywordIndex kw = InputAgent.formatIntegers(propertyViewerPos.getKeyword(), x, y);
-		InputAgent.storeAndExecute(new KeywordCommand(this, kw));
-	}
-
-	public void setPropertyViewerSize(int x, int y) {
-		if (propertyViewerSize.getValue().get(0) == x && propertyViewerSize.getValue().get(1) == y)
-			return;
-		KeywordIndex kw = InputAgent.formatIntegers(propertyViewerSize.getKeyword(), x, y);
-		InputAgent.storeAndExecute(new KeywordCommand(this, kw));
-	}
-
-	public void setLogViewerPos(int x, int y) {
-		if (logViewerPos.getValue().get(0) == x && logViewerPos.getValue().get(1) == y)
-			return;
-		KeywordIndex kw = InputAgent.formatIntegers(logViewerPos.getKeyword(), x, y);
-		InputAgent.storeAndExecute(new KeywordCommand(this, kw));
-	}
-
-	public void setLogViewerSize(int x, int y) {
-		if (logViewerSize.getValue().get(0) == x && logViewerSize.getValue().get(1) == y)
-			return;
-		KeywordIndex kw = InputAgent.formatIntegers(logViewerSize.getKeyword(), x, y);
-		InputAgent.storeAndExecute(new KeywordCommand(this, kw));
-	}
-
-	public void setEventViewerPos(int x, int y) {
-		if (eventViewerPos.getValue().get(0) == x && eventViewerPos.getValue().get(1) == y)
-			return;
-		KeywordIndex kw = InputAgent.formatIntegers(eventViewerPos.getKeyword(), x, y);
-		InputAgent.storeAndExecute(new KeywordCommand(this, kw));
-	}
-
-	public void setEventViewerSize(int x, int y) {
-		if (eventViewerSize.getValue().get(0) == x && eventViewerSize.getValue().get(1) == y)
-			return;
-		KeywordIndex kw = InputAgent.formatIntegers(eventViewerSize.getKeyword(), x, y);
-		InputAgent.storeAndExecute(new KeywordCommand(this, kw));
-	}
-
 	public void setControlPanelWidth(int width) {
 		if (controlPanelWidth.getValue() == width)
 			return;
 		KeywordIndex kw = InputAgent.formatIntegers(controlPanelWidth.getKeyword(), width);
 		InputAgent.storeAndExecute(new KeywordCommand(this, kw));
+	}
+
+	public int getControlPanelWidth() {
+		return controlPanelWidth.getValue();
 	}
 
 	public boolean isModelBuilderVisible() {

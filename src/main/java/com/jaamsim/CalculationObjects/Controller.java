@@ -24,6 +24,9 @@ import java.util.Comparator;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.EntityTarget;
+import com.jaamsim.basicsim.ObserverEntity;
+import com.jaamsim.basicsim.SubjectEntity;
+import com.jaamsim.basicsim.SubjectEntityDelegate;
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
@@ -37,7 +40,7 @@ import com.jaamsim.units.TimeUnit;
  * @author Harry King
  *
  */
-public class Controller extends DisplayEntity {
+public class Controller extends DisplayEntity implements SubjectEntity {
 
 	@Keyword(description = "Simulation time for the first update signal.",
 	         exampleList = {"5 s"})
@@ -55,6 +58,8 @@ public class Controller extends DisplayEntity {
 	private int count;  // Number of update cycle completed.
 
 	private final ProcessTarget doUpdate = new DoUpdateTarget(this);
+
+	private final SubjectEntityDelegate subject = new SubjectEntityDelegate(this);
 
 	{
 		firstTime = new ValueInput("FirstTime", KEY_INPUTS, 0.0d);
@@ -99,6 +104,19 @@ public class Controller extends DisplayEntity {
 			}
 
 		});
+
+		// Clear the list of observers
+		subject.clear();
+	}
+
+	@Override
+	public void registerObserver(ObserverEntity obs) {
+		subject.registerObserver(obs);
+	}
+
+	@Override
+	public void notifyObservers() {
+		subject.notifyObservers();
 	}
 
 	@Override
@@ -128,6 +146,9 @@ public class Controller extends DisplayEntity {
 		for (Controllable ent : entityList) {
 			ent.update(simTime);
 		}
+
+		// Notify any observers
+		notifyObservers();
 
 		// Increment the number of cycles
 		count++;

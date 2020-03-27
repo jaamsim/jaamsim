@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2017-2019 JaamSim Software Inc.
+ * Copyright (C) 2017-2020 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
  */
 package com.jaamsim.Commands;
 
+import com.jaamsim.Graphics.View;
 import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.datatypes.IntegerVector;
@@ -23,7 +24,6 @@ import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.ui.FrameBox;
-import com.jaamsim.ui.View;
 import com.jaamsim.units.DistanceUnit;
 
 public class DefineViewCommand implements Command {
@@ -81,6 +81,11 @@ public class DefineViewCommand implements Command {
 	@Override
 	public Command tryMerge(Command cmd) {
 		return null;
+	}
+
+	@Override
+	public boolean isChange() {
+		return true;
 	}
 
 	@Override

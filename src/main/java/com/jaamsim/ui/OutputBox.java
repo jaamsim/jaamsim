@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2019 JaamSim Software Inc.
+ * Copyright (C) 2019-2020 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,8 +18,6 @@
 package com.jaamsim.ui;
 
 import java.awt.Point;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
@@ -29,7 +27,6 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 
 import com.jaamsim.basicsim.Entity;
-import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.OutputHandle;
@@ -54,28 +51,7 @@ public class OutputBox extends FrameBox {
 
 		getContentPane().add( scrollPane );
 
-		Simulation simulation = GUIFrame.getJaamSimModel().getSimulation();
-		GUIFrame gui = GUIFrame.getInstance();
-		Point pt = gui.getGlobalLocation(simulation.getOutputViewerPos().get(0),
-				simulation.getOutputViewerPos().get(1));
-		setLocation(pt);
-		setSize(simulation.getOutputViewerSize().get(0), simulation.getOutputViewerSize().get(1));
-
-		addComponentListener(new ComponentAdapter() {
-
-			@Override
-			public void componentMoved(ComponentEvent e) {
-				Point pt = gui.getRelativeLocation(getLocation().x, getLocation().y);
-				Simulation simulation = GUIFrame.getJaamSimModel().getSimulation();
-				simulation.setOutputViewerPos(pt.x, pt.y);
-			}
-
-			@Override
-			public void componentResized(ComponentEvent e) {
-				Simulation simulation = GUIFrame.getJaamSimModel().getSimulation();
-				simulation.setOutputViewerSize(getSize().width, getSize().height);
-			}
-		});
+		addComponentListener(FrameBox.getSizePosAdapter(this, "OutputViewerSize", "OutputViewerPos"));
 	}
 
 	/**

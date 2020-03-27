@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2020 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,6 +48,8 @@ public EntityTracer() {}
 
 @Override
 public void startUp() {
+	super.startUp();
+
 	if (entities.getValue().isEmpty() || startTime.getValue() == 0.0d)
 		return;
 

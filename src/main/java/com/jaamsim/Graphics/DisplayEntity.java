@@ -58,7 +58,6 @@ import com.jaamsim.render.RenderUtils;
 import com.jaamsim.render.VisibilityInfo;
 import com.jaamsim.ui.EditBox;
 import com.jaamsim.ui.FrameBox;
-import com.jaamsim.ui.View;
 import com.jaamsim.units.AngleUnit;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.DistanceUnit;
@@ -1134,7 +1133,7 @@ public class DisplayEntity extends Entity {
 	}
 
 	/**
-	 * Returns the location at which entities arrive at this entity, if relevant.
+	 * Returns the global position at which entities depart from this entity, if relevant.
 	 * @return arrival location
 	 */
 	public Vec3d getSourcePoint() {
@@ -1146,7 +1145,7 @@ public class DisplayEntity extends Entity {
 	}
 
 	/**
-	 * Returns the location at which entities depart from this entity, if relevant.
+	 * Returns the global position at which entities arrive at this entity, if relevant.
 	 * @return departure location
 	 */
 	public Vec3d getSinkPoint() {

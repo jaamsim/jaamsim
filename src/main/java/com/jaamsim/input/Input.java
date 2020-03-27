@@ -164,20 +164,21 @@ public abstract class Input<T> {
 	public Input(String key, String cat, T def) {
 		keyword = key;
 		category = cat;
-		setDefaultValue(def);
+		defValue = def;
 
-		edited = false;
 		promptReqd = true;
-		isDef = true;
 		hidden = false;
-		valueTokens = null;
 		defText = null;
 		isReqd = false;
-		isValid = true;
+
+		reset();
 	}
 
+	/**
+	 * Sets the input to its default value.
+	 */
 	public void reset() {
-		this.setDefaultValue( this.getDefaultValue() );
+		value = defValue;
 		valueTokens = null;
 		edited = false;
 		isDef = true;
@@ -274,9 +275,13 @@ public abstract class Input<T> {
 		return defText;
 	}
 
+	/**
+	 * Sets the default value and returns the input to its new default state.
+	 * @param val - new default value
+	 */
 	public void setDefaultValue(T val) {
 		defValue = val;
-		value = val;
+		reset();
 	}
 
 	public T getDefaultValue() {

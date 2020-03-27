@@ -107,7 +107,26 @@ public class KeywordIndex {
 	}
 
 	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!(obj instanceof KeywordIndex))
+			return false;
+
+		KeywordIndex kw = (KeywordIndex) obj;
+		if (context == null && kw.context != null)
+			return false;
+		if (context != null && !context.equals(kw.context))
+			return false;
+
+		return input.equals(kw.input) && keyword.equals(kw.keyword)
+				&& start == kw.start && end == kw.end;
+    }
+
+	@Override
 	public String toString() {
 		return input.subList(start, end).toString();
 	}
+
 }

@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2016-2019 JaamSim Software Inc.
+ * Copyright (C) 2016-2020 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,11 +18,14 @@ package com.jaamsim.ProcessFlow;
 
 import com.jaamsim.BasicObjects.DowntimeEntity;
 import com.jaamsim.basicsim.EntityTarget;
+import com.jaamsim.basicsim.ObserverEntity;
+import com.jaamsim.basicsim.SubjectEntity;
+import com.jaamsim.basicsim.SubjectEntityDelegate;
 import com.jaamsim.events.EventHandle;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.events.ProcessTarget;
 
-public abstract class Device extends StateUserEntity {
+public abstract class Device extends StateUserEntity implements ObserverEntity, SubjectEntity {
 
 	private double lastUpdateTime; // simulation time at which the process was updated last
 	private double duration; // calculated duration of the process time step
@@ -31,6 +34,8 @@ public abstract class Device extends StateUserEntity {
 	private boolean stepCompleted;  // indicates that the last process time step was completed
 	private boolean processing;  // indicates that the process loop is active
 	private long startUpTicks;  // clock ticks at which device was started most recently
+
+	private final SubjectEntityDelegate subject = new SubjectEntityDelegate(this);
 
 	public Device() {}
 
@@ -45,6 +50,30 @@ public abstract class Device extends StateUserEntity {
 		stepCompleted = true;
 		processing = false;
 		startUpTicks = -1L;
+
+		// Clear the list of observers
+		subject.clear();
+	}
+
+	@Override
+	public void lateInit() {
+		super.lateInit();
+		ObserverEntity.registerWithSubjects(this, getWatchList());
+	}
+
+	@Override
+	public void registerObserver(ObserverEntity obs) {
+		subject.registerObserver(obs);
+	}
+
+	@Override
+	public void notifyObservers() {
+		subject.notifyObservers();
+	}
+
+	@Override
+	public void observerUpdate(SubjectEntity subj) {
+		this.performUnscheduledUpdate();
 	}
 
 	/**
@@ -152,6 +181,9 @@ public abstract class Device extends StateUserEntity {
 		if (this.isNewStepReqd(stepCompleted)) {
 			this.processChanged();
 		}
+
+		// Notify any observers
+		notifyObservers();
 	}
 
 	/**
@@ -244,6 +276,9 @@ public abstract class Device extends StateUserEntity {
 		// Update the state
 		this.setPresentState();
 		startUpTicks = -1L;
+
+		// Notify any observers
+		notifyObservers();
 	}
 
 	/**
@@ -283,21 +318,13 @@ public abstract class Device extends StateUserEntity {
 		}
 	}
 
-	/**
-	 * ProcessTarget for the unscheduledUpdate method
-	 */
-	private static class UnscheduledUpdateTarget extends EntityTarget<Device> {
-		UnscheduledUpdateTarget(Device ent) {
-			super(ent, "unscheduledUpdate");
-		}
-
+	private final EventHandle unscheduledUpdateHandle = new EventHandle();
+	private final ProcessTarget unscheduledUpdateTarget = new EntityTarget<Device>(this, "unscheduledUpdate") {
 		@Override
 		public void process() {
-			ent.unscheduledUpdate();
+			unscheduledUpdate();
 		}
-	}
-	private final ProcessTarget unscheduledUpdateTarget = new UnscheduledUpdateTarget(this);
-	private final EventHandle unscheduledUpdateHandle = new EventHandle();
+	};
 
 	/**
 	 * Revises the time for the next event by stopping the present process and starting a new one.

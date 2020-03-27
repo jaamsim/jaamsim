@@ -1,6 +1,5 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2014 Ausenco Engineering Canada Inc.
  * Copyright (C) 2020 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,29 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.jaamsim.input;
+package com.jaamsim.basicsim;
 
-import java.net.URI;
+public interface SubjectEntity {
 
-public class ParseContext {
-	public final URI context;
-	public final String jail;
+	/**
+	 * Records that the specified entity is monitoring this subject entity.
+	 * @param obs - observer entity monitoring this subject entity
+	 */
+	public void registerObserver(ObserverEntity obs);
 
-	ParseContext(URI ctxt, String jail) {
-		context = ctxt;
-		this.jail = jail;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (!(obj instanceof ParseContext))
-			return false;
-
-		ParseContext pc = (ParseContext) obj;
-		return context.equals(pc.context) && jail.equals(pc.jail);
-    }
+	/**
+	 * Notifies the observers that are monitoring this subject entity that a state change has
+	 * occurred.
+	 */
+	public void notifyObservers();
 
 }

@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2017-2019 JaamSim Software Inc.
+ * Copyright (C) 2017-2020 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 package com.jaamsim.Commands;
+
+import java.util.Arrays;
 
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.JaamSimModel;
@@ -97,6 +99,11 @@ public class KeywordCommand implements Command {
 		}
 
 		return new KeywordCommand(entity, index, oldKws, kwCmd.newKws);
+	}
+
+	@Override
+	public boolean isChange() {
+		return !Arrays.equals(newKws, oldKws);
 	}
 
 	@Override

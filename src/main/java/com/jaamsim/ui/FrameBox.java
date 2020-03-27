@@ -18,20 +18,27 @@
 package com.jaamsim.ui;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Point;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 
+import javax.swing.JFrame;
 import javax.swing.JTable;
 import javax.swing.UIManager;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
+import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.controllers.RenderManager;
+import com.jaamsim.datatypes.IntegerVector;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.KeywordIndex;
 
@@ -87,16 +94,61 @@ public class FrameBox extends OSFixJFrame {
 	 */
 	private static class CloseListener extends WindowAdapter {
 		final KeywordIndex kw;
+
 		public CloseListener(String keyword) {
-			ArrayList<String> arg = new ArrayList<>(1);
-			arg.add("FALSE");
-			kw = new KeywordIndex(keyword, arg, null);
+			kw = InputAgent.formatBoolean(keyword, false);
 		}
 
 		@Override
 		public void windowClosing(WindowEvent e) {
 			Simulation simulation = GUIFrame.getJaamSimModel().getSimulation();
-			InputAgent.apply(simulation, kw);
+			InputAgent.storeAndExecute(new KeywordCommand(simulation, kw));
+		}
+	}
+
+	public static ComponentAdapter getSizePosAdapter(JFrame frame, String sizeKey, String posKey) {
+		return new SizePosAdapter(frame, sizeKey, posKey);
+	}
+
+	/**
+	 * Listens for re-size and re-position events and sets the appropriate keywords.
+	 */
+	private static class SizePosAdapter extends ComponentAdapter {
+		final JFrame tool;
+		final String sizeKeyword;
+		final String posKeyword;
+
+		public SizePosAdapter(JFrame frame, String sizeKey, String posKey) {
+			tool = frame;
+			sizeKeyword = sizeKey;
+			posKeyword = posKey;
+		}
+
+		@Override
+		public void componentMoved(ComponentEvent e) {
+			setSizePos();
+		}
+
+		@Override
+		public void componentResized(ComponentEvent e) {
+			setSizePos();
+		}
+
+		private void setSizePos() {
+			Dimension size = tool.getSize();
+			Point pos = tool.getLocation();
+			pos = GUIFrame.getInstance().getRelativeLocation(pos.x, pos.y);
+
+			Simulation simulation = GUIFrame.getJaamSimModel().getSimulation();
+			IntegerVector oldSize = (IntegerVector) simulation.getInput(sizeKeyword).getValue();
+			IntegerVector oldPos = (IntegerVector) simulation.getInput(posKeyword).getValue();
+			if (oldSize.get(0) == size.width && oldSize.get(1) == size.height
+					&& oldPos.get(0) == pos.x && oldPos.get(1) == pos.y)
+				return;
+
+			KeywordIndex sizeKw = InputAgent.formatIntegers(sizeKeyword, size.width, size.height);
+			KeywordIndex posKw = InputAgent.formatIntegers(posKeyword, pos.x, pos.y);
+			InputAgent.storeAndExecute(new KeywordCommand(simulation, sizeKw, posKw));
 		}
 	}
 

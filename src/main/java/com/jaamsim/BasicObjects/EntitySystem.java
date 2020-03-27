@@ -56,20 +56,28 @@ public class EntitySystem extends AbstractStateUserEntity {
 
 		entityList.clear();
 		for (AbstractStateUserEntity stateEnt : getJaamSimModel().getClonesOfIterator(AbstractStateUserEntity.class)) {
-			if (stateEnt.getEntitySystem() == this)
+			if (stateEnt.getEntitySystemList().contains(this))
 				entityList.add(stateEnt);
 		}
 	}
 
 	@Override
 	public void validate() {
-		EntitySystem sys = getEntitySystem();
-		while(sys != null) {
-			if (sys == this)
-				throw new InputErrorException("The chain of EntitySystem inputs cannot include "
-						+ "this EntitySystem.");
-			sys = sys.getEntitySystem();
+		super.validate();
+
+		if (this.isMemberOf(this))
+			throw new InputErrorException("The chain of EntitySystem inputs cannot include "
+					+ "this EntitySystem.");
+	}
+
+	private boolean isMemberOf(EntitySystem sys) {
+		if (getEntitySystemList().contains(sys))
+			return true;
+		for (EntitySystem s : getEntitySystemList()) {
+			if (s.isMemberOf(sys))
+				return true;
 		}
+		return false;
 	}
 
 	public void performUpdate() {

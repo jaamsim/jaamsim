@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2019 JaamSim Software Inc.
+ * Copyright (C) 2016-2020 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -67,7 +67,8 @@ public class EntityGate extends LinkedService {
 
 		// If the gate is closed, in maintenance or breakdown, or other entities are already
 		// queued, then add the entity to the queue
-		Queue queue = waitQueue.getValue();
+		double simTime = getSimTime();
+		Queue queue = getQueue(simTime);
 		if (!queue.isEmpty() || !this.isIdle() || num >= getNumberToRelease(getSimTime())) {
 			queue.addEntity(ent);
 			return;
@@ -91,7 +92,7 @@ public class EntityGate extends LinkedService {
 		this.setMatchValue(m);
 
 		// Stop if the queue has become empty
-		if (waitQueue.getValue().getMatchCount(m) == 0) {
+		if (getQueue(simTime).getMatchCount(m) == 0) {
 			return false;
 		}
 

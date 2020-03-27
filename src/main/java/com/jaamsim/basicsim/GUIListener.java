@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2019 JaamSim Software Inc.
+ * Copyright (C) 2019-2020 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,15 +17,13 @@
 package com.jaamsim.basicsim;
 
 import com.jaamsim.Commands.Command;
+import com.jaamsim.Graphics.View;
+import com.jaamsim.math.Vec3d;
 
 public interface GUIListener {
 
 	public void handleInputError(Throwable t, Entity ent);
 	public void exit(int errorCode);
-	public void showTool(String name, boolean bool);
-	public void setToolLocation(String name, int x, int y);
-	public void setToolSize(String name, int width, int height);
-	public void setControlPanelWidth(int width);
 	public void invokeErrorDialogBox(String title, String msg);
 	public void updateObjectSelector();
 	public void updateModelBuilder();
@@ -33,5 +31,11 @@ public interface GUIListener {
 	public void updateAll();
 	public void deleteEntity(Entity ent);
 	public void renameEntity(Entity ent, String newName);
+	public void addView(View v);
+	public void removeView(View v);
+	public void createWindow(View v);
+	public void closeWindow(View v);
+	public int getNextViewID();
+	public Vec3d getPOI(View v);
 
 }

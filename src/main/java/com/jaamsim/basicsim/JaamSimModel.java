@@ -43,7 +43,6 @@ import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.states.StateEntity;
 import com.jaamsim.ui.EventViewer;
 import com.jaamsim.ui.LogBox;
-import com.jaamsim.ui.View;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 
@@ -91,9 +90,6 @@ public class JaamSimModel {
 
 	private final ArrayList<ObjectType> objectTypes = new ArrayList<>();
 	private final HashMap<Class<? extends Entity>, ObjectType> objectTypeMap = new HashMap<>();
-
-	private final ArrayList<View> views = new ArrayList<>();
-	private int nextViewID = 1;
 
 	private final SimCalendar calendar = new SimCalendar();
 	private long startMillis;  // start time in milliseonds from the epoch
@@ -1105,29 +1101,6 @@ public class JaamSimModel {
 		synchronized (objectTypes) {
 			return objectTypeMap.get(klass);
 		}
-	}
-
-	public void addView(View v) {
-		synchronized (views) {
-			views.add(v);
-		}
-	}
-
-	public void removeView(View v) {
-		synchronized (views) {
-			views.remove(v);
-		}
-	}
-
-	public ArrayList<View> getViews() {
-		synchronized (views) {
-			return views;
-		}
-	}
-
-	public int getNextViewID() {
-		nextViewID++;
-		return nextViewID;
 	}
 
 	private final EventHandle thresholdChangedHandle = new EventHandle();

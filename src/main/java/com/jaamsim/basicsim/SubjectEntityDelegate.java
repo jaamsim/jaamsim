@@ -1,6 +1,5 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2014 Ausenco Engineering Canada Inc.
  * Copyright (C) 2020 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,29 +14,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.jaamsim.input;
+package com.jaamsim.basicsim;
 
-import java.net.URI;
+import java.util.ArrayList;
 
-public class ParseContext {
-	public final URI context;
-	public final String jail;
+public class SubjectEntityDelegate implements SubjectEntity {
 
-	ParseContext(URI ctxt, String jail) {
-		context = ctxt;
-		this.jail = jail;
+	private final SubjectEntity subject;
+	private final ArrayList<ObserverEntity> observerList = new ArrayList<>();
+
+	public SubjectEntityDelegate(SubjectEntity subj) {
+		subject = subj;
+	}
+
+	public void clear() {
+		observerList.clear();
 	}
 
 	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (!(obj instanceof ParseContext))
-			return false;
+	public void registerObserver(ObserverEntity obs) {
+		observerList.add(obs);
+	}
 
-		ParseContext pc = (ParseContext) obj;
-		return context.equals(pc.context) && jail.equals(pc.jail);
-    }
+	@Override
+	public void notifyObservers() {
+		for (ObserverEntity obs : observerList) {
+			obs.observerUpdate(subject);
+		}
+	}
+
+	@Override
+	public String toString() {
+		return String.format("%s: %s", subject, observerList);
+	}
 
 }

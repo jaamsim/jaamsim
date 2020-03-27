@@ -16,6 +16,7 @@
  */
 package com.jaamsim.DisplayModels;
 
+import com.jaamsim.Graphics.View;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.input.EntityListInput;
@@ -26,7 +27,6 @@ import com.jaamsim.input.Vec3dInput;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.render.DisplayModelBinding;
 import com.jaamsim.render.VisibilityInfo;
-import com.jaamsim.ui.View;
 import com.jaamsim.units.DistanceUnit;
 
 public abstract class DisplayModel extends Entity {

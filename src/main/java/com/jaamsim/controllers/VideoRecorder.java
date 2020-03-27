@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2012 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2020 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,12 +28,13 @@ import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 
+import com.jaamsim.Graphics.View;
 import com.jaamsim.datatypes.IntegerVector;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.render.Future;
 import com.jaamsim.render.OffscreenTarget;
+import com.jaamsim.ui.GUIFrame;
 import com.jaamsim.ui.LogBox;
-import com.jaamsim.ui.View;
 import com.jaamsim.video.AviWriter;
 import com.jaamsim.video.vp8.Encoder;
 
@@ -85,8 +87,8 @@ public class VideoRecorder {
 		for (View v : views) {
 			ViewInfo vi = new ViewInfo();
 
-			IntegerVector windSize = v.getWindowSize();
-			IntegerVector windPos = v.getWindowPos();
+			IntegerVector windSize = GUIFrame.getInstance().getWindowSize(v);
+			IntegerVector windPos = GUIFrame.getInstance().getWindowPos(v);
 
 			vi.x = windPos.get(0);
 			vi.y = windPos.get(1);

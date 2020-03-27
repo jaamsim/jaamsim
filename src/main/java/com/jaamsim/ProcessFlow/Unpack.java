@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2019 JaamSim Software Inc.
+ * Copyright (C) 2016-2020 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -76,7 +76,7 @@ public class Unpack extends LinkedService {
 		this.setMatchValue(m);
 
 		// Is there a container waiting to be unpacked?
-		if (container == null && waitQueue.getValue().getMatchCount(m) == 0) {
+		if (container == null && getQueue(simTime).getMatchCount(m) == 0) {
 			return false;
 		}
 

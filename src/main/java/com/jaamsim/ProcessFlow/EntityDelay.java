@@ -216,6 +216,9 @@ public class EntityDelay extends LinkedComponent implements LineEntity {
 		// Send the entity to the next component
 		this.sendToNextComponent(ent);
 		this.setPresentState();
+
+		// Notify any observers
+		notifyObservers();
 	}
 
 	public void setPresentState() {

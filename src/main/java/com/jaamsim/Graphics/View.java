@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018-2019 JaamSim Software Inc.
+ * Copyright (C) 2018-2020 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,26 +15,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.jaamsim.ui;
+package com.jaamsim.Graphics;
 
-import java.awt.EventQueue;
-import java.awt.Frame;
-import java.awt.Point;
-import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Locale;
 
 import com.jaamsim.Commands.KeywordCommand;
-import com.jaamsim.Graphics.DisplayEntity;
-import com.jaamsim.Graphics.Region;
 import com.jaamsim.basicsim.Entity;
-import com.jaamsim.controllers.RenderManager;
+import com.jaamsim.basicsim.GUIListener;
 import com.jaamsim.datatypes.IntegerVector;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.FileInput;
-import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.IntegerListInput;
 import com.jaamsim.input.KeyedVec3dInput;
@@ -46,6 +38,7 @@ import com.jaamsim.input.Vec3dInput;
 import com.jaamsim.math.Transform;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.math.Vec4d;
+import com.jaamsim.ui.GUIFrame;
 import com.jaamsim.units.DistanceUnit;
 
 public class View extends Entity {
@@ -54,8 +47,6 @@ public class View extends Entity {
 	public static final int NO_VIEW_ID = 0;
 
 	private final int viewID;
-
-	private boolean keepWindowOpen;  // used by GUIFrame to determine whether a window is open or closed
 
 	@Keyword(description = "The region in which the view's coordinates are given.",
 	         exampleList = {"Region1"})
@@ -183,96 +174,33 @@ public class View extends Entity {
 	}
 
 	public View() {
-		getJaamSimModel().addView(this);
-		viewID = getJaamSimModel().getNextViewID();
+		GUIListener gui = getJaamSimModel().getGUIListener();
+		if (gui == null) {
+			viewID = -1;
+			return;
+		}
+		gui.addView(this);
+		viewID = gui.getNextViewID();
 	}
 
 	@Override
 	public void kill() {
 		super.kill();
-		getJaamSimModel().removeView(this);
-		if (RenderManager.isGood()) {
-			RenderManager.inst().closeWindow(this);
-		}
+		GUIListener gui = getJaamSimModel().getGUIListener();
+		if (gui == null)
+			return;
+		gui.removeView(this);
+		gui.closeWindow(this);
 	}
 
 	@Override
 	public void restore(String name) {
 		super.restore(name);
-		getJaamSimModel().addView(this);
-		if (RenderManager.isGood()) {
-			RenderManager.inst().createWindow(this);
-		}
-	}
-
-
-	private static class WindowSizePosUpdater implements Runnable {
-		private final IntegerVector pos;
-		private final IntegerVector size;
-		private final Frame window;
-
-		public WindowSizePosUpdater(Frame w, IntegerVector p, IntegerVector s) {
-			window = w;
-			pos = p;
-			size = s;
-		}
-
-		@Override
-		public void run() {
-			if (pos != null) {
-				Point fix = OSFix.getLocationAdustment();
-				Point pt = GUIFrame.getInstance().getGlobalLocation(pos.get(0), pos.get(1));
-				window.setLocation(pt.x + fix.x, pt.y + fix.y);
-			}
-
-			if (size != null) {
-				Point fix = OSFix.getSizeAdustment();
-				window.setSize(size.get(0)+fix.x, size.get(1)+fix.y);
-			}
-		}
-
-		void doUpdate() {
-			if (EventQueue.isDispatchThread()) {
-				this.run();
-				return;
-			}
-
-			try {
-				EventQueue.invokeAndWait(this);
-			}
-			catch (InvocationTargetException | InterruptedException e) {} //ignore
-		}
-	}
-
-	@Override
-	public void updateForInput( Input<?> in ) {
-		super.updateForInput( in );
-
-		// Do nothing if the renderer has not be initialized successfully
-		if (!RenderManager.isGood())
+		GUIListener gui = getJaamSimModel().getGUIListener();
+		if (gui == null)
 			return;
-
-		if (in == windowPos) {
-			final Frame window = RenderManager.getOpenWindowForView(this);
-			if (window != null)
-				new WindowSizePosUpdater(window, windowPos.getValue(), null).doUpdate();
-			return;
-		}
-		if (in == windowSize) {
-			final Frame window = RenderManager.getOpenWindowForView(this);
-			if (window != null)
-				new WindowSizePosUpdater(window, null, windowSize.getValue()).doUpdate();
-			return;
-		}
-		if (in == showWindow) {
-			if (showWindow.getValue()) {
-				RenderManager.inst().createWindow(this);
-			}
-			else {
-				RenderManager.inst().closeWindow(this);
-			}
-			return;
-		}
+		gui.addView(this);
+		gui.createWindow(this);
 	}
 
 	public Vec3d getViewCenter() {
@@ -403,23 +331,14 @@ public class View extends Entity {
 		ArrayList<KeywordIndex> kwList = new ArrayList<>(2);
 
 		IntegerVector pos = windowPos.getValue();
-		Point posFix = OSFix.getLocationAdustment();
-		Point pt = GUIFrame.getInstance().getRelativeLocation(x - posFix.x, y - posFix.y);
-		if (pos.get(0) != pt.x || pos.get(1) != pt.y) {
-			ArrayList<String> tokens = new ArrayList<>(2);
-			tokens.add(String.format((Locale)null, "%d", pt.x));
-			tokens.add(String.format((Locale)null, "%d", pt.y));
-			KeywordIndex posKw = new KeywordIndex(this.windowPos.getKeyword(), tokens, null);
+		if (pos.get(0) != x || pos.get(1) != y) {
+			KeywordIndex posKw = InputAgent.formatIntegers(windowPos.getKeyword(), x, y);
 			kwList.add(posKw);
 		}
 
 		IntegerVector size = windowSize.getValue();
-		Point sizeFix = OSFix.getSizeAdustment();
-		if (size.get(0) != width - sizeFix.x || size.get(1) != height - sizeFix.y) {
-			ArrayList<String> tokens = new ArrayList<>(2);
-			tokens.add(String.format((Locale)null, "%d", width - sizeFix.x));
-			tokens.add(String.format((Locale)null, "%d", height - sizeFix.y));
-			KeywordIndex sizeKw = new KeywordIndex(this.windowSize.getKeyword(), tokens, null);
+		if (size.get(0) != width || size.get(1) != height) {
+			KeywordIndex sizeKw = InputAgent.formatIntegers(windowSize.getKeyword(), width, height);
 			kwList.add(sizeKw);
 		}
 
@@ -432,28 +351,11 @@ public class View extends Entity {
 	}
 
 	public IntegerVector getWindowPos() {
-		Point fix = OSFix.getLocationAdustment();  //FIXME
-		IntegerVector ret = new IntegerVector(windowPos.getValue());
-		Point pt = GUIFrame.getInstance().getGlobalLocation(ret.get(0), ret.get(1));
-		ret.set(0, pt.x + fix.x);
-		ret.set(1, pt.y + fix.y);
-		return ret;
+		return windowPos.getValue();
 	}
 
 	public IntegerVector getWindowSize() {
-		Point fix = OSFix.getSizeAdustment();  //FIXME
-		IntegerVector ret = new IntegerVector(windowSize.getValue());
-		ret.addAt(fix.x, 0);
-		ret.addAt(fix.y, 1);
-		return ret;
-	}
-
-	public void setKeepWindowOpen(boolean b) {
-		keepWindowOpen = b;
-	}
-
-	public boolean getKeepWindowOpen() {
-		return keepWindowOpen;
+		return windowSize.getValue();
 	}
 
 	public int getID() {
@@ -522,9 +424,10 @@ public class View extends Entity {
 	    unitType = DistanceUnit.class,
 	    sequence = 1)
 	public Vec3d getPointOfInterest(double simTime) {
-		if (!RenderManager.isGood())
+		GUIListener gui = getJaamSimModel().getGUIListener();
+		if (gui == null)
 			return new Vec3d();
-		return RenderManager.inst().getPOI(this);
+		return gui.getPOI(this);
 	}
 
 	@Output(name = "DistanceToPOI",
@@ -532,10 +435,11 @@ public class View extends Entity {
 	    unitType = DistanceUnit.class,
 	    sequence = 2)
 	public double geDistanceToPOI(double simTime) {
-		if (!RenderManager.isGood())
+		GUIListener gui = getJaamSimModel().getGUIListener();
+		if (gui == null)
 			return Double.NaN;
 
-		Vec3d poi = RenderManager.inst().getPOI(this);
+		Vec3d poi = gui.getPOI(this);
 		if (poi == null)
 			return Double.NaN;
 

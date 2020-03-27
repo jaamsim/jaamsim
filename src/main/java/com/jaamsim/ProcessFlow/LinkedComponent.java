@@ -23,6 +23,9 @@ import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.LinkDisplayable;
 import com.jaamsim.StringProviders.StringProvInput;
+import com.jaamsim.basicsim.ObserverEntity;
+import com.jaamsim.basicsim.SubjectEntity;
+import com.jaamsim.basicsim.SubjectEntityDelegate;
 import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
@@ -40,7 +43,7 @@ import com.jaamsim.units.TimeUnit;
  * LinkedComponents are used to form a chain of components that process DisplayEntities that pass through the system.
  * Sub-classes for EntityGenerator, Server, and EntitySink.
  */
-public abstract class LinkedComponent extends StateEntity implements Linkable, LinkDisplayable {
+public abstract class LinkedComponent extends StateEntity implements SubjectEntity, Linkable, LinkDisplayable {
 
 	@Keyword(description = "The default value for the output obj.\n"
 	                     + "Normally, obj is set to the last entity received by this object. "
@@ -60,6 +63,7 @@ public abstract class LinkedComponent extends StateEntity implements Linkable, L
 	protected final StringProvInput stateAssignment;
 
 	private final ProcessorData processor = new ProcessorData();
+	private final SubjectEntityDelegate subject = new SubjectEntityDelegate(this);
 
 	{
 		attributeDefinitionList.setHidden(false);
@@ -105,6 +109,17 @@ public abstract class LinkedComponent extends StateEntity implements Linkable, L
 	public void earlyInit() {
 		super.earlyInit();
 		processor.clear();
+		subject.clear();
+	}
+
+	@Override
+	public void registerObserver(ObserverEntity obs) {
+		subject.registerObserver(obs);
+	}
+
+	@Override
+	public void notifyObservers() {
+		subject.notifyObservers();
 	}
 
 	@Override
@@ -121,6 +136,9 @@ public abstract class LinkedComponent extends StateEntity implements Linkable, L
 	public void addEntity(DisplayEntity ent) {
 		if (isTraceFlag()) trace(0, "addEntity(%s)", ent);
 		processor.receiveEntity(ent);
+
+		// Notify any observers
+		notifyObservers();
 
 		// Assign a new state to the received entity
 		if (!stateAssignment.isDefault() && ent instanceof StateEntity) {

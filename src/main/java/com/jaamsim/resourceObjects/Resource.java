@@ -61,6 +61,7 @@ public class Resource extends AbstractResourceProvider {
 
 	@Override
 	public void validate() {
+		super.validate();
 
 		boolean found = false;
 		for (Entity ent : getJaamSimModel().getClonesOfIterator(Entity.class, ResourceUser.class)) {

@@ -109,6 +109,7 @@ import com.jaamsim.Graphics.OverlayText;
 import com.jaamsim.Graphics.Region;
 import com.jaamsim.Graphics.TextBasics;
 import com.jaamsim.Graphics.TextEntity;
+import com.jaamsim.Graphics.View;
 import com.jaamsim.SubModels.CompoundEntity;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ErrorException;
@@ -127,6 +128,7 @@ import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.Parser;
 import com.jaamsim.math.Color4d;
+import com.jaamsim.math.MathUtils;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.DistanceUnit;
@@ -142,14 +144,16 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 	private static JaamSimModel sim;
 
+	private final ArrayList<View> views = new ArrayList<>();
+	private int nextViewID = 1;
+
 	// global shutdown flag
 	static private AtomicBoolean shuttingDown;
 
 	private JMenu fileMenu;
 	private JMenu editMenu;
-	private JMenu viewMenu;
-	private JMenu windowMenu;
-	private JMenu windowList;
+	private JMenu toolsMenu;
+	private JMenu viewsMenu;
 	private JMenu optionMenu;
 	private JMenu unitsMenu;
 	private JMenu helpMenu;
@@ -334,7 +338,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 			@Override
 			public void windowIconified(WindowEvent e) {
-				closeWindows();
+				updateUI();
 			}
 
 			@Override
@@ -357,7 +361,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				if (simulation == null)
 					return;
 				windowOffset = getLocation();
-				updateToolLocations();
+				updateToolLocations(simulation);
 				updateViewLocations();
 			}
 		});
@@ -389,10 +393,11 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 	private static synchronized GUIFrame createInstance() {
 		instance = new GUIFrame();
+		UIUpdater updater = new UIUpdater(instance);
 		GUIFrame.registerCallback(new Runnable() {
 			@Override
 			public void run() {
-				SwingUtilities.invokeLater(new UIUpdater(instance));
+				SwingUtilities.invokeLater(updater);
 			}
 		});
 		return instance;
@@ -406,20 +411,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		rateLimiter.queueUpdate();
 	}
 
-	public void closeWindows() {
-
-		// Close all the tools
-		closeAllTools();
-
-		// Save whether each window is open or closed
-		for (View v : sim.getViews()) {
-			v.setKeepWindowOpen(v.showWindow());
-		}
-
-		// Close all the view windows
-		RenderManager.clear();
-	}
-
 	public void showWindows() {
 		if (!RenderManager.isGood())
 			return;
@@ -428,8 +419,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		View activeView = RenderManager.inst().getActiveView();
 
 		// Re-open the view windows
-		for (int i = 0; i < sim.getViews().size(); i++) {
-			View v = sim.getViews().get(i);
+		for (int i = 0; i < views.size(); i++) {
+			View v = views.get(i);
 			if (v != null && v.showWindow() && v != activeView)
 				RenderManager.inst().createWindow(v);
 		}
@@ -439,7 +430,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			RenderManager.inst().createWindow(activeView);
 
 		// Re-open the tools
-		showActiveTools();
+		showActiveTools(sim.getSimulation());
 		updateUI();
 	}
 
@@ -482,7 +473,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		// Build a completely new simulation model
 		sim.clear();
 		sim.autoLoad();
-		setWindowDefaults();
+		setWindowDefaults(sim.getSimulation());
 
 		EntityPallet.update();
 
@@ -497,7 +488,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		// Set up the individual menus
 		this.initializeFileMenu();
 		this.initializeEditMenu();
-		this.initializeViewMenu();
+		this.initializeToolsMenu();
 		this.initializeWindowMenu();
 		this.initializeOptionsMenu();
 		this.initializeUnitsMenu();
@@ -507,8 +498,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		JMenuBar mainMenuBar = new JMenuBar();
 		mainMenuBar.add( fileMenu );
 		mainMenuBar.add( editMenu );
-		mainMenuBar.add( viewMenu );
-		mainMenuBar.add( windowMenu );
+		mainMenuBar.add( toolsMenu );
+		mainMenuBar.add( viewsMenu );
 		mainMenuBar.add( optionMenu );
 		mainMenuBar.add( unitsMenu );
 		mainMenuBar.add( helpMenu );
@@ -761,13 +752,13 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	}
 
 	/**
-	 * Sets up the View menu in the Control Panel's menu bar.
+	 * Sets up the Tools menu in the Control Panel's menu bar.
 	 */
-	private void initializeViewMenu() {
+	private void initializeToolsMenu() {
 
-		// View menu creation
-		viewMenu = new JMenu( "Tools" );
-		viewMenu.setMnemonic(KeyEvent.VK_T);
+		// Tools menu creation
+		toolsMenu = new JMenu( "Tools" );
+		toolsMenu.setMnemonic(KeyEvent.VK_T);
 
 		// 1) "Show Basic Tools" menu item
 		JMenuItem showBasicToolsMenuItem = new JMenuItem( "Show Basic Tools" );
@@ -776,13 +767,19 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				InputAgent.applyBoolean(sim.getSimulation(), "ShowModelBuilder", true);
-				InputAgent.applyBoolean(sim.getSimulation(), "ShowObjectSelector", true);
-				InputAgent.applyBoolean(sim.getSimulation(), "ShowInputEditor", true);
-				InputAgent.applyBoolean(sim.getSimulation(), "ShowOutputViewer", true);
+				EntityPallet.getInstance().toFront();
+				ObjectSelector.getInstance().toFront();
+				EditBox.getInstance().toFront();
+				OutputBox.getInstance().toFront();
+				KeywordIndex[] kws = new KeywordIndex[4];
+				kws[0] = InputAgent.formatBoolean("ShowModelBuilder", true);
+				kws[1] = InputAgent.formatBoolean("ShowObjectSelector", true);
+				kws[2] = InputAgent.formatBoolean("ShowInputEditor", true);
+				kws[3] = InputAgent.formatBoolean("ShowOutputViewer", true);
+				InputAgent.storeAndExecute(new KeywordCommand(sim.getSimulation(), kws));
 			}
 		} );
-		viewMenu.add( showBasicToolsMenuItem );
+		toolsMenu.add( showBasicToolsMenuItem );
 
 		// 2) "Close All Tools" menu item
 		JMenuItem closeAllToolsMenuItem = new JMenuItem( "Close All Tools" );
@@ -791,16 +788,18 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				InputAgent.applyBoolean(sim.getSimulation(), "ShowModelBuilder", false);
-				InputAgent.applyBoolean(sim.getSimulation(), "ShowObjectSelector", false);
-				InputAgent.applyBoolean(sim.getSimulation(), "ShowInputEditor", false);
-				InputAgent.applyBoolean(sim.getSimulation(), "ShowOutputViewer", false);
-				InputAgent.applyBoolean(sim.getSimulation(), "ShowPropertyViewer", false);
-				InputAgent.applyBoolean(sim.getSimulation(), "ShowLogViewer", false);
-				InputAgent.applyBoolean(sim.getSimulation(), "ShowEventViewer", false);
+				KeywordIndex[] kws = new KeywordIndex[7];
+				kws[0] = InputAgent.formatBoolean("ShowModelBuilder", false);
+				kws[1] = InputAgent.formatBoolean("ShowObjectSelector", false);
+				kws[2] = InputAgent.formatBoolean("ShowInputEditor", false);
+				kws[3] = InputAgent.formatBoolean("ShowOutputViewer", false);
+				kws[4] = InputAgent.formatBoolean("ShowPropertyViewer", false);
+				kws[5] = InputAgent.formatBoolean("ShowLogViewer", false);
+				kws[6] = InputAgent.formatBoolean("ShowEventViewer", false);
+				InputAgent.storeAndExecute(new KeywordCommand(sim.getSimulation(), kws));
 			}
 		} );
-		viewMenu.add( closeAllToolsMenuItem );
+		toolsMenu.add( closeAllToolsMenuItem );
 
 		// 3) "Model Builder" menu item
 		JMenuItem objectPalletMenuItem = new JMenuItem( "Model Builder" );
@@ -809,11 +808,13 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				InputAgent.applyBoolean(sim.getSimulation(), "ShowModelBuilder", true);
+				EntityPallet.getInstance().toFront();
+				KeywordIndex kw = InputAgent.formatBoolean("ShowModelBuilder", true);
+				InputAgent.storeAndExecute(new KeywordCommand(sim.getSimulation(), kw));
 			}
 		} );
-		viewMenu.addSeparator();
-		viewMenu.add( objectPalletMenuItem );
+		toolsMenu.addSeparator();
+		toolsMenu.add( objectPalletMenuItem );
 
 		// 4) "Object Selector" menu item
 		JMenuItem objectSelectorMenuItem = new JMenuItem( "Object Selector" );
@@ -822,10 +823,12 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				InputAgent.applyBoolean(sim.getSimulation(), "ShowObjectSelector", true);
+				ObjectSelector.getInstance().toFront();
+				KeywordIndex kw = InputAgent.formatBoolean("ShowObjectSelector", true);
+				InputAgent.storeAndExecute(new KeywordCommand(sim.getSimulation(), kw));
 			}
 		} );
-		viewMenu.add( objectSelectorMenuItem );
+		toolsMenu.add( objectSelectorMenuItem );
 
 		// 5) "Input Editor" menu item
 		JMenuItem inputEditorMenuItem = new JMenuItem( "Input Editor" );
@@ -834,10 +837,12 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				InputAgent.applyBoolean(sim.getSimulation(), "ShowInputEditor", true);
+				EditBox.getInstance().toFront();
+				KeywordIndex kw = InputAgent.formatBoolean("ShowInputEditor", true);
+				InputAgent.storeAndExecute(new KeywordCommand(sim.getSimulation(), kw));
 			}
 		} );
-		viewMenu.add( inputEditorMenuItem );
+		toolsMenu.add( inputEditorMenuItem );
 
 		// 6) "Output Viewer" menu item
 		JMenuItem outputMenuItem = new JMenuItem( "Output Viewer" );
@@ -846,10 +851,12 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				InputAgent.applyBoolean(sim.getSimulation(), "ShowOutputViewer", true);
+				OutputBox.getInstance().toFront();
+				KeywordIndex kw = InputAgent.formatBoolean("ShowOutputViewer", true);
+				InputAgent.storeAndExecute(new KeywordCommand(sim.getSimulation(), kw));
 			}
 		} );
-		viewMenu.add( outputMenuItem );
+		toolsMenu.add( outputMenuItem );
 
 		// 7) "Property Viewer" menu item
 		JMenuItem propertiesMenuItem = new JMenuItem( "Property Viewer" );
@@ -858,10 +865,12 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				InputAgent.applyBoolean(sim.getSimulation(), "ShowPropertyViewer", true);
+				PropertyBox.getInstance().toFront();
+				KeywordIndex kw = InputAgent.formatBoolean("ShowPropertyViewer", true);
+				InputAgent.storeAndExecute(new KeywordCommand(sim.getSimulation(), kw));
 			}
 		} );
-		viewMenu.add( propertiesMenuItem );
+		toolsMenu.add( propertiesMenuItem );
 
 		// 8) "Log Viewer" menu item
 		JMenuItem logMenuItem = new JMenuItem( "Log Viewer" );
@@ -870,10 +879,12 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				InputAgent.applyBoolean(sim.getSimulation(), "ShowLogViewer", true);
+				LogBox.getInstance().toFront();
+				KeywordIndex kw = InputAgent.formatBoolean("ShowLogViewer", true);
+				InputAgent.storeAndExecute(new KeywordCommand(sim.getSimulation(), kw));
 			}
 		} );
-		viewMenu.add( logMenuItem );
+		toolsMenu.add( logMenuItem );
 
 		// 9) "Event Viewer" menu item
 		JMenuItem eventsMenuItem = new JMenuItem( "Event Viewer" );
@@ -882,10 +893,12 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				InputAgent.applyBoolean(sim.getSimulation(), "ShowEventViewer", true);
+				EventViewer.getInstance().toFront();
+				KeywordIndex kw = InputAgent.formatBoolean("ShowEventViewer", true);
+				InputAgent.storeAndExecute(new KeywordCommand(sim.getSimulation(), kw));
 			}
 		} );
-		viewMenu.add( eventsMenuItem );
+		toolsMenu.add( eventsMenuItem );
 
 		// 10) "Reset Positions and Sizes" menu item
 		JMenuItem resetItem = new JMenuItem( "Reset Positions and Sizes" );
@@ -896,22 +909,102 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				sim.getSimulation().resetWindowPositionsAndSizes();
 			}
 		} );
-		viewMenu.addSeparator();
-		viewMenu.add( resetItem );
+		toolsMenu.addSeparator();
+		toolsMenu.add( resetItem );
 	}
 
 	/**
-	 * Sets up the Window menu in the Control Panel's menu bar.
+	 * Sets up the Views menu in the Control Panel's menu bar.
 	 */
 	private void initializeWindowMenu() {
+		viewsMenu = new JMenu("Views");
+		viewsMenu.setMnemonic(KeyEvent.VK_V);
+		viewsMenu.addMenuListener(new MenuListener() {
 
-		// Window menu creation
-		windowMenu = new NewRenderWindowMenu("Views");
-		windowMenu.setMnemonic(KeyEvent.VK_V);
+			@Override
+			public void menuSelected(MenuEvent e) {
 
-		// Initialize list of windows
-		windowList = new WindowMenu("Select Window");
-		windowList.setMnemonic(KeyEvent.VK_S);
+				// 1) Select from the available view windows
+				for (View view : getInstance().getViews()) {
+					JMenuItem item = new JMenuItem(view.getName());
+					item.addActionListener(new ActionListener() {
+						@Override
+						public void actionPerformed(ActionEvent e) {
+							if (!RenderManager.isGood()) {
+								if (RenderManager.canInitialize()) {
+									RenderManager.initialize(SAFE_GRAPHICS);
+								} else {
+									// A fatal error has occurred, don't try to initialize again
+									return;
+								}
+							}
+							KeywordIndex kw = InputAgent.formatBoolean("ShowWindow", true);
+							InputAgent.storeAndExecute(new KeywordCommand(view, kw));
+							FrameBox.setSelectedEntity(view, false);
+						}
+					});
+					viewsMenu.add(item);
+				}
+
+				// 2) "Define New View" menu item
+				JMenuItem defineItem = new JMenuItem("Define New View");
+				defineItem.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						if (!RenderManager.isGood()) {
+							if (RenderManager.canInitialize()) {
+								RenderManager.initialize(SAFE_GRAPHICS);
+							} else {
+								// A fatal error has occurred, don't try to initialize again
+								return;
+							}
+						}
+
+						String name = InputAgent.getUniqueName(sim, "View", "");
+						IntegerVector winPos = null;
+						Vec3d pos = null;
+						Vec3d center = null;
+						ArrayList<View> viewList = getInstance().getViews();
+						if (!viewList.isEmpty()) {
+							View lastView = viewList.get(viewList.size() - 1);
+							winPos = (IntegerVector) lastView.getInput("WindowPosition").getValue();
+							winPos = new IntegerVector(winPos);
+							winPos.set(0, winPos.get(0) + VIEW_OFFSET);
+							pos = lastView.getViewPosition();
+							center = lastView.getViewCenter();
+						}
+						InputAgent.storeAndExecute(new DefineViewCommand(sim, name, pos, center, winPos));
+					}
+				});
+				viewsMenu.addSeparator();
+				viewsMenu.add(defineItem);
+
+				// 3) "Reset Positions and Sizes" menu item
+				JMenuItem resetItem = new JMenuItem( "Reset Positions and Sizes" );
+				resetItem.setMnemonic(KeyEvent.VK_R);
+				resetItem.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed( ActionEvent e ) {
+						for (View v : getInstance().getViews()) {
+							KeywordIndex posKw = InputAgent.formatArgs("WindowPosition");
+							KeywordIndex sizeKw = InputAgent.formatArgs("WindowSize");
+							InputAgent.storeAndExecute(new KeywordCommand(v, posKw, sizeKw));
+						}
+					}
+				} );
+				viewsMenu.addSeparator();
+				viewsMenu.add(resetItem);
+			}
+
+			@Override
+			public void menuCanceled(MenuEvent arg0) {
+			}
+
+			@Override
+			public void menuDeselected(MenuEvent arg0) {
+				viewsMenu.removeAll();
+			}
+		});
 	}
 
 	/**
@@ -1327,7 +1420,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			public void actionPerformed( ActionEvent event ) {
 				DisplayEntity ent = (DisplayEntity) sim.getNamedEntity("XYZ-Axis");
 				if (ent != null) {
-					InputAgent.applyBoolean(ent, "Show", xyzAxis.isSelected());
+					KeywordIndex kw = InputAgent.formatBoolean("Show", xyzAxis.isSelected());
+					InputAgent.storeAndExecute(new KeywordCommand(ent, kw));
 				}
 				controlStartResume.requestFocusInWindow();
 			}
@@ -1357,7 +1451,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 					grid.setSelected(true);
 				}
 				if (ent != null) {
-					InputAgent.applyBoolean(ent, "Show", grid.isSelected());
+					KeywordIndex kw = InputAgent.formatBoolean("Show", grid.isSelected());
+					InputAgent.storeAndExecute(new KeywordCommand(ent, kw));
 				}
 				controlStartResume.requestFocusInWindow();
 			}
@@ -1378,7 +1473,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			@Override
 			public void actionPerformed( ActionEvent event ) {
 				boolean bool = showLabels.isSelected();
-				InputAgent.applyBoolean(sim.getSimulation(), "ShowLabels", bool);
+				KeywordIndex kw = InputAgent.formatBoolean("ShowLabels", bool);
+				InputAgent.storeAndExecute(new KeywordCommand(sim.getSimulation(), kw));
 				setShowLabels(bool);
 				controlStartResume.requestFocusInWindow();
 			}
@@ -1399,7 +1495,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			@Override
 			public void actionPerformed( ActionEvent event ) {
 				boolean bool = showSubModels.isSelected();
-				InputAgent.applyBoolean(sim.getSimulation(), "ShowSubModels", bool);
+				KeywordIndex kw = InputAgent.formatBoolean("ShowSubModels", bool);
+				InputAgent.storeAndExecute(new KeywordCommand(sim.getSimulation(), kw));
 				setShowSubModels(bool);
 				controlStartResume.requestFocusInWindow();
 			}
@@ -1419,7 +1516,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				InputAgent.applyBoolean(sim.getSimulation(), "SnapToGrid", snapToGrid.isSelected());
+				KeywordIndex kw = InputAgent.formatBoolean("SnapToGrid", snapToGrid.isSelected());
+				InputAgent.storeAndExecute(new KeywordCommand(sim.getSimulation(), kw));
 				gridSpacing.setEnabled(snapToGrid.isSelected());
 				controlStartResume.requestFocusInWindow();
 			}
@@ -1912,7 +2010,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				JMenuItem selectedItem = null;
 				int selectedIndex = -1;
 				int ind = 0;
-				for (final String fontName : GUIFrame.getFontsInUse(GUIFrame.getJaamSimModel())) {
+				for (final String fontName : GUIFrame.getFontsInUse(sim)) {
 					JMenuItem item = new JMenuItem(fontName);
 					if (selectedItem == null && fontName.equals(textEnt.getFontName())) {
 						selectedItem = item;
@@ -2100,7 +2198,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				JMenuItem selectedItem = null;
 				int selectedIndex = -1;
 				int ind = 0;
-				for (Color4d col : GUIFrame.getFontColoursInUse(GUIFrame.getJaamSimModel())) {
+				for (Color4d col : GUIFrame.getFontColoursInUse(sim)) {
 					String colourName = ColourInput.toString(col);
 					JMenuItem item = new JMenuItem(colourName);
 					ColorIcon icon = new ColorIcon(16, 16);
@@ -2168,7 +2266,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 	private static void setFontColour(TextEntity textEnt, String colName) {
 		KeywordIndex kw = InputAgent.formatInput("FontColour", colName);
-		Color4d col = Input.parseColour(textEnt.getJaamSimModel(), kw);
+		Color4d col = Input.parseColour(sim, kw);
 		setFontColour(textEnt, col);
 	}
 
@@ -2288,7 +2386,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				int val = (int) lineWidth.getValue();
 				if (val == lineEnt.getLineWidth())
 					return;
-				InputAgent.applyIntegers((Entity)lineEnt, "LineWidth", val);
+				KeywordIndex kw = InputAgent.formatIntegers("LineWidth", val);
+				InputAgent.storeAndExecute(new KeywordCommand((Entity)lineEnt, kw));
 			}
 		});
 
@@ -2365,7 +2464,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				JMenuItem selectedItem = null;
 				int selectedIndex = -1;
 				int ind = 0;
-				for (Color4d col : GUIFrame.getLineColoursInUse(GUIFrame.getJaamSimModel())) {
+				for (Color4d col : GUIFrame.getLineColoursInUse(sim)) {
 					String colourName = ColourInput.toString(col);
 					JMenuItem item = new JMenuItem(colourName);
 					ColorIcon icon = new ColorIcon(16, 16);
@@ -2433,7 +2532,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 	private static void setLineColour(LineEntity lineEnt, String colName) {
 		KeywordIndex kw = InputAgent.formatInput("LineColour", colName);
-		Color4d col = Input.parseColour(lineEnt.getJaamSimModel(), kw);
+		Color4d col = Input.parseColour(sim, kw);
 		setLineColour(lineEnt, col);
 	}
 
@@ -2539,7 +2638,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				JMenuItem selectedItem = null;
 				int selectedIndex = -1;
 				int ind = 0;
-				for (Color4d col : GUIFrame.getFillColoursInUse(GUIFrame.getJaamSimModel())) {
+				for (Color4d col : GUIFrame.getFillColoursInUse(sim)) {
 					String colourName = ColourInput.toString(col);
 					JMenuItem item = new JMenuItem(colourName);
 					ColorIcon icon = new ColorIcon(16, 16);
@@ -2607,7 +2706,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 	private static void setFillColour(FillEntity fillEnt, String colName) {
 		KeywordIndex kw = InputAgent.formatInput("FillColour", colName);
-		Color4d col = Input.parseColour(fillEnt.getJaamSimModel(), kw);
+		Color4d col = Input.parseColour(sim, kw);
 		setFillColour(fillEnt, col);
 	}
 
@@ -2793,7 +2892,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			@Override
 			public void actionPerformed( ActionEvent event ) {
 				boolean bool = ((JToggleButton)event.getSource()).isSelected();
-				InputAgent.applyBoolean(sim.getSimulation(), "RealTime", bool);
+				KeywordIndex kw = InputAgent.formatBoolean("RealTime", bool);
+				InputAgent.storeAndExecute(new KeywordCommand(sim.getSimulation(), kw));
 				controlStartResume.requestFocusInWindow();
 			}
 		});
@@ -2822,10 +2922,13 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			@Override
 			public void stateChanged( ChangeEvent e ) {
 				Double val = (Double)((JSpinner)e.getSource()).getValue();
+				if (MathUtils.near(val, sim.getSimulation().getRealTimeFactor()))
+					return;
 				NumberFormat nf = NumberFormat.getNumberInstance(Locale.US);
 				DecimalFormat df = (DecimalFormat)nf;
 				df.applyPattern("0.######");
-				InputAgent.applyArgs(sim.getSimulation(), "RealTimeFactor", df.format(val));
+				KeywordIndex kw = InputAgent.formatArgs("RealTimeFactor", df.format(val));
+				InputAgent.storeAndExecute(new KeywordCommand(sim.getSimulation(), kw));
 				controlStartResume.requestFocusInWindow();
 			}
 		});
@@ -2913,158 +3016,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		locatorPos.setToolTipText(formatToolTip("Cursor Position",
 				"The coordinates of the cursor on the x-y plane."));
 		mainToolBar.add( locatorPos );
-	}
-
-	// ******************************************************************************************************
-	// VIEW WINDOWS
-	// ******************************************************************************************************
-
-	private static class WindowMenu extends JMenu implements MenuListener {
-
-		WindowMenu(String text) {
-			super(text);
-			this.addMenuListener(this);
-		}
-
-		@Override
-		public void menuCanceled(MenuEvent arg0) {}
-
-		@Override
-		public void menuDeselected(MenuEvent arg0) {
-			this.removeAll();
-		}
-
-		@Override
-		public void menuSelected(MenuEvent arg0) {
-			if (!RenderManager.isGood()) { return; }
-
-			ArrayList<Integer> windowIDs = RenderManager.inst().getOpenWindowIDs();
-			for (int id : windowIDs) {
-				String windowName = RenderManager.inst().getWindowName(id);
-				this.add(new WindowSelector(id, windowName));
-			}
-		}
-	}
-
-	private static class WindowSelector extends JMenuItem implements ActionListener {
-		private final int windowID;
-
-		WindowSelector(int windowID, String windowName) {
-			this.windowID = windowID;
-			this.setText(windowName);
-			this.addActionListener(this);
-		}
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			if (!RenderManager.isGood()) { return; }
-
-			RenderManager.inst().focusWindow(windowID);
-		}
-	}
-
-	private static class NewRenderWindowMenu extends JMenu implements MenuListener {
-
-		NewRenderWindowMenu(String text) {
-			super(text);
-			this.addMenuListener(this);
-		}
-
-		@Override
-		public void menuSelected(MenuEvent e) {
-
-			// 1) Select from the available view windows
-			for (View view : sim.getViews()) {
-				this.add(new NewRenderWindowLauncher(view));
-			}
-
-			// 2) "Define New View" menu item
-			this.addSeparator();
-			this.add(new ViewDefiner());
-
-			// 3) "Reset Positions and Sizes" menu item
-			JMenuItem resetItem = new JMenuItem( "Reset Positions and Sizes" );
-			resetItem.setMnemonic(KeyEvent.VK_R);
-			resetItem.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed( ActionEvent e ) {
-					for (View v : sim.getViews()) {
-						KeywordIndex posKw = InputAgent.formatArgs("WindowPosition");
-						KeywordIndex sizeKw = InputAgent.formatArgs("WindowSize");
-						InputAgent.storeAndExecute(new KeywordCommand(v, posKw, sizeKw));
-					}
-				}
-			} );
-			this.addSeparator();
-			this.add(resetItem);
-		}
-
-		@Override
-		public void menuCanceled(MenuEvent arg0) {
-		}
-
-		@Override
-		public void menuDeselected(MenuEvent arg0) {
-			this.removeAll();
-		}
-	}
-	private static class NewRenderWindowLauncher extends JMenuItem implements ActionListener {
-		private final View view;
-
-		NewRenderWindowLauncher(View v) {
-			view = v;
-			this.setText(view.getName());
-			this.addActionListener(this);
-		}
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			if (!RenderManager.isGood()) {
-				if (RenderManager.canInitialize()) {
-					RenderManager.initialize(SAFE_GRAPHICS);
-				} else {
-					// A fatal error has occurred, don't try to initialize again
-					return;
-				}
-			}
-			KeywordIndex kw = InputAgent.formatArgs("ShowWindow", "TRUE");
-			InputAgent.storeAndExecute(new KeywordCommand(view, kw));
-			FrameBox.setSelectedEntity(view, false);
-		}
-	}
-
-	private static class ViewDefiner extends JMenuItem implements ActionListener {
-		ViewDefiner() {} {
-			this.setText("Define New View");
-			this.addActionListener(this);
-		}
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			if (!RenderManager.isGood()) {
-				if (RenderManager.canInitialize()) {
-					RenderManager.initialize(SAFE_GRAPHICS);
-				} else {
-					// A fatal error has occurred, don't try to initialize again
-					return;
-				}
-			}
-
-			String name = InputAgent.getUniqueName(getJaamSimModel(), "View", "");
-			IntegerVector winPos = null;
-			Vec3d pos = null;
-			Vec3d center = null;
-			ArrayList<View> viewList = sim.getViews();
-			if (!viewList.isEmpty()) {
-				View lastView = viewList.get(viewList.size()-1);
-				winPos = (IntegerVector) lastView.getInput("WindowPosition").getValue();
-				winPos = new IntegerVector(winPos);
-				winPos.set(0, winPos.get(0) + VIEW_OFFSET);
-				pos = lastView.getViewPosition();
-				center = lastView.getViewCenter();
-			}
-			InputAgent.storeAndExecute(new DefineViewCommand(sim, name, pos, center, winPos));
-		}
 	}
 
 	// ******************************************************************************************************
@@ -3279,13 +3230,12 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 						continue;
 					fileMenu.getItem(i).setEnabled(true);
 				}
-				for( int i = 0; i < viewMenu.getItemCount(); i++ ) {
-					if (viewMenu.getItem(i) == null)
+				for( int i = 0; i < toolsMenu.getItemCount(); i++ ) {
+					if (toolsMenu.getItem(i) == null)
 						continue;
-					viewMenu.getItem(i).setEnabled(true);
+					toolsMenu.getItem(i).setEnabled(true);
 				}
 
-				windowList.setEnabled( true );
 				speedUpDisplay.setEnabled( false );
 				remainingDisplay.setEnabled( false );
 				setSpeedUp(0);
@@ -3306,13 +3256,12 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 						continue;
 					fileMenu.getItem(i).setEnabled(true);
 				}
-				for( int i = 0; i < viewMenu.getItemCount(); i++ ) {
-					if (viewMenu.getItem(i) == null)
+				for( int i = 0; i < toolsMenu.getItemCount(); i++ ) {
+					if (toolsMenu.getItem(i) == null)
 						continue;
-					viewMenu.getItem(i).setEnabled(true);
+					toolsMenu.getItem(i).setEnabled(true);
 				}
 
-				windowList.setEnabled( true );
 				speedUpDisplay.setEnabled( false );
 				remainingDisplay.setEnabled( false );
 				setSpeedUp(0);
@@ -3332,13 +3281,12 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 						continue;
 					fileMenu.getItem(i).setEnabled(true);
 				}
-				for( int i = 0; i < viewMenu.getItemCount(); i++ ) {
-					if (viewMenu.getItem(i) == null)
+				for( int i = 0; i < toolsMenu.getItemCount(); i++ ) {
+					if (toolsMenu.getItem(i) == null)
 						continue;
-					viewMenu.getItem(i).setEnabled(true);
+					toolsMenu.getItem(i).setEnabled(true);
 				}
 
-				windowList.setEnabled( true );
 				speedUpDisplay.setEnabled( false );
 				remainingDisplay.setEnabled( false );
 				setSpeedUp(0);
@@ -3410,12 +3358,21 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		updateForRealTime(simulation.isRealTime(), simulation.getRealTimeFactor());
 		updateForPauseTime(simulation.getPauseTimeString());
 		update2dButton();
+		updateShowAxesButton();
+		updateShowGridButton();
 		updateFindButton();
 		updateFormatButtons(selectedEntity);
 		updateForSnapToGrid(simulation.isSnapToGrid());
 		updateForSnapGridSpacing(simulation.getSnapGridSpacingString());
 		updateShowLabelsButton(simulation.isShowLabels());
 		updateShowSubModelsButton(simulation.isShowSubModels());
+		updateToolVisibilities(simulation);
+		updateToolSizes(simulation);
+		updateToolLocations(simulation);
+		updateViewVisibilities();
+		updateViewSizes();
+		updateViewLocations();
+		setControlPanelWidth(simulation.getControlPanelWidth());
 	}
 
 	private void updateSaveButton() {
@@ -3464,7 +3421,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		try {
 			// Parse the keyword inputs
 			KeywordIndex kw = new KeywordIndex("PauseTime", tokens, null);
-			InputAgent.apply(sim.getSimulation(), kw);
+			InputAgent.storeAndExecute(new KeywordCommand(sim.getSimulation(), kw));
 		}
 		catch (InputErrorException e) {
 			pauseTime.setText(prevVal);
@@ -3534,7 +3491,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 			// Reset the Region input for the entities in this region
 			KeywordIndex kw = InputAgent.formatArgs("Region");
-			for (DisplayEntity e : getJaamSimModel().getClonesOfIterator(DisplayEntity.class)) {
+			for (DisplayEntity e : sim.getClonesOfIterator(DisplayEntity.class)) {
 				if (e == ent || e.getInput("Region").getValue() != ent)
 					continue;
 				InputAgent.storeAndExecute(new CoordinateCommand(e, kw));
@@ -3552,7 +3509,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 			// Reset the RelativeEntity input for entities
 			KeywordIndex kw = InputAgent.formatArgs("RelativeEntity");
-			for (DisplayEntity e : getJaamSimModel().getClonesOfIterator(DisplayEntity.class)) {
+			for (DisplayEntity e : sim.getClonesOfIterator(DisplayEntity.class)) {
 				if (e == ent || e.getInput("RelativeEntity").getValue() != ent)
 					continue;
 				InputAgent.storeAndExecute(new CoordinateCommand(e, kw));
@@ -3560,7 +3517,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		}
 
 		// Delete any references to this entity in the inputs to other entities
-		for (Entity e : getJaamSimModel().getClonesOfIterator(Entity.class)) {
+		for (Entity e : sim.getClonesOfIterator(Entity.class)) {
 			if (e == ent)
 				continue;
 			ArrayList<KeywordIndex> oldKwList = new ArrayList<>();
@@ -3593,6 +3550,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	@Override
 	public void storeAndExecute(Command cmd) {
 		synchronized (undoList) {
+			if (!cmd.isChange())
+				return;
 
 			// Execute the command and catch an error if it occurs
 			cmd.execute();
@@ -3604,10 +3563,15 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				mergedCmd = lastCmd.tryMerge(cmd);
 			}
 
-			// Store the command on the undo list
+			// If the new command can be combined, then change the entry for previous command
 			if (mergedCmd != null) {
-				undoList.set(undoList.size() - 1, mergedCmd);
+				if (mergedCmd.isChange())
+					undoList.set(undoList.size() - 1, mergedCmd);
+				else
+					undoList.remove(undoList.size() - 1);
 			}
+
+			// If the new command cannot be combined, then add it to the undo list
 			else {
 				undoList.add(cmd);
 			}
@@ -3735,6 +3699,16 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		lockViewXYPlane.setSelected(view.is2DLocked());
 	}
 
+	private void updateShowAxesButton() {
+		DisplayEntity ent = (DisplayEntity) sim.getNamedEntity("XYZ-Axis");
+		xyzAxis.setSelected(ent != null && ent.getShow());
+	}
+
+	private void updateShowGridButton() {
+		DisplayEntity ent = (DisplayEntity) sim.getNamedEntity("XY-Grid");
+		grid.setSelected(ent != null && ent.getShow());
+	}
+
 	private void updateFindButton() {
 		boolean bool = FindBox.getInstance().isVisible();
 		find.setSelected(bool);
@@ -3748,7 +3722,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 	public void setSelectedEnt(Entity ent) {
 		selectedEntity = ent;
-		updateFormatButtons(ent);
 	}
 
 	private void updateFormatButtons(Entity ent) {
@@ -3992,33 +3965,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		LOWER_START = TOP_START + VIEW_HEIGHT;
 	}
 
-	/**
-	 * Displays the view windows and tools on startup.
-	 */
-	public void displayWindows() {
-
-		// Show the view windows specified in the configuration file
-		for (View v : sim.getViews()) {
-			if (v.showWindow())
-				RenderManager.inst().createWindow(v);
-		}
-
-		// Set the initial state for the "Show Axes" check box
-		DisplayEntity ent = (DisplayEntity) sim.getNamedEntity("XYZ-Axis");
-		if (ent == null) {
-			xyzAxis.setEnabled(false);
-			xyzAxis.setSelected(false);
-		}
-		else {
-			xyzAxis.setEnabled(true);
-			xyzAxis.setSelected(ent.getShow());
-		}
-
-		// Set the initial state for the "Show Grid" check box
-		ent = (DisplayEntity) sim.getNamedEntity("XY-Grid");
-		grid.setSelected(ent != null && ent.getShow());
-	}
-
 	public void setShowLabels(boolean bool) {
 		for (DisplayEntity ent : sim.getClonesOfIterator(DisplayEntity.class)) {
 			if (!EntityLabel.canLabel(ent))
@@ -4034,61 +3980,25 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	}
 
 	private void updateShowLabelsButton(boolean bool) {
+		if (showLabels.isSelected() == bool)
+			return;
 		showLabels.setSelected(bool);
+		setShowLabels(bool);
+		updateUI();
 	}
 
 	private void updateShowSubModelsButton(boolean bool) {
-		showSubModels.setSelected(bool);
-	}
-
-	public JFrame getTool(String name) {
-		JFrame ret;
-		switch (name) {
-		case "ModelBuilder":
-			ret = EntityPallet.getInstance();
-			break;
-		case "ObjectSelector":
-			ret = ObjectSelector.getInstance();
-			break;
-		case "InputEditor":
-			ret = EditBox.getInstance();
-			break;
-		case "OutputViewer":
-			ret = OutputBox.getInstance();
-			break;
-		case "PropertyViewer":
-			ret = PropertyBox.getInstance();
-			break;
-		case "LogViewer":
-			ret = LogBox.getInstance();
-			break;
-		case "EventViewer":
-			ret = EventViewer.getInstance();
-			break;
-		default:
-			throw new ErrorException("UI tool not found");
-		}
-		return ret;
-	}
-
-	@Override
-	public void showTool(String name, boolean bool) {
-		if (name.equals("EventViewer") && !bool) {
-			if (EventViewer.hasInstance())
-				EventViewer.getInstance().dispose();
+		if (showSubModels.isSelected() == bool)
 			return;
-		}
-		JFrame tool = getTool(name);
-		tool.setVisible(bool);
-		if (bool)
-			tool.toFront();
+		showSubModels.setSelected(bool);
+		setShowSubModels(bool);
+		updateUI();
 	}
 
 	/**
 	 * Re-open any Tools windows that have been closed temporarily.
 	 */
-	public void showActiveTools() {
-		Simulation simulation = sim.getSimulation();
+	public void showActiveTools(Simulation simulation) {
 		EntityPallet.getInstance().setVisible(simulation.isModelBuilderVisible());
 		ObjectSelector.getInstance().setVisible(simulation.isObjectSelectorVisible());
 		EditBox.getInstance().setVisible(simulation.isInputEditorVisible());
@@ -4118,16 +4028,36 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			EventViewer.getInstance().setVisible(false);
 	}
 
-	private void updateToolWindows() {
-		if (sim.getSimulation() == null)
-			return;
-		showActiveTools();
-		updateToolSizes();
-		updateToolLocations();
+	public boolean isIconified() {
+		return getExtendedState() == Frame.ICONIFIED;
 	}
 
-	public void updateToolSizes() {
-		Simulation simulation = sim.getSimulation();
+	private void updateToolVisibilities(Simulation simulation) {
+		boolean iconified = isIconified();
+		setFrameVisibility(EntityPallet.getInstance(), !iconified && simulation.isModelBuilderVisible());
+		setFrameVisibility(ObjectSelector.getInstance(), !iconified && simulation.isObjectSelectorVisible());
+		setFrameVisibility(EditBox.getInstance(), !iconified && simulation.isInputEditorVisible());
+		setFrameVisibility(OutputBox.getInstance(), !iconified && simulation.isOutputViewerVisible());
+		setFrameVisibility(PropertyBox.getInstance(), !iconified && simulation.isPropertyViewerVisible());
+		setFrameVisibility(LogBox.getInstance(), !iconified && simulation.isLogViewerVisible());
+
+		if (!simulation.isEventViewerVisible()) {
+			if (EventViewer.hasInstance())
+				EventViewer.getInstance().dispose();
+			return;
+		}
+		setFrameVisibility(EventViewer.getInstance(), !iconified);
+	}
+
+	private void setFrameVisibility(JFrame frame, boolean bool) {
+		if (frame.isVisible() == bool)
+			return;
+		frame.setVisible(bool);
+		if (bool)
+			frame.toFront();
+	}
+
+	public void updateToolSizes(Simulation simulation) {
 		EntityPallet.getInstance().setSize(simulation.getModelBuilderSize().get(0),
 				simulation.getModelBuilderSize().get(1));
 		ObjectSelector.getInstance().setSize(simulation.getObjectSelectorSize().get(0),
@@ -4146,8 +4076,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		}
 	}
 
-	public void updateToolLocations() {
-		Simulation simulation = sim.getSimulation();
+	public void updateToolLocations(Simulation simulation) {
 		setToolLocation(EntityPallet.getInstance(), simulation.getModelBuilderPos().get(0),
 				simulation.getModelBuilderPos().get(1));
 		setToolLocation(ObjectSelector.getInstance(), simulation.getObjectSelectorPos().get(0),
@@ -4166,43 +4095,56 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		}
 	}
 
-	@Override
-	public void setToolLocation(String name, int x, int y) {
-		if (name.equals("EventViewer") && !EventViewer.hasInstance())
-			return;
-		setToolLocation(getTool(name), x, y);
-	}
-
 	public void setToolLocation(JFrame tool, int x, int y) {
 		Point pt = getGlobalLocation(x, y);
 		tool.setLocation(pt);
 	}
 
-	@Override
-	public void setToolSize(String name, int width, int height) {
-		if (name.equals("EventViewer") && !EventViewer.hasInstance())
+	private void updateViewVisibilities() {
+		if (!RenderManager.isGood())
 			return;
-		getTool(name).setSize(width, height);
+		boolean iconified = isIconified();
+		for (View v : views) {
+			boolean isVisible = RenderManager.inst().isVisible(v);
+			if (!iconified && v.showWindow()) {
+				if (!isVisible) {
+					RenderManager.inst().createWindow(v);
+				}
+			}
+			else {
+				if (isVisible) {
+					RenderManager.inst().closeWindow(v);
+				}
+			}
+		}
+	}
+
+	private void updateViewSizes() {
+		for (View v : views) {
+			final Frame window = RenderManager.getOpenWindowForView(v);
+			if (window == null)
+				continue;
+			IntegerVector size = getWindowSize(v);
+			window.setSize(size.get(0), size.get(1));
+		}
 	}
 
 	public void updateViewLocations() {
-		for (View v : sim.getViews()) {
+		for (View v : views) {
 			final Frame window = RenderManager.getOpenWindowForView(v);
 			if (window == null)
-				return;
-			IntegerVector pos = v.getWindowPos();
+				continue;
+			IntegerVector pos = getWindowPos(v);
 			window.setLocation(pos.get(0), pos.get(1));
 		}
 	}
 
-	@Override
 	public void setControlPanelWidth(int width) {
 		int height = getSize().height;
 		setSize(width, height);
 	}
 
-	public void setWindowDefaults() {
-		Simulation simulation = sim.getSimulation();
+	public void setWindowDefaults(Simulation simulation) {
 		simulation.setModelBuilderDefaults(   COL1_START, TOP_START,     COL1_WIDTH, HALF_TOP    );
 		simulation.setObjectSelectorDefaults( COL1_START, BOTTOM_START,  COL1_WIDTH, HALF_BOTTOM );
 		simulation.setInputEditorDefaults(    COL2_START, LOWER_START,   COL2_WIDTH, LOWER_HEIGHT);
@@ -4211,6 +4153,77 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		simulation.setLogViewerDefaults(      COL4_START, LOWER_START,   COL4_WIDTH, LOWER_HEIGHT);
 		simulation.setEventViewerDefaults(    COL4_START, LOWER_START,   COL4_WIDTH, LOWER_HEIGHT);
 		simulation.setControlPanelWidthDefault(DEFAULT_GUI_WIDTH);
+	}
+
+	public ArrayList<View> getViews() {
+		synchronized (views) {
+			return views;
+		}
+	}
+
+	@Override
+	public void addView(View v) {
+		synchronized (views) {
+			views.add(v);
+		}
+	}
+
+	@Override
+	public void removeView(View v) {
+		synchronized (views) {
+			views.remove(v);
+		}
+	}
+
+	@Override
+	public void createWindow(View v) {
+		if (!RenderManager.isGood())
+			return;
+		RenderManager.inst().createWindow(v);
+	}
+
+	@Override
+	public void closeWindow(View v) {
+		if (!RenderManager.isGood())
+			return;
+		RenderManager.inst().closeWindow(v);
+	}
+
+	@Override
+	public int getNextViewID() {
+		nextViewID++;
+		return nextViewID;
+	}
+
+	public IntegerVector getWindowPos(View v) {
+		Point fix = OSFix.getLocationAdustment();  //FIXME
+		IntegerVector ret = new IntegerVector(v.getWindowPos());
+		Point pt = getGlobalLocation(ret.get(0), ret.get(1));
+		ret.set(0, pt.x + fix.x);
+		ret.set(1, pt.y + fix.y);
+		return ret;
+	}
+
+	public IntegerVector getWindowSize(View v) {
+		Point fix = OSFix.getSizeAdustment();  //FIXME
+		IntegerVector ret = new IntegerVector(v.getWindowSize());
+		ret.addAt(fix.x, 0);
+		ret.addAt(fix.y, 1);
+		return ret;
+	}
+
+	public void setWindowPos(View v, int x, int y, int width, int height) {
+		Point posFix = OSFix.getLocationAdustment();
+		Point sizeFix = OSFix.getSizeAdustment();
+		Point pt = getRelativeLocation(x - posFix.x, y - posFix.y);
+		v.setWindowPos(pt.x, pt.y, width - sizeFix.x, height - sizeFix.y);
+	}
+
+	@Override
+	public Vec3d getPOI(View v) {
+		if (!RenderManager.isGood())
+			return new Vec3d();
+		return RenderManager.inst().getPOI(v);
 	}
 
 	// ******************************************************************************************************
@@ -4321,16 +4334,18 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 		// Load the autoload file
 		sim.autoLoad();
+		Simulation simulation = sim.getSimulation();
 
 		// Show the Control Panel
 		if (gui != null) {
-			gui.setTitle(sim.getSimulation().getModelName());
+			gui.setTitle(simulation.getModelName());
 			gui.setVisible(true);
 			gui.calcWindowDefaults();
 			gui.setLocation(gui.getX(), gui.getY());  //FIXME remove when setLocation is fixed for Windows 10
-			gui.setWindowDefaults();
+			gui.setWindowDefaults(simulation);
 			gui.updateControls();
 			EntityPallet.update();
+			gui.clearUndoRedo();
 		}
 
 		// Resolve all input arguments against the current working directory
@@ -4370,12 +4385,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			GUIFrame.updateForSimState(GUIFrame.SIM_STATE_CONFIGURED);
 		}
 
-		// Show the view windows
-		if(!quiet && !batch) {
-			if (gui != null)
-				gui.displayWindows();
-		}
-
 		// If in batch or quiet mode, close the any tools that were opened
 		if (quiet || batch) {
 			if (gui != null)
@@ -4404,7 +4413,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			gui.toFront();
 
 		// Set the selected entity to the Simulation object
-		FrameBox.setSelectedEntity(sim.getSimulation(), false);
+		FrameBox.setSelectedEntity(simulation, false);
 	}
 
 	/*
@@ -4584,7 +4593,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		clear();
 		sim.setRecordEdits(true);
 		InputAgent.loadDefault(sim);
-		displayWindows();
 		FrameBox.setSelectedEntity(sim.getSimulation(), false);
 	}
 
@@ -4616,27 +4624,24 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 		// Load the selected file
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
-            File temp = chooser.getSelectedFile();
-			final GUIFrame gui1 = this;
-    		final File chosenfile = temp;
+			clear();
+			File chosenfile = chooser.getSelectedFile();
 			new Thread(new Runnable() {
 				@Override
 				public void run() {
 					sim.setRecordEdits(false);
-					gui1.clear();
+
 					Throwable ret = GUIFrame.configure(chosenfile);
 					if (ret != null)
 						handleConfigError(ret, chosenfile);
 
 					sim.setRecordEdits(true);
-
-					gui1.displayWindows();
 					FrameBox.setSelectedEntity(sim.getSimulation(), false);
 				}
 			}).start();
 
 			setConfigFolder(chosenfile.getParent());
-        }
+		}
 	}
 
 	static Throwable configure(File file) {
@@ -4662,9 +4667,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			gui.setTitle( sim.getSimulation().getModelName() + " - " + sim.getRunName() );
 			gui.updateForSimulationState(GUIFrame.SIM_STATE_CONFIGURED);
 			gui.enableSave(sim.isRecordEditsFound());
-
-			gui.updateToolWindows();
-			gui.setShowLabels(sim.getSimulation().isShowLabels());
 		}
 		return ret;
 	}
@@ -5170,7 +5172,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				options[0]);
 
 		if (userOption == JOptionPane.YES_OPTION) {
-			InputAgent.applyBoolean(sim.getSimulation(), "ShowLogViewer", true);
+			KeywordIndex kw = InputAgent.formatBoolean("ShowLogViewer", true);
+			InputAgent.storeAndExecute(new KeywordCommand(sim.getSimulation(), kw));
 		}
 	}
 
