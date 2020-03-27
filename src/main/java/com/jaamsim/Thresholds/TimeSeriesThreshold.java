@@ -417,6 +417,39 @@ public class TimeSeriesThreshold extends Threshold {
 	}
 
 	/**
+	 * Returns the last time that one of the parameters TimeSeries, MaxOpenLimit, or MinOpenLimit
+	 * changed, before the given time.
+	 * @param simTime - simulation time in seconds
+	 * @return the last simulation time in seconds that a change occurred
+	 */
+	public double getLastChangeBeforeTime(double simTime) {
+		return EventManager.ticksToSecs(getLastChangeBeforeTicks(EventManager.secsToNearestTick(simTime)));
+	}
+
+	/**
+	 * Returns the last time that one of the parameters TimeSeries, MaxOpenLimit, or MinOpenLimit
+	 * changed, before the given time.
+	 * @param ticks - simulation time in clock ticks.
+	 * @return the last time in clock ticks that a change occurred
+	 */
+	private long getLastChangeBeforeTicks(long ticks) {
+		long lastChange = timeSeries.getValue().getLastChangeBeforeTicks(ticks);
+		lastChange = Math.min(lastChange, maxOpenLimit.getValue().getLastChangeBeforeTicks(ticks));
+		lastChange = Math.min(lastChange, minOpenLimit.getValue().getLastChangeBeforeTicks(ticks));
+		return lastChange;
+	}
+
+	/**
+	 * Returns the next time that one of the parameters TimeSeries, MaxOpenLimit, or MinOpenLimit
+	 * will change, after the given time.
+	 * @param simTime - simulation time in seconds
+	 * @return the next simulation time in seconds that a change will occur
+	 */
+	public double getNextChangeAfterTime(double simTime) {
+		return EventManager.ticksToSecs(getNextChangeAfterTicks(EventManager.secsToNearestTick(simTime)));
+	}
+
+	/**
 	 * Returns the next time that one of the parameters TimeSeries, MaxOpenLimit, or MinOpenLimit
 	 * will change, after the given time.
 	 * @param ticks - simulation time in clock ticks.
