@@ -38,6 +38,9 @@ public class SubjectEntityDelegate implements SubjectEntity {
 
 	@Override
 	public void notifyObservers() {
+		Entity ent = (Entity) subject;
+		if (ent.isTraceFlag()) ent.trace(0, "notifyObservers: %s", observerList);
+
 		for (ObserverEntity obs : observerList) {
 			obs.observerUpdate(subject);
 		}
