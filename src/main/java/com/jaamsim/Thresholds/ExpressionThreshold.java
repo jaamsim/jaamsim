@@ -37,6 +37,7 @@ import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.units.DimensionlessUnit;
+import com.jaamsim.units.RateUnit;
 
 public class ExpressionThreshold extends Threshold implements ObserverEntity {
 
@@ -86,6 +87,8 @@ public class ExpressionThreshold extends Threshold implements ObserverEntity {
 
 	private boolean lastOpenValue; // state of the threshold that was calculated on-demand
 	private boolean useLastValue;
+	private long numCalls;
+	private long numEvals;
 
 	{
 		watchList.setHidden(false);
@@ -128,6 +131,8 @@ public class ExpressionThreshold extends Threshold implements ObserverEntity {
 		lastOpenValue = initialOpenValue.getValue();
 		lastOpenValue = this.getOpenConditionValue(0.0);
 		useLastValue = false;
+		numCalls = 0L;
+		numEvals = 0L;
 	}
 
 	@Override
@@ -229,8 +234,11 @@ public class ExpressionThreshold extends Threshold implements ObserverEntity {
 			}
 
 			// Save the threshold's last state (unless called by the UI thread)
-			if (EventManager.hasCurrent())
+			if (EventManager.hasCurrent()) {
 				lastOpenValue = ret;
+				numCalls++;
+				numEvals++;
+			}
 			return ret;
 		}
 		catch (ExpError e) {
@@ -246,8 +254,10 @@ public class ExpressionThreshold extends Threshold implements ObserverEntity {
 		if (!EventManager.hasCurrent())
 			return super.isOpen();
 
-		if (useLastValue && isWatchList())
+		if (useLastValue && isWatchList()) {
+			numCalls++;
 			return super.isOpen();
+		}
 
 		// Determine the state implied by the OpenCondition and CloseCondition expressions
 		boolean ret = this.getOpenConditionValue(getSimTime());
@@ -325,10 +335,29 @@ public class ExpressionThreshold extends Threshold implements ObserverEntity {
 
 	@Output(name = "Open",
 	 description = "If open, then return TRUE.  Otherwise, return FALSE.",
-	    unitType = DimensionlessUnit.class)
+	    unitType = DimensionlessUnit.class,
+	    sequence = 1)
 	@Override
 	public Boolean getOpen(double simTime) {
 		return this.getOpenConditionValue(simTime);
+	}
+
+	@Output(name = "FracEval",
+	 description = "Fraction of times that the threshold expression was evaluated out of the "
+	             + "total number of times the threshold state was obtained.",
+	    unitType = DimensionlessUnit.class,
+	    sequence = 2)
+	public double getFracEval(double simTime) {
+		return (double) numEvals / numCalls;
+	}
+
+	@Output(name = "EvalRate",
+	 description = "Number of times that the threshold expression is evaluated per unit "
+	             + "simulation time.",
+	    unitType = RateUnit.class,
+	    sequence = 3)
+	public double getEvalRate(double simTime) {
+		return numEvals / simTime;
 	}
 
 }
