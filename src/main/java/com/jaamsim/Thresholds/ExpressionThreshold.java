@@ -85,6 +85,7 @@ public class ExpressionThreshold extends Threshold implements ObserverEntity {
 	private final BooleanInput verifyWatchList;
 
 	private boolean lastOpenValue; // state of the threshold that was calculated on-demand
+	private boolean useLastValue;
 
 	{
 		watchList.setHidden(false);
@@ -126,6 +127,7 @@ public class ExpressionThreshold extends Threshold implements ObserverEntity {
 		super.earlyInit();
 		lastOpenValue = initialOpenValue.getValue();
 		lastOpenValue = this.getOpenConditionValue(0.0);
+		useLastValue = false;
 	}
 
 	@Override
@@ -150,12 +152,16 @@ public class ExpressionThreshold extends Threshold implements ObserverEntity {
 		super.startUp();
 
 		// If there is no WatchList, the open/close expressions are tested after every event
-		if (getWatchList().isEmpty() || isVerifyWatchList())
+		if (!isWatchList() || isVerifyWatchList())
 			doOpenClose();
 	}
 
 	public boolean isVerifyWatchList() {
 		return verifyWatchList.getValue();
+	}
+
+	public boolean isWatchList() {
+		return !getWatchList().isEmpty();
 	}
 
 	/**
@@ -240,6 +246,9 @@ public class ExpressionThreshold extends Threshold implements ObserverEntity {
 		if (!EventManager.hasCurrent())
 			return super.isOpen();
 
+		if (useLastValue && isWatchList())
+			return super.isOpen();
+
 		// Determine the state implied by the OpenCondition and CloseCondition expressions
 		boolean ret = this.getOpenConditionValue(getSimTime());
 
@@ -267,11 +276,13 @@ public class ExpressionThreshold extends Threshold implements ObserverEntity {
 			boolean bool = getOpenConditionValue(getSimTime());
 			if (isTraceFlag()) trace(0, "setOpen(%s)", bool);
 			setOpen(bool);
+			useLastValue = true;
 		}
 	};
 
 	@Override
 	public void observerUpdate(SubjectEntity subj) {
+		useLastValue = false;
 		if (observerUpdateHandle.isScheduled())
 			return;
 		// Priority set to 99 to ensure that this event executed just before the conditional events
