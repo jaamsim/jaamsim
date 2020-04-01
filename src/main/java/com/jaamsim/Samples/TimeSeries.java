@@ -17,6 +17,7 @@
  */
 package com.jaamsim.Samples;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import com.jaamsim.Graphics.DisplayEntity;
@@ -134,6 +135,11 @@ public class TimeSeries extends DisplayEntity implements TimeSeriesProvider, Sub
 	@Override
 	public void notifyObservers() {
 		subject.notifyObservers();
+	}
+
+	@Override
+	public ArrayList<ObserverEntity> getObserverList() {
+		return subject.getObserverList();
 	}
 
 	public boolean isOffsetToFirst() {

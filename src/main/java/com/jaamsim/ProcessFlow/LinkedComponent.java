@@ -123,6 +123,11 @@ public abstract class LinkedComponent extends StateEntity implements SubjectEnti
 	}
 
 	@Override
+	public ArrayList<ObserverEntity> getObserverList() {
+		return subject.getObserverList();
+	}
+
+	@Override
 	public String getInitialState() {
 		return "None";
 	}

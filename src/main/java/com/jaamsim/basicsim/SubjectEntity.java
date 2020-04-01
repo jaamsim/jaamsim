@@ -16,6 +16,8 @@
  */
 package com.jaamsim.basicsim;
 
+import java.util.ArrayList;
+
 public interface SubjectEntity {
 
 	/**
@@ -29,5 +31,11 @@ public interface SubjectEntity {
 	 * occurred.
 	 */
 	public void notifyObservers();
+
+	/**
+	 * Returns a list of the observers that are monitoring this subject entity.
+	 * @return list of observers
+	 */
+	public ArrayList<ObserverEntity> getObserverList();
 
 }

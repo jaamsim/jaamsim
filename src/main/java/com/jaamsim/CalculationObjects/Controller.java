@@ -120,6 +120,11 @@ public class Controller extends DisplayEntity implements SubjectEntity {
 	}
 
 	@Override
+	public ArrayList<ObserverEntity> getObserverList() {
+		return subject.getObserverList();
+	}
+
+	@Override
 	public void startUp() {
 		super.startUp();
 

@@ -47,6 +47,11 @@ public class SubjectEntityDelegate implements SubjectEntity {
 	}
 
 	@Override
+	public ArrayList<ObserverEntity> getObserverList() {
+		return observerList;
+	}
+
+	@Override
 	public String toString() {
 		return String.format("%s: %s", subject, observerList);
 	}

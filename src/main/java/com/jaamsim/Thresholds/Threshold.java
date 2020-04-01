@@ -111,6 +111,11 @@ public class Threshold extends StateEntity implements SubjectEntity {
 		subject.notifyObservers();
 	}
 
+	@Override
+	public ArrayList<ObserverEntity> getObserverList() {
+		return subject.getObserverList();
+	}
+
 	public void setInitialOpenValue(boolean bool) {
 		initialOpenValue = bool;
 	}

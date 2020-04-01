@@ -16,6 +16,8 @@
  */
 package com.jaamsim.ProcessFlow;
 
+import java.util.ArrayList;
+
 import com.jaamsim.BasicObjects.DowntimeEntity;
 import com.jaamsim.basicsim.EntityTarget;
 import com.jaamsim.basicsim.ObserverEntity;
@@ -69,6 +71,11 @@ public abstract class Device extends StateUserEntity implements ObserverEntity, 
 	@Override
 	public void notifyObservers() {
 		subject.notifyObservers();
+	}
+
+	@Override
+	public ArrayList<ObserverEntity> getObserverList() {
+		return subject.getObserverList();
 	}
 
 	@Override
