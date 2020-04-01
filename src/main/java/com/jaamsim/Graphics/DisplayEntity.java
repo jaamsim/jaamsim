@@ -32,6 +32,7 @@ import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.basicsim.GUIListener;
 import com.jaamsim.basicsim.ObjectType;
+import com.jaamsim.basicsim.ObserverEntity;
 import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.EntityInput;
@@ -1167,6 +1168,10 @@ public class DisplayEntity extends Entity {
 		return Math.max(getSize().x, getSize().y)/2.0 + 0.05d;
 	}
 
+	public ArrayList<ObserverEntity> getObserverList() {
+		return new ArrayList<>();
+	}
+
 	////////////////////////////////////////////////////////////////////////
 	// Outputs
 	////////////////////////////////////////////////////////////////////////
@@ -1217,6 +1222,13 @@ public class DisplayEntity extends Entity {
 		}
 		Vec3d vec = getSize();
 		return Math.max(Math.max(vec.x, vec.y), vec.z);
+	}
+
+	@Output(name = "ObserverList",
+	 description = "The observers that are monitoring the state of this entity.",
+	    sequence = 5)
+	public ArrayList<ObserverEntity> getObserverList(double simTime) {
+		return getObserverList();
 	}
 
 }
