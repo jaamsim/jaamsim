@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2019 JaamSim Software Inc.
+ * Copyright (C) 2016-2020 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -110,7 +110,7 @@ implements SampleProvider, RandomStreamUser {
 	public void earlyInit() {
 		super.earlyInit();
 		stats.clear();
-		lastSample = getMeanValue(0);
+		lastSample = getInitValue();
 	}
 
 	@Override
@@ -121,6 +121,10 @@ implements SampleProvider, RandomStreamUser {
 			setUnitType(getUnitType());
 			return;
 		}
+	}
+
+	public double getInitValue() {
+		return getMeanValue(0);
 	}
 
 	@Override
@@ -182,6 +186,8 @@ implements SampleProvider, RandomStreamUser {
 		// If we are not in a model context, do not perturb the distribution by sampling,
 		// instead simply return the last sampled value
 		if (!EventManager.hasCurrent()) {
+			if (simTime == 0.0d)
+				return getInitValue();
 			return lastSample;
 		}
 
