@@ -190,6 +190,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 	private JToggleButton showLinks;
 	private JToggleButton createLinks;
+	private JButton nextButton;
+	private JButton prevButton;
 
 	private JButton copyButton;
 	private JButton pasteButton;
@@ -1167,6 +1169,12 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		buttonBar.add(Box.createRigidArea(gapDim));
 		addCreateLinksButton(buttonBar, noMargin);
 
+		// Previous and Next buttons
+		buttonBar.add(Box.createRigidArea(gapDim));
+		addPreviousButton(buttonBar, noMargin);
+		buttonBar.add(Box.createRigidArea(gapDim));
+		addNextButton(buttonBar, noMargin);
+
 		// Show Copy and Paste buttons
 		buttonBar.addSeparator(separatorDim);
 		addCopyButton(buttonBar, noMargin);
@@ -1609,6 +1617,88 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 		});
 		buttonBar.add( createLinks );
+	}
+
+	private void addPreviousButton(JToolBar buttonBar, Insets margin) {
+		prevButton = new JButton(new ImageIcon(GUIFrame.class.getResource("/resources/images/Previous-16.png")));
+		prevButton.setToolTipText(formatToolTip("Previous",
+				"Selects the previous object in the chain of linked objects."));
+		prevButton.setMargin(margin);
+		prevButton.setFocusPainted(false);
+		prevButton.setRequestFocusEnabled(false);
+		prevButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed( ActionEvent event ) {
+				if (createLinks.isSelected())
+					createLinks.doClick();
+				if (selectedEntity != null && selectedEntity instanceof DisplayEntity) {
+					DisplayEntity selectedDEnt = (DisplayEntity) selectedEntity;
+					ArrayList<DisplayEntity> list = selectedDEnt.getPreviousList();
+					if (list.isEmpty())
+						return;
+					if (list.size() == 1) {
+						FrameBox.setSelectedEntity(list.get(0), false);
+						return;
+					}
+					ScrollablePopupMenu menu = new ScrollablePopupMenu();
+					for (Entity ent : list) {
+						JMenuItem item = new JMenuItem(ent.getName());
+						item.addActionListener( new ActionListener() {
+							@Override
+							public void actionPerformed( ActionEvent event ) {
+								FrameBox.setSelectedEntity(ent, false);
+								controlStartResume.requestFocusInWindow();
+							}
+						} );
+						menu.add(item);
+					}
+					menu.show(prevButton, 0, prevButton.getHeight());
+				}
+				controlStartResume.requestFocusInWindow();
+			}
+		});
+		buttonBar.add( prevButton );
+	}
+
+	private void addNextButton(JToolBar buttonBar, Insets margin) {
+		nextButton = new JButton(new ImageIcon(GUIFrame.class.getResource("/resources/images/Next-16.png")));
+		nextButton.setToolTipText(formatToolTip("Next",
+				"Selects the next object in the chain of linked objects."));
+		nextButton.setMargin(margin);
+		nextButton.setFocusPainted(false);
+		nextButton.setRequestFocusEnabled(false);
+		nextButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed( ActionEvent event ) {
+				if (createLinks.isSelected())
+					createLinks.doClick();
+				if (selectedEntity != null && selectedEntity instanceof DisplayEntity) {
+					DisplayEntity selectedDEnt = (DisplayEntity) selectedEntity;
+					ArrayList<DisplayEntity> list = selectedDEnt.getNextList();
+					if (list.isEmpty())
+						return;
+					if (list.size() == 1) {
+						FrameBox.setSelectedEntity(list.get(0), false);
+						return;
+					}
+					ScrollablePopupMenu menu = new ScrollablePopupMenu();
+					for (Entity ent : list) {
+						JMenuItem item = new JMenuItem(ent.getName());
+						item.addActionListener( new ActionListener() {
+							@Override
+							public void actionPerformed( ActionEvent event ) {
+								FrameBox.setSelectedEntity(ent, false);
+								controlStartResume.requestFocusInWindow();
+							}
+						} );
+						menu.add(item);
+					}
+					menu.show(nextButton, 0, nextButton.getHeight());
+				}
+				controlStartResume.requestFocusInWindow();
+			}
+		});
+		buttonBar.add( nextButton );
 	}
 
 	private void addCopyButton(JToolBar buttonBar, Insets margin) {
@@ -3360,6 +3450,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		update2dButton();
 		updateShowAxesButton();
 		updateShowGridButton();
+		updateNextPrevButtons();
 		updateFindButton();
 		updateFormatButtons(selectedEntity);
 		updateForSnapToGrid(simulation.isSnapToGrid());
@@ -3707,6 +3798,17 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	private void updateShowGridButton() {
 		DisplayEntity ent = (DisplayEntity) sim.getNamedEntity("XY-Grid");
 		grid.setSelected(ent != null && ent.getShow());
+	}
+
+	private void updateNextPrevButtons() {
+		if (selectedEntity != null && selectedEntity instanceof DisplayEntity) {
+			DisplayEntity selectedDEnt = (DisplayEntity) selectedEntity;
+			prevButton.setEnabled(!selectedDEnt.getPreviousList().isEmpty());
+			nextButton.setEnabled(!selectedDEnt.getNextList().isEmpty());
+			return;
+		}
+		prevButton.setEnabled(false);
+		nextButton.setEnabled(false);
 	}
 
 	private void updateFindButton() {
