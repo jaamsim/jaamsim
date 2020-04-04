@@ -1642,7 +1642,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 					if (list.isEmpty())
 						return;
 					if (list.size() == 1) {
-						FrameBox.setSelectedEntity(list.get(0).entity, false);
+						setSelectedDEnt(list.get(0));
 						return;
 					}
 					ScrollablePopupMenu menu = new ScrollablePopupMenu();
@@ -1651,7 +1651,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 						item.addActionListener( new ActionListener() {
 							@Override
 							public void actionPerformed( ActionEvent event ) {
-								FrameBox.setSelectedEntity(de.entity, false);
+								setSelectedDEnt(de);
 								controlStartResume.requestFocusInWindow();
 							}
 						} );
@@ -1684,7 +1684,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 					if (list.isEmpty())
 						return;
 					if (list.size() == 1) {
-						FrameBox.setSelectedEntity(list.get(0).entity, false);
+						setSelectedDEnt(list.get(0));
 						return;
 					}
 					ScrollablePopupMenu menu = new ScrollablePopupMenu();
@@ -1693,7 +1693,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 						item.addActionListener( new ActionListener() {
 							@Override
 							public void actionPerformed( ActionEvent event ) {
-								FrameBox.setSelectedEntity(de.entity, false);
+								setSelectedDEnt(de);
 								controlStartResume.requestFocusInWindow();
 							}
 						} );
@@ -1705,6 +1705,13 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			}
 		});
 		buttonBar.add( nextButton );
+	}
+
+	private void setSelectedDEnt(DirectedEntity de) {
+		FrameBox.setSelectedEntity(de.entity, false);
+		if (!reverseButton.isSelected() == de.direction)
+			return;
+		reverseButton.doClick();
 	}
 
 	private void addReverseButton(JToolBar buttonBar, Insets margin) {
