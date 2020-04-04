@@ -70,9 +70,4 @@ public class SubModelStart extends DisplayEntity implements Linkable, LinkDispla
 		return ret;
 	}
 
-	@Override
-	public ArrayList<DisplayEntity> getSourceEntities() {
-		return new ArrayList<>();
-	}
-
 }

@@ -216,11 +216,6 @@ public abstract class LinkedComponent extends StateEntity implements SubjectEnti
 		return ret;
 	}
 
-	@Override
-	public ArrayList<DisplayEntity> getSourceEntities() {
-		return new ArrayList<>();
-	}
-
 	// ******************************************************************************************************
 	// OUTPUT METHODS
 	// ******************************************************************************************************

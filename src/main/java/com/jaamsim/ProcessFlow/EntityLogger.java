@@ -98,11 +98,6 @@ public class EntityLogger extends Logger implements Linkable, LinkDisplayable {
 		return ret;
 	}
 
-	@Override
-	public ArrayList<DisplayEntity> getSourceEntities() {
-		return new ArrayList<>();
-	}
-
 	@Output(name = "obj",
 	 description = "The entity that was received most recently.",
 	    sequence = 0)

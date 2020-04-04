@@ -86,15 +86,4 @@ public class SimEntity extends StateEntity implements LinkDisplayable {
 		gen.setPrototypeEntity(this);
 	}
 
-	// LinkDisplayable
-	@Override
-	public ArrayList<DisplayEntity> getDestinationEntities() {
-		return new ArrayList<>();
-	}
-
-	@Override
-	public ArrayList<DisplayEntity> getSourceEntities() {
-		return new ArrayList<>();
-	}
-
 }

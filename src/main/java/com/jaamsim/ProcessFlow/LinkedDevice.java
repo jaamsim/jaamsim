@@ -166,11 +166,6 @@ public abstract class LinkedDevice extends Device implements Linkable, LinkDispl
 		return ret;
 	}
 
-	@Override
-	public ArrayList<DisplayEntity> getSourceEntities() {
-		return new ArrayList<>();
-	}
-
 	// ******************************************************************************************************
 	// OUTPUT METHODS
 	// ******************************************************************************************************

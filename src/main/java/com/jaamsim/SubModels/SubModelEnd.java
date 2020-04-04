@@ -16,8 +16,6 @@
  */
 package com.jaamsim.SubModels;
 
-import java.util.ArrayList;
-
 import com.jaamsim.EntityProviders.EntityProvInput;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.LinkDisplayable;
@@ -65,16 +63,6 @@ public class SubModelEnd extends DisplayEntity implements Linkable, LinkDisplaya
 			error("Object '%s' returned by NextComponent does not accept an entity.", nextComp);
 		}
 		((Linkable)nextComp).addEntity(ent);
-	}
-
-	// LinkDisplayable
-	@Override
-	public ArrayList<DisplayEntity> getDestinationEntities() {
-		return new ArrayList<>();	}
-
-	@Override
-	public ArrayList<DisplayEntity> getSourceEntities() {
-		return new ArrayList<>();
 	}
 
 }
