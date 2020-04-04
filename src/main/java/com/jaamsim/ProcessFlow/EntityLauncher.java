@@ -22,7 +22,6 @@ import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.EntityProviders.EntityProvInput;
 import com.jaamsim.GameObjects.GameEntity;
 import com.jaamsim.Graphics.DisplayEntity;
-import com.jaamsim.Graphics.LinkDisplayable;
 import com.jaamsim.Graphics.OverlayEntity;
 import com.jaamsim.Graphics.TextBasics;
 import com.jaamsim.basicsim.Entity;
@@ -32,7 +31,7 @@ import com.jaamsim.input.Keyword;
 import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.StringInput;
 
-public class EntityLauncher extends GameEntity implements LinkDisplayable, EntityGen {
+public class EntityLauncher extends GameEntity implements EntityGen {
 
 	@Keyword(description = "The prototype for entities to be generated. "
 	                     + "The generated entities will be copies of this entity.",
@@ -113,7 +112,6 @@ public class EntityLauncher extends GameEntity implements LinkDisplayable, Entit
 		InputAgent.storeAndExecute(new KeywordCommand(this, kw));
 	}
 
-	// LinkDisplayable
 	@Override
 	public ArrayList<DisplayEntity> getDestinationEntities() {
 		ArrayList<DisplayEntity> ret = new ArrayList<>();

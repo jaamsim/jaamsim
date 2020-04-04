@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import com.jaamsim.BasicObjects.Logger;
 import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.Graphics.DisplayEntity;
-import com.jaamsim.Graphics.LinkDisplayable;
 import com.jaamsim.basicsim.FileEntity;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InterfaceEntityInput;
@@ -30,7 +29,7 @@ import com.jaamsim.input.Keyword;
 import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.Output;
 
-public class EntityLogger extends Logger implements Linkable, LinkDisplayable {
+public class EntityLogger extends Logger implements Linkable {
 
 	@Keyword(description = "The next object to which the processed DisplayEntity is passed.",
 			exampleList = {"Queue1"})
@@ -87,7 +86,6 @@ public class EntityLogger extends Logger implements Linkable, LinkDisplayable {
 		InputAgent.storeAndExecute(new KeywordCommand(this, kw));
 	}
 
-	// LinkDisplayable
 	@Override
 	public ArrayList<DisplayEntity> getDestinationEntities() {
 		ArrayList<DisplayEntity> ret = new ArrayList<>();

@@ -20,7 +20,6 @@ import java.util.ArrayList;
 
 import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.Graphics.DisplayEntity;
-import com.jaamsim.Graphics.LinkDisplayable;
 import com.jaamsim.ProcessFlow.EntityGenerator;
 import com.jaamsim.ProcessFlow.Linkable;
 import com.jaamsim.input.InputAgent;
@@ -28,7 +27,7 @@ import com.jaamsim.input.InterfaceEntityInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.KeywordIndex;
 
-public class SubModelStart extends DisplayEntity implements Linkable, LinkDisplayable {
+public class SubModelStart extends DisplayEntity implements Linkable {
 
 	@Keyword(description = "The next component in the sub-model.",
 			exampleList = {"Queue1"})
@@ -59,7 +58,6 @@ public class SubModelStart extends DisplayEntity implements Linkable, LinkDispla
 		InputAgent.storeAndExecute(new KeywordCommand(this, kw));
 	}
 
-	// LinkDisplayable
 	@Override
 	public ArrayList<DisplayEntity> getDestinationEntities() {
 		ArrayList<DisplayEntity> ret = new ArrayList<>();

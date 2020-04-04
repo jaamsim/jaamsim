@@ -20,7 +20,6 @@ import java.util.ArrayList;
 
 import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.Graphics.DisplayEntity;
-import com.jaamsim.Graphics.LinkDisplayable;
 import com.jaamsim.StringProviders.StringProvInput;
 import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.Input;
@@ -35,7 +34,7 @@ import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.RateUnit;
 import com.jaamsim.units.TimeUnit;
 
-public abstract class LinkedDevice extends Device implements Linkable, LinkDisplayable {
+public abstract class LinkedDevice extends Device implements Linkable {
 
 	@Keyword(description = "The default value for the output obj.\n"
 	                     + "Normally, obj is set to the last entity received by this object. "
@@ -155,7 +154,6 @@ public abstract class LinkedDevice extends Device implements Linkable, LinkDispl
 		InputAgent.storeAndExecute(new KeywordCommand(this, kw));
 	}
 
-	// LinkDisplayable
 	@Override
 	public ArrayList<DisplayEntity> getDestinationEntities() {
 		ArrayList<DisplayEntity> ret = new ArrayList<>();

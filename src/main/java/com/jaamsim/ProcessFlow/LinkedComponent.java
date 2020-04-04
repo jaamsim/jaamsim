@@ -21,7 +21,6 @@ import java.util.ArrayList;
 
 import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.Graphics.DisplayEntity;
-import com.jaamsim.Graphics.LinkDisplayable;
 import com.jaamsim.StringProviders.StringProvInput;
 import com.jaamsim.basicsim.ObserverEntity;
 import com.jaamsim.basicsim.SubjectEntity;
@@ -43,7 +42,7 @@ import com.jaamsim.units.TimeUnit;
  * LinkedComponents are used to form a chain of components that process DisplayEntities that pass through the system.
  * Sub-classes for EntityGenerator, Server, and EntitySink.
  */
-public abstract class LinkedComponent extends StateEntity implements SubjectEntity, Linkable, LinkDisplayable {
+public abstract class LinkedComponent extends StateEntity implements SubjectEntity, Linkable {
 
 	@Keyword(description = "The default value for the output obj.\n"
 	                     + "Normally, obj is set to the last entity received by this object. "
@@ -205,7 +204,6 @@ public abstract class LinkedComponent extends StateEntity implements SubjectEnti
 		InputAgent.storeAndExecute(new KeywordCommand(this, kw));
 	}
 
-	// LinkDisplayable
 	@Override
 	public ArrayList<DisplayEntity> getDestinationEntities() {
 		ArrayList<DisplayEntity> ret = new ArrayList<>();
