@@ -50,7 +50,6 @@ import com.jaamsim.GameObjects.GameEntity;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.Editable;
 import com.jaamsim.Graphics.EntityLabel;
-import com.jaamsim.Graphics.LinkDisplayable;
 import com.jaamsim.Graphics.OverlayEntity;
 import com.jaamsim.Graphics.Region;
 import com.jaamsim.Graphics.View;
@@ -2082,23 +2081,14 @@ public class RenderManager implements DragSourceListener {
 	}
 
 	private void addLinkDisplays(ArrayList<RenderProxy> scene) {
-
-		for (Entity e : GUIFrame.getJaamSimModel().getClonesOfIterator(
-				Entity.class, LinkDisplayable.class)) {
-
-				LinkDisplayable ld = (LinkDisplayable)e;
-				ArrayList<DisplayEntity> dests = ld.getDestinationEntities();
-				for (DisplayEntity dest : dests) {
-					addLink((DisplayEntity) ld, dest, scene);
-				}
-
-				ArrayList<DisplayEntity> sources = ld.getSourceEntities();
-				for (DisplayEntity source : sources) {
-					addLink(source, (DisplayEntity) ld, scene);
-				}
-
+		for (DisplayEntity ent : GUIFrame.getJaamSimModel().getClonesOfIterator(DisplayEntity.class)) {
+			for (DisplayEntity dest : ent.getDestinationEntities()) {
+				addLink(ent, dest, scene);
+			}
+			for (DisplayEntity source : ent.getSourceEntities()) {
+				addLink(source, ent, scene);
+			}
 		}
-
 	}
 
 	public static void setDebugInfo(boolean showDebug) {
