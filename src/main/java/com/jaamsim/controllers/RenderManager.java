@@ -135,6 +135,7 @@ public class RenderManager implements DragSourceListener {
 
 	private final AtomicBoolean showLinks = new AtomicBoolean(false);
 	private final AtomicBoolean createLinks = new AtomicBoolean(false);
+	private final AtomicBoolean linkDirection = new AtomicBoolean(true);
 	private final double linkArrowSize = 0.2;
 
 	private final ExceptionLogger exceptionLogger;
@@ -451,7 +452,7 @@ public class RenderManager implements DragSourceListener {
 
 					// Finally include the displayable links for linked entities
 					if (showLinks.get()) {
-						addLinkDisplays(cachedScene);
+						addLinkDisplays(linkDirection.get(), cachedScene);
 					}
 
 					endNanos = System.nanoTime();
@@ -2019,6 +2020,9 @@ public class RenderManager implements DragSourceListener {
 	public void setCreateLinks(boolean bCreate) {
 		createLinks.set(bCreate);
 	}
+	public void setLinkDirection(boolean bool) {
+		linkDirection.set(bool);
+	}
 
 	private void addLink(DisplayEntity sourceLD, DisplayEntity destLD, ArrayList<RenderProxy> scene) {
 		Vec3d source = sourceLD.getSourcePoint();
@@ -2080,12 +2084,12 @@ public class RenderManager implements DragSourceListener {
 
 	}
 
-	private void addLinkDisplays(ArrayList<RenderProxy> scene) {
+	private void addLinkDisplays(boolean dir, ArrayList<RenderProxy> scene) {
 		for (DisplayEntity ent : GUIFrame.getJaamSimModel().getClonesOfIterator(DisplayEntity.class)) {
-			for (DisplayEntity dest : ent.getDestinationEntities()) {
+			for (DisplayEntity dest : ent.getDestinationEntities(dir)) {
 				addLink(ent, dest, scene);
 			}
-			for (DisplayEntity source : ent.getSourceEntities()) {
+			for (DisplayEntity source : ent.getSourceEntities(dir)) {
 				addLink(source, ent, scene);
 			}
 		}
