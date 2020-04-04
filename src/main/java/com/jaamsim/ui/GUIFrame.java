@@ -474,6 +474,9 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		remainingDisplay.setText("-");
 		locatorPos.setText( "-" );
 
+		// Clear the buttons
+		clearButtons();
+
 		// Build a completely new simulation model
 		sim.clear();
 		sim.autoLoad();
@@ -3476,6 +3479,15 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	@Override
 	public void updateModelBuilder() {
 		EntityPallet.update();
+	}
+
+	private void clearButtons() {
+		if (showLinks.isSelected())
+			showLinks.doClick();
+		if (createLinks.isSelected())
+			createLinks.doClick();
+		if (reverseButton.isSelected())
+			reverseButton.doClick();
 	}
 
 	public void updateControls() {
