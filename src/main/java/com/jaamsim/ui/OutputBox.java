@@ -135,6 +135,13 @@ public class OutputBox extends FrameBox {
 		}
 
 		@Override
+		public Point getToolTipLocation(MouseEvent e) {
+			int row = rowAtPoint(e.getPoint());
+			int y = getCellRect(row, 0, true).getLocation().y;
+			return new Point(getColumnModel().getColumn(0).getWidth(), y);
+		}
+
+		@Override
 		public void doLayout() {
 			FrameBox.fitTableToLastColumn(this);
 		}

@@ -17,6 +17,7 @@
  */
 package com.jaamsim.ui;
 
+import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -438,6 +439,13 @@ public static class EditTable extends JTable {
 		TableModel model = getModel();
 		Input<?> in = (Input<?>)model.getValueAt(rowIndex, 0);
 		return EditBox.getInputDesc(EditBox.getInstance().getCurrentEntity(), in);
+	}
+
+	@Override
+	public Point getToolTipLocation(MouseEvent e) {
+		int row = rowAtPoint(e.getPoint());
+		int y = getCellRect(row, 0, true).getLocation().y;
+		return new Point(col1Width, y);
 	}
 
 	@Override
