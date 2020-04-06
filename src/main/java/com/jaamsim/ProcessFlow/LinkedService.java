@@ -59,7 +59,9 @@ public abstract class LinkedService extends LinkedDevice implements QueueUser {
 	                     + "automatically. A floating point number is truncated to an integer."
 	                     + "\n\n"
 	                     + "Note that a change in the Match value does not trigger the processor "
-	                     + "to re-check the Queue.",
+	                     + "automatically to re-check the Queue. "
+	                     + "The processor can be triggered by adding one or more objects to the "
+	                     + "'WatchList' input.",
 	         exampleList = {"this.obj.Attrib1"})
 	protected final StringProvInput match;
 
