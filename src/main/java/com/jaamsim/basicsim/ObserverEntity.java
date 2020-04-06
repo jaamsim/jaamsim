@@ -52,4 +52,33 @@ public interface ObserverEntity {
 		}
 	}
 
+	/**
+	 * Returns whether the specified observer entity is watching the specified subject or if any
+	 * of its subjects are watching the specified subject, and so on recursively.
+	 * @param obs - observer
+	 * @param subj - subject
+	 * @return true if the observer is watching the subject directly or indirectly
+	 */
+	public static boolean isObserverOf(ObserverEntity obs, SubjectEntity subj) {
+		for (SubjectEntity ent : obs.getWatchList()) {
+			if (ent == subj || (ent instanceof ObserverEntity
+					&& isObserverOf((ObserverEntity) ent, subj)))
+				return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Tests whether there is a closed loop in the chain of observers and subjects.
+	 * @param obs - observer
+	 */
+	public static void validate(ObserverEntity obs) {
+		if (!(obs instanceof SubjectEntity))
+			return;
+		SubjectEntity subj = (SubjectEntity) obs;
+		if (isObserverOf(obs, subj))
+			throw new InputErrorException("The chain of WatchList inputs cannot include "
+					+ "this entity.");
+	}
+
 }

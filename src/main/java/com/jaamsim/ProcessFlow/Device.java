@@ -42,6 +42,12 @@ public abstract class Device extends StateUserEntity implements ObserverEntity, 
 	public Device() {}
 
 	@Override
+	public void validate() {
+		super.validate();
+		ObserverEntity.validate(this);
+	}
+
+	@Override
 	public void earlyInit() {
 		super.earlyInit();
 

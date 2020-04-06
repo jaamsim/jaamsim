@@ -149,6 +149,12 @@ public class ExpressionThreshold extends Threshold implements ObserverEntity {
 	public ExpressionThreshold() {}
 
 	@Override
+	public void validate() {
+		super.validate();
+		ObserverEntity.validate(this);
+	}
+
+	@Override
 	public void earlyInit() {
 		super.earlyInit();
 		lastOpenValue = initialOpenValue.getValue();
