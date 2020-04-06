@@ -4145,14 +4145,22 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	}
 
 	public void setWindowDefaults(Simulation simulation) {
-		simulation.setModelBuilderDefaults(   COL1_START, TOP_START,     COL1_WIDTH, HALF_TOP    );
-		simulation.setObjectSelectorDefaults( COL1_START, BOTTOM_START,  COL1_WIDTH, HALF_BOTTOM );
-		simulation.setInputEditorDefaults(    COL2_START, LOWER_START,   COL2_WIDTH, LOWER_HEIGHT);
-		simulation.setOutputViewerDefaults(   COL3_START, LOWER_START,   COL3_WIDTH, LOWER_HEIGHT);
-		simulation.setPropertyViewerDefaults( COL4_START, LOWER_START,   COL4_WIDTH, LOWER_HEIGHT);
-		simulation.setLogViewerDefaults(      COL4_START, LOWER_START,   COL4_WIDTH, LOWER_HEIGHT);
-		simulation.setEventViewerDefaults(    COL4_START, LOWER_START,   COL4_WIDTH, LOWER_HEIGHT);
-		simulation.setControlPanelWidthDefault(DEFAULT_GUI_WIDTH);
+		// Set the defaults from the AWT thread to avoid synchronization problems with updateUI and
+		// the SizePosAdapter for the tool windows
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				simulation.setModelBuilderDefaults(   COL1_START, TOP_START,     COL1_WIDTH, HALF_TOP    );
+				simulation.setObjectSelectorDefaults( COL1_START, BOTTOM_START,  COL1_WIDTH, HALF_BOTTOM );
+				simulation.setInputEditorDefaults(    COL2_START, LOWER_START,   COL2_WIDTH, LOWER_HEIGHT);
+				simulation.setOutputViewerDefaults(   COL3_START, LOWER_START,   COL3_WIDTH, LOWER_HEIGHT);
+				simulation.setPropertyViewerDefaults( COL4_START, LOWER_START,   COL4_WIDTH, LOWER_HEIGHT);
+				simulation.setLogViewerDefaults(      COL4_START, LOWER_START,   COL4_WIDTH, LOWER_HEIGHT);
+				simulation.setEventViewerDefaults(    COL4_START, LOWER_START,   COL4_WIDTH, LOWER_HEIGHT);
+				simulation.setControlPanelWidthDefault(DEFAULT_GUI_WIDTH);
+				updateControls();
+			}
+		});
 	}
 
 	public ArrayList<View> getViews() {
@@ -4343,7 +4351,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			gui.calcWindowDefaults();
 			gui.setLocation(gui.getX(), gui.getY());  //FIXME remove when setLocation is fixed for Windows 10
 			gui.setWindowDefaults(simulation);
-			gui.updateControls();
 			EntityPallet.update();
 			gui.clearUndoRedo();
 		}
