@@ -47,6 +47,7 @@ import com.jaamsim.Commands.DefineCommand;
 import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.DisplayModels.DisplayModel;
 import com.jaamsim.GameObjects.GameEntity;
+import com.jaamsim.Graphics.DirectedEntity;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.Editable;
 import com.jaamsim.Graphics.EntityLabel;
@@ -2024,11 +2025,11 @@ public class RenderManager implements DragSourceListener {
 		linkDirection.set(bool);
 	}
 
-	private void addLink(DisplayEntity sourceLD, DisplayEntity destLD, ArrayList<RenderProxy> scene) {
-		Vec3d source = sourceLD.getSourcePoint();
-		Vec3d sink = destLD.getSinkPoint();
-		double sourceRadius = sourceLD.getRadius();
-		double sinkRadius = destLD.getRadius();
+	private void addLink(DirectedEntity sourceDE, DirectedEntity destDE, boolean dir, ArrayList<RenderProxy> scene) {
+		Vec3d source = sourceDE.entity.getSourcePoint();
+		Vec3d sink = destDE.entity.getSinkPoint();
+		double sourceRadius = sourceDE.entity.getRadius();
+		double sinkRadius = destDE.entity.getRadius();
 		Vec3d arrowDir = new Vec3d();
 		arrowDir.sub3(sink, source);
 		if (arrowDir.mag3() < (sourceRadius + sinkRadius)) {
@@ -2086,11 +2087,12 @@ public class RenderManager implements DragSourceListener {
 
 	private void addLinkDisplays(boolean dir, ArrayList<RenderProxy> scene) {
 		for (DisplayEntity ent : GUIFrame.getJaamSimModel().getClonesOfIterator(DisplayEntity.class)) {
-			for (DisplayEntity dest : ent.getDestinationEntities(dir)) {
-				addLink(ent, dest, scene);
+			DirectedEntity de = new DirectedEntity(ent, dir);
+			for (DirectedEntity dest : ent.getDestinationDirEnts(dir)) {
+				addLink(de, dest, dir, scene);
 			}
-			for (DisplayEntity source : ent.getSourceEntities(dir)) {
-				addLink(source, ent, scene);
+			for (DirectedEntity source : ent.getSourceDirEnts(dir)) {
+				addLink(source, de, dir, scene);
 			}
 		}
 	}
