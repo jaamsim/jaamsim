@@ -1180,6 +1180,28 @@ public class DisplayEntity extends Entity {
 		return new ArrayList<>();
 	}
 
+	public ArrayList<DisplayEntity> getNextList() {
+		ArrayList<DisplayEntity> ret = new ArrayList<>();
+		ret.addAll(getDestinationEntities());
+		for (DisplayEntity ent : getJaamSimModel().getClonesOfIterator(DisplayEntity.class)) {
+			if (ent.getSourceEntities().contains(this)) {
+				ret.add(ent);
+			}
+		}
+		return ret;
+	}
+
+	public ArrayList<DisplayEntity> getPreviousList() {
+		ArrayList<DisplayEntity> ret = new ArrayList<>();
+		ret.addAll(getSourceEntities());
+		for (DisplayEntity ent : getJaamSimModel().getClonesOfIterator(DisplayEntity.class)) {
+			if (ent.getDestinationEntities().contains(this)) {
+				ret.add(ent);
+			}
+		}
+		return ret;
+	}
+
 	////////////////////////////////////////////////////////////////////////
 	// Outputs
 	////////////////////////////////////////////////////////////////////////
@@ -1237,6 +1259,20 @@ public class DisplayEntity extends Entity {
 	    sequence = 5)
 	public ArrayList<ObserverEntity> getObserverList(double simTime) {
 		return getObserverList();
+	}
+
+	@Output(name = "NextList",
+	 description = "The entities that are immediately downstream from this entity.",
+	    sequence = 6)
+	public ArrayList<DisplayEntity> getNextList(double simTime) {
+		return getNextList();
+	}
+
+	@Output(name = "PreviousList",
+	 description = "The entities that are immediately upstream from this entity.",
+	    sequence = 7)
+	public ArrayList<DisplayEntity> getPreviousList(double simTime) {
+		return getPreviousList();
 	}
 
 }
