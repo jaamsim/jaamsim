@@ -17,6 +17,8 @@
  */
 package com.jaamsim.Thresholds;
 
+import java.util.ArrayList;
+
 import com.jaamsim.DisplayModels.ShapeModel;
 import com.jaamsim.basicsim.EntityTarget;
 import com.jaamsim.basicsim.ErrorException;
@@ -33,6 +35,7 @@ import com.jaamsim.input.ExpEvaluator;
 import com.jaamsim.input.ExpResType;
 import com.jaamsim.input.ExpressionInput;
 import com.jaamsim.input.Input;
+import com.jaamsim.input.InterfaceEntityListInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.math.Color4d;
@@ -76,6 +79,22 @@ public class ExpressionThreshold extends Threshold implements ObserverEntity {
 	         exampleList = { "FALSE" })
 	private final BooleanInput showPendingStates;
 
+	@Keyword(description = "An optional list of objects to monitor.\n\n"
+	                     + "If the WatchList input is provided, the ExpressionThreshold evaluates "
+	                     + "its OpenCondition and CloseCondition expression inputs and set its "
+	                     + "open/closed state ONLY when triggered by an object in its WatchList. "
+	                     + "This is much more efficient than the default behaviour which "
+	                     + "evalautes these expressions at every event time and whenever its "
+	                     + "state is queried by another object.\n\n"
+	                     + "Care must be taken to ensure that the WatchList input includes every "
+	                     + "object that can trigger the OpenCondition or CloseCondition expressions. "
+	                     + "Normally, the WatchList should include every object that is referenced "
+	                     + "directly or indirectly by these expressions. "
+	                     + "The VerfiyWatchList input can be used to ensure that the WatchList "
+	                     + "includes all the necessary objects.",
+	         exampleList = {"Object1  Object2"})
+	protected final InterfaceEntityListInput<SubjectEntity> watchList;
+
 	@Keyword(description = "Allows the user to verify that the input to the 'WatchList' keyword "
 	                     + "includes all the objects that affect the ExpressionThreshold's state. "
 	                     + "When set to TRUE, the ExpressionThreshold uses both the normal logic "
@@ -91,7 +110,6 @@ public class ExpressionThreshold extends Threshold implements ObserverEntity {
 	private long numEvals;
 
 	{
-		watchList.setHidden(false);
 		attributeDefinitionList.setHidden(false);
 
 		openCondition = new ExpressionInput("OpenCondition", KEY_INPUTS, null);
@@ -119,7 +137,12 @@ public class ExpressionThreshold extends Threshold implements ObserverEntity {
 		showPendingStates = new BooleanInput("ShowPendingStates", FORMAT, true);
 		this.addInput(showPendingStates);
 
-		verifyWatchList = new BooleanInput("VerifyWatchList", OPTIONS, false);
+		watchList = new InterfaceEntityListInput<>(SubjectEntity.class, "WatchList", KEY_INPUTS, new ArrayList<>());
+		watchList.setIncludeSelf(false);
+		watchList.setUnique(true);
+		this.addInput(watchList);
+
+		verifyWatchList = new BooleanInput("VerifyWatchList", KEY_INPUTS, false);
 		this.addInput(verifyWatchList);
 	}
 
@@ -159,6 +182,11 @@ public class ExpressionThreshold extends Threshold implements ObserverEntity {
 		// If there is no WatchList, the open/close expressions are tested after every event
 		if (!isWatchList() || isVerifyWatchList())
 			doOpenClose();
+	}
+
+	@Override
+	public ArrayList<SubjectEntity> getWatchList() {
+		return watchList.getValue();
 	}
 
 	public boolean isVerifyWatchList() {

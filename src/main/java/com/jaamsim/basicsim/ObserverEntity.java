@@ -18,6 +18,8 @@ package com.jaamsim.basicsim;
 
 import java.util.ArrayList;
 
+import com.jaamsim.input.InputErrorException;
+
 public interface ObserverEntity {
 
 	public static String ERR_WATCHLIST = "WatchList verification error.\n\n"
@@ -32,6 +34,12 @@ public interface ObserverEntity {
 	 * @param subj - subject entity that has changed state
 	 */
 	public void observerUpdate(SubjectEntity subj);
+
+	/**
+	 * Return a list of the subject entities watched by this observer.
+	 * @return list of subject entities
+	 */
+	public ArrayList<SubjectEntity> getWatchList();
 
 	/**
 	 * Registers an observer with a list of subjects.

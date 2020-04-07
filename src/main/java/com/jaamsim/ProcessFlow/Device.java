@@ -83,6 +83,11 @@ public abstract class Device extends StateUserEntity implements ObserverEntity, 
 		this.performUnscheduledUpdate();
 	}
 
+	@Override
+	public ArrayList<SubjectEntity> getWatchList() {
+		return new ArrayList<>();
+	}
+
 	/**
 	 * Restarts the processing loop.
 	 */

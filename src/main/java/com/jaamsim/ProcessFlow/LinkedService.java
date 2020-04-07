@@ -25,6 +25,7 @@ import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.StringProviders.StringProvInput;
 import com.jaamsim.basicsim.SubjectEntity;
 import com.jaamsim.input.InputAgent;
+import com.jaamsim.input.InterfaceEntityListInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.Output;
@@ -62,11 +63,15 @@ public abstract class LinkedService extends LinkedDevice implements QueueUser {
 	         exampleList = {"this.obj.Attrib1"})
 	protected final StringProvInput match;
 
+	@Keyword(description = "An optional list of objects to monitor.\n\n"
+	                     + "The queue will be inspected for an entity to process whenever one of "
+	                     + "the WatchList objects changes state.",
+	         exampleList = {"Object1  Object2"})
+	protected final InterfaceEntityListInput<SubjectEntity> watchList;
+
 	private String matchValue;
 
 	{
-		watchList.setHidden(false);
-
 		stateGraphics.setHidden(false);
 		workingStateListInput.setHidden(false);
 
@@ -81,6 +86,11 @@ public abstract class LinkedService extends LinkedDevice implements QueueUser {
 		match = new StringProvInput("Match", KEY_INPUTS, null);
 		match.setUnitType(DimensionlessUnit.class);
 		this.addInput(match);
+
+		watchList = new InterfaceEntityListInput<>(SubjectEntity.class, "WatchList", KEY_INPUTS, new ArrayList<>());
+		watchList.setIncludeSelf(false);
+		watchList.setUnique(true);
+		this.addInput(watchList);
 	}
 
 	public LinkedService() {}
@@ -89,6 +99,11 @@ public abstract class LinkedService extends LinkedDevice implements QueueUser {
 	public void earlyInit() {
 		super.earlyInit();
 		matchValue = null;
+	}
+
+	@Override
+	public ArrayList<SubjectEntity> getWatchList() {
+		return watchList.getValue();
 	}
 
 	@Override
