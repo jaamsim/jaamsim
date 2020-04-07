@@ -1172,6 +1172,14 @@ public class DisplayEntity extends Entity {
 		return new ArrayList<>();
 	}
 
+	public ArrayList<DisplayEntity> getDestinationEntities() {
+		return new ArrayList<>();
+	}
+
+	public ArrayList<DisplayEntity> getSourceEntities() {
+		return new ArrayList<>();
+	}
+
 	////////////////////////////////////////////////////////////////////////
 	// Outputs
 	////////////////////////////////////////////////////////////////////////
