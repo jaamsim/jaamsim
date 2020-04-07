@@ -1133,26 +1133,42 @@ public class DisplayEntity extends Entity {
 		return tagMap;
 	}
 
+	public Vec3d getSourcePoint() {
+		return this.getSourcePoint(true);
+	}
+
+	public Vec3d getSinkPoint() {
+		return this.getSinkPoint(true);
+	}
+
 	/**
 	 * Returns the global position at which entities depart from this entity, if relevant.
+	 * @param dir - true = normal direction, false = reverse direction
 	 * @return arrival location
 	 */
-	public Vec3d getSourcePoint() {
+	public Vec3d getSourcePoint(boolean dir) {
 		if (usePointsInput() && !pointsInput.getValue().isEmpty()) {
 			ArrayList<Vec3d> points = pointsInput.getValue();
-			return getGlobalPosition(points.get(points.size() - 1));
+			Vec3d localPt = points.get(0);
+			if (dir)
+				localPt = points.get(points.size() - 1);
+			return getGlobalPosition(localPt);
 		}
 		return getGlobalPosition();
 	}
 
 	/**
 	 * Returns the global position at which entities arrive at this entity, if relevant.
+	 * @param dir - true = normal direction, false = reverse direction
 	 * @return departure location
 	 */
-	public Vec3d getSinkPoint() {
+	public Vec3d getSinkPoint(boolean dir) {
 		if (usePointsInput() && !pointsInput.getValue().isEmpty()) {
 			ArrayList<Vec3d> points = pointsInput.getValue();
-			return getGlobalPosition(points.get(0));
+			Vec3d localPt = points.get(0);
+			if (!dir)
+				localPt = points.get(points.size() - 1);
+			return getGlobalPosition(localPt);
 		}
 		return getGlobalPosition();
 	}

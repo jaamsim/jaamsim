@@ -18,6 +18,8 @@ package com.jaamsim.Graphics;
 
 import java.util.ArrayList;
 
+import com.jaamsim.math.Vec3d;
+
 public class DirectedEntity {
 
 	public final DisplayEntity entity;
@@ -32,6 +34,14 @@ public class DirectedEntity {
 	public DirectedEntity(DisplayEntity ent, boolean dir) {
 		entity = ent;
 		direction = dir;
+	}
+
+	public Vec3d getSourcePoint() {
+		return entity.getSourcePoint(direction);
+	}
+
+	public Vec3d getSinkPoint() {
+		return entity.getSinkPoint(direction);
 	}
 
 	public static ArrayList<DirectedEntity> getList(ArrayList<DisplayEntity> list, boolean dir) {
