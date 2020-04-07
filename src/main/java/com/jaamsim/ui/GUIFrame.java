@@ -193,6 +193,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	private JToggleButton createLinks;
 	private JButton nextButton;
 	private JButton prevButton;
+	private JToggleButton reverseButton;
 
 	private JButton copyButton;
 	private JButton pasteButton;
@@ -1175,6 +1176,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		addPreviousButton(buttonBar, noMargin);
 		buttonBar.add(Box.createRigidArea(gapDim));
 		addNextButton(buttonBar, noMargin);
+		buttonBar.add(Box.createRigidArea(gapDim));
+		addReverseButton(buttonBar, noMargin);
 
 		// Show Copy and Paste buttons
 		buttonBar.addSeparator(separatorDim);
@@ -1634,7 +1637,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 					createLinks.doClick();
 				if (selectedEntity != null && selectedEntity instanceof DisplayEntity) {
 					DisplayEntity selectedDEnt = (DisplayEntity) selectedEntity;
-					ArrayList<DirectedEntity> list = selectedDEnt.getPreviousList(true);
+					boolean dir = !reverseButton.isSelected();
+					ArrayList<DirectedEntity> list = selectedDEnt.getPreviousList(dir);
 					if (list.isEmpty())
 						return;
 					if (list.size() == 1) {
@@ -1675,7 +1679,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 					createLinks.doClick();
 				if (selectedEntity != null && selectedEntity instanceof DisplayEntity) {
 					DisplayEntity selectedDEnt = (DisplayEntity) selectedEntity;
-					ArrayList<DirectedEntity> list = selectedDEnt.getNextList(true);
+					boolean dir = !reverseButton.isSelected();
+					ArrayList<DirectedEntity> list = selectedDEnt.getNextList(dir);
 					if (list.isEmpty())
 						return;
 					if (list.size() == 1) {
@@ -1700,6 +1705,27 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			}
 		});
 		buttonBar.add( nextButton );
+	}
+
+	private void addReverseButton(JToolBar buttonBar, Insets margin) {
+		reverseButton = new JToggleButton(new ImageIcon(GUIFrame.class.getResource("/resources/images/Reverse-16.png")));
+		reverseButton.setToolTipText(formatToolTip("Reverse Direction",
+				"When enabled, the link arrows are shown for entities travelling in the reverse "
+				+ "direction, and the Next and Previous buttons select the next/previous links "
+				+ "for that direction."));
+		reverseButton.setMargin(margin);
+		reverseButton.setFocusPainted(false);
+		reverseButton.setRequestFocusEnabled(false);
+		reverseButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed( ActionEvent event ) {
+				if (createLinks.isSelected())
+					createLinks.doClick();
+				updateUI();
+			}
+		});
+		// Reverse button is not needed in the open source JaamSim
+		//buttonBar.add( reverseButton );
 	}
 
 	private void addCopyButton(JToolBar buttonBar, Insets margin) {
@@ -3803,9 +3829,10 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 	private void updateNextPrevButtons() {
 		if (selectedEntity != null && selectedEntity instanceof DisplayEntity) {
+			boolean dir = !reverseButton.isSelected();
 			DisplayEntity selectedDEnt = (DisplayEntity) selectedEntity;
-			prevButton.setEnabled(!selectedDEnt.getPreviousList(true).isEmpty());
-			nextButton.setEnabled(!selectedDEnt.getNextList(true).isEmpty());
+			prevButton.setEnabled(!selectedDEnt.getPreviousList(dir).isEmpty());
+			nextButton.setEnabled(!selectedDEnt.getNextList(dir).isEmpty());
 			return;
 		}
 		prevButton.setEnabled(false);
