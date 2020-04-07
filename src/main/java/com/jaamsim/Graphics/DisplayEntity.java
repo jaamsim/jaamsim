@@ -1192,23 +1192,31 @@ public class DisplayEntity extends Entity {
 		return new ArrayList<>();
 	}
 
-	public ArrayList<DisplayEntity> getNextList() {
-		ArrayList<DisplayEntity> ret = new ArrayList<>();
-		ret.addAll(getDestinationEntities());
+	public ArrayList<DirectedEntity> getNextList(boolean dir) {
+		ArrayList<DirectedEntity> ret = new ArrayList<>();
+		ret.addAll(getDestinationDirEnts(dir));
+		DirectedEntity thisDe = new DirectedEntity(this, dir);
 		for (DisplayEntity ent : getJaamSimModel().getClonesOfIterator(DisplayEntity.class)) {
-			if (ent.getSourceEntities().contains(this)) {
-				ret.add(ent);
+			if (ent.getSourceDirEnts(true).contains(thisDe)) {
+				ret.add(new DirectedEntity(ent, true));
+			}
+			if (ent.getSourceDirEnts(false).contains(thisDe)) {
+				ret.add(new DirectedEntity(ent, false));
 			}
 		}
 		return ret;
 	}
 
-	public ArrayList<DisplayEntity> getPreviousList() {
-		ArrayList<DisplayEntity> ret = new ArrayList<>();
-		ret.addAll(getSourceEntities());
+	public ArrayList<DirectedEntity> getPreviousList(boolean dir) {
+		ArrayList<DirectedEntity> ret = new ArrayList<>();
+		ret.addAll(getSourceDirEnts(dir));
+		DirectedEntity thisDe = new DirectedEntity(this, dir);
 		for (DisplayEntity ent : getJaamSimModel().getClonesOfIterator(DisplayEntity.class)) {
-			if (ent.getDestinationEntities().contains(this)) {
-				ret.add(ent);
+			if (ent.getDestinationDirEnts(true).contains(thisDe)) {
+				ret.add(new DirectedEntity(ent, true));
+			}
+			if (ent.getDestinationDirEnts(false).contains(thisDe)) {
+				ret.add(new DirectedEntity(ent, false));
 			}
 		}
 		return ret;
@@ -1276,15 +1284,15 @@ public class DisplayEntity extends Entity {
 	@Output(name = "NextList",
 	 description = "The entities that are immediately downstream from this entity.",
 	    sequence = 6)
-	public ArrayList<DisplayEntity> getNextList(double simTime) {
-		return getNextList();
+	public ArrayList<DirectedEntity> getNextList(double simTime) {
+		return getNextList(true);
 	}
 
 	@Output(name = "PreviousList",
 	 description = "The entities that are immediately upstream from this entity.",
 	    sequence = 7)
-	public ArrayList<DisplayEntity> getPreviousList(double simTime) {
-		return getPreviousList();
+	public ArrayList<DirectedEntity> getPreviousList(double simTime) {
+		return getPreviousList(true);
 	}
 
 }

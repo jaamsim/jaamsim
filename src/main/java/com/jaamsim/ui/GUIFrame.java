@@ -100,6 +100,7 @@ import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.Commands.RenameCommand;
 import com.jaamsim.DisplayModels.TextModel;
 import com.jaamsim.Graphics.BillboardText;
+import com.jaamsim.Graphics.DirectedEntity;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.EntityLabel;
 import com.jaamsim.Graphics.FillEntity;
@@ -1633,20 +1634,20 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 					createLinks.doClick();
 				if (selectedEntity != null && selectedEntity instanceof DisplayEntity) {
 					DisplayEntity selectedDEnt = (DisplayEntity) selectedEntity;
-					ArrayList<DisplayEntity> list = selectedDEnt.getPreviousList();
+					ArrayList<DirectedEntity> list = selectedDEnt.getPreviousList(true);
 					if (list.isEmpty())
 						return;
 					if (list.size() == 1) {
-						FrameBox.setSelectedEntity(list.get(0), false);
+						FrameBox.setSelectedEntity(list.get(0).entity, false);
 						return;
 					}
 					ScrollablePopupMenu menu = new ScrollablePopupMenu();
-					for (Entity ent : list) {
-						JMenuItem item = new JMenuItem(ent.getName());
+					for (DirectedEntity de : list) {
+						JMenuItem item = new JMenuItem(de.toString());
 						item.addActionListener( new ActionListener() {
 							@Override
 							public void actionPerformed( ActionEvent event ) {
-								FrameBox.setSelectedEntity(ent, false);
+								FrameBox.setSelectedEntity(de.entity, false);
 								controlStartResume.requestFocusInWindow();
 							}
 						} );
@@ -1674,20 +1675,20 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 					createLinks.doClick();
 				if (selectedEntity != null && selectedEntity instanceof DisplayEntity) {
 					DisplayEntity selectedDEnt = (DisplayEntity) selectedEntity;
-					ArrayList<DisplayEntity> list = selectedDEnt.getNextList();
+					ArrayList<DirectedEntity> list = selectedDEnt.getNextList(true);
 					if (list.isEmpty())
 						return;
 					if (list.size() == 1) {
-						FrameBox.setSelectedEntity(list.get(0), false);
+						FrameBox.setSelectedEntity(list.get(0).entity, false);
 						return;
 					}
 					ScrollablePopupMenu menu = new ScrollablePopupMenu();
-					for (Entity ent : list) {
-						JMenuItem item = new JMenuItem(ent.getName());
+					for (DirectedEntity de : list) {
+						JMenuItem item = new JMenuItem(de.toString());
 						item.addActionListener( new ActionListener() {
 							@Override
 							public void actionPerformed( ActionEvent event ) {
-								FrameBox.setSelectedEntity(ent, false);
+								FrameBox.setSelectedEntity(de.entity, false);
 								controlStartResume.requestFocusInWindow();
 							}
 						} );
@@ -3803,8 +3804,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	private void updateNextPrevButtons() {
 		if (selectedEntity != null && selectedEntity instanceof DisplayEntity) {
 			DisplayEntity selectedDEnt = (DisplayEntity) selectedEntity;
-			prevButton.setEnabled(!selectedDEnt.getPreviousList().isEmpty());
-			nextButton.setEnabled(!selectedDEnt.getNextList().isEmpty());
+			prevButton.setEnabled(!selectedDEnt.getPreviousList(true).isEmpty());
+			nextButton.setEnabled(!selectedDEnt.getNextList(true).isEmpty());
 			return;
 		}
 		prevButton.setEnabled(false);
