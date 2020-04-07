@@ -66,6 +66,7 @@ import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.math.AABB;
+import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Mat4d;
 import com.jaamsim.math.MathUtils;
 import com.jaamsim.math.Plane;
@@ -2081,7 +2082,11 @@ public class RenderManager implements DragSourceListener {
 		segments.add(sink4);
 		segments.add(ap1);
 
-		scene.add(new LineProxy(segments, ColourInput.BLUE, 1, DisplayModel.ALWAYS, 0));
+		Color4d linkColour = ColourInput.BLUE;
+		if (!dir)
+			linkColour = ColourInput.RED;
+
+		scene.add(new LineProxy(segments, linkColour, 1, DisplayModel.ALWAYS, 0));
 
 	}
 
