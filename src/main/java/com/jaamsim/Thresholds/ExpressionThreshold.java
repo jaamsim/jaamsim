@@ -84,7 +84,7 @@ public class ExpressionThreshold extends Threshold implements ObserverEntity {
 	                     + "its OpenCondition and CloseCondition expression inputs and set its "
 	                     + "open/closed state ONLY when triggered by an object in its WatchList. "
 	                     + "This is much more efficient than the default behaviour which "
-	                     + "evalautes these expressions at every event time and whenever its "
+	                     + "evaluates these expressions at every event time and whenever its "
 	                     + "state is queried by another object.\n\n"
 	                     + "Care must be taken to ensure that the WatchList input includes every "
 	                     + "object that can trigger the OpenCondition or CloseCondition expressions. "
