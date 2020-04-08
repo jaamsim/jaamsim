@@ -4314,6 +4314,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				simulation.setEventViewerDefaults(    COL4_START, LOWER_START,   COL4_WIDTH, LOWER_HEIGHT);
 				simulation.setControlPanelWidthDefault(DEFAULT_GUI_WIDTH);
 				updateControls();
+				clearUndoRedo();
 			}
 		});
 	}
@@ -4507,7 +4508,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			gui.setLocation(gui.getX(), gui.getY());  //FIXME remove when setLocation is fixed for Windows 10
 			gui.setWindowDefaults(simulation);
 			EntityPallet.update();
-			gui.clearUndoRedo();
 		}
 
 		// Resolve all input arguments against the current working directory
