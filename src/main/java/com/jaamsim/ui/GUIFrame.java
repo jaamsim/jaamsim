@@ -253,7 +253,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	private static boolean SAFE_GRAPHICS;
 
 	// Collection of default window parameters
-	public static int DEFAULT_GUI_WIDTH = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds().width;
+	public static int DEFAULT_GUI_WIDTH;
 	public static int COL1_WIDTH;
 	public static int COL2_WIDTH;
 	public static int COL3_WIDTH;
@@ -4097,6 +4097,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		Dimension guiSize = this.getSize();
 		Rectangle winSize = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
 
+		DEFAULT_GUI_WIDTH = winSize.width;
 		COL1_WIDTH = 220;
 		COL4_WIDTH = 520;
 		int middleWidth = DEFAULT_GUI_WIDTH - COL1_WIDTH - COL4_WIDTH;
