@@ -3692,11 +3692,12 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	@Override
 	public void storeAndExecute(Command cmd) {
 		synchronized (undoList) {
-			if (!cmd.isChange())
-				return;
 
 			// Execute the command and catch an error if it occurs
 			cmd.execute();
+
+			if (!cmd.isChange())
+				return;
 
 			// Attempt to merge the command with the previous one
 			Command mergedCmd = null;
