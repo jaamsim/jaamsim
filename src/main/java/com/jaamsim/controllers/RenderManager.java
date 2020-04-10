@@ -1208,8 +1208,7 @@ public class RenderManager implements DragSourceListener {
 		oldFixed.mult4(dragEntityTransMat, fixedPoint);
 
 		Vec4d newFixed = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
-		selectedEntity.setSize(scale);
-		Mat4d transMat = selectedEntity.getTransMatrix(); // Get the new matrix
+		Mat4d transMat = selectedEntity.getTransMatrix(scale); // Get the new matrix once size is changed
 		newFixed.mult4(transMat, fixedPoint);
 
 		Vec4d posAdjust = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
@@ -1468,7 +1467,7 @@ public class RenderManager implements DragSourceListener {
 			dragEntityPoints = selectedEntity.getPoints();
 			dragEntityOrientation = selectedEntity.getOrientation();
 			dragEntitySize = selectedEntity.getSize();
-			dragEntityTransMat = selectedEntity.getTransMatrix();
+			dragEntityTransMat = selectedEntity.getTransMatrix(dragEntitySize);
 			dragEntityInvTransMat = selectedEntity.getInvTransMatrix();
 			if (selectedEntity instanceof OverlayEntity) {
 				dragEntityScreenPosition = ((OverlayEntity) selectedEntity).getScreenPosition();

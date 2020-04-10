@@ -673,11 +673,11 @@ public class DisplayEntity extends Entity {
 	 * Returns the global transform with scale factor all rolled into a Matrix4d
 	 * @return
 	 */
-	public Mat4d getTransMatrix() {
+	public Mat4d getTransMatrix(Vec3d scale) {
 		Transform trans = getGlobalTrans();
 		Mat4d ret = new Mat4d();
 		trans.getMat4d(ret);
-		ret.scaleCols3(getSize());
+		ret.scaleCols3(scale);
 		return ret;
 	}
 
