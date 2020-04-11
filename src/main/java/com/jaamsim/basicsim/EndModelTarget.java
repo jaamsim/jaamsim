@@ -29,7 +29,7 @@ class EndModelTarget extends ProcessTarget {
 
 	@Override
 	public String getDescription() {
-		return "SimulationEnd";
+		return "Simulation.endRun";
 	}
 
 	@Override

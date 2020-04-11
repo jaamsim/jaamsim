@@ -29,7 +29,7 @@ public class ClearStatisticsTarget extends ProcessTarget {
 
 	@Override
 	public String getDescription() {
-		return "ClearStatistics";
+		return "Simulation.clearStatistics";
 	}
 
 	@Override

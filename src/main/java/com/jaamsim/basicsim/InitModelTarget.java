@@ -30,7 +30,7 @@ public class InitModelTarget extends ProcessTarget {
 
 	@Override
 	public String getDescription() {
-		return "SimulationInit";
+		return "Simulation.init";
 	}
 
 	@Override
