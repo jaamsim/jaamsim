@@ -162,14 +162,19 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 		buttonPanel.add( nextEventButton );
 		buttonPanel.add( nextTimeButton );
 		buttonPanel.add( clearButton );
-		getContentPane().add(buttonPanel, BorderLayout.NORTH);
 
 		// Event List
 		eventList = new EventTable(new DefaultTableModel(0, headers.length));
 		sp = new JScrollPane();
 		sp.getViewport().add(eventList);
 		sp.setPreferredSize(new Dimension( 800, 300 ));
-		jTabbedFrame.addTab("Future Events", null, sp, null);
+
+		// Event Pane
+		JPanel eventPanel = new JPanel();
+		eventPanel.setLayout( new BorderLayout() );
+		eventPanel.add(buttonPanel, BorderLayout.NORTH);
+		eventPanel.add(sp, BorderLayout.CENTER);
+		jTabbedFrame.addTab("Future Events", null, eventPanel, null);
 
 		// Conditionals List
 		condList = new JTable(new DefaultTableModel(0, 1));
