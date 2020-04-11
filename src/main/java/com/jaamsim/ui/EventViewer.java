@@ -24,7 +24,10 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Map.Entry;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -72,6 +75,8 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 	private static JScrollPane sp;
 	private static JTable condList;
 	private static JScrollPane condSp;
+	private static JTable profList;
+	private static JScrollPane profSp;
 	private static EventManager evtMan;
 
 	private static long nanoseconds;
@@ -175,6 +180,17 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 		condSp.setPreferredSize(new Dimension( 800, 300 ));
 		jTabbedFrame.addTab("Conditional Events", null, condSp, null);
 
+		// Profiler List
+		profList = new JTable(new DefaultTableModel(0, 2));
+		profList.getColumnModel().getColumn(0).setHeaderValue("Event Type");
+		profList.getColumnModel().getColumn(1).setHeaderValue("Percent of Total Time");
+		profList.getTableHeader().setFont(FrameBox.boldFont);
+		profList.setDefaultRenderer(Object.class, colRenderer);
+		profSp = new JScrollPane();
+		profSp.getViewport().add(profList);
+		profSp.setPreferredSize(new Dimension( 800, 300 ));
+		jTabbedFrame.addTab("Execution Time Profile", null, profSp, null);
+
 		pack();
 
 		addComponentListener(FrameBox.getSizePosAdapter(this, "EventViewerSize", "EventViewerPos"));
@@ -256,6 +272,7 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 		if (isDirty() || !Unit.getDisplayedUnit(TimeUnit.class).equals(timeUnit)) {
 			setDirty(false);
 			update();
+			updateProfile();
 		}
 	}
 
@@ -347,6 +364,44 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 			tableModel.insertRow(i, condData);
 		}
 		tableModel.setRowCount(condDataList.size());
+	}
+
+	public void updateProfile() {
+
+		// Make a copy of the hashmap entries to avoid concurrent modification exceptions
+		ArrayList<Entry<String, Long>> nanosList;
+		try {
+			nanosList = new ArrayList<>(nanosMap.entrySet());
+		}
+		catch (Exception e) {
+			setDirty(true);
+			return;
+		}
+
+		// Sort the event type in order of decreasing total nanoseconds
+		Collections.sort(nanosList, new Comparator<Entry<String, Long>>() {
+			@Override
+			public int compare(Entry<String, Long> o1, Entry<String, Long> o2) {
+				return Long.compare(o2.getValue(), o1.getValue());
+			}
+		});
+
+		// Calculate the total nanoseconds for all the events
+		Long totalNanos = 0L;
+		for (Entry<String, Long> nanosData : nanosList) {
+			totalNanos += nanosData.getValue();
+		}
+
+		// Build the table entries
+		DefaultTableModel tableModel = (DefaultTableModel) profList.getModel();
+		String[] data = new String[2];
+		for (int i = 0; i < nanosList.size(); i++) {
+			Entry<String, Long> nanosData = nanosList.get(i);
+			data[0] = nanosData.getKey();
+			data[1] = String.format("%.3f%%", 100.0d * nanosData.getValue() / totalNanos);
+			tableModel.insertRow(i, data);
+		}
+		tableModel.setRowCount(nanosList.size());
 	}
 
 	public void addRetiredEvent(EventData evtData) {
