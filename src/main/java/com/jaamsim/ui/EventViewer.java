@@ -24,6 +24,7 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -63,6 +64,7 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 	private static ArrayList<EventData> eventDataList;
 	private static boolean dirty;
 	private static String timeUnit;
+	private static HashMap <String, Long> nanosMap;
 
 	private static final TableCellRenderer evCellRenderer;
 	private static JTabbedPane jTabbedFrame;
@@ -100,6 +102,7 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 
 		retiredEventDataList = new ArrayList<>();
 		eventDataList = new ArrayList<>();
+		nanosMap = new HashMap <>();
 
 		evtMan = em;
 		evtMan.setTraceListener(this);
@@ -360,9 +363,20 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 	}
 
 	public void recordNanos() {
+
+		// Set the elapsed time for the last retired event
 		if (retiredEvent == null)
 			return;
 		retiredEvent.setNanoseconds(System.nanoTime() - nanoseconds);
+
+		// Accumulate the total time for each type of event
+		Long val = nanosMap.get(retiredEvent.description);
+		if (val == null)
+			val = new Long(0L);
+		val += retiredEvent.nanoseconds;
+		nanosMap.put(retiredEvent.description, val);
+
+		// Clear the last retired event
 		retiredEvent = null;
 	}
 
