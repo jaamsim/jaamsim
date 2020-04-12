@@ -481,7 +481,8 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 	}
 
 	public static Color getColor(int i) {
-		switch (eventDataList.get(i).status) {
+		String status = (String) eventList.getModel().getValueAt(i, 4);
+		switch (status) {
 			case STATE_COMPLETED:   return COLOR_COMPLETED;
 			case STATE_INTERRUPTED: return COLOR_INTERRUPTED;
 			case STATE_TERMINATED:  return COLOR_TERMINATED;
