@@ -34,6 +34,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
+import javax.swing.JToggleButton;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.table.DefaultTableModel;
@@ -79,6 +80,7 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 	private static JTable profList;
 	private static JScrollPane profSp;
 	private static EventManager evtMan;
+	private static JToggleButton conditionalsButton;
 
 	private static long nanoseconds;
 	private static EventData retiredEvent;
@@ -153,6 +155,17 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 		clearButton.setToolTipText(GUIFrame.formatToolTip("Clear Events",
 				"Removes the completed events from the viewer."));
 
+		// Hide Conditionals Button
+		conditionalsButton = new JToggleButton( "Hide Conditional Evaluation" );
+		conditionalsButton.addActionListener( new ActionListener() {
+			@Override
+			public void actionPerformed( ActionEvent e ) {
+				updateEvents();
+			}
+		});
+		conditionalsButton.setToolTipText(GUIFrame.formatToolTip("Hide Conditional Evaluation",
+				"Hides the entries for the evaluation of conditional events."));
+
 		// Tabs
 		jTabbedFrame = new JTabbedPane();
 		jTabbedFrame.addChangeListener(new TabListener());
@@ -164,6 +177,7 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 		buttonPanel.add( nextEventButton );
 		buttonPanel.add( nextTimeButton );
 		buttonPanel.add( clearButton );
+		buttonPanel.add( conditionalsButton );
 
 		// Event List
 		eventList = new EventTable(new DefaultTableModel(0, headers.length));
@@ -224,6 +238,10 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 
 	private synchronized static void killInstance() {
 		myInstance = null;
+	}
+
+	private boolean isHideConditionals() {
+		return conditionalsButton.isSelected();
 	}
 
 	@Override
