@@ -92,10 +92,12 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 	private static final String STATE_COMPLETED   = "Completed";    // event executed
 	private static final String STATE_INTERRUPTED = "Interrupted";  // event executed early
 	private static final String STATE_TERMINATED  = "Terminated";   // event killed
+	private static final String STATE_EVALUATED   = "Evaluated";    // condition evaluated
 
 	private static final Color COLOR_COMPLETED   = new Color(144, 238, 144);  // light green
 	private static final Color COLOR_INTERRUPTED = new Color(224, 255, 255);  // light cyan
 	private static final Color COLOR_TERMINATED  = new Color(240, 128, 128);  // light coral
+	private static final Color COLOR_EVALUATED   = new Color(255, 255, 224);  // light yellow
 
 	static {
 		evCellRenderer = new EventViewerCellRenderer();
@@ -483,6 +485,7 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 			case STATE_COMPLETED:   return COLOR_COMPLETED;
 			case STATE_INTERRUPTED: return COLOR_INTERRUPTED;
 			case STATE_TERMINATED:  return COLOR_TERMINATED;
+			case STATE_EVALUATED:   return COLOR_EVALUATED;
 			default: return null;
 		}
 	}
@@ -547,10 +550,15 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 
 	@Override
 	public void traceConditionalEval(EventManager e, long tick, ProcessTarget t) {
+		recordNanos();
+		addRetiredEvent(new EventData(tick, 0, t.getDescription(), STATE_EVALUATED));
+		setDirty(true);
 	}
 
 	@Override
 	public void traceConditionalEvalEnded(EventManager e, long tick, ProcessTarget t) {
+		recordNanos();
+		setDirty(true);
 	}
 
 }
