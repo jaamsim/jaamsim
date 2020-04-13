@@ -72,8 +72,8 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 	private static JScrollPane condSp;
 	private static EventManager evtMan;
 
-	private static final String[] headers= {"Ticks", "SimTime", "Priority", "Description", "State"};
-	private static final int[] colWidth = {100, 100, 60, 180, 80};
+	private static final String[] headers= {"Ticks", "SimTime", "Priority", "Description", "State", "Nanos"};
+	private static final int[] colWidth = {100, 100, 60, 180, 80, 60};
 
 	private static final int MAX_RETIRED_EVENTS = 1000;
 	private static final int SCROLL_POSITION = 5;
@@ -306,7 +306,7 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 		// Rebuild the event list with the updated data
 		double factor = Unit.getDisplayedUnitFactor(TimeUnit.class);
 		DefaultTableModel tableModel = (DefaultTableModel) eventList.getModel();
-		String[] data = new String[5];
+		String[] data = new String[6];
 		for (int i = 0; i < eventDataList.size(); i++) {
 			EventData evtData = eventDataList.get(i);
 			data[0] = Long.toString(evtData.ticks);
@@ -314,6 +314,7 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 			data[2] = Integer.toString(evtData.priority);
 			data[3] = evtData.description;
 			data[4] = evtData.status;
+			data[5] = evtData.nanoseconds >= 0 ? Long.toString(evtData.nanoseconds) : "";
 			tableModel.insertRow(i, data);
 		}
 		tableModel.setRowCount(eventDataList.size());
