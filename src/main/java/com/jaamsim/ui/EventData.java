@@ -22,12 +22,22 @@ public class EventData {
 	public int priority;
 	public String description;
 	public String status;
+	public long nanoseconds;
 
 	public EventData(long tk, int pri, String desc, String stat) {
+		this(tk, pri, desc, stat, -1L);
+	}
+
+	public EventData(long tk, int pri, String desc, String stat, long nanos) {
 		ticks = tk;
 		priority = pri;
 		description = desc;
 		status = stat;
+		nanoseconds = nanos;
+	}
+
+	public void setNanoseconds(long nanos) {
+		nanoseconds = nanos;
 	}
 
 	@Override
