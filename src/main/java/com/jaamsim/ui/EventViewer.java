@@ -374,7 +374,18 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 	}
 
 	public void updateConditionals() {
-		ArrayList<String> condDataList = evtMan.getConditionalDataList();
+
+		// Make a copy of the conditional data to avoid concurrent modification exceptions
+		ArrayList<String> condDataList;
+		try {
+			condDataList = evtMan.getConditionalDataList();
+		}
+		catch (Exception e) {
+			setDirty(true);
+			return;
+		}
+
+		// Build the table entries
 		DefaultTableModel tableModel = (DefaultTableModel) condList.getModel();
 		String[] condData = new String[1];
 		for (int i = 0; i < condDataList.size(); i++) {
