@@ -40,6 +40,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
 
+import com.jaamsim.basicsim.Entity;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.events.EventTraceListener;
 import com.jaamsim.events.ProcessTarget;
@@ -424,12 +425,26 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 			return;
 		retiredEvent.setNanoseconds(System.nanoTime() - nanoseconds);
 
+		// Set the key for a generated entity based on its prototype
+		String key = retiredEvent.description;
+		int ind = key.lastIndexOf(".");
+		if (ind >= 0) {
+			String entName = key.substring(0, ind);
+			String method = key.substring(ind);
+			Entity ent = GUIFrame.getJaamSimModel().getNamedEntity(entName);
+			if (ent == null) {
+				// Replace the trailing digits with a single asterisk
+				String protoName = entName.replaceFirst("\\d*$", "\\*");
+				key = protoName + method;
+			}
+		}
+
 		// Accumulate the total time for each type of event
-		Long val = nanosMap.get(retiredEvent.description);
+		Long val = nanosMap.get(key);
 		if (val == null)
 			val = new Long(0L);
 		val += retiredEvent.nanoseconds;
-		nanosMap.put(retiredEvent.description, val);
+		nanosMap.put(key, val);
 
 		// Clear the last retired event
 		retiredEvent = null;
