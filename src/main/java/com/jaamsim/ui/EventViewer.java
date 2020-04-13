@@ -545,4 +545,12 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 		setDirty(true);
 	}
 
+	@Override
+	public void traceConditionalEval(EventManager e, long tick, ProcessTarget t) {
+	}
+
+	@Override
+	public void traceConditionalEvalEnded(EventManager e, long tick, ProcessTarget t) {
+	}
+
 }

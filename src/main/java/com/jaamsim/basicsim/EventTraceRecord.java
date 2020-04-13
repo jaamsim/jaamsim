@@ -148,6 +148,12 @@ class EventTraceRecord extends ArrayList<String> implements EventTraceListener {
 		this.append(String.format("SchedProcess\t%d\t%d\t%s", tick, priority, t.getDescription()));
 	}
 
+	@Override
+	public void traceConditionalEval(EventManager e, long tick, ProcessTarget t) {}
+
+	@Override
+	public void traceConditionalEvalEnded(EventManager e, long tick, ProcessTarget t) {}
+
 	boolean isDefaultEventManager() {
 		return eventManagerName.equals("DefaultEventManager");
 	}

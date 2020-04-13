@@ -334,7 +334,12 @@ public final class EventManager {
 		try {
 			for (int i = 0; i < condEvents.size();) {
 				ConditionalEvent c = condEvents.get(i);
-				if (c.c.evaluate()) {
+				if (trcListener != null)
+					trcListener.traceConditionalEval(this, currentTick.get(), c.target);
+				boolean bool = c.c.evaluate();
+				if (trcListener != null)
+					trcListener.traceConditionalEvalEnded(this, currentTick.get(), c.target);
+				if (bool) {
 					condEvents.remove(i);
 					EventNode node = getEventNode(currentTick.get(), 0);
 					Event evt = getEvent();

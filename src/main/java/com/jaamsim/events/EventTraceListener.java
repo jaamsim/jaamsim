@@ -102,4 +102,20 @@ public void traceWaitUntil(EventManager e, long tick);
  */
 public void traceWaitUntilEnded(EventManager e, long tick, ProcessTarget t);
 
+/**
+ * Called when a conditional event's condition is evaluated.
+ * @param e - event processor
+ * @param tick - present simulation time in clock ticks
+ * @param t - holds the method to be executed by the conditional event
+ */
+public void traceConditionalEval(EventManager e, long tick, ProcessTarget t);
+
+/**
+ * Called when the evaluation of conditional event's condition has finished.
+ * @param e - event processor
+ * @param tick - present simulation time in clock ticks
+ * @param t - holds the method to be executed by the conditional event
+ */
+public void traceConditionalEvalEnded(EventManager e, long tick, ProcessTarget t);
+
 }
