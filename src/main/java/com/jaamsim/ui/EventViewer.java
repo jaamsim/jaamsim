@@ -72,8 +72,8 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 	private static JScrollPane condSp;
 	private static EventManager evtMan;
 
-	private static final String[] headers= {"Ticks", "SimTime", "Priority", "Description", "State", "Nanos"};
-	private static final int[] colWidth = {100, 100, 60, 180, 80, 60};
+	private static final String[] headers= {"Ticks", "Time", "Pri", "Description", "State", "Nanos"};
+	private static final int[] colWidth = {100, 80, 30, 160, 80, 60};
 
 	private static final int MAX_RETIRED_EVENTS = 1000;
 	private static final int SCROLL_POSITION = 5;
