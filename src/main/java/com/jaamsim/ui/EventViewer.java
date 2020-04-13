@@ -145,7 +145,7 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 			@Override
 			public void actionPerformed( ActionEvent e ) {
 				retiredEventDataList.clear();
-				update();
+				updateEvents();
 			}
 		});
 		clearButton.setToolTipText(GUIFrame.formatToolTip("Clear Events",
@@ -266,6 +266,7 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 	private static class TabListener implements ChangeListener {
 		@Override
 		public void stateChanged(ChangeEvent e) {
+			dirty = true;
 			GUIFrame.updateUI();
 		}
 	}
@@ -277,8 +278,18 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 
 		if (isDirty() || !Unit.getDisplayedUnit(TimeUnit.class).equals(timeUnit)) {
 			setDirty(false);
-			update();
-			updateProfile();
+			switch (jTabbedFrame.getSelectedIndex()) {
+			case 0:
+				updateEvents();
+				return;
+			case 1:
+				updateConditionals();
+				return;
+			case 2:
+				updateProfile();
+				return;
+			default: return;
+			}
 		}
 	}
 
@@ -293,7 +304,7 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 		return dirty;
 	}
 
-	public void update() {
+	public void updateEvents() {
 
 		// Try to update the event data. If unsuccessful, try again later.
 		ArrayList<EventData> newEventDataList = new ArrayList<>(retiredEventDataList);
@@ -360,10 +371,11 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 		}
 		line = Math.min(line + SCROLL_POSITION, eventDataList.size()-1);
 		eventList.scrollRectToVisible(eventList.getCellRect(line, 0, true));
+	}
 
-		// Update the conditionals
+	public void updateConditionals() {
 		ArrayList<String> condDataList = evtMan.getConditionalDataList();
-		tableModel = (DefaultTableModel) condList.getModel();
+		DefaultTableModel tableModel = (DefaultTableModel) condList.getModel();
 		String[] condData = new String[1];
 		for (int i = 0; i < condDataList.size(); i++) {
 			condData[0] = condDataList.get(i);
