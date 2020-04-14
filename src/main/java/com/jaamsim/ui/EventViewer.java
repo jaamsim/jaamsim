@@ -543,11 +543,7 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 	}
 
 	@Override
-	public void traceWaitUntilEnded(EventManager e, long tick, ProcessTarget t) {
-		recordNanos();
-		addRetiredEvent(new EventData(tick, 0, t.getDescription(), STATE_COMPLETED));
-		setDirty(true);
-	}
+	public void traceWaitUntilEnded(EventManager e, long tick, ProcessTarget t) {}
 
 	@Override
 	public void traceConditionalEval(EventManager e, long tick, ProcessTarget t) {
