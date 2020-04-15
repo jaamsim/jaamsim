@@ -160,6 +160,7 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 		conditionalsButton.addActionListener( new ActionListener() {
 			@Override
 			public void actionPerformed( ActionEvent e ) {
+				nextEventButton.requestFocusInWindow();
 				updateEvents();
 			}
 		});
