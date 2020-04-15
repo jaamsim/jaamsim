@@ -367,17 +367,21 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 		double factor = Unit.getDisplayedUnitFactor(TimeUnit.class);
 		DefaultTableModel tableModel = (DefaultTableModel) eventList.getModel();
 		String[] data = new String[6];
+		int rowCount = 0;
 		for (int i = 0; i < eventDataList.size(); i++) {
 			EventData evtData = eventDataList.get(i);
+			if (isHideConditionals() && evtData.status == STATE_EVALUATED)
+				continue;
 			data[0] = Long.toString(evtData.ticks);
 			data[1] = Double.toString(evtMan.ticksToSeconds(evtData.ticks)/factor);
 			data[2] = Integer.toString(evtData.priority);
 			data[3] = evtData.description;
 			data[4] = evtData.status;
 			data[5] = evtData.nanoseconds >= 0 ? Long.toString(evtData.nanoseconds) : "";
-			tableModel.insertRow(i, data);
+			tableModel.insertRow(rowCount, data);
+			rowCount++;
 		}
-		tableModel.setRowCount(eventDataList.size());
+		tableModel.setRowCount(rowCount);
 
 		// Reselect the previously selected row in its new position
 		if (selection > -1) {
@@ -389,7 +393,7 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 		if (selection == -1) {
 			line = retiredEventDataList.size();
 		}
-		line = Math.min(line + SCROLL_POSITION, eventDataList.size()-1);
+		line = Math.min(line + SCROLL_POSITION, rowCount - 1);
 		eventList.scrollRectToVisible(eventList.getCellRect(line, 0, true));
 	}
 
