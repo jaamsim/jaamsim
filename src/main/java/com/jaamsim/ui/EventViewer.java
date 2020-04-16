@@ -367,7 +367,7 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 				continue;
 			if (indNextEvt == -1 && evtData.status.isEmpty())
 				indNextEvt = rowCount;
-			if (evtData.equals(selectedEventData))
+			if (evtData.equals(selectedEventData) && evtData.status.isEmpty())
 				selection = rowCount;
 			data[0] = Long.toString(evtData.ticks);
 			data[1] = Double.toString(evtMan.ticksToSeconds(evtData.ticks)/factor);
