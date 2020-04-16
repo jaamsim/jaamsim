@@ -398,6 +398,8 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 		}
 		line = Math.min(line + SCROLL_POSITION, rowCount - 1);
 		eventList.scrollRectToVisible(eventList.getCellRect(line, 0, true));
+		// Second call is req'd to get correct result when conditional evaluations are excluded
+		eventList.scrollRectToVisible(eventList.getCellRect(line, 0, true));
 	}
 
 	public void updateConditionals() {
