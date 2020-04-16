@@ -340,19 +340,11 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 		// Find the selected row in the updated event data
 		int selection = eventList.getSelectedRow();
 		if (selection > -1) {
-			EventData selectedEventData = eventDataList.get(selection);
-
-			// Find this event in the new data
-			selection = -1;
-			for (int i = 0; i < newEventDataList.size(); i++) {
-				if (newEventDataList.get(i).ticks > selectedEventData.ticks) {
-					break;
-				}
-				if (newEventDataList.get(i).equals(selectedEventData)) {
-					selection = i;
-					break;
-				}
-			}
+			DefaultTableModel tableModel = (DefaultTableModel) eventList.getModel();
+			long ticks = Long.parseLong((String) tableModel.getValueAt(selection, 0));
+			int pri = Integer.parseInt((String) tableModel.getValueAt(selection, 2));
+			String desc = (String) tableModel.getValueAt(selection, 3);
+			selectedEventData = new EventData(ticks, pri, desc, "", 0L);
 		}
 		eventDataList = newEventDataList;
 
@@ -370,12 +362,15 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 		String[] data = new String[6];
 		int rowCount = 0;
 		int indNextEvt = -1;
+		selection = -1;
 		for (int i = 0; i < eventDataList.size(); i++) {
 			EventData evtData = eventDataList.get(i);
 			if (isHideConditionals() && evtData.status == STATE_EVALUATED)
 				continue;
 			if (indNextEvt == -1 && evtData.status.isEmpty())
 				indNextEvt = rowCount;
+			if (evtData.equals(selectedEventData))
+				selection = rowCount;
 			data[0] = Long.toString(evtData.ticks);
 			data[1] = Double.toString(evtMan.ticksToSeconds(evtData.ticks)/factor);
 			data[2] = Integer.toString(evtData.priority);
