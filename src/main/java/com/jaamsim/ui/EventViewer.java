@@ -368,10 +368,13 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 		DefaultTableModel tableModel = (DefaultTableModel) eventList.getModel();
 		String[] data = new String[6];
 		int rowCount = 0;
+		int indNextEvt = -1;
 		for (int i = 0; i < eventDataList.size(); i++) {
 			EventData evtData = eventDataList.get(i);
 			if (isHideConditionals() && evtData.status == STATE_EVALUATED)
 				continue;
+			if (indNextEvt == -1 && evtData.status.isEmpty())
+				indNextEvt = rowCount;
 			data[0] = Long.toString(evtData.ticks);
 			data[1] = Double.toString(evtMan.ticksToSeconds(evtData.ticks)/factor);
 			data[2] = Integer.toString(evtData.priority);
@@ -391,7 +394,7 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 		// Scroll to show either the selected row or the next event to be executed
 		int line = selection;
 		if (selection == -1) {
-			line = retiredEventDataList.size();
+			line = indNextEvt;
 		}
 		line = Math.min(line + SCROLL_POSITION, rowCount - 1);
 		eventList.scrollRectToVisible(eventList.getCellRect(line, 0, true));
