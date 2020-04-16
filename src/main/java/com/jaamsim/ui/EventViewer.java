@@ -66,7 +66,6 @@ import com.jaamsim.units.Unit;
 public class EventViewer extends FrameBox implements EventTraceListener {
 	private static EventViewer myInstance;
 	private static ArrayList<EventData> retiredEventDataList;
-	private static ArrayList<EventData> eventDataList;
 	private static boolean dirty;
 	private static String timeUnit;
 	private static HashMap <String, Long> nanosMap;
@@ -111,7 +110,6 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 		addWindowListener(FrameBox.getCloseListener("ShowEventViewer"));
 
 		retiredEventDataList = new ArrayList<>();
-		eventDataList = new ArrayList<>();
 		nanosMap = new HashMap <>();
 
 		evtMan = em;
@@ -328,9 +326,9 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 	public void updateEvents() {
 
 		// Try to update the event data. If unsuccessful, try again later.
-		ArrayList<EventData> newEventDataList = new ArrayList<>(retiredEventDataList);
+		ArrayList<EventData> eventDataList = new ArrayList<>(retiredEventDataList);
 		try {
-			newEventDataList.addAll(evtMan.getEventDataList());
+			eventDataList.addAll(evtMan.getEventDataList());
 		}
 		catch (Exception e) {
 			setDirty(true);
@@ -339,6 +337,7 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 
 		// Find the selected row in the updated event data
 		int selection = eventList.getSelectedRow();
+		EventData selectedEventData = null;
 		if (selection > -1) {
 			DefaultTableModel tableModel = (DefaultTableModel) eventList.getModel();
 			long ticks = Long.parseLong((String) tableModel.getValueAt(selection, 0));
@@ -346,7 +345,6 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 			String desc = (String) tableModel.getValueAt(selection, 3);
 			selectedEventData = new EventData(ticks, pri, desc, "", 0L);
 		}
-		eventDataList = newEventDataList;
 
 		// Update the header if the time unit has changed
 		if (!Unit.getDisplayedUnit(TimeUnit.class).equals(timeUnit)) {
