@@ -69,6 +69,7 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 	private static boolean dirty;
 	private static String timeUnit;
 	private static HashMap <String, ProfileData> nanosMap;
+	private static double startTime;
 
 	private static final TableCellRenderer evCellRenderer;
 	private static JTabbedPane jTabbedFrame;
@@ -114,6 +115,7 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 
 		retiredEventDataList = new ArrayList<>();
 		nanosMap = new HashMap <>();
+		startTime = GUIFrame.getJaamSimModel().getSimTime();
 
 		evtMan = em;
 		evtMan.setTraceListener(this);
@@ -473,7 +475,7 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 
 		// Build the table entries
 		double factor = Unit.getDisplayedUnitFactor(TimeUnit.class);
-		double dur = GUIFrame.getJaamSimModel().getSimTime()/factor;
+		double dur = (GUIFrame.getJaamSimModel().getSimTime() - startTime)/factor;
 		DefaultTableModel tableModel = (DefaultTableModel) profList.getModel();
 		String[] data = new String[4];
 		for (int i = 0; i < nanosList.size(); i++) {
