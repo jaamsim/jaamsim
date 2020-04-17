@@ -249,6 +249,8 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 	public void reset() {
 		super.reset();
 		retiredEventDataList.clear();
+		nanosMap.clear();
+		startTime = 0.0d;
 		setDirty(true);
 	}
 
