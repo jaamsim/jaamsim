@@ -293,6 +293,9 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 				getColumnModel().getColumn(i).setWidth(profColWidth[i]);
 			}
 
+			getColumnModel().getColumn(2).setHeaderValue(String.format("%s (/%s)",
+					profHeaders[2], timeUnit));
+
 			this.getTableHeader().setFont(FrameBox.boldFont);
 			this.getTableHeader().setReorderingAllowed(false);
 		}
@@ -315,6 +318,17 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 	public void updateValues(double simTime) {
 		if (!this.isVisible())
 			return;
+
+		// Update the headers if the time unit has changed
+		if (!Unit.getDisplayedUnit(TimeUnit.class).equals(timeUnit)) {
+			timeUnit = Unit.getDisplayedUnit(TimeUnit.class);
+			eventList.getColumnModel().getColumn(1).setHeaderValue(String.format("%s (%s)",
+					headers[1], timeUnit));
+			profList.getColumnModel().getColumn(2).setHeaderValue(String.format("%s (/%s)",
+					profHeaders[2], timeUnit));
+			repaint();
+			setDirty(true);
+		}
 
 		if (isDirty() || !Unit.getDisplayedUnit(TimeUnit.class).equals(timeUnit)) {
 			setDirty(false);
@@ -365,14 +379,6 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 			int pri = Integer.parseInt((String) tableModel.getValueAt(selection, 2));
 			String desc = (String) tableModel.getValueAt(selection, 3);
 			selectedEventData = new EventData(ticks, pri, desc, "", 0L);
-		}
-
-		// Update the header if the time unit has changed
-		if (!Unit.getDisplayedUnit(TimeUnit.class).equals(timeUnit)) {
-			timeUnit = Unit.getDisplayedUnit(TimeUnit.class);
-			eventList.getColumnModel().getColumn(1).setHeaderValue(String.format("%s (%s)",
-					headers[1], timeUnit));
-			repaint();
 		}
 
 		// Rebuild the event list with the updated data
@@ -466,7 +472,8 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 		}
 
 		// Build the table entries
-		double dur = GUIFrame.getJaamSimModel().getSimTime();
+		double factor = Unit.getDisplayedUnitFactor(TimeUnit.class);
+		double dur = GUIFrame.getJaamSimModel().getSimTime()/factor;
 		DefaultTableModel tableModel = (DefaultTableModel) profList.getModel();
 		String[] data = new String[4];
 		for (int i = 0; i < nanosList.size(); i++) {
