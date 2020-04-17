@@ -68,7 +68,7 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 	private static ArrayList<EventData> retiredEventDataList;
 	private static boolean dirty;
 	private static String timeUnit;
-	private static HashMap <String, Long> nanosMap;
+	private static HashMap <String, ProfileData> nanosMap;
 
 	private static final TableCellRenderer evCellRenderer;
 	private static JTabbedPane jTabbedFrame;
@@ -421,7 +421,7 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 	public void updateProfile() {
 
 		// Make a copy of the hashmap entries to avoid concurrent modification exceptions
-		ArrayList<Entry<String, Long>> nanosList;
+		ArrayList<Entry<String, ProfileData>> nanosList;
 		try {
 			nanosList = new ArrayList<>(nanosMap.entrySet());
 		}
@@ -431,26 +431,26 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 		}
 
 		// Sort the event type in order of decreasing total nanoseconds
-		Collections.sort(nanosList, new Comparator<Entry<String, Long>>() {
+		Collections.sort(nanosList, new Comparator<Entry<String, ProfileData>>() {
 			@Override
-			public int compare(Entry<String, Long> o1, Entry<String, Long> o2) {
-				return Long.compare(o2.getValue(), o1.getValue());
+			public int compare(Entry<String, ProfileData> o1, Entry<String, ProfileData> o2) {
+				return Long.compare(o2.getValue().nanoseconds, o1.getValue().nanoseconds);
 			}
 		});
 
 		// Calculate the total nanoseconds for all the events
 		Long totalNanos = 0L;
-		for (Entry<String, Long> nanosData : nanosList) {
-			totalNanos += nanosData.getValue();
+		for (Entry<String, ProfileData> nanosData : nanosList) {
+			totalNanos += nanosData.getValue().nanoseconds;
 		}
 
 		// Build the table entries
 		DefaultTableModel tableModel = (DefaultTableModel) profList.getModel();
 		String[] data = new String[2];
 		for (int i = 0; i < nanosList.size(); i++) {
-			Entry<String, Long> nanosData = nanosList.get(i);
+			Entry<String, ProfileData> nanosData = nanosList.get(i);
 			data[0] = nanosData.getKey();
-			data[1] = String.format("%.3f%%", 100.0d * nanosData.getValue() / totalNanos);
+			data[1] = String.format("%.3f%%", 100.0d * nanosData.getValue().nanoseconds / totalNanos);
 			tableModel.insertRow(i, data);
 		}
 		tableModel.setRowCount(nanosList.size());
@@ -491,14 +491,30 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 		}
 
 		// Accumulate the total time for each type of event
-		Long val = nanosMap.get(key);
-		if (val == null)
-			val = new Long(0L);
-		val += retiredEvent.nanoseconds;
-		nanosMap.put(key, val);
+		ProfileData val = nanosMap.get(key);
+		if (val == null) {
+			val = new ProfileData();
+			nanosMap.put(key, val);
+		}
+		val.recordNanos(retiredEvent.nanoseconds);
 
 		// Clear the last retired event
 		retiredEvent = null;
+	}
+
+	public class ProfileData {
+		public long nanoseconds;
+		public long count;
+
+		public ProfileData() {
+			nanoseconds = 0L;
+			count = 0L;
+		}
+
+		public void recordNanos(long nanos) {
+			nanoseconds += nanos;
+			count++;
+		}
 	}
 
 	public static Color getColor(int i) {
