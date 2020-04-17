@@ -466,12 +466,15 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 		}
 
 		// Build the table entries
+		double dur = GUIFrame.getJaamSimModel().getSimTime();
 		DefaultTableModel tableModel = (DefaultTableModel) profList.getModel();
-		String[] data = new String[2];
+		String[] data = new String[4];
 		for (int i = 0; i < nanosList.size(); i++) {
 			Entry<String, ProfileData> nanosData = nanosList.get(i);
 			data[0] = nanosData.getKey();
 			data[1] = String.format("%.3f%%", 100.0d * nanosData.getValue().nanoseconds / totalNanos);
+			data[2] = String.format("%.1f", nanosData.getValue().getAvgRate(dur));
+			data[3] = String.format("%.0f", nanosData.getValue().getAvgNanos());
 			tableModel.insertRow(i, data);
 		}
 		tableModel.setRowCount(nanosList.size());
@@ -535,6 +538,14 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 		public void recordNanos(long nanos) {
 			nanoseconds += nanos;
 			count++;
+		}
+
+		public double getAvgNanos() {
+			return (double) nanoseconds / count;
+		}
+
+		public double getAvgRate(double dur) {
+			return count / dur;
 		}
 	}
 
