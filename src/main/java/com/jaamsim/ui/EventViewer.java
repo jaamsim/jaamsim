@@ -87,6 +87,9 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 	private static final String[] headers= {"Ticks", "Time", "Pri", "Description", "State", "Nanos"};
 	private static final int[] colWidth = {100, 80, 30, 160, 80, 60};
 
+	private static final String[] profHeaders= {"Event Type", "% of Total Time", "Rate", "Avg. Nanos"};
+	private static final int[] profColWidth = {200, 100, 100, 100};
+
 	private static final int MAX_RETIRED_EVENTS = 1000;
 	private static final int SCROLL_POSITION = 5;
 
@@ -202,10 +205,7 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 		jTabbedFrame.addTab("Conditional Events", null, condSp, null);
 
 		// Profiler List
-		profList = new JTable(new DefaultTableModel(0, 2));
-		profList.getColumnModel().getColumn(0).setHeaderValue("Event Type");
-		profList.getColumnModel().getColumn(1).setHeaderValue("Percent of Total Time");
-		profList.getTableHeader().setFont(FrameBox.boldFont);
+		profList = new ProfileTable(new DefaultTableModel(0, profHeaders.length));
 		profList.setDefaultRenderer(Object.class, colRenderer);
 		profSp = new JScrollPane();
 		profSp.getViewport().add(profList);
@@ -271,6 +271,27 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 
 			getColumnModel().getColumn(1).setHeaderValue(String.format("%s (%s)",
 					headers[1], timeUnit));
+
+			this.getTableHeader().setFont(FrameBox.boldFont);
+			this.getTableHeader().setReorderingAllowed(false);
+		}
+
+		@Override
+		public void doLayout() {
+			FrameBox.fitTableToLastColumn(this);
+		}
+	}
+
+	private static class ProfileTable extends JTable {
+		public ProfileTable(TableModel model) {
+			super(model);
+
+			setFillsViewportHeight(true);
+
+			for (int i = 0; i < profHeaders.length; i++) {
+				getColumnModel().getColumn(i).setHeaderValue(profHeaders[i]);
+				getColumnModel().getColumn(i).setWidth(profColWidth[i]);
+			}
 
 			this.getTableHeader().setFont(FrameBox.boldFont);
 			this.getTableHeader().setReorderingAllowed(false);
