@@ -69,6 +69,7 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 	private static boolean dirty;
 	private static String timeUnit;
 	private static HashMap <String, ProfileData> nanosMap;
+	private static HashMap <String, ProfileData> classNanosMap;
 	private static double startTime;
 
 	private static final TableCellRenderer evCellRenderer;
@@ -81,6 +82,7 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 	private static JScrollPane profSp;
 	private static EventManager evtMan;
 	private static JToggleButton conditionalsButton;
+	private static JToggleButton classButton;
 
 	private static long nanoseconds;
 	private static EventData retiredEvent;
@@ -115,6 +117,7 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 
 		retiredEventDataList = new ArrayList<>();
 		nanosMap = new HashMap <>();
+		classNanosMap = new HashMap <>();
 		startTime = GUIFrame.getJaamSimModel().getSimTime();
 
 		evtMan = em;
@@ -212,6 +215,7 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 			@Override
 			public void actionPerformed( ActionEvent e ) {
 				nanosMap.clear();
+				classNanosMap.clear();
 				startTime = GUIFrame.getJaamSimModel().getSimTime();
 				updateProfile();
 			}
@@ -219,10 +223,23 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 		clearProfButton.setToolTipText(GUIFrame.formatToolTip("Clear Results",
 				"Removes the execution time results."));
 
+		// Show Class Results Button
+		classButton = new JToggleButton( "Show Class Results" );
+		classButton.addActionListener( new ActionListener() {
+			@Override
+			public void actionPerformed( ActionEvent e ) {
+				clearProfButton.requestFocusInWindow();
+				updateProfile();
+			}
+		});
+		classButton.setToolTipText(GUIFrame.formatToolTip("Show Class Results",
+				"Displays the execution time results by class."));
+
 		// Profiler Button Bar
 		JPanel profButtonPanel = new JPanel();
 		profButtonPanel.setLayout( new FlowLayout( FlowLayout.LEFT ) );
 		profButtonPanel.add( clearProfButton );
+		profButtonPanel.add( classButton );
 
 		// Profiler List
 		profList = new ProfileTable(new DefaultTableModel(0, profHeaders.length));
@@ -274,6 +291,7 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 		super.reset();
 		retiredEventDataList.clear();
 		nanosMap.clear();
+		classNanosMap.clear();
 		startTime = 0.0d;
 		setDirty(true);
 	}
@@ -478,7 +496,10 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 		// Make a copy of the hashmap entries to avoid concurrent modification exceptions
 		ArrayList<Entry<String, ProfileData>> nanosList;
 		try {
-			nanosList = new ArrayList<>(nanosMap.entrySet());
+			if (classButton.isSelected())
+				nanosList = new ArrayList<>(classNanosMap.entrySet());
+			else
+				nanosList = new ArrayList<>(nanosMap.entrySet());
 		}
 		catch (Exception e) {
 			setDirty(true);
@@ -537,6 +558,7 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 
 		// Set the key for a generated entity based on its prototype
 		String key = retiredEvent.description;
+		String classKey = key;
 		int ind = key.lastIndexOf(".");
 		if (ind >= 0) {
 			String entName = key.substring(0, ind);
@@ -546,6 +568,10 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 				// Replace the trailing digits with a single asterisk
 				String protoName = entName.replaceFirst("\\d*$", "\\*");
 				key = protoName + method;
+				classKey = key;
+			}
+			else {
+				classKey = ent.getClass().getSimpleName() + method;
 			}
 		}
 
@@ -554,6 +580,14 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 		if (val == null) {
 			val = new ProfileData();
 			nanosMap.put(key, val);
+		}
+		val.recordNanos(retiredEvent.nanoseconds);
+
+		// Accumulate the total time by class
+		val = classNanosMap.get(classKey);
+		if (val == null) {
+			val = new ProfileData();
+			classNanosMap.put(classKey, val);
 		}
 		val.recordNanos(retiredEvent.nanoseconds);
 
