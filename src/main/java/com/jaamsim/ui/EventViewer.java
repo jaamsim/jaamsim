@@ -206,13 +206,37 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 		condSp.setPreferredSize(new Dimension( 800, 300 ));
 		jTabbedFrame.addTab("Conditional Events", null, condSp, null);
 
+		// Clear Results Button
+		JButton clearProfButton = new JButton( "Clear Results" );
+		clearProfButton.addActionListener( new ActionListener() {
+			@Override
+			public void actionPerformed( ActionEvent e ) {
+				nanosMap.clear();
+				startTime = GUIFrame.getJaamSimModel().getSimTime();
+				updateProfile();
+			}
+		});
+		clearProfButton.setToolTipText(GUIFrame.formatToolTip("Clear Results",
+				"Removes the execution time results."));
+
+		// Profiler Button Bar
+		JPanel profButtonPanel = new JPanel();
+		profButtonPanel.setLayout( new FlowLayout( FlowLayout.LEFT ) );
+		profButtonPanel.add( clearProfButton );
+
 		// Profiler List
 		profList = new ProfileTable(new DefaultTableModel(0, profHeaders.length));
 		profList.setDefaultRenderer(Object.class, colRenderer);
 		profSp = new JScrollPane();
 		profSp.getViewport().add(profList);
 		profSp.setPreferredSize(new Dimension( 800, 300 ));
-		jTabbedFrame.addTab("Execution Time Profile", null, profSp, null);
+
+		// Profiler Pane
+		JPanel profPanel = new JPanel();
+		profPanel.setLayout( new BorderLayout() );
+		profPanel.add(profButtonPanel, BorderLayout.NORTH);
+		profPanel.add(profSp, BorderLayout.CENTER);
+		jTabbedFrame.addTab("Execution Time Profile", null, profPanel, null);
 
 		pack();
 
