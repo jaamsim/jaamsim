@@ -145,6 +145,7 @@ public class EntityProcessor extends Seize {
 		// Remove the first entity from the queue
 		double simTime = getSimTime();
 		String m = this.getNextMatchValue(simTime);
+		this.setMatchValue(m);
 		DisplayEntity ent = getQueue(simTime).removeFirstForMatch(m);
 		if (ent == null)
 			error("Entity not found for specified Match value: %s", m);
