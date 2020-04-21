@@ -115,7 +115,7 @@ public class Resource extends AbstractResourceProvider {
 		super.seize(n, ent);
 		double simTime = getSimTime();
 		if (getAvailableUnits(simTime) < n)
-			error(ERR_CAPACITY, getCapacity(simTime), n);
+			error(ERR_CAPACITY, getAvailableUnits(simTime), n);
 
 		unitsInUse += n;
 		collectStatistics(simTime, unitsInUse);
