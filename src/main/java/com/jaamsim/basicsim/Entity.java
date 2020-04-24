@@ -839,12 +839,13 @@ public class Entity {
 						this, err.getMessage());
 			}
 		} else {
+			if (value.type == ExpResType.NUMBER && h.getUnitType() != value.unitType) {
+				throw new ExpError(null, -1, "Unit returned by the expression does not match the "
+						+ "attribute. Received: %s, expected: %s",
+						value.unitType.getSimpleName(), h.getUnitType().getSimpleName());
+			}
 			assignValue = value.getCopy();
 		}
-
-		if (value.type == ExpResType.NUMBER && h.getUnitType() != value.unitType)
-			throw new ExpError(null, -1, "Invalid unit returned by an expression. Received: %s, expected: %s",
-					value.unitType.getSimpleName(), h.getUnitType().getSimpleName());
 
 		h.setValue(assignValue);
 	}
