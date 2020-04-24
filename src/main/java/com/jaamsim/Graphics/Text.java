@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2009-2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018 JaamSim Software Inc.
+ * Copyright (C) 2018-2020 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -138,8 +138,12 @@ public class Text extends TextBasics {
 			siFactor = unit.getValue().getConversionFactorToSI();
 
 		// Default Format
-		if (formatText.isDefault())
-			return dataSource.getValue().getNextString(simTime, siFactor);
+		if (formatText.isDefault()) {
+			String ret = dataSource.getValue().getNextString(simTime, siFactor);
+			if (ret == null)
+				ret = "null";
+			return ret;
+		}
 
 		// Only static text is to be displayed
 		if (dataSource.isDefault())
@@ -147,7 +151,10 @@ public class Text extends TextBasics {
 
 		// Dynamic text is to be displayed
 		try {
-			return dataSource.getValue().getNextString(simTime, formatText.getValue(), siFactor);
+			String ret = dataSource.getValue().getNextString(simTime, formatText.getValue(), siFactor);
+			if (ret == null)
+				ret = "null";
+			return ret;
 		}
 		catch (Throwable e) {
 			return failText.getValue();
