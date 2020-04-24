@@ -824,6 +824,8 @@ public class Entity {
 			throw new ExpError(null, -1, "Invalid attribute name for %s: %s", this, name);
 
 		ExpResult assignValue = null;
+
+		// Collection Attribute
 		if (indices != null) {
 			ExpResult attribValue = h.getValue(getSimTime(), ExpResult.class);
 			if (attribValue.type != ExpResType.COLLECTION) {
@@ -838,7 +840,10 @@ public class Entity {
 				throw new ExpError(err.source, err.pos, "Error during assignment to %s: %s",
 						this, err.getMessage());
 			}
-		} else {
+		}
+
+		// Single-Valued Attribute
+		else {
 			if (value.type == ExpResType.NUMBER && h.getUnitType() != value.unitType) {
 				throw new ExpError(null, -1, "Unit returned by the expression does not match the "
 						+ "attribute. Received: %s, expected: %s",
