@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2017 JaamSim Software Inc.
+ * Copyright (C) 2017-2020 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,8 +26,13 @@ public class OSFix {
 	private static final String OS_NAME = System.getProperty("os.name");
 	private static final Point DEFAULT_ADJUST = new Point();
 	private static final String WIN_10 = "Windows 10";
+	private static final String MAC_OS_X = "Mac OS X";
 	private static final Point WIN_10_LOCATION_ADJUST = new Point(-7, 0);
 	private static final Point WIN_10_SIZE_ADJUST = new Point(15, 8);
+
+	public static final boolean isMac() {
+		return OS_NAME.equals(MAC_OS_X);
+	}
 
 	public static final Point getSizeAdustment() {
 		Point ret;
