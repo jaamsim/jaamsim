@@ -73,6 +73,14 @@ public class KeywordCommand implements Command {
 			ent.getJaamSimModel().setSessionEdited(true);
 	}
 
+	public Entity getEntity() {
+		return entity;
+	}
+
+	public KeywordIndex[] getKws() {
+		return newKws;
+	}
+
 	@Override
 	public void execute() {
 		applyKeywords(entity, newKws);
