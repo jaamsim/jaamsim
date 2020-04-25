@@ -364,7 +364,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				Simulation simulation = sim.getSimulation();
 				if (simulation == null)
 					return;
-				windowOffset = getLocation();
+				windowOffset = new Point(getLocation().x - initLocation.x,
+						getLocation().y - initLocation.y);
 				updateToolLocations(simulation);
 				updateViewLocations();
 			}
@@ -372,6 +373,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	}
 
 	private Point windowOffset = new Point();
+	private Point initLocation = getLocation();
 
 	public Point getRelativeLocation(int x, int y) {
 		return new Point(x - windowOffset.x, y - windowOffset.y);
@@ -1587,7 +1589,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		showLinks.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-
 				boolean bShow = (((JToggleButton)event.getSource()).isSelected());
 				if (RenderManager.isGood()) {
 					RenderManager.inst().setShowLinks(bShow);
