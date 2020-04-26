@@ -377,7 +377,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	}
 
 	private Point windowOffset = new Point();
-	private Point initLocation = getLocation();
+	private Point initLocation = new Point(getX(), getY()); // bypass the OSFix correction
 
 	public Point getRelativeLocation(int x, int y) {
 		return new Point(x - windowOffset.x, y - windowOffset.y);
