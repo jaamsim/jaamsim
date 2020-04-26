@@ -206,6 +206,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	private JButton clearButton;
 
 	private Entity selectedEntity;
+	private ButtonGroup alignmentGroup;
 	private JToggleButton alignLeft;
 	private JToggleButton alignCentre;
 	private JToggleButton alignRight;
@@ -2016,7 +2017,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				"Aligns the text to the right margin."));
 		alignRight.addActionListener( alignListener );
 
-		ButtonGroup alignmentGroup = new ButtonGroup();
+		alignmentGroup = new ButtonGroup();
 		alignmentGroup.add(alignLeft);
 		alignmentGroup.add(alignCentre);
 		alignmentGroup.add(alignRight);
@@ -3945,6 +3946,9 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		alignLeft.setEnabled(isAlignable);
 		alignCentre.setEnabled(isAlignable);
 		alignRight.setEnabled(isAlignable);
+		if (!isAlignable) {
+			alignmentGroup.clearSelection();
+		}
 
 		bold.setEnabled(bool);
 		italic.setEnabled(bool);
@@ -3957,6 +3961,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		if (!bool) {
 			font.setText("");
 			textHeight.setText(null);
+			bold.setSelected(false);
+			italic.setSelected(false);
 			colourIcon.setFillColor(Color.LIGHT_GRAY);
 			colourIcon.setOutlineColor(Color.LIGHT_GRAY);
 			return;
