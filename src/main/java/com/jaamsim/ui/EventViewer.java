@@ -595,7 +595,7 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 		retiredEvent = null;
 	}
 
-	public class ProfileData {
+	static class ProfileData {
 		public long nanoseconds;
 		public long count;
 
