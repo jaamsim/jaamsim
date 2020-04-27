@@ -19,6 +19,7 @@ package com.jaamsim.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
@@ -38,7 +39,6 @@ import javax.swing.JToggleButton;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
 
 import com.jaamsim.basicsim.Entity;
@@ -72,7 +72,6 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 	private static HashMap <String, ProfileData> classNanosMap;
 	private static double startTime;
 
-	private static final TableCellRenderer evCellRenderer;
 	private static JTabbedPane jTabbedFrame;
 	private static JTable eventList;
 	private static JScrollPane sp;
@@ -105,10 +104,6 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 	private static final Color COLOR_INTERRUPTED = new Color(224, 255, 255);  // light cyan
 	private static final Color COLOR_TERMINATED  = new Color(240, 128, 128);  // light coral
 	private static final Color COLOR_EVALUATED   = new Color(255, 255, 224);  // light yellow
-
-	static {
-		evCellRenderer = new EventViewerCellRenderer();
-	}
 
 	public EventViewer( EventManager em ) {
 		super("Event Viewer");
@@ -306,8 +301,6 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 	private static class EventTable extends JTable {
 		public EventTable(TableModel model) {
 			super(model);
-
-			setDefaultRenderer(Object.class, evCellRenderer);
 			setFillsViewportHeight(true);
 
 			for (int i = 0; i < headers.length; i++) {
@@ -320,6 +313,19 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 
 			this.getTableHeader().setFont(FrameBox.boldFont);
 			this.getTableHeader().setReorderingAllowed(false);
+
+			setDefaultRenderer(Object.class, new DefaultCellRenderer() {
+				@Override
+				public Component getTableCellRendererComponent(JTable table, Object value,
+				                                               boolean isSelected, boolean hasFocus,
+				                                               int row, int column) {
+					Component cell = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+
+					if (row != table.getSelectedRow())
+						cell.setBackground(getColor(row));
+					return cell;
+				}
+			});
 		}
 
 		@Override
