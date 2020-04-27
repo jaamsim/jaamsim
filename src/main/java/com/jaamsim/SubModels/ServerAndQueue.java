@@ -77,6 +77,7 @@ public class ServerAndQueue extends CompoundEntity {
 		// Threshold inputs
 		String expString = "sub.[Queue].QueueLength < sub.MaxQueueLength";
 		InputAgent.applyArgs(threshold, "OpenCondition", expString);
+		InputAgent.applyArgs(threshold, "WatchList", queue.getName());
 
 		// Set the component positions within the sub-model region
 		InputAgent.applyVec3d(start,     "Position", new Vec3d(-1.0d, -0.4d, 0.0d), DistanceUnit.class);
