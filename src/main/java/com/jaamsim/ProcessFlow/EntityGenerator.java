@@ -75,6 +75,7 @@ public class EntityGenerator extends LinkedService implements EntityGen {
 		stateAssignment.setHidden(true);
 		waitQueue.setHidden(true);
 		match.setHidden(true);
+		watchList.setHidden(true);
 		processPosition.setHidden(true);
 		opportunisticMaintenanceList.setHidden(true);
 		opportunisticBreakdownList.setHidden(true);

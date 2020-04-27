@@ -68,6 +68,7 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 		operatingThresholdList.setHidden(true);
 		waitQueue.setHidden(true);
 		match.setHidden(true);
+		watchList.setHidden(true);
 		processPosition.setHidden(true);
 		forcedMaintenanceList.setHidden(true);
 		forcedBreakdownList.setHidden(true);
