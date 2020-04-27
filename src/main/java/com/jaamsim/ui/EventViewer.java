@@ -542,6 +542,10 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 		retiredEvent = evtData;
 		nanoseconds = System.nanoTime();
 
+		recordRetiredEvent(evtData);
+	}
+
+	private void recordRetiredEvent(EventData evtData) {
 		// Save a list of the last N events that have been executed
 		if (retiredEventDataList.size() >= MAX_RETIRED_EVENTS) {
 			retiredEventDataList.remove(0);
@@ -644,12 +648,13 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 
 	@Override
 	public void traceSchedProcess(EventManager e, long curTick, long tick, int priority, ProcessTarget t) {
-		recordNanos();
+		// Don't record anything, but mark dirty as there is a new event somewhere in the event list
 		setDirty(true);
 	}
 
 	@Override
 	public void traceProcessStart(EventManager e, ProcessTarget t, long tick) {
+		// FIXME: after returning from the started process we no longer accrue time to the original executing task
 		recordNanos();
 		setDirty(true);
 	}
@@ -662,6 +667,7 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 
 	@Override
 	public void traceInterrupt(EventManager e, long curTick, long tick, int priority, ProcessTarget t) {
+		// FIXME: after returning from the interrupted event we no longer accrue time to the original executing task
 		recordNanos();
 		addRetiredEvent(new EventData(curTick, priority, t.getDescription(), STATE_INTERRUPTED));
 		setDirty(true);
@@ -669,8 +675,7 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 
 	@Override
 	public void traceKill(EventManager e, long curTick, long tick, int priority, ProcessTarget t) {
-		recordNanos();
-		addRetiredEvent(new EventData(curTick, priority, t.getDescription(), STATE_TERMINATED));
+		recordRetiredEvent(new EventData(curTick, priority, t.getDescription(), STATE_TERMINATED));
 		setDirty(true);
 	}
 
