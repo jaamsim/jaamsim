@@ -1601,6 +1601,14 @@ public class ExpressionBox extends JDialog {
 				"'split(\"ab.cd.ef\", \"\\.\")' returns {\"ab\", \"cd\", \"ef\"}",
 				"'split(\"ab.cd.ef\", \"\\.\", 2)' returns {\"ab\", \"cd.ef\"}"));
 
+		functions.add(new ButtonDesc("length", "Length function ('length')",
+				"Returns the length of the specified string. "
+						+ "The length is equal to the number of characters in the string.",
+				"Accepts a string and returns a dimensionless integer.",
+				"length()",
+				-1,
+				"'length(\"abc\")' returns 3"));
+
 	}
 
 }

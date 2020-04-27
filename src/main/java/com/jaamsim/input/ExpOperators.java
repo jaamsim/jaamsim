@@ -2325,5 +2325,26 @@ public class ExpOperators {
 			}
 		});
 
+		addFunction("length", 1, 1, new CallableFunc() {
+			@Override
+			public void checkUnits(ParseContext context, ExpResult[] args, String source, int pos) throws ExpError {
+				checkStringFunction(args[0], source, pos);
+			}
+			@Override
+			public ExpResult call(EvalContext context, ExpResult[] args, String source, int pos) throws ExpError {
+				return ExpResult.makeNumResult(args[0].stringVal.length(), DimensionlessUnit.class);
+			}
+			@Override
+			public ExpValResult validate(ParseContext context, ExpValResult[] args, String source, int pos) {
+				if (	args[0].state == ExpValResult.State.ERROR ||
+						args[0].state == ExpValResult.State.UNDECIDABLE)
+					return args[0];
+				if (args[0].type != ExpResType.STRING) {
+					ExpError error = new ExpError(source, pos, "Argument must be a string");
+					return ExpValResult.makeErrorRes(error);
+				}
+				return ExpValResult.makeValidRes(ExpResType.NUMBER, DimensionlessUnit.class);
+			}
+		});
 	}
 }
