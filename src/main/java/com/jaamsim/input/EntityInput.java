@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2010-2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018-2019 JaamSim Software Inc.
+ * Copyright (C) 2018-2020 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -69,7 +69,7 @@ public class EntityInput<T extends Entity> extends Input<T> {
 			return list;
 
 		for (T each: ent.getJaamSimModel().getClonesOfIterator(entSubClass)) {
-			if (each.isGenerated())
+			if (!each.isRegistered())
 				continue;
 
 			if (!isValid(each))

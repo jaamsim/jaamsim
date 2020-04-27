@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2016-2019 JaamSim Software Inc.
+ * Copyright (C) 2016-2020 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,7 +48,7 @@ public class InterfaceEntityInput<T> extends Input<T> {
 		ArrayList<String> list = new ArrayList<>();
 		JaamSimModel simModel = ent.getJaamSimModel();
 		for (Entity each: simModel.getClonesOfIterator(Entity.class, entClass)) {
-			if (each.isGenerated())
+			if (!each.isRegistered())
 				continue;
 
 			list.add(each.getName());
