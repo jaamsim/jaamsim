@@ -38,7 +38,6 @@ import com.jaamsim.input.Vec3dInput;
 import com.jaamsim.math.Transform;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.math.Vec4d;
-import com.jaamsim.ui.GUIFrame;
 import com.jaamsim.units.DistanceUnit;
 
 public class View extends Entity {
@@ -109,6 +108,14 @@ public class View extends Entity {
 
 	private double cachedSimTime = 0;
 
+	private static IntegerVector defPos = new IntegerVector(2);
+	private static IntegerVector defSize = new IntegerVector(2);
+
+	static {
+		defPos.fillWithEntriesOf(2, 0);
+		defSize.fillWithEntriesOf(2, 0);
+	}
+
 	{
 		attributeDefinitionList.setHidden(true);
 		namedExpressionInput.setHidden(true);
@@ -126,18 +133,12 @@ public class View extends Entity {
 		position.setPromptReqd(false);
 		this.addInput(position);
 
-		IntegerVector defSize = new IntegerVector(2);
-		defSize.add(GUIFrame.VIEW_WIDTH);
-		defSize.add(GUIFrame.VIEW_HEIGHT);
 		windowSize = new IntegerListInput("WindowSize", GRAPHICS, defSize);
 		windowSize.setValidCount(2);
 		windowSize.setValidRange(1, 8192);
 		windowSize.setPromptReqd(false);
 		this.addInput(windowSize);
 
-		IntegerVector defPos = new IntegerVector(2);
-		defPos.add(GUIFrame.COL2_START);
-		defPos.add(GUIFrame.TOP_START);
 		windowPos = new IntegerListInput("WindowPosition", GRAPHICS, defPos);
 		windowPos.setValidCount(2);
 		windowPos.setValidRange(-8192, 8192);
@@ -201,6 +202,16 @@ public class View extends Entity {
 			return;
 		gui.addView(this);
 		gui.createWindow(this);
+	}
+
+	public static void setDefaultPosition(int x, int y) {
+		defPos.set(0, x);
+		defPos.set(1, y);
+	}
+
+	public static void setDefaultSize(int width, int height) {
+		defSize.set(0, width);
+		defSize.set(1, height);
 	}
 
 	public Vec3d getViewCenter() {
