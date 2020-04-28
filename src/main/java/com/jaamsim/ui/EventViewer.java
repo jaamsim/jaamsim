@@ -65,26 +65,26 @@ import com.jaamsim.units.Unit;
  */
 public class EventViewer extends FrameBox implements EventTraceListener {
 	private static EventViewer myInstance;
-	private static ArrayList<EventData> retiredEventDataList;
-	private static boolean dirty;
-	private static String timeUnit;
-	private static HashMap <String, ProfileData> nanosMap;
-	private static HashMap <String, ProfileData> classNanosMap;
-	private static double startTime;
+	private ArrayList<EventData> retiredEventDataList;
+	private boolean dirty;
+	private String timeUnit;
+	private HashMap <String, ProfileData> nanosMap;
+	private HashMap <String, ProfileData> classNanosMap;
+	private double startTime;
 
-	private static JTabbedPane jTabbedFrame;
-	private static JTable eventList;
-	private static JScrollPane sp;
-	private static JTable condList;
-	private static JScrollPane condSp;
-	private static JTable profList;
-	private static JScrollPane profSp;
-	private static EventManager evtMan;
-	private static JToggleButton conditionalsButton;
-	private static JToggleButton classButton;
+	private JTabbedPane jTabbedFrame;
+	private JTable eventList;
+	private JScrollPane sp;
+	private JTable condList;
+	private JScrollPane condSp;
+	private JTable profList;
+	private JScrollPane profSp;
+	private EventManager evtMan;
+	private JToggleButton conditionalsButton;
+	private JToggleButton classButton;
 
-	private static long nanoseconds;
-	private static EventData retiredEvent;
+	private long nanoseconds;
+	private EventData retiredEvent;
 
 	private static final String[] headers= {"Ticks", "Time", "Pri", "Description", "State", "Nanos"};
 	private static final int[] colWidth = {100, 80, 30, 160, 80, 60};
@@ -298,7 +298,7 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 		evtMan.setTraceListener(null);
 	}
 
-	private static class EventTable extends JTable {
+	private class EventTable extends JTable {
 		public EventTable(TableModel model) {
 			super(model);
 			setFillsViewportHeight(true);
@@ -334,7 +334,7 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 		}
 	}
 
-	private static class ProfileTable extends JTable {
+	private class ProfileTable extends JTable {
 		public ProfileTable(TableModel model) {
 			super(model);
 
@@ -358,7 +358,7 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 		}
 	}
 
-	private static class TabListener implements ChangeListener {
+	private class TabListener implements ChangeListener {
 		@Override
 		public void stateChanged(ChangeEvent e) {
 			dirty = true;
@@ -628,7 +628,7 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 		}
 	}
 
-	public static Color getColor(int i) {
+	public Color getColor(int i) {
 		String status = (String) eventList.getModel().getValueAt(i, 4);
 		switch (status) {
 			case STATE_COMPLETED:   return COLOR_COMPLETED;
