@@ -21,8 +21,6 @@ import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
-import com.jaamsim.ui.EventData;
-
 /**
  * The EventManager is responsible for scheduling future events, controlling
  * conditional event evaluation, and advancing the simulation time. Events are
