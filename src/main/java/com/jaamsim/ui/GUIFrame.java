@@ -254,25 +254,25 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	private static boolean SAFE_GRAPHICS;
 
 	// Collection of default window parameters
-	public static int DEFAULT_GUI_WIDTH;
-	public static int COL1_WIDTH;
-	public static int COL2_WIDTH;
-	public static int COL3_WIDTH;
-	public static int COL4_WIDTH;
-	public static int COL1_START;
-	public static int COL2_START;
-	public static int COL3_START;
-	public static int COL4_START;
-	public static int HALF_TOP;
-	public static int HALF_BOTTOM;
-	public static int TOP_START;
-	public static int BOTTOM_START;
-	public static int LOWER_HEIGHT;
-	public static int LOWER_START;
-	public static int VIEW_HEIGHT;
-	public static int VIEW_WIDTH;
+	int DEFAULT_GUI_WIDTH;
+	int COL1_WIDTH;
+	int COL2_WIDTH;
+	int COL3_WIDTH;
+	int COL4_WIDTH;
+	int COL1_START;
+	int COL2_START;
+	int COL3_START;
+	int COL4_START;
+	int HALF_TOP;
+	int HALF_BOTTOM;
+	int TOP_START;
+	int BOTTOM_START;
+	int LOWER_HEIGHT;
+	int LOWER_START;
+	int VIEW_HEIGHT;
+	int VIEW_WIDTH;
 
-	public static int VIEW_OFFSET = 50;
+	int VIEW_OFFSET = 50;
 
 	private static final String LAST_USED_FOLDER = "";
 	private static final String LAST_USED_3D_FOLDER = "3D_FOLDER";
