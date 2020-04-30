@@ -4570,9 +4570,16 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 		// If no configuration files were specified on the command line, then load the default configuration file
 		if (configFiles.size() == 0 && !scriptMode) {
-			sim.setRecordEdits(true);
-			InputAgent.loadDefault(sim);
-			GUIFrame.updateForSimState(GUIFrame.SIM_STATE_CONFIGURED);
+			// Load the default model from the AWT thread to avoid synchronization problems with updateUI and
+			// setWindowDefaults
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					sim.setRecordEdits(true);
+					InputAgent.loadDefault(sim);
+					GUIFrame.updateForSimState(GUIFrame.SIM_STATE_CONFIGURED);
+				}
+			});
 		}
 
 		// If in batch or quiet mode, close the any tools that were opened
