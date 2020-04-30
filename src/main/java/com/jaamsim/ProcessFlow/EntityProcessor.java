@@ -33,7 +33,7 @@ import com.jaamsim.resourceObjects.AbstractResourceProvider;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
 
-public class EntityProcessor extends Seize {
+public class EntityProcessor extends AbstractLinkedResourceUser {
 
 	@Keyword(description = "The maximum number of entities that can be processed simultaneously.\n"
 	                     + "If the capacity changes during the simulation run, the EntityProcessor "
@@ -53,18 +53,6 @@ public class EntityProcessor extends Seize {
 
 	{
 		trace.setHidden(false);
-
-		processPosition.setHidden(false);
-		workingStateListInput.setHidden(false);
-		immediateMaintenanceList.setHidden(false);
-		forcedMaintenanceList.setHidden(false);
-		opportunisticMaintenanceList.setHidden(false);
-		immediateBreakdownList.setHidden(false);
-		forcedBreakdownList.setHidden(false);
-		opportunisticBreakdownList.setHidden(false);
-
-		immediateThresholdList.setHidden(false);
-		immediateReleaseThresholdList.setHidden(false);
 
 		resourceList.setRequired(false);
 
@@ -126,7 +114,9 @@ public class EntityProcessor extends Seize {
 			startNextEntities();
 		}
 		else {
-			super.queueChanged();
+			if (isReadyToStart()) {
+				AbstractResourceProvider.notifyResourceUsers(getResourceList());
+			}
 		}
 	}
 
@@ -140,19 +130,9 @@ public class EntityProcessor extends Seize {
 
 	@Override
 	public void startNextEntity() {
-		if (isTraceFlag()) trace(2, "startNextEntity");
-
-		// Remove the first entity from the queue
+		super.startNextEntity();
 		double simTime = getSimTime();
-		String m = this.getNextMatchValue(simTime);
-		this.setMatchValue(m);
-		DisplayEntity ent = getQueue(simTime).removeFirstForMatch(m);
-		if (ent == null)
-			error("Entity not found for specified Match value: %s", m);
-		this.registerEntity(ent);
-
-		// Seize the resources and pass the entity to the next component
-		this.seizeResources();
+		DisplayEntity ent = getReceivedEntity(simTime);
 
 		// Set the service duration
 		double dur = serviceTime.getValue().getNextSample(simTime);
@@ -259,6 +239,9 @@ public class EntityProcessor extends Seize {
 		if (getResourceList().isEmpty())
 			startNextEntities();
 
+		if (isReadyToStart()) {
+			AbstractResourceProvider.notifyResourceUsers(getResourceList());
+		}
 		super.thresholdChanged();
 	}
 
