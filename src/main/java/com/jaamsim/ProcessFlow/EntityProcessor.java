@@ -108,16 +108,19 @@ public class EntityProcessor extends AbstractLinkedResourceUser {
 		}
 	}
 
-	@Override
-	public void queueChanged() {
+	public void stateChanged() {
 		if (getResourceList().isEmpty()) {
 			startNextEntities();
+			return;
 		}
-		else {
-			if (isReadyToStart()) {
-				AbstractResourceProvider.notifyResourceUsers(getResourceList());
-			}
-		}
+		if (!isReadyToStart())
+			return;
+		AbstractResourceProvider.notifyResourceUsers(getResourceList());
+	}
+
+	@Override
+	public void queueChanged() {
+		stateChanged();
 	}
 
 	@Override
@@ -234,14 +237,7 @@ public class EntityProcessor extends AbstractLinkedResourceUser {
 				entry.remainingTicks = 0L;
 			}
 		}
-
-		// If no resources are required, start as many entities as possible
-		if (getResourceList().isEmpty())
-			startNextEntities();
-
-		if (isReadyToStart()) {
-			AbstractResourceProvider.notifyResourceUsers(getResourceList());
-		}
+		stateChanged();
 		super.thresholdChanged();
 	}
 
@@ -252,14 +248,7 @@ public class EntityProcessor extends AbstractLinkedResourceUser {
 
 	@Override
 	public void endDowntime(DowntimeEntity down) {
-
-		// If no resources are required, start as many entities as possible
-		if (getResourceList().isEmpty())
-			startNextEntities();
-
-		if (isReadyToStart()) {
-			AbstractResourceProvider.notifyResourceUsers(getResourceList());
-		}
+		stateChanged();
 		super.endDowntime(down);
 	}
 
@@ -299,12 +288,7 @@ public class EntityProcessor extends AbstractLinkedResourceUser {
 
 		// Select the resource users to notify
 		if (getCapacity(getSimTime()) > lastCapacity) {
-			if (getResourceList().isEmpty()) {
-				startNextEntities();
-			}
-			else {
-				AbstractResourceProvider.notifyResourceUsers(getResourceList());
-			}
+			stateChanged();
 		}
 
 		// Wait for the next capacity change
