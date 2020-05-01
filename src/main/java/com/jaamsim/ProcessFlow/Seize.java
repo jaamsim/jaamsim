@@ -18,6 +18,11 @@
 package com.jaamsim.ProcessFlow;
 
 import com.jaamsim.Graphics.DisplayEntity;
+import com.jaamsim.basicsim.EntityTarget;
+import com.jaamsim.basicsim.SubjectEntity;
+import com.jaamsim.events.EventHandle;
+import com.jaamsim.events.EventManager;
+import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.resourceObjects.AbstractResourceProvider;
 
 public class Seize extends AbstractLinkedResourceUser {
@@ -56,6 +61,21 @@ public class Seize extends AbstractLinkedResourceUser {
 		stateChanged();
 		super.thresholdChanged();
 	}
+
+	@Override
+	public void observerUpdate(SubjectEntity subj) {
+		if (!stateChangedHandle.isScheduled()) {
+			EventManager.scheduleTicks(0, 10, true, stateChangedTarget, stateChangedHandle);
+		}
+	}
+
+	private final EventHandle stateChangedHandle = new EventHandle();
+	private final ProcessTarget stateChangedTarget = new EntityTarget<Seize>(this, "stateChanged") {
+		@Override
+		public void process() {
+			stateChanged();
+		}
+	};
 
 	@Override
 	protected boolean startProcessing(double simTime) {
