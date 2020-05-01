@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2019 JaamSim Software Inc.
+ * Copyright (C) 2016-2020 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@
 package com.jaamsim.input;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.units.DimensionlessUnit;
@@ -45,6 +46,15 @@ public class AttributeDefinitionListInput extends ListInput<ArrayList<AttributeH
 		// Divide up the inputs by the inner braces
 		ArrayList<KeywordIndex> subArgs = kw.getSubArgs();
 		ArrayList<AttributeHandle> temp = new ArrayList<>(subArgs.size());
+
+		// Ensure that no attribute names are repeated
+		HashSet<String> nameSet = new HashSet<>();
+		for (KeywordIndex subArg : subArgs) {
+			String name = subArg.getArg(0);
+			if (nameSet.contains(name))
+				throw new InputErrorException("Duplicate attribute name: %s", name);
+			nameSet.add(name);
+		}
 
 		// Parse the inputs within each inner brace
 		for (int i = 0; i < subArgs.size(); i++) {
