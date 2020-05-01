@@ -24,7 +24,10 @@ import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.Samples.TimeSeries;
+import com.jaamsim.basicsim.EntityTarget;
+import com.jaamsim.basicsim.SubjectEntity;
 import com.jaamsim.events.Conditional;
+import com.jaamsim.events.EventHandle;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.Keyword;
@@ -122,6 +125,21 @@ public class EntityProcessor extends AbstractLinkedResourceUser {
 	public void queueChanged() {
 		stateChanged();
 	}
+
+	@Override
+	public void observerUpdate(SubjectEntity subj) {
+		if (!stateChangedHandle.isScheduled()) {
+			EventManager.scheduleTicks(0, 10, true, stateChangedTarget, stateChangedHandle);
+		}
+	}
+
+	private final EventHandle stateChangedHandle = new EventHandle();
+	private final ProcessTarget stateChangedTarget = new EntityTarget<EntityProcessor>(this, "stateChanged") {
+		@Override
+		public void process() {
+			stateChanged();
+		}
+	};
 
 	@Override
 	public boolean isReadyToStart() {
