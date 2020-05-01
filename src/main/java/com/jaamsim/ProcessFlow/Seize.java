@@ -40,18 +40,20 @@ public class Seize extends AbstractLinkedResourceUser {
 
 	public Seize() {}
 
+	public void stateChanged() {
+		if (!isReadyToStart())
+			return;
+		AbstractResourceProvider.notifyResourceUsers(getResourceList());
+	}
+
 	@Override
 	public void queueChanged() {
-		if (isReadyToStart()) {
-			AbstractResourceProvider.notifyResourceUsers(getResourceList());
-		}
+		stateChanged();
 	}
 
 	@Override
 	public void thresholdChanged() {
-		if (isReadyToStart()) {
-			AbstractResourceProvider.notifyResourceUsers(getResourceList());
-		}
+		stateChanged();
 		super.thresholdChanged();
 	}
 
