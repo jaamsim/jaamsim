@@ -117,6 +117,7 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 		startTime = GUIFrame.getJaamSimModel().getSimTime();
 
 		evtMan = em;
+		evtMan.pause();
 		evtMan.setTraceListener(this);
 
 		timeUnit = Unit.getDisplayedUnit(TimeUnit.class);
@@ -296,6 +297,7 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 	public void dispose() {
 		super.dispose();
 		killInstance();
+		evtMan.pause();
 		evtMan.setTraceListener(null);
 	}
 
