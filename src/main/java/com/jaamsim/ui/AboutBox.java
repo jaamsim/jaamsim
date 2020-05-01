@@ -33,7 +33,7 @@ import javax.swing.JTextArea;
 public class AboutBox extends FrameBox implements ActionListener {
 	private static AboutBox instance;
 
-	public static final String version = "2020-04";
+	public static final String version = "2020-05";
 
 	public AboutBox() {
 		super("About");
