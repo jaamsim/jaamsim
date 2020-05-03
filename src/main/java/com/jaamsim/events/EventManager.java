@@ -243,7 +243,7 @@ public final class EventManager {
 					ProcessTarget nextTarget = nextEvent.target;
 					if (trcListener != null) {
 						cur.beginCallbacks();
-						trcListener.traceEvent(this, currentTick.get(), nextNode.schedTick, nextNode.priority, nextTarget);
+						trcListener.traceEvent(nextNode.schedTick, nextNode.priority, nextTarget);
 						cur.endCallbacks();
 					}
 

@@ -95,8 +95,8 @@ class EventTraceRecord extends ArrayList<String> implements EventTraceListener {
 	}
 
 	@Override
-	public void traceEvent(EventManager e, long curTick, long tick, int priority, ProcessTarget t) {
-		this.addHeader(e.name, curTick);
+	public void traceEvent(long tick, int priority, ProcessTarget t) {
+		this.addHeader(EventManager.current().name, tick);
 		this.append(String.format("Event\t%d\t%d\t%s", tick, priority, t.getDescription()));
 
 		traceLevel++;

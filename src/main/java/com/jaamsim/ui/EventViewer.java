@@ -643,7 +643,7 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 	}
 
 	@Override
-	public void traceEvent(EventManager e, long curTick, long tick, int priority, ProcessTarget t) {
+	public void traceEvent(long tick, int priority, ProcessTarget t) {
 		recordNanos();
 		addRetiredEvent(new EventData(tick, priority, t.getDescription(), STATE_COMPLETED));
 		setDirty(true);

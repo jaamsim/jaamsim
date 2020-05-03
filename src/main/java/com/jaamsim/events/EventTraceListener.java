@@ -22,13 +22,11 @@ public interface EventTraceListener {
 
 /**
  * Called at the start of execution for an event.
- * @param e - event processor
- * @param curTick - present simulation time in clock ticks
  * @param tick - time for the next event in clock ticks
  * @param priority - priority of the event being executed
  * @param t - holds the method to be executed by the event
  */
-public void traceEvent(EventManager e, long curTick, long tick, int priority, ProcessTarget t);
+public void traceEvent(long tick, int priority, ProcessTarget t);
 
 /**
  * Called when a future event is scheduled by a 'wait' method.

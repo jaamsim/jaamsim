@@ -151,9 +151,9 @@ class EventTracer implements EventTraceListener {
 	}
 
 	@Override
-	public void traceEvent(EventManager e, long curTick, long tick, int priority, ProcessTarget t) {
-		reader.traceEvent(e, curTick, tick, priority, t);
-		this.finish(e);
+	public void traceEvent(long tick, int priority, ProcessTarget t) {
+		reader.traceEvent(tick, priority, t);
+		this.finish(EventManager.current());
 	}
 
 	@Override

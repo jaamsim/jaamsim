@@ -140,8 +140,9 @@ public class EventRecorder implements EventTraceListener {
 	}
 
 	@Override
-	public synchronized void traceEvent(EventManager e, long curTick, long tick, int priority, ProcessTarget t) {
-		this.addHeader(e.name, curTick);
+	public synchronized void traceEvent(long tick, int priority, ProcessTarget t) {
+		EventManager e = EventManager.current();
+		this.addHeader(e.name, tick);
 		this.append(String.format("Event\t%d\t%d\t%s", tick, priority, t.getDescription()));
 		traceLevel++;
 		this.finish(e);
