@@ -101,15 +101,6 @@ public void traceWaitUntil(EventManager e, long tick);
 public void traceSchedUntil(EventManager e, long tick);
 
 /**
- * Called when a conditional event's condition has been satisfied and the event is scheduled for
- * execution.
- * @param e - event processor
- * @param tick - present simulation time in clock ticks
- * @param t - holds the method to be executed by the conditional event
- */
-public void traceWaitUntilEnded(EventManager e, long tick, ProcessTarget t);
-
-/**
  * Called when a conditional event's condition is evaluated.
  * @param e - event processor
  * @param tick - present simulation time in clock ticks

@@ -130,12 +130,6 @@ class EventTraceRecord extends ArrayList<String> implements EventTraceListener {
 	}
 
 	@Override
-	public void traceWaitUntilEnded(EventManager e, long curTick, ProcessTarget t) {
-		this.addHeader(e.name, curTick);
-		this.append(String.format("WaitUntilEnded\t%s", t.getDescription()));
-	}
-
-	@Override
 	public void traceProcessStart(EventManager e, ProcessTarget t, long tick) {
 		this.addHeader(e.name, tick);
 		this.append(String.format("StartProcess\t%s", t.getDescription()));
@@ -159,7 +153,12 @@ class EventTraceRecord extends ArrayList<String> implements EventTraceListener {
 	public void traceConditionalEval(EventManager e, long tick, ProcessTarget t) {}
 
 	@Override
-	public void traceConditionalEvalEnded(boolean wakeup, EventManager e, long tick, ProcessTarget t) {}
+	public void traceConditionalEvalEnded(boolean wakeup, EventManager e, long tick, ProcessTarget t) {
+		if (!wakeup)
+			return;
+		this.addHeader(e.name, tick);
+		this.append(String.format("WaitUntilEnded\t%s", t.getDescription()));
+	}
 
 	boolean isDefaultEventManager() {
 		return eventManagerName.equals("DefaultEventManager");

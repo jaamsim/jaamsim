@@ -349,7 +349,6 @@ public final class EventManager {
 						// and we immediately switch it to this event
 						evt.handle.event = evt;
 					}
-					if (trcListener != null) trcListener.traceWaitUntilEnded(this, currentTick.get(), c.target);
 					node.addEvent(evt, true);
 					continue;
 				}

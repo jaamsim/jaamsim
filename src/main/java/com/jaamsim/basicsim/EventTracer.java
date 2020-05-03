@@ -199,15 +199,14 @@ class EventTracer implements EventTraceListener {
 	}
 
 	@Override
-	public void traceWaitUntilEnded(EventManager e, long curTick, ProcessTarget t) {
-		reader.traceWaitUntilEnded(e, curTick, t);
-		this.finish(e);
-	}
-
-	@Override
 	public void traceConditionalEval(EventManager e, long tick, ProcessTarget t) {}
 
 	@Override
-	public void traceConditionalEvalEnded(boolean wakeup, EventManager e, long tick, ProcessTarget t) {}
+	public void traceConditionalEvalEnded(boolean wakeup, EventManager e, long tick, ProcessTarget t) {
+		if (!wakeup)
+			return;
+		reader.traceConditionalEvalEnded(wakeup, e, tick, t);
+		this.finish(e);
+	}
 
 }

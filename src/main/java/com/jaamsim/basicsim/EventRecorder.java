@@ -179,13 +179,6 @@ public class EventRecorder implements EventTraceListener {
 	}
 
 	@Override
-	public synchronized void traceWaitUntilEnded(EventManager e, long curTick, ProcessTarget t) {
-		this.addHeader(e.name, curTick);
-		this.append(String.format("WaitUntilEnded\t%s", t.getDescription()));
-		this.finish(e);
-	}
-
-	@Override
 	public synchronized void traceProcessStart(EventManager e, ProcessTarget t, long tick) {
 		this.addHeader(e.name, tick);
 		this.append(String.format("StartProcess\t%s", t.getDescription()));
@@ -212,6 +205,12 @@ public class EventRecorder implements EventTraceListener {
 	public void traceConditionalEval(EventManager e, long tick, ProcessTarget t) {}
 
 	@Override
-	public void traceConditionalEvalEnded(boolean wakeup, EventManager e, long tick, ProcessTarget t) {}
+	public void traceConditionalEvalEnded(boolean wakeup, EventManager e, long tick, ProcessTarget t) {
+		if (!wakeup)
+			return;
+		this.addHeader(e.name, tick);
+		this.append(String.format("WaitUntilEnded\t%s", t.getDescription()));
+		this.finish(e);
+	}
 
 }
