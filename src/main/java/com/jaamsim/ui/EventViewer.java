@@ -650,64 +650,64 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 	}
 
 	@Override
-	public void traceWait(EventManager e, long curTick, long tick, int priority, ProcessTarget t) {
+	public void traceWait(long tick, int priority, ProcessTarget t) {
 		recordNanos();
 		setDirty(true);
 	}
 
 	@Override
-	public void traceSchedProcess(EventManager e, long curTick, long tick, int priority, ProcessTarget t) {
+	public void traceSchedProcess(long tick, int priority, ProcessTarget t) {
 		// Don't record anything, but mark dirty as there is a new event somewhere in the event list
 		setDirty(true);
 	}
 
 	@Override
-	public void traceProcessStart(EventManager e, ProcessTarget t, long tick) {
+	public void traceProcessStart(ProcessTarget t) {
 		// FIXME: after returning from the started process we no longer accrue time to the original executing task
 		recordNanos();
 		setDirty(true);
 	}
 
 	@Override
-	public void traceProcessEnd(EventManager e, long tick) {
+	public void traceProcessEnd() {
 		recordNanos();
 		setDirty(true);
 	}
 
 	@Override
-	public void traceInterrupt(EventManager e, long curTick, long tick, int priority, ProcessTarget t) {
+	public void traceInterrupt(long tick, int priority, ProcessTarget t) {
 		// FIXME: after returning from the interrupted event we no longer accrue time to the original executing task
 		recordNanos();
-		addRetiredEvent(new EventData(curTick, priority, t.getDescription(), STATE_INTERRUPTED));
+		addRetiredEvent(new EventData(EventManager.current().getTicks(), priority, t.getDescription(), STATE_INTERRUPTED));
 		setDirty(true);
 	}
 
 	@Override
-	public void traceKill(EventManager e, long curTick, long tick, int priority, ProcessTarget t) {
-		recordRetiredEvent(new EventData(curTick, priority, t.getDescription(), STATE_TERMINATED));
+	public void traceKill(long tick, int priority, ProcessTarget t) {
+		recordRetiredEvent(new EventData(EventManager.current().getTicks(), priority, t.getDescription(), STATE_TERMINATED));
 		setDirty(true);
 	}
 
 	@Override
-	public void traceWaitUntil(EventManager e, long tick) {
+	public void traceWaitUntil() {
 		recordNanos();
 		setDirty(true);
 	}
 
 	@Override
-	public void traceSchedUntil(EventManager e, long tick) {
+	public void traceSchedUntil(ProcessTarget t) {
 		setDirty(true);
 	}
 
 	@Override
-	public void traceConditionalEval(EventManager e, long tick, ProcessTarget t) {
+	public void traceConditionalEval(ProcessTarget t) {
 		recordNanos();
-		addRetiredEvent(new EventData(tick, 0, t.getDescription(), STATE_EVALUATED));
+		addRetiredEvent(new EventData(EventManager.current().getTicks(), 0, t.getDescription(), STATE_EVALUATED));
 		setDirty(true);
 	}
 
 	@Override
-	public void traceConditionalEvalEnded(boolean wakeup, EventManager e, long tick, ProcessTarget t) {
+	public void traceConditionalEvalEnded(boolean wakeup, ProcessTarget t) {
 		recordNanos();
 		setDirty(true);
 	}

@@ -145,9 +145,9 @@ class EventTracer implements EventTraceListener {
 	}
 
 	@Override
-	public void traceWait(EventManager e, long curTick, long tick, int priority, ProcessTarget t) {
-		reader.traceWait(e, curTick, tick, priority, t);
-		this.finish(e);
+	public void traceWait(long tick, int priority, ProcessTarget t) {
+		reader.traceWait(tick, priority, t);
+		this.finish(EventManager.current());
 	}
 
 	@Override
@@ -157,56 +157,56 @@ class EventTracer implements EventTraceListener {
 	}
 
 	@Override
-	public void traceSchedProcess(EventManager e, long curTick, long tick, int priority, ProcessTarget t) {
-		reader.traceSchedProcess(e, curTick, tick, priority, t);
-		this.finish(e);
+	public void traceSchedProcess(long tick, int priority, ProcessTarget t) {
+		reader.traceSchedProcess(tick, priority, t);
+		this.finish(EventManager.current());
 	}
 
 	@Override
-	public void traceProcessStart(EventManager e, ProcessTarget t, long tick) {
-		reader.traceProcessStart(e, t, tick);
-		this.finish(e);
+	public void traceProcessStart(ProcessTarget t) {
+		reader.traceProcessStart(t);
+		this.finish(EventManager.current());
 	}
 
 	@Override
-	public void traceProcessEnd(EventManager e, long tick) {
-		reader.traceProcessEnd(e, tick);
-		this.finish(e);
+	public void traceProcessEnd() {
+		reader.traceProcessEnd();
+		this.finish(EventManager.current());
 	}
 
 	@Override
-	public void traceInterrupt(EventManager e, long curTick, long tick, int priority, ProcessTarget t) {
-		reader.traceInterrupt(e, curTick, tick, priority, t);
-		this.finish(e);
+	public void traceInterrupt(long tick, int priority, ProcessTarget t) {
+		reader.traceInterrupt(tick, priority, t);
+		this.finish(EventManager.current());
 	}
 
 	@Override
-	public void traceKill(EventManager e, long curTick, long tick, int priority, ProcessTarget t) {
-		reader.traceKill(e, curTick, tick, priority, t);
-		this.finish(e);
+	public void traceKill(long tick, int priority, ProcessTarget t) {
+		reader.traceKill(tick, priority, t);
+		this.finish(EventManager.current());
 	}
 
 	@Override
-	public void traceWaitUntil(EventManager e, long tick) {
-		reader.traceWaitUntil(e, tick);
-		this.finish(e);
+	public void traceWaitUntil() {
+		reader.traceWaitUntil();
+		this.finish(EventManager.current());
 	}
 
 	@Override
-	public void traceSchedUntil(EventManager e, long tick) {
-		reader.traceSchedUntil(e, tick);
-		this.finish(e);
+	public void traceSchedUntil(ProcessTarget t) {
+		reader.traceSchedUntil(t);
+		this.finish(EventManager.current());
 	}
 
 	@Override
-	public void traceConditionalEval(EventManager e, long tick, ProcessTarget t) {}
+	public void traceConditionalEval(ProcessTarget t) {}
 
 	@Override
-	public void traceConditionalEvalEnded(boolean wakeup, EventManager e, long tick, ProcessTarget t) {
+	public void traceConditionalEvalEnded(boolean wakeup, ProcessTarget t) {
 		if (!wakeup)
 			return;
-		reader.traceConditionalEvalEnded(wakeup, e, tick, t);
-		this.finish(e);
+		reader.traceConditionalEvalEnded(wakeup, t);
+		this.finish(EventManager.current());
 	}
 
 }

@@ -87,8 +87,8 @@ class EventTraceRecord extends ArrayList<String> implements EventTraceListener {
 	}
 
 	@Override
-	public void traceWait(EventManager e, long curTick, long tick, int priority, ProcessTarget t) {
-		this.addHeader(e.name, curTick);
+	public void traceWait(long tick, int priority, ProcessTarget t) {
+		this.addHeader(EventManager.current().name, EventManager.current().getTicks());
 		traceLevel--;
 
 		this.append(String.format("Wait\t%d\t%d\t%s", tick, priority, EventRecorder.getWaitDescription()));
@@ -103,60 +103,64 @@ class EventTraceRecord extends ArrayList<String> implements EventTraceListener {
 	}
 
 	@Override
-	public void traceInterrupt(EventManager e, long curTick, long tick, int priority, ProcessTarget t) {
-		this.addHeader(e.name, curTick);
+	public void traceInterrupt(long tick, int priority, ProcessTarget t) {
+		this.addHeader(EventManager.current().name, EventManager.current().getTicks());
 		this.append(String.format("Int\t%d\t%d\t%s", tick, priority, t.getDescription()));
 		traceLevel++;
 	}
 
 	@Override
-	public void traceKill(EventManager e, long curTick, long tick, int priority, ProcessTarget t) {
-		this.addHeader(e.name, curTick);
+	public void traceKill(long tick, int priority, ProcessTarget t) {
+		this.addHeader(EventManager.current().name, EventManager.current().getTicks());
 		this.append(String.format("Kill\t%d\t%d\t%s", tick, priority, t.getDescription()));
 	}
 
 	@Override
-	public void traceWaitUntil(EventManager e, long tick) {
-		this.addHeader(e.name, tick);
+	public void traceWaitUntil() {
+		this.addHeader(EventManager.current().name, EventManager.current().getTicks());
 		traceLevel--;
 		this.append("WaitUntil");
 	}
 
 	@Override
-	public void traceSchedUntil(EventManager e, long tick) {
-		this.addHeader(e.name, tick);
+	public void traceSchedUntil(ProcessTarget t) {
+		this.addHeader(EventManager.current().name, EventManager.current().getTicks());
 		traceLevel--;
-		this.append("SchedUntil");
+		this.append(String.format("SchedUntil\t%s", t.getDescription()));
 	}
 
 	@Override
-	public void traceProcessStart(EventManager e, ProcessTarget t, long tick) {
-		this.addHeader(e.name, tick);
+	public void traceProcessStart(ProcessTarget t) {
+		EventManager e = EventManager.current();
+		this.addHeader(e.name, e.getTicks());
 		this.append(String.format("StartProcess\t%s", t.getDescription()));
 		traceLevel++;
 	}
 
 	@Override
-	public void traceProcessEnd(EventManager e, long tick) {
-		this.addHeader(e.name, tick);
+	public void traceProcessEnd() {
+		EventManager e = EventManager.current();
+		this.addHeader(e.name, e.getTicks());
 		traceLevel--;
 		this.append("Exit");
 	}
 
 	@Override
-	public void traceSchedProcess(EventManager e, long curTick, long tick, int priority, ProcessTarget t) {
-		this.addHeader(e.name, curTick);
+	public void traceSchedProcess(long tick, int priority, ProcessTarget t) {
+		EventManager e = EventManager.current();
+		this.addHeader(e.name, e.getTicks());
 		this.append(String.format("SchedProcess\t%d\t%d\t%s", tick, priority, t.getDescription()));
 	}
 
 	@Override
-	public void traceConditionalEval(EventManager e, long tick, ProcessTarget t) {}
+	public void traceConditionalEval(ProcessTarget t) {}
 
 	@Override
-	public void traceConditionalEvalEnded(boolean wakeup, EventManager e, long tick, ProcessTarget t) {
+	public void traceConditionalEvalEnded(boolean wakeup, ProcessTarget t) {
 		if (!wakeup)
 			return;
-		this.addHeader(e.name, tick);
+		EventManager e = EventManager.current();
+		this.addHeader(e.name, e.getTicks());
 		this.append(String.format("WaitUntilEnded\t%s", t.getDescription()));
 	}
 

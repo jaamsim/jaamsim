@@ -172,7 +172,7 @@ public final class EventManager {
 			// Notify the event manager that the process has been completed
 			if (trcListener != null) {
 				cur.beginCallbacks();
-				trcListener.traceProcessEnd(this, currentTick.get());
+				trcListener.traceProcessEnd();
 				cur.endCallbacks();
 			}
 			if (cur.hasNext()) {
@@ -333,10 +333,10 @@ public final class EventManager {
 			for (int i = 0; i < condEvents.size();) {
 				ConditionalEvent c = condEvents.get(i);
 				if (trcListener != null)
-					trcListener.traceConditionalEval(this, currentTick.get(), c.target);
+					trcListener.traceConditionalEval(c.target);
 				boolean bool = c.c.evaluate();
 				if (trcListener != null)
-					trcListener.traceConditionalEvalEnded(bool, this, currentTick.get(), c.target);
+					trcListener.traceConditionalEvalEnded(bool, c.target);
 				if (bool) {
 					condEvents.remove(i);
 					EventNode node = getEventNode(currentTick.get(), 0);
@@ -482,7 +482,7 @@ public final class EventManager {
 
 			if (trcListener != null) {
 				cur.beginCallbacks();
-				trcListener.traceWait(this, currentTick.get(), nextEventTime, priority, t);
+				trcListener.traceWait(nextEventTime, priority, t);
 				cur.endCallbacks();
 			}
 			node.addEvent(evt, fifo);
@@ -536,7 +536,7 @@ public final class EventManager {
 			condEvents.add(evt);
 			if (trcListener != null) {
 				cur.beginCallbacks();
-				trcListener.traceWaitUntil(this, currentTick.get());
+				trcListener.traceWaitUntil();
 				cur.endCallbacks();
 			}
 			captureProcess(cur);
@@ -560,7 +560,7 @@ public final class EventManager {
 			condEvents.add(evt);
 			if (trcListener != null) {
 				cur.beginCallbacks();
-				trcListener.traceSchedUntil(this, currentTick.get());
+				trcListener.traceSchedUntil(t);
 				cur.endCallbacks();
 			}
 		}
@@ -578,7 +578,7 @@ public final class EventManager {
 			cur.checkCallback();
 			if (trcListener != null) {
 				cur.beginCallbacks();
-				trcListener.traceProcessStart(this, t, currentTick.get());
+				trcListener.traceProcessStart(t);
 				cur.endCallbacks();
 			}
 			// Transfer control to the new process
@@ -661,10 +661,10 @@ public final class EventManager {
 	private void trcKill(BaseEvent event) {
 		if (event instanceof Event) {
 			EventNode node = ((Event)event).node;
-			trcListener.traceKill(this, currentTick.get(), node.schedTick, node.priority, event.target);
+			trcListener.traceKill(node.schedTick, node.priority, event.target);
 		}
 		else {
-			trcListener.traceKill(this, currentTick.get(), -1, -1, event.target);
+			trcListener.traceKill(-1, -1, event.target);
 		}
 	}
 
@@ -708,10 +708,10 @@ public final class EventManager {
 	private void trcInterrupt(BaseEvent event) {
 		if (event instanceof Event) {
 			EventNode node = ((Event)event).node;
-			trcListener.traceInterrupt(this, currentTick.get(), node.schedTick, node.priority, event.target);
+			trcListener.traceInterrupt(node.schedTick, node.priority, event.target);
 		}
 		else {
-			trcListener.traceInterrupt(this, currentTick.get(), -1, -1, event.target);
+			trcListener.traceInterrupt(-1, -1, event.target);
 		}
 	}
 
@@ -827,7 +827,7 @@ public final class EventManager {
 		}
 		if (trcListener != null) {
 			cur.beginCallbacks();
-			trcListener.traceSchedProcess(this, currentTick.get(), schedTick, eventPriority, t);
+			trcListener.traceSchedProcess(schedTick, eventPriority, t);
 			cur.endCallbacks();
 		}
 		node.addEvent(evt, fifo);
