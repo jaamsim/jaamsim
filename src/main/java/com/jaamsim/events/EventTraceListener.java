@@ -119,10 +119,11 @@ public void traceConditionalEval(EventManager e, long tick, ProcessTarget t);
 
 /**
  * Called when the evaluation of conditional event's condition has finished.
+ * @param wakeup - true if the conditional event is now scheduled after evaluating the condition
  * @param e - event processor
  * @param tick - present simulation time in clock ticks
  * @param t - holds the method to be executed by the conditional event
  */
-public void traceConditionalEvalEnded(EventManager e, long tick, ProcessTarget t);
+public void traceConditionalEvalEnded(boolean wakeup, EventManager e, long tick, ProcessTarget t);
 
 }

@@ -212,6 +212,6 @@ public class EventRecorder implements EventTraceListener {
 	public void traceConditionalEval(EventManager e, long tick, ProcessTarget t) {}
 
 	@Override
-	public void traceConditionalEvalEnded(EventManager e, long tick, ProcessTarget t) {}
+	public void traceConditionalEvalEnded(boolean wakeup, EventManager e, long tick, ProcessTarget t) {}
 
 }

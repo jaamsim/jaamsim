@@ -710,7 +710,7 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 	}
 
 	@Override
-	public void traceConditionalEvalEnded(EventManager e, long tick, ProcessTarget t) {
+	public void traceConditionalEvalEnded(boolean wakeup, EventManager e, long tick, ProcessTarget t) {
 		recordNanos();
 		setDirty(true);
 	}
