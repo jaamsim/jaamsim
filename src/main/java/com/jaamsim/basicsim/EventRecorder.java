@@ -61,12 +61,13 @@ public class EventRecorder implements EventTraceListener {
 		traces.add(rec.toString());
 	}
 
-	private void addHeader(String name, long internalTime) {
+	private void addHeader() {
 		// Don't write anything if not at level 0
 		if (traceLevel != 0)
-			return;
+			throw new ErrorException("Tracing started incorrectly");
 
-		StringBuilder header = new StringBuilder(name).append("\t").append(internalTime);
+		EventManager e = EventManager.current();
+		StringBuilder header = new StringBuilder(e.name).append("\t").append(e.getTicks());
 		traces.add(header.toString());
 		traceLevel++;
 	}
@@ -132,7 +133,6 @@ public class EventRecorder implements EventTraceListener {
 	@Override
 	public synchronized void traceWait(long tick, int priority, ProcessTarget t) {
 		EventManager e = EventManager.current();
-		this.addHeader(e.name, e.getTicks());
 		traceLevel--;
 
 		this.append(String.format("Wait\t%d\t%d\t%s", tick, priority, getWaitDescription()));
@@ -143,7 +143,7 @@ public class EventRecorder implements EventTraceListener {
 	@Override
 	public synchronized void traceEvent(long tick, int priority, ProcessTarget t) {
 		EventManager e = EventManager.current();
-		this.addHeader(e.name, tick);
+		this.addHeader();
 		this.append(String.format("Event\t%d\t%d\t%s", tick, priority, t.getDescription()));
 		traceLevel++;
 		this.finish(e);
@@ -152,7 +152,6 @@ public class EventRecorder implements EventTraceListener {
 	@Override
 	public synchronized void traceInterrupt(long tick, int priority, ProcessTarget t) {
 		EventManager e = EventManager.current();
-		this.addHeader(e.name, e.getTicks());
 		this.append(String.format("Int\t%d\t%d\t%s", tick, priority, t.getDescription()));
 		traceLevel++;
 		this.finish(e);
@@ -161,7 +160,6 @@ public class EventRecorder implements EventTraceListener {
 	@Override
 	public synchronized void traceKill(long tick, int priority, ProcessTarget t) {
 		EventManager e = EventManager.current();
-		this.addHeader(e.name, e.getTicks());
 		this.append(String.format("Kill\t%d\t%d\t%s", tick, priority, t.getDescription()));
 		this.finish(e);
 	}
@@ -169,7 +167,6 @@ public class EventRecorder implements EventTraceListener {
 	@Override
 	public synchronized void traceWaitUntil() {
 		EventManager e = EventManager.current();
-		this.addHeader(e.name, e.getTicks());
 		traceLevel--;
 		this.append("WaitUntil");
 		this.finish(e);
@@ -178,7 +175,6 @@ public class EventRecorder implements EventTraceListener {
 	@Override
 	public synchronized void traceSchedUntil(ProcessTarget t) {
 		EventManager e = EventManager.current();
-		this.addHeader(e.name, e.getTicks());
 		traceLevel--;
 		this.append(String.format("SchedUntil\t%s", t.getDescription()));
 		this.finish(e);
@@ -187,7 +183,6 @@ public class EventRecorder implements EventTraceListener {
 	@Override
 	public synchronized void traceProcessStart(ProcessTarget t) {
 		EventManager e = EventManager.current();
-		this.addHeader(e.name, e.getTicks());
 		this.append(String.format("StartProcess\t%s", t.getDescription()));
 		traceLevel++;
 		this.finish(e);
@@ -196,7 +191,6 @@ public class EventRecorder implements EventTraceListener {
 	@Override
 	public synchronized void traceProcessEnd() {
 		EventManager e = EventManager.current();
-		this.addHeader(e.name, e.getTicks());
 		traceLevel--;
 		this.append("Exit");
 		this.finish(e);
@@ -205,7 +199,6 @@ public class EventRecorder implements EventTraceListener {
 	@Override
 	public synchronized void traceSchedProcess(long tick, int priority, ProcessTarget t) {
 		EventManager e = EventManager.current();
-		this.addHeader(e.name, e.getTicks());
 		this.append(String.format("SchedProcess\t%d\t%d\t%s", tick, priority, t.getDescription()));
 		this.finish(e);
 	}
@@ -215,12 +208,12 @@ public class EventRecorder implements EventTraceListener {
 
 	@Override
 	public void traceConditionalEvalEnded(boolean wakeup, ProcessTarget t) {
-		if (!wakeup)
-			return;
-		EventManager e = EventManager.current();
-		this.addHeader(e.name, e.getTicks());
-		this.append(String.format("WaitUntilEnded\t%s", t.getDescription()));
-		this.finish(e);
+		// FIXME: restore tracing of ending conditional waits
+		//if (!wakeup)
+		//	return;
+		//EventManager e = EventManager.current();
+		//this.append(String.format("WaitUntilEnded\t%s", t.getDescription()));
+		//this.finish(e);
 	}
 
 }
