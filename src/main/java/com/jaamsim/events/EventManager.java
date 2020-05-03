@@ -561,7 +561,7 @@ public final class EventManager {
 			condEvents.add(evt);
 			if (trcListener != null) {
 				cur.beginCallbacks();
-				trcListener.traceWaitUntil(this, currentTick.get());
+				trcListener.traceSchedUntil(this, currentTick.get());
 				cur.endCallbacks();
 			}
 		}

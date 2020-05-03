@@ -123,6 +123,13 @@ class EventTraceRecord extends ArrayList<String> implements EventTraceListener {
 	}
 
 	@Override
+	public void traceSchedUntil(EventManager e, long tick) {
+		this.addHeader(e.name, tick);
+		traceLevel--;
+		this.append("SchedUntil");
+	}
+
+	@Override
 	public void traceWaitUntilEnded(EventManager e, long curTick, ProcessTarget t) {
 		this.addHeader(e.name, curTick);
 		this.append(String.format("WaitUntilEnded\t%s", t.getDescription()));

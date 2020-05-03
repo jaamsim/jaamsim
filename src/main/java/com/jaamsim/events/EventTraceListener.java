@@ -87,11 +87,18 @@ public void traceInterrupt(EventManager e, long curTick, long tick, int priority
 public void traceKill(EventManager e, long curTick, long tick, int priority, ProcessTarget t);
 
 /**
- * Called when a conditional event has been scheduled by a 'scheduleUntil' or 'waitUntil' method.
+ * Called when a conditional event has been scheduled by a 'waitUntil' method.
  * @param e - event processor
  * @param tick - present simulation time in clock ticks
  */
 public void traceWaitUntil(EventManager e, long tick);
+
+/**
+ * Called when a conditional event has been scheduled by a 'scheduleUntil' method.
+ * @param e - event processor
+ * @param tick - present simulation time in clock ticks
+ */
+public void traceSchedUntil(EventManager e, long tick);
 
 /**
  * Called when a conditional event's condition has been satisfied and the event is scheduled for

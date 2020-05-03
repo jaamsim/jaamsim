@@ -193,6 +193,12 @@ class EventTracer implements EventTraceListener {
 	}
 
 	@Override
+	public void traceSchedUntil(EventManager e, long tick) {
+		reader.traceSchedUntil(e, tick);
+		this.finish(e);
+	}
+
+	@Override
 	public void traceWaitUntilEnded(EventManager e, long curTick, ProcessTarget t) {
 		reader.traceWaitUntilEnded(e, curTick, t);
 		this.finish(e);

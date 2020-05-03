@@ -695,6 +695,11 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 	}
 
 	@Override
+	public void traceSchedUntil(EventManager e, long tick) {
+		setDirty(true);
+	}
+
+	@Override
 	public void traceWaitUntilEnded(EventManager e, long tick, ProcessTarget t) {}
 
 	@Override
