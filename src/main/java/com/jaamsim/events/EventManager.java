@@ -769,8 +769,9 @@ public final class EventManager {
 					throw new ProcessError("Tried to schedule using an EventHandle already in use");
 				handle.event = evt;
 			}
-			if (trcListener != null)
-				trcListener.traceSchedProcess(this, currentTick.get(), schedTick, eventPriority, t);
+			// FIXME: this is the only callback that does not occur in Process context, disable for now
+			//if (trcListener != null)
+			//	trcListener.traceSchedProcess(this, currentTick.get(), schedTick, eventPriority, t);
 			node.addEvent(evt, fifo);
 
 			// During real-time waits an event can be inserted becoming the next event to execute
