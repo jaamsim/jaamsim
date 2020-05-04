@@ -84,6 +84,7 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 	private JToggleButton conditionalsButton;
 	private JToggleButton classButton;
 
+	private int level;
 	private long nanoseconds;
 	private EventData retiredEvent;
 
@@ -545,15 +546,6 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 		tableModel.setRowCount(nanosList.size());
 	}
 
-	public void addRetiredEvent(EventData evtData) {
-
-		// Save the last event that has started execution and begin measuring its execution time
-		retiredEvent = evtData;
-		nanoseconds = System.nanoTime();
-
-		recordRetiredEvent(evtData);
-	}
-
 	private void recordRetiredEvent(EventData evtData) {
 		// Save a list of the last N events that have been executed
 		if (retiredEventDataList.size() >= MAX_RETIRED_EVENTS) {
@@ -563,9 +555,7 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 	}
 
 	public void recordNanos() {
-
-		// Set the elapsed time for the last retired event
-		if (retiredEvent == null)
+		if (level != 0)
 			return;
 		retiredEvent.setNanoseconds(System.nanoTime() - nanoseconds);
 
@@ -644,13 +634,17 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 
 	@Override
 	public void traceEvent(long tick, int priority, ProcessTarget t) {
-		recordNanos();
-		addRetiredEvent(new EventData(tick, priority, t.getDescription(), STATE_COMPLETED));
+		level = 1;
+		retiredEvent = new EventData(tick, priority, t.getDescription(), STATE_COMPLETED);
+		nanoseconds = System.nanoTime();
+
+		recordRetiredEvent(retiredEvent);
 		setDirty(true);
 	}
 
 	@Override
 	public void traceWait(long tick, int priority, ProcessTarget t) {
+		level--;
 		recordNanos();
 		setDirty(true);
 	}
@@ -663,22 +657,21 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 
 	@Override
 	public void traceProcessStart(ProcessTarget t) {
-		// FIXME: after returning from the started process we no longer accrue time to the original executing task
-		recordNanos();
+		level++;
 		setDirty(true);
 	}
 
 	@Override
 	public void traceProcessEnd() {
+		level--;
 		recordNanos();
 		setDirty(true);
 	}
 
 	@Override
 	public void traceInterrupt(long tick, int priority, ProcessTarget t) {
-		// FIXME: after returning from the interrupted event we no longer accrue time to the original executing task
-		recordNanos();
-		addRetiredEvent(new EventData(EventManager.current().getTicks(), priority, t.getDescription(), STATE_INTERRUPTED));
+		level++;
+		recordRetiredEvent(new EventData(EventManager.current().getTicks(), priority, t.getDescription(), STATE_INTERRUPTED));
 		setDirty(true);
 	}
 
@@ -690,6 +683,7 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 
 	@Override
 	public void traceWaitUntil() {
+		level--;
 		recordNanos();
 		setDirty(true);
 	}
@@ -701,13 +695,17 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 
 	@Override
 	public void traceConditionalEval(ProcessTarget t) {
-		recordNanos();
-		addRetiredEvent(new EventData(EventManager.current().getTicks(), 0, t.getDescription(), STATE_EVALUATED));
+		level = 1;
+		retiredEvent = new EventData(EventManager.current().getTicks(), 0, t.getDescription(), STATE_EVALUATED);
+		nanoseconds = System.nanoTime();
+
+		recordRetiredEvent(retiredEvent);
 		setDirty(true);
 	}
 
 	@Override
 	public void traceConditionalEvalEnded(boolean wakeup, ProcessTarget t) {
+		level--;
 		recordNanos();
 		setDirty(true);
 	}
