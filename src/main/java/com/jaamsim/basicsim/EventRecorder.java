@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.events.EventTraceListener;
 import com.jaamsim.events.ProcessTarget;
-import com.jaamsim.input.Input;
 import com.jaamsim.input.InputErrorException;
 
 public class EventRecorder implements EventTraceListener {
@@ -55,25 +54,14 @@ public class EventRecorder implements EventTraceListener {
 		StringBuilder rec = new StringBuilder();
 
 		for (int i = 0; i < traceLevel; i++) {
-			rec.append(Input.SEPARATOR);
+			rec.append("\t");
 		}
 		rec.append(record);
 		traces.add(rec.toString());
 	}
 
-	private void addHeader() {
-		// Don't write anything if not at level 0
-		if (traceLevel != 0)
-			throw new ErrorException("Tracing started incorrectly");
-
-		EventManager e = EventManager.current();
-		StringBuilder header = new StringBuilder(e.name).append("\t").append(e.getTicks());
-		traces.add(header.toString());
-		traceLevel++;
-	}
-
 	private void finish() {
-		if(traceLevel != 1)
+		if(traceLevel != 0)
 			return;
 
 		traces.add("");
@@ -90,7 +78,6 @@ public class EventRecorder implements EventTraceListener {
 		catch( IOException ioe ) {}
 
 		traces.clear();
-		traceLevel--;
 	}
 
 	private static final String entClassName = Entity.class.getName();
@@ -131,32 +118,38 @@ public class EventRecorder implements EventTraceListener {
 	}
 
 	@Override
-	public synchronized void traceWait(long tick, int priority, ProcessTarget t) {
-		traceLevel--;
-
-		this.append(String.format("Wait\t%d\t%d\t%s", tick, priority, getWaitDescription()));
-
-		this.finish();
-	}
-
-	@Override
 	public synchronized void traceEvent(long tick, int priority, ProcessTarget t) {
-		this.addHeader();
+		// Don't write anything if not at level 0
+		if (traceLevel != 0)
+			throw new ErrorException("Tracing started incorrectly");
+
 		this.append(String.format("Event\t%d\t%d\t%s", tick, priority, t.getDescription()));
 		traceLevel++;
-		this.finish();
 	}
 
 	@Override
 	public synchronized void traceInterrupt(long tick, int priority, ProcessTarget t) {
 		this.append(String.format("Int\t%d\t%d\t%s", tick, priority, t.getDescription()));
 		traceLevel++;
+	}
+
+	@Override
+	public synchronized void traceProcessStart(ProcessTarget t) {
+		this.append(String.format("StartProcess\t%s", t.getDescription()));
+		traceLevel++;
+	}
+
+	@Override
+	public synchronized void traceProcessEnd() {
+		traceLevel--;
+		this.append("Exit");
 		this.finish();
 	}
 
 	@Override
-	public synchronized void traceKill(long tick, int priority, ProcessTarget t) {
-		this.append(String.format("Kill\t%d\t%d\t%s", tick, priority, t.getDescription()));
+	public synchronized void traceWait(long tick, int priority, ProcessTarget t) {
+		traceLevel--;
+		this.append(String.format("Wait\t%d\t%d\t%s", tick, priority, getWaitDescription()));
 		this.finish();
 	}
 
@@ -170,27 +163,16 @@ public class EventRecorder implements EventTraceListener {
 	@Override
 	public synchronized void traceSchedUntil(ProcessTarget t) {
 		this.append(String.format("SchedUntil\t%s", t.getDescription()));
-		this.finish();
-	}
-
-	@Override
-	public synchronized void traceProcessStart(ProcessTarget t) {
-		this.append(String.format("StartProcess\t%s", t.getDescription()));
-		traceLevel++;
-		this.finish();
-	}
-
-	@Override
-	public synchronized void traceProcessEnd() {
-		traceLevel--;
-		this.append("Exit");
-		this.finish();
 	}
 
 	@Override
 	public synchronized void traceSchedProcess(long tick, int priority, ProcessTarget t) {
 		this.append(String.format("SchedProcess\t%d\t%d\t%s", tick, priority, t.getDescription()));
-		this.finish();
+	}
+
+	@Override
+	public synchronized void traceKill(long tick, int priority, ProcessTarget t) {
+		this.append(String.format("Kill\t%d\t%d\t%s", tick, priority, t.getDescription()));
 	}
 
 	@Override

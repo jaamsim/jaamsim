@@ -24,7 +24,6 @@ import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.Input;
 
 class EventTraceRecord extends ArrayList<String> implements EventTraceListener {
-	private String eventManagerName;
 	private long internalTime;
 	private String targetName;
 	int traceLevel;
@@ -38,7 +37,7 @@ class EventTraceRecord extends ArrayList<String> implements EventTraceListener {
 
 		// The first line of the trace is always <eventManagerName>\t<InternalSimulationTime>
 		temp = this.get(0).split("\t");
-		eventManagerName = temp[0];
+		//FIXME eventManagerName = temp[0];
 		internalTime = Long.parseLong(temp[1]);
 
 		// Try to parse a target entity and method form the second line
@@ -161,10 +160,6 @@ class EventTraceRecord extends ArrayList<String> implements EventTraceListener {
 		EventManager e = EventManager.current();
 		this.addHeader(e.name, e.getTicks());
 		this.append(String.format("WaitUntilEnded\t%s", t.getDescription()));
-	}
-
-	boolean isDefaultEventManager() {
-		return eventManagerName.equals("DefaultEventManager");
 	}
 
 	long getInternalTime() {

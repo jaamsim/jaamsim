@@ -73,7 +73,7 @@ class EventTracer implements EventTraceListener {
 
 			// Parse the key information from the record
 			temp.parse();
-			if (temp.isDefaultEventManager() && temp.getInternalTime() > bufferTime) {
+			if (temp.getInternalTime() > bufferTime) {
 				bufferTime = temp.getInternalTime();
 			}
 			eventBuffer.add(temp);
@@ -203,10 +203,11 @@ class EventTracer implements EventTraceListener {
 
 	@Override
 	public void traceConditionalEvalEnded(boolean wakeup, ProcessTarget t) {
-		if (!wakeup)
-			return;
-		reader.traceConditionalEvalEnded(wakeup, t);
-		this.finish(EventManager.current());
+		//FIXME: disable conditional tracing under the event recorder is also fixed
+		//if (!wakeup)
+		//	return;
+		//reader.traceConditionalEvalEnded(wakeup, t);
+		//this.finish(EventManager.current());
 	}
 
 }
