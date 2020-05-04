@@ -175,7 +175,6 @@ public class EventRecorder implements EventTraceListener {
 	@Override
 	public synchronized void traceSchedUntil(ProcessTarget t) {
 		EventManager e = EventManager.current();
-		traceLevel--;
 		this.append(String.format("SchedUntil\t%s", t.getDescription()));
 		this.finish(e);
 	}
