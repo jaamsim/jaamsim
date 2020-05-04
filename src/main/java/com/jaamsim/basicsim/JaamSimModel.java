@@ -796,7 +796,14 @@ public class JaamSimModel {
 		ent.parent = parent;
 		ent.setLocalName(name); // Note: child entities will be added to its parent during this call
 
+		// Create any objects associated with this entity and set their inputs
+		// (These objects and their inputs are not be marked as 'edited' to avoid having them saved
+		// to the input file)
+		boolean bool = isRecordEdits();
+		setRecordEdits(false);
 		ent.postDefine();
+		setRecordEdits(bool);
+
 		return ent;
 	}
 
