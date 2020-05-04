@@ -18,6 +18,7 @@ package com.jaamsim.basicsim;
 
 import java.util.ArrayList;
 
+import com.jaamsim.events.EventManager;
 import com.jaamsim.events.EventTraceListener;
 import com.jaamsim.events.ProcessTarget;
 
@@ -57,61 +58,61 @@ class EventTraceRecord extends ArrayList<String> implements EventTraceListener {
 	}
 
 	@Override
-	public void traceWait(long tick, int priority, ProcessTarget t) {
+	public final void traceWait(long tick, int priority, ProcessTarget t) {
 		traceLevel--;
-		this.append(String.format("Wait\t%d\t%d\t%s", tick, priority, EventRecorder.getWaitDescription()));
+		this.append(String.format("Wait\t%d\t%d\t%s", tick, priority, getWaitDescription()));
 	}
 
 	@Override
-	public void traceEvent(long tick, int priority, ProcessTarget t) {
+	public final void traceEvent(long tick, int priority, ProcessTarget t) {
 		this.append(String.format("Event\t%d\t%d\t%s", tick, priority, t.getDescription()));
 		traceLevel++;
 	}
 
 	@Override
-	public void traceInterrupt(long tick, int priority, ProcessTarget t) {
+	public final void traceInterrupt(long tick, int priority, ProcessTarget t) {
 		this.append(String.format("Int\t%d\t%d\t%s", tick, priority, t.getDescription()));
 		traceLevel++;
 	}
 
 	@Override
-	public void traceKill(long tick, int priority, ProcessTarget t) {
+	public final void traceKill(long tick, int priority, ProcessTarget t) {
 		this.append(String.format("Kill\t%d\t%d\t%s", tick, priority, t.getDescription()));
 	}
 
 	@Override
-	public void traceWaitUntil() {
+	public final void traceWaitUntil() {
 		traceLevel--;
 		this.append("WaitUntil");
 	}
 
 	@Override
-	public void traceSchedUntil(ProcessTarget t) {
+	public final void traceSchedUntil(ProcessTarget t) {
 		this.append(String.format("SchedUntil\t%s", t.getDescription()));
 	}
 
 	@Override
-	public void traceProcessStart(ProcessTarget t) {
+	public final void traceProcessStart(ProcessTarget t) {
 		this.append(String.format("StartProcess\t%s", t.getDescription()));
 		traceLevel++;
 	}
 
 	@Override
-	public void traceProcessEnd() {
+	public final void traceProcessEnd() {
 		traceLevel--;
 		this.append("Exit");
 	}
 
 	@Override
-	public void traceSchedProcess(long tick, int priority, ProcessTarget t) {
+	public final void traceSchedProcess(long tick, int priority, ProcessTarget t) {
 		this.append(String.format("SchedProcess\t%d\t%d\t%s", tick, priority, t.getDescription()));
 	}
 
 	@Override
-	public void traceConditionalEval(ProcessTarget t) {}
+	public final void traceConditionalEval(ProcessTarget t) {}
 
 	@Override
-	public void traceConditionalEvalEnded(boolean wakeup, ProcessTarget t) {
+	public final void traceConditionalEvalEnded(boolean wakeup, ProcessTarget t) {
 		//if (!wakeup)
 		//	return;
 		//EventManager e = EventManager.current();
@@ -138,5 +139,42 @@ class EventTraceRecord extends ArrayList<String> implements EventTraceListener {
 			return false;
 
 		return true;
+	}
+
+	private static final String entClassName = Entity.class.getName();
+	private static final String evtManClassName = EventManager.class.getName();
+	static String getWaitDescription() {
+		StackTraceElement[] callStack = Thread.currentThread().getStackTrace();
+		int evtManIdx = -1;
+		// walk out of any EventManager methods
+		for (int i = 0; i < callStack.length; i++) {
+			if (callStack[i].getClassName().equals(evtManClassName)) {
+				evtManIdx = i;
+				continue;
+			}
+
+			// we have walked through the eventManager methods
+			if (evtManIdx != -1)
+				break;
+		}
+
+		// walk past any Entity methods
+		int entIdx = -1;
+		for (int i = evtManIdx + 1; i < callStack.length; i++) {
+			if (callStack[i].getClassName().equals(entClassName)) {
+				entIdx = i;
+				continue;
+			}
+
+			break;
+		}
+
+		StackTraceElement elem;
+		if (entIdx > -1)
+			elem = callStack[entIdx + 1];
+		else
+			elem = callStack[evtManIdx + 1];
+
+		return String.format("%s:%s", elem.getClassName(), elem.getMethodName());
 	}
 }
