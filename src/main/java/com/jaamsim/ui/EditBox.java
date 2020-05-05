@@ -377,6 +377,10 @@ public static class EditTable extends JTable {
 	public TableCellEditor getCellEditor(int row, int col) {
 		Input<?> in = (Input<?>)this.getValueAt(row, col);
 
+		// Is the input locked at its present value?
+		if (in.isLocked())
+			return null;
+
 		CellEditor ret;
 
 		ArrayList<String> array = in.getValidOptions(entity);
