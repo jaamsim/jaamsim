@@ -442,16 +442,11 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 		DefaultTableModel tableModel = (DefaultTableModel) eventList.getModel();
 		String[] data = new String[6];
 		int rowCount = 0;
-		int indNextEvt = -1;
 		selection = -1;
 		for (int i = 0; i < retiredEventDataList.size(); i++) {
 			EventData evtData = retiredEventDataList.get(i);
 			if (isHideConditionals() && evtData.status == STATE_EVALUATED)
 				continue;
-			if (indNextEvt == -1 && evtData.status.isEmpty())
-				indNextEvt = rowCount;
-			if (evtData.equals(selectedEventData) && evtData.status.isEmpty())
-				selection = rowCount;
 			data[0] = Long.toString(evtData.ticks);
 			data[1] = Double.toString(evtMan.ticksToSeconds(evtData.ticks)/factor);
 			data[2] = Integer.toString(evtData.priority);
@@ -461,20 +456,19 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 			tableModel.insertRow(rowCount, data);
 			rowCount++;
 		}
+
+		// after traversing all the retired events save the first row for a pending event
+		int indNextEvt = rowCount;
 		for (int i = 0; i < eventDataList.size(); i++) {
 			EventData evtData = eventDataList.get(i);
-			if (isHideConditionals() && evtData.status == STATE_EVALUATED)
-				continue;
-			if (indNextEvt == -1 && evtData.status.isEmpty())
-				indNextEvt = rowCount;
-			if (evtData.equals(selectedEventData) && evtData.status.isEmpty())
+			if (evtData.equals(selectedEventData))
 				selection = rowCount;
 			data[0] = Long.toString(evtData.ticks);
 			data[1] = Double.toString(evtMan.ticksToSeconds(evtData.ticks)/factor);
 			data[2] = Integer.toString(evtData.priority);
 			data[3] = evtData.description;
-			data[4] = evtData.status;
-			data[5] = evtData.nanoseconds >= 0 ? Long.toString(evtData.nanoseconds) : "";
+			data[4] = "";
+			data[5] = "";
 			tableModel.insertRow(rowCount, data);
 			rowCount++;
 		}
