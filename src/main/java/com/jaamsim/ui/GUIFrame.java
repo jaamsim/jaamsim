@@ -5406,7 +5406,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	private static final Pattern gt = Pattern.compile(">");
 	private static final Pattern br = Pattern.compile("\n");
 
-	private static final String html_replace(String str) {
+	public static final String html_replace(String str) {
 		String desc = str;
 		desc = amp.matcher(desc).replaceAll("&amp;");
 		desc = lt.matcher(desc).replaceAll("&lt;");

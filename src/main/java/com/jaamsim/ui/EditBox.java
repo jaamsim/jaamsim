@@ -241,6 +241,11 @@ public class EditBox extends FrameBox {
 		return String.format("<html><font color=\"red\">%s</font></html>", str);
 	}
 
+	public static String formatLockedText(String str) {
+		str = GUIFrame.html_replace(str);
+		return String.format("<html><font color=\"gray\">%s</font></html>", str);
+	}
+
 private static class CategoryInputs {
 	final String category;
 	final ArrayList<Input<?>> inputs;
