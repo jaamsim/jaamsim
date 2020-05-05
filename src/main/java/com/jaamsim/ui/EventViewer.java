@@ -25,6 +25,7 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -66,7 +67,9 @@ import com.jaamsim.units.Unit;
  */
 public class EventViewer extends FrameBox implements EventTraceListener {
 	private static EventViewer myInstance;
-	private ArrayList<EventData> retiredEventDataList;
+	private final EventData[] retiredEventRing;
+	private int firstRetiredEvent;
+	private int lastRetiredEvent;
 	private boolean dirty;
 	private String timeUnit;
 	private HashMap <String, ProfileData> nanosMap;
@@ -94,7 +97,6 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 	private static final String[] profHeaders= {"Event Type", "% of Total Time", "Rate", "Avg. Nanos"};
 	private static final int[] profColWidth = {200, 100, 100, 100};
 
-	private static final int MAX_RETIRED_EVENTS = 1000;
 	private static final int SCROLL_POSITION = 5;
 
 	private static final String STATE_COMPLETED   = "Completed";    // event executed
@@ -112,7 +114,9 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 		setDefaultCloseOperation( FrameBox.DISPOSE_ON_CLOSE );
 		addWindowListener(FrameBox.getCloseListener("ShowEventViewer"));
 
-		retiredEventDataList = new ArrayList<>();
+		retiredEventRing = new EventData[1024];
+		firstRetiredEvent = 0;
+		lastRetiredEvent = 0;
 		nanosMap = new HashMap <>();
 		classNanosMap = new HashMap <>();
 		startTime = GUIFrame.getJaamSimModel().getSimTime();
@@ -152,7 +156,9 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 		clearButton.addActionListener( new ActionListener() {
 			@Override
 			public void actionPerformed( ActionEvent e ) {
-				retiredEventDataList.clear();
+				Arrays.fill(retiredEventRing, null);
+				firstRetiredEvent = 0;
+				lastRetiredEvent = 0;
 				updateEvents();
 			}
 		});
@@ -287,7 +293,9 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 	@Override
 	public void reset() {
 		super.reset();
-		retiredEventDataList.clear();
+		Arrays.fill(retiredEventRing, null);
+		firstRetiredEvent = 0;
+		lastRetiredEvent = 0;
 		nanosMap.clear();
 		classNanosMap.clear();
 		startTime = 0.0d;
@@ -443,8 +451,8 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 		String[] data = new String[6];
 		int rowCount = 0;
 		selection = -1;
-		for (int i = 0; i < retiredEventDataList.size(); i++) {
-			EventData evtData = retiredEventDataList.get(i);
+		for (int i = firstRetiredEvent; i != lastRetiredEvent; i = (i +1) % retiredEventRing.length) {
+			EventData evtData = retiredEventRing[i];
 			if (isHideConditionals() && evtData.status == STATE_EVALUATED)
 				continue;
 			data[0] = Long.toString(evtData.ticks);
@@ -558,11 +566,10 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 	}
 
 	private void recordRetiredEvent(EventData evtData) {
-		// Save a list of the last N events that have been executed
-		if (retiredEventDataList.size() >= MAX_RETIRED_EVENTS) {
-			retiredEventDataList.remove(0);
-		}
-		retiredEventDataList.add(evtData);
+		retiredEventRing[lastRetiredEvent] = evtData;
+		lastRetiredEvent = (lastRetiredEvent + 1) % retiredEventRing.length;
+		if (lastRetiredEvent == firstRetiredEvent)
+			firstRetiredEvent = (firstRetiredEvent + 1) % retiredEventRing.length;
 	}
 
 	public void recordNanos() {
