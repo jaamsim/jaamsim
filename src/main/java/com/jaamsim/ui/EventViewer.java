@@ -417,9 +417,9 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 	public void updateEvents() {
 
 		// Try to update the event data. If unsuccessful, try again later.
-		ArrayList<EventData> eventDataList = new ArrayList<>(retiredEventDataList);
+		ArrayList<EventData> eventDataList;
 		try {
-			eventDataList.addAll(evtMan.getEventDataList());
+			eventDataList = evtMan.getEventDataList();
 		}
 		catch (Exception e) {
 			setDirty(true);
@@ -444,6 +444,23 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 		int rowCount = 0;
 		int indNextEvt = -1;
 		selection = -1;
+		for (int i = 0; i < retiredEventDataList.size(); i++) {
+			EventData evtData = retiredEventDataList.get(i);
+			if (isHideConditionals() && evtData.status == STATE_EVALUATED)
+				continue;
+			if (indNextEvt == -1 && evtData.status.isEmpty())
+				indNextEvt = rowCount;
+			if (evtData.equals(selectedEventData) && evtData.status.isEmpty())
+				selection = rowCount;
+			data[0] = Long.toString(evtData.ticks);
+			data[1] = Double.toString(evtMan.ticksToSeconds(evtData.ticks)/factor);
+			data[2] = Integer.toString(evtData.priority);
+			data[3] = evtData.description;
+			data[4] = evtData.status;
+			data[5] = evtData.nanoseconds >= 0 ? Long.toString(evtData.nanoseconds) : "";
+			tableModel.insertRow(rowCount, data);
+			rowCount++;
+		}
 		for (int i = 0; i < eventDataList.size(); i++) {
 			EventData evtData = eventDataList.get(i);
 			if (isHideConditionals() && evtData.status == STATE_EVALUATED)
