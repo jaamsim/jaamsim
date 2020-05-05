@@ -16,6 +16,7 @@
  */
 package com.jaamsim.SubModels;
 
+import com.jaamsim.Graphics.Region;
 import com.jaamsim.ProcessFlow.Queue;
 import com.jaamsim.ProcessFlow.Server;
 import com.jaamsim.Samples.SampleConstant;
@@ -87,9 +88,10 @@ public class ServerAndQueue extends CompoundEntity {
 		InputAgent.applyVec3d(end,       "Position", new Vec3d( 1.0d, -0.4d, 0.0d), DistanceUnit.class);
 
 		// Set the scale, size, and position of the sub-model region
-		setDefaultRegionScale(0.5d);
-		setDefaultRegionSize(new Vec3d(3.0d, 2.0d, 0.0d));
-		setDefaultRegionPosition(new Vec3d(0.0d, -1.5d, 0.0d));
+		Region region = getSubModelRegion();
+		InputAgent.applyValue(region, "Scale",    0.5d, "");
+		InputAgent.applyVec3d(region, "Size",     new Vec3d(1.5d,  1.0d, 0.0d), DistanceUnit.class);
+		InputAgent.applyVec3d(region, "Position", new Vec3d(0.0d, -1.5d, 0.0d), DistanceUnit.class);
 
 		// Set the region
 		String regionName = getSubModelRegion().getName();
