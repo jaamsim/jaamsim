@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2019 JaamSim Software Inc.
+ * Copyright (C) 2019-2020 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -80,13 +80,6 @@ public class ServerAndQueue extends CompoundEntity {
 		InputAgent.applyArgs(threshold, "OpenCondition", expString);
 		InputAgent.applyArgs(threshold, "WatchList", queue.getName());
 
-		// Set the component positions within the sub-model region
-		InputAgent.applyVec3d(start,     "Position", new Vec3d(-1.0d, -0.4d, 0.0d), DistanceUnit.class);
-		InputAgent.applyVec3d(queue,     "Position", new Vec3d(-0.5d,  0.4d, 0.0d), DistanceUnit.class);
-		InputAgent.applyVec3d(threshold, "Position", new Vec3d( 0.5d,  0.4d, 0.0d), DistanceUnit.class);
-		InputAgent.applyVec3d(server,    "Position", new Vec3d( 0.0d, -0.4d, 0.0d), DistanceUnit.class);
-		InputAgent.applyVec3d(end,       "Position", new Vec3d( 1.0d, -0.4d, 0.0d), DistanceUnit.class);
-
 		// Set the scale, size, and position of the sub-model region
 		Region region = getSubModelRegion();
 		InputAgent.applyValue(region, "Scale",    0.5d, "");
@@ -94,12 +87,18 @@ public class ServerAndQueue extends CompoundEntity {
 		InputAgent.applyVec3d(region, "Position", new Vec3d(0.0d, -1.5d, 0.0d), DistanceUnit.class);
 
 		// Set the region
-		String regionName = getSubModelRegion().getName();
-		InputAgent.applyArgs(start,     "Region", regionName);
-		InputAgent.applyArgs(queue,     "Region", regionName);
-		InputAgent.applyArgs(threshold, "Region", regionName);
-		InputAgent.applyArgs(server,    "Region", regionName);
-		InputAgent.applyArgs(end,       "Region", regionName);
+		InputAgent.applyArgs(start,     "Region", region.getName());
+		InputAgent.applyArgs(queue,     "Region", region.getName());
+		InputAgent.applyArgs(threshold, "Region", region.getName());
+		InputAgent.applyArgs(server,    "Region", region.getName());
+		InputAgent.applyArgs(end,       "Region", region.getName());
+
+		// Set the component positions within the sub-model region
+		InputAgent.applyVec3d(start,     "Position", new Vec3d(-1.0d, -0.4d, 0.0d), DistanceUnit.class);
+		InputAgent.applyVec3d(queue,     "Position", new Vec3d(-0.5d,  0.4d, 0.0d), DistanceUnit.class);
+		InputAgent.applyVec3d(threshold, "Position", new Vec3d( 0.5d,  0.4d, 0.0d), DistanceUnit.class);
+		InputAgent.applyVec3d(server,    "Position", new Vec3d( 0.0d, -0.4d, 0.0d), DistanceUnit.class);
+		InputAgent.applyVec3d(end,       "Position", new Vec3d( 1.0d, -0.4d, 0.0d), DistanceUnit.class);
 	}
 
 	@Output(name = "MaxQueueLength",
