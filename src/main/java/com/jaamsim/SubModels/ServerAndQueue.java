@@ -34,10 +34,6 @@ import com.jaamsim.units.DistanceUnit;
 
 public class ServerAndQueue extends CompoundEntity {
 
-	@Keyword(description = "The service time required to process an entity.",
-	         exampleList = { "3.0 h", "NormalDistribution1", "'1[s] + 0.5*[TimeSeries1].PresentValue'" })
-	private SampleInput serviceTime;
-
 	@Keyword(description = "The queue length at which the Threshold output closes.",
 	         exampleList = { "3", "[InputValue1].Value" })
 	private SampleInput maxQueueLength;
@@ -63,10 +59,6 @@ public class ServerAndQueue extends CompoundEntity {
 		ExpressionThreshold threshold = InputAgent.generateEntityWithName(simModel, ExpressionThreshold.class, "Threshold", this, true, true);
 		Server server = InputAgent.generateEntityWithName(simModel, Server.class, "Server", this, true, true);
 		SubModelEnd end = InputAgent.generateEntityWithName(simModel, SubModelEnd.class, "End", this, true, true);
-
-		// Add component inputs to the sub-model
-		serviceTime = (SampleInput) server.getInput("ServiceTime");
-		addInput(serviceTime);
 
 		// SubModelStart inputs
 		InputAgent.applyArgs(start, "NextComponent", queue.getName());
