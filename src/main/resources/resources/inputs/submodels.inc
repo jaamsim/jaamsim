@@ -22,9 +22,6 @@ SubModelStart       JavaClass { com.jaamsim.SubModels.SubModelStart } Palette { 
 SubModelEnd         JavaClass { com.jaamsim.SubModels.SubModelEnd   } Palette { 'SubModel Objects'   }  DefaultDisplayModel { SubModelEndIcon          } IconFile { '<res>/images/SubModelEnd-24.png'     } DefaultSize { 0.5 0.5 0.0 m }
 ServerAndQueue      JavaClass { com.jaamsim.SubModels.ServerAndQueue} Palette { 'SubModel Objects'   }  DefaultDisplayModel { ServerAndQueueIcon       } IconFile { '<res>/images/ServerAndQueue-24.png'  }
 
-SubModelStart       DragAndDrop { FALSE }
-SubModelEnd         DragAndDrop { FALSE }
-
 SubModel            Description { 'A collection of objects that can be used in multiple places within a model.' }
 SubModelStart       Description { 'The first component of a sub-model.' }
 SubModelEnd         Description { 'The last component of a sub-model.' }
