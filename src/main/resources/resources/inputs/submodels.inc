@@ -20,7 +20,7 @@ ServerAndQueueIcon  ImageFile { '<res>/images/ServerAndQueue-256.png'}  Transpar
 SubModel            JavaClass { com.jaamsim.SubModels.SubModel      } Palette { 'SubModel Objects'   }  DefaultDisplayModel { SubModelIcon             } IconFile { '<res>/images/SubModel-24.png'        }
 SubModelStart       JavaClass { com.jaamsim.SubModels.SubModelStart } Palette { 'SubModel Objects'   }  DefaultDisplayModel { SubModelStartIcon        } IconFile { '<res>/images/SubModelStart-24.png'   } DefaultSize { 0.5 0.5 0.0 m }
 SubModelEnd         JavaClass { com.jaamsim.SubModels.SubModelEnd   } Palette { 'SubModel Objects'   }  DefaultDisplayModel { SubModelEndIcon          } IconFile { '<res>/images/SubModelEnd-24.png'     } DefaultSize { 0.5 0.5 0.0 m }
-ServerAndQueue      JavaClass { com.jaamsim.SubModels.ServerAndQueue} Palette { 'SubModel Objects'   }  DefaultDisplayModel { ServerAndQueueIcon       } IconFile { '<res>/images/ServerAndQueue-24.png'  }
+ServerAndQueue      JavaClass { com.jaamsim.SubModels.ServerAndQueue} Palette { 'Pre-built SubModels'}  DefaultDisplayModel { ServerAndQueueIcon       } IconFile { '<res>/images/ServerAndQueue-24.png'  }
 
 SubModel            Description { 'A collection of objects that can be used in multiple places within a model.' }
 SubModelStart       Description { 'The first component of a sub-model.' }
