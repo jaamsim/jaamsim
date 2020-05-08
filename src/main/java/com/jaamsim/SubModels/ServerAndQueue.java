@@ -62,15 +62,20 @@ public class ServerAndQueue extends CompoundEntity {
 
 		// SubModelStart inputs
 		InputAgent.applyArgs(start, "NextComponent", queue.getName());
+		start.getInput("NextComponent").setLocked(true);
 
 		// Server inputs
 		InputAgent.applyArgs(server, "WaitQueue", queue.getName());
 		InputAgent.applyArgs(server, "NextComponent", end.getName());
+		server.getInput("WaitQueue").setLocked(true);
+		server.getInput("NextComponent").setLocked(true);
 
 		// Threshold inputs
 		String expString = "sub.[Queue].QueueLength < sub.MaxQueueLength";
 		InputAgent.applyArgs(threshold, "OpenCondition", expString);
 		InputAgent.applyArgs(threshold, "WatchList", queue.getName());
+		threshold.getInput("OpenCondition").setLocked(true);
+		threshold.getInput("WatchList").setLocked(true);
 
 		// Set the scale, size, and position of the sub-model region
 		Region region = getSubModelRegion();
@@ -84,6 +89,11 @@ public class ServerAndQueue extends CompoundEntity {
 		InputAgent.applyArgs(threshold, "Region", region.getName());
 		InputAgent.applyArgs(server,    "Region", region.getName());
 		InputAgent.applyArgs(end,       "Region", region.getName());
+		start.getInput("Region").setLocked(true);
+		queue.getInput("Region").setLocked(true);
+		threshold.getInput("Region").setLocked(true);
+		server.getInput("Region").setLocked(true);
+		end.getInput("Region").setLocked(true);
 
 		// Set the component positions within the sub-model region
 		InputAgent.applyVec3d(start,     "Position", new Vec3d(-1.0d, -0.4d, 0.0d), DistanceUnit.class);
