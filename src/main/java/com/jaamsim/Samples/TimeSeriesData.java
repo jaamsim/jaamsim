@@ -21,12 +21,14 @@ import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.events.EventManager;
 
 public class TimeSeriesData {
+	final EventManager evt;
 	final long[] ticksList;   // time in clock ticks corresponding to each value
 	final double[] valueList;
 	private double maxValue;  // The maximum value that occurs in valueList
 	private double minValue;  // The minimum value that occurs in valueList
 
-	public TimeSeriesData( DoubleVector times, DoubleVector values ) {
+	public TimeSeriesData(DoubleVector times, DoubleVector values, EventManager evt) {
+		this.evt = evt;
 		ticksList = new long[times.size()];
 		for (int i = 0; i < times.size(); i++) {
 			ticksList[i] = Math.round(times.get(i));
@@ -71,7 +73,7 @@ public class TimeSeriesData {
 			if (i > 0) {
 				sb.append(",");
 			}
-			String str = String.format(" {%s[s], %s}", EventManager.ticksToSecs(ticksList[i]), valueList[i]);
+			String str = String.format(" {%s[s], %s}", evt.ticksToSeconds(ticksList[i]), valueList[i]);
 			sb.append(str);
 		}
 		sb.append(" }");

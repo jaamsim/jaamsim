@@ -4682,7 +4682,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 		@Override
 		public void run() {
-			double callBackTime = EventManager.ticksToSecs(frame.simTicks);
+			EventManager evt = GUIFrame.getJaamSimModel().getEventManager();
+			double callBackTime = evt.ticksToSeconds(frame.simTicks);
 
 			frame.setClock(callBackTime);
 			frame.updateControls();

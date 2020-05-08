@@ -142,7 +142,7 @@ public class TimeSeriesDataInput extends Input<TimeSeriesData> {
 					+ "zero. Received %s seconds.", times.get(0));
 
 		// Set the value to a new time series data object
-		value = new TimeSeriesData( times, values );
+		value = new TimeSeriesData(times, values, simModel.getEventManager());
 	}
 
 	public void setUnitType(Class<? extends Unit> u) {
