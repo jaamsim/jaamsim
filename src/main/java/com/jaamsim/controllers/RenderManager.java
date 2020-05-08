@@ -59,7 +59,6 @@ import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.basicsim.ObjectType;
 import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.datatypes.IntegerVector;
-import com.jaamsim.events.EventManager;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
@@ -371,7 +370,8 @@ public class RenderManager implements DragSourceListener {
 					continue;
 				}
 
-				double renderTime = EventManager.ticksToSecs(simTick);
+				JaamSimModel simModel = GUIFrame.getJaamSimModel();
+				double renderTime = simModel.getEventManager().ticksToSeconds(simTick);
 				redraw.beginDrawing();
 
 				ArrayList<View> views = GUIFrame.getInstance().getViews();
@@ -391,7 +391,7 @@ public class RenderManager implements DragSourceListener {
 				long updateNanos = 0;
 				long endNanos = 0;
 
-				int maxRenderableEntities = GUIFrame.getJaamSimModel().getSimulation().getMaxEntitiesToDisplay();
+				int maxRenderableEntities = simModel.getSimulation().getMaxEntitiesToDisplay();
 
 				synchronized (sceneDragLock) {
 
@@ -404,7 +404,7 @@ public class RenderManager implements DragSourceListener {
 					// Update all graphical entities in the simulation
 					// All entities are updated regardless of the number or whether 'Show' is set
 					// (required for Queue, etc.)
-					for (DisplayEntity de : GUIFrame.getJaamSimModel().getClonesOfIterator(DisplayEntity.class)) {
+					for (DisplayEntity de : simModel.getClonesOfIterator(DisplayEntity.class)) {
 						try {
 							de.updateGraphics(renderTime);
 						}
@@ -418,7 +418,7 @@ public class RenderManager implements DragSourceListener {
 
 					int numEnts = 0;
 					// Collect the render proxies for each entity
-					for (DisplayEntity de : GUIFrame.getJaamSimModel().getClonesOfIterator(DisplayEntity.class)) {
+					for (DisplayEntity de : simModel.getClonesOfIterator(DisplayEntity.class)) {
 						if (!de.getShow())
 							continue;
 
@@ -489,7 +489,7 @@ public class RenderManager implements DragSourceListener {
 					dbgMsg.append(" entities at (").append(mouseInfo.x);
 					dbgMsg.append(", ").append(mouseInfo.y).append("): ");
 					for (PickData pd : picks) {
-						Entity ent = GUIFrame.getJaamSimModel().idToEntity(pd.id);
+						Entity ent = simModel.idToEntity(pd.id);
 						if (ent != null)
 							dbgMsg.append(ent.getName());
 
