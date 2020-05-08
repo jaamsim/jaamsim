@@ -915,9 +915,6 @@ public final class EventManager {
 	public final void setTickLength(double tickLength) {
 		secsPerTick = tickLength;
 		ticksPerSecond = Math.round(1e9d / secsPerTick) / 1e9d;
-
-		globalsecsPerTick = secsPerTick;
-		globalticksPerSecond = ticksPerSecond;
 	}
 
 	/**
@@ -932,27 +929,6 @@ public final class EventManager {
 	 */
 	public final double ticksToSeconds(long ticks) {
 		return ticks * secsPerTick;
-	}
-
-	/**
-	 * This whole block is a temporary crutch until we decide how access to time conversion
-	 * should be exposed.
-	 */
-	private static double globalsecsPerTick = 1e-6d;
-	private static double globalticksPerSecond = Math.round(1e9d / globalsecsPerTick) / 1e9d;
-
-	/**
-	 * Convert the number of seconds rounded to the nearest tick. The same as EventManager.secondsToNearestTick()
-	 */
-	public static final long secsToNearestTick(double seconds) {
-		return Math.round(seconds * globalticksPerSecond);
-	}
-
-	/**
-	 * Convert the number of ticks into a value in seconds. The same as EventManager.ticksToSeconds()
-	 */
-	public static final double ticksToSecs(long ticks) {
-		return ticks * globalsecsPerTick;
 	}
 
 	public ArrayList<EventData> getEventDataList() {
