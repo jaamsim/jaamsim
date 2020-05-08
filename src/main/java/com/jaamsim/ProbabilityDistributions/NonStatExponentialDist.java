@@ -21,7 +21,6 @@ import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.Samples.TimeSeries;
 import com.jaamsim.Samples.TimeSeriesProvider;
-import com.jaamsim.events.EventManager;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.TimeSeriesInput;
@@ -113,7 +112,7 @@ public class NonStatExponentialDist extends Distribution {
 		if (ticksNext < ticksNow)
 			error("Negative time advance");
 
-		return EventManager.ticksToSecs(ticksNext - ticksNow);
+		return getJaamSimModel().getEventManager().ticksToSeconds(ticksNext - ticksNow);
 	}
 
 	@Override
@@ -122,7 +121,7 @@ public class NonStatExponentialDist extends Distribution {
 			return Double.NaN;
 		double factor = getScaleFactor(simTime);
 		double arrivals = factor * expectedArrivals.getValue().getMaxValue();
-		double dt = EventManager.ticksToSecs( expectedArrivals.getValue().getMaxTicksValue() );
+		double dt = getJaamSimModel().getEventManager().ticksToSeconds( expectedArrivals.getValue().getMaxTicksValue() );
 		return dt/arrivals;
 	}
 

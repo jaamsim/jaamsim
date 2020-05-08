@@ -92,7 +92,8 @@ public class TimeSeriesDataInput extends Input<TimeSeriesData> {
 			if (Input.isRFC8601DateTime(each.get(0))) {
 				Input.assertCountRange(each, 2, 3);
 				double simTime = Input.parseRFC8601DateTime(simModel, each.get(0));
-				recordus = EventManager.secsToNearestTick(simTime);
+				EventManager evt = simModel.getEventManager();
+				recordus = evt.secondsToNearestTick(simTime);
 				each.remove(0);
 			}
 			// Time input in number/unit format

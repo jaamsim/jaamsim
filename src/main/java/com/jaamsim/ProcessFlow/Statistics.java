@@ -136,6 +136,7 @@ public class Statistics extends LinkedComponent {
 		}
 
 		// Update the statistics for each of the entity's states
+		EventManager evt = EventManager.current();
 		if (ent instanceof StateEntity) {
 			StateEntity se = (StateEntity) ent;
 			if (recordEntityStateTimes.getValue()) {
@@ -149,7 +150,7 @@ public class Statistics extends LinkedComponent {
 					if (resetEntityStateTimes.getValue()) {
 						ticks = se.getCurrentCycleTicks(rec);
 					}
-					double dur = EventManager.ticksToSecs(ticks);
+					double dur = evt.ticksToSeconds(ticks);
 					durStats.addValue(dur);
 				}
 			}

@@ -27,7 +27,6 @@ import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.StringProviders.StringProvListInput;
 import com.jaamsim.datatypes.IntegerVector;
-import com.jaamsim.events.EventManager;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.DateInput;
 import com.jaamsim.input.DirInput;
@@ -696,7 +695,7 @@ public class Simulation extends Entity {
 	 */
 	public boolean canResume(long simTicks) {
 		double totalDur = getRunDuration() + getInitializationTime();
-		return simTicks < EventManager.secsToNearestTick(totalDur);
+		return simTicks < this.getJaamSimModel().getEventManager().secondsToNearestTick(totalDur);
 	}
 
 	public int getSubstreamNumber() {

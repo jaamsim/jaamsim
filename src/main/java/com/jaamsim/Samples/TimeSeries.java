@@ -153,7 +153,7 @@ public class TimeSeries extends DisplayEntity implements TimeSeriesProvider, Sub
 		long ticks = this.getSimTicks();
 		long durTicks = getNextChangeAfterTicks(ticks) - ticks;
 		if (isTraceFlag())
-			trace(0, "waitForNextValue - dur=%.6f", EventManager.ticksToSecs(durTicks));
+			trace(0, "waitForNextValue - dur=%.6f", EventManager.current().ticksToSeconds(durTicks));
 		if (durTicks == 0L)
 			return;
 		this.scheduleProcessTicks(durTicks, 0, waitForNextValueTarget);
@@ -183,13 +183,15 @@ public class TimeSeries extends DisplayEntity implements TimeSeriesProvider, Sub
 	}
 
 	private long getTicks(double simTime) {
-		return EventManager.secsToNearestTick(simTime);
+		EventManager evt = this.getJaamSimModel().getEventManager();
+		return evt.secondsToNearestTick(simTime);
 	}
 
 	private double getSimTime(long ticks) {
 		if (ticks == Long.MAX_VALUE)
 			return Double.POSITIVE_INFINITY;
-		return EventManager.ticksToSecs(ticks);
+		EventManager evt = this.getJaamSimModel().getEventManager();
+		return evt.ticksToSeconds(ticks);
 	}
 
 	/**
@@ -514,7 +516,8 @@ public class TimeSeries extends DisplayEntity implements TimeSeriesProvider, Sub
 	public final double getNextValue(double simTime) {
 		if (value.getValue() == null)
 			return Double.NaN;
-		long simTicks = EventManager.secsToNearestTick(simTime);
+		EventManager evt = this.getJaamSimModel().getEventManager();
+		long simTicks = evt.secondsToNearestTick(simTime);
 		long nextTicks = getNextChangeAfterTicks(simTicks);
 		return this.getValueForTicks(nextTicks);
 	}

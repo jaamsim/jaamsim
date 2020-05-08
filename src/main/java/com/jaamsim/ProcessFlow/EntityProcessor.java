@@ -157,7 +157,7 @@ public class EntityProcessor extends AbstractLinkedResourceUser {
 
 		// Set the service duration
 		double dur = serviceTime.getValue().getNextSample(simTime);
-		long ticks = EventManager.secsToNearestTick(dur);
+		long ticks = EventManager.current().secondsToNearestTick(dur);
 
 		// Add the entity to the list of entities to be processed
 		newEntryList.add(new ProcessorEntry(ent, getSeizedUnits(simTime), ticks));
@@ -188,7 +188,8 @@ public class EntityProcessor extends AbstractLinkedResourceUser {
 		for (ProcessorEntry entry : entryList) {
 			ticks = Math.min(ticks, entry.remainingTicks);
 		}
-		return EventManager.ticksToSecs(ticks);
+		EventManager evt = this.getJaamSimModel().getEventManager();
+		return evt.ticksToSeconds(ticks);
 	}
 
 	@Override
@@ -197,7 +198,7 @@ public class EntityProcessor extends AbstractLinkedResourceUser {
 
 		// Decrement the remaining durations for each of the entities
 		if (isTraceFlag()) traceLine(3, "BEFORE - entryList=%s", entryList);
-		long delta = EventManager.secsToNearestTick(dt);
+		long delta = EventManager.current().secondsToNearestTick(dt);
 		for (ProcessorEntry entry : entryList) {
 			entry.remainingTicks -= delta;
 		}
@@ -382,8 +383,9 @@ public class EntityProcessor extends AbstractLinkedResourceUser {
 		if (isBusy()) {
 			dt = simTime - getLastUpdateTime();
 		}
+		EventManager evt = this.getJaamSimModel().getEventManager();
 		for (int i = 0; i < entryList.size(); i++) {
-			ret[i] = EventManager.ticksToSecs(entryList.get(i).remainingTicks) - dt;
+			ret[i] = evt.ticksToSeconds(entryList.get(i).remainingTicks) - dt;
 		}
 		return ret;
 	}

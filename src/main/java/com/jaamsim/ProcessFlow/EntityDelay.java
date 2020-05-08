@@ -165,12 +165,12 @@ public class EntityDelay extends LinkedComponent implements LineEntity {
 		// Select the delay time for this entity
 		double simTime = this.getSimTime();
 		double dur = duration.getValue().getNextSample(simTime);
-		long durTicks = EventManager.secsToNearestTick(dur);
+		long durTicks = EventManager.current().secondsToNearestTick(dur);
 
 		// Adjust the duration for the previous entity's exit time
 		if (!allowOvertaking.getValue()) {
 			double sep = minSeparation.getValue().getNextSample(simTime);
-			long sepTicks = EventManager.secsToNearestTick(sep);
+			long sepTicks = EventManager.current().secondsToNearestTick(sep);
 			long simTicks = getSimTicks();
 			durTicks = Math.max(durTicks, exitTicks - simTicks + sepTicks);
 			exitTicks = simTicks + durTicks;
@@ -178,7 +178,7 @@ public class EntityDelay extends LinkedComponent implements LineEntity {
 
 		// Add the entity to the list of entities being delayed
 		if (animation.getValue()) {
-			dur = EventManager.ticksToSecs(durTicks);
+			dur = EventManager.current().ticksToSeconds(durTicks);
 			EntityDelayEntry entry = new EntityDelayEntry(ent, simTime, dur);
 			entityMap.put(ent.getEntityNumber(), entry);
 		}

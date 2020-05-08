@@ -403,7 +403,7 @@ public abstract class StateEntity extends DisplayEntity implements StateUser {
 	 */
 	public double getWorkingTime() {
 		long ticks = getWorkingTicks(getSimTicks());
-		return EventManager.ticksToSecs(ticks);
+		return EventManager.current().ticksToSeconds(ticks);
 	}
 
 	/**
@@ -414,12 +414,13 @@ public abstract class StateEntity extends DisplayEntity implements StateUser {
 	 * @return
 	 */
 	public double getTimeInState(double simTime, String state) {
-		long simTicks = EventManager.secsToNearestTick(simTime);
+		EventManager evt = this.getJaamSimModel().getEventManager();
+		long simTicks = evt.secondsToNearestTick(simTime);
 		StateRecord rec = states.get(state);
 		if (rec == null)
 			return 0.0;
 		long ticks = getTicksInState(simTicks, rec);
-		return EventManager.ticksToSecs(ticks);
+		return evt.ticksToSeconds(ticks);
 	}
 
 	/**
@@ -430,7 +431,8 @@ public abstract class StateEntity extends DisplayEntity implements StateUser {
 	 * @return total time
 	 */
 	public double getTotalTimeInState(double simTime, String state) {
-		long simTicks = EventManager.secsToNearestTick(simTime);
+		EventManager evt = this.getJaamSimModel().getEventManager();
+		long simTicks = evt.secondsToNearestTick(simTime);
 		long ticks = 0L;
 		Iterator<Entry<String, StateRecord>> itr = states.entrySet().iterator();
 		while (itr.hasNext()) {
@@ -439,7 +441,7 @@ public abstract class StateEntity extends DisplayEntity implements StateUser {
 				ticks += getTicksInState(simTicks, pair.getValue());
 			}
 		}
-		return EventManager.ticksToSecs(ticks);
+		return evt.ticksToSeconds(ticks);
 	}
 
 	/**
@@ -449,12 +451,13 @@ public abstract class StateEntity extends DisplayEntity implements StateUser {
 	 * @return total time in any state
 	 */
 	public double getTotalTime(double simTime) {
-		long simTicks = EventManager.secsToNearestTick(simTime);
+		EventManager evt = this.getJaamSimModel().getEventManager();
+		long simTicks = evt.secondsToNearestTick(simTime);
 		long ticks = 0L;
 		for (StateRecord rec : states.values()) {
 			ticks += getTicksInState(simTicks, rec);
 		}
-		return EventManager.ticksToSecs(ticks);
+		return evt.ticksToSeconds(ticks);
 	}
 
 	@Output(name = "State",
@@ -488,9 +491,10 @@ public abstract class StateEntity extends DisplayEntity implements StateUser {
 		if (presentState == null) {
 			return 0.0;
 		}
-		long simTicks = EventManager.secsToNearestTick(simTime);
+		EventManager evt = this.getJaamSimModel().getEventManager();
+		long simTicks = evt.secondsToNearestTick(simTime);
 		long ticks = getWorkingTicks(simTicks);
-		return EventManager.ticksToSecs(ticks);
+		return evt.ticksToSeconds(ticks);
 	}
 
 	@Output(name = "StateTimes",
@@ -500,13 +504,14 @@ public abstract class StateEntity extends DisplayEntity implements StateUser {
 	  reportable = true,
 	    sequence = 3)
 	public LinkedHashMap<String, Double> getStateTimes(double simTime) {
-		long simTicks = EventManager.secsToNearestTick(simTime);
+		EventManager evt = this.getJaamSimModel().getEventManager();
+		long simTicks = evt.secondsToNearestTick(simTime);
 		LinkedHashMap<String, Double> ret = new LinkedHashMap<>(states.size());
 		for (StateRecord stateRec : this.getStateRecs()) {
 			long ticks = getTicksInState(simTicks, stateRec);
 			if (useCurrentCycle)
 				ticks = getCurrentCycleTicks(simTicks, stateRec);
-			Double t = EventManager.ticksToSecs(ticks);
+			Double t = evt.ticksToSeconds(ticks);
 			ret.put(stateRec.getName(), t);
 		}
 		return ret;
@@ -520,7 +525,8 @@ public abstract class StateEntity extends DisplayEntity implements StateUser {
 	  reportable = true,
 	    sequence = 4)
 	public double getTotalTimeInCycle(double simTime) {
-		long simTicks = EventManager.secsToNearestTick(simTime);
+		EventManager evt = this.getJaamSimModel().getEventManager();
+		long simTicks = evt.secondsToNearestTick(simTime);
 		long ticks = 0L;
 		for (StateRecord stateRec : states.values()) {
 			if (useCurrentCycle) {
@@ -530,7 +536,7 @@ public abstract class StateEntity extends DisplayEntity implements StateUser {
 				ticks += getTicksInState(simTicks, stateRec);
 			}
 		}
-		return EventManager.ticksToSecs(ticks);
+		return evt.ticksToSeconds(ticks);
 	}
 
 }

@@ -191,7 +191,8 @@ public class TimeSeriesThreshold extends Threshold {
 	 * @return TRUE if open, FALSE if closed
 	 */
 	public boolean isOpenAtTime(double simTime) {
-		return isOpenAtTicks(EventManager.secsToNearestTick(simTime));
+		EventManager evt = this.getJaamSimModel().getEventManager();
+		return isOpenAtTicks(evt.secondsToNearestTick(simTime));
 	}
 
 	/**
@@ -205,7 +206,8 @@ public class TimeSeriesThreshold extends Threshold {
 	private boolean isOpenAtTicks(long ticks) {
 
 		// Add offset from input
-		ticks += EventManager.secsToNearestTick(offset.getValue());
+		EventManager evt = this.getJaamSimModel().getEventManager();
+		ticks += evt.secondsToNearestTick(offset.getValue());
 		ticks = Math.max(ticks, 0);
 
 		long changeTime = ticks;
@@ -215,7 +217,7 @@ public class TimeSeriesThreshold extends Threshold {
 			return false;
 
 		// If there is no lookahead, then the threshold is open
-		long lookAheadInTicks = EventManager.secsToNearestTick(lookAhead.getValue());
+		long lookAheadInTicks = evt.secondsToNearestTick(lookAhead.getValue());
 		if (lookAheadInTicks == 0)
 			return true;
 
@@ -252,15 +254,16 @@ public class TimeSeriesThreshold extends Threshold {
 		if (this.isOpenAtTicks(ticks))
 			return 0;
 
+		EventManager evt = this.getJaamSimModel().getEventManager();
 		// Add offset from input
-		ticks += EventManager.secsToNearestTick(offset.getValue());
+		ticks += evt.secondsToNearestTick(offset.getValue());
 		ticks = Math.max(ticks, 0);
 
 		// Threshold is currently closed. Find the next open point
 		long openTime = -1;
 		long changeTime = ticks;
 		long maxTicksValueFromTimeSeries = this.getMaxTicksValueFromTimeSeries();
-		long lookAheadInTicks = EventManager.secsToNearestTick(lookAhead.getValue());
+		long lookAheadInTicks = evt.secondsToNearestTick(lookAhead.getValue());
 		while( true ) {
 			changeTime = this.getNextChangeAfterTicks(changeTime);
 
@@ -342,13 +345,14 @@ public class TimeSeriesThreshold extends Threshold {
 			return 0;
 
 		// Add offset from input
-		ticks += EventManager.secsToNearestTick(offset.getValue());
+		EventManager evt = this.getJaamSimModel().getEventManager();
+		ticks += evt.secondsToNearestTick(offset.getValue());
 		ticks = Math.max(ticks, 0);
 
 		// Find the next change point after startTime
 		long changeTime = ticks;
 		long maxTicksValueFromTimeSeries = this.getMaxTicksValueFromTimeSeries();
-		long lookAheadInTicks = EventManager.secsToNearestTick(lookAhead.getValue());
+		long lookAheadInTicks = evt.secondsToNearestTick(lookAhead.getValue());
 		while( true ) {
 			changeTime = this.getNextChangeAfterTicks(changeTime);
 
@@ -386,8 +390,9 @@ public class TimeSeriesThreshold extends Threshold {
 		if (this.isAlwaysOpen())
 			return endTime - startTime;
 
-		long ticks = EventManager.secsToNearestTick(startTime);
-		long endTicks = EventManager.secsToNearestTick(endTime);
+		EventManager evt = this.getJaamSimModel().getEventManager();
+		long ticks = evt.secondsToNearestTick(startTime);
+		long endTicks = evt.secondsToNearestTick(endTime);
 		long openTicks = 0;
 
 		boolean done = false;
@@ -413,7 +418,7 @@ public class TimeSeriesThreshold extends Threshold {
 				}
 			}
 		}
-		return EventManager.ticksToSecs(openTicks);
+		return evt.ticksToSeconds(openTicks);
 	}
 
 	/**
@@ -423,7 +428,8 @@ public class TimeSeriesThreshold extends Threshold {
 	 * @return the last simulation time in seconds that a change occurred
 	 */
 	public double getLastChangeBeforeTime(double simTime) {
-		return EventManager.ticksToSecs(getLastChangeBeforeTicks(EventManager.secsToNearestTick(simTime)));
+		EventManager evt = this.getJaamSimModel().getEventManager();
+		return evt.ticksToSeconds(getLastChangeBeforeTicks(evt.secondsToNearestTick(simTime)));
 	}
 
 	/**
@@ -446,7 +452,8 @@ public class TimeSeriesThreshold extends Threshold {
 	 * @return the next simulation time in seconds that a change will occur
 	 */
 	public double getNextChangeAfterTime(double simTime) {
-		return EventManager.ticksToSecs(getNextChangeAfterTicks(EventManager.secsToNearestTick(simTime)));
+		EventManager evt = this.getJaamSimModel().getEventManager();
+		return evt.ticksToSeconds(getNextChangeAfterTicks(evt.secondsToNearestTick(simTime)));
 	}
 
 	/**
@@ -487,10 +494,11 @@ public class TimeSeriesThreshold extends Threshold {
 		double maxOpenLimitVal = maxOpenLimit.getValue().getValueForTicks(ticks);
 
 		// Error check that threshold limits remain consistent
-		if (minOpenLimitVal > maxOpenLimitVal)
+		if (minOpenLimitVal > maxOpenLimitVal) {
+			EventManager evt = this.getJaamSimModel().getEventManager();
 			error("MaxOpenLimit must be larger than MinOpenLimit. MaxOpenLimit: %s, MinOpenLimit: %s, time: %s",
-					maxOpenLimitVal, minOpenLimitVal, EventManager.ticksToSecs(ticks));
-
+					maxOpenLimitVal, minOpenLimitVal, evt.ticksToSeconds(ticks));
+		}
 		return (value >= minOpenLimitVal) && (value <= maxOpenLimitVal);
 	}
 
@@ -511,9 +519,10 @@ public class TimeSeriesThreshold extends Threshold {
 	public double getNextOpenTime(double simTime) {
 		if (timeSeries.getValue() == null)
 			return Double.NaN;
-		long simTicks = EventManager.secsToNearestTick(simTime);
+		EventManager evt = this.getJaamSimModel().getEventManager();
+		long simTicks = evt.secondsToNearestTick(simTime);
 		long ticks = simTicks + calcClosedTicksFromTicks(simTicks);
-		return EventManager.ticksToSecs(ticks);
+		return evt.ticksToSeconds(ticks);
 	}
 
 	@Output(name = "NextCloseTime",
@@ -523,9 +532,10 @@ public class TimeSeriesThreshold extends Threshold {
 	public double getNextCloseTime(double simTime) {
 		if (timeSeries.getValue() == null)
 			return Double.NaN;
-		long simTicks = EventManager.secsToNearestTick(simTime);
+		EventManager evt = this.getJaamSimModel().getEventManager();
+		long simTicks = evt.secondsToNearestTick(simTime);
 		long ticks = simTicks + calcOpenTicksFromTicks(simTicks);
-		return EventManager.ticksToSecs(ticks);
+		return evt.ticksToSeconds(ticks);
 	}
 
 }

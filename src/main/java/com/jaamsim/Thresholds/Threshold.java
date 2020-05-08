@@ -208,7 +208,8 @@ public class Threshold extends StateEntity implements SubjectEntity {
 	  reportable = true,
 	    sequence = 1)
 	public double getOpenFraction(double simTime) {
-		long simTicks = EventManager.secsToNearestTick(simTime);
+		EventManager evt = this.getJaamSimModel().getEventManager();
+		long simTicks = evt.secondsToNearestTick(simTime);
 		long openTicks = this.getTicksInState(simTicks, getState("Open"));
 		long closedTicks = this.getTicksInState(simTicks, getState("Closed"));
 		long totTicks = openTicks + closedTicks;
@@ -221,7 +222,8 @@ public class Threshold extends StateEntity implements SubjectEntity {
 	    unitType = DimensionlessUnit.class,
 	    sequence = 2)
 	public double getClosedFraction(double simTime) {
-		long simTicks = EventManager.secsToNearestTick(simTime);
+		EventManager evt = this.getJaamSimModel().getEventManager();
+		long simTicks = evt.secondsToNearestTick(simTime);
 		long openTicks = this.getTicksInState(simTicks, getState("Open"));
 		long closedTicks = this.getTicksInState(simTicks, getState("Closed"));
 		long totTicks = openTicks + closedTicks;
