@@ -933,7 +933,7 @@ public class RenderManager implements DragSourceListener {
 	 */
 	public double getOffsetForStringPosition(TessFontKey fontKey, double textHeight, String string, int i) {
 		StringBuilder sb = new StringBuilder(string);
-		return getRenderedStringLength(fontKey, textHeight, sb.substring(0, i).toString());
+		return getRenderedStringLength(fontKey, textHeight, sb.substring(0, i));
 	}
 
 	private void logException(Throwable t) {

@@ -250,7 +250,7 @@ public class EditableTextDelegate implements EditableText {
 		int start = Math.min(insertPos, insertPos + numSelected);
 		int end = Math.max(insertPos, insertPos + numSelected);
 		StringBuilder sb = new StringBuilder(text);
-		String copiedText = sb.substring(start, end).toString();
+		String copiedText = sb.substring(start, end);
 		clpbrd.setContents(new StringSelection(copiedText), null);
 	}
 
