@@ -350,6 +350,18 @@ public class Entity {
 			}
 			tmp.clear();
 			sourceInput.getValueTokens(tmp);
+
+			// Replace references to the parent entity
+			if (this.getParent() != ent.getParent()) {
+				String oldParent = ent.getParent().getName();
+				String newParent = this.getParent().getName();
+				for (int i = 0; i < tmp.size(); i++) {
+					String str = tmp.get(i);
+					str = str.replace(oldParent, newParent);
+					tmp.set(i, str);
+				}
+			}
+
 			KeywordIndex kw = new KeywordIndex(key, tmp, null);
 			InputAgent.apply(this, targetInput, kw);
 		}
