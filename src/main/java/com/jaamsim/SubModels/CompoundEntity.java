@@ -87,6 +87,13 @@ public abstract class CompoundEntity extends LinkedComponent {
 			showComponents(showComponents.getValue());
 			return;
 		}
+
+		if (in == regionInput) {
+			if (getCurrentRegion() == null)
+				return;
+			InputAgent.applyArgs(smRegion, "Region", getCurrentRegion().getName());
+			return;
+		}
 	}
 
 	@Override
