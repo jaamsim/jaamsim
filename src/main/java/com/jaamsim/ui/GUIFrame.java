@@ -5029,28 +5029,22 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	}
 
 	public void copyChildren(Entity parent0, Entity parent1) {
+
+		// Create the copied children
 		for (Entity child : parent0.getChildren()) {
 			if (child.isGenerated() || child instanceof EntityLabel)
 				continue;
 
 			// Construct the new child's name
-			String name = child.getLocalName();
-			name = parent1.getName() + "." + name;
+			String localName = child.getLocalName();
+			String name = parent1.getName() + "." + localName;
 
-			// Create the new child and copy the inputs
+			// Create the new child
 			InputAgent.storeAndExecute(new DefineCommand(sim, child.getClass(), name));
-			Entity copiedChild = sim.getNamedEntity(name);
-			copiedChild.copyInputs(child);
 
+			// Add a label if necessary
 			if (child instanceof DisplayEntity) {
-
-				// Set the region
-				if (parent1 instanceof CompoundEntity) {
-					Region region = ((CompoundEntity) parent1).getSubModelRegion();
-					InputAgent.applyArgs(copiedChild, "Region", region.getName());
-				}
-
-				// Add a label if necessary
+				Entity copiedChild = parent1.getChild(localName);
 				EntityLabel label = EntityLabel.getLabel((DisplayEntity) child);
 				if (label != null) {
 					EntityLabel newLabel = EntityLabel.createLabel((DisplayEntity) copiedChild);
@@ -5058,8 +5052,21 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 					newLabel.setShow(label.getShow());
 				}
 			}
+		}
 
-			// Copy the child's children
+		// Set the early and normal inputs for each child
+		for (int seq = 0; seq < 2; seq++) {
+			for (Entity child : parent0.getChildren()) {
+				String localName = child.getLocalName();
+				Entity copiedChild = parent1.getChild(localName);
+				copiedChild.copyInputs(child, seq, false);
+			}
+		}
+
+		// Copy each child's children
+		for (Entity child : parent0.getChildren()) {
+			String localName = child.getLocalName();
+			Entity copiedChild = parent1.getChild(localName);
 			copyChildren(child, copiedChild);
 		}
 	}
