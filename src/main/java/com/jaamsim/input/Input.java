@@ -501,6 +501,12 @@ public abstract class Input<T> {
 		return isDef;
 	}
 
+	public int getSequenceNumber() {
+		if (InputAgent.isEarlyInput(this))
+			return 0;
+		return 1;
+	}
+
 	public ArrayList<String> getValueTokens() {
 		ArrayList<String> ret = new ArrayList<>();
 		getValueTokens(ret);
