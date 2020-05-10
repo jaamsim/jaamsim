@@ -67,6 +67,7 @@ import com.jaamsim.units.Unit;
  */
 public class EventViewer extends FrameBox implements EventTraceListener {
 	private static EventViewer myInstance;
+	private final ArrayList<EventData> pendingEvents;
 	private final EventData[] retiredEventRing;
 	private int firstRetiredEvent;
 	private int lastRetiredEvent;
@@ -114,6 +115,7 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 		setDefaultCloseOperation( FrameBox.DISPOSE_ON_CLOSE );
 		addWindowListener(FrameBox.getCloseListener("ShowEventViewer"));
 
+		pendingEvents = new ArrayList<>();
 		retiredEventRing = new EventData[1024];
 		firstRetiredEvent = 0;
 		lastRetiredEvent = 0;
@@ -425,9 +427,9 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 	public void updateEvents() {
 
 		// Try to update the event data. If unsuccessful, try again later.
-		ArrayList<EventData> eventDataList;
 		try {
-			eventDataList = evtMan.getEventDataList();
+			pendingEvents.clear();
+			evtMan.getEventDataList(pendingEvents);
 		}
 		catch (Exception e) {
 			setDirty(true);
@@ -467,8 +469,8 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 
 		// after traversing all the retired events save the first row for a pending event
 		int indNextEvt = rowCount;
-		for (int i = 0; i < eventDataList.size(); i++) {
-			EventData evtData = eventDataList.get(i);
+		for (int i = 0; i < pendingEvents.size(); i++) {
+			EventData evtData = pendingEvents.get(i);
 			if (evtData.equals(selectedEventData))
 				selection = rowCount;
 			data[0] = Long.toString(evtData.ticks);
@@ -480,6 +482,7 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 			tableModel.insertRow(rowCount, data);
 			rowCount++;
 		}
+		pendingEvents.clear();
 		tableModel.setRowCount(rowCount);
 
 		// Reselect the previously selected row in its new position

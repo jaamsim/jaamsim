@@ -931,18 +931,21 @@ public final class EventManager {
 		return ticks * secsPerTick;
 	}
 
-	public ArrayList<EventData> getEventDataList() {
+	/**
+	 * Apppend EventData objects to the provided list for all pending events.
+	 * @param events List to append EventData objects to
+	 */
+	public final void getEventDataList(ArrayList<EventData> events) {
 		// Unsynchronized for use by the Event Viewer
-		EventDataBuilder lb = new EventDataBuilder();
+		EventDataBuilder lb = new EventDataBuilder(events);
 		eventTree.runOnAllNodes(lb);
-		return lb.eventDataList;
 	}
 
 	private static class EventDataBuilder implements EventNode.Runner {
-		ArrayList<EventData> eventDataList;
+		final ArrayList<EventData> eventDataList;
 
-		EventDataBuilder() {
-			eventDataList = new ArrayList<>();
+		EventDataBuilder(ArrayList<EventData> events) {
+			eventDataList = events;
 		}
 
 		@Override
