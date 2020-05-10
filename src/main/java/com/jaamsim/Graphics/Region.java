@@ -76,6 +76,13 @@ public class Region extends DisplayEntity {
 		}
 	}
 
+	public double getGlobalScale() {
+		double ret = getScale();
+		if (getCurrentRegion() != null)
+			ret *= getCurrentRegion().getGlobalScale();
+		return ret;
+	}
+
 	public Vec3d getInternalSize() {
 		Vec3d ret = getSize();
 		ret.scale3(1.0d/getScale());
