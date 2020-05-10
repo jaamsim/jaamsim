@@ -68,6 +68,7 @@ import com.jaamsim.units.Unit;
 public class EventViewer extends FrameBox implements EventTraceListener {
 	private static EventViewer myInstance;
 	private final ArrayList<EventData> pendingEvents;
+	private final ArrayList<String> condEvents;
 	private final RetiredEventData[] retiredEventRing;
 	private int firstRetiredEvent;
 	private int lastRetiredEvent;
@@ -116,6 +117,7 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 		addWindowListener(FrameBox.getCloseListener("ShowEventViewer"));
 
 		pendingEvents = new ArrayList<>();
+		condEvents = new ArrayList<>();
 		retiredEventRing = new RetiredEventData[1024];
 		firstRetiredEvent = 0;
 		lastRetiredEvent = 0;
@@ -519,9 +521,9 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 	public void updateConditionals() {
 
 		// Make a copy of the conditional data to avoid concurrent modification exceptions
-		ArrayList<String> condDataList;
 		try {
-			condDataList = evtMan.getConditionalDataList();
+			condEvents.clear();
+			evtMan.getConditionalDataList(condEvents);
 		}
 		catch (Exception e) {
 			setDirty(true);
@@ -531,11 +533,12 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 		// Build the table entries
 		DefaultTableModel tableModel = (DefaultTableModel) condList.getModel();
 		String[] condData = new String[1];
-		for (int i = 0; i < condDataList.size(); i++) {
-			condData[0] = condDataList.get(i);
+		for (int i = 0; i < condEvents.size(); i++) {
+			condData[0] = condEvents.get(i);
 			tableModel.insertRow(i, condData);
 		}
-		tableModel.setRowCount(condDataList.size());
+		tableModel.setRowCount(condEvents.size());
+		condEvents.clear();
 	}
 
 	public void updateProfile() {

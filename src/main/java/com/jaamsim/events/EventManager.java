@@ -961,12 +961,10 @@ public final class EventManager {
 		}
 	}
 
-	public ArrayList<String> getConditionalDataList() {
-		ArrayList<String> ret = new ArrayList<>(condEvents.size());
+	public final void getConditionalDataList(ArrayList<String> events) {
 		for (ConditionalEvent cond : condEvents) {
-			ret.add(cond.target.getDescription());
+			events.add(cond.target.getDescription());
 		}
-		return ret;
 	}
 
 }
