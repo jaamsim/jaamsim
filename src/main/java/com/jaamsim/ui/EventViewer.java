@@ -68,7 +68,7 @@ import com.jaamsim.units.Unit;
 public class EventViewer extends FrameBox implements EventTraceListener {
 	private static EventViewer myInstance;
 	private final ArrayList<EventData> pendingEvents;
-	private final EventData[] retiredEventRing;
+	private final RetiredEventData[] retiredEventRing;
 	private int firstRetiredEvent;
 	private int lastRetiredEvent;
 	private boolean dirty;
@@ -90,7 +90,7 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 
 	private int level;
 	private long nanoseconds;
-	private EventData retiredEvent;
+	private RetiredEventData retiredEvent;
 
 	private static final String[] headers= {"Ticks", "Time", "Pri", "Description", "State", "Nanos"};
 	private static final int[] colWidth = {100, 80, 30, 160, 80, 60};
@@ -116,7 +116,7 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 		addWindowListener(FrameBox.getCloseListener("ShowEventViewer"));
 
 		pendingEvents = new ArrayList<>();
-		retiredEventRing = new EventData[1024];
+		retiredEventRing = new RetiredEventData[1024];
 		firstRetiredEvent = 0;
 		lastRetiredEvent = 0;
 		nanosMap = new HashMap <>();
@@ -424,6 +424,21 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 		return dirty;
 	}
 
+	static class RetiredEventData extends EventData {
+		final String status;
+		long nanos;
+
+		public RetiredEventData(long tk, int pri, String desc, String stat) {
+			super(tk, pri, desc);
+			status = stat;
+			nanos = -1L;
+		}
+
+		void setNanoseconds(long ns) {
+			nanos = ns;
+		}
+	}
+
 	public void updateEvents() {
 
 		// Try to update the event data. If unsuccessful, try again later.
@@ -444,7 +459,7 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 			long ticks = Long.parseLong((String) tableModel.getValueAt(selection, 0));
 			int pri = Integer.parseInt((String) tableModel.getValueAt(selection, 2));
 			String desc = (String) tableModel.getValueAt(selection, 3);
-			selectedEventData = new EventData(ticks, pri, desc, "", 0L);
+			selectedEventData = new EventData(ticks, pri, desc);
 		}
 
 		// Rebuild the event list with the updated data
@@ -454,7 +469,7 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 		int rowCount = 0;
 		selection = -1;
 		for (int i = firstRetiredEvent; i != lastRetiredEvent; i = (i +1) % retiredEventRing.length) {
-			EventData evtData = retiredEventRing[i];
+			RetiredEventData evtData = retiredEventRing[i];
 			if (isHideConditionals() && evtData.status == STATE_EVALUATED)
 				continue;
 			data[0] = Long.toString(evtData.ticks);
@@ -462,7 +477,7 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 			data[2] = Integer.toString(evtData.priority);
 			data[3] = evtData.description;
 			data[4] = evtData.status;
-			data[5] = evtData.nanoseconds >= 0 ? Long.toString(evtData.nanoseconds) : "";
+			data[5] = evtData.nanos >= 0 ? Long.toString(evtData.nanos) : "";
 			tableModel.insertRow(rowCount, data);
 			rowCount++;
 		}
@@ -568,7 +583,7 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 		tableModel.setRowCount(nanosList.size());
 	}
 
-	private void recordRetiredEvent(EventData evtData) {
+	private void recordRetiredEvent(RetiredEventData evtData) {
 		retiredEventRing[lastRetiredEvent] = evtData;
 		lastRetiredEvent = (lastRetiredEvent + 1) % retiredEventRing.length;
 		if (lastRetiredEvent == firstRetiredEvent)
@@ -605,7 +620,7 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 			val = new ProfileData();
 			nanosMap.put(key, val);
 		}
-		val.recordNanos(retiredEvent.nanoseconds);
+		val.recordNanos(retiredEvent.nanos);
 
 		// Accumulate the total time by class
 		val = classNanosMap.get(classKey);
@@ -613,7 +628,7 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 			val = new ProfileData();
 			classNanosMap.put(classKey, val);
 		}
-		val.recordNanos(retiredEvent.nanoseconds);
+		val.recordNanos(retiredEvent.nanos);
 
 		// Clear the last retired event
 		retiredEvent = null;
@@ -656,7 +671,7 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 	@Override
 	public void traceEvent(long tick, int priority, ProcessTarget t) {
 		level = 1;
-		retiredEvent = new EventData(tick, priority, t.getDescription(), STATE_COMPLETED);
+		retiredEvent = new RetiredEventData(tick, priority, t.getDescription(), STATE_COMPLETED);
 		nanoseconds = System.nanoTime();
 
 		recordRetiredEvent(retiredEvent);
@@ -692,13 +707,13 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 	@Override
 	public void traceInterrupt(long tick, int priority, ProcessTarget t) {
 		level++;
-		recordRetiredEvent(new EventData(EventManager.current().getTicks(), priority, t.getDescription(), STATE_INTERRUPTED));
+		recordRetiredEvent(new RetiredEventData(EventManager.current().getTicks(), priority, t.getDescription(), STATE_INTERRUPTED));
 		setDirty(true);
 	}
 
 	@Override
 	public void traceKill(long tick, int priority, ProcessTarget t) {
-		recordRetiredEvent(new EventData(EventManager.current().getTicks(), priority, t.getDescription(), STATE_TERMINATED));
+		recordRetiredEvent(new RetiredEventData(EventManager.current().getTicks(), priority, t.getDescription(), STATE_TERMINATED));
 		setDirty(true);
 	}
 
@@ -717,7 +732,7 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 	@Override
 	public void traceConditionalEval(ProcessTarget t) {
 		level = 1;
-		retiredEvent = new EventData(EventManager.current().getTicks(), 0, t.getDescription(), STATE_EVALUATED);
+		retiredEvent = new RetiredEventData(EventManager.current().getTicks(), 0, t.getDescription(), STATE_EVALUATED);
 		nanoseconds = System.nanoTime();
 
 		recordRetiredEvent(retiredEvent);

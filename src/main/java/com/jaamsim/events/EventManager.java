@@ -955,7 +955,7 @@ public final class EventManager {
 				long ticks = evt.node.schedTick;
 				int pri = evt.node.priority;
 				String desc = evt.target.getDescription();
-				eventDataList.add(new EventData(ticks, pri, desc, ""));
+				eventDataList.add(new EventData(ticks, pri, desc));
 				evt = evt.next;
 			}
 		}
