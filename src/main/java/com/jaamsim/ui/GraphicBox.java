@@ -69,7 +69,7 @@ public class GraphicBox extends JDialog {
 	private static GraphicBox myInstance;  // only one instance allowed to be open
 	private final  JLabel previewLabel; // preview DisplayModel as a picture
 	final ImageIcon previewIcon = new ImageIcon();
-	private static DisplayEntity currentEntity;
+	private DisplayEntity currentEntity;
 	private ArrayList<String> modelList;
 	private final static JList<String> displayModelList; // Names of valid DisplayModel choices
 
@@ -350,14 +350,12 @@ public class GraphicBox extends JDialog {
 	}
 
 	public static GraphicBox getInstance(DisplayEntity ent, Component c, int x, int y) {
-		currentEntity = ent;
-
 		// Has the Graphic Box been created?
 		if (myInstance == null) {
 			myInstance = new GraphicBox();
 			myInstance.setMinimumSize(new Dimension(400, 300));
 		}
-
+		myInstance.currentEntity = ent;
 		// Position of the GraphicBox
 		Point pos = c.getLocationOnScreen();
 		myInstance.setLocation(pos.x + x, pos.y + y);
