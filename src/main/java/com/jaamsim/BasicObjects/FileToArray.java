@@ -94,13 +94,15 @@ public abstract class FileToArray extends LinkedComponent {
 	@Override
 	public void earlyInit() {
 		super.earlyInit();
-		setValueForURI(dataFile.getValue(), 0.0d);
+		if (dataFile.getValue() != null)
+			setValueForURI(dataFile.getValue(), 0.0d);
 	}
 
 	@Override
 	public void addEntity(DisplayEntity ent) {
 		super.addEntity(ent);
-		setValueForURI(dataFile.getValue(), getSimTime());
+		if (dataFile.getValue() != null)
+			setValueForURI(dataFile.getValue(), getSimTime());
 		sendToNextComponent(ent);
 	}
 
