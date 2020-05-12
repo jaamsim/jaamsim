@@ -1556,6 +1556,21 @@ public class RenderManager implements DragSourceListener {
 		GUIFrame.showLocatorPosition(xyPlanePoint);
 	}
 
+	public Region getRegion(int windowID, int x, int y) {
+		Ray currentRay = getRayForMouse(windowID, x, y);
+		int viewID = getActiveView().getID();
+		List<PickData> picks = pickForRay(currentRay, viewID, false);
+		Collections.sort(picks, new SelectionSorter());
+		for (PickData pd : picks) {
+			if (!pd.isEntity)
+				continue;
+			Entity ent = GUIFrame.getJaamSimModel().idToEntity(pd.id);
+			if (ent instanceof Region) {
+				return (Region) ent;
+			}
+		}
+		return null;
+	}
 
 	public void createDNDObject(int windowID, int x, int y) {
 		JaamSimModel simModel = dndObjectType.getJaamSimModel();
@@ -1567,23 +1582,9 @@ public class RenderManager implements DragSourceListener {
 			return;
 		}
 
-		// Find the region for this location
-		Region region = null;
-		View view = windowToViewMap.get(windowID);
-		List<PickData> picks = pickForRay(currentRay, view.getID(), false);
-		Collections.sort(picks, new SelectionSorter());
-		for (PickData pd : picks) {
-			if (pd.isEntity) {
-				DisplayEntity ent = (DisplayEntity) simModel.idToEntity(pd.id);
-				if (ent instanceof Region) {
-					region = (Region) ent;
-					break;
-				}
-			}
-		}
-
 		// Set the sub-model for this location
 		Entity parent = null;
+		Region region = getRegion(windowID, x, y);
 		if (region != null && region.getParent() != simModel.getSimulation()) {
 			parent = region.getParent();
 		}
