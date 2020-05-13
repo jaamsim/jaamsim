@@ -4983,15 +4983,39 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		Entity ent = getEntityFromClipboard();
 		if (ent == null || ent == sim.getSimulation())
 			return;
-		String copyName = InputAgent.getUniqueName(sim, ent.getName(), "_Copy");
+
+		// Identify the region for the new entity
+		Region region = null;
+		if (selectedEntity != null && selectedEntity instanceof DisplayEntity
+				&& !(ent instanceof OverlayEntity)) {
+			if (selectedEntity instanceof Region)
+				region = (Region) selectedEntity;
+			else
+				region = ((DisplayEntity) selectedEntity).getCurrentRegion();
+		}
+
+		// Create the new entity
+		String copyName = ent.getName();
+		if (region != null && region.getParent() != sim.getSimulation())
+			copyName = region.getParent().getName() + "." + ent.getLocalName();
+		copyName = InputAgent.getUniqueName(sim, copyName, "_Copy");
 		InputAgent.storeAndExecute(new DefineCommand(sim, ent.getClass(), copyName));
+
+		// Copy the inputs
 		Entity copiedEnt = sim.getNamedEntity(copyName);
 		copiedEnt.copyInputs(ent);
+
+		// Set the region
+		if (region != null)
+			InputAgent.applyArgs(copiedEnt, "Region", region.getName());
+
+		// Set the position
 		if (ent instanceof DisplayEntity) {
 			DisplayEntity dEnt = (DisplayEntity) copiedEnt;
 
 			// If an entity is not selected, paste the new entity at the point of interest
-			if (selectedEntity == null || !(selectedEntity instanceof DisplayEntity)) {
+			if (selectedEntity == null || !(selectedEntity instanceof DisplayEntity)
+					|| selectedEntity instanceof Region) {
 				if (RenderManager.isGood())
 					RenderManager.inst().dragEntityToMousePosition(dEnt);
 			}
