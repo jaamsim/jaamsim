@@ -126,6 +126,8 @@ public abstract class CompoundEntity extends LinkedComponent {
 	@Override
 	public void addChild(Entity ent) {
 		synchronized (namedChildren) {
+			if (namedChildren.get(ent.getLocalName()) != null)
+				throw new ErrorException("Entity name: %s is already in use.", ent.getName());
 			namedChildren.put(ent.getLocalName(), ent);
 		}
 	}

@@ -821,6 +821,31 @@ public class JaamSimModel {
 		return ent;
 	}
 
+	public final void addNamedEntity(Entity ent) {
+		if (ent.parent != null) {
+			ent.parent.addChild(ent);
+			return;
+		}
+
+		synchronized (namedEntities) {
+			if (namedEntities.get(ent.entityName) != null)
+				throw new ErrorException("Entity name: %s is already in use.", ent.entityName);
+			namedEntities.put(ent.entityName, ent);
+		}
+	}
+
+	public final void removeNamedEntity(Entity ent) {
+		if (ent.parent != null) {
+			ent.parent.removeChild(ent);
+			return;
+		}
+
+		synchronized (namedEntities) {
+			if (namedEntities.remove(ent.entityName) != ent)
+				throw new ErrorException("Named Entities Internal Consistency error");
+		}
+	}
+
 	/**
 	 * Changes the specified entity's name.
 	 * @param e - entity to be renamed
