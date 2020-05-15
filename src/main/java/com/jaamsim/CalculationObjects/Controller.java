@@ -82,6 +82,14 @@ public class Controller extends DisplayEntity implements SubjectEntity {
 		entityList = new ArrayList<>();
 	}
 
+	private static final EntitySequenceSort sequenceSort = new EntitySequenceSort();
+	static class EntitySequenceSort implements Comparator<Controllable> {
+		@Override
+		public int compare(Controllable c1, Controllable c2) {
+			return Double.compare(c1.getSequenceNumber(), c2.getSequenceNumber());
+		}
+	}
+
 	@Override
 	public void earlyInit() {
 		super.earlyInit();
@@ -96,14 +104,7 @@ public class Controller extends DisplayEntity implements SubjectEntity {
 		}
 
 		// Sort the calculation entities into the correct sequence
-		Collections.sort(entityList, new Comparator<Controllable>() {
-
-			@Override
-			public int compare(Controllable c1, Controllable c2) {
-				return Double.compare(c1.getSequenceNumber(), c2.getSequenceNumber());
-			}
-
-		});
+		Collections.sort(entityList, sequenceSort);
 
 		// Clear the list of observers
 		subject.clear();
