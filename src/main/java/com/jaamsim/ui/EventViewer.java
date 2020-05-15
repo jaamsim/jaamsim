@@ -601,7 +601,7 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 		// Set the key for a generated entity based on its prototype
 		String key = retiredEvent.description;
 		String classKey = key;
-		int ind = key.lastIndexOf(".");
+		int ind = key.lastIndexOf('.');
 		if (ind >= 0) {
 			String entName = key.substring(0, ind);
 			String method = key.substring(ind);
