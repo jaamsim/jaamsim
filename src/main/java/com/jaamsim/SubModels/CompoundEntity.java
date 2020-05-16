@@ -141,19 +141,6 @@ public abstract class CompoundEntity extends LinkedComponent {
 	}
 
 	@Override
-	public void renameChild(Entity ent, String oldName, String newName) {
-		synchronized (namedChildren) {
-			if (namedChildren.get(newName) != null)
-				throw new ErrorException("Child name: %s is already in use.", newName);
-
-			if (namedChildren.remove(oldName) != ent)
-				throw new ErrorException("Named Children Internal Consistency error");
-
-			namedChildren.put(newName, ent);
-		}
-	}
-
-	@Override
 	public ArrayList<Entity> getChildren() {
 		synchronized (namedChildren) {
 			return new ArrayList<>(namedChildren.values());

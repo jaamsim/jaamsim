@@ -482,17 +482,6 @@ public class Entity {
 	}
 
 	/**
-	 * Called when an entity which is a child of this entity has been renamed
-	 * Note: Should only be called from JaamSimModel.renameEntity()
-	 * @param e
-	 * @param oldName
-	 * @param newName
-	 */
-	public void renameChild(Entity e, String oldName, String newName) {
-		error("Entity [%s] may not have children", getName());
-	}
-
-	/**
 	 * Get the unique number for this entity
 	 * @return
 	 */
