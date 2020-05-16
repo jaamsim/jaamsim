@@ -1013,15 +1013,8 @@ public class JaamSimModel {
 		synchronized (namedEntities) {
 			validateEntList();
 			numLiveEnts--;
-			if (e.isRegistered()) {
-				if (e.parent == null) {
-					if (e != namedEntities.remove(e.entityName))
-						throw new ErrorException("Named Entities Internal Consistency error: %s", e);
-				}
-				else {
-					e.parent.removeChild(e);
-				}
-			}
+			if (e.isRegistered())
+				removeNamedEntity(e);
 
 			e.entityName = null;
 			e.setFlag(Entity.FLAG_DEAD);
