@@ -850,45 +850,20 @@ public class JaamSimModel {
 
 	/**
 	 * Changes the specified entity's name.
-	 * @param e - entity to be renamed
+	 * @param ent - entity to be renamed
 	 * @param newName - new local name for the entity
 	 */
-	final void renameEntity(Entity e, String newName) {
-		synchronized(namedEntities) {
-			// Unregistered entities do not appear in the named entity hashmap, no consistency checks needed
-			if (!e.isRegistered()) {
-				e.entityName = newName;
-				return;
-			}
-
-			if (e.getParent() != getSimulation()) {
-				// This entity is part of a submodel
-				Entity parent = e.getParent();
-
-				String oldName = e.getLocalName();
-				e.entityName = newName;
-
-				if (oldName == null) {
-					// Newly created entity
-					parent.addChild(e);
-				} else {
-					// Genuine renaming
-					parent.renameChild(e, oldName, newName);
-				}
-				return;
-			}
-
-			// This is a top-level entity
-			if (namedEntities.get(newName) != null)
-				throw new ErrorException("Entity name: %s is already in use.", newName);
-
-			String oldName = e.entityName;
-			if (oldName != null && namedEntities.remove(oldName) != e)
-				throw new ErrorException("Named Entities Internal Consistency error");
-
-			e.entityName = newName;
-			namedEntities.put(newName, e);
+	final void renameEntity(Entity ent, String newName) {
+		if (!ent.isRegistered()) {
+			ent.entityName = newName;
+			return;
 		}
+
+		if (ent.entityName != null) {
+			removeNamedEntity(ent);
+		}
+		ent.entityName = newName;
+		addNamedEntity(ent);
 	}
 
 	private void validateEntList() {
