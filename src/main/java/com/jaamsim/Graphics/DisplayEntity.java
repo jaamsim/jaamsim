@@ -1179,9 +1179,13 @@ public class DisplayEntity extends Entity {
 	 * @return distance from the arrival/departure location
 	 */
 	public double getRadius() {
+		double scale = 1.0d;
+		if (currentRegion != null)
+			scale = currentRegion.getGlobalScale();
 		if (usePointsInput())
-			return 0.05d;
-		return Math.max(getSize().x, getSize().y)/2.0 + 0.05d;
+			return 0.05d * scale;
+		double ret = Math.max(getSize().x, getSize().y)/2.0 + 0.05d;
+		return ret * scale;
 	}
 
 	public ArrayList<ObserverEntity> getObserverList() {

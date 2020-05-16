@@ -158,6 +158,7 @@ public abstract class Input<T> {
 	private String defText; // special text to show in the default column of the Input Editor
 	private boolean isReqd;     // indicates whether this input must be provided by the user
 	private boolean isValid;  // if false, the input is no longer valid and must be re-entered
+	private boolean isLocked; // indicates whether the input can be changed through by the user
 
 	public static final Comparator<Object> uiSortOrder = new NaturalOrderComparator();
 
@@ -338,6 +339,14 @@ public abstract class Input<T> {
 		return isValid;
 	}
 
+	public void setLocked(boolean bool) {
+		isLocked = bool;
+	}
+
+	public boolean isLocked() {
+		return isLocked;
+	}
+
 	public boolean useExpressionBuilder() {
 		return false;
 	}
@@ -490,6 +499,12 @@ public abstract class Input<T> {
 
 	public boolean isDefault() {
 		return isDef;
+	}
+
+	public int getSequenceNumber() {
+		if (InputAgent.isEarlyInput(this))
+			return 0;
+		return 1;
 	}
 
 	public ArrayList<String> getValueTokens() {

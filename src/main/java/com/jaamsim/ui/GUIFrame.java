@@ -111,6 +111,7 @@ import com.jaamsim.Graphics.Region;
 import com.jaamsim.Graphics.TextBasics;
 import com.jaamsim.Graphics.TextEntity;
 import com.jaamsim.Graphics.View;
+import com.jaamsim.ProbabilityDistributions.RandomStreamUser;
 import com.jaamsim.SubModels.CompoundEntity;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ErrorException;
@@ -3697,12 +3698,11 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	@Override
 	public void storeAndExecute(Command cmd) {
 		synchronized (undoList) {
+			if (!cmd.isChange())
+				return;
 
 			// Execute the command and catch an error if it occurs
 			cmd.execute();
-
-			if (!cmd.isChange())
-				return;
 
 			// Attempt to merge the command with the previous one
 			Command mergedCmd = null;
@@ -5031,28 +5031,22 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	}
 
 	public void copyChildren(Entity parent0, Entity parent1) {
+
+		// Create the copied children
 		for (Entity child : parent0.getChildren()) {
 			if (child.isGenerated() || child instanceof EntityLabel)
 				continue;
 
 			// Construct the new child's name
-			String name = child.getLocalName();
-			name = parent1.getName() + "." + name;
+			String localName = child.getLocalName();
+			String name = parent1.getName() + "." + localName;
 
-			// Create the new child and copy the inputs
+			// Create the new child
 			InputAgent.storeAndExecute(new DefineCommand(sim, child.getClass(), name));
-			Entity copiedChild = sim.getNamedEntity(name);
-			copiedChild.copyInputs(child);
 
+			// Add a label if necessary
 			if (child instanceof DisplayEntity) {
-
-				// Set the region
-				if (parent1 instanceof CompoundEntity) {
-					Region region = ((CompoundEntity) parent1).getSubModelRegion();
-					InputAgent.applyArgs(copiedChild, "Region", region.getName());
-				}
-
-				// Add a label if necessary
+				Entity copiedChild = parent1.getChild(localName);
 				EntityLabel label = EntityLabel.getLabel((DisplayEntity) child);
 				if (label != null) {
 					EntityLabel newLabel = EntityLabel.createLabel((DisplayEntity) copiedChild);
@@ -5060,8 +5054,34 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 					newLabel.setShow(label.getShow());
 				}
 			}
+		}
 
-			// Copy the child's children
+		// Set the early and normal inputs for each child
+		for (int seq = 0; seq < 2; seq++) {
+			for (Entity child : parent0.getChildren()) {
+				String localName = child.getLocalName();
+				Entity copiedChild = parent1.getChild(localName);
+				copiedChild.copyInputs(child, seq, false);
+			}
+		}
+
+		// Ensure that any random stream inputs have a unique stream number
+		for (Entity copiedChild : parent1.getChildren()) {
+			if (!(copiedChild instanceof RandomStreamUser))
+				continue;
+			RandomStreamUser rsu = (RandomStreamUser) copiedChild;
+			int seed = rsu.getStreamNumber();
+			if (seed < 0 || sim.getSimulation().getRandomStreamUsers(seed).size() > 1) {
+				seed = sim.getSimulation().getLargestStreamNumber() + 1;
+				String key = rsu.getStreamNumberKeyword();
+				InputAgent.applyIntegers(copiedChild, key, seed);
+			}
+		}
+
+		// Copy each child's children
+		for (Entity child : parent0.getChildren()) {
+			String localName = child.getLocalName();
+			Entity copiedChild = parent1.getChild(localName);
 			copyChildren(child, copiedChild);
 		}
 	}
@@ -5407,7 +5427,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	private static final Pattern gt = Pattern.compile(">");
 	private static final Pattern br = Pattern.compile("\n");
 
-	private static final String html_replace(String str) {
+	public static final String html_replace(String str) {
 		String desc = str;
 		desc = amp.matcher(desc).replaceAll("&amp;");
 		desc = lt.matcher(desc).replaceAll("&lt;");

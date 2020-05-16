@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2019 JaamSim Software Inc.
+ * Copyright (C) 2019-2020 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
  */
 package com.jaamsim.SubModels;
 
+import com.jaamsim.Graphics.Region;
 import com.jaamsim.ProcessFlow.Queue;
 import com.jaamsim.ProcessFlow.Server;
 import com.jaamsim.Samples.SampleConstant;
@@ -32,10 +33,6 @@ import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.DistanceUnit;
 
 public class ServerAndQueue extends CompoundEntity {
-
-	@Keyword(description = "The service time required to process an entity.",
-	         exampleList = { "3.0 h", "NormalDistribution1", "'1[s] + 0.5*[TimeSeries1].PresentValue'" })
-	private SampleInput serviceTime;
 
 	@Keyword(description = "The queue length at which the Threshold output closes.",
 	         exampleList = { "3", "[InputValue1].Value" })
@@ -63,21 +60,40 @@ public class ServerAndQueue extends CompoundEntity {
 		Server server = InputAgent.generateEntityWithName(simModel, Server.class, "Server", this, true, true);
 		SubModelEnd end = InputAgent.generateEntityWithName(simModel, SubModelEnd.class, "End", this, true, true);
 
-		// Add component inputs to the sub-model
-		serviceTime = (SampleInput) server.getInput("ServiceTime");
-		addInput(serviceTime);
-
 		// SubModelStart inputs
 		InputAgent.applyArgs(start, "NextComponent", queue.getName());
+		start.getInput("NextComponent").setLocked(true);
 
 		// Server inputs
 		InputAgent.applyArgs(server, "WaitQueue", queue.getName());
 		InputAgent.applyArgs(server, "NextComponent", end.getName());
+		server.getInput("WaitQueue").setLocked(true);
+		server.getInput("NextComponent").setLocked(true);
 
 		// Threshold inputs
 		String expString = "sub.[Queue].QueueLength < sub.MaxQueueLength";
 		InputAgent.applyArgs(threshold, "OpenCondition", expString);
 		InputAgent.applyArgs(threshold, "WatchList", queue.getName());
+		threshold.getInput("OpenCondition").setLocked(true);
+		threshold.getInput("WatchList").setLocked(true);
+
+		// Set the scale, size, and position of the sub-model region
+		Region region = getSubModelRegion();
+		InputAgent.applyValue(region, "Scale",    0.5d, "");
+		InputAgent.applyVec3d(region, "Size",     new Vec3d(1.5d,  1.0d, 0.0d), DistanceUnit.class);
+		InputAgent.applyVec3d(region, "Position", new Vec3d(0.0d, -1.5d, 0.0d), DistanceUnit.class);
+
+		// Set the region
+		InputAgent.applyArgs(start,     "Region", region.getName());
+		InputAgent.applyArgs(queue,     "Region", region.getName());
+		InputAgent.applyArgs(threshold, "Region", region.getName());
+		InputAgent.applyArgs(server,    "Region", region.getName());
+		InputAgent.applyArgs(end,       "Region", region.getName());
+		start.getInput("Region").setLocked(true);
+		queue.getInput("Region").setLocked(true);
+		threshold.getInput("Region").setLocked(true);
+		server.getInput("Region").setLocked(true);
+		end.getInput("Region").setLocked(true);
 
 		// Set the component positions within the sub-model region
 		InputAgent.applyVec3d(start,     "Position", new Vec3d(-1.0d, -0.4d, 0.0d), DistanceUnit.class);
@@ -85,19 +101,6 @@ public class ServerAndQueue extends CompoundEntity {
 		InputAgent.applyVec3d(threshold, "Position", new Vec3d( 0.5d,  0.4d, 0.0d), DistanceUnit.class);
 		InputAgent.applyVec3d(server,    "Position", new Vec3d( 0.0d, -0.4d, 0.0d), DistanceUnit.class);
 		InputAgent.applyVec3d(end,       "Position", new Vec3d( 1.0d, -0.4d, 0.0d), DistanceUnit.class);
-
-		// Set the scale, size, and position of the sub-model region
-		setDefaultRegionScale(0.5d);
-		setDefaultRegionSize(new Vec3d(3.0d, 2.0d, 0.0d));
-		setDefaultRegionPosition(new Vec3d(0.0d, -1.5d, 0.0d));
-
-		// Set the region
-		String regionName = getSubModelRegion().getName();
-		InputAgent.applyArgs(start,     "Region", regionName);
-		InputAgent.applyArgs(queue,     "Region", regionName);
-		InputAgent.applyArgs(threshold, "Region", regionName);
-		InputAgent.applyArgs(server,    "Region", regionName);
-		InputAgent.applyArgs(end,       "Region", regionName);
 	}
 
 	@Output(name = "MaxQueueLength",

@@ -336,22 +336,49 @@ public class Entity {
 	}
 
 	/**
-	 * Copy the inputs for each keyword to the caller.  Any inputs that have already
-	 * been set for the caller are overwritten by those for the entity being copied.
+	 * Copy the inputs for each keyword to the caller.
 	 * @param ent = entity whose inputs are to be copied
 	 */
 	public void copyInputs(Entity ent) {
+		for (int seq = 0; seq < 2; seq++) {
+			copyInputs(ent, seq, false);
+		}
+	}
+
+	/**
+	 * Copy the inputs for the keywords with the specified sequence number to the caller.
+	 * @param ent = entity whose inputs are to be copied
+	 * @param seq = sequence number for the keyword (0 = early keyword, 1 = normal keyword)
+	 * @param bool = true if each copied input is locked after its value is set
+	 */
+	public void copyInputs(Entity ent, int seq, boolean bool) {
 		ArrayList<String> tmp = new ArrayList<>();
-		for (Input<?> sourceInput : ent.inpList) {
+		for (Input<?> sourceInput : ent.getEditableInputs()) {
+			if (sourceInput.isDefault() || sourceInput.isSynonym()
+					|| sourceInput.getSequenceNumber() != seq)
+				continue;
 			String key = sourceInput.getKeyword();
 			Input<?> targetInput = this.getInput(key);
-			if (sourceInput.isDefault() || sourceInput.isSynonym() || targetInput == null) {
+			if (targetInput == null)
 				continue;
-			}
+
 			tmp.clear();
 			sourceInput.getValueTokens(tmp);
+
+			// Replace references to the parent entity
+			if (this.getParent() != ent.getParent()) {
+				String oldParent = ent.getParent().getName();
+				String newParent = this.getParent().getName();
+				for (int i = 0; i < tmp.size(); i++) {
+					String str = tmp.get(i);
+					str = str.replace(oldParent, newParent);
+					tmp.set(i, str);
+				}
+			}
+
 			KeywordIndex kw = new KeywordIndex(key, tmp, null);
 			InputAgent.apply(this, targetInput, kw);
+			targetInput.setLocked(bool);
 		}
 	}
 

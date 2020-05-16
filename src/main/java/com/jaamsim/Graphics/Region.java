@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2002-2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2019 JaamSim Software Inc.
+ * Copyright (C) 2019-2020 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -76,6 +76,22 @@ public class Region extends DisplayEntity {
 		}
 	}
 
+	public double getGlobalScale() {
+		double ret = getScale();
+		if (getCurrentRegion() != null)
+			ret *= getCurrentRegion().getGlobalScale();
+		return ret;
+	}
+
+	public Quaternion getGlobalRotation() {
+		Quaternion ret = new Quaternion();
+		ret.setEuler3(getOrientation());
+		if (getCurrentRegion() == null)
+			return ret;
+		ret.mult(ret, getCurrentRegion().getGlobalRotation());
+		return ret;
+	}
+
 	public Vec3d getInternalSize() {
 		Vec3d ret = getSize();
 		ret.scale3(1.0d/getScale());
@@ -100,9 +116,7 @@ public class Region extends DisplayEntity {
 	 * @return transformation to global coordinates
 	 */
 	public Transform getRegionTrans() {
-		Quaternion rot = new Quaternion();
-		rot.setEuler3(getOrientation());
-		return new Transform(getGlobalPosition(), rot, getScale());
+		return new Transform(getGlobalPosition(), getGlobalRotation(), getGlobalScale());
 	}
 
 	/**
@@ -111,9 +125,7 @@ public class Region extends DisplayEntity {
 	 * @return transformation to global coordinates
 	 */
 	public Transform getRegionTransForVectors() {
-		Quaternion rot = new Quaternion();
-		rot.setEuler3(getOrientation());
-		return new Transform(null, rot, getScale());
+		return new Transform(null, getGlobalRotation(), getGlobalScale());
 	}
 
 	/**
