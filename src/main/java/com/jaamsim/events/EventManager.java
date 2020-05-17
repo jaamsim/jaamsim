@@ -905,10 +905,10 @@ public final class EventManager {
 	 * @throws ProcessError if called outside of a Process context
 	 */
 	public static final double simSeconds() {
-		return Process.current().evt()._simSeconds();
+		return Process.current().evt().getSeconds();
 	}
 
-	private double _simSeconds() {
+	public final double getSeconds() {
 		return currentTick.get() * secsPerTick;
 	}
 
