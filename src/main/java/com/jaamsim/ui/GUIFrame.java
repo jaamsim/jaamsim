@@ -132,6 +132,7 @@ import com.jaamsim.input.Parser;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.MathUtils;
 import com.jaamsim.math.Vec3d;
+import com.jaamsim.rng.MRG1999a;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.DistanceUnit;
 import com.jaamsim.units.TimeUnit;
@@ -4512,6 +4513,10 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 			if (minimize)
 				gui.setExtendedState(JFrame.ICONIFIED);
+			// This is only here to initialize the static cache in the MRG1999a class to avoid future latency
+			// when initializing other objects in drag+drop
+			@SuppressWarnings("unused")
+			MRG1999a cacher = new MRG1999a();
 		}
 
 		if (!batch && !headless) {
