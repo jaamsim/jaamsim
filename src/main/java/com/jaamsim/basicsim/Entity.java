@@ -18,7 +18,6 @@
 package com.jaamsim.basicsim;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
@@ -455,10 +454,9 @@ public class Entity {
 
 		// Build up the name back to front
 		StringBuilder sb = new StringBuilder();
-		Collections.reverse(revNames);
-		for (int i = 0; i < revNames.size(); ++i) {
+		for (int i = revNames.size() - 1; i >= 0; i--) {
 			sb.append(revNames.get(i));
-			if (i < revNames.size()-1) {
+			if (i > 0) {
 				sb.append('.');
 			}
 		}
