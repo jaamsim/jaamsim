@@ -5094,12 +5094,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			if (!(copiedChild instanceof RandomStreamUser))
 				continue;
 			RandomStreamUser rsu = (RandomStreamUser) copiedChild;
-			int seed = rsu.getStreamNumber();
-			if (seed < 0 || sim.getSimulation().getRandomStreamUsers(seed).size() > 1) {
-				seed = sim.getSimulation().getLargestStreamNumber() + 1;
-				String key = rsu.getStreamNumberKeyword();
-				InputAgent.applyIntegers(copiedChild, key, seed);
-			}
+			setUniqueRandomSeed(rsu);
 		}
 
 		// Copy each child's children
@@ -5108,6 +5103,16 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			Entity copiedChild = parent1.getChild(localName);
 			copyChildren(child, copiedChild);
 		}
+	}
+
+	public void setUniqueRandomSeed(RandomStreamUser rsu) {
+		Simulation simulation = sim.getSimulation();
+		int seed = rsu.getStreamNumber();
+		if (seed >= 0 && simulation.getRandomStreamUsers(seed).size() <= 1)
+			return;
+		seed = simulation.getLargestStreamNumber() + 1;
+		String key = rsu.getStreamNumberKeyword();
+		InputAgent.applyIntegers((Entity) rsu, key, seed);
 	}
 
 	public void invokeNew() {
