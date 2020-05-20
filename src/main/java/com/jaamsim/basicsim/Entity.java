@@ -709,7 +709,7 @@ public class Entity {
 	 * @param args - trace data
 	 */
 	public void trace(int indent, String fmt, Object... args) {
-		InputAgent.trace(simModel, indent, this, fmt, args);
+		simModel.trace(indent, this, fmt, args);
 	}
 
 	/**
@@ -720,7 +720,7 @@ public class Entity {
 	 * @param args - trace data
 	 */
 	public void traceLine(int indent, String fmt, Object... args) {
-		InputAgent.trace(simModel, indent, null, fmt, args);
+		simModel.trace(indent, null, fmt, args);
 	}
 
 	/**

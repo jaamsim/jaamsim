@@ -44,6 +44,7 @@ import com.jaamsim.states.StateEntity;
 import com.jaamsim.ui.EventViewer;
 import com.jaamsim.ui.LogBox;
 import com.jaamsim.units.DimensionlessUnit;
+import com.jaamsim.units.TimeUnit;
 import com.jaamsim.units.Unit;
 
 public class JaamSimModel {
@@ -1351,12 +1352,30 @@ public class JaamSimModel {
 		return numWarnings;
 	}
 
-	public void setLastTickForTrace(long tick) {
-		lastTickForTrace = tick;
-	}
+	public final void trace(int indent, Entity ent, String fmt, Object... args) {
+		// Print a TIME header every time time has advanced
+		long traceTick = EventManager.simTicks();
+		if (lastTickForTrace != traceTick) {
+			double unitFactor = Unit.getDisplayedUnitFactor(TimeUnit.class);
+			String unitString = Unit.getDisplayedUnit(TimeUnit.class);
+			System.out.format(" \nTIME = %.6f %s,  TICKS = %d\n",
+					EventManager.current().ticksToSeconds(traceTick) / unitFactor, unitString,
+					traceTick);
+			lastTickForTrace = traceTick;
+		}
 
-	public long getLastTickForTrace() {
-		return lastTickForTrace;
+		// Create an indent string to space the lines
+		StringBuilder str = new StringBuilder("");
+		for (int i = 0; i < indent; i++)
+			str.append("   ");
+
+		// Append the Entity name if provided
+		if (ent != null)
+			str.append(ent.toString()).append(".");
+
+		str.append(String.format(fmt, args));
+		System.out.println(str.toString());
+		System.out.flush();
 	}
 
 	public boolean isPreDefinedEntity(Entity ent) {

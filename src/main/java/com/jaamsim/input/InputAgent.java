@@ -51,12 +51,10 @@ import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.basicsim.ObjectType;
 import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.datatypes.DoubleVector;
-import com.jaamsim.events.EventManager;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.ui.LogBox;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.DistanceUnit;
-import com.jaamsim.units.TimeUnit;
 import com.jaamsim.units.Unit;
 
 public class InputAgent {
@@ -883,32 +881,6 @@ public class InputAgent {
 		for (StackTraceElement each : t.getStackTrace()) {
 			InputAgent.logMessage(simModel, each.toString());
 		}
-	}
-
-	public static final void trace(JaamSimModel simModel, int indent, Entity ent, String fmt, Object... args) {
-		// Print a TIME header every time time has advanced
-		long traceTick = EventManager.simTicks();
-		if (simModel.getLastTickForTrace() != traceTick) {
-			double unitFactor = Unit.getDisplayedUnitFactor(TimeUnit.class);
-			String unitString = Unit.getDisplayedUnit(TimeUnit.class);
-			System.out.format(" \nTIME = %.6f %s,  TICKS = %d\n",
-					EventManager.current().ticksToSeconds(traceTick) / unitFactor, unitString,
-					traceTick);
-			simModel.setLastTickForTrace(traceTick);
-		}
-
-		// Create an indent string to space the lines
-		StringBuilder str = new StringBuilder("");
-		for (int i = 0; i < indent; i++)
-			str.append("   ");
-
-		// Append the Entity name if provided
-		if (ent != null)
-			str.append(ent.toString()).append(".");
-
-		str.append(String.format(fmt, args));
-		System.out.println(str.toString());
-		System.out.flush();
 	}
 
 	/**
