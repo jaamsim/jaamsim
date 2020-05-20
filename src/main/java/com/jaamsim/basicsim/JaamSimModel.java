@@ -1354,12 +1354,13 @@ public class JaamSimModel {
 
 	public final void trace(int indent, Entity ent, String fmt, Object... args) {
 		// Print a TIME header every time time has advanced
-		long traceTick = EventManager.simTicks();
+		EventManager evt = EventManager.current();
+		long traceTick = evt.getTicks();
 		if (lastTickForTrace != traceTick) {
 			double unitFactor = Unit.getDisplayedUnitFactor(TimeUnit.class);
 			String unitString = Unit.getDisplayedUnit(TimeUnit.class);
 			System.out.format(" \nTIME = %.6f %s,  TICKS = %d\n",
-					EventManager.current().ticksToSeconds(traceTick) / unitFactor, unitString,
+					evt.ticksToSeconds(traceTick) / unitFactor, unitString,
 					traceTick);
 			lastTickForTrace = traceTick;
 		}
@@ -1371,7 +1372,7 @@ public class JaamSimModel {
 
 		// Append the Entity name if provided
 		if (ent != null)
-			str.append(ent.toString()).append(".");
+			str.append(ent.getName()).append(":");
 
 		str.append(String.format(fmt, args));
 		System.out.println(str.toString());
