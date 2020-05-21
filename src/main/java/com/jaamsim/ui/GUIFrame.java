@@ -5005,6 +5005,12 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		Entity copiedEnt = sim.getNamedEntity(copyName);
 		copiedEnt.copyInputs(ent);
 
+		// Ensure that a random generator has a unique stream number
+		if (copiedEnt instanceof RandomStreamUser) {
+			RandomStreamUser rsu = (RandomStreamUser) copiedEnt;
+			setUniqueRandomSeed(rsu);
+		}
+
 		// Set the region
 		if (region != null)
 			InputAgent.applyArgs(copiedEnt, "Region", region.getName());
