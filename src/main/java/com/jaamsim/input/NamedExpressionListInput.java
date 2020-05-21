@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2016-2019 JaamSim Software Inc.
+ * Copyright (C) 2016-2020 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 
 public class NamedExpressionListInput extends ListInput<ArrayList<NamedExpression>> {
+
 	public NamedExpressionListInput(String key, String cat, ArrayList<NamedExpression> def) {
 		super(key, cat, def);
 	}
@@ -106,6 +107,21 @@ public class NamedExpressionListInput extends ListInput<ArrayList<NamedExpressio
 	@Override
 	public boolean useExpressionBuilder() {
 		return true;
+	}
+
+	public String getStubDefinition() {
+		StringBuilder sb = new StringBuilder();
+		boolean first = true;
+		for (NamedExpression ne : value) {
+			if (first) {
+				first = false;
+			}
+			else {
+				sb.append(Input.BRACE_SEPARATOR);
+			}
+			sb.append(ne.getStubDefinition());
+		}
+		return sb.toString();
 	}
 
 }
