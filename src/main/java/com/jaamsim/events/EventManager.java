@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2002-2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2017-2019 JaamSim Software Inc.
+ * Copyright (C) 2017-2020 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -882,6 +882,14 @@ public final class EventManager {
 	 */
 	public static final boolean hasCurrent() {
 		return (Thread.currentThread() instanceof Process);
+	}
+
+	/**
+	 * Returns whether or not a future event can be scheduled from the present thread.
+	 * @return true if a future event can be scheduled
+	 */
+	public static final boolean canSchedule() {
+		return hasCurrent() && Process.current().canSchedule();
 	}
 
 	/**
