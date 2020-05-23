@@ -51,7 +51,6 @@ final class Process extends Thread {
 
 	private boolean dieFlag;
 	private boolean activeFlag;
-	private boolean inUserCallback;
 
 	// Initialize the storage for the pooled Processes
 	static {
@@ -141,7 +140,6 @@ final class Process extends Thread {
 		target = targ;
 		activeFlag = false;
 		dieFlag = false;
-		inUserCallback = false;
 	}
 
 	// Pull a process from the pool and have it attempt to execute events from the
@@ -252,22 +250,4 @@ final class Process extends Thread {
 		activeFlag = true;
 		hasNext = (nextProcess != null);
 	}
-
-	final void beginCallbacks() {
-		inUserCallback = true;
-	}
-
-	final void endCallbacks() {
-		inUserCallback = false;
-	}
-
-	final void checkCallback() {
-		if (inUserCallback)
-			throw new ProcessError("Event Control attempted from inside a user callback");
-	}
-
-	final boolean canSchedule() {
-		return !inUserCallback;
-	}
-
 }

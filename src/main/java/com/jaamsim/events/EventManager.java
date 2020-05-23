@@ -50,6 +50,7 @@ public final class EventManager {
 	private final AtomicLong currentTick;
 	private volatile boolean executeEvents;
 	private boolean processRunning;
+	private boolean disableSchedule;
 
 	private final ArrayList<ConditionalEvent> condEvents;
 
@@ -97,6 +98,7 @@ public final class EventManager {
 		isRunning = new AtomicBoolean(false);
 		executeEvents = false;
 		processRunning = false;
+		disableSchedule = false;
 		executeRealTime = false;
 		realTimeFactor = 1;
 		rebaseRealTime = true;
@@ -171,9 +173,9 @@ public final class EventManager {
 
 			// Notify the event manager that the process has been completed
 			if (trcListener != null) {
-				cur.beginCallbacks();
+				disableSchedule();
 				trcListener.traceProcessEnd();
-				cur.endCallbacks();
+				enableSchedule();
 			}
 			if (cur.hasNext()) {
 				cur.wakeNextProcess();
@@ -218,6 +220,7 @@ public final class EventManager {
 				return;
 
 			processRunning = true;
+			enableSchedule();
 			isRunning.set(true);
 			timelistener.timeRunning();
 
@@ -242,9 +245,9 @@ public final class EventManager {
 					Event nextEvent = nextNode.head;
 					ProcessTarget nextTarget = nextEvent.target;
 					if (trcListener != null) {
-						cur.beginCallbacks();
+						disableSchedule();
 						trcListener.traceEvent(nextNode.schedTick, nextNode.priority, nextTarget);
-						cur.endCallbacks();
+						enableSchedule();
 					}
 
 					removeEvent(nextEvent);
@@ -328,7 +331,7 @@ public final class EventManager {
 
 	private void evaluateConditions(Process cur) {
 		// Protecting the conditional evaluate() callbacks and the traceWaitUntilEnded callback
-		cur.beginCallbacks();
+		disableSchedule();
 		try {
 			for (int i = 0; i < condEvents.size();) {
 				ConditionalEvent c = condEvents.get(i);
@@ -362,7 +365,7 @@ public final class EventManager {
 			timelistener.handleError(e);
 		}
 
-		cur.endCallbacks();
+		enableSchedule();
 	}
 
 	/**
@@ -465,7 +468,7 @@ public final class EventManager {
 	 * @param priority the priority of the scheduled event: 1 is the highest priority (default is priority 5)
 	 */
 	private void waitTicks(Process cur, long ticks, int priority, boolean fifo, EventHandle handle) {
-		cur.checkCallback();
+		assertCanSchedule();
 		long nextEventTime = calculateEventTime(ticks);
 		WaitTarget t = new WaitTarget(cur);
 		EventNode node = getEventNode(nextEventTime, priority);
@@ -480,9 +483,9 @@ public final class EventManager {
 		}
 
 		if (trcListener != null) {
-			cur.beginCallbacks();
+			disableSchedule();
 			trcListener.traceWait(nextEventTime, priority, t);
-			cur.endCallbacks();
+			enableSchedule();
 		}
 		node.addEvent(evt, fifo);
 		captureProcess(cur);
@@ -522,7 +525,7 @@ public final class EventManager {
 	 * the thread stack.
 	 */
 	private void waitUntil(Process cur, Conditional cond, EventHandle handle) {
-		cur.checkCallback();
+		assertCanSchedule();
 		WaitTarget t = new WaitTarget(cur);
 		ConditionalEvent evt = new ConditionalEvent(cond, t, handle);
 		if (handle != null) {
@@ -532,9 +535,9 @@ public final class EventManager {
 		}
 		condEvents.add(evt);
 		if (trcListener != null) {
-			cur.beginCallbacks();
+			disableSchedule();
 			trcListener.traceWaitUntil();
-			cur.endCallbacks();
+			enableSchedule();
 		}
 		captureProcess(cur);
 	}
@@ -545,7 +548,7 @@ public final class EventManager {
 	}
 
 	private void schedUntil(Process cur, ProcessTarget t, Conditional cond, EventHandle handle) {
-		cur.checkCallback();
+		assertCanSchedule();
 		ConditionalEvent evt = new ConditionalEvent(cond, t, handle);
 		if (handle != null) {
 			if (handle.isScheduled())
@@ -554,9 +557,9 @@ public final class EventManager {
 		}
 		condEvents.add(evt);
 		if (trcListener != null) {
-			cur.beginCallbacks();
+			disableSchedule();
 			trcListener.traceSchedUntil(t);
-			cur.endCallbacks();
+			enableSchedule();
 		}
 	}
 
@@ -568,11 +571,11 @@ public final class EventManager {
 	private void start(Process cur, ProcessTarget t) {
 		Process newProcess = Process.allocate(this, cur, t);
 		// Notify the eventManager that a new process has been started
-		cur.checkCallback();
+		assertCanSchedule();
 		if (trcListener != null) {
-			cur.beginCallbacks();
+			disableSchedule();
 			trcListener.traceProcessStart(t);
-			cur.endCallbacks();
+			enableSchedule();
 		}
 		// Transfer control to the new process
 		newProcess.wake();
@@ -632,16 +635,16 @@ public final class EventManager {
 	 *	Removes an event from the pending list without executing it.
 	 */
 	private void killEvent(Process cur, EventHandle handle) {
-		cur.checkCallback();
+		assertCanSchedule();
 
 		// no handle given, or Handle was not scheduled, nothing to do
 		if (handle == null || handle.event == null)
 			return;
 
 		if (trcListener != null) {
-			cur.beginCallbacks();
+			disableSchedule();
 			trcKill(handle.event);
-			cur.endCallbacks();
+			enableSchedule();
 		}
 		ProcessTarget t = rem(handle);
 
@@ -672,16 +675,16 @@ public final class EventManager {
 	 *	Removes an event from the pending list and executes it.
 	 */
 	private void interruptEvent(Process cur, EventHandle handle) {
-		cur.checkCallback();
+		assertCanSchedule();
 
 		// no handle given, or Handle was not scheduled, nothing to do
 		if (handle == null || handle.event == null)
 			return;
 
 		if (trcListener != null) {
-			cur.beginCallbacks();
+			disableSchedule();
 			trcInterrupt(handle.event);
-			cur.endCallbacks();
+			enableSchedule();
 		}
 		ProcessTarget t = rem(handle);
 
@@ -801,7 +804,7 @@ public final class EventManager {
 	}
 
 	private void scheduleTicks(Process cur, long waitLength, int eventPriority, boolean fifo, ProcessTarget t, EventHandle handle) {
-		cur.checkCallback();
+		assertCanSchedule();
 		long schedTick = calculateEventTime(waitLength);
 		EventNode node = getEventNode(schedTick, eventPriority);
 		Event evt = getEvent();
@@ -814,9 +817,9 @@ public final class EventManager {
 			handle.event = evt;
 		}
 		if (trcListener != null) {
-			cur.beginCallbacks();
+			disableSchedule();
 			trcListener.traceSchedProcess(schedTick, eventPriority, t);
-			cur.endCallbacks();
+			enableSchedule();
 		}
 		node.addEvent(evt, fifo);
 	}
@@ -877,7 +880,7 @@ public final class EventManager {
 	 * @return true if a future event can be scheduled
 	 */
 	public static final boolean canSchedule() {
-		return hasCurrent() && Process.current().canSchedule();
+		return hasCurrent() && EventManager.current().scheduleEnabled();
 	}
 
 	/**
@@ -963,4 +966,20 @@ public final class EventManager {
 		}
 	}
 
+	private void disableSchedule() {
+		disableSchedule = true;
+	}
+
+	private void enableSchedule() {
+		disableSchedule = false;
+	}
+
+	private void assertCanSchedule() {
+		if (disableSchedule)
+			throw new ProcessError("Event Control attempted from inside a user callback");
+	}
+
+	private boolean scheduleEnabled() {
+		return !disableSchedule;
+	}
 }
