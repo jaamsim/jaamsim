@@ -351,6 +351,17 @@ public class Entity {
 	 * @param bool = true if each copied input is locked after its value is set
 	 */
 	public void copyInputs(Entity ent, int seq, boolean bool) {
+
+		// Provide stub definitions for the custom outputs
+		if (seq == 0) {
+			NamedExpressionListInput in = (NamedExpressionListInput) ent.getInput("CustomOutputList");
+			if (in != null && !in.isDefault()) {
+				KeywordIndex kw = InputAgent.formatInput(in.getKeyword(), in.getStubDefinition());
+				InputAgent.apply(this, kw);
+			}
+		}
+
+		// Apply the inputs based on the source entity
 		ArrayList<String> tmp = new ArrayList<>();
 		for (Input<?> sourceInput : ent.getEditableInputs()) {
 			if (sourceInput.isDefault() || sourceInput.isSynonym()
@@ -476,17 +487,6 @@ public class Entity {
 	}
 
 	public void removeChild(Entity child) {
-		error("Entity [%s] may not have children", getName());
-	}
-
-	/**
-	 * Called when an entity which is a child of this entity has been renamed
-	 * Note: Should only be called from JaamSimModel.renameEntity()
-	 * @param e
-	 * @param oldName
-	 * @param newName
-	 */
-	public void renameChild(Entity e, String oldName, String newName) {
 		error("Entity [%s] may not have children", getName());
 	}
 

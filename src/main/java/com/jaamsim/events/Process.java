@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2002-2014 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2020 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -264,4 +265,9 @@ final class Process extends Thread {
 		if (inUserCallback)
 			throw new ProcessError("Event Control attempted from inside a user callback");
 	}
+
+	final boolean canSchedule() {
+		return !inUserCallback;
+	}
+
 }

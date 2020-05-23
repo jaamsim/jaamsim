@@ -297,7 +297,7 @@ public class ExpressionThreshold extends Threshold implements ObserverEntity {
 		boolean ret = this.getOpenConditionValue(getSimTime());
 
 		// If necessary, schedule an event to change the saved state
-		if (ret != super.isOpen())
+		if (ret != super.isOpen() && EventManager.canSchedule())
 			performSetOpen();
 
 		// Return the value calculated on demand

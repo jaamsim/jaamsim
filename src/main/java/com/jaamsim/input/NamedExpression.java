@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2016 JaamSim Software Inc.
+ * Copyright (C) 2016-2020 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package com.jaamsim.input;
 
 import com.jaamsim.input.ExpParser.Expression;
+import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 
 public class NamedExpression {
@@ -41,4 +42,13 @@ public class NamedExpression {
 	public Class<? extends Unit> getUnitType() {
 		return unitType;
 	}
+
+	public String getStubDefinition() {
+		if (unitType == DimensionlessUnit.class) {
+			return String.format("{ %s  0 }", getName());
+		}
+		return String.format("{ %s  0[%s]  %s }",
+				getName(), Unit.getSIUnit(unitType), unitType.getSimpleName());
+	}
+
 }

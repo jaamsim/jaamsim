@@ -1151,21 +1151,7 @@ public class InputAgent {
 		if (in == null || in.isDefault()) {
 			return;
 		}
-		StringBuilder sb = new StringBuilder();
-		for (NamedExpression ne : in.getValue()) {
-			String str;
-			Class<? extends Unit> ut = ne.getUnitType();
-			if (ut == DimensionlessUnit.class) {
-				str = String.format(" { %s  0 }", ne.getName());
-			}
-			else {
-				str = String.format(" { %s  0[%s]  %s }",
-						ne.getName(), Unit.getSIUnit(ut), ut.getSimpleName());
-			}
-			sb.append(str);
-		}
-		file.format("%s %s {%s }%n",
-	            ent.getName(), in.getKeyword(), sb.toString());
+		file.format("%s %s { %s }%n", ent.getName(), in.getKeyword(), in.getStubDefinition());
 	}
 
 	public static void printRunOutputHeaders(JaamSimModel simModel, PrintStream outStream) {

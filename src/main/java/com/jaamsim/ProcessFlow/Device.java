@@ -250,7 +250,7 @@ public abstract class Device extends StateUserEntity implements ObserverEntity, 
 
 		if (this.isBusy()) {
 			double dt = simTime - lastUpdateTime;
-			duration -= dt;
+			duration = Math.max(0.0d, duration - dt);
 			this.updateProgress(dt);
 		}
 		lastUpdateTime = simTime;
