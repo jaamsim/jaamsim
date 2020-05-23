@@ -465,29 +465,27 @@ public final class EventManager {
 	 * @param priority the priority of the scheduled event: 1 is the highest priority (default is priority 5)
 	 */
 	private void waitTicks(Process cur, long ticks, int priority, boolean fifo, EventHandle handle) {
-		synchronized (lockObject) {
-			cur.checkCallback();
-			long nextEventTime = calculateEventTime(ticks);
-			WaitTarget t = new WaitTarget(cur);
-			EventNode node = getEventNode(nextEventTime, priority);
-			Event evt = getEvent();
-			evt.node = node;
-			evt.target = t;
-			evt.handle = handle;
-			if (handle != null) {
-				if (handle.isScheduled())
-					throw new ProcessError("Tried to schedule using an EventHandle already in use");
-				handle.event = evt;
-			}
-
-			if (trcListener != null) {
-				cur.beginCallbacks();
-				trcListener.traceWait(nextEventTime, priority, t);
-				cur.endCallbacks();
-			}
-			node.addEvent(evt, fifo);
-			captureProcess(cur);
+		cur.checkCallback();
+		long nextEventTime = calculateEventTime(ticks);
+		WaitTarget t = new WaitTarget(cur);
+		EventNode node = getEventNode(nextEventTime, priority);
+		Event evt = getEvent();
+		evt.node = node;
+		evt.target = t;
+		evt.handle = handle;
+		if (handle != null) {
+			if (handle.isScheduled())
+				throw new ProcessError("Tried to schedule using an EventHandle already in use");
+			handle.event = evt;
 		}
+
+		if (trcListener != null) {
+			cur.beginCallbacks();
+			trcListener.traceWait(nextEventTime, priority, t);
+			cur.endCallbacks();
+		}
+		node.addEvent(evt, fifo);
+		captureProcess(cur);
 	}
 
 	/**
@@ -524,23 +522,21 @@ public final class EventManager {
 	 * the thread stack.
 	 */
 	private void waitUntil(Process cur, Conditional cond, EventHandle handle) {
-		synchronized (lockObject) {
-			cur.checkCallback();
-			WaitTarget t = new WaitTarget(cur);
-			ConditionalEvent evt = new ConditionalEvent(cond, t, handle);
-			if (handle != null) {
-				if (handle.isScheduled())
-					throw new ProcessError("Tried to waitUntil using a handle already in use");
-				handle.event = evt;
-			}
-			condEvents.add(evt);
-			if (trcListener != null) {
-				cur.beginCallbacks();
-				trcListener.traceWaitUntil();
-				cur.endCallbacks();
-			}
-			captureProcess(cur);
+		cur.checkCallback();
+		WaitTarget t = new WaitTarget(cur);
+		ConditionalEvent evt = new ConditionalEvent(cond, t, handle);
+		if (handle != null) {
+			if (handle.isScheduled())
+				throw new ProcessError("Tried to waitUntil using a handle already in use");
+			handle.event = evt;
 		}
+		condEvents.add(evt);
+		if (trcListener != null) {
+			cur.beginCallbacks();
+			trcListener.traceWaitUntil();
+			cur.endCallbacks();
+		}
+		captureProcess(cur);
 	}
 
 	public static final void scheduleUntil(ProcessTarget t, Conditional cond, EventHandle handle) {
@@ -549,20 +545,18 @@ public final class EventManager {
 	}
 
 	private void schedUntil(Process cur, ProcessTarget t, Conditional cond, EventHandle handle) {
-		synchronized (lockObject) {
-			cur.checkCallback();
-			ConditionalEvent evt = new ConditionalEvent(cond, t, handle);
-			if (handle != null) {
-				if (handle.isScheduled())
-					throw new ProcessError("Tried to scheduleUntil using a handle already in use");
-				handle.event = evt;
-			}
-			condEvents.add(evt);
-			if (trcListener != null) {
-				cur.beginCallbacks();
-				trcListener.traceSchedUntil(t);
-				cur.endCallbacks();
-			}
+		cur.checkCallback();
+		ConditionalEvent evt = new ConditionalEvent(cond, t, handle);
+		if (handle != null) {
+			if (handle.isScheduled())
+				throw new ProcessError("Tried to scheduleUntil using a handle already in use");
+			handle.event = evt;
+		}
+		condEvents.add(evt);
+		if (trcListener != null) {
+			cur.beginCallbacks();
+			trcListener.traceSchedUntil(t);
+			cur.endCallbacks();
 		}
 	}
 
@@ -574,17 +568,15 @@ public final class EventManager {
 	private void start(Process cur, ProcessTarget t) {
 		Process newProcess = Process.allocate(this, cur, t);
 		// Notify the eventManager that a new process has been started
-		synchronized (lockObject) {
-			cur.checkCallback();
-			if (trcListener != null) {
-				cur.beginCallbacks();
-				trcListener.traceProcessStart(t);
-				cur.endCallbacks();
-			}
-			// Transfer control to the new process
-			newProcess.wake();
-			threadWait(cur);
+		cur.checkCallback();
+		if (trcListener != null) {
+			cur.beginCallbacks();
+			trcListener.traceProcessStart(t);
+			cur.endCallbacks();
 		}
+		// Transfer control to the new process
+		newProcess.wake();
+		threadWait(cur);
 	}
 
 	/**
@@ -640,22 +632,20 @@ public final class EventManager {
 	 *	Removes an event from the pending list without executing it.
 	 */
 	private void killEvent(Process cur, EventHandle handle) {
-		synchronized (lockObject) {
-			cur.checkCallback();
+		cur.checkCallback();
 
-			// no handle given, or Handle was not scheduled, nothing to do
-			if (handle == null || handle.event == null)
-				return;
+		// no handle given, or Handle was not scheduled, nothing to do
+		if (handle == null || handle.event == null)
+			return;
 
-			if (trcListener != null) {
-				cur.beginCallbacks();
-				trcKill(handle.event);
-				cur.endCallbacks();
-			}
-			ProcessTarget t = rem(handle);
-
-			t.kill();
+		if (trcListener != null) {
+			cur.beginCallbacks();
+			trcKill(handle.event);
+			cur.endCallbacks();
 		}
+		ProcessTarget t = rem(handle);
+
+		t.kill();
 	}
 
 	private void trcKill(BaseEvent event) {
@@ -682,27 +672,25 @@ public final class EventManager {
 	 *	Removes an event from the pending list and executes it.
 	 */
 	private void interruptEvent(Process cur, EventHandle handle) {
-		synchronized (lockObject) {
-			cur.checkCallback();
+		cur.checkCallback();
 
-			// no handle given, or Handle was not scheduled, nothing to do
-			if (handle == null || handle.event == null)
-				return;
+		// no handle given, or Handle was not scheduled, nothing to do
+		if (handle == null || handle.event == null)
+			return;
 
-			if (trcListener != null) {
-				cur.beginCallbacks();
-				trcInterrupt(handle.event);
-				cur.endCallbacks();
-			}
-			ProcessTarget t = rem(handle);
-
-			Process proc = t.getProcess();
-			if (proc == null)
-				proc = Process.allocate(this, cur, t);
-			proc.setNextProcess(cur);
-			proc.wake();
-			threadWait(cur);
+		if (trcListener != null) {
+			cur.beginCallbacks();
+			trcInterrupt(handle.event);
+			cur.endCallbacks();
 		}
+		ProcessTarget t = rem(handle);
+
+		Process proc = t.getProcess();
+		if (proc == null)
+			proc = Process.allocate(this, cur, t);
+		proc.setNextProcess(cur);
+		proc.wake();
+		threadWait(cur);
 	}
 
 	private void trcInterrupt(BaseEvent event) {
