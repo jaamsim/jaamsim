@@ -269,7 +269,7 @@ public final class EventManager {
 				// conditonal events
 				if (eventTree.getNextNode().schedTick > nextTick) {
 					if (condEvents.size() > 0) {
-						evaluateConditions(cur);
+						evaluateConditions();
 						if (!executeEvents) continue;
 					}
 
@@ -329,7 +329,7 @@ public final class EventManager {
 		return isRunning.get();
 	}
 
-	private void evaluateConditions(Process cur) {
+	private void evaluateConditions() {
 		// Protecting the conditional evaluate() callbacks and the traceWaitUntilEnded callback
 		disableSchedule();
 		try {
