@@ -94,6 +94,24 @@ public class TestEventManager {
 		}
 
 		try {
+			EventManager.scheduleUntil(null, null, null);
+			fail("Did not throw an error.");
+		}
+		catch (ProcessError e) {}
+		catch (Throwable e) {
+			fail("Unknown error thrown.");
+		}
+
+		try {
+			EventManager.waitUntil(null, null);
+			fail("Did not throw an error.");
+		}
+		catch (ProcessError e) {}
+		catch (Throwable e) {
+			fail("Unknown error thrown.");
+		}
+
+		try {
 			EventManager.interruptEvent(null);
 			fail("Did not throw an error.");
 		}
