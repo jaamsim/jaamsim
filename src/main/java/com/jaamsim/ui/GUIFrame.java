@@ -2289,132 +2289,22 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 					return;
 				final TextEntity textEnt = (TextEntity) selectedEntity;
 				final Color4d presentColour = textEnt.getFontColor();
-				ScrollablePopupMenu fontMenu = new ScrollablePopupMenu();
+				ArrayList<Color4d> coloursInUse = GUIFrame.getFontColoursInUse(sim);
+				ColourMenu fontMenu = new ColourMenu(presentColour, coloursInUse, true) {
 
-				ActionListener fontActionListener = new ActionListener() {
 					@Override
-					public void actionPerformed( ActionEvent event ) {
-						if (!(event.getSource() instanceof JMenuItem))
-							return;
-						JMenuItem item = (JMenuItem) event.getSource();
-						setFontColour(textEnt, item.getText());
-						controlStartResume.requestFocusInWindow();
+					public void setColour(String colStr) {
+						KeywordIndex kw = InputAgent.formatInput("FontColour", colStr);
+						InputAgent.storeAndExecute(new KeywordCommand(selectedEntity, kw));
 					}
+
 				};
-
-				MouseListener fontMouseListener = new MouseListener() {
-					@Override
-					public void mouseClicked(MouseEvent e) {}
-					@Override
-					public void mousePressed(MouseEvent e) {}
-					@Override
-					public void mouseReleased(MouseEvent e) {}
-					@Override
-					public void mouseEntered(MouseEvent e) {
-						if (!(e.getSource() instanceof JMenuItem))
-							return;
-						JMenuItem item = (JMenuItem) e.getSource();
-						setFontColour(textEnt, item.getText());
-					}
-					@Override
-					public void mouseExited(MouseEvent e) {
-						setFontColour(textEnt, presentColour);
-					}
-				};
-
-				final ActionListener chooserActionListener = new ActionListener() {
-					@Override
-					public void actionPerformed( ActionEvent event ) {
-						Color clr = ColorEditor.getColorChooser().getColor();
-						Color4d newColour = new Color4d(clr.getRed(), clr.getGreen(),
-								clr.getBlue(), clr.getAlpha());
-						setFontColour(textEnt, newColour);
-						controlStartResume.requestFocusInWindow();
-					}
-				};
-
-				// Font colours already in use
-				JMenuItem selectedItem = null;
-				int selectedIndex = -1;
-				int ind = 0;
-				for (Color4d col : GUIFrame.getFontColoursInUse(sim)) {
-					String colourName = ColourInput.toString(col);
-					JMenuItem item = new JMenuItem(colourName);
-					ColorIcon icon = new ColorIcon(16, 16);
-					icon.setFillColor(
-							new Color((float)col.r, (float)col.g, (float)col.b, (float)col.a));
-					icon.setOutlineColor(Color.DARK_GRAY);
-					item.setIcon(icon);
-					if (selectedItem == null && col.equals(textEnt.getFontColor())) {
-						selectedItem = item;
-						selectedIndex = ind;
-					}
-					ind++;
-					item.addActionListener(fontActionListener);
-					item.addMouseListener(fontMouseListener);
-					fontMenu.add(item);
-				}
-				fontMenu.addSeparator();
-
-				// Colour chooser
-				JMenuItem chooserItem = new JMenuItem(ColorEditor.OPTION_COLOUR_CHOOSER);
-				chooserItem.addActionListener(new ActionListener() {
-					@Override
-					public void actionPerformed(ActionEvent event) {
-						JColorChooser chooser = ColorEditor.getColorChooser();
-						JDialog dialog = JColorChooser.createDialog(null,
-								ColorEditor.DIALOG_NAME,
-								true,  //modal
-								chooser,
-								chooserActionListener,  //OK button listener
-								null); //no CANCEL button listener
-						dialog.setIconImage(GUIFrame.getWindowIcon());
-						dialog.setAlwaysOnTop(true);
-						Color4d col = textEnt.getFontColor();
-						chooser.setColor(new Color((float)col.r, (float)col.g, (float)col.b, (float)col.a));
-						dialog.setVisible(true);
-					}
-				});
-				fontMenu.add(chooserItem);
-				fontMenu.addSeparator();
-
-				// All possible fonts
-				for (Color4d col : ColourInput.namedColourList) {
-					String colourName = ColourInput.toString(col);
-					JMenuItem item = new JMenuItem(colourName);
-					ColorIcon icon = new ColorIcon(16, 16);
-					icon.setFillColor(
-							new Color((float)col.r, (float)col.g, (float)col.b, (float)col.a));
-					icon.setOutlineColor(Color.DARK_GRAY);
-					item.setIcon(icon);
-					item.addActionListener(fontActionListener);
-					item.addMouseListener(fontMouseListener);
-					fontMenu.add(item);
-				}
-
 				fontMenu.show(fontColour, 0, fontColour.getPreferredSize().height);
-				if (selectedItem != null) {
-					fontMenu.ensureIndexIsVisible(selectedIndex);
-					selectedItem.setArmed(true);
-				}
+				controlStartResume.requestFocusInWindow();
 			}
 		});
 
 		buttonBar.add( fontColour );
-	}
-
-	private static void setFontColour(TextEntity textEnt, String colName) {
-		KeywordIndex kw = InputAgent.formatInput("FontColour", colName);
-		Color4d col = Input.parseColour(sim, kw);
-		setFontColour(textEnt, col);
-	}
-
-	private static void setFontColour(TextEntity textEnt, Color4d col) {
-		if (col.equals(textEnt.getFontColor()))
-			return;
-		String colName = ColourInput.toString(col);
-		KeywordIndex kw = InputAgent.formatInput("FontColour", colName);
-		InputAgent.storeAndExecute(new KeywordCommand((Entity)textEnt, kw));
 	}
 
 	private void addZButtons(JToolBar buttonBar, Insets margin) {
