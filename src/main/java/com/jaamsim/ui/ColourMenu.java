@@ -116,8 +116,10 @@ public abstract class ColourMenu extends ScrollablePopupMenu {
 						null); //no CANCEL button listener
 				dialog.setIconImage(GUIFrame.getWindowIcon());
 				dialog.setAlwaysOnTop(true);
-				chooser.setColor(new Color((float)presentColour.r, (float)presentColour.g,
-						(float)presentColour.b, (float)presentColour.a));
+				if (presentColour != null) {
+					chooser.setColor(new Color((float)presentColour.r, (float)presentColour.g,
+							(float)presentColour.b, (float)presentColour.a));
+				}
 				dialog.setVisible(true);
 			}
 		});
