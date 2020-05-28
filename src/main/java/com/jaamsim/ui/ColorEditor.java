@@ -17,15 +17,12 @@
  */
 package com.jaamsim.ui;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 
 import javax.swing.JColorChooser;
-import javax.swing.JDialog;
 
-import com.jaamsim.input.ColourInput;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.ui.EditBox.EditTable;
 
@@ -74,28 +71,6 @@ public class ColorEditor extends CellEditor {
 		if (colorChooser == null)
 			colorChooser = new JColorChooser();
 		return colorChooser;
-	}
-
-	public void launchDialog() {
-		JColorChooser chooser = getColorChooser();
-		JDialog dialog = JColorChooser.createDialog(null,
-				DIALOG_NAME,
-				true,  //modal
-				chooser,
-				this,  //OK button listener
-				null); //no CANCEL button listener
-		dialog.setIconImage(GUIFrame.getWindowIcon());
-		dialog.setAlwaysOnTop(true);
-
-		Color4d col = ((ColourInput)input).getValue();
-		chooser.setColor(new Color((float)col.r, (float)col.g, (float)col.b, (float)col.a));
-		dialog.setVisible(true);
-
-		// Apply editing
-		stopCellEditing();
-
-		// Focus the cell
-		propTable.requestFocusInWindow();
 	}
 
 }
