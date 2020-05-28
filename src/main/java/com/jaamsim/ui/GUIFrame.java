@@ -2445,132 +2445,22 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 					return;
 				final LineEntity lineEnt = (LineEntity) selectedEntity;
 				final Color4d presentColour = lineEnt.getLineColour();
-				ScrollablePopupMenu menu = new ScrollablePopupMenu();
+				ArrayList<Color4d> coloursInUse = GUIFrame.getLineColoursInUse(sim);
+				ColourMenu menu = new ColourMenu(presentColour, coloursInUse, true) {
 
-				ActionListener actionListener = new ActionListener() {
 					@Override
-					public void actionPerformed( ActionEvent event ) {
-						if (!(event.getSource() instanceof JMenuItem))
-							return;
-						JMenuItem item = (JMenuItem) event.getSource();
-						setLineColour(lineEnt, item.getText());
-						controlStartResume.requestFocusInWindow();
+					public void setColour(String colStr) {
+						KeywordIndex kw = InputAgent.formatInput("LineColour", colStr);
+						InputAgent.storeAndExecute(new KeywordCommand(selectedEntity, kw));
 					}
+
 				};
-
-				MouseListener mouseListener = new MouseListener() {
-					@Override
-					public void mouseClicked(MouseEvent e) {}
-					@Override
-					public void mousePressed(MouseEvent e) {}
-					@Override
-					public void mouseReleased(MouseEvent e) {}
-					@Override
-					public void mouseEntered(MouseEvent e) {
-						if (!(e.getSource() instanceof JMenuItem))
-							return;
-						JMenuItem item = (JMenuItem) e.getSource();
-						setLineColour(lineEnt, item.getText());
-					}
-					@Override
-					public void mouseExited(MouseEvent e) {
-						setLineColour(lineEnt, presentColour);
-					}
-				};
-
-				final ActionListener chooserActionListener = new ActionListener() {
-					@Override
-					public void actionPerformed( ActionEvent event ) {
-						Color clr = ColorEditor.getColorChooser().getColor();
-						Color4d newColour = new Color4d(clr.getRed(), clr.getGreen(),
-								clr.getBlue(), clr.getAlpha());
-						setLineColour(lineEnt, newColour);
-						controlStartResume.requestFocusInWindow();
-					}
-				};
-
-				// Line colours already in use
-				JMenuItem selectedItem = null;
-				int selectedIndex = -1;
-				int ind = 0;
-				for (Color4d col : GUIFrame.getLineColoursInUse(sim)) {
-					String colourName = ColourInput.toString(col);
-					JMenuItem item = new JMenuItem(colourName);
-					ColorIcon icon = new ColorIcon(16, 16);
-					icon.setFillColor(
-							new Color((float)col.r, (float)col.g, (float)col.b, (float)col.a));
-					icon.setOutlineColor(Color.DARK_GRAY);
-					item.setIcon(icon);
-					if (selectedItem == null && col.equals(lineEnt.getLineColour())) {
-						selectedItem = item;
-						selectedIndex = ind;
-					}
-					ind++;
-					item.addActionListener(actionListener);
-					item.addMouseListener(mouseListener);
-					menu.add(item);
-				}
-				menu.addSeparator();
-
-				// Colour chooser
-				JMenuItem chooserItem = new JMenuItem(ColorEditor.OPTION_COLOUR_CHOOSER);
-				chooserItem.addActionListener(new ActionListener() {
-					@Override
-					public void actionPerformed(ActionEvent event) {
-						JColorChooser chooser = ColorEditor.getColorChooser();
-						JDialog dialog = JColorChooser.createDialog(null,
-								ColorEditor.DIALOG_NAME,
-								true,  //modal
-								chooser,
-								chooserActionListener,  //OK button listener
-								null); //no CANCEL button listener
-						dialog.setIconImage(GUIFrame.getWindowIcon());
-						dialog.setAlwaysOnTop(true);
-						Color4d col = lineEnt.getLineColour();
-						chooser.setColor(new Color((float)col.r, (float)col.g, (float)col.b, (float)col.a));
-						dialog.setVisible(true);
-					}
-				});
-				menu.add(chooserItem);
-				menu.addSeparator();
-
-				// All possible colours
-				for (Color4d col : ColourInput.namedColourList) {
-					String colourName = ColourInput.toString(col);
-					JMenuItem item = new JMenuItem(colourName);
-					ColorIcon icon = new ColorIcon(16, 16);
-					icon.setFillColor(
-							new Color((float)col.r, (float)col.g, (float)col.b, (float)col.a));
-					icon.setOutlineColor(Color.DARK_GRAY);
-					item.setIcon(icon);
-					item.addActionListener(actionListener);
-					item.addMouseListener(mouseListener);
-					menu.add(item);
-				}
-
 				menu.show(lineColour, 0, lineColour.getPreferredSize().height);
-				if (selectedItem != null) {
-					menu.ensureIndexIsVisible(selectedIndex);
-					selectedItem.setArmed(true);
-				}
+				controlStartResume.requestFocusInWindow();
 			}
 		});
 
 		buttonBar.add( lineColour );
-	}
-
-	private static void setLineColour(LineEntity lineEnt, String colName) {
-		KeywordIndex kw = InputAgent.formatInput("LineColour", colName);
-		Color4d col = Input.parseColour(sim, kw);
-		setLineColour(lineEnt, col);
-	}
-
-	private static void setLineColour(LineEntity lineEnt, Color4d col) {
-		if (col.equals(lineEnt.getLineColour()))
-			return;
-		String colName = ColourInput.toString(col);
-		KeywordIndex kw = InputAgent.formatInput("LineColour", colName);
-		InputAgent.storeAndExecute(new KeywordCommand((Entity)lineEnt, kw));
 	}
 
 	private void addFillButton(JToolBar buttonBar, Insets margin) {
