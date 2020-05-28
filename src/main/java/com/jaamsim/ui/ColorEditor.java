@@ -21,8 +21,6 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 
-import javax.swing.JColorChooser;
-
 import com.jaamsim.math.Color4d;
 import com.jaamsim.ui.EditBox.EditTable;
 
@@ -31,11 +29,6 @@ import com.jaamsim.ui.EditBox.EditTable;
  *
  */
 public class ColorEditor extends CellEditor {
-
-	private static JColorChooser colorChooser;
-
-	public static final String DIALOG_NAME = "Colour Chooser";
-	public static final String OPTION_COLOUR_CHOOSER = String.format("*** %s ***", DIALOG_NAME);
 
 	public ColorEditor(EditTable table) {
 		super(table, true);
@@ -65,12 +58,6 @@ public class ColorEditor extends CellEditor {
 			menu.show(panel, 0, panel.getHeight());
 			return;
 		}
-	}
-
-	public static JColorChooser getColorChooser() {
-		if (colorChooser == null)
-			colorChooser = new JColorChooser();
-		return colorChooser;
 	}
 
 }

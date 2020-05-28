@@ -36,6 +36,11 @@ public abstract class ColourMenu extends ScrollablePopupMenu {
 	JMenuItem selectedItem = null;
 	int selectedIndex = -1;
 
+	private static JColorChooser colorChooser;
+
+	public static final String DIALOG_NAME = "Colour Chooser";
+	public static final String OPTION_COLOUR_CHOOSER = String.format("*** %s ***", DIALOG_NAME);
+
 	public ColourMenu(Color4d presentColour, ArrayList<Color4d> coloursInUse, boolean preview) {
 
 		ActionListener actionListener = new ActionListener() {
@@ -72,7 +77,7 @@ public abstract class ColourMenu extends ScrollablePopupMenu {
 		final ActionListener chooserActionListener = new ActionListener() {
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				Color clr = ColorEditor.getColorChooser().getColor();
+				Color clr = getColorChooser().getColor();
 				Color4d newColour = new Color4d(clr.getRed(), clr.getGreen(),
 						clr.getBlue(), clr.getAlpha());
 				String colStr = ColourInput.toString(newColour);
@@ -103,13 +108,13 @@ public abstract class ColourMenu extends ScrollablePopupMenu {
 		addSeparator();
 
 		// Colour chooser
-		JMenuItem chooserItem = new JMenuItem(ColorEditor.OPTION_COLOUR_CHOOSER);
+		JMenuItem chooserItem = new JMenuItem(OPTION_COLOUR_CHOOSER);
 		chooserItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent event) {
-				JColorChooser chooser = ColorEditor.getColorChooser();
+				JColorChooser chooser = getColorChooser();
 				JDialog dialog = JColorChooser.createDialog(null,
-						ColorEditor.DIALOG_NAME,
+						DIALOG_NAME,
 						true,  //modal
 						chooser,
 						chooserActionListener,  //OK button listener
@@ -140,6 +145,12 @@ public abstract class ColourMenu extends ScrollablePopupMenu {
 				item.addMouseListener(mouseListener);
 			add(item);
 		}
+	}
+
+	public static JColorChooser getColorChooser() {
+		if (colorChooser == null)
+			colorChooser = new JColorChooser();
+		return colorChooser;
 	}
 
 	@Override
