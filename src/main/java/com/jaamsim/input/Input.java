@@ -1449,7 +1449,7 @@ public abstract class Input<T> {
 
 		// Color names
 		if (kw.numArgs() <= 2) {
-			Color4d colAtt = ColourInput.getColorWithName(kw.getArg(0).toLowerCase());
+			Color4d colAtt = ColourInput.getColorWithName(kw.getArg(0));
 			if( colAtt == null )
 				throw new InputErrorException( "Color " + kw.getArg( 0 ) + " not found" );
 

@@ -80,7 +80,7 @@ static {
 	}
 
 public static Color4d getColorWithName(String colorName) {
-	return colorMap.get(colorName);
+	return colorMap.get(colorName.toLowerCase());
 }
 
 public static String getColorName(Color4d col) {
@@ -92,7 +92,8 @@ private static void defColor(String colorName, int r, int g, int b) {
 }
 
 private static void mapColor(String colorName, Color4d col) {
-	if (colorMap.put(colorName, col) != null)
+	String name = colorName.toLowerCase();
+	if (colorMap.put(name, col) != null)
 		System.out.println(String.format("ColorName added twice: %s ", colorName));
 	if (colorNameMap.put(col, colorName) != null)
 		System.out.println(String.format("Color4d added twice: %s", colorName));
