@@ -27,22 +27,22 @@ import com.jaamsim.math.Color4d;
 
 public class ColourInput extends Input<Color4d> {
 
-public static final Color4d WHITE       = new Color4d(1.0d, 1.0d, 1.0d);
-public static final Color4d BLACK       = new Color4d(0.0d, 0.0d, 0.0d);
-public static final Color4d RED         = new Color4d(1.0d, 0.0d, 0.0d);
-public static final Color4d GREEN       = new Color4d(0.0d, 1.0d, 0.0d);
-public static final Color4d BLUE        = new Color4d(0.0d, 0.0d, 1.0d);
-public static final Color4d CYAN        = new Color4d(0.0d, 1.0d, 1.0d);
-public static final Color4d YELLOW      = new Color4d(1.0d, 1.0d, 0.0d);
-public static final Color4d PURPLE      = new Color4d(1.0d, 0.0d, 1.0d);
-public static final Color4d LIGHT_GREY  = new Color4d(191, 191, 191, 255);
-public static final Color4d MED_GREY    = new Color4d(128, 128, 128, 255);
-public static final Color4d DARK_RED    = new Color4d(191, 0, 0, 255);
-public static final Color4d DARK_GREEN  = new Color4d(0, 191, 0, 255);
-public static final Color4d DARK_BLUE   = new Color4d(0, 0, 191, 255);
-public static final Color4d DARK_CYAN   = new Color4d(0, 191, 191, 255);
-public static final Color4d DARK_YELLOW = new Color4d(191, 191, 0, 255);
-public static final Color4d DARK_PURPLE = new Color4d(191, 0, 191, 255);
+public static final Color4d WHITE       = new Color4d(255, 255, 255);
+public static final Color4d BLACK       = new Color4d(  0,   0,   0);
+public static final Color4d RED         = new Color4d(255,   0,   0);
+public static final Color4d GREEN       = new Color4d(  0, 255,   0);
+public static final Color4d BLUE        = new Color4d(  0,   0, 255);
+public static final Color4d CYAN        = new Color4d(  0, 255, 255);
+public static final Color4d YELLOW      = new Color4d(255, 255,   0);
+public static final Color4d PURPLE      = new Color4d(255,   0, 255);
+public static final Color4d LIGHT_GREY  = new Color4d(191, 191, 191);
+public static final Color4d MED_GREY    = new Color4d(128, 128, 128);
+public static final Color4d DARK_RED    = new Color4d(191,   0,   0);
+public static final Color4d DARK_GREEN  = new Color4d(  0, 191,   0);
+public static final Color4d DARK_BLUE   = new Color4d(  0,   0, 191);
+public static final Color4d DARK_CYAN   = new Color4d(  0, 191, 191);
+public static final Color4d DARK_YELLOW = new Color4d(191, 191,   0);
+public static final Color4d DARK_PURPLE = new Color4d(191,   0, 191);
 
 private static final HashMap<String, Color4d> colorMap;
 private static final HashMap<Color4d, String> colorNameMap;
