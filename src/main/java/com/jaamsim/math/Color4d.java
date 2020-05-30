@@ -30,11 +30,11 @@ public double b;
 public double a;
 
 public Color4d() {
-	r = 0.0d; g = 0.0d; b = 0.0d; a = 1.0d;
+	this(0.0d, 0.0d, 0.0d, 1.0d);
 }
 
 public Color4d(double r, double g, double b) {
-	this.r = r; this.g = g; this.b = b; this.a = 1.0d;
+	this(r, g, b, 1.0d);
 }
 
 public Color4d(double r, double g, double b, double a) {
@@ -42,15 +42,15 @@ public Color4d(double r, double g, double b, double a) {
 }
 
 public Color4d(Color4d col) {
-	this.r = col.r; this.g = col.g; this.b = col.b; this.a = col.a;
+	this(col.r, col.g, col.b, col.a);
 }
 
 public Color4d(int r, int g, int b) {
 	this(r, g, b, 255);
 }
 
-public Color4d(int red, int green, int blue, int alpha) {
-	r = red/255.0d; g = green/255.0d; b = blue/255.0d; a = alpha/255.0d;
+public Color4d(int r, int g, int b, int a) {
+	this(r/255.0d, g/255.0d, b/255.0d, a/255.0d);
 }
 
 public float[] toFloats() {
