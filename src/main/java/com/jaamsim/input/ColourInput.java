@@ -101,153 +101,181 @@ private static void mapColor(String colorName, Color4d col) {
 }
 
 private static void initColors() {
-	mapColor("white", WHITE);
-	mapColor("black", BLACK);
 
-	mapColor("red", RED);
-	mapColor("green", GREEN);
-	mapColor("blue", BLUE);
-	mapColor("cyan", CYAN);
-	mapColor("yellow", YELLOW);
-	//mapColor("purple", PURPLE); This RGB value is actually "magenta"
-
-	mapColor("darkred", DARK_RED);
-	mapColor("darkgreen", DARK_GREEN);
-	mapColor("darkblue", DARK_BLUE);
-	mapColor("darkcyan", DARK_CYAN);
-	mapColor("darkyellow", DARK_YELLOW);
-	mapColor("darkpurple", DARK_PURPLE);
-
-	defColor("lavenderblush", 255, 240, 245);
+	// Pink colours
 	defColor("pink", 255, 192, 203);
 	defColor("lightpink", 255, 182, 193);
-	defColor("palevioletred", 219, 112, 147);
 	defColor("hotpink", 255, 105, 180);
 	defColor("deeppink", 255, 20, 147);
-	defColor("violetred", 208, 32, 144);
+	defColor("palevioletred", 219, 112, 147);
 	defColor("mediumvioletred", 199, 21, 133);
-	defColor("raspberry", 135, 38, 87);
-	defColor("thistle", 216, 191, 216);
-	defColor("plum", 221, 160, 221);
-	defColor("orchid", 218, 112, 214);
-	defColor("violet", 238, 130, 238);
-	defColor("magenta", 255, 0, 255);
-	defColor("purple", 128, 0, 128);
-	defColor("mediumorchid", 186, 85, 211);
-	defColor("darkorchid", 153, 50, 204);
-	defColor("darkviolet", 148, 0, 211);
-	defColor("blueviolet", 138, 43, 226);
-	defColor("indigo", 75, 0, 130);
-	defColor("mediumpurple", 147, 112, 219);
-	defColor("lightslateblue", 132, 112, 255);
-	defColor("mediumslateblue", 123, 104, 238);
-	defColor("slateblue", 106, 90, 205);
-	defColor("darkslateblue", 72, 61, 139);
-	defColor("ghostwhite", 248, 248, 255);
-	defColor("lavender", 230, 230, 250);
-	defColor("navy", 0, 0, 128);
-	defColor("midnightblue", 25, 25, 112);
-	defColor("cobalt", 61, 89, 171);
-	defColor("royalblue", 65, 105, 225);
-	defColor("cornflowerblue", 100, 149, 237);
-	defColor("lightsteelblue", 176, 196, 222);
-	defColor("lightslategray", 119, 136, 153);
-	defColor("slategray", 112, 128, 144);
-	defColor("dodgerblue", 30, 144, 255);
-	defColor("aliceblue", 240, 248, 255);
-	defColor("powderblue", 176, 224, 230);
-	defColor("lightblue", 173, 216, 230);
-	defColor("lightskyblue", 135, 206, 250);
-	defColor("skyblue", 135, 206, 235);
-	defColor("deepskyblue", 0, 191, 255);
-	defColor("peacock", 51, 161, 201);
-	defColor("steelblue", 70, 130, 180);
-	defColor("darkturquoise", 0, 206, 209);
-	defColor("cadetblue", 95, 158, 160);
-	defColor("azure", 240, 255, 255);
-	defColor("lightcyan", 224, 255, 255);
-	defColor("paleturquoise", 187, 255, 255);
-	defColor("turquoise", 64, 224, 208);
-	defColor("mediumturquoise", 72, 209, 204);
-	defColor("lightseagreen", 32, 178, 170);
-	defColor("manganeseblue", 3, 168, 158);
-	defColor("teal", 0, 128, 128);
-	defColor("darkslategray", 47, 79, 79);
-	defColor("turquoiseblue", 0, 199, 140);
-	defColor("aquamarine", 127, 255, 212);
-	defColor("mintcream", 245, 255, 250);
-	defColor("mint", 189, 252, 201);
-	defColor("seagreen", 84, 255, 159);
-	defColor("mediumspringgreen", 0, 250, 154);
-	defColor("springgreen", 0, 255, 127);
-	defColor("emeraldgreen", 0, 201, 87);
-	defColor("mediumseagreen", 60, 179, 113);
-	defColor("cobaltgreen", 61, 145, 64);
-	defColor("darkseagreen", 143, 188, 143);
-	defColor("honeydew", 240, 255, 240);
-	defColor("palegreen", 152, 251, 152);
-	defColor("lawngreen", 124, 252, 0);
-	defColor("greenyellow", 173, 255, 47);
-	defColor("limegreen", 50, 205, 50);
-	defColor("forestgreen", 34, 139, 34);
-	defColor("sapgreen", 48, 128, 20);
-	defColor("darkolivegreen", 85, 107, 47);
-	defColor("olivedrab", 107, 142, 35);
-	defColor("olive", 128, 128, 0);
-	defColor("ivory", 255, 255, 240);
-	defColor("lightyellow", 255, 255, 224);
-	defColor("lightgoldenrodyellow", 250, 250, 210);
-	defColor("cornsilk", 255, 248, 220);
-	defColor("lemonchiffon", 255, 250, 205);
-	defColor("beige", 245, 245, 220);
-	defColor("khaki", 240, 230, 140);
-	defColor("lightgoldenrod", 255, 236, 139);
-	defColor("palegoldenrod", 238, 232, 170);
-	defColor("darkkhaki", 189, 183, 107);
-	defColor("banana", 227, 207, 87);
-	defColor("gold", 255, 215, 0);
-	defColor("goldenrod", 218, 165, 32);
-	defColor("darkgoldenrod", 184, 134, 11);
-	defColor("brick", 156, 102, 31);
-	defColor("floralwhite", 255, 250, 240);
-	defColor("seashell", 255, 245, 238);
-	defColor("oldlace", 253, 245, 230);
-	defColor("linen", 250, 240, 230);
-	defColor("antiquewhite", 250, 235, 215);
-	defColor("papayawhip", 255, 239, 213);
-	defColor("blanchedalmond", 255, 235, 205);
-	defColor("eggshell", 252, 230, 201);
-	defColor("bisque", 255, 228, 196);
-	defColor("moccasin", 255, 228, 181);
-	defColor("navajowhite", 255, 222, 173);
-	defColor("wheat", 245, 222, 179);
-	defColor("peachpuff", 255, 218, 185);
-	defColor("tan", 210, 180, 140);
-	defColor("burlywood", 222, 184, 135);
-	defColor("melon", 227, 168, 105);
-	defColor("sandybrown", 244, 164, 96);
-	defColor("cadmiumyellow", 255, 153, 18);
-	defColor("carrot", 237, 145, 33);
-	defColor("orange", 255, 128, 0);
-	defColor("flesh", 255, 125, 64);
-	defColor("cadmiumorange", 255, 97, 3);
-	defColor("chocolate", 210, 105, 30);
-	defColor("rawsienna", 199, 97, 20);
-	defColor("sienna", 160, 82, 45);
-	defColor("brown", 138, 54, 15);
+
+	defColor("violetred", 208, 32, 144);
+
+	// Red colours
 	defColor("lightsalmon", 255, 160, 122);
-	defColor("darksalmon", 233, 150, 122);
 	defColor("salmon", 250, 128, 114);
+	defColor("darksalmon", 233, 150, 122);
 	defColor("lightcoral", 240, 128, 128);
-	defColor("coral", 255, 114, 86);
-	defColor("tomato", 255, 99, 71);
-	defColor("orangered", 255, 69, 0);
+	defColor("indianred", 176, 23, 31);
 	defColor("crimson", 220, 20, 60);
 	defColor("firebrick", 178, 34, 34);
-	defColor("indianred", 176, 23, 31);
-	defColor("burntumber", 138, 51, 36);
+	mapColor("darkred", DARK_RED);
+	mapColor("red", RED);
+
+	// Orange colours
+	defColor("orangered", 255, 69, 0);
+	defColor("tomato", 255, 99, 71);
+	defColor("coral", 255, 114, 86);
+	defColor("orange", 255, 128, 0);
+
+	defColor("flesh", 255, 125, 64);
+	defColor("carrot", 237, 145, 33);
+	defColor("cadmiumorange", 255, 97, 3);
+
+	// Yellow colours
+	mapColor("yellow", YELLOW);
+	defColor("lightyellow", 255, 255, 224);
+	defColor("lemonchiffon", 255, 250, 205);
+	defColor("lightgoldenrodyellow", 250, 250, 210);
+	defColor("papayawhip", 255, 239, 213);
+	defColor("moccasin", 255, 228, 181);
+	defColor("peachpuff", 255, 218, 185);
+	defColor("palegoldenrod", 238, 232, 170);
+	defColor("khaki", 240, 230, 140);
+	defColor("darkkhaki", 189, 183, 107);
+	defColor("gold", 255, 215, 0);
+
+	defColor("cadmiumyellow", 255, 153, 18);
+	defColor("lightgoldenrod", 255, 236, 139);
+	defColor("banana", 227, 207, 87);
+	mapColor("darkyellow", DARK_YELLOW);
+
+	// Brown colours
+	defColor("cornsilk", 255, 248, 220);
+	defColor("blanchedalmond", 255, 235, 205);
+	defColor("bisque", 255, 228, 196);
+	defColor("navajowhite", 255, 222, 173);
+	defColor("wheat", 245, 222, 179);
+	defColor("burlywood", 222, 184, 135);
+	defColor("tan", 210, 180, 140);
+	defColor("sandybrown", 244, 164, 96);
+	defColor("goldenrod", 218, 165, 32);
+	defColor("darkgoldenrod", 184, 134, 11);
+	defColor("chocolate", 210, 105, 30);
+	defColor("sienna", 160, 82, 45);
+	defColor("brown", 138, 54, 15);
 	defColor("maroon", 128, 0, 0);
+
+	defColor("rawsienna", 199, 97, 20);
+	defColor("burntumber", 138, 51, 36);
 	defColor("sepia", 94, 38, 18);
+	defColor("brick", 156, 102, 31);
+	defColor("melon", 227, 168, 105);
+
+	// Green colours
+	defColor("darkolivegreen", 85, 107, 47);
+	defColor("olive", 128, 128, 0);
+	defColor("olivedrab", 107, 142, 35);
+	defColor("limegreen", 50, 205, 50);
+	defColor("lawngreen", 124, 252, 0);
+	defColor("greenyellow", 173, 255, 47);
+	defColor("springgreen", 0, 255, 127);
+	defColor("mediumspringgreen", 0, 250, 154);
+	defColor("palegreen", 152, 251, 152);
+	defColor("darkseagreen", 143, 188, 143);
+	defColor("mediumseagreen", 60, 179, 113);
+	defColor("seagreen", 84, 255, 159);
+	defColor("forestgreen", 34, 139, 34);
+	mapColor("green", GREEN);
+	mapColor("darkgreen", DARK_GREEN);
+
+	defColor("mint", 189, 252, 201);
+	defColor("emeraldgreen", 0, 201, 87);
+	defColor("cobaltgreen", 61, 145, 64);
+	defColor("sapgreen", 48, 128, 20);
+
+	// Cyan colours
+	mapColor("cyan", CYAN);
+	defColor("lightcyan", 224, 255, 255);
+	defColor("paleturquoise", 187, 255, 255);
+	defColor("aquamarine", 127, 255, 212);
+	defColor("turquoise", 64, 224, 208);
+	defColor("mediumturquoise", 72, 209, 204);
+	defColor("darkturquoise", 0, 206, 209);
+	defColor("lightseagreen", 32, 178, 170);
+	defColor("cadetblue", 95, 158, 160);
+	mapColor("darkcyan", DARK_CYAN);
+	defColor("teal", 0, 128, 128);
+
+	defColor("manganeseblue", 3, 168, 158);
+	defColor("turquoiseblue", 0, 199, 140);
+
+	// Blue colours
+	defColor("lightsteelblue", 176, 196, 222);
+	defColor("powderblue", 176, 224, 230);
+	defColor("lightblue", 173, 216, 230);
+	defColor("skyblue", 135, 206, 235);
+	defColor("lightskyblue", 135, 206, 250);
+	defColor("deepskyblue", 0, 191, 255);
+	defColor("dodgerblue", 30, 144, 255);
+	defColor("cornflowerblue", 100, 149, 237);
+	defColor("steelblue", 70, 130, 180);
+	defColor("royalblue", 65, 105, 225);
+	mapColor("blue", BLUE);
+	mapColor("darkblue", DARK_BLUE);
+	defColor("navy", 0, 0, 128);
+	defColor("midnightblue", 25, 25, 112);
+
+	defColor("cobalt", 61, 89, 171);
+	defColor("peacock", 51, 161, 201);
+
+	// Purple, violet, and magenta colours
+	defColor("lavender", 230, 230, 250);
+	defColor("thistle", 216, 191, 216);
+	defColor("plum", 221, 160, 221);
+	defColor("violet", 238, 130, 238);
+	defColor("orchid", 218, 112, 214);
+	defColor("magenta", 255, 0, 255);
+	defColor("mediumorchid", 186, 85, 211);
+	defColor("mediumpurple", 147, 112, 219);
+	defColor("blueviolet", 138, 43, 226);
+	defColor("darkviolet", 148, 0, 211);
+	defColor("darkorchid", 153, 50, 204);
+	defColor("purple", 128, 0, 128);
+	defColor("indigo", 75, 0, 130);
+	defColor("darkslateblue", 72, 61, 139);
+	defColor("slateblue", 106, 90, 205);
+	defColor("mediumslateblue", 123, 104, 238);
+
+	mapColor("darkpurple", DARK_PURPLE);
+	defColor("raspberry", 135, 38, 87);
+	defColor("lightslateblue", 132, 112, 255);
+
+	// White colours
+	mapColor("white", WHITE);
+	defColor("honeydew", 240, 255, 240);
+	defColor("mintcream", 245, 255, 250);
+	defColor("azure", 240, 255, 255);
+	defColor("aliceblue", 240, 248, 255);
+	defColor("ghostwhite", 248, 248, 255);
+	defColor("seashell", 255, 245, 238);
+	defColor("beige", 245, 245, 220);
+	defColor("oldlace", 253, 245, 230);
+	defColor("floralwhite", 255, 250, 240);
+	defColor("ivory", 255, 255, 240);
+	defColor("antiquewhite", 250, 235, 215);
+	defColor("linen", 250, 240, 230);
+	defColor("lavenderblush", 255, 240, 245);
+
+	defColor("eggshell", 252, 230, 201);
+
+	// Grey and black colours
+	defColor("lightslategray", 119, 136, 153);
+	defColor("slategray", 112, 128, 144);
+	defColor("darkslategray", 47, 79, 79);
+	mapColor("black", BLACK);
+
 	defColor("gray99", 252, 252, 252);
 	defColor("gray98", 250, 250, 250);
 	defColor("gray97", 247, 247, 247);
