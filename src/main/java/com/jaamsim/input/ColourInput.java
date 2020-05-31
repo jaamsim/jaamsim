@@ -95,9 +95,11 @@ private static void mapColor(String colorName, String family, Color4d col) {
 	String name = colorName.toLowerCase();
 	if (colorMap.put(name, col) != null)
 		System.out.println(String.format("ColorName added twice: %s ", colorName));
-	if (colorNameMap.put(col, colorName) != null)
-		System.out.println(String.format("Color4d added twice: %s", colorName));
-	namedColourList.add(col);
+
+	if (!colorNameMap.containsKey(col)) {
+		colorNameMap.put(col, colorName);
+		namedColourList.add(col);
+	}
 }
 
 private static void initColors() {
