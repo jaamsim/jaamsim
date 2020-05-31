@@ -60,6 +60,17 @@ public static Comparator<Color4d> colourComparator = new Comparator<Color4d>() {
 	}
 };
 
+public static Comparator<String> luminosityComparator = new Comparator<String>() {
+	@Override
+	public int compare(String name1, String name2) {
+		Color4d col1 = ColourInput.getColorWithName(name1);
+		Color4d col2 = ColourInput.getColorWithName(name2);
+		double lum1 = 0.2126d*col1.r + 0.7152d*col1.g + 0.0722d*col1.b;
+		double lum2 = 0.2126d*col2.r + 0.7152d*col2.g + 0.0722d*col2.b;
+		return Double.compare(lum2, lum1);  // from light to dark
+	}
+};
+
 static {
 	colorMap = new HashMap<>();
 	colorNameMap = new HashMap<>();
@@ -70,6 +81,11 @@ static {
 	}
 
 	initColors();
+
+	for (String family : colorFamilies) {
+		ArrayList<String> list = colorFamilyMap.get(family);
+		Collections.sort(list, luminosityComparator);
+	}
 }
 	public ColourInput(String key, String cat, Color4d def) {
 		super(key, cat, def);
