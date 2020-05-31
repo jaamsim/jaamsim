@@ -17,7 +17,6 @@
 package com.jaamsim.ui;
 
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -32,9 +31,6 @@ import com.jaamsim.input.ColourInput;
 import com.jaamsim.math.Color4d;
 
 public abstract class ColourMenu extends ScrollablePopupMenu {
-
-	JMenuItem selectedItem = null;
-	int selectedIndex = -1;
 
 	private static JColorChooser colorChooser;
 
@@ -86,7 +82,6 @@ public abstract class ColourMenu extends ScrollablePopupMenu {
 		};
 
 		// Colours already in use
-		int ind = 0;
 		for (Color4d col : coloursInUse) {
 			String colStr = ColourInput.toString(col);
 			JMenuItem item = new JMenuItem(colStr);
@@ -95,11 +90,6 @@ public abstract class ColourMenu extends ScrollablePopupMenu {
 					new Color((float)col.r, (float)col.g, (float)col.b, (float)col.a));
 			icon.setOutlineColor(Color.DARK_GRAY);
 			item.setIcon(icon);
-			if (selectedItem == null && col.equals(presentColour)) {
-				selectedItem = item;
-				selectedIndex = ind;
-			}
-			ind++;
 			item.addActionListener(actionListener);
 			if (preview)
 				item.addMouseListener(mouseListener);
@@ -129,21 +119,24 @@ public abstract class ColourMenu extends ScrollablePopupMenu {
 			}
 		});
 		add(chooserItem);
-		addSeparator();
 
 		// All possible colours
-		for (Color4d col : ColourInput.namedColourList) {
-			String colStr = ColourInput.toString(col);
-			JMenuItem item = new JMenuItem(colStr);
-			ColorIcon icon = new ColorIcon(16, 16);
-			icon.setFillColor(
-					new Color((float)col.r, (float)col.g, (float)col.b, (float)col.a));
-			icon.setOutlineColor(Color.DARK_GRAY);
-			item.setIcon(icon);
-			item.addActionListener(actionListener);
-			if (preview)
-				item.addMouseListener(mouseListener);
-			add(item);
+		for (String family : ColourInput.getColorFamilies()) {
+			addSeparator();
+			add(new JMenuItem(family.toUpperCase() + " COLOURS:"));
+			for (String colStr : ColourInput.getColorListForFamily(family)) {
+				Color4d col = ColourInput.getColorWithName(colStr);
+				JMenuItem item = new JMenuItem(colStr);
+				ColorIcon icon = new ColorIcon(16, 16);
+				icon.setFillColor(
+						new Color((float)col.r, (float)col.g, (float)col.b, (float)col.a));
+				icon.setOutlineColor(Color.DARK_GRAY);
+				item.setIcon(icon);
+				item.addActionListener(actionListener);
+				if (preview)
+					item.addMouseListener(mouseListener);
+				add(item);
+			}
 		}
 	}
 
@@ -151,15 +144,6 @@ public abstract class ColourMenu extends ScrollablePopupMenu {
 		if (colorChooser == null)
 			colorChooser = new JColorChooser();
 		return colorChooser;
-	}
-
-	@Override
-	public void show(Component invoker, int x, int y) {
-		super.show(invoker, x, y);
-		if (selectedItem != null) {
-			ensureIndexIsVisible(selectedIndex);
-			selectedItem.setArmed(true);
-		}
 	}
 
 	public abstract void setColour(String colStr);
