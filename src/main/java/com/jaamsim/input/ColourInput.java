@@ -117,18 +117,18 @@ private static void initColors() {
 	defColor("Salmon",      "Red", 250, 128, 114);
 	defColor("DarkSalmon",  "Red", 233, 150, 122);
 	defColor("LightCoral",  "Red", 240, 128, 128);
-	defColor("IndianRed",   "Red", 176,  23,  31);
+	defColor("IndianRed",   "Red", 205,  92,  92);
 	defColor("Crimson",     "Red", 220,  20,  60);
 	defColor("FireBrick",   "Red", 178,  34,  34);
-	defColor("DarkRed",     "Red", 191,   0,   0);  // DARK_RED
+	defColor("DarkRed",     "Red", 139,   0,   0);
 	defColor("Red",         "Red", 255,   0,   0);  // RED
 
 	// Orange colours
 	defColor("OrangeRed",     "Orange", 255,  69,   0);
 	defColor("Tomato",        "Orange", 255,  99,  71);
-	defColor("Coral",         "Orange", 255, 114,  86);
+	defColor("Coral",         "Orange", 255, 127,  80);
 	defColor("DarkOrange",    "Orange", 255, 140,   0);
-	defColor("Orange",        "Orange", 255, 128,   0);
+	defColor("Orange",        "Orange", 255, 165,   0);
 
 	defColor("Flesh",         "Orange", 255, 125,  64);
 	defColor("Carrot",        "Orange", 237, 145,  33);
@@ -194,10 +194,10 @@ private static void initColors() {
 	defColor("DarkSeaGreen",      "Green", 143, 188, 143);
 	defColor("MediumAquamarine",  "Green", 102, 205, 170);
 	defColor("MediumSeaGreen",    "Green",  60, 179, 113);
-	defColor("SeaGreen",          "Green",  84, 255, 159);
+	defColor("SeaGreen",          "Green",  46, 139,  87);
 	defColor("ForestGreen",       "Green",  34, 139,  34);
-	defColor("Green",             "Green",   0, 255,   0);  // GREEN
-	defColor("DarkGreen",         "Green",   0, 191,   0);  // DARK_GREEN
+	defColor("Green",             "Green",   0, 128,   0);
+	defColor("DarkGreen",         "Green",   0, 100,   0);
 
 	defColor("Mint",              "Green", 189, 252, 201);
 	defColor("EmeraldGreen",      "Green",   0, 201,  87);
@@ -208,14 +208,14 @@ private static void initColors() {
 	defColor("Cyan",            "Cyan",   0, 255, 255);  // CYAN
 	defColor("Aqua",            "Cyan",   0, 255, 255);  // same as Cyan
 	defColor("LightCyan",       "Cyan", 224, 255, 255);
-	defColor("PaleTurquoise",   "Cyan", 187, 255, 255);
+	defColor("PaleTurquoise",   "Cyan", 175, 238, 238);
 	defColor("Aquamarine",      "Cyan", 127, 255, 212);
 	defColor("Turquoise",       "Cyan",  64, 224, 208);
 	defColor("MediumTurquoise", "Cyan",  72, 209, 204);
 	defColor("DarkTurquoise",   "Cyan",   0, 206, 209);
 	defColor("LightSeaGreen",   "Cyan",  32, 178, 170);
 	defColor("CadetBlue",       "Cyan",  95, 158, 160);
-	defColor("DarkCyan",        "Cyan",   0, 191, 191);  // DARK_CYAN
+	defColor("DarkCyan",        "Cyan",   0, 139, 139);
 	defColor("Teal",            "Cyan",   0, 128, 128);
 
 	defColor("ManganeseBlue",   "Cyan",   3, 168, 158);
@@ -234,7 +234,7 @@ private static void initColors() {
 	defColor("RoyalBlue",      "Blue",  65, 105, 225);
 	defColor("Blue",           "Blue",   0,   0, 255);  // BLUE
 	defColor("MediumBlue",     "Blue",   0,   0, 205);
-	defColor("DarkBlue",       "Blue",   0,   0, 191);  // DARK_BLUE
+	defColor("DarkBlue",       "Blue",   0,   0, 139);
 	defColor("Navy",           "Blue",   0,   0, 128);
 	defColor("MidnightBlue",   "Blue",  25,  25, 112);
 
