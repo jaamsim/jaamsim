@@ -46,7 +46,6 @@ public static final Color4d DARK_PURPLE = new Color4d(191,   0, 191);
 
 private static final HashMap<String, Color4d> colorMap;
 private static final HashMap<Color4d, String> colorNameMap;
-public static final ArrayList<Color4d> namedColourList;
 private static final HashMap<String, ArrayList<String>> colorFamilyMap;
 
 public static final String[] colorFamilies = new String[]{"Pink", "Red", "Orange", "Yellow",
@@ -64,7 +63,6 @@ public static Comparator<Color4d> colourComparator = new Comparator<Color4d>() {
 static {
 	colorMap = new HashMap<>();
 	colorNameMap = new HashMap<>();
-	namedColourList = new ArrayList<>();
 
 	colorFamilyMap = new HashMap<>();
 	for (String family : colorFamilies) {
@@ -72,7 +70,6 @@ static {
 	}
 
 	initColors();
-	Collections.sort(namedColourList, colourComparator);
 }
 	public ColourInput(String key, String cat, Color4d def) {
 		super(key, cat, def);
@@ -115,7 +112,6 @@ private static void mapColor(String colorName, String family, Color4d col) {
 
 	if (!colorNameMap.containsKey(col)) {
 		colorNameMap.put(col, colorName);
-		namedColourList.add(col);
 	}
 
 	ArrayList<String> list = colorFamilyMap.get(family);
