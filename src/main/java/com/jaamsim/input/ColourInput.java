@@ -110,7 +110,7 @@ private static void initColors() {
 	defColor("PaleVioletRed",   "Pink", 219, 112, 147);
 	defColor("MediumVioletRed", "Pink", 199,  21, 133);
 
-	defColor("VioletRed",       "Pink", 208,  32, 144);
+	defColor("VioletRed",       "Pink", 247,  83, 148);
 
 	// Red colours
 	defColor("LightSalmon", "Red", 255, 160, 122);
@@ -132,7 +132,7 @@ private static void initColors() {
 
 	defColor("Flesh",         "Orange", 255, 125,  64);
 	defColor("Carrot",        "Orange", 237, 145,  33);
-	defColor("CadmiumOrange", "Orange", 255,  97,   3);
+	defColor("CadmiumOrange", "Orange", 237, 135,  45);
 
 	// Yellow colours
 	defColor("Yellow",               "Yellow", 255, 255,   0);  // YELLOW
@@ -147,10 +147,10 @@ private static void initColors() {
 	defColor("DarkKhaki",            "Yellow", 189, 183, 107);
 	defColor("Gold",                 "Yellow", 255, 215,   0);
 
-	defColor("CadmiumYellow",        "Yellow", 255, 153,  18);
+	defColor("CadmiumYellow",        "Yellow", 255, 246,   0);
 	defColor("LightGoldenrod",       "Yellow", 255, 236, 139);
-	defColor("Banana",               "Yellow", 227, 207,  87);
-	defColor("DarkYellow",           "Yellow", 191, 191,   0);  // DARK_YELLOW
+	defColor("Banana",               "Yellow", 255, 255,  53);
+	defColor("DarkYellow",           "Yellow", 155, 135,  12);
 
 	// Brown colours
 	defColor("Cornsilk",       "Brown", 255, 248, 220);
@@ -284,7 +284,7 @@ private static void initColors() {
 	defColor("LavenderBlush", "White", 255, 240, 245);
 	defColor("MistyRose",     "White", 255, 228, 225);
 
-	defColor("EggShell",      "White", 252, 230, 201);
+	defColor("EggShell",      "White", 240, 234, 214);
 
 	// Grey and black colours
 	defColor("Gainsboro",      "Black", 220, 220, 220);
