@@ -120,8 +120,8 @@ private static void initColors() {
 	defColor("IndianRed",   "Red", 176,  23,  31);
 	defColor("Crimson",     "Red", 220,  20,  60);
 	defColor("FireBrick",   "Red", 178,  34,  34);
-	mapColor("DarkRed",     "Red", DARK_RED);
-	mapColor("Red",         "Red", RED);
+	defColor("DarkRed",     "Red", 191,   0,   0);  // DARK_RED
+	defColor("Red",         "Red", 255,   0,   0);  // RED
 
 	// Orange colours
 	defColor("OrangeRed",     "Orange", 255,  69,   0);
@@ -134,7 +134,7 @@ private static void initColors() {
 	defColor("CadmiumOrange", "Orange", 255,  97,   3);
 
 	// Yellow colours
-	mapColor("Yellow",               "Yellow", YELLOW);
+	defColor("Yellow",               "Yellow", 255, 255,   0);  // YELLOW
 	defColor("LightYellow",          "Yellow", 255, 255, 224);
 	defColor("LemonChiffon",         "Yellow", 255, 250, 205);
 	defColor("LightGoldenrodYellow", "Yellow", 250, 250, 210);
@@ -149,7 +149,7 @@ private static void initColors() {
 	defColor("CadmiumYellow",        "Yellow", 255, 153,  18);
 	defColor("LightGoldenrod",       "Yellow", 255, 236, 139);
 	defColor("Banana",               "Yellow", 227, 207,  87);
-	mapColor("DarkYellow",           "Yellow", DARK_YELLOW);
+	defColor("DarkYellow",           "Yellow", 191, 191,   0);  // DARK_YELLOW
 
 	// Brown colours
 	defColor("Cornsilk",       "Brown", 255, 248, 220);
@@ -187,8 +187,8 @@ private static void initColors() {
 	defColor("MediumSeaGreen",    "Green",  60, 179, 113);
 	defColor("SeaGreen",          "Green",  84, 255, 159);
 	defColor("ForestGreen",       "Green",  34, 139,  34);
-	mapColor("Green",             "Green", GREEN);
-	mapColor("DarkGreen",         "Green", DARK_GREEN);
+	defColor("Green",             "Green",   0, 255,   0);  // GREEN
+	defColor("DarkGreen",         "Green",   0, 191,   0);  // DARK_GREEN
 
 	defColor("Mint",              "Green", 189, 252, 201);
 	defColor("EmeraldGreen",      "Green",   0, 201,  87);
@@ -196,7 +196,7 @@ private static void initColors() {
 	defColor("SapGreen",          "Green",  48, 128,  20);
 
 	// Cyan colours
-	mapColor("Cyan",            "Cyan", CYAN);
+	defColor("Cyan",            "Cyan",   0, 255, 255);  // CYAN
 	defColor("LightCyan",       "Cyan", 224, 255, 255);
 	defColor("PaleTurquoise",   "Cyan", 187, 255, 255);
 	defColor("Aquamarine",      "Cyan", 127, 255, 212);
@@ -205,7 +205,7 @@ private static void initColors() {
 	defColor("DarkTurquoise",   "Cyan",   0, 206, 209);
 	defColor("LightSeaGreen",   "Cyan",  32, 178, 170);
 	defColor("CadetBlue",       "Cyan",  95, 158, 160);
-	mapColor("DarkCyan",        "Cyan", DARK_CYAN);
+	defColor("DarkCyan",        "Cyan",   0, 191, 191);  // DARK_CYAN
 	defColor("Teal",            "Cyan",   0, 128, 128);
 
 	defColor("ManganeseBlue",   "Cyan",   3, 168, 158);
@@ -222,8 +222,8 @@ private static void initColors() {
 	defColor("CornflowerBlue", "Blue", 100, 149, 237);
 	defColor("SteelBlue",      "Blue",  70, 130, 180);
 	defColor("RoyalBlue",      "Blue",  65, 105, 225);
-	mapColor("Blue",           "Blue", BLUE);
-	mapColor("DarkBlue",       "Blue", DARK_BLUE);
+	defColor("Blue",           "Blue",   0,   0, 255);  // BLUE
+	defColor("DarkBlue",       "Blue",   0,   0, 191);  // DARK_BLUE
 	defColor("Navy",           "Blue",   0,   0, 128);
 	defColor("MidnightBlue",   "Blue",  25,  25, 112);
 
@@ -248,12 +248,12 @@ private static void initColors() {
 	defColor("SlateBlue",       "Purple", 106,  90, 205);
 	defColor("MediumSlateBlue", "Purple", 123, 104, 238);
 
-	mapColor("DarkPurple",      "Purple", DARK_PURPLE);
+	defColor("DarkPurple",      "Purple", 191,   0, 191);  // DARK_PURPLE
 	defColor("Raspberry",       "Purple", 135,  38,  87);
 	defColor("LightSlateBlue",  "Purple", 132, 112, 255);
 
 	// White colours
-	mapColor("White",         "White", WHITE);
+	defColor("White",         "White", 255, 255, 255);  // WHITE
 	defColor("Honeydew",      "White", 240, 255, 240);
 	defColor("MintCream",     "White", 245, 255, 250);
 	defColor("Azure",         "White", 240, 255, 255);
@@ -274,7 +274,7 @@ private static void initColors() {
 	defColor("LightSlateGray", "Black", 119, 136, 153);
 	defColor("SlateGray",      "Black", 112, 128, 144);
 	defColor("DarkSlateGray",  "Black",  47,  79,  79);
-	mapColor("Black",          "Black", BLACK);
+	defColor("Black",          "Black",   0,   0,   0);  // BLACK
 
 	defColor("gray99",         "Black", 252, 252, 252);
 	defColor("gray98",         "Black", 250, 250, 250);
@@ -300,7 +300,7 @@ private static void initColors() {
 	defColor("gray78",         "Black", 199, 199, 199);
 	defColor("gray77",         "Black", 196, 196, 196);
 	defColor("gray76",         "Black", 194, 194, 194);
-	mapColor("gray75",         "Black", LIGHT_GREY);
+	defColor("gray75",         "Black", 191, 191, 191);  // LIGHT_GREY
 	defColor("gray74",         "Black", 189, 189, 189);
 	defColor("gray73",         "Black", 186, 186, 186);
 	defColor("gray72",         "Black", 184, 184, 184);
@@ -325,7 +325,7 @@ private static void initColors() {
 	defColor("gray53",         "Black", 135, 135, 135);
 	defColor("gray52",         "Black", 133, 133, 133);
 	defColor("gray51",         "Black", 130, 130, 130);
-	mapColor("gray50",         "Black", MED_GREY);
+	defColor("gray50",         "Black", 128, 128, 128);  // MED_GREY
 	defColor("gray49",         "Black", 125, 125, 125);
 	defColor("gray48",         "Black", 122, 122, 122);
 	defColor("gray47",         "Black", 120, 120, 120);
