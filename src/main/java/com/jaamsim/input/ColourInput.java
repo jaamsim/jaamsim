@@ -103,178 +103,178 @@ private static void mapColor(String colorName, String family, Color4d col) {
 private static void initColors() {
 
 	// Pink colours
-	defColor("pink",            "Pink", 255, 192, 203);
-	defColor("lightpink",       "Pink", 255, 182, 193);
-	defColor("hotpink",         "Pink", 255, 105, 180);
-	defColor("deeppink",        "Pink", 255,  20, 147);
-	defColor("palevioletred",   "Pink", 219, 112, 147);
-	defColor("mediumvioletred", "Pink", 199,  21, 133);
+	defColor("Pink",            "Pink", 255, 192, 203);
+	defColor("LightPink",       "Pink", 255, 182, 193);
+	defColor("HotPink",         "Pink", 255, 105, 180);
+	defColor("DeepPink",        "Pink", 255,  20, 147);
+	defColor("PaleVioletRed",   "Pink", 219, 112, 147);
+	defColor("MediumVioletRed", "Pink", 199,  21, 133);
 
-	defColor("violetred",       "Pink", 208,  32, 144);
+	defColor("VioletRed",       "Pink", 208,  32, 144);
 
 	// Red colours
-	defColor("lightsalmon", "Red", 255, 160, 122);
-	defColor("salmon",      "Red", 250, 128, 114);
-	defColor("darksalmon",  "Red", 233, 150, 122);
-	defColor("lightcoral",  "Red", 240, 128, 128);
-	defColor("indianred",   "Red", 176,  23,  31);
-	defColor("crimson",     "Red", 220,  20,  60);
-	defColor("firebrick",   "Red", 178,  34,  34);
-	mapColor("darkred",     "Red", DARK_RED);
-	mapColor("red",         "Red", RED);
+	defColor("LightSalmon", "Red", 255, 160, 122);
+	defColor("Salmon",      "Red", 250, 128, 114);
+	defColor("DarkSalmon",  "Red", 233, 150, 122);
+	defColor("LightCoral",  "Red", 240, 128, 128);
+	defColor("IndianRed",   "Red", 176,  23,  31);
+	defColor("Crimson",     "Red", 220,  20,  60);
+	defColor("FireBrick",   "Red", 178,  34,  34);
+	mapColor("DarkRed",     "Red", DARK_RED);
+	mapColor("Red",         "Red", RED);
 
 	// Orange colours
-	defColor("orangered",     "Orange", 255,  69,   0);
-	defColor("tomato",        "Orange", 255,  99,  71);
-	defColor("coral",         "Orange", 255, 114,  86);
-	defColor("orange",        "Orange", 255, 128,   0);
+	defColor("OrangeRed",     "Orange", 255,  69,   0);
+	defColor("Tomato",        "Orange", 255,  99,  71);
+	defColor("Coral",         "Orange", 255, 114,  86);
+	defColor("Orange",        "Orange", 255, 128,   0);
 
-	defColor("flesh",         "Orange", 255, 125,  64);
-	defColor("carrot",        "Orange", 237, 145,  33);
-	defColor("cadmiumorange", "Orange", 255,  97,   3);
+	defColor("Flesh",         "Orange", 255, 125,  64);
+	defColor("Carrot",        "Orange", 237, 145,  33);
+	defColor("CadmiumOrange", "Orange", 255,  97,   3);
 
 	// Yellow colours
-	mapColor("yellow",               "Yellow", YELLOW);
-	defColor("lightyellow",          "Yellow", 255, 255, 224);
-	defColor("lemonchiffon",         "Yellow", 255, 250, 205);
-	defColor("lightgoldenrodyellow", "Yellow", 250, 250, 210);
-	defColor("papayawhip",           "Yellow", 255, 239, 213);
-	defColor("moccasin",             "Yellow", 255, 228, 181);
-	defColor("peachpuff",            "Yellow", 255, 218, 185);
-	defColor("palegoldenrod",        "Yellow", 238, 232, 170);
-	defColor("khaki",                "Yellow", 240, 230, 140);
-	defColor("darkkhaki",            "Yellow", 189, 183, 107);
-	defColor("gold",                 "Yellow", 255, 215,   0);
+	mapColor("Yellow",               "Yellow", YELLOW);
+	defColor("LightYellow",          "Yellow", 255, 255, 224);
+	defColor("LemonChiffon",         "Yellow", 255, 250, 205);
+	defColor("LightGoldenrodYellow", "Yellow", 250, 250, 210);
+	defColor("PapayaWhip",           "Yellow", 255, 239, 213);
+	defColor("Moccasin",             "Yellow", 255, 228, 181);
+	defColor("PeachPuff",            "Yellow", 255, 218, 185);
+	defColor("PaleGoldenrod",        "Yellow", 238, 232, 170);
+	defColor("Khaki",                "Yellow", 240, 230, 140);
+	defColor("DarkKhaki",            "Yellow", 189, 183, 107);
+	defColor("Gold",                 "Yellow", 255, 215,   0);
 
-	defColor("cadmiumyellow",        "Yellow", 255, 153,  18);
-	defColor("lightgoldenrod",       "Yellow", 255, 236, 139);
-	defColor("banana",               "Yellow", 227, 207,  87);
-	mapColor("darkyellow",           "Yellow", DARK_YELLOW);
+	defColor("CadmiumYellow",        "Yellow", 255, 153,  18);
+	defColor("LightGoldenrod",       "Yellow", 255, 236, 139);
+	defColor("Banana",               "Yellow", 227, 207,  87);
+	mapColor("DarkYellow",           "Yellow", DARK_YELLOW);
 
 	// Brown colours
-	defColor("cornsilk",       "Brown", 255, 248, 220);
-	defColor("blanchedalmond", "Brown", 255, 235, 205);
-	defColor("bisque",         "Brown", 255, 228, 196);
-	defColor("navajowhite",    "Brown", 255, 222, 173);
-	defColor("wheat",          "Brown", 245, 222, 179);
-	defColor("burlywood",      "Brown", 222, 184, 135);
-	defColor("tan",            "Brown", 210, 180, 140);
-	defColor("sandybrown",     "Brown", 244, 164,  96);
-	defColor("goldenrod",      "Brown", 218, 165,  32);
-	defColor("darkgoldenrod",  "Brown", 184, 134,  11);
-	defColor("chocolate",      "Brown", 210, 105,  30);
-	defColor("sienna",         "Brown", 160,  82,  45);
-	defColor("brown",          "Brown", 138,  54,  15);
-	defColor("maroon",         "Brown", 128,   0,   0);
+	defColor("Cornsilk",       "Brown", 255, 248, 220);
+	defColor("BlanchedAlmond", "Brown", 255, 235, 205);
+	defColor("Bisque",         "Brown", 255, 228, 196);
+	defColor("NavajoWhite",    "Brown", 255, 222, 173);
+	defColor("Wheat",          "Brown", 245, 222, 179);
+	defColor("Burlywood",      "Brown", 222, 184, 135);
+	defColor("Tan",            "Brown", 210, 180, 140);
+	defColor("SandyBrown",     "Brown", 244, 164,  96);
+	defColor("Goldenrod",      "Brown", 218, 165,  32);
+	defColor("DarkGoldenrod",  "Brown", 184, 134,  11);
+	defColor("Chocolate",      "Brown", 210, 105,  30);
+	defColor("Sienna",         "Brown", 160,  82,  45);
+	defColor("Brown",          "Brown", 138,  54,  15);
+	defColor("Maroon",         "Brown", 128,   0,   0);
 
-	defColor("rawsienna",      "Brown", 199,  97,  20);
-	defColor("burntumber",     "Brown", 138,  51,  36);
-	defColor("sepia",          "Brown",  94,  38,  18);
-	defColor("brick",          "Brown", 156, 102,  31);
-	defColor("melon",          "Brown", 227, 168, 105);
+	defColor("RawSienna",      "Brown", 199,  97,  20);
+	defColor("BurntUmber",     "Brown", 138,  51,  36);
+	defColor("Sepia",          "Brown",  94,  38,  18);
+	defColor("Brick",          "Brown", 156, 102,  31);
+	defColor("Melon",          "Brown", 227, 168, 105);
 
 	// Green colours
-	defColor("darkolivegreen",    "Green",  85, 107,  47);
-	defColor("olive",             "Green", 128, 128,   0);
-	defColor("olivedrab",         "Green", 107, 142,  35);
-	defColor("limegreen",         "Green",  50, 205,  50);
-	defColor("lawngreen",         "Green", 124, 252,   0);
-	defColor("greenyellow",       "Green", 173, 255,  47);
-	defColor("springgreen",       "Green",   0, 255, 127);
-	defColor("mediumspringgreen", "Green",   0, 250, 154);
-	defColor("palegreen",         "Green", 152, 251, 152);
-	defColor("darkseagreen",      "Green", 143, 188, 143);
-	defColor("mediumseagreen",    "Green",  60, 179, 113);
-	defColor("seagreen",          "Green",  84, 255, 159);
-	defColor("forestgreen",       "Green",  34, 139,  34);
-	mapColor("green",             "Green", GREEN);
-	mapColor("darkgreen",         "Green", DARK_GREEN);
+	defColor("DarkOliveGreen",    "Green",  85, 107,  47);
+	defColor("Olive",             "Green", 128, 128,   0);
+	defColor("OliveDrab",         "Green", 107, 142,  35);
+	defColor("LimeGreen",         "Green",  50, 205,  50);
+	defColor("LawnGreen",         "Green", 124, 252,   0);
+	defColor("GreenYellow",       "Green", 173, 255,  47);
+	defColor("SpringGreen",       "Green",   0, 255, 127);
+	defColor("MediumSpringGreen", "Green",   0, 250, 154);
+	defColor("PaleGreen",         "Green", 152, 251, 152);
+	defColor("DarkSeaGreen",      "Green", 143, 188, 143);
+	defColor("MediumSeaGreen",    "Green",  60, 179, 113);
+	defColor("SeaGreen",          "Green",  84, 255, 159);
+	defColor("ForestGreen",       "Green",  34, 139,  34);
+	mapColor("Green",             "Green", GREEN);
+	mapColor("DarkGreen",         "Green", DARK_GREEN);
 
-	defColor("mint",              "Green", 189, 252, 201);
-	defColor("emeraldgreen",      "Green",   0, 201,  87);
-	defColor("cobaltgreen",       "Green",  61, 145,  64);
-	defColor("sapgreen",          "Green",  48, 128,  20);
+	defColor("Mint",              "Green", 189, 252, 201);
+	defColor("EmeraldGreen",      "Green",   0, 201,  87);
+	defColor("CobaltGreen",       "Green",  61, 145,  64);
+	defColor("SapGreen",          "Green",  48, 128,  20);
 
 	// Cyan colours
-	mapColor("cyan",            "Cyan", CYAN);
-	defColor("lightcyan",       "Cyan", 224, 255, 255);
-	defColor("paleturquoise",   "Cyan", 187, 255, 255);
-	defColor("aquamarine",      "Cyan", 127, 255, 212);
-	defColor("turquoise",       "Cyan",  64, 224, 208);
-	defColor("mediumturquoise", "Cyan",  72, 209, 204);
-	defColor("darkturquoise",   "Cyan",   0, 206, 209);
-	defColor("lightseagreen",   "Cyan",  32, 178, 170);
-	defColor("cadetblue",       "Cyan",  95, 158, 160);
-	mapColor("darkcyan",        "Cyan", DARK_CYAN);
-	defColor("teal",            "Cyan",   0, 128, 128);
+	mapColor("Cyan",            "Cyan", CYAN);
+	defColor("LightCyan",       "Cyan", 224, 255, 255);
+	defColor("PaleTurquoise",   "Cyan", 187, 255, 255);
+	defColor("Aquamarine",      "Cyan", 127, 255, 212);
+	defColor("Turquoise",       "Cyan",  64, 224, 208);
+	defColor("MediumTurquoise", "Cyan",  72, 209, 204);
+	defColor("DarkTurquoise",   "Cyan",   0, 206, 209);
+	defColor("LightSeaGreen",   "Cyan",  32, 178, 170);
+	defColor("CadetBlue",       "Cyan",  95, 158, 160);
+	mapColor("DarkCyan",        "Cyan", DARK_CYAN);
+	defColor("Teal",            "Cyan",   0, 128, 128);
 
-	defColor("manganeseblue",   "Cyan",   3, 168, 158);
-	defColor("turquoiseblue",   "Cyan",   0, 199, 140);
+	defColor("ManganeseBlue",   "Cyan",   3, 168, 158);
+	defColor("TurquoiseBlue",   "Cyan",   0, 199, 140);
 
 	// Blue colours
-	defColor("lightsteelblue", "Blue", 176, 196, 222);
-	defColor("powderblue",     "Blue", 176, 224, 230);
-	defColor("lightblue",      "Blue", 173, 216, 230);
-	defColor("skyblue",        "Blue", 135, 206, 235);
-	defColor("lightskyblue",   "Blue", 135, 206, 250);
-	defColor("deepskyblue",    "Blue",   0, 191, 255);
-	defColor("dodgerblue",     "Blue",  30, 144, 255);
-	defColor("cornflowerblue", "Blue", 100, 149, 237);
-	defColor("steelblue",      "Blue",  70, 130, 180);
-	defColor("royalblue",      "Blue",  65, 105, 225);
-	mapColor("blue",           "Blue", BLUE);
-	mapColor("darkblue",       "Blue", DARK_BLUE);
-	defColor("navy",           "Blue",   0,   0, 128);
-	defColor("midnightblue",   "Blue",  25,  25, 112);
+	defColor("LightSteelBlue", "Blue", 176, 196, 222);
+	defColor("PowderBlue",     "Blue", 176, 224, 230);
+	defColor("LightBlue",      "Blue", 173, 216, 230);
+	defColor("SkyBlue",        "Blue", 135, 206, 235);
+	defColor("LightSkyBlue",   "Blue", 135, 206, 250);
+	defColor("DeepSkyBlue",    "Blue",   0, 191, 255);
+	defColor("DodgerBlue",     "Blue",  30, 144, 255);
+	defColor("CornflowerBlue", "Blue", 100, 149, 237);
+	defColor("SteelBlue",      "Blue",  70, 130, 180);
+	defColor("RoyalBlue",      "Blue",  65, 105, 225);
+	mapColor("Blue",           "Blue", BLUE);
+	mapColor("DarkBlue",       "Blue", DARK_BLUE);
+	defColor("Navy",           "Blue",   0,   0, 128);
+	defColor("MidnightBlue",   "Blue",  25,  25, 112);
 
-	defColor("cobalt",         "Blue",  61,  89, 171);
-	defColor("peacock",        "Blue",  51, 161, 201);
+	defColor("Cobalt",         "Blue",  61,  89, 171);
+	defColor("Peacock",        "Blue",  51, 161, 201);
 
 	// Purple, violet, and magenta colours
-	defColor("lavender",        "Purple", 230, 230, 250);
-	defColor("thistle",         "Purple", 216, 191, 216);
-	defColor("plum",            "Purple", 221, 160, 221);
-	defColor("violet",          "Purple", 238, 130, 238);
-	defColor("orchid",          "Purple", 218, 112, 214);
-	defColor("magenta",         "Purple", 255,   0, 255);
-	defColor("mediumorchid",    "Purple", 186,  85, 211);
-	defColor("mediumpurple",    "Purple", 147, 112, 219);
-	defColor("blueviolet",      "Purple", 138,  43, 226);
-	defColor("darkviolet",      "Purple", 148,   0, 211);
-	defColor("darkorchid",      "Purple", 153,  50, 204);
-	defColor("purple",          "Purple", 128,   0, 128);
-	defColor("indigo",          "Purple", 75,    0, 130);
-	defColor("darkslateblue",   "Purple", 72,   61, 139);
-	defColor("slateblue",       "Purple", 106,  90, 205);
-	defColor("mediumslateblue", "Purple", 123, 104, 238);
+	defColor("Lavender",        "Purple", 230, 230, 250);
+	defColor("Thistle",         "Purple", 216, 191, 216);
+	defColor("Plum",            "Purple", 221, 160, 221);
+	defColor("Violet",          "Purple", 238, 130, 238);
+	defColor("Orchid",          "Purple", 218, 112, 214);
+	defColor("Magenta",         "Purple", 255,   0, 255);
+	defColor("MediumOrchid",    "Purple", 186,  85, 211);
+	defColor("MediumPurple",    "Purple", 147, 112, 219);
+	defColor("BlueViolet",      "Purple", 138,  43, 226);
+	defColor("DarkViolet",      "Purple", 148,   0, 211);
+	defColor("DarkOrchid",      "Purple", 153,  50, 204);
+	defColor("Purple",          "Purple", 128,   0, 128);
+	defColor("Indigo",          "Purple",  75,   0, 130);
+	defColor("DarkSlateBlue",   "Purple",  72,  61, 139);
+	defColor("SlateBlue",       "Purple", 106,  90, 205);
+	defColor("MediumSlateBlue", "Purple", 123, 104, 238);
 
-	mapColor("darkpurple",      "Purple", DARK_PURPLE);
-	defColor("raspberry",       "Purple", 135,  38,  87);
-	defColor("lightslateblue",  "Purple", 132, 112, 255);
+	mapColor("DarkPurple",      "Purple", DARK_PURPLE);
+	defColor("Raspberry",       "Purple", 135,  38,  87);
+	defColor("LightSlateBlue",  "Purple", 132, 112, 255);
 
 	// White colours
-	mapColor("white",         "White", WHITE);
-	defColor("honeydew",      "White", 240, 255, 240);
-	defColor("mintcream",     "White", 245, 255, 250);
-	defColor("azure",         "White", 240, 255, 255);
-	defColor("aliceblue",     "White", 240, 248, 255);
-	defColor("ghostwhite",    "White", 248, 248, 255);
-	defColor("seashell",      "White", 255, 245, 238);
-	defColor("beige",         "White", 245, 245, 220);
-	defColor("oldlace",       "White", 253, 245, 230);
-	defColor("floralwhite",   "White", 255, 250, 240);
-	defColor("ivory",         "White", 255, 255, 240);
-	defColor("antiquewhite",  "White", 250, 235, 215);
-	defColor("linen",         "White", 250, 240, 230);
-	defColor("lavenderblush", "White", 255, 240, 245);
+	mapColor("White",         "White", WHITE);
+	defColor("Honeydew",      "White", 240, 255, 240);
+	defColor("MintCream",     "White", 245, 255, 250);
+	defColor("Azure",         "White", 240, 255, 255);
+	defColor("AliceBlue",     "White", 240, 248, 255);
+	defColor("GhostWhite",    "White", 248, 248, 255);
+	defColor("Seashell",      "White", 255, 245, 238);
+	defColor("Beige",         "White", 245, 245, 220);
+	defColor("OldLace",       "White", 253, 245, 230);
+	defColor("FloralWhite",   "White", 255, 250, 240);
+	defColor("Ivory",         "White", 255, 255, 240);
+	defColor("AntiqueWhite",  "White", 250, 235, 215);
+	defColor("Linen",         "White", 250, 240, 230);
+	defColor("LavenderBlush", "White", 255, 240, 245);
 
-	defColor("eggshell",      "White", 252, 230, 201);
+	defColor("EggShell",      "White", 252, 230, 201);
 
 	// Grey and black colours
-	defColor("lightslategray", "Black", 119, 136, 153);
-	defColor("slategray",      "Black", 112, 128, 144);
-	defColor("darkslategray",  "Black",  47,  79,  79);
-	mapColor("black",          "Black", BLACK);
+	defColor("LightSlateGray", "Black", 119, 136, 153);
+	defColor("SlateGray",      "Black", 112, 128, 144);
+	defColor("DarkSlateGray",  "Black",  47,  79,  79);
+	mapColor("Black",          "Black", BLACK);
 
 	defColor("gray99",         "Black", 252, 252, 252);
 	defColor("gray98",         "Black", 250, 250, 250);
