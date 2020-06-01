@@ -1831,75 +1831,20 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				if (!dispEnt.isGraphicsNominal() || dispEnt.getDisplayModelList().size() != 1)
 					return;
 				final String presentModelName = dispEnt.getDisplayModelList().get(0).getName();
-				ScrollablePopupMenu menu = new ScrollablePopupMenu();
-
-				ActionListener actionListener = new ActionListener() {
-					@Override
-					public void actionPerformed( ActionEvent event ) {
-						if (!(event.getSource() instanceof JMenuItem))
-							return;
-						JMenuItem item = (JMenuItem) event.getSource();
-						String modelName = item.getText();
-						if (!modelName.equals(dispEnt.getDisplayModelList().get(0).getName())) {
-							dispModel.setText(modelName);
-							KeywordIndex kw = InputAgent.formatArgs("DisplayModel", modelName);
-							InputAgent.storeAndExecute(new KeywordCommand(dispEnt, kw));
-						}
-						controlStartResume.requestFocusInWindow();
-					}
-				};
-
-				MouseListener mouseListener = new MouseListener() {
-					@Override
-					public void mouseClicked(MouseEvent e) {}
-					@Override
-					public void mousePressed(MouseEvent e) {}
-					@Override
-					public void mouseReleased(MouseEvent e) {}
-					@Override
-					public void mouseEntered(MouseEvent e) {
-						if (!(e.getSource() instanceof JMenuItem))
-							return;
-						JMenuItem item = (JMenuItem) e.getSource();
-						String modelName = item.getText();
-						if (!modelName.equals(dispEnt.getDisplayModelList().get(0).getName())) {
-							dispModel.setText(modelName);
-							KeywordIndex kw = InputAgent.formatArgs("DisplayModel", modelName);
-							InputAgent.storeAndExecute(new KeywordCommand(dispEnt, kw));
-						}
-					}
-					@Override
-					public void mouseExited(MouseEvent e) {
-						if (!presentModelName.equals(dispEnt.getDisplayModelList().get(0).getName())) {
-							dispModel.setText(presentModelName);
-							KeywordIndex kw = InputAgent.formatArgs("DisplayModel", presentModelName);
-							InputAgent.storeAndExecute(new KeywordCommand(dispEnt, kw));
-						}
-					}
-				};
-
-				// All valid display models
-				JMenuItem selectedItem = null;
-				int selectedIndex = -1;
-				int ind = 0;
 				Input<?> in = dispEnt.getInput("DisplayModel");
-				for (String modelName : in.getValidOptions(selectedEntity)) {
-					JMenuItem item = new JMenuItem(modelName);
-					if (selectedItem == null && modelName.equals(dispEnt.getDisplayModelList().get(0).getName())) {
-						selectedItem = item;
-						selectedIndex = ind;
-					}
-					ind++;
-					item.addActionListener(actionListener);
-					item.addMouseListener(mouseListener);
-					menu.add(item);
-				}
+				ArrayList<String> choices = in.getValidOptions(selectedEntity);
+				PreviewablePopupMenu menu = new PreviewablePopupMenu(presentModelName, choices, true) {
 
+					@Override
+					public void setValue(String str) {
+						dispModel.setText(str);
+						KeywordIndex kw = InputAgent.formatArgs("DisplayModel", str);
+						InputAgent.storeAndExecute(new KeywordCommand(dispEnt, kw));
+					}
+
+				};
 				menu.show(dispModel, 0, dispModel.getPreferredSize().height);
-				if (selectedItem != null) {
-					menu.ensureIndexIsVisible(selectedIndex);
-					selectedItem.setArmed(true);
-				}
+				controlStartResume.requestFocusInWindow();
 			}
 		});
 
