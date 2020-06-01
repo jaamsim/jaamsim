@@ -20,6 +20,7 @@ import java.util.ArrayList;
 
 import com.jaamsim.ProcessFlow.AbstractStateUserEntity;
 import com.jaamsim.basicsim.ErrorException;
+import com.jaamsim.basicsim.ObserverEntity;
 import com.jaamsim.basicsim.SubjectEntity;
 import com.jaamsim.events.EventHandle;
 import com.jaamsim.events.EventManager;
@@ -33,7 +34,7 @@ import com.jaamsim.input.InterfaceEntityListInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 
-public class EntitySystem extends AbstractStateUserEntity {
+public class EntitySystem extends AbstractStateUserEntity implements ObserverEntity {
 
 	@Keyword(description = "An expression returning a string that sets this object's present "
 	                     + "state. "
@@ -62,6 +63,29 @@ public class EntitySystem extends AbstractStateUserEntity {
 		watchList.setUnique(true);
 		watchList.setRequired(true);
 		this.addInput(watchList);
+	}
+
+	@Override
+	public void validate() {
+		super.validate();
+		ObserverEntity.validate(this);
+	}
+
+
+	@Override
+	public void lateInit() {
+		super.lateInit();
+		ObserverEntity.registerWithSubjects(this, getWatchList());
+	}
+
+	@Override
+	public void observerUpdate(SubjectEntity subj) {
+		performUpdate();
+	}
+
+	@Override
+	public ArrayList<SubjectEntity> getWatchList() {
+		return watchList.getValue();
 	}
 
 	public void performUpdate() {
