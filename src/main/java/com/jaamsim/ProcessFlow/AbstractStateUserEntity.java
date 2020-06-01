@@ -16,31 +16,12 @@
  */
 package com.jaamsim.ProcessFlow;
 
-import java.util.ArrayList;
-
-import com.jaamsim.BasicObjects.EntitySystem;
 import com.jaamsim.input.ColourInput;
-import com.jaamsim.input.EntityListInput;
-import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.states.StateEntity;
-import com.jaamsim.states.StateRecord;
 
 public abstract class AbstractStateUserEntity extends StateEntity {
-
-	@Keyword(description = "One or more EntitySystems whose states are influenced by the state of "
-	                     + "this object. "
-	                     + "Each EntitySystem is notified to re-calculate its state whenever "
-	                     + "there is a state change for this object.",
-	         exampleList = {"EntitySystem1  EntitySystem2"})
-	protected final EntityListInput<EntitySystem> entitySystemList;
-
-	{
-		entitySystemList = new EntityListInput<>(EntitySystem.class, "EntitySystemList", OPTIONS, new ArrayList<>());
-		this.addInput(entitySystemList);
-		this.addSynonym(entitySystemList, "EntitySystem");
-	}
 
 	public static final String STATE_MAINTENANCE = "Maintenance";
 	public static final String STATE_BREAKDOWN = "Breakdown";
@@ -59,18 +40,6 @@ public abstract class AbstractStateUserEntity extends StateEntity {
 	@Override
 	public boolean isValidState(String state) {
 		return true;
-	}
-
-	@Override
-	public void stateChanged(StateRecord prev, StateRecord next) {
-		super.stateChanged(prev, next);
-		for (EntitySystem sys : getEntitySystemList()) {
-			sys.performUpdate();
-		}
-	}
-
-	public ArrayList<EntitySystem> getEntitySystemList() {
-		return entitySystemList.getValue();
 	}
 
 	/**

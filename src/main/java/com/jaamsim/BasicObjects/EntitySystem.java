@@ -28,7 +28,6 @@ import com.jaamsim.input.ExpEvaluator;
 import com.jaamsim.input.ExpResType;
 import com.jaamsim.input.ExpResult;
 import com.jaamsim.input.ExpressionInput;
-import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 
@@ -48,36 +47,6 @@ public class EntitySystem extends AbstractStateUserEntity {
 		stateExp = new ExpressionInput("StateExpression", KEY_INPUTS, null);
 		stateExp.setResultType(ExpResType.STRING);
 		this.addInput(stateExp);
-	}
-
-	@Override
-	public void earlyInit() {
-		super.earlyInit();
-
-		entityList.clear();
-		for (AbstractStateUserEntity stateEnt : getJaamSimModel().getClonesOfIterator(AbstractStateUserEntity.class)) {
-			if (stateEnt.getEntitySystemList().contains(this))
-				entityList.add(stateEnt);
-		}
-	}
-
-	@Override
-	public void validate() {
-		super.validate();
-
-		if (this.isMemberOf(this))
-			throw new InputErrorException("The chain of EntitySystem inputs cannot include "
-					+ "this EntitySystem.");
-	}
-
-	private boolean isMemberOf(EntitySystem sys) {
-		if (getEntitySystemList().contains(sys))
-			return true;
-		for (EntitySystem s : getEntitySystemList()) {
-			if (s.isMemberOf(sys))
-				return true;
-		}
-		return false;
 	}
 
 	public void performUpdate() {
