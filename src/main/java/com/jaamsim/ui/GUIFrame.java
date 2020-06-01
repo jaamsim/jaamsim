@@ -40,8 +40,6 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.FocusEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.geom.Rectangle2D;
@@ -2038,86 +2036,22 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 					return;
 				final TextEntity textEnt = (TextEntity) selectedEntity;
 				final String presentFontName = textEnt.getFontName();
-				ScrollablePopupMenu fontMenu = new ScrollablePopupMenu();
+				ArrayList<String> valuesInUse = GUIFrame.getFontsInUse(sim);
+				ArrayList<String> choices = TextModel.validFontNames;
+				PreviewablePopupMenu fontMenu = new PreviewablePopupMenu(presentFontName,
+						valuesInUse, choices, true) {
 
-				ActionListener fontActionListener = new ActionListener() {
 					@Override
-					public void actionPerformed( ActionEvent event ) {
-						if (!(event.getSource() instanceof JMenuItem))
-							return;
-						JMenuItem item = (JMenuItem) event.getSource();
-						String fontName = item.getText();
-						if (!fontName.equals(textEnt.getFontName())) {
-							font.setText(fontName);
-							String name = Parser.addQuotesIfNeeded(fontName);
-							KeywordIndex kw = InputAgent.formatInput("FontName", name);
-							InputAgent.storeAndExecute(new KeywordCommand((Entity)textEnt, kw));
-						}
-						controlStartResume.requestFocusInWindow();
+					public void setValue(String str) {
+						font.setText(str);
+						String name = Parser.addQuotesIfNeeded(str);
+						KeywordIndex kw = InputAgent.formatInput("FontName", name);
+						InputAgent.storeAndExecute(new KeywordCommand(selectedEntity, kw));
 					}
+
 				};
-
-				MouseListener fontMouseListener = new MouseListener() {
-					@Override
-					public void mouseClicked(MouseEvent e) {}
-					@Override
-					public void mousePressed(MouseEvent e) {}
-					@Override
-					public void mouseReleased(MouseEvent e) {}
-					@Override
-					public void mouseEntered(MouseEvent e) {
-						if (!(e.getSource() instanceof JMenuItem))
-							return;
-						JMenuItem item = (JMenuItem) e.getSource();
-						String fontName = item.getText();
-						if (!fontName.equals(textEnt.getFontName())) {
-							font.setText(fontName);
-							String name = Parser.addQuotesIfNeeded(fontName);
-							KeywordIndex kw = InputAgent.formatInput("FontName", name);
-							InputAgent.storeAndExecute(new KeywordCommand((Entity)textEnt, kw));
-						}
-					}
-					@Override
-					public void mouseExited(MouseEvent e) {
-						if (!presentFontName.equals(textEnt.getFontName())) {
-							font.setText(presentFontName);
-							String name = Parser.addQuotesIfNeeded(presentFontName);
-							KeywordIndex kw = InputAgent.formatInput("FontName", name);
-							InputAgent.storeAndExecute(new KeywordCommand((Entity)textEnt, kw));
-						}
-					}
-				};
-
-				// Fonts already in use
-				JMenuItem selectedItem = null;
-				int selectedIndex = -1;
-				int ind = 0;
-				for (final String fontName : GUIFrame.getFontsInUse(sim)) {
-					JMenuItem item = new JMenuItem(fontName);
-					if (selectedItem == null && fontName.equals(textEnt.getFontName())) {
-						selectedItem = item;
-						selectedIndex = ind;
-					}
-					ind++;
-					item.addActionListener(fontActionListener);
-					item.addMouseListener(fontMouseListener);
-					fontMenu.add(item);
-				}
-				fontMenu.addSeparator();
-
-				// All possible fonts
-				for (final String fontName : TextModel.validFontNames) {
-					JMenuItem item = new JMenuItem(fontName);
-					item.addActionListener(fontActionListener);
-					item.addMouseListener(fontMouseListener);
-					fontMenu.add(item);
-				}
-
 				fontMenu.show(font, 0, font.getPreferredSize().height);
-				if (selectedItem != null) {
-					fontMenu.ensureIndexIsVisible(selectedIndex);
-					selectedItem.setArmed(true);
-				}
+				controlStartResume.requestFocusInWindow();
 			}
 		});
 
