@@ -20,6 +20,7 @@ import java.util.ArrayList;
 
 import com.jaamsim.ProcessFlow.AbstractStateUserEntity;
 import com.jaamsim.basicsim.ErrorException;
+import com.jaamsim.basicsim.SubjectEntity;
 import com.jaamsim.events.EventHandle;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.events.ProcessTarget;
@@ -28,6 +29,7 @@ import com.jaamsim.input.ExpEvaluator;
 import com.jaamsim.input.ExpResType;
 import com.jaamsim.input.ExpResult;
 import com.jaamsim.input.ExpressionInput;
+import com.jaamsim.input.InterfaceEntityListInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 
@@ -36,10 +38,17 @@ public class EntitySystem extends AbstractStateUserEntity {
 	@Keyword(description = "An expression returning a string that sets this object's present "
 	                     + "state. "
 	                     + "If left blank, the state will be set to Working if any of the "
-	                     + "entities in the system are working. "
-	                     + "It will be set to Idle if all of the entities in the system are idle.",
+	                     + "entities specified by the WatchList input are working. "
+	                     + "It will be set to Idle if all of the entities in the WatchList are "
+	                     + "idle.",
 	         exampleList = {"'[Server1].Working || [Server2].Working ? \"Working\" : \"Idle\"'"})
 	protected final ExpressionInput stateExp;
+
+	@Keyword(description = "A list of objects to monitor.\n\n"
+	                     + "The system's state will be re-calculated whenever one of "
+	                     + "the WatchList objects changes state.",
+	         exampleList = {"Object1  Object2"})
+	protected final InterfaceEntityListInput<SubjectEntity> watchList;
 
 	private final ArrayList<AbstractStateUserEntity> entityList = new ArrayList<>();
 
@@ -47,6 +56,12 @@ public class EntitySystem extends AbstractStateUserEntity {
 		stateExp = new ExpressionInput("StateExpression", KEY_INPUTS, null);
 		stateExp.setResultType(ExpResType.STRING);
 		this.addInput(stateExp);
+
+		watchList = new InterfaceEntityListInput<>(SubjectEntity.class, "WatchList", KEY_INPUTS, new ArrayList<>());
+		watchList.setIncludeSelf(false);
+		watchList.setUnique(true);
+		watchList.setRequired(true);
+		this.addInput(watchList);
 	}
 
 	public void performUpdate() {
