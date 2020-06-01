@@ -22,6 +22,7 @@ import com.jaamsim.ProcessFlow.AbstractStateUserEntity;
 import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.basicsim.ObserverEntity;
 import com.jaamsim.basicsim.SubjectEntity;
+import com.jaamsim.basicsim.SubjectEntityDelegate;
 import com.jaamsim.events.EventHandle;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.events.ProcessTarget;
@@ -33,8 +34,9 @@ import com.jaamsim.input.ExpressionInput;
 import com.jaamsim.input.InterfaceEntityListInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
+import com.jaamsim.states.StateRecord;
 
-public class EntitySystem extends AbstractStateUserEntity implements ObserverEntity {
+public class EntitySystem extends AbstractStateUserEntity implements ObserverEntity, SubjectEntity {
 
 	@Keyword(description = "An expression returning a string that sets this object's present "
 	                     + "state. "
@@ -50,6 +52,8 @@ public class EntitySystem extends AbstractStateUserEntity implements ObserverEnt
 	                     + "the WatchList objects changes state.",
 	         exampleList = {"Object1  Object2"})
 	protected final InterfaceEntityListInput<SubjectEntity> watchList;
+
+	private final SubjectEntityDelegate subject = new SubjectEntityDelegate(this);
 
 	{
 		stateExp = new ExpressionInput("StateExpression", KEY_INPUTS, null);
@@ -74,6 +78,21 @@ public class EntitySystem extends AbstractStateUserEntity implements ObserverEnt
 	public void lateInit() {
 		super.lateInit();
 		ObserverEntity.registerWithSubjects(this, getWatchList());
+	}
+
+	@Override
+	public void registerObserver(ObserverEntity obs) {
+		subject.registerObserver(obs);
+	}
+
+	@Override
+	public void notifyObservers() {
+		subject.notifyObservers();
+	}
+
+	@Override
+	public ArrayList<ObserverEntity> getObserverList() {
+		return subject.getObserverList();
 	}
 
 	@Override
@@ -191,6 +210,12 @@ public class EntitySystem extends AbstractStateUserEntity implements ObserverEnt
 		catch (ExpError e) {
 			throw new ErrorException(this, e);
 		}
+	}
+
+	@Override
+	public void stateChanged(StateRecord prev, StateRecord next) {
+		super.stateChanged(prev, next);
+		notifyObservers();
 	}
 
 	@Output(name = "EntityList",
