@@ -48,28 +48,6 @@ public class CameraControl implements WindowInteractionListener {
 
 	private final Vec3d POI = new Vec3d();
 
-	private static class PolarInfo {
-		double rotZ; // The spherical coordinate that rotates around Z (in radians)
-		double rotX; // Ditto for X
-		double radius; // The distance the camera is from the view center
-		final Vec3d viewCenter;
-
-		PolarInfo(Vec3d center) {
-			viewCenter = new Vec3d(center);
-		}
-
-		@Override
-		public boolean equals(Object o) {
-			if (!(o instanceof PolarInfo)) {
-				return false;
-			}
-			PolarInfo pi = (PolarInfo)o;
-
-			return pi.rotZ == rotZ && pi.rotX == rotX && pi.radius == radius &&
-			       viewCenter.equals3(pi.viewCenter);
-		}
-	}
-
 	private PolarInfo piCache; // The last polar info this view has re-drawn for
 
 	public CameraControl(Renderer renderer, View updateView) {
