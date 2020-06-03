@@ -1833,7 +1833,7 @@ public class RenderManager implements DragSourceListener {
 
 		double rotX = Math.atan2(xyDist, viewDiff.z);
 
-		if (Math.abs(rotX) < 0.005) {
+		if (cameraPos.x == cameraCenter.x && cameraPos.y == cameraCenter.y) {
 			rotZ = 0; // Don't rotate if we are looking straight up or down
 		}
 
