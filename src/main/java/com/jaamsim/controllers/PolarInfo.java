@@ -24,10 +24,30 @@ public class PolarInfo {
 	double rotZ; // The spherical coordinate that rotates around Z (in radians)
 	double rotX; // Ditto for X
 	double radius; // The distance the camera is from the view center
-	final Vec3d viewCenter;
+	final Vec3d viewCenter; // centre of the polar coordinate system
 
 	PolarInfo(Vec3d center) {
 		viewCenter = new Vec3d(center);
+	}
+
+	/**
+	 * Constructs the polar coordinates for the view camera.
+	 * @param center - position along the camera's line of sight
+	 * @param pos - position of the view camera
+	 */
+	PolarInfo(Vec3d center, Vec3d pos) {
+		viewCenter = new Vec3d(center);
+
+		Vec3d viewDiff = new Vec3d();
+		viewDiff.sub3(pos, center);
+		radius = viewDiff.mag3();
+
+		rotZ = Math.atan2(viewDiff.x, -viewDiff.y);
+		if (viewDiff.x == 0.0d && viewDiff.y == 0.0d)  // degenerate case
+			rotZ = 0.0d;
+
+		double xyDist = Math.hypot(viewDiff.x, viewDiff.y);
+		rotX = Math.atan2(xyDist, viewDiff.z);
 	}
 
 	@Override
