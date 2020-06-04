@@ -92,7 +92,7 @@ public class CameraControl implements WindowInteractionListener {
 		Vec3d camPos = _updateView.getGlobalPosition();
 		Vec3d center = _updateView.getGlobalCenter();
 
-		PolarInfo origPi = getPolarFrom(center, camPos);
+		PolarInfo origPi = new PolarInfo(center, camPos);
 
 		Quaternion origRot = polarToRot(origPi);
 		Mat4d rot = new Mat4d();
@@ -114,7 +114,7 @@ public class CameraControl implements WindowInteractionListener {
 		center.multAndTrans3(rotTransX, center);
 		center.multAndTrans3(rotTransZ, center);
 
-		PolarInfo pi = getPolarFrom(center, camPos);
+		PolarInfo pi = new PolarInfo(center, camPos);
 		updateCamTrans(pi, true);
 
 	}
@@ -158,7 +158,7 @@ public class CameraControl implements WindowInteractionListener {
 		Vec3d center = _updateView.getGlobalCenter();
 		camPos.sub3(diff);
 		center.sub3(diff);
-		PolarInfo pi = getPolarFrom(center, camPos);
+		PolarInfo pi = new PolarInfo(center, camPos);
 		updateCamTrans(pi, true);
 
 	}
@@ -177,7 +177,7 @@ public class CameraControl implements WindowInteractionListener {
 		Vec3d center = _updateView.getGlobalCenter();
 		camPos.z -= zDiff;
 		center.z -= zDiff;
-		PolarInfo pi = getPolarFrom(center, camPos);
+		PolarInfo pi = new PolarInfo(center, camPos);
 		updateCamTrans(pi, true);
 
 	}
@@ -187,7 +187,7 @@ public class CameraControl implements WindowInteractionListener {
 		Vec3d camPos = _updateView.getGlobalPosition();
 		Vec3d center = _updateView.getGlobalCenter();
 
-		PolarInfo origPi = getPolarFrom(center, camPos);
+		PolarInfo origPi = new PolarInfo(center, camPos);
 		if ( camPos.x == center.x &&
 		     camPos.y == center.y ) {
 			// This is a degenerate camera view, tweak the polar info a bit to
@@ -221,7 +221,7 @@ public class CameraControl implements WindowInteractionListener {
 		camPos.multAndTrans3(rotTransZ, camPos);
 		center.multAndTrans3(rotTransZ, center);
 
-		PolarInfo pi = getPolarFrom(center, camPos);
+		PolarInfo pi = new PolarInfo(center, camPos);
 
 		Quaternion newRot = polarToRot(pi);
 		rot.setRot3(newRot);
@@ -239,7 +239,7 @@ public class CameraControl implements WindowInteractionListener {
 			camPos.multAndTrans3(rotTransZ, camPos);
 			center.multAndTrans3(rotTransZ, center);
 
-			pi = getPolarFrom(center, camPos);
+			pi = new PolarInfo(center, camPos);
 		}
 
 		updateCamTrans(pi, true);
@@ -270,7 +270,7 @@ public class CameraControl implements WindowInteractionListener {
 		camPos.add3(diff);
 		center.add3(diff);
 
-		PolarInfo pi = getPolarFrom(center, camPos);
+		PolarInfo pi = new PolarInfo(center, camPos);
 		updateCamTrans(pi, true);
 	}
 
@@ -463,26 +463,8 @@ public class CameraControl implements WindowInteractionListener {
 		}
 	}
 
-	private PolarInfo getPolarFrom(Vec3d center, Vec3d pos) {
-		PolarInfo pi = new PolarInfo(center);
-
-		Vec3d viewDiff = new Vec3d();
-		viewDiff.sub3(pos, pi.viewCenter);
-
-		pi.radius = viewDiff.mag3();
-
-		pi.rotZ = Math.atan2(viewDiff.x, -viewDiff.y);
-
-		double xyDist = Math.hypot(viewDiff.x, viewDiff.y);
-
-		pi.rotX = Math.atan2(xyDist, viewDiff.z);
-
-		return pi;
-
-	}
-
 	private PolarInfo getPolarCoordsFromView() {
-		return getPolarFrom(_updateView.getGlobalCenter(), _updateView.getGlobalPosition());
+		return new PolarInfo(_updateView.getGlobalCenter(), _updateView.getGlobalPosition());
 	}
 
 	public void checkForUpdate() {
