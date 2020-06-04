@@ -17,6 +17,7 @@
  */
 package com.jaamsim.controllers;
 
+import com.jaamsim.math.Quaternion;
 import com.jaamsim.math.Vec3d;
 
 public class PolarInfo {
@@ -44,6 +45,17 @@ public class PolarInfo {
 
 		double xyDist = Math.hypot(viewDiff.x, viewDiff.y);
 		rotX = Math.atan2(xyDist, viewDiff.z);
+	}
+
+	public Quaternion getRotation() {
+		Quaternion rot = new Quaternion();
+		rot.setRotZAxis(rotZ);
+
+		Quaternion tmp = new Quaternion();
+		tmp.setRotXAxis(rotX);
+
+		rot.mult(rot, tmp);
+		return rot;
 	}
 
 	@Override
