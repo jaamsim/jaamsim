@@ -69,7 +69,6 @@ import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Mat4d;
 import com.jaamsim.math.MathUtils;
 import com.jaamsim.math.Plane;
-import com.jaamsim.math.Quaternion;
 import com.jaamsim.math.Ray;
 import com.jaamsim.math.Transform;
 import com.jaamsim.math.Vec2d;
@@ -1820,33 +1819,11 @@ public class RenderManager implements DragSourceListener {
 	 * @return
 	 */
 	public Future<BufferedImage> renderScreenShot(View view, int width, int height, OffscreenTarget target) {
-
 		Vec3d cameraPos = view.getGlobalPosition();
 		Vec3d cameraCenter = view.getGlobalCenter();
+		PolarInfo pi = new PolarInfo(cameraCenter, cameraPos);
 
-		Vec3d viewDiff = new Vec3d();
-		viewDiff.sub3(cameraPos, cameraCenter);
-
-		double rotZ = Math.atan2(viewDiff.x, -viewDiff.y);
-
-		double xyDist = Math.hypot(viewDiff.x, viewDiff.y);
-
-		double rotX = Math.atan2(xyDist, viewDiff.z);
-
-		if (cameraPos.x == cameraCenter.x && cameraPos.y == cameraCenter.y) {
-			rotZ = 0; // Don't rotate if we are looking straight up or down
-		}
-
-		Quaternion rot = new Quaternion();
-		rot.setRotZAxis(rotZ);
-
-		Quaternion tmp = new Quaternion();
-		tmp.setRotXAxis(rotX);
-
-		rot.mult(rot, tmp);
-
-		Transform trans = new Transform(cameraPos, rot, 1);
-
+		Transform trans = new Transform(cameraPos, pi.getRotation(), 1);
 		CameraInfo camInfo = new CameraInfo(Math.PI/3, trans, view.getSkyboxTexture());
 
 		return renderer.renderOffscreen(null, view.getID(), camInfo, width, height, null, target);
