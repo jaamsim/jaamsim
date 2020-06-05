@@ -527,12 +527,26 @@ public class Queue extends LinkedComponent {
 			}
 		}
 
-		// Return the first match value that has sufficient entities in each queue
+		// Find the match values that have sufficient entities in each queue
+		ArrayList<String> matchList = new ArrayList<>();
 		for (String m : shortest.getEntityTypes()) {
 			if (Queue.sufficientEntities(queueList, numberList, m))
-				return m;
+				matchList.add(m);
 		}
-		return null;
+
+		// Select the match value with the earliest entity arrival
+		String ret = null;
+		double earliestTime = Double.POSITIVE_INFINITY;
+		for (String m : matchList) {
+			for (Queue que : queueList) {
+				double timeAdded = que.storage.first(m).timeAdded;
+				if (timeAdded < earliestTime) {
+					ret = m;
+					earliestTime = timeAdded;
+				}
+			}
+		}
+		return ret;
 	}
 
 	/**
