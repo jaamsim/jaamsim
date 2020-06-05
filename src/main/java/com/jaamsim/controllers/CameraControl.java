@@ -94,9 +94,8 @@ public class CameraControl implements WindowInteractionListener {
 
 		PolarInfo origPi = new PolarInfo(center, camPos);
 
-		Quaternion origRot = polarToRot(origPi);
 		Mat4d rot = new Mat4d();
-		rot.setRot3(origRot);
+		rot.setRot3(origPi.getRotation());
 
 		Vec3d rotXAxis = new Vec3d(1.0d, 0.0d, 0.0d);
 		rotXAxis.mult3(rot, rotXAxis);
@@ -196,9 +195,8 @@ public class CameraControl implements WindowInteractionListener {
 			origPi.rotZ = 0;
 		}
 
-		Quaternion origRot = polarToRot(origPi);
 		Mat4d rot = new Mat4d();
-		rot.setRot3(origRot);
+		rot.setRot3(origPi.getRotation());
 
 		Vec3d origUp = new Vec3d(0.0d, 1.0d, 0.0d);
 		origUp.mult3(rot, origUp);
@@ -223,8 +221,7 @@ public class CameraControl implements WindowInteractionListener {
 
 		PolarInfo pi = new PolarInfo(center, camPos);
 
-		Quaternion newRot = polarToRot(pi);
-		rot.setRot3(newRot);
+		rot.setRot3(pi.getRotation());
 
 		Vec3d newUp = new Vec3d(0.0d, 1.0d, 0.0d);
 		newUp.mult3(rot, newUp);
@@ -306,17 +303,6 @@ public class CameraControl implements WindowInteractionListener {
 	@Override
 	public void mouseEntry(int windowID, int x, int y, boolean isInWindow) {}
 
-	private Quaternion polarToRot(PolarInfo pi) {
-		Quaternion rot = new Quaternion();
-		rot.setRotZAxis(pi.rotZ);
-
-		Quaternion tmp = new Quaternion();
-		tmp.setRotXAxis(pi.rotX);
-
-		rot.mult(rot, tmp);
-		return rot;
-	}
-
 	private void updateCamTrans(PolarInfo pi, boolean updateInputs) {
 
 		if (pi.rotX == 0) {
@@ -336,11 +322,9 @@ public class CameraControl implements WindowInteractionListener {
 
 		Vec4d zOffset = new Vec4d(0, 0, pi.radius, 1.0d);
 
-		Quaternion rot = polarToRot(pi);
-
 		Transform finalTrans = new Transform(pi.viewCenter);
 
-		finalTrans.merge(finalTrans, new Transform(null, rot, 1));
+		finalTrans.merge(finalTrans, new Transform(null, pi.getRotation(), 1));
 		finalTrans.merge(finalTrans, new Transform(zOffset));
 
 
