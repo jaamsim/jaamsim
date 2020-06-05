@@ -519,9 +519,9 @@ public class Queue extends LinkedComponent {
 
 		// Find the queue with the fewest match values
 		Queue shortest = null;
-		int count = -1;
+		int count = Integer.MAX_VALUE;
 		for (Queue que : queueList) {
-			if (que.getEntityTypes().size() > count) {
+			if (que.storage.getTypes().size() < count) {
 				count = que.getEntityTypes().size();
 				shortest = que;
 			}
