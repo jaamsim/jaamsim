@@ -192,7 +192,6 @@ public class CameraControl implements WindowInteractionListener {
 			// This is a degenerate camera view, tweak the polar info a bit to
 			// prevent view flipping
 			origPi.rotX = 0.00001;
-			origPi.rotZ = 0;
 		}
 
 		Mat4d rot = new Mat4d();
