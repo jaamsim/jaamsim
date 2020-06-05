@@ -26,10 +26,6 @@ public class PolarInfo {
 	double radius; // The distance the camera is from the view center
 	final Vec3d viewCenter; // centre of the polar coordinate system
 
-	PolarInfo(Vec3d center) {
-		viewCenter = new Vec3d(center);
-	}
-
 	/**
 	 * Constructs the polar coordinates for the view camera.
 	 * @param center - position along the camera's line of sight
