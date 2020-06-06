@@ -175,13 +175,14 @@ public class Pack extends LinkedService {
 		// Remove the next entity from the queue and pack the container
 		if (packedEntity != null) {
 			container.addEntity(packedEntity);
+			releaseEntity(simTime);
 			packedEntity = null;
 			numberInserted++;
 		}
 
 		// If the container is full, send it to the next component
 		if (numberInserted >= numberToInsert) {
-			this.sendToNextComponent((DisplayEntity)container);
+			getNextComponent().addEntity((DisplayEntity) container);
 			container = null;
 			numberInserted = 0;
 			startedPacking = false;
