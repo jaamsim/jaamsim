@@ -43,6 +43,11 @@ public class Unpack extends LinkedService {
 	         exampleList = { "3.0 h", "NormalDistribution1", "'1[s] + 0.5*[TimeSeries1].PresentValue'" })
 	private final SampleInput serviceTime;
 
+	@Keyword(description = "The state to be assigned to container on arrival at this object.\n"
+	                     + "No state is assigned if the entry is blank.",
+	         exampleList = {"Service"})
+	protected final StringProvInput containerStateAssignment;
+
 	private String entityMatch;   // Match value for the entities to be removed from the container
 	private int numberToRemove;   // Number of entities to remove from the present EntityContainer
 
@@ -55,6 +60,10 @@ public class Unpack extends LinkedService {
 		serviceTime.setUnitType(TimeUnit.class);
 		serviceTime.setValidRange(0, Double.POSITIVE_INFINITY);
 		this.addInput(serviceTime);
+
+		containerStateAssignment = new StringProvInput("ContainerStateAssignment", OPTIONS, null);
+		containerStateAssignment.setUnitType(DimensionlessUnit.class);
+		this.addInput(containerStateAssignment);
 	}
 
 	private EntContainer container;	// the received EntityContainer
@@ -67,6 +76,14 @@ public class Unpack extends LinkedService {
 		super.earlyInit();
 		container = null;
 		numberRemoved = 0;
+	}
+
+	private void setContainerState() {
+		if (!containerStateAssignment.isDefault()) {
+			double simTime = getSimTime();
+			String state = containerStateAssignment.getValue().getNextString(simTime);
+			container.setPresentState(state);
+		}
 	}
 
 	@Override
@@ -85,7 +102,7 @@ public class Unpack extends LinkedService {
 
 			// Remove the container from the queue
 			container = (EntContainer)this.getNextEntityForMatch(m);
-			setEntityState((DisplayEntity) container);
+			setContainerState();
 			numberToRemove = this.getNumberToRemove();
 			entityMatch = null;
 			if (matchForEntities.getValue() != null)
