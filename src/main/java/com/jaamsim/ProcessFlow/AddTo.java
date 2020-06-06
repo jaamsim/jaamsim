@@ -32,6 +32,8 @@ public class AddTo extends Pack {
 	{
 		prototypeEntityContainer.setHidden(true);
 
+		numberOfEntities.setValidRange(0, Double.POSITIVE_INFINITY);
+
 		containerQueue = new EntityInput<>(Queue.class, "ContainerQueue", KEY_INPUTS, null);
 		containerQueue.setRequired(true);
 		this.addInput(containerQueue);
@@ -75,12 +77,6 @@ public class AddTo extends Pack {
 		}
 
 		return super.startProcessing(simTime);
-	}
-
-	@Override
-	protected int getNumberToInsert(double simTime) {
-		int ret = (int)numberOfEntities.getValue().getNextSample(simTime);
-		return ret;
 	}
 
 	@Override

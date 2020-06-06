@@ -73,7 +73,7 @@ public class Pack extends LinkedService {
 
 		numberOfEntities = new SampleInput("NumberOfEntities", KEY_INPUTS, new SampleConstant(1.0));
 		numberOfEntities.setUnitType(DimensionlessUnit.class);
-		numberOfEntities.setValidRange(0, Double.POSITIVE_INFINITY);
+		numberOfEntities.setValidRange(1, Double.POSITIVE_INFINITY);
 		this.addInput(numberOfEntities);
 
 		serviceTime = new SampleInput("ServiceTime", KEY_INPUTS, new SampleConstant(TimeUnit.class, 0.0));
@@ -190,9 +190,7 @@ public class Pack extends LinkedService {
 	}
 
 	protected int getNumberToInsert(double simTime) {
-		int ret = (int)numberOfEntities.getValue().getNextSample(simTime);
-		ret = Math.max(ret, 1);
-		return ret;
+		return (int) numberOfEntities.getValue().getNextSample(simTime);
 	}
 
 	private int getNumberToStart(double simTime) {
