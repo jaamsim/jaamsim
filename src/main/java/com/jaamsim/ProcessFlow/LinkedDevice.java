@@ -112,7 +112,7 @@ public abstract class LinkedDevice extends Device implements Linkable {
 	}
 
 	protected void registerEntity(DisplayEntity ent) {
-		processor.receiveEntity(ent);
+		receiveEntity(ent);
 
 		// Assign a new state to the received entity
 		if (!stateAssignment.isDefault() && ent instanceof StateEntity) {
@@ -121,8 +121,16 @@ public abstract class LinkedDevice extends Device implements Linkable {
 		}
 	}
 
+	protected void receiveEntity(DisplayEntity ent) {
+		processor.receiveEntity(ent);
+	}
+
 	protected void setReceivedEntity(DisplayEntity ent) {
 		processor.setReceivedEntity(ent);
+	}
+
+	protected void releaseEntity(double simTime) {
+		processor.releaseEntity(simTime);
 	}
 
 	/**
@@ -130,7 +138,7 @@ public abstract class LinkedDevice extends Device implements Linkable {
 	 * @param ent - the entity to be sent downstream.
 	 */
 	public void sendToNextComponent(DisplayEntity ent) {
-		processor.releaseEntity(getSimTime());
+		releaseEntity(getSimTime());
 		if( nextComponent.getValue() != null )
 			nextComponent.getValue().addEntity(ent);
 	}
