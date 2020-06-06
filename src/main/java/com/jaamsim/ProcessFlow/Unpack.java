@@ -164,9 +164,10 @@ public class Unpack extends LinkedService {
 
 	@Override
 	public void updateGraphics(double simTime) {
-		if (container == null)
-			return;
-		moveToProcessPosition((DisplayEntity)container);
+		if (container != null)
+			moveToProcessPosition((DisplayEntity)container);
+		if (unpackedEntity != null)
+			moveToProcessPosition(unpackedEntity);
 	}
 
 	@Override
