@@ -68,6 +68,7 @@ public class Unpack extends LinkedService {
 
 	private EntContainer container;	// the received EntityContainer
 	private int numberRemoved;   // Number of entities removed from the received EntityContainer
+	private DisplayEntity unpackedEntity;  // the entity being unpacked
 
 	public Unpack() {}
 
@@ -110,6 +111,13 @@ public class Unpack extends LinkedService {
 			numberRemoved = 0;
 		}
 
+		// Remove the next entity to unpack and set its state
+		if (numberRemoved < numberToRemove && !container.isEmpty(entityMatch)) {
+			unpackedEntity = container.removeEntity(entityMatch);
+			receiveEntity(unpackedEntity);
+			setEntityState(unpackedEntity);
+		}
+
 		return true;
 	}
 
@@ -124,19 +132,18 @@ public class Unpack extends LinkedService {
 	@Override
 	protected void processStep(double simTime) {
 
-		// Remove the next entity from the container
-		if (numberRemoved < numberToRemove && !container.isEmpty(entityMatch)) {
-			DisplayEntity ent = container.removeEntity(entityMatch);
-			receiveEntity(ent);
-			setEntityState(ent);
-			sendToNextComponent(ent);
+		// Send the unpacked entity to the next component
+		if (unpackedEntity != null) {
+			sendToNextComponent(unpackedEntity);
+			unpackedEntity = null;
 			numberRemoved++;
 		}
 
 		// Stop when the desired number of entities have been removed
-		else {
+		if (numberRemoved >= numberToRemove || container.isEmpty(entityMatch)) {
 			this.disposeContainer(container);
 			container = null;
+			numberRemoved = 0;
 		}
 	}
 
@@ -165,7 +172,7 @@ public class Unpack extends LinkedService {
 	@Override
 	protected double getStepDuration(double simTime) {
 		double dur = 0.0;
-		if (numberRemoved < numberToRemove && !container.isEmpty(entityMatch))
+		if (unpackedEntity != null)
 			dur = serviceTime.getValue().getNextSample(simTime);
 		return dur;
 	}
