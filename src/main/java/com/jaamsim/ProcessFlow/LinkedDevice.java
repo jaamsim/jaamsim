@@ -112,11 +112,6 @@ public abstract class LinkedDevice extends Device implements Linkable {
 		setEntityState(ent);
 	}
 
-	protected void registerEntity(DisplayEntity ent) {
-		receiveEntity(ent);
-		setEntityState(ent);
-	}
-
 	protected void receiveEntity(DisplayEntity ent) {
 		processor.receiveEntity(ent);
 	}
