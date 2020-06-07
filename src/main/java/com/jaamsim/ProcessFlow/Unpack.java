@@ -111,6 +111,7 @@ public class Unpack extends LinkedService {
 		if (numberRemoved < numberToRemove && !container.isEmpty(entityMatch)) {
 			DisplayEntity ent = container.removeEntity(entityMatch);
 			receiveEntity(ent);
+			setEntityState(ent);
 			sendToNextComponent(ent);
 			numberRemoved++;
 		}
