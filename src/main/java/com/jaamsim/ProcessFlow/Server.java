@@ -70,6 +70,8 @@ public class Server extends LinkedService {
 
 		// Remove the first entity from the queue
 		servedEntity = this.getNextEntityForMatch(m);
+		receiveEntity(servedEntity);
+		setEntityState(servedEntity);
 
 		// Set the service duration
 		serviceDuration = serviceTime.getValue().getNextSample(simTime);

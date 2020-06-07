@@ -27,7 +27,6 @@ import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InterfaceEntityInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
-import com.jaamsim.states.StateEntity;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
 
@@ -164,10 +163,8 @@ public class Pack extends LinkedService {
 			if (getQueue(simTime).getMatchCount(getMatchValue()) == 0)
 				return false;
 			packedEntity = this.getNextEntityForMatch(getMatchValue());
-			if (!stateAssignment.isDefault() && packedEntity instanceof StateEntity) {
-				String state = stateAssignment.getValue().getNextString(simTime);
-				((StateEntity)packedEntity).setPresentState(state);
-			}
+			receiveEntity(packedEntity);
+			setEntityState(packedEntity);
 		}
 		return true;
 	}

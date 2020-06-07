@@ -99,6 +99,8 @@ public class EntityGate extends LinkedService {
 
 		// Select the next entity to release
 		servedEntity = this.getNextEntityForMatch(m);
+		receiveEntity(servedEntity);
+		setEntityState(servedEntity);
 		num++;
 
 		return true;
