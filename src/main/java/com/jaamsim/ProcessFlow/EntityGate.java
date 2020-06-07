@@ -77,7 +77,8 @@ public class EntityGate extends LinkedService {
 		// If the gate is open and there are no other entities still in the queue,
 		// then send the entity to the next component
 		num++;
-		this.registerEntity(ent);
+		receiveEntity(ent);
+		setEntityState(ent);
 		this.sendToNextComponent(ent);
 	}
 

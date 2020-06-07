@@ -108,7 +108,8 @@ public abstract class LinkedDevice extends Device implements Linkable {
 
 	@Override
 	public void addEntity(DisplayEntity ent) {
-		this.registerEntity(ent);
+		receiveEntity(ent);
+		setEntityState(ent);
 	}
 
 	protected void registerEntity(DisplayEntity ent) {
