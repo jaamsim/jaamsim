@@ -130,8 +130,8 @@ public abstract class LinkedDevice extends Device implements Linkable {
 	 */
 	public void sendToNextComponent(DisplayEntity ent) {
 		releaseEntity(getSimTime());
-		if( nextComponent.getValue() != null )
-			nextComponent.getValue().addEntity(ent);
+		if (getNextComponent() != null )
+			getNextComponent().addEntity(ent);
 	}
 
 	protected void setEntityState(DisplayEntity ent) {
@@ -139,6 +139,10 @@ public abstract class LinkedDevice extends Device implements Linkable {
 			return;
 		String state = stateAssignment.getValue().getNextString(getSimTime());
 		((StateEntity) ent).setPresentState(state);
+	}
+
+	protected Linkable getNextComponent() {
+		return nextComponent.getValue();
 	}
 
 	@Override
