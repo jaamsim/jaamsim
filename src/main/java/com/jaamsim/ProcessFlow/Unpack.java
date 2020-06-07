@@ -84,7 +84,6 @@ public class Unpack extends LinkedService {
 
 			// Remove the container from the queue
 			container = (EntContainer)this.getNextEntityForMatch(m);
-			receiveEntity((DisplayEntity) container);
 			setEntityState((DisplayEntity) container);
 			numberToRemove = this.getNumberToRemove();
 			entityMatch = null;
@@ -109,7 +108,9 @@ public class Unpack extends LinkedService {
 
 		// Remove the next entity from the container
 		if (numberRemoved < numberToRemove && !container.isEmpty(entityMatch)) {
-			this.sendToNextComponent(container.removeEntity(entityMatch));
+			DisplayEntity ent = container.removeEntity(entityMatch);
+			receiveEntity(ent);
+			sendToNextComponent(ent);
 			numberRemoved++;
 		}
 
