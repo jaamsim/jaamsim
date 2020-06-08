@@ -90,16 +90,11 @@ public class Unpack extends LinkedService {
 	@Override
 	protected boolean startProcessing(double simTime) {
 
-		// Determine the match value
-		String m = this.getNextMatchValue(getSimTime());
-		this.setMatchValue(m);
-
-		// Is there a container waiting to be unpacked?
-		if (container == null && getQueue(simTime).getMatchCount(m) == 0) {
-			return false;
-		}
-
 		if (container == null) {
+			String m = getNextMatchValue(getSimTime());
+			setMatchValue(m);
+			if (getQueue(simTime).getMatchCount(m) == 0)
+				return false;
 
 			// Remove the container from the queue
 			container = (EntContainer)this.getNextEntityForMatch(m);
