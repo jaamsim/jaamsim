@@ -90,19 +90,28 @@ public class Unpack extends LinkedService {
 	@Override
 	protected boolean startProcessing(double simTime) {
 
+		// If a container has not been started yet, remove one from the queue
 		if (container == null) {
+
+			// Set the match value for the container
 			String m = getNextMatchValue(getSimTime());
 			setMatchValue(m);
+
+			// Stop if no container is available
 			if (getQueue(simTime).getMatchCount(m) == 0)
 				return false;
 
 			// Remove the container from the queue
 			container = (EntContainer)this.getNextEntityForMatch(m);
 			setContainerState();
-			numberToRemove = this.getNumberToRemove();
+
+			// Set the match value for the entities to remove
 			entityMatch = null;
 			if (matchForEntities.getValue() != null)
 				entityMatch = matchForEntities.getValue().getNextString(simTime, 1.0d, true);
+
+			// Set the number of entities to remove
+			numberToRemove = getNumberToRemove();
 			numberRemoved = 0;
 		}
 
