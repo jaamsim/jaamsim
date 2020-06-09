@@ -1618,6 +1618,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				if (RenderManager.isGood()) {
 					if (bCreate) {
 						FrameBox.setSelectedEntity(null, false);
+						showLinks.setSelected(true);
+						RenderManager.inst().setShowLinks(true);
 					}
 					RenderManager.inst().setCreateLinks(bCreate);
 					RenderManager.redraw();
