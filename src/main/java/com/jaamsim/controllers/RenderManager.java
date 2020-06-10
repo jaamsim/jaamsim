@@ -154,6 +154,7 @@ public class RenderManager implements DragSourceListener {
 	private ArrayList<RenderProxy> cachedScene;
 
 	private DisplayEntity selectedEntity = null;
+	private Vec3d mousePosition = new Vec3d();
 
 	private long simTick = 0;
 
@@ -1551,8 +1552,8 @@ public class RenderManager implements DragSourceListener {
 			return;
 		}
 
-		Vec3d xyPlanePoint = currentRay.getPointAtDist(dist);
-		GUIFrame.showLocatorPosition(xyPlanePoint);
+		mousePosition = currentRay.getPointAtDist(dist);
+		GUIFrame.showLocatorPosition(mousePosition);
 	}
 
 	public Region getRegion(int windowID, int x, int y) {
