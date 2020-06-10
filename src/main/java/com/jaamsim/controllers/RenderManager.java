@@ -2009,6 +2009,11 @@ public class RenderManager implements DragSourceListener {
 		Vec3d sink = destDE.getSinkPoint();
 		double sourceRadius = sourceDE.entity.getRadius();
 		double sinkRadius = destDE.entity.getRadius();
+		addLink(source, sink, sourceRadius, sinkRadius, dir, scene);
+	}
+
+	private void addLink(Vec3d source, Vec3d sink, double sourceRadius, double sinkRadius, boolean dir, ArrayList<RenderProxy> scene) {
+
 		Vec3d arrowDir = new Vec3d();
 		arrowDir.sub3(sink, source);
 		if (arrowDir.mag3() < (sourceRadius + sinkRadius)) {
