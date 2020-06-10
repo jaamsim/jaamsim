@@ -1614,6 +1614,10 @@ public class RenderManager implements DragSourceListener {
 		// Set input values for a dragged and dropped entity
 		ent.setInputsForDragAndDrop();
 
+		// Set the link from the selected entity
+		if (selectedEntity != null && ent instanceof DisplayEntity)
+			selectedEntity.linkTo((DisplayEntity) ent);
+
 		// We are no longer drag-and-dropping
 		dndObjectType = null;
 		FrameBox.setSelectedEntity(ent, false);
