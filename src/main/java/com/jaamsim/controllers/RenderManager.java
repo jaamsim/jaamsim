@@ -457,6 +457,13 @@ public class RenderManager implements DragSourceListener {
 						addLinkDisplays(linkDirection.get(), cachedScene);
 					}
 
+					// Show a rubber band arrow from the selected entity to the mouse position
+					if (createLinks.get() && selectedEntity != null) {
+						Vec3d source = selectedEntity.getGlobalPosition();
+						double sourceRadius = selectedEntity.getRadius();
+						addLink(source, mousePosition, sourceRadius, 0.0d, true, cachedScene);
+					}
+
 					endNanos = System.nanoTime();
 				} // sceneDragLock
 
@@ -2070,7 +2077,6 @@ public class RenderManager implements DragSourceListener {
 			linkColour = ColourInput.RED;
 
 		scene.add(new LineProxy(segments, linkColour, 1, DisplayModel.ALWAYS, 0));
-
 	}
 
 	private void addLinkDisplays(boolean dir, ArrayList<RenderProxy> scene) {
