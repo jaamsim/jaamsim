@@ -155,6 +155,7 @@ public class RenderManager implements DragSourceListener {
 
 	private DisplayEntity selectedEntity = null;
 	private Vec3d mousePosition = new Vec3d();
+	private int mouseWindowID = -1;  // window containing the present mouse position
 
 	private long simTick = 0;
 
@@ -1563,6 +1564,9 @@ public class RenderManager implements DragSourceListener {
 		GUIFrame.showLocatorPosition(mousePosition);
 	}
 
+	public void mouseEntry(int windowID, int x, int y, boolean isInWindow) {
+		mouseWindowID = isInWindow ? windowID : -1;
+	}
 	public Region getRegion(int windowID, int x, int y) {
 		Ray currentRay = getRayForMouse(windowID, x, y);
 		int viewID = getActiveView().getID();

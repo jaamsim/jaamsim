@@ -300,7 +300,12 @@ public class CameraControl implements WindowInteractionListener {
 	}
 
 	@Override
-	public void mouseEntry(int windowID, int x, int y, boolean isInWindow) {}
+	public void mouseEntry(int windowID, int x, int y, boolean isInWindow) {
+		if (!RenderManager.isGood())
+			return;
+		RenderManager.redraw();
+		RenderManager.inst().mouseEntry(windowID, x, y, isInWindow);
+	}
 
 	private void updateCamTrans(PolarInfo pi, boolean updateInputs) {
 
