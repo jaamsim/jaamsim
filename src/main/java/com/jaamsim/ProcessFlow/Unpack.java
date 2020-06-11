@@ -22,6 +22,7 @@ import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.StringProviders.StringProvInput;
 import com.jaamsim.input.Keyword;
+import com.jaamsim.input.Output;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
 
@@ -42,6 +43,11 @@ public class Unpack extends LinkedService {
 	         exampleList = { "3.0 h", "NormalDistribution1", "'1[s] + 0.5*[TimeSeries1].PresentValue'" })
 	private final SampleInput serviceTime;
 
+	@Keyword(description = "The state to be assigned to container on arrival at this object.\n"
+	                     + "No state is assigned if the entry is blank.",
+	         exampleList = {"Service"})
+	protected final StringProvInput containerStateAssignment;
+
 	private String entityMatch;   // Match value for the entities to be removed from the container
 	private int numberToRemove;   // Number of entities to remove from the present EntityContainer
 
@@ -54,10 +60,15 @@ public class Unpack extends LinkedService {
 		serviceTime.setUnitType(TimeUnit.class);
 		serviceTime.setValidRange(0, Double.POSITIVE_INFINITY);
 		this.addInput(serviceTime);
+
+		containerStateAssignment = new StringProvInput("ContainerStateAssignment", OPTIONS, null);
+		containerStateAssignment.setUnitType(DimensionlessUnit.class);
+		this.addInput(containerStateAssignment);
 	}
 
 	private EntContainer container;	// the received EntityContainer
 	private int numberRemoved;   // Number of entities removed from the received EntityContainer
+	private DisplayEntity unpackedEntity;  // the entity being unpacked
 
 	public Unpack() {}
 
@@ -68,27 +79,47 @@ public class Unpack extends LinkedService {
 		numberRemoved = 0;
 	}
 
+	private void setContainerState() {
+		if (!containerStateAssignment.isDefault()) {
+			double simTime = getSimTime();
+			String state = containerStateAssignment.getValue().getNextString(simTime);
+			container.setPresentState(state);
+		}
+	}
+
 	@Override
 	protected boolean startProcessing(double simTime) {
 
-		// Determine the match value
-		String m = this.getNextMatchValue(getSimTime());
-		this.setMatchValue(m);
-
-		// Is there a container waiting to be unpacked?
-		if (container == null && getQueue(simTime).getMatchCount(m) == 0) {
-			return false;
-		}
-
+		// If a container has not been started yet, remove one from the queue
 		if (container == null) {
+
+			// Set the match value for the container
+			String m = getNextMatchValue(getSimTime());
+			setMatchValue(m);
+
+			// Stop if no container is available
+			if (getQueue(simTime).getMatchCount(m) == 0)
+				return false;
 
 			// Remove the container from the queue
 			container = (EntContainer)this.getNextEntityForMatch(m);
-			numberToRemove = this.getNumberToRemove();
+			setContainerState();
+
+			// Set the match value for the entities to remove
 			entityMatch = null;
 			if (matchForEntities.getValue() != null)
 				entityMatch = matchForEntities.getValue().getNextString(simTime, 1.0d, true);
+
+			// Set the number of entities to remove
+			numberToRemove = getNumberToRemove();
 			numberRemoved = 0;
+		}
+
+		// Remove the next entity to unpack and set its state
+		if (numberRemoved < numberToRemove && !container.isEmpty(entityMatch)) {
+			unpackedEntity = container.removeEntity(entityMatch);
+			receiveEntity(unpackedEntity);
+			setEntityState(unpackedEntity);
 		}
 
 		return true;
@@ -105,16 +136,18 @@ public class Unpack extends LinkedService {
 	@Override
 	protected void processStep(double simTime) {
 
-		// Remove the next entity from the container
-		if (numberRemoved < numberToRemove && !container.isEmpty(entityMatch)) {
-			this.sendToNextComponent(container.removeEntity(entityMatch));
+		// Send the unpacked entity to the next component
+		if (unpackedEntity != null) {
+			sendToNextComponent(unpackedEntity);
+			unpackedEntity = null;
 			numberRemoved++;
 		}
 
 		// Stop when the desired number of entities have been removed
-		else {
+		if (numberRemoved >= numberToRemove || container.isEmpty(entityMatch)) {
 			this.disposeContainer(container);
 			container = null;
+			numberRemoved = 0;
 		}
 	}
 
@@ -135,17 +168,24 @@ public class Unpack extends LinkedService {
 
 	@Override
 	public void updateGraphics(double simTime) {
-		if (container == null)
-			return;
-		moveToProcessPosition((DisplayEntity)container);
+		if (container != null)
+			moveToProcessPosition((DisplayEntity)container);
+		if (unpackedEntity != null)
+			moveToProcessPosition(unpackedEntity);
 	}
 
 	@Override
 	protected double getStepDuration(double simTime) {
 		double dur = 0.0;
-		if (numberRemoved < numberToRemove && !container.isEmpty(entityMatch))
+		if (unpackedEntity != null)
 			dur = serviceTime.getValue().getNextSample(simTime);
 		return dur;
+	}
+
+	@Output(name = "Container",
+	 description = "The EntityContainer that is being unpacked.")
+	public DisplayEntity getContainer(double simTime) {
+		return (DisplayEntity)container;
 	}
 
 }

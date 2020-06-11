@@ -69,7 +69,6 @@ import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Mat4d;
 import com.jaamsim.math.MathUtils;
 import com.jaamsim.math.Plane;
-import com.jaamsim.math.Quaternion;
 import com.jaamsim.math.Ray;
 import com.jaamsim.math.Transform;
 import com.jaamsim.math.Vec2d;
@@ -155,6 +154,8 @@ public class RenderManager implements DragSourceListener {
 	private ArrayList<RenderProxy> cachedScene;
 
 	private DisplayEntity selectedEntity = null;
+	private Vec3d mousePosition = new Vec3d();
+	private int mouseWindowID = -1;  // window containing the present mouse position
 
 	private long simTick = 0;
 
@@ -455,6 +456,13 @@ public class RenderManager implements DragSourceListener {
 					// Finally include the displayable links for linked entities
 					if (showLinks.get()) {
 						addLinkDisplays(linkDirection.get(), cachedScene);
+					}
+
+					// Show a rubber band arrow from the selected entity to the mouse position
+					if (createLinks.get() && selectedEntity != null && mouseWindowID > 0) {
+						Vec3d source = selectedEntity.getGlobalPosition();
+						double sourceRadius = selectedEntity.getRadius();
+						addLink(source, mousePosition, sourceRadius, 0.0d, true, cachedScene);
 					}
 
 					endNanos = System.nanoTime();
@@ -1552,8 +1560,12 @@ public class RenderManager implements DragSourceListener {
 			return;
 		}
 
-		Vec3d xyPlanePoint = currentRay.getPointAtDist(dist);
-		GUIFrame.showLocatorPosition(xyPlanePoint);
+		mousePosition = currentRay.getPointAtDist(dist);
+		GUIFrame.showLocatorPosition(mousePosition);
+	}
+
+	public void mouseEntry(int windowID, int x, int y, boolean isInWindow) {
+		mouseWindowID = isInWindow ? windowID : -1;
 	}
 
 	public Region getRegion(int windowID, int x, int y) {
@@ -1601,6 +1613,10 @@ public class RenderManager implements DragSourceListener {
 
 		// Set input values for a dragged and dropped entity
 		ent.setInputsForDragAndDrop();
+
+		// Set the link from the selected entity
+		if (selectedEntity != null && ent instanceof DisplayEntity)
+			selectedEntity.linkTo((DisplayEntity) ent);
 
 		// We are no longer drag-and-dropping
 		dndObjectType = null;
@@ -1820,33 +1836,11 @@ public class RenderManager implements DragSourceListener {
 	 * @return
 	 */
 	public Future<BufferedImage> renderScreenShot(View view, int width, int height, OffscreenTarget target) {
-
 		Vec3d cameraPos = view.getGlobalPosition();
 		Vec3d cameraCenter = view.getGlobalCenter();
+		PolarInfo pi = new PolarInfo(cameraCenter, cameraPos);
 
-		Vec3d viewDiff = new Vec3d();
-		viewDiff.sub3(cameraPos, cameraCenter);
-
-		double rotZ = Math.atan2(viewDiff.x, -viewDiff.y);
-
-		double xyDist = Math.hypot(viewDiff.x, viewDiff.y);
-
-		double rotX = Math.atan2(xyDist, viewDiff.z);
-
-		if (Math.abs(rotX) < 0.005) {
-			rotZ = 0; // Don't rotate if we are looking straight up or down
-		}
-
-		Quaternion rot = new Quaternion();
-		rot.setRotZAxis(rotZ);
-
-		Quaternion tmp = new Quaternion();
-		tmp.setRotXAxis(rotX);
-
-		rot.mult(rot, tmp);
-
-		Transform trans = new Transform(cameraPos, rot, 1);
-
+		Transform trans = new Transform(cameraPos, pi.getRotation(), 1);
 		CameraInfo camInfo = new CameraInfo(Math.PI/3, trans, view.getSkyboxTexture());
 
 		return renderer.renderOffscreen(null, view.getID(), camInfo, width, height, null, target);
@@ -2031,6 +2025,11 @@ public class RenderManager implements DragSourceListener {
 		Vec3d sink = destDE.getSinkPoint();
 		double sourceRadius = sourceDE.entity.getRadius();
 		double sinkRadius = destDE.entity.getRadius();
+		addLink(source, sink, sourceRadius, sinkRadius, dir, scene);
+	}
+
+	private void addLink(Vec3d source, Vec3d sink, double sourceRadius, double sinkRadius, boolean dir, ArrayList<RenderProxy> scene) {
+
 		Vec3d arrowDir = new Vec3d();
 		arrowDir.sub3(sink, source);
 		if (arrowDir.mag3() < (sourceRadius + sinkRadius)) {
@@ -2087,7 +2086,6 @@ public class RenderManager implements DragSourceListener {
 			linkColour = ColourInput.RED;
 
 		scene.add(new LineProxy(segments, linkColour, 1, DisplayModel.ALWAYS, 0));
-
 	}
 
 	private void addLinkDisplays(boolean dir, ArrayList<RenderProxy> scene) {

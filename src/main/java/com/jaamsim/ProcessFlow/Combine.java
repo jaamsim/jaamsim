@@ -119,7 +119,8 @@ public class Combine extends LinkedService {
 				continue;
 			}
 
-			this.registerEntity(ent);
+			receiveEntity(ent);
+			setEntityState(ent);
 			processedEntityList[i] = ent;
 		}
 

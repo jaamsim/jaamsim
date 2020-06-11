@@ -56,15 +56,16 @@ public class Branch extends LinkedComponent {
 	@Override
 	public void addEntity( DisplayEntity ent ) {
 		super.addEntity(ent);
+		double simTime = getSimTime();
 
 		// Choose the next component for this entity
-		int i = (int) choice.getValue().getNextSample(this.getSimTime());
+		int i = (int) choice.getValue().getNextSample(simTime);
 		if (i<1 || i>nextComponentList.getValue().size())
 			error("Chosen index i=%s is out of range for NextComponentList: %s.",
 			      i, nextComponentList.getValue());
 
 		// Set the standard outputs for a LinkedComponent
-		this.sendToNextComponent(ent);
+		releaseEntity(simTime);
 
 		// Pass the entity to the selected next component
 		nextComponentList.getValue().get(i-1).addEntity(ent);

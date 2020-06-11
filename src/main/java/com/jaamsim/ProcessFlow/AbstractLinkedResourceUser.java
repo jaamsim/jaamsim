@@ -112,7 +112,8 @@ public abstract class AbstractLinkedResourceUser extends LinkedService implement
 		DisplayEntity ent = getQueue(simTime).removeFirstForMatch(m);
 		if (ent == null)
 			error("Entity not found for specified Match value: %s", m);
-		this.registerEntity(ent);
+		receiveEntity(ent);
+		setEntityState(ent);
 
 		// Seize the resources
 		this.seizeResources();

@@ -33,9 +33,10 @@ public class EntitySink extends LinkedComponent {
 	@Override
 	public void addEntity( DisplayEntity ent ) {
 		super.addEntity(ent);
+		double simTime = getSimTime();
 
-		// Only increments the number process when there is no next entity
-		this.sendToNextComponent(ent);
+		// Increment the number processed
+		releaseEntity(simTime);
 
 		// Kill the added entity
 		if (ent.isGenerated()) {

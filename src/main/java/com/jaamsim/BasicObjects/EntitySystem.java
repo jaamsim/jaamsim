@@ -20,6 +20,9 @@ import java.util.ArrayList;
 
 import com.jaamsim.ProcessFlow.AbstractStateUserEntity;
 import com.jaamsim.basicsim.ErrorException;
+import com.jaamsim.basicsim.ObserverEntity;
+import com.jaamsim.basicsim.SubjectEntity;
+import com.jaamsim.basicsim.SubjectEntityDelegate;
 import com.jaamsim.events.EventHandle;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.events.ProcessTarget;
@@ -28,56 +31,78 @@ import com.jaamsim.input.ExpEvaluator;
 import com.jaamsim.input.ExpResType;
 import com.jaamsim.input.ExpResult;
 import com.jaamsim.input.ExpressionInput;
-import com.jaamsim.input.InputErrorException;
+import com.jaamsim.input.InterfaceEntityListInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
+import com.jaamsim.states.StateRecord;
 
-public class EntitySystem extends AbstractStateUserEntity {
+public class EntitySystem extends AbstractStateUserEntity implements ObserverEntity, SubjectEntity {
 
 	@Keyword(description = "An expression returning a string that sets this object's present "
 	                     + "state. "
 	                     + "If left blank, the state will be set to Working if any of the "
-	                     + "entities in the system are working. "
-	                     + "It will be set to Idle if all of the entities in the system are idle.",
+	                     + "entities specified by the WatchList input are working. "
+	                     + "It will be set to Idle if all of the entities in the WatchList are "
+	                     + "idle.",
 	         exampleList = {"'[Server1].Working || [Server2].Working ? \"Working\" : \"Idle\"'"})
 	protected final ExpressionInput stateExp;
 
-	private final ArrayList<AbstractStateUserEntity> entityList = new ArrayList<>();
+	@Keyword(description = "A list of objects to monitor.\n\n"
+	                     + "The system's state will be re-calculated whenever one of "
+	                     + "the WatchList objects changes state.",
+	         exampleList = {"Object1  Object2"})
+	protected final InterfaceEntityListInput<SubjectEntity> watchList;
+
+	private final SubjectEntityDelegate subject = new SubjectEntityDelegate(this);
 
 	{
 		stateExp = new ExpressionInput("StateExpression", KEY_INPUTS, null);
 		stateExp.setResultType(ExpResType.STRING);
 		this.addInput(stateExp);
-	}
 
-	@Override
-	public void earlyInit() {
-		super.earlyInit();
-
-		entityList.clear();
-		for (AbstractStateUserEntity stateEnt : getJaamSimModel().getClonesOfIterator(AbstractStateUserEntity.class)) {
-			if (stateEnt.getEntitySystemList().contains(this))
-				entityList.add(stateEnt);
-		}
+		watchList = new InterfaceEntityListInput<>(SubjectEntity.class, "WatchList", KEY_INPUTS, new ArrayList<>());
+		watchList.setIncludeSelf(false);
+		watchList.setUnique(true);
+		watchList.setRequired(true);
+		this.addInput(watchList);
 	}
 
 	@Override
 	public void validate() {
 		super.validate();
-
-		if (this.isMemberOf(this))
-			throw new InputErrorException("The chain of EntitySystem inputs cannot include "
-					+ "this EntitySystem.");
+		ObserverEntity.validate(this);
 	}
 
-	private boolean isMemberOf(EntitySystem sys) {
-		if (getEntitySystemList().contains(sys))
-			return true;
-		for (EntitySystem s : getEntitySystemList()) {
-			if (s.isMemberOf(sys))
-				return true;
-		}
-		return false;
+
+	@Override
+	public void lateInit() {
+		super.lateInit();
+		ObserverEntity.registerWithSubjects(this, getWatchList());
+	}
+
+	@Override
+	public void registerObserver(ObserverEntity obs) {
+		subject.registerObserver(obs);
+	}
+
+	@Override
+	public void notifyObservers() {
+		subject.notifyObservers();
+	}
+
+	@Override
+	public ArrayList<ObserverEntity> getObserverList() {
+		return subject.getObserverList();
+	}
+
+	@Override
+	public void observerUpdate(SubjectEntity subj) {
+		performUpdate();
+	}
+
+	@Override
+	public ArrayList<SubjectEntity> getWatchList() {
+		return watchList.getValue();
 	}
 
 	public void performUpdate() {
@@ -103,8 +128,10 @@ public class EntitySystem extends AbstractStateUserEntity {
 
 	@Override
 	public boolean isBusy() {
-		for (AbstractStateUserEntity ent : entityList) {
-			if (ent.isWorkingState())
+		for (SubjectEntity subj : getWatchList()) {
+			if (!(subj instanceof AbstractStateUserEntity))
+				continue;
+			if (((AbstractStateUserEntity) subj).isBusy())
 				return true;
 		}
 		return false;
@@ -112,8 +139,10 @@ public class EntitySystem extends AbstractStateUserEntity {
 
 	@Override
 	public boolean isMaintenance() {
-		for (AbstractStateUserEntity ent : entityList) {
-			if (ent.isMaintenance())
+		for (SubjectEntity subj : getWatchList()) {
+			if (!(subj instanceof AbstractStateUserEntity))
+				continue;
+			if (((AbstractStateUserEntity) subj).isMaintenance())
 				return true;
 		}
 		return false;
@@ -121,8 +150,10 @@ public class EntitySystem extends AbstractStateUserEntity {
 
 	@Override
 	public boolean isBreakdown() {
-		for (AbstractStateUserEntity ent : entityList) {
-			if (ent.isBreakdown())
+		for (SubjectEntity subj : getWatchList()) {
+			if (!(subj instanceof AbstractStateUserEntity))
+				continue;
+			if (((AbstractStateUserEntity) subj).isBreakdown())
 				return true;
 		}
 		return false;
@@ -130,8 +161,10 @@ public class EntitySystem extends AbstractStateUserEntity {
 
 	@Override
 	public boolean isStopped() {
-		for (AbstractStateUserEntity ent : entityList) {
-			if (ent.isStopped())
+		for (SubjectEntity subj : getWatchList()) {
+			if (!(subj instanceof AbstractStateUserEntity))
+				continue;
+			if (((AbstractStateUserEntity) subj).isStopped())
 				return true;
 		}
 		return false;
@@ -139,8 +172,10 @@ public class EntitySystem extends AbstractStateUserEntity {
 
 	@Override
 	public boolean isSetup() {
-		for (AbstractStateUserEntity ent : entityList) {
-			if (ent.isSetup())
+		for (SubjectEntity subj : getWatchList()) {
+			if (!(subj instanceof AbstractStateUserEntity))
+				continue;
+			if (((AbstractStateUserEntity) subj).isSetup())
 				return true;
 		}
 		return false;
@@ -148,8 +183,10 @@ public class EntitySystem extends AbstractStateUserEntity {
 
 	@Override
 	public boolean isIdle() {
-		for (AbstractStateUserEntity ent : entityList) {
-			if (!ent.isIdle())
+		for (SubjectEntity subj : getWatchList()) {
+			if (!(subj instanceof AbstractStateUserEntity))
+				continue;
+			if (!((AbstractStateUserEntity) subj).isIdle())
 				return false;
 		}
 		return true;
@@ -175,11 +212,24 @@ public class EntitySystem extends AbstractStateUserEntity {
 		}
 	}
 
+	@Override
+	public void stateChanged(StateRecord prev, StateRecord next) {
+		super.stateChanged(prev, next);
+		notifyObservers();
+	}
+
 	@Output(name = "EntityList",
-	 description = "Entities included in this system.",
+	 description = "Entities included in this system. "
+	             + "Consists of the entities in the WatchList for which a state can be obtained.",
 	    sequence = 1)
 	public ArrayList<AbstractStateUserEntity> getEntityList(double simTime) {
-		return entityList;
+		ArrayList<AbstractStateUserEntity> ret = new ArrayList<>();
+		for (SubjectEntity subj : getWatchList()) {
+			if (!(subj instanceof AbstractStateUserEntity))
+				continue;
+			ret.add((AbstractStateUserEntity) subj);
+		}
+		return ret;
 	}
 
 }

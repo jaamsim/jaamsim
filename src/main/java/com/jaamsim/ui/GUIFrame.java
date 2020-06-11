@@ -40,8 +40,6 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.FocusEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.geom.Rectangle2D;
@@ -64,8 +62,6 @@ import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JColorChooser;
-import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -1622,6 +1618,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				if (RenderManager.isGood()) {
 					if (bCreate) {
 						FrameBox.setSelectedEntity(null, false);
+						showLinks.setSelected(true);
+						RenderManager.inst().setShowLinks(true);
 					}
 					RenderManager.inst().setCreateLinks(bCreate);
 					RenderManager.redraw();
@@ -1833,75 +1831,20 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				if (!dispEnt.isGraphicsNominal() || dispEnt.getDisplayModelList().size() != 1)
 					return;
 				final String presentModelName = dispEnt.getDisplayModelList().get(0).getName();
-				ScrollablePopupMenu menu = new ScrollablePopupMenu();
-
-				ActionListener actionListener = new ActionListener() {
-					@Override
-					public void actionPerformed( ActionEvent event ) {
-						if (!(event.getSource() instanceof JMenuItem))
-							return;
-						JMenuItem item = (JMenuItem) event.getSource();
-						String modelName = item.getText();
-						if (!modelName.equals(dispEnt.getDisplayModelList().get(0).getName())) {
-							dispModel.setText(modelName);
-							KeywordIndex kw = InputAgent.formatArgs("DisplayModel", modelName);
-							InputAgent.storeAndExecute(new KeywordCommand(dispEnt, kw));
-						}
-						controlStartResume.requestFocusInWindow();
-					}
-				};
-
-				MouseListener mouseListener = new MouseListener() {
-					@Override
-					public void mouseClicked(MouseEvent e) {}
-					@Override
-					public void mousePressed(MouseEvent e) {}
-					@Override
-					public void mouseReleased(MouseEvent e) {}
-					@Override
-					public void mouseEntered(MouseEvent e) {
-						if (!(e.getSource() instanceof JMenuItem))
-							return;
-						JMenuItem item = (JMenuItem) e.getSource();
-						String modelName = item.getText();
-						if (!modelName.equals(dispEnt.getDisplayModelList().get(0).getName())) {
-							dispModel.setText(modelName);
-							KeywordIndex kw = InputAgent.formatArgs("DisplayModel", modelName);
-							InputAgent.storeAndExecute(new KeywordCommand(dispEnt, kw));
-						}
-					}
-					@Override
-					public void mouseExited(MouseEvent e) {
-						if (!presentModelName.equals(dispEnt.getDisplayModelList().get(0).getName())) {
-							dispModel.setText(presentModelName);
-							KeywordIndex kw = InputAgent.formatArgs("DisplayModel", presentModelName);
-							InputAgent.storeAndExecute(new KeywordCommand(dispEnt, kw));
-						}
-					}
-				};
-
-				// All valid display models
-				JMenuItem selectedItem = null;
-				int selectedIndex = -1;
-				int ind = 0;
 				Input<?> in = dispEnt.getInput("DisplayModel");
-				for (String modelName : in.getValidOptions(selectedEntity)) {
-					JMenuItem item = new JMenuItem(modelName);
-					if (selectedItem == null && modelName.equals(dispEnt.getDisplayModelList().get(0).getName())) {
-						selectedItem = item;
-						selectedIndex = ind;
-					}
-					ind++;
-					item.addActionListener(actionListener);
-					item.addMouseListener(mouseListener);
-					menu.add(item);
-				}
+				ArrayList<String> choices = in.getValidOptions(selectedEntity);
+				PreviewablePopupMenu menu = new PreviewablePopupMenu(presentModelName, choices, true) {
 
+					@Override
+					public void setValue(String str) {
+						dispModel.setText(str);
+						KeywordIndex kw = InputAgent.formatArgs("DisplayModel", str);
+						InputAgent.storeAndExecute(new KeywordCommand(dispEnt, kw));
+					}
+
+				};
 				menu.show(dispModel, 0, dispModel.getPreferredSize().height);
-				if (selectedItem != null) {
-					menu.ensureIndexIsVisible(selectedIndex);
-					selectedItem.setArmed(true);
-				}
+				controlStartResume.requestFocusInWindow();
 			}
 		});
 
@@ -2095,86 +2038,22 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 					return;
 				final TextEntity textEnt = (TextEntity) selectedEntity;
 				final String presentFontName = textEnt.getFontName();
-				ScrollablePopupMenu fontMenu = new ScrollablePopupMenu();
+				ArrayList<String> valuesInUse = GUIFrame.getFontsInUse(sim);
+				ArrayList<String> choices = TextModel.validFontNames;
+				PreviewablePopupMenu fontMenu = new PreviewablePopupMenu(presentFontName,
+						valuesInUse, choices, true) {
 
-				ActionListener fontActionListener = new ActionListener() {
 					@Override
-					public void actionPerformed( ActionEvent event ) {
-						if (!(event.getSource() instanceof JMenuItem))
-							return;
-						JMenuItem item = (JMenuItem) event.getSource();
-						String fontName = item.getText();
-						if (!fontName.equals(textEnt.getFontName())) {
-							font.setText(fontName);
-							String name = Parser.addQuotesIfNeeded(fontName);
-							KeywordIndex kw = InputAgent.formatInput("FontName", name);
-							InputAgent.storeAndExecute(new KeywordCommand((Entity)textEnt, kw));
-						}
-						controlStartResume.requestFocusInWindow();
+					public void setValue(String str) {
+						font.setText(str);
+						String name = Parser.addQuotesIfNeeded(str);
+						KeywordIndex kw = InputAgent.formatInput("FontName", name);
+						InputAgent.storeAndExecute(new KeywordCommand(selectedEntity, kw));
 					}
+
 				};
-
-				MouseListener fontMouseListener = new MouseListener() {
-					@Override
-					public void mouseClicked(MouseEvent e) {}
-					@Override
-					public void mousePressed(MouseEvent e) {}
-					@Override
-					public void mouseReleased(MouseEvent e) {}
-					@Override
-					public void mouseEntered(MouseEvent e) {
-						if (!(e.getSource() instanceof JMenuItem))
-							return;
-						JMenuItem item = (JMenuItem) e.getSource();
-						String fontName = item.getText();
-						if (!fontName.equals(textEnt.getFontName())) {
-							font.setText(fontName);
-							String name = Parser.addQuotesIfNeeded(fontName);
-							KeywordIndex kw = InputAgent.formatInput("FontName", name);
-							InputAgent.storeAndExecute(new KeywordCommand((Entity)textEnt, kw));
-						}
-					}
-					@Override
-					public void mouseExited(MouseEvent e) {
-						if (!presentFontName.equals(textEnt.getFontName())) {
-							font.setText(presentFontName);
-							String name = Parser.addQuotesIfNeeded(presentFontName);
-							KeywordIndex kw = InputAgent.formatInput("FontName", name);
-							InputAgent.storeAndExecute(new KeywordCommand((Entity)textEnt, kw));
-						}
-					}
-				};
-
-				// Fonts already in use
-				JMenuItem selectedItem = null;
-				int selectedIndex = -1;
-				int ind = 0;
-				for (final String fontName : GUIFrame.getFontsInUse(sim)) {
-					JMenuItem item = new JMenuItem(fontName);
-					if (selectedItem == null && fontName.equals(textEnt.getFontName())) {
-						selectedItem = item;
-						selectedIndex = ind;
-					}
-					ind++;
-					item.addActionListener(fontActionListener);
-					item.addMouseListener(fontMouseListener);
-					fontMenu.add(item);
-				}
-				fontMenu.addSeparator();
-
-				// All possible fonts
-				for (final String fontName : TextModel.validFontNames) {
-					JMenuItem item = new JMenuItem(fontName);
-					item.addActionListener(fontActionListener);
-					item.addMouseListener(fontMouseListener);
-					fontMenu.add(item);
-				}
-
 				fontMenu.show(font, 0, font.getPreferredSize().height);
-				if (selectedItem != null) {
-					fontMenu.ensureIndexIsVisible(selectedIndex);
-					selectedItem.setArmed(true);
-				}
+				controlStartResume.requestFocusInWindow();
 			}
 		});
 
@@ -2289,132 +2168,22 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 					return;
 				final TextEntity textEnt = (TextEntity) selectedEntity;
 				final Color4d presentColour = textEnt.getFontColor();
-				ScrollablePopupMenu fontMenu = new ScrollablePopupMenu();
+				ArrayList<Color4d> coloursInUse = GUIFrame.getFontColoursInUse(sim);
+				ColourMenu fontMenu = new ColourMenu(presentColour, coloursInUse, true) {
 
-				ActionListener fontActionListener = new ActionListener() {
 					@Override
-					public void actionPerformed( ActionEvent event ) {
-						if (!(event.getSource() instanceof JMenuItem))
-							return;
-						JMenuItem item = (JMenuItem) event.getSource();
-						setFontColour(textEnt, item.getText());
-						controlStartResume.requestFocusInWindow();
+					public void setColour(String colStr) {
+						KeywordIndex kw = InputAgent.formatInput("FontColour", colStr);
+						InputAgent.storeAndExecute(new KeywordCommand(selectedEntity, kw));
 					}
+
 				};
-
-				MouseListener fontMouseListener = new MouseListener() {
-					@Override
-					public void mouseClicked(MouseEvent e) {}
-					@Override
-					public void mousePressed(MouseEvent e) {}
-					@Override
-					public void mouseReleased(MouseEvent e) {}
-					@Override
-					public void mouseEntered(MouseEvent e) {
-						if (!(e.getSource() instanceof JMenuItem))
-							return;
-						JMenuItem item = (JMenuItem) e.getSource();
-						setFontColour(textEnt, item.getText());
-					}
-					@Override
-					public void mouseExited(MouseEvent e) {
-						setFontColour(textEnt, presentColour);
-					}
-				};
-
-				final ActionListener chooserActionListener = new ActionListener() {
-					@Override
-					public void actionPerformed( ActionEvent event ) {
-						Color clr = ColorEditor.getColorChooser().getColor();
-						Color4d newColour = new Color4d(clr.getRed(), clr.getGreen(),
-								clr.getBlue(), clr.getAlpha());
-						setFontColour(textEnt, newColour);
-						controlStartResume.requestFocusInWindow();
-					}
-				};
-
-				// Font colours already in use
-				JMenuItem selectedItem = null;
-				int selectedIndex = -1;
-				int ind = 0;
-				for (Color4d col : GUIFrame.getFontColoursInUse(sim)) {
-					String colourName = ColourInput.toString(col);
-					JMenuItem item = new JMenuItem(colourName);
-					ColorIcon icon = new ColorIcon(16, 16);
-					icon.setFillColor(
-							new Color((float)col.r, (float)col.g, (float)col.b, (float)col.a));
-					icon.setOutlineColor(Color.DARK_GRAY);
-					item.setIcon(icon);
-					if (selectedItem == null && col.equals(textEnt.getFontColor())) {
-						selectedItem = item;
-						selectedIndex = ind;
-					}
-					ind++;
-					item.addActionListener(fontActionListener);
-					item.addMouseListener(fontMouseListener);
-					fontMenu.add(item);
-				}
-				fontMenu.addSeparator();
-
-				// Colour chooser
-				JMenuItem chooserItem = new JMenuItem(ColorEditor.OPTION_COLOUR_CHOOSER);
-				chooserItem.addActionListener(new ActionListener() {
-					@Override
-					public void actionPerformed(ActionEvent event) {
-						JColorChooser chooser = ColorEditor.getColorChooser();
-						JDialog dialog = JColorChooser.createDialog(null,
-								ColorEditor.DIALOG_NAME,
-								true,  //modal
-								chooser,
-								chooserActionListener,  //OK button listener
-								null); //no CANCEL button listener
-						dialog.setIconImage(GUIFrame.getWindowIcon());
-						dialog.setAlwaysOnTop(true);
-						Color4d col = textEnt.getFontColor();
-						chooser.setColor(new Color((float)col.r, (float)col.g, (float)col.b, (float)col.a));
-						dialog.setVisible(true);
-					}
-				});
-				fontMenu.add(chooserItem);
-				fontMenu.addSeparator();
-
-				// All possible fonts
-				for (Color4d col : ColourInput.namedColourList) {
-					String colourName = ColourInput.toString(col);
-					JMenuItem item = new JMenuItem(colourName);
-					ColorIcon icon = new ColorIcon(16, 16);
-					icon.setFillColor(
-							new Color((float)col.r, (float)col.g, (float)col.b, (float)col.a));
-					icon.setOutlineColor(Color.DARK_GRAY);
-					item.setIcon(icon);
-					item.addActionListener(fontActionListener);
-					item.addMouseListener(fontMouseListener);
-					fontMenu.add(item);
-				}
-
 				fontMenu.show(fontColour, 0, fontColour.getPreferredSize().height);
-				if (selectedItem != null) {
-					fontMenu.ensureIndexIsVisible(selectedIndex);
-					selectedItem.setArmed(true);
-				}
+				controlStartResume.requestFocusInWindow();
 			}
 		});
 
 		buttonBar.add( fontColour );
-	}
-
-	private static void setFontColour(TextEntity textEnt, String colName) {
-		KeywordIndex kw = InputAgent.formatInput("FontColour", colName);
-		Color4d col = Input.parseColour(sim, kw);
-		setFontColour(textEnt, col);
-	}
-
-	private static void setFontColour(TextEntity textEnt, Color4d col) {
-		if (col.equals(textEnt.getFontColor()))
-			return;
-		String colName = ColourInput.toString(col);
-		KeywordIndex kw = InputAgent.formatInput("FontColour", colName);
-		InputAgent.storeAndExecute(new KeywordCommand((Entity)textEnt, kw));
 	}
 
 	private void addZButtons(JToolBar buttonBar, Insets margin) {
@@ -2555,132 +2324,22 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 					return;
 				final LineEntity lineEnt = (LineEntity) selectedEntity;
 				final Color4d presentColour = lineEnt.getLineColour();
-				ScrollablePopupMenu menu = new ScrollablePopupMenu();
+				ArrayList<Color4d> coloursInUse = GUIFrame.getLineColoursInUse(sim);
+				ColourMenu menu = new ColourMenu(presentColour, coloursInUse, true) {
 
-				ActionListener actionListener = new ActionListener() {
 					@Override
-					public void actionPerformed( ActionEvent event ) {
-						if (!(event.getSource() instanceof JMenuItem))
-							return;
-						JMenuItem item = (JMenuItem) event.getSource();
-						setLineColour(lineEnt, item.getText());
-						controlStartResume.requestFocusInWindow();
+					public void setColour(String colStr) {
+						KeywordIndex kw = InputAgent.formatInput("LineColour", colStr);
+						InputAgent.storeAndExecute(new KeywordCommand(selectedEntity, kw));
 					}
+
 				};
-
-				MouseListener mouseListener = new MouseListener() {
-					@Override
-					public void mouseClicked(MouseEvent e) {}
-					@Override
-					public void mousePressed(MouseEvent e) {}
-					@Override
-					public void mouseReleased(MouseEvent e) {}
-					@Override
-					public void mouseEntered(MouseEvent e) {
-						if (!(e.getSource() instanceof JMenuItem))
-							return;
-						JMenuItem item = (JMenuItem) e.getSource();
-						setLineColour(lineEnt, item.getText());
-					}
-					@Override
-					public void mouseExited(MouseEvent e) {
-						setLineColour(lineEnt, presentColour);
-					}
-				};
-
-				final ActionListener chooserActionListener = new ActionListener() {
-					@Override
-					public void actionPerformed( ActionEvent event ) {
-						Color clr = ColorEditor.getColorChooser().getColor();
-						Color4d newColour = new Color4d(clr.getRed(), clr.getGreen(),
-								clr.getBlue(), clr.getAlpha());
-						setLineColour(lineEnt, newColour);
-						controlStartResume.requestFocusInWindow();
-					}
-				};
-
-				// Line colours already in use
-				JMenuItem selectedItem = null;
-				int selectedIndex = -1;
-				int ind = 0;
-				for (Color4d col : GUIFrame.getLineColoursInUse(sim)) {
-					String colourName = ColourInput.toString(col);
-					JMenuItem item = new JMenuItem(colourName);
-					ColorIcon icon = new ColorIcon(16, 16);
-					icon.setFillColor(
-							new Color((float)col.r, (float)col.g, (float)col.b, (float)col.a));
-					icon.setOutlineColor(Color.DARK_GRAY);
-					item.setIcon(icon);
-					if (selectedItem == null && col.equals(lineEnt.getLineColour())) {
-						selectedItem = item;
-						selectedIndex = ind;
-					}
-					ind++;
-					item.addActionListener(actionListener);
-					item.addMouseListener(mouseListener);
-					menu.add(item);
-				}
-				menu.addSeparator();
-
-				// Colour chooser
-				JMenuItem chooserItem = new JMenuItem(ColorEditor.OPTION_COLOUR_CHOOSER);
-				chooserItem.addActionListener(new ActionListener() {
-					@Override
-					public void actionPerformed(ActionEvent event) {
-						JColorChooser chooser = ColorEditor.getColorChooser();
-						JDialog dialog = JColorChooser.createDialog(null,
-								ColorEditor.DIALOG_NAME,
-								true,  //modal
-								chooser,
-								chooserActionListener,  //OK button listener
-								null); //no CANCEL button listener
-						dialog.setIconImage(GUIFrame.getWindowIcon());
-						dialog.setAlwaysOnTop(true);
-						Color4d col = lineEnt.getLineColour();
-						chooser.setColor(new Color((float)col.r, (float)col.g, (float)col.b, (float)col.a));
-						dialog.setVisible(true);
-					}
-				});
-				menu.add(chooserItem);
-				menu.addSeparator();
-
-				// All possible colours
-				for (Color4d col : ColourInput.namedColourList) {
-					String colourName = ColourInput.toString(col);
-					JMenuItem item = new JMenuItem(colourName);
-					ColorIcon icon = new ColorIcon(16, 16);
-					icon.setFillColor(
-							new Color((float)col.r, (float)col.g, (float)col.b, (float)col.a));
-					icon.setOutlineColor(Color.DARK_GRAY);
-					item.setIcon(icon);
-					item.addActionListener(actionListener);
-					item.addMouseListener(mouseListener);
-					menu.add(item);
-				}
-
 				menu.show(lineColour, 0, lineColour.getPreferredSize().height);
-				if (selectedItem != null) {
-					menu.ensureIndexIsVisible(selectedIndex);
-					selectedItem.setArmed(true);
-				}
+				controlStartResume.requestFocusInWindow();
 			}
 		});
 
 		buttonBar.add( lineColour );
-	}
-
-	private static void setLineColour(LineEntity lineEnt, String colName) {
-		KeywordIndex kw = InputAgent.formatInput("LineColour", colName);
-		Color4d col = Input.parseColour(sim, kw);
-		setLineColour(lineEnt, col);
-	}
-
-	private static void setLineColour(LineEntity lineEnt, Color4d col) {
-		if (col.equals(lineEnt.getLineColour()))
-			return;
-		String colName = ColourInput.toString(col);
-		KeywordIndex kw = InputAgent.formatInput("LineColour", colName);
-		InputAgent.storeAndExecute(new KeywordCommand((Entity)lineEnt, kw));
 	}
 
 	private void addFillButton(JToolBar buttonBar, Insets margin) {
@@ -2729,132 +2388,22 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 					return;
 				final FillEntity fillEnt = (FillEntity) selectedEntity;
 				final Color4d presentColour = fillEnt.getFillColour();
-				ScrollablePopupMenu menu = new ScrollablePopupMenu();
+				ArrayList<Color4d> coloursInUse = GUIFrame.getFillColoursInUse(sim);
+				ColourMenu menu = new ColourMenu(presentColour, coloursInUse, true) {
 
-				ActionListener actionListener = new ActionListener() {
 					@Override
-					public void actionPerformed( ActionEvent event ) {
-						if (!(event.getSource() instanceof JMenuItem))
-							return;
-						JMenuItem item = (JMenuItem) event.getSource();
-						setFillColour(fillEnt, item.getText());
-						controlStartResume.requestFocusInWindow();
+					public void setColour(String colStr) {
+						KeywordIndex kw = InputAgent.formatInput("FillColour", colStr);
+						InputAgent.storeAndExecute(new KeywordCommand(selectedEntity, kw));
 					}
+
 				};
-
-				MouseListener mouseListener = new MouseListener() {
-					@Override
-					public void mouseClicked(MouseEvent e) {}
-					@Override
-					public void mousePressed(MouseEvent e) {}
-					@Override
-					public void mouseReleased(MouseEvent e) {}
-					@Override
-					public void mouseEntered(MouseEvent e) {
-						if (!(e.getSource() instanceof JMenuItem))
-							return;
-						JMenuItem item = (JMenuItem) e.getSource();
-						setFillColour(fillEnt, item.getText());
-					}
-					@Override
-					public void mouseExited(MouseEvent e) {
-						setFillColour(fillEnt, presentColour);
-					}
-				};
-
-				final ActionListener chooserActionListener = new ActionListener() {
-					@Override
-					public void actionPerformed( ActionEvent event ) {
-						Color clr = ColorEditor.getColorChooser().getColor();
-						Color4d newColour = new Color4d(clr.getRed(), clr.getGreen(),
-								clr.getBlue(), clr.getAlpha());
-						setFillColour(fillEnt, newColour);
-						controlStartResume.requestFocusInWindow();
-					}
-				};
-
-				// Fill colours already in use
-				JMenuItem selectedItem = null;
-				int selectedIndex = -1;
-				int ind = 0;
-				for (Color4d col : GUIFrame.getFillColoursInUse(sim)) {
-					String colourName = ColourInput.toString(col);
-					JMenuItem item = new JMenuItem(colourName);
-					ColorIcon icon = new ColorIcon(16, 16);
-					icon.setFillColor(
-							new Color((float)col.r, (float)col.g, (float)col.b, (float)col.a));
-					icon.setOutlineColor(Color.DARK_GRAY);
-					item.setIcon(icon);
-					if (selectedItem == null && col.equals(fillEnt.getFillColour())) {
-						selectedItem = item;
-						selectedIndex = ind;
-					}
-					ind++;
-					item.addActionListener(actionListener);
-					item.addMouseListener(mouseListener);
-					menu.add(item);
-				}
-				menu.addSeparator();
-
-				// Colour chooser
-				JMenuItem chooserItem = new JMenuItem(ColorEditor.OPTION_COLOUR_CHOOSER);
-				chooserItem.addActionListener(new ActionListener() {
-					@Override
-					public void actionPerformed(ActionEvent event) {
-						JColorChooser chooser = ColorEditor.getColorChooser();
-						JDialog dialog = JColorChooser.createDialog(null,
-								ColorEditor.DIALOG_NAME,
-								true,  //modal
-								chooser,
-								chooserActionListener,  //OK button listener
-								null); //no CANCEL button listener
-						dialog.setIconImage(GUIFrame.getWindowIcon());
-						dialog.setAlwaysOnTop(true);
-						Color4d col = fillEnt.getFillColour();
-						chooser.setColor(new Color((float)col.r, (float)col.g, (float)col.b, (float)col.a));
-						dialog.setVisible(true);
-					}
-				});
-				menu.add(chooserItem);
-				menu.addSeparator();
-
-				// All possible colours
-				for (Color4d col : ColourInput.namedColourList) {
-					String colourName = ColourInput.toString(col);
-					JMenuItem item = new JMenuItem(colourName);
-					ColorIcon icon = new ColorIcon(16, 16);
-					icon.setFillColor(
-							new Color((float)col.r, (float)col.g, (float)col.b, (float)col.a));
-					icon.setOutlineColor(Color.DARK_GRAY);
-					item.setIcon(icon);
-					item.addActionListener(actionListener);
-					item.addMouseListener(mouseListener);
-					menu.add(item);
-				}
-
 				menu.show(fillColour, 0, fillColour.getPreferredSize().height);
-				if (selectedItem != null) {
-					menu.ensureIndexIsVisible(selectedIndex);
-					selectedItem.setArmed(true);
-				}
+				controlStartResume.requestFocusInWindow();
 			}
 		});
 
 		buttonBar.add( fillColour );
-	}
-
-	private static void setFillColour(FillEntity fillEnt, String colName) {
-		KeywordIndex kw = InputAgent.formatInput("FillColour", colName);
-		Color4d col = Input.parseColour(sim, kw);
-		setFillColour(fillEnt, col);
-	}
-
-	private static void setFillColour(FillEntity fillEnt, Color4d col) {
-		if (col.equals(fillEnt.getFillColour()))
-			return;
-		String colName = ColourInput.toString(col);
-		KeywordIndex kw = InputAgent.formatInput("FillColour", colName);
-		InputAgent.storeAndExecute(new KeywordCommand((Entity)fillEnt, kw));
 	}
 
 	// ******************************************************************************************************

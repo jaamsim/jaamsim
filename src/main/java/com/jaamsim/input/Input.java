@@ -939,8 +939,10 @@ public abstract class Input<T> {
 	}
 
 	private static final Pattern is8601date = Pattern.compile("\\d{4}-\\d{2}-\\d{2}");
+	private static final Pattern is8601short = Pattern.compile("\\d{4}-\\d{2}-\\d{2}[ T]\\d{2}:\\d{2}");
 	private static final Pattern is8601time = Pattern.compile("\\d{4}-\\d{2}-\\d{2}[ T]\\d{2}:\\d{2}:\\d{2}");
 	private static final Pattern is8601full = Pattern.compile("\\d{4}-\\d{2}-\\d{2}[ T]\\d{2}:\\d{2}:\\d{2}\\.\\d{1,6}");
+	private static final Pattern isextendshort = Pattern.compile("\\d{1,}:\\d{2}");
 	private static final Pattern isextendtime = Pattern.compile("\\d{1,}:\\d{2}:\\d{2}");
 	private static final Pattern isextendfull = Pattern.compile("\\d{1,}:\\d{2}:\\d{2}.\\d{1,6}");
 	private static final long usPerSec = 1000000;
@@ -951,12 +953,14 @@ public abstract class Input<T> {
 
 	public static boolean isRFC8601DateTime(String input) {
 		if (isRFC8601Date(input)) return true;
+		if (isextendshort.matcher(input).matches()) return true;
 		if (isextendtime.matcher(input).matches()) return true;
 		if (isextendfull.matcher(input).matches()) return true;
 		return false;
 	}
 
 	public static boolean isRFC8601Date(String input) {
+		if (is8601short.matcher(input).matches()) return true;
 		if (is8601time.matcher(input).matches()) return true;
 		if (is8601full.matcher(input).matches()) return true;
 		if (is8601date.matcher(input).matches()) return true;
@@ -978,6 +982,22 @@ public abstract class Input<T> {
 			return simModel.calendarMillisToSimTime(millis);
 		}
 
+		// hh:mm format
+		if (isextendshort.matcher(input).matches()) {
+			int len = input.length();
+			int hh = Integer.parseInt(input.substring(0, len - 3));
+			int mm = Integer.parseInt(input.substring(len - 2, len));
+
+			if (mm < 0 || mm > 59)
+				throw new InputErrorException(INP_ERR_BADDATE, input);
+
+			long ret = 0;
+			ret += hh * usPerHr;
+			ret += mm * usPerMin;
+			return ret * 1e-6;
+		}
+
+		// hh:mm:ss format
 		if (isextendtime.matcher(input).matches()) {
 			int len = input.length();
 			int hh = Integer.parseInt(input.substring(0, len - 6));
@@ -994,6 +1014,7 @@ public abstract class Input<T> {
 			return ret * 1e-6;
 		}
 
+		// hh:mm:ss.ssssss format
 		if (isextendfull.matcher(input).matches()) {
 			int len = input.indexOf('.');
 			int hh = Integer.parseInt(input.substring(0, len - 6));
@@ -1035,8 +1056,17 @@ public abstract class Input<T> {
 	public static int[] parseRFC8601Date(String input) {
 		int YY = 0, MM = 0, DD = 0, hh = 0, mm = 0, ss = 0, ms = 0;
 
+		// YY-MM-DD hh:mm format
+		if (is8601short.matcher(input).matches()) {
+			YY = Integer.parseInt(input.substring(0, 4));
+			MM = Integer.parseInt(input.substring(5, 7));
+			DD = Integer.parseInt(input.substring(8, 10));
+			hh = Integer.parseInt(input.substring(11, 13));
+			mm = Integer.parseInt(input.substring(14, 16));
+		}
+
 		// YY-MM-DD hh:mm:ss format
-		if (is8601time.matcher(input).matches()) {
+		else if (is8601time.matcher(input).matches()) {
 			YY = Integer.parseInt(input.substring(0, 4));
 			MM = Integer.parseInt(input.substring(5, 7));
 			DD = Integer.parseInt(input.substring(8, 10));
@@ -1449,7 +1479,7 @@ public abstract class Input<T> {
 
 		// Color names
 		if (kw.numArgs() <= 2) {
-			Color4d colAtt = ColourInput.getColorWithName(kw.getArg(0).toLowerCase());
+			Color4d colAtt = ColourInput.getColorWithName(kw.getArg(0));
 			if( colAtt == null )
 				throw new InputErrorException( "Color " + kw.getArg( 0 ) + " not found" );
 

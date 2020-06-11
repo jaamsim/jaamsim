@@ -196,7 +196,8 @@ public class Assemble extends LinkedService implements EntityGen {
 		assembledEntity.earlyInit();
 
 		// Set the obj output to the assembled part
-		this.registerEntity(assembledEntity);
+		receiveEntity(assembledEntity);
+		setEntityState(assembledEntity);
 
 		// Set the state for the assembled part
 		if (!stateAssignment.isDefault() && assembledEntity instanceof StateEntity) {

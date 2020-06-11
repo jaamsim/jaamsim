@@ -139,16 +139,15 @@ public abstract class LinkedComponent extends StateEntity implements SubjectEnti
 	@Override
 	public void addEntity(DisplayEntity ent) {
 		if (isTraceFlag()) trace(0, "addEntity(%s)", ent);
-		processor.receiveEntity(ent);
+		receiveEntity(ent);
+		setEntityState(ent);
 
 		// Notify any observers
 		notifyObservers();
+	}
 
-		// Assign a new state to the received entity
-		if (!stateAssignment.isDefault() && ent instanceof StateEntity) {
-			String state = stateAssignment.getValue().getNextString(getSimTime());
-			((StateEntity)ent).setPresentState(state);
-		}
+	protected void receiveEntity(DisplayEntity ent) {
+		processor.receiveEntity(ent);
 	}
 
 	protected void setReceivedEntity(DisplayEntity ent) {
@@ -164,9 +163,20 @@ public abstract class LinkedComponent extends StateEntity implements SubjectEnti
 	 * @param ent - the entity to be sent downstream.
 	 */
 	public void sendToNextComponent(DisplayEntity ent) {
-		processor.releaseEntity(getSimTime());
-		if( nextComponent.getValue() != null )
-			nextComponent.getValue().addEntity(ent);
+		releaseEntity(getSimTime());
+		if (getNextComponent() != null )
+			getNextComponent().addEntity(ent);
+	}
+
+	protected void setEntityState(DisplayEntity ent) {
+		if (stateAssignment.isDefault() || !(ent instanceof StateEntity))
+			return;
+		String state = stateAssignment.getValue().getNextString(getSimTime());
+		((StateEntity) ent).setPresentState(state);
+	}
+
+	protected Linkable getNextComponent() {
+		return nextComponent.getValue();
 	}
 
 	/**

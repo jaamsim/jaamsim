@@ -26,6 +26,7 @@ import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InterfaceEntityListInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.KeywordIndex;
+import com.jaamsim.states.StateEntity;
 
 public class Duplicate extends LinkedComponent {
 
@@ -46,6 +47,7 @@ public class Duplicate extends LinkedComponent {
 	@Override
 	public void addEntity(DisplayEntity ent) {
 		super.addEntity(ent);
+		double simTime = getSimTime();
 
 		// Make the duplicates and send them to the targets
 		int n = 1;
@@ -58,9 +60,9 @@ public class Duplicate extends LinkedComponent {
 			Entity.fastCopyInputs(ent, dup);
 
 			// Set the state for the duplicated entity
-			if (dup instanceof SimEntity) {
-				String state = ((SimEntity)ent).getPresentState(getSimTime());
-				((SimEntity)dup).setPresentState(state);
+			if (dup instanceof StateEntity) {
+				String state = ((StateEntity) ent).getPresentState(simTime);
+				((StateEntity) dup).setPresentState(state);
 			}
 
 			// Set the graphics for the duplicated entity

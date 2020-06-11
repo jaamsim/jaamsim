@@ -108,21 +108,20 @@ public abstract class LinkedDevice extends Device implements Linkable {
 
 	@Override
 	public void addEntity(DisplayEntity ent) {
-		this.registerEntity(ent);
+		receiveEntity(ent);
+		setEntityState(ent);
 	}
 
-	protected void registerEntity(DisplayEntity ent) {
+	protected void receiveEntity(DisplayEntity ent) {
 		processor.receiveEntity(ent);
-
-		// Assign a new state to the received entity
-		if (!stateAssignment.isDefault() && ent instanceof StateEntity) {
-			String state = stateAssignment.getValue().getNextString(getSimTime());
-			((StateEntity)ent).setPresentState(state);
-		}
 	}
 
 	protected void setReceivedEntity(DisplayEntity ent) {
 		processor.setReceivedEntity(ent);
+	}
+
+	protected void releaseEntity(double simTime) {
+		processor.releaseEntity(simTime);
 	}
 
 	/**
@@ -130,9 +129,20 @@ public abstract class LinkedDevice extends Device implements Linkable {
 	 * @param ent - the entity to be sent downstream.
 	 */
 	public void sendToNextComponent(DisplayEntity ent) {
-		processor.releaseEntity(getSimTime());
-		if( nextComponent.getValue() != null )
-			nextComponent.getValue().addEntity(ent);
+		releaseEntity(getSimTime());
+		if (getNextComponent() != null )
+			getNextComponent().addEntity(ent);
+	}
+
+	protected void setEntityState(DisplayEntity ent) {
+		if (stateAssignment.isDefault() || !(ent instanceof StateEntity))
+			return;
+		String state = stateAssignment.getValue().getNextString(getSimTime());
+		((StateEntity) ent).setPresentState(state);
+	}
+
+	protected Linkable getNextComponent() {
+		return nextComponent.getValue();
 	}
 
 	@Override
