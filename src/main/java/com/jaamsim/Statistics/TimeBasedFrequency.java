@@ -67,12 +67,16 @@ public class TimeBasedFrequency {
 	private void resizeForValue(int val) {
 		int val0 = firstVal;
 		int val1 =  firstVal + binTimes.length - 1;
+		if (val >= val0 && val <= val1)
+			return;
+
 		if (val < val0) {
-			resize(val0 - binTimes.length, val1);
+			val0 = Math.min(val, val0 - binTimes.length);
 		}
 		else if (val > val1) {
-			resize(val0, val1 + binTimes.length);
+			val1 = Math.max(val, val1 + binTimes.length);
 		}
+		resize(val0, val1);
 	}
 
 	/**
