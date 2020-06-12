@@ -61,14 +61,16 @@ public class SampleFrequency {
 	private void resizeForValue(int val) {
 		int val0 = firstVal;
 		int val1 =  firstVal + binCounts.length - 1;
+		if (val >= val0 && val <= val1)
+			return;
+
 		if (val < val0) {
 			val0 = Math.min(val, val0 - binCounts.length);
-			resize(val0, val1);
 		}
 		else if (val > val1) {
 			val1 = Math.max(val, val1 + binCounts.length);
-			resize(val0, val1);
 		}
+		resize(val0, val1);
 	}
 
 	/**
