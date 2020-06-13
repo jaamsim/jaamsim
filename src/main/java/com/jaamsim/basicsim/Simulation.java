@@ -218,6 +218,10 @@ public class Simulation extends Entity {
 	         exampleList = {"TRUE"})
 	private final BooleanInput showSubModels;
 
+	@Keyword(description = "The state of the 'Show Entity Flow' button on the Control Panel.",
+	         exampleList = {"TRUE"})
+	private final BooleanInput showEntityFlow;
+
 	@Keyword(description = "If TRUE, the Model Builder tool is shown on startup.",
 	         exampleList = {"TRUE"})
 	private final BooleanInput showModelBuilder;
@@ -455,6 +459,11 @@ public class Simulation extends Entity {
 		showSubModels.setPromptReqd(false);
 		showSubModels.setHidden(true);
 		this.addInput(showSubModels);
+
+		showEntityFlow = new BooleanInput("ShowEntityFlow", GUI, false);
+		showEntityFlow.setPromptReqd(false);
+		showEntityFlow.setHidden(true);
+		this.addInput(showEntityFlow);
 
 		showModelBuilder = new BooleanInput("ShowModelBuilder", GUI, false);
 		showModelBuilder.setPromptReqd(false);
@@ -814,6 +823,10 @@ public class Simulation extends Entity {
 
 	public boolean isShowSubModels() {
 		return showSubModels.getValue();
+	}
+
+	public boolean isShowEntityFlow() {
+		return showEntityFlow.getValue();
 	}
 
 	public double getIncrementSize() {
