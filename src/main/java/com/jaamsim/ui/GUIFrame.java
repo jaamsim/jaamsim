@@ -3050,6 +3050,10 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		Simulation simulation = sim.getSimulation();
 		if (simulation == null)
 			return;
+		updateControls(simulation);
+	}
+
+	public void updateControls(Simulation simulation) {
 		updateSaveButton();
 		updateUndoButtons();
 		updateForRealTime(simulation.isRealTime(), simulation.getRealTimeFactor());
@@ -3891,7 +3895,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				simulation.setControlPanelWidthDefault(DEFAULT_GUI_WIDTH);
 				View.setDefaultPosition(COL2_START, TOP_START);
 				View.setDefaultSize(VIEW_WIDTH, VIEW_HEIGHT);
-				updateControls();
+				updateControls(simulation);
 				clearUndoRedo();
 			}
 		});
