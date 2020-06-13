@@ -1592,13 +1592,11 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			@Override
 			public void actionPerformed( ActionEvent event ) {
 				boolean bShow = (((JToggleButton)event.getSource()).isSelected());
-				if (RenderManager.isGood()) {
-					RenderManager.inst().setShowLinks(bShow);
-					RenderManager.redraw();
-				}
+				KeywordIndex kw = InputAgent.formatBoolean("ShowEntityFlow", bShow);
+				InputAgent.storeAndExecute(new KeywordCommand(sim.getSimulation(), kw));
+				setShowEntityFlow(bShow);
 				controlStartResume.requestFocusInWindow();
 			}
-
 		});
 		buttonBar.add( showLinks );
 	}
@@ -1613,7 +1611,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		createLinks.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-
 				boolean bCreate = (((JToggleButton)event.getSource()).isSelected());
 				if (RenderManager.isGood()) {
 					if (bCreate) {
@@ -1626,7 +1623,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				}
 				controlStartResume.requestFocusInWindow();
 			}
-
 		});
 		buttonBar.add( createLinks );
 	}
@@ -3068,6 +3064,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		updateForSnapGridSpacing(simulation.getSnapGridSpacingString());
 		updateShowLabelsButton(simulation.isShowLabels());
 		updateShowSubModelsButton(simulation.isShowSubModels());
+		updateShowEntityFlowButton(simulation.isShowEntityFlow());
 		updateToolVisibilities(simulation);
 		updateToolSizes(simulation);
 		updateToolLocations(simulation);
@@ -3714,6 +3711,12 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		}
 	}
 
+	public void setShowEntityFlow(boolean bool) {
+		if (!RenderManager.isGood())
+			return;
+		RenderManager.inst().setShowLinks(bool);
+	}
+
 	private void updateShowLabelsButton(boolean bool) {
 		if (showLabels.isSelected() == bool)
 			return;
@@ -3727,6 +3730,14 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			return;
 		showSubModels.setSelected(bool);
 		setShowSubModels(bool);
+		updateUI();
+	}
+
+	private void updateShowEntityFlowButton(boolean bool) {
+		if (showLinks.isSelected() == bool)
+			return;
+		showLinks.setSelected(bool);
+		setShowEntityFlow(bool);
 		updateUI();
 	}
 
