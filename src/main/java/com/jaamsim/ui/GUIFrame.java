@@ -3033,8 +3033,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	}
 
 	private void clearButtons() {
-		if (showLinks.isSelected())
-			showLinks.doClick();
 		if (createLinks.isSelected())
 			createLinks.doClick();
 		if (reverseButton.isSelected())
