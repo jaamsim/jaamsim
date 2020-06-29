@@ -27,6 +27,7 @@ import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InterfaceEntityInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
+import com.jaamsim.input.StringInput;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
 
@@ -36,6 +37,11 @@ public class Pack extends LinkedService {
 	                     + "The generated EntityContainers will be copies of this entity.",
 	         exampleList = {"EntityContainer1"})
 	protected final InterfaceEntityInput<EntContainer> prototypeEntityContainer;
+
+	@Keyword(description = "The base for the names assigned to the generated EntityContainers. "
+	                     + "The generated containers will be named Name1, Name2, etc.",
+	         exampleList = {"Container", "Box"})
+	private final StringInput baseName;
 
 	@Keyword(description = "The number of entities to pack into the container.",
 	         exampleList = {"2", "DiscreteDistribution1", "'1 + [TimeSeries1].PresentValue'"})
@@ -70,6 +76,10 @@ public class Pack extends LinkedService {
 		prototypeEntityContainer = new InterfaceEntityInput<>(EntContainer.class, "PrototypeEntityContainer", KEY_INPUTS, null);
 		prototypeEntityContainer.setRequired(true);
 		this.addInput(prototypeEntityContainer);
+
+		baseName = new StringInput("BaseName", KEY_INPUTS, null);
+		baseName.setDefaultText("Pack Name");
+		this.addInput(baseName);
 
 		numberOfEntities = new SampleInput("NumberOfEntities", KEY_INPUTS, new SampleConstant(1.0));
 		numberOfEntities.setUnitType(DimensionlessUnit.class);
@@ -111,10 +121,17 @@ public class Pack extends LinkedService {
 
 	protected EntContainer getNextContainer() {
 		numberGenerated++;
+
+		// Set the name for the container
+		String name = baseName.getValue();
+		if (name == null) {
+			name = this.getName() + "_";
+			name = name.replace(".", "_");
+		}
+		name = name + numberGenerated;
+
 		DisplayEntity proto = (DisplayEntity)prototypeEntityContainer.getValue();
-		StringBuilder sb = new StringBuilder();
-		sb.append(this.getName()).append("_").append(numberGenerated);
-		DisplayEntity ret = InputAgent.generateEntityWithName(getJaamSimModel(), proto.getClass(), sb.toString());
+		DisplayEntity ret = InputAgent.generateEntityWithName(getJaamSimModel(), proto.getClass(), name);
 		Entity.fastCopyInputs(proto, ret);
 		ret.earlyInit();
 		return (EntContainer)ret;
