@@ -1097,6 +1097,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			@Override
 			public void actionPerformed( ActionEvent event ) {
 				AboutBox about = new AboutBox();
+				about.setLocationRelativeTo(null);
 				about.setVisible(true);
 			}
 		} );
