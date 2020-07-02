@@ -186,8 +186,10 @@ public class Assemble extends LinkedService implements EntityGen {
 		numberGenerated++;
 		DisplayEntity proto = prototypeEntity.getValue();
 		String name = baseName.getValue();
-		if (name == null)
+		if (name == null) {
 			name = this.getName() + "_";
+			name = name.replace(".", "_");
+		}
 		name = name + numberGenerated;
 
 		// Create the new entity
