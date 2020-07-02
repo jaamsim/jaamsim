@@ -26,6 +26,7 @@ import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InterfaceEntityListInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.KeywordIndex;
+import com.jaamsim.input.StringInput;
 import com.jaamsim.states.StateEntity;
 
 public class Duplicate extends LinkedComponent {
@@ -35,11 +36,20 @@ public class Duplicate extends LinkedComponent {
 	         exampleList = {"Assign1 Queue1"})
 	protected final InterfaceEntityListInput<Linkable> targetComponentList;
 
+	@Keyword(description = "The base for the names assigned to the duplicated entities. "
+	                     + "The duplicated entities will be named Name1, Name2, etc.",
+	         exampleList = {"Customer", "Package"})
+	private final StringInput baseName;
+
 	{
 		targetComponentList = new InterfaceEntityListInput<>( Linkable.class, "TargetComponentList", KEY_INPUTS, null);
 		targetComponentList.setUnique(false);
 		targetComponentList.setRequired(true);
 		this.addInput( targetComponentList);
+
+		baseName = new StringInput("BaseName", KEY_INPUTS, null);
+		baseName.setDefaultText("EntityName_Dup");
+		this.addInput(baseName);
 	}
 
 	public Duplicate() {}
@@ -49,14 +59,19 @@ public class Duplicate extends LinkedComponent {
 		super.addEntity(ent);
 		double simTime = getSimTime();
 
+		// Set the base name for the duplicates
+		String name = baseName.getValue();
+		if (name == null) {
+			name = ent.getName() + "_Dup";
+			name = name.replace(".", "_");
+		}
+
 		// Make the duplicates and send them to the targets
 		int n = 1;
 		for (Linkable target : targetComponentList.getValue()) {
 
 			// Create the duplicated entity
-			StringBuilder sb = new StringBuilder();
-			sb.append(ent.getName()).append("_Dup").append(n);
-			DisplayEntity dup = InputAgent.generateEntityWithName(getJaamSimModel(), ent.getClass(), sb.toString());
+			DisplayEntity dup = InputAgent.generateEntityWithName(getJaamSimModel(), ent.getClass(), name + n);
 			Entity.fastCopyInputs(ent, dup);
 
 			// Set the state for the duplicated entity
