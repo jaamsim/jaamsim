@@ -30,7 +30,7 @@ import javax.swing.JTextArea;
 /**
  * Class to display information about model objects.
  */
-public class AboutBox extends FrameBox implements ActionListener {
+public class AboutBox extends FrameBox {
 	private static AboutBox instance;
 
 	public static final String version = "2020-09";
@@ -84,7 +84,12 @@ public class AboutBox extends FrameBox implements ActionListener {
 		getContentPane().add( area );
 
 		JButton closeButton = new JButton("OK");
-		closeButton.addActionListener(this);
+		closeButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				setVisible(false);
+			}
+		});
 
 		constraints.gridy = index++;
 		constraints.insets = new Insets( 10, 75, 15, 75 );
@@ -94,11 +99,6 @@ public class AboutBox extends FrameBox implements ActionListener {
 
 		setSize( 300, 150 );
 		pack();
-	}
-
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		setVisible(false);
 	}
 
 	public static synchronized AboutBox instance() {
