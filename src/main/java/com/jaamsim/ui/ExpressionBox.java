@@ -91,10 +91,10 @@ public class ExpressionBox extends JDialog {
 
 	public ExpressionBox(Input<?> in, String str) {
 		super((JDialog)null, DIALOG_NAME, true);
+		setType(Type.UTILITY);
 
 		getContentPane().setLayout( new BorderLayout() );
 		setMinimumSize(new Dimension(900, 300));
-		setIconImage(GUIFrame.getWindowIcon());
 
 		// Initial text
 		input = in;
