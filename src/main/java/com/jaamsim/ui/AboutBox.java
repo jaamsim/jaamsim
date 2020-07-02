@@ -39,7 +39,7 @@ public class AboutBox extends FrameBox {
 		super("About");
 
 		setResizable(false);
-		setDefaultCloseOperation(FrameBox.HIDE_ON_CLOSE);
+		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
 		// setup the layout
 		int index = 0;
@@ -87,7 +87,7 @@ public class AboutBox extends FrameBox {
 		closeButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				setVisible(false);
+				dispose();
 			}
 		});
 
