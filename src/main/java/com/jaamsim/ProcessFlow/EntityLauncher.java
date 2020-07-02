@@ -78,8 +78,10 @@ public class EntityLauncher extends GameEntity implements EntityGen {
 
 		// Set the name for the entities
 		String name = baseName.getValue();
-		if (name == null)
+		if (name == null) {
 			name = this.getName() + "_";
+			name = name.replace(".", "_");
+		}
 
 		// Create a new entity
 		numberGenerated++;
