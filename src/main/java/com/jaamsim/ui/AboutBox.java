@@ -83,7 +83,7 @@ public class AboutBox extends FrameBox {
 		layout.setConstraints( area, constraints );
 		getContentPane().add( area );
 
-		JButton closeButton = new JButton("OK");
+		JButton closeButton = new JButton("Close");
 		closeButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
