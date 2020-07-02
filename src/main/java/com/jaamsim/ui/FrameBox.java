@@ -50,7 +50,7 @@ public class FrameBox extends OSFixJFrame {
 
 	protected static final Color TABLE_SELECT = new Color(255, 250, 180);
 
-	protected static final Font boldFont;
+	public static final Font boldFont;
 	protected static final TableCellRenderer colRenderer;
 
 	static {

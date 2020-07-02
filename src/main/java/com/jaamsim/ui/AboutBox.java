@@ -24,18 +24,20 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JTextArea;
 
 /**
  * Class to display information about model objects.
  */
-public class AboutBox extends FrameBox {
+public class AboutBox extends JDialog {
 
 	public static final String version = "2020-09";
 
 	public AboutBox() {
-		super("About");
+		super((JDialog)null, "About", true);
+		setType(Type.UTILITY);
 
 		setResizable(false);
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
@@ -56,7 +58,7 @@ public class AboutBox extends FrameBox {
 		// display the model's name
 		String name = GUIFrame.getJaamSimModel().getSimulation().getModelName();
 		JLabel lab = new JLabel(name + " Version: " + version);
-		lab.setFont(boldFont);
+		lab.setFont(FrameBox.boldFont);
 		layout.setConstraints( lab, constraints );
 		getContentPane().add( lab );
 
@@ -77,7 +79,7 @@ public class AboutBox extends FrameBox {
 		area.setEditable(false);
 		area.setFocusable(false);
 		area.setBackground(lab.getBackground());
-		area.setFont(boldFont);
+		area.setFont(FrameBox.boldFont);
 		constraints.gridy = index++;
 		layout.setConstraints( area, constraints );
 		getContentPane().add( area );
