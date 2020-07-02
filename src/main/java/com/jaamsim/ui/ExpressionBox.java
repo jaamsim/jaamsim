@@ -19,10 +19,8 @@ package com.jaamsim.ui;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.GraphicsEnvironment;
 import java.awt.Insets;
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -313,11 +311,8 @@ public class ExpressionBox extends JDialog {
 
 	public int showDialog() {
 
-		// Position the editor at the centre of the screen
-		Rectangle winSize = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
-		setLocation((winSize.width - getWidth())/2, (winSize.height - getHeight())/2);
-
 		// Show the dialog box and wait for editing to finish
+		this.setLocationRelativeTo(null);
 		this.setVisible(true);
 
 		// Return how the editing was completed
