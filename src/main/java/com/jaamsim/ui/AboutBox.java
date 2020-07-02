@@ -31,7 +31,6 @@ import javax.swing.JTextArea;
  * Class to display information about model objects.
  */
 public class AboutBox extends FrameBox {
-	private static AboutBox instance;
 
 	public static final String version = "2020-09";
 
@@ -101,10 +100,4 @@ public class AboutBox extends FrameBox {
 		pack();
 	}
 
-	public static synchronized AboutBox instance() {
-		if (instance == null)
-			instance = new AboutBox();
-
-		return instance;
-	}
 }
