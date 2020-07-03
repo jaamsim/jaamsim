@@ -73,6 +73,11 @@ public final class EventManager {
 	private EventTimeListener timelistener;
 	private EventTraceListener trcListener;
 
+	private final static int MAX_SIMULTANEOUS_EVENTS = 10000;  // prevents an infinite loop
+	private final static String ERROR_MAX_EVENTS = String.format("Model execution has stalled:\n"
+			+ "%s events have been executed without advancing the simulation time.",
+			MAX_SIMULTANEOUS_EVENTS);
+
 	/**
 	 * Allocates a new EventManager with the given parent and name
 	 *
@@ -225,6 +230,7 @@ public final class EventManager {
 			timelistener.timeRunning();
 
 			// Loop continuously
+			int num = 0;
 			while (true) {
 				EventNode nextNode = eventTree.getNextNode();
 				if (nextNode == null ||
@@ -241,6 +247,12 @@ public final class EventManager {
 
 				// If the next event is at the current tick, execute it
 				if (nextNode.schedTick == currentTick.get()) {
+					num++;
+					if (num >= MAX_SIMULTANEOUS_EVENTS) {
+						timelistener.handleError(new RuntimeException(ERROR_MAX_EVENTS));
+						executeEvents = false;
+					}
+
 					// Remove the event from the future events
 					Event nextEvent = nextNode.head;
 					ProcessTarget nextTarget = nextEvent.target;
@@ -264,6 +276,7 @@ public final class EventManager {
 					else
 						return;
 				}
+				num = 0;
 
 				// If the next event would require us to advance the time, check the
 				// conditonal events
