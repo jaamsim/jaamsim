@@ -156,7 +156,7 @@ public abstract class AbstractLinkedResourceUser extends LinkedService implement
 		for (int i=0; i<resList.size(); i++) {
 			int ind = Math.min(i, numberList.size() - 1);
 			int n = (int) numberList.get(ind).getNextSample(simTime);
-			if (!resList.get(i).canSeize(n, ent)) {
+			if (!resList.get(i).canSeize(simTime, n, ent)) {
 				this.setReceivedEntity(oldEnt);
 				return false;
 			}

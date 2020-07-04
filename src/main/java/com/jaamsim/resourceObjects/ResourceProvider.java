@@ -25,11 +25,12 @@ public interface ResourceProvider {
 	/**
 	 * Tests whether the specified number of resource units are available to be assigned to the
 	 * specified entity.
+	 * @param simTime - present simulation time
 	 * @param n - number of resource units to seize
 	 * @param ent - entity that would seize the units
 	 * @return true if the units can be seized
 	 */
-	public boolean canSeize(int n, DisplayEntity ent);
+	public boolean canSeize(double simTime, int n, DisplayEntity ent);
 
 	/**
 	 * Assigns the specified number of resource units to the specified entity.

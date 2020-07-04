@@ -243,7 +243,7 @@ public class ResourceUnit extends StateUserEntity implements Seizable, ResourceP
 	// ResourcePool interface methods
 
 	@Override
-	public boolean canSeize(int n, DisplayEntity ent) {
+	public boolean canSeize(double simTime, int n, DisplayEntity ent) {
 		return canSeize(ent) && n <= 1;
 	}
 

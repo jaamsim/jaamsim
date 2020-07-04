@@ -79,7 +79,7 @@ public class ResourcePool extends AbstractResourceProvider {
 	}
 
 	@Override
-	public boolean canSeize(int n, DisplayEntity ent) {
+	public boolean canSeize(double simTime, int n, DisplayEntity ent) {
 		return n <= getEligibleList(ent).size();
 	}
 

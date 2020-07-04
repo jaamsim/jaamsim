@@ -105,8 +105,7 @@ public class Resource extends AbstractResourceProvider {
 	}
 
 	@Override
-	public boolean canSeize(int n, DisplayEntity ent) {
-		double simTime = getSimTime();
+	public boolean canSeize(double simTime, int n, DisplayEntity ent) {
 		return getAvailableUnits(simTime) >= n;
 	}
 
