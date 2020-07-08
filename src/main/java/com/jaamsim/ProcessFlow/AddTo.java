@@ -23,21 +23,21 @@ import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.Keyword;
 
-public class AddTo extends Pack {
+public class AddTo extends AbstractPack {
 
 	@Keyword(description = "The queue in which the waiting containers will be placed.",
 	         exampleList = {"Queue1"})
 	private final EntityInput<Queue> containerQueue;
 
 	{
-		prototypeEntityContainer.setHidden(true);
-
 		numberOfEntities.setValidRange(0, Double.POSITIVE_INFINITY);
 
 		containerQueue = new EntityInput<>(Queue.class, "ContainerQueue", KEY_INPUTS, null);
 		containerQueue.setRequired(true);
 		this.addInput(containerQueue);
 	}
+
+	public AddTo() {}
 
 	@Override
 	public void addEntity(DisplayEntity ent) {
