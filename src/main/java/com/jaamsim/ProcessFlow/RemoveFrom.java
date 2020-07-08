@@ -26,7 +26,7 @@ import com.jaamsim.input.InterfaceEntityInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.units.DimensionlessUnit;
 
-public class RemoveFrom extends Unpack {
+public class RemoveFrom extends AbstractUnpack {
 
 	@Keyword(description = "The maximum number of entities to remove from the container.",
 	         exampleList = {"2", "DiscreteDistribution1", "this.attrib" })
@@ -46,6 +46,8 @@ public class RemoveFrom extends Unpack {
 		nextForContainers.setRequired(true);
 		this.addInput(nextForContainers);
 	}
+
+	public RemoveFrom() {}
 
 	@Override
 	protected void disposeContainer(EntContainer c) {
