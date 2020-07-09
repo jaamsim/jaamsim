@@ -23,46 +23,16 @@ import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.OverlayEntity;
 import com.jaamsim.Graphics.TextBasics;
-import com.jaamsim.Samples.SampleConstant;
-import com.jaamsim.Samples.SampleInput;
-import com.jaamsim.Samples.SampleListInput;
-import com.jaamsim.Samples.SampleProvider;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.datatypes.IntegerVector;
-import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.EntityInput;
-import com.jaamsim.input.EntityListInput;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.StringInput;
 import com.jaamsim.states.StateEntity;
-import com.jaamsim.units.DimensionlessUnit;
-import com.jaamsim.units.TimeUnit;
 
-public class Assemble extends LinkedService implements EntityGen {
-
-	@Keyword(description = "The service time required to perform the assembly process.",
-	         exampleList = { "3.0 h", "ExponentialDistribution1", "'1[s] + 0.5*[TimeSeries1].PresentValue'" })
-	private final SampleInput serviceTime;
-
-	@Keyword(description = "A list of Queue objects in which to place the arriving sub-component entities.",
-	         exampleList = {"Queue1 Queue2"})
-	private final EntityListInput<Queue> waitQueueList;
-
-	@Keyword(description = "The number of entities required from each queue for the assembly process to begin. "
-	                     + "The last value in the list is used if the number of queues is greater "
-	                     + "than the number of values. "
-	                     + "Only an integer number of entities can be assembled. "
-	                     + "A decimal value will be truncated to an integer.",
-	         exampleList = {"2 1", "{ 2 } { 1 }", "{ DiscreteDistribution1 } { 'this.obj.attrib1 + 1' }"})
-	private final SampleListInput numberRequired;
-
-	@Keyword(description = "If TRUE, the all entities used in the assembly process must have the same Match value. "
-			+ "The match value for an entity determined by the Match keyword for each queue. The value is calculated "
-			+ "when the entity first arrives at its queue.",
-	         exampleList = {"TRUE"})
-	private final BooleanInput matchRequired;
+public class Assemble extends AbstractCombine implements EntityGen {
 
 	@Keyword(description = "The prototype for entities representing the assembled part.",
 	         exampleList = {"Proto"})
@@ -77,29 +47,6 @@ public class Assemble extends LinkedService implements EntityGen {
 	private int numberGenerated = 0;  // Number of entities generated so far
 
 	{
-		waitQueue.setHidden(true);
-		match.setHidden(true);
-		watchList.setHidden(true);
-
-		serviceTime = new SampleInput("ServiceTime", KEY_INPUTS, new SampleConstant(TimeUnit.class, 0.0));
-		serviceTime.setUnitType(TimeUnit.class);
-		serviceTime.setValidRange(0, Double.POSITIVE_INFINITY);
-		this.addInput(serviceTime);
-
-		waitQueueList = new EntityListInput<>(Queue.class, "WaitQueueList", KEY_INPUTS, new ArrayList<Queue>());
-		waitQueueList.setRequired(true);
-		this.addInput(waitQueueList);
-
-		ArrayList<SampleProvider> def = new ArrayList<>();
-		def.add(new SampleConstant(1));
-		numberRequired = new SampleListInput("NumberRequired", KEY_INPUTS, def);
-		numberRequired.setDimensionless(true);
-		numberRequired.setUnitType(DimensionlessUnit.class);
-		this.addInput(numberRequired);
-
-		matchRequired = new BooleanInput("MatchRequired", KEY_INPUTS, false);
-		this.addInput(matchRequired);
-
 		prototypeEntity = new EntityInput<>(DisplayEntity.class, "PrototypeEntity", KEY_INPUTS, null);
 		prototypeEntity.setRequired(true);
 		prototypeEntity.addInvalidClass(TextBasics.class);
@@ -122,40 +69,12 @@ public class Assemble extends LinkedService implements EntityGen {
 	}
 
 	@Override
-	public void addEntity( DisplayEntity ent ) {
-		error("An entity cannot be sent directly to an Assemble object. It must be sent to the appropriate queue.");
-	}
-
-	@Override
-	public void addQueue(Queue que) {
-		ArrayList<String> toks = new ArrayList<>();
-		waitQueueList.getValueTokens(toks);
-		toks.add(que.getName());
-		KeywordIndex kw = new KeywordIndex(waitQueueList.getKeyword(), toks, null);
-		InputAgent.storeAndExecute(new KeywordCommand(this, kw));
-	}
-
-	@Override
-	public ArrayList<Queue> getQueues() {
-		return waitQueueList.getValue();
-	}
-
-	/**
-	* Process DisplayEntities from the Queue
-	*/
-	@Override
 	protected boolean startProcessing(double simTime) {
 
-		// Determine the required numbers of entities
-		IntegerVector numList = new IntegerVector(numberRequired.getListSize());
-		for (int i = 0; i < numberRequired.getListSize(); i++) {
-			int n = (int) numberRequired.getValue().get(i).getNextSample(simTime);
-			numList.add(n);
-		}
-
 		// Do the queues have enough entities?
-		ArrayList<Queue> queueList = waitQueueList.getValue();
-		if (matchRequired.getValue()) {
+		ArrayList<Queue> queueList = getQueues();
+		IntegerVector numList = getNumberRequired(simTime);
+		if (isMatchRequired()) {
 			String m = Queue.selectMatchValue(queueList, numList);
 			if (m == null) {
 				return false;
@@ -173,8 +92,7 @@ public class Assemble extends LinkedService implements EntityGen {
 			Queue que = queueList.get(i);
 			int ind = Math.min(i, numList.size() - 1);
 			for (int n = 0; n < numList.get(ind); n++) {
-				DisplayEntity ent;
-				ent = que.removeFirstForMatch(getMatchValue());
+				DisplayEntity ent = que.removeFirstForMatch(getMatchValue());
 				if (ent == null)
 					error("An entity with the specified match value %s was not found in %s.",
 							getMatchValue(), que);
@@ -215,11 +133,6 @@ public class Assemble extends LinkedService implements EntityGen {
 		// Send the assembled part to the next element in the chain
 		this.sendToNextComponent(assembledEntity);
 		assembledEntity = null;
-	}
-
-	@Override
-	protected double getStepDuration(double simTime) {
-		return serviceTime.getValue().getNextSample(simTime);
 	}
 
 	@Override
