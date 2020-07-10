@@ -74,9 +74,8 @@ public class Combine extends AbstractCombine {
 
 		// Remove the appropriate entities from each queue
 		// (performed in reverse order so that obj is set to the entity in the first queue)
-		for (int i=queueList.size()-1; i>=0; i--) {
-			int ind = Math.min(i, numList.size() - 1);
-			for (int n = 0; n < numList.get(ind); n++) {
+		for (int i = queueList.size() - 1; i >= 0; i--) {
+			for (int n = 0; n < numList.get(i); n++) {
 				DisplayEntity ent = queueList.get(i).removeFirstForMatch(getMatchValue());
 				if (ent == null)
 					error("An entity with the specified match value %s was not found in %s.",

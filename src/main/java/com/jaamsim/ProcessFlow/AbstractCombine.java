@@ -105,12 +105,20 @@ public abstract class AbstractCombine extends LinkedService {
 	}
 
 	public IntegerVector getNumberRequired(double simTime) {
-		IntegerVector numList = new IntegerVector(numberRequired.getListSize());
+		IntegerVector ret = new IntegerVector(waitQueueList.getListSize());
+
+		// Number of values enter by the user
 		for (int i = 0; i < numberRequired.getListSize(); i++) {
 			int n = (int) numberRequired.getValue().get(i).getNextSample(simTime);
-			numList.add(n);
+			ret.add(n);
 		}
-		return numList;
+
+		// Additional copies of the last value needed to complete the list
+		int lastVal = ret.get(numberRequired.getListSize() - 1);
+		for (int i = numberRequired.getListSize(); i < waitQueueList.getListSize(); i++) {
+			ret.add(lastVal);
+		}
+		return ret;
 	}
 
 	public boolean isMatchRequired() {
