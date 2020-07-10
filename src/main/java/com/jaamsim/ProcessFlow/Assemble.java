@@ -33,12 +33,13 @@ import com.jaamsim.states.StateEntity;
 
 public class Assemble extends AbstractCombine implements EntityGen {
 
-	@Keyword(description = "The prototype for entities representing the assembled part.",
+	@Keyword(description = "The prototype for entities representing the assembled parts.",
 	         exampleList = {"Proto"})
 	private final EntityInput<DisplayEntity> prototypeEntity;
 
-	@Keyword(description = "The base for the names assigned to the generated entities. "
-	                     + "The generated entities will be named Name1, Name2, etc.",
+	@Keyword(description = "The base for the names assigned to the entities representing the "
+	                     + "assembled parts. "
+	                     + "The entities will be named Name1, Name2, etc.",
 	         exampleList = {"Customer", "Package"})
 	private final StringInput baseName;
 
