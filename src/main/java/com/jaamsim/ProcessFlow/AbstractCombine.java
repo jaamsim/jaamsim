@@ -60,6 +60,15 @@ public abstract class AbstractCombine extends LinkedService {
 	         exampleList = {"TRUE"})
 	private final BooleanInput matchRequired;
 
+	@Keyword(description = "Determines which match value to use when several values have the "
+	                     + "required number of entities. "
+	                     + "If FALSE, the entity with the earliest arrival time in any of the "
+	                     + "queues determines the match value. "
+	                     + "If TRUE, the entity with the earliest arrival time in the first "
+	                     + "queue determines the match value.",
+	         exampleList = {"TRUE"})
+	private final BooleanInput firstQueue;
+
 	{
 		waitQueue.setHidden(true);
 		match.setHidden(true);
@@ -83,6 +92,10 @@ public abstract class AbstractCombine extends LinkedService {
 
 		matchRequired = new BooleanInput("MatchRequired", KEY_INPUTS, false);
 		this.addInput(matchRequired);
+
+		firstQueue = new BooleanInput("FirstQueue", KEY_INPUTS, false);
+		this.addInput(firstQueue);
+
 	}
 
 	public AbstractCombine() {}
@@ -127,6 +140,10 @@ public abstract class AbstractCombine extends LinkedService {
 		return matchRequired.getValue();
 	}
 
+	public boolean isFirstQueue() {
+		return firstQueue.getValue();
+	}
+
 	@Override
 	protected double getStepDuration(double simTime) {
 		return serviceTime.getValue().getNextSample(simTime);
@@ -139,7 +156,7 @@ public abstract class AbstractCombine extends LinkedService {
 	 * @param numberList - number of matches required for each queue.
 	 * @return match value.
 	 */
-	public static String selectMatchValue(ArrayList<Queue> queueList, int[] numberList) {
+	public static String selectMatchValue(ArrayList<Queue> queueList, int[] numberList, boolean bool) {
 
 		// Check whether each queue has sufficient entities for any match value
 		for (int i=0; i<queueList.size(); i++) {
@@ -174,6 +191,8 @@ public abstract class AbstractCombine extends LinkedService {
 					ret = m;
 					earliestTime = timeAdded;
 				}
+				if (bool)
+					break;
 			}
 		}
 		return ret;

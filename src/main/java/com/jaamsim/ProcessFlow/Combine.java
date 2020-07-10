@@ -59,7 +59,7 @@ public class Combine extends AbstractCombine {
 		ArrayList<Queue> queueList = getQueues();
 		int[] numList = getNumberRequired(simTime);
 		if (isMatchRequired()) {
-			String m = selectMatchValue(queueList, numList);
+			String m = selectMatchValue(queueList, numList, isFirstQueue());
 			if (m == null) {
 				return false;
 			}
