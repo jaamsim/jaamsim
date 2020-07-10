@@ -25,7 +25,6 @@ import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.Samples.SampleListInput;
 import com.jaamsim.Samples.SampleProvider;
-import com.jaamsim.datatypes.IntegerVector;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.EntityListInput;
 import com.jaamsim.input.InputAgent;
@@ -104,19 +103,19 @@ public abstract class AbstractCombine extends LinkedService {
 		return waitQueueList.getValue();
 	}
 
-	public IntegerVector getNumberRequired(double simTime) {
-		IntegerVector ret = new IntegerVector(waitQueueList.getListSize());
+	public int[] getNumberRequired(double simTime) {
 
 		// Number of values enter by the user
+		int[] ret = new int[waitQueueList.getListSize()];
 		for (int i = 0; i < numberRequired.getListSize(); i++) {
 			int n = (int) numberRequired.getValue().get(i).getNextSample(simTime);
-			ret.add(n);
+			ret[i] = n;
 		}
 
 		// Additional copies of the last value needed to complete the list
-		int lastVal = ret.get(numberRequired.getListSize() - 1);
+		int lastVal = ret[numberRequired.getListSize() - 1];
 		for (int i = numberRequired.getListSize(); i < waitQueueList.getListSize(); i++) {
-			ret.add(lastVal);
+			ret[i] = lastVal;
 		}
 		return ret;
 	}
@@ -137,11 +136,11 @@ public abstract class AbstractCombine extends LinkedService {
 	 * @param numberList - number of matches required for each queue.
 	 * @return match value.
 	 */
-	public static String selectMatchValue(ArrayList<Queue> queueList, IntegerVector numberList) {
+	public static String selectMatchValue(ArrayList<Queue> queueList, int[] numberList) {
 
 		// Check whether each queue has sufficient entities for any match value
 		for (int i=0; i<queueList.size(); i++) {
-			if (queueList.get(i).getMaxCount() < numberList.get(i))
+			if (queueList.get(i).getMaxCount() < numberList[i])
 				return null;
 		}
 
@@ -186,9 +185,9 @@ public abstract class AbstractCombine extends LinkedService {
 	 * @param m - match value.
 	 * @return true if there are sufficient entities in each queue.
 	 */
-	public static boolean sufficientEntities(ArrayList<Queue> queueList, IntegerVector numberList, String m) {
+	public static boolean sufficientEntities(ArrayList<Queue> queueList, int[] numberList, String m) {
 		for (int i = 0; i < queueList.size(); i++) {
-			if (queueList.get(i).getMatchCount(m) < numberList.get(i))
+			if (queueList.get(i).getMatchCount(m) < numberList[i])
 				return false;
 		}
 		return true;

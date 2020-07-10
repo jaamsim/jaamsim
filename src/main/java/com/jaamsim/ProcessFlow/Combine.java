@@ -20,7 +20,6 @@ package com.jaamsim.ProcessFlow;
 import java.util.ArrayList;
 
 import com.jaamsim.Graphics.DisplayEntity;
-import com.jaamsim.datatypes.IntegerVector;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.Keyword;
 
@@ -58,7 +57,7 @@ public class Combine extends AbstractCombine {
 
 		// Do the queues have enough entities?
 		ArrayList<Queue> queueList = getQueues();
-		IntegerVector numList = getNumberRequired(simTime);
+		int[] numList = getNumberRequired(simTime);
 		if (isMatchRequired()) {
 			String m = selectMatchValue(queueList, numList);
 			if (m == null) {
@@ -75,7 +74,7 @@ public class Combine extends AbstractCombine {
 		// Remove the appropriate entities from each queue
 		// (performed in reverse order so that obj is set to the entity in the first queue)
 		for (int i = queueList.size() - 1; i >= 0; i--) {
-			for (int n = 0; n < numList.get(i); n++) {
+			for (int n = 0; n < numList[i]; n++) {
 				DisplayEntity ent = queueList.get(i).removeFirstForMatch(getMatchValue());
 				if (ent == null)
 					error("An entity with the specified match value %s was not found in %s.",

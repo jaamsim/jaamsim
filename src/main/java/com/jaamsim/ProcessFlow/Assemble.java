@@ -24,7 +24,6 @@ import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.OverlayEntity;
 import com.jaamsim.Graphics.TextBasics;
 import com.jaamsim.basicsim.Entity;
-import com.jaamsim.datatypes.IntegerVector;
 import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
@@ -73,7 +72,7 @@ public class Assemble extends AbstractCombine implements EntityGen {
 
 		// Do the queues have enough entities?
 		ArrayList<Queue> queueList = getQueues();
-		IntegerVector numList = getNumberRequired(simTime);
+		int[] numList = getNumberRequired(simTime);
 		if (isMatchRequired()) {
 			String m = selectMatchValue(queueList, numList);
 			if (m == null) {
@@ -89,7 +88,7 @@ public class Assemble extends AbstractCombine implements EntityGen {
 
 		// Remove the appropriate entities from each queue
 		for (int i = 0; i < queueList.size(); i++) {
-			for (int n = 0; n < numList.get(i); n++) {
+			for (int n = 0; n < numList[i]; n++) {
 				DisplayEntity ent = queueList.get(i).removeFirstForMatch(getMatchValue());
 				if (ent == null)
 					error("An entity with the specified match value %s was not found in %s.",
