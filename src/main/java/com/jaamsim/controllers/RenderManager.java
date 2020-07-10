@@ -460,7 +460,7 @@ public class RenderManager implements DragSourceListener {
 
 					// Show a rubber band arrow from the selected entity to the mouse position
 					if (createLinks.get() && selectedEntity != null && mouseWindowID > 0) {
-						Vec3d source = selectedEntity.getGlobalPosition();
+						Vec3d source = selectedEntity.getSourcePoint();
 						double sourceRadius = selectedEntity.getRadius();
 						addLink(source, mousePosition, sourceRadius, 0.0d, true, cachedScene);
 					}
