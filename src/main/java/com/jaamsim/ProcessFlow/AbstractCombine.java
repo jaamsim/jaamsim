@@ -130,4 +130,87 @@ public abstract class AbstractCombine extends LinkedService {
 		return serviceTime.getValue().getNextSample(simTime);
 	}
 
+	/**
+	 * Returns a match value that has sufficient numbers of entities in each
+	 * queue. The first match value that satisfies the criterion is selected.
+	 * If the numberList is too short, then the last value is used.
+	 * @param queueList - list of queues to check.
+	 * @param numberList - number of matches required for each queue.
+	 * @return match value.
+	 */
+	public static String selectMatchValue(ArrayList<Queue> queueList, IntegerVector numberList) {
+
+		// Check whether each queue has sufficient entities for any match value
+		int number;
+		for (int i=0; i<queueList.size(); i++) {
+			if (numberList == null) {
+				number = 1;
+			}
+			else {
+				int ind = Math.min(i, numberList.size()-1);
+				number = numberList.get(ind);
+			}
+			if (queueList.get(i).getMaxCount() < number)
+				return null;
+		}
+
+		// Find the queue with the fewest match values
+		Queue shortest = null;
+		int count = Integer.MAX_VALUE;
+		for (Queue que : queueList) {
+			if (que.getEntityTypes().size() < count) {
+				count = que.getEntityTypes().size();
+				shortest = que;
+			}
+		}
+
+		// Find the match values that have sufficient entities in each queue
+		ArrayList<String> matchList = new ArrayList<>();
+		for (String m : shortest.getEntityTypes()) {
+			if (sufficientEntities(queueList, numberList, m))
+				matchList.add(m);
+		}
+
+		// Select the match value with the earliest entity arrival
+		String ret = null;
+		double earliestTime = Double.POSITIVE_INFINITY;
+		for (String m : matchList) {
+			for (Queue que : queueList) {
+				double timeAdded = que.getTimeAddedForMatch(m);
+				if (timeAdded < earliestTime) {
+					ret = m;
+					earliestTime = timeAdded;
+				}
+			}
+		}
+		return ret;
+	}
+
+	/**
+	 * Returns true if each of the queues contains sufficient entities with
+	 * the specified match value for processing to begin.
+	 * If the numberList is too short, then the last value is used.
+	 * If the numberList is null, then one entity per queue is required.
+	 * If the match value m is null, then all the entities in each queue are counted.
+	 * @param queueList - list of queues to check.
+	 * @param numberList - number of matches required for each queue.
+	 * @param m - match value.
+	 * @return true if there are sufficient entities in each queue.
+	 */
+	public static boolean sufficientEntities(ArrayList<Queue> queueList, IntegerVector numberList, String m) {
+		int number;
+		for (int i=0; i<queueList.size(); i++) {
+			if (numberList == null) {
+				number = 1;
+			}
+			else {
+				int ind = Math.min(i, numberList.size()-1);
+				number = numberList.get(ind);
+			}
+			if (queueList.get(i).getMatchCount(m) < number)
+				return false;
+		}
+		return true;
+	}
+
 }

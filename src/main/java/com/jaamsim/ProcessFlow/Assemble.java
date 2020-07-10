@@ -75,14 +75,14 @@ public class Assemble extends AbstractCombine implements EntityGen {
 		ArrayList<Queue> queueList = getQueues();
 		IntegerVector numList = getNumberRequired(simTime);
 		if (isMatchRequired()) {
-			String m = Queue.selectMatchValue(queueList, numList);
+			String m = selectMatchValue(queueList, numList);
 			if (m == null) {
 				return false;
 			}
 			this.setMatchValue(m);
 		}
 		else {
-			if (!Queue.sufficientEntities(queueList, numList, null)) {
+			if (!sufficientEntities(queueList, numList, null)) {
 				return false;
 			}
 		}
