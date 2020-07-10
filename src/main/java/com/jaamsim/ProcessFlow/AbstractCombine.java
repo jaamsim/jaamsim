@@ -133,7 +133,6 @@ public abstract class AbstractCombine extends LinkedService {
 	/**
 	 * Returns a match value that has sufficient numbers of entities in each
 	 * queue. The first match value that satisfies the criterion is selected.
-	 * If the numberList is too short, then the last value is used.
 	 * @param queueList - list of queues to check.
 	 * @param numberList - number of matches required for each queue.
 	 * @return match value.
@@ -141,16 +140,8 @@ public abstract class AbstractCombine extends LinkedService {
 	public static String selectMatchValue(ArrayList<Queue> queueList, IntegerVector numberList) {
 
 		// Check whether each queue has sufficient entities for any match value
-		int number;
 		for (int i=0; i<queueList.size(); i++) {
-			if (numberList == null) {
-				number = 1;
-			}
-			else {
-				int ind = Math.min(i, numberList.size()-1);
-				number = numberList.get(ind);
-			}
-			if (queueList.get(i).getMaxCount() < number)
+			if (queueList.get(i).getMaxCount() < numberList.get(i))
 				return null;
 		}
 
@@ -189,8 +180,6 @@ public abstract class AbstractCombine extends LinkedService {
 	/**
 	 * Returns true if each of the queues contains sufficient entities with
 	 * the specified match value for processing to begin.
-	 * If the numberList is too short, then the last value is used.
-	 * If the numberList is null, then one entity per queue is required.
 	 * If the match value m is null, then all the entities in each queue are counted.
 	 * @param queueList - list of queues to check.
 	 * @param numberList - number of matches required for each queue.
@@ -198,16 +187,8 @@ public abstract class AbstractCombine extends LinkedService {
 	 * @return true if there are sufficient entities in each queue.
 	 */
 	public static boolean sufficientEntities(ArrayList<Queue> queueList, IntegerVector numberList, String m) {
-		int number;
-		for (int i=0; i<queueList.size(); i++) {
-			if (numberList == null) {
-				number = 1;
-			}
-			else {
-				int ind = Math.min(i, numberList.size()-1);
-				number = numberList.get(ind);
-			}
-			if (queueList.get(i).getMatchCount(m) < number)
+		for (int i = 0; i < queueList.size(); i++) {
+			if (queueList.get(i).getMatchCount(m) < numberList.get(i))
 				return false;
 		}
 		return true;
