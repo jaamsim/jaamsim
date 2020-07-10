@@ -35,15 +35,16 @@ import com.jaamsim.units.TimeUnit;
 
 public abstract class AbstractCombine extends LinkedService {
 
-	@Keyword(description = "The service time required to perform the assembly process.",
+	@Keyword(description = "The time required to process each set of entities.",
 	         exampleList = { "3.0 h", "ExponentialDistribution1", "'1[s] + 0.5*[TimeSeries1].PresentValue'" })
 	private final SampleInput serviceTime;
 
-	@Keyword(description = "A list of Queue objects in which to place the arriving sub-component entities.",
+	@Keyword(description = "The Queue objects in which to place the arriving entities.",
 	         exampleList = {"Queue1 Queue2"})
 	private final EntityListInput<Queue> waitQueueList;
 
-	@Keyword(description = "The number of entities required from each queue for the assembly process to begin. "
+	@Keyword(description = "The number of entities required from each queue for processing to "
+	                     + "begin. "
 	                     + "The last value in the list is used if the number of queues is greater "
 	                     + "than the number of values. "
 	                     + "Only an integer number of entities can be assembled. "
@@ -51,9 +52,11 @@ public abstract class AbstractCombine extends LinkedService {
 	         exampleList = {"2 1", "{ 2 } { 1 }", "{ DiscreteDistribution1 } { 'this.obj.attrib1 + 1' }"})
 	private final SampleListInput numberRequired;
 
-	@Keyword(description = "If TRUE, the all entities used in the assembly process must have the same Match value. "
-			+ "The match value for an entity determined by the Match keyword for each queue. The value is calculated "
-			+ "when the entity first arrives at its queue.",
+	@Keyword(description = "If TRUE, the all entities to be processed must have the same Match "
+	                     + "value. "
+	                     + "The match value for an entity is determined by the Match keyword for "
+	                     + "its queue. "
+	                     + "The value is calculated when the entity first arrives at its queue.",
 	         exampleList = {"TRUE"})
 	private final BooleanInput matchRequired;
 
