@@ -153,7 +153,7 @@ public class RenderManager implements DragSourceListener {
 	 */
 	private ArrayList<RenderProxy> cachedScene;
 
-	private DisplayEntity selectedEntity = null;
+	private final ArrayList<DisplayEntity> selectedEntityList = new ArrayList<>();
 	private Vec3d mousePosition = new Vec3d();
 	private int mouseWindowID = -1;  // window containing the present mouse position
 
@@ -432,8 +432,11 @@ public class RenderManager implements DragSourceListener {
 							try {
 								totalBindings++;
 								binding.collectProxies(renderTime, cachedScene);
-								if (binding.isBoundTo(selectedEntity)) {
-									selectedBindings.add(binding);
+								for (DisplayEntity ent : getSelectedEntityList()) {
+									if (binding.isBoundTo(ent)) {
+										selectedBindings.add(binding);
+										break;
+									}
 								}
 							} catch (Throwable t) {
 								// Log the exception in the exception list
@@ -459,7 +462,8 @@ public class RenderManager implements DragSourceListener {
 					}
 
 					// Show a rubber band arrow from the selected entity to the mouse position
-					if (createLinks.get() && selectedEntity != null && mouseWindowID > 0) {
+					if (createLinks.get() && isSingleEntitySelected() && mouseWindowID > 0) {
+						DisplayEntity selectedEntity = getSelectedEntity();
 						Vec3d source = selectedEntity.getSourcePoint();
 						double sourceRadius = selectedEntity.getRadius();
 						addLink(source, mousePosition, sourceRadius, 0.0d, true, cachedScene);
@@ -966,8 +970,10 @@ public class RenderManager implements DragSourceListener {
 
 	private void setSelectEntity(Entity ent, boolean canMakeLink) {
 		if (ent instanceof DisplayEntity) {
-			DisplayEntity oldEnt = selectedEntity;
-			selectedEntity = (DisplayEntity)ent;
+			DisplayEntity selectedEntity = (DisplayEntity) ent;
+			DisplayEntity oldEnt = getSelectedEntity();
+			selectedEntityList.clear();
+			selectedEntityList.add(selectedEntity);
 
 			if (createLinks.get() && canMakeLink) {
 				if (selectedEntity != null && oldEnt != null && oldEnt != selectedEntity) {
@@ -980,20 +986,34 @@ public class RenderManager implements DragSourceListener {
 
 		}
 		else if (ent instanceof View) {
-			selectedEntity = null;
+			selectedEntityList.clear();
 			View view = (View) ent;
 			int windowID = getWindowID(view);
 			focusWindow(windowID);
 		}
 		else {
-			selectedEntity = null;
+			selectedEntityList.clear();
 		}
 
 		GUIFrame.updateUI();
 	}
 
+	private ArrayList<DisplayEntity> getSelectedEntityList() {
+		return selectedEntityList;
+	}
+
+	private DisplayEntity getSelectedEntity() {
+		if (selectedEntityList.isEmpty())
+			return null;
+		return selectedEntityList.get(0);
+	}
+
 	public boolean isEntitySelected() {
-		return (selectedEntity != null);
+		return !selectedEntityList.isEmpty();
+	}
+
+	private boolean isSingleEntitySelected() {
+		return selectedEntityList.size() == 1;
 	}
 
 	/**
@@ -1008,6 +1028,7 @@ public class RenderManager implements DragSourceListener {
 
 		// If control key is pressed and there is no object to move then do nothing (return true)
 		// If control key is not pressed, then move the camera (return false)
+		DisplayEntity selectedEntity = getSelectedEntity();
 		if (selectedEntity == null || !selectedEntity.isMovable()
 				|| !selectedEntity.isGraphicsNominal())
 			return dragInfo.controlDown();
@@ -1078,6 +1099,7 @@ public class RenderManager implements DragSourceListener {
 
 	// Moves an overlay entity to a new position in the windows
 	private boolean handleOverlayMove(int x, int y, int startX, int startY, int windowWidth, int windowHeight) {
+		DisplayEntity selectedEntity = getSelectedEntity();
 		if (dragEntityScreenPosition == null)
 			return false;
 		int dx = x - startX;
@@ -1094,6 +1116,7 @@ public class RenderManager implements DragSourceListener {
 
 	//Moves the selected entity to a new position in space
 	private boolean handleMove(Ray currentRay, Ray firstRay, double currentDist, double firstDist, boolean shift) {
+		DisplayEntity selectedEntity = getSelectedEntity();
 
 		// Trap degenerate cases
 		if (currentDist < 0 || currentDist == Double.POSITIVE_INFINITY ||
@@ -1150,6 +1173,7 @@ public class RenderManager implements DragSourceListener {
 	}
 
 	private boolean handleResize(Ray currentRay, Ray firstRay, double currentDist, double firstDist) {
+		DisplayEntity selectedEntity = getSelectedEntity();
 
 		Vec3d currentPoint = currentRay.getPointAtDist(currentDist);
 		Vec3d firstPoint = firstRay.getPointAtDist(firstDist);
@@ -1234,6 +1258,7 @@ public class RenderManager implements DragSourceListener {
 	public static final double ANGLE_SPACING = Math.toRadians(1.0d);
 
 	private boolean handleRotate(Ray currentRay, Ray firstRay, double currentDist, double firstDist) {
+		DisplayEntity selectedEntity = getSelectedEntity();
 
 		// The points where the previous pick ended and current position. Collision is with the entity's XY plane
 		Vec3d currentPoint = currentRay.getPointAtDist(currentDist);
@@ -1268,6 +1293,7 @@ public class RenderManager implements DragSourceListener {
 	}
 
 	private boolean handleLineMove(Ray currentRay, Ray firstRay, double currentDist, double firstDist, boolean shift) {
+		DisplayEntity selectedEntity = getSelectedEntity();
 
 		// The points where the previous pick ended and current position. Collision is with the entity's XY plane
 		Vec3d currentPoint = currentRay.getPointAtDist(currentDist);
@@ -1318,6 +1344,7 @@ public class RenderManager implements DragSourceListener {
 	}
 
 	private boolean handleLineNodeMove(Ray currentRay, Ray firstRay, double currentDist, double firstDist, boolean shift) {
+		DisplayEntity selectedEntity = getSelectedEntity();
 
 		int nodeIndex = (int)(-1*(dragHandleID - LINENODE_PICK_ID));
 
@@ -1361,6 +1388,7 @@ public class RenderManager implements DragSourceListener {
 	}
 
 	private void splitLineEntity(int windowID, int x, int y) {
+		DisplayEntity selectedEntity = getSelectedEntity();
 		Ray currentRay = getRayForMouse(windowID, x, y);
 
 		Mat4d rayMatrix = MathUtils.RaySpace(currentRay);
@@ -1400,6 +1428,7 @@ public class RenderManager implements DragSourceListener {
 	}
 
 	private void removeLineNode(int windowID, int x, int y) {
+		DisplayEntity selectedEntity = getSelectedEntity();
 		ArrayList<Vec3d> points = selectedEntity.getPoints();
 		if (points == null || points.size() <= 2)
 			return;
@@ -1416,9 +1445,10 @@ public class RenderManager implements DragSourceListener {
 	}
 
 	public int getNodeIndex(int windowID, int x, int y) {
-		if (selectedEntity == null)
+		if (!isSingleEntitySelected())
 			return -1;
 
+		DisplayEntity selectedEntity = getSelectedEntity();
 		ArrayList<Vec3d> points = selectedEntity.getPoints();
 		if (points == null)
 			return -1;
@@ -1442,6 +1472,7 @@ public class RenderManager implements DragSourceListener {
 	}
 
 	public boolean handleMouseButton(int windowID, int x, int y, int button, boolean isDown, int modifiers) {
+		DisplayEntity selectedEntity = getSelectedEntity();
 
 		if (button != 1) { return false; }
 		if (!isDown) {
@@ -1533,7 +1564,7 @@ public class RenderManager implements DragSourceListener {
 	}
 
 	public void clearSelection() {
-		selectedEntity = null;
+		selectedEntityList.clear();
 	}
 
 	public void hideExistingPopups() {
@@ -1615,8 +1646,8 @@ public class RenderManager implements DragSourceListener {
 		ent.setInputsForDragAndDrop();
 
 		// Set the link from the selected entity
-		if (createLinks.get() && selectedEntity != null && ent instanceof DisplayEntity)
-			selectedEntity.linkTo((DisplayEntity) ent);
+		if (createLinks.get() && isSingleEntitySelected() && ent instanceof DisplayEntity)
+			getSelectedEntity().linkTo((DisplayEntity) ent);
 
 		// We are no longer drag-and-dropping
 		dndObjectType = null;
@@ -1900,6 +1931,7 @@ public class RenderManager implements DragSourceListener {
 	}
 
 	public boolean handleKeyPressed(int keyCode, char keyChar, boolean shift, boolean control, boolean alt) {
+		DisplayEntity selectedEntity = getSelectedEntity();
 
 		// Selected entity in edit mode
 		if (selectedEntity instanceof Editable && ((Editable) selectedEntity).isEditMode()) {
@@ -1981,6 +2013,7 @@ public class RenderManager implements DragSourceListener {
 	}
 
 	public void handleKeyReleased(int keyCode, char keyChar, boolean shift, boolean control, boolean alt) {
+		DisplayEntity selectedEntity = getSelectedEntity();
 		selectedEntity.handleKeyReleased(keyCode, keyChar, shift, control, alt);
 	}
 
