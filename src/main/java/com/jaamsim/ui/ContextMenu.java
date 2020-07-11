@@ -442,18 +442,33 @@ public class ContextMenu {
 				// Match all the inputs
 				splitEnt.copyInputs(ent);
 
-				// Original entity is left with the first portion of the nodes
+				// If the mouse was not clicked on a node, add one at this location
 				ArrayList<Vec3d> pts = ent.getPoints();
-				ArrayList<Vec3d> pts0 = new ArrayList<>(nodeIndex + 1);
-				for (int i = 0; i <= nodeIndex; i++) {
+				int ind = nodeIndex;
+				if (nodeIndex == -1) {
+					Vec3d pos = RenderManager.inst().getPOI();
+					if (pos == null)
+						return;
+					Vec3d localPos = ent.getLocalPosition(pos);
+					Simulation simulation = ent.getJaamSimModel().getSimulation();
+					if (simulation.isSnapToGrid()) {
+						localPos = simulation.getSnapGridPosition(localPos);
+					}
+					ind = PolylineInfo.getInsertionIndex(pts, localPos);
+					pts.add(ind, localPos);
+				}
+
+				// Original entity is left with the first portion of the nodes
+				ArrayList<Vec3d> pts0 = new ArrayList<>(ind + 1);
+				for (int i = 0; i <= ind; i++) {
 					pts0.add(pts.get(i));
 				}
 				KeywordIndex ptsKw0 = InputAgent.formatPointsInputs("Points", pts0, new Vec3d());
-				InputAgent.storeAndExecute(new KeywordCommand(ent, nodeIndex, ptsKw0));
+				InputAgent.storeAndExecute(new KeywordCommand(ent, ind, ptsKw0));
 
 				// New entity receives the remaining portion of the nodes
-				ArrayList<Vec3d> pts1 = new ArrayList<>(pts.size() - nodeIndex);
-				for (int i = nodeIndex; i < pts.size(); i++) {
+				ArrayList<Vec3d> pts1 = new ArrayList<>(pts.size() - ind);
+				for (int i = ind; i < pts.size(); i++) {
 					pts1.add(pts.get(i));
 				}
 				KeywordIndex ptsKw1 = InputAgent.formatPointsInputs("Points", pts1, new Vec3d());
@@ -466,7 +481,7 @@ public class ContextMenu {
 				FrameBox.setSelectedEntity(splitEnt, false);
 			}
 		} );
-		if (ent.isGenerated() || nodeIndex <= 0
+		if (ent.isGenerated() || nodeIndex == 0
 				|| nodeIndex == ent.getPoints().size() - 1) {
 			spitMenuItem.setEnabled(false);
 		}
