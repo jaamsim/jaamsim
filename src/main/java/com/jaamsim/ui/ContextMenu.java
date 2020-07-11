@@ -213,10 +213,11 @@ public class ContextMenu {
 		}
 
 		synchronized (menuItems) {
-			menu.addSeparator();
 			for (ContextMenuItem each : menuItems) {
-				if (each.supportsEntity(ent))
+				if (each.supportsEntity(ent)) {
+					menu.addSeparator();
 					menu.add(new UIMenuItem(each, ent, x, y));
+				}
 			}
 		}
 	}
