@@ -379,6 +379,11 @@ public class ContextMenu {
 		}
 		menu.add( centerInViewMenuItem );
 
+		// The following menu items apply only to a polyline type DisplayEntity
+		if (!ent.usePointsInput())
+			return;
+		menu.addSeparator();
+
 		// 6) Add Node
 		JMenuItem addNodeItem = new JMenuItem( "Add Node" );
 		addNodeItem.addActionListener( new ActionListener() {
@@ -403,10 +408,7 @@ public class ContextMenu {
 		if (ent.isGenerated() || nodeIndex >= 0) {
 			addNodeItem.setEnabled(false);
 		}
-		if (ent.usePointsInput()) {
-			menu.addSeparator();
-			menu.add( addNodeItem );
-		}
+		menu.add( addNodeItem );
 
 		// 7) Delete Node
 		JMenuItem deleteNodeItem = new JMenuItem( "Delete Node" );
@@ -424,9 +426,7 @@ public class ContextMenu {
 				|| ent.getPoints().size() <= 2) {
 			deleteNodeItem.setEnabled(false);
 		}
-		if (ent.usePointsInput()) {
-			menu.add( deleteNodeItem );
-		}
+		menu.add( deleteNodeItem );
 
 		// 8) Split
 		JMenuItem spitMenuItem = new JMenuItem( "Split" );
@@ -470,9 +470,7 @@ public class ContextMenu {
 				|| nodeIndex == ent.getPoints().size() - 1) {
 			spitMenuItem.setEnabled(false);
 		}
-		if (ent.usePointsInput()) {
-			menu.add( spitMenuItem );
-		}
+		menu.add( spitMenuItem );
 	}
 
 	public static void populateCompoundEntityMenu(JPopupMenu menu, final CompoundEntity ent, final int nodeIndex,
