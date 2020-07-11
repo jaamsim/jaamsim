@@ -407,7 +407,27 @@ public class ContextMenu {
 			menu.add( addNodeItem );
 		}
 
-		// 6) Split
+		// 7) Delete Node
+		JMenuItem deleteNodeItem = new JMenuItem( "Delete Node" );
+		deleteNodeItem.addActionListener( new ActionListener() {
+
+			@Override
+			public void actionPerformed( ActionEvent event ) {
+				ArrayList<Vec3d> pts = ent.getPoints();
+				pts.remove(nodeIndex);
+				KeywordIndex ptsKw = InputAgent.formatPointsInputs("Points", pts, new Vec3d());
+				InputAgent.storeAndExecute(new KeywordCommand(ent, nodeIndex, ptsKw));
+			}
+		} );
+		if (ent.isGenerated() || nodeIndex == -1
+				|| ent.getPoints().size() <= 2) {
+			deleteNodeItem.setEnabled(false);
+		}
+		if (ent.usePointsInput()) {
+			menu.add( deleteNodeItem );
+		}
+
+		// 8) Split
 		JMenuItem spitMenuItem = new JMenuItem( "Split" );
 		spitMenuItem.addActionListener( new ActionListener() {
 
@@ -451,26 +471,6 @@ public class ContextMenu {
 		}
 		if (ent.usePointsInput()) {
 			menu.add( spitMenuItem );
-		}
-
-		// 7) Delete Node
-		JMenuItem deleteNodeItem = new JMenuItem( "Delete Node" );
-		deleteNodeItem.addActionListener( new ActionListener() {
-
-			@Override
-			public void actionPerformed( ActionEvent event ) {
-				ArrayList<Vec3d> pts = ent.getPoints();
-				pts.remove(nodeIndex);
-				KeywordIndex ptsKw = InputAgent.formatPointsInputs("Points", pts, new Vec3d());
-				InputAgent.storeAndExecute(new KeywordCommand(ent, nodeIndex, ptsKw));
-			}
-		} );
-		if (ent.isGenerated() || nodeIndex == -1
-				|| ent.getPoints().size() <= 2) {
-			deleteNodeItem.setEnabled(false);
-		}
-		if (ent.usePointsInput()) {
-			menu.add( deleteNodeItem );
 		}
 	}
 
