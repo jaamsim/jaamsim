@@ -628,7 +628,13 @@ public class RenderManager implements DragSourceListener {
 		} // synchronized (_popupLock)
 	}
 
-	public void handleMouseClicked(int windowID, int x, int y, short count) {
+	public void handleMouseClicked(int windowID, int x, int y, int modifiers, short count) {
+
+		boolean shiftDown = (modifiers & WindowInteractionListener.MOD_SHIFT) != 0;
+		boolean controlDown = (modifiers & WindowInteractionListener.MOD_CTRL) != 0;
+		boolean altDown = (modifiers & WindowInteractionListener.MOD_ALT) != 0;
+		if (shiftDown || altDown)
+			return;
 
 		List<PickData> picks = pickForMouse(windowID, false);
 
@@ -640,6 +646,11 @@ public class RenderManager implements DragSourceListener {
 				DisplayEntity ent = (DisplayEntity) GUIFrame.getJaamSimModel().idToEntity(pd.id);
 				if (!ent.isMovable()) {
 					continue;
+				}
+				if (controlDown && isEntitySelected()) {
+					addSelectedEntity(ent);
+					GUIFrame.updateUI();
+					return;
 				}
 				FrameBox.setSelectedEntity(ent, true);
 
@@ -996,6 +1007,12 @@ public class RenderManager implements DragSourceListener {
 		}
 
 		GUIFrame.updateUI();
+	}
+
+	private void addSelectedEntity(DisplayEntity ent) {
+		if (selectedEntityList.contains(ent))
+			return;
+		selectedEntityList.add(ent);
 	}
 
 	private ArrayList<DisplayEntity> getSelectedEntityList() {

@@ -275,6 +275,8 @@ public class CameraControl implements WindowInteractionListener {
 		if (!RenderManager.isGood()) { return; }
 
 		RenderManager.inst().hideExistingPopups();
+
+		// Right click
 		if (button  == 3) {
 			Vec3d pos = RenderManager.inst().getMousePosition(windowID, x, y);
 			if (pos != null)
@@ -282,8 +284,10 @@ public class CameraControl implements WindowInteractionListener {
 			// Hand this off to the RenderManager to deal with
 			RenderManager.inst().popupMenu(windowID);
 		}
-		if (button == 1 && (modifiers & WindowInteractionListener.MOD_CTRL) == 0) {
-			RenderManager.inst().handleMouseClicked(windowID, x, y, count);
+
+		// Left click
+		if (button == 1) {
+			RenderManager.inst().handleMouseClicked(windowID, x, y, modifiers, count);
 		}
 	}
 
