@@ -1086,6 +1086,8 @@ public class RenderManager implements DragSourceListener {
 		if (selectedEntity instanceof OverlayEntity) {
 			Vec2d size = renderer.getViewableSize(dragInfo.windowID);
 			if (!dragInfo.controlDown()) {
+				if (!isSingleEntitySelected())
+					return false;
 				OverlayEntity olEnt = (OverlayEntity) selectedEntity;
 				return olEnt.handleDrag(dragInfo.x, dragInfo.y, dragInfo.startX, dragInfo.startY,
 					(int)size.x, (int)size.y);
@@ -1108,6 +1110,8 @@ public class RenderManager implements DragSourceListener {
 
 		// If the Control key is not pressed, then the selected entity handles the drag action
 		if (!dragInfo.controlDown()) {
+			if (!isSingleEntitySelected())
+				return false;
 			Vec3d firstPt = firstRay.getPointAtDist(firstDist);
 			Vec3d currentPt = currentRay.getPointAtDist(currentDist);
 			boolean ret = selectedEntity.handleDrag(currentPt, firstPt);
@@ -1247,6 +1251,8 @@ public class RenderManager implements DragSourceListener {
 	}
 
 	private boolean handleResize(Ray currentRay, Ray firstRay, double currentDist, double firstDist) {
+		if (!isSingleEntitySelected())
+			return false;
 		DisplayEntity selectedEntity = getSelectedEntity();
 
 		Vec3d currentPoint = currentRay.getPointAtDist(currentDist);
@@ -1332,6 +1338,8 @@ public class RenderManager implements DragSourceListener {
 	public static final double ANGLE_SPACING = Math.toRadians(1.0d);
 
 	private boolean handleRotate(Ray currentRay, Ray firstRay, double currentDist, double firstDist) {
+		if (!isSingleEntitySelected())
+			return false;
 		DisplayEntity selectedEntity = getSelectedEntity();
 
 		// The points where the previous pick ended and current position. Collision is with the entity's XY plane
@@ -1443,6 +1451,8 @@ public class RenderManager implements DragSourceListener {
 	}
 
 	private boolean handleLineNodeMove(Ray currentRay, Ray firstRay, double currentDist, double firstDist, boolean shift) {
+		if (!isSingleEntitySelected())
+			return false;
 		DisplayEntity selectedEntity = getSelectedEntity();
 
 		int nodeIndex = (int)(-1*(dragHandleID - LINENODE_PICK_ID));
