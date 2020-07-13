@@ -636,41 +636,47 @@ public class RenderManager implements DragSourceListener {
 		if (shiftDown || altDown)
 			return;
 
+		// Find the entity at this location
 		List<PickData> picks = pickForMouse(windowID, false);
-
 		Collections.sort(picks, new SelectionSorter());
-
+		DisplayEntity ent = null;
 		for (PickData pd : picks) {
-			// Select the first entity after sorting
-			if (pd.isEntity) {
-				DisplayEntity ent = (DisplayEntity) GUIFrame.getJaamSimModel().idToEntity(pd.id);
-				if (!ent.isMovable()) {
-					continue;
-				}
-				if (controlDown && isEntitySelected()) {
-					addSelectedEntity(ent);
-					GUIFrame.updateUI();
-					return;
-				}
-				FrameBox.setSelectedEntity(ent, true);
-
-				if (ent instanceof OverlayEntity) {
-					OverlayEntity olEnt = (OverlayEntity) ent;
-					Vec2d size = renderer.getViewableSize(windowID);
-					olEnt.handleMouseClicked(count, x, y, (int)size.x, (int)size.y);
-					GUIFrame.updateUI();
-					return;
-				}
-
-				Vec3d globalCoord = getGlobalPositionForMouseData(windowID, x, y, ent);
-				ent.handleMouseClicked(count, globalCoord);
-				GUIFrame.updateUI();
-				return;
+			if (!pd.isEntity)
+				continue;
+			DisplayEntity e = (DisplayEntity) GUIFrame.getJaamSimModel().idToEntity(pd.id);
+			if (e.isMovable()) {
+				ent = e;
+				break;
 			}
 		}
 
 		// If no entity is found, set the selected entity to null
-		FrameBox.setSelectedEntity(null, false);
+		if (ent == null) {
+			FrameBox.setSelectedEntity(null, false);
+			GUIFrame.updateUI();
+			return;
+		}
+
+		// Select the entity
+		if (controlDown && isEntitySelected()) {
+			addSelectedEntity(ent);
+			GUIFrame.updateUI();
+			return;
+		}
+		FrameBox.setSelectedEntity(ent, true);
+
+		// Handle the mouse click for an Overlay entity
+		if (ent instanceof OverlayEntity) {
+			OverlayEntity olEnt = (OverlayEntity) ent;
+			Vec2d size = renderer.getViewableSize(windowID);
+			olEnt.handleMouseClicked(count, x, y, (int)size.x, (int)size.y);
+			GUIFrame.updateUI();
+			return;
+		}
+
+		// Handle the mouse click for a normal entity
+		Vec3d globalCoord = getGlobalPositionForMouseData(windowID, x, y, ent);
+		ent.handleMouseClicked(count, globalCoord);
 		GUIFrame.updateUI();
 	}
 
