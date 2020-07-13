@@ -1140,6 +1140,7 @@ public class RenderManager implements DragSourceListener {
 	//Moves the selected entity to a new position in space
 	private boolean handleMove(Ray currentRay, Ray firstRay, double currentDist, double firstDist, boolean shift) {
 		DisplayEntity selectedEntity = getSelectedEntity();
+		Vec3d lastLocalPos = selectedEntity.getPosition();
 
 		// Trap degenerate cases
 		if (currentDist < 0 || currentDist == Double.POSITIVE_INFINITY ||
@@ -1173,25 +1174,49 @@ public class RenderManager implements DragSourceListener {
 			pos.add3(del);
 		}
 
-		// Normal objects
 		Vec3d localPos = selectedEntity.getLocalPosition(pos);
 		Simulation simulation = GUIFrame.getJaamSimModel().getSimulation();
 		if (simulation.isSnapToGrid())
 			localPos = simulation.getSnapGridPosition(localPos, selectedEntity.getPosition(), shift);
 		KeywordIndex kw = InputAgent.formatVec3dInput("Position", localPos, DistanceUnit.class);
 
+		// Normal objects
 		if (!selectedEntity.usePointsInput()) {
 			InputAgent.storeAndExecute(new KeywordCommand(selectedEntity, kw));
-			return true;
+		}
+		// Polyline objects
+		else {
+			ArrayList<Vec3d> points = selectedEntity.getPoints();
+			Vec3d offset = new Vec3d(localPos);
+			offset.sub3(selectedEntity.getPosition());
+			KeywordIndex ptsKw = InputAgent.formatPointsInputs("Points", points, offset);
+			InputAgent.storeAndExecute(new KeywordCommand(selectedEntity, kw, ptsKw));
 		}
 
-		// Polyline objects
-		ArrayList<Vec3d> points = selectedEntity.getPoints();
-		Vec3d offset = new Vec3d(localPos);
-		offset.sub3(selectedEntity.getPosition());
-		KeywordIndex ptsKw = InputAgent.formatPointsInputs("Points", points, offset);
+		// Move any additional entities that were selected
+		if (isSingleEntitySelected())
+			return true;
+		Vec3d globalOffset = selectedEntity.getGlobalPosition();
+		globalOffset.sub3(selectedEntity.getGlobalPosition(lastLocalPos));
+		for (DisplayEntity ent : getSelectedEntityList()) {
+			if (ent == selectedEntity)
+				continue;
+			pos = ent.getGlobalPosition();
+			pos.add3(globalOffset);
+			localPos = ent.getLocalPosition(pos);
+			kw = InputAgent.formatVec3dInput("Position", localPos, DistanceUnit.class);
+			if (!ent.usePointsInput()) {
+				InputAgent.storeAndExecute(new KeywordCommand(ent, kw));
+			}
+			else {
+				ArrayList<Vec3d> points = ent.getPoints();
+				Vec3d offset = new Vec3d(localPos);
+				offset.sub3(ent.getPosition());
+				KeywordIndex ptsKw = InputAgent.formatPointsInputs("Points", points, offset);
+				InputAgent.storeAndExecute(new KeywordCommand(ent, kw, ptsKw));
+			}
+		}
 
-		InputAgent.storeAndExecute(new KeywordCommand(selectedEntity, kw, ptsKw));
 		return true;
 	}
 
