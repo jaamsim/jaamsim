@@ -1016,7 +1016,7 @@ public class RenderManager implements DragSourceListener {
 	}
 
 	private void addSelectedEntity(DisplayEntity ent) {
-		if (selectedEntityList.contains(ent))
+		if (!isSelectionValid(ent))
 			return;
 		selectedEntityList.add(ent);
 	}
@@ -1037,6 +1037,32 @@ public class RenderManager implements DragSourceListener {
 
 	private boolean isSingleEntitySelected() {
 		return selectedEntityList.size() == 1;
+	}
+
+	private boolean isSelectionValid(DisplayEntity ent) {
+		if (!isEntitySelected())
+			return true;
+		DisplayEntity selectedEntity = getSelectedEntity();
+
+		if (ent instanceof OverlayEntity && !(selectedEntity instanceof OverlayEntity))
+			return false;
+
+		if (!(ent instanceof OverlayEntity) && selectedEntity instanceof OverlayEntity)
+			return false;
+
+		if (ent.getCurrentRegion() != selectedEntity.getCurrentRegion())
+			return false;
+
+		if (ent.getParent() != selectedEntity.getParent())
+			return false;
+
+		DisplayEntity e = ent;
+		while (e != null) {
+			if (selectedEntityList.contains(e))
+				return false;
+			e = e.getRelativeEntity();
+		}
+		return true;
 	}
 
 	/**
