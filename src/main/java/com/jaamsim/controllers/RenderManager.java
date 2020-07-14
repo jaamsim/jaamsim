@@ -2044,6 +2044,8 @@ public class RenderManager implements DragSourceListener {
 
 		// Selected entity in edit mode
 		if (selectedEntity instanceof Editable && ((Editable) selectedEntity).isEditMode()) {
+			if (!isSingleEntitySelected())
+				return false;
 			selectedEntity.handleKeyPressed(keyCode, keyChar, shift, control, alt);
 			return true;
 		}
@@ -2106,7 +2108,11 @@ public class RenderManager implements DragSourceListener {
 
 		// Selected entity not in edit mode
 		if (selectedEntity != null) {
-			boolean bool = selectedEntity.handleKeyPressed(keyCode, keyChar, shift, control, alt);
+			boolean bool = false;
+			for (DisplayEntity ent : getSelectedEntityList()) {
+				boolean b = ent.handleKeyPressed(keyCode, keyChar, shift, control, alt);
+				bool = bool || b;
+			}
 			return bool;
 		}
 
