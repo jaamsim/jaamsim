@@ -1153,17 +1153,38 @@ public class RenderManager implements DragSourceListener {
 	// Moves an overlay entity to a new position in the windows
 	private boolean handleOverlayMove(int x, int y, int startX, int startY, int windowWidth, int windowHeight) {
 		DisplayEntity selectedEntity = getSelectedEntity();
+		OverlayEntity olEnt = (OverlayEntity) selectedEntity;
+		IntegerVector lastPos = olEnt.getScreenPosition();
+
 		if (dragEntityScreenPosition == null)
 			return false;
 		int dx = x - startX;
 		int dy = y - startY;
-		OverlayEntity olEnt = (OverlayEntity) selectedEntity;
 		int posX = dragEntityScreenPosition.get(0) + dx * (olEnt.getAlignRight() ? -1 : 1);
 		int posY = dragEntityScreenPosition.get(1) + dy * (olEnt.getAlignBottom() ? -1 : 1);
 		posX = Math.min(Math.max(0, posX), windowWidth);
 		posY = Math.min(Math.max(0, posY), windowHeight);
 		KeywordIndex kw = InputAgent.formatIntegers("ScreenPosition", posX, posY);
 		InputAgent.storeAndExecute(new KeywordCommand(olEnt, kw));
+
+		// Move any additional entities that were selected
+		if (isSingleEntitySelected())
+			return true;
+		int xOffset = (posX - lastPos.get(0)) * (olEnt.getAlignRight() ? -1 : 1);
+		int yOffset = posY - lastPos.get(1) * (olEnt.getAlignBottom() ? -1 : 1);
+		for (DisplayEntity ent : getSelectedEntityList()) {
+			if (ent == selectedEntity)
+				continue;
+			olEnt = (OverlayEntity) ent;
+			IntegerVector pos = olEnt.getScreenPosition();
+			posX = pos.get(0) + xOffset * (olEnt.getAlignRight() ? -1 : 1);
+			posY = pos.get(1) + yOffset * (olEnt.getAlignBottom() ? -1 : 1);
+			posX = Math.min(Math.max(0, posX), windowWidth);
+			posY = Math.min(Math.max(0, posY), windowHeight);
+			kw = InputAgent.formatIntegers("ScreenPosition", posX, posY);
+			InputAgent.storeAndExecute(new KeywordCommand(olEnt, kw));
+		}
+
 		return true;
 	}
 
