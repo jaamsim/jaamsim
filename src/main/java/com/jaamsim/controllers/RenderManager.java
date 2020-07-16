@@ -43,6 +43,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
+import com.jaamsim.Commands.ListCommand;
+import com.jaamsim.Commands.Command;
 import com.jaamsim.Commands.DefineCommand;
 import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.DisplayModels.DisplayModel;
@@ -1191,7 +1193,6 @@ public class RenderManager implements DragSourceListener {
 	//Moves the selected entity to a new position in space
 	private boolean handleMove(Ray currentRay, Ray firstRay, double currentDist, double firstDist, boolean shift) {
 		DisplayEntity selectedEntity = getSelectedEntity();
-		Vec3d lastLocalPos = selectedEntity.getPosition();
 
 		// Trap degenerate cases
 		if (currentDist < 0 || currentDist == Double.POSITIVE_INFINITY ||
@@ -1231,24 +1232,22 @@ public class RenderManager implements DragSourceListener {
 			localPos = simulation.getSnapGridPosition(localPos, selectedEntity.getPosition(), shift);
 		KeywordIndex kw = InputAgent.formatVec3dInput("Position", localPos, DistanceUnit.class);
 
-		// Normal objects
+		// Move the selected entity
+		ArrayList<Command> cmdList = new ArrayList<>();
 		if (!selectedEntity.usePointsInput()) {
-			InputAgent.storeAndExecute(new KeywordCommand(selectedEntity, kw));
+			cmdList.add(new KeywordCommand(selectedEntity, kw));
 		}
-		// Polyline objects
 		else {
 			ArrayList<Vec3d> points = selectedEntity.getPoints();
 			Vec3d offset = new Vec3d(localPos);
 			offset.sub3(selectedEntity.getPosition());
 			KeywordIndex ptsKw = InputAgent.formatPointsInputs("Points", points, offset);
-			InputAgent.storeAndExecute(new KeywordCommand(selectedEntity, kw, ptsKw));
+			cmdList.add(new KeywordCommand(selectedEntity, kw, ptsKw));
 		}
 
 		// Move any additional entities that were selected
-		if (isSingleEntitySelected())
-			return true;
-		Vec3d globalOffset = selectedEntity.getGlobalPosition();
-		globalOffset.sub3(selectedEntity.getGlobalPosition(lastLocalPos));
+		Vec3d globalOffset = selectedEntity.getGlobalPosition(localPos);
+		globalOffset.sub3(selectedEntity.getGlobalPosition());
 		for (DisplayEntity ent : getSelectedEntityList()) {
 			if (ent == selectedEntity)
 				continue;
@@ -1257,17 +1256,18 @@ public class RenderManager implements DragSourceListener {
 			localPos = ent.getLocalPosition(pos);
 			kw = InputAgent.formatVec3dInput("Position", localPos, DistanceUnit.class);
 			if (!ent.usePointsInput()) {
-				InputAgent.storeAndExecute(new KeywordCommand(ent, kw));
+				cmdList.add(new KeywordCommand(ent, kw));
 			}
 			else {
 				ArrayList<Vec3d> points = ent.getPoints();
 				Vec3d offset = new Vec3d(localPos);
 				offset.sub3(ent.getPosition());
 				KeywordIndex ptsKw = InputAgent.formatPointsInputs("Points", points, offset);
-				InputAgent.storeAndExecute(new KeywordCommand(ent, kw, ptsKw));
+				cmdList.add(new KeywordCommand(ent, kw, ptsKw));
 			}
 		}
 
+		InputAgent.storeAndExecute(new ListCommand(cmdList));
 		return true;
 	}
 
