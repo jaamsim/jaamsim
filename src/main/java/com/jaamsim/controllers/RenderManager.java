@@ -1397,7 +1397,6 @@ public class RenderManager implements DragSourceListener {
 
 	private boolean handleLineMove(Ray currentRay, Ray firstRay, double currentDist, double firstDist, boolean shift) {
 		DisplayEntity selectedEntity = getSelectedEntity();
-		Vec3d lastLocalPos = selectedEntity.getPoints().get(0);
 
 		// The points where the previous pick ended and current position. Collision is with the entity's XY plane
 		Vec3d currentPoint = currentRay.getPointAtDist(currentDist);
@@ -1443,13 +1442,12 @@ public class RenderManager implements DragSourceListener {
 
 		KeywordIndex ptsKw = InputAgent.formatPointsInputs("Points", localPts, new Vec3d());
 		KeywordIndex posKw = InputAgent.formatVec3dInput("Position", localPos, DistanceUnit.class);
-		InputAgent.storeAndExecute(new KeywordCommand(selectedEntity, -1, ptsKw, posKw));
+		ArrayList<Command> cmdList = new ArrayList<>();
+		cmdList.add(new KeywordCommand(selectedEntity, -1, posKw, ptsKw));
 
 		// Move any additional entities that were selected
-		if (isSingleEntitySelected())
-			return true;
-		Vec3d globalOffset = selectedEntity.getGlobalPosition(selectedEntity.getPoints().get(0));
-		globalOffset.sub3(selectedEntity.getGlobalPosition(lastLocalPos));
+		Vec3d globalOffset = selectedEntity.getGlobalPosition(localPos);
+		globalOffset.sub3(selectedEntity.getGlobalPosition(selectedEntity.getPoints().get(0)));
 		for (DisplayEntity ent : getSelectedEntityList()) {
 			if (ent == selectedEntity)
 				continue;
@@ -1458,16 +1456,18 @@ public class RenderManager implements DragSourceListener {
 			localPos = ent.getLocalPosition(pos);
 			posKw = InputAgent.formatVec3dInput("Position", localPos, DistanceUnit.class);
 			if (!ent.usePointsInput()) {
-				InputAgent.storeAndExecute(new KeywordCommand(ent, posKw));
+				cmdList.add(new KeywordCommand(ent, posKw));
 			}
 			else {
 				ArrayList<Vec3d> points = ent.getPoints();
 				Vec3d offset = new Vec3d(localPos);
 				offset.sub3(ent.getPosition());
 				ptsKw = InputAgent.formatPointsInputs("Points", points, globalOffset);
-				InputAgent.storeAndExecute(new KeywordCommand(ent, posKw, ptsKw));
+				cmdList.add(new KeywordCommand(ent, posKw, ptsKw));
 			}
 		}
+
+		InputAgent.storeAndExecute(new ListCommand(cmdList));
 		return true;
 	}
 
