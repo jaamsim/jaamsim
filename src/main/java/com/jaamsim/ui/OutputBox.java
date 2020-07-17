@@ -124,6 +124,12 @@ public class OutputBox extends FrameBox {
 		public String getToolTipText(MouseEvent event) {
 			Point p = event.getPoint();
 			int row = rowAtPoint(p);
+			int col = columnAtPoint(p);
+
+			// Only the first column has tooltip
+			if (col != 0)
+				return null;
+
 			if (currentEntity == null ||
 			    row >= entries.size() ||
 			    entries.get(row) instanceof Class) {
