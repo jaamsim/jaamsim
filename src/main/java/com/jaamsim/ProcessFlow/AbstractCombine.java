@@ -215,4 +215,15 @@ public abstract class AbstractCombine extends LinkedService {
 		return true;
 	}
 
+	@Override
+	public ArrayList<DisplayEntity> getSourceEntities() {
+		ArrayList<DisplayEntity> ret = super.getSourceEntities();
+		for (Queue queue : getQueues()) {
+			if (queue == null)
+				continue;
+			ret.add(queue);
+		}
+		return ret;
+	}
+
 }
