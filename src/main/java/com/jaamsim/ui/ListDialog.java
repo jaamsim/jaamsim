@@ -48,6 +48,7 @@ public class ListDialog extends JDialog {
 	public ListDialog(Frame owner, String title, boolean modal,
 			ArrayList<String> optionList, ArrayList<String> initList) {
 		super(owner, title, modal);
+		setType(Type.UTILITY);
 		selectedList = new ArrayList<>();
 		setSize(190, 300);
 
@@ -120,7 +121,6 @@ public class ListDialog extends JDialog {
 			}
 		} );
 
-		setIconImage(GUIFrame.getWindowIcon());
 		setAlwaysOnTop(true);
 	}
 
