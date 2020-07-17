@@ -1167,11 +1167,10 @@ public class RenderManager implements DragSourceListener {
 		posX = Math.min(Math.max(0, posX), windowWidth);
 		posY = Math.min(Math.max(0, posY), windowHeight);
 		KeywordIndex kw = InputAgent.formatIntegers("ScreenPosition", posX, posY);
-		InputAgent.storeAndExecute(new KeywordCommand(olEnt, kw));
+		ArrayList<Command> cmdList = new ArrayList<>();
+		cmdList.add(new KeywordCommand(olEnt, kw));
 
 		// Move any additional entities that were selected
-		if (isSingleEntitySelected())
-			return true;
 		int xOffset = (posX - lastPos.get(0)) * (olEnt.getAlignRight() ? -1 : 1);
 		int yOffset = posY - lastPos.get(1) * (olEnt.getAlignBottom() ? -1 : 1);
 		for (DisplayEntity ent : getSelectedEntityList()) {
@@ -1184,9 +1183,10 @@ public class RenderManager implements DragSourceListener {
 			posX = Math.min(Math.max(0, posX), windowWidth);
 			posY = Math.min(Math.max(0, posY), windowHeight);
 			kw = InputAgent.formatIntegers("ScreenPosition", posX, posY);
-			InputAgent.storeAndExecute(new KeywordCommand(olEnt, kw));
+			cmdList.add(new KeywordCommand(olEnt, kw));
 		}
 
+		InputAgent.storeAndExecute(new ListCommand(cmdList));
 		return true;
 	}
 
