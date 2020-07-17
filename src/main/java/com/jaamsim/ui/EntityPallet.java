@@ -27,6 +27,7 @@ import java.awt.dnd.DragGestureEvent;
 import java.awt.dnd.DragGestureListener;
 import java.awt.dnd.DragSource;
 import java.awt.event.MouseEvent;
+import java.util.Enumeration;
 import java.util.HashMap;
 
 import javax.swing.ImageIcon;
@@ -132,6 +133,9 @@ public class EntityPallet extends OSFixJFrame implements DragGestureListener {
 
 	private void updateTree() {
 
+		// Store all the expanded paths
+		Enumeration<TreePath> expandedPaths = tree.getExpandedDescendants(new TreePath(top));
+
 		// Create a tree that allows one selection at a time
 		top.removeAllChildren();
 		HashMap<String, DefaultMutableTreeNode> paletteNodes = new HashMap<>();
@@ -152,6 +156,26 @@ public class EntityPallet extends OSFixJFrame implements DragGestureListener {
 			palNode.add(classNode);
 		}
 		treeModel.reload(top);
+
+		// Restore all the expanded paths
+		while (expandedPaths != null && expandedPaths.hasMoreElements()) {
+			TreePath oldPath = expandedPaths.nextElement();
+			if (oldPath.getPathCount() < 2)
+				continue;
+			DefaultMutableTreeNode oldPaletteNode = (DefaultMutableTreeNode) (oldPath.getPath())[1];
+			String paletteName = (String) (oldPaletteNode.getUserObject());
+
+			// Find and expand the new tree node with this name
+			Enumeration<?> enumeration = top.children();
+			while (enumeration.hasMoreElements()) {
+				DefaultMutableTreeNode eachNode = (DefaultMutableTreeNode) enumeration.nextElement();
+				if (paletteName.equals(eachNode.getUserObject())) {
+					Object[] nodeList = {top, eachNode};
+					tree.expandPath(new TreePath(nodeList));
+					break;
+				}
+			}
+		}
 	}
 
 	public synchronized static EntityPallet getInstance() {
