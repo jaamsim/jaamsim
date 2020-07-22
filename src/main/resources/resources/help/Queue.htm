@@ -1,0 +1,66 @@
+<html>
+
+<body lang=EN-CA>
+
+<div class=WordSection1>
+
+<div style='border:none;border-bottom:solid #7F7F7F 1.0pt;padding:0in 0in 1.0pt 0in'>
+
+<h2><a name="_Toc42878501">Queue</a></h2>
+
+</div>
+
+<p class=Main style='page-break-after:avoid'>A <span class=SimObjectChar>Queue</span>
+object defines a location for simulation entities to wait for processing by
+other entities.</p>
+
+<p class=Main style='page-break-after:avoid'>Unlike many other objects in this
+palette, an entity received by a <span class=SimObjectChar>Queue</span> is not
+passed automatically to the next object.  It must wait in the <span
+class=SimObjectChar>Queue</span> until it is removed by some other object.  <span
+class=SimObjectChar>Queues</span> are used in this way by the <span
+class=SimObjectChar>Server</span>, <span class=SimObjectChar>Seize</span>, <span
+class=SimObjectChar>EntityGate</span>, <span class=SimObjectChar>Assemble</span>,
+<span class=SimObjectChar>Combine</span>, <span class=SimObjectChar>Pack</span>,
+<span class=SimObjectChar>Unpack</span>, <span class=SimObjectChar>AddTo</span>,
+and <span class=SimObjectChar>RemoveFrom</span> objects.  Whenever an entity is
+added to a <span class=SimObjectChar>Queue</span>, all the objects that use
+this <span class=SimObjectChar>Queue</span> are notified that a new entity is
+available.  The first available object will remove the entity from the <span
+class=SimObjectChar>Queue</span> and start processing it.</p>
+
+<p class=Main style='page-break-after:avoid'>Queued entities can be sequenced
+by an optional priority value specified by the <span class=KeywordChar>Priority</span>
+keyword.  In most cases, the <span class=KeywordChar>Priority</span> is
+specified by an Expression that is evaluated when the entity first arrives at
+the <span class=SimObjectChar>Queue</span>.  <span class=KeywordChar>Priority</span>
+is integer valued and decimal values will be truncated, which means, for
+example, that priority values of 3.2 and 3.6 are identical (i.e. truncated to
+3).</p>
+
+<p class=Main style='page-break-after:avoid'>Entities with the same priority
+values can be sequenced in either the default first-in-first-out (FIFO) order,
+or in last-in-first-out order (LIFO).</p>
+
+<p class=Main>Lastly, a queued entity can be <span class=MainChar>provided with
+an optional identification using the </span><span class=KeywordChar>Match</span><span
+class=MainChar> keyword.  Objects that use </span><span class=SimObjectChar>Queues</span><span
+class=MainChar>, such as a </span><span class=SimObjectChar>Server</span><span
+class=MainChar>, can request its </span><span class=SimObjectChar>Queue</span><span
+class=MainChar> to provide the first entity with a specified value for the </span><span
+class=KeywordChar>Match</span><span class=MainChar> keyword.  As with the </span><span
+class=KeywordChar>Priority</span><span class=MainChar> keyword, in most cases
+the </span><span class=KeywordChar>Match</span><span class=MainChar> value is
+specified by an Expression that is evaluated when the entity first arrives at
+the Queue.  The </span><span class=KeywordChar>Match</span><span
+class=MainChar> variable is stored as a string, but will also accept a
+dimensionless integer or an entity which will be converted to a string.  If a
+decimal value is provided, it will be truncated.</span></p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+</div>
+
+</body>
+
+</html>

@@ -1,0 +1,57 @@
+<html>
+
+
+<body lang=EN-CA>
+
+<div class=WordSection1>
+
+<div style='border:none;border-bottom:solid #7F7F7F 1.0pt;padding:0in 0in 1.0pt 0in'>
+
+<h2><a name="_Toc42878500"></a><a name="_Toc440897775">Server</a></h2>
+
+</div>
+
+<p class=Main style='page-break-after:avoid'>The <span class=SimObjectChar>Server</span>
+object processes an incoming entity and then passes it to the next object.</p>
+
+<p class=Main style='page-break-after:avoid'>Entities that are waiting to be
+processed are held by a <span class=SimObjectChar>Queue</span> object
+identified by the keyword <span class=KeywordChar>WaitQueue</span>.  All
+entities received by the <span class=SimObjectChar>Server</span> first pass
+through this <span class=SimObjectChar>Queue</span> object, even if the <span
+class=SimObjectChar>Server</span> is <span class=StateChar>Idle</span>.</p>
+
+<p class=Main style='page-break-after:avoid'>Entities can also be sent directly
+to the <span class=SimObjectChar>Queue</span>.  Whenever an entity is added to
+a <span class=SimObjectChar>Queue</span>, all the <span class=SimObjectChar>Servers</span>
+that specified this <span class=SimObjectChar>Queue</span> as its <span
+class=KeywordChar>WaitQueue</span> will be notified.  The first <span
+class=SimObjectChar>Server</span> that is available will then remove the entity
+for processing.</p>
+
+<p class=Main style='page-break-after:avoid'>The rate at which entities are
+processed is determined by the <span class=KeywordChar>ServiceTime</span>
+keyword.  This input has units of time and accepts a constant value, a <span
+class=SimObjectChar>TimeSeries</span>, a Probability Distribution, or an
+Expression.</p>
+
+<p class=Main>The <span class=SimObjectChar>Server</span> can be stopped under
+various <span class=MainChar>circumstances using the </span><span
+class=KeywordChar>OperatingThresholdList</span><span class=MainChar> keyword,
+which specifies a list of threshold objects such as </span><span
+class=SimObjectChar>SignalThreshold</span><span class=MainChar>, </span><span
+class=SimObjectChar>TimeSeriesThreshold</span><span class=MainChar>, or </span><span
+class=SimObjectChar>ExpressionThreshold</span><span class=MainChar>.  All of
+the specified threshold objects must be open for the </span><span
+class=SimObjectChar>Server</span><span class=MainChar> to operate.  However, if
+a threshold closes while the </span><span class=SimObjectChar>Server</span><span
+class=MainChar> is processing an entity, it will complete its work on that
+entity before ceasing further operation.</span></p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+</div>
+
+</body>
+
+</html>
