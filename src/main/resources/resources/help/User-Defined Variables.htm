@@ -1,0 +1,121 @@
+<html>
+
+<body lang=EN-CA>
+
+<div class=WordSection1>
+
+<div style='border:none;border-bottom:solid #7F7F7F 1.0pt;padding:0in 0in 1.0pt 0in'>
+
+<h2><a name="_Toc42878423"></a><a name="_Ref466562281">User-Defined Variables</a></h2>
+
+</div>
+
+<p class=Main style='page-break-after:avoid'>Users can define two types of
+variables for individual objects in a model:</p>
+
+<p class=Main style='margin-left:.5in;text-indent:-.25in'><span
+style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><b>Attribute</b>.  A variable whose value can be changed be
+changed by one or more Assign objects in a model.  Attributes are a useful way
+to add application-specific information to generated entities or to the
+permanent objects in a model.  For example, if there are two types of customers
+in a model that require different service times, an attribute named
+&quot;type&quot; can be added to the generated customer objects and randomly
+assigned the value 1 or 2.  When the customer arrives at the server, its
+service time can then be calculated based on its type attribute.</p>
+
+<p class=Main style='margin-left:.5in;text-indent:-.25in'><span
+style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><b>Custom Output</b>.  A variable whose value is calculated on
+demand by evaluating a specified expression during the simulation run.  Custom
+outputs are a way for the user to supplement the JaamSim's built-in outputs or
+to avoid repeating a complicated calculation in more than one expression.</p>
+
+<p class=Main>Attributes and custom outputs can have same types of values as
+expressions, i.e. numbers with or without units, strings, entities, arrays, maps,
+or lambda functions.  They appear in the Output Viewer as outputs under the
+Entity heading.</p>
+
+<p class=Main>The name for an attribute or custom output can be any alphanumeric
+text provided that no spaces, commas, or special symbols are included.</p>
+
+<p class=Main>Attributes and custom outputs can be defined for any of the
+objects in a model using the <span class=KeywordChar>AttributeDefinitionList</span>
+and <span class=KeywordChar>CustomOutputList</span> keywords described in the
+following table.</p>
+
+<p class=MsoCaption>Keywords for Attributes and Custom Outputs</p>
+
+<table class=SimTable border=1 cellspacing=0 cellpadding=0 width=662
+ style='width:496.75pt;margin-left:7.95pt;border-collapse:collapse;border:none'>
+ <thead>
+  <tr style='page-break-inside:avoid'>
+   <td width=159 valign=top style='width:118.95pt;border:solid #A6A6A6 1.0pt;
+   background:#BFBFBF;padding:0in 5.4pt 0in 5.4pt'>
+   <p class=TableHeading><b><span lang=EN-AU>Keyword</span></b></p>
+   </td>
+   <td width=504 valign=top style='width:377.8pt;border:solid #A6A6A6 1.0pt;
+   border-left:none;background:#BFBFBF;padding:0in 5.4pt 0in 5.4pt'>
+   <p class=TableHeading><b><span lang=EN-AU>Description</span></b></p>
+   </td>
+  </tr>
+ </thead>
+ <tr style='page-break-inside:avoid'>
+  <td width=159 valign=top style='width:118.95pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph><span lang=EN-AU>AttributeDefinitionList</span></p>
+  </td>
+  <td width=504 valign=top style='width:377.8pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph style='margin-bottom:12.0pt'><span lang=EN-AU>Defines
+  one or more attributes for the object.  The following format is used for the
+  input:</span></p>
+  <p class=codeintable style='margin-bottom:12.0pt'><span lang=EN-AU>{&nbsp;&lt;Name1&gt;&nbsp;&lt;InitValue1&gt;&nbsp;}&nbsp;...&nbsp;{&nbsp;&lt;NameN&gt;&nbsp;&lt;InitValueN&gt;&nbsp;}</span></p>
+  <p class=TableText-Paragraph style='margin-bottom:12.0pt'><span lang=EN-AU>where
+  Name is the name of the attribute and InitValue is an expression that returns
+  the initial value for the attribute.  The expression is evaluated when the
+  simulation is first started or re-started.  Normally, the expression is a
+  simple constant, such as </span><span class=codeChar><span lang=EN-AU
+  style='font-size:9.0pt'>5[km]</span></span><span lang=EN-AU>.  The attribute
+  type (number, string, etc.) is determined by its initial value.  <u>Do not
+  reference any attributes, outputs, or custom outputs of any object in the
+  InitValue expression</u>.</span></p>
+  <p class=TableText-Paragraph style='margin-bottom:12.0pt'><span lang=EN-AU>The
+  following example defines a series of attributes of various types:</span></p>
+  <p class=codeintable><span lang=EN-AU>{ A 1 } { B 9[km] } { C '&quot;abc&quot;'
+  } { D [Server1] } { E '{5,3,7}' }</span></p>
+  <p class=TableText-Paragraph><span lang=EN-AU>&nbsp;</span></p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=159 valign=top style='width:118.95pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph><span lang=EN-AU>CustomOutputList</span></p>
+  </td>
+  <td width=504 valign=top style='width:377.8pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph style='margin-bottom:12.0pt'><span lang=EN-AU>Defines
+  one or more custom outputs for the object.  The following format is used for
+  the input:</span></p>
+  <p class=codeintable style='margin-bottom:12.0pt'><span lang=EN-AU>{&nbsp;&lt;Name1&gt;&nbsp;&lt;Exp1&gt;&nbsp;&lt;Unit1&gt;&nbsp;}&nbsp;...&nbsp;{&nbsp;&lt;NameN&gt;&nbsp;&lt;ExpN&gt;&nbsp;&lt;UnitN&gt;&nbsp;}</span></p>
+  <p class=TableText-Paragraph style='margin-bottom:12.0pt'><span lang=EN-AU>where
+  Name is the name of the custom output, Exp is the expression to be evaluated
+  on demand, and Unit is the unit type for the output.</span></p>
+  <p class=TableText-Paragraph style='margin-bottom:12.0pt'><span lang=EN-AU>For
+  example, the following example defines a custom output called TwiceSimTime,
+  whose value is equal to two times the present simulation time:</span></p>
+  <p class=codeintable><span lang=EN-AU>{&nbsp;TwiceSimTime&nbsp;&nbsp;'2&nbsp;*&nbsp;this.SimTime'&nbsp;&nbsp;TimeUnit&nbsp;}</span></p>
+  <p class=TableText-Paragraph><span lang=EN-AU>&nbsp;</span></p>
+  </td>
+ </tr>
+</table>
+
+<p class=MsoNormal>&nbsp;</p>
+
+</div>
+
+</body>
+
+</html>
