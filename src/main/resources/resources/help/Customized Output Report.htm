@@ -1,0 +1,50 @@
+<html>
+
+<body lang=EN-CA>
+
+<div class=WordSection1>
+
+<div style='border:none;border-bottom:solid #7F7F7F 1.0pt;padding:0in 0in 1.0pt 0in'>
+
+<h2><a name="_Toc42878427">Customized Output Report</a></h2>
+
+</div>
+
+<p class=Main>When making multiple runs, the output reports for the runs are
+appended one after another in a single file.  If more than just a few runs are
+to be made, it is best to create a customized output report using the <span
+class=KeywordChar>RunOutputList</span> keyword for Simulation.  This keyword
+allows the user to specify the set of outputs needed to analyse the results
+from the runs.  Each output is entered as a separate expression enclosed by
+curly braces.  For example, if the desired outputs are the simulation run
+number, average utilisation of Server1, and average waiting time in hours for
+Queue1, then the input to the <span class=KeywordChar>RunOutputList</span>
+keyword would be as follows:</p>
+
+<p class=code style='margin-left:13.5pt'>{ [Simulation].RunNumber } { [Server1].Utilisation
+} { [Queue1].AverageQueueTime/1[h] }</p>
+
+<p class=Main>To make the custom output file easier to input to Excel, it is
+best to record only dimensionless values such as <span class=codeChar><span
+style='font-size:9.0pt'>[Queue1].AverageQueueTime/1[h]</span></span> in the
+above example. In this way, the value will be converted into the desired unit
+(hours in this case) and the unit will not appear in the entries for this
+column.</p>
+
+<p class=Main>Prepare this input using the Input Builder, which can be opened
+from the dropdown menu in the Input Editor.</p>
+
+<p class=Main>At the end of each run, the specified outputs are collected in a
+single output file with the name &lt;configuration file name&gt;.dat.  The file
+has one row for each simulation run that was performed and is tab-delimited, which
+allows it to be imported directly into Excel for analysis.</p>
+
+<p class=MsoNormal>The <span class=KeywordChar>RunOutputList</span> report can
+be generated with or without the main report, as specified by the <span
+class=KeywordChar>PrintReport</span> keyword.</p>
+
+</div>
+
+</body>
+
+</html>
