@@ -1,0 +1,74 @@
+<html>
+
+<body lang=EN-CA>
+
+<div class=WordSection1>
+
+<div style='border:none;border-bottom:solid #7F7F7F 1.0pt;padding:0in 0in 1.0pt 0in'>
+
+<h2><a name="_Toc42878452">Text</a></h2>
+
+</div>
+
+<p class=Main style='page-break-after:avoid'>The <span class=SimObjectChar>Text</span>
+object is used to show static or dynamic text in a model.  <span
+class=SimObjectChar>Text</span> objects are used for labelling various parts of
+the model and for monitoring the status of the model.</p>
+
+<p class=Main style='page-break-after:avoid'>The output displayed by the <span
+class=SimObjectChar>Text</span> object is determined primarily by its <span
+class=KeywordChar>Format</span> keyword.  Dynamic text can be introduced by
+including a Java format code such as %s in the <span class=KeywordChar>Format</span>
+keyword and specifying the value to be displayed with the <span
+class=KeywordChar>DataSource</span> keyword.  Some typical Java format codes
+are %s, which can display both text and numbers, and %.6f, which displays a numeric
+value with six decimal places.</p>
+
+<p class=Main style='page-break-after:avoid'>If the variable text is a number
+with <span class=MainChar>units</span>, the value can be converted from SI to a
+specified unit through the <span class=KeywordChar>Unit</span> keyword.</p>
+
+<p class=Main style='page-break-after:avoid'>The easiest way to modify the
+contents of a Text object is to edit it directly in the view window. 
+Double-click on the object to place it in edit mode.  In this mode, text can be
+entered, deleted, inserted, and highlighted using the same conventions as a
+typical text editor.  Text can be copied from and pasted to the clipboard using
+Ctrl-C and Ctrl-V.  Press the Return key or click on another object to save the
+changes and return the Text object to its normal mode.</p>
+
+<p class=Main style='page-break-after:avoid'>The appearance and style of the
+text is determined by the keywords under the Font tab, including <span
+class=KeywordChar>FontName</span>, <span class=KeywordChar>FontColour</span>,
+etc.  If no inputs are provided to these keywords, the appearance of the text
+is determined by the TextModel entered for the <span class=KeywordChar>DisplayModel</span>
+keyword.  The default TextModel is set to the black Verdana font.</p>
+
+<p class=Main style='page-break-after:avoid'>TextModels can be used in the same
+way as the Text Styles in Microsoft Word.  A new TextModel can be created
+through the following steps:</p>
+
+<p class=List-Number1>1.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;
+</span>In the Object Selector, right&#8209;click on the <span
+class=SimObjectChar>TextModelDefault</span> object and select Duplicate.</p>
+
+<p class=List-Number1>2.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;
+</span>Rename the new <span class=SimObjectChar>TextModel</span> object by clicking
+on its name in the Object Selector, entering the new name.</p>
+
+<p class=List-Number1>3.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;
+</span>Use the Input Editor to specify the characteristics for the new <span
+class=SimObjectChar>TextModel</span>, such as font, font style, colour, etc.</p>
+
+<p class=List-Number1 style='text-indent:-.25in;page-break-after:auto'>4.<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp; </span>Use the Input
+Editor to select the new <span class=SimObjectChar>TextModel</span> for the <span
+class=SimObjectChar>Text</span> object's <span class=KeywordChar>DisplayModel</span>
+keyword.</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+</div>
+
+</body>
+
+</html>
