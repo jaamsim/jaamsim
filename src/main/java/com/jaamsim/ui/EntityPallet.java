@@ -26,6 +26,8 @@ import java.awt.dnd.DnDConstants;
 import java.awt.dnd.DragGestureEvent;
 import java.awt.dnd.DragGestureListener;
 import java.awt.dnd.DragSource;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -86,6 +88,28 @@ public class EntityPallet extends OSFixJFrame implements DragGestureListener {
 		ToolTipManager.sharedInstance().setDismissDelay(600000);
 
 		addComponentListener(FrameBox.getSizePosAdapter(this, "ModelBuilderSize", "ModelBuilderPos"));
+
+		tree.addKeyListener(new KeyListener() {
+			@Override
+			public void keyTyped(KeyEvent e) {}
+
+			@Override
+			public void keyPressed(KeyEvent e) {
+				int keyCode = e.getKeyCode();
+				if (keyCode == KeyEvent.VK_F1) {
+					TreePath path = tree.getSelectionPath();
+					if (path == null || !(path.getLastPathComponent() instanceof DefaultMutableTreeNode))
+						return;
+					DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) path.getLastPathComponent();
+					if(treeNode.getUserObject() instanceof ObjectType) {
+						HelpBox.getInstance().showDialog(treeNode.getUserObject().toString());
+					}
+				}
+			}
+
+			@Override
+			public void keyReleased(KeyEvent e) {}
+		});
 	}
 
 	@Override
