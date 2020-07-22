@@ -1,0 +1,40 @@
+<html>
+
+<body lang=EN-CA>
+
+<div class=WordSection1>
+
+<div style='border:none;border-bottom:solid #7F7F7F 1.0pt;padding:0in 0in 1.0pt 0in'>
+
+<h2><a name="_Toc42878462"></a><a name="_Toc440897764">Changing the Random Seed</a></h2>
+
+</div>
+
+<p class=Main style='page-break-after:avoid'>Each Probability Distribution has
+the <span class=KeywordChar>RandomSeed</span> keyword, which generates a
+different pseudo-random sequence of values for each Probability Distribution. 
+Often, a simulation model is executed multiple times, called ‘replications’,
+using different random seeds to determine the statistical accuracy of the
+output parameters.</p>
+
+<p class=Main>One way to achieve multiple replications is to change the <span
+class=KeywordChar>RandomSeed</span> for each Probability Distribution. 
+However, this can be impractical when large numbers of distributions are used
+in a model.  The <span class=KeywordChar>GlobalSubstreamSeed</span> keyword for
+the <span class=SimObjectChar>Simulation</span> object simplifies this
+process.  Changing the input for this keyword causes all Probability
+Distributions in the model to generate a different random sequence.  In effect,
+the seed for each Probability Distribution is the combination of the inputs to
+the <span class=KeywordChar>RandomSeed</span> and <span class=KeywordChar>GlobalSubstreamSeed</span>
+keywords.</p>
+
+<p class=MsoNormal>When multiple objects behave according to a Probability Distribution
+with the same characteristics, it is advisable to have a unique instance of the
+Probability Distribution for each object.  This avoids any cross-correlation
+effects arising from the order in which a single distribution may be sampled.</p>
+
+</div>
+
+</body>
+
+</html>
