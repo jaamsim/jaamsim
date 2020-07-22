@@ -535,6 +535,12 @@ public class ObjectSelector extends FrameBox {
 			if (control && keyCode == KeyEvent.VK_V) {
 				GUIFrame.getInstance().pasteEntityFromClipboard();
 			}
+			if (keyCode == KeyEvent.VK_F1) {
+				String topic = "";
+				if (currentEntity != null)
+					topic = currentEntity.getObjectType().getName();
+				HelpBox.getInstance().showDialog(topic);
+			}
 		}
 
 		@Override
