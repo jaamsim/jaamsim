@@ -1,0 +1,114 @@
+<html>
+
+<body lang=EN-CA>
+
+<div class=WordSection1>
+
+<div style='border:none;border-bottom:solid #7F7F7F 1.0pt;padding:0in 0in 1.0pt 0in'>
+
+<h2><a name="_Toc42878480"></a><a name="_Ref466303048"></a><a
+name="_Toc440897767">TimeSeries</a></h2>
+
+</div>
+
+<p class=Main style='page-break-after:avoid'>The <span class=SimObjectChar>TimeSeries</span>
+object simulates a numerical value that varies with time.</p>
+
+<p class=Main style='page-break-after:avoid'>Many JaamSim keywords are
+structured to accept a constant value, a Probability Distribution, a <span
+class=SimObjectChar>TimeSeries</span>, or an Expression, which makes <span
+class=SimObjectChar>TimeSeries</span> a powerful and flexible component for
+building simulation models.</p>
+
+<p class=Main style='page-break-after:avoid'>The data for the object consists
+of a series of time stamps and values specified by the <span class=KeywordChar>Value</span>
+keyword.  The time stamps can be irregularly spaced and it is possible to
+repeat the time series over and over again during the simulation using the <span
+class=KeywordChar>CycleTime</span> keyword.</p>
+
+<p class=Main style='page-break-after:avoid'>The value returned by a <span
+class=SimObjectChar>TimeSeries</span> object has a specific unit type indicated
+by the <span class=KeywordChar>UnitType</span> keyword.  To maintain
+consistency, the <span class=KeywordChar>UnitType</span> must be specified
+prior to any other input.</p>
+
+<p class=Main>Timestamps can be entered in the normal fashion, such as
+0&nbsp;s, 5&nbsp;h, etc., or in various year/month/day formats.</p>
+
+<p class=Main>The first timestamp must always be zero seconds<b> </b>(i.e.
+0&nbsp;s) or January&nbsp;1,&nbsp;00:00 of an arbitrary year.  If a non-zero
+year is used, for example 2010-01-01, then the <span class=SimObjectChar>TimeSeries</span>
+considers this date to be time zero of the simulation and all other timestamps
+are offset accordingly.</p>
+
+<p class=Main>The value for the <span class=SimObjectChar>TimeSeries</span> is
+constant between one timestamp and the next.  If the simulation time is greater
+than the <span class=KeywordChar>CycleTime</span>, the <span
+class=SimObjectChar>TimeSeries</span> will repeat from the beginning of the <span
+class=KeywordChar>Value</span> list. </p>
+
+<p class=Main>For time series with more than a few entries, it is best to put
+the Value inputs in a separate file and use the Include feature.  This will
+require manual editing of the configuration file.  In the following example,
+the include file, TimeSeries1.inc, contains the following entries:</p>
+
+<p class=code style='page-break-after:avoid'>TimeSeries1  Value {</p>
+
+<p class=code style='page-break-after:avoid'>{&nbsp;&nbsp;&nbsp;0&nbsp;d&nbsp;&nbsp;0.00&nbsp;&nbsp;km/h&nbsp;&nbsp;}</p>
+
+<p class=code style='page-break-after:avoid'>{&nbsp;&nbsp;&nbsp;2
+d&nbsp;&nbsp;0.76&nbsp;&nbsp;km/h&nbsp;&nbsp;}</p>
+
+<p class=code style='page-break-after:avoid'>{&nbsp;&nbsp;10 d&nbsp;&nbsp;0.24&nbsp;&nbsp;km/h&nbsp;&nbsp;}</p>
+
+<p class=code>}</p>
+
+<p class=Main>Assuming that the include-file is located in the same directory
+as the configuration file, the inputs to the configuration file would be:</p>
+
+<p class=code style='page-break-after:avoid'>Define  TimeSeries  { TimeSeries1
+}</p>
+
+<p class=code style='page-break-after:avoid'>TimeSeries1  UnitType  { SpeedUnit
+}</p>
+
+<p class=code style='page-break-after:avoid'>Include '.\TimeSeries1.inc'</p>
+
+<p class=code style='page-break-after:avoid'>TimeSeries1  CycleTime  { 14 d }</p>
+
+<p class=code style='page-break-after:avoid'>&nbsp;</p>
+
+<p class=code>RecordEdits</p>
+
+<p class=Main>Note that all the inputs associated with TimeSeries1 appear at
+the beginning of the configuration file before the RecordEdits statement.  This
+position will allow editing of the model in the Input Editor and saving the
+results without changing the Include file arrangement.</p>
+
+<p class=Main>In the example,<span class=SimObjectChar> TimeSeries1</span> takes
+on a new value (0.76&nbsp;km/h) on when simulation time reaches 24&nbsp;hours
+and another new value (0.24&nbsp;km/h) at 240 hours.  After 14&nbsp;days, the <span
+class=SimObjectChar>TimeSeries</span> completes a cycle and takes on the original
+value (0&nbsp;km/h).  This 14-day cycle would repeat until the end of the
+simulation run.</p>
+
+<p class=Main>The following inputs in year/month/day format are equivalent to
+those for the example given above.</p>
+
+<p class=code style='page-break-after:avoid'>TimeSeries1  Value {</p>
+
+<p class=code style='page-break-after:avoid'>{&nbsp;&nbsp;2014-01-01T00:00:00&nbsp;&nbsp;0.00&nbsp;&nbsp;km/h&nbsp;&nbsp;}</p>
+
+<p class=code style='page-break-after:avoid'>{&nbsp;&nbsp;2014-01-03T00:00:00&nbsp;&nbsp;0.76&nbsp;&nbsp;km/h&nbsp;&nbsp;}</p>
+
+<p class=code style='page-break-after:avoid'>{&nbsp;&nbsp;2014-01-11T00:00:00&nbsp;&nbsp;0.24&nbsp;&nbsp;km/h&nbsp;&nbsp;}</p>
+
+<p class=code>}</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+</div>
+
+</body>
+
+</html>

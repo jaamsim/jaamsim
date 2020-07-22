@@ -1,0 +1,86 @@
+<html>
+
+<body lang=EN-CA>
+
+<div class=WordSection1>
+
+<div style='border:none;border-bottom:solid #7F7F7F 1.0pt;padding:0in 0in 1.0pt 0in'>
+
+<h2><a name="_Toc42878492">ScriptEntity</a></h2>
+
+</div>
+
+<p class=Main style='page-break-after:avoid'>Originally developed for video
+capture, a <span class=SimObjectChar>ScriptEntity</span> can be used to change window
+<span class=SimObjectChar>Views</span>, to create automatic zooming and
+panning, and to toggle video capture during a run.  Furthermore, keywords
+defined in the script file can be used to modify simulation and object
+parameters initially defined in the input configuration file.</p>
+
+<p class=Main style='page-break-after:avoid'>At present, the ScriptEnity cannot
+be dragged and dropped into a model. It can only be created by editing the
+configuration file.</p>
+
+<p class=Main style='page-break-after:avoid'>The <span class=SimObjectChar>ScriptEntity</span>
+object takes only one keyword, which is the path to a script (.scr) file.</p>
+
+<p class=Main>The script file contains sets of model inputs preceded by the <span
+class=KeywordChar>Time</span> keyword under the <span class=SimObjectChar>ScriptEntity</span>
+object.  </p>
+
+<p class=MsoCaption>Inputs for .scr file</p>
+
+<table class=SimTable border=1 cellspacing=0 cellpadding=0 width=658
+ style='width:493.6pt;margin-left:7.95pt;border-collapse:collapse;border:none'>
+ <tr style='page-break-inside:avoid'>
+  <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
+  background:#BFBFBF;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableHeading><b><span lang=EN-AU>Keyword</span></b></p>
+  </td>
+  <td width=453 valign=top style='width:339.7pt;border:solid #A6A6A6 1.0pt;
+  border-left:none;background:#BFBFBF;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableHeading><b><span lang=EN-AU>Description</span></b></p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph><span lang=EN-AU>Time</span></p>
+  </td>
+  <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph><span lang=EN-AU>The simulated time at which the
+  subsequent inputs are executed.</span></p>
+  </td>
+ </tr>
+</table>
+
+<p class=Main style='page-break-after:avoid'>For example, the following inputs
+can be entered into a .scr file and then referenced by a <span
+class=SimObjectChar>ScriptEntity</span> object to slow down the model at a
+given point in the simulation run:</p>
+
+<p class=code style='page-break-after:avoid'>ScriptEntity1 Time            {
+24.0 h }</p>
+
+<p class=code style='page-break-after:avoid'>Simulation    RealTime        {
+TRUE }</p>
+
+<p class=code style='page-break-after:avoid'>Simulation    RealTimeFactor  {
+1200 }</p>
+
+<p class=code style='page-break-after:avoid'>&nbsp;</p>
+
+<p class=code style='page-break-after:avoid'>ScriptEntity1 Time            {
+30.0 h }</p>
+
+<p class=code>Simulation    RealTime        { FALSE }</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+</div>
+
+</body>
+
+</html>

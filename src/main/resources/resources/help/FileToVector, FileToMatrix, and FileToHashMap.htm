@@ -1,0 +1,186 @@
+<html>
+
+<body lang=EN-CA>
+
+<div class=WordSection1>
+
+<div style='border:none;border-bottom:solid #7F7F7F 1.0pt;padding:0in 0in 1.0pt 0in'>
+
+<h2><a name="_Toc42878489">FileToVector, FileToMatrix, and FileToHashMap</a></h2>
+
+</div>
+
+<p class=Main style='page-break-after:avoid'>The <span class=SimObjectChar>FileToVector</span>,
+<span class=SimObjectChar>FileToMatrix, and FileToHashMap</span> objects read
+data contained in a file.</p>
+
+<p class=Main style='page-break-after:avoid'>The data must be delimited by
+either spaces or tabs (but NOT commas), and can consist of any mixture of
+numbers (with or without units), strings, entities, arrays, maps, and lambda
+functions.  An entry that contains spaces must be enclosed by single quotes.</p>
+
+<p class=Main style='page-break-after:avoid'>An entry can be given in
+expression format or it can take advantage of rules that allow a somewhat
+simpler format.  The following table gives some examples of valid data entries:</p>
+
+<p class=MsoCaption>Table 13&#8209;24 Data File Entries</p>
+
+<table class=SimTable border=1 cellspacing=0 cellpadding=0 width=662
+ style='width:496.75pt;margin-left:7.95pt;border-collapse:collapse;border:none'>
+ <tr style='page-break-inside:avoid'>
+  <td width=111 valign=top style='width:82.95pt;border:solid #A6A6A6 1.0pt;
+  background:#BFBFBF;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableHeading><b><span lang=EN-AU>Entry</span></b></p>
+  </td>
+  <td width=360 valign=top style='width:270.35pt;border:solid #A6A6A6 1.0pt;
+  border-left:none;background:#BFBFBF;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableHeading><b><span lang=EN-AU>Rule</span></b></p>
+  </td>
+  <td width=191 valign=top style='width:143.45pt;border:solid #A6A6A6 1.0pt;
+  border-left:none;background:#BFBFBF;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableHeading><b><span lang=EN-AU>Examples</span></b></p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=111 valign=top style='width:82.95pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph style='page-break-after:avoid'><span lang=EN-AU>Number</span></p>
+  </td>
+  <td width=360 valign=top style='width:270.35pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph><span lang=EN-AU>If the number includes a unit,
+  the unit must be enclosed by square brackets.  If there is a space between
+  the number and the unit, the entry must be enclosed by single quotes.</span></p>
+  <p class=TableText-Paragraph><span lang=EN-AU>&nbsp;</span></p>
+  </td>
+  <td width=191 style='width:143.45pt;border-top:none;border-left:none;
+  border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=codeintable><span lang=EN-AU>1.0</span></p>
+  <p class=codeintable><span lang=EN-AU>&nbsp;</span></p>
+  <p class=codeintable><span lang=EN-AU>1.0[m]</span></p>
+  <p class=codeintable><span lang=EN-AU>&nbsp;</span></p>
+  <p class=codeintable><span lang=EN-AU>'1.0 [m]'</span></p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=111 valign=top style='width:82.95pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph style='page-break-after:avoid'><span lang=EN-AU>Time
+  Stamp</span></p>
+  </td>
+  <td width=360 valign=top style='width:270.35pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph><span lang=EN-AU>Time stamps can be entered as
+  either:</span></p>
+  <p class=TableText-Paragraph><span class=codeChar><span lang=EN-AU
+  style='font-size:9.0pt'>'YYYY-MM-DD HH:MM:SS.SSS' or </span></span></p>
+  <p class=TableText-Paragraph><span class=codeChar><span lang=EN-AU
+  style='font-size:9.0pt'>YYYY-MM-DDTHH:MM:SS.SSS</span></span></p>
+  <p class=TableText-Paragraph><span lang=EN-AU>See </span><span
+  lang=EN-AU>Table&nbsp;4&#8209;14</span><span lang=EN-AU> for more details.</span></p>
+  </td>
+  <td width=191 style='width:143.45pt;border-top:none;border-left:none;
+  border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=codeintable><span lang=EN-AU>&nbsp;</span></p>
+  <p class=codeintable><span lang=EN-AU>'0000-01-02 06:24:00.0'</span></p>
+  <p class=codeintable><span lang=EN-AU>&nbsp;</span></p>
+  <p class=codeintable><span lang=EN-AU> 0000-01-02T06:24:00.0</span></p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=111 valign=top style='width:82.95pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph style='page-break-after:avoid'><span lang=EN-AU>Object</span></p>
+  </td>
+  <td width=360 valign=top style='width:270.35pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph><span lang=EN-AU>Object names can be entered
+  with or without square brackets</span></p>
+  <p class=TableText-Paragraph><span lang=EN-AU>&nbsp;</span></p>
+  </td>
+  <td width=191 style='width:143.45pt;border-top:none;border-left:none;
+  border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=codeintable><span lang=EN-AU>[Server1]</span></p>
+  <p class=codeintable><span lang=EN-AU>&nbsp;</span></p>
+  <p class=codeintable><span lang=EN-AU>Server1</span></p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=111 valign=top style='width:82.95pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph><span lang=EN-AU>Array</span></p>
+  </td>
+  <td width=360 valign=top style='width:270.35pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph><span lang=EN-AU>An array must be enclosed by
+  single quotes.</span></p>
+  <p class=TableText-Paragraph><span lang=EN-AU>&nbsp;</span></p>
+  <p class=TableText-Paragraph><span lang=EN-AU>&nbsp;</span></p>
+  </td>
+  <td width=191 style='width:143.45pt;border-top:none;border-left:none;
+  border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=codeintable><span lang=EN-AU>'{1,2,3}'</span></p>
+  <p class=codeintable><span lang=EN-AU>&nbsp;</span></p>
+  <p class=codeintable><span lang=EN-AU>'{1, 2, 3}'</span></p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=111 valign=top style='width:82.95pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph><span lang=EN-AU>String</span></p>
+  </td>
+  <td width=360 valign=top style='width:270.35pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph><span lang=EN-AU>Any entry that cannot be
+  interpreted as a valid number, object, or array is treated as a string.</span></p>
+  <p class=TableText-Paragraph><span lang=EN-AU>&nbsp;</span></p>
+  </td>
+  <td width=191 style='width:143.45pt;border-top:none;border-left:none;
+  border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=codeintable><span lang=EN-AU>'&quot;Quick red fox&quot;'</span></p>
+  <p class=codeintable><span lang=EN-AU>&nbsp;</span></p>
+  <p class=codeintable><span lang=EN-AU>'Quick red fox'</span></p>
+  </td>
+ </tr>
+</table>
+
+<p class=Main style='page-break-after:avoid'>The data read from the file is
+made available to the model through an output named <span class=KeywordChar>Value</span>. 
+The two objects differ in the type of data returned by this output:</p>
+
+<p class=Main style='margin-left:.5in;text-indent:-.25in;page-break-after:avoid'><span
+style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><span class=SimObjectChar>FileToVector</span>: the <span
+class=KeywordChar>Value</span> output returns a single array combining all the
+records in the file.  </p>
+
+<p class=Main style='margin-left:.5in;text-indent:-.25in;page-break-after:avoid'><span
+style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><span class=SimObjectChar>FileToMatrix</span>: the <span
+class=KeywordChar>Value</span> output returns an array of arrays, with one
+internal array for each record that was read.</p>
+
+<p class=Main style='margin-left:.5in;text-indent:-.25in;page-break-after:avoid'><span
+style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span>FileToHashMap: the Value output return a map with the first entry
+in each line of the file treated as the key and with the corresponding value
+consisting of the remaining entries collected as an array.</p>
+
+<p class=Main>The data file is first read when the simulation is started.  It
+is re-read and the Value output updated whenever the object receives an entity.</p>
+
+</div>
+
+</body>
+
+</html>

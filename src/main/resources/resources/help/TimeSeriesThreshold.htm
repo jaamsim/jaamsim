@@ -1,0 +1,51 @@
+<html>
+
+<body lang=EN-CA>
+
+<div class=WordSection1>
+
+<div style='border:none;border-bottom:solid #7F7F7F 1.0pt;padding:0in 0in 1.0pt 0in'>
+
+<h2><a name="_Toc42878481"></a><a name="_Ref466301078"></a><a
+name="_Toc440897768">TimeSeriesThreshold</a></h2>
+
+</div>
+
+<p class=Main style='page-break-after:avoid'>The <span class=SimObjectChar>TimeSeriesThreshold</span>
+object varies its state between open and closed depending on the present value
+for a <span class=SimObjectChar>TimeSeries</span> object.</p>
+
+<p class=Main style='page-break-after:avoid'>The <span class=SimObjectChar>TimeSeries</span>
+to be monitored is specified by the <span class=KeywordChar>TimeSeries</span>
+keyword.  Trigger levels are determined by the <span class=KeywordChar>MinOpenLimit</span>
+and <span class=KeywordChar>MaxOpenLimit</span> keywords.  For the <span
+class=SimObjectChar>TimeSeriesThreshold</span> to be open, the present value for
+the <span class=SimObjectChar>TimeSeries</span> must be within the range specified
+by these two keywords.</p>
+
+<p class=Main style='page-break-after:avoid'>The <span class=KeywordChar>LookAhead</span>
+and <span class=KeywordChar>Offset</span> keywords provide additional
+flexibility:</p>
+
+<p class=List-Bullet1 style='page-break-after:avoid'><span style='font-family:
+Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span>If a non&#8209;zero value is specified for the <span
+class=KeywordChar>LookAhead</span> keyword, then the present value for the <span
+class=SimObjectChar>TimeSeries</span> must be within the range specified by the
+<span class=KeywordChar>MinOpenLimit</span> and <span class=KeywordChar>MaxOpenLimit</span>
+keywords over the entire <span class=KeywordChar>LookAhead</span> duration,
+starting from the present time.</p>
+
+<p class=List-Bullet1><span style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span>If a non&#8209;zero value is specified for the <span
+class=KeywordChar>Offset</span> keyword, then the above rule is modified so
+that the <span class=KeywordChar>LookAhead</span> duration begins at the
+present time plus the offset.</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+</div>
+
+</body>
+
+</html>

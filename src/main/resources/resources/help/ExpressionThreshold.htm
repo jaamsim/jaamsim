@@ -1,0 +1,83 @@
+<html>
+
+<body lang=EN-CA>
+
+<div class=WordSection1>
+
+<div style='border:none;border-bottom:solid #7F7F7F 1.0pt;padding:0in 0in 1.0pt 0in'>
+
+<h2><a name="_Toc42878482"></a><a name="_Ref466301036"></a><a
+name="_Toc440897769">ExpressionThreshold</a></h2>
+
+</div>
+
+<p class=Main style='page-break-after:avoid'>The <span class=SimObjectChar>ExpressionThreshold</span>
+object varies its state between open and closed depending on the value returned
+by an expression.</p>
+
+<p class=Main style='page-break-after:avoid'>The expression to be evaluated is
+specified by the <span class=KeywordChar>OpenCondition</span> keyword.  It is
+re-evaluated with every time advance of the model, and on demand when the Open
+output is tested by another Expression.</p>
+
+<p class=Main style='page-break-after:avoid'>Normally, an <span
+class=SimObjectChar>ExpressionThreshold</span> is open when the <span
+class=KeywordChar>OpenCondition</span> is TRUE and IS closed when it is FALSE. 
+However, it is possible to specify a separate expression to close the <span
+class=SimObjectChar>ExpressionThreshold</span> using the <span
+class=KeywordChar>CloseCondition</span> keyword.  When this keyword is
+specified, the threshold remains open until the <span class=KeywordChar>CloseCondition</span>
+expression is TRUE.</p>
+
+<p class=Main style='page-break-after:avoid'>The <span class=KeywordChar>CloseCondition</span>
+keyword introduces some special cases to be addressed:</p>
+
+<p class=Main style='margin-left:.5in;text-indent:-.25in;page-break-after:avoid'><span
+style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span>If the two conditions conflict by both returning TRUE, then the
+threshold is considered to be open.</p>
+
+<p class=Main style='margin-left:.5in;text-indent:-.25in;page-break-after:avoid'><span
+style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span>If both conditions are FALSE, then the threshold's previous open
+or closed state is retained.</p>
+
+<p class=Main style='margin-left:.5in;text-indent:-.25in;page-break-after:avoid'><span
+style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span>If both conditions are FALSE at the start of the simulation run,
+then <span class=KeywordChar>InitialOpenValue</span> keyword determines whether
+the threshold is open or closed.</p>
+
+<p class=Main style='page-break-after:avoid'>Expression thresholds CANNOT be
+used in some circumstances.  The expressions entered to the <span
+class=KeywordChar>OpenCondition</span> and <span class=KeywordChar>CloseCondition</span>
+keywords are tested only when an event occurs in the model such as the arrival
+of an entity or the completion of processing a Server.  Normally, this restriction
+has no effect on a discrete event simulation since every change of the model's state
+is associated with an event.  However, it is possible to enter an expression
+that changes between TRUE and FALSE without an event occurring.  This can occur
+when simulation time is used explicitly in an expression, e.g. <span
+class=codeChar><span style='font-size:9.0pt'>'this.SimTime &gt; 5[s]'</span></span>. 
+An <span class=SimObjectChar>ExpressionThreshold</span> will detect this
+condition becoming TRUE at the first event that occurs after 5 seconds.  The
+correct way to model this type of condition is to use a <span
+class=SimObjectChar>TimeSeries</span> and a <span class=SimObjectChar>TimeSeriesThreshold</span>.</p>
+
+<p class=Main>The <span class=KeywordChar>ShowPendingStates</span> keyword is
+used to detect situations where an <span class=SimObjectChar>ExpressionThreshold</span>
+is being used inappropriately.  A &quot;pending state&quot; is the situation
+where the present values for the <span class=KeywordChar>OpenCondition</span>
+and <span class=KeywordChar>CloseCondition</span> expressions are inconsistent
+with the present state of the <span class=SimObjectChar>ExpressionTheshold</span>. 
+This situation can be detected when the ExpressionTheshold is visible in the
+View window because the <span class=KeywordChar>OpenCondition</span> and <span
+class=KeywordChar>CloseCondition</span> expressions are re-evaluated every time
+the computer screen is refreshed.</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+</div>
+
+</body>
+
+</html>
