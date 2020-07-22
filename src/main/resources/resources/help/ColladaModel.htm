@@ -1,0 +1,42 @@
+<html>
+
+<body lang=EN-CA>
+
+<div class=WordSection1>
+
+<h3>ColladaModel</h3>
+
+<p class=Main style='page-break-after:avoid'><span class=SimObjectChar>ColladaModel</span>
+objects are used to display custom 3D graphics in a simulation model.  The
+COLLADA file format (.DAE) is an interchange file format used for 3D graphics. 
+Any 3D object such as a <span class=SimObjectChar>DisplayEntity</span> and most
+of its sub-classes can accept a <span class=SimObjectChar>ColladaModel</span>
+as its <span class=SimObjectChar>DisplayModel</span>.</p>
+
+<p class=Main style='page-break-after:avoid'>A number of other 3D formats can
+be used in addition to Collada.  At the present time, JaamSim supports DAE,
+OBJ, and JSB formats as well as zipped versions of these files (ZIP).  The JSB
+format is specific to JaamSim:</p>
+
+<p class=Main style='page-break-after:avoid'>The JSB format is a binary format
+that allows complex 3D objects to be loaded much faster than is possible with
+the DAE and OBJ formats.  A JSB file can be exported by right clicking on a <span
+class=SimObjectChar>ColladaModel</span> in the Object Selector and selecting
+&quot;Export 3D Binary File (*.jsb)&quot;.  Note that the exported JSB will
+look for the same textures as the DAE file and that these should be located in
+the same relative position to the JSB file as they were to the DAE file.</p>
+
+<p class=MsoNormal>Managing 3D assets can be complicated because of the large
+file sizes and the need to provide separate files for the textures.  It is
+recommended that the user place each 3D asset and its texture files in its own
+ZIP file.  This approach greatly reduces the number and size of the files being
+handled, and ensures that the files can be moved between computers without
+breaking the file paths.  Note that it is often necessary to edit the DAE file
+with a text editor, such as Notepad++, to convert any absolute file paths for
+texture files to relative ones.</p>
+
+</div>
+
+</body>
+
+</html>
