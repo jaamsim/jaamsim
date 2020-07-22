@@ -4783,6 +4783,18 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		});
 	}
 
+	public void invokeHelp() {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				String topic = "";
+				if (selectedEntity != null)
+					topic = selectedEntity.getObjectType().getName();
+				HelpBox.getInstance().showDialog(topic);
+			}
+		});
+	}
+
 	public void invokeRunPause() {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override

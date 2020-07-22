@@ -2104,6 +2104,10 @@ public class RenderManager implements DragSourceListener {
 			GUIFrame.getInstance().invokeFind();
 			return true;
 		}
+		if (keyCode == KeyEvent.VK_F1) {
+			GUIFrame.getInstance().invokeHelp();
+			return true;
+		}
 		if (keyCode == KeyEvent.VK_SPACE) {
 			GUIFrame.getInstance().invokeRunPause();
 			return true;
