@@ -1,0 +1,274 @@
+<html>
+
+<body lang=EN-CA link=blue vlink=purple>
+
+<div class=WordSection1>
+
+<h1><a name="_Toc42878428"></a><a name="_Ref465784312">Configuration File</a></h1>
+
+<p class=Main>The easiest way to create a simple model in JaamSim is to use the
+Graphical User Interface.  However, once a model becomes more complex, it is
+often easier to edit the configuration file (CFG file) in a text editor.  The
+configuration file is saved in plain text and has been designed to be human
+readable.</p>
+
+<p class=Main>There are many advantages to a readable input file in plain text:</p>
+
+<p class=List-Bullet1><span style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span>Inputs can be easily reviewed and audited.</p>
+
+<p class=List-Bullet1><span style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span>Standard software for change control such as GIT can be used to
+track model inputs.</p>
+
+<p class=List-Bullet1><span style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span>Software for performing simulation experiments and optimisation
+can be developed by third-parties in other programming languages such as
+Python.</p>
+
+<p class=Main>The recommended text editor is Notepad++, an open-source editor
+available for download at <a href="https://notepad-plus-plus.org/">www.notepad-plus-plus.org</a>.</p>
+
+<div style='border:none;border-bottom:solid #7F7F7F 1.0pt;padding:0in 0in 1.0pt 0in'>
+
+<h2><a name="_Toc42878429">Basic Structure</a></h2>
+
+</div>
+
+<p class=Main>A JaamSim input configuration file consists of a series of lines,
+akin to a scripting language.  Each line consists of a combination of object
+names, keywords, and values contained within braces.  One or more spaces are
+used to separate these elements.  Braces are also used to denote sets of
+arguments within the outer braces required for arguments in general.  Blank
+lines are ignored by JaamSim.</p>
+
+<p class=Main>Lines beginning with a hash mark ('#') can be used to create
+comments to document the input files.    If a comment extends for several
+lines, each line must start with a hash mark.</p>
+
+<div style='border:none;border-bottom:solid #7F7F7F 1.0pt;padding:0in 0in 1.0pt 0in'>
+
+<h2><a name="_Toc42878430">Object Definitions</a></h2>
+
+</div>
+
+<p class=Main>In JaamSim, an object is initialized by a Define statement.  The <span
+class=MainChar>statement contains Define followed by the object type, and the
+object name enclosed by braces.  Multiple objects can be defined at the same
+time, provided that they are of the same type.  For instance, the following two
+lines define respectively a single Arrow object and three Arrow objects.</span></p>
+
+<p class=code style='page-break-after:avoid'>Define&nbsp;Arrow&nbsp;&nbsp;{&nbsp;SingleArrow&nbsp;}</p>
+
+<p class=code>Define&nbsp;Arrow&nbsp;&nbsp;{&nbsp;Arrow1&nbsp;Arrow2&nbsp;Arrow3&nbsp;}</p>
+
+<p class=Main>Object instances can only be referenced after they have been
+defined.</p>
+
+<div style='border:none;border-bottom:solid #7F7F7F 1.0pt;padding:0in 0in 1.0pt 0in'>
+
+<h2><a name="_Toc42878431">Object Inputs</a></h2>
+
+</div>
+
+<p class=Main>Once an object is defined, its keyword values can be set using a
+command of the following form:</p>
+
+<p class=code>&lt;object&nbsp;name&gt;&nbsp;&lt;keyword&gt;&nbsp;{&nbsp;&lt;value1&gt;&nbsp;&lt;value2&gt;&nbsp;…&nbsp;}</p>
+
+<p class=Main>where value1, value2, … is the list of values for the keyword
+separated by one or more spaces.  For instance, the following line sets the
+colour of the Arrow1 object to be black:</p>
+
+<p class=code>Arrow1&nbsp;Colour&nbsp;{&nbsp;black&nbsp;}</p>
+
+<p class=Main>Multiple parameters for an object can be set in one line
+containing the object name followed by keyword and value pairs.</p>
+
+<p class=code>Arrow1&nbsp;Colour&nbsp;{&nbsp;black&nbsp;}&nbsp;Width&nbsp;{&nbsp;2&nbsp;}</p>
+
+<p class=Main>Inner braces are used for keywords that accept multiple input
+values.</p>
+
+<p class=code>Arrow1&nbsp;Points&nbsp;{&nbsp;{&nbsp;0&nbsp;0&nbsp;0&nbsp;m&nbsp;}&nbsp;{&nbsp;1&nbsp;1&nbsp;1&nbsp;m&nbsp;}&nbsp;}</p>
+
+<p class=code>&nbsp;</p>
+
+<div style='border:none;border-bottom:solid #7F7F7F 1.0pt;padding:0in 0in 1.0pt 0in'>
+
+<h2><a name="_Toc42878432">Using Multiple Lines</a></h2>
+
+</div>
+
+<p class=Main>The readability of a configuration file can often be improved by
+spreading lengthy inputs over multiple lines. This can be done for an input
+that accepts an expression and for inputs that use inner braces, such as the
+RunOutputList keyword for Simulation and the Value keyword for TimeSeries.</p>
+
+<p class=Main>For inputs that accept an expression, only the contents of the
+expression within the single quote marks can be spread over multiple lines. 
+For example,</p>
+
+<p class=code>Server1  ServiceTime  { 'this.obj.type == 1 ? 5[s] #some comment#</p>
+
+<p class=code>                                            : 2[s] #another
+comment#' }</p>
+
+<p class=Main>For inputs that use inner braces, new lines can start only
+between on pair of inner braces and the next.  For example:</p>
+
+<p class=code>Simulation RunOutputList { { [Simulation].RunNumber }</p>
+
+<p class=code>                           { [Server1].Utilisation } </p>
+
+<p class=code>                           { [Queue1].AverageQueueTime/1[h] } }</p>
+
+<p class=code>&nbsp;</p>
+
+<div style='border:none;border-bottom:solid #7F7F7F 1.0pt;padding:0in 0in 1.0pt 0in'>
+
+<h2><a name="_Toc42878433"></a><a name="_Ref451084143">Include Statements</a></h2>
+
+</div>
+
+<p class=Main>The user can store input data in multiple files and then refer to
+these files in an input configuration file using Include statements.  These
+statements refer to other input configuration files by filename and path,
+surrounded by single quotes:</p>
+
+<p class=code>Include&nbsp;&nbsp;'..\Base&nbsp;File\InputFile.cfg'</p>
+
+<p class=Main>Include statements are particularly useful when only a few inputs
+are varied across many simulation runs.  Include statements can be used to create
+incremental configuration files for additional runs that contain a base case
+configuration file :</p>
+
+<p class=code style='page-break-after:avoid'>Include&nbsp;&nbsp;'..\Base&nbsp;File\Basecase.cfg'</p>
+
+<p class=code>Arrow1&nbsp;Width&nbsp;{&nbsp;2.0&nbsp;}</p>
+
+<p class=Main>This example includes the contents of Basecase.cfg and modifies
+the already-defined object Arrow1’s keyword Width value to 2.0.  Note that the
+changes from the base case configuration must appear after the Include
+statement.  These simple configuration files are useful because it is easy to
+tell exactly how the configuration differs from the base case configuration.</p>
+
+<div style='border:none;border-bottom:solid #7F7F7F 1.0pt;padding:0in 0in 1.0pt 0in'>
+
+<h2><a name="_Toc42878434"><span class=SimObjectChar>Groups</span></a></h2>
+
+</div>
+
+<p class=Main><span class=SimObjectChar>Group</span> objects bundle multiple
+objects together to simplify inputs.  Instead of referring to a long list of
+objects, a single <span class=SimObjectChar>Group</span> can be used instead. 
+The <span class=SimObjectChar>Group </span>may be used to set the value for a
+keyword for all members instead of setting the value for each member of the <span
+class=SimObjectChar>Group</span>.  Certain keywords also accept <span
+class=SimObjectChar>Group</span> objects as values.</p>
+
+<p class=MsoCaption>Table&nbsp;8&#8209;1 Group Inputs</p>
+
+<table class=SimTable border=1 cellspacing=0 cellpadding=0 width=658
+ style='width:493.6pt;margin-left:7.95pt;border-collapse:collapse;border:none'>
+ <tr style='page-break-inside:avoid'>
+  <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
+  background:#BFBFBF;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableHeading><b><span lang=EN-AU>Keyword</span></b></p>
+  </td>
+  <td width=453 valign=top style='width:339.7pt;border:solid #A6A6A6 1.0pt;
+  border-left:none;background:#BFBFBF;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableHeading><b><span lang=EN-AU>Description</span></b></p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph><span lang=EN-AU>List</span></p>
+  </td>
+  <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph><span lang=EN-AU>A list of names of the objects
+  included in this list, enclosed by braces.</span></p>
+  </td>
+ </tr>
+</table>
+
+<p class=Main>The following example demonstrates the use of <span
+class=SimObjectChar>Groups</span>:</p>
+
+<p class=code style='page-break-after:avoid'>Define&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Arrow&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;Arrow1&nbsp;Arrow2&nbsp;Arrow3&nbsp;}</p>
+
+<p class=code style='page-break-after:avoid'>Define&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Group&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;ArrowList&nbsp;}</p>
+
+<p class=code style='page-break-after:avoid'>ArrowList&nbsp;&nbsp;List&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;Arrow1&nbsp;Arrow2&nbsp;Arrow3&nbsp;}</p>
+
+<p class=code>ArrowList&nbsp;&nbsp;Colour&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;black&nbsp;}</p>
+
+<p class=Main>In this example, a <span class=SimObjectChar>Group</span> of
+three <span class=SimObjectChar>Arrow</span> objects is created and each <span
+class=SimObjectChar>Arrow</span> is set to the colour black.</p>
+
+<p class=Main>By using the <span class=KeywordChar>List</span> keyword, a
+fourth <span class=SimObjectChar>Arrow</span> can be added to the <span
+class=SimObjectChar>Group</span>:</p>
+
+<p class=code style='page-break-after:avoid'>Define&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Arrow&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;Arrow4&nbsp;}</p>
+
+<p class=code style='page-break-after:avoid'>ArrowList&nbsp;&nbsp;List&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;ArrowList&nbsp;Arrow4&nbsp;}</p>
+
+<p class=code>ArrowList&nbsp;&nbsp;Colour&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;black&nbsp;}</p>
+
+<div style='border:none;border-bottom:solid #7F7F7F 1.0pt;padding:0in 0in 1.0pt 0in'>
+
+<h2><a name="_Toc42878435"></a><a name="_Ref451085371">RecordEdits Statement</a></h2>
+
+</div>
+
+<p class=Main>The <span class=KeywordChar>RecordEdits</span> statement is used
+to preserve the organisation and formatting of a configuration file that has
+been prepared manually by the user.</p>
+
+<p class=Main>It is usually best to construct a complex model manually using a
+text editor.  These inputs are carefully formatted and organised, and include
+comments to document model design.  However, once this material has been
+created, the easiest way to position the objects and to add graphics such as
+titles, labels, etc. is through the graphical user interface.  If the model is
+then saved, all the formatting and comments would normally be lost.</p>
+
+<p class=Main>JaamSim avoids this predicament with the <span class=KeywordChar>RecordEdits</span>
+statement.  On saving, JaamSim copies all inputs before the <span
+class=KeywordChar>RecordEdits</span> statement line-by-line to the saved file,
+and then saves all the changes to the model using computer-written inputs.  The
+following example illustrates this structure:</p>
+
+<p class=code style='page-break-after:avoid'># Manually prepared inputs:</p>
+
+<p class=code style='page-break-after:avoid'># - Everything before the
+RecordEdits statement is unchanged when JaamSim saves a file.  </p>
+
+<p class=code style='page-break-after:avoid'>&nbsp;</p>
+
+<p class=code style='page-break-after:avoid'>RecordEdits</p>
+
+<p class=code style='page-break-after:avoid'>&nbsp;</p>
+
+<p class=code style='page-break-after:avoid'># Computer written inputs:</p>
+
+<p class=code># - Everything that appears after the RecordEdits statement is
+written by the computer.</p>
+
+<p class=Main>The Save functionality in JaamSim is disabled when an input file
+is loaded without a <span class=KeywordChar>RecordEdits</span> statement.  In
+this case, the Save As operation adds a <span class=KeywordChar>RecordEdits</span>
+statement to the end of the original configuration file and then writes out the
+new inputs.</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+</div>
+
+</body>
+
+</html>
