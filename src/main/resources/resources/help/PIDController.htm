@@ -1,0 +1,73 @@
+<html>
+
+<body lang=EN-CA>
+
+<div class=WordSection1>
+
+<div style='border:none;border-bottom:solid #7F7F7F 1.0pt;padding:0in 0in 1.0pt 0in'>
+
+<h2><a name="_Toc42878528"></a><a name="_Toc440897804">PIDController</a></h2>
+
+</div>
+
+<p class=Main style='page-break-after:avoid'>The <span class=SimObjectChar>PIDController</span>
+object simulates the Proportional-Integral-Differential (PID) type controller
+that is widely used in electronic control systems. </p>
+
+<p class=code style='page-break-after:avoid'>error = <b>SetPoint</b> – x</p>
+
+<p class=code style='page-break-after:avoid'>integral = INTEGRAL + (error –
+ERROR)*(t – T)</p>
+
+<p class=code style='page-break-after:avoid'>derivative = (error – ERROR)/(t –
+T)</p>
+
+<p class=code style='page-break-after:avoid'>&nbsp;</p>
+
+<p class=code style='page-break-after:avoid'>y’ = <b>ProportionalGain</b>/<b>SetPointScale</b>
+* (error + integral/<b>IntegralTime</b> +</p>
+
+<p class=code style='page-break-after:avoid'>                 derivative*<b>DerivativeTime</b>)</p>
+
+<p class=code style='page-break-after:avoid'>&nbsp;</p>
+
+<p class=code style='page-break-after:avoid'>y = min( max( y’, <b>OutputLow</b>
+), <b>OutputHigh</b> )</p>
+
+<p class=Main style='page-break-after:avoid'>where:</p>
+
+<p class=code style='page-break-after:avoid'>y = present output value for the
+PID controller</p>
+
+<p class=code style='page-break-after:avoid'>x = present <b>ProcessVariable</b>
+input to the PID controller</p>
+
+<p class=code style='page-break-after:avoid'>t = present simulation time</p>
+
+<p class=code style='page-break-after:avoid'>Y = output value for the PID
+controller at the last update time</p>
+
+<p class=code style='page-break-after:avoid'>X = <b>ProcessVariable</b> input
+to the PID controller at the last update time</p>
+
+<p class=code style='page-break-after:avoid'>T = simulation time at the last
+update</p>
+
+<p class=code style='page-break-after:avoid'>ERROR = value for error at the
+last update time</p>
+
+<p class=code style='page-break-after:avoid'>INTEGRAL = value for integral at
+the last update time</p>
+
+<p class=Main>The value returned by the <span class=SimObjectChar>PIDController</span>
+is calculated on demand.  The update signal received from the <span
+class=SimObjectChar>Controller</span> is used only to record the values Y, X, T,
+ERROR, and INTEGRAL used in the calculation.</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+</div>
+
+</body>
+
+</html>

@@ -1,0 +1,49 @@
+<html>
+
+<body lang=EN-CA>
+
+<div class=WordSection1>
+
+<div style='border:none;border-bottom:solid #7F7F7F 1.0pt;padding:0in 0in 1.0pt 0in'>
+
+<h2><a name="_Toc42878526"></a><a name="_Toc440897802">Integrator</a></h2>
+
+</div>
+
+<p class=Main style='page-break-after:avoid'>The <span class=SimObjectChar>Integrator</span>
+object integrates the input value with respect to time using the trapezoidal
+rule:</p>
+
+<p class=code style='page-break-after:avoid'>y = Y + (t – T)*0.5*(x + X)</p>
+
+<p class=Main style='page-break-after:avoid'>where:</p>
+
+<p class=code style='page-break-after:avoid'>y = present output value for the
+integrator</p>
+
+<p class=code style='page-break-after:avoid'>x = present input to the
+integrator</p>
+
+<p class=code style='page-break-after:avoid'>t = present simulation time</p>
+
+<p class=code style='page-break-after:avoid'>Y = output value for the
+integrator at the last update time</p>
+
+<p class=code style='page-break-after:avoid'>X = input to the integrator at the
+last update time</p>
+
+<p class=code style='page-break-after:avoid'>T = simulation time at the last
+update</p>
+
+<p class=Main>The value returned by the <span class=SimObjectChar>Integrator</span>
+is calculated on demand.  The update signal received from the <span
+class=SimObjectChar>Controller</span> is used only to record the values Y, X,
+and T used in the calculation.</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+</div>
+
+</body>
+
+</html>

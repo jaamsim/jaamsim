@@ -1,0 +1,45 @@
+<html>
+
+<body lang=EN-CA>
+
+<div class=WordSection1>
+
+<div style='border:none;border-bottom:solid #7F7F7F 1.0pt;padding:0in 0in 1.0pt 0in'>
+
+<h2><a name="_Toc42878530"></a><a name="_Toc440897806">MovingAverage</a></h2>
+
+</div>
+
+<p class=Main style='page-break-after:avoid'>The <span class=SimObjectChar>MovingAverage</span>
+object calculates the average value of the input over a given time interval.</p>
+
+<p class=code style='page-break-after:avoid'>y = { x + <span style='font-size:
+14.0pt'>&#931;</span><sub><span style='font-size:7.0pt'>(i = M to M-N-2) </span></sub>X(i)
+} / N</p>
+
+<p class=Main style='page-break-after:avoid'>where:</p>
+
+<p class=code style='page-break-after:avoid'>y = present output value for the MovingAverage
+object</p>
+
+<p class=code style='page-break-after:avoid'>x = present input to the MovingAverage
+object</p>
+
+<p class=code style='page-break-after:avoid'>N = <b>NumberOfSamples</b></p>
+
+<p class=code style='page-break-after:avoid'>M = number of updates that have
+been performed previously</p>
+
+<p class=code style='page-break-after:avoid'>X(i) = input to the MovingAverage object
+at the i<sup>th</sup> update time</p>
+
+<p class=Main>The value returned by the <span class=SimObjectChar>MovingAverage</span>
+<span class=SimObjectChar>object</span> is calculated on demand.  The update
+signal received from the <span class=SimObjectChar>Controller</span> is used
+only to record the values X(i) used in the calculation.</p>
+
+</div>
+
+</body>
+
+</html>
