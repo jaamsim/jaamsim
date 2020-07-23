@@ -1,0 +1,38 @@
+<html>
+
+<body lang=EN-CA>
+
+<div class=WordSection1>
+
+<div style='border:none;border-bottom:solid #7F7F7F 1.0pt;padding:0in 0in 1.0pt 0in'>
+
+<h2><a name="_Toc42878515"></a><a name="_Toc440897790">Assemble</a></h2>
+
+</div>
+
+<p class=Main style='page-break-after:avoid'>The <span class=SimObjectChar>Assemble</span>
+object combines a number of sub&#8209;components into an assembled part.</p>
+
+<p class=Main style='page-break-after:avoid'>Sub-components waiting for
+processing are collected into a series of <span class=SimObjectChar>Queue</span>
+objects, identified by the <span class=KeywordChar>WaitQueueList</span>
+keyword, one for each type of sub-component.</p>
+
+<p class=Main style='page-break-after:avoid'>Incoming sub-components must be
+sent directly to the appropriate queue, not to the <span class=SimObjectChar>Assemble</span>
+object itself.  If necessary, a <span class=SimObjectChar>Branch</span> object
+can be used to direct incoming entities to the various queues.</p>
+
+<p class=MsoNormal>The assembly process begins when there is at least one
+sub-component entity in each of the <span class=SimObjectChar>Queues</span>. 
+When this occurs, the first sub-component in each <span class=SimObjectChar>Queue</span>
+is removed and destroyed, and a new assembled part is created by copying the
+object specified by the <span class=KeywordChar>PrototypeEntity</span>
+keyword.  The time required to complete the assembly process is given by the <span
+class=KeywordChar>ServiceTime</span> keyword.</p>
+
+</div>
+
+</body>
+
+</html>

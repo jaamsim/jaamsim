@@ -1,0 +1,63 @@
+<html>
+
+<body lang=EN-CA>
+
+<div class=WordSection1>
+
+<div style='border:none;border-bottom:solid #7F7F7F 1.0pt;padding:0in 0in 1.0pt 0in'>
+
+<h2><a name="_Toc42878507">Assign</a></h2>
+
+</div>
+
+<p class=Main style='page-break-after:avoid'>The <span class=SimObjectChar>Assign</span>
+object performs one or more <span class=SimObjectChar>Attribute</span>
+assignments whenever it receives an incoming entity.  Once the assignments have
+been performed, the received entity is passed to the next object without delay.</p>
+
+<p class=Main style='page-break-after:avoid'>The <span class=SimObjectChar>Assign</span>
+object is the only place where an <span class=SimObjectChar>Attribute</span>'s
+value can be modified.  <span class=SimObjectChar>The Assign object can modify
+the value of any attribute in the model: its own attributes, the received
+entity's attributes, or any other object's attributes.</span></p>
+
+<p class=Main style='page-break-after:avoid'><span class=SimObjectChar>The
+attribute assignments to be performed are specified by the input to the </span><span
+class=KeywordChar>AttributeAssignmentList</span> keyword.  Each assignment has
+the following form:</p>
+
+<p class=code>{ &lt;left-hand side expression&gt; = &lt;right-hand side
+expression&gt; }</p>
+
+<p class=Main>The right side of each assignment equation is an expression to be
+evaluated.  The left side is an expression that identifies the attribute whose
+value is to be modified.  For example, if object Assign1 has a dimensionless
+numerical attribute A, then the following input to its <span class=KeywordChar>AttributeAssignmentList</span>
+keyword causes the attribute to be increased by 1:</p>
+
+<p class=code>{ 'this.A = this.A + 1' }</p>
+
+<p class=Main>The Assign object attribute obj can be used to access the
+attributes of the received entity.  For example, if the received entity has an
+attribute B whose value is a string, then the following input to the <span
+class=KeywordChar>AttributeAssignmentList</span> keyword causes this attribute
+to take the value <span class=codeChar><span style='font-size:9.0pt'>'New
+String'</span></span>:</p>
+
+<p class=code>{ 'this.obj.B = [[New String]]' }</p>
+
+<p class=Main>If another object, say Server1, has an attribute C whose value is
+a number with units of distance, then the following input to the<span
+class=KeywordChar> AttributeAssignmentList</span> keyword causes this attribute
+to be increased by 1 kilometre:</p>
+
+<p class=code>{ '[Server1].C = [Server1].C + 1[km]' }</p>
+
+<p class=MsoNormal>An unlimited number of assignments can be performed by one
+Assign object.</p>
+
+</div>
+
+</body>
+
+</html>

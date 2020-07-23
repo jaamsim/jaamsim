@@ -1,0 +1,51 @@
+<html>
+
+<body lang=EN-CA>
+
+<div class=WordSection1>
+
+<div style='border:none;border-bottom:solid #7F7F7F 1.0pt;padding:0in 0in 1.0pt 0in'>
+
+<h2><a name="_Toc42878504"></a><a name="_Toc440897780">Seize</a></h2>
+
+</div>
+
+<p class=Main style='page-break-after:avoid'>The <span class=SimObjectChar>Seize</span>
+object allocates one or more units of a specified set of <span
+class=SimObjectChar>Resources</span> on receiving an incoming entity.</p>
+
+<p class=Main style='page-break-after:avoid'>If any of the <span
+class=SimObjectChar>Resources</span> have insufficient units available, the
+received entity is directed to a <span class=SimObjectChar>Queue</span> object
+identified by the <span class=KeywordChar>WaitQueue</span> keyword.  All
+entities received by the <span class=SimObjectChar>Seize</span> object first
+pass through this <span class=SimObjectChar>Queue</span> object, even if
+sufficient units of the <span class=SimObjectChar>Resources</span> are
+available.</p>
+
+<p class=Main style='page-break-after:avoid'>Entities can be sent directly to
+the <span class=SimObjectChar>Queue</span> specified by the <span
+class=KeywordChar>WaitQueue</span> keyword.  Whenever an entity is added to the
+<span class=SimObjectChar>Queue</span>, all the Seize objects that specified
+this <span class=SimObjectChar>Queue</span> as their <span class=KeywordChar>WaitQueue</span>
+will be notified.  The first <span class=SimObjectChar>Seize</span> block that
+has sufficient resource units available will then remove the entity for
+processing.</p>
+
+<p class=Main style='page-break-after:avoid'>Entities waiting for the same <span
+class=SimObjectChar>Resources</span> at more than one <span
+class=SimObjectChar>Seize</span> object are processed in order of the priority
+assigned to them by the input to their <span class=SimObjectChar>Queue’s</span>
+<span class=KeywordChar>Priority</span> keyword.  If the entities in two or
+more <span class=SimObjectChar>Queues</span> have the same priority value, then
+the one that has waited the longest is chosen.</p>
+
+<p class=MsoNormal>All of the specified <span class=SimObjectChar>Resources for
+the selected entity</span> must be available before any are seized.  Once all
+of them are available, they are seized simultaneously.</p>
+
+</div>
+
+</body>
+
+</html>

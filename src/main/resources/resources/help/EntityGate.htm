@@ -1,0 +1,43 @@
+<html>
+
+<body lang=EN-CA>
+
+<div class=WordSection1>
+
+<div style='border:none;border-bottom:solid #7F7F7F 1.0pt;padding:0in 0in 1.0pt 0in'>
+
+<h2><a name="_Toc42878512"></a><a name="_Toc440897787">EntityGate</a></h2>
+
+</div>
+
+<p class=Main style='page-break-after:avoid'>The <span class=SimObjectChar>EntityGate</span>
+object allows incoming entities to be blocked temporarily.</p>
+
+<p class=Main>When the <span class=SimObjectChar>EntityGate</span> is open and
+the <span class=SimObjectChar>Queue</span> is empty, incoming entities pass
+through without delay.  When it is <span class=StateChar>closed</span>,
+incoming entities are directed to a <span class=SimObjectChar>Queue</span> where
+they are held until the <span class=SimObjectChar>EntityGate</span> becomes <span
+class=StateChar>Open</span>.  When the <span class=SimObjectChar>EntityGate</span>
+opens, the queued entities are released one at time, separated by a delay
+determined by the <span class=KeywordChar>ReleaseDelay</span> keyword.  This
+delay does not apply to entities that arrive when the <span
+class=SimObjectChar>EntityGate</span> is <span class=StateChar>open</span>. 
+However, if queued entities are still being released, an incoming entity is
+placed at the end of the <span class=SimObjectChar>Queue</span> even though the
+<span class=SimObjectChar>EntityGate</span> is <span class=StateChar>Open</span>.</p>
+
+<p class=MsoNormal>The <span class=SimObjectChar>EntityGate's</span> state,
+either <span class=StateChar>Open</span> or <span class=StateChar>Closed</span>,
+is determined by the input to the <span class=KeywordChar>OperatingThresholdList</span>
+keyword, which specifies a list of threshold objects such as <span
+class=SimObjectChar>SignalThreshold</span>, <span class=SimObjectChar>TimeSeriesThreshold</span>,
+or <span class=SimObjectChar>ExpressionThreshold</span>.  All of the specified
+threshold objects must be open for the <span class=SimObjectChar>EntityGate</span>
+to become <span class=StateChar>Open</span>.</p>
+
+</div>
+
+</body>
+
+</html>

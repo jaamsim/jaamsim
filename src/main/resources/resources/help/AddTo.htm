@@ -1,0 +1,41 @@
+<html>
+
+<body lang=EN-CA>
+
+<div class=WordSection1>
+
+<div style='border:none;border-bottom:solid #7F7F7F 1.0pt;padding:0in 0in 1.0pt 0in'>
+
+<h2><a name="_Toc42878519"></a><a name="_Toc440897794">AddTo</a></h2>
+
+</div>
+
+<p class=Main style='page-break-after:avoid'>The <span class=SimObjectChar>AddTo</span>
+object is used to add a given number of entities to a received <span
+class=SimObjectChar>EntityContainer</span>.</p>
+
+<p class=Main style='page-break-after:avoid'>The number of entities to be added
+to each <span class=SimObjectChar>EntityContainer</span> is determined by the <span
+class=KeywordChar>NumberOfEntities</span> keyword.  Once the specified number
+of entities is available in the <span class=KeywordChar>WaitQueue</span> and
+there is an <span class=SimObjectChar>EntityContainer</span> waiting in the <span
+class=KeywordChar>ContainerQueue</span>, the entities are added one by one to
+the <span class=SimObjectChar>EntityContainer</span> in the same order as they
+appeared in the <span class=KeywordChar>WaitQueue</span>.  The time to add each
+entity is specified by the <span class=KeywordChar>ServiceTime</span> keyword. 
+<span class=SimObjectChar>EntityContainers</span> are filled in the order in
+which they appear in the <span class=KeywordChar>ContainerQueue</span>.</p>
+
+<p class=MsoNormal>When an input to the <span class=KeywordChar>Match</span>
+keyword is provided, only the entities in the <span class=KeywordChar>WaitQueue</span>
+that have the same <span class=KeywordChar>Match</span> value<span
+class=KeywordChar> </span>are added to the<span class=KeywordChar> </span><span
+class=SimObjectChar>EntityContainer</span>.  The <span class=KeywordChar>Match</span>
+keyword for the <span class=KeywordChar>ContainerQueue</span> is not used by
+this logic.</p>
+
+</div>
+
+</body>
+
+</html>
