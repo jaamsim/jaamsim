@@ -26,16 +26,23 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JEditorPane;
+import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.plaf.basic.BasicArrowButton;
 import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.StyleSheet;
 
@@ -47,6 +54,10 @@ public class HelpBox extends JDialog {
 	private final ArrayList<String> topicList = new ArrayList<>();
 	private JList<String> list;
 	private final JEditorPane editorPane = new JEditorPane();
+	private final JTextField topicSearch;
+	private final ArrayList<String> prevTopics = new ArrayList<>();  // previous topics viewed
+	private final Dimension itemSize;
+	private ScrollablePopupMenu topicMenu;
 
 	private static HelpBox myInstance;
 
@@ -73,6 +84,33 @@ public class HelpBox extends JDialog {
 		}
 		Collections.sort(topicList, Input.uiSortOrder);
 
+		// Topics search
+		topicSearch = new JTextField("", 30);
+		topicSearch.setToolTipText(GUIFrame.formatToolTip("Topic",
+				"Title of the help topic to find."));
+
+		// Recent topics
+		JButton dropdown = new BasicArrowButton(BasicArrowButton.SOUTH) {
+	        @Override
+			public Dimension getPreferredSize() {
+	            return new Dimension(16, topicSearch.getPreferredSize().height);
+	        }
+		};
+		dropdown.setToolTipText(GUIFrame.formatToolTip("Previous Topics",
+				"Help topics that have been found previously."));
+
+		JPanel textPanel = new JPanel();
+		textPanel.setLayout( new FlowLayout(FlowLayout.CENTER, 0, 0) );
+		textPanel.add(new JLabel("Find Topic:"));
+		textPanel.add(Box.createRigidArea(new Dimension(5, 5)));
+		textPanel.add(topicSearch);
+		textPanel.add(dropdown);
+		textPanel.setBorder(new EmptyBorder(10, 5, 5, 5));
+		getContentPane().add(textPanel, BorderLayout.NORTH);
+
+		itemSize = topicSearch.getPreferredSize();
+		itemSize.width += dropdown.getPreferredSize().width;
+
 		// Topic selector
 		String[] topics = new String[topicList.size()];
 		topics = topicList.toArray(topics);
@@ -85,6 +123,7 @@ public class HelpBox extends JDialog {
 				if (ind == -1)
 					return;
 				showTopic(topicList.get(ind));
+				topicSearch.setText("");
 			}
 		});
 		JScrollPane listScroller = new JScrollPane(list);
@@ -134,6 +173,63 @@ public class HelpBox extends JDialog {
 
 		// Set initial position in middle of screen
 		setLocationRelativeTo(null);
+
+		// Dropdown button pressed
+		dropdown.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				topicMenu = new ScrollablePopupMenu();
+				for (final String topic : prevTopics) {
+					JMenuItem item = new JMenuItem(topic);
+					item.setPreferredSize(itemSize);
+					item.addActionListener( new ActionListener() {
+
+						@Override
+						public void actionPerformed( ActionEvent event ) {
+							topicMenu = null;
+							showAndSaveTopic(topic);
+						}
+					} );
+					topicMenu.add(item);
+				}
+				topicMenu.show(topicSearch, 0, topicSearch.getHeight());
+			}
+		});
+
+		// Return pressed - pick the first topic that contains the string
+		topicSearch.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String str = topicSearch.getText().trim();
+				for (String topic : topicList) {
+					if (!topic.toUpperCase().contains(str.toUpperCase()))
+						continue;
+					showAndSaveTopic(topic);
+					return;
+				}
+			}
+		});
+
+		// Listen for changes to the text
+		topicSearch.getDocument().addDocumentListener(new DocumentListener() {
+
+			@Override
+			public void insertUpdate(DocumentEvent e) {
+				if (e.getLength() != 1)  // single character entered
+					return;
+				String topic = topicSearch.getText().trim();
+				myInstance.showTopicMenu(topic);
+			}
+
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+				String topic = topicSearch.getText().trim();
+				myInstance.showTopicMenu(topic);
+			}
+
+			@Override
+			public void changedUpdate(DocumentEvent e) {}
+	    });
 	}
 
 	public synchronized static HelpBox getInstance() {
@@ -160,6 +256,7 @@ public class HelpBox extends JDialog {
 		if (topic.isEmpty() && presentTopic == null)
 			topic = DEFAULT_TOPIC;
 		showTopic(topic);
+		topicSearch.setText("");
 		this.setVisible(true);
 	}
 
@@ -172,8 +269,56 @@ public class HelpBox extends JDialog {
 			presentTopic = topic;
 			int ind = topicList.indexOf(topic);
 			list.setSelectedIndex(ind);
+			list.ensureIndexIsVisible(ind);
 		}
 		catch (Throwable t) {}
+	}
+
+	private void showAndSaveTopic(String topic) {
+		showTopic(topic);
+		topicSearch.setText(topic);
+		prevTopics.remove(topic);
+		prevTopics.add(0, topic);
+	}
+
+	private void showTopicMenu(String str) {
+		if (str.isEmpty()) {
+			if (topicMenu != null) {
+				topicMenu.setVisible(false);
+				topicMenu = null;
+			}
+			return;
+		}
+
+		// List the topics that contain the string
+		ArrayList<String> shortList = new ArrayList<>();
+		for (String topic: topicList) {
+			if (!topic.toUpperCase().contains(str.toUpperCase()))
+				continue;
+			shortList.add(topic);
+		}
+
+		// Build the menu of matching topics
+		topicMenu = new ScrollablePopupMenu();
+		boolean first = true;
+		for (final String topic : shortList) {
+			JMenuItem item = new JMenuItem(topic);
+			item.setPreferredSize(itemSize);
+			item.addActionListener( new ActionListener() {
+				@Override
+				public void actionPerformed( ActionEvent event ) {
+					topicMenu = null;
+					showAndSaveTopic(topic);
+				}
+			} );
+			topicMenu.add(item);
+			if (first) {
+				item.setArmed(true);
+				first = false;
+			}
+		}
+		topicMenu.setFocusable(false);
+		topicMenu.show(topicSearch, 0, topicSearch.getHeight());
 	}
 
 }
