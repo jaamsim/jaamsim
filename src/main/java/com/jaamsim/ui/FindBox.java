@@ -53,6 +53,7 @@ public class FindBox extends JDialog {
 	private final ArrayList<String> prevNames = new ArrayList<>();  // previous entities found
 	private final Dimension itemSize;
 	private ScrollablePopupMenu entityMenu;
+	private final ArrayList<String> nameList = new ArrayList<>(); // eligible entity names
 
 	private static FindBox myInstance;
 	public static final String DIALOG_NAME = "Entity Finder";
@@ -140,6 +141,10 @@ public class FindBox extends JDialog {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				String name = searchText.getText().trim();
+				if (!nameList.isEmpty()) {
+					name = nameList.get(0);
+					searchText.setText(name);
+				}
 				findEntity(name);
 			}
 		});
@@ -252,7 +257,7 @@ public class FindBox extends JDialog {
 			return;
 		}
 		entityMenu = new ScrollablePopupMenu();
-		ArrayList<String> nameList = new ArrayList<>();
+		nameList.clear();
 		JaamSimModel simModel = GUIFrame.getJaamSimModel();
 		for (Entity ent: simModel.getClonesOfIterator(Entity.class)) {
 			if (ent instanceof ObjectType || ent instanceof Unit || ent instanceof IconModel)
@@ -265,6 +270,7 @@ public class FindBox extends JDialog {
 		}
 		Collections.sort(nameList, Input.uiSortOrder);
 
+		boolean first = true;
 		for (final String entName : nameList) {
 			JMenuItem item = new JMenuItem(entName);
 			item.setPreferredSize(itemSize);
@@ -277,6 +283,10 @@ public class FindBox extends JDialog {
 				}
 			} );
 			entityMenu.add(item);
+			if (first && !focusable) {
+				item.setArmed(true);
+				first = false;
+			}
 		}
 		if (nameList.size() >= MAX_LIST_SIZE) {
 			JMenuItem item = new JMenuItem("more ...");
