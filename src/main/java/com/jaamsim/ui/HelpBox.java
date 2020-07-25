@@ -21,6 +21,8 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
@@ -210,6 +212,25 @@ public class HelpBox extends JDialog {
 			}
 		});
 
+		// Down arrow pressed
+		topicSearch.addKeyListener(new KeyListener() {
+			@Override
+			public void keyTyped(KeyEvent e) {}
+
+			@Override
+			public void keyPressed(KeyEvent e) {
+				int keyCode = e.getKeyCode();
+				if (keyCode == KeyEvent.VK_DOWN && topicMenu != null) {
+					topicMenu.setVisible(false);
+					String name = topicSearch.getText().trim();
+					showTopicMenu(name, true);
+				}
+			}
+
+			@Override
+			public void keyReleased(KeyEvent e) {}
+		});
+
 		// Listen for changes to the text
 		topicSearch.getDocument().addDocumentListener(new DocumentListener() {
 
@@ -218,13 +239,13 @@ public class HelpBox extends JDialog {
 				if (e.getLength() != 1)  // single character entered
 					return;
 				String topic = topicSearch.getText().trim();
-				myInstance.showTopicMenu(topic);
+				myInstance.showTopicMenu(topic, false);
 			}
 
 			@Override
 			public void removeUpdate(DocumentEvent e) {
 				String topic = topicSearch.getText().trim();
-				myInstance.showTopicMenu(topic);
+				myInstance.showTopicMenu(topic, false);
 			}
 
 			@Override
@@ -281,7 +302,7 @@ public class HelpBox extends JDialog {
 		prevTopics.add(0, topic);
 	}
 
-	private void showTopicMenu(String str) {
+	private void showTopicMenu(String str, boolean focusable) {
 		if (str.isEmpty()) {
 			if (topicMenu != null) {
 				topicMenu.setVisible(false);
@@ -312,12 +333,13 @@ public class HelpBox extends JDialog {
 				}
 			} );
 			topicMenu.add(item);
-			if (first) {
+			if (first && !focusable) {
 				item.setArmed(true);
 				first = false;
 			}
 		}
-		topicMenu.setFocusable(false);
+		if (!focusable)
+			topicMenu.setFocusable(false);
 		topicMenu.show(topicSearch, 0, topicSearch.getHeight());
 	}
 
