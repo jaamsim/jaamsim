@@ -23,6 +23,8 @@ import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
@@ -142,6 +144,25 @@ public class FindBox extends JDialog {
 			}
 		});
 
+		// Down arrow pressed
+		searchText.addKeyListener(new KeyListener() {
+			@Override
+			public void keyTyped(KeyEvent e) {}
+
+			@Override
+			public void keyPressed(KeyEvent e) {
+				int keyCode = e.getKeyCode();
+				if (keyCode == KeyEvent.VK_DOWN && entityMenu != null) {
+					entityMenu.setVisible(false);
+					String name = searchText.getText().trim();
+					showEntityMenu(name, true);
+				}
+			}
+
+			@Override
+			public void keyReleased(KeyEvent e) {}
+		});
+
 		// Listen for changes to the text
 		searchText.getDocument().addDocumentListener(new DocumentListener() {
 
@@ -150,13 +171,13 @@ public class FindBox extends JDialog {
 				if (e.getLength() != 1)  // single character entered
 					return;
 				String name = searchText.getText().trim();
-				myInstance.showEntityMenu(name);
+				myInstance.showEntityMenu(name, false);
 			}
 
 			@Override
 			public void removeUpdate(DocumentEvent e) {
 				String name = searchText.getText().trim();
-				myInstance.showEntityMenu(name);
+				myInstance.showEntityMenu(name, false);
 			}
 
 			@Override
@@ -222,7 +243,7 @@ public class FindBox extends JDialog {
 		FrameBox.setSelectedEntity(ent, false);
 	}
 
-	private void showEntityMenu(String name) {
+	private void showEntityMenu(String name, boolean focusable) {
 		if (name.isEmpty()) {
 			if (entityMenu != null) {
 				entityMenu.setVisible(false);
@@ -262,7 +283,8 @@ public class FindBox extends JDialog {
 			item.setPreferredSize(itemSize);
 			entityMenu.add(item);
 		}
-		entityMenu.setFocusable(false);
+		if (!focusable)
+			entityMenu.setFocusable(false);
 		entityMenu.show(searchText, 0, searchText.getHeight());
 	}
 
