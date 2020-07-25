@@ -40,6 +40,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
+import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -75,6 +76,10 @@ public class ExpressionBox extends JDialog {
 	private int editMode;
 	private JPopupMenu entityMenu;
 	private JPopupMenu outputMenu;
+
+	private final ArrayList<String> nameList = new ArrayList<>();
+	private final ArrayList<String> compList = new ArrayList<>();
+	private final ArrayList<OutputHandle> handles = new ArrayList<>();
 
 	private static final int EDIT_MODE_NORMAL = 0;
 	private static final int EDIT_MODE_ENTITY = 1;
@@ -216,6 +221,38 @@ public class ExpressionBox extends JDialog {
 				}
 				else if (c == '.') {
 					setEditMode(EDIT_MODE_OUTPUT);
+				}
+
+				// Return pressed
+				if (c == '\n' && (editMode == EDIT_MODE_ENTITY
+						|| editMode == EDIT_MODE_OUTPUT)) {
+					SwingUtilities.invokeLater(new Runnable() {
+						@Override
+						public void run() {
+							if (editMode == EDIT_MODE_ENTITY) {
+								int ind0 = editArea.getText().lastIndexOf('[', e.getOffset());
+								if (ind0 == -1 || nameList.isEmpty())
+									return;
+								String name = String.format("[%s]", nameList.get(0));
+								editArea.replaceRange(name, ind0, e.getOffset() + 1);
+							}
+							else if (editMode == EDIT_MODE_OUTPUT) {
+								String name = "";
+								if (!compList.isEmpty()) {
+									name = String.format("[%s]", compList.get(0));
+								}
+								else if (!handles.isEmpty()) {
+									name = handles.get(0).getName();
+								}
+								int ind0 = editArea.getText().lastIndexOf('.', e.getOffset());
+								if (ind0 == -1 || name.isEmpty())
+									return;
+								editArea.replaceRange(name, ind0 + 1, e.getOffset() + 1);
+							}
+							setEditMode(EDIT_MODE_NORMAL);
+						}
+					});
+					return;
 				}
 
 				// Show the pop-up menus for entity/output selection
@@ -660,7 +697,7 @@ public class ExpressionBox extends JDialog {
 		if (entityMenu != null)
 			entityMenu.setVisible(false);
 		entityMenu = new ScrollablePopupMenu();
-		ArrayList<String> nameList = new ArrayList<>();
+		nameList.clear();
 		JaamSimModel simModel = GUIFrame.getJaamSimModel();
 		for (DisplayEntity each: simModel.getClonesOfIterator(DisplayEntity.class)) {
 			if (!each.isRegistered())
@@ -681,6 +718,7 @@ public class ExpressionBox extends JDialog {
 		}
 		Collections.sort(nameList, Input.uiSortOrder);
 
+		boolean first = true;
 		for (final String entName : nameList) {
 			JMenuItem item = new JMenuItem(entName);
 			item.addActionListener( new ActionListener() {
@@ -695,6 +733,10 @@ public class ExpressionBox extends JDialog {
 				}
 			} );
 			entityMenu.add(item);
+			if (first) {
+				item.setArmed(true);
+				first = false;
+			}
 		}
 		Point p = editArea.getCaret().getMagicCaretPosition();
 		if (p == null)
@@ -710,7 +752,7 @@ public class ExpressionBox extends JDialog {
 		outputMenu = new ScrollablePopupMenu();
 
 		// Sub-model components
-		ArrayList<String> compList = new ArrayList<>();
+		compList.clear();
 		for (Entity comp : ent.getChildren()) {
 			if (!comp.isRegistered())
 				continue;
@@ -720,6 +762,7 @@ public class ExpressionBox extends JDialog {
 		}
 		Collections.sort(compList);
 
+		boolean first = true;
 		for (String compName : compList) {
 			String str = String.format("[%s]", compName);
 			JMenuItem item = new JMenuItem(str);
@@ -734,10 +777,14 @@ public class ExpressionBox extends JDialog {
 				}
 			} );
 			outputMenu.add(item);
+			if (first) {
+				item.setArmed(true);
+				first = false;
+			}
 		}
 
 		// Outputs
-		ArrayList<OutputHandle> handles = new ArrayList<>();
+		handles.clear();
 		for (OutputHandle hand : OutputHandle.getOutputHandleList(ent)) {
 			if (hand.getName().contains(" "))
 				continue;
@@ -765,6 +812,10 @@ public class ExpressionBox extends JDialog {
 				}
 			} );
 			outputMenu.add(item);
+			if (first) {
+				item.setArmed(true);
+				first = false;
+			}
 		}
 
 		Point p = editArea.getCaret().getMagicCaretPosition();
