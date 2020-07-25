@@ -73,8 +73,8 @@ public class ExpressionBox extends JDialog {
 	private int result;
 
 	private int editMode;
-	private static JPopupMenu entityMenu;
-	private static JPopupMenu outputMenu;
+	private JPopupMenu entityMenu;
+	private JPopupMenu outputMenu;
 
 	private static final int EDIT_MODE_NORMAL = 0;
 	private static final int EDIT_MODE_ENTITY = 1;
