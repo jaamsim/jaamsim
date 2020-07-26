@@ -23,6 +23,8 @@ import java.awt.Insets;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -203,6 +205,26 @@ public class ExpressionBox extends JDialog {
 			}
 		} );
 
+		// Down arrow pressed
+		editArea.addKeyListener(new KeyListener() {
+			@Override
+			public void keyTyped(KeyEvent e) {}
+
+			@Override
+			public void keyPressed(KeyEvent e) {
+				int keyCode = e.getKeyCode();
+				if (keyCode == KeyEvent.VK_DOWN) {
+					int ind = editArea.getCaretPosition() - 1;
+					//System.out.format("ind=%s, length=%s%n", ind, editArea.getText().length());
+					ind = Math.min(ind, editArea.getText().length() - 1);
+					showMenus(ind, true);
+				}
+			}
+
+			@Override
+			public void keyReleased(KeyEvent e) {}
+		});
+
 		// Listen for changes to the text
 		editArea.getDocument().addDocumentListener(new DocumentListener() {
 
@@ -257,7 +279,7 @@ public class ExpressionBox extends JDialog {
 				}
 
 				// Show the pop-up menus for entity/output selection
-				showMenus(e.getOffset());
+				showMenus(e.getOffset(), false);
 			}
 
 			@Override
@@ -280,7 +302,7 @@ public class ExpressionBox extends JDialog {
 				offset = Math.min(offset, editArea.getText().length() - 1);
 
 				// Show the pop-up menus for entity/output selection
-				showMenus(offset);
+				showMenus(offset, false);
 			}
 
 			@Override
@@ -636,7 +658,7 @@ public class ExpressionBox extends JDialog {
 
 	}
 
-	private void showMenus(int ind1) {
+	private void showMenus(int ind1, boolean focusable) {
 		String text = editArea.getText();
 
 		if (editMode == EDIT_MODE_ENTITY) {
@@ -659,7 +681,7 @@ public class ExpressionBox extends JDialog {
 			}
 
 			// Show the entity name pop-up
-			showEntityMenu(name, ind0, ind1);
+			showEntityMenu(name, ind0, ind1, focusable);
 			return;
 		}
 
@@ -689,12 +711,12 @@ public class ExpressionBox extends JDialog {
 			}
 
 			// Show the output name pop-up
-			showOutputMenu(ent, name, dotIndex, ind1);
+			showOutputMenu(ent, name, dotIndex, ind1, focusable);
 			return;
 		}
 	}
 
-	private void showEntityMenu(String name, final int ind0, final int ind1) {
+	private void showEntityMenu(String name, final int ind0, final int ind1, boolean focusable) {
 		if (entityMenu != null)
 			entityMenu.setVisible(false);
 		entityMenu = new ScrollablePopupMenu();
@@ -743,7 +765,7 @@ public class ExpressionBox extends JDialog {
 				}
 			} );
 			entityMenu.add(item);
-			if (first) {
+			if (first && !focusable) {
 				item.setArmed(true);
 				first = false;
 			}
@@ -752,11 +774,12 @@ public class ExpressionBox extends JDialog {
 		if (p == null)
 			p = new Point();  // p is null after text is selected and the '[' key is pressed
 		int height = editArea.getFontMetrics(editArea.getFont()).getHeight();
-		entityMenu.setFocusable(false);
+		if (!focusable)
+			entityMenu.setFocusable(false);
 		entityMenu.show(editArea, p.x, p.y + height);
 	}
 
-	private void showOutputMenu(Entity ent, String name, final int ind0, final int ind1) {
+	private void showOutputMenu(Entity ent, String name, final int ind0, final int ind1, boolean focusable) {
 		if (outputMenu != null)
 			outputMenu.setVisible(false);
 		outputMenu = new ScrollablePopupMenu();
@@ -796,7 +819,7 @@ public class ExpressionBox extends JDialog {
 				}
 			} );
 			outputMenu.add(item);
-			if (first) {
+			if (first && !focusable) {
 				item.setArmed(true);
 				first = false;
 			}
@@ -837,7 +860,7 @@ public class ExpressionBox extends JDialog {
 				}
 			} );
 			outputMenu.add(item);
-			if (first) {
+			if (first && !focusable) {
 				item.setArmed(true);
 				first = false;
 			}
@@ -847,7 +870,8 @@ public class ExpressionBox extends JDialog {
 		if (p == null)
 			p = new Point();
 		int height = editArea.getFontMetrics(editArea.getFont()).getHeight();
-		outputMenu.setFocusable(false);
+		if (!focusable)
+			outputMenu.setFocusable(false);
 		outputMenu.show(editArea, p.x, p.y + height);
 	}
 
