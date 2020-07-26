@@ -721,7 +721,16 @@ public class ExpressionBox extends JDialog {
 
 		boolean first = true;
 		for (final String entName : nameList) {
-			JMenuItem item = new JMenuItem(entName);
+			JMenuItem item = new JMenuItem(entName) {
+				@Override
+				public Point getToolTipLocation(MouseEvent e) {
+					return new Point(entityMenu.getWidth(), -getY());
+				}
+			};
+			item.setToolTipText(GUIFrame.formatOutputToolTip(
+					entName,
+					simModel.getNamedEntity(entName).getDescription()) );
+
 			item.addActionListener( new ActionListener() {
 
 				@Override
