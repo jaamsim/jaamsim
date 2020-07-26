@@ -775,7 +775,16 @@ public class ExpressionBox extends JDialog {
 		boolean first = true;
 		for (String compName : compList) {
 			String str = String.format("[%s]", compName);
-			JMenuItem item = new JMenuItem(str);
+			JMenuItem item = new JMenuItem(str) {
+				@Override
+				public Point getToolTipLocation(MouseEvent e) {
+					return new Point(outputMenu.getWidth(), -getY());
+				}
+			};
+			item.setToolTipText(GUIFrame.formatOutputToolTip(
+					String.format("%s.%s", ent, compName),
+					ent.getChild(compName).getDescription()) );
+
 			item.addActionListener( new ActionListener() {
 
 				@Override
