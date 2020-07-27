@@ -682,6 +682,17 @@ public class ExpressionBox extends JDialog {
 
 			// Show the entity name pop-up
 			showEntityMenu(name, ind0, ind1, focusable);
+
+			// If the popup menu takes the focus, set it to the second item on the list
+			if (focusable) {
+				SwingUtilities.invokeLater(new Runnable() {
+					@Override
+					public void run() {
+						entityMenu.dispatchEvent(new KeyEvent(entityMenu, KeyEvent.KEY_PRESSED, 0, 0, KeyEvent.VK_DOWN, '\0'));
+						entityMenu.dispatchEvent(new KeyEvent(entityMenu, KeyEvent.KEY_PRESSED, 0, 0, KeyEvent.VK_DOWN, '\0'));
+					}
+				});
+			}
 			return;
 		}
 
@@ -712,6 +723,17 @@ public class ExpressionBox extends JDialog {
 
 			// Show the output name pop-up
 			showOutputMenu(ent, name, dotIndex, ind1, focusable);
+
+			// If the popup menu takes the focus, set it to the second item on the list
+			if (focusable) {
+				SwingUtilities.invokeLater(new Runnable() {
+					@Override
+					public void run() {
+						outputMenu.dispatchEvent(new KeyEvent(outputMenu, KeyEvent.KEY_PRESSED, 0, 0, KeyEvent.VK_DOWN, '\0'));
+						outputMenu.dispatchEvent(new KeyEvent(outputMenu, KeyEvent.KEY_PRESSED, 0, 0, KeyEvent.VK_DOWN, '\0'));
+					}
+				});
+			}
 			return;
 		}
 	}
