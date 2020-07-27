@@ -39,6 +39,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -224,6 +225,14 @@ public class HelpBox extends JDialog {
 					topicMenu.setVisible(false);
 					String name = topicSearch.getText().trim();
 					showTopicMenu(name, true);
+
+					// Set the pop-up menu to the second item on the list
+					SwingUtilities.invokeLater(new Runnable() {
+						@Override
+						public void run() {
+							topicMenu.dispatchEvent(new KeyEvent(topicMenu, KeyEvent.KEY_PRESSED, 0, 0, KeyEvent.VK_DOWN, '\0'));
+						}
+					});
 				}
 			}
 
