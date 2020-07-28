@@ -77,6 +77,7 @@ public class ExpressionBox extends JDialog {
 	private int result;
 
 	private int editMode;
+	private Point menuPos;
 	private JPopupMenu entityMenu;
 	private JPopupMenu outputMenu;
 
@@ -314,6 +315,14 @@ public class ExpressionBox extends JDialog {
 
 	private void setEditMode(int mode) {
 		editMode = mode;
+
+		// Set the position for the pop-up menu
+		menuPos = editArea.getCaret().getMagicCaretPosition();
+		if (menuPos == null)
+			menuPos = new Point();
+		menuPos.y += editArea.getFontMetrics(editArea.getFont()).getHeight();
+
+		// Hide the unused menu if it is still visible
 		if (mode != EDIT_MODE_ENTITY && entityMenu != null) {
 			entityMenu.setVisible(false);
 			entityMenu = null;
@@ -792,13 +801,10 @@ public class ExpressionBox extends JDialog {
 				first = false;
 			}
 		}
-		Point p = editArea.getCaret().getMagicCaretPosition();
-		if (p == null)
-			p = new Point();  // p is null after text is selected and the '[' key is pressed
-		int height = editArea.getFontMetrics(editArea.getFont()).getHeight();
+
 		if (!focusable)
 			entityMenu.setFocusable(false);
-		entityMenu.show(editArea, p.x, p.y + height);
+		entityMenu.show(editArea, menuPos.x, menuPos.y);
 	}
 
 	private void showOutputMenu(Entity ent, String name, final int ind0, final int ind1, boolean focusable) {
@@ -888,13 +894,9 @@ public class ExpressionBox extends JDialog {
 			}
 		}
 
-		Point p = editArea.getCaret().getMagicCaretPosition();
-		if (p == null)
-			p = new Point();
-		int height = editArea.getFontMetrics(editArea.getFont()).getHeight();
 		if (!focusable)
 			outputMenu.setFocusable(false);
-		outputMenu.show(editArea, p.x, p.y + height);
+		outputMenu.show(editArea, menuPos.x, menuPos.y);
 	}
 
 	private Entity getEntityReference(String text, int dotIndex) {
