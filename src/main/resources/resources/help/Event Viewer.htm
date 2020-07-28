@@ -1,0 +1,172 @@
+<html>
+
+<body lang=EN-CA>
+
+<div class=WordSection1>
+
+<div style='border:none;border-bottom:solid #7F7F7F 1.0pt;padding:0in 0in 1.0pt 0in'>
+
+<h2>Event Viewer</h2>
+
+</div>
+
+<p class=Main style='page-break-after:avoid'>The Event Viewer is a tool for
+debugging and optimizing a simulation model.  It is intended primarily for
+advanced users and programmers, but can also be used to demonstrate the
+underlying logic behind discrete event simulation.</p>
+
+<h3>Future Events tab</h3>
+
+<p class=Main style='page-break-after:avoid'>The 'Future Events' tab displays
+the future events that are scheduled for execution by the model at the present
+simulation time.  The most recent events that have been executed, including
+conditional events, are also displayed along with the computer processing time
+in nanoseconds that was required to execute each event.  A maximum of 1,000
+completed events can be recorded, after which the oldest ones are discarded.</p>
+
+<p class=Main style='page-break-after:avoid'>A complex model can have many
+hundreds or thousands of future events.</p>
+
+<p class=Main>Events that have been completed are shown with a green background
+in the table.  An event that was scheduled and then cancelled is shown with a
+red background.  A conditional event that has been completed is shown with a
+yellow background.  Future events are shown with a white background.</p>
+
+<p class=Main>The following information is provided by the columns in the
+table:</p>
+
+<p class=Main style='margin-left:.5in;text-indent:-.25in'><span
+style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><b>Ticks</b> – the internal simulation time for the event
+expressed as an integer number of 'clock ticks'.  The duration of a clock tick
+is defined by the <span class=KeywordChar>TickLength</span> input for the
+Simulation object. The default value is one microsecond.</p>
+
+<p class=Main style='margin-left:.5in;text-indent:-.25in'><span
+style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><b>Time</b> – the simulation time for the event.  The time unit
+for this display is set using the Unit menu item on the Control Panel.  The
+default unit is hours.</p>
+
+<p class=Main style='margin-left:.5in;text-indent:-.25in'><span
+style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><b>Pri </b>– the priority of the event that was assigned by the
+internal JaamSim logic.  Events that are scheduled for the same simulation time
+are executed in order of increasing priority value, e.g. an event with priority
+2 is executed before an event with priority 5.</p>
+
+<p class=Main style='margin-left:.5in;text-indent:-.25in'><span
+style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><b>Description </b>– the simulation object associated with the
+event and the JaamSim method to be executed by the event.</p>
+
+<p class=Main style='margin-left:.5in;text-indent:-.25in'><span
+style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><b>State</b> – the present state of the event: 'Completed',
+'Terminated', or blank if the event has not been executed yet.</p>
+
+<p class=Main style='margin-left:.5in;text-indent:-.25in'><span
+style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><b>Nanos</b> – the computer processing time in nanoseconds that
+was required to execute the event.  These times are accurate ONLY when the
+model is executed continuously with 'Real Time' mode turned off.  Processing
+times are many times longer when events are executed one by one using the 'Next
+Event' button or when 'Real Time' mode is used to slow the execution speed for
+the model.  The large reduction in processing time is due to the 'just-in-time'
+compiling used by the Java virtual machine, not to the way the execution time
+data is collected.</p>
+
+<p class=Main>The following buttons are provided:</p>
+
+<p class=Main style='margin-left:.5in;text-indent:-.25in'><span
+style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><b>'Next Event' button</b> – executes the next future event.  If
+the event time is later than the present simulation time, the model is advanced
+to that time in accordance with the 'Real Time' mode setting, i.e. at the
+specified execution speed if it is 'on' or instantaneously if it is 'off'. 
+After the event is executed, it is common for one or more new events to be
+scheduled for execution at future times.</p>
+
+<p class=Main style='margin-left:.5in;text-indent:-.25in'><span
+style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><b>'Next Time' button</b> – executes the next future event along
+with any other events that are scheduled for the same simulation time.</p>
+
+<p class=Main style='margin-left:.5in;text-indent:-.25in'><span
+style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><b>'Clear Events' button</b> – removes all the completed events
+from the Event Viewer.</p>
+
+<p class=Main style='margin-left:.5in;text-indent:-.25in'><span
+style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><b>'Hide Condition Events' button </b>– turns off the display of
+any conditional events that were executed.  Conditional events are tested and,
+if appropriate, executed before time is advanced to the next event time.  The
+processing time required to execute these events can be significant which makes
+it important to display them.  However, if there are a large number of these
+events, they can create unnecessary clutter in the display.  This button gives
+the user the ability to display or hide these results as required.</p>
+
+<h3>'Conditional Events' tab</h3>
+
+<p class=Main>The 'Conditional Events' tab provides a list of the conditional
+events to be tested and possibly executed at each event time.  Most conditional
+events are associated with an <span class=SimObjectChar>ExpressionThreshold</span>
+object.  Note that often it is possible to eliminate a conditional event by
+providing an input to the <span class=KeywordChar>WatchList</span> keyword for
+the object in question.</p>
+
+<h3>'Execution Time Profile' tab</h3>
+
+<p class=Main style='page-break-after:avoid'>The 'Execution Time Profile' tab
+provides a list of event types sorted by the total processing time consumed by
+each event type.  </p>
+
+<p class=Main>For accurate results, a model MUST be executed with 'Real Time'
+mode set to 'off' and allowed to run long enough for the 'Speed' display on the
+Control Panel to have reached its maximum value.  The model should then be
+paused and the 'Clear Results' button clicked to reset the execute time data. 
+The model can then be resumed to collect fresh data.  The displayed profile
+data is updated continuously as the model runs.</p>
+
+<p class=Main>The following data is displayed on the 'Execution Profile' tab:</p>
+
+<p class=Main style='margin-left:.5in;text-indent:-.25in'><span
+style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><b>'Event Type'</b> – the simulation object and JaamSim method
+name for the event.</p>
+
+<p class=Main style='margin-left:.5in;text-indent:-.25in'><span
+style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><b>'% of Total Time'</b> – the total processing time for the
+events of this type divided by the total processing time for all types of
+events, expressed as a percentage.</p>
+
+<p class=Main style='margin-left:.5in;text-indent:-.25in'><span
+style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><b>'Rate' </b>– the number of executions for this event type per
+unit simulation time.  The time unit for this display is set using the Unit
+menu item on the Control Panel.  The default unit is hours.</p>
+
+<p class=Main style='margin-left:.5in;text-indent:-.25in'><span
+style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><b>'Avg. Nanos'</b> – the average processing time in nanoseconds
+required to execute events of this type.</p>
+
+<p class=Main>The 'Rate' and 'Avg. Nanos' displays can be used to determine
+whether the total processing time for an event type is the result of a long
+execution time or a large number of events being executed.</p>
+
+<p class=Main>The 'Show Class Results' button changes the display to show
+results for each simulation object type instead of for each simulation object. 
+For example, the normal display will show separate entries for EntityConveyor1
+and EntityConveyor2, whereas with 'Show Class Results' selected, it will show a
+single entry for all EntityConveyors.</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+</div>
+
+</body>
+
+</html>
