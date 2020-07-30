@@ -41,7 +41,8 @@ import com.jaamsim.units.TimeUnit;
 
 public class EntityContainer extends SimEntity implements EntContainer {
 
-	@Keyword(description = "The priority for positioning the received entity in the container. "
+	@Keyword(description = "The priority for positioning the received entity in the "
+	                     + "EntityContainer. "
 	                     + "Priority is integer valued and a lower numerical value indicates a "
 	                     + "higher priority. "
 	                     + "For example, priority 3 is higher than 4, and priorities 3, 3.2, and "
@@ -50,40 +51,42 @@ public class EntityContainer extends SimEntity implements EntContainer {
 	private final SampleInput priority;
 
 	@Keyword(description = "An expression returning a string value that categorizes the entities "
-	                     + "in the container. "
+	                     + "in the EntityContainer. "
 	                     + "The expression is evaluated and the value saved when the entity is "
-	                     + "first loaded into the container. "
+	                     + "first loaded into the EntityContainer. "
 	                     + "Expressions that return a dimensionless integer or an object are also "
 	                     + "valid. The returned number or object is converted to a string "
 	                     + "automatically. A floating point number is truncated to an integer.",
 	         exampleList = {"this.obj.Attrib1"})
 	private final StringProvInput match;
 
-	@Keyword(description = "Determines the order in which entities are placed in the container "
-	                     + "(FIFO or LIFO):\n"
+	@Keyword(description = "Determines the order in which entities are placed in the "
+	                     + "EntityContainer (FIFO or LIFO):\n"
 	                     + "TRUE = first in first out (FIFO) order (the default setting),\n"
 	                     + "FALSE = last in first out (LIFO) order.",
 	         exampleList = {"FALSE"})
 	private final BooleanInput fifo;
 
-	@Keyword(description = "Determines whether the states for the entities held by the container "
-	                     + "are updated to match each change to the container's state.",
+	@Keyword(description = "If TRUE, the states for the entities contained by the EntityContainer "
+	                     + "are set to the same state as the EntityContainer. "
+	                     + "If FALSE, the entities retain their original state.",
 	         exampleList = {"FALSE"})
 	private final BooleanInput setEntityState;
 
-	@Keyword(description = "The position of the first entity in the container relative to the container.",
+	@Keyword(description = "The position of the first entity in the EntityContainer relative to "
+	                     + "the EntityContainer.",
 	         exampleList = {"1.0 0.0 0.01 m"})
 	protected final Vec3dInput positionOffset;
 
-	@Keyword(description = "The amount of graphical space shown between entities in the container.",
+	@Keyword(description = "The amount of graphical space shown between entities in the EntityContainer.",
 	         exampleList = {"1 m"})
 	private final ValueInput spacingInput;
 
-	@Keyword(description = "The number of entities in each row inside the container.",
+	@Keyword(description = "The number of entities in each row inside the EntityContainer.",
 			exampleList = {"4"})
 	protected final IntegerInput maxPerLineInput;
 
-	@Keyword(description = "The number of rows in each level of entities inside the container.",
+	@Keyword(description = "The number of rows in each level of entities inside the EntityContainer.",
 			exampleList = {"4"})
 	protected final IntegerInput maxRows;
 
@@ -318,7 +321,7 @@ public class EntityContainer extends SimEntity implements EntContainer {
 	}
 
 	@Output(name = "PriorityValues",
-	 description = "The Priority expression value for each entity in the queue.",
+	 description = "The Priority expression value for each entity in the EntityContainer.",
 	    unitType = DimensionlessUnit.class,
 	    sequence = 5)
 	public ArrayList<Integer> getPriorityValues(double simTime) {
@@ -326,7 +329,7 @@ public class EntityContainer extends SimEntity implements EntContainer {
 	}
 
 	@Output(name = "MatchValues",
-	 description = "The Match expression value for each entity in the queue.",
+	 description = "The Match expression value for each entity in the EntityContainer.",
 	    unitType = DimensionlessUnit.class,
 	    sequence = 6)
 	public ArrayList<String> getMatchValues(double simTime) {
@@ -334,7 +337,7 @@ public class EntityContainer extends SimEntity implements EntContainer {
 	}
 
 	@Output(name = "StorageTimes",
-	 description = "The elapsed time since each entity was placed in storage.",
+	 description = "The elapsed time since each entity was placed in the EntityContainer.",
 	    unitType = TimeUnit.class,
 	    sequence = 7)
 	public ArrayList<Double> getStorageTimes(double simTime) {
@@ -342,7 +345,7 @@ public class EntityContainer extends SimEntity implements EntContainer {
 	}
 
 	@Output(name = "MatchValueCount",
-	 description = "The present number of unique match values in the container.",
+	 description = "The present number of unique Match values in the EntityContainer.",
 	    unitType = DimensionlessUnit.class,
 	    sequence = 8)
 	public int getMatchValueCount(double simTime) {
@@ -350,7 +353,7 @@ public class EntityContainer extends SimEntity implements EntContainer {
 	}
 
 	@Output(name = "UniqueMatchValues",
-	 description = "The list of unique Match values for the entities in the container.",
+	 description = "The list of unique Match values for the entities in the EntityContainer.",
 	    sequence = 9)
 	public ArrayList<String> getUniqueMatchValues(double simTime) {
 		ArrayList<String> ret = new ArrayList<>(container.getTypeList());
@@ -359,7 +362,7 @@ public class EntityContainer extends SimEntity implements EntContainer {
 	}
 
 	@Output(name = "MatchValueCountMap",
-	 description = "The number of entities in the container for each Match expression value.\n"
+	 description = "The number of entities in the EntityContainer for each Match expression value.\n"
 	             + "For example, '[EntityContainer1].MatchValueCountMap(\"SKU1\")' returns the "
 	             + "number of entities whose Match value is \"SKU1\".",
 	    unitType = DimensionlessUnit.class,
@@ -373,7 +376,7 @@ public class EntityContainer extends SimEntity implements EntContainer {
 	}
 
 	@Output(name = "MatchValueMap",
-	 description = "Provides a list of entities in the container for each Match expression "
+	 description = "Provides a list of entities in the EntityContainer for each Match expression "
 	             + "value.\n"
 	             + "For example, '[EntityContainer1].MatchValueMap(\"SKU1\")' returns a list of "
 	             + "entities whose Match value is \"SKU1\".",
