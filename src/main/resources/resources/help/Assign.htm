@@ -32,29 +32,65 @@ expression&gt; }</p>
 <p class=Main>The right side of each assignment equation is an expression to be
 evaluated.  The left side is an expression that identifies the attribute whose
 value is to be modified.  For example, if object Assign1 has a dimensionless
-numerical attribute A, then the following input to its <span class=KeywordChar>AttributeAssignmentList</span>
+numerical attribute <span class=codeChar><span style='font-size:9.0pt'>A</span></span>,
+then the following input to its <span class=KeywordChar>AttributeAssignmentList</span>
 keyword causes the attribute to be increased by 1:</p>
 
 <p class=code>{ 'this.A = this.A + 1' }</p>
 
-<p class=Main>The Assign object attribute obj can be used to access the
-attributes of the received entity.  For example, if the received entity has an
-attribute B whose value is a string, then the following input to the <span
-class=KeywordChar>AttributeAssignmentList</span> keyword causes this attribute
-to take the value <span class=codeChar><span style='font-size:9.0pt'>'New
-String'</span></span>:</p>
+<p class=Main>The Assign object attribute <span class=codeChar><span
+style='font-size:9.0pt'>obj</span></span> can be used to access the attributes
+of the received entity.  For example, if the received entity has an attribute <span
+class=codeChar><span style='font-size:9.0pt'>B</span></span> whose value is a
+string, then the following input to the <span class=KeywordChar>AttributeAssignmentList</span>
+keyword causes this attribute to take the value <span class=codeChar><span
+style='font-size:9.0pt'>'New String'</span></span>:</p>
 
-<p class=code>{ 'this.obj.B = [[New String]]' }</p>
+<p class=code>{ 'this.obj.B = &quot;New String&quot;' }</p>
 
-<p class=Main>If another object, say Server1, has an attribute C whose value is
-a number with units of distance, then the following input to the<span
+<p class=Main>If another object, say Server1, has an attribute <span
+class=codeChar><span style='font-size:9.0pt'>C</span></span> whose value is a
+number with units of distance, then the following input to the<span
 class=KeywordChar> AttributeAssignmentList</span> keyword causes this attribute
 to be increased by 1 kilometre:</p>
 
 <p class=code>{ '[Server1].C = [Server1].C + 1[km]' }</p>
 
-<p class=MsoNormal>An unlimited number of assignments can be performed by one
-Assign object.</p>
+<p class=Main>The entries in an array or map can also be modified.  For
+example, the following input assigns the value <span class=codeChar><span
+style='font-size:9.0pt'>1</span></span> to the second entry in an array-valued
+attribute <span class=codeChar><span style='font-size:9.0pt'>ArrayAttrib</span></span>
+and the value <span class=codeChar><span style='font-size:9.0pt'>2</span></span>
+to the key <span class=codeChar><span style='font-size:9.0pt'>&quot;abc&quot;</span></span>
+in the map-valued attribute <span class=codeChar><span style='font-size:9.0pt'>MapAttrib</span></span>:</p>
+
+<p class=code>{  'this.ArrayAttrib(2) = 1' }  { 'this.MapAttrib(&quot;abc&quot;)
+= 2' }</p>
+
+<p class=Main>Furthermore, the index for an array assignment or the key for a
+map can be a calculated quantity.  For example, the following input assigns the
+value <span class=codeChar><span style='font-size:9.0pt'>1</span></span> to the
+index of <span class=codeChar><span style='font-size:9.0pt'>ArrayAttrib</span></span>
+that is given by the attribute <span class=codeChar><span style='font-size:
+9.0pt'>N</span></span> of the entity that is being processed:</p>
+
+<p class=code>{  'this.ArrayAttrib(this.obj.N) = 1' }</p>
+
+<p class=Main>An entry in a two-index array (an array of arrays) can be set by
+specifying two separate indices.  For example, if the attribute <span
+class=codeChar><span style='font-size:9.0pt'>MatrixAttrib</span></span> is the
+two-index array <span class=codeChar><span style='font-size:9.0pt'>{{0,0},{0,0}}</span></span>,
+then the following input assigns the value <span class=codeChar><span
+style='font-size:9.0pt'>1</span></span> to the second entry in the first nested
+array:</p>
+
+<p class=code>{  'this.MatrixAttrib(1)(2) = 1' }</p>
+
+<p class=Main>An unlimited number of assignments can be performed by one Assign
+object.  The assignments are processed in the order in which they appear in the
+<span class=KeywordChar>AttributeAssignmentList</span> input.</p>
+
+<p class=MsoNormal>&nbsp;</p>
 
 </div>
 
