@@ -57,24 +57,25 @@ public class EntityDelay extends LinkedComponent implements LineEntity {
 
 	@Keyword(description = "The minimum time between the previous entity leaving the path and "
 	                     + "the present entity leaving the path. "
-	                     + "Applicable only when entities are prevented from overtaking.",
+	                     + "Applicable only when AllowOvertaking is FALSE.",
 	         exampleList = { "3.0 h", "NormalDistribution1", "'1[s] + 0.5*[TimeSeries1].PresentValue'" })
 	private final SampleInput minSeparation;
 
-	@Keyword(description = "If TRUE, a delayed entity is moved along the specified path to "
-	                     + "indicate its progression through the delay.",
+	@Keyword(description = "If TRUE, an entity is moved along the specified path to "
+	                     + "indicate its progression through the delay activity.",
 	         exampleList = {"TRUE"})
 	private final BooleanInput animation;
 
-	@Keyword(description = "Determines whether to rotate the entities to match the path.",
+	@Keyword(description = "If TRUE, the entities are rotated to match the direction of "
+	                     + "the path.",
 	         exampleList = {"TRUE"})
 	private final BooleanInput rotateEntities;
 
-	@Keyword(description = "The width of the path in pixels.",
+	@Keyword(description = "The width in pixels of the line representing the EntityDelay.",
 	         exampleList = {"1"})
 	private final IntegerInput widthInput;
 
-	@Keyword(description = "The colour of the path.",
+	@Keyword(description = "The colour of the line representing the EntityDelay.",
 	         exampleList = {"red"})
 	private final ColourInput colorInput;
 
