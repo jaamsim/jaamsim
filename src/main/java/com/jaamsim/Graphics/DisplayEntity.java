@@ -100,22 +100,22 @@ public class DisplayEntity extends Entity {
 	protected final EnumInput<PolylineInfo.CurveType> curveTypeInput;
 
 	@Keyword(description = "If a Region is specified, the Position and Orientation inputs for "
-	                     + "the present object will be relative to the Position and Orientation "
+	                     + "the present object are relative to the Position and Orientation "
 	                     + "of the specified Region. If the specified Region is moved or "
-	                     + "rotated, the present object with move to maintain it relative "
+	                     + "rotated, the present object is moved to maintain its relative "
 	                     + "position and orientation.",
 	         exampleList = {"Region1"})
 	protected final EntityInput<Region> regionInput;
 
 	@Keyword(description = "If an object is specified, the Position input for the present object "
-	                     + "will be relative to the Position for the specified object. If the "
-	                     + "specified object is moved, the present object will move to maintain "
+	                     + "is relative to the Position for the specified object. If the "
+	                     + "specified object is moved, the present object is moved to maintain "
 	                     + "its relative position.",
 	         exampleList = {"DisplayEntity1"})
 	protected final RelativeEntityInput relativeEntity;
 
 	@Keyword(description = "The graphic representation of the object. If a list of DisplayModels "
-	                     + "is entered, each one will be displayed provided that its DrawRange "
+	                     + "is entered, each one is displayed provided that its DrawRange "
 	                     + "input is satisfied. This feature allows the object's appearance to "
 	                     + "change with its distance from the View window's camera.",
 	         exampleList = {"ColladaModel1", "ColladaModel1 ColladaModel2"})
@@ -134,7 +134,8 @@ public class DisplayEntity extends Entity {
 	         exampleList = {"View2 View3"})
 	private final EntityListInput<View> visibleViews;
 
-	@Keyword(description = "The distances from the camera that this entity will be visible",
+	@Keyword(description = "The minimum and maximum distance from the camera for which this "
+	                     + "entity is displayed.",
 	         exampleList = {"0 100 m"})
 	private final ValueListInput drawRange;
 
@@ -1247,7 +1248,7 @@ public class DisplayEntity extends Entity {
 	////////////////////////////////////////////////////////////////////////
 
 	@Output(name = "Position",
-	 description = "The present {x, y, z} coordinates of the DisplayEntity in its region.",
+	 description = "The present {x, y, z} coordinates of the DisplayEntity in its Region.",
 	    unitType = DistanceUnit.class,
 	    sequence = 0)
 	public Vec3d getPosOutput(double simTime) {
@@ -1263,7 +1264,7 @@ public class DisplayEntity extends Entity {
 	}
 
 	@Output(name = "Orientation",
-	 description = "The present {x, y, z} euler angles of the DisplayEntity's rotation.",
+	 description = "The present {x, y, z} Euler angles of the DisplayEntity's rotation.",
 	    unitType = AngleUnit.class,
 	    sequence = 2)
 	public Vec3d getOrientOutput(double simTime) {

@@ -934,7 +934,7 @@ public class Entity {
 	}
 
 	@Output(name = "Parent",
-	 description = "The parent entity of this entity.",
+	 description = "The parent entity for this entity.",
 	    sequence = 3)
 	public Entity getParentOutput(double simTime) {
 		return getParent();
