@@ -28,11 +28,12 @@ import com.jaamsim.states.StateEntity;
 public class SimEntity extends StateEntity {
 
 	@Keyword(description = "A list of states that will always appear in the output report, "
-			+ "even if no time is recorded for this state.",
+	                     + "even if no time is recorded for this state.",
 	         exampleList = "Idle Working")
 	protected final StringListInput defaultStateList;
 
-	@Keyword(description = "The state assigned to the entity when it is first created.",
+	@Keyword(description = "The state of the SimEntity at the start of the simulation run or when "
+	                     + "it is first created during a simulation run.",
 	         exampleList = "Idle")
 	protected final StringInput initialState;
 
