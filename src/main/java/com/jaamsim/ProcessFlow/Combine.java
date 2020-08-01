@@ -33,6 +33,8 @@ public class Combine extends AbstractCombine {
 	private ArrayList<DisplayEntity> processedEntityList;  // entities being processed
 
 	{
+		stateGraphics.setHidden(true);
+
 		retainAll = new BooleanInput("RetainAll", KEY_INPUTS, false);
 		this.addInput(retainAll);
 	}
