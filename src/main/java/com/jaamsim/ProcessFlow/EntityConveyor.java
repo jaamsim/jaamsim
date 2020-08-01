@@ -45,6 +45,11 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 	         exampleList = {"10.0 s"})
 	private final SampleInput travelTimeInput;
 
+	@Keyword(description = "If TRUE, the entities are rotated to match the direction of "
+	                     + "the path.",
+	         exampleList = {"TRUE"})
+	private final BooleanInput rotateEntities;
+
 	@Keyword(description = "The width of the conveyor in pixels.",
 	         exampleList = {"1"})
 	private final IntegerInput widthInput;
@@ -52,10 +57,6 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 	@Keyword(description = "The colour of the conveyor.",
 	         exampleList = {"red"})
 	private final ColourInput colorInput;
-
-	@Keyword(description = "Determines whether to rotate the entities to match the conveyor.",
-	         exampleList = {"TRUE"})
-	private final BooleanInput rotateEntities;
 
 	private final ArrayList<ConveyorEntry> entryList;  // List of the entities being conveyed
 	private double presentTravelTime;
@@ -78,6 +79,9 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 		travelTimeInput.setUnitType(TimeUnit.class);
 		this.addInput(travelTimeInput);
 
+		rotateEntities = new BooleanInput("RotateEntities", FORMAT, false);
+		this.addInput(rotateEntities);
+
 		widthInput = new IntegerInput("LineWidth", FORMAT, 1);
 		widthInput.setValidRange(1, Integer.MAX_VALUE);
 		widthInput.setDefaultText("PolylineModel");
@@ -89,9 +93,6 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 		this.addInput(colorInput);
 		this.addSynonym(colorInput, "Colour");
 		this.addSynonym(colorInput, "Color");
-
-		rotateEntities = new BooleanInput("RotateEntities", FORMAT, false);
-		this.addInput(rotateEntities);
 	}
 
 	public EntityConveyor() {
