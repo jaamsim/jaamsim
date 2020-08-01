@@ -99,20 +99,19 @@ public class Queue extends LinkedComponent {
 	         exampleList = {"100"})
 	protected final IntegerInput maxValidLength;
 
-	@Keyword(description = "The amount of graphical space shown between DisplayEntity objects in "
-	                     + "the queue.",
+	@Keyword(description = "The amount of graphical space shown between objects in the queue.",
 	         exampleList = {"1 m"})
 	private final ValueInput spacing;
 
-	@Keyword(description = "The number of queuing entities in each row.",
+	@Keyword(description = "Maximum number of objects in each row of the Queue.",
 			exampleList = {"4"})
 	protected final IntegerInput maxPerLine; // maximum items per sub line-up of queue
 
-	@Keyword(description = "The number of rows in each level of the entity queue.",
+	@Keyword(description = "The number of rows in each level of the Queue.",
 			exampleList = {"4"})
 	protected final IntegerInput maxRows;
 
-	@Keyword(description = "If TRUE, the entities in the Queue are displayed.",
+	@Keyword(description = "If TRUE, the objects in the Queue are displayed.",
 			exampleList = {"FALSE"})
 	protected final BooleanInput showEntities;
 
