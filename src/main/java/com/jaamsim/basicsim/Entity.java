@@ -96,7 +96,7 @@ public class Entity {
 	public static final String GUI = "GUI";
 	public static final String MULTIPLE_RUNS = "Multiple Runs";
 
-	@Keyword(description = "A free form string describing the Entity",
+	@Keyword(description = "A free-form string describing the object.",
 	         exampleList = {"'A very useful entity'"})
 	protected final StringInput desc;
 
