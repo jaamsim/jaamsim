@@ -122,6 +122,10 @@ public class JaamSimModel {
 		return gui;
 	}
 
+	/**
+	 * Deletes all the objects in the present model and prepares the JaamSimModel to load a new
+	 * input file using the autoLoad() and configure() methods.
+	 */
 	public void clear() {
 		eventManager.clear();
 		eventManager.setTraceListener(null);
@@ -190,7 +194,7 @@ public class JaamSimModel {
 	}
 
 	/**
-	 * Pre-loads the simulation model with basic objects such as DisplayModels and Units.
+	 * Pre-loads the simulation model with built-in objects such as Simulation and Units.
 	 */
 	public void autoLoad() {
 		setRecordEdits(false);
@@ -200,6 +204,7 @@ public class JaamSimModel {
 
 	/**
 	 * Loads the specified configuration file to create the objects in the model.
+	 * The autoLoad() method must be executed first.
 	 * @param file - configuration file
 	 * @throws URISyntaxException
 	 */
@@ -366,7 +371,7 @@ public class JaamSimModel {
 	}
 
 	/**
-	 * Temporarily stops the simulation model at the present simulation time.
+	 * Suspends model execution at the present simulation time.
 	 */
 	public void pause() {
 		//System.out.format("%s.pause%n", this);
@@ -374,8 +379,10 @@ public class JaamSimModel {
 	}
 
 	/**
-	 * Re-starts the simulation model at the present simulation and allows it to proceed to the
-	 * specified pause time.
+	 * Resumes a paused simulation model.
+	 * The model will continue execution until the specified simulation time at which the model
+	 * will be paused.
+	 * Events scheduled at the next pause time will not be executed until the model is resumed.
 	 * @param simTime - next pause time
 	 */
 	public void resume(double simTime) {
@@ -384,6 +391,7 @@ public class JaamSimModel {
 
 	/**
 	 * Sets the simulation time to zero and re-initializes the model.
+	 * The start() method can be used to begin a new simulation run.
 	 */
 	public void reset() {
 		eventManager.pause();
@@ -561,7 +569,7 @@ public class JaamSimModel {
 	}
 
 	/**
-	 * Creates a new entity for the specified class with the specified name.
+	 * Creates a new entity for the specified type and name.
 	 * If the name already used, "_1", "_2", etc. will be appended to the name until an unused
 	 * name is found.
 	 * @param type - type of entity to be created
