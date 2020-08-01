@@ -44,7 +44,7 @@ public abstract class LinkedDevice extends Device implements Linkable {
 	         exampleList = {"SimEntity1"})
 	protected final EntityInput<DisplayEntity> defaultEntity;
 
-	@Keyword(description = "The next object to which the processed DisplayEntity is passed.",
+	@Keyword(description = "The next object to which the processed entity is passed.",
 	         exampleList = {"Queue1"})
 	protected final InterfaceEntityInput<Linkable> nextComponent;
 
