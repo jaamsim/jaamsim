@@ -62,9 +62,8 @@ public class InputAgent {
 
 	private static final String INP_ERR_DEFINEUSED = "The name: %s has already been used and is a %s";
 	public static final String INP_ERR_BADNAME = "An entity name cannot be blank or contain "
-	                                            + "spaces, tabs, braces, single or double quotes, "
-	                                            + "square brackets, the hash character, or a "
-	                                            + "period.\n "
+	                                            + "spaces, tabs, braces, single or double quotes,\n"
+	                                            + "square brackets, hash characters, or periods.\n"
 	                                            + "Name: %s";
 	private static final String INP_ERR_BADPARENT = "The parent entity [%s] has not been defined.";
 	static final char[] INVALID_ENTITY_CHARS = new char[]{' ', '\t', '\n', '{', '}', '\'', '"', '[', ']', '#','.'};
