@@ -3163,6 +3163,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		String localName = newName;
 		if (newName.contains(".")) {
 			String[] names = newName.split("\\.");
+			if (names.length == 0)
+				throw new ErrorException(InputAgent.INP_ERR_BADNAME, localName);
 			localName = names[names.length - 1];
 			names = Arrays.copyOf(names, names.length - 1);
 			Entity parent = sim.getEntityFromNames(names);
