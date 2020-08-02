@@ -52,7 +52,7 @@ public abstract class StateUserEntity extends AbstractStateUserEntity implements
 
 	@Keyword(description = "A list of thresholds that must be satisfied for the object to "
 	                     + "operate. If a threshold closes part way though processing an entity, "
-	                     + "the remaining work is completed, but the entity cannot be released "
+	                     + "the remaining work is completed, but the entity is retained "
 	                     + "until the threshold re-opens.",
 	         exampleList = {"ExpressionThreshold1 TimeSeriesThreshold1 SignalThreshold1"})
 	protected final EntityListInput<Threshold> releaseThresholdList;
