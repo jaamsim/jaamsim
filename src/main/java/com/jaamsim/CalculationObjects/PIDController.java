@@ -59,7 +59,8 @@ public class PIDController extends DoubleCalculation {
 	protected final UnitTypeInput outputUnitType;
 
 	@Keyword(description = "The coefficient applied to the proportional feedback loop. "
-	                     + "Its unit type must be the same as the controller's output.",
+	                     + "The unit type for the proportional gain is given by the "
+	                     + "outputUnitType keyword.",
 	         exampleList = {"1.3 m"})
 	private final ValueInput proportionalGain;
 
