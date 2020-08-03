@@ -195,7 +195,9 @@ public class ExternalProgram extends LinkedComponent {
 	@Output(name = "Value",
 	 description = "An array of values returned by the external program after parsing. "
 	             + "Returned strings are converted automatically to numbers, times, or entities, "
-	             + "if appropriate.",
+	             + "if appropriate. "
+	             + "For example, if the external program returns a single number, its value is "
+	             + "'this.Value(1)'",
 	    sequence = 1)
 	public ExpResult getValue(double simTime) {
 		return value;
