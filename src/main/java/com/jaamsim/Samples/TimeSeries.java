@@ -42,7 +42,7 @@ import com.jaamsim.units.UserSpecifiedUnit;
 public class TimeSeries extends DisplayEntity implements TimeSeriesProvider, SubjectEntity {
 
 	@Keyword(description = "If TRUE, the simulation times corresponding to the time stamps "
-	                     + "entered to the 'Value' keyword are calculated relative time for the "
+	                     + "entered to the 'Value' keyword are calculated relative to the "
 	                     + "first time stamp. This offset sets the simulation time for the first "
 	                     + "time stamp to zero seconds.",
 	         exampleList = {"TRUE"})
