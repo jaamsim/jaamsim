@@ -45,7 +45,7 @@ public class Polyline extends DisplayEntity implements LineEntity, FillEntity {
 	         exampleList = { "3" })
 	private final IntegerInput lineWidth;
 
-	@Keyword(description = "The colour with which the shape is outlined.",
+	@Keyword(description = "The colour with which the polyline is outlined.",
 	         exampleList = {"red"})
 	private final ColourInput lineColour;
 
