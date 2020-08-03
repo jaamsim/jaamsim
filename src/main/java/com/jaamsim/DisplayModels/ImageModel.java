@@ -63,16 +63,16 @@ public class ImageModel extends DisplayModel {
 			"Personal Computer Exchange (*.pcx)"};
 
 	{
-		imageFile = new FileInput( "ImageFile", GRAPHICS, null );
+		imageFile = new FileInput( "ImageFile", KEY_INPUTS, null );
 		imageFile.setFileType("Image");
 		imageFile.setValidFileExtensions(VALID_FILE_EXTENSIONS);
 		imageFile.setValidFileDescriptions(VALID_FILE_DESCRIPTIONS);
 		this.addInput( imageFile);
 
-		transparent = new BooleanInput("Transparent", GRAPHICS, false);
+		transparent = new BooleanInput("Transparent", KEY_INPUTS, false);
 		this.addInput(transparent);
 
-		compressedTexture = new BooleanInput("CompressedTexture", GRAPHICS, false);
+		compressedTexture = new BooleanInput("CompressedTexture", KEY_INPUTS, false);
 		this.addInput(compressedTexture);
 
 	}

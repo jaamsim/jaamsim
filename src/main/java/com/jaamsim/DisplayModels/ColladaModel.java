@@ -65,7 +65,7 @@ public class ColladaModel extends DisplayModel {
 			"JaamSim 3D Binary Files (*.jsb)"};
 
 	{
-		colladaFile = new FileInput( "ColladaFile", GRAPHICS, null );
+		colladaFile = new FileInput( "ColladaFile", KEY_INPUTS, null );
 		colladaFile.setFileType("3D");
 		colladaFile.setValidFileExtensions(VALID_FILE_EXTENSIONS);
 		colladaFile.setValidFileDescriptions(VALID_FILE_DESCRIPTIONS);

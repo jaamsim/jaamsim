@@ -96,29 +96,29 @@ public class ShapeModel extends DisplayModel implements LineEntity, FillEntity {
 	private final IntegerInput lineWidth;
 
 	{
-		shape = new EnumInput<>(ValidShapes.class, "Shape", GRAPHICS, ValidShapes.CIRCLE);
+		shape = new EnumInput<>(ValidShapes.class, "Shape", KEY_INPUTS, ValidShapes.CIRCLE);
 		this.addInput(shape);
 
-		fillColour = new ColourInput("FillColour", FORMAT, ColourInput.MED_GREY);
+		fillColour = new ColourInput("FillColour", KEY_INPUTS, ColourInput.MED_GREY);
 		this.addInput(fillColour);
 		this.addSynonym(fillColour, "FillColor");
 
-		lineColour = new ColourInput("LineColour", FORMAT, ColourInput.BLACK);
+		lineColour = new ColourInput("LineColour", KEY_INPUTS, ColourInput.BLACK);
 		this.addInput(lineColour);
 		this.addSynonym(lineColour, "OutlineColour");
 		this.addSynonym(lineColour, "OutlineColor");
 
-		filled = new BooleanInput("Filled", FORMAT, true);
+		filled = new BooleanInput("Filled", KEY_INPUTS, true);
 		this.addInput(filled);
 
-		outlined = new BooleanInput("Outlined", FORMAT, true);
+		outlined = new BooleanInput("Outlined", KEY_INPUTS, true);
 		this.addInput(outlined);
 
-		bold = new BooleanInput("Bold", FORMAT, false);
+		bold = new BooleanInput("Bold", KEY_INPUTS, false);
 		bold.setHidden(true);
 		this.addInput(bold);
 
-		lineWidth = new IntegerInput("LineWidth", FORMAT, 1);
+		lineWidth = new IntegerInput("LineWidth", KEY_INPUTS, 1);
 		lineWidth.setValidRange(0, Integer.MAX_VALUE);
 		this.addInput(lineWidth);
 	}

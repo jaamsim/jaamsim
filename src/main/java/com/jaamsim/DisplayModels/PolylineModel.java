@@ -80,30 +80,30 @@ public class PolylineModel extends DisplayModel implements LineEntity, FillEntit
 	protected final Vec3dInput arrowHeadSize;
 
 	{
-		outlined = new BooleanInput("Outlined", FORMAT, true);
+		outlined = new BooleanInput("Outlined", KEY_INPUTS, true);
 		this.addInput(outlined);
 
-		colour = new ColourInput("LineColour", FORMAT, ColourInput.BLACK);
+		colour = new ColourInput("LineColour", KEY_INPUTS, ColourInput.BLACK);
 		this.addInput(colour);
 		this.addSynonym(colour, "Color");
 		this.addSynonym(colour, "Colour");
 
-		width = new IntegerInput("LineWidth", FORMAT, 1);
+		width = new IntegerInput("LineWidth", KEY_INPUTS, 1);
 		width.setValidRange(0, Integer.MAX_VALUE);
 		this.addInput(width);
 		this.addSynonym(width, "Width");
 
-		filled = new BooleanInput("Filled", FORMAT, false);
+		filled = new BooleanInput("Filled", KEY_INPUTS, false);
 		this.addInput(filled);
 
-		fillColour = new ColourInput("FillColour", FORMAT, ColourInput.MED_GREY);
+		fillColour = new ColourInput("FillColour", KEY_INPUTS, ColourInput.MED_GREY);
 		this.addInput(fillColour);
 		this.addSynonym(fillColour, "FillColor");
 
-		showArrowHead = new BooleanInput("ShowArrowHead", FORMAT, false);
+		showArrowHead = new BooleanInput("ShowArrowHead", KEY_INPUTS, false);
 		this.addInput(showArrowHead);
 
-		arrowHeadSize = new Vec3dInput("ArrowHeadSize", FORMAT, new Vec3d(0.1d, 0.1d, 0.0d));
+		arrowHeadSize = new Vec3dInput("ArrowHeadSize", KEY_INPUTS, new Vec3d(0.1d, 0.1d, 0.0d));
 		arrowHeadSize.setUnitType(DistanceUnit.class);
 		this.addInput(arrowHeadSize);
 		this.addSynonym(arrowHeadSize, "ArrowSize");
