@@ -139,7 +139,10 @@ public class Simulation extends Entity {
 
 	@Keyword(description = "The maximum number of entities to display in the view windows. "
 	                     + "A model can contain more than this number of entities, but only this "
-	                     + "number will be displayed.",
+	                     + "number will be displayed. "
+	                     + "This limit prevents JaamSim from becoming unresponsive when the "
+	                     + "number of entities in a model exceeds the graphics capabilities of "
+	                     + "the computer.",
 	         exampleList = {"100000"})
 	private final IntegerInput maxEntitiesToDisplay;
 
