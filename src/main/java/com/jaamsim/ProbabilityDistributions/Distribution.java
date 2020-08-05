@@ -48,12 +48,14 @@ implements SampleProvider, RandomStreamUser {
 	protected final UnitTypeInput unitType;
 
 	@Keyword(description = "Seed for the random number generator. "
-	                     + "Must be an integer >= 0. "
+	                     + "Must be an integer >= 0. \n\n"
 	                     + "The 'RandomSeed' keyword works together with the "
 	                     + "'GlobalSubstreamSeed' keyword for Simulation to determine the random "
 	                     + "sequence. "
 	                     + "The 'GlobalSubsteamSeed' keyword allows the user to change all the "
-	                     + "random sequences in a model with a single input.",
+	                     + "random sequences in a model with a single input.\n\n"
+	                     + "When an object with this input is copied and pasted, the RandomSeed "
+	                     + "input is reset to an unused value for each copy that is pasted.",
 			 exampleList = {"547"})
 	private final IntegerInput randomSeedInput;
 
