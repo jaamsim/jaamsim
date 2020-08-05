@@ -19,8 +19,6 @@ package com.jaamsim.font;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import com.jogamp.opengl.GL2GL3;
-
 import com.jaamsim.math.AABB;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Mat4d;
@@ -33,6 +31,7 @@ import com.jaamsim.render.Renderable;
 import com.jaamsim.render.Renderer;
 import com.jaamsim.render.Shader;
 import com.jaamsim.render.VisibilityInfo;
+import com.jogamp.opengl.GL2GL3;
 
 public class TessString implements Renderable {
 
@@ -86,13 +85,22 @@ public TessString(TessFont font, String contents, Color4d color,
 	numVerts = new int[contents.length()];
 	advances = new double[contents.length()];
 
+	double maxWidth = 0;
 	double width = 0;
 	double height = _font.getNominalHeight();
+	double yAdvance = 0;
 	_contents = RenderUtils.stringToCodePoints(contents);
 	for (int i = 0; i < _contents.length; ++i) {
+		if (_contents[i] == '\n') {
+			width = 0;
+			yAdvance += _font.getLineAdvance();
+			continue;
+		}
+
 		TessChar tc = _font.getTessChar(_contents[i]);
 		assert(tc != null);
 		width += tc.getAdvance();
+		maxWidth = Math.max(width, maxWidth);
 
 		starts[i] = tc.getStartIndex();
 		numVerts[i] = tc.getNumVerts();
@@ -102,15 +110,15 @@ public TessString(TessFont font, String contents, Color4d color,
 	// As the renderer draws characters from the bottom left, but the model specifies text labels in the center,
 	// we need to offset the transform
 	Mat4d align = new Mat4d();
-	align.setTranslate3(new Vec4d(-width/2, -height/2, 0, 1.0d));
+	align.setTranslate3(new Vec4d(-maxWidth/2, -height/2 + yAdvance/2, 0, 1.0d));
 	_trans.mult4(align);
 
 	ArrayList<Vec4d> vs = new ArrayList<>(4);
 
-	vs.add(new Vec4d( width,  height, 0, 1.0d));
-	vs.add(new Vec4d(     0,  height, 0, 1.0d));
-	vs.add(new Vec4d(     0,       0, 0, 1.0d));
-	vs.add(new Vec4d( width,       0, 0, 1.0d));
+	vs.add(new Vec4d( maxWidth,  height+yAdvance, 0, 1.0d));
+	vs.add(new Vec4d(        0,  height+yAdvance, 0, 1.0d));
+	vs.add(new Vec4d(        0,                0, 0, 1.0d));
+	vs.add(new Vec4d( maxWidth,                0, 0, 1.0d));
 
 	_bounds = new AABB(vs, _trans);
 }
@@ -163,17 +171,24 @@ public void render(int contextID, Renderer renderer, Camera cam, Ray pickRay) {
 
 
 	// Send out one draw call per character
-	float advance = 0;
+	float advanceX = 0;
+	float advanceY = 0;
 
 	gl.glDisable(GL2GL3.GL_CULL_FACE);
 
 	for (int i = 0; i < _contents.length; ++i) {
 
-		gl.glUniform1f(advanceVar, advance);
+		if (_contents[i] == '\n') {
+			advanceX = 0;
+			advanceY -= _font.getLineAdvance();
+			continue;
+		}
+
+		gl.glUniform2f(advanceVar, advanceX, advanceY);
 
 		gl.glDrawArrays(GL2GL3.GL_TRIANGLES, starts[i], numVerts[i]);
 
-		advance += advances[i];
+		advanceX += advances[i];
 	}
 	gl.glEnable(GL2GL3.GL_CULL_FACE);
 

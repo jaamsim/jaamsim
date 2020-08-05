@@ -18,7 +18,7 @@
 
 uniform mat4 modelViewProjMat;
 
-uniform float advance;
+uniform vec2 advance;
 
 attribute vec2 position;
 
@@ -30,7 +30,7 @@ void main()
 {
     vec4 pos;
     pos.xy = position;
-    pos.x += advance;
+    pos.xy += advance;
     pos.z = 0; pos.w = 1;
 
     gl_Position = modelViewProjMat * pos;
