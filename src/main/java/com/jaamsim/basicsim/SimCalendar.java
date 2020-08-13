@@ -104,11 +104,12 @@ public final class SimCalendar extends GregorianCalendar {
 		}
 
 		// Simple calendar with 365 days per year
-		long seconds = millis / millisPerSec;
-		long minutes = millis / millisPerMin;
-		long hours = millis / millisPerHr;
-		long days = millis / millisPerDay;
-		long years = millis / millisPerYr;
+		long years = Math.floorDiv(millis, millisPerYr);
+		long millisInYear = millis - years*millisPerYr;  // millis in the present year (always > 0)
+		long seconds = millisInYear / millisPerSec;
+		long minutes = millisInYear / millisPerMin;
+		long hours = millisInYear / millisPerHr;
+		long days = millisInYear / millisPerDay;
 
 		int dayOfYear = (int) (days % 365L) + 1;  // dayOfYear = 1 - 365;
 		int month = getMonthForDay(dayOfYear);    // month = 0 - 11
@@ -120,7 +121,7 @@ public final class SimCalendar extends GregorianCalendar {
 		super.set(Calendar.HOUR_OF_DAY, (int) (hours % 24L));
 		super.set(Calendar.MINUTE, (int) (minutes % 60L));
 		super.set(Calendar.SECOND, (int) (seconds % 60L));
-		super.set(Calendar.MILLISECOND, (int) (millis % 1000L));
+		super.set(Calendar.MILLISECOND, (int) (millisInYear % 1000L));
 	}
 
 	/**
