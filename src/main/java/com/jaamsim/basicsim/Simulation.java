@@ -77,7 +77,7 @@ public class Simulation extends Entity {
 	private final BooleanInput gregorianCalendar;
 
 	@Keyword(description = "The calendar date and time that corresponds to zero simulation time.",
-	         exampleList = {"'2000-09-01", "'2000-09-01 00:08:00'"} )
+	         exampleList = {"2000-09-01", "'2000-09-01 00:08:00'"} )
 	private final DateInput startDate;
 
 	@Keyword(description = "An optional expression that pauses the run when TRUE is returned.",
