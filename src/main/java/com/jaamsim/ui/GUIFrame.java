@@ -292,9 +292,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 		try {
 			iconImages.clear();
-
 			Toolkit toolkit = Toolkit.getDefaultToolkit();
-			iconImages.add(toolkit.getImage(GUIFrame.class.getResource("/resources/images/icon.png")));
+			iconImages.add(toolkit.getImage(GUIFrame.class.getResource("/resources/images/icon-16.png")));
 			iconImages.add(toolkit.getImage(GUIFrame.class.getResource("/resources/images/icon-32.png")));
 			iconImages.add(toolkit.getImage(GUIFrame.class.getResource("/resources/images/icon-64.png")));
 			iconImages.add(toolkit.getImage(GUIFrame.class.getResource("/resources/images/icon-128.png")));
