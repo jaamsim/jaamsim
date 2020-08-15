@@ -62,7 +62,7 @@ public class FindBox extends JDialog {
 		super((JDialog)null, DIALOG_NAME, false);
 
 		getContentPane().setLayout( new BorderLayout() );
-		setIconImage(GUIFrame.getWindowIcon());
+		setIconImages(GUIFrame.getWindowIcons());
 
 		// Search text
 		searchText = new JTextField("", 30);

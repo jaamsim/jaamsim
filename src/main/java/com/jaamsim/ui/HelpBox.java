@@ -69,7 +69,7 @@ public class HelpBox extends JDialog {
 
 	public HelpBox() {
 		super((JDialog)null, DIALOG_NAME, false);
-		setIconImage(GUIFrame.getWindowIcon());
+		setIconImages(GUIFrame.getWindowIcons());
 		setResizable(true);
 		setDefaultCloseOperation(HIDE_ON_CLOSE);
 
