@@ -246,6 +246,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	private int lastValue = -1;
 	private JProgressBar progressBar;
 	private static Image iconImage;
+	private static ArrayList<Image> iconImages = new ArrayList<>();
 
 	private static final RateLimiter rateLimiter;
 
@@ -291,8 +292,15 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		}
 
 		try {
+			iconImages.clear();
 			URL file = GUIFrame.class.getResource("/resources/images/icon.png");
 			iconImage = Toolkit.getDefaultToolkit().getImage(file);
+
+			Toolkit toolkit = Toolkit.getDefaultToolkit();
+			iconImages.add(toolkit.getImage(GUIFrame.class.getResource("/resources/images/icon.png")));
+			iconImages.add(toolkit.getImage(GUIFrame.class.getResource("/resources/images/icon-32.png")));
+			iconImages.add(toolkit.getImage(GUIFrame.class.getResource("/resources/images/icon-64.png")));
+			iconImages.add(toolkit.getImage(GUIFrame.class.getResource("/resources/images/icon-128.png")));
 		}
 		catch (Exception e) {
 			LogBox.logLine("Unable to load icon file.");
@@ -314,7 +322,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		initializeButtonBar();
 		initializeMainToolBars();
 
-		this.setIconImage(GUIFrame.getWindowIcon());
+		this.setIconImages(GUIFrame.getWindowIcons());
 
 		//Set window size
 		setResizable( true );  //FIXME should be false, but this causes the window to be sized
@@ -3656,6 +3664,10 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 	public static Image getWindowIcon() {
 		return iconImage;
+	}
+
+	public static ArrayList<Image> getWindowIcons() {
+		return iconImages;
 	}
 
 	public void copyLocationToClipBoard(Vec3d pos) {
