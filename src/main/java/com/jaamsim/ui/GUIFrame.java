@@ -245,7 +245,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 	private int lastValue = -1;
 	private JProgressBar progressBar;
-	private static Image iconImage;
 	private static ArrayList<Image> iconImages = new ArrayList<>();
 
 	private static final RateLimiter rateLimiter;
@@ -293,8 +292,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 		try {
 			iconImages.clear();
-			URL file = GUIFrame.class.getResource("/resources/images/icon.png");
-			iconImage = Toolkit.getDefaultToolkit().getImage(file);
 
 			Toolkit toolkit = Toolkit.getDefaultToolkit();
 			iconImages.add(toolkit.getImage(GUIFrame.class.getResource("/resources/images/icon.png")));
@@ -304,7 +301,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		}
 		catch (Exception e) {
 			LogBox.logLine("Unable to load icon file.");
-			iconImage = null;
 		}
 
 		shuttingDown = new AtomicBoolean(false);
@@ -3660,10 +3656,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			textHeight.setText(textEnt.getTextHeightString());
 			GUIFrame.showErrorDialog("Input Error", e.getMessage());
 		}
-	}
-
-	public static Image getWindowIcon() {
-		return iconImage;
 	}
 
 	public static ArrayList<Image> getWindowIcons() {
