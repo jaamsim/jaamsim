@@ -20,7 +20,6 @@ package com.jaamsim.controllers;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Frame;
-import java.awt.Image;
 import java.awt.dnd.DragSourceDragEvent;
 import java.awt.dnd.DragSourceDropEvent;
 import java.awt.dnd.DragSourceEvent;
@@ -277,16 +276,13 @@ public class RenderManager implements DragSourceListener {
 
 		IntegerVector windSize = GUIFrame.getInstance().getWindowSize(view);
 		IntegerVector windPos = GUIFrame.getInstance().getWindowPos(view);
-
-		Image icon = GUIFrame.getWindowIcon();
-
 		CameraControl control = new CameraControl(renderer, view);
 
 		int windowID = renderer.createWindow(windPos.get(0), windPos.get(1),
 		                                      windSize.get(0), windSize.get(1),
 		                                      view.getID(),
 		                                      view.getTitle(), view.getName(),
-		                                      icon, control);
+		                                      null, control);
 
 		control.setWindowID(windowID);
 		windowControls.put(windowID, control);
