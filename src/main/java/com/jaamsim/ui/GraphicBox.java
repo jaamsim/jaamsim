@@ -82,8 +82,7 @@ public class GraphicBox extends JDialog {
 	private GraphicBox() {
 
 		setTitle( "Select DisplayModel" );
-		setIconImage(GUIFrame.getWindowIcon());
-
+		setType(Type.UTILITY);
 		this.setModal(true);
 
 		// Upon closing do the close method
