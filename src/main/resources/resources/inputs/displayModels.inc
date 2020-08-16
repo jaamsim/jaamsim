@@ -66,3 +66,6 @@ ArrowModelDefault ShowArrowHead { TRUE }
 
 Define  IconModel  { VideoRecorderIconModel }
 VideoRecorderIconModel ImageFile { '<res>/images/VideoRecorder-256.png' }
+
+Define  ImageModel  { ImageModelDefault }
+ImageModelDefault ImageFile { '<res>/images/ImageDefault-256.png' }
