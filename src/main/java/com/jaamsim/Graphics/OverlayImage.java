@@ -17,6 +17,7 @@
  */
 package com.jaamsim.Graphics;
 
+import com.jaamsim.DisplayModels.IconModel;
 import com.jaamsim.DisplayModels.ImageModel;
 import com.jaamsim.datatypes.IntegerVector;
 import com.jaamsim.input.IntegerListInput;
@@ -36,6 +37,7 @@ public class OverlayImage extends OverlayEntity {
 	{
 		displayModelListInput.clearValidClasses();
 		displayModelListInput.addValidClass(ImageModel.class);
+		displayModelListInput.addInvalidClass(IconModel.class);
 
 		IntegerVector defSize = new IntegerVector(2);
 		defSize.add(100);
