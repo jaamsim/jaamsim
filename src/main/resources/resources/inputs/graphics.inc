@@ -30,7 +30,7 @@ Graph                 JavaClass { com.jaamsim.Graphics.Graph                    
 EntityLabel           JavaClass { com.jaamsim.Graphics.EntityLabel                   } Palette { 'Graphics Objects' } DefaultDisplayModel { EntityLabelModel         } DragAndDrop { FALSE }
 BarGauge              JavaClass { com.jaamsim.Graphics.BarGauge                      } Palette { 'Graphics Objects' } DefaultDisplayModel { BarGauge2D               } IconFile { '<res>/images/BarGauge-24.png' } DefaultSize { 0.5 1.0 0.0 m }
 BooleanIndicator      JavaClass { com.jaamsim.BasicObjects.BooleanIndicator          } Palette { 'Graphics Objects' } DefaultDisplayModel { Circle                   } IconFile { '<res>/images/BooleanIndicator-24.png' } DefaultSize { 0.25 0.25 0.0 m }
-OverlayImage          JavaClass { com.jaamsim.Graphics.OverlayImage                  } Palette { 'Graphics Objects' }
+OverlayImage          JavaClass { com.jaamsim.Graphics.OverlayImage                  } Palette { 'Graphics Objects' } DefaultDisplayModel { ImageModelDefault        } IconFile { '<res>/images/ImageDefault-24.png' }
 OverlayText           JavaClass { com.jaamsim.Graphics.OverlayText                   } Palette { 'Graphics Objects' } DefaultDisplayModel { OverlayTextModel         } IconFile { '<res>/images/Text-24.png' }
 OverlayClock          JavaClass { com.jaamsim.Graphics.OverlayClock                  } Palette { 'Graphics Objects' } DefaultDisplayModel { TextModelDefault         }
 BillboardText         JavaClass { com.jaamsim.Graphics.BillboardText                 } Palette { 'Graphics Objects' } DefaultDisplayModel { BillboardTextModel       } IconFile { '<res>/images/Text-24.png' }
