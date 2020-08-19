@@ -1,0 +1,250 @@
+<html>
+
+<body lang=EN-CA>
+
+<div class=WordSection1>
+
+<h1><a name="_Toc47541815">Application Programming Interface</a></h1>
+
+<p class=Main>The Application Programming Inferface (API) allows a JaamSim
+model to be constructed and/or launched from another program.  </p>
+
+<p class=Main>The API is implemented through the JaamSimModel class.  There is
+one constructor for this class:</p>
+
+<p class=Main style='text-indent:.5in'>JaamSimModel()        Constructs a new
+instance of the JaamSimModel class.</p>
+
+<p class=Main>The following methods can be used.</p>
+
+<p class=MsoCaption>Method Summary for JaamSimModel</p>
+
+<table class=SimTable border=1 cellspacing=0 cellpadding=0 width=657
+ style='width:492.45pt;margin-left:7.95pt;border-collapse:collapse;border:none'>
+ <thead>
+  <tr style='page-break-inside:avoid'>
+   <td width=135 valign=top style='width:100.95pt;border:solid #A6A6A6 1.0pt;
+   background:#BFBFBF;padding:0in 5.4pt 0in 5.4pt'>
+   <p class=TableHeading><b><span lang=EN-AU>Modifier and Type</span></b></p>
+   </td>
+   <td width=522 valign=top style='width:391.5pt;border:solid #A6A6A6 1.0pt;
+   border-left:none;background:#BFBFBF;padding:0in 5.4pt 0in 5.4pt'>
+   <p class=TableHeading><b>Method and Description</b></p>
+   </td>
+  </tr>
+ </thead>
+ <tr style='page-break-inside:avoid'>
+  <td width=135 valign=top style='width:100.95pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph><span lang=EN-AU>void</span></p>
+  </td>
+  <td width=522 valign=top style='width:391.5pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph><b><span lang=EN-AU>autoLoad()</span></b></p>
+  <p class=TableText-Paragraph><span lang=EN-AU>Pre-loads the simulation model
+  with basic objects such as Simulation and Units.</span></p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=135 valign=top style='width:100.95pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph><span lang=EN-AU>void</span></p>
+  </td>
+  <td width=522 valign=top style='width:391.5pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph><b><span lang=EN-AU>configure(File</span></b><span
+  lang=EN-AU> file<b>)</b></span></p>
+  <p class=TableText-Paragraph><span lang=EN-AU>Loads the specified
+  configuration file to create the objects in the model.  The autoLoad() method
+  must be executed first.</span></p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=135 valign=top style='width:100.95pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph><span lang=EN-AU>void</span></p>
+  </td>
+  <td width=522 valign=top style='width:391.5pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph><b><span lang=EN-AU>start()</span></b></p>
+  <p class=TableText-Paragraph><span lang=EN-AU>Starts the simulation model on
+  a new thread.</span></p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=135 valign=top style='width:100.95pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph><span lang=EN-AU>void</span></p>
+  </td>
+  <td width=522 valign=top style='width:391.5pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph><b><span lang=EN-AU>pause()</span></b></p>
+  <p class=TableText-Paragraph><span lang=EN-AU>Suspends model execution at the
+  present simulation time.</span></p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=135 valign=top style='width:100.95pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph><span lang=EN-AU>void</span></p>
+  </td>
+  <td width=522 valign=top style='width:391.5pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph><b><span lang=EN-AU>resume(</span></b><span
+  lang=EN-AU>double simTime<b>)</b></span></p>
+  <p class=TableText-Paragraph><span lang=EN-AU>Resumes a paused simulation
+  model.  The model will continue execution until the specified simulation time
+  at which the model will be paused.  Events scheduled at the next pause time
+  will not be executed until the model is resumed.</span></p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=135 valign=top style='width:100.95pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph><span lang=EN-AU>void</span></p>
+  </td>
+  <td width=522 valign=top style='width:391.5pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph><b><span lang=EN-AU>reset()</span></b></p>
+  <p class=TableText-Paragraph><span lang=EN-AU>Sets the simulation time to
+  zero and re-initialises the model.  The start() method can be used to begin a
+  new simulation run.</span></p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=135 valign=top style='width:100.95pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph><span lang=EN-AU>void</span></p>
+  </td>
+  <td width=522 valign=top style='width:391.5pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph><b><span lang=EN-AU>clear()</span></b></p>
+  <p class=TableText-Paragraph><span lang=EN-AU>Deletes all the objects in the
+  present model and prepares the JaamSimModel to load a new input file using
+  the autoLoad() and configure() methods.</span></p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=135 valign=top style='width:100.95pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph><span lang=EN-AU>double</span></p>
+  </td>
+  <td width=522 valign=top style='width:391.5pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph><b><span lang=EN-AU>getSimTime()</span></b></p>
+  <p class=TableText-Paragraph><span lang=EN-AU>Returns the present simulation
+  time in seconds.</span></p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=135 valign=top style='width:100.95pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph><span lang=EN-AU>boolean</span></p>
+  </td>
+  <td width=522 valign=top style='width:391.5pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph><b><span lang=EN-AU>isRunning()</span></b></p>
+  <p class=TableText-Paragraph><span lang=EN-AU>Returns true if the simulation
+  is executing.</span></p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=135 valign=top style='width:100.95pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph><span lang=EN-AU>void</span></p>
+  </td>
+  <td width=522 valign=top style='width:391.5pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph><b><span lang=EN-AU>defineEntity(String</span></b><span
+  lang=EN-AU> type<b>, String</b> name<b>)</b></span></p>
+  <p class=TableText-Paragraph><span lang=EN-AU>Creates a new entity with the
+  specified type and name.  If the name already used, &quot;_1&quot;,
+  &quot;_2&quot;, etc. will be appended to the name until an unused name is
+  found.</span></p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=135 valign=top style='width:100.95pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph><span lang=EN-AU>void</span></p>
+  </td>
+  <td width=522 valign=top style='width:391.5pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph><b><span lang=EN-AU>setInput(String</span></b><span
+  lang=EN-AU> entName<b>, String</b> keyword<b>, String</b> arg<b>)</b></span></p>
+  <p class=TableText-Paragraph><span lang=EN-AU>Sets the input for the
+  specified entity and keyword to the specified string.</span></p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=135 valign=top style='width:100.95pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph><span lang=EN-AU>String</span></p>
+  </td>
+  <td width=522 valign=top style='width:391.5pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph><b><span lang=EN-AU>getStringValue(String</span></b><span
+  lang=EN-AU> expString<b>)</b></span></p>
+  <p class=TableText-Paragraph><span lang=EN-AU>Evaluates the specified
+  expression and returns its value as a string.  Any type of result can be
+  returned by the expression, including an entity or an array.  If it returns a
+  number, it must be dimensionless.</span></p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=135 valign=top style='width:100.95pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph><span lang=EN-AU>double</span></p>
+  </td>
+  <td width=522 valign=top style='width:391.5pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph><b><span lang=EN-AU>getDoubleValue(String</span></b><span
+  lang=EN-AU> expString<b>)</b></span></p>
+  <p class=TableText-Paragraph><span lang=EN-AU>Evaluates the specified
+  expression and returns its value.  The expression must return a dimensionless
+  number.  All other types of expressions return NaN.</span></p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=135 valign=top style='width:100.95pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph><span lang=EN-AU>void</span></p>
+  </td>
+  <td width=522 valign=top style='width:391.5pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph><b><span lang=EN-AU>save(File</span></b><span
+  lang=EN-AU> file<b>)</b></span></p>
+  <p class=TableText-Paragraph><span lang=EN-AU>Writes the inputs for the
+  simulation model to the specified file.</span></p>
+  </td>
+ </tr>
+</table>
+
+<p class=Main>Also provided are 'setValue' methods for the FileToVector,
+FileToMatrix, and FileToHashMap classes.  The setValue method sets the data for
+these objects directly from a Java data structure, without the use of the <span
+class=KeywordChar>DataFile</span> input which can be left blank.</p>
+
+<p class=Main>&nbsp;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+</div>
+
+</body>
+
+</html>
