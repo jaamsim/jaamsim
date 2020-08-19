@@ -6,20 +6,58 @@
 
 <div style='border:none;border-bottom:solid #7F7F7F 1.0pt;padding:0in 0in 1.0pt 0in'>
 
-<h2><a name="_Toc42878445">View Window</a></h2>
+<h2>View Window</h2>
 
 </div>
 
-<p class=Main style='page-break-after:avoid'>The View object is used to hold
-the position and direction of the camera that creates the 3D image in a View
-window.</p>
+<p class=Main style='page-break-after:avoid'><span class=SimObjectChar>A View</span>
+window displays a graphical representation of the simulation.  Model objects
+are dragged and dropped into a View window using the Model Builder tool.</p>
 
-<p class=Main style='page-break-after:avoid'>A new View can be created by
-clicking on the View item in the Menu bar.  An existing View can be selected
-for editing by clicking on its entry in the Object Selector.  Views can be
-copied, pasted, renamed, or deleted in the same way as other objects in the Object
-Selector.  However, a renamed View must be closed and re-opened before its new
-name is displayed.</p>
+<p class=Main>Multiple <span class=SimObjectChar>View</span> windows can be
+defined that depict different portions of the 3d model space.</p>
+
+<p class=Main>A new View can be created by clicking on the 'Views' item in the Menu
+bar.  An existing View can be selected for editing by clicking on its entry in the
+Object Selector.  Views can be copied, pasted, renamed, or deleted in the same
+way as other objects in the Object Selector.</p>
+
+<p class=Main style='page-break-after:avoid'><span class=SimObjectChar>View</span>
+windows are created with a number of default graphical objects:</p>
+
+<p class=Main style='margin-top:0in;margin-right:0in;margin-bottom:0in;
+margin-left:.5in;margin-bottom:.0001pt;text-indent:-.25in;page-break-after:
+avoid'><span style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span>XY-Grid – a static grid on the xy-plane</p>
+
+<p class=Main style='margin-top:0in;margin-right:0in;margin-bottom:0in;
+margin-left:.5in;margin-bottom:.0001pt;text-indent:-.25in;page-break-after:
+avoid'><span style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span>XYZ-Axis – coordinate vectors located at the origin</p>
+
+<p class=Main style='margin-top:0in;margin-right:0in;margin-bottom:0in;
+margin-left:.5in;margin-bottom:.0001pt;text-indent:-.25in;page-break-after:
+avoid'><span style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span>Title – overlay text where a title for the simulation can be
+entered</p>
+
+<p class=Main style='margin-top:0in;margin-right:0in;margin-bottom:0in;
+margin-left:.5in;margin-bottom:.0001pt;text-indent:-.25in'><span
+style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span>Clock – overlay clock showing simulation time in YYYY-MM-DD
+format</p>
+
+<p class=Main>The XY-Grid and XYZ-Axis are <span class=SimObjectChar>DisplayEntity</span>
+objects with the <span class=KeywordChar>Movable</span> keyword is set to FALSE
+so that they cannot be moved accidentally and do not respond to mouse clicks. 
+They can be turned on or off using the 'Show Grid' and 'Show Axes' buttons.</p>
+
+<p class=Main>The Title and Clock objects overlay objects (<span
+class=SimObjectChar>OverlayText</span> and <span class=SimObjectChar>OverlayClock,</span>
+respectively) that appear in a fixed position on the <span class=SimObjectChar>View</span>
+window and are not part of the 3D scene.  The Title can be modified by double
+clicking on the text and editing it in place.  Both objects can be moved using
+Ctrl + Left Drag or deleted using the Delete key.</p>
 
 <p class=MsoNormal>&nbsp;</p>
 
