@@ -6,16 +6,17 @@
 
 <div style='border:none;border-bottom:solid #7F7F7F 1.0pt;padding:0in 0in 1.0pt 0in'>
 
-<h2><a name="_Toc42878439">Maintenance and Breakdowns</a></h2>
+<h2><a name="_Toc47541818"></a><a name="_Ref47109521">Maintenance and
+Breakdowns</a></h2>
 
 </div>
 
 <p class=Main>Planned maintenance and breakdowns are modelled using the <span
-class=SimObjectChar>DowntimeEntity</span> (Section 13.9), which generates
-random or scheduled events based on either working time or calendar time.  Normally,
-a maintenance activity is scheduled to occur at regular intervals based on
-calendar time.  Breakdowns are normally modelled to occur randomly based on the
-working time for the object.</p>
+class=SimObjectChar>DowntimeEntity</span>, which generates random or scheduled
+events based on either working time or calendar time.  Normally, a maintenance
+activity is scheduled to occur at regular intervals based on calendar time. 
+Breakdowns are normally modelled to occur randomly based on the working time
+for the object.</p>
 
 <p class=Main>The object that will undergo the maintenance or breakdown has a
 series of keywords that determine how the object responds to a particular
@@ -28,101 +29,101 @@ maintenance or breakdown event.</p>
  <tr style='page-break-inside:avoid'>
   <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
   background:#BFBFBF;padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableHeading><b><span lang=EN-AU>Keyword</span></b></p>
+  <p class=TableHeading><b>Keyword</b></p>
   </td>
   <td width=453 valign=top style='width:339.7pt;border:solid #A6A6A6 1.0pt;
   border-left:none;background:#BFBFBF;padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableHeading><b><span lang=EN-AU>Description</span></b></p>
+  <p class=TableHeading><b>Description</b></p>
   </td>
  </tr>
  <tr style='page-break-inside:avoid'>
   <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
   border-top:none;padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph style='page-break-after:avoid'><span lang=EN-AU>WorkingStateList</span></p>
+  <p class=TableText-Paragraph style='page-break-after:avoid'>WorkingStateList</p>
   </td>
   <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
   none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
   padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph><span lang=EN-AU>A list of states for which the
-  entity is considered to be working.</span></p>
+  <p class=TableText-Paragraph>A list of states for which the entity is
+  considered to be working.</p>
   </td>
  </tr>
  <tr style='page-break-inside:avoid'>
   <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
   border-top:none;padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph style='page-break-after:avoid'><span lang=EN-AU>ImmediateMaintenanceList</span></p>
+  <p class=TableText-Paragraph style='page-break-after:avoid'>ImmediateMaintenanceList</p>
   </td>
   <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
   none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
   padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph><span lang=EN-AU>A list of DowntimeEntities
+  <p class=TableText-Paragraph>A list of <span class=SimObjectChar>DowntimeEntities</span>
   representing planned maintenance that must be performed immediately,
-  interrupting any work underway at present.</span></p>
+  interrupting any work underway at present.</p>
   </td>
  </tr>
  <tr style='page-break-inside:avoid'>
   <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
   border-top:none;padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph style='page-break-after:avoid'><span lang=EN-AU>ForcedMaintenanceList</span></p>
+  <p class=TableText-Paragraph style='page-break-after:avoid'>ForcedMaintenanceList</p>
   </td>
   <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
   none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
   padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph><span lang=EN-AU>A list of DowntimeEntities
+  <p class=TableText-Paragraph>A list of <span class=SimObjectChar>DowntimeEntities</span>
   representing planned maintenance that must begin as soon as task underway at
-  present is finished.</span></p>
+  present is finished.</p>
   </td>
  </tr>
  <tr style='page-break-inside:avoid'>
   <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
   border-top:none;padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph style='page-break-after:avoid'><span lang=EN-AU>OpportunisticMaintenanceList</span></p>
+  <p class=TableText-Paragraph style='page-break-after:avoid'>OpportunisticMaintenanceList</p>
   </td>
   <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
   none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
   padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph><span lang=EN-AU>A list of DowntimeEntities
+  <p class=TableText-Paragraph>A list of <span class=SimObjectChar>DowntimeEntities</span>
   representing planned maintenance that can wait until task underway at present
-  is finished and the queue of tasks is empty.</span></p>
+  is finished and the queue of tasks is empty.</p>
   </td>
  </tr>
  <tr style='page-break-inside:avoid'>
   <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
   border-top:none;padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph style='page-break-after:avoid'><span lang=EN-AU>ImmediateBreakdownList</span></p>
+  <p class=TableText-Paragraph style='page-break-after:avoid'>ImmediateBreakdownList</p>
   </td>
   <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
   none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
   padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph><span lang=EN-AU>A list of DowntimeEntities
-  representing unplanned maintenance that must be performed immediately, interrupting
-  any work underway at present.</span></p>
+  <p class=TableText-Paragraph>A list of <span class=SimObjectChar>DowntimeEntities</span>
+  representing unplanned maintenance that must be performed immediately,
+  interrupting any work underway at present.</p>
   </td>
  </tr>
  <tr style='page-break-inside:avoid'>
   <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
   border-top:none;padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph style='page-break-after:avoid'><span lang=EN-AU>ForcedBreakdownList</span></p>
+  <p class=TableText-Paragraph style='page-break-after:avoid'>ForcedBreakdownList</p>
   </td>
   <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
   none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
   padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph><span lang=EN-AU>A list of DowntimeEntities
+  <p class=TableText-Paragraph>A list of <span class=SimObjectChar>DowntimeEntities</span>
   representing unplanned maintenance that must begin as soon as task underway
-  at present is finished.</span></p>
+  at present is finished.</p>
   </td>
  </tr>
  <tr style='page-break-inside:avoid'>
   <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
   border-top:none;padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph><span lang=EN-AU>OpportunisticBreakdownList</span></p>
+  <p class=TableText-Paragraph>OpportunisticBreakdownList</p>
   </td>
   <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
   none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
   padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph><span lang=EN-AU>A list of DowntimeEntities
+  <p class=TableText-Paragraph>A list of <span class=SimObjectChar>DowntimeEntities</span>
   representing unplanned maintenance that can wait until task underway at
-  present is finished and the queue of tasks is empty.</span></p>
+  present is finished and the queue of tasks is empty.</p>
   </td>
  </tr>
 </table>
@@ -143,112 +144,178 @@ grouped together as follows.</p>
  <tr style='page-break-inside:avoid'>
   <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
   background:#BFBFBF;padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableHeading><b><span lang=EN-AU>Output Name</span></b></p>
+  <p class=TableHeading><b>Output Name</b></p>
   </td>
   <td width=453 valign=top style='width:339.7pt;border:solid #A6A6A6 1.0pt;
   border-left:none;background:#BFBFBF;padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableHeading><b><span lang=EN-AU>Description</span></b></p>
+  <p class=TableHeading><b>Description</b></p>
   </td>
  </tr>
  <tr style='page-break-inside:avoid'>
   <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
   border-top:none;padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph style='page-break-after:avoid'><span lang=EN-AU>Open</span></p>
+  <p class=TableText-Paragraph style='page-break-after:avoid'><span lang=EN-AU>Idle</span></p>
   </td>
   <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
   none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
   padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph><span lang=EN-AU>Returns TRUE if all the
-  thresholds specified by the OperatingThresholdList, ImmediateThresholdList,
-  and ImmediateReleaseThresholdList keywords are open.</span></p>
+  <p class=TableText-Paragraph><span lang=EN-AU>Returns TRUE if able to work
+  but there is no work to perform.  For an EntitySystem, TRUE is returned if
+  all the entities in the system are idle.</span></p>
   </td>
  </tr>
  <tr style='page-break-inside:avoid'>
   <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
   border-top:none;padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph style='page-break-after:avoid'><span lang=EN-AU>Working</span></p>
+  <p class=TableText-Paragraph style='page-break-after:avoid'>Working</p>
   </td>
   <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
   none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
   padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph><span lang=EN-AU>Returns TRUE if work is being
-  performed.</span></p>
+  <p class=TableText-Paragraph>Returns TRUE if work is being performed.  For an
+  EntitySystem, TRUE is returned if any of the entities in the system are
+  working.</p>
   </td>
  </tr>
  <tr style='page-break-inside:avoid'>
   <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
   border-top:none;padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph style='page-break-after:avoid'><span lang=EN-AU>Maintenance</span></p>
+  <p class=TableText-Paragraph style='page-break-after:avoid'><span lang=EN-AU>Setup</span></p>
   </td>
   <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
   none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
   padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph><span lang=EN-AU>Returns TRUE if maintenance is
-  being performed.</span></p>
+  <p class=TableText-Paragraph><span lang=EN-AU>Returns TRUE if setup is being
+  performed.  For an EntitySystem, TRUE is returned if setup is being performed
+  on any of the entities in the system.</span></p>
   </td>
  </tr>
  <tr style='page-break-inside:avoid'>
   <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
   border-top:none;padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph style='page-break-after:avoid'><span lang=EN-AU>Breakdown</span></p>
+  <p class=TableText-Paragraph style='page-break-after:avoid'>Maintenance</p>
   </td>
   <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
   none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
   padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph><span lang=EN-AU>Returns TRUE if a breakdown is being
-  repaired.</span></p>
+  <p class=TableText-Paragraph>Returns TRUE if maintenance is being performed.  For
+  an EntitySystem, TRUE is returned if maintenance is being performed on any of
+  the entities in the system.</p>
   </td>
  </tr>
  <tr style='page-break-inside:avoid'>
   <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
   border-top:none;padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph style='page-break-after:avoid'><span lang=EN-AU>Utilisation</span></p>
+  <p class=TableText-Paragraph style='page-break-after:avoid'>Breakdown</p>
   </td>
   <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
   none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
   padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph><span lang=EN-AU>The fraction of calendar time
-  (excluding the initialisation period) that this object is in the Working
-  state.</span></p>
+  <p class=TableText-Paragraph>Returns TRUE if a breakdown is being repaired.  For
+  an EntitySystem, TRUE is returned if a breakdown is being repaired on any of
+  the entities in the system.</p>
   </td>
  </tr>
  <tr style='page-break-inside:avoid'>
   <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
   border-top:none;padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph style='page-break-after:avoid'><span lang=EN-AU>Commitment</span></p>
+  <p class=TableText-Paragraph style='page-break-after:avoid'><span lang=EN-AU>Stopped</span></p>
   </td>
   <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
   none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
   padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph><span lang=EN-AU>The fraction of calendar time
-  (excluding the initialisation period) that this object is in any state other
-  than Idle.</span></p>
+  <p class=TableText-Paragraph><span lang=EN-AU>Returns TRUE if an operating
+  limit prevents work from being performed.  For an EntitySystem, TRUE is
+  returned if an operating limit prevents work from being performed on any of
+  the entities in the system.</span></p>
   </td>
  </tr>
  <tr style='page-break-inside:avoid'>
   <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
   border-top:none;padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph style='page-break-after:avoid'><span lang=EN-AU>Availability</span></p>
+  <p class=TableText-Paragraph style='page-break-after:avoid'>Utilisation</p>
   </td>
   <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
   none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
   padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph><span lang=EN-AU>The fraction of calendar time
-  (excluding the initialisation period) that this object is in any state other
-  than Maintenance or Breakdown.</span></p>
+  <p class=TableText-Paragraph>The fraction of calendar time (excluding the
+  initialisation period) that this object is in the Working state.  Includes
+  any completed cycles.</p>
   </td>
  </tr>
  <tr style='page-break-inside:avoid'>
   <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
   border-top:none;padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph><span lang=EN-AU>Reliability</span></p>
+  <p class=TableText-Paragraph style='page-break-after:avoid'>Commitment</p>
   </td>
   <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
   none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
   padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph><span lang=EN-AU>The ratio of Working time to
-  the sum of Working time and Breakdown time.  All times exclude the
-  initialisation period.</span></p>
+  <p class=TableText-Paragraph>The fraction of calendar time (excluding the
+  initialisation period) that his object is in any state other than Idle.  Includes
+  any completed cycles.</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph style='page-break-after:avoid'>Availability</p>
+  </td>
+  <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>The fraction of calendar time (excluding the
+  initialisation period) that this object is in any state other than
+  Maintenance or Breakdown.  Includes any completed cycles.</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>Reliability</p>
+  </td>
+  <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>The ratio of Working time to the sum of Working
+  time and Breakdown time.  All times exclude the initialisation period and
+  include any completed cycles.</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph style='page-break-after:avoid'>Open</p>
+  </td>
+  <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>Returns TRUE if all the thresholds specified by
+  the <span class=KeywordChar>ThresholdList</span> keywords are open.</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph style='page-break-after:avoid'><span lang=EN-AU>NextMaintenanceTime</span></p>
+  </td>
+  <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph><span lang=EN-AU>The estimated time at which the
+  next maintenance activity will start.</span></p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph><span lang=EN-AU>NextBreakdownTime</span></p>
+  </td>
+  <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph><span lang=EN-AU>The estimated time at which the
+  next breakdown will occur.</span></p>
   </td>
  </tr>
 </table>
