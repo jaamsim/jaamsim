@@ -4,16 +4,158 @@
 
 <div class=WordSection1>
 
-<h3><a name="_Ref442369292">TextModel</a></h3>
+<h3>TextModel</h3>
 
-<p class=MsoNormal><span class=SimObjectChar>TextModel</span> objects specify
-the general appearance of <span class=SimObjectChar>Text</span> objects and of
-overlay<span class=MainChar> </span>objects that display text (<span
+<p class=Main style='page-break-after:avoid'><span class=SimObjectChar>TextModel</span>
+objects specify the general appearance of <span class=SimObjectChar>Text</span>
+objects and of overlay<span class=MainChar> </span>objects that display text (<span
 class=SimObjectChar>OverlayText,</span> <span class=SimObjectChar>OverlayClock</span>,
-and <span class=SimObjectChar>BillboardText)</span>.  A <span
-class=SimObjectChar>TextModel</span> object can therefore be used as a style
-class, with all instances of these <span class=SimObjectChar>Text</span>
-objects that have the same style sharing the same <span class=SimObjectChar>TextModel</span>.</p>
+and <span class=SimObjectChar>BillboardText)</span>.</p>
+
+<p class=Main>The inputs to the <span class=SimObjectChar>TextModel</span> keywords
+set the default values for the corresponding keywords for Text, OverlayText,
+etc.  A <span class=SimObjectChar>TextModel</span> can therefore be used as a
+style for these objects.  For example, changing the FontName input for a <span
+class=SimObjectChar>TextModel</span> will change the font shown by all the
+objects that use that <span class=SimObjectChar>TextModel</span> as their <span
+class=KeywordChar>DisplayModel</span> input.</p>
+
+<p class=MsoCaption>TextModel Inputs</p>
+
+<table class=SimTable border=1 cellspacing=0 cellpadding=0 width=658
+ style='width:493.6pt;margin-left:7.95pt;border-collapse:collapse;border:none'>
+ <tr style='page-break-inside:avoid'>
+  <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
+  background:#BFBFBF;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableHeading><b>Keyword</b></p>
+  </td>
+  <td width=453 valign=top style='width:339.7pt;border:solid #A6A6A6 1.0pt;
+  border-left:none;background:#BFBFBF;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableHeading><b>Description</b></p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph style='page-break-after:avoid'><b><u><span
+  lang=EN-AU>Key Inputs</span></u></b></p>
+  </td>
+  <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph><span lang=EN-AU>&nbsp;</span></p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph style='page-break-after:avoid'>Description</p>
+  </td>
+  <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph><span lang=EN-AU>A free-form string describing
+  the object.</span></p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph style='page-break-after:avoid'>FontName</p>
+  </td>
+  <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>The font to be used for the text.</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph style='page-break-after:avoid'>TextHeight</p>
+  </td>
+  <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>The height of the text as displayed in the view
+  window.</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph style='page-break-after:avoid'><span lang=EN-AU>TextHeightInPixels</span></p>
+  </td>
+  <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph><span lang=EN-AU>The height of the text in
+  pixels, used by billboard text and overlay text.</span></p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph style='page-break-after:avoid'>FontColour</p>
+  </td>
+  <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>The colour of the text.</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph style='page-break-after:avoid'>FontStyle</p>
+  </td>
+  <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>The font styles to be applied to the text, e.g.
+  Bold, Italic.</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph style='page-break-after:avoid'>DropShadow</p>
+  </td>
+  <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>If TRUE, then a drop shadow appears for the
+  text.</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph style='page-break-after:avoid'>DropShadowColour</p>
+  </td>
+  <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>The colour for the drop shadow.</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>DropShadowOffset</p>
+  </td>
+  <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>The { x, y, z } coordinates of the drop shadow's
+  offset, expressed as a decimal fraction of the text height.</p>
+  </td>
+ </tr>
+</table>
+
+<p class=Main>&nbsp;</p>
+
+<p class=MsoNormal>&nbsp;</p>
 
 </div>
 
