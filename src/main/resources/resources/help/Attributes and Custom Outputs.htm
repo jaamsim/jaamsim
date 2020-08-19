@@ -6,7 +6,7 @@
 
 <div style='border:none;border-bottom:solid #7F7F7F 1.0pt;padding:0in 0in 1.0pt 0in'>
 
-<h2><a name="_Toc42878423"></a><a name="_Ref466562281">User-Defined Variables</a></h2>
+<h2>Attributes and Custom Outputs</h2>
 
 </div>
 
@@ -21,8 +21,8 @@ to add application-specific information to generated entities or to the
 permanent objects in a model.  For example, if there are two types of customers
 in a model that require different service times, an attribute named
 &quot;type&quot; can be added to the generated customer objects and randomly
-assigned the value 1 or 2.  When the customer arrives at the server, its
-service time can then be calculated based on its type attribute.</p>
+assigned the value 1 or 2.  When the customer arrives at the server, its service
+time can then be calculated based on its type attribute.</p>
 
 <p class=Main style='margin-left:.5in;text-indent:-.25in'><span
 style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -52,62 +52,59 @@ following table.</p>
   <tr style='page-break-inside:avoid'>
    <td width=159 valign=top style='width:118.95pt;border:solid #A6A6A6 1.0pt;
    background:#BFBFBF;padding:0in 5.4pt 0in 5.4pt'>
-   <p class=TableHeading><b><span lang=EN-AU>Keyword</span></b></p>
+   <p class=TableHeading><b>Keyword</b></p>
    </td>
    <td width=504 valign=top style='width:377.8pt;border:solid #A6A6A6 1.0pt;
    border-left:none;background:#BFBFBF;padding:0in 5.4pt 0in 5.4pt'>
-   <p class=TableHeading><b><span lang=EN-AU>Description</span></b></p>
+   <p class=TableHeading><b>Description</b></p>
    </td>
   </tr>
  </thead>
  <tr style='page-break-inside:avoid'>
   <td width=159 valign=top style='width:118.95pt;border:solid #A6A6A6 1.0pt;
   border-top:none;padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph><span lang=EN-AU>AttributeDefinitionList</span></p>
+  <p class=TableText-Paragraph>AttributeDefinitionList</p>
   </td>
   <td width=504 valign=top style='width:377.8pt;border-top:none;border-left:
   none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
   padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph style='margin-bottom:12.0pt'><span lang=EN-AU>Defines
-  one or more attributes for the object.  The following format is used for the
-  input:</span></p>
-  <p class=codeintable style='margin-bottom:12.0pt'><span lang=EN-AU>{&nbsp;&lt;Name1&gt;&nbsp;&lt;InitValue1&gt;&nbsp;}&nbsp;...&nbsp;{&nbsp;&lt;NameN&gt;&nbsp;&lt;InitValueN&gt;&nbsp;}</span></p>
-  <p class=TableText-Paragraph style='margin-bottom:12.0pt'><span lang=EN-AU>where
-  Name is the name of the attribute and InitValue is an expression that returns
-  the initial value for the attribute.  The expression is evaluated when the
-  simulation is first started or re-started.  Normally, the expression is a
-  simple constant, such as </span><span class=codeChar><span lang=EN-AU
-  style='font-size:9.0pt'>5[km]</span></span><span lang=EN-AU>.  The attribute
-  type (number, string, etc.) is determined by its initial value.  <u>Do not
-  reference any attributes, outputs, or custom outputs of any object in the
-  InitValue expression</u>.</span></p>
-  <p class=TableText-Paragraph style='margin-bottom:12.0pt'><span lang=EN-AU>The
-  following example defines a series of attributes of various types:</span></p>
-  <p class=codeintable><span lang=EN-AU>{ A 1 } { B 9[km] } { C '&quot;abc&quot;'
-  } { D [Server1] } { E '{5,3,7}' }</span></p>
-  <p class=TableText-Paragraph><span lang=EN-AU>&nbsp;</span></p>
+  <p class=TableText-Paragraph style='margin-bottom:12.0pt'>Defines one or more
+  attributes for the object.  The following format is used for the input:</p>
+  <p class=codeintable style='margin-bottom:12.0pt'>{&nbsp;&lt;Name1&gt;&nbsp;&lt;InitValue1&gt;&nbsp;}&nbsp;...&nbsp;{&nbsp;&lt;NameN&gt;&nbsp;&lt;InitValueN&gt;&nbsp;}</p>
+  <p class=TableText-Paragraph style='margin-bottom:12.0pt'>where Name is the
+  name of the attribute and InitValue is an expression that returns the initial
+  value for the attribute.  The expression is evaluated when the simulation is
+  first started or re-started.  Normally, the expression is a simple constant,
+  such as <span class=codeChar><span style='font-size:9.0pt'>5[km]</span></span>. 
+  The attribute type (number, string, etc.) is determined by its initial value. 
+  <u>Do not reference any attributes, outputs, or custom outputs of any object
+  in the InitValue expression</u>.</p>
+  <p class=TableText-Paragraph style='margin-bottom:12.0pt'>The following
+  example defines a series of attributes of various types:</p>
+  <p class=codeintable>{ A 1 } { B 9[km] } { C '&quot;abc&quot;' } { D
+  [Server1] } { E '{5,3,7}' }</p>
+  <p class=TableText-Paragraph>&nbsp;</p>
   </td>
  </tr>
  <tr style='page-break-inside:avoid'>
   <td width=159 valign=top style='width:118.95pt;border:solid #A6A6A6 1.0pt;
   border-top:none;padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph><span lang=EN-AU>CustomOutputList</span></p>
+  <p class=TableText-Paragraph>CustomOutputList</p>
   </td>
   <td width=504 valign=top style='width:377.8pt;border-top:none;border-left:
   none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
   padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph style='margin-bottom:12.0pt'><span lang=EN-AU>Defines
-  one or more custom outputs for the object.  The following format is used for
-  the input:</span></p>
-  <p class=codeintable style='margin-bottom:12.0pt'><span lang=EN-AU>{&nbsp;&lt;Name1&gt;&nbsp;&lt;Exp1&gt;&nbsp;&lt;Unit1&gt;&nbsp;}&nbsp;...&nbsp;{&nbsp;&lt;NameN&gt;&nbsp;&lt;ExpN&gt;&nbsp;&lt;UnitN&gt;&nbsp;}</span></p>
-  <p class=TableText-Paragraph style='margin-bottom:12.0pt'><span lang=EN-AU>where
-  Name is the name of the custom output, Exp is the expression to be evaluated
-  on demand, and Unit is the unit type for the output.</span></p>
-  <p class=TableText-Paragraph style='margin-bottom:12.0pt'><span lang=EN-AU>For
-  example, the following example defines a custom output called TwiceSimTime,
-  whose value is equal to two times the present simulation time:</span></p>
-  <p class=codeintable><span lang=EN-AU>{&nbsp;TwiceSimTime&nbsp;&nbsp;'2&nbsp;*&nbsp;this.SimTime'&nbsp;&nbsp;TimeUnit&nbsp;}</span></p>
-  <p class=TableText-Paragraph><span lang=EN-AU>&nbsp;</span></p>
+  <p class=TableText-Paragraph style='margin-bottom:12.0pt'>Defines one or more
+  custom outputs for the object.  The following format is used for the input:</p>
+  <p class=codeintable style='margin-bottom:12.0pt'>{&nbsp;&lt;Name1&gt;&nbsp;&lt;Exp1&gt;&nbsp;&lt;Unit1&gt;&nbsp;}&nbsp;...&nbsp;{&nbsp;&lt;NameN&gt;&nbsp;&lt;ExpN&gt;&nbsp;&lt;UnitN&gt;&nbsp;}</p>
+  <p class=TableText-Paragraph style='margin-bottom:12.0pt'>where Name is the
+  name of the custom output, Exp is the expression to be evaluated on demand,
+  and Unit is the unit type for the output.</p>
+  <p class=TableText-Paragraph style='margin-bottom:12.0pt'>For example, the
+  following example defines a custom output called TwiceSimTime, whose value is
+  equal to two times the present simulation time:</p>
+  <p class=codeintable>{&nbsp;TwiceSimTime&nbsp;&nbsp;'2&nbsp;*&nbsp;this.SimTime'&nbsp;&nbsp;TimeUnit&nbsp;}</p>
+  <p class=TableText-Paragraph>&nbsp;</p>
   </td>
  </tr>
 </table>
