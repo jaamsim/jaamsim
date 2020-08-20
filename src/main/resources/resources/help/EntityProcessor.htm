@@ -1,0 +1,548 @@
+<html>
+
+<body lang=EN-CA>
+
+<div class=WordSection1>
+
+<div style='border:none;border-bottom:solid #7F7F7F 1.0pt;padding:0in 0in 1.0pt 0in'>
+
+<h2>EntityProcessor</h2>
+
+</div>
+
+<p class=Main style='page-break-after:avoid'>The <span class=SimObjectChar>EntityProcessor</span>
+simulates multiple parallel servers that share the same queue.  The servers are
+assumed to have exactly the same characteristics, which makes them interchangeable.</p>
+
+<p class=Main>The <span class=KeywordChar>Capacity</span> input specifies the
+number of parallel servers.  </p>
+
+<p class=Main>The <span class=KeywordChar>WaitQueue</span> input identifies the
+Queue from which the entities are drawn for processing.  </p>
+
+<p class=Main>The optional <span class=KeywordChar>ResourceList</span> and <span
+class=KeywordChar>NumberOfUnits</span> keywords determine whether additional
+resources need to be seized before processing can begin.  All the resource
+units must be available before the next entity can be removed from the <span
+class=KeywordChar>WaitQueue</span>.  The resource units are seized
+simultaneously.</p>
+
+<p class=Main>When the processing of an entity is completed, its resources are
+released, the entity is sent to the object specified by the <span
+class=KeywordChar>NextComponent</span> input.</p>
+
+<p class=MsoCaption>EntityProcessor Inputs</p>
+
+<table class=SimTable border=1 cellspacing=0 cellpadding=0 width=658
+ style='width:493.6pt;margin-left:7.95pt;border-collapse:collapse;border:none'>
+ <tr style='page-break-inside:avoid'>
+  <td width=209 valign=top style='width:157.0pt;border:solid #A6A6A6 1.0pt;
+  background:#BFBFBF;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableHeading><b>Keyword</b></p>
+  </td>
+  <td width=449 valign=top style='width:336.6pt;border:solid #A6A6A6 1.0pt;
+  border-left:none;background:#BFBFBF;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableHeading><b>Description</b></p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=209 valign=top style='width:157.0pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph style='page-break-after:avoid'><b><u>Key Inputs</u></b></p>
+  </td>
+  <td width=449 valign=top style='width:336.6pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>&nbsp;</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=209 valign=top style='width:157.0pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph style='page-break-after:avoid'>Description</p>
+  </td>
+  <td width=449 valign=top style='width:336.6pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph><span lang=EN-AU>A free-form string describing
+  the object.</span></p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=209 valign=top style='width:157.0pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph style='page-break-after:avoid'>NextComponent</p>
+  </td>
+  <td width=449 valign=top style='width:336.6pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>The next object to which the processed entity is
+  passed.</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=209 valign=top style='width:157.0pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>WaitQueue</p>
+  </td>
+  <td width=449 valign=top style='width:336.6pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>Queue from which the next entity for processing
+  will be selected.</p>
+  <p class=TableText-Paragraph>If an expression is entered that can return
+  various Queues, it is necessary for each Queue to be included in the entry to
+  the <span class=KeywordChar>WatchList</span> keyword.  If a Queue is not
+  included, then the arrival of an entity to that </p>
+  <p class=TableText-Paragraph>Queue will not wake up this processor.</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=209 valign=top style='width:157.0pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>Match</p>
+  </td>
+  <td width=449 valign=top style='width:336.6pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>An expression returning a string value that
+  determines which of the queued entities are eligible to be selected.  If
+  used, the only entities eligible for selection are the ones whose inputs for
+  the Queue's <span class=KeywordChar>Match</span> keyword are equal to value
+  returned by the expression entered for this <span class=KeywordChar><span
+  lang=EN-AU>Match</span></span> keyword.</p>
+  <p class=TableText-Paragraph>Expressions that return a dimensionless integer
+  or an object are also valid.  The returned number or object is converted to a
+  string automatically.  A floating point number is truncated to an integer.</p>
+  <p class=TableText-Paragraph>Note that a change in the <span
+  class=KeywordChar>Match</span> value does not trigger the processor
+  automatically to re-check the Queue.  The processor can be triggered by
+  adding one or more objects to the <span class=KeywordChar><span lang=EN-AU>WatchList</span></span>
+  input.</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=209 valign=top style='width:157.0pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph><span lang=EN-AU>WatchList</span></p>
+  </td>
+  <td width=449 valign=top style='width:336.6pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph><span lang=EN-AU>An optional list of objects to
+  monitor.</span></p>
+  <p class=TableText-Paragraph><span lang=EN-AU>The queue will be inspected for
+  an entity to process whenever one of the WatchList objects changes state.</span></p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=209 valign=top style='width:157.0pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>ResourceList</p>
+  </td>
+  <td width=449 valign=top style='width:336.6pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>The Resources from which units are to be seized.
+   All the resource units must be available to be seized before any one unit is
+  seized.</p>
+  <p class=TableText-Paragraph>When more than one object attempts to seize the
+  same resource, the resource is assigned based on the priorities and arrival
+  times of entities waiting in the objects' Queues.  An entity's priority is
+  determined by the <span class=KeywordChar><span lang=EN-AU>Priority</span></span>
+  input for its Queue, and is assigned to the entity when it first arrives to
+  the Queue.  This priority determines both the position of the entity in the
+  queue and its priority for seizing a resource.</p>
+  <p class=TableText-Paragraph>If several entities have the same priority, the
+  resource is assigned to entity that arrived first to its Queue.</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=209 valign=top style='width:157.0pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>NumberOfUnits</p>
+  </td>
+  <td width=449 valign=top style='width:336.6pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>The number of units to seize from the Resources
+  specified by the <span class=KeywordChar><span lang=EN-AU>ResourceList</span></span>
+  keyword.  The last value in the list is used if the number of resources is
+  greater than the number of values.  Only an integer number of resource units
+  can be seized.  A decimal value will be truncated to an integer.</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=209 valign=top style='width:157.0pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph><span lang=EN-AU>Capacity</span></p>
+  </td>
+  <td width=449 valign=top style='width:336.6pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph><span lang=EN-AU>The maximum number of entities
+  that can be processed simultaneously.</span></p>
+  <p class=TableText-Paragraph><span lang=EN-AU>If the capacity changes during
+  the simulation run, the EntityProcessor will attempt to use an increase in
+  capacity as soon as it occurs.  However, a decrease in capacity will have no
+  affect on entities that have already started processing.</span></p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=209 valign=top style='width:157.0pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>ServiceTime</p>
+  </td>
+  <td width=449 valign=top style='width:336.6pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>The service time required to process an entity.</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=209 valign=top style='width:157.0pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph style='page-break-after:avoid'><b><u><span
+  lang=EN-AU>Options</span></u></b></p>
+  </td>
+  <td width=449 valign=top style='width:336.6pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph><span lang=EN-AU>&nbsp;</span></p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=209 valign=top style='width:157.0pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Par style='page-break-after:avoid'>AttributeDefinitionList,
+  CustomOutputList</p>
+  </td>
+  <td width=449 valign=top style='width:336.6pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>See Section 6.2.</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=209 valign=top style='width:157.0pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>StateAssignment</p>
+  </td>
+  <td width=449 valign=top style='width:336.6pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>The state to be assigned to each entity on
+  arrival at this object.  No state is assigned if the entry is blank.</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=209 valign=top style='width:157.0pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph style='page-break-after:avoid'><b><u>Thresholds</u></b></p>
+  </td>
+  <td width=449 valign=top style='width:336.6pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>&nbsp;</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=209 valign=top style='width:157.0pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Par>ImmediateThresholdList, ImmediateReleaseThresholdList,
+  OperatingThresholdList</p>
+  </td>
+  <td width=449 valign=top style='width:336.6pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>See Section 10.1.</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=209 valign=top style='width:157.0pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph style='page-break-after:avoid'><b><u>Maintenance</u></b></p>
+  </td>
+  <td width=449 valign=top style='width:336.6pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>&nbsp;</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=209 valign=top style='width:157.0pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Par>WorkingStateList, ImmediateMaintenanceList,
+  ForcedMaintenanceList, OpportunisticMaintenanceList, ImmediateBreakdownList,
+  ForcedBreakdownList, OpportunisticBreakdownList</p>
+  </td>
+  <td width=449 valign=top style='width:336.6pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>See Section 10.2.</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=209 valign=top style='width:157.0pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph style='page-break-after:avoid'><b><u><span
+  lang=EN-AU>Format</span></u></b></p>
+  </td>
+  <td width=449 valign=top style='width:336.6pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph><span lang=EN-AU>&nbsp;</span></p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=209 valign=top style='width:157.0pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph style='page-break-after:avoid'>StateGraphics</p>
+  </td>
+  <td width=449 valign=top style='width:336.6pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>A list of state/DisplayEntity pairs.  For each
+  state, the graphics will be changed to those for the corresponding
+  DisplayEntity, e.g.</p>
+  <p class=TableText-Paragraph><span class=codeChar><span style='font-size:
+  9.0pt'>{ Idle DisplayEntity1</span></span><span class=codeChar><span
+  lang=EN-AU style='font-size:9.0pt'> } { Working DisplayEntity2 }</span></span></p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=209 valign=top style='width:157.0pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>ProcessPosition</p>
+  </td>
+  <td width=449 valign=top style='width:336.6pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>The position of the entity being processed
+  relative to the processor.</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=209 valign=top style='width:157.0pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph style='page-break-after:avoid'><b><u>Graphics</u></b></p>
+  </td>
+  <td width=449 valign=top style='width:336.6pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>&nbsp;</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=209 valign=top style='width:157.0pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Par>Position, Alignment, Size, Orientation, Region,
+  RelativeEntity, DisplayModel, Show, Movable, VisibleViews, DrawRange</p>
+  </td>
+  <td width=449 valign=top style='width:336.6pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>See Section 11.1.</p>
+  </td>
+ </tr>
+</table>
+
+<p class=MsoCaption>EntityProcessor Outputs</p>
+
+<table class=SimTable border=1 cellspacing=0 cellpadding=0 width=658
+ style='width:493.6pt;margin-left:7.95pt;border-collapse:collapse;border:none'>
+ <tr style='page-break-inside:avoid'>
+  <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
+  background:#BFBFBF;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableHeading><b>Output Name</b></p>
+  </td>
+  <td width=453 valign=top style='width:339.7pt;border:solid #A6A6A6 1.0pt;
+  border-left:none;background:#BFBFBF;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableHeading><b>Description</b></p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph style='page-break-after:avoid'><b><u>Entity and
+  DisplayEntity</u></b></p>
+  </td>
+  <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>&nbsp;</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Par>Name, ObjectType, SimTime, Parent, Attributes, Custom
+  Outputs, Position, Size, Orientation, Alignment, GraphicalLength,
+  ObserverList, NextList, PreviousList</p>
+  </td>
+  <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>See Section 10.1.</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph style='page-break-after:avoid'><b><u>StateEntity</u></b></p>
+  </td>
+  <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>&nbsp;</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Par>State, WorkingState, WorkingTime, StateTimes,
+  TotalTime</p>
+  </td>
+  <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>See Section 10.3.</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph style='page-break-after:avoid'><b><u>StateUserEntity</u></b></p>
+  </td>
+  <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>&nbsp;</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Par>Idle, Working, Setup, Maintenance, Breakdown, Stopped,
+  Utilisation, Commitment, Availability, Reliability, Open,
+  NextMaintenanceTime, NextBreakdownTime</p>
+  </td>
+  <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>See Section 10.3.</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph style='page-break-after:avoid'><b><u>LinkedDevice</u></b></p>
+  </td>
+  <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>&nbsp;</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Par>obj, NumberAdded, NumberProcessed, NumberInProgress,
+  ProcessingRate, ReleaseTime</p>
+  </td>
+  <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>See Section 16.</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph style='page-break-after:avoid'><b><u>LinkedService</u></b></p>
+  </td>
+  <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>&nbsp;</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>MatchValue</p>
+  </td>
+  <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>The present value to be matched to an entity in
+  the queue.</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph style='page-break-after:avoid'><b><u>Server</u></b></p>
+  </td>
+  <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>&nbsp;</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph style='page-break-after:avoid'>Capacity</p>
+  </td>
+  <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>The present number of entities that can be
+  processed simultaneously.</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph style='page-break-after:avoid'>UnitsInUse</p>
+  </td>
+  <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>The present number of capacity units that are
+  being used.</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph style='page-break-after:avoid'>EntityList</p>
+  </td>
+  <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>The entities being processed at present.</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph><span lang=EN-AU>RemainingTime</span></p>
+  </td>
+  <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph><span lang=EN-AU>The remaining processing time
+  for the entities being processed at present.</span></p>
+  </td>
+ </tr>
+</table>
+
+<p class=Main>&nbsp;</p>
+
+</div>
+
+</body>
+
+</html>
