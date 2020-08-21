@@ -144,15 +144,17 @@ public class HelpBox extends JDialog {
 		editorPane.setEditorKit(editorKit);
 		StyleSheet styleSheet = editorKit.getStyleSheet();
 		styleSheet.addRule("body {font-family: sans-serif; font-size: 10px;}");
-		styleSheet.addRule("h1 {font-size: 16px; color: blue;}");
-		styleSheet.addRule("h2 {font-size: 14px; color: blue;}");
-		styleSheet.addRule("h3 {font-size: 12px; color: blue;}");
-		styleSheet.addRule("h4 {font-size: 10px; color: blue;}");
+		styleSheet.addRule("h1 {font-size: 16px; color: blue; margin-top: 10; margin-bottom: 2;}");
+		styleSheet.addRule("h2 {font-size: 14px; color: blue; margin-top: 10; margin-bottom: 2;}");
+		styleSheet.addRule("h3 {font-size: 12px; color: blue; margin-top: 10; margin-bottom: 2;}");
+		styleSheet.addRule("h4 {font-size: 10px; color: blue; margin-top: 10; margin-bottom: 2;}");
+		styleSheet.addRule(".Main {margin-top: 2; margin-bottom: 10;}");
 		styleSheet.addRule(".KeywordChar {color: blue;}");
-		styleSheet.addRule(".MsoCaption {font-weight: bold;}");
+		styleSheet.addRule(".MsoCaption {font-weight: bold; margin-top: 2; margin-bottom: 2;}");
 		styleSheet.addRule(".TableText-Paragraph {font-size: 9px;}");
-		styleSheet.addRule(".code {font-family: monospace; font-size: 9px;}");
+		styleSheet.addRule(".code {font-family: monospace; font-size: 9px; margin-top: 0; margin-bottom: 10;}");
 		styleSheet.addRule(".codeintable {font-family: monospace; font-size: 9px;}");
+		styleSheet.addRule(".List-Bullet1 {margin-top: 2; margin-bottom: 10;}");
 
 		JScrollPane scrollPane = new JScrollPane(editorPane);
 		scrollPane.setBorder(new EmptyBorder(5, 5, 5, 5));
