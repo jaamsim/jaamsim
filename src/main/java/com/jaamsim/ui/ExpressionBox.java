@@ -472,6 +472,198 @@ public class ExpressionBox extends JDialog {
 		}
 	}
 
+	private void showEntityMenu(String name, final int ind0, final int ind1, boolean focusable) {
+		if (entityMenu != null)
+			entityMenu.setVisible(false);
+		entityMenu = new ScrollablePopupMenu();
+		nameList.clear();
+		JaamSimModel simModel = GUIFrame.getJaamSimModel();
+		for (DisplayEntity each: simModel.getClonesOfIterator(DisplayEntity.class)) {
+			if (!each.isRegistered())
+				continue;
+
+			if (each instanceof OverlayEntity || each instanceof Region
+					|| each instanceof EntityLabel)
+				continue;
+
+			if (!each.getName().toUpperCase().contains(name.toUpperCase()))
+				continue;
+
+			nameList.add(each.getName());
+		}
+		String simName = GUIFrame.getJaamSimModel().getSimulation().getName();
+		if (simName.toUpperCase().contains(name.toUpperCase())) {
+			nameList.add(simName);
+		}
+		Collections.sort(nameList, Input.uiSortOrder);
+
+		boolean first = true;
+		for (final String entName : nameList) {
+			JMenuItem item = new JMenuItem(entName) {
+				@Override
+				public Point getToolTipLocation(MouseEvent e) {
+					return new Point(entityMenu.getWidth(), -getY());
+				}
+			};
+			item.setToolTipText(GUIFrame.formatOutputToolTip(
+					entName,
+					simModel.getNamedEntity(entName).getDescription()) );
+
+			item.addActionListener( new ActionListener() {
+
+				@Override
+				public void actionPerformed( ActionEvent event ) {
+					entityMenu = null;
+					String str = String.format("[%s]", entName);
+					editArea.replaceRange(str, ind0, ind1 + 1);
+					editArea.requestFocusInWindow();
+					setEditMode(EDIT_MODE_NORMAL);
+				}
+			} );
+			entityMenu.add(item);
+			if (first && !focusable) {
+				item.setArmed(true);
+				first = false;
+			}
+		}
+
+		if (!focusable)
+			entityMenu.setFocusable(false);
+		entityMenu.show(editArea, menuPos.x, menuPos.y);
+	}
+
+	private void showOutputMenu(Entity ent, String name, final int ind0, final int ind1, boolean focusable) {
+		if (outputMenu != null)
+			outputMenu.setVisible(false);
+		outputMenu = new ScrollablePopupMenu();
+
+		// Sub-model components
+		compList.clear();
+		for (Entity comp : ent.getChildren()) {
+			if (!comp.isRegistered())
+				continue;
+			if (!comp.getLocalName().toUpperCase().contains(name.toUpperCase()))
+				continue;
+			compList.add(comp.getLocalName());
+		}
+		Collections.sort(compList);
+
+		boolean first = true;
+		for (String compName : compList) {
+			String str = String.format("[%s]", compName);
+			JMenuItem item = new JMenuItem(str) {
+				@Override
+				public Point getToolTipLocation(MouseEvent e) {
+					return new Point(outputMenu.getWidth(), -getY());
+				}
+			};
+			item.setToolTipText(GUIFrame.formatOutputToolTip(
+					String.format("%s.%s", ent, compName),
+					ent.getChild(compName).getDescription()) );
+
+			item.addActionListener( new ActionListener() {
+
+				@Override
+				public void actionPerformed( ActionEvent event ) {
+					outputMenu = null;
+					editArea.replaceRange(item.getText(), ind0 + 1, ind1 + 1);
+					editArea.requestFocusInWindow();
+					setEditMode(EDIT_MODE_NORMAL);
+				}
+			} );
+			outputMenu.add(item);
+			if (first && !focusable) {
+				item.setArmed(true);
+				first = false;
+			}
+		}
+
+		// Outputs
+		handles.clear();
+		for (OutputHandle hand : OutputHandle.getOutputHandleList(ent)) {
+			if (hand.getName().contains(" "))
+				continue;
+
+			if (!hand.getName().toUpperCase().contains(name.toUpperCase()))
+				continue;
+
+			handles.add(hand);
+		}
+		Collections.sort(handles, Input.uiSortOrder);
+
+		for (final OutputHandle hand : handles) {
+			JMenuItem item = new JMenuItem(hand.getName()) {
+				@Override
+				public Point getToolTipLocation(MouseEvent e) {
+					return new Point(outputMenu.getWidth(), -getY());
+				}
+			};
+			item.setToolTipText(GUIFrame.formatOutputToolTip(
+					hand.getName(),
+					hand.getDescription()) );
+
+			item.addActionListener( new ActionListener() {
+
+				@Override
+				public void actionPerformed( ActionEvent event ) {
+					outputMenu = null;
+					editArea.replaceRange(hand.getName(), ind0 + 1, ind1 + 1);
+					editArea.requestFocusInWindow();
+					setEditMode(EDIT_MODE_NORMAL);
+				}
+			} );
+			outputMenu.add(item);
+			if (first && !focusable) {
+				item.setArmed(true);
+				first = false;
+			}
+		}
+
+		if (!focusable)
+			outputMenu.setFocusable(false);
+		outputMenu.show(editArea, menuPos.x, menuPos.y);
+	}
+
+	private Entity getEntityReference(String text, int dotIndex) {
+
+		// Find the previous part of the text that might correspond to an entity
+		for (int i = dotIndex - 1; i >= 0; i--) {
+			String expString = text.substring(i, dotIndex);
+			//System.out.println(expString);
+
+			// Try to evaluate the string as an expression that returns an entity
+			Entity thisEnt = EditBox.getInstance().getCurrentEntity();
+			double simTime = GUIFrame.getJaamSimModel().getSimTime();
+			try {
+				ExpEvaluator.EntityParseContext pc = ExpEvaluator.getParseContext(thisEnt, expString);
+				Expression exp = ExpParser.parseExpression(pc, expString);
+				ExpParser.assertResultType(exp, ExpResType.ENTITY);
+
+				ExpResult res = ExpEvaluator.evaluateExpression(exp, simTime);
+				//System.out.println(res.entVal);
+				return res.entVal;
+			}
+			catch (Throwable e) {}
+		}
+		return null;
+	}
+
+	public boolean isControlChar(char ch) {
+		return containsChar(controlChars, ch);
+	}
+
+	public boolean isMathChar(char ch) {
+		return containsChar(mathChars, ch);
+	}
+
+	private boolean containsChar(char[] chars, char ch) {
+		for (char c : chars) {
+			if (c == ch)
+				return true;
+		}
+		return false;
+	}
+
 	private void addToolBarButtons(JToolBar buttonBar) {
 
 	    Dimension separatorDim = new Dimension(11, 20);
@@ -745,198 +937,6 @@ public class ExpressionBox extends JDialog {
 			});
 		}
 
-	}
-
-	private void showEntityMenu(String name, final int ind0, final int ind1, boolean focusable) {
-		if (entityMenu != null)
-			entityMenu.setVisible(false);
-		entityMenu = new ScrollablePopupMenu();
-		nameList.clear();
-		JaamSimModel simModel = GUIFrame.getJaamSimModel();
-		for (DisplayEntity each: simModel.getClonesOfIterator(DisplayEntity.class)) {
-			if (!each.isRegistered())
-				continue;
-
-			if (each instanceof OverlayEntity || each instanceof Region
-					|| each instanceof EntityLabel)
-				continue;
-
-			if (!each.getName().toUpperCase().contains(name.toUpperCase()))
-				continue;
-
-			nameList.add(each.getName());
-		}
-		String simName = GUIFrame.getJaamSimModel().getSimulation().getName();
-		if (simName.toUpperCase().contains(name.toUpperCase())) {
-			nameList.add(simName);
-		}
-		Collections.sort(nameList, Input.uiSortOrder);
-
-		boolean first = true;
-		for (final String entName : nameList) {
-			JMenuItem item = new JMenuItem(entName) {
-				@Override
-				public Point getToolTipLocation(MouseEvent e) {
-					return new Point(entityMenu.getWidth(), -getY());
-				}
-			};
-			item.setToolTipText(GUIFrame.formatOutputToolTip(
-					entName,
-					simModel.getNamedEntity(entName).getDescription()) );
-
-			item.addActionListener( new ActionListener() {
-
-				@Override
-				public void actionPerformed( ActionEvent event ) {
-					entityMenu = null;
-					String str = String.format("[%s]", entName);
-					editArea.replaceRange(str, ind0, ind1 + 1);
-					editArea.requestFocusInWindow();
-					setEditMode(EDIT_MODE_NORMAL);
-				}
-			} );
-			entityMenu.add(item);
-			if (first && !focusable) {
-				item.setArmed(true);
-				first = false;
-			}
-		}
-
-		if (!focusable)
-			entityMenu.setFocusable(false);
-		entityMenu.show(editArea, menuPos.x, menuPos.y);
-	}
-
-	private void showOutputMenu(Entity ent, String name, final int ind0, final int ind1, boolean focusable) {
-		if (outputMenu != null)
-			outputMenu.setVisible(false);
-		outputMenu = new ScrollablePopupMenu();
-
-		// Sub-model components
-		compList.clear();
-		for (Entity comp : ent.getChildren()) {
-			if (!comp.isRegistered())
-				continue;
-			if (!comp.getLocalName().toUpperCase().contains(name.toUpperCase()))
-				continue;
-			compList.add(comp.getLocalName());
-		}
-		Collections.sort(compList);
-
-		boolean first = true;
-		for (String compName : compList) {
-			String str = String.format("[%s]", compName);
-			JMenuItem item = new JMenuItem(str) {
-				@Override
-				public Point getToolTipLocation(MouseEvent e) {
-					return new Point(outputMenu.getWidth(), -getY());
-				}
-			};
-			item.setToolTipText(GUIFrame.formatOutputToolTip(
-					String.format("%s.%s", ent, compName),
-					ent.getChild(compName).getDescription()) );
-
-			item.addActionListener( new ActionListener() {
-
-				@Override
-				public void actionPerformed( ActionEvent event ) {
-					outputMenu = null;
-					editArea.replaceRange(item.getText(), ind0 + 1, ind1 + 1);
-					editArea.requestFocusInWindow();
-					setEditMode(EDIT_MODE_NORMAL);
-				}
-			} );
-			outputMenu.add(item);
-			if (first && !focusable) {
-				item.setArmed(true);
-				first = false;
-			}
-		}
-
-		// Outputs
-		handles.clear();
-		for (OutputHandle hand : OutputHandle.getOutputHandleList(ent)) {
-			if (hand.getName().contains(" "))
-				continue;
-
-			if (!hand.getName().toUpperCase().contains(name.toUpperCase()))
-				continue;
-
-			handles.add(hand);
-		}
-		Collections.sort(handles, Input.uiSortOrder);
-
-		for (final OutputHandle hand : handles) {
-			JMenuItem item = new JMenuItem(hand.getName()) {
-				@Override
-				public Point getToolTipLocation(MouseEvent e) {
-					return new Point(outputMenu.getWidth(), -getY());
-				}
-			};
-			item.setToolTipText(GUIFrame.formatOutputToolTip(
-					hand.getName(),
-					hand.getDescription()) );
-
-			item.addActionListener( new ActionListener() {
-
-				@Override
-				public void actionPerformed( ActionEvent event ) {
-					outputMenu = null;
-					editArea.replaceRange(hand.getName(), ind0 + 1, ind1 + 1);
-					editArea.requestFocusInWindow();
-					setEditMode(EDIT_MODE_NORMAL);
-				}
-			} );
-			outputMenu.add(item);
-			if (first && !focusable) {
-				item.setArmed(true);
-				first = false;
-			}
-		}
-
-		if (!focusable)
-			outputMenu.setFocusable(false);
-		outputMenu.show(editArea, menuPos.x, menuPos.y);
-	}
-
-	private Entity getEntityReference(String text, int dotIndex) {
-
-		// Find the previous part of the text that might correspond to an entity
-		for (int i = dotIndex - 1; i >= 0; i--) {
-			String expString = text.substring(i, dotIndex);
-			//System.out.println(expString);
-
-			// Try to evaluate the string as an expression that returns an entity
-			Entity thisEnt = EditBox.getInstance().getCurrentEntity();
-			double simTime = GUIFrame.getJaamSimModel().getSimTime();
-			try {
-				ExpEvaluator.EntityParseContext pc = ExpEvaluator.getParseContext(thisEnt, expString);
-				Expression exp = ExpParser.parseExpression(pc, expString);
-				ExpParser.assertResultType(exp, ExpResType.ENTITY);
-
-				ExpResult res = ExpEvaluator.evaluateExpression(exp, simTime);
-				//System.out.println(res.entVal);
-				return res.entVal;
-			}
-			catch (Throwable e) {}
-		}
-		return null;
-	}
-
-	public boolean isControlChar(char ch) {
-		return containsChar(controlChars, ch);
-	}
-
-	public boolean isMathChar(char ch) {
-		return containsChar(mathChars, ch);
-	}
-
-	private boolean containsChar(char[] chars, char ch) {
-		for (char c : chars) {
-			if (c == ch)
-				return true;
-		}
-		return false;
 	}
 
 	private static class ButtonDesc {
