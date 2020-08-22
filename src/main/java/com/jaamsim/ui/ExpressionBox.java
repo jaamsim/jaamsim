@@ -392,6 +392,86 @@ public class ExpressionBox extends JDialog {
 		return editArea.getText();
 	}
 
+	private void showMenus(int ind1, boolean focusable) {
+		String text = editArea.getText();
+
+		if (editMode == EDIT_MODE_ENTITY) {
+
+			// Determine the partial name for the entity
+			final int ind0 = text.lastIndexOf('[', ind1);
+			if (ind0 == -1) {
+				setEditMode(EDIT_MODE_NORMAL);
+				return;
+			}
+			String name = "";
+			if (ind1 > ind0) {
+				name = text.substring(ind0 + 1, ind1 + 1);
+			}
+
+			// Does the name contain any invalid characters?
+			if (!name.isEmpty() && !InputAgent.isValidName(name)) {
+				setEditMode(EDIT_MODE_NORMAL);
+				return;
+			}
+
+			// Show the entity name pop-up
+			showEntityMenu(name, ind0, ind1, focusable);
+
+			// If the popup menu takes the focus, set it to the second item on the list
+			if (focusable) {
+				SwingUtilities.invokeLater(new Runnable() {
+					@Override
+					public void run() {
+						entityMenu.dispatchEvent(new KeyEvent(entityMenu, KeyEvent.KEY_PRESSED, 0, 0, KeyEvent.VK_DOWN, '\0'));
+						entityMenu.dispatchEvent(new KeyEvent(entityMenu, KeyEvent.KEY_PRESSED, 0, 0, KeyEvent.VK_DOWN, '\0'));
+					}
+				});
+			}
+			return;
+		}
+
+		if (editMode == EDIT_MODE_OUTPUT) {
+
+			// Find the entity name
+			int dotIndex = text.lastIndexOf('.', ind1);
+			Entity ent = getEntityReference(text, dotIndex);
+
+			if (ent == null) {
+				setEditMode(EDIT_MODE_NORMAL);
+				return;
+			}
+
+			// Find the partial output name
+			String name = "";
+			if (ind1 > dotIndex) {
+				name = text.substring(dotIndex + 1, ind1 + 1);
+			}
+
+			// Does the name contain any invalid characters?
+			for (char c : name.toCharArray()) {
+				if (isControlChar(c) || isMathChar(c)) {
+					setEditMode(EDIT_MODE_NORMAL);
+					return;
+				}
+			}
+
+			// Show the output name pop-up
+			showOutputMenu(ent, name, dotIndex, ind1, focusable);
+
+			// If the popup menu takes the focus, set it to the second item on the list
+			if (focusable) {
+				SwingUtilities.invokeLater(new Runnable() {
+					@Override
+					public void run() {
+						outputMenu.dispatchEvent(new KeyEvent(outputMenu, KeyEvent.KEY_PRESSED, 0, 0, KeyEvent.VK_DOWN, '\0'));
+						outputMenu.dispatchEvent(new KeyEvent(outputMenu, KeyEvent.KEY_PRESSED, 0, 0, KeyEvent.VK_DOWN, '\0'));
+					}
+				});
+			}
+			return;
+		}
+	}
+
 	private void addToolBarButtons(JToolBar buttonBar) {
 
 	    Dimension separatorDim = new Dimension(11, 20);
@@ -665,86 +745,6 @@ public class ExpressionBox extends JDialog {
 			});
 		}
 
-	}
-
-	private void showMenus(int ind1, boolean focusable) {
-		String text = editArea.getText();
-
-		if (editMode == EDIT_MODE_ENTITY) {
-
-			// Determine the partial name for the entity
-			final int ind0 = text.lastIndexOf('[', ind1);
-			if (ind0 == -1) {
-				setEditMode(EDIT_MODE_NORMAL);
-				return;
-			}
-			String name = "";
-			if (ind1 > ind0) {
-				name = text.substring(ind0 + 1, ind1 + 1);
-			}
-
-			// Does the name contain any invalid characters?
-			if (!name.isEmpty() && !InputAgent.isValidName(name)) {
-				setEditMode(EDIT_MODE_NORMAL);
-				return;
-			}
-
-			// Show the entity name pop-up
-			showEntityMenu(name, ind0, ind1, focusable);
-
-			// If the popup menu takes the focus, set it to the second item on the list
-			if (focusable) {
-				SwingUtilities.invokeLater(new Runnable() {
-					@Override
-					public void run() {
-						entityMenu.dispatchEvent(new KeyEvent(entityMenu, KeyEvent.KEY_PRESSED, 0, 0, KeyEvent.VK_DOWN, '\0'));
-						entityMenu.dispatchEvent(new KeyEvent(entityMenu, KeyEvent.KEY_PRESSED, 0, 0, KeyEvent.VK_DOWN, '\0'));
-					}
-				});
-			}
-			return;
-		}
-
-		if (editMode == EDIT_MODE_OUTPUT) {
-
-			// Find the entity name
-			int dotIndex = text.lastIndexOf('.', ind1);
-			Entity ent = getEntityReference(text, dotIndex);
-
-			if (ent == null) {
-				setEditMode(EDIT_MODE_NORMAL);
-				return;
-			}
-
-			// Find the partial output name
-			String name = "";
-			if (ind1 > dotIndex) {
-				name = text.substring(dotIndex + 1, ind1 + 1);
-			}
-
-			// Does the name contain any invalid characters?
-			for (char c : name.toCharArray()) {
-				if (isControlChar(c) || isMathChar(c)) {
-					setEditMode(EDIT_MODE_NORMAL);
-					return;
-				}
-			}
-
-			// Show the output name pop-up
-			showOutputMenu(ent, name, dotIndex, ind1, focusable);
-
-			// If the popup menu takes the focus, set it to the second item on the list
-			if (focusable) {
-				SwingUtilities.invokeLater(new Runnable() {
-					@Override
-					public void run() {
-						outputMenu.dispatchEvent(new KeyEvent(outputMenu, KeyEvent.KEY_PRESSED, 0, 0, KeyEvent.VK_DOWN, '\0'));
-						outputMenu.dispatchEvent(new KeyEvent(outputMenu, KeyEvent.KEY_PRESSED, 0, 0, KeyEvent.VK_DOWN, '\0'));
-					}
-				});
-			}
-			return;
-		}
 	}
 
 	private void showEntityMenu(String name, final int ind0, final int ind1, boolean focusable) {
