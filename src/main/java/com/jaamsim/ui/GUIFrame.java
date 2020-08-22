@@ -5140,6 +5140,18 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				name, desc);
 	}
 
+	/**
+	 * Returns the HTML code for an entity's pop-up tooltip in the Input Builder.
+	 * @param name - entity name
+	 * @param type - object type for the entity
+	 * @param description - description for the entity
+	 * @return HTML for the tooltip
+	 */
+	public static String formatEntityToolTip(String name, String type, String description) {
+		String desc = html_replace(description);
+		return String.format("<html><p width=\"250px\"><b>%s</b> (%s)<br>%s</p></html>",
+				name, type, desc);
+	}
 
 	static ArrayList<Color4d> getFillColoursInUse(JaamSimModel simModel) {
 		ArrayList<Color4d> ret = new ArrayList<>();

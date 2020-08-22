@@ -505,9 +505,11 @@ public class ExpressionBox extends JDialog {
 					return new Point(entityMenu.getWidth(), -getY());
 				}
 			};
-			item.setToolTipText(GUIFrame.formatOutputToolTip(
+			Entity ent = simModel.getNamedEntity(entName);
+			item.setToolTipText(GUIFrame.formatEntityToolTip(
 					entName,
-					simModel.getNamedEntity(entName).getDescription()) );
+					ent.getObjectType().getName(),
+					ent.getDescription()) );
 
 			item.addActionListener( new ActionListener() {
 
