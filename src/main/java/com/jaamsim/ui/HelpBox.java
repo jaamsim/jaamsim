@@ -96,10 +96,10 @@ public class HelpBox extends JDialog {
 				File helpDir = new File(uri.getPath());
 				for (File file : helpDir.listFiles()) {
 					String name = file.getName();
-					int ind = name.indexOf('.');
-					topicList.add(name.substring(0, ind));
+					if (name.endsWith(".htm")) {
+						topicList.add(name.substring(0, name.length() - 4));
+					}
 				}
-
 			}
 
 			// When running in a built jar or executable
