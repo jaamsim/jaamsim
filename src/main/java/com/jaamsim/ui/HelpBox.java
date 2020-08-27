@@ -24,9 +24,18 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
+import java.util.stream.Stream;
 
 import javax.swing.Box;
 import javax.swing.JButton;
@@ -78,14 +87,42 @@ public class HelpBox extends JDialog {
 		setPreferredSize(new Dimension(1000, 800));
 
 		// Topics List
-		URL url = GUIFrame.class.getResource("/resources/help");
-		File helpDir = new File(url.getPath());
-		for (File file : helpDir.listFiles()) {
-			String name = file.getName();
-			int ind = name.indexOf('.');
-			topicList.add(name.substring(0, ind));
+		try {
+			String helpFolder = "/resources/help";
+			URI uri = GUIFrame.class.getResource(helpFolder).toURI();
+
+			// When developing in an IDE
+			if (uri.getScheme().equals("file")) {
+				File helpDir = new File(uri.getPath());
+				for (File file : helpDir.listFiles()) {
+					String name = file.getName();
+					int ind = name.indexOf('.');
+					topicList.add(name.substring(0, ind));
+				}
+
+			}
+
+			// When running in a built jar or executable
+			if (uri.getScheme().equals("jar")) {
+				try {
+					FileSystem fs = FileSystems.newFileSystem(uri, Collections.<String, Object>emptyMap());
+					Path helpPath = fs.getPath(helpFolder);
+					Stream<Path> walk = Files.walk(helpPath, 1);
+			        for (Iterator<Path> it = walk.iterator(); it.hasNext();){
+			        	Path each = it.next();
+			        	String file = each.toString();
+			        	if (file.endsWith(".htm")) {
+			        		topicList.add(file.substring(helpFolder.length() + 1, file.length() - 4));
+			        	}
+			        }
+			        walk.close();
+			        fs.close();
+				} catch (IOException e1) {}
+			}
+
+			Collections.sort(topicList, Input.uiSortOrder);
 		}
-		Collections.sort(topicList, Input.uiSortOrder);
+		catch (URISyntaxException e1) {}
 
 		// Topics search
 		topicSearch = new JTextField("", 30);
