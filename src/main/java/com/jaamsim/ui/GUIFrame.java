@@ -45,17 +45,26 @@ import java.awt.event.WindowEvent;
 import java.awt.geom.Rectangle2D;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.prefs.Preferences;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import javax.swing.Box;
 import javax.swing.ButtonGroup;
@@ -4859,6 +4868,45 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	public static void set3DFolder(String path) {
 		Preferences prefs = Preferences.userRoot().node(instance.getClass().getName());
 		prefs.put(LAST_USED_3D_FOLDER, path);
+	}
+
+	/**
+	 * Returns a list of the names of the files contained in the specified resource folder.
+	 * @param folder - name of the resource folder
+	 * @return names of the files in the folder
+	 */
+	public static ArrayList<String> getResourceFileNames(String folder) {
+		ArrayList<String> ret = new ArrayList<>();
+
+		try {
+			URI uri = GUIFrame.class.getResource(folder).toURI();
+
+			// When developing in an IDE
+			if (uri.getScheme().equals("file")) {
+				File dir = new File(uri.getPath());
+				for (File file : dir.listFiles()) {
+					ret.add(file.getName());
+				}
+			}
+
+			// When running in a built jar or executable
+			if (uri.getScheme().equals("jar")) {
+				try {
+					FileSystem fs = FileSystems.newFileSystem(uri, Collections.<String, Object>emptyMap());
+					Path path = fs.getPath(folder);
+					Stream<Path> walk = Files.walk(path, 1);
+					for (Iterator<Path> it = walk.iterator(); it.hasNext();){
+						Path each = it.next();
+						String file = each.toString();
+						ret.add(file.substring(folder.length() + 1));
+					}
+					walk.close();
+					fs.close();
+				} catch (IOException e) {}
+			}
+		} catch (URISyntaxException e) {}
+
+		return ret;
 	}
 
 	// ******************************************************************************************************
