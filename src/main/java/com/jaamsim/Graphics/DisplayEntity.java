@@ -979,6 +979,10 @@ public class DisplayEntity extends Entity {
 		// Do nothing in default behavior
 	}
 
+	public void linkTo(DisplayEntity nextEnt, boolean dir) {
+		linkTo(nextEnt);
+	}
+
 	/**
 	 * Set the inputs for the two entities affected by a 'split' operation.
 	 * @param splitEnt - entity split from the original
