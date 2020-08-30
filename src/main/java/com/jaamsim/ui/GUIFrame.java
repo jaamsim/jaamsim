@@ -80,6 +80,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JProgressBar;
+import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
@@ -151,6 +152,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	private static GUIFrame instance;
 
 	private static JaamSimModel sim;
+	private static final ArrayList<JaamSimModel> simList = new ArrayList<>();
 
 	private final ArrayList<View> views = new ArrayList<>();
 	private int nextViewID = 1;
@@ -164,6 +166,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	private JMenu viewsMenu;
 	private JMenu optionMenu;
 	private JMenu unitsMenu;
+	private JMenu windowMenu;
 	private JMenu helpMenu;
 	private JToggleButton snapToGrid;
 	private JToggleButton xyzAxis;
@@ -402,6 +405,10 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	}
 
 	private static void setJaamSimModel(JaamSimModel sm) {
+		if (sm == sim)
+			return;
+		if (!simList.contains(sm))
+			simList.add(sm);
 		sim = sm;
 	}
 
@@ -519,6 +526,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		this.initializeViewsMenu();
 		this.initializeOptionsMenu();
 		this.initializeUnitsMenu();
+		this.initializeWindowMenu();
 		this.initializeHelpMenu();
 
 		// Add the individual menu to the main menu
@@ -529,6 +537,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		mainMenuBar.add( viewsMenu );
 		mainMenuBar.add( optionMenu );
 		mainMenuBar.add( unitsMenu );
+		mainMenuBar.add( windowMenu );
 		mainMenuBar.add( helpMenu );
 
 		// Add main menu to the window
@@ -1092,6 +1101,43 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			public void menuSelected(MenuEvent arg0) {
 				UnitsSelector.populateMenu(unitsMenu);
 				unitsMenu.setVisible(true);
+			}
+		});
+	}
+
+	/**
+	 * Sets up the Windows menu in the Control Panel's menu bar.
+	 */
+	private void initializeWindowMenu() {
+		windowMenu = new JMenu( "Window" );
+		windowMenu.setMnemonic(KeyEvent.VK_W);
+		windowMenu.addMenuListener(new MenuListener() {
+
+			@Override
+			public void menuSelected(MenuEvent e) {
+				for (JaamSimModel sm : simList) {
+					JRadioButtonMenuItem item = new JRadioButtonMenuItem(sm.toString());
+					if (sm == sim)
+						item.setSelected(true);
+					item.addActionListener( new ActionListener() {
+
+						@Override
+						public void actionPerformed( ActionEvent event ) {
+							setJaamSimModel(sm);
+						}
+
+					} );
+					windowMenu.add( item );
+				}
+			}
+
+			@Override
+			public void menuCanceled(MenuEvent arg0) {
+			}
+
+			@Override
+			public void menuDeselected(MenuEvent arg0) {
+				windowMenu.removeAll();
 			}
 		});
 	}
