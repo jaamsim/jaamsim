@@ -512,7 +512,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		this.initializeFileMenu();
 		this.initializeEditMenu();
 		this.initializeToolsMenu();
-		this.initializeWindowMenu();
+		this.initializeViewsMenu();
 		this.initializeOptionsMenu();
 		this.initializeUnitsMenu();
 		this.initializeHelpMenu();
@@ -939,7 +939,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	/**
 	 * Sets up the Views menu in the Control Panel's menu bar.
 	 */
-	private void initializeWindowMenu() {
+	private void initializeViewsMenu() {
 		viewsMenu = new JMenu("Views");
 		viewsMenu.setMnemonic(KeyEvent.VK_V);
 		viewsMenu.addMenuListener(new MenuListener() {
