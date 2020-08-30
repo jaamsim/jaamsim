@@ -401,6 +401,10 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		return sim;
 	}
 
+	private static void setJaamSimModel(JaamSimModel sm) {
+		sim = sm;
+	}
+
 	@Override
 	public Dimension getPreferredSize() {
 		Point fix = OSFix.getSizeAdustment();
@@ -4101,7 +4105,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 		// create a graphic simulation
 		LogBox.logLine("Loading Simulation Environment ... ");
-		sim = new JaamSimModel("GUI_Model");
+		JaamSimModel simModel = new JaamSimModel("GUI_Model");
+		setJaamSimModel(simModel);
 
 		GUIFrame gui = null;
 		if (!headless) {
