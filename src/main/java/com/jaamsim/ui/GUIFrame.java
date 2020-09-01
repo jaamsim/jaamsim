@@ -62,6 +62,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.prefs.Preferences;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
@@ -153,6 +154,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 	private static JaamSimModel sim;
 	private static final ArrayList<JaamSimModel> simList = new ArrayList<>();
+	private static final AtomicLong modelCount = new AtomicLong(0);  // number of JaamSimModels
 
 	private final ArrayList<View> views = new ArrayList<>();
 	private int nextViewID = 1;
@@ -410,6 +412,11 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		if (!simList.contains(sm))
 			simList.add(sm);
 		sim = sm;
+	}
+
+	private static JaamSimModel getNextJaamSimModel() {
+		long num = modelCount.incrementAndGet();
+		return new JaamSimModel("Model" + num);
 	}
 
 	@Override
@@ -4151,7 +4158,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 		// create a graphic simulation
 		LogBox.logLine("Loading Simulation Environment ... ");
-		JaamSimModel simModel = new JaamSimModel("GUI_Model");
+		JaamSimModel simModel = getNextJaamSimModel();
 		setJaamSimModel(simModel);
 
 		GUIFrame gui = null;
