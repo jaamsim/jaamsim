@@ -415,6 +415,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		GUIFrame gui = getInstance();
 		if (gui == null)
 			return;
+		RenderManager.clear();
+		gui.resetViews();
 		gui.setTitle(sm);
 	}
 
@@ -4057,6 +4059,15 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	public int getNextViewID() {
 		nextViewID++;
 		return nextViewID;
+	}
+
+	private void resetViews() {
+		synchronized (views) {
+			views.clear();
+			for (View v : getJaamSimModel().getClonesOfIterator(View.class)) {
+				views.add(v);
+			}
+		}
 	}
 
 	public IntegerVector getWindowPos(View v) {

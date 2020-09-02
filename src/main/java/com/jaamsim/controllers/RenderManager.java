@@ -312,7 +312,8 @@ public class RenderManager implements DragSourceListener {
 
 		// Update the state of the window in the input file
 		View v = windowToViewMap.get(windowID);
-		if (!GUIFrame.getInstance().isIconified() && v.showWindow() && !v.isDead()) {
+		if (v.showWindow() && !GUIFrame.getInstance().isIconified() && !v.isDead()
+				&& GUIFrame.getJaamSimModel() == v.getJaamSimModel()) {
 			KeywordIndex kw = InputAgent.formatBoolean("ShowWindow", false);
 			InputAgent.storeAndExecute(new KeywordCommand(v, kw));
 		}
