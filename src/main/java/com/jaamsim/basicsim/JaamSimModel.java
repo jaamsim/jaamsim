@@ -632,6 +632,7 @@ public class JaamSimModel {
 	public void save(File file) {
 		InputAgent.printNewConfigurationFileWithName(this, file);
 		configFile = file;
+		name = file.getName();
 	}
 
 	public EventManager getEventManager() {
