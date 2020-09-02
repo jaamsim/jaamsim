@@ -4475,15 +4475,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	}
 
 	void load() {
-		sim.pause();
-
-		// check for unsaved changes
-		if (sim.isSessionEdited()) {
-			boolean confirmed = GUIFrame.showSaveChangesDialog(GUIFrame.this);
-			if (!confirmed) {
-				return;
-			}
-		}
 
 		LogBox.logLine("Loading...");
 
@@ -4502,8 +4493,11 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 		// Load the selected file
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
-			clear();
 			File chosenfile = chooser.getSelectedFile();
+
+			JaamSimModel simModel = new JaamSimModel(chosenfile.getName());
+			setJaamSimModel(simModel);
+			clear();
 			new Thread(new Runnable() {
 				@Override
 				public void run() {
@@ -4514,6 +4508,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 						handleConfigError(ret, chosenfile);
 
 					sim.setRecordEdits(true);
+					resetViews();
 					FrameBox.setSelectedEntity(sim.getSimulation(), false);
 				}
 			}).start();
