@@ -19,6 +19,7 @@ package com.jaamsim.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -4508,15 +4509,19 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			SwingUtilities.invokeLater(new Runnable() {
 				@Override
 				public void run() {
+					setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 					sim.setRecordEdits(false);
 
 					Throwable ret = GUIFrame.configure(chosenfile);
-					if (ret != null)
+					if (ret != null) {
+						setCursor(Cursor.getDefaultCursor());
 						handleConfigError(ret, chosenfile);
+					}
 
 					sim.setRecordEdits(true);
 					resetViews();
 					FrameBox.setSelectedEntity(sim.getSimulation(), false);
+					setCursor(Cursor.getDefaultCursor());
 				}
 			});
 
