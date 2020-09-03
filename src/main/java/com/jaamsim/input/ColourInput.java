@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Locale;
 
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.math.Color4d;
@@ -103,7 +104,7 @@ static {
 	}
 
 public static Color4d getColorWithName(String colorName) {
-	return colorMap.get(colorName.toLowerCase());
+	return colorMap.get(colorName.toLowerCase(Locale.ROOT));
 }
 
 public static String getColorName(Color4d col) {
@@ -122,7 +123,7 @@ private static void defColor(String colorName, String family, int r, int g, int 
 }
 
 private static void mapColor(String colorName, String family, Color4d col) {
-	String name = colorName.toLowerCase();
+	String name = colorName.toLowerCase(Locale.ROOT);
 	if (colorMap.put(name, col) != null)
 		System.out.println(String.format("ColorName added twice: %s ", colorName));
 
