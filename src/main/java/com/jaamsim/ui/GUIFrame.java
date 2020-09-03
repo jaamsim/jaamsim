@@ -4498,6 +4498,10 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			File chosenfile = chooser.getSelectedFile();
 
+			// Delete the present JaamSimModel if it is unedited and unsaved
+			if (sim.getConfigFile() == null && !sim.isSessionEdited())
+				simList.remove(sim);
+
 			JaamSimModel simModel = new JaamSimModel(chosenfile.getName());
 			setJaamSimModel(simModel);
 			clear();
