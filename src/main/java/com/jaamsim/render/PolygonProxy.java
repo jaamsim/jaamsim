@@ -19,6 +19,7 @@ package com.jaamsim.render;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Transform;
 import com.jaamsim.math.Vec3d;
@@ -47,6 +48,8 @@ public class PolygonProxy implements RenderProxy {
 	public PolygonProxy(List<Vec4d> points, Transform trans, Vec3d scale,
 	                    Color4d colour, boolean isOutline, double lineWidth, VisibilityInfo visInfo, long pickingID) {
 		_colour = colour;
+		if (_colour == null)
+			throw new ErrorException("Null colour passed to PolygonProxy");
 		_hoverColour = colour;
 		_points = points;
 		_trans = trans;
