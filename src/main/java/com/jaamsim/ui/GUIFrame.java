@@ -424,6 +424,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		if (gui == null)
 			return;
 		RenderManager.clear();
+		EntityPallet.update();
 		gui.resetViews();
 		gui.setTitle(sm);
 
