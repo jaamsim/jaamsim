@@ -414,6 +414,21 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		sim = sm;
 	}
 
+	public void setTitle(JaamSimModel sm) {
+		String str = "JaamSim";
+		if (sm.getSimulation() != null)
+			str = sm.getSimulation().getModelName();
+		setTitle(sm.toString() + " - " + str);
+	}
+
+	public void setTitle(JaamSimModel sm, int val) {
+		String str = "JaamSim";
+		if (sm.getSimulation() != null)
+			str = sm.getSimulation().getModelName();
+		String title = String.format("%d%% %s - %s", val, sim.toString(), str);
+		setTitle(title);
+	}
+
 	private static JaamSimModel getNextJaamSimModel() {
 		long num = modelCount.incrementAndGet();
 		return new JaamSimModel("Model" + num);
@@ -497,9 +512,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		RenderManager.clear();
 
 		this.updateForSimulationState(GUIFrame.SIM_STATE_LOADED);
-
-		// Clear the title bar
-		setTitle(sim.getSimulation().getModelName());
 
 		// Clear the status bar
 		tickUpdate(0L);
@@ -2864,9 +2876,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		lastValue = val;
 
 		if (getSimState() >= SIM_STATE_CONFIGURED) {
-			String name = sim.getSimulation().getModelName();
-			String title = String.format("%d%% %s - %s", val, name, sim.getRunName());
-			setTitle(title);
+			setTitle(sim, val);
 		}
 	}
 
@@ -4192,7 +4202,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 		// Show the Control Panel
 		if (gui != null) {
-			gui.setTitle(simulation.getModelName());
+			gui.setTitle(simModel);
 			gui.setVisible(true);
 			gui.calcWindowDefaults();
 			gui.setLocation(gui.getX(), gui.getY());  //FIXME remove when setLocation is fixed for Windows 10
@@ -4516,7 +4526,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		GUIFrame gui = GUIFrame.getInstance();
 		if (gui != null) {
 			gui.setProgress(0);
-			gui.setTitle( sim.getSimulation().getModelName() + " - " + sim.getRunName() );
+			gui.setTitle(sim);
 			gui.updateForSimulationState(GUIFrame.SIM_STATE_CONFIGURED);
 			gui.enableSave(sim.isRecordEditsFound());
 		}
@@ -4550,7 +4560,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			sim.save(file);
 
 			// Set the title bar to match the new run name
-			this.setTitle( sim.getSimulation().getModelName() + " - " + sim.getRunName() );
+			setTitle(sim);
 		}
 		catch (Exception e) {
 			GUIFrame.showErrorDialog("File Error", e.getMessage());
