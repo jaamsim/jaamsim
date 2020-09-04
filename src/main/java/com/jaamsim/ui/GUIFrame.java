@@ -430,6 +430,9 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		// Set the listeners for the new model
 		sm.setTimeListener(gui);
 		sm.setGUIListener(gui);
+
+		// Pass the simulation time for the new model to the user interface
+		gui.tickUpdate(sm.getSimTicks());
 	}
 
 	public void setTitle(JaamSimModel sm) {

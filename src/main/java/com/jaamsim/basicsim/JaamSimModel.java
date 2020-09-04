@@ -528,6 +528,10 @@ public class JaamSimModel {
 		return eventManager.ticksToSeconds(eventManager.getTicks());
 	}
 
+	public long getSimTicks() {
+		return eventManager.getTicks();
+	}
+
 	/**
 	 * Evaluates the specified expression and returns its value as a string.
 	 * Any type of result can be returned by the expression, including an entity or an array.
