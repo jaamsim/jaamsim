@@ -4505,7 +4505,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			JaamSimModel simModel = new JaamSimModel(chosenfile.getName());
 			setJaamSimModel(simModel);
 			clear();
-			new Thread(new Runnable() {
+			SwingUtilities.invokeLater(new Runnable() {
 				@Override
 				public void run() {
 					sim.setRecordEdits(false);
@@ -4518,7 +4518,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 					resetViews();
 					FrameBox.setSelectedEntity(sim.getSimulation(), false);
 				}
-			}).start();
+			});
 
 			setConfigFolder(chosenfile.getParent());
 		}
