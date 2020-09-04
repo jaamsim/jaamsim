@@ -142,11 +142,10 @@ public class ObjectSelector extends FrameBox {
 	@Override
 	public void updateValues(double simTime) {
 		GUIFrame gui = GUIFrame.getInstance();
-		if (!this.isVisible() || gui == null || gui.getSimState() == GUIFrame.SIM_STATE_RUNNING)
-			return;
-
 		JaamSimModel simModel = GUIFrame.getJaamSimModel();
 		if (simModel == null || simModel.getSimulation() == null)
+			return;
+		if (!this.isVisible() || gui == null || simModel.getSimState() == JaamSimModel.SIM_STATE_RUNNING)
 			return;
 
 		long curSequence = simModel.getEntitySequence();

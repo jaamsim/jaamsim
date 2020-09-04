@@ -97,6 +97,21 @@ public class JaamSimModel {
 	private boolean calendarUsed;  // records whether the calendar has been used
 	private boolean reloadReqd;  // indicates that the simulation must be saved and reloaded
 
+	private int simState;
+
+	/** model was executed, but no configuration performed */
+	public static final int SIM_STATE_LOADED = 0;
+	/** essential model elements created, no configuration performed */
+	public static final int SIM_STATE_UNCONFIGURED = 1;
+	/** model has been configured, not started */
+	public static final int SIM_STATE_CONFIGURED = 2;
+	/** model is presently executing events */
+	public static final int SIM_STATE_RUNNING = 3;
+	/** model has run, but presently is paused */
+	public static final int SIM_STATE_PAUSED = 4;
+	/** model is paused but cannot be resumed */
+	public static final int SIM_STATE_ENDED = 5;
+
 	public JaamSimModel() {
 		this("");
 	}
@@ -120,6 +135,14 @@ public class JaamSimModel {
 
 	public GUIListener getGUIListener() {
 		return gui;
+	}
+
+	public int getSimState() {
+		return simState;
+	}
+
+	public void setSimState(int state) {
+		simState = state;
 	}
 
 	/**

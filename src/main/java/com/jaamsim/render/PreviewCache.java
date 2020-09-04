@@ -32,6 +32,7 @@ import com.jaamsim.DisplayModels.ImageModel;
 import com.jaamsim.DisplayModels.ShapeModel;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.View;
+import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.math.Quaternion;
 import com.jaamsim.math.Transform;
@@ -48,8 +49,9 @@ public class PreviewCache {
 	public PreviewCache() {
 		_imageCache = new HashMap<>();
 
-		if (GUIFrame.getInstance().getSimState() != GUIFrame.SIM_STATE_RUNNING) {
-			dummyEntity = GUIFrame.getJaamSimModel().createInstance(DisplayEntity.class);
+		JaamSimModel simModel = GUIFrame.getJaamSimModel();
+		if (simModel.getSimState() != JaamSimModel.SIM_STATE_RUNNING) {
+			dummyEntity = simModel.createInstance(DisplayEntity.class);
 			//FIXME: remove this when models are no longer static
 			dummyEntity.setName("");
 			dummyEntity.kill();
@@ -107,8 +109,9 @@ public class PreviewCache {
 			// This will all need to be refactored soonish.
 
 			if (dummyEntity == null) {
-				if (GUIFrame.getInstance().getSimState() != GUIFrame.SIM_STATE_RUNNING) {
-					dummyEntity = GUIFrame.getJaamSimModel().createInstance(DisplayEntity.class);
+				JaamSimModel simModel = GUIFrame.getJaamSimModel();
+				if (simModel.getSimState() != JaamSimModel.SIM_STATE_RUNNING) {
+					dummyEntity = simModel.createInstance(DisplayEntity.class);
 					dummyEntity.kill();
 				} else {
 					// The simulation is running so we can't make the dummy entity

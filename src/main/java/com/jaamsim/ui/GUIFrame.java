@@ -532,7 +532,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		EntityPallet.clear();
 		RenderManager.clear();
 
-		this.updateForSimulationState(GUIFrame.SIM_STATE_LOADED);
+		this.updateForSimulationState(JaamSimModel.SIM_STATE_LOADED);
 
 		// Clear the status bar
 		tickUpdate(0L);
@@ -2668,7 +2668,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				if( getSimState() == SIM_STATE_RUNNING ) {
+				if (sim.getSimState() == JaamSimModel.SIM_STATE_RUNNING) {
 					GUIFrame.this.pauseSimulation();
 				}
 				controlStartResume.requestFocusInWindow();
@@ -2863,7 +2863,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		this.setProgress(progress);
 
 		// Do nothing further if the simulation is not executing events
-		if (getSimState() != SIM_STATE_RUNNING)
+		if (sim.getSimState() != JaamSimModel.SIM_STATE_RUNNING)
 			return;
 
 		// Set the speedup factor display
@@ -2897,7 +2897,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		progressBar.repaint(25);
 		lastValue = val;
 
-		if (getSimState() >= SIM_STATE_CONFIGURED) {
+		if (sim.getSimState() >= JaamSimModel.SIM_STATE_CONFIGURED) {
 			setTitle(sim, val);
 		}
 	}
@@ -2948,7 +2948,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	 * @return true if the simulation was started or resumed; false if cancel or close was selected
 	 */
 	public boolean startSimulation() {
-		if( getSimState() <= SIM_STATE_CONFIGURED ) {
+		if (sim.getSimState() <= JaamSimModel.SIM_STATE_CONFIGURED) {
 			boolean confirmed = true;
 			if (sim.isSessionEdited()) {
 				confirmed = GUIFrame.showSaveChangesDialog(this);
@@ -2958,7 +2958,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			}
 			return confirmed;
 		}
-		else if( getSimState() == SIM_STATE_PAUSED ) {
+		else if (sim.getSimState() == JaamSimModel.SIM_STATE_PAUSED) {
 			sim.resume(sim.getSimulation().getPauseTime());
 			return true;
 		}
@@ -2970,7 +2970,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	 * Pauses the simulation run.
 	 */
 	private void pauseSimulation() {
-		if( getSimState() == SIM_STATE_RUNNING )
+		if (sim.getSimState() == JaamSimModel.SIM_STATE_RUNNING)
 			sim.pause();
 		else
 			throw new ErrorException( "Invalid Simulation State for pause" );
@@ -2980,33 +2980,15 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	 * Stops the simulation run.
 	 */
 	public void stopSimulation() {
-		if( getSimState() == SIM_STATE_RUNNING ||
-		    getSimState() == SIM_STATE_PAUSED ||
-		    getSimState() == SIM_STATE_ENDED) {
+		if (sim.getSimState() == JaamSimModel.SIM_STATE_RUNNING ||
+		    sim.getSimState() == JaamSimModel.SIM_STATE_PAUSED ||
+		    sim.getSimState() == JaamSimModel.SIM_STATE_ENDED) {
 			sim.reset();
 			FrameBox.stop();
-			this.updateForSimulationState(GUIFrame.SIM_STATE_CONFIGURED);
+			this.updateForSimulationState(JaamSimModel.SIM_STATE_CONFIGURED);
 		}
 		else
 			throw new ErrorException( "Invalid Simulation State for stop" );
-	}
-
-	/** model was executed, but no configuration performed */
-	public static final int SIM_STATE_LOADED = 0;
-	/** essential model elements created, no configuration performed */
-	public static final int SIM_STATE_UNCONFIGURED = 1;
-	/** model has been configured, not started */
-	public static final int SIM_STATE_CONFIGURED = 2;
-	/** model is presently executing events */
-	public static final int SIM_STATE_RUNNING = 3;
-	/** model has run, but presently is paused */
-	public static final int SIM_STATE_PAUSED = 4;
-	/** model is paused but cannot be resumed */
-	public static final int SIM_STATE_ENDED = 5;
-
-	private int simState;
-	public int getSimState() {
-		return simState;
 	}
 
 	public static void updateForSimState(int state) {
@@ -3023,10 +3005,10 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	 * @param state - an index that designates the state of the simulation run.
 	 */
 	void updateForSimulationState(int state) {
-		simState = state;
+		sim.setSimState(state);
 
-		switch( getSimState() ) {
-			case SIM_STATE_LOADED:
+		switch (sim.getSimState()) {
+			case JaamSimModel.SIM_STATE_LOADED:
 				for( int i = 0; i < fileMenu.getItemCount() - 1; i++ ) {
 					if (fileMenu.getItem(i) == null)
 						continue;
@@ -3052,7 +3034,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				progressBar.setEnabled( false );
 				break;
 
-			case SIM_STATE_UNCONFIGURED:
+			case JaamSimModel.SIM_STATE_UNCONFIGURED:
 				for( int i = 0; i < fileMenu.getItemCount() - 1; i++ ) {
 					if (fileMenu.getItem(i) == null)
 						continue;
@@ -3077,7 +3059,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				progressBar.setEnabled( false );
 				break;
 
-			case SIM_STATE_CONFIGURED:
+			case JaamSimModel.SIM_STATE_CONFIGURED:
 				for( int i = 0; i < fileMenu.getItemCount() - 1; i++ ) {
 					if (fileMenu.getItem(i) == null)
 						continue;
@@ -3103,7 +3085,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				progressBar.setEnabled( true );
 				break;
 
-			case SIM_STATE_RUNNING:
+			case JaamSimModel.SIM_STATE_RUNNING:
 				speedUpDisplay.setEnabled( true );
 				remainingDisplay.setEnabled( true );
 				controlStartResume.setEnabled( true );
@@ -3113,7 +3095,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				controlStop.setSelected( false );
 				break;
 
-			case SIM_STATE_PAUSED:
+			case JaamSimModel.SIM_STATE_PAUSED:
 				controlStartResume.setEnabled( true );
 				controlStartResume.setSelected( false );
 				controlStartResume.setToolTipText(RUN_TOOLTIP);
@@ -3121,7 +3103,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				controlStop.setSelected( false );
 				break;
 
-			case SIM_STATE_ENDED:
+			case JaamSimModel.SIM_STATE_ENDED:
 				controlStartResume.setEnabled( false );
 				controlStartResume.setSelected( false );
 				controlStartResume.setToolTipText(RUN_TOOLTIP);
@@ -4205,7 +4187,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		GUIFrame gui = null;
 		if (!headless) {
 			gui = GUIFrame.createInstance();
-			gui.updateForSimulationState(SIM_STATE_LOADED);
+			gui.updateForSimulationState(JaamSimModel.SIM_STATE_LOADED);
 			sim.setTimeListener(gui);
 			sim.setGUIListener(gui);
 
@@ -4280,7 +4262,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				public void run() {
 					sim.setRecordEdits(true);
 					InputAgent.loadDefault(sim);
-					GUIFrame.updateForSimState(GUIFrame.SIM_STATE_CONFIGURED);
+					GUIFrame.updateForSimState(JaamSimModel.SIM_STATE_CONFIGURED);
 				}
 			});
 		}
@@ -4411,12 +4393,12 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		boolean running = evt.isRunning();
 		if (running) {
 			initSpeedUp(evt.ticksToSeconds(tick));
-			updateForSimulationState(SIM_STATE_RUNNING);
+			updateForSimulationState(JaamSimModel.SIM_STATE_RUNNING);
 		}
 		else {
-			int state = SIM_STATE_PAUSED;
+			int state = JaamSimModel.SIM_STATE_PAUSED;
 			if (!sim.getSimulation().canResume(simTicks))
-				state = SIM_STATE_ENDED;
+				state = JaamSimModel.SIM_STATE_ENDED;
 			updateForSimulationState(state);
 		}
 	}
@@ -4429,7 +4411,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				String.format("%s: %-70s", ent.getName(), t.getMessage()),
 				"The error must be corrected before the simulation can be started.");
 
-		GUIFrame.updateForSimState(GUIFrame.SIM_STATE_CONFIGURED);
+		GUIFrame.updateForSimState(JaamSimModel.SIM_STATE_CONFIGURED);
 	}
 
 	@Override
@@ -4533,7 +4515,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	}
 
 	static Throwable configure(File file) {
-		GUIFrame.updateForSimState(GUIFrame.SIM_STATE_UNCONFIGURED);
+		GUIFrame.updateForSimState(JaamSimModel.SIM_STATE_UNCONFIGURED);
 
 		Throwable ret = null;
 		try {
@@ -4553,7 +4535,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		if (gui != null) {
 			gui.setProgress(0);
 			gui.setTitle(sim);
-			gui.updateForSimulationState(GUIFrame.SIM_STATE_CONFIGURED);
+			gui.updateForSimulationState(JaamSimModel.SIM_STATE_CONFIGURED);
 			gui.enableSave(sim.isRecordEditsFound());
 		}
 		return ret;
