@@ -4433,16 +4433,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	}
 
 	void newModel() {
-		sim.pause();
-
-		// check for unsaved changes
-		if (sim.isSessionEdited()) {
-			boolean confirmed = GUIFrame.showSaveChangesDialog(GUIFrame.this);
-			if (!confirmed) {
-				return;
-			}
-		}
-
+		JaamSimModel simModel = getNextJaamSimModel();
+		setJaamSimModel(simModel);
 		clear();
 		sim.setRecordEdits(true);
 		InputAgent.loadDefault(sim);
