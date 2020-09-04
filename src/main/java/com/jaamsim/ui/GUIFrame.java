@@ -411,13 +411,25 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			return;
 		if (!simList.contains(sm))
 			simList.add(sm);
+
+		// Clear the listeners for the previous model
+		if (sim != null) {
+			sim.setTimeListener(null);
+			sim.setGUIListener(null);
+		}
+
 		sim = sm;
+
 		GUIFrame gui = getInstance();
 		if (gui == null)
 			return;
 		RenderManager.clear();
 		gui.resetViews();
 		gui.setTitle(sm);
+
+		// Set the listeners for the new model
+		sm.setTimeListener(gui);
+		sm.setGUIListener(gui);
 	}
 
 	public void setTitle(JaamSimModel sm) {
