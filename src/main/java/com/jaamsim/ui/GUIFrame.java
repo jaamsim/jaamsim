@@ -1147,6 +1147,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 						@Override
 						public void actionPerformed( ActionEvent event ) {
 							setJaamSimModel(sm);
+							FrameBox.setSelectedEntity(sm.getSimulation(), false);
 						}
 
 					} );
