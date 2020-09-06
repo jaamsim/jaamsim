@@ -4169,6 +4169,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		// create a graphic simulation
 		LogBox.logLine("Loading Simulation Environment ... ");
 		JaamSimModel simModel = getNextJaamSimModel();
+		simModel.autoLoad();
+		Simulation simulation = simModel.getSimulation();
 		setJaamSimModel(simModel);
 
 		GUIFrame gui = null;
@@ -4195,10 +4197,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 		sim.setBatchRun(batch);
 		sim.setScriptMode(scriptMode);
-
-		// Load the autoload file
-		sim.autoLoad();
-		Simulation simulation = sim.getSimulation();
 
 		// Show the Control Panel
 		if (gui != null) {
