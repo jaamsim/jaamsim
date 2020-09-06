@@ -345,7 +345,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		controlStartResume.setEnabled( false );
 		controlStop.setSelected( false );
 		controlStop.setEnabled( false );
-		setProgress( 0 );
 		ToolTipManager.sharedInstance().setLightWeightPopupEnabled( false );
 		JPopupMenu.setDefaultLightWeightPopupEnabled( false );
 
@@ -4171,11 +4170,14 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		JaamSimModel simModel = getNextJaamSimModel();
 		simModel.autoLoad();
 		Simulation simulation = simModel.getSimulation();
-		setJaamSimModel(simModel);
 
 		GUIFrame gui = null;
 		if (!headless) {
 			gui = GUIFrame.createInstance();
+		}
+		setJaamSimModel(simModel);
+
+		if (!headless) {
 			gui.updateForSimulationState(JaamSimModel.SIM_STATE_LOADED);
 			sim.setTimeListener(gui);
 			sim.setGUIListener(gui);
