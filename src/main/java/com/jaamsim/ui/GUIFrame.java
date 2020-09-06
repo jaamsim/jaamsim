@@ -4178,10 +4178,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		setJaamSimModel(simModel);
 
 		if (!headless) {
-			gui.updateForSimulationState(JaamSimModel.SIM_STATE_LOADED);
-			sim.setTimeListener(gui);
-			sim.setGUIListener(gui);
-
 			if (minimize)
 				gui.setExtendedState(JFrame.ICONIFIED);
 			// This is only here to initialize the static cache in the MRG1999a class to avoid future latency
@@ -4202,12 +4198,10 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 		// Show the Control Panel
 		if (gui != null) {
-			gui.setTitle(simModel);
 			gui.setVisible(true);
 			gui.calcWindowDefaults();
 			gui.setLocation(gui.getX(), gui.getY());  //FIXME remove when setLocation is fixed for Windows 10
 			gui.setWindowDefaults(simulation);
-			EntityPallet.update();
 		}
 
 		// Resolve all input arguments against the current working directory
