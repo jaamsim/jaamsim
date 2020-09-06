@@ -551,11 +551,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		// Clear the buttons
 		clearButtons();
 
-		// Build a completely new simulation model
-		sim.clear();
-		sim.autoLoad();
-		setWindowDefaults(sim.getSimulation());
-
 		EntityPallet.update();
 
 		clearUndoRedo();
@@ -4470,11 +4465,20 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	}
 
 	void newModel() {
+
+		// Create the new JaamSimModel and load the default objects and inputs
 		JaamSimModel simModel = getNextJaamSimModel();
+		simModel.autoLoad();
+		setWindowDefaults(simModel.getSimulation());
+
+		// Set the Control Panel to the new JaamSimModel and reset the user interface
 		setJaamSimModel(simModel);
 		clear();
+
+		// Load the default model
 		sim.setRecordEdits(true);
 		InputAgent.loadDefault(sim);
+
 		FrameBox.setSelectedEntity(sim.getSimulation(), false);
 	}
 
@@ -4495,7 +4499,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		// Show the file chooser and wait for selection
 		int returnVal = chooser.showOpenDialog(this);
 
-		// Load the selected file
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			File chosenfile = chooser.getSelectedFile();
 
@@ -4503,9 +4506,16 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			if (sim.getConfigFile() == null && !sim.isSessionEdited())
 				simList.remove(sim);
 
+			// Create the new JaamSimModel and load the default objects and inputs
 			JaamSimModel simModel = new JaamSimModel(chosenfile.getName());
+			simModel.autoLoad();
+			setWindowDefaults(simModel.getSimulation());
+
+			// Set the Control Panel to the new JaamSimModel and reset the user interface
 			setJaamSimModel(simModel);
 			clear();
+
+			// Load the selected input file
 			SwingUtilities.invokeLater(new Runnable() {
 				@Override
 				public void run() {
