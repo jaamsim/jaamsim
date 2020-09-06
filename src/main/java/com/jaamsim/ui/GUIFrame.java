@@ -534,25 +534,10 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	 */
 	public void clear() {
 
-		// Close the tool and view windows
-		FrameBox.clear();
-		EntityPallet.clear();
-		RenderManager.clear();
-
 		this.updateForSimulationState(JaamSimModel.SIM_STATE_LOADED);
-
-		// Clear the status bar
-		tickUpdate(0L);
-		setProgress( 0 );
-		speedUpDisplay.setText("0");
-		remainingDisplay.setText("-");
-		locatorPos.setText( "-" );
 
 		// Clear the buttons
 		clearButtons();
-
-		EntityPallet.update();
-
 		clearUndoRedo();
 	}
 
