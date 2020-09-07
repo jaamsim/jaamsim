@@ -4970,7 +4970,9 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 					for (Iterator<Path> it = walk.iterator(); it.hasNext();){
 						Path each = it.next();
 						String file = each.toString();
-						ret.add(file.substring(folder.length() + 1));
+						if (file.length() > folder.length()) {
+							ret.add(file.substring(folder.length() + 1));
+						}
 					}
 					walk.close();
 					fs.close();
