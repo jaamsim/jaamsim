@@ -352,6 +352,14 @@ public class Entity {
 	 */
 	public void copyInputs(Entity ent, int seq, boolean bool) {
 
+		String oldParent = ent.getParent().getName();
+		String oldParent1 = String.format("[%s]", oldParent);
+		String oldParent2 = String.format("%s.", oldParent);
+
+		String newParent = this.getParent().getName();
+		String newParent1 = String.format("[%s]", newParent);
+		String newParent2 = String.format("%s.", newParent);
+
 		// Provide stub definitions for the custom outputs
 		if (seq == 0) {
 			NamedExpressionListInput in = (NamedExpressionListInput) ent.getInput("CustomOutputList");
@@ -377,18 +385,28 @@ public class Entity {
 
 			// Replace references to the parent entity
 			if (this.getParent() != ent.getParent()) {
-				String oldParent = ent.getParent().getName();
-				String newParent = this.getParent().getName();
 				for (int i = 0; i < tmp.size(); i++) {
 					String str = tmp.get(i);
-					str = str.replace(oldParent, newParent);
+					if (str.equals(oldParent))
+						str = newParent;
+					str = str.replace(oldParent1, newParent1);
+					str = str.replace(oldParent2, newParent2);
 					tmp.set(i, str);
 				}
 			}
 
-			KeywordIndex kw = new KeywordIndex(key, tmp, null);
-			InputAgent.apply(this, targetInput, kw);
-			targetInput.setLocked(bool);
+			try {
+				KeywordIndex kw = new KeywordIndex(key, tmp, null);
+				InputAgent.apply(this, targetInput, kw);
+				targetInput.setLocked(bool);
+			}
+			catch (Exception e) {
+				GUIListener gui = getJaamSimModel().getGUIListener();
+				if (gui != null) {
+					String msg = String.format("%s, keyword: %s, value: %s%n%s", this, key, tmp, e.getMessage());
+					gui.invokeErrorDialogBox("Runtime Error", msg);
+				}
+			}
 		}
 	}
 
