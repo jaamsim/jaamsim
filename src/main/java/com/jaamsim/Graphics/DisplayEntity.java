@@ -373,6 +373,10 @@ public class DisplayEntity extends Entity {
 		return position.equals3(positionInput.getValue());
 	}
 
+	public boolean isPointsNominal() {
+		return points.equals(pointsInput.getValue());
+	}
+
 	public boolean isSizeNominal() {
 		return size.equals3(sizeInput.getValue());
 	}
@@ -400,7 +404,7 @@ public class DisplayEntity extends Entity {
 	}
 
 	public boolean isGraphicsNominal() {
-		return isPositionNominal() && isSizeNominal() && isAlignmentNominal()
+		return isPositionNominal() && isPointsNominal() && isSizeNominal() && isAlignmentNominal()
 				&& isOrientationNominal() && isDisplayModelNominal() && isRegionNominal()
 				&& isShowNominal();
 	}
