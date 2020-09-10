@@ -114,12 +114,20 @@ public class OverlayString implements OverlayRenderable {
 		float offsetX = (float)(2*x/windowWidth - 1);
 		float offsetY = (float)(2*y/windowHeight - 1);
 
+		float origX = offsetX;
+
 		gl.glDisable(GL2GL3.GL_CULL_FACE);
 
 		for (int cp : RenderUtils.stringToCodePoints(_contents)) {
 			TessChar tc = _font.getTessChar(cp);
 			if (tc == null) {
 				assert(false);
+				continue;
+			}
+
+			if (cp == '\n') {
+				offsetX = origX;
+				offsetY -= _font.getLineAdvance()*scaleY;
 				continue;
 			}
 
