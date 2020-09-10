@@ -1931,7 +1931,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				if (!(selectedEntity instanceof DisplayEntity))
 					return;
 				DisplayEntity dispEnt = (DisplayEntity) selectedEntity;
-				if (!dispEnt.isGraphicsNominal() || dispEnt.getDisplayModelList().size() != 1)
+				if (!dispEnt.isDisplayModelNominal() || dispEnt.getDisplayModelList().size() != 1)
 					return;
 				final String presentModelName = dispEnt.getDisplayModelList().get(0).getName();
 				Input<?> in = dispEnt.getInput("DisplayModel");
@@ -3562,7 +3562,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 	public void updateDisplayModelButtons(Entity ent) {
 		boolean bool = ent instanceof DisplayEntity
-				&& ((DisplayEntity)ent).isGraphicsNominal()
+				&& ((DisplayEntity)ent).isDisplayModelNominal()
 				&& ((DisplayEntity)ent).getDisplayModelList().size() == 1;
 
 		dispModel.setEnabled(bool);
