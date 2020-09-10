@@ -1144,12 +1144,18 @@ public class RenderManager implements DragSourceListener {
 		}
 
 		// LINE MOVE
-		if (dragHandleID == LINEDRAG_PICK_ID)
+		if (dragHandleID == LINEDRAG_PICK_ID) {
+			if (!selectedEntity.isPointsNominal())
+				return true;
 			return handleLineMove(currentRay, firstRay, currentDist, firstDist, dragInfo.shiftDown());
+		}
 
 		// LINE NODE MOVE
-		if (dragHandleID <= LINENODE_PICK_ID)
+		if (dragHandleID <= LINENODE_PICK_ID) {
+			if (!selectedEntity.isPointsNominal())
+				return true;
 			return handleLineNodeMove(currentRay, firstRay, currentDist, firstDist, dragInfo.shiftDown());
+		}
 
 		return false;
 
