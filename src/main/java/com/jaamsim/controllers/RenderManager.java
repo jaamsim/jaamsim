@@ -1077,8 +1077,7 @@ public class RenderManager implements DragSourceListener {
 		// If control key is pressed and there is no object to move then do nothing (return true)
 		// If control key is not pressed, then move the camera (return false)
 		DisplayEntity selectedEntity = getSelectedEntity();
-		if (selectedEntity == null || !selectedEntity.isMovable()
-				|| !selectedEntity.isGraphicsNominal())
+		if (selectedEntity == null || !selectedEntity.isMovable())
 			return dragInfo.controlDown();
 
 		// Overlay object
@@ -1124,17 +1123,25 @@ public class RenderManager implements DragSourceListener {
 			return true;
 
 		// MOVE
-		if (dragHandleID == MOVE_PICK_ID)
+		if (dragHandleID == MOVE_PICK_ID) {
+			if (!selectedEntity.isPositionNominal())
+				return true;
 			return handleMove(currentRay, firstRay, currentDist, firstDist, dragInfo.shiftDown());
+		}
 
 		// RESIZE
-		if (dragHandleID <= RESIZE_POSX_PICK_ID &&
-		    dragHandleID >= RESIZE_NXNY_PICK_ID)
+		if (dragHandleID <= RESIZE_POSX_PICK_ID && dragHandleID >= RESIZE_NXNY_PICK_ID) {
+			if (!selectedEntity.isSizeNominal())
+				return true;
 			return handleResize(currentRay, firstRay, currentDist, firstDist);
+		}
 
 		// ROTATE
-		if (dragHandleID == ROTATE_PICK_ID)
+		if (dragHandleID == ROTATE_PICK_ID) {
+			if (!selectedEntity.isOrientationNominal())
+				return true;
 			return handleRotate(currentRay, firstRay, currentDist, firstDist);
+		}
 
 		// LINE MOVE
 		if (dragHandleID == LINEDRAG_PICK_ID)
