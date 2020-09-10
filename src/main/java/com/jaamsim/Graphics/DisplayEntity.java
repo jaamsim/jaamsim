@@ -369,6 +369,36 @@ public class DisplayEntity extends Entity {
 		this.setShow(showInput.getValue());
 	}
 
+	public boolean isPositionNominal() {
+		return position.equals3(positionInput.getValue());
+	}
+
+	public boolean isSizeNominal() {
+		return size.equals3(sizeInput.getValue());
+	}
+
+	public boolean isAlignmentNominal() {
+		return align.equals3(alignmentInput.getValue());
+	}
+
+	public boolean isOrientationNominal() {
+		return orient.equals3(orientationInput.getValue());
+	}
+
+	public boolean isDisplayModelNominal() {
+		return displayModelList.isEmpty() && displayModelListInput.getValue() == null
+				|| displayModelList.equals(displayModelListInput.getValue());
+	}
+
+	public boolean isRegionNominal() {
+		return currentRegion == null && regionInput.getValue() == null
+				|| currentRegion != null && currentRegion.equals(regionInput.getValue());
+	}
+
+	public boolean isShowNominal() {
+		return show == showInput.getValue();
+	}
+
 	public boolean isGraphicsNominal() {
 		boolean ret = position.equals3(positionInput.getValue());
 		ret = ret && size.equals3(sizeInput.getValue());
