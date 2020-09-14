@@ -25,6 +25,7 @@ import com.jaamsim.input.EntityListInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.states.DowntimeUser;
+import com.jaamsim.units.TimeUnit;
 
 public abstract class StateUserEntity extends AbstractStateUserEntity implements ThresholdUser, DowntimeUser {
 
@@ -374,6 +375,7 @@ public abstract class StateUserEntity extends AbstractStateUserEntity implements
 
 	@Output(name = "NextMaintenanceTime",
 	 description = "The estimated time at which the next maintenance activity will start.",
+	    unitType = TimeUnit.class,
 	  reportable = false,
 	    sequence = 2)
 	public double getNextMaintenanceTime(double simTime) {
@@ -392,6 +394,7 @@ public abstract class StateUserEntity extends AbstractStateUserEntity implements
 
 	@Output(name = "NextBreakdownTime",
 	 description = "The estimated time at which the next breakdown will occur.",
+	    unitType = TimeUnit.class,
 	  reportable = false,
 	    sequence = 3)
 	public double getNextBreakdownTime(double simTime) {
