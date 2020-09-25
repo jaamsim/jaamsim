@@ -3246,6 +3246,11 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		if (!InputAgent.isValidName(localName))
 			throw new ErrorException(InputAgent.INP_ERR_BADNAME, localName);
 
+		// Check that the new name does not conflict with another entity
+		if (sim.getNamedEntity(newName) != null)
+			throw new ErrorException(InputAgent.INP_ERR_DEFINEUSED, newName,
+					sim.getNamedEntity(newName).getClass().getSimpleName());
+
 		// Rename the entity
 		InputAgent.storeAndExecute(new RenameCommand(ent, newName));
 	}

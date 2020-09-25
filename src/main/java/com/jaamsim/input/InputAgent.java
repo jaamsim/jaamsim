@@ -60,7 +60,7 @@ import com.jaamsim.units.Unit;
 public class InputAgent {
 	private static final String recordEditsMarker = "RecordEdits";
 
-	private static final String INP_ERR_DEFINEUSED = "The name: %s has already been used and is a %s";
+	public static final String INP_ERR_DEFINEUSED = "The name: %s has already been used and is a %s";
 	public static final String INP_ERR_BADNAME = "An entity name cannot be blank or contain "
 	                                            + "spaces, tabs, braces, single or double quotes,\n"
 	                                            + "square brackets, hash characters, or periods.\n"
