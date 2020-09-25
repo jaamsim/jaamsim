@@ -2216,6 +2216,16 @@ public class RenderManager implements DragSourceListener {
 		Vec3d sink = destDE.getSinkPoint();
 		double sourceRadius = sourceDE.entity.getRadius();
 		double sinkRadius = destDE.entity.getRadius();
+
+		// If the objects are too close, use the minimum radius values
+		Vec3d arrowDir = new Vec3d();
+		arrowDir.sub3(sink, source);
+		double linkSize = arrowDir.mag3();
+		if (linkSize - sourceRadius - sinkRadius < linkArrowSize) {
+			sourceRadius = sourceDE.entity.getMinRadius();
+			sinkRadius = destDE.entity.getMinRadius();
+		}
+
 		addLink(source, sink, sourceRadius, sinkRadius, dir, scene);
 	}
 

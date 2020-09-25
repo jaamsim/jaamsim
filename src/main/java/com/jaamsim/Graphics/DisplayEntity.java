@@ -1217,6 +1217,13 @@ public class DisplayEntity extends Entity {
 		return ret * scale;
 	}
 
+	public double getMinRadius() {
+		double scale = 1.0d;
+		if (currentRegion != null)
+			scale = currentRegion.getGlobalScale();
+		return 0.05d * scale;
+	}
+
 	public ArrayList<ObserverEntity> getObserverList() {
 		return new ArrayList<>();
 	}
