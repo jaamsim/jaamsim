@@ -1213,7 +1213,7 @@ public class DisplayEntity extends Entity {
 			scale = currentRegion.getGlobalScale();
 		if (usePointsInput())
 			return 0.05d * scale;
-		double ret = Math.max(getSize().x, getSize().y)/2.0 + 0.05d;
+		double ret = Math.min(getSize().x, getSize().y)/2.0 + 0.05d;
 		return ret * scale;
 	}
 
