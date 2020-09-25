@@ -2231,22 +2231,23 @@ public class RenderManager implements DragSourceListener {
 
 	private void addLink(Vec3d source, Vec3d sink, double sourceRadius, double sinkRadius, boolean dir, ArrayList<RenderProxy> scene) {
 
+		// Calculate the length of the arrow and a unit vector in its direction
 		Vec3d arrowDir = new Vec3d();
 		arrowDir.sub3(sink, source);
-		if (arrowDir.mag3() < (sourceRadius + sinkRadius)) {
-			// The two objects are too close
-			return;
-		}
-
-		// Scale back the arrows to the 'radius' provided
-		double linkSize = arrowDir.mag3() - sourceRadius - sinkRadius;
+		double linkSize = arrowDir.mag3();
 		arrowDir.normalize3();
+
+		// Reduce the arrow length to allow for the radius values
+		linkSize = linkSize - sourceRadius - sinkRadius;
+		if (linkSize <= 0.0d)
+			return;
 		Vec3d temp = new Vec3d();
 		temp.scale3(sourceRadius, arrowDir);
 		source.add3(temp);
 		temp.scale3(sinkRadius, arrowDir);
 		sink.sub3(temp);
 
+		// Reduce the arrow head size for a short arrow
 		double arrowHeadSize = Math.min(linkSize*0.3, linkArrowSize);
 
 		temp.scale3(arrowHeadSize, arrowDir);
