@@ -2257,10 +2257,12 @@ public class RenderManager implements DragSourceListener {
 		arrowPoint0.sub3(arrowMidPoint, arrowHeadDir);
 		arrowPoint1.add3(arrowMidPoint, arrowHeadDir);
 
-		Vec4d source4 = new Vec4d(source.x, source.y, source.z, 1);
-		Vec4d sink4 = new Vec4d(sink.x, sink.y, sink.z, 1);
-		Vec4d ap0 = new Vec4d(arrowPoint0.x, arrowPoint0.y, arrowPoint0.z, 1);
-		Vec4d ap1 = new Vec4d(arrowPoint1.x, arrowPoint1.y, arrowPoint1.z, 1);
+		double delta = GUIFrame.getJaamSimModel().getSimulation().getSnapGridSpacing()/100.0d;
+
+		Vec4d source4 = new Vec4d(source.x, source.y, source.z + delta, 1);
+		Vec4d sink4 = new Vec4d(sink.x, sink.y, sink.z + delta, 1);
+		Vec4d ap0 = new Vec4d(arrowPoint0.x, arrowPoint0.y, arrowPoint0.z + delta, 1);
+		Vec4d ap1 = new Vec4d(arrowPoint1.x, arrowPoint1.y, arrowPoint1.z + delta, 1);
 
 		ArrayList<Vec4d> segments = new ArrayList<>(6);
 		segments.add(source4);
