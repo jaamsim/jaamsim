@@ -464,8 +464,7 @@ public class RenderManager implements DragSourceListener {
 					if (createLinks.get() && isSingleEntitySelected() && mouseWindowID > 0) {
 						DisplayEntity selectedEntity = getSelectedEntity();
 						Vec3d source = selectedEntity.getSourcePoint(linkDirection.get());
-						double sourceRadius = selectedEntity.getRadius();
-						addLink(source, mousePosition, sourceRadius, 0.0d, linkDirection.get(), cachedScene);
+						addLink(source, mousePosition, 0.0d, 0.0d, linkDirection.get(), cachedScene);
 					}
 
 					endNanos = System.nanoTime();
