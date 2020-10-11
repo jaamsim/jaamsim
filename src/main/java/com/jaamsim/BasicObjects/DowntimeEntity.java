@@ -503,6 +503,15 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 	// OUTPUTS
 	// ******************************************************************************************************
 
+	@Output(name = "NumberPending",
+	 description = "The number of downtime events that are backlogged. "
+	             + "If two or more downtime events are pending they will be performed one after "
+	             + "another.",
+	    sequence = 0)
+	public double getNumberPending(double simTime) {
+		return downtimePendings;
+	}
+
 	@Output(name = "StartTime",
 	 description = "The time that the most recent downtime event started.",
 	    unitType = TimeUnit.class,
