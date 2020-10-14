@@ -296,10 +296,10 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 	static {
 		try {
-			if (OSFix.isMac())
-				UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
-			else
+			if (OSFix.isWindows())
 				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+			else
+				UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
 		}
 		catch (Exception e) {
 			LogBox.logLine("Unable to change look and feel.");
