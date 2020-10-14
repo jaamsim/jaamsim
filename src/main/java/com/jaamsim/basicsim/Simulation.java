@@ -1109,7 +1109,7 @@ public class Simulation extends Entity {
 		return runIndexDefinitionList.getValue();
 	}
 
-	@Output(name = "Software Name",
+	@Output(name = "SoftwareName",
 	 description = "The licensed name for the simulation software.",
 	  reportable = true,
 	    sequence = 0)
@@ -1117,7 +1117,7 @@ public class Simulation extends Entity {
 		return modelName;
 	}
 
-	@Output(name = "Software Version",
+	@Output(name = "SoftwareVersion",
 	 description = "The release number for the simulation software.",
 	  reportable = true,
 	    sequence = 1)
@@ -1125,7 +1125,7 @@ public class Simulation extends Entity {
 		return AboutBox.version;
 	}
 
-	@Output(name = "Configuration File",
+	@Output(name = "ConfigurationFile",
 	 description = "The configuration file that has been loaded.",
 	  reportable = true,
 	    sequence = 2)
@@ -1155,7 +1155,7 @@ public class Simulation extends Entity {
 		return getJaamSimModel().getRunIndexList();
 	}
 
-	@Output(name = "Present Time and Date",
+	@Output(name = "PresentTimeAndDate",
 	 description = "The present local time and date.",
 	  reportable = true,
 	    sequence = 5)
@@ -1164,7 +1164,7 @@ public class Simulation extends Entity {
 		return timeStamp;
 	}
 
-	@Output(name = "Initialization Duration",
+	@Output(name = "InitializationDuration",
 	 description = "The length of time the model was executed prior to the start of statistics "
 	             + "collection.",
 	    unitType = TimeUnit.class,
@@ -1174,7 +1174,7 @@ public class Simulation extends Entity {
 		return initializationTime.getValue();
 	}
 
-	@Output(name = "Run Duration",
+	@Output(name = "RunDuration",
 	 description = "The length of time over which statistics were collected.",
 	    unitType = TimeUnit.class,
 	  reportable = true,
@@ -1183,7 +1183,7 @@ public class Simulation extends Entity {
 		return runDuration.getValue();
 	}
 
-	@Output(name = "Present Simulation Time",
+	@Output(name = "PresentSimulationTime",
 	 description = "The value for the simulation clock at the present time.",
 	    unitType = TimeUnit.class,
 	  reportable = true,
