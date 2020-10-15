@@ -18,6 +18,8 @@
 package com.jaamsim.ui;
 
 import java.awt.Point;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.MouseEvent;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -366,6 +368,19 @@ public static class EditTable extends JTable {
 		this.getTableHeader().setReorderingAllowed(false);
 
 		this.setPresentCellEditor(null);
+
+		addFocusListener(new FocusListener() {
+			@Override
+			public void focusGained(FocusEvent e) {
+				int row = getSelectedRow();
+				editCellAt(row, VALUE_COLUMN);
+				if (getEditorComponent() != null) {
+					getEditorComponent().requestFocusInWindow();
+				}
+			}
+			@Override
+			public void focusLost(FocusEvent e) {}
+		});
 	}
 
 	@Override
