@@ -37,7 +37,6 @@ public class VertexMap {
 	 * @param pos
 	 * @param normal
 	 * @param texCoord
-	 * @return
 	 */
 	public int getVertIndex(Vec3d pos, Vec3d normal, Vec2d texCoord) {
 		Vertex v = new Vertex(pos, normal, texCoord, null, null);

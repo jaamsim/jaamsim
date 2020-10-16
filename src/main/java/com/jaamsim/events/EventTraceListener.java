@@ -79,8 +79,6 @@ public void traceWaitUntil();
 
 /**
  * Called when a conditional event has been scheduled by a 'scheduleUntil' method.
- * @param e - event processor
- * @param tick - present simulation time in clock ticks
  */
 public void traceSchedUntil(ProcessTarget t);
 

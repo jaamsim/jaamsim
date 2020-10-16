@@ -148,7 +148,6 @@ public class Util {
 	 * @param img
 	 * @param x
 	 * @param y
-	 * @return
 	 */
 	public static RGBColor avgPixel2(BufferedImage img, int x, int y) {
 		assert(x < img.getWidth());

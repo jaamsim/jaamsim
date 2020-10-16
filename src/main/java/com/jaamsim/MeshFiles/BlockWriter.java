@@ -45,7 +45,7 @@ public class BlockWriter {
 	 * Write the block and sub blocks to the output stream
 	 * Can throw a DataBlock.Error
 	 * @param out
-	 * @param d
+	 * @param b
 	 */
 	public static void writeBlock(OutputStream out, DataBlock b) {
 		try {

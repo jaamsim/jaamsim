@@ -242,7 +242,6 @@ public class OutputHandle {
 	 * Checks the output for all possible numerical types and returns a double representing the value
 	 * @param simTime
 	 * @param def - the default value if the return is null or not a number value
-	 * @return
 	 */
 	public double getValueAsDouble(double simTime, double def, Unit u) {
 		double ret = getValueAsDouble(simTime, def);
@@ -261,7 +260,6 @@ public class OutputHandle {
 	 * Checks the output for all possible numerical types and returns a double representing the value
 	 * @param simTime
 	 * @param def - the default value if the return is null or not a number value
-	 * @return
 	 */
 	public double getValueAsDouble(double simTime, double def) {
 		Class<?> retType = this.getReturnType();

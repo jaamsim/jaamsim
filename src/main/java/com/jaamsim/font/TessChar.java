@@ -52,8 +52,8 @@ private double _advance;
 
 /**
  * Creates a TessChar
- * @param c - the character this represents
- * @param vertices - a list of vertices in the XY plane, will be stored and never written to
+ * @param cp - the character this represents
+ * @param numVerts - a list of vertices in the XY plane, will be stored and never written to
  * @param width - width of the bounds
  * @param height - height of the bounds
  */
@@ -68,7 +68,6 @@ public TessChar(int cp, int startIndex, int numVerts, double width, double heigh
 
 /**
  * Returns a list of alternating x,y coordinates for this character. Renders in the XY plane with Y up
- * @return
  */
 //public double[] getVertices() {
 //	return _vertices;

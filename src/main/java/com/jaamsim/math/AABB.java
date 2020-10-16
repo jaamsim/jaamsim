@@ -62,7 +62,7 @@ public class AABB {
 	/**
 	 * Build an AABB with an expanded area
 	 * @param points
-	 * @param expansion
+	 * @param fudge
 	 */
 	public AABB(List<? extends Vec3d> points, double fudge) {
 		this(points);
@@ -166,7 +166,6 @@ public class AABB {
 	/**
 	 * Get the distance that this ray collides with the AABB, a negative number indicates no collision
 	 * @param r
-	 * @return
 	 */
 	public double collisionDist(Ray r) {
 		return collisionDist(r, 0);
@@ -272,7 +271,6 @@ public class AABB {
 	/**
 	 * Is the AABB completely on one side of this plane, or colliding?
 	 * @param p
-	 * @return
 	 */
 	public PlaneTestResult testToPlane(Plane p) {
 		if (_isEmpty) {

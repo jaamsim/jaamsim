@@ -284,9 +284,9 @@ public class Gamma {
 	 * @param x
 	 *            Argument.
 	 * @return The value of {@code 1.0 / Gamma(1.0 + x) - 1.0}.
-	 * @throws NumberIsTooSmallException
+	 * @throws RuntimeException
 	 *             if {@code x < -0.5}
-	 * @throws NumberIsTooLargeException
+	 * @throws RuntimeException
 	 *             if {@code x > 1.5}
 	 * @since 3.1
 	 */
@@ -380,9 +380,9 @@ public class Gamma {
 	 * @param x
 	 *            Argument.
 	 * @return The value of {@code log(Gamma(1 + x))}.
-	 * @throws NumberIsTooSmallException
+	 * @throws RuntimeException
 	 *             if {@code x < -0.5}.
-	 * @throws NumberIsTooLargeException
+	 * @throws RuntimeException
 	 *             if {@code x > 1.5}.
 	 * @since 3.1
 	 */

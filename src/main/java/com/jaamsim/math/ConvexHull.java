@@ -64,7 +64,6 @@ public class ConvexHull {
 
 	/**
 	 * Initialize this hull from the vertices provided. This is an implementation of the QuickHull algorithm (or close enough to it)
-	 * @param verts
 	 */
 	public ConvexHull(ArrayList<Vec3d> baseVerts, int seed, int maxNumPoints, Vec3dInterner interner) {
 
@@ -397,7 +396,6 @@ public class ConvexHull {
 
 	/**
 	 * Return the list of faces (a list of triplets of indices into the vertices) for this mesh
-	 * @return
 	 */
 	public List<HullFace> getFaces() {
 		return _faces;
@@ -573,8 +571,7 @@ public class ConvexHull {
 
 	/**
 	 * Get an world space AABB if this hull were transformed by 't'
-	 * @param t
-	 * @return
+	 * @param mat
 	 */
 	public AABB getAABB(Mat4d mat) {
 		return new AABB(_verts, mat);

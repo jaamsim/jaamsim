@@ -1729,7 +1729,6 @@ public class MeshData {
 
 	/**
 	 * Build up a tree of 'DataBlock's and return it. This will return null if the runtime data needed as been discarded
-	 * @return
 	 */
 	public DataBlock getDataAsBlock() {
 		if (!keepRuntimeData) {
@@ -1913,7 +1912,6 @@ public class MeshData {
 
 	/**
 	 * Returns an array of all the used shaders for this MeshData
-	 * @return
 	 */
 	public int[] getUsedMeshShaders(boolean canBatch) {
 		ArrayList<Integer> shaderIDs = new ArrayList<>();

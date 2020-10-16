@@ -58,7 +58,6 @@ public class Vec4dInterner {
 	/**
 	 * intern will return a pointer to a Vec4d (which may differ from input 'v') that is mathematically equal but
 	 * may be a shared object. Any value returned by intern should be defensively copied before being modified
-	 * @return
 	 */
 	public Vec4d intern(Vec4d v) {
 		VecWrapper wrapped = new VecWrapper(v);

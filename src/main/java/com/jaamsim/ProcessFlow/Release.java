@@ -70,7 +70,6 @@ public class Release extends LinkedComponent {
 
 	/**
 	 * Release the specified Resources.
-	 * @return
 	 */
 	public void releaseResources(DisplayEntity ent) {
 		double simTime = this.getSimTime();

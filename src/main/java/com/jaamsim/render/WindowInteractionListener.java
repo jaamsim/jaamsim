@@ -94,7 +94,7 @@ public interface WindowInteractionListener extends KeyListener {
 	 * @param x
 	 * @param y
 	 * @param button
-	 * @param down
+	 * @param isDown
 	 */
 	public void mouseButtonDown(int windowID, int x, int y, int button, boolean isDown, int modifiers);
 

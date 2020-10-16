@@ -128,7 +128,6 @@ public static boolean segOverlap(double a0, double a1, double b0, double b1, dou
  * @param val
  * @param min
  * @param max
- * @return
  */
 public static double bound(double val, double min, double max) {
 	//assert(min <= max);
@@ -142,7 +141,6 @@ public static double bound(double val, double min, double max) {
  * Return a matrix that rotates points and projects them onto the ray's view plane.
  * IE: the new coordinate system has the ray pointing in the +Z direction from the origin.
  * This is useful for ray-line collisions and ray-point collisions
- * @return
  */
 public static Mat4d RaySpace(Ray r) {
 
@@ -178,7 +176,6 @@ public static Mat4d RaySpace(Ray r) {
  * Returns a Transform representing a rotation around a non-origin point
  * @param rot - the rotation (in world coordinates) to apply
  * @param point - the point to rotate around
- * @return
  */
 public static Mat4d rotateAroundPoint(Quaternion rot, Vec3d point) {
 	Vec3d negPoint = new Vec3d(point);
@@ -278,7 +275,6 @@ public static double collisionDistPoly(Ray r, List<Vec3d> points) {
  * @param rayMat - the rayspace matrix
  * @param lines - pairs of vertices, each pair defining a line segment (this is not a line strip or line loop)
  * @param collisionAngle - the angle of the collision cone in radians
- * @return
  */
 public static double collisionDistLines(Mat4d rayMat, Vec4d[] lines, double collisionAngle) {
 	double shortDist = Double.POSITIVE_INFINITY;
@@ -312,7 +308,6 @@ public static double collisionDistLines(Mat4d rayMat, Vec4d[] lines, double coll
  * @param p0
  * @param p1
  * @param p2
- * @return
  */
 public static Vec3d collidePlanes(Plane p0, Plane p1, Plane p2) {
 	Ray r = p0.collide(p1);

@@ -31,7 +31,7 @@ public interface OverlayRenderable {
 
 	/**
 	 * Render in screen space
-	 * @param vaoMap
+	 * @param contextID
 	 * @param renderer
 	 * @param windowWidth - the width of the current window
 	 * @param windowHeight - the height of the current window

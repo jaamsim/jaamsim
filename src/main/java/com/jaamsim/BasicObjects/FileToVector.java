@@ -46,7 +46,6 @@ public class FileToVector extends FileToArray {
 	 * of the DataFile input which can be left blank. The list input can contain the following
 	 * Java classes and their sub-classes: Double, Integer, String, Entity, List, Map, and Array.
 	 * @param list - List of Java objects containing the input data.
-	 * @throws Exception
 	 */
 	public void setValue(ArrayList<Object> list) throws ExpError {
 		ArrayList<ExpResult> resList = getExpResultList(list);

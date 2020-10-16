@@ -131,7 +131,6 @@ public class Action {
 	 * Returns a Mat4d of the time interpolated value of the rotation and translation defined by Channel ch
 	 * @param ch
 	 * @param time
-	 * @return
 	 */
 	public static Mat4d getChannelMatAtTime(Channel ch, double time) {
 		Mat4d ret = new Mat4d();

@@ -146,7 +146,6 @@ public void setAxisAngle(Vec3d axis, double angle) {
  * Only valid for vectors of the same length
  * @param from
  * @param to
- * @return
  */
 public static Quaternion transformVectors(Vec4d from, Vec4d to) {
 
@@ -236,8 +235,8 @@ public void conjugate(Quaternion q) {
 /**
  * Quaternion multiplication, mathematically equivalent to applying both rotations in order.
  * Sets this to a*b
- * @param q
- * @param res
+ * @param a
+ * @param b
  */
 public void mult(Quaternion a, Quaternion b) {
 	double _x = a.w*b.x + a.x*b.w + a.y*b.z - a.z*b.y;

@@ -30,7 +30,6 @@ public class TestOutput {
 	/**
 	 * Returns false if any of the outputs for this class do no conform to the correct method signature
 	 * @param klass
-	 * @return
 	 */
 	private void testOutputsForClass(Class<?> klass) {
 		for (Method m : klass.getMethods()) {

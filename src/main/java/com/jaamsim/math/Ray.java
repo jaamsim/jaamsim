@@ -49,7 +49,6 @@ public class Ray {
 	/**
 	 * Returns a new Ray as though this was passed through the Transform trans
 	 * @param trans
-	 * @return
 	 */
 	public Ray transform(Transform trans) {
 		return transform(trans.getMat4dRef());
@@ -58,7 +57,6 @@ public class Ray {
 	/**
 	 * Returns a new Ray as though this was passed through the Matrix mat
 	 * @param mat
-	 * @return
 	 */
 	public Ray transform(Mat4d mat) {
 		Vec4d startTransed = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
@@ -74,7 +72,6 @@ public class Ray {
 	/**
 	 * Returns a new vector4d representing the point 'dist' distance along this ray
 	 * @param dist
-	 * @return
 	 */
 	public Vec3d getPointAtDist(double dist) {
 		Vec3d ret = new Vec3d(_direction);
@@ -87,7 +84,6 @@ public class Ray {
 	 * Returns the distance along the ray to the point on the ray closest to given point, this
 	 * can be negative if the point given is effectively behind the ray
 	 * @param point
-	 * @return
 	 */
 	public double getDistAlongRay(Vec3d point) {
 		Vec3d diff = new Vec3d(point);

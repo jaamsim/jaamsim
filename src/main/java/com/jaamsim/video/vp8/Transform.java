@@ -171,7 +171,6 @@ public class Transform {
 	/**
 	 * Get the equivalent of the DC component, useful for encoding Y2 residue blocks
 	 * @param in
-	 * @return
 	 */
 	public static short DCTVal0(short[] in) {
 		short ret = 0;

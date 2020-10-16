@@ -510,7 +510,6 @@ public class Entity {
 
 	/**
 	 * Get the unique number for this entity
-	 * @return
 	 */
 	public long getEntityNumber() {
 		return entityNumber;
@@ -685,7 +684,7 @@ public class Entity {
 
 	/**
 	 * Wait a number of discrete simulation ticks and a given priority.
-	 * @param secs
+	 * @param ticks
 	 * @param priority
 	 */
 	public final void simWaitTicks(long ticks, int priority) {
@@ -694,7 +693,7 @@ public class Entity {
 
 	/**
 	 * Wait a number of discrete simulation ticks and a given priority.
-	 * @param secs
+	 * @param ticks
 	 * @param priority
 	 * @param fifo
 	 * @param handle
@@ -756,7 +755,6 @@ public class Entity {
 	/**
 	 * Returns a user specific unit type. This is needed for entity types like distributions that may change the unit type
 	 * that is returned at runtime.
-	 * @return
 	 */
 	public Class<? extends Unit> getUserUnitType() {
 		return DimensionlessUnit.class;

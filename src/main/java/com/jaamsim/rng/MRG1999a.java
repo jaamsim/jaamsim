@@ -166,7 +166,6 @@ public class MRG1999a {
 
 	/**
 	 * Get the next uniformly distributed double value U(0,1)
-	 * @return
 	 */
 	public double nextUniform() {
 		// Mix the first half of the state

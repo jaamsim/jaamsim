@@ -170,7 +170,6 @@ static void nioBuffToGL(GL2GL3 gl, Renderer r, int bufferHandle, int itemSize, B
 
 	/**
 	 * Returns a list of points for a circle in the XY plane at the origin
-	 * @return
 	 */
 	public static ArrayList<Vec4d> getCirclePoints(int numSegments) {
 		if (numSegments < 3) {
@@ -210,7 +209,6 @@ static void nioBuffToGL(GL2GL3 gl, Renderer r, int bufferHandle, int itemSize, B
 	 * Build up a rounded rectangle (similar to the existing stockpiles). Assumes rounding width-wise
 	 * @param width
 	 * @param height
-	 * @return
 	 */
 	public static ArrayList<Vec4d> getRoundedRectPoints(double width, double height, int numSegments) {
 		ArrayList<Vec4d> ret = new ArrayList<>();
@@ -251,7 +249,6 @@ static void nioBuffToGL(GL2GL3 gl, Renderer r, int bufferHandle, int itemSize, B
 	 * @param startAngle
 	 * @param endAngle
 	 * @param numSegments
-	 * @return
 	 */
 	public static ArrayList<Vec4d> getArcPoints(double radius, Vec4d center, double startAngle, double endAngle, int numSegments) {
 		if (numSegments < 3) {
@@ -280,7 +277,6 @@ static void nioBuffToGL(GL2GL3 gl, Renderer r, int bufferHandle, int itemSize, B
 	 * @param y - y coord in window space
 	 * @param width - window width
 	 * @param height - window height
-	 * @return
 	 */
 	public static Ray getPickRayForPosition(CameraInfo cameraInfo, int x, int y, int width, int height) {
 
@@ -295,7 +291,6 @@ static void nioBuffToGL(GL2GL3 gl, Renderer r, int bufferHandle, int itemSize, B
 	 * Get a Ray representing a line starting at the camera position and projecting through the current mouse pointer
 	 * in this window
 	 * @param mouseInfo
-	 * @return
 	 */
 	public static Ray getPickRay(Renderer.WindowMouseInfo mouseInfo) {
 
@@ -316,7 +311,6 @@ static void nioBuffToGL(GL2GL3 gl, Renderer r, int bufferHandle, int itemSize, B
 	 * @param aspectRatio
 	 * @param x - normalized [-1. 1] screen x coord
 	 * @param y - normalized [-1. 1] screen y coord
-	 * @return
 	 */
 	public static Ray getViewRay(CameraInfo camInfo, double aspectRatio, double x, double y) {
 
@@ -343,7 +337,6 @@ static void nioBuffToGL(GL2GL3 gl, Renderer r, int bufferHandle, int itemSize, B
 	 * Return a matrix that is the combination of the transform and non-uniform scale
 	 * @param trans
 	 * @param scale
-	 * @return
 	 */
 	public static Mat4d mergeTransAndScale(Transform trans, Vec3d scale) {
 		Mat4d ret = new Mat4d();
@@ -357,7 +350,6 @@ static void nioBuffToGL(GL2GL3 gl, Renderer r, int bufferHandle, int itemSize, B
 	 * Get the inverse (in Matrix4d form) of the combined Transform and non-uniform scale factors
 	 * @param trans
 	 * @param scale
-	 * @return
 	 */
 	public static Mat4d getInverseWithScale(Transform trans, Vec3d scale) {
 		Transform t = new Transform(trans);
@@ -494,7 +486,6 @@ static void nioBuffToGL(GL2GL3 gl, Renderer r, int bufferHandle, int itemSize, B
 	 * Marshal a Mat4d into a static scratch space, this should only be called by the render thread, but I'm not
 	 * putting a guard here for performance reasons. This returns a colum major float array
 	 * @param mat
-	 * @return
 	 */
 	public static float[] MarshalMat4d(Mat4d mat) {
 		MAT_MARSHAL[ 0] = (float)mat.d00;
@@ -627,7 +618,6 @@ static void nioBuffToGL(GL2GL3 gl, Renderer r, int bufferHandle, int itemSize, B
 	 * @param centerPoint
 	 * @param currentRay
 	 * @param lastRay
-	 * @return
 	 */
 	public static double getZDiff(Vec3d centerPoint, Ray currentRay, Ray lastRay) {
 

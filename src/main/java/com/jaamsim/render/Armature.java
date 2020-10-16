@@ -50,7 +50,6 @@ public class Armature {
 		}
 		/**
 		 * Returns the bone space to model space matrix
-		 * @return
 		 */
 		public Mat4d getMatrix() {
 			return mat;
@@ -143,7 +142,6 @@ public class Armature {
 	/**
 	 * Returns a 'pose' (a list of matrices for known bones) based on the actions for this skeleton
 	 * @param actions
-	 * @return
 	 */
 	public ArrayList<Mat4d> getPose(ArrayList<Action.Queue> actions) {
 		if (actions == null) {

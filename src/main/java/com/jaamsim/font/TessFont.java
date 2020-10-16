@@ -102,8 +102,7 @@ public TessFont(TessFontKey key) {
  * only need to be done once. See preloadCache() to avoid lazy
  * initialization
  *
- * @param c
- * @return
+ * @param cp
  */
 
 public synchronized TessChar getTessChar(int cp) {
@@ -433,7 +432,6 @@ public synchronized int getGLBuffer(GL2GL3 gl) {
  * Get the dimensions of the fully rendered string (useful for app level layout)
  * @param textHeight - the requested text height
  * @param string - the string to render
- * @return
  */
 public Vec3d getStringSize(double textHeight, String string) {
 	return new Vec3d(getStringLength(textHeight, string), textHeight, 0.0d);

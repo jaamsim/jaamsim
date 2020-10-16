@@ -519,7 +519,7 @@ public class InputAgent {
 	 *
 	 * @param ent - the entity whose keyword and value has been entered.
 	 * @param keyword - the keyword.
-	 * @param value - the input value String for the keyword.
+	 * @param args - the input value String for the keyword.
 	 */
 	public static void applyArgs(Entity ent, String keyword, String... args){
 		KeywordIndex kw = formatArgs(keyword, args);
@@ -876,7 +876,7 @@ public class InputAgent {
 
 	/**
 	 * Writes a stack trace to standard error, the Log Viewer, and the Log File.
-	 * @param e - exception to be traced
+	 * @param t - exception to be traced
 	 */
 	public static void logStackTrace(JaamSimModel simModel, Throwable t) {
 		for (StackTraceElement each : t.getStackTrace()) {
@@ -920,7 +920,7 @@ public class InputAgent {
 	/**
 	 * Prints the present state of the model to a new configuration file.
 	 *
-	 * @param fileName - the full path and file name for the new configuration file.
+	 * @param f - the full path and file name for the new configuration file.
 	 */
 	public static void printNewConfigurationFileWithName(JaamSimModel simModel, File f) {
 
@@ -1734,7 +1734,6 @@ public class InputAgent {
 	 * Split an input (list of strings) down to a single level of nested braces, this may then be called again for
 	 * further nesting.
 	 * @param input
-	 * @return
 	 */
 	public static ArrayList<ArrayList<String>> splitForNestedBraces(List<String> input) {
 		ArrayList<ArrayList<String>> inputs = new ArrayList<>();

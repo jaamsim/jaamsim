@@ -98,7 +98,6 @@ public class Renderer implements GLAnimatorControl {
 
 	/**
 	 * Get a system wide unique ID
-	 * @return
 	 */
 	public static int getAssetID() {
 		return nextAssetID.incrementAndGet();
@@ -394,7 +393,6 @@ public class Renderer implements GLAnimatorControl {
 	/**
 	 * Returns the shader object for this handle, should only be called from the render thread (during a render)
 	 * @param h
-	 * @return
 	 */
 	public Shader getShader(ShaderHandle h) {
 		return shaders.get(h);
@@ -408,7 +406,6 @@ public class Renderer implements GLAnimatorControl {
 	/**
 	 * Returns the MeshProto for the supplied key, should only be called from the render thread (during a render)
 	 * @param key
-	 * @return
 	 */
 	public MeshProto getProto(MeshProtoKey key) {
 		MeshProto proto = protoCache.get(key);
@@ -480,7 +477,6 @@ public class Renderer implements GLAnimatorControl {
 
 	/**
 	 * Get a list of all the IDs of currently open windows
-	 * @return
 	 */
 	public ArrayList<Integer> getOpenWindowIDs() {
 		synchronized(openWindows) {
@@ -539,7 +535,6 @@ public class Renderer implements GLAnimatorControl {
 	 *
 	 * @param width
 	 * @param height
-	 * @return
 	 */
 	private void createWindowImp(CreateWindowMessage message) {
 
@@ -998,8 +993,6 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 
 	/**
 	 * Cast the provided ray into the current scene and return the list of bounds collisions
-	 * @param ray
-	 * @return
 	 */
 	public List<PickResult> pick(Ray pickRay, int viewID, boolean precise) {
 
@@ -1092,7 +1085,6 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 	/**
 	 * Get Window specific information about the mouse. This is very useful for picking on the App side
 	 * @param windowID
-	 * @return
 	 */
 	public WindowMouseInfo getMouseInfo(int windowID) {
 		synchronized(openWindows) {
@@ -1518,10 +1510,8 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 	/**
 	 * Queue up an off screen rendering
 	 * @param scene
-	 * @param cam
 	 * @param width
 	 * @param height
-	 * @return
 	 */
 	public Future<BufferedImage> renderOffscreen(ArrayList<RenderProxy> scene, int viewID, CameraInfo camInfo,
 	                                   int width, int height, Runnable runWhenDone, OffscreenTarget target) {
@@ -1734,7 +1724,6 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 
 	/**
 	 * Returns true if the current thread is this renderer's render thread
-	 * @return
 	 */
 	public boolean isRenderThread() {
 		return (Thread.currentThread() == renderThread);

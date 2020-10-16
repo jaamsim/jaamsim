@@ -643,8 +643,6 @@ public class DisplayEntity extends Entity {
 	 * Returns the equivalent global transform for this entity as if 'sizeIn' where the actual
 	 * size.
 	 * @param sizeIn
-	 * @param simTime
-	 * @return
 	 */
 	public Transform getGlobalTransForSize(Vec3d sizeIn) {
 		// Okay, this math may be hard to follow, this is effectively merging two TRS transforms,
@@ -696,7 +694,6 @@ public class DisplayEntity extends Entity {
 
 	/**
 	 * Returns the global transform with scale factor all rolled into a Matrix4d
-	 * @return
 	 */
 	public Mat4d getTransMatrix(Vec3d scale) {
 		Transform trans = getGlobalTrans();
@@ -708,7 +705,6 @@ public class DisplayEntity extends Entity {
 
 	/**
 	 * Returns the inverse global transform with scale factor all rolled into a Matrix4d
-	 * @return
 	 */
 	public Mat4d getInvTransMatrix() {
 		return RenderUtils.getInverseWithScale(getGlobalTrans(), size);
@@ -716,7 +712,6 @@ public class DisplayEntity extends Entity {
 
 	/**
 	 * Return the position in the global coordinate system
-	 * @return
 	 */
 	public Vec3d getGlobalPosition() {
 		return getGlobalPosition(getPosition());
@@ -725,7 +720,6 @@ public class DisplayEntity extends Entity {
 	/**
 	 * Convert the specified local coordinate to the global coordinate system
 	 * @param pos - a position in the entity's local coordinate system
-	 * @return
 	 */
 	public Vec3d getGlobalPosition(Vec3d pos) {
 
@@ -749,7 +743,6 @@ public class DisplayEntity extends Entity {
 
 	/**
 	 * Returns the global coordinates for a specified array of local coordinates.
-	 * @return
 	 */
 	public ArrayList<Vec3d> getGlobalPosition(ArrayList<Vec3d> pts) {
 		ArrayList<Vec3d> ret = new ArrayList<>(pts.size());
@@ -761,7 +754,7 @@ public class DisplayEntity extends Entity {
 
 	/**
 	 * Returns the local coordinates for a specified array of global coordinates.
-	 * @param pos - a position in the global coordinate system
+	 * @param pts - a position in the global coordinate system
 	 */
 	public ArrayList<Vec3d> getLocalPosition(ArrayList<Vec3d> pts) {
 		ArrayList<Vec3d> ret = new ArrayList<>(pts.size());
@@ -997,7 +990,7 @@ public class DisplayEntity extends Entity {
 
 	/**
 	 * An overloadable method that is called when the 'create link' feature is enabled and selection changes
-	 * @param ent
+	 * @param nextEnt
 	 */
 	public void linkTo(DisplayEntity nextEnt) {
 		// Do nothing in default behavior
@@ -1156,7 +1149,6 @@ public class DisplayEntity extends Entity {
 
 	/**
 	 * Get all tags for this entity
-	 * @return
 	 */
 	public HashMap<String, Tag> getTagSet() {
 		return tagMap;

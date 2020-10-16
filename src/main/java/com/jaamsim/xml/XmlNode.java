@@ -123,8 +123,7 @@ public class XmlNode {
 
 	/**
 	 * Return the number of child attributes of this tag
-	 * @param name
-	 * @return
+	 * @param tag
 	 */
 	public int getNumChildrenByTag(String tag) {
 		int num = 0;
@@ -152,7 +151,6 @@ public class XmlNode {
 	 * Find the first child tag of type 'tag'
 	 * @param tag
 	 * @param recurse
-	 * @return
 	 */
 	public XmlNode findChildTag(String tag, boolean recurse) {
 		for (XmlNode child : _children) {

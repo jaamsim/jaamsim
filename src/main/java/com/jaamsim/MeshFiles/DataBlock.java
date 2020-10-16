@@ -266,7 +266,6 @@ public class DataBlock {
 	/**
 	 * Returns the first child with a matching name. Utility
 	 * @param name
-	 * @return
 	 */
 	public DataBlock findChildByName(String name) {
 		for (DataBlock b : children) {

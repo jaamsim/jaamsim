@@ -51,7 +51,6 @@ public class CameraInfo {
 	/**
 	 * Very similar to equals() but not
 	 * @param other
-	 * @return
 	 */
 	public boolean isSame(CameraInfo other) {
 		boolean isSame = true;

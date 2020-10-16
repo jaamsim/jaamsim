@@ -387,7 +387,6 @@ public abstract class Device extends StateUserEntity implements ObserverEntity, 
 	 * Performs any calculations related to the state of the process and returns a boolean to
 	 * specify whether to start a new time step.
 	 * @param simTime - present simulation time
-	 * @return indicates whether to start a new time step
 	 */
 	protected abstract void processStep(double simTime);
 

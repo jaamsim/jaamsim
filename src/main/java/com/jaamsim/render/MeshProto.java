@@ -1728,7 +1728,6 @@ private void loadGPUSubLine(GL2GL3 gl, Renderer renderer, MeshData.SubLineData d
 
 /**
  * Has this mesh been loaded into GPU memory?
- * @return
  */
 public boolean isLoadedGPU() {
 	return _isLoadedGPU;

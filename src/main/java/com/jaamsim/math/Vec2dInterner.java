@@ -56,7 +56,6 @@ public class Vec2dInterner {
 	/**
 	 * intern will return a pointer to a Vec2d (which may differ from input 'v') that is mathematically equal but
 	 * may be a shared object. Any value returned by intern should be defensively copied before being modified
-	 * @return
 	 */
 	public Vec2d intern(Vec2d v) {
 		VecWrapper wrapped = new VecWrapper(v);

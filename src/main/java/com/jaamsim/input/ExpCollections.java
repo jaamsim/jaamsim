@@ -92,7 +92,6 @@ public class ExpCollections {
 	 * This obeys a single level of copy-on-write semantics if the original object is marked as constant
 	 * @param vals - The original values for the collection (may be an ArrayList or Map)
 	 * @param constExp - Is the original a constant?
-	 * @return
 	 */
 	public static ExpResult makeAssignableArrrayCollection(ArrayList<ExpResult> vals, boolean constExp) {
 		return ExpResult.makeCollectionResult(new AssignableArrayCollection(vals, constExp));

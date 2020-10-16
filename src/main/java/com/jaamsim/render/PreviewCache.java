@@ -64,9 +64,8 @@ public class PreviewCache {
 
 	/**
 	 * Get the preview image for this, optionally a Runnable can be passed in that will be run when this image is ready
-	 * @param ot
+	 * @param dm
 	 * @param notifier
-	 * @return
 	 */
 	public Future<BufferedImage> getPreview(DisplayModel dm, Runnable notifier) {
 		synchronized (_imageCache) {

@@ -99,7 +99,6 @@ public class BoolDecoder {
 	/**
 	 * Return a tree coded value, use the same tree coding scheme as in the VP8 RFC
 	 * @param treeCode
-	 * @return
 	 */
 	public int getTreeVal(int[] treeCode, int[] probs) {
 		return getTreeVal(treeCode, probs, 0);

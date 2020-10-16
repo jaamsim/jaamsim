@@ -80,7 +80,6 @@ public void set(Vec3d p0, Vec3d p1, Vec3d p2) {
 /**
  * Get the shortest distance from the plane to this point, effectively just a convenient dot product
  * @param point
- * @return
  */
 public double getNormalDist(Vec3d point) {
 	double dot = point.dot3(normal);
@@ -139,7 +138,6 @@ public int hashCode() {
  * Get the distance along a ray that it collides with this plane, this can return
  * infinity if the ray is parallel
  * @param r
- * @return
  */
 public double collisionDist(Ray r) {
 
@@ -187,7 +185,6 @@ public Ray collide(Plane p) {
 /**
  * Returns if ray 'r' collides with the back of the plane
  * @param r
- * @return
  */
 public boolean backFaceCollision(Ray r) {
 

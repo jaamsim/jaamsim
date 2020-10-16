@@ -129,7 +129,6 @@ public final class BoolEncoder {
 
 	/**
 	 * Returns the data so far, note after this is called, the encoder can still be added to
-	 * @return
 	 */
 	public ByteBuffer getData() {
 		ByteBuffer ret = ByteBuffer.allocate(pos + 2);

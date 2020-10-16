@@ -142,7 +142,6 @@ public abstract class StateEntity extends DisplayEntity implements StateUser {
 
 	/**
 	 * Get the name of the initial state this Entity will be initialized with.
-	 * @return
 	 */
 	public String getInitialState() {
 		return isActive() ? STATE_IDLE : STATE_INACTIVE;
@@ -151,7 +150,6 @@ public abstract class StateEntity extends DisplayEntity implements StateUser {
 	/**
 	 * Tests the given state name to see if it is valid for this Entity.
 	 * @param state
-	 * @return
 	 */
 	public boolean isValidState(String state) {
 		return STATE_IDLE.equals(state) || STATE_WORKING.equals(state)
@@ -162,7 +160,6 @@ public abstract class StateEntity extends DisplayEntity implements StateUser {
 	 * Tests the given state name to see if it is counted as working hours when in
 	 * that state..
 	 * @param state
-	 * @return
 	 */
 	public boolean isValidWorkingState(String state) {
 
@@ -346,7 +343,6 @@ public abstract class StateEntity extends DisplayEntity implements StateUser {
 	 * useful for model code.
 	 * @param simTicks
 	 * @param state
-	 * @return
 	 */
 	public long getTicksInState(long simTicks, StateRecord state) {
 		if (state == null)
@@ -411,7 +407,6 @@ public abstract class StateEntity extends DisplayEntity implements StateUser {
 	 * that the entity has been in the specified state.
 	 * @param simTime - present simulation time
 	 * @param state - string representing the state
-	 * @return
 	 */
 	public double getTimeInState(double simTime, String state) {
 		EventManager evt = this.getJaamSimModel().getEventManager();

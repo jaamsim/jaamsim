@@ -20,14 +20,13 @@ import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import com.jogamp.opengl.GL2GL3;
-
 import com.jaamsim.math.AABB;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Mat4d;
 import com.jaamsim.math.Transform;
 import com.jaamsim.math.Vec4d;
 import com.jaamsim.render.Renderer.ShaderHandle;
+import com.jogamp.opengl.GL2GL3;
 
 /**
  * Miscellaneous debug tools
@@ -310,11 +309,7 @@ public class DebugUtils {
 
 	/**
 	 * Render a number of lines segments from the points provided
-	 * @param vaoMap
-	 * @param renderer
 	 * @param lineSegments - pairs of discontinuous line start and end points
-	 * @param color
-	 * @param cam
 	 */
 	public static void renderLine(int contextID, Renderer renderer,
             FloatBuffer lineSegments, float[] color, double lineWidth, Camera cam) {
@@ -367,12 +362,6 @@ public class DebugUtils {
 
 	/**
 	 * Render a list of points
-	 * @param vaoMap
-	 * @param renderer
-	 * @param points
-	 * @param color
-	 * @param pointWidth
-	 * @param cam
 	 */
 	public static void renderPoints(int contextID, Renderer renderer,
             FloatBuffer points, float[] color, double pointWidth, Camera cam) {

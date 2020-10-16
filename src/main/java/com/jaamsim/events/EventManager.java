@@ -76,7 +76,6 @@ public final class EventManager {
 	/**
 	 * Allocates a new EventManager with the given parent and name
 	 *
-	 * @param parent the connection point for this EventManager in the tree
 	 * @param name the name this EventManager should use
 	 */
 	public EventManager(String name) {
@@ -430,13 +429,11 @@ public final class EventManager {
 	/**
 	 * Pause the execution of the current Process and schedule it to wake up at a future
 	 * time in the controlling EventManager,
-	 * @throws ProcessError if called outside of a Process context
-	 *
-	 * @param waitLength the number of ticks in the future to wake at
-	 * @param eventPriority the priority of the scheduled wakeup event
+	 * @param ticks the number of ticks in the future to wake at
+	 * @param priority the priority of the scheduled wakeup event
 	 * @param fifo break ties with previously scheduled events using FIFO/LIFO ordering
-	 * @param t the process target to run when the event is executed
 	 * @param handle an optional handle to hold onto the scheduled event
+	 * @throws ProcessError if called outside of a Process context
 	 */
 	public static final void waitTicks(long ticks, int priority, boolean fifo, EventHandle handle) {
 		Process cur = Process.current();
@@ -446,13 +443,11 @@ public final class EventManager {
 	/**
 	 * Pause the execution of the current Process and schedule it to wake up at a future
 	 * time in the controlling EventManager,
-	 * @throws ProcessError if called outside of a Process context
-	 *
 	 * @param secs the number of seconds in the future to wake at
-	 * @param eventPriority the priority of the scheduled wakeup event
+	 * @param priority the priority of the scheduled wakeup event
 	 * @param fifo break ties with previously scheduled events using FIFO/LIFO ordering
-	 * @param t the process target to run when the event is executed
 	 * @param handle an optional handle to hold onto the scheduled event
+	 * @throws ProcessError if called outside of a Process context
 	 */
 	public static final void waitSeconds(double secs, int priority, boolean fifo, EventHandle handle) {
 		Process cur = Process.current();
@@ -585,7 +580,6 @@ public final class EventManager {
 	/**
 	 * Remove an event from the eventList, must hold the lockObject.
 	 * @param idx
-	 * @return
 	 */
 	private void removeEvent(Event evt) {
 		EventNode node = evt.node;
@@ -774,13 +768,13 @@ public final class EventManager {
 
 	/**
 	 * Schedule a future event in the controlling EventManager for the current Process.
-	 * @throws ProcessError if called outside of a Process context
 	 *
 	 * @param waitLength the number of ticks in the future to schedule this event
 	 * @param eventPriority the priority of the scheduled event
 	 * @param fifo break ties with previously scheduled events using FIFO/LIFO ordering
 	 * @param t the process target to run when the event is executed
 	 * @param handle an optional handle to hold onto the scheduled event
+	 * @throws ProcessError if called outside of a Process context
 	 */
 	public static final void scheduleTicks(long waitLength, int eventPriority, boolean fifo, ProcessTarget t, EventHandle handle) {
 		Process cur = Process.current();
@@ -789,13 +783,14 @@ public final class EventManager {
 
 	/**
 	 * Schedule a future event in the controlling EventManager for the current Process.
-	 * @throws ProcessError if called outside of a Process context
 	 *
 	 * @param secs the number of seconds in the future to schedule this event
 	 * @param eventPriority the priority of the scheduled event
 	 * @param fifo break ties with previously scheduled events using FIFO/LIFO ordering
 	 * @param t the process target to run when the event is executed
 	 * @param handle an optional handle to hold onto the scheduled event
+	 *
+	 * @throws ProcessError if called outside of a Process context
 	 */
 	public static final void scheduleSeconds(double secs, int eventPriority, boolean fifo, ProcessTarget t, EventHandle handle) {
 		Process cur = Process.current();

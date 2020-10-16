@@ -73,8 +73,7 @@ public boolean equals4(Color4d c) {
 
 /**
  * Checks if all vector components are within EPSILON of each other
- * @param other - the other vector
- * @return
+ * @param o - the other vector
  */
 @Override
 public boolean equals(Object o)

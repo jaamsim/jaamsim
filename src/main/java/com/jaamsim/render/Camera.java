@@ -147,7 +147,6 @@ private void updateProjMat() {
 
 /**
  * Gets a reference to the projection matrix for this camera
- * @return
  */
 public Mat4d getProjMat4d() {
 	if (_projMatDirty) {
@@ -180,7 +179,6 @@ public double getAspectRatio() {
 }
 /**
  * Get the camera FOV in the y direction in radians
- * @return
  */
 public double getFOV() {
 	return _info.FOV;
@@ -212,7 +210,6 @@ public void getViewDir(Vec4d dirOut) {
 /**
  * Test frustum collision with sphere s
  * @param s
- * @return
  */
 public boolean collides(Sphere s) {
 	updateFrustum();

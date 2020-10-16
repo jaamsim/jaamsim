@@ -5209,7 +5209,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	/**
 	 * Returns the HTML code for pop-up tooltips in the Model Builder and Control Panel.
 	 * @param name - name of the item whose tooltip is to be generated
-	 * @param description - text describing the item's function
+	 * @param desc - text describing the item's function
 	 * @return HTML for the tooltip
 	 */
 	public static String formatToolTip(String name, String desc) {

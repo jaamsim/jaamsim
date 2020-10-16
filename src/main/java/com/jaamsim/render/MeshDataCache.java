@@ -154,7 +154,6 @@ public class MeshDataCache {
 	/**
 	 * Load the mesh in a new thread, then notify on 'notifier'
 	 * @param key
-	 * @param notifier
 	 */
 	public static void loadMesh(final MeshProtoKey key) {
 		MeshDataLoader ml = new MeshDataLoader(key);

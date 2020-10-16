@@ -33,7 +33,6 @@ public interface RenderProxy {
 	 * render thread.
 	 * @param r
 	 * @param outList
-	 * @return
 	 */
 	public abstract void collectRenderables(Renderer r, ArrayList<Renderable> outList);
 

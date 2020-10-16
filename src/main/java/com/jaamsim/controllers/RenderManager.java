@@ -42,10 +42,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
-import com.jaamsim.Commands.ListCommand;
 import com.jaamsim.Commands.Command;
 import com.jaamsim.Commands.DefineCommand;
 import com.jaamsim.Commands.KeywordCommand;
+import com.jaamsim.Commands.ListCommand;
 import com.jaamsim.DisplayModels.DisplayModel;
 import com.jaamsim.GameObjects.GameEntity;
 import com.jaamsim.Graphics.DirectedEntity;
@@ -332,7 +332,6 @@ public class RenderManager implements DragSourceListener {
 
 	/**
 	 * Ideally, this states that it is safe to call initialize() (assuming isGood() returned false)
-	 * @return
 	 */
 	public static boolean canInitialize() {
 		return s_instance == null;
@@ -1981,7 +1980,6 @@ public class RenderManager implements DragSourceListener {
 	/**
 	 * Can this hardware perform off screen rendering. Note: this method returning true is necessary, but not sufficient to
 	 * support off screen rendering.
-	 * @return
 	 */
 	public static boolean canRenderOffscreen() {
 		if (!isGood()) return false;
@@ -1996,7 +1994,6 @@ public class RenderManager implements DragSourceListener {
 	 * @param camInfo
 	 * @param width
 	 * @param height
-	 * @return
 	 */
 	public Future<BufferedImage> renderOffscreen(ArrayList<RenderProxy> scene, CameraInfo camInfo, int viewID,
 	                                   int width, int height, Runnable runWhenDone) {
@@ -2005,12 +2002,10 @@ public class RenderManager implements DragSourceListener {
 
 	/**
 	 * Return a FutureImage of the equivalent screen renderer from the given position looking at the given center
-	 * @param cameraPos
-	 * @param viewCenter
+	 * @param view
 	 * @param width - width of returned image
 	 * @param height - height of returned image
 	 * @param target - optional target to prevent re-allocating GPU resources
-	 * @return
 	 */
 	public Future<BufferedImage> renderScreenShot(View view, int width, int height, OffscreenTarget target) {
 		Vec3d cameraPos = view.getGlobalPosition();

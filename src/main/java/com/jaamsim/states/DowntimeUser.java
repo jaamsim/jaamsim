@@ -24,14 +24,12 @@ public interface DowntimeUser {
 	/**
 	 * Returns true if the specified maintenance activity applies to this user.
 	 * @param down - planned or unplanned maintenance activity
-	 * @return
 	 */
 	public boolean isDowntimeUser(DowntimeEntity down);
 
 	/**
 	 * Returns true if the specified maintenance activity can be started.
 	 * @param down - planned or unplanned maintenance activity
-	 * @return
 	 */
 	public boolean canStartDowntime(DowntimeEntity down);
 

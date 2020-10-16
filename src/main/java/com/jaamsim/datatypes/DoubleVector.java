@@ -312,7 +312,6 @@ public class DoubleVector {
 
 	/**
 	 * Reverse the elements position n to 0 and 0 to n
-	 * @return
 	 */
 	public void reverse() {
 		int numSwaps = this.size() / 2;

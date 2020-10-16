@@ -482,7 +482,6 @@ public double determinant() {
 
 /**
  * Returns the inverse of this matrix, or null if the matrix is not invertible
- * @return
  */
 public Mat4d inverse() {
 	double det = determinant();
@@ -547,7 +546,6 @@ private double cofactor(int x, int y, double[] data, double[] sub) {
 
 /**
  * Returns a column major (for historical reasons) array of the elements of this matrix
- * @return
  */
 public double[] toCMDataArray() {
 	double[] ret = new double[16];
@@ -576,7 +574,6 @@ public double[] toCMDataArray() {
 
 /**
  * Debugging feature. Check that this matrix is very close to the identity matrix
- * @return
  */
 public boolean nearIdentity() {
 	return nearIdentityThresh(0.0001);
@@ -611,7 +608,6 @@ public boolean nearIdentityThresh(double threshold) {
 
 /**
  * Debugging feature. Check that this matrix is very close to the identity matrix
- * @return
  */
 public boolean nearIdentity3() {
 	return nearIdentityThresh3(0.0001);

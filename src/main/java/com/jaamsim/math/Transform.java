@@ -156,8 +156,8 @@ private void updateMatrix() {
  * Populates a transform that is the merging of this and 'rhs'
  * The matrix from this new transform will be the same as if the matrices of both transforms
  * were multiplied (see the unit tests)
- * @param rhs - the right hand matrix to merge with
- * @param out
+ * @param a - the right hand matrix to merge with
+ * @param b
  */
 public void merge(Transform a, Transform b) {
 	Vec3d temp = new Vec3d(a._trans);
