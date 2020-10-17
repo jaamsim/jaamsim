@@ -49,7 +49,6 @@ public class ColorEditor extends CellEditor {
 				public void setColour(String colStr) {
 					setValue(colStr);
 					stopCellEditing();
-					propTable.requestFocusInWindow();
 				}
 
 			};

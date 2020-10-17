@@ -48,7 +48,6 @@ import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.ui.EditBox.EditTable;
 
 public abstract class CellEditor extends AbstractCellEditor implements TableCellEditor, ActionListener {
-	protected final EditTable propTable;
 	protected Input<?> input;
 
 	private final JPanel jPanel;
@@ -61,7 +60,6 @@ public abstract class CellEditor extends AbstractCellEditor implements TableCell
 	protected String retryString;
 
 	public CellEditor(EditTable table, boolean showButton) {
-		propTable = table;
 		this.addCellEditorListener(new CellListener());
 
 		// Table cell
@@ -208,7 +206,8 @@ public abstract class CellEditor extends AbstractCellEditor implements TableCell
 
 			// The value has not changed
 			if (in.getValueString().equals(newValue) && in.isValid()) {
-				editor.propTable.setPresentCellEditor(null);
+				editor.getTable().setPresentCellEditor(null);
+				editor.getTable().requestFocusInWindow();
 				return;
 			}
 
@@ -267,7 +266,8 @@ public abstract class CellEditor extends AbstractCellEditor implements TableCell
 				return;
 			}
 			finally {
-				editor.propTable.setPresentCellEditor(null);
+				editor.getTable().setPresentCellEditor(null);
+				editor.getTable().requestFocusInWindow();
 			}
 		}
 	}
