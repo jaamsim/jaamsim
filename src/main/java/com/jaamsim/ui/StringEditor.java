@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2005-2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2019 JaamSim Software Inc.
+ * Copyright (C) 2016-2020 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,16 +19,14 @@ package com.jaamsim.ui;
 
 import java.awt.event.ActionEvent;
 
-import com.jaamsim.ui.EditBox.EditTable;
-
 /**
  * Handles inputs that are edited in place.
  *
  */
 public class StringEditor extends CellEditor {
 
-	public StringEditor(EditTable table) {
-		super(table, false);
+	public StringEditor(int width, int height) {
+		super(width, height, false);
 	}
 
 	@Override

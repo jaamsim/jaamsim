@@ -59,14 +59,11 @@ public abstract class CellEditor extends AbstractCellEditor implements TableCell
 	private EditTable table;
 	protected String retryString;
 
-	public CellEditor(EditTable table, boolean showButton) {
+	public CellEditor(int width, int height, boolean showButton) {
 		this.addCellEditorListener(new CellListener());
 
 		// Table cell
 		jPanel = new JPanel(new BorderLayout());
-		int height = table.getRowHeight();
-		int width = table.getColumnModel().getColumn(EditBox.VALUE_COLUMN).getWidth() -
-				table.getColumnModel().getColumnMargin();
 		jPanel.setPreferredSize(new Dimension(width, height));
 
 		// Editable text

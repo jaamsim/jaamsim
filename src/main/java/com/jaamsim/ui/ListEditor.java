@@ -22,7 +22,6 @@ import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 
 import com.jaamsim.input.Parser;
-import com.jaamsim.ui.EditBox.EditTable;
 
 /**
  * Handles inputs where a list of entities can be selected.
@@ -34,8 +33,8 @@ public class ListEditor extends CellEditor {
 	private boolean caseSensitive;
 	private boolean innerBraces;
 
-	public ListEditor(EditTable table, ArrayList<String> aList) {
-		super(table, true);
+	public ListEditor(int width, int height, ArrayList<String> aList) {
+		super(width, height, true);
 		options = aList;
 		caseSensitive = true;
 		innerBraces = false;

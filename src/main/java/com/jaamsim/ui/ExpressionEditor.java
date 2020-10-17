@@ -23,12 +23,10 @@ import java.util.ArrayList;
 
 import javax.swing.JMenuItem;
 
-import com.jaamsim.ui.EditBox.EditTable;
-
 public class ExpressionEditor extends CellEditor {
 
-	public ExpressionEditor(EditTable table) {
-		super(table, true);
+	public ExpressionEditor(int width, int height) {
+		super(width, height, true);
 	}
 
 	@Override

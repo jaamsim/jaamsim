@@ -407,30 +407,33 @@ public static class EditTable extends JTable {
 		CellEditor ret;
 
 		ArrayList<String> array = in.getValidOptions(entity);
+		int width = getColumnModel().getColumn(VALUE_COLUMN).getWidth()
+				- getColumnModel().getColumnMargin();
+		int height = getRowHeight();
 
 		// 1) Colour input
 		if (in instanceof ColourInput) {
-			ret = new ColorEditor(this);
+			ret = new ColorEditor(width, height);
 		}
 
 		// 2) File input
 		else if (in instanceof FileInput) {
-			ret = new FileEditor(this);
+			ret = new FileEditor(width, height);
 		}
 
 		// 3) Expression Builder
 		else if (in.useExpressionBuilder()) {
-			ret = new ExpressionEditor(this);
+			ret = new ExpressionEditor(width, height);
 		}
 
 		// 4) Normal text
 		else if (array == null) {
-			ret = new StringEditor(this);
+			ret = new StringEditor(width, height);
 		}
 
 		// 5) Multiple selections from a List
 		else if (in instanceof ListInput) {
-			ListEditor listEditor = new ListEditor(this, array);
+			ListEditor listEditor = new ListEditor(width, height, array);
 			if (in instanceof StringListInput) {
 				listEditor.setCaseSensitive( ((StringListInput)(in)).getCaseSensitive() );
 			}
@@ -442,7 +445,7 @@ public static class EditTable extends JTable {
 
 		// 6) Single selection from a drop down box
 		else {
-			ret = new DropDownMenuEditor(this, array);
+			ret = new DropDownMenuEditor(width, height, array);
 		}
 
 		// If the user is going to retry a failed edit, update the editor with the old value

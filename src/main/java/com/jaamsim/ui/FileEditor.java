@@ -26,7 +26,6 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import com.jaamsim.input.FileInput;
 import com.jaamsim.input.Input;
-import com.jaamsim.ui.EditBox.EditTable;
 
 /**
  * Handles file inputs.
@@ -34,8 +33,8 @@ import com.jaamsim.ui.EditBox.EditTable;
  */
 public class FileEditor extends CellEditor {
 
-	public FileEditor(EditTable table) {
-		super(table, true);
+	public FileEditor(int width, int height) {
+		super(width, height, true);
 	}
 
 	@Override

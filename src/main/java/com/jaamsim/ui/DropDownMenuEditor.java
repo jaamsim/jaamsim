@@ -24,8 +24,6 @@ import java.util.ArrayList;
 
 import javax.swing.JMenuItem;
 
-import com.jaamsim.ui.EditBox.EditTable;
-
 /**
  * Handles inputs with drop-down menus.
  *
@@ -34,8 +32,8 @@ public class DropDownMenuEditor extends CellEditor {
 
 	private ArrayList<String> options;
 
-	public DropDownMenuEditor(EditTable table, ArrayList<String> aList) {
-		super(table, true);
+	public DropDownMenuEditor(int width, int height, ArrayList<String> aList) {
+		super(width, height, true);
 		options = aList;
 	}
 
