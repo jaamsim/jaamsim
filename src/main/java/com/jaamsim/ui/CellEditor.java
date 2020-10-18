@@ -115,6 +115,7 @@ public abstract class CellEditor extends AbstractCellEditor implements TableCell
 
 	public void setValue(String str) {
 		text.setText(str);
+		table.selectNextCell();
 	}
 
 	public String getValue() {

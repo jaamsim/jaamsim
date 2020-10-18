@@ -508,6 +508,13 @@ public static class EditTable extends JTable {
 		presentCellEditor = editor;
 	}
 
+	public void selectNextCell() {
+		int row = getSelectedRow();
+		int col = getSelectedColumn();
+		row = Math.min(row + 1, getModel().getRowCount() - 1);
+		changeSelection(row, col, false, false);
+	}
+
 }
 
 private static class EditTableModel extends AbstractTableModel {
