@@ -20,15 +20,18 @@ package com.jaamsim.ui;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
+import javax.swing.AbstractAction;
 import javax.swing.AbstractCellEditor;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.event.CellEditorListener;
@@ -87,11 +90,21 @@ public abstract class CellEditor extends AbstractCellEditor implements TableCell
 							text.setText(String.valueOf(e.getKeyChar()));
 						}
 					});
+					return;
 				}
 				return;
 			}
 			@Override
 			public void keyReleased(KeyEvent e) {}
+		});
+
+		// Edit the value when F2 is pressed
+		jPanel.getInputMap().put(KeyStroke.getKeyStroke("F2"), "edit");
+		jPanel.getActionMap().put("edit", new AbstractAction() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				text.requestFocusInWindow();
+			}
 		});
 
 		// Launch Entity Finder on Cntrl+F
