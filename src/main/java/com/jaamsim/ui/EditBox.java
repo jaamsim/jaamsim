@@ -168,7 +168,12 @@ public class EditBox extends FrameBox {
 			return;
 
 		JTable propTable = (JTable)(((JScrollPane)jTabbedFrame.getSelectedComponent()).getViewport().getComponent(0));
+		int row = propTable.getSelectedRow();
+		int col = propTable.getSelectedColumn();
 		((EditTableModel)propTable.getModel()).fireTableDataChanged();
+
+		// Restore the selected cell
+		propTable.changeSelection(row, col, false, false);
 	}
 
 	private synchronized static void killInstance() {
