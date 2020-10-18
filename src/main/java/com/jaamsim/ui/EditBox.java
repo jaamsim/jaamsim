@@ -377,6 +377,9 @@ public static class EditTable extends JTable {
 		addFocusListener(new FocusListener() {
 			@Override
 			public void focusGained(FocusEvent e) {
+				if (retryString != null) {
+					changeSelection(retryRow, retryCol, false, false);
+				}
 				int row = getSelectedRow();
 				editCellAt(row, VALUE_COLUMN);
 				if (getEditorComponent() != null) {

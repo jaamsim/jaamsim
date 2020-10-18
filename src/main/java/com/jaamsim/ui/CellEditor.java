@@ -212,7 +212,6 @@ public abstract class CellEditor extends AbstractCellEditor implements TableCell
 							@Override
 							public void run() {
 								table.setRetry(newValue, row, col);
-								table.editCellAt(row, col);
 							}
 						});
 
