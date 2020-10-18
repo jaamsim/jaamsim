@@ -68,6 +68,7 @@ public class EditBox extends FrameBox {
 	private final TableCellRenderer columnRender = new EditBoxColumnRenderer();
 
 	private String lastCategory = null;
+	private String lastKeyword = null;
 
 	private EditBox() {
 		super( "Input Editor" );
@@ -160,6 +161,13 @@ public class EditBox extends FrameBox {
 			jTabbedFrame.setSelectedIndex(initialTab);
 			prevTab = initialTab;
 		}
+
+		// Set the keyword
+		editTableList.get(initialTab).selectKeyword(lastKeyword);
+	}
+
+	public void setLastKeyword(String keyword) {
+		lastKeyword = keyword;
 	}
 
 	@Override
@@ -382,8 +390,13 @@ public static class EditTable extends JTable {
 				}
 				int row = getSelectedRow();
 				editCellAt(row, VALUE_COLUMN);
-				if (getEditorComponent() != null) {
-					getEditorComponent().requestFocusInWindow();
+				if (getEditorComponent() == null)
+					return;
+				getEditorComponent().requestFocusInWindow();
+
+				Input<?> in = (Input<?>) getValueAt(row, 0);
+				if (in != null) {
+					EditBox.getInstance().setLastKeyword(in.getKeyword());
 				}
 			}
 			@Override
@@ -519,6 +532,18 @@ public static class EditTable extends JTable {
 		int col = getSelectedColumn();
 		row = Math.min(row + 1, getModel().getRowCount() - 1);
 		changeSelection(row, col, false, false);
+	}
+
+	public void selectKeyword(String keyword) {
+		int selectedRow = 0;
+		for (int row = 0; row < getModel().getRowCount(); row++) {
+			Input<?> in = (Input<?>) getModel().getValueAt(row, 0);
+			if (in.getKeyword().equals(keyword)) {
+				selectedRow = row;
+				break;
+			}
+		}
+		changeSelection(selectedRow, VALUE_COLUMN, false, false);
 	}
 
 }
