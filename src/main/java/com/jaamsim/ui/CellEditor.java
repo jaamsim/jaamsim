@@ -72,6 +72,28 @@ public abstract class CellEditor extends AbstractCellEditor implements TableCell
 		text = new JTextField();
 		jPanel.add(text, BorderLayout.WEST);
 
+		// If text is entered, over-write the present value
+		jPanel.addKeyListener(new KeyListener() {
+			@Override
+			public void keyTyped(KeyEvent e) {}
+			@Override
+			public void keyPressed(KeyEvent e) {
+				// Alphanumeric key
+				if (e.getKeyChar() != KeyEvent.CHAR_UNDEFINED) {
+					text.requestFocusInWindow();
+					SwingUtilities.invokeLater(new Runnable() {
+						@Override
+						public void run() {
+							text.setText(String.valueOf(e.getKeyChar()));
+						}
+					});
+				}
+				return;
+			}
+			@Override
+			public void keyReleased(KeyEvent e) {}
+		});
+
 		// Launch Entity Finder on Cntrl+F
 		text.addKeyListener(new KeyListener() {
 			@Override
