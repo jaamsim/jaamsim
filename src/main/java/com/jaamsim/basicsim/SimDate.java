@@ -52,6 +52,10 @@ public class SimDate {
 		millisecond = calendar.get(Calendar.MILLISECOND);
 	}
 
+	public int[] toArray() {
+		return new int[]{year, month, dayOfMonth, hourOfDay, minute, second, millisecond};
+	}
+
 	@Override
 	public String toString() {
 		if (hourOfDay == 0 && minute == 0 && second == 0 && millisecond == 0)

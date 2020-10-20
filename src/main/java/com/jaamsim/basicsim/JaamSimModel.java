@@ -22,6 +22,7 @@ import java.io.PrintStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicLong;
@@ -1485,6 +1486,30 @@ public class JaamSimModel {
 		synchronized (calendar) {
 			calendar.setTimeInMillis(millis);
 			return calendar.getTime();
+		}
+	}
+
+	/**
+	 * Returns the calendar date and time for the specified time in milliseconds from the epoch.
+	 * @param millis - time in milliseconds from the epoch
+	 * @return SimDate for the specified time
+	 */
+	public SimDate getSimDate(long millis) {
+		synchronized (calendar) {
+			calendar.setTimeInMillis(millis);
+			return calendar.getSimDate();
+		}
+	}
+
+	/**
+	 * Returns the day of week for the specified time in milliseconds from the epoch.
+	 * @param millis - time in milliseconds from the epoch
+	 * @return day of week (Sunday = 1, Monday = 2, ..., Saturday = 7)
+	 */
+	public int getDayOfWeek(long millis) {
+		synchronized (calendar) {
+			calendar.setTimeInMillis(millis);
+			return calendar.get(Calendar.DAY_OF_WEEK);
 		}
 	}
 

@@ -1192,4 +1192,24 @@ public class Simulation extends Entity {
 		return simTime;
 	}
 
+	@Output(name = "SimDate",
+	 description = "The calendar date and time for the present simulation time expressed as an "
+	             + "array of integer values in the format (YY, MM, DD, hh, mm, ss, milliseconds).",
+	    unitType = DimensionlessUnit.class,
+	    sequence = 9)
+	public int[] getSimDate(double simTime) {
+		long millis = getJaamSimModel().simTimeToCalendarMillis(simTime);
+		return getJaamSimModel().getSimDate(millis).toArray();
+	}
+
+	@Output(name = "SimDayOfWeek",
+	 description = "The calendar day of week (Sunday = 1, Monday = 2, ..., Saturday = 7) for the "
+	             + "present simulation time.",
+	    unitType = DimensionlessUnit.class,
+	    sequence = 10)
+	public int getSimDayOfWeek(double simTime) {
+		long millis = getJaamSimModel().simTimeToCalendarMillis(simTime);
+		return getJaamSimModel().getDayOfWeek(millis);
+	}
+
 }
