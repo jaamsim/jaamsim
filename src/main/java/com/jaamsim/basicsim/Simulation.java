@@ -1212,4 +1212,22 @@ public class Simulation extends Entity {
 		return getJaamSimModel().getDayOfWeek(millis);
 	}
 
+	@Output(name = "PresentDate",
+	 description = "The present local time and date expressed as an array of integer values in "
+	             + "the format (YY, MM, DD, hh, mm, ss, milliseconds).",
+	    sequence = 11)
+	public int[] getPresentDate(double simTime) {
+		SimDate simDate = new SimDate(Calendar.getInstance());
+		return simDate.toArray();
+	}
+
+	@Output(name = "PresentDayOfWeek",
+	 description = "The calendar day of week (Sunday = 1, Monday = 2, ..., Saturday = 7) for the "
+	             + "present local time.",
+	    unitType = DimensionlessUnit.class,
+	    sequence = 12)
+	public int getPresentDayOfWeek(double simTime) {
+		return Calendar.getInstance().get(Calendar.DAY_OF_WEEK);
+	}
+
 }
