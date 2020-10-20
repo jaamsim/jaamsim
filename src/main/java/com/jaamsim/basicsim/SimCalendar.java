@@ -155,4 +155,12 @@ public final class SimCalendar extends GregorianCalendar {
 		return ret;
 	}
 
+	/**
+	 * Returns the SimDate containing the date and time data.
+	 * @return SimDate
+	 */
+	public SimDate getSimDate() {
+		return new SimDate(this);
+	}
+
 }

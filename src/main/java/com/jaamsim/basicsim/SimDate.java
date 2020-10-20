@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2019 JaamSim Software Inc.
+ * Copyright (C) 2019-2020 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 package com.jaamsim.basicsim;
+
+import java.util.Calendar;
 
 public class SimDate {
 
@@ -38,6 +40,16 @@ public class SimDate {
 		minute = mm;
 		second = ss;
 		millisecond = ms;
+	}
+
+	public SimDate(Calendar calendar) {
+		year = calendar.get(Calendar.YEAR);
+		month = calendar.get(Calendar.MONTH) + 1;
+		dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
+		hourOfDay = calendar.get(Calendar.HOUR_OF_DAY);
+		minute = calendar.get(Calendar.MINUTE);
+		second = calendar.get(Calendar.SECOND);
+		millisecond = calendar.get(Calendar.MILLISECOND);
 	}
 
 	@Override
