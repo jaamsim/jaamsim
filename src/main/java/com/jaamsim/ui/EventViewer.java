@@ -48,7 +48,6 @@ import com.jaamsim.events.EventManager;
 import com.jaamsim.events.EventTraceListener;
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.units.TimeUnit;
-import com.jaamsim.units.Unit;
 
 /**
  * Class to display, and control the execution of events in the EventManager
@@ -129,7 +128,7 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 		evtMan.pause();
 		evtMan.setTraceListener(this);
 
-		timeUnit = Unit.getDisplayedUnit(TimeUnit.class);
+		timeUnit = GUIFrame.getJaamSimModel().getDisplayedUnit(TimeUnit.class);
 
 		// Next Event Button
 		JButton nextEventButton = new JButton( "Next Event" );
@@ -388,8 +387,8 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 			return;
 
 		// Update the headers if the time unit has changed
-		if (!Unit.getDisplayedUnit(TimeUnit.class).equals(timeUnit)) {
-			timeUnit = Unit.getDisplayedUnit(TimeUnit.class);
+		if (!GUIFrame.getJaamSimModel().getDisplayedUnit(TimeUnit.class).equals(timeUnit)) {
+			timeUnit = GUIFrame.getJaamSimModel().getDisplayedUnit(TimeUnit.class);
 			eventList.getColumnModel().getColumn(1).setHeaderValue(String.format("%s (%s)",
 					headers[1], timeUnit));
 			profList.getColumnModel().getColumn(2).setHeaderValue(String.format("%s (/%s)",
@@ -398,7 +397,7 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 			setDirty(true);
 		}
 
-		if (isDirty() || !Unit.getDisplayedUnit(TimeUnit.class).equals(timeUnit)) {
+		if (isDirty() || !GUIFrame.getJaamSimModel().getDisplayedUnit(TimeUnit.class).equals(timeUnit)) {
 			setDirty(false);
 			switch (jTabbedFrame.getSelectedIndex()) {
 			case 0:
@@ -465,7 +464,7 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 		}
 
 		// Rebuild the event list with the updated data
-		double factor = Unit.getDisplayedUnitFactor(TimeUnit.class);
+		double factor = GUIFrame.getJaamSimModel().getDisplayedUnitFactor(TimeUnit.class);
 		DefaultTableModel tableModel = (DefaultTableModel) eventList.getModel();
 		String[] data = new String[6];
 		int rowCount = 0;
@@ -571,7 +570,7 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 		}
 
 		// Build the table entries
-		double factor = Unit.getDisplayedUnitFactor(TimeUnit.class);
+		double factor = GUIFrame.getJaamSimModel().getDisplayedUnitFactor(TimeUnit.class);
 		double dur = (GUIFrame.getJaamSimModel().getSimTime() - startTime)/factor;
 		DefaultTableModel tableModel = (DefaultTableModel) profList.getModel();
 		String[] data = new String[4];

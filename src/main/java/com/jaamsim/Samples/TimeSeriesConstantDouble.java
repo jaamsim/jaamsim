@@ -17,6 +17,7 @@
 package com.jaamsim.Samples;
 
 import com.jaamsim.input.Input;
+import com.jaamsim.ui.GUIFrame;
 import com.jaamsim.units.Unit;
 
 public class TimeSeriesConstantDouble implements TimeSeriesProvider {
@@ -90,9 +91,9 @@ public class TimeSeriesConstantDouble implements TimeSeriesProvider {
 	@Override
 	public String toString() {
 		StringBuilder tmp = new StringBuilder();
-		tmp.append(val/Unit.getDisplayedUnitFactor(unitType));
+		tmp.append(val/GUIFrame.getJaamSimModel().getDisplayedUnitFactor(unitType));
 		if (unitType != Unit.class)
-			tmp.append(Input.SEPARATOR).append(Unit.getDisplayedUnit(unitType));
+			tmp.append(Input.SEPARATOR).append(GUIFrame.getJaamSimModel().getDisplayedUnit(unitType));
 		return tmp.toString();
 	}
 

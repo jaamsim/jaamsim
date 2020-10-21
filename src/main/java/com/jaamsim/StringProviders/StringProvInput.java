@@ -28,6 +28,7 @@ import com.jaamsim.input.Input;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.Parser;
+import com.jaamsim.ui.GUIFrame;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
@@ -134,8 +135,8 @@ public class StringProvInput extends Input<StringProvider> {
 			sb.append(value.getNextString(simTime));
 		}
 		else {
-			String unitString = Unit.getDisplayedUnit(unitType);
-			double sifactor = Unit.getDisplayedUnitFactor(unitType);
+			String unitString = GUIFrame.getJaamSimModel().getDisplayedUnit(unitType);
+			double sifactor = GUIFrame.getJaamSimModel().getDisplayedUnitFactor(unitType);
 			sb.append(value.getNextString(simTime, sifactor));
 			sb.append("[").append(unitString).append("]");
 		}

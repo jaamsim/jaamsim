@@ -190,7 +190,7 @@ public class OutputBox extends FrameBox {
 					// Determine the preferred unit
 					OutputHandle out = (OutputHandle)entry;
 					Class<? extends Unit> ut = out.getUnitType();
-					double factor = Unit.getDisplayedUnitFactor(ut);
+					double factor = GUIFrame.getJaamSimModel().getDisplayedUnitFactor(ut);
 
 					// Select the appropriate format
 					String fmt = "%s";
@@ -209,7 +209,7 @@ public class OutputBox extends FrameBox {
 
 					// Append the appropriate unit
 					if (ut != Unit.class && ut != DimensionlessUnit.class) {
-						String unitString = Unit.getDisplayedUnit(ut);
+						String unitString = GUIFrame.getJaamSimModel().getDisplayedUnit(ut);
 						sb.append(Input.SEPARATOR).append(unitString);
 					}
 

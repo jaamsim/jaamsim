@@ -19,6 +19,7 @@ package com.jaamsim.input;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.math.Vec3d;
+import com.jaamsim.ui.GUIFrame;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 
@@ -67,7 +68,7 @@ public class Vec3dInput extends Input<Vec3d> {
 		if (defValue == null)
 			return "";
 
-		double factor = Unit.getDisplayedUnitFactor(unitType);
+		double factor = GUIFrame.getJaamSimModel().getDisplayedUnitFactor(unitType);
 
 		StringBuilder tmp = new StringBuilder();
 		tmp.append(defValue.x/factor);
@@ -77,7 +78,7 @@ public class Vec3dInput extends Input<Vec3d> {
 		tmp.append(defValue.z/factor);
 		if (unitType != Unit.class) {
 			tmp.append(SEPARATOR);
-			tmp.append(Unit.getDisplayedUnit(unitType));
+			tmp.append(GUIFrame.getJaamSimModel().getDisplayedUnit(unitType));
 		}
 
 		return tmp.toString();

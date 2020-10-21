@@ -52,6 +52,7 @@ import com.jaamsim.basicsim.ObjectType;
 import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.math.Vec3d;
+import com.jaamsim.ui.GUIFrame;
 import com.jaamsim.ui.LogBox;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.DistanceUnit;
@@ -1226,8 +1227,8 @@ public class InputAgent {
 
 			// Determine the preferred unit for this output
 			Class<? extends Unit> ut = out.getUnitType();
-			double factor = Unit.getDisplayedUnitFactor(ut);
-			String unitString = Unit.getDisplayedUnit(ut);
+			double factor = ent.getJaamSimModel().getDisplayedUnitFactor(ut);
+			String unitString = ent.getJaamSimModel().getDisplayedUnit(ut);
 			if (ut == Unit.class || ut == DimensionlessUnit.class)
 				unitString = "-";
 
@@ -1666,8 +1667,8 @@ public class InputAgent {
 	}
 
 	public static KeywordIndex formatPointsInputs(String keyword, ArrayList<Vec3d> points, Vec3d offset) {
-		String unitStr = Unit.getDisplayedUnit(DistanceUnit.class);
-		double factor = Unit.getDisplayedUnitFactor(DistanceUnit.class);
+		String unitStr = GUIFrame.getJaamSimModel().getDisplayedUnit(DistanceUnit.class);
+		double factor = GUIFrame.getJaamSimModel().getDisplayedUnitFactor(DistanceUnit.class);
 		ArrayList<String> tokens = new ArrayList<>(points.size() * 6);
 		for (Vec3d v : points) {
 			tokens.add("{");
@@ -1681,8 +1682,8 @@ public class InputAgent {
 	}
 
 	public static KeywordIndex formatVec3dInput(String keyword, Vec3d point, Class<? extends Unit> ut) {
-		String unitStr = Unit.getDisplayedUnit(ut);
-		double factor = Unit.getDisplayedUnitFactor(ut);
+		String unitStr = GUIFrame.getJaamSimModel().getDisplayedUnit(ut);
+		double factor = GUIFrame.getJaamSimModel().getDisplayedUnitFactor(ut);
 		ArrayList<String> tokens = new ArrayList<>(4);
 		tokens.add(coordFormat.format(point.x/factor));
 		tokens.add(coordFormat.format(point.y/factor));

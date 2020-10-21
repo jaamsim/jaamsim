@@ -63,6 +63,7 @@ public class JaamSimModel {
 	private final AtomicLong entityCount = new AtomicLong(0);
 
 	private final HashMap<String, Entity> namedEntities = new HashMap<>(100);
+	private final HashMap<Class<? extends Unit>, Unit> preferredUnit = new HashMap<>();
 
 	// Note, entityList is an empty list node used to identify the end of the list
 	// The first real entity is at entityList.next.ent
@@ -1388,8 +1389,8 @@ public class JaamSimModel {
 		EventManager evt = EventManager.current();
 		long traceTick = evt.getTicks();
 		if (lastTickForTrace != traceTick) {
-			double unitFactor = Unit.getDisplayedUnitFactor(TimeUnit.class);
-			String unitString = Unit.getDisplayedUnit(TimeUnit.class);
+			double unitFactor = this.getDisplayedUnitFactor(TimeUnit.class);
+			String unitString = this.getDisplayedUnit(TimeUnit.class);
 			System.out.format(" \nTIME = %.6f %s,  TICKS = %d\n",
 					evt.ticksToSeconds(traceTick) / unitFactor, unitString,
 					traceTick);
@@ -1483,6 +1484,53 @@ public class JaamSimModel {
 	 */
 	public long simTimeToCalendarMillis(double simTime) {
 		return Math.round(simTime * 1000.0d) + startMillis;
+	}
+
+	public final void setPreferredUnitList(ArrayList<? extends Unit> list) {
+		ArrayList<String> utList = Unit.getUnitTypeList(this);
+
+		// Set the preferred units in the list
+		for (Unit u : list) {
+			Class<? extends Unit> ut = u.getClass();
+			this.setPreferredUnit(ut, u);
+			utList.remove(ut.getSimpleName());
+		}
+
+		// Clear the entries for unit types that were not in the list
+		for (String utName : utList) {
+			Class<? extends Unit> ut = Input.parseUnitType(this, utName);
+			preferredUnit.remove(ut);
+		}
+	}
+
+	public final void setPreferredUnit(Class<? extends Unit> type, Unit u) {
+		if (u.getName().equals(Unit.getSIUnit(type))) {
+			preferredUnit.remove(type);
+			return;
+		}
+		preferredUnit.put(type, u);
+	}
+
+	public final ArrayList<Unit> getPreferredUnitList() {
+		return new ArrayList<>(preferredUnit.values());
+	}
+
+	public final <T extends Unit> Unit getPreferredUnit(Class<T> type) {
+		return preferredUnit.get(type);
+	}
+
+	public final <T extends Unit> String getDisplayedUnit(Class<T> ut) {
+		Unit u = this.getPreferredUnit(ut);
+		if (u == null)
+			return Unit.getSIUnit(ut);
+		return u.getName();
+	}
+
+	public final <T extends Unit> double getDisplayedUnitFactor(Class<T> ut) {
+		Unit u = this.getPreferredUnit(ut);
+		if (u == null)
+			return 1.0;
+		return u.getConversionFactorToSI();
 	}
 
 	@Override

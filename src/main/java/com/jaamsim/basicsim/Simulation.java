@@ -660,7 +660,7 @@ public class Simulation extends Entity {
 		}
 
 		if (in == displayedUnits) {
-			Unit.setPreferredUnitList(this.getJaamSimModel(), displayedUnits.getValue());
+			getJaamSimModel().setPreferredUnitList(displayedUnits.getValue());
 			return;
 		}
 	}
