@@ -1508,8 +1508,13 @@ public class JaamSimModel {
 	 */
 	public int getDayOfWeek(long millis) {
 		synchronized (calendar) {
-			calendar.setTimeInMillis(millis);
-			return calendar.get(Calendar.DAY_OF_WEEK);
+			if (calendar.isGregorian()) {
+				calendar.setTimeInMillis(millis);
+				return calendar.get(Calendar.DAY_OF_WEEK);
+			}
+			calendar.setTimeInMillis(startMillis);
+			long simDay = (millis - startMillis)/(1000*60*60*24);
+			return (int) ((calendar.get(Calendar.DAY_OF_WEEK) - 1 + simDay) % 7L) + 1;
 		}
 	}
 

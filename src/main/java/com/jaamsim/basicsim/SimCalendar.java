@@ -76,6 +76,10 @@ public final class SimCalendar extends GregorianCalendar {
 		gregorian = bool;
 	}
 
+	public boolean isGregorian() {
+		return gregorian;
+	}
+
 	/**
 	 * Returns the month number for the given day of the year.
 	 * Does not account for leap years.
