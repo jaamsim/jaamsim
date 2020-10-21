@@ -238,7 +238,7 @@ public class ExpressionBox extends JDialog {
 					return;
 				}
 
-				// Set or terminate the entity/output name selection state
+				// Set the entity/output name selection state
 				char c = editArea.getText().charAt(e.getOffset());
 				if (c == '[') {
 					setEditMode(EDIT_MODE_ENTITY);
@@ -247,8 +247,8 @@ public class ExpressionBox extends JDialog {
 					setEditMode(EDIT_MODE_OUTPUT);
 				}
 
-				// Return pressed
-				if (c == '\n' && (editMode == EDIT_MODE_ENTITY
+				// Return or space bar pressed while in edit mode
+				if ((c == '\n' || c == ' ') && (editMode == EDIT_MODE_ENTITY
 						|| editMode == EDIT_MODE_OUTPUT)) {
 					SwingUtilities.invokeLater(new Runnable() {
 						@Override
