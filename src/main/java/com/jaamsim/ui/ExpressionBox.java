@@ -392,6 +392,11 @@ public class ExpressionBox extends JDialog {
 		return editArea.getText();
 	}
 
+	/**
+	 * Displays the auto-complete menu for the present edit mode.
+	 * @param ind1 - starting position of the text to be replaced
+	 * @param focusable - true if the menu is to take the focus
+	 */
 	private void showMenus(int ind1, boolean focusable) {
 		String text = editArea.getText();
 
@@ -472,6 +477,13 @@ public class ExpressionBox extends JDialog {
 		}
 	}
 
+	/**
+	 * Displays the auto-complete menu for an entity name.
+	 * @param name - partial name of the entity
+	 * @param ind0 - starting position of the text to be replaced
+	 * @param ind1 - ending position of the text to be replaced
+	 * @param focusable - true if the menu is to take the focus
+	 */
 	private void showEntityMenu(String name, final int ind0, final int ind1, boolean focusable) {
 		if (entityMenu != null)
 			entityMenu.setVisible(false);
@@ -534,6 +546,13 @@ public class ExpressionBox extends JDialog {
 		entityMenu.show(editArea, menuPos.x, menuPos.y);
 	}
 
+	/**
+	 * Displays the auto-complete menu for an output name.
+	 * @param name - partial name of the entity
+	 * @param ind0 - starting position of the text to be replaced
+	 * @param ind1 - ending position of the text to be replaced
+	 * @param focusable - true if the menu is to take the focus
+	 */
 	private void showOutputMenu(Entity ent, String name, final int ind0, final int ind1, boolean focusable) {
 		if (outputMenu != null)
 			outputMenu.setVisible(false);
