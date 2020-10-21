@@ -24,13 +24,14 @@ import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -43,6 +44,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
+import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
@@ -207,23 +209,20 @@ public class ExpressionBox extends JDialog {
 		} );
 
 		// Down arrow pressed
-		editArea.addKeyListener(new KeyListener() {
+		KeyStroke downArrow = KeyStroke.getKeyStroke("DOWN");
+		Object key = editArea.getInputMap().get(downArrow);
+		Action defaultAction = editArea.getActionMap().get(key);
+		editArea.getActionMap().put(key, new AbstractAction() {
 			@Override
-			public void keyTyped(KeyEvent e) {}
-
-			@Override
-			public void keyPressed(KeyEvent e) {
-				int keyCode = e.getKeyCode();
-				if (keyCode == KeyEvent.VK_DOWN) {
-					int ind = editArea.getCaretPosition() - 1;
-					//System.out.format("ind=%s, length=%s%n", ind, editArea.getText().length());
-					ind = Math.min(ind, editArea.getText().length() - 1);
-					showMenus(ind, true);
+			public void actionPerformed(ActionEvent e) {
+				if (editMode == EDIT_MODE_NORMAL) {
+					defaultAction.actionPerformed(e);
+					return;
 				}
+				int ind = editArea.getCaretPosition() - 1;
+				ind = Math.min(ind, editArea.getText().length() - 1);
+				showMenus(ind, true);
 			}
-
-			@Override
-			public void keyReleased(KeyEvent e) {}
 		});
 
 		// Listen for changes to the text
