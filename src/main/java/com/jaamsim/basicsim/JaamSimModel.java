@@ -1335,10 +1335,14 @@ public class JaamSimModel {
 	public void openLogFile() {
 		String logFileName = getRunName() + ".log";
 		URI logURI = null;
+		logFile = null;
 		try {
 			URI confURI = configFile.toURI();
 			logURI = confURI.resolve(new URI(null, logFileName, null)); // The new URI here effectively escapes the file name
-			logFile = new FileEntity(logURI.getPath());
+			File f = new File(logURI.getPath());
+			if (f.exists() && !f.delete())
+				throw new Exception("Cannot delete an existing log file.");
+			logFile = new FileEntity(f);
 		}
 		catch( Exception e ) {
 			InputAgent.logWarning(this, "Could not create log file.%n%s", e.getMessage());
