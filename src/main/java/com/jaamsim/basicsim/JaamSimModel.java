@@ -1231,7 +1231,10 @@ public class JaamSimModel {
 			StringBuilder tmp = new StringBuilder("");
 			tmp.append(getReportFileName(getRunName()));
 			tmp.append(".rep");
-			reportFile = new FileEntity(tmp.toString());
+			File f = new File(tmp.toString());
+			if (f.exists() && !f.delete())
+				throw new ErrorException("Cannot delete the existing report file %s", f);
+			reportFile = new FileEntity(f);
 		}
 		return reportFile;
 	}
