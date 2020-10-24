@@ -613,11 +613,13 @@ public class InputAgent {
 	 *
 	 */
 	public static void printInputFileKeywords(JaamSimModel simModel) {
+
 		// Create report file for the inputs
 		String inputReportFileName = simModel.getReportFileName(simModel.getRunName() + ".inp");
-
-		FileEntity inputReportFile = new FileEntity( inputReportFileName);
-		inputReportFile.flush();
+		File f = new File(inputReportFileName);
+		if (f.exists() && !f.delete())
+			throw new ErrorException("Cannot delete the existing input report file %s", f);
+		FileEntity inputReportFile = new FileEntity(f);
 
 		ArrayList<ObjectType> objectTypes = new ArrayList<>();
 		for (ObjectType type : simModel.getObjectTypes())
@@ -820,7 +822,6 @@ public class InputAgent {
 		// Close out the report
 		inputReportFile.flush();
 		inputReportFile.close();
-
 	}
 
 	private static final String errPrefix = "*** ERROR *** %s%n";
