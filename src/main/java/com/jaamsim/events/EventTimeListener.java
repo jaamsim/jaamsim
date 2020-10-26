@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2021 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,8 +19,21 @@ package com.jaamsim.events;
 
 public interface EventTimeListener {
 
-public void tickUpdate(long tick);
-public void timeRunning();
-public void handleError(Throwable t);
+	/**
+	 * Called when the simulation time is advanced by the next event.
+	 * @param tick - present simulation time in clock ticks
+	 */
+	public void tickUpdate(long tick);
+
+	/**
+	 * Called when the simulation run is started, resumed, or paused.
+	 */
+	public void timeRunning();
+
+	/**
+	 * Called when a runtime error is encountered.
+	 * @param t - error condition
+	 */
+	public void handleError(Throwable t);
 
 }
