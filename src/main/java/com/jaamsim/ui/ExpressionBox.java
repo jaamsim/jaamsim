@@ -336,7 +336,7 @@ public class ExpressionBox extends JDialog {
 
 		// Prepare the input string
 		Entity ent = EditBox.getInstance().getCurrentEntity();
-		String str = editArea.getText().replace("\n", " ");
+		String str = editArea.getText().trim().replace("\n", " ");
 		if (!str.isEmpty())
 			str = input.applyConditioning(str);
 
