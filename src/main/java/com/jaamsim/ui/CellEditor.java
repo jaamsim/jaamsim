@@ -288,17 +288,17 @@ public abstract class CellEditor extends AbstractCellEditor implements TableCell
 
 			final String newValue = editor.getValue();
 
-			// The value has not changed
-			if (in.getValueString().equals(newValue) && in.isValid()) {
-				editor.getTable().setPresentCellEditor(null);
-				editor.getTable().requestFocusInWindow();
-				return;
-			}
-
 			// Adjust the user's entry to standardise the syntax
 			String str = newValue.trim();
 			if (!str.isEmpty())
 				str = in.applyConditioning(str);
+
+			// The value has not changed
+			if (in.getValueString().replace('\n', ' ').equals(str) && in.isValid()) {
+				editor.getTable().setPresentCellEditor(null);
+				editor.getTable().requestFocusInWindow();
+				return;
+			}
 
 			try {
 				// Parse the keyword inputs
