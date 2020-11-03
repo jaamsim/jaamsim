@@ -67,6 +67,10 @@ public class NamedExpressionListInput extends ListInput<ArrayList<NamedExpressio
 				if (subArg.numArgs() == 3) {
 					unitType = Input.parseUnitType(thisEnt.getJaamSimModel(), subArg.getArg(2));
 				}
+				if (unitType != DimensionlessUnit.class) {
+					ExpParser.assertResultType(exp, ExpResType.NUMBER);
+				}
+				ExpParser.assertUnitType(exp, unitType);
 
 				// Save the data for this expression
 				NamedExpression ne = new NamedExpression(name, exp, unitType);
