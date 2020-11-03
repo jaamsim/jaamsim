@@ -89,8 +89,14 @@ public class ExpressionEditor extends CellEditor {
 
 	private void launchExpressionBox() {
 
+		// Use the input from the Input Editor if it has been changed already,
+		// otherwise use the input's value which includes any newline characters
+		String str = input.getValueString();
+		if (!str.replace('\n', ' ').equals(getValue()))
+			str = getValue();
+
 		// Launch the dialog box and wait for editing to finish
-		ExpressionBox expDialog = new ExpressionBox(input, getValue());
+		ExpressionBox expDialog = new ExpressionBox(input, str);
 		int result = expDialog.showDialog();
 
 		// Return the new expression
