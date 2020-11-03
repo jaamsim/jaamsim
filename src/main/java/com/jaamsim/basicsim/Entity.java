@@ -788,17 +788,9 @@ public class Entity {
 		return null;
 	}
 
-	public boolean hasOutput(String outputName) {
-		if (OutputHandle.hasOutput(this.getClass(), outputName))
-			return true;
-		if (attributeMap.containsKey(outputName))
-			return true;
-		if (customOutputMap.containsKey(outputName))
-			return true;
-		if (inputOutputMap.containsKey(outputName))
-			return true;
-
-		return false;
+	public boolean hasOutput(String name) {
+		return (OutputHandle.hasOutput(this.getClass(), name))
+				|| hasAttribute(name) || hasCustomOutput(name) || hasInputOutput(name);
 	}
 
 	public void addCustomOutput(String name, Expression exp, Class<? extends Unit> unitType) {
@@ -809,6 +801,14 @@ public class Entity {
 
 	public void removeCustomOutput(String name) {
 		customOutputMap.remove(name);
+	}
+
+	public boolean hasCustomOutput(String name) {
+		return customOutputMap.containsKey(name);
+	}
+
+	public boolean hasInputOutput(String name) {
+		return inputOutputMap.containsKey(name);
 	}
 
 	/**
