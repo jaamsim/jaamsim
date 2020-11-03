@@ -56,8 +56,9 @@ public class NamedExpressionListInput extends ListInput<ArrayList<NamedExpressio
 			try {
 				// Parse the expression name
 				String name = subArg.getArg(0);
-				if (OutputHandle.hasOutput(thisEnt.getClass(), name)) {
-					throw new InputErrorException("Expression name is the same as existing output name: %s", name);
+				if (OutputHandle.hasOutput(thisEnt.getClass(), name)
+						|| thisEnt.hasAttribute(name) || thisEnt.hasInputOutput(name)) {
+					throw new InputErrorException("Custom output name is the same as existing output name: %s", name);
 				}
 
 				String expString = subArg.getArg(1);
