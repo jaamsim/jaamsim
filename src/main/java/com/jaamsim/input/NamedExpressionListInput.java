@@ -17,6 +17,7 @@
 package com.jaamsim.input;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.input.ExpParser.Expression;
@@ -48,6 +49,17 @@ public class NamedExpressionListInput extends ListInput<ArrayList<NamedExpressio
 		// Divide up the inputs by the inner braces
 		ArrayList<KeywordIndex> subArgs = kw.getSubArgs();
 		ArrayList<NamedExpression> temp = new ArrayList<>(subArgs.size());
+
+		// Ensure that no custom output names are repeated
+		HashSet<String> nameSet = new HashSet<>();
+		for (KeywordIndex subArg : subArgs) {
+			if (subArg.numArgs() == 0)
+				continue;
+			String name = subArg.getArg(0);
+			if (nameSet.contains(name))
+				throw new InputErrorException("Duplicate custom output name: %s", name);
+			nameSet.add(name);
+		}
 
 		// Parse the inputs within each inner brace
 		for (int i = 0; i < subArgs.size(); i++) {
