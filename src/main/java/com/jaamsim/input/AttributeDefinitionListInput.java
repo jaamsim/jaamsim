@@ -50,6 +50,8 @@ public class AttributeDefinitionListInput extends ListInput<ArrayList<AttributeH
 		// Ensure that no attribute names are repeated
 		HashSet<String> nameSet = new HashSet<>();
 		for (KeywordIndex subArg : subArgs) {
+			if (subArg.numArgs() == 0)
+				continue;
 			String name = subArg.getArg(0);
 			if (nameSet.contains(name))
 				throw new InputErrorException("Duplicate attribute name: %s", name);
