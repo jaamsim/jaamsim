@@ -336,9 +336,7 @@ public class ExpressionBox extends JDialog {
 
 		// Prepare the input string
 		Entity ent = EditBox.getInstance().getCurrentEntity();
-		String str = editArea.getText().trim().replace("\n", " ");
-		if (!str.isEmpty())
-			str = input.applyConditioning(str);
+		String str = getInputString();
 
 		// Load the input
 		try {
@@ -388,7 +386,10 @@ public class ExpressionBox extends JDialog {
 	}
 
 	public String getInputString() {
-		return editArea.getText();
+		String str = editArea.getText().trim().replace("\n", " ");
+		if (!str.isEmpty())
+			str = input.applyConditioning(str);
+		return str;
 	}
 
 	/**
