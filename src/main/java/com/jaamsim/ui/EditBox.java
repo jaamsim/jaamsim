@@ -391,7 +391,8 @@ public static class EditTable extends JTable {
 				int row = getSelectedRow();
 				if (row == -1)
 					return;
-				editCellAt(row, VALUE_COLUMN);
+				if (presentCellEditor == null)
+					editCellAt(row, VALUE_COLUMN);
 				if (getEditorComponent() == null)
 					return;
 				getEditorComponent().requestFocusInWindow();
