@@ -385,18 +385,25 @@ public static class EditTable extends JTable {
 		addFocusListener(new FocusListener() {
 			@Override
 			public void focusGained(FocusEvent e) {
+
+				// Re-select the cell if an entry is being edited after an error
 				if (retryString != null) {
 					changeSelection(retryRow, retryCol, false, false);
 				}
+
+				// Start the CellEditor for the selected input
 				int row = getSelectedRow();
 				if (row == -1)
 					return;
 				if (presentCellEditor == null)
 					editCellAt(row, VALUE_COLUMN);
+
+				// Direct the inputs to the CellEditor
 				if (getEditorComponent() == null)
 					return;
 				getEditorComponent().requestFocusInWindow();
 
+				// Save the keyword for the input that is being edited
 				Input<?> in = (Input<?>) getValueAt(row, 0);
 				if (in != null) {
 					EditBox.getInstance().setLastKeyword(in.getKeyword());
