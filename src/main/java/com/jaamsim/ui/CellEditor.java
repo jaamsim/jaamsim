@@ -20,6 +20,10 @@ package com.jaamsim.ui;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -94,7 +98,78 @@ public abstract class CellEditor extends AbstractCellEditor implements TableCell
 			public void keyReleased(KeyEvent e) {}
 		});
 
-		// Edit the value when F2 is pressed
+		// Delete
+		jPanel.getInputMap().put(KeyStroke.getKeyStroke("DELETE"), "delete");
+		jPanel.getActionMap().put("delete", new AbstractAction() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				text.setText("");
+			}
+		});
+
+		// Copy
+		jPanel.getInputMap().put(KeyStroke.getKeyStroke("control C"), "copy");
+		jPanel.getActionMap().put("copy", new AbstractAction() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Clipboard clpbrd = Toolkit.getDefaultToolkit().getSystemClipboard();
+				clpbrd.setContents(new StringSelection(text.getText()), null);
+			}
+		});
+
+		// Paste
+		jPanel.getInputMap().put(KeyStroke.getKeyStroke("control V"), "paste");
+		jPanel.getActionMap().put("paste", new AbstractAction() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Clipboard clpbrd = Toolkit.getDefaultToolkit().getSystemClipboard();
+				try {
+					String str = (String)clpbrd.getData(DataFlavor.stringFlavor);
+					text.setText(str);
+				}
+				catch (Throwable err) {}
+			}
+		});
+
+		// Cut
+		jPanel.getInputMap().put(KeyStroke.getKeyStroke("control X"), "cut");
+		jPanel.getActionMap().put("cut", new AbstractAction() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Clipboard clpbrd = Toolkit.getDefaultToolkit().getSystemClipboard();
+				clpbrd.setContents(new StringSelection(text.getText()), null);
+				text.setText("");
+			}
+		});
+
+		// Find
+		jPanel.getInputMap().put(KeyStroke.getKeyStroke("control F"), "find");
+		jPanel.getActionMap().put("find", new AbstractAction() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				FindBox.getInstance().showDialog(text.getText());
+			}
+		});
+
+		// Help
+		jPanel.getInputMap().put(KeyStroke.getKeyStroke("F1"), "help");
+		jPanel.getActionMap().put("help", new AbstractAction() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String topic = "";
+				Entity ent = table.getEntity();
+				if (ent != null) {
+					topic = ent.getObjectType().getName();
+					Entity inpEnt = ent.getJaamSimModel().getNamedEntity(text.getText());
+					if (inpEnt != null) {
+						topic = inpEnt.getObjectType().getName();
+					}
+				}
+				HelpBox.getInstance().showDialog(topic);
+			}
+		});
+
+		// Edit
 		jPanel.getInputMap().put(KeyStroke.getKeyStroke("F2"), "edit");
 		jPanel.getActionMap().put("edit", new AbstractAction() {
 			@Override
