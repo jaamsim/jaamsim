@@ -196,20 +196,13 @@ public abstract class CellEditor extends AbstractCellEditor implements TableCell
 			}
 		});
 
-		// Launch Entity Finder on Cntrl+F
-		text.addKeyListener(new KeyListener() {
+		// Find while editing
+		text.getInputMap().put(KeyStroke.getKeyStroke("control F"), "find");
+		text.getActionMap().put("find", new AbstractAction() {
 			@Override
-			public void keyTyped(KeyEvent e) {}
-			@Override
-			public void keyPressed(KeyEvent e) {
-				// Cntrl+F
-				if (e.isControlDown() && e.getKeyCode() == KeyEvent.VK_F) {
-					FindBox.getInstance().showDialog(text.getSelectedText());
-					return;
-				}
+			public void actionPerformed(ActionEvent e) {
+				FindBox.getInstance().showDialog(text.getSelectedText());
 			}
-			@Override
-			public void keyReleased(KeyEvent e) {}
 		});
 
 		// Dropdown button
