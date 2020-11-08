@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2005-2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2019 JaamSim Software Inc.
+ * Copyright (C) 2016-2020 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -77,17 +77,18 @@ public abstract class CellEditor extends AbstractCellEditor implements TableCell
 			@Override
 			public void keyPressed(KeyEvent e) {
 				// Alphanumeric key
-				if (e.getKeyChar() != KeyEvent.CHAR_UNDEFINED) {
+				char keyChar = e.getKeyChar();
+				if (keyChar != KeyEvent.CHAR_UNDEFINED && !Character.isISOControl(keyChar)
+						&& !e.isControlDown() && !e.isAltDown()) {
 					text.requestFocusInWindow();
 					SwingUtilities.invokeLater(new Runnable() {
 						@Override
 						public void run() {
-							text.setText(String.valueOf(e.getKeyChar()));
+							text.setText(String.valueOf(keyChar));
 						}
 					});
 					return;
 				}
-				return;
 			}
 			@Override
 			public void keyReleased(KeyEvent e) {}
