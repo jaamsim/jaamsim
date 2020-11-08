@@ -178,6 +178,24 @@ public abstract class CellEditor extends AbstractCellEditor implements TableCell
 			}
 		});
 
+		// Escape
+		jPanel.getInputMap().put(KeyStroke.getKeyStroke("ESCAPE"), "escape");
+		jPanel.getActionMap().put("escape", new AbstractAction() {
+			@Override
+			public void actionPerformed(ActionEvent e) {}
+		});
+
+		// Escape while editing
+		text.getInputMap().put(KeyStroke.getKeyStroke("ESCAPE"), "escape");
+		text.getActionMap().put("escape", new AbstractAction() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Input<?> in = (Input<?>) getCellEditorValue();
+				text.setText(in.getValueString());
+				table.requestFocusInWindow();
+			}
+		});
+
 		// Launch Entity Finder on Cntrl+F
 		text.addKeyListener(new KeyListener() {
 			@Override
