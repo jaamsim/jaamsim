@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2010-2011 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2020 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,10 +26,13 @@ public class BooleanInput extends Input<Boolean> {
 
 	private static final ArrayList<String> validOptions;
 
+	public static final String TRUE = "TRUE";
+	public static final String FALSE = "FALSE";
+
 	static {
 		validOptions = new ArrayList<>();
-		validOptions.add("TRUE");
-		validOptions.add("FALSE");
+		validOptions.add(TRUE);
+		validOptions.add(FALSE);
 	}
 
 	/**
@@ -62,8 +66,8 @@ public class BooleanInput extends Input<Boolean> {
 			return "";
 
 		if (defValue)
-			return "TRUE";
+			return TRUE;
 
-		return "FALSE";
+		return FALSE;
 	}
 }
