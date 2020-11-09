@@ -44,6 +44,15 @@ public class BooleanInput extends Input<Boolean> {
 	}
 
 	@Override
+	public String applyConditioning(String str) {
+		if (str.startsWith("t") || str.startsWith("T") || str.startsWith("1"))
+			return TRUE;
+		if (str.startsWith("f") || str.startsWith("F") || str.startsWith("0"))
+			return FALSE;
+		return str;
+	}
+
+	@Override
 	public void parse(Entity thisEnt, KeywordIndex kw)
 	throws InputErrorException {
 		Input.assertCount(kw, 1);

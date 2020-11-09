@@ -101,7 +101,7 @@ public abstract class Input<T> {
 	protected static final String VALID_ENTITY = "Accepts the name of an entity.";
 	protected static final String VALID_ENTITY_TYPE = "Accepts the name of an entity of type %s.";
 	protected static final String VALID_INTERFACE_ENTITY = "Accepts the name of an entity that supports the %s interface.";
-	protected static final String VALID_BOOLEAN = "Accepts the text TRUE or FALSE (case sensitive).";
+	protected static final String VALID_BOOLEAN = "Accepts the text TRUE or FALSE. Inputs of T, t, and 1 are interpreted as TRUE, while F, f, and 0 are interpreted as FALSE.";
 	protected static final String VALID_STRING = "Accepts a text string. The string must be enclosed by single quotes if it includes a space.";
 	protected static final String VALID_DATE = "Accepts a calendar date and time in one of the following formats: 'YYYY-MM-DD hh:mm:ss.sss', 'YYYY-MM-DD hh:mm:ss', 'YYYY-MM-DD'";
 	protected static final String VALID_FILE = "Accepts a file path enclosed by single quotes.";
