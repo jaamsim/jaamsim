@@ -199,6 +199,7 @@ public class InputAgent {
 					if (nextLine == null)  // end of file
 						break;
 					StringBuilder sb = new StringBuilder(line);
+					sb.append('\n');
 					sb.append(nextLine);
 					line = sb.toString();
 
