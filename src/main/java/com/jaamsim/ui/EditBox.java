@@ -503,7 +503,7 @@ public static class EditTable extends JTable {
 	public Point getToolTipLocation(MouseEvent e) {
 		int row = rowAtPoint(e.getPoint());
 		int y = getCellRect(row, 0, true).getLocation().y;
-		return new Point(col1Width, y);
+		return new Point(col1Width + col2Width, y);
 	}
 
 	@Override
