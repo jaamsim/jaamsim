@@ -182,7 +182,6 @@ public class ExpressionBox extends JDialog {
 			public void windowClosing( WindowEvent e ) {
 				result = ERROR_OPTION;
 				setVisible(false);
-				undoEdits();
 				dispose();
 			}
 		} );
@@ -203,7 +202,6 @@ public class ExpressionBox extends JDialog {
 			public void actionPerformed( ActionEvent e ) {
 				result = CANCEL_OPTION;
 				setVisible(false);
-				undoEdits();
 				dispose();
 			}
 		} );

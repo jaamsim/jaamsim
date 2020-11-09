@@ -23,6 +23,11 @@ import java.util.ArrayList;
 
 import javax.swing.JMenuItem;
 
+import com.jaamsim.Commands.KeywordCommand;
+import com.jaamsim.basicsim.Entity;
+import com.jaamsim.input.InputAgent;
+import com.jaamsim.input.KeywordIndex;
+
 public class ExpressionEditor extends CellEditor {
 
 	public ExpressionEditor(int width, int height) {
@@ -102,6 +107,15 @@ public class ExpressionEditor extends CellEditor {
 		// Return the new expression
 		if (result == ExpressionBox.APPROVE_OPTION) {
 			setValue(expDialog.getInputString());
+		}
+		else {
+			// Reset the original value
+			Entity ent = EditBox.getInstance().getCurrentEntity();
+			try {
+				KeywordIndex kw = InputAgent.formatInput(input.getKeyword(), str);
+				InputAgent.storeAndExecute(new KeywordCommand(ent, kw));
+			}
+			catch (Exception e) {}
 		}
 
 		// Apply editing
