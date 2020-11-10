@@ -367,12 +367,6 @@ public class ExpressionBox extends JDialog {
 			return "ERROR: " + str;
 	}
 
-	private void undoEdits() {
-		Entity ent = EditBox.getInstance().getCurrentEntity();
-		String keyword = input.getKeyword();
-		GUIFrame.getInstance().undo(ent, keyword);
-	}
-
 	public int showDialog() {
 
 		// Show the dialog box and wait for editing to finish

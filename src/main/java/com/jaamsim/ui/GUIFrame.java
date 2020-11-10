@@ -3385,27 +3385,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		updateUI();
 	}
 
-	public void undo(Entity ent, String keyword) {
-		synchronized (undoList) {
-			if (undoList.isEmpty())
-				return;
-
-			// Confirm that the specified command is the last one on the undo list
-			Command cmd = undoList.get(undoList.size() - 1);
-			if (!(cmd instanceof KeywordCommand))
-				return;
-			KeywordCommand kwCmd = (KeywordCommand) cmd;
-			if (kwCmd.getEntity() != ent || kwCmd.getKws().length != 1
-					|| !kwCmd.getKws()[0].keyword.equals(keyword))
-				return;
-
-			// Remove and undo the last command from the undo list WITHOUT adding it to the redo list
-			undoList.remove(undoList.size() - 1);
-			cmd.undo();
-			updateUI();
-		}
-	}
-
 	public void redo() {
 		synchronized (undoList) {
 			if (redoList.isEmpty())
