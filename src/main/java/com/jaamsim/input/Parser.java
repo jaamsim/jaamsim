@@ -64,7 +64,7 @@ public static final boolean tokenize(ArrayList<String> tokens, String rec, boole
 			continue;
 
 		// handle delimiter chars
-		if (c == '{' || c == '}' || c == ' ' || c == '\t') {
+		if (c == '{' || c == '}' || c == ' ' || c == '\t' || c == '\n') {
 			if (tokStart != -1 && i - tokStart > 0) {
 				tokens.add(rec.substring(tokStart, i));
 				tokStart = -1;
