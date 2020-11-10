@@ -243,6 +243,12 @@ public abstract class CellEditor extends AbstractCellEditor implements TableCell
 		return false;
 	}
 
+	public void updateValue() {
+		if (text.hasFocus())
+			return;
+		text.setText(input.getValueString());
+	}
+
 	@Override
 	public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
 

@@ -175,13 +175,18 @@ public class EditBox extends FrameBox {
 		if(currentEntity == null)
 			return;
 
-		JTable propTable = (JTable)(((JScrollPane)jTabbedFrame.getSelectedComponent()).getViewport().getComponent(0));
+		EditTable propTable = (EditTable)(((JScrollPane)jTabbedFrame.getSelectedComponent()).getViewport().getComponent(0));
 		int row = propTable.getSelectedRow();
 		((EditTableModel)propTable.getModel()).fireTableDataChanged();
 
 		// Restore the selected cell
 		if (row != -1)
 			propTable.changeSelection(row, VALUE_COLUMN, false, false);
+
+		// Update the value in the selected cell
+		if (propTable.getPresentCellEditor() != null) {
+			propTable.getPresentCellEditor().updateValue();
+		}
 	}
 
 	private synchronized static void killInstance() {
