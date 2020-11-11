@@ -18,6 +18,7 @@
 package com.jaamsim.input;
 
 import com.jaamsim.basicsim.Entity;
+import com.jaamsim.ui.GUIFrame;
 import com.jaamsim.units.Unit;
 
 public class ExpResult {
@@ -115,8 +116,8 @@ public class ExpResult {
 	public String getOutputString() {
 		switch (type) {
 		case NUMBER:
-			double factor = Unit.getDisplayedUnitFactor(unitType);
-			String unitString = Unit.getDisplayedUnit(unitType);
+			double factor = GUIFrame.getJaamSimModel().getDisplayedUnitFactor(unitType);
+			String unitString = GUIFrame.getJaamSimModel().getDisplayedUnit(unitType);
 			if (unitString.isEmpty())
 				return String.format("%s", value);
 			return String.format("%s[%s]", value/factor, unitString);
@@ -139,8 +140,8 @@ public class ExpResult {
 	public String getFormatString() {
 		switch (type) {
 		case NUMBER:
-			double factor = Unit.getDisplayedUnitFactor(unitType);
-			String unitString = Unit.getDisplayedUnit(unitType);
+			double factor = GUIFrame.getJaamSimModel().getDisplayedUnitFactor(unitType);
+			String unitString = GUIFrame.getJaamSimModel().getDisplayedUnit(unitType);
 			if (unitString.isEmpty())
 				return String.format("%s", value);
 			return String.format("%s[%s]", value/factor, unitString);

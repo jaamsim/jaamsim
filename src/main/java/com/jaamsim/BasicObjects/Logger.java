@@ -31,7 +31,6 @@ import com.jaamsim.input.Output;
 import com.jaamsim.input.UnitTypeListInput;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.units.TimeUnit;
-import com.jaamsim.units.Unit;
 
 public abstract class Logger extends DisplayEntity {
 
@@ -136,7 +135,7 @@ public abstract class Logger extends DisplayEntity {
 
 		// Print the title for each column
 		// (a) Simulation time
-		String unit = Unit.getDisplayedUnit(TimeUnit.class);
+		String unit = getJaamSimModel().getDisplayedUnit(TimeUnit.class);
 		file.format("%nthis.SimTime/1[%s]", unit);
 
 		// (b) Print at titles for any additional columns
@@ -179,7 +178,7 @@ public abstract class Logger extends DisplayEntity {
 		logTime = simTime;
 
 		// Write the time for the log entry
-		double factor = Unit.getDisplayedUnitFactor(TimeUnit.class);
+		double factor = getJaamSimModel().getDisplayedUnitFactor(TimeUnit.class);
 		file.format("%n%s", simTime/factor);
 
 		// Write any additional columns for the log entry

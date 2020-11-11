@@ -25,6 +25,7 @@ import java.util.Map;
 import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.datatypes.IntegerVector;
 import com.jaamsim.input.ExpResult.Iterator;
+import com.jaamsim.ui.GUIFrame;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 
@@ -392,9 +393,9 @@ public class ExpCollections {
 			StringBuilder sb = new StringBuilder();
 			sb.append("{");
 			for (int i = 0; i < vector.size(); ++i) {
-				sb.append(vector.get(i+1)*Unit.getDisplayedUnitFactor(unitType));
+				sb.append(vector.get(i+1)*GUIFrame.getJaamSimModel().getDisplayedUnitFactor(unitType));
 				sb.append(" ");
-				sb.append(Unit.getDisplayedUnit(unitType));
+				sb.append(GUIFrame.getJaamSimModel().getDisplayedUnit(unitType));
 				if (i < vector.size()) {
 					sb.append(", ");
 				}
@@ -474,9 +475,9 @@ public class ExpCollections {
 			StringBuilder sb = new StringBuilder();
 			sb.append("{");
 			for (int i = 0; i < vector.size(); ++i) {
-				sb.append(vector.get(i+1)*Unit.getDisplayedUnitFactor(unitType));
+				sb.append(vector.get(i+1)*GUIFrame.getJaamSimModel().getDisplayedUnitFactor(unitType));
 				sb.append(" ");
-				sb.append(Unit.getDisplayedUnit(unitType));
+				sb.append(GUIFrame.getJaamSimModel().getDisplayedUnit(unitType));
 				if (i < vector.size()) {
 					sb.append(", ");
 				}

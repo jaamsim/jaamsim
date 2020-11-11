@@ -26,6 +26,7 @@ import com.jaamsim.input.Input;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.ListInput;
+import com.jaamsim.ui.GUIFrame;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 
@@ -239,8 +240,8 @@ public class SampleListInput extends ListInput<ArrayList<SampleProvider>> {
 				sb.append(Double.toString(samp.getNextSample(simTime)));
 			}
 			else {
-				String unitString = Unit.getDisplayedUnit(ut);
-				double sifactor = Unit.getDisplayedUnitFactor(ut);
+				String unitString = GUIFrame.getJaamSimModel().getDisplayedUnit(ut);
+				double sifactor = GUIFrame.getJaamSimModel().getDisplayedUnitFactor(ut);
 				sb.append(Double.toString(samp.getNextSample(simTime)/sifactor));
 				sb.append("[").append(unitString).append("]");
 			}

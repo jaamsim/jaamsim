@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.math.Vec3d;
+import com.jaamsim.ui.GUIFrame;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 
@@ -79,8 +80,8 @@ public class Vec3dListInput extends ListInput<ArrayList<Vec3d>> {
 		if (defValue == null || defValue.isEmpty())
 			return "";
 
-		double factor = Unit.getDisplayedUnitFactor(unitType);
-		String unitStr = Unit.getDisplayedUnit(unitType);
+		double factor = GUIFrame.getJaamSimModel().getDisplayedUnitFactor(unitType);
+		String unitStr = GUIFrame.getJaamSimModel().getDisplayedUnit(unitType);
 
 		StringBuilder tmp = new StringBuilder();
 		for (Vec3d each: defValue) {

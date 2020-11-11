@@ -144,7 +144,6 @@ import com.jaamsim.rng.MRG1999a;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.DistanceUnit;
 import com.jaamsim.units.TimeUnit;
-import com.jaamsim.units.Unit;
 
 /**
  * The main window for a Graphical Simulation.  It provides the controls for managing then
@@ -2834,8 +2833,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	void setClock(double simTime) {
 
 		// Set the simulation time display
-		String unit = Unit.getDisplayedUnit(TimeUnit.class);
-		double factor = Unit.getDisplayedUnitFactor(TimeUnit.class);
+		String unit = getJaamSimModel().getDisplayedUnit(TimeUnit.class);
+		double factor = getJaamSimModel().getDisplayedUnitFactor(TimeUnit.class);
 		clockDisplay.setText(String.format("%,.2f  %s", simTime/factor, unit));
 
 		// Set the run progress bar display
@@ -3201,7 +3200,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 		// if we only got one token, and it isn't RFC8601 - add a unit
 		if (tokens.size() == 1 && !tokens.get(0).contains("-") && !tokens.get(0).contains(":"))
-			tokens.add(Unit.getDisplayedUnit(TimeUnit.class));
+			tokens.add(getJaamSimModel().getDisplayedUnit(TimeUnit.class));
 
 		try {
 			// Parse the keyword inputs
@@ -3734,8 +3733,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			return;
 		}
 
-		String unit = Unit.getDisplayedUnit(DistanceUnit.class);
-		double factor = Unit.getDisplayedUnitFactor(DistanceUnit.class);
+		String unit = getJaamSimModel().getDisplayedUnit(DistanceUnit.class);
+		double factor = getJaamSimModel().getDisplayedUnitFactor(DistanceUnit.class);
 		locatorPos.setText(String.format((Locale)null, "%.3f  %.3f  %.3f  %s",
 				pos.x/factor, pos.y/factor, pos.z/factor, unit));
 	}

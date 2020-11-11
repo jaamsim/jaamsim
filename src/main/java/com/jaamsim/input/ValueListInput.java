@@ -19,6 +19,7 @@ package com.jaamsim.input;
 
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.datatypes.DoubleVector;
+import com.jaamsim.ui.GUIFrame;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 
@@ -105,12 +106,12 @@ public class ValueListInput extends ListInput<DoubleVector> {
 		for (int i = 0; i < defValue.size(); i++) {
 			if (i > 0)
 				tmp.append(SEPARATOR);
-			tmp.append(defValue.get(i)/Unit.getDisplayedUnitFactor(unitType));
+			tmp.append(defValue.get(i)/GUIFrame.getJaamSimModel().getDisplayedUnitFactor(unitType));
 		}
 
 		if (unitType != Unit.class) {
 			tmp.append(SEPARATOR);
-			tmp.append(Unit.getDisplayedUnit(unitType));
+			tmp.append(GUIFrame.getJaamSimModel().getDisplayedUnit(unitType));
 		}
 
 		return tmp.toString();
