@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2017-2019 JaamSim Software Inc.
+ * Copyright (C) 2017-2020 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,8 +18,8 @@
 package com.jaamsim.input;
 
 import com.jaamsim.basicsim.Entity;
+import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.datatypes.DoubleVector;
-import com.jaamsim.ui.GUIFrame;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 
@@ -98,7 +98,7 @@ public class ValueListInput extends ListInput<DoubleVector> {
 	}
 
 	@Override
-	public String getDefaultString() {
+	public String getDefaultString(JaamSimModel simModel) {
 		if (defValue == null || defValue.size() == 0)
 			return "";
 
@@ -106,12 +106,12 @@ public class ValueListInput extends ListInput<DoubleVector> {
 		for (int i = 0; i < defValue.size(); i++) {
 			if (i > 0)
 				tmp.append(SEPARATOR);
-			tmp.append(defValue.get(i)/GUIFrame.getJaamSimModel().getDisplayedUnitFactor(unitType));
+			tmp.append(defValue.get(i)/simModel.getDisplayedUnitFactor(unitType));
 		}
 
 		if (unitType != Unit.class) {
 			tmp.append(SEPARATOR);
-			tmp.append(GUIFrame.getJaamSimModel().getDisplayedUnit(unitType));
+			tmp.append(simModel.getDisplayedUnit(unitType));
 		}
 
 		return tmp.toString();

@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2020 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,8 +18,8 @@
 package com.jaamsim.input;
 
 import com.jaamsim.basicsim.Entity;
+import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.datatypes.DoubleVector;
-import com.jaamsim.ui.GUIFrame;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
@@ -67,7 +68,7 @@ public class ValueInput extends Input<Double> {
 	}
 
 	@Override
-	public String getDefaultString() {
+	public String getDefaultString(JaamSimModel simModel) {
 		if (defValue == null)
 			return "";
 
@@ -79,12 +80,12 @@ public class ValueInput extends Input<Double> {
 			tmp.append(NEGATIVE_INFINITY);
 		}
 		else {
-			tmp.append(defValue/GUIFrame.getJaamSimModel().getDisplayedUnitFactor(unitType));
+			tmp.append(defValue/simModel.getDisplayedUnitFactor(unitType));
 		}
 
 		if (unitType != Unit.class) {
 			tmp.append(SEPARATOR);
-			tmp.append(GUIFrame.getJaamSimModel().getDisplayedUnit(unitType));
+			tmp.append(simModel.getDisplayedUnit(unitType));
 		}
 
 		return tmp.toString();
