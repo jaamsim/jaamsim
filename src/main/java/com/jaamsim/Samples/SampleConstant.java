@@ -20,7 +20,6 @@ package com.jaamsim.Samples;
 import java.util.ArrayList;
 
 import com.jaamsim.input.Input;
-import com.jaamsim.ui.GUIFrame;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 
@@ -70,17 +69,17 @@ public class SampleConstant implements SampleProvider {
 	@Override
 	public String toString() {
 		StringBuilder tmp = new StringBuilder();
-		tmp.append(val/GUIFrame.getJaamSimModel().getDisplayedUnitFactor(unitType));
+		tmp.append(Double.toString(val));
 		if (unitType != DimensionlessUnit.class)
-			tmp.append(Input.SEPARATOR).append(GUIFrame.getJaamSimModel().getDisplayedUnit(unitType));
+			tmp.append(Input.SEPARATOR).append(Unit.getSIUnit(unitType));
 		return tmp.toString();
 	}
 
 	public ArrayList<String> getTokens() {
 		ArrayList<String> list = new ArrayList<>();
-		list.add(String.format( "%s", val/GUIFrame.getJaamSimModel().getDisplayedUnitFactor(unitType)));
+		list.add(Double.toString(val));
 		if (unitType != DimensionlessUnit.class)
-			list.add(GUIFrame.getJaamSimModel().getDisplayedUnit(unitType));
+			list.add(Unit.getSIUnit(unitType));
 		return list;
 	}
 }

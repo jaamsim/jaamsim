@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2020 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +18,6 @@
 package com.jaamsim.Samples;
 
 import com.jaamsim.input.Input;
-import com.jaamsim.ui.GUIFrame;
 import com.jaamsim.units.Unit;
 
 public class TimeSeriesConstantDouble implements TimeSeriesProvider {
@@ -91,9 +91,9 @@ public class TimeSeriesConstantDouble implements TimeSeriesProvider {
 	@Override
 	public String toString() {
 		StringBuilder tmp = new StringBuilder();
-		tmp.append(val/GUIFrame.getJaamSimModel().getDisplayedUnitFactor(unitType));
+		tmp.append(Double.toString(val));
 		if (unitType != Unit.class)
-			tmp.append(Input.SEPARATOR).append(GUIFrame.getJaamSimModel().getDisplayedUnit(unitType));
+			tmp.append(Input.SEPARATOR).append(Unit.getSIUnit(unitType));
 		return tmp.toString();
 	}
 
