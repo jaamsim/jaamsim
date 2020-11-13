@@ -17,7 +17,9 @@
  */
 package com.jaamsim.Samples;
 
+import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.input.Input;
+import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 
 public class TimeSeriesConstantDouble implements TimeSeriesProvider {
@@ -86,6 +88,14 @@ public class TimeSeriesConstantDouble implements TimeSeriesProvider {
 	@Override
 	public double getMeanValue(double simTime) {
 		return val;
+	}
+
+	public String getValueString(JaamSimModel simModel) {
+		StringBuilder tmp = new StringBuilder();
+		tmp.append(Double.toString(val/simModel.getDisplayedUnitFactor(unitType)));
+		if (unitType != DimensionlessUnit.class)
+			tmp.append(Input.SEPARATOR).append(simModel.getDisplayedUnit(unitType));
+		return tmp.toString();
 	}
 
 	@Override
