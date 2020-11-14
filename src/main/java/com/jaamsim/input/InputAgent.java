@@ -1603,7 +1603,7 @@ public class InputAgent {
 				sb.append(String.format(floatFmt, result.value/factor));
 				break;
 			case COLLECTION:
-				sb.append(result.colVal.getOutputString());
+				sb.append(result.colVal.getOutputString(simModel));
 				break;
 			default:
 				assert(false);

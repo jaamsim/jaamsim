@@ -18,6 +18,7 @@
 package com.jaamsim.input;
 
 import com.jaamsim.basicsim.Entity;
+import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.ui.GUIFrame;
 import com.jaamsim.units.Unit;
 
@@ -39,7 +40,7 @@ public class ExpResult {
 
 		public int getSize();
 
-		public String getOutputString();
+		public String getOutputString(JaamSimModel simModel);
 
 		public Collection getCopy();
 	}
@@ -113,7 +114,7 @@ public class ExpResult {
 		return this;
 	}
 
-	public String getOutputString() {
+	public String getOutputString(JaamSimModel simModel) {
 		switch (type) {
 		case NUMBER:
 			double factor = GUIFrame.getJaamSimModel().getDisplayedUnitFactor(unitType);
@@ -126,7 +127,7 @@ public class ExpResult {
 		case ENTITY:
 			return String.format("[%s]", entVal.getName());
 		case COLLECTION:
-			return colVal.getOutputString();
+			return colVal.getOutputString(simModel);
 		case LAMBDA:
 			return "function|" + lcVal.getNumParams()+"|";
 
@@ -150,7 +151,7 @@ public class ExpResult {
 		case ENTITY:
 			return String.format("[%s]", entVal.getName());
 		case COLLECTION:
-			return colVal.getOutputString();
+			return colVal.getOutputString(null);
 		case LAMBDA:
 			return "function|" + lcVal.getNumParams()+"|";
 
@@ -162,7 +163,7 @@ public class ExpResult {
 
 	@Override
 	public String toString() {
-		return getOutputString();
+		return getOutputString(null);
 	}
 
 	@Override
