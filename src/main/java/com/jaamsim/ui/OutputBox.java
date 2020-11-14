@@ -27,6 +27,7 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 
 import com.jaamsim.basicsim.Entity;
+import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.OutputHandle;
@@ -188,9 +189,10 @@ public class OutputBox extends FrameBox {
 					return "";
 				try {
 					// Determine the preferred unit
+					JaamSimModel simModel = GUIFrame.getJaamSimModel();
 					OutputHandle out = (OutputHandle)entry;
 					Class<? extends Unit> ut = out.getUnitType();
-					double factor = GUIFrame.getJaamSimModel().getDisplayedUnitFactor(ut);
+					double factor = simModel.getDisplayedUnitFactor(ut);
 
 					// Select the appropriate format
 					String fmt = "%s";
@@ -205,11 +207,11 @@ public class OutputBox extends FrameBox {
 
 					// Evaluate the output
 					StringBuilder sb = new StringBuilder();
-					sb.append(InputAgent.getValueAsString(out, simTime, fmt, factor));
+					sb.append(InputAgent.getValueAsString(simModel, out, simTime, fmt, factor));
 
 					// Append the appropriate unit
 					if (ut != Unit.class && ut != DimensionlessUnit.class) {
-						String unitString = GUIFrame.getJaamSimModel().getDisplayedUnit(ut);
+						String unitString = simModel.getDisplayedUnit(ut);
 						sb.append(Input.SEPARATOR).append(unitString);
 					}
 

@@ -1216,6 +1216,7 @@ public class InputAgent {
 	 * @param simTime - simulation time at which the outputs are evaluated
 	 */
 	public static void printReport(Entity ent, FileEntity file, double simTime) {
+		JaamSimModel simModel = ent.getJaamSimModel();
 
 		// Loop through the outputs
 		ArrayList<OutputHandle> handles = OutputHandle.getOutputHandleList(ent);
@@ -1299,7 +1300,7 @@ public class InputAgent {
 			}
 			// Expression based custom outputs
 			else if (out.getReturnType() == ExpResult.class) {
-				String val = InputAgent.getValueAsString(out, simTime, "%s", factor);
+				String val = InputAgent.getValueAsString(simModel, out, simTime, "%s", factor);
 				file.format(OUTPUT_FORMAT,
 						ent.getName(), out.getName(), val, unitString);
 			}
@@ -1417,13 +1418,14 @@ public class InputAgent {
 
 	/**
 	 * Returns a formated string for the specified output.
+	 * @param simModel - simulation model
 	 * @param out - output
 	 * @param simTime - present simulation time
 	 * @param floatFmt - format string for numerical values
 	 * @param factor - divisor to be applied to numerical values
 	 * @return formated string for the output
 	 */
-	public static String getValueAsString(OutputHandle out, double simTime, String floatFmt, double factor) {
+	public static String getValueAsString(JaamSimModel simModel, OutputHandle out, double simTime, String floatFmt, double factor) {
 		StringBuilder sb = new StringBuilder();
 		String str;
 		String COMMA_SEPARATOR = ", ";

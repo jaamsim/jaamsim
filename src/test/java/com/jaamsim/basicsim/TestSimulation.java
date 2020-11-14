@@ -69,7 +69,7 @@ public class TestSimulation {
 
 			for (OutputHandle out : OutputHandle.getOutputHandleList(ent)) {
 				try {
-					InputAgent.getValueAsString(out, 0.0d, "%s", 1.0d);
+					InputAgent.getValueAsString(simModel, out, 0.0d, "%s", 1.0d);
 				}
 				catch (Throwable t) {
 					System.out.println("Ent: " + ent.getName() + " Out: " + out.getName());
