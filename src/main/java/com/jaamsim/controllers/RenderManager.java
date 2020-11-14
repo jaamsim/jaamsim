@@ -1251,7 +1251,7 @@ public class RenderManager implements DragSourceListener {
 			ArrayList<Vec3d> points = selectedEntity.getPoints();
 			Vec3d offset = new Vec3d(localPos);
 			offset.sub3(selectedEntity.getPosition());
-			KeywordIndex ptsKw = InputAgent.formatPointsInputs("Points", points, offset);
+			KeywordIndex ptsKw = simModel.formatPointsInputs("Points", points, offset);
 			cmdList.add(new KeywordCommand(selectedEntity, kw, ptsKw));
 		}
 
@@ -1272,7 +1272,7 @@ public class RenderManager implements DragSourceListener {
 				ArrayList<Vec3d> points = ent.getPoints();
 				Vec3d offset = new Vec3d(localPos);
 				offset.sub3(ent.getPosition());
-				KeywordIndex ptsKw = InputAgent.formatPointsInputs("Points", points, offset);
+				KeywordIndex ptsKw = simModel.formatPointsInputs("Points", points, offset);
 				cmdList.add(new KeywordCommand(ent, kw, ptsKw));
 			}
 		}
@@ -1453,7 +1453,7 @@ public class RenderManager implements DragSourceListener {
 		pos.add3(delta);
 		Vec3d localPos = selectedEntity.getLocalPosition(pos);
 
-		KeywordIndex ptsKw = InputAgent.formatPointsInputs("Points", localPts, new Vec3d());
+		KeywordIndex ptsKw = simModel.formatPointsInputs("Points", localPts, new Vec3d());
 		KeywordIndex posKw = simModel.formatVec3dInput("Position", localPos, DistanceUnit.class);
 		ArrayList<Command> cmdList = new ArrayList<>();
 		cmdList.add(new KeywordCommand(selectedEntity, -1, posKw, ptsKw));
@@ -1475,7 +1475,7 @@ public class RenderManager implements DragSourceListener {
 				ArrayList<Vec3d> points = ent.getPoints();
 				Vec3d offset = new Vec3d(localPos);
 				offset.sub3(ent.getPosition());
-				ptsKw = InputAgent.formatPointsInputs("Points", points, globalOffset);
+				ptsKw = simModel.formatPointsInputs("Points", points, globalOffset);
 				cmdList.add(new KeywordCommand(ent, posKw, ptsKw));
 			}
 		}
@@ -1488,6 +1488,8 @@ public class RenderManager implements DragSourceListener {
 		if (!isSingleEntitySelected())
 			return false;
 		DisplayEntity selectedEntity = getSelectedEntity();
+		JaamSimModel simModel = selectedEntity.getJaamSimModel();
+		Simulation simulation = simModel.getSimulation();
 
 		int nodeIndex = (int)(-1*(dragHandleID - LINENODE_PICK_ID));
 
@@ -1511,7 +1513,6 @@ public class RenderManager implements DragSourceListener {
 		Vec3d localPos = selectedEntity.getLocalPosition(point);
 
 		// Align the node to snap grid
-		Simulation simulation = GUIFrame.getJaamSimModel().getSimulation();
 		if (simulation.isSnapToGrid()) {
 			Vec3d oldPos = screenPoints.get(nodeIndex);
 			localPos = simulation.getSnapGridPosition(localPos, oldPos, shift);
@@ -1525,13 +1526,15 @@ public class RenderManager implements DragSourceListener {
 		// Set the new position for the node
 		newPoints.set(nodeIndex, localPos);
 
-		KeywordIndex ptsKw = InputAgent.formatPointsInputs("Points", newPoints, new Vec3d());
+		KeywordIndex ptsKw = simModel.formatPointsInputs("Points", newPoints, new Vec3d());
 		InputAgent.storeAndExecute(new KeywordCommand(selectedEntity, nodeIndex, ptsKw));
 		return true;
 	}
 
 	private void splitLineEntity(int windowID, int x, int y) {
 		DisplayEntity selectedEntity = getSelectedEntity();
+		JaamSimModel simModel = selectedEntity.getJaamSimModel();
+
 		Ray currentRay = getRayForMouse(windowID, x, y);
 
 		Mat4d rayMatrix = MathUtils.RaySpace(currentRay);
@@ -1566,12 +1569,14 @@ public class RenderManager implements DragSourceListener {
 		// Insert the new node
 		points.add(splitInd + 1, selectedEntity.getLocalPosition(nearPoint));
 
-		KeywordIndex ptsKw = InputAgent.formatPointsInputs("Points", points, new Vec3d());
+		KeywordIndex ptsKw = simModel.formatPointsInputs("Points", points, new Vec3d());
 		InputAgent.storeAndExecute(new KeywordCommand(selectedEntity, splitInd + 1, ptsKw));
 	}
 
 	private void removeLineNode(int windowID, int x, int y) {
 		DisplayEntity selectedEntity = getSelectedEntity();
+		JaamSimModel simModel = selectedEntity.getJaamSimModel();
+
 		ArrayList<Vec3d> points = selectedEntity.getPoints();
 		if (points == null || points.size() <= 2)
 			return;
@@ -1583,7 +1588,7 @@ public class RenderManager implements DragSourceListener {
 		// Remove the selected node
 		points.remove(removeInd);
 
-		KeywordIndex ptsKw = InputAgent.formatPointsInputs("Points", points, new Vec3d());
+		KeywordIndex ptsKw = simModel.formatPointsInputs("Points", points, new Vec3d());
 		InputAgent.storeAndExecute(new KeywordCommand(selectedEntity, removeInd, ptsKw));
 	}
 

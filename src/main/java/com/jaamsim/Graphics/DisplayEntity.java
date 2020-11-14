@@ -899,7 +899,7 @@ public class DisplayEntity extends Entity {
 		// Polyline objects
 		Vec3d dist = new Vec3d(newPos);
 		dist.sub3(points.get(0));
-		kw = InputAgent.formatPointsInputs(pointsInput.getKeyword(), pointsInput.getValue(), dist);
+		kw = simModel.formatPointsInputs(pointsInput.getKeyword(), pointsInput.getValue(), dist);
 		InputAgent.apply(this, kw);
 	}
 
@@ -972,7 +972,7 @@ public class DisplayEntity extends Entity {
 			offset.sub3(getPoints().get(0));
 		}
 		String ptsKey = pointsInput.getKeyword();
-		KeywordIndex ptsKw = InputAgent.formatPointsInputs(ptsKey, getPoints(), offset);
+		KeywordIndex ptsKw = simModel.formatPointsInputs(ptsKey, getPoints(), offset);
 
 		InputAgent.storeAndExecute(new KeywordCommand(this, posKw, ptsKw));
 		return true;

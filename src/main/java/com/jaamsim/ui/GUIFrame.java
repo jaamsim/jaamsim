@@ -2323,7 +2323,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				}
 
 				// Polyline object
-				KeywordIndex ptsKw = InputAgent.formatPointsInputs("Points", points, offset);
+				KeywordIndex ptsKw = sim.formatPointsInputs("Points", points, offset);
 				InputAgent.storeAndExecute(new KeywordCommand(dispEnt, posKw, ptsKw));
 				controlStartResume.requestFocusInWindow();
 			}

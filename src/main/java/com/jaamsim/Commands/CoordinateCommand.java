@@ -72,7 +72,7 @@ public class CoordinateCommand extends KeywordCommand {
 		// Polyline object
 		if (dispEnt.usePointsInput() && globalPts != null) {
 			ArrayList<Vec3d> localPts = dispEnt.getLocalPosition(globalPts);
-			KeywordIndex ptsKw = InputAgent.formatPointsInputs("Points", localPts, new Vec3d());
+			KeywordIndex ptsKw = simModel.formatPointsInputs("Points", localPts, new Vec3d());
 			InputAgent.apply(dispEnt, ptsKw);
 		}
 	}
