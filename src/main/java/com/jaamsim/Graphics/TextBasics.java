@@ -286,7 +286,7 @@ public abstract class TextBasics extends DisplayEntity implements TextEntity, Ed
 		double length = textSize.x + textSize.y;
 		double height = 2.0 * textSize.y;
 		Vec3d newSize = new Vec3d(length, height, 0.0);
-		InputAgent.apply(this, InputAgent.formatVec3dInput("Size", newSize, DistanceUnit.class));
+		InputAgent.apply(this, getJaamSimModel().formatVec3dInput("Size", newSize, DistanceUnit.class));
 	}
 
 	@Override

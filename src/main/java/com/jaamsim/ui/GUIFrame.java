@@ -2026,12 +2026,12 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				align.x = alignRight.isSelected() ? 0.5d : align.x;
 				if (align.x == textEnt.getAlignment().x)
 					return;
-				KeywordIndex kw = InputAgent.formatVec3dInput("Alignment", align, DimensionlessUnit.class);
+				KeywordIndex kw = sim.formatVec3dInput("Alignment", align, DimensionlessUnit.class);
 
 				Vec3d pos = textEnt.getPosition();
 				Vec3d size = textEnt.getSize();
 				pos.x += (align.x - prevAlign) * size.x;
-				KeywordIndex posKw = InputAgent.formatVec3dInput("Position", pos, DistanceUnit.class);
+				KeywordIndex posKw = sim.formatVec3dInput("Position", pos, DistanceUnit.class);
 
 				InputAgent.storeAndExecute(new KeywordCommand(textEnt, kw, posKw));
 				controlStartResume.requestFocusInWindow();
@@ -2315,7 +2315,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				}
 
 				// Normal object
-				KeywordIndex posKw = InputAgent.formatVec3dInput("Position", pos, DistanceUnit.class);
+				KeywordIndex posKw = sim.formatVec3dInput("Position", pos, DistanceUnit.class);
 				if (!dispEnt.usePointsInput()) {
 					InputAgent.storeAndExecute(new KeywordCommand(dispEnt, posKw));
 					controlStartResume.requestFocusInWindow();

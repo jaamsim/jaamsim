@@ -529,7 +529,7 @@ public class InputAgent {
 	}
 
 	public static void applyVec3d(Entity ent, String keyword, Vec3d point, Class<? extends Unit> ut) {
-		KeywordIndex kw = formatVec3dInput(keyword, point, ut);
+		KeywordIndex kw = ent.getJaamSimModel().formatVec3dInput(keyword, point, ut);
 		InputAgent.apply(ent, kw);
 	}
 
