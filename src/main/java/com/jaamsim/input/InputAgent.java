@@ -1686,6 +1686,10 @@ public class InputAgent {
 	public static KeywordIndex formatVec3dInput(String keyword, Vec3d point, Class<? extends Unit> ut) {
 		String unitStr = GUIFrame.getJaamSimModel().getDisplayedUnit(ut);
 		double factor = GUIFrame.getJaamSimModel().getDisplayedUnitFactor(ut);
+		return formatVec3dInput(keyword, point, factor, unitStr);
+	}
+
+	public static KeywordIndex formatVec3dInput(String keyword, Vec3d point, double factor, String unitStr) {
 		ArrayList<String> tokens = new ArrayList<>(4);
 		tokens.add(coordFormat.format(point.x/factor));
 		tokens.add(coordFormat.format(point.y/factor));
