@@ -46,6 +46,7 @@ import com.jaamsim.states.StateEntity;
 import com.jaamsim.ui.EventViewer;
 import com.jaamsim.ui.LogBox;
 import com.jaamsim.units.DimensionlessUnit;
+import com.jaamsim.units.DistanceUnit;
 import com.jaamsim.units.TimeUnit;
 import com.jaamsim.units.Unit;
 
@@ -1578,6 +1579,12 @@ public class JaamSimModel {
 		double factor = getDisplayedUnitFactor(ut);
 		String unitStr = getDisplayedUnit(ut);
 		return InputAgent.formatVec3dInput(keyword, point, factor, unitStr);
+	}
+
+	public KeywordIndex formatPointsInputs(String keyword, ArrayList<Vec3d> points, Vec3d offset) {
+		double factor = getDisplayedUnitFactor(DistanceUnit.class);
+		String unitStr = getDisplayedUnit(DistanceUnit.class);
+		return InputAgent.formatPointsInputs(keyword, points, offset, factor, unitStr);
 	}
 
 	@Override
