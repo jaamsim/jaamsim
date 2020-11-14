@@ -41,6 +41,7 @@ import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.KeywordIndex;
+import com.jaamsim.math.Vec3d;
 import com.jaamsim.states.StateEntity;
 import com.jaamsim.ui.EventViewer;
 import com.jaamsim.ui.LogBox;
@@ -1571,6 +1572,12 @@ public class JaamSimModel {
 		if (u == null)
 			return 1.0;
 		return u.getConversionFactorToSI();
+	}
+
+	public KeywordIndex formatVec3dInput(String keyword, Vec3d point, Class<? extends Unit> ut) {
+		double factor = getDisplayedUnitFactor(ut);
+		String unitStr = getDisplayedUnit(ut);
+		return InputAgent.formatVec3dInput(keyword, point, factor, unitStr);
 	}
 
 	@Override
