@@ -52,10 +52,8 @@ import com.jaamsim.basicsim.ObjectType;
 import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.math.Vec3d;
-import com.jaamsim.ui.GUIFrame;
 import com.jaamsim.ui.LogBox;
 import com.jaamsim.units.DimensionlessUnit;
-import com.jaamsim.units.DistanceUnit;
 import com.jaamsim.units.Unit;
 
 public class InputAgent {
@@ -1666,12 +1664,6 @@ public class InputAgent {
 	private static final DecimalFormat coordFormat = (DecimalFormat)NumberFormat.getNumberInstance(Locale.US);
 	static {
 		coordFormat.applyPattern("0.0#####");
-	}
-
-	public static KeywordIndex formatPointsInputs(String keyword, ArrayList<Vec3d> points, Vec3d offset) {
-		String unitStr = GUIFrame.getJaamSimModel().getDisplayedUnit(DistanceUnit.class);
-		double factor = GUIFrame.getJaamSimModel().getDisplayedUnitFactor(DistanceUnit.class);
-		return formatPointsInputs(keyword, points, offset, factor, unitStr);
 	}
 
 	public static KeywordIndex formatPointsInputs(String keyword, ArrayList<Vec3d> points, Vec3d offset, double factor, String unitStr) {
