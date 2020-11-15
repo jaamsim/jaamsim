@@ -117,8 +117,12 @@ public class ExpResult {
 	public String getOutputString(JaamSimModel simModel) {
 		switch (type) {
 		case NUMBER:
-			double factor = GUIFrame.getJaamSimModel().getDisplayedUnitFactor(unitType);
-			String unitString = GUIFrame.getJaamSimModel().getDisplayedUnit(unitType);
+			double factor = 1.0d;
+			String unitString = Unit.getSIUnit(unitType);
+			if (simModel != null) {
+				factor = simModel.getDisplayedUnitFactor(unitType);
+				unitString = simModel.getDisplayedUnit(unitType);
+			}
 			if (unitString.isEmpty())
 				return String.format("%s", value);
 			return String.format("%s[%s]", value/factor, unitString);
