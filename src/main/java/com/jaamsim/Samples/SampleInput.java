@@ -140,6 +140,14 @@ public class SampleInput extends Input<SampleProvider> {
 	}
 
 	@Override
+	public String getDefaultString(JaamSimModel simModel) {
+		if (defValue instanceof SampleConstant) {
+			return ((SampleConstant) defValue).getValueString(simModel);
+		}
+		return getDefaultString();
+	}
+
+	@Override
 	public String getPresentValueString(JaamSimModel simModel, double simTime) {
 		if (value == null)
 			return "";

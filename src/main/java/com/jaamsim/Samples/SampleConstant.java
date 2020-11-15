@@ -19,6 +19,7 @@ package com.jaamsim.Samples;
 
 import java.util.ArrayList;
 
+import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.input.Input;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
@@ -64,6 +65,14 @@ public class SampleConstant implements SampleProvider {
 	@Override
 	public double getMaxValue() {
 		return val;
+	}
+
+	public String getValueString(JaamSimModel simModel) {
+		StringBuilder tmp = new StringBuilder();
+		tmp.append(Double.toString(val/simModel.getDisplayedUnitFactor(unitType)));
+		if (unitType != DimensionlessUnit.class)
+			tmp.append(Input.SEPARATOR).append(simModel.getDisplayedUnit(unitType));
+		return tmp.toString();
 	}
 
 	@Override
