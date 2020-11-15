@@ -290,6 +290,16 @@ public abstract class Input<T> {
 	}
 
 	/**
+	 * Returns a string representing the default value for the input using the preferred units
+	 * specified for the simulation model.
+	 * @param simModel - simulation model
+	 * @return string representing the default value
+	 */
+	public String getDefaultString(JaamSimModel simModel) {
+		return getDefaultString();
+	}
+
+	/**
 	 * Returns a string representing the default value for the input.
 	 * @return string representing the default value
 	 */
