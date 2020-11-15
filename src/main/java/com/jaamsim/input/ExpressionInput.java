@@ -20,6 +20,7 @@ package com.jaamsim.input;
 import java.util.ArrayList;
 
 import com.jaamsim.basicsim.Entity;
+import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.input.ExpParser.Expression;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
@@ -116,7 +117,7 @@ public class ExpressionInput extends Input<ExpParser.Expression> {
 	}
 
 	@Override
-	public String getPresentValueString(double simTime) {
+	public String getPresentValueString(JaamSimModel simModel, double simTime) {
 		if (value == null)
 			return "";
 

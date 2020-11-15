@@ -26,7 +26,6 @@ import com.jaamsim.input.Input;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.Parser;
-import com.jaamsim.ui.GUIFrame;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
@@ -141,7 +140,7 @@ public class SampleInput extends Input<SampleProvider> {
 	}
 
 	@Override
-	public String getPresentValueString(double simTime) {
+	public String getPresentValueString(JaamSimModel simModel, double simTime) {
 		if (value == null)
 			return "";
 
@@ -151,8 +150,8 @@ public class SampleInput extends Input<SampleProvider> {
 			sb.append(Double.toString(value.getNextSample(simTime)));
 		}
 		else {
-			String unitString = GUIFrame.getJaamSimModel().getDisplayedUnit(ut);
-			double sifactor = GUIFrame.getJaamSimModel().getDisplayedUnitFactor(ut);
+			String unitString = simModel.getDisplayedUnit(ut);
+			double sifactor = simModel.getDisplayedUnitFactor(ut);
 			sb.append(Double.toString(value.getNextSample(simTime)/sifactor));
 			sb.append("[").append(unitString).append("]");
 		}

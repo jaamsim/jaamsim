@@ -359,10 +359,11 @@ public abstract class Input<T> {
 	 * Returns a string representing the value for this input at the present simulation time and
 	 * using the preferred units specified for the simulation model. Any expressions included in
 	 * the input are evaluated.
+	 * @param simModel - simulation model
 	 * @param simTime - present simulation time
 	 * @return string representing the input value
 	 */
-	public String getPresentValueString(double simTime) {
+	public String getPresentValueString(JaamSimModel simModel, double simTime) {
 		return getValueString();
 	}
 

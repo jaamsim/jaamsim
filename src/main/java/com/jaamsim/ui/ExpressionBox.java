@@ -351,8 +351,9 @@ public class ExpressionBox extends JDialog {
 		// Show the present value
 		String valStr;
 		try {
-			double simTime = GUIFrame.getJaamSimModel().getSimTime();
-			valStr = input.getPresentValueString(simTime);
+			JaamSimModel simModel = GUIFrame.getJaamSimModel();
+			double simTime = simModel.getSimTime();
+			valStr = input.getPresentValueString(simModel, simTime);
 		}
 		catch (Exception e) {
 			valStr = "Cannot evaluate at this time";
