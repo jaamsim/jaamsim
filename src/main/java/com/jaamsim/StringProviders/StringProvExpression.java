@@ -66,7 +66,8 @@ public class StringProvExpression implements StringProvider {
 				break;
 			case NUMBER:
 				if (result.unitType != unitType) {
-					ret = result.toString();
+					JaamSimModel simModel = thisEnt.getJaamSimModel();
+					ret = result.getOutputString(simModel);
 					break;
 				}
 				if (integerValue) {
