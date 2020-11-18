@@ -18,6 +18,7 @@
 package com.jaamsim.input;
 
 import com.jaamsim.basicsim.Entity;
+import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.units.Unit;
 
 public class ExpResult {
@@ -38,7 +39,7 @@ public class ExpResult {
 
 		public int getSize();
 
-		public String getOutputString();
+		public String getOutputString(JaamSimModel simModel);
 
 		public Collection getCopy();
 	}
@@ -112,11 +113,15 @@ public class ExpResult {
 		return this;
 	}
 
-	public String getOutputString() {
+	public String getOutputString(JaamSimModel simModel) {
 		switch (type) {
 		case NUMBER:
-			double factor = Unit.getDisplayedUnitFactor(unitType);
-			String unitString = Unit.getDisplayedUnit(unitType);
+			double factor = 1.0d;
+			String unitString = Unit.getSIUnit(unitType);
+			if (simModel != null) {
+				factor = simModel.getDisplayedUnitFactor(unitType);
+				unitString = simModel.getDisplayedUnit(unitType);
+			}
 			if (unitString.isEmpty())
 				return String.format("%s", value);
 			return String.format("%s[%s]", value/factor, unitString);
@@ -125,7 +130,7 @@ public class ExpResult {
 		case ENTITY:
 			return String.format("[%s]", entVal.getName());
 		case COLLECTION:
-			return colVal.getOutputString();
+			return colVal.getOutputString(simModel);
 		case LAMBDA:
 			return "function|" + lcVal.getNumParams()+"|";
 
@@ -139,17 +144,16 @@ public class ExpResult {
 	public String getFormatString() {
 		switch (type) {
 		case NUMBER:
-			double factor = Unit.getDisplayedUnitFactor(unitType);
-			String unitString = Unit.getDisplayedUnit(unitType);
+			String unitString = Unit.getSIUnit(unitType);
 			if (unitString.isEmpty())
 				return String.format("%s", value);
-			return String.format("%s[%s]", value/factor, unitString);
+			return String.format("%s[%s]", value, unitString);
 		case STRING:
 			return stringVal;
 		case ENTITY:
 			return String.format("[%s]", entVal.getName());
 		case COLLECTION:
-			return colVal.getOutputString();
+			return colVal.getOutputString(null);
 		case LAMBDA:
 			return "function|" + lcVal.getNumParams()+"|";
 
@@ -161,7 +165,7 @@ public class ExpResult {
 
 	@Override
 	public String toString() {
-		return getOutputString();
+		return getOutputString(null);
 	}
 
 	@Override

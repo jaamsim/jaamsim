@@ -24,13 +24,14 @@ import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -43,6 +44,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
+import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
@@ -180,7 +182,6 @@ public class ExpressionBox extends JDialog {
 			public void windowClosing( WindowEvent e ) {
 				result = ERROR_OPTION;
 				setVisible(false);
-				undoEdits();
 				dispose();
 			}
 		} );
@@ -201,29 +202,25 @@ public class ExpressionBox extends JDialog {
 			public void actionPerformed( ActionEvent e ) {
 				result = CANCEL_OPTION;
 				setVisible(false);
-				undoEdits();
 				dispose();
 			}
 		} );
 
 		// Down arrow pressed
-		editArea.addKeyListener(new KeyListener() {
+		KeyStroke downArrow = KeyStroke.getKeyStroke("DOWN");
+		Object key = editArea.getInputMap().get(downArrow);
+		Action defaultAction = editArea.getActionMap().get(key);
+		editArea.getActionMap().put(key, new AbstractAction() {
 			@Override
-			public void keyTyped(KeyEvent e) {}
-
-			@Override
-			public void keyPressed(KeyEvent e) {
-				int keyCode = e.getKeyCode();
-				if (keyCode == KeyEvent.VK_DOWN) {
-					int ind = editArea.getCaretPosition() - 1;
-					//System.out.format("ind=%s, length=%s%n", ind, editArea.getText().length());
-					ind = Math.min(ind, editArea.getText().length() - 1);
-					showMenus(ind, true);
+			public void actionPerformed(ActionEvent e) {
+				if (editMode == EDIT_MODE_NORMAL) {
+					defaultAction.actionPerformed(e);
+					return;
 				}
+				int ind = editArea.getCaretPosition() - 1;
+				ind = Math.min(ind, editArea.getText().length() - 1);
+				showMenus(ind, true);
 			}
-
-			@Override
-			public void keyReleased(KeyEvent e) {}
 		});
 
 		// Listen for changes to the text
@@ -238,7 +235,7 @@ public class ExpressionBox extends JDialog {
 					return;
 				}
 
-				// Set or terminate the entity/output name selection state
+				// Set the entity/output name selection state
 				char c = editArea.getText().charAt(e.getOffset());
 				if (c == '[') {
 					setEditMode(EDIT_MODE_ENTITY);
@@ -247,8 +244,8 @@ public class ExpressionBox extends JDialog {
 					setEditMode(EDIT_MODE_OUTPUT);
 				}
 
-				// Return pressed
-				if (c == '\n' && (editMode == EDIT_MODE_ENTITY
+				// Return or space bar pressed while in edit mode
+				if ((c == '\n' || c == ' ') && (editMode == EDIT_MODE_ENTITY
 						|| editMode == EDIT_MODE_OUTPUT)) {
 					SwingUtilities.invokeLater(new Runnable() {
 						@Override
@@ -337,9 +334,7 @@ public class ExpressionBox extends JDialog {
 
 		// Prepare the input string
 		Entity ent = EditBox.getInstance().getCurrentEntity();
-		String str = editArea.getText().replace("\n", " ");
-		if (!str.isEmpty())
-			str = input.applyConditioning(str);
+		String str = getInputString();
 
 		// Load the input
 		try {
@@ -356,8 +351,9 @@ public class ExpressionBox extends JDialog {
 		// Show the present value
 		String valStr;
 		try {
-			double simTime = GUIFrame.getJaamSimModel().getSimTime();
-			valStr = input.getPresentValueString(simTime);
+			JaamSimModel simModel = GUIFrame.getJaamSimModel();
+			double simTime = simModel.getSimTime();
+			valStr = input.getPresentValueString(simModel, simTime);
 		}
 		catch (Exception e) {
 			valStr = "Cannot evaluate at this time";
@@ -372,12 +368,6 @@ public class ExpressionBox extends JDialog {
 			return "ERROR: " + str;
 	}
 
-	private void undoEdits() {
-		Entity ent = EditBox.getInstance().getCurrentEntity();
-		String keyword = input.getKeyword();
-		GUIFrame.getInstance().undo(ent, keyword);
-	}
-
 	public int showDialog() {
 
 		// Show the dialog box and wait for editing to finish
@@ -389,9 +379,17 @@ public class ExpressionBox extends JDialog {
 	}
 
 	public String getInputString() {
-		return editArea.getText();
+		String str = editArea.getText().trim();
+		if (!str.isEmpty())
+			str = input.applyConditioning(str);
+		return str;
 	}
 
+	/**
+	 * Displays the auto-complete menu for the present edit mode.
+	 * @param ind1 - starting position of the text to be replaced
+	 * @param focusable - true if the menu is to take the focus
+	 */
 	private void showMenus(int ind1, boolean focusable) {
 		String text = editArea.getText();
 
@@ -472,6 +470,13 @@ public class ExpressionBox extends JDialog {
 		}
 	}
 
+	/**
+	 * Displays the auto-complete menu for an entity name.
+	 * @param name - partial name of the entity
+	 * @param ind0 - starting position of the text to be replaced
+	 * @param ind1 - ending position of the text to be replaced
+	 * @param focusable - true if the menu is to take the focus
+	 */
 	private void showEntityMenu(String name, final int ind0, final int ind1, boolean focusable) {
 		if (entityMenu != null)
 			entityMenu.setVisible(false);
@@ -534,6 +539,13 @@ public class ExpressionBox extends JDialog {
 		entityMenu.show(editArea, menuPos.x, menuPos.y);
 	}
 
+	/**
+	 * Displays the auto-complete menu for an output name.
+	 * @param name - partial name of the entity
+	 * @param ind0 - starting position of the text to be replaced
+	 * @param ind1 - ending position of the text to be replaced
+	 * @param focusable - true if the menu is to take the focus
+	 */
 	private void showOutputMenu(Entity ent, String name, final int ind0, final int ind1, boolean focusable) {
 		if (outputMenu != null)
 			outputMenu.setVisible(false);

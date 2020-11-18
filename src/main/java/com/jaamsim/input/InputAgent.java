@@ -54,7 +54,6 @@ import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.ui.LogBox;
 import com.jaamsim.units.DimensionlessUnit;
-import com.jaamsim.units.DistanceUnit;
 import com.jaamsim.units.Unit;
 
 public class InputAgent {
@@ -199,6 +198,7 @@ public class InputAgent {
 					if (nextLine == null)  // end of file
 						break;
 					StringBuilder sb = new StringBuilder(line);
+					sb.append('\n');
 					sb.append(nextLine);
 					line = sb.toString();
 
@@ -527,7 +527,7 @@ public class InputAgent {
 	}
 
 	public static void applyVec3d(Entity ent, String keyword, Vec3d point, Class<? extends Unit> ut) {
-		KeywordIndex kw = formatVec3dInput(keyword, point, ut);
+		KeywordIndex kw = ent.getJaamSimModel().formatVec3dInput(keyword, point, ut);
 		InputAgent.apply(ent, kw);
 	}
 
@@ -613,11 +613,13 @@ public class InputAgent {
 	 *
 	 */
 	public static void printInputFileKeywords(JaamSimModel simModel) {
+
 		// Create report file for the inputs
 		String inputReportFileName = simModel.getReportFileName(simModel.getRunName() + ".inp");
-
-		FileEntity inputReportFile = new FileEntity( inputReportFileName);
-		inputReportFile.flush();
+		File f = new File(inputReportFileName);
+		if (f.exists() && !f.delete())
+			throw new ErrorException("Cannot delete the existing input report file %s", f);
+		FileEntity inputReportFile = new FileEntity(f);
 
 		ArrayList<ObjectType> objectTypes = new ArrayList<>();
 		for (ObjectType type : simModel.getObjectTypes())
@@ -820,7 +822,6 @@ public class InputAgent {
 		// Close out the report
 		inputReportFile.flush();
 		inputReportFile.close();
-
 	}
 
 	private static final String errPrefix = "*** ERROR *** %s%n";
@@ -1215,6 +1216,7 @@ public class InputAgent {
 	 * @param simTime - simulation time at which the outputs are evaluated
 	 */
 	public static void printReport(Entity ent, FileEntity file, double simTime) {
+		JaamSimModel simModel = ent.getJaamSimModel();
 
 		// Loop through the outputs
 		ArrayList<OutputHandle> handles = OutputHandle.getOutputHandleList(ent);
@@ -1226,8 +1228,8 @@ public class InputAgent {
 
 			// Determine the preferred unit for this output
 			Class<? extends Unit> ut = out.getUnitType();
-			double factor = Unit.getDisplayedUnitFactor(ut);
-			String unitString = Unit.getDisplayedUnit(ut);
+			double factor = ent.getJaamSimModel().getDisplayedUnitFactor(ut);
+			String unitString = ent.getJaamSimModel().getDisplayedUnit(ut);
 			if (ut == Unit.class || ut == DimensionlessUnit.class)
 				unitString = "-";
 
@@ -1298,7 +1300,7 @@ public class InputAgent {
 			}
 			// Expression based custom outputs
 			else if (out.getReturnType() == ExpResult.class) {
-				String val = InputAgent.getValueAsString(out, simTime, "%s", factor);
+				String val = InputAgent.getValueAsString(simModel, out, simTime, "%s", factor);
 				file.format(OUTPUT_FORMAT,
 						ent.getName(), out.getName(), val, unitString);
 			}
@@ -1416,13 +1418,14 @@ public class InputAgent {
 
 	/**
 	 * Returns a formated string for the specified output.
+	 * @param simModel - simulation model
 	 * @param out - output
 	 * @param simTime - present simulation time
 	 * @param floatFmt - format string for numerical values
 	 * @param factor - divisor to be applied to numerical values
 	 * @return formated string for the output
 	 */
-	public static String getValueAsString(OutputHandle out, double simTime, String floatFmt, double factor) {
+	public static String getValueAsString(JaamSimModel simModel, OutputHandle out, double simTime, String floatFmt, double factor) {
 		StringBuilder sb = new StringBuilder();
 		String str;
 		String COMMA_SEPARATOR = ", ";
@@ -1600,7 +1603,7 @@ public class InputAgent {
 				sb.append(String.format(floatFmt, result.value/factor));
 				break;
 			case COLLECTION:
-				sb.append(result.colVal.getOutputString());
+				sb.append(result.colVal.getOutputString(simModel));
 				break;
 			default:
 				assert(false);
@@ -1665,9 +1668,7 @@ public class InputAgent {
 		coordFormat.applyPattern("0.0#####");
 	}
 
-	public static KeywordIndex formatPointsInputs(String keyword, ArrayList<Vec3d> points, Vec3d offset) {
-		String unitStr = Unit.getDisplayedUnit(DistanceUnit.class);
-		double factor = Unit.getDisplayedUnitFactor(DistanceUnit.class);
+	public static KeywordIndex formatPointsInputs(String keyword, ArrayList<Vec3d> points, Vec3d offset, double factor, String unitStr) {
 		ArrayList<String> tokens = new ArrayList<>(points.size() * 6);
 		for (Vec3d v : points) {
 			tokens.add("{");
@@ -1680,9 +1681,7 @@ public class InputAgent {
 		return new KeywordIndex(keyword, tokens, null);
 	}
 
-	public static KeywordIndex formatVec3dInput(String keyword, Vec3d point, Class<? extends Unit> ut) {
-		String unitStr = Unit.getDisplayedUnit(ut);
-		double factor = Unit.getDisplayedUnitFactor(ut);
+	public static KeywordIndex formatVec3dInput(String keyword, Vec3d point, double factor, String unitStr) {
 		ArrayList<String> tokens = new ArrayList<>(4);
 		tokens.add(coordFormat.format(point.x/factor));
 		tokens.add(coordFormat.format(point.y/factor));

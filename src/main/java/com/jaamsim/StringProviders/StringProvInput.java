@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2015 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018-2019 JaamSim Software Inc.
+ * Copyright (C) 2018-2020 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -124,7 +124,7 @@ public class StringProvInput extends Input<StringProvider> {
 	}
 
 	@Override
-	public String getPresentValueString(double simTime) {
+	public String getPresentValueString(JaamSimModel simModel, double simTime) {
 		if (value == null)
 			return "";
 
@@ -134,8 +134,8 @@ public class StringProvInput extends Input<StringProvider> {
 			sb.append(value.getNextString(simTime));
 		}
 		else {
-			String unitString = Unit.getDisplayedUnit(unitType);
-			double sifactor = Unit.getDisplayedUnitFactor(unitType);
+			String unitString = simModel.getDisplayedUnit(unitType);
+			double sifactor = simModel.getDisplayedUnitFactor(unitType);
 			sb.append(value.getNextString(simTime, sifactor));
 			sb.append("[").append(unitString).append("]");
 		}

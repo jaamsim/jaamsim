@@ -22,7 +22,6 @@ import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 
 import com.jaamsim.math.Color4d;
-import com.jaamsim.ui.EditBox.EditTable;
 
 /**
  * Handles colour inputs.
@@ -30,8 +29,8 @@ import com.jaamsim.ui.EditBox.EditTable;
  */
 public class ColorEditor extends CellEditor {
 
-	public ColorEditor(EditTable table) {
-		super(table, true);
+	public ColorEditor(int width, int height) {
+		super(width, height, true);
 	}
 
 	@Override
@@ -49,7 +48,6 @@ public class ColorEditor extends CellEditor {
 				public void setColour(String colStr) {
 					setValue(colStr);
 					stopCellEditing();
-					propTable.requestFocusInWindow();
 				}
 
 			};

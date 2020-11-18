@@ -18,6 +18,7 @@ package com.jaamsim.StringProviders;
 
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ErrorException;
+import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.input.ExpError;
 import com.jaamsim.input.ExpEvaluator;
 import com.jaamsim.input.ExpParser;
@@ -65,7 +66,8 @@ public class StringProvExpression implements StringProvider {
 				break;
 			case NUMBER:
 				if (result.unitType != unitType) {
-					ret = result.toString();
+					JaamSimModel simModel = thisEnt.getJaamSimModel();
+					ret = result.getOutputString(simModel);
 					break;
 				}
 				if (integerValue) {
@@ -76,7 +78,8 @@ public class StringProvExpression implements StringProvider {
 				}
 				break;
 			case COLLECTION:
-				ret = result.colVal.getOutputString();
+				JaamSimModel simModel = thisEnt.getJaamSimModel();
+				ret = result.colVal.getOutputString(simModel);
 				break;
 			default:
 				assert(false);
@@ -112,7 +115,8 @@ public class StringProvExpression implements StringProvider {
 				ret = String.format(fmt, result.value/siFactor);
 				break;
 			case COLLECTION:
-				ret = String.format(fmt, result.colVal.getOutputString());
+				JaamSimModel simModel = thisEnt.getJaamSimModel();
+				ret = String.format(fmt, result.colVal.getOutputString(simModel));
 				break;
 			default:
 				assert(false);

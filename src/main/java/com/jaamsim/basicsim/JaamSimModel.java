@@ -22,6 +22,7 @@ import java.io.PrintStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicLong;
@@ -40,10 +41,12 @@ import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.KeywordIndex;
+import com.jaamsim.math.Vec3d;
 import com.jaamsim.states.StateEntity;
 import com.jaamsim.ui.EventViewer;
 import com.jaamsim.ui.LogBox;
 import com.jaamsim.units.DimensionlessUnit;
+import com.jaamsim.units.DistanceUnit;
 import com.jaamsim.units.TimeUnit;
 import com.jaamsim.units.Unit;
 
@@ -63,6 +66,7 @@ public class JaamSimModel {
 	private final AtomicLong entityCount = new AtomicLong(0);
 
 	private final HashMap<String, Entity> namedEntities = new HashMap<>(100);
+	private final HashMap<Class<? extends Unit>, Unit> preferredUnit = new HashMap<>();
 
 	// Note, entityList is an empty list node used to identify the end of the list
 	// The first real entity is at entityList.next.ent
@@ -1230,7 +1234,10 @@ public class JaamSimModel {
 			StringBuilder tmp = new StringBuilder("");
 			tmp.append(getReportFileName(getRunName()));
 			tmp.append(".rep");
-			reportFile = new FileEntity(tmp.toString());
+			File f = new File(tmp.toString());
+			if (f.exists() && !f.delete())
+				throw new ErrorException("Cannot delete the existing report file %s", f);
+			reportFile = new FileEntity(f);
 		}
 		return reportFile;
 	}
@@ -1334,10 +1341,14 @@ public class JaamSimModel {
 	public void openLogFile() {
 		String logFileName = getRunName() + ".log";
 		URI logURI = null;
+		logFile = null;
 		try {
 			URI confURI = configFile.toURI();
 			logURI = confURI.resolve(new URI(null, logFileName, null)); // The new URI here effectively escapes the file name
-			logFile = new FileEntity(logURI.getPath());
+			File f = new File(logURI.getPath());
+			if (f.exists() && !f.delete())
+				throw new Exception("Cannot delete an existing log file.");
+			logFile = new FileEntity(f);
 		}
 		catch( Exception e ) {
 			InputAgent.logWarning(this, "Could not create log file.%n%s", e.getMessage());
@@ -1388,8 +1399,8 @@ public class JaamSimModel {
 		EventManager evt = EventManager.current();
 		long traceTick = evt.getTicks();
 		if (lastTickForTrace != traceTick) {
-			double unitFactor = Unit.getDisplayedUnitFactor(TimeUnit.class);
-			String unitString = Unit.getDisplayedUnit(TimeUnit.class);
+			double unitFactor = this.getDisplayedUnitFactor(TimeUnit.class);
+			String unitString = this.getDisplayedUnit(TimeUnit.class);
 			System.out.format(" \nTIME = %.6f %s,  TICKS = %d\n",
 					evt.ticksToSeconds(traceTick) / unitFactor, unitString,
 					traceTick);
@@ -1457,15 +1468,6 @@ public class JaamSimModel {
 	}
 
 	/**
-	 * Returns the date corresponding to the specified time in milliseconds from the epoch.
-	 * @param millis - time is milliseconds from the epoch
-	 * @return date for the specified time
-	 */
-	public Date getCalendarDate(long millis) {
-		return calendar.getDate(millis);
-	}
-
-	/**
 	 * Returns the simulation time in seconds that corresponds to the specified time in
 	 * milliseconds from the epoch.
 	 * @param millis - milliseconds from the epoch
@@ -1483,6 +1485,106 @@ public class JaamSimModel {
 	 */
 	public long simTimeToCalendarMillis(double simTime) {
 		return Math.round(simTime * 1000.0d) + startMillis;
+	}
+
+	/**
+	 * Returns the date corresponding to the specified time in milliseconds from the epoch.
+	 * @param millis - time in milliseconds from the epoch
+	 * @return date for the specified time
+	 */
+	public synchronized Date getCalendarDate(long millis) {
+		synchronized (calendar) {
+			calendar.setTimeInMillis(millis);
+			return calendar.getTime();
+		}
+	}
+
+	/**
+	 * Returns the calendar date and time for the specified time in milliseconds from the epoch.
+	 * @param millis - time in milliseconds from the epoch
+	 * @return SimDate for the specified time
+	 */
+	public SimDate getSimDate(long millis) {
+		synchronized (calendar) {
+			calendar.setTimeInMillis(millis);
+			return calendar.getSimDate();
+		}
+	}
+
+	/**
+	 * Returns the day of week for the specified time in milliseconds from the epoch.
+	 * @param millis - time in milliseconds from the epoch
+	 * @return day of week (Sunday = 1, Monday = 2, ..., Saturday = 7)
+	 */
+	public int getDayOfWeek(long millis) {
+		synchronized (calendar) {
+			if (calendar.isGregorian()) {
+				calendar.setTimeInMillis(millis);
+				return calendar.get(Calendar.DAY_OF_WEEK);
+			}
+			calendar.setTimeInMillis(startMillis);
+			long simDay = (millis - startMillis)/(1000*60*60*24);
+			return (int) ((calendar.get(Calendar.DAY_OF_WEEK) - 1 + simDay) % 7L) + 1;
+		}
+	}
+
+	public final void setPreferredUnitList(ArrayList<? extends Unit> list) {
+		ArrayList<String> utList = Unit.getUnitTypeList(this);
+
+		// Set the preferred units in the list
+		for (Unit u : list) {
+			Class<? extends Unit> ut = u.getClass();
+			this.setPreferredUnit(ut, u);
+			utList.remove(ut.getSimpleName());
+		}
+
+		// Clear the entries for unit types that were not in the list
+		for (String utName : utList) {
+			Class<? extends Unit> ut = Input.parseUnitType(this, utName);
+			preferredUnit.remove(ut);
+		}
+	}
+
+	public final void setPreferredUnit(Class<? extends Unit> type, Unit u) {
+		if (u.getName().equals(Unit.getSIUnit(type))) {
+			preferredUnit.remove(type);
+			return;
+		}
+		preferredUnit.put(type, u);
+	}
+
+	public final ArrayList<Unit> getPreferredUnitList() {
+		return new ArrayList<>(preferredUnit.values());
+	}
+
+	public final <T extends Unit> Unit getPreferredUnit(Class<T> type) {
+		return preferredUnit.get(type);
+	}
+
+	public final <T extends Unit> String getDisplayedUnit(Class<T> ut) {
+		Unit u = this.getPreferredUnit(ut);
+		if (u == null)
+			return Unit.getSIUnit(ut);
+		return u.getName();
+	}
+
+	public final <T extends Unit> double getDisplayedUnitFactor(Class<T> ut) {
+		Unit u = this.getPreferredUnit(ut);
+		if (u == null)
+			return 1.0;
+		return u.getConversionFactorToSI();
+	}
+
+	public KeywordIndex formatVec3dInput(String keyword, Vec3d point, Class<? extends Unit> ut) {
+		double factor = getDisplayedUnitFactor(ut);
+		String unitStr = getDisplayedUnit(ut);
+		return InputAgent.formatVec3dInput(keyword, point, factor, unitStr);
+	}
+
+	public KeywordIndex formatPointsInputs(String keyword, ArrayList<Vec3d> points, Vec3d offset) {
+		double factor = getDisplayedUnitFactor(DistanceUnit.class);
+		String unitStr = getDisplayedUnit(DistanceUnit.class);
+		return InputAgent.formatPointsInputs(keyword, points, offset, factor, unitStr);
 	}
 
 	@Override

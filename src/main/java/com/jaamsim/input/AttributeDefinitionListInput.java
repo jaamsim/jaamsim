@@ -50,6 +50,8 @@ public class AttributeDefinitionListInput extends ListInput<ArrayList<AttributeH
 		// Ensure that no attribute names are repeated
 		HashSet<String> nameSet = new HashSet<>();
 		for (KeywordIndex subArg : subArgs) {
+			if (subArg.numArgs() == 0)
+				continue;
 			String name = subArg.getArg(0);
 			if (nameSet.contains(name))
 				throw new InputErrorException("Duplicate attribute name: %s", name);
@@ -59,43 +61,24 @@ public class AttributeDefinitionListInput extends ListInput<ArrayList<AttributeH
 		// Parse the inputs within each inner brace
 		for (int i = 0; i < subArgs.size(); i++) {
 			KeywordIndex subArg = subArgs.get(i);
-			Input.assertCount(subArg, 2, 3);
+			Input.assertCount(subArg, 2);
 			try {
 				// Parse the attribute name
 				String name = subArg.getArg(0);
-				if (OutputHandle.hasOutput(thisEnt.getClass(), name)) {
+				if (OutputHandle.hasOutput(thisEnt.getClass(), name)
+						|| thisEnt.hasCustomOutput(name) || thisEnt.hasInputOutput(name)) {
 					throw new InputErrorException("Attribute name is the same as existing output name: %s", name);
 				}
 
 				ExpResult expVal;
 				Class<? extends Unit> unitType = DimensionlessUnit.class;
 
-				if (subArg.numArgs() == 2) {
-					// parse this as an expression
-					String expString = subArg.getArg(1);
-					ExpParser.Expression exp = ExpParser.parseExpression(ExpEvaluator.getParseContext(thisEnt, expString), expString);
-					expVal = ExpEvaluator.evaluateExpression(exp, 0);
-					if (expVal.type == ExpResType.NUMBER) {
-						unitType = expVal.unitType;
-					}
-				} else {
-					// Parse the unit type
-					double factor = 1.0;
-					if (subArg.numArgs() == 3) {
-						String unitName = Parser.removeEnclosure("[", subArg.getArg(2), "]");
-						Unit unit = Input.parseUnit(thisEnt.getJaamSimModel(), unitName);
-						unitType = unit.getClass();
-						factor = unit.getConversionFactorToSI();
-					}
-
-					// Parse the initial value
-					double val;
-					try {
-						val = factor * Double.valueOf(subArg.getArg(1));
-					} catch (Exception e) {
-						throw new InputErrorException(INP_ERR_DOUBLE, subArg.getArg(1));
-					}
-					expVal = ExpResult.makeNumResult(val, unitType);
+				// Parse the expression
+				String expString = subArg.getArg(1);
+				ExpParser.Expression exp = ExpParser.parseExpression(ExpEvaluator.getParseContext(thisEnt, expString), expString);
+				expVal = ExpEvaluator.evaluateExpression(exp, 0);
+				if (expVal.type == ExpResType.NUMBER) {
+					unitType = expVal.unitType;
 				}
 
 				// Save the data for this attribute

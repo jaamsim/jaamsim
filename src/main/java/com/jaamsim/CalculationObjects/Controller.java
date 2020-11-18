@@ -22,6 +22,8 @@ import java.util.Collections;
 import java.util.Comparator;
 
 import com.jaamsim.Graphics.DisplayEntity;
+import com.jaamsim.Samples.SampleConstant;
+import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.EntityTarget;
 import com.jaamsim.basicsim.ObserverEntity;
@@ -31,7 +33,6 @@ import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
-import com.jaamsim.input.ValueInput;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
 
@@ -44,11 +45,11 @@ public class Controller extends DisplayEntity implements SubjectEntity {
 
 	@Keyword(description = "Simulation time for the first update signal.",
 	         exampleList = {"5 s"})
-	private final ValueInput firstTime;
+	private final SampleInput firstTime;
 
 	@Keyword(description = "Time interval between update signals.",
 	         exampleList = {"100 ms"})
-	private final ValueInput interval;
+	private final SampleInput interval;
 
 	@Keyword(description = "Maximum number of updates to perform.",
 	         exampleList = {"5"})
@@ -62,14 +63,15 @@ public class Controller extends DisplayEntity implements SubjectEntity {
 	private final SubjectEntityDelegate subject = new SubjectEntityDelegate(this);
 
 	{
-		firstTime = new ValueInput("FirstTime", KEY_INPUTS, 0.0d);
+		firstTime = new SampleInput("FirstTime", KEY_INPUTS, new SampleConstant(0.0d));
 		firstTime.setUnitType(TimeUnit.class);
 		firstTime.setValidRange(0.0, Double.POSITIVE_INFINITY);
 		this.addInput(firstTime);
 
-		interval = new ValueInput("Interval", KEY_INPUTS, 1.0d);
+		interval = new SampleInput("Interval", KEY_INPUTS, null);
 		interval.setUnitType(TimeUnit.class);
 		interval.setValidRange(0.0, Double.POSITIVE_INFINITY);
+		interval.setRequired(true);
 		this.addInput(interval);
 		this.addSynonym(interval, "SamplingTime");
 
@@ -131,7 +133,7 @@ public class Controller extends DisplayEntity implements SubjectEntity {
 
 		// Schedule the first update
 		if (maxUpdates.getValue() > 0)
-			this.scheduleProcess(firstTime.getValue(), 5, doUpdate);
+			this.scheduleProcess(firstTime.getValue().getNextSample(0.0d), 5, doUpdate);
 	}
 
 	private static class DoUpdateTarget extends EntityTarget<Controller> {
@@ -161,7 +163,7 @@ public class Controller extends DisplayEntity implements SubjectEntity {
 
 		// Schedule the next update
 		if (count < maxUpdates.getValue())
-			this.scheduleProcess(interval.getValue(), 5, doUpdate);
+			this.scheduleProcess(interval.getValue().getNextSample(simTime), 5, doUpdate);
 	}
 
 	public int getCount() {

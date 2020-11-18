@@ -101,7 +101,7 @@ public abstract class Input<T> {
 	protected static final String VALID_ENTITY = "Accepts the name of an entity.";
 	protected static final String VALID_ENTITY_TYPE = "Accepts the name of an entity of type %s.";
 	protected static final String VALID_INTERFACE_ENTITY = "Accepts the name of an entity that supports the %s interface.";
-	protected static final String VALID_BOOLEAN = "Accepts the text TRUE or FALSE (case sensitive).";
+	protected static final String VALID_BOOLEAN = "Accepts the text TRUE or FALSE. Inputs of T, t, and 1 are interpreted as TRUE, while F, f, and 0 are interpreted as FALSE.";
 	protected static final String VALID_STRING = "Accepts a text string. The string must be enclosed by single quotes if it includes a space.";
 	protected static final String VALID_DATE = "Accepts a calendar date and time in one of the following formats: 'YYYY-MM-DD hh:mm:ss.sss', 'YYYY-MM-DD hh:mm:ss', 'YYYY-MM-DD'";
 	protected static final String VALID_FILE = "Accepts a file path enclosed by single quotes.";
@@ -289,6 +289,20 @@ public abstract class Input<T> {
 		return defValue;
 	}
 
+	/**
+	 * Returns a string representing the default value for the input using the preferred units
+	 * specified for the simulation model.
+	 * @param simModel - simulation model
+	 * @return string representing the default value
+	 */
+	public String getDefaultString(JaamSimModel simModel) {
+		return getDefaultString();
+	}
+
+	/**
+	 * Returns a string representing the default value for the input.
+	 * @return string representing the default value
+	 */
 	public String getDefaultString() {
 		if (defValue == null)
 			return "";
@@ -351,7 +365,15 @@ public abstract class Input<T> {
 		return false;
 	}
 
-	public String getPresentValueString(double simTime) {
+	/**
+	 * Returns a string representing the value for this input at the present simulation time and
+	 * using the preferred units specified for the simulation model. Any expressions included in
+	 * the input are evaluated.
+	 * @param simModel - simulation model
+	 * @param simTime - present simulation time
+	 * @return string representing the input value
+	 */
+	public String getPresentValueString(JaamSimModel simModel, double simTime) {
 		return getValueString();
 	}
 
@@ -507,12 +529,22 @@ public abstract class Input<T> {
 		return 1;
 	}
 
+	/**
+	 * Returns an array of white-space delimited strings that can be used to generate the input
+	 * file entry for this input value.
+	 * @return array of strings
+	 */
 	public ArrayList<String> getValueTokens() {
 		ArrayList<String> ret = new ArrayList<>();
 		getValueTokens(ret);
 		return ret;
 	}
 
+	/**
+	 * Populates an array of white-space delimited strings that can be used to generate the input
+	 * file string for this input value.
+	 * @param toks - array of strings to be populated
+	 */
 	public void getValueTokens(ArrayList<String> toks) {
 		if (valueTokens == null)
 			return;
@@ -521,6 +553,10 @@ public abstract class Input<T> {
 			toks.add(each);
 	}
 
+	/**
+	 * Returns the input file entry for this input value.
+	 * @return input file text
+	 */
 	public final String getValueString() {
 		if (isDefault()) return "";
 		ArrayList<String> tmp = new ArrayList<>();
@@ -535,6 +571,12 @@ public abstract class Input<T> {
 		return getValueString(tmp, false);
 	}
 
+	/**
+	 * Returns the input file entry for the specified array of white-space delimited strings.
+	 * @param tokens - array of strings for the input
+	 * @param addLF - true if a newline character is to be added before each inner brace
+	 * @return input file text
+	 */
 	public static final String getValueString(ArrayList<String> tokens, boolean addLF) {
 		if (tokens.size() == 0) return "";
 

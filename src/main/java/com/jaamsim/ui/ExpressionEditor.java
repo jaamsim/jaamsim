@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2018-2019 JaamSim Software Inc.
+ * Copyright (C) 2018-2020 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,12 +23,15 @@ import java.util.ArrayList;
 
 import javax.swing.JMenuItem;
 
-import com.jaamsim.ui.EditBox.EditTable;
+import com.jaamsim.Commands.KeywordCommand;
+import com.jaamsim.basicsim.Entity;
+import com.jaamsim.input.InputAgent;
+import com.jaamsim.input.KeywordIndex;
 
 public class ExpressionEditor extends CellEditor {
 
-	public ExpressionEditor(EditTable table) {
-		super(table, true);
+	public ExpressionEditor(int width, int height) {
+		super(width, height, true);
 	}
 
 	@Override
@@ -72,7 +75,6 @@ public class ExpressionEditor extends CellEditor {
 						}
 						setValue(option);
 						stopCellEditing();
-						propTable.requestFocusInWindow();
 					}
 				} );
 				menu.add(item);
@@ -92,20 +94,32 @@ public class ExpressionEditor extends CellEditor {
 
 	private void launchExpressionBox() {
 
+		// Use the input from the Input Editor if it has been changed already,
+		// otherwise use the input's value which includes any newline characters
+		String str = input.getValueString();
+		if (!str.replace('\n', ' ').equals(getValue()))
+			str = getValue();
+
 		// Launch the dialog box and wait for editing to finish
-		ExpressionBox expDialog = new ExpressionBox(input, getValue());
+		ExpressionBox expDialog = new ExpressionBox(input, str);
 		int result = expDialog.showDialog();
 
 		// Return the new expression
 		if (result == ExpressionBox.APPROVE_OPTION) {
 			setValue(expDialog.getInputString());
 		}
+		else {
+			// Reset the original value
+			Entity ent = EditBox.getInstance().getCurrentEntity();
+			try {
+				KeywordIndex kw = InputAgent.formatInput(input.getKeyword(), str);
+				InputAgent.storeAndExecute(new KeywordCommand(ent, kw));
+			}
+			catch (Exception e) {}
+		}
 
 		// Apply editing
 		stopCellEditing();
-
-		// Focus the cell
-		propTable.requestFocusInWindow();
 	}
 
 }

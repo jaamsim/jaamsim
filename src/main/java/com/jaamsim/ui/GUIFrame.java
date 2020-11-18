@@ -144,7 +144,6 @@ import com.jaamsim.rng.MRG1999a;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.DistanceUnit;
 import com.jaamsim.units.TimeUnit;
-import com.jaamsim.units.Unit;
 
 /**
  * The main window for a Graphical Simulation.  It provides the controls for managing then
@@ -296,10 +295,10 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 	static {
 		try {
-			if (OSFix.isMac())
-				UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
-			else
+			if (OSFix.isWindows())
 				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+			else
+				UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
 		}
 		catch (Exception e) {
 			LogBox.logLine("Unable to change look and feel.");
@@ -425,6 +424,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			return;
 		RenderManager.clear();
 		EntityPallet.update();
+		ObjectSelector.allowUpdate();
 		gui.resetViews();
 		gui.setTitle(sm);
 
@@ -2026,12 +2026,12 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				align.x = alignRight.isSelected() ? 0.5d : align.x;
 				if (align.x == textEnt.getAlignment().x)
 					return;
-				KeywordIndex kw = InputAgent.formatVec3dInput("Alignment", align, DimensionlessUnit.class);
+				KeywordIndex kw = sim.formatVec3dInput("Alignment", align, DimensionlessUnit.class);
 
 				Vec3d pos = textEnt.getPosition();
 				Vec3d size = textEnt.getSize();
 				pos.x += (align.x - prevAlign) * size.x;
-				KeywordIndex posKw = InputAgent.formatVec3dInput("Position", pos, DistanceUnit.class);
+				KeywordIndex posKw = sim.formatVec3dInput("Position", pos, DistanceUnit.class);
 
 				InputAgent.storeAndExecute(new KeywordCommand(textEnt, kw, posKw));
 				controlStartResume.requestFocusInWindow();
@@ -2315,7 +2315,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				}
 
 				// Normal object
-				KeywordIndex posKw = InputAgent.formatVec3dInput("Position", pos, DistanceUnit.class);
+				KeywordIndex posKw = sim.formatVec3dInput("Position", pos, DistanceUnit.class);
 				if (!dispEnt.usePointsInput()) {
 					InputAgent.storeAndExecute(new KeywordCommand(dispEnt, posKw));
 					controlStartResume.requestFocusInWindow();
@@ -2323,7 +2323,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				}
 
 				// Polyline object
-				KeywordIndex ptsKw = InputAgent.formatPointsInputs("Points", points, offset);
+				KeywordIndex ptsKw = sim.formatPointsInputs("Points", points, offset);
 				InputAgent.storeAndExecute(new KeywordCommand(dispEnt, posKw, ptsKw));
 				controlStartResume.requestFocusInWindow();
 			}
@@ -2833,8 +2833,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	void setClock(double simTime) {
 
 		// Set the simulation time display
-		String unit = Unit.getDisplayedUnit(TimeUnit.class);
-		double factor = Unit.getDisplayedUnitFactor(TimeUnit.class);
+		String unit = getJaamSimModel().getDisplayedUnit(TimeUnit.class);
+		double factor = getJaamSimModel().getDisplayedUnitFactor(TimeUnit.class);
 		clockDisplay.setText(String.format("%,.2f  %s", simTime/factor, unit));
 
 		// Set the run progress bar display
@@ -3200,7 +3200,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 		// if we only got one token, and it isn't RFC8601 - add a unit
 		if (tokens.size() == 1 && !tokens.get(0).contains("-") && !tokens.get(0).contains(":"))
-			tokens.add(Unit.getDisplayedUnit(TimeUnit.class));
+			tokens.add(getJaamSimModel().getDisplayedUnit(TimeUnit.class));
 
 		try {
 			// Parse the keyword inputs
@@ -3382,27 +3382,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			cmd.undo();
 		}
 		updateUI();
-	}
-
-	public void undo(Entity ent, String keyword) {
-		synchronized (undoList) {
-			if (undoList.isEmpty())
-				return;
-
-			// Confirm that the specified command is the last one on the undo list
-			Command cmd = undoList.get(undoList.size() - 1);
-			if (!(cmd instanceof KeywordCommand))
-				return;
-			KeywordCommand kwCmd = (KeywordCommand) cmd;
-			if (kwCmd.getEntity() != ent || kwCmd.getKws().length != 1
-					|| !kwCmd.getKws()[0].keyword.equals(keyword))
-				return;
-
-			// Remove and undo the last command from the undo list WITHOUT adding it to the redo list
-			undoList.remove(undoList.size() - 1);
-			cmd.undo();
-			updateUI();
-		}
 	}
 
 	public void redo() {
@@ -3754,8 +3733,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			return;
 		}
 
-		String unit = Unit.getDisplayedUnit(DistanceUnit.class);
-		double factor = Unit.getDisplayedUnitFactor(DistanceUnit.class);
+		String unit = getJaamSimModel().getDisplayedUnit(DistanceUnit.class);
+		double factor = getJaamSimModel().getDisplayedUnitFactor(DistanceUnit.class);
 		locatorPos.setText(String.format((Locale)null, "%.3f  %.3f  %.3f  %s",
 				pos.x/factor, pos.y/factor, pos.z/factor, unit));
 	}

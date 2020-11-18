@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2005-2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2019 JaamSim Software Inc.
+ * Copyright (C) 2016-2020 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,6 @@ import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 
 import com.jaamsim.input.Parser;
-import com.jaamsim.ui.EditBox.EditTable;
 
 /**
  * Handles inputs where a list of entities can be selected.
@@ -34,8 +33,8 @@ public class ListEditor extends CellEditor {
 	private boolean caseSensitive;
 	private boolean innerBraces;
 
-	public ListEditor(EditTable table, ArrayList<String> aList) {
-		super(table, true);
+	public ListEditor(int width, int height, ArrayList<String> aList) {
+		super(width, height, true);
 		options = aList;
 		caseSensitive = true;
 		innerBraces = false;
@@ -76,9 +75,6 @@ public class ListEditor extends CellEditor {
 
 		// Apply editing
 		stopCellEditing();
-
-		// Focus the cell
-		propTable.requestFocusInWindow();
 	}
 
 	public void setCaseSensitive(boolean bool) {

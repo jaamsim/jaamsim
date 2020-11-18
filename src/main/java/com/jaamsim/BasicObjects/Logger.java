@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2016-2019 JaamSim Software Inc.
+ * Copyright (C) 2016-2020 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
  */
 package com.jaamsim.BasicObjects;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import com.jaamsim.Graphics.DisplayEntity;
@@ -30,7 +31,6 @@ import com.jaamsim.input.Output;
 import com.jaamsim.input.UnitTypeListInput;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.units.TimeUnit;
-import com.jaamsim.units.Unit;
 
 public abstract class Logger extends DisplayEntity {
 
@@ -115,7 +115,10 @@ public abstract class Logger extends DisplayEntity {
 					simModel.getReportFileName(simModel.getRunName()));
 			tmp.append("-").append(this.getName());
 			tmp.append(".log");
-			file = new FileEntity(tmp.toString());
+			File f = new File(tmp.toString());
+			if (f.exists() && !f.delete())
+				error("Cannot delete the existing log file %s", f);
+			file = new FileEntity(f);
 		}
 
 		// Print the detailed run information to the file
@@ -132,7 +135,7 @@ public abstract class Logger extends DisplayEntity {
 
 		// Print the title for each column
 		// (a) Simulation time
-		String unit = Unit.getDisplayedUnit(TimeUnit.class);
+		String unit = getJaamSimModel().getDisplayedUnit(TimeUnit.class);
 		file.format("%nthis.SimTime/1[%s]", unit);
 
 		// (b) Print at titles for any additional columns
@@ -175,7 +178,7 @@ public abstract class Logger extends DisplayEntity {
 		logTime = simTime;
 
 		// Write the time for the log entry
-		double factor = Unit.getDisplayedUnitFactor(TimeUnit.class);
+		double factor = getJaamSimModel().getDisplayedUnitFactor(TimeUnit.class);
 		file.format("%n%s", simTime/factor);
 
 		// Write any additional columns for the log entry

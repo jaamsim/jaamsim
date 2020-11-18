@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.GUIListener;
+import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.datatypes.IntegerVector;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.EntityInput;
@@ -317,8 +318,9 @@ public class View extends Entity {
 				tempPos.sub3(followEntityInput.getValue().getGlobalPosition(), tempPos);
 			}
 
-			KeywordIndex posKw = InputAgent.formatVec3dInput("ViewPosition", tempPos, DistanceUnit.class);
-			KeywordIndex ctrKw = InputAgent.formatVec3dInput("ViewCenter", tempCent, DistanceUnit.class);
+			JaamSimModel simModel = getJaamSimModel();
+			KeywordIndex posKw = simModel.formatVec3dInput("ViewPosition", tempPos, DistanceUnit.class);
+			KeywordIndex ctrKw = simModel.formatVec3dInput("ViewCenter", tempCent, DistanceUnit.class);
 			InputAgent.storeAndExecute(new KeywordCommand(this, posKw, ctrKw));
 		}
 	}
@@ -407,8 +409,9 @@ public class View extends Entity {
 				pos.y -= dist;
 				pos.z += dist;
 			}
-			KeywordIndex posKw = InputAgent.formatVec3dInput(position.getKeyword(), pos, DistanceUnit.class);
-			KeywordIndex ctrKw = InputAgent.formatVec3dInput(center.getKeyword(), viewCenter, DistanceUnit.class);
+			JaamSimModel simModel = getJaamSimModel();
+			KeywordIndex posKw = simModel.formatVec3dInput(position.getKeyword(), pos, DistanceUnit.class);
+			KeywordIndex ctrKw = simModel.formatVec3dInput(center.getKeyword(), viewCenter, DistanceUnit.class);
 
 			InputAgent.storeAndExecute(new KeywordCommand(this, kw, posKw, ctrKw));
 		}

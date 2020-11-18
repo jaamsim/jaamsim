@@ -220,7 +220,7 @@ public class SampleListInput extends ListInput<ArrayList<SampleProvider>> {
 	}
 
 	@Override
-	public String getPresentValueString(double simTime) {
+	public String getPresentValueString(JaamSimModel simModel, double simTime) {
 		if (value == null)
 			return "";
 
@@ -239,8 +239,8 @@ public class SampleListInput extends ListInput<ArrayList<SampleProvider>> {
 				sb.append(Double.toString(samp.getNextSample(simTime)));
 			}
 			else {
-				String unitString = Unit.getDisplayedUnit(ut);
-				double sifactor = Unit.getDisplayedUnitFactor(ut);
+				String unitString = simModel.getDisplayedUnit(ut);
+				double sifactor = simModel.getDisplayedUnitFactor(ut);
 				sb.append(Double.toString(samp.getNextSample(simTime)/sifactor));
 				sb.append("[").append(unitString).append("]");
 			}

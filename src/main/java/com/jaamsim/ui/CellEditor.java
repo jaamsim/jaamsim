@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2005-2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2019 JaamSim Software Inc.
+ * Copyright (C) 2016-2020 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,15 +20,22 @@ package com.jaamsim.ui;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.StringSelection;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
+import javax.swing.AbstractAction;
 import javax.swing.AbstractCellEditor;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.event.CellEditorListener;
@@ -45,7 +52,6 @@ import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.ui.EditBox.EditTable;
 
 public abstract class CellEditor extends AbstractCellEditor implements TableCellEditor, ActionListener {
-	protected final EditTable propTable;
 	protected Input<?> input;
 
 	private final JPanel jPanel;
@@ -57,35 +63,146 @@ public abstract class CellEditor extends AbstractCellEditor implements TableCell
 	private EditTable table;
 	protected String retryString;
 
-	public CellEditor(EditTable table, boolean showButton) {
-		propTable = table;
+	public CellEditor(int width, int height, boolean showButton) {
 		this.addCellEditorListener(new CellListener());
 
 		// Table cell
 		jPanel = new JPanel(new BorderLayout());
-		int height = table.getRowHeight();
-		int width = table.getColumnModel().getColumn(EditBox.VALUE_COLUMN).getWidth() -
-				table.getColumnModel().getColumnMargin();
 		jPanel.setPreferredSize(new Dimension(width, height));
 
 		// Editable text
 		text = new JTextField();
 		jPanel.add(text, BorderLayout.WEST);
 
-		// Launch Entity Finder on Cntrl+F
-		text.addKeyListener(new KeyListener() {
+		// If text is entered, over-write the present value
+		jPanel.addKeyListener(new KeyListener() {
 			@Override
 			public void keyTyped(KeyEvent e) {}
 			@Override
 			public void keyPressed(KeyEvent e) {
-				// Cntrl+F
-				if (e.isControlDown() && e.getKeyCode() == KeyEvent.VK_F) {
-					FindBox.getInstance().showDialog(text.getSelectedText());
+				// Alphanumeric key
+				char keyChar = e.getKeyChar();
+				if (keyChar != KeyEvent.CHAR_UNDEFINED && !Character.isISOControl(keyChar)
+						&& !e.isControlDown() && !e.isAltDown()) {
+					text.requestFocusInWindow();
+					SwingUtilities.invokeLater(new Runnable() {
+						@Override
+						public void run() {
+							text.setText(String.valueOf(keyChar));
+						}
+					});
 					return;
 				}
 			}
 			@Override
 			public void keyReleased(KeyEvent e) {}
+		});
+
+		// Delete
+		jPanel.getInputMap().put(KeyStroke.getKeyStroke("DELETE"), "delete");
+		jPanel.getActionMap().put("delete", new AbstractAction() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				text.setText("");
+			}
+		});
+
+		// Copy
+		jPanel.getInputMap().put(KeyStroke.getKeyStroke("control C"), "copy");
+		jPanel.getActionMap().put("copy", new AbstractAction() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Clipboard clpbrd = Toolkit.getDefaultToolkit().getSystemClipboard();
+				clpbrd.setContents(new StringSelection(text.getText()), null);
+			}
+		});
+
+		// Paste
+		jPanel.getInputMap().put(KeyStroke.getKeyStroke("control V"), "paste");
+		jPanel.getActionMap().put("paste", new AbstractAction() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Clipboard clpbrd = Toolkit.getDefaultToolkit().getSystemClipboard();
+				try {
+					String str = (String)clpbrd.getData(DataFlavor.stringFlavor);
+					text.setText(str);
+				}
+				catch (Throwable err) {}
+			}
+		});
+
+		// Cut
+		jPanel.getInputMap().put(KeyStroke.getKeyStroke("control X"), "cut");
+		jPanel.getActionMap().put("cut", new AbstractAction() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Clipboard clpbrd = Toolkit.getDefaultToolkit().getSystemClipboard();
+				clpbrd.setContents(new StringSelection(text.getText()), null);
+				text.setText("");
+			}
+		});
+
+		// Find
+		jPanel.getInputMap().put(KeyStroke.getKeyStroke("control F"), "find");
+		jPanel.getActionMap().put("find", new AbstractAction() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				FindBox.getInstance().showDialog(text.getText());
+			}
+		});
+
+		// Help
+		jPanel.getInputMap().put(KeyStroke.getKeyStroke("F1"), "help");
+		jPanel.getActionMap().put("help", new AbstractAction() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String topic = "";
+				Entity ent = table.getEntity();
+				if (ent != null) {
+					topic = ent.getObjectType().getName();
+					Entity inpEnt = ent.getJaamSimModel().getNamedEntity(text.getText());
+					if (inpEnt != null) {
+						topic = inpEnt.getObjectType().getName();
+					}
+				}
+				HelpBox.getInstance().showDialog(topic);
+			}
+		});
+
+		// Edit
+		jPanel.getInputMap().put(KeyStroke.getKeyStroke("F2"), "edit");
+		jPanel.getActionMap().put("edit", new AbstractAction() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				text.requestFocusInWindow();
+			}
+		});
+
+		// Escape
+		jPanel.getInputMap().put(KeyStroke.getKeyStroke("ESCAPE"), "escape");
+		jPanel.getActionMap().put("escape", new AbstractAction() {
+			@Override
+			public void actionPerformed(ActionEvent e) {}
+		});
+
+		// Escape while editing
+		text.getInputMap().put(KeyStroke.getKeyStroke("ESCAPE"), "escape");
+		text.getActionMap().put("escape", new AbstractAction() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Input<?> in = (Input<?>) getCellEditorValue();
+				text.setText(in.getValueString());
+				table.requestFocusInWindow();
+			}
+		});
+
+		// Find while editing
+		text.getInputMap().put(KeyStroke.getKeyStroke("control F"), "find");
+		text.getActionMap().put("find", new AbstractAction() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				FindBox.getInstance().showDialog(text.getSelectedText());
+			}
 		});
 
 		// Dropdown button
@@ -114,7 +231,8 @@ public abstract class CellEditor extends AbstractCellEditor implements TableCell
 	}
 
 	public void setValue(String str) {
-		text.setText(str);
+		text.setText(str.replace('\n', ' '));
+		table.selectNextCell();
 	}
 
 	public String getValue() {
@@ -123,6 +241,12 @@ public abstract class CellEditor extends AbstractCellEditor implements TableCell
 
 	public boolean canRetry() {
 		return false;
+	}
+
+	public void updateValue() {
+		if (text.hasFocus())
+			return;
+		text.setText(input.getValueString());
 	}
 
 	@Override
@@ -170,16 +294,17 @@ public abstract class CellEditor extends AbstractCellEditor implements TableCell
 
 			final String newValue = editor.getValue();
 
-			// The value has not changed
-			if (in.getValueString().equals(newValue) && in.isValid()) {
-				editor.propTable.setPresentCellEditor(null);
-				return;
-			}
-
 			// Adjust the user's entry to standardise the syntax
 			String str = newValue.trim();
 			if (!str.isEmpty())
 				str = in.applyConditioning(str);
+
+			// The value has not changed
+			if (in.getValueString().replace('\n', ' ').equals(str) && in.isValid()) {
+				editor.getTable().setPresentCellEditor(null);
+				editor.getTable().requestFocusInWindow();
+				return;
+			}
 
 			try {
 				// Parse the keyword inputs
@@ -211,7 +336,6 @@ public abstract class CellEditor extends AbstractCellEditor implements TableCell
 							@Override
 							public void run() {
 								table.setRetry(newValue, row, col);
-								table.editCellAt(row, col);
 							}
 						});
 
@@ -232,7 +356,8 @@ public abstract class CellEditor extends AbstractCellEditor implements TableCell
 				return;
 			}
 			finally {
-				editor.propTable.setPresentCellEditor(null);
+				editor.getTable().setPresentCellEditor(null);
+				editor.getTable().requestFocusInWindow();
 			}
 		}
 	}

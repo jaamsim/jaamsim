@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2019 JaamSim Software Inc.
+ * Copyright (C) 2016-2020 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.KeywordIndex;
+import com.jaamsim.input.Parser;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
@@ -65,6 +66,18 @@ public class SampleInput extends Input<SampleProvider> {
 		if (value instanceof SampleExpression) {
 			parseFrom(thisEnt, in);
 		}
+	}
+
+	@Override
+	public String applyConditioning(String str) {
+
+		// No changes required if the input is a number and unit
+		ArrayList<String> tokens = new ArrayList<>();
+		Parser.tokenize(tokens, str, true);
+		if (tokens.size() == 2 && isDouble(tokens.get(0)))
+			return str;
+
+		return Parser.addQuotesIfNeeded(str);
 	}
 
 	@Override
@@ -127,7 +140,15 @@ public class SampleInput extends Input<SampleProvider> {
 	}
 
 	@Override
-	public String getPresentValueString(double simTime) {
+	public String getDefaultString(JaamSimModel simModel) {
+		if (defValue instanceof SampleConstant) {
+			return ((SampleConstant) defValue).getValueString(simModel);
+		}
+		return getDefaultString();
+	}
+
+	@Override
+	public String getPresentValueString(JaamSimModel simModel, double simTime) {
 		if (value == null)
 			return "";
 
@@ -137,8 +158,8 @@ public class SampleInput extends Input<SampleProvider> {
 			sb.append(Double.toString(value.getNextSample(simTime)));
 		}
 		else {
-			String unitString = Unit.getDisplayedUnit(ut);
-			double sifactor = Unit.getDisplayedUnitFactor(ut);
+			String unitString = simModel.getDisplayedUnit(ut);
+			double sifactor = simModel.getDisplayedUnitFactor(ut);
 			sb.append(Double.toString(value.getNextSample(simTime)/sifactor));
 			sb.append("[").append(unitString).append("]");
 		}

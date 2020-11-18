@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2005-2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2019 JaamSim Software Inc.
+ * Copyright (C) 2016-2020 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,8 +24,6 @@ import java.util.ArrayList;
 
 import javax.swing.JMenuItem;
 
-import com.jaamsim.ui.EditBox.EditTable;
-
 /**
  * Handles inputs with drop-down menus.
  *
@@ -34,8 +32,8 @@ public class DropDownMenuEditor extends CellEditor {
 
 	private ArrayList<String> options;
 
-	public DropDownMenuEditor(EditTable table, ArrayList<String> aList) {
-		super(table, true);
+	public DropDownMenuEditor(int width, int height, ArrayList<String> aList) {
+		super(width, height, true);
 		options = aList;
 	}
 
@@ -57,7 +55,6 @@ public class DropDownMenuEditor extends CellEditor {
 					public void actionPerformed( ActionEvent event ) {
 						setValue(option);
 						stopCellEditing();
-						propTable.requestFocusInWindow();
 					}
 				} );
 				menu.add(item);

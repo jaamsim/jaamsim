@@ -29,16 +29,9 @@ import com.jaamsim.input.InputErrorException;
  * Class encapsulating file input/output methods and file access.
  */
 public class FileEntity {
+
 	private File backingFileObject;
 	private BufferedWriter outputStream;
-
-	public FileEntity(String fileName) {
-		this(fileName, false);
-	}
-
-	public FileEntity(String fileName, boolean append) {
-		this(new File(fileName), append);
-	}
 
 	public FileEntity(File file) {
 		this(file, false);

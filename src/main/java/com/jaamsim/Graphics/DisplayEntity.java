@@ -31,6 +31,7 @@ import com.jaamsim.DisplayModels.TextModel;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.basicsim.GUIListener;
+import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.basicsim.ObjectType;
 import com.jaamsim.basicsim.ObserverEntity;
 import com.jaamsim.datatypes.DoubleVector;
@@ -876,7 +877,8 @@ public class DisplayEntity extends Entity {
 	public void dragged(int x, int y, Vec3d newPos) {
 
 		// Normal objects
-		KeywordIndex kw = InputAgent.formatVec3dInput(positionInput.getKeyword(), newPos, DistanceUnit.class);
+		JaamSimModel simModel = getJaamSimModel();
+		KeywordIndex kw = simModel.formatVec3dInput(positionInput.getKeyword(), newPos, DistanceUnit.class);
 		InputAgent.apply(this, kw);
 
 		ArrayList<Vec3d> points = pointsInput.getValue();
@@ -890,7 +892,7 @@ public class DisplayEntity extends Entity {
 		// Polyline objects
 		Vec3d dist = new Vec3d(newPos);
 		dist.sub3(points.get(0));
-		kw = InputAgent.formatPointsInputs(pointsInput.getKeyword(), pointsInput.getValue(), dist);
+		kw = simModel.formatPointsInputs(pointsInput.getKeyword(), pointsInput.getValue(), dist);
 		InputAgent.apply(this, kw);
 	}
 
@@ -906,6 +908,8 @@ public class DisplayEntity extends Entity {
 	public boolean handleKeyPressed(int keyCode, char keyChar, boolean shift, boolean control, boolean alt) {
 		if (!isMovable())
 			return false;
+		JaamSimModel simModel = getJaamSimModel();
+
 		double inc = getSimulation().getIncrementSize();
 		if (getSimulation().isSnapToGrid())
 			inc = Math.max(inc, getSimulation().getSnapGridSpacing());
@@ -945,7 +949,7 @@ public class DisplayEntity extends Entity {
 		if (getSimulation().isSnapToGrid())
 			pos = getSimulation().getSnapGridPosition(pos, pos, shift);
 		String posKey = positionInput.getKeyword();
-		KeywordIndex posKw = InputAgent.formatVec3dInput(posKey, pos, DistanceUnit.class);
+		KeywordIndex posKw = simModel.formatVec3dInput(posKey, pos, DistanceUnit.class);
 
 		if (!usePointsInput()) {
 			InputAgent.storeAndExecute(new KeywordCommand(this, posKw));
@@ -961,7 +965,7 @@ public class DisplayEntity extends Entity {
 			offset.sub3(getPoints().get(0));
 		}
 		String ptsKey = pointsInput.getKeyword();
-		KeywordIndex ptsKw = InputAgent.formatPointsInputs(ptsKey, getPoints(), offset);
+		KeywordIndex ptsKw = simModel.formatPointsInputs(ptsKey, getPoints(), offset);
 
 		InputAgent.storeAndExecute(new KeywordCommand(this, posKw, ptsKw));
 		return true;

@@ -154,7 +154,7 @@ public class EntityLabel extends TextBasics {
 
 		// Set the label's position
 		Vec3d pos = getNominalPosition(ent);
-		InputAgent.apply(label, InputAgent.formatVec3dInput("Position", pos, DistanceUnit.class));
+		InputAgent.apply(label, simModel.formatVec3dInput("Position", pos, DistanceUnit.class));
 
 		// Set the label's size
 		label.resizeForText();

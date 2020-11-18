@@ -25,6 +25,7 @@ import javax.swing.JTable;
 import javax.swing.border.Border;
 import javax.swing.table.DefaultTableCellRenderer;
 
+import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.input.Input;
 
 public class EditBoxColumnRenderer extends DefaultTableCellRenderer {
@@ -49,6 +50,7 @@ public Component getTableCellRendererComponent(JTable table, Object value,
 
 	Input<?> in = (Input<?>)value;
 	String str;
+	JaamSimModel simModel = EditBox.getInstance().getCurrentEntity().getJaamSimModel();
 
 	// 1) Keyword
 	if (column == 0) {
@@ -60,7 +62,7 @@ public Component getTableCellRendererComponent(JTable table, Object value,
 		if (in.getDefaultText() != null)
 			str = EditBox.formatEditorText(in.getDefaultText());
 		else {
-			str = in.getDefaultString();
+			str = in.getDefaultString(simModel);
 			if (str == null || str.isEmpty())
 				str = EditBox.NONE;
 		}

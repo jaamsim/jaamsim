@@ -42,9 +42,6 @@ public abstract class Unit extends Entity {
 		this.addInput(conversionFactorToSI);
 	}
 
-	private static final HashMap<Class<? extends Unit>, Unit>
-		preferredUnit = new HashMap<>();
-
 	public Unit() {}
 
 	private static final HashMap<Class<? extends Unit>, String>
@@ -65,53 +62,6 @@ public abstract class Unit extends Entity {
 			return unit;
 
 		return "SI";
-	}
-
-	public static final void setPreferredUnitList(JaamSimModel simModel, ArrayList<? extends Unit> list) {
-		ArrayList<String> utList = Unit.getUnitTypeList(simModel);
-
-		// Set the preferred units in the list
-		for (Unit u : list) {
-			Class<? extends Unit> ut = u.getClass();
-			Unit.setPreferredUnit(ut, u);
-			utList.remove(ut.getSimpleName());
-		}
-
-		// Clear the entries for unit types that were not in the list
-		for (String utName : utList) {
-			Class<? extends Unit> ut = Input.parseUnitType(simModel, utName);
-			preferredUnit.remove(ut);
-		}
-	}
-
-	public static final void setPreferredUnit(Class<? extends Unit> type, Unit u) {
-		if (u.getName().equals(Unit.getSIUnit(type))) {
-			preferredUnit.remove(type);
-			return;
-		}
-		preferredUnit.put(type, u);
-	}
-
-	public static final ArrayList<Unit> getPreferredUnitList() {
-		return new ArrayList<>(preferredUnit.values());
-	}
-
-	public static final <T extends Unit> Unit getPreferredUnit(Class<T> type) {
-		return preferredUnit.get(type);
-	}
-
-	public static final <T extends Unit> String getDisplayedUnit(Class<T> ut) {
-		Unit u = Unit.getPreferredUnit(ut);
-		if (u == null)
-			return Unit.getSIUnit(ut);
-		return u.getName();
-	}
-
-	public static final <T extends Unit> double getDisplayedUnitFactor(Class<T> ut) {
-		Unit u = Unit.getPreferredUnit(ut);
-		if (u == null)
-			return 1.0;
-		return u.getConversionFactorToSI();
 	}
 
 	/**

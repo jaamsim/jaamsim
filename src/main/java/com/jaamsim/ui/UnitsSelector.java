@@ -41,7 +41,7 @@ public class UnitsSelector {
 				continue;
 
 			// For each unit type create a sub-menu of units from which to select
-			String selectedUnitName = Unit.getDisplayedUnit(ut);
+			String selectedUnitName = GUIFrame.getJaamSimModel().getDisplayedUnit(ut);
 			JMenu subMenu = new JMenu(utName);
 			for (final Unit u : unitList) {
 				JRadioButtonMenuItem item = new JRadioButtonMenuItem(u.getName());
@@ -52,9 +52,9 @@ public class UnitsSelector {
 
 					@Override
 					public void actionPerformed( ActionEvent event ) {
-						Unit.setPreferredUnit(ut, u);
+						GUIFrame.getJaamSimModel().setPreferredUnit(ut, u);
 						ArrayList<String> toks = new ArrayList<>();
-						for (Unit pref : Unit.getPreferredUnitList()) {
+						for (Unit pref : GUIFrame.getJaamSimModel().getPreferredUnitList()) {
 							toks.add(pref.getName());
 						}
 						KeywordIndex kw = new KeywordIndex("DisplayedUnits", toks, null);

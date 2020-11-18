@@ -227,6 +227,8 @@ public class ContextMenu {
 
 		if (!RenderManager.isGood())
 			return;
+		final JaamSimModel simModel = GUIFrame.getJaamSimModel();
+		final Simulation simulation = simModel.getSimulation();
 
 		// 1) Change Graphics
 		JMenuItem changeGraphicsMenuItem = new JMenuItem( "Change Graphics" );
@@ -369,8 +371,8 @@ public class ContextMenu {
 				viewCenter.add3(diff);
 
 				RenderManager.inst().setPOI(v, viewCenter);
-				KeywordIndex posKw = InputAgent.formatVec3dInput("ViewPosition", viewPos, DistanceUnit.class);
-				KeywordIndex ctrKw = InputAgent.formatVec3dInput("ViewCenter", viewCenter, DistanceUnit.class);
+				KeywordIndex posKw = simModel.formatVec3dInput("ViewPosition", viewPos, DistanceUnit.class);
+				KeywordIndex ctrKw = simModel.formatVec3dInput("ViewCenter", viewCenter, DistanceUnit.class);
 				InputAgent.storeAndExecute(new KeywordCommand(v, posKw, ctrKw));
 			}
 		} );
@@ -395,13 +397,12 @@ public class ContextMenu {
 				if (pos == null)
 					return;
 				Vec3d localPos = ent.getLocalPosition(pos);
-				Simulation simulation = ent.getJaamSimModel().getSimulation();
 				if (simulation.isSnapToGrid()) {
 					localPos = simulation.getSnapGridPosition(localPos);
 				}
 				int ind = PolylineInfo.getInsertionIndex(pts, localPos);
 				pts.add(ind, localPos);
-				KeywordIndex ptsKw = InputAgent.formatPointsInputs("Points", pts, new Vec3d());
+				KeywordIndex ptsKw = simModel.formatPointsInputs("Points", pts, new Vec3d());
 				InputAgent.storeAndExecute(new KeywordCommand(ent, ind, ptsKw));
 			}
 		} );
@@ -418,7 +419,7 @@ public class ContextMenu {
 			public void actionPerformed( ActionEvent event ) {
 				ArrayList<Vec3d> pts = ent.getPoints();
 				pts.remove(nodeIndex);
-				KeywordIndex ptsKw = InputAgent.formatPointsInputs("Points", pts, new Vec3d());
+				KeywordIndex ptsKw = simModel.formatPointsInputs("Points", pts, new Vec3d());
 				InputAgent.storeAndExecute(new KeywordCommand(ent, nodeIndex, ptsKw));
 			}
 		} );
@@ -434,7 +435,6 @@ public class ContextMenu {
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				JaamSimModel simModel = ent.getJaamSimModel();
 				String name = InputAgent.getUniqueName(simModel, ent.getName(), "_Split");
 				InputAgent.storeAndExecute(new DefineCommand(simModel, ent.getClass(), name));
 				DisplayEntity splitEnt = (DisplayEntity) simModel.getNamedEntity(name);
@@ -450,7 +450,6 @@ public class ContextMenu {
 					if (pos == null)
 						return;
 					Vec3d localPos = ent.getLocalPosition(pos);
-					Simulation simulation = ent.getJaamSimModel().getSimulation();
 					if (simulation.isSnapToGrid()) {
 						localPos = simulation.getSnapGridPosition(localPos);
 					}
@@ -463,7 +462,7 @@ public class ContextMenu {
 				for (int i = 0; i <= ind; i++) {
 					pts0.add(pts.get(i));
 				}
-				KeywordIndex ptsKw0 = InputAgent.formatPointsInputs("Points", pts0, new Vec3d());
+				KeywordIndex ptsKw0 = simModel.formatPointsInputs("Points", pts0, new Vec3d());
 				InputAgent.storeAndExecute(new KeywordCommand(ent, ind, ptsKw0));
 
 				// New entity receives the remaining portion of the nodes
@@ -471,7 +470,7 @@ public class ContextMenu {
 				for (int i = ind; i < pts.size(); i++) {
 					pts1.add(pts.get(i));
 				}
-				KeywordIndex ptsKw1 = InputAgent.formatPointsInputs("Points", pts1, new Vec3d());
+				KeywordIndex ptsKw1 = simModel.formatPointsInputs("Points", pts1, new Vec3d());
 				InputAgent.processKeyword(splitEnt, ptsKw1);
 
 				// Change any other object specific inputs for the split

@@ -18,6 +18,8 @@
 package com.jaamsim.ui;
 
 import java.awt.Point;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.MouseEvent;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -66,6 +68,7 @@ public class EditBox extends FrameBox {
 	private final TableCellRenderer columnRender = new EditBoxColumnRenderer();
 
 	private String lastCategory = null;
+	private String lastKeyword = null;
 
 	private EditBox() {
 		super( "Input Editor" );
@@ -158,6 +161,13 @@ public class EditBox extends FrameBox {
 			jTabbedFrame.setSelectedIndex(initialTab);
 			prevTab = initialTab;
 		}
+
+		// Set the keyword
+		editTableList.get(initialTab).selectKeyword(lastKeyword);
+	}
+
+	public void setLastKeyword(String keyword) {
+		lastKeyword = keyword;
 	}
 
 	@Override
@@ -165,8 +175,18 @@ public class EditBox extends FrameBox {
 		if(currentEntity == null)
 			return;
 
-		JTable propTable = (JTable)(((JScrollPane)jTabbedFrame.getSelectedComponent()).getViewport().getComponent(0));
+		EditTable propTable = (EditTable)(((JScrollPane)jTabbedFrame.getSelectedComponent()).getViewport().getComponent(0));
+		int row = propTable.getSelectedRow();
 		((EditTableModel)propTable.getModel()).fireTableDataChanged();
+
+		// Restore the selected cell
+		if (row != -1)
+			propTable.changeSelection(row, VALUE_COLUMN, false, false);
+
+		// Update the value in the selected cell
+		if (propTable.getPresentCellEditor() != null) {
+			propTable.getPresentCellEditor().updateValue();
+		}
 	}
 
 	private synchronized static void killInstance() {
@@ -366,6 +386,37 @@ public static class EditTable extends JTable {
 		this.getTableHeader().setReorderingAllowed(false);
 
 		this.setPresentCellEditor(null);
+
+		addFocusListener(new FocusListener() {
+			@Override
+			public void focusGained(FocusEvent e) {
+
+				// Re-select the cell if an entry is being edited after an error
+				if (retryString != null) {
+					changeSelection(retryRow, retryCol, false, false);
+				}
+
+				// Start the CellEditor for the selected input
+				int row = getSelectedRow();
+				if (row == -1)
+					return;
+				if (presentCellEditor == null)
+					editCellAt(row, VALUE_COLUMN);
+
+				// Direct the inputs to the CellEditor
+				if (getEditorComponent() == null)
+					return;
+				getEditorComponent().requestFocusInWindow();
+
+				// Save the keyword for the input that is being edited
+				Input<?> in = (Input<?>) getValueAt(row, 0);
+				if (in != null) {
+					EditBox.getInstance().setLastKeyword(in.getKeyword());
+				}
+			}
+			@Override
+			public void focusLost(FocusEvent e) {}
+		});
 	}
 
 	@Override
@@ -384,30 +435,33 @@ public static class EditTable extends JTable {
 		CellEditor ret;
 
 		ArrayList<String> array = in.getValidOptions(entity);
+		int width = getColumnModel().getColumn(VALUE_COLUMN).getWidth()
+				- getColumnModel().getColumnMargin();
+		int height = getRowHeight();
 
 		// 1) Colour input
 		if (in instanceof ColourInput) {
-			ret = new ColorEditor(this);
+			ret = new ColorEditor(width, height);
 		}
 
 		// 2) File input
 		else if (in instanceof FileInput) {
-			ret = new FileEditor(this);
+			ret = new FileEditor(width, height);
 		}
 
 		// 3) Expression Builder
 		else if (in.useExpressionBuilder()) {
-			ret = new ExpressionEditor(this);
+			ret = new ExpressionEditor(width, height);
 		}
 
 		// 4) Normal text
 		else if (array == null) {
-			ret = new StringEditor(this);
+			ret = new StringEditor(width, height);
 		}
 
 		// 5) Multiple selections from a List
 		else if (in instanceof ListInput) {
-			ListEditor listEditor = new ListEditor(this, array);
+			ListEditor listEditor = new ListEditor(width, height, array);
 			if (in instanceof StringListInput) {
 				listEditor.setCaseSensitive( ((StringListInput)(in)).getCaseSensitive() );
 			}
@@ -419,7 +473,7 @@ public static class EditTable extends JTable {
 
 		// 6) Single selection from a drop down box
 		else {
-			ret = new DropDownMenuEditor(this, array);
+			ret = new DropDownMenuEditor(width, height, array);
 		}
 
 		// If the user is going to retry a failed edit, update the editor with the old value
@@ -454,7 +508,7 @@ public static class EditTable extends JTable {
 	public Point getToolTipLocation(MouseEvent e) {
 		int row = rowAtPoint(e.getPoint());
 		int y = getCellRect(row, 0, true).getLocation().y;
-		return new Point(col1Width, y);
+		return new Point(col1Width + col2Width, y);
 	}
 
 	@Override
@@ -486,6 +540,25 @@ public static class EditTable extends JTable {
 
 	public void setPresentCellEditor(CellEditor editor) {
 		presentCellEditor = editor;
+	}
+
+	public void selectNextCell() {
+		int row = getSelectedRow();
+		int col = getSelectedColumn();
+		row = Math.min(row + 1, getModel().getRowCount() - 1);
+		changeSelection(row, col, false, false);
+	}
+
+	public void selectKeyword(String keyword) {
+		int selectedRow = 0;
+		for (int row = 0; row < getModel().getRowCount(); row++) {
+			Input<?> in = (Input<?>) getModel().getValueAt(row, 0);
+			if (in.getKeyword().equals(keyword)) {
+				selectedRow = row;
+				break;
+			}
+		}
+		changeSelection(selectedRow, VALUE_COLUMN, false, false);
 	}
 
 }

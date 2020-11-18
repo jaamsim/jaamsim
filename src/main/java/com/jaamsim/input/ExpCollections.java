@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.datatypes.IntegerVector;
 import com.jaamsim.input.ExpResult.Iterator;
@@ -191,13 +192,13 @@ public class ExpCollections {
 		}
 
 		@Override
-		public String getOutputString() {
+		public String getOutputString(JaamSimModel simModel) {
 			try {
 				StringBuilder sb = new StringBuilder();
 				sb.append("{");
 				for (int i = 0; i < list.size(); ++i) {
 					ExpResult val = index(ExpResult.makeNumResult(i+1, DimensionlessUnit.class));
-					sb.append(val.getOutputString());
+					sb.append(val.getOutputString(simModel));
 					if (i < list.size() -1) {
 						sb.append(", ");
 					}
@@ -301,13 +302,13 @@ public class ExpCollections {
 		}
 
 		@Override
-		public String getOutputString() {
+		public String getOutputString(JaamSimModel simModel) {
 			try {
 				StringBuilder sb = new StringBuilder();
 				sb.append("{");
 				for (int i = 0; i < Array.getLength(array); ++i) {
 					ExpResult val = index(ExpResult.makeNumResult(i+1, DimensionlessUnit.class));
-					sb.append(val.getOutputString());
+					sb.append(val.getOutputString(simModel));
 					if (i < Array.getLength(array) -1) {
 						sb.append(", ");
 					}
@@ -387,13 +388,19 @@ public class ExpCollections {
 		}
 
 		@Override
-		public String getOutputString() {
+		public String getOutputString(JaamSimModel simModel) {
+			double factor = 1.0d;
+			String unitStr = Unit.getSIUnit(unitType);
+			if (simModel != null) {
+				factor = simModel.getDisplayedUnitFactor(unitType);
+				unitStr = simModel.getDisplayedUnit(unitType);
+			}
 			StringBuilder sb = new StringBuilder();
 			sb.append("{");
 			for (int i = 0; i < vector.size(); ++i) {
-				sb.append(vector.get(i+1)*Unit.getDisplayedUnitFactor(unitType));
+				sb.append(vector.get(i+1)/factor);
 				sb.append(" ");
-				sb.append(Unit.getDisplayedUnit(unitType));
+				sb.append(unitStr);
 				if (i < vector.size()) {
 					sb.append(", ");
 				}
@@ -469,13 +476,19 @@ public class ExpCollections {
 		}
 
 		@Override
-		public String getOutputString() {
+		public String getOutputString(JaamSimModel simModel) {
+			double factor = 1.0d;
+			String unitStr = Unit.getSIUnit(unitType);
+			if (simModel != null) {
+				factor = simModel.getDisplayedUnitFactor(unitType);
+				unitStr = simModel.getDisplayedUnit(unitType);
+			}
 			StringBuilder sb = new StringBuilder();
 			sb.append("{");
 			for (int i = 0; i < vector.size(); ++i) {
-				sb.append(vector.get(i+1)*Unit.getDisplayedUnitFactor(unitType));
+				sb.append(vector.get(i+1)/factor);
 				sb.append(" ");
-				sb.append(Unit.getDisplayedUnit(unitType));
+				sb.append(unitStr);
 				if (i < vector.size()) {
 					sb.append(", ");
 				}
@@ -563,16 +576,16 @@ public class ExpCollections {
 			throw new ExpError(null, 0, "Can not assign to built in collection");
 		}
 		@Override
-		public String getOutputString() {
+		public String getOutputString(JaamSimModel simModel) {
 			try {
 				StringBuilder sb = new StringBuilder();
 				sb.append("{");
 				Iterator it = getIter();
 				while(it.hasNext()) {
 					ExpResult index = it.nextKey();
-					sb.append(index.getOutputString());
+					sb.append(index.getOutputString(simModel));
 					sb.append(" = ");
-					sb.append(index(index).getOutputString());
+					sb.append(index(index).getOutputString(simModel));
 					if (it.hasNext()) {
 						sb.append(", ");
 					}
@@ -677,13 +690,13 @@ public class ExpCollections {
 			return list.size();
 		}
 		@Override
-		public String getOutputString() {
+		public String getOutputString(JaamSimModel simModel) {
 			try {
 				StringBuilder sb = new StringBuilder();
 				sb.append("{");
 				for (int i = 0; i < list.size(); ++i) {
 					ExpResult val = index(ExpResult.makeNumResult(i+1, DimensionlessUnit.class));
-					sb.append(val.getOutputString());
+					sb.append(val.getOutputString(simModel));
 					if (i < list.size() -1) {
 						sb.append(", ");
 					}
@@ -781,16 +794,16 @@ public class ExpCollections {
 			return map.size();
 		}
 		@Override
-		public String getOutputString() {
+		public String getOutputString(JaamSimModel simModel) {
 			try {
 				StringBuilder sb = new StringBuilder();
 				sb.append("{");
 				Iterator it = getIter();
 				while(it.hasNext()) {
 					ExpResult index = it.nextKey();
-					sb.append(index.getOutputString());
+					sb.append(index.getOutputString(simModel));
 					sb.append(" = ");
-					sb.append(index(index).getOutputString());
+					sb.append(index(index).getOutputString(simModel));
 					if (it.hasNext()) {
 						sb.append(", ");
 					}

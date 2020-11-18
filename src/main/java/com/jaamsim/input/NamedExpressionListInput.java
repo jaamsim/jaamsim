@@ -17,6 +17,7 @@
 package com.jaamsim.input;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.input.ExpParser.Expression;
@@ -49,6 +50,17 @@ public class NamedExpressionListInput extends ListInput<ArrayList<NamedExpressio
 		ArrayList<KeywordIndex> subArgs = kw.getSubArgs();
 		ArrayList<NamedExpression> temp = new ArrayList<>(subArgs.size());
 
+		// Ensure that no custom output names are repeated
+		HashSet<String> nameSet = new HashSet<>();
+		for (KeywordIndex subArg : subArgs) {
+			if (subArg.numArgs() == 0)
+				continue;
+			String name = subArg.getArg(0);
+			if (nameSet.contains(name))
+				throw new InputErrorException("Duplicate custom output name: %s", name);
+			nameSet.add(name);
+		}
+
 		// Parse the inputs within each inner brace
 		for (int i = 0; i < subArgs.size(); i++) {
 			KeywordIndex subArg = subArgs.get(i);
@@ -56,8 +68,9 @@ public class NamedExpressionListInput extends ListInput<ArrayList<NamedExpressio
 			try {
 				// Parse the expression name
 				String name = subArg.getArg(0);
-				if (OutputHandle.hasOutput(thisEnt.getClass(), name)) {
-					throw new InputErrorException("Expression name is the same as existing output name: %s", name);
+				if (OutputHandle.hasOutput(thisEnt.getClass(), name)
+						|| thisEnt.hasAttribute(name) || thisEnt.hasInputOutput(name)) {
+					throw new InputErrorException("Custom output name is the same as existing output name: %s", name);
 				}
 
 				String expString = subArg.getArg(1);
@@ -67,6 +80,10 @@ public class NamedExpressionListInput extends ListInput<ArrayList<NamedExpressio
 				if (subArg.numArgs() == 3) {
 					unitType = Input.parseUnitType(thisEnt.getJaamSimModel(), subArg.getArg(2));
 				}
+				if (unitType != DimensionlessUnit.class) {
+					ExpParser.assertResultType(exp, ExpResType.NUMBER);
+				}
+				ExpParser.assertUnitType(exp, unitType);
 
 				// Save the data for this expression
 				NamedExpression ne = new NamedExpression(name, exp, unitType);

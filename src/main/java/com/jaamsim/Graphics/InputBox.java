@@ -80,7 +80,7 @@ public class InputBox extends TextBasics {
 		if (!isEditMode() && targetInput != null) {
 			String str = targetInput.getValueString();
 			if (str.isEmpty())
-				str = targetInput.getDefaultString();
+				str = targetInput.getDefaultString(getJaamSimModel());
 			this.setText(str);
 		}
 		return getText();
