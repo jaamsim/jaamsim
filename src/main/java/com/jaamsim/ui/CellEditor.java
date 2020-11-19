@@ -104,6 +104,7 @@ public abstract class CellEditor extends AbstractCellEditor implements TableCell
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				text.setText("");
+				fireEditingStopped();
 			}
 		});
 
@@ -126,6 +127,7 @@ public abstract class CellEditor extends AbstractCellEditor implements TableCell
 				try {
 					String str = (String)clpbrd.getData(DataFlavor.stringFlavor);
 					text.setText(str);
+					fireEditingStopped();
 				}
 				catch (Throwable err) {}
 			}
@@ -139,6 +141,7 @@ public abstract class CellEditor extends AbstractCellEditor implements TableCell
 				Clipboard clpbrd = Toolkit.getDefaultToolkit().getSystemClipboard();
 				clpbrd.setContents(new StringSelection(text.getText()), null);
 				text.setText("");
+				fireEditingStopped();
 			}
 		});
 
