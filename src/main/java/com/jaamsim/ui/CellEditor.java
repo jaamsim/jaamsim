@@ -145,6 +145,24 @@ public abstract class CellEditor extends AbstractCellEditor implements TableCell
 			}
 		});
 
+		// Undo
+		jPanel.getInputMap().put(KeyStroke.getKeyStroke("control Z"), "undo");
+		jPanel.getActionMap().put("undo", new AbstractAction() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				GUIFrame.getInstance().invokeUndo();
+			}
+		});
+
+		// Redo
+		jPanel.getInputMap().put(KeyStroke.getKeyStroke("control Y"), "redo");
+		jPanel.getActionMap().put("redo", new AbstractAction() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				GUIFrame.getInstance().invokeRedo();
+			}
+		});
+
 		// Find
 		jPanel.getInputMap().put(KeyStroke.getKeyStroke("control F"), "find");
 		jPanel.getActionMap().put("find", new AbstractAction() {
