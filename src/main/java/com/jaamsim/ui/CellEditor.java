@@ -108,6 +108,16 @@ public abstract class CellEditor extends AbstractCellEditor implements TableCell
 			}
 		});
 
+		// Backspace
+		jPanel.getInputMap().put(KeyStroke.getKeyStroke("BACK_SPACE"), "backspace");
+		jPanel.getActionMap().put("backspace", new AbstractAction() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				text.setText("");
+				text.requestFocusInWindow();
+			}
+		});
+
 		// Copy
 		jPanel.getInputMap().put(KeyStroke.getKeyStroke("control C"), "copy");
 		jPanel.getActionMap().put("copy", new AbstractAction() {
