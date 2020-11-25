@@ -33,7 +33,7 @@ import javax.swing.JTextArea;
  */
 public class AboutBox extends JDialog {
 
-	public static final String version = "2020-12";
+	public static final String version = "2020-13";
 
 	public AboutBox() {
 		super((JDialog)null, "About", true);
