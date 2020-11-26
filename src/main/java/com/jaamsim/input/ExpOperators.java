@@ -306,8 +306,13 @@ public class ExpOperators {
 	private static String getUnitMismatchString(Class<? extends Unit> u0, Class<? extends Unit> u1) {
 		String s0 = unitToString(u0);
 		String s1 = unitToString(u1);
-
 		return String.format("Unit mismatch: '%s' and '%s' are not compatible", s0, s1);
+	}
+
+	private static String getUnitMismatchString(String str, Class<? extends Unit> u0, Class<? extends Unit> u1) {
+		String s0 = unitToString(u0);
+		String s1 = unitToString(u1);
+		return String.format("Unit mismatch for binary operator '%s': '%s' and '%s' are not compatible", str, s0, s1);
 	}
 
 	private static String getInvalidTrigUnitString(Class<? extends Unit> u0) {
@@ -413,7 +418,7 @@ public class ExpOperators {
 						throw new ExpError(source, pos, "Operator '+' can only add numbers to numbers");
 					}
 					if (lval.unitType != rval.unitType) {
-						throw new ExpError(source, pos, getUnitMismatchString(lval.unitType, rval.unitType));
+						throw new ExpError(source, pos, getUnitMismatchString("+", lval.unitType, rval.unitType));
 					}
 					return;
 				case LAMBDA:
@@ -454,7 +459,7 @@ public class ExpOperators {
 						return ExpValResult.makeErrorRes(new ExpError(source, pos, "Operator '+' can only add numbers to numbers"));
 					}
 					if (lval.unitType != rval.unitType) {
-						return ExpValResult.makeErrorRes(new ExpError(source, pos, getUnitMismatchString(lval.unitType, rval.unitType)));
+						return ExpValResult.makeErrorRes(new ExpError(source, pos, getUnitMismatchString("+", lval.unitType, rval.unitType)));
 					}
 					return ExpValResult.makeValidRes(ExpResType.NUMBER, lval.unitType);
 				case LAMBDA:
@@ -480,7 +485,7 @@ public class ExpOperators {
 				checkBothNumbers(lval, rval, source, pos);
 
 				if (lval.unitType != rval.unitType) {
-					throw new ExpError(source, pos, getUnitMismatchString(lval.unitType, rval.unitType));
+					throw new ExpError(source, pos, getUnitMismatchString("-", lval.unitType, rval.unitType));
 				}
 			}
 			@Override
@@ -499,7 +504,7 @@ public class ExpOperators {
 				}
 
 				if (lval.unitType != rval.unitType) {
-					ExpError error = new ExpError(source, pos, getUnitMismatchString(lval.unitType, rval.unitType));
+					ExpError error = new ExpError(source, pos, getUnitMismatchString("-", lval.unitType, rval.unitType));
 					return ExpValResult.makeErrorRes(error);
 				}
 				return ExpValResult.makeValidRes(ExpResType.NUMBER, lval.unitType);
@@ -515,7 +520,7 @@ public class ExpOperators {
 
 				Class<? extends Unit> newType = context.multUnitTypes(lval.unitType, rval.unitType);
 				if (newType == null) {
-					throw new ExpError(source, pos, getUnitMismatchString(lval.unitType, rval.unitType));
+					throw new ExpError(source, pos, getUnitMismatchString("*", lval.unitType, rval.unitType));
 				}
 			}
 			@Override
@@ -536,7 +541,7 @@ public class ExpOperators {
 
 				Class<? extends Unit> newType = context.multUnitTypes(lval.unitType, rval.unitType);
 				if (newType == null) {
-					ExpError error = new ExpError(source, pos, getUnitMismatchString(lval.unitType, rval.unitType));
+					ExpError error = new ExpError(source, pos, getUnitMismatchString("*", lval.unitType, rval.unitType));
 					return ExpValResult.makeErrorRes(error);
 				}
 				return ExpValResult.makeValidRes(ExpResType.NUMBER, newType);
@@ -552,7 +557,7 @@ public class ExpOperators {
 
 				Class<? extends Unit> newType = context.divUnitTypes(lval.unitType, rval.unitType);
 				if (newType == null) {
-					throw new ExpError(source, pos, getUnitMismatchString(lval.unitType, rval.unitType));
+					throw new ExpError(source, pos, getUnitMismatchString("/", lval.unitType, rval.unitType));
 				}
 			}
 			@Override
@@ -574,7 +579,7 @@ public class ExpOperators {
 
 				Class<? extends Unit> newType = context.divUnitTypes(lval.unitType, rval.unitType);
 				if (newType == null) {
-					ExpError error = new ExpError(source, pos, getUnitMismatchString(lval.unitType, rval.unitType));
+					ExpError error = new ExpError(source, pos, getUnitMismatchString("/", lval.unitType, rval.unitType));
 					return ExpValResult.makeErrorRes(error);
 				}
 				return ExpValResult.makeValidRes(ExpResType.NUMBER, newType);
@@ -591,7 +596,7 @@ public class ExpOperators {
 				if (lval.unitType != DimensionlessUnit.class ||
 				    rval.unitType != DimensionlessUnit.class) {
 
-					throw new ExpError(source, pos, getUnitMismatchString(lval.unitType, rval.unitType));
+					throw new ExpError(source, pos, getUnitMismatchString("^", lval.unitType, rval.unitType));
 				}
 			}
 			@Override
@@ -611,7 +616,7 @@ public class ExpOperators {
 
 				if (	lval.unitType != DimensionlessUnit.class ||
 						rval.unitType != DimensionlessUnit.class) {
-					ExpError error = new ExpError(source, pos, getUnitMismatchString(lval.unitType, rval.unitType));
+					ExpError error = new ExpError(source, pos, getUnitMismatchString("^", lval.unitType, rval.unitType));
 					return ExpValResult.makeErrorRes(error);
 				}
 				return ExpValResult.makeValidRes(ExpResType.NUMBER, DimensionlessUnit.class);
@@ -626,7 +631,7 @@ public class ExpOperators {
 				checkBothNumbers(lval, rval, source, pos);
 
 				if (lval.unitType != rval.unitType) {
-					throw new ExpError(source, pos, getUnitMismatchString(lval.unitType, rval.unitType));
+					throw new ExpError(source, pos, getUnitMismatchString("%", lval.unitType, rval.unitType));
 				}
 			}
 			@Override
@@ -645,7 +650,7 @@ public class ExpOperators {
 				}
 
 				if (lval.unitType != rval.unitType) {
-					ExpError error = new ExpError(source, pos, getUnitMismatchString(lval.unitType, rval.unitType));
+					ExpError error = new ExpError(source, pos, getUnitMismatchString("%", lval.unitType, rval.unitType));
 					return ExpValResult.makeErrorRes(error);
 				}
 				return ExpValResult.makeValidRes(ExpResType.NUMBER, lval.unitType);
@@ -739,7 +744,7 @@ public class ExpOperators {
 					ExpResult rval, String source, int pos) throws ExpError {
 				checkBothNumbers(lval, rval, source, pos);
 				if (lval.unitType != rval.unitType) {
-					throw new ExpError(source, pos, getUnitMismatchString(lval.unitType, rval.unitType));
+					throw new ExpError(source, pos, getUnitMismatchString("<", lval.unitType, rval.unitType));
 				}
 			}
 			@Override
@@ -758,7 +763,7 @@ public class ExpOperators {
 					ExpResult rval, String source, int pos) throws ExpError {
 				checkBothNumbers(lval, rval, source, pos);
 				if (lval.unitType != rval.unitType) {
-					throw new ExpError(source, pos, getUnitMismatchString(lval.unitType, rval.unitType));
+					throw new ExpError(source, pos, getUnitMismatchString("<=", lval.unitType, rval.unitType));
 				}
 			}
 			@Override
@@ -777,7 +782,7 @@ public class ExpOperators {
 					ExpResult rval, String source, int pos) throws ExpError {
 				checkBothNumbers(lval, rval, source, pos);
 				if (lval.unitType != rval.unitType) {
-					throw new ExpError(source, pos, getUnitMismatchString(lval.unitType, rval.unitType));
+					throw new ExpError(source, pos, getUnitMismatchString(">", lval.unitType, rval.unitType));
 				}
 			}
 			@Override
@@ -796,7 +801,7 @@ public class ExpOperators {
 					ExpResult rval, String source, int pos) throws ExpError {
 				checkBothNumbers(lval, rval, source, pos);
 				if (lval.unitType != rval.unitType) {
-					throw new ExpError(source, pos, getUnitMismatchString(lval.unitType, rval.unitType));
+					throw new ExpError(source, pos, getUnitMismatchString(">=", lval.unitType, rval.unitType));
 				}
 			}
 			@Override
