@@ -80,11 +80,14 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JProgressBar;
 import javax.swing.JRadioButtonMenuItem;
+import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
+import javax.swing.JTextPane;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.JWindow;
@@ -93,6 +96,7 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
+import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.MenuEvent;
@@ -5042,7 +5046,9 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		}
 
 		// Error message
-		sb.append(html_replace(message)).append("<br>");
+		if (!message.isEmpty()) {
+			sb.append(html_replace(message)).append("<br>");
+		}
 
 		// Append the source expression with the error shown in red
 		if (source != null && !source.isEmpty()) {
@@ -5078,8 +5084,40 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	public static void showErrorDialog(String title, String source, int position, String pre, String message, String post) {
 		if (sim == null || sim.isBatchRun())
 			GUIFrame.shutdown(1);
-		String msg = GUIFrame.getErrorMessage(source, position, pre, message, post);
-		JOptionPane.showMessageDialog(null, msg, title, JOptionPane.ERROR_MESSAGE);
+		JPanel panel = new JPanel();
+		panel.setLayout( new BorderLayout() );
+
+		// Use the standard font for dialog boxes
+		Font messageFont = UIManager.getDefaults().getFont("OptionPane.messageFont");
+
+		// Message
+		JTextPane msgPane = new JTextPane();
+		msgPane.setOpaque(false);
+		msgPane.setFont(messageFont);
+		msgPane.setText(pre + "\n\n" + message);
+		panel.add(msgPane, BorderLayout.NORTH);
+
+		// Source
+		if (!source.isEmpty() && position != -1) {
+			JTextPane srcPane = new JTextPane();
+			srcPane.setContentType("text/html");
+			String msg = GUIFrame.getErrorMessage(source, position, "", "", "");
+			srcPane.setText(msg);
+			JScrollPane scrollPane = new JScrollPane(srcPane);
+			scrollPane.setPreferredSize( new Dimension( 900, 300 ) );
+			scrollPane.setBorder(new EmptyBorder(10, 0, 10, 0));
+			panel.add(scrollPane, BorderLayout.CENTER);
+		}
+
+		// Additional information
+		JTextPane postPane = new JTextPane();
+		postPane.setOpaque(false);
+		postPane.setFont(messageFont);
+		postPane.setText(post);
+		panel.add(postPane, BorderLayout.SOUTH);
+
+		panel.setMinimumSize( new Dimension( 600, 300 ) );
+		JOptionPane.showMessageDialog(null, panel, title, JOptionPane.ERROR_MESSAGE);
 	}
 
 	public static void showErrorDialog(String title, String pre, String message, String post) {
