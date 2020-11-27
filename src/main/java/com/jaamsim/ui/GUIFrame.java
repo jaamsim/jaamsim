@@ -5044,14 +5044,14 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		// Error message
 		sb.append(html_replace(message)).append("<br>");
 
-		// Append the source expression and an 'arrow' pointing at the error
+		// Append the source expression with the error shown in red
 		if (source != null && !source.isEmpty()) {
-			sb.append("<pre><font color=\"red\">");
-			sb.append(html_replace(source)).append("<br>");
-			for (int i = 0; i < position; ++i) {
-				sb.append(" ");
-			}
-			sb.append("<b>^</b></font></pre>");
+			sb.append("<pre>");
+			sb.append(html_replace(source.substring(0, position)));
+			sb.append("<font color=\"red\">");
+			sb.append(html_replace(source.substring(position)));
+			sb.append("</font>");
+			sb.append("</pre>");
 		}
 
 		// Final text after the message
