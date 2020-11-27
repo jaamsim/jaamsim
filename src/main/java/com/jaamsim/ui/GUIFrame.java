@@ -5099,12 +5099,19 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 		// Source
 		if (!source.isEmpty() && position != -1) {
-			JTextPane srcPane = new JTextPane();
+			JTextPane srcPane = new JTextPane() {
+				@Override
+				public Dimension getPreferredScrollableViewportSize() {
+					Dimension ret = getPreferredSize();
+					ret.width = Math.min(ret.width, 900);
+					ret.height = Math.min(ret.height, 300);
+					return ret;
+				}
+			};
 			srcPane.setContentType("text/html");
 			String msg = GUIFrame.getErrorMessage(source, position, "", "", "");
 			srcPane.setText(msg);
 			JScrollPane scrollPane = new JScrollPane(srcPane);
-			scrollPane.setPreferredSize( new Dimension( 900, 300 ) );
 			scrollPane.setBorder(new EmptyBorder(10, 0, 10, 0));
 			panel.add(scrollPane, BorderLayout.CENTER);
 		}
