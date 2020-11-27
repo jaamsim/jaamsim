@@ -5052,7 +5052,14 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 		// Append the source expression with the error shown in red
 		if (source != null && !source.isEmpty()) {
-			sb.append("<pre>");
+
+			// Use the same font as the Input Builder so that the expression looks the same
+			Font font = UIManager.getDefaults().getFont("TextArea.font");
+			String preStyle = String.format("<pre style=\"font-family: %s; font-size: %spt\">",
+					font.getFamily(), font.getSize());
+
+			// Source expression
+			sb.append(preStyle);
 			sb.append(html_replace(source.substring(0, position)));
 			sb.append("<font color=\"red\">");
 			sb.append(html_replace(source.substring(position)));
