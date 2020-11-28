@@ -400,7 +400,7 @@ public static class EditTable extends JTable {
 				int row = getSelectedRow();
 				if (row == -1)
 					return;
-				if (presentCellEditor == null)
+				if (presentCellEditor == null || retryString != null)
 					editCellAt(row, VALUE_COLUMN);
 
 				// Direct the inputs to the CellEditor
