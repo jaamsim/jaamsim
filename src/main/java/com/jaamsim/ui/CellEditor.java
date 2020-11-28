@@ -275,7 +275,7 @@ public abstract class CellEditor extends AbstractCellEditor implements TableCell
 	}
 
 	public void updateValue() {
-		if (text.hasFocus())
+		if (text.hasFocus() || retryString != null)
 			return;
 		text.setText(input.getValueString());
 	}
@@ -290,7 +290,6 @@ public abstract class CellEditor extends AbstractCellEditor implements TableCell
 		String val = input.getValueString();
 		if (canRetry() && retryString != null) {
 			val = retryString;
-			retryString = null;
 		}
 		text.setText(val);
 
