@@ -26,6 +26,8 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
@@ -73,6 +75,18 @@ public abstract class CellEditor extends AbstractCellEditor implements TableCell
 		// Editable text
 		text = new JTextField();
 		jPanel.add(text, BorderLayout.WEST);
+
+		// If in retry mode, edit the cell value immediately
+		jPanel.addFocusListener(new FocusListener() {
+			@Override
+			public void focusGained(FocusEvent e) {
+				if (retryString == null)
+					return;
+				text.requestFocusInWindow();
+			}
+			@Override
+			public void focusLost(FocusEvent e) {}
+		});
 
 		// If text is entered, over-write the present value
 		jPanel.addKeyListener(new KeyListener() {
