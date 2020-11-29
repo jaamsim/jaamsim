@@ -1,12 +1,13 @@
 <html>
 
+
 <body lang=EN-CA>
 
 <div class=WordSection1>
 
 <div style='border:none;border-bottom:solid #7F7F7F 1.0pt;padding:0in 0in 1.0pt 0in'>
 
-<h2><a name="_Toc47541792"></a><a name="_Ref466479640"></a><a
+<h2><a name="_Toc51268224"></a><a name="_Ref466479640"></a><a
 name="_Toc440897744">Input Editor</a></h2>
 
 </div>
@@ -17,19 +18,37 @@ object is selected, its parameters appear in the Input Editor window, grouped
 under a number of tabs.  If a keyword has a default value assigned, it is shown
 in the Default column.  </p>
 
-<p class=Main style='page-break-after:avoid'>Hovering the cursor over a keyword
-will display a tooltip containing a brief description of the keyword and an
-example input.</p>
+<p class=Main>Hovering the cursor over a keyword will display a tooltip
+containing a brief description of the keyword and an example input.</p>
 
 <p class=Main>The input for a keyword can be modified by clicking on the entry
-in the Value column and entering a new value with the appropriate units. 
-Numbers must be entered without spaces or commas and Boolean keywords must take
-the value TRUE or FALSE (case sensitive).  If an entry is made in the Value
-column, it will overwrite the default.  If an input is not valid, an error
-message will be displayed showing the cause of the error.</p>
+in the Value column and entering a new value with the appropriate units.  If an
+entry is made in the Value column, it will overwrite the default value shown in
+the Default column.  If an input is not valid, an error message will be
+displayed showing the cause of the error.</p>
 
-<p class=Main style='page-break-after:avoid'>Depending on the object, different
-keyword values will have different data types as shown in the following table.</p>
+<p class=Main>The Input Editor uses the same editing conventions as a spreadsheet
+such as Excel.  A cell in the Value column can be either selected or edited:</p>
+
+<p class=Main style='margin-left:.5in;text-indent:-.25in'><span
+style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span>If the cell is selected, a new value can be entered that replaces
+the previous value or it can be deleted by pressing the delete or backspace key. 
+Its value can be copied to the system clipboard by pressing Ctrl+C.  A value
+saved on the system clipboard can be pasted to the cell by pressing Ctrl+V. 
+Model changes can be undone and redone by pressing Ctrl+Z and Ctrl+Y,
+respectively.  If the input value is an object name, it can be found by
+pressing Ctrl+F or its 'Help' information can be obtained by pressing F1.</p>
+
+<p class=Main style='margin-left:.5in;text-indent:-.25in'><span
+style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span>The value in the selected cell can be edited by clicking or
+double-clicking on the cell or by pressing F2.  The edited value is accepted by
+pressing the 'Return' key, selecting another input, or by clicking elsewhere in
+the model.  Editing can be aborted by pressing the 'Escape' key.</p>
+
+<p class=Main>Depending on the object, different keyword values will have
+different data types as shown in the following table.</p>
 
 <p class=MsoCaption><a name="_Ref433808164">Input Data Types</a></p>
 
@@ -65,8 +84,8 @@ keyword values will have different data types as shown in the following table.</
   <td width=216 valign=top style='width:161.8pt;border-top:none;border-left:
   none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
   padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph>5</p>
-  <p class=TableText-Paragraph>5.0</p>
+  <p class=codeintable>5</p>
+  <p class=codeintable>5.0</p>
   </td>
  </tr>
  <tr style='page-break-inside:avoid'>
@@ -83,10 +102,10 @@ keyword values will have different data types as shown in the following table.</
   <td width=216 valign=top style='width:161.8pt;border-top:none;border-left:
   none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
   padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph>1000 mm</p>
-  <p class=TableText-Paragraph>1.0 m</p>
-  <p class=TableText-Paragraph>0.001 km</p>
-  <p class=TableText-Paragraph>0.001 [km]</p>
+  <p class=codeintable>1000 mm</p>
+  <p class=codeintable>1.0 m</p>
+  <p class=codeintable>0.001 km</p>
+  <p class=codeintable>0.001 [km]</p>
   </td>
  </tr>
  <tr style='page-break-inside:avoid'>
@@ -98,8 +117,8 @@ keyword values will have different data types as shown in the following table.</
   none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
   padding:0in 5.4pt 0in 5.4pt'>
   <p class=TableText-Paragraph>Times can be entered normally as a number and time
-  unit or it can be entered in date/time format.  The following formats are
-  supported: </p>
+  unit or it can be entered in date/time format.  The following formats are supported:
+  </p>
   <p class=codeintable>hh:mm</p>
   <p class=codeintable>hh:mm.ss</p>
   <p class=codeintable>hh:mm:ss.sss,</p>
@@ -115,10 +134,10 @@ keyword values will have different data types as shown in the following table.</
   <td width=216 valign=top style='width:161.8pt;border-top:none;border-left:
   none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
   padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph>30.4 h</p>
-  <p class=TableText-Paragraph>30:24:00.0</p>
-  <p class=TableText-Paragraph>'0000-01-02 06:24:00.0'</p>
-  <p class=TableText-Paragraph>0000-01-02T06:24:00.0</p>
+  <p class=codeintable>30.4 h</p>
+  <p class=codeintable>30:24:00.0</p>
+  <p class=codeintable>'0000-01-02 06:24:00.0'</p>
+  <p class=codeintable>0000-01-02T06:24:00.0</p>
   </td>
  </tr>
  <tr style='page-break-inside:avoid'>
@@ -137,9 +156,9 @@ keyword values will have different data types as shown in the following table.</
   <td width=216 valign=top style='width:161.8pt;border-top:none;border-left:
   none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
   padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph>2.0  1.0  0.0  m</p>
-  <p class=TableText-Paragraph>2.0  1.0  m</p>
-  <p class=TableText-Paragraph>2.0  1.0  0.0  [m]</p>
+  <p class=codeintable>2.0  1.0  0.0  m</p>
+  <p class=codeintable>2.0  1.0  m</p>
+  <p class=codeintable>2.0  1.0  0.0  [m]</p>
   </td>
  </tr>
  <tr style='page-break-inside:avoid'>
@@ -156,8 +175,8 @@ keyword values will have different data types as shown in the following table.</
   <td width=216 valign=top style='width:161.8pt;border-top:none;border-left:
   none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
   padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph>'1 + 2*[Queue1].QueueLength'</p>
-  <p class=TableText-Paragraph>'2[s] + [Queue1].QueueTimes(1)'</p>
+  <p class=codeintable>'1 + 2*[Queue1].QueueLength'</p>
+  <p class=codeintable>'2[s] + [Queue1].QueueTimes(1)'</p>
   </td>
  </tr>
  <tr style='page-break-inside:avoid'>
@@ -168,13 +187,15 @@ keyword values will have different data types as shown in the following table.</
   <td width=304 valign=top style='width:228.0pt;border-top:none;border-left:
   none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
   padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph>A value of either TRUE or FALSE (case-sensitive).</p>
+  <p class=TableText-Paragraph>A value of either TRUE or FALSE
+  (case-sensitive).  When entered through the Input Editor, these inputs can
+  also accept t, T, or 1 for TRUE and f, F, 0 for FALSE.</p>
   </td>
   <td width=216 valign=top style='width:161.8pt;border-top:none;border-left:
   none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
   padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph>TRUE</p>
-  <p class=TableText-Paragraph>FALSE</p>
+  <p class=codeintable>TRUE</p>
+  <p class=codeintable>FALSE</p>
   </td>
  </tr>
  <tr style='page-break-inside:avoid'>
@@ -193,9 +214,9 @@ keyword values will have different data types as shown in the following table.</
   <td width=216 valign=top style='width:161.8pt;border-top:none;border-left:
   none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
   padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph>pink</p>
-  <p class=TableText-Paragraph>255 192 203</p>
-  <p class=TableText-Paragraph>255 192 203 125</p>
+  <p class=codeintable>pink</p>
+  <p class=codeintable>255 192 203</p>
+  <p class=codeintable>255 192 203 125</p>
   </td>
  </tr>
  <tr style='page-break-inside:avoid'>
@@ -212,8 +233,8 @@ keyword values will have different data types as shown in the following table.</
   <td width=216 valign=top style='width:161.8pt;border-top:none;border-left:
   none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
   padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph>'Quick red fox'</p>
-  <p class=TableText-Paragraph>Quick_red_fox</p>
+  <p class=codeintable>'Quick red fox'</p>
+  <p class=codeintable>Quick_red_fox</p>
   </td>
  </tr>
  <tr style='page-break-inside:avoid'>
@@ -229,8 +250,8 @@ keyword values will have different data types as shown in the following table.</
   <td width=216 valign=top style='width:161.8pt;border-top:none;border-left:
   none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
   padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph>Server1</p>
-  <p class=TableText-Paragraph>Queue1</p>
+  <p class=codeintable>Server1</p>
+  <p class=codeintable>Queue1</p>
   </td>
  </tr>
 </table>
@@ -239,13 +260,10 @@ keyword values will have different data types as shown in the following table.</
 distinct entries in a list.  For example, a list of two points would be entered
 as <span class=codeChar><span style='font-size:9.0pt'>{&nbsp;0.0&nbsp;1.0&nbsp;0.0&nbsp;m&nbsp;}&nbsp;{&nbsp;1.0&nbsp;1.0&nbsp;0.0&nbsp;m&nbsp;}</span></span>. 
 When an input has only one set of inner braces, it can be entered without the
-inner braces.  For instance, &nbsp;<span class=codeChar><span style='font-size:
-9.0pt'>{&nbsp;1&nbsp;2&nbsp;3&nbsp;}</span></span> can be entered as <span
-class=codeChar><span style='font-size:9.0pt'>1&nbsp;2&nbsp;3</span></span>.</p>
+inner braces.  For instance, <span class=codeChar><span style='font-size:9.0pt'>{&nbsp;1&nbsp;2&nbsp;3&nbsp;}</span></span>
+can be entered as <span class=codeChar><span style='font-size:9.0pt'>1&nbsp;2&nbsp;3</span></span>.</p>
 
 <p class=Main>A drop-down menu is available for most types of inputs.</p>
-
-<p class=MsoNormal>&nbsp;</p>
 
 </div>
 
