@@ -6,29 +6,39 @@
 
 <div style='border:none;border-bottom:solid #7F7F7F 1.0pt;padding:0in 0in 1.0pt 0in'>
 
-<h2>Input Builder</h2>
+<h2><a name="_Toc51268226">Input Builder</a></h2>
 
 </div>
 
-<p class=Main style='page-break-after:avoid'>The Input Builder is a tool for
-constructing inputs that involve expressions.  It is opened through the Input
-Editor by clicking on the 'Input Builder' entry in the dropdown menu for a keyword.</p>
+<p class=Main>The Input Builder is a tool for constructing inputs that involve
+expressions.  It is opened through the Input Editor by clicking on the 'Input
+Builder' entry in the dropdown menu for a keyword.</p>
+
+<p class=Main>The following figure shows the Input Builder being used to
+construct the input to the <span class=KeywordChar>RunOutputList</span> keyword
+for the Simulation object.</p>
 
 <p class=Main>The Input Builder has an auto-complete feature that provides a
 menu of valid names for both objects and outputs.  The feature is activated by
 entering a left square bracket (indicating the start of an object name) or a
 period (indicating the start of an output name).  The menu becomes shorter as
-the user enters any portion of the object's or output's name.  Hovering the
-cursor over a menu item generates a pop-up description of the object or output. 
-For an object, the description pop-up is generated from the input to its <span
+the user enters any portion of the object's or output's name.  The highlighted
+menu entry can be changed using the up and down arrow keys.  It can be selected
+by pressing the 'Return' key or the 'Spacebar'.  Hovering the cursor over a
+menu item generates a pop-up description of the object or output.  For an
+object, the description pop-up is generated from the input to its <span
 class=KeywordChar>Description</span> keyword.</p>
+
+<p class=Main>Long expressions can be entered over multiple lines to improve
+readability.  Line feeds within an expression are retained as part of the
+input.</p>
 
 <p class=Main>The input for a keyword that uses inner curly braces such as <span
 class=KeywordChar>AttributeDefinitionList</span> or <span class=KeywordChar>RunOutputList</span>
-can be spread over several lines in the Input Builder.  Line feeds are deleted
-automatically when the input is accepted.  When an existing input is edited,
-the input for each pair of curly braces is placed automatically on a separate
-line.</p>
+can also be spread over several lines in the Input Builder.  In this case, the
+line feeds between the pairs of braces are deleted automatically when the input
+is accepted.  When an existing input is edited, the input for each pair of
+curly braces is placed automatically on a separate line.</p>
 
 <p class=Main>The field at the bottom of the Input Builder shows whether or not
 the present input is valid.  The present value for the input is shown if the
@@ -39,8 +49,6 @@ input can be accepted.</p>
 types that are used by the expression system's syntax.  The buttons provide
 both a convenient way to enter the correct symbols as well as pop-up
 descriptions that define the syntax and provide examples.</p>
-
-<p class=MsoNormal>&nbsp;</p>
 
 </div>
 
