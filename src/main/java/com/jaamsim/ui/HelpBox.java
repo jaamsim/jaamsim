@@ -281,9 +281,39 @@ public class HelpBox extends JDialog {
 		showDialog("");
 	}
 
-	public void showDialog(String topic) {
-		if (topic.isEmpty() && presentTopic == null)
-			topic = DEFAULT_TOPIC;
+	/**
+	 * Launches the Help tool for the specified string that determines the topic to be displayed.
+	 * If the string is an exact match to a topic then that topic is displayed.
+	 * Otherwise, the displayed topic is the first one in the list of topics that contains the string.
+	 * If the string is blank, the previous topic is retained.
+	 * If there is no previous topic, the default topic is displayed.
+	 * @param str - determines the topic to be displayed
+	 */
+	public void showDialog(String str) {
+		String topic = "";  // displays the present topic
+
+		// Present topic or default topic
+		if (str.isEmpty()) {
+			if (presentTopic == null)
+				topic = DEFAULT_TOPIC;
+		}
+
+		// Exact match to a topic
+		else if (topicList.contains(str)) {
+			topic = str;
+		}
+
+		// First topic that contains the string
+		else {
+			for (String tpc : topicList) {
+				if (tpc.toUpperCase().contains(str.toUpperCase())) {
+					topic = tpc;
+					break;
+				}
+			}
+		}
+
+		// Display the selected topic
 		showTopic(topic);
 		topicSearch.setText("");
 		this.setVisible(true);
