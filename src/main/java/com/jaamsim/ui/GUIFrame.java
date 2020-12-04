@@ -1774,7 +1774,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 					}
 					menu.show(prevButton, 0, prevButton.getHeight());
 				}
-				controlStartResume.requestFocusInWindow();
 			}
 		});
 		buttonBar.add( prevButton );
@@ -1816,7 +1815,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 					}
 					menu.show(nextButton, 0, nextButton.getHeight());
 				}
-				controlStartResume.requestFocusInWindow();
 			}
 		});
 		buttonBar.add( nextButton );
