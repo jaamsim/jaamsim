@@ -1945,11 +1945,11 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 						dispModel.setText(str);
 						KeywordIndex kw = InputAgent.formatArgs("DisplayModel", str);
 						InputAgent.storeAndExecute(new KeywordCommand(dispEnt, kw));
+						controlStartResume.requestFocusInWindow();
 					}
 
 				};
 				menu.show(dispModel, 0, dispModel.getPreferredSize().height);
-				controlStartResume.requestFocusInWindow();
 			}
 		});
 
@@ -2154,11 +2154,11 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 						String name = Parser.addQuotesIfNeeded(str);
 						KeywordIndex kw = InputAgent.formatInput("FontName", name);
 						InputAgent.storeAndExecute(new KeywordCommand(selectedEntity, kw));
+						controlStartResume.requestFocusInWindow();
 					}
 
 				};
 				fontMenu.show(font, 0, font.getPreferredSize().height);
-				controlStartResume.requestFocusInWindow();
 			}
 		});
 
