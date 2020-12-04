@@ -147,11 +147,14 @@ public class ScrollablePopupMenu extends JPopupMenu {
 		int val = scrollBar.getValue();
 
 		// Is the rectangle visible with the present scroll bar position
-		if (val <= valTop && valBottom <= val + scrollBar.getVisibleAmount())
+		if (val <= valTop && valBottom <= val + scrollBar.getVisibleAmount() - 2*i.bottom)
 			return;
 
-		// Show the rectangle at the top of the view area
-		scrollBar.setValue(valTop);
+		// Show the rectangle at the top or bottom of the view area
+		if (val > valTop)
+			scrollBar.setValue(valTop);
+		else
+			scrollBar.setValue(valBottom - scrollBar.getVisibleAmount() + 2*i.bottom);
 	}
 
 	public int getSelection() {
