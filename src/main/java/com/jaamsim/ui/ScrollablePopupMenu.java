@@ -24,11 +24,16 @@ import java.awt.LayoutManager;
 import java.awt.Rectangle;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 
+import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollBar;
+import javax.swing.SwingUtilities;
+import javax.swing.event.MenuKeyEvent;
+import javax.swing.event.MenuKeyListener;
 
 public class ScrollablePopupMenu extends JPopupMenu {
 
@@ -68,6 +73,27 @@ public class ScrollablePopupMenu extends JPopupMenu {
 				scrollBar.setValue(scrollBar.getValue() + amount);
 				event.consume();
 			}
+		});
+
+		// Respond to the up and down arrow keys
+		addMenuKeyListener(new MenuKeyListener() {
+			@Override
+			public void menuKeyTyped(MenuKeyEvent e) {}
+			@Override
+			public void menuKeyPressed(MenuKeyEvent e) {
+				int keyCode = e.getKeyCode();
+				if (keyCode == KeyEvent.VK_UP || keyCode == KeyEvent.VK_DOWN) {
+					SwingUtilities.invokeLater(new Runnable() {
+						@Override
+						public void run() {
+							int index = getSelection();
+							ensureIndexIsVisible(index);
+						}
+					});
+				}
+			}
+			@Override
+			public void menuKeyReleased(MenuKeyEvent e) {}
 		});
 	}
 
@@ -126,6 +152,19 @@ public class ScrollablePopupMenu extends JPopupMenu {
 
 		// Show the rectangle at the top of the view area
 		scrollBar.setValue(valTop);
+	}
+
+	public int getSelection() {
+		for (int i = 1; i < getComponentCount(); i++) {
+			Component comp = getComponent(i);
+			if (!(comp instanceof JMenuItem))
+				continue;
+			JMenuItem item = (JMenuItem) comp;
+			if (item.isArmed() || item.isSelected()) {
+				return i - 1;
+			}
+		}
+		return -1;
 	}
 
 	protected static class ScrollableMenuLayout implements LayoutManager{
