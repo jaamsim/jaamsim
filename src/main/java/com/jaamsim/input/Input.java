@@ -1245,7 +1245,7 @@ public abstract class Input<T> {
 					if (Input.isRFC8601DateTime(kw.getArg(i))) {
 						double element = Input.parseRFC8601DateTime(simModel, kw.getArg(i));
 						if (element < minValue || element > maxValue)
-							throw new InputErrorException(INP_ERR_DOUBLERANGE, minValue, maxValue, temp);
+							throw new InputErrorException(INP_ERR_DOUBLERANGE, minValue, maxValue, element);
 						temp.add(element);
 					}
 					// Normal format
