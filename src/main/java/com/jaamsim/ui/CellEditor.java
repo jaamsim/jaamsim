@@ -88,6 +88,16 @@ public abstract class CellEditor extends AbstractCellEditor implements TableCell
 			public void focusLost(FocusEvent e) {}
 		});
 
+		// Accept an input change if the focus is lost
+		text.addFocusListener(new FocusListener() {
+			@Override
+			public void focusGained(FocusEvent e) {}
+			@Override
+			public void focusLost(FocusEvent e) {
+				fireEditingStopped();
+			}
+		});
+
 		// If text is entered, over-write the present value
 		jPanel.addKeyListener(new KeyListener() {
 			@Override
