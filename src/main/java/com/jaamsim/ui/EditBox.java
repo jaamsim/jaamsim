@@ -29,9 +29,6 @@ import java.util.Comparator;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
-import javax.swing.SwingUtilities;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
@@ -63,7 +60,6 @@ public class EditBox extends FrameBox {
 	private final JTabbedPane jTabbedFrame;
 
 	private final ArrayList<EditTable> editTableList;
-	private int prevTab;
 
 	private final TableCellRenderer columnRender = new EditBoxColumnRenderer();
 
@@ -79,26 +75,6 @@ public class EditBox extends FrameBox {
 
 		// Provide tabs for the editor
 		jTabbedFrame = new JTabbedPane();
-		jTabbedFrame.addChangeListener(new ChangeListener()  {
-
-			@Override
-			public void stateChanged(ChangeEvent e) {
-				if (prevTab != -1 && editTableList.size() > prevTab) {
-					final CellEditor editor = editTableList.get(prevTab).getPresentCellEditor();
-					if (editor != null) {
-						// Wait for a change in selected entity to take effect
-						SwingUtilities.invokeLater(new Runnable() {
-							@Override
-							public void run() {
-								editor.stopCellEditing();
-							}
-						});
-					}
-				}
-				prevTab = jTabbedFrame.getSelectedIndex();
-				GUIFrame.updateUI();
-			}
-		});
 		getContentPane().add(jTabbedFrame);
 
 		// Save changes to the editor's size and position
@@ -154,12 +130,6 @@ public class EditBox extends FrameBox {
 				initialTab = curTab;
 
 			curTab++;
-		}
-
-		prevTab = -1;
-		if (jTabbedFrame.getTabCount() > 0) {
-			jTabbedFrame.setSelectedIndex(initialTab);
-			prevTab = initialTab;
 		}
 
 		// Set the keyword
@@ -250,7 +220,6 @@ public class EditBox extends FrameBox {
 
 	public void setTab(int tab) {
 		jTabbedFrame.setSelectedIndex(tab);
-		prevTab = tab;
 	}
 
 	public static String formatEditorText(String str) {
