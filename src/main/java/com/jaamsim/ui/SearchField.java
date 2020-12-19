@@ -43,7 +43,6 @@ public abstract class SearchField extends JPanel {
 	private JTextField topicSearch;
 	private ScrollablePopupMenu topicMenu;
 	private final ArrayList<String> prevTopics = new ArrayList<>();  // previous topics viewed
-	private Dimension itemSize;
 
 	public SearchField(int columns) {
 		setLayout( new FlowLayout(FlowLayout.CENTER, 0, 0) );
@@ -62,9 +61,6 @@ public abstract class SearchField extends JPanel {
 		dropdown.setToolTipText("Previous Searches");
 		add(dropdown);
 
-		itemSize = topicSearch.getPreferredSize();
-		itemSize.width += dropdown.getPreferredSize().width;
-
 		// Dropdown button pressed
 		dropdown.addActionListener(new ActionListener() {
 			@Override
@@ -72,7 +68,7 @@ public abstract class SearchField extends JPanel {
 				topicMenu = new ScrollablePopupMenu();
 				for (final String topic : prevTopics) {
 					JMenuItem item = new JMenuItem(topic);
-					item.setPreferredSize(itemSize);
+					item.setPreferredSize(topicSearch.getPreferredSize());
 					item.addActionListener( new ActionListener() {
 
 						@Override
@@ -175,7 +171,7 @@ public abstract class SearchField extends JPanel {
 		boolean first = true;
 		for (final String topic : getTopicList(str)) {
 			JMenuItem item = new JMenuItem(topic);
-			item.setPreferredSize(itemSize);
+			item.setPreferredSize(topicSearch.getPreferredSize());
 			item.addActionListener( new ActionListener() {
 				@Override
 				public void actionPerformed( ActionEvent event ) {
