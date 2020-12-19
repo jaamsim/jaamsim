@@ -20,8 +20,6 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -47,9 +45,9 @@ public class FindBox extends JDialog {
 
 	public FindBox() {
 		super((JDialog)null, DIALOG_NAME, false);
-
 		getContentPane().setLayout( new BorderLayout() );
 		setIconImages(GUIFrame.getWindowIcons());
+		setDefaultCloseOperation(HIDE_ON_CLOSE);
 
 		// Search text
 		searchText = new SearchField(30) {
@@ -95,14 +93,6 @@ public class FindBox extends JDialog {
 		closeButton.addActionListener( new ActionListener() {
 			@Override
 			public void actionPerformed( ActionEvent e ) {
-				setVisible(false);
-			}
-		} );
-
-		// Window closed
-		this.addWindowListener( new WindowAdapter() {
-			@Override
-			public void windowClosing( WindowEvent e ) {
 				setVisible(false);
 			}
 		} );
