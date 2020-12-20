@@ -176,6 +176,7 @@ public class DisplayEntityFactory extends Entity {
 			}
 
 			// Set the entity name
+			i = fileName.indexOf('.');  // first period in the file name
 			String entityName = fileName.substring(0, i);
 			entityName = entityName.replaceAll(" ", "_"); // Space is not allowed for Entity Name
 			entityName = InputAgent.getUniqueName(simModel, entityName, "");
@@ -238,6 +239,7 @@ public class DisplayEntityFactory extends Entity {
 			}
 
 			// Set the entity name
+			i = fileName.indexOf('.');  // first period in the file name
 			String entityName = fileName.substring(0, i);
 			entityName = entityName.replaceAll(" ", "_"); // Space is not allowed for Entity Name
 			entityName = InputAgent.getUniqueName(simModel, entityName, "");
