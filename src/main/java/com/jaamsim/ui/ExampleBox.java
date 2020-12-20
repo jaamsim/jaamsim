@@ -21,11 +21,14 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import javax.imageio.ImageIO;
 import javax.swing.Box;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -45,6 +48,9 @@ public class ExampleBox extends JDialog {
 	private final ArrayList<String> exampleList = new ArrayList<>();
 	private JList<String> list;
 	private final SearchField exampleSearch;
+
+	private final JLabel previewLabel;
+	private final ImageIcon previewIcon = new ImageIcon();
 
 	private static ExampleBox myInstance;
 
@@ -116,6 +122,11 @@ public class ExampleBox extends JDialog {
 		listScroller.setBorder(new EmptyBorder(5, 5, 5, 0));
 		listScroller.setPreferredSize(new Dimension(250, 200));
 		getContentPane().add(listScroller, BorderLayout.WEST);
+
+		// Example preview
+		previewLabel = new JLabel("", JLabel.CENTER);
+		previewLabel.setBorder(new EmptyBorder(5, 5, 5, 5));
+		getContentPane().add(previewLabel, BorderLayout.CENTER);
 
 		// Open button
 		JButton openButton = new JButton("Open");
@@ -213,6 +224,19 @@ public class ExampleBox extends JDialog {
 			int ind = exampleList.indexOf(topic);
 			list.setSelectedIndex(ind);
 			list.ensureIndexIsVisible(ind);
+
+			// Clear the old preview image
+			previewLabel.setIcon(null);
+
+			// Get the preview image
+			url = GUIFrame.class.getResource("/resources/examples/" + topic + ".png");
+			if (url == null)
+				return;
+			BufferedImage image = ImageIO.read(url);
+
+			// Display the image
+			previewIcon.setImage(image);
+			previewLabel.setIcon(previewIcon);
 		}
 		catch (Throwable t) {}
 	}
