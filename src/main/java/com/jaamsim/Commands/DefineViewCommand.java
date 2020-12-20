@@ -49,7 +49,7 @@ public class DefineViewCommand implements Command {
 
 		// Create the new view
 		view = InputAgent.defineEntityWithUniqueName(simModel, View.class, viewName, "", true);
-		view.getJaamSimModel().setSessionEdited(true);
+		simModel.setSessionEdited(true);
 
 		// Position the window on the screen
 		if (windowPos != null) {
@@ -75,7 +75,7 @@ public class DefineViewCommand implements Command {
 	@Override
 	public void undo() {
 		view.kill();
-		view.getJaamSimModel().setSessionEdited(true);
+		simModel.setSessionEdited(true);
 	}
 
 	@Override

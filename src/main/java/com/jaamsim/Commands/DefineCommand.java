@@ -41,7 +41,7 @@ public class DefineCommand implements Command {
 		// If the entity has been killed by the undo method, then simply restore it to life
 		if (entity != null) {
 			entity.restore(entityName);
-			entity.getJaamSimModel().setSessionEdited(true);
+			simModel.setSessionEdited(true);
 			return;
 		}
 
@@ -50,13 +50,13 @@ public class DefineCommand implements Command {
 			throw new ErrorException("Name is already in use. Should never happen.");
 		}
 		entity = InputAgent.defineEntityWithUniqueName(simModel, klass, entityName, "", true);
-		entity.getJaamSimModel().setSessionEdited(true);
+		simModel.setSessionEdited(true);
 	}
 
 	@Override
 	public void undo() {
 		entity.kill();
-		entity.getJaamSimModel().setSessionEdited(true);
+		simModel.setSessionEdited(true);
 	}
 
 	@Override
