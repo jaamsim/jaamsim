@@ -142,8 +142,25 @@ public class InputAgent {
 
 	}
 
-	public static final boolean readStream(JaamSimModel simModel, String root, URI path, String file) throws URISyntaxException {
-		URI resolved = getFileURI(path, file, root);
+	/**
+	 * Reads model inputs from the specified source.
+	 * <p>
+	 * The specified file path string can be absolute or relative to a reference folder.
+	 * It can also contain the keyword '&LTres&GT' for the case of a resource file.
+	 * In the case of a relative file path, a 'context' folder must be specified.
+	 * A 'context' of null indicates an absolute file path.
+	 * A 'jailPrefix' of null indicates no restriction.
+	 * <p>
+	 * @param simModel - simulation model to be populated
+	 * @param jailPrefix - file path to a base folder from which a relative path cannot escape
+	 * @param context - URI for the folder that is the reference for relative file paths
+	 * @param filePath - file path string for the model inputs
+	 * @return true if the inputs were read
+	 * @throws URISyntaxException
+	 */
+	public static final boolean readStream(JaamSimModel simModel, String jailPrefix, URI context,
+			String filePath) throws URISyntaxException {
+		URI resolved = getFileURI(context, filePath, jailPrefix);
 
 		URL url = null;
 		try {
@@ -155,7 +172,7 @@ public class InputAgent {
 
 		if (url == null) {
 			InputAgent.logError(simModel,
-					"Unable to resolve path %s%s - %s", root, path.toString(), file);
+					"Unable to resolve path %s%s - %s", jailPrefix, context.toString(), filePath);
 			return false;
 		}
 
@@ -169,7 +186,7 @@ public class InputAgent {
 			return false;
 		}
 
-		InputAgent.readBufferedStream(simModel, buf, resolved, root);
+		InputAgent.readBufferedStream(simModel, buf, resolved, jailPrefix);
 		return true;
 	}
 
