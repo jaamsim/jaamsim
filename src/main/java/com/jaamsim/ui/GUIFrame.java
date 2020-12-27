@@ -409,7 +409,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		return sim;
 	}
 
-	private static void setJaamSimModel(JaamSimModel sm) {
+	public static void setJaamSimModel(JaamSimModel sm) {
 		if (sm == sim)
 			return;
 		if (!simList.contains(sm))

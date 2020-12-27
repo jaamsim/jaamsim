@@ -40,7 +40,9 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.input.Input;
+import com.jaamsim.input.InputAgent;
 
 public class ExampleBox extends JDialog {
 
@@ -133,6 +135,20 @@ public class ExampleBox extends JDialog {
 		openButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+
+				// Create the new simulation model
+				JaamSimModel simModel = new JaamSimModel(presentExample + ".cfg");
+
+				// Load the specified model file
+				simModel.autoLoad();
+				GUIFrame.getInstance().setWindowDefaults(simModel.getSimulation());
+				InputAgent.readResource(simModel, "<res>/examples/" + presentExample + ".cfg");
+				simModel.postLoad();
+
+				// Display the new model
+				GUIFrame.setJaamSimModel(simModel);
+				GUIFrame.getInstance().clear();
+				FrameBox.setSelectedEntity(simModel.getSimulation(), false);
 			}
 		});
 
