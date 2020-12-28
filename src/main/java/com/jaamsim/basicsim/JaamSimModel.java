@@ -1210,6 +1210,9 @@ public class JaamSimModel {
 		if (configFile != null)
 			return configFile.getParentFile().getPath() + File.separator;
 
+		if (gui != null && gui.getDefaultFolder() != null)
+			return gui.getDefaultFolder() + File.separator;
+
 		return null;
 	}
 

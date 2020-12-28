@@ -37,5 +37,6 @@ public interface GUIListener {
 	public void closeWindow(View v);
 	public int getNextViewID();
 	public Vec3d getPOI(View v);
+	public String getDefaultFolder();
 
 }

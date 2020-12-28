@@ -4913,6 +4913,11 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		});
 	}
 
+	@Override
+	public String getDefaultFolder() {
+		return GUIFrame.getConfigFolder();
+	}
+
 	public static String getConfigFolder() {
 		Preferences prefs = Preferences.userRoot().node(instance.getClass().getName());
 		return prefs.get(LAST_USED_FOLDER, new File(".").getAbsolutePath());
