@@ -48,8 +48,11 @@ public class FileEditor extends CellEditor {
 			@SuppressWarnings("unchecked")
 			URI uri = ((Input<URI>) getCellEditorValue()).getValue();
 			if (uri != null) {
-				File lastFile = new File(uri);
-				fileChooser.setSelectedFile(lastFile);
+				try {
+					File lastFile = new File(uri);
+					fileChooser.setSelectedFile(lastFile);
+				}
+				catch (Exception ex) {}
 			}
 
 			// Set the file extension filters
