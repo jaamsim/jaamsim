@@ -134,6 +134,9 @@ public class PreviewCache {
 				meshSize.scale3(1/maxDim);
 				dummyEntity.setSize(meshSize);
 			}
+			else {
+				dummyEntity.setSize(new Vec3d(1.0d, 1.0d, 1.0d));
+			}
 
 			dm.getBinding(dummyEntity).collectProxies(0, proxies);
 
