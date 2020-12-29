@@ -143,13 +143,13 @@ public class PreviewCache {
 			}
 
 			// If this model is 3D, switch to an isometric view
-			Vec3d cameraPos = new Vec3d(0.0d, 0.0d, 1.2d);
+			Vec3d cameraPos = new Vec3d(0.0d, 0.0d, 12.0d);
 			if (!isFlat)
-				cameraPos = new Vec3d(1.2d, 1.2d, 1.2d);
+				cameraPos = new Vec3d(12.0d, 12.0d, 12.0d);
 
 			PolarInfo pi = new PolarInfo(new Vec3d(), cameraPos);
 			Transform camTrans = new Transform(cameraPos, pi.getRotation(), 1);
-			CameraInfo camInfo = new CameraInfo(Math.PI/3, camTrans, null);
+			CameraInfo camInfo = new CameraInfo(Math.PI/30, camTrans, null); // one-tenth the normal FOV
 
 			Future<BufferedImage> fi = RenderManager.inst().renderOffscreen(proxies, camInfo, View.OMNI_VIEW_ID, 180, 180, notifier);
 
