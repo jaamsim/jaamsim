@@ -32,7 +32,7 @@ public class PolarInfo {
 	 * @param center - position along the camera's line of sight
 	 * @param pos - position of the view camera
 	 */
-	PolarInfo(Vec3d center, Vec3d pos) {
+	public PolarInfo(Vec3d center, Vec3d pos) {
 		viewCenter = new Vec3d(center);
 
 		Vec3d viewDiff = new Vec3d();

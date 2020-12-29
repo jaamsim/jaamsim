@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2012 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2020 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,15 +30,13 @@ import javax.imageio.ImageIO;
 import com.jaamsim.DisplayModels.ColladaModel;
 import com.jaamsim.DisplayModels.DisplayModel;
 import com.jaamsim.DisplayModels.ImageModel;
-import com.jaamsim.DisplayModels.ShapeModel;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.View;
 import com.jaamsim.basicsim.JaamSimModel;
+import com.jaamsim.controllers.PolarInfo;
 import com.jaamsim.controllers.RenderManager;
-import com.jaamsim.math.Quaternion;
 import com.jaamsim.math.Transform;
 import com.jaamsim.math.Vec3d;
-import com.jaamsim.math.Vec4d;
 import com.jaamsim.ui.GUIFrame;
 
 public class PreviewCache {
@@ -139,35 +138,17 @@ public class PreviewCache {
 			dm.getBinding(dummyEntity).collectProxies(0, proxies);
 
 			boolean isFlat = true;
-			if (dm instanceof ShapeModel) {
-				isFlat = true;
-			}
 			if (dm instanceof ColladaModel) {
 				isFlat = false;
 			}
 
+			// If this model is 3D, switch to an isometric view
+			Vec3d cameraPos = new Vec3d(0.0d, 0.0d, 1.2d);
+			if (!isFlat)
+				cameraPos = new Vec3d(1.2d, 1.2d, 1.2d);
 
-			Transform camTrans;
-			if (!isFlat) {
-				// If this model is 3D, switch to an isometric view
-				Quaternion cameraRot = new Quaternion();
-				Quaternion tmp = new Quaternion();
-
-				tmp.setRotXAxis(Math.PI / 2);
-				cameraRot.mult(tmp, cameraRot);
-
-				tmp.setRotZAxis(3*Math.PI / 4);
-				cameraRot.mult(tmp, cameraRot);
-
-				tmp.setAxisAngle(new Vec3d(1.0d, -1.0d, 0.0d), Math.PI / 5);
-				cameraRot.mult(tmp, cameraRot);
-
-				camTrans = new Transform(new Vec4d(1.2, 1.2, 1.2, 1.0d), cameraRot, 1);
-			} else {
-				camTrans = new Transform(new Vec4d(0, 0, 1.2, 1.0d));
-			}
-
-
+			PolarInfo pi = new PolarInfo(new Vec3d(), cameraPos);
+			Transform camTrans = new Transform(cameraPos, pi.getRotation(), 1);
 			CameraInfo camInfo = new CameraInfo(Math.PI/3, camTrans, null);
 
 			Future<BufferedImage> fi = RenderManager.inst().renderOffscreen(proxies, camInfo, View.OMNI_VIEW_ID, 180, 180, notifier);
