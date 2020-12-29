@@ -130,7 +130,7 @@ public class PreviewCache {
 				ColladaModel cm = (ColladaModel)dm;
 				MeshProtoKey key = ColladaModel.getCachedMeshKey(cm.getColladaFile());
 				Vec3d meshSize = new Vec3d(RenderManager.inst().getMeshBounds(key, true).radius);
-				double maxDim = Math.max(Math.max(meshSize.x, meshSize.y), meshSize.z);
+				double maxDim = meshSize.mag3()/Math.sqrt(3.0d);
 				meshSize.scale3(1/maxDim);
 				dummyEntity.setSize(meshSize);
 			}
