@@ -145,7 +145,7 @@ public class PreviewCache {
 			// If this model is 3D, switch to an isometric view
 			Vec3d cameraPos = new Vec3d(0.0d, 0.0d, 12.0d);
 			if (!isFlat)
-				cameraPos = new Vec3d(12.0d, 12.0d, 12.0d);
+				cameraPos = new Vec3d(10.0d, 10.0d, 10.0d);
 
 			PolarInfo pi = new PolarInfo(new Vec3d(), cameraPos);
 			Transform camTrans = new Transform(cameraPos, pi.getRotation(), 1);
