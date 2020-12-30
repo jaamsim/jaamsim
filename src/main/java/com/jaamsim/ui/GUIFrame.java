@@ -1212,6 +1212,21 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			}
 		} );
 		helpMenu.add( helpItem );
+
+		// 3) "Examples" menu item
+		JMenuItem exampleItem = new JMenuItem( "Examples" );
+		exampleItem.setMnemonic(KeyEvent.VK_E);
+		exampleItem.addActionListener( new ActionListener() {
+
+			@Override
+			public void actionPerformed( ActionEvent event ) {
+				String topic = "";
+				if (selectedEntity != null)
+					topic = selectedEntity.getObjectType().getName();
+				ExampleBox.getInstance().showDialog(topic);
+			}
+		} );
+		helpMenu.add( exampleItem );
 	}
 
 	/**
