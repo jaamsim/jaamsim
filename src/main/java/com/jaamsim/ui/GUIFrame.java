@@ -4472,40 +4472,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			File chosenfile = chooser.getSelectedFile();
-
-			// Delete the present JaamSimModel if it is unedited and unsaved
-			if (sim.getConfigFile() == null && !sim.isSessionEdited())
-				simList.remove(sim);
-
-			// Create the new JaamSimModel and load the default objects and inputs
-			JaamSimModel simModel = new JaamSimModel(chosenfile.getName());
-			simModel.autoLoad();
-			setWindowDefaults(simModel.getSimulation());
-
-			// Set the Control Panel to the new JaamSimModel and reset the user interface
-			setJaamSimModel(simModel);
-
-			// Load the selected input file
-			SwingUtilities.invokeLater(new Runnable() {
-				@Override
-				public void run() {
-					setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-					sim.setRecordEdits(false);
-
-					Throwable ret = GUIFrame.configure(chosenfile);
-					if (ret != null) {
-						setCursor(Cursor.getDefaultCursor());
-						handleConfigError(ret, chosenfile);
-					}
-
-					sim.setRecordEdits(true);
-					resetViews();
-					FrameBox.setSelectedEntity(sim.getSimulation(), false);
-					setCursor(Cursor.getDefaultCursor());
-				}
-			});
-
-			setConfigFolder(chosenfile.getParent());
+			load(chosenfile);
 		}
 	}
 
