@@ -409,11 +409,21 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		return sim;
 	}
 
+	/**
+	 * Sets the model to be displayed by the user interface.
+	 * @param sm - simulation model to be displayed
+	 */
 	public static void setJaamSimModel(JaamSimModel sm) {
 		if (sm == sim)
 			return;
+
+		// Add the new model to the list of models
 		if (!simList.contains(sm))
 			simList.add(sm);
+
+		// Remove the previous model if it is unedited and unsaved
+		if (sim != null && sim.getConfigFile() == null && !sim.isSessionEdited())
+			simList.remove(sim);
 
 		// Clear the listeners for the previous model
 		if (sim != null) {
@@ -4477,10 +4487,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	}
 
 	public void load(File file) {
-
-		// Delete the present JaamSimModel if it is unedited and unsaved
-		if (sim.getConfigFile() == null && !sim.isSessionEdited())
-			simList.remove(sim);
 
 		// Create the new JaamSimModel and load the default objects and inputs
 		JaamSimModel simModel = new JaamSimModel(file.getName());
