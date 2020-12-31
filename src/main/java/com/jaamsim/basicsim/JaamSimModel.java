@@ -149,6 +149,10 @@ public class JaamSimModel {
 		simState = state;
 	}
 
+	public String getName() {
+		return name;
+	}
+
 	/**
 	 * Deletes all the objects in the present model and prepares the JaamSimModel to load a new
 	 * input file using the autoLoad() and configure() methods.
