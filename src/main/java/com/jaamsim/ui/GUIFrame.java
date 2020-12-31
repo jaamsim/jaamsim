@@ -431,6 +431,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		ObjectSelector.allowUpdate();
 		gui.resetViews();
 		gui.setTitle(sm);
+		gui.clearButtons();
+		gui.clearUndoRedo();
 
 		// Set the listeners for the new model
 		sm.setTimeListener(gui);
@@ -4455,7 +4457,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 		// Set the Control Panel to the new JaamSimModel and reset the user interface
 		setJaamSimModel(simModel);
-		clear();
 
 		// Load the default model
 		sim.setRecordEdits(true);
@@ -4495,7 +4496,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 			// Set the Control Panel to the new JaamSimModel and reset the user interface
 			setJaamSimModel(simModel);
-			clear();
 
 			// Load the selected input file
 			SwingUtilities.invokeLater(new Runnable() {
