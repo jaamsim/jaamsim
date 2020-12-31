@@ -461,14 +461,14 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		String str = "JaamSim";
 		if (sm.getSimulation() != null)
 			str = sm.getSimulation().getModelName();
-		setTitle(sm.toString() + " - " + str);
+		setTitle(sm.getName() + " - " + str);
 	}
 
 	public void setTitle(JaamSimModel sm, int val) {
 		String str = "JaamSim";
 		if (sm.getSimulation() != null)
 			str = sm.getSimulation().getModelName();
-		String title = String.format("%d%% %s - %s", val, sim.toString(), str);
+		String title = String.format("%d%% %s - %s", val, sim.getName(), str);
 		setTitle(title);
 	}
 
@@ -1150,7 +1150,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			@Override
 			public void menuSelected(MenuEvent e) {
 				for (JaamSimModel sm : simList) {
-					JRadioButtonMenuItem item = new JRadioButtonMenuItem(sm.toString());
+					JRadioButtonMenuItem item = new JRadioButtonMenuItem(sm.getName());
 					if (sm == sim)
 						item.setSelected(true);
 					item.addActionListener( new ActionListener() {
