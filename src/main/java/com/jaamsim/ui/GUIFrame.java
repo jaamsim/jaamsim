@@ -536,18 +536,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	}
 
 	/**
-	 * Clears the simulation and user interface prior to loading a new model
-	 */
-	public void clear() {
-
-		this.updateForSimulationState(JaamSimModel.SIM_STATE_LOADED);
-
-		// Clear the buttons
-		clearButtons();
-		clearUndoRedo();
-	}
-
-	/**
 	 * Sets up the Control Panel's menu bar.
 	 */
 	private void initializeMenus() {
