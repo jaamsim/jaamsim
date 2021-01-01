@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2016-2020 JaamSim Software Inc.
+ * Copyright (C) 2016-2021 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -1205,19 +1205,26 @@ public class JaamSimModel {
 
 	private String getReportDirectory() {
 		if (reportDir != null)
-			return reportDir.getPath() + File.separator;
+			return reportDir.getPath();
 
 		if (configFile != null)
-			return configFile.getParentFile().getPath() + File.separator;
+			return configFile.getParentFile().getPath();
 
 		if (gui != null && gui.getDefaultFolder() != null)
-			return gui.getDefaultFolder() + File.separator;
+			return gui.getDefaultFolder();
 
 		return null;
 	}
 
 	public String getReportFileName(String name) {
-		return getReportDirectory() + name;
+		String dir = getReportDirectory();
+		if (dir == null)
+			return null;
+		StringBuilder sb = new StringBuilder();
+		sb.append(dir);
+		sb.append(File.separator);
+		sb.append(name);
+		return sb.toString();
 	}
 
 	public void setReportDirectory(File dir) {
