@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2002-2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2020 JaamSim Software Inc.
+ * Copyright (C) 2016-2021 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -290,6 +290,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 	int VIEW_OFFSET = 50;
 
+	private static final String DEFAULT_MODEL_NAME = "Model";
+
 	private static final String LAST_USED_FOLDER = "";
 	private static final String LAST_USED_3D_FOLDER = "3D_FOLDER";
 	private static final String LAST_USED_IMAGE_FOLDER = "IMAGE_FOLDER";
@@ -422,7 +424,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			simList.add(sm);
 
 		// Remove the previous model if it is unedited and unsaved
-		if (sim != null && sim.getConfigFile() == null && !sim.isSessionEdited())
+		if (sim != null && sim.getConfigFile() == null && !sim.isSessionEdited()
+				&& sim.getName().startsWith(DEFAULT_MODEL_NAME))
 			simList.remove(sim);
 
 		// Clear the listeners for the previous model
@@ -471,7 +474,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 	private static JaamSimModel getNextJaamSimModel() {
 		long num = modelCount.incrementAndGet();
-		return new JaamSimModel("Model" + num);
+		return new JaamSimModel(DEFAULT_MODEL_NAME + num);
 	}
 
 	@Override
