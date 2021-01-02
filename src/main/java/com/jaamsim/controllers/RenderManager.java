@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2012 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2020 JaamSim Software Inc.
+ * Copyright (C) 2016-2021 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -398,8 +398,6 @@ public class RenderManager implements DragSourceListener {
 					DisplayModelBinding.clearCacheCounters();
 					DisplayModelBinding.clearCacheMissData();
 
-					ArrayList<DisplayModelBinding> selectedBindings = new ArrayList<>();
-
 					// Update all graphical entities in the simulation
 					// All entities are updated regardless of the number or whether 'Show' is set
 					// (required for Queue, etc.)
@@ -430,12 +428,6 @@ public class RenderManager implements DragSourceListener {
 							try {
 								totalBindings++;
 								binding.collectProxies(renderTime, cachedScene);
-								for (DisplayEntity ent : getSelectedEntityList()) {
-									if (binding.isBoundTo(ent)) {
-										selectedBindings.add(binding);
-										break;
-									}
-								}
 							} catch (Throwable t) {
 								// Log the exception in the exception list
 								logException(t);
@@ -445,12 +437,14 @@ public class RenderManager implements DragSourceListener {
 
 					// Collect the proxies for the green box that is shown around the selected entity
 					// (collected second so they always appear on top)
-					for (DisplayModelBinding binding : selectedBindings) {
-						try {
-							binding.collectSelectionProxies(renderTime, cachedScene);
-						} catch (Throwable t) {
-							// Log the exception in the exception list
-							logException(t);
+					for (DisplayEntity ent : getSelectedEntityList()) {
+						for (DisplayModelBinding binding : ent.getDisplayBindings()) {
+							try {
+								binding.collectSelectionProxies(renderTime, cachedScene);
+							} catch (Throwable t) {
+								// Log the exception in the exception list
+								logException(t);
+							}
 						}
 					}
 
