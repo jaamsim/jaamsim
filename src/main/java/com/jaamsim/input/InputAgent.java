@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2009-2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018-2020 JaamSim Software Inc.
+ * Copyright (C) 2018-2021 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -632,8 +632,8 @@ public class InputAgent {
 	public static void printInputFileKeywords(JaamSimModel simModel) {
 
 		// Create report file for the inputs
-		String inputReportFileName = simModel.getReportFileName(simModel.getRunName() + ".inp");
-		File f = new File(inputReportFileName);
+		String fileName = simModel.getReportFileName(".inp");
+		File f = new File(fileName);
 		if (f.exists() && !f.delete())
 			throw new ErrorException("Cannot delete the existing input report file %s", f);
 		FileEntity inputReportFile = new FileEntity(f);

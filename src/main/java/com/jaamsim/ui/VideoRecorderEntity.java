@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2019 JaamSim Software Inc.
+ * Copyright (C) 2019-2021 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -224,10 +224,8 @@ public class VideoRecorderEntity extends DisplayEntity {
 		ArrayList<View> views = captureViews.getValue();
 
 		JaamSimModel simModel = getJaamSimModel();
-		String videoFileName = String.format("%s_%s", simModel.getRunName(), videoName.getValue());
-		String fullVideoFile = simModel.getReportFileName(videoFileName); // getReportFileName() prepends the report directory onto a filename
-
-		VideoRecorder recorder = new VideoRecorder(views, fullVideoFile, width, height, captureFrames.getDefaultValue(),
+		String fileName = simModel.getReportFileName("_" + videoName.getValue());
+		VideoRecorder recorder = new VideoRecorder(views, fileName, width, height, captureFrames.getDefaultValue(),
 		                             saveImages.getValue(), saveVideo.getValue(), videoBGColor.getValue());
 
 		// Otherwise, start capturing

@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2016-2020 JaamSim Software Inc.
+ * Copyright (C) 2016-2021 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -111,11 +111,8 @@ public abstract class Logger extends DisplayEntity {
 
 		// Create the report file
 		if (file == null) {
-			StringBuilder tmp = new StringBuilder(
-					simModel.getReportFileName(simModel.getRunName()));
-			tmp.append("-").append(this.getName());
-			tmp.append(".log");
-			File f = new File(tmp.toString());
+			String fileName = simModel.getReportFileName("-" + this.getName() + ".log");
+			File f = new File(fileName);
 			if (f.exists() && !f.delete())
 				error("Cannot delete the existing log file %s", f);
 			file = new FileEntity(f);

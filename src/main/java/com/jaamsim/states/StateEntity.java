@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018-2020 JaamSim Software Inc.
+ * Copyright (C) 2018-2021 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -104,7 +104,7 @@ public abstract class StateEntity extends DisplayEntity implements StateUser {
 		// Create state trace file if required
 		if (traceState.getValue()) {
 			JaamSimModel simModel = getJaamSimModel();
-			String fileName = simModel.getReportFileName(simModel.getRunName() + "-" + this.getName() + ".trc");
+			String fileName = simModel.getReportFileName("-" + this.getName() + ".trc");
 			File f = new File(fileName);
 			if (f.exists() && !f.delete())
 				error("Cannot delete the existing trace file %s", f);

@@ -1216,14 +1216,21 @@ public class JaamSimModel {
 		return null;
 	}
 
-	public String getReportFileName(String name) {
+	/**
+	 * Returns the path to the report file with the specified extension for this model.
+	 * Returns null if the file path cannot be constructed.
+	 * @param ext - file extension, e.g. ".dat"
+	 * @return file path
+	 */
+	public String getReportFileName(String ext) {
 		String dir = getReportDirectory();
 		if (dir == null)
 			return null;
 		StringBuilder sb = new StringBuilder();
 		sb.append(dir);
 		sb.append(File.separator);
-		sb.append(name);
+		sb.append(getRunName());
+		sb.append(ext);
 		return sb.toString();
 	}
 
@@ -1241,10 +1248,8 @@ public class JaamSimModel {
 
 	public FileEntity getReportFile() {
 		if (reportFile == null) {
-			StringBuilder tmp = new StringBuilder("");
-			tmp.append(getReportFileName(getRunName()));
-			tmp.append(".rep");
-			File f = new File(tmp.toString());
+			String fileName = getReportFileName(".rep");
+			File f = new File(fileName);
 			if (f.exists() && !f.delete())
 				throw new ErrorException("Cannot delete the existing report file %s", f);
 			reportFile = new FileEntity(f);
@@ -1258,11 +1263,9 @@ public class JaamSimModel {
 			// Select either standard out or a file for the outputs
 			outStream = System.out;
 			if (!isScriptMode()) {
-				StringBuilder sb = new StringBuilder();
-				sb.append(getReportFileName(getRunName()));
-				sb.append(".dat");
+				String fileName = getReportFileName(".dat");
 				try {
-					outStream = new PrintStream(sb.toString());
+					outStream = new PrintStream(fileName);
 				}
 				catch (FileNotFoundException e) {
 					throw new InputErrorException(
