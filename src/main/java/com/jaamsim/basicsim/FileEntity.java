@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2002-2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2020 JaamSim Software Inc.
+ * Copyright (C) 2020-2021 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -121,4 +121,10 @@ public class FileEntity {
 			throw new ErrorException( "Unable to delete " + backingFileObject.getName() + "(" + e.getMessage() + ")" );
 		}
 	}
+
+	@Override
+	public String toString() {
+		return backingFileObject.toString();
+	}
+
 }
