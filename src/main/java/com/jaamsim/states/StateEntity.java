@@ -105,6 +105,8 @@ public abstract class StateEntity extends DisplayEntity implements StateUser {
 		if (traceState.getValue()) {
 			JaamSimModel simModel = getJaamSimModel();
 			String fileName = simModel.getReportFileName("-" + this.getName() + ".trc");
+			if (fileName == null)
+				error("Cannot create the trace file");
 			File f = new File(fileName);
 			if (f.exists() && !f.delete())
 				error("Cannot delete the existing trace file %s", f);

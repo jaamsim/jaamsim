@@ -112,6 +112,8 @@ public abstract class Logger extends DisplayEntity {
 		// Create the report file
 		if (file == null) {
 			String fileName = simModel.getReportFileName("-" + this.getName() + ".log");
+			if (fileName == null)
+				error("Cannot create the log file");
 			File f = new File(fileName);
 			if (f.exists() && !f.delete())
 				error("Cannot delete the existing log file %s", f);

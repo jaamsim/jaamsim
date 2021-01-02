@@ -1249,6 +1249,8 @@ public class JaamSimModel {
 	public FileEntity getReportFile() {
 		if (reportFile == null) {
 			String fileName = getReportFileName(".rep");
+			if (fileName == null)
+				throw new ErrorException("Cannot create the report file");
 			File f = new File(fileName);
 			if (f.exists() && !f.delete())
 				throw new ErrorException("Cannot delete the existing report file %s", f);
@@ -1264,6 +1266,8 @@ public class JaamSimModel {
 			outStream = System.out;
 			if (!isScriptMode()) {
 				String fileName = getReportFileName(".dat");
+				if (fileName == null)
+					throw new ErrorException("Cannot create the run output file");
 				try {
 					outStream = new PrintStream(fileName);
 				}

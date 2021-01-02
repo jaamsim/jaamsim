@@ -633,6 +633,8 @@ public class InputAgent {
 
 		// Create report file for the inputs
 		String fileName = simModel.getReportFileName(".inp");
+		if (fileName == null)
+			throw new ErrorException("Cannot create the input report file");
 		File f = new File(fileName);
 		if (f.exists() && !f.delete())
 			throw new ErrorException("Cannot delete the existing input report file %s", f);

@@ -225,6 +225,8 @@ public class VideoRecorderEntity extends DisplayEntity {
 
 		JaamSimModel simModel = getJaamSimModel();
 		String fileName = simModel.getReportFileName("_" + videoName.getValue());
+		if (fileName == null)
+			JOptionPane.showMessageDialog(null, "Cannot create the file for the Video Recording.");
 		VideoRecorder recorder = new VideoRecorder(views, fileName, width, height, captureFrames.getDefaultValue(),
 		                             saveImages.getValue(), saveVideo.getValue(), videoBGColor.getValue());
 
