@@ -413,9 +413,9 @@ public class RenderManager implements DragSourceListener {
 						collectSelectionProxies(ent, renderTime, cachedScene);
 					}
 
-					// Finally include the displayable links for linked entities
+					// Show the displayable links for linked entities
 					if (showLinks.get()) {
-						addLinkDisplays(linkDirection.get(), cachedScene);
+						addLinkDisplays(simModel, linkDirection.get(), cachedScene);
 					}
 
 					// Show a rubber band arrow from the selected entity to the mouse position
@@ -2307,8 +2307,8 @@ public class RenderManager implements DragSourceListener {
 		scene.add(new LineProxy(segments, linkColour, 1, DisplayModel.ALWAYS, 0));
 	}
 
-	private void addLinkDisplays(boolean dir, ArrayList<RenderProxy> scene) {
-		for (DisplayEntity ent : GUIFrame.getJaamSimModel().getClonesOfIterator(DisplayEntity.class)) {
+	public void addLinkDisplays(JaamSimModel simModel, boolean dir, ArrayList<RenderProxy> scene) {
+		for (DisplayEntity ent : simModel.getClonesOfIterator(DisplayEntity.class)) {
 			DirectedEntity de = new DirectedEntity(ent, dir);
 			for (DirectedEntity dest : ent.getDestinationDirEnts(dir)) {
 				addLink(de, dest, dir, scene);
