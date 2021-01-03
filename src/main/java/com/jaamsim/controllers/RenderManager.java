@@ -2029,13 +2029,7 @@ public class RenderManager implements DragSourceListener {
 	 * @param target - optional target to prevent re-allocating GPU resources
 	 */
 	public Future<BufferedImage> renderScreenShot(View view, int width, int height, OffscreenTarget target) {
-		Vec3d cameraPos = view.getGlobalPosition();
-		Vec3d cameraCenter = view.getGlobalCenter();
-		PolarInfo pi = new PolarInfo(cameraCenter, cameraPos);
-
-		Transform trans = new Transform(cameraPos, pi.getRotation(), 1);
-		CameraInfo camInfo = new CameraInfo(Math.PI/3, trans, view.getSkyboxTexture());
-
+		CameraInfo camInfo = view.getCameraInfo();
 		return renderer.renderOffscreen(null, view.getID(), camInfo, width, height, null, target);
 	}
 
