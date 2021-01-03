@@ -403,29 +403,9 @@ public class RenderManager implements DragSourceListener {
 					// (required for Queue, etc.)
 					updateGraphics(simModel, renderTime);
 
+					// Show each entity in the model
 					updateNanos = System.nanoTime();
-
-					int numEnts = 0;
-					// Collect the render proxies for each entity
-					for (DisplayEntity de : simModel.getClonesOfIterator(DisplayEntity.class)) {
-						if (!de.getShow())
-							continue;
-
-						numEnts++;
-						// There is an upper limit on number of entities
-						if (numEnts > maxRenderableEntities) {
-							break;
-						}
-						for (DisplayModelBinding binding : de.getDisplayBindings()) {
-							try {
-								totalBindings++;
-								binding.collectProxies(renderTime, cachedScene);
-							} catch (Throwable t) {
-								// Log the exception in the exception list
-								logException(t);
-							}
-						}
-					}
+					totalBindings = collectProxies(simModel, renderTime, maxRenderableEntities, cachedScene);
 
 					// Collect the proxies for the green box that is shown around the selected entity
 					// (collected second so they always appear on top)
@@ -528,6 +508,35 @@ public class RenderManager implements DragSourceListener {
 				logException(e);
 			}
 		}
+	}
+
+	public int collectProxies(JaamSimModel simModel, double simTime, int maxEnts, ArrayList<RenderProxy> scene) {
+
+		int numEnts = 0;
+		int numBindings = 0;
+
+		// Collect the render proxies for each entity
+		for (DisplayEntity de : simModel.getClonesOfIterator(DisplayEntity.class)) {
+			if (!de.getShow())
+				continue;
+
+			numEnts++;
+			// There is an upper limit on number of entities
+			if (numEnts > maxEnts) {
+				break;
+			}
+			for (DisplayModelBinding binding : de.getDisplayBindings()) {
+				try {
+					numBindings++;
+					binding.collectProxies(simTime, scene);
+				} catch (Throwable t) {
+					// Log the exception in the exception list
+					logException(t);
+				}
+			}
+		}
+
+		return numBindings;
 	}
 
 	public void popupMenu(final int windowID) {
