@@ -414,15 +414,16 @@ public class RenderManager implements DragSourceListener {
 					}
 
 					// Show the displayable links for linked entities
+					double delta = simModel.getSimulation().getSnapGridSpacing()/100.0d;
 					if (showLinks.get()) {
-						addLinkDisplays(simModel, linkDirection.get(), cachedScene);
+						addLinkDisplays(simModel, linkDirection.get(), delta, cachedScene);
 					}
 
 					// Show a rubber band arrow from the selected entity to the mouse position
 					if (createLinks.get() && isSingleEntitySelected() && mouseWindowID > 0) {
 						DisplayEntity selectedEntity = getSelectedEntity();
 						Vec3d source = selectedEntity.getSourcePoint(linkDirection.get());
-						addLink(source, mousePosition, 0.0d, 0.0d, linkDirection.get(), cachedScene);
+						addLink(source, mousePosition, 0.0d, 0.0d, linkDirection.get(), delta, cachedScene);
 					}
 
 					endNanos = System.nanoTime();
@@ -2226,7 +2227,7 @@ public class RenderManager implements DragSourceListener {
 		linkDirection.set(bool);
 	}
 
-	private void addLink(DirectedEntity sourceDE, DirectedEntity destDE, boolean dir, ArrayList<RenderProxy> scene) {
+	private void addLink(DirectedEntity sourceDE, DirectedEntity destDE, boolean dir, double delta, ArrayList<RenderProxy> scene) {
 		Vec3d source = sourceDE.getSourcePoint();
 		Vec3d sink = destDE.getSinkPoint();
 		double sourceRadius = sourceDE.entity.getRadius();
@@ -2241,10 +2242,10 @@ public class RenderManager implements DragSourceListener {
 			sinkRadius = destDE.entity.getMinRadius();
 		}
 
-		addLink(source, sink, sourceRadius, sinkRadius, dir, scene);
+		addLink(source, sink, sourceRadius, sinkRadius, dir, delta, scene);
 	}
 
-	private void addLink(Vec3d source, Vec3d sink, double sourceRadius, double sinkRadius, boolean dir, ArrayList<RenderProxy> scene) {
+	private void addLink(Vec3d source, Vec3d sink, double sourceRadius, double sinkRadius, boolean dir, double delta, ArrayList<RenderProxy> scene) {
 
 		// Calculate the length of the arrow and a unit vector in its direction
 		Vec3d arrowDir = new Vec3d();
@@ -2282,8 +2283,6 @@ public class RenderManager implements DragSourceListener {
 		arrowPoint0.sub3(arrowMidPoint, arrowHeadDir);
 		arrowPoint1.add3(arrowMidPoint, arrowHeadDir);
 
-		double delta = GUIFrame.getJaamSimModel().getSimulation().getSnapGridSpacing()/100.0d;
-
 		Vec4d source4 = new Vec4d(source.x, source.y, source.z + delta, 1);
 		Vec4d sink4 = new Vec4d(sink.x, sink.y, sink.z + delta, 1);
 		Vec4d ap0 = new Vec4d(arrowPoint0.x, arrowPoint0.y, arrowPoint0.z + delta, 1);
@@ -2307,14 +2306,14 @@ public class RenderManager implements DragSourceListener {
 		scene.add(new LineProxy(segments, linkColour, 1, DisplayModel.ALWAYS, 0));
 	}
 
-	public void addLinkDisplays(JaamSimModel simModel, boolean dir, ArrayList<RenderProxy> scene) {
+	public void addLinkDisplays(JaamSimModel simModel, boolean dir, double delta, ArrayList<RenderProxy> scene) {
 		for (DisplayEntity ent : simModel.getClonesOfIterator(DisplayEntity.class)) {
 			DirectedEntity de = new DirectedEntity(ent, dir);
 			for (DirectedEntity dest : ent.getDestinationDirEnts(dir)) {
-				addLink(de, dest, dir, scene);
+				addLink(de, dest, dir, delta, scene);
 			}
 			for (DirectedEntity source : ent.getSourceDirEnts(dir)) {
-				addLink(source, de, dir, scene);
+				addLink(source, de, dir, delta, scene);
 			}
 		}
 	}
