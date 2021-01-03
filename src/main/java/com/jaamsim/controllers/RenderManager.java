@@ -401,15 +401,7 @@ public class RenderManager implements DragSourceListener {
 					// Update all graphical entities in the simulation
 					// All entities are updated regardless of the number or whether 'Show' is set
 					// (required for Queue, etc.)
-					for (DisplayEntity de : simModel.getClonesOfIterator(DisplayEntity.class)) {
-						try {
-							de.updateGraphics(renderTime);
-						}
-						// Catch everything so we don't screw up the behavior handling
-						catch (Throwable e) {
-							logException(e);
-						}
-					}
+					updateGraphics(simModel, renderTime);
 
 					updateNanos = System.nanoTime();
 
@@ -524,6 +516,18 @@ public class RenderManager implements DragSourceListener {
 
 		exceptionLogger.printExceptionLog();
 
+	}
+
+	public void updateGraphics(JaamSimModel simModel, double simTime) {
+		for (DisplayEntity de : simModel.getClonesOfIterator(DisplayEntity.class)) {
+			try {
+				de.updateGraphics(simTime);
+			}
+			// Catch everything so we don't screw up the behavior handling
+			catch (Throwable e) {
+				logException(e);
+			}
+		}
 	}
 
 	public void popupMenu(final int windowID) {
