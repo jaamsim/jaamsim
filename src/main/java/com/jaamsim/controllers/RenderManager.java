@@ -407,17 +407,10 @@ public class RenderManager implements DragSourceListener {
 					updateNanos = System.nanoTime();
 					totalBindings = collectProxies(simModel, renderTime, maxRenderableEntities, cachedScene);
 
-					// Collect the proxies for the green box that is shown around the selected entity
+					// Show the green box around the selected entities
 					// (collected second so they always appear on top)
 					for (DisplayEntity ent : getSelectedEntityList()) {
-						for (DisplayModelBinding binding : ent.getDisplayBindings()) {
-							try {
-								binding.collectSelectionProxies(renderTime, cachedScene);
-							} catch (Throwable t) {
-								// Log the exception in the exception list
-								logException(t);
-							}
-						}
+						collectSelectionProxies(ent, renderTime, cachedScene);
 					}
 
 					// Finally include the displayable links for linked entities
@@ -537,6 +530,17 @@ public class RenderManager implements DragSourceListener {
 		}
 
 		return numBindings;
+	}
+
+	public void collectSelectionProxies(DisplayEntity ent, double simTime, ArrayList<RenderProxy> scene) {
+		for (DisplayModelBinding binding : ent.getDisplayBindings()) {
+			try {
+				binding.collectSelectionProxies(simTime, scene);
+			} catch (Throwable t) {
+				// Log the exception in the exception list
+				logException(t);
+			}
+		}
 	}
 
 	public void popupMenu(final int windowID) {
