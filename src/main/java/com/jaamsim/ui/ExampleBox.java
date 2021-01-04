@@ -280,12 +280,11 @@ public class ExampleBox extends JDialog {
 			// Create the new model
 			JaamSimModel simModel = new JaamSimModel(example + ".cfg");
 			simModel.autoLoad();
-			Simulation simulation = simModel.getSimulation();
-			GUIFrame.getInstance().setWindowDefaults(simulation);
 			InputAgent.readResource(simModel, "<res>/examples/" + example + ".cfg");
 			simModel.postLoad();
 
 			// Add labels and sub-models
+			Simulation simulation = simModel.getSimulation();
 			simModel.showTemporaryLabels( simulation.isShowLabels() );
 			simModel.showSubModels( simulation.isShowSubModels() );
 
