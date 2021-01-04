@@ -155,6 +155,9 @@ public class ExampleBox extends JDialog {
 				// Display the new model
 				GUIFrame.setJaamSimModel(simModel);
 				FrameBox.setSelectedEntity(simModel.getSimulation(), false);
+
+				// Bring the new model to front
+				GUIFrame.getInstance().setVisible(true);
 			}
 		});
 
