@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2020 JaamSim Software Inc.
+ * Copyright (C) 2020-2021 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,8 +25,8 @@ import java.awt.image.BufferedImage;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 
-import javax.imageio.ImageIO;
 import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -40,9 +40,13 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import com.jaamsim.Graphics.View;
 import com.jaamsim.basicsim.JaamSimModel;
+import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
+import com.jaamsim.render.CameraInfo;
+import com.jaamsim.render.Future;
 
 public class ExampleBox extends JDialog {
 
@@ -53,6 +57,8 @@ public class ExampleBox extends JDialog {
 
 	private final JLabel previewLabel;
 	private final ImageIcon previewIcon = new ImageIcon();
+
+	private final HashMap<String, Future<BufferedImage>> imageCache = new HashMap<>();
 
 	private static ExampleBox myInstance;
 
@@ -244,16 +250,53 @@ public class ExampleBox extends JDialog {
 			previewLabel.setIcon(null);
 
 			// Get the preview image
-			url = GUIFrame.class.getResource("/resources/examples/" + topic + ".png");
-			if (url == null)
-				return;
-			BufferedImage image = ImageIO.read(url);
+			Future<BufferedImage> fi = getPreview(topic);
+			fi.blockUntilDone();
+			if (fi.failed()) {
+				System.out.println(fi.getFailureMessage());
+				return; // Something went wrong...
+			}
 
 			// Display the image
-			previewIcon.setImage(image);
+			previewIcon.setImage(fi.get());
 			previewLabel.setIcon(previewIcon);
 		}
 		catch (Throwable t) {}
+	}
+
+	public Future<BufferedImage> getPreview(String example) {
+		synchronized (imageCache) {
+
+			// Return the cached image if available
+			Future<BufferedImage> cached = imageCache.get(example);
+			if (cached != null) {
+				return cached;
+			}
+
+			// Create the new model
+			JaamSimModel simModel = new JaamSimModel(example + ".cfg");
+			simModel.autoLoad();
+			GUIFrame.getInstance().setWindowDefaults(simModel.getSimulation());
+			InputAgent.readResource(simModel, "<res>/examples/" + example + ".cfg");
+			simModel.postLoad();
+
+			// Get the View to render
+			View view = null;
+			for (View v : simModel.getInstanceIterator(View.class)) {
+				view = v;
+				break;
+			}
+
+			// Render the view offscreen
+			if (view == null || !RenderManager.isGood())
+				return null;
+			CameraInfo camInfo = view.getCameraInfo();
+			Future<BufferedImage> fi = RenderManager.inst().renderOffscreen(simModel, 0.0d, camInfo, 640, 480);
+
+			// Save and return the image
+			imageCache.put(example, fi);
+			return fi;
+		}
 	}
 
 }

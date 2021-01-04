@@ -2022,6 +2022,35 @@ public class RenderManager implements DragSourceListener {
 	}
 
 	/**
+	 * Returns an image of the specified simulation model.
+	 * @param simModel - simulation model to render
+	 * @param simTime - present simulation time
+	 * @param camInfo - position and orientation of the view camera
+	 * @param width - width of the returned image
+	 * @param height - height of the returned image
+	 * @return image of the model
+	 */
+	public Future<BufferedImage> renderOffscreen(JaamSimModel simModel, double simTime, CameraInfo camInfo, int width, int height) {
+
+		// Update the graphics for each entity in the model
+		updateGraphics(simModel, simTime);
+
+		// Collect the display information for each entity
+		ArrayList<RenderProxy> scene = new ArrayList<>();
+		int maxEnts = simModel.getSimulation().getMaxEntitiesToDisplay();
+		collectProxies(simModel, simTime, maxEnts, scene);
+
+		// Show the entity flow links
+		boolean showLinks = simModel.getSimulation().isShowEntityFlow();
+		if (showLinks) {
+			double delta = simModel.getSimulation().getSnapGridSpacing()/100.0d;
+			addLinkDisplays(simModel, true, delta, scene);
+		}
+
+		return renderOffscreen(scene, camInfo, View.OMNI_VIEW_ID, width, height, null);
+	}
+
+	/**
 	 * Return a FutureImage of the equivalent screen renderer from the given position looking at the given center
 	 * @param view
 	 * @param width - width of returned image
