@@ -31,6 +31,7 @@ import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.EntityLabel;
 import com.jaamsim.Samples.SampleExpression;
 import com.jaamsim.StringProviders.StringProvExpression;
+import com.jaamsim.SubModels.CompoundEntity;
 import com.jaamsim.Thresholds.ThresholdUser;
 import com.jaamsim.datatypes.IntegerVector;
 import com.jaamsim.events.Conditional;
@@ -1611,6 +1612,12 @@ public class JaamSimModel {
 			if (!EntityLabel.canLabel(ent))
 				continue;
 			EntityLabel.showTemporaryLabel(ent, bool);
+		}
+	}
+
+	public void showSubModels(boolean bool) {
+		for (CompoundEntity submodel : getClonesOfIterator(CompoundEntity.class)) {
+			submodel.showTemporaryComponents(bool);
 		}
 	}
 

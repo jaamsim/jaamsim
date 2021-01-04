@@ -124,7 +124,6 @@ import com.jaamsim.Graphics.TextBasics;
 import com.jaamsim.Graphics.TextEntity;
 import com.jaamsim.Graphics.View;
 import com.jaamsim.ProbabilityDistributions.RandomStreamUser;
-import com.jaamsim.SubModels.CompoundEntity;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.basicsim.GUIListener;
@@ -1646,7 +1645,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				boolean bool = showSubModels.isSelected();
 				KeywordIndex kw = InputAgent.formatBoolean("ShowSubModels", bool);
 				InputAgent.storeAndExecute(new KeywordCommand(sim.getSimulation(), kw));
-				setShowSubModels(bool);
+				sim.showSubModels(bool);
 				controlStartResume.requestFocusInWindow();
 			}
 		} );
@@ -3795,12 +3794,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		LOWER_START = TOP_START + VIEW_HEIGHT;
 	}
 
-	public void setShowSubModels(boolean bool) {
-		for (CompoundEntity submodel : sim.getClonesOfIterator(CompoundEntity.class)) {
-			submodel.showTemporaryComponents(bool);
-		}
-	}
-
 	public void setShowEntityFlow(boolean bool) {
 		if (!RenderManager.isGood())
 			return;
@@ -3819,7 +3812,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		if (showSubModels.isSelected() == bool)
 			return;
 		showSubModels.setSelected(bool);
-		setShowSubModels(bool);
+		sim.showSubModels(bool);
 		updateUI();
 	}
 

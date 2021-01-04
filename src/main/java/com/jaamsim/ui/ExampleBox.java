@@ -282,7 +282,9 @@ public class ExampleBox extends JDialog {
 			InputAgent.readResource(simModel, "<res>/examples/" + example + ".cfg");
 			simModel.postLoad();
 
+			// Add labels and sub-models
 			simModel.showTemporaryLabels( simulation.isShowLabels() );
+			simModel.showSubModels( simulation.isShowSubModels() );
 
 			// Get the View to render
 			View view = null;
