@@ -42,6 +42,7 @@ import javax.swing.event.ListSelectionListener;
 
 import com.jaamsim.Graphics.View;
 import com.jaamsim.basicsim.JaamSimModel;
+import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
@@ -276,9 +277,12 @@ public class ExampleBox extends JDialog {
 			// Create the new model
 			JaamSimModel simModel = new JaamSimModel(example + ".cfg");
 			simModel.autoLoad();
-			GUIFrame.getInstance().setWindowDefaults(simModel.getSimulation());
+			Simulation simulation = simModel.getSimulation();
+			GUIFrame.getInstance().setWindowDefaults(simulation);
 			InputAgent.readResource(simModel, "<res>/examples/" + example + ".cfg");
 			simModel.postLoad();
+
+			simModel.showTemporaryLabels( simulation.isShowLabels() );
 
 			// Get the View to render
 			View view = null;

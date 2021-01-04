@@ -1624,7 +1624,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				boolean bool = showLabels.isSelected();
 				KeywordIndex kw = InputAgent.formatBoolean("ShowLabels", bool);
 				InputAgent.storeAndExecute(new KeywordCommand(sim.getSimulation(), kw));
-				setShowLabels(bool);
+				sim.showTemporaryLabels(bool);
 				controlStartResume.requestFocusInWindow();
 			}
 		} );
@@ -3795,14 +3795,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		LOWER_START = TOP_START + VIEW_HEIGHT;
 	}
 
-	public void setShowLabels(boolean bool) {
-		for (DisplayEntity ent : sim.getClonesOfIterator(DisplayEntity.class)) {
-			if (!EntityLabel.canLabel(ent))
-				continue;
-			EntityLabel.showTemporaryLabel(ent, bool);
-		}
-	}
-
 	public void setShowSubModels(boolean bool) {
 		for (CompoundEntity submodel : sim.getClonesOfIterator(CompoundEntity.class)) {
 			submodel.showTemporaryComponents(bool);
@@ -3819,7 +3811,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		if (showLabels.isSelected() == bool)
 			return;
 		showLabels.setSelected(bool);
-		setShowLabels(bool);
+		sim.showTemporaryLabels(bool);
 		updateUI();
 	}
 

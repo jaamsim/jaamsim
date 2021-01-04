@@ -27,6 +27,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
+import com.jaamsim.Graphics.DisplayEntity;
+import com.jaamsim.Graphics.EntityLabel;
 import com.jaamsim.Samples.SampleExpression;
 import com.jaamsim.StringProviders.StringProvExpression;
 import com.jaamsim.Thresholds.ThresholdUser;
@@ -1602,6 +1604,14 @@ public class JaamSimModel {
 		double factor = getDisplayedUnitFactor(DistanceUnit.class);
 		String unitStr = getDisplayedUnit(DistanceUnit.class);
 		return InputAgent.formatPointsInputs(keyword, points, offset, factor, unitStr);
+	}
+
+	public void showTemporaryLabels(boolean bool) {
+		for (DisplayEntity ent : getClonesOfIterator(DisplayEntity.class)) {
+			if (!EntityLabel.canLabel(ent))
+				continue;
+			EntityLabel.showTemporaryLabel(ent, bool);
+		}
 	}
 
 	@Override
