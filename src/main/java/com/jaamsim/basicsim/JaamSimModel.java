@@ -296,6 +296,11 @@ public class JaamSimModel {
 	 */
 	public void start() {
 		//System.out.format("%s.start%n", this);
+		double pauseTime = getSimulation().getPauseTime();
+		start(pauseTime);
+	}
+
+	public void start(double pauseTime) {
 		boolean bool = validate();
 		if (!bool)
 			return;
@@ -322,7 +327,7 @@ public class JaamSimModel {
 
 		runNumber = getSimulation().getStartingRunNumber();
 		setRunIndexList();
-		startRun();
+		startRun(pauseTime);
 	}
 
 	void initRun() {
@@ -334,9 +339,13 @@ public class JaamSimModel {
 	 */
 	public void startRun() {
 		//System.out.format("%s.startRun%n", this);
-		initRun();
 		double pauseTime = getSimulation().getPauseTime();
-		eventManager.resume(eventManager.secondsToNearestTick(pauseTime));
+		startRun(pauseTime);
+	}
+
+	public void startRun(double pauseTime) {
+		initRun();
+		resume(pauseTime);
 	}
 
 	/**
