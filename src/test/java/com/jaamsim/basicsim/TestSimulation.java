@@ -31,6 +31,7 @@ import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.OutputHandle;
+import com.jaamsim.ui.GUIFrame;
 
 public class TestSimulation {
 
@@ -173,6 +174,39 @@ public class TestSimulation {
 		assert(simModel2.getSimTime() == 1000.0d);
 		assert(simModel2.getDoubleValue("[Gen].NumberGenerated") == 500.0d);
 		assert(simModel2.getDoubleValue("[Sink].NumberAdded") == 500.0d);
+	}
+
+	@Test
+	public void testExampleModels() {
+		System.out.println();
+		System.out.println("Example Models:");
+
+		// Loop through the configuration files in the examples folder
+		for (String name : GUIFrame.getResourceFileNames("/resources/examples")) {
+			if (!name.endsWith(".cfg"))
+				continue;
+			System.out.println();
+			System.out.println(name);
+
+			// Load the example model
+			JaamSimModel simModel = new JaamSimModel(name);
+			simModel.autoLoad();
+			InputAgent.readResource(simModel, "<res>/examples/" + name);
+			simModel.postLoad();
+
+			// Validate the inputs
+			boolean bool = simModel.validate();
+			if (!bool)
+				Assert.fail("validation failed");
+
+			// Run the model for one hour
+			WaitForPauseListener listener = new WaitForPauseListener(simModel);
+			simModel.setTimeListener(listener);
+			simModel.initRun();
+			simModel.resume(3600.0);  // pause at 1 hour
+			listener.waitForPause(1000L);
+			System.out.format("completed at simTime=%s%n", simModel.getSimTime());
+		}
 	}
 
 	static class WaitForPauseListener implements EventTimeListener {
