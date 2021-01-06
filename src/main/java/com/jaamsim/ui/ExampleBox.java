@@ -194,6 +194,10 @@ public class ExampleBox extends JDialog {
 
 		// Set initial position in middle of screen
 		setLocationRelativeTo(null);
+
+		// Focus on the list and select the first example
+		list.requestFocusInWindow();
+		list.setSelectedIndex(0);
 	}
 
 	public synchronized static ExampleBox getInstance() {
