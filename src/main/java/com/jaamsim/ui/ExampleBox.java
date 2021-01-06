@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
+import javax.swing.AbstractAction;
 import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -37,6 +38,7 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
@@ -145,6 +147,17 @@ public class ExampleBox extends JDialog {
 					openExample(exampleList.get(ind) + ".cfg");
 					exampleSearch.setText("");
 				}
+			}
+		});
+
+		// Enter key opens the selected example
+		list.getInputMap().put(KeyStroke.getKeyStroke("ENTER"), "enter");
+		list.getActionMap().put("enter", new AbstractAction() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				int ind = list.getSelectedIndex();
+				openExample(exampleList.get(ind) + ".cfg");
+				exampleSearch.setText("");
 			}
 		});
 
