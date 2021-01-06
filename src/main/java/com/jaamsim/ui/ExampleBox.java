@@ -21,6 +21,8 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.net.URL;
 import java.util.ArrayList;
@@ -132,6 +134,20 @@ public class ExampleBox extends JDialog {
 		listScroller.setPreferredSize(new Dimension(250, 200));
 		getContentPane().add(listScroller, BorderLayout.WEST);
 
+		// Double click opens the indicated example
+		list.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent evt) {
+				if (evt.getClickCount() > 1) {
+					int ind = list.locationToIndex(evt.getPoint());
+					if (ind == -1)
+						return;
+					openExample(exampleList.get(ind) + ".cfg");
+					exampleSearch.setText("");
+				}
+			}
+		});
+
 		// Example preview
 		previewLabel = new JLabel("", JLabel.CENTER);
 		previewLabel.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -142,22 +158,7 @@ public class ExampleBox extends JDialog {
 		openButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-
-				// Create the new simulation model
-				JaamSimModel simModel = new JaamSimModel(presentExample + ".cfg");
-
-				// Load the specified model file
-				simModel.autoLoad();
-				GUIFrame.getInstance().setWindowDefaults(simModel.getSimulation());
-				InputAgent.readResource(simModel, "<res>/examples/" + presentExample + ".cfg");
-				simModel.postLoad();
-
-				// Display the new model
-				GUIFrame.setJaamSimModel(simModel);
-				FrameBox.setSelectedEntity(simModel.getSimulation(), false);
-
-				// Bring the new model to front
-				GUIFrame.getInstance().setVisible(true);
+				openExample(presentExample + ".cfg");
 			}
 		});
 
@@ -305,6 +306,25 @@ public class ExampleBox extends JDialog {
 			imageCache.put(example, fi);
 			return fi;
 		}
+	}
+
+	private void openExample(String name) {
+
+		// Create the new simulation model
+		JaamSimModel simModel = new JaamSimModel(name);
+
+		// Load the specified model file
+		simModel.autoLoad();
+		GUIFrame.getInstance().setWindowDefaults(simModel.getSimulation());
+		InputAgent.readResource(simModel, "<res>/examples/" + name);
+		simModel.postLoad();
+
+		// Display the new model
+		GUIFrame.setJaamSimModel(simModel);
+		FrameBox.setSelectedEntity(simModel.getSimulation(), false);
+
+		// Bring the new model to front
+		GUIFrame.getInstance().setVisible(true);
 	}
 
 }
