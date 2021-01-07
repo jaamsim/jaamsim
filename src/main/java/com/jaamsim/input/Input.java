@@ -296,14 +296,6 @@ public abstract class Input<T> {
 	 * @return string representing the default value
 	 */
 	public String getDefaultString(JaamSimModel simModel) {
-		return getDefaultString();
-	}
-
-	/**
-	 * Returns a string representing the default value for the input.
-	 * @return string representing the default value
-	 */
-	public String getDefaultString() {
 		if (defValue == null)
 			return "";
 		return defValue.toString();
