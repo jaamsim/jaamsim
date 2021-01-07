@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018-2019 JaamSim Software Inc.
+ * Copyright (C) 2018-2021 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -235,13 +235,13 @@ public class TextModel extends DisplayModel implements TextEntity {
 	@Override
 	public String getTextHeightString() {
 		if (textHeight.isDefault())
-			return textHeight.getDefaultString();
+			return textHeight.getDefaultString(getJaamSimModel());
 		return textHeight.getValueString();
 	}
 
 	public String getTextHeightInPixelsString() {
 		if (textHeightInPixels.isDefault())
-			return textHeightInPixels.getDefaultString();
+			return textHeightInPixels.getDefaultString(getJaamSimModel());
 		return textHeightInPixels.getValueString();
 	}
 

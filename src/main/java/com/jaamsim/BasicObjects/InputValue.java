@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2015 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018-2019 JaamSim Software Inc.
+ * Copyright (C) 2018-2021 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,7 +55,7 @@ public class InputValue extends TextBasics implements SampleProvider {
 	}
 
 	public InputValue() {
-		setText(valInput.getDefaultString());
+		setText(valInput.getDefaultString(getJaamSimModel()));
 	}
 
 	@Override
@@ -65,7 +65,7 @@ public class InputValue extends TextBasics implements SampleProvider {
 		if (in == unitType) {
 			setUnitType(unitType.getUnitType());
 			if (valInput.isDefault())
-				setText(valInput.getDefaultString());
+				setText(valInput.getDefaultString(getJaamSimModel()));
 			return;
 		}
 
@@ -73,7 +73,7 @@ public class InputValue extends TextBasics implements SampleProvider {
 			if (!suppressUpdate)
 				setText(valInput.getValueString());
 			if (valInput.isDefault())
-				setText(valInput.getDefaultString());
+				setText(valInput.getDefaultString(getJaamSimModel()));
 			suppressUpdate = false;
 			return;
 		}
