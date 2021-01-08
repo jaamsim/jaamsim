@@ -3147,14 +3147,9 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			reverseButton.doClick();
 	}
 
-	public void updateControls() {
-		Simulation simulation = sim.getSimulation();
+	public void updateControls(Simulation simulation) {
 		if (simulation == null)
 			return;
-		updateControls(simulation);
-	}
-
-	public void updateControls(Simulation simulation) {
 		updateSaveButton();
 		updateUndoButtons();
 		updateForRealTime(simulation.isRealTime(), simulation.getRealTimeFactor());
@@ -4345,7 +4340,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			double callBackTime = evt.ticksToSeconds(frame.simTicks);
 
 			frame.setClock(callBackTime);
-			frame.updateControls();
+			frame.updateControls(sim.getSimulation());
 			FrameBox.updateEntityValues(callBackTime);
 		}
 	}
