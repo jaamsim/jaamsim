@@ -3533,7 +3533,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	}
 
 	private void updateFindButton() {
-		boolean bool = FindBox.getInstance().isVisible();
+		boolean bool = FindBox.hasInstance() && FindBox.getInstance().isVisible();
 		find.setSelected(bool);
 	}
 

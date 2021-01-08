@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2019-2020 JaamSim Software Inc.
+ * Copyright (C) 2019-2021 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -102,6 +102,10 @@ public class FindBox extends JDialog {
 		if (myInstance == null)
 			myInstance = new FindBox();
 		return myInstance;
+	}
+
+	public synchronized static boolean hasInstance() {
+		return (myInstance != null);
 	}
 
 	private synchronized static void killInstance() {
