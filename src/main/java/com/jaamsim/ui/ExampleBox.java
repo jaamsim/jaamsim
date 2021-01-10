@@ -336,6 +336,9 @@ public class ExampleBox extends JDialog {
 		InputAgent.readResource(simModel, "<res>/examples/" + name);
 		simModel.postLoad();
 
+		// A RecordEdits marker in the example file must be ignored
+		simModel.setRecordEditsFound(false);
+
 		// Display the new model
 		GUIFrame.setJaamSimModel(simModel);
 		FrameBox.setSelectedEntity(simModel.getSimulation(), false);
