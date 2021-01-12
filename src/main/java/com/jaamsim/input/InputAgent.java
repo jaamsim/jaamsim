@@ -985,7 +985,7 @@ public class InputAgent {
 		for (Entity ent : simModel.getClonesOfIterator(Entity.class)) {
 			if (!ent.isAdded() || ent.isGenerated())
 				continue;
-			if (ent instanceof EntityLabel && !((EntityLabel) ent).getShow()
+			if (ent instanceof EntityLabel && !((EntityLabel) ent).getShowInput()
 					&& ((EntityLabel) ent).isDefault())
 				continue;
 			newEntities.add(ent);
@@ -1036,7 +1036,7 @@ public class InputAgent {
 		for (Entity ent : simModel.getClonesOfIterator(Entity.class)) {
 			if (!ent.isEdited() || !ent.isRegistered())
 				continue;
-			if (ent instanceof EntityLabel && !((EntityLabel) ent).getShow()
+			if (ent instanceof EntityLabel && !((EntityLabel) ent).getShowInput()
 					&& ((EntityLabel) ent).isDefault())
 				continue;
 			entityList.add(ent);
