@@ -193,8 +193,6 @@ public class EntityLabel extends TextBasics {
 				return;
 			label = EntityLabel.createLabel(ent);
 			InputAgent.applyBoolean(label, "Show", false);
-			label.setShow(true);
-			return;
 		}
 
 		// Show or hide the label
