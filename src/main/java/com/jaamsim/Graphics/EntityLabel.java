@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2015 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018-2019 JaamSim Software Inc.
+ * Copyright (C) 2018-2021 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -153,7 +153,7 @@ public class EntityLabel extends TextBasics {
 		}
 
 		// Set the label's position
-		Vec3d pos = getNominalPosition(ent);
+		Vec3d pos = label.getDefaultPosition();
 		InputAgent.apply(label, simModel.formatVec3dInput("Position", pos, DistanceUnit.class));
 
 		// Set the label's size
@@ -162,7 +162,8 @@ public class EntityLabel extends TextBasics {
 		return label;
 	}
 
-	public static Vec3d getNominalPosition(DisplayEntity ent) {
+	public Vec3d getDefaultPosition() {
+		DisplayEntity ent = getTarget();
 		double ypos = -0.15d - 0.5d*ent.getSize().y;
 		return new Vec3d(0.0d, ypos, 0.0d);
 	}
@@ -208,8 +209,7 @@ public class EntityLabel extends TextBasics {
 
 	@Override
 	public boolean isDefault() {
-		DisplayEntity ent = getTarget();
-		Vec3d pos = getNominalPosition(ent);
+		Vec3d pos = getDefaultPosition();
 		return getPosition().equals3(pos) && super.isDefault();
 	}
 
