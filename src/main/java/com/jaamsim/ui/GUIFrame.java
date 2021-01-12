@@ -4712,7 +4712,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 			// Add a label if required
 			if (sim.getSimulation().isShowLabels() && EntityLabel.canLabel(dEnt))
-				EntityLabel.showTemporaryLabel(dEnt, true);
+				EntityLabel.showTemporaryLabel(dEnt, true, true);
 		}
 
 		// Copy the children
@@ -4741,7 +4741,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				Entity copiedChild = parent1.getChild(localName);
 				EntityLabel label = EntityLabel.getLabel((DisplayEntity) child);
 				if (label != null) {
-					EntityLabel newLabel = EntityLabel.createLabel((DisplayEntity) copiedChild);
+					EntityLabel newLabel = EntityLabel.createLabel((DisplayEntity) copiedChild, true);
 					InputAgent.applyBoolean(newLabel, "Show", label.getShowInput());
 					newLabel.setShow(label.getShow());
 				}

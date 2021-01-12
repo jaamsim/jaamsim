@@ -125,7 +125,13 @@ public class EntityLabel extends TextBasics {
 		this.resizeForText();
 	}
 
-	public static EntityLabel createLabel(DisplayEntity ent) {
+	/**
+	 * Creates a label for the specified entity.
+	 * @param ent - entity to be labeled
+	 * @param undo - true if undo is to be enabled
+	 * @return label object
+	 */
+	public static EntityLabel createLabel(DisplayEntity ent, boolean undo) {
 		EntityLabel label = getLabel(ent);
 		if (label != null)
 			return label;
@@ -133,8 +139,13 @@ public class EntityLabel extends TextBasics {
 		// Create the EntityLabel object
 		JaamSimModel simModel = ent.getJaamSimModel();
 		String name = InputAgent.getUniqueName(simModel, ent.getName() + "_Label", "");
-		InputAgent.storeAndExecute(new DefineCommand(simModel, EntityLabel.class, name));
-		label = (EntityLabel)simModel.getNamedEntity(name);
+		if (undo) {
+			InputAgent.storeAndExecute(new DefineCommand(simModel, EntityLabel.class, name));
+			label = (EntityLabel)simModel.getNamedEntity(name);
+		}
+		else {
+			label = InputAgent.defineEntityWithUniqueName(simModel, EntityLabel.class, name, "", true);
+		}
 
 		// Assign inputs that link the label to its target entity
 		InputAgent.applyArgs(label, "TargetEntity", ent.getName());
@@ -175,7 +186,7 @@ public class EntityLabel extends TextBasics {
 		if (label == null) {
 			if (!bool)
 				return;
-			label = EntityLabel.createLabel(ent);
+			label = EntityLabel.createLabel(ent, true);
 		}
 
 		// Show or hide the label
@@ -184,14 +195,14 @@ public class EntityLabel extends TextBasics {
 		InputAgent.applyBoolean(label, "Show", bool);
 	}
 
-	public static void showTemporaryLabel(DisplayEntity ent, boolean bool) {
+	public static void showTemporaryLabel(DisplayEntity ent, boolean bool, boolean undo) {
 		EntityLabel label = getLabel(ent);
 
 		// Does the label exist yet?
 		if (label == null) {
 			if (!bool)
 				return;
-			label = EntityLabel.createLabel(ent);
+			label = EntityLabel.createLabel(ent, undo);
 			InputAgent.applyBoolean(label, "Show", false);
 		}
 

@@ -1835,7 +1835,7 @@ public class RenderManager implements DragSourceListener {
 
 			// Add the label
 			if (simulation.isShowLabels() && EntityLabel.canLabel(dispEnt))
-				EntityLabel.showTemporaryLabel(dispEnt, true);
+				EntityLabel.showTemporaryLabel(dispEnt, true, true);
 
 			// Set the focus on the window that received the entity
 			Frame awtRef = renderer.getAWTFrame(windowID);
