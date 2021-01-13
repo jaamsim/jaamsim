@@ -20,15 +20,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.jaamsim.Graphics.DisplayEntity;
-import com.jaamsim.ProcessFlow.LinkedComponent;
 import com.jaamsim.Graphics.Region;
-import com.jaamsim.SubModels.SubModelEnd;
-import com.jaamsim.SubModels.SubModelStart;
+import com.jaamsim.ProcessFlow.LinkedComponent;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.basicsim.JaamSimModel;
-import com.jaamsim.input.Input;
 import com.jaamsim.input.BooleanInput;
+import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.math.Vec3d;

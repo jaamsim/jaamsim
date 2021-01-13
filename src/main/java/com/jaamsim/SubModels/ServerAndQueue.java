@@ -21,8 +21,6 @@ import com.jaamsim.ProcessFlow.Queue;
 import com.jaamsim.ProcessFlow.Server;
 import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
-import com.jaamsim.SubModels.SubModelEnd;
-import com.jaamsim.SubModels.SubModelStart;
 import com.jaamsim.Thresholds.ExpressionThreshold;
 import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.input.InputAgent;
