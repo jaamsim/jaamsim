@@ -1048,9 +1048,11 @@ public class MeshData {
 	private void addToHist(HashMap<Integer, Integer> hist, int val) {
 		Integer histVal = hist.get(val);
 		if (histVal == null) {
-			histVal = new Integer(0);
+			histVal = Integer.valueOf(1);
 		}
-		histVal += 1;
+		else {
+			histVal += 1;
+		}
 		hist.put(val, histVal);
 
 	}

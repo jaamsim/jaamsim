@@ -1821,7 +1821,7 @@ public class ExpOperators {
 									+ "Example: 'format(\"5km is %%f metres\", 5[km]/1[m])'",
 									i + 1);
 						}
-						strArgs[i-1] = new Double(args[i].value);
+						strArgs[i-1] = Double.valueOf(args[i].value);
 					}
 				}
 				String ret = null;
