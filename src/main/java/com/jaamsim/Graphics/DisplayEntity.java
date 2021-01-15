@@ -274,12 +274,16 @@ public class DisplayEntity extends Entity {
 		super.updateForInput( in );
 
 		if (in == positionInput) {
+			if (usePointsInput())
+				return;
 			this.setPosition(positionInput.getValue());
 			return;
 		}
 
 		if (in == pointsInput) {
-			this.setPoints(pointsInput.getValue());
+			if (!usePointsInput())
+				return;
+			updateForPointsInput(pointsInput.getValue());
 			return;
 		}
 		if (in == sizeInput) {
@@ -357,11 +361,31 @@ public class DisplayEntity extends Entity {
 		}
 	}
 
+	public void updateForPointsInput(ArrayList<Vec3d> pts) {
+		setPoints(pts);
+
+		// Set the position to the point half way between the first and last nodes
+		Vec3d pos = new Vec3d(pts.get(0));
+		pos.add3(pts.get(pts.size() - 1));
+		pos.scale3(0.5d, pos);
+		setPosition(pos);
+	}
+
 	/**
 	 * Restores the initial appearance of this entity.
 	 */
 	public void resetGraphics() {
-		this.setPosition(positionInput.getValue());
+
+		// Normal objects
+		if (!usePointsInput()) {
+			setPosition(positionInput.getValue());
+		}
+
+		// Polyline objects
+		else {
+			updateForPointsInput(pointsInput.getValue());
+		}
+
 		this.setSize(sizeInput.getValue());
 		this.setAlignment(alignmentInput.getValue());
 		this.setOrientation(orientationInput.getValue());
