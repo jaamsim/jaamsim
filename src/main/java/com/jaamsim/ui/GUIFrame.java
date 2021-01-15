@@ -2334,8 +2334,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				}
 
 				// Normal object
-				KeywordIndex posKw = sim.formatVec3dInput("Position", pos, DistanceUnit.class);
 				if (!dispEnt.usePointsInput()) {
+					KeywordIndex posKw = sim.formatVec3dInput("Position", pos, DistanceUnit.class);
 					InputAgent.storeAndExecute(new KeywordCommand(dispEnt, posKw));
 					controlStartResume.requestFocusInWindow();
 					return;
@@ -2343,7 +2343,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 				// Polyline object
 				KeywordIndex ptsKw = sim.formatPointsInputs("Points", points, offset);
-				InputAgent.storeAndExecute(new KeywordCommand(dispEnt, posKw, ptsKw));
+				InputAgent.storeAndExecute(new KeywordCommand(dispEnt, ptsKw));
 				controlStartResume.requestFocusInWindow();
 			}
 		};
