@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2002-2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2017-2020 JaamSim Software Inc.
+ * Copyright (C) 2017-2021 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -875,24 +875,24 @@ public class DisplayEntity extends Entity {
 	}
 
 	public void dragged(int x, int y, Vec3d newPos) {
+		JaamSimModel simModel = getJaamSimModel();
 
 		// Normal objects
-		JaamSimModel simModel = getJaamSimModel();
 		KeywordIndex kw = simModel.formatVec3dInput(positionInput.getKeyword(), newPos, DistanceUnit.class);
 		InputAgent.apply(this, kw);
 
-		ArrayList<Vec3d> points = pointsInput.getValue();
-		if (points == null || points.isEmpty())
+		ArrayList<Vec3d> pts = pointsInput.getValue();
+		if (pts == null || pts.isEmpty())
 			return;
 		if (!usePointsInput()) {
-			setPoints(points);
+			setPoints(pts);
 			return;
 		}
 
 		// Polyline objects
 		Vec3d dist = new Vec3d(newPos);
-		dist.sub3(points.get(0));
-		kw = simModel.formatPointsInputs(pointsInput.getKeyword(), pointsInput.getValue(), dist);
+		dist.sub3(pts.get(0));
+		kw = simModel.formatPointsInputs(pointsInput.getKeyword(), pts, dist);
 		InputAgent.apply(this, kw);
 	}
 
