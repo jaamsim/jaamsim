@@ -878,21 +878,17 @@ public class DisplayEntity extends Entity {
 		JaamSimModel simModel = getJaamSimModel();
 
 		// Normal objects
-		KeywordIndex kw = simModel.formatVec3dInput(positionInput.getKeyword(), newPos, DistanceUnit.class);
-		InputAgent.apply(this, kw);
-
-		ArrayList<Vec3d> pts = pointsInput.getValue();
-		if (pts == null || pts.isEmpty())
-			return;
 		if (!usePointsInput()) {
-			setPoints(pts);
+			KeywordIndex kw = simModel.formatVec3dInput(positionInput.getKeyword(), newPos, DistanceUnit.class);
+			InputAgent.apply(this, kw);
 			return;
 		}
 
 		// Polyline objects
 		Vec3d dist = new Vec3d(newPos);
+		ArrayList<Vec3d> pts = pointsInput.getValue();
 		dist.sub3(pts.get(0));
-		kw = simModel.formatPointsInputs(pointsInput.getKeyword(), pts, dist);
+		KeywordIndex kw = simModel.formatPointsInputs(pointsInput.getKeyword(), pts, dist);
 		InputAgent.apply(this, kw);
 	}
 
