@@ -175,7 +175,9 @@ public class EntityLabel extends TextBasics {
 
 	public Vec3d getDefaultPosition() {
 		DisplayEntity ent = getTarget();
-		double ypos = -0.15d - 0.5d*ent.getSize().y;
+		double ypos = -0.15d;
+		if (!ent.usePointsInput())
+			ypos -= 0.5d*ent.getSize().y;
 		return new Vec3d(0.0d, ypos, 0.0d);
 	}
 
