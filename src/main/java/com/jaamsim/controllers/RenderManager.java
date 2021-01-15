@@ -1251,11 +1251,11 @@ public class RenderManager implements DragSourceListener {
 		Vec3d localPos = selectedEntity.getLocalPosition(pos);
 		if (simulation.isSnapToGrid())
 			localPos = simulation.getSnapGridPosition(localPos, selectedEntity.getPosition(), shift);
-		KeywordIndex kw = simModel.formatVec3dInput("Position", localPos, DistanceUnit.class);
 
 		// Move the selected entity
 		ArrayList<Command> cmdList = new ArrayList<>();
 		if (!selectedEntity.usePointsInput()) {
+			KeywordIndex kw = simModel.formatVec3dInput("Position", localPos, DistanceUnit.class);
 			cmdList.add(new KeywordCommand(selectedEntity, kw));
 		}
 		else {
@@ -1263,7 +1263,7 @@ public class RenderManager implements DragSourceListener {
 			Vec3d offset = new Vec3d(localPos);
 			offset.sub3(selectedEntity.getPosition());
 			KeywordIndex ptsKw = simModel.formatPointsInputs("Points", points, offset);
-			cmdList.add(new KeywordCommand(selectedEntity, kw, ptsKw));
+			cmdList.add(new KeywordCommand(selectedEntity, ptsKw));
 		}
 
 		// Move any additional entities that were selected
@@ -1275,8 +1275,8 @@ public class RenderManager implements DragSourceListener {
 			pos = ent.getGlobalPosition();
 			pos.add3(globalOffset);
 			localPos = ent.getLocalPosition(pos);
-			kw = simModel.formatVec3dInput("Position", localPos, DistanceUnit.class);
 			if (!ent.usePointsInput()) {
+				KeywordIndex kw = simModel.formatVec3dInput("Position", localPos, DistanceUnit.class);
 				cmdList.add(new KeywordCommand(ent, kw));
 			}
 			else {
@@ -1284,7 +1284,7 @@ public class RenderManager implements DragSourceListener {
 				Vec3d offset = new Vec3d(localPos);
 				offset.sub3(ent.getPosition());
 				KeywordIndex ptsKw = simModel.formatPointsInputs("Points", points, offset);
-				cmdList.add(new KeywordCommand(ent, kw, ptsKw));
+				cmdList.add(new KeywordCommand(ent, ptsKw));
 			}
 		}
 
@@ -1465,9 +1465,8 @@ public class RenderManager implements DragSourceListener {
 		Vec3d localPos = selectedEntity.getLocalPosition(pos);
 
 		KeywordIndex ptsKw = simModel.formatPointsInputs("Points", localPts, new Vec3d());
-		KeywordIndex posKw = simModel.formatVec3dInput("Position", localPos, DistanceUnit.class);
 		ArrayList<Command> cmdList = new ArrayList<>();
-		cmdList.add(new KeywordCommand(selectedEntity, -1, posKw, ptsKw));
+		cmdList.add(new KeywordCommand(selectedEntity, -1, ptsKw));
 
 		// Move any additional entities that were selected
 		Vec3d globalOffset = selectedEntity.getGlobalPosition(localPos);
@@ -1478,8 +1477,8 @@ public class RenderManager implements DragSourceListener {
 			pos = ent.getGlobalPosition();
 			pos.add3(globalOffset);
 			localPos = ent.getLocalPosition(pos);
-			posKw = simModel.formatVec3dInput("Position", localPos, DistanceUnit.class);
 			if (!ent.usePointsInput()) {
+				KeywordIndex posKw = simModel.formatVec3dInput("Position", localPos, DistanceUnit.class);
 				cmdList.add(new KeywordCommand(ent, posKw));
 			}
 			else {
@@ -1487,7 +1486,7 @@ public class RenderManager implements DragSourceListener {
 				Vec3d offset = new Vec3d(localPos);
 				offset.sub3(ent.getPosition());
 				ptsKw = simModel.formatPointsInputs("Points", points, globalOffset);
-				cmdList.add(new KeywordCommand(ent, posKw, ptsKw));
+				cmdList.add(new KeywordCommand(ent, ptsKw));
 			}
 		}
 
