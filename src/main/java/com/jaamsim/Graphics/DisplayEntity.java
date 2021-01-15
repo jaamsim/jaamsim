@@ -966,14 +966,13 @@ public class DisplayEntity extends Entity {
 		}
 
 		// Normal object
-		Vec3d pos = getPosition();
-		pos.add3(offset);
-		if (getSimulation().isSnapToGrid())
-			pos = getSimulation().getSnapGridPosition(pos, pos, shift);
-		String posKey = positionInput.getKeyword();
-		KeywordIndex posKw = simModel.formatVec3dInput(posKey, pos, DistanceUnit.class);
-
 		if (!usePointsInput()) {
+			Vec3d pos = getPosition();
+			pos.add3(offset);
+			if (getSimulation().isSnapToGrid())
+				pos = getSimulation().getSnapGridPosition(pos, pos, shift);
+			String posKey = positionInput.getKeyword();
+			KeywordIndex posKw = simModel.formatVec3dInput(posKey, pos, DistanceUnit.class);
 			InputAgent.storeAndExecute(new KeywordCommand(this, posKw));
 			return true;
 		}
@@ -989,7 +988,7 @@ public class DisplayEntity extends Entity {
 		String ptsKey = pointsInput.getKeyword();
 		KeywordIndex ptsKw = simModel.formatPointsInputs(ptsKey, getPoints(), offset);
 
-		InputAgent.storeAndExecute(new KeywordCommand(this, posKw, ptsKw));
+		InputAgent.storeAndExecute(new KeywordCommand(this, ptsKw));
 		return true;
 	}
 
