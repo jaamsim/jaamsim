@@ -332,12 +332,17 @@ public class ExampleBox extends JDialog {
 
 		// Load the specified model file
 		simModel.autoLoad();
+		Simulation simulation = simModel.getSimulation();
 		GUIFrame.getInstance().setWindowDefaults(simModel.getSimulation());
 		InputAgent.readResource(simModel, "<res>/examples/" + name);
 		simModel.postLoad();
 
 		// A RecordEdits marker in the example file must be ignored
 		simModel.setRecordEditsFound(false);
+
+		// Add labels and sub-models
+		simModel.showTemporaryLabels( simulation.isShowLabels() );
+		simModel.showSubModels( simulation.isShowSubModels() );
 
 		// Display the new model
 		GUIFrame.setJaamSimModel(simModel);
