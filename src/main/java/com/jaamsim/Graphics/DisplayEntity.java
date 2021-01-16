@@ -379,11 +379,13 @@ public class DisplayEntity extends Entity {
 		// Normal objects
 		if (!usePointsInput()) {
 			setPosition(positionInput.getValue());
+			pointsInput.reset();
 		}
 
 		// Polyline objects
 		else {
 			updateForPointsInput(pointsInput.getValue());
+			positionInput.reset();
 		}
 
 		this.setSize(sizeInput.getValue());
