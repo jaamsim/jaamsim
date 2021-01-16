@@ -97,6 +97,8 @@ public abstract class Logger extends DisplayEntity {
 	public void earlyInit() {
 		super.earlyInit();
 
+		unitTypeListInput.reset();  // Delete an unnecessary input
+
 		logTime = 0.0d;
 
 		// Close the file if it is already open

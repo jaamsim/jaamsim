@@ -684,6 +684,12 @@ public class Simulation extends Entity {
 		}
 	}
 
+	@Override
+	public void earlyInit() {
+		super.earlyInit();
+		unitTypeList.reset();  // Delete an unnecessary input
+	}
+
 	/**
 	 * Clears the Simulation prior to loading a new model
 	 */
