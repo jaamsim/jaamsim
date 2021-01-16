@@ -1624,6 +1624,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				KeywordIndex kw = InputAgent.formatBoolean("ShowLabels", bool);
 				InputAgent.storeAndExecute(new KeywordCommand(sim.getSimulation(), kw));
 				sim.showTemporaryLabels(bool);
+				updateUI();
 				controlStartResume.requestFocusInWindow();
 			}
 		} );
@@ -1646,6 +1647,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				KeywordIndex kw = InputAgent.formatBoolean("ShowSubModels", bool);
 				InputAgent.storeAndExecute(new KeywordCommand(sim.getSimulation(), kw));
 				sim.showSubModels(bool);
+				updateUI();
 				controlStartResume.requestFocusInWindow();
 			}
 		} );
