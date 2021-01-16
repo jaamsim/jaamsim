@@ -333,7 +333,7 @@ public class ExampleBox extends JDialog {
 		// Load the specified model file
 		simModel.autoLoad();
 		Simulation simulation = simModel.getSimulation();
-		GUIFrame.getInstance().setWindowDefaults(simModel.getSimulation());
+		GUIFrame.getInstance().setWindowDefaults(simulation);
 		InputAgent.readResource(simModel, "<res>/examples/" + name);
 		simModel.postLoad();
 
@@ -346,7 +346,7 @@ public class ExampleBox extends JDialog {
 
 		// Display the new model
 		GUIFrame.setJaamSimModel(simModel);
-		FrameBox.setSelectedEntity(simModel.getSimulation(), false);
+		FrameBox.setSelectedEntity(simulation, false);
 
 		// Bring the new model to front
 		GUIFrame.getInstance().setVisible(true);
