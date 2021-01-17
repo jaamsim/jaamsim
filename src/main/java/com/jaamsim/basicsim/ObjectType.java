@@ -60,7 +60,7 @@ public class ObjectType extends Entity {
 	private final Vec3dInput defaultSize;
 
 	@Keyword(description = "The default alignment for the instances of this class.",
-	         exampleList = {"0.0 0.0 -0.5 m"})
+	         exampleList = {"0.0 0.0 -0.5"})
 	private final Vec3dInput defaultAlignment;
 
 	private final ArrayList<DisplayModel> displayEntityDefault = new ArrayList<>(1);
