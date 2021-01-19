@@ -949,12 +949,12 @@ public abstract class Input<T> {
 				throw new InputErrorException(INP_ERR_TIME, data);
 
 			try {
-				double hour = Double.valueOf(splitDouble[0]);
-				double min = Double.valueOf(splitDouble[1]);
+				double hour = Double.parseDouble(splitDouble[0]);
+				double min = Double.parseDouble(splitDouble[1]);
 				double sec = 0.0d;
 
 				if (splitDouble.length == 3)
-					sec = Double.valueOf(splitDouble[2]);
+					sec = Double.parseDouble(splitDouble[2]);
 
 				value = hour + (min / 60.0d) + (sec / 3600.0d);
 			}
