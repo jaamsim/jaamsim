@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2021 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,10 +33,11 @@ import com.jaamsim.units.Unit;
 public class EventSchedule extends DisplayEntity implements SampleProvider{
 
 	@Keyword(description = "A sequence of monotonically-increasing simulation times at which to "
-	                     + "generate events. If entered in date format, an input of "
-	                     + "'0000-01-01 00:00:00' corresponds to zero simulation time.",
+	                     + "generate events. "
+	                     + "Times entered in date format are converted to simulation time using "
+	                     + "the StartDate input for the Simulation object.",
 	         exampleList = {"2  10  18  h",
-	                        "'0000-01-15 12:30:00'  '0000-02-07 8:00:00'  '0000-03-30 18:00:00'"})
+	                        "'1970-01-15 12:30:00'  '1970-02-07 8:00:00'  '1970-03-30 18:00:00'"})
 	private final ValueListInput timeList;
 
 	@Keyword(description = "Defines when the event times will repeat from the start.",
