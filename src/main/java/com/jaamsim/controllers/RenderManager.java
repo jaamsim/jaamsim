@@ -1469,7 +1469,7 @@ public class RenderManager implements DragSourceListener {
 		cmdList.add(new KeywordCommand(selectedEntity, -1, ptsKw));
 
 		// Move any additional entities that were selected
-		Vec3d globalOffset = selectedEntity.getGlobalPosition(localPos);
+		Vec3d globalOffset = globalPts.get(0);
 		globalOffset.sub3(selectedEntity.getGlobalPosition(selectedEntity.getPoints().get(0)));
 		for (DisplayEntity ent : getSelectedEntityList()) {
 			if (ent == selectedEntity)
@@ -1483,8 +1483,10 @@ public class RenderManager implements DragSourceListener {
 			}
 			else {
 				ArrayList<Vec3d> points = ent.getPoints();
-				Vec3d offset = new Vec3d(localPos);
-				offset.sub3(ent.getPosition());
+				Vec3d globalPos = ent.getGlobalPosition(points.get(0));
+				globalPos.add3(globalOffset);
+				Vec3d offset = ent.getLocalPosition(globalPos);
+				offset.sub3(points.get(0));
 				ptsKw = simModel.formatPointsInputs("Points", points, offset);
 				cmdList.add(new KeywordCommand(ent, ptsKw));
 			}
