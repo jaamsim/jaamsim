@@ -216,6 +216,17 @@ public class ExampleBox extends JDialog {
 		super.dispose();
 	}
 
+	/**
+	 * Launches the Help tool and searches for topics that contain the specified string.
+	 * @param str - string to search
+	 */
+	public void search(String str) {
+		if (str == null || str.isEmpty())
+			return;
+		this.setVisible(true);
+		exampleSearch.search(str);
+	}
+
 	public void showDialog() {
 		showDialog("");
 	}

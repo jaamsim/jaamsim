@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2020 JaamSim Software Inc.
+ * Copyright (C) 2020-2021 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -93,11 +93,26 @@ public class HelpBox extends JDialog {
 		topicSearch.setToolTipText(GUIFrame.formatToolTip("Topic",
 				"Title of the help topic to find."));
 
+		// Examples button
+		JButton examplesButton = new JButton("Examples");
+		examplesButton.setToolTipText(GUIFrame.formatToolTip("Examples",
+				"Show example models related to this topic."));
+		examplesButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (presentTopic == null)
+					return;
+				ExampleBox.getInstance().search(presentTopic);
+			}
+		});
+
 		JPanel textPanel = new JPanel();
 		textPanel.setLayout( new FlowLayout(FlowLayout.CENTER, 0, 0) );
 		textPanel.add(new JLabel("Find Topic:"));
 		textPanel.add(Box.createRigidArea(new Dimension(5, 5)));
 		textPanel.add(topicSearch);
+		textPanel.add(Box.createRigidArea(new Dimension(20, 5)));
+		textPanel.add(examplesButton);
 		textPanel.setBorder(new EmptyBorder(10, 5, 5, 5));
 		getContentPane().add(textPanel, BorderLayout.NORTH);
 
