@@ -1281,8 +1281,10 @@ public class RenderManager implements DragSourceListener {
 			}
 			else {
 				ArrayList<Vec3d> points = ent.getPoints();
-				Vec3d offset = new Vec3d(localPos);
-				offset.sub3(ent.getPosition());
+				Vec3d globalPos = ent.getGlobalPosition(points.get(0));
+				globalPos.add3(globalOffset);
+				Vec3d offset = ent.getLocalPosition(globalPos);
+				offset.sub3(points.get(0));
 				KeywordIndex ptsKw = simModel.formatPointsInputs("Points", points, offset);
 				cmdList.add(new KeywordCommand(ent, ptsKw));
 			}
