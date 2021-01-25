@@ -78,7 +78,7 @@ public class ExampleBox extends JDialog {
 
 		getContentPane().setLayout( new BorderLayout() );
 		setMinimumSize(new Dimension(300, 300));
-		setPreferredSize(new Dimension(1000, 800));
+		setPreferredSize(new Dimension(1100, 800));
 
 		// Example List
 		for (String name : GUIFrame.getResourceFileNames("/resources/examples")) {
@@ -89,7 +89,7 @@ public class ExampleBox extends JDialog {
 		Collections.sort(exampleList, Input.uiSortOrder);
 
 		// Example search
-		exampleSearch = new SearchField(30) {
+		exampleSearch = new SearchField(50) {
 			@Override
 			public void showTopic(String topic) {
 				ExampleBox.this.showTopic(topic);
@@ -133,7 +133,7 @@ public class ExampleBox extends JDialog {
 		});
 		JScrollPane listScroller = new JScrollPane(list);
 		listScroller.setBorder(new EmptyBorder(5, 5, 5, 0));
-		listScroller.setPreferredSize(new Dimension(250, 200));
+		listScroller.setPreferredSize(new Dimension(350, 200));
 		getContentPane().add(listScroller, BorderLayout.WEST);
 
 		// Double click opens the indicated example
