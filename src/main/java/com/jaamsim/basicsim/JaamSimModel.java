@@ -246,6 +246,7 @@ public class JaamSimModel {
 		configFile = file;
 		openLogFile();
 		InputAgent.loadConfigurationFile(this, file);
+		name = file.getName();
 
 		// The session is not considered to be edited after loading a configuration file
 		setSessionEdited(false);
