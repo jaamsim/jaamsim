@@ -176,8 +176,6 @@ public class RenderManager implements DragSourceListener {
 	// The video recorder to sample
 	private VideoRecorder recorder;
 
-	// FIXME: the preview cache will cause a GUIFrame to be created, needs fixing for fully headless
-	// operation
 	private final PreviewCache previewCache = new PreviewCache();
 
 	// Below are special PickingIDs for resizing and dragging handles

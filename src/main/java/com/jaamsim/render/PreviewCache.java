@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2012 Ausenco Engineering Canada Inc.
- * Copyright (C) 2020 JaamSim Software Inc.
+ * Copyright (C) 2020-2021 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,24 +37,17 @@ import com.jaamsim.controllers.PolarInfo;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.math.Transform;
 import com.jaamsim.math.Vec3d;
-import com.jaamsim.ui.GUIFrame;
 
 public class PreviewCache {
 
-	private HashMap<DisplayModel, Future<BufferedImage>> _imageCache;
-
-	private DisplayEntity dummyEntity;
+	private final HashMap<DisplayModel, Future<BufferedImage>> _imageCache;
+	private final DisplayEntity dummyEntity;
 
 	public PreviewCache() {
 		_imageCache = new HashMap<>();
-
-		JaamSimModel simModel = GUIFrame.getJaamSimModel();
-		if (simModel.getSimState() != JaamSimModel.SIM_STATE_RUNNING) {
-			dummyEntity = simModel.createInstance(DisplayEntity.class);
-			//FIXME: remove this when models are no longer static
-			dummyEntity.setName("");
-			dummyEntity.kill();
-		}
+		JaamSimModel simModel = new JaamSimModel();
+		simModel.autoLoad();
+		dummyEntity = simModel.createInstance(DisplayEntity.class);
 	}
 
 	public void clear() {
@@ -103,22 +96,7 @@ public class PreviewCache {
 
 			ArrayList<RenderProxy> proxies = new ArrayList<>();
 
-			// Collect the render proxies for a dummy version of this DisplayModel,
-			// This will all need to be refactored soonish.
-
-			if (dummyEntity == null) {
-				JaamSimModel simModel = GUIFrame.getJaamSimModel();
-				if (simModel.getSimState() != JaamSimModel.SIM_STATE_RUNNING) {
-					dummyEntity = simModel.createInstance(DisplayEntity.class);
-					dummyEntity.kill();
-				} else {
-					// The simulation is running so we can't make the dummy entity
-					Future<BufferedImage> ret = new Future<>(null);
-					ret.setFailed("Simulation running");
-					return ret;
-				}
-			}
-
+			// Collect the render proxies for a dummy version of this DisplayModel
 			if (dm == null || !dm.canDisplayEntity(dummyEntity)) {
 				Future<BufferedImage> ret = new Future<>(null);
 				ret.setFailed("Cannot render preview");
