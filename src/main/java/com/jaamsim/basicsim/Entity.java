@@ -780,10 +780,6 @@ public class Entity {
 		customOutputMap.put(name, eh);
 	}
 
-	public void removeCustomOutput(String name) {
-		customOutputMap.remove(name);
-	}
-
 	public boolean hasCustomOutput(String name) {
 		return customOutputMap.containsKey(name);
 	}
@@ -805,13 +801,6 @@ public class Entity {
 
 	public boolean hasAttribute(String name) {
 		return attributeMap.containsKey(name);
-	}
-
-	public Class<? extends Unit> getAttributeUnitType(String name) {
-		AttributeHandle h = attributeMap.get(name);
-		if (h == null)
-			return null;
-		return h.getUnitType();
 	}
 
 	// Utility function to help set attribute values for nested indices
