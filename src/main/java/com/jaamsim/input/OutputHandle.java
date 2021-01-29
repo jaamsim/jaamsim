@@ -44,9 +44,9 @@ public class OutputHandle {
 		outputInfoCache = new HashMap<>();
 	}
 
-	public OutputHandle(Entity e, String outputName) {
+	OutputHandle(Entity e, OutputStaticInfo info) {
 		ent = e;
-		outputInfo = OutputHandle.getOutputInfoImp(e.getClass()).get(outputName);
+		outputInfo = info;
 		unitType = outputInfo.unitType;
 	}
 
@@ -106,6 +106,18 @@ public class OutputHandle {
 		return ret;
 	}
 
+	public static OutputHandle getOutputHandle(Entity e, String outputName) {
+		OutputStaticInfo info = getOutputInfoImp(e.getClass()).get(outputName);
+		if (info == null)
+			return null;
+
+		OutputHandle ret = new OutputHandle(e, info);
+		if (ret.getUnitType() == UserSpecifiedUnit.class)
+			ret.setUnitType(e.getUserUnitType());
+
+		return ret;
+	}
+	
 	/**
 	 * Return a list of the OuputHandles for the given entity.
 	 * @param e = the entity whose OutputHandles are to be returned.
@@ -114,11 +126,11 @@ public class OutputHandle {
 	public static ArrayList<OutputHandle> getAllOutputHandles(Entity e) {
 		Class<? extends Entity> klass = e.getClass();
 		ArrayList<OutputHandle> ret = new ArrayList<>();
-		for( OutputStaticInfo p : getOutputInfoImp(klass).values() ) {
-			OutputHandle oh = new OutputHandle(e, p.name);
+		for (OutputStaticInfo p : getOutputInfoImp(klass).values()) {
+			OutputHandle oh = new OutputHandle(e, p);
 			if (oh.getUnitType() == UserSpecifiedUnit.class)
 				oh.setUnitType(e.getUserUnitType());
-			ret.add(oh);  // required to get the correct unit type for the output
+			ret.add(oh); // required to get the correct unit type for the output
 		}
 
 		return ret;

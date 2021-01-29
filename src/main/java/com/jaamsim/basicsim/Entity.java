@@ -51,7 +51,6 @@ import com.jaamsim.input.SynonymInput;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
 import com.jaamsim.units.Unit;
-import com.jaamsim.units.UserSpecifiedUnit;
 
 /**
  * Abstract class that encapsulates the methods and data needed to create a
@@ -761,13 +760,9 @@ public class Entity {
 		if (ret != null)
 			return ret;
 
-		if (OutputHandle.hasOutput(this.getClass(), outputName)) {
-			ret = new OutputHandle(this, outputName);
-			if (ret.getUnitType() == UserSpecifiedUnit.class)
-				ret.setUnitType(getUserUnitType());
-
+		ret = OutputHandle.getOutputHandle(this, outputName);
+		if (ret != null)
 			return ret;
-		}
 
 		return null;
 	}
