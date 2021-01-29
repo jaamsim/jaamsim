@@ -758,7 +758,7 @@ public class Entity {
 		if (ret != null)
 			return ret;
 
-		if (hasOutput(outputName)) {
+		if (OutputHandle.hasOutput(this.getClass(), outputName)) {
 			ret = new OutputHandle(this, outputName);
 			if (ret.getUnitType() == UserSpecifiedUnit.class)
 				ret.setUnitType(getUserUnitType());
@@ -767,11 +767,6 @@ public class Entity {
 		}
 
 		return null;
-	}
-
-	public boolean hasOutput(String name) {
-		return (OutputHandle.hasOutput(this.getClass(), name))
-				|| hasAttribute(name) || hasCustomOutput(name);
 	}
 
 	public void addCustomOutput(String name, Expression exp, Class<? extends Unit> unitType) {
