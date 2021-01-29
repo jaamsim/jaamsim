@@ -772,7 +772,7 @@ public class Entity {
 		return null;
 	}
 
-	public void addCustomOutput(String name, Expression exp, Class<? extends Unit> unitType) {
+	private void addCustomOutput(String name, Expression exp, Class<? extends Unit> unitType) {
 		ExpressionHandle eh = new ExpressionHandle(this, exp, name);
 		eh.setUnitType(unitType);
 		customOutputMap.put(name, eh);
