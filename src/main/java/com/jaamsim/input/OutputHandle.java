@@ -173,9 +173,6 @@ public class OutputHandle {
 
 	@SuppressWarnings("unchecked") // This suppresses the warning on the cast, which is effectively checked
 	public <T> T getValue(double simTime, Class<T> klass) {
-		if( outputInfo.method == null )
-			return null;
-
 		T ret = null;
 		try {
 			if (!klass.isAssignableFrom(outputInfo.method.getReturnType()))
@@ -321,12 +318,10 @@ public class OutputHandle {
 	}
 
 	public Class<?> getReturnType() {
-		assert (outputInfo.method != null);
 		return outputInfo.method.getReturnType();
 	}
 
 	public Class<?> getDeclaringClass() {
-		assert (outputInfo.method != null);
 		return outputInfo.method.getDeclaringClass();
 	}
 
