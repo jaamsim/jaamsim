@@ -594,7 +594,7 @@ public class ExpressionBox extends JDialog {
 
 		// Outputs
 		handles.clear();
-		for (OutputHandle hand : OutputHandle.getOutputHandleList(ent)) {
+		for (OutputHandle hand : ent.getAllOutputs()) {
 			if (hand.getName().contains(" "))
 				continue;
 

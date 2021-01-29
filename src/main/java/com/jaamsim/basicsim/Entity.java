@@ -18,8 +18,11 @@
 package com.jaamsim.basicsim;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Map.Entry;
 
 import com.jaamsim.events.Conditional;
 import com.jaamsim.events.EventHandle;
@@ -859,20 +862,44 @@ public class Entity {
 		h.setValue(assignValue);
 	}
 
-	public ArrayList<String> getAttributeNames(){
-		ArrayList<String> ret = new ArrayList<>();
-		for (String name : attributeMap.keySet()) {
-			ret.add(name);
+	public ArrayList<OutputHandle> getAllOutputs() {
+		ArrayList<OutputHandle> ret = OutputHandle.getAllOutputHandles(this);
+
+		// Add the custom outputs
+		for (Entry<String, ExpressionHandle> e : customOutputMap.entrySet()) {
+			ret.add(e.getValue());
 		}
+		
+		// And the attributes
+		for (Entry<String, AttributeHandle> e : attributeMap.entrySet()) {
+			ret.add(e.getValue());
+		}
+		
+		Collections.sort(ret, new OutputHandleComparator());
 		return ret;
 	}
 
-	public ArrayList<String> getCustomOutputNames(){
-		ArrayList<String> ret = new ArrayList<>();
-		for (String name : customOutputMap.keySet()) {
-			ret.add(name);
+	private static class OutputHandleComparator implements Comparator<OutputHandle> {
+
+		@Override
+		public int compare(OutputHandle hand0, OutputHandle hand1) {
+			Class<?> class0 = hand0.getDeclaringClass();
+			Class<?> class1 = hand1.getDeclaringClass();
+
+			if (class0 == class1) {
+				if (hand0.getSequence() == hand1.getSequence())
+					return 0;
+				else if (hand0.getSequence() < hand1.getSequence())
+					return -1;
+				else
+					return 1;
+			}
+
+			if (class0.isAssignableFrom(class1))
+				return -1;
+			else
+				return 1;
 		}
-		return ret;
 	}
 
 	public ObjectType getObjectType() {

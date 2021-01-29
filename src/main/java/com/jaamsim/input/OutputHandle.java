@@ -19,13 +19,12 @@ package com.jaamsim.input;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.units.Unit;
+import com.jaamsim.units.UserSpecifiedUnit;
 
 /**
  * OutputHandle is a class that represents all the useful runtime information for an output,
@@ -112,51 +111,19 @@ public class OutputHandle {
 	 * @param e = the entity whose OutputHandles are to be returned.
 	 * @return = ArrayList of OutputHandles.
 	 */
-	public static ArrayList<OutputHandle> getOutputHandleList(Entity e) {
+	public static ArrayList<OutputHandle> getAllOutputHandles(Entity e) {
 		Class<? extends Entity> klass = e.getClass();
 		ArrayList<OutputHandle> ret = new ArrayList<>();
 		for( OutputStaticInfo p : getOutputInfoImp(klass).values() ) {
-			//ret.add( new OutputHandle(e, p) );
-			ret.add( e.getOutputHandle(p.name) );  // required to get the correct unit type for the output
+			OutputHandle oh = new OutputHandle(e, p.name);
+			if (oh.getUnitType() == UserSpecifiedUnit.class)
+				oh.setUnitType(e.getUserUnitType());
+			ret.add(oh);  // required to get the correct unit type for the output
 		}
 
-		// Add the custom outputs
-		for (String outputName : e.getCustomOutputNames()) {
-			ret.add(e.getOutputHandle(outputName));
-		}
-
-		// And the attributes
-		for (String attribName : e.getAttributeNames()) {
-			ret.add(e.getOutputHandle(attribName));
-		}
-
-		Collections.sort(ret, new OutputHandleComparator());
 		return ret;
 	}
-
-	private static class OutputHandleComparator implements Comparator<OutputHandle> {
-
-		@Override
-		public int compare(OutputHandle hand0, OutputHandle hand1) {
-			Class<?> class0 = hand0.getDeclaringClass();
-			Class<?> class1 = hand1.getDeclaringClass();
-
-			if (class0 == class1) {
-				if (hand0.getSequence() == hand1.getSequence())
-					return 0;
-				else if (hand0.getSequence() < hand1.getSequence())
-					return -1;
-				else
-					return 1;
-			}
-
-			if (class0.isAssignableFrom(class1))
-				return -1;
-			else
-				return 1;
-		}
-	}
-
+	
 	/**
 	 * Returns true if any of the outputs for the specified class will be printed to the
 	 * output report.

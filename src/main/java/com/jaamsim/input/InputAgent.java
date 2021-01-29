@@ -1238,7 +1238,7 @@ public class InputAgent {
 		JaamSimModel simModel = ent.getJaamSimModel();
 
 		// Loop through the outputs
-		ArrayList<OutputHandle> handles = OutputHandle.getOutputHandleList(ent);
+		ArrayList<OutputHandle> handles = ent.getAllOutputs();
 		for (OutputHandle out : handles) {
 
 			// Should this output appear in the report?

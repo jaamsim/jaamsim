@@ -68,7 +68,7 @@ public class TestSimulation {
 				InputAgent.apply(ent, inp, kw);
 			}
 
-			for (OutputHandle out : OutputHandle.getOutputHandleList(ent)) {
+			for (OutputHandle out : ent.getAllOutputs()) {
 				try {
 					InputAgent.getValueAsString(simModel, out, 0.0d, "%s", 1.0d);
 				}
