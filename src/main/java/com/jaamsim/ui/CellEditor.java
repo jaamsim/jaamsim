@@ -333,7 +333,7 @@ public abstract class CellEditor extends AbstractCellEditor implements TableCell
 		this.row = row;
 		this.col = col;
 	}
-	
+
 	public static class CellListener implements CellEditorListener {
 
 		@Override

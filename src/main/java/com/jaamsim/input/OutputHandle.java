@@ -117,7 +117,7 @@ public class OutputHandle {
 
 		return ret;
 	}
-	
+
 	/**
 	 * Return a list of the OuputHandles for the given entity.
 	 * @param e = the entity whose OutputHandles are to be returned.
@@ -135,7 +135,7 @@ public class OutputHandle {
 
 		return ret;
 	}
-	
+
 	/**
 	 * Returns true if any of the outputs for the specified class will be printed to the
 	 * output report.

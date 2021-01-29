@@ -21,9 +21,9 @@ import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.input.ExpError;
 import com.jaamsim.input.ExpEvaluator;
 import com.jaamsim.input.ExpParser;
+import com.jaamsim.input.ExpParser.Expression;
 import com.jaamsim.input.ExpResType;
 import com.jaamsim.input.ExpResult;
-import com.jaamsim.input.ExpParser.Expression;
 
 public class EntityProvExpression<T extends Entity> implements EntityProvider<T> {
 

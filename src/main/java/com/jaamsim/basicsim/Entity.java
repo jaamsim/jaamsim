@@ -864,12 +864,12 @@ public class Entity {
 		for (Entry<String, ExpressionHandle> e : customOutputMap.entrySet()) {
 			ret.add(e.getValue());
 		}
-		
+
 		// And the attributes
 		for (Entry<String, AttributeHandle> e : attributeMap.entrySet()) {
 			ret.add(e.getValue());
 		}
-		
+
 		Collections.sort(ret, new OutputHandleComparator());
 		return ret;
 	}

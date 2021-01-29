@@ -22,8 +22,8 @@ import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.input.ExpError;
 import com.jaamsim.input.ExpEvaluator;
 import com.jaamsim.input.ExpParser;
-import com.jaamsim.input.ExpResult;
 import com.jaamsim.input.ExpParser.Expression;
+import com.jaamsim.input.ExpResult;
 import com.jaamsim.units.Unit;
 
 public class StringProvExpression implements StringProvider {

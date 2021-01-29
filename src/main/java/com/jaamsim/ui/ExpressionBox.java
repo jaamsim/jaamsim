@@ -59,6 +59,7 @@ import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.input.ExpEvaluator;
 import com.jaamsim.input.ExpParser;
+import com.jaamsim.input.ExpParser.Expression;
 import com.jaamsim.input.ExpResType;
 import com.jaamsim.input.ExpResult;
 import com.jaamsim.input.Input;
@@ -66,7 +67,6 @@ import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.OutputHandle;
 import com.jaamsim.input.Parser;
-import com.jaamsim.input.ExpParser.Expression;
 import com.jaamsim.units.Unit;
 
 public class ExpressionBox extends JDialog {

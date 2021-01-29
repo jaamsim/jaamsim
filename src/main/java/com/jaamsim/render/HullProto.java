@@ -21,11 +21,10 @@ import java.nio.IntBuffer;
 import java.util.HashMap;
 import java.util.List;
 
-import com.jogamp.opengl.GL2GL3;
-
 import com.jaamsim.math.ConvexHull;
 import com.jaamsim.math.Mat4d;
 import com.jaamsim.math.Vec3d;
+import com.jogamp.opengl.GL2GL3;
 
 /**
  * A renderable prototype for a convex hull
