@@ -48,6 +48,8 @@ public class OutputHandle {
 		ent = e;
 		outputInfo = info;
 		unitType = outputInfo.unitType;
+		if (unitType == UserSpecifiedUnit.class)
+			unitType = e.getUserUnitType();
 	}
 
 	protected OutputHandle(Entity e) {
@@ -112,9 +114,6 @@ public class OutputHandle {
 			return null;
 
 		OutputHandle ret = new OutputHandle(e, info);
-		if (ret.getUnitType() == UserSpecifiedUnit.class)
-			ret.setUnitType(e.getUserUnitType());
-
 		return ret;
 	}
 
@@ -128,8 +127,6 @@ public class OutputHandle {
 		ArrayList<OutputHandle> ret = new ArrayList<>();
 		for (OutputStaticInfo p : getOutputInfoImp(klass).values()) {
 			OutputHandle oh = new OutputHandle(e, p);
-			if (oh.getUnitType() == UserSpecifiedUnit.class)
-				oh.setUnitType(e.getUserUnitType());
 			ret.add(oh); // required to get the correct unit type for the output
 		}
 
