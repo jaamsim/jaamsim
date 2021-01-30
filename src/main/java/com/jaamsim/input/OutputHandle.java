@@ -33,8 +33,8 @@ import com.jaamsim.units.UserSpecifiedUnit;
  *
  */
 public class OutputHandle extends ValueHandle {
-	public OutputStaticInfo outputInfo;
-	public Class<? extends Unit> unitType;
+	public final OutputStaticInfo outputInfo;
+	public final Class<? extends Unit> unitType;
 
 	private static final HashMap<Class<? extends Entity>, HashMap<String, OutputStaticInfo>> outputInfoCache;
 
@@ -45,9 +45,10 @@ public class OutputHandle extends ValueHandle {
 	OutputHandle(Entity e, OutputStaticInfo info) {
 		super(e);
 		outputInfo = info;
-		unitType = outputInfo.unitType;
-		if (unitType == UserSpecifiedUnit.class)
+		if (outputInfo.unitType == UserSpecifiedUnit.class)
 			unitType = e.getUserUnitType();
+		else
+			unitType = outputInfo.unitType;
 	}
 
 	/**
