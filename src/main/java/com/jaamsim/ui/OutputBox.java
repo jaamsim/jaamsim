@@ -31,6 +31,7 @@ import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.OutputHandle;
+import com.jaamsim.input.ValueHandle;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 
@@ -79,8 +80,7 @@ public class OutputBox extends FrameBox {
 		Class<?> currClass = null;
 		entries.clear();
 
-		ArrayList<OutputHandle> handles = currentEntity.getAllOutputs();
-		for (OutputHandle h : handles) {
+		for (ValueHandle h : currentEntity.getAllOutputs()) {
 			Class<?> klass = h.getDeclaringClass();
 			if (currClass != klass) {
 				// This is the first time we've seen this class, add a place holder row

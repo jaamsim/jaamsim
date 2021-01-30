@@ -30,7 +30,7 @@ import com.jaamsim.events.TestFrameworkHelpers;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.KeywordIndex;
-import com.jaamsim.input.OutputHandle;
+import com.jaamsim.input.ValueHandle;
 import com.jaamsim.ui.GUIFrame;
 
 public class TestSimulation {
@@ -68,7 +68,7 @@ public class TestSimulation {
 				InputAgent.apply(ent, inp, kw);
 			}
 
-			for (OutputHandle out : ent.getAllOutputs()) {
+			for (ValueHandle out : ent.getAllOutputs()) {
 				try {
 					InputAgent.getValueAsString(simModel, out, 0.0d, "%s", 1.0d);
 				}

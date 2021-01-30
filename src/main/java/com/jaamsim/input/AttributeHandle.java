@@ -19,7 +19,7 @@ package com.jaamsim.input;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.units.Unit;
 
-public class AttributeHandle extends OutputHandle {
+public class AttributeHandle extends ValueHandle {
 	private final String attributeName;
 	private ExpResult initialValue;
 	private ExpResult value;
@@ -30,7 +30,6 @@ public class AttributeHandle extends OutputHandle {
 		this.attributeName = outputName;
 	}
 
-	@Override
 	public void setUnitType(Class<? extends Unit> ut) {
 		unitType = ut;
 	}

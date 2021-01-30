@@ -1238,8 +1238,7 @@ public class InputAgent {
 		JaamSimModel simModel = ent.getJaamSimModel();
 
 		// Loop through the outputs
-		ArrayList<OutputHandle> handles = ent.getAllOutputs();
-		for (OutputHandle out : handles) {
+		for (ValueHandle out : ent.getAllOutputs()) {
 
 			// Should this output appear in the report?
 			if (!out.isReportable())
@@ -1444,7 +1443,7 @@ public class InputAgent {
 	 * @param factor - divisor to be applied to numerical values
 	 * @return formated string for the output
 	 */
-	public static String getValueAsString(JaamSimModel simModel, OutputHandle out, double simTime, String floatFmt, double factor) {
+	public static String getValueAsString(JaamSimModel simModel, ValueHandle out, double simTime, String floatFmt, double factor) {
 		StringBuilder sb = new StringBuilder();
 		String str;
 		String COMMA_SEPARATOR = ", ";

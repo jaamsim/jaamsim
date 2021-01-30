@@ -46,6 +46,14 @@ public abstract class ValueHandle {
 
 	abstract public boolean canCache();
 
+	public boolean isNumericValue() {
+		return ValueHandle.isNumericType(this.getReturnType());
+	}
+
+	public boolean isIntegerValue() {
+		return ValueHandle.isIntegerType(this.getReturnType());
+	}
+
 	public static boolean isNumericType(Class<?> rtype) {
 
 		if (rtype == double.class) return true;

@@ -50,10 +50,6 @@ public class OutputHandle extends ValueHandle {
 			unitType = e.getUserUnitType();
 	}
 
-	protected OutputHandle(Entity e) {
-		super(e);
-	}
-
 	/**
 	 * A data class containing the 'static' (ie: class derived) information for a single output
 	 */
@@ -120,9 +116,9 @@ public class OutputHandle extends ValueHandle {
 	 * @param e = the entity whose OutputHandles are to be returned.
 	 * @return = ArrayList of OutputHandles.
 	 */
-	public static ArrayList<OutputHandle> getAllOutputHandles(Entity e) {
+	public static ArrayList<ValueHandle> getAllOutputHandles(Entity e) {
 		Class<? extends Entity> klass = e.getClass();
-		ArrayList<OutputHandle> ret = new ArrayList<>();
+		ArrayList<ValueHandle> ret = new ArrayList<>();
 		for (OutputStaticInfo p : getOutputInfoImp(klass).values()) {
 			OutputHandle oh = new OutputHandle(e, p);
 			ret.add(oh); // required to get the correct unit type for the output
@@ -167,14 +163,6 @@ public class OutputHandle extends ValueHandle {
 	@Override
 	public boolean canCache() {
 		return true;
-	}
-
-	public boolean isNumericValue() {
-		return ValueHandle.isNumericType(this.getReturnType());
-	}
-
-	public boolean isIntegerValue() {
-		return ValueHandle.isIntegerType(this.getReturnType());
 	}
 
 	/**
@@ -272,10 +260,6 @@ public class OutputHandle extends ValueHandle {
 	@Override
 	public Class<?> getDeclaringClass() {
 		return outputInfo.method.getDeclaringClass();
-	}
-
-	public void setUnitType(Class<? extends Unit> ut) {
-		unitType = ut;
 	}
 
 	@Override

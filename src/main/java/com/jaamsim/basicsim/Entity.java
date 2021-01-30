@@ -48,6 +48,7 @@ import com.jaamsim.input.Output;
 import com.jaamsim.input.OutputHandle;
 import com.jaamsim.input.StringInput;
 import com.jaamsim.input.SynonymInput;
+import com.jaamsim.input.ValueHandle;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
 import com.jaamsim.units.Unit;
@@ -750,8 +751,8 @@ public class Entity {
 	}
 
 
-	public final OutputHandle getOutputHandle(String outputName) {
-		OutputHandle ret;
+	public final ValueHandle getOutputHandle(String outputName) {
+		ValueHandle ret;
 		ret = attributeMap.get(outputName);
 		if (ret != null)
 			return ret;
@@ -856,8 +857,8 @@ public class Entity {
 		h.setValue(assignValue);
 	}
 
-	public ArrayList<OutputHandle> getAllOutputs() {
-		ArrayList<OutputHandle> ret = OutputHandle.getAllOutputHandles(this);
+	public ArrayList<ValueHandle> getAllOutputs() {
+		ArrayList<ValueHandle> ret = OutputHandle.getAllOutputHandles(this);
 
 		// Add the custom outputs
 		for (Entry<String, ExpressionHandle> e : customOutputMap.entrySet()) {
@@ -869,14 +870,14 @@ public class Entity {
 			ret.add(e.getValue());
 		}
 
-		Collections.sort(ret, new OutputHandleComparator());
+		Collections.sort(ret, new ValueHandleComparator());
 		return ret;
 	}
 
-	private static class OutputHandleComparator implements Comparator<OutputHandle> {
+	private static class ValueHandleComparator implements Comparator<ValueHandle> {
 
 		@Override
-		public int compare(OutputHandle hand0, OutputHandle hand1) {
+		public int compare(ValueHandle hand0, ValueHandle hand1) {
 			Class<?> class0 = hand0.getDeclaringClass();
 			Class<?> class1 = hand1.getDeclaringClass();
 

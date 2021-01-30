@@ -21,7 +21,7 @@ import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.input.ExpParser.Expression;
 import com.jaamsim.units.Unit;
 
-public class ExpressionHandle extends OutputHandle {
+public class ExpressionHandle extends ValueHandle {
 
 	private final Expression exp;
 	private final String name;
