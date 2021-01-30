@@ -41,7 +41,7 @@ public class ExpEvaluator {
 			return ExpResType.STRING;
 		} else if (Entity.class.isAssignableFrom(klass)){
 			return ExpResType.ENTITY;
-		} else if (OutputHandle.isNumericType(klass) ||
+		} else if (ValueHandle.isNumericType(klass) ||
 			       klass == boolean.class ||
 			       klass == Boolean.class) {
 			return ExpResType.NUMBER;
@@ -64,7 +64,7 @@ public class ExpEvaluator {
 		if (Entity.class.isAssignableFrom(retType)) {
 			return ExpResult.makeEntityResult(oh.getValue(simTime, Entity.class));
 		}
-		if (    OutputHandle.isNumericType(retType) ||
+		if (ValueHandle.isNumericType(retType) ||
 		        retType == boolean.class ||
 		        retType == Boolean.class) {
 			return ExpResult.makeNumResult(oh.getValueAsDouble(simTime, 0), oh.getUnitType());

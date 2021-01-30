@@ -32,9 +32,7 @@ import com.jaamsim.units.UserSpecifiedUnit;
  * @author matt.chudleigh
  *
  */
-public class OutputHandle {
-
-	public Entity ent;
+public class OutputHandle extends ValueHandle {
 	public OutputStaticInfo outputInfo;
 	public Class<? extends Unit> unitType;
 
@@ -45,7 +43,7 @@ public class OutputHandle {
 	}
 
 	OutputHandle(Entity e, OutputStaticInfo info) {
-		ent = e;
+		super(e);
 		outputInfo = info;
 		unitType = outputInfo.unitType;
 		if (unitType == UserSpecifiedUnit.class)
@@ -53,7 +51,7 @@ public class OutputHandle {
 	}
 
 	protected OutputHandle(Entity e) {
-		ent = e;
+		super(e);
 	}
 
 	/**
@@ -147,6 +145,7 @@ public class OutputHandle {
 		return false;
 	}
 
+	@Override
 	@SuppressWarnings("unchecked") // This suppresses the warning on the cast, which is effectively checked
 	public <T> T getValue(double simTime, Class<T> klass) {
 		T ret = null;
@@ -165,46 +164,17 @@ public class OutputHandle {
 		return ret;
 	}
 
+	@Override
 	public boolean canCache() {
 		return true;
 	}
 
 	public boolean isNumericValue() {
-		return isNumericType(this.getReturnType());
+		return ValueHandle.isNumericType(this.getReturnType());
 	}
 
 	public boolean isIntegerValue() {
-		return isIntegerType(this.getReturnType());
-	}
-
-	public static boolean isNumericType(Class<?> rtype) {
-
-		if (rtype == double.class) return true;
-		if (rtype == int.class) return true;
-		if (rtype == long.class) return true;
-		if (rtype == float.class) return true;
-		if (rtype == short.class) return true;
-		if (rtype == char.class) return true;
-
-		if (rtype == Double.class) return true;
-		if (rtype == Integer.class) return true;
-		if (rtype == Long.class) return true;
-		if (rtype == Float.class) return true;
-		if (rtype == Short.class) return true;
-		if (rtype == Character.class) return true;
-
-		return false;
-	}
-
-	public static boolean isIntegerType(Class<?> rtype) {
-
-		if (rtype == int.class) return true;
-		if (rtype == long.class) return true;
-
-		if (rtype == Integer.class) return true;
-		if (rtype == Long.class) return true;
-
-		return false;
+		return ValueHandle.isIntegerType(this.getReturnType());
 	}
 
 	/**
@@ -230,6 +200,7 @@ public class OutputHandle {
 	 * @param simTime
 	 * @param def - the default value if the return is null or not a number value
 	 */
+	@Override
 	public double getValueAsDouble(double simTime, double def) {
 		Class<?> retType = this.getReturnType();
 
@@ -293,10 +264,12 @@ public class OutputHandle {
 		return def;
 	}
 
+	@Override
 	public Class<?> getReturnType() {
 		return outputInfo.method.getReturnType();
 	}
 
+	@Override
 	public Class<?> getDeclaringClass() {
 		return outputInfo.method.getDeclaringClass();
 	}
@@ -305,22 +278,27 @@ public class OutputHandle {
 		unitType = ut;
 	}
 
+	@Override
 	public Class<? extends Unit> getUnitType() {
 		return unitType;
 	}
 
+	@Override
 	public String getDescription() {
 		return outputInfo.desc;
 	}
 
+	@Override
 	public String getName() {
 		return outputInfo.name;
 	}
 
+	@Override
 	public boolean isReportable() {
 		return outputInfo.reportable;
 	}
 
+	@Override
 	public int getSequence() {
 		return outputInfo.sequence;
 	}
@@ -329,5 +307,4 @@ public class OutputHandle {
 	public String toString() {
 		return getName();
 	}
-
 }

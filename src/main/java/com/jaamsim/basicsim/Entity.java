@@ -768,8 +768,7 @@ public class Entity {
 	}
 
 	private void addCustomOutput(String name, Expression exp, Class<? extends Unit> unitType) {
-		ExpressionHandle eh = new ExpressionHandle(this, exp, name);
-		eh.setUnitType(unitType);
+		ExpressionHandle eh = new ExpressionHandle(this, exp, name, unitType);
 		customOutputMap.put(name, eh);
 	}
 
