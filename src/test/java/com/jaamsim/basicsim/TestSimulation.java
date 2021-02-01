@@ -200,12 +200,14 @@ public class TestSimulation {
 				Assert.fail("validation failed");
 
 			// Run the model for one hour
+			long nanos = System.nanoTime();
 			WaitForPauseListener listener = new WaitForPauseListener(simModel);
 			simModel.setTimeListener(listener);
 			simModel.initRun();
-			simModel.resume(3600.0);  // pause at 1 hour
-			listener.waitForPause(1000L);
-			System.out.format("completed at simTime=%s%n", simModel.getSimTime());
+			simModel.resume(1000.0);  // pause at 1000 seconds
+			listener.waitForPause(5000L);
+			nanos = System.nanoTime() - nanos;
+			System.out.format("completed at simTime=%s, millis=%s%n", simModel.getSimTime(), nanos/1000000L);
 		}
 	}
 
