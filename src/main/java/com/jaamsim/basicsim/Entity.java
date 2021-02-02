@@ -37,6 +37,7 @@ import com.jaamsim.input.ExpResType;
 import com.jaamsim.input.ExpResult;
 import com.jaamsim.input.ExpValResult;
 import com.jaamsim.input.ExpressionHandle;
+import com.jaamsim.input.InOutHandle;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InputErrorException;
@@ -86,6 +87,7 @@ public class Entity {
 
 	private final HashMap<String, AttributeHandle> attributeMap = new LinkedHashMap<>();
 	private final HashMap<String, ExpressionHandle> customOutputMap = new LinkedHashMap<>();
+	private final HashMap<String, InOutHandle> inputOutputMap = new LinkedHashMap<>();
 
 	public static final String KEY_INPUTS = "Key Inputs";
 	public static final String OPTIONS = "Options";
@@ -300,6 +302,17 @@ public class Entity {
 
 	protected void addInput(Input<?> in) {
 		inpList.add(in);
+	}
+
+	protected void addInputAsOutput(Input<?> input) {
+		addInputAsOutput(input, input.getKeyword(), Integer.MAX_VALUE-1, DimensionlessUnit.class);
+	}
+
+	protected void addInputAsOutput(Input<?> input, String alias, int sequence, Class<? extends Unit> unitType) {
+
+		InOutHandle handle = new InOutHandle(this, input, alias, sequence, unitType);
+		inputOutputMap.put(alias, handle);
+
 	}
 
 	protected void removeInput(Input<?> in) {
@@ -761,6 +774,10 @@ public class Entity {
 		if (ret != null)
 			return ret;
 
+		ret = inputOutputMap.get(outputName);
+		if (ret != null)
+			return ret;
+
 		ret = OutputHandle.getOutputHandle(this, outputName);
 		if (ret != null)
 			return ret;
@@ -775,6 +792,10 @@ public class Entity {
 
 	public boolean hasCustomOutput(String name) {
 		return customOutputMap.containsKey(name);
+	}
+
+	public boolean hasInputOutput(String name) {
+		return inputOutputMap.containsKey(name);
 	}
 
 	/**
@@ -867,6 +888,11 @@ public class Entity {
 
 		// And the attributes
 		for (Entry<String, AttributeHandle> e : attributeMap.entrySet()) {
+			ret.add(e.getValue());
+		}
+
+		// Add the Inputs as Outputs
+		for (Entry<String, InOutHandle> e : inputOutputMap.entrySet()) {
 			ret.add(e.getValue());
 		}
 

@@ -70,7 +70,7 @@ public class NamedExpressionListInput extends ListInput<ArrayList<NamedExpressio
 				// Parse the expression name
 				String name = subArg.getArg(0);
 				if (OutputHandle.hasOutput(thisEnt.getClass(), name)
-						|| thisEnt.hasAttribute(name)) {
+						|| thisEnt.hasAttribute(name) || thisEnt.hasInputOutput(name)) {
 					throw new InputErrorException("Custom output name is the same as existing output name: %s", name);
 				}
 

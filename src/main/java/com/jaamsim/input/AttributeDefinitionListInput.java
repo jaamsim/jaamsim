@@ -67,7 +67,7 @@ public class AttributeDefinitionListInput extends ListInput<ArrayList<AttributeH
 				// Parse the attribute name
 				String name = subArg.getArg(0);
 				if (OutputHandle.hasOutput(thisEnt.getClass(), name)
-						|| thisEnt.hasCustomOutput(name)) {
+						|| thisEnt.hasCustomOutput(name) || thisEnt.hasInputOutput(name)) {
 					throw new InputErrorException("Attribute name is the same as existing output name: %s", name);
 				}
 
