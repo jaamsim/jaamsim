@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2002-2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2020 JaamSim Software Inc.
+ * Copyright (C) 2016-2021 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -87,7 +87,7 @@ public class Entity {
 
 	private final HashMap<String, AttributeHandle> attributeMap = new LinkedHashMap<>();
 	private final HashMap<String, ExpressionHandle> customOutputMap = new LinkedHashMap<>();
-	private final HashMap<String, InOutHandle> inputOutputMap = new LinkedHashMap<>();
+	private final HashMap<String, ValueHandle> inputOutputMap = new LinkedHashMap<>();
 
 	public static final String KEY_INPUTS = "Key Inputs";
 	public static final String OPTIONS = "Options";
@@ -312,7 +312,15 @@ public class Entity {
 
 		InOutHandle handle = new InOutHandle(this, input, alias, sequence, unitType);
 		inputOutputMap.put(alias, handle);
+	}
 
+	protected void addInputAsOutput(String name, Expression exp, Class<? extends Unit> unitType) {
+		ExpressionHandle eh = new ExpressionHandle(this, exp, name, unitType);
+		inputOutputMap.put(name, eh);
+	}
+
+	protected void removeInputAsOutput(String name) {
+		inputOutputMap.remove(name);
 	}
 
 	protected void removeInput(Input<?> in) {
@@ -896,7 +904,7 @@ public class Entity {
 		}
 
 		// Add the Inputs as Outputs
-		for (Entry<String, InOutHandle> e : inputOutputMap.entrySet()) {
+		for (Entry<String, ValueHandle> e : inputOutputMap.entrySet()) {
 			ret.add(e.getValue());
 		}
 
