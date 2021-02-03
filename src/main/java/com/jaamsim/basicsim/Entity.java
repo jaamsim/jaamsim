@@ -785,9 +785,13 @@ public class Entity {
 		return null;
 	}
 
-	private void addCustomOutput(String name, Expression exp, Class<? extends Unit> unitType) {
+	public void addCustomOutput(String name, Expression exp, Class<? extends Unit> unitType) {
 		ExpressionHandle eh = new ExpressionHandle(this, exp, name, unitType);
 		customOutputMap.put(name, eh);
+	}
+
+	public void removeCustomOutput(String name) {
+		customOutputMap.remove(name);
 	}
 
 	public boolean hasCustomOutput(String name) {
