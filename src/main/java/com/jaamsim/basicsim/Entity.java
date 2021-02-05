@@ -859,13 +859,13 @@ public class Entity {
 	public ArrayList<ValueHandle> getAllOutputs() {
 		ArrayList<ValueHandle> ret = OutputHandle.getAllOutputHandles(this);
 
-		// Add the custom outputs
-		for (Entry<String, ExpressionHandle> e : customOutputMap.entrySet()) {
+		// And the attributes
+		for (Entry<String, AttributeHandle> e : attributeMap.entrySet()) {
 			ret.add(e.getValue());
 		}
 
-		// And the attributes
-		for (Entry<String, AttributeHandle> e : attributeMap.entrySet()) {
+		// Add the custom outputs
+		for (Entry<String, ExpressionHandle> e : customOutputMap.entrySet()) {
 			ret.add(e.getValue());
 		}
 
