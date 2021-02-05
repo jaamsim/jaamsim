@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2019-2020 JaamSim Software Inc.
+ * Copyright (C) 2019-2021 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,7 +44,6 @@ public abstract class CompoundEntity extends LinkedComponent {
 	private Region smRegion;
 
 	{
-		namedExpressionInput.setHidden(true); // FIXME CustomOutputList conflicts with the component outputs
 		nextComponent.setRequired(false);
 
 		showComponents = new BooleanInput("ShowComponents", FORMAT, false);
