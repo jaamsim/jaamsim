@@ -3142,6 +3142,11 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		EntityPallet.update();
 	}
 
+	@Override
+	public void updateInputEditor() {
+		EditBox.getInstance().setEntity(null);
+	}
+
 	private void clearButtons() {
 		if (createLinks.isSelected())
 			createLinks.doClick();
@@ -3542,6 +3547,11 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 	public void setSelectedEnt(Entity ent) {
 		selectedEntity = ent;
+	}
+
+	@Override
+	public boolean isSelected(Entity ent) {
+		return ent == selectedEntity;
 	}
 
 	private void updateFormatButtons(Entity ent) {

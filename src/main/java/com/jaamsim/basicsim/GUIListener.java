@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2019-2020 JaamSim Software Inc.
+ * Copyright (C) 2019-2021 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@ public interface GUIListener {
 	public void invokeErrorDialogBox(String title, String msg);
 	public void updateObjectSelector();
 	public void updateModelBuilder();
+	public void updateInputEditor();
 	public void storeAndExecute(Command cmd);
 	public void updateAll();
 	public void deleteEntity(Entity ent);
@@ -38,5 +39,6 @@ public interface GUIListener {
 	public int getNextViewID();
 	public Vec3d getPOI(View v);
 	public String getDefaultFolder();
+	public boolean isSelected(Entity ent);
 
 }

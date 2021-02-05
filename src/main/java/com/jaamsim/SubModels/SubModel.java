@@ -18,10 +18,9 @@ package com.jaamsim.SubModels;
 
 import java.util.ArrayList;
 
+import com.jaamsim.basicsim.GUIListener;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.Keyword;
-import com.jaamsim.ui.EditBox;
-import com.jaamsim.ui.GUIFrame;
 
 public class SubModel extends AbstractSubModel {
 
@@ -45,8 +44,9 @@ public class SubModel extends AbstractSubModel {
 
 		if (in == keywordListInput) {
 			updateKeywords(keywordListInput.getValue());
-			if (GUIFrame.getInstance() != null)
-				EditBox.getInstance().setEntity(null);
+			GUIListener gui = getJaamSimModel().getGUIListener();
+			if (gui != null && gui.isSelected(this))
+				gui.updateInputEditor();
 			return;
 		}
 	}
