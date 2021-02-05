@@ -17,14 +17,21 @@
 package com.jaamsim.SubModels;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.Map.Entry;
 
+import com.jaamsim.input.ExpressionHandle;
 import com.jaamsim.input.ExpressionInput;
 import com.jaamsim.input.Input;
+import com.jaamsim.input.ValueHandle;
+import com.jaamsim.input.ExpParser.Expression;
+import com.jaamsim.units.Unit;
 
 public abstract class AbstractSubModel extends CompoundEntity {
 
 	protected ArrayList<PassThroughData> keywordList;
 	private ArrayList<ExpressionInput> newInputList;
+	private final LinkedHashMap<String, ValueHandle> inputOutputMap = new LinkedHashMap<>();
 
 	public AbstractSubModel() {
 		keywordList = new ArrayList<>();
@@ -85,6 +92,36 @@ public abstract class AbstractSubModel extends CompoundEntity {
 		}
 		newInputList = list;
 		setKeywordList(newDataList);
+	}
+
+	private void addInputAsOutput(String name, Expression exp, Class<? extends Unit> unitType) {
+		ExpressionHandle eh = new ExpressionHandle(this, exp, name, unitType);
+		inputOutputMap.put(name, eh);
+	}
+
+	private void removeInputAsOutput(String name) {
+		inputOutputMap.remove(name);
+	}
+
+	@Override
+	public ValueHandle getOutputHandle(String outputName) {
+		ValueHandle ret = inputOutputMap.get(outputName);
+		if (ret != null)
+			return ret;
+
+		return super.getOutputHandle(outputName);
+	}
+
+	@Override
+	public ArrayList<ValueHandle> getAllOutputs() {
+		ArrayList<ValueHandle> ret = super.getAllOutputs();
+
+		// Add the Inputs as Outputs
+		for (Entry<String, ValueHandle> e : inputOutputMap.entrySet()) {
+			ret.add(e.getValue());
+		}
+
+		return ret;
 	}
 
 }
