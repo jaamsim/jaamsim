@@ -25,14 +25,15 @@ import com.jaamsim.ui.GUIFrame;
 
 public class SubModel extends AbstractSubModel {
 
-	@Keyword(description = "Defines new keywords for the sub-model that can be passed to its "
-	                     + "component objects. Each new keyword defines a matching sub-model "
-	                     + "output that can be used in the inputs to the sub-model's components.",
+	@Keyword(description = "Defines new keywords for the sub-model and creates new outputs with "
+	                     + "the same names. "
+	                     + "This allows the components of a sub-model to receive all their inputs "
+	                     + "from either the parent sub-model or from other components.",
 	         exampleList = {"{ ServiceTime TimeUnit } { NumberOfUnits }"})
 	protected final PassThroughListInput keywordListInput;
 
 	{
-		keywordListInput = new PassThroughListInput("KeywordList", KEY_INPUTS, new ArrayList<PassThroughData>());
+		keywordListInput = new PassThroughListInput("KeywordList", OPTIONS, new ArrayList<PassThroughData>());
 		this.addInput(keywordListInput);
 	}
 
