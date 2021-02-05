@@ -18,8 +18,11 @@
 package com.jaamsim.basicsim;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Map.Entry;
 
 import com.jaamsim.events.Conditional;
 import com.jaamsim.events.EventHandle;
@@ -46,10 +49,10 @@ import com.jaamsim.input.Output;
 import com.jaamsim.input.OutputHandle;
 import com.jaamsim.input.StringInput;
 import com.jaamsim.input.SynonymInput;
+import com.jaamsim.input.ValueHandle;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
 import com.jaamsim.units.Unit;
-import com.jaamsim.units.UserSpecifiedUnit;
 
 /**
  * Abstract class that encapsulates the methods and data needed to create a
@@ -761,8 +764,8 @@ public class Entity {
 	}
 
 
-	public final OutputHandle getOutputHandle(String outputName) {
-		OutputHandle ret;
+	public final ValueHandle getOutputHandle(String outputName) {
+		ValueHandle ret;
 		ret = attributeMap.get(outputName);
 		if (ret != null)
 			return ret;
@@ -775,25 +778,15 @@ public class Entity {
 		if (ret != null)
 			return ret;
 
-		if (hasOutput(outputName)) {
-			ret = new OutputHandle(this, outputName);
-			if (ret.getUnitType() == UserSpecifiedUnit.class)
-				ret.setUnitType(getUserUnitType());
-
+		ret = OutputHandle.getOutputHandle(this, outputName);
+		if (ret != null)
 			return ret;
-		}
 
 		return null;
 	}
 
-	public boolean hasOutput(String name) {
-		return (OutputHandle.hasOutput(this.getClass(), name))
-				|| hasAttribute(name) || hasCustomOutput(name) || hasInputOutput(name);
-	}
-
 	public void addCustomOutput(String name, Expression exp, Class<? extends Unit> unitType) {
-		ExpressionHandle eh = new ExpressionHandle(this, exp, name);
-		eh.setUnitType(unitType);
+		ExpressionHandle eh = new ExpressionHandle(this, exp, name, unitType);
 		customOutputMap.put(name, eh);
 	}
 
@@ -826,13 +819,6 @@ public class Entity {
 
 	public boolean hasAttribute(String name) {
 		return attributeMap.containsKey(name);
-	}
-
-	public Class<? extends Unit> getAttributeUnitType(String name) {
-		AttributeHandle h = attributeMap.get(name);
-		if (h == null)
-			return null;
-		return h.getUnitType();
 	}
 
 	// Utility function to help set attribute values for nested indices
@@ -896,29 +882,50 @@ public class Entity {
 		h.setValue(assignValue);
 	}
 
-	public ArrayList<String> getAttributeNames(){
-		ArrayList<String> ret = new ArrayList<>();
-		for (String name : attributeMap.keySet()) {
-			ret.add(name);
+	public ArrayList<ValueHandle> getAllOutputs() {
+		ArrayList<ValueHandle> ret = OutputHandle.getAllOutputHandles(this);
+
+		// Add the custom outputs
+		for (Entry<String, ExpressionHandle> e : customOutputMap.entrySet()) {
+			ret.add(e.getValue());
 		}
+
+		// And the attributes
+		for (Entry<String, AttributeHandle> e : attributeMap.entrySet()) {
+			ret.add(e.getValue());
+		}
+
+		// Add the Inputs as Outputs
+		for (Entry<String, InOutHandle> e : inputOutputMap.entrySet()) {
+			ret.add(e.getValue());
+		}
+
+		Collections.sort(ret, new ValueHandleComparator());
 		return ret;
 	}
 
-	public ArrayList<String> getCustomOutputNames(){
-		ArrayList<String> ret = new ArrayList<>();
-		for (String name : customOutputMap.keySet()) {
-			ret.add(name);
-		}
-		return ret;
-	}
-	public ArrayList<String> getInputOutputNames(){
-		ArrayList<String> ret = new ArrayList<>();
-		for (String name : inputOutputMap.keySet()) {
-			ret.add(name);
-		}
-		return ret;
-	}
+	private static class ValueHandleComparator implements Comparator<ValueHandle> {
 
+		@Override
+		public int compare(ValueHandle hand0, ValueHandle hand1) {
+			Class<?> class0 = hand0.getDeclaringClass();
+			Class<?> class1 = hand1.getDeclaringClass();
+
+			if (class0 == class1) {
+				if (hand0.getSequence() == hand1.getSequence())
+					return 0;
+				else if (hand0.getSequence() < hand1.getSequence())
+					return -1;
+				else
+					return 1;
+			}
+
+			if (class0.isAssignableFrom(class1))
+				return -1;
+			else
+				return 1;
+		}
+	}
 
 	public ObjectType getObjectType() {
 		return simModel.getObjectTypeForClass(this.getClass());

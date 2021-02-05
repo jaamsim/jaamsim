@@ -137,7 +137,7 @@ public class SampleFrequency {
 
 	/**
 	 * Returns an array of the integer values covering the range between the lowest and highest
-	 * values that were recorded. 
+	 * values that were recorded.
 	 * @return array of integer values
 	 */
 	public int[] getBinValues() {

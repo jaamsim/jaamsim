@@ -81,7 +81,7 @@ public class TimeBasedFrequency {
 
 	/**
 	 * Records the specified integer value at the specified time.
-	 * @param t - time at which the value occurs 
+	 * @param t - time at which the value occurs
 	 * @param val - integer value to be recorded
 	 */
 	public void addValue(double t, int val) {
@@ -158,7 +158,7 @@ public class TimeBasedFrequency {
 
 	/**
 	 * Returns an array of the integer values covering the range between the lowest and highest
-	 * values that were recorded. 
+	 * values that were recorded.
 	 * @return array of integer values
 	 */
 	public int[] getBinValues() {

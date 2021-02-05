@@ -19,13 +19,12 @@ package com.jaamsim.input;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.units.Unit;
+import com.jaamsim.units.UserSpecifiedUnit;
 
 /**
  * OutputHandle is a class that represents all the useful runtime information for an output,
@@ -33,11 +32,9 @@ import com.jaamsim.units.Unit;
  * @author matt.chudleigh
  *
  */
-public class OutputHandle {
-
-	public Entity ent;
-	public OutputStaticInfo outputInfo;
-	public Class<? extends Unit> unitType;
+public class OutputHandle extends ValueHandle {
+	public final OutputStaticInfo outputInfo;
+	public final Class<? extends Unit> unitType;
 
 	private static final HashMap<Class<? extends Entity>, HashMap<String, OutputStaticInfo>> outputInfoCache;
 
@@ -45,14 +42,13 @@ public class OutputHandle {
 		outputInfoCache = new HashMap<>();
 	}
 
-	public OutputHandle(Entity e, String outputName) {
-		ent = e;
-		outputInfo = OutputHandle.getOutputInfoImp(e.getClass()).get(outputName);
-		unitType = outputInfo.unitType;
-	}
-
-	protected OutputHandle(Entity e) {
-		ent = e;
+	OutputHandle(Entity e, OutputStaticInfo info) {
+		super(e);
+		outputInfo = info;
+		if (outputInfo.unitType == UserSpecifiedUnit.class)
+			unitType = e.getUserUnitType();
+		else
+			unitType = outputInfo.unitType;
 	}
 
 	/**
@@ -107,58 +103,29 @@ public class OutputHandle {
 		return ret;
 	}
 
+	public static OutputHandle getOutputHandle(Entity e, String outputName) {
+		OutputStaticInfo info = getOutputInfoImp(e.getClass()).get(outputName);
+		if (info == null)
+			return null;
+
+		OutputHandle ret = new OutputHandle(e, info);
+		return ret;
+	}
+
 	/**
 	 * Return a list of the OuputHandles for the given entity.
 	 * @param e = the entity whose OutputHandles are to be returned.
 	 * @return = ArrayList of OutputHandles.
 	 */
-	public static ArrayList<OutputHandle> getOutputHandleList(Entity e) {
+	public static ArrayList<ValueHandle> getAllOutputHandles(Entity e) {
 		Class<? extends Entity> klass = e.getClass();
-		ArrayList<OutputHandle> ret = new ArrayList<>();
-		for( OutputStaticInfo p : getOutputInfoImp(klass).values() ) {
-			//ret.add( new OutputHandle(e, p) );
-			ret.add( e.getOutputHandle(p.name) );  // required to get the correct unit type for the output
+		ArrayList<ValueHandle> ret = new ArrayList<>();
+		for (OutputStaticInfo p : getOutputInfoImp(klass).values()) {
+			OutputHandle oh = new OutputHandle(e, p);
+			ret.add(oh); // required to get the correct unit type for the output
 		}
 
-		// Add the custom outputs
-		for (String outputName : e.getCustomOutputNames()) {
-			ret.add(e.getOutputHandle(outputName));
-		}
-		// Add the input outputs
-		for (String outputName : e.getInputOutputNames()) {
-			ret.add(e.getOutputHandle(outputName));
-		}
-
-		// And the attributes
-		for (String attribName : e.getAttributeNames()) {
-			ret.add(e.getOutputHandle(attribName));
-		}
-
-		Collections.sort(ret, new OutputHandleComparator());
 		return ret;
-	}
-
-	private static class OutputHandleComparator implements Comparator<OutputHandle> {
-
-		@Override
-		public int compare(OutputHandle hand0, OutputHandle hand1) {
-			Class<?> class0 = hand0.getDeclaringClass();
-			Class<?> class1 = hand1.getDeclaringClass();
-
-			if (class0 == class1) {
-				if (hand0.getSequence() == hand1.getSequence())
-					return 0;
-				else if (hand0.getSequence() < hand1.getSequence())
-					return -1;
-				else
-					return 1;
-			}
-
-			if (class0.isAssignableFrom(class1))
-				return -1;
-			else
-				return 1;
-		}
 	}
 
 	/**
@@ -175,11 +142,9 @@ public class OutputHandle {
 		return false;
 	}
 
+	@Override
 	@SuppressWarnings("unchecked") // This suppresses the warning on the cast, which is effectively checked
 	public <T> T getValue(double simTime, Class<T> klass) {
-		if( outputInfo.method == null )
-			return null;
-
 		T ret = null;
 		try {
 			if (!klass.isAssignableFrom(outputInfo.method.getReturnType()))
@@ -196,46 +161,9 @@ public class OutputHandle {
 		return ret;
 	}
 
+	@Override
 	public boolean canCache() {
 		return true;
-	}
-
-	public boolean isNumericValue() {
-		return isNumericType(this.getReturnType());
-	}
-
-	public boolean isIntegerValue() {
-		return isIntegerType(this.getReturnType());
-	}
-
-	public static boolean isNumericType(Class<?> rtype) {
-
-		if (rtype == double.class) return true;
-		if (rtype == int.class) return true;
-		if (rtype == long.class) return true;
-		if (rtype == float.class) return true;
-		if (rtype == short.class) return true;
-		if (rtype == char.class) return true;
-
-		if (rtype == Double.class) return true;
-		if (rtype == Integer.class) return true;
-		if (rtype == Long.class) return true;
-		if (rtype == Float.class) return true;
-		if (rtype == Short.class) return true;
-		if (rtype == Character.class) return true;
-
-		return false;
-	}
-
-	public static boolean isIntegerType(Class<?> rtype) {
-
-		if (rtype == int.class) return true;
-		if (rtype == long.class) return true;
-
-		if (rtype == Integer.class) return true;
-		if (rtype == Long.class) return true;
-
-		return false;
 	}
 
 	/**
@@ -261,6 +189,7 @@ public class OutputHandle {
 	 * @param simTime
 	 * @param def - the default value if the return is null or not a number value
 	 */
+	@Override
 	public double getValueAsDouble(double simTime, double def) {
 		Class<?> retType = this.getReturnType();
 
@@ -324,36 +253,37 @@ public class OutputHandle {
 		return def;
 	}
 
+	@Override
 	public Class<?> getReturnType() {
-		assert (outputInfo.method != null);
 		return outputInfo.method.getReturnType();
 	}
 
+	@Override
 	public Class<?> getDeclaringClass() {
-		assert (outputInfo.method != null);
 		return outputInfo.method.getDeclaringClass();
 	}
 
-	public void setUnitType(Class<? extends Unit> ut) {
-		unitType = ut;
-	}
-
+	@Override
 	public Class<? extends Unit> getUnitType() {
 		return unitType;
 	}
 
+	@Override
 	public String getDescription() {
 		return outputInfo.desc;
 	}
 
+	@Override
 	public String getName() {
 		return outputInfo.name;
 	}
 
+	@Override
 	public boolean isReportable() {
 		return outputInfo.reportable;
 	}
 
+	@Override
 	public int getSequence() {
 		return outputInfo.sequence;
 	}
@@ -362,5 +292,4 @@ public class OutputHandle {
 	public String toString() {
 		return getName();
 	}
-
 }

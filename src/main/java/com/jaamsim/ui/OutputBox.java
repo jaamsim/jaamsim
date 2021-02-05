@@ -30,7 +30,7 @@ import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
-import com.jaamsim.input.OutputHandle;
+import com.jaamsim.input.ValueHandle;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 
@@ -79,8 +79,7 @@ public class OutputBox extends FrameBox {
 		Class<?> currClass = null;
 		entries.clear();
 
-		ArrayList<OutputHandle> handles = OutputHandle.getOutputHandleList(currentEntity);
-		for (OutputHandle h : handles) {
+		for (ValueHandle h : currentEntity.getAllOutputs()) {
 			Class<?> klass = h.getDeclaringClass();
 			if (currClass != klass) {
 				// This is the first time we've seen this class, add a place holder row
@@ -137,7 +136,7 @@ public class OutputBox extends FrameBox {
 				return null;
 			}
 
-			OutputHandle output = (OutputHandle)entries.get(row);
+			ValueHandle output = (ValueHandle)entries.get(row);
 			return GUIFrame.formatOutputToolTip(output.getName(), output.getDescription());
 		}
 
@@ -183,14 +182,14 @@ public class OutputBox extends FrameBox {
 			case 0:
 				if (entry instanceof Class)
 					return String.format("<HTML><B>%s</B></HTML>", ((Class<?>)entry).getSimpleName());
-				return String.format("    %s", ((OutputHandle)entry).getName());
+				return String.format("    %s", ((ValueHandle)entry).getName());
 			case 1:
 				if (entry instanceof Class)
 					return "";
 				try {
 					// Determine the preferred unit
 					JaamSimModel simModel = GUIFrame.getJaamSimModel();
-					OutputHandle out = (OutputHandle)entry;
+					ValueHandle out = (ValueHandle)entry;
 					Class<? extends Unit> ut = out.getUnitType();
 					double factor = simModel.getDisplayedUnitFactor(ut);
 

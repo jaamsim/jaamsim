@@ -59,14 +59,14 @@ import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.input.ExpEvaluator;
 import com.jaamsim.input.ExpParser;
+import com.jaamsim.input.ExpParser.Expression;
 import com.jaamsim.input.ExpResType;
 import com.jaamsim.input.ExpResult;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.KeywordIndex;
-import com.jaamsim.input.OutputHandle;
 import com.jaamsim.input.Parser;
-import com.jaamsim.input.ExpParser.Expression;
+import com.jaamsim.input.ValueHandle;
 import com.jaamsim.units.Unit;
 
 public class ExpressionBox extends JDialog {
@@ -85,7 +85,7 @@ public class ExpressionBox extends JDialog {
 
 	private final ArrayList<String> nameList = new ArrayList<>();
 	private final ArrayList<String> compList = new ArrayList<>();
-	private final ArrayList<OutputHandle> handles = new ArrayList<>();
+	private final ArrayList<ValueHandle> handles = new ArrayList<>();
 
 	private static final int EDIT_MODE_NORMAL = 0;
 	private static final int EDIT_MODE_ENTITY = 1;
@@ -594,7 +594,7 @@ public class ExpressionBox extends JDialog {
 
 		// Outputs
 		handles.clear();
-		for (OutputHandle hand : OutputHandle.getOutputHandleList(ent)) {
+		for (ValueHandle hand : ent.getAllOutputs()) {
 			if (hand.getName().contains(" "))
 				continue;
 
@@ -605,7 +605,7 @@ public class ExpressionBox extends JDialog {
 		}
 		Collections.sort(handles, Input.uiSortOrder);
 
-		for (final OutputHandle hand : handles) {
+		for (final ValueHandle hand : handles) {
 			JMenuItem item = new JMenuItem(hand.getName()) {
 				@Override
 				public Point getToolTipLocation(MouseEvent e) {

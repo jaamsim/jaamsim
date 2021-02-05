@@ -40,13 +40,13 @@ public abstract class GameEntity extends DisplayEntity {
 	}
 
 	public GameEntity() {}
-	
+
 	@Override
 	public void earlyInit() {
 		super.earlyInit();
 		evt = null;
 	}
-	
+
 	@Override
 	public void startUp() {
 		super.startUp();

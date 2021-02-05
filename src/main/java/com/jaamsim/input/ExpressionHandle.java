@@ -19,16 +19,24 @@ package com.jaamsim.input;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.input.ExpParser.Expression;
+import com.jaamsim.units.Unit;
 
-public class ExpressionHandle extends OutputHandle {
+public class ExpressionHandle extends ValueHandle {
 
 	private final Expression exp;
 	private final String name;
+	private final Class<? extends Unit> unitType;
 
-	public ExpressionHandle(Entity ent, Expression exp, String name) {
+	public ExpressionHandle(Entity ent, Expression exp, String name, Class<? extends Unit> unitType) {
 		super(ent);
 		this.exp = exp;
 		this.name = name;
+		this.unitType = unitType;
+	}
+
+	@Override
+	public Class<? extends Unit> getUnitType() {
+		return unitType;
 	}
 
 	@Override

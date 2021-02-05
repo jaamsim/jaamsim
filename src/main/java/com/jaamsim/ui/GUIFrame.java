@@ -4157,7 +4157,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		LogBox.logLine("Loading Simulation Environment ... ");
 		JaamSimModel simModel = getNextJaamSimModel();
 		simModel.autoLoad();
-		Simulation simulation = simModel.getSimulation();
 
 		GUIFrame gui = null;
 		if (!headless) {
@@ -4189,7 +4188,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			gui.setVisible(true);
 			gui.calcWindowDefaults();
 			gui.setLocation(gui.getX(), gui.getY());  //FIXME remove when setLocation is fixed for Windows 10
-			gui.setWindowDefaults(simulation);
+			gui.setWindowDefaults(simModel.getSimulation());
 		}
 
 		// Resolve all input arguments against the current working directory
@@ -4264,7 +4263,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			gui.toFront();
 
 		// Set the selected entity to the Simulation object
-		FrameBox.setSelectedEntity(simulation, false);
+		FrameBox.setSelectedEntity(simModel.getSimulation(), false);
 	}
 
 	/*

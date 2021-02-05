@@ -17,15 +17,26 @@
 package com.jaamsim.input;
 
 import com.jaamsim.basicsim.Entity;
+import com.jaamsim.units.Unit;
 
-public class AttributeHandle extends OutputHandle {
+public class AttributeHandle extends ValueHandle {
 	private final String attributeName;
 	private ExpResult initialValue;
 	private ExpResult value;
+	private Class<? extends Unit> unitType;
 
 	public AttributeHandle(Entity e, String outputName) {
 		super(e);
 		this.attributeName = outputName;
+	}
+
+	public void setUnitType(Class<? extends Unit> ut) {
+		unitType = ut;
+	}
+
+	@Override
+	public Class<? extends Unit> getUnitType() {
+		return unitType;
 	}
 
 	public void setInitialValue(ExpResult val) {

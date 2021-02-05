@@ -20,9 +20,8 @@ import java.net.URI;
 import java.nio.FloatBuffer;
 import java.util.HashMap;
 
-import com.jogamp.opengl.GL2GL3;
-
 import com.jaamsim.math.Mat4d;
+import com.jogamp.opengl.GL2GL3;
 
 public class Skybox {
 

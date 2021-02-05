@@ -19,9 +19,9 @@ package com.jaamsim.ProcessFlow;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.Map.Entry;
 
 /**
  * Stores a set of unique objects in an order determined by the object's comparator.
@@ -187,7 +187,7 @@ public class MappedTreeSet<K,V> {
 	public Collection<V> values(Object key) {
 		return subsetMap.get(key);
 	}
-	
+
 	/**
 	 * Returns the key for the subset that has the greatest number of elements.
 	 * @return key with the most elements.

@@ -41,7 +41,7 @@ public class ExpEvaluator {
 			return ExpResType.STRING;
 		} else if (Entity.class.isAssignableFrom(klass)){
 			return ExpResType.ENTITY;
-		} else if (OutputHandle.isNumericType(klass) ||
+		} else if (ValueHandle.isNumericType(klass) ||
 			       klass == boolean.class ||
 			       klass == Boolean.class) {
 			return ExpResType.NUMBER;
@@ -52,7 +52,7 @@ public class ExpEvaluator {
 		}
 	}
 
-	private static ExpResult getResultFromOutput(OutputHandle oh, double simTime) {
+	private static ExpResult getResultFromOutput(ValueHandle oh, double simTime) {
 		Class<?> retType = oh.getReturnType();
 		if (retType == ExpResult.class) {
 			// This is already an expression, so return it
@@ -64,7 +64,7 @@ public class ExpEvaluator {
 		if (Entity.class.isAssignableFrom(retType)) {
 			return ExpResult.makeEntityResult(oh.getValue(simTime, Entity.class));
 		}
-		if (    OutputHandle.isNumericType(retType) ||
+		if (ValueHandle.isNumericType(retType) ||
 		        retType == boolean.class ||
 		        retType == Boolean.class) {
 			return ExpResult.makeNumResult(oh.getValueAsDouble(simTime, 0), oh.getUnitType());
@@ -193,7 +193,7 @@ public class ExpEvaluator {
 			if (constEnt.entVal == null) {
 				throw new ExpError(null, 0, "Trying to resolve output on null entity");
 			}
-			OutputHandle oh = constEnt.entVal.getOutputHandle(name);
+			ValueHandle oh = constEnt.entVal.getOutputHandle(name);
 
 			if (oh == null) {
 				throw new ExpError(null, 0, "Could not find output '%s' on entity '%s'", name, constEnt.entVal.getName());
@@ -222,11 +222,11 @@ public class ExpEvaluator {
 
 	private static class CachedResolver implements ExpParser.OutputResolver {
 
-		private final OutputHandle handle;
+		private final ValueHandle handle;
 		private final ExpResType type;
 		private final boolean isExpResult;
 
-		public CachedResolver(OutputHandle oh) throws ExpError {
+		public CachedResolver(ValueHandle oh) throws ExpError {
 
 			handle = oh;
 
@@ -320,7 +320,7 @@ public class ExpEvaluator {
 				throw new ExpError(null, 0, "Trying to resolve output on null entity");
 			}
 
-			OutputHandle oh = ent.getOutputHandle(outputName);
+			ValueHandle oh = ent.getOutputHandle(outputName);
 			if (oh == null) {
 				throw new ExpError(null, 0, "Could not find output '%s' on entity '%s'", outputName, ent.getName());
 			}

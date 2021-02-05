@@ -49,8 +49,8 @@ public class KeyEventInput extends Input<Integer> {
 			value = temp;
 			return;
 		}
-		
-		// Remaining keys are represented by the key code 
+
+		// Remaining keys are represented by the key code
 		temp = Input.parseInteger(kw.getArg(0));
 		value = temp;
 	}
@@ -72,14 +72,14 @@ public class KeyEventInput extends Input<Integer> {
 	public String getDefaultString(JaamSimModel simModel) {
 		if (defValue == null)
 			return null;
-		
+
 		String ret = getKeyName(defValue);
 		if (ret != null)
 			return ret;
-		
+
 		return defValue.toString();
 	}
-	
+
 	public void setDefaultValue(String name) {
 		setDefaultValue(getKeyCode(name));
 	}
@@ -94,7 +94,7 @@ public class KeyEventInput extends Input<Integer> {
 		}
 		return code;
 	}
-	
+
 	public static String getKeyName(int code) {
 		String name;
 		name = keyNameMap.get(code);
