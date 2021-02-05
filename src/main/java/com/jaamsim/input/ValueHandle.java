@@ -34,8 +34,6 @@ public abstract class ValueHandle {
 
 	abstract public Class<?> getReturnType();
 
-	abstract public Class<?> getDeclaringClass();
-
 	abstract public String getDescription();
 
 	abstract public String getName();
@@ -45,6 +43,10 @@ public abstract class ValueHandle {
 	abstract public int getSequence();
 
 	abstract public boolean canCache();
+
+	public Class<?> getDeclaringClass() {
+		return ent.getClass();
+	}
 
 	public boolean isNumericValue() {
 		return ValueHandle.isNumericType(this.getReturnType());
