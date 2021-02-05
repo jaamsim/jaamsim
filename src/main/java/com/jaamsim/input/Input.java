@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2010-2012 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2020 JaamSim Software Inc.
+ * Copyright (C) 2016-2021 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -138,6 +138,9 @@ public abstract class Input<T> {
 	                                               + "Each definition in the list must be enclosed by braces.";
 	protected static final String VALID_CUSTOM_OUT = "Accepts a list of custom output definitions each consisting of a custom output name, an expression, and a unit type (if required). "
 	                                               + "Each definition in the list must be enclosed by braces.";
+	protected static final String VALID_PASSTHROUGH = "Accepts a list of passthrough keyword definitions each consisting of the name for the new keyword and output followed by the unit type for the new output. "
+	                                                + "The unit type defaults to DimensionlessUnit if no unit type is entered. "
+	                                                + "Each definition in the list must be enclosed by braces.";
 
 	public static final String POSITIVE_INFINITY = "Infinity";
 	public static final String NEGATIVE_INFINITY = "-Infinity";

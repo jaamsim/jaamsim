@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2018-2020 JaamSim Software Inc.
+ * Copyright (C) 2018-2021 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,38 @@
  */
 package com.jaamsim.SubModels;
 
-public class SubModel extends CompoundEntity {
+import java.util.ArrayList;
+
+import com.jaamsim.input.Input;
+import com.jaamsim.input.Keyword;
+import com.jaamsim.ui.EditBox;
+import com.jaamsim.ui.GUIFrame;
+
+public class SubModel extends AbstractSubModel {
+
+	@Keyword(description = "Defines new keywords for the sub-model that can be passed to its "
+	                     + "component objects. Each new keyword defines a matching sub-model "
+	                     + "output that can be used in the inputs to the sub-model's components.",
+	         exampleList = {"{ ServiceTime TimeUnit } { NumberOfUnits }"})
+	protected final PassThroughListInput keywordListInput;
+
+	{
+		keywordListInput = new PassThroughListInput("KeywordList", KEY_INPUTS, new ArrayList<PassThroughData>());
+		this.addInput(keywordListInput);
+	}
 
 	public SubModel() {}
+
+	@Override
+	public void updateForInput(Input<?> in) {
+		super.updateForInput(in);
+
+		if (in == keywordListInput) {
+			updateKeywords(keywordListInput.getValue());
+			if (GUIFrame.getInstance() != null)
+				EditBox.getInstance().setEntity(null);
+			return;
+		}
+	}
 
 }
