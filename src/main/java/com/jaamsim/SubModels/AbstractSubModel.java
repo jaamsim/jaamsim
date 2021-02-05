@@ -37,7 +37,7 @@ public abstract class AbstractSubModel extends CompoundEntity {
 
 		if (newInputList.contains(in)) {
 			ExpressionInput expIn = (ExpressionInput) in;
-			addCustomOutput(expIn.getKeyword(), expIn.getValue(), expIn.getUnitType());
+			addInputAsOutput(expIn.getKeyword(), expIn.getValue(), expIn.getUnitType());
 			return;
 		}
 	}
@@ -63,7 +63,7 @@ public abstract class AbstractSubModel extends CompoundEntity {
 		// Remove the old inputs and outputs
 		for (ExpressionInput in : newInputList) {
 			removeInput(in);
-			removeCustomOutput(in.getKeyword());
+			removeInputAsOutput(in.getKeyword());
 		}
 
 		// Add the new keywords, using the old ones whenever possible to save their input values
@@ -80,7 +80,7 @@ public abstract class AbstractSubModel extends CompoundEntity {
 				in = newInputList.get(index);
 			}
 			addInput(in);
-			addCustomOutput(in.getKeyword(), in.getValue(), in.getUnitType());
+			addInputAsOutput(in.getKeyword(), in.getValue(), in.getUnitType());
 			list.add(in);
 		}
 		newInputList = list;
