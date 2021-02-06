@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.jaamsim.Graphics.DisplayEntity;
+import com.jaamsim.Graphics.EntityLabel;
 import com.jaamsim.Graphics.Region;
 import com.jaamsim.ProcessFlow.LinkedComponent;
 import com.jaamsim.basicsim.Entity;
@@ -167,6 +168,10 @@ public abstract class CompoundEntity extends LinkedComponent {
 			if (!(ent instanceof DisplayEntity))
 				continue;
 			DisplayEntity comp = (DisplayEntity) ent;
+			if (comp instanceof EntityLabel) {
+				comp.setShow(bool && getSimulation().isShowLabels());
+				continue;
+			}
 			comp.setShow(bool);
 		}
 	}
