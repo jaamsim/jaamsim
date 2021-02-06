@@ -2329,9 +2329,13 @@ public class RenderManager implements DragSourceListener {
 		for (DisplayEntity ent : simModel.getClonesOfIterator(DisplayEntity.class)) {
 			DirectedEntity de = new DirectedEntity(ent, dir);
 			for (DirectedEntity dest : ent.getDestinationDirEnts(dir)) {
+				if (!ent.getShow() && !dest.entity.getShow())
+					continue;
 				addLink(de, dest, dir, delta, scene);
 			}
 			for (DirectedEntity source : ent.getSourceDirEnts(dir)) {
+				if (!ent.getShow() && !source.entity.getShow())
+					continue;
 				addLink(source, de, dir, delta, scene);
 			}
 		}
