@@ -1621,7 +1621,7 @@ public class JaamSimModel {
 		for (DisplayEntity ent : getClonesOfIterator(DisplayEntity.class)) {
 			if (!EntityLabel.canLabel(ent))
 				continue;
-			EntityLabel.showTemporaryLabel(ent, bool, false);
+			EntityLabel.showTemporaryLabel(ent, bool && ent.getShow(), false);
 		}
 	}
 
