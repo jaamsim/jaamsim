@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2018-2019 JaamSim Software Inc.
+ * Copyright (C) 2018-2021 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,8 +45,10 @@ public class TestSimulation {
 		// Define an instance of every drag-and-drop type
 		for (ObjectType each: simModel.getClonesOfIterator(ObjectType.class)) {
 			Class<? extends Entity> proto = Input.parseEntityType(simModel, each.getName());
-			@SuppressWarnings("unused")
+			if (proto == Simulation.class)
+				continue;
 			Entity ent = InputAgent.defineEntityWithUniqueName(simModel, proto, each.getName(), "-", true);
+			assert(ent != null);
 		}
 	}
 
