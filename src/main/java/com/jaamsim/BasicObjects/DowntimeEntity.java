@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2019 JaamSim Software Inc.
+ * Copyright (C) 2016-2021 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -500,11 +500,19 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 	// OUTPUTS
 	// ******************************************************************************************************
 
+	@Output(name = "UserList",
+	 description = "The objects that experience breakdowns or maintenance caused by this "
+	             + "DowntimeEntity.",
+	    sequence = 0)
+	public ArrayList<DowntimeUser> getUserList(double simTime) {
+		return downtimeUserList;
+	}
+
 	@Output(name = "NumberPending",
 	 description = "The number of downtime events that are backlogged. "
 	             + "If two or more downtime events are pending they will be performed one after "
 	             + "another.",
-	    sequence = 0)
+	    sequence = 1)
 	public double getNumberPending(double simTime) {
 		return downtimePendings;
 	}
@@ -512,7 +520,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 	@Output(name = "StartTime",
 	 description = "The time that the most recent downtime event started.",
 	    unitType = TimeUnit.class,
-	    sequence = 1)
+	    sequence = 2)
 	public double getStartTime(double simTime) {
 		return startTime;
 	}
@@ -520,7 +528,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 	@Output(name = "EndTime",
 	 description = "The time that the most recent downtime event finished or will finish.",
 	    unitType = TimeUnit.class,
-	    sequence = 2)
+	    sequence = 3)
 	public double getEndTime(double simTime) {
 		return endTime;
 	}
@@ -531,7 +539,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 	             + "time is estimated assuming that it will work continuously until the downtime "
 	             + "event occurs.",
 	    unitType = TimeUnit.class,
-	    sequence = 3)
+	    sequence = 4)
 	public double getNextStartTime(double simTime) {
 		StateEntity ent = iatWorkingEntity.getValue();
 
@@ -549,7 +557,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 	@Output(name = "CalculatedDowntimeRatio",
 	 description = "The value calculated directly from model inputs for:\n"
 	             + "(avg. downtime duration)/(avg. downtime interval)",
-	    sequence = 4)
+	    sequence = 5)
 	public double getCalculatedDowntimeRatio(double simTime) {
 		if (downtimeDurationDistribution.getValue() == null
 				|| downtimeIATDistribution.getValue() == null)
@@ -562,7 +570,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 	@Output(name = "Availability",
 	 description = "The fraction of calendar time (excluding the initialisation period) during "
 	             + "which this type of downtime did not occur.",
-	    sequence = 5)
+	    sequence = 6)
 	public double getAvailability(double simTime) {
 		double total = simTime;
 		if (simTime > getSimulation().getInitializationTime())
