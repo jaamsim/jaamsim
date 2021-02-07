@@ -234,12 +234,6 @@ public class JaamSimModel {
 
 		// Save the number of entities created by the autoload.cfg file
 		preDefinedEntityCount = getTailEntity().getEntityNumber();
-
-		// Find the Simulation object that was created by the autoload.cfg file
-		for (Simulation ent : getInstanceIterator(Simulation.class)) {
-			simulation = ent;
-			break;
-		}
 	}
 
 	/**
@@ -664,6 +658,10 @@ public class JaamSimModel {
 
 	public EventManager getEventManager() {
 		return eventManager;
+	}
+
+	void setSimulation(Simulation sim) {
+		simulation = sim;
 	}
 
 	public Simulation getSimulation() {

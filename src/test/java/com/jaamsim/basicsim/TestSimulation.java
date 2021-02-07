@@ -59,8 +59,11 @@ public class TestSimulation {
 		// Define an instance of every drag-and-drop type
 		for (ObjectType each: simModel.getClonesOfIterator(ObjectType.class)) {
 			Class<? extends Entity> proto = Input.parseEntityType(simModel, each.getName());
-			Entity ent = InputAgent.defineEntityWithUniqueName(simModel, proto, each.getName(), "-", true);
-
+			Entity ent = null;
+			if (proto == Simulation.class)
+				ent = simModel.getSimulation();
+			else
+				ent = InputAgent.defineEntityWithUniqueName(simModel, proto, each.getName(), "-", true);
 			KeywordIndex kw = new KeywordIndex("none", new ArrayList<String>(0), null);
 			for (Input<?> inp : ent.getEditableInputs()) {
 				// This is a hack to make the in non-default so we hit updateForInput()

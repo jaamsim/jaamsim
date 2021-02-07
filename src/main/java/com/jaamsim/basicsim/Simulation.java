@@ -631,7 +631,11 @@ public class Simulation extends Entity {
 		this.addInput(printInputReport);
 	}
 
-	public Simulation() {}
+	public Simulation() {
+		if (getJaamSimModel().getSimulation() != null)
+			throw new ErrorException("Cannot Define a second Simulation object");
+		getJaamSimModel().setSimulation(this);
+	}
 
 	@Override
 	public void updateForInput( Input<?> in ) {
