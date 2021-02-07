@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2019-2020 JaamSim Software Inc.
+ * Copyright (C) 2019-2021 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -194,10 +194,17 @@ public class Threshold extends StateEntity implements SubjectEntity {
 		setTagColour( ShapeModel.TAG_OUTLINES, ColourInput.BLACK );
 	}
 
+	@Output(name = "UserList",
+	 description = "The objects that are stopped by this Threshold.",
+	    sequence = 0)
+	public ArrayList<ThresholdUser> getUserList(double simTime) {
+		return userList;
+	}
+
 	@Output(name = "Open",
 	 description = "If open, then return TRUE.  Otherwise, return FALSE.",
 	    unitType = DimensionlessUnit.class,
-	    sequence = 0)
+	    sequence = 1)
 	public Boolean getOpen(double simTime) {
 		return open;
 	}
@@ -206,7 +213,7 @@ public class Threshold extends StateEntity implements SubjectEntity {
 	 description = "The fraction of total simulation time that the threshold is open.",
 	    unitType = DimensionlessUnit.class,
 	  reportable = true,
-	    sequence = 1)
+	    sequence = 2)
 	public double getOpenFraction(double simTime) {
 		EventManager evt = this.getJaamSimModel().getEventManager();
 		long simTicks = evt.secondsToNearestTick(simTime);
@@ -220,7 +227,7 @@ public class Threshold extends StateEntity implements SubjectEntity {
 	@Output(name = "ClosedFraction",
 	 description = "The fraction of total simulation time that the threshold is closed.",
 	    unitType = DimensionlessUnit.class,
-	    sequence = 2)
+	    sequence = 3)
 	public double getClosedFraction(double simTime) {
 		EventManager evt = this.getJaamSimModel().getEventManager();
 		long simTicks = evt.secondsToNearestTick(simTime);
@@ -234,7 +241,7 @@ public class Threshold extends StateEntity implements SubjectEntity {
 	@Output(name = "OpenCount",
 	 description = "The number of times the threshold's state has changed from closed to open.",
 	    unitType = DimensionlessUnit.class,
-	    sequence = 3)
+	    sequence = 4)
 	public long getOpenCount(double simTime) {
 		return openCount;
 	}
@@ -242,7 +249,7 @@ public class Threshold extends StateEntity implements SubjectEntity {
 	@Output(name = "ClosedCount",
 	 description = "The number of times the threshold's state has changed from open to closed.",
 	    unitType = DimensionlessUnit.class,
-	    sequence = 4)
+	    sequence = 5)
 	public long getClosedCount(double simTime) {
 		return closedCount;
 	}
