@@ -5118,7 +5118,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		panel.add(msgPane, BorderLayout.NORTH);
 
 		// Source
-		if (!source.isEmpty() && position != -1) {
+		if (source != null && !source.isEmpty() && position != -1) {
 			JTextPane srcPane = new JTextPane() {
 				@Override
 				public Dimension getPreferredScrollableViewportSize() {
