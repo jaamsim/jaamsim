@@ -393,6 +393,7 @@ public class EntityProcessor extends AbstractLinkedResourceUser {
 
 	@Output(name = "RemainingTime",
 	 description = "The remaining processing time for the entities being processed at present.",
+	    unitType = TimeUnit.class,
 	    sequence = 3)
 	public double[] getRemainingTime(double simTime) {
 		double[] ret = new double[entryList.size()];
