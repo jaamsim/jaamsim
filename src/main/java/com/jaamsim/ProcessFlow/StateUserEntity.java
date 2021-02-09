@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2016-2020 JaamSim Software Inc.
+ * Copyright (C) 2016-2021 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -215,10 +215,27 @@ public abstract class StateUserEntity extends AbstractStateUserEntity implements
 		return !isStopped();
 	}
 
+	/**
+	 * Returns whether all work in progress has been completed.
+	 * @return true if there is no work in progress
+	 */
+	public boolean isFinished() {
+		return true;
+	}
+
+	/**
+	 * Returns whether work must stop if a ReleaseThreshold closes.
+	 * @return true if work stops for a ReleaseThreshold closure
+	 */
+	public boolean isReadyToRelease() {
+		return true;
+	}
+
 	@Override
 	public boolean isStopped() {
 		return isImmediateThresholdClosure() || isImmediateReleaseThresholdClosure()
-				|| isOperatingThresholdClosure() || isReleaseThresholdClosure();
+				|| (isOperatingThresholdClosure() && isFinished())
+				|| (isReleaseThresholdClosure() && isReadyToRelease());
 	}
 
 	@Override

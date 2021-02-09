@@ -257,12 +257,9 @@ public abstract class Device extends StateUserEntity implements ObserverEntity, 
 		lastUpdateTime = simTime;
 	}
 
-	/**
-	 * Return whether all work in progress has been completed.
-	 * @return true if there is no work in progress
-	 */
-	public boolean isFinished() {
-		return true;
+	@Override
+	public boolean isReadyToRelease() {
+		return readyToRelease;
 	}
 
 	public void setReadyToRelease(boolean bool) {
