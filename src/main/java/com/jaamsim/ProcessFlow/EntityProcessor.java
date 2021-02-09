@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2017-2020 JaamSim Software Inc.
+ * Copyright (C) 2017-2021 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -56,6 +56,7 @@ public class EntityProcessor extends AbstractLinkedResourceUser {
 
 	{
 		trace.setHidden(false);
+		releaseThresholdList.setHidden(false);
 
 		resourceList.setRequired(false);
 
@@ -186,6 +187,8 @@ public class EntityProcessor extends AbstractLinkedResourceUser {
 	protected double getStepDuration(double simTime) {
 		long ticks = Long.MAX_VALUE;
 		for (ProcessorEntry entry : entryList) {
+			if (entry.remainingTicks <= 0L && isReleaseThresholdClosure())
+				continue;
 			ticks = Math.min(ticks, entry.remainingTicks);
 		}
 		EventManager evt = this.getJaamSimModel().getEventManager();
@@ -201,6 +204,7 @@ public class EntityProcessor extends AbstractLinkedResourceUser {
 		long delta = EventManager.current().secondsToNearestTick(dt);
 		for (ProcessorEntry entry : entryList) {
 			entry.remainingTicks -= delta;
+			entry.remainingTicks = Math.max(0L, entry.remainingTicks);
 		}
 		if (isTraceFlag()) traceLine(3, "AFTER  - entryList=%s", entryList);
 	}
@@ -215,13 +219,31 @@ public class EntityProcessor extends AbstractLinkedResourceUser {
 				completedEntries.add(entry);
 			}
 		}
-		entryList.removeAll(completedEntries);
+		if (completedEntries.isEmpty())
+			return;
 
-		// Release the resources for each entity
+		// Check for a release threshold closure
+		if (isReleaseThresholdClosure()) {
+			if (completedEntries.size() == getCapacity(simTime))
+				setReadyToRelease(true);
+			return;
+		}
+
+		// Release the completed entities one at a time
 		for (ProcessorEntry entry : completedEntries) {
+			entryList.remove(entry);
+
+			// Release the resources
 			for (int i = 0; i < entry.resourceUnits.length; i++) {
 				getResourceList().get(i).release(entry.resourceUnits[i], entry.entity);
 			}
+
+			// Pass the entity to the next component
+			sendToNextComponent(entry.entity);
+
+			// Re-check the release condition
+			if (isReleaseThresholdClosure())
+				break;
 		}
 
 		// Notify any resource users that are waiting for these Resources
@@ -230,11 +252,6 @@ public class EntityProcessor extends AbstractLinkedResourceUser {
 		}
 		else {
 			AbstractResourceProvider.notifyResourceUsers(getResourceList());
-		}
-
-		// Pass the entities to the next component
-		for (ProcessorEntry entry : completedEntries) {
-			this.sendToNextComponent(entry.entity);
 		}
 	}
 
@@ -386,6 +403,7 @@ public class EntityProcessor extends AbstractLinkedResourceUser {
 		EventManager evt = this.getJaamSimModel().getEventManager();
 		for (int i = 0; i < entryList.size(); i++) {
 			ret[i] = evt.ticksToSeconds(entryList.get(i).remainingTicks) - dt;
+			ret[i] = Math.max(0L, ret[i]);
 		}
 		return ret;
 	}
