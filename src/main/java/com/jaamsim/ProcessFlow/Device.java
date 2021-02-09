@@ -267,11 +267,8 @@ public abstract class Device extends StateUserEntity implements ObserverEntity, 
 	}
 
 	public boolean isReadyToStop() {
-		return !isActive() || isMaintenance() || isBreakdown()
-				|| isImmediateThresholdClosure() || isImmediateReleaseThresholdClosure()
-				|| (isOperatingThresholdClosure() && isFinished())
-				|| (isReleaseThresholdClosure() && readyToRelease)
-				|| isImmediateDowntimePending() || (isForcedDowntimePending() && isFinished());
+		return !isAvailable() || isImmediateDowntimePending()
+				|| (isForcedDowntimePending() && isFinished());
 	}
 
 	/**
