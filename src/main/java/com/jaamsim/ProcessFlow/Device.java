@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2016-2020 JaamSim Software Inc.
+ * Copyright (C) 2016-2021 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -166,6 +166,7 @@ public abstract class Device extends StateUserEntity implements ObserverEntity, 
 			this.stopProcessing();
 			return;
 		}
+		setReadyToRelease(false);
 
 		// Start the next time step
 		if (this.isNewStepReqd(stepCompleted)) {
@@ -283,7 +284,6 @@ public abstract class Device extends StateUserEntity implements ObserverEntity, 
 		if (isTraceFlag()) trace(0, "stopProcessing");
 
 		processing = false;
-		setReadyToRelease(false);
 
 		// Notify other processes that are dependent on this one
 		this.processChanged();
