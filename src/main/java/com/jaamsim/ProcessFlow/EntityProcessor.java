@@ -185,14 +185,19 @@ public class EntityProcessor extends AbstractLinkedResourceUser {
 
 	@Override
 	protected double getStepDuration(double simTime) {
+		long ticks = getDurationTicks(isReleaseThresholdClosure());
+		EventManager evt = this.getJaamSimModel().getEventManager();
+		return evt.ticksToSeconds(ticks);
+	}
+
+	private long getDurationTicks(boolean bool) {
 		long ticks = Long.MAX_VALUE;
 		for (ProcessorEntry entry : entryList) {
-			if (entry.remainingTicks <= 0L && isReleaseThresholdClosure())
+			if (entry.remainingTicks <= 0L && bool)
 				continue;
 			ticks = Math.min(ticks, entry.remainingTicks);
 		}
-		EventManager evt = this.getJaamSimModel().getEventManager();
-		return evt.ticksToSeconds(ticks);
+		return ticks;
 	}
 
 	@Override
@@ -274,6 +279,11 @@ public class EntityProcessor extends AbstractLinkedResourceUser {
 			}
 		}
 		stateChanged();
+
+		// Release entities that have been waiting for a ReleaseThreshold to open
+		if (!isReleaseThresholdClosure() && getDurationTicks(false) <= 0L)
+			performUnscheduledUpdate();
+
 		super.thresholdChanged();
 	}
 
