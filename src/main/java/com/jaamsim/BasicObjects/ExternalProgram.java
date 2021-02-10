@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2019 JaamSim Software Inc.
+ * Copyright (C) 2019-2021 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -166,8 +166,10 @@ public class ExternalProgram extends LinkedComponent {
 						break;
 					sb.append("\n").append(line);
 				}
+				er.close();
 				throw new Exception(sb.toString());
 			}
+			er.close();
 
 			// Collect the outputs from the program
 			InputStream is = process.getInputStream();
@@ -179,6 +181,7 @@ public class ExternalProgram extends LinkedComponent {
 					break;
 				Parser.tokenize(list, line, false);
 			}
+			reader.close();
 
 			// Set the new output value
 			ArrayList<ExpResult> resList = FileToArray.getExpResultList(list, this, simTime);
