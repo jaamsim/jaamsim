@@ -51,6 +51,16 @@ public class AttributeHandle extends OutputHandle {
 		return value.getValue(simTime, klass);
 	}
 
+	public ExpResult copyValue() {
+		if (!ent.hasAttribute(attributeName)) {
+			return null;
+		}
+		if (value == null) {
+			return null;
+		}
+		return value.getCopy();
+	}
+
 	@Override
 	public double getValueAsDouble(double simTime, double def) {
 		if (value.type == ExpResType.NUMBER)
