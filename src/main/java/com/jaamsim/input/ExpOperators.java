@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2017-2020 JaamSim Software Inc.
+ * Copyright (C) 2017-2021 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -1654,7 +1654,7 @@ public class ExpOperators {
 			@Override
 			public ExpResult call(EvalContext context, ExpResult[] args, String source, int pos) throws ExpError {
 				if (args[0].type != ExpResType.COLLECTION) {
-					throw new ExpError(source, pos, "Expected Collection type argument");
+					throw new ExpError(source, pos, "Expected Collection type argument. Received: %s", args[0].type);
 				}
 
 				ExpResult.Collection col = args[0].colVal;
