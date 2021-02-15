@@ -198,11 +198,13 @@ public class InputAgent {
 
 			ParseContext pc = new ParseContext(resolved, root);
 
+			String line = "";
 			while (true) {
-				String line = buf.readLine();
+				String str = buf.readLine();
 				// end of file, stop reading
-				if (line == null)
+				if (str == null)
 					break;
+				line = str;
 
 				int previousRecordSize = record.size();
 				boolean quoted = Parser.tokenize(record, line, true);
@@ -264,7 +266,7 @@ public class InputAgent {
 
 			// Leftover Input at end of file
 			if (record.size() > 0)
-				InputAgent.logBadInput(simModel, record, "Leftover input at end of file");
+				InputAgent.logError(simModel, "Unable to parse the input:%n%s", line);
 			buf.close();
 		}
 		catch (IOException e) {
