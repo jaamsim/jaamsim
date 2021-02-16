@@ -226,14 +226,15 @@ public class InputAgent {
 					quoted = Parser.tokenize(record, line, true);
 				}
 
+				// Print the inputs to the .log file
+				simModel.logMessage(line);
+
 				braceDepth = InputAgent.getBraceDepth(simModel, record, braceDepth, previousRecordSize);
 				if( braceDepth != 0 )
 					continue;
 
 				if (record.size() == 0)
 					continue;
-
-				InputAgent.echoInputRecord(simModel, record);
 
 				if ("DEFINE".equalsIgnoreCase(record.get(0))) {
 					InputAgent.processDefineRecord(simModel, record);
