@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2009-2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018-2020 JaamSim Software Inc.
+ * Copyright (C) 2018-2021 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ package com.jaamsim.Graphics;
 import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.StringProviders.StringProvConstant;
 import com.jaamsim.StringProviders.StringProvInput;
+import com.jaamsim.basicsim.GUIListener;
 import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
@@ -128,7 +129,14 @@ public class Text extends TextBasics {
 	public void acceptEdits() {
 		super.acceptEdits();
 		KeywordIndex kw = InputAgent.formatArgs("Format", getText());
-		InputAgent.storeAndExecute(new KeywordCommand(this, kw));
+		try {
+			InputAgent.storeAndExecute(new KeywordCommand(this, kw));
+		}
+		catch (Exception e) {
+			GUIListener gui = getJaamSimModel().getGUIListener();
+			if (gui != null)
+				gui.invokeErrorDialogBox("Input Error", e.getMessage());
+		}
 	}
 
 	public String getRenderText(double simTime) {
