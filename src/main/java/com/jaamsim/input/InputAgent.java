@@ -73,6 +73,8 @@ public class InputAgent {
 	private static final String[] GRAPHICS_PALETTES = {"Graphics Objects", "View", "Display Models"};
 	private static final String[] GRAPHICS_CATEGORIES = {Entity.GRAPHICS, Entity.FONT, Entity.FORMAT, Entity.GUI};
 
+	private static final int MAX_BRACE_DEPTH = 3;
+
 	public static void storeAndExecute(Command cmd) {
 		GUIListener gui = cmd.getJaamSimModel().getGUIListener();
 		if (gui == null) {
@@ -92,18 +94,6 @@ public class InputAgent {
 
 			if (token.equals("}"))
 				braceDepth--;
-
-			if (braceDepth < 0) {
-				InputAgent.logBadInput(simModel, tokens, "Extra closing braces found");
-				tokens.clear();
-				braceDepth = 0;
-			}
-
-			if (braceDepth > 3) {
-				InputAgent.logBadInput(simModel, tokens, "Maximum brace depth (3) exceeded");
-				tokens.clear();
-				braceDepth = 0;
-			}
 		}
 
 		return braceDepth;
@@ -229,12 +219,22 @@ public class InputAgent {
 				// Print the inputs to the .log file
 				simModel.logMessage(line);
 
+				// Keep reading the input file until the opening and closing braces are matched
 				braceDepth = InputAgent.getBraceDepth(simModel, record, braceDepth, previousRecordSize);
-				if( braceDepth != 0 )
+
+				if (braceDepth < 0 || braceDepth > MAX_BRACE_DEPTH) {
+					InputAgent.logError(simModel, "Invalid brace depth: %s", braceDepth);
+					record.clear();
+					braceDepth = 0;
+				}
+
+				if( braceDepth > 0 )
 					continue;
 
 				if (record.size() == 0)
 					continue;
+
+				// Process the input lines
 
 				if ("DEFINE".equalsIgnoreCase(record.get(0))) {
 					InputAgent.processDefineRecord(simModel, record);
@@ -849,31 +849,6 @@ public class InputAgent {
 	private static final String errPrefix = "*** ERROR *** %s%n";
 	private static final String inpErrPrefix = "*** INPUT ERROR *** %s%n";
 	private static final String wrnPrefix = "***WARNING*** %s%n";
-
-	private static void echoInputRecord(JaamSimModel simModel, ArrayList<String> tokens) {
-		FileEntity logFile = simModel.getLogFile();
-		if (logFile == null)
-			return;
-
-		boolean beginLine = true;
-		for (int i = 0; i < tokens.size(); i++) {
-			if (!beginLine)
-				logFile.write(Input.SEPARATOR);
-			String tok = tokens.get(i);
-			logFile.write(tok);
-			beginLine = false;
-		}
-		// If there were any leftover string written out, make sure the line gets terminated
-		if (!beginLine)
-			logFile.newLine();
-
-		logFile.flush();
-	}
-
-	private static void logBadInput(JaamSimModel simModel, ArrayList<String> tokens, String msg) {
-		InputAgent.echoInputRecord(simModel, tokens);
-		InputAgent.logError(simModel, "%s", msg);
-	}
 
 	public static void logMessage(String fmt, Object... args) {  //FIXME delete when possible
 		logMessage(null, fmt, args);
