@@ -43,4 +43,9 @@ public class StringInput extends Input<String> {
 		return Input.VALID_STRING;
 	}
 
+	@Override
+	public boolean useExpressionBuilder() {
+		return true;
+	}
+
 }
