@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2005-2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2020 JaamSim Software Inc.
+ * Copyright (C) 2016-2021 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -335,12 +335,15 @@ public abstract class CellEditor extends AbstractCellEditor implements TableCell
 	}
 
 	public static class CellListener implements CellEditorListener {
+		private boolean isErrorDialogShown = false;
 
 		@Override
 		public void editingCanceled(ChangeEvent evt) {}
 
 		@Override
 		public void editingStopped(ChangeEvent evt) {
+			if (isErrorDialogShown)
+				return;
 
 			CellEditor editor = (CellEditor)evt.getSource();
 			Input<?> in = (Input<?>)editor.getCellEditorValue();
@@ -376,12 +379,14 @@ public abstract class CellEditor extends AbstractCellEditor implements TableCell
 				}
 
 				if (editor.canRetry() && !entityChanged) {
+					isErrorDialogShown = true;  // trap call to editingStopped on loss of focus
 					boolean editSelected = GUIFrame.showErrorEditDialog("Input Error",
 							exep.source,
 							exep.position,
 							"Input error:",
 							exep.getMessage(),
 							"Do you want to continue editing, or reset the input?");
+					isErrorDialogShown = false;
 					if (editSelected) {
 						// Any editor that supports retry should implement the following
 						final int row = editor.getRow();
