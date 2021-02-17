@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018-2020 JaamSim Software Inc.
+ * Copyright (C) 2018-2021 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -256,8 +256,7 @@ public class OverlayText extends OverlayEntity implements TextEntity, EditableTe
 		if (keyChar == '\'') {
 			GUIListener gui = getJaamSimModel().getGUIListener();
 			if (gui != null)
-				gui.invokeErrorDialogBox("Input Error",
-						"Text cannot include a single quote or apostrophe symbol (').");
+				gui.invokeErrorDialogBox("Input Error", Input.INP_ERR_QUOTE);
 			return CONTINUE_EDITS;
 		}
 		return editableText.handleEditKeyPressed(keyCode, keyChar, shift, control, alt);

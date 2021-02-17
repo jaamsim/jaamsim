@@ -83,6 +83,7 @@ public abstract class Input<T> {
 	protected static final String INP_VAL_LISTSET = "Values found for %s without %s being set";
 	protected static final String INP_VAL_LISTSIZE = "%s and %s must be of equal size";
 	protected static final String INP_ERR_BRACES = "List must contain equal numbers of opening and closing braces";
+	public static final String INP_ERR_QUOTE = "A String cannot include a single quote or apostrophe (').";
 
 	protected static final String VALID_SAMPLE_PROV = "Accepts a number with units of type %s, an object that returns such a number, or an expression that returns such a number.";
 	protected static final String VALID_SAMPLE_PROV_DIMLESS = "Accepts a dimensionless number, an object that returns such a number, or an expression that returns such a number.";

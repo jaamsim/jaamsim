@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2015 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018-2020 JaamSim Software Inc.
+ * Copyright (C) 2018-2021 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import com.jaamsim.basicsim.GUIListener;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.ColourInput;
+import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.StringChoiceInput;
@@ -144,8 +145,7 @@ public abstract class TextBasics extends DisplayEntity implements TextEntity, Ed
 		if (keyChar == '\'') {
 			GUIListener gui = getJaamSimModel().getGUIListener();
 			if (gui != null)
-				gui.invokeErrorDialogBox("Input Error",
-						"Text cannot include a single quote or apostrophe (').");
+				gui.invokeErrorDialogBox("Input Error", Input.INP_ERR_QUOTE);
 			return CONTINUE_EDITS;
 		}
 		return editableText.handleEditKeyPressed(keyCode, keyChar, shift, control, alt);
