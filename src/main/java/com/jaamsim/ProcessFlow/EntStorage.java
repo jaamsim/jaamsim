@@ -258,12 +258,7 @@ public class EntStorage {
 	 * @return entities in storage
 	 */
 	public ArrayList<DisplayEntity> getEntityList() {
-		ArrayList<DisplayEntity> ret = new ArrayList<>(entrySet.size());
-		Iterator<StorageEntry> itr = entrySet.iterator();
-		while (itr.hasNext()) {
-			ret.add(itr.next().entity);
-		}
-		return ret;
+		return getEntityList(null);
 	}
 
 	/**
@@ -272,10 +267,10 @@ public class EntStorage {
 	 * @return entities in storage for the specified type
 	 */
 	public ArrayList<DisplayEntity> getEntityList(String type) {
-		Collection<StorageEntry> entries = entrySet.values(type);
-		ArrayList<DisplayEntity> ret = new ArrayList<>(entries.size());
-		for (StorageEntry entry : entries) {
-			ret.add(entry.entity);
+		ArrayList<DisplayEntity> ret = new ArrayList<>(size(type));
+		Iterator<StorageEntry> itr = iterator(type);
+		while (itr.hasNext()) {
+			ret.add(itr.next().entity);
 		}
 		return ret;
 	}
