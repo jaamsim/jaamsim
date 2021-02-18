@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2018 JaamSim Software Inc.
+ * Copyright (C) 2018-2021 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -138,7 +138,7 @@ public class EntStorage {
 	 * @return number of entities in storage.
 	 */
 	public int size() {
-		return entrySet.size();
+		return size(null);
 	}
 
 	/**
@@ -148,6 +148,8 @@ public class EntStorage {
 	 * @return number of entities of the specified type.
 	 */
 	public int size(String type) {
+		if (type == null)
+			return entrySet.size();
 		return entrySet.size(type);
 	}
 
@@ -156,7 +158,7 @@ public class EntStorage {
 	 * @return true if the storage is empty
 	 */
 	public boolean isEmpty() {
-		return entrySet.isEmpty();
+		return isEmpty(null);
 	}
 
 	/**
@@ -165,6 +167,8 @@ public class EntStorage {
 	 * @return true if the storage is empty
 	 */
 	public boolean isEmpty(String type) {
+		if (type == null)
+			return entrySet.isEmpty();
 		return entrySet.isEmpty(type);
 	}
 
@@ -173,7 +177,7 @@ public class EntStorage {
 	 * @return first entity in the storage.
 	 */
 	public StorageEntry first() {
-		return entrySet.first();
+		return first(null);
 	}
 
 	/**
@@ -183,14 +187,18 @@ public class EntStorage {
 	 * @return first StorageEntry of the specified type.
 	 */
 	public StorageEntry first(String type) {
+		if (type == null)
+			return entrySet.first();
 		return entrySet.first(type);
 	}
 
 	public Iterator<StorageEntry> iterator() {
-		return entrySet.iterator();
+		return iterator(null);
 	}
 
 	public Iterator<StorageEntry> iterator(String type) {
+		if (type == null)
+			return entrySet.iterator();
 		return entrySet.iterator(type);
 	}
 
@@ -199,7 +207,7 @@ public class EntStorage {
 	 * @return StorageEntries in storage.
 	 */
 	public Collection<StorageEntry> getEntries() {
-		return entrySet.values();
+		return getEntries(null);
 	}
 
 	/**
@@ -208,6 +216,8 @@ public class EntStorage {
 	 * @return StorageEntries in storage.
 	 */
 	public Collection<StorageEntry> getEntries(String type) {
+		if (type == null)
+			return entrySet.values();
 		return entrySet.values(type);
 	}
 
