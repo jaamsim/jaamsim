@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2020 JaamSim Software Inc.
+ * Copyright (C) 2016-2021 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -147,7 +147,7 @@ public abstract class LinkedService extends LinkedDevice implements QueueUser {
 	 */
 	protected DisplayEntity getNextEntityForMatch(String m) {
 		double simTime = getSimTime();
-		return getQueue(simTime).removeFirstForMatch(m);
+		return getQueue(simTime).removeFirst(m);
 	}
 
 	/**

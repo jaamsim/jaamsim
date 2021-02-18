@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2003-2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2020 JaamSim Software Inc.
+ * Copyright (C) 2016-2021 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -466,7 +466,7 @@ public class Queue extends LinkedComponent {
 	 * @param m - value to be matched.
 	 * @return entity whose match value equals the specified value.
 	 */
-	public DisplayEntity removeFirstForMatch(String m) {
+	public DisplayEntity removeFirst(String m) {
 
 		if (m == null)
 			return this.removeFirst();

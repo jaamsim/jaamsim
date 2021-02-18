@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2020 JaamSim Software Inc.
+ * Copyright (C) 2016-2021 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -77,7 +77,7 @@ public class Combine extends AbstractCombine {
 		// (performed in reverse order so that obj is set to the entity in the first queue)
 		for (int i = queueList.size() - 1; i >= 0; i--) {
 			for (int n = 0; n < numList[i]; n++) {
-				DisplayEntity ent = queueList.get(i).removeFirstForMatch(getMatchValue());
+				DisplayEntity ent = queueList.get(i).removeFirst(getMatchValue());
 				if (ent == null)
 					error("An entity with the specified match value %s was not found in %s.",
 							getMatchValue(), queueList.get(i));

@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2017-2020 JaamSim Software Inc.
+ * Copyright (C) 2017-2021 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -109,7 +109,7 @@ public abstract class AbstractLinkedResourceUser extends LinkedService implement
 		double simTime = getSimTime();
 		String m = this.getNextMatchValue(simTime);
 		this.setMatchValue(m);
-		DisplayEntity ent = getQueue(simTime).removeFirstForMatch(m);
+		DisplayEntity ent = getQueue(simTime).removeFirst(m);
 		if (ent == null)
 			error("Entity not found for specified Match value: %s", m);
 		receiveEntity(ent);
