@@ -98,7 +98,7 @@ public abstract class AbstractUnpack extends LinkedService {
 			setMatchValue(m);
 
 			// Stop if no container is available
-			if (getQueue(simTime).getCount(m) == 0)
+			if (getQueue(simTime).isEmpty(m))
 				return false;
 
 			// Remove the container from the queue
