@@ -136,7 +136,7 @@ public abstract class AbstractLinkedResourceUser extends LinkedService implement
 		}
 		double simTime = getSimTime();
 		String m = this.getNextMatchValue(simTime);
-		DisplayEntity ent = getQueue(simTime).getFirstForMatch(m);
+		DisplayEntity ent = getQueue(simTime).getFirst(m);
 		return ent != null && checkResources(ent);
 	}
 

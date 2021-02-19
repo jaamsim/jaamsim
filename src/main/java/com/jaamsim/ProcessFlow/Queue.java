@@ -442,7 +442,7 @@ public class Queue extends LinkedComponent {
 		return storage.size(m);
 	}
 
-	public DisplayEntity getFirstForMatch(String m) {
+	public DisplayEntity getFirst(String m) {
 		if (m == null) {
 			return this.getFirst();
 		}
