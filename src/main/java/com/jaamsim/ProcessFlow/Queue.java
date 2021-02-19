@@ -611,14 +611,14 @@ public class Queue extends LinkedComponent {
 	    unitType = DimensionlessUnit.class,
 	    sequence = 0)
 	public int getQueueLength(double simTime) {
-		return storage.size();
+		return getCount();
 	}
 
 	@Output(name = "QueueList",
 	 description = "The entities in the queue.",
 	    sequence = 1)
 	public ArrayList<DisplayEntity> getQueueList(double simTime) {
-		return storage.getEntityList();
+		return getEntityList();
 	}
 
 	@Output(name = "QueueTimes",
@@ -710,14 +710,14 @@ public class Queue extends LinkedComponent {
 	    unitType = DimensionlessUnit.class,
 	    sequence = 11)
 	public int getMatchValueCount(double simTime) {
-		return storage.getTypes().size();
+		return getEntityTypes().size();
 	}
 
 	@Output(name = "UniqueMatchValues",
 	 description = "The list of unique Match values for the entities in the queue.",
 	    sequence = 12)
 	public ArrayList<String> getUniqueMatchValues(double simTime) {
-		ArrayList<String> ret = new ArrayList<>(storage.getTypes());
+		ArrayList<String> ret = new ArrayList<>(getEntityTypes());
 		Collections.sort(ret);
 		return ret;
 	}
@@ -729,9 +729,9 @@ public class Queue extends LinkedComponent {
 	    unitType = DimensionlessUnit.class,
 	    sequence = 13)
 	public LinkedHashMap<String, Integer> getMatchValueCountMap(double simTime) {
-		LinkedHashMap<String, Integer> ret = new LinkedHashMap<>(storage.getTypes().size());
+		LinkedHashMap<String, Integer> ret = new LinkedHashMap<>(getEntityTypes().size());
 		for (String m : getUniqueMatchValues(simTime)) {
-			ret.put(m, storage.size(m));
+			ret.put(m, getCount(m));
 		}
 		return ret;
 	}
@@ -742,9 +742,9 @@ public class Queue extends LinkedComponent {
 	             + "whose Match value is \"SKU1\".",
 	    sequence = 14)
 	public LinkedHashMap<String, ArrayList<DisplayEntity>> getMatchValueMap(double simTime) {
-		LinkedHashMap<String, ArrayList<DisplayEntity>> ret = new LinkedHashMap<>(storage.getTypes().size());
+		LinkedHashMap<String, ArrayList<DisplayEntity>> ret = new LinkedHashMap<>(getEntityTypes().size());
 		for (String m : getUniqueMatchValues(simTime)) {
-			ret.put(m, storage.getEntityList(m));
+			ret.put(m, getEntityList(m));
 		}
 		return ret;
 	}
