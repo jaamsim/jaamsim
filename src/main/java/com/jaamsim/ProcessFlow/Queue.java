@@ -486,6 +486,14 @@ public class Queue extends LinkedComponent {
 		return storage.getTypes();
 	}
 
+	public ArrayList<DisplayEntity> getEntityList() {
+		return getEntityList(null);
+	}
+
+	public ArrayList<DisplayEntity> getEntityList(String m) {
+		return storage.getEntityList(m);
+	}
+
 	/**
 	 * Update the position of all entities in the queue. ASSUME that entities
 	 * will line up according to the orientation of the queue.
