@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2020 JaamSim Software Inc.
+ * Copyright (C) 2016-2021 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -209,7 +209,7 @@ public abstract class AbstractCombine extends LinkedService {
 	 */
 	public static boolean sufficientEntities(ArrayList<Queue> queueList, int[] numberList, String m) {
 		for (int i = 0; i < queueList.size(); i++) {
-			if (queueList.get(i).getMatchCount(m) < numberList[i])
+			if (queueList.get(i).getCount(m) < numberList[i])
 				return false;
 		}
 		return true;

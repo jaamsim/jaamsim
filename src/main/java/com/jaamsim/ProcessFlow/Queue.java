@@ -435,7 +435,7 @@ public class Queue extends LinkedComponent {
 	 * @param m - value to be matched.
 	 * @return number of entities that have this match value.
 	 */
-	public int getMatchCount(String m) {
+	public int getCount(String m) {
 		if (m == null) {
 			return storage.size();
 		}

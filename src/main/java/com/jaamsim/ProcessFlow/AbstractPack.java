@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2020 JaamSim Software Inc.
+ * Copyright (C) 2016-2021 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -119,7 +119,7 @@ public abstract class AbstractPack extends LinkedService {
 		if (!startedPacking) {
 			String m = this.getNextMatchValue(simTime);
 			numberToInsert = this.getNumberToInsert(simTime);
-			if (getQueue(simTime).getMatchCount(m) < getNumberToStart(simTime)) {
+			if (getQueue(simTime).getCount(m) < getNumberToStart(simTime)) {
 				return false;
 			}
 
@@ -137,7 +137,7 @@ public abstract class AbstractPack extends LinkedService {
 
 		// Select the next entity to pack and set its state
 		if (numberInserted < numberToInsert) {
-			if (getQueue(simTime).getMatchCount(getMatchValue()) == 0)
+			if (getQueue(simTime).getCount(getMatchValue()) == 0)
 				return false;
 			packedEntity = this.getNextEntityForMatch(getMatchValue());
 			receiveEntity(packedEntity);

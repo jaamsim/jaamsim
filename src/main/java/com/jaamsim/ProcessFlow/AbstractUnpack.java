@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2020 JaamSim Software Inc.
+ * Copyright (C) 2016-2021 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -98,7 +98,7 @@ public abstract class AbstractUnpack extends LinkedService {
 			setMatchValue(m);
 
 			// Stop if no container is available
-			if (getQueue(simTime).getMatchCount(m) == 0)
+			if (getQueue(simTime).getCount(m) == 0)
 				return false;
 
 			// Remove the container from the queue
