@@ -452,7 +452,7 @@ public class Queue extends LinkedComponent {
 		return entry.entity;
 	}
 
-	public double getTimeAddedForMatch(String m) {
+	public double getTimeAdded(String m) {
 		if (m == null) {
 			return storage.first().timeAdded;
 		}

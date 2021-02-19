@@ -186,7 +186,7 @@ public abstract class AbstractCombine extends LinkedService {
 		double earliestTime = Double.POSITIVE_INFINITY;
 		for (String m : matchList) {
 			for (Queue que : queueList) {
-				double timeAdded = que.getTimeAddedForMatch(m);
+				double timeAdded = que.getTimeAdded(m);
 				if (timeAdded < earliestTime) {
 					ret = m;
 					earliestTime = timeAdded;
