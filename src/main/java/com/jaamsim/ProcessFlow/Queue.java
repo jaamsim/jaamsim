@@ -384,10 +384,7 @@ public class Queue extends LinkedComponent {
 	 * Removes the first entity from the queue
 	 */
 	public DisplayEntity removeFirst() {
-		if (storage.isEmpty())
-			error("Cannot remove an entity from an empty queue");
-		QueueEntry entry = (QueueEntry) storage.first();
-		return this.remove(entry);
+		return removeFirst(null);
 	}
 
 	/**
@@ -395,23 +392,21 @@ public class Queue extends LinkedComponent {
 	 * @return first entity in the queue.
 	 */
 	public DisplayEntity getFirst() {
-		if (storage.isEmpty())
-			return null;
-		return storage.first().entity;
+		return getFirst(null);
 	}
 
 	/**
 	 * Returns the number of entities in the queue
 	 */
 	public int getCount() {
-		return storage.size();
+		return getCount(null);
 	}
 
 	/**
 	 * Returns true if the queue is empty
 	 */
 	public boolean isEmpty() {
-		return storage.isEmpty();
+		return isEmpty(null);
 	}
 
 	/**
@@ -436,16 +431,14 @@ public class Queue extends LinkedComponent {
 	 * @return number of entities that have this match value.
 	 */
 	public int getCount(String m) {
-		if (m == null) {
-			return storage.size();
-		}
 		return storage.size(m);
 	}
 
+	public boolean isEmpty(String m) {
+		return storage.isEmpty(m);
+	}
+
 	public DisplayEntity getFirst(String m) {
-		if (m == null) {
-			return this.getFirst();
-		}
 		StorageEntry entry = storage.first(m);
 		if (entry == null)
 			return null;
@@ -453,9 +446,6 @@ public class Queue extends LinkedComponent {
 	}
 
 	public double getTimeAdded(String m) {
-		if (m == null) {
-			return storage.first().timeAdded;
-		}
 		return storage.first(m).timeAdded;
 	}
 
@@ -467,11 +457,9 @@ public class Queue extends LinkedComponent {
 	 * @return entity whose match value equals the specified value.
 	 */
 	public DisplayEntity removeFirst(String m) {
-
-		if (m == null)
-			return this.removeFirst();
-
 		QueueEntry entry = (QueueEntry) storage.first(m);
+		if (entry == null)
+			return null;
 		return this.remove(entry);
 	}
 
