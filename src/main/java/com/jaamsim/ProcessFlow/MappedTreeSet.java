@@ -139,7 +139,10 @@ public class MappedTreeSet<K,V> {
 	}
 
 	public Iterator<V> iterator(K key) {
-		return subsetMap.get(key).iterator();
+		TreeSet<V> subSet = subsetMap.get(key);
+		if (subSet == null)
+			return null;
+		return subSet.iterator();
 	}
 
 	public Object[] toArray() {
