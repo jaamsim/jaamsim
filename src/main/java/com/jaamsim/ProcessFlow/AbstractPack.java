@@ -139,7 +139,7 @@ public abstract class AbstractPack extends LinkedService {
 		if (numberInserted < numberToInsert) {
 			if (getQueue(simTime).isEmpty(getMatchValue()))
 				return false;
-			packedEntity = this.getNextEntityForMatch(getMatchValue());
+			packedEntity = this.removeNextEntity(getMatchValue());
 			receiveEntity(packedEntity);
 			setEntityState(packedEntity);
 		}

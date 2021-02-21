@@ -102,7 +102,7 @@ public abstract class AbstractUnpack extends LinkedService {
 				return false;
 
 			// Remove the container from the queue
-			container = (EntContainer)this.getNextEntityForMatch(m);
+			container = (EntContainer)this.removeNextEntity(m);
 			setContainerState();
 
 			// Set the match value for the entities to remove

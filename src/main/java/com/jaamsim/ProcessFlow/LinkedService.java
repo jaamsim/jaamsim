@@ -145,7 +145,7 @@ public abstract class LinkedService extends LinkedDevice implements QueueUser {
 	 * @param m - match value.
 	 * @return next entity for processing.
 	 */
-	protected DisplayEntity getNextEntityForMatch(String m) {
+	protected DisplayEntity removeNextEntity(String m) {
 		double simTime = getSimTime();
 		return getQueue(simTime).removeFirst(m);
 	}

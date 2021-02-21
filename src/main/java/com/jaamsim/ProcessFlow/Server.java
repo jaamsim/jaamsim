@@ -69,7 +69,7 @@ public class Server extends LinkedService {
 		}
 
 		// Remove the first entity from the queue
-		servedEntity = this.getNextEntityForMatch(m);
+		servedEntity = this.removeNextEntity(m);
 		receiveEntity(servedEntity);
 		setEntityState(servedEntity);
 
