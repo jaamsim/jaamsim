@@ -150,6 +150,12 @@ public abstract class LinkedService extends LinkedDevice implements QueueUser {
 		return getQueue(simTime).removeFirst(m);
 	}
 
+	protected DisplayEntity getNextEntity(String m) {
+		double simTime = getSimTime();
+		Queue queue = getQueue(simTime);
+		return queue.getFirst(m);
+	}
+
 	/**
 	 * Returns a value which determines which of the entities in the queue are
 	 * eligible to be removed. Returns null if the Match keyword has not been set.
