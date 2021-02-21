@@ -109,7 +109,7 @@ public abstract class AbstractLinkedResourceUser extends LinkedService implement
 		double simTime = getSimTime();
 		String m = this.getNextMatchValue(simTime);
 		this.setMatchValue(m);
-		DisplayEntity ent = getQueue(simTime).removeFirst(m);
+		DisplayEntity ent = removeNextEntity(m);
 		if (ent == null)
 			error("Entity not found for specified Match value: %s", m);
 		receiveEntity(ent);
@@ -136,7 +136,7 @@ public abstract class AbstractLinkedResourceUser extends LinkedService implement
 		}
 		double simTime = getSimTime();
 		String m = this.getNextMatchValue(simTime);
-		DisplayEntity ent = getQueue(simTime).getFirst(m);
+		DisplayEntity ent = getNextEntity(m);
 		return ent != null && checkResources(ent);
 	}
 
