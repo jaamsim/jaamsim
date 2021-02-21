@@ -23,13 +23,19 @@ import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.EntityProviders.EntityProvInput;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.StringProviders.StringProvInput;
+import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.basicsim.SubjectEntity;
+import com.jaamsim.input.ExpError;
+import com.jaamsim.input.ExpEvaluator;
+import com.jaamsim.input.ExpResType;
+import com.jaamsim.input.ExpressionInput;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InterfaceEntityListInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.Vec3dInput;
+import com.jaamsim.input.ExpParser.Expression;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.DistanceUnit;
@@ -65,6 +71,21 @@ public abstract class LinkedService extends LinkedDevice implements QueueUser {
 	         exampleList = {"this.obj.Attrib1"})
 	protected final StringProvInput match;
 
+	@Keyword(description = "An optional expression that tests whether an entity in the queue is "
+	                     + "elible to be processed. "
+	                     + "The expression should return 1 (true) if the entity is eligible. "
+	                     + "The entity chosen for processing is the first one in the queue that "
+	                     + "satifies both the SelectionCondition expression and the Match value "
+	                     + "(if specified)."
+	                     + "\n\n"
+	                     + "Unlike the Match value, which must be specified when an entity "
+	                     + "first enters the queue, the SelectionCondition is evaluated when an "
+	                     + "entity is to be removed from the queue. "
+	                     + "Consequently, a SelectionCondition is more flexible than a Match "
+	                     + "value, but is significantly less efficient.",
+	         exampleList = {"'this.obj.attrib > 10'"})
+	protected final ExpressionInput selectionCondition;
+
 	@Keyword(description = "An optional list of objects to monitor.\n\n"
 	                     + "The queue will be inspected for an entity to process whenever one of "
 	                     + "the WatchList objects changes state.",
@@ -88,6 +109,11 @@ public abstract class LinkedService extends LinkedDevice implements QueueUser {
 		match = new StringProvInput("Match", KEY_INPUTS, null);
 		match.setUnitType(DimensionlessUnit.class);
 		this.addInput(match);
+
+		selectionCondition = new ExpressionInput("SelectionCondition", KEY_INPUTS, null);
+		selectionCondition.setUnitType(DimensionlessUnit.class);
+		selectionCondition.setResultType(ExpResType.NUMBER);
+		this.addInput(selectionCondition);
 
 		watchList = new InterfaceEntityListInput<>(SubjectEntity.class, "WatchList", KEY_INPUTS, new ArrayList<>());
 		watchList.setIncludeSelf(false);
@@ -175,6 +201,36 @@ public abstract class LinkedService extends LinkedDevice implements QueueUser {
 
 	protected String getMatchValue() {
 		return matchValue;
+	}
+
+	/**
+	 * Returns whether the specified entity satisfies the SelectionCondition input.
+	 * @param ent - entity to be tested
+	 * @param simTime - present simulation time
+	 * @return true if the entity satisfies the SelectionCondition
+	 */
+	public boolean isAllowed(DisplayEntity ent, double simTime) {
+		Expression exp = selectionCondition.getValue();
+		if (exp == null)
+			return true;
+
+		// Temporarily set the output 'obj' so that the expression can be evaluated
+		DisplayEntity oldEnt = getReceivedEntity(simTime);
+		setReceivedEntity(ent);
+
+		// Evaluate the condition for the proposed user
+		boolean ret = false;
+		try {
+			ret = ExpEvaluator.evaluateExpression(exp, simTime).value != 0;
+		}
+		catch (ExpError e) {
+			throw new ErrorException(this, e);
+		}
+
+		// Reset the output 'obj' to the original entity
+		setReceivedEntity(oldEnt);
+
+		return ret;
 	}
 
 	// ********************************************************************************************
