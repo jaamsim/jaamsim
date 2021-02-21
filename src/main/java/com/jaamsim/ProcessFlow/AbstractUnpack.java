@@ -97,12 +97,11 @@ public abstract class AbstractUnpack extends LinkedService {
 			String m = getNextMatchValue(getSimTime());
 			setMatchValue(m);
 
-			// Stop if no container is available
-			if (getQueue(simTime).isEmpty(m))
-				return false;
-
 			// Remove the container from the queue
 			container = (EntContainer)this.removeNextEntity(m);
+			if (container == null)
+				return false;
+
 			setContainerState();
 
 			// Set the match value for the entities to remove

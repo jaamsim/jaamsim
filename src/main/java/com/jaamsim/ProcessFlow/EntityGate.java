@@ -92,13 +92,11 @@ public class EntityGate extends LinkedService {
 		String m = this.getNextMatchValue(getSimTime());
 		this.setMatchValue(m);
 
-		// Stop if the queue has become empty
-		if (getQueue(simTime).isEmpty(m)) {
-			return false;
-		}
-
 		// Select the next entity to release
 		servedEntity = this.removeNextEntity(m);
+		if (servedEntity == null)
+			return false;
+
 		receiveEntity(servedEntity);
 		setEntityState(servedEntity);
 		num++;
