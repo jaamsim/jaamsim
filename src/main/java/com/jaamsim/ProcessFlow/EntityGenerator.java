@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2020 JaamSim Software Inc.
+ * Copyright (C) 2016-2021 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -79,6 +79,7 @@ public class EntityGenerator extends LinkedService implements EntityGen {
 		processPosition.setHidden(true);
 		opportunisticMaintenanceList.setHidden(true);
 		opportunisticBreakdownList.setHidden(true);
+		selectionCondition.setHidden(true);
 
 		firstArrivalTime = new SampleInput("FirstArrivalTime", KEY_INPUTS, new SampleConstant(TimeUnit.class, 0.0));
 		firstArrivalTime.setUnitType(TimeUnit.class);

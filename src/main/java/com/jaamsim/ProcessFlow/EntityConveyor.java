@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2020 JaamSim Software Inc.
+ * Copyright (C) 2016-2021 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -73,6 +73,7 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 		processPosition.setHidden(true);
 		forcedMaintenanceList.setHidden(true);
 		forcedBreakdownList.setHidden(true);
+		selectionCondition.setHidden(true);
 
 		travelTimeInput = new SampleInput("TravelTime", KEY_INPUTS, new SampleConstant(0.0d));
 		travelTimeInput.setValidRange(0.0, Double.POSITIVE_INFINITY);
