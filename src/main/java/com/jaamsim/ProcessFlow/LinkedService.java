@@ -173,13 +173,24 @@ public abstract class LinkedService extends LinkedDevice implements QueueUser {
 	 */
 	protected DisplayEntity removeNextEntity(String m) {
 		double simTime = getSimTime();
-		return getQueue(simTime).removeFirst(m);
+		Queue queue = getQueue(simTime);
+
+		if (selectionCondition.isDefault())
+			return queue.removeFirst(m);
+
+		// Find the first entity that satisfies the SelectionCondition input
+		return queue.removeFirst(m, this, simTime);
 	}
 
 	protected DisplayEntity getNextEntity(String m) {
 		double simTime = getSimTime();
 		Queue queue = getQueue(simTime);
-		return queue.getFirst(m);
+
+		if (selectionCondition.isDefault())
+			return queue.getFirst(m);
+
+		// Find the first entity that satisfies the SelectionCondition input
+		return queue.getFirst(m, this, simTime);
 	}
 
 	/**

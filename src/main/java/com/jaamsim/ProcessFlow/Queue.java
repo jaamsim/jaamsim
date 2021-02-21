@@ -464,6 +464,46 @@ public class Queue extends LinkedComponent {
 	}
 
 	/**
+	 * Returns the first entity in the queue whose match value is equal to the specified value and
+	 * that satisfies the SelectionCondition for the specified LinkedService.
+	 * @param m - value to be matched
+	 * @param serv - LinkedService that determines the entities that are eligible
+	 * @return selected entity
+	 */
+	public DisplayEntity getFirst(String m, LinkedService serv, double simTime) {
+		QueueEntry entry = getFirstEntry(m, serv, simTime);
+		if (entry == null)
+			return null;
+		return entry.entity;
+	}
+
+	/**
+	 * Removes and returns the first entity in the queue whose match value is equal to the
+	 * specified value and that satisfies the SelectionCondition for the specified LinkedService.
+	 * @param m - value to be matched
+	 * @param serv - LinkedService that determines the entities that are eligible
+	 * @return selected entity
+	 */
+	public DisplayEntity removeFirst(String m, LinkedService serv, double simTime) {
+		QueueEntry entry = getFirstEntry(m, serv, simTime);
+		if (entry == null)
+			return null;
+		return remove(entry);
+	}
+
+	private QueueEntry getFirstEntry(String m, LinkedService serv, double simTime) {
+		Iterator<StorageEntry> itr = storage.iterator(m);
+		if (itr == null)
+			return null;
+		while (itr.hasNext()) {
+			QueueEntry entry = (QueueEntry) itr.next();
+			if (serv.isAllowed(entry.entity, simTime))
+				return entry;
+		}
+		return null;
+	}
+
+	/**
 	 * Returns the match value that has the largest number of entities in the queue.
 	 * @return match value with the most entities.
 	 */
