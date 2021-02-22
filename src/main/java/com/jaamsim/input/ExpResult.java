@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016 JaamSim Software Inc.
+ * Copyright (C) 2016-2021 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -128,6 +128,8 @@ public class ExpResult {
 		case STRING:
 			return String.format("\"%s\"", stringVal);
 		case ENTITY:
+			if (entVal == null)
+				return "null";
 			return String.format("[%s]", entVal.getName());
 		case COLLECTION:
 			return colVal.getOutputString(simModel);
@@ -151,6 +153,8 @@ public class ExpResult {
 		case STRING:
 			return stringVal;
 		case ENTITY:
+			if (entVal == null)
+				return "null";
 			return String.format("[%s]", entVal.getName());
 		case COLLECTION:
 			return colVal.getOutputString(null);
