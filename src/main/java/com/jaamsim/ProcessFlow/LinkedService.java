@@ -86,6 +86,15 @@ public abstract class LinkedService extends LinkedDevice implements QueueUser {
 	         exampleList = {"'this.obj.attrib > 10'"})
 	protected final ExpressionInput selectionCondition;
 
+	@Keyword(description = "An optional expression that returns the next entity to be removed "
+	                     + "from the queue. "
+	                     + "No entity is removed if the expression returns null or the entity is "
+	                     + "not present in the queue. "
+	                     + "To be removed, the entity must also satisfy the Match and "
+	                     + "SelectionCondition inputs if these are entered.",
+	         exampleList = {"'this.nextEntity'"})
+	protected final ExpressionInput nextEntity;
+
 	@Keyword(description = "An optional list of objects to monitor.\n\n"
 	                     + "The queue will be inspected for an entity to process whenever one of "
 	                     + "the WatchList objects changes state.",
@@ -114,6 +123,10 @@ public abstract class LinkedService extends LinkedDevice implements QueueUser {
 		selectionCondition.setUnitType(DimensionlessUnit.class);
 		selectionCondition.setResultType(ExpResType.NUMBER);
 		this.addInput(selectionCondition);
+
+		nextEntity = new ExpressionInput("NextEntity", KEY_INPUTS, null);
+		selectionCondition.setResultType(ExpResType.ENTITY);
+		this.addInput(nextEntity);
 
 		watchList = new InterfaceEntityListInput<>(SubjectEntity.class, "WatchList", KEY_INPUTS, new ArrayList<>());
 		watchList.setIncludeSelf(false);
@@ -175,22 +188,50 @@ public abstract class LinkedService extends LinkedDevice implements QueueUser {
 		double simTime = getSimTime();
 		Queue queue = getQueue(simTime);
 
-		if (selectionCondition.isDefault())
+		if (selectionCondition.isDefault() && nextEntity.isDefault())
 			return queue.removeFirst(m);
 
-		// Find the first entity that satisfies the SelectionCondition input
-		return queue.removeFirst(m, this, simTime);
+		// Evaluate the NextEntity input
+		DisplayEntity entity = null;
+		if (!nextEntity.isDefault()) {
+			entity = getNextEntityValue(simTime);
+			if (entity == null)
+				return null;
+		}
+
+		// Find the first entity that satisfies the SelectionCondition and NextEntity inputs
+		return queue.removeFirst(m, this, simTime, entity);
 	}
 
 	protected DisplayEntity getNextEntity(String m) {
 		double simTime = getSimTime();
 		Queue queue = getQueue(simTime);
 
-		if (selectionCondition.isDefault())
+		if (selectionCondition.isDefault() && nextEntity.isDefault())
 			return queue.getFirst(m);
 
-		// Find the first entity that satisfies the SelectionCondition input
-		return queue.getFirst(m, this, simTime);
+		// Evaluate the NextEntity input
+		DisplayEntity entity = null;
+		if (!nextEntity.isDefault()) {
+			entity = getNextEntityValue(simTime);
+			if (entity == null)
+				return null;
+		}
+
+		// Find the first entity that satisfies the SelectionCondition and NextEntity inputs
+		return queue.getFirst(m, this, simTime, entity);
+	}
+
+	private DisplayEntity getNextEntityValue(double simTime) {
+		DisplayEntity ret = null;
+		Expression exp = nextEntity.getValue();
+		try {
+			ret = (DisplayEntity) ExpEvaluator.evaluateExpression(exp, simTime).entVal;
+		}
+		catch (ExpError e) {
+			throw new ErrorException(this, e);
+		}
+		return ret;
 	}
 
 	/**

@@ -468,10 +468,11 @@ public class Queue extends LinkedComponent {
 	 * that satisfies the SelectionCondition for the specified LinkedService.
 	 * @param m - value to be matched
 	 * @param serv - LinkedService that determines the entities that are eligible
+	 * @param ent - only eligible entity (null indicates no restriction)
 	 * @return selected entity
 	 */
-	public DisplayEntity getFirst(String m, LinkedService serv, double simTime) {
-		QueueEntry entry = getFirstEntry(m, serv, simTime);
+	public DisplayEntity getFirst(String m, LinkedService serv, double simTime, DisplayEntity ent) {
+		QueueEntry entry = getFirstEntry(m, serv, simTime, ent);
 		if (entry == null)
 			return null;
 		return entry.entity;
@@ -482,22 +483,23 @@ public class Queue extends LinkedComponent {
 	 * specified value and that satisfies the SelectionCondition for the specified LinkedService.
 	 * @param m - value to be matched
 	 * @param serv - LinkedService that determines the entities that are eligible
+	 * @param ent - only eligible entity (null indicates no restriction)
 	 * @return selected entity
 	 */
-	public DisplayEntity removeFirst(String m, LinkedService serv, double simTime) {
-		QueueEntry entry = getFirstEntry(m, serv, simTime);
+	public DisplayEntity removeFirst(String m, LinkedService serv, double simTime, DisplayEntity ent) {
+		QueueEntry entry = getFirstEntry(m, serv, simTime, ent);
 		if (entry == null)
 			return null;
 		return remove(entry);
 	}
 
-	private QueueEntry getFirstEntry(String m, LinkedService serv, double simTime) {
+	private QueueEntry getFirstEntry(String m, LinkedService serv, double simTime, DisplayEntity ent) {
 		Iterator<StorageEntry> itr = storage.iterator(m);
 		if (itr == null)
 			return null;
 		while (itr.hasNext()) {
 			QueueEntry entry = (QueueEntry) itr.next();
-			if (serv.isAllowed(entry.entity, simTime))
+			if ((ent == null || entry.entity == ent) && serv.isAllowed(entry.entity, simTime))
 				return entry;
 		}
 		return null;
