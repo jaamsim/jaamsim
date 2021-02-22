@@ -74,6 +74,7 @@ public abstract class AbstractCombine extends LinkedService {
 		match.setHidden(true);
 		watchList.setHidden(true);
 		selectionCondition.setHidden(true);
+		nextEntity.setHidden(true);
 
 		serviceTime = new SampleInput("ServiceTime", KEY_INPUTS, new SampleConstant(TimeUnit.class, 0.0));
 		serviceTime.setUnitType(TimeUnit.class);

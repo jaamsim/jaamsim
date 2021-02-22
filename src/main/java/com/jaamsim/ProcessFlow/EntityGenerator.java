@@ -80,6 +80,7 @@ public class EntityGenerator extends LinkedService implements EntityGen {
 		opportunisticMaintenanceList.setHidden(true);
 		opportunisticBreakdownList.setHidden(true);
 		selectionCondition.setHidden(true);
+		nextEntity.setHidden(true);
 
 		firstArrivalTime = new SampleInput("FirstArrivalTime", KEY_INPUTS, new SampleConstant(TimeUnit.class, 0.0));
 		firstArrivalTime.setUnitType(TimeUnit.class);
