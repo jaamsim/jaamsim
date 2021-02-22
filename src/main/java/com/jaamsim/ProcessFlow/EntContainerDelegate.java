@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2018-2019 JaamSim Software Inc.
+ * Copyright (C) 2018-2021 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -79,10 +79,7 @@ public class EntContainerDelegate implements EntContainer {
 
 	@Override
 	public DisplayEntity removeEntity(String type) {
-		StorageEntry entry = storage.first();
-		if (type != null) {
-			entry = storage.first(type);
-		}
+		StorageEntry entry = storage.first(type);
 		storage.remove(entry);
 		DisplayEntity ent = entry.entity;
 		numberRemoved++;
@@ -91,17 +88,11 @@ public class EntContainerDelegate implements EntContainer {
 
 	@Override
 	public int getCount(String type) {
-		if (type == null) {
-			return storage.size();
-		}
 		return storage.size(type);
 	}
 
 	@Override
 	public boolean isEmpty(String type) {
-		if (type == null) {
-			return storage.isEmpty();
-		}
 		return storage.isEmpty(type);
 	}
 
@@ -144,9 +135,6 @@ public class EntContainerDelegate implements EntContainer {
 	}
 
 	public ArrayList<DisplayEntity> getEntityList(String type) {
-		if (type == null) {
-			return storage.getEntityList();
-		}
 		return storage.getEntityList(type);
 	}
 
