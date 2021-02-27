@@ -80,7 +80,7 @@ public class ColladaModel extends DisplayModel {
 		colladaFile.setValidFileDescriptions(VALID_FILE_DESCRIPTIONS);
 		this.addInput( colladaFile);
 
-		actions = new ActionListInput("Actions", GRAPHICS, new ArrayList<Action.Binding>());
+		actions = new ActionListInput("Actions", KEY_INPUTS, new ArrayList<Action.Binding>());
 		this.addInput(actions);
 	}
 
