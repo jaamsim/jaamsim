@@ -52,6 +52,11 @@ public class ActionListInput extends ListInput<ArrayList<Action.Binding>>{
 	}
 
 	@Override
+	public String getValidInputDesc() {
+		return Input.VALID_ACTION;
+	}
+
+	@Override
 	public int getListSize() {
 		if (value == null)
 			return 0;

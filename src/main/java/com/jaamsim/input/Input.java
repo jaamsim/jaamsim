@@ -142,6 +142,9 @@ public abstract class Input<T> {
 	protected static final String VALID_PASSTHROUGH = "Accepts a list of passthrough keyword definitions each consisting of the name for the new keyword and output followed by the unit type for the new output. "
 	                                                + "The unit type defaults to DimensionlessUnit if no unit type is entered. "
 	                                                + "Each definition in the list must be enclosed by braces.";
+	protected static final String VALID_ACTION = "Accepts a list of action name and output name pairs. "
+	                                           + "Each action/output pair consists of an action name followed by an output name. "
+	                                           + "The names are separated by one or more spaces and enclosed braces.";
 
 	public static final String POSITIVE_INFINITY = "Infinity";
 	public static final String NEGATIVE_INFINITY = "-Infinity";
