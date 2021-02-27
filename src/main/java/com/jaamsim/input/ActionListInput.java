@@ -73,6 +73,11 @@ public class ActionListInput extends ListInput<ArrayList<Action.Binding>>{
 	}
 
 	@Override
+	public boolean useExpressionBuilder() {
+		return true;
+	}
+
+	@Override
 	public String getDefaultString(JaamSimModel simModel) {
 		if (defValue == null || defValue.isEmpty())
 			return "";
