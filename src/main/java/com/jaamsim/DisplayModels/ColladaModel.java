@@ -57,7 +57,9 @@ public class ColladaModel extends DisplayModel {
 	         exampleList = {"..\\graphics\\ship.dae", "..\\graphics\\ship.dae.zip" })
 	private final FileInput colladaFile;
 
-	@Keyword(description = "A list of active actions and the entity output that drives them",
+	@Keyword(description = "Entity outputs that drive the animated actions for the ColladaModel. "
+			+ "The actions for a ColladaModel are defined as part of its ColladaFile input. "
+			+ "They are listed in the 'Actions' output for the ColladaModel. ",
 	         exampleList = { "{ ContentAction Contents } { BoomAngleAction BoomAngle }" })
 	private final ActionListInput actions;
 
