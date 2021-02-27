@@ -1,0 +1,1698 @@
+<?xml version="1.0" encoding="utf-8"?>
+<COLLADA xmlns="http://www.collada.org/2005/11/COLLADASchema" version="1.4.1">
+  <asset>
+    <contributor>
+      <author>chudo</author>
+      <authoring_tool>OpenCOLLADA for 3ds Max;  ;  </authoring_tool>
+      <source_data>file:///D:/max-test/scenes/test-crane.max</source_data>
+    </contributor>
+    <created>2016-04-15T10:15:46</created>
+    <modified>2016-04-15T10:15:46</modified>
+    <unit name="inch" meter="0.0254"/>
+    <up_axis>Z_UP</up_axis>
+  </asset>
+  <library_effects>
+    <effect id="ColorEffectR214G228B153">
+      <profile_COMMON>
+        <technique sid="common">
+          <phong>
+            <ambient>
+              <color>0.8392157 0.8941177 0.6 1</color>
+            </ambient>
+            <diffuse>
+              <color>0.8392157 0.8941177 0.6 1</color>
+            </diffuse>
+            <specular>
+              <color>1 1 1 1</color>
+            </specular>
+            <shininess>
+              <float>10</float>
+            </shininess>
+            <reflective>
+              <color>0 0 0 1</color>
+            </reflective>
+            <transparent>
+              <color>1 1 1 1</color>
+            </transparent>
+            <transparency>
+              <float>1</float>
+            </transparency>
+          </phong>
+        </technique>
+      </profile_COMMON>
+    </effect>
+    <effect id="ColorEffectR225G198B87">
+      <profile_COMMON>
+        <technique sid="common">
+          <phong>
+            <ambient>
+              <color>0.8823529 0.7764706 0.3411765 1</color>
+            </ambient>
+            <diffuse>
+              <color>0.8823529 0.7764706 0.3411765 1</color>
+            </diffuse>
+            <specular>
+              <color>1 1 1 1</color>
+            </specular>
+            <shininess>
+              <float>10</float>
+            </shininess>
+            <reflective>
+              <color>0 0 0 1</color>
+            </reflective>
+            <transparent>
+              <color>1 1 1 1</color>
+            </transparent>
+            <transparency>
+              <float>1</float>
+            </transparency>
+          </phong>
+        </technique>
+      </profile_COMMON>
+    </effect>
+    <effect id="ColorEffectR8G110B135">
+      <profile_COMMON>
+        <technique sid="common">
+          <phong>
+            <ambient>
+              <color>0.03137255 0.4313726 0.5294118 1</color>
+            </ambient>
+            <diffuse>
+              <color>0.03137255 0.4313726 0.5294118 1</color>
+            </diffuse>
+            <specular>
+              <color>1 1 1 1</color>
+            </specular>
+            <shininess>
+              <float>10</float>
+            </shininess>
+            <reflective>
+              <color>0 0 0 1</color>
+            </reflective>
+            <transparent>
+              <color>1 1 1 1</color>
+            </transparent>
+            <transparency>
+              <float>1</float>
+            </transparency>
+          </phong>
+        </technique>
+      </profile_COMMON>
+    </effect>
+    <effect id="ColorEffectR198G225B87">
+      <profile_COMMON>
+        <technique sid="common">
+          <phong>
+            <ambient>
+              <color>0.7764706 0.8823529 0.3411765 1</color>
+            </ambient>
+            <diffuse>
+              <color>0.7764706 0.8823529 0.3411765 1</color>
+            </diffuse>
+            <specular>
+              <color>1 1 1 1</color>
+            </specular>
+            <shininess>
+              <float>10</float>
+            </shininess>
+            <reflective>
+              <color>0 0 0 1</color>
+            </reflective>
+            <transparent>
+              <color>1 1 1 1</color>
+            </transparent>
+            <transparency>
+              <float>1</float>
+            </transparency>
+          </phong>
+        </technique>
+      </profile_COMMON>
+    </effect>
+    <effect id="ColorEffectR86G86B86">
+      <profile_COMMON>
+        <technique sid="common">
+          <phong>
+            <ambient>
+              <color>0.3372549 0.3372549 0.3372549 1</color>
+            </ambient>
+            <diffuse>
+              <color>0.3372549 0.3372549 0.3372549 1</color>
+            </diffuse>
+            <specular>
+              <color>1 1 1 1</color>
+            </specular>
+            <shininess>
+              <float>10</float>
+            </shininess>
+            <reflective>
+              <color>0 0 0 1</color>
+            </reflective>
+            <transparent>
+              <color>1 1 1 1</color>
+            </transparent>
+            <transparency>
+              <float>1</float>
+            </transparency>
+          </phong>
+        </technique>
+      </profile_COMMON>
+    </effect>
+  </library_effects>
+  <library_materials>
+    <material id="ColorEffectR214G228B153-material" name="ColorEffectR214G228B153-material">
+      <instance_effect url="#ColorEffectR214G228B153"/>
+    </material>
+    <material id="ColorEffectR225G198B87-material" name="ColorEffectR225G198B87-material">
+      <instance_effect url="#ColorEffectR225G198B87"/>
+    </material>
+    <material id="ColorEffectR8G110B135-material" name="ColorEffectR8G110B135-material">
+      <instance_effect url="#ColorEffectR8G110B135"/>
+    </material>
+    <material id="ColorEffectR198G225B87-material" name="ColorEffectR198G225B87-material">
+      <instance_effect url="#ColorEffectR198G225B87"/>
+    </material>
+    <material id="ColorEffectR86G86B86-material" name="ColorEffectR86G86B86-material">
+      <instance_effect url="#ColorEffectR86G86B86"/>
+    </material>
+  </library_materials>
+  <library_geometries>
+    <geometry id="geom-Base" name="Base">
+      <mesh>
+        <source id="geom-Base-positions">
+          <float_array id="geom-Base-positions-array" count="24">-78.74016 -78.74016 0 78.74016 -78.74016 0 -78.74016 78.74016 0 78.74016 78.74016 0 -78.74016 -78.74016 3.937008 78.74016 -78.74016 3.937008 -78.74016 78.74016 3.937008 78.74016 78.74016 3.937008</float_array>
+          <technique_common>
+            <accessor source="#geom-Base-positions-array" count="8" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="geom-Base-normals">
+          <float_array id="geom-Base-normals-array" count="72">0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 1 0 0 1 0 0 1 0 0 1 0 -1 0 0 -1 0 0 -1 0 0 -1 0 1 0 0 1 0 0 1 0 0 1 0 0 0 1 0 0 1 0 0 1 0 0 1 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0</float_array>
+          <technique_common>
+            <accessor source="#geom-Base-normals-array" count="24" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="geom-Base-map1">
+          <float_array id="geom-Base-map1-array" count="36">0 0 0 1 0 0 0 1 0 1 1 0 0 0 0 1 0 0 0 1 0 1 1 0 0 0 0 1 0 0 0 1 0 1 1 0</float_array>
+          <technique_common>
+            <accessor source="#geom-Base-map1-array" count="12" stride="3">
+              <param name="S" type="float"/>
+              <param name="T" type="float"/>
+              <param name="P" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <vertices id="geom-Base-vertices">
+          <input semantic="POSITION" source="#geom-Base-positions"/>
+        </vertices>
+        <triangles material="ColorMaterial" count="12">
+          <input semantic="VERTEX" source="#geom-Base-vertices" offset="0"/>
+          <input semantic="NORMAL" source="#geom-Base-normals" offset="1"/>
+          <input semantic="TEXCOORD" source="#geom-Base-map1" offset="2" set="0"/>
+          <p>0 0 9 2 1 11 3 2 10 3 2 10 1 3 8 0 0 9 4 4 8 5 5 9 7 6 11 7 6 11 6 7 10 4 4 8 0 8 4 1 9 5 5 10 7 5 10 7 4 11 6 0 8 4 1 12 0 3 13 1 7 14 3 7 14 3 5 15 2 1 12 0 3 16 4 2 17 5 6 18 7 6 18 7 7 19 6 3 16 4 2 20 0 0 21 1 4 22 3 4 22 3 6 23 2 2 20 0</p>
+        </triangles>
+      </mesh>
+      <extra>
+        <technique profile="OpenCOLLADA3dsMax">
+          <max_box>
+            <generateuvs type="integer">1</generateuvs>
+            <height type="float">3.937008</height>
+            <heightsegments type="integer">1</heightsegments>
+            <length type="float">157.4803</length>
+            <lengthsegments type="integer">1</lengthsegments>
+            <width type="float">157.4803</width>
+            <widthsegments type="integer">1</widthsegments>
+          </max_box>
+        </technique>
+      </extra>
+    </geometry>
+    <geometry id="geom-Crane1" name="Crane1">
+      <mesh>
+        <source id="geom-Crane1-positions">
+          <float_array id="geom-Crane1-positions-array" count="24">-5 -5 0 5 -5 0 -5 5 0 5 5 0 -5 -5 40 5 -5 40 -5 5 40 5 5 40</float_array>
+          <technique_common>
+            <accessor source="#geom-Crane1-positions-array" count="8" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="geom-Crane1-normals">
+          <float_array id="geom-Crane1-normals-array" count="72">0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 1 0 0 1 0 0 1 0 0 1 0 -0.9999999 0 0 -1 0 0 -0.9999999 0 0 -1 0 0.9999999 0 0 1 0 0 0.9999999 0 0 1 0 0 0 0.9999999 0 0 1 0 0 0.9999999 0 0 1 0 -0.9999999 0 0 -1 0 0 -0.9999999 0 0 -1 0 0</float_array>
+          <technique_common>
+            <accessor source="#geom-Crane1-normals-array" count="24" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="geom-Crane1-map1">
+          <float_array id="geom-Crane1-map1-array" count="36">0 0 0 1 0 0 0 1 0 1 1 0 0 0 0 1 0 0 0 1 0 1 1 0 0 0 0 1 0 0 0 1 0 1 1 0</float_array>
+          <technique_common>
+            <accessor source="#geom-Crane1-map1-array" count="12" stride="3">
+              <param name="S" type="float"/>
+              <param name="T" type="float"/>
+              <param name="P" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <vertices id="geom-Crane1-vertices">
+          <input semantic="POSITION" source="#geom-Crane1-positions"/>
+        </vertices>
+        <triangles material="ColorMaterial" count="12">
+          <input semantic="VERTEX" source="#geom-Crane1-vertices" offset="0"/>
+          <input semantic="NORMAL" source="#geom-Crane1-normals" offset="1"/>
+          <input semantic="TEXCOORD" source="#geom-Crane1-map1" offset="2" set="0"/>
+          <p>0 0 9 2 1 11 3 2 10 3 2 10 1 3 8 0 0 9 4 4 8 5 5 9 7 6 11 7 6 11 6 7 10 4 4 8 0 8 4 1 9 5 5 10 7 5 10 7 4 11 6 0 8 4 1 12 0 3 13 1 7 14 3 7 14 3 5 15 2 1 12 0 3 16 4 2 17 5 6 18 7 6 18 7 7 19 6 3 16 4 2 20 0 0 21 1 4 22 3 4 22 3 6 23 2 2 20 0</p>
+        </triangles>
+      </mesh>
+      <extra>
+        <technique profile="OpenCOLLADA3dsMax">
+          <max_box>
+            <generateuvs type="integer">1</generateuvs>
+            <height type="float">40</height>
+            <heightsegments type="integer">1</heightsegments>
+            <length type="float">10</length>
+            <lengthsegments type="integer">1</lengthsegments>
+            <width type="float">10</width>
+            <widthsegments type="integer">1</widthsegments>
+          </max_box>
+        </technique>
+      </extra>
+    </geometry>
+    <geometry id="geom-Boom1" name="Boom1">
+      <mesh>
+        <source id="geom-Boom1-positions">
+          <float_array id="geom-Boom1-positions-array" count="24">-5 -29.52756 0 5 -29.52756 0 -5 29.52756 0 5 29.52756 0 -5 -29.52756 10 5 -29.52756 10 -5 29.52756 10 5 29.52756 10</float_array>
+          <technique_common>
+            <accessor source="#geom-Boom1-positions-array" count="8" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="geom-Boom1-normals">
+          <float_array id="geom-Boom1-normals-array" count="72">0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 1 0 0 1 0 0 1 0 0 1 0 -1 0 0 -1 0 0 -1 0 0 -1 0 1 0 0 1 0 0 1 0 0 1 0 0 0 1 0 0 1 0 0 1 0 0 1 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0</float_array>
+          <technique_common>
+            <accessor source="#geom-Boom1-normals-array" count="24" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="geom-Boom1-map1">
+          <float_array id="geom-Boom1-map1-array" count="36">0 0 0 1 0 0 0 1 0 1 1 0 0 0 0 1 0 0 0 1 0 1 1 0 0 0 0 1 0 0 0 1 0 1 1 0</float_array>
+          <technique_common>
+            <accessor source="#geom-Boom1-map1-array" count="12" stride="3">
+              <param name="S" type="float"/>
+              <param name="T" type="float"/>
+              <param name="P" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <vertices id="geom-Boom1-vertices">
+          <input semantic="POSITION" source="#geom-Boom1-positions"/>
+        </vertices>
+        <triangles material="ColorMaterial" count="12">
+          <input semantic="VERTEX" source="#geom-Boom1-vertices" offset="0"/>
+          <input semantic="NORMAL" source="#geom-Boom1-normals" offset="1"/>
+          <input semantic="TEXCOORD" source="#geom-Boom1-map1" offset="2" set="0"/>
+          <p>0 0 9 2 1 11 3 2 10 3 2 10 1 3 8 0 0 9 4 4 8 5 5 9 7 6 11 7 6 11 6 7 10 4 4 8 0 8 4 1 9 5 5 10 7 5 10 7 4 11 6 0 8 4 1 12 0 3 13 1 7 14 3 7 14 3 5 15 2 1 12 0 3 16 4 2 17 5 6 18 7 6 18 7 7 19 6 3 16 4 2 20 0 0 21 1 4 22 3 4 22 3 6 23 2 2 20 0</p>
+        </triangles>
+      </mesh>
+      <extra>
+        <technique profile="OpenCOLLADA3dsMax">
+          <max_box>
+            <generateuvs type="integer">1</generateuvs>
+            <height type="float">10</height>
+            <heightsegments type="integer">1</heightsegments>
+            <length type="float">59.05512</length>
+            <lengthsegments type="integer">1</lengthsegments>
+            <width type="float">10</width>
+            <widthsegments type="integer">1</widthsegments>
+          </max_box>
+        </technique>
+      </extra>
+    </geometry>
+    <geometry id="geom-Hook1" name="Hook1">
+      <mesh>
+        <source id="geom-Hook1-positions">
+          <float_array id="geom-Hook1-positions-array" count="24">-5.055534 -14.76378 0 5.055534 -14.76378 0 -5.055534 14.76378 0 5.055534 14.76378 0 -5.055534 -14.76378 10.11811 5.055534 -14.76378 10.11811 -5.055534 14.76378 10.11811 5.055534 14.76378 10.11811</float_array>
+          <technique_common>
+            <accessor source="#geom-Hook1-positions-array" count="8" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="geom-Hook1-normals">
+          <float_array id="geom-Hook1-normals-array" count="72">0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 1 0 0 1 0 0 1 0 0 1 0 -1 0 0 -1 0 0 -1 0 0 -1 0 1 0 0 1 0 0 1 0 0 1 0 0 0 1 0 0 1 0 0 1 0 0 1 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0</float_array>
+          <technique_common>
+            <accessor source="#geom-Hook1-normals-array" count="24" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="geom-Hook1-map1">
+          <float_array id="geom-Hook1-map1-array" count="36">0 0 0 1 0 0 0 1 0 1 1 0 0 0 0 1 0 0 0 1 0 1 1 0 0 0 0 1 0 0 0 1 0 1 1 0</float_array>
+          <technique_common>
+            <accessor source="#geom-Hook1-map1-array" count="12" stride="3">
+              <param name="S" type="float"/>
+              <param name="T" type="float"/>
+              <param name="P" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <vertices id="geom-Hook1-vertices">
+          <input semantic="POSITION" source="#geom-Hook1-positions"/>
+        </vertices>
+        <triangles material="ColorMaterial" count="12">
+          <input semantic="VERTEX" source="#geom-Hook1-vertices" offset="0"/>
+          <input semantic="NORMAL" source="#geom-Hook1-normals" offset="1"/>
+          <input semantic="TEXCOORD" source="#geom-Hook1-map1" offset="2" set="0"/>
+          <p>0 0 9 2 1 11 3 2 10 3 2 10 1 3 8 0 0 9 4 4 8 5 5 9 7 6 11 7 6 11 6 7 10 4 4 8 0 8 4 1 9 5 5 10 7 5 10 7 4 11 6 0 8 4 1 12 0 3 13 1 7 14 3 7 14 3 5 15 2 1 12 0 3 16 4 2 17 5 6 18 7 6 18 7 7 19 6 3 16 4 2 20 0 0 21 1 4 22 3 4 22 3 6 23 2 2 20 0</p>
+        </triangles>
+      </mesh>
+      <extra>
+        <technique profile="OpenCOLLADA3dsMax">
+          <max_box>
+            <generateuvs type="integer">1</generateuvs>
+            <height type="float">10.11811</height>
+            <heightsegments type="integer">1</heightsegments>
+            <length type="float">29.52756</length>
+            <lengthsegments type="integer">1</lengthsegments>
+            <width type="float">10.11107</width>
+            <widthsegments type="integer">1</widthsegments>
+          </max_box>
+        </technique>
+      </extra>
+    </geometry>
+    <geometry id="geom-Crane2" name="Crane2">
+      <mesh>
+        <source id="geom-Crane2-positions">
+          <float_array id="geom-Crane2-positions-array" count="24">-5 -5 0 5 -5 0 -5 5 0 5 5 0 -5 -5 40 5 -5 40 -5 5 40 5 5 40</float_array>
+          <technique_common>
+            <accessor source="#geom-Crane2-positions-array" count="8" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="geom-Crane2-normals">
+          <float_array id="geom-Crane2-normals-array" count="72">0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 1 0 0 1 0 0 1 0 0 1 0 -0.9999999 0 0 -1 0 0 -0.9999999 0 0 -1 0 0.9999999 0 0 1 0 0 0.9999999 0 0 1 0 0 0 0.9999999 0 0 1 0 0 0.9999999 0 0 1 0 -0.9999999 0 0 -1 0 0 -0.9999999 0 0 -1 0 0</float_array>
+          <technique_common>
+            <accessor source="#geom-Crane2-normals-array" count="24" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="geom-Crane2-map1">
+          <float_array id="geom-Crane2-map1-array" count="36">0 0 0 1 0 0 0 1 0 1 1 0 0 0 0 1 0 0 0 1 0 1 1 0 0 0 0 1 0 0 0 1 0 1 1 0</float_array>
+          <technique_common>
+            <accessor source="#geom-Crane2-map1-array" count="12" stride="3">
+              <param name="S" type="float"/>
+              <param name="T" type="float"/>
+              <param name="P" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <vertices id="geom-Crane2-vertices">
+          <input semantic="POSITION" source="#geom-Crane2-positions"/>
+        </vertices>
+        <triangles material="ColorMaterial" count="12">
+          <input semantic="VERTEX" source="#geom-Crane2-vertices" offset="0"/>
+          <input semantic="NORMAL" source="#geom-Crane2-normals" offset="1"/>
+          <input semantic="TEXCOORD" source="#geom-Crane2-map1" offset="2" set="0"/>
+          <p>0 0 9 2 1 11 3 2 10 3 2 10 1 3 8 0 0 9 4 4 8 5 5 9 7 6 11 7 6 11 6 7 10 4 4 8 0 8 4 1 9 5 5 10 7 5 10 7 4 11 6 0 8 4 1 12 0 3 13 1 7 14 3 7 14 3 5 15 2 1 12 0 3 16 4 2 17 5 6 18 7 6 18 7 7 19 6 3 16 4 2 20 0 0 21 1 4 22 3 4 22 3 6 23 2 2 20 0</p>
+        </triangles>
+      </mesh>
+      <extra>
+        <technique profile="OpenCOLLADA3dsMax">
+          <max_box>
+            <generateuvs type="integer">1</generateuvs>
+            <height type="float">40</height>
+            <heightsegments type="integer">1</heightsegments>
+            <length type="float">10</length>
+            <lengthsegments type="integer">1</lengthsegments>
+            <width type="float">10</width>
+            <widthsegments type="integer">1</widthsegments>
+          </max_box>
+        </technique>
+      </extra>
+    </geometry>
+    <geometry id="geom-Boom2" name="Boom2">
+      <mesh>
+        <source id="geom-Boom2-positions">
+          <float_array id="geom-Boom2-positions-array" count="24">-5 -29.52756 0 5 -29.52756 0 -5 29.52756 0 5 29.52756 0 -5 -29.52756 11.81102 5 -29.52756 11.81102 -5 29.52756 11.81102 5 29.52756 11.81102</float_array>
+          <technique_common>
+            <accessor source="#geom-Boom2-positions-array" count="8" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="geom-Boom2-normals">
+          <float_array id="geom-Boom2-normals-array" count="72">0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 1 0 0 1 0 0 1 0 0 1 0 -1 0 0 -1 0 0 -1 0 0 -1 0 1 0 0 1 0 0 1 0 0 1 0 0 0 1 0 0 1 0 0 1 0 0 1 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0</float_array>
+          <technique_common>
+            <accessor source="#geom-Boom2-normals-array" count="24" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="geom-Boom2-map1">
+          <float_array id="geom-Boom2-map1-array" count="36">0 0 0 1 0 0 0 1 0 1 1 0 0 0 0 1 0 0 0 1 0 1 1 0 0 0 0 1 0 0 0 1 0 1 1 0</float_array>
+          <technique_common>
+            <accessor source="#geom-Boom2-map1-array" count="12" stride="3">
+              <param name="S" type="float"/>
+              <param name="T" type="float"/>
+              <param name="P" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <vertices id="geom-Boom2-vertices">
+          <input semantic="POSITION" source="#geom-Boom2-positions"/>
+        </vertices>
+        <triangles material="ColorMaterial" count="12">
+          <input semantic="VERTEX" source="#geom-Boom2-vertices" offset="0"/>
+          <input semantic="NORMAL" source="#geom-Boom2-normals" offset="1"/>
+          <input semantic="TEXCOORD" source="#geom-Boom2-map1" offset="2" set="0"/>
+          <p>0 0 9 2 1 11 3 2 10 3 2 10 1 3 8 0 0 9 4 4 8 5 5 9 7 6 11 7 6 11 6 7 10 4 4 8 0 8 4 1 9 5 5 10 7 5 10 7 4 11 6 0 8 4 1 12 0 3 13 1 7 14 3 7 14 3 5 15 2 1 12 0 3 16 4 2 17 5 6 18 7 6 18 7 7 19 6 3 16 4 2 20 0 0 21 1 4 22 3 4 22 3 6 23 2 2 20 0</p>
+        </triangles>
+      </mesh>
+      <extra>
+        <technique profile="OpenCOLLADA3dsMax">
+          <max_box>
+            <generateuvs type="integer">1</generateuvs>
+            <height type="float">11.81102</height>
+            <heightsegments type="integer">1</heightsegments>
+            <length type="float">59.05512</length>
+            <lengthsegments type="integer">1</lengthsegments>
+            <width type="float">10</width>
+            <widthsegments type="integer">1</widthsegments>
+          </max_box>
+        </technique>
+      </extra>
+    </geometry>
+    <geometry id="geom-Hook2" name="Hook2">
+      <mesh>
+        <source id="geom-Hook2-positions">
+          <float_array id="geom-Hook2-positions-array" count="24">-5.055534 -14.76378 0 5.055534 -14.76378 0 -5.055534 14.76378 0 5.055534 14.76378 0 -5.055534 -14.76378 10.11811 5.055534 -14.76378 10.11811 -5.055534 14.76378 10.11811 5.055534 14.76378 10.11811</float_array>
+          <technique_common>
+            <accessor source="#geom-Hook2-positions-array" count="8" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="geom-Hook2-normals">
+          <float_array id="geom-Hook2-normals-array" count="72">0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 1 0 0 1 0 0 1 0 0 1 0 -1 0 0 -1 0 0 -1 0 0 -1 0 1 0 0 1 0 0 1 0 0 1 0 0 0 1 0 0 1 0 0 1 0 0 1 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0</float_array>
+          <technique_common>
+            <accessor source="#geom-Hook2-normals-array" count="24" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="geom-Hook2-map1">
+          <float_array id="geom-Hook2-map1-array" count="36">0 0 0 1 0 0 0 1 0 1 1 0 0 0 0 1 0 0 0 1 0 1 1 0 0 0 0 1 0 0 0 1 0 1 1 0</float_array>
+          <technique_common>
+            <accessor source="#geom-Hook2-map1-array" count="12" stride="3">
+              <param name="S" type="float"/>
+              <param name="T" type="float"/>
+              <param name="P" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <vertices id="geom-Hook2-vertices">
+          <input semantic="POSITION" source="#geom-Hook2-positions"/>
+        </vertices>
+        <triangles material="ColorMaterial" count="12">
+          <input semantic="VERTEX" source="#geom-Hook2-vertices" offset="0"/>
+          <input semantic="NORMAL" source="#geom-Hook2-normals" offset="1"/>
+          <input semantic="TEXCOORD" source="#geom-Hook2-map1" offset="2" set="0"/>
+          <p>0 0 9 2 1 11 3 2 10 3 2 10 1 3 8 0 0 9 4 4 8 5 5 9 7 6 11 7 6 11 6 7 10 4 4 8 0 8 4 1 9 5 5 10 7 5 10 7 4 11 6 0 8 4 1 12 0 3 13 1 7 14 3 7 14 3 5 15 2 1 12 0 3 16 4 2 17 5 6 18 7 6 18 7 7 19 6 3 16 4 2 20 0 0 21 1 4 22 3 4 22 3 6 23 2 2 20 0</p>
+        </triangles>
+      </mesh>
+      <extra>
+        <technique profile="OpenCOLLADA3dsMax">
+          <max_box>
+            <generateuvs type="integer">1</generateuvs>
+            <height type="float">10.11811</height>
+            <heightsegments type="integer">1</heightsegments>
+            <length type="float">29.52756</length>
+            <lengthsegments type="integer">1</lengthsegments>
+            <width type="float">10.11107</width>
+            <widthsegments type="integer">1</widthsegments>
+          </max_box>
+        </technique>
+      </extra>
+    </geometry>
+  </library_geometries>
+  <library_lights>
+    <light id="EnvironmentAmbientLight" name="EnvironmentAmbientLight">
+      <technique_common>
+        <ambient>
+          <color>0 0 0</color>
+        </ambient>
+      </technique_common>
+    </light>
+  </library_lights>
+  <library_visual_scenes>
+    <visual_scene id="MaxScene">
+      <node name="EnvironmentAmbientLight">
+        <instance_light url="#EnvironmentAmbientLight"/>
+      </node>
+      <node id="node-Base" name="Base">
+        <translate>0.1776123 0 0</translate>
+        <instance_geometry url="#geom-Base">
+          <bind_material>
+            <technique_common>
+              <instance_material symbol="ColorMaterial" target="#ColorEffectR214G228B153-material"/>
+            </technique_common>
+          </bind_material>
+        </instance_geometry>
+        <node id="node-Crane1" name="Crane1">
+          <translate>-25 5 0</translate>
+          <instance_geometry url="#geom-Crane1">
+            <bind_material>
+              <technique_common>
+                <instance_material symbol="ColorMaterial" target="#ColorEffectR225G198B87-material"/>
+              </technique_common>
+            </bind_material>
+          </instance_geometry>
+          <node id="node-Boom1" name="Boom1">
+            <translate>0 -0.8776731 39.96385</translate>
+            <rotate sid="rotationZ">0 0 1 0</rotate>
+            <rotate sid="rotationY">0 1 0 0</rotate>
+            <rotate sid="rotationX">1 0 0 0</rotate>
+            <rotate sid="rotationZ_Boom1">0 0 1 0</rotate>
+            <rotate sid="rotationY_Boom1">0 1 0 0</rotate>
+            <rotate sid="rotationX_Boom1">1 0 0 0</rotate>
+            <node>
+              <matrix>1 0 0 0 0 1 0 25.11049 0 0 1 0 0 0 0 1</matrix>
+              <instance_geometry url="#geom-Boom1">
+                <bind_material>
+                  <technique_common>
+                    <instance_material symbol="ColorMaterial" target="#ColorEffectR8G110B135-material"/>
+                  </technique_common>
+                </bind_material>
+              </instance_geometry>
+            </node>
+            <node id="node-Hook1" name="Hook1">
+              <translate>0.05553436 53.44888 5.12735</translate>
+              <rotate sid="rotationZ">0 0 1 0</rotate>
+              <rotate sid="rotationY">0 1 0 0</rotate>
+              <rotate sid="rotationX">1 0 0 0</rotate>
+              <rotate sid="rotationZ_Hook1">0 0 1 0</rotate>
+              <rotate sid="rotationY_Hook1">0 1 0 0</rotate>
+              <rotate sid="rotationX_Hook1">1 0 0 0</rotate>
+              <node>
+                <matrix>1 0 0 0 0 1 0 15.99408 0 0 1 -5.068672 0 0 0 1</matrix>
+                <instance_geometry url="#geom-Hook1">
+                  <bind_material>
+                    <technique_common>
+                      <instance_material symbol="ColorMaterial" target="#ColorEffectR198G225B87-material"/>
+                    </technique_common>
+                  </bind_material>
+                </instance_geometry>
+              </node>
+              <extra>
+                <technique profile="OpenCOLLADA">
+                  <cast_shadows type="bool">1</cast_shadows>
+                  <primary_visibility type="integer">1</primary_visibility>
+                  <receive_shadows type="bool">1</receive_shadows>
+                  <secondary_visibility type="integer">1</secondary_visibility>
+                </technique>
+              </extra>
+            </node>
+            <extra>
+              <technique profile="OpenCOLLADA">
+                <cast_shadows type="bool">1</cast_shadows>
+                <primary_visibility type="integer">1</primary_visibility>
+                <receive_shadows type="bool">1</receive_shadows>
+                <secondary_visibility type="integer">1</secondary_visibility>
+              </technique>
+            </extra>
+          </node>
+          <extra>
+            <technique profile="OpenCOLLADA">
+              <cast_shadows type="bool">1</cast_shadows>
+              <primary_visibility type="integer">1</primary_visibility>
+              <receive_shadows type="bool">1</receive_shadows>
+              <secondary_visibility type="integer">1</secondary_visibility>
+            </technique>
+          </extra>
+        </node>
+        <node id="node-Crane2" name="Crane2">
+          <translate sid="translation">38.2565 3.154928 0</translate>
+          <translate sid="translation_Trans1">0 -0.1326447 0</translate>
+          <translate sid="translation_Trans2">-0.4748802 0 0</translate>
+          <instance_geometry url="#geom-Crane2">
+            <bind_material>
+              <technique_common>
+                <instance_material symbol="ColorMaterial" target="#ColorEffectR86G86B86-material"/>
+              </technique_common>
+            </bind_material>
+          </instance_geometry>
+          <node id="node-Boom2" name="Boom2">
+            <translate sid="translation">0 -1.551885 -78.02747</translate>
+            <translate sid="translation_Boom2">0 1.198235 39.26459</translate>
+            <translate sid="translation_Trans1">0 1.198235 39.26459</translate>
+            <translate sid="translation_Trans2">0 1.198235 39.26459</translate>
+            <rotate sid="rotationZ">0 0 1 0</rotate>
+            <rotate sid="rotationY">0 1 0 0</rotate>
+            <rotate sid="rotationX">1 0 0 0</rotate>
+            <rotate sid="rotationZ_Boom2">0 0 1 0</rotate>
+            <rotate sid="rotationY_Boom2">0 1 0 0</rotate>
+            <rotate sid="rotationX_Boom2">1 0 0 0</rotate>
+            <rotate sid="rotationZ_Trans1">0 0 1 0</rotate>
+            <rotate sid="rotationY_Trans1">0 1 0 0</rotate>
+            <rotate sid="rotationX_Trans1">1 0 0 0</rotate>
+            <rotate sid="rotationZ_Trans2">0 0 1 0</rotate>
+            <rotate sid="rotationY_Trans2">0 1 0 0</rotate>
+            <rotate sid="rotationX_Trans2">1 0 0 0</rotate>
+            <node>
+              <matrix>1 0 0 0 0 1 0 23.1024 0 0 1 0 0 0 0 1</matrix>
+              <instance_geometry url="#geom-Boom2">
+                <bind_material>
+                  <technique_common>
+                    <instance_material symbol="ColorMaterial" target="#ColorEffectR86G86B86-material"/>
+                  </technique_common>
+                </bind_material>
+              </instance_geometry>
+            </node>
+            <node id="node-Hook2" name="Hook2">
+              <translate>-0.5972061 52.02043 6.253784</translate>
+              <rotate sid="rotationZ">0 0 1 0</rotate>
+              <rotate sid="rotationY">0 1 0 0</rotate>
+              <rotate sid="rotationX">1 0 0 0</rotate>
+              <rotate sid="rotationZ_Hook2">0 0 1 0</rotate>
+              <rotate sid="rotationY_Hook2">0 1 0 0</rotate>
+              <rotate sid="rotationX_Hook2">1 0 0 0</rotate>
+              <node>
+                <matrix>1 0 0 0 0 1 0 14.86589 0 0 1 -5.305542 0 0 0 1</matrix>
+                <instance_geometry url="#geom-Hook2">
+                  <bind_material>
+                    <technique_common>
+                      <instance_material symbol="ColorMaterial" target="#ColorEffectR198G225B87-material"/>
+                    </technique_common>
+                  </bind_material>
+                </instance_geometry>
+              </node>
+              <extra>
+                <technique profile="OpenCOLLADA">
+                  <cast_shadows type="bool">1</cast_shadows>
+                  <primary_visibility type="integer">1</primary_visibility>
+                  <receive_shadows type="bool">1</receive_shadows>
+                  <secondary_visibility type="integer">1</secondary_visibility>
+                </technique>
+              </extra>
+            </node>
+            <extra>
+              <technique profile="OpenCOLLADA">
+                <cast_shadows type="bool">1</cast_shadows>
+                <primary_visibility type="integer">1</primary_visibility>
+                <receive_shadows type="bool">1</receive_shadows>
+                <secondary_visibility type="integer">1</secondary_visibility>
+              </technique>
+            </extra>
+          </node>
+          <extra>
+            <technique profile="OpenCOLLADA">
+              <cast_shadows type="bool">1</cast_shadows>
+              <primary_visibility type="integer">1</primary_visibility>
+              <receive_shadows type="bool">1</receive_shadows>
+              <secondary_visibility type="integer">1</secondary_visibility>
+            </technique>
+          </extra>
+        </node>
+        <extra>
+          <technique profile="OpenCOLLADA">
+            <cast_shadows type="bool">1</cast_shadows>
+            <primary_visibility type="integer">1</primary_visibility>
+            <receive_shadows type="bool">1</receive_shadows>
+            <secondary_visibility type="integer">1</secondary_visibility>
+          </technique>
+        </extra>
+      </node>
+    </visual_scene>
+  </library_visual_scenes>
+  <library_animations>
+    <animation id="Boom1_animation" name="Boom1">
+      <source id="node-Boom1_rotationZ_Boom1.ANGLE-input">
+        <float_array id="node-Boom1_rotationZ_Boom1.ANGLE-input-array" count="2">0 3.333333</float_array>
+        <technique_common>
+          <accessor source="#node-Boom1_rotationZ_Boom1.ANGLE-input-array" count="2" stride="1">
+            <param name="TIME" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="node-Boom1_rotationZ_Boom1.ANGLE-output">
+        <float_array id="node-Boom1_rotationZ_Boom1.ANGLE-output-array" count="2">0 90</float_array>
+        <technique_common>
+          <accessor source="#node-Boom1_rotationZ_Boom1.ANGLE-output-array" count="2" stride="1">
+            <param name="ANGLE" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="node-Boom1_rotationZ_Boom1.ANGLE-intangent">
+        <float_array id="node-Boom1_rotationZ_Boom1.ANGLE-intangent-array" count="4">-0.3333333 30 2.222222 60</float_array>
+        <technique_common>
+          <accessor source="#node-Boom1_rotationZ_Boom1.ANGLE-intangent-array" count="2" stride="2">
+            <param name="X" type="float"/>
+            <param name="Y" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="node-Boom1_rotationZ_Boom1.ANGLE-outtangent">
+        <float_array id="node-Boom1_rotationZ_Boom1.ANGLE-outtangent-array" count="4">1.111111 30 3.666667 60</float_array>
+        <technique_common>
+          <accessor source="#node-Boom1_rotationZ_Boom1.ANGLE-outtangent-array" count="2" stride="2">
+            <param name="X" type="float"/>
+            <param name="Y" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="node-Boom1_rotationZ_Boom1.ANGLE-interpolation">
+        <Name_array id="node-Boom1_rotationZ_Boom1.ANGLE-interpolation-array" count="2">LINEAR LINEAR</Name_array>
+        <technique_common>
+          <accessor source="#node-Boom1_rotationZ_Boom1.ANGLE-interpolation-array" count="2" stride="1">
+            <param name="INTERPOLATION" type="name"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="node-Boom1_rotationY_Boom1.ANGLE-input">
+        <float_array id="node-Boom1_rotationY_Boom1.ANGLE-input-array" count="2">0 3.333333</float_array>
+        <technique_common>
+          <accessor source="#node-Boom1_rotationY_Boom1.ANGLE-input-array" count="2" stride="1">
+            <param name="TIME" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="node-Boom1_rotationY_Boom1.ANGLE-output">
+        <float_array id="node-Boom1_rotationY_Boom1.ANGLE-output-array" count="2">0 0</float_array>
+        <technique_common>
+          <accessor source="#node-Boom1_rotationY_Boom1.ANGLE-output-array" count="2" stride="1">
+            <param name="ANGLE" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="node-Boom1_rotationY_Boom1.ANGLE-intangent">
+        <float_array id="node-Boom1_rotationY_Boom1.ANGLE-intangent-array" count="4">-0.333 0 2.223333 0</float_array>
+        <technique_common>
+          <accessor source="#node-Boom1_rotationY_Boom1.ANGLE-intangent-array" count="2" stride="2">
+            <param name="X" type="float"/>
+            <param name="Y" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="node-Boom1_rotationY_Boom1.ANGLE-outtangent">
+        <float_array id="node-Boom1_rotationY_Boom1.ANGLE-outtangent-array" count="4">1.11 0 3.666333 0</float_array>
+        <technique_common>
+          <accessor source="#node-Boom1_rotationY_Boom1.ANGLE-outtangent-array" count="2" stride="2">
+            <param name="X" type="float"/>
+            <param name="Y" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="node-Boom1_rotationY_Boom1.ANGLE-interpolation">
+        <Name_array id="node-Boom1_rotationY_Boom1.ANGLE-interpolation-array" count="2">BEZIER BEZIER</Name_array>
+        <technique_common>
+          <accessor source="#node-Boom1_rotationY_Boom1.ANGLE-interpolation-array" count="2" stride="1">
+            <param name="INTERPOLATION" type="name"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="node-Boom1_rotationX_Boom1.ANGLE-input">
+        <float_array id="node-Boom1_rotationX_Boom1.ANGLE-input-array" count="2">0 3.333333</float_array>
+        <technique_common>
+          <accessor source="#node-Boom1_rotationX_Boom1.ANGLE-input-array" count="2" stride="1">
+            <param name="TIME" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="node-Boom1_rotationX_Boom1.ANGLE-output">
+        <float_array id="node-Boom1_rotationX_Boom1.ANGLE-output-array" count="2">0 0</float_array>
+        <technique_common>
+          <accessor source="#node-Boom1_rotationX_Boom1.ANGLE-output-array" count="2" stride="1">
+            <param name="ANGLE" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="node-Boom1_rotationX_Boom1.ANGLE-intangent">
+        <float_array id="node-Boom1_rotationX_Boom1.ANGLE-intangent-array" count="4">-0.3333333 0 2.223333 0</float_array>
+        <technique_common>
+          <accessor source="#node-Boom1_rotationX_Boom1.ANGLE-intangent-array" count="2" stride="2">
+            <param name="X" type="float"/>
+            <param name="Y" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="node-Boom1_rotationX_Boom1.ANGLE-outtangent">
+        <float_array id="node-Boom1_rotationX_Boom1.ANGLE-outtangent-array" count="4">1.111111 0 3.666333 0</float_array>
+        <technique_common>
+          <accessor source="#node-Boom1_rotationX_Boom1.ANGLE-outtangent-array" count="2" stride="2">
+            <param name="X" type="float"/>
+            <param name="Y" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="node-Boom1_rotationX_Boom1.ANGLE-interpolation">
+        <Name_array id="node-Boom1_rotationX_Boom1.ANGLE-interpolation-array" count="2">BEZIER BEZIER</Name_array>
+        <technique_common>
+          <accessor source="#node-Boom1_rotationX_Boom1.ANGLE-interpolation-array" count="2" stride="1">
+            <param name="INTERPOLATION" type="name"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <sampler id="node-Boom1_rotationZ_Boom1.ANGLE-sampler">
+        <input semantic="INPUT" source="#node-Boom1_rotationZ_Boom1.ANGLE-input"/>
+        <input semantic="OUTPUT" source="#node-Boom1_rotationZ_Boom1.ANGLE-output"/>
+        <input semantic="IN_TANGENT" source="#node-Boom1_rotationZ_Boom1.ANGLE-intangent"/>
+        <input semantic="OUT_TANGENT" source="#node-Boom1_rotationZ_Boom1.ANGLE-outtangent"/>
+        <input semantic="INTERPOLATION" source="#node-Boom1_rotationZ_Boom1.ANGLE-interpolation"/>
+      </sampler>
+      <sampler id="node-Boom1_rotationY_Boom1.ANGLE-sampler">
+        <input semantic="INPUT" source="#node-Boom1_rotationY_Boom1.ANGLE-input"/>
+        <input semantic="OUTPUT" source="#node-Boom1_rotationY_Boom1.ANGLE-output"/>
+        <input semantic="IN_TANGENT" source="#node-Boom1_rotationY_Boom1.ANGLE-intangent"/>
+        <input semantic="OUT_TANGENT" source="#node-Boom1_rotationY_Boom1.ANGLE-outtangent"/>
+        <input semantic="INTERPOLATION" source="#node-Boom1_rotationY_Boom1.ANGLE-interpolation"/>
+      </sampler>
+      <sampler id="node-Boom1_rotationX_Boom1.ANGLE-sampler">
+        <input semantic="INPUT" source="#node-Boom1_rotationX_Boom1.ANGLE-input"/>
+        <input semantic="OUTPUT" source="#node-Boom1_rotationX_Boom1.ANGLE-output"/>
+        <input semantic="IN_TANGENT" source="#node-Boom1_rotationX_Boom1.ANGLE-intangent"/>
+        <input semantic="OUT_TANGENT" source="#node-Boom1_rotationX_Boom1.ANGLE-outtangent"/>
+        <input semantic="INTERPOLATION" source="#node-Boom1_rotationX_Boom1.ANGLE-interpolation"/>
+      </sampler>
+      <channel source="#node-Boom1_rotationZ_Boom1.ANGLE-sampler" target="node-Boom1/rotationZ_Boom1.ANGLE"/>
+      <channel source="#node-Boom1_rotationY_Boom1.ANGLE-sampler" target="node-Boom1/rotationY_Boom1.ANGLE"/>
+      <channel source="#node-Boom1_rotationX_Boom1.ANGLE-sampler" target="node-Boom1/rotationX_Boom1.ANGLE"/>
+    </animation>
+    <animation id="Boom2_animation" name="Boom2">
+      <source id="node-Boom2_rotationZ_Boom2.ANGLE-input">
+        <float_array id="node-Boom2_rotationZ_Boom2.ANGLE-input-array" count="2">0 3.333333</float_array>
+        <technique_common>
+          <accessor source="#node-Boom2_rotationZ_Boom2.ANGLE-input-array" count="2" stride="1">
+            <param name="TIME" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="node-Boom2_rotationZ_Boom2.ANGLE-output">
+        <float_array id="node-Boom2_rotationZ_Boom2.ANGLE-output-array" count="2">0 -90</float_array>
+        <technique_common>
+          <accessor source="#node-Boom2_rotationZ_Boom2.ANGLE-output-array" count="2" stride="1">
+            <param name="ANGLE" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="node-Boom2_rotationZ_Boom2.ANGLE-intangent">
+        <float_array id="node-Boom2_rotationZ_Boom2.ANGLE-intangent-array" count="4">-0.3333333 -30 2.222222 -60</float_array>
+        <technique_common>
+          <accessor source="#node-Boom2_rotationZ_Boom2.ANGLE-intangent-array" count="2" stride="2">
+            <param name="X" type="float"/>
+            <param name="Y" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="node-Boom2_rotationZ_Boom2.ANGLE-outtangent">
+        <float_array id="node-Boom2_rotationZ_Boom2.ANGLE-outtangent-array" count="4">1.111111 -30 3.666667 -60</float_array>
+        <technique_common>
+          <accessor source="#node-Boom2_rotationZ_Boom2.ANGLE-outtangent-array" count="2" stride="2">
+            <param name="X" type="float"/>
+            <param name="Y" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="node-Boom2_rotationZ_Boom2.ANGLE-interpolation">
+        <Name_array id="node-Boom2_rotationZ_Boom2.ANGLE-interpolation-array" count="2">LINEAR LINEAR</Name_array>
+        <technique_common>
+          <accessor source="#node-Boom2_rotationZ_Boom2.ANGLE-interpolation-array" count="2" stride="1">
+            <param name="INTERPOLATION" type="name"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="node-Boom2_rotationY_Boom2.ANGLE-input">
+        <float_array id="node-Boom2_rotationY_Boom2.ANGLE-input-array" count="2">0 3.333333</float_array>
+        <technique_common>
+          <accessor source="#node-Boom2_rotationY_Boom2.ANGLE-input-array" count="2" stride="1">
+            <param name="TIME" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="node-Boom2_rotationY_Boom2.ANGLE-output">
+        <float_array id="node-Boom2_rotationY_Boom2.ANGLE-output-array" count="2">0 0</float_array>
+        <technique_common>
+          <accessor source="#node-Boom2_rotationY_Boom2.ANGLE-output-array" count="2" stride="1">
+            <param name="ANGLE" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="node-Boom2_rotationY_Boom2.ANGLE-intangent">
+        <float_array id="node-Boom2_rotationY_Boom2.ANGLE-intangent-array" count="4">-0.3333333 0 2.223333 0</float_array>
+        <technique_common>
+          <accessor source="#node-Boom2_rotationY_Boom2.ANGLE-intangent-array" count="2" stride="2">
+            <param name="X" type="float"/>
+            <param name="Y" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="node-Boom2_rotationY_Boom2.ANGLE-outtangent">
+        <float_array id="node-Boom2_rotationY_Boom2.ANGLE-outtangent-array" count="4">1.111111 0 3.666333 0</float_array>
+        <technique_common>
+          <accessor source="#node-Boom2_rotationY_Boom2.ANGLE-outtangent-array" count="2" stride="2">
+            <param name="X" type="float"/>
+            <param name="Y" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="node-Boom2_rotationY_Boom2.ANGLE-interpolation">
+        <Name_array id="node-Boom2_rotationY_Boom2.ANGLE-interpolation-array" count="2">BEZIER BEZIER</Name_array>
+        <technique_common>
+          <accessor source="#node-Boom2_rotationY_Boom2.ANGLE-interpolation-array" count="2" stride="1">
+            <param name="INTERPOLATION" type="name"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="node-Boom2_rotationX_Boom2.ANGLE-input">
+        <float_array id="node-Boom2_rotationX_Boom2.ANGLE-input-array" count="2">0 3.333333</float_array>
+        <technique_common>
+          <accessor source="#node-Boom2_rotationX_Boom2.ANGLE-input-array" count="2" stride="1">
+            <param name="TIME" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="node-Boom2_rotationX_Boom2.ANGLE-output">
+        <float_array id="node-Boom2_rotationX_Boom2.ANGLE-output-array" count="2">0 0</float_array>
+        <technique_common>
+          <accessor source="#node-Boom2_rotationX_Boom2.ANGLE-output-array" count="2" stride="1">
+            <param name="ANGLE" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="node-Boom2_rotationX_Boom2.ANGLE-intangent">
+        <float_array id="node-Boom2_rotationX_Boom2.ANGLE-intangent-array" count="4">-0.3333333 0 2.223333 0</float_array>
+        <technique_common>
+          <accessor source="#node-Boom2_rotationX_Boom2.ANGLE-intangent-array" count="2" stride="2">
+            <param name="X" type="float"/>
+            <param name="Y" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="node-Boom2_rotationX_Boom2.ANGLE-outtangent">
+        <float_array id="node-Boom2_rotationX_Boom2.ANGLE-outtangent-array" count="4">1.111111 0 3.666333 0</float_array>
+        <technique_common>
+          <accessor source="#node-Boom2_rotationX_Boom2.ANGLE-outtangent-array" count="2" stride="2">
+            <param name="X" type="float"/>
+            <param name="Y" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="node-Boom2_rotationX_Boom2.ANGLE-interpolation">
+        <Name_array id="node-Boom2_rotationX_Boom2.ANGLE-interpolation-array" count="2">BEZIER BEZIER</Name_array>
+        <technique_common>
+          <accessor source="#node-Boom2_rotationX_Boom2.ANGLE-interpolation-array" count="2" stride="1">
+            <param name="INTERPOLATION" type="name"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <sampler id="node-Boom2_rotationZ_Boom2.ANGLE-sampler">
+        <input semantic="INPUT" source="#node-Boom2_rotationZ_Boom2.ANGLE-input"/>
+        <input semantic="OUTPUT" source="#node-Boom2_rotationZ_Boom2.ANGLE-output"/>
+        <input semantic="IN_TANGENT" source="#node-Boom2_rotationZ_Boom2.ANGLE-intangent"/>
+        <input semantic="OUT_TANGENT" source="#node-Boom2_rotationZ_Boom2.ANGLE-outtangent"/>
+        <input semantic="INTERPOLATION" source="#node-Boom2_rotationZ_Boom2.ANGLE-interpolation"/>
+      </sampler>
+      <sampler id="node-Boom2_rotationY_Boom2.ANGLE-sampler">
+        <input semantic="INPUT" source="#node-Boom2_rotationY_Boom2.ANGLE-input"/>
+        <input semantic="OUTPUT" source="#node-Boom2_rotationY_Boom2.ANGLE-output"/>
+        <input semantic="IN_TANGENT" source="#node-Boom2_rotationY_Boom2.ANGLE-intangent"/>
+        <input semantic="OUT_TANGENT" source="#node-Boom2_rotationY_Boom2.ANGLE-outtangent"/>
+        <input semantic="INTERPOLATION" source="#node-Boom2_rotationY_Boom2.ANGLE-interpolation"/>
+      </sampler>
+      <sampler id="node-Boom2_rotationX_Boom2.ANGLE-sampler">
+        <input semantic="INPUT" source="#node-Boom2_rotationX_Boom2.ANGLE-input"/>
+        <input semantic="OUTPUT" source="#node-Boom2_rotationX_Boom2.ANGLE-output"/>
+        <input semantic="IN_TANGENT" source="#node-Boom2_rotationX_Boom2.ANGLE-intangent"/>
+        <input semantic="OUT_TANGENT" source="#node-Boom2_rotationX_Boom2.ANGLE-outtangent"/>
+        <input semantic="INTERPOLATION" source="#node-Boom2_rotationX_Boom2.ANGLE-interpolation"/>
+      </sampler>
+      <channel source="#node-Boom2_rotationZ_Boom2.ANGLE-sampler" target="node-Boom2/rotationZ_Boom2.ANGLE"/>
+      <channel source="#node-Boom2_rotationY_Boom2.ANGLE-sampler" target="node-Boom2/rotationY_Boom2.ANGLE"/>
+      <channel source="#node-Boom2_rotationX_Boom2.ANGLE-sampler" target="node-Boom2/rotationX_Boom2.ANGLE"/>
+    </animation>
+    <animation id="Hook1_animation" name="Hook1">
+      <source id="node-Hook1_rotationZ_Hook1.ANGLE-input">
+        <float_array id="node-Hook1_rotationZ_Hook1.ANGLE-input-array" count="2">0 3.333333</float_array>
+        <technique_common>
+          <accessor source="#node-Hook1_rotationZ_Hook1.ANGLE-input-array" count="2" stride="1">
+            <param name="TIME" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="node-Hook1_rotationZ_Hook1.ANGLE-output">
+        <float_array id="node-Hook1_rotationZ_Hook1.ANGLE-output-array" count="2">0 0</float_array>
+        <technique_common>
+          <accessor source="#node-Hook1_rotationZ_Hook1.ANGLE-output-array" count="2" stride="1">
+            <param name="ANGLE" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="node-Hook1_rotationZ_Hook1.ANGLE-intangent">
+        <float_array id="node-Hook1_rotationZ_Hook1.ANGLE-intangent-array" count="4">-0.333 0 2.223333 0</float_array>
+        <technique_common>
+          <accessor source="#node-Hook1_rotationZ_Hook1.ANGLE-intangent-array" count="2" stride="2">
+            <param name="X" type="float"/>
+            <param name="Y" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="node-Hook1_rotationZ_Hook1.ANGLE-outtangent">
+        <float_array id="node-Hook1_rotationZ_Hook1.ANGLE-outtangent-array" count="4">1.11 0 3.666333 0</float_array>
+        <technique_common>
+          <accessor source="#node-Hook1_rotationZ_Hook1.ANGLE-outtangent-array" count="2" stride="2">
+            <param name="X" type="float"/>
+            <param name="Y" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="node-Hook1_rotationZ_Hook1.ANGLE-interpolation">
+        <Name_array id="node-Hook1_rotationZ_Hook1.ANGLE-interpolation-array" count="2">BEZIER BEZIER</Name_array>
+        <technique_common>
+          <accessor source="#node-Hook1_rotationZ_Hook1.ANGLE-interpolation-array" count="2" stride="1">
+            <param name="INTERPOLATION" type="name"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="node-Hook1_rotationY_Hook1.ANGLE-input">
+        <float_array id="node-Hook1_rotationY_Hook1.ANGLE-input-array" count="2">0 3.333333</float_array>
+        <technique_common>
+          <accessor source="#node-Hook1_rotationY_Hook1.ANGLE-input-array" count="2" stride="1">
+            <param name="TIME" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="node-Hook1_rotationY_Hook1.ANGLE-output">
+        <float_array id="node-Hook1_rotationY_Hook1.ANGLE-output-array" count="2">0 0</float_array>
+        <technique_common>
+          <accessor source="#node-Hook1_rotationY_Hook1.ANGLE-output-array" count="2" stride="1">
+            <param name="ANGLE" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="node-Hook1_rotationY_Hook1.ANGLE-intangent">
+        <float_array id="node-Hook1_rotationY_Hook1.ANGLE-intangent-array" count="4">-0.333 0 2.223333 0</float_array>
+        <technique_common>
+          <accessor source="#node-Hook1_rotationY_Hook1.ANGLE-intangent-array" count="2" stride="2">
+            <param name="X" type="float"/>
+            <param name="Y" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="node-Hook1_rotationY_Hook1.ANGLE-outtangent">
+        <float_array id="node-Hook1_rotationY_Hook1.ANGLE-outtangent-array" count="4">1.11 0 3.666333 0</float_array>
+        <technique_common>
+          <accessor source="#node-Hook1_rotationY_Hook1.ANGLE-outtangent-array" count="2" stride="2">
+            <param name="X" type="float"/>
+            <param name="Y" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="node-Hook1_rotationY_Hook1.ANGLE-interpolation">
+        <Name_array id="node-Hook1_rotationY_Hook1.ANGLE-interpolation-array" count="2">BEZIER BEZIER</Name_array>
+        <technique_common>
+          <accessor source="#node-Hook1_rotationY_Hook1.ANGLE-interpolation-array" count="2" stride="1">
+            <param name="INTERPOLATION" type="name"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="node-Hook1_rotationX_Hook1.ANGLE-input">
+        <float_array id="node-Hook1_rotationX_Hook1.ANGLE-input-array" count="2">0 3.333333</float_array>
+        <technique_common>
+          <accessor source="#node-Hook1_rotationX_Hook1.ANGLE-input-array" count="2" stride="1">
+            <param name="TIME" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="node-Hook1_rotationX_Hook1.ANGLE-output">
+        <float_array id="node-Hook1_rotationX_Hook1.ANGLE-output-array" count="2">0 -90</float_array>
+        <technique_common>
+          <accessor source="#node-Hook1_rotationX_Hook1.ANGLE-output-array" count="2" stride="1">
+            <param name="ANGLE" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="node-Hook1_rotationX_Hook1.ANGLE-intangent">
+        <float_array id="node-Hook1_rotationX_Hook1.ANGLE-intangent-array" count="4">-0.3333333 -30 2.222222 -60</float_array>
+        <technique_common>
+          <accessor source="#node-Hook1_rotationX_Hook1.ANGLE-intangent-array" count="2" stride="2">
+            <param name="X" type="float"/>
+            <param name="Y" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="node-Hook1_rotationX_Hook1.ANGLE-outtangent">
+        <float_array id="node-Hook1_rotationX_Hook1.ANGLE-outtangent-array" count="4">1.111111 -30 3.666667 -60</float_array>
+        <technique_common>
+          <accessor source="#node-Hook1_rotationX_Hook1.ANGLE-outtangent-array" count="2" stride="2">
+            <param name="X" type="float"/>
+            <param name="Y" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="node-Hook1_rotationX_Hook1.ANGLE-interpolation">
+        <Name_array id="node-Hook1_rotationX_Hook1.ANGLE-interpolation-array" count="2">LINEAR LINEAR</Name_array>
+        <technique_common>
+          <accessor source="#node-Hook1_rotationX_Hook1.ANGLE-interpolation-array" count="2" stride="1">
+            <param name="INTERPOLATION" type="name"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <sampler id="node-Hook1_rotationZ_Hook1.ANGLE-sampler">
+        <input semantic="INPUT" source="#node-Hook1_rotationZ_Hook1.ANGLE-input"/>
+        <input semantic="OUTPUT" source="#node-Hook1_rotationZ_Hook1.ANGLE-output"/>
+        <input semantic="IN_TANGENT" source="#node-Hook1_rotationZ_Hook1.ANGLE-intangent"/>
+        <input semantic="OUT_TANGENT" source="#node-Hook1_rotationZ_Hook1.ANGLE-outtangent"/>
+        <input semantic="INTERPOLATION" source="#node-Hook1_rotationZ_Hook1.ANGLE-interpolation"/>
+      </sampler>
+      <sampler id="node-Hook1_rotationY_Hook1.ANGLE-sampler">
+        <input semantic="INPUT" source="#node-Hook1_rotationY_Hook1.ANGLE-input"/>
+        <input semantic="OUTPUT" source="#node-Hook1_rotationY_Hook1.ANGLE-output"/>
+        <input semantic="IN_TANGENT" source="#node-Hook1_rotationY_Hook1.ANGLE-intangent"/>
+        <input semantic="OUT_TANGENT" source="#node-Hook1_rotationY_Hook1.ANGLE-outtangent"/>
+        <input semantic="INTERPOLATION" source="#node-Hook1_rotationY_Hook1.ANGLE-interpolation"/>
+      </sampler>
+      <sampler id="node-Hook1_rotationX_Hook1.ANGLE-sampler">
+        <input semantic="INPUT" source="#node-Hook1_rotationX_Hook1.ANGLE-input"/>
+        <input semantic="OUTPUT" source="#node-Hook1_rotationX_Hook1.ANGLE-output"/>
+        <input semantic="IN_TANGENT" source="#node-Hook1_rotationX_Hook1.ANGLE-intangent"/>
+        <input semantic="OUT_TANGENT" source="#node-Hook1_rotationX_Hook1.ANGLE-outtangent"/>
+        <input semantic="INTERPOLATION" source="#node-Hook1_rotationX_Hook1.ANGLE-interpolation"/>
+      </sampler>
+      <channel source="#node-Hook1_rotationZ_Hook1.ANGLE-sampler" target="node-Hook1/rotationZ_Hook1.ANGLE"/>
+      <channel source="#node-Hook1_rotationY_Hook1.ANGLE-sampler" target="node-Hook1/rotationY_Hook1.ANGLE"/>
+      <channel source="#node-Hook1_rotationX_Hook1.ANGLE-sampler" target="node-Hook1/rotationX_Hook1.ANGLE"/>
+    </animation>
+    <animation id="Hook2_animation" name="Hook2">
+      <source id="node-Hook2_rotationZ_Hook2.ANGLE-input">
+        <float_array id="node-Hook2_rotationZ_Hook2.ANGLE-input-array" count="2">0 3.333333</float_array>
+        <technique_common>
+          <accessor source="#node-Hook2_rotationZ_Hook2.ANGLE-input-array" count="2" stride="1">
+            <param name="TIME" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="node-Hook2_rotationZ_Hook2.ANGLE-output">
+        <float_array id="node-Hook2_rotationZ_Hook2.ANGLE-output-array" count="2">0 0</float_array>
+        <technique_common>
+          <accessor source="#node-Hook2_rotationZ_Hook2.ANGLE-output-array" count="2" stride="1">
+            <param name="ANGLE" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="node-Hook2_rotationZ_Hook2.ANGLE-intangent">
+        <float_array id="node-Hook2_rotationZ_Hook2.ANGLE-intangent-array" count="4">-0.333 0 2.223333 0</float_array>
+        <technique_common>
+          <accessor source="#node-Hook2_rotationZ_Hook2.ANGLE-intangent-array" count="2" stride="2">
+            <param name="X" type="float"/>
+            <param name="Y" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="node-Hook2_rotationZ_Hook2.ANGLE-outtangent">
+        <float_array id="node-Hook2_rotationZ_Hook2.ANGLE-outtangent-array" count="4">1.11 0 3.666333 0</float_array>
+        <technique_common>
+          <accessor source="#node-Hook2_rotationZ_Hook2.ANGLE-outtangent-array" count="2" stride="2">
+            <param name="X" type="float"/>
+            <param name="Y" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="node-Hook2_rotationZ_Hook2.ANGLE-interpolation">
+        <Name_array id="node-Hook2_rotationZ_Hook2.ANGLE-interpolation-array" count="2">BEZIER BEZIER</Name_array>
+        <technique_common>
+          <accessor source="#node-Hook2_rotationZ_Hook2.ANGLE-interpolation-array" count="2" stride="1">
+            <param name="INTERPOLATION" type="name"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="node-Hook2_rotationY_Hook2.ANGLE-input">
+        <float_array id="node-Hook2_rotationY_Hook2.ANGLE-input-array" count="2">0 3.333333</float_array>
+        <technique_common>
+          <accessor source="#node-Hook2_rotationY_Hook2.ANGLE-input-array" count="2" stride="1">
+            <param name="TIME" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="node-Hook2_rotationY_Hook2.ANGLE-output">
+        <float_array id="node-Hook2_rotationY_Hook2.ANGLE-output-array" count="2">0 0</float_array>
+        <technique_common>
+          <accessor source="#node-Hook2_rotationY_Hook2.ANGLE-output-array" count="2" stride="1">
+            <param name="ANGLE" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="node-Hook2_rotationY_Hook2.ANGLE-intangent">
+        <float_array id="node-Hook2_rotationY_Hook2.ANGLE-intangent-array" count="4">-0.333 0 2.223333 0</float_array>
+        <technique_common>
+          <accessor source="#node-Hook2_rotationY_Hook2.ANGLE-intangent-array" count="2" stride="2">
+            <param name="X" type="float"/>
+            <param name="Y" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="node-Hook2_rotationY_Hook2.ANGLE-outtangent">
+        <float_array id="node-Hook2_rotationY_Hook2.ANGLE-outtangent-array" count="4">1.11 0 3.666333 0</float_array>
+        <technique_common>
+          <accessor source="#node-Hook2_rotationY_Hook2.ANGLE-outtangent-array" count="2" stride="2">
+            <param name="X" type="float"/>
+            <param name="Y" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="node-Hook2_rotationY_Hook2.ANGLE-interpolation">
+        <Name_array id="node-Hook2_rotationY_Hook2.ANGLE-interpolation-array" count="2">BEZIER BEZIER</Name_array>
+        <technique_common>
+          <accessor source="#node-Hook2_rotationY_Hook2.ANGLE-interpolation-array" count="2" stride="1">
+            <param name="INTERPOLATION" type="name"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="node-Hook2_rotationX_Hook2.ANGLE-input">
+        <float_array id="node-Hook2_rotationX_Hook2.ANGLE-input-array" count="2">0 3.333333</float_array>
+        <technique_common>
+          <accessor source="#node-Hook2_rotationX_Hook2.ANGLE-input-array" count="2" stride="1">
+            <param name="TIME" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="node-Hook2_rotationX_Hook2.ANGLE-output">
+        <float_array id="node-Hook2_rotationX_Hook2.ANGLE-output-array" count="2">0 -90</float_array>
+        <technique_common>
+          <accessor source="#node-Hook2_rotationX_Hook2.ANGLE-output-array" count="2" stride="1">
+            <param name="ANGLE" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="node-Hook2_rotationX_Hook2.ANGLE-intangent">
+        <float_array id="node-Hook2_rotationX_Hook2.ANGLE-intangent-array" count="4">-0.3333333 -30 2.222222 -60</float_array>
+        <technique_common>
+          <accessor source="#node-Hook2_rotationX_Hook2.ANGLE-intangent-array" count="2" stride="2">
+            <param name="X" type="float"/>
+            <param name="Y" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="node-Hook2_rotationX_Hook2.ANGLE-outtangent">
+        <float_array id="node-Hook2_rotationX_Hook2.ANGLE-outtangent-array" count="4">1.111111 -30 3.666667 -60</float_array>
+        <technique_common>
+          <accessor source="#node-Hook2_rotationX_Hook2.ANGLE-outtangent-array" count="2" stride="2">
+            <param name="X" type="float"/>
+            <param name="Y" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="node-Hook2_rotationX_Hook2.ANGLE-interpolation">
+        <Name_array id="node-Hook2_rotationX_Hook2.ANGLE-interpolation-array" count="2">LINEAR LINEAR</Name_array>
+        <technique_common>
+          <accessor source="#node-Hook2_rotationX_Hook2.ANGLE-interpolation-array" count="2" stride="1">
+            <param name="INTERPOLATION" type="name"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <sampler id="node-Hook2_rotationZ_Hook2.ANGLE-sampler">
+        <input semantic="INPUT" source="#node-Hook2_rotationZ_Hook2.ANGLE-input"/>
+        <input semantic="OUTPUT" source="#node-Hook2_rotationZ_Hook2.ANGLE-output"/>
+        <input semantic="IN_TANGENT" source="#node-Hook2_rotationZ_Hook2.ANGLE-intangent"/>
+        <input semantic="OUT_TANGENT" source="#node-Hook2_rotationZ_Hook2.ANGLE-outtangent"/>
+        <input semantic="INTERPOLATION" source="#node-Hook2_rotationZ_Hook2.ANGLE-interpolation"/>
+      </sampler>
+      <sampler id="node-Hook2_rotationY_Hook2.ANGLE-sampler">
+        <input semantic="INPUT" source="#node-Hook2_rotationY_Hook2.ANGLE-input"/>
+        <input semantic="OUTPUT" source="#node-Hook2_rotationY_Hook2.ANGLE-output"/>
+        <input semantic="IN_TANGENT" source="#node-Hook2_rotationY_Hook2.ANGLE-intangent"/>
+        <input semantic="OUT_TANGENT" source="#node-Hook2_rotationY_Hook2.ANGLE-outtangent"/>
+        <input semantic="INTERPOLATION" source="#node-Hook2_rotationY_Hook2.ANGLE-interpolation"/>
+      </sampler>
+      <sampler id="node-Hook2_rotationX_Hook2.ANGLE-sampler">
+        <input semantic="INPUT" source="#node-Hook2_rotationX_Hook2.ANGLE-input"/>
+        <input semantic="OUTPUT" source="#node-Hook2_rotationX_Hook2.ANGLE-output"/>
+        <input semantic="IN_TANGENT" source="#node-Hook2_rotationX_Hook2.ANGLE-intangent"/>
+        <input semantic="OUT_TANGENT" source="#node-Hook2_rotationX_Hook2.ANGLE-outtangent"/>
+        <input semantic="INTERPOLATION" source="#node-Hook2_rotationX_Hook2.ANGLE-interpolation"/>
+      </sampler>
+      <channel source="#node-Hook2_rotationZ_Hook2.ANGLE-sampler" target="node-Hook2/rotationZ_Hook2.ANGLE"/>
+      <channel source="#node-Hook2_rotationY_Hook2.ANGLE-sampler" target="node-Hook2/rotationY_Hook2.ANGLE"/>
+      <channel source="#node-Hook2_rotationX_Hook2.ANGLE-sampler" target="node-Hook2/rotationX_Hook2.ANGLE"/>
+    </animation>
+    <animation id="Trans1_animation" name="Trans1">
+      <source id="node-Crane2_translation_Trans1.X-input">
+        <float_array id="node-Crane2_translation_Trans1.X-input-array" count="2">0 3.333333</float_array>
+        <technique_common>
+          <accessor source="#node-Crane2_translation_Trans1.X-input-array" count="2" stride="1">
+            <param name="TIME" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="node-Crane2_translation_Trans1.X-output">
+        <float_array id="node-Crane2_translation_Trans1.X-output-array" count="2">0 0</float_array>
+        <technique_common>
+          <accessor source="#node-Crane2_translation_Trans1.X-output-array" count="2" stride="1">
+            <param name="X" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="node-Crane2_translation_Trans1.X-intangent">
+        <float_array id="node-Crane2_translation_Trans1.X-intangent-array" count="4">-0.333 0 2.223333 0</float_array>
+        <technique_common>
+          <accessor source="#node-Crane2_translation_Trans1.X-intangent-array" count="2" stride="2">
+            <param name="X" type="float"/>
+            <param name="Y" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="node-Crane2_translation_Trans1.X-outtangent">
+        <float_array id="node-Crane2_translation_Trans1.X-outtangent-array" count="4">1.11 0 3.666333 0</float_array>
+        <technique_common>
+          <accessor source="#node-Crane2_translation_Trans1.X-outtangent-array" count="2" stride="2">
+            <param name="X" type="float"/>
+            <param name="Y" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="node-Crane2_translation_Trans1.X-interpolation">
+        <Name_array id="node-Crane2_translation_Trans1.X-interpolation-array" count="2">BEZIER BEZIER</Name_array>
+        <technique_common>
+          <accessor source="#node-Crane2_translation_Trans1.X-interpolation-array" count="2" stride="1">
+            <param name="INTERPOLATION" type="name"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="node-Crane2_translation_Trans1.Y-input">
+        <float_array id="node-Crane2_translation_Trans1.Y-input-array" count="2">0 3.333333</float_array>
+        <technique_common>
+          <accessor source="#node-Crane2_translation_Trans1.Y-input-array" count="2" stride="1">
+            <param name="TIME" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="node-Crane2_translation_Trans1.Y-output">
+        <float_array id="node-Crane2_translation_Trans1.Y-output-array" count="2">-0.1326447 63.75753</float_array>
+        <technique_common>
+          <accessor source="#node-Crane2_translation_Trans1.Y-output-array" count="2" stride="1">
+            <param name="Y" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="node-Crane2_translation_Trans1.Y-intangent">
+        <float_array id="node-Crane2_translation_Trans1.Y-intangent-array" count="4">-0.3333333 21.16408 2.222222 42.46081</float_array>
+        <technique_common>
+          <accessor source="#node-Crane2_translation_Trans1.Y-intangent-array" count="2" stride="2">
+            <param name="X" type="float"/>
+            <param name="Y" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="node-Crane2_translation_Trans1.Y-outtangent">
+        <float_array id="node-Crane2_translation_Trans1.Y-outtangent-array" count="4">1.111111 21.16408 3.666667 42.46081</float_array>
+        <technique_common>
+          <accessor source="#node-Crane2_translation_Trans1.Y-outtangent-array" count="2" stride="2">
+            <param name="X" type="float"/>
+            <param name="Y" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="node-Crane2_translation_Trans1.Y-interpolation">
+        <Name_array id="node-Crane2_translation_Trans1.Y-interpolation-array" count="2">LINEAR LINEAR</Name_array>
+        <technique_common>
+          <accessor source="#node-Crane2_translation_Trans1.Y-interpolation-array" count="2" stride="1">
+            <param name="INTERPOLATION" type="name"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="node-Crane2_translation_Trans1.Z-input">
+        <float_array id="node-Crane2_translation_Trans1.Z-input-array" count="2">0 3.333333</float_array>
+        <technique_common>
+          <accessor source="#node-Crane2_translation_Trans1.Z-input-array" count="2" stride="1">
+            <param name="TIME" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="node-Crane2_translation_Trans1.Z-output">
+        <float_array id="node-Crane2_translation_Trans1.Z-output-array" count="2">0 0</float_array>
+        <technique_common>
+          <accessor source="#node-Crane2_translation_Trans1.Z-output-array" count="2" stride="1">
+            <param name="Z" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="node-Crane2_translation_Trans1.Z-intangent">
+        <float_array id="node-Crane2_translation_Trans1.Z-intangent-array" count="4">-0.333 0 2.223333 0</float_array>
+        <technique_common>
+          <accessor source="#node-Crane2_translation_Trans1.Z-intangent-array" count="2" stride="2">
+            <param name="X" type="float"/>
+            <param name="Y" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="node-Crane2_translation_Trans1.Z-outtangent">
+        <float_array id="node-Crane2_translation_Trans1.Z-outtangent-array" count="4">1.11 0 3.666333 0</float_array>
+        <technique_common>
+          <accessor source="#node-Crane2_translation_Trans1.Z-outtangent-array" count="2" stride="2">
+            <param name="X" type="float"/>
+            <param name="Y" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="node-Crane2_translation_Trans1.Z-interpolation">
+        <Name_array id="node-Crane2_translation_Trans1.Z-interpolation-array" count="2">BEZIER BEZIER</Name_array>
+        <technique_common>
+          <accessor source="#node-Crane2_translation_Trans1.Z-interpolation-array" count="2" stride="1">
+            <param name="INTERPOLATION" type="name"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <sampler id="node-Crane2_translation_Trans1.X-sampler">
+        <input semantic="INPUT" source="#node-Crane2_translation_Trans1.X-input"/>
+        <input semantic="OUTPUT" source="#node-Crane2_translation_Trans1.X-output"/>
+        <input semantic="IN_TANGENT" source="#node-Crane2_translation_Trans1.X-intangent"/>
+        <input semantic="OUT_TANGENT" source="#node-Crane2_translation_Trans1.X-outtangent"/>
+        <input semantic="INTERPOLATION" source="#node-Crane2_translation_Trans1.X-interpolation"/>
+      </sampler>
+      <sampler id="node-Crane2_translation_Trans1.Y-sampler">
+        <input semantic="INPUT" source="#node-Crane2_translation_Trans1.Y-input"/>
+        <input semantic="OUTPUT" source="#node-Crane2_translation_Trans1.Y-output"/>
+        <input semantic="IN_TANGENT" source="#node-Crane2_translation_Trans1.Y-intangent"/>
+        <input semantic="OUT_TANGENT" source="#node-Crane2_translation_Trans1.Y-outtangent"/>
+        <input semantic="INTERPOLATION" source="#node-Crane2_translation_Trans1.Y-interpolation"/>
+      </sampler>
+      <sampler id="node-Crane2_translation_Trans1.Z-sampler">
+        <input semantic="INPUT" source="#node-Crane2_translation_Trans1.Z-input"/>
+        <input semantic="OUTPUT" source="#node-Crane2_translation_Trans1.Z-output"/>
+        <input semantic="IN_TANGENT" source="#node-Crane2_translation_Trans1.Z-intangent"/>
+        <input semantic="OUT_TANGENT" source="#node-Crane2_translation_Trans1.Z-outtangent"/>
+        <input semantic="INTERPOLATION" source="#node-Crane2_translation_Trans1.Z-interpolation"/>
+      </sampler>
+      <channel source="#node-Crane2_translation_Trans1.X-sampler" target="node-Crane2/translation_Trans1.X"/>
+      <channel source="#node-Crane2_translation_Trans1.Y-sampler" target="node-Crane2/translation_Trans1.Y"/>
+      <channel source="#node-Crane2_translation_Trans1.Z-sampler" target="node-Crane2/translation_Trans1.Z"/>
+    </animation>
+    <animation id="Trans2_animation" name="Trans2">
+      <source id="node-Crane2_translation_Trans2.X-input">
+        <float_array id="node-Crane2_translation_Trans2.X-input-array" count="2">0 3.333333</float_array>
+        <technique_common>
+          <accessor source="#node-Crane2_translation_Trans2.X-input-array" count="2" stride="1">
+            <param name="TIME" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="node-Crane2_translation_Trans2.X-output">
+        <float_array id="node-Crane2_translation_Trans2.X-output-array" count="2">-0.4748802 33.00218</float_array>
+        <technique_common>
+          <accessor source="#node-Crane2_translation_Trans2.X-output-array" count="2" stride="1">
+            <param name="X" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="node-Crane2_translation_Trans2.X-intangent">
+        <float_array id="node-Crane2_translation_Trans2.X-intangent-array" count="4">-0.3333333 10.68414 2.222222 21.84316</float_array>
+        <technique_common>
+          <accessor source="#node-Crane2_translation_Trans2.X-intangent-array" count="2" stride="2">
+            <param name="X" type="float"/>
+            <param name="Y" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="node-Crane2_translation_Trans2.X-outtangent">
+        <float_array id="node-Crane2_translation_Trans2.X-outtangent-array" count="4">1.111111 10.68414 3.666667 21.84316</float_array>
+        <technique_common>
+          <accessor source="#node-Crane2_translation_Trans2.X-outtangent-array" count="2" stride="2">
+            <param name="X" type="float"/>
+            <param name="Y" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="node-Crane2_translation_Trans2.X-interpolation">
+        <Name_array id="node-Crane2_translation_Trans2.X-interpolation-array" count="2">LINEAR LINEAR</Name_array>
+        <technique_common>
+          <accessor source="#node-Crane2_translation_Trans2.X-interpolation-array" count="2" stride="1">
+            <param name="INTERPOLATION" type="name"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="node-Crane2_translation_Trans2.Y-input">
+        <float_array id="node-Crane2_translation_Trans2.Y-input-array" count="2">0 3.333333</float_array>
+        <technique_common>
+          <accessor source="#node-Crane2_translation_Trans2.Y-input-array" count="2" stride="1">
+            <param name="TIME" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="node-Crane2_translation_Trans2.Y-output">
+        <float_array id="node-Crane2_translation_Trans2.Y-output-array" count="2">0 0</float_array>
+        <technique_common>
+          <accessor source="#node-Crane2_translation_Trans2.Y-output-array" count="2" stride="1">
+            <param name="Y" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="node-Crane2_translation_Trans2.Y-intangent">
+        <float_array id="node-Crane2_translation_Trans2.Y-intangent-array" count="4">-0.333 0 2.223333 0</float_array>
+        <technique_common>
+          <accessor source="#node-Crane2_translation_Trans2.Y-intangent-array" count="2" stride="2">
+            <param name="X" type="float"/>
+            <param name="Y" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="node-Crane2_translation_Trans2.Y-outtangent">
+        <float_array id="node-Crane2_translation_Trans2.Y-outtangent-array" count="4">1.11 0 3.666333 0</float_array>
+        <technique_common>
+          <accessor source="#node-Crane2_translation_Trans2.Y-outtangent-array" count="2" stride="2">
+            <param name="X" type="float"/>
+            <param name="Y" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="node-Crane2_translation_Trans2.Y-interpolation">
+        <Name_array id="node-Crane2_translation_Trans2.Y-interpolation-array" count="2">BEZIER BEZIER</Name_array>
+        <technique_common>
+          <accessor source="#node-Crane2_translation_Trans2.Y-interpolation-array" count="2" stride="1">
+            <param name="INTERPOLATION" type="name"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="node-Crane2_translation_Trans2.Z-input">
+        <float_array id="node-Crane2_translation_Trans2.Z-input-array" count="2">0 3.333333</float_array>
+        <technique_common>
+          <accessor source="#node-Crane2_translation_Trans2.Z-input-array" count="2" stride="1">
+            <param name="TIME" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="node-Crane2_translation_Trans2.Z-output">
+        <float_array id="node-Crane2_translation_Trans2.Z-output-array" count="2">0 0</float_array>
+        <technique_common>
+          <accessor source="#node-Crane2_translation_Trans2.Z-output-array" count="2" stride="1">
+            <param name="Z" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="node-Crane2_translation_Trans2.Z-intangent">
+        <float_array id="node-Crane2_translation_Trans2.Z-intangent-array" count="4">-0.333 0 2.223333 0</float_array>
+        <technique_common>
+          <accessor source="#node-Crane2_translation_Trans2.Z-intangent-array" count="2" stride="2">
+            <param name="X" type="float"/>
+            <param name="Y" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="node-Crane2_translation_Trans2.Z-outtangent">
+        <float_array id="node-Crane2_translation_Trans2.Z-outtangent-array" count="4">1.11 0 3.666333 0</float_array>
+        <technique_common>
+          <accessor source="#node-Crane2_translation_Trans2.Z-outtangent-array" count="2" stride="2">
+            <param name="X" type="float"/>
+            <param name="Y" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="node-Crane2_translation_Trans2.Z-interpolation">
+        <Name_array id="node-Crane2_translation_Trans2.Z-interpolation-array" count="2">BEZIER BEZIER</Name_array>
+        <technique_common>
+          <accessor source="#node-Crane2_translation_Trans2.Z-interpolation-array" count="2" stride="1">
+            <param name="INTERPOLATION" type="name"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <sampler id="node-Crane2_translation_Trans2.X-sampler">
+        <input semantic="INPUT" source="#node-Crane2_translation_Trans2.X-input"/>
+        <input semantic="OUTPUT" source="#node-Crane2_translation_Trans2.X-output"/>
+        <input semantic="IN_TANGENT" source="#node-Crane2_translation_Trans2.X-intangent"/>
+        <input semantic="OUT_TANGENT" source="#node-Crane2_translation_Trans2.X-outtangent"/>
+        <input semantic="INTERPOLATION" source="#node-Crane2_translation_Trans2.X-interpolation"/>
+      </sampler>
+      <sampler id="node-Crane2_translation_Trans2.Y-sampler">
+        <input semantic="INPUT" source="#node-Crane2_translation_Trans2.Y-input"/>
+        <input semantic="OUTPUT" source="#node-Crane2_translation_Trans2.Y-output"/>
+        <input semantic="IN_TANGENT" source="#node-Crane2_translation_Trans2.Y-intangent"/>
+        <input semantic="OUT_TANGENT" source="#node-Crane2_translation_Trans2.Y-outtangent"/>
+        <input semantic="INTERPOLATION" source="#node-Crane2_translation_Trans2.Y-interpolation"/>
+      </sampler>
+      <sampler id="node-Crane2_translation_Trans2.Z-sampler">
+        <input semantic="INPUT" source="#node-Crane2_translation_Trans2.Z-input"/>
+        <input semantic="OUTPUT" source="#node-Crane2_translation_Trans2.Z-output"/>
+        <input semantic="IN_TANGENT" source="#node-Crane2_translation_Trans2.Z-intangent"/>
+        <input semantic="OUT_TANGENT" source="#node-Crane2_translation_Trans2.Z-outtangent"/>
+        <input semantic="INTERPOLATION" source="#node-Crane2_translation_Trans2.Z-interpolation"/>
+      </sampler>
+      <channel source="#node-Crane2_translation_Trans2.X-sampler" target="node-Crane2/translation_Trans2.X"/>
+      <channel source="#node-Crane2_translation_Trans2.Y-sampler" target="node-Crane2/translation_Trans2.Y"/>
+      <channel source="#node-Crane2_translation_Trans2.Z-sampler" target="node-Crane2/translation_Trans2.Z"/>
+    </animation>
+  </library_animations>
+  <library_animation_clips>
+    <animation_clip id="Boom1_clip" name="Boom1">
+      <instance_animation url="#Boom1_animation"/>
+    </animation_clip>
+    <animation_clip id="Boom2_clip" name="Boom2">
+      <instance_animation url="#Boom2_animation"/>
+    </animation_clip>
+    <animation_clip id="Hook1_clip" name="Hook1">
+      <instance_animation url="#Hook1_animation"/>
+    </animation_clip>
+    <animation_clip id="Hook2_clip" name="Hook2">
+      <instance_animation url="#Hook2_animation"/>
+    </animation_clip>
+    <animation_clip id="Trans1_clip" name="TransY">
+      <instance_animation url="#Trans1_animation"/>
+    </animation_clip>
+    <animation_clip id="Trans2_clip" name="TransX">
+      <instance_animation url="#Trans2_animation"/>
+    </animation_clip>
+  </library_animation_clips>
+  <scene>
+    <instance_visual_scene url="#MaxScene"/>
+  </scene>
+</COLLADA>
