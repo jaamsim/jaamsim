@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2012 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2021 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -434,18 +435,37 @@ public synchronized int getGLBuffer(GL2GL3 gl) {
  * @param string - the string to render
  */
 public Vec3d getStringSize(double textHeight, String string) {
-	return new Vec3d(getStringLength(textHeight, string), textHeight, 0.0d);
-}
-
-public double getStringLength(double textHeight, String string) {
+	Vec3d ret = new Vec3d();
 	if (string == null)
-		return 0.0d;
+		return ret;
+
+	// Loop through the unicode characters in the string
 	double width = 0.0d;
+	ret.y = getNominalHeight();
 	for (int cp : RenderUtils.stringToCodePoints(string)) {
+
+		// Is the character a newline
+		if (cp == '\n') {
+			ret.x = Math.max(ret.x, width);
+			ret.y += getLineAdvance();
+			width = 0.0d;
+			continue;
+		}
+
+		// All other characters
 		TessChar tc = getTessChar(cp);
 		width += tc.getAdvance();
 	}
-	return width * textHeight / getNominalHeight();
+	ret.x = Math.max(ret.x, width);
+
+	// Scale the maximum width value and return
+	double scale = textHeight / getNominalHeight();
+	ret.scale2(scale);
+	return ret;
+}
+
+public double getStringLength(double textHeight, String string) {
+	return getStringSize(textHeight, string).x;
 }
 
 /**
