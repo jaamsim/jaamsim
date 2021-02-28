@@ -469,24 +469,36 @@ public double getStringLength(double textHeight, String string) {
 }
 
 /**
- * Returns the index of the first character in the string whose x-coordinate
- * is closest to the given value.
+ * Returns the index of the first character in the string whose x and coordinates are closest to
+ * the given values.
  * @param textHeight - height of the text in metres
  * @param string - given string
  * @param x - x-coordinate whose index number is to be found
+ * @param y - y-coordinate whose index number is to be found
  * @return index number in the string.
  */
-public int getStringPosition(double textHeight, String string, double x) {
+public int getStringPosition(double textHeight, String string, double x, double y) {
 	if (string == null)
 		return 0;
+
 	double scaledX = x / textHeight * getNominalHeight();
-	double width = 0.0d;
+	double scaledY = y / textHeight * getNominalHeight();
+	Vec3d pos = new Vec3d();
+	pos.y = -getNominalHeight();
+
 	int[] cpList = RenderUtils.stringToCodePoints(string);
-	for (int i=0; i < cpList.length; i++) {
+	for (int i = 0; i < cpList.length; i++) {
 		TessChar tc = getTessChar(cpList[i]);
-		if (width + 0.5d*tc.getAdvance() >= scaledX)
+		if (cpList[i] == '\n') {
+			pos.x = 0.0d;
+			pos.y -= getLineAdvance();
+			continue;
+		}
+		if (scaledX - pos.x < 0.5d*tc.getAdvance()
+				&& scaledY - pos.y > -0.5d*getLineAdvance()) {
 			return i;
-		width += tc.getAdvance();
+		}
+		pos.x += tc.getAdvance();
 	}
 	return cpList.length;
 }

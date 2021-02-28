@@ -957,7 +957,11 @@ public class RenderManager implements DragSourceListener {
 	}
 
 	public int getRenderedStringPosition(TessFontKey fontKey, double textHeight, String string, double x) {
-		return renderer.getTessFont(fontKey).getStringPosition(textHeight, string, x);
+		return getRenderedStringPosition(fontKey, textHeight, string, x, 0.0d);
+	}
+
+	public int getRenderedStringPosition(TessFontKey fontKey, double textHeight, String string, double x, double y) {
+		return renderer.getTessFont(fontKey).getStringPosition(textHeight, string, x, y);
 	}
 
 	/**
