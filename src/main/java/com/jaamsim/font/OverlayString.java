@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2012 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018 JaamSim Software Inc.
+ * Copyright (C) 2018-2021 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -66,17 +66,20 @@ public class OverlayString implements OverlayRenderable {
 	public void render(int contextID, Renderer renderer,
 		double windowWidth, double windowHeight, Camera cam, Ray pickRay) {
 
-
+		// Calculate coordinates for the bottom left of the first character relative to the
+		// bottom left of the window
 		Vec3d renderedSize = _font.getStringSize(_height, _contents);
 		double x = _x;
 		double y = _y;
 		if (_alignRight) {
 			x = windowWidth - _x - renderedSize.x;
 		}
-		if (!_alignBottom) {
-			y = windowHeight - _y - renderedSize.y;
+		if (_alignBottom) {
+			y = _y + renderedSize.y - _height;
 		}
-
+		else {
+			y = windowHeight - _y - _height;
+		}
 
 		GL2GL3 gl = renderer.getGL();
 
@@ -130,7 +133,6 @@ public class OverlayString implements OverlayRenderable {
 				offsetY -= _font.getLineAdvance()*scaleY;
 				continue;
 			}
-
 			gl.glUniform2f(offsetVar, offsetX, offsetY);
 
 			gl.glDrawArrays(GL2GL3.GL_TRIANGLES, tc.getStartIndex(), tc.getNumVerts());
