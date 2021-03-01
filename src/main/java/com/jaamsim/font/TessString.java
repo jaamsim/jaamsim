@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2012 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2021 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -115,10 +116,10 @@ public TessString(TessFont font, String contents, Color4d color,
 
 	ArrayList<Vec4d> vs = new ArrayList<>(4);
 
-	vs.add(new Vec4d( maxWidth,  height+yAdvance, 0, 1.0d));
-	vs.add(new Vec4d(        0,  height+yAdvance, 0, 1.0d));
-	vs.add(new Vec4d(        0,                0, 0, 1.0d));
-	vs.add(new Vec4d( maxWidth,                0, 0, 1.0d));
+	vs.add(new Vec4d( maxWidth,     height, 0, 1.0d));
+	vs.add(new Vec4d(        0,     height, 0, 1.0d));
+	vs.add(new Vec4d(        0,  -yAdvance, 0, 1.0d));
+	vs.add(new Vec4d( maxWidth,  -yAdvance, 0, 1.0d));
 
 	_bounds = new AABB(vs, _trans);
 }
