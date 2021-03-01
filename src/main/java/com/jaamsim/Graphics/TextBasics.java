@@ -268,8 +268,9 @@ public abstract class TextBasics extends DisplayEntity implements TextEntity, Ed
 		trans.multAndTrans(globalCoord, entityCoord);
 
 		// Position the insertion point where the text was clicked
-		double insert = entityCoord.x + 0.5d*textsize.x;
-		int pos = RenderManager.inst().getRenderedStringPosition(fontKey, height, getText(), insert);
+		double x = entityCoord.x + 0.5d*textsize.x;
+		double y = entityCoord.y - 0.5d*textsize.y;
+		int pos = RenderManager.inst().getRenderedStringPosition(fontKey, height, getText(), x, y);
 		return pos;
 	}
 

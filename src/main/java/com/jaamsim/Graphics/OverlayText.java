@@ -359,17 +359,18 @@ public class OverlayText extends OverlayEntity implements TextEntity, EditableTe
 	/**
 	 * Returns the insert position in the present text that corresponds to the specified global
 	 * coordinate. Index 0 is located immediately before the first character in the text.
-	 * @param x -
-	 * @param y -
+	 * @param x - global x-coordinate for the specified position
+	 * @param y - global y-coordinate for the specified position
 	 * @return insert position in the text string
 	 */
 	public int getStringPosition(int x, int y, int windowWidth, int windowHeight) {
 		double height = getTextHeight();
 		TessFontKey fontKey = getTessFontKey();
-		double length = RenderManager.inst().getRenderedStringLength(fontKey, height, getText());
+		Vec3d size = RenderManager.inst().getRenderedStringSize(fontKey, height, getText());
 		IntegerVector pos = getScreenPosition();
-		double textStart = getAlignRight() ? windowWidth - pos.get(0) - length : pos.get(0);
-		return RenderManager.inst().getRenderedStringPosition(fontKey, height, getText(), x - textStart);
+		double startX = getAlignRight() ? windowWidth - pos.get(0) - size.x : pos.get(0);
+		double startY = getAlignBottom() ? windowHeight - pos.get(1) - size.y : pos.get(1);
+		return RenderManager.inst().getRenderedStringPosition(fontKey, height, getText(), x - startX, -y + startY);
 	}
 
 	public String getRenderText(double simTime) {
