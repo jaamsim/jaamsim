@@ -394,8 +394,8 @@ public class TextModel extends DisplayModel implements TextEntity {
 					int endPos = Math.max(insertPos, insertPos + numSelected);
 
 					// Calculate the position of the selected text in metres relative to the centre of the string
-					double start = RenderManager.inst().getOffsetForStringPosition(fk, height, text, startPos) - 0.5d*length;
-					double end = RenderManager.inst().getOffsetForStringPosition(fk, height, text, endPos) - 0.5d*length;
+					double start = RenderManager.inst().getOffsetForStringPosition(fk, height, text, startPos).x - 0.5d*length;
+					double end = RenderManager.inst().getOffsetForStringPosition(fk, height, text, endPos).x - 0.5d*length;
 
 					ArrayList<Vec4d> rect = new ArrayList<>();
 					rect.add(new Vec4d( start,  ycoord, -zcoord, 1.0d ));
@@ -408,7 +408,7 @@ public class TextModel extends DisplayModel implements TextEntity {
 				}
 
 				// Show the text insertion mark
-				double insert = RenderManager.inst().getOffsetForStringPosition(fk, height, text, insertPos) - 0.5d*length;
+				double insert = RenderManager.inst().getOffsetForStringPosition(fk, height, text, insertPos).x - 0.5d*length;
 				ArrayList<Vec4d> points = new ArrayList<>();
 				points.add(new Vec4d( insert, -ycoord, zcoord, 1.0d ));
 				points.add(new Vec4d( insert,  ycoord, zcoord, 1.0d ));
@@ -555,8 +555,8 @@ public class TextModel extends DisplayModel implements TextEntity {
 					int endPos = Math.max(insertPos, insertPos + numSelected);
 
 					// Calculate the position of the selected text in pixels relative to the start of the string
-					double startOffset = RenderManager.inst().getOffsetForStringPosition(fk, height, text, startPos);
-					double endOffset = RenderManager.inst().getOffsetForStringPosition(fk, height, text, endPos);
+					double startOffset = RenderManager.inst().getOffsetForStringPosition(fk, height, text, startPos).x;
+					double endOffset = RenderManager.inst().getOffsetForStringPosition(fk, height, text, endPos).x;
 					double start = textStart + startOffset * (alignRight ? -1.0d : 1.0d);
 					double end = textStart + endOffset * (alignRight ? -1.0d : 1.0d);
 
@@ -570,7 +570,7 @@ public class TextModel extends DisplayModel implements TextEntity {
 				}
 
 				// Show the text insertion mark
-				double insertOffset = RenderManager.inst().getOffsetForStringPosition(fk, height, text, insertPos);
+				double insertOffset = RenderManager.inst().getOffsetForStringPosition(fk, height, text, insertPos).x;
 				double insert = textStart + insertOffset * (alignRight ? -1.0d : 1.0d);
 				ArrayList<Vec2d> points = new ArrayList<>(2);
 				points.add(new Vec2d( insert, top ));

@@ -967,9 +967,8 @@ public class RenderManager implements DragSourceListener {
 	 * @param i - insertion position
 	 * @return x coordinate of the insertion position relative to the beginning of the string.
 	 */
-	public double getOffsetForStringPosition(TessFontKey fontKey, double textHeight, String string, int i) {
-		StringBuilder sb = new StringBuilder(string);
-		return getRenderedStringLength(fontKey, textHeight, sb.substring(0, i));
+	public Vec3d getOffsetForStringPosition(TessFontKey fontKey, double textHeight, String string, int i) {
+		return renderer.getTessFont(fontKey).getOffsetForString(textHeight, string.substring(0, i));
 	}
 
 	private void logException(Throwable t) {

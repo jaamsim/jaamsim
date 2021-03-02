@@ -491,6 +491,38 @@ public int getStringPosition(double textHeight, String string, double x) {
 	return cpList.length;
 }
 
+/**
+ * Returns the vector from the first character to the last character of the string.
+ * @param textHeight - height of the text in metres
+ * @param string - given string
+ * @return vector from the first to last character
+ */
+public Vec3d getOffsetForString(double textHeight, String string) {
+	Vec3d ret = new Vec3d();
+	if (string == null)
+		return ret;
+
+	// Loop through the unicode characters in the string
+	for (int cp : RenderUtils.stringToCodePoints(string)) {
+
+		// Is the character a newline
+		if (cp == '\n') {
+			ret.x = 0.0d;
+			ret.y -= getLineAdvance();
+			continue;
+		}
+
+		// All other characters
+		TessChar tc = getTessChar(cp);
+		ret.x += tc.getAdvance();
+	}
+
+	// Scale and return
+	double scale = textHeight / getNominalHeight();
+	ret.scale2(scale);
+	return ret;
+}
+
 public double getNominalHeight() {
 	return _nominalHeight;
 }
