@@ -385,27 +385,33 @@ public class TextModel extends DisplayModel implements TextEntity {
 			// If the text is being edited, show the selection and the text insertion mark
 			if (editMode) {
 				Vec3d size = RenderManager.inst().getRenderedStringSize(fk, height, text);
-				double length = size.x;
-				double ycoord = 0.5*height*1.5d;
 				double zcoord = 0.01*height;
 
 				// Highlight the selected text
 				if (numSelected != 0) {
 					int startPos = Math.min(insertPos, insertPos + numSelected);
 					int endPos = Math.max(insertPos, insertPos + numSelected);
-
-					// Calculate the position of the selected text in metres relative to the centre of the string
-					double start = RenderManager.inst().getOffsetForStringPosition(fk, height, text, startPos).x - 0.5d*length;
-					double end = RenderManager.inst().getOffsetForStringPosition(fk, height, text, endPos).x - 0.5d*length;
-
-					ArrayList<Vec4d> rect = new ArrayList<>();
-					rect.add(new Vec4d( start,  ycoord, -zcoord, 1.0d ));
-					rect.add(new Vec4d( start, -ycoord, -zcoord, 1.0d ));
-					rect.add(new Vec4d(   end, -ycoord, -zcoord, 1.0d ));
-					rect.add(new Vec4d(   end,  ycoord, -zcoord, 1.0d ));
-					Vec3d scale = new Vec3d(1.0d, 1.0d, 1.0d);
-					cachedProxies.add(new PolygonProxy(rect, trans, scale,
-							ColourInput.LIGHT_GREY, false, 1, vi, labelObservee.getEntityNumber()));
+					int startSel = startPos;
+					for (int i = startPos; i <= endPos; i++) {
+						if (i < endPos && text.charAt(i) != '\n')
+							continue;
+						Vec3d start = RenderManager.inst().getOffsetForStringPosition(fk, height, text, startSel);
+						Vec3d end = RenderManager.inst().getOffsetForStringPosition(fk, height, text, i);
+						start.x -= 0.5d * size.x;
+						start.y += 0.5d * size.y;
+						end.x -= 0.5d * size.x;
+						double top = start.y + 0.25d*height;
+						double bottom = start.y - 1.25d*height;
+						ArrayList<Vec4d> rect = new ArrayList<>();
+						rect.add(new Vec4d( start.x, top,    -zcoord, 1.0d ));
+						rect.add(new Vec4d( start.x, bottom, -zcoord, 1.0d ));
+						rect.add(new Vec4d( end.x,   bottom, -zcoord, 1.0d ));
+						rect.add(new Vec4d( end.x,   top,    -zcoord, 1.0d ));
+						Vec3d scale = new Vec3d(1.0d, 1.0d, 1.0d);
+						cachedProxies.add(new PolygonProxy(rect, trans, scale,
+								ColourInput.LIGHT_GREY, false, 1, vi, labelObservee.getEntityNumber()));
+						startSel = i + 1;
+					}
 				}
 
 				// Show the text insertion mark
@@ -547,30 +553,33 @@ public class TextModel extends DisplayModel implements TextEntity {
 			// If the text is being edited, show the selection and the text insertion mark
 			if (editMode) {
 				Vec3d size = RenderManager.inst().getRenderedStringSize(fk, height, text);
-				double margin = 0.25d*height;
 				double textStartX = alignRight ? pos.get(0) + size.x : pos.get(0);
 				double textStartY = alignBottom ? pos.get(1) + size.y - height : pos.get(1);
-				double top = textStartY - margin;
-				double bottom = textStartY + height + margin;
 
 				// Highlight the selected text
 				if (numSelected != 0) {
 					int startPos = Math.min(insertPos, insertPos + numSelected);
 					int endPos = Math.max(insertPos, insertPos + numSelected);
-
-					// Calculate the position of the selected text in pixels relative to the start of the string
-					double startOffset = RenderManager.inst().getOffsetForStringPosition(fk, height, text, startPos).x;
-					double endOffset = RenderManager.inst().getOffsetForStringPosition(fk, height, text, endPos).x;
-					double start = textStartX + startOffset * (alignRight ? -1.0d : 1.0d);
-					double end = textStartX + endOffset * (alignRight ? -1.0d : 1.0d);
-
-					ArrayList<Vec2d> rect = new ArrayList<>(4);
-					rect.add(new Vec2d( start, bottom ));
-					rect.add(new Vec2d( start, top ));
-					rect.add(new Vec2d(   end, top ));
-					rect.add(new Vec2d(   end, bottom ));
-					cachedProxies.add(new OverlayPolygonProxy(rect, ColourInput.LIGHT_GREY,
-							!alignBottom, alignRight, vi, labelObservee.getEntityNumber()));
+					int startSel = startPos;
+					for (int i = startPos; i <= endPos; i++) {
+						if (i < endPos && text.charAt(i) != '\n')
+							continue;
+						Vec3d start = RenderManager.inst().getOffsetForStringPosition(fk, height, text, startSel);
+						Vec3d end = RenderManager.inst().getOffsetForStringPosition(fk, height, text, i);
+						double startX = textStartX + start.x * (alignRight ? -1.0d : 1.0d);
+						double startY = textStartY - start.y * (alignBottom ? -1.0d : 1.0d);
+						double endX = textStartX + end.x * (alignRight ? -1.0d : 1.0d);
+						double top = startY - 0.25d*height;
+						double bottom = startY + 1.25d*height;
+						ArrayList<Vec2d> rect = new ArrayList<>(4);
+						rect.add(new Vec2d( startX, bottom ));
+						rect.add(new Vec2d( startX, top ));
+						rect.add(new Vec2d(   endX, top ));
+						rect.add(new Vec2d(   endX, bottom ));
+						cachedProxies.add(new OverlayPolygonProxy(rect, ColourInput.LIGHT_GREY,
+								!alignBottom, alignRight, vi, labelObservee.getEntityNumber()));
+						startSel = i + 1;
+					}
 				}
 
 				// Show the text insertion mark
