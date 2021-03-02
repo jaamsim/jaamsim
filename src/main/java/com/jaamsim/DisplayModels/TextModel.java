@@ -384,7 +384,8 @@ public class TextModel extends DisplayModel implements TextEntity {
 
 			// If the text is being edited, show the selection and the text insertion mark
 			if (editMode) {
-				double length = RenderManager.inst().getRenderedStringLength(fk, height, text);
+				Vec3d size = RenderManager.inst().getRenderedStringSize(fk, height, text);
+				double length = size.x;
 				double ycoord = 0.5*height*1.5d;
 				double zcoord = 0.01*height;
 
@@ -408,10 +409,12 @@ public class TextModel extends DisplayModel implements TextEntity {
 				}
 
 				// Show the text insertion mark
-				double insert = RenderManager.inst().getOffsetForStringPosition(fk, height, text, insertPos).x - 0.5d*length;
+				Vec3d offset = RenderManager.inst().getOffsetForStringPosition(fk, height, text, insertPos);
+				offset.x -= 0.5d * size.x;
+				offset.y += 0.5d * size.y;
 				ArrayList<Vec4d> points = new ArrayList<>();
-				points.add(new Vec4d( insert, -ycoord, zcoord, 1.0d ));
-				points.add(new Vec4d( insert,  ycoord, zcoord, 1.0d ));
+				points.add(new Vec4d( offset.x, offset.y - 1.25d*height, zcoord, 1.0d ));
+				points.add(new Vec4d( offset.x, offset.y + 0.25d*height, zcoord, 1.0d ));
 				RenderUtils.transformPointsLocal(trans, points, 0);
 				cachedProxies.add(new LineProxy(points, ColourInput.BLACK, 1, vi, labelObservee.getEntityNumber()));
 			}
@@ -543,11 +546,12 @@ public class TextModel extends DisplayModel implements TextEntity {
 
 			// If the text is being edited, show the selection and the text insertion mark
 			if (editMode) {
-				double length = RenderManager.inst().getRenderedStringLength(fk, height, text);
+				Vec3d size = RenderManager.inst().getRenderedStringSize(fk, height, text);
 				double margin = 0.25d*height;
-				double textStart = alignRight ? pos.get(0) + length : pos.get(0);
-				double top = pos.get(1) - margin;
-				double bottom = pos.get(1) + height + margin;
+				double textStartX = alignRight ? pos.get(0) + size.x : pos.get(0);
+				double textStartY = alignBottom ? pos.get(1) + size.y - height : pos.get(1);
+				double top = textStartY - margin;
+				double bottom = textStartY + height + margin;
 
 				// Highlight the selected text
 				if (numSelected != 0) {
@@ -557,8 +561,8 @@ public class TextModel extends DisplayModel implements TextEntity {
 					// Calculate the position of the selected text in pixels relative to the start of the string
 					double startOffset = RenderManager.inst().getOffsetForStringPosition(fk, height, text, startPos).x;
 					double endOffset = RenderManager.inst().getOffsetForStringPosition(fk, height, text, endPos).x;
-					double start = textStart + startOffset * (alignRight ? -1.0d : 1.0d);
-					double end = textStart + endOffset * (alignRight ? -1.0d : 1.0d);
+					double start = textStartX + startOffset * (alignRight ? -1.0d : 1.0d);
+					double end = textStartX + endOffset * (alignRight ? -1.0d : 1.0d);
 
 					ArrayList<Vec2d> rect = new ArrayList<>(4);
 					rect.add(new Vec2d( start, bottom ));
@@ -570,11 +574,12 @@ public class TextModel extends DisplayModel implements TextEntity {
 				}
 
 				// Show the text insertion mark
-				double insertOffset = RenderManager.inst().getOffsetForStringPosition(fk, height, text, insertPos).x;
-				double insert = textStart + insertOffset * (alignRight ? -1.0d : 1.0d);
+				Vec3d offset = RenderManager.inst().getOffsetForStringPosition(fk, height, text, insertPos);
+				double insertX = textStartX + offset.x * (alignRight ? -1.0d : 1.0d);
+				double insertY = textStartY - offset.y * (alignBottom ? -1.0d : 1.0d);
 				ArrayList<Vec2d> points = new ArrayList<>(2);
-				points.add(new Vec2d( insert, top ));
-				points.add(new Vec2d( insert, bottom ));
+				points.add(new Vec2d( insertX, insertY + 1.25d*height ));
+				points.add(new Vec2d( insertX, insertY - 0.25d*height ));
 				cachedProxies.add(new OverlayLineProxy(points, ColourInput.BLACK,
 						!alignBottom, alignRight, 1, vi, labelObservee.getEntityNumber()));
 			}
