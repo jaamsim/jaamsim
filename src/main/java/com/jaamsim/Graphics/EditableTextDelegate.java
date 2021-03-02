@@ -155,6 +155,12 @@ public class EditableTextDelegate implements EditableText {
 				break;
 
 			case KeyEvent.VK_ENTER:
+				if (control) {
+					StringBuilder sb = new StringBuilder(text);
+					text = sb.insert(insertPos, '\n').toString();
+					insertPos++;
+					break;
+				}
 				ret = ACCEPT_EDITS;
 				break;
 
