@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2018 JaamSim Software Inc.
+ * Copyright (C) 2018-2021 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -218,12 +218,16 @@ public class EditableTextDelegate implements EditableText {
 				end = i + 1;
 				break;
 			}
+			if (text.charAt(i) == '\n') {
+				end = i;
+				break;
+			}
 		}
 
 		// Find the start of the present word
 		int start = 0;
 		for (int i=insertPos-1; i>=0; i--) {
-			if (text.charAt(i) == ' ') {
+			if (text.charAt(i) == ' ' || text.charAt(i) == '\n') {
 				start = i + 1;
 				break;
 			}
