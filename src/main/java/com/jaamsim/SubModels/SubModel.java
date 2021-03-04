@@ -64,6 +64,14 @@ public class SubModel extends AbstractSubModel implements DragAndDropable {
 		}
 	}
 
+	@Override
+	public void validate() {
+		// If there are clones, only the clones need to be validated
+		if (!getClones().isEmpty())
+			return;
+		super.validate();
+	}
+
 	public void updateClones() {
 		for (SubModelClone clone : getClones()) {
 			clone.update();
