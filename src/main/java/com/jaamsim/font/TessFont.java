@@ -489,14 +489,14 @@ public int getStringPosition(double textHeight, String string, double x, double 
 	int[] cpList = RenderUtils.stringToCodePoints(string);
 	for (int i = 0; i < cpList.length; i++) {
 		TessChar tc = getTessChar(cpList[i]);
+		if ((scaledX - pos.x < 0.5d*tc.getAdvance() || cpList[i] == '\n')
+				&& scaledY - pos.y > -0.5d*getLineAdvance()) {
+			return i;
+		}
 		if (cpList[i] == '\n') {
 			pos.x = 0.0d;
 			pos.y -= getLineAdvance();
 			continue;
-		}
-		if (scaledX - pos.x < 0.5d*tc.getAdvance()
-				&& scaledY - pos.y > -0.5d*getLineAdvance()) {
-			return i;
 		}
 		pos.x += tc.getAdvance();
 	}
