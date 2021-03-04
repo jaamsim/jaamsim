@@ -161,11 +161,19 @@ public class EditableTextDelegate implements EditableText {
 				break;
 
 			case KeyEvent.VK_HOME:
-				setInsertPosition(0, shift);
+				if (control) {
+					setInsertPosition(0, shift);
+					break;
+				}
+				setInsertPosition(getLineStart(insertPos), shift);
 				break;
 
 			case KeyEvent.VK_END:
-				setInsertPosition(text.length(), shift);
+				if (control) {
+					setInsertPosition(text.length(), shift);
+					break;
+				}
+				setInsertPosition(getLineEnd(insertPos), shift);
 				break;
 
 			case KeyEvent.VK_ENTER:
