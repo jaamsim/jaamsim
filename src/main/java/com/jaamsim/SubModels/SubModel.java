@@ -41,7 +41,11 @@ public class SubModel extends AbstractSubModel implements DragAndDropable {
 		this.addInput(keywordListInput);
 	}
 
-	public SubModel() {}
+	public SubModel() {
+		GUIListener gui = getJaamSimModel().getGUIListener();
+		if (gui != null)
+			gui.updateModelBuilder();
+	}
 
 	@Override
 	public void updateForInput(Input<?> in) {

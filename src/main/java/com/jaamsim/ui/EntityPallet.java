@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2019-2020 JaamSim Software Inc.
+ * Copyright (C) 2019-2021 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,6 +44,7 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
+import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.basicsim.ObjectType;
 import com.jaamsim.controllers.RenderManager;
@@ -123,8 +124,8 @@ public class EntityPallet extends OSFixJFrame implements DragGestureListener {
 				DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) path.getLastPathComponent();
 
 				// This is an ObjectType node
-				if(treeNode.getUserObject() instanceof ObjectType) {
-					ObjectType type = (ObjectType) treeNode.getUserObject();
+				if(treeNode.getUserObject() instanceof DragAndDropable) {
+					DragAndDropable type = (DragAndDropable) treeNode.getUserObject();
 					Cursor cursor = null;
 
 					if (event.getDragAction() == DnDConstants.ACTION_COPY) {
@@ -133,7 +134,7 @@ public class EntityPallet extends OSFixJFrame implements DragGestureListener {
 					if (RenderManager.isGood()) {
 						// The new renderer is initialized
 						RenderManager.inst().startDragAndDrop(type);
-						event.startDrag(cursor,new TransferableObjectType(type), RenderManager.inst());
+						event.startDrag(cursor, new TransferableObjectType(type), RenderManager.inst());
 
 					} else {
 						event.startDrag(cursor,new TransferableObjectType(type));
@@ -164,7 +165,8 @@ public class EntityPallet extends OSFixJFrame implements DragGestureListener {
 		top.removeAllChildren();
 		HashMap<String, DefaultMutableTreeNode> paletteNodes = new HashMap<>();
 		JaamSimModel simModel = GUIFrame.getJaamSimModel();
-		for (ObjectType type : simModel.getObjectTypes()) {
+		for (Entity ent : simModel.getClonesOfIterator(Entity.class, DragAndDropable.class)) {
+			DragAndDropable type = (DragAndDropable) ent;
 			if (!type.isDragAndDrop())
 				continue;
 
@@ -238,11 +240,11 @@ public class EntityPallet extends OSFixJFrame implements DragGestureListener {
 
 			// If we don't find an ObjectType (likely we will) just return
 			Object userObj = ((DefaultMutableTreeNode)value).getUserObject();
-			if (!(userObj instanceof ObjectType))
+			if (!(userObj instanceof DragAndDropable))
 				return this;
 
-			ObjectType type = (ObjectType)userObj;
-			this.setText(type.getName());
+			DragAndDropable type = (DragAndDropable)userObj;
+			this.setText(((Entity)type).getName());
 
 			if (!RenderManager.isGood())
 				return this;
@@ -301,9 +303,9 @@ public class EntityPallet extends OSFixJFrame implements DragGestureListener {
 	}
 
 	private static class TransferableObjectType implements Transferable {
-		private final ObjectType type;
+		private final DragAndDropable type;
 
-		TransferableObjectType(ObjectType type) {
+		TransferableObjectType(DragAndDropable type) {
 			this.type = type;
 		}
 

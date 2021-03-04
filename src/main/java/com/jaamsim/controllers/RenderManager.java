@@ -53,11 +53,11 @@ import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.Editable;
 import com.jaamsim.Graphics.EntityLabel;
 import com.jaamsim.Graphics.OverlayEntity;
+import com.jaamsim.SubModels.SubModelClone;
 import com.jaamsim.Graphics.Region;
 import com.jaamsim.Graphics.View;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.JaamSimModel;
-import com.jaamsim.basicsim.ObjectType;
 import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.datatypes.IntegerVector;
 import com.jaamsim.input.ColourInput;
@@ -92,6 +92,7 @@ import com.jaamsim.render.TexCache;
 import com.jaamsim.render.WindowInteractionListener;
 import com.jaamsim.render.util.ExceptionLogger;
 import com.jaamsim.ui.ContextMenu;
+import com.jaamsim.ui.DragAndDropable;
 import com.jaamsim.ui.FrameBox;
 import com.jaamsim.ui.GUIFrame;
 import com.jaamsim.ui.LogBox;
@@ -171,7 +172,7 @@ public class RenderManager implements DragSourceListener {
 	private IntegerVector dragEntityScreenPosition;
 
 	// The object type for drag-and-drop operation, if this is null, the user is not dragging
-	private ObjectType dndObjectType;
+	private DragAndDropable dndObjectType;
 
 	// The video recorder to sample
 	private VideoRecorder recorder;
@@ -1733,7 +1734,7 @@ public class RenderManager implements DragSourceListener {
 		}
 	}
 
-	public void startDragAndDrop(ObjectType ot) {
+	public void startDragAndDrop(DragAndDropable ot) {
 		dndObjectType = ot;
 	}
 
@@ -1789,13 +1790,17 @@ public class RenderManager implements DragSourceListener {
 
 		// Create a new instance
 		Class<? extends Entity> proto  = dndObjectType.getJavaClass();
-		String name = proto.getSimpleName();
+		String name = dndObjectType.getName();
 		if (parent != null && !(OverlayEntity.class.isAssignableFrom(proto))) {
 			name = parent.getName() + "." + name;
 		}
 		name = InputAgent.getUniqueName(simModel, name, "");
 		InputAgent.storeAndExecute(new DefineCommand(simModel, proto, name));
 		Entity ent = simModel.getNamedEntity(name);
+
+		if (ent instanceof SubModelClone) {
+			InputAgent.applyArgs(ent, "Prototype", dndObjectType.getPrototype().getName());
+		}
 
 		// Set input values for a dragged and dropped entity
 		ent.setInputsForDragAndDrop();
