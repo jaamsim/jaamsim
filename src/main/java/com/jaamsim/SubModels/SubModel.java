@@ -65,6 +65,22 @@ public class SubModel extends AbstractSubModel implements DragAndDropable {
 	}
 
 	@Override
+	public void kill() {
+		super.kill();
+		GUIListener gui = getJaamSimModel().getGUIListener();
+		if (gui != null)
+			gui.updateModelBuilder();
+	}
+
+	@Override
+	public void restore(String name) {
+		super.restore(name);
+		GUIListener gui = getJaamSimModel().getGUIListener();
+		if (gui != null)
+			gui.updateModelBuilder();
+	}
+
+	@Override
 	public void validate() {
 		// If there are clones, only the clones need to be validated
 		if (!getClones().isEmpty())
