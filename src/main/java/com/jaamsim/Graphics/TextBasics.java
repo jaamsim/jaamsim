@@ -219,7 +219,7 @@ public abstract class TextBasics extends DisplayEntity implements TextEntity, Ed
 
 		// Position the insertion point where the text was clicked
 		int pos = getStringPosition(globalCoord);
-		editableText.setInsertPosition(pos, false);
+		editableText.setInsertPosition(pos, shift);
 
 		// Double click selects a whole word
 		if (count == 2)

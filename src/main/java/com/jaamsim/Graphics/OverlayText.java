@@ -337,7 +337,7 @@ public class OverlayText extends OverlayEntity implements TextEntity, EditableTe
 
 		// Position the insertion point where the text was clicked
 		int pos = getStringPosition(x, y, windowWidth, windowHeight);
-		editableText.setInsertPosition(pos, false);
+		editableText.setInsertPosition(pos, shift);
 
 		// Double click selects a whole word
 		if (count == 2)
