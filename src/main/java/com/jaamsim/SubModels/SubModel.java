@@ -21,6 +21,7 @@ import java.util.ArrayList;
 
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.GUIListener;
+import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.ui.DragAndDropable;
@@ -53,11 +54,35 @@ public class SubModel extends AbstractSubModel implements DragAndDropable {
 
 		if (in == keywordListInput) {
 			updateKeywords(keywordListInput.getValue());
+			for (SubModelClone clone : getClones()) {
+				clone.updateKeywords(keywordListInput.getValue());
+			}
 			GUIListener gui = getJaamSimModel().getGUIListener();
 			if (gui != null && gui.isSelected(this))
 				gui.updateInputEditor();
 			return;
 		}
+	}
+
+	public void updateClones() {
+		for (SubModelClone clone : getClones()) {
+			clone.update();
+		}
+	}
+
+	/**
+	 * Returns the clones that were made from this prototype sub-model.
+	 * @return list of clones of this prototype.
+	 */
+	public ArrayList<SubModelClone> getClones() {
+		ArrayList<SubModelClone> ret = new ArrayList<>();
+		JaamSimModel simModel = getJaamSimModel();
+		for (SubModelClone clone : simModel.getClonesOfIterator(SubModelClone.class)) {
+			if (clone.isClone(this)) {
+				ret.add(clone);
+			}
+		}
+		return ret;
 	}
 
 	@Override
