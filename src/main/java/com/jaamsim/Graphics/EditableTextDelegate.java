@@ -146,6 +146,20 @@ public class EditableTextDelegate implements EditableText {
 				setInsertPosition(Math.min(text.length(), insertPos+1), shift);
 				break;
 
+			case KeyEvent.VK_UP:
+				int upPos = getUpPosition(insertPos);
+				if (upPos >= 0) {
+					setInsertPosition(upPos, shift);
+				}
+				break;
+
+			case KeyEvent.VK_DOWN:
+				int downPos = getDownPosition(insertPos);
+				if (downPos >= 0) {
+					setInsertPosition(downPos, shift);
+				}
+				break;
+
 			case KeyEvent.VK_HOME:
 				setInsertPosition(0, shift);
 				break;
@@ -253,6 +267,51 @@ public class EditableTextDelegate implements EditableText {
 		text = sb.delete(start, end).toString();
 		insertPos = start;
 		numSelected = 0;
+	}
+
+	/**
+	 * Returns the index of the first character in the line of text containing the specified index.
+	 * @param i - index in the text string
+	 * @return index of the first character in the line
+	 */
+	private int getLineStart(int ind) {
+		for (int i = ind - 1; i >= 0; i--) {
+			if (text.charAt(i) == '\n') {
+				return i + 1;
+			}
+		}
+		return 0;
+	}
+
+	/**
+	 * Returns the index of the first newline character after the specified index.
+	 * @param i - index in the text string
+	 * @return index of the first newline
+	 */
+	private int getLineEnd(int ind) {
+		for (int i = ind; i < text.length(); i++) {
+			if (text.charAt(i) == '\n') {
+				return i;
+			}
+		}
+		return text.length();
+	}
+
+	private int getUpPosition(int ind) {
+		int start = getLineStart(ind);
+		if (start == 0)
+			return -1;
+		int linePos = ind - start;
+		int end = start - 1;
+		return Math.min(getLineStart(end) + linePos, end);
+	}
+
+	private int getDownPosition(int ind) {
+		int end = getLineEnd(ind);
+		if (end == text.length())
+			return -1;
+		int linePos = ind - getLineStart(ind);
+		return Math.min(end + 1 + linePos, getLineEnd(end + 1));
 	}
 
 	private void copyToClipboard() {
