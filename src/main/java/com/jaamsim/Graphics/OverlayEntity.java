@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018-2020 JaamSim Software Inc.
+ * Copyright (C) 2018-2021 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -120,7 +120,8 @@ public abstract class OverlayEntity extends DisplayEntity {
 		return true;
 	}
 
-	public void handleMouseClicked(short count, int x, int y, int windowWidth, int windowHeight) {}
+	public void handleMouseClicked(short count, int x, int y, int windowWidth, int windowHeight,
+			boolean shift, boolean control, boolean alt) {}
 
 	public boolean handleDrag(int x, int y, int startX, int startY, int windowWidth, int windowHeight) {
 		return false;

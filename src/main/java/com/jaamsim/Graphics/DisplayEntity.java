@@ -1006,7 +1006,7 @@ public class DisplayEntity extends Entity {
 		}
 	}
 
-	public void handleMouseClicked(short count, Vec3d globalCoord) {}
+	public void handleMouseClicked(short count, Vec3d globalCoord, boolean shift, boolean control, boolean alt) {}
 
 	public boolean handleDrag(Vec3d currentPt, Vec3d firstPt) {
 		return false;

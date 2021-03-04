@@ -204,7 +204,8 @@ public abstract class TextBasics extends DisplayEntity implements TextEntity, Ed
 	}
 
 	@Override
-	public void handleMouseClicked(short count, Vec3d globalCoord) {
+	public void handleMouseClicked(short count, Vec3d globalCoord,
+			boolean shift, boolean control, boolean alt) {
 		if (count > 2)
 			return;
 

@@ -322,7 +322,8 @@ public class OverlayText extends OverlayEntity implements TextEntity, EditableTe
 	}
 
 	@Override
-	public void handleMouseClicked(short count, int x, int y, int windowWidth, int windowHeight) {
+	public void handleMouseClicked(short count, int x, int y, int windowWidth, int windowHeight,
+			boolean shift, boolean control, boolean alt) {
 		if (count > 2)
 			return;
 

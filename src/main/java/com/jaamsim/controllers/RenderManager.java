@@ -640,7 +640,7 @@ public class RenderManager implements DragSourceListener {
 		boolean shiftDown = (modifiers & WindowInteractionListener.MOD_SHIFT) != 0;
 		boolean controlDown = (modifiers & WindowInteractionListener.MOD_CTRL) != 0;
 		boolean altDown = (modifiers & WindowInteractionListener.MOD_ALT) != 0;
-		if (shiftDown || altDown)
+		if (altDown)
 			return;
 
 		// Find the entity at this location
@@ -676,14 +676,15 @@ public class RenderManager implements DragSourceListener {
 		if (ent instanceof OverlayEntity) {
 			OverlayEntity olEnt = (OverlayEntity) ent;
 			Vec2d size = renderer.getViewableSize(windowID);
-			olEnt.handleMouseClicked(count, x, y, (int)size.x, (int)size.y);
+			olEnt.handleMouseClicked(count, x, y, (int)size.x, (int)size.y,
+					shiftDown, controlDown, altDown);
 			GUIFrame.updateUI();
 			return;
 		}
 
 		// Handle the mouse click for a normal entity
 		Vec3d globalCoord = getGlobalPositionForMouseData(windowID, x, y, ent);
-		ent.handleMouseClicked(count, globalCoord);
+		ent.handleMouseClicked(count, globalCoord, shiftDown, controlDown, altDown);
 		GUIFrame.updateUI();
 	}
 
