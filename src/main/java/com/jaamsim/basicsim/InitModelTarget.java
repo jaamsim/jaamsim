@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2019 JaamSim Software Inc.
+ * Copyright (C) 2019-2021 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
  */
 package com.jaamsim.basicsim;
 
+import com.jaamsim.SubModels.SubModelClone;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.events.ProcessTarget;
 
@@ -36,6 +37,11 @@ public class InitModelTarget extends ProcessTarget {
 	@Override
 	public void process() {
 		Simulation simulation = simModel.getSimulation();
+
+		// Create the components for any sub-model clones
+		for (SubModelClone clone : simModel.getClonesOfIterator(SubModelClone.class)) {
+			clone.update();
+		}
 
 		// Initialise each entity
 		simModel.earlyInit();

@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2016-2020 JaamSim Software Inc.
+ * Copyright (C) 2016-2021 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,6 +34,7 @@ import com.jaamsim.Commands.DefineCommand;
 import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.EntityLabel;
+import com.jaamsim.SubModels.SubModel;
 import com.jaamsim.Graphics.OverlayEntity;
 import com.jaamsim.Graphics.PolylineInfo;
 import com.jaamsim.Graphics.View;
@@ -204,6 +205,11 @@ public class ContextMenu {
 		if (ent instanceof DisplayEntity && !(ent instanceof OverlayEntity)) {
 			menu.addSeparator();
 			ContextMenu.populateDisplayEntityMenu(menu, (DisplayEntity)ent, nodeIndex, c, x, y);
+		}
+
+		// SubModel menu items
+		if (ent instanceof SubModel) {
+			ContextMenu.populateSubModelMenu(menu, (SubModel)ent, nodeIndex, c, x, y);
 		}
 
 		// CompoundEntity menu items
@@ -485,6 +491,24 @@ public class ContextMenu {
 			spitMenuItem.setEnabled(false);
 		}
 		menu.add( spitMenuItem );
+	}
+
+	public static void populateSubModelMenu(JPopupMenu menu, final SubModel submodel, final int nodeIndex,
+			final Component c, final int x, final int y) {
+
+		if (!RenderManager.isGood())
+			return;
+
+		// Select Components
+		JMenuItem updateClonesItem = new JMenuItem( "Update Clones" );
+		updateClonesItem.addActionListener( new ActionListener() {
+
+			@Override
+			public void actionPerformed( ActionEvent event ) {
+				submodel.updateClones();
+			}
+		} );
+		menu.add( updateClonesItem );
 	}
 
 	public static void populateCompoundEntityMenu(JPopupMenu menu, final CompoundEntity ent, final int nodeIndex,

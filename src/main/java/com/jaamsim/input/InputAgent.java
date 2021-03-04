@@ -69,7 +69,8 @@ public class InputAgent {
 
 	private static final String[] EARLY_KEYWORDS = {"UnitType", "UnitTypeList", "OutputUnitType", "SecondaryUnitType",
 	                                                "GregorianCalendar", "StartDate", "DataFile",
-	                                                "AttributeDefinitionList", "CustomOutputList"};
+	                                                "AttributeDefinitionList", "CustomOutputList",
+	                                                "Prototype", "KeywordList"};
 	private static final String[] GRAPHICS_PALETTES = {"Graphics Objects", "View", "Display Models"};
 	private static final String[] GRAPHICS_CATEGORIES = {Entity.GRAPHICS, Entity.FONT, Entity.FORMAT, Entity.GUI};
 

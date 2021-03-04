@@ -16,13 +16,17 @@
  */
 package com.jaamsim.SubModels;
 
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
+import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.GUIListener;
+import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.Keyword;
+import com.jaamsim.ui.DragAndDropable;
 
-public class SubModel extends AbstractSubModel {
+public class SubModel extends AbstractSubModel implements DragAndDropable {
 
 	@Keyword(description = "Defines new keywords for the sub-model and creates new outputs with "
 	                     + "the same names. "
@@ -31,12 +35,18 @@ public class SubModel extends AbstractSubModel {
 	         exampleList = {"{ ServiceTime TimeUnit } { NumberOfUnits }"})
 	protected final PassThroughListInput keywordListInput;
 
+	public static String PALETTE_NAME = "Pre-built SubModels";
+
 	{
 		keywordListInput = new PassThroughListInput("KeywordList", OPTIONS, new ArrayList<PassThroughData>());
 		this.addInput(keywordListInput);
 	}
 
-	public SubModel() {}
+	public SubModel() {
+		GUIListener gui = getJaamSimModel().getGUIListener();
+		if (gui != null)
+			gui.updateModelBuilder();
+	}
 
 	@Override
 	public void updateForInput(Input<?> in) {
@@ -44,11 +54,84 @@ public class SubModel extends AbstractSubModel {
 
 		if (in == keywordListInput) {
 			updateKeywords(keywordListInput.getValue());
+			for (SubModelClone clone : getClones()) {
+				clone.updateKeywords(keywordListInput.getValue());
+			}
 			GUIListener gui = getJaamSimModel().getGUIListener();
 			if (gui != null && gui.isSelected(this))
 				gui.updateInputEditor();
 			return;
 		}
+	}
+
+	@Override
+	public void kill() {
+		super.kill();
+		GUIListener gui = getJaamSimModel().getGUIListener();
+		if (gui != null)
+			gui.updateModelBuilder();
+	}
+
+	@Override
+	public void restore(String name) {
+		super.restore(name);
+		GUIListener gui = getJaamSimModel().getGUIListener();
+		if (gui != null)
+			gui.updateModelBuilder();
+	}
+
+	@Override
+	public void validate() {
+		// If there are clones, only the clones need to be validated
+		if (!getClones().isEmpty())
+			return;
+		super.validate();
+	}
+
+	public void updateClones() {
+		for (SubModelClone clone : getClones()) {
+			clone.update();
+		}
+	}
+
+	/**
+	 * Returns the clones that were made from this prototype sub-model.
+	 * @return list of clones of this prototype.
+	 */
+	public ArrayList<SubModelClone> getClones() {
+		ArrayList<SubModelClone> ret = new ArrayList<>();
+		JaamSimModel simModel = getJaamSimModel();
+		for (SubModelClone clone : simModel.getClonesOfIterator(SubModelClone.class)) {
+			if (clone.isClone(this)) {
+				ret.add(clone);
+			}
+		}
+		return ret;
+	}
+
+	@Override
+	public Class<? extends Entity> getJavaClass() {
+		return SubModelClone.class;
+	}
+
+	@Override
+	public Entity getPrototype() {
+		return this;
+	}
+
+	@Override
+	public boolean isDragAndDrop() {
+		return true;
+	}
+
+	@Override
+	public String getPaletteName() {
+		return PALETTE_NAME;
+	}
+
+	@Override
+	public BufferedImage getIconImage() {
+		return getObjectType().getIconImage();
 	}
 
 }
