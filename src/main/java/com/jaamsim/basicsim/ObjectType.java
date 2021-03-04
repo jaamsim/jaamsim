@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2019 JaamSim Software Inc.
+ * Copyright (C) 2018-2021 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,9 +30,10 @@ import com.jaamsim.input.Keyword;
 import com.jaamsim.input.StringInput;
 import com.jaamsim.input.Vec3dInput;
 import com.jaamsim.math.Vec3d;
+import com.jaamsim.ui.DragAndDropable;
 import com.jaamsim.units.DistanceUnit;
 
-public class ObjectType extends Entity {
+public class ObjectType extends Entity implements DragAndDropable {
 
 	@Keyword(description = "The java class of the object type",
 	         exampleList = {"This is placeholder example text"})
@@ -114,10 +115,17 @@ public class ObjectType extends Entity {
 		getJaamSimModel().removeObjectType(this);
 	}
 
+	@Override
 	public Class<? extends Entity> getJavaClass() {
 		return javaClass.getValue();
 	}
 
+	@Override
+	public Entity getPrototype() {
+		return null;
+	}
+
+	@Override
 	public String getPaletteName() {
 		String s = palette.getValue();
 		if (s != null)
@@ -130,10 +138,12 @@ public class ObjectType extends Entity {
 		return displayEntityDefault;
 	}
 
+	@Override
 	public boolean isDragAndDrop() {
 		return dragAndDrop.getValue();
 	}
 
+	@Override
 	public BufferedImage getIconImage() {
 		return iconFile.getValue();
 	}

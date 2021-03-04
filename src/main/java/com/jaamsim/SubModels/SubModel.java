@@ -16,13 +16,16 @@
  */
 package com.jaamsim.SubModels;
 
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
+import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.GUIListener;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.Keyword;
+import com.jaamsim.ui.DragAndDropable;
 
-public class SubModel extends AbstractSubModel {
+public class SubModel extends AbstractSubModel implements DragAndDropable {
 
 	@Keyword(description = "Defines new keywords for the sub-model and creates new outputs with "
 	                     + "the same names. "
@@ -30,6 +33,8 @@ public class SubModel extends AbstractSubModel {
 	                     + "from either the parent sub-model or from other components.",
 	         exampleList = {"{ ServiceTime TimeUnit } { NumberOfUnits }"})
 	protected final PassThroughListInput keywordListInput;
+
+	public static String PALETTE_NAME = "Pre-built SubModels";
 
 	{
 		keywordListInput = new PassThroughListInput("KeywordList", OPTIONS, new ArrayList<PassThroughData>());
@@ -49,6 +54,31 @@ public class SubModel extends AbstractSubModel {
 				gui.updateInputEditor();
 			return;
 		}
+	}
+
+	@Override
+	public Class<? extends Entity> getJavaClass() {
+		return SubModelClone.class;
+	}
+
+	@Override
+	public Entity getPrototype() {
+		return this;
+	}
+
+	@Override
+	public boolean isDragAndDrop() {
+		return true;
+	}
+
+	@Override
+	public String getPaletteName() {
+		return PALETTE_NAME;
+	}
+
+	@Override
+	public BufferedImage getIconImage() {
+		return getObjectType().getIconImage();
 	}
 
 }
