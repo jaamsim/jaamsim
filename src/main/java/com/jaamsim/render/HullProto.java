@@ -36,37 +36,15 @@ public class HullProto {
 	private ConvexHull _hull;
 	boolean _isLoadedGPU = false;
 
-	private HashMap<Integer, Integer> _vaoMap = new HashMap<>();
+	private static HashMap<Integer, Integer> _vaoMap = new HashMap<>();
 
 	public HullProto(ConvexHull hull) {
 		_hull = hull;
 	}
 
-	private void setupVAO(int contextID, Renderer renderer, int progHandle, int vertexBuffer, int indexBuffer) {
-		GL2GL3 gl = renderer.getGL();
-
-		int vao = renderer.generateVAO(contextID, gl);
-
-		_vaoMap.put(contextID, vao);
-		gl.glBindVertexArray(vao);
-
-		gl.glUseProgram(progHandle);
-
-		int posVar = gl.glGetAttribLocation(progHandle, "position");
-		gl.glEnableVertexAttribArray(posVar);
-
-		gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, vertexBuffer);
-		gl.glVertexAttribPointer(posVar, 3, GL2GL3.GL_FLOAT, false, 0, 0);
-
-		gl.glBindBuffer(GL2GL3.GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
-
-		gl.glBindVertexArray(0);
-
-	}
-
 	public void render(int contextID, Renderer renderer,
-            Mat4d modelViewMat,
-            Camera cam) {
+						Mat4d modelViewMat,
+						Camera cam) {
 
 		GL2GL3 gl = renderer.getGL();
 
@@ -111,19 +89,24 @@ public class HullProto {
 
 		ib.flip();
 
-		gl.glBindBuffer(GL2GL3.GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
-		gl.glBufferData(GL2GL3.GL_ELEMENT_ARRAY_BUFFER, faces.size() * 3 * 4, ib, GL2GL3.GL_STATIC_DRAW);
-
-		gl.glBindBuffer(GL2GL3.GL_ELEMENT_ARRAY_BUFFER, 0);
-
 		if (!_vaoMap.containsKey(contextID)) {
-			setupVAO(contextID, renderer, progHandle, vertexBuffer, indexBuffer);
+			int vao = renderer.generateVAO(contextID, gl);
+			_vaoMap.put(contextID, vao);
 		}
 
 		int vao = _vaoMap.get(contextID);
 		gl.glBindVertexArray(vao);
 
 		gl.glUseProgram(progHandle);
+
+		int posVar = gl.glGetAttribLocation(progHandle, "position");
+		gl.glEnableVertexAttribArray(posVar);
+
+		gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, vertexBuffer);
+		gl.glVertexAttribPointer(posVar, 3, GL2GL3.GL_FLOAT, false, 0, 0);
+
+		gl.glBindBuffer(GL2GL3.GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
+		gl.glBufferData(GL2GL3.GL_ELEMENT_ARRAY_BUFFER, faces.size() * 3 * 4, ib, GL2GL3.GL_STATIC_DRAW);
 
 		// Setup uniforms for this object
 		Mat4d projMat = cam.getProjMat4d();
@@ -135,28 +118,10 @@ public class HullProto {
 		gl.glUniform1f(fcVar, Camera.FC);
 
 		// Actually draw it
-
-		gl.glEnable(GL2GL3.GL_BLEND);
-		gl.glEnable(GL2GL3.GL_CULL_FACE);
-		gl.glCullFace(GL2GL3.GL_BACK);
-
 		gl.glBlendFunc(GL2GL3.GL_ONE, GL2GL3.GL_ONE_MINUS_SRC_ALPHA);
 		gl.glBlendEquation(GL2GL3.GL_FUNC_ADD);
 
-		gl.glDisable(GL2GL3.GL_DEPTH_TEST);
-
-		//gl.glPolygonMode(GL2GL3.GL_FRONT_AND_BACK, GL2GL3.GL_LINE);
-
 		gl.glDrawElements(GL2GL3.GL_TRIANGLES, numIndices, GL2GL3.GL_UNSIGNED_INT, 0);
-
-		//gl.glPolygonMode(GL2GL3.GL_FRONT_AND_BACK, GL2GL3.GL_FILL);
-
-		gl.glEnable(GL2GL3.GL_DEPTH_TEST);
-
-		gl.glDisable(GL2GL3.GL_CULL_FACE);
-		gl.glCullFace(GL2GL3.GL_BACK);
-
-		gl.glDisable(GL2GL3.GL_BLEND);
 
 		gl.glBindVertexArray(0);
 
@@ -164,7 +129,4 @@ public class HullProto {
 
 	}
 
-	public boolean isLoadedGPU() {
-		return _isLoadedGPU;
-	}
 }

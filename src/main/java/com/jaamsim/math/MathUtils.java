@@ -137,6 +137,13 @@ public static double bound(double val, double min, double max) {
 	return val;
 }
 
+public static double vecDistSq3(Vec3d a, Vec3d b) {
+	double dx = a.x - b.x;
+	double dy = a.y - b.y;
+	double dz = a.z - b.z;
+	return dx*dx + dy*dy + dz*dz;
+}
+
 /**
  * Return a matrix that rotates points and projects them onto the ray's view plane.
  * IE: the new coordinate system has the ray pointing in the +Z direction from the origin.

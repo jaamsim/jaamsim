@@ -26,7 +26,7 @@ in float interpZ;
 //layout(location = 0) out vec4 output;
 out vec4 outColour;
 
-const int MAX_SAMPLERS = 8;
+const int MAX_SAMPLERS = 32;
 
 uniform sampler2D diffTexs[MAX_SAMPLERS];
 flat in int diffTexIndexF;

@@ -117,7 +117,7 @@ public class AttributeDefinitionListInput extends ListInput<ArrayList<AttributeH
 			AttributeHandle hNew = new AttributeHandle(thisEnt, h.getName());
 			hNew.setUnitType(h.getUnitType());
 			hNew.setInitialValue(h.getInitialValue());
-			hNew.setValue(h.getValue(0.0d, ExpResult.class));
+			hNew.setValue(h.copyValue());
 			value.add(hNew);
 		}
 	}

@@ -257,7 +257,7 @@ private int meshIndirectBuffer;
 private IntBuffer indirectBufferData;
 
 
-private final int MAX_SAMPLERS = 8; // Keep this in sync with the shaders
+private final int MAX_SAMPLERS = 32; // Keep this in sync with the shaders
 
 private final MeshData data;
 private final ArrayList<SubMesh> _subMeshes;

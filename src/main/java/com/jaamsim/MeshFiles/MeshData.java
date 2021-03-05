@@ -1624,7 +1624,7 @@ public class MeshData {
 			v4Interner = null; // Drop ref to the interner to free memory
 		}
 
-		populateActionList();
+		finalizeData();
 	}
 
 	private class ExportTransVisitor implements TransVisitor {
