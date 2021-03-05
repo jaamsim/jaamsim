@@ -49,7 +49,7 @@ public class ConvexHull {
 
 		ConvexHull ret = null;
 		for (int i = 0; i < numAttempts; ++i) {
-			int seed = (int)((double)i/(double)numAttempts);
+			double seed = ((double)i/(double)numAttempts);
 
 			ret = new ConvexHull(baseVerts, seed, maxNumPoints, interner);
 			if (!ret._isDegenerate || badInput) {
@@ -65,7 +65,7 @@ public class ConvexHull {
 	/**
 	 * Initialize this hull from the vertices provided. This is an implementation of the QuickHull algorithm (or close enough to it)
 	 */
-	public ConvexHull(ArrayList<Vec3d> baseVerts, int seed, int maxNumPoints, Vec3dInterner interner) {
+	public ConvexHull(ArrayList<Vec3d> baseVerts, double seed, int maxNumPoints, Vec3dInterner interner) {
 
 		assert(seed >= 0);
 		assert(seed < 1);
@@ -83,15 +83,15 @@ public class ConvexHull {
 
 		// Create two starting faces (both use the same verts but are wound backwards to face in both directions)
 
-		int ind0 = baseVerts.size() * seed;
-		Vec3d v0 = baseVerts.get(0);
+		int ind0 = (int)(baseVerts.size() * seed);
+		Vec3d v0 = baseVerts.get(ind0);
 		double bestDist = 0;
 		int ind1 = 0;
 		Vec3d temp = new Vec3d();
 		for (int i = 0; i < baseVerts.size(); ++i) {
 			if (i == ind0) continue;
 
-			// Ind1 is the furthest vertex from ind0
+			// Ind1 is the farthest vertex from ind0
 			temp.sub3(v0, baseVerts.get(i));
 			double dist = temp.mag3();
 			if (dist > bestDist) {
@@ -99,7 +99,7 @@ public class ConvexHull {
 				ind1 = i;
 			}
 		}
-		// Now ind2 is the vertex furthest from the line of the above two
+		// Now ind2 is the vertex farthest from the line of the above two
 		bestDist = 0;
 		Vec3d dir = new Vec3d();
 		dir.sub3(v0, baseVerts.get(ind1));
@@ -120,7 +120,8 @@ public class ConvexHull {
 
 		if (ind1 == ind0 ||
 		    ind2 == ind0 ||
-		    ind1 == ind2) {
+		    ind1 == ind2 ||
+			bestDist < 0.00001) {
 			makeDegenerate(baseVerts);
 			return;
 		}
@@ -129,9 +130,6 @@ public class ConvexHull {
 		TempHullFace f1 = new TempHullFace(ind0, ind2, ind1, baseVerts);
 		tempFaces.add(f0);
 		tempFaces.add(f1);
-
-		// Make sure the planes do not face each other
-		assert(f0.plane.normal.dot3(f1.plane.normal) < 0.9999 );
 
 		boolean planar = true;
 
@@ -185,7 +183,7 @@ public class ConvexHull {
 			for (Iterator<TempHullFace> it = tempFaces.iterator(); it.hasNext(); ) {
 				TempHullFace tempFace = it.next();
 
-				if (tempFace.plane.getNormalDist(farVert) > -0.00001) { // Non zero to allow a bit of floating point round off and avoid degenerate faces
+				if (tempFace.getPointAngle(farVert, baseVerts) > -0.00001) { // Non zero to allow a bit of floating point round off and avoid degenerate faces
 					// This face can see this point, and is therefore not part of the hull
 					deadFaces.add(tempFace);
 					it.remove();
@@ -530,6 +528,19 @@ public class ConvexHull {
 			}
 			assert(dist > -0.000001);
 			points.add(ind);
+		}
+
+		// Return the sine of the angle from the plane to the nearest point
+		public double getPointAngle(Vec3d pt, ArrayList<Vec3d> verts) {
+			double nearDistSq = Double.MAX_VALUE;
+			for (int i = 0; i < 3; ++i) {
+				Vec3d vert = verts.get(indices[i]);
+				double distSq = MathUtils.vecDistSq3(pt, vert);
+				nearDistSq = Math.min(distSq, nearDistSq);
+			}
+			double nearDist = Math.sqrt(nearDistSq);
+			double dist = plane.getNormalDist(pt);
+			return dist/nearDist;
 		}
 
 	}
