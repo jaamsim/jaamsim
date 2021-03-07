@@ -30,6 +30,7 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.net.URI;
 
 import javax.swing.AbstractAction;
 import javax.swing.AbstractCellEditor;
@@ -51,6 +52,7 @@ import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.KeywordIndex;
+import com.jaamsim.input.ParseContext;
 import com.jaamsim.ui.EditBox.EditTable;
 
 public abstract class CellEditor extends AbstractCellEditor implements TableCellEditor, ActionListener {
@@ -365,7 +367,12 @@ public abstract class CellEditor extends AbstractCellEditor implements TableCell
 
 			try {
 				// Parse the keyword inputs
-				KeywordIndex kw = InputAgent.formatInput(in.getKeyword(), str);
+				ParseContext pc = null;
+				if (GUIFrame.getJaamSimModel().getConfigFile() != null) {
+					URI configDirURI = GUIFrame.getJaamSimModel().getConfigFile().getParentFile().toURI();
+					pc = new ParseContext(configDirURI, null);
+				}
+				KeywordIndex kw = InputAgent.formatInput(in.getKeyword(), str, pc);
 				InputAgent.storeAndExecute(new KeywordCommand(ent, kw));
 				in.setValid(true);
 			}

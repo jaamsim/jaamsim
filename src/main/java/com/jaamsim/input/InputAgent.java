@@ -1721,9 +1721,13 @@ public class InputAgent {
 	}
 
 	public static KeywordIndex formatInput(String keyword, String str) {
+		return formatInput(keyword, str, null);
+	}
+
+	public static KeywordIndex formatInput(String keyword, String str, ParseContext pc) {
 		ArrayList<String> tokens = new ArrayList<>();
 		Parser.tokenize(tokens, str, true);
-		return new KeywordIndex(keyword, tokens, null);
+		return new KeywordIndex(keyword, tokens, pc);
 	}
 
 	/**
