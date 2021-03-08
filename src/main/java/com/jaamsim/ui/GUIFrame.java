@@ -541,6 +541,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		}
 		sim.closeLogFile();
 		simList.remove(sim);
+		sim.pause();
+		sim.clear();
 		if (simList.isEmpty())
 			GUIFrame.shutdown(0);
 		setJaamSimModel(simList.get(0));
