@@ -333,7 +333,7 @@ public class ColladaModel extends DisplayModel {
 
 	@Output (name = "Actions")
 	public String getActionsOutput(double simTime) {
-		if (colladaFile.getValue() == null)
+		if (!RenderManager.isGood() || colladaFile.getValue() == null)
 			return "";
 		MeshProtoKey meshKey = getCachedMeshKey(colladaFile.getValue());
 		ArrayList<Action.Description> actionDescs = RenderManager.inst().getMeshActions(meshKey, true);
