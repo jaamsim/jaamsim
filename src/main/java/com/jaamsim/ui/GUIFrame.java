@@ -3904,7 +3904,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	}
 
 	private void updateToolVisibilities(Simulation simulation) {
-		boolean iconified = isIconified();
+		boolean iconified = isIconified() || simulation.isPresentationMode();
 		setFrameVisibility(EntityPallet.getInstance(), !iconified && simulation.isModelBuilderVisible());
 		setFrameVisibility(ObjectSelector.getInstance(), !iconified && simulation.isObjectSelectorVisible());
 		setFrameVisibility(EditBox.getInstance(), !iconified && simulation.isInputEditorVisible());
