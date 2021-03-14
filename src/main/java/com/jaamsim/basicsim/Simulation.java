@@ -221,6 +221,10 @@ public class Simulation extends Entity {
 	         exampleList = {"TRUE"})
 	private final BooleanInput showSubModels;
 
+	@Keyword(description = "The state of the 'Presentation Mode' button on the Control Panel.",
+	         exampleList = {"TRUE"})
+	private final BooleanInput presentationMode;
+
 	@Keyword(description = "The state of the 'Show Entity Flow' button on the Control Panel.",
 	         exampleList = {"TRUE"})
 	private final BooleanInput showEntityFlow;
@@ -462,6 +466,11 @@ public class Simulation extends Entity {
 		showSubModels.setPromptReqd(false);
 		showSubModels.setHidden(true);
 		this.addInput(showSubModels);
+
+		presentationMode = new BooleanInput("PresentationMode", GUI, false);
+		presentationMode.setPromptReqd(false);
+		presentationMode.setHidden(true);
+		this.addInput(presentationMode);
 
 		showEntityFlow = new BooleanInput("ShowEntityFlow", GUI, false);
 		showEntityFlow.setPromptReqd(false);
@@ -836,6 +845,10 @@ public class Simulation extends Entity {
 
 	public boolean isShowSubModels() {
 		return showSubModels.getValue();
+	}
+
+	public boolean isPresentationMode() {
+		return presentationMode.getValue();
 	}
 
 	public boolean isShowEntityFlow() {

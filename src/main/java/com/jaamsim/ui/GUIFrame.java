@@ -203,6 +203,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 	private JToggleButton showLabels;
 	private JToggleButton showSubModels;
+	private JToggleButton presentMode;
 
 	private JToggleButton showLinks;
 	private JToggleButton createLinks;
@@ -1277,6 +1278,10 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		buttonBar.addSeparator(separatorDim);
 		addUndoButtons(buttonBar, noMargin);
 
+		// Presentation Mode button
+		buttonBar.addSeparator(separatorDim);
+		addPresentationModeButton(buttonBar, noMargin);
+
 		// 2D, axes, and grid buttons
 		buttonBar.addSeparator(separatorDim);
 		add2dButton(buttonBar, smallMargin);
@@ -1654,6 +1659,27 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			}
 		} );
 		buttonBar.add( showSubModels );
+	}
+
+	private void addPresentationModeButton(JToolBar buttonBar, Insets margin) {
+		presentMode = new JToggleButton( new ImageIcon(
+				GUIFrame.class.getResource("/resources/images/PresentationMode-16.png")) );
+		presentMode.setMargin(margin);
+		presentMode.setFocusPainted(false);
+		presentMode.setRequestFocusEnabled(false);
+		presentMode.setToolTipText(formatToolTip("Presentation Mode",
+				"Closes the tool windows and expands the view window to its maximum size."));
+		presentMode.addActionListener( new ActionListener() {
+
+			@Override
+			public void actionPerformed( ActionEvent event ) {
+				boolean bool = presentMode.isSelected();
+				KeywordIndex kw = InputAgent.formatBoolean("PresentationMode", bool);
+				InputAgent.storeAndExecute(new KeywordCommand(sim.getSimulation(), kw));
+				controlStartResume.requestFocusInWindow();
+			}
+		} );
+		buttonBar.add( presentMode );
 	}
 
 	private void addSnapToGridButton(JToolBar buttonBar, Insets margin) {
@@ -3173,6 +3199,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		updateForSnapGridSpacing(simulation.getSnapGridSpacingString());
 		updateShowLabelsButton(simulation.isShowLabels());
 		updateShowSubModelsButton(simulation.isShowSubModels());
+		updatePresentationModeButton(simulation.isPresentationMode());
 		updateShowEntityFlowButton(simulation.isShowEntityFlow());
 		updateToolVisibilities(simulation);
 		updateToolSizes(simulation);
@@ -3823,6 +3850,12 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		showSubModels.setSelected(bool);
 		sim.showSubModels(bool);
 		updateUI();
+	}
+
+	private void updatePresentationModeButton(boolean bool) {
+		if (presentMode.isSelected() == bool)
+			return;
+		presentMode.setSelected(bool);
 	}
 
 	private void updateShowEntityFlowButton(boolean bool) {
