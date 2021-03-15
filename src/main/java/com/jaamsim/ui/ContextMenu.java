@@ -104,6 +104,7 @@ public class ContextMenu {
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
+				GUIFrame.getInstance().clearPresentationMode();
 				InputAgent.applyBoolean(simulation, "ShowInputEditor", true);
 				FrameBox.setSelectedEntity(ent, false);
 			}
@@ -119,6 +120,7 @@ public class ContextMenu {
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
+				GUIFrame.getInstance().clearPresentationMode();
 				InputAgent.applyBoolean(simulation, "ShowOutputViewer", true);
 				FrameBox.setSelectedEntity(ent, false);
 			}
@@ -134,6 +136,7 @@ public class ContextMenu {
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
+				GUIFrame.getInstance().clearPresentationMode();
 				InputAgent.applyBoolean(simulation, "ShowPropertyViewer", true);
 				FrameBox.setSelectedEntity(ent, false);
 			}

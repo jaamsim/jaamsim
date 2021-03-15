@@ -839,6 +839,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
+				clearPresentationMode();
 				EntityPallet.getInstance().toFront();
 				ObjectSelector.getInstance().toFront();
 				EditBox.getInstance().toFront();
@@ -880,6 +881,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				clearPresentationMode();
 				EntityPallet.getInstance().toFront();
 				KeywordIndex kw = InputAgent.formatBoolean("ShowModelBuilder", true);
 				InputAgent.storeAndExecute(new KeywordCommand(sim.getSimulation(), kw));
@@ -895,6 +897,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				clearPresentationMode();
 				ObjectSelector.getInstance().toFront();
 				KeywordIndex kw = InputAgent.formatBoolean("ShowObjectSelector", true);
 				InputAgent.storeAndExecute(new KeywordCommand(sim.getSimulation(), kw));
@@ -909,6 +912,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				clearPresentationMode();
 				EditBox.getInstance().toFront();
 				KeywordIndex kw = InputAgent.formatBoolean("ShowInputEditor", true);
 				InputAgent.storeAndExecute(new KeywordCommand(sim.getSimulation(), kw));
@@ -923,6 +927,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				clearPresentationMode();
 				OutputBox.getInstance().toFront();
 				KeywordIndex kw = InputAgent.formatBoolean("ShowOutputViewer", true);
 				InputAgent.storeAndExecute(new KeywordCommand(sim.getSimulation(), kw));
@@ -937,6 +942,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				clearPresentationMode();
 				PropertyBox.getInstance().toFront();
 				KeywordIndex kw = InputAgent.formatBoolean("ShowPropertyViewer", true);
 				InputAgent.storeAndExecute(new KeywordCommand(sim.getSimulation(), kw));
@@ -951,6 +957,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				clearPresentationMode();
 				LogBox.getInstance().toFront();
 				KeywordIndex kw = InputAgent.formatBoolean("ShowLogViewer", true);
 				InputAgent.storeAndExecute(new KeywordCommand(sim.getSimulation(), kw));
@@ -965,6 +972,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				clearPresentationMode();
 				EventViewer.getInstance().toFront();
 				KeywordIndex kw = InputAgent.formatBoolean("ShowEventViewer", true);
 				InputAgent.storeAndExecute(new KeywordCommand(sim.getSimulation(), kw));
@@ -978,6 +986,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		resetItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed( ActionEvent e ) {
+				clearPresentationMode();
 				sim.getSimulation().resetWindowPositionsAndSizes();
 			}
 		} );
@@ -3856,6 +3865,12 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		if (presentMode.isSelected() == bool)
 			return;
 		presentMode.setSelected(bool);
+	}
+
+	public void clearPresentationMode() {
+		if (!presentMode.isSelected())
+			return;
+		presentMode.doClick();
 	}
 
 	private void updateShowEntityFlowButton(boolean bool) {
