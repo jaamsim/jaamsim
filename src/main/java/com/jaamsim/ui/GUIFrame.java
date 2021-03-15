@@ -4089,6 +4089,16 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	public IntegerVector getWindowPos(View v) {
 		Point fix = OSFix.getLocationAdustment();  //FIXME
 		IntegerVector ret = new IntegerVector(v.getWindowPos());
+
+		// Presentation mode
+		View activeView = null;
+		if (RenderManager.isGood())
+			activeView = RenderManager.inst().getActiveView();
+		if (presentMode.isSelected() && v == activeView) {
+			ret.set(0, COL1_START);
+			ret.set(1, TOP_START);
+		}
+
 		Point pt = getGlobalLocation(ret.get(0), ret.get(1));
 		ret.set(0, pt.x + fix.x);
 		ret.set(1, pt.y + fix.y);
@@ -4098,12 +4108,24 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	public IntegerVector getWindowSize(View v) {
 		Point fix = OSFix.getSizeAdustment();  //FIXME
 		IntegerVector ret = new IntegerVector(v.getWindowSize());
+
+		// Presentation mode
+		View activeView = null;
+		if (RenderManager.isGood())
+			activeView = RenderManager.inst().getActiveView();
+		if (presentMode.isSelected() && v == activeView) {
+			ret.set(0, VIEW_WIDTH + COL1_WIDTH);
+			ret.set(1, VIEW_HEIGHT + LOWER_HEIGHT);
+		}
+
 		ret.addAt(fix.x, 0);
 		ret.addAt(fix.y, 1);
 		return ret;
 	}
 
 	public void setWindowPos(View v, int x, int y, int width, int height) {
+		if (presentMode.isSelected())
+			return;
 		Point posFix = OSFix.getLocationAdustment();
 		Point sizeFix = OSFix.getSizeAdustment();
 		Point pt = getRelativeLocation(x - posFix.x, y - posFix.y);
