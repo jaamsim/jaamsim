@@ -625,6 +625,11 @@ public class Queue extends LinkedComponent {
 	}
 
 	@Override
+	public boolean canLink(boolean dir) {
+		return true;
+	}
+
+	@Override
 	public void linkTo(DisplayEntity nextEnt) {
 		if (!(nextEnt instanceof LinkedService))
 			return;

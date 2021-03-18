@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2016-2020 JaamSim Software Inc.
+ * Copyright (C) 2016-2021 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -149,6 +149,11 @@ public abstract class LinkedDevice extends Device implements Linkable {
 	public void clearStatistics() {
 		super.clearStatistics();
 		processor.clearStatistics();
+	}
+
+	@Override
+	public boolean canLink(boolean dir) {
+		return !nextComponent.getHidden();
 	}
 
 	@Override

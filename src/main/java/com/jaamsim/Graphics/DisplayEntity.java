@@ -1013,6 +1013,15 @@ public class DisplayEntity extends Entity {
 	}
 
 	/**
+	 * Returns whether this entity can link in the specified direction to another entity.
+	 * @param dir - entity flow direction
+	 * @return true if a link can be started
+	 */
+	public boolean canLink(boolean dir) {
+		return false;
+	}
+
+	/**
 	 * An overloadable method that is called when the 'create link' feature is enabled and selection changes
 	 * @param nextEnt
 	 */

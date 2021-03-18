@@ -421,8 +421,11 @@ public class RenderManager implements DragSourceListener {
 					// Show a rubber band arrow from the selected entity to the mouse position
 					if (createLinks.get() && isSingleEntitySelected() && mouseWindowID > 0) {
 						DisplayEntity selectedEntity = getSelectedEntity();
-						Vec3d source = selectedEntity.getSourcePoint(linkDirection.get());
-						addLink(source, mousePosition, 0.0d, 0.0d, linkDirection.get(), delta, cachedScene);
+						boolean dir = linkDirection.get();
+						if (selectedEntity.canLink(dir)) {
+							Vec3d source = selectedEntity.getSourcePoint(dir);
+							addLink(source, mousePosition, 0.0d, 0.0d, dir, delta, cachedScene);
+						}
 					}
 
 					endNanos = System.nanoTime();
@@ -1000,13 +1003,14 @@ public class RenderManager implements DragSourceListener {
 			selectedEntityList.clear();
 			selectedEntityList.add(selectedEntity);
 
-			if (createLinks.get() && canMakeLink) {
-				if (selectedEntity != null && oldEnt != null && oldEnt != selectedEntity) {
-					try {
-						oldEnt.linkTo(selectedEntity, linkDirection.get());
-					}
-					catch (InputErrorException e) {}
+			boolean dir = linkDirection.get();
+			if (createLinks.get() && canMakeLink && selectedEntity != oldEnt
+					&& oldEnt != null && selectedEntity != null
+					&& oldEnt.canLink(dir)) {
+				try {
+					oldEnt.linkTo(selectedEntity, dir);
 				}
+				catch (InputErrorException e) {}
 			}
 
 		}
