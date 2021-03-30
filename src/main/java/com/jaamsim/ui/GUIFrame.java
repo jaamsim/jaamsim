@@ -4645,6 +4645,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		}
 		catch (Exception e) {
 			GUIFrame.showErrorDialog("File Error", e.getMessage());
+			LogBox.logException(e);
 		}
 	}
 
