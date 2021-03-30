@@ -30,10 +30,12 @@ import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
+import com.jaamsim.input.ValueInput;
 import com.jaamsim.states.DowntimeUser;
 import com.jaamsim.states.StateEntity;
 import com.jaamsim.states.StateEntityListener;
 import com.jaamsim.states.StateRecord;
+import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
 
 public class DowntimeEntity extends StateEntity implements StateEntityListener {
@@ -79,6 +81,13 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
             exampleList = {"1"})
 	protected final IntegerInput maxDowntimesPending;
 
+	@Keyword(description = "The total time from the scheduled start time that the downtime event should be completed within.  "
+			             + "For example, if the scheduled start time is 100 h and the completion time limit is 48 h, the event "
+			             + "will be recorded as late in the 'LateEvents' output if it is not completed by 148h.",
+            exampleList = {"48 h"})
+	protected final ValueInput completionTimeLimit;
+
+
 	private final ArrayList<DowntimeUser> downtimeUserList;  // entities that use this downtime entity
 	private boolean down;             // true for the duration of a downtime event
 	private int downtimePendings;    // number of queued downtime events
@@ -91,6 +100,9 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 	private double endTime;          // the end time of the latest downtime event
 
 	private static final String STATE_DOWNTIME = "Downtime";
+
+	private int numLateEvents;    // Number of events that did not finish within the completion time limit
+	private double targetCompletionTime; // the time that the latest downtime event should be completed
 
 	{
 		workingStateListInput.setHidden(true);
@@ -127,6 +139,10 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 		maxDowntimesPending = new IntegerInput("MaxDowntimesPending", "Key Inputs", Integer.MAX_VALUE);
 		maxDowntimesPending.setValidRange(1, Integer.MAX_VALUE);
 		this.addInput(maxDowntimesPending);
+
+		completionTimeLimit = new ValueInput("CompletionTimeLimit","Key Inputs", Double.POSITIVE_INFINITY);
+		completionTimeLimit.setUnitType(TimeUnit.class);
+		this.addInput(completionTimeLimit);
 	}
 
 	public DowntimeEntity(){
@@ -143,6 +159,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 		downtimePendingStartTime = 0.0;
 		startTime = 0;
 		endTime = 0;
+		numLateEvents = 0;
 
 		if (!this.isActive())
 			return;
@@ -173,6 +190,12 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
     public void startUp() {
 		super.startUp();
 		checkProcessNetwork();
+	}
+
+	@Override
+	public void clearStatistics() {
+		super.clearStatistics();
+		numLateEvents = 0;
 	}
 
 	/**
@@ -345,6 +368,8 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 		if( downtimePendings == 1 )
 			downtimePendingStartTime = this.getSimTime();
 
+		targetCompletionTime = this.getSimTime() + completionTimeLimit.getValue();
+
 		// Determine the time the next downtime event is due
 		// Calendar time based
 		if( iatWorkingEntity.getValue() == null ) {
@@ -408,6 +433,11 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 		// Loop through all objects that this object is watching and try to restart them.
 		for (DowntimeUser each : downtimeUserList) {
 			each.endDowntime(this);
+		}
+
+		// If this event was late, increment counter
+		if(this.getSimTime() > targetCompletionTime ) {
+			numLateEvents++;
 		}
 
 		this.checkProcessNetwork();
@@ -585,4 +615,12 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 		return 1.0d - down/total;
 	}
 
+	@Output(name = "LateEvents",
+	 description = "Number of events that did not finish within the Completion Time limit.",
+	    unitType = DimensionlessUnit.class,
+	  reportable = true,
+	    sequence = 6)
+	public double getLateEvents(double simTime) {
+		return numLateEvents;
+	}
 }
