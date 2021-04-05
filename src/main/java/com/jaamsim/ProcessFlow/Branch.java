@@ -92,7 +92,7 @@ public class Branch extends LinkedComponent {
 	}
 
 	@Override
-	public void linkTo(DisplayEntity nextEnt) {
+	public void linkTo(DisplayEntity nextEnt, boolean dir) {
 		if (!(nextEnt instanceof Linkable) || nextEnt instanceof EntityGenerator) {
 			return;
 		}

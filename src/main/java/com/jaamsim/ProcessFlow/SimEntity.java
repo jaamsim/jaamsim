@@ -83,7 +83,7 @@ public class SimEntity extends StateEntity {
 	}
 
 	@Override
-	public void linkTo(DisplayEntity nextEnt) {
+	public void linkTo(DisplayEntity nextEnt, boolean dir) {
 		if (!(nextEnt instanceof EntityGen))
 			return;
 

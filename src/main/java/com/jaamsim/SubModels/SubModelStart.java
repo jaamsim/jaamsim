@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2018-2020 JaamSim Software Inc.
+ * Copyright (C) 2018-2021 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,7 +46,7 @@ public class SubModelStart extends DisplayEntity implements Linkable {
 	}
 
 	@Override
-	public void linkTo(DisplayEntity nextEnt) {
+	public void linkTo(DisplayEntity nextEnt, boolean dir) {
 		if (nextComponent.getHidden() || !(nextEnt instanceof Linkable)
 				|| nextEnt instanceof EntityGenerator) {
 			return;

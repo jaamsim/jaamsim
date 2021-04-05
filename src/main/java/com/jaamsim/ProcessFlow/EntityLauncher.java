@@ -107,7 +107,7 @@ public class EntityLauncher extends GameEntity implements EntityGen {
 	}
 
 	@Override
-	public void linkTo(DisplayEntity nextEnt) {
+	public void linkTo(DisplayEntity nextEnt, boolean dir) {
 		if (nextComponent.getHidden() || !(nextEnt instanceof Linkable)
 				|| nextEnt instanceof EntityGenerator) {
 			return;
