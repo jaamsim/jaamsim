@@ -120,9 +120,8 @@ public class Duplicate extends LinkedComponent {
 			super.linkTo(nextEnt);
 			return;
 		}
-		if (!(nextEnt instanceof Linkable) || nextEnt instanceof EntityGenerator) {
+		if (!(nextEnt instanceof Linkable) || nextEnt instanceof EntityGen)
 			return;
-		}
 
 		ArrayList<String> toks = new ArrayList<>();
 		targetComponentList.getValueTokens(toks);

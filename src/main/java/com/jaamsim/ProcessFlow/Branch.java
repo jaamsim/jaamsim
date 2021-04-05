@@ -93,9 +93,8 @@ public class Branch extends LinkedComponent {
 
 	@Override
 	public void linkTo(DisplayEntity nextEnt, boolean dir) {
-		if (!(nextEnt instanceof Linkable) || nextEnt instanceof EntityGenerator) {
+		if (!(nextEnt instanceof Linkable) || nextEnt instanceof EntityGen)
 			return;
-		}
 
 		ArrayList<String> toks = new ArrayList<>();
 		nextComponentList.getValueTokens(toks);

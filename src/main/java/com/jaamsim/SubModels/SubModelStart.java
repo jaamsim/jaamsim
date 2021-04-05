@@ -20,7 +20,7 @@ import java.util.ArrayList;
 
 import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.Graphics.DisplayEntity;
-import com.jaamsim.ProcessFlow.EntityGenerator;
+import com.jaamsim.ProcessFlow.EntityGen;
 import com.jaamsim.ProcessFlow.Linkable;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InterfaceEntityInput;
@@ -47,10 +47,8 @@ public class SubModelStart extends DisplayEntity implements Linkable {
 
 	@Override
 	public void linkTo(DisplayEntity nextEnt, boolean dir) {
-		if (nextComponent.getHidden() || !(nextEnt instanceof Linkable)
-				|| nextEnt instanceof EntityGenerator) {
+		if (!(nextEnt instanceof Linkable) || nextEnt instanceof EntityGen)
 			return;
-		}
 
 		ArrayList<String> toks = new ArrayList<>();
 		toks.add(nextEnt.getName());

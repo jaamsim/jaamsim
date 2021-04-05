@@ -108,10 +108,8 @@ public class EntityLauncher extends GameEntity implements EntityGen {
 
 	@Override
 	public void linkTo(DisplayEntity nextEnt, boolean dir) {
-		if (nextComponent.getHidden() || !(nextEnt instanceof Linkable)
-				|| nextEnt instanceof EntityGenerator) {
+		if (!(nextEnt instanceof Linkable) || nextEnt instanceof EntityGen)
 			return;
-		}
 
 		ArrayList<String> toks = new ArrayList<>();
 		toks.add(nextEnt.getName());

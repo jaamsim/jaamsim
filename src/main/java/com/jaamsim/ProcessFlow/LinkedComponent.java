@@ -209,9 +209,8 @@ public abstract class LinkedComponent extends StateEntity implements SubjectEnti
 	@Override
 	public void linkTo(DisplayEntity nextEnt, boolean dir) {
 		if (nextComponent.getHidden() || !(nextEnt instanceof Linkable)
-				|| nextEnt instanceof EntityGenerator) {
+				|| nextEnt instanceof EntityGen)
 			return;
-		}
 
 		ArrayList<String> toks = new ArrayList<>();
 		toks.add(nextEnt.getName());
