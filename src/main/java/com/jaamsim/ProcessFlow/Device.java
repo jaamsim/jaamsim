@@ -279,6 +279,9 @@ public abstract class Device extends StateUserEntity implements ObserverEntity, 
 
 		processing = false;
 
+		// Set any actions that must be done prior to calling processChanged
+		this.prepareToStop();
+
 		// Notify other processes that are dependent on this one
 		this.processChanged();
 
@@ -395,6 +398,12 @@ public abstract class Device extends StateUserEntity implements ObserverEntity, 
 	 * @return whether to start a new time step
 	 */
 	protected abstract boolean isNewStepReqd(boolean completed);
+
+	/**
+	 * Performs any actions that must be done to stop the process prior to calling
+	 * setProcessChanged.
+	 */
+	protected void prepareToStop() {}
 
 	/**
 	 * Set the process to its stopped condition.
