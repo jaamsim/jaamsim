@@ -104,6 +104,8 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 	private int numLateEvents;    // Number of events that did not finish within the completion time limit
 	private double targetCompletionTime; // the time that the latest downtime event should be completed
 
+	private double totalLateTime;  // Total time after completion time limit that the downtime took to complete
+
 	{
 		workingStateListInput.setHidden(true);
 
@@ -160,6 +162,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 		startTime = 0;
 		endTime = 0;
 		numLateEvents = 0;
+		totalLateTime = 0;
 
 		if (!this.isActive())
 			return;
@@ -196,6 +199,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 	public void clearStatistics() {
 		super.clearStatistics();
 		numLateEvents = 0;
+		totalLateTime = 0;
 	}
 
 	/**
@@ -438,6 +442,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 		// If this event was late, increment counter
 		if(this.getSimTime() > targetCompletionTime ) {
 			numLateEvents++;
+			totalLateTime += (this.getSimTime() - targetCompletionTime);
 		}
 
 		this.checkProcessNetwork();
@@ -622,5 +627,14 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 	    sequence = 6)
 	public double getLateEvents(double simTime) {
 		return numLateEvents;
+	}
+
+	@Output(name = "TotalLateTime",
+	 description = "Total hours after completion time limit that the downtime took to complete.",
+	    unitType = TimeUnit.class,
+	  reportable = true,
+	    sequence = 7)
+	public double getTotalLateTime(double simTime) {
+		return totalLateTime;
 	}
 }
