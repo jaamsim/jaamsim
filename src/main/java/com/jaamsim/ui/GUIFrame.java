@@ -266,7 +266,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 	private static final RateLimiter rateLimiter;
 
-	private static boolean SAFE_GRAPHICS;
+	private static boolean SAFE_GRAPHICS = true;
 
 	// Collection of default window parameters
 	int DEFAULT_GUI_WIDTH;
