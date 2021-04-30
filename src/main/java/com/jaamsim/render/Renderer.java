@@ -103,7 +103,7 @@ public class Renderer implements GLAnimatorControl {
 		return nextAssetID.incrementAndGet();
 	}
 
-	private static boolean USE_DEBUG_GL = true;
+	private static boolean USE_DEBUG_GL = false;
 	private static boolean DEBUG_DRAW_AABBS = false;
 	private static boolean DEBUG_DRAW_HULLS = false;
 	private static boolean DEBUG_DRAW_ARMATURES = false;
