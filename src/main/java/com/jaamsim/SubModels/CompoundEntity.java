@@ -17,7 +17,7 @@
 package com.jaamsim.SubModels;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.EntityLabel;
@@ -40,7 +40,7 @@ public abstract class CompoundEntity extends LinkedComponent {
 	         exampleList = {"FALSE"})
 	protected final BooleanInput showComponents;
 
-	private final HashMap<String, Entity> namedChildren = new HashMap<>();
+	private final LinkedHashMap<String, Entity> namedChildren = new LinkedHashMap<>();
 	private SubModelStart smStart;
 	private Region smRegion;
 
