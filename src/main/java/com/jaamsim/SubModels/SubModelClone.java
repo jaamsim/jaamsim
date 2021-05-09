@@ -16,6 +16,8 @@
  */
 package com.jaamsim.SubModels;
 
+import java.util.LinkedHashMap;
+
 import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.Region;
@@ -146,6 +148,15 @@ public class SubModelClone extends AbstractSubModel {
 	protected void setComponentInputs() {
 		AbstractSubModel proto = prototype.getValue();
 
+		// Save the seeds for the components that use a random distribution
+		LinkedHashMap<Entity, Integer> seedMap = new LinkedHashMap<>();
+		for (Entity comp : getChildren()) {
+			if (!(comp instanceof RandomStreamUser))
+				continue;
+			seedMap.put(comp, ((RandomStreamUser) comp).getStreamNumber());
+		}
+		//System.out.println(seedMap);
+
 		// Set the early and normal keywords for each component
 		for (int seq = 0; seq < 2; seq++) {
 			for (Entity protoComp : proto.getChildren()) {
@@ -155,18 +166,20 @@ public class SubModelClone extends AbstractSubModel {
 			}
 		}
 
-		// Ensure that any random stream inputs have a unique stream number
-		for (Entity comp : getChildren()) {
-			if (!(comp instanceof RandomStreamUser))
-				continue;
-			RandomStreamUser rsu = (RandomStreamUser) comp;
-			int seed = rsu.getStreamNumber();
-			if (seed < 0 || getSimulation().getRandomStreamUsers(seed).size() > 1) {
+		// Reset the stream number inputs for the random distributions to the saved values
+		for (Entity comp : seedMap.keySet()) {
+			String name = comp.getLocalName();
+			Entity protoComp = proto.getChild(name);
+
+			// Assign a new seed if it is the same as the seed for the parent component
+			int seed = seedMap.get(comp).intValue();
+			if (seed == -1 || seed == ((RandomStreamUser) protoComp).getStreamNumber())
 				seed = getSimulation().getLargestStreamNumber() + 1;
-				String key = rsu.getStreamNumberKeyword();
-				InputAgent.applyIntegers(comp, key, seed);
-				comp.getInput(key).setLocked(true);
-			}
+
+			//System.out.format("comp=%s, seed=%s%n", comp, seed);
+			String key = ((RandomStreamUser) comp).getStreamNumberKeyword();
+			InputAgent.applyIntegers(comp, key, seed);
+			comp.getInput(key).setLocked(true);
 		}
 
 		// Set the "Show" input for each component
