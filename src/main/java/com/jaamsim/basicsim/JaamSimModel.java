@@ -381,6 +381,15 @@ public class JaamSimModel {
 		}
 	}
 
+	/**
+	 * Performs the shut down procedure for each entity.
+	 */
+	public void close() {
+		for (Entity each : getClonesOfIterator(Entity.class)) {
+			each.close();
+		}
+	}
+
 	public void doPauseCondition() {
 		if (getSimulation().isPauseConditionSet())
 			EventManager.scheduleUntil(pauseModelTarget, pauseCondition, null);

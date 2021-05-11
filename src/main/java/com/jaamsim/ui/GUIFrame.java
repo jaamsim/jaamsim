@@ -543,6 +543,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		sim.closeLogFile();
 		simList.remove(sim);
 		sim.pause();
+		sim.close();
 		sim.clear();
 		if (simList.isEmpty())
 			GUIFrame.shutdown(0);

@@ -283,6 +283,12 @@ public class Entity {
 	public void doEnd() {}
 
 	/**
+	 * Performs any actions that are required when a model is closed prior to its scheduled end
+	 * time. For example, an entity may need to close a file that it opened.
+	 */
+	public void close() {}
+
+	/**
 	 * Get the current Simulation ticks value.
 	 * @return the current simulation tick
 	 */
