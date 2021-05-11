@@ -1818,8 +1818,11 @@ public class RenderManager implements DragSourceListener {
 		ent.setInputsForDragAndDrop();
 
 		// Set the link from the selected entity
-		if (createLinks.get() && isSingleEntitySelected() && ent instanceof DisplayEntity)
-			getSelectedEntity().linkTo((DisplayEntity) ent, linkDirection.get());
+		boolean dir = linkDirection.get();
+		if (createLinks.get() && isSingleEntitySelected() && ent instanceof DisplayEntity
+				&& getSelectedEntity().canLink(dir)) {
+			getSelectedEntity().linkTo((DisplayEntity) ent, dir);
+		}
 
 		// We are no longer drag-and-dropping
 		dndObjectType = null;
