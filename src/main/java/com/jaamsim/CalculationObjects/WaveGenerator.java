@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016 JaamSim Software Inc.
+ * Copyright (C) 2016-2021 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,10 +17,15 @@
  */
 package com.jaamsim.CalculationObjects;
 
+import java.util.ArrayList;
+
+import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleProvider;
 import com.jaamsim.input.Input;
+import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
+import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.UnitTypeInput;
 import com.jaamsim.input.ValueInput;
@@ -132,6 +137,41 @@ public abstract class WaveGenerator extends DisplayEntity implements SampleProvi
 	@Override
 	public double getMaxValue() {
 		return offset.getValue() + amplitude.getValue();
+	}
+
+	@Override
+	public boolean canLink(boolean dir) {
+		// UnitType input must be set or hidden
+		return dir && (!unitType.isDefault() || unitType.getHidden());
+	}
+
+	@Override
+	public void linkTo(DisplayEntity nextEnt, boolean dir) {
+		if (!dir || !(nextEnt instanceof DoubleCalculation))
+			return;
+
+		ArrayList<KeywordIndex> kwList = new ArrayList<>();
+		DoubleCalculation nextCalc = (DoubleCalculation) nextEnt;
+
+		// Set the UnitType input for the next object
+		if (!nextCalc.unitType.getHidden()
+				&& !unitType.getHidden() && !unitType.isDefault()) {
+			String key = unitType.getKeyword();
+			kwList.add( InputAgent.formatArgs(key, getUnitType().getSimpleName()) );
+		}
+
+		// Set the InputValue input for the next object
+		if (!nextCalc.inputValue.getHidden()) {
+			String key = nextCalc.inputValue.getKeyword();
+			kwList.add( InputAgent.formatArgs(key, this.getName()) );
+		}
+
+		if (kwList.isEmpty())
+			return;
+
+		KeywordIndex[] kws = new KeywordIndex[kwList.size()];
+		kwList.toArray(kws);
+		InputAgent.storeAndExecute(new KeywordCommand(nextCalc, kws));
 	}
 
 }
