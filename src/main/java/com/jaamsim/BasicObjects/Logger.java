@@ -229,6 +229,16 @@ public abstract class Logger extends DisplayEntity {
 		}
 	}
 
+	@Override
+	public void close() {
+		super.close();
+		if (file == null)
+			return;
+		file.flush();
+		file.close();
+		file = null;
+	}
+
 	@Output(name = "LogTime",
 	 description = "The simulation time at which the last log entry was made.",
 	    unitType = TimeUnit.class)
