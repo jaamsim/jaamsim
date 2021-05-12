@@ -30,6 +30,7 @@ import com.jaamsim.input.EntityListInput;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.KeywordIndex;
+import com.jaamsim.input.Output;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
 
@@ -69,6 +70,8 @@ public abstract class AbstractCombine extends LinkedService {
 	         exampleList = {"TRUE"})
 	private final BooleanInput firstQueue;
 
+	private final ArrayList<DisplayEntity> consumedEntityList = new ArrayList<>();
+
 	{
 		waitQueue.setHidden(true);
 		match.setHidden(true);
@@ -101,6 +104,12 @@ public abstract class AbstractCombine extends LinkedService {
 	}
 
 	public AbstractCombine() {}
+
+	@Override
+	public void earlyInit() {
+		super.earlyInit();
+		consumedEntityList.clear();
+	}
 
 	@Override
 	public void addEntity( DisplayEntity ent ) {
@@ -217,6 +226,17 @@ public abstract class AbstractCombine extends LinkedService {
 		return true;
 	}
 
+	public void clearConsumedEntityList() {
+		for (DisplayEntity ent : consumedEntityList) {
+			ent.kill();
+		}
+		consumedEntityList.clear();
+	}
+
+	public void addConsumedEntity(DisplayEntity ent) {
+		consumedEntityList.add(ent);
+	}
+
 	@Override
 	public ArrayList<DisplayEntity> getSourceEntities() {
 		ArrayList<DisplayEntity> ret = super.getSourceEntities();
@@ -226,6 +246,14 @@ public abstract class AbstractCombine extends LinkedService {
 			ret.add(queue);
 		}
 		return ret;
+	}
+
+	@Output(name = "ConsumedEntityList",
+	 description = "The entities that were removed from the queues for processing and were then "
+	             + "destroyed.",
+	    sequence = 0)
+	public ArrayList<DisplayEntity> getConsumedEntityList(double simTime) {
+		return consumedEntityList;
 	}
 
 }
