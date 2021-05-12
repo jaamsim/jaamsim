@@ -126,6 +126,16 @@ public abstract class StateEntity extends DisplayEntity implements StateUser {
 		}
 	}
 
+	@Override
+	public void close() {
+		super.close();
+		if (stateReportFile == null)
+			return;
+		stateReportFile.flush();
+		stateReportFile.close();
+		stateReportFile = null;
+	}
+
 	private void initStateData() {
 		lastStateCollectionTick = 0;
 		if (EventManager.hasCurrent())
