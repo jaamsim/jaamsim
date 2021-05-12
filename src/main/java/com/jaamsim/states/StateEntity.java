@@ -127,6 +127,20 @@ public abstract class StateEntity extends DisplayEntity implements StateUser {
 	}
 
 	@Override
+	public void doEnd() {
+		super.doEnd();
+		if (stateReportFile == null)
+			return;
+		stateReportFile.flush();
+
+		// Close the state trace file
+		if (getJaamSimModel().isLastRun()) {
+			stateReportFile.close();
+			stateReportFile = null;
+		}
+	}
+
+	@Override
 	public void close() {
 		super.close();
 		if (stateReportFile == null)
