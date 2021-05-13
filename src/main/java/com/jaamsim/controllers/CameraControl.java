@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2012 Ausenco Engineering Canada Inc.
- * Copyright (C) 2019-2023 JaamSim Software Inc.
+ * Copyright (C) 2019-2024 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,6 +50,9 @@ public class CameraControl implements WindowInteractionListener {
 
 	private PolarInfo piCache; // The last polar info this view has re-drawn for
 
+	private Vec3d dragViewCenter;    // ViewCenter input at start of a drag action
+	private Vec3d dragViewPosition;  // ViewPosition input at the start of a drag action
+
 	public CameraControl(Renderer renderer, View updateView) {
 		_renderer = renderer;
 		_updateView = updateView;
@@ -76,7 +79,7 @@ public class CameraControl implements WindowInteractionListener {
 			if (dragInfo.shiftDown()) {
 				handleExpVertPan(dragInfo.x, dragInfo.y, dragInfo.dx, dragInfo.dy);
 			} else {
-				handleExpPan(dragInfo.x, dragInfo.y, dragInfo.dx, dragInfo.dy);
+				handleExpPan(dragInfo.x, dragInfo.y, dragInfo.startX, dragInfo.startY);
 			}
 		}
 		else if (dragInfo.button == 3 && !_updateView.is2DLocked()) {
@@ -120,14 +123,14 @@ public class CameraControl implements WindowInteractionListener {
 
 	}
 
-	private void handleExpPan(int x, int y, int dx, int dy) {
+	private void handleExpPan(int x, int y, int x0, int y0) {
 
 		Renderer.WindowMouseInfo info = _renderer.getMouseInfo(_windowID);
 		if (info == null) return;
 
 		//Cast a ray into the XY plane both for now, and for the previous mouse position
 		Ray currRay = RenderUtils.getPickRayForPosition(info.cameraInfo, x, y, info.width, info.height);
-		Ray prevRay = RenderUtils.getPickRayForPosition(info.cameraInfo, x - dx, y - dy, info.width, info.height);
+		Ray prevRay = RenderUtils.getPickRayForPosition(info.cameraInfo, x0, y0, info.width, info.height);
 
 		double currZDot = currRay.getDirRef().z;
 		double prevZDot = prevRay.getDirRef().z;
@@ -155,8 +158,8 @@ public class CameraControl implements WindowInteractionListener {
 		Vec3d diff = new Vec3d();
 		diff.sub3(currIntersect, prevIntersect);
 
-		Vec3d camPos = _updateView.getGlobalPosition();
-		Vec3d center = _updateView.getGlobalCenter();
+		Vec3d camPos = new Vec3d(dragViewPosition);
+		Vec3d center = new Vec3d(dragViewCenter);
 		camPos.sub3(diff);
 		center.sub3(diff);
 		PolarInfo pi = new PolarInfo(center, camPos);
@@ -403,6 +406,10 @@ public class CameraControl implements WindowInteractionListener {
 			if (clickPoint != null)
 				setPOI(clickPoint);
 		}
+
+		// Save the initial view parameters at the start of a drag action
+		dragViewCenter = _updateView.getGlobalCenter();
+		dragViewPosition = _updateView.getGlobalPosition();
 
 		RenderManager.inst().handleMouseButton(windowID, x, y, button, isDown, modifiers);
 	}
