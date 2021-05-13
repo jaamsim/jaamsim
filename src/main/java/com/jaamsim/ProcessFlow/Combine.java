@@ -74,8 +74,7 @@ public class Combine extends AbstractCombine {
 		}
 
 		// Remove the appropriate entities from each queue
-		// (performed in reverse order so that obj is set to the entity in the first queue)
-		for (int i = queueList.size() - 1; i >= 0; i--) {
+		for (int i = 0; i < queueList.size(); i++) {
 			for (int n = 0; n < numList[i]; n++) {
 				DisplayEntity ent = queueList.get(i).removeFirst(getMatchValue());
 				if (ent == null)
@@ -88,11 +87,15 @@ public class Combine extends AbstractCombine {
 					continue;
 				}
 
+				// Save the entities to be passed on
 				receiveEntity(ent);
 				setEntityState(ent);
 				processedEntityList.add(ent);
 			}
 		}
+
+		// Set the obj output
+		setReceivedEntity(processedEntityList.get(0));
 
 		return true;
 	}
