@@ -102,17 +102,8 @@ public class Combine extends AbstractCombine {
 
 	@Override
 	protected void processStep(double simTime) {
-
-		// If specified, send all the entities to the next component
-		if (retainAll.getValue()) {
-			for (DisplayEntity ent : processedEntityList) {
-				sendToNextComponent(ent);
-			}
-		}
-
-		// Otherwise, send just the first one
-		else {
-			sendToNextComponent(processedEntityList.get(0));
+		for (DisplayEntity ent : processedEntityList) {
+			sendToNextComponent(ent);
 		}
 		processedEntityList.clear();
 	}
@@ -124,9 +115,9 @@ public class Combine extends AbstractCombine {
 
 	@Override
 	public void updateGraphics(double simTime) {
-		if (processedEntityList.isEmpty())
-			return;
-		moveToProcessPosition(processedEntityList.get(0));
+		for (DisplayEntity ent : processedEntityList) {
+			moveToProcessPosition(ent);
+		}
 	}
 
 }
