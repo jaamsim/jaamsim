@@ -117,7 +117,7 @@ public class Duplicate extends LinkedComponent {
 	@Override
 	public void linkTo(DisplayEntity nextEnt, boolean dir) {
 		if (nextComponent.isDefault()) {
-			super.linkTo(nextEnt);
+			super.linkTo(nextEnt, dir);
 			return;
 		}
 		if (!(nextEnt instanceof Linkable) || nextEnt instanceof EntityGen)

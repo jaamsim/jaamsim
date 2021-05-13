@@ -1025,13 +1025,7 @@ public class DisplayEntity extends Entity {
 	 * An overloadable method that is called when the 'create link' feature is enabled and selection changes
 	 * @param nextEnt
 	 */
-	public void linkTo(DisplayEntity nextEnt) {  //FIXME remove when there are no overrides
-		// Do nothing in default behavior
-	}
-
-	public void linkTo(DisplayEntity nextEnt, boolean dir) {
-		linkTo(nextEnt);
-	}
+	public void linkTo(DisplayEntity nextEnt, boolean dir) {}
 
 	/**
 	 * Set the inputs for the two entities affected by a 'split' operation.
