@@ -74,6 +74,7 @@ public class Combine extends AbstractCombine {
 		}
 
 		// Remove the appropriate entities from each queue
+		clearConsumedEntityList();
 		for (int i = 0; i < queueList.size(); i++) {
 			for (int n = 0; n < numList[i]; n++) {
 				DisplayEntity ent = queueList.get(i).removeFirst(getMatchValue());
@@ -83,7 +84,8 @@ public class Combine extends AbstractCombine {
 
 				// Destroy all the entities but the first
 				if ((i > 0 || n > 0) && !retainAll.getValue()) {
-					ent.kill();
+					addConsumedEntity(ent);
+					ent.setShow(false);
 					continue;
 				}
 
