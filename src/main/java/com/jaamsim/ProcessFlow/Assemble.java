@@ -88,13 +88,15 @@ public class Assemble extends AbstractCombine implements EntityGen {
 		}
 
 		// Remove the appropriate entities from each queue
+		clearConsumedEntityList();
 		for (int i = 0; i < queueList.size(); i++) {
 			for (int n = 0; n < numList[i]; n++) {
 				DisplayEntity ent = queueList.get(i).removeFirst(getMatchValue());
 				if (ent == null)
 					error("An entity with the specified match value %s was not found in %s.",
 							getMatchValue(), queueList.get(i));
-				ent.kill();
+				addConsumedEntity(ent);
+				ent.setShow(false);
 			}
 		}
 
