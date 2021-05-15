@@ -200,6 +200,8 @@ public class RenderManager implements DragSourceListener {
 	// Line nodes start at this constant and proceed into the negative range, therefore this should be the lowest defined constant
 	public static final long LINENODE_PICK_ID = -12;
 
+	public static final Color4d REF_LINK_COLOUR = new Color4d(138, 54, 15);  // Brown
+
 	private RenderManager(boolean safeGraphics) {
 		renderer = new Renderer(safeGraphics);
 
@@ -416,6 +418,7 @@ public class RenderManager implements DragSourceListener {
 					double delta = simModel.getSimulation().getSnapGridSpacing()/100.0d;
 					if (showLinks.get()) {
 						addLinkDisplays(simModel, linkDirection.get(), delta, cachedScene);
+						addEntityReferenceDisplays(simModel, delta, cachedScene);
 					}
 
 					// Show a rubber band arrow from the selected entity to the mouse position
@@ -2355,6 +2358,33 @@ public class RenderManager implements DragSourceListener {
 				if (!source.entity.getShow())
 					continue;
 				addLink(source, de, linkColour, delta, scene);
+			}
+		}
+	}
+
+	public void addEntityReferenceDisplays(JaamSimModel simModel, double delta, ArrayList<RenderProxy> scene) {
+
+		// Loop through the displayed objects in the model
+		for (DisplayEntity ent : simModel.getClonesOfIterator(DisplayEntity.class)) {
+			if (!ent.getShow() || ent instanceof EntityLabel || ent instanceof OverlayEntity
+					|| ent instanceof Region)
+				continue;
+			Vec3d sink = ent.getGlobalPosition();
+			double sinkRadius = ent.getMinRadius();
+
+			// Loop through the entity references for this entity
+			ArrayList<DisplayEntity> srcList = ent.getSourceEntities();
+			ArrayList<DisplayEntity> destList = ent.getDestinationEntities();
+			for (Entity ref : ent.getEntityReferences()) {
+				if (!(ref instanceof DisplayEntity) || !((DisplayEntity) ref).getShow()
+						|| ref instanceof OverlayEntity || ref instanceof Region
+						|| destList.contains(ref) || srcList.contains(ref))
+					continue;
+
+				// Show an arrow for each reference
+				Vec3d source = ((DisplayEntity) ref).getGlobalPosition();
+				double sourceRadius = ((DisplayEntity) ref).getMinRadius();
+				addLink(source, sink, sourceRadius, sinkRadius, REF_LINK_COLOUR, delta, cachedScene);
 			}
 		}
 	}
