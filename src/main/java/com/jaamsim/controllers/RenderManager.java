@@ -2299,16 +2299,18 @@ public class RenderManager implements DragSourceListener {
 			return;
 		Vec3d temp = new Vec3d();
 		temp.scale3(sourceRadius, arrowDir);
-		source.add3(temp);
+		Vec3d sourcePt = new Vec3d(source);
+		sourcePt.add3(temp);
 		temp.scale3(sinkRadius, arrowDir);
-		sink.sub3(temp);
+		Vec3d sinkPt = new Vec3d(sink);
+		sinkPt.sub3(temp);
 
 		// Reduce the arrow head size for a short arrow
 		double arrowHeadSize = Math.min(linkSize*0.3, arrowSize);
 
 		temp.scale3(arrowHeadSize, arrowDir);
 		Vec3d arrowMidPoint = new Vec3d();
-		arrowMidPoint.sub3(sink, temp);
+		arrowMidPoint.sub3(sinkPt, temp);
 		Vec3d arrowHeadDir = new Vec3d();
 		arrowHeadDir.cross3(arrowDir, new Vec3d(0,0,1));
 		if (arrowHeadDir.mag3() == 0.0) {
@@ -2323,8 +2325,8 @@ public class RenderManager implements DragSourceListener {
 		arrowPoint0.sub3(arrowMidPoint, arrowHeadDir);
 		arrowPoint1.add3(arrowMidPoint, arrowHeadDir);
 
-		Vec4d source4 = new Vec4d(source.x, source.y, source.z + delta, 1);
-		Vec4d sink4 = new Vec4d(sink.x, sink.y, sink.z + delta, 1);
+		Vec4d source4 = new Vec4d(sourcePt.x, sourcePt.y, sourcePt.z + delta, 1);
+		Vec4d sink4 = new Vec4d(sinkPt.x, sinkPt.y, sinkPt.z + delta, 1);
 		Vec4d ap0 = new Vec4d(arrowPoint0.x, arrowPoint0.y, arrowPoint0.z + delta, 1);
 		Vec4d ap1 = new Vec4d(arrowPoint1.x, arrowPoint1.y, arrowPoint1.z + delta, 1);
 
