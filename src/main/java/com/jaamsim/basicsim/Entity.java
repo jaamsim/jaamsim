@@ -433,6 +433,14 @@ public class Entity {
 		}
 	}
 
+	public ArrayList<Entity> getEntityReferences() {
+		ArrayList<Entity> ret = new ArrayList<>();
+		for (Input<?> inp : inpList) {
+			inp.appendEntityReferences(ret);
+		}
+		return ret;
+	}
+
 	final void setFlag(int flag) {
 		flags |= flag;
 	}

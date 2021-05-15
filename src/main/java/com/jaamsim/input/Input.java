@@ -238,6 +238,12 @@ public abstract class Input<T> {
 	}
 
 	/**
+	 * Appends the entities referenced by the value for this input.
+	 * @param list - list of entity references
+	 */
+	public void appendEntityReferences(ArrayList<Entity> list) {}
+
+	/**
 	 * Describes the valid inputs for this type of input.
 	 * @return description of valid inputs
 	 */
