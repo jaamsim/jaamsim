@@ -1370,4 +1370,19 @@ public class DisplayEntity extends Entity {
 		return getPreviousList(true);
 	}
 
+	@Output(name = "EntityReferenceList",
+	 description = "The entities that appear in the inputs to this entity.",
+	    sequence = 8)
+	public ArrayList<DisplayEntity> getEntityReferenceList(double simTime) {
+		ArrayList<Entity> list = getEntityReferences();
+		ArrayList<DisplayEntity> ret = new ArrayList<>(list.size());
+		for (Entity ent : list) {
+			if (!(ent instanceof DisplayEntity)
+					|| ent instanceof OverlayEntity || ent instanceof Region)
+				continue;
+			ret.add((DisplayEntity) ent);
+		}
+		return ret;
+	}
+
 }
