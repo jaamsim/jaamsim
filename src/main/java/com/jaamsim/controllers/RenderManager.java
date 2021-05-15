@@ -424,7 +424,8 @@ public class RenderManager implements DragSourceListener {
 						boolean dir = linkDirection.get();
 						if (selectedEntity.canLink(dir)) {
 							Vec3d source = selectedEntity.getSourcePoint(dir);
-							addLink(source, mousePosition, 0.0d, 0.0d, dir, delta, cachedScene);
+							Color4d linkColour = dir ? ColourInput.BLUE : ColourInput.RED;
+							addLink(source, mousePosition, 0.0d, 0.0d, linkColour, delta, cachedScene);
 						}
 					}
 
@@ -2255,7 +2256,8 @@ public class RenderManager implements DragSourceListener {
 		linkDirection.set(bool);
 	}
 
-	private void addLink(DirectedEntity sourceDE, DirectedEntity destDE, boolean dir, double delta, ArrayList<RenderProxy> scene) {
+	private void addLink(DirectedEntity sourceDE, DirectedEntity destDE, Color4d linkColour,
+			double delta, ArrayList<RenderProxy> scene) {
 		Vec3d source = sourceDE.getSourcePoint();
 		Vec3d sink = destDE.getSinkPoint();
 		double sourceRadius = sourceDE.entity.getRadius();
@@ -2270,10 +2272,11 @@ public class RenderManager implements DragSourceListener {
 			sinkRadius = destDE.entity.getMinRadius();
 		}
 
-		addLink(source, sink, sourceRadius, sinkRadius, dir, delta, scene);
+		addLink(source, sink, sourceRadius, sinkRadius, linkColour, delta, scene);
 	}
 
-	private void addLink(Vec3d source, Vec3d sink, double sourceRadius, double sinkRadius, boolean dir, double delta, ArrayList<RenderProxy> scene) {
+	private void addLink(Vec3d source, Vec3d sink, double sourceRadius, double sinkRadius,
+			Color4d linkColour, double delta, ArrayList<RenderProxy> scene) {
 
 		// Calculate the length of the arrow and a unit vector in its direction
 		Vec3d arrowDir = new Vec3d();
@@ -2327,25 +2330,23 @@ public class RenderManager implements DragSourceListener {
 		segments.add(sink4);
 		segments.add(ap1);
 
-		Color4d linkColour = ColourInput.BLUE;
-		if (!dir)
-			linkColour = ColourInput.RED;
-
 		scene.add(new LineProxy(segments, linkColour, 1, DisplayModel.ALWAYS, 0));
 	}
 
-	public void addLinkDisplays(JaamSimModel simModel, boolean dir, double delta, ArrayList<RenderProxy> scene) {
+	public void addLinkDisplays(JaamSimModel simModel, boolean dir, double delta,
+			ArrayList<RenderProxy> scene) {
+		Color4d linkColour = dir ? ColourInput.BLUE : ColourInput.RED;
 		for (DisplayEntity ent : simModel.getClonesOfIterator(DisplayEntity.class)) {
 			DirectedEntity de = new DirectedEntity(ent, dir);
 			for (DirectedEntity dest : ent.getDestinationDirEnts(dir)) {
 				if (!ent.getShow() && !dest.entity.getShow())
 					continue;
-				addLink(de, dest, dir, delta, scene);
+				addLink(de, dest, linkColour, delta, scene);
 			}
 			for (DirectedEntity source : ent.getSourceDirEnts(dir)) {
 				if (!ent.getShow() && !source.entity.getShow())
 					continue;
-				addLink(source, de, dir, delta, scene);
+				addLink(source, de, linkColour, delta, scene);
 			}
 		}
 	}
