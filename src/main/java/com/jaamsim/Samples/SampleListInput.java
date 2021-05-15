@@ -215,6 +215,19 @@ public class SampleListInput extends ListInput<ArrayList<SampleProvider>> {
 	}
 
 	@Override
+	public void appendEntityReferences(ArrayList<Entity> list) {
+		if (value == null)
+			return;
+		for (SampleProvider samp : value) {
+			if (samp instanceof Entity) {
+				if (list.contains(samp))
+					continue;
+				list.add((Entity) samp);
+			}
+		}
+	}
+
+	@Override
 	public boolean useExpressionBuilder() {
 		return true;
 	}

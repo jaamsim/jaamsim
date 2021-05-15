@@ -257,4 +257,15 @@ public class EntityListInput<T extends Entity> extends ListInput<ArrayList<T>> {
 		return ret;
 	}
 
+	@Override
+	public void appendEntityReferences(ArrayList<Entity> list) {
+		if (value == null)
+			return;
+		for (Entity ent : value) {
+			if (ent == null || list.contains(ent))
+				continue;
+			list.add(ent);
+		}
+	}
+
 }

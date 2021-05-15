@@ -119,6 +119,15 @@ public class StringProvInput extends Input<StringProvider> {
 	}
 
 	@Override
+	public void appendEntityReferences(ArrayList<Entity> list) {
+		if (value instanceof Entity) {
+			if (list.contains(value))
+				return;
+			list.add((Entity) value);
+		}
+	}
+
+	@Override
 	public boolean useExpressionBuilder() {
 		return true;
 	}

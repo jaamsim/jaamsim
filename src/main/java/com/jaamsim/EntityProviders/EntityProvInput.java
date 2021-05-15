@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2017-2020 JaamSim Software Inc.
+ * Copyright (C) 2017-2021 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -117,6 +117,18 @@ public class EntityProvInput<T extends Entity> extends Input<EntityProvider<T>> 
 			}
 		}
 		return false;
+	}
+
+	@Override
+	public void appendEntityReferences(ArrayList<Entity> list) {
+		if (value == null)
+			return;
+		if (value instanceof EntityProvConstant) {
+			Entity ent = ((EntityProvConstant<T>) value).getEntity();
+			if (ent == null || list.contains(ent))
+				return;
+			list.add(ent);
+		}
 	}
 
 	@Override

@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2016-2020 JaamSim Software Inc.
+ * Copyright (C) 2016-2021 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -71,6 +71,13 @@ public class InterfaceEntityInput<T> extends Input<T> {
 			return true;
 		}
 		return false;
+	}
+
+	@Override
+	public void appendEntityReferences(ArrayList<Entity> list) {
+		if (value == null || list.contains(value))
+			return;
+		list.add((Entity) value);
 	}
 
 }

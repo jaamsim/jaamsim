@@ -135,6 +135,15 @@ public class SampleInput extends Input<SampleProvider> {
 	}
 
 	@Override
+	public void appendEntityReferences(ArrayList<Entity> list) {
+		if (value instanceof Entity) {
+			if (list.contains(value))
+				return;
+			list.add((Entity) value);
+		}
+	}
+
+	@Override
 	public boolean useExpressionBuilder() {
 		return true;
 	}

@@ -153,4 +153,15 @@ public class InterfaceEntityListInput<T> extends ListInput<ArrayList<T>> {
 		return ret;
 	}
 
+	@Override
+	public void appendEntityReferences(ArrayList<Entity> list) {
+		if (value == null)
+			return;
+		for (T ent : value) {
+			if (ent == null || list.contains(ent))
+				continue;
+			list.add((Entity) ent);
+		}
+	}
+
 }

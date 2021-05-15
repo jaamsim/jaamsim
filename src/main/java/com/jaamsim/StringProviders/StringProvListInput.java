@@ -139,6 +139,19 @@ public class StringProvListInput extends ListInput<ArrayList<StringProvider>> {
 	}
 
 	@Override
+	public void appendEntityReferences(ArrayList<Entity> list) {
+		if (value == null)
+			return;
+		for (StringProvider sp : value) {
+			if (sp instanceof Entity) {
+				if (list.contains(sp))
+					continue;
+				list.add((Entity) sp);
+			}
+		}
+	}
+
+	@Override
 	public boolean useExpressionBuilder() {
 		return true;
 	}

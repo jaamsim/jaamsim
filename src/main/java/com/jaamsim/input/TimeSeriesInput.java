@@ -103,6 +103,13 @@ public class TimeSeriesInput extends Input<TimeSeriesProvider> {
 	}
 
 	@Override
+	public void appendEntityReferences(ArrayList<Entity> list) {
+		if (!(value instanceof Entity) || list.contains(value))
+			return;
+		list.add((Entity) value);
+	}
+
+	@Override
 	public String getDefaultString(JaamSimModel simModel) {
 		if (defValue instanceof TimeSeriesConstantDouble) {
 			return ((TimeSeriesConstantDouble) defValue).getValueString(simModel);
