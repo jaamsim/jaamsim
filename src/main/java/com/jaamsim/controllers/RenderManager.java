@@ -2379,7 +2379,7 @@ public class RenderManager implements DragSourceListener {
 			double sinkRadius = ent.getMinRadius();
 
 			// Set the arrow head size for the region
-			double arrowSize = linkArrowSize;
+			double arrowSize = 0.5d * linkArrowSize;
 			if (ent.getCurrentRegion() != null)
 				arrowSize *= ent.getCurrentRegion().getGlobalScale();
 
