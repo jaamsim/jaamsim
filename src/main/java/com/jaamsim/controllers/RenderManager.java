@@ -428,7 +428,8 @@ public class RenderManager implements DragSourceListener {
 						if (selectedEntity.canLink(dir)) {
 							Vec3d source = selectedEntity.getSourcePoint(dir);
 							Color4d linkColour = dir ? ColourInput.BLUE : ColourInput.RED;
-							addLink(source, mousePosition, 0.0d, 0.0d, linkColour, delta, cachedScene);
+							addLink(source, mousePosition, 0.0d, 0.0d, linkColour, linkArrowSize,
+									delta, cachedScene);
 						}
 					}
 
@@ -2275,11 +2276,16 @@ public class RenderManager implements DragSourceListener {
 			sinkRadius = destDE.entity.getMinRadius();
 		}
 
-		addLink(source, sink, sourceRadius, sinkRadius, linkColour, delta, scene);
+		// Set the arrow head size for the region
+		double arrowSize = linkArrowSize;
+		if (destDE.entity.getCurrentRegion() != null)
+			arrowSize *= destDE.entity.getCurrentRegion().getGlobalScale();
+
+		addLink(source, sink, sourceRadius, sinkRadius, linkColour, arrowSize, delta, scene);
 	}
 
 	private void addLink(Vec3d source, Vec3d sink, double sourceRadius, double sinkRadius,
-			Color4d linkColour, double delta, ArrayList<RenderProxy> scene) {
+			Color4d linkColour, double arrowSize, double delta, ArrayList<RenderProxy> scene) {
 
 		// Calculate the length of the arrow and a unit vector in its direction
 		Vec3d arrowDir = new Vec3d();
@@ -2298,7 +2304,7 @@ public class RenderManager implements DragSourceListener {
 		sink.sub3(temp);
 
 		// Reduce the arrow head size for a short arrow
-		double arrowHeadSize = Math.min(linkSize*0.3, linkArrowSize);
+		double arrowHeadSize = Math.min(linkSize*0.3, arrowSize);
 
 		temp.scale3(arrowHeadSize, arrowDir);
 		Vec3d arrowMidPoint = new Vec3d();
@@ -2372,6 +2378,11 @@ public class RenderManager implements DragSourceListener {
 			Vec3d sink = ent.getGlobalPosition();
 			double sinkRadius = ent.getMinRadius();
 
+			// Set the arrow head size for the region
+			double arrowSize = linkArrowSize;
+			if (ent.getCurrentRegion() != null)
+				arrowSize *= ent.getCurrentRegion().getGlobalScale();
+
 			// Loop through the entity references for this entity
 			ArrayList<DisplayEntity> srcList = ent.getSourceEntities();
 			ArrayList<DisplayEntity> destList = ent.getDestinationEntities();
@@ -2384,7 +2395,7 @@ public class RenderManager implements DragSourceListener {
 				// Show an arrow for each reference
 				Vec3d source = ((DisplayEntity) ref).getGlobalPosition();
 				double sourceRadius = ((DisplayEntity) ref).getMinRadius();
-				addLink(source, sink, sourceRadius, sinkRadius, REF_LINK_COLOUR, delta, cachedScene);
+				addLink(source, sink, sourceRadius, sinkRadius, REF_LINK_COLOUR, arrowSize, delta, cachedScene);
 			}
 		}
 	}
