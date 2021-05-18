@@ -2336,15 +2336,23 @@ public class RenderManager implements DragSourceListener {
 	public void addLinkDisplays(JaamSimModel simModel, boolean dir, double delta,
 			ArrayList<RenderProxy> scene) {
 		Color4d linkColour = dir ? ColourInput.BLUE : ColourInput.RED;
+
+		// Loop through the displayed objects in the model
 		for (DisplayEntity ent : simModel.getClonesOfIterator(DisplayEntity.class)) {
+			if (!ent.getShow())
+				continue;
 			DirectedEntity de = new DirectedEntity(ent, dir);
+
+			// Destinations that receive entities from this object
 			for (DirectedEntity dest : ent.getDestinationDirEnts(dir)) {
-				if (!ent.getShow() && !dest.entity.getShow())
+				if (!dest.entity.getShow())
 					continue;
 				addLink(de, dest, linkColour, delta, scene);
 			}
+
+			// Sources that direct entities to this object
 			for (DirectedEntity source : ent.getSourceDirEnts(dir)) {
-				if (!ent.getShow() && !source.entity.getShow())
+				if (!source.entity.getShow())
 					continue;
 				addLink(source, de, linkColour, delta, scene);
 			}
