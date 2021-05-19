@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2015 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018-2020 JaamSim Software Inc.
+ * Copyright (C) 2018-2021 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -124,6 +124,12 @@ public class StringProvInput extends Input<StringProvider> {
 			if (list.contains(value))
 				return;
 			list.add((Entity) value);
+			return;
+		}
+
+		if (value instanceof StringProvExpression) {
+			((StringProvExpression) value).appendEntityReferences(list);
+			return;
 		}
 	}
 
