@@ -223,6 +223,12 @@ public class SampleListInput extends ListInput<ArrayList<SampleProvider>> {
 				if (list.contains(samp))
 					continue;
 				list.add((Entity) samp);
+				continue;
+			}
+
+			if (samp instanceof SampleExpression) {
+				((SampleExpression) samp).appendEntityReferences(list);
+				continue;
 			}
 		}
 	}
