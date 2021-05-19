@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2019 JaamSim Software Inc.
+ * Copyright (C) 2016-2021 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@
  * limitations under the License.
  */
 package com.jaamsim.Samples;
+
+import java.util.ArrayList;
 
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ErrorException;
@@ -90,6 +92,13 @@ public class SampleExpression implements SampleProvider {
 
 	public String getExpressionString() {
 		return parseContext.getUpdatedSource();
+	}
+
+	public void appendEntityReferences(ArrayList<Entity> list) {
+		try {
+			ExpParser.appendEntityReferences(exp, list);
+		}
+		catch (ExpError e) {}
 	}
 
 	@Override

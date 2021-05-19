@@ -140,6 +140,12 @@ public class SampleInput extends Input<SampleProvider> {
 			if (list.contains(value))
 				return;
 			list.add((Entity) value);
+			return;
+		}
+
+		if (value instanceof SampleExpression) {
+			((SampleExpression) value).appendEntityReferences(list);
+			return;
 		}
 	}
 
