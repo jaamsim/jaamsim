@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2017-2018 JaamSim Software Inc.
+ * Copyright (C) 2017-2021 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 package com.jaamsim.EntityProviders;
+
+import java.util.ArrayList;
 
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ErrorException;
@@ -67,6 +69,13 @@ public class EntityProvExpression<T extends Entity> implements EntityProvider<T>
 			throw new ErrorException(thisEnt, e);
 		}
 		return ret;
+	}
+
+	public void appendEntityReferences(ArrayList<Entity> list) {
+		try {
+			ExpParser.appendEntityReferences(exp, list);
+		}
+		catch (ExpError e) {}
 	}
 
 	@Override

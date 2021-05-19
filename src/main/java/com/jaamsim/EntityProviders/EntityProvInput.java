@@ -128,6 +128,12 @@ public class EntityProvInput<T extends Entity> extends Input<EntityProvider<T>> 
 			if (ent == null || list.contains(ent))
 				return;
 			list.add(ent);
+			return;
+		}
+
+		if (value instanceof EntityProvExpression) {
+			((EntityProvExpression<T>) value).appendEntityReferences(list);
+			return;
 		}
 	}
 
