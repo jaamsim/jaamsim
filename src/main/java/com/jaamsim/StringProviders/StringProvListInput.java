@@ -147,6 +147,11 @@ public class StringProvListInput extends ListInput<ArrayList<StringProvider>> {
 				if (list.contains(sp))
 					continue;
 				list.add((Entity) sp);
+				continue;
+			}
+
+			if (sp instanceof StringProvExpression) {
+				((StringProvExpression) sp).appendEntityReferences(list);
 			}
 		}
 	}
