@@ -2391,6 +2391,7 @@ public class RenderManager implements DragSourceListener {
 			for (Entity ref : ent.getEntityReferences()) {
 				if (!(ref instanceof DisplayEntity) || !((DisplayEntity) ref).getShow()
 						|| ref instanceof OverlayEntity || ref instanceof Region
+						|| ref == ent
 						|| destList.contains(ref) || srcList.contains(ref))
 					continue;
 

@@ -1377,7 +1377,7 @@ public class DisplayEntity extends Entity {
 		ArrayList<Entity> list = getEntityReferences();
 		ArrayList<DisplayEntity> ret = new ArrayList<>(list.size());
 		for (Entity ent : list) {
-			if (!(ent instanceof DisplayEntity)
+			if (!(ent instanceof DisplayEntity) || ent == this
 					|| ent instanceof OverlayEntity || ent instanceof Region)
 				continue;
 			ret.add((DisplayEntity) ent);
