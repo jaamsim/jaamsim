@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2019 JaamSim Software Inc.
+ * Copyright (C) 2016-2021 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -1257,6 +1257,35 @@ public class ExpParser {
 		exp.validationResult = valRes;
 
 		return expNode;
+	}
+
+	private static class EntityListBuilder implements ExpressionWalker {
+
+		private ArrayList<Entity> entityList;
+
+		private EntityListBuilder(ArrayList<Entity> list) {
+			entityList = list;
+		}
+
+		@Override
+		public void visit(ExpNode exp) throws ExpError {
+			if (exp instanceof Constant) {
+				Entity ent = ((Constant) exp).val.entVal;
+				if (ent == null || entityList.contains(ent))
+					return;
+				entityList.add(ent);
+			}
+		}
+
+		@Override
+		public ExpNode updateRef(ExpNode exp) throws ExpError {
+			return exp;
+		}
+	}
+
+	public static void appendEntityReferences(Expression exp, ArrayList<Entity> list) throws ExpError {
+		EntityListBuilder elb = new EntityListBuilder(list);
+		exp.rootNode.walk(elb);
 	}
 
 	public static void assertUnitType(Expression exp, Class<? extends Unit> unitType) {
