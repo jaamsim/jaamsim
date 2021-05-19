@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2020 JaamSim Software Inc.
+ * Copyright (C) 2016-2021 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -109,6 +109,16 @@ public class ExpressionInput extends Input<ExpParser.Expression> {
 	public void getValueTokens(ArrayList<String> toks) {
 		if (value == null) return;
 		toks.add(parseContext.getUpdatedSource());
+	}
+
+	@Override
+	public void appendEntityReferences(ArrayList<Entity> list) {
+		if (value == null)
+			return;
+		try {
+			ExpParser.appendEntityReferences(value, list);
+		}
+		catch (ExpError e) {}
 	}
 
 	@Override
