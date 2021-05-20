@@ -225,6 +225,10 @@ public class Simulation extends Entity {
 	         exampleList = {"TRUE"})
 	private final BooleanInput presentationMode;
 
+	@Keyword(description = "The state of the 'Show References' button on the Control Panel.",
+	         exampleList = {"TRUE"})
+	private final BooleanInput showReferences;
+
 	@Keyword(description = "The state of the 'Show Entity Flow' button on the Control Panel.",
 	         exampleList = {"TRUE"})
 	private final BooleanInput showEntityFlow;
@@ -471,6 +475,11 @@ public class Simulation extends Entity {
 		presentationMode.setPromptReqd(false);
 		presentationMode.setHidden(true);
 		this.addInput(presentationMode);
+
+		showReferences = new BooleanInput("ShowReferences", GUI, false);
+		showReferences.setPromptReqd(false);
+		showReferences.setHidden(true);
+		this.addInput(showReferences);
 
 		showEntityFlow = new BooleanInput("ShowEntityFlow", GUI, false);
 		showEntityFlow.setPromptReqd(false);
@@ -849,6 +858,10 @@ public class Simulation extends Entity {
 
 	public boolean isPresentationMode() {
 		return presentationMode.getValue();
+	}
+
+	public boolean isShowReferences() {
+		return showReferences.getValue();
 	}
 
 	public boolean isShowEntityFlow() {

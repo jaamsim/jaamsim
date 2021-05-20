@@ -205,6 +205,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	private JToggleButton showSubModels;
 	private JToggleButton presentMode;
 
+	private JToggleButton showReferences;
 	private JToggleButton showLinks;
 	private JToggleButton createLinks;
 	private JButton nextButton;
@@ -1319,6 +1320,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 		// Show and create links buttons
 		buttonBar.addSeparator(separatorDim);
+		addShowReferencesButton(buttonBar, noMargin);
+		buttonBar.add(Box.createRigidArea(gapDim));
 		addShowLinksButton(buttonBar, noMargin);
 
 		buttonBar.add(Box.createRigidArea(gapDim));
@@ -1748,6 +1751,26 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		gridSpacing.setEnabled(snapToGrid.isSelected());
 
 		buttonBar.add(gridSpacing);
+	}
+
+	private void addShowReferencesButton(JToolBar buttonBar, Insets margin) {
+		showReferences = new JToggleButton(new ImageIcon(GUIFrame.class.getResource("/resources/images/ShowReferences-16.png")));
+		showReferences.setToolTipText(formatToolTip("Show References",
+				"Shows arrows to indicate which objects appear in the inputs for each object."));
+		showReferences.setMargin(margin);
+		showReferences.setFocusPainted(false);
+		showReferences.setRequestFocusEnabled(false);
+		showReferences.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed( ActionEvent event ) {
+				boolean bShow = (((JToggleButton)event.getSource()).isSelected());
+				KeywordIndex kw = InputAgent.formatBoolean("ShowReferences", bShow);
+				InputAgent.storeAndExecute(new KeywordCommand(sim.getSimulation(), kw));
+				setShowReferences(bShow);
+				controlStartResume.requestFocusInWindow();
+			}
+		});
+		buttonBar.add( showReferences );
 	}
 
 	private void addShowLinksButton(JToolBar buttonBar, Insets margin) {
@@ -3210,6 +3233,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		updateShowLabelsButton(simulation.isShowLabels());
 		updateShowSubModelsButton(simulation.isShowSubModels());
 		updatePresentationModeButton(simulation.isPresentationMode());
+		updateShowReferencesButton(simulation.isShowReferences());
 		updateShowEntityFlowButton(simulation.isShowEntityFlow());
 		updateToolVisibilities(simulation);
 		updateToolSizes(simulation);
@@ -3840,6 +3864,12 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		LOWER_START = TOP_START + VIEW_HEIGHT;
 	}
 
+	public void setShowReferences(boolean bool) {
+		if (!RenderManager.isGood())
+			return;
+		RenderManager.inst().setShowReferences(bool);
+	}
+
 	public void setShowEntityFlow(boolean bool) {
 		if (!RenderManager.isGood())
 			return;
@@ -3872,6 +3902,14 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		if (!presentMode.isSelected())
 			return;
 		presentMode.doClick();
+	}
+
+	private void updateShowReferencesButton(boolean bool) {
+		if (showReferences.isSelected() == bool)
+			return;
+		showReferences.setSelected(bool);
+		setShowReferences(bool);
+		updateUI();
 	}
 
 	private void updateShowEntityFlowButton(boolean bool) {
