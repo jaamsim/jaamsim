@@ -1283,9 +1283,31 @@ public class ExpParser {
 		}
 	}
 
+	public static void appendEntityReferences(Assignment assign, ArrayList<Entity> list) throws ExpError {
+
+		// Entity whose attribute is to be assigned (left hand side)
+		if (assign.entExp != null)
+			ExpParser.appendEntityReferences(assign.entExp, list);
+
+		// Value to be assigned to the attribute (right hand side)
+		if (assign.valueExp != null)
+			ExpParser.appendEntityReferences(assign.valueExp, list);
+
+		// Any indices associated with the entity's attribute
+		if (assign.attribIndices != null) {
+			for (ExpNode node : assign.attribIndices) {
+				ExpParser.appendEntityReferences(node, list);
+			}
+		}
+	}
+
 	public static void appendEntityReferences(Expression exp, ArrayList<Entity> list) throws ExpError {
+		ExpParser.appendEntityReferences(exp.rootNode, list);
+	}
+
+	public static void appendEntityReferences(ExpNode node, ArrayList<Entity> list) throws ExpError {
 		EntityListBuilder elb = new EntityListBuilder(list);
-		exp.rootNode.walk(elb);
+		node.walk(elb);
 	}
 
 	public static void assertUnitType(Expression exp, Class<? extends Unit> unitType) {

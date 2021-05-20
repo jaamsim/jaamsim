@@ -96,6 +96,18 @@ public class AssignmentListInput extends ListInput<ArrayList<ExpParser.Assignmen
 	}
 
 	@Override
+	public void appendEntityReferences(ArrayList<Entity> list) {
+		if (value == null)
+			return;
+		try {
+			for (ExpParser.Assignment assign : value) {
+				ExpParser.appendEntityReferences(assign, list);
+			}
+		}
+		catch (ExpError e) {}
+	}
+
+	@Override
 	public boolean useExpressionBuilder() {
 		return true;
 	}
