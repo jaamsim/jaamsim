@@ -135,6 +135,7 @@ public class RenderManager implements DragSourceListener {
 
 	private final AtomicBoolean screenshot = new AtomicBoolean(false);
 
+	private final AtomicBoolean showReferences = new AtomicBoolean(false);
 	private final AtomicBoolean showLinks = new AtomicBoolean(false);
 	private final AtomicBoolean createLinks = new AtomicBoolean(false);
 	private final AtomicBoolean linkDirection = new AtomicBoolean(true);
@@ -418,6 +419,8 @@ public class RenderManager implements DragSourceListener {
 					double delta = simModel.getSimulation().getSnapGridSpacing()/100.0d;
 					if (showLinks.get()) {
 						addLinkDisplays(simModel, linkDirection.get(), delta, cachedScene);
+					}
+					if (showReferences.get()) {
 						addEntityReferenceDisplays(simModel, delta, cachedScene);
 					}
 
@@ -2250,12 +2253,18 @@ public class RenderManager implements DragSourceListener {
 		catch (InputErrorException e) {}
 	}
 
+	public void setShowReferences(boolean bShow) {
+		showReferences.set(bShow);
+	}
+
 	public void setShowLinks(boolean bShow) {
 		showLinks.set(bShow);
 	}
+
 	public void setCreateLinks(boolean bCreate) {
 		createLinks.set(bCreate);
 	}
+
 	public void setLinkDirection(boolean bool) {
 		linkDirection.set(bool);
 	}
