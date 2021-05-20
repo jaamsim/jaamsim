@@ -2407,6 +2407,11 @@ public class RenderManager implements DragSourceListener {
 						|| destList.contains(ref) || srcList.contains(ref))
 					continue;
 
+				// If one or more entities are selected, show the arrows only for those entities
+				if (!selectedEntityList.isEmpty() && !selectedEntityList.contains(ent)
+						&& !selectedEntityList.contains(ref))
+					continue;
+
 				// Show an arrow for each reference
 				Vec3d source = ((DisplayEntity) ref).getGlobalPosition();
 				double sourceRadius = ((DisplayEntity) ref).getMinRadius();

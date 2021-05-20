@@ -1756,7 +1756,9 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	private void addShowReferencesButton(JToolBar buttonBar, Insets margin) {
 		showReferences = new JToggleButton(new ImageIcon(GUIFrame.class.getResource("/resources/images/ShowReferences-16.png")));
 		showReferences.setToolTipText(formatToolTip("Show References",
-				"Shows arrows to indicate which objects appear in the inputs for each object."));
+				"Shows arrows to indicate which objects appear in the inputs for other objects. "
+				+ "If one or more objects are selected, then only the arrows associated with "
+				+ "the selected objects are shown."));
 		showReferences.setMargin(margin);
 		showReferences.setFocusPainted(false);
 		showReferences.setRequestFocusEnabled(false);
