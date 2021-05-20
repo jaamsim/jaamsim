@@ -1753,7 +1753,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	private void addShowLinksButton(JToolBar buttonBar, Insets margin) {
 		showLinks = new JToggleButton(new ImageIcon(GUIFrame.class.getResource("/resources/images/ShowLinks-16.png")));
 		showLinks.setToolTipText(formatToolTip("Show Entity Flow",
-				"When selected, arrows are shown between objects to indicate the flow of entities."));
+				"Shows arrows between objects to indicate the flow of entities."));
 		showLinks.setMargin(margin);
 		showLinks.setFocusPainted(false);
 		showLinks.setRequestFocusEnabled(false);
