@@ -332,7 +332,7 @@ public abstract class StateUserEntity extends AbstractStateUserEntity implements
 		// Downtime can start when any work in progress has been interrupted and there are no
 		// other maintenance or breakdown activities that are being performed. It is okay to start
 		// downtime when one or more thresholds are closed.
-		return !isBusy() && !isMaintenance() && !isBreakdown();
+		return !isBusy() && (down.isConcurrent() || !isMaintenance() && !isBreakdown());
 	}
 
 	@Override

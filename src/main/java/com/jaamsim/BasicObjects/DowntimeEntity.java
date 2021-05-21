@@ -119,7 +119,6 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 		this.addSynonym(downtimeDurationDistribution, "TimeToRepair");
 
 		concurrent = new BooleanInput("Concurrent", KEY_INPUTS, false);
-		concurrent.setHidden(true);
 		this.addInput(concurrent);
 
 		maxDowntimesPending = new IntegerInput("MaxDowntimesPending", "Key Inputs", Integer.MAX_VALUE);
@@ -494,6 +493,10 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 
 	public ArrayList<DowntimeUser> getDowntimeUserList() {
 		return downtimeUserList;
+	}
+
+	public boolean isConcurrent() {
+		return concurrent.getValue();
 	}
 
 	// ******************************************************************************************************
