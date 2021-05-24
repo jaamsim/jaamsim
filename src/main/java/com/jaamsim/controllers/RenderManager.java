@@ -2390,7 +2390,7 @@ public class RenderManager implements DragSourceListener {
 					|| ent instanceof Region)
 				continue;
 			Vec3d sink = ent.getGlobalPosition();
-			double sinkRadius = ent.getMinRadius();
+			double sinkRadius = 2.0d * ent.getMinRadius();
 
 			// Set the arrow head size for the region
 			double arrowSize = 0.5d * linkArrowSize;
@@ -2414,7 +2414,7 @@ public class RenderManager implements DragSourceListener {
 
 				// Show an arrow for each reference
 				Vec3d source = ((DisplayEntity) ref).getGlobalPosition();
-				double sourceRadius = ((DisplayEntity) ref).getMinRadius();
+				double sourceRadius = 0.0d;
 				addLink(source, sink, sourceRadius, sinkRadius, REF_LINK_COLOUR, arrowSize, delta, cachedScene);
 			}
 		}
