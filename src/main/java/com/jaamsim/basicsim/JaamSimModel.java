@@ -443,6 +443,17 @@ public class JaamSimModel {
 	}
 
 	/**
+	 * Executes the end of run method for each entity.
+	 */
+	public void doEnd() {
+		for (Entity each : getClonesOfIterator(Entity.class)) {
+			if (!each.isActive())
+				continue;
+			each.doEnd();
+		}
+	}
+
+	/**
 	 * Sets the simulation time to zero and re-initializes the model.
 	 * The start() method can be used to begin a new simulation run.
 	 */
@@ -490,11 +501,7 @@ public class JaamSimModel {
 	public void endRun() {
 
 		// Execute the end of run method for each entity
-		for (Entity each : getClonesOfIterator(Entity.class)) {
-			if (!each.isActive())
-				continue;
-			each.doEnd();
-		}
+		doEnd();
 
 		// Print the output report
 		if (getSimulation().getPrintReport())
