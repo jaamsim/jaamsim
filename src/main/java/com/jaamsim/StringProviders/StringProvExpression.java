@@ -25,6 +25,7 @@ import com.jaamsim.input.ExpError;
 import com.jaamsim.input.ExpEvaluator;
 import com.jaamsim.input.ExpParser;
 import com.jaamsim.input.ExpParser.Expression;
+import com.jaamsim.input.ExpResType;
 import com.jaamsim.input.ExpResult;
 import com.jaamsim.units.Unit;
 
@@ -137,6 +138,21 @@ public class StringProvExpression implements StringProvider {
 			ExpParser.appendEntityReferences(exp, list);
 		}
 		catch (ExpError e) {}
+	}
+
+	@Override
+	public double getNextValue(double simTime) {
+		double ret = Double.NaN;
+		try {
+			ExpResult result = ExpEvaluator.evaluateExpression(exp, simTime);
+			if (result.type  == ExpResType.NUMBER) {
+				ret = result.value;
+			}
+		}
+		catch(ExpError e) {
+			throw new ErrorException(thisEnt, e);
+		}
+		return ret;
 	}
 
 	@Override
