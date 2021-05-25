@@ -1175,13 +1175,13 @@ public class InputAgent {
 	}
 
 	/**
-	 * Prints selected outputs for the simulation run to stdout or a file.
+	 * Prints selected outputs for the simulation run to the specified print stream.
+	 * @param simModel - model whose outputs are to be printed
+	 * @param outStream - print stream for the outputs
 	 * @param simTime - simulation time at which the outputs are printed.
 	 */
 	public static void printRunOutputs(JaamSimModel simModel, PrintStream outStream, double simTime) {
 		Simulation simulation = simModel.getSimulation();
-
-		// Write the selected outputs
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < simulation.getRunOutputList().getListSize(); i++) {
 			StringProvider samp = simulation.getRunOutputList().getValue().get(i);
@@ -1196,12 +1196,6 @@ public class InputAgent {
 			sb.append(str);
 		}
 		outStream.println(sb.toString());
-
-		// Terminate the outputs
-		if (simModel.isLastRun()) {
-			outStream.close();
-			outStream = null;
-		}
 	}
 
 

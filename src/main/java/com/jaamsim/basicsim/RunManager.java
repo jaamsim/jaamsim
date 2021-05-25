@@ -91,7 +91,7 @@ public class RunManager implements RunListener {
 
 		// Print the selected outputs
 		if (simModel.getSimulation().getRunOutputList().getValue() != null) {
-			PrintStream outStream = getOutStream();
+			outStream = getOutStream();
 			if (simModel.isFirstRun()) {
 				InputAgent.printRunOutputHeaders(simModel, outStream);
 			}
@@ -100,6 +100,10 @@ public class RunManager implements RunListener {
 
 		if (simModel.isLastRun()) {
 			simModel.end();
+			if (outStream != null) {
+				outStream.close();
+				outStream = null;
+			}
 			return;
 		}
 
