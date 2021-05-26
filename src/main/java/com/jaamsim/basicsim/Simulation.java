@@ -151,6 +151,7 @@ public class Simulation extends Entity {
 	private final ValueInput tickLengthInput;
 
 	// Multiple Runs tab
+
 	@Keyword(description = "Defines the number of run indices and the maximum value N for each "
 	                     + "index. When making multiple runs, each index will be iterated from "
 	                     + "1 to N starting with the last index. One run will be executed for "
@@ -175,6 +176,10 @@ public class Simulation extends Entity {
 	                     + "78 = (2-1)*5*10 + (3-1)*10 + 8.",
 	         exampleList = {"78", "2-3-8"})
 	private final RunNumberInput endingRunNumber;
+
+	@Keyword(description = "The number of replications to perform for each scenario.",
+	         exampleList = {"10"})
+	private final IntegerInput numberOfReplications;
 
 	// GUI tab
 	@Keyword(description = "An optional list of units to be used for displaying model outputs.",
@@ -416,6 +421,10 @@ public class Simulation extends Entity {
 
 		endingRunNumber = new RunNumberInput("EndingRunNumber", MULTIPLE_RUNS, 1);
 		this.addInput(endingRunNumber);
+
+		numberOfReplications = new IntegerInput("NumberOfReplications", MULTIPLE_RUNS, 1);
+		numberOfReplications.setValidRange(1, Integer.MAX_VALUE);
+		this.addInput(numberOfReplications);
 
 		// GUI tab
 		displayedUnits = new EntityListInput<>(Unit.class, "DisplayedUnits", GUI, new ArrayList<Unit>());
@@ -1131,6 +1140,10 @@ public class Simulation extends Entity {
 
 	public void setControlPanelWidthDefault(int width) {
 		controlPanelWidth.setDefaultValue(width);
+	}
+
+	public int getNumberOfReplications() {
+		return numberOfReplications.getValue();
 	}
 
 	public int getStartingRunNumber() {
