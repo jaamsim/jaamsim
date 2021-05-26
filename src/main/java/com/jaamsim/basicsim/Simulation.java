@@ -159,7 +159,7 @@ public class Simulation extends Entity {
 	                     + "indices are defined with ranges of 3, 5, and 10, then at total of "
 	                     + "3*5*10 = 150 runs will be executed.",
 	         exampleList = {"3 5 10"})
-	private final IntegerListInput runIndexDefinitionList;
+	private final IntegerListInput scenarioIndexDefinitionList;
 
 	@Keyword(description = "The first run number to be executed. The value can be entered as "
 	                     + "either an integer or as the equivalent combination of run indices. "
@@ -167,7 +167,7 @@ public class Simulation extends Entity {
 	                     + "3, 5, and 10, then run number 22 can be expressed as 1-3-2 because "
 	                     + "22 = (1-1)*5*10 + (3-1)*10 + 2.",
 	         exampleList = {"22", "1-3-2"})
-	private final RunNumberInput startingRunNumber;
+	private final RunNumberInput startingScenarioNumber;
 
 	@Keyword(description = "The last run number to be executed. The value can be entered as "
 	                     + "either an integer or as the equivalent combination of run indices. "
@@ -175,7 +175,7 @@ public class Simulation extends Entity {
 	                     + "3, 5, and 10, then run number 78 can be expressed as 2-3-8 because "
 	                     + "78 = (2-1)*5*10 + (3-1)*10 + 8.",
 	         exampleList = {"78", "2-3-8"})
-	private final RunNumberInput endingRunNumber;
+	private final RunNumberInput endingScenarioNumber;
 
 	@Keyword(description = "The number of replications to perform for each scenario.",
 	         exampleList = {"10"})
@@ -413,14 +413,17 @@ public class Simulation extends Entity {
 		// Multiple Runs tab
 		IntegerVector defRangeList = new IntegerVector();
 		defRangeList.add(1);
-		runIndexDefinitionList = new IntegerListInput("RunIndexDefinitionList", MULTIPLE_RUNS, defRangeList);
-		this.addInput(runIndexDefinitionList);
+		scenarioIndexDefinitionList = new IntegerListInput("ScenarioIndexDefinitionList", MULTIPLE_RUNS, defRangeList);
+		this.addInput(scenarioIndexDefinitionList);
+		this.addSynonym(scenarioIndexDefinitionList, "RunIndexDefinitionList");
 
-		startingRunNumber = new RunNumberInput("StartingRunNumber", MULTIPLE_RUNS, 1);
-		this.addInput(startingRunNumber);
+		startingScenarioNumber = new RunNumberInput("StartingScenarioNumber", MULTIPLE_RUNS, 1);
+		this.addInput(startingScenarioNumber);
+		this.addSynonym(startingScenarioNumber, "StartingRunNumber");
 
-		endingRunNumber = new RunNumberInput("EndingRunNumber", MULTIPLE_RUNS, 1);
-		this.addInput(endingRunNumber);
+		endingScenarioNumber = new RunNumberInput("EndingScenarioNumber", MULTIPLE_RUNS, 1);
+		this.addInput(endingScenarioNumber);
+		this.addSynonym(endingScenarioNumber, "EndingRunNumber");
 
 		numberOfReplications = new IntegerInput("NumberOfReplications", MULTIPLE_RUNS, 1);
 		numberOfReplications.setValidRange(1, Integer.MAX_VALUE);
@@ -678,15 +681,15 @@ public class Simulation extends Entity {
 			return;
 		}
 
-		if (in == runIndexDefinitionList) {
+		if (in == scenarioIndexDefinitionList) {
 			getJaamSimModel().setRunIndexList();
-			startingRunNumber.setRunIndexRangeList(runIndexDefinitionList.getValue());
-			endingRunNumber.setRunIndexRangeList(runIndexDefinitionList.getValue());
+			startingScenarioNumber.setRunIndexRangeList(getRunIndexDefinitionList());
+			endingScenarioNumber.setRunIndexRangeList(getRunIndexDefinitionList());
 			return;
 		}
 
-		if (in == startingRunNumber) {
-			getJaamSimModel().setRunNumber(startingRunNumber.getValue());
+		if (in == startingScenarioNumber) {
+			getJaamSimModel().setRunNumber(getStartingRunNumber());
 			return;
 		}
 
@@ -1147,15 +1150,15 @@ public class Simulation extends Entity {
 	}
 
 	public int getStartingRunNumber() {
-		return startingRunNumber.getValue();
+		return startingScenarioNumber.getValue();
 	}
 
 	public int getEndingRunNumber() {
-		return endingRunNumber.getValue();
+		return endingScenarioNumber.getValue();
 	}
 
 	public IntegerVector getRunIndexDefinitionList() {
-		return runIndexDefinitionList.getValue();
+		return scenarioIndexDefinitionList.getValue();
 	}
 
 	@Output(name = "SoftwareName",
