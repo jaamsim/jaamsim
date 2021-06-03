@@ -128,14 +128,6 @@ public abstract class Device extends StateUserEntity implements ObserverEntity, 
 	}
 
 	/**
-	 * Returns whether the caller can be started.
-	 * @return true if the caller can be started
-	 */
-	public boolean isAbleToRestart() {
-		return isAvailable() && !isForcedDowntimePending() && !isImmediateDowntimePending();
-	}
-
-	/**
 	 * Returns the simulation time in clock ticks at which the device was started most recently.
 	 * @return start time in clock ticks
 	 */

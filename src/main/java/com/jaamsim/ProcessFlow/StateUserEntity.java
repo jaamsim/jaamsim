@@ -312,6 +312,14 @@ public abstract class StateUserEntity extends AbstractStateUserEntity implements
 		return false;
 	}
 
+	/**
+	 * Returns whether the caller can be started.
+	 * @return true if the caller can be started
+	 */
+	public boolean isAbleToRestart() {
+		return isAvailable() && !isForcedDowntimePending() && !isImmediateDowntimePending();
+	}
+
 	// ********************************************************************************************
 	// MAINTENANCE AND BREAKDOWNS
 	// ********************************************************************************************
