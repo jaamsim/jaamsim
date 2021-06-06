@@ -46,6 +46,7 @@ import javax.swing.event.ListSelectionListener;
 
 import com.jaamsim.Graphics.View;
 import com.jaamsim.basicsim.JaamSimModel;
+import com.jaamsim.basicsim.RunManager;
 import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.input.Input;
@@ -350,6 +351,10 @@ public class ExampleBox extends JDialog {
 
 		// A RecordEdits marker in the example file must be ignored
 		simModel.setRecordEditsFound(false);
+
+		// Add the run manager
+		RunManager runMgr = new RunManager(simModel);
+		simModel.setRunListener(runMgr);
 
 		// Add labels and sub-models
 		simModel.showTemporaryLabels( simulation.isShowLabels() );

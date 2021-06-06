@@ -128,6 +128,7 @@ import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.basicsim.GUIListener;
 import com.jaamsim.basicsim.JaamSimModel;
+import com.jaamsim.basicsim.RunManager;
 import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.controllers.RateLimiter;
 import com.jaamsim.controllers.RenderManager;
@@ -4281,6 +4282,10 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		JaamSimModel simModel = getNextJaamSimModel();
 		simModel.autoLoad();
 
+		// Add the run manager
+		RunManager runMgr = new RunManager(simModel);
+		simModel.setRunListener(runMgr);
+
 		GUIFrame gui = null;
 		if (!headless) {
 			gui = GUIFrame.createInstance();
@@ -4562,6 +4567,10 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		simModel.autoLoad();
 		setWindowDefaults(simModel.getSimulation());
 
+		// Add the run manager
+		RunManager runMgr = new RunManager(simModel);
+		simModel.setRunListener(runMgr);
+
 		// Set the Control Panel to the new JaamSimModel and reset the user interface
 		setJaamSimModel(simModel);
 
@@ -4601,6 +4610,10 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		JaamSimModel simModel = new JaamSimModel(file.getName());
 		simModel.autoLoad();
 		setWindowDefaults(simModel.getSimulation());
+
+		// Add the run manager
+		RunManager runMgr = new RunManager(simModel);
+		simModel.setRunListener(runMgr);
 
 		// Set the Control Panel to the new JaamSimModel and reset the user interface
 		setJaamSimModel(simModel);
