@@ -16,40 +16,11 @@
  */
 package com.jaamsim.basicsim;
 
-/**
- * Controls the execution of one or more runs of a given simulation model.
- * @author Harry King
- *
- */
-public class RunManager implements RunListener {
+public interface RunListener {
 
-	private final JaamSimModel simModel;
-
-	public RunManager(JaamSimModel sm) {
-		simModel = sm;
-	}
-
-	public JaamSimModel getJaamSimModel() {
-		return simModel;
-	}
-
-	public void start(double pauseTime) {
-	}
-
-	public void pause() {
-	}
-
-	public void resume(double pauseTime) {
-	}
-
-	public void reset() {
-	}
-
-	public void close() {
-	}
-
-	@Override
-	public void runEnded() {
-	}
+	/**
+	 * Notifies that the specified simulation run has finished execution.
+	 */
+	public void runEnded();
 
 }

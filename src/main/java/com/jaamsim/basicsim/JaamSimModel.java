@@ -65,6 +65,7 @@ public class JaamSimModel {
 	private String name;
 	private int runNumber;    // labels each run when multiple runs are being made
 	private IntegerVector runIndexList;
+	private RunListener runListener;
 	private GUIListener gui;
 	private final AtomicLong entityCount = new AtomicLong(0);
 
@@ -134,6 +135,14 @@ public class JaamSimModel {
 
 	public final void setTimeListener(EventTimeListener l) {
 		eventManager.setTimeListener(l);
+	}
+
+	public final void setRunListener(RunListener l) {
+		runListener = l;
+	}
+
+	public final RunListener getRunListener() {
+		return runListener;
 	}
 
 	public void setGUIListener(GUIListener l) {
@@ -502,6 +511,9 @@ public class JaamSimModel {
 
 		// Execute the end of run method for each entity
 		doEnd();
+
+		// Notify the run manager
+		runListener.runEnded();
 
 		// Print the output report
 		if (getSimulation().getPrintReport())
