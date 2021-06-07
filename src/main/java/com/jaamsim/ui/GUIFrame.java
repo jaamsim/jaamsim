@@ -156,6 +156,7 @@ import com.jaamsim.units.TimeUnit;
 public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListener {
 	private static GUIFrame instance;
 
+	private static RunManager runManager;
 	private static JaamSimModel sim;
 	private static final ArrayList<JaamSimModel> simList = new ArrayList<>();
 	private static final AtomicLong modelCount = new AtomicLong(0);  // number of JaamSimModels
@@ -437,6 +438,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		}
 
 		sim = sm;
+		runManager = (RunManager) sm.getRunListener();
 
 		GUIFrame gui = getInstance();
 		if (gui == null)
