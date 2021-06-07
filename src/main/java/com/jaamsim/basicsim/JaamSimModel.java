@@ -327,9 +327,6 @@ public class JaamSimModel {
 		}
 
 		eventManager.setTickLength(getSimulation().getTickLength());
-
-		runNumber = getSimulation().getStartingRunNumber();
-		setRunIndexList();
 		startRun(pauseTime);
 	}
 
@@ -482,10 +479,6 @@ public class JaamSimModel {
 			} catch (Exception e) {}
 		}
 
-		// Reset the run number and run indices
-		runNumber = getSimulation().getStartingRunNumber();
-		setRunIndexList();
-
 		// Close the output reports
 		if (reportFile != null) {
 			reportFile.close();
@@ -511,9 +504,6 @@ public class JaamSimModel {
 		}
 
 		// Start the next run
-		runNumber++;
-		setRunIndexList();
-
 		eventManager.pause();
 		eventManager.clear();
 		killGeneratedEntities();

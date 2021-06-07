@@ -32,6 +32,7 @@ public class RunManager implements RunListener {
 
 	private final JaamSimModel simModel;
 	private PrintStream outStream;  // location where the custom outputs will be written
+	private int runNumber;    // labels each run when multiple runs are being made
 
 	public RunManager(JaamSimModel sm) {
 		simModel = sm;
@@ -42,6 +43,8 @@ public class RunManager implements RunListener {
 	}
 
 	public void start(double pauseTime) {
+		runNumber = simModel.getSimulation().getStartingRunNumber();
+		simModel.setRunNumber(runNumber);
 		simModel.start(pauseTime);
 	}
 
@@ -58,6 +61,8 @@ public class RunManager implements RunListener {
 			outStream.close();
 			outStream = null;
 		}
+		runNumber = simModel.getSimulation().getStartingRunNumber();
+		simModel.setRunNumber(runNumber);
 		simModel.reset();
 	}
 
@@ -87,6 +92,14 @@ public class RunManager implements RunListener {
 			}
 			InputAgent.printRunOutputs(simModel, outStream, EventManager.simSeconds());
 		}
+
+		if (simModel.isLastRun()) {
+			return;
+		}
+
+		// Increment the run number
+		runNumber++;
+		simModel.setRunNumber(runNumber);
 	}
 
 	public PrintStream getOutStream() {
