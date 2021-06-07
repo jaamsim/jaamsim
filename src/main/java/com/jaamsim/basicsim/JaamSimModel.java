@@ -515,19 +515,6 @@ public class JaamSimModel {
 		// Notify the run manager
 		runListener.runEnded();
 
-		// Print the output report
-		if (getSimulation().getPrintReport())
-			InputAgent.printReport(this, EventManager.simSeconds());
-
-		// Print the selected outputs
-		if (getSimulation().getRunOutputList().getValue() != null) {
-			if (outStream == null) {
-				outStream = getOutStream();
-				InputAgent.printRunOutputHeaders(this, outStream);
-			}
-			InputAgent.printRunOutputs(this, outStream, EventManager.simSeconds());
-		}
-
 		// Increment the run number and check for last run
 		if (isLastRun()) {
 			end();

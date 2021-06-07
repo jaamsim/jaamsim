@@ -16,6 +16,11 @@
  */
 package com.jaamsim.basicsim;
 
+import java.io.PrintStream;
+
+import com.jaamsim.events.EventManager;
+import com.jaamsim.input.InputAgent;
+
 /**
  * Controls the execution of one or more runs of a given simulation model.
  * @author Harry King
@@ -58,6 +63,19 @@ public class RunManager implements RunListener {
 
 	@Override
 	public void runEnded() {
+
+		// Print the output report
+		if (simModel.getSimulation().getPrintReport())
+			InputAgent.printReport(simModel, EventManager.simSeconds());
+
+		// Print the selected outputs
+		if (simModel.getSimulation().getRunOutputList().getValue() != null) {
+			PrintStream outStream = simModel.getOutStream();
+			if (simModel.isFirstRun()) {
+				InputAgent.printRunOutputHeaders(simModel, outStream);
+			}
+			InputAgent.printRunOutputs(simModel, outStream, EventManager.simSeconds());
+		}
 	}
 
 }
