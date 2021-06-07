@@ -94,12 +94,27 @@ public class RunManager implements RunListener {
 		}
 
 		if (simModel.isLastRun()) {
+			simModel.end();
 			return;
 		}
+
+		// Clear the model prior to the next run
+		simModel.pause();
+		simModel.getEventManager().clear();
+		simModel.killGeneratedEntities();
 
 		// Increment the run number
 		runNumber++;
 		simModel.setRunNumber(runNumber);
+
+		// Start the next run
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				double pauseTime = simModel.getSimulation().getPauseTime();
+				simModel.startRun(pauseTime);
+			}
+		}).start();
 	}
 
 	public PrintStream getOutStream() {

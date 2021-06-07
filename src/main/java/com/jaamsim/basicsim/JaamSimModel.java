@@ -337,12 +337,6 @@ public class JaamSimModel {
 	/**
 	 * Starts a single simulation run.
 	 */
-	public void startRun() {
-		//System.out.format("%s.startRun%n", this);
-		double pauseTime = getSimulation().getPauseTime();
-		startRun(pauseTime);
-	}
-
 	public void startRun(double pauseTime) {
 		initRun();
 		resume(pauseTime);
@@ -496,24 +490,6 @@ public class JaamSimModel {
 
 		// Notify the run manager
 		runListener.runEnded();
-
-		// Increment the run number and check for last run
-		if (isLastRun()) {
-			end();
-			return;
-		}
-
-		// Start the next run
-		eventManager.pause();
-		eventManager.clear();
-		killGeneratedEntities();
-
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				startRun();
-			}
-		}).start();
 	}
 
 	/**
