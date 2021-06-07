@@ -16,10 +16,12 @@
  */
 package com.jaamsim.basicsim;
 
+import java.io.FileNotFoundException;
 import java.io.PrintStream;
 
 import com.jaamsim.events.EventManager;
 import com.jaamsim.input.InputAgent;
+import com.jaamsim.input.InputErrorException;
 
 /**
  * Controls the execution of one or more runs of a given simulation model.
@@ -29,6 +31,7 @@ import com.jaamsim.input.InputAgent;
 public class RunManager implements RunListener {
 
 	private final JaamSimModel simModel;
+	private PrintStream outStream;  // location where the custom outputs will be written
 
 	public RunManager(JaamSimModel sm) {
 		simModel = sm;
@@ -51,10 +54,18 @@ public class RunManager implements RunListener {
 	}
 
 	public void reset() {
+		if (outStream != null) {
+			outStream.close();
+			outStream = null;
+		}
 		simModel.reset();
 	}
 
 	public void close() {
+		if (outStream != null) {
+			outStream.close();
+			outStream = null;
+		}
 		simModel.closeLogFile();
 		simModel.pause();
 		simModel.close();
@@ -70,12 +81,37 @@ public class RunManager implements RunListener {
 
 		// Print the selected outputs
 		if (simModel.getSimulation().getRunOutputList().getValue() != null) {
-			PrintStream outStream = simModel.getOutStream();
+			PrintStream outStream = getOutStream();
 			if (simModel.isFirstRun()) {
 				InputAgent.printRunOutputHeaders(simModel, outStream);
 			}
 			InputAgent.printRunOutputs(simModel, outStream, EventManager.simSeconds());
 		}
+	}
+
+	public PrintStream getOutStream() {
+		if (outStream == null) {
+
+			// Select either standard out or a file for the outputs
+			outStream = System.out;
+			if (!simModel.isScriptMode()) {
+				String fileName = simModel.getReportFileName(".dat");
+				if (fileName == null)
+					throw new ErrorException("Cannot create the run output file");
+				try {
+					outStream = new PrintStream(fileName);
+				}
+				catch (FileNotFoundException e) {
+					throw new InputErrorException(
+							"FileNotFoundException thrown trying to open PrintStream: " + e );
+				}
+				catch (SecurityException e) {
+					throw new InputErrorException(
+							"SecurityException thrown trying to open PrintStream: " + e );
+				}
+			}
+		}
+		return outStream;
 	}
 
 }

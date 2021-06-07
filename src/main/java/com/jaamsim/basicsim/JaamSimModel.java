@@ -17,8 +17,6 @@
 package com.jaamsim.basicsim;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.PrintStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -80,7 +78,6 @@ public class JaamSimModel {
 	private File configFile;           // present configuration file
 	private File reportDir;         // directory for the output reports
 	private FileEntity reportFile;  // file to which the output report will be written
-	private PrintStream outStream;  // location where the custom outputs will be written
 
 	private boolean batchRun;       // true if the run is to be terminated automatically
 	private boolean scriptMode;     // TRUE if script mode (command line) is specified
@@ -209,10 +206,6 @@ public class JaamSimModel {
 		if (reportFile != null) {
 			reportFile.close();
 			reportFile = null;
-		}
-		if (outStream != null) {
-			outStream.close();
-			outStream = null;
 		}
 		setSessionEdited(false);
 		recordEditsFound = false;
@@ -497,10 +490,6 @@ public class JaamSimModel {
 		if (reportFile != null) {
 			reportFile.close();
 			reportFile = null;
-		}
-		if (outStream != null) {
-			outStream.close();
-			outStream = null;
 		}
 	}
 
@@ -1283,31 +1272,6 @@ public class JaamSimModel {
 			reportFile = new FileEntity(f);
 		}
 		return reportFile;
-	}
-
-	public PrintStream getOutStream() {
-		if (outStream == null) {
-
-			// Select either standard out or a file for the outputs
-			outStream = System.out;
-			if (!isScriptMode()) {
-				String fileName = getReportFileName(".dat");
-				if (fileName == null)
-					throw new ErrorException("Cannot create the run output file");
-				try {
-					outStream = new PrintStream(fileName);
-				}
-				catch (FileNotFoundException e) {
-					throw new InputErrorException(
-							"FileNotFoundException thrown trying to open PrintStream: " + e );
-				}
-				catch (SecurityException e) {
-					throw new InputErrorException(
-							"SecurityException thrown trying to open PrintStream: " + e );
-				}
-			}
-		}
-		return outStream;
 	}
 
 	public void setBatchRun(boolean bool) {
