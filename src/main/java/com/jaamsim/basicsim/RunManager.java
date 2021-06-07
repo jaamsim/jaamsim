@@ -34,18 +34,26 @@ public class RunManager implements RunListener {
 	}
 
 	public void start(double pauseTime) {
+		simModel.start(pauseTime);
 	}
 
 	public void pause() {
+		simModel.pause();
 	}
 
 	public void resume(double pauseTime) {
+		simModel.resume(pauseTime);
 	}
 
 	public void reset() {
+		simModel.reset();
 	}
 
 	public void close() {
+		simModel.closeLogFile();
+		simModel.pause();
+		simModel.close();
+		simModel.clear();
 	}
 
 	@Override

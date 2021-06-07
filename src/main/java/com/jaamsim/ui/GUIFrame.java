@@ -544,11 +544,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			if (!confirmed)
 				return;
 		}
-		sim.closeLogFile();
 		simList.remove(sim);
-		sim.pause();
-		sim.close();
-		sim.clear();
+		runManager.close();
 		if (simList.isEmpty())
 			GUIFrame.shutdown(0);
 		setJaamSimModel(simList.get(0));
@@ -3023,18 +3020,19 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	 * @return true if the simulation was started or resumed; false if cancel or close was selected
 	 */
 	public boolean startSimulation() {
+		double pauseTime = sim.getSimulation().getPauseTime();
 		if (sim.getSimState() <= JaamSimModel.SIM_STATE_CONFIGURED) {
 			boolean confirmed = true;
 			if (sim.isSessionEdited()) {
 				confirmed = GUIFrame.showSaveChangesDialog(this);
 			}
 			if (confirmed) {
-				sim.start();
+				runManager.start(pauseTime);
 			}
 			return confirmed;
 		}
 		else if (sim.getSimState() == JaamSimModel.SIM_STATE_PAUSED) {
-			sim.resume(sim.getSimulation().getPauseTime());
+			runManager.resume(pauseTime);
 			return true;
 		}
 		else
@@ -3046,7 +3044,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	 */
 	private void pauseSimulation() {
 		if (sim.getSimState() == JaamSimModel.SIM_STATE_RUNNING)
-			sim.pause();
+			runManager.pause();
 		else
 			throw new ErrorException( "Invalid Simulation State for pause" );
 	}
@@ -3058,7 +3056,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		if (sim.getSimState() == JaamSimModel.SIM_STATE_RUNNING ||
 		    sim.getSimState() == JaamSimModel.SIM_STATE_PAUSED ||
 		    sim.getSimState() == JaamSimModel.SIM_STATE_ENDED) {
-			sim.reset();
+			runManager.reset();
 			FrameBox.stop();
 			this.updateForSimulationState(JaamSimModel.SIM_STATE_CONFIGURED);
 		}
