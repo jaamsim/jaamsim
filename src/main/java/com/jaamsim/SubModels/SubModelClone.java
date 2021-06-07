@@ -17,6 +17,7 @@
 package com.jaamsim.SubModels;
 
 import java.util.LinkedHashMap;
+import java.util.Map.Entry;
 
 import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.Graphics.DisplayEntity;
@@ -167,12 +168,12 @@ public class SubModelClone extends AbstractSubModel {
 		}
 
 		// Reset the stream number inputs for the random distributions to the saved values
-		for (Entity comp : seedMap.keySet()) {
-			String name = comp.getLocalName();
-			Entity protoComp = proto.getChild(name);
+		for (Entry<Entity, Integer> entry : seedMap.entrySet()) {
+			Entity comp = entry.getKey();
+			Entity protoComp = proto.getChild(comp.getLocalName());
 
 			// Assign a new seed if it is the same as the seed for the parent component
-			int seed = seedMap.get(comp).intValue();
+			int seed = entry.getValue().intValue();
 			if (seed == -1 || seed == ((RandomStreamUser) protoComp).getStreamNumber())
 				seed = getSimulation().getLargestStreamNumber() + 1;
 
