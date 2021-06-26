@@ -85,7 +85,7 @@ public class FindBox extends JDialog {
 			@Override
 			public void actionPerformed( ActionEvent e ) {
 				String name = searchText.getText().trim();
-				findEntity(name);
+				searchText.showAndSaveTopic(name);
 			}
 		} );
 

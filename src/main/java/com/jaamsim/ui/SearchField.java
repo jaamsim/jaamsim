@@ -196,7 +196,7 @@ public abstract class SearchField extends JPanel {
 		topicMenu.show(topicSearch, 0, topicSearch.getHeight());
 	}
 
-	private void showAndSaveTopic(String topic) {
+	public void showAndSaveTopic(String topic) {
 		showTopic(topic);
 		topicSearch.setText(topic);
 		prevTopics.remove(topic);
