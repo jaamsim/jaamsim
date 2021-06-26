@@ -53,8 +53,7 @@ public class FindBox extends JDialog {
 		searchText = new SearchField(30) {
 			@Override
 			public boolean showTopic(String topic) {
-				findEntity(topic);
-				return true;
+				return findEntity(topic);
 			}
 			@Override
 			public ArrayList<String> getTopicList(String str) {
@@ -128,17 +127,18 @@ public class FindBox extends JDialog {
 		this.setVisible(true);
 	}
 
-	private void findEntity(String name) {
+	private boolean findEntity(String name) {
 		if (name.isEmpty())
-			return;
+			return false;
 		Entity ent = GUIFrame.getJaamSimModel().getEntity(name);
 		if (ent == null || ent instanceof ObjectType || ent instanceof Unit ||
 				ent instanceof IconModel) {
 			String msg = String.format("Cannot find entity named: '%s'.", name);
 			GUIFrame.showErrorDialog("Error", msg);
-			return;
+			return false;
 		}
 		FrameBox.setSelectedEntity(ent, false);
+		return true;
 	}
 
 	private ArrayList<String> getNameList(String name) {

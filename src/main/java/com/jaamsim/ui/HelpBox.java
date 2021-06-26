@@ -77,8 +77,7 @@ public class HelpBox extends JDialog {
 		topicSearch = new SearchField(30) {
 			@Override
 			public boolean showTopic(String topic) {
-				HelpBox.this.showTopic(topic);
-				return true;
+				return HelpBox.this.showTopic(topic);
 			}
 			@Override
 			public ArrayList<String> getTopicList(String str) {
@@ -241,18 +240,21 @@ public class HelpBox extends JDialog {
 		this.setVisible(true);
 	}
 
-	private void showTopic(String topic) {
+	private boolean showTopic(String topic) {
 		try {
 			URL url = GUIFrame.class.getResource("/resources/help/" + topic + ".htm");
 			if (url == null)
-				return;
+				return false;
 			editorPane.setPage(url);
 			presentTopic = topic;
 			int ind = topicList.indexOf(topic);
 			list.setSelectedIndex(ind);
 			list.ensureIndexIsVisible(ind);
+			return true;
 		}
-		catch (Throwable t) {}
+		catch (Throwable t) {
+			return false;
+		}
 	}
 
 }
