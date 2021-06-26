@@ -91,8 +91,9 @@ public class ExampleBox extends JDialog {
 		// Example search
 		exampleSearch = new SearchField(50) {
 			@Override
-			public void showTopic(String topic) {
+			public boolean showTopic(String topic) {
 				ExampleBox.this.showTopic(topic);
+				return true;
 			}
 			@Override
 			public ArrayList<String> getTopicList(String str) {

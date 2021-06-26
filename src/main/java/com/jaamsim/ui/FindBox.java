@@ -52,8 +52,9 @@ public class FindBox extends JDialog {
 		// Search text
 		searchText = new SearchField(30) {
 			@Override
-			public void showTopic(String topic) {
+			public boolean showTopic(String topic) {
 				findEntity(topic);
+				return true;
 			}
 			@Override
 			public ArrayList<String> getTopicList(String str) {

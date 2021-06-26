@@ -76,8 +76,9 @@ public class HelpBox extends JDialog {
 		// Topics search
 		topicSearch = new SearchField(30) {
 			@Override
-			public void showTopic(String topic) {
+			public boolean showTopic(String topic) {
 				HelpBox.this.showTopic(topic);
+				return true;
 			}
 			@Override
 			public ArrayList<String> getTopicList(String str) {

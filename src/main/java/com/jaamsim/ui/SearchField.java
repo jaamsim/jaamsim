@@ -197,7 +197,9 @@ public abstract class SearchField extends JPanel {
 	}
 
 	public void showAndSaveTopic(String topic) {
-		showTopic(topic);
+		boolean bool = showTopic(topic);
+		if (!bool)
+			return;
 		topicSearch.setText(topic);
 		prevTopics.remove(topic);
 		prevTopics.add(0, topic);
@@ -213,7 +215,8 @@ public abstract class SearchField extends JPanel {
 	/**
 	 * Displays the selected topic.
 	 * @param topic - topic to display
+	 * @return true if the topic was found
 	 */
-	public abstract void showTopic(String topic);
+	public abstract boolean showTopic(String topic);
 
 }
