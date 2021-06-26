@@ -148,6 +148,7 @@ public class FindBox extends JDialog {
 	public void showDialog(String str) {
 		searchText.setText(str);
 		this.setVisible(true);
+		searchText.requestFocusInWindow();
 	}
 
 	private boolean findEntity(String name) {
