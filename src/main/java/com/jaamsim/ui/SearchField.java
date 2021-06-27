@@ -164,7 +164,10 @@ public abstract class SearchField extends JPanel {
 	}
 
 	private void showTopicMenu(String str, boolean focusable) {
-		if (str.isEmpty()) {
+
+		// Find the matching topics
+		ArrayList<String> list = getTopicList(str);
+		if (str.isEmpty() || list.isEmpty()) {
 			if (topicMenu != null) {
 				topicMenu.setVisible(false);
 				topicMenu = null;
@@ -175,7 +178,7 @@ public abstract class SearchField extends JPanel {
 		// Build the menu of matching topics
 		topicMenu = new ScrollablePopupMenu();
 		boolean first = true;
-		for (final String topic : getTopicList(str)) {
+		for (final String topic : list) {
 			JMenuItem item = new JMenuItem(topic);
 			item.setPreferredSize(topicSearch.getPreferredSize());
 			item.addActionListener( new ActionListener() {
