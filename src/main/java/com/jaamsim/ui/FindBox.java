@@ -118,6 +118,17 @@ public class FindBox extends JDialog {
 		super.dispose();
 	}
 
+	/**
+	 * Launches the Find tool and searches for entities that contain the specified string.
+	 * @param str - string to search
+	 */
+	public void search(String str) {
+		if (str == null || str.isEmpty())
+			return;
+		this.setVisible(true);
+		searchText.search(str);
+	}
+
 	public void showDialog() {
 		showDialog("");
 	}
