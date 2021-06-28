@@ -1191,21 +1191,50 @@ public class Simulation extends Entity {
 		return "";
 	}
 
+	@Output(name = "ScenarioNumber",
+	 description = "The counter used to indentify an individual simulation scenario when multiple "
+	             + "scenarios are being made.",
+	    unitType = DimensionlessUnit.class,
+	  reportable = true,
+	    sequence = 3)
+	public int getScenarioNumber(double simTime) {
+		return getJaamSimModel().getScenarioNumber();
+	}
+
+	@Output(name = "ScenarioIndex",
+	 description = "The list of scenario indices that correspond to the scenario number.",
+	    unitType = DimensionlessUnit.class,
+	  reportable = true,
+	    sequence = 4)
+	public IntegerVector getScenarioIndex(double simTime) {
+		return getJaamSimModel().getScenarioIndexList();
+	}
+
+	@Output(name = "ReplicationNumber",
+	 description = "The counter used to indentify an individual replication for the present "
+	             + "scenario.",
+	    unitType = DimensionlessUnit.class,
+	  reportable = true,
+	    sequence = 5)
+	public int getReplicationNumber(double simTime) {
+		return getJaamSimModel().getReplicationNumber();
+	}
+
 	@Output(name = "RunNumber",
 	 description = "The counter used to indentify an individual simulation run when multiple runs "
 	             + "are being made.",
 	    unitType = DimensionlessUnit.class,
 	  reportable = true,
-	    sequence = 3)
+	    sequence = 6)
 	public int getRunNumber(double simTime) {
-		return getJaamSimModel().getScenarioNumber();
+		return getJaamSimModel().getRunNumber();
 	}
 
 	@Output(name = "RunIndex",
-	 description = "The list of run indices that correspond to the run number.",
+	 description = "For backwards compatibility - same as the ScenarioIndex output.",
 	    unitType = DimensionlessUnit.class,
 	  reportable = true,
-	    sequence = 4)
+	    sequence = 7)
 	public IntegerVector getRunIndex(double simTime) {
 		return getJaamSimModel().getScenarioIndexList();
 	}
@@ -1213,7 +1242,7 @@ public class Simulation extends Entity {
 	@Output(name = "PresentTimeAndDate",
 	 description = "The present local time and date.",
 	  reportable = true,
-	    sequence = 5)
+	    sequence = 8)
 	public String getPresentTime(double simTime) {
 		String timeStamp = new SimpleDateFormat("MMM dd, yyyy HH:mm").format(Calendar.getInstance().getTime());
 		return timeStamp;
@@ -1224,7 +1253,7 @@ public class Simulation extends Entity {
 	             + "collection.",
 	    unitType = TimeUnit.class,
 	  reportable = true,
-	    sequence = 6)
+	    sequence = 9)
 	public double getInitializationDuration(double simTime) {
 		return initializationTime.getValue();
 	}
@@ -1233,7 +1262,7 @@ public class Simulation extends Entity {
 	 description = "The length of time over which statistics were collected.",
 	    unitType = TimeUnit.class,
 	  reportable = true,
-	    sequence = 7)
+	    sequence = 10)
 	public double getRunDuration(double simTime) {
 		return runDuration.getValue();
 	}
@@ -1242,7 +1271,7 @@ public class Simulation extends Entity {
 	 description = "The value for the simulation clock at the present time.",
 	    unitType = TimeUnit.class,
 	  reportable = true,
-	    sequence = 8)
+	    sequence = 11)
 	public double getPresentSimulationTime(double simTime) {
 		return simTime;
 	}
@@ -1251,7 +1280,7 @@ public class Simulation extends Entity {
 	 description = "The calendar date and time for the present simulation time expressed as an "
 	             + "array of integer values in the format (YY, MM, DD, hh, mm, ss, milliseconds).",
 	    unitType = DimensionlessUnit.class,
-	    sequence = 9)
+	    sequence = 12)
 	public int[] getSimDate(double simTime) {
 		long millis = getJaamSimModel().simTimeToCalendarMillis(simTime);
 		return getJaamSimModel().getSimDate(millis).toArray();
@@ -1261,7 +1290,7 @@ public class Simulation extends Entity {
 	 description = "The calendar day of week (Sunday = 1, Monday = 2, ..., Saturday = 7) for the "
 	             + "present simulation time.",
 	    unitType = DimensionlessUnit.class,
-	    sequence = 10)
+	    sequence = 13)
 	public int getSimDayOfWeek(double simTime) {
 		long millis = getJaamSimModel().simTimeToCalendarMillis(simTime);
 		return getJaamSimModel().getDayOfWeek(millis);
@@ -1270,7 +1299,7 @@ public class Simulation extends Entity {
 	@Output(name = "PresentDate",
 	 description = "The present local time and date expressed as an array of integer values in "
 	             + "the format (YY, MM, DD, hh, mm, ss, milliseconds).",
-	    sequence = 11)
+	    sequence = 14)
 	public int[] getPresentDate(double simTime) {
 		SimDate simDate = new SimDate(Calendar.getInstance());
 		return simDate.toArray();
@@ -1280,7 +1309,7 @@ public class Simulation extends Entity {
 	 description = "The calendar day of week (Sunday = 1, Monday = 2, ..., Saturday = 7) for the "
 	             + "present local time.",
 	    unitType = DimensionlessUnit.class,
-	    sequence = 12)
+	    sequence = 15)
 	public int getPresentDayOfWeek(double simTime) {
 		return Calendar.getInstance().get(Calendar.DAY_OF_WEEK);
 	}

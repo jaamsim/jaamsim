@@ -741,6 +741,11 @@ public class JaamSimModel {
 		return replicationNumber;
 	}
 
+	public int getRunNumber() {
+		int numberOfReplications = getSimulation().getNumberOfReplications();
+		return (scenarioNumber - 1) * numberOfReplications + replicationNumber;
+	}
+
 	public String getRunHeader() {
 		return String.format("##### SCENARIO %s - REPLICATION %s #####",
 				getScenarioCode(), replicationNumber);
