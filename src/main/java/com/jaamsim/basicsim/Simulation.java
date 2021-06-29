@@ -685,14 +685,14 @@ public class Simulation extends Entity {
 		}
 
 		if (in == scenarioIndexDefinitionList) {
-			getJaamSimModel().setRunIndexList();
-			startingScenarioNumber.setRunIndexRangeList(getRunIndexDefinitionList());
-			endingScenarioNumber.setRunIndexRangeList(getRunIndexDefinitionList());
+			getJaamSimModel().setScenarioIndexList();
+			startingScenarioNumber.setRunIndexRangeList(getScenarioIndexDefinitionList());
+			endingScenarioNumber.setRunIndexRangeList(getScenarioIndexDefinitionList());
 			return;
 		}
 
 		if (in == startingScenarioNumber) {
-			getJaamSimModel().setRunNumber(getStartingRunNumber());
+			getJaamSimModel().setScenarioNumber(getStartingScenarioNumber());
 			return;
 		}
 
@@ -1152,15 +1152,15 @@ public class Simulation extends Entity {
 		return numberOfReplications.getValue();
 	}
 
-	public int getStartingRunNumber() {
+	public int getStartingScenarioNumber() {
 		return startingScenarioNumber.getValue();
 	}
 
-	public int getEndingRunNumber() {
+	public int getEndingScenarioNumber() {
 		return endingScenarioNumber.getValue();
 	}
 
-	public IntegerVector getRunIndexDefinitionList() {
+	public IntegerVector getScenarioIndexDefinitionList() {
 		return scenarioIndexDefinitionList.getValue();
 	}
 
@@ -1198,7 +1198,7 @@ public class Simulation extends Entity {
 	  reportable = true,
 	    sequence = 3)
 	public int getRunNumber(double simTime) {
-		return getJaamSimModel().getRunNumber();
+		return getJaamSimModel().getScenarioNumber();
 	}
 
 	@Output(name = "RunIndex",
@@ -1207,7 +1207,7 @@ public class Simulation extends Entity {
 	  reportable = true,
 	    sequence = 4)
 	public IntegerVector getRunIndex(double simTime) {
-		return getJaamSimModel().getRunIndexList();
+		return getJaamSimModel().getScenarioIndexList();
 	}
 
 	@Output(name = "PresentTimeAndDate",

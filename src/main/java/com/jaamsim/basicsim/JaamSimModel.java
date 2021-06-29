@@ -61,8 +61,8 @@ public class JaamSimModel {
 	private final EventManager eventManager;
 	private Simulation simulation;
 	private String name;
-	private int runNumber;    // labels each run when multiple runs are being made
-	private IntegerVector runIndexList;
+	private int scenarioNumber;    // labels each scenario when multiple scenarios are being made
+	private IntegerVector scenarioIndexList;
 	private RunListener runListener;
 	private GUIListener gui;
 	private final AtomicLong entityCount = new AtomicLong(0);
@@ -125,9 +125,9 @@ public class JaamSimModel {
 		eventManager = new EventManager("DefaultEventManager");
 		simulation = null;
 		this.name = name;
-		runNumber = 1;
-		runIndexList = new IntegerVector();
-		runIndexList.add(1);
+		scenarioNumber = 1;
+		scenarioIndexList = new IntegerVector();
+		scenarioIndexList.add(1);
 	}
 
 	public final void setTimeListener(EventTimeListener l) {
@@ -199,7 +199,7 @@ public class JaamSimModel {
 		stringCache.clear();
 
 		// Reset the run number and run indices
-		runNumber = 1;
+		scenarioNumber = 1;
 
 		configFile = null;
 		reportDir = null;
@@ -639,15 +639,27 @@ public class JaamSimModel {
 	}
 
 	public boolean isMultipleRuns() {
-		return getSimulation().getEndingRunNumber() > getSimulation().getStartingRunNumber();
+		return isMultipleScenarios();  // FIXME
 	}
 
 	public boolean isFirstRun() {
-		return runNumber == getSimulation().getStartingRunNumber();
+		return isFirstScenario();  // FIXME
 	}
 
 	public boolean isLastRun() {
-		return runNumber >= getSimulation().getEndingRunNumber();
+		return isLastScenario();  // FIXME
+	}
+
+	public boolean isMultipleScenarios() {
+		return getSimulation().getEndingScenarioNumber() > getSimulation().getStartingScenarioNumber();
+	}
+
+	public boolean isFirstScenario() {
+		return scenarioNumber == getSimulation().getStartingScenarioNumber();
+	}
+
+	public boolean isLastScenario() {
+		return scenarioNumber >= getSimulation().getEndingScenarioNumber();
 	}
 
 	/**
@@ -684,11 +696,11 @@ public class JaamSimModel {
 	}
 
 	/**
-	 * Returns the input format used to specify a set of run indices.
-	 * @param indexList - run indices.
-	 * @return run code.
+	 * Returns the input format used to specify a set of scenario indices.
+	 * @param indexList - scenario indices.
+	 * @return scenario code.
 	 */
-	public static String getRunCode(IntegerVector indexList) {
+	public static String getScenarioCode(IntegerVector indexList) {
 		StringBuilder sb = new StringBuilder();
 		sb.append(indexList.get(0));
 		for (int i=1; i<indexList.size(); i++) {
@@ -697,29 +709,29 @@ public class JaamSimModel {
 		return sb.toString();
 	}
 
-	public void setRunNumber(int n) {
-		runNumber = n;
-		setRunIndexList();
+	public void setScenarioNumber(int n) {
+		scenarioNumber = n;
+		setScenarioIndexList();
 	}
 
-	public void setRunIndexList() {
-		runIndexList = getRunIndexList(runNumber, getSimulation().getRunIndexDefinitionList());
+	public void setScenarioIndexList() {
+		scenarioIndexList = getRunIndexList(scenarioNumber, getSimulation().getScenarioIndexDefinitionList());
 	}
 
-	public int getRunNumber() {
-		return runNumber;
+	public int getScenarioNumber() {
+		return scenarioNumber;
 	}
 
-	public IntegerVector getRunIndexList() {
-		return runIndexList;
+	public IntegerVector getScenarioIndexList() {
+		return scenarioIndexList;
 	}
 
-	public String getRunCode() {
-		return getRunCode(runIndexList);
+	public String getScenarioCode() {
+		return getScenarioCode(scenarioIndexList);
 	}
 
 	public String getRunHeader() {
-		return String.format("##### RUN %s #####", getRunCode());
+		return String.format("##### RUN %s #####", getScenarioCode());
 	}
 
 	final long getNextEntityID() {

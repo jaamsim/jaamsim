@@ -32,7 +32,7 @@ public class RunManager implements RunListener {
 
 	private final JaamSimModel simModel;
 	private PrintStream outStream;  // location where the custom outputs will be written
-	private int runNumber;    // labels each run when multiple runs are being made
+	private int scenarioNumber;    // labels each scenario when multiple scenarios are being made
 
 	public RunManager(JaamSimModel sm) {
 		simModel = sm;
@@ -43,8 +43,8 @@ public class RunManager implements RunListener {
 	}
 
 	public void start(double pauseTime) {
-		runNumber = simModel.getSimulation().getStartingRunNumber();
-		simModel.setRunNumber(runNumber);
+		scenarioNumber = simModel.getSimulation().getStartingScenarioNumber();
+		simModel.setScenarioNumber(scenarioNumber);
 		simModel.start(pauseTime);
 	}
 
@@ -61,8 +61,8 @@ public class RunManager implements RunListener {
 			outStream.close();
 			outStream = null;
 		}
-		runNumber = simModel.getSimulation().getStartingRunNumber();
-		simModel.setRunNumber(runNumber);
+		scenarioNumber = simModel.getSimulation().getStartingScenarioNumber();
+		simModel.setScenarioNumber(scenarioNumber);
 		simModel.reset();
 	}
 
@@ -104,8 +104,8 @@ public class RunManager implements RunListener {
 		simModel.killGeneratedEntities();
 
 		// Increment the run number
-		runNumber++;
-		simModel.setRunNumber(runNumber);
+		scenarioNumber++;
+		simModel.setScenarioNumber(scenarioNumber);
 
 		// Start the next run
 		new Thread(new Runnable() {
