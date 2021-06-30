@@ -49,6 +49,7 @@ import com.jaamsim.basicsim.GUIListener;
 import com.jaamsim.basicsim.Group;
 import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.basicsim.ObjectType;
+import com.jaamsim.basicsim.Scenario;
 import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.math.Vec3d;
@@ -1194,6 +1195,21 @@ public class InputAgent {
 			if (i > 0)
 				sb.append("\t");
 			sb.append(str);
+		}
+		outStream.println(sb.toString());
+	}
+
+	public static void printScenarioOutputs(Scenario scene, PrintStream outStream) {
+
+		// Mean value for each output
+		StringBuilder sb = new StringBuilder();
+		double[] values = scene.getMeanValues();
+		for (int i = 0; i < values.length; i++) {
+			if (i > 0)
+				sb.append("\t");
+			if (Double.isNaN(values[i]))
+				continue;
+			sb.append(values[i]);
 		}
 		outStream.println(sb.toString());
 	}

@@ -34,6 +34,7 @@ public class RunManager implements RunListener {
 	private PrintStream outStream;  // location where the custom outputs will be written
 	private int scenarioNumber;    // labels each scenario when multiple scenarios are being made
 	private int replicationNumber;
+	private Scenario presentScenario;
 
 	public RunManager(JaamSimModel sm) {
 		simModel = sm;
@@ -96,6 +97,18 @@ public class RunManager implements RunListener {
 				InputAgent.printRunOutputHeaders(simModel, outStream);
 			}
 			InputAgent.printRunOutputs(simModel, outStream, EventManager.simSeconds());
+
+			int numberOfReplications = simModel.getSimulation().getNumberOfReplications();
+			if (numberOfReplications > 1) {
+				if (replicationNumber == 1) {
+					int numOuts = simModel.getSimulation().getRunOutputList().getListSize();
+					presentScenario = new Scenario(numOuts);
+				}
+				presentScenario.recordRun(simModel);
+				if (replicationNumber == numberOfReplications) {
+					InputAgent.printScenarioOutputs(presentScenario, outStream);
+				}
+			}
 		}
 
 		if (simModel.isLastRun()) {
