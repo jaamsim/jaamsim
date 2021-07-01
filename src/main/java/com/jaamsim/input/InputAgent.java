@@ -1211,6 +1211,16 @@ public class InputAgent {
 				continue;
 			sb.append(values[i]);
 		}
+
+		// Confidence intervals for each output
+		values = scene.getConfidenceIntervals();
+		for (int i = 0; i < values.length; i++) {
+			sb.append("\t");
+			if (Double.isNaN(values[i]))
+				continue;
+			sb.append(values[i]);
+		}
+
 		outStream.println(sb.toString());
 	}
 
