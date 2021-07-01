@@ -63,6 +63,7 @@ public class JaamSimModel {
 	private String name;
 	private int scenarioNumber;    // labels each scenario when multiple scenarios are being made
 	private IntegerVector scenarioIndexList;
+	private int replicationNumber;
 	private RunListener runListener;
 	private GUIListener gui;
 	private final AtomicLong entityCount = new AtomicLong(0);
@@ -126,6 +127,7 @@ public class JaamSimModel {
 		simulation = null;
 		this.name = name;
 		scenarioNumber = 1;
+		replicationNumber = 1;
 		scenarioIndexList = new IntegerVector();
 		scenarioIndexList.add(1);
 	}
@@ -200,6 +202,7 @@ public class JaamSimModel {
 
 		// Reset the run number and run indices
 		scenarioNumber = 1;
+		replicationNumber = 1;
 
 		configFile = null;
 		reportDir = null;
@@ -639,15 +642,15 @@ public class JaamSimModel {
 	}
 
 	public boolean isMultipleRuns() {
-		return isMultipleScenarios();  // FIXME
+		return isMultipleScenarios() || getSimulation().getNumberOfReplications() > 1;
 	}
 
 	public boolean isFirstRun() {
-		return isFirstScenario();  // FIXME
+		return isFirstScenario() && replicationNumber == 1;
 	}
 
 	public boolean isLastRun() {
-		return isLastScenario();  // FIXME
+		return isLastScenario() && replicationNumber == getSimulation().getNumberOfReplications();
 	}
 
 	public boolean isMultipleScenarios() {
@@ -730,8 +733,17 @@ public class JaamSimModel {
 		return getScenarioCode(scenarioIndexList);
 	}
 
+	public void setReplicationNumber(int n) {
+		replicationNumber = n;
+	}
+
+	public int getReplicationNumber() {
+		return replicationNumber;
+	}
+
 	public String getRunHeader() {
-		return String.format("##### RUN %s #####", getScenarioCode());
+		return String.format("##### SCENARIO %s - REPLICATION %s #####",
+				getScenarioCode(), replicationNumber);
 	}
 
 	final long getNextEntityID() {
