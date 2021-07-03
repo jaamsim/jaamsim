@@ -184,6 +184,12 @@ public class Simulation extends Entity {
 	         exampleList = {"10"})
 	private final IntegerInput numberOfReplications;
 
+	@Keyword(description = "If TRUE, the run output report will include an entry for each "
+	                     + "replication that was performed. "
+	                     + "If FALSE, the report will show entries only for the scenarios.",
+	         exampleList = {"TRUE"})
+	private final BooleanInput printReplications;
+
 	// GUI tab
 	@Keyword(description = "An optional list of units to be used for displaying model outputs.",
 	         exampleList = {"h kt"})
@@ -431,6 +437,9 @@ public class Simulation extends Entity {
 		numberOfReplications = new IntegerInput("NumberOfReplications", MULTIPLE_RUNS, 1);
 		numberOfReplications.setValidRange(1, Integer.MAX_VALUE);
 		this.addInput(numberOfReplications);
+
+		printReplications = new BooleanInput("PrintReplications", MULTIPLE_RUNS, true);
+		this.addInput(printReplications);
 
 		// GUI tab
 		displayedUnits = new EntityListInput<>(Unit.class, "DisplayedUnits", GUI, new ArrayList<Unit>());
@@ -1150,6 +1159,10 @@ public class Simulation extends Entity {
 
 	public int getNumberOfReplications() {
 		return numberOfReplications.getValue();
+	}
+
+	public boolean getPrintReplications() {
+		return printReplications.getValue();
 	}
 
 	public int getStartingScenarioNumber() {

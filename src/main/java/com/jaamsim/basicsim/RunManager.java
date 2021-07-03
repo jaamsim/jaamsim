@@ -96,7 +96,8 @@ public class RunManager implements RunListener {
 			if (simModel.isFirstRun()) {
 				InputAgent.printRunOutputHeaders(simModel, outStream);
 			}
-			InputAgent.printRunOutputs(simModel, outStream, EventManager.simSeconds());
+			if (simModel.getSimulation().getPrintReplications())
+				InputAgent.printRunOutputs(simModel, outStream, EventManager.simSeconds());
 
 			int numberOfReplications = simModel.getSimulation().getNumberOfReplications();
 			if (numberOfReplications > 1) {
