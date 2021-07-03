@@ -151,28 +151,31 @@ public class Simulation extends Entity {
 	private final ValueInput tickLengthInput;
 
 	// Multiple Runs tab
-
-	@Keyword(description = "Defines the number of run indices and the maximum value N for each "
-	                     + "index. When making multiple runs, each index will be iterated from "
-	                     + "1 to N starting with the last index. One run will be executed for "
-	                     + "every combination of the run index values. For example, if three run "
-	                     + "indices are defined with ranges of 3, 5, and 10, then at total of "
-	                     + "3*5*10 = 150 runs will be executed.",
+	@Keyword(description = "Defines the number of scenario indices and the maximum value N for "
+	                     + "each index. "
+	                     + "When running multiple scenarios, each index will be iterated from "
+	                     + "1 to N starting with the last index. "
+	                     + "One scenario will be executed for every combination of the scenario "
+	                     + "index values. "
+	                     + "For example, if three scenario indices are defined with ranges of 3, "
+	                     + "5, and 10, then a total of 3*5*10 = 150 scenarios will be executed.",
 	         exampleList = {"3 5 10"})
 	private final IntegerListInput scenarioIndexDefinitionList;
 
-	@Keyword(description = "The first run number to be executed. The value can be entered as "
-	                     + "either an integer or as the equivalent combination of run indices. "
-	                     + "For example, if there are three run indices with ranges of "
-	                     + "3, 5, and 10, then run number 22 can be expressed as 1-3-2 because "
+	@Keyword(description = "The first scenario number to be executed. "
+	                     + "The value can be entered as either an integer or as the equivalent "
+	                     + "combination of scenario indices. "
+	                     + "For example, if there are three sceario indices with ranges of 3, "
+	                     + "5, and 10, then scenario number 22 can be expressed as 1-3-2 because "
 	                     + "22 = (1-1)*5*10 + (3-1)*10 + 2.",
 	         exampleList = {"22", "1-3-2"})
 	private final RunNumberInput startingScenarioNumber;
 
-	@Keyword(description = "The last run number to be executed. The value can be entered as "
-	                     + "either an integer or as the equivalent combination of run indices. "
-	                     + "For example, if there are three run indices with ranges of "
-	                     + "3, 5, and 10, then run number 78 can be expressed as 2-3-8 because "
+	@Keyword(description = "The last scenario number to be executed. "
+	                     + "The value can be entered as either an integer or as the equivalent "
+	                     + "combination of scenario indices. "
+	                     + "For example, if there are three scenario indices with ranges of 3, "
+	                     + "5, and 10, then scenario number 78 can be expressed as 2-3-8 because "
 	                     + "78 = (2-1)*5*10 + (3-1)*10 + 8.",
 	         exampleList = {"78", "2-3-8"})
 	private final RunNumberInput endingScenarioNumber;
