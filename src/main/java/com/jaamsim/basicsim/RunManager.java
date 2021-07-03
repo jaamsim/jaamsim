@@ -85,33 +85,45 @@ public class RunManager implements RunListener {
 
 	@Override
 	public void runEnded() {
+		Simulation simulation = simModel.getSimulation();
 
 		// Print the output report
-		if (simModel.getSimulation().getPrintReport())
+		if (simulation.getPrintReport())
 			InputAgent.printReport(simModel, EventManager.simSeconds());
 
 		// Print the selected outputs
-		if (simModel.getSimulation().getRunOutputList().getValue() != null) {
+		if (simulation.getRunOutputList().getValue() != null) {
 			outStream = getOutStream();
+
+			// Column headings
 			if (simModel.isFirstRun()) {
 				InputAgent.printRunOutputHeaders(simModel, outStream);
 			}
-			if (simModel.getSimulation().getPrintReplications())
+
+			// Print the replication's outputs
+			if (simulation.getPrintReplications())
 				InputAgent.printRunOutputs(simModel, outStream, EventManager.simSeconds());
 
-			int numberOfReplications = simModel.getSimulation().getNumberOfReplications();
+			int numberOfReplications = simulation.getNumberOfReplications();
 			if (numberOfReplications > 1) {
+
+				// Start a new Scenario
 				if (replicationNumber == 1) {
-					int numOuts = simModel.getSimulation().getRunOutputList().getListSize();
+					int numOuts = simulation.getRunOutputList().getListSize();
 					presentScenario = new Scenario(numOuts);
 				}
+
+				// Record the replication's outputs
 				presentScenario.recordRun(simModel);
+
+				// Print the scenario's outputs
 				if (replicationNumber == numberOfReplications) {
 					InputAgent.printScenarioOutputs(presentScenario, outStream);
 				}
 			}
 		}
 
+		// Close the print stream for the selected outputs
 		if (simModel.isLastRun()) {
 			simModel.end();
 			if (outStream != null) {
