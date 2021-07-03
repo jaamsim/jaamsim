@@ -119,6 +119,9 @@ public class RunManager implements RunListener {
 				// Print the scenario's outputs
 				if (replicationNumber == numberOfReplications) {
 					InputAgent.printScenarioOutputs(presentScenario, outStream);
+					if (simulation.getPrintReplications() && !simModel.isLastRun()) {
+						outStream.println();
+					}
 				}
 			}
 		}
