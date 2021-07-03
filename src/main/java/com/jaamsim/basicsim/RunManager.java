@@ -101,10 +101,10 @@ public class RunManager implements RunListener {
 			}
 
 			// Print the replication's outputs
-			if (simulation.getPrintReplications())
+			int numberOfReplications = simulation.getNumberOfReplications();
+			if (simulation.getPrintReplications() || numberOfReplications == 1)
 				InputAgent.printRunOutputs(simModel, outStream, EventManager.simSeconds());
 
-			int numberOfReplications = simulation.getNumberOfReplications();
 			if (numberOfReplications > 1) {
 
 				// Start a new Scenario
