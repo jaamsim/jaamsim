@@ -1199,7 +1199,7 @@ public class InputAgent {
 		outStream.println(sb.toString());
 	}
 
-	public static void printScenarioOutputs(Scenario scene, PrintStream outStream) {
+	public static void printScenarioOutputs(Scenario scene, boolean bool, PrintStream outStream) {
 
 		// Mean value for each output
 		StringBuilder sb = new StringBuilder();
@@ -1213,12 +1213,14 @@ public class InputAgent {
 		}
 
 		// Confidence intervals for each output
-		values = scene.getConfidenceIntervals();
-		for (int i = 0; i < values.length; i++) {
-			sb.append("\t");
-			if (Double.isNaN(values[i]))
-				continue;
-			sb.append(values[i]);
+		if (bool) {
+			values = scene.getConfidenceIntervals();
+			for (int i = 0; i < values.length; i++) {
+				sb.append("\t");
+				if (Double.isNaN(values[i]))
+					continue;
+				sb.append(values[i]);
+			}
 		}
 
 		outStream.println(sb.toString());

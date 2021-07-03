@@ -190,6 +190,15 @@ public class Simulation extends Entity {
 	         exampleList = {"TRUE"})
 	private final BooleanInput printReplications;
 
+	@Keyword(description = "If TRUE, the run output report will include the 95% confidence "
+	                     + "intervals for the outputs defined by the input to RunOutputList "
+	                     + "keyword. "
+	                     + "The confidence intervals are calculated using the factor for the "
+	                     + "Student's T distribution corresponding to 95% confidence and the "
+	                     + "standard deviation for the output values over the replications.",
+	         exampleList = {"TRUE"})
+	private final BooleanInput printConfidenceIntervals;
+
 	// GUI tab
 	@Keyword(description = "An optional list of units to be used for displaying model outputs.",
 	         exampleList = {"h kt"})
@@ -440,6 +449,9 @@ public class Simulation extends Entity {
 
 		printReplications = new BooleanInput("PrintReplications", MULTIPLE_RUNS, true);
 		this.addInput(printReplications);
+
+		printConfidenceIntervals = new BooleanInput("PrintConfidenceIntervals", MULTIPLE_RUNS, true);
+		this.addInput(printConfidenceIntervals);
 
 		// GUI tab
 		displayedUnits = new EntityListInput<>(Unit.class, "DisplayedUnits", GUI, new ArrayList<Unit>());
@@ -1163,6 +1175,10 @@ public class Simulation extends Entity {
 
 	public boolean getPrintReplications() {
 		return printReplications.getValue();
+	}
+
+	public boolean getPrintConfidenceIntervals() {
+		return printConfidenceIntervals.getValue();
 	}
 
 	public int getStartingScenarioNumber() {
