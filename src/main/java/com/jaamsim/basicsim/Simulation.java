@@ -176,6 +176,11 @@ public class Simulation extends Entity {
 	         exampleList = {"10"})
 	private final SampleInput numberOfReplications;
 
+	@Keyword(description = "The number of simulation runs to perform simultaneously while "
+	                     + "executing the specified number of scenarios and replications.",
+	         exampleList = {"10"})
+	private final IntegerInput numberOfThreads;
+
 	@Keyword(description = "If TRUE, the run output report will include an entry for each "
 	                     + "replication that was performed. "
 	                     + "If FALSE, the report will show entries only for the scenarios.",
@@ -453,6 +458,10 @@ public class Simulation extends Entity {
 		numberOfReplications.setIntegerValue(true);
 		numberOfReplications.setValidRange(1, Integer.MAX_VALUE);
 		this.addInput(numberOfReplications);
+
+		numberOfThreads = new IntegerInput("NumberOfThreads", MULTIPLE_RUNS, 1);
+		numberOfThreads.setValidRange(1, Integer.MAX_VALUE);
+		this.addInput(numberOfThreads);
 
 		printReplications = new BooleanInput("PrintReplications", MULTIPLE_RUNS, true);
 		this.addInput(printReplications);
@@ -1207,6 +1216,10 @@ public class Simulation extends Entity {
 
 	public int getNumberOfReplications() {
 		return (int) numberOfReplications.getValue().getNextSample(0.0d);
+	}
+
+	public int getNumberOfThreads() {
+		return numberOfThreads.getValue();
 	}
 
 	public boolean getPrintReplications() {
