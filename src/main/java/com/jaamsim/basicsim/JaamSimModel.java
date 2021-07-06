@@ -132,6 +132,22 @@ public class JaamSimModel {
 		scenarioIndexList.add(1);
 	}
 
+	public JaamSimModel(JaamSimModel sm) {
+		this(sm.name);
+		autoLoad();
+		simulation = getSimulation();
+		try {
+			configure(sm.configFile);
+		}
+		catch (Exception e) {
+			LogBox.logException(e);
+		}
+	}
+
+	public void setName(String str) {
+		name = str;
+	}
+
 	public final void setTimeListener(EventTimeListener l) {
 		eventManager.setTimeListener(l);
 	}
