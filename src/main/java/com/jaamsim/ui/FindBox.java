@@ -31,6 +31,7 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import com.jaamsim.DisplayModels.IconModel;
+import com.jaamsim.Graphics.EntityLabel;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.basicsim.ObjectType;
@@ -169,7 +170,8 @@ public class FindBox extends JDialog {
 		ArrayList<String> nameList = new ArrayList<>();
 		JaamSimModel simModel = GUIFrame.getJaamSimModel();
 		for (Entity ent: simModel.getClonesOfIterator(Entity.class)) {
-			if (ent instanceof ObjectType || ent instanceof Unit || ent instanceof IconModel)
+			if (ent instanceof ObjectType || ent instanceof Unit || ent instanceof IconModel
+					|| ent instanceof EntityLabel)
 				continue;
 			if (!ent.getName().toUpperCase().contains(name.toUpperCase()))
 				continue;
