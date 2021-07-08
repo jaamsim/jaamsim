@@ -63,7 +63,8 @@ public class FindBox extends JDialog {
 				str = str.replaceAll("[{}\\[\\]]", "").trim();  // remove braces
 				if (str.isEmpty())
 					return new ArrayList<>();
-				return getNameList(str);
+				String[] names = str.split("[\\s,]", 2);  // ignore anything after whitespace or comma
+				return getNameList(names[0]);
 			}
 		};
 		searchText.setToolTipText(GUIFrame.formatToolTip("Entity Name",
