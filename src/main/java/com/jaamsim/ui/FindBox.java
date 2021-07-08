@@ -60,6 +60,9 @@ public class FindBox extends JDialog {
 			}
 			@Override
 			public ArrayList<String> getTopicList(String str) {
+				str = str.replaceAll("[{}\\[\\]]", "").trim();  // remove braces
+				if (str.isEmpty())
+					return new ArrayList<>();
 				return getNameList(str);
 			}
 		};
