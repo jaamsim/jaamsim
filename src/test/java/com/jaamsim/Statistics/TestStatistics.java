@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2018 JaamSim Software Inc.
+ * Copyright (C) 2018-2021 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,8 +40,8 @@ public class TestStatistics {
 		assertTrue(stats.getSumSquared() == 103.0d);
 		assertTrue(MathUtils.near(stats.getMean(), 3.4d));
 		assertTrue(MathUtils.near(stats.getMeanSquared(), 20.6d));
-		assertTrue(MathUtils.near(stats.getVariance(), 9.04d));
-		assertTrue(MathUtils.near(stats.getStandardDeviation(), Math.sqrt(9.04d)));
+		assertTrue(MathUtils.near(stats.getVariance(), 11.3d));
+		assertTrue(MathUtils.near(stats.getStandardDeviation(), Math.sqrt(11.3d)));
 	}
 
 	@Test
