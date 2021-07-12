@@ -77,8 +77,7 @@ public class SampleStatistics {
 	}
 
 	public double getVariance() {
-		double mean = getMean();
-		return getMeanSquared() - mean*mean;
+		return (sumSquared - sum*sum/count)/(count - 1L);
 	}
 
 	public double getStandardDeviation() {
