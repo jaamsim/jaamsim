@@ -20,6 +20,8 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
@@ -142,6 +144,16 @@ public abstract class SearchField extends JPanel {
 			@Override
 			public void changedUpdate(DocumentEvent e) {}
 	    });
+
+		// Focus on the search text
+		addFocusListener(new FocusListener() {
+			@Override
+			public void focusGained(FocusEvent e) {
+				topicSearch.requestFocusInWindow();
+			}
+			@Override
+			public void focusLost(FocusEvent e) {}
+		});
 	}
 
 	@Override
@@ -164,7 +176,10 @@ public abstract class SearchField extends JPanel {
 	}
 
 	private void showTopicMenu(String str, boolean focusable) {
-		if (str.isEmpty()) {
+
+		// Find the matching topics
+		ArrayList<String> list = getTopicList(str);
+		if (str.isEmpty() || list.isEmpty()) {
 			if (topicMenu != null) {
 				topicMenu.setVisible(false);
 				topicMenu = null;
@@ -175,7 +190,7 @@ public abstract class SearchField extends JPanel {
 		// Build the menu of matching topics
 		topicMenu = new ScrollablePopupMenu();
 		boolean first = true;
-		for (final String topic : getTopicList(str)) {
+		for (final String topic : list) {
 			JMenuItem item = new JMenuItem(topic);
 			item.setPreferredSize(topicSearch.getPreferredSize());
 			item.addActionListener( new ActionListener() {
@@ -196,8 +211,10 @@ public abstract class SearchField extends JPanel {
 		topicMenu.show(topicSearch, 0, topicSearch.getHeight());
 	}
 
-	private void showAndSaveTopic(String topic) {
-		showTopic(topic);
+	public void showAndSaveTopic(String topic) {
+		boolean bool = showTopic(topic);
+		if (!bool)
+			return;
 		topicSearch.setText(topic);
 		prevTopics.remove(topic);
 		prevTopics.add(0, topic);
@@ -213,7 +230,8 @@ public abstract class SearchField extends JPanel {
 	/**
 	 * Displays the selected topic.
 	 * @param topic - topic to display
+	 * @return true if the topic was found
 	 */
-	public abstract void showTopic(String topic);
+	public abstract boolean showTopic(String topic);
 
 }

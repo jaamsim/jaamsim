@@ -204,7 +204,7 @@ public abstract class CellEditor extends AbstractCellEditor implements TableCell
 		jPanel.getActionMap().put("find", new AbstractAction() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				FindBox.getInstance().showDialog(text.getText());
+				FindBox.getInstance().search(text.getText());
 			}
 		});
 
@@ -258,7 +258,7 @@ public abstract class CellEditor extends AbstractCellEditor implements TableCell
 		text.getActionMap().put("find", new AbstractAction() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				FindBox.getInstance().showDialog(text.getSelectedText());
+				FindBox.getInstance().search(text.getSelectedText());
 			}
 		});
 

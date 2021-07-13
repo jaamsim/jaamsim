@@ -72,7 +72,10 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 	         exampleList = {"FALSE"})
 	protected final BooleanInput concurrent;
 
-	@Keyword(description = "The maximum number of downtimes pending for the downtime event.",
+	@Keyword(description = "The maximum number of downtime activities that are allowed to become "
+	                     + "backlogged. "
+	                     + "Once this limit is reached, any further downtime activities "
+	                     + "are discarded.",
             exampleList = {"1"})
 	protected final IntegerInput maxDowntimesPending;
 

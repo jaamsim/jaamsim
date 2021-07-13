@@ -20,6 +20,8 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -29,6 +31,7 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import com.jaamsim.DisplayModels.IconModel;
+import com.jaamsim.Graphics.EntityLabel;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.basicsim.ObjectType;
@@ -52,12 +55,16 @@ public class FindBox extends JDialog {
 		// Search text
 		searchText = new SearchField(30) {
 			@Override
-			public void showTopic(String topic) {
-				findEntity(topic);
+			public boolean showTopic(String topic) {
+				return findEntity(topic);
 			}
 			@Override
 			public ArrayList<String> getTopicList(String str) {
-				return getNameList(str);
+				str = str.replaceAll("[{}\\[\\]]", "").trim();  // remove braces
+				if (str.isEmpty())
+					return new ArrayList<>();
+				String[] names = str.split("[\\s,]", 2);  // ignore anything after whitespace or comma
+				return getNameList(names[0]);
 			}
 		};
 		searchText.setToolTipText(GUIFrame.formatToolTip("Entity Name",
@@ -85,7 +92,7 @@ public class FindBox extends JDialog {
 			@Override
 			public void actionPerformed( ActionEvent e ) {
 				String name = searchText.getText().trim();
-				findEntity(name);
+				searchText.showAndSaveTopic(name);
 			}
 		} );
 
@@ -96,6 +103,16 @@ public class FindBox extends JDialog {
 				setVisible(false);
 			}
 		} );
+
+		// Focus on the search text
+		addFocusListener(new FocusListener() {
+			@Override
+			public void focusGained(FocusEvent e) {
+				searchText.requestFocusInWindow();
+			}
+			@Override
+			public void focusLost(FocusEvent e) {}
+		});
 	}
 
 	public synchronized static FindBox getInstance() {
@@ -118,6 +135,17 @@ public class FindBox extends JDialog {
 		super.dispose();
 	}
 
+	/**
+	 * Launches the Find tool and searches for entities that contain the specified string.
+	 * @param str - string to search
+	 */
+	public void search(String str) {
+		if (str == null || str.isEmpty())
+			return;
+		this.setVisible(true);
+		searchText.search(str);
+	}
+
 	public void showDialog() {
 		showDialog("");
 	}
@@ -125,26 +153,29 @@ public class FindBox extends JDialog {
 	public void showDialog(String str) {
 		searchText.setText(str);
 		this.setVisible(true);
+		searchText.requestFocusInWindow();
 	}
 
-	private void findEntity(String name) {
+	private boolean findEntity(String name) {
 		if (name.isEmpty())
-			return;
+			return false;
 		Entity ent = GUIFrame.getJaamSimModel().getEntity(name);
 		if (ent == null || ent instanceof ObjectType || ent instanceof Unit ||
 				ent instanceof IconModel) {
 			String msg = String.format("Cannot find entity named: '%s'.", name);
 			GUIFrame.showErrorDialog("Error", msg);
-			return;
+			return false;
 		}
 		FrameBox.setSelectedEntity(ent, false);
+		return true;
 	}
 
 	private ArrayList<String> getNameList(String name) {
 		ArrayList<String> nameList = new ArrayList<>();
 		JaamSimModel simModel = GUIFrame.getJaamSimModel();
 		for (Entity ent: simModel.getClonesOfIterator(Entity.class)) {
-			if (ent instanceof ObjectType || ent instanceof Unit || ent instanceof IconModel)
+			if (ent instanceof ObjectType || ent instanceof Unit || ent instanceof IconModel
+					|| ent instanceof EntityLabel)
 				continue;
 			if (!ent.getName().toUpperCase().contains(name.toUpperCase()))
 				continue;

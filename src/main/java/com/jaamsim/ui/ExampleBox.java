@@ -92,8 +92,8 @@ public class ExampleBox extends JDialog {
 		// Example search
 		exampleSearch = new SearchField(50) {
 			@Override
-			public void showTopic(String topic) {
-				ExampleBox.this.showTopic(topic);
+			public boolean showTopic(String topic) {
+				return ExampleBox.this.showTopic(topic);
 			}
 			@Override
 			public ArrayList<String> getTopicList(String str) {
@@ -270,11 +270,11 @@ public class ExampleBox extends JDialog {
 		this.setVisible(true);
 	}
 
-	private void showTopic(String topic) {
+	private boolean showTopic(String topic) {
 		try {
 			URL url = GUIFrame.class.getResource("/resources/examples/" + topic + ".cfg");
 			if (url == null)
-				return;
+				return false;
 			presentExample = topic;
 			int ind = exampleList.indexOf(topic);
 			list.setSelectedIndex(ind);
@@ -288,14 +288,17 @@ public class ExampleBox extends JDialog {
 			fi.blockUntilDone();
 			if (fi.failed()) {
 				System.out.println(fi.getFailureMessage());
-				return; // Something went wrong...
+				return false; // Something went wrong...
 			}
 
 			// Display the image
 			previewIcon.setImage(fi.get());
 			previewLabel.setIcon(previewIcon);
+			return true;
 		}
-		catch (Throwable t) {}
+		catch (Throwable t) {
+			return false;
+		}
 	}
 
 	public Future<BufferedImage> getPreview(String example) {
