@@ -110,7 +110,7 @@ public class RunManager implements RunListener {
 				// Start a new Scenario
 				if (replicationNumber == 1) {
 					int numOuts = simulation.getRunOutputList().getListSize();
-					presentScenario = new Scenario(numOuts);
+					presentScenario = new Scenario(numOuts, scenarioNumber);
 				}
 
 				// Record the replication's outputs

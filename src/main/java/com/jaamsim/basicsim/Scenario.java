@@ -28,13 +28,19 @@ import com.jaamsim.StringProviders.StringProvider;
  */
 public class Scenario {
 
+	private final int scenarioNumber;
 	private final ArrayList<SampleStatistics> runStatistics;
 
-	public Scenario(int numOuts) {
+	public Scenario(int numOuts, int scene) {
+		scenarioNumber = scene;
 		runStatistics = new ArrayList<>(numOuts);
 		for (int i = 0; i < numOuts; i++) {
 			runStatistics.add(new SampleStatistics());
 		}
+	}
+
+	public int getScenarioNumber() {
+		return scenarioNumber;
 	}
 
 	public void recordRun(JaamSimModel simModel) {
