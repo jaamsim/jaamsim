@@ -1171,6 +1171,8 @@ public class InputAgent {
 			else
 				sb.append("\t");
 			sb.append(str);
+			if (simulation.getPrintConfidenceIntervals())
+				sb.append("\t");
 		}
 		outStream.println(sb.toString());
 	}
@@ -1183,6 +1185,7 @@ public class InputAgent {
 	 */
 	public static void printRunOutputs(JaamSimModel simModel, PrintStream outStream, double simTime) {
 		Simulation simulation = simModel.getSimulation();
+
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < simulation.getRunOutputList().getListSize(); i++) {
 			StringProvider samp = simulation.getRunOutputList().getValue().get(i);
@@ -1195,31 +1198,31 @@ public class InputAgent {
 			if (i > 0)
 				sb.append("\t");
 			sb.append(str);
+			if (simulation.getPrintConfidenceIntervals())
+				sb.append("\t");
 		}
 		outStream.println(sb.toString());
 	}
 
 	public static void printScenarioOutputs(Scenario scene, boolean bool, PrintStream outStream) {
 
-		// Mean value for each output
+		// Mean value and confidence interval for each output
 		StringBuilder sb = new StringBuilder();
 		double[] values = scene.getMeanValues();
+		double[] intervals = scene.getConfidenceIntervals();
 		for (int i = 0; i < values.length; i++) {
 			if (i > 0)
 				sb.append("\t");
-			if (Double.isNaN(values[i]))
-				continue;
-			sb.append(values[i]);
-		}
 
-		// Confidence intervals for each output
-		if (bool) {
-			values = scene.getConfidenceIntervals();
-			for (int i = 0; i < values.length; i++) {
-				sb.append("\t");
-				if (Double.isNaN(values[i]))
-					continue;
+			// Mean value
+			if (!Double.isNaN(values[i]))
 				sb.append(values[i]);
+
+			// Confidence interval
+			if (bool) {
+				sb.append("\t");
+				if (!Double.isNaN(intervals[i]))
+					sb.append(intervals[i]);
 			}
 		}
 
