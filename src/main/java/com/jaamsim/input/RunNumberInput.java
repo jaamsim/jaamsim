@@ -97,4 +97,9 @@ public class RunNumberInput extends Input<Integer> {
 		value = temp;
 	}
 
+	@Override
+	public String getValidInputDesc() {
+		return Input.VALID_SCENARIO_NUMBER;
+	}
+
 }

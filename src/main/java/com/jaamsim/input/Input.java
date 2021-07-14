@@ -145,6 +145,9 @@ public abstract class Input<T> {
 	protected static final String VALID_ACTION = "Accepts a list of action name and output name pairs. "
 	                                           + "Each action/output pair consists of an action name followed by an output name. "
 	                                           + "The names are separated by one or more spaces and enclosed braces.";
+	protected static final String VALID_SCENARIO_NUMBER = "Accepts an integer value or an equivalent combination of scenario indices. "
+                                                        + "For example, if three scenario indices have been defined with ranges of 3, 5, and 10, "
+                                                        + "then scenario number 22 can be expressed as 1-3-2 because 22 = (1-1)*5*10 + (3-1)*10 + 2.";
 
 	public static final String POSITIVE_INFINITY = "Infinity";
 	public static final String NEGATIVE_INFINITY = "-Infinity";

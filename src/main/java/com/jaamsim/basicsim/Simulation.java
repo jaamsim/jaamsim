@@ -165,21 +165,11 @@ public class Simulation extends Entity {
 	         exampleList = {"3 5 10"})
 	private final IntegerListInput scenarioIndexDefinitionList;
 
-	@Keyword(description = "The first scenario number to be executed. "
-	                     + "The value can be entered as either an integer or as the equivalent "
-	                     + "combination of scenario indices. "
-	                     + "For example, if there are three sceario indices with ranges of 3, "
-	                     + "5, and 10, then scenario number 22 can be expressed as 1-3-2 because "
-	                     + "22 = (1-1)*5*10 + (3-1)*10 + 2.",
+	@Keyword(description = "The first scenario number to be executed.",
 	         exampleList = {"22", "1-3-2"})
 	private final RunNumberInput startingScenarioNumber;
 
-	@Keyword(description = "The last scenario number to be executed. "
-	                     + "The value can be entered as either an integer or as the equivalent "
-	                     + "combination of scenario indices. "
-	                     + "For example, if there are three scenario indices with ranges of 3, "
-	                     + "5, and 10, then scenario number 78 can be expressed as 2-3-8 because "
-	                     + "78 = (2-1)*5*10 + (3-1)*10 + 8.",
+	@Keyword(description = "The last scenario number to be executed.",
 	         exampleList = {"78", "2-3-8"})
 	private final RunNumberInput endingScenarioNumber;
 
