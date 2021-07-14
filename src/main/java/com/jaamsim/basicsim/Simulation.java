@@ -158,7 +158,10 @@ public class Simulation extends Entity {
 	                     + "One scenario will be executed for every combination of the scenario "
 	                     + "index values. "
 	                     + "For example, if three scenario indices are defined with ranges of 3, "
-	                     + "5, and 10, then a total of 3*5*10 = 150 scenarios will be executed.",
+	                     + "5, and 10, then a total of 3*5*10 = 150 scenarios will be executed.\n\n"
+	                     + "If left blank, a single scenario index is defined and there are no "
+	                     + "restrictions on the values that can be assigned to the "
+	                     + "StartingScenarioNumber and EndingScenarioNumber inputs.",
 	         exampleList = {"3 5 10"})
 	private final IntegerListInput scenarioIndexDefinitionList;
 
@@ -429,9 +432,7 @@ public class Simulation extends Entity {
 		this.addInput(tickLengthInput);
 
 		// Multiple Runs tab
-		IntegerVector defRangeList = new IntegerVector();
-		defRangeList.add(1);
-		scenarioIndexDefinitionList = new IntegerListInput("ScenarioIndexDefinitionList", MULTIPLE_RUNS, defRangeList);
+		scenarioIndexDefinitionList = new IntegerListInput("ScenarioIndexDefinitionList", MULTIPLE_RUNS, new IntegerVector());
 		this.addInput(scenarioIndexDefinitionList);
 		this.addSynonym(scenarioIndexDefinitionList, "RunIndexDefinitionList");
 

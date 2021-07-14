@@ -672,6 +672,11 @@ public class JaamSimModel {
 	 * @return run indices.
 	 */
 	public static IntegerVector getRunIndexList(int n, IntegerVector rangeList) {
+		if (rangeList.size() == 0) {
+			IntegerVector indexList = new IntegerVector(1);
+			indexList.add(n);
+			return indexList;
+		}
 		IntegerVector indexList = new IntegerVector(rangeList.size());
 		indexList.fillWithEntriesOf(rangeList.size(), 0);
 		int denom = 1;
