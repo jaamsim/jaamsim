@@ -101,11 +101,10 @@ public class Simulation extends Entity {
 	                     + "distribution. Must be an integer >= 0. GlobalSubstreamSeed works "
 	                     + "together with each probability distribution's RandomSeed keyword to "
 	                     + "determine its random sequence. It allows the user to change all the "
-	                     + "random sequences in a model with a single input. To run multiple "
-	                     + "replications, set the appropriate inputs under the Multiple Runs tab "
-	                     + "and then set the GlobalSubstreamSeed input to the run number or to "
-	                     + "one of the run indices.",
-	         exampleList = {"5", "[Simulation].RunNumber", "[Simulation].RunIndex(3)"})
+	                     + "random sequences in a model with a single input.\n\n"
+	                     + "The default value is the replication number for the simulation run "
+	                     + "being executed.",
+	         exampleList = {"5", "'this.ReplicationNumber + 100'"})
 	private final SampleInput globalSeedInput;
 
 	@Keyword(description = "If TRUE, a full output report is printed to the file "
@@ -396,6 +395,7 @@ public class Simulation extends Entity {
 		globalSeedInput = new SampleInput("GlobalSubstreamSeed", KEY_INPUTS, new SampleConstant(0));
 		globalSeedInput.setUnitType(DimensionlessUnit.class);
 		globalSeedInput.setValidRange(0, Integer.MAX_VALUE);
+		globalSeedInput.setDefaultText("this.ReplicationNumber");
 		this.addInput(globalSeedInput);
 
 		printReport = new BooleanInput("PrintReport", KEY_INPUTS, false);
@@ -766,6 +766,8 @@ public class Simulation extends Entity {
 	}
 
 	public int getSubstreamNumber() {
+		if (globalSeedInput.isDefault())
+			return getJaamSimModel().getReplicationNumber();
 		return (int)globalSeedInput.getValue().getNextSample(0.0);
 	}
 
