@@ -118,8 +118,10 @@ public class RunManager implements RunListener {
 
 				// Print the scenario's outputs
 				if (replicationNumber == numberOfReplications) {
+					boolean labels = simulation.getPrintRunLabels();
+					boolean reps = simulation.getPrintReplications();
 					boolean bool = simulation.getPrintConfidenceIntervals();
-					InputAgent.printScenarioOutputs(presentScenario, bool, outStream);
+					InputAgent.printScenarioOutputs(presentScenario, labels, reps, bool, outStream);
 					if (simulation.getPrintReplications() && !simModel.isLastRun()) {
 						outStream.println();
 					}

@@ -191,6 +191,13 @@ public class Simulation extends Entity {
 	         exampleList = {"TRUE"})
 	private final BooleanInput printConfidenceIntervals;
 
+	@Keyword(description = "If TRUE, the first column of the run output report will show "
+	                     + "the scenario number for each simulation run. "
+	                     + "If the PrintReplications input is also TRUE, then the second column "
+	                     + "will show the replication number.",
+	         exampleList = {"TRUE"})
+	private final BooleanInput printRunLabels;
+
 	// GUI tab
 	@Keyword(description = "An optional list of units to be used for displaying model outputs.",
 	         exampleList = {"h kt"})
@@ -443,6 +450,9 @@ public class Simulation extends Entity {
 
 		printConfidenceIntervals = new BooleanInput("PrintConfidenceIntervals", MULTIPLE_RUNS, true);
 		this.addInput(printConfidenceIntervals);
+
+		printRunLabels = new BooleanInput("PrintRunLabels", MULTIPLE_RUNS, true);
+		this.addInput(printRunLabels);
 
 		// GUI tab
 		displayedUnits = new EntityListInput<>(Unit.class, "DisplayedUnits", GUI, new ArrayList<Unit>());
@@ -1172,6 +1182,10 @@ public class Simulation extends Entity {
 
 	public boolean getPrintConfidenceIntervals() {
 		return printConfidenceIntervals.getValue();
+	}
+
+	public boolean getPrintRunLabels() {
+		return printRunLabels.getValue();
 	}
 
 	public int getStartingScenarioNumber() {

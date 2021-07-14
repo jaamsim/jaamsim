@@ -1157,9 +1157,16 @@ public class InputAgent {
 
 	public static void printRunOutputHeaders(JaamSimModel simModel, PrintStream outStream) {
 		Simulation simulation = simModel.getSimulation();
+		StringBuilder sb = new StringBuilder();
+
+		// Scenario and replication columns
+		if (simulation.getPrintRunLabels()) {
+			sb.append("Scenario").append("\t");
+			if (simulation.getPrintReplications())
+				sb.append("Replication").append("\t");
+		}
 
 		// Write the header line for the expressions
-		StringBuilder sb = new StringBuilder();
 		ArrayList<String> toks = new ArrayList<>();
 		simulation.getRunOutputList().getValueTokens(toks);
 		boolean first = true;
@@ -1185,8 +1192,16 @@ public class InputAgent {
 	 */
 	public static void printRunOutputs(JaamSimModel simModel, PrintStream outStream, double simTime) {
 		Simulation simulation = simModel.getSimulation();
-
 		StringBuilder sb = new StringBuilder();
+
+		// Scenario and replication columns
+		if (simulation.getPrintRunLabels()) {
+			sb.append(simModel.getScenarioNumber()).append("\t");
+			if (simulation.getPrintReplications())
+				sb.append(simModel.getReplicationNumber()).append("\t");
+		}
+
+		// Expression values
 		for (int i = 0; i < simulation.getRunOutputList().getListSize(); i++) {
 			StringProvider samp = simulation.getRunOutputList().getValue().get(i);
 			String str;
@@ -1204,10 +1219,17 @@ public class InputAgent {
 		outStream.println(sb.toString());
 	}
 
-	public static void printScenarioOutputs(Scenario scene, boolean bool, PrintStream outStream) {
+	public static void printScenarioOutputs(Scenario scene, boolean labels, boolean reps, boolean bool, PrintStream outStream) {
+		StringBuilder sb = new StringBuilder();
+
+		// Scenario and replication columns
+		if (labels) {
+			sb.append(scene.getScenarioNumber()).append("\t");
+			if (reps)
+				sb.append("\t");
+		}
 
 		// Mean value and confidence interval for each output
-		StringBuilder sb = new StringBuilder();
 		double[] values = scene.getMeanValues();
 		double[] intervals = scene.getConfidenceIntervals();
 		for (int i = 0; i < values.length; i++) {
