@@ -34,8 +34,7 @@ public class SampleConstant implements SampleProvider {
 	}
 
 	public SampleConstant(double val) {
-		this.unitType = DimensionlessUnit.class;
-		this.val = val;
+		this(DimensionlessUnit.class, val);
 	}
 
 	void setUnitType(Class<? extends Unit> ut) {
