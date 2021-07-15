@@ -433,11 +433,11 @@ public class Simulation extends Entity {
 		this.addInput(scenarioIndexDefinitionList);
 		this.addSynonym(scenarioIndexDefinitionList, "RunIndexDefinitionList");
 
-		startingScenarioNumber = new RunNumberInput("StartingScenarioNumber", MULTIPLE_RUNS, 1);
+		startingScenarioNumber = new RunNumberInput("StartingScenarioNumber", MULTIPLE_RUNS, new SampleConstant(1));
 		this.addInput(startingScenarioNumber);
 		this.addSynonym(startingScenarioNumber, "StartingRunNumber");
 
-		endingScenarioNumber = new RunNumberInput("EndingScenarioNumber", MULTIPLE_RUNS, 1);
+		endingScenarioNumber = new RunNumberInput("EndingScenarioNumber", MULTIPLE_RUNS, new SampleConstant(1));
 		this.addInput(endingScenarioNumber);
 		this.addSynonym(endingScenarioNumber, "EndingRunNumber");
 
@@ -1189,11 +1189,11 @@ public class Simulation extends Entity {
 	}
 
 	public int getStartingScenarioNumber() {
-		return startingScenarioNumber.getValue();
+		return (int) startingScenarioNumber.getValue().getNextSample(0.0d);
 	}
 
 	public int getEndingScenarioNumber() {
-		return endingScenarioNumber.getValue();
+		return (int) endingScenarioNumber.getValue().getNextSample(0.0d);
 	}
 
 	public IntegerVector getScenarioIndexDefinitionList() {

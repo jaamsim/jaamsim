@@ -17,16 +17,20 @@
  */
 package com.jaamsim.input;
 
+import com.jaamsim.Samples.SampleConstant;
+import com.jaamsim.Samples.SampleInput;
+import com.jaamsim.Samples.SampleProvider;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.datatypes.IntegerVector;
+import com.jaamsim.units.DimensionlessUnit;
 
-public class RunNumberInput extends Input<Integer> {
+public class RunNumberInput extends SampleInput {
 
 	private IntegerVector rangeList;
 	private int max;
 
-	public RunNumberInput(String key, String cat, Integer def) {
+	public RunNumberInput(String key, String cat, SampleProvider def) {
 		super(key, cat, def);
 		rangeList = new IntegerVector(1);
 		max = Integer.MAX_VALUE;
@@ -63,18 +67,13 @@ public class RunNumberInput extends Input<Integer> {
 		Input.assertCount(kw, 1);
 		String[] data = kw.getArg(0).split("-");
 
-		// Run number entered as a single integer
-		if (data.length == 1) {
-			value = Input.parseInteger(kw.getArg(0), 1, max);
+		// Run number entered as a number or expression
+		if (data.length != rangeList.size()) {
+			value = Input.parseSampleExp(kw, thisEnt, 1, max, DimensionlessUnit.class);
 			return;
 		}
 
 		// Run number entered as a series of run indices
-		if (data.length != rangeList.size())
-			throw new InputErrorException("The number of run indices entered does not match "
-					+ "the number that have been defined. Expected: %s, received: %s",
-					rangeList.size(), data.length);
-
 		IntegerVector indexList = new IntegerVector(data.length);
 		indexList.fillWithEntriesOf(data.length, 0);
 		for (int i=0; i<data.length; i++) {
@@ -94,7 +93,7 @@ public class RunNumberInput extends Input<Integer> {
 		if (temp < 1 || temp > max)
 			throw new InputErrorException(INP_ERR_INTEGERRANGE, 1, max, temp);
 
-		value = temp;
+		value = new SampleConstant(temp);
 	}
 
 	@Override
