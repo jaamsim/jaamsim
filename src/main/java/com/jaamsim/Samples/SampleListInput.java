@@ -35,6 +35,7 @@ public class SampleListInput extends ListInput<ArrayList<SampleProvider>> {
 	private boolean dimensionless = false;
 	private double minValue = Double.NEGATIVE_INFINITY;
 	private double maxValue = Double.POSITIVE_INFINITY;
+	private boolean integerValue = false;
 
 	public SampleListInput(String key, String cat, ArrayList<SampleProvider> def) {
 		super(key, cat, def);
@@ -68,6 +69,10 @@ public class SampleListInput extends ListInput<ArrayList<SampleProvider>> {
 
 	public void setDimensionless(boolean bool) {
 		dimensionless = bool;
+	}
+
+	public void setIntegerValue(boolean bool) {
+		integerValue = bool;
 	}
 
 	/**
@@ -146,6 +151,8 @@ public class SampleListInput extends ListInput<ArrayList<SampleProvider>> {
 
 	@Override
 	public String getValidInputDesc() {
+		if (integerValue)
+			return Input.VALID_SAMPLE_LIST_INTEGER;
 		if (dimensionless) {
 			return Input.VALID_SAMPLE_LIST_DIMLESS;
 		}

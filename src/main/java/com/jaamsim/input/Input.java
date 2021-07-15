@@ -121,6 +121,8 @@ public abstract class Input<T> {
 	                                                + "Each entry in the list must be enclosed by braces.";
 	protected static final String VALID_SAMPLE_LIST_DIMLESS = "Accepts a list containing dimensionless numbers, objects that return such a number, or expressions that return such a number. "
 	                                                        + "Each entry in the list can be enclosed by braces.";
+	protected static final String VALID_SAMPLE_LIST_INTEGER = "Accepts a list containing dimensionless integers, objects that return such a number, or expressions that return such a number. "
+            + "Each entry in the list can be enclosed by braces.";
 	protected static final String VALID_UNIT_TYPE_LIST = "Accepts a list of unit types separated by spaces.";
 	protected static final String VALID_STRING_PROV_LIST = "Accepts a list of strings or expressions that return strings. "
 	                                                     + "Also accepts other types of expressions whose outputs will be converted to strings. "
