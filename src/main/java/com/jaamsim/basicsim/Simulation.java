@@ -174,7 +174,7 @@ public class Simulation extends Entity {
 
 	@Keyword(description = "The number of replications to perform for each scenario.",
 	         exampleList = {"10"})
-	private final IntegerInput numberOfReplications;
+	private final SampleInput numberOfReplications;
 
 	@Keyword(description = "If TRUE, the run output report will include an entry for each "
 	                     + "replication that was performed. "
@@ -441,7 +441,8 @@ public class Simulation extends Entity {
 		this.addInput(endingScenarioNumber);
 		this.addSynonym(endingScenarioNumber, "EndingRunNumber");
 
-		numberOfReplications = new IntegerInput("NumberOfReplications", MULTIPLE_RUNS, 1);
+		numberOfReplications = new SampleInput("NumberOfReplications", MULTIPLE_RUNS, new SampleConstant(1));
+		numberOfReplications.setUnitType(DimensionlessUnit.class);
 		numberOfReplications.setValidRange(1, Integer.MAX_VALUE);
 		this.addInput(numberOfReplications);
 
@@ -1173,7 +1174,7 @@ public class Simulation extends Entity {
 	}
 
 	public int getNumberOfReplications() {
-		return numberOfReplications.getValue();
+		return (int) numberOfReplications.getValue().getNextSample(0.0d);
 	}
 
 	public boolean getPrintReplications() {
