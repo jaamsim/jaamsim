@@ -72,6 +72,7 @@ public abstract class AbstractLinkedResourceUser extends LinkedService implement
 		numberOfUnitsList.setValidRange(0, Double.POSITIVE_INFINITY);
 		numberOfUnitsList.setDimensionless(true);
 		numberOfUnitsList.setUnitType(DimensionlessUnit.class);
+		numberOfUnitsList.setIntegerValue(true);
 		this.addInput(numberOfUnitsList);
 	}
 

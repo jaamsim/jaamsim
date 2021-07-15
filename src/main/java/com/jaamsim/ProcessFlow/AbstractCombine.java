@@ -93,6 +93,7 @@ public abstract class AbstractCombine extends LinkedService {
 		numberRequired = new SampleListInput("NumberRequired", KEY_INPUTS, def);
 		numberRequired.setDimensionless(true);
 		numberRequired.setUnitType(DimensionlessUnit.class);
+		numberRequired.setIntegerValue(true);
 		this.addInput(numberRequired);
 
 		matchRequired = new BooleanInput("MatchRequired", KEY_INPUTS, false);
