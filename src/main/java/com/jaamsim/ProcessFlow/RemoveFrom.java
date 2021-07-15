@@ -39,6 +39,7 @@ public class RemoveFrom extends AbstractUnpack {
 	{
 		numberOfEntities = new SampleInput("NumberOfEntities", KEY_INPUTS, new SampleConstant(1));
 		numberOfEntities.setUnitType(DimensionlessUnit.class);
+		numberOfEntities.setIntegerValue(true);
 		numberOfEntities.setValidRange(0, Double.POSITIVE_INFINITY);
 		this.addInput(numberOfEntities);
 

@@ -401,6 +401,7 @@ public class Simulation extends Entity {
 
 		globalSeedInput = new SampleInput("GlobalSubstreamSeed", KEY_INPUTS, new SampleConstant(0));
 		globalSeedInput.setUnitType(DimensionlessUnit.class);
+		globalSeedInput.setIntegerValue(true);
 		globalSeedInput.setValidRange(0, Integer.MAX_VALUE);
 		globalSeedInput.setDefaultText("this.ReplicationNumber");
 		this.addInput(globalSeedInput);
@@ -434,15 +435,18 @@ public class Simulation extends Entity {
 		this.addSynonym(scenarioIndexDefinitionList, "RunIndexDefinitionList");
 
 		startingScenarioNumber = new RunNumberInput("StartingScenarioNumber", MULTIPLE_RUNS, new SampleConstant(1));
+		startingScenarioNumber.setIntegerValue(true);
 		this.addInput(startingScenarioNumber);
 		this.addSynonym(startingScenarioNumber, "StartingRunNumber");
 
 		endingScenarioNumber = new RunNumberInput("EndingScenarioNumber", MULTIPLE_RUNS, new SampleConstant(1));
+		endingScenarioNumber.setIntegerValue(true);
 		this.addInput(endingScenarioNumber);
 		this.addSynonym(endingScenarioNumber, "EndingRunNumber");
 
 		numberOfReplications = new SampleInput("NumberOfReplications", MULTIPLE_RUNS, new SampleConstant(1));
 		numberOfReplications.setUnitType(DimensionlessUnit.class);
+		numberOfReplications.setIntegerValue(true);
 		numberOfReplications.setValidRange(1, Integer.MAX_VALUE);
 		this.addInput(numberOfReplications);
 

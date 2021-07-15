@@ -40,6 +40,7 @@ public class ServerAndQueue extends CompoundEntity {
 		SampleConstant def = new SampleConstant(Double.POSITIVE_INFINITY);
 		maxQueueLength = new SampleInput("MaxQueueLength", KEY_INPUTS, def);
 		maxQueueLength.setUnitType(DimensionlessUnit.class);
+		maxQueueLength.setIntegerValue(true);
 		maxQueueLength.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		this.addInput(maxQueueLength);
 	}

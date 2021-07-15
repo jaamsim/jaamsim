@@ -94,6 +94,7 @@ public class EntityGenerator extends LinkedService implements EntityGen {
 
 		entitiesPerArrival = new SampleInput("EntitiesPerArrival", KEY_INPUTS, new SampleConstant(1));
 		entitiesPerArrival.setUnitType(DimensionlessUnit.class);
+		entitiesPerArrival.setIntegerValue(true);
 		entitiesPerArrival.setValidRange(1, Double.POSITIVE_INFINITY);
 		this.addInput(entitiesPerArrival);
 
@@ -109,6 +110,7 @@ public class EntityGenerator extends LinkedService implements EntityGen {
 
 		maxNumber = new SampleInput("MaxNumber", KEY_INPUTS, null);
 		maxNumber.setUnitType(DimensionlessUnit.class);
+		maxNumber.setIntegerValue(true);
 		maxNumber.setValidRange(1, Double.POSITIVE_INFINITY);
 		maxNumber.setDefaultText(Input.POSITIVE_INFINITY);
 		this.addInput(maxNumber);

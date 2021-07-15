@@ -49,6 +49,7 @@ public class EntityGate extends LinkedService {
 		SampleConstant def = new SampleConstant(Double.POSITIVE_INFINITY);
 		numberToRelease = new SampleInput("NumberToRelease", KEY_INPUTS, def);
 		numberToRelease.setUnitType(DimensionlessUnit.class);
+		numberToRelease.setIntegerValue(true);
 		numberToRelease.setValidRange(0.0, Double.POSITIVE_INFINITY);
 		this.addInput(numberToRelease);
 	}

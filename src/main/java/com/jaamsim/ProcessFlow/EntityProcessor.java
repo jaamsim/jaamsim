@@ -62,6 +62,7 @@ public class EntityProcessor extends AbstractLinkedResourceUser {
 
 		capacity = new SampleInput("Capacity", KEY_INPUTS, new SampleConstant(1));
 		capacity.setUnitType(DimensionlessUnit.class);
+		capacity.setIntegerValue(true);
 		capacity.setValidRange(0, Double.POSITIVE_INFINITY);
 		this.addInput(capacity);
 

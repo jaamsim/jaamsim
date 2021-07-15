@@ -60,6 +60,7 @@ public abstract class AbstractPack extends LinkedService {
 	{
 		numberOfEntities = new SampleInput("NumberOfEntities", KEY_INPUTS, new SampleConstant(1));
 		numberOfEntities.setUnitType(DimensionlessUnit.class);
+		numberOfEntities.setIntegerValue(true);
 		numberOfEntities.setValidRange(1, Double.POSITIVE_INFINITY);
 		this.addInput(numberOfEntities);
 
@@ -74,6 +75,7 @@ public abstract class AbstractPack extends LinkedService {
 
 		numberToStart = new SampleInput("NumberToStart", OPTIONS, null);
 		numberToStart.setUnitType(DimensionlessUnit.class);
+		numberToStart.setIntegerValue(true);
 		numberToStart.setDefaultText("NumberOfEntities Input");
 		numberToStart.setValidRange(0, Double.POSITIVE_INFINITY);
 		this.addInput(numberToStart);

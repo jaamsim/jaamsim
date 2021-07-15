@@ -61,6 +61,7 @@ public class SetGraphics extends LinkedComponent {
 
 		choice = new SampleInput("Choice", KEY_INPUTS, new SampleConstant(1));
 		choice.setUnitType(DimensionlessUnit.class);
+		choice.setIntegerValue(true);
 		choice.setValidRange(1, Double.POSITIVE_INFINITY);
 		this.addInput(choice);
 	}
