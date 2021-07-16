@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2019 JaamSim Software Inc.
+ * Copyright (C) 2019-2021 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,6 +31,7 @@ import com.jaamsim.events.EventManager;
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.events.TestFrameworkHelpers;
 import com.jaamsim.input.InputAgent;
+import com.jaamsim.math.MathUtils;
 
 public class TestContinuousDistribution {
 
@@ -91,8 +92,8 @@ public class TestContinuousDistribution {
 		double total = TestContinuousDistribution.sampleDistribution(dist, numSamples);
 		double mean = total / numSamples;
 
-		assertTrue( Math.abs( dist.getSampleMean(0.0) - mean ) < 0.001 );
-		assertTrue( Math.abs( dist.getSampleMean(0.0) / dist.getMeanValue(0.0) - 1.0 ) < 0.001 );
-		assertTrue( Math.abs( dist.getSampleStandardDeviation(0.0) / dist.getStandardDeviation(0.0) - 1.0 ) < 0.001 );
+		assertTrue( MathUtils.near(dist.getSampleMean(0.0), mean) );
+		assertTrue( Math.abs( dist.getSampleMean(0.0) / dist.getMeanValue(0.0) - 1.0 ) < 0.01 );
+		assertTrue( Math.abs( dist.getSampleStandardDeviation(0.0) / dist.getStandardDeviation(0.0) - 1.0 ) < 0.01 );
 	}
 }
