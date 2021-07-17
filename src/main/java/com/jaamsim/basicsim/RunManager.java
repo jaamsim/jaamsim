@@ -140,7 +140,6 @@ public class RunManager implements RunListener {
 		}
 
 		// Clear the model prior to the next run
-		simModel.pause();
 		simModel.getEventManager().clear();
 		simModel.killGeneratedEntities();
 

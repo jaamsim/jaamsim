@@ -491,8 +491,12 @@ public class JaamSimModel {
 		// Execute the end of run method for each entity
 		doEnd();
 
+		// Stop the model
+		pause();
+
 		// Notify the run manager
-		runListener.runEnded();
+		if (runListener != null)
+			runListener.runEnded();
 	}
 
 	/**
