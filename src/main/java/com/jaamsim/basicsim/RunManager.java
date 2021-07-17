@@ -33,7 +33,6 @@ public class RunManager implements RunListener {
 	private final JaamSimModel simModel;
 	private PrintStream outStream;  // location where the custom outputs will be written
 	private int scenarioNumber;    // labels each scenario when multiple scenarios are being made
-	private int replicationNumber;
 	private Scenario presentScenario;
 
 	public RunManager(JaamSimModel sm) {
@@ -45,11 +44,12 @@ public class RunManager implements RunListener {
 	}
 
 	public void start(double pauseTime) {
-		scenarioNumber = simModel.getSimulation().getStartingScenarioNumber();
-		replicationNumber = 1;
-		simModel.setScenarioNumber(scenarioNumber);
-		simModel.setReplicationNumber(replicationNumber);
-		simModel.start(pauseTime);
+		Simulation simulation = simModel.getSimulation();
+		scenarioNumber = simulation.getStartingScenarioNumber();
+		int numOuts = simulation.getRunOutputList().getListSize();
+		int numberOfReplications = simulation.getNumberOfReplications();
+		presentScenario = new Scenario(numOuts, scenarioNumber, numberOfReplications, this);
+		presentScenario.startNextRun(simModel, pauseTime);
 	}
 
 	public void pause() {
@@ -66,9 +66,7 @@ public class RunManager implements RunListener {
 			outStream = null;
 		}
 		scenarioNumber = simModel.getSimulation().getStartingScenarioNumber();
-		replicationNumber = 1;
 		simModel.setScenarioNumber(scenarioNumber);
-		simModel.setReplicationNumber(replicationNumber);
 		simModel.reset();
 	}
 
@@ -91,77 +89,52 @@ public class RunManager implements RunListener {
 		if (simulation.getPrintReport())
 			InputAgent.printReport(simModel, EventManager.simSeconds());
 
-		// Print the selected outputs
-		if (simulation.getRunOutputList().getValue() != null) {
-			outStream = getOutStream();
+		// Is the scenario finished?
+		if (presentScenario.isFinished()) {
 
-			// Column headings
-			if (simModel.isFirstRun()) {
-				InputAgent.printRunOutputHeaders(simModel, outStream);
-			}
-
-			// Print the replication's outputs
-			int numberOfReplications = simulation.getNumberOfReplications();
-			if (simulation.getPrintReplications() || numberOfReplications == 1)
-				InputAgent.printRunOutputs(simModel, outStream, EventManager.simSeconds());
-
-			if (numberOfReplications > 1) {
-
-				// Start a new Scenario
-				if (replicationNumber == 1) {
-					int numOuts = simulation.getRunOutputList().getListSize();
-					presentScenario = new Scenario(numOuts, scenarioNumber, numberOfReplications, this);
-				}
-
-				// Record the replication's outputs
-				presentScenario.recordRun(simModel);
-
-				// Print the scenario's outputs
-				if (replicationNumber == numberOfReplications) {
+			// Print the results
+			int numOuts = simulation.getRunOutputList().getListSize();
+			if (numOuts > 0) {
+				outStream = getOutStream();
+				if (outStream != null) {
+					if (simModel.isFirstScenario())
+						InputAgent.printRunOutputHeaders(simModel, outStream);
 					boolean labels = simulation.getPrintRunLabels();
 					boolean reps = simulation.getPrintReplications();
 					boolean bool = simulation.getPrintConfidenceIntervals();
 					InputAgent.printScenarioOutputs(presentScenario, labels, reps, bool, outStream);
-					if (simulation.getPrintReplications() && !simModel.isLastRun()) {
+					if (simulation.getPrintReplications() && !simModel.isLastScenario()) {
 						outStream.println();
 					}
 				}
 			}
-		}
 
-		// Close the print stream for the selected outputs
-		if (simModel.isLastRun()) {
-			simModel.end();
-			if (outStream != null) {
-				outStream.close();
-				outStream = null;
+			// Exit if this is the last scenario
+			if (simModel.isLastScenario()) {
+				simModel.end();
+				if (outStream != null) {
+					outStream.close();
+					outStream = null;
+				}
+				return;
 			}
-			return;
-		}
 
-		// Clear the model prior to the next run
-		simModel.getEventManager().clear();
-		simModel.killGeneratedEntities();
-
-		// Increment the run number
-		if (replicationNumber < simModel.getSimulation().getNumberOfReplications()) {
-			replicationNumber++;
-		}
-		else {
-			replicationNumber = 1;
+			// Start a new Scenario
 			scenarioNumber++;
+			int numberOfReplications = simulation.getNumberOfReplications();
+			presentScenario = new Scenario(numOuts, scenarioNumber, numberOfReplications, this);
 		}
-		simModel.setScenarioNumber(scenarioNumber);
-		simModel.setReplicationNumber(replicationNumber);
 
 		// Start the next run
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				double pauseTime = simModel.getSimulation().getPauseTime();
-				simModel.startRun(pauseTime);
-			}
-		}).start();
+		if (presentScenario.hasRunsToStart()) {
+			new Thread(new Runnable() {
+				@Override
+				public void run() {
+					double pauseTime = simModel.getSimulation().getPauseTime();
+					presentScenario.startNextRun(simModel, pauseTime);
+				}
+			}).start();
+		}
 	}
 
 	public PrintStream getOutStream() {

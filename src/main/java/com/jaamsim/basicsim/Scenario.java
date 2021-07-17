@@ -60,6 +60,14 @@ public class Scenario implements RunListener {
 		return scenarioNumber;
 	}
 
+	public int getNumberOfReplications() {
+		return replications;
+	}
+
+	public ArrayList<SimRun> getRunsCompleted() {
+		return runsCompleted;
+	}
+
 	public void recordRun(JaamSimModel simModel) {
 		ArrayList<StringProvider> spList = simModel.getSimulation().getRunOutputList().getValue();
 		if (spList.size() != runStatistics.size())
@@ -109,6 +117,7 @@ public class Scenario implements RunListener {
 
 	@Override
 	public synchronized void runEnded(SimRun run) {
+		recordRun(run.getJaamSimModel());
 		runsInProgress.remove(run);
 		runsCompleted.add(run);
 		listener.runEnded(run);

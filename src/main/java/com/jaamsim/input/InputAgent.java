@@ -50,6 +50,7 @@ import com.jaamsim.basicsim.Group;
 import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.basicsim.ObjectType;
 import com.jaamsim.basicsim.Scenario;
+import com.jaamsim.basicsim.SimRun;
 import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.math.Vec3d;
@@ -1235,10 +1236,45 @@ public class InputAgent {
 		outStream.println(sb.toString());
 	}
 
+	/**
+	 * Prints the custom output report for the specified scenario.
+	 * @param scene - scenario to the reported
+	 * @param labels - true if scenario and replication labels are to be printed for each run
+	 * @param reps - true if the results for each replication are to be printed
+	 * @param bool - true if confidence intervals are to be printed
+	 * @param outStream - PrintStream to which the results will be printed
+	 */
 	public static void printScenarioOutputs(Scenario scene, boolean labels, boolean reps, boolean bool, PrintStream outStream) {
-		StringBuilder sb = new StringBuilder();
+		int replications = scene.getRunsCompleted().size();
+
+		// Print the outputs for each replication
+		if (reps || replications == 1) {
+			for (SimRun run : scene.getRunsCompleted()) {
+				StringBuilder sb = new StringBuilder();
+				if (labels) {
+					sb.append(scene.getScenarioNumber()).append("\t");
+					sb.append(run.getReplicationNumber()).append("\t");
+				}
+				boolean first = true;
+				for (String str : run.getRunOutputStrings()) {
+					if (!first) {
+						sb.append("\t");
+					}
+					first = false;
+					sb.append(str);
+					if (bool) {
+						sb.append("\t");
+					}
+				}
+				outStream.println(sb.toString());
+			}
+		}
+
+		if (replications <= 1)
+			return;
 
 		// Scenario and replication columns
+		StringBuilder sb = new StringBuilder();
 		if (labels) {
 			sb.append(scene.getScenarioNumber()).append("\t");
 			if (reps)
