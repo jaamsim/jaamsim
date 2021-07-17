@@ -496,7 +496,7 @@ public class JaamSimModel {
 
 		// Notify the run manager
 		if (runListener != null)
-			runListener.runEnded();
+			runListener.runEnded(null);
 	}
 
 	/**

@@ -84,7 +84,7 @@ public class RunManager implements RunListener {
 	}
 
 	@Override
-	public void runEnded() {
+	public void runEnded(SimRun run) {
 		Simulation simulation = simModel.getSimulation();
 
 		// Print the output report

@@ -88,7 +88,7 @@ public class SimRun implements RunListener {
 	}
 
 	@Override
-	public void runEnded() {
+	public void runEnded(SimRun run) {
 
 		// Save the RunOutputList values for the run
 		double simTime = simModel.getSimTime();
@@ -99,7 +99,7 @@ public class SimRun implements RunListener {
 		}
 
 		// Notify the listener
-		listener.runEnded();
+		listener.runEnded(this);
 	}
 
 	public ArrayList<Double> getRunOutputValues() {
