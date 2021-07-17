@@ -26,13 +26,30 @@ import com.jaamsim.StringProviders.StringProvider;
  * @author Harry King
  *
  */
-public class Scenario {
+public class Scenario implements RunListener {
 
 	private final int scenarioNumber;
+	private final int replications;  // number of replications to be performed
+	private final RunListener listener;
+
+	private final ArrayList<SimRun> runsToStart;
+	private final ArrayList<SimRun> runsInProgress;
+	private final ArrayList<SimRun> runsCompleted;
+
 	private final ArrayList<SampleStatistics> runStatistics;
 
-	public Scenario(int numOuts, int scene) {
+	public Scenario(int numOuts, int scene, int numReps, RunListener l) {
 		scenarioNumber = scene;
+		replications = numReps;
+		listener = l;
+
+		runsToStart = new ArrayList<>(replications);
+		runsInProgress = new ArrayList<>(replications);
+		runsCompleted = new ArrayList<>(replications);
+		for (int i = 1; i <= replications; i++) {
+			runsToStart.add(new SimRun(scenarioNumber, i, this));
+		}
+
 		runStatistics = new ArrayList<>(numOuts);
 		for (int i = 0; i < numOuts; i++) {
 			runStatistics.add(new SampleStatistics());
@@ -71,6 +88,30 @@ public class Scenario {
 			ret[i] = runStatistics.get(i).getConfidenceInterval95();
 		}
 		return ret;
+	}
+
+	public synchronized boolean hasRunsToStart() {
+		return !runsToStart.isEmpty();
+	}
+
+	public synchronized void startNextRun(JaamSimModel simModel, double pauseTime) {
+		if (runsToStart.isEmpty())
+			return;
+		SimRun run = runsToStart.remove(0);
+		runsInProgress.add(run);
+		run.setJaamSimModel(simModel);
+		run.start(pauseTime);
+	}
+
+	public synchronized boolean isFinished() {
+		return runsToStart.isEmpty() && runsInProgress.isEmpty();
+	}
+
+	@Override
+	public synchronized void runEnded(SimRun run) {
+		runsInProgress.remove(run);
+		runsCompleted.add(run);
+		listener.runEnded(run);
 	}
 
 }
