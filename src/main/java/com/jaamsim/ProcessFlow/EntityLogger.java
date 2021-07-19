@@ -112,6 +112,11 @@ public class EntityLogger extends Logger implements Linkable, StateEntityListene
 	}
 
 	@Override
+	public boolean canLink(boolean dir) {
+		return !nextComponent.getHidden();
+	}
+
+	@Override
 	public void linkTo(DisplayEntity nextEnt, boolean dir) {
 		if (!(nextEnt instanceof Linkable) || nextEnt instanceof EntityGen)
 			return;
