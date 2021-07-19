@@ -19,6 +19,7 @@ package com.jaamsim.BasicObjects;
 
 import java.util.ArrayList;
 
+import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.StringProviders.StringProvListInput;
 import com.jaamsim.StringProviders.StringProvider;
 import com.jaamsim.basicsim.EntityTarget;
@@ -171,7 +172,7 @@ public class ExpressionLogger extends Logger implements StateEntityListener {
 			return;
 
 		// Record the entry in the log
-		this.recordLogEntry(simTime);
+		this.recordLogEntry(simTime, null);
 
 		// Get ready for the next entry
 		this.startAction();
@@ -191,7 +192,7 @@ public class ExpressionLogger extends Logger implements StateEntityListener {
 	}
 
 	@Override
-	protected void recordEntry(FileEntity file, double simTime) {
+	protected void recordEntry(FileEntity file, double simTime, DisplayEntity dEnt) {
 
 		// Write the state values
 		for (StateEntity ent : stateTraceList.getValue()) {
@@ -217,7 +218,7 @@ public class ExpressionLogger extends Logger implements StateEntityListener {
 
 	@Override
 	public void updateForStateChange(StateEntity ent, StateRecord prev, StateRecord next) {
-		this.recordLogEntry(getSimTime());
+		this.recordLogEntry(getSimTime(), ent);
 	}
 
 	/**
@@ -252,7 +253,7 @@ public class ExpressionLogger extends Logger implements StateEntityListener {
 			return;
 
 		// Record the entry in the log
-		this.recordLogEntry(simTime);
+		this.recordLogEntry(simTime, null);
 
 		// Wait for the next value change
 		EventManager.scheduleUntil(doValueTrace, valueChanged, null);

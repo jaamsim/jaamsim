@@ -158,7 +158,7 @@ public abstract class Logger extends DisplayEntity {
 	/**
 	 * Writes an entry to the log file.
 	 */
-	protected void recordLogEntry(double simTime) {
+	protected void recordLogEntry(double simTime, DisplayEntity ent) {
 
 		if (!isActive())
 			return;
@@ -183,7 +183,7 @@ public abstract class Logger extends DisplayEntity {
 		file.format("%n%s", simTime/factor);
 
 		// Write any additional columns for the log entry
-		this.recordEntry(file, simTime);
+		this.recordEntry(file, simTime, ent);
 
 		// Write the expression values
 		for (int i=0; i<dataSource.getListSize(); i++) {
@@ -213,7 +213,7 @@ public abstract class Logger extends DisplayEntity {
 
 	protected abstract void printColumnTitles(FileEntity file);
 
-	protected abstract void recordEntry(FileEntity file, double simTime);
+	protected abstract void recordEntry(FileEntity file, double simTime, DisplayEntity ent);
 
 	@Override
 	public void doEnd() {

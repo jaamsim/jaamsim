@@ -57,7 +57,7 @@ public class EntityLogger extends Logger implements Linkable {
 		receivedEntity = ent;
 
 		// Record the entry in the log
-		this.recordLogEntry(getSimTime());
+		this.recordLogEntry(getSimTime(), ent);
 
 		// Send the entity to the next element in the chain
 		nextComponent.getValue().addEntity(ent);
@@ -69,8 +69,8 @@ public class EntityLogger extends Logger implements Linkable {
 	}
 
 	@Override
-	protected void recordEntry(FileEntity file, double simTime) {
-		file.format("\t%s", receivedEntity);
+	protected void recordEntry(FileEntity file, double simTime, DisplayEntity ent) {
+		file.format("\t%s", ent);
 	}
 
 	@Override
