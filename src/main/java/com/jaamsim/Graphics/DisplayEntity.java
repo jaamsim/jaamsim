@@ -589,7 +589,9 @@ public class DisplayEntity extends Entity {
 	 * @return global size
 	 */
 	public Vec3d getGlobalSize() {
-		Vec3d ret = new Vec3d(sizeInput.getValue());
+		// FIXME - calculation should use getOrientation() but this causes entities in a rotated
+		//         Queue to be displayed incorrectly
+		Vec3d ret = getSize();
 		calculateEulerRotation(ret, orientationInput.getValue());
 		ret.x = Math.abs(ret.x);
 		ret.y = Math.abs(ret.y);
