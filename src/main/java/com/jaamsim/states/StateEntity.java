@@ -122,7 +122,7 @@ public abstract class StateEntity extends DisplayEntity implements StateUser {
 		for (Entity ent : getJaamSimModel().getClonesOfIterator(Entity.class, StateEntityListener.class)) {
 			StateEntityListener sel = (StateEntityListener)ent;
 			if (sel.isWatching(this))
-				stateListeners.add(sel);
+				addStateListener(sel);
 		}
 	}
 
@@ -164,6 +164,10 @@ public abstract class StateEntity extends DisplayEntity implements StateUser {
 		states.put(init.getName(), init);
 
 		this.setGraphicsForState(init.getName());
+	}
+
+	public void addStateListener(StateEntityListener listener) {
+		stateListeners.add(listener);
 	}
 
 	public ArrayList<StateEntityListener> getStateListeners() {

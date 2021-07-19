@@ -23,22 +23,34 @@ import com.jaamsim.BasicObjects.Logger;
 import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.basicsim.FileEntity;
+import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InterfaceEntityInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.Output;
+import com.jaamsim.states.StateEntity;
+import com.jaamsim.states.StateEntityListener;
+import com.jaamsim.states.StateRecord;
 
-public class EntityLogger extends Logger implements Linkable {
+public class EntityLogger extends Logger implements Linkable, StateEntityListener {
 
 	@Keyword(description = "The next object to which the processed DisplayEntity is passed.",
 			exampleList = {"Queue1"})
 	protected final InterfaceEntityInput<Linkable> nextComponent;
 
+	@Keyword(description = "If TRUE, an entry will made in the log file every time one of the "
+	                     + "received entities changes state.",
+	         exampleList = {"TRUE"})
+	private final BooleanInput traceEntityStates;
+
 	{
 		nextComponent = new InterfaceEntityInput<>(Linkable.class, "NextComponent", KEY_INPUTS, null);
 		nextComponent.setRequired(true);
 		this.addInput(nextComponent);
+
+		traceEntityStates = new BooleanInput("TraceEntityStates", KEY_INPUTS, false);
+		this.addInput(traceEntityStates);
 	}
 
 	private DisplayEntity receivedEntity;
@@ -56,6 +68,13 @@ public class EntityLogger extends Logger implements Linkable {
 
 		receivedEntity = ent;
 
+		// Trace states for received entities
+		if (traceEntityStates.getValue() && ent instanceof StateEntity) {
+			((StateEntity) ent).addStateListener(this);
+			nextComponent.getValue().addEntity(ent);
+			return;
+		}
+
 		// Record the entry in the log
 		this.recordLogEntry(getSimTime(), ent);
 
@@ -65,12 +84,31 @@ public class EntityLogger extends Logger implements Linkable {
 
 	@Override
 	protected void printColumnTitles(FileEntity file) {
+		if (traceEntityStates.getValue()) {
+			file.format("\t%s\t%s", "Entity", "State");
+			return;
+		}
 		file.format("\t%s", "this.obj");
 	}
 
 	@Override
 	protected void recordEntry(FileEntity file, double simTime, DisplayEntity ent) {
+		if (traceEntityStates.getValue() && ent instanceof StateEntity) {
+			file.format("\t%s\t%s", ent, ((StateEntity) ent).getPresentState(simTime));
+			return;
+		}
 		file.format("\t%s", ent);
+	}
+
+	@Override
+	public boolean isWatching(StateEntity ent) {
+		// Method not used
+		return false;
+	}
+
+	@Override
+	public void updateForStateChange(StateEntity ent, StateRecord prev, StateRecord next) {
+		recordLogEntry(getSimTime(), ent);
 	}
 
 	@Override
