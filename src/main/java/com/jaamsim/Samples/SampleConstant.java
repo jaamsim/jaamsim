@@ -26,15 +26,22 @@ import com.jaamsim.units.Unit;
 
 public class SampleConstant implements SampleProvider {
 	private Class<? extends Unit> unitType;
+	private boolean integerValue;
 	private final double val;
 
 	public SampleConstant(Class<? extends Unit> unitType, double val) {
 		this.unitType = unitType;
 		this.val = val;
+		integerValue = false;
 	}
 
 	public SampleConstant(double val) {
 		this(DimensionlessUnit.class, val);
+	}
+
+	public SampleConstant(int val) {
+		this(DimensionlessUnit.class, val);
+		integerValue = true;
 	}
 
 	void setUnitType(Class<? extends Unit> ut) {
@@ -67,6 +74,9 @@ public class SampleConstant implements SampleProvider {
 	}
 
 	public String getValueString(JaamSimModel simModel) {
+		if (integerValue)
+			return Integer.toString((int) val);
+
 		StringBuilder tmp = new StringBuilder();
 		tmp.append(Double.toString(val/simModel.getDisplayedUnitFactor(unitType)));
 		if (unitType != DimensionlessUnit.class)
@@ -76,6 +86,9 @@ public class SampleConstant implements SampleProvider {
 
 	@Override
 	public String toString() {
+		if (integerValue)
+			return Integer.toString((int) val);
+
 		StringBuilder tmp = new StringBuilder();
 		tmp.append(Double.toString(val));
 		if (unitType != DimensionlessUnit.class)
@@ -85,6 +98,12 @@ public class SampleConstant implements SampleProvider {
 
 	public ArrayList<String> getTokens() {
 		ArrayList<String> list = new ArrayList<>();
+
+		if (integerValue) {
+			list.add(Integer.toString((int) val));
+			return list;
+		}
+
 		list.add(Double.toString(val));
 		if (unitType != DimensionlessUnit.class)
 			list.add(Unit.getSIUnit(unitType));
