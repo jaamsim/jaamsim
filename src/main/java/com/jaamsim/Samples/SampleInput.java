@@ -34,6 +34,7 @@ public class SampleInput extends Input<SampleProvider> {
 	private Class<? extends Unit> unitType;
 	private double minValue = Double.NEGATIVE_INFINITY;
 	private double maxValue = Double.POSITIVE_INFINITY;
+	private boolean integerValue = false;
 
 	public SampleInput(String key, String cat, SampleProvider def) {
 		super(key, cat, def);
@@ -56,6 +57,10 @@ public class SampleInput extends Input<SampleProvider> {
 	public void setValidRange(double min, double max) {
 		minValue = min;
 		maxValue = max;
+	}
+
+	public void setIntegerValue(boolean bool) {
+		integerValue = bool;
 	}
 
 	@Override
@@ -89,6 +94,9 @@ public class SampleInput extends Input<SampleProvider> {
 
 	@Override
 	public String getValidInputDesc() {
+		if (integerValue) {
+			return Input.VALID_SAMPLE_PROV_INTEGER;
+		}
 		if (unitType == UserSpecifiedUnit.class) {
 			return Input.VALID_SAMPLE_PROV_UNIT;
 		}

@@ -89,6 +89,7 @@ public abstract class Input<T> {
 	protected static final String VALID_SAMPLE_PROV_DIMLESS = "Accepts a dimensionless number, an object that returns such a number, or an expression that returns such a number.";
 	protected static final String VALID_SAMPLE_PROV_UNIT = "Accepts a number with or without units, an object that returns such a number, or an expression that returns such a number. "
 	                                                     + "An input to the UnitType keyword MUST BE PROVIDED before an input to this keyword can be entered.";
+	protected static final String VALID_SAMPLE_PROV_INTEGER = "Accepts a dimensionless integer, an object that returns such a number, or an expression that returns such a number.";
 	protected static final String VALID_STRING_PROV = "Accepts a string or an expression that returns a string. "
 	                                                + "Also accepts other types of expressions whose outputs will be converted to a string.";
 	protected static final String VALID_ENTITY_PROV = "Accepts an entity name or an expression that returns an entity.";
