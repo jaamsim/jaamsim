@@ -58,7 +58,7 @@ public abstract class AbstractPack extends LinkedService {
 	private DisplayEntity packedEntity;  // the entity being packed
 
 	{
-		numberOfEntities = new SampleInput("NumberOfEntities", KEY_INPUTS, new SampleConstant(1.0));
+		numberOfEntities = new SampleInput("NumberOfEntities", KEY_INPUTS, new SampleConstant(1));
 		numberOfEntities.setUnitType(DimensionlessUnit.class);
 		numberOfEntities.setValidRange(1, Double.POSITIVE_INFINITY);
 		this.addInput(numberOfEntities);

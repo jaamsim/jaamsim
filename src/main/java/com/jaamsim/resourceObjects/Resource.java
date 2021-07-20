@@ -51,7 +51,7 @@ public class Resource extends AbstractResourceProvider {
 		trace.setHidden(false);
 		attributeDefinitionList.setHidden(false);
 
-		capacity = new SampleInput("Capacity", KEY_INPUTS, new SampleConstant(1.0));
+		capacity = new SampleInput("Capacity", KEY_INPUTS, new SampleConstant(1));
 		capacity.setUnitType(DimensionlessUnit.class);
 		capacity.setValidRange(0, Double.POSITIVE_INFINITY);
 		this.addInput(capacity);

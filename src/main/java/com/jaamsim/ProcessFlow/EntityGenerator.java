@@ -92,7 +92,7 @@ public class EntityGenerator extends LinkedService implements EntityGen {
 		interArrivalTime.setValidRange(0, Double.POSITIVE_INFINITY);
 		this.addInput(interArrivalTime);
 
-		entitiesPerArrival = new SampleInput("EntitiesPerArrival", KEY_INPUTS, new SampleConstant(DimensionlessUnit.class, 1.0));
+		entitiesPerArrival = new SampleInput("EntitiesPerArrival", KEY_INPUTS, new SampleConstant(1));
 		entitiesPerArrival.setUnitType(DimensionlessUnit.class);
 		entitiesPerArrival.setValidRange(1, Double.POSITIVE_INFINITY);
 		this.addInput(entitiesPerArrival);

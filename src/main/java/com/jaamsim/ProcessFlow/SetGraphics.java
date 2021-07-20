@@ -59,7 +59,7 @@ public class SetGraphics extends LinkedComponent {
 		graphicsList.addInvalidClass(OverlayEntity.class);
 		this.addInput(graphicsList);
 
-		choice = new SampleInput("Choice", KEY_INPUTS, new SampleConstant(DimensionlessUnit.class, 1.0));
+		choice = new SampleInput("Choice", KEY_INPUTS, new SampleConstant(1));
 		choice.setUnitType(DimensionlessUnit.class);
 		choice.setValidRange(1, Double.POSITIVE_INFINITY);
 		this.addInput(choice);
