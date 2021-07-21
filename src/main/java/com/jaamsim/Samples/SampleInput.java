@@ -88,7 +88,10 @@ public class SampleInput extends Input<SampleProvider> {
 	@Override
 	public void parse(Entity thisEnt, KeywordIndex kw)
 	throws InputErrorException {
-		value = Input.parseSampleExp(kw, thisEnt, minValue, maxValue, unitType);
+		SampleProvider sp = Input.parseSampleExp(kw, thisEnt, minValue, maxValue, unitType);
+		if (integerValue && sp instanceof SampleConstant)
+			sp = new SampleConstant((int) sp.getNextSample(0.0d));
+		value = sp;
 		this.setValid(true);
 	}
 
@@ -125,6 +128,10 @@ public class SampleInput extends Input<SampleProvider> {
 
 		// Preserve the exact text for a constant value input
 		if (value instanceof SampleConstant) {
+			if (integerValue) {
+				((SampleConstant) value).getValueTokens(toks);
+				return;
+			}
 			super.getValueTokens(toks);
 			return;
 		}
