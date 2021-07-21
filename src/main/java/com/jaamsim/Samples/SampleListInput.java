@@ -180,7 +180,7 @@ public class SampleListInput extends ListInput<ArrayList<SampleProvider>> {
 		for (int i = 0; i < value.size(); i++) {
 			toks.add("{");
 			if (value.get(i) instanceof SampleConstant)
-				toks.addAll(((SampleConstant)value.get(i)).getTokens());
+				((SampleConstant)value.get(i)).getValueTokens(toks);
 			else
 				toks.add(value.get(i).toString());
 			toks.add("}");
