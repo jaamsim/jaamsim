@@ -116,6 +116,8 @@ public class SampleListInput extends ListInput<ArrayList<SampleProvider>> {
 				KeywordIndex argKw = new KeywordIndex(subArg, i, i + 1);
 				try {
 					SampleProvider sp = Input.parseSampleExp(argKw, thisEnt, minValue, maxValue, getUnitType(i));
+					if (integerValue && sp instanceof SampleConstant)
+						sp = new SampleConstant((int) sp.getNextSample(0.0d));
 					temp.add(sp);
 				}
 				catch (InputErrorException e) {
@@ -136,6 +138,8 @@ public class SampleListInput extends ListInput<ArrayList<SampleProvider>> {
 			KeywordIndex subArg = subArgs.get(i);
 			try {
 				SampleProvider sp = Input.parseSampleExp(subArg, thisEnt, minValue, maxValue, getUnitType(i));
+				if (integerValue && sp instanceof SampleConstant)
+					sp = new SampleConstant((int) sp.getNextSample(0.0d));
 				temp.add(sp);
 			}
 			catch (InputErrorException e) {
