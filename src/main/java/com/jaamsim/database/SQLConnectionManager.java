@@ -52,7 +52,7 @@ public class SQLConnectionManager extends DisplayEntity {
 		 this.addInput(sqlServer);
 	 }
 
-	private SQLConnectionManager() {
+	public SQLConnectionManager() {
 		properties = new Properties();
 		properties.put("database", database);
 		properties.put("user", user);
