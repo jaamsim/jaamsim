@@ -19,6 +19,7 @@ Define ObjectType {
                     FileToHashMap
                     ExternalProgram
                     EntitySystem
+                    SQLConnectionManager
                   }
 
 Define TextModel  {
@@ -75,6 +76,7 @@ FileToMatrix            JavaClass { com.jaamsim.BasicObjects.FileToMatrix       
 FileToHashMap           JavaClass { com.jaamsim.BasicObjects.FileToHashMap              } Palette { 'Basic Objects' } DefaultDisplayModel { FileToHashMapIconModel } IconFile { '<res>/images/FileToHashMap-24.png'  }
 ExternalProgram         JavaClass { com.jaamsim.BasicObjects.ExternalProgram            } Palette { 'Basic Objects' } DefaultDisplayModel { ExternalProgramIconModel } IconFile { '<res>/images/ExternalProgram-24.png'  }
 EntitySystem            JavaClass { com.jaamsim.BasicObjects.EntitySystem               } Palette { 'Basic Objects' } DefaultDisplayModel { EntitySystemIconModel  } IconFile { '<res>/images/EntitySystem-24.png'  }
+SQLConnectionManager    JavaClass { com.jaamsim.database.SQLConnectionManager           } Palette { 'Basic Objects' } DefaultDisplayModel { ControllerIconModel    } IconFile { '<res>/images/Controller-24.png'    }
 
 Group               Description { 'Collection of entities used as an convenience for specifying model inputs.' }
 ScriptEntity        Description { 'Executes a series of commands in simulated time. Used primarily for recording videos.' }
@@ -96,3 +98,4 @@ FileToMatrix        Description { 'Populates a two-dimensional array with data f
 FileToHashMap       Description { 'Populates a hashmap with data from a specified file.' }
 ExternalProgram     Description { 'Executes an external program when an entity is received.' }
 EntitySystem        Description { 'Represents a group of entities whose state is determined by the states of those entities.' }
+SQLConnectionManager Description { 'Manages the connection to a database.' }
