@@ -19,38 +19,35 @@ public class SQLConnectionManager extends DisplayEntity {
 	private static SQLConnectionManager single_instance = null;
 	private Connection conn = null;
 
-	 // DEFINE THE INPUT OBJECTS
-	 @Keyword(description = "Database name",
-	 exampleList = "JaamsimDB")
-	 private final StringInput database;
+	@Keyword(description = "Database name",
+	         exampleList = "JaamsimDB")
+	private final StringInput database;
 
-	 @Keyword(description = "User",
-			 exampleList = "admin sa PeterPaulAndMary")
-			 private final StringInput user;
+	@Keyword(description = "User",
+	         exampleList = "admin sa PeterPaulAndMary")
+	private final StringInput user;
 
-	 @Keyword(description = "Password",
-			 exampleList = "secretIngredient")
-			 private final StringInput password;
+	@Keyword(description = "Password",
+	         exampleList = "secretIngredient")
+	private final StringInput password;
 
-	 @Keyword(description = "Server",
-			 exampleList = "jdbc:sqlserver://10.100.16.108:1433")
-			 private final StringInput sqlServer;
+	@Keyword(description = "Server",
+	         exampleList = "jdbc:sqlserver://10.100.16.108:1433")
+	private final StringInput sqlServer;
 
+	{
+		database = new StringInput("DataBase", KEY_INPUTS, "");
+		this.addInput(database);
 
-	 // ADD THE INPUTS TO EACH INSTANCE THAT IS CREATED
-	 {
-		 database = new StringInput("DataBase", KEY_INPUTS, "");
-		 this.addInput(database);
+		user = new StringInput("User", KEY_INPUTS, "");
+		this.addInput(user);
 
-		 user = new StringInput("User", KEY_INPUTS, "");
-		 this.addInput(user);
+		password = new StringInput("Password", KEY_INPUTS, "");
+		this.addInput(password);
 
-		 password = new StringInput("Password", KEY_INPUTS, "");
-		 this.addInput(password);
-
-		 sqlServer = new StringInput("SQLserver", KEY_INPUTS, "");
-		 this.addInput(sqlServer);
-	 }
+		sqlServer = new StringInput("SQLserver", KEY_INPUTS, "");
+		this.addInput(sqlServer);
+	}
 
 	public SQLConnectionManager() {
 		properties = new Properties();
