@@ -39,16 +39,16 @@ public class SQLConnectionManager extends DisplayEntity {
 
 	 // ADD THE INPUTS TO EACH INSTANCE THAT IS CREATED
 	 {
-		 database = new StringInput("", "", "connection string");
+		 database = new StringInput("DataBase", KEY_INPUTS, "");
 		 this.addInput(database);
 
-		 user = new StringInput("", "", "connection string");
+		 user = new StringInput("User", KEY_INPUTS, "");
 		 this.addInput(user);
 
-		 password = new StringInput("", "", "connection string");
+		 password = new StringInput("Password", KEY_INPUTS, "");
 		 this.addInput(password);
 
-		 sqlServer = new StringInput("", "", "connection string");
+		 sqlServer = new StringInput("SQLserver", KEY_INPUTS, "");
 		 this.addInput(sqlServer);
 	 }
 
