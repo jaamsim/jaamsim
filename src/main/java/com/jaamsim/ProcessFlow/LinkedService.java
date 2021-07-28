@@ -72,10 +72,10 @@ public abstract class LinkedService extends LinkedDevice implements QueueUser {
 	protected final StringProvInput match;
 
 	@Keyword(description = "An optional expression that tests whether an entity in the queue is "
-	                     + "elible to be processed. "
+	                     + "eligible to be processed. "
 	                     + "The expression should return 1 (true) if the entity is eligible. "
 	                     + "The entity chosen for processing is the first one in the queue that "
-	                     + "satifies both the SelectionCondition expression and the Match value "
+	                     + "satisfies both the SelectionCondition expression and the Match value "
 	                     + "(if specified)."
 	                     + "\n\n"
 	                     + "Unlike the Match value, which must be specified when an entity "
