@@ -261,7 +261,9 @@ public class ColladaModel extends DisplayModel {
 		return MeshDataCache.getMeshData(key);
 	}
 
-	@Output(name = "Vertices")
+	@Output(name = "Vertices",
+	 description = "Number of vertices contained in the 3D model.",
+	    sequence = 2)
 	public int getNumVerticesOutput(double simTime) {
 		MeshData data = getMeshData();
 		if (data == null) return 0;
@@ -269,7 +271,9 @@ public class ColladaModel extends DisplayModel {
 		return data.getNumVertices();
 	}
 
-	@Output(name = "Triangles")
+	@Output(name = "Triangles",
+	 description = "Number of triangles contained in the 3D model.",
+	    sequence = 3)
 	public int getNumTrianglesOutput(double simTime) {
 		MeshData data = getMeshData();
 		if (data == null) return 0;
@@ -277,7 +281,10 @@ public class ColladaModel extends DisplayModel {
 		return data.getNumTriangles();
 	}
 
-	@Output(name = "VertexShareRatio")
+	@Output(name = "VertexShareRatio",
+	 description = "Number of triangles divided by one-third of the number of vertices. "
+	             + "A value > 1 indicates that vertices were shared between multiple triangles.",
+	    sequence = 4)
 	public double getVertexShareRatioOutput(double simTime) {
 		MeshData data = getMeshData();
 		if (data == null) return 0;
@@ -287,7 +294,9 @@ public class ColladaModel extends DisplayModel {
 		return numTriangles / (numVertices/3);
 	}
 
-	@Output(name = "NumSubInstances")
+	@Output(name = "NumSubInstances",
+	 description = "Number of subinstances contained in the 3D model.",
+	    sequence = 5)
 	public int getNumSubInstancesOutput(double simTime) {
 		MeshData data = getMeshData();
 		if (data == null) return 0;
@@ -296,7 +305,9 @@ public class ColladaModel extends DisplayModel {
 
 	}
 
-	@Output(name = "NumSubMeshes")
+	@Output(name = "NumSubMeshes",
+	 description = "Number of submeshes contained in the 3D model.",
+	    sequence = 6)
 	public int getNumSubMeshesOutput(double simTime) {
 		MeshData data = getMeshData();
 		if (data == null) return 0;
@@ -331,7 +342,9 @@ public class ColladaModel extends DisplayModel {
 		}
 	}
 
-	@Output (name = "Actions")
+	@Output(name = "Actions",
+	 description = "Names of the animations contained in the 3D model.",
+	    sequence = 1)
 	public String getActionsOutput(double simTime) {
 		if (!RenderManager.isGood() || colladaFile.getValue() == null)
 			return "";
