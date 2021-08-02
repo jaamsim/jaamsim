@@ -89,7 +89,7 @@ public class SampleStatistics {
 			return Double.NaN;
 		int n = (int) count - 1;
 		double factor = StudentsTDistribution.getConfidenceIntervalFactor95(n);
-		return Math.sqrt(getVariance()/n) * factor;
+		return Math.sqrt(getVariance()/count) * factor;
 	}
 
 }

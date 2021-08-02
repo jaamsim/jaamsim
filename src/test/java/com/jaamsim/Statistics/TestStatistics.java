@@ -42,7 +42,7 @@ public class TestStatistics {
 		assertTrue(MathUtils.near(stats.getMeanSquared(), 20.6d));
 		assertTrue(MathUtils.near(stats.getVariance(), 11.3d));
 		assertTrue(MathUtils.near(stats.getStandardDeviation(), Math.sqrt(11.3d)));
-		assertTrue(MathUtils.near(stats.getConfidenceInterval95(), Math.sqrt(11.3d/4.0d)*2.776));
+		assertTrue(MathUtils.near(stats.getConfidenceInterval95(), Math.sqrt(11.3d/5.0d)*2.776));
 	}
 
 	@Test
