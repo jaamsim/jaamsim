@@ -968,6 +968,14 @@ public class InputAgent {
 			if (ent instanceof EntityLabel && !((EntityLabel) ent).getShowInput()
 					&& ((EntityLabel) ent).isDefault())
 				continue;
+			if (simModel.getObjectTypeForClass(ent.getClass()) == null) {
+				String msg = String.format("Object cannot be defined: %s", ent);
+				LogBox.logLine(msg);
+				GUIListener gui = simModel.getGUIListener();
+				if (gui != null)
+					gui.invokeErrorDialogBox("Save Error", msg);
+				continue;
+			}
 			newEntities.add(ent);
 		}
 		Collections.sort(newEntities, uiEntitySortOrder);
@@ -1019,6 +1027,14 @@ public class InputAgent {
 			if (ent instanceof EntityLabel && !((EntityLabel) ent).getShowInput()
 					&& ((EntityLabel) ent).isDefault())
 				continue;
+			if (simModel.getObjectTypeForClass(ent.getClass()) == null) {
+				String msg = String.format("Inputs for object cannot be saved: %s", ent);
+				LogBox.logLine(msg);
+				GUIListener gui = simModel.getGUIListener();
+				if (gui != null)
+					gui.invokeErrorDialogBox("Save Error", msg);
+				continue;
+			}
 			entityList.add(ent);
 		}
 		Collections.sort(entityList, uiEntitySortOrder);
