@@ -23,7 +23,6 @@ import com.jaamsim.Samples.SampleProvider;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.datatypes.IntegerVector;
-import com.jaamsim.units.DimensionlessUnit;
 
 public class RunNumberInput extends SampleInput {
 
@@ -59,6 +58,7 @@ public class RunNumberInput extends SampleInput {
 		}
 		if (rangeList.size() == 0)
 			max = Integer.MAX_VALUE;
+		setValidRange(1, max);
 	}
 
 	@Override
@@ -69,7 +69,7 @@ public class RunNumberInput extends SampleInput {
 
 		// Run number entered as a number or expression
 		if (data.length != rangeList.size()) {
-			value = Input.parseSampleExp(kw, thisEnt, 1, max, DimensionlessUnit.class);
+			super.parse(thisEnt, kw);
 			return;
 		}
 
