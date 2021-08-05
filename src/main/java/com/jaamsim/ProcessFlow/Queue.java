@@ -740,7 +740,7 @@ public class Queue extends LinkedComponent {
 	  reportable = true,
 	    sequence = 9)
 	public double[] getQueueLengthDistribution(double simTime) {
-		return freq.getBinTimes(simTime);
+		return freq.getBinTimes(simTime, 0, freq.getMax());
 	}
 
 	@Output(name = "AverageQueueTime",

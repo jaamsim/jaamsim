@@ -179,11 +179,25 @@ public class TimeBasedFrequency {
 	 * @return array of total times
 	 */
 	public double[] getBinTimes(double t) {
-		int num = maxVal - minVal + 1;
-		int offset = minVal - firstVal;
-		double[] ret = new double[num];
-		System.arraycopy(binTimes, offset, ret, 0, num);
-		int index = lastVal - minVal;
+		return getBinTimes(t, minVal, maxVal);
+	}
+
+	/**
+	 * Returns an array containing the total time that each integer value applied up to the
+	 * specified time, covering the range between the specified first and last values.
+	 * @param t - specified time
+	 * @param val0 - first integer value for the returned array
+	 * @param val1 - last integer value for the returned array
+	 * @return array of total times
+	 */
+	public double[] getBinTimes(double t, int val0, int val1) {
+		double[] ret = new double[val1 - val0 + 1];
+		int srcPos = Math.max(val0 - firstVal, 0);
+		int destPos = Math.max(firstVal - val0,  0);
+		int num = Math.min(val1 - val0 + 1, binTimes.length - srcPos);
+		System.arraycopy(binTimes, srcPos, ret, destPos, num);
+
+		int index = lastVal - val0;
 		ret[index] += t - lastTime;
 		return ret;
 	}
