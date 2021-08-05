@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2018 JaamSim Software Inc.
+ * Copyright (C) 2018-2021 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,9 +22,9 @@ import com.jaamsim.basicsim.ErrorException;
 
 public class TimeBasedFrequency {
 
-	private double startTime;
-	private double lastTime;
-	private int lastVal = 0;
+	private double startTime;   // time at which recording begins
+	private double lastTime;    // time at which the last value was recorded
+	private int lastVal = 0;    // last value that was recorded
 	private double[] binTimes;  // total time recorded for each bin
 	private int firstVal;  // value for the first bin
 	private int minVal;  // minimum value recorded
@@ -93,6 +93,7 @@ public class TimeBasedFrequency {
 			minVal = val;
 			maxVal = val;
 			lastVal = val;
+			//System.out.println(this);
 			return;
 		}
 
@@ -102,6 +103,7 @@ public class TimeBasedFrequency {
 		maxVal = Math.max(maxVal, val);
 		lastTime = t;
 		lastVal = val;
+		//System.out.println(this);
 	}
 
 	/**
@@ -199,6 +201,13 @@ public class TimeBasedFrequency {
 			ret[i] = ret[i]/total;
 		}
 		return ret;
+	}
+
+	@Override
+	public String toString() {
+		return String.format("startTime=%s, lastTime=%s, lastVal=%s, minVal=%s, maxVal=%s,"
+				+ "firstVal=%s, binTimes=%s",
+				startTime, lastTime, lastVal, minVal, maxVal, firstVal, Arrays.toString(binTimes));
 	}
 
 }
