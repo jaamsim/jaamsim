@@ -6,81 +6,88 @@
 
 <div style='border:none;border-bottom:solid #7F7F7F 1.0pt;padding:0in 0in 1.0pt 0in'>
 
-<h2><a name="_Toc47541831">Text</a></h2>
+<h2><a name="_Toc78442838">Text</a></h2>
 
 </div>
 
-<p class=Main style='page-break-after:avoid'>The <span class=SimObjectChar>Text</span>
-object is used to show static or dynamic text in a model.  <span
-class=SimObjectChar>Text</span> objects are used for labelling various parts of
-the model and for monitoring the status of the model.</p>
+<p class=Main>The <span class=SimObjectChar>Text</span> object is used to show
+static or dynamic text in a model.  <span class=SimObjectChar>Text</span>
+objects are used for labelling various parts of the model and for monitoring
+the status of the model.</p>
 
-<p class=Main style='page-break-after:avoid'>The output displayed by the <span
-class=SimObjectChar>Text</span> object is determined primarily by its <span
-class=KeywordChar>Format</span> keyword.  Dynamic text can be introduced by
-including a Java format code such as <span class=codeChar><span
-style='font-size:9.0pt'>%s</span></span> in the <span class=KeywordChar>Format</span>
-keyword and specifying the value to be displayed with the <span
-class=KeywordChar>DataSource</span> keyword.  Some typical Java format codes
-are <span class=codeChar><span style='font-size:9.0pt'>%s</span></span>, which
-can display both text and numbers, and <span class=codeChar><span
+<p class=Main>The output displayed by the <span class=SimObjectChar>Text</span>
+object is determined primarily by its <span class=KeywordChar>Format</span>
+keyword.  Dynamic text can be introduced by including a Java format code such
+as <span class=codeChar><span style='font-size:9.0pt'>%s</span></span> in the <span
+class=KeywordChar>Format</span> keyword and specifying the value to be
+displayed with the <span class=KeywordChar>DataSource</span> keyword.  Some
+typical Java format codes are <span class=codeChar><span style='font-size:9.0pt'>%s</span></span>,
+which can display both text and numbers, <span class=codeChar><span
 style='font-size:9.0pt'>%.6f</span></span>, which displays a numeric value with
-six decimal places.</p>
+six decimal places, and <span class=codeChar><span style='font-size:9.0pt'>%n</span></span>,
+which starts a new line.</p>
 
-<p class=Main style='page-break-after:avoid'>If the variable text is a number
-with <span class=MainChar>units</span>, the value can be converted from SI to a
-specified unit through the <span class=KeywordChar>Unit</span> keyword.</p>
+<p class=Main>If the variable text is a number with <span class=MainChar>units</span>,
+the value can be converted from SI to a specified unit through the <span
+class=KeywordChar>Unit</span> keyword.</p>
 
-<p class=Main style='page-break-after:avoid'>The easiest way to modify the
-contents of a Text object is to edit it directly in the view window. 
-Double-click on the object to place it in edit mode.  In this mode, text can be
-entered, deleted, inserted, and highlighted using the same conventions as a typical
-text editor.  Text can be copied from and pasted to the clipboard using Ctrl-C
-and Ctrl-V.  Press the Return key or click on another object to save the
-changes and return the Text object to its normal mode.</p>
+<p class=Main>The easiest way to modify the contents of a Text object is to
+edit it directly in the view window.  Double-click on the object or press the
+F2 key to place it in edit mode.  In this mode, text can be entered, deleted,
+inserted, and highlighted using the same conventions as a typical text editor. 
+Text can be copied from and pasted to the clipboard using Ctrl-C and Ctrl-V.  A
+new line can be started at any point in the text by pressing Ctrl-Enter.  Press
+the Return key or click on another object to save the changes and return the
+Text object to its normal mode.  Press the Escape key to terminate editing and
+restore the original text.</p>
 
-<p class=Main style='page-break-after:avoid'>The appearance and style of the
-text is determined by the keywords under the Font tab, including <span
-class=KeywordChar>FontName</span>, <span class=KeywordChar>FontColour</span>,
-etc.  If no inputs are provided to these keywords, the appearance of the text
-is determined by the TextModel entered for the <span class=KeywordChar>DisplayModel</span>
-keyword.  The default TextModel is set to the black Verdana font.</p>
+<p class=Main>The appearance and style of the text is determined by the keywords
+under the Font tab, including <span class=KeywordChar>FontName</span>, <span
+class=KeywordChar>FontColour</span>, etc.  If no inputs are provided to these
+keywords, the appearance of the text is determined by the <span
+class=SimObjectChar>TextModel</span> entered for the <span class=KeywordChar>DisplayModel</span>
+keyword.  The default <span class=SimObjectChar>TextModel</span> is set to the
+black Verdana font.</p>
 
-<p class=Main style='page-break-after:avoid'>TextModels can be used in the same
-way as the Text Styles in Microsoft Word.  A new TextModel can be created
-through the following steps:</p>
+<p class=Main><span class=SimObjectChar>TextModels</span> can be used in the
+same way as the Text Styles in Microsoft Word.  A new <span
+class=SimObjectChar>TextModel</span> can be created through the following
+steps:</p>
 
-<p class=List-Number1>1.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;
+<p class=List-Number1 style='page-break-after:auto'>1.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;
 </span>In the Object Selector, right&#8209;click on the <span
 class=SimObjectChar>TextModelDefault</span> object and select Duplicate.</p>
 
-<p class=List-Number1>2.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;
+<p class=List-Number1 style='page-break-after:auto'>2.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;
 </span>Rename the new <span class=SimObjectChar>TextModel</span> object by clicking
 on its name in the Object Selector, entering the new name.</p>
 
-<p class=List-Number1>3.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;
-</span>With the new TextModel selected in the Object Selector, use the formatting
-buttons in the button bar to specify its characteristics such as font, font
-style, colour, etc.</p>
+<p class=List-Number1 style='page-break-after:auto'>3.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;
+</span>With the new <span class=SimObjectChar>TextModel</span> selected in the
+Object Selector, use the formatting buttons in the button bar to specify its
+characteristics such as font, font style, colour, etc.</p>
 
 <p class=List-Number1 style='margin-left:0in;text-indent:0in;page-break-after:
-auto'>The new TextModel can be applied to the Text object by clicking the
-object and using the DisplayModel button in the button bar.</p>
+auto'>The new <span class=SimObjectChar>TextModel</span> can be applied to the
+Text object by clicking the object and using the '<span class=SimObjectChar>DisplayModel</span>'
+button in the button bar.</p>
 
 <p class=MsoCaption>Text Inputs</p>
 
 <table class=SimTable border=1 cellspacing=0 cellpadding=0 width=658
  style='width:493.6pt;margin-left:7.95pt;border-collapse:collapse;border:none'>
- <tr style='page-break-inside:avoid'>
-  <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
-  background:#BFBFBF;padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableHeading><b>Keyword</b></p>
-  </td>
-  <td width=453 valign=top style='width:339.7pt;border:solid #A6A6A6 1.0pt;
-  border-left:none;background:#BFBFBF;padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableHeading><b>Description</b></p>
-  </td>
- </tr>
+ <thead>
+  <tr style='page-break-inside:avoid'>
+   <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
+   background:#BFBFBF;padding:0in 5.4pt 0in 5.4pt'>
+   <p class=TableHeading><b>Keyword</b></p>
+   </td>
+   <td width=453 valign=top style='width:339.7pt;border:solid #A6A6A6 1.0pt;
+   border-left:none;background:#BFBFBF;padding:0in 5.4pt 0in 5.4pt'>
+   <p class=TableHeading><b>Description</b></p>
+   </td>
+  </tr>
+ </thead>
  <tr style='page-break-inside:avoid'>
   <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
   border-top:none;padding:0in 5.4pt 0in 5.4pt'>
@@ -95,19 +102,18 @@ object and using the DisplayModel button in the button bar.</p>
  <tr style='page-break-inside:avoid'>
   <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
   border-top:none;padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph style='page-break-after:avoid'>Description</p>
+  <p class=TableText-Paragraph>Description</p>
   </td>
   <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
   none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
   padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph><span lang=EN-AU>A free-form string describing
-  the object.</span></p>
+  <p class=TableText-Paragraph>A free-form string describing the object.</p>
   </td>
  </tr>
  <tr style='page-break-inside:avoid'>
   <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
   border-top:none;padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph style='page-break-after:avoid'>TextHeight</p>
+  <p class=TableText-Paragraph>TextHeight</p>
   </td>
   <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
   none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
@@ -119,51 +125,56 @@ object and using the DisplayModel button in the button bar.</p>
  <tr style='page-break-inside:avoid'>
   <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
   border-top:none;padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph style='page-break-after:avoid'>Format</p>
+  <p class=TableText-Paragraph>Format</p>
   </td>
   <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
   none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
   padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph>The fixed and variable text to be displayed.  If
-  spaces are included, enclose the text in single quotes.  If variable text is
-  to be displayed using the <span class=KeywordChar>DataSource</span> keyword,
-  include the appropriate Java format in the text. For example, <span
-  class=codeChar><span style='font-size:9.0pt'>%s</span></span> will display a
-  text output and <span class=codeChar><span style='font-size:9.0pt'>%.6f</span></span>
-  will display a number with six decimals of accuracy.</p>
+  <p class=TableText-Paragraph>The fixed and variable text to be displayed, as
+  specified by a Java format string.  If variable text is to be displayed using
+  the <span class=KeywordChar>DataSource</span> keyword, include the
+  appropriate Java format in the text.  For example, <span class=codeChar><span
+  style='font-size:9.0pt'>%s</span></span> will display a text output and <span
+  class=codeChar><span style='font-size:9.0pt'>%.6f</span></span> will display
+  a number with six decimal digits of accuracy.  A new line can be started by
+  entering <span class=codeChar><span style='font-size:9.0pt'>%n</span></span>. 
+  Note that a % character is generated by entering <span class=codeChar><span
+  style='font-size:9.0pt'>%%</span></span>.</p>
   </td>
  </tr>
  <tr style='page-break-inside:avoid'>
   <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
   border-top:none;padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph style='page-break-after:avoid'>UnitType</p>
+  <p class=TableText-Paragraph>UnitType</p>
   </td>
   <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
   none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
   padding:0in 5.4pt 0in 5.4pt'>
   <p class=TableText-Paragraph>The unit type for the numerical value to be
-  displayed as variable text.  Set to DimensionlessUnit if the variable text is
-  non-numeric such as the state of a Server.</p>
+  displayed as variable text.  Set to <span class=codeChar><span
+  style='font-size:9.0pt'>DimensionlessUnit</span></span> if the variable text
+  is non-numeric such as the state of a Server.</p>
   </td>
  </tr>
  <tr style='page-break-inside:avoid'>
   <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
   border-top:none;padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph style='page-break-after:avoid'>Unit</p>
+  <p class=TableText-Paragraph>Unit</p>
   </td>
   <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
   none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
   padding:0in 5.4pt 0in 5.4pt'>
   <p class=TableText-Paragraph>The unit in which to express an expression that
-  returns a numerical value.  For example, if the UnitType input has been set
-  to DistanceUnit, then the output value could be displayed in kilometres,
-  instead of meters, by entering km to this keyword.</p>
+  returns a numerical value.  For example, if the <span class=KeywordChar>UnitType</span>
+  input has been set to <span class=codeChar><span style='font-size:9.0pt'>DistanceUnit</span></span>,
+  then the output value could be displayed in kilometres, instead of meters, by
+  entering km to this keyword.</p>
   </td>
  </tr>
  <tr style='page-break-inside:avoid'>
   <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
   border-top:none;padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph style='page-break-after:avoid'>DataSource</p>
+  <p class=TableText-Paragraph>DataSource</p>
   </td>
   <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
   none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
@@ -176,7 +187,7 @@ object and using the DisplayModel button in the button bar.</p>
  <tr style='page-break-inside:avoid'>
   <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
   border-top:none;padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph style='page-break-after:avoid'>FailText</p>
+  <p class=TableText-Paragraph>FailText</p>
   </td>
   <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
   none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
@@ -188,13 +199,12 @@ object and using the DisplayModel button in the button bar.</p>
  <tr style='page-break-inside:avoid'>
   <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
   border-top:none;padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph style='page-break-after:avoid'><b><u><span
-  lang=EN-AU>Options</span></u></b></p>
+  <p class=TableText-Paragraph style='page-break-after:avoid'><b><u>Options</u></b></p>
   </td>
   <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
   none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
   padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph><span lang=EN-AU>&nbsp;</span></p>
+  <p class=TableText-Paragraph>&nbsp;</p>
   </td>
  </tr>
  <tr style='page-break-inside:avoid'>
@@ -222,7 +232,7 @@ object and using the DisplayModel button in the button bar.</p>
  <tr style='page-break-inside:avoid'>
   <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
   border-top:none;padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph style='page-break-after:avoid'>FontName</p>
+  <p class=TableText-Paragraph>FontName</p>
   </td>
   <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
   none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
@@ -233,19 +243,19 @@ object and using the DisplayModel button in the button bar.</p>
  <tr style='page-break-inside:avoid'>
   <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
   border-top:none;padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph style='page-break-after:avoid'>FontColour</p>
+  <p class=TableText-Paragraph>FontColour</p>
   </td>
   <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
   none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
   padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph>The colour of the text, specified by a colour
+  <p class=TableText-Paragraph>The colour of the text specified by a colour
   keyword or RGB values.</p>
   </td>
  </tr>
  <tr style='page-break-inside:avoid'>
   <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
   border-top:none;padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph style='page-break-after:avoid'>FontStyle</p>
+  <p class=TableText-Paragraph>FontStyle</p>
   </td>
   <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
   none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
@@ -257,36 +267,36 @@ object and using the DisplayModel button in the button bar.</p>
  <tr style='page-break-inside:avoid'>
   <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
   border-top:none;padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph style='page-break-after:avoid'>DropShadow</p>
+  <p class=TableText-Paragraph>DropShadow</p>
   </td>
   <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
   none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
   padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph>If TRUE, then a drop shadow appears for the
-  text.</p>
+  <p class=TableText-Paragraph>If <span class=codeChar><span style='font-size:
+  9.0pt'>TRUE</span></span>, then a drop shadow appears for the text.</p>
   </td>
  </tr>
  <tr style='page-break-inside:avoid'>
   <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
   border-top:none;padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph style='page-break-after:avoid'>DropShadowColour</p>
+  <p class=TableText-Paragraph>DropShadowColour</p>
   </td>
   <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
   none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
   padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph>The colour for the drop shadow, specified by a
+  <p class=TableText-Paragraph>The colour for the drop shadow specified by a
   colour keyword or RGB values.</p>
   </td>
  </tr>
  <tr style='page-break-inside:avoid'>
   <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
   border-top:none;padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph style='page-break-after:avoid'>DropShadOffset</p>
+  <p class=TableText-Paragraph>DropShadowOffset</p>
   </td>
   <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
   none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
   padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph>The { x, y, z } coordinates of the drop shadow's
+  <p class=TableText-Paragraph>The x, y, z coordinates of the drop shadow's
   offset, expressed as a decimal fraction of the text height.</p>
   </td>
  </tr>
@@ -319,16 +329,18 @@ object and using the DisplayModel button in the button bar.</p>
 
 <table class=SimTable border=1 cellspacing=0 cellpadding=0 width=658
  style='width:493.6pt;margin-left:7.95pt;border-collapse:collapse;border:none'>
- <tr style='page-break-inside:avoid'>
-  <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
-  background:#BFBFBF;padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableHeading><b>Output Name</b></p>
-  </td>
-  <td width=453 valign=top style='width:339.7pt;border:solid #A6A6A6 1.0pt;
-  border-left:none;background:#BFBFBF;padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableHeading><b>Description</b></p>
-  </td>
- </tr>
+ <thead>
+  <tr style='page-break-inside:avoid'>
+   <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
+   background:#BFBFBF;padding:0in 5.4pt 0in 5.4pt'>
+   <p class=TableHeading><b>Output Name</b></p>
+   </td>
+   <td width=453 valign=top style='width:339.7pt;border:solid #A6A6A6 1.0pt;
+   border-left:none;background:#BFBFBF;padding:0in 5.4pt 0in 5.4pt'>
+   <p class=TableHeading><b>Description</b></p>
+   </td>
+  </tr>
+ </thead>
  <tr style='page-break-inside:avoid'>
   <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
   border-top:none;padding:0in 5.4pt 0in 5.4pt'>
@@ -344,19 +356,42 @@ object and using the DisplayModel button in the button bar.</p>
  <tr style='page-break-inside:avoid'>
   <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
   border-top:none;padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Par>Name, ObjectType, SimTime, Parent, Attributes, Custom
-  Outputs, Position, Size, Orientation, Alignment, GraphicalLength,
-  ObserverList, NextList, PreviousList</p>
+  <p class=TableText-Par>Name, ObjectType, SimTime, Parent, Position, Size,
+  Orientation, Alignment, GraphicalLength, ObserverList, NextList,
+  PreviousList, EntityReferenceList</p>
   </td>
   <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
   none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
   padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph>See Section 10.1.</p>
+  <p class=TableText-Paragraph>See Section 11.1.</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph style='page-break-after:avoid'><b><u>Text</u></b></p>
+  </td>
+  <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>&nbsp;</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>User-defined attributes and custom outputs</p>
+  </td>
+  <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>As defined by the <span class=KeywordChar>AttributeDefinitionList</span>
+  and <span class=KeywordChar>CustomOutputList</span> inputs.</p>
   </td>
  </tr>
 </table>
 
-<p class=MsoNormal>&nbsp;</p>
+<p class=Main>&nbsp;</p>
 
 </div>
 

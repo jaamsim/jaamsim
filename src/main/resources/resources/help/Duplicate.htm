@@ -6,12 +6,280 @@
 
 <div style='border:none;border-bottom:solid #7F7F7F 1.0pt;padding:0in 0in 1.0pt 0in'>
 
-<h2><a name="_Toc42878509"></a><a name="_Toc440897784">Duplicate</a></h2>
+<h2><a name="_Toc78442897">Duplicate</a></h2>
 
 </div>
 
-<p class=MsoNormal>The <span class=SimObjectChar>Duplicate</span> object sends
+<p class=Main>The <span class=SimObjectChar>Duplicate</span> object sends
 copies of the received entity to one or more objects.</p>
+
+<p class=MsoCaption>Duplicate Inputs</p>
+
+<table class=SimTable border=1 cellspacing=0 cellpadding=0 width=658
+ style='width:493.6pt;margin-left:7.95pt;border-collapse:collapse;border:none'>
+ <tr style='page-break-inside:avoid'>
+  <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
+  background:#BFBFBF;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableHeading><b>Keyword</b></p>
+  </td>
+  <td width=453 valign=top style='width:339.7pt;border:solid #A6A6A6 1.0pt;
+  border-left:none;background:#BFBFBF;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableHeading><b>Description</b></p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph style='page-break-after:avoid'><b><u>Key Inputs</u></b></p>
+  </td>
+  <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>&nbsp;</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>Description</p>
+  </td>
+  <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph><span lang=EN-AU>A free-form string describing
+  the object.</span></p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>NextComponent</p>
+  </td>
+  <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>The next object to which the processed entity is
+  passed.</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>TargetComponentList</p>
+  </td>
+  <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>The list of components that will receive the
+  duplicated entities.  One duplicated entity will be sent to each entry in the
+  list.</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph><span lang=EN-AU>NumberOfDuplicates</span></p>
+  </td>
+  <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph><span lang=EN-AU>The number of duplicated
+  entities to be sent to each target.  The last value in the list is used if
+  the number of targets is greater than the number of values.  Only an integer
+  number of entities can be handled.  A decimal value will be truncated to an
+  integer.</span></p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph><span lang=EN-AU>BaseName</span></p>
+  </td>
+  <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph><span lang=EN-AU>The base for the names assigned
+  to the duplicated entities.  The duplicated entities will be named Name1,
+  Name2, etc.</span></p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph style='page-break-after:avoid'><b><u><span
+  lang=EN-AU>Options</span></u></b></p>
+  </td>
+  <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph><span lang=EN-AU>&nbsp;</span></p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Par>AttributeDefinitionList, CustomOutputList</p>
+  </td>
+  <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>See Section <span
+  lang=EN-AU>6.2</span>.</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>StateAssignment</p>
+  </td>
+  <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>The state to be assigned to each entity on
+  arrival at this object.  No state is assigned if the entry is blank.</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph style='page-break-after:avoid'><b><u>Graphics</u></b></p>
+  </td>
+  <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>&nbsp;</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Par>Position, Alignment, Size, Orientation, Region, RelativeEntity,
+  DisplayModel, Show, Movable, VisibleViews, DrawRange</p>
+  </td>
+  <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>See Section 11.1.</p>
+  </td>
+ </tr>
+</table>
+
+<p class=MsoCaption>Duplicate Outputs</p>
+
+<table class=SimTable border=1 cellspacing=0 cellpadding=0 width=658
+ style='width:493.6pt;margin-left:7.95pt;border-collapse:collapse;border:none'>
+ <thead>
+  <tr style='page-break-inside:avoid'>
+   <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
+   background:#BFBFBF;padding:0in 5.4pt 0in 5.4pt'>
+   <p class=TableHeading><b>Output Name</b></p>
+   </td>
+   <td width=453 valign=top style='width:339.7pt;border:solid #A6A6A6 1.0pt;
+   border-left:none;background:#BFBFBF;padding:0in 5.4pt 0in 5.4pt'>
+   <p class=TableHeading><b>Description</b></p>
+   </td>
+  </tr>
+ </thead>
+ <tr style='page-break-inside:avoid'>
+  <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph style='page-break-after:avoid'><b><u>Entity and
+  DisplayEntity</u></b></p>
+  </td>
+  <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>&nbsp;</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Par>Name, ObjectType, SimTime, Parent, Position, Size,
+  Orientation, Alignment, GraphicalLength, ObserverList, NextList,
+  PreviousList, EntityReferenceList</p>
+  </td>
+  <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>See Section 11.1.</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph style='page-break-after:avoid'><b><u>StateEntity</u></b></p>
+  </td>
+  <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>&nbsp;</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Par>State, WorkingState, WorkingTime, StateTimes,
+  TotalTime</p>
+  </td>
+  <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>See Section 10.3.</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph style='page-break-after:avoid'><b><u>LinkedComponent</u></b></p>
+  </td>
+  <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>&nbsp;</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Par>obj, NumberAdded, NumberProcessed, NumberInProgress,
+  ProcessingRate, ReleaseTime</p>
+  </td>
+  <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>See Section 16.</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph style='page-break-after:avoid'><b><u>Duplicate</u></b></p>
+  </td>
+  <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>&nbsp;</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph><span lang=EN-AU>User-defined attributes and custom
+  outputs</span></p>
+  </td>
+  <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph><span lang=EN-AU>As defined by the </span><span
+  class=KeywordChar><span lang=EN-AU>AttributeDefinitionList</span></span><span
+  lang=EN-AU> and </span><span class=KeywordChar><span lang=EN-AU>CustomOutputList</span></span><span
+  lang=EN-AU> inputs.</span></p>
+  </td>
+ </tr>
+</table>
+
+<p class=MsoNormal>&nbsp;</p>
 
 </div>
 

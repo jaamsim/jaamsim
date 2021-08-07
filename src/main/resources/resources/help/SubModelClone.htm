@@ -4,63 +4,17 @@
 
 <div class=WordSection1>
 
-<h3>ColladaModel</h3>
+<div style='border:none;border-bottom:solid #7F7F7F 1.0pt;padding:0in 0in 1.0pt 0in'>
 
-<p class=Main style='page-break-after:avoid'><span class=SimObjectChar>ColladaModel</span>
-objects are used to display custom 3D graphics in a simulation model.  The
-COLLADA file format (.DAE) is an interchange file format used for 3D graphics. 
-Any 3D object such as a <span class=SimObjectChar>DisplayEntity</span> and most
-of its sub-classes can accept a <span class=SimObjectChar>ColladaModel</span>
-as its <span class=SimObjectChar>DisplayModel</span>.</p>
+<h2><a name="_Toc78442933">SubModelClone</a></h2>
 
-<p class=Main>A number of other 3D formats can be used in addition to Collada. 
-At the present time, JaamSim supports DAE, OBJ, and JSB formats as well as
-zipped versions of these files (ZIP).  The JSB format is specific to JaamSim:</p>
+</div>
 
-<p class=Main>The JSB format is a binary format that allows complex 3D objects
-to be loaded much faster than is possible with the DAE and OBJ formats.  A JSB
-file can be exported by right clicking on a <span class=SimObjectChar>ColladaModel</span>
-in the Object Selector and selecting &quot;Export 3D Binary File
-(*.jsb)&quot;.  Note that the exported JSB will look for the same textures as
-the DAE file and that these should be located in the same relative position to
-the JSB file as they were to the DAE file.</p>
+<p class=Main>A SubModelClone is a copy of a SubModel that can be updated to
+reflect any changes to the original SubModel.  A SubModelClone is created by
+dragging and dropping a SubModel from the 'Pre-built SubModels' palette.</p>
 
-<p class=Main>Managing 3D assets can be complicated because of the large file
-sizes and the need to provide separate files for the textures.  It is
-recommended that the user place each 3D asset and its texture files in its own
-ZIP file.  This approach greatly reduces the number and size of the files being
-handled, and ensures that the files can be moved between computers without
-breaking the file paths.  Note that it is often necessary to edit the DAE file
-with a text editor, such as Notepad++, to convert any absolute file paths for
-texture files to relative ones.</p>
-
-<p class=Main>The <span class=KeywordChar>Actions</span> keyword allows 3D animations
-included in the imported 3D file (.DAE, .JSB, etc.) to be reproduced by any
-DisplayEntity (or sub-class) that uses this ColladaModel.  The animations
-imported with the 3D file are listed by the <span class=OutputChar>Actions</span>
-output for ColladaModel.  The input to the <span class=KeywordChar>Actions</span>
-keyword consists of a list of action name / output name pairs, with each pair
-enclosed by braces, e.g.</p>
-
-<p class=code>{ ActionName1  OutputName1 } { ActionName2  OutputName2 }</p>
-
-<p class=Main>In this example, <span class=codeChar><span style='font-size:
-9.0pt'>ActionName1</span></span> is the name of one of the animations listed in
-the <span class=KeywordChar>Actions</span> output for the ColladaModel, and <span
-class=codeChar><span style='font-size:9.0pt'>OutputName1</span></span> is the
-name of an output provided by the DisplayEntity (or sub-class) that uses this
-ColladaModel as the input to its <span class=KeywordChar>DisplayModel</span>
-keyword.  The output must return a dimensionless number which is interpreted by
-the ColladaModel as the number of seconds that have elapsed in the animation. 
-This value can be related to the simulation time in the model (after a suitable
-offset) or it can vary arbitrarily to move the animation forward or backward as
-required.  The same ColladaModel can be shared by more than one DisplayEntity
-with each DisplayEntity showing a different point in the same animation.</p>
-
-<p class=Main>The '3D Animation Example' provided under Help &gt; Examples
-demonstrates how to use animations in a JaamSim model.</p>
-
-<p class=MsoCaption>ColladaModel Inputs</p>
+<p class=MsoCaption>SubModelClone Inputs</p>
 
 <table class=SimTable border=1 cellspacing=0 cellpadding=0 width=658
  style='width:493.6pt;margin-left:7.95pt;border-collapse:collapse;border:none'>
@@ -101,34 +55,76 @@ demonstrates how to use animations in a JaamSim model.</p>
  <tr style='page-break-inside:avoid'>
   <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
   border-top:none;padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph>ColladaFile</p>
+  <p class=TableText-Paragraph>NextComponent</p>
   </td>
   <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
   none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
   padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph>A file path to the DAE, OBJ, or JSB file to be
-  used for this DisplayModel.  A ZIP file containing one of these files and its
-  related texture files can also be used, and is the recommended option for
-  this input.  The file path must be enclosed in single quotes if it contains
-  spaces.</p>
+  <p class=TableText-Paragraph>The next object to which the processed entity is
+  passed.</p>
   </td>
  </tr>
  <tr style='page-break-inside:avoid'>
   <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
   border-top:none;padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph>Actions</p>
+  <p class=TableText-Paragraph>User-defined inputs</p>
   </td>
   <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
   none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
   padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph>Entity outputs that drive the animated actions
-  for the ColladaModel.  The actions for a ColladaModel are defined as part of
-  its ColladaFile input.  They are listed in the 'Actions' output for the ColladaModel.</p>
+  <p class=TableText-Paragraph>Inputs defined by the user through the <span
+  class=KeywordChar>KeywordList</span> input for the original SubModel from
+  which the SubModelClone was created.</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph style='page-break-after:avoid'><b><u>Options</u></b></p>
+  </td>
+  <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>&nbsp;</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Par>AttributeDefinitionList, CustomOutputList</p>
+  </td>
+  <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>See Section 6.2.</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph style='page-break-after:avoid'><b><u>Graphics</u></b></p>
+  </td>
+  <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>&nbsp;</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Par>Position, Alignment, Size, Orientation, Region,
+  RelativeEntity, DisplayModel, Show, Movable, VisibleViews, DrawRange</p>
+  </td>
+  <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>See Section 11.1.</p>
   </td>
  </tr>
 </table>
 
-<p class=MsoCaption>ColladaModel Outputs</p>
+<p class=MsoCaption>SubModelClone Outputs</p>
 
 <table class=SimTable border=1 cellspacing=0 cellpadding=0 width=658
  style='width:493.6pt;margin-left:7.95pt;border-collapse:collapse;border:none'>
@@ -147,7 +143,8 @@ demonstrates how to use animations in a JaamSim model.</p>
  <tr style='page-break-inside:avoid'>
   <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
   border-top:none;padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph style='page-break-after:avoid'><b><u>Entity</u></b></p>
+  <p class=TableText-Paragraph style='page-break-after:avoid'><b><u>Entity and
+  DisplayEntity</u></b></p>
   </td>
   <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
   none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
@@ -158,7 +155,9 @@ demonstrates how to use animations in a JaamSim model.</p>
  <tr style='page-break-inside:avoid'>
   <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
   border-top:none;padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Par>Name, ObjectType, SimTime, Parent</p>
+  <p class=TableText-Par>Name, ObjectType, SimTime, Parent, Position, Size,
+  Orientation, Alignment, GraphicalLength, ObserverList, NextList, PreviousList,
+  EntityReferenceList</p>
   </td>
   <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
   none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
@@ -169,7 +168,7 @@ demonstrates how to use animations in a JaamSim model.</p>
  <tr style='page-break-inside:avoid'>
   <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
   border-top:none;padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph style='page-break-after:avoid'><b><u>ColladaModel</u></b></p>
+  <p class=TableText-Paragraph style='page-break-after:avoid'><b><u>StateEntity</u></b></p>
   </td>
   <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
   none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
@@ -180,71 +179,85 @@ demonstrates how to use animations in a JaamSim model.</p>
  <tr style='page-break-inside:avoid'>
   <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
   border-top:none;padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph>Actions</p>
+  <p class=TableText-Par>State, WorkingState, WorkingTime, StateTimes,
+  TotalTime</p>
   </td>
   <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
   none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
   padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph>Names of the animations contained in the 3D
-  model.</p>
+  <p class=TableText-Paragraph>See Section 10.3.</p>
   </td>
  </tr>
  <tr style='page-break-inside:avoid'>
   <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
   border-top:none;padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph>Vertices</p>
+  <p class=TableText-Paragraph style='page-break-after:avoid'><b><u>LinkedComponent</u></b></p>
   </td>
   <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
   none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
   padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph>Number of vertices contained in the 3D model.</p>
+  <p class=TableText-Paragraph>&nbsp;</p>
   </td>
  </tr>
  <tr style='page-break-inside:avoid'>
   <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
   border-top:none;padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph>Triangles</p>
+  <p class=TableText-Par>obj, NumberAdded, NumberProcessed, NumberInProgress,
+  ProcessingRate, ReleaseTime</p>
   </td>
   <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
   none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
   padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph>Number of triangles contained in the 3D model.</p>
+  <p class=TableText-Paragraph>See Section 16.</p>
   </td>
  </tr>
  <tr style='page-break-inside:avoid'>
   <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
   border-top:none;padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph>VertexShareRatio</p>
+  <p class=TableText-Paragraph style='page-break-after:avoid'><b><u>SubModelClone</u></b></p>
   </td>
   <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
   none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
   padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph>Number of triangles divided by one-third of the
-  number of vertices.  A value &gt; 1 indicates that vertices were shared
-  between multiple triangles.</p>
+  <p class=TableText-Paragraph>&nbsp;</p>
   </td>
  </tr>
  <tr style='page-break-inside:avoid'>
   <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
   border-top:none;padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph>NumSubInstances</p>
+  <p class=TableText-Paragraph>Prototype</p>
   </td>
   <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
   none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
   padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph>Number of sub-instances contained in the 3D
-  model.</p>
+  <p class=TableText-Paragraph>Original <span class=SimObjectChar>SubModel</span>
+  from which the <span class=SimObjectChar>SubModelClone</span> was created.</p>
   </td>
  </tr>
  <tr style='page-break-inside:avoid'>
   <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
   border-top:none;padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph>NumSubMeshes</p>
+  <p class=TableText-Paragraph>User-defined outputs</p>
   </td>
   <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
   none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
   padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph>Number of sub-meshes contained in the 3D model.</p>
+  <p class=TableText-Paragraph>Outputs defined by the user through the <span
+  class=KeywordChar>KeywordList</span> input for the original <span
+  class=SimObjectChar>SubModel</span> from which the <span class=SimObjectChar>SubModelClone</span>
+  was created.</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>User-defined attributes and custom outputs</p>
+  </td>
+  <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>As defined by the <span class=KeywordChar>AttributeDefinitionList</span>
+  and <span class=KeywordChar>CustomOutputList</span> inputs.</p>
   </td>
  </tr>
 </table>

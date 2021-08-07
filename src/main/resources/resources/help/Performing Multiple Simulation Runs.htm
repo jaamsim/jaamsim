@@ -6,121 +6,106 @@
 
 <div style='border:none;border-bottom:solid #7F7F7F 1.0pt;padding:0in 0in 1.0pt 0in'>
 
-<h2><a name="_Toc42878426">Performing Multiple Simulation Runs</a></h2>
+<h2><a name="_Toc78442811">Performing Multiple Simulation Runs</a></h2>
 
 </div>
 
-<p class=Main style='page-break-after:avoid'>Multiple simulation runs can be
-executed automatically, one after another, using the keywords under the
-Multiple Runs tab for the Simulation object.  The Simulation outputs <span
-class=KeywordChar>RunNumber</span> and <span class=KeywordChar>RunIndex</span>
-are used to change selected inputs between simulation runs.  By default, the <span
-class=KeywordChar>RunNumber</span> output starts at 1 and is incremented by one
-with each simulation run that is performed.  This output can be used to vary one
-or more inputs by referencing [Simulation].RunNumber in an expression.  For
-example, setting the <span class=KeywordChar>ServiceTime</span> input for a <span
-class=SimObjectChar>Server</span> to the following expression:</p>
+<p class=Main>Multiple simulation runs can be executed automatically, one after
+another, using the keywords under the Multiple Runs tab for the Simulation
+object.  The <span class=KeywordChar>NumberOfReplications</span> input
+specifies the number of simulation runs to perform for each scenario.  The
+Simulation outputs <span class=OutputChar>ScenarioNumber</span> and <span
+class=OutputChar>ScenarioIndex</span> are used to change selected inputs
+between simulation scenarios.  By default, the <span class=OutputChar>ScenarioNumber</span>
+output starts at 1 and is incremented by one with each simulation scenario that
+is performed.  This output can be used to vary one or more inputs by
+referencing <span class=codeChar><span style='font-size:9.0pt'>[Simulation].ScenarioNumber</span></span>
+in an expression.  For example, setting the <span class=KeywordChar>ServiceTime</span>
+input for a <span class=SimObjectChar>Server</span> to the following expression:</p>
 
-<p class=code style='page-break-after:avoid'> '1[s] + 0.1[s]*[Simulation].RunNumber'</p>
+<p class=code> '{1.0[s], 1.1[s], 1.2[s]}([Simulation].ScenarioNumber)'</p>
 
-<p class=Main>assigns the service time to 1.1 s, 1.2 s, 1.3 s, etc., as the run
-number is incremented over multiple runs.</p>
+<p class=Main>assigns the service time to 1.0 s, 1.1 s, 1.2 s, etc., as the scenario
+number is incremented over from 1 to 3.</p>
 
-<p class=Main>The <span class=KeywordChar>RunIndex</span> output is used when
-there are multiple inputs to test.  This output contains an array of integers
-that are each incremented from 1 to N, where a separate value for N can be
-specified for each index.  The number of run indices and the ranges over which
-they are incremented are determined by the <span class=KeywordChar>RunIndexDefinitionList</span>
+<p class=Main>The <span class=OutputChar>ScenarioIndex</span> output is used
+when there are multiple inputs to test.  This output contains an array of
+integers that are each incremented from 1 to N, where a separate value for N
+can be specified for each index.  The number of run indices and the ranges over
+which they are incremented are determined by the <span class=KeywordChar>ScenarioIndexDefinitionList</span>
 keyword.</p>
 
 <p class=Main>For example, suppose there are two <span class=SimObjectChar>Servers</span>
-and service times of 1.1 s, 1.2 s, and 1.3 s are to be tested for <span
-class=SimObjectChar>Server1</span> and service times of 2.1 s and 2.2 s are to
+and service times of 1.0 s, 1.1 s, and 1.2 s are to be tested for <span
+class=SimObjectChar>Server1</span> and service times of 2.0 s and 2.5 s are to
 be tested for <span class=SimObjectChar>Server2</span>.  Ten replications are
-to be made for each combination of service times.  In this case, three run
+to be made for each combination of service times.  In this case, two run
 indices are needed – one for each variable that is to be changed.  The run
 indices are defined by entering the values <span style='font-size:9.0pt;
-font-family:"Courier New"'>3 2 10</span> to the <span class=KeywordChar>RunIndexDefinitionList</span>
-keyword.  This input indicates that <span class=KeywordChar>RunIndex(1)</span>
-will be incremented over the range 1 to 3, <span class=KeywordChar>RunIndex(2)</span>
-will be incremented over 1 to 2, and that <span class=KeywordChar>RunIndex(3)</span>
-will be incremented over 1 to 10.  The three run indices are used in the model
-inputs as follows:</p>
+font-family:"Courier New"'>3 2</span> to the <span class=KeywordChar>ScenarioIndexDefinitionList</span>
+keyword.  This input indicates that <span class=codeChar><span
+style='font-size:9.0pt'>ScenarioIndex(1)</span></span> will be incremented over
+the range 1 to 3, and <span class=codeChar><span style='font-size:9.0pt'>ScenarioIndex(2)</span></span>
+will be incremented over 1 to 2.  The two scenario indices are used in the
+model inputs as follows:</p>
 
-<p class=Main style='margin-left:.5in;text-indent:-.25in'><span
+<p class=Main style='margin-top:12.0pt;margin-right:0in;margin-bottom:0in;
+margin-left:.5in;margin-bottom:.0001pt;text-indent:-.25in'><span
 style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 </span></span><span class=KeywordChar>ServiceTime</span><span
-class=SimObjectChar> keyword for Server1</span>:  <span style='font-size:9.0pt;
-font-family:"Courier New"'>'1[s] + 0.1[s]*[Simulation].RunIndex(1)'</span></p>
+class=SimObjectChar> </span>input for<span class=SimObjectChar> Server1</span>:</p>
 
-<p class=Main style='margin-left:.5in;text-indent:-.25in'><span
+<p class=Main style='margin-top:0in;margin-right:0in;margin-bottom:12.0pt;
+margin-left:.5in'><span class=codeChar><span style='font-size:9.0pt'>'{1.0[s],&nbsp;1.1[s],&nbsp;1.2[s]}([Simulation].ScenarioIndex(1))'</span></span></p>
+
+<p class=Main style='margin-top:12.0pt;margin-right:0in;margin-bottom:0in;
+margin-left:.5in;margin-bottom:.0001pt;text-indent:-.25in'><span
 style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 </span></span><span class=KeywordChar>ServiceTime</span><span
-class=SimObjectChar> keyword for Server2</span>:  <span style='font-size:9.0pt;
-font-family:"Courier New"'>'2[s] + 0.1[s]*[Simulation].RunIndex(2)'</span></p>
+class=SimObjectChar> </span>input for<span class=SimObjectChar> Server2</span>:</p>
 
-<p class=Main style='margin-left:.5in;text-indent:-.25in'><span
-style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-</span></span><span class=KeywordChar>GlobalSubstreamSeed</span><span
-class=SimObjectChar> keyword for Simulation</span>:  <span style='font-size:
-9.0pt;font-family:"Courier New"'>'[Simulation].RunIndex(3)'</span></p>
+<p class=Main style='margin-top:0in;margin-right:0in;margin-bottom:12.0pt;
+margin-left:.5in'><span class=codeChar><span style='font-size:9.0pt'>'{2.0[s],&nbsp;2.5[s]'}([Simulation].ScenarioIndex(2))</span></span></p>
 
-<p class=Main>With these inputs, a total of sixty runs would be performed with
-the run indices incremented in the following sequence:</p>
+<p class=Main>The <span class=KeywordChar>GlobalSubstreamSeed</span> input can
+be left blank so that its value defaults to the present replication number.</p>
 
-<p class=code style='margin-left:.5in;text-indent:-.25in'><span
-style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-</span></span>1-1-1, 1-1-2, … 1-1-10, </p>
+<p class=Main>With these inputs, a total of six scenarios each consisting of ten
+runs would be performed.  The scenario indices would be incremented in the
+sequence:  <span class=codeChar><span style='font-size:9.0pt'>1-1, 1-2, 2-1, 2-2,
+3-1, 3-2.</span></span></p>
 
-<p class=code style='margin-left:.5in;text-indent:-.25in'><span
-style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-</span></span>1-2-1, 1-2-2, … 1-2-10,</p>
+<p class=Main>The notation <span class=codeChar><span style='font-size:9.0pt'>i-j</span></span>
+indicates scenario indices <span class=codeChar><span style='font-size:9.0pt'>ScenarioIndex(1)
+= i</span></span>, and <span class=codeChar><span style='font-size:9.0pt'>ScenarioIndex(2)
+= k</span></span>.</p>
 
-<p class=code style='margin-left:.5in;text-indent:-.25in'><span
-style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-</span></span>2-1-1, 2-1-2, … 2-1-10,</p>
-
-<p class=code style='margin-left:.5in;text-indent:-.25in'><span
-style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-</span></span>2-2-1, 2-2-2, … 2-2-10,</p>
-
-<p class=code style='margin-left:.5in;text-indent:-.25in'><span
-style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-</span></span>3-1-1, 3-1-2, … 3-1-10,</p>
-
-<p class=code style='margin-left:.5in;text-indent:-.25in'><span
-style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-</span></span>3-2-1, 3-2-2, … 3-2-10,</p>
-
-<p class=Main>The notation <span style='font-size:9.0pt;font-family:"Courier New"'>i-j-k</span>
-indicates run indices <span class=KeywordChar>RunIndex(1)</span> = i, <span
-class=KeywordChar>RunIndex(2)</span> = j, and <span class=KeywordChar>RunIndex(3)</span>
-= k.</p>
-
-<p class=Main>It is not necessary to perform all the simulation runs defined by
-the run indices.  The Simulation keywords <span class=KeywordChar>StartingRunNumber</span>
-and <span class=KeywordChar>EndingRunNumber</span> can be used to determine the
-runs that will be performed.  To perform all sixty runs, the <span
-class=KeywordChar>StartingRunNumber</span> should be set to <span
+<p class=Main>It is not necessary to perform all the scenarios defined by the
+scenario indices.  The Simulation keywords <span class=KeywordChar>StartingScenarioNumber</span>
+and <span class=KeywordChar>EndingScenarioNumber</span> can be used to
+determine the scenarios that will be performed.  To perform all six scenarios,
+the <span class=KeywordChar>StartingScenarioNumber</span> should be set to <span
 style='font-size:9.0pt;font-family:"Courier New"'>1</span> (the default value)
-and the <span class=KeywordChar>EndingRunNumber </span>should be set to <span
-style='font-size:9.0pt;font-family:"Courier New"'>60</span>.</p>
+and the <span class=KeywordChar>EndingScenarioNumber </span>should be set to <span
+style='font-size:9.0pt;font-family:"Courier New"'>6</span>.</p>
 
-<p class=Main>Run indices are related to the run number by a mathematical
-equation that performs the necessary transformation.  In the example given
-above, the <span class=KeywordChar>RunNumber</span> increases from 1 to 60, at
-the same time as the run indices increase from <span style='font-size:9.0pt;
-font-family:"Courier New"'>1-1-1</span> to <span style='font-size:9.0pt;
-font-family:"Courier New"'>3-2-10</span>.  Run numbers and run indices in the <span
-style='font-size:9.0pt;font-family:"Courier New"'>i-j-…-k</span> notation can
-be used interchangeably for the <span class=KeywordChar>StartingRunNumber</span>
-and <span class=KeywordChar>EndingRunNumber</span> inputs.  For example, to
-perform all sixty runs, the <span class=KeywordChar>StartingRunNumber</span>
-could be set to <span style='font-size:9.0pt;font-family:"Courier New"'>1-1-1</span>
-and <span class=KeywordChar>EndingRunNumber</span> to <span style='font-size:
-9.0pt;font-family:"Courier New"'>3-2-10</span> instead of <span
+<p class=Main>Scenario indices are related to the scenario number by a
+mathematical equation that performs the necessary transformation.  In the
+example given above, the <span class=KeywordChar>ScenarioNumber</span>
+increases from 1 to 6, at the same time as the scenario indices increase from <span
+style='font-size:9.0pt;font-family:"Courier New"'>1-1</span> to <span
+style='font-size:9.0pt;font-family:"Courier New"'>3-2</span>.  Scenario numbers
+and scenario indices in the <span class=codeChar><span style='font-size:9.0pt'>i-j</span></span>
+notation can be used interchangeably for the <span class=KeywordChar>StartingScenaroNumber</span>
+and <span class=KeywordChar>EndingScenarioNumber</span> inputs.  For example,
+to perform all six scenarios, the <span class=KeywordChar>StartingScenarioNumber</span>
+could be set to <span style='font-size:9.0pt;font-family:"Courier New"'>1-1</span>
+and <span class=KeywordChar>EndingScenarioNumber</span> to <span
+style='font-size:9.0pt;font-family:"Courier New"'>3-2</span> instead of <span
 style='font-size:9.0pt;font-family:"Courier New"'>1</span> and <span
-style='font-size:9.0pt;font-family:"Courier New"'>60</span>.</p>
+style='font-size:9.0pt;font-family:"Courier New"'>6</span>.</p>
+
+<p class=MsoNormal>&nbsp;</p>
 
 </div>
 

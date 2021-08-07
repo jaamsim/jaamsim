@@ -6,7 +6,7 @@
 
 <div style='border:none;border-bottom:solid #7F7F7F 1.0pt;padding:0in 0in 1.0pt 0in'>
 
-<h2><a name="_Toc47541803">Simulation Object</a></h2>
+<h2><a name="_Toc78442810">Simulation Object</a></h2>
 
 </div>
 
@@ -19,16 +19,18 @@ model is started, and thus does not appear in the Model Builder.</p>
 
 <table class=SimTable border=1 cellspacing=0 cellpadding=0 width=658
  style='width:493.6pt;margin-left:7.95pt;border-collapse:collapse;border:none'>
- <tr style='page-break-inside:avoid'>
-  <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
-  background:#BFBFBF;padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableHeading><b>Keyword</b></p>
-  </td>
-  <td width=453 valign=top style='width:339.7pt;border:solid #A6A6A6 1.0pt;
-  border-left:none;background:#BFBFBF;padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableHeading><b>Description</b></p>
-  </td>
- </tr>
+ <thead>
+  <tr style='page-break-inside:avoid'>
+   <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
+   background:#BFBFBF;padding:0in 5.4pt 0in 5.4pt'>
+   <p class=TableHeading><b>Keyword</b></p>
+   </td>
+   <td width=453 valign=top style='width:339.7pt;border:solid #A6A6A6 1.0pt;
+   border-left:none;background:#BFBFBF;padding:0in 5.4pt 0in 5.4pt'>
+   <p class=TableHeading><b>Description</b></p>
+   </td>
+  </tr>
+ </thead>
  <tr style='page-break-inside:avoid'>
   <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
   border-top:none;padding:0in 5.4pt 0in 5.4pt'>
@@ -43,7 +45,7 @@ model is started, and thus does not appear in the Model Builder.</p>
  <tr style='page-break-inside:avoid'>
   <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
   border-top:none;padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph style='page-break-after:avoid'>RunDuration</p>
+  <p class=TableText-Paragraph>RunDuration</p>
   </td>
   <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
   none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
@@ -55,7 +57,7 @@ model is started, and thus does not appear in the Model Builder.</p>
  <tr style='page-break-inside:avoid'>
   <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
   border-top:none;padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph style='page-break-after:avoid'>InitializationDuration</p>
+  <p class=TableText-Paragraph>InitializationDuration</p>
   </td>
   <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
   none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
@@ -72,20 +74,19 @@ model is started, and thus does not appear in the Model Builder.</p>
  <tr style='page-break-inside:avoid'>
   <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
   border-top:none;padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph style='page-break-after:avoid'>ExitAtStop</p>
+  <p class=TableText-Paragraph>ExitAtStop</p>
   </td>
   <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
   none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
   padding:0in 5.4pt 0in 5.4pt'>
   <p class=TableText-Paragraph>If TRUE, the program will be closed on
-  completion of the last simulation run.  Otherwise, the last run will be
-  paused.</p>
+  completion of the last simulation run.  Otherwise, the last run will be paused.</p>
   </td>
  </tr>
  <tr style='page-break-inside:avoid'>
   <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
   border-top:none;padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph style='page-break-after:avoid'>GlobalSubstreamSeed</p>
+  <p class=TableText-Paragraph>GlobalSubstreamSeed</p>
   </td>
   <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
   none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
@@ -96,18 +97,14 @@ model is started, and thus does not appear in the Model Builder.</p>
   together with each probability distribution's <span class=KeywordChar><span
   lang=EN-AU>RandomSeed</span></span> keyword to determine its random
   sequence.  It allows the user to change all the random sequences in a model
-  with a single input.  To run multiple replications, set the appropriate
-  inputs under the Multiple Runs tab and then set the <span class=KeywordChar><span
-  lang=EN-AU>GlobalSubstreamSeed</span></span> input to <span class=codeChar><span
-  lang=EN-AU style='font-size:9.0pt'>[Simulation].RunNumber</span></span> or to
-  <span class=codeChar><span lang=EN-AU style='font-size:9.0pt'>[Simulation].RunIndex(N)</span></span>,
-  where N is a suitable integer.</p>
+  with a single input.  The default value is the replication number for the
+  simulation run being executed.</p>
   </td>
  </tr>
  <tr style='page-break-inside:avoid'>
   <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
   border-top:none;padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph style='page-break-after:avoid'>PrintReport</p>
+  <p class=TableText-Paragraph>PrintReport</p>
   </td>
   <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
   none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
@@ -120,7 +117,7 @@ model is started, and thus does not appear in the Model Builder.</p>
  <tr style='page-break-inside:avoid'>
   <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
   border-top:none;padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph style='page-break-after:avoid'>ReportDirectory</p>
+  <p class=TableText-Paragraph>ReportDirectory</p>
   </td>
   <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
   none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
@@ -169,19 +166,19 @@ model is started, and thus does not appear in the Model Builder.</p>
  <tr style='page-break-inside:avoid'>
   <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
   border-top:none;padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Par style='page-break-after:avoid'>AttributeDefinitionList,
-  CustomOutputList</p>
+  <p class=TableText-Par>AttributeDefinitionList, CustomOutputList</p>
   </td>
   <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
   none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
   padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph>See Section 6.2.</p>
+  <p class=TableText-Paragraph>See Section <span
+  lang=EN-AU>6.2</span>.</p>
   </td>
  </tr>
  <tr style='page-break-inside:avoid'>
   <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
   border-top:none;padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph style='page-break-after:avoid'><span lang=EN-AU>GeorgianCalendar</span></p>
+  <p class=TableText-Paragraph><span lang=EN-AU>GeorgianCalendar</span></p>
   </td>
   <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
   none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
@@ -194,7 +191,7 @@ model is started, and thus does not appear in the Model Builder.</p>
  <tr style='page-break-inside:avoid'>
   <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
   border-top:none;padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph style='page-break-after:avoid'><span lang=EN-AU>StartDate</span></p>
+  <p class=TableText-Paragraph><span lang=EN-AU>StartDate</span></p>
   </td>
   <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
   none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
@@ -206,7 +203,7 @@ model is started, and thus does not appear in the Model Builder.</p>
  <tr style='page-break-inside:avoid'>
   <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
   border-top:none;padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph style='page-break-after:avoid'>PauseCondition</p>
+  <p class=TableText-Paragraph>PauseCondition</p>
   </td>
   <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
   none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
@@ -218,7 +215,7 @@ model is started, and thus does not appear in the Model Builder.</p>
  <tr style='page-break-inside:avoid'>
   <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
   border-top:none;padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph style='page-break-after:avoid'>ExitAtPauseCondition</p>
+  <p class=TableText-Paragraph>ExitAtPauseCondition</p>
   </td>
   <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
   none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
@@ -274,47 +271,97 @@ model is started, and thus does not appear in the Model Builder.</p>
  <tr style='page-break-inside:avoid'>
   <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
   border-top:none;padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph style='page-break-after:avoid'>RunIndexDefinitionList</p>
+  <p class=TableText-Paragraph>ScenarioIndexDefinitionList</p>
   </td>
   <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
   none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
   padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph>Defines the number of run indices and the
-  maximum value N for each index.  When making multiple runs, each index will
-  be iterated from 1 to N starting with the last index.  One run will be
-  executed for every combination of the run index values.  For example, if
-  three run indices are defined with ranges of 3, 5, and 10, then at total of
-  3*5*10 = 150 runs will be executed.</p>
+  <p class=TableText-Paragraph>Defines the number of scenario indices and the
+  maximum value N for each index.  When running multiple scenarios, each index
+  will be iterated from 1 to N starting with the last index.  One scenario will
+  be executed for every combination of the scenario index values.  For example,
+  if three scenario indices are defined with ranges of 3, 5, and 10, then a
+  total of 3*5*10 = 150 scenarios will be executed.  If left blank, a single
+  scenario index is defined and there are no restrictions on the values that
+  can be assigned to the StartingScenarioNumber and EndingScenarioNumber
+  inputs.</p>
   </td>
  </tr>
  <tr style='page-break-inside:avoid'>
   <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
   border-top:none;padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph style='page-break-after:avoid'>StartingRunNumber</p>
+  <p class=TableText-Paragraph>StartingScenarioNumber</p>
   </td>
   <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
   none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
   padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph>The first run number to be executed.  The value
-  can be entered as either an integer or as the equivalent combination of run
-  indices.  For example, if there are three run indices with ranges of 3, 5,
-  and 10, then run number 22 can be expressed as 1-3-2 because 22 = (1-1)*5*10
-  + (3-1)*10 + 2.</p>
+  <p class=TableText-Paragraph>The first scenario number to be executed.</p>
   </td>
  </tr>
  <tr style='page-break-inside:avoid'>
   <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
   border-top:none;padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph style='page-break-after:avoid'>EndingRunNumber</p>
+  <p class=TableText-Paragraph>EndingScenarioNumber</p>
   </td>
   <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
   none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
   padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph>The last run number to be executed. The value
-  can be entered as either an integer or as the equivalent combination of run
-  indices.  For example, if there are three run indices with ranges of 3, 5,
-  and 10, then run number 78 can be expressed as 2-3-8 because 78 = (2-1)*5*10
-  + (3-1)*10 + 8.</p>
+  <p class=TableText-Paragraph>The last scenario number to be executed.</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph><span lang=EN-AU>NumberOfReplications</span></p>
+  </td>
+  <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph><span lang=EN-AU>The number of replications to
+  perform for each scenario.</span></p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph><span lang=EN-AU>PrintReplications</span></p>
+  </td>
+  <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph><span lang=EN-AU>If TRUE, the run output report
+  will include an entry for each replication that was performed.  If FALSE, the
+  report will show entries only for the scenarios.</span></p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph><span lang=EN-AU>PrintConfidenceIntervals</span></p>
+  </td>
+  <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph><span lang=EN-AU>If TRUE, the run output report
+  will include the 95% confidence intervals for the outputs defined by the
+  input to RunOutputList keyword.  The confidence intervals are calculated
+  using the factor for the Student's T distribution corresponding to 95%
+  confidence and the standard deviation for the output values over the
+  replications.</span></p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph><span lang=EN-AU>PrintRunLabels</span></p>
+  </td>
+  <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph><span lang=EN-AU>If TRUE, the first column of
+  the run output report will show the scenario number for each simulation run. 
+  If the PrintReplications input is also TRUE, then the second column will show
+  the replication number.</span></p>
   </td>
  </tr>
 </table>

@@ -6,7 +6,7 @@
 
 <div style='border:none;border-bottom:solid #7F7F7F 1.0pt;padding:0in 0in 1.0pt 0in'>
 
-<h2><a name="_Toc47541821"></a><a name="_Ref47075764">DisplayEntity</a></h2>
+<h2><a name="_Toc78442828"></a><a name="_Ref47075764">DisplayEntity</a></h2>
 
 </div>
 
@@ -14,14 +14,14 @@
 3D graphical object in JaamSim.  All JaamSim objects that have graphics are
 subclasses of <span class=SimObjectChar>DisplayEntity</span>.</p>
 
-<p class=Main>All objects intended for visualization in a model display window
-in JaamSim have a set of basic graphics keywords used to define their
-appearance.  These are found in the Graphics tab of the Input Editor when the
-object is selected.  For polyline type objects the inputs for <span
+<p class=Main>All objects intended for visualization in a model view window have
+a set of basic graphics keywords that are used to define their appearance. 
+These inputs are found in the Graphics tab of the Input Editor when the object
+is selected.  For normal objects, the graphics inputs are <span
 class=KeywordChar>Position</span>, <span class=KeywordChar>Alignment</span>, <span
-class=KeywordChar>Size</span>, and <span class=KeywordChar>Orientation</span>
-are replaced by those for <span class=KeywordChar>Points</span> and <span
-class=KeywordChar>CurveType</span>.</p>
+class=KeywordChar>Size</span>, and <span class=KeywordChar>Orientation</span>.  For
+polyline type objects the graphics inputs are <span class=KeywordChar>Points</span>
+and <span class=KeywordChar>CurveType</span>.</p>
 
 <p class=MsoCaption><span class=SimObjectChar>DisplayEntity</span> Inputs</p>
 
@@ -52,37 +52,37 @@ class=KeywordChar>CurveType</span>.</p>
  <tr style='page-break-inside:avoid'>
   <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
   border-top:none;padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph style='page-break-after:avoid'>Position</p>
+  <p class=TableText-Paragraph>Position</p>
   </td>
   <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
   none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
   padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph>The location of the object in {x, y, z}
+  <p class=TableText-Paragraph>The location of the object in (x, y, z)
   coordinates.</p>
   </td>
  </tr>
  <tr style='page-break-inside:avoid'>
   <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
   border-top:none;padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph style='page-break-after:avoid'>Alignment</p>
+  <p class=TableText-Paragraph>Alignment</p>
   </td>
   <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
   none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
   padding:0in 5.4pt 0in 5.4pt'>
   <p class=TableText-Paragraph>The point within the object that is located at
   the coordinates of its Position input.  Expressed with respect to a unit box
-  centered about { 0 0 0 }.</p>
+  centered about (0 0 0).</p>
   </td>
  </tr>
  <tr style='page-break-inside:avoid'>
   <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
   border-top:none;padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph style='page-break-after:avoid'>Size</p>
+  <p class=TableText-Paragraph>Size</p>
   </td>
   <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
   none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
   padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph>The size of the object in {x, y, z}
+  <p class=TableText-Paragraph>The size of the object in (x, y, z)
   coordinates.  If only the x- and y-dimensions are given then the z-dimension
   is assumed to be zero.</p>
   </td>
@@ -90,7 +90,7 @@ class=KeywordChar>CurveType</span>.</p>
  <tr style='page-break-inside:avoid'>
   <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
   border-top:none;padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph style='page-break-after:avoid'>Orientation</p>
+  <p class=TableText-Paragraph>Orientation</p>
   </td>
   <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
   none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
@@ -114,12 +114,12 @@ class=KeywordChar>CurveType</span>.</p>
  <tr style='page-break-inside:avoid'>
   <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
   border-top:none;padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph style='page-break-after:avoid'>Points</p>
+  <p class=TableText-Paragraph>Points</p>
   </td>
   <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
   none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
   padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph>A list of points in {x, y, z} coordinates that
+  <p class=TableText-Paragraph>A list of points in (x, y, z) coordinates that
   define a polyline.  When only two coordinates are given it is assumed that z
   = 0.</p>
   </td>
@@ -127,7 +127,7 @@ class=KeywordChar>CurveType</span>.</p>
  <tr style='page-break-inside:avoid'>
   <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
   border-top:none;padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph style='page-break-after:avoid'>CurveType</p>
+  <p class=TableText-Paragraph>CurveType</p>
   </td>
   <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
   none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
@@ -150,7 +150,7 @@ class=KeywordChar>CurveType</span>.</p>
  <tr style='page-break-inside:avoid'>
   <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
   border-top:none;padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph style='page-break-after:avoid'>Region</p>
+  <p class=TableText-Paragraph>Region</p>
   </td>
   <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
   none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
@@ -165,36 +165,36 @@ class=KeywordChar>CurveType</span>.</p>
  <tr style='page-break-inside:avoid'>
   <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
   border-top:none;padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph style='page-break-after:avoid'>RelativeEntity</p>
+  <p class=TableText-Paragraph>RelativeEntity</p>
   </td>
   <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
   none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
   padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph>If an object is specified, the Position input
-  for the present object is relative to the Position for the specified object. 
-  If the specified object is moved, the present object is moved to maintain its
+  <p class=TableText-Paragraph>If an object is specified, the Position input for
+  the present object is relative to the Position for the specified object.  If
+  the specified object is moved, the present object is moved to maintain its
   relative position.</p>
   </td>
  </tr>
  <tr style='page-break-inside:avoid'>
   <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
   border-top:none;padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph style='page-break-after:avoid'>DisplayModel</p>
+  <p class=TableText-Paragraph>DisplayModel</p>
   </td>
   <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
   none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
   padding:0in 5.4pt 0in 5.4pt'>
   <p class=TableText-Paragraph>The graphic representation of the object.  If a
   list of DisplayModels is entered, each one is displayed provided that its <span
-  class=KeywordChar><span lang=EN-AU>DrawRange</span></span> input is
-  satisfied.  This feature allows the object's appearance to change with its
-  distance from the View window's camera.</p>
+  class=KeywordChar>DrawRange</span> input is satisfied.  This feature allows
+  the object's appearance to change with its distance from the View window's
+  camera.</p>
   </td>
  </tr>
  <tr style='page-break-inside:avoid'>
   <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
   border-top:none;padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph style='page-break-after:avoid'>Show</p>
+  <p class=TableText-Paragraph>Show</p>
   </td>
   <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
   none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
@@ -218,25 +218,25 @@ class=KeywordChar>CurveType</span>.</p>
  <tr style='page-break-inside:avoid'>
   <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
   border-top:none;padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph><span lang=EN-AU>VisibleViews</span></p>
+  <p class=TableText-Paragraph>VisibleViews</p>
   </td>
   <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
   none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
   padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph><span lang=EN-AU>The view windows on which this
-  entity will be visible.</span></p>
+  <p class=TableText-Paragraph>The view windows on which this entity will be
+  visible.</p>
   </td>
  </tr>
  <tr style='page-break-inside:avoid'>
   <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
   border-top:none;padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph><span lang=EN-AU>DrawRange</span></p>
+  <p class=TableText-Paragraph>DrawRange</p>
   </td>
   <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
   none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
   padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph><span lang=EN-AU>The minimum and maximum
-  distance from the camera for which this entity is displayed.</span></p>
+  <p class=TableText-Paragraph>The minimum and maximum distance from the camera
+  for which this entity is displayed.</p>
   </td>
  </tr>
 </table>
@@ -258,7 +258,18 @@ class=KeywordChar>CurveType</span>.</p>
  <tr style='page-break-inside:avoid'>
   <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
   border-top:none;padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph style='page-break-after:avoid'>Name</p>
+  <p class=TableText-Paragraph><b><u>Entity</u></b></p>
+  </td>
+  <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>&nbsp;</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>Name</p>
   </td>
   <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
   none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
@@ -269,7 +280,7 @@ class=KeywordChar>CurveType</span>.</p>
  <tr style='page-break-inside:avoid'>
   <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
   border-top:none;padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph style='page-break-after:avoid'>ObjectType</p>
+  <p class=TableText-Paragraph>ObjectType</p>
   </td>
   <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
   none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
@@ -281,7 +292,7 @@ class=KeywordChar>CurveType</span>.</p>
  <tr style='page-break-inside:avoid'>
   <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
   border-top:none;padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph style='page-break-after:avoid'>SimTime</p>
+  <p class=TableText-Paragraph>SimTime</p>
   </td>
   <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
   none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
@@ -292,131 +303,134 @@ class=KeywordChar>CurveType</span>.</p>
  <tr style='page-break-inside:avoid'>
   <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
   border-top:none;padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph style='page-break-after:avoid'><span lang=EN-AU>Parent</span></p>
+  <p class=TableText-Paragraph>Parent</p>
   </td>
   <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
   none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
   padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph><span lang=EN-AU>The parent entity for this
-  entity.</span></p>
+  <p class=TableText-Paragraph>The parent entity for this entity.</p>
   </td>
  </tr>
  <tr style='page-break-inside:avoid'>
   <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
   border-top:none;padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph style='page-break-after:avoid'><span lang=EN-AU>User-defined
-  attributes and custom outputs</span></p>
+  <p class=TableText-Paragraph><b><u>DisplayEntity</u></b></p>
   </td>
   <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
   none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
   padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph>The present values for each of the attributes
-  and custom outputs that were defined for the <span class=SimObjectChar><span
-  lang=EN-AU>DisplayEntity</span></span>.</p>
+  <p class=TableText-Paragraph>&nbsp;</p>
   </td>
  </tr>
  <tr style='page-break-inside:avoid'>
   <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
   border-top:none;padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph style='page-break-after:avoid'>Position</p>
+  <p class=TableText-Paragraph>Position</p>
   </td>
   <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
   none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
   padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph>The present {x, y, z} coordinates of the <span
-  class=SimObjectChar><span lang=EN-AU>DisplayEntity</span></span> in its Region.</p>
+  <p class=TableText-Paragraph>The present (x, y, z) coordinates of the <span
+  class=SimObjectChar>DisplayEntity</span> in its Region.</p>
   </td>
  </tr>
  <tr style='page-break-inside:avoid'>
   <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
   border-top:none;padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph style='page-break-after:avoid'>Size</p>
+  <p class=TableText-Paragraph>Size</p>
   </td>
   <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
   none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
   padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph>The present {x, y, z} components of the <span
-  class=SimObjectChar><span lang=EN-AU>DisplayEntity</span></span>'s size.</p>
+  <p class=TableText-Paragraph>The present (x, y, z) components of the <span
+  class=SimObjectChar>DisplayEntity</span>'s size.</p>
   </td>
  </tr>
  <tr style='page-break-inside:avoid'>
   <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
   border-top:none;padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph style='page-break-after:avoid'>Orientation</p>
+  <p class=TableText-Paragraph>Orientation</p>
   </td>
   <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
   none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
   padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph>The present {x, y, z} Euler angles of the <span
-  class=SimObjectChar><span lang=EN-AU>DisplayEntity</span></span>'s rotation.</p>
+  <p class=TableText-Paragraph>The present (x, y, z) Euler angles of the <span
+  class=SimObjectChar>DisplayEntity</span>'s rotation.</p>
   </td>
  </tr>
  <tr style='page-break-inside:avoid'>
   <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
   border-top:none;padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph style='page-break-after:avoid'>Alignment</p>
+  <p class=TableText-Paragraph>Alignment</p>
   </td>
   <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
   none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
   padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph>The present {x, y, z} coordinates of a point on
-  the <span class=SimObjectChar><span lang=EN-AU>DisplayEntity</span></span>
-  that aligns direction with the position output. Each component should be in
-  the range [-0.5, 0.5].</p>
+  <p class=TableText-Paragraph>The present (x, y, z) coordinates of a point on
+  the <span class=SimObjectChar>DisplayEntity</span> that aligns direction with
+  the position output. Each component should be in the range [-0.5, 0.5].</p>
   </td>
  </tr>
  <tr style='page-break-inside:avoid'>
   <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
   border-top:none;padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph style='page-break-after:avoid'><span lang=EN-AU>GraphicalLength</span></p>
+  <p class=TableText-Paragraph>GraphicalLength</p>
   </td>
   <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
   none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
   padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph><u><span lang=EN-AU>Polyline type objects</span></u><span
-  lang=EN-AU>: the length of the polyline determined by its </span><span
-  class=KeywordChar><span lang=EN-AU>Points</span></span><span lang=EN-AU> and </span><span
-  class=KeywordChar><span lang=EN-AU>CurveType</span></span><span lang=EN-AU>
-  inputs.</span></p>
-  <p class=TableText-Paragraph><u><span lang=EN-AU>Non-polyline type objects</span></u><span
-  lang=EN-AU>: the largest of the </span><span class=KeywordChar><span
-  lang=EN-AU>Size</span></span><span lang=EN-AU> inputs.</span></p>
+  <p class=TableText-Paragraph><u>Polyline type objects</u>: the length of the
+  polyline determined by its <span class=KeywordChar>Points</span> and <span
+  class=KeywordChar>CurveType</span> inputs.</p>
+  <p class=TableText-Paragraph><u>Non-polyline type objects</u>: the largest of
+  the <span class=KeywordChar>Size</span> inputs.</p>
   </td>
  </tr>
  <tr style='page-break-inside:avoid'>
   <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
   border-top:none;padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph style='page-break-after:avoid'><span lang=EN-AU>ObserverList</span></p>
+  <p class=TableText-Paragraph>ObserverList</p>
   </td>
   <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
   none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
   padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph><span lang=EN-AU>The observers that are
-  monitoring the state of this entity.</span></p>
+  <p class=TableText-Paragraph>The observers that are monitoring the state of
+  this entity.</p>
   </td>
  </tr>
  <tr style='page-break-inside:avoid'>
   <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
   border-top:none;padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph style='page-break-after:avoid'><span lang=EN-AU>NextList</span></p>
+  <p class=TableText-Paragraph>NextList</p>
   </td>
   <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
   none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
   padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph><span lang=EN-AU>The entities that are
-  immediately downstream from this entity.</span></p>
+  <p class=TableText-Paragraph>The entities that are immediately downstream
+  from this entity.</p>
   </td>
  </tr>
  <tr style='page-break-inside:avoid'>
   <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
   border-top:none;padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph><span lang=EN-AU>PreviousList</span></p>
+  <p class=TableText-Paragraph>PreviousList</p>
   </td>
   <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
   none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
   padding:0in 5.4pt 0in 5.4pt'>
-  <p class=TableText-Paragraph><span lang=EN-AU>The entities that are
-  immediately upstream from this entity.</span></p>
+  <p class=TableText-Paragraph>The entities that are immediately upstream from
+  this entity.</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>EntityReferenceList</p>
+  </td>
+  <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal>The entities that appear in the inputs to this entity.</p>
   </td>
  </tr>
 </table>

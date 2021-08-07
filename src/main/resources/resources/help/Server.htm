@@ -1,54 +1,550 @@
 <html>
 
-
 <body lang=EN-CA>
 
 <div class=WordSection1>
 
 <div style='border:none;border-bottom:solid #7F7F7F 1.0pt;padding:0in 0in 1.0pt 0in'>
 
-<h2><a name="_Toc42878500"></a><a name="_Toc440897775">Server</a></h2>
+<h2><a name="_Toc78442888">Server</a></h2>
 
 </div>
 
-<p class=Main style='page-break-after:avoid'>The <span class=SimObjectChar>Server</span>
-object processes an incoming entity and then passes it to the next object.</p>
+<p class=Main>The <span class=SimObjectChar>Server</span> object processes an
+incoming entity and then passes it to the next object.</p>
 
-<p class=Main style='page-break-after:avoid'>Entities that are waiting to be
-processed are held by a <span class=SimObjectChar>Queue</span> object
-identified by the keyword <span class=KeywordChar>WaitQueue</span>.  All
-entities received by the <span class=SimObjectChar>Server</span> first pass
-through this <span class=SimObjectChar>Queue</span> object, even if the <span
-class=SimObjectChar>Server</span> is <span class=StateChar>Idle</span>.</p>
+<p class=Main>Entities that are waiting to be processed are held by a <span
+class=SimObjectChar>Queue</span> object identified by the keyword <span
+class=KeywordChar>WaitQueue</span>.  All entities received by the <span
+class=SimObjectChar>Server</span> first pass through this <span
+class=SimObjectChar>Queue</span> object, even if the <span class=SimObjectChar>Server</span>
+is <span class=StateChar>Idle</span>.  Entities can be sent to the <span
+class=SimObjectChar>Server</span> or directly to the <span class=SimObjectChar>Queue</span>. 
+The choice has no effect on the model logic.</p>
 
-<p class=Main style='page-break-after:avoid'>Entities can also be sent directly
-to the <span class=SimObjectChar>Queue</span>.  Whenever an entity is added to
-a <span class=SimObjectChar>Queue</span>, all the <span class=SimObjectChar>Servers</span>
-that specified this <span class=SimObjectChar>Queue</span> as its <span
-class=KeywordChar>WaitQueue</span> will be notified.  The first <span
-class=SimObjectChar>Server</span> that is available will then remove the entity
-for processing.</p>
+<p class=Main>Whenever an entity is added to a <span class=SimObjectChar>Queue</span>,
+all the <span class=SimObjectChar>Servers</span> and other type of objects that
+specified this <span class=SimObjectChar>Queue</span> as its <span
+class=KeywordChar>WaitQueue</span> will be notified.  The first one that is
+available will then remove the entity for processing.</p>
 
-<p class=Main style='page-break-after:avoid'>The rate at which entities are
-processed is determined by the <span class=KeywordChar>ServiceTime</span>
-keyword.  This input has units of time and accepts a constant value, a <span
-class=SimObjectChar>TimeSeries</span>, a Probability Distribution, or an
-Expression.</p>
+<p class=Main>The rate at which entities are processed is determined by the <span
+class=KeywordChar>ServiceTime</span> keyword.  This input has the units of time
+and can be a constant value, an object that returns a number with units of time
+(e.g. <span class=SimObjectChar>TimeSeries</span> or Probability Distribution),
+or an expression that returns such a number.</p>
 
-<p class=Main>The <span class=SimObjectChar>Server</span> can be stopped under
-various <span class=MainChar>circumstances using the </span><span
-class=KeywordChar>OperatingThresholdList</span><span class=MainChar> keyword,
-which specifies a list of threshold objects such as </span><span
-class=SimObjectChar>SignalThreshold</span><span class=MainChar>, </span><span
-class=SimObjectChar>TimeSeriesThreshold</span><span class=MainChar>, or </span><span
-class=SimObjectChar>ExpressionThreshold</span><span class=MainChar>.  All of
-the specified threshold objects must be open for the </span><span
-class=SimObjectChar>Server</span><span class=MainChar> to operate.  However, if
-a threshold closes while the </span><span class=SimObjectChar>Server</span><span
-class=MainChar> is processing an entity, it will complete its work on that
-entity before ceasing further operation.</span></p>
+<p class=Main>The operation of a Server can be stopped by threshold closures,
+scheduled maintenance, and by breakdown events as controlled by the inputs to
+its various <span class=KeywordChar>Threshold</span>, <span class=KeywordChar>Maintenance</span>,
+and <span class=KeywordChar>Breakdown</span> keywords.</p>
 
-<p class=MsoNormal>&nbsp;</p>
+<p class=Main><span class=MainChar>Although a Server is alerted automatically
+when an entity arrives to its </span><span class=KeywordChar>WaitQueue</span><span
+class=MainChar>, it is NOT alerted automatically when its </span><span
+class=KeywordChar>Match</span><span class=MainChar> input changes or when an
+expression entered </span><span class=KeywordChar>WaitQueue</span><span
+class=MainChar> keyword changes the Queue it returns.  The </span><span
+class=KeywordChar>WatchList</span><span class=MainChar> keyword provides a way
+to alert the Server to these types of changes.</span></p>
+
+<p class=Main><span class=MainChar>Normally, a Server picks the first object
+from its queue for processing.  However, it is possible to select any of the
+other objects in the queue using the </span><span class=KeywordChar>Match</span><span
+class=MainChar>, </span><span class=KeywordChar>SelectionCondition</span><span
+class=MainChar>, and </span><span class=KeywordChar>NextEntity</span><span
+class=MainChar> keywords.  These inputs can be used separately or together to
+specify the objects that are eligible to be selected.</span></p>
+
+<p class=MsoCaption>Server Inputs</p>
+
+<table class=SimTable border=1 cellspacing=0 cellpadding=0 width=658
+ style='width:493.6pt;margin-left:7.95pt;border-collapse:collapse;border:none'>
+ <thead>
+  <tr style='page-break-inside:avoid'>
+   <td width=209 valign=top style='width:157.0pt;border:solid #A6A6A6 1.0pt;
+   background:#BFBFBF;padding:0in 5.4pt 0in 5.4pt'>
+   <p class=TableHeading><b>Keyword</b></p>
+   </td>
+   <td width=449 valign=top style='width:336.6pt;border:solid #A6A6A6 1.0pt;
+   border-left:none;background:#BFBFBF;padding:0in 5.4pt 0in 5.4pt'>
+   <p class=TableHeading><b>Description</b></p>
+   </td>
+  </tr>
+ </thead>
+ <tr style='page-break-inside:avoid'>
+  <td width=209 valign=top style='width:157.0pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph style='page-break-after:avoid'><b><u>Key Inputs</u></b></p>
+  </td>
+  <td width=449 valign=top style='width:336.6pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>&nbsp;</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=209 valign=top style='width:157.0pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>Description</p>
+  </td>
+  <td width=449 valign=top style='width:336.6pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>A free-form string describing the object.</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=209 valign=top style='width:157.0pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>NextComponent</p>
+  </td>
+  <td width=449 valign=top style='width:336.6pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>The next object to which the processed entity is
+  passed.</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=209 valign=top style='width:157.0pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>WaitQueue</p>
+  </td>
+  <td width=449 valign=top style='width:336.6pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>Queue from which the next entity for processing
+  will be selected.</p>
+  <p class=TableText-Paragraph>If an expression is entered that can return
+  various Queues, it is necessary for each Queue to be included in the entry to
+  the <span class=KeywordChar>WatchList</span> keyword.  If a Queue is not
+  included, then the arrival of an entity to that </p>
+  <p class=TableText-Paragraph>Queue will not wake up this processor.</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=209 valign=top style='width:157.0pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>Match</p>
+  </td>
+  <td width=449 valign=top style='width:336.6pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>An expression returning a string value that
+  determines which of the queued entities are eligible to be selected.  If
+  used, the only entities eligible for selection are the ones whose inputs for
+  the Queue's <span class=KeywordChar>Match</span> keyword are equal to value
+  returned by the expression entered for this <span class=KeywordChar>Match</span>
+  keyword.</p>
+  <p class=TableText-Paragraph>Expressions that return a dimensionless integer
+  or an object are also valid.  The returned number or object is converted to a
+  string automatically.  A floating point number is truncated to an integer.</p>
+  <p class=TableText-Paragraph>Note that a change in the <span
+  class=KeywordChar>Match</span> value does not trigger the processor
+  automatically to re-check the Queue.  The processor can be triggered by
+  adding one or more objects to the <span class=KeywordChar>WatchList</span>
+  input.</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=209 valign=top style='width:157.0pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>SelectionCondition</p>
+  </td>
+  <td width=449 valign=top style='width:336.6pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>An optional expression that tests whether an
+  entity in the queue is eligible to be processed.  The expression should
+  return 1 (true) if the entity is eligible.  The entity chosen for processing
+  is the first one in the queue that satisfies both the SelectionCondition expression
+  and the Match value (if specified).</p>
+  <p class=TableText-Paragraph>Unlike the Match value, which must be specified
+  when an entity first enters the queue, the SelectionCondition is evaluated
+  when an entity is to be removed from the queue.  Consequently, a
+  SelectionCondition is more flexible than a Match value, but is significantly
+  less efficient.</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=209 valign=top style='width:157.0pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>NextEntity</p>
+  </td>
+  <td width=449 valign=top style='width:336.6pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>An optional expression that returns the next
+  entity to be removed from the queue.  No entity is removed if the expression
+  returns null or the entity is not present in the queue.  To be removed, the
+  entity must also satisfy the Match and SelectionCondition inputs if these are
+  entered.</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=209 valign=top style='width:157.0pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>WatchList</p>
+  </td>
+  <td width=449 valign=top style='width:336.6pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>An optional list of objects to monitor.</p>
+  <p class=TableText-Paragraph>The queue will be inspected for an entity to
+  process whenever one of the <span class=KeywordChar>WatchList</span> objects
+  changes state.</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=209 valign=top style='width:157.0pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>ServiceTime</p>
+  </td>
+  <td width=449 valign=top style='width:336.6pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>The service time required to process an entity.</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=209 valign=top style='width:157.0pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph style='page-break-after:avoid'><b><u>Options</u></b></p>
+  </td>
+  <td width=449 valign=top style='width:336.6pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>&nbsp;</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=209 valign=top style='width:157.0pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Par>AttributeDefinitionList, CustomOutputList</p>
+  </td>
+  <td width=449 valign=top style='width:336.6pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>See Section 6.2.</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=209 valign=top style='width:157.0pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>StateAssignment</p>
+  </td>
+  <td width=449 valign=top style='width:336.6pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>The state to be assigned to each entity on
+  arrival at this object.  No state is assigned if the entry is blank.</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=209 valign=top style='width:157.0pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph style='page-break-after:avoid'><b><u>Thresholds</u></b></p>
+  </td>
+  <td width=449 valign=top style='width:336.6pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>&nbsp;</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=209 valign=top style='width:157.0pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Par>ImmediateThresholdList, ImmediateReleaseThresholdList,
+  OperatingThresholdList, ReleaseThresholdList</p>
+  </td>
+  <td width=449 valign=top style='width:336.6pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>See Section 10.1.</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=209 valign=top style='width:157.0pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph style='page-break-after:avoid'><b><u>Maintenance</u></b></p>
+  </td>
+  <td width=449 valign=top style='width:336.6pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>&nbsp;</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=209 valign=top style='width:157.0pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Par>WorkingStateList, ImmediateMaintenanceList,
+  ForcedMaintenanceList, OpportunisticMaintenanceList, ImmediateBreakdownList,
+  ForcedBreakdownList, OpportunisticBreakdownList</p>
+  </td>
+  <td width=449 valign=top style='width:336.6pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>See Section 10.2.</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=209 valign=top style='width:157.0pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph style='page-break-after:avoid'><b><u>Format</u></b></p>
+  </td>
+  <td width=449 valign=top style='width:336.6pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>&nbsp;</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=209 valign=top style='width:157.0pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>StateGraphics</p>
+  </td>
+  <td width=449 valign=top style='width:336.6pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>A list of state/<span class=SimObjectChar>DisplayEntity</span>
+  pairs.  For each state, the graphics will be changed to those for the
+  corresponding <span class=SimObjectChar>DisplayEntity</span>, e.g.</p>
+  <p class=TableText-Paragraph><span class=codeChar><span style='font-size:
+  9.0pt'>{ Idle DisplayEntity1 } { Working DisplayEntity2 }</span></span></p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=209 valign=top style='width:157.0pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>ProcessPosition</p>
+  </td>
+  <td width=449 valign=top style='width:336.6pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>The position of the entity being processed
+  relative to the processor.</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=209 valign=top style='width:157.0pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph style='page-break-after:avoid'><b><u>Graphics</u></b></p>
+  </td>
+  <td width=449 valign=top style='width:336.6pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>&nbsp;</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=209 valign=top style='width:157.0pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Par>Position, Alignment, Size, Orientation, Region,
+  RelativeEntity, DisplayModel, Show, Movable, VisibleViews, DrawRange</p>
+  </td>
+  <td width=449 valign=top style='width:336.6pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>See Section 11.1.</p>
+  </td>
+ </tr>
+</table>
+
+<p class=MsoCaption>Server Outputs</p>
+
+<table class=SimTable border=1 cellspacing=0 cellpadding=0 width=658
+ style='width:493.6pt;margin-left:7.95pt;border-collapse:collapse;border:none'>
+ <tr style='page-break-inside:avoid'>
+  <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
+  background:#BFBFBF;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableHeading><b>Output Name</b></p>
+  </td>
+  <td width=453 valign=top style='width:339.7pt;border:solid #A6A6A6 1.0pt;
+  border-left:none;background:#BFBFBF;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableHeading><b>Description</b></p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph style='page-break-after:avoid'><b><u>Entity and
+  DisplayEntity</u></b></p>
+  </td>
+  <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>&nbsp;</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Par>Name, ObjectType, SimTime, Parent, Position, Size,
+  Orientation, Alignment, GraphicalLength, ObserverList, NextList,
+  PreviousList, EntityReferenceList</p>
+  </td>
+  <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>See Section 11.1.</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph style='page-break-after:avoid'><b><u>StateEntity</u></b></p>
+  </td>
+  <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>&nbsp;</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Par>State, WorkingState, WorkingTime, StateTimes,
+  TotalTime</p>
+  </td>
+  <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>See Section 10.3.</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph style='page-break-after:avoid'><b><u>StateUserEntity</u></b></p>
+  </td>
+  <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>&nbsp;</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Par>Idle, Working, Setup, Maintenance, Breakdown, Stopped,
+  Utilisation, Commitment, Availability, Reliability, Open,
+  NextMaintenanceTime, NextBreakdownTime</p>
+  </td>
+  <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>See Section 10.2.</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph style='page-break-after:avoid'><b><u>LinkedDevice</u></b></p>
+  </td>
+  <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>&nbsp;</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Par>obj, NumberAdded, NumberProcessed, NumberInProgress,
+  ProcessingRate, ReleaseTime</p>
+  </td>
+  <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>See Section 16.</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph style='page-break-after:avoid'><b><u>LinkedService</u></b></p>
+  </td>
+  <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>&nbsp;</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>MatchValue</p>
+  </td>
+  <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>The present value to be matched to an entity in
+  the queue.</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph style='page-break-after:avoid'><b><u>Server</u></b></p>
+  </td>
+  <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>&nbsp;</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>ServiceDuration</p>
+  </td>
+  <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>The total working time required for the present
+  service activity.</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>ServicePerformed</p>
+  </td>
+  <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>The working time that has been completed for the
+  present service activity.</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>FractionCompleted</p>
+  </td>
+  <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>The portion of the total service time for the
+  present service activity that has been completed.</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=205 valign=top style='width:153.9pt;border:solid #A6A6A6 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>User-defined attributes and custom outputs</p>
+  </td>
+  <td width=453 valign=top style='width:339.7pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=TableText-Paragraph>As defined by the <span class=KeywordChar>AttributeDefinitionList</span>
+  and <span class=KeywordChar>CustomOutputList</span> inputs.</p>
+  </td>
+ </tr>
+</table>
+
+<p class=Main>&nbsp;</p>
 
 </div>
 
