@@ -96,16 +96,16 @@ public class SampleConstant implements SampleProvider {
 		return tmp.toString();
 	}
 
-	public ArrayList<String> getValueTokens(ArrayList<String> toks) {
+	public void getValueTokens(ArrayList<String> toks) {
 
 		if (integerValue) {
 			toks.add(Integer.toString((int) val));
-			return toks;
+			return;
 		}
 
 		toks.add(Double.toString(val));
 		if (unitType != DimensionlessUnit.class)
 			toks.add(Unit.getSIUnit(unitType));
-		return toks;
+		return;
 	}
 }
