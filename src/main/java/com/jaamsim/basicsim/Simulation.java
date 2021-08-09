@@ -435,12 +435,16 @@ public class Simulation extends Entity {
 		this.addSynonym(scenarioIndexDefinitionList, "RunIndexDefinitionList");
 
 		startingScenarioNumber = new RunNumberInput("StartingScenarioNumber", MULTIPLE_RUNS, new SampleConstant(1));
+		startingScenarioNumber.setUnitType(DimensionlessUnit.class);
 		startingScenarioNumber.setIntegerValue(true);
+		startingScenarioNumber.setValidRange(1, Integer.MAX_VALUE);
 		this.addInput(startingScenarioNumber);
 		this.addSynonym(startingScenarioNumber, "StartingRunNumber");
 
 		endingScenarioNumber = new RunNumberInput("EndingScenarioNumber", MULTIPLE_RUNS, new SampleConstant(1));
+		endingScenarioNumber.setUnitType(DimensionlessUnit.class);
 		endingScenarioNumber.setIntegerValue(true);
+		endingScenarioNumber.setValidRange(1, Integer.MAX_VALUE);
 		this.addInput(endingScenarioNumber);
 		this.addSynonym(endingScenarioNumber, "EndingRunNumber");
 
