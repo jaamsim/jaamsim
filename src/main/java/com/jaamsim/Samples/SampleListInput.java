@@ -48,8 +48,9 @@ public class SampleListInput extends ListInput<ArrayList<SampleProvider>> {
 			return;
 
 		// Save the new unit types
+		if (!isDefault())
+			setValid(false);
 		unitTypeList = new ArrayList<>(utList);
-		this.setValid(false);
 
 		// Set the units for the default value column in the Input Editor
 		if (defValue == null)
