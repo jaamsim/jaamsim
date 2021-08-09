@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2015 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2021 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -69,7 +70,8 @@ public class KeywordInput extends Input<String> {
 
 	@Override
 	public void getValueTokens(ArrayList<String> toks) {
-		if (value == null) return;
+		if (value == null || isDefault())
+			return;
 		toks.add(targetEntity.getName());
 		toks.add(value);
 	}

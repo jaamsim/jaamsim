@@ -187,7 +187,8 @@ public class SampleListInput extends ListInput<ArrayList<SampleProvider>> {
 
 	@Override
 	public void getValueTokens(ArrayList<String> toks) {
-		if (value == null || valueTokens == null) return;
+		if (value == null || valueTokens == null || isDefault())
+			return;
 
 		for (int i = 0; i < value.size(); i++) {
 			toks.add("{");

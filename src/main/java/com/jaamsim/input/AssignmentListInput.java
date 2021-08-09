@@ -73,7 +73,8 @@ public class AssignmentListInput extends ListInput<ArrayList<ExpParser.Assignmen
 
 	@Override
 	public void getValueTokens(ArrayList<String> toks) {
-		if (value == null) return;
+		if (value == null || isDefault())
+			return;
 
 		for (int i = 0; i < value.size(); i++) {
 			toks.add("{");

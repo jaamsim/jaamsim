@@ -91,7 +91,8 @@ public class StringProvInput extends Input<StringProvider> {
 
 	@Override
 	public void getValueTokens(ArrayList<String> toks) {
-		if (value == null) return;
+		if (value == null || isDefault())
+			return;
 
 		// Preserve the exact text for a constant value input
 		if (value instanceof StringProvSample && ((StringProvSample) value).getSampleProvider() instanceof SampleConstant) {

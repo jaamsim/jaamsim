@@ -59,7 +59,8 @@ public class InterfaceEntityInput<T> extends Input<T> {
 
 	@Override
 	public void getValueTokens(ArrayList<String> toks) {
-		if (value == null) return;
+		if (value == null || isDefault())
+			return;
 
 		toks.add(value.toString());
 	}

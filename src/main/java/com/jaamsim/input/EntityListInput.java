@@ -169,7 +169,8 @@ public class EntityListInput<T extends Entity> extends ListInput<ArrayList<T>> {
 
 	@Override
 	public void getValueTokens(ArrayList<String> toks) {
-		if (value == null) return;
+		if (value == null || isDefault())
+			return;
 
 		for (int i = 0; i < value.size(); i++)
 			toks.add(value.get(i).getName());

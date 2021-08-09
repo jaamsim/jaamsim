@@ -101,7 +101,7 @@ public class EntityProvInput<T extends Entity> extends Input<EntityProvider<T>> 
 
 	@Override
 	public void getValueTokens(ArrayList<String> toks) {
-		if (value == null)
+		if (value == null || isDefault())
 			return;
 
 		toks.add(value.toString());

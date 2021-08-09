@@ -66,7 +66,8 @@ public class ActionListInput extends ListInput<ArrayList<Action.Binding>>{
 
 	@Override
 	public void getValueTokens(ArrayList<String> toks) {
-		if (value == null) return;
+		if (value == null || isDefault())
+			return;
 
 		for (int i = 0; i < value.size(); i++) {
 			Action.Binding b = value.get(i);

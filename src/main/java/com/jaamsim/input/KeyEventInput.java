@@ -1,7 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2017 JaamSim Software Inc.
- * Copyright (C) 2021 JaamSim Software Inc.
+ * Copyright (C) 2017-2021 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -62,7 +61,7 @@ public class KeyEventInput extends Input<Integer> {
 
 	@Override
 	public void getValueTokens(ArrayList<String> toks) {
-		if (value == null)
+		if (value == null || isDefault())
 			return;
 
 		toks.add(getKeyName(value));
