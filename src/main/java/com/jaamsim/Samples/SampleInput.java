@@ -125,7 +125,8 @@ public class SampleInput extends Input<SampleProvider> {
 
 	@Override
 	public void getValueTokens(ArrayList<String> toks) {
-		if (value == null) return;
+		if (value == null || isDefault())
+			return;
 
 		// Preserve the exact text for a constant value input
 		if (value instanceof SampleConstant) {
