@@ -17,6 +17,8 @@
  */
 package com.jaamsim.input;
 
+import java.util.ArrayList;
+
 import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.Samples.SampleProvider;
@@ -99,6 +101,23 @@ public class RunNumberInput extends SampleInput {
 	@Override
 	public String getValidInputDesc() {
 		return Input.VALID_SCENARIO_NUMBER;
+	}
+
+	@Override
+	public void getValueTokens(ArrayList<String> toks) {
+		if (value == null || isDefault())
+			return;
+
+		if (rangeList.size() == 0) {
+			super.getValueTokens(toks);
+			return;
+		}
+
+		if (valueTokens == null)
+			return;
+
+		for (String each : valueTokens)
+			toks.add(each);
 	}
 
 }
