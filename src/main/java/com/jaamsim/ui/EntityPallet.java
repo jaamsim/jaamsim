@@ -19,6 +19,7 @@ package com.jaamsim.ui;
 
 import java.awt.Component;
 import java.awt.Cursor;
+import java.awt.Point;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
@@ -258,7 +259,7 @@ public class EntityPallet extends OSFixJFrame implements DragGestureListener {
 		}
 	}
 
-	static class MyTree extends JTree {
+	class MyTree extends JTree {
 
 		public MyTree() {
 		}
@@ -287,6 +288,15 @@ public class EntityPallet extends OSFixJFrame implements DragGestureListener {
 			}
 			ObjectType ot = (ObjectType)object;
 			return GUIFrame.formatToolTip(ot.getName(), ot.getDescription());
+		}
+
+		@Override
+		public Point getToolTipLocation(MouseEvent e) {
+			TreePath path = getPathForLocation(e.getX(), e.getY());
+			if (path == null)
+				return null;
+
+			return new Point(treeView.getWidth(), getPathBounds(path).y);
 		}
 	}
 
