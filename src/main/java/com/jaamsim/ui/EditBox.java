@@ -483,7 +483,7 @@ public static class EditTable extends JTable {
 
 		// Only the keyword column has tooltip
 		if (colIndex != 0)
-			return null;
+			return "";
 
 		TableModel model = getModel();
 		Input<?> in = (Input<?>)model.getValueAt(rowIndex, 0);
