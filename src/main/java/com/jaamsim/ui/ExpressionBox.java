@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2018-2020 JaamSim Software Inc.
+ * Copyright (C) 2018-2021 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -919,7 +919,12 @@ public class ExpressionBox extends JDialog {
 
 					// Loop through the unit types that have been defined
 					for (final String funcName : ExpParser.getFunctionNames()) {
-						JMenuItem item = new JMenuItem(funcName);
+						JMenuItem item = new JMenuItem(funcName) {
+							@Override
+							public Point getToolTipLocation(MouseEvent e) {
+								return new Point(funcMenu.getWidth(), -getY());
+							}
+						};
 						final ButtonDesc bd = getButtonDesc(functions, funcName);
 						if (bd != null) {
 							item.setToolTipText(GUIFrame.formatKeywordToolTip(
