@@ -302,12 +302,13 @@ public class DisplayEntity extends Entity {
 			return;
 		}
 		if (in == displayModelListInput) {
+			boolean bool = usePointsInput();
 			this.setDisplayModelList(displayModelListInput.getValue());
 			setGraphicsKeywords();
 
 			// Refresh the contents of the Input Editor
 			GUIListener gui = getJaamSimModel().getGUIListener();
-			if (gui != null && gui.isSelected(this))
+			if (gui != null && gui.isSelected(this) && usePointsInput() != bool)
 				gui.updateInputEditor();
 			return;
 		}
