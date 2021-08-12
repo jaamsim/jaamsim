@@ -18,6 +18,7 @@
 package com.jaamsim.ui;
 
 import java.awt.Point;
+import java.awt.event.ActionEvent;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.MouseEvent;
@@ -26,9 +27,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
+import javax.swing.AbstractAction;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
+import javax.swing.KeyStroke;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
@@ -387,6 +390,18 @@ public static class EditTable extends JTable {
 			}
 			@Override
 			public void focusLost(FocusEvent e) {}
+		});
+
+		// Prevent the default action of selecting first row when Enter is pressed on the last row
+		getInputMap(JTable.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(
+				KeyStroke.getKeyStroke("ENTER"), "enter");
+		getActionMap().put("enter", new AbstractAction() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (presentCellEditor != null)
+					presentCellEditor.stopCellEditing();
+				selectNextCell();
+			}
 		});
 	}
 
