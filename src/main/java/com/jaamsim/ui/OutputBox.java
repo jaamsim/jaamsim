@@ -163,12 +163,12 @@ public class OutputBox extends FrameBox {
 
 			// Only the first column has tooltip
 			if (col != 0)
-				return null;
+				return "";
 
 			if (currentEntity == null ||
 			    row >= entries.size() ||
 			    entries.get(row) instanceof Class) {
-				return null;
+				return "";
 			}
 
 			ValueHandle output = (ValueHandle)entries.get(row);
