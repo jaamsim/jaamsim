@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018-2020 JaamSim Software Inc.
+ * Copyright (C) 2018-2021 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
  */
 package com.jaamsim.ui;
 
+import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -32,6 +33,7 @@ import javax.swing.JFrame;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
+import javax.swing.ToolTipManager;
 import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
 import javax.swing.event.TreeSelectionEvent;
@@ -73,7 +75,33 @@ public class ObjectSelector extends FrameBox {
 
 		top = new DefaultMutableTreeNode();
 		treeModel = new DefaultTreeModel(top);
-		tree = new JTree();
+		tree = new JTree() {
+			@Override
+			public String getToolTipText(MouseEvent e) {
+				TreePath path = getPathForLocation(e.getX(), e.getY());
+				if (path == null)
+					return "";
+
+				DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
+				if (node == null)
+					return "";
+
+				Object object = node.getUserObject();
+				if (!(object instanceof Entity))
+					return "";
+				Entity ent = (Entity) object;
+
+				return GUIFrame.formatToolTip(ent.getName(), ent.getDescription());
+			}
+
+			@Override
+			public Point getToolTipLocation(MouseEvent e) {
+				TreePath path = getPathForLocation(e.getX(), e.getY());
+				if (path == null)
+					return null;
+				return new Point(treeView.getWidth(), getPathBounds(path).y);
+			}
+		};
 		tree.setModel(treeModel);
 		tree.getSelectionModel().setSelectionMode( TreeSelectionModel.SINGLE_TREE_SELECTION );
 		tree.setRootVisible(false);
@@ -92,6 +120,9 @@ public class ObjectSelector extends FrameBox {
 
 		tree.addMouseListener(new MyMouseListener());
 		tree.addKeyListener(new MyKeyListener());
+
+		ToolTipManager.sharedInstance().registerComponent(tree);
+		ToolTipManager.sharedInstance().setDismissDelay(600000);
 	}
 
 	@Override
