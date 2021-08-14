@@ -20,6 +20,7 @@ package com.jaamsim.ui;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -47,6 +48,7 @@ import java.awt.geom.Rectangle2D;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -55,6 +57,7 @@ import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -271,6 +274,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	private static final RateLimiter rateLimiter;
 
 	private static boolean SAFE_GRAPHICS;
+
+	private static File userManualFile;
 
 	// Collection of default window parameters
 	int DEFAULT_GUI_WIDTH;
@@ -1243,6 +1248,33 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			}
 		} );
 		helpMenu.add( exampleItem );
+
+		// 4) "User Manual" menu item
+		JMenuItem userManualItem = new JMenuItem( "User Manual" );
+		userManualItem.setMnemonic(KeyEvent.VK_U);
+		userManualItem.addActionListener( new ActionListener() {
+
+			@Override
+			public void actionPerformed( ActionEvent event ) {
+				if (!Desktop.isDesktopSupported()) {
+					GUIFrame.showErrorDialog("File Error", "Cannot open the User Manual file");
+					return;
+				}
+				try {
+					if (userManualFile == null) {
+						InputStream is = GUIFrame.class.getResourceAsStream("/resources/documents/JaamSim User Manual.pdf");
+						userManualFile = File.createTempFile("JaamSim-", ".pdf");
+						userManualFile.deleteOnExit();
+						Files.copy(is, userManualFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+					}
+					Desktop.getDesktop().open(userManualFile);
+				}
+				catch (Exception e) {
+					GUIFrame.showErrorDialog("File Error", "Cannot open the User Manual file");
+				}
+			}
+		} );
+		helpMenu.add( userManualItem );
 	}
 
 	/**
