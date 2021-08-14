@@ -269,24 +269,21 @@ public class EntityPallet extends OSFixJFrame implements DragGestureListener {
 		 */
 		@Override
 		public String getToolTipText(MouseEvent e) {
-
-			if(this.getPathForLocation(e.getX(), e.getY()) == null) {
+			TreePath path = getPathForLocation(e.getX(), e.getY());
+			if (path == null)
 				return "";
-			}
 
 			// Obtain the node under the mouse
-			DefaultMutableTreeNode node = (DefaultMutableTreeNode)this.getPathForLocation(e.getX(), e.getY()).getLastPathComponent();
-			if(node == null) {
+			DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
+			if (node == null)
 				return "";
-			}
 
+			// Get the object type for this node
 			Object object = node.getUserObject();
-
-			// It is a leaf node
-			if (!(object instanceof ObjectType)) {
+			if (!(object instanceof ObjectType))
 				return "";
-			}
-			ObjectType ot = (ObjectType)object;
+			ObjectType ot = (ObjectType) object;
+
 			return GUIFrame.formatToolTip(ot.getName(), ot.getDescription());
 		}
 
