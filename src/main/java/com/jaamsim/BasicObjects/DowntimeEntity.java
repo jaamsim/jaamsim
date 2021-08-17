@@ -78,13 +78,15 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 	                     + "backlogged. "
 	                     + "Once this limit is reached, any further downtime activities "
 	                     + "are discarded.",
-            exampleList = {"1"})
+	         exampleList = {"1"})
 	protected final IntegerInput maxDowntimesPending;
 
-	@Keyword(description = "The total time from the scheduled start time that the downtime event should be completed within.  "
-			             + "For example, if the scheduled start time is 100 h and the completion time limit is 48 h, the event "
-			             + "will be recorded as late in the 'LateEvents' output if it is not completed by 148h.",
-            exampleList = {"48 h"})
+	@Keyword(description = "The total time from the scheduled start time that the downtime event "
+	                     + "should be completed within. "
+	                     + "For example, if the scheduled start time is 100 h and the completion "
+	                     + "time limit is 48 h, the event will be recorded as late in the "
+	                     + "'LateEvents' output if it is not completed by 148h.",
+	         exampleList = {"48 h"})
 	protected final ValueInput completionTimeLimit;
 
 
