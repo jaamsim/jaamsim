@@ -56,8 +56,9 @@ public class FileInput extends Input<URI> {
 
 		// Confirm that the file exists
 		if (!InputAgent.fileExists(temp))
-			throw new InputErrorException("The specified file does not exist.\n" +
-					"File path = %s", kw.getArg(0));
+			throw new InputErrorException("The specified file does not exist.\n"
+					+ "File path = %s\n"
+					+ "URI=%s", kw.getArg(0), temp);
 
 		if (!isValidExtension(temp))
 			throw new InputErrorException("Invalid file extension: %s.\nValid extensions are: %s",
