@@ -25,6 +25,8 @@ limitations under the License.
   <property name="build.dir"     location="build"/>
   <property name="jogl.lib"      location="jar/jogl-all.jar"/>
   <property name="gluegen.lib"   location="jar/gluegen-rt.jar"/>
+  <property name="json.lib"      location="jar/json.jar"/>
+  <property name="paho.lib"      location="jar/org.eclipse.paho.client.mqttv3.jar"/>
   <property name="class.dir"     location="${build.dir}/classes"/>
   <property name="jars.dir"      location="${build.dir}/jars"/>
 
@@ -58,7 +60,7 @@ limitations under the License.
            debuglevel="lines,source"
            deprecation="on"
            includeantruntime="false"
-           classpath="${jogl.lib}:${gluegen.lib}">
+           classpath="${jogl.lib}:${gluegen.lib}:${json.lib}:${paho.lib}">
       <compilerarg value="-Xlint:-serial"/>
     </javac>
   </target>
@@ -67,7 +69,7 @@ limitations under the License.
     <jar jarfile="${jars.dir}/JaamSim${ver}-bare.jar" compress="true">
       <manifest>
         <attribute name="Main-Class" value="com.jaamsim.ui.GUIFrame"/>
-        <attribute name="Class-Path" value="jogl-all.jar gluegen-rt.jar"/>
+        <attribute name="Class-Path" value="jogl-all.jar gluegen-rt.jar json.jar org.eclipse.paho.client.mqttv3.jar"/>
       </manifest>
       <fileset dir="${class.dir}"/>
       <fileset dir="${res.dir}"/>
@@ -92,6 +94,8 @@ limitations under the License.
       <zipfileset src="jar/jogl-all-natives-linux-i586.jar"       includes="natives/**/*"/>
       <zipfileset src="jar/jogl-all-natives-linux-amd64.jar"      includes="natives/**/*"/>
       <zipfileset src="jar/jogl-all-natives-macosx-universal.jar" includes="natives/**/*"/>
+      <zipfileset src="jar/json.jar"/>
+      <zipfileset src="jar/org.eclipse.paho.client.mqttv3.jar"/>
     </jar>
   </target>
   <target name="exe" depends="jar">

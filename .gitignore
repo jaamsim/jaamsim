@@ -2,3 +2,7 @@
 build.log
 build.log.old
 *.class
+/target/
+.classpath
+.project
+/.settings/
