@@ -4827,10 +4827,21 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		}
 
 		// Create the new entity
-		String copyName = ent.getName();
+		String otName = ent.getObjectType().getName();
+		int length = otName.length();
+		String localName = ent.getLocalName();
+		String copyName = localName;
+		String sep = "_Copy";
+		if (localName.length() >= length && localName.substring(0, length).equals(otName)) {
+			String str = localName.substring(length);
+			if (str.isEmpty() || Input.isInteger(str)) {
+				copyName = otName;
+				sep = "";
+			}
+		}
 		if (region != null && region.getParent() != sim.getSimulation())
-			copyName = region.getParent().getName() + "." + ent.getLocalName();
-		copyName = InputAgent.getUniqueName(sim, copyName, "_Copy");
+			copyName = region.getParent().getName() + "." + copyName;
+		copyName = InputAgent.getUniqueName(sim, copyName, sep);
 		InputAgent.storeAndExecute(new DefineCommand(sim, ent.getClass(), copyName));
 
 		// Copy the inputs
