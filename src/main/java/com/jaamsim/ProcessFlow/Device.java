@@ -300,6 +300,12 @@ public abstract class Device extends StateUserEntity implements ObserverEntity, 
 			return;
 		}
 
+		// If process is being set down, wait for it to complete
+		if (isSetdown()) {
+			if (isTraceFlag()) trace(0, "unscheduledUpdate - SETDOWN IN PROGRESS");
+			return;
+		}
+
 		// If the process is working, perform its next update immediately
 		if (endStepHandle.isScheduled()) {
 			if (isTraceFlag()) trace(0, "unscheduledUpdate - WORK IN PROGRESS");
