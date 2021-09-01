@@ -207,6 +207,11 @@ public abstract class StateUserEntity extends AbstractStateUserEntity implements
 		return false;
 	}
 
+	@Override
+	public boolean isSetdown() {
+		return false;
+	}
+
 	/**
 	 * Tests whether all the thresholds are open.
 	 * @return true if all the thresholds are open.

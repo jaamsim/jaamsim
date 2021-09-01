@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2020 JaamSim Software Inc.
+ * Copyright (C) 2020-2021 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,12 +28,14 @@ public abstract class AbstractStateUserEntity extends StateEntity {
 	public static final String STATE_STOPPED = "Stopped";
 	public static final String STATE_BLOCKED = "Blocked";
 	public static final String STATE_SETUP = "Setup";
+	public static final String STATE_SETDOWN = "Setdown";
 
 	protected static final Color4d COL_MAINTENANCE = ColourInput.RED;
 	protected static final Color4d COL_BREAKDOWN = ColourInput.RED;
 	protected static final Color4d COL_STOPPED = ColourInput.getColorWithName("gray25");
 	protected static final Color4d COL_BLOCKED = ColourInput.getColorWithName("gray25");
 	protected static final Color4d COL_SETUP = ColourInput.getColorWithName("gray25");
+	protected static final Color4d COL_SETDOWN = ColourInput.getColorWithName("gray25");
 
 	public AbstractStateUserEntity() {}
 
@@ -53,6 +55,12 @@ public abstract class AbstractStateUserEntity extends StateEntity {
 	 * @return true if undergoing set up
 	 */
 	public abstract boolean isSetup();
+
+	/**
+	 * Returns whether set down is being performed.
+	 * @return true if undergoing set down
+	 */
+	public abstract boolean isSetdown();
 
 	/**
 	 * Returns whether scheduled maintenance is being performed.
@@ -85,7 +93,7 @@ public abstract class AbstractStateUserEntity extends StateEntity {
 	 * @return true if idle
 	 */
 	public boolean isIdle() {
-		return !isBusy() && isAvailable() && !isSetup();
+		return !isBusy() && isAvailable() && !isSetup() && !isSetdown();
 	}
 
 	/**
@@ -93,7 +101,7 @@ public abstract class AbstractStateUserEntity extends StateEntity {
 	 * @return true if unable to work
 	 */
 	public boolean isUnableToWork() {
-		return !isBusy() && !isAvailable() && !isSetup();
+		return !isBusy() && !isAvailable() && !isSetup() && !isSetdown();
 	}
 
 	public void setPresentState() {
@@ -130,6 +138,12 @@ public abstract class AbstractStateUserEntity extends StateEntity {
 			return;
 		}
 
+		// Setdown
+		if (this.isSetdown()) {
+			this.setPresentState(STATE_SETDOWN);
+			return;
+		}
+
 		// Not working because there is nothing to do (Idle)
 		this.setPresentState(STATE_IDLE);
 		return;
@@ -161,6 +175,11 @@ public abstract class AbstractStateUserEntity extends StateEntity {
 		// Setup
 		if (this.isSetup()) {
 			return COL_SETUP;
+		}
+
+		// Setdown
+		if (this.isSetdown()) {
+			return COL_SETDOWN;
 		}
 
 		// Not working because there is nothing to do (Idle)
@@ -213,11 +232,20 @@ public abstract class AbstractStateUserEntity extends StateEntity {
 		return isSetup();
 	}
 
+	@Output(name = "Setdown",
+	 description = "Returns TRUE if setdown is being performed. "
+	             + "For an EntitySystem, TRUE is returned if setdown is being performed on any of "
+	             + "the entities in the system.",
+	    sequence = 4)
+	public boolean isSetdown(double simTime) {
+		return isSetdown();
+	}
+
 	@Output(name = "Maintenance",
 	 description = "Returns TRUE if maintenance is being performed. "
 	             + "For an EntitySystem, TRUE is returned if maintenance is being performed on "
 	             + "any of the entities in the system.",
-	    sequence = 4)
+	    sequence = 5)
 	public boolean isMaintenance(double simTime) {
 		return isMaintenance();
 	}
@@ -226,7 +254,7 @@ public abstract class AbstractStateUserEntity extends StateEntity {
 	 description = "Returns TRUE if a breakdown is being repaired. "
 	             + "For an EntitySystem, TRUE is returned if a breakdown is being repaired on "
 	             + "any of the entities in the system.",
-	    sequence = 5)
+	    sequence = 6)
 	public boolean isBreakdown(double simTime) {
 		return isBreakdown();
 	}
@@ -235,7 +263,7 @@ public abstract class AbstractStateUserEntity extends StateEntity {
 	 description = "Returns TRUE if an operating limit prevents work from being performed. "
 	             + "For an EntitySystem, TRUE is returned if an operating limit prevents work "
 	             + "from being performed on any of the entities in the system.",
-	    sequence = 6)
+	    sequence = 7)
 	public boolean isStopped(double simTime) {
 		return isStopped();
 	}
@@ -244,7 +272,7 @@ public abstract class AbstractStateUserEntity extends StateEntity {
 	 description = "The fraction of calendar time (excluding the initialisation period) that "
 	             + "this object is in the Working state. Includes any completed cycles.",
 	  reportable = true,
-	    sequence = 7)
+	    sequence = 8)
 	public double getUtilisation(double simTime) {
 		double total = this.getTotalTime(simTime);
 		double working = getTimeInState_Working(simTime);
@@ -255,7 +283,7 @@ public abstract class AbstractStateUserEntity extends StateEntity {
 	 description = "The fraction of calendar time (excluding the initialisation period) that "
 	             + "this object is in any state other than Idle. Includes any completed cycles.",
 	  reportable = true,
-	    sequence = 8)
+	    sequence = 9)
 	public double getCommitment(double simTime) {
 		double total = this.getTotalTime(simTime);
 		double idle = getTimeInState_Idle(simTime);
@@ -267,7 +295,7 @@ public abstract class AbstractStateUserEntity extends StateEntity {
 	             + "this object is in any state other than Maintenance or Breakdown. "
 	             + "Includes any completed cycles.",
 	  reportable = true,
-	    sequence = 9)
+	    sequence = 10)
 	public double getAvailability(double simTime) {
 		double total = this.getTotalTime(simTime);
 		double maintenance = getTimeInState_Maintenance(simTime);
@@ -279,7 +307,7 @@ public abstract class AbstractStateUserEntity extends StateEntity {
 	 description = "The ratio of Working time to the sum of Working time and Breakdown time. "
 	             + "All times exclude the initialisation period and include any completed cycles.",
 	  reportable = true,
-	    sequence = 10)
+	    sequence = 11)
 	public double getReliability(double simTime) {
 		double working = getTimeInState_Working(simTime);
 		double breakdown = getTimeInState_Breakdown(simTime);
