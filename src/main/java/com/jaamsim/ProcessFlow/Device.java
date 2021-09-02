@@ -135,6 +135,10 @@ public abstract class Device extends StateUserEntity implements ObserverEntity, 
 		return startUpTicks;
 	}
 
+	public void setStartUpTicks(long ticks) {
+		startUpTicks = ticks;
+	}
+
 	/**
 	 * Starts the next time step for the process.
 	 */
