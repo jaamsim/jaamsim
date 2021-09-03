@@ -286,7 +286,6 @@ public abstract class Device extends StateUserEntity implements ObserverEntity, 
 
 		// Update the state
 		this.setPresentState();
-		startUpTicks = -1L;
 
 		// Notify any observers
 		notifyObservers();
