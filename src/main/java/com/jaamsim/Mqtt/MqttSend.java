@@ -36,7 +36,7 @@ public class MqttSend extends LinkedComponent {
 	@Keyword(description = "The MQTT client", exampleList = "[client]")
 	protected final EntityInput<MqttClient> client;
 	{
-		client = new EntityInput<MqttClient>(MqttClient.class, "Client", KEY_INPUTS, null);
+		client = new EntityInput<>(MqttClient.class, "Client", KEY_INPUTS, null);
 		client.setRequired(true);
 
 		this.addInput(client);
