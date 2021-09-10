@@ -1,5 +1,6 @@
 package com.jaamsim.Mqtt;
 
+import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -69,6 +70,8 @@ public class MqttSend extends LinkedComponent {
 			mqtt.publish(topic.getValue(), message);
 			
 			sendToNextComponent(ent);
+		} catch (MqttException e) {
+			error("The MQTT send could not publish (reason code = " + e.getReasonCode() + ")");
 		} catch (Exception e) {
 			error(e.getLocalizedMessage());
 		}

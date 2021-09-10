@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.paho.client.mqttv3.IMqttMessageListener;
+import org.eclipse.paho.client.mqttv3.MqttException;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -48,8 +49,8 @@ public class MqttReceive extends LinkedComponent implements IMqttMessageListener
 			
 			mqtt = this.client.getValue().getClient();
 			mqtt.subscribe(topic.getValue(), this);
-		} catch (Exception e) {
-			error(e.getLocalizedMessage());
+		} catch (MqttException e) {
+			error("The MQTT receive could not subscribe (reason code = " + e.getReasonCode() + ")");
 		}
 	}
 
@@ -58,8 +59,8 @@ public class MqttReceive extends LinkedComponent implements IMqttMessageListener
 		try {
 			mqtt.unsubscribe(topic.getValue());
 			mqtt = null;
-		} catch (Exception e) {
-			error(e.getLocalizedMessage());
+		} catch (MqttException e) {
+			error("The MQTT receive could not unsubscribe (reason code = " + e.getReasonCode() + ")");
 		}
 	}
 
