@@ -1,3 +1,19 @@
+/*
+ * JaamSim Discrete Event Simulation
+ * Copyright (C) 2021 Georg Hackenberg
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.jaamsim.Mqtt;
 
 import org.eclipse.paho.client.mqttv3.MqttException;
@@ -73,7 +89,7 @@ public class MqttSend extends LinkedComponent {
 		} catch (MqttException e) {
 			error("The MQTT send could not publish (reason code = " + e.getReasonCode() + ")");
 		} catch (Exception e) {
-			error(e.getLocalizedMessage());
+			error("The MQTT send could not publish (exception = " + e.getLocalizedMessage() + ")");
 		}
 	}
 	
@@ -89,10 +105,12 @@ public class MqttSend extends LinkedComponent {
 	
 	private Object transformResult(ExpResult result) throws Exception {
 		switch (result.type) {
-			case NUMBER:
+			case NUMBER: {
 				return result.value;
-			case STRING:
+			}
+			case STRING: {
 				return result.stringVal;
+			}
 			case COLLECTION:
 				if (result.colVal.getSize() == 0) {
 					return new JSONArray();
@@ -130,12 +148,14 @@ public class MqttSend extends LinkedComponent {
 							}
 							return object;
 						}
-						default:
+						default: {
 							throw new Exception("Key type not supported: " + result.colVal.getIter().nextKey().type);
+						}	
 					}
 				}
-			default:
+			default: {
 				throw new Exception("Result type not supported: " + result.type);
+			}
 		}
 	}
 
