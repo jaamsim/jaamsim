@@ -23,12 +23,14 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 import com.jaamsim.Graphics.DisplayEntity;
+import com.jaamsim.input.BooleanInput;
+import com.jaamsim.input.Input;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.StringInput;
 
 public class MqttClient extends DisplayEntity implements MqttCallback {
 	
-	@Keyword(description = "The server URI", exampleList = "tcp://localhost:1883")
+	@Keyword(description = "The server URI.", exampleList = "tcp://localhost:1883")
 	private final StringInput serverUri;
 	{
 		serverUri = new StringInput("ServerUri", KEY_INPUTS, "tcp://localhost:1883");
@@ -37,19 +39,40 @@ public class MqttClient extends DisplayEntity implements MqttCallback {
 		this.addInput(serverUri);
 	}
 
-	@Keyword(description = "The client ID", exampleList = "JaamSim")
+	@Keyword(description = "The (unique) client ID. If not provided, a random client ID is generated automatically for you.", exampleList = "JaamSim")
 	private final StringInput clientId;
 	{
-		clientId = new StringInput("ClientId", KEY_INPUTS, "JaamSim");
-		clientId.setRequired(true);
+		clientId = new StringInput("ClientId", KEY_INPUTS, null);
+		clientId.setRequired(false);
 		
 		this.addInput(clientId);
 	}
-	private MqttConnectOptions options;
+
+	@Keyword(description = "The user name.", exampleList = "UserName")
+	private final StringInput userName;
 	{
-		options = new MqttConnectOptions();
-		options.setCleanSession(true);
-		options.setAutomaticReconnect(true);
+		userName = new StringInput("Username", KEY_INPUTS, null);
+		userName.setRequired(false);
+		
+		this.addInput(userName);
+	}
+
+	@Keyword(description = "The password.", exampleList = "UserSecret")
+	private final StringInput password;
+	{
+		password = new StringInput("Password", KEY_INPUTS, null);
+		password.setRequired(false);
+		
+		this.addInput(password);
+	}
+
+	@Keyword(description = "The clean session flag.", exampleList = {"true", "false"})
+	private final BooleanInput cleanSession;
+	{
+		cleanSession = new BooleanInput("CleanSession", KEY_INPUTS, true);
+		cleanSession.setRequired(false);
+		
+		this.addInput(cleanSession);
 	}
 	 
 	private org.eclipse.paho.client.mqttv3.MqttClient client;
@@ -63,11 +86,39 @@ public class MqttClient extends DisplayEntity implements MqttCallback {
 		try {
 			super.earlyInit();
 			
-			client = new org.eclipse.paho.client.mqttv3.MqttClient(serverUri.getValue(), clientId.getValue());
+			MqttConnectOptions options = new MqttConnectOptions();
+			options.setAutomaticReconnect(true);
+			options.setCleanSession(getValue(cleanSession, true));
+			options.setUserName(getValue(userName, null));
+			options.setPassword(getCharArray(getValue(password, null)));
+			
+			String rawClientId = getValue(clientId, org.eclipse.paho.client.mqttv3.MqttClient.generateClientId());
+			
+			client = new org.eclipse.paho.client.mqttv3.MqttClient(serverUri.getValue(), rawClientId);
 			client.connect(options);
 			client.setCallback(this);
 		} catch (MqttException e) {
-			error(e.getLocalizedMessage());
+			error("The MQTT client could not connect (reason code = " + e.getReasonCode() + ")");
+		} catch (Exception e) {
+			error("The MQTT client could not connect (exception = " + e.getLocalizedMessage() + ")");
+		}
+	}
+	
+	private <T> T getValue(Input<T> input, T fallback) {
+		if (input.getValue() != null) {
+			return input.getValue();
+		} else if (input.getDefaultValue() != null) {
+			return input.getDefaultValue();
+		} else {
+			return fallback;
+		}
+	}
+	
+	private char[] getCharArray(String value) {
+		if (value != null) {
+			return value.toCharArray();
+		} else {
+			return null;
 		}
 	}
 	
@@ -80,7 +131,9 @@ public class MqttClient extends DisplayEntity implements MqttCallback {
 				client.disconnect();
 			}
 		} catch (MqttException e) {
-			error(e.getLocalizedMessage());
+			error("The MQTT client could not disconnect (reason code = " + e.getReasonCode() + ")");
+		} catch (Exception e) {
+			error("The MQTT client could not disconnect (exception = " + e.getLocalizedMessage() + ")");
 		}
 	}
 

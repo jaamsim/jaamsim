@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.paho.client.mqttv3.IMqttMessageListener;
+import org.eclipse.paho.client.mqttv3.MqttException;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -35,7 +36,7 @@ import com.jaamsim.input.StringInput;
 
 public class MqttReceive extends LinkedComponent implements IMqttMessageListener {
 
-	@Keyword(description = "The MQTT client", exampleList = "[client]")
+	@Keyword(description = "The MQTT client.", exampleList = "[client]")
 	private final EntityInput<MqttClient> client;
 	{
 		client = new EntityInput<MqttClient>(MqttClient.class, "Client", KEY_INPUTS, null);
@@ -44,7 +45,7 @@ public class MqttReceive extends LinkedComponent implements IMqttMessageListener
 		this.addInput(client);
 	}
 
-	@Keyword(description = "The MQTT topic", exampleList = "some/mqtt/topic")
+	@Keyword(description = "The MQTT topic.", exampleList = "some/mqtt/topic")
 	private final StringInput topic;
 	{
 		topic = new StringInput("Topic", KEY_INPUTS, null);
@@ -64,8 +65,10 @@ public class MqttReceive extends LinkedComponent implements IMqttMessageListener
 			
 			mqtt = this.client.getValue().getClient();
 			mqtt.subscribe(topic.getValue(), this);
+		} catch (MqttException e) {
+			error("The MQTT receive could not subscribe (reason code = " + e.getReasonCode() + ")");
 		} catch (Exception e) {
-			error(e.getLocalizedMessage());
+			error("The MQTT receive could not subscribe (exception = " + e.getLocalizedMessage() + ")");
 		}
 	}
 
@@ -74,8 +77,10 @@ public class MqttReceive extends LinkedComponent implements IMqttMessageListener
 		try {
 			mqtt.unsubscribe(topic.getValue());
 			mqtt = null;
+		} catch (MqttException e) {
+			error("The MQTT receive could not unsubscribe (reason code = " + e.getReasonCode() + ")");
 		} catch (Exception e) {
-			error(e.getLocalizedMessage());
+			error("The MQTT receive could not unsubscribe (exception = " + e.getLocalizedMessage() + ")");
 		}
 	}
 
@@ -100,7 +105,7 @@ public class MqttReceive extends LinkedComponent implements IMqttMessageListener
 						
 						nextComponent.getValue().addEntity(entity);
 					} catch (Exception e) {
-						error(e.getLocalizedMessage());
+						error("The MQTT receive could not schedule (exception = " + e.getLocalizedMessage() + ")");
 					}
 				}
 				@Override
@@ -108,8 +113,8 @@ public class MqttReceive extends LinkedComponent implements IMqttMessageListener
 					return name + ".generate";
 				}
 			}, new EventHandle());
-		} catch (Exception exception) {
-			error(exception.getLocalizedMessage());
+		} catch (Exception e) {
+			error("The MQTT receive could not process (exception = " + e.getLocalizedMessage() + ")");
 		}
 	}
 	

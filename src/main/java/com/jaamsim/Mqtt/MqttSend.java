@@ -16,6 +16,7 @@
  */
 package com.jaamsim.Mqtt;
 
+import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -33,7 +34,7 @@ import com.jaamsim.units.DimensionlessUnit;
 
 public class MqttSend extends LinkedComponent {
 
-	@Keyword(description = "The MQTT client", exampleList = "[client]")
+	@Keyword(description = "The MQTT client.", exampleList = "[client]")
 	protected final EntityInput<MqttClient> client;
 	{
 		client = new EntityInput<MqttClient>(MqttClient.class, "Client", KEY_INPUTS, null);
@@ -42,7 +43,7 @@ public class MqttSend extends LinkedComponent {
 		this.addInput(client);
 	}
 
-	@Keyword(description = "The MQTT topic", exampleList = "some/mqtt/topic")
+	@Keyword(description = "The MQTT topic.", exampleList = "some/mqtt/topic")
 	protected final StringInput topic;
 	{
 		topic = new StringInput("Topic", KEY_INPUTS, null);
@@ -51,7 +52,7 @@ public class MqttSend extends LinkedComponent {
 		this.addInput(topic);
 	}
 
-	@Keyword(description = "The MQTT payload", exampleList = {"1", "\"string\"", "{1, 2, 3}", "{\"a\", \"b\", \"c\"}", "{\"a\"=1, \"b\"=2, \"c\"=3}"})
+	@Keyword(description = "The MQTT payload.", exampleList = {"1", "\"string\"", "{1, 2, 3}", "{\"a\", \"b\", \"c\"}", "{\"a\"=1, \"b\"=2, \"c\"=3}"})
 	private final ExpressionInput expression;
 	{
 		expression = new ExpressionInput("Expression", KEY_INPUTS, null);
@@ -85,8 +86,10 @@ public class MqttSend extends LinkedComponent {
 			mqtt.publish(topic.getValue(), message);
 			
 			sendToNextComponent(ent);
+		} catch (MqttException e) {
+			error("The MQTT send could not publish (reason code = " + e.getReasonCode() + ")");
 		} catch (Exception e) {
-			error(e.getLocalizedMessage());
+			error("The MQTT send could not publish (exception = " + e.getLocalizedMessage() + ")");
 		}
 	}
 	
@@ -102,11 +105,13 @@ public class MqttSend extends LinkedComponent {
 	
 	private Object transformResult(ExpResult result) throws Exception {
 		switch (result.type) {
-			case NUMBER:
+			case NUMBER: {
 				return result.value;
-			case STRING:
+			}
+			case STRING: {
 				return result.stringVal;
-			case COLLECTION:
+			}
+			case COLLECTION: {
 				if (result.colVal.getSize() == 0) {
 					return new JSONArray();
 				} else {
@@ -134,21 +139,26 @@ public class MqttSend extends LinkedComponent {
 								ExpResult key = iterator.nextKey();
 								ExpResult value = result.colVal.index(key);
 								switch (key.type) {
-									case STRING:
+									case STRING:{
 										object.put(key.stringVal, transformResult(value));
 										break;
-									default:
+									}
+									default: {
 										throw new Exception("Key type not supported: " + key.type);
+									}
 								}
 							}
 							return object;
 						}
-						default:
+						default: {
 							throw new Exception("Key type not supported: " + result.colVal.getIter().nextKey().type);
+						}
 					}
 				}
-			default:
+			}
+			default: {
 				throw new Exception("Result type not supported: " + result.type);
+			}
 		}
 	}
 
