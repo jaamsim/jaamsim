@@ -119,6 +119,7 @@ import com.jaamsim.units.DistanceUnit;
 import com.jaamsim.units.TimeUnit;
 import com.jaamsim.units.Unit;
 
+
 /**
  * The main window for a Graphical Simulation.  It provides the controls for managing then
  * EventManager (run, pause, ...) and the graphics (zoom, pan, ...)
@@ -299,7 +300,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		return instance;
 	}
 
-	private static synchronized GUIFrame createInstance() {
+	public static synchronized GUIFrame createInstance() {
 		instance = new GUIFrame();
 		GUIFrame.registerCallback(new Runnable() {
 			@Override
@@ -2240,7 +2241,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 				new SpinnerModel(Simulation.DEFAULT_REAL_TIME_FACTOR,
 				   Simulation.MIN_REAL_TIME_FACTOR, Simulation.MAX_REAL_TIME_FACTOR, 1);
 		spinner = new JSpinner(numberModel);
-
 		// show up to 6 decimal places
 		JSpinner.NumberEditor numberEditor = new JSpinner.NumberEditor(spinner,"0.######");
 		spinner.setEditor(numberEditor);
@@ -2627,6 +2627,10 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 	 */
 	public boolean startSimulation() {
 		if( getSimState() <= SIM_STATE_CONFIGURED ) {
+		
+		//
+//		if(getSimState() == SIM_STATE_RUNNING ) return true; // Added by Jalal, if StartSimulation runs multiple time then nothing willl happen
+			
 			boolean confirmed = true;
 			if (InputAgent.isSessionEdited()) {
 				confirmed = GUIFrame.showSaveChangesDialog(this);
@@ -2648,7 +2652,9 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 	/**
 	 * Pauses the simulation run.
 	 */
-	private void pauseSimulation() {
+	public void pauseSimulation() {
+		if(getSimState() == SIM_STATE_PAUSED ) return;
+		// Added by Jalal, if PauseSimulation runs multiple time then nothing willl happen
 		if( getSimState() == SIM_STATE_RUNNING )
 			currentEvt.pause();
 		else
@@ -3142,7 +3148,16 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 	// MAIN
 	// ******************************************************************************************************
 
-	public static void main( String args[] ) {
+
+	public static Federate federate;
+    
+	public static void main(String args[] ) throws Exception
+	{
+		create(args);
+	}
+	
+	public static GUIFrame create( String args[] ) throws Exception
+	{
 		// Process the input arguments and filter out directives
 		ArrayList<String> configFiles = new ArrayList<>(args.length);
 		boolean batch = false;
@@ -3151,8 +3166,15 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		boolean scriptMode = false;
 		boolean headless = false;
 
+//		int port = 0;
+		
 		for (String each : args) {
 			// Batch mode
+			if(each.startsWith("-fn:"))  // java ..... -w::c:/...
+			{
+				continue;
+			}
+			
 			if (each.equalsIgnoreCase("-b") ||
 			    each.equalsIgnoreCase("-batch")) {
 				batch = true;
@@ -3315,7 +3337,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 			if (InputAgent.numErrors() > 0)
 				GUIFrame.shutdown(0);
 			Simulation.start(evt);
-			return;
 		}
 
 		// Hide the splash screen
@@ -3330,6 +3351,11 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 
 		// Set the selected entity to the Simulation object
 		FrameBox.setSelectedEntity(Simulation.getInstance(), false);
+		//
+		//added by Jalal Possik
+//		if(watchFile != null) new WatchChange(watchFile, gui).start();
+//		new HTTPServer(port, gui);
+		return gui;
 	}
 
 	/*
@@ -3964,5 +3990,15 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, EventErr
 		return String.format("<html><p width=\"250px\"><b>%s</b><br>%s</p></html>",
 				name, desc);
 	}
+
+	//added by Jalal
+	public void setRealTimeFactor(double val) 
+	{
+		NumberFormat nf = NumberFormat.getNumberInstance(Locale.US);
+		DecimalFormat df = (DecimalFormat)nf;
+		df.applyPattern("0.######");
+		InputAgent.applyArgs(Simulation.getInstance(), "RealTimeFactor", df.format(val));
+	}
+	//till here 
 
 }

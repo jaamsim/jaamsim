@@ -16,8 +16,11 @@
  */
 package com.jaamsim.ProcessFlow;
 
+import java.util.ArrayList;
+
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.basicsim.Entity;
+import com.jaamsim.ui.Federate;
 
 /**
  * EntitySink kills the DisplayEntities sent to it.
@@ -41,6 +44,9 @@ public class EntitySink extends LinkedComponent {
 		if (ent.testFlag(Entity.FLAG_GENERATED)) {
 			ent.kill();
 		}
+		//
+		ArrayList<String> atts = this.getAttributeNames();
+		if(atts.size() > 0 && atts.get(0).equals("waitRTIOrder")) Federate.instance.onAddEntity(this);
 	}
 
 }

@@ -17,6 +17,7 @@
  */
 package com.jaamsim.ProcessFlow;
 
+
 import java.util.ArrayList;
 
 import com.jaamsim.Commands.KeywordCommand;
@@ -27,6 +28,7 @@ import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InterfaceEntityListInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.KeywordIndex;
+import com.jaamsim.ui.Federate;
 import com.jaamsim.units.DimensionlessUnit;
 
 public class Branch extends LinkedComponent {
@@ -64,12 +66,20 @@ public class Branch extends LinkedComponent {
 		if (i<1 || i>nextComponentList.getValue().size())
 			error("Chosen index i=%s is out of range for NextComponentList: %s.",
 			      i, nextComponentList.getValue());
-
+//Added by Jalal
+		
+		ArrayList<String> atts = this.getAttributeNames();
+		if(atts.size() > 0 && atts.get(0).equals("waitRTIOrder")) Federate.instance.onAddEntity(this);
+		
+		//Till here
+		
 		// Set the standard outputs for a LinkedComponent
 		this.sendToNextComponent(ent);
 
 		// Pass the entity to the selected next component
 		nextComponentList.getValue().get(i-1).addEntity(ent);
+		
+
 	}
 
 	@Override

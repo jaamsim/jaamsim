@@ -30,6 +30,7 @@ import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.resourceObjects.AbstractResourceProvider;
+import com.jaamsim.ui.Federate;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
 
@@ -237,6 +238,13 @@ public class EntityProcessor extends Seize {
 
 		// Pass the entities to the next component
 		for (ProcessorEntry entry : completedEntries) {
+			
+			//added by Jalal
+			ArrayList<String> atts = this.getAttributeNames();
+			if(atts.size() > 0 && atts.get(0).equals("waitRTIOrder")) 
+				Federate.instance.onAddEntity(this);
+			//till here
+			
 			this.sendToNextComponent(entry.entity);
 		}
 	}

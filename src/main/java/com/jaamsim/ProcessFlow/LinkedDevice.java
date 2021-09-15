@@ -179,7 +179,8 @@ public abstract class LinkedDevice extends Device implements Linkable, LinkDispl
 	}
 
 	public void incrementNumberProcessed() {
-		numberProcessed++;
+		// numberProcessed++;
+		System.out.println();
 	}
 
 	/**

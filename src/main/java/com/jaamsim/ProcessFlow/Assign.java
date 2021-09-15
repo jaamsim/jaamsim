@@ -26,6 +26,7 @@ import com.jaamsim.input.ExpError;
 import com.jaamsim.input.ExpEvaluator;
 import com.jaamsim.input.ExpParser;
 import com.jaamsim.input.Keyword;
+import com.jaamsim.ui.Federate;
 
 /**
  * Assigns values to Attributes.
@@ -63,6 +64,12 @@ public class Assign extends LinkedComponent {
 			}
 		}
 
+		//Added by Jalal
+
+		ArrayList<String> atts = this.getAttributeNames();
+		if(atts.size() > 0 && atts.get(0).equals("waitRTIOrder")) Federate.instance.onAddEntity(this);
+		//Till here
+		
 		// Pass the entity to the next component
 		this.sendToNextComponent(ent);
 	}

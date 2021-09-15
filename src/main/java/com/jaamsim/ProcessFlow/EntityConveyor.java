@@ -33,6 +33,7 @@ import com.jaamsim.input.Keyword;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.MathUtils;
 import com.jaamsim.math.Vec3d;
+import com.jaamsim.ui.Federate;
 import com.jaamsim.ui.GUIFrame;
 import com.jaamsim.units.TimeUnit;
 
@@ -129,7 +130,13 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 		// Add the entity to the conveyor
 		ConveyorEntry entry = new ConveyorEntry(ent, 0.0d);
 		entryList.add(entry);
-
+		//Added by Jalal
+		
+		ArrayList<String> atts = this.getAttributeNames();
+		if(atts.size() > 0 && atts.get(0).equals("waitRTIOrder")) Federate.instance.onAddEntity(this);
+						
+		//Till here
+		
 		// If necessary, wake up the conveyor
 		this.restart();
 	}

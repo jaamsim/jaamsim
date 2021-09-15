@@ -836,8 +836,8 @@ public final class EventManager {
 	 */
 	public void pause() {
 		executeEvents = false;
+		System.out.println("pause");
 	}
-
 	/**
 	 * Sets the value that is tested in the doProcess loop to determine if the
 	 * next event should be executed.  Generates an interrupt of activeThread
@@ -847,6 +847,8 @@ public final class EventManager {
 	 * @param targetTicks - clock ticks at which to pause
 	 */
 	public void resume(long targetTicks) {
+
+		System.out.println("wait to resume");
 		synchronized (lockObject) {
 
 			// Ignore the pause time if it has already been reached
@@ -861,6 +863,7 @@ public final class EventManager {
 
 			executeEvents = true;
 			Process.processEvents(this);
+			System.out.println("after resume");
 		}
 	}
 

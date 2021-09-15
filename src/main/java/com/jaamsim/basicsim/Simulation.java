@@ -201,7 +201,19 @@ public class Simulation extends Entity {
 
 	@Keyword(description = "The target ratio of elapsed simulation time to elapsed real time.",
 	         exampleList = {"1200"})
-	private static final ValueInput realTimeFactor;
+	
+	//changed by Jalal, it was private static final ValueInput realTimeFactor;
+	private static ValueInput realTimeFactor;
+	
+	public static void setRealTimeFactor(double realTimeFactor) {
+		
+//		Simulation.realTimeFactor.
+		System.out.println("================================" + Simulation.realTimeFactor.getValue());
+		
+	}
+	
+	//till here
+
 
 	public static final double DEFAULT_REAL_TIME_FACTOR = 1;
 	public static final double MIN_REAL_TIME_FACTOR = 1e-6;

@@ -31,6 +31,7 @@ import com.jaamsim.input.Keyword;
 import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.Output;
 import com.jaamsim.math.Vec3d;
+import com.jaamsim.ui.Federate;
 
 public class EntityLogger extends Logger implements Linkable, LinkDisplayable {
 
@@ -61,6 +62,13 @@ public class EntityLogger extends Logger implements Linkable, LinkDisplayable {
 
 		// Record the entry in the log
 		this.recordLogEntry(getSimTime());
+
+		//Added by Jalal
+		
+				ArrayList<String> atts = this.getAttributeNames();
+				if(atts.size() > 0 && atts.get(0).equals("waitRTIOrder")) Federate.instance.onAddEntity(this);
+								
+				//Till here
 
 		// Send the entity to the next element in the chain
 		nextComponent.getValue().addEntity(ent);
