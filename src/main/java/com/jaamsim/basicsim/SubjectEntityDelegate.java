@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2020 JaamSim Software Inc.
+ * Copyright (C) 2020-2021 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,6 +33,8 @@ public class SubjectEntityDelegate implements SubjectEntity {
 
 	@Override
 	public void registerObserver(ObserverEntity obs) {
+		if (observerList.contains(obs))
+			return;
 		observerList.add(obs);
 	}
 
