@@ -425,9 +425,6 @@ public class TextModel extends DisplayModel implements TextEntity {
 				cachedProxies.add(new LineProxy(points, ColourInput.BLACK, 1, vi, labelObservee.getEntityNumber()));
 			}
 
-			// Show the text
-			cachedProxies.add(new StringProxy(text, fk, color, trans, height, vi, labelObservee.getEntityNumber()));
-
 			// Show the drop shadow
 			if (ds) {
 				Transform dsTrans = new Transform(trans);
@@ -438,6 +435,9 @@ public class TextModel extends DisplayModel implements TextEntity {
 
 				cachedProxies.add(new StringProxy(text, fk, dsColor, dsTrans, height, vi, labelObservee.getEntityNumber()));
 			}
+
+			// Show the text
+			cachedProxies.add(new StringProxy(text, fk, color, trans, height, vi, labelObservee.getEntityNumber()));
 
 			out.addAll(cachedProxies);
 		}
