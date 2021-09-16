@@ -5,6 +5,7 @@ Define ObjectType {
                     Controller
                     InputValue
                     InputBox
+                    ToggleButton
                     TimeSeries
                     TimeSeriesThreshold
                     ExpressionThreshold
@@ -61,6 +62,7 @@ Output                  JavaClass { com.jaamsim.basicsim.OutputMethod           
 Controller              JavaClass { com.jaamsim.CalculationObjects.Controller           } Palette { 'Basic Objects' } DefaultDisplayModel { ControllerIconModel } IconFile { '<res>/images/Controller-24.png'   }
 InputValue              JavaClass { com.jaamsim.BasicObjects.InputValue                 } Palette { 'Basic Objects' } DefaultDisplayModel { InputValueModel     } IconFile { '<res>/images/InputValue-24.png'         }
 InputBox                JavaClass { com.jaamsim.Graphics.InputBox                       } Palette { 'Basic Objects' } DefaultDisplayModel { InputBoxModel       } IconFile { '<res>/images/InputValue-24.png'   } DragAndDrop { FALSE }
+ToggleButton            JavaClass { com.jaamsim.BasicObjects.ToggleButton               } Palette { 'Basic Objects' } DefaultDisplayModel { Rectangle           } IconFile { '<res>/images/Button-24.png'       } DefaultSize { 1.0 0.5 0.0 m }
 TimeSeries              JavaClass { com.jaamsim.Samples.TimeSeries                      } Palette { 'Basic Objects' } DefaultDisplayModel { TimeSeriesIconModel } IconFile { '<res>/images/TimeSeries-24.png'   }
 TimeSeriesThreshold     JavaClass { com.jaamsim.Thresholds.TimeSeriesThreshold          } Palette { 'Basic Objects' } DefaultDisplayModel { Rectangle           } IconFile { '<res>/images/Threshold-24.png'    } DefaultSize { 0.5 0.5 0.0 m }
 ExpressionThreshold     JavaClass { com.jaamsim.Thresholds.ExpressionThreshold          } Palette { 'Basic Objects' } DefaultDisplayModel { Rectangle           } IconFile { '<res>/images/Threshold-24.png'    } DefaultSize { 0.5 0.5 0.0 m }
@@ -82,6 +84,7 @@ Output              Description { '???' }
 Controller          Description { 'Signals modelled objects to perform an update.' }
 InputValue          Description { 'Provides a way to enter a numerical value directly into the simulation model screen.' }
 InputBox            Description { 'Text that provides an input value for the model.' }
+ToggleButton        Description { 'Button that can be clicked by the user.' }
 TimeSeries          Description { 'Provides a floating point number that changes in simulated time following a series of input values.' }
 TimeSeriesThreshold Description { 'Specifies a range of values from a TimeSeries for which an activity is permitted.' }
 ExpressionThreshold Description { 'Specifies a logical condition for which an activity is permitted.' }

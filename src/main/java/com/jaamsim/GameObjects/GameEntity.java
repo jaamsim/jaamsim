@@ -92,11 +92,20 @@ public abstract class GameEntity extends DisplayEntity {
 	}
 
 	private void scheduleAction() {
+		setState();
 		if (evt == null || doActionHandle.isScheduled() || !getSimulation().isRealTime())
 			return;
 		evt.scheduleProcessExternal(0L, 0, false, doActionTarget, doActionHandle);
 	}
 
+	/**
+	 * Performs any actions to occur immediately after the object is clicked, prior to any events.
+	 */
+	public void setState() {}
+
+	/**
+	 * Performs any actions to occur after the event that is scheduled when the object is clicked.
+	 */
 	public abstract void doAction();
 
 	/**
