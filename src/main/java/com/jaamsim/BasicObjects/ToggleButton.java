@@ -20,17 +20,20 @@ import java.util.ArrayList;
 
 import com.jaamsim.DisplayModels.ShapeModel;
 import com.jaamsim.GameObjects.GameEntity;
+import com.jaamsim.Graphics.FillEntity;
+import com.jaamsim.Graphics.LineEntity;
 import com.jaamsim.basicsim.ObserverEntity;
 import com.jaamsim.basicsim.SubjectEntity;
 import com.jaamsim.basicsim.SubjectEntityDelegate;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.Input;
+import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.math.Color4d;
 
-public class ToggleButton extends GameEntity implements SubjectEntity {
+public class ToggleButton extends GameEntity implements SubjectEntity, LineEntity, FillEntity {
 
 	@Keyword(description = "The initial state for the button: "
 	                     + "TRUE = button pressed, FALSE = button unpressed.",
@@ -45,18 +48,50 @@ public class ToggleButton extends GameEntity implements SubjectEntity {
 	         exampleList = { "magenta" })
 	private final ColourInput unpressedColour;
 
+	@Keyword(description = "Determines whether or not the object is outlined. "
+	                     + "If TRUE, it is outlined with a specified colour. "
+	                     + "If FALSE, it is drawn without an outline.",
+	         exampleList = {"FALSE"})
+	protected final BooleanInput outlined;
+
+	@Keyword(description = "The colour with which the object is outlined.",
+	         exampleList = {"red"})
+	protected final ColourInput lineColour;
+
+	@Keyword(description = "Width of the outline in pixels.",
+	         exampleList = { "3" })
+	protected final IntegerInput lineWidth;
+
 	private boolean value;  // true = pressed, false = not pressed
 	private final SubjectEntityDelegate subject = new SubjectEntityDelegate(this);
 
 	{
+		displayModelListInput.clearValidClasses();
+		displayModelListInput.addValidClass(ShapeModel.class);
+
 		initialValue = new BooleanInput("InitialValue", KEY_INPUTS, false);
 		this.addInput(initialValue);
 
-		pressedColour = new ColourInput("PressedColour", FORMAT, ColourInput.LIGHT_GREY);
+		pressedColour = new ColourInput("PressedColour", FORMAT, null);
+		pressedColour.setDefaultText("ShapeModel value");
 		this.addInput(pressedColour);
+		this.addSynonym(pressedColour, "FillColour");
 
 		unpressedColour = new ColourInput("UnpressedColour", FORMAT, ColourInput.getColorWithName("Ivory"));
 		this.addInput(unpressedColour);
+
+		outlined = new BooleanInput("Outlined", FORMAT, true);
+		outlined.setDefaultText("ShapeModel value");
+		this.addInput(outlined);
+
+		lineColour = new ColourInput("LineColour", FORMAT, ColourInput.BLACK);
+		lineColour.setDefaultText("ShapeModel value");
+		this.addInput(lineColour);
+
+		lineWidth = new IntegerInput("LineWidth", FORMAT, 1);
+		lineWidth.setValidRange(0, Integer.MAX_VALUE);
+		lineWidth.setDefaultText("ShapeModel value");
+		this.addInput(lineWidth);
 	}
 
 	@Override
@@ -95,13 +130,54 @@ public class ToggleButton extends GameEntity implements SubjectEntity {
 	}
 
 	@Override
+	public boolean isFilled() {
+		return true;
+	}
+
+	@Override
+	public Color4d getFillColour() {
+		if (pressedColour.isDefault() && getDisplayModel() instanceof FillEntity) {
+			FillEntity model = (FillEntity) getDisplayModel();
+			return model.getFillColour();
+		}
+		return pressedColour.getValue();
+	}
+
+	@Override
+	public boolean isOutlined() {
+		if (outlined.isDefault() && getDisplayModel() instanceof LineEntity) {
+			LineEntity model = (LineEntity) getDisplayModel();
+			return model.isOutlined();
+		}
+		return outlined.getValue();
+	}
+
+	@Override
+	public int getLineWidth() {
+		if (lineWidth.isDefault() && getDisplayModel() instanceof LineEntity) {
+			LineEntity model = (LineEntity) getDisplayModel();
+			return model.getLineWidth();
+		}
+		return lineWidth.getValue();
+	}
+
+	@Override
+	public Color4d getLineColour() {
+		if (lineColour.isDefault() && getDisplayModel() instanceof LineEntity) {
+			LineEntity model = (LineEntity) getDisplayModel();
+			return model.getLineColour();
+		}
+		return lineColour.getValue();
+	}
+
+	@Override
 	public void updateGraphics(double simTime) {
 		super.updateGraphics(simTime);
 
 		// Select the colour
 		Color4d col;
 		if (value) {
-			col = pressedColour.getValue();
+			col = getFillColour();
 		}
 		else {
 			col = unpressedColour.getValue();
@@ -109,9 +185,7 @@ public class ToggleButton extends GameEntity implements SubjectEntity {
 
 		// Display the button
 		setTagVisibility(ShapeModel.TAG_CONTENTS, true);
-		setTagVisibility(ShapeModel.TAG_OUTLINES, true);
 		setTagColour(ShapeModel.TAG_CONTENTS, col);
-		setTagColour(ShapeModel.TAG_OUTLINES, ColourInput.BLACK);
 	}
 
 	@Output(name = "Value",
