@@ -3803,7 +3803,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 	private void updateFillButtons(Entity ent) {
 		boolean bool = ent instanceof FillEntity;
-		fill.setEnabled(bool);
+		fill.setEnabled(bool && ent.getInput("Filled") != null);
 		fillColour.setEnabled(bool);
 		if (!bool) {
 			fillColourIcon.setFillColor(Color.LIGHT_GRAY);
