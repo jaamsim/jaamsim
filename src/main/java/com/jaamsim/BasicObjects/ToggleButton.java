@@ -16,8 +16,13 @@
  */
 package com.jaamsim.BasicObjects;
 
+import java.util.ArrayList;
+
 import com.jaamsim.DisplayModels.ShapeModel;
 import com.jaamsim.GameObjects.GameEntity;
+import com.jaamsim.basicsim.ObserverEntity;
+import com.jaamsim.basicsim.SubjectEntity;
+import com.jaamsim.basicsim.SubjectEntityDelegate;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.Input;
@@ -25,7 +30,7 @@ import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.math.Color4d;
 
-public class ToggleButton extends GameEntity {
+public class ToggleButton extends GameEntity implements SubjectEntity {
 
 	@Keyword(description = "The initial state for the button: "
 	                     + "TRUE = button pressed, FALSE = button unpressed.",
@@ -41,6 +46,7 @@ public class ToggleButton extends GameEntity {
 	private final ColourInput unpressedColour;
 
 	private boolean value;  // true = pressed, false = not pressed
+	private final SubjectEntityDelegate subject = new SubjectEntityDelegate(this);
 
 	{
 		initialValue = new BooleanInput("InitialValue", KEY_INPUTS, false);
@@ -70,7 +76,22 @@ public class ToggleButton extends GameEntity {
 
 	@Override
 	public void doAction() {
-		// needed only to trigger a new event
+		notifyObservers();
+	}
+
+	@Override
+	public void registerObserver(ObserverEntity obs) {
+		subject.registerObserver(obs);
+	}
+
+	@Override
+	public void notifyObservers() {
+		subject.notifyObservers();
+	}
+
+	@Override
+	public ArrayList<ObserverEntity> getObserverList() {
+		return subject.getObserverList();
 	}
 
 	@Override
