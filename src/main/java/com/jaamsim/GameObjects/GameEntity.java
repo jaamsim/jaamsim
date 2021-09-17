@@ -31,8 +31,6 @@ public abstract class GameEntity extends DisplayEntity {
 	         exampleList = {"A", "F1", "ESCAPE"})
 	private final KeyEventInput actionKey;
 
-	private EventManager evt;
-
 	{
 		actionKey = new KeyEventInput("ActionKey", KEY_INPUTS, null);
 		actionKey.setDefaultValue("SPACE");
@@ -40,18 +38,6 @@ public abstract class GameEntity extends DisplayEntity {
 	}
 
 	public GameEntity() {}
-
-	@Override
-	public void earlyInit() {
-		super.earlyInit();
-		evt = null;
-	}
-
-	@Override
-	public void startUp() {
-		super.startUp();
-		evt = EventManager.current();
-	}
 
 	@Override
 	public boolean handleKeyPressed(int keyCode, char keyChar, boolean shift, boolean control, boolean alt) {
@@ -93,6 +79,7 @@ public abstract class GameEntity extends DisplayEntity {
 
 	private void scheduleAction() {
 		setState();
+		EventManager evt = getJaamSimModel().getEventManager();
 		if (evt == null || doActionHandle.isScheduled() || !getSimulation().isRealTime())
 			return;
 		evt.scheduleProcessExternal(0L, 0, false, doActionTarget, doActionHandle);
