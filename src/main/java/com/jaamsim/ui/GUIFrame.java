@@ -2484,7 +2484,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				if (!(selectedEntity instanceof LineEntity))
+				if (!(selectedEntity instanceof LineEntity)
+						|| selectedEntity.getInput("Outlined") == null)
 					return;
 				LineEntity lineEnt = (LineEntity) selectedEntity;
 				lineWidth.setEnabled(outline.isSelected());
@@ -2507,7 +2508,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 			@Override
 			public void stateChanged( ChangeEvent e ) {
-				if (!(selectedEntity instanceof LineEntity))
+				if (!(selectedEntity instanceof LineEntity)
+						|| selectedEntity.getInput("LineWidth") == null)
 					return;
 				LineEntity lineEnt = (LineEntity) selectedEntity;
 				int val = (int) lineWidth.getValue();
@@ -2540,7 +2542,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				if (!(selectedEntity instanceof LineEntity))
+				if (!(selectedEntity instanceof LineEntity)
+						|| selectedEntity.getInput("LineColour") == null)
 					return;
 				final LineEntity lineEnt = (LineEntity) selectedEntity;
 				final Color4d presentColour = lineEnt.getLineColour();
@@ -2574,7 +2577,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				if (!(selectedEntity instanceof FillEntity))
+				if (!(selectedEntity instanceof FillEntity)
+						|| selectedEntity.getInput("Filled") == null)
 					return;
 				FillEntity fillEnt = (FillEntity) selectedEntity;
 				fillColour.setEnabled(fill.isSelected());
@@ -2604,7 +2608,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				if (!(selectedEntity instanceof FillEntity))
+				if (!(selectedEntity instanceof FillEntity)
+						|| selectedEntity.getInput("FillColour") == null)
 					return;
 				final FillEntity fillEnt = (FillEntity) selectedEntity;
 				final Color4d presentColour = fillEnt.getFillColour();
