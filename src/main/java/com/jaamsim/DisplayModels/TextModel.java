@@ -58,7 +58,7 @@ import com.jaamsim.render.TessFontKey;
 import com.jaamsim.render.VisibilityInfo;
 import com.jaamsim.units.DistanceUnit;
 
-public class TextModel extends DisplayModel implements TextEntity {
+public class TextModel extends AbstractShapeModel implements TextEntity {
 
 	@Keyword(description = "The font to be used for the text.",
 	         exampleList = { "Arial" })

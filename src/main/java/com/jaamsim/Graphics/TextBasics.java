@@ -43,7 +43,7 @@ import com.jogamp.newt.event.KeyEvent;
  * @author Harry King
  *
  */
-public abstract class TextBasics extends DisplayEntity implements TextEntity, EditableText {
+public abstract class TextBasics extends AbstractShape implements TextEntity, EditableText {
 
 	@Keyword(description = "The font to be used for the text.",
 	         exampleList = { "Arial" })
