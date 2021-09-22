@@ -52,11 +52,6 @@ public abstract class AbstractShapeModel extends DisplayModel implements LineEnt
 	         exampleList = {"red"})
 	protected final ColourInput lineColour;
 
-	@Keyword(description = "If the value is true, then the display model outline will be a bold line. Otherwise the outline " +
-	                "will be one pixel wide line.",
-	         exampleList = { "TRUE" })
-	private final BooleanInput bold;
-
 	@Keyword(description = "Width of the outline in pixels.",
 	         exampleList = { "3" })
 	protected final IntegerInput lineWidth;
@@ -77,10 +72,6 @@ public abstract class AbstractShapeModel extends DisplayModel implements LineEnt
 		outlined = new BooleanInput("Outlined", KEY_INPUTS, false);
 		this.addInput(outlined);
 
-		bold = new BooleanInput("Bold", KEY_INPUTS, false);
-		bold.setHidden(true);
-		this.addInput(bold);
-
 		lineWidth = new IntegerInput("LineWidth", KEY_INPUTS, 1);
 		lineWidth.setValidRange(0, Integer.MAX_VALUE);
 		this.addInput(lineWidth);
@@ -100,8 +91,6 @@ public abstract class AbstractShapeModel extends DisplayModel implements LineEnt
 
 	@Override
 	public int getLineWidth() {
-		if (!bold.isDefault() && lineWidth.isDefault())
-			return bold.getValue() ? 2 : 1;
 		return lineWidth.getValue();
 	}
 
