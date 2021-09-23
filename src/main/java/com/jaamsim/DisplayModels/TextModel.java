@@ -283,7 +283,7 @@ public class TextModel extends AbstractShapeModel implements TextEntity {
 	// ********************************************************************************************
 	// Binding
 	// ********************************************************************************************
-	private static class Binding extends DisplayModelBinding {
+	private class Binding extends DisplayModelBinding {
 
 		private TextBasics labelObservee;
 
@@ -305,6 +305,14 @@ public class TextModel extends AbstractShapeModel implements TextEntity {
 
 		private VisibilityInfo viCache;
 
+		private Vec3d scaleCache;
+		private Transform backgroundTransCache;
+
+		private boolean filledCache;
+		private boolean outlinedCache;
+		private Color4d fillColorCache;
+		private Color4d outlineColorCache;
+		private int outlineWidthCache;
 
 		private ArrayList<RenderProxy> cachedProxies = null;
 
@@ -336,6 +344,14 @@ public class TextModel extends AbstractShapeModel implements TextEntity {
 			boolean editMode = labelObservee.isEditMode();
 			int insertPos = labelObservee.getInsertPosition();
 			int numSelected = labelObservee.getNumberSelected();
+			Vec3d scale = labelObservee.getSize();
+			scale.mul3(getModelScale());
+			Transform backgroundTrans = labelObservee.getGlobalTrans();
+			boolean filled = labelObservee.isFilled();
+			boolean outlined = labelObservee.isOutlined();
+			Color4d fillColor = labelObservee.getFillColour();
+			Color4d outlineColor = labelObservee.getLineColour();
+			int outlineWidth = labelObservee.getLineWidth();
 
 			VisibilityInfo vi = getVisibilityInfo();
 
@@ -353,6 +369,13 @@ public class TextModel extends AbstractShapeModel implements TextEntity {
 			dirty = dirty || insertPos != insertPosCache;
 			dirty = dirty || numSelected != numSelectedCache;
 			dirty = dirty || !compare(viCache, vi);
+			dirty = dirty || dirty_vec3d(scaleCache, scale);
+			dirty = dirty || !compare(backgroundTransCache, backgroundTrans);
+			dirty = dirty || filledCache != filled;
+			dirty = dirty || outlinedCache != outlined;
+			dirty = dirty || dirty_col4d(fillColorCache, fillColor);
+			dirty = dirty || dirty_col4d(outlineColorCache, outlineColor);
+			dirty = dirty || outlineWidthCache != outlineWidth;
 
 			textCache = text;
 			transCache = trans;
@@ -366,6 +389,13 @@ public class TextModel extends AbstractShapeModel implements TextEntity {
 			insertPosCache = insertPos;
 			numSelectedCache = numSelected;
 			viCache = vi;
+			scaleCache = scale;
+			backgroundTransCache = backgroundTrans;
+			filledCache = filled;
+			outlinedCache = outlined;
+			fillColorCache = fillColor;
+			outlineColorCache = outlineColor;
+			outlineWidthCache = outlineWidth;
 
 			if (cachedProxies != null && !dirty) {
 				// Nothing changed
@@ -381,6 +411,24 @@ public class TextModel extends AbstractShapeModel implements TextEntity {
 			}
 
 			cachedProxies = new ArrayList<>();
+
+			// Show the background rectangle
+			if (filled || outlined) {
+				double zcoord = 0.02*height;
+				ArrayList<Vec4d> backgroundRect = new ArrayList<>();
+				backgroundRect.add(new Vec4d( 0.5d,  0.5d, -zcoord, 1.0d ));
+				backgroundRect.add(new Vec4d(-0.5d,  0.5d, -zcoord, 1.0d ));
+				backgroundRect.add(new Vec4d(-0.5d, -0.5d, -zcoord, 1.0d ));
+				backgroundRect.add(new Vec4d( 0.5d, -0.5d, -zcoord, 1.0d ));
+				if (filled) {
+					cachedProxies.add(new PolygonProxy(backgroundRect, backgroundTrans, scale,
+							fillColor, false, 1, vi, labelObservee.getEntityNumber()));
+				}
+				if (outlined) {
+					cachedProxies.add(new PolygonProxy(backgroundRect, backgroundTrans, scale,
+							outlineColor, true, outlineWidth, vi, labelObservee.getEntityNumber()));
+				}
+			}
 
 			// If the text is being edited, show the selection and the text insertion mark
 			if (editMode) {
@@ -407,8 +455,7 @@ public class TextModel extends AbstractShapeModel implements TextEntity {
 						rect.add(new Vec4d( start.x, bottom, -zcoord, 1.0d ));
 						rect.add(new Vec4d( end.x,   bottom, -zcoord, 1.0d ));
 						rect.add(new Vec4d( end.x,   top,    -zcoord, 1.0d ));
-						Vec3d scale = new Vec3d(1.0d, 1.0d, 1.0d);
-						cachedProxies.add(new PolygonProxy(rect, trans, scale,
+						cachedProxies.add(new PolygonProxy(rect, trans, DisplayModel.ONES,
 								ColourInput.LIGHT_GREY, false, 1, vi, labelObservee.getEntityNumber()));
 						startSel = i + 1;
 					}
