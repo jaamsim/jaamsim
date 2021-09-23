@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2017-2019 JaamSim Software Inc.
+ * Copyright (C) 2017-2021 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,6 @@ import com.jaamsim.basicsim.Entity;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.ColourInput;
-import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Vec3dInput;
 import com.jaamsim.math.Color4d;
@@ -46,30 +45,7 @@ import com.jaamsim.render.RenderUtils;
 import com.jaamsim.render.VisibilityInfo;
 import com.jaamsim.units.DistanceUnit;
 
-public class PolylineModel extends DisplayModel implements LineEntity, FillEntity {
-
-	@Keyword(description = "Determines whether or not the polyline is outlined. "
-	                     + "If TRUE, it is outlined with a uniform colour. "
-	                     + "If FALSE, it is drawn without an outline.",
-	         exampleList = {"FALSE"})
-	private final BooleanInput outlined;
-
-	@Keyword(description = "The colour of the polyline.",
-	         exampleList = {"red"})
-	private final ColourInput colour;
-
-	@Keyword(description = "The width of the polyline in pixels.",
-	         exampleList = {"1"})
-	private final IntegerInput width;
-
-	@Keyword(description = "Determines whether the polyline is filled or hollow. "
-	                     + "If TRUE, then the polyline has a solid fill.",
-	         exampleList = { "FALSE" })
-	private final BooleanInput filled;
-
-	@Keyword(description = "The colour for the filled part of the polyline.",
-	         exampleList = { "red" })
-	private final ColourInput fillColour;
+public class PolylineModel extends AbstractShapeModel {
 
 	@Keyword(description = "If TRUE, an arrow head is displayed at the end of the polyline.",
 	         exampleList = {"TRUE", "FALSE"})
@@ -80,24 +56,13 @@ public class PolylineModel extends DisplayModel implements LineEntity, FillEntit
 	protected final Vec3dInput arrowHeadSize;
 
 	{
-		outlined = new BooleanInput("Outlined", KEY_INPUTS, true);
-		this.addInput(outlined);
+		outlined.setDefaultValue(true);
 
-		colour = new ColourInput("LineColour", KEY_INPUTS, ColourInput.BLACK);
-		this.addInput(colour);
-		this.addSynonym(colour, "Color");
-		this.addSynonym(colour, "Colour");
+		this.addSynonym(lineColour, "Color");
+		this.addSynonym(lineColour, "Colour");
 
-		width = new IntegerInput("LineWidth", KEY_INPUTS, 1);
-		width.setValidRange(0, Integer.MAX_VALUE);
-		this.addInput(width);
-		this.addSynonym(width, "Width");
+		this.addSynonym(lineWidth, "Width");
 
-		filled = new BooleanInput("Filled", KEY_INPUTS, false);
-		this.addInput(filled);
-
-		fillColour = new ColourInput("FillColour", KEY_INPUTS, ColourInput.MED_GREY);
-		this.addInput(fillColour);
 		this.addSynonym(fillColour, "FillColor");
 
 		showArrowHead = new BooleanInput("ShowArrowHead", KEY_INPUTS, false);
@@ -129,31 +94,6 @@ public class PolylineModel extends DisplayModel implements LineEntity, FillEntit
 	@Override
 	public boolean canDisplayEntity(Entity ent) {
 		return (ent instanceof DisplayEntity);
-	}
-
-	@Override
-	public boolean isOutlined() {
-		return outlined.getValue();
-	}
-
-	@Override
-	public Color4d getLineColour() {
-		return colour.getValue();
-	}
-
-	@Override
-	public int getLineWidth() {
-		return Math.max(1, width.getValue());
-	}
-
-	@Override
-	public boolean isFilled() {
-		return filled.getValue();
-	}
-
-	@Override
-	public Color4d getFillColour() {
-		return fillColour.getValue();
 	}
 
 	public boolean getShowArrowHead() {
