@@ -23,6 +23,7 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 import com.jaamsim.Graphics.DisplayEntity;
+import com.jaamsim.input.Input;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.StringInput;
 
@@ -40,8 +41,8 @@ public class MqttClient extends DisplayEntity implements MqttCallback {
 	@Keyword(description = "The client ID", exampleList = "JaamSim")
 	private final StringInput clientId;
 	{
-		clientId = new StringInput("ClientId", KEY_INPUTS, "JaamSim");
-		clientId.setRequired(true);
+		clientId = new StringInput("ClientId", KEY_INPUTS, null);
+		clientId.setRequired(false);
 		
 		this.addInput(clientId);
 	}
@@ -63,7 +64,9 @@ public class MqttClient extends DisplayEntity implements MqttCallback {
 		try {
 			super.earlyInit();
 			
-			client = new org.eclipse.paho.client.mqttv3.MqttClient(serverUri.getValue(), clientId.getValue());
+			String clientId = getValue(this.clientId, org.eclipse.paho.client.mqttv3.MqttClient.generateClientId());
+			
+			client = new org.eclipse.paho.client.mqttv3.MqttClient(serverUri.getValue(), clientId);
 			client.connect(options);
 			client.setCallback(this);
 		} catch (MqttException e) {
@@ -101,6 +104,16 @@ public class MqttClient extends DisplayEntity implements MqttCallback {
 	@Override
 	public void connectionLost(Throwable exception) {
 		error("The MQTT client lost its connection (exception = " + exception.getLocalizedMessage() + ")");
+	}
+	
+	private <T> T getValue(Input<T> input, T fallback) {
+		if (input.getValue() != null) {
+			return input.getValue();
+		} else if (input.getDefaultValue() != null) {
+			return input.getDefaultValue();
+		} else {
+			return fallback;
+		}
 	}
 
 }
