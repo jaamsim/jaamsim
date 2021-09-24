@@ -36,7 +36,7 @@ import com.jaamsim.input.StringInput;
 
 public class MqttReceive extends LinkedComponent implements IMqttMessageListener {
 
-	@Keyword(description = "The MQTT client", exampleList = "[client]")
+	@Keyword(description = "The MQTT client.", exampleList = "[client]")
 	private final EntityInput<MqttClient> client;
 	{
 		client = new EntityInput<>(MqttClient.class, "Client", KEY_INPUTS, null);
@@ -45,7 +45,7 @@ public class MqttReceive extends LinkedComponent implements IMqttMessageListener
 		this.addInput(client);
 	}
 
-	@Keyword(description = "The MQTT topic", exampleList = "some/mqtt/topic")
+	@Keyword(description = "The MQTT topic.", exampleList = "some/mqtt/topic")
 	private final StringInput topic;
 	{
 		topic = new StringInput("Topic", KEY_INPUTS, null);

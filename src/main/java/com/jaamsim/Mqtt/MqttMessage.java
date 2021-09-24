@@ -29,7 +29,7 @@ public class MqttMessage extends DisplayEntity {
 		this.topic = topic;
 	}
 	
-	@Output(name = "Topic", description = "The topic of the MQTT message", reportable = true, sequence = 0, unitType = UserSpecifiedUnit.class)
+	@Output(name = "Topic", description = "The MQTT topic.", reportable = true, sequence = 0, unitType = UserSpecifiedUnit.class)
 	public Object getTopic(double simTime) {
 		return topic;
 	}
@@ -38,7 +38,7 @@ public class MqttMessage extends DisplayEntity {
 		this.value = value;
 	}
 	
-	@Output(name = "Value", description = "The payload of the MQTT message", reportable = true, sequence = 1, unitType = UserSpecifiedUnit.class)
+	@Output(name = "Value", description = "The MQTT payload.", reportable = true, sequence = 1, unitType = UserSpecifiedUnit.class)
 	public Object getValue(double simTime) {
 		return value;
 	}
