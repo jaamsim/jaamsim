@@ -34,7 +34,7 @@ import com.jaamsim.units.DimensionlessUnit;
 
 public class MqttSend extends LinkedComponent {
 
-	@Keyword(description = "The MQTT client", exampleList = "[client]")
+	@Keyword(description = "The MQTT client.", exampleList = "[client]")
 	protected final EntityInput<MqttClient> client;
 	{
 		client = new EntityInput<>(MqttClient.class, "Client", KEY_INPUTS, null);
@@ -43,7 +43,7 @@ public class MqttSend extends LinkedComponent {
 		this.addInput(client);
 	}
 
-	@Keyword(description = "The MQTT topic", exampleList = "some/mqtt/topic")
+	@Keyword(description = "The MQTT topic.", exampleList = "some/mqtt/topic")
 	protected final StringInput topic;
 	{
 		topic = new StringInput("Topic", KEY_INPUTS, null);
@@ -52,7 +52,7 @@ public class MqttSend extends LinkedComponent {
 		this.addInput(topic);
 	}
 
-	@Keyword(description = "The MQTT payload", exampleList = {"1", "\"string\"", "{1, 2, 3}", "{\"a\", \"b\", \"c\"}", "{\"a\"=1, \"b\"=2, \"c\"=3}"})
+	@Keyword(description = "The MQTT payload.", exampleList = {"1", "\"string\"", "{1, 2, 3}", "{\"a\", \"b\", \"c\"}", "{\"a\"=1, \"b\"=2, \"c\"=3}"})
 	private final ExpressionInput expression;
 	{
 		expression = new ExpressionInput("Expression", KEY_INPUTS, null);

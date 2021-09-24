@@ -29,7 +29,7 @@ import com.jaamsim.input.StringInput;
 
 public class MqttClient extends DisplayEntity implements MqttCallback {
 	
-	@Keyword(description = "The server URI", exampleList = "tcp://localhost:1883")
+	@Keyword(description = "The server URI.", exampleList = "tcp://localhost:1883")
 	private final StringInput serverUri;
 	{
 		serverUri = new StringInput("ServerUri", KEY_INPUTS, "tcp://localhost:1883");
@@ -38,7 +38,7 @@ public class MqttClient extends DisplayEntity implements MqttCallback {
 		this.addInput(serverUri);
 	}
 
-	@Keyword(description = "The client ID", exampleList = "JaamSim")
+	@Keyword(description = "The (unique) client ID. If not provided, a random client ID is generated automatically for you.", exampleList = "JaamSim")
 	private final StringInput clientId;
 	{
 		clientId = new StringInput("ClientId", KEY_INPUTS, null);
