@@ -67,7 +67,9 @@ public class MqttClient extends DisplayEntity implements MqttCallback {
 			client.connect(options);
 			client.setCallback(this);
 		} catch (MqttException e) {
-			error(e.getLocalizedMessage());
+			error("The MQTT client could not connect (reason code = " + e.getReasonCode() + ")");
+		} catch (Exception e) {
+			error("The MQTT client could not connect (exception = " + e.getLocalizedMessage() + ")");
 		}
 	}
 	
@@ -80,7 +82,9 @@ public class MqttClient extends DisplayEntity implements MqttCallback {
 				client.disconnect();
 			}
 		} catch (MqttException e) {
-			error(e.getLocalizedMessage());
+			error("The MQTT client could not disconnect (reason code = " + e.getReasonCode() + ")");
+		} catch (Exception e) {
+			error("The MQTT client could not disconnect (exception = " + e.getLocalizedMessage() + ")");
 		}
 	}
 
@@ -96,7 +100,7 @@ public class MqttClient extends DisplayEntity implements MqttCallback {
 	
 	@Override
 	public void connectionLost(Throwable exception) {
-		error(exception.getLocalizedMessage());
+		error("The MQTT client lost its connection (exception = " + exception.getLocalizedMessage() + ")");
 	}
 
 }
