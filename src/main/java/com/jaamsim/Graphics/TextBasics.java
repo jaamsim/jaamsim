@@ -287,7 +287,7 @@ public abstract class TextBasics extends AbstractShape implements TextEntity, Ed
 		Vec3d textSize = getTextSize();
 		double length = textSize.x + textSize.y;
 		double height = 2.0 * textSize.y;
-		Vec3d newSize = new Vec3d(length, height, 0.0);
+		Vec3d newSize = new Vec3d(length, height, 1.0d);
 		InputAgent.apply(this, getJaamSimModel().formatVec3dInput("Size", newSize, DistanceUnit.class));
 	}
 
