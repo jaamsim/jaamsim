@@ -21,6 +21,7 @@ import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.StringProviders.StringProvConstant;
 import com.jaamsim.StringProviders.StringProvInput;
 import com.jaamsim.basicsim.GUIListener;
+import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
@@ -76,6 +77,13 @@ public class Text extends TextBasics {
 	         exampleList = {"'Input Error'"})
 	private final StringInput failText;
 
+	@Keyword(description = "If TRUE, then the size of the background rectangle is adjusted "
+	                     + "whenever the displayed text or its font is changed. "
+	                     + "Resizing is performed only when the DataSource input has been left "
+	                     + "blank.",
+	         exampleList = { "TRUE" })
+	protected final BooleanInput autoSize;
+
 	protected String renderText = "";
 
 	{
@@ -96,6 +104,9 @@ public class Text extends TextBasics {
 
 		failText = new StringInput("FailText", KEY_INPUTS, "Input Error");
 		this.addInput(failText);
+
+		autoSize = new BooleanInput("AutoSize", OPTIONS, true);
+		this.addInput(autoSize);
 	}
 
 	public Text() {}
@@ -167,6 +178,10 @@ public class Text extends TextBasics {
 		catch (Throwable e) {
 			return failText.getValue();
 		}
+	}
+
+	public boolean isAutoSize() {
+		return autoSize.getValue() && dataSource.isDefault();
 	}
 
 	@Override
