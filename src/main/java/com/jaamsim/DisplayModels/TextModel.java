@@ -306,8 +306,6 @@ public class TextModel extends AbstractShapeModel implements TextEntity {
 		private VisibilityInfo viCache;
 
 		private Vec3d scaleCache;
-		private Transform backgroundTransCache;
-
 		private boolean filledCache;
 		private boolean outlinedCache;
 		private Color4d fillColorCache;
@@ -346,7 +344,6 @@ public class TextModel extends AbstractShapeModel implements TextEntity {
 			int numSelected = labelObservee.getNumberSelected();
 			Vec3d scale = labelObservee.getSize();
 			scale.mul3(getModelScale());
-			Transform backgroundTrans = labelObservee.getGlobalTrans();
 			boolean filled = labelObservee.isFilled();
 			boolean outlined = labelObservee.isOutlined();
 			Color4d fillColor = labelObservee.getFillColour();
@@ -370,7 +367,6 @@ public class TextModel extends AbstractShapeModel implements TextEntity {
 			dirty = dirty || numSelected != numSelectedCache;
 			dirty = dirty || !compare(viCache, vi);
 			dirty = dirty || dirty_vec3d(scaleCache, scale);
-			dirty = dirty || !compare(backgroundTransCache, backgroundTrans);
 			dirty = dirty || filledCache != filled;
 			dirty = dirty || outlinedCache != outlined;
 			dirty = dirty || dirty_col4d(fillColorCache, fillColor);
@@ -390,7 +386,6 @@ public class TextModel extends AbstractShapeModel implements TextEntity {
 			numSelectedCache = numSelected;
 			viCache = vi;
 			scaleCache = scale;
-			backgroundTransCache = backgroundTrans;
 			filledCache = filled;
 			outlinedCache = outlined;
 			fillColorCache = fillColor;
@@ -420,6 +415,7 @@ public class TextModel extends AbstractShapeModel implements TextEntity {
 				backgroundRect.add(new Vec4d(-0.5d,  0.5d, -zcoord, 1.0d ));
 				backgroundRect.add(new Vec4d(-0.5d, -0.5d, -zcoord, 1.0d ));
 				backgroundRect.add(new Vec4d( 0.5d, -0.5d, -zcoord, 1.0d ));
+				Transform backgroundTrans = labelObservee.getGlobalTrans();
 				if (filled) {
 					cachedProxies.add(new PolygonProxy(backgroundRect, backgroundTrans, scale,
 							fillColor, false, 1, vi, labelObservee.getEntityNumber()));
