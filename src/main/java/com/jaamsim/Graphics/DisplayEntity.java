@@ -635,6 +635,23 @@ public class DisplayEntity extends Entity {
 	}
 
 	/**
+	 * Returns the local coordinates corresponding to a specified alignment in the entity's
+	 * internal coordinate system.
+	 * @param a - specified alignment
+	 * @return local position
+	 */
+	public Vec3d getPositionForAlignment(Vec3d a) {
+		Vec3d temp = new Vec3d(a);
+		synchronized (position) {
+			temp.sub3(align);
+			temp.mul3(size);
+			calculateEulerRotation(temp, orient);
+			temp.add3(position);
+		}
+		return temp;
+	}
+
+	/**
 	 * Returns the global coordinates for the given position in the entity's internal coordinate
 	 * system, relative to its centre.
 	 * @param pos - position in internal coordinates

@@ -2136,7 +2136,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 					return;
 				TextBasics textEnt = (TextBasics) selectedEntity;
 				Vec3d align = textEnt.getAlignment();
-				double prevAlign = align.x;
 				align.x = alignLeft.isSelected() ? -0.5d : align.x;
 				align.x = alignCentre.isSelected() ? 0.0d : align.x;
 				align.x = alignRight.isSelected() ? 0.5d : align.x;
@@ -2144,9 +2143,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 					return;
 				KeywordIndex kw = sim.formatVec3dInput("Alignment", align, DimensionlessUnit.class);
 
-				Vec3d pos = textEnt.getPosition();
-				Vec3d size = textEnt.getSize();
-				pos.x += (align.x - prevAlign) * size.x;
+				Vec3d pos = textEnt.getPositionForAlignment(align);
 				KeywordIndex posKw = sim.formatVec3dInput("Position", pos, DistanceUnit.class);
 
 				InputAgent.storeAndExecute(new KeywordCommand(textEnt, kw, posKw));
