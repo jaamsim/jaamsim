@@ -2213,7 +2213,9 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 					Text t = (Text) textEnt;
 					int style = (bold.isSelected() ? Font.BOLD : 0) + (italic.isSelected() ? Font.ITALIC : 0);
 					Vec3d size = t.getAutoSize(t.getFontName(), style, t.getTextHeight());
-					kwList.add( getJaamSimModel().formatVec3dInput("Size", size, DistanceUnit.class) );
+					if (Double.isFinite(size.x) && Double.isFinite(size.y)) {
+						kwList.add( getJaamSimModel().formatVec3dInput("Size", size, DistanceUnit.class) );
+					}
 				}
 				KeywordIndex[] kws = new KeywordIndex[kwList.size()];
 				kwList.toArray(kws);
@@ -2278,7 +2280,9 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 						if (textEnt instanceof Text && ((Text) textEnt).isAutoSize()) {
 							Text t = (Text) textEnt;
 							Vec3d size = t.getAutoSize(str, t.getStyle(), t.getTextHeight());
-							kwList.add( getJaamSimModel().formatVec3dInput("Size", size, DistanceUnit.class) );
+							if (Double.isFinite(size.x) && Double.isFinite(size.y)) {
+								kwList.add( getJaamSimModel().formatVec3dInput("Size", size, DistanceUnit.class) );
+							}
 						}
 						KeywordIndex[] kws = new KeywordIndex[kwList.size()];
 						kwList.toArray(kws);
@@ -2359,7 +2363,9 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				if (textEnt instanceof Text && ((Text) textEnt).isAutoSize()) {
 					Text t = (Text) textEnt;
 					Vec3d size = t.getAutoSize(t.getFontName(), t.getStyle(), height);
-					kwList.add( getJaamSimModel().formatVec3dInput("Size", size, DistanceUnit.class) );
+					if (Double.isFinite(size.x) && Double.isFinite(size.y)) {
+						kwList.add( getJaamSimModel().formatVec3dInput("Size", size, DistanceUnit.class) );
+					}
 				}
 				KeywordIndex[] kws = new KeywordIndex[kwList.size()];
 				kwList.toArray(kws);
@@ -3858,7 +3864,9 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				Text t = (Text) textEnt;
 				double textHeight = Input.parseDoubles(getJaamSimModel(), kwList.get(0), 0.0d, Double.POSITIVE_INFINITY, DistanceUnit.class).get(0);
 				Vec3d size = t.getAutoSize(t.getFontName(), t.getStyle(), textHeight);
-				kwList.add( getJaamSimModel().formatVec3dInput("Size", size, DistanceUnit.class) );
+				if (Double.isFinite(size.x) && Double.isFinite(size.y)) {
+					kwList.add( getJaamSimModel().formatVec3dInput("Size", size, DistanceUnit.class) );
+				}
 			}
 			KeywordIndex[] kws = new KeywordIndex[kwList.size()];
 			kwList.toArray(kws);
