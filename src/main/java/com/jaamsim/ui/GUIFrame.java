@@ -123,6 +123,7 @@ import com.jaamsim.Graphics.LineEntity;
 import com.jaamsim.Graphics.OverlayEntity;
 import com.jaamsim.Graphics.OverlayText;
 import com.jaamsim.Graphics.Region;
+import com.jaamsim.Graphics.Text;
 import com.jaamsim.Graphics.TextBasics;
 import com.jaamsim.Graphics.TextEntity;
 import com.jaamsim.Graphics.View;
@@ -2206,8 +2207,17 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				if (italic.isSelected())
 					stylesList.add("ITALIC");
 				String[] styles = stylesList.toArray(new String[stylesList.size()]);
-				KeywordIndex kw = InputAgent.formatArgs("FontStyle", styles);
-				InputAgent.storeAndExecute(new KeywordCommand((Entity)textEnt, kw));
+				ArrayList<KeywordIndex> kwList = new ArrayList<>(2);
+				kwList.add( InputAgent.formatArgs("FontStyle", styles) );
+				if (textEnt instanceof Text && ((Text) textEnt).isAutoSize()) {
+					Text t = (Text) textEnt;
+					int style = (bold.isSelected() ? Font.BOLD : 0) + (italic.isSelected() ? Font.ITALIC : 0);
+					Vec3d size = t.getAutoSize(t.getFontName(), style, t.getTextHeight());
+					kwList.add( getJaamSimModel().formatVec3dInput("Size", size, DistanceUnit.class) );
+				}
+				KeywordIndex[] kws = new KeywordIndex[kwList.size()];
+				kwList.toArray(kws);
+				InputAgent.storeAndExecute(new KeywordCommand(selectedEntity, kws));
 				controlStartResume.requestFocusInWindow();
 			}
 		};
@@ -2263,8 +2273,16 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 					public void setValue(String str) {
 						font.setText(str);
 						String name = Parser.addQuotesIfNeeded(str);
-						KeywordIndex kw = InputAgent.formatInput("FontName", name);
-						InputAgent.storeAndExecute(new KeywordCommand(selectedEntity, kw));
+						ArrayList<KeywordIndex> kwList = new ArrayList<>(2);
+						kwList.add( InputAgent.formatInput("FontName", name) );
+						if (textEnt instanceof Text && ((Text) textEnt).isAutoSize()) {
+							Text t = (Text) textEnt;
+							Vec3d size = t.getAutoSize(str, t.getStyle(), t.getTextHeight());
+							kwList.add( getJaamSimModel().formatVec3dInput("Size", size, DistanceUnit.class) );
+						}
+						KeywordIndex[] kws = new KeywordIndex[kwList.size()];
+						kwList.toArray(kws);
+						InputAgent.storeAndExecute(new KeywordCommand(selectedEntity, kws));
 						controlStartResume.requestFocusInWindow();
 					}
 
@@ -2336,8 +2354,16 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 					format = "%.0f";
 				String str = String.format(format, height);
 				textHeight.setText(str);
-				KeywordIndex kw = InputAgent.formatInput("TextHeight", str);
-				InputAgent.storeAndExecute(new KeywordCommand((Entity)textEnt, kw));
+				ArrayList<KeywordIndex> kwList = new ArrayList<>(2);
+				kwList.add( InputAgent.formatInput("TextHeight", str) );
+				if (textEnt instanceof Text && ((Text) textEnt).isAutoSize()) {
+					Text t = (Text) textEnt;
+					Vec3d size = t.getAutoSize(t.getFontName(), t.getStyle(), height);
+					kwList.add( getJaamSimModel().formatVec3dInput("Size", size, DistanceUnit.class) );
+				}
+				KeywordIndex[] kws = new KeywordIndex[kwList.size()];
+				kwList.toArray(kws);
+				InputAgent.storeAndExecute(new KeywordCommand(selectedEntity, kws));
 				controlStartResume.requestFocusInWindow();
 			}
 		};
@@ -3826,8 +3852,17 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			return;
 
 		try {
-			KeywordIndex kw = InputAgent.formatInput("TextHeight", str);
-			InputAgent.storeAndExecute(new KeywordCommand((Entity)textEnt, kw));
+			ArrayList<KeywordIndex> kwList = new ArrayList<>(2);
+			kwList.add( InputAgent.formatInput("TextHeight", str) );
+			if (textEnt instanceof Text && ((Text) textEnt).isAutoSize()) {
+				Text t = (Text) textEnt;
+				double textHeight = Input.parseDoubles(getJaamSimModel(), kwList.get(0), 0.0d, Double.POSITIVE_INFINITY, DistanceUnit.class).get(0);
+				Vec3d size = t.getAutoSize(t.getFontName(), t.getStyle(), textHeight);
+				kwList.add( getJaamSimModel().formatVec3dInput("Size", size, DistanceUnit.class) );
+			}
+			KeywordIndex[] kws = new KeywordIndex[kwList.size()];
+			kwList.toArray(kws);
+			InputAgent.storeAndExecute(new KeywordCommand(selectedEntity, kws));
 		}
 		catch (InputErrorException e) {
 			textHeight.setText(textEnt.getTextHeightString());
