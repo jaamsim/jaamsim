@@ -1720,6 +1720,8 @@ public class RenderManager implements DragSourceListener {
 			// Use the entity collision point for dragging instead of the handle collision point
 			dragCollisionPoint = pickRay.getPointAtDist(entityDist);
 			dragHandleID = MOVE_PICK_ID;
+			if (selectedEntity.usePointsInput())
+				dragHandleID = LINEDRAG_PICK_ID;
 			return true;
 		}
 		if (mouseHandleDist != Double.POSITIVE_INFINITY) {
