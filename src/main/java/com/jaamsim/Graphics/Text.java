@@ -17,6 +17,8 @@
  */
 package com.jaamsim.Graphics;
 
+import java.util.ArrayList;
+
 import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.StringProviders.StringProvConstant;
 import com.jaamsim.StringProviders.StringProvInput;
@@ -29,7 +31,9 @@ import com.jaamsim.input.Keyword;
 import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.StringInput;
 import com.jaamsim.input.UnitTypeInput;
+import com.jaamsim.math.Vec3d;
 import com.jaamsim.units.DimensionlessUnit;
+import com.jaamsim.units.DistanceUnit;
 import com.jaamsim.units.Unit;
 
 /**
@@ -134,14 +138,24 @@ public class Text extends TextBasics {
 
 		// Set the displayed text to the entity's name
 		InputAgent.applyArgs(this, "Format", this.getName());
+
+		// Set the size to match the text
+		resizeForText();
 	}
 
 	@Override
 	public void acceptEdits() {
 		super.acceptEdits();
-		KeywordIndex kw = InputAgent.formatArgs("Format", getText());
+		ArrayList<KeywordIndex> kwList = new ArrayList<>(2);
+		kwList.add( InputAgent.formatArgs("Format", getText()) );
+		if (isAutoSize()) {
+			Vec3d size = getAutoSize(getText(), getStyle(), getTextHeight());
+			kwList.add( getJaamSimModel().formatVec3dInput("Size", size, DistanceUnit.class) );
+		}
+		KeywordIndex[] kws = new KeywordIndex[kwList.size()];
+		kwList.toArray(kws);
 		try {
-			InputAgent.storeAndExecute(new KeywordCommand(this, kw));
+			InputAgent.storeAndExecute(new KeywordCommand(this, kws));
 		}
 		catch (Exception e) {
 			GUIListener gui = getJaamSimModel().getGUIListener();
