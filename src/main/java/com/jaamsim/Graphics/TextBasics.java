@@ -275,19 +275,23 @@ public abstract class TextBasics extends AbstractShape implements TextEntity, Ed
 		return pos;
 	}
 
-	public Vec3d getTextSize() {
-		double height = getTextHeight();
-		TessFontKey fontKey = getTessFontKey();
-		return RenderManager.inst().getRenderedStringSize(fontKey, height, getText());
+	public Vec3d getTextSize(String fontName, int style, double textHeight) {
+		TessFontKey fontKey = new TessFontKey(fontName, style);
+		return RenderManager.inst().getRenderedStringSize(fontKey, textHeight, getText());
+	}
+
+	public Vec3d getAutoSize(String fontName, int style, double textHeight) {
+		Vec3d ret = getTextSize(fontName, style, textHeight);
+		ret.x += textHeight;
+		ret.y += textHeight;
+		ret.z = 1.0d;
+		return ret;
 	}
 
 	public void resizeForText() {
 		if (!RenderManager.isGood())
 			return;
-		Vec3d textSize = getTextSize();
-		double length = textSize.x + textSize.y;
-		double height = 2.0 * textSize.y;
-		Vec3d newSize = new Vec3d(length, height, 1.0d);
+		Vec3d newSize = getAutoSize(getFontName(), getStyle(), getTextHeight());
 		InputAgent.apply(this, getJaamSimModel().formatVec3dInput("Size", newSize, DistanceUnit.class));
 	}
 
