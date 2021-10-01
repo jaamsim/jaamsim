@@ -285,6 +285,8 @@ public abstract class TextBasics extends AbstractShape implements TextEntity, Ed
 		ret.x += textHeight;
 		ret.y += textHeight;
 		ret.z = 1.0d;
+		if (getSimulation().isSnapToGrid())
+			ret = getSimulation().getSnapGridPosition(ret);
 		return ret;
 	}
 
