@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2012 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018-2020 JaamSim Software Inc.
+ * Copyright (C) 2018-2021 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -238,6 +238,7 @@ public class Renderer implements GLAnimatorControl {
 
 			// Notify the main thread we're done
 			initialized.set(true);
+			LogBox.logLine("Renderer initialized");
 
 		} catch (Throwable e) {
 
@@ -275,7 +276,13 @@ public class Renderer implements GLAnimatorControl {
 			}
 		});
 
+		// Start the render loop
+		boolean first = true;
 		while (!shutdown.get()) {
+			if (first) {
+				LogBox.logLine("Renderer loop started");
+				first = false;
+			}
 			try {
 
 				// If a fatal error was encountered, clean up the renderer
@@ -569,10 +576,13 @@ public class Renderer implements GLAnimatorControl {
 		window.getAWTFrameRef().setType(Type.UTILITY);
 		window.getAWTFrameRef().setAutoRequestFocus(false);
 
+		LogBox.format("View window created: %s", message.name);
+
 		EventQueue.invokeLater(new Runnable() {
 			@Override
 			public void run() {
 				window.getAWTFrameRef().setVisible(true);
+				LogBox.format("View window displayed: %s", message.name);
 			}
 		});
 

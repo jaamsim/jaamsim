@@ -290,6 +290,8 @@ public class RenderManager implements DragSourceListener {
 		windowControls.put(windowID, control);
 		windowToViewMap.put(windowID, view);
 
+		LogBox.format("View window requested: %s", view.getName());
+
 		GUIFrame.updateUI();
 	}
 
@@ -370,6 +372,10 @@ public class RenderManager implements DragSourceListener {
 					} catch(InterruptedException e) {}
 					continue;
 				}
+
+				// Renderer has been initialized successfully
+				if (cachedScene == null)
+					LogBox.logLine("RenderManager loop started");
 
 				JaamSimModel simModel = GUIFrame.getJaamSimModel();
 				double renderTime = simModel.getEventManager().ticksToSeconds(simTick);
