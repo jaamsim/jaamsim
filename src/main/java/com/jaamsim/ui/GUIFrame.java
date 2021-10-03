@@ -5381,10 +5381,14 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	 * @param msg - error message
 	 */
 	public static void invokeErrorDialog(String title, String msg) {
+		invokeErrorDialog(title, "", msg, "");
+	}
+
+	public static void invokeErrorDialog(String title, String pre, String message, String post) {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				GUIFrame.showErrorDialog(title, msg);
+				GUIFrame.showErrorDialog(title, pre, message, post);
 			}
 		});
 	}
