@@ -362,6 +362,13 @@ public class RenderManager implements DragSourceListener {
 					windowControls.clear();
 					previewCache.clear();
 
+					GUIFrame.invokeErrorDialog("Graphics Error",
+							"The 3D graphics system has encountered a fatal error:",
+							renderer.getErrorString(),
+							"In most cases, this type of error can be fixed by updating the "
+							+ "computer's graphics drivers.\n"
+							+ "See the User Manual for more information.");
+
 					break;
 				}
 
