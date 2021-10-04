@@ -1175,7 +1175,7 @@ public abstract class Input<T> {
 	static {
 		daysInMonth = new int[12];
 		daysInMonth[0] = 31;
-		daysInMonth[1] = 28;
+		daysInMonth[1] = 29;
 		daysInMonth[2] = 31;
 		daysInMonth[3] = 30;
 		daysInMonth[4] = 31;
