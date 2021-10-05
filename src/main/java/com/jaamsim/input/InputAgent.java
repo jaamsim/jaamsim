@@ -41,7 +41,6 @@ import java.util.Map.Entry;
 
 import com.jaamsim.Commands.Command;
 import com.jaamsim.Graphics.EntityLabel;
-import com.jaamsim.StringProviders.StringProvider;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.basicsim.FileEntity;
@@ -1193,41 +1192,6 @@ public class InputAgent {
 			if (first)
 				first = false;
 			else
-				sb.append("\t");
-			sb.append(str);
-			if (simulation.getPrintConfidenceIntervals())
-				sb.append("\t");
-		}
-		outStream.println(sb.toString());
-	}
-
-	/**
-	 * Prints selected outputs for the simulation run to the specified print stream.
-	 * @param simModel - model whose outputs are to be printed
-	 * @param outStream - print stream for the outputs
-	 * @param simTime - simulation time at which the outputs are printed.
-	 */
-	public static void printRunOutputs(JaamSimModel simModel, PrintStream outStream, double simTime) {
-		Simulation simulation = simModel.getSimulation();
-		StringBuilder sb = new StringBuilder();
-
-		// Scenario and replication columns
-		if (simulation.getPrintRunLabels()) {
-			sb.append(simModel.getScenarioNumber()).append("\t");
-			if (simulation.getPrintReplications())
-				sb.append(simModel.getReplicationNumber()).append("\t");
-		}
-
-		// Expression values
-		for (int i = 0; i < simulation.getRunOutputList().getListSize(); i++) {
-			StringProvider samp = simulation.getRunOutputList().getValue().get(i);
-			String str;
-			try {
-				str = samp.getNextString(simTime);
-			} catch (Exception e) {
-				str = e.getMessage();
-			}
-			if (i > 0)
 				sb.append("\t");
 			sb.append(str);
 			if (simulation.getPrintConfidenceIntervals())
