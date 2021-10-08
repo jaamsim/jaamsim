@@ -892,6 +892,14 @@ public class Simulation extends Entity {
 		return runOutputList;
 	}
 
+	public ArrayList<String> getRunOutputHeaders() {
+		ArrayList<String> ret = new ArrayList<>(runOutputList.getListSize());
+		for (int i = 0; i < runOutputList.getListSize(); i++) {
+			ret.add(runOutputList.getValue().get(i).toString());
+		}
+		return ret;
+	}
+
 	public int getMaxEntitiesToDisplay() {
 		return maxEntitiesToDisplay.getValue();
 	}

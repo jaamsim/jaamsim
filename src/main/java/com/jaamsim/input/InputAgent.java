@@ -1183,12 +1183,8 @@ public class InputAgent {
 		}
 
 		// Write the header line for the expressions
-		ArrayList<String> toks = new ArrayList<>();
-		simulation.getRunOutputList().getValueTokens(toks);
 		boolean first = true;
-		for (String str : toks) {
-			if (str.equals("{") || str.equals("}"))
-				continue;
+		for (String str : simulation.getRunOutputHeaders()) {
 			if (first)
 				first = false;
 			else
