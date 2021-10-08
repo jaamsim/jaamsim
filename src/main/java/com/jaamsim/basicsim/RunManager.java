@@ -46,7 +46,7 @@ public class RunManager implements RunListener {
 	public void start(double pauseTime) {
 		Simulation simulation = simModel.getSimulation();
 		scenarioNumber = simulation.getStartingScenarioNumber();
-		int numOuts = simulation.getRunOutputList().getListSize();
+		int numOuts = simulation.getRunOutputListSize();
 		int numberOfReplications = simulation.getNumberOfReplications();
 		presentScenario = new Scenario(numOuts, scenarioNumber, numberOfReplications, this);
 		presentScenario.startNextRun(simModel, pauseTime);
@@ -93,7 +93,7 @@ public class RunManager implements RunListener {
 		if (presentScenario.isFinished()) {
 
 			// Print the results
-			int numOuts = simulation.getRunOutputList().getListSize();
+			int numOuts = simulation.getRunOutputListSize();
 			if (numOuts > 0) {
 				outStream = getOutStream();
 				if (outStream != null) {
