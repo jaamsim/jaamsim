@@ -888,10 +888,6 @@ public class Simulation extends Entity {
 		return startDate.getValue();
 	}
 
-	public StringProvListInput getRunOutputList() {
-		return runOutputList;
-	}
-
 	public int getRunOutputListSize() {
 		return runOutputList.getListSize();
 	}
