@@ -19,7 +19,6 @@ package com.jaamsim.basicsim;
 import java.util.ArrayList;
 
 import com.jaamsim.Statistics.SampleStatistics;
-import com.jaamsim.StringProviders.StringProvider;
 
 /**
  * A set of simulation runs that are replications of a given model.
@@ -68,14 +67,12 @@ public class Scenario implements RunListener {
 		return runsCompleted;
 	}
 
-	public void recordRun(JaamSimModel simModel) {
-		ArrayList<StringProvider> spList = simModel.getSimulation().getRunOutputList().getValue();
-		if (spList.size() != runStatistics.size())
+	public void recordRun(SimRun run) {
+		if (run.getRunOutputValues().size() != runStatistics.size())
 			throw new ErrorException("List sizes do not match");
 
-		double simTime = simModel.getSimTime();
-		for (int i = 0; i < runStatistics.size(); i++) {
-			double val = spList.get(i).getNextValue(simTime);
+		for (int i = 0; i < run.getRunOutputValues().size(); i++) {
+			double val = run.getRunOutputValues().get(i);
 			if (Double.isNaN(val))
 				continue;
 			runStatistics.get(i).addValue(val);
@@ -117,7 +114,7 @@ public class Scenario implements RunListener {
 
 	@Override
 	public synchronized void runEnded(SimRun run) {
-		recordRun(run.getJaamSimModel());
+		recordRun(run);
 		runsInProgress.remove(run);
 		runsCompleted.add(run);
 		listener.runEnded(run);
