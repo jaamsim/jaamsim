@@ -904,6 +904,22 @@ public class Simulation extends Entity {
 		return ret;
 	}
 
+	public ArrayList<String> getRunOutputStrings(double simTime) {
+		ArrayList<String> ret = new ArrayList<>(runOutputList.getListSize());
+		for (int i = 0; i < runOutputList.getListSize(); i++) {
+			ret.add(runOutputList.getValue().get(i).getNextString(simTime));
+		}
+		return ret;
+	}
+
+	public ArrayList<Double> getRunOutputValues(double simTime) {
+		ArrayList<Double> ret = new ArrayList<>(runOutputList.getListSize());
+		for (int i = 0; i < runOutputList.getListSize(); i++) {
+			ret.add(runOutputList.getValue().get(i).getNextValue(simTime));
+		}
+		return ret;
+	}
+
 	public int getMaxEntitiesToDisplay() {
 		return maxEntitiesToDisplay.getValue();
 	}

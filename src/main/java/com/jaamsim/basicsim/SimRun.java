@@ -18,8 +18,6 @@ package com.jaamsim.basicsim;
 
 import java.util.ArrayList;
 
-import com.jaamsim.StringProviders.StringProvider;
-
 /**
  * An individual run for a simulation model.
  * @author Harry King
@@ -31,8 +29,8 @@ public class SimRun implements RunListener {
 	private final int replicationNumber;  // replication number
 	private JaamSimModel simModel;        // simulation model to be executed
 	private final RunListener listener;   // listens for the end of the run
-	private final ArrayList<Double> runOutputValues;
-	private final ArrayList<String> runOutputStrings;
+	private ArrayList<Double> runOutputValues;
+	private ArrayList<String> runOutputStrings;
 
 	/**
 	 * Constructs a SimRun object for the given scenario and replications numbers.
@@ -92,11 +90,8 @@ public class SimRun implements RunListener {
 
 		// Save the RunOutputList values for the run
 		double simTime = simModel.getSimTime();
-		ArrayList<StringProvider> runOutputList = simModel.getSimulation().getRunOutputList().getValue();
-		for (int i = 0; i < runOutputList.size(); i++) {
-			runOutputValues.add(runOutputList.get(i).getNextValue(simTime));
-			runOutputStrings.add(runOutputList.get(i).getNextString(simTime));
-		}
+		runOutputValues = simModel.getSimulation().getRunOutputValues(simTime);
+		runOutputStrings = simModel.getSimulation().getRunOutputStrings(simTime);
 
 		// Notify the listener
 		listener.runEnded(this);
