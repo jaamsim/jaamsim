@@ -52,10 +52,8 @@ public class RunManager implements RunListener {
 	public synchronized void start(double pauseTime) {
 		Simulation simulation = simModel.getSimulation();
 		int numOuts = simulation.getRunOutputListSize();
-		int numberOfScenarios = simulation.getEndingScenarioNumber()
-				- simulation.getStartingScenarioNumber() + 1;
 		int numberOfReplications = simulation.getNumberOfReplications();
-		int numberOfRuns = numberOfScenarios * numberOfReplications;
+		int numberOfRuns = simulation.getNumberOfRuns();
 		int numberOfThreads = simulation.getNumberOfThreads();
 
 		// Start a new simulation run on each thread

@@ -662,7 +662,7 @@ public class JaamSimModel {
 	}
 
 	public boolean isMultipleRuns() {
-		return isMultipleScenarios() || getSimulation().getNumberOfReplications() > 1;
+		return getSimulation().getNumberOfRuns() > 1;
 	}
 
 	public boolean isFirstRun() {
@@ -671,10 +671,6 @@ public class JaamSimModel {
 
 	public boolean isLastRun() {
 		return isLastScenario() && replicationNumber == getSimulation().getNumberOfReplications();
-	}
-
-	public boolean isMultipleScenarios() {
-		return getSimulation().getEndingScenarioNumber() > getSimulation().getStartingScenarioNumber();
 	}
 
 	public boolean isFirstScenario() {

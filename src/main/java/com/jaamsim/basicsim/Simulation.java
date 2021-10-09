@@ -1242,6 +1242,14 @@ public class Simulation extends Entity {
 		return (int) endingScenarioNumber.getValue().getNextSample(0.0d);
 	}
 
+	public int getNumberOfScenarios() {
+		return getEndingScenarioNumber() - getStartingScenarioNumber() + 1;
+	}
+
+	public int getNumberOfRuns() {
+		return getNumberOfScenarios() * getNumberOfReplications();
+	}
+
 	public IntegerVector getScenarioIndexDefinitionList() {
 		return scenarioIndexDefinitionList.getValue();
 	}
