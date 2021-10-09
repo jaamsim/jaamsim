@@ -1209,7 +1209,14 @@ public class InputAgent {
 
 		// Print the outputs for each replication
 		if (reps || replications == 1) {
-			for (SimRun run : scene.getRunsCompleted()) {
+			ArrayList<SimRun> runList = scene.getRunsCompleted();
+			Collections.sort(runList, new Comparator<SimRun>() {
+				@Override
+				public int compare(SimRun run1, SimRun run2) {
+					return Integer.compare(run1.getReplicationNumber(), run2.getReplicationNumber());
+				}
+			});
+			for (SimRun run : runList) {
 				StringBuilder sb = new StringBuilder();
 				if (labels) {
 					sb.append(scene.getScenarioNumber()).append("\t");
