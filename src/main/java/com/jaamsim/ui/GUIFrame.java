@@ -3093,6 +3093,9 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				confirmed = GUIFrame.showSaveChangesDialog(this);
 			}
 			if (confirmed) {
+				if (sim.getSimulation().getNumberOfRuns() > 1) {
+					RunProgressBox.getInstance().setVisible(true);
+				}
 				runManager.start(pauseTime);
 			}
 			return confirmed;
