@@ -46,7 +46,7 @@ public class RunProgressBox extends JFrame {
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
 		JPanel barPanel = new JPanel();
-		barPanel.setLayout( new GridLayout(0, 2) );
+		barPanel.setLayout( new GridLayout(0, 2, 5, 5) );
 		barPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
 
 		Simulation simulation = GUIFrame.getJaamSimModel().getSimulation();
