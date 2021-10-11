@@ -98,18 +98,16 @@ public class RunManager implements RunListener {
 	}
 
 	public synchronized void reset() {
-		if (outStream != null) {
-			outStream.close();
-			outStream = null;
-		}
+		simModelList.remove(simModel);
+		close();
+		simModelList.clear();
+		scenarioList.clear();
+
 		presentScenario = null;
 		scenarioNumber = simModel.getSimulation().getStartingScenarioNumber();
 		simModel.setScenarioNumber(scenarioNumber);
 		simModel.setReplicationNumber(1);
 		simModel.reset();
-
-		simModelList.clear();
-		scenarioList.clear();
 	}
 
 	public synchronized void close() {
