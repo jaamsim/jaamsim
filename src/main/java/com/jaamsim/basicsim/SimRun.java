@@ -105,4 +105,9 @@ public class SimRun implements RunListener {
 		return runOutputStrings;
 	}
 
+	public double getProgress() {
+		double simTime = simModel.getSimTime();
+		return simModel.getSimulation().getProgress(simTime);
+	}
+
 }

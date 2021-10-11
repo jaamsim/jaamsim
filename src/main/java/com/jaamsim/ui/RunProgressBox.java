@@ -35,6 +35,7 @@ public class RunProgressBox extends JFrame {
 	private static RunProgressBox myInstance;
 	private final ArrayList<JLabel> labelList;
 	private final ArrayList<JProgressBar> progressBarList;
+	private final JProgressBar overallBar;
 	private static String LABEL_FORMAT = "THREAD %s:  scenario %s, replication %s";
 
 	public RunProgressBox() {
@@ -78,6 +79,20 @@ public class RunProgressBox extends JFrame {
 		getContentPane().setLayout( new BorderLayout() );
 		getContentPane().add(barPanel, BorderLayout.CENTER);
 
+		// Overall progress bar
+		JPanel overallBarPanel = new JPanel();
+		overallBarPanel.setLayout( new GridLayout(0, 2, 5, 5) );
+		overallBarPanel.setBorder(new EmptyBorder(0, 10, 10, 10));
+		overallBarPanel.add(new JLabel("OVERALL PROGRESS"));
+
+		overallBar = new JProgressBar(0, 100);
+		overallBar.setPreferredSize( new Dimension(120, 20) );
+		overallBar.setValue( 0 );
+		overallBar.setStringPainted( true );
+		overallBarPanel.add(overallBar);
+
+		getContentPane().add(overallBarPanel, BorderLayout.SOUTH);
+
 		pack();
 		setLocationRelativeTo(null);
 	}
@@ -119,6 +134,8 @@ public class RunProgressBox extends JFrame {
 			int progress = (int) Math.round( simulation.getProgress(simTime) * 100.0d );
 			progressBarList.get(i).setValue(progress);
 		}
+		int progress = (int) Math.round( GUIFrame.getRunManager().getProgress() * 100.0d );
+		overallBar.setValue(progress);
 	}
 
 }
