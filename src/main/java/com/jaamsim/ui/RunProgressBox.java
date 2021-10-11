@@ -37,6 +37,7 @@ public class RunProgressBox extends JFrame {
 	private final ArrayList<JProgressBar> progressBarList;
 	private final JProgressBar overallBar;
 	private static String LABEL_FORMAT = "THREAD %s:  scenario %s, replication %s";
+	private static String LABEL_FORMAT_SHORT = "THREAD %s:";
 
 	public RunProgressBox() {
 		super("Run Progress");
@@ -121,7 +122,7 @@ public class RunProgressBox extends JFrame {
 		ArrayList<JaamSimModel> simModelList = GUIFrame.getRunManager().getSimModelList();
 		for (int i = 0; i < progressBarList.size(); i++) {
 			if (i >= simModelList.size()) {
-				labelList.get(i).setText(String.format(LABEL_FORMAT, i + 1, "-", "-"));
+				labelList.get(i).setText(String.format(LABEL_FORMAT_SHORT, i + 1));
 				progressBarList.get(i).setValue(0);
 				continue;
 			}
