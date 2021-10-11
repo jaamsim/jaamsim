@@ -2814,9 +2814,14 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 					GUIFrame.this.pauseSimulation();
 				}
 				controlStartResume.requestFocusInWindow();
+				if (RunProgressBox.hasInstance())
+					RunProgressBox.getInstance().setVisible(false);
 				boolean confirmed = GUIFrame.showConfirmStopDialog();
-				if (!confirmed)
+				if (!confirmed) {
+					if (RunProgressBox.hasInstance())
+						RunProgressBox.getInstance().setVisible(true);
 					return;
+				}
 
 				GUIFrame.this.stopSimulation();
 				initSpeedUp(0.0d);
