@@ -3130,6 +3130,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		    sim.getSimState() == JaamSimModel.SIM_STATE_PAUSED ||
 		    sim.getSimState() == JaamSimModel.SIM_STATE_ENDED) {
 			runManager.reset();
+			if (RunProgressBox.hasInstance())
+				RunProgressBox.getInstance().dispose();
 			FrameBox.stop();
 			this.updateForSimulationState(JaamSimModel.SIM_STATE_CONFIGURED);
 		}
