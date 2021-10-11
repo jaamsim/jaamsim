@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InputErrorException;
+import com.jaamsim.ui.RunProgressBox;
 
 /**
  * Controls the execution of one or more runs of a given simulation model.
@@ -127,6 +128,8 @@ public class RunManager implements RunListener {
 	@Override
 	public synchronized void runEnded(SimRun run) {
 		Simulation simulation = simModel.getSimulation();
+		if (RunProgressBox.hasInstance())
+			RunProgressBox.getInstance().update();
 
 		// Print the output report
 		if (simulation.getPrintReport())
