@@ -3105,12 +3105,22 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				if (sim.getSimulation().getNumberOfRuns() > 1) {
 					RunProgressBox.getInstance().setVisible(true);
 				}
-				runManager.start(pauseTime);
+				new Thread(new Runnable() {
+					@Override
+					public void run() {
+						runManager.start(pauseTime);
+					}
+				}).start();
 			}
 			return confirmed;
 		}
 		else if (sim.getSimState() == JaamSimModel.SIM_STATE_PAUSED) {
-			runManager.resume(pauseTime);
+			new Thread(new Runnable() {
+				@Override
+				public void run() {
+					runManager.resume(pauseTime);
+				}
+			}).start();
 			return true;
 		}
 		else
@@ -3122,7 +3132,12 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	 */
 	private void pauseSimulation() {
 		if (sim.getSimState() == JaamSimModel.SIM_STATE_RUNNING)
-			runManager.pause();
+			new Thread(new Runnable() {
+				@Override
+				public void run() {
+					runManager.pause();
+				}
+			}).start();
 		else
 			throw new ErrorException( "Invalid Simulation State for pause" );
 	}
@@ -3134,7 +3149,12 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		if (sim.getSimState() == JaamSimModel.SIM_STATE_RUNNING ||
 		    sim.getSimState() == JaamSimModel.SIM_STATE_PAUSED ||
 		    sim.getSimState() == JaamSimModel.SIM_STATE_ENDED) {
-			runManager.reset();
+			new Thread(new Runnable() {
+				@Override
+				public void run() {
+					runManager.reset();
+				}
+			}).start();
 			if (RunProgressBox.hasInstance())
 				RunProgressBox.getInstance().dispose();
 			FrameBox.stop();
