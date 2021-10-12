@@ -1219,7 +1219,7 @@ public class Simulation extends Entity {
 	}
 
 	public int getNumberOfThreads() {
-		return numberOfThreads.getValue();
+		return Math.min(numberOfThreads.getValue(), getNumberOfRuns());
 	}
 
 	public boolean getPrintReplications() {

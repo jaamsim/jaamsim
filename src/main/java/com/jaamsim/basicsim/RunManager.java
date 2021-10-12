@@ -53,14 +53,13 @@ public class RunManager implements RunListener {
 		Simulation simulation = simModel.getSimulation();
 		int numOuts = simulation.getRunOutputListSize();
 		int numberOfReplications = simulation.getNumberOfReplications();
-		int numberOfRuns = simulation.getNumberOfRuns();
 		int numberOfThreads = simulation.getNumberOfThreads();
 
 		// Start a new simulation run on each thread
 		simModelList.clear();
 		scenarioList.clear();
 		scenarioNumber = simulation.getStartingScenarioNumber();
-		while (simModelList.size() < Math.min(numberOfThreads, numberOfRuns)) {
+		while (simModelList.size() < numberOfThreads) {
 
 			// Create a JaamSimModel for each thread
 			JaamSimModel sm = simModel;
