@@ -2997,15 +2997,12 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		clockDisplay.setText(String.format("%,.2f  %s", simTime/factor, unit));
 
 		// Set the run progress bar display
-		long cTime = System.currentTimeMillis();
 		Simulation simulation = sim.getSimulation();
 		if (simulation == null) {
 			setProgress(0);
 			return;
 		}
-		double duration = simulation.getRunDuration() + simulation.getInitializationTime();
-		double timeElapsed = simTime - simulation.getStartTime();
-		int progress = (int)(timeElapsed * 100.0d / duration);
+		int progress = (int) Math.round(simulation.getProgress(simTime) * 100.0d);
 		this.setProgress(progress);
 
 		// Do nothing further if the simulation is not executing events
@@ -3013,6 +3010,9 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			return;
 
 		// Set the speedup factor display
+		double duration = simulation.getRunDuration() + simulation.getInitializationTime();
+		double timeElapsed = simTime - simulation.getStartTime();
+		long cTime = System.currentTimeMillis();
 		if (cTime - lastSystemTime > 5000L || cTime - resumeSystemTime < 5000L) {
 			long elapsedMillis = cTime - lastSystemTime;
 			double elapsedSimTime = timeElapsed - lastSimTime;
