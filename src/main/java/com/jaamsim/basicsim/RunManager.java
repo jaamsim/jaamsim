@@ -49,6 +49,10 @@ public class RunManager implements RunListener {
 		return simModel;
 	}
 
+	public ArrayList<JaamSimModel> getSimModelList() {
+		return new ArrayList<>(simModelList);
+	}
+
 	public synchronized void start(double pauseTime) {
 		Simulation simulation = simModel.getSimulation();
 		int numOuts = simulation.getRunOutputListSize();

@@ -897,6 +897,16 @@ public class Simulation extends Entity {
 		return startDate.getValue();
 	}
 
+	/**
+	 * Returns the decimal fraction of the present run that has been completed for the specified
+	 * simulation time.
+	 * @param simTime - present simulation time
+	 * @return fraction completed
+	 */
+	public double getProgress(double simTime) {
+		return (simTime - getStartTime()) / (getRunDuration() + getInitializationTime());
+	}
+
 	public int getRunOutputListSize() {
 		return runOutputList.getListSize();
 	}

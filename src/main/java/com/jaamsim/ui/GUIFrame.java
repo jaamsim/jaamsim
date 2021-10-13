@@ -420,6 +420,10 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		return sim;
 	}
 
+	public static RunManager getRunManager() {
+		return runManager;
+	}
+
 	/**
 	 * Sets the model to be displayed by the user interface.
 	 * @param sm - simulation model to be displayed
@@ -4551,6 +4555,9 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			frame.setClock(callBackTime);
 			frame.updateControls(sim.getSimulation());
 			FrameBox.updateEntityValues(callBackTime);
+
+			if (RunProgressBox.hasInstance())
+				RunProgressBox.getInstance().update();
 		}
 	}
 
