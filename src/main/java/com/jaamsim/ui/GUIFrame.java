@@ -3038,12 +3038,15 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		if (lastValue == val)
 			return;
 
+		// Set the progress bar value
 		progressBar.setValue( val );
 		progressBar.repaint(25);
 		lastValue = val;
 
+		// Show the overall progress in JaamSim's title bar
 		if (sim.getSimState() >= JaamSimModel.SIM_STATE_CONFIGURED) {
-			setTitle(sim, val);
+			int overallProgress = (int) Math.round(runManager.getProgress() * 100.0d);
+			setTitle(sim, overallProgress);
 		}
 	}
 
