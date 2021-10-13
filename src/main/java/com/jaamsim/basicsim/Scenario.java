@@ -64,7 +64,9 @@ public class Scenario implements RunListener {
 	}
 
 	public ArrayList<SimRun> getRunsCompleted() {
-		return runsCompleted;
+		synchronized (this) {
+			return runsCompleted;
+		}
 	}
 
 	public void recordRun(SimRun run) {
@@ -95,28 +97,36 @@ public class Scenario implements RunListener {
 		return ret;
 	}
 
-	public synchronized boolean hasRunsToStart() {
-		return !runsToStart.isEmpty();
+	public boolean hasRunsToStart() {
+		synchronized (this) {
+			return !runsToStart.isEmpty();
+		}
 	}
 
-	public synchronized void startNextRun(JaamSimModel simModel, double pauseTime) {
-		if (runsToStart.isEmpty())
-			return;
-		SimRun run = runsToStart.remove(0);
-		runsInProgress.add(run);
-		run.setJaamSimModel(simModel);
-		run.start(pauseTime);
+	public void startNextRun(JaamSimModel simModel, double pauseTime) {
+		synchronized (this) {
+			if (runsToStart.isEmpty())
+				return;
+			SimRun run = runsToStart.remove(0);
+			runsInProgress.add(run);
+			run.setJaamSimModel(simModel);
+			run.start(pauseTime);
+		}
 	}
 
-	public synchronized boolean isFinished() {
-		return runsToStart.isEmpty() && runsInProgress.isEmpty();
+	public boolean isFinished() {
+		synchronized (this) {
+			return runsToStart.isEmpty() && runsInProgress.isEmpty();
+		}
 	}
 
 	@Override
-	public synchronized void runEnded(SimRun run) {
+	public void runEnded(SimRun run) {
 		recordRun(run);
-		runsInProgress.remove(run);
-		runsCompleted.add(run);
+		synchronized (this) {
+			runsInProgress.remove(run);
+			runsCompleted.add(run);
+		}
 		listener.runEnded(run);
 	}
 
