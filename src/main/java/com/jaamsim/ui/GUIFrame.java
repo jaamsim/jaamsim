@@ -1131,7 +1131,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		graphicsDebug.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				RenderManager.setDebugInfo(((JCheckBoxMenuItem)e.getSource()).getState());
+				RenderManager.setDebugInfo(graphicsDebug.getState());
 			}
 		});
 	}
@@ -1597,7 +1597,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				boolean bLock2D = (((JToggleButton)event.getSource()).isSelected());
+				boolean bLock2D = lockViewXYPlane.isSelected();
 
 				if (RenderManager.isGood()) {
 					View currentView = RenderManager.inst().getActiveView();
@@ -1802,7 +1802,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		showReferences.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				boolean bShow = (((JToggleButton)event.getSource()).isSelected());
+				boolean bShow = showReferences.isSelected();
 				KeywordIndex kw = InputAgent.formatBoolean("ShowReferences", bShow);
 				InputAgent.storeAndExecute(new KeywordCommand(sim.getSimulation(), kw));
 				setShowReferences(bShow);
@@ -1822,7 +1822,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		showLinks.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				boolean bShow = (((JToggleButton)event.getSource()).isSelected());
+				boolean bShow = showLinks.isSelected();
 				KeywordIndex kw = InputAgent.formatBoolean("ShowEntityFlow", bShow);
 				InputAgent.storeAndExecute(new KeywordCommand(sim.getSimulation(), kw));
 				setShowEntityFlow(bShow);
@@ -1842,7 +1842,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		createLinks.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				boolean bCreate = (((JToggleButton)event.getSource()).isSelected());
+				boolean bCreate = createLinks.isSelected();
 				if (RenderManager.isGood()) {
 					if (bCreate) {
 						FrameBox.setSelectedEntity(null, false);
@@ -1960,7 +1960,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			public void actionPerformed( ActionEvent event ) {
 				if (createLinks.isSelected())
 					createLinks.doClick();
-				boolean bool = (((JToggleButton)event.getSource()).isSelected());
+				boolean bool = reverseButton.isSelected();
 				if (RenderManager.isGood()) {
 					RenderManager.inst().setLinkDirection(!bool);
 					RenderManager.redraw();
@@ -2752,16 +2752,15 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				JToggleButton startResume = (JToggleButton)event.getSource();
-				startResume.setEnabled(false);
-				if(startResume.isSelected()) {
+				controlStartResume.setEnabled(false);
+				if (controlStartResume.isSelected()) {
 					boolean bool = GUIFrame.this.startSimulation();
 					if (bool) {
 						controlStartResume.setPressedIcon(pausePressedIcon);
 					}
 					else {
-						startResume.setSelected(false);
-						startResume.setEnabled(true);
+						controlStartResume.setSelected(false);
+						controlStartResume.setEnabled(true);
 					}
 				}
 				else {
@@ -2842,7 +2841,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				boolean bool = ((JToggleButton)event.getSource()).isSelected();
+				boolean bool = controlRealTime.isSelected();
 				KeywordIndex kw = InputAgent.formatBoolean("RealTime", bool);
 				InputAgent.storeAndExecute(new KeywordCommand(sim.getSimulation(), kw));
 				controlStartResume.requestFocusInWindow();
@@ -2872,7 +2871,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 			@Override
 			public void stateChanged( ChangeEvent e ) {
-				Double val = (Double)((JSpinner)e.getSource()).getValue();
+				Double val = (Double) spinner.getValue();
 				if (MathUtils.near(val, sim.getSimulation().getRealTimeFactor()))
 					return;
 				NumberFormat nf = NumberFormat.getNumberInstance(Locale.US);
