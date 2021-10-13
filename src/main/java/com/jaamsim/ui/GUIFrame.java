@@ -2987,7 +2987,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	/**
 	 * Sets the values for the simulation time, run progress, speedup factor,
 	 * and remaining run time in the Control Panel's status bar.
-	 *
 	 * @param simTime - the present simulation time in seconds.
 	 */
 	void setClock(double simTime) {
@@ -3033,7 +3032,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 	/**
 	 * Displays the given value on the Control Panel's progress bar.
-	 *
 	 * @param val - the percent of the run that has completed.
 	 */
 	public void setProgress( int val ) {
@@ -3051,7 +3049,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 	/**
 	 * Write the given value on the Control Panel's speed up factor box.
-	 *
 	 * @param val - the speed up factor to write.
 	 */
 	public void setSpeedUp( double val ) {
@@ -3068,7 +3065,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 	/**
 	 * Write the given value on the Control Panel's remaining run time box.
-	 *
 	 * @param val - the remaining run time in seconds.
 	 */
 	public void setRemaining( double val ) {
@@ -3174,7 +3170,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 	/**
 	 * Sets the state of the simulation run to the given state value.
-	 *
 	 * @param state - an index that designates the state of the simulation run.
 	 */
 	void updateForSimulationState(int state) {
@@ -4509,7 +4504,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		FrameBox.setSelectedEntity(simModel.getSimulation(), false);
 	}
 
-	/*
+	/**
 	 * this class is created so the next value will be value * 2 and the
 	 * previous value will be value / 2
 	 */
