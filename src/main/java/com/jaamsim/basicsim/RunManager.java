@@ -18,6 +18,7 @@ package com.jaamsim.basicsim;
 
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
+import java.util.ArrayList;
 
 import com.jaamsim.events.EventManager;
 import com.jaamsim.input.InputAgent;
@@ -35,82 +36,128 @@ public class RunManager implements RunListener {
 	private int scenarioNumber;    // labels each scenario when multiple scenarios are being made
 	private Scenario presentScenario;
 
+	private final ArrayList<JaamSimModel> simModelList;
+	private final ArrayList<Scenario> scenarioList;
+
 	public RunManager(JaamSimModel sm) {
 		simModel = sm;
+		simModelList = new ArrayList<>();
+		scenarioList = new ArrayList<>();
 	}
 
 	public JaamSimModel getJaamSimModel() {
 		return simModel;
 	}
 
-	public void start(double pauseTime) {
+	public synchronized void start(double pauseTime) {
 		Simulation simulation = simModel.getSimulation();
-		scenarioNumber = simulation.getStartingScenarioNumber();
 		int numOuts = simulation.getRunOutputListSize();
+		int numberOfScenarios = simulation.getEndingScenarioNumber()
+				- simulation.getStartingScenarioNumber() + 1;
 		int numberOfReplications = simulation.getNumberOfReplications();
-		presentScenario = new Scenario(numOuts, scenarioNumber, numberOfReplications, this);
-		presentScenario.startNextRun(simModel, pauseTime);
+		int numberOfRuns = numberOfScenarios * numberOfReplications;
+		int numberOfThreads = simulation.getNumberOfThreads();
+
+		// Start a new simulation run on each thread
+		simModelList.clear();
+		scenarioList.clear();
+		scenarioNumber = simulation.getStartingScenarioNumber();
+		while (simModelList.size() < Math.min(numberOfThreads, numberOfRuns)) {
+
+			// Create a JaamSimModel for each thread
+			JaamSimModel sm = simModel;
+			if (simModelList.size() > 0) {
+				sm = new JaamSimModel(simModel);
+				sm.setName(String.format("%s (%s)", simModel.getName(), simModelList.size() + 1));
+			}
+			simModelList.add(sm);
+
+			// Create a new Scenario when required
+			if (presentScenario == null || !presentScenario.hasRunsToStart()) {
+				if (presentScenario != null)
+					scenarioNumber++;
+				presentScenario = new Scenario(numOuts, scenarioNumber, numberOfReplications, this);
+				scenarioList.add(presentScenario);
+			}
+
+			// Start the next simulation run for the present scenario
+			presentScenario.startNextRun(sm, pauseTime);
+		}
 	}
 
-	public void pause() {
-		simModel.pause();
+	public synchronized void pause() {
+		for (JaamSimModel sm : simModelList) {
+			sm.pause();
+		}
 	}
 
-	public void resume(double pauseTime) {
-		simModel.resume(pauseTime);
+	public synchronized void resume(double pauseTime) {
+		for (JaamSimModel sm : simModelList) {
+			sm.resume(pauseTime);
+		}
 	}
 
-	public void reset() {
+	public synchronized void reset() {
 		if (outStream != null) {
 			outStream.close();
 			outStream = null;
 		}
+		presentScenario = null;
 		scenarioNumber = simModel.getSimulation().getStartingScenarioNumber();
 		simModel.setScenarioNumber(scenarioNumber);
+		simModel.setReplicationNumber(1);
 		simModel.reset();
+
+		simModelList.clear();
+		scenarioList.clear();
 	}
 
-	public void close() {
+	public synchronized void close() {
 		if (outStream != null) {
 			outStream.close();
 			outStream = null;
 		}
-		simModel.closeLogFile();
-		simModel.pause();
-		simModel.close();
-		simModel.clear();
+		for (JaamSimModel sm : simModelList) {
+			sm.closeLogFile();
+			sm.pause();
+			sm.close();
+			sm.clear();
+		}
 	}
 
 	@Override
-	public void runEnded(SimRun run) {
+	public synchronized void runEnded(SimRun run) {
 		Simulation simulation = simModel.getSimulation();
 
 		// Print the output report
 		if (simulation.getPrintReport())
-			InputAgent.printReport(simModel, EventManager.simSeconds());
+			InputAgent.printReport(run.getJaamSimModel(), EventManager.simSeconds());
 
 		// Is the scenario finished?
-		if (presentScenario.isFinished()) {
+		int i = run.getScenarioNumber() - simulation.getStartingScenarioNumber();
+		Scenario scene = scenarioList.get(i);
+		if (scene.isFinished()) {
 
 			// Print the results
 			int numOuts = simulation.getRunOutputListSize();
 			if (numOuts > 0) {
 				outStream = getOutStream();
 				if (outStream != null) {
-					if (simModel.isFirstScenario())
+					if (i == 0)
 						InputAgent.printRunOutputHeaders(simModel, outStream);
 					boolean labels = simulation.getPrintRunLabels();
 					boolean reps = simulation.getPrintReplications();
 					boolean bool = simulation.getPrintConfidenceIntervals();
-					InputAgent.printScenarioOutputs(presentScenario, labels, reps, bool, outStream);
-					if (simulation.getPrintReplications() && !simModel.isLastScenario()) {
+					InputAgent.printScenarioOutputs(scene, labels, reps, bool, outStream);
+					if (simulation.getPrintReplications()
+							&& run.getScenarioNumber() < simulation.getEndingScenarioNumber()) {
 						outStream.println();
 					}
 				}
 			}
 
 			// Exit if this is the last scenario
-			if (simModel.isLastScenario()) {
+			if (run.getScenarioNumber() == simulation.getEndingScenarioNumber()) {
 				simModel.end();
 				if (outStream != null) {
 					outStream.close();
@@ -118,11 +165,16 @@ public class RunManager implements RunListener {
 				}
 				return;
 			}
+		}
 
-			// Start a new Scenario
+		// Start a new Scenario
+		if (!presentScenario.hasRunsToStart()
+				&& scenarioNumber < simulation.getEndingScenarioNumber()) {
 			scenarioNumber++;
+			int numOuts = simulation.getRunOutputListSize();
 			int numberOfReplications = simulation.getNumberOfReplications();
 			presentScenario = new Scenario(numOuts, scenarioNumber, numberOfReplications, this);
+			scenarioList.add(presentScenario);
 		}
 
 		// Start the next run
@@ -130,8 +182,9 @@ public class RunManager implements RunListener {
 			new Thread(new Runnable() {
 				@Override
 				public void run() {
+					JaamSimModel sm = run.getJaamSimModel();
 					double pauseTime = simModel.getSimulation().getPauseTime();
-					presentScenario.startNextRun(simModel, pauseTime);
+					presentScenario.startNextRun(sm, pauseTime);
 				}
 			}).start();
 		}
