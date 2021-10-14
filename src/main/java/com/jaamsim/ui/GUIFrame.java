@@ -4489,7 +4489,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		if (batch) {
 			if (sim.getNumErrors() > 0)
 				GUIFrame.shutdown(0);
-			sim.start();
+			runMgr.start();
 			return;
 		}
 

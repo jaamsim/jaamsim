@@ -54,6 +54,10 @@ public class RunManager implements RunListener {
 		return new ArrayList<>(simModelList);
 	}
 
+	public synchronized void start() {
+		start(Double.POSITIVE_INFINITY);
+	}
+
 	public synchronized void start(double pauseTime) {
 		Simulation simulation = simModel.getSimulation();
 		int numOuts = simulation.getRunOutputListSize();
