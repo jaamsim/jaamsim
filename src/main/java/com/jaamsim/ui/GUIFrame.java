@@ -432,7 +432,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	 */
 	public static void setRunManager(RunManager mgr) {
 		JaamSimModel sm = mgr.getJaamSimModel();
-		if (sm == sim)
+		if (mgr == runManager)
 			return;
 
 		// Add the new model to the list of models
@@ -485,7 +485,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		String str = "JaamSim";
 		if (sm.getSimulation() != null)
 			str = sm.getSimulation().getModelName();
-		String title = String.format("%d%% %s - %s", val, sim.getName(), str);
+		String title = String.format("%d%% %s - %s", val, sm.getName(), str);
 		setTitle(title);
 	}
 
@@ -1178,7 +1178,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				for (RunManager mgr : runManagerList) {
 					JaamSimModel sm = mgr.getJaamSimModel();
 					JRadioButtonMenuItem item = new JRadioButtonMenuItem(sm.getName());
-					if (sm == sim)
+					if (mgr == runManager)
 						item.setSelected(true);
 					item.addActionListener( new ActionListener() {
 
@@ -4423,8 +4423,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 		LogBox.logLine("Simulation Environment Loaded");
 
-		sim.setBatchRun(batch);
-		sim.setScriptMode(scriptMode);
+		simModel.setBatchRun(batch);
+		simModel.setScriptMode(scriptMode);
 
 		// Show the Control Panel
 		if (gui != null) {
@@ -4461,7 +4461,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		// If in script mode, load a configuration file from standard in
 		if (scriptMode) {
 			BufferedReader buf = new BufferedReader(new InputStreamReader(System.in));
-			InputAgent.readBufferedStream(sim, buf, null, "");
+			InputAgent.readBufferedStream(simModel, buf, null, "");
 		}
 
 		// If no configuration files were specified on the command line, then load the default configuration file
@@ -4471,8 +4471,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			SwingUtilities.invokeLater(new Runnable() {
 				@Override
 				public void run() {
-					sim.setRecordEdits(true);
-					InputAgent.loadDefault(sim);
+					simModel.setRecordEdits(true);
+					InputAgent.loadDefault(simModel);
 					GUIFrame.updateForSimState(JaamSimModel.SIM_STATE_CONFIGURED);
 				}
 			});
@@ -4485,11 +4485,11 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		}
 
 		// Set RecordEdits mode (if it has not already been set in the configuration file)
-		sim.setRecordEdits(true);
+		simModel.setRecordEdits(true);
 
 		// Start the model if in batch mode
 		if (batch) {
-			if (sim.getNumErrors() > 0)
+			if (simModel.getNumErrors() > 0)
 				GUIFrame.shutdown(0);
 			runMgr.start();
 			return;
@@ -4692,10 +4692,10 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		setRunManager(runMgr);
 
 		// Load the default model
-		sim.setRecordEdits(true);
-		InputAgent.loadDefault(sim);
+		simModel.setRecordEdits(true);
+		InputAgent.loadDefault(simModel);
 
-		FrameBox.setSelectedEntity(sim.getSimulation(), false);
+		FrameBox.setSelectedEntity(simModel.getSimulation(), false);
 	}
 
 	void load() {
@@ -4739,7 +4739,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			@Override
 			public void run() {
 				setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-				sim.setRecordEdits(false);
+				simModel.setRecordEdits(false);
 
 				Throwable ret = GUIFrame.configure(file);
 				if (ret != null) {
@@ -4747,9 +4747,9 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 					handleConfigError(ret, file);
 				}
 
-				sim.setRecordEdits(true);
+				simModel.setRecordEdits(true);
 				resetViews();
-				FrameBox.setSelectedEntity(sim.getSimulation(), false);
+				FrameBox.setSelectedEntity(simModel.getSimulation(), false);
 				setCursor(Cursor.getDefaultCursor());
 			}
 		});
