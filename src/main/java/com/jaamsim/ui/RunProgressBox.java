@@ -36,6 +36,8 @@ public class RunProgressBox extends JFrame {
 	private final ArrayList<JLabel> labelList;
 	private final ArrayList<JProgressBar> progressBarList;
 	private final JProgressBar overallBar;
+	private boolean show;
+
 	private static String LABEL_FORMAT = "THREAD %s:  scenario %s, replication %s";
 	private static String LABEL_FORMAT_SHORT = "THREAD %s:";
 
@@ -137,6 +139,17 @@ public class RunProgressBox extends JFrame {
 		}
 		int progress = (int) Math.round( GUIFrame.getRunManager().getProgress() * 100.0d );
 		overallBar.setValue(progress);
+	}
+
+	public boolean getShow() {
+		return show;
+	}
+
+	public void setShow(boolean bool) {
+		show = bool;
+		if (bool == isVisible())
+			return;
+		setVisible(bool);
 	}
 
 }

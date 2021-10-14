@@ -2815,11 +2815,11 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				}
 				controlStartResume.requestFocusInWindow();
 				if (RunProgressBox.hasInstance())
-					RunProgressBox.getInstance().setVisible(false);
+					RunProgressBox.getInstance().setShow(false);
 				boolean confirmed = GUIFrame.showConfirmStopDialog();
 				if (!confirmed) {
 					if (RunProgressBox.hasInstance())
-						RunProgressBox.getInstance().setVisible(true);
+						RunProgressBox.getInstance().setShow(true);
 					return;
 				}
 
@@ -3103,7 +3103,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			}
 			if (confirmed) {
 				if (sim.getSimulation().getNumberOfRuns() > 1) {
-					RunProgressBox.getInstance().setVisible(true);
+					RunProgressBox.getInstance().setShow(true);
 				}
 				new Thread(new Runnable() {
 					@Override
@@ -4063,6 +4063,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		OutputBox.getInstance().setVisible(false);
 		PropertyBox.getInstance().setVisible(false);
 		LogBox.getInstance().setVisible(false);
+
 		if (EventViewer.hasInstance())
 			EventViewer.getInstance().setVisible(false);
 	}
@@ -4079,6 +4080,9 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		setFrameVisibility(OutputBox.getInstance(), !iconified && simulation.isOutputViewerVisible());
 		setFrameVisibility(PropertyBox.getInstance(), !iconified && simulation.isPropertyViewerVisible());
 		setFrameVisibility(LogBox.getInstance(), !iconified && simulation.isLogViewerVisible());
+
+		if (RunProgressBox.hasInstance())
+			setFrameVisibility(RunProgressBox.getInstance(), !iconified && RunProgressBox.getInstance().getShow());
 
 		if (!simulation.isEventViewerVisible()) {
 			if (EventViewer.hasInstance())
