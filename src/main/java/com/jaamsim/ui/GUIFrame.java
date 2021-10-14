@@ -161,7 +161,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	private static GUIFrame instance;
 
 	private static RunManager runManager;
-	private static JaamSimModel sim;
 	private static final ArrayList<RunManager> runManagerList = new ArrayList<>();
 	private static final AtomicLong modelCount = new AtomicLong(0);  // number of JaamSimModels
 
@@ -387,6 +386,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		addComponentListener(new ComponentAdapter() {
 			@Override
 			public void componentResized(ComponentEvent e) {
+				JaamSimModel sim = getJaamSimModel();
 				if (sim.getSimulation() == null)
 					return;
 				sim.getSimulation().setControlPanelWidth(getSize().width);
@@ -394,6 +394,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 			@Override
 			public void componentMoved(ComponentEvent e) {
+				JaamSimModel sim = getJaamSimModel();
 				Simulation simulation = sim.getSimulation();
 				if (simulation == null)
 					return;
@@ -440,6 +441,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			runManagerList.add(mgr);
 
 		// Remove the previous model if it is unedited and unsaved
+		JaamSimModel sim = getJaamSimModel();
 		if (sim != null && sim.getConfigFile() == null && !sim.isSessionEdited()
 				&& sim.getName().startsWith(DEFAULT_MODEL_NAME))
 			runManagerList.remove(runManager);
@@ -450,7 +452,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			sim.setGUIListener(null);
 		}
 
-		sim = sm;
 		runManager = mgr;
 
 		GUIFrame gui = getInstance();
@@ -543,7 +544,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			RenderManager.inst().createWindow(activeView);
 
 		// Re-open the tools
-		showActiveTools(sim.getSimulation());
+		showActiveTools(getJaamSimModel().getSimulation());
 		updateUI();
 	}
 
@@ -551,6 +552,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	 * Perform exit window duties
 	 */
 	void close() {
+		JaamSimModel sim = getJaamSimModel();
 		// check for unsaved changes
 		if (sim.isSessionEdited()) {
 			boolean confirmed = GUIFrame.showSaveChangesDialog(this);
@@ -702,6 +704,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
+				JaamSimModel sim = getJaamSimModel();
 				InputAgent.printInputFileKeywords(sim);
 			}
 		} );
@@ -864,6 +867,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				kws[1] = InputAgent.formatBoolean("ShowObjectSelector", true);
 				kws[2] = InputAgent.formatBoolean("ShowInputEditor", true);
 				kws[3] = InputAgent.formatBoolean("ShowOutputViewer", true);
+				JaamSimModel sim = getJaamSimModel();
 				InputAgent.storeAndExecute(new KeywordCommand(sim.getSimulation(), kws));
 			}
 		} );
@@ -884,6 +888,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				kws[4] = InputAgent.formatBoolean("ShowPropertyViewer", false);
 				kws[5] = InputAgent.formatBoolean("ShowLogViewer", false);
 				kws[6] = InputAgent.formatBoolean("ShowEventViewer", false);
+				JaamSimModel sim = getJaamSimModel();
 				InputAgent.storeAndExecute(new KeywordCommand(sim.getSimulation(), kws));
 			}
 		} );
@@ -899,6 +904,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				clearPresentationMode();
 				EntityPallet.getInstance().toFront();
 				KeywordIndex kw = InputAgent.formatBoolean("ShowModelBuilder", true);
+				JaamSimModel sim = getJaamSimModel();
 				InputAgent.storeAndExecute(new KeywordCommand(sim.getSimulation(), kw));
 			}
 		} );
@@ -915,6 +921,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				clearPresentationMode();
 				ObjectSelector.getInstance().toFront();
 				KeywordIndex kw = InputAgent.formatBoolean("ShowObjectSelector", true);
+				JaamSimModel sim = getJaamSimModel();
 				InputAgent.storeAndExecute(new KeywordCommand(sim.getSimulation(), kw));
 			}
 		} );
@@ -930,6 +937,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				clearPresentationMode();
 				EditBox.getInstance().toFront();
 				KeywordIndex kw = InputAgent.formatBoolean("ShowInputEditor", true);
+				JaamSimModel sim = getJaamSimModel();
 				InputAgent.storeAndExecute(new KeywordCommand(sim.getSimulation(), kw));
 			}
 		} );
@@ -945,6 +953,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				clearPresentationMode();
 				OutputBox.getInstance().toFront();
 				KeywordIndex kw = InputAgent.formatBoolean("ShowOutputViewer", true);
+				JaamSimModel sim = getJaamSimModel();
 				InputAgent.storeAndExecute(new KeywordCommand(sim.getSimulation(), kw));
 			}
 		} );
@@ -960,6 +969,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				clearPresentationMode();
 				PropertyBox.getInstance().toFront();
 				KeywordIndex kw = InputAgent.formatBoolean("ShowPropertyViewer", true);
+				JaamSimModel sim = getJaamSimModel();
 				InputAgent.storeAndExecute(new KeywordCommand(sim.getSimulation(), kw));
 			}
 		} );
@@ -975,6 +985,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				clearPresentationMode();
 				LogBox.getInstance().toFront();
 				KeywordIndex kw = InputAgent.formatBoolean("ShowLogViewer", true);
+				JaamSimModel sim = getJaamSimModel();
 				InputAgent.storeAndExecute(new KeywordCommand(sim.getSimulation(), kw));
 			}
 		} );
@@ -990,6 +1001,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				clearPresentationMode();
 				EventViewer.getInstance().toFront();
 				KeywordIndex kw = InputAgent.formatBoolean("ShowEventViewer", true);
+				JaamSimModel sim = getJaamSimModel();
 				InputAgent.storeAndExecute(new KeywordCommand(sim.getSimulation(), kw));
 			}
 		} );
@@ -1002,6 +1014,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			@Override
 			public void actionPerformed( ActionEvent e ) {
 				clearPresentationMode();
+				JaamSimModel sim = getJaamSimModel();
 				sim.getSimulation().resetWindowPositionsAndSizes();
 			}
 		} );
@@ -1056,6 +1069,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 							}
 						}
 
+						JaamSimModel sim = getJaamSimModel();
 						String name = InputAgent.getUniqueName(sim, "View", "");
 						IntegerVector winPos = null;
 						Vec3d pos = null;
@@ -1627,6 +1641,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
+				JaamSimModel sim = getJaamSimModel();
 				DisplayEntity ent = (DisplayEntity) sim.getNamedEntity("XYZ-Axis");
 				if (ent != null) {
 					KeywordIndex kw = InputAgent.formatBoolean("Show", xyzAxis.isSelected());
@@ -1650,6 +1665,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
+				JaamSimModel sim = getJaamSimModel();
 				DisplayEntity ent = (DisplayEntity) sim.getNamedEntity("XY-Grid");
 				if (ent == null && sim.getNamedEntity("Grid100x100") != null) {
 					InputAgent.storeAndExecute(new DefineCommand(sim, DisplayEntity.class, "XY-Grid"));
@@ -1681,6 +1697,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
+				JaamSimModel sim = getJaamSimModel();
 				boolean bool = showLabels.isSelected();
 				KeywordIndex kw = InputAgent.formatBoolean("ShowLabels", bool);
 				InputAgent.storeAndExecute(new KeywordCommand(sim.getSimulation(), kw));
@@ -1704,6 +1721,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
+				JaamSimModel sim = getJaamSimModel();
 				boolean bool = showSubModels.isSelected();
 				KeywordIndex kw = InputAgent.formatBoolean("ShowSubModels", bool);
 				InputAgent.storeAndExecute(new KeywordCommand(sim.getSimulation(), kw));
@@ -1727,6 +1745,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
+				JaamSimModel sim = getJaamSimModel();
 				boolean bool = presentMode.isSelected();
 				KeywordIndex kw = InputAgent.formatBoolean("PresentationMode", bool);
 				InputAgent.storeAndExecute(new KeywordCommand(sim.getSimulation(), kw));
@@ -1748,6 +1767,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
+				JaamSimModel sim = getJaamSimModel();
 				KeywordIndex kw = InputAgent.formatBoolean("SnapToGrid", snapToGrid.isSelected());
 				InputAgent.storeAndExecute(new KeywordCommand(sim.getSimulation(), kw));
 				gridSpacing.setEnabled(snapToGrid.isSelected());
@@ -1806,6 +1826,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		showReferences.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed( ActionEvent event ) {
+				JaamSimModel sim = getJaamSimModel();
 				boolean bShow = showReferences.isSelected();
 				KeywordIndex kw = InputAgent.formatBoolean("ShowReferences", bShow);
 				InputAgent.storeAndExecute(new KeywordCommand(sim.getSimulation(), kw));
@@ -1826,6 +1847,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		showLinks.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed( ActionEvent event ) {
+				JaamSimModel sim = getJaamSimModel();
 				boolean bShow = showLinks.isSelected();
 				KeywordIndex kw = InputAgent.formatBoolean("ShowEntityFlow", bShow);
 				InputAgent.storeAndExecute(new KeywordCommand(sim.getSimulation(), kw));
@@ -2141,6 +2163,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
+				JaamSimModel sim = getJaamSimModel();
 				if (!(selectedEntity instanceof TextBasics))
 					return;
 				TextBasics textEnt = (TextBasics) selectedEntity;
@@ -2270,6 +2293,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
+				JaamSimModel sim = getJaamSimModel();
 				if (!(selectedEntity instanceof TextEntity))
 					return;
 				final TextEntity textEnt = (TextEntity) selectedEntity;
@@ -2343,6 +2367,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
+				JaamSimModel sim = getJaamSimModel();
 				if (!(selectedEntity instanceof TextEntity))
 					return;
 				TextEntity textEnt = (TextEntity) selectedEntity;
@@ -2420,6 +2445,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
+				JaamSimModel sim = getJaamSimModel();
 				if (!(selectedEntity instanceof TextEntity))
 					return;
 				final TextEntity textEnt = (TextEntity) selectedEntity;
@@ -2448,6 +2474,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
+				JaamSimModel sim = getJaamSimModel();
 				if (!(selectedEntity instanceof DisplayEntity)
 						|| selectedEntity instanceof OverlayEntity)
 					return;
@@ -2579,6 +2606,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
+				JaamSimModel sim = getJaamSimModel();
 				if (!(selectedEntity instanceof LineEntity)
 						|| selectedEntity.getInput("LineColour") == null)
 					return;
@@ -2645,6 +2673,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
+				JaamSimModel sim = getJaamSimModel();
 				if (!(selectedEntity instanceof FillEntity)
 						|| selectedEntity.getInput("FillColour") == null)
 					return;
@@ -2813,6 +2842,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
+				JaamSimModel sim = getJaamSimModel();
 				if (sim.getSimState() == JaamSimModel.SIM_STATE_RUNNING) {
 					GUIFrame.this.pauseSimulation();
 				}
@@ -2845,6 +2875,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
+				JaamSimModel sim = getJaamSimModel();
 				boolean bool = controlRealTime.isSelected();
 				KeywordIndex kw = InputAgent.formatBoolean("RealTime", bool);
 				InputAgent.storeAndExecute(new KeywordCommand(sim.getSimulation(), kw));
@@ -2875,6 +2906,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 			@Override
 			public void stateChanged( ChangeEvent e ) {
+				JaamSimModel sim = getJaamSimModel();
 				Double val = (Double) spinner.getValue();
 				if (MathUtils.near(val, sim.getSimulation().getRealTimeFactor()))
 					return;
@@ -2993,6 +3025,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	 * @param simTime - the present simulation time in seconds.
 	 */
 	void setClock(double simTime) {
+		JaamSimModel sim = getJaamSimModel();
 
 		// Set the simulation time display
 		String unit = getJaamSimModel().getDisplayedUnit(TimeUnit.class);
@@ -3047,6 +3080,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		lastValue = val;
 
 		// Show the overall progress in JaamSim's title bar
+		JaamSimModel sim = getJaamSimModel();
 		if (sim.getSimState() >= JaamSimModel.SIM_STATE_CONFIGURED) {
 			int overallProgress = (int) Math.round(runManager.getProgress() * 100.0d);
 			setTitle(sim, overallProgress);
@@ -3097,6 +3131,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	 * @return true if the simulation was started or resumed; false if cancel or close was selected
 	 */
 	public boolean startSimulation() {
+		JaamSimModel sim = getJaamSimModel();
 		double pauseTime = sim.getSimulation().getPauseTime();
 		if (sim.getSimState() <= JaamSimModel.SIM_STATE_CONFIGURED) {
 			boolean confirmed = true;
@@ -3133,7 +3168,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	 * Pauses the simulation run.
 	 */
 	private void pauseSimulation() {
-		if (sim.getSimState() == JaamSimModel.SIM_STATE_RUNNING)
+		if (getJaamSimModel().getSimState() == JaamSimModel.SIM_STATE_RUNNING)
 			new Thread(new Runnable() {
 				@Override
 				public void run() {
@@ -3148,6 +3183,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	 * Stops the simulation run.
 	 */
 	public void stopSimulation() {
+		JaamSimModel sim = getJaamSimModel();
 		if (sim.getSimState() == JaamSimModel.SIM_STATE_RUNNING ||
 		    sim.getSimState() == JaamSimModel.SIM_STATE_PAUSED ||
 		    sim.getSimState() == JaamSimModel.SIM_STATE_ENDED) {
@@ -3179,6 +3215,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	 * @param state - an index that designates the state of the simulation run.
 	 */
 	void updateForSimulationState(int state) {
+		JaamSimModel sim = getJaamSimModel();
 		sim.setSimState(state);
 
 		switch (sim.getSimState()) {
@@ -3349,14 +3386,14 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	}
 
 	private void updateSaveButton() {
-		fileSave.setEnabled(sim.isSessionEdited());
+		fileSave.setEnabled(getJaamSimModel().isSessionEdited());
 	}
 
 	/**
 	 * updates RealTime button and Spinner
 	 */
 	private synchronized void updateForRealTime(boolean executeRT, double factorRT) {
-		sim.getEventManager().setExecuteRealTime(executeRT, factorRT);
+		getJaamSimModel().getEventManager().setExecuteRealTime(executeRT, factorRT);
 		controlRealTime.setSelected(executeRT);
 		spinner.setValue(factorRT);
 		spinner.setEnabled(executeRT);
@@ -3376,6 +3413,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	 * @param str - value to assign.
 	 */
 	private void setPauseTime(String str) {
+		JaamSimModel sim = getJaamSimModel();
 		String prevVal = sim.getSimulation().getPauseTimeString();
 		if (prevVal.equals(str))
 			return;
@@ -3409,6 +3447,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	 */
 	@Override
 	public void renameEntity(Entity ent, String newName) {
+		JaamSimModel sim = getJaamSimModel();
 
 		// If the name has not changed, do nothing
 		if (ent.getName().equals(newName))
@@ -3446,6 +3485,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 	@Override
 	public void deleteEntity(Entity ent) {
+		JaamSimModel sim = getJaamSimModel();
 
 		if (ent.isGenerated())
 			throw new ErrorException("Cannot delete an entity that was generated by a simulation "
@@ -3497,7 +3537,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		}
 
 		// Delete any references to this entity in the inputs to other entities
-		for (Entity e : sim.getClonesOfIterator(Entity.class)) {
+		for (Entity e : getJaamSimModel().getClonesOfIterator(Entity.class)) {
 			if (e == ent)
 				continue;
 			ArrayList<KeywordIndex> oldKwList = new ArrayList<>();
@@ -3645,6 +3685,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	}
 
 	private void setSnapGridSpacing(String str) {
+		JaamSimModel sim = getJaamSimModel();
 		Input<?> in = sim.getSimulation().getInput("SnapGridSpacing");
 		String prevVal = in.getValueString();
 		if (prevVal.equals(str))
@@ -3680,12 +3721,12 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	}
 
 	private void updateShowAxesButton() {
-		DisplayEntity ent = (DisplayEntity) sim.getNamedEntity("XYZ-Axis");
+		DisplayEntity ent = (DisplayEntity) getJaamSimModel().getNamedEntity("XYZ-Axis");
 		xyzAxis.setSelected(ent != null && ent.getShow());
 	}
 
 	private void updateShowGridButton() {
-		DisplayEntity ent = (DisplayEntity) sim.getNamedEntity("XY-Grid");
+		DisplayEntity ent = (DisplayEntity) getJaamSimModel().getNamedEntity("XY-Grid");
 		grid.setSelected(ent != null && ent.getShow());
 	}
 
@@ -3732,7 +3773,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	}
 
 	private void updateEditButtons(Entity ent) {
-		boolean bool = (ent != null && ent != sim.getSimulation());
+		boolean bool = (ent != null && ent != getJaamSimModel().getSimulation());
 		copyButton.setEnabled(bool);
 		copyMenuItem.setEnabled(bool);
 		deleteMenuItem.setEnabled(bool);
@@ -3995,7 +4036,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		if (showLabels.isSelected() == bool)
 			return;
 		showLabels.setSelected(bool);
-		sim.showTemporaryLabels(bool);
+		getJaamSimModel().showTemporaryLabels(bool);
 		updateUI();
 	}
 
@@ -4003,7 +4044,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		if (showSubModels.isSelected() == bool)
 			return;
 		showSubModels.setSelected(bool);
-		sim.showSubModels(bool);
+		getJaamSimModel().showSubModels(bool);
 		updateUI();
 	}
 
@@ -4578,6 +4619,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 		@Override
 		public void run() {
+			JaamSimModel sim = getJaamSimModel();
 			if (sim == null)
 				return;
 			EventManager evt = sim.getEventManager();
@@ -4613,7 +4655,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		}
 		else {
 			int state = JaamSimModel.SIM_STATE_PAUSED;
-			if (!sim.getSimulation().canResume(simTicks))
+			if (!getJaamSimModel().getSimulation().canResume(simTicks))
 				state = JaamSimModel.SIM_STATE_ENDED;
 			updateForSimulationState(state);
 		}
@@ -4621,6 +4663,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 	@Override
 	public void handleInputError(Throwable t, Entity ent) {
+		JaamSimModel sim = getJaamSimModel();
 		InputAgent.logMessage(sim, "Validation Error - %s: %s", ent.getName(), t.getMessage());
 		GUIFrame.showErrorDialog("Input Error",
 				"JaamSim has detected the following input error during validation:",
@@ -4632,6 +4675,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 	@Override
 	public void handleError(Throwable t) {
+		JaamSimModel sim = getJaamSimModel();
 		if (t instanceof OutOfMemoryError) {
 			OutOfMemoryError e = (OutOfMemoryError)t;
 			InputAgent.logMessage(sim, "Out of Memory use the -Xmx flag during execution for more memory");
@@ -4759,6 +4803,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 	static Throwable configure(File file) {
 		GUIFrame.updateForSimState(JaamSimModel.SIM_STATE_UNCONFIGURED);
+		JaamSimModel sim = getJaamSimModel();
 
 		Throwable ret = null;
 		try {
@@ -4785,6 +4830,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	}
 
 	static void handleConfigError(Throwable t, File file) {
+		JaamSimModel sim = getJaamSimModel();
 		if (t instanceof InputErrorException) {
 			InputAgent.logMessage(sim, "Input Error: %s", t.getMessage());
 			GUIFrame.showErrorOptionDialog("Input Error",
@@ -4807,6 +4853,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	 * @param file = file to be saved
 	 */
 	private void setSaveFile(File file) {
+		JaamSimModel sim = getJaamSimModel();
 		try {
 			sim.save(file);
 
@@ -4821,6 +4868,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 	boolean save() {
 		LogBox.logLine("Saving...");
+		JaamSimModel sim = getJaamSimModel();
 		if( sim.getConfigFile() != null ) {
 			setSaveFile(sim.getConfigFile());
 			updateUI();
@@ -4843,7 +4891,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				new FileNameExtensionFilter("JaamSim Configuration File (*.cfg)", "CFG");
 		chooser.addChoosableFileFilter(cfgFilter);
 		chooser.setFileFilter(cfgFilter);
-		chooser.setSelectedFile(sim.getConfigFile());
+		chooser.setSelectedFile(getJaamSimModel().getConfigFile());
 
 		// Show the file chooser and wait for selection
 		int returnVal = chooser.showSaveDialog(this);
@@ -4878,7 +4926,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	}
 
 	public void copyToClipboard(Entity ent) {
-		if (ent == sim.getSimulation())
+		if (ent == getJaamSimModel().getSimulation())
 			return;
 		Clipboard clpbrd = Toolkit.getDefaultToolkit().getSystemClipboard();
 		clpbrd.setContents(new StringSelection(ent.getName()), null);
@@ -4888,7 +4936,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		Clipboard clpbrd = Toolkit.getDefaultToolkit().getSystemClipboard();
 		try {
 			String name = (String)clpbrd.getData(DataFlavor.stringFlavor);
-			return sim.getNamedEntity(name);
+			return getJaamSimModel().getNamedEntity(name);
 		}
 		catch (Throwable err) {
 			return null;
@@ -4897,6 +4945,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 	public void pasteEntityFromClipboard() {
 		Entity ent = getEntityFromClipboard();
+		JaamSimModel sim = getJaamSimModel();
 		if (ent == null || ent == sim.getSimulation())
 			return;
 
@@ -4988,6 +5037,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	}
 
 	public void copyChildren(Entity parent0, Entity parent1) {
+		JaamSimModel sim = getJaamSimModel();
 
 		// Create the copied children
 		for (Entity child : parent0.getChildren()) {
@@ -5039,7 +5089,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	}
 
 	public void setUniqueRandomSeed(RandomStreamUser rsu) {
-		Simulation simulation = sim.getSimulation();
+		Simulation simulation = getJaamSimModel().getSimulation();
 		int seed = rsu.getStreamNumber();
 		if (seed >= 0 && simulation.getRandomStreamUsers(seed).size() <= 1)
 			return;
@@ -5276,7 +5326,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	 * @return true for any response other than Cancel or Close.
 	 */
 	public static boolean showSaveChangesDialog(GUIFrame gui) {
-
+		JaamSimModel sim = getJaamSimModel();
 		String message;
 		if (sim.getConfigFile() == null)
 			message = "Do you want to save the changes you made?";
@@ -5356,6 +5406,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	 * @param post - text to appear after the error message
 	 */
 	public static void showErrorDialog(String title, String source, int position, String pre, String message, String post) {
+		JaamSimModel sim = getJaamSimModel();
 		if (sim == null || sim.isBatchRun())
 			GUIFrame.shutdown(1);
 		JPanel panel = new JPanel();
@@ -5438,6 +5489,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	 * @param msg - error message
 	 */
 	public static void showErrorOptionDialog(String title, String msg) {
+		JaamSimModel sim = getJaamSimModel();
 		if (sim == null || sim.isBatchRun())
 			GUIFrame.shutdown(1);
 
