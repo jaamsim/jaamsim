@@ -417,7 +417,9 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	}
 
 	public static JaamSimModel getJaamSimModel() {
-		return sim;
+		if (runManager == null)
+			return null;
+		return runManager.getJaamSimModel();
 	}
 
 	public static RunManager getRunManager() {
