@@ -452,6 +452,10 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			sim.setGUIListener(null);
 		}
 
+		// Delete the run progress window, if open
+		if (RunProgressBox.hasInstance())
+			RunProgressBox.getInstance().dispose();
+
 		runManager = mgr;
 
 		GUIFrame gui = getInstance();
