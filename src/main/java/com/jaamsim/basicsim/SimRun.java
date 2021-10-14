@@ -28,7 +28,7 @@ public class SimRun implements RunListener {
 	private final int scenarioNumber;     // scenario number
 	private final int replicationNumber;  // replication number
 	private JaamSimModel simModel;        // simulation model to be executed
-	private final RunListener listener;   // listens for the end of the run
+	private final RunListener listener;   // notifies the Scenario that the run has ended
 	private ArrayList<Double> runOutputValues;
 	private ArrayList<String> runOutputStrings;
 

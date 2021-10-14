@@ -64,7 +64,7 @@ public class JaamSimModel {
 	private int scenarioNumber;    // labels each scenario when multiple scenarios are being made
 	private IntegerVector scenarioIndexList;
 	private int replicationNumber;
-	private RunListener runListener;
+	private RunListener runListener;  // notifies the SimRun that the run has ended
 	private GUIListener gui;
 	private final AtomicLong entityCount = new AtomicLong(0);
 

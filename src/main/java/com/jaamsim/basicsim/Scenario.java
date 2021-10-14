@@ -29,7 +29,7 @@ public class Scenario implements RunListener {
 
 	private final int scenarioNumber;
 	private final int replications;  // number of replications to be performed
-	private final RunListener listener;
+	private final RunListener listener;  // notifies the RunManager that the run has ended
 
 	private final ArrayList<SimRun> runsToStart;
 	private final ArrayList<SimRun> runsInProgress;
