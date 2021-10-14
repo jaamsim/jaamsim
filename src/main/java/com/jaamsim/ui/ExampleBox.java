@@ -364,7 +364,7 @@ public class ExampleBox extends JDialog {
 		simModel.showSubModels( simulation.isShowSubModels() );
 
 		// Display the new model
-		GUIFrame.setJaamSimModel(simModel);
+		GUIFrame.setRunManager(runMgr);
 		FrameBox.setSelectedEntity(simulation, false);
 
 		// Bring the new model to front

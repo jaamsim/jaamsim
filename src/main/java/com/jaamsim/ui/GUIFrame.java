@@ -162,7 +162,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 	private static RunManager runManager;
 	private static JaamSimModel sim;
-	private static final ArrayList<JaamSimModel> simList = new ArrayList<>();
+	private static final ArrayList<RunManager> runManagerList = new ArrayList<>();
 	private static final AtomicLong modelCount = new AtomicLong(0);  // number of JaamSimModels
 
 	private final ArrayList<View> views = new ArrayList<>();
@@ -428,18 +428,19 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	 * Sets the model to be displayed by the user interface.
 	 * @param sm - simulation model to be displayed
 	 */
-	public static void setJaamSimModel(JaamSimModel sm) {
+	public static void setRunManager(RunManager mgr) {
+		JaamSimModel sm = mgr.getJaamSimModel();
 		if (sm == sim)
 			return;
 
 		// Add the new model to the list of models
-		if (!simList.contains(sm))
-			simList.add(sm);
+		if (!runManagerList.contains(mgr))
+			runManagerList.add(mgr);
 
 		// Remove the previous model if it is unedited and unsaved
 		if (sim != null && sim.getConfigFile() == null && !sim.isSessionEdited()
 				&& sim.getName().startsWith(DEFAULT_MODEL_NAME))
-			simList.remove(sim);
+			runManagerList.remove(runManager);
 
 		// Clear the listeners for the previous model
 		if (sim != null) {
@@ -448,7 +449,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		}
 
 		sim = sm;
-		runManager = (RunManager) sm.getRunListener();
+		runManager = mgr;
 
 		GUIFrame gui = getInstance();
 		if (gui == null)
@@ -554,11 +555,11 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			if (!confirmed)
 				return;
 		}
-		simList.remove(sim);
+		runManagerList.remove(runManager);
 		runManager.close();
-		if (simList.isEmpty())
+		if (runManagerList.isEmpty())
 			GUIFrame.shutdown(0);
-		setJaamSimModel(simList.get(0));
+		setRunManager(runManagerList.get(0));
 		FrameBox.setSelectedEntity(sim.getSimulation(), false);
 	}
 
@@ -1172,7 +1173,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 			@Override
 			public void menuSelected(MenuEvent e) {
-				for (JaamSimModel sm : simList) {
+				for (RunManager mgr : runManagerList) {
+					JaamSimModel sm = mgr.getJaamSimModel();
 					JRadioButtonMenuItem item = new JRadioButtonMenuItem(sm.getName());
 					if (sm == sim)
 						item.setSelected(true);
@@ -1180,7 +1182,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 						@Override
 						public void actionPerformed( ActionEvent event ) {
-							setJaamSimModel(sm);
+							setRunManager(mgr);
 							FrameBox.setSelectedEntity(sm.getSimulation(), false);
 						}
 
@@ -4402,7 +4404,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		if (!headless) {
 			gui = GUIFrame.createInstance();
 		}
-		setJaamSimModel(simModel);
+		setRunManager(runMgr);
 
 		if (!headless) {
 			if (minimize)
@@ -4687,7 +4689,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		simModel.setRunListener(runMgr);
 
 		// Set the Control Panel to the new JaamSimModel and reset the user interface
-		setJaamSimModel(simModel);
+		setRunManager(runMgr);
 
 		// Load the default model
 		sim.setRecordEdits(true);
@@ -4731,7 +4733,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		simModel.setRunListener(runMgr);
 
 		// Set the Control Panel to the new JaamSimModel and reset the user interface
-		setJaamSimModel(simModel);
+		setRunManager(runMgr);
 
 		// Load the selected input file
 		SwingUtilities.invokeLater(new Runnable() {
