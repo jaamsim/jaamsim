@@ -357,7 +357,6 @@ public class ExampleBox extends JDialog {
 
 		// Add the run manager
 		RunManager runMgr = new RunManager(simModel);
-		simModel.setRunListener(runMgr);
 
 		// Add labels and sub-models
 		simModel.showTemporaryLabels( simulation.isShowLabels() );

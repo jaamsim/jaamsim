@@ -4398,7 +4398,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 		// Add the run manager
 		RunManager runMgr = new RunManager(simModel);
-		simModel.setRunListener(runMgr);
 
 		GUIFrame gui = null;
 		if (!headless) {
@@ -4686,7 +4685,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 		// Add the run manager
 		RunManager runMgr = new RunManager(simModel);
-		simModel.setRunListener(runMgr);
 
 		// Set the Control Panel to the new JaamSimModel and reset the user interface
 		setRunManager(runMgr);
@@ -4730,7 +4728,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 		// Add the run manager
 		RunManager runMgr = new RunManager(simModel);
-		simModel.setRunListener(runMgr);
 
 		// Set the Control Panel to the new JaamSimModel and reset the user interface
 		setRunManager(runMgr);
