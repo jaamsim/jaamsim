@@ -17,6 +17,7 @@
 package com.jaamsim.ui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.util.ArrayList;
@@ -36,6 +37,8 @@ public class RunProgressBox extends JFrame {
 	private final ArrayList<JLabel> labelList;
 	private final ArrayList<JProgressBar> progressBarList;
 	private final JProgressBar overallBar;
+	private final JLabel rateLabel;
+	private final JLabel remainingTimeLabel;
 	private boolean show;
 
 	private static String LABEL_FORMAT = "THREAD %s:  scenario %s, replication %s";
@@ -96,6 +99,20 @@ public class RunProgressBox extends JFrame {
 
 		getContentPane().add(overallBarPanel, BorderLayout.SOUTH);
 
+		// Run processing rate
+		rateLabel = new JLabel("- runs per hour");
+		rateLabel.setForeground(Color.RED);
+		rateLabel.setToolTipText(GUIFrame.formatToolTip("Run Processing Rate",
+				"The rate at which simulation runs are being executed."));
+		overallBarPanel.add(rateLabel);
+
+		// Remaining execution time
+		remainingTimeLabel = new JLabel("- seconds left");
+		remainingTimeLabel.setForeground(Color.RED);
+		remainingTimeLabel.setToolTipText(GUIFrame.formatToolTip("Remaining Time",
+				"The remaining time required to complete all the simulation runs."));
+		overallBarPanel.add(remainingTimeLabel);
+
 		pack();
 		setLocationRelativeTo(null);
 	}
@@ -121,6 +138,8 @@ public class RunProgressBox extends JFrame {
 	}
 
 	public void update() {
+
+		// Progress bar for each thread
 		ArrayList<JaamSimModel> simModelList = GUIFrame.getRunManager().getSimModelList();
 		for (int i = 0; i < progressBarList.size(); i++) {
 			if (i >= simModelList.size()) {
@@ -137,8 +156,20 @@ public class RunProgressBox extends JFrame {
 			int progress = (int) Math.round( simulation.getProgress(simTime) * 100.0d );
 			progressBarList.get(i).setValue(progress);
 		}
-		int progress = (int) Math.round( GUIFrame.getRunManager().getProgress() * 100.0d );
+
+		// Overall progress bar
+		double overallProgress = GUIFrame.getRunManager().getProgress();
+		int progress = (int) Math.round( overallProgress * 100.0d );
 		overallBar.setValue(progress);
+
+		// Run processing rate
+		double progressRate = GUIFrame.getInstance().getOverallProgressRate();
+		double processingRate = progressRate * GUIFrame.getJaamSimModel().getSimulation().getNumberOfRuns();
+		rateLabel.setText(String.format("%,.1f runs per hour", processingRate * 3600.0d));
+
+		// Remaining execution time
+		double remainingTime = (1.0d - overallProgress) / progressRate;
+		remainingTimeLabel.setText(GUIFrame.getRemainingTimeString(remainingTime));
 	}
 
 	public boolean getShow() {
