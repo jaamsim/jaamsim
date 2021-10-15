@@ -138,38 +138,40 @@ public class RunProgressBox extends JFrame {
 	}
 
 	public void update() {
-
-		// Progress bar for each thread
-		ArrayList<JaamSimModel> simModelList = GUIFrame.getRunManager().getSimModelList();
-		for (int i = 0; i < progressBarList.size(); i++) {
-			if (i >= simModelList.size()) {
-				labelList.get(i).setText(String.format(LABEL_FORMAT_SHORT, i + 1));
-				progressBarList.get(i).setValue(0);
-				continue;
+		try {
+			// Progress bar for each thread
+			ArrayList<JaamSimModel> simModelList = GUIFrame.getRunManager().getSimModelList();
+			for (int i = 0; i < progressBarList.size(); i++) {
+				if (i >= simModelList.size()) {
+					labelList.get(i).setText(String.format(LABEL_FORMAT_SHORT, i + 1));
+					progressBarList.get(i).setValue(0);
+					continue;
+				}
+				JaamSimModel sm = simModelList.get(i);
+				String str = String.format(LABEL_FORMAT, i + 1, sm.getScenarioNumber(),
+						sm.getReplicationNumber());
+				labelList.get(i).setText(str);
+				Simulation simulation = sm.getSimulation();
+				double simTime = sm.getSimTime();
+				int progress = (int) Math.round( simulation.getProgress(simTime) * 100.0d );
+				progressBarList.get(i).setValue(progress);
 			}
-			JaamSimModel sm = simModelList.get(i);
-			String str = String.format(LABEL_FORMAT, i + 1, sm.getScenarioNumber(),
-					sm.getReplicationNumber());
-			labelList.get(i).setText(str);
-			Simulation simulation = sm.getSimulation();
-			double simTime = sm.getSimTime();
-			int progress = (int) Math.round( simulation.getProgress(simTime) * 100.0d );
-			progressBarList.get(i).setValue(progress);
+
+			// Overall progress bar
+			double overallProgress = GUIFrame.getRunManager().getProgress();
+			int progress = (int) Math.round( overallProgress * 100.0d );
+			overallBar.setValue(progress);
+
+			// Run processing rate
+			double progressRate = GUIFrame.getInstance().getOverallProgressRate();
+			double processingRate = progressRate * GUIFrame.getJaamSimModel().getSimulation().getNumberOfRuns();
+			rateLabel.setText(String.format("%,.1f runs per hour", processingRate * 3600.0d));
+
+			// Remaining execution time
+			double remainingTime = (1.0d - overallProgress) / progressRate;
+			remainingTimeLabel.setText(GUIFrame.getRemainingTimeString(remainingTime));
 		}
-
-		// Overall progress bar
-		double overallProgress = GUIFrame.getRunManager().getProgress();
-		int progress = (int) Math.round( overallProgress * 100.0d );
-		overallBar.setValue(progress);
-
-		// Run processing rate
-		double progressRate = GUIFrame.getInstance().getOverallProgressRate();
-		double processingRate = progressRate * GUIFrame.getJaamSimModel().getSimulation().getNumberOfRuns();
-		rateLabel.setText(String.format("%,.1f runs per hour", processingRate * 3600.0d));
-
-		// Remaining execution time
-		double remainingTime = (1.0d - overallProgress) / progressRate;
-		remainingTimeLabel.setText(GUIFrame.getRemainingTimeString(remainingTime));
+		catch (Throwable t) {}
 	}
 
 	public boolean getShow() {
