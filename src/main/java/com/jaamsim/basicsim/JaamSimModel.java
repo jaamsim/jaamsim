@@ -137,7 +137,7 @@ public class JaamSimModel {
 		autoLoad();
 		simulation = getSimulation();
 		try {
-			configure(sm.configFile);
+			configure(sm.configFile, false);
 		}
 		catch (Exception e) {
 			LogBox.logException(e);
@@ -264,8 +264,13 @@ public class JaamSimModel {
 	 * @throws URISyntaxException
 	 */
 	public void configure(File file) throws URISyntaxException {
+		configure(file, true);
+	}
+
+	public void configure(File file, boolean bool) throws URISyntaxException {
 		configFile = file;
-		openLogFile();
+		if (bool)
+			openLogFile();
 		InputAgent.loadConfigurationFile(this, file);
 		name = file.getName();
 
@@ -273,7 +278,7 @@ public class JaamSimModel {
 		setSessionEdited(false);
 
 		// Save and close the input trace file
-		if (numWarnings == 0 && numErrors == 0) {
+		if (bool && numWarnings == 0 && numErrors == 0) {
 			closeLogFile();
 
 			// Open a fresh log file for the simulation run
