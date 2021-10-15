@@ -131,7 +131,7 @@ public class RunManager implements RunListener {
 	public void runEnded(SimRun run) {
 		Simulation simulation = simModel.getSimulation();
 		if (RunProgressBox.hasInstance())
-			RunProgressBox.getInstance().update();
+			GUIFrame.updateUI();
 
 		// Print the output report
 		if (simulation.getPrintReport())

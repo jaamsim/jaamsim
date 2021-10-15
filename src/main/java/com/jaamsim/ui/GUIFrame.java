@@ -3052,6 +3052,12 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		int progress = (int) Math.round(simulation.getProgress(simTime) * 100.0d);
 		this.setProgress(progress);
 
+		// Show the overall progress in JaamSim's title bar
+		if (sim.getSimState() >= JaamSimModel.SIM_STATE_CONFIGURED) {
+			int overallProgress = (int) Math.round(runManager.getProgress() * 100.0d);
+			setTitle(sim, overallProgress);
+		}
+
 		// Do nothing further if the simulation is not executing events
 		if (sim.getSimState() != JaamSimModel.SIM_STATE_RUNNING)
 			return;
@@ -3094,13 +3100,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		progressBar.setValue( val );
 		progressBar.repaint(25);
 		lastValue = val;
-
-		// Show the overall progress in JaamSim's title bar
-		JaamSimModel sim = getJaamSimModel();
-		if (sim.getSimState() >= JaamSimModel.SIM_STATE_CONFIGURED) {
-			int overallProgress = (int) Math.round(runManager.getProgress() * 100.0d);
-			setTitle(sim, overallProgress);
-		}
 	}
 
 	/**
