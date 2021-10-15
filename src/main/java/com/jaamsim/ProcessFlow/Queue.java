@@ -554,7 +554,13 @@ public class Queue extends LinkedComponent {
 		double maxHeight = 0;
 
 		// Copy the storage entries to avoid some concurrent modification exceptions
-		TreeSet<StorageEntry> entries = new TreeSet<>(storage.getEntries());
+		TreeSet<StorageEntry> entries;
+		try {
+			entries = new TreeSet<>(storage.getEntries());
+		}
+		catch (Exception e) {
+			return;
+		}
 
 		// Find the maximum width and height of the entities
 		if (entries.size() >  maxPerLine.getValue()){
