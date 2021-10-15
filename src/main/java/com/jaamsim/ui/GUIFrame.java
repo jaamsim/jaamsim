@@ -3112,18 +3112,26 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	 * @param val - the remaining run time in seconds.
 	 */
 	public void setRemaining( double val ) {
+		remainingDisplay.setText( getRemainingTimeString(val) );
+	}
+
+	/**
+	 * Returns a string containing the remaining run time in the most appropriate unit.
+	 * @param val - remaining run time in seconds
+	 */
+	public static String getRemainingTimeString(double val) {
 		if (val == 0.0)
-			remainingDisplay.setText("-");
+			return "-";
 		else if (val < 60.0)
-			remainingDisplay.setText(String.format("%.0f seconds left", val));
+			return String.format("%.0f seconds left", val);
 		else if (val < 3600.0)
-			remainingDisplay.setText(String.format("%.1f minutes left", val/60.0));
+			return String.format("%.1f minutes left", val/60.0);
 		else if (val < 3600.0*24.0)
-			remainingDisplay.setText(String.format("%.1f hours left", val/3600.0));
+			return String.format("%.1f hours left", val/3600.0);
 		else if (val < 3600.0*8760.0)
-			remainingDisplay.setText(String.format("%.1f days left", val/(3600.0*24.0)));
+			return String.format("%.1f days left", val/(3600.0*24.0));
 		else
-			remainingDisplay.setText(String.format("%.1f years left", val/(3600.0*8760.0)));
+			return String.format("%.1f years left", val/(3600.0*8760.0));
 	}
 
 	// ******************************************************************************************************
