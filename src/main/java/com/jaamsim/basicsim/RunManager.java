@@ -115,6 +115,13 @@ public class RunManager implements RunListener {
 		}
 	}
 
+	public Scenario getScenario(int scenarioNumber) {
+		synchronized (scenarioList) {
+			int i = scenarioNumber - simModel.getSimulation().getStartingScenarioNumber();
+			return scenarioList.get(i);
+		}
+	}
+
 	@Override
 	public void runEnded(SimRun run) {
 		Simulation simulation = simModel.getSimulation();
@@ -126,8 +133,7 @@ public class RunManager implements RunListener {
 			InputAgent.printReport(run.getJaamSimModel(), EventManager.simSeconds());
 
 		// Is the scenario finished?
-		int i = run.getScenarioNumber() - simulation.getStartingScenarioNumber();
-		Scenario scene = scenarioList.get(i);
+		Scenario scene = getScenario(run.getScenarioNumber());
 		if (scene.isFinished()) {
 
 			// Print the results
@@ -135,7 +141,7 @@ public class RunManager implements RunListener {
 			if (numOuts > 0) {
 				outStream = getOutStream();
 				if (outStream != null) {
-					if (i == 0)
+					if (run.getScenarioNumber() == simulation.getStartingScenarioNumber())
 						InputAgent.printRunOutputHeaders(simModel, outStream);
 					boolean labels = simulation.getPrintRunLabels();
 					boolean reps = simulation.getPrintReplications();
