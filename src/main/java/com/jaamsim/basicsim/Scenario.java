@@ -131,11 +131,13 @@ public class Scenario implements RunListener {
 	}
 
 	public double getProgress() {
-		double ret = runsCompleted.size();
-		for (SimRun run : runsInProgress) {
-			ret += run.getProgress();
+		synchronized (this) {
+			double ret = runsCompleted.size();
+			for (SimRun run : runsInProgress) {
+				ret += run.getProgress();
+			}
+			return ret / replications;
 		}
-		return ret / replications;
 	}
 
 }

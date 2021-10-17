@@ -223,11 +223,13 @@ public class RunManager implements RunListener {
 	}
 
 	public double getProgress() {
-		double ret = 0.0d;
-		for (Scenario scene : scenarioList) {
-			ret += scene.getProgress();
+		synchronized (scenarioList) {
+			double ret = 0.0d;
+			for (Scenario scene : scenarioList) {
+				ret += scene.getProgress();
+			}
+			return ret / simModel.getSimulation().getNumberOfScenarios();
 		}
-		return ret / simModel.getSimulation().getNumberOfScenarios();
 	}
 
 }
