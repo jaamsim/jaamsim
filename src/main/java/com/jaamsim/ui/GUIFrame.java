@@ -480,18 +480,18 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	}
 
 	public void setTitle(JaamSimModel sm) {
-		String str = "JaamSim";
-		if (sm.getSimulation() != null)
-			str = sm.getSimulation().getModelName();
-		setTitle(sm.getName() + " - " + str);
+		setTitle(sm, 0);
 	}
 
 	public void setTitle(JaamSimModel sm, int val) {
 		String str = "JaamSim";
 		if (sm.getSimulation() != null)
 			str = sm.getSimulation().getModelName();
-		String title = String.format("%d%% %s - %s", val, sm.getName(), str);
-		setTitle(title);
+		StringBuilder sb = new StringBuilder();
+		if (val > 0)
+			sb.append(val).append("% ");
+		sb.append(sm.getName()).append(" - ").append(str);
+		setTitle(sb.toString());
 	}
 
 	private static JaamSimModel getNextJaamSimModel() {
