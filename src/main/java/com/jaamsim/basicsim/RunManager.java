@@ -34,8 +34,6 @@ public class RunManager implements RunListener {
 
 	private final JaamSimModel simModel;
 	private PrintStream outStream;  // location where the custom outputs will be written
-	private int scenarioNumber;    // labels each scenario when multiple scenarios are being made
-	private Scenario presentScenario;
 
 	private final ArrayList<JaamSimModel> simModelList;
 	private final ArrayList<Scenario> scenarioList;
@@ -60,34 +58,23 @@ public class RunManager implements RunListener {
 
 	public synchronized void start(double pauseTime) {
 		Simulation simulation = simModel.getSimulation();
-		int numOuts = simulation.getRunOutputListSize();
-		int numberOfReplications = simulation.getNumberOfReplications();
 		int numberOfThreads = simulation.getNumberOfThreads();
 
 		// Start a new simulation run on each thread
 		simModelList.clear();
 		scenarioList.clear();
-		scenarioNumber = simulation.getStartingScenarioNumber();
-		while (simModelList.size() < numberOfThreads) {
+		for (int i = 0; i < numberOfThreads; i++) {
 
 			// Create a JaamSimModel for each thread
 			JaamSimModel sm = simModel;
-			if (simModelList.size() > 0) {
+			if (i > 0) {
 				sm = new JaamSimModel(simModel);
 				sm.setName(String.format("%s (%s)", simModel.getName(), simModelList.size() + 1));
 			}
 			simModelList.add(sm);
 
-			// Create a new Scenario when required
-			if (presentScenario == null || !presentScenario.hasRunsToStart()) {
-				if (presentScenario != null)
-					scenarioNumber++;
-				presentScenario = new Scenario(numOuts, scenarioNumber, numberOfReplications, this);
-				scenarioList.add(presentScenario);
-			}
-
 			// Start the next simulation run for the present scenario
-			presentScenario.startNextRun(sm, pauseTime);
+			startNextRun(sm, pauseTime);
 		}
 	}
 
@@ -109,8 +96,7 @@ public class RunManager implements RunListener {
 		simModelList.clear();
 		scenarioList.clear();
 
-		presentScenario = null;
-		scenarioNumber = simModel.getSimulation().getStartingScenarioNumber();
+		int scenarioNumber = simModel.getSimulation().getStartingScenarioNumber();
 		simModel.setScenarioNumber(scenarioNumber);
 		simModel.setReplicationNumber(1);
 		simModel.reset();
@@ -130,7 +116,7 @@ public class RunManager implements RunListener {
 	}
 
 	@Override
-	public synchronized void runEnded(SimRun run) {
+	public void runEnded(SimRun run) {
 		Simulation simulation = simModel.getSimulation();
 		if (RunProgressBox.hasInstance())
 			RunProgressBox.getInstance().update();
@@ -173,26 +159,35 @@ public class RunManager implements RunListener {
 			}
 		}
 
-		// Start a new Scenario
-		if (!presentScenario.hasRunsToStart()
-				&& scenarioNumber < simulation.getEndingScenarioNumber()) {
-			scenarioNumber++;
-			int numOuts = simulation.getRunOutputListSize();
-			int numberOfReplications = simulation.getNumberOfReplications();
-			presentScenario = new Scenario(numOuts, scenarioNumber, numberOfReplications, this);
-			scenarioList.add(presentScenario);
-		}
-
 		// Start the next run
-		if (presentScenario.hasRunsToStart()) {
-			new Thread(new Runnable() {
-				@Override
-				public void run() {
-					JaamSimModel sm = run.getJaamSimModel();
-					double pauseTime = simModel.getSimulation().getPauseTime();
-					presentScenario.startNextRun(sm, pauseTime);
-				}
-			}).start();
+		JaamSimModel sm = run.getJaamSimModel();
+		double pauseTime = simModel.getSimulation().getPauseTime();
+		startNextRun(sm, pauseTime);
+	}
+
+	private void startNextRun(JaamSimModel sm, double pauseTime) {
+		synchronized (scenarioList) {
+			Simulation simulation = simModel.getSimulation();
+
+			// Set the present scenario
+			Scenario presentScenario = null;
+			if (!scenarioList.isEmpty())
+				presentScenario = scenarioList.get(scenarioList.size() - 1);
+
+			// Start a new scenario if required
+			if (presentScenario == null || !presentScenario.hasRunsToStart()) {
+				if (scenarioList.size() >= simulation.getNumberOfScenarios())
+					return;
+				int numOuts = simulation.getRunOutputListSize();
+				int scenarioNumber = scenarioList.size() + simulation.getStartingScenarioNumber();
+				int numberOfReplications = simulation.getNumberOfReplications();
+				presentScenario = new Scenario(numOuts, scenarioNumber, numberOfReplications, this);
+				scenarioList.add(presentScenario);
+			}
+
+			// Start the next simulation run for the present scenario
+			if (presentScenario.hasRunsToStart())
+				presentScenario.startNextRun(sm, pauseTime);
 		}
 	}
 
