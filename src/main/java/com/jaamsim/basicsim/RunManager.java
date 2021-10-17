@@ -49,7 +49,9 @@ public class RunManager implements RunListener {
 	}
 
 	public ArrayList<JaamSimModel> getSimModelList() {
-		return new ArrayList<>(simModelList);
+		synchronized (simModelList) {
+			return new ArrayList<>(simModelList);
+		}
 	}
 
 	public synchronized void start() {
@@ -71,7 +73,9 @@ public class RunManager implements RunListener {
 				sm = new JaamSimModel(simModel);
 				sm.setName(String.format("%s (%s)", simModel.getName(), simModelList.size() + 1));
 			}
-			simModelList.add(sm);
+			synchronized (simModelList) {
+				simModelList.add(sm);
+			}
 
 			// Start the next simulation run for the present scenario
 			startNextRun(sm, pauseTime);
