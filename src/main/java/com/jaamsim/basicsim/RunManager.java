@@ -133,40 +133,42 @@ public class RunManager implements RunListener {
 		if (RunProgressBox.hasInstance())
 			GUIFrame.updateUI();
 
-		// Print the output report
-		if (simulation.getPrintReport())
-			InputAgent.printReport(run.getJaamSimModel(), EventManager.simSeconds());
+		synchronized (simModel) {
+			// Print the output report
+			if (simulation.getPrintReport())
+				InputAgent.printReport(run.getJaamSimModel(), EventManager.simSeconds());
 
-		// Is the scenario finished?
-		Scenario scene = getScenario(run.getScenarioNumber());
-		if (scene.isFinished()) {
+			// Is the scenario finished?
+			Scenario scene = getScenario(run.getScenarioNumber());
+			if (scene.isFinished()) {
 
-			// Print the results
-			int numOuts = simulation.getRunOutputListSize();
-			if (numOuts > 0) {
-				outStream = getOutStream();
-				if (outStream != null) {
-					if (run.getScenarioNumber() == simulation.getStartingScenarioNumber())
-						InputAgent.printRunOutputHeaders(simModel, outStream);
-					boolean labels = simulation.getPrintRunLabels();
-					boolean reps = simulation.getPrintReplications();
-					boolean bool = simulation.getPrintConfidenceIntervals();
-					InputAgent.printScenarioOutputs(scene, labels, reps, bool, outStream);
-					if (simulation.getPrintReplications()
-							&& run.getScenarioNumber() < simulation.getEndingScenarioNumber()) {
-						outStream.println();
+				// Print the results
+				int numOuts = simulation.getRunOutputListSize();
+				if (numOuts > 0) {
+					outStream = getOutStream();
+					if (outStream != null) {
+						if (run.getScenarioNumber() == simulation.getStartingScenarioNumber())
+							InputAgent.printRunOutputHeaders(simModel, outStream);
+						boolean labels = simulation.getPrintRunLabels();
+						boolean reps = simulation.getPrintReplications();
+						boolean bool = simulation.getPrintConfidenceIntervals();
+						InputAgent.printScenarioOutputs(scene, labels, reps, bool, outStream);
+						if (simulation.getPrintReplications()
+								&& run.getScenarioNumber() < simulation.getEndingScenarioNumber()) {
+							outStream.println();
+						}
 					}
 				}
-			}
 
-			// Exit if this is the last scenario
-			if (run.getScenarioNumber() == simulation.getEndingScenarioNumber()) {
-				simModel.end();
-				if (outStream != null) {
-					outStream.close();
-					outStream = null;
+				// Exit if this is the last scenario
+				if (run.getScenarioNumber() == simulation.getEndingScenarioNumber()) {
+					simModel.end();
+					if (outStream != null) {
+						outStream.close();
+						outStream = null;
+					}
+					return;
 				}
-				return;
 			}
 		}
 
