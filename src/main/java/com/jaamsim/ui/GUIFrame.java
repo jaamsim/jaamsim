@@ -3131,7 +3131,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	 * @param val - remaining run time in seconds
 	 */
 	public static String getRemainingTimeString(double val) {
-		if (val == 0.0)
+		if (val < 0.0)
 			return "-";
 		else if (val < 60.0)
 			return String.format("%.0f seconds left", val);
@@ -3257,7 +3257,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				speedUpDisplay.setEnabled( false );
 				remainingDisplay.setEnabled( false );
 				setSpeedUp(0);
-				setRemaining(0);
+				setRemaining(-1);
 				setProgress(0);
 				controlStartResume.setEnabled( true );
 				controlStartResume.setSelected( false );
@@ -3283,7 +3283,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				speedUpDisplay.setEnabled( false );
 				remainingDisplay.setEnabled( false );
 				setSpeedUp(0);
-				setRemaining(0);
+				setRemaining(-1);
 				setProgress(0);
 				controlStartResume.setEnabled( false );
 				controlStartResume.setSelected( false );
@@ -3308,7 +3308,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				speedUpDisplay.setEnabled( false );
 				remainingDisplay.setEnabled( false );
 				setSpeedUp(0);
-				setRemaining(0);
+				setRemaining(-1);
 				setProgress(0);
 				controlStartResume.setEnabled( true );
 				controlStartResume.setSelected( false );
