@@ -4671,10 +4671,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	@Override
 	public void timeRunning() {
 		EventManager evt = EventManager.current();
-		long tick = evt.getTicks();
 		boolean running = evt.isRunning();
 		if (running) {
-			initSpeedUp(evt.ticksToSeconds(tick));
 			updateForSimulationState(JaamSimModel.SIM_STATE_RUNNING);
 		}
 		else {

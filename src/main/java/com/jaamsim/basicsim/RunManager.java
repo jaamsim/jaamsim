@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InputErrorException;
+import com.jaamsim.ui.GUIFrame;
 import com.jaamsim.ui.RunProgressBox;
 
 /**
@@ -196,8 +197,12 @@ public class RunManager implements RunListener {
 			}
 
 			// Start the next simulation run for the present scenario
-			if (presentScenario.hasRunsToStart())
+			if (presentScenario.hasRunsToStart()) {
 				presentScenario.startNextRun(sm, pauseTime);
+				if (sm == simModel && GUIFrame.getInstance() != null) {
+					GUIFrame.getInstance().initSpeedUp(0.0d);
+				}
+			}
 		}
 	}
 
