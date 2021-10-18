@@ -132,7 +132,7 @@ public abstract class AbstractLinkedResourceUser extends LinkedService implement
 
 	@Override
 	public boolean isReadyToStart() {
-		if (!isAvailable() || isForcedDowntimePending() || isImmediateDowntimePending()) {
+		if (!isAbleToRestart()) {
 			return false;
 		}
 		double simTime = getSimTime();
