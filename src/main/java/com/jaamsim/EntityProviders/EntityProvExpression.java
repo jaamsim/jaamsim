@@ -58,7 +58,7 @@ public class EntityProvExpression<T extends Entity> implements EntityProvider<T>
 				thisEnt.error(BAD_RESULT_TYPE, exp.source, result.type, "ENTITY");
 			}
 
-			if (!entClass.isAssignableFrom(result.entVal.getClass())) {
+			if (result.entVal != null && !entClass.isAssignableFrom(result.entVal.getClass())) {
 				thisEnt.error(BAD_RESULT_CLASS, exp.source,
 						result.entVal.getClass().getSimpleName(), entClass.getSimpleName());
 			}
