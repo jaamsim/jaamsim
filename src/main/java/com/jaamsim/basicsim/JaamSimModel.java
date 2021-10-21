@@ -136,11 +136,46 @@ public class JaamSimModel {
 		this(sm.name);
 		autoLoad();
 		simulation = getSimulation();
-		try {
-			configure(sm.configFile, false);
+		setRecordEdits(true);
+
+		boolean verify = false;  // verify the copied model
+
+		// Create the new entities in the same order as the original model
+		for (Entity ent : sm.getClonesOfIterator(Entity.class)) {
+			if (ent.isGenerated() || ent.isPreDefined())
+				continue;
+			if (ent instanceof EntityLabel && !((EntityLabel) ent).getShowInput()
+					&& ((EntityLabel) ent).isDefault())
+				continue;
+			defineEntity(ent.getObjectType().getName(), ent.getName());
 		}
-		catch (Exception e) {
-			LogBox.logException(e);
+
+		// Copy the inputs to the new entities
+		for (int seq = 0; seq < 2; seq++) {
+			for (Entity ent : sm.getClonesOfIterator(Entity.class)) {
+				if (!ent.isRegistered())
+					continue;
+				if (ent instanceof EntityLabel && !((EntityLabel) ent).getShowInput()
+						&& ((EntityLabel) ent).isDefault())
+					continue;
+				Entity newEnt = getEntity(ent.getName());
+				newEnt.copyInputs(ent, seq, false);
+			}
+		}
+
+		// Complete the preparation of the sub-model clones
+		postLoad();
+
+		// Verify the copied model by saving its configuration file
+		if (verify) {
+			try {
+				File file = File.createTempFile("JaamSim-", ".cfg");
+				InputAgent.printNewConfigurationFileWithName(this, file);
+				System.out.println(file.getPath());
+			}
+			catch (Exception e) {
+				System.out.println(e.getMessage());
+			}
 		}
 	}
 
