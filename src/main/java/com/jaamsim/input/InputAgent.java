@@ -1695,8 +1695,8 @@ public class InputAgent {
 	static public String getRelativeFilePath(JaamSimModel simModel, URI uri) {
 
 		// Relativize the file path against the resources folder
-		String resString = resRoot.toString();
-		String inputString = uri.toString();
+		String resString = resRoot.getPath();
+		String inputString = uri.getPath();
 		if (inputString.startsWith(resString)) {
 			return String.format("<res>/%s", inputString.substring(resString.length()));
 		}
