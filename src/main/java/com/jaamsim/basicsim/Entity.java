@@ -436,9 +436,11 @@ public class Entity {
 				targetInput.setLocked(bool);
 			}
 			catch (Exception e) {
+				String msg = String.format("%s, keyword: %s, value: %s%n%s", this, key, tmp, e.getMessage());
+				System.out.println(msg);
+				e.printStackTrace();
 				GUIListener gui = getJaamSimModel().getGUIListener();
 				if (gui != null) {
-					String msg = String.format("%s, keyword: %s, value: %s%n%s", this, key, tmp, e.getMessage());
 					gui.invokeErrorDialogBox("Runtime Error", msg);
 				}
 			}
