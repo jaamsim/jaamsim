@@ -556,12 +556,17 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	 * Perform exit window duties
 	 */
 	void close() {
+		if (RunProgressBox.hasInstance())
+			RunProgressBox.getInstance().setShow(false);
 		JaamSimModel sim = getJaamSimModel();
 		// check for unsaved changes
 		if (sim.isSessionEdited()) {
 			boolean confirmed = GUIFrame.showSaveChangesDialog(this);
-			if (!confirmed)
+			if (!confirmed) {
+				if (RunProgressBox.hasInstance())
+					RunProgressBox.getInstance().setShow(true);
 				return;
+			}
 		}
 		runManagerList.remove(runManager);
 		runManager.close();
