@@ -245,28 +245,57 @@ public class Entity {
 		postDefine();
 	}
 
+	/**
+	 * Returns whether the entity was defined after the 'RecordEdits' flag was set.
+	 * @return true if defined after RecordEdits
+	 */
 	public final boolean isAdded() {
 		return this.testFlag(Entity.FLAG_ADDED);
 	}
 
+	/**
+	 * Returns whether the entity was created during the execution of the simulation run.
+	 * @return true if created during the simulation run
+	 */
 	public final boolean isGenerated() {
 		return this.testFlag(Entity.FLAG_GENERATED);
 	}
 
+	/**
+	 * Returns whether the entity is included in the 'namedEntities' HashMap and therefore can be
+	 * referenced by the inputs to other entities.
+	 * @return true if its name is recorded
+	 */
 	public final boolean isRegistered() {
 		return this.testFlag(Entity.FLAG_REGISTERED);
 	}
 
+	/**
+	 * Returns whether all references to the entity have been removed by the 'kill' method.
+	 * @return true if the entity has been killed
+	 */
 	public final boolean isDead() {
 		return this.testFlag(Entity.FLAG_DEAD);
 	}
 
+	/**
+	 * Returns whether one or more inputs were modified after the 'RecordEdits' flag was set.
+	 * @return true if edited after RecordEdits
+	 */
 	public final boolean isEdited() {
 		return this.testFlag(Entity.FLAG_EDITED);
 	}
 
 	public final void setEdited() {
 		this.setFlag(Entity.FLAG_EDITED);
+	}
+
+	/**
+	 * Returns whether the entity was created by the 'autoload' file.
+	 * @return true if created by autoload
+	 */
+	public final boolean isPreDefined() {
+		return simModel.isPreDefinedEntity(this);
 	}
 
 	/**
