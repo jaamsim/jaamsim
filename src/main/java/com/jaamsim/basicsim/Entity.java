@@ -398,13 +398,16 @@ public class Entity {
 		ArrayList<String> tmp = new ArrayList<>();
 		ArrayList<String> targetToks = new ArrayList<>();
 		for (Input<?> sourceInput : ent.getEditableInputs()) {
-			if (sourceInput.isDefault() || sourceInput.isSynonym()
-					|| sourceInput.getSequenceNumber() != seq)
+			if (sourceInput.isSynonym() || sourceInput.getSequenceNumber() != seq)
 				continue;
 
 			String key = sourceInput.getKeyword();
 			Input<?> targetInput = this.getInput(key);
 			if (targetInput == null)
+				continue;
+
+			// Ignore inputs that have the default value for both the source and target entities
+			if (sourceInput.isDefault() && targetInput.isDefault())
 				continue;
 
 			tmp.clear();
