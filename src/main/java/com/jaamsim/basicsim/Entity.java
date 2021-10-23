@@ -396,10 +396,12 @@ public class Entity {
 
 		// Apply the inputs based on the source entity
 		ArrayList<String> tmp = new ArrayList<>();
+		ArrayList<String> targetToks = new ArrayList<>();
 		for (Input<?> sourceInput : ent.getEditableInputs()) {
 			if (sourceInput.isDefault() || sourceInput.isSynonym()
 					|| sourceInput.getSequenceNumber() != seq)
 				continue;
+
 			String key = sourceInput.getKeyword();
 			Input<?> targetInput = this.getInput(key);
 			if (targetInput == null)
@@ -419,6 +421,14 @@ public class Entity {
 					tmp.set(i, str);
 				}
 			}
+
+			// Ignore inputs that have already been set for the target entity by either the
+			// autoload or postDefine methods. This prevents such an input from being set as
+			// 'edited' causing it to be written to the saved configuration file for verification.
+			targetToks.clear();
+			targetInput.getValueTokens(targetToks);
+			if (targetToks.equals(tmp))
+				continue;
 
 			try {
 				KeywordIndex kw = new KeywordIndex(key, tmp, null);
