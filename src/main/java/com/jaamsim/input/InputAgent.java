@@ -963,7 +963,7 @@ public class InputAgent {
 		// Prepare a sorted list of all the entities that were added to the model
 		ArrayList<Entity> newEntities = new ArrayList<>();
 		for (Entity ent : simModel.getClonesOfIterator(Entity.class)) {
-			if (!ent.isAdded() || ent.isGenerated())
+			if (!ent.isAdded() || ent.isGenerated() || ent instanceof ObjectType)
 				continue;
 			if (ent instanceof EntityLabel && !((EntityLabel) ent).getShowInput()
 					&& ((EntityLabel) ent).isDefault())
@@ -1022,7 +1022,7 @@ public class InputAgent {
 		// Prepare a sorted list of all the entities that were edited
 		ArrayList<Entity> entityList = new ArrayList<>();
 		for (Entity ent : simModel.getClonesOfIterator(Entity.class)) {
-			if (!ent.isEdited() || !ent.isRegistered())
+			if (!ent.isEdited() || !ent.isRegistered() || ent instanceof ObjectType)
 				continue;
 			if (ent instanceof EntityLabel && !((EntityLabel) ent).getShowInput()
 					&& ((EntityLabel) ent).isDefault())
