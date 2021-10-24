@@ -954,6 +954,15 @@ public class Entity {
 		}
 	}
 
+	/**
+	 * Returns the object type for this entity.
+	 * Null is returned if the entity itself is an instance of ObjectType.
+	 * <p>
+	 * For example, if Server1 is an instance of Server, then
+	 * Server1.getObjectType() returns Server, and
+	 * Server.getObjectType() returns null.
+	 * @return object type for the entity
+	 */
 	public ObjectType getObjectType() {
 		return simModel.getObjectTypeForClass(this.getClass());
 	}
