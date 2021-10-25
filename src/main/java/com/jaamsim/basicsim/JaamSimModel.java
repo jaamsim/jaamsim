@@ -21,6 +21,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicLong;
@@ -42,6 +43,7 @@ import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.KeywordIndex;
+import com.jaamsim.input.NamedExpressionListInput;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.states.StateEntity;
 import com.jaamsim.ui.EventViewer;
@@ -150,16 +152,52 @@ public class JaamSimModel {
 			defineEntity(ent.getObjectType().getName(), ent.getName());
 		}
 
-		// Copy the inputs to the new entities
-		for (int seq = 0; seq < 2; seq++) {
-			for (Entity ent : sm.getClonesOfIterator(Entity.class)) {
-				if (!ent.isRegistered())
-					continue;
-				if (ent instanceof EntityLabel && !((EntityLabel) ent).getShowInput()
-						&& ((EntityLabel) ent).isDefault())
-					continue;
+		// Prepare a sorted list of registered entities on which to set inputs
+		ArrayList<Entity> entityList = new ArrayList<>();
+		for (Entity ent : sm.getClonesOfIterator(Entity.class)) {
+			if (!ent.isRegistered() || ent instanceof ObjectType)
+				continue;
+			if (ent instanceof EntityLabel && !((EntityLabel) ent).getShowInput()
+					&& ((EntityLabel) ent).isDefault())
+				continue;
+			entityList.add(ent);
+		}
+		Collections.sort(entityList, InputAgent.subModelSortOrder);
+
+		// Stub definitions
+		for (Entity ent : entityList) {
+			if (ent.isGenerated())
+				continue;
+			NamedExpressionListInput in = (NamedExpressionListInput) ent.getInput("CustomOutputList");
+			if (in == null || in.isDefault())
+				continue;
+			Entity newEnt = getEntity(ent.getName());
+			if (newEnt == null)
+				throw new ErrorException("New entity not found: %s", ent.getName());
+			KeywordIndex kw = InputAgent.formatInput(in.getKeyword(), in.getStubDefinition());
+			InputAgent.apply(newEnt, kw);
+		}
+
+		// Copy the early inputs to the new entities in the specified sequence of inputs
+		for (String key : InputAgent.EARLY_KEYWORDS) {
+			for (Entity ent : entityList) {
 				Entity newEnt = getEntity(ent.getName());
-				newEnt.copyInputs(ent, seq, false);
+				if (newEnt == null)
+					throw new ErrorException("New entity not found: %s", ent.getName());
+				newEnt.copyInput(ent, key, false);
+			}
+		}
+
+		// Copy the normal inputs to the new entities
+		for (Entity ent : entityList) {
+			Entity newEnt = getEntity(ent.getName());
+			if (newEnt == null)
+				throw new ErrorException("New entity not found: %s", ent.getName());
+			for (Input<?> in : ent.getEditableInputs()) {
+				if (in.isSynonym() || InputAgent.isEarlyInput(in))
+					continue;
+				String key = in.getKeyword();
+				newEnt.copyInput(ent, key, false);
 			}
 		}
 

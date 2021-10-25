@@ -68,7 +68,7 @@ public class InputAgent {
 	private static final String INP_ERR_BADPARENT = "The parent entity [%s] has not been defined.";
 	static final char[] INVALID_ENTITY_CHARS = new char[]{' ', '\t', '\n', '{', '}', '\'', '"', '[', ']', '#','.'};
 
-	private static final String[] EARLY_KEYWORDS = {"UnitType", "UnitTypeList", "OutputUnitType", "SecondaryUnitType",
+	public static final String[] EARLY_KEYWORDS = {"UnitType", "UnitTypeList", "OutputUnitType", "SecondaryUnitType",
 	                                                "GregorianCalendar", "StartDate", "DataFile",
 	                                                "AttributeDefinitionList", "CustomOutputList",
 	                                                "Prototype", "KeywordList"};
