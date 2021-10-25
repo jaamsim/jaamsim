@@ -377,14 +377,6 @@ public class Entity {
 	 */
 	public void copyInputs(Entity ent, int seq, boolean bool) {
 
-		String oldParent = ent.getParent().getName();
-		String oldParent1 = String.format("[%s]", oldParent);
-		String oldParent2 = String.format("%s.", oldParent);
-
-		String newParent = this.getParent().getName();
-		String newParent1 = String.format("[%s]", newParent);
-		String newParent2 = String.format("%s.", newParent);
-
 		// Provide stub definitions for the custom outputs
 		if (seq == 0) {
 			NamedExpressionListInput in = (NamedExpressionListInput) ent.getInput("CustomOutputList");
@@ -395,57 +387,72 @@ public class Entity {
 		}
 
 		// Apply the inputs based on the source entity
-		ArrayList<String> tmp = new ArrayList<>();
-		ArrayList<String> targetToks = new ArrayList<>();
 		for (Input<?> sourceInput : ent.getEditableInputs()) {
 			if (sourceInput.isSynonym() || sourceInput.getSequenceNumber() != seq)
 				continue;
-
 			String key = sourceInput.getKeyword();
-			Input<?> targetInput = this.getInput(key);
-			if (targetInput == null)
-				continue;
+			copyInput(ent, key, bool);
+		}
+	}
 
-			// Ignore inputs that have the default value for both the source and target entities
-			if (sourceInput.isDefault() && targetInput.isDefault())
-				continue;
+	/**
+	 * Copy the input with the specified keyword from the specified entity to the caller.
+	 * @param ent - entity whose input is to be copied
+	 * @param key - keyword for the input to be copied
+	 * @param bool - true if the copied input is locked after its value is set
+	 */
+	public void copyInput(Entity ent, String key, boolean bool) {
 
-			tmp.clear();
-			sourceInput.getValueTokens(tmp);
+		Input<?> sourceInput = ent.getInput(key);
+		Input<?> targetInput = this.getInput(key);
+		if (sourceInput == null || targetInput == null)
+			return;
 
-			// Replace references to the parent entity
-			if (this.getParent() != ent.getParent()) {
-				for (int i = 0; i < tmp.size(); i++) {
-					String str = tmp.get(i);
-					if (str.equals(oldParent))
-						str = newParent;
-					str = str.replace(oldParent1, newParent1);
-					str = str.replace(oldParent2, newParent2);
-					tmp.set(i, str);
-				}
+		// Ignore inputs that have the default value for both the source and target entities
+		if (sourceInput.isDefault() && targetInput.isDefault())
+			return;
+
+		// Replace references to the parent entity
+		ArrayList<String> tmp = sourceInput.getValueTokens();
+		if (this.getParent() != ent.getParent()) {
+
+			String oldParent = ent.getParent().getName();
+			String oldParent1 = String.format("[%s]", oldParent);
+			String oldParent2 = String.format("%s.", oldParent);
+
+			String newParent = this.getParent().getName();
+			String newParent1 = String.format("[%s]", newParent);
+			String newParent2 = String.format("%s.", newParent);
+
+			for (int i = 0; i < tmp.size(); i++) {
+				String str = tmp.get(i);
+				if (str.equals(oldParent))
+					str = newParent;
+				str = str.replace(oldParent1, newParent1);
+				str = str.replace(oldParent2, newParent2);
+				tmp.set(i, str);
 			}
+		}
 
-			// Ignore inputs that have already been set for the target entity by either the
-			// autoload or postDefine methods. This prevents such an input from being set as
-			// 'edited' causing it to be written to the saved configuration file for verification.
-			targetToks.clear();
-			targetInput.getValueTokens(targetToks);
-			if (targetToks.equals(tmp))
-				continue;
+		// Ignore inputs that have already been set for the target entity by either the
+		// autoload or postDefine methods. This prevents such an input from being set as
+		// 'edited' causing it to be written to the saved configuration file for verification.
+		ArrayList<String> targetToks = targetInput.getValueTokens();
+		if (targetToks.equals(tmp))
+			return;
 
-			try {
-				KeywordIndex kw = new KeywordIndex(key, tmp, null);
-				InputAgent.apply(this, targetInput, kw);
-				targetInput.setLocked(bool);
-			}
-			catch (Exception e) {
-				String msg = String.format("%s, keyword: %s, value: %s%n%s", this, key, tmp, e.getMessage());
-				System.out.println(msg);
-				e.printStackTrace();
-				GUIListener gui = getJaamSimModel().getGUIListener();
-				if (gui != null) {
-					gui.invokeErrorDialogBox("Runtime Error", msg);
-				}
+		try {
+			KeywordIndex kw = new KeywordIndex(key, tmp, null);
+			InputAgent.apply(this, targetInput, kw);
+			targetInput.setLocked(bool);
+		}
+		catch (Exception e) {
+			String msg = String.format("%s, keyword: %s, value: %s%n%s", this, key, tmp, e.getMessage());
+			System.out.println(msg);
+			e.printStackTrace();
+			GUIListener gui = getJaamSimModel().getGUIListener();
+			if (gui != null) {
+				gui.invokeErrorDialogBox("Runtime Error", msg);
 			}
 		}
 	}
