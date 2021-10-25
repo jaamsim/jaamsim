@@ -1431,26 +1431,32 @@ public class InputAgent {
 		}
 	}
 
+	private static class SubModelComparator implements Comparator<Entity> {
+		@Override
+		public int compare(Entity ent0, Entity ent1) {
+			return Integer.compare(ent0.getSubModelLevel(), ent1.getSubModelLevel());
+		}
+	}
+	public static final Comparator<Entity> subModelSortOrder = new SubModelComparator();
+
 	private static class EntityComparator implements Comparator<Entity> {
 		@Override
 		public int compare(Entity ent0, Entity ent1) {
 
 			// Place the Simulation entity in the first position
-			Class<? extends Entity> class0 = ent0.getClass();
-			Class<? extends Entity> class1 = ent1.getClass();
-			boolean isSim0 = (class0 == Simulation.class);
-			boolean isSim1 = (class1 == Simulation.class);
+			boolean isSim0 = (ent0.getClass() == Simulation.class);
+			boolean isSim1 = (ent1.getClass() == Simulation.class);
 			int ret = Boolean.compare(isSim1, isSim0);  // Simulation goes first
 			if (ret != 0)
 				return ret;
 
 			// First sort by sub-model level
-			int sub0 = ent0.getSubModelLevel();
-			int sub1 = ent1.getSubModelLevel();
-			ret = Integer.compare(sub0, sub1);
+			ret = subModelSortOrder.compare(ent0, ent1);
 			if (ret != 0)
 				return ret;
 
+			Class<? extends Entity> class0 = ent0.getClass();
+			Class<? extends Entity> class1 = ent1.getClass();
 			ObjectType ot0 = ent0.getJaamSimModel().getObjectTypeForClass(class0);
 			ObjectType ot1 = ent1.getJaamSimModel().getObjectTypeForClass(class1);
 			String pal0 = ot0.getPaletteName();
