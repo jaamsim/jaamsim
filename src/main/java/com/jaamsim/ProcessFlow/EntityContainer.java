@@ -27,6 +27,7 @@ import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.StringProviders.StringProvInput;
 import com.jaamsim.input.BooleanInput;
+import com.jaamsim.input.Input;
 import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
@@ -358,7 +359,7 @@ public class EntityContainer extends SimEntity implements EntContainer {
 	    sequence = 9)
 	public ArrayList<String> getUniqueMatchValues(double simTime) {
 		ArrayList<String> ret = new ArrayList<>(container.getEntityTypes());
-		Collections.sort(ret);
+		Collections.sort(ret, Input.uiSortOrder);
 		return ret;
 	}
 

@@ -772,7 +772,7 @@ public class Queue extends LinkedComponent {
 	    sequence = 12)
 	public ArrayList<String> getUniqueMatchValues(double simTime) {
 		ArrayList<String> ret = new ArrayList<>(getEntityTypes());
-		Collections.sort(ret);
+		Collections.sort(ret, Input.uiSortOrder);
 		return ret;
 	}
 
