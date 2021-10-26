@@ -351,7 +351,7 @@ public class EntityContainer extends SimEntity implements EntContainer {
 	    unitType = DimensionlessUnit.class,
 	    sequence = 8)
 	public int getMatchValueCount(double simTime) {
-		return container.getTypeList().size();
+		return container.getEntityTypes().size();
 	}
 
 	@Output(name = "UniqueMatchValues",
@@ -370,7 +370,7 @@ public class EntityContainer extends SimEntity implements EntContainer {
 	    unitType = DimensionlessUnit.class,
 	    sequence = 10)
 	public LinkedHashMap<String, Integer> getMatchValueCountMap(double simTime) {
-		LinkedHashMap<String, Integer> ret = new LinkedHashMap<>(container.getTypeList().size());
+		LinkedHashMap<String, Integer> ret = new LinkedHashMap<>(container.getEntityTypes().size());
 		for (String m : getUniqueMatchValues(simTime)) {
 			ret.put(m, getCount(m));
 		}
@@ -384,7 +384,7 @@ public class EntityContainer extends SimEntity implements EntContainer {
 	             + "entities whose Match value is \"SKU1\".",
 	    sequence = 11)
 	public LinkedHashMap<String, ArrayList<DisplayEntity>> getMatchValueMap(double simTime) {
-		LinkedHashMap<String, ArrayList<DisplayEntity>> ret = new LinkedHashMap<>(container.getTypeList().size());
+		LinkedHashMap<String, ArrayList<DisplayEntity>> ret = new LinkedHashMap<>(container.getEntityTypes().size());
 		for (String m : getUniqueMatchValues(simTime)) {
 			ret.put(m, container.getEntityList(m));
 		}
