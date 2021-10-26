@@ -18,6 +18,7 @@ package com.jaamsim.ProcessFlow;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Set;
 
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.ProcessFlow.EntStorage.StorageEntry;
@@ -148,6 +149,10 @@ public class EntContainerDelegate implements EntContainer {
 
 	public ArrayList<Double> getStorageTimeList(double simTime) {
 		return storage.getStorageTimeList(simTime);
+	}
+
+	public Set<String> getEntityTypes() {
+		return storage.getTypes();
 	}
 
 	@Override

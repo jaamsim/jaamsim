@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018-2019 JaamSim Software Inc.
+ * Copyright (C) 2018-2021 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -357,7 +357,7 @@ public class EntityContainer extends SimEntity implements EntContainer {
 	 description = "The list of unique Match values for the entities in the EntityContainer.",
 	    sequence = 9)
 	public ArrayList<String> getUniqueMatchValues(double simTime) {
-		ArrayList<String> ret = new ArrayList<>(container.getTypeList());
+		ArrayList<String> ret = new ArrayList<>(container.getEntityTypes());
 		Collections.sort(ret);
 		return ret;
 	}
