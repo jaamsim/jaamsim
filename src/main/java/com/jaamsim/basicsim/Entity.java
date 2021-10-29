@@ -426,13 +426,11 @@ public class Entity {
 
 		// Replace references to the parent entity
 		ArrayList<String> tmp = sourceInput.getValueTokens();
-		if (this.getParent() != ent.getParent()) {
-
-			String oldParent = ent.getParent().getName();
+		String oldParent = ent.getParent().getName();
+		String newParent = this.getParent().getName();
+		if (!newParent.equals(oldParent)) {
 			String oldParent1 = String.format("[%s]", oldParent);
 			String oldParent2 = String.format("%s.", oldParent);
-
-			String newParent = this.getParent().getName();
 			String newParent1 = String.format("[%s]", newParent);
 			String newParent2 = String.format("%s.", newParent);
 
