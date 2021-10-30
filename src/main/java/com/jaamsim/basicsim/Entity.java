@@ -424,6 +424,11 @@ public class Entity {
 		if (sourceInput.isDefault() && targetInput.isDefault())
 			return;
 
+		// Ignore locked inputs for generated entities.
+		// These inputs are set automatically in the postLoad.
+		if (ent.isGenerated() && sourceInput.isLocked())
+			return;
+
 		// Replace references to the parent entity
 		ArrayList<String> tmp = sourceInput.getValueTokens();
 		String oldParent = ent.getParent().getName();
