@@ -44,6 +44,7 @@ import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.NamedExpressionListInput;
+import com.jaamsim.input.ParseContext;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.states.StateEntity;
 import com.jaamsim.ui.EventViewer;
@@ -178,13 +179,19 @@ public class JaamSimModel {
 			InputAgent.apply(newEnt, kw);
 		}
 
+		ParseContext context = null;
+		if (sm.getConfigFile() != null) {
+			URI uri = sm.getConfigFile().getParentFile().toURI();
+			context = new ParseContext(uri, null);
+		}
+
 		// Copy the early inputs to the new entities in the specified sequence of inputs
 		for (String key : InputAgent.EARLY_KEYWORDS) {
 			for (Entity ent : entityList) {
 				Entity newEnt = getEntity(ent.getName());
 				if (newEnt == null)
 					throw new ErrorException("New entity not found: %s", ent.getName());
-				newEnt.copyInput(ent, key, false);
+				newEnt.copyInput(ent, key, context, false);
 			}
 		}
 
@@ -197,7 +204,7 @@ public class JaamSimModel {
 				if (in.isSynonym() || InputAgent.isEarlyInput(in))
 					continue;
 				String key = in.getKeyword();
-				newEnt.copyInput(ent, key, false);
+				newEnt.copyInput(ent, key, context, false);
 			}
 		}
 

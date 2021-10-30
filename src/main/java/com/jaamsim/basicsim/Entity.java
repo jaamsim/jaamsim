@@ -17,6 +17,7 @@
  */
 package com.jaamsim.basicsim;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -46,6 +47,7 @@ import com.jaamsim.input.NamedExpression;
 import com.jaamsim.input.NamedExpressionListInput;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.OutputHandle;
+import com.jaamsim.input.ParseContext;
 import com.jaamsim.input.StringInput;
 import com.jaamsim.input.SynonymInput;
 import com.jaamsim.input.ValueHandle;
@@ -369,13 +371,22 @@ public class Entity {
 		}
 	}
 
+	public void copyInputs(Entity ent, int seq, boolean bool) {
+		ParseContext context = null;
+		if (ent.getJaamSimModel().getConfigFile() != null) {
+			URI uri = ent.getJaamSimModel().getConfigFile().getParentFile().toURI();
+			context = new ParseContext(uri, null);
+		}
+		copyInputs(ent, seq, context, bool);
+	}
+
 	/**
 	 * Copy the inputs for the keywords with the specified sequence number to the caller.
 	 * @param ent = entity whose inputs are to be copied
 	 * @param seq = sequence number for the keyword (0 = early keyword, 1 = normal keyword)
 	 * @param bool = true if each copied input is locked after its value is set
 	 */
-	public void copyInputs(Entity ent, int seq, boolean bool) {
+	public void copyInputs(Entity ent, int seq, ParseContext context, boolean bool) {
 
 		// Provide stub definitions for the custom outputs
 		if (seq == 0) {
@@ -391,7 +402,7 @@ public class Entity {
 			if (sourceInput.isSynonym() || sourceInput.getSequenceNumber() != seq)
 				continue;
 			String key = sourceInput.getKeyword();
-			copyInput(ent, key, bool);
+			copyInput(ent, key, context, bool);
 		}
 	}
 
@@ -399,9 +410,10 @@ public class Entity {
 	 * Copy the input with the specified keyword from the specified entity to the caller.
 	 * @param ent - entity whose input is to be copied
 	 * @param key - keyword for the input to be copied
+	 * @param context - specifies the file path to the folder containing the configuration file
 	 * @param bool - true if the copied input is locked after its value is set
 	 */
-	public void copyInput(Entity ent, String key, boolean bool) {
+	public void copyInput(Entity ent, String key, ParseContext context, boolean bool) {
 
 		Input<?> sourceInput = ent.getInput(key);
 		Input<?> targetInput = this.getInput(key);
@@ -442,7 +454,7 @@ public class Entity {
 			return;
 
 		try {
-			KeywordIndex kw = new KeywordIndex(key, tmp, null);
+			KeywordIndex kw = new KeywordIndex(key, tmp, context);
 			InputAgent.apply(this, targetInput, kw);
 			targetInput.setLocked(bool);
 		}
