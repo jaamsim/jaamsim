@@ -22,7 +22,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Set;
-import java.util.TreeSet;
 
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.ProcessFlow.EntStorage.StorageEntry;
@@ -554,30 +553,25 @@ public class Queue extends LinkedComponent {
 		double maxHeight = 0;
 
 		// Copy the storage entries to avoid some concurrent modification exceptions
-		TreeSet<StorageEntry> entries;
+		ArrayList<DisplayEntity> entityList;
 		try {
-			entries = new TreeSet<>(storage.getEntries());
+			entityList = storage.getEntityList(null);
 		}
 		catch (Exception e) {
 			return;
 		}
 
 		// Find the maximum width and height of the entities
-		if (entries.size() >  maxPerLine.getValue()){
-			Iterator<StorageEntry> itr = entries.iterator();
-			while (itr.hasNext()) {
-				QueueEntry entry = (QueueEntry) itr.next();
-				maxWidth = Math.max(maxWidth, entry.entity.getGlobalSize().y);
-				maxHeight = Math.max(maxHeight, entry.entity.getGlobalSize().z);
+		if (entityList.size() >  maxPerLine.getValue()){
+			for (DisplayEntity ent : entityList) {
+				maxWidth = Math.max(maxWidth, ent.getGlobalSize().y);
+				maxHeight = Math.max(maxHeight, ent.getGlobalSize().z);
 			 }
 		}
 
 		// update item locations
 		int i = 0;
-		Iterator<StorageEntry> itr = entries.iterator();
-		while (itr.hasNext()) {
-			QueueEntry entry = (QueueEntry) itr.next();
-			DisplayEntity item = entry.entity;
+		for (DisplayEntity item : entityList) {
 
 			// Calculate the row and level number for the entity
 			int ind = i % maxPerLine.getValue();
@@ -603,7 +597,7 @@ public class Queue extends LinkedComponent {
 			double distanceZ = level * (spacing.getValue() + maxHeight);
 
 			// Calculate the x-coordinate
-			double length = entry.entity.getGlobalSize().x;
+			double length = item.getGlobalSize().x;
 			distanceX += 0.5d * length;
 			tmp.set3(-distanceX, distanceY, distanceZ);
 
