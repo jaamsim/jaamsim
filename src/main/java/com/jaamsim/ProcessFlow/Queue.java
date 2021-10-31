@@ -571,7 +571,7 @@ public class Queue extends LinkedComponent {
 
 		// update item locations
 		int i = 0;
-		for (DisplayEntity item : entityList) {
+		for (DisplayEntity ent : entityList) {
 
 			// Calculate the row and level number for the entity
 			int ind = i % maxPerLine.getValue();
@@ -586,18 +586,18 @@ public class Queue extends LinkedComponent {
 			i++;
 
 			// Set the region
-			item.setRegion(this.getCurrentRegion());
+			ent.setRegion(this.getCurrentRegion());
 
 			// Rotate each transporter about its center so it points to the right direction
-			item.setRelativeOrientation(queueOrientation);
-			item.setShow(visible);
+			ent.setRelativeOrientation(queueOrientation);
+			ent.setShow(visible);
 
 			// Calculate the y- and z- coordinates
 			double distanceY = row * (spacing.getValue() + maxWidth);
 			double distanceZ = level * (spacing.getValue() + maxHeight);
 
 			// Calculate the x-coordinate
-			double length = item.getGlobalSize().x;
+			double length = ent.getGlobalSize().x;
 			distanceX += 0.5d * length;
 			tmp.set3(-distanceX, distanceY, distanceZ);
 
@@ -606,7 +606,7 @@ public class Queue extends LinkedComponent {
 
 			// Set Position
 			Vec3d pos = this.getGlobalPositionForPosition(tmp);
-			item.setGlobalPosition(pos);
+			ent.setGlobalPosition(pos);
 		}
 	}
 
