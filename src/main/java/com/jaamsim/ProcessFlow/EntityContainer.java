@@ -249,7 +249,7 @@ public class EntityContainer extends SimEntity implements EntContainer {
 		double distanceX = -0.5*size.x;
 		double distanceY0 = -0.5*size.y + 0.5*maxWidth;
 		int i = 0;
-		for (DisplayEntity item : entityList) {
+		for (DisplayEntity ent : entityList) {
 
 			// Calculate the row and level number for the entity
 			int ind = i % maxPerLineInput.getValue();
@@ -262,23 +262,23 @@ public class EntityContainer extends SimEntity implements EntContainer {
 			}
 
 			// Set the region
-			item.setRegion(this.getCurrentRegion());
+			ent.setRegion(this.getCurrentRegion());
 
 			// Rotate each entity about its center so it points to the right direction
-			item.setShow(visible);
-			item.setRelativeOrientation(orient);
+			ent.setShow(visible);
+			ent.setRelativeOrientation(orient);
 
 			// Calculate the y- and z- coordinates
 			double distanceY = distanceY0 + row * (spacingInput.getValue() + maxWidth);
 			double distanceZ = level * (spacingInput.getValue() + maxHeight);
 
 			// Set Position
-			Vec3d itemSize = item.getGlobalSize();
+			Vec3d itemSize = ent.getGlobalSize();
 			distanceX += 0.5*itemSize.x;
 			tmp.set3(distanceX, distanceY, distanceZ);
 			tmp.add3(positionOffset.getValue());
 			Vec3d pos = this.getGlobalPositionForPosition(tmp);
-			item.setGlobalPosition(pos);
+			ent.setGlobalPosition(pos);
 
 			// increment total distance
 			distanceX += 0.5*itemSize.x + spacingInput.getValue();
