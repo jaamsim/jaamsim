@@ -24,8 +24,6 @@ import java.util.concurrent.TimeUnit;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.jaamsim.events.EventManager;
-import com.jaamsim.events.EventTimeListener;
 import com.jaamsim.events.TestFrameworkHelpers;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
@@ -118,7 +116,7 @@ public class TestSimulation {
 
 		// Perform the simulation run
 		WaitForPauseListener listener = new WaitForPauseListener(simModel);
-		simModel.setTimeListener(listener);
+		simModel.setRunListener(listener);
 		simModel.start();
 		listener.waitForPause(1000L);
 
@@ -158,10 +156,10 @@ public class TestSimulation {
 		simModel2.setInput("Simulation", "RunDuration", "1000 s");
 
 		WaitForPauseListener listener = new WaitForPauseListener(simModel);
-		simModel.setTimeListener(listener);
+		simModel.setRunListener(listener);
 
 		WaitForPauseListener listener2 = new WaitForPauseListener(simModel2);
-		simModel2.setTimeListener(listener2);
+		simModel2.setRunListener(listener2);
 
 		// Start both runs
 		simModel.start();
@@ -198,6 +196,8 @@ public class TestSimulation {
 			simModel.autoLoad();
 			InputAgent.readResource(simModel, "<res>/examples/" + name);
 			simModel.postLoad();
+			simModel.setInput("Simulation", "RunDuration", "1000 s");
+			simModel.setInput("Simulation", "InitializationDuration", "0 s");
 
 			// Validate the inputs
 			boolean bool = simModel.validate();
@@ -207,16 +207,16 @@ public class TestSimulation {
 			// Run the model for one hour
 			long nanos = System.nanoTime();
 			WaitForPauseListener listener = new WaitForPauseListener(simModel);
-			simModel.setTimeListener(listener);
+			simModel.setRunListener(listener);
 			simModel.initRun();
-			simModel.resume(1000.0);  // pause at 1000 seconds
+			simModel.start();
 			listener.waitForPause(5000L);
 			nanos = System.nanoTime() - nanos;
 			System.out.format("completed at simTime=%s, millis=%s%n", simModel.getSimTime(), nanos/1000000L);
 		}
 	}
 
-	static class WaitForPauseListener implements EventTimeListener {
+	static class WaitForPauseListener implements RunListener {
 		private final JaamSimModel simModel;
 		private final CountDownLatch countDownLatch;
 
@@ -226,23 +226,8 @@ public class TestSimulation {
 		}
 
 		@Override
-		public void tickUpdate(long tick) {
-		}
-
-		@Override
-		public void timeRunning() {
-			//System.out.format("%s.timeRunning() - simTicks=%s, isRunning=%s%n",
-			//		simModel, EventManager.current().getTicks(), EventManager.current().isRunning());
-			if (EventManager.current().isRunning())
-				return;
+		public void runEnded(SimRun run) {
 			countDownLatch.countDown();
-		}
-
-		@Override
-		public void handleError(Throwable t) {
-			countDownLatch.countDown();
-			System.out.format("%s.handleError: %s%n", simModel, t.getMessage());
-			t.printStackTrace();
 		}
 
 		/**
@@ -255,9 +240,10 @@ public class TestSimulation {
 				boolean bool = countDownLatch.await(timeoutMS, TimeUnit.MILLISECONDS);
 				if (!bool) {
 					simModel.pause();
-					throw new RuntimeException(
-							String.format("%s - Timeout at %s milliseconds. Model not completed.",
-									simModel, timeoutMS));
+					String msg = String.format("%s - Timeout at %s milliseconds, "
+							+ "simTime=%.6f seconds. Model not completed.",
+							simModel, timeoutMS, simModel.getSimTime());
+					throw new RuntimeException(msg);
 				}
 				//System.out.format("%s.waitForPause - finished%n", simModel);
 			} catch (InterruptedException e) {
