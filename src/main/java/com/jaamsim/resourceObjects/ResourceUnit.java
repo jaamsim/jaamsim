@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2018-2020 JaamSim Software Inc.
+ * Copyright (C) 2018-2021 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -77,6 +77,10 @@ public class ResourceUnit extends StateUserEntity implements Seizable, ResourceP
 	private long lastReleaseTicks;  // clock ticks at which the unit was unassigned
 	private ArrayList<ResourceUser> userList;  // objects that can use this resource
 
+	//	Statistics
+	private int unitsSeized;    // number of units that have been seized
+	private int unitsReleased;  // number of units that have been released
+
 	public static final Color4d COL_OUTLINE = ColourInput.MED_GREY;
 
 	{
@@ -120,6 +124,9 @@ public class ResourceUnit extends StateUserEntity implements Seizable, ResourceP
 		presentAssignment = null;
 		lastReleaseTicks = 0L;
 		userList = AbstractResourceProvider.getUserList(this);
+
+		unitsSeized = 0;
+		unitsReleased = 0;
 	}
 
 	@Override
@@ -179,6 +186,7 @@ public class ResourceUnit extends StateUserEntity implements Seizable, ResourceP
 			error("Unit is already in use: assignment=%s, entity=%s", presentAssignment, ent);
 		}
 		presentAssignment = ent;
+		unitsSeized++;
 		setPresentState();
 	}
 
@@ -186,7 +194,15 @@ public class ResourceUnit extends StateUserEntity implements Seizable, ResourceP
 	public void release() {
 		presentAssignment = null;
 		lastReleaseTicks = getSimTicks();
+		unitsReleased++;
 		setPresentState();
+	}
+
+	@Override
+	public void clearStatistics() {
+		super.clearStatistics();
+		unitsSeized = 0;
+		unitsReleased = 0;
 	}
 
 	@Override
@@ -323,6 +339,48 @@ public class ResourceUnit extends StateUserEntity implements Seizable, ResourceP
 	    sequence = 1)
 	public ArrayList<ResourceUser> getUserList(double simTime) {
 		return getResourceProvider().getUserList();
+	}
+
+	@Output(name = "Capacity",
+	 description = "The total number of resource units that can be used.",
+	    unitType = DimensionlessUnit.class,
+	    sequence = 2)
+	public int getPresentCapacity(double simTime) {
+		return getCapacity(simTime);
+	}
+
+	@Output(name = "UnitsInUse",
+	 description = "The present number of resource units that are in use.",
+	    unitType = DimensionlessUnit.class,
+	    sequence = 3)
+	public int getUnitsInUse(double simTime) {
+		return getUnitsInUse();
+	}
+
+	@Output(name = "AvailableUnits",
+	 description = "The number of resource units that are not in use.",
+	    unitType = DimensionlessUnit.class,
+	    sequence = 4)
+	public int getAvailableUnits(double simTime) {
+		return getCapacity(simTime) - getUnitsInUse();
+	}
+
+	@Output(name = "UnitsSeized",
+	 description = "The total number of times that the unit has been seized.",
+	    unitType = DimensionlessUnit.class,
+	  reportable = true,
+	    sequence = 5)
+	public int getUnitsSeized(double simTime) {
+		return unitsSeized;
+	}
+
+	@Output(name = "UnitsReleased",
+	 description = "The total number of times that the unit has been released.",
+	    unitType = DimensionlessUnit.class,
+	  reportable = true,
+	    sequence = 6)
+	public int getUnitsReleased(double simTime) {
+		return unitsReleased;
 	}
 
 	@Output(name = "Assignment",
