@@ -228,12 +228,19 @@ public class EntityContainer extends SimEntity implements EntContainer {
 		Vec3d size = this.getSize();
 		Vec3d tmp = new Vec3d();
 
+		// Copy the storage entries to avoid some concurrent modification exceptions
+		ArrayList<DisplayEntity> entityList;
+		try {
+			entityList = container.getEntityList(null);
+		}
+		catch (Exception e) {
+			return;
+		}
+
 		// Find the maximum width and height of the entities
 		double maxWidth = 0;
 		double maxHeight = 0;
-		Iterator<DisplayEntity> itr = container.iterator();
-		while (itr.hasNext()) {
-			DisplayEntity ent = itr.next();
+		for (DisplayEntity ent : entityList) {
 			maxWidth = Math.max(maxWidth, ent.getGlobalSize().y);
 			maxHeight = Math.max(maxHeight, ent.getGlobalSize().z);
 		}
@@ -241,10 +248,8 @@ public class EntityContainer extends SimEntity implements EntContainer {
 		// Update the position of each entity (start at the bottom left of the container)
 		double distanceX = -0.5*size.x;
 		double distanceY0 = -0.5*size.y + 0.5*maxWidth;
-		itr = container.iterator();
 		int i = 0;
-		while (itr.hasNext()) {
-			DisplayEntity item = itr.next();
+		for (DisplayEntity item : entityList) {
 
 			// Calculate the row and level number for the entity
 			int ind = i % maxPerLineInput.getValue();
