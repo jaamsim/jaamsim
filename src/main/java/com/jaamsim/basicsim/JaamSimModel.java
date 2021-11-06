@@ -141,6 +141,10 @@ public class JaamSimModel {
 		simulation = getSimulation();
 		setRecordEdits(true);
 
+		configFile = sm.configFile;
+		reportDir = sm.reportDir;
+		reportFile = sm.reportFile;
+
 		boolean verify = false;  // verify the copied model
 
 		// Create the new entities in the same order as the original model
