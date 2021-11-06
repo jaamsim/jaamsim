@@ -117,7 +117,7 @@ public abstract class Logger extends DisplayEntity {
 
 		// Close the file if it is already open
 		JaamSimModel simModel = getJaamSimModel();
-		if (file != null && simModel.isFirstRun()) {
+		if (file != null && (simModel.isFirstRun() || isSeparateFiles())) {
 			file.close();
 			file = null;
 		}
@@ -127,7 +127,14 @@ public abstract class Logger extends DisplayEntity {
 
 		// Create the report file
 		if (file == null) {
-			String fileName = simModel.getReportFileName("-" + this.getName() + ".log");
+			StringBuilder sb = new StringBuilder();
+			sb.append("-").append(this.getName());
+			if (isSeparateFiles()) {
+				sb.append("-s").append(simModel.getScenarioNumber());
+				sb.append("r").append(simModel.getReplicationNumber());
+			}
+			sb.append(".log");
+			String fileName = simModel.getReportFileName(sb.toString());
 			if (fileName == null)
 				return;
 			File f = new File(fileName);
@@ -137,11 +144,11 @@ public abstract class Logger extends DisplayEntity {
 		}
 
 		// Print the detailed run information to the file
-		if (getJaamSimModel().isFirstRun())
+		if (getJaamSimModel().isFirstRun() || isSeparateFiles())
 			InputAgent.printReport(getSimulation(), file, 0.0d);
 
 		// Print run number header if multiple runs are to be performed
-		if (getJaamSimModel().isMultipleRuns()) {
+		if (getJaamSimModel().isMultipleRuns() && !isSeparateFiles()) {
 			if (!getJaamSimModel().isFirstRun()) {
 				file.format("%n");
 			}
@@ -242,7 +249,7 @@ public abstract class Logger extends DisplayEntity {
 		file.flush();
 
 		// Close the report file
-		if (getJaamSimModel().isLastRun()) {
+		if (getJaamSimModel().isLastRun() || isSeparateFiles()) {
 			file.close();
 			file = null;
 		}
