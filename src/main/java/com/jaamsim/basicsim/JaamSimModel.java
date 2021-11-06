@@ -145,6 +145,10 @@ public class JaamSimModel {
 		reportDir = sm.reportDir;
 		reportFile = sm.reportFile;
 
+		// Ensure that 'getReportDirectory' works correctly for an Example Model
+		if (reportDir == null && configFile == null)
+			reportDir = new File(sm.getReportDirectory());
+
 		boolean verify = false;  // verify the copied model
 
 		// Create the new entities in the same order as the original model
