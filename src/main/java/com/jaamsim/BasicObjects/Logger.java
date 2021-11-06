@@ -51,6 +51,17 @@ public abstract class Logger extends DisplayEntity {
 	                     + " { '[Queue1].AverageQueueTime / 1[h]' }"})
 	private final StringProvListInput dataSource;
 
+	@Keyword(description = "If TRUE, an individual .log file will be created for each simulation "
+	                     + "run and the suffix '-sNrM' will be added to each .log file name, "
+	                     + "where N and M are the scenario and replication numbers for the run. "
+	                     + "If FALSE, a single .log file will be created that contains the "
+	                     + "outputs for all the simulation runs. "
+	                     + "This input is ignored if multiple runs are to be executed and the "
+	                     + "NumberOfThreads input is greater than one, in which case individual "
+	                     + ".log files will be created.",
+	         exampleList = { "FALSE" })
+	private final BooleanInput separateFiles;
+
 	@Keyword(description = "If TRUE, log entries are recorded during the initialization period.",
 	         exampleList = { "FALSE" })
 	private final BooleanInput includeInitialization;
@@ -76,6 +87,9 @@ public abstract class Logger extends DisplayEntity {
 		dataSource = new StringProvListInput("DataSource", KEY_INPUTS,
 				new ArrayList<StringProvider>());
 		this.addInput(dataSource);
+
+		separateFiles = new BooleanInput("SeparateFiles", KEY_INPUTS, false);
+		this.addInput(separateFiles);
 
 		includeInitialization = new BooleanInput("IncludeInitialization", KEY_INPUTS, true);
 		this.addInput(includeInitialization);
@@ -153,6 +167,11 @@ public abstract class Logger extends DisplayEntity {
 
 		// Empty the output buffer
 		file.flush();
+	}
+
+	protected boolean isSeparateFiles() {
+		int numThreads = getJaamSimModel().getSimulation().getNumberOfThreads();
+		return separateFiles.getValue() || numThreads > 1;
 	}
 
 	/**
