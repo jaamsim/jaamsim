@@ -35,6 +35,7 @@ public class RunManager implements RunListener {
 
 	private final JaamSimModel simModel;
 	private PrintStream outStream;  // location where the custom outputs will be written
+	private FileEntity reportFile;  // main output report
 
 	private final ArrayList<JaamSimModel> simModelList;
 	private final ArrayList<Scenario> scenarioList;
@@ -62,6 +63,10 @@ public class RunManager implements RunListener {
 	public synchronized void start(double pauseTime) {
 		Simulation simulation = simModel.getSimulation();
 		int numberOfThreads = simulation.getNumberOfThreads();
+
+		// Open the main report
+		if (simulation.getPrintReport())
+			reportFile = simModel.getReportFile();
 
 		// Start a new simulation run on each thread
 		simModelList.clear();
@@ -111,6 +116,10 @@ public class RunManager implements RunListener {
 		if (outStream != null) {
 			outStream.close();
 			outStream = null;
+		}
+		if (reportFile != null) {
+			reportFile.close();
+			reportFile = null;
 		}
 		for (JaamSimModel sm : simModelList) {
 			sm.closeLogFile();
@@ -162,11 +171,15 @@ public class RunManager implements RunListener {
 
 				// Exit if this is the last scenario
 				if (run.getScenarioNumber() == simulation.getEndingScenarioNumber()) {
-					simModel.end();
 					if (outStream != null) {
 						outStream.close();
 						outStream = null;
 					}
+					if (reportFile != null) {
+						reportFile.close();
+						reportFile = null;
+					}
+					simModel.end();
 					return;
 				}
 			}

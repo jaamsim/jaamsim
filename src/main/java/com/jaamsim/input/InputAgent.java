@@ -1425,12 +1425,6 @@ public class InputAgent {
 			InputAgent.printReport(ent, reportFile, simTime);
 			reportFile.format("%n");
 		}
-
-		// Close the report file
-		if (simModel.isLastRun()) {
-			reportFile.close();
-			reportFile = null;
-		}
 	}
 
 	private static class SubModelComparator implements Comparator<Entity> {
