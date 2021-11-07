@@ -1383,12 +1383,11 @@ public class InputAgent {
 
 	/**
 	 * Prints the output report for the simulation run.
-	 * @param simTime - simulation time at which the report is printed.
+	 * @param simModel - simulation model whose report is to be printed
+	 * @param simTime - simulation time at which the report is printed
+	 * @param reportFile - file in which to print the report
 	 */
-	public static void printReport(JaamSimModel simModel, double simTime) {
-
-		// Create the report file
-		FileEntity reportFile = simModel.getReportFile();
+	public static void printReport(JaamSimModel simModel, double simTime, FileEntity reportFile) {
 
 		// Print run number header when multiple runs are to be performed
 		if (simModel.isMultipleRuns())

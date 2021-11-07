@@ -16,6 +16,7 @@
  */
 package com.jaamsim.basicsim;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.ArrayList;
@@ -66,7 +67,7 @@ public class RunManager implements RunListener {
 
 		// Open the main report
 		if (simulation.getPrintReport())
-			reportFile = simModel.getReportFile();
+			reportFile = getReportFile();
 
 		// Start a new simulation run on each thread
 		simModelList.clear();
@@ -144,8 +145,8 @@ public class RunManager implements RunListener {
 
 		synchronized (simModel) {
 			// Print the output report
-			if (simulation.getPrintReport())
-				InputAgent.printReport(run.getJaamSimModel(), EventManager.simSeconds());
+			if (reportFile != null)
+				InputAgent.printReport(run.getJaamSimModel(), EventManager.simSeconds(), reportFile);
 
 			// Is the scenario finished?
 			Scenario scene = getScenario(run.getScenarioNumber());
@@ -244,6 +245,19 @@ public class RunManager implements RunListener {
 			}
 		}
 		return outStream;
+	}
+
+	public FileEntity getReportFile() {
+		if (reportFile == null) {
+			String fileName = simModel.getReportFileName(".rep");
+			if (fileName == null)
+				throw new ErrorException("Cannot create the report file");
+			File f = new File(fileName);
+			if (f.exists() && !f.delete())
+				throw new ErrorException("Cannot delete the existing report file %s", f);
+			reportFile = new FileEntity(f);
+		}
+		return reportFile;
 	}
 
 	public double getProgress() {

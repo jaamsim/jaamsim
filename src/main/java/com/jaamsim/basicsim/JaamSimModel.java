@@ -81,7 +81,6 @@ public class JaamSimModel {
 
 	private File configFile;           // present configuration file
 	private File reportDir;         // directory for the output reports
-	private FileEntity reportFile;  // file to which the output report will be written
 
 	private boolean batchRun;       // true if the run is to be terminated automatically
 	private boolean scriptMode;     // TRUE if script mode (command line) is specified
@@ -143,7 +142,6 @@ public class JaamSimModel {
 
 		configFile = sm.configFile;
 		reportDir = sm.reportDir;
-		reportFile = sm.reportFile;
 
 		// Ensure that 'getReportDirectory' works correctly for an Example Model
 		if (reportDir == null && configFile == null)
@@ -310,10 +308,7 @@ public class JaamSimModel {
 
 		configFile = null;
 		reportDir = null;
-		if (reportFile != null) {
-			reportFile.close();
-			reportFile = null;
-		}
+
 		setSessionEdited(false);
 		recordEditsFound = false;
 		numErrors = 0;
@@ -583,12 +578,6 @@ public class JaamSimModel {
 			try {
 				each.lateInit();
 			} catch (Exception e) {}
-		}
-
-		// Close the output reports
-		if (reportFile != null) {
-			reportFile.close();
-			reportFile = null;
 		}
 	}
 
@@ -1368,19 +1357,6 @@ public class JaamSimModel {
 
 	public void prepareReportDirectory() {
 		if (reportDir != null) reportDir.mkdirs();
-	}
-
-	public FileEntity getReportFile() {
-		if (reportFile == null) {
-			String fileName = getReportFileName(".rep");
-			if (fileName == null)
-				throw new ErrorException("Cannot create the report file");
-			File f = new File(fileName);
-			if (f.exists() && !f.delete())
-				throw new ErrorException("Cannot delete the existing report file %s", f);
-			reportFile = new FileEntity(f);
-		}
-		return reportFile;
 	}
 
 	public void setBatchRun(boolean bool) {
