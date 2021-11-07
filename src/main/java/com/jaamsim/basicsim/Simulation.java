@@ -120,11 +120,17 @@ public class Simulation extends Entity {
 	@Keyword(description = "Not Used")
 	private final UnitTypeListInput unitTypeList;
 
-	@Keyword(description = "One or more selected outputs to be printed at the end of each "
-	                     + "simulation run. Each output is specified by an expression. In script "
-	                     + "mode (-s tag), the selected outputs are printed to the command line "
-	                     + "(standard out). Otherwise, they are printed to the file "
-	                     + "<configuration file name>.dat.\n\n"
+	@Keyword(description = "One or more selected outputs to be printed in tabular form to a "
+	                     + "custom output report. "
+	                     + "One row is printed to the report at the end of each simulation run. "
+	                     + "An additional row is printed at the end of each scenario that "
+	                     + "displays the aggregate average value and the 95% confidence interval "
+	                     + "for each output."
+	                     + "\n\n"
+	                     + "In script mode (-s tag), the selected outputs are printed to the "
+	                     + "command line (standard out). "
+	                     + "Otherwise, they are printed to the file <configuration file name>.dat."
+	                     + "\n\n"
 	                     + "It is best to include only dimensionless quantities and non-numeric "
 	                     + "outputs in the RunOutputList. "
 	                     + "An output with dimensions can be made non-dimensional by dividing it "
@@ -133,7 +139,7 @@ public class Simulation extends Entity {
 	                     + "A dimensional number will be displayed along with its unit. "
 	                     + "The 'format' function can be used if a fixed number of decimal places "
 	                     + "is required.",
-	         exampleList = {"{ [Simulation].RunNumber } { '[Queue1].AverageQueueTime / 1[h]' }"})
+	         exampleList = {"{ [Queue1].QueueLengthAverage } { [Queue1].AverageQueueTime/1[h] }"})
 	protected final StringProvListInput runOutputList;
 
 	@Keyword(description = "The maximum number of entities to display in the view windows. "
