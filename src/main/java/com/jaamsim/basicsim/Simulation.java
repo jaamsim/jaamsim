@@ -142,6 +142,13 @@ public class Simulation extends Entity {
 	         exampleList = {"{ [Queue1].QueueLengthAverage } { [Queue1].AverageQueueTime/1[h] }"})
 	protected final StringProvListInput runOutputList;
 
+	@Keyword(description = "One or more selected outputs that specify the key inputs to each "
+	                     + "scenario. "
+	                     + "These values appear at the beginning of each row of the custom output "
+	                     + "report.",
+	         exampleList = {"{ [RunInputs].IAT/1[min] } { [RunInputs].ServiceTime/1[min] }"})
+	protected final StringProvListInput runParameterList;
+
 	@Keyword(description = "The maximum number of entities to display in the view windows. "
 	                     + "A model can contain more than this number of entities, but only this "
 	                     + "number will be displayed. "
@@ -430,6 +437,9 @@ public class Simulation extends Entity {
 
 		runOutputList = new StringProvListInput("RunOutputList", KEY_INPUTS, null);
 		this.addInput(runOutputList);
+
+		runParameterList = new StringProvListInput("RunParameterList", KEY_INPUTS, null);
+		this.addInput(runParameterList);
 
 		maxEntitiesToDisplay = new IntegerInput("MaxEntitiesToDisplay", OPTIONS, 10000);
 		maxEntitiesToDisplay.setValidRange(0, Integer.MAX_VALUE);
@@ -937,6 +947,22 @@ public class Simulation extends Entity {
 		ArrayList<Double> ret = new ArrayList<>(runOutputList.getListSize());
 		for (int i = 0; i < runOutputList.getListSize(); i++) {
 			ret.add(runOutputList.getValue().get(i).getNextValue(simTime));
+		}
+		return ret;
+	}
+
+	public ArrayList<String> getRunParameterHeaders() {
+		ArrayList<String> ret = new ArrayList<>(runParameterList.getListSize());
+		for (int i = 0; i < runParameterList.getListSize(); i++) {
+			ret.add(runParameterList.getValue().get(i).toString());
+		}
+		return ret;
+	}
+
+	public ArrayList<String> getRunParameterStrings(double simTime) {
+		ArrayList<String> ret = new ArrayList<>(runParameterList.getListSize());
+		for (int i = 0; i < runParameterList.getListSize(); i++) {
+			ret.add(runParameterList.getValue().get(i).getNextString(simTime));
 		}
 		return ret;
 	}
