@@ -3066,10 +3066,9 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		long cTime = System.currentTimeMillis();
 		long elapsedMillis = cTime - lastSystemTime;
 		if (elapsedMillis > 5000L || cTime - resumeSystemTime < 5000L) {
-			double elapsedSimTime = timeElapsed - lastSimTime;
 
 			// Determine the speed-up factor
-			speedUp = (elapsedSimTime * 1000.0d) / elapsedMillis;
+			speedUp = (timeElapsed - lastSimTime) * 1000.0d / elapsedMillis;
 			setSpeedUp(speedUp);
 
 			if (elapsedMillis > 5000L) {
