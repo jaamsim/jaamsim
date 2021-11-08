@@ -1184,6 +1184,11 @@ public class InputAgent {
 				sb.append("Replication").append("\t");
 		}
 
+		// Run parameter columns
+		for (String str : simulation.getRunParameterHeaders()) {
+			sb.append(str).append("\t");
+		}
+
 		// Write the header line for the expressions
 		boolean first = true;
 		for (String str : simulation.getRunOutputHeaders()) {
@@ -1220,10 +1225,19 @@ public class InputAgent {
 			});
 			for (SimRun run : runList) {
 				StringBuilder sb = new StringBuilder();
+
+				// Scenario and replication numbers
 				if (labels) {
 					sb.append(scene.getScenarioNumber()).append("\t");
 					sb.append(run.getReplicationNumber()).append("\t");
 				}
+
+				// Run parameters
+				for (String str : run.getRunParameterStrings()) {
+					sb.append(str).append("\t");
+				}
+
+				// Run outputs
 				boolean first = true;
 				for (String str : run.getRunOutputStrings()) {
 					if (!first) {
@@ -1248,6 +1262,11 @@ public class InputAgent {
 			sb.append(scene.getScenarioNumber()).append("\t");
 			if (reps)
 				sb.append("\t");
+		}
+
+		// Run parameters
+		for (String str : scene.getParameters()) {
+			sb.append(str).append("\t");
 		}
 
 		// Mean value and confidence interval for each output
