@@ -3021,18 +3021,11 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	private long lastSystemTime;
 	private double lastSimTime;
 	private double speedUp;
-	private double lastOverallProgress;
-	private double overallProgressRate;
 
 	public void initSpeedUp(double simTime) {
 		resumeSystemTime = System.currentTimeMillis();
 		lastSystemTime = resumeSystemTime;
 		lastSimTime = simTime;
-		lastOverallProgress = runManager.getProgress();
-	}
-
-	public double getOverallProgressRate() {
-		return overallProgressRate;
 	}
 
 	/**
@@ -3079,13 +3072,9 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			speedUp = (elapsedSimTime * 1000.0d) / elapsedMillis;
 			setSpeedUp(speedUp);
 
-			double overallProgress = runManager.getProgress();
-			overallProgressRate = (overallProgress - lastOverallProgress)*1000.0d/elapsedMillis;
-
 			if (elapsedMillis > 5000L) {
 				lastSystemTime = cTime;
 				lastSimTime = timeElapsed;
-				lastOverallProgress = overallProgress;
 			}
 		}
 

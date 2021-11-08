@@ -30,6 +30,7 @@ import javax.swing.border.EmptyBorder;
 
 import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.basicsim.Simulation;
+import com.jaamsim.math.MathUtils;
 
 public class RunProgressBox extends JFrame {
 
@@ -41,6 +42,9 @@ public class RunProgressBox extends JFrame {
 	private final JLabel remainingTimeLabel;
 	private boolean show;
 
+	private long lastSystemTime;
+	private double lastOverallProgress;
+
 	private static String LABEL_FORMAT = "THREAD %s:  scenario %s, replication %s";
 	private static String LABEL_FORMAT_SHORT = "THREAD %s:";
 
@@ -51,6 +55,8 @@ public class RunProgressBox extends JFrame {
 		setAlwaysOnTop(true);
 		setResizable(false);
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+
+		init();
 
 		JPanel barPanel = new JPanel();
 		barPanel.setLayout( new GridLayout(0, 2, 5, 5) );
@@ -137,6 +143,11 @@ public class RunProgressBox extends JFrame {
 		super.dispose();
 	}
 
+	public void init() {
+		lastSystemTime = System.currentTimeMillis();
+		lastOverallProgress = GUIFrame.getRunManager().getProgress();
+	}
+
 	public void update() {
 		try {
 			// Progress bar for each thread
@@ -162,10 +173,20 @@ public class RunProgressBox extends JFrame {
 			int progress = (int) Math.round( overallProgress * 100.0d );
 			overallBar.setValue(progress);
 
+			// Do nothing further if the runs are finished
+			if (MathUtils.near(lastOverallProgress, 1.0d))
+				return;
+
 			// Run processing rate
-			double progressRate = GUIFrame.getInstance().getOverallProgressRate();
+			long millis = System.currentTimeMillis();
+			long elapsedMillis = millis - lastSystemTime;
+			double progressRate = (overallProgress - lastOverallProgress)*1000.0d/elapsedMillis;
 			double processingRate = progressRate * GUIFrame.getJaamSimModel().getSimulation().getNumberOfRuns();
 			rateLabel.setText(String.format("%,.1f runs per hour", processingRate * 3600.0d));
+			if (elapsedMillis > 5000L) {
+				lastSystemTime = millis;
+				lastOverallProgress = overallProgress;
+			}
 
 			// Remaining execution time
 			double remainingTime = (1.0d - overallProgress) / progressRate;
