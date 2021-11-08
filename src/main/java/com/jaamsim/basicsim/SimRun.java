@@ -31,6 +31,7 @@ public class SimRun implements RunListener {
 	private final RunListener listener;   // notifies the Scenario that the run has ended
 	private ArrayList<Double> runOutputValues;
 	private ArrayList<String> runOutputStrings;
+	private ArrayList<String> runParameterStrings;
 
 	/**
 	 * Constructs a SimRun object for the given scenario and replications numbers.
@@ -44,6 +45,7 @@ public class SimRun implements RunListener {
 		listener = l;
 		runOutputValues = new ArrayList<>();
 		runOutputStrings = new ArrayList<>();
+		runParameterStrings = new ArrayList<>();
 	}
 
 	/**
@@ -92,6 +94,7 @@ public class SimRun implements RunListener {
 		double simTime = simModel.getSimTime();
 		runOutputValues = simModel.getSimulation().getRunOutputValues(simTime);
 		runOutputStrings = simModel.getSimulation().getRunOutputStrings(simTime);
+		runParameterStrings = simModel.getSimulation().getRunParameterStrings(simTime);
 
 		// Notify the listener
 		listener.runEnded(this);
@@ -103,6 +106,10 @@ public class SimRun implements RunListener {
 
 	public ArrayList<String> getRunOutputStrings() {
 		return runOutputStrings;
+	}
+
+	public ArrayList<String> getRunParameterStrings() {
+		return runParameterStrings;
 	}
 
 	public double getProgress() {
