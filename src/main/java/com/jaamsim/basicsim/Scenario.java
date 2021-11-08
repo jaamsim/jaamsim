@@ -81,6 +81,25 @@ public class Scenario implements RunListener {
 		}
 	}
 
+	public String[] getParameters() {
+		if (runsCompleted.isEmpty())
+			return new String[0];
+
+		// Start with the parameters for the first run
+		int n = runsCompleted.get(0).getRunParameterStrings().size();
+		String[] ret = runsCompleted.get(0).getRunParameterStrings().toArray(new String[n]);
+
+		// Ensure that each run has the same parameter values
+		for (SimRun run : runsCompleted) {
+			for (int i = 0; i < run.getRunParameterStrings().size(); i++) {
+				if (!ret[i].equals(run.getRunParameterStrings().get(i))) {
+					ret[i] = "*";
+				}
+			}
+		}
+		return ret;
+	}
+
 	public double[] getMeanValues() {
 		double[] ret = new double[runStatistics.size()];
 		for (int i = 0; i < runStatistics.size(); i++) {
