@@ -54,7 +54,7 @@ import com.jaamsim.units.DistanceUnit;
 import com.jaamsim.units.TimeUnit;
 import com.jaamsim.units.Unit;
 
-public class JaamSimModel {
+public class JaamSimModel implements EventTimeListener {
 	// Perform debug only entity list validation logic
 	private static final boolean VALIDATE_ENT_LIST = false;
 
@@ -126,6 +126,7 @@ public class JaamSimModel {
 
 	public JaamSimModel(String name) {
 		eventManager = new EventManager("DefaultEventManager");
+		eventManager.setTimeListener(this);
 		simulation = null;
 		this.name = name;
 		scenarioNumber = 1;
@@ -234,10 +235,6 @@ public class JaamSimModel {
 		name = str;
 	}
 
-	public final void setTimeListener(EventTimeListener l) {
-		eventManager.setTimeListener(l);
-	}
-
 	public final void setRunListener(RunListener l) {
 		runListener = l;
 	}
@@ -252,6 +249,27 @@ public class JaamSimModel {
 
 	public GUIListener getGUIListener() {
 		return gui;
+	}
+
+	@Override
+	public void tickUpdate(long tick) {
+		if (gui == null)
+			return;
+		gui.tickUpdate(tick);
+	}
+
+	@Override
+	public void timeRunning() {
+		if (gui == null)
+			return;
+		gui.timeRunning();
+	}
+
+	@Override
+	public void handleError(Throwable t) {
+		if (gui == null)
+			return;
+		gui.handleError(t);
 	}
 
 	public int getSimState() {

@@ -448,7 +448,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 		// Clear the listeners for the previous model
 		if (sim != null) {
-			sim.setTimeListener(null);
 			sim.setGUIListener(null);
 		}
 
@@ -470,7 +469,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		gui.clearUndoRedo();
 
 		// Set the listeners for the new model
-		sm.setTimeListener(gui);
 		sm.setGUIListener(gui);
 
 		// Pass the simulation time for the new model to the user interface

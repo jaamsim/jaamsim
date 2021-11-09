@@ -18,9 +18,10 @@ package com.jaamsim.basicsim;
 
 import com.jaamsim.Commands.Command;
 import com.jaamsim.Graphics.View;
+import com.jaamsim.events.EventTimeListener;
 import com.jaamsim.math.Vec3d;
 
-public interface GUIListener {
+public interface GUIListener extends EventTimeListener {
 
 	public void handleInputError(Throwable t, Entity ent);
 	public void exit(int errorCode);
