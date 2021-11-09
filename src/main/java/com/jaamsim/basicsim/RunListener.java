@@ -24,4 +24,10 @@ public interface RunListener {
 	 */
 	public void runEnded(SimRun run);
 
+	/**
+	 * Called when a runtime error is encountered.
+	 * @param t - error condition
+	 */
+	public void handleError(Throwable t);
+
 }

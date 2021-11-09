@@ -149,6 +149,9 @@ public class Scenario implements RunListener {
 		listener.runEnded(run);
 	}
 
+	@Override
+	public void handleError(Throwable t) {}
+
 	public double getProgress() {
 		synchronized (this) {
 			double ret = runsCompleted.size();

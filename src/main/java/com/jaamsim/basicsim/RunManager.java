@@ -192,6 +192,9 @@ public class RunManager implements RunListener {
 		startNextRun(sm, pauseTime);
 	}
 
+	@Override
+	public void handleError(Throwable t) {}
+
 	private void startNextRun(JaamSimModel sm, double pauseTime) {
 		synchronized (scenarioList) {
 			Simulation simulation = simModel.getSimulation();

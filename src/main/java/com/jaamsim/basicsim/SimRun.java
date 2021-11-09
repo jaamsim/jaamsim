@@ -100,6 +100,10 @@ public class SimRun implements RunListener {
 		listener.runEnded(this);
 	}
 
+	@Override
+	public void handleError(Throwable t) {
+	}
+
 	public ArrayList<Double> getRunOutputValues() {
 		return runOutputValues;
 	}

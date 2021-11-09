@@ -250,5 +250,8 @@ public class TestSimulation {
 				e.printStackTrace();
 			}
 		}
+
+		@Override
+		public void handleError(Throwable t) {}
 	}
 }
