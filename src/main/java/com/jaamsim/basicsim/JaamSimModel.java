@@ -365,13 +365,8 @@ public class JaamSimModel implements EventTimeListener {
 	 * @throws URISyntaxException
 	 */
 	public void configure(File file) throws URISyntaxException {
-		configure(file, true);
-	}
-
-	public void configure(File file, boolean bool) throws URISyntaxException {
 		configFile = file;
-		if (bool)
-			openLogFile();
+		openLogFile();
 		InputAgent.loadConfigurationFile(this, file);
 		name = file.getName();
 
@@ -379,7 +374,7 @@ public class JaamSimModel implements EventTimeListener {
 		setSessionEdited(false);
 
 		// Save and close the input trace file
-		if (bool && numWarnings == 0 && numErrors == 0) {
+		if (numWarnings == 0 && numErrors == 0) {
 			closeLogFile();
 
 			// Open a fresh log file for the simulation run
