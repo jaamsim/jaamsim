@@ -430,7 +430,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 	/**
 	 * Sets the model to be displayed by the user interface.
-	 * @param sm - simulation model to be displayed
+	 * @param mgr - run manager to be displayed
 	 */
 	public static void setRunManager(RunManager mgr) {
 		JaamSimModel sm = mgr.getJaamSimModel();
