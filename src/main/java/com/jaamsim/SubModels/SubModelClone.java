@@ -181,6 +181,11 @@ public class SubModelClone extends AbstractSubModel {
 			String key = ((RandomStreamUser) comp).getStreamNumberKeyword();
 			InputAgent.applyIntegers(comp, key, seed);
 			comp.getInput(key).setLocked(true);
+
+			// Mark the seed input and clone as edited so that the seed value is saved in the
+			// configuration file
+			comp.getInput(key).setEdited(true);
+			comp.setEdited();
 		}
 
 		// Set the "Show" input for each component
