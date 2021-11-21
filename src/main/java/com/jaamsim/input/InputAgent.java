@@ -1214,15 +1214,17 @@ public class InputAgent {
 	public static void printScenarioOutputs(Scenario scene, boolean labels, boolean reps, boolean bool, PrintStream outStream) {
 		int replications = scene.getRunsCompleted().size();
 
+		// Sort the completed runs by replication number
+		ArrayList<SimRun> runList = scene.getRunsCompleted();
+		Collections.sort(runList, new Comparator<SimRun>() {
+			@Override
+			public int compare(SimRun run1, SimRun run2) {
+				return Integer.compare(run1.getReplicationNumber(), run2.getReplicationNumber());
+			}
+		});
+
 		// Print the outputs for each replication
 		if (reps || replications == 1) {
-			ArrayList<SimRun> runList = scene.getRunsCompleted();
-			Collections.sort(runList, new Comparator<SimRun>() {
-				@Override
-				public int compare(SimRun run1, SimRun run2) {
-					return Integer.compare(run1.getReplicationNumber(), run2.getReplicationNumber());
-				}
-			});
 			for (SimRun run : runList) {
 				StringBuilder sb = new StringBuilder();
 
@@ -1255,6 +1257,19 @@ public class InputAgent {
 
 		if (replications <= 1)
 			return;
+
+		// Print an error message for any runs that failed
+		if (!reps) {
+			for (SimRun run : runList) {
+				if (!run.isError())
+					continue;
+				String msg = "";
+				if (!run.getRunOutputStrings().isEmpty())
+					msg = run.getRunOutputStrings().get(0);
+				outStream.format("%s\tError in replication %s - %s%n",
+						run.getScenarioNumber(), run.getReplicationNumber(), msg);
+			}
+		}
 
 		// Scenario and replication columns
 		StringBuilder sb = new StringBuilder();
