@@ -141,7 +141,8 @@ public class Scenario implements RunListener {
 
 	@Override
 	public void runEnded(SimRun run) {
-		recordRun(run);
+		if (!run.isError())
+			recordRun(run);
 		synchronized (this) {
 			runsInProgress.remove(run);
 			runsCompleted.add(run);

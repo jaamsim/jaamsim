@@ -267,6 +267,10 @@ public class JaamSimModel implements EventTimeListener {
 
 	@Override
 	public void handleError(Throwable t) {
+		if (isMultipleRuns() && runListener != null) {
+			runListener.handleError(t);
+			return;
+		}
 		if (gui == null)
 			return;
 		gui.handleError(t);

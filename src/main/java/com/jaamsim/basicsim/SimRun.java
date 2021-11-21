@@ -32,6 +32,7 @@ public class SimRun implements RunListener {
 	private ArrayList<Double> runOutputValues;
 	private ArrayList<String> runOutputStrings;
 	private ArrayList<String> runParameterStrings;
+	private boolean errorFlag;
 
 	/**
 	 * Constructs a SimRun object for the given scenario and replications numbers.
@@ -69,6 +70,10 @@ public class SimRun implements RunListener {
 		return replicationNumber;
 	}
 
+	public boolean isError() {
+		return errorFlag;
+	}
+
 	/**
 	 * Starts the simulation run on a new thread.
 	 */
@@ -102,6 +107,12 @@ public class SimRun implements RunListener {
 
 	@Override
 	public void handleError(Throwable t) {
+		double simTime = simModel.getSimTime();
+		runOutputStrings = new ArrayList<>(1);
+		runOutputStrings.add(t.getMessage());
+		runParameterStrings = simModel.getSimulation().getRunParameterStrings(simTime);
+		errorFlag = true;
+		listener.runEnded(this);
 	}
 
 	public ArrayList<Double> getRunOutputValues() {
