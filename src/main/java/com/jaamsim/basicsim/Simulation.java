@@ -379,11 +379,20 @@ public class Simulation extends Entity {
 	         exampleList = {"TRUE"})
 	private final BooleanInput printInputReport;
 
-	@Keyword(description = "This is placeholder description text",
+	@Keyword(description = "If TRUE, an additional output file is generated that traces the exact "
+	                     + "sequence of events executed by the model. "
+	                     + "The event file is named <configuration file name>.evt and is placed "
+	                     + "in the same folder as the configuration file.",
 	         exampleList = {"TRUE"})
 	private final BooleanInput traceEventsInput;
 
-	@Keyword(description = "This is placeholder description text",
+	@Keyword(description = "If TRUE, the events executed by the model are compared to those in an "
+	                     + "event file that was generated previously using the TraceEvents "
+	                     + "keyword. "
+	                     + "An error message is generated if an event executed by the model "
+	                     + "differs in any way from the ones specified by the event file. "
+	                     + "The event file must be named <configuration file name>.evt and placed "
+	                     + "in the same folder as the configuration file.",
 	         exampleList = {"TRUE"})
 	private final BooleanInput verifyEventsInput;
 
@@ -707,12 +716,10 @@ public class Simulation extends Entity {
 		startTimeInput.setHidden(true);
 		this.addInput(startTimeInput);
 
-		traceEventsInput = new BooleanInput("TraceEvents", KEY_INPUTS, false);
-		traceEventsInput.setHidden(true);
+		traceEventsInput = new BooleanInput("TraceEvents", OPTIONS, false);
 		this.addInput(traceEventsInput);
 
-		verifyEventsInput = new BooleanInput("VerifyEvents", KEY_INPUTS, false);
-		verifyEventsInput.setHidden(true);
+		verifyEventsInput = new BooleanInput("VerifyEvents", OPTIONS, false);
 		this.addInput(verifyEventsInput);
 
 		printInputReport = new BooleanInput("PrintInputReport", KEY_INPUTS, false);
