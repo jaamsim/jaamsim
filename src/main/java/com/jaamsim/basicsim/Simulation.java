@@ -158,6 +158,23 @@ public class Simulation extends Entity {
 	         exampleList = {"100000"})
 	private final IntegerInput maxEntitiesToDisplay;
 
+	@Keyword(description = "If TRUE, an additional output file is generated that traces the exact "
+	                     + "sequence of events executed by the model. "
+	                     + "The event file is named <configuration file name>.evt and is placed "
+	                     + "in the same folder as the configuration file.",
+	         exampleList = {"TRUE"})
+	private final BooleanInput traceEventsInput;
+
+	@Keyword(description = "If TRUE, the events executed by the model are compared to those in an "
+	                     + "event file that was generated previously using the TraceEvents "
+	                     + "keyword. "
+	                     + "An error message is generated if an event executed by the model "
+	                     + "differs in any way from the ones specified by the event file. "
+	                     + "The event file must be named <configuration file name>.evt and placed "
+	                     + "in the same folder as the configuration file.",
+	         exampleList = {"TRUE"})
+	private final BooleanInput verifyEventsInput;
+
 	@Keyword(description = "The length of time represented by one simulation tick.",
 	         exampleList = {"1e-6 s"})
 	private final ValueInput tickLengthInput;
@@ -379,23 +396,6 @@ public class Simulation extends Entity {
 	         exampleList = {"TRUE"})
 	private final BooleanInput printInputReport;
 
-	@Keyword(description = "If TRUE, an additional output file is generated that traces the exact "
-	                     + "sequence of events executed by the model. "
-	                     + "The event file is named <configuration file name>.evt and is placed "
-	                     + "in the same folder as the configuration file.",
-	         exampleList = {"TRUE"})
-	private final BooleanInput traceEventsInput;
-
-	@Keyword(description = "If TRUE, the events executed by the model are compared to those in an "
-	                     + "event file that was generated previously using the TraceEvents "
-	                     + "keyword. "
-	                     + "An error message is generated if an event executed by the model "
-	                     + "differs in any way from the ones specified by the event file. "
-	                     + "The event file must be named <configuration file name>.evt and placed "
-	                     + "in the same folder as the configuration file.",
-	         exampleList = {"TRUE"})
-	private final BooleanInput verifyEventsInput;
-
 	private String modelName = "JaamSim";
 
 	{
@@ -453,6 +453,12 @@ public class Simulation extends Entity {
 		maxEntitiesToDisplay = new IntegerInput("MaxEntitiesToDisplay", OPTIONS, 10000);
 		maxEntitiesToDisplay.setValidRange(0, Integer.MAX_VALUE);
 		this.addInput(maxEntitiesToDisplay);
+
+		traceEventsInput = new BooleanInput("TraceEvents", OPTIONS, false);
+		this.addInput(traceEventsInput);
+
+		verifyEventsInput = new BooleanInput("VerifyEvents", OPTIONS, false);
+		this.addInput(verifyEventsInput);
 
 		tickLengthInput = new ValueInput("TickLength", OPTIONS, 1e-6d);
 		tickLengthInput.setUnitType(TimeUnit.class);
@@ -715,12 +721,6 @@ public class Simulation extends Entity {
 		startTimeInput.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		startTimeInput.setHidden(true);
 		this.addInput(startTimeInput);
-
-		traceEventsInput = new BooleanInput("TraceEvents", OPTIONS, false);
-		this.addInput(traceEventsInput);
-
-		verifyEventsInput = new BooleanInput("VerifyEvents", OPTIONS, false);
-		this.addInput(verifyEventsInput);
 
 		printInputReport = new BooleanInput("PrintInputReport", KEY_INPUTS, false);
 		printInputReport.setHidden(true);
