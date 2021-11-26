@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2021 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +27,8 @@ import java.util.ArrayList;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.events.EventTraceListener;
 import com.jaamsim.events.ProcessTarget;
-import com.jaamsim.input.InputAgent;
+import com.jaamsim.ui.GUIFrame;
+import com.jaamsim.ui.LogBox;
 
 class EventTracer implements EventTraceListener {
 	private BufferedReader eventVerifyReader;
@@ -42,8 +44,15 @@ class EventTracer implements EventTraceListener {
 			eventVerifyReader = new BufferedReader(new FileReader(evtFile));
 		}
 		catch (FileNotFoundException e) {}
-		if (eventVerifyReader == null)
-			InputAgent.logMessage("Unable to open an event verification file.");
+		if (eventVerifyReader == null) {
+			String msg = "Unable to open the event verification file.";
+			System.out.println(msg);
+			LogBox.logLine(msg);
+			if (GUIFrame.getInstance() != null) {
+				GUIFrame.getRunManager().pause();
+				GUIFrame.invokeErrorDialog("Event Verification Error", msg);
+			}
+		}
 
 		reader = new EventTraceRecord();
 	}
@@ -92,23 +101,37 @@ class EventTracer implements EventTraceListener {
 
 			for (int i = 0; i < record.size(); i++) {
 				if (!record.get(i).equals(each.get(i))) {
-					System.out.println("Difference in event stream detected");
-					System.out.println("Received:");
+					StringBuilder sb = new StringBuilder();
+					sb.append("Present event;\n");
+					sb.append(record.get(i)).append("\n");
+
+					sb.append("\n");
+					sb.append("Next event in the trace file:\n");
+					sb.append(each.get(i)).append("\n");
+
+					sb.append("\n");
+					sb.append("List of events at the present time:\n");
 					for (String line : record) {
-						System.out.println(line);
+						sb.append(line).append("\n");
 					}
 
-					System.out.println("Expected:");
+					sb.append("List of events at the present time in the trace file:\n");
 					for (String line : each) {
-						System.out.println(line);
+						sb.append(line).append("\n");
 					}
 
-					System.out.println("Lines:");
-					System.out.println("R:" + record.get(i));
-					System.out.println("E:" + each.get(i));
-
+					String msg = sb.toString();
+					System.out.println(msg);
+					LogBox.logLine(msg);
 					EventManager.current().pause();
-					new Throwable().printStackTrace();
+
+					if (GUIFrame.getInstance() != null) {
+						GUIFrame.getRunManager().pause();
+						GUIFrame.invokeErrorDialog("Event Verification Error",
+								"Present event does not match the next event at this time in the "
+								+ "trace file.",
+								msg, "This message is repeated in the Log Viewer.");
+					}
 					break;
 				}
 			}
@@ -119,18 +142,29 @@ class EventTracer implements EventTraceListener {
 			return;
 		}
 
-		System.out.println("No matching event found for:");
+		StringBuilder sb = new StringBuilder();
+		sb.append("Present event:\n");
 		for (String line : record) {
-			System.out.println(line);
+			sb.append(line).append("\n");
 		}
+		sb.append("Next events in the trace file:\n");
 		for (EventTraceRecord rec : eventBuffer) {
-			System.out.println("Buffered Record:");
 			for (String line : rec) {
-				System.out.println(line);
+				sb.append(line).append("\n");
 			}
-			System.out.println();
 		}
+
+		String msg = sb.toString();
+		System.out.println(msg);
+		LogBox.logLine(msg);
 		EventManager.current().pause();
+
+		if (GUIFrame.getInstance() != null) {
+			GUIFrame.getRunManager().pause();
+			GUIFrame.invokeErrorDialog("Event Verification Error",
+					"Present event has no matching event at this time in the trace file.",
+					msg, "This message is repeated in the Log Viewer.");
+		}
 	}
 
 	private void finish() {
