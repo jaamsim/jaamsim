@@ -420,8 +420,9 @@ public class Entity {
 		if (sourceInput == null || targetInput == null)
 			return;
 
-		// Ignore inputs that have the default value for both the source and target entities
-		if (sourceInput.isDefault() && targetInput.isDefault())
+		// Ignore a default input for a source entity
+		// (default inputs for the source entity can be assigned later for the target entity)
+		if (sourceInput.isDefault())
 			return;
 
 		// Ignore locked inputs for generated entities.
