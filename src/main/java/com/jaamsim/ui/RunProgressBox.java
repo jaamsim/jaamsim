@@ -42,8 +42,10 @@ public class RunProgressBox extends JFrame {
 	private final JLabel remainingTimeLabel;
 	private boolean show;
 
+	private long resumeSystemTime;
 	private long lastSystemTime;
 	private double lastOverallProgress;
+	private double progressRate;
 
 	private static String LABEL_FORMAT = "THREAD %s:  scenario %s, replication %s";
 	private static String LABEL_FORMAT_SHORT = "THREAD %s:";
@@ -144,7 +146,8 @@ public class RunProgressBox extends JFrame {
 	}
 
 	public void init() {
-		lastSystemTime = System.currentTimeMillis();
+		resumeSystemTime = System.currentTimeMillis();
+		lastSystemTime = resumeSystemTime;
 		lastOverallProgress = GUIFrame.getRunManager().getProgress();
 	}
 
@@ -180,12 +183,17 @@ public class RunProgressBox extends JFrame {
 			// Run processing rate
 			long millis = System.currentTimeMillis();
 			long elapsedMillis = millis - lastSystemTime;
-			double progressRate = (overallProgress - lastOverallProgress)*1000.0d/elapsedMillis;
-			double processingRate = progressRate * GUIFrame.getJaamSimModel().getSimulation().getNumberOfRuns();
-			rateLabel.setText(String.format("%,.1f runs per hour", processingRate * 3600.0d));
-			if (elapsedMillis > 5000L) {
-				lastSystemTime = millis;
-				lastOverallProgress = overallProgress;
+			if (elapsedMillis > 5000L || millis - resumeSystemTime < 5000L) {
+
+				// Determine the processing rate
+				progressRate = (overallProgress - lastOverallProgress)*1000.0d/elapsedMillis;
+				double processingRate = progressRate * GUIFrame.getJaamSimModel().getSimulation().getNumberOfRuns();
+				rateLabel.setText(String.format("%,.1f runs per hour", processingRate * 3600.0d));
+
+				if (elapsedMillis > 5000L) {
+					lastSystemTime = millis;
+					lastOverallProgress = overallProgress;
+				}
 			}
 
 			// Remaining execution time
