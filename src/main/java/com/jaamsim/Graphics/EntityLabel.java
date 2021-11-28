@@ -222,6 +222,8 @@ public class EntityLabel extends TextBasics {
 
 	@Override
 	public boolean isDefault() {
+		if (getTarget() == null)
+			return true;
 		Vec3d pos = getDefaultPosition();
 		return getPosition().near3(pos) && super.isDefault();
 	}
