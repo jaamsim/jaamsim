@@ -193,11 +193,15 @@ public class SubModelClone extends AbstractSubModel {
 		showTemporaryComponents(bool);
 	}
 
+	public SubModel getPrototype() {
+		return prototype.getValue();
+	}
+
 	@Output(name = "Prototype",
 	 description = "The prototype SubModel from which this sub-model was cloned.",
 	    sequence = 0)
 	public SubModel getPrototype(double simTime) {
-		return prototype.getValue();
+		return getPrototype();
 	}
 
 }

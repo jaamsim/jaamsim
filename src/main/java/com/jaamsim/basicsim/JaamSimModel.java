@@ -31,6 +31,8 @@ import com.jaamsim.Graphics.EntityLabel;
 import com.jaamsim.Samples.SampleExpression;
 import com.jaamsim.StringProviders.StringProvExpression;
 import com.jaamsim.SubModels.CompoundEntity;
+import com.jaamsim.SubModels.SubModel;
+import com.jaamsim.SubModels.SubModelClone;
 import com.jaamsim.Thresholds.ThresholdUser;
 import com.jaamsim.datatypes.IntegerVector;
 import com.jaamsim.events.Conditional;
@@ -152,11 +154,26 @@ public class JaamSimModel implements EventTimeListener {
 
 		// Create the new entities in the same order as the original model
 		for (Entity ent : sm.getClonesOfIterator(Entity.class)) {
-			if (ent.isGenerated() || ent.isPreDefined())
+			if (ent.isPreDefined() || getNamedEntity(ent.getName()) != null)
 				continue;
 			if (ent instanceof EntityLabel && !((EntityLabel) ent).getShowInput()
 					&& ((EntityLabel) ent).isDefault())
 				continue;
+
+			// Generate all the sub-model components when the first one is found
+			if (ent.isGenerated()) {
+				if (ent.getParent() instanceof SubModelClone) {
+					Entity clone = getNamedEntity(ent.getParent().getName());
+					SubModel proto = ((SubModelClone) ent.getParent()).getPrototype();
+					if (clone == null || proto == null)
+						continue;
+					KeywordIndex kw = InputAgent.formatInput("Prototype", proto.getName());
+					InputAgent.apply(clone, kw);
+				}
+				continue;
+			}
+
+			// Define the new object
 			defineEntity(ent.getObjectType().getName(), ent.getName());
 		}
 
