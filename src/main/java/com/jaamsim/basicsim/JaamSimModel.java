@@ -156,9 +156,6 @@ public class JaamSimModel implements EventTimeListener {
 		for (Entity ent : sm.getClonesOfIterator(Entity.class)) {
 			if (ent.isPreDefined() || getNamedEntity(ent.getName()) != null)
 				continue;
-			if (ent instanceof EntityLabel && !((EntityLabel) ent).getShowInput()
-					&& ((EntityLabel) ent).isDefault())
-				continue;
 
 			// Generate all the sub-model components when the first one is found
 			if (ent.isGenerated()) {
@@ -181,9 +178,6 @@ public class JaamSimModel implements EventTimeListener {
 		ArrayList<Entity> entityList = new ArrayList<>();
 		for (Entity ent : sm.getClonesOfIterator(Entity.class)) {
 			if (!ent.isRegistered() || ent instanceof ObjectType)
-				continue;
-			if (ent instanceof EntityLabel && !((EntityLabel) ent).getShowInput()
-					&& ((EntityLabel) ent).isDefault())
 				continue;
 			entityList.add(ent);
 		}
