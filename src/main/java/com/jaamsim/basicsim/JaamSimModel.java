@@ -196,7 +196,7 @@ public class JaamSimModel implements EventTimeListener {
 			NamedExpressionListInput in = (NamedExpressionListInput) ent.getInput("CustomOutputList");
 			if (in == null || in.isDefault())
 				continue;
-			Entity newEnt = getEntity(ent.getName());
+			Entity newEnt = getNamedEntity(ent.getName());
 			if (newEnt == null)
 				throw new ErrorException("New entity not found: %s", ent.getName());
 			KeywordIndex kw = InputAgent.formatInput(in.getKeyword(), in.getStubDefinition());
@@ -212,7 +212,7 @@ public class JaamSimModel implements EventTimeListener {
 		// Copy the early inputs to the new entities in the specified sequence of inputs
 		for (String key : InputAgent.EARLY_KEYWORDS) {
 			for (Entity ent : entityList) {
-				Entity newEnt = getEntity(ent.getName());
+				Entity newEnt = getNamedEntity(ent.getName());
 				if (newEnt == null)
 					throw new ErrorException("New entity not found: %s", ent.getName());
 				newEnt.copyInput(ent, key, context, false);
@@ -221,7 +221,7 @@ public class JaamSimModel implements EventTimeListener {
 
 		// Copy the normal inputs to the new entities
 		for (Entity ent : entityList) {
-			Entity newEnt = getEntity(ent.getName());
+			Entity newEnt = getNamedEntity(ent.getName());
 			if (newEnt == null)
 				throw new ErrorException("New entity not found: %s", ent.getName());
 			for (Input<?> in : ent.getEditableInputs()) {
