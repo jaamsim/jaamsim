@@ -422,8 +422,7 @@ public class DisplayEntity extends Entity {
 	}
 
 	public boolean isRegionNominal() {
-		return currentRegion == null && regionInput.getValue() == null
-				|| currentRegion != null && currentRegion.equals(regionInput.getValue());
+		return currentRegion == regionInput.getValue();
 	}
 
 	public boolean isShowNominal() {
