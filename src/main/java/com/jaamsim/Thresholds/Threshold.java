@@ -150,12 +150,13 @@ public class Threshold extends StateEntity implements SubjectEntity {
 		if (isTraceFlag()) trace(0, "setOpen(%s)", bool);
 
 		open = bool;
+
+		// Set the new state
+		setPresentState();
 		if (open) {
-			setPresentState("Open");
 			openCount++;
 		}
 		else {
-			setPresentState("Closed");
 			closedCount++;
 		}
 
@@ -163,6 +164,15 @@ public class Threshold extends StateEntity implements SubjectEntity {
 
 		// Notify any observers
 		notifyObservers();
+	}
+
+	public void setPresentState() {
+		if (open) {
+			setPresentState("Open");
+		}
+		else {
+			setPresentState("Closed");
+		}
 	}
 
 	@Override
