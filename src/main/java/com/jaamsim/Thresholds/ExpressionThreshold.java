@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2020 JaamSim Software Inc.
+ * Copyright (C) 2016-2021 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -157,8 +157,7 @@ public class ExpressionThreshold extends Threshold implements ObserverEntity {
 	@Override
 	public void earlyInit() {
 		super.earlyInit();
-		lastOpenValue = initialOpenValue.getValue();
-		lastOpenValue = this.getOpenConditionValue(0.0);
+		lastOpenValue = getInitialOpenValue();
 		useLastValue = false;
 		numCalls = 0L;
 		numEvals = 0L;
@@ -175,8 +174,7 @@ public class ExpressionThreshold extends Threshold implements ObserverEntity {
 		super.updateForInput(in);
 
 		if (in == openCondition || in == closeCondition || in == initialOpenValue) {
-			lastOpenValue = initialOpenValue.getValue();
-			this.setInitialOpenValue(this.getOpenConditionValue(0.0));
+			lastOpenValue = getInitialOpenValue();
 			return;
 		}
 	}
@@ -188,6 +186,12 @@ public class ExpressionThreshold extends Threshold implements ObserverEntity {
 		// If there is no WatchList, the open/close expressions are tested after every event
 		if (!isWatchList() || isVerifyWatchList())
 			doOpenClose();
+	}
+
+	@Override
+	public boolean getInitialOpenValue() {
+		lastOpenValue = getInitialOpenValue();
+		return getOpenConditionValue(0.0);
 	}
 
 	@Override

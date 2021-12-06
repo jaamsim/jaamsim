@@ -53,7 +53,6 @@ public class Threshold extends StateEntity implements SubjectEntity {
 
 	private final ArrayList<ThresholdUser> userList;
 	private boolean open;
-	private boolean initialOpenValue;
 	private long openCount;
 	private long closedCount;
 
@@ -79,14 +78,13 @@ public class Threshold extends StateEntity implements SubjectEntity {
 
 	public Threshold() {
 		userList = new ArrayList<>();
-		initialOpenValue = true;
 		open = true;
 	}
 
 	@Override
 	public void earlyInit() {
 		super.earlyInit();
-		open = initialOpenValue;
+		open = getInitialOpenValue();
 		openCount = 0L;
 		closedCount = 0L;
 
@@ -99,6 +97,10 @@ public class Threshold extends StateEntity implements SubjectEntity {
 
 		// Clear the list of observers
 		subject.clear();
+	}
+
+	public boolean getInitialOpenValue() {
+		return true;
 	}
 
 	@Override
@@ -116,13 +118,9 @@ public class Threshold extends StateEntity implements SubjectEntity {
 		return subject.getObserverList();
 	}
 
-	public void setInitialOpenValue(boolean bool) {
-		initialOpenValue = bool;
-	}
-
 	@Override
 	public String getInitialState() {
-		if (initialOpenValue)
+		if (getInitialOpenValue())
 			return "Open";
 		else
 			return "Closed";
