@@ -190,8 +190,7 @@ public class ExpressionThreshold extends Threshold implements ObserverEntity {
 
 	@Override
 	public boolean getInitialOpenValue() {
-		lastOpenValue = getInitialOpenValue();
-		return getOpenConditionValue(0.0);
+		return getOpenConditionValue(0.0, initialOpenValue.getValue());
 	}
 
 	@Override
@@ -234,13 +233,18 @@ public class ExpressionThreshold extends Threshold implements ObserverEntity {
 		}
 	};
 
+	private boolean getOpenConditionValue(double simTime) {
+		return getOpenConditionValue(simTime, lastOpenValue);
+	}
+
 	/**
 	 * Returns the state implied by the present values for the OpenCondition
 	 * and CloseCondition expressions.
 	 * @param simTime - present simulation time.
+	 * @param val - present value for the threshold
 	 * @return state implied by the OpenCondition and CloseCondition expressions.
 	 */
-	private boolean getOpenConditionValue(double simTime) {
+	private boolean getOpenConditionValue(double simTime, boolean val) {
 		try {
 			if (openCondition.getValue() == null)
 				return super.isOpen();
@@ -267,7 +271,7 @@ public class ExpressionThreshold extends Threshold implements ObserverEntity {
 
 				// If the open and close conditions are both false, then the state is unchanged
 				else {
-					ret = lastOpenValue;
+					ret = val;
 				}
 			}
 
