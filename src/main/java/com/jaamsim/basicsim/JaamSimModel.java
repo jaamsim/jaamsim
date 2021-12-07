@@ -150,8 +150,6 @@ public class JaamSimModel implements EventTimeListener {
 		if (reportDir == null && configFile == null)
 			reportDir = new File(sm.getReportDirectory());
 
-		boolean verify = false;  // verify the copied model
-
 		// Create the new entities in the same order as the original model
 		for (Entity ent : sm.getClonesOfIterator(Entity.class)) {
 			if (ent.isPreDefined() || getNamedEntity(ent.getName()) != null)
@@ -232,18 +230,6 @@ public class JaamSimModel implements EventTimeListener {
 		// Verify that the new JaamSimModel is an exact copy
 		if (!this.isCopyOf(sm))
 			throw new ErrorException("Copied JaamSimModel does not match the original");
-
-		// Verify the copied model by saving its configuration file
-		if (verify) {
-			try {
-				File file = File.createTempFile("JaamSim-", ".cfg");
-				InputAgent.printNewConfigurationFileWithName(this, file);
-				System.out.println(file.getPath());
-			}
-			catch (Exception e) {
-				System.out.println(e.getMessage());
-			}
-		}
 	}
 
 	/**
