@@ -229,6 +229,10 @@ public class JaamSimModel implements EventTimeListener {
 		// Complete the preparation of the sub-model clones
 		postLoad();
 
+		// Verify that the new JaamSimModel is an exact copy
+		if (!this.isCopyOf(sm))
+			throw new ErrorException("Copied JaamSimModel does not match the original");
+
 		// Verify the copied model by saving its configuration file
 		if (verify) {
 			try {
@@ -240,6 +244,32 @@ public class JaamSimModel implements EventTimeListener {
 				System.out.println(e.getMessage());
 			}
 		}
+	}
+
+	/**
+	 * Returns whether this JaamSimModel is a copy of the specified model.
+	 * Avoids the complexities of overriding the equals method.
+	 * @param sm - JaamSimModel to be compared
+	 * @return true if the model is a copy
+	 */
+	public boolean isCopyOf(JaamSimModel sm) {
+
+		// Loop through the two sets of entities in parallel
+		ClonesOfIterable<Entity> itr0 = sm.getClonesOfIterator(Entity.class);
+		ClonesOfIterable<Entity> itr1 = this.getClonesOfIterator(Entity.class);
+		while (itr0.hasNext() || itr1.hasNext()) {
+			Entity ent0 = itr0.hasNext() ? itr0.next() : null;
+			Entity ent1 = itr1.hasNext() ? itr1.next() : null;
+			if (ent0 == null || ent1 == null || !ent0.isRegistered() || !ent1.isRegistered())
+				continue;
+
+			// Verify that the entity list contains the same sequence of objects
+			if (!ent1.isCopyOf(ent0)) {
+				System.out.format("Entity lists do not match: ent0=%s, ent1=%s%n", ent0, ent1);
+				return false;
+			}
+		}
+		return true;
 	}
 
 	public void setName(String str) {

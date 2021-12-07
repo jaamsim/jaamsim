@@ -162,6 +162,31 @@ public class Entity {
 		flags = 0;
 	}
 
+	public boolean isCopyOf(Entity ent) {
+
+		// Names and classes must match
+		if (ent.getClass() != getClass() || !ent.getName().equals(getName())) {
+			System.out.format("Names or classes do not match: this=%s, ent=%s%n", this, ent);
+			return false;
+		}
+
+		// Input strings must match
+		for (int i = 0; i < inpList.size(); i++) {
+			Input<?> in = inpList.get(i);
+			if (in.isSynonym())
+				continue;
+			if (InputAgent.isGraphicsInput(in))  //FIXME resetGraphics clears the Position/Points inputs
+				continue;
+			Input<?> in1 = ent.inpList.get(i);
+			if (!in.getValueTokens().equals(in1.getValueTokens())) {
+				System.out.format("Inputs do not match: entity=%s, keyword=%s, in0=%s, in1=%s%n",
+						ent, in.getKeyword(), in.getValueString(), in1.getValueString());
+				return false;
+			}
+		}
+		return true;
+	}
+
 	/**
 	 * Performs any initialization that must occur after the constructor has finished.
 	 */
