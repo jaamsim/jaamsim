@@ -1268,6 +1268,8 @@ public class Simulation extends Entity {
 	}
 
 	public int getNumberOfThreads() {
+		if (isRealTime())
+			return 1;
 		return Math.min(numberOfThreads.getValue(), getNumberOfRuns());
 	}
 
