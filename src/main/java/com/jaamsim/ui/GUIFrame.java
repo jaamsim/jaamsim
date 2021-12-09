@@ -274,6 +274,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	private static final RateLimiter rateLimiter;
 
 	private static boolean SAFE_GRAPHICS;
+	private static boolean OPTIONAL_GRAPHICS;
 
 	private static File userManualFile;
 
@@ -4428,6 +4429,11 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				SAFE_GRAPHICS = true;
 				continue;
 			}
+			if (each.equalsIgnoreCase("-og") ||
+				    each.equalsIgnoreCase("-optional_graphics")) {
+					OPTIONAL_GRAPHICS = true;
+					continue;
+				}
 			// Not a program directive, add to list of config files
 			configFiles.add(each);
 		}
@@ -4567,6 +4573,10 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 		// Set the selected entity to the Simulation object
 		FrameBox.setSelectedEntity(simModel.getSimulation(), false);
+	}
+
+	public static boolean isOptionalGraphics() {
+		return OPTIONAL_GRAPHICS;
 	}
 
 	/**
