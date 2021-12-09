@@ -66,7 +66,6 @@ public class RunProgressBox extends JFrame {
 
 		Simulation simulation = GUIFrame.getJaamSimModel().getSimulation();
 		int numberOfThreads = simulation.getNumberOfThreads();
-		numberOfThreads = Math.min(numberOfThreads, simulation.getNumberOfRuns());
 		labelList = new ArrayList<>(numberOfThreads);
 		progressBarList = new ArrayList<>(numberOfThreads);
 
