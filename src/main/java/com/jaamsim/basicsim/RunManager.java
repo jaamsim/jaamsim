@@ -25,6 +25,7 @@ import com.jaamsim.events.EventManager;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.ui.GUIFrame;
+import com.jaamsim.ui.LogBox;
 import com.jaamsim.ui.RunProgressBox;
 
 /**
@@ -77,8 +78,22 @@ public class RunManager implements RunListener {
 			// Create a JaamSimModel for each thread
 			JaamSimModel sm = simModel;
 			if (i > 0) {
-				sm = new JaamSimModel(simModel);
-				sm.setName(String.format("%s (%s)", simModel.getName(), simModelList.size() + 1));
+				try {
+					sm = new JaamSimModel(simModel);
+					sm.setName(String.format("%s(%s)", simModel.getName(), simModelList.size() + 1));
+				}
+				catch (Exception e) {
+					pause();
+					if (RunProgressBox.hasInstance())
+						RunProgressBox.getInstance().setShow(false);
+					GUIFrame.invokeErrorDialog("Runtime Error",
+							"The following runtime error has occurred while starting the model "
+							+ "on multiple threads:",
+							e.getMessage(),
+							"More information about the error can be found in the Log Viewer.");
+					LogBox.logException(e);
+					return;
+				}
 			}
 			synchronized (simModelList) {
 				simModelList.add(sm);
