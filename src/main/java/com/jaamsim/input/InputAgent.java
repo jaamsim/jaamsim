@@ -603,7 +603,7 @@ public class InputAgent {
 			ent.setEdited();
 		}
 
-		ent.updateForInput(in);
+		in.doCallback(ent);
 		GUIListener gui = ent.getJaamSimModel().getGUIListener();
 		if (gui != null)
 			gui.updateAll();

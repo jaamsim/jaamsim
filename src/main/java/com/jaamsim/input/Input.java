@@ -159,6 +159,7 @@ public abstract class Input<T> {
 
 	private String keyword; // the preferred name for the input keyword
 	private final String category;
+	private InputCallback callback;
 
 	protected T defValue;
 	protected T value;
@@ -186,6 +187,17 @@ public abstract class Input<T> {
 		isReqd = false;
 
 		reset();
+	}
+
+	public void doCallback(Entity ent) {
+		if (callback != null)
+			callback.callback(ent, this);
+		else
+			ent.updateForInput(this);
+	}
+
+	public void setCallback(InputCallback back) {
+		callback = back;
 	}
 
 	/**

@@ -40,6 +40,7 @@ import com.jaamsim.input.ExpValResult;
 import com.jaamsim.input.ExpressionHandle;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
+import com.jaamsim.input.InputCallback;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.KeywordIndex;
@@ -521,7 +522,7 @@ public class Entity {
 			targetInput.copyFrom(target, sourceInput);
 
 			// Further processing related to this input
-			target.updateForInput(targetInput);
+			targetInput.doCallback(target);
 		}
 	}
 
@@ -678,6 +679,12 @@ public class Entity {
 		return ret;
 	}
 
+	public static final InputCallback updateForInputCallback = new InputCallback() {
+		@Override
+		public void callback(Entity ent, Input<?> inp) {
+			ent.updateForInput(inp);
+		}
+	};
 	/**
 	 * This method updates the Entity for changes in the given input
 	 */
