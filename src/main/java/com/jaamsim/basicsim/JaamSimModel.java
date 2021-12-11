@@ -152,6 +152,8 @@ public class JaamSimModel implements EventTimeListener {
 
 		// Create the new entities in the same order as the original model
 		for (Entity ent : sm.getClonesOfIterator(Entity.class)) {
+			if (!ent.isRegistered())
+				break;
 			if (ent.isPreDefined() || getNamedEntity(ent.getName()) != null)
 				continue;
 
@@ -175,7 +177,9 @@ public class JaamSimModel implements EventTimeListener {
 		// Prepare a sorted list of registered entities on which to set inputs
 		ArrayList<Entity> entityList = new ArrayList<>();
 		for (Entity ent : sm.getClonesOfIterator(Entity.class)) {
-			if (!ent.isRegistered() || ent instanceof ObjectType)
+			if (!ent.isRegistered())
+				break;
+			if (ent instanceof ObjectType)
 				continue;
 			entityList.add(ent);
 		}
