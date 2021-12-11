@@ -158,15 +158,13 @@ public class JaamSimModel implements EventTimeListener {
 				continue;
 
 			// Generate all the sub-model components when the first one is found
-			if (ent.isGenerated()) {
-				if (ent.getParent() instanceof SubModelClone) {
-					Entity clone = getNamedEntity(ent.getParent().getName());
-					SubModel proto = ((SubModelClone) ent.getParent()).getPrototype();
-					if (clone == null || proto == null)
-						continue;
-					KeywordIndex kw = InputAgent.formatInput("Prototype", proto.getName());
-					InputAgent.apply(clone, kw);
-				}
+			if (ent.isGenerated() && ent.getParent() instanceof SubModelClone) {
+				Entity clone = getNamedEntity(ent.getParent().getName());
+				SubModel proto = ((SubModelClone) ent.getParent()).getPrototype();
+				if (clone == null || proto == null)
+					continue;
+				KeywordIndex kw = InputAgent.formatInput("Prototype", proto.getName());
+				InputAgent.apply(clone, kw);
 				continue;
 			}
 
