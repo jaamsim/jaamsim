@@ -475,7 +475,7 @@ public class JaamSimModel implements EventTimeListener {
 			EventTracer trc = new EventTracer(evtName);
 			eventManager.setTraceListener(trc);
 		}
-		else if (getSimulation().isEventViewerVisible()) {
+		else if (getSimulation().isEventViewerVisible() && gui != null) {
 			eventManager.setTraceListener(EventViewer.getInstance());
 		}
 
