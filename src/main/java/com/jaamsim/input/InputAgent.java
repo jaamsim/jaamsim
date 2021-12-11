@@ -24,10 +24,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -1730,10 +1733,15 @@ public class InputAgent {
 	static public String getRelativeFilePath(JaamSimModel simModel, URI uri) {
 
 		// Relativize the file path against the resources folder
-		String resString = resRoot.getPath();
-		String inputString = uri.getPath();
+		String resString = resRoot.toString();
+		String inputString = uri.toString();
 		if (inputString.startsWith(resString)) {
-			return String.format("<res>/%s", inputString.substring(resString.length()));
+			inputString = inputString.substring(resString.length());
+			try {
+				inputString = URLDecoder.decode(inputString, StandardCharsets.UTF_8.name());
+			}
+			catch (UnsupportedEncodingException e) {}
+			return String.format("<res>/%s", inputString);
 		}
 
 		// Relativize the file path against the configuration file
