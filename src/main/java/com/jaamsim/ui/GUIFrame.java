@@ -4739,6 +4739,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			source = ((ErrorException) t).source;
 			pos = ((ErrorException) t).position;
 		}
+		if (RunProgressBox.hasInstance())
+			RunProgressBox.getInstance().setShow(false);
 		GUIFrame.showErrorDialog("Runtime Error",
 				source,
 				pos,
