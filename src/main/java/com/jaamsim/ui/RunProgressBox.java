@@ -60,9 +60,12 @@ public class RunProgressBox extends JFrame {
 
 		init();
 
-		JPanel barPanel = new JPanel();
-		barPanel.setLayout( new GridLayout(0, 2, 5, 5) );
-		barPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
+		GridLayout grid = new GridLayout(0, 2, 5, 5);
+		Dimension barDim = new Dimension(120, 20);
+		int gap = 10;      // insets
+
+		JPanel barPanel = new JPanel(grid);
+		barPanel.setBorder(new EmptyBorder(gap, gap, gap, gap));
 
 		Simulation simulation = GUIFrame.getJaamSimModel().getSimulation();
 		int numberOfThreads = simulation.getNumberOfThreads();
@@ -79,7 +82,7 @@ public class RunProgressBox extends JFrame {
 
 			// Progress bar
 			JProgressBar bar = new JProgressBar(0, 100);
-			bar.setPreferredSize( new Dimension(120, 20) );
+			bar.setPreferredSize(barDim);
 			bar.setValue( 0 );
 			bar.setStringPainted( true );
 			barPanel.add(bar);
@@ -93,13 +96,12 @@ public class RunProgressBox extends JFrame {
 		getContentPane().add(barPanel, BorderLayout.CENTER);
 
 		// Overall progress bar
-		JPanel overallBarPanel = new JPanel();
-		overallBarPanel.setLayout( new GridLayout(0, 2, 5, 5) );
-		overallBarPanel.setBorder(new EmptyBorder(0, 10, 10, 10));
+		JPanel overallBarPanel = new JPanel(grid);
+		overallBarPanel.setBorder(new EmptyBorder(0, gap, gap, gap));
 		overallBarPanel.add(new JLabel("OVERALL PROGRESS"));
 
 		overallBar = new JProgressBar(0, 100);
-		overallBar.setPreferredSize( new Dimension(120, 20) );
+		overallBar.setPreferredSize(barDim);
 		overallBar.setValue( 0 );
 		overallBar.setStringPainted( true );
 		overallBarPanel.add(overallBar);
