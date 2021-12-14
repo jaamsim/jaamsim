@@ -95,6 +95,8 @@ public class RunManager implements RunListener {
 					return;
 				}
 			}
+			if (!hasRunsToStart())
+				return;
 			synchronized (simModelList) {
 				simModelList.add(sm);
 			}
@@ -149,6 +151,13 @@ public class RunManager implements RunListener {
 		synchronized (scenarioList) {
 			int i = scenarioNumber - simModel.getSimulation().getStartingScenarioNumber();
 			return scenarioList.get(i);
+		}
+	}
+
+	public boolean hasRunsToStart() {
+		synchronized (scenarioList) {
+			return scenarioList.size() < simModel.getSimulation().getNumberOfScenarios()
+					|| scenarioList.get(scenarioList.size() - 1).hasRunsToStart();
 		}
 	}
 
