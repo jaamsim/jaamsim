@@ -26,6 +26,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
+import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
 
 import com.jaamsim.basicsim.JaamSimModel;
@@ -55,7 +56,6 @@ public class RunProgressBox extends JFrame {
 		setType(Type.UTILITY);
 		setAutoRequestFocus(false);
 		setAlwaysOnTop(true);
-		setResizable(false);
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
 		init();
@@ -63,9 +63,10 @@ public class RunProgressBox extends JFrame {
 		GridLayout grid = new GridLayout(0, 2, 5, 5);
 		Dimension barDim = new Dimension(120, 20);
 		int gap = 10;      // insets
+		int maxBars = 10;  // number of progress bars to display
 
 		JPanel barPanel = new JPanel(grid);
-		barPanel.setBorder(new EmptyBorder(gap, gap, gap, gap));
+		barPanel.setBorder(new EmptyBorder(0, gap, 0, gap));
 
 		Simulation simulation = GUIFrame.getJaamSimModel().getSimulation();
 		int numberOfThreads = simulation.getNumberOfThreads();
@@ -93,11 +94,17 @@ public class RunProgressBox extends JFrame {
 		}
 
 		getContentPane().setLayout( new BorderLayout() );
-		getContentPane().add(barPanel, BorderLayout.CENTER);
+		JScrollPane scrollPane = new JScrollPane(barPanel);
+		scrollPane.setBorder(new EmptyBorder(gap, 0, gap, 0));
+		Dimension dim = scrollPane.getPreferredSize();
+		dim.height = Math.min(dim.height, maxBars*barDim.height + (maxBars - 1)*grid.getVgap()
+				+ 2*gap);
+		scrollPane.setPreferredSize(dim);
+		getContentPane().add(scrollPane, BorderLayout.CENTER);
 
 		// Overall progress bar
 		JPanel overallBarPanel = new JPanel(grid);
-		overallBarPanel.setBorder(new EmptyBorder(0, gap, gap, gap));
+		overallBarPanel.setBorder(new EmptyBorder(gap, gap, gap, gap));
 		overallBarPanel.add(new JLabel("OVERALL PROGRESS"));
 
 		overallBar = new JProgressBar(0, 100);
