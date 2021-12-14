@@ -229,7 +229,7 @@ public abstract class Input<T> {
 	 * @param in - input object to be copied.
 	 */
 	public void parseFrom(Entity thisEnt, Input<?> in) {
-		ArrayList<String> toks = new ArrayList<>(Arrays.asList(valueTokens));
+		ArrayList<String> toks = new ArrayList<>(Arrays.asList(in.valueTokens));
 		KeywordIndex kw = new KeywordIndex(in.getKeyword(), toks, null);
 		parse(thisEnt, kw);
 	}
