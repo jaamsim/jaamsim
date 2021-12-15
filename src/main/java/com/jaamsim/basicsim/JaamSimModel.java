@@ -247,8 +247,13 @@ public class JaamSimModel implements EventTimeListener {
 		ClonesOfIterable<Entity> itr0 = sm.getClonesOfIterator(Entity.class);
 		ClonesOfIterable<Entity> itr1 = this.getClonesOfIterator(Entity.class);
 		while (itr0.hasNext() || itr1.hasNext()) {
-			Entity ent0 = itr0.hasNext() ? itr0.next() : null;
-			Entity ent1 = itr1.hasNext() ? itr1.next() : null;
+			Entity ent0 = null;
+			Entity ent1 = null;
+			try {
+				ent0 = itr0.hasNext() ? itr0.next() : null;
+				ent1 = itr1.hasNext() ? itr1.next() : null;
+			}
+			catch (Exception e) {}
 			if ((ent0 == null || !ent0.isRegistered()) && (ent1 == null || !ent1.isRegistered()))
 				break;
 
