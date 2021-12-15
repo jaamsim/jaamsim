@@ -242,17 +242,18 @@ public class JaamSimModel implements EventTimeListener {
 	 */
 	public boolean isCopyOf(JaamSimModel sm) {
 
-		// Loop through the two sets of entities in parallel
+		// Loop through the two sets of registered entities in parallel
+		// (any non-registered entities appear after all the registered entities)
 		ClonesOfIterable<Entity> itr0 = sm.getClonesOfIterator(Entity.class);
 		ClonesOfIterable<Entity> itr1 = this.getClonesOfIterator(Entity.class);
 		while (itr0.hasNext() || itr1.hasNext()) {
 			Entity ent0 = itr0.hasNext() ? itr0.next() : null;
 			Entity ent1 = itr1.hasNext() ? itr1.next() : null;
-			if (ent0 == null || ent1 == null || !ent0.isRegistered() || !ent1.isRegistered())
-				continue;
+			if ((ent0 == null || !ent0.isRegistered()) && (ent1 == null || !ent1.isRegistered()))
+				break;
 
 			// Verify that the entity list contains the same sequence of objects
-			if (!ent1.isCopyOf(ent0)) {
+			if (ent0 == null || ent1 == null || !ent1.isCopyOf(ent0)) {
 				System.out.format("Entity lists do not match: ent0=%s, ent1=%s%n", ent0, ent1);
 				return false;
 			}
