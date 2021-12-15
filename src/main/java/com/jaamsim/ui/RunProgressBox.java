@@ -31,7 +31,6 @@ import javax.swing.border.EmptyBorder;
 
 import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.basicsim.Simulation;
-import com.jaamsim.math.MathUtils;
 
 public class RunProgressBox extends JFrame {
 
@@ -184,14 +183,10 @@ public class RunProgressBox extends JFrame {
 			int progress = (int) Math.round( overallProgress * 100.0d );
 			overallBar.setValue(progress);
 
-			// Do nothing further if the runs are finished
-			if (MathUtils.near(lastOverallProgress, 1.0d))
-				return;
-
 			// Run processing rate
 			long millis = System.currentTimeMillis();
 			long elapsedMillis = millis - lastSystemTime;
-			if (elapsedMillis > 5000L || millis - resumeSystemTime < 5000L) {
+			if (progress < 100 && (elapsedMillis > 5000L || millis - resumeSystemTime < 5000L)) {
 
 				// Determine the processing rate
 				progressRate = (overallProgress - lastOverallProgress)*1000.0d/elapsedMillis;
