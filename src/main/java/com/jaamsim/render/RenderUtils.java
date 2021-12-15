@@ -51,16 +51,16 @@ import com.jogamp.opengl.GL2GL3;
  */
 public class RenderUtils {
 
-	public static List<Vec4d> CIRCLE_POINTS;
-	public static List<Vec4d> RECT_POINTS;
-	public static List<Vec4d> TRIANGLE_POINTS;
-	public static List<Vec4d> PENTAGON_POINTS;
-	public static List<Vec4d> HEXAGON_POINTS;
-	public static List<Vec4d> OCTAGON_POINTS;
-	public static List<Vec4d> PENTAGRAM_POINTS;
-	public static List<Vec4d> HEPTAGRAM_POINTS;
-	public static List<Vec4d> OCTAGRAM_POINTS;
-	public static List<Vec4d> ARROW2D_POINTS;
+	public static final List<Vec4d> CIRCLE_POINTS;
+	public static final List<Vec4d> RECT_POINTS;
+	public static final List<Vec4d> TRIANGLE_POINTS;
+	public static final List<Vec4d> PENTAGON_POINTS;
+	public static final List<Vec4d> HEXAGON_POINTS;
+	public static final List<Vec4d> OCTAGON_POINTS;
+	public static final List<Vec4d> PENTAGRAM_POINTS;
+	public static final List<Vec4d> HEPTAGRAM_POINTS;
+	public static final List<Vec4d> OCTAGRAM_POINTS;
+	public static final List<Vec4d> ARROW2D_POINTS;
 
 	static {
 		CIRCLE_POINTS = getCirclePoints(32);

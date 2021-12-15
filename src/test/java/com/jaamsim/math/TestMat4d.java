@@ -25,11 +25,11 @@ import org.junit.Test;
 public class TestMat4d {
 private static final double EPS = 1e-12d;
 //Test constructors and basic utility helpers
-public static double[] d_seq = new double[16];
-public static double[] d_nseq = new double[16];
-public static double[] d_seqtranspose = new double[16];
-public static double[] d_z = new double[16];
-public static double[] d_seqmult = new double[16];
+private static final double[] d_seq = new double[16];
+private static final double[] d_nseq = new double[16];
+private static final double[] d_seqtranspose = new double[16];
+private static final double[] d_z = new double[16];
+private static final double[] d_seqmult = new double[16];
 
 public static final Mat4d ident;
 public static final Mat4d ident3;
