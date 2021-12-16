@@ -308,4 +308,28 @@ public class RunManager implements RunListener {
 		return false;
 	}
 
+	public int getStartingScenarioNumber() {
+		return simModel.getSimulation().getStartingScenarioNumber();
+	}
+
+	public int getEndingScenarioNumber() {
+		return simModel.getSimulation().getEndingScenarioNumber();
+	}
+
+	public int getNumberOfScenarios() {
+		return simModel.getSimulation().getNumberOfScenarios();
+	}
+
+	public int getNumberOfReplications() {
+		return simModel.getSimulation().getNumberOfReplications();
+	}
+
+	public int getNumberOfRuns() {
+		return simModel.getSimulation().getNumberOfRuns();
+	}
+
+	public int getNumberOfThreads() {
+		return simModel.getSimulation().getNumberOfThreads();
+	}
+
 }
