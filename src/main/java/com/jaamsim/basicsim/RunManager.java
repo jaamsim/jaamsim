@@ -297,4 +297,15 @@ public class RunManager implements RunListener {
 		}
 	}
 
+	public boolean isRunning() {
+		synchronized (simModelList) {
+			for (JaamSimModel sm : simModelList) {
+				if (sm.isRunning()) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
 }

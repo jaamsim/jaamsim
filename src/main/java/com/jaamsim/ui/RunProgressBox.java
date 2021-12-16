@@ -186,7 +186,8 @@ public class RunProgressBox extends JFrame {
 			// Run processing rate
 			long millis = System.currentTimeMillis();
 			long elapsedMillis = millis - lastSystemTime;
-			if (progress < 100 && (elapsedMillis > 5000L || millis - resumeSystemTime < 5000L)) {
+			if ((elapsedMillis > 5000L || millis - resumeSystemTime < 5000L)
+					&& GUIFrame.getRunManager().isRunning()) {
 
 				// Determine the processing rate
 				progressRate = (overallProgress - lastOverallProgress)*1000.0d/elapsedMillis;
