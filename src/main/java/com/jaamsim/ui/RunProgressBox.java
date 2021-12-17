@@ -67,8 +67,7 @@ public class RunProgressBox extends JFrame {
 		JPanel barPanel = new JPanel(grid);
 		barPanel.setBorder(new EmptyBorder(0, gap, 0, gap));
 
-		Simulation simulation = GUIFrame.getJaamSimModel().getSimulation();
-		int numberOfThreads = simulation.getNumberOfThreads();
+		int numberOfThreads = GUIFrame.getRunManager().getNumberOfThreads();
 		labelList = new ArrayList<>(numberOfThreads);
 		progressBarList = new ArrayList<>(numberOfThreads);
 
@@ -191,7 +190,7 @@ public class RunProgressBox extends JFrame {
 
 				// Determine the processing rate
 				progressRate = (overallProgress - lastOverallProgress)*1000.0d/elapsedMillis;
-				double processingRate = progressRate * GUIFrame.getJaamSimModel().getSimulation().getNumberOfRuns();
+				double processingRate = progressRate * GUIFrame.getRunManager().getNumberOfRuns();
 				rateLabel.setText(String.format("%,.1f runs per hour", processingRate * 3600.0d));
 
 				if (elapsedMillis > 5000L) {

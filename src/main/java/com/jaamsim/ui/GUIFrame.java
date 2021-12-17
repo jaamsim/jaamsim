@@ -3155,7 +3155,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			}
 			if (confirmed) {
 				if (!sim.getSimulation().isRealTime()
-						&& sim.getSimulation().getNumberOfRuns() > 1) {
+						&& runManager.getNumberOfRuns() > 1) {
 					RunProgressBox.getInstance().setShow(true);
 				}
 				new Thread(new Runnable() {
@@ -3169,7 +3169,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		}
 		else if (sim.getSimState() == JaamSimModel.SIM_STATE_PAUSED) {
 			if (!sim.getSimulation().isRealTime()
-					&& sim.getSimulation().getNumberOfRuns() > 1) {
+					&& runManager.getNumberOfRuns() > 1) {
 				RunProgressBox.getInstance().setShow(true);
 			}
 			new Thread(new Runnable() {
