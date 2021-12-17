@@ -64,7 +64,6 @@ public class RunManager implements RunListener {
 
 	public synchronized void start(double pauseTime) {
 		Simulation simulation = simModel.getSimulation();
-		int numberOfThreads = simulation.getNumberOfThreads();
 
 		// Open the main report
 		if (simulation.getPrintReport())
@@ -73,7 +72,7 @@ public class RunManager implements RunListener {
 		// Start a new simulation run on each thread
 		simModelList.clear();
 		scenarioList.clear();
-		for (int i = 0; i < numberOfThreads; i++) {
+		for (int i = 0; i < getNumberOfThreads(); i++) {
 
 			// Create a JaamSimModel for each thread
 			JaamSimModel sm = simModel;
@@ -124,8 +123,7 @@ public class RunManager implements RunListener {
 		simModelList.clear();
 		scenarioList.clear();
 
-		int scenarioNumber = simModel.getSimulation().getStartingScenarioNumber();
-		simModel.setScenarioNumber(scenarioNumber);
+		simModel.setScenarioNumber(getStartingScenarioNumber());
 		simModel.setReplicationNumber(1);
 		simModel.reset();
 	}
@@ -149,14 +147,14 @@ public class RunManager implements RunListener {
 
 	public Scenario getScenario(int scenarioNumber) {
 		synchronized (scenarioList) {
-			int i = scenarioNumber - simModel.getSimulation().getStartingScenarioNumber();
+			int i = scenarioNumber - getStartingScenarioNumber();
 			return scenarioList.get(i);
 		}
 	}
 
 	public boolean hasRunsToStart() {
 		synchronized (scenarioList) {
-			return scenarioList.size() < simModel.getSimulation().getNumberOfScenarios()
+			return scenarioList.size() < getNumberOfScenarios()
 					|| scenarioList.get(scenarioList.size() - 1).hasRunsToStart();
 		}
 	}
@@ -181,21 +179,21 @@ public class RunManager implements RunListener {
 				if (numOuts > 0) {
 					outStream = getOutStream();
 					if (outStream != null) {
-						if (run.getScenarioNumber() == simulation.getStartingScenarioNumber())
+						if (run.getScenarioNumber() == getStartingScenarioNumber())
 							InputAgent.printRunOutputHeaders(simModel, outStream);
 						boolean labels = simulation.getPrintRunLabels();
 						boolean reps = simulation.getPrintReplications();
 						boolean bool = simulation.getPrintConfidenceIntervals();
 						InputAgent.printScenarioOutputs(scene, labels, reps, bool, outStream);
 						if (simulation.getPrintReplications()
-								&& run.getScenarioNumber() < simulation.getEndingScenarioNumber()) {
+								&& run.getScenarioNumber() < getEndingScenarioNumber()) {
 							outStream.println();
 						}
 					}
 				}
 
 				// Exit if this is the last scenario
-				if (run.getScenarioNumber() == simulation.getEndingScenarioNumber()) {
+				if (run.getScenarioNumber() == getEndingScenarioNumber()) {
 					if (outStream != null) {
 						outStream.close();
 						outStream = null;
@@ -230,11 +228,11 @@ public class RunManager implements RunListener {
 
 			// Start a new scenario if required
 			if (presentScenario == null || !presentScenario.hasRunsToStart()) {
-				if (scenarioList.size() >= simulation.getNumberOfScenarios())
+				if (scenarioList.size() >= getNumberOfScenarios())
 					return;
 				int numOuts = simulation.getRunOutputListSize();
-				int scenarioNumber = scenarioList.size() + simulation.getStartingScenarioNumber();
-				int numberOfReplications = simulation.getNumberOfReplications();
+				int scenarioNumber = scenarioList.size() + getStartingScenarioNumber();
+				int numberOfReplications = getNumberOfReplications();
 				presentScenario = new Scenario(numOuts, scenarioNumber, numberOfReplications, this);
 				scenarioList.add(presentScenario);
 			}
@@ -293,7 +291,7 @@ public class RunManager implements RunListener {
 			for (Scenario scene : scenarioList) {
 				ret += scene.getProgress();
 			}
-			return ret / simModel.getSimulation().getNumberOfScenarios();
+			return ret / getNumberOfScenarios();
 		}
 	}
 
