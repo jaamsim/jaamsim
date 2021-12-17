@@ -1176,14 +1176,23 @@ public class InputAgent {
 		file.format("%s %s { %s }%n", ent.getName(), in.getKeyword(), in.getStubDefinition());
 	}
 
-	public static void printRunOutputHeaders(JaamSimModel simModel, PrintStream outStream) {
+	/**
+	 * Prints the column headings for the custom output report.
+	 * @param simModel - model whose headings are to be printed
+	 * @param labels - true if scenario and replication labels are to be printed for each run
+	 * @param reps - true if the results for each replication are to be printed
+	 * @param bool - true if confidence intervals are to be printed
+	 * @param outStream - PrintStream to which the report will be printed
+	 */
+	public static void printRunOutputHeaders(JaamSimModel simModel, boolean labels, boolean reps,
+			boolean bool, PrintStream outStream) {
 		Simulation simulation = simModel.getSimulation();
 		StringBuilder sb = new StringBuilder();
 
 		// Scenario and replication columns
-		if (simulation.getPrintRunLabels()) {
+		if (labels) {
 			sb.append("Scenario").append("\t");
-			if (simulation.getPrintReplications())
+			if (reps)
 				sb.append("Replication").append("\t");
 		}
 
@@ -1200,7 +1209,7 @@ public class InputAgent {
 			else
 				sb.append("\t");
 			sb.append(str);
-			if (simulation.getPrintConfidenceIntervals())
+			if (bool)
 				sb.append("\t");
 		}
 		outStream.println(sb.toString());
@@ -1214,7 +1223,8 @@ public class InputAgent {
 	 * @param bool - true if confidence intervals are to be printed
 	 * @param outStream - PrintStream to which the results will be printed
 	 */
-	public static void printScenarioOutputs(Scenario scene, boolean labels, boolean reps, boolean bool, PrintStream outStream) {
+	public static void printScenarioOutputs(Scenario scene, boolean labels, boolean reps,
+			boolean bool, PrintStream outStream) {
 		int replications = scene.getRunsCompleted().size();
 
 		// Sort the completed runs by replication number

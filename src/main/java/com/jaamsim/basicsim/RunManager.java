@@ -179,14 +179,13 @@ public class RunManager implements RunListener {
 				if (numOuts > 0) {
 					outStream = getOutStream();
 					if (outStream != null) {
-						if (run.getScenarioNumber() == getStartingScenarioNumber())
-							InputAgent.printRunOutputHeaders(simModel, outStream);
 						boolean labels = simulation.getPrintRunLabels();
 						boolean reps = simulation.getPrintReplications();
 						boolean bool = simulation.getPrintConfidenceIntervals();
+						if (run.getScenarioNumber() == getStartingScenarioNumber())
+							InputAgent.printRunOutputHeaders(simModel, labels, reps, bool, outStream);
 						InputAgent.printScenarioOutputs(scene, labels, reps, bool, outStream);
-						if (simulation.getPrintReplications()
-								&& run.getScenarioNumber() < getEndingScenarioNumber()) {
+						if (reps && run.getScenarioNumber() < getEndingScenarioNumber()) {
 							outStream.println();
 						}
 					}
