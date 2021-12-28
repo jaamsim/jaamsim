@@ -419,14 +419,6 @@ public abstract class Device extends StateUserEntity implements ObserverEntity, 
 		return lastUpdateTime;
 	}
 
-	protected final void setStepCompleted(boolean bool) {
-		stepCompleted = bool;
-	}
-
-	protected final boolean isStepCompleted() {
-		return stepCompleted;
-	}
-
 	protected final double getRemainingDuration() {
 		return duration;
 	}
