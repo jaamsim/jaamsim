@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2021 JaamSim Software Inc.
+ * Copyright (C) 2016-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -244,7 +244,7 @@ public class EntityGenerator extends LinkedService implements EntityGen {
 	    sequence = 3)
 	public double getElapsedTime(double simTime) {
 		double ret = presentIAT - getRemainingDuration();
-		if (isWorking(simTime)) {
+		if (isBusy()) {
 			ret += simTime - getLastUpdateTime();
 		}
 		return ret;
