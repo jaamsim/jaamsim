@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018-2021 JaamSim Software Inc.
+ * Copyright (C) 2018-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -503,7 +503,7 @@ public abstract class StateEntity extends DisplayEntity implements StateUser {
 	@Output(name = "WorkingState",
 	 description = "Returns TRUE if the present state is one of the working states.",
 	    sequence = 1)
-	public boolean isWorking(double simTime) {
+	public boolean isWorkingState(double simTime) {
 		if (presentState == null) {
 			return this.isValidWorkingState(this.getInitialState());
 		}
