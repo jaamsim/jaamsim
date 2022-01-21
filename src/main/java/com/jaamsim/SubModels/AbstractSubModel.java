@@ -62,7 +62,7 @@ public abstract class AbstractSubModel extends CompoundEntity {
 	 * Updates the added keywords to match the specified list.
 	 * @param newDataList - data for the new list of added keywords
 	 */
-	public void updateKeywords(ArrayList<PassThroughData> newDataList) {
+	void updateKeywords(ArrayList<PassThroughData> newDataList) {
 
 		// Do nothing if the keywords are unchanged
 		if (newDataList.equals(keywordList))
