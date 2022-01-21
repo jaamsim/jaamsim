@@ -20,11 +20,13 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 
+import com.jaamsim.basicsim.Entity;
+import com.jaamsim.input.ExpParser.Expression;
 import com.jaamsim.input.ExpressionHandle;
 import com.jaamsim.input.ExpressionInput;
 import com.jaamsim.input.Input;
+import com.jaamsim.input.InputCallback;
 import com.jaamsim.input.ValueHandle;
-import com.jaamsim.input.ExpParser.Expression;
 import com.jaamsim.units.Unit;
 
 public abstract class AbstractSubModel extends CompoundEntity {
@@ -38,17 +40,6 @@ public abstract class AbstractSubModel extends CompoundEntity {
 		newInputList = new ArrayList<>();
 	}
 
-	@Override
-	public void updateForInput(Input<?> in) {
-		super.updateForInput(in);
-
-		if (newInputList.contains(in)) {
-			ExpressionInput expIn = (ExpressionInput) in;
-			addInputAsOutput(expIn.getKeyword(), expIn.getValue(), expIn.getUnitType());
-			return;
-		}
-	}
-
 	public void setKeywordList(ArrayList<PassThroughData> list) {
 		keywordList = new ArrayList<>(list);
 	}
@@ -56,6 +47,16 @@ public abstract class AbstractSubModel extends CompoundEntity {
 	public ArrayList<PassThroughData> getKeywordList() {
 		return keywordList;
 	}
+
+
+	static final InputCallback SubModelKeywordCallback = new InputCallback() {
+		@Override
+		public void callback(Entity ent, Input<?> inp) {
+			ExpressionInput expIn = (ExpressionInput)inp;
+			AbstractSubModel absModel = (AbstractSubModel)ent;
+			absModel.addInputAsOutput(expIn.getKeyword(), expIn.getValue(), expIn.getUnitType());
+		}
+	};
 
 	/**
 	 * Updates the added keywords to match the specified list.
@@ -81,6 +82,7 @@ public abstract class AbstractSubModel extends CompoundEntity {
 			if (index == -1) {
 				in = new ExpressionInput(data.getName(), KEY_INPUTS, null);
 				in.setUnitType(data.getUnitType());
+				in.setCallback(SubModelKeywordCallback);
 				in.setRequired(true);
 			}
 			else {
