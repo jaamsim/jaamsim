@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2017-2021 JaamSim Software Inc.
+ * Copyright (C) 2017-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,7 +55,6 @@ public class EntityProcessor extends AbstractLinkedResourceUser {
 	private int lastCapacity; // Last recorded value for capacity
 
 	{
-		trace.setHidden(false);
 		releaseThresholdList.setHidden(false);
 
 		resourceList.setRequired(false);
