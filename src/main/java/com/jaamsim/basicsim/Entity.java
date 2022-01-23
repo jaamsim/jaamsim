@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2002-2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2021 JaamSim Software Inc.
+ * Copyright (C) 2016-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -171,6 +171,7 @@ public class Entity {
 		}
 
 		// Input strings must match
+		boolean ret = true;
 		for (int i = 0; i < inpList.size(); i++) {
 			Input<?> in = inpList.get(i);
 			if (in.isSynonym())
@@ -181,10 +182,10 @@ public class Entity {
 			if (!in.getValueTokens().equals(in1.getValueTokens())) {
 				System.out.format("Inputs do not match: entity=%s, keyword=%s, in0=%s, in1=%s%n",
 						ent, in.getKeyword(), in.getValueString(), in1.getValueString());
-				return false;
+				ret = false;
 			}
 		}
-		return true;
+		return ret;
 	}
 
 	/**
