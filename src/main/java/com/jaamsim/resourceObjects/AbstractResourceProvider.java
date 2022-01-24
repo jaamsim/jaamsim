@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2018-2020 JaamSim Software Inc.
+ * Copyright (C) 2018-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Statistics.TimeBasedFrequency;
@@ -180,14 +181,15 @@ public abstract class AbstractResourceProvider extends DisplayEntity implements 
 			// Seize the resources
 			selection.startNextEntity();
 
-			// If the selected object has no more entities, remove it from the list
-			if (!selection.hasWaitingEntity()) {
-				list.remove(selection);
+			// Remove any resource users than have no waiting entities and then re-sort
+			Iterator<ResourceUser> itr = list.iterator();
+			while (itr.hasNext()) {
+				ResourceUser ru = itr.next();
+				if (!ru.hasWaitingEntity()) {
+					itr.remove();
+				}
 			}
-			// If it does have more entities, re-sort the list to account for the next entity
-			else {
-				Collections.sort(list, userCompare);
-			}
+			Collections.sort(list, userCompare);
 		}
 	}
 
