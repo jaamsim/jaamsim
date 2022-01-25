@@ -49,7 +49,7 @@ public abstract class AbstractSubModel extends CompoundEntity {
 	}
 
 
-	static final InputCallback SubModelKeywordCallback = new InputCallback() {
+	static final InputCallback subModelKeywordCallback = new InputCallback() {
 		@Override
 		public void callback(Entity ent, Input<?> inp) {
 			ExpressionInput expIn = (ExpressionInput)inp;
@@ -82,7 +82,7 @@ public abstract class AbstractSubModel extends CompoundEntity {
 			if (index == -1) {
 				in = new ExpressionInput(data.getName(), KEY_INPUTS, null);
 				in.setUnitType(data.getUnitType());
-				in.setCallback(SubModelKeywordCallback);
+				in.setCallback(subModelKeywordCallback);
 				in.setRequired(true);
 			}
 			else {

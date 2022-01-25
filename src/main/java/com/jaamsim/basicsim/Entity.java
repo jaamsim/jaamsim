@@ -136,6 +136,7 @@ public class Entity {
 		this.addInput(desc);
 
 		trace = new BooleanInput("Trace", OPTIONS, false);
+		trace.setCallback(traceInputCallback);
 		trace.setHidden(true);
 		this.addInput(trace);
 
@@ -685,20 +686,23 @@ public class Entity {
 			ent.updateForInput(inp);
 		}
 	};
+
+	static final InputCallback traceInputCallback = new InputCallback() {
+		@Override
+		public void callback(Entity ent, Input<?> inp) {
+			BooleanInput trc = (BooleanInput)inp;
+			if (trc.getValue())
+				ent.setTraceFlag();
+			else
+				ent.clearTraceFlag();
+
+		}
+	};
+
 	/**
 	 * This method updates the Entity for changes in the given input
 	 */
 	public void updateForInput( Input<?> in ) {
-
-		if (in == trace) {
-			if (trace.getValue())
-				this.setTraceFlag();
-			else
-				this.clearTraceFlag();
-
-			return;
-		}
-
 		if (in == attributeDefinitionList) {
 			attributeMap.clear();
 			for (AttributeHandle h : attributeDefinitionList.getValue()) {
