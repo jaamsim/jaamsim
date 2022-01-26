@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2021 JaamSim Software Inc.
+ * Copyright (C) 2021-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -109,8 +109,10 @@ public class SimRun implements RunListener {
 
 	@Override
 	public void handleError(Throwable t) {
-		LogBox.format("Runtime error in run %s of scenario %s:",
+		String msg = String.format("Runtime error in replication %s of scenario %s:",
 				replicationNumber, scenarioNumber);
+		LogBox.logLine(msg);
+		System.err.println(msg);
 		LogBox.logException(t);
 		double simTime = simModel.getSimTime();
 		runOutputStrings = new ArrayList<>(1);
