@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2021 JaamSim Software Inc.
+ * Copyright (C) 2021-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -202,6 +202,22 @@ public class RunManager implements RunListener {
 						reportFile = null;
 					}
 					simModel.end();
+
+					// Are there any runs with errors
+					ArrayList<SimRun> errorRuns = getErrorRuns();
+					if (GUIFrame.getInstance() != null && !errorRuns.isEmpty()) {
+						if (RunProgressBox.hasInstance())
+							RunProgressBox.getInstance().setShow(false);
+						StringBuilder sb = new StringBuilder();
+						for (SimRun r : errorRuns) {
+							sb.append(String.format("replication %s of scenario %s%n",
+									r.getReplicationNumber(), r.getScenarioNumber()));
+						}
+						GUIFrame.invokeErrorDialog("Runtime Error",
+								"Runtime errors occured in the following simulation runs:",
+								sb.toString(),
+								"More information can be found in the Log Viewer.");
+					}
 					return;
 				}
 			}
@@ -327,6 +343,16 @@ public class RunManager implements RunListener {
 
 	public int getNumberOfThreads() {
 		return simModel.getSimulation().getNumberOfThreads();
+	}
+
+	public ArrayList<SimRun> getErrorRuns() {
+		synchronized (scenarioList) {
+			ArrayList<SimRun> ret = new ArrayList<>();
+			for (Scenario scene : scenarioList) {
+				ret.addAll(scene.getErrorRuns());
+			}
+			return ret;
+		}
 	}
 
 }
