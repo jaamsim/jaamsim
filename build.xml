@@ -16,8 +16,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -->
 <project name="jaamsim" basedir="." default="jar">
-  <property name="ver.major"           value="2021"/>
-  <property name="ver.minor"           value="06"/>
+  <property name="ver.major"           value="2022"/>
+  <property name="ver.minor"           value="01"/>
   <property name="ver"                 value="${ver.major}-${ver.minor}"/>
   <property name="src.dir"       location="src/main"/>
   <property name="res.dir"       location="src/main/resources"/>
