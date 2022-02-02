@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2016-2020 JaamSim Software Inc.
+ * Copyright (C) 2016-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
  */
 package com.jaamsim.input;
 
+import com.jaamsim.input.ExpEvaluator.EntityParseContext;
 import com.jaamsim.input.ExpParser.Expression;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
@@ -23,11 +24,13 @@ import com.jaamsim.units.Unit;
 public class NamedExpression {
 
 	private final String name;
+	private final EntityParseContext parseContext;
 	private final Expression exp;
 	private final Class<? extends Unit> unitType;
 
-	public NamedExpression(String name, Expression exp, Class<? extends Unit> unitType) {
+	public NamedExpression(String name, EntityParseContext parseContext, Expression exp, Class<? extends Unit> unitType) {
 		this.name = name;
+		this.parseContext = parseContext;
 		this.exp = exp;
 		this.unitType = unitType;
 	}
@@ -41,6 +44,10 @@ public class NamedExpression {
 
 	public Class<? extends Unit> getUnitType() {
 		return unitType;
+	}
+
+	public EntityParseContext getParseContext() {
+		return parseContext;
 	}
 
 	public String getStubDefinition() {

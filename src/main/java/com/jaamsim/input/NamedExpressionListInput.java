@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2016-2021 JaamSim Software Inc.
+ * Copyright (C) 2016-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import java.util.HashSet;
 
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.JaamSimModel;
+import com.jaamsim.input.ExpEvaluator.EntityParseContext;
 import com.jaamsim.input.ExpParser.Expression;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
@@ -75,7 +76,8 @@ public class NamedExpressionListInput extends ListInput<ArrayList<NamedExpressio
 				}
 
 				String expString = subArg.getArg(1);
-				Expression exp = ExpParser.parseExpression(ExpEvaluator.getParseContext(thisEnt, expString), expString);
+				EntityParseContext pc = ExpEvaluator.getParseContext(thisEnt, expString);
+				Expression exp = ExpParser.parseExpression(pc, expString);
 
 				Class<? extends Unit> unitType = DimensionlessUnit.class;
 				if (subArg.numArgs() == 3) {
@@ -87,7 +89,7 @@ public class NamedExpressionListInput extends ListInput<ArrayList<NamedExpressio
 				ExpParser.assertUnitType(exp, unitType);
 
 				// Save the data for this expression
-				NamedExpression ne = new NamedExpression(name, exp, unitType);
+				NamedExpression ne = new NamedExpression(name, pc, exp, unitType);
 				temp.add(ne);
 
 			} catch (ExpError e) {
@@ -104,6 +106,20 @@ public class NamedExpressionListInput extends ListInput<ArrayList<NamedExpressio
 	@Override
 	public String getValidInputDesc() {
 		return Input.VALID_CUSTOM_OUT;
+	}
+
+	@Override
+	public void getValueTokens(ArrayList<String> toks) {
+		if (value == null || isDefault())
+			return;
+		for (NamedExpression ne : value) {
+			toks.add("{");
+			toks.add(ne.getName());
+			toks.add(ne.getParseContext().getUpdatedSource());
+			if (ne.getUnitType() != DimensionlessUnit.class)
+				toks.add(ne.getUnitType().getSimpleName());
+			toks.add("}");
+		}
 	}
 
 	@Override
