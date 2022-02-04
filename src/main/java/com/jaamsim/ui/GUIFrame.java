@@ -562,8 +562,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		if (sim.isSessionEdited()) {
 			boolean confirmed = GUIFrame.showSaveChangesDialog(this);
 			if (!confirmed) {
-				if (RunProgressBox.hasInstance())
-					RunProgressBox.getInstance().setShow(true);
 				return;
 			}
 		}
@@ -2855,12 +2853,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 					GUIFrame.this.pauseSimulation();
 				}
 				controlStartResume.requestFocusInWindow();
-				if (RunProgressBox.hasInstance())
-					RunProgressBox.getInstance().setShow(false);
 				boolean confirmed = GUIFrame.showConfirmStopDialog();
 				if (!confirmed) {
-					if (RunProgressBox.hasInstance())
-						RunProgressBox.getInstance().setShow(true);
 					return;
 				}
 
@@ -5326,6 +5320,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	 * @return true if the file is to be overwritten.
 	 */
 	public static boolean showSaveAsDialog(String fileName) {
+		if (RunProgressBox.hasInstance())
+			RunProgressBox.getInstance().setShow(false);
 		int userOption = JOptionPane.showConfirmDialog(null,
 				String.format("The file '%s' already exists.\n" +
 						"Do you want to replace it?", fileName),
@@ -5340,6 +5336,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	 * @return true if the run is to be stopped.
 	 */
 	public static boolean showConfirmStopDialog() {
+		if (RunProgressBox.hasInstance())
+			RunProgressBox.getInstance().setShow(false);
 		int userOption = JOptionPane.showConfirmDialog( null,
 				"WARNING: Are you sure you want to reset the simulation time to 0?",
 				"Confirm Reset",
@@ -5353,6 +5351,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	 * @return true for any response other than Cancel or Close.
 	 */
 	public static boolean showSaveChangesDialog(GUIFrame gui) {
+		if (RunProgressBox.hasInstance())
+			RunProgressBox.getInstance().setShow(false);
 		JaamSimModel sim = getJaamSimModel();
 		String message;
 		if (sim.getConfigFile() == null)
@@ -5518,6 +5518,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	 * @param msg - error message
 	 */
 	public static void showErrorOptionDialog(String title, String msg) {
+		if (RunProgressBox.hasInstance())
+			RunProgressBox.getInstance().setShow(false);
 		JaamSimModel sim = getJaamSimModel();
 		if (sim == null || sim.isBatchRun())
 			GUIFrame.shutdown(1);
@@ -5549,6 +5551,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	 * @return true if the input is to be re-edited
 	 */
 	public static boolean showErrorEditDialog(String title, String source, int pos, String pre, String msg, String post) {
+		if (RunProgressBox.hasInstance())
+			RunProgressBox.getInstance().setShow(false);
 		String message = GUIFrame.getErrorMessage(source, pos, pre, msg, post);
 		String[] options = { "Edit", "Reset" };
 		int reply = JOptionPane.showOptionDialog(null,
