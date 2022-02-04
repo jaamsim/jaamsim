@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2021 JaamSim Software Inc.
+ * Copyright (C) 2016-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import java.util.HashSet;
 
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.JaamSimModel;
+import com.jaamsim.input.ExpEvaluator.EntityParseContext;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 
@@ -32,6 +33,9 @@ import com.jaamsim.units.Unit;
  * @author Harry King
  */
 public class AttributeDefinitionListInput extends ListInput<ArrayList<AttributeHandle>> {
+
+	private ArrayList<ExpEvaluator.EntityParseContext> parseContextList;
+
 	public AttributeDefinitionListInput(String key, String cat, ArrayList<AttributeHandle> def) {
 		super(key, cat, def);
 	}
@@ -47,6 +51,7 @@ public class AttributeDefinitionListInput extends ListInput<ArrayList<AttributeH
 		// Divide up the inputs by the inner braces
 		ArrayList<KeywordIndex> subArgs = kw.getSubArgs();
 		ArrayList<AttributeHandle> temp = new ArrayList<>(subArgs.size());
+		ArrayList<ExpEvaluator.EntityParseContext> pcList = new ArrayList<>(subArgs.size());
 
 		// Ensure that no attribute names are repeated
 		HashSet<String> nameSet = new HashSet<>();
@@ -76,7 +81,8 @@ public class AttributeDefinitionListInput extends ListInput<ArrayList<AttributeH
 
 				// Parse the expression
 				String expString = subArg.getArg(1);
-				ExpParser.Expression exp = ExpParser.parseExpression(ExpEvaluator.getParseContext(thisEnt, expString), expString);
+				EntityParseContext pc = ExpEvaluator.getParseContext(thisEnt, expString);
+				ExpParser.Expression exp = ExpParser.parseExpression(pc, expString);
 				expVal = ExpEvaluator.evaluateExpression(exp, 0);
 				if (expVal.type == ExpResType.NUMBER) {
 					unitType = expVal.unitType;
@@ -90,6 +96,7 @@ public class AttributeDefinitionListInput extends ListInput<ArrayList<AttributeH
 				h.setInitialValue(expVal);
 				h.setValue(expVal);
 				temp.add(h);
+				pcList.add(pc);
 
 			} catch (ExpError e) {
 				throw new InputErrorException(e);
@@ -99,12 +106,26 @@ public class AttributeDefinitionListInput extends ListInput<ArrayList<AttributeH
 		}
 
 		// Save the data for each attribute
+		parseContextList = pcList;
 		value = temp;
 	}
 
 	@Override
 	public String getValidInputDesc() {
 		return Input.VALID_ATTRIB_DEF;
+	}
+
+	@Override
+	public void getValueTokens(ArrayList<String> toks) {
+		if (value == null || isDefault())
+			return;
+		for (int i = 0; i < value.size(); i++) {
+			AttributeHandle h = value.get(i);
+			toks.add("{");
+			toks.add(h.getName());
+			toks.add(parseContextList.get(i).getUpdatedSource());
+			toks.add("}");
+		}
 	}
 
 	@Override
@@ -120,6 +141,7 @@ public class AttributeDefinitionListInput extends ListInput<ArrayList<AttributeH
 			hNew.setValue(h.copyValue());
 			value.add(hNew);
 		}
+		parseContextList = new ArrayList<>(((AttributeDefinitionListInput) in).parseContextList);
 	}
 
 	@Override
