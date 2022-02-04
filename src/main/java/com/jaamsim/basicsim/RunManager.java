@@ -83,8 +83,6 @@ public class RunManager implements RunListener {
 				}
 				catch (Exception e) {
 					pause();
-					if (RunProgressBox.hasInstance())
-						RunProgressBox.getInstance().setShow(false);
 					GUIFrame.invokeErrorDialog("Runtime Error",
 							"The following runtime error has occurred while starting the model "
 							+ "on multiple threads:",
@@ -206,8 +204,6 @@ public class RunManager implements RunListener {
 					// Are there any runs with errors
 					ArrayList<SimRun> errorRuns = getErrorRuns();
 					if (GUIFrame.getInstance() != null && !errorRuns.isEmpty()) {
-						if (RunProgressBox.hasInstance())
-							RunProgressBox.getInstance().setShow(false);
 						StringBuilder sb = new StringBuilder();
 						for (SimRun r : errorRuns) {
 							sb.append(String.format("replication %s of scenario %s%n",

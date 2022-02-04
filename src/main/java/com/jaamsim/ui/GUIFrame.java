@@ -4739,8 +4739,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			source = ((ErrorException) t).source;
 			pos = ((ErrorException) t).position;
 		}
-		if (RunProgressBox.hasInstance())
-			RunProgressBox.getInstance().setShow(false);
 		GUIFrame.showErrorDialog("Runtime Error",
 				source,
 				pos,
@@ -5435,6 +5433,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	 * @param post - text to appear after the error message
 	 */
 	public static void showErrorDialog(String title, String source, int position, String pre, String message, String post) {
+		if (RunProgressBox.hasInstance())
+			RunProgressBox.getInstance().setShow(false);
 		JaamSimModel sim = getJaamSimModel();
 		if (sim == null || sim.isBatchRun())
 			GUIFrame.shutdown(1);
