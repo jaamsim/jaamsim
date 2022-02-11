@@ -100,8 +100,8 @@ public abstract class Device extends StateUserEntity implements ObserverEntity, 
 	public final void restart() {
 
 		// If already working, do nothing
-		if (processing) {
-			if (isTraceFlag()) trace(0, "restart - ALREADY WORKING");
+		if (processing || isSetup() || isSetdown()) {
+			if (isTraceFlag()) trace(0, "restart - ALREADY STARTED");
 			setPresentState();
 			return;
 		}
