@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2009-2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018-2021 JaamSim Software Inc.
+ * Copyright (C) 2018-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -149,7 +149,7 @@ public class Text extends TextBasics {
 		ArrayList<KeywordIndex> kwList = new ArrayList<>(2);
 		kwList.add( InputAgent.formatArgs("Format", getText()) );
 		if (isAutoSize()) {
-			Vec3d size = getAutoSize(getText(), getStyle(), getTextHeight());
+			Vec3d size = getAutoSize(getFontName(), getStyle(), getTextHeight());
 			kwList.add( getJaamSimModel().formatVec3dInput("Size", size, DistanceUnit.class) );
 		}
 		KeywordIndex[] kws = new KeywordIndex[kwList.size()];
