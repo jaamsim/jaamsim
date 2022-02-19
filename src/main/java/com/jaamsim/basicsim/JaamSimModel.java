@@ -441,11 +441,10 @@ public class JaamSimModel implements EventTimeListener {
 				each.validate();
 			}
 			catch (Throwable t) {
+				InputAgent.logMessage(this, "Validation Error - %s: %s%n",
+						each.getName(), t.getMessage());
 				if (gui != null) {
 					gui.handleInputError(t, each);
-				}
-				else {
-					System.out.format("Validation Error - %s: %s%n", each.getName(), t.getMessage());
 				}
 				return false;
 			}
