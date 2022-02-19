@@ -923,6 +923,27 @@ public class InputAgent {
 	}
 
 	/**
+	 * Writes a runtime error message to standard error, the Log Viewer, and the Log File.
+	 * @param simModel - model in which the error occurred
+	 * @param t - error that occurred
+	 */
+	public static void logRuntimeError(JaamSimModel simModel, Throwable t) {
+		simModel.recordError();
+		InputAgent.logMessage(simModel,
+				"Runtime error in replication %s of scenario %s at time %f s:",
+				simModel.getReplicationNumber(), simModel.getScenarioNumber(),
+				simModel.getSimTime());
+		InputAgent.logMessage(simModel, "%s", t.getMessage());
+		if (t.getCause() != null) {
+			InputAgent.logMessage(simModel, "Call Stack of original exception:");
+			InputAgent.logStackTrace(simModel, t.getCause());
+		}
+		InputAgent.logMessage(simModel, "Thrown exception call stack:");
+		InputAgent.logStackTrace(simModel, t);
+		InputAgent.logMessage(simModel, "");
+	}
+
+	/**
 	 * Prints the present state of the model to a new configuration file.
 	 *
 	 * @param f - the full path and file name for the new configuration file.

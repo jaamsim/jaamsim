@@ -4694,30 +4694,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 	@Override
 	public void handleError(Throwable t) {
-		JaamSimModel sim = getJaamSimModel();
-		if (t instanceof OutOfMemoryError) {
-			OutOfMemoryError e = (OutOfMemoryError)t;
-			InputAgent.logMessage(sim, "Out of Memory use the -Xmx flag during execution for more memory");
-			InputAgent.logMessage(sim, "Further debug information:");
-			InputAgent.logMessage(sim, "%s", e.getMessage());
-			InputAgent.logStackTrace(sim, t);
-			GUIFrame.shutdown(1);
-			return;
-		}
-		else {
-			EventManager evt = EventManager.current();
-			long currentTick = evt.getTicks();
-			double curSec = evt.ticksToSeconds(currentTick);
-			InputAgent.logMessage(sim, "EXCEPTION AT TIME: %f s", curSec);
-			InputAgent.logMessage(sim, "%s", t.getMessage());
-			if (t.getCause() != null) {
-				InputAgent.logMessage(sim, "Call Stack of original exception:");
-				InputAgent.logStackTrace(sim, t.getCause());
-			}
-			InputAgent.logMessage(sim, "Thrown exception call stack:");
-			InputAgent.logStackTrace(sim, t);
-		}
-
 		String msg = t.getMessage();
 		if (msg == null)
 			msg = "null";

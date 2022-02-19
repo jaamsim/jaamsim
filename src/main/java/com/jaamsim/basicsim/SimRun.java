@@ -18,8 +18,6 @@ package com.jaamsim.basicsim;
 
 import java.util.ArrayList;
 
-import com.jaamsim.ui.LogBox;
-
 /**
  * An individual run for a simulation model.
  * @author Harry King
@@ -109,11 +107,6 @@ public class SimRun implements RunListener {
 
 	@Override
 	public void handleError(Throwable t) {
-		String msg = String.format("Runtime error in replication %s of scenario %s:",
-				replicationNumber, scenarioNumber);
-		LogBox.logLine(msg);
-		System.err.println(msg);
-		LogBox.logException(t);
 		double simTime = simModel.getSimTime();
 		runOutputStrings = new ArrayList<>(1);
 		runOutputStrings.add(t.getMessage());
