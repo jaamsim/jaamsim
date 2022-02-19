@@ -4686,7 +4686,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	public void handleInputError(Throwable t, Entity ent) {
 		JaamSimModel sim = getJaamSimModel();
 		InputAgent.logMessage(sim, "Validation Error - %s: %s", ent.getName(), t.getMessage());
-		GUIFrame.showErrorDialog("Input Error",
+		GUIFrame.invokeErrorDialog("Input Error",
 				"JaamSim has detected the following input error during validation:",
 				String.format("%s: %-70s", ent.getName(), t.getMessage()),
 				"The error must be corrected before the simulation can be started.");
