@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2018-2020 JaamSim Software Inc.
+ * Copyright (C) 2018-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,18 @@
  */
 package com.jaamsim.SubModels;
 
+import java.util.ArrayList;
+
+import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.EntityProviders.EntityProvInput;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.OverlayEntity;
 import com.jaamsim.Graphics.TextBasics;
+import com.jaamsim.ProcessFlow.EntityGen;
 import com.jaamsim.ProcessFlow.Linkable;
+import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
+import com.jaamsim.input.KeywordIndex;
 
 public class SubModelEnd extends DisplayEntity implements Linkable {
 
@@ -62,6 +68,22 @@ public class SubModelEnd extends DisplayEntity implements Linkable {
 			error("Object '%s' returned by NextComponent does not accept an entity.", nextComp);
 		}
 		((Linkable)nextComp).addEntity(ent);
+	}
+
+	@Override
+	public boolean canLink(boolean dir) {
+		return dir;
+	}
+
+	@Override
+	public void linkTo(DisplayEntity nextEnt, boolean dir) {
+		if (!(nextEnt instanceof Linkable) || nextEnt instanceof EntityGen)
+			return;
+
+		ArrayList<String> toks = new ArrayList<>();
+		toks.add(nextEnt.getName());
+		KeywordIndex kw = new KeywordIndex(nextComponent.getKeyword(), toks, null);
+		InputAgent.storeAndExecute(new KeywordCommand(this, kw));
 	}
 
 }
