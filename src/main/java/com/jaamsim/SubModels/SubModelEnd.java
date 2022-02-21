@@ -86,4 +86,16 @@ public class SubModelEnd extends DisplayEntity implements Linkable {
 		InputAgent.storeAndExecute(new KeywordCommand(this, kw));
 	}
 
+	@Override
+	public ArrayList<DisplayEntity> getDestinationEntities() {
+		ArrayList<DisplayEntity> ret = new ArrayList<>();
+		if (nextComponent.isDefault())
+			return ret;
+		DisplayEntity ent = nextComponent.getValue().getNextEntity(0.0d);
+		if (ent != null) {
+			ret.add(ent);
+		}
+		return ret;
+	}
+
 }
