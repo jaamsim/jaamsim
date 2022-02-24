@@ -144,6 +144,18 @@ public abstract class AbstractStateUserEntity extends StateEntity {
 			return;
 		}
 
+		// Setup
+		if (this.isSetup()) {
+			this.setPresentState(STATE_SETUP);
+			return;
+		}
+
+		// Setdown
+		if (this.isSetdown()) {
+			this.setPresentState(STATE_SETDOWN);
+			return;
+		}
+
 		// Not working because of maintenance or a closure (UnableToWork)
 		if (this.isMaintenance()) {
 			this.setPresentState(STATE_MAINTENANCE);
@@ -155,18 +167,6 @@ public abstract class AbstractStateUserEntity extends StateEntity {
 		}
 		if (this.isStopped()) {
 			this.setPresentState(STATE_STOPPED);
-			return;
-		}
-
-		// Setup
-		if (this.isSetup()) {
-			this.setPresentState(STATE_SETUP);
-			return;
-		}
-
-		// Setdown
-		if (this.isSetdown()) {
-			this.setPresentState(STATE_SETDOWN);
 			return;
 		}
 
