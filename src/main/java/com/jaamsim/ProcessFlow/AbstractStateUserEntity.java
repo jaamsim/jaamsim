@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2020-2021 JaamSim Software Inc.
+ * Copyright (C) 2020-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,29 @@
  */
 package com.jaamsim.ProcessFlow;
 
+import com.jaamsim.events.Conditional;
+import com.jaamsim.events.EventManager;
+import com.jaamsim.events.ProcessTarget;
+import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.ColourInput;
+import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.states.StateEntity;
 
 public abstract class AbstractStateUserEntity extends StateEntity {
+
+	@Keyword(description = "If TRUE, the object's state will be recalculated at each event time "
+	                     + "to verify that it has been set correctly by the program. "
+	                     + "An error message will be generated if the state is not correct.",
+	         exampleList = {"TRUE"})
+	private final BooleanInput verifyState;
+
+	{
+		verifyState = new BooleanInput("VerifyState", OPTIONS, false);
+		verifyState.setHidden(true);
+		this.addInput(verifyState);
+	}
 
 	public static final String STATE_MAINTENANCE = "Maintenance";
 	public static final String STATE_BREAKDOWN = "Breakdown";
@@ -38,6 +55,15 @@ public abstract class AbstractStateUserEntity extends StateEntity {
 	protected static final Color4d COL_SETDOWN = ColourInput.getColorWithName("gray25");
 
 	public AbstractStateUserEntity() {}
+
+	@Override
+	public void startUp() {
+		super.startUp();
+
+		// Track any state changes
+		if (verifyState.getValue())
+			doStateVerification();
+	}
 
 	@Override
 	public boolean isValidState(String state) {
@@ -205,6 +231,43 @@ public abstract class AbstractStateUserEntity extends StateEntity {
 	public double getTimeInState_Stopped(double simTime) {
 		return getTimeInState(simTime, STATE_STOPPED);
 	}
+
+	/**
+	 * Loops from one state verification to the next.
+	 */
+	void doStateVerification() {
+		EventManager.scheduleUntil(verifyStateTarget, verifyStateConditional, null);
+	}
+
+	// Perform state verification at each event time
+	class VerifyStateConditional extends Conditional {
+		@Override
+		public boolean evaluate() {
+			String state = getState().getName();
+			setPresentState();
+			String correctState = getState().getName();
+			if (!correctState.equals(state))
+				error("Present state is incorrect: presentState=%s, correctState=%s",
+					state, correctState);
+			return false;
+		}
+	}
+	private final Conditional verifyStateConditional = new VerifyStateConditional();
+
+	// Unused target for VerifyStateConditional
+	class VerifyStateTarget extends ProcessTarget {
+		@Override
+		public String getDescription() {
+			return AbstractStateUserEntity.this.getName() + ".verifyState";
+		}
+
+		@Override
+		public void process() {
+			// error message has already been generated in the 'evaluate' method
+			doStateVerification();
+		}
+	}
+	private final ProcessTarget verifyStateTarget = new VerifyStateTarget();
 
 	@Output(name = "Idle",
 	 description = "Returns TRUE if able to work but there is no work to perform. "
