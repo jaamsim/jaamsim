@@ -4731,7 +4731,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			source = ((ErrorException) t).source;
 			pos = ((ErrorException) t).position;
 		}
-		GUIFrame.showErrorDialog("Runtime Error",
+		GUIFrame.invokeErrorDialog("Runtime Error",
 				source,
 				pos,
 				"JaamSim has detected the following runtime error condition:",
