@@ -41,6 +41,7 @@ import com.jaamsim.input.EntityListInput;
 import com.jaamsim.input.EnumInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
+import com.jaamsim.input.InputCallback;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.KeywordIndex;
@@ -212,12 +213,14 @@ public class DisplayEntity extends Entity {
 
 		visibleViews = new EntityListInput<>(View.class, "VisibleViews", GRAPHICS, null);
 		visibleViews.setDefaultText("All Views");
+		visibleViews.setCallback(updateRangeVisibilityCallback);
 		this.addInput(visibleViews);
 
 		drawRange = new ValueListInput("DrawRange", GRAPHICS, defRange);
 		drawRange.setUnitType(DistanceUnit.class);
 		drawRange.setValidCount(2);
 		drawRange.setValidRange(0, Double.POSITIVE_INFINITY);
+		drawRange.setCallback(updateRangeVisibilityCallback);
 		this.addInput(drawRange);
 	}
 
@@ -321,21 +324,27 @@ public class DisplayEntity extends Entity {
 			invalidateScreenPoints();
 			return;
 		}
+	}
 
-		if (in == visibleViews || in == drawRange) {
-			if (visibleViews.isDefault() && drawRange.isDefault()) {
-				visInfo = null;
-			}
-			double minDist = drawRange.getValue().get(0);
-			double maxDist = drawRange.getValue().get(1);
-			// It's possible for the distance to be behind the camera, yet have the object visible (distance is to center)
-			// So instead use negative infinity in place of zero to never cull when close to the camera.
-			if (minDist == 0.0) {
-				minDist = Double.NEGATIVE_INFINITY;
-			}
-			visInfo = new VisibilityInfo(visibleViews.getValue(), minDist, maxDist);
-			return;
+	static final InputCallback updateRangeVisibilityCallback = new InputCallback() {
+		@Override
+		public void callback(Entity ent, Input<?> inp) {
+			((DisplayEntity)ent).updateRangeVisibility();
 		}
+	};
+
+	void updateRangeVisibility() {
+		if (visibleViews.isDefault() && drawRange.isDefault()) {
+			visInfo = null;
+		}
+		double minDist = drawRange.getValue().get(0);
+		double maxDist = drawRange.getValue().get(1);
+		// It's possible for the distance to be behind the camera, yet have the object visible (distance is to center)
+		// So instead use negative infinity in place of zero to never cull when close to the camera.
+		if (minDist == 0.0) {
+			minDist = Double.NEGATIVE_INFINITY;
+		}
+		visInfo = new VisibilityInfo(visibleViews.getValue(), minDist, maxDist);
 	}
 
 	@Override
