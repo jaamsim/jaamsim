@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2019-2020 JaamSim Software Inc.
+ * Copyright (C) 2019-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@ import com.jaamsim.Graphics.LineEntity;
 import com.jaamsim.Graphics.PolylineInfo;
 import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
+import com.jaamsim.SubModels.CompoundEntity;
 import com.jaamsim.basicsim.EntityTarget;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.input.BooleanInput;
@@ -264,6 +265,15 @@ public class EntityDelay extends LinkedComponent implements LineEntity {
 
 		if (!usePointsInput())
 			return;
+
+		// If the EntityDelay is not visible show the entities at the sub-model's process position
+		if (!getShow() && getVisibleParent() instanceof CompoundEntity) {
+			CompoundEntity ce = (CompoundEntity) getVisibleParent();
+			for (EntityDelayEntry entry : entityMap.values()) {
+				entry.ent.moveToProcessPosition(ce, ce.getProcessPosition());
+			}
+			return;
+		}
 
 		// Loop through the entities on the path
 		for (EntityDelayEntry entry : entityMap.values()) {

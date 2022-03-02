@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2021 JaamSim Software Inc.
+ * Copyright (C) 2016-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ import com.jaamsim.Graphics.LineEntity;
 import com.jaamsim.Graphics.PolylineInfo;
 import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
+import com.jaamsim.SubModels.CompoundEntity;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.IntegerInput;
@@ -284,6 +285,15 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 
 		if (presentTravelTime == 0.0d || !usePointsInput())
 			return;
+
+		// If the conveyor is not visible show the entities at the sub-model's process position
+		if (!getShow() && getVisibleParent() instanceof CompoundEntity) {
+			CompoundEntity ce = (CompoundEntity) getVisibleParent();
+			for (ConveyorEntry entry : entryList) {
+				entry.entity.moveToProcessPosition(ce, ce.getProcessPosition());
+			}
+			return;
+		}
 
 		// Move each entity on the conveyor to its present position
 		double frac = 0.0d;

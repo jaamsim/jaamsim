@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2003-2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2021 JaamSim Software Inc.
+ * Copyright (C) 2016-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.Statistics.TimeBasedFrequency;
 import com.jaamsim.Statistics.TimeBasedStatistics;
 import com.jaamsim.StringProviders.StringProvInput;
+import com.jaamsim.SubModels.CompoundEntity;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.EntityTarget;
 import com.jaamsim.events.EventHandle;
@@ -558,6 +559,15 @@ public class Queue extends LinkedComponent {
 			entityList = storage.getEntityList(null);
 		}
 		catch (Exception e) {
+			return;
+		}
+
+		// If the queue is not visible show the entities at the sub-model's process position
+		if (!getShow() && getVisibleParent() instanceof CompoundEntity) {
+			CompoundEntity ce = (CompoundEntity) getVisibleParent();
+			for (DisplayEntity ent : entityList) {
+				ent.moveToProcessPosition(ce, ce.getProcessPosition());
+			}
 			return;
 		}
 
