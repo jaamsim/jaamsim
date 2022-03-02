@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2002-2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2017-2021 JaamSim Software Inc.
+ * Copyright (C) 2017-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -1314,6 +1314,34 @@ public class DisplayEntity extends Entity {
 			}
 		}
 		return ret;
+	}
+
+	/**
+	 * Sets the region, position, and orientation to match the specified entity and offset.
+	 * @param ent - entity whose position, etc. is to be matched
+	 * @param offset - new position of this entity relative to the specified entity
+	 */
+	public final void moveToProcessPosition(DisplayEntity ent, Vec3d offset) {
+		setRegion(ent.getCurrentRegion());
+		Vec3d pos = ent.getGlobalPosition();
+		pos.add3(offset);
+		setGlobalPosition(pos);
+		setRelativeOrientation(ent.getOrientation());
+	}
+
+	/**
+	 * Returns the first parent that is visible in the chain of parents.
+	 * @return first visible parent
+	 */
+	public DisplayEntity getVisibleParent() {
+		Entity ent = this.getParent();
+		while (ent != null && ent instanceof DisplayEntity) {
+			if (((DisplayEntity) ent).getShow()) {
+				return (DisplayEntity) ent;
+			}
+			ent = ent.getParent();
+		}
+		return null;
 	}
 
 	////////////////////////////////////////////////////////////////////////

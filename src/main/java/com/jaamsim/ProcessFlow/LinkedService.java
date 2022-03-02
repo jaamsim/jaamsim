@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2021 JaamSim Software Inc.
+ * Copyright (C) 2016-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.EntityProviders.EntityProvInput;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.StringProviders.StringProvInput;
+import com.jaamsim.SubModels.CompoundEntity;
 import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.basicsim.SubjectEntity;
 import com.jaamsim.input.ExpError;
@@ -349,11 +350,12 @@ public abstract class LinkedService extends LinkedDevice implements QueueUser {
 	// ********************************************************************************************
 
 	protected final void moveToProcessPosition(DisplayEntity ent) {
-		ent.setRegion(this.getCurrentRegion());
-		Vec3d pos = this.getGlobalPosition();
-		pos.add3(processPosition.getValue());
-		ent.setGlobalPosition(pos);
-		ent.setRelativeOrientation(this.getOrientation());
+		if (!getShow() && getVisibleParent() instanceof CompoundEntity) {
+			CompoundEntity ce = (CompoundEntity) getVisibleParent();
+			ent.moveToProcessPosition(ce, ce.getProcessPosition());
+			return;
+		}
+		ent.moveToProcessPosition(this, processPosition.getValue());
 	}
 
 	@Override
