@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2019-2021 JaamSim Software Inc.
+ * Copyright (C) 2019-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
+import com.jaamsim.input.Vec3dInput;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.DistanceUnit;
@@ -40,6 +41,12 @@ public abstract class CompoundEntity extends LinkedComponent {
 	         exampleList = {"FALSE"})
 	protected final BooleanInput showComponents;
 
+	@Keyword(description = "The position of the entities being processed relative to the "
+	                     + "sub-model. "
+	                     + "This position is used when the sub-model's components are not shown.",
+	         exampleList = {"1.0 0.0 0.01 m"})
+	protected final Vec3dInput processPosition;
+
 	private final LinkedHashMap<String, Entity> namedChildren = new LinkedHashMap<>();
 	private SubModelStart smStart;
 	private Region smRegion;
@@ -49,6 +56,10 @@ public abstract class CompoundEntity extends LinkedComponent {
 
 		showComponents = new BooleanInput("ShowComponents", FORMAT, false);
 		this.addInput(showComponents);
+
+		processPosition = new Vec3dInput("ProcessPosition", FORMAT, new Vec3d(0.0d, 0.0d, 0.01d));
+		processPosition.setUnitType(DistanceUnit.class);
+		this.addInput(processPosition);
 	}
 
 	public CompoundEntity() {}
@@ -188,6 +199,10 @@ public abstract class CompoundEntity extends LinkedComponent {
 
 	public void addReturnedEntity(DisplayEntity ent) {
 		sendToNextComponent(ent);
+	}
+
+	public Vec3d getProcessPosition() {
+		return processPosition.getValue();
 	}
 
 }
