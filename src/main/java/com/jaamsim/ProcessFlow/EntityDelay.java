@@ -266,17 +266,26 @@ public class EntityDelay extends LinkedComponent implements LineEntity {
 		if (!usePointsInput())
 			return;
 
+		// Copy the list to avoid concurrent modification exceptions
+		ArrayList<EntityDelayEntry> copiedList;
+		try {
+			copiedList = new ArrayList<>(entityMap.values());
+		}
+		catch (Exception e) {
+			return;
+		}
+
 		// If the EntityDelay is not visible show the entities at the sub-model's process position
 		if (!getShow() && getVisibleParent() instanceof CompoundEntity) {
 			CompoundEntity ce = (CompoundEntity) getVisibleParent();
-			for (EntityDelayEntry entry : entityMap.values()) {
+			for (EntityDelayEntry entry : copiedList) {
 				entry.ent.moveToProcessPosition(ce, ce.getProcessPosition());
 			}
 			return;
 		}
 
 		// Loop through the entities on the path
-		for (EntityDelayEntry entry : entityMap.values()) {
+		for (EntityDelayEntry entry : copiedList) {
 			// Calculate the distance travelled by this entity
 			double frac = ( simTime - entry.startTime ) / entry.duration;
 

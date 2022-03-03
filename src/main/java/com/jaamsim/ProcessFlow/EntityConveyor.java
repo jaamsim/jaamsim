@@ -286,10 +286,19 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 		if (presentTravelTime == 0.0d || !usePointsInput())
 			return;
 
+		// Copy the list to avoid concurrent modification exceptions
+		ArrayList<ConveyorEntry> copiedList;
+		try {
+			copiedList = new ArrayList<>(entryList);
+		}
+		catch (Exception e) {
+			return;
+		}
+
 		// If the conveyor is not visible show the entities at the sub-model's process position
 		if (!getShow() && getVisibleParent() instanceof CompoundEntity) {
 			CompoundEntity ce = (CompoundEntity) getVisibleParent();
-			for (ConveyorEntry entry : entryList) {
+			for (ConveyorEntry entry : copiedList) {
 				entry.entity.moveToProcessPosition(ce, ce.getProcessPosition());
 			}
 			return;
@@ -300,8 +309,7 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 		if (isBusy()) {
 			frac = (simTime - this.getLastUpdateTime())/presentTravelTime;
 		}
-		for (int i=0; i<entryList.size(); i++) {
-			ConveyorEntry entry = entryList.get(i);
+		for (ConveyorEntry entry : copiedList) {
 
 			entry.entity.setRegion(this.getCurrentRegion());
 
