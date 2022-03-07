@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2021 JaamSim Software Inc.
+ * Copyright (C) 2016-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -117,7 +117,17 @@ public class Combine extends AbstractCombine {
 
 	@Override
 	public void updateGraphics(double simTime) {
-		for (DisplayEntity ent : processedEntityList) {
+
+		// Copy the list to avoid concurrent modification exceptions
+		ArrayList<DisplayEntity> copiedList;
+		try {
+			copiedList = new ArrayList<>(processedEntityList);
+		}
+		catch (Exception e) {
+			return;
+		}
+
+		for (DisplayEntity ent : copiedList) {
 			moveToProcessPosition(ent);
 		}
 	}
