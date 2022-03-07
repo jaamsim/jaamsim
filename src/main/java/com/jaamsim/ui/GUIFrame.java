@@ -314,6 +314,13 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 			else
 				UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+
+			// FIXME ensure that JTextArea text is scaled correctly for HiDPI monitors
+			Font font = UIManager.getFont("TextArea.font");
+			float size = UIManager.getFont("TextField.font").getSize2D();
+			if (font.getFamily().equals("Monospaced"))
+				size *= 1.2f;
+			UIManager.getDefaults().put("TextArea.font", font.deriveFont(size));
 		}
 		catch (Exception e) {
 			LogBox.logLine("Unable to change look and feel.");
