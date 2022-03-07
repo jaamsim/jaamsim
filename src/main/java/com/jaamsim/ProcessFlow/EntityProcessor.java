@@ -366,10 +366,18 @@ public class EntityProcessor extends AbstractLinkedResourceUser {
 
 	@Override
 	public void updateGraphics(double simTime) {
-		for (ProcessorEntry entry : entryList) {
-			moveToProcessPosition(entry.entity);
+
+		// Copy the lists to avoid concurrent modification exceptions
+		ArrayList<ProcessorEntry> copiedList;
+		try {
+			copiedList = new ArrayList<>(entryList);
+			copiedList.addAll(newEntryList);
 		}
-		for (ProcessorEntry entry : newEntryList) {
+		catch (Exception e) {
+			return;
+		}
+
+		for (ProcessorEntry entry : copiedList) {
 			moveToProcessPosition(entry.entity);
 		}
 	}
