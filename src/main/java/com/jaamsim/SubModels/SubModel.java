@@ -23,6 +23,7 @@ import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.GUIListener;
 import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.input.Input;
+import com.jaamsim.input.InputCallback;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.ui.DragAndDropable;
 
@@ -35,10 +36,11 @@ public class SubModel extends AbstractSubModel implements DragAndDropable {
 	         exampleList = {"{ ServiceTime TimeUnit } { NumberOfUnits }"})
 	protected final PassThroughListInput keywordListInput;
 
-	public static String PALETTE_NAME = "Pre-built SubModels";
+	public static final String PALETTE_NAME = "Pre-built SubModels";
 
 	{
 		keywordListInput = new PassThroughListInput("KeywordList", OPTIONS, new ArrayList<PassThroughData>());
+		keywordListInput.setCallback(keywordListKeywordCallback);
 		this.addInput(keywordListInput);
 	}
 
@@ -48,21 +50,21 @@ public class SubModel extends AbstractSubModel implements DragAndDropable {
 			gui.updateModelBuilder();
 	}
 
-	@Override
-	public void updateForInput(Input<?> in) {
-		super.updateForInput(in);
+	static final InputCallback keywordListKeywordCallback = new InputCallback() {
+		@Override
+		public void callback(Entity ent, Input<?> inp) {
+			SubModel sm = (SubModel)ent;
+			PassThroughListInput ptl = (PassThroughListInput)inp;
 
-		if (in == keywordListInput) {
-			updateKeywords(keywordListInput.getValue());
-			for (SubModelClone clone : getClones()) {
-				clone.updateKeywords(keywordListInput.getValue());
+			sm.updateKeywords(ptl.getValue());
+			for (SubModelClone clone : sm.getClones()) {
+				clone.updateKeywords(ptl.getValue());
 			}
-			GUIListener gui = getJaamSimModel().getGUIListener();
-			if (gui != null && gui.isSelected(this))
+			GUIListener gui = sm.getJaamSimModel().getGUIListener();
+			if (gui != null && gui.isSelected(sm))
 				gui.updateInputEditor();
-			return;
 		}
-	}
+	};
 
 	@Override
 	public void kill() {

@@ -40,6 +40,7 @@ import com.jaamsim.input.ExpValResult;
 import com.jaamsim.input.ExpressionHandle;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
+import com.jaamsim.input.InputCallback;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.KeywordIndex;
@@ -135,6 +136,7 @@ public class Entity {
 		this.addInput(desc);
 
 		trace = new BooleanInput("Trace", OPTIONS, false);
+		trace.setCallback(traceInputCallback);
 		trace.setHidden(true);
 		this.addInput(trace);
 
@@ -144,11 +146,13 @@ public class Entity {
 
 		attributeDefinitionList = new AttributeDefinitionListInput("AttributeDefinitionList",
 				OPTIONS, new ArrayList<AttributeHandle>());
+		attributeDefinitionList.setCallback(attributeDefinitionListCallback);
 		attributeDefinitionList.setHidden(false);
 		this.addInput(attributeDefinitionList);
 
 		namedExpressionInput = new NamedExpressionListInput("CustomOutputList",
 				OPTIONS, new ArrayList<NamedExpression>());
+		namedExpressionInput.setCallback(namedExpressionInputCallback);
 		namedExpressionInput.setHidden(false);
 		this.addInput(namedExpressionInput);
 	}
@@ -524,7 +528,7 @@ public class Entity {
 			targetInput.copyFrom(target, sourceInput);
 
 			// Further processing related to this input
-			target.updateForInput(targetInput);
+			targetInput.doCallback(target);
 		}
 	}
 
@@ -681,36 +685,57 @@ public class Entity {
 		return ret;
 	}
 
+	public static final InputCallback updateForInputCallback = new InputCallback() {
+		@Override
+		public void callback(Entity ent, Input<?> inp) {
+			ent.updateForInput(inp);
+		}
+	};
+
+	static final InputCallback traceInputCallback = new InputCallback() {
+		@Override
+		public void callback(Entity ent, Input<?> inp) {
+			BooleanInput trc = (BooleanInput)inp;
+			if (trc.getValue())
+				ent.setTraceFlag();
+			else
+				ent.clearTraceFlag();
+
+		}
+	};
+
+	static final InputCallback attributeDefinitionListCallback = new InputCallback() {
+		@Override
+		public void callback(Entity ent, Input<?> inp) {
+			ent.updateAttributeMap();
+		}
+	};
+
+	void updateAttributeMap() {
+		attributeMap.clear();
+		for (AttributeHandle h : attributeDefinitionList.getValue()) {
+			this.addAttribute(h.getName(), h);
+		}
+	}
+
+	static final InputCallback namedExpressionInputCallback = new InputCallback() {
+		@Override
+		public void callback(Entity ent, Input<?> inp) {
+			ent.updatecustomOutputMap();
+		}
+	};
+
+	void updatecustomOutputMap() {
+		customOutputMap.clear();
+		for (NamedExpression ne : namedExpressionInput.getValue()) {
+			addCustomOutput(ne.getName(), ne.getExpression(), ne.getUnitType());
+		}
+	}
+
 	/**
 	 * This method updates the Entity for changes in the given input
 	 */
-	public void updateForInput( Input<?> in ) {
-
-		if (in == trace) {
-			if (trace.getValue())
-				this.setTraceFlag();
-			else
-				this.clearTraceFlag();
-
-			return;
-		}
-
-		if (in == attributeDefinitionList) {
-			attributeMap.clear();
-			for (AttributeHandle h : attributeDefinitionList.getValue()) {
-				this.addAttribute(h.getName(), h);
-			}
-			return;
-		}
-		if (in == namedExpressionInput) {
-			customOutputMap.clear();
-			for (NamedExpression ne : namedExpressionInput.getValue()) {
-				addCustomOutput(ne.getName(), ne.getExpression(), ne.getUnitType());
-			}
-			return;
-		}
-
-	}
+	public void updateForInput(Input<?> in) {}
 
 	public final void startProcess(String methodName, Object... args) {
 		EventManager.startProcess(new ReflectionTarget(this, methodName, args));
