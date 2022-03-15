@@ -31,6 +31,7 @@ import com.jaamsim.input.ExpParser.Expression;
 import com.jaamsim.input.ExpResult;
 import com.jaamsim.input.FileInput;
 import com.jaamsim.input.Input;
+import com.jaamsim.input.InputCallback;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.units.DimensionlessUnit;
@@ -65,6 +66,7 @@ public abstract class FileToArray extends LinkedComponent {
 		nextComponent.setRequired(false);
 
 		dataFile = new FileInput("DataFile", KEY_INPUTS, null);
+		dataFile.setCallback(dataFileInputCallback);
 		this.addInput(dataFile);
 	}
 
@@ -77,18 +79,19 @@ public abstract class FileToArray extends LinkedComponent {
 		value = ExpCollections.wrapCollection(resList, DimensionlessUnit.class);
 	}
 
-	@Override
-	public void updateForInput(Input<?> in) {
-		super.updateForInput(in);
+	static final InputCallback dataFileInputCallback = new InputCallback() {
+		@Override
+		public void callback(Entity ent, Input<?> inp) {
+			((FileToArray)ent).updateDateFile();
+		}
+	};
 
-		if (in == dataFile) {
-			if (dataFile.getValue() == null) {
-				clearValue();
-				return;
-			}
-			setValueForURI(dataFile.getValue(), 0.0d);
+	void updateDateFile() {
+		if (dataFile.getValue() == null) {
+			clearValue();
 			return;
 		}
+		setValueForURI(dataFile.getValue(), 0.0d);
 	}
 
 	@Override
