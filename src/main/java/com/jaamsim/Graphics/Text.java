@@ -22,11 +22,13 @@ import java.util.ArrayList;
 import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.StringProviders.StringProvConstant;
 import com.jaamsim.StringProviders.StringProvInput;
+import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.GUIListener;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
+import com.jaamsim.input.InputCallback;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.StringInput;
@@ -92,9 +94,11 @@ public class Text extends TextBasics {
 
 	{
 		formatText = new StringInput("Format", KEY_INPUTS, "%s");
+		formatText.setCallback(formattextCallback);
 		this.addInput(formatText);
 
 		unitType = new UnitTypeInput("UnitType", KEY_INPUTS, DimensionlessUnit.class);
+		unitType.setCallback(unittypeCallback);
 		this.addInput(unitType);
 
 		unit = new EntityInput<>(Unit.class, "Unit", KEY_INPUTS, null);
@@ -115,21 +119,28 @@ public class Text extends TextBasics {
 
 	public Text() {}
 
-	@Override
-	public void updateForInput(Input<?> in) {
-		super.updateForInput(in);
-
-		if (in == formatText) {
-			setText(formatText.getValue());
-			return;
+	static final InputCallback formattextCallback = new InputCallback() {
+		@Override
+		public void callback(Entity ent, Input<?> inp) {
+			((Text)ent).updateFormattextValue();
 		}
+	};
 
-		if (in == unitType) {
-			Class<? extends Unit> ut = unitType.getUnitType();
-			dataSource.setUnitType(ut);
-			unit.setSubClass(ut);
-			return;
+	void updateFormattextValue() {
+		setText(formatText.getValue());
+	}
+
+	static final InputCallback unittypeCallback = new InputCallback() {
+		@Override
+		public void callback(Entity ent, Input<?> inp) {
+			((Text)ent).updateUnitypeValue();
 		}
+	};
+
+	void updateUnitypeValue() {
+		Class<? extends Unit> ut = unitType.getUnitType();
+		dataSource.setUnitType(ut);
+		unit.setSubClass(ut);
 	}
 
 	@Override

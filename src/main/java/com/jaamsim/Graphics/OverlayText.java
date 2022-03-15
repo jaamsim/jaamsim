@@ -23,6 +23,7 @@ import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.DisplayModels.TextModel;
 import com.jaamsim.StringProviders.StringProvConstant;
 import com.jaamsim.StringProviders.StringProvInput;
+import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.GUIListener;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.datatypes.IntegerVector;
@@ -31,6 +32,7 @@ import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
+import com.jaamsim.input.InputCallback;
 import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.KeywordIndex;
@@ -128,9 +130,11 @@ public class OverlayText extends OverlayEntity implements TextEntity, EditableTe
 		displayModelListInput.addValidClass(TextModel.class);
 
 		formatText = new StringInput("Format", KEY_INPUTS, "%s");
+		formatText.setCallback(formattextCallback);
 		this.addInput(formatText);
 
 		unitType = new UnitTypeInput("UnitType", KEY_INPUTS, DimensionlessUnit.class);
+		unitType.setCallback(unittypeCallback);
 		this.addInput(unitType);
 
 		unit = new EntityInput<>(Unit.class, "Unit", KEY_INPUTS, null);
@@ -184,21 +188,28 @@ public class OverlayText extends OverlayEntity implements TextEntity, EditableTe
 		editableText = new EditableTextDelegate();
 	}
 
-	@Override
-	public void updateForInput(Input<?> in) {
-		super.updateForInput(in);
-
-		if (in == formatText) {
-			setText(formatText.getValue());
-			return;
+	static final InputCallback formattextCallback = new InputCallback() {
+		@Override
+		public void callback(Entity ent, Input<?> inp) {
+			((OverlayText)ent).updateFormattextValue();
 		}
+	};
 
-		if (in == unitType) {
-			Class<? extends Unit> ut = unitType.getUnitType();
-			dataSource.setUnitType(ut);
-			unit.setSubClass(ut);
-			return;
+	void updateFormattextValue() {
+		setText(formatText.getValue());
+	}
+
+	static final InputCallback unittypeCallback = new InputCallback() {
+		@Override
+		public void callback(Entity ent, Input<?> inp) {
+			((OverlayText)ent).updateUnitypeValue();
 		}
+	};
+
+	void updateUnitypeValue() {
+		Class<? extends Unit> ut = unitType.getUnitType();
+		dataSource.setUnitType(ut);
+		unit.setSubClass(ut);
 	}
 
 	@Override
