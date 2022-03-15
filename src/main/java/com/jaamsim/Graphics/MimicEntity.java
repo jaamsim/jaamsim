@@ -20,7 +20,9 @@ import java.util.ArrayList;
 
 import com.jaamsim.DisplayModels.DisplayModel;
 import com.jaamsim.EntityProviders.EntityProvInput;
+import com.jaamsim.basicsim.Entity;
 import com.jaamsim.input.Input;
+import com.jaamsim.input.InputCallback;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.render.DisplayModelBinding;
 
@@ -37,20 +39,18 @@ public class MimicEntity extends DisplayEntity {
 		sourceEntity.addInvalidClass(MimicEntity.class);
 		sourceEntity.addInvalidClass(TextBasics.class);
 		sourceEntity.addInvalidClass(OverlayEntity.class);
+		sourceEntity.setCallback(inputCallback);
 		this.addInput(sourceEntity);
 	}
 
 	public MimicEntity() {}
 
-	@Override
-	public void updateForInput(Input<?> in) {
-		super.updateForInput(in);
-
-		if (in == sourceEntity) {
-			this.clearBindings();
-			return;
+	static final InputCallback inputCallback = new InputCallback() {
+		@Override
+		public void callback(Entity ent, Input<?> inp) {
+			((MimicEntity)ent).clearBindings();
 		}
-	}
+	};
 
 	@Override
 	public ArrayList<DisplayModel> getDisplayModelList() {

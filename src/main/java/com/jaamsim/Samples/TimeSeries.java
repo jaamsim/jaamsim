@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import com.jaamsim.Graphics.DisplayEntity;
+import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.EntityTarget;
 import com.jaamsim.basicsim.ObserverEntity;
 import com.jaamsim.basicsim.SubjectEntity;
@@ -29,6 +30,7 @@ import com.jaamsim.events.EventManager;
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.Input;
+import com.jaamsim.input.InputCallback;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
@@ -75,6 +77,7 @@ public class TimeSeries extends DisplayEntity implements TimeSeriesProvider, Sub
 
 		unitType = new UnitTypeInput("UnitType", KEY_INPUTS, UserSpecifiedUnit.class);
 		unitType.setRequired(true);
+		unitType.setCallback(inputCallback);
 		this.addInput(unitType);
 
 		value = new TimeSeriesDataInput("Value", KEY_INPUTS, null);
@@ -111,14 +114,15 @@ public class TimeSeries extends DisplayEntity implements TimeSeriesProvider, Sub
 					+ "the first and last times in the series." );
 	}
 
-	@Override
-	public void updateForInput( Input<?> in ) {
-		super.updateForInput( in );
-
-		if (in == unitType) {
-			value.setUnitType( unitType.getUnitType() );
-			return;
+	static final InputCallback inputCallback = new InputCallback() {
+		@Override
+		public void callback(Entity ent, Input<?> inp) {
+			((TimeSeries)ent).updateInputValue();
 		}
+	};
+
+	void updateInputValue() {
+		value.setUnitType( unitType.getUnitType() );
 	}
 
 	@Override

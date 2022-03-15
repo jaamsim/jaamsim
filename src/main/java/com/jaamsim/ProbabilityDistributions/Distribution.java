@@ -22,9 +22,11 @@ import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.Samples.SampleProvider;
 import com.jaamsim.Statistics.SampleStatistics;
+import com.jaamsim.basicsim.Entity;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
+import com.jaamsim.input.InputCallback;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
@@ -77,6 +79,7 @@ implements SampleProvider, RandomStreamUser {
 	{
 		unitType = new UnitTypeInput("UnitType", KEY_INPUTS, UserSpecifiedUnit.class);
 		unitType.setRequired(true);
+		unitType.setCallback(inputCallback);
 		this.addInput(unitType);
 
 		randomSeedInput = new IntegerInput("RandomSeed", KEY_INPUTS, -1);
@@ -115,14 +118,15 @@ implements SampleProvider, RandomStreamUser {
 		lastSample = getInitValue();
 	}
 
-	@Override
-	public void updateForInput(Input<?> in) {
-		super.updateForInput(in);
-
-		if (in == unitType) {
-			setUnitType(getUnitType());
-			return;
+	static final InputCallback inputCallback = new InputCallback() {
+		@Override
+		public void callback(Entity ent, Input<?> inp) {
+			((Distribution)ent).updateInputValue();
 		}
+	};
+
+	void updateInputValue() {
+		setUnitType(getUnitType());
 	}
 
 	public double getInitValue() {

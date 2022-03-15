@@ -38,6 +38,7 @@ import com.jaamsim.events.EventManager;
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.Input;
+import com.jaamsim.input.InputCallback;
 import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.InterfaceEntityInput;
 import com.jaamsim.input.Keyword;
@@ -141,6 +142,7 @@ public class Queue extends LinkedComponent {
 		renegeTime = new SampleInput("RenegeTime", KEY_INPUTS, null);
 		renegeTime.setUnitType(TimeUnit.class);
 		renegeTime.setValidRange(0.0d, Double.POSITIVE_INFINITY);
+		renegeTime.setCallback(inputCallback);
 		this.addInput(renegeTime);
 
 		renegeCondition = new SampleInput("RenegeCondition", KEY_INPUTS, new SampleConstant(1));
@@ -177,15 +179,16 @@ public class Queue extends LinkedComponent {
 		freq = new TimeBasedFrequency(0, 10);
 	}
 
-	@Override
-	public void updateForInput(Input<?> in) {
-		super.updateForInput(in);
-
-		if (in == renegeTime) {
-			boolean bool = renegeTime.getValue() != null;
-			renegeDestination.setRequired(bool);
-			return;
+	static final InputCallback inputCallback = new InputCallback() {
+		@Override
+		public void callback(Entity ent, Input<?> inp) {
+			((Queue)ent).updateRenegeTimeCallback();
 		}
+	};
+
+	void updateRenegeTimeCallback() {
+		boolean bool = renegeTime.getValue() != null;
+		renegeDestination.setRequired(bool);
 	}
 
 	@Override

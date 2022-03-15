@@ -21,7 +21,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 
+import com.jaamsim.basicsim.Entity;
 import com.jaamsim.input.Input;
+import com.jaamsim.input.InputCallback;
 import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.StringInput;
@@ -56,6 +58,7 @@ public class OverlayClock extends OverlayText {
 		this.addInput(startingYear);
 
 		dateFormatInput = new StringInput("DateFormat", KEY_INPUTS, "yyyy-MMM-dd HH:mm:ss.SSS");
+		dateFormatInput.setCallback(inputCallback);
 		this.addInput(dateFormatInput);
 	}
 
@@ -64,14 +67,16 @@ public class OverlayClock extends OverlayText {
 		dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
 	}
 
-	@Override
-	public void updateForInput( Input<?> in ) {
-		super.updateForInput( in );
-
-		if( in == dateFormatInput ) {
-			dateFormat = new SimpleDateFormat(dateFormatInput.getValue());
-			dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+	static final InputCallback inputCallback = new InputCallback() {
+		@Override
+		public void callback(Entity ent, Input<?> inp) {
+			((OverlayClock)ent).updateInputValue();
 		}
+	};
+
+	void updateInputValue() {
+		dateFormat = new SimpleDateFormat(dateFormatInput.getValue());
+		dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
 	}
 
 	@Override

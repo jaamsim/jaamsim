@@ -21,9 +21,11 @@ import java.util.ArrayList;
 import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.StringProviders.StringProvInput;
+import com.jaamsim.basicsim.Entity;
 import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
+import com.jaamsim.input.InputCallback;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.InterfaceEntityInput;
 import com.jaamsim.input.Keyword;
@@ -60,6 +62,7 @@ public abstract class LinkedDevice extends Device implements Linkable {
 		workingStateListInput.setHidden(true);
 
 		defaultEntity = new EntityInput<>(DisplayEntity.class, "DefaultEntity", KEY_INPUTS, null);
+		defaultEntity.setCallback(inputCallback);
 		this.addInput(defaultEntity);
 		this.addSynonym(defaultEntity, "TestEntity");
 		defaultEntity.setHidden(true);
@@ -73,14 +76,15 @@ public abstract class LinkedDevice extends Device implements Linkable {
 		this.addInput(stateAssignment);
 	}
 
-	@Override
-	public void updateForInput(Input<?> in) {
-		super.updateForInput(in);
-
-		if (in == defaultEntity) {
-			processor.setReceivedEntity(defaultEntity.getValue());
-			return;
+	static final InputCallback inputCallback = new InputCallback() {
+		@Override
+		public void callback(Entity ent, Input<?> inp) {
+			((LinkedDevice)ent).updateInputValue();
 		}
+	};
+
+	void updateInputValue() {
+		processor.setReceivedEntity(defaultEntity.getValue());
 	}
 
 	@Override

@@ -17,7 +17,9 @@
  */
 package com.jaamsim.Graphics;
 
+import com.jaamsim.basicsim.Entity;
 import com.jaamsim.input.Input;
+import com.jaamsim.input.InputCallback;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.math.Quaternion;
@@ -43,6 +45,7 @@ public class Region extends DisplayEntity {
 
 		scaleInput = new ValueInput("Scale", KEY_INPUTS, 1.0d);
 		scaleInput.setUnitType(DimensionlessUnit.class);
+		scaleInput.setCallback(inputCallback);
 		this.addInput(scaleInput);
 	}
 
@@ -51,14 +54,15 @@ public class Region extends DisplayEntity {
 	@Override
 	public void setInputsForDragAndDrop() {}
 
-	@Override
-	public void updateForInput( Input<?> in ) {
-		super.updateForInput( in );
-
-		if (in == scaleInput) {
-			this.setScale(scaleInput.getValue());
-			return;
+	static final InputCallback inputCallback = new InputCallback() {
+		@Override
+		public void callback(Entity ent, Input<?> inp) {
+			((Region)ent).updateInputValue();
 		}
+	};
+
+	void updateInputValue() {
+		this.setScale(scaleInput.getValue());
 	}
 
 	@Override

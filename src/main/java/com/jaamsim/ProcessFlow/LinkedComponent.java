@@ -22,12 +22,14 @@ import java.util.ArrayList;
 import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.StringProviders.StringProvInput;
+import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ObserverEntity;
 import com.jaamsim.basicsim.SubjectEntity;
 import com.jaamsim.basicsim.SubjectEntityDelegate;
 import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
+import com.jaamsim.input.InputCallback;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.InterfaceEntityInput;
 import com.jaamsim.input.Keyword;
@@ -70,6 +72,7 @@ public abstract class LinkedComponent extends StateEntity implements SubjectEnti
 
 		defaultEntity = new EntityInput<>(DisplayEntity.class, "DefaultEntity", KEY_INPUTS, null);
 		defaultEntity.setHidden(true);
+		defaultEntity.setCallback(inputCallback);
 		this.addInput(defaultEntity);
 		this.addSynonym(defaultEntity, "TestEntity");
 
@@ -82,14 +85,15 @@ public abstract class LinkedComponent extends StateEntity implements SubjectEnti
 		this.addInput(stateAssignment);
 	}
 
-	@Override
-	public void updateForInput(Input<?> in) {
-		super.updateForInput(in);
-
-		if (in == defaultEntity) {
-			setReceivedEntity(defaultEntity.getValue());
-			return;
+	static final InputCallback inputCallback = new InputCallback() {
+		@Override
+		public void callback(Entity ent, Input<?> inp) {
+			((LinkedComponent)ent).updateInputValue();
 		}
+	};
+
+	void updateInputValue() {
+		setReceivedEntity(defaultEntity.getValue());
 	}
 
 	@Override

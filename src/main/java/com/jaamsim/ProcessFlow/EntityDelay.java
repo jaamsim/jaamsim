@@ -28,11 +28,13 @@ import com.jaamsim.Graphics.PolylineInfo;
 import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.SubModels.CompoundEntity;
+import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.EntityTarget;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.Input;
+import com.jaamsim.input.InputCallback;
 import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
@@ -104,6 +106,7 @@ public class EntityDelay extends LinkedComponent implements LineEntity {
 		this.addInput(minSeparation);
 
 		animation = new BooleanInput("Animation", FORMAT, true);
+		animation.setCallback(inputCallback);
 		this.addInput(animation);
 
 		rotateEntities = new BooleanInput("RotateEntities", FORMAT, false);
@@ -124,16 +127,16 @@ public class EntityDelay extends LinkedComponent implements LineEntity {
 
 	public EntityDelay() {}
 
-	@Override
-	public void updateForInput(Input<?> in) {
-		super.updateForInput( in );
-
-		// If animation is turned off, clear the list of entities to be displayed
-		if (in == animation) {
-			if (!animation.getValue())
-				entityMap.clear();
-			return;
+	static final InputCallback inputCallback = new InputCallback() {
+		@Override
+		public void callback(Entity ent, Input<?> inp) {
+			((EntityDelay)ent).updateAnimationValue();
 		}
+	};
+
+	void updateAnimationValue() {
+		if (!animation.getValue())
+			entityMap.clear();
 	}
 
 	@Override

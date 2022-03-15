@@ -25,9 +25,11 @@ import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.Statistics.SampleFrequency;
 import com.jaamsim.Statistics.SampleStatistics;
 import com.jaamsim.Statistics.TimeBasedStatistics;
+import com.jaamsim.basicsim.Entity;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.Input;
+import com.jaamsim.input.InputCallback;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.UnitTypeInput;
@@ -80,6 +82,7 @@ public class Statistics extends LinkedComponent {
 
 		unitType = new UnitTypeInput("UnitType", KEY_INPUTS, UserSpecifiedUnit.class);
 		unitType.setRequired(true);
+		unitType.setCallback(inputCallback);
 		this.addInput(unitType);
 
 		sampleValue = new SampleInput("SampleValue", KEY_INPUTS, null);
@@ -99,16 +102,17 @@ public class Statistics extends LinkedComponent {
 
 	public Statistics() {}
 
-	@Override
-	public void updateForInput(Input<?> in) {
-		super.updateForInput(in);
-
-		if (in == unitType) {
-			Class<? extends Unit> ut = unitType.getUnitType();
-			sampleValue.setUnitType(ut);
-			histogramBinWidth.setUnitType(ut);
-			return;
+	static final InputCallback inputCallback = new InputCallback() {
+		@Override
+		public void callback(Entity ent, Input<?> inp) {
+			((Statistics)ent).updateUnitTypeInputValue();
 		}
+	};
+
+	void updateUnitTypeInputValue() {
+		Class<? extends Unit> ut = unitType.getUnitType();
+		sampleValue.setUnitType(ut);
+		histogramBinWidth.setUnitType(ut);
 	}
 
 	@Override
