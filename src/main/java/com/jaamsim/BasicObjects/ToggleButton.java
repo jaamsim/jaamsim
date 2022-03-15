@@ -22,12 +22,14 @@ import com.jaamsim.DisplayModels.ShapeModel;
 import com.jaamsim.GameObjects.GameEntity;
 import com.jaamsim.Graphics.FillEntity;
 import com.jaamsim.Graphics.LineEntity;
+import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ObserverEntity;
 import com.jaamsim.basicsim.SubjectEntity;
 import com.jaamsim.basicsim.SubjectEntityDelegate;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.Input;
+import com.jaamsim.input.InputCallback;
 import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
@@ -70,6 +72,7 @@ public class ToggleButton extends GameEntity implements SubjectEntity, LineEntit
 		displayModelListInput.addValidClass(ShapeModel.class);
 
 		initialValue = new BooleanInput("InitialValue", KEY_INPUTS, false);
+		initialValue.setCallback(initialValueCallback);
 		this.addInput(initialValue);
 
 		pressedColour = new ColourInput("PressedColour", FORMAT, null);
@@ -94,14 +97,15 @@ public class ToggleButton extends GameEntity implements SubjectEntity, LineEntit
 		this.addInput(lineWidth);
 	}
 
-	@Override
-	public void updateForInput(Input<?> in) {
-		super.updateForInput(in);
-
-		if (in == initialValue) {
-			value = initialValue.getValue();
-			return;
+	static final InputCallback initialValueCallback = new InputCallback() {
+		@Override
+		public void callback(Entity ent, Input<?> inp) {
+			((ToggleButton)ent).updateInputValue();
 		}
+	};
+
+	void updateInputValue() {
+		value = initialValue.getValue();
 	}
 
 	@Override
