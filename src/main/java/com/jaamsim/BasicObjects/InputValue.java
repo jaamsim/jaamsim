@@ -20,9 +20,11 @@ package com.jaamsim.BasicObjects;
 import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.Graphics.TextBasics;
 import com.jaamsim.Samples.SampleProvider;
+import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.GUIListener;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
+import com.jaamsim.input.InputCallback;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.KeywordIndex;
@@ -47,10 +49,12 @@ public class InputValue extends TextBasics implements SampleProvider {
 	{
 		unitType = new UnitTypeInput("UnitType", KEY_INPUTS, UserSpecifiedUnit.class);
 		unitType.setRequired(true);
+		unitType.setCallback(unitTypeInputCallback);
 		this.addInput(unitType);
 
 		valInput = new ValueInput("Value", KEY_INPUTS, 0.0d);
 		valInput.setUnitType(UserSpecifiedUnit.class);
+		valInput.setCallback(valInputCallback);
 		this.addInput(valInput);
 	}
 
@@ -58,25 +62,32 @@ public class InputValue extends TextBasics implements SampleProvider {
 		setText(valInput.getDefaultString(getJaamSimModel()));
 	}
 
-	@Override
-	public void updateForInput(Input<?> in) {
-		super.updateForInput(in);
-
-		if (in == unitType) {
-			setUnitType(unitType.getUnitType());
-			if (valInput.isDefault())
-				setText(valInput.getDefaultString(getJaamSimModel()));
-			return;
+	static final InputCallback unitTypeInputCallback = new InputCallback() {
+		@Override
+		public void callback(Entity ent, Input<?> inp) {
+			((InputValue)ent).updateUnitType();
 		}
+	};
 
-		if (in == valInput) {
-			if (!suppressUpdate)
-				setText(valInput.getValueString());
-			if (valInput.isDefault())
-				setText(valInput.getDefaultString(getJaamSimModel()));
-			suppressUpdate = false;
-			return;
+	void updateUnitType() {
+		setUnitType(unitType.getUnitType());
+		if (valInput.isDefault())
+			setText(valInput.getDefaultString(getJaamSimModel()));
+	}
+
+	static final InputCallback valInputCallback = new InputCallback() {
+		@Override
+		public void callback(Entity ent, Input<?> inp) {
+			((InputValue)ent).updateValInput();
 		}
+	};
+
+	void updateValInput() {
+		if (!suppressUpdate)
+			setText(valInput.getValueString());
+		if (valInput.isDefault())
+			setText(valInput.getDefaultString(getJaamSimModel()));
+		suppressUpdate = false;
 	}
 
 	private void setUnitType(Class<? extends Unit> ut) {
