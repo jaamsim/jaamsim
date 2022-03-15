@@ -23,6 +23,7 @@ import javax.swing.JOptionPane;
 
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.View;
+import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.controllers.VideoRecorder;
@@ -34,6 +35,7 @@ import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.EntityListInput;
 import com.jaamsim.input.Input;
+import com.jaamsim.input.InputCallback;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.IntegerListInput;
@@ -142,6 +144,7 @@ public class VideoRecorderEntity extends DisplayEntity {
 		this.addInput(saveImages);
 
 		saveVideo = new BooleanInput("SaveVideo", KEY_INPUTS, false);
+		saveVideo.setCallback(inputCallback);
 		this.addInput(saveVideo);
 	}
 
@@ -171,16 +174,17 @@ public class VideoRecorderEntity extends DisplayEntity {
 		this.hasRunStartup = true;
 	}
 
-	@Override
-    public void updateForInput(Input<?> in) {
-		super.updateForInput(in);
-
-		if (in == saveVideo) {
-			// Start the capture if we are already running and we set the input
-			// to true
-			if (hasRunStartup && saveVideo.getValue())
-				EventManager.scheduleTicks(0, 10, false, new CaptureNetworkTarget(this), null);
+	static final InputCallback inputCallback = new InputCallback() {
+		@Override
+		public void callback(Entity ent, Input<?> inp) {
+			((VideoRecorderEntity)ent).updateInputValue();
 		}
+	};
+
+	void updateInputValue() {
+		// Start the capture if we are already running and we set the input to true
+		if (hasRunStartup && saveVideo.getValue())
+			EventManager.scheduleTicks(0, 10, false, new CaptureNetworkTarget(this), null);
 	}
 
 	private static class CaptureNetworkTarget extends ProcessTarget {

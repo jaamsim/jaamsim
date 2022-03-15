@@ -19,11 +19,13 @@ package com.jaamsim.Thresholds;
 
 import com.jaamsim.Samples.TimeSeries;
 import com.jaamsim.Samples.TimeSeriesConstantDouble;
+import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.EntityTarget;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
+import com.jaamsim.input.InputCallback;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
@@ -75,6 +77,7 @@ public class TimeSeriesThreshold extends Threshold {
 	{
 		unitType = new UnitTypeInput("UnitType", KEY_INPUTS, UserSpecifiedUnit.class);
 		unitType.setRequired(true);
+		unitType.setCallback(inputCallback);
 		this.addInput(unitType);
 
 		timeSeries = new TimeSeriesInput("TimeSeries", KEY_INPUTS, null);
@@ -99,16 +102,19 @@ public class TimeSeriesThreshold extends Threshold {
 		this.addInput( offset );
 	}
 
-	@Override
-	public void updateForInput( Input<?> in ) {
-		super.updateForInput( in );
-
-		if (in == unitType) {
-			timeSeries.setUnitType(this.getUnitType());
-			maxOpenLimit.setUnitType(this.getUnitType());
-			minOpenLimit.setUnitType(this.getUnitType());
+	static final InputCallback inputCallback = new InputCallback() {
+		@Override
+		public void callback(Entity ent, Input<?> inp) {
+			((TimeSeriesThreshold)ent).updateInputValue();
 		}
+	};
+
+	void updateInputValue() {
+		timeSeries.setUnitType(this.getUnitType());
+		maxOpenLimit.setUnitType(this.getUnitType());
+		minOpenLimit.setUnitType(this.getUnitType());
 	}
+
 
 	@Override
 	public void validate() throws InputErrorException {

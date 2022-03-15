@@ -20,6 +20,7 @@ package com.jaamsim.Thresholds;
 import java.util.ArrayList;
 
 import com.jaamsim.DisplayModels.ShapeModel;
+import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.EntityTarget;
 import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.basicsim.ObserverEntity;
@@ -35,6 +36,7 @@ import com.jaamsim.input.ExpEvaluator;
 import com.jaamsim.input.ExpResType;
 import com.jaamsim.input.ExpressionInput;
 import com.jaamsim.input.Input;
+import com.jaamsim.input.InputCallback;
 import com.jaamsim.input.InterfaceEntityListInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
@@ -116,14 +118,17 @@ public class ExpressionThreshold extends Threshold implements ObserverEntity {
 		openCondition.setUnitType(DimensionlessUnit.class);
 		openCondition.setResultType(ExpResType.NUMBER);
 		openCondition.setRequired(true);
+		openCondition.setCallback(inputCallback);
 		this.addInput(openCondition);
 
 		closeCondition = new ExpressionInput("CloseCondition", KEY_INPUTS, null);
 		closeCondition.setUnitType(DimensionlessUnit.class);
 		closeCondition.setResultType(ExpResType.NUMBER);
+		closeCondition.setCallback(inputCallback);
 		this.addInput(closeCondition);
 
 		initialOpenValue = new BooleanInput("InitialOpenValue", KEY_INPUTS, false);
+		initialOpenValue.setCallback(inputCallback);
 		this.addInput(initialOpenValue);
 
 		pendingOpenColour = new ColourInput("PendingOpenColour", FORMAT, ColourInput.YELLOW);
@@ -169,14 +174,15 @@ public class ExpressionThreshold extends Threshold implements ObserverEntity {
 		ObserverEntity.registerWithSubjects(this, getWatchList());
 	}
 
-	@Override
-	public void updateForInput(Input<?> in) {
-		super.updateForInput(in);
-
-		if (in == openCondition || in == closeCondition || in == initialOpenValue) {
-			lastOpenValue = getInitialOpenValue();
-			return;
+	static final InputCallback inputCallback = new InputCallback() {
+		@Override
+		public void callback(Entity ent, Input<?> inp) {
+			((ExpressionThreshold)ent).updateInputValue();
 		}
+	};
+
+	void updateInputValue() {
+		lastOpenValue = getInitialOpenValue();
 	}
 
 	@Override
