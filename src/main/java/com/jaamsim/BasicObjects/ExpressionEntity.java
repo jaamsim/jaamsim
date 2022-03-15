@@ -19,7 +19,9 @@ package com.jaamsim.BasicObjects;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.Samples.SampleProvider;
+import com.jaamsim.basicsim.Entity;
 import com.jaamsim.input.Input;
+import com.jaamsim.input.InputCallback;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.UnitTypeInput;
@@ -39,6 +41,7 @@ public class ExpressionEntity extends DisplayEntity implements SampleProvider {
 	{
 		unitType = new UnitTypeInput("UnitType", KEY_INPUTS, UserSpecifiedUnit.class);
 		unitType.setRequired(true);
+		unitType.setCallback(unitTypeInputCallback);
 		this.addInput(unitType);
 
 		sampleValue = new SampleInput("Expression", KEY_INPUTS, null);
@@ -49,14 +52,15 @@ public class ExpressionEntity extends DisplayEntity implements SampleProvider {
 
 	public ExpressionEntity() {}
 
-	@Override
-	public void updateForInput(Input<?> in) {
-		super.updateForInput(in);
-
-		if (in == unitType) {
-			sampleValue.setUnitType(getUnitType());
-			return;
+	static final InputCallback unitTypeInputCallback = new InputCallback() {
+		@Override
+		public void callback(Entity ent, Input<?> inp) {
+			((ExpressionEntity)ent).updateSampleUnitType();
 		}
+	};
+
+	void updateSampleUnitType() {
+		sampleValue.setUnitType(getUnitType());
 	}
 
 	@Override

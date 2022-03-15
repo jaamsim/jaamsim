@@ -26,10 +26,12 @@ import java.util.concurrent.TimeUnit;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.ProcessFlow.LinkedComponent;
 import com.jaamsim.StringProviders.StringProvListInput;
+import com.jaamsim.basicsim.Entity;
 import com.jaamsim.input.ExpCollections;
 import com.jaamsim.input.ExpResult;
 import com.jaamsim.input.FileInput;
 import com.jaamsim.input.Input;
+import com.jaamsim.input.InputCallback;
 import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
@@ -80,6 +82,7 @@ public class ExternalProgram extends LinkedComponent {
 		this.addInput(dataSource);
 
 		initialValue = new StringProvListInput("InitialValue", KEY_INPUTS, null);
+		initialValue.setCallback(initialValueCallback);
 		this.addInput(initialValue);
 
 		timeOut = new IntegerInput("TimeOut", KEY_INPUTS, 1000);
@@ -91,14 +94,15 @@ public class ExternalProgram extends LinkedComponent {
 		value = ExpCollections.wrapCollection(new ArrayList<ExpResult>(), DimensionlessUnit.class);
 	}
 
-	@Override
-	public void updateForInput(Input<?> in) {
-		super.updateForInput(in);
-
-		if (in == initialValue) {
-			value = getInitialValue();
-			return;
+	static final InputCallback initialValueCallback = new InputCallback() {
+		@Override
+		public void callback(Entity ent, Input<?> inp) {
+			((ExternalProgram)ent).updateInitialValue();
 		}
+	};
+
+	void updateInitialValue() {
+		value = getInitialValue();
 	}
 
 	protected ExpResult getInitialValue() {

@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.StringProviders.StringProvListInput;
 import com.jaamsim.StringProviders.StringProvider;
+import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.EntityTarget;
 import com.jaamsim.basicsim.FileEntity;
 import com.jaamsim.events.Conditional;
@@ -29,6 +30,7 @@ import com.jaamsim.events.EventManager;
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.EntityListInput;
 import com.jaamsim.input.Input;
+import com.jaamsim.input.InputCallback;
 import com.jaamsim.input.IntegerListInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.UnitTypeListInput;
@@ -93,6 +95,7 @@ public class ExpressionLogger extends Logger implements StateEntityListener {
 
 		valueTraceList = new StringProvListInput("ValueTraceList", KEY_INPUTS,
 				new ArrayList<StringProvider>());
+		valueTraceList.setCallback(unitLastValueListCallback);
 		this.addInput(valueTraceList);
 
 		valuePrecisionList = new IntegerListInput("ValuePrecisionList", KEY_INPUTS, null);
@@ -102,16 +105,17 @@ public class ExpressionLogger extends Logger implements StateEntityListener {
 
 	public ExpressionLogger() {}
 
-	@Override
-	public void updateForInput(Input<?> in) {
-		super.updateForInput(in);
+	static final InputCallback unitLastValueListCallback = new InputCallback() {
+		@Override
+		public void callback(Entity ent, Input<?> inp) {
+			((ExpressionLogger)ent).updateLastValueList();
+		}
+	};
 
-		if (in == valueTraceList) {
-			lastValueList.clear();
-			for (int i=0; i<valueTraceList.getListSize(); i++) {
-				lastValueList.add("");
-			}
-			return;
+	void updateLastValueList() {
+		lastValueList.clear();
+		for (int i=0; i<valueTraceList.getListSize(); i++) {
+			lastValueList.add("");
 		}
 	}
 
