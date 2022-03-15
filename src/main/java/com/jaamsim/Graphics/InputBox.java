@@ -18,9 +18,11 @@
 package com.jaamsim.Graphics;
 
 import com.jaamsim.Commands.KeywordCommand;
+import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.GUIListener;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
+import com.jaamsim.input.InputCallback;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.KeywordIndex;
@@ -35,6 +37,7 @@ public class InputBox extends TextBasics {
 	{
 		target = new KeywordInput("TargetInput", KEY_INPUTS, null);
 		target.setRequired(true);
+		target.setCallback(inputCallback);
 		this.addInput(target);
 	}
 
@@ -46,15 +49,12 @@ public class InputBox extends TextBasics {
 		this.setText(this.getName());
 	}
 
-	@Override
-	public void updateForInput(Input<?> in) {
-		super.updateForInput(in);
-
-		if (in == target) {
-			cancelEdits();
-			return;
+	static final InputCallback inputCallback = new InputCallback() {
+		@Override
+		public void callback(Entity ent, Input<?> inp) {
+			((InputBox)ent).cancelEdits();
 		}
-	}
+	};
 
 	@Override
 	public void acceptEdits() {
