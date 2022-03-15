@@ -26,6 +26,7 @@ import com.jaamsim.input.ClassInput;
 import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.ImageInput;
 import com.jaamsim.input.Input;
+import com.jaamsim.input.InputCallback;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.StringInput;
 import com.jaamsim.input.Vec3dInput;
@@ -68,12 +69,14 @@ public class ObjectType extends Entity implements DragAndDropable {
 
 	{
 		javaClass = new ClassInput( "JavaClass", KEY_INPUTS, null );
+		javaClass.setCallback(javaclassCallback);
 		this.addInput( javaClass );
 
 		palette = new StringInput("Palette", KEY_INPUTS, null);
 		this.addInput( palette );
 
 		defaultDisplayModel = new EntityInput<>(DisplayModel.class, "DefaultDisplayModel", KEY_INPUTS, null);
+		defaultDisplayModel.setCallback(displaymodelCallback);
 		this.addInput(defaultDisplayModel);
 
 		dragAndDrop = new BooleanInput("DragAndDrop", KEY_INPUTS, true);
@@ -92,21 +95,28 @@ public class ObjectType extends Entity implements DragAndDropable {
 
 	public ObjectType() {}
 
-	@Override
-	public void updateForInput(Input<?> in) {
-
-		if (in == defaultDisplayModel) {
-			displayEntityDefault.clear();
-			if (defaultDisplayModel.getValue() != null)
-				displayEntityDefault.add(defaultDisplayModel.getValue());
-			return;
+	static final InputCallback javaclassCallback = new InputCallback() {
+		@Override
+		public void callback(Entity ent, Input<?> inp) {
+			((ObjectType)ent).updatejavaclassCallback();
 		}
+	};
 
-		if (in == javaClass) {
-			getJaamSimModel().addObjectType(this);
+	void updatejavaclassCallback() {
+		getJaamSimModel().addObjectType(this);
+	}
+
+	static final InputCallback displaymodelCallback = new InputCallback() {
+		@Override
+		public void callback(Entity ent, Input<?> inp) {
+			((ObjectType)ent).updatedisplaymodelCallback();
 		}
+	};
 
-		super.updateForInput(in);
+	void updatedisplaymodelCallback() {
+		displayEntityDefault.clear();
+		if (defaultDisplayModel.getValue() != null)
+			displayEntityDefault.add(defaultDisplayModel.getValue());
 	}
 
 	@Override
