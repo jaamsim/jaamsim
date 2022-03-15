@@ -18,8 +18,10 @@ package com.jaamsim.BasicObjects;
 
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleProvider;
+import com.jaamsim.basicsim.Entity;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.input.Input;
+import com.jaamsim.input.InputCallback;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.UnitTypeInput;
@@ -44,6 +46,7 @@ public class ValueSequence extends DisplayEntity implements SampleProvider {
 	{
 		unitType = new UnitTypeInput("UnitType", KEY_INPUTS, UserSpecifiedUnit.class);
 		unitType.setRequired(true);
+		unitType.setCallback(unitTypeCallback);
 		this.addInput(unitType);
 
 		valueList = new ValueListInput("ValueList", KEY_INPUTS, null);
@@ -60,14 +63,15 @@ public class ValueSequence extends DisplayEntity implements SampleProvider {
 		index = -1;
 	}
 
-	@Override
-	public void updateForInput(Input<?> in) {
-		super.updateForInput(in);
-
-		if (in == unitType) {
-			valueList.setUnitType(getUnitType());
-			return;
+	static final InputCallback unitTypeCallback = new InputCallback() {
+		@Override
+		public void callback(Entity ent, Input<?> inp) {
+			((ValueSequence)ent).updateUnitType();
 		}
+	};
+
+	void updateUnitType() {
+		valueList.setUnitType(getUnitType());
 	}
 
 	@Override
