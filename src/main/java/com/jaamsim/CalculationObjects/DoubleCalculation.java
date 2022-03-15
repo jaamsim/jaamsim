@@ -24,9 +24,11 @@ import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.Samples.SampleProvider;
+import com.jaamsim.basicsim.Entity;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
+import com.jaamsim.input.InputCallback;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.Output;
@@ -57,6 +59,7 @@ implements SampleProvider {
 	{
 		unitType = new UnitTypeInput("UnitType", KEY_INPUTS, UserSpecifiedUnit.class);
 		unitType.setRequired(true);
+		unitType.setCallback(unitTypeInputCallback);
 		this.addInput(unitType);
 
 		SampleConstant def = new SampleConstant(UserSpecifiedUnit.class, 0.0d);
@@ -67,15 +70,15 @@ implements SampleProvider {
 
 	public DoubleCalculation() {}
 
-	@Override
-	public void updateForInput(Input<?> in) {
-		super.updateForInput(in);
-
-		if (in == unitType) {
-			Class<? extends Unit> ut = unitType.getUnitType();
-			this.setUnitType(ut);
-			return;
+	static final InputCallback unitTypeInputCallback = new InputCallback() {
+		@Override
+		public void callback(Entity ent, Input<?> inp) {
+			((DoubleCalculation)ent).updateUnitType();
 		}
+	};
+
+	void updateUnitType() {
+		this.setUnitType(unitType.getUnitType());
 	}
 
 	protected void setUnitType(Class<? extends Unit> ut) {

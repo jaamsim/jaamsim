@@ -22,8 +22,10 @@ import java.util.ArrayList;
 import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleProvider;
+import com.jaamsim.basicsim.Entity;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
+import com.jaamsim.input.InputCallback;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.Output;
@@ -64,6 +66,7 @@ public abstract class WaveGenerator extends DisplayEntity implements SampleProvi
 	{
 		unitType = new UnitTypeInput("UnitType", KEY_INPUTS, UserSpecifiedUnit.class);
 		unitType.setRequired(true);
+		unitType.setCallback(unitTypeInputCallback);
 		this.addInput(unitType);
 
 		amplitude = new ValueInput("Amplitude", KEY_INPUTS, 1.0d);
@@ -85,15 +88,16 @@ public abstract class WaveGenerator extends DisplayEntity implements SampleProvi
 		this.addInput(offset);
 	}
 
-	@Override
-	public void updateForInput(Input<?> in) {
-		super.updateForInput(in);
-
-		if (in == unitType) {
-			amplitude.setUnitType(unitType.getUnitType());
-			offset.setUnitType(unitType.getUnitType());
-			return;
+	static final InputCallback unitTypeInputCallback = new InputCallback() {
+		@Override
+		public void callback(Entity ent, Input<?> inp) {
+			((WaveGenerator)ent).updateUnitType();
 		}
+	};
+
+	void updateUnitType() {
+		amplitude.setUnitType(unitType.getUnitType());
+		offset.setUnitType(unitType.getUnitType());
 	}
 
 	@Override

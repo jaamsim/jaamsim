@@ -18,7 +18,9 @@
 package com.jaamsim.CalculationObjects;
 
 import com.jaamsim.Samples.SampleInput;
+import com.jaamsim.basicsim.Entity;
 import com.jaamsim.input.Input;
+import com.jaamsim.input.InputCallback;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.UnitTypeInput;
@@ -104,6 +106,7 @@ public class PIDController extends DoubleCalculation {
 
 		outputUnitType = new UnitTypeInput("OutputUnitType", KEY_INPUTS, UserSpecifiedUnit.class);
 		outputUnitType.setRequired(true);
+		outputUnitType.setCallback(unitTypeInputCallback);
 		this.addInput(outputUnitType);
 
 		proportionalGain = new ValueInput("ProportionalGain", KEY_INPUTS, 1.0d);
@@ -132,17 +135,18 @@ public class PIDController extends DoubleCalculation {
 
 	public PIDController() {}
 
-	@Override
-	public void updateForInput( Input<?> in ) {
-		super.updateForInput( in );
-
-		if (in == outputUnitType) {
-			Class<? extends Unit> outUnitType = outputUnitType.getUnitType();
-			outputLow.setUnitType(outUnitType);
-			outputHigh.setUnitType(outUnitType);
-			proportionalGain.setUnitType(outUnitType);
-			return;
+	static final InputCallback unitTypeInputCallback = new InputCallback() {
+		@Override
+		public void callback(Entity ent, Input<?> inp) {
+			((PIDController)ent).updateUnitTypeCallback();
 		}
+	};
+
+	void updateUnitTypeCallback() {
+		Class<? extends Unit> outUnitType = outputUnitType.getUnitType();
+		outputLow.setUnitType(outUnitType);
+		outputHigh.setUnitType(outUnitType);
+		proportionalGain.setUnitType(outUnitType);
 	}
 
 	@Override

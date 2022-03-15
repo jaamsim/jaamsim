@@ -24,8 +24,10 @@ import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleListInput;
 import com.jaamsim.Samples.SampleProvider;
+import com.jaamsim.basicsim.Entity;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
+import com.jaamsim.input.InputCallback;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.KeywordIndex;
@@ -65,6 +67,7 @@ public class WeightedSum extends DisplayEntity implements SampleProvider {
 	{
 		unitType = new UnitTypeInput("UnitType", KEY_INPUTS, UserSpecifiedUnit.class);
 		unitType.setRequired(true);
+		unitType.setCallback(unitTypeInputCallback);
 		this.addInput(unitType);
 
 		ArrayList<SampleProvider> def = new ArrayList<>();
@@ -80,14 +83,15 @@ public class WeightedSum extends DisplayEntity implements SampleProvider {
 
 	public WeightedSum() {}
 
-	@Override
-	public void updateForInput(Input<?> in) {
-		super.updateForInput(in);
-
-		if (in == unitType) {
-			inputValueList.setUnitType(unitType.getUnitType());
-			return;
+	static final InputCallback unitTypeInputCallback = new InputCallback() {
+		@Override
+		public void callback(Entity ent, Input<?> inp) {
+			((WeightedSum)ent).updateUnitTypeCallback();
 		}
+	};
+
+	void updateUnitTypeCallback() {
+		inputValueList.setUnitType(unitType.getUnitType());
 	}
 
 	@Override
