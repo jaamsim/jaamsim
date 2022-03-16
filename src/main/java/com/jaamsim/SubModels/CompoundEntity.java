@@ -29,6 +29,7 @@ import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
+import com.jaamsim.input.InputCallback;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Vec3dInput;
 import com.jaamsim.math.Vec3d;
@@ -55,6 +56,7 @@ public abstract class CompoundEntity extends LinkedComponent {
 		nextComponent.setRequired(false);
 
 		showComponents = new BooleanInput("ShowComponents", FORMAT, false);
+		showComponents.setCallback(showComponentsCallback);
 		this.addInput(showComponents);
 
 		processPosition = new Vec3dInput("ProcessPosition", FORMAT, new Vec3d(0.0d, 0.0d, 0.01d));
@@ -88,14 +90,20 @@ public abstract class CompoundEntity extends LinkedComponent {
 		showTemporaryComponents(bool);
 	}
 
+	static final InputCallback showComponentsCallback = new InputCallback() {
+		@Override
+		public void callback(Entity ent, Input<?> inp) {
+			((CompoundEntity)ent).updateShowComponents();
+		}
+	};
+
+	void updateShowComponents() {
+		showComponents(showComponents.getValue());
+	}
+
 	@Override
 	public void updateForInput(Input<?> in) {
 		super.updateForInput(in);
-
-		if (in == showComponents) {
-			showComponents(showComponents.getValue());
-			return;
-		}
 
 		if (in == regionInput) {
 			if (getCurrentRegion() == null)
