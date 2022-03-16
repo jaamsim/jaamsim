@@ -192,6 +192,7 @@ public class DisplayEntity extends Entity {
 		this.addInput(curveTypeInput);
 
 		regionInput = new RegionInput("Region", GRAPHICS, null);
+		regionInput.setCallback(regionCallback);
 		this.addInput(regionInput);
 
 		relativeEntity = new RelativeEntityInput("RelativeEntity", GRAPHICS, null);
@@ -300,10 +301,6 @@ public class DisplayEntity extends Entity {
 			this.setAlignment(alignmentInput.getValue());
 			return;
 		}
-		if (in == regionInput) {
-			this.setRegion(regionInput.getValue());
-			return;
-		}
 		if (in == displayModelListInput) {
 			boolean bool = usePointsInput();
 			this.setDisplayModelList(displayModelListInput.getValue());
@@ -324,6 +321,17 @@ public class DisplayEntity extends Entity {
 			invalidateScreenPoints();
 			return;
 		}
+	}
+
+	static final InputCallback regionCallback = new InputCallback() {
+		@Override
+		public void callback(Entity ent, Input<?> inp) {
+			((DisplayEntity)ent).updateRegionCallback();
+		}
+	};
+
+	void updateRegionCallback() {
+		this.setRegion(regionInput.getValue());
 	}
 
 	static final InputCallback updateRangeVisibilityCallback = new InputCallback() {

@@ -55,6 +55,8 @@ public abstract class CompoundEntity extends LinkedComponent {
 	{
 		nextComponent.setRequired(false);
 
+		regionInput.setCallback(regionCallback);
+
 		showComponents = new BooleanInput("ShowComponents", FORMAT, false);
 		showComponents.setCallback(showComponentsCallback);
 		this.addInput(showComponents);
@@ -101,16 +103,18 @@ public abstract class CompoundEntity extends LinkedComponent {
 		showComponents(showComponents.getValue());
 	}
 
-	@Override
-	public void updateForInput(Input<?> in) {
-		super.updateForInput(in);
-
-		if (in == regionInput) {
-			if (getCurrentRegion() == null)
-				return;
-			InputAgent.applyArgs(smRegion, "Region", getCurrentRegion().getName());
-			return;
+	static final InputCallback regionCallback = new InputCallback() {
+		@Override
+		public void callback(Entity ent, Input<?> inp) {
+			((CompoundEntity)ent).updateCompoundRegionCallback();
 		}
+	};
+
+	void updateCompoundRegionCallback() {
+		this.setRegion(regionInput.getValue());
+		if (getCurrentRegion() == null)
+			return;
+		InputAgent.applyArgs(smRegion, "Region", getCurrentRegion().getName());
 	}
 
 	@Override
