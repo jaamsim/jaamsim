@@ -33,6 +33,7 @@ import com.jaamsim.input.DirInput;
 import com.jaamsim.input.EntityListInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
+import com.jaamsim.input.InputCallback;
 import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.IntegerListInput;
 import com.jaamsim.input.Keyword;
@@ -411,9 +412,11 @@ public class Simulation extends Entity {
 		this.addInput(initializationTime);
 
 		gregorianCalendar = new BooleanInput("GregorianCalendar", OPTIONS, false);
+		gregorianCalendar.setCallback(calendarCallback);
 		this.addInput(gregorianCalendar);
 
 		startDate = new DateInput("StartDate", OPTIONS, new SimDate(1970, 1, 1));
+		startDate.setCallback(calendarCallback);
 		this.addInput(startDate);
 
 		pauseConditionInput = new SampleInput("PauseCondition", OPTIONS, null);
@@ -438,6 +441,7 @@ public class Simulation extends Entity {
 
 		reportDirectory = new DirInput("ReportDirectory", KEY_INPUTS, null);
 		reportDirectory.setDefaultText("Configuration File Directory");
+		reportDirectory.setCallback(reportDirectoryCallback);
 		this.addInput(reportDirectory);
 
 		unitTypeList = new UnitTypeListInput("UnitTypeList", KEY_INPUTS, null);
@@ -467,6 +471,7 @@ public class Simulation extends Entity {
 
 		// Multiple Runs tab
 		scenarioIndexDefinitionList = new IntegerListInput("ScenarioIndexDefinitionList", MULTIPLE_RUNS, new IntegerVector());
+		scenarioIndexDefinitionList.setCallback(scenarioIndexDefinitionListCallback);
 		this.addInput(scenarioIndexDefinitionList);
 		this.addSynonym(scenarioIndexDefinitionList, "RunIndexDefinitionList");
 
@@ -474,6 +479,7 @@ public class Simulation extends Entity {
 		startingScenarioNumber.setUnitType(DimensionlessUnit.class);
 		startingScenarioNumber.setIntegerValue(true);
 		startingScenarioNumber.setValidRange(1, Integer.MAX_VALUE);
+		startingScenarioNumber.setCallback(startingScenarioNumberCallback);
 		this.addInput(startingScenarioNumber);
 		this.addSynonym(startingScenarioNumber, "StartingRunNumber");
 
@@ -508,6 +514,7 @@ public class Simulation extends Entity {
 		displayedUnits.setDefaultText("SI Units");
 		displayedUnits.setPromptReqd(false);
 		displayedUnits.setHidden(true);
+		displayedUnits.setCallback(displayedUnitsCallback);
 		this.addInput(displayedUnits);
 
 		realTime = new BooleanInput("RealTime", GUI, false);
@@ -733,36 +740,55 @@ public class Simulation extends Entity {
 		getJaamSimModel().setSimulation(this);
 	}
 
-	@Override
-	public void updateForInput( Input<?> in ) {
-		super.updateForInput( in );
+	static final InputCallback calendarCallback = new InputCallback() {
+		@Override
+		public void callback(Entity ent, Input<?> inp) {
+			Simulation sim = (Simulation)ent;
 
-		if (in == gregorianCalendar || in == startDate) {
-			getJaamSimModel().setCalendar(isGregorianCalendar(), getStartDate());
-			return;
+			sim.getJaamSimModel().setCalendar(sim.isGregorianCalendar(), sim.getStartDate());
 		}
+	};
 
-		if (in == reportDirectory) {
-			getJaamSimModel().setReportDirectory(reportDirectory.getDir());
-			return;
+	static final InputCallback reportDirectoryCallback = new InputCallback() {
+		@Override
+		public void callback(Entity ent, Input<?> inp) {
+			Simulation sim = (Simulation)ent;
+			DirInput dirinp = (DirInput)inp;
+			sim.getJaamSimModel().setReportDirectory(dirinp.getDir());
 		}
+	};
 
-		if (in == scenarioIndexDefinitionList) {
-			getJaamSimModel().setScenarioIndexList();
-			startingScenarioNumber.setRunIndexRangeList(getScenarioIndexDefinitionList());
-			endingScenarioNumber.setRunIndexRangeList(getScenarioIndexDefinitionList());
-			return;
-		}
+	static final InputCallback startingScenarioNumberCallback = new InputCallback() {
+		@Override
+		public void callback(Entity ent, Input<?> inp) {
+			Simulation sim = (Simulation)ent;
 
-		if (in == startingScenarioNumber) {
-			getJaamSimModel().setScenarioNumber(getStartingScenarioNumber());
-			return;
+			sim.getJaamSimModel().setScenarioNumber(sim.getStartingScenarioNumber());
 		}
+	};
 
-		if (in == displayedUnits) {
-			getJaamSimModel().setPreferredUnitList(displayedUnits.getValue());
-			return;
+	static final InputCallback displayedUnitsCallback = new InputCallback() {
+		@Override
+		public void callback(Entity ent, Input<?> inp) {
+			((Simulation)ent).displayUnitsCallback();
 		}
+	};
+
+	void displayUnitsCallback() {
+		getJaamSimModel().setPreferredUnitList(displayedUnits.getValue());
+	}
+
+	static final InputCallback scenarioIndexDefinitionListCallback = new InputCallback() {
+		@Override
+		public void callback(Entity ent, Input<?> inp) {
+			((Simulation)ent).scenarioIndexDefinitionListCallback();
+		}
+	};
+
+	void scenarioIndexDefinitionListCallback() {
+		getJaamSimModel().setScenarioIndexList();
+		startingScenarioNumber.setRunIndexRangeList(getScenarioIndexDefinitionList());
+		endingScenarioNumber.setRunIndexRangeList(getScenarioIndexDefinitionList());
 	}
 
 	@Override
