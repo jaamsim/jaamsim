@@ -168,27 +168,33 @@ public class DisplayEntity extends Entity {
 	{
 		positionInput = new Vec3dInput("Position", GRAPHICS, new Vec3d());
 		positionInput.setUnitType(DistanceUnit.class);
+		positionInput.setCallback(positionCallback);
 		this.addInput(positionInput);
 
 		alignmentInput = new Vec3dInput("Alignment", GRAPHICS, new Vec3d());
+		alignmentInput.setCallback(alignmentCallback);
 		this.addInput(alignmentInput);
 
 		sizeInput = new Vec3dInput("Size", GRAPHICS, new Vec3d(1.0d, 1.0d, 1.0d));
 		sizeInput.setUnitType(DistanceUnit.class);
 		sizeInput.setValidRange(0.0d, Double.POSITIVE_INFINITY);
+		sizeInput.setCallback(sizeCallback);
 		this.addInput(sizeInput);
 
 		orientationInput = new Vec3dInput("Orientation", GRAPHICS, new Vec3d());
 		orientationInput.setUnitType(AngleUnit.class);
+		orientationInput.setCallback(orientationCallback);
 		this.addInput(orientationInput);
 
 		pointsInput = new Vec3dListInput("Points", GRAPHICS, defPoints);
 		pointsInput.setValidCountRange( 2, Integer.MAX_VALUE );
 		pointsInput.setUnitType(DistanceUnit.class);
+		pointsInput.setCallback(pointsCallback);
 		this.addInput(pointsInput);
 
 		curveTypeInput = new EnumInput<>(PolylineInfo.CurveType.class, "CurveType", GRAPHICS,
 				PolylineInfo.CurveType.LINEAR);
+		curveTypeInput.setCallback(curveTypeCallback);
 		this.addInput(curveTypeInput);
 
 		regionInput = new RegionInput("Region", GRAPHICS, null);
@@ -203,10 +209,12 @@ public class DisplayEntity extends Entity {
 		displayModelListInput.addValidClass(ShapeModel.class);
 		displayModelListInput.addValidClass(ImageModel.class);
 		displayModelListInput.addInvalidClass(IconModel.class);
+		displayModelListInput.setCallback(displayModelListCallback);
 		this.addInput(displayModelListInput);
 		displayModelListInput.setUnique(false);
 
 		showInput = new BooleanInput("Show", GRAPHICS, true);
+		showInput.setCallback(showCallback);
 		this.addInput(showInput);
 
 		movable = new BooleanInput("Movable", GRAPHICS, true);
@@ -272,55 +280,93 @@ public class DisplayEntity extends Entity {
 			InputAgent.applyArgs(this, "Alignment", "0.0", "0.0", "-0.5");
 	}
 
-	@Override
-	public void updateForInput( Input<?> in ) {
-		super.updateForInput( in );
+	static final InputCallback positionCallback = new InputCallback() {
+		@Override
+		public void callback(Entity ent, Input<?> inp) {
+			DisplayEntity de = (DisplayEntity)ent;
+			Vec3dInput v3dinp = (Vec3dInput)inp;
 
-		if (in == positionInput) {
-			if (usePointsInput())
+			if (de.usePointsInput())
 				return;
-			this.setPosition(positionInput.getValue());
-			return;
+			de.setPosition(v3dinp.getValue());
 		}
+	};
 
-		if (in == pointsInput) {
-			if (!usePointsInput())
+	static final InputCallback pointsCallback = new InputCallback() {
+		@Override
+		public void callback(Entity ent, Input<?> inp) {
+			DisplayEntity de = (DisplayEntity)ent;
+			Vec3dListInput v3dinp = (Vec3dListInput)inp;
+
+			if (!de.usePointsInput())
 				return;
-			updateForPointsInput(pointsInput.getValue());
-			return;
+			de.updateForPointsInput(v3dinp.getValue());
 		}
-		if (in == sizeInput) {
-			this.setSize(sizeInput.getValue());
-			return;
-		}
-		if (in == orientationInput) {
-			this.setOrientation(orientationInput.getValue());
-			return;
-		}
-		if (in == alignmentInput) {
-			this.setAlignment(alignmentInput.getValue());
-			return;
-		}
-		if (in == displayModelListInput) {
-			boolean bool = usePointsInput();
-			this.setDisplayModelList(displayModelListInput.getValue());
-			setGraphicsKeywords();
+	};
 
-			// Refresh the contents of the Input Editor
-			GUIListener gui = getJaamSimModel().getGUIListener();
-			if (gui != null && gui.isSelected(this) && usePointsInput() != bool)
-				gui.updateInputEditor();
-			return;
-		}
-		if (in == showInput) {
-			this.setShow(showInput.getValue());
-			return;
-		}
+	static final InputCallback sizeCallback = new InputCallback() {
+		@Override
+		public void callback(Entity ent, Input<?> inp) {
+			DisplayEntity de = (DisplayEntity)ent;
+			Vec3dInput v3dinp = (Vec3dInput)inp;
 
-		if (in == curveTypeInput) {
-			invalidateScreenPoints();
-			return;
+			de.setSize(v3dinp.getValue());
 		}
+	};
+
+	static final InputCallback orientationCallback = new InputCallback() {
+		@Override
+		public void callback(Entity ent, Input<?> inp) {
+			DisplayEntity de = (DisplayEntity)ent;
+			Vec3dInput v3dinp = (Vec3dInput)inp;
+
+			de.setOrientation(v3dinp.getValue());
+		}
+	};
+
+	static final InputCallback alignmentCallback = new InputCallback() {
+		@Override
+		public void callback(Entity ent, Input<?> inp) {
+			DisplayEntity de = (DisplayEntity)ent;
+			Vec3dInput v3dinp = (Vec3dInput)inp;
+
+			de.setAlignment(v3dinp.getValue());
+		}
+	};
+
+	static final InputCallback showCallback = new InputCallback() {
+		@Override
+		public void callback(Entity ent, Input<?> inp) {
+			DisplayEntity de = (DisplayEntity)ent;
+			BooleanInput boolinp = (BooleanInput)inp;
+
+			de.setShow(boolinp.getValue());
+		}
+	};
+
+	static final InputCallback curveTypeCallback = new InputCallback() {
+		@Override
+		public void callback(Entity ent, Input<?> inp) {
+			((DisplayEntity)ent).invalidateScreenPoints();
+		}
+	};
+
+	static final InputCallback displayModelListCallback = new InputCallback() {
+		@Override
+		public void callback(Entity ent, Input<?> inp) {
+			((DisplayEntity)ent).displayModelCallback();
+		}
+	};
+
+	void displayModelCallback() {
+		boolean bool = usePointsInput();
+		this.setDisplayModelList(displayModelListInput.getValue());
+		setGraphicsKeywords();
+
+		// Refresh the contents of the Input Editor
+		GUIListener gui = getJaamSimModel().getGUIListener();
+		if (gui != null && gui.isSelected(this) && usePointsInput() != bool)
+			gui.updateInputEditor();
 	}
 
 	static final InputCallback regionCallback = new InputCallback() {
