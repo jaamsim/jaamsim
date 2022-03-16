@@ -27,6 +27,7 @@ import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
+import com.jaamsim.input.InputCallback;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.math.Vec3d;
@@ -44,8 +45,10 @@ public class EntityLabel extends TextBasics {
 		namedExpressionInput.setHidden(true);
 
 		targetEntity = new EntityInput<>(DisplayEntity.class, "TargetEntity", KEY_INPUTS, null);
+		targetEntity.setCallback(inputCallback);
 		this.addInput(targetEntity);
 
+		textHeight.setCallback(textHeightCallback);
 		targetEntity.setHidden(true);
 		relativeEntity.setHidden(true);
 		regionInput.setHidden(true);
@@ -74,25 +77,28 @@ public class EntityLabel extends TextBasics {
 	@Override
 	public void resetGraphics() {}
 
-	@Override
-	public void updateForInput(Input<?> in) {
-		super.updateForInput(in);
+	static final InputCallback inputCallback = new InputCallback() {
+		@Override
+		public void callback(Entity ent, Input<?> inp) {
+			((EntityLabel)ent).updateInputValue();
+		}
+	};
 
-		if (in == targetEntity) {
-			DisplayEntity ent = targetEntity.getValue();
-			if (ent == null) {
-				setText("ERROR");
-				return;
-			}
-			setText(ent.getName());
+	void updateInputValue() {
+		DisplayEntity ent = targetEntity.getValue();
+		if (ent == null) {
+			setText("ERROR");
 			return;
 		}
-
-		if (in == textHeight) {
-			resizeForText();
-			return;
-		}
+		setText(ent.getName());
 	}
+
+	static final InputCallback textHeightCallback = new InputCallback() {
+		@Override
+		public void callback(Entity ent, Input<?> inp) {
+			((EntityLabel)ent).resizeForText();
+		}
+	};
 
 	@Override
 	public boolean isGraphicsNominal() {
