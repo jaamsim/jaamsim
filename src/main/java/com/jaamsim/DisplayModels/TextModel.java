@@ -33,6 +33,7 @@ import com.jaamsim.datatypes.IntegerVector;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.Input;
+import com.jaamsim.input.InputCallback;
 import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.StringChoiceInput;
@@ -124,6 +125,7 @@ public class TextModel extends AbstractShapeModel implements TextEntity {
 		textHeight = new ValueInput("TextHeight", KEY_INPUTS, 0.3d);
 		textHeight.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		textHeight.setUnitType(DistanceUnit.class);
+		textHeight.setCallback(textheightCallback);
 		this.addInput(textHeight);
 
 		textHeightInPixels = new IntegerInput("TextHeightInPixels", KEY_INPUTS, 10);
@@ -137,6 +139,7 @@ public class TextModel extends AbstractShapeModel implements TextEntity {
 		fontStyle = new StringListInput("FontStyle", KEY_INPUTS, new ArrayList<String>(0));
 		fontStyle.setValidOptions(validStyles);
 		fontStyle.setCaseSensitive(false);
+		fontStyle.setCallback(fontstyleCallback);
 		this.addInput(fontStyle);
 
 		dropShadow = new BooleanInput("DropShadow", KEY_INPUTS, false);
@@ -152,22 +155,29 @@ public class TextModel extends AbstractShapeModel implements TextEntity {
 		style = Font.PLAIN;
 	}
 
-	@Override
-	public void updateForInput(Input<?> in) {
-		super.updateForInput(in);
-
-		if (in == fontStyle) {
-			style = getStyle(fontStyle.getValue());
-			return;
+	static final InputCallback fontstyleCallback = new InputCallback() {
+		@Override
+		public void callback(Entity ent, Input<?> inp) {
+			((TextModel)ent).updatefontstyle();
 		}
+	};
 
-		if (in == textHeight) {
-			for (TextBasics text : getJaamSimModel().getClonesOfIterator(EntityLabel.class)) {
-				if (text.getDisplayModelList().get(0) == this) {
-					text.resizeForText();
-				}
+	void updatefontstyle() {
+		style = getStyle(fontStyle.getValue());
+	}
+
+	static final InputCallback textheightCallback = new InputCallback() {
+		@Override
+		public void callback(Entity ent, Input<?> inp) {
+			((TextModel)ent).updatetextheight();
+		}
+	};
+
+	void updatetextheight() {
+		for (TextBasics text : getJaamSimModel().getClonesOfIterator(EntityLabel.class)) {
+			if (text.getDisplayModelList().get(0) == this) {
+				text.resizeForText();
 			}
-			return;
 		}
 	}
 
