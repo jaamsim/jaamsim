@@ -22,11 +22,13 @@ import java.util.ArrayList;
 
 import com.jaamsim.Samples.SampleListInput;
 import com.jaamsim.Samples.SampleProvider;
+import com.jaamsim.basicsim.Entity;
 import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.ColorListInput;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.Input;
+import com.jaamsim.input.InputCallback;
 import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.UnitTypeInput;
@@ -96,6 +98,7 @@ public class Graph extends GraphBasics  {
 		this.addInput(numberOfPoints);
 
 		unitType = new UnitTypeInput("UnitType", KEY_INPUTS, DimensionlessUnit.class);
+		unitType.setCallback(inputCallback1);
 		this.addInput(unitType);
 
 		dataSource = new SampleListInput("DataSource", KEY_INPUTS, null);
@@ -107,6 +110,7 @@ public class Graph extends GraphBasics  {
 		defLineColor.add(ColourInput.getColorWithName("red"));
 		lineColorsList = new ColorListInput("LineColours", KEY_INPUTS, defLineColor);
 		lineColorsList.setValidCountRange(1, Integer.MAX_VALUE);
+		lineColorsList.setCallback(inputCallback4);
 		this.addInput(lineColorsList);
 		this.addSynonym(lineColorsList, "LineColors");
 
@@ -115,19 +119,23 @@ public class Graph extends GraphBasics  {
 		lineWidths = new ValueListInput("LineWidths", KEY_INPUTS, defLineWidths);
 		lineWidths.setUnitType(DimensionlessUnit.class);
 		lineWidths.setValidCountRange(1, Integer.MAX_VALUE);
+		lineWidths.setCallback(inputCallback5);
 		this.addInput(lineWidths);
 
 		secondaryUnitType = new UnitTypeInput("SecondaryUnitType", KEY_INPUTS, DimensionlessUnit.class);
+		secondaryUnitType.setCallback(inputCallback2);
 		this.addInput(secondaryUnitType);
 
 		secondaryDataSource = new SampleListInput("SecondaryDataSource", KEY_INPUTS, null);
 		secondaryDataSource.setUnitType(DimensionlessUnit.class);
+		secondaryDataSource.setCallback(inputCallback3);
 		this.addInput(secondaryDataSource);
 
 		ArrayList<Color4d> defSecondaryLineColor = new ArrayList<>(0);
 		defSecondaryLineColor.add(ColourInput.getColorWithName("black"));
 		secondaryLineColorsList = new ColorListInput("SecondaryLineColours", KEY_INPUTS, defSecondaryLineColor);
 		secondaryLineColorsList.setValidCountRange(1, Integer.MAX_VALUE);
+		secondaryLineColorsList.setCallback(inputCallback6);
 		this.addInput(secondaryLineColorsList);
 		this.addSynonym(secondaryLineColorsList, "SecondaryLineColors");
 
@@ -136,6 +144,7 @@ public class Graph extends GraphBasics  {
 		secondaryLineWidths = new ValueListInput("SecondaryLineWidths", KEY_INPUTS, defSecondaryLineWidths);
 		secondaryLineWidths.setUnitType(DimensionlessUnit.class);
 		secondaryLineWidths.setValidCountRange(1, Integer.MAX_VALUE);
+		secondaryLineWidths.setCallback(inputCallback7);
 		this.addInput(secondaryLineWidths);
 	}
 
@@ -146,59 +155,96 @@ public class Graph extends GraphBasics  {
 		this.setSecondaryYAxisUnit(DimensionlessUnit.class);
 	}
 
-	@Override
-	public void updateForInput( Input<?> in ) {
-		super.updateForInput( in );
-
-		if (in == unitType) {
-			Class<? extends Unit> ut = unitType.getUnitType();
-			dataSource.setUnitType(ut);
-			this.setYAxisUnit(ut);
-			return;
+	static final InputCallback inputCallback1 = new InputCallback() {
+		@Override
+		public void callback(Entity ent, Input<?> inp) {
+			((Graph)ent).updateInputValue1();
 		}
+	};
 
-		if (in == secondaryUnitType) {
-			Class<? extends Unit> ut = secondaryUnitType.getUnitType();
-			secondaryDataSource.setUnitType(ut);
-			this.setSecondaryYAxisUnit(ut);
-			return;
+	void updateInputValue1() {
+		Class<? extends Unit> ut = unitType.getUnitType();
+		dataSource.setUnitType(ut);
+		this.setYAxisUnit(ut);
+	}
+
+	static final InputCallback inputCallback2 = new InputCallback() {
+		@Override
+		public void callback(Entity ent, Input<?> inp) {
+			((Graph)ent).updateInputValue2();
 		}
+	};
 
-		if (in == secondaryDataSource) {
-			showSecondaryYAxis = !secondaryDataSource.isDefault();
-			return;
+	void updateInputValue2() {
+		Class<? extends Unit> ut = secondaryUnitType.getUnitType();
+		secondaryDataSource.setUnitType(ut);
+		this.setSecondaryYAxisUnit(ut);
+	}
+
+	static final InputCallback inputCallback3 = new InputCallback() {
+		@Override
+		public void callback(Entity ent, Input<?> inp) {
+			((Graph)ent).updateInputValue3();
 		}
+	};
 
-		if (in == lineColorsList) {
-			for (int i = 0; i < primarySeries.size(); ++ i) {
-				SeriesInfo info = primarySeries.get(i);
-				info.lineColour = getLineColor(i, lineColorsList.getValue());
-			}
-			return;
+	void updateInputValue3() {
+		showSecondaryYAxis = !secondaryDataSource.isDefault();
+	}
+
+	static final InputCallback inputCallback4 = new InputCallback() {
+		@Override
+		public void callback(Entity ent, Input<?> inp) {
+			((Graph)ent).updateInputValue4();
 		}
+	};
 
-		if (in == lineWidths) {
-			for (int i = 0; i < primarySeries.size(); ++ i) {
-				SeriesInfo info = primarySeries.get(i);
-				info.lineWidth = getLineWidth(i, lineWidths.getValue());
-			}
-			return;
+	void updateInputValue4() {
+		for (int i = 0; i < primarySeries.size(); ++ i) {
+			SeriesInfo info = primarySeries.get(i);
+			info.lineColour = getLineColor(i, lineColorsList.getValue());
 		}
+	}
 
-		if (in == secondaryLineColorsList) {
-			for (int i = 0; i < secondarySeries.size(); ++ i) {
-				SeriesInfo info = secondarySeries.get(i);
-				info.lineColour = getLineColor(i, secondaryLineColorsList.getValue());
-			}
-			return;
+	static final InputCallback inputCallback5 = new InputCallback() {
+		@Override
+		public void callback(Entity ent, Input<?> inp) {
+			((Graph)ent).updateInputValue5();
 		}
+	};
 
-		if (in == secondaryLineWidths) {
-			for (int i = 0; i < secondarySeries.size(); ++ i) {
-				SeriesInfo info = secondarySeries.get(i);
-				info.lineWidth = getLineWidth(i, secondaryLineWidths.getValue());
-			}
-			return;
+	void updateInputValue5() {
+		for (int i = 0; i < primarySeries.size(); ++ i) {
+			SeriesInfo info = primarySeries.get(i);
+			info.lineWidth = getLineWidth(i, lineWidths.getValue());
+		}
+	}
+
+	static final InputCallback inputCallback6 = new InputCallback() {
+		@Override
+		public void callback(Entity ent, Input<?> inp) {
+			((Graph)ent).updateInputValue6();
+		}
+	};
+
+	void updateInputValue6() {
+		for (int i = 0; i < secondarySeries.size(); ++ i) {
+			SeriesInfo info = secondarySeries.get(i);
+			info.lineColour = getLineColor(i, secondaryLineColorsList.getValue());
+		}
+	}
+
+	static final InputCallback inputCallback7 = new InputCallback() {
+		@Override
+		public void callback(Entity ent, Input<?> inp) {
+			((Graph)ent).updateInputValue7();
+		}
+	};
+
+	void updateInputValue7() {
+		for (int i = 0; i < secondarySeries.size(); ++ i) {
+			SeriesInfo info = secondarySeries.get(i);
+			info.lineWidth = getLineWidth(i, secondaryLineWidths.getValue());
 		}
 	}
 
