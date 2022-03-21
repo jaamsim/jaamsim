@@ -1997,8 +1997,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		reverseButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				if (createLinks.isSelected())
-					createLinks.doClick();
 				boolean bool = reverseButton.isSelected();
 				if (RenderManager.isGood()) {
 					RenderManager.inst().setLinkDirection(!bool);
