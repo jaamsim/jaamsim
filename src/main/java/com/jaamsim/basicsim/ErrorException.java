@@ -29,7 +29,11 @@ public class ErrorException extends RuntimeException {
 	public int position;
 
 	public ErrorException(int pos, String src, String name, String msg) {
-		super(msg);
+		this(pos, src, name, msg, null);
+	}
+
+	public ErrorException(int pos, String src, String name, String msg, Throwable cause) {
+		super(msg, cause);
 		entName = name;
 		source = src;
 		position = pos;
@@ -44,14 +48,11 @@ public class ErrorException extends RuntimeException {
 	}
 
 	public ErrorException(Entity ent, ExpError e) {
-		this(e.pos, e.source, ent.getName(), e.getMessage());
+		this(e.pos, e.source, ent.getName(), e.getMessage(), e);
 	}
 
 	public ErrorException( Throwable cause ) {
-		super( cause );
-		entName = "";
-		source = "";
-		position = -1;
+		this(-1, "", "", cause.getMessage(), cause);
 	}
 
 	@Override
