@@ -427,7 +427,7 @@ public class ExpParser {
 				} else {
 					this.resolver = context.getOutputResolver(outputName);
 				}
-			} catch (ExpError ex) {
+			} catch (Exception ex) {
 				throw (fixError(ex, exp.source, pos));
 			}
 
@@ -439,7 +439,7 @@ public class ExpParser {
 				ExpResult ent = entNode.evaluate(ec);
 
 				return resolver.resolve(ec, ent);
-			} catch (ExpError ex) {
+			} catch (Exception ex) {
 				throw fixError(ex, exp.source, tokenPos);
 			}
 
@@ -551,7 +551,7 @@ public class ExpParser {
 
 				throw new ExpError(exp.source, tokenPos, "Expression does not evaluate to a collection or lambda type.");
 
-			} catch (ExpError ex) {
+			} catch (Exception ex) {
 				throw fixError(ex, exp.source, tokenPos);
 			}
 		}
@@ -636,7 +636,7 @@ public class ExpParser {
 					boolean isConstant = ec == null;
 					return ExpCollections.makeAssignableMapCollection(map, isConstant);
 				}
-			} catch (ExpError ex) {
+			} catch (Exception ex) {
 				throw fixError(ex, exp.source, tokenPos);
 			}
 
@@ -991,12 +991,10 @@ public class ExpParser {
 	}
 
 	// Some errors can be throw without a known source or position, update such errors with the given info
-	private static ExpError fixError(ExpError ex, String source, int pos) {
-		ExpError exFixed = ex;
-		if (ex.source == null) {
-			exFixed = new ExpError(source, pos, ex.getMessage(), ex);
-		}
-		return exFixed;
+	private static ExpError fixError(Exception ex, String source, int pos) {
+		if (!(ex instanceof ExpError) || ((ExpError) ex).source == null)
+			return new ExpError(source, pos, ex.getMessage(), ex);
+		return (ExpError) ex;
 	}
 
 	private static void fixValidationErrors(ExpValResult res, String source, int pos) {
