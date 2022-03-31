@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016 JaamSim Software Inc.
+ * Copyright (C) 2016-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -356,14 +356,7 @@ public class ExpEvaluator {
 
 		@Override
 		public void assign(ExpResult ent, ExpResult[] indices, ExpResult val) throws ExpError {
-			if (ent.type != ExpResType.ENTITY) {
-				throw new ExpError(null, 0, "Can not execute assignment, not assigning to an entity");
-			}
 			Entity assignEnt = ent.entVal;
-			if (assignEnt == null) {
-				throw new ExpError(null, 0, "Trying to assign to a null entity");
-			}
-
 			assignEnt.setAttribute(attribName, indices, val);
 		}
 

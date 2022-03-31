@@ -235,6 +235,7 @@ public class ExpParser {
 		public ExpNode[] attribIndices;
 		public ExpNode valueExp;
 		public Assigner assigner;
+		int attribPos;
 		public Assignment(String source) {
 			super(source);
 		}
@@ -242,7 +243,7 @@ public class ExpParser {
 		public ExpResult evaluate(EvalContext ec) throws ExpError {
 			synchronized(executingThreads) {
 				if (executingThreads.contains(Thread.currentThread())) {
-					throw new ExpError(null, 0, "Expression recursion detected for expression: %s", source);
+					throw new ExpError(source, entExp.tokenPos, "Expression recursion detected");
 				}
 
 				executingThreads.add(Thread.currentThread());
@@ -257,11 +258,20 @@ public class ExpParser {
 						indices[i] = attribIndices[i].evaluate(ec);
 					}
 				}
+				if (ent.type != ExpResType.ENTITY)
+					throw new ExpError(source, entExp.tokenPos, "Can not execute assignment, not assigning to an entity");
+				if (ent.entVal == null)
+					throw new ExpError(source, entExp.tokenPos, "Trying to assign to a null entity");
+
 				assigner.assign(ent, indices, value);
 
 				return value;
-
-			} finally {
+			}
+			catch (Exception ex) {
+				// Add the position for exceptions related to the attribute name and the values of its indices
+				throw fixError(ex, source, attribPos);
+			}
+			finally {
 				synchronized(executingThreads) {
 					executingThreads.remove(Thread.currentThread());
 				}
@@ -1513,6 +1523,7 @@ public class ExpParser {
 		} else {
 			ret.assigner = context.getAssigner(lhsResolve.outputName);
 		}
+		ret.attribPos = lhsNode.tokenPos;
 
 		return ret;
 
