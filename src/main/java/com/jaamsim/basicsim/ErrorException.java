@@ -28,11 +28,11 @@ public class ErrorException extends RuntimeException {
 	public String source;
 	public int position;
 
-	public ErrorException(int pos, String src, String name, String msg) {
-		this(pos, src, name, msg, null);
+	public ErrorException(String src, int pos, String name, String msg) {
+		this(src, pos, name, msg, null);
 	}
 
-	public ErrorException(int pos, String src, String name, String msg, Throwable cause) {
+	public ErrorException(String src, int pos, String name, String msg, Throwable cause) {
 		super(msg, cause);
 		entName = name;
 		source = src;
@@ -40,19 +40,19 @@ public class ErrorException extends RuntimeException {
 	}
 
 	public ErrorException(String format, Object... args) {
-		this(-1, "", "", String.format(format, args));
+		this("", -1, "", String.format(format, args));
 	}
 
 	public ErrorException(Entity ent, String msg) {
-		this(-1, "", ent.getName(), msg);
+		this("", -1, ent.getName(), msg);
 	}
 
 	public ErrorException(Entity ent, ExpError e) {
-		this(e.pos, e.source, ent.getName(), e.getMessage(), e);
+		this(e.source, e.pos, ent.getName(), e.getMessage(), e);
 	}
 
 	public ErrorException( Throwable cause ) {
-		this(-1, "", "", cause.getMessage(), cause);
+		this("", -1, "", cause.getMessage(), cause);
 	}
 
 	@Override
