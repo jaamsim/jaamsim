@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2021 JaamSim Software Inc.
+ * Copyright (C) 2016-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -121,7 +121,7 @@ implements SampleProvider {
 		// call stack size to be exceeded
 		double ret = lastInputValue;
 		try {
-			ret = inputValue.getValue().getNextSample(simTime);
+			ret = inputValue.getNextSample(simTime);
 		} catch(Exception e) {
 			if (EventManager.hasCurrent()) {
 				error("Closed loop detected in calculation. Insert a UnitDelay object.");
