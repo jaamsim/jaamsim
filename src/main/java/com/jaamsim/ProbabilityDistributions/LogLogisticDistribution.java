@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016 JaamSim Software Inc.
+ * Copyright (C) 2016-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -74,23 +74,23 @@ public class LogLogisticDistribution extends Distribution {
 
 		// Inverse transform method
 		double u = rng.nextUniform();
-		double scale = scaleInput.getValue().getNextSample(simTime);
-		double shape = shapeInput.getValue().getNextSample(simTime);
+		double scale = scaleInput.getNextSample(simTime);
+		double shape = shapeInput.getNextSample(simTime);
 		return scale * Math.pow( u / (1 - u), 1.0 / shape );
 	}
 
 	@Override
 	protected double getMean(double simTime) {
-		double scale = scaleInput.getValue().getNextSample(simTime);
-		double shape = shapeInput.getValue().getNextSample(simTime);
+		double scale = scaleInput.getNextSample(simTime);
+		double shape = shapeInput.getNextSample(simTime);
 		double theta = Math.PI / shape;
 		return scale * theta / Math.sin( theta );
 	}
 
 	@Override
 	protected double getStandardDev(double simTime) {
-		double scale = scaleInput.getValue().getNextSample(simTime);
-		double shape = shapeInput.getValue().getNextSample(simTime);
+		double scale = scaleInput.getNextSample(simTime);
+		double shape = shapeInput.getNextSample(simTime);
 		double theta = Math.PI / shape;
 		return scale * Math.sqrt( theta * ( 2.0/Math.sin(2.0*theta) - theta/Math.pow( Math.sin(theta), 2.0) ) );
 	}

@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2019 JaamSim Software Inc.
+ * Copyright (C) 2016-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -85,7 +85,7 @@ public class BooleanSelector extends DisplayEntity implements RandomStreamUser {
 
 	public boolean getNextValue() {
 		double samp = rng.nextUniform();
-		double prob = trueProbInput.getValue().getNextSample(0);
+		double prob = trueProbInput.getNextSample(0);
 		lastValue = samp < prob;
 		return lastValue;
 	}
@@ -104,7 +104,7 @@ public class BooleanSelector extends DisplayEntity implements RandomStreamUser {
 
 		// Select the next sample
 		double samp = rng.nextUniform();
-		double prob = trueProbInput.getValue().getNextSample(simTime);
+		double prob = trueProbInput.getNextSample(simTime);
 		lastValue = samp < prob;
 		return lastValue;
 	}

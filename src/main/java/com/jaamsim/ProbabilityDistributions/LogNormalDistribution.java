@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016 JaamSim Software Inc.
+ * Copyright (C) 2016-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -98,26 +98,26 @@ public class LogNormalDistribution extends Distribution {
 		sample = v1 * Math.sqrt( -2.0 * Math.log( w ) / w );
 
 		// Adjust for the desired mode and standard deviation
-		double mean = normalMeanInput.getValue().getNextSample(simTime);
-		double sd = normalStandardDeviationInput.getValue().getNextSample(simTime);
+		double mean = normalMeanInput.getNextSample(simTime);
+		double sd = normalStandardDeviationInput.getNextSample(simTime);
 		sample = mean + sample*sd;
 
 		// Convert to lognormal
-		double scale = scaleInput.getValue().getNextSample(simTime);
+		double scale = scaleInput.getNextSample(simTime);
 		return scale * Math.exp(sample);
 	}
 
 	@Override
 	protected double getMean(double simTime) {
-		double mean = normalMeanInput.getValue().getNextSample(simTime);
-		double sd = normalStandardDeviationInput.getValue().getNextSample(simTime);
-		double scale = scaleInput.getValue().getNextSample(simTime);
+		double mean = normalMeanInput.getNextSample(simTime);
+		double sd = normalStandardDeviationInput.getNextSample(simTime);
+		double scale = scaleInput.getNextSample(simTime);
 		return scale * Math.exp(mean + sd*sd/2.0);
 	}
 
 	@Override
 	protected double getStandardDev(double simTime) {
-		double sd = normalStandardDeviationInput.getValue().getNextSample(simTime);
+		double sd = normalStandardDeviationInput.getNextSample(simTime);
 		return this.getMean(simTime) * Math.sqrt( Math.exp(sd*sd) - 1.0 );
 	}
 

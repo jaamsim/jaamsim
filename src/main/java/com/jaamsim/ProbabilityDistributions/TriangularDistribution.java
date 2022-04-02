@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016 JaamSim Software Inc.
+ * Copyright (C) 2016-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -77,9 +77,9 @@ public class TriangularDistribution extends Distribution {
 	protected double getSample(double simTime) {
 
 		double sample;
-		double minVal = minValueInput.getValue().getNextSample(simTime);
-		double maxVal = maxValueInput.getValue().getNextSample(simTime);
-		double mode = modeInput.getValue().getNextSample(simTime);
+		double minVal = minValueInput.getNextSample(simTime);
+		double maxVal = maxValueInput.getNextSample(simTime);
+		double mode = modeInput.getNextSample(simTime);
 
 		// Select the random value
 		double rand = rng.nextUniform();
@@ -102,17 +102,17 @@ public class TriangularDistribution extends Distribution {
 
 	@Override
 	protected double getMean(double simTime) {
-		double minVal = minValueInput.getValue().getNextSample(simTime);
-		double maxVal = maxValueInput.getValue().getNextSample(simTime);
-		double mode = modeInput.getValue().getNextSample(simTime);
+		double minVal = minValueInput.getNextSample(simTime);
+		double maxVal = maxValueInput.getNextSample(simTime);
+		double mode = modeInput.getNextSample(simTime);
 		return (minVal + mode + maxVal)/3.0;
 	}
 
 	@Override
 	protected double getStandardDev(double simTime) {
-		double a = minValueInput.getValue().getNextSample(simTime);
-		double b = maxValueInput.getValue().getNextSample(simTime);
-		double m = modeInput.getValue().getNextSample(simTime);
+		double a = minValueInput.getNextSample(simTime);
+		double b = maxValueInput.getNextSample(simTime);
+		double m = modeInput.getNextSample(simTime);
 		return  Math.sqrt( ( a*a + b*b + m*m - a*b - a*m - b*m ) / 18.0 );
 	}
 

@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2020 JaamSim Software Inc.
+ * Copyright (C) 2016-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -195,8 +195,8 @@ implements SampleProvider, RandomStreamUser {
 
 		// Loop until the select sample falls within the desired min and max values
 		double nextSample;
-		double minVal = this.minValueInput.getValue().getNextSample(simTime);
-		double maxVal = this.maxValueInput.getValue().getNextSample(simTime);
+		double minVal = this.minValueInput.getNextSample(simTime);
+		double maxVal = this.maxValueInput.getNextSample(simTime);
 		int n = 0;
 		do {
 			if (n > MAX_ATTEMPTS) {

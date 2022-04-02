@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016 JaamSim Software Inc.
+ * Copyright (C) 2016-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,22 +44,22 @@ public class UniformDistribution extends Distribution {
 	protected double getSample(double simTime) {
 
 		// Select the sample from a uniform distribution between the min and max values
-		double minVal = minValueInput.getValue().getNextSample(simTime);
-		double maxVal = maxValueInput.getValue().getNextSample(simTime);
+		double minVal = minValueInput.getNextSample(simTime);
+		double maxVal = maxValueInput.getNextSample(simTime);
 		return minVal + rng.nextUniform()*(maxVal - minVal);
 	}
 
 	@Override
 	protected double getMean(double simTime) {
-		double minVal = minValueInput.getValue().getNextSample(simTime);
-		double maxVal = maxValueInput.getValue().getNextSample(simTime);
+		double minVal = minValueInput.getNextSample(simTime);
+		double maxVal = maxValueInput.getNextSample(simTime);
 		return 0.5 *(minVal + maxVal);
 	}
 
 	@Override
 	protected double getStandardDev(double simTime) {
-		double minVal = minValueInput.getValue().getNextSample(simTime);
-		double maxVal = maxValueInput.getValue().getNextSample(simTime);
+		double minVal = minValueInput.getNextSample(simTime);
+		double maxVal = maxValueInput.getNextSample(simTime);
 		return 0.5*(maxVal - minVal) / Math.sqrt(3.0);
 	}
 
