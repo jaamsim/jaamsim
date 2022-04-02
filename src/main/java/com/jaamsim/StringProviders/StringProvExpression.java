@@ -27,6 +27,7 @@ import com.jaamsim.input.ExpParser;
 import com.jaamsim.input.ExpParser.Expression;
 import com.jaamsim.input.ExpResType;
 import com.jaamsim.input.ExpResult;
+import com.jaamsim.input.Input;
 import com.jaamsim.units.Unit;
 
 public class StringProvExpression implements StringProvider {
@@ -110,8 +111,7 @@ public class StringProvExpression implements StringProvider {
 				break;
 			case NUMBER:
 				if (result.unitType != unitType) {
-					throw new ExpError(exp.source, 0, "Invalid unit returned by an expression.%n"
-							+ "Received: %s, expected: %s",
+					throw new ExpError(exp.source, 0, Input.EXP_ERR_UNIT,
 							thisEnt.getJaamSimModel().getObjectTypeForClass(result.unitType),
 							thisEnt.getJaamSimModel().getObjectTypeForClass(unitType));
 				}

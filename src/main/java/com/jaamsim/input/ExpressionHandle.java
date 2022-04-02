@@ -60,8 +60,7 @@ public class ExpressionHandle extends ValueHandle {
 		try {
 			ExpResult er = ExpEvaluator.evaluateExpression(exp, simTime);
 			if (er.type == ExpResType.NUMBER && er.unitType != unitType) {
-				throw new ExpError(exp.source, 0, "Unit Type mismatch in custom output.%n"
-						+ "Received %s, expected %s",
+				throw new ExpError(exp.source, 0, Input.EXP_ERR_UNIT,
 						er.unitType.getSimpleName(), unitType.getSimpleName());
 			}
 			return er;
