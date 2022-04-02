@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2016-2021 JaamSim Software Inc.
+ * Copyright (C) 2016-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -110,9 +110,9 @@ public class StringProvExpression implements StringProvider {
 				break;
 			case NUMBER:
 				if (result.unitType != unitType) {
-					thisEnt.error("Invalid unit returned by an expression: '%s'%n"
+					throw new ExpError(exp.source, 0, "Invalid unit returned by an expression.%n"
 							+ "Received: %s, expected: %s",
-							exp, thisEnt.getJaamSimModel().getObjectTypeForClass(result.unitType),
+							thisEnt.getJaamSimModel().getObjectTypeForClass(result.unitType),
 							thisEnt.getJaamSimModel().getObjectTypeForClass(unitType));
 				}
 				ret = String.format(fmt, result.value/siFactor);

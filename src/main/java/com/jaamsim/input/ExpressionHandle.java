@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2016-2021 JaamSim Software Inc.
+ * Copyright (C) 2016-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -60,8 +60,9 @@ public class ExpressionHandle extends ValueHandle {
 		try {
 			ExpResult er = ExpEvaluator.evaluateExpression(exp, simTime);
 			if (er.type == ExpResType.NUMBER && er.unitType != unitType) {
-				throw new ErrorException(String.format("Unit Type mismatch in custom output. Entity: %s Expression: '%s' Expected %s, got %s.",
-						ent.getName(), exp.source, unitType.getSimpleName(), er.unitType.getSimpleName()));
+				throw new ExpError(exp.source, 0, "Unit Type mismatch in custom output.%n"
+						+ "Received %s, expected %s",
+						er.unitType.getSimpleName(), unitType.getSimpleName());
 			}
 			return er;
 		}
