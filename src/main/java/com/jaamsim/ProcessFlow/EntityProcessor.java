@@ -157,7 +157,7 @@ public class EntityProcessor extends AbstractLinkedResourceUser {
 		DisplayEntity ent = getReceivedEntity(simTime);
 
 		// Set the service duration
-		double dur = serviceTime.getValue().getNextSample(simTime);
+		double dur = serviceTime.getNextSample(simTime);
 		long ticks = EventManager.current().secondsToNearestTick(dur);
 
 		// Add the entity to the list of entities to be processed
@@ -387,7 +387,7 @@ public class EntityProcessor extends AbstractLinkedResourceUser {
 	    unitType = DimensionlessUnit.class,
 	    sequence = 0)
 	public int getCapacity(double simTime) {
-		return (int) capacity.getValue().getNextSample(simTime);
+		return (int) capacity.getNextSample(simTime);
 	}
 
 	@Output(name = "UnitsInUse",

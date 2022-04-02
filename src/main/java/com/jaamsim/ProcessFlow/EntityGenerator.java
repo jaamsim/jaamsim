@@ -143,14 +143,14 @@ public class EntityGenerator extends LinkedService implements EntityGen {
 
 		// Stop if the last entity been generated
 		if (maxNumber.getValue() != null
-				&& numberGenerated >= maxNumber.getValue().getNextSample(simTime))
+				&& numberGenerated >= maxNumber.getNextSample(simTime))
 			return false;
 
 		// Select the inter-arrival time for the next entity
 		if (numberGenerated == 0)
-			presentIAT = firstArrivalTime.getValue().getNextSample(simTime);
+			presentIAT = firstArrivalTime.getNextSample(simTime);
 		else
-			presentIAT = interArrivalTime.getValue().getNextSample(simTime);
+			presentIAT = interArrivalTime.getNextSample(simTime);
 
 		if (presentIAT == Double.POSITIVE_INFINITY)
 			return false;
@@ -174,7 +174,7 @@ public class EntityGenerator extends LinkedService implements EntityGen {
 		}
 
 		// Create the new entities
-		int num = (int) entitiesPerArrival.getValue().getNextSample(getSimTime());
+		int num = (int) entitiesPerArrival.getNextSample(getSimTime());
 		for (int i=0; i<num; i++) {
 			numberGenerated++;
 			DisplayEntity proto = prototypeEntity.getValue().getNextEntity(simTime);

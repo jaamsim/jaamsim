@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2021 JaamSim Software Inc.
+ * Copyright (C) 2016-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -170,13 +170,13 @@ public abstract class AbstractPack extends LinkedService {
 	}
 
 	protected int getNumberToInsert(double simTime) {
-		return (int) numberOfEntities.getValue().getNextSample(simTime);
+		return (int) numberOfEntities.getNextSample(simTime);
 	}
 
 	private int getNumberToStart(double simTime) {
 		int ret = numberToInsert;
 		if (!numberToStart.isDefault() && numberToInsert > 0) {
-			ret = (int) numberToStart.getValue().getNextSample(simTime);
+			ret = (int) numberToStart.getNextSample(simTime);
 			ret = Math.max(ret, 1);
 		}
 		return ret;
@@ -184,7 +184,7 @@ public abstract class AbstractPack extends LinkedService {
 
 	@Override
 	protected double getStepDuration(double simTime) {
-		return serviceTime.getValue().getNextSample(simTime);
+		return serviceTime.getNextSample(simTime);
 	}
 
 	@Override

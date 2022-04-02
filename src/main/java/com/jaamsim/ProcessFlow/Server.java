@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2021 JaamSim Software Inc.
+ * Copyright (C) 2016-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -72,7 +72,7 @@ public class Server extends LinkedService {
 		setEntityState(servedEntity);
 
 		// Set the service duration
-		serviceDuration = serviceTime.getValue().getNextSample(simTime);
+		serviceDuration = serviceTime.getNextSample(simTime);
 
 		return true;
 	}

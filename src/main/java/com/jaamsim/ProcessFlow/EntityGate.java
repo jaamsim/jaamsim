@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2021 JaamSim Software Inc.
+ * Copyright (C) 2016-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -118,7 +118,7 @@ public class EntityGate extends LinkedService {
 
 	@Override
 	protected double getStepDuration(double simTime) {
-		return releaseDelay.getValue().getNextSample(simTime);
+		return releaseDelay.getNextSample(simTime);
 	}
 	@Override
 	public void thresholdChanged() {
@@ -135,7 +135,7 @@ public class EntityGate extends LinkedService {
 	}
 
 	public int getNumberToRelease(double simTime) {
-		return (int) numberToRelease.getValue().getNextSample(simTime);
+		return (int) numberToRelease.getNextSample(simTime);
 	}
 
 	@Override
