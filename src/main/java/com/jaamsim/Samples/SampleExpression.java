@@ -62,6 +62,11 @@ public class SampleExpression implements SampleProvider {
 		double ret = 0.0;
 		try {
 			ExpResult res = ExpEvaluator.evaluateExpression(exp, simTime);
+
+			if (res.type != ExpResType.NUMBER)
+				throw new ExpError(exp.source, 0, Input.EXP_ERR_RESULT_TYPE,
+						res.type, ExpResType.NUMBER);
+
 			if (res.unitType != unitType)
 				throw new ExpError(exp.source, 0, Input.EXP_ERR_UNIT,
 						thisEnt.getJaamSimModel().getObjectTypeForClass(res.unitType),
