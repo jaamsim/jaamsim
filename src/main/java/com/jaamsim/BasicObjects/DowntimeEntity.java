@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2021 JaamSim Software Inc.
+ * Copyright (C) 2016-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -188,7 +188,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 		if (firstDowntime.getValue() == null)
 			secondsForNextFailure = getNextDowntimeIAT();
 		else
-			secondsForNextFailure = firstDowntime.getValue().getNextSample(getSimTime());
+			secondsForNextFailure = firstDowntime.getNextSample(getSimTime());
 	}
 
 	@Override
@@ -454,7 +454,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 	 * Return the time in seconds of the next downtime IAT
 	 */
 	private double getNextDowntimeIAT() {
-		return downtimeIATDistribution.getValue().getNextSample(getSimTime());
+		return downtimeIATDistribution.getNextSample(getSimTime());
 	}
 
 	/**
@@ -482,7 +482,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 	 * Return the time in seconds of the next downtime duration
 	 */
 	private double getDowntimeDuration() {
-		return downtimeDurationDistribution.getValue().getNextSample(getSimTime());
+		return downtimeDurationDistribution.getNextSample(getSimTime());
 	}
 
 	public SampleProvider getDowntimeDurationDistribution() {

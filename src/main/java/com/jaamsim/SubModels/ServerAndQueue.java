@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2019-2020 JaamSim Software Inc.
+ * Copyright (C) 2019-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -106,7 +106,7 @@ public class ServerAndQueue extends CompoundEntity {
 	 description = "The queue length at which the Threshold output closes.",
 	    sequence = 0)
 	public int getMaxQueueLength(double simTime) {
-		return (int) maxQueueLength.getValue().getNextSample(simTime);
+		return (int) maxQueueLength.getNextSample(simTime);
 	}
 
 }

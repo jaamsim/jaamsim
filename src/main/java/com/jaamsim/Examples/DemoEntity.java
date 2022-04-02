@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2016 JaamSim Software Inc.
+ * Copyright (C) 2016-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -94,7 +94,7 @@ public class DemoEntity extends DisplayEntity {
 
 		// Set the duration for the trip
 		double simTime = this.getSimTime();
-		double duration = travelTime.getValue().getNextSample(simTime);
+		double duration = travelTime.getNextSample(simTime);
 
 		// Set the speed
 		speed = 1.0 / duration;
