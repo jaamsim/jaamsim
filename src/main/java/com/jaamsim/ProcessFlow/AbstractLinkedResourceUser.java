@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2017-2021 JaamSim Software Inc.
+ * Copyright (C) 2017-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -153,10 +153,9 @@ public abstract class AbstractLinkedResourceUser extends LinkedService implement
 		this.setReceivedEntity(ent);
 
 		ArrayList<ResourceProvider> resList = getResourceList();
-		ArrayList<SampleProvider> numberList = numberOfUnitsList.getValue();
 		for (int i=0; i<resList.size(); i++) {
-			int ind = Math.min(i, numberList.size() - 1);
-			int n = (int) numberList.get(ind).getNextSample(simTime);
+			int ind = Math.min(i, numberOfUnitsList.getListSize() - 1);
+			int n = (int) numberOfUnitsList.getNextSample(ind, simTime);
 			if (!resList.get(i).canSeize(simTime, n, ent)) {
 				this.setReceivedEntity(oldEnt);
 				return false;
@@ -176,10 +175,9 @@ public abstract class AbstractLinkedResourceUser extends LinkedService implement
 
 		// Set the number of resources to seize
 		ArrayList<ResourceProvider> resList = getResourceList();
-		ArrayList<SampleProvider> numberList = numberOfUnitsList.getValue();
-		for (int i = 0; i < resList.size(); i++) {
-			int ind = Math.min(i, numberList.size() - 1);
-			seizedUnits[i] = (int) numberList.get(ind).getNextSample(simTime);
+		for (int i = 0; i < numberOfUnitsList.getListSize(); i++) {
+			int ind = Math.min(i, numberOfUnitsList.getListSize() - 1);
+			seizedUnits[i] = (int) numberOfUnitsList.getNextSample(ind, simTime);
 		}
 
 		// Seize the resources
