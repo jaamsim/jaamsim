@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2017-2021 JaamSim Software Inc.
+ * Copyright (C) 2017-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import java.util.Collections;
 
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.basicsim.Entity;
+import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputErrorException;
@@ -148,6 +149,16 @@ public class EntityProvInput<T extends Entity> extends Input<EntityProvider<T>> 
 			return "";
 
 		return String.format("[%s]", value.getNextEntity(simTime));
+	}
+
+	public T getNextEntity(double simTime) {
+		try {
+			return value.getNextEntity(simTime);
+		}
+		catch (ErrorException e) {
+			e.entName = String.format("%s keyword '%s'", e.entName, getKeyword());
+			throw e;
+		}
 	}
 
 }
