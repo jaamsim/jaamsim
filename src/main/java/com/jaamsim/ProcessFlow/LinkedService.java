@@ -315,9 +315,12 @@ public abstract class LinkedService extends LinkedDevice implements QueueUser {
 		if (!getWatchList().isEmpty())
 			return ret;
 
-		Queue queue = getQueue(0.0d);
-		if (queue != null)
-			ret.add(queue);
+		try {
+			Queue queue = getQueue(0.0d);
+			if (queue != null)
+				ret.add(queue);
+		}
+		catch (Exception e) {}
 		return ret;
 	}
 
@@ -361,9 +364,12 @@ public abstract class LinkedService extends LinkedDevice implements QueueUser {
 	@Override
 	public ArrayList<DisplayEntity> getSourceEntities() {
 		ArrayList<DisplayEntity> ret = super.getSourceEntities();
-		Queue queue = getQueue(0.0d);
-		if (queue != null)
-			ret.add(queue);
+		try {
+			Queue queue = getQueue(0.0d);
+			if (queue != null)
+				ret.add(queue);
+		}
+		catch (Exception e) {}
 		return ret;
 	}
 
