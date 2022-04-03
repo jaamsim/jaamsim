@@ -177,7 +177,7 @@ public class EntityGenerator extends LinkedService implements EntityGen {
 		int num = (int) entitiesPerArrival.getNextSample(getSimTime());
 		for (int i=0; i<num; i++) {
 			numberGenerated++;
-			DisplayEntity proto = prototypeEntity.getValue().getNextEntity(simTime);
+			DisplayEntity proto = prototypeEntity.getNextEntity(simTime);
 			StringBuilder sb = new StringBuilder();
 			sb.append(name).append(numberGenerated);
 			DisplayEntity ent = InputAgent.generateEntityWithName(getJaamSimModel(), proto.getClass(), sb.toString());
@@ -212,9 +212,9 @@ public class EntityGenerator extends LinkedService implements EntityGen {
 	@Override
 	public ArrayList<DisplayEntity> getSourceEntities() {
 		ArrayList<DisplayEntity> ret = new ArrayList<>();
-		if (prototypeEntity.getValue() == null)
+		if (prototypeEntity.isDefault())
 			return ret;
-		DisplayEntity ent = prototypeEntity.getValue().getNextEntity(0.0d);
+		DisplayEntity ent = prototypeEntity.getNextEntity(0.0d);
 		if (ent != null) {
 			ret.add(ent);
 		}

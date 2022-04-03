@@ -75,8 +75,8 @@ public class SetGraphics extends LinkedComponent {
 
 		// Identify the entity whose graphics are to be changed
 		DisplayEntity target = ent;
-		if (targetEntity.getValue() != null) {
-			target = targetEntity.getValue().getNextEntity(simTime);
+		if (!targetEntity.isDefault()) {
+			target = targetEntity.getNextEntity(simTime);
 		}
 
 		// Choose the new graphics for this entity
