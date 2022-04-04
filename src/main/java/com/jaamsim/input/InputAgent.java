@@ -527,8 +527,10 @@ public class InputAgent {
 			}
 			catch (Throwable e) {
 				simModel.recordError();
-				InputAgent.logMessage(simModel,
-						"Validation Error - %s: %s", each, e.getMessage());
+				String msg = String.format("Validation Error - %s: %s%n", each, e.getMessage());
+				if (e instanceof ErrorException)
+					msg = String.format("Validation Error - %s%n", e.getMessage());
+				InputAgent.logMessage(simModel, msg);
 			}
 		}
 
