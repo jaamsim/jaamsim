@@ -1092,12 +1092,24 @@ public class RenderManager implements DragSourceListener {
 		if (ent.getParent() != selectedEntity.getParent())
 			return false;
 
+		// Is the new entity or any entities in its chain of relative entities already selected?
 		DisplayEntity e = ent;
 		while (e != null) {
 			if (selectedEntityList.contains(e))
 				return false;
 			e = e.getRelativeEntity();
 		}
+
+		// Is the new entity a relative entity of any entities that are already selected?
+		for (DisplayEntity de : selectedEntityList) {
+			e = de.getRelativeEntity();
+			while (e != null) {
+				if (e == ent)
+					return false;
+				e = e.getRelativeEntity();
+			}
+		}
+
 		return true;
 	}
 
