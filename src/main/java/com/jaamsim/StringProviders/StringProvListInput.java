@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2015 Ausenco Engineering Canada Inc.
- * Copyright (C) 2017-2021 JaamSim Software Inc.
+ * Copyright (C) 2017-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import java.util.Collections;
 
 import com.jaamsim.Samples.SampleProvider;
 import com.jaamsim.basicsim.Entity;
+import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputErrorException;
@@ -182,6 +183,26 @@ public class StringProvListInput extends ListInput<ArrayList<StringProvider>> {
 			sb.append(Input.BRACE_SEPARATOR).append("}");
 		}
 		return sb.toString();
+	}
+
+	public String getNextString(int i, double simTime) {
+		try {
+			return value.get(i).getNextString(simTime);
+		}
+		catch (ErrorException e) {
+			e.entName = String.format("%s keyword '%s', index (%d)", e.entName, getKeyword(), i + 1);
+			throw e;
+		}
+	}
+
+	public double getNextValue(int i, double simTime) {
+		try {
+			return value.get(i).getNextValue(simTime);
+		}
+		catch (ErrorException e) {
+			e.entName = String.format("%s keyword '%s', index (%d)", e.entName, getKeyword(), i + 1);
+			throw e;
+		}
 	}
 
 }
