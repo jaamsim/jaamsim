@@ -161,8 +161,8 @@ public class EntityContainer extends SimEntity implements EntContainer {
 		int pri = (int) priority.getNextSample(simTime);
 
 		String m = null;
-		if (match.getValue() != null)
-			m = match.getValue().getNextString(simTime, 1.0d, true);
+		if (!match.isDefault())
+			m = match.getNextString(simTime, 1.0d, true);
 
 		container.addEntity(ent, m, pri, fifo.getValue(), simTime);
 	}

@@ -255,10 +255,10 @@ public abstract class LinkedService extends LinkedDevice implements QueueUser {
 	 * @return match value.
 	 */
 	protected String getNextMatchValue(double simTime) {
-		if (match.getValue() == null)
+		if (match.isDefault())
 			return null;
 
-		return match.getValue().getNextString(simTime, 1.0d, true);
+		return match.getNextString(simTime, 1.0d, true);
 	}
 
 	protected void setMatchValue(String m) {
