@@ -446,6 +446,8 @@ public class JaamSimModel implements EventTimeListener {
 				if (t instanceof ErrorException)
 					msg = String.format("Validation Error - %s%n", t.getMessage());
 				InputAgent.logMessage(this, msg);
+				if (t.getMessage() == null || t.getMessage().equals("null"))
+					InputAgent.logStackTrace(this, t);
 				if (gui != null) {
 					gui.handleInputError(t, each);
 				}
