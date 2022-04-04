@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2019-2021 JaamSim Software Inc.
+ * Copyright (C) 2019-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -108,7 +108,7 @@ public class ExternalProgram extends LinkedComponent {
 
 		ArrayList<String> list = new ArrayList<>(n);
 		for (int i = 0; i < n; i++) {
-			list.add(initialValue.getValue().get(i).getNextString(0.0d));
+			list.add(initialValue.getNextString(i, 0.0d));
 		}
 		ArrayList<ExpResult> resList = FileToArray.getExpResultList(list, this, 0.0d);
 		return ExpCollections.wrapCollection(resList, DimensionlessUnit.class);
@@ -143,7 +143,7 @@ public class ExternalProgram extends LinkedComponent {
 
 		// 3) Command line parameters
 		for (int i = 0; i < n; i++) {
-			command[i + m] = dataSource.getValue().get(i).getNextString(simTime);
+			command[i + m] = dataSource.getNextString(i, simTime);
 		}
 
 		try {

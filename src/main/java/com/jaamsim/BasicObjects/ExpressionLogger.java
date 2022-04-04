@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2015 Ausenco Engineering Canada Inc.
- * Copyright (C) 2015-2021 JaamSim Software Inc.
+ * Copyright (C) 2015-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -129,7 +129,7 @@ public class ExpressionLogger extends Logger implements StateEntityListener {
 		// Start tracing the expression values
 		if (valueTraceList.getListSize() > 0) {
 			for (int i=0; i<valueTraceList.getListSize(); i++) {
-				String str = valueTraceList.getValue().get(i).getNextString(getSimTime());
+				String str = valueTraceList.getNextString(i, getSimTime());
 				lastValueList.set(i, str);
 			}
 			this.doValueTrace();
@@ -202,7 +202,7 @@ public class ExpressionLogger extends Logger implements StateEntityListener {
 		try {
 			// Write the traced expression values
 			for (int i=0; i<valueTraceList.getListSize(); i++) {
-				String str = valueTraceList.getValue().get(i).getNextString(simTime);
+				String str = valueTraceList.getNextString(i, simTime);
 				file.format("\t%s", str);
 			}
 		}
@@ -229,7 +229,7 @@ public class ExpressionLogger extends Logger implements StateEntityListener {
 		double simTime = getSimTime();
 		try {
 			for (int i=0; i<valueTraceList.getListSize(); i++) {
-				String str = valueTraceList.getValue().get(i).getNextString(simTime);
+				String str = valueTraceList.getNextString(i, simTime);
 				if (!str.equals(lastValueList.get(i))) {
 					lastValueList.set(i, str);
 					ret = true;
