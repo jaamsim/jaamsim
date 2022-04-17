@@ -105,10 +105,10 @@ public class StringProvExpression implements StringProvider {
 			ExpResult result = ExpEvaluator.evaluateExpression(exp, simTime);
 			switch (result.type) {
 			case STRING:
-				ret = String.format(fmt, result.stringVal);
+				ret = String.format(fmt, result.stringVal);  // no double quotes
 				break;
 			case ENTITY:
-				ret = String.format(fmt, result.entVal.getName());
+				ret = String.format(fmt, result.entVal);  // no square brackets
 				break;
 			case NUMBER:
 				if (result.unitType != unitType) {
