@@ -287,7 +287,8 @@ public class SampleListInput extends ListInput<ArrayList<SampleProvider>> {
 			return value.get(i).getNextSample(simTime);
 		}
 		catch (ErrorException e) {
-			e.entName = String.format("%s keyword '%s', index (%d)", e.entName, getKeyword(), i + 1);
+			e.keyword = getKeyword();
+			e.index = i + 1;
 			throw e;
 		}
 	}

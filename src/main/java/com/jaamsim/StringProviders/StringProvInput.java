@@ -172,7 +172,7 @@ public class StringProvInput extends Input<StringProvider> {
 			return value.getNextString(simTime, siFactor, integerValue);
 		}
 		catch (ErrorException e) {
-			e.entName = String.format("%s keyword '%s'", e.entName, getKeyword());
+			e.keyword = getKeyword();
 			throw e;
 		}
 	}
@@ -182,7 +182,7 @@ public class StringProvInput extends Input<StringProvider> {
 			return value.getNextString(simTime, fmt, siFactor);
 		}
 		catch (ErrorException e) {
-			e.entName = String.format("%s keyword '%s'", e.entName, getKeyword());
+			e.keyword = getKeyword();
 			throw e;
 		}
 	}
@@ -192,7 +192,7 @@ public class StringProvInput extends Input<StringProvider> {
 			return value.getNextValue(simTime);
 		}
 		catch (ErrorException e) {
-			e.entName = String.format("%s keyword '%s'", e.entName, getKeyword());
+			e.keyword = getKeyword();
 			throw e;
 		}
 	}

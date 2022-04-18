@@ -156,7 +156,7 @@ public class EntityProvInput<T extends Entity> extends Input<EntityProvider<T>> 
 			return value.getNextEntity(simTime);
 		}
 		catch (ErrorException e) {
-			e.entName = String.format("%s keyword '%s'", e.entName, getKeyword());
+			e.keyword = getKeyword();
 			throw e;
 		}
 	}

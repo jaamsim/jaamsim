@@ -204,7 +204,7 @@ public class SampleInput extends Input<SampleProvider> {
 			return value.getNextSample(simTime);
 		}
 		catch (ErrorException e) {
-			e.entName = String.format("%s keyword '%s'", e.entName, getKeyword());
+			e.keyword = getKeyword();
 			throw e;
 		}
 	}
