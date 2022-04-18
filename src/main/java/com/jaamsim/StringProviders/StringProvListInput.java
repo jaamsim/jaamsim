@@ -63,10 +63,10 @@ public class StringProvListInput extends ListInput<ArrayList<StringProvider>> {
 				temp.add(sp);
 			}
 			catch (InputErrorException e) {
-				if (subArgs.size() == 1)
-					throw new InputErrorException(e.getMessage());
-				else
-					throw new InputErrorException(INP_ERR_ELEMENT, i+1, e.getMessage());
+				String msg = e.getMessage();
+				if (subArg.numArgs() > 1)
+					msg = String.format(INP_ERR_ELEMENT, i + 1, e.getMessage());
+				throw new InputErrorException(e.position, e.source, msg);
 			}
 		}
 		value = temp;
