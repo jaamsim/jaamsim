@@ -25,16 +25,24 @@ import com.jaamsim.input.ExpError;
 public class ErrorException extends RuntimeException {
 
 	public String entName;
+	public String keyword;
+	public int index;
 	public String source;
 	public int position;
 
 	public ErrorException(String src, int pos, String name, String msg) {
-		this(src, pos, name, msg, null);
+		this(src, pos, name, "", -1, msg, null);
 	}
 
 	public ErrorException(String src, int pos, String name, String msg, Throwable cause) {
+		this(src, pos, name, "", -1, msg, cause);
+	}
+
+	public ErrorException(String src, int pos, String name, String key, int ind, String msg, Throwable cause) {
 		super(msg, cause);
 		entName = name;
+		keyword = key;
+		index = ind;
 		source = src;
 		position = pos;
 	}
@@ -61,7 +69,12 @@ public class ErrorException extends RuntimeException {
 			return super.getMessage();
 		}
 		StringBuilder sb = new StringBuilder();
-		sb.append(entName).append(": ");
+		sb.append(entName);
+		if (!keyword.isEmpty())
+			sb.append(String.format(" keyword '%s'", keyword));
+		if (index > 0)
+			sb.append(String.format(", index (%d)", index));
+		sb.append(": ");
 		sb.append(super.getMessage());
 		return sb.toString();
 	}
