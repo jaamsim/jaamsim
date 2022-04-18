@@ -126,7 +126,7 @@ public class SampleListInput extends ListInput<ArrayList<SampleProvider>> {
 					String msg = e.getMessage();
 					if (subArg.numArgs() > 1)
 						msg = String.format(INP_ERR_ELEMENT, i + 1, e.getMessage());
-					throw new InputErrorException(e.position, e.source, msg);
+					throw new InputErrorException(e.position, e.source, msg, e);
 				}
 			}
 			value = temp;
@@ -148,7 +148,7 @@ public class SampleListInput extends ListInput<ArrayList<SampleProvider>> {
 				String msg = e.getMessage();
 				if (subArg.numArgs() > 1)
 					msg = String.format(INP_ERR_ELEMENT, i + 1, e.getMessage());
-				throw new InputErrorException(e.position, e.source, msg);
+				throw new InputErrorException(e.position, e.source, msg, e);
 			}
 		}
 		value = temp;
