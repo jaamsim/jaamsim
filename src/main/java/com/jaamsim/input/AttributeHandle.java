@@ -54,6 +54,10 @@ public class AttributeHandle extends ValueHandle {
 
 	@Override
 	public <T> T getValue(double simTime, Class<T> klass) {
+		return getValue(klass);
+	}
+
+	public <T> T getValue(Class<T> klass) {
 		if (!ent.hasAttribute(attributeName)) {
 			return null;
 		}
