@@ -44,7 +44,7 @@ public class ExpressionHandle extends ValueHandle {
 		// Make a best effort to return the type
 		ExpResult res = evaluateExp(simTime);
 
-		return res.getValue(simTime, klass);
+		return res.getValue(klass);
 	}
 
 	@Override

@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2021 JaamSim Software Inc.
+ * Copyright (C) 2021-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -60,7 +60,7 @@ public class AttributeHandle extends ValueHandle {
 		if (value == null) {
 			return null;
 		}
-		return value.getValue(simTime, klass);
+		return value.getValue(klass);
 	}
 
 	public ExpResult copyValue() {
