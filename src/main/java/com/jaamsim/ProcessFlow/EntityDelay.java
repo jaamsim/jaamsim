@@ -184,9 +184,6 @@ public class EntityDelay extends LinkedComponent implements LineEntity {
 			EntityDelayEntry entry = new EntityDelayEntry(ent, simTime, dur);
 			entityMap.put(ent.getEntityNumber(), entry);
 		}
-		else {
-			ent.setGlobalPosition(this.getGlobalPosition());
-		}
 
 		RemoveDisplayEntityTarget target = new RemoveDisplayEntityTarget(this, ent);
 		scheduleProcessTicks(durTicks, 5, true, target, null); // FIFO
