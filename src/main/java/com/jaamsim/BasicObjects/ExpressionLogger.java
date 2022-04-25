@@ -25,13 +25,18 @@ import com.jaamsim.StringProviders.StringProvider;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.EntityTarget;
 import com.jaamsim.basicsim.FileEntity;
+import com.jaamsim.basicsim.ObserverEntity;
+import com.jaamsim.basicsim.SubjectEntity;
 import com.jaamsim.events.Conditional;
+import com.jaamsim.events.EventHandle;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.events.ProcessTarget;
+import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.EntityListInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputCallback;
 import com.jaamsim.input.IntegerListInput;
+import com.jaamsim.input.InterfaceEntityListInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.UnitTypeListInput;
 import com.jaamsim.input.ValueInput;
@@ -40,7 +45,7 @@ import com.jaamsim.states.StateEntityListener;
 import com.jaamsim.states.StateRecord;
 import com.jaamsim.units.TimeUnit;
 
-public class ExpressionLogger extends Logger implements StateEntityListener {
+public class ExpressionLogger extends Logger implements StateEntityListener, ObserverEntity {
 
 	@Keyword(description = "A fixed interval at which entries will be written to the log file. "
 	                     + "This input is optional if state tracing or value tracing is "
@@ -77,6 +82,30 @@ public class ExpressionLogger extends Logger implements StateEntityListener {
 	@Keyword(description = "Not Used")
 	private final IntegerListInput valuePrecisionList;
 
+	@Keyword(description = "An optional list of objects to monitor.\n\n"
+	                     + "If the WatchList input is provided, the ExpressionLogger evaluates "
+	                     + "its ValueTraceList expression inputs ONLY when triggered by an object "
+	                     + "in its WatchList. "
+	                     + "This is much more efficient than the default behaviour which "
+	                     + "evaluates these expressions at every event time.\n\n"
+	                     + "Care must be taken to ensure that the WatchList input includes every "
+	                     + "object that can trigger a change in a ValueTraceList expression. "
+	                     + "Normally, the WatchList should include every object that is referenced "
+	                     + "directly or indirectly by these expressions. "
+	                     + "The VerfiyWatchList input can be used to ensure that the WatchList "
+	                     + "includes all the necessary objects.",
+	         exampleList = {"Object1  Object2"})
+	protected final InterfaceEntityListInput<SubjectEntity> watchList;
+
+	@Keyword(description = "Allows the user to verify that the input to the 'WatchList' keyword "
+	                     + "includes all the objects that affect the ExpressionThreshold's state. "
+	                     + "When set to TRUE, the ExpressionThreshold uses both the normal logic "
+	                     + "and the WatchList logic to set its state. "
+	                     + "An error message is generated if the threshold changes state without "
+	                     + "being triggered by a WatchList object.",
+	         exampleList = { "TRUE" })
+	private final BooleanInput verifyWatchList;
+
 	private final ArrayList<String> lastValueList = new ArrayList<>();
 
 	{
@@ -101,6 +130,14 @@ public class ExpressionLogger extends Logger implements StateEntityListener {
 		valuePrecisionList = new IntegerListInput("ValuePrecisionList", KEY_INPUTS, null);
 		valuePrecisionList.setHidden(true);
 		this.addInput(valuePrecisionList);
+
+		watchList = new InterfaceEntityListInput<>(SubjectEntity.class, "WatchList", KEY_INPUTS, new ArrayList<>());
+		watchList.setIncludeSelf(false);
+		watchList.setUnique(true);
+		this.addInput(watchList);
+
+		verifyWatchList = new BooleanInput("VerifyWatchList", KEY_INPUTS, false);
+		this.addInput(verifyWatchList);
 	}
 
 	public ExpressionLogger() {}
@@ -127,6 +164,12 @@ public class ExpressionLogger extends Logger implements StateEntityListener {
 	}
 
 	@Override
+	public void lateInit() {
+		super.lateInit();
+		ObserverEntity.registerWithSubjects(this, getWatchList());
+	}
+
+	@Override
 	public void startUp() {
 		super.startUp();
 
@@ -136,13 +179,56 @@ public class ExpressionLogger extends Logger implements StateEntityListener {
 				String str = valueTraceList.getNextString(i, getSimTime());
 				lastValueList.set(i, str);
 			}
-			this.doValueTrace();
+
+			// If there is no WatchList, the open/close expressions are tested after every event
+			if (!isWatchList() || isVerifyWatchList())
+				doValueTrace();
 		}
 
 		// Start log entries at fixed intervals
 		if (interval.getValue() != null)
 			this.scheduleProcess(getStartTime(), 5, endActionTarget);
 	}
+
+	@Override
+	public ArrayList<SubjectEntity> getWatchList() {
+		return watchList.getValue();
+	}
+
+	public boolean isVerifyWatchList() {
+		return verifyWatchList.getValue();
+	}
+
+	public boolean isWatchList() {
+		return !getWatchList().isEmpty();
+	}
+
+	@Override
+	public void observerUpdate(SubjectEntity subj) {
+		performUpdate();
+	}
+
+	public void performUpdate() {
+		if (recordLogEntryHandle.isScheduled())
+			return;
+		EventManager.scheduleTicks(0L, 11, true, recordLogEntryTarget, recordLogEntryHandle);
+	}
+
+	private final EventHandle recordLogEntryHandle = new EventHandle();
+	private final ProcessTarget recordLogEntryTarget = new ProcessTarget() {
+
+		@Override
+		public void process() {
+			if (valueChanged())
+				recordLogEntry(getSimTime(), null);
+		}
+
+		@Override
+		public String getDescription() {
+			return "recordLogEntry";
+		}
+
+	};
 
 	@Override
 	protected void printColumnTitles(FileEntity file) {
@@ -284,6 +370,8 @@ public class ExpressionLogger extends Logger implements StateEntityListener {
 
 		@Override
 		public void process() {
+			if (isVerifyWatchList())
+				error(ERR_WATCHLIST);
 			doValueTrace();
 		}
 	}
