@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2018-2021 JaamSim Software Inc.
+ * Copyright (C) 2018-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,8 @@ import com.jaamsim.ProbabilityDistributions.StudentsTDistribution;
 public class SampleStatistics {
 
 	private long count;
+	private double avg;
+	private double q;
 	private double sum;
 	private double sumSquared;
 	private double minVal = Double.NaN;
@@ -30,6 +32,9 @@ public class SampleStatistics {
 
 	public void clear() {
 		count = 0L;
+		avg = 0.0d;
+		q = 0.0d;
+
 		sum = 0.0d;
 		sumSquared = 0.0d;
 		minVal = Double.NaN;
@@ -38,8 +43,15 @@ public class SampleStatistics {
 
 	public void addValue(double val) {
 		count++;
+
+		// Welford's Online Algorithm
+		double lastAvg = avg;
+		avg += (val - avg)/count;
+		q += (val - lastAvg)*(val - avg);
+
 		sum += val;
 		sumSquared += val*val;
+
 		if (Double.isNaN(minVal) || val < minVal) {
 			minVal = val;
 		}
@@ -69,7 +81,7 @@ public class SampleStatistics {
 	}
 
 	public double getMean() {
-		return sum/count;
+		return avg;
 	}
 
 	public double getMeanSquared() {
@@ -77,7 +89,7 @@ public class SampleStatistics {
 	}
 
 	public double getVariance() {
-		return (sumSquared - sum*sum/count)/(count - 1L);
+		return q/(count - 1L);
 	}
 
 	public double getStandardDeviation() {
