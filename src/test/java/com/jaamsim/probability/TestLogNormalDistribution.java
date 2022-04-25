@@ -46,8 +46,8 @@ public class TestLogNormalDistribution {
 
 		LogNormalDistribution dist = InputAgent.defineEntityWithUniqueName(simModel, LogNormalDistribution.class, "Dist", "-", true);
 		InputAgent.applyArgs(dist, "UnitType", t.getName());
-		InputAgent.applyArgs(dist, "NormalMean", "10.0");
-		InputAgent.applyArgs(dist, "NormalStandardDeviation", "2.0");
+		InputAgent.applyArgs(dist, "NormalMean", "1.0");
+		InputAgent.applyArgs(dist, "NormalStandardDeviation", "0.2");
 		InputAgent.applyArgs(dist, "RandomSeed", "1");
 		dist.validate();
 		dist.earlyInit();
