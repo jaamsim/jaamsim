@@ -50,6 +50,9 @@ public abstract class AbstractUnpack extends LinkedService {
 
 	private String entityMatch;   // Match value for the entities to be removed from the container
 	private int numberToRemove;   // Number of entities to remove from the present EntityContainer
+	private EntContainer container;	// the received EntityContainer
+	private int numberRemoved;   // Number of entities removed from the received EntityContainer
+	private DisplayEntity unpackedEntity;  // the entity being unpacked
 
 	{
 		matchForEntities = new StringProvInput("MatchForEntities", KEY_INPUTS, null);
@@ -66,15 +69,14 @@ public abstract class AbstractUnpack extends LinkedService {
 		this.addInput(containerStateAssignment);
 	}
 
-	private EntContainer container;	// the received EntityContainer
-	private int numberRemoved;   // Number of entities removed from the received EntityContainer
-	private DisplayEntity unpackedEntity;  // the entity being unpacked
 
 	public AbstractUnpack() {}
 
 	@Override
 	public void earlyInit() {
 		super.earlyInit();
+		entityMatch = "";
+		numberToRemove = 0;
 		container = null;
 		numberRemoved = 0;
 		unpackedEntity = null;
