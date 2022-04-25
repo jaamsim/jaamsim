@@ -77,6 +77,7 @@ public abstract class AbstractUnpack extends LinkedService {
 		super.earlyInit();
 		container = null;
 		numberRemoved = 0;
+		unpackedEntity = null;
 	}
 
 	private void setContainerState() {
