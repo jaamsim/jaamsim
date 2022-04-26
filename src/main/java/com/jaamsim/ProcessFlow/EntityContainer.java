@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018-2021 JaamSim Software Inc.
+ * Copyright (C) 2018-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -158,11 +158,11 @@ public class EntityContainer extends SimEntity implements EntContainer {
 		registerEntity(ent);
 
 		// Determine the priority and match value for the received entity
-		int pri = (int) priority.getValue().getNextSample(simTime);
+		int pri = (int) priority.getNextSample(simTime);
 
 		String m = null;
-		if (match.getValue() != null)
-			m = match.getValue().getNextString(simTime, 1.0d, true);
+		if (!match.isDefault())
+			m = match.getNextString(simTime, 1.0d, true);
 
 		container.addEntity(ent, m, pri, fifo.getValue(), simTime);
 	}

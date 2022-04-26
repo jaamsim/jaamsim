@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016 JaamSim Software Inc.
+ * Copyright (C) 2016-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -77,8 +77,8 @@ public class GammaDistribution extends Distribution {
 	@Override
 	protected double getSample(double simTime) {
 		double u2, b, sample;
-		double mean = meanInput.getValue().getNextSample(simTime);
-		double shape = shapeInput.getValue().getNextSample(simTime);
+		double mean = meanInput.getNextSample(simTime);
+		double shape = shapeInput.getNextSample(simTime);
 
 		// Case 1 - Shape parameter < 1
 		if( shape < 1.0 ) {
@@ -123,13 +123,13 @@ public class GammaDistribution extends Distribution {
 
 	@Override
 	protected double getMean(double simTime) {
-		return meanInput.getValue().getNextSample(simTime);
+		return meanInput.getNextSample(simTime);
 	}
 
 	@Override
 	protected double getStandardDev(double simTime) {
-		double mean = meanInput.getValue().getNextSample(simTime);
-		double shape = shapeInput.getValue().getNextSample(simTime);
+		double mean = meanInput.getNextSample(simTime);
+		double shape = shapeInput.getNextSample(simTime);
 		return mean / Math.sqrt(shape);
 	}
 

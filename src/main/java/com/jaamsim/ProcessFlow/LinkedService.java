@@ -138,6 +138,19 @@ public abstract class LinkedService extends LinkedDevice implements QueueUser {
 	public LinkedService() {}
 
 	@Override
+	public void validate() {
+		super.validate();
+
+		// Check the WaitQueue expression
+		if (!waitQueue.isDefault()) {
+			Queue q = getQueue(0.0d);  // Ensures that the expression can be evaluated
+			if (q == null)
+				throw new ErrorException(waitQueue.getValueString(), 0, getName(),
+						"Input to 'WaitQueue' returns null");
+		}
+	}
+
+	@Override
 	public void earlyInit() {
 		super.earlyInit();
 		matchValue = null;
@@ -242,10 +255,10 @@ public abstract class LinkedService extends LinkedDevice implements QueueUser {
 	 * @return match value.
 	 */
 	protected String getNextMatchValue(double simTime) {
-		if (match.getValue() == null)
+		if (match.isDefault())
 			return null;
 
-		return match.getValue().getNextString(simTime, 1.0d, true);
+		return match.getNextString(simTime, 1.0d, true);
 	}
 
 	protected void setMatchValue(String m) {
@@ -302,9 +315,9 @@ public abstract class LinkedService extends LinkedDevice implements QueueUser {
 	}
 
 	public Queue getQueue(double simTime) {
-		if (waitQueue.getValue() == null)
+		if (waitQueue.isDefault())
 			return null;
-		return waitQueue.getValue().getNextEntity(simTime);
+		return waitQueue.getNextEntity(simTime);
 	}
 
 	@Override
@@ -315,9 +328,12 @@ public abstract class LinkedService extends LinkedDevice implements QueueUser {
 		if (!getWatchList().isEmpty())
 			return ret;
 
-		Queue queue = getQueue(0.0d);
-		if (queue != null)
-			ret.add(queue);
+		try {
+			Queue queue = getQueue(0.0d);
+			if (queue != null)
+				ret.add(queue);
+		}
+		catch (Exception e) {}
 		return ret;
 	}
 
@@ -361,9 +377,12 @@ public abstract class LinkedService extends LinkedDevice implements QueueUser {
 	@Override
 	public ArrayList<DisplayEntity> getSourceEntities() {
 		ArrayList<DisplayEntity> ret = super.getSourceEntities();
-		Queue queue = getQueue(0.0d);
-		if (queue != null)
-			ret.add(queue);
+		try {
+			Queue queue = getQueue(0.0d);
+			if (queue != null)
+				ret.add(queue);
+		}
+		catch (Exception e) {}
 		return ret;
 	}
 

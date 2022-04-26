@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2017 JaamSim Software Inc.
+ * Copyright (C) 2017-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -75,12 +75,12 @@ public class SetGraphics extends LinkedComponent {
 
 		// Identify the entity whose graphics are to be changed
 		DisplayEntity target = ent;
-		if (targetEntity.getValue() != null) {
-			target = targetEntity.getValue().getNextEntity(simTime);
+		if (!targetEntity.isDefault()) {
+			target = targetEntity.getNextEntity(simTime);
 		}
 
 		// Choose the new graphics for this entity
-		int i = (int) choice.getValue().getNextSample(simTime);
+		int i = (int) choice.getNextSample(simTime);
 		if (i<1 || i>graphicsList.getValue().size())
 			error("Chosen index i=%s is out of range for GraphicList: %s.", i, graphicsList.getValue());
 		DisplayEntity chosen = graphicsList.getValue().get(i-1);

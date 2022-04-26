@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2021 JaamSim Software Inc.
+ * Copyright (C) 2016-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import com.jaamsim.basicsim.Entity;
+import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputErrorException;
@@ -196,6 +197,16 @@ public class SampleInput extends Input<SampleProvider> {
 			sb.append("[").append(unitString).append("]");
 		}
 		return sb.toString();
+	}
+
+	public double getNextSample(double simTime) {
+		try {
+			return value.getNextSample(simTime);
+		}
+		catch (ErrorException e) {
+			e.keyword = getKeyword();
+			throw e;
+		}
 	}
 
 }

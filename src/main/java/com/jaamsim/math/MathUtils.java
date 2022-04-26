@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2012 Ausenco Engineering Canada Inc.
- * Copyright (C) 2019-2020 JaamSim Software Inc.
+ * Copyright (C) 2019-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,6 +48,16 @@ public static final boolean isSmall(double a) {
 public static boolean near(double a, double b) {
 	double diff = Math.abs(a - b);
 	return isSmall(diff);
+}
+
+public static boolean near(double[] a, double[] b) {
+	if (a.length != b.length)
+		return false;
+	for (int i = 0; i < a.length; i++) {
+		if (!MathUtils.near(a[i], b[i]))
+			return false;
+	}
+	return true;
 }
 
 /**

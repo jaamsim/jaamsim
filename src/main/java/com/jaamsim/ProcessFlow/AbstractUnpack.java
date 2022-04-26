@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2021 JaamSim Software Inc.
+ * Copyright (C) 2016-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,6 +50,9 @@ public abstract class AbstractUnpack extends LinkedService {
 
 	private String entityMatch;   // Match value for the entities to be removed from the container
 	private int numberToRemove;   // Number of entities to remove from the present EntityContainer
+	private EntContainer container;	// the received EntityContainer
+	private int numberRemoved;   // Number of entities removed from the received EntityContainer
+	private DisplayEntity unpackedEntity;  // the entity being unpacked
 
 	{
 		matchForEntities = new StringProvInput("MatchForEntities", KEY_INPUTS, null);
@@ -66,23 +69,23 @@ public abstract class AbstractUnpack extends LinkedService {
 		this.addInput(containerStateAssignment);
 	}
 
-	private EntContainer container;	// the received EntityContainer
-	private int numberRemoved;   // Number of entities removed from the received EntityContainer
-	private DisplayEntity unpackedEntity;  // the entity being unpacked
 
 	public AbstractUnpack() {}
 
 	@Override
 	public void earlyInit() {
 		super.earlyInit();
+		entityMatch = "";
+		numberToRemove = 0;
 		container = null;
 		numberRemoved = 0;
+		unpackedEntity = null;
 	}
 
 	private void setContainerState() {
 		if (!containerStateAssignment.isDefault()) {
 			double simTime = getSimTime();
-			String state = containerStateAssignment.getValue().getNextString(simTime);
+			String state = containerStateAssignment.getNextString(simTime);
 			container.setPresentState(state);
 		}
 	}
@@ -106,8 +109,8 @@ public abstract class AbstractUnpack extends LinkedService {
 
 			// Set the match value for the entities to remove
 			entityMatch = null;
-			if (matchForEntities.getValue() != null)
-				entityMatch = matchForEntities.getValue().getNextString(simTime, 1.0d, true);
+			if (!matchForEntities.isDefault())
+				entityMatch = matchForEntities.getNextString(simTime, 1.0d, true);
 
 			// Set the number of entities to remove
 			numberToRemove = getNumberToRemove();
@@ -173,7 +176,7 @@ public abstract class AbstractUnpack extends LinkedService {
 	protected double getStepDuration(double simTime) {
 		double dur = 0.0;
 		if (unpackedEntity != null)
-			dur = serviceTime.getValue().getNextSample(simTime);
+			dur = serviceTime.getNextSample(simTime);
 		return dur;
 	}
 

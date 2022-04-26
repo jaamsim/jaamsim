@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2021 JaamSim Software Inc.
+ * Copyright (C) 2016-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -78,7 +78,7 @@ public class Duplicate extends LinkedComponent {
 		// Number of targets entered by the user
 		int[] ret = new int[targetComponentList.getListSize()];
 		for (int i = 0; i < numberOfDuplicates.getListSize(); i++) {
-			int n = (int) numberOfDuplicates.getValue().get(i).getNextSample(simTime);
+			int n = (int) numberOfDuplicates.getNextSample(i, simTime);
 			ret[i] = n;
 		}
 

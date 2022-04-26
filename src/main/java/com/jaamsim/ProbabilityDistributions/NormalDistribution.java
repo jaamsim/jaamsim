@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016 JaamSim Software Inc.
+ * Copyright (C) 2016-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -89,18 +89,18 @@ public class NormalDistribution extends Distribution {
 		sample = v1 * Math.sqrt( -2.0 * Math.log( w ) / w );
 
 		// Adjust for the desired mode and standard deviation
-		double mean = meanInput.getValue().getNextSample(simTime);
-		double sdev = standardDeviationInput.getValue().getNextSample(simTime);
+		double mean = meanInput.getNextSample(simTime);
+		double sdev = standardDeviationInput.getNextSample(simTime);
 		return mean + sample*sdev;
 	}
 
 	@Override
 	protected double getMean(double simTime) {
-		return meanInput.getValue().getNextSample(simTime);
+		return meanInput.getNextSample(simTime);
 	}
 
 	@Override
 	protected double getStandardDev(double simTime) {
-		return  standardDeviationInput.getValue().getNextSample(simTime);
+		return  standardDeviationInput.getNextSample(simTime);
 	}
 }

@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018-2020 JaamSim Software Inc.
+ * Copyright (C) 2018-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -75,12 +75,11 @@ public class Release extends LinkedComponent {
 	public void releaseResources(DisplayEntity ent) {
 		double simTime = this.getSimTime();
 		ArrayList<ResourceProvider> resList = resourceList.getValue();
-		ArrayList<SampleProvider> numberList = numberOfUnitsList.getValue();
 
 		// Release the Resources
 		for(int i=0; i<resList.size(); i++) {
-			int ind = Math.min(i, numberList.size() - 1);
-			int n = (int) numberList.get(ind).getNextSample(simTime);
+			int ind = Math.min(i, numberOfUnitsList.getListSize() - 1);
+			int n = (int) numberOfUnitsList.getNextSample(ind, simTime);
 			if (n == 0)
 				continue;
 			resList.get(i).release(n, ent);

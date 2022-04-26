@@ -112,7 +112,7 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 	@Override
 	public void startUp() {
 		super.startUp();
-		presentTravelTime = travelTimeInput.getValue().getNextSample(0.0);
+		presentTravelTime = travelTimeInput.getNextSample(0.0);
 	}
 
 	private static class ConveyorEntry {
@@ -216,7 +216,7 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 	private void updateTravelTime(double simTime) {
 
 		// Has the travel time changed?
-		double newTime = travelTimeInput.getValue().getNextSample(simTime);
+		double newTime = travelTimeInput.getNextSample(simTime);
 		if (newTime != presentTravelTime) {
 
 			if (isTraceFlag()) {

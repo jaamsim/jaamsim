@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2021 JaamSim Software Inc.
+ * Copyright (C) 2016-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,6 +54,7 @@ public abstract class AbstractPack extends LinkedService {
 	protected EntContainer container;	// the generated EntityContainer
 	private int numberInserted;   // Number of entities inserted to the EntityContainer
 	private int numberToInsert;   // Number of entities to insert in the present EntityContainer
+	private int numberToStartPacking;  // Number of entities required before packing can begin
 	private boolean startedPacking;  // True if the packing process has already started
 	private DisplayEntity packedEntity;  // the entity being packed
 
@@ -91,6 +92,8 @@ public abstract class AbstractPack extends LinkedService {
 		super.earlyInit();
 		container = null;
 		numberInserted = 0;
+		numberToInsert = -1;
+		numberToStartPacking = -1;
 		startedPacking = false;
 		packedEntity = null;
 	}
@@ -102,7 +105,7 @@ public abstract class AbstractPack extends LinkedService {
 	private void setContainerState() {
 		if (!containerStateAssignment.isDefault()) {
 			double simTime = getSimTime();
-			String state = containerStateAssignment.getValue().getNextString(simTime);
+			String state = containerStateAssignment.getNextString(simTime);
 			container.setPresentState(state);
 		}
 	}
@@ -110,29 +113,36 @@ public abstract class AbstractPack extends LinkedService {
 	@Override
 	protected boolean startProcessing(double simTime) {
 
-		// If necessary, get a new container
-		if (container == null && !waitForEntities.getValue() && isContainerAvailable()) {
-			container = this.getNextContainer();
-			numberInserted = 0;
-			setContainerState();
+		// A container must be available before packing can start
+		if (container == null) {
+			if (!isContainerAvailable())
+				return false;
+
+			// If necessary, get a new container
+			if (!waitForEntities.getValue()) {
+				container = this.getNextContainer();
+				setContainerState();
+			}
 		}
 
 		// Are there sufficient entities in the queue to start packing?
 		if (!startedPacking) {
 			String m = this.getNextMatchValue(simTime);
-			numberToInsert = this.getNumberToInsert(simTime);
-			if (getQueue(simTime).getCount(m) < getNumberToStart(simTime)) {
+			if (numberToStartPacking < 0)
+				numberToStartPacking = this.getNumberToStart(simTime);
+			if (getQueue(simTime).getCount(m) < numberToStartPacking) {
 				return false;
 			}
 
 			// If necessary, get a new container
 			if (container == null) {
-				if (!isContainerAvailable())
-					return false;
 				container = this.getNextContainer();
-				numberInserted = 0;
 				setContainerState();
 			}
+
+			// Start packing
+			numberInserted = 0;
+			numberToInsert = this.getNumberToInsert(simTime);
 			startedPacking = true;
 			this.setMatchValue(m);
 		}
@@ -165,18 +175,20 @@ public abstract class AbstractPack extends LinkedService {
 			getNextComponent().addEntity((DisplayEntity) container);
 			container = null;
 			numberInserted = 0;
+			numberToInsert = -1;
+			numberToStartPacking = -1;
 			startedPacking = false;
 		}
 	}
 
 	protected int getNumberToInsert(double simTime) {
-		return (int) numberOfEntities.getValue().getNextSample(simTime);
+		return (int) numberOfEntities.getNextSample(simTime);
 	}
 
 	private int getNumberToStart(double simTime) {
 		int ret = numberToInsert;
 		if (!numberToStart.isDefault() && numberToInsert > 0) {
-			ret = (int) numberToStart.getValue().getNextSample(simTime);
+			ret = (int) numberToStart.getNextSample(simTime);
 			ret = Math.max(ret, 1);
 		}
 		return ret;
@@ -184,7 +196,7 @@ public abstract class AbstractPack extends LinkedService {
 
 	@Override
 	protected double getStepDuration(double simTime) {
-		return serviceTime.getValue().getNextSample(simTime);
+		return serviceTime.getNextSample(simTime);
 	}
 
 	@Override

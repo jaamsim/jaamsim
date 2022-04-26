@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2015 Ausenco Engineering Canada Inc.
- * Copyright (C) 2017-2021 JaamSim Software Inc.
+ * Copyright (C) 2017-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import com.jaamsim.basicsim.Entity;
+import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputErrorException;
@@ -122,10 +123,10 @@ public class SampleListInput extends ListInput<ArrayList<SampleProvider>> {
 					temp.add(sp);
 				}
 				catch (InputErrorException e) {
-					if (subArg.numArgs() == 1)
-						throw new InputErrorException(e.getMessage());
-					else
-						throw new InputErrorException(INP_ERR_ELEMENT, i+1, e.getMessage());
+					String msg = e.getMessage();
+					if (subArg.numArgs() > 1)
+						msg = String.format(INP_ERR_ELEMENT, i + 1, e.getMessage());
+					throw new InputErrorException(e.position, e.source, msg, e);
 				}
 			}
 			value = temp;
@@ -144,10 +145,10 @@ public class SampleListInput extends ListInput<ArrayList<SampleProvider>> {
 				temp.add(sp);
 			}
 			catch (InputErrorException e) {
-				if (subArgs.size() == 1)
-					throw new InputErrorException(e.getMessage());
-				else
-					throw new InputErrorException(INP_ERR_ELEMENT, i+1, e.getMessage());
+				String msg = e.getMessage();
+				if (subArg.numArgs() > 1)
+					msg = String.format(INP_ERR_ELEMENT, i + 1, e.getMessage());
+				throw new InputErrorException(e.position, e.source, msg, e);
 			}
 		}
 		value = temp;
@@ -279,6 +280,17 @@ public class SampleListInput extends ListInput<ArrayList<SampleProvider>> {
 			sb.append(Input.BRACE_SEPARATOR).append("}");
 		}
 		return sb.toString();
+	}
+
+	public double getNextSample(int i, double simTime) {
+		try {
+			return value.get(i).getNextSample(simTime);
+		}
+		catch (ErrorException e) {
+			e.keyword = getKeyword();
+			e.index = i + 1;
+			throw e;
+		}
 	}
 
 }

@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2002-2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2021 JaamSim Software Inc.
+ * Copyright (C) 2016-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -845,7 +845,7 @@ public class Simulation extends Entity {
 	public int getSubstreamNumber() {
 		if (globalSeedInput.isDefault())
 			return getJaamSimModel().getReplicationNumber();
-		return (int)globalSeedInput.getValue().getNextSample(0.0);
+		return (int)globalSeedInput.getNextSample(0.0);
 	}
 
 	/**
@@ -971,7 +971,7 @@ public class Simulation extends Entity {
 	public ArrayList<String> getRunOutputStrings(double simTime) {
 		ArrayList<String> ret = new ArrayList<>(runOutputList.getListSize());
 		for (int i = 0; i < runOutputList.getListSize(); i++) {
-			ret.add(runOutputList.getValue().get(i).getNextString(simTime));
+			ret.add(runOutputList.getNextString(i, simTime));
 		}
 		return ret;
 	}
@@ -979,7 +979,7 @@ public class Simulation extends Entity {
 	public ArrayList<Double> getRunOutputValues(double simTime) {
 		ArrayList<Double> ret = new ArrayList<>(runOutputList.getListSize());
 		for (int i = 0; i < runOutputList.getListSize(); i++) {
-			ret.add(runOutputList.getValue().get(i).getNextValue(simTime));
+			ret.add(runOutputList.getNextValue(i, simTime));
 		}
 		return ret;
 	}
@@ -1054,7 +1054,7 @@ public class Simulation extends Entity {
 
 	public boolean isPauseConditionSatisfied(double simTime) {
 		return pauseConditionInput.getValue() != null &&
-				pauseConditionInput.getValue().getNextSample(simTime) != 0.0d;
+				pauseConditionInput.getNextSample(simTime) != 0.0d;
 	}
 
 	public Vec3d getSnapGridPosition(Vec3d pos) {
@@ -1290,7 +1290,7 @@ public class Simulation extends Entity {
 	}
 
 	public int getNumberOfReplications() {
-		return (int) numberOfReplications.getValue().getNextSample(0.0d);
+		return (int) numberOfReplications.getNextSample(0.0d);
 	}
 
 	public int getNumberOfThreads() {
@@ -1312,11 +1312,11 @@ public class Simulation extends Entity {
 	}
 
 	public int getStartingScenarioNumber() {
-		return (int) startingScenarioNumber.getValue().getNextSample(0.0d);
+		return (int) startingScenarioNumber.getNextSample(0.0d);
 	}
 
 	public int getEndingScenarioNumber() {
-		return (int) endingScenarioNumber.getValue().getNextSample(0.0d);
+		return (int) endingScenarioNumber.getNextSample(0.0d);
 	}
 
 	public int getNumberOfScenarios() {

@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2009-2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018-2021 JaamSim Software Inc.
+ * Copyright (C) 2018-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -527,8 +527,10 @@ public class InputAgent {
 			}
 			catch (Throwable e) {
 				simModel.recordError();
-				InputAgent.logMessage(simModel,
-						"Validation Error - %s: %s", each, e.getMessage());
+				String msg = String.format("Validation Error - %s: %s%n", each, e.getMessage());
+				if (e instanceof ErrorException)
+					msg = String.format("Validation Error - %s%n", e.getMessage());
+				InputAgent.logMessage(simModel, msg);
 			}
 		}
 
@@ -934,12 +936,14 @@ public class InputAgent {
 				simModel.getReplicationNumber(), simModel.getScenarioNumber(),
 				simModel.getSimTime());
 		InputAgent.logMessage(simModel, "%s", t.getMessage());
-		if (t.getCause() != null) {
-			InputAgent.logMessage(simModel, "Call Stack of original exception:");
-			InputAgent.logStackTrace(simModel, t.getCause());
+
+		// Stack trace for the root cause
+		Throwable rootCause = t;
+		while (rootCause.getCause() != null && rootCause.getCause() != rootCause) {
+			rootCause = rootCause.getCause();
 		}
-		InputAgent.logMessage(simModel, "Thrown exception call stack:");
-		InputAgent.logStackTrace(simModel, t);
+		InputAgent.logMessage(simModel, "Stack trace:");
+		InputAgent.logStackTrace(simModel, rootCause);
 		InputAgent.logMessage(simModel, "");
 	}
 

@@ -63,7 +63,7 @@ public class SubModelEnd extends DisplayEntity implements Linkable {
 		}
 
 		// If NextComponent is specified, send the entity to that object
-		DisplayEntity nextComp = nextComponent.getValue().getNextEntity(getSimTime());
+		DisplayEntity nextComp = nextComponent.getNextEntity(getSimTime());
 		if (!(nextComp instanceof Linkable)) {
 			error("Object '%s' returned by NextComponent does not accept an entity.", nextComp);
 		}
@@ -91,7 +91,7 @@ public class SubModelEnd extends DisplayEntity implements Linkable {
 		ArrayList<DisplayEntity> ret = new ArrayList<>();
 		if (nextComponent.isDefault())
 			return ret;
-		DisplayEntity ent = nextComponent.getValue().getNextEntity(0.0d);
+		DisplayEntity ent = nextComponent.getNextEntity(0.0d);
 		if (ent != null) {
 			ret.add(ent);
 		}

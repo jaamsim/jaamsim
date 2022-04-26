@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2015-2019 JaamSim Software Inc.
+ * Copyright (C) 2015-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -941,97 +941,43 @@ public class TestExpParser {
 		res = exp.evaluate(ec);
 		assertTrue(res.value == 5);
 		assertTrue(res.unitType == DimensionlessUnit.class);
-
-	}
-
-	private static class AssignContainer {
-		public ExpResult res;
-		public ExpResult.Collection col;
-		public String lastAttribName;
-	}
-
-	private static class TestAssigner implements ExpParser.Assigner {
-
-		AssignContainer cont;
-		String attribName;
-
-		TestAssigner(AssignContainer cont, String attribName) {
-			this.cont = cont;
-			this.attribName = attribName;
-		}
-		@Override
-		public void assign(ExpResult ent, ExpResult[] indices, ExpResult val)
-				throws ExpError {
-			if (indices == null) {
-				cont.res = val;
-			} else {
-				cont.col = cont.col.assign(indices[0], val);
-				if (indices.length > 1) {
-					assertTrue(indices[1].type == ExpResType.NUMBER);
-					assertTrue(indices[1].value == 42.0);
-				}
-			}
-			cont.lastAttribName = attribName;
-		}
-	}
-
-	private static class AssignPC extends PC {
-		AssignContainer cont;
-
-		AssignPC(AssignContainer cont) {
-			this.cont = cont;
-		}
-
-		@Override
-		public Assigner getAssigner(String attribName) throws ExpError {
-			return new TestAssigner(cont, attribName);
-		}
-		@Override
-		public Assigner getConstAssigner(ExpResult constEnt, String attribName)
-				throws ExpError {
-			return new TestAssigner(cont, attribName);
-		}
-
 	}
 
 	@Test
 	public void testAssignment() throws ExpError {
-		AssignContainer cont = new AssignContainer();
+		JaamSimModel simModel = new JaamSimModel();
+		simModel.autoLoad();
 
-		ArrayList<ExpResult> initialRes = new ArrayList<>();
-		initialRes.add(ExpResult.makeNumResult(42, DimensionlessUnit.class));
-		cont.col = ExpCollections.makeAssignableArrrayCollection(initialRes, false).colVal;
-		AssignPC apc = new AssignPC(cont);
+		simModel.defineEntity("DisplayEntity", "foo");
+		simModel.setInput("foo", "AttributeDefinitionList",
+				  "{ arg 0 }"
+				+ "{ blarg '{ { 0 }, { 0 } }' }"
+				+ "{ map '{ \"bar\" = 0 }' }" );
 
-		ExpParser.Assignment assign = ExpParser.parseAssignment(apc, "[foo].arg = 40 + 2");
-		ExpResult res = assign.evaluate(ec);
+		Entity foo = simModel.getEntity("foo");
+
+		// Number attribute
+		String assignStr = "[foo].arg = 40 + 2";
+		ExpEvaluator.EntityParseContext pc = ExpEvaluator.getParseContext(foo, assignStr);
+		ExpParser.Assignment assign = ExpParser.parseAssignment(pc, assignStr);
+		ExpResult res = ExpEvaluator.evaluateExpression(assign, 0.0d);
 		assertTrue(res.value == 42.0);
-		assertTrue(cont.res.type == ExpResType.NUMBER);
-		assertTrue(cont.res.value == 42.0);
-		assertTrue(cont.lastAttribName.equals("arg"));
+		assertTrue(res.type == ExpResType.NUMBER);
 
-		assign = ExpParser.parseAssignment(apc, "[foo].blarg(4)(23+19) = 40 + 5");
-		res = assign.evaluate(ec);
-		ExpResult contained = cont.col.index(ExpResult.makeNumResult(4, DimensionlessUnit.class));
+		// Array attribute
+		assignStr = "[foo].blarg(2)(3 + 2) = 40 + 5";
+		pc = ExpEvaluator.getParseContext(foo, assignStr);
+		assign = ExpParser.parseAssignment(pc, assignStr);
+		res = ExpEvaluator.evaluateExpression(assign, 0.0d);
 		assertTrue(res.value == 45.0);
-		assertTrue(contained.type == ExpResType.NUMBER);
-		assertTrue(contained.value == 45.0);
-		assertTrue(cont.lastAttribName.equals("blarg"));
+		assertTrue(res.type == ExpResType.NUMBER);
 
-
-		// Test assigning to maps
-		HashMap<String, ExpResult> initialMap = new HashMap<>();
-		initialMap.put("bar", ExpResult.makeNumResult(2, DimensionlessUnit.class));
-		cont.col = ExpCollections.makeAssignableMapCollection(initialMap, false).colVal;
-
-		assign = ExpParser.parseAssignment(apc, "[foo].map(\"bar\") = 42");
-		res = assign.evaluate(ec);
-
-		contained = cont.col.index(ExpResult.makeStringResult("bar"));
+		// Map attribute
+		assignStr = "[foo].map(\"bar\") = 42";
+		pc = ExpEvaluator.getParseContext(foo, assignStr);
+		assign = ExpParser.parseAssignment(pc, assignStr);
+		res = ExpEvaluator.evaluateExpression(assign, 0.0d);
 		assertTrue(res.value == 42.0);
-		assertTrue(contained.type == ExpResType.NUMBER);
-		assertTrue(contained.value == 42.0);
-		assertTrue(cont.lastAttribName.equals("map"));
-
+		assertTrue(res.type == ExpResType.NUMBER);
 	}
 }

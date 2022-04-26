@@ -962,7 +962,7 @@ public class Entity {
 
 		// Collection Attribute
 		if (indices != null) {
-			ExpResult attribValue = h.getValue(getSimTime(), ExpResult.class);
+			ExpResult attribValue = h.getValue(ExpResult.class);
 			if (attribValue.type != ExpResType.COLLECTION) {
 				throw new ExpError(null, -1, "Trying to set %s attribute: %s with an index, "
 						+ "but it is not a collection", this, name);

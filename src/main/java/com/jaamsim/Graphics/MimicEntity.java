@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2017 JaamSim Software Inc.
+ * Copyright (C) 2017-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,16 +54,16 @@ public class MimicEntity extends DisplayEntity {
 
 	@Override
 	public ArrayList<DisplayModel> getDisplayModelList() {
-		if (sourceEntity.getValue() == null) {
+		if (sourceEntity.isDefault()) {
 			return super.getDisplayModelList();
 		}
-		return sourceEntity.getValue().getNextEntity(0.0d).getDisplayModelList();
+		return sourceEntity.getNextEntity(0.0d).getDisplayModelList();
 	}
 
 	@Override
 	public ArrayList<DisplayModelBinding> getDisplayBindings() {
-		if (sourceEntity.getValue() != null) {
-			DisplayEntity ent = sourceEntity.getValue().getNextEntity(0.0d);
+		if (!sourceEntity.isDefault()) {
+			DisplayEntity ent = sourceEntity.getNextEntity(0.0d);
 			if (sourceBindings != ent.getDisplayBindings()) {
 				sourceBindings = ent.getDisplayBindings();
 				this.clearBindings();

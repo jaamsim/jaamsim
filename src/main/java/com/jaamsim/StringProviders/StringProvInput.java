@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2015 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018-2021 JaamSim Software Inc.
+ * Copyright (C) 2018-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import java.util.Collections;
 import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleProvider;
 import com.jaamsim.basicsim.Entity;
+import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputErrorException;
@@ -156,6 +157,44 @@ public class StringProvInput extends Input<StringProvider> {
 			sb.append("[").append(unitString).append("]");
 		}
 		return sb.toString();
+	}
+
+	public String getNextString(double simTime) {
+		return getNextString(simTime, 1.0d, false);
+	}
+
+	public String getNextString(double simTime, double siFactor) {
+		return getNextString(simTime, siFactor, false);
+	}
+
+	public String getNextString(double simTime, double siFactor, boolean integerValue) {
+		try {
+			return value.getNextString(simTime, siFactor, integerValue);
+		}
+		catch (ErrorException e) {
+			e.keyword = getKeyword();
+			throw e;
+		}
+	}
+
+	public String getNextString(double simTime, String fmt, double siFactor) {
+		try {
+			return value.getNextString(simTime, fmt, siFactor);
+		}
+		catch (ErrorException e) {
+			e.keyword = getKeyword();
+			throw e;
+		}
+	}
+
+	public double getNextValue(double simTime) {
+		try {
+			return value.getNextValue(simTime);
+		}
+		catch (ErrorException e) {
+			e.keyword = getKeyword();
+			throw e;
+		}
 	}
 
 }

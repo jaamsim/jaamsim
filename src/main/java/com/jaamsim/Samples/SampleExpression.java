@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2021 JaamSim Software Inc.
+ * Copyright (C) 2016-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ import com.jaamsim.input.ExpEvaluator;
 import com.jaamsim.input.ExpParser;
 import com.jaamsim.input.ExpResType;
 import com.jaamsim.input.ExpResult;
+import com.jaamsim.input.Input;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
@@ -61,10 +62,14 @@ public class SampleExpression implements SampleProvider {
 		double ret = 0.0;
 		try {
 			ExpResult res = ExpEvaluator.evaluateExpression(exp, simTime);
+
+			if (res.type != ExpResType.NUMBER)
+				throw new ExpError(exp.source, 0, Input.EXP_ERR_RESULT_TYPE,
+						res.type, ExpResType.NUMBER);
+
 			if (res.unitType != unitType)
-				thisEnt.error("Invalid unit returned by an expression: '%s'%n"
-						+ "Received: %s, expected: %s",
-						exp, thisEnt.getJaamSimModel().getObjectTypeForClass(res.unitType),
+				throw new ExpError(exp.source, 0, Input.EXP_ERR_UNIT,
+						thisEnt.getJaamSimModel().getObjectTypeForClass(res.unitType),
 						thisEnt.getJaamSimModel().getObjectTypeForClass(unitType));
 
 			ret = res.value;

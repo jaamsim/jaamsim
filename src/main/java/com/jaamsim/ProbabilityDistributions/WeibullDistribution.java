@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016 JaamSim Software Inc.
+ * Copyright (C) 2016-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -82,9 +82,9 @@ public class WeibullDistribution extends Distribution {
 	@Override
 	protected double getSample(double simTime) {
 
-		double scale = scaleInput.getValue().getNextSample(simTime);
-		double shape = shapeInput.getValue().getNextSample(simTime);
-		double loc = locationInput.getValue().getNextSample(simTime);
+		double scale = scaleInput.getNextSample(simTime);
+		double shape = shapeInput.getNextSample(simTime);
+		double loc = locationInput.getNextSample(simTime);
 
 		// Inverse transform method
 		return  scale * Math.pow( - Math.log(rng.nextUniform()), 1.0/shape ) + loc;
@@ -92,16 +92,16 @@ public class WeibullDistribution extends Distribution {
 
 	@Override
 	protected double getMean(double simTime) {
-		double scale = scaleInput.getValue().getNextSample(simTime);
-		double shape = shapeInput.getValue().getNextSample(simTime);
-		double loc = locationInput.getValue().getNextSample(simTime);
+		double scale = scaleInput.getNextSample(simTime);
+		double shape = shapeInput.getNextSample(simTime);
+		double loc = locationInput.getNextSample(simTime);
 		return scale/shape * Gamma.gamma(1.0/shape) + loc;
 	}
 
 	@Override
 	protected double getStandardDev(double simTime) {
-		double scale = scaleInput.getValue().getNextSample(simTime);
-		double shape = shapeInput.getValue().getNextSample(simTime);
+		double scale = scaleInput.getNextSample(simTime);
+		double shape = shapeInput.getNextSample(simTime);
 		return scale/shape * Math.sqrt( 2.0*shape*Gamma.gamma(2.0/shape) - Math.pow(Gamma.gamma(1.0/shape), 2.0) );
 	}
 

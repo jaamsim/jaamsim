@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2010-2012 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2021 JaamSim Software Inc.
+ * Copyright (C) 2016-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -84,6 +84,13 @@ public abstract class Input<T> {
 	protected static final String INP_VAL_LISTSIZE = "%s and %s must be of equal size";
 	protected static final String INP_ERR_BRACES = "List must contain equal numbers of opening and closing braces";
 	public static final String INP_ERR_QUOTE = "A String cannot include a single quote or apostrophe (').";
+
+	public static final String EXP_ERR_RESULT_TYPE = "Incorrect result type returned by expression.%n"
+	                                               + "Received: %s, expected: %s";
+	public static final String EXP_ERR_CLASS = "Incorrect class returned by expression.%n"
+	                                         + "Received: %s, expected: %s";
+	public static final String EXP_ERR_UNIT = "Incorrect unit type returned by expression.%n"
+	                                        + "Received: %s, expected: %s";
 
 	protected static final String VALID_SAMPLE_PROV = "Accepts a number with units of type %s, an object that returns such a number, or an expression that returns such a number.";
 	protected static final String VALID_SAMPLE_PROV_DIMLESS = "Accepts a dimensionless number, an object that returns such a number, or an expression that returns such a number.";

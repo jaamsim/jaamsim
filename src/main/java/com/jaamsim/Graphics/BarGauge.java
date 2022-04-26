@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2016 JaamSim Software Inc.
+ * Copyright (C) 2016-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -58,7 +58,7 @@ public class BarGauge extends DisplayEntity {
 	 description = "Value displayed by the gauge.",
 	    unitType = DimensionlessUnit.class)
 	public double getValue(double simTime) {
-		double ret = dataSource.getValue().getNextSample(simTime);
+		double ret = dataSource.getNextSample(simTime);
 		ret = Math.min(ret, 1.0d);
 		ret = Math.max(ret, 0.0d);
 		return ret;

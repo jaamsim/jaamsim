@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2021 JaamSim Software Inc.
+ * Copyright (C) 2016-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -110,7 +110,7 @@ public class WeightedSum extends DisplayEntity implements SampleProvider {
 
 		// Confirm that the number of entries in the CoeffientList matches the EntityList
 		if (coefficientList.getValue() != null
-				&& coefficientList.getValue().size() != inputValueList.getValue().size()) {
+				&& coefficientList.getListSize() != inputValueList.getListSize()) {
 			throw new InputErrorException("If set, the number of entries for CoefficientList "
 					+ "must match the entries for InputValueList");
 		}
@@ -125,16 +125,16 @@ public class WeightedSum extends DisplayEntity implements SampleProvider {
 
 		// Calculate the unweighted sum of the inputs
 		if (coefficientList.getValue() == null) {
-			for (int i=0; i<inputValueList.getValue().size(); i++) {
-				val += inputValueList.getValue().get(i).getNextSample(simTime);
+			for (int i = 0; i < inputValueList.getListSize(); i++) {
+				val += inputValueList.getNextSample(i, simTime);
 			}
 		}
 
 		// Calculate the weighted sum of the inputs
 		else {
-			for (int i=0; i<inputValueList.getValue().size(); i++) {
+			for (int i = 0; i < inputValueList.getListSize(); i++) {
 				val += coefficientList.getValue().get(i)
-						* inputValueList.getValue().get(i).getNextSample(simTime);
+						* inputValueList.getNextSample(i, simTime);
 			}
 		}
 

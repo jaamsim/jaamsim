@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016 JaamSim Software Inc.
+ * Copyright (C) 2016-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -80,9 +80,9 @@ public class BetaDistribution extends Distribution {
 		// Effectively calculate the inverse CDF
 		double val = rng.nextUniform();
 
-		double alpha = alphaInput.getValue().getNextSample(simTime);
-		double beta = betaInput.getValue().getNextSample(simTime);
-		double scale = scaleInput.getValue().getNextSample(simTime);
+		double alpha = alphaInput.getNextSample(simTime);
+		double beta = betaInput.getNextSample(simTime);
+		double scale = scaleInput.getNextSample(simTime);
 
 		double low = 0;
 		double high = 1;
@@ -115,9 +115,9 @@ public class BetaDistribution extends Distribution {
 	@Override
 	protected double getMean(double simTime) {
 
-		double alpha = alphaInput.getValue().getNextSample(simTime);
-		double beta = betaInput.getValue().getNextSample(simTime);
-		double scale = scaleInput.getValue().getNextSample(simTime);
+		double alpha = alphaInput.getNextSample(simTime);
+		double beta = betaInput.getNextSample(simTime);
+		double scale = scaleInput.getNextSample(simTime);
 
 		return (alpha / (alpha + beta)) * scale;
 	}
@@ -125,9 +125,9 @@ public class BetaDistribution extends Distribution {
 	@Override
 	protected double getStandardDev(double simTime) {
 
-		double alpha = alphaInput.getValue().getNextSample(simTime);
-		double beta = betaInput.getValue().getNextSample(simTime);
-		double scale = scaleInput.getValue().getNextSample(simTime);
+		double alpha = alphaInput.getNextSample(simTime);
+		double beta = betaInput.getNextSample(simTime);
+		double scale = scaleInput.getNextSample(simTime);
 
 		double apbSqrd = (alpha + beta) * (alpha + beta);
 		return (Math.sqrt(alpha * beta / (apbSqrd * (alpha + beta + 1)))) * scale;

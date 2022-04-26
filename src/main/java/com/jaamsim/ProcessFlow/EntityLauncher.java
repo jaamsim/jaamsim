@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2017-2021 JaamSim Software Inc.
+ * Copyright (C) 2017-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -85,7 +85,7 @@ public class EntityLauncher extends GameEntity implements EntityGen {
 
 		// Create a new entity
 		numberGenerated++;
-		DisplayEntity proto = prototypeEntity.getValue().getNextEntity(0.0d);
+		DisplayEntity proto = prototypeEntity.getNextEntity(0.0d);
 		name = name + numberGenerated;
 		DisplayEntity ent = InputAgent.generateEntityWithName(getJaamSimModel(), proto.getClass(), name);
 		Entity.fastCopyInputs(proto, ent);
@@ -130,9 +130,9 @@ public class EntityLauncher extends GameEntity implements EntityGen {
 	@Override
 	public ArrayList<DisplayEntity> getSourceEntities() {
 		ArrayList<DisplayEntity> ret = new ArrayList<>();
-		if (prototypeEntity.getValue() == null)
+		if (prototypeEntity.isDefault())
 			return ret;
-		DisplayEntity ent = prototypeEntity.getValue().getNextEntity(0.0d);
+		DisplayEntity ent = prototypeEntity.getNextEntity(0.0d);
 		if (ent != null) {
 			ret.add(ent);
 		}

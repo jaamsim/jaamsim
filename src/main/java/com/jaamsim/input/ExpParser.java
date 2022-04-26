@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2021 JaamSim Software Inc.
+ * Copyright (C) 2016-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -235,6 +235,7 @@ public class ExpParser {
 		public ExpNode[] attribIndices;
 		public ExpNode valueExp;
 		public Assigner assigner;
+		int attribPos;
 		public Assignment(String source) {
 			super(source);
 		}
@@ -242,7 +243,7 @@ public class ExpParser {
 		public ExpResult evaluate(EvalContext ec) throws ExpError {
 			synchronized(executingThreads) {
 				if (executingThreads.contains(Thread.currentThread())) {
-					throw new ExpError(null, 0, "Expression recursion detected for expression: %s", source);
+					throw new ExpError(source, entExp.tokenPos, "Expression recursion detected");
 				}
 
 				executingThreads.add(Thread.currentThread());
@@ -257,11 +258,20 @@ public class ExpParser {
 						indices[i] = attribIndices[i].evaluate(ec);
 					}
 				}
+				if (ent.type != ExpResType.ENTITY)
+					throw new ExpError(source, entExp.tokenPos, "Can not execute assignment, not assigning to an entity");
+				if (ent.entVal == null)
+					throw new ExpError(source, entExp.tokenPos, "Trying to assign to a null entity");
+
 				assigner.assign(ent, indices, value);
 
 				return value;
-
-			} finally {
+			}
+			catch (Exception ex) {
+				// Add the position for exceptions related to the attribute name and the values of its indices
+				throw fixError(ex, source, attribPos);
+			}
+			finally {
 				synchronized(executingThreads) {
 					executingThreads.remove(Thread.currentThread());
 				}
@@ -427,7 +437,7 @@ public class ExpParser {
 				} else {
 					this.resolver = context.getOutputResolver(outputName);
 				}
-			} catch (ExpError ex) {
+			} catch (Exception ex) {
 				throw (fixError(ex, exp.source, pos));
 			}
 
@@ -439,7 +449,7 @@ public class ExpParser {
 				ExpResult ent = entNode.evaluate(ec);
 
 				return resolver.resolve(ec, ent);
-			} catch (ExpError ex) {
+			} catch (Exception ex) {
 				throw fixError(ex, exp.source, tokenPos);
 			}
 
@@ -551,7 +561,7 @@ public class ExpParser {
 
 				throw new ExpError(exp.source, tokenPos, "Expression does not evaluate to a collection or lambda type.");
 
-			} catch (ExpError ex) {
+			} catch (Exception ex) {
 				throw fixError(ex, exp.source, tokenPos);
 			}
 		}
@@ -636,7 +646,7 @@ public class ExpParser {
 					boolean isConstant = ec == null;
 					return ExpCollections.makeAssignableMapCollection(map, isConstant);
 				}
-			} catch (ExpError ex) {
+			} catch (Exception ex) {
 				throw fixError(ex, exp.source, tokenPos);
 			}
 
@@ -991,12 +1001,10 @@ public class ExpParser {
 	}
 
 	// Some errors can be throw without a known source or position, update such errors with the given info
-	private static ExpError fixError(ExpError ex, String source, int pos) {
-		ExpError exFixed = ex;
-		if (ex.source == null) {
-			exFixed = new ExpError(source, pos, ex.getMessage());
-		}
-		return exFixed;
+	private static ExpError fixError(Exception ex, String source, int pos) {
+		if (!(ex instanceof ExpError) || ((ExpError) ex).source == null)
+			return new ExpError(source, pos, ex.getMessage(), ex);
+		return (ExpError) ex;
 	}
 
 	private static void fixValidationErrors(ExpValResult res, String source, int pos) {
@@ -1515,6 +1523,7 @@ public class ExpParser {
 		} else {
 			ret.assigner = context.getAssigner(lhsResolve.outputName);
 		}
+		ret.attribPos = lhsNode.tokenPos;
 
 		return ret;
 

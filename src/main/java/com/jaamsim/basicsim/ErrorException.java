@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2002-2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016 JaamSim Software Inc.
+ * Copyright (C) 2016-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,42 +25,56 @@ import com.jaamsim.input.ExpError;
 public class ErrorException extends RuntimeException {
 
 	public String entName;
+	public String keyword;
+	public int index;
 	public String source;
 	public int position;
 
-	public ErrorException(int pos, String src, String name, String msg) {
-		super(msg);
+	public ErrorException(String src, int pos, String name, String msg) {
+		this(src, pos, name, "", -1, msg, null);
+	}
+
+	public ErrorException(String src, int pos, String name, String msg, Throwable cause) {
+		this(src, pos, name, "", -1, msg, cause);
+	}
+
+	public ErrorException(String src, int pos, String name, String key, int ind, String msg, Throwable cause) {
+		super(msg, cause);
 		entName = name;
+		keyword = key;
+		index = ind;
 		source = src;
 		position = pos;
 	}
 
 	public ErrorException(String format, Object... args) {
-		this(-1, "", "", String.format(format, args));
+		this("", -1, "", String.format(format, args));
 	}
 
 	public ErrorException(Entity ent, String msg) {
-		this(-1, "", ent.getName(), msg);
+		this("", -1, ent.getName(), msg);
 	}
 
 	public ErrorException(Entity ent, ExpError e) {
-		this(e.pos, e.source, ent.getName(), e.getMessage());
+		this(e.source, e.pos, ent.getName(), e.getMessage(), e);
 	}
 
 	public ErrorException( Throwable cause ) {
-		super( cause );
-		entName = "";
-		source = "";
-		position = -1;
+		this("", -1, "", cause.getMessage(), cause);
 	}
 
 	@Override
 	public String getMessage() {
-		if (entName.isEmpty()) {
+		if (entName == null || entName.isEmpty()) {
 			return super.getMessage();
 		}
 		StringBuilder sb = new StringBuilder();
-		sb.append(entName).append(": ");
+		sb.append(entName);
+		if (!keyword.isEmpty())
+			sb.append(String.format(" keyword '%s'", keyword));
+		if (index > 0)
+			sb.append(String.format(", index (%d)", index));
+		sb.append(": ");
 		sb.append(super.getMessage());
 		return sb.toString();
 	}

@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2017-2021 JaamSim Software Inc.
+ * Copyright (C) 2017-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -1208,12 +1208,12 @@ public class ExpOperators {
 				while (it.hasNext()) {
 					ExpResult compKey = it.nextKey();
 					ExpResult comp = col.index(compKey);
+					if (comp.type != ExpResType.NUMBER) {
+						throw new ExpError(source, pos, "Can not take max of non-numeric type in collection");
+					}
 					if (comp.unitType != ut) {
 						throw new ExpError(source, pos, "Unmatched Unit types in collection: %s, %s",
 						                   ut.getSimpleName(), comp.unitType.getSimpleName());
-					}
-					if (comp.type != ExpResType.NUMBER) {
-						throw new ExpError(source, pos, "Can not take max of non-numeric type in collection");
 					}
 					if (comp.value > ret.value) {
 						ret = comp;
@@ -1255,12 +1255,12 @@ public class ExpOperators {
 				while (it.hasNext()) {
 					ExpResult compKey = it.nextKey();
 					ExpResult comp = col.index(compKey);
+					if (comp.type != ExpResType.NUMBER) {
+						throw new ExpError(source, pos, "Can not take min of non-numeric type in collection");
+					}
 					if (comp.unitType != ut) {
 						throw new ExpError(source, pos, "Unmatched Unit types in collection: %s, %s",
 						                   ut.getSimpleName(), comp.unitType.getSimpleName());
-					}
-					if (comp.type != ExpResType.NUMBER) {
-						throw new ExpError(source, pos, "Can not take min of non-numeric type in collection");
 					}
 					if (comp.value < ret.value) {
 						ret = comp;

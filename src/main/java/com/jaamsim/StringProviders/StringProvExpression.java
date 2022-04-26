@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2016-2021 JaamSim Software Inc.
+ * Copyright (C) 2016-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +27,8 @@ import com.jaamsim.input.ExpParser;
 import com.jaamsim.input.ExpParser.Expression;
 import com.jaamsim.input.ExpResType;
 import com.jaamsim.input.ExpResult;
+import com.jaamsim.input.Input;
+import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 
 public class StringProvExpression implements StringProvider {
@@ -103,16 +105,20 @@ public class StringProvExpression implements StringProvider {
 			ExpResult result = ExpEvaluator.evaluateExpression(exp, simTime);
 			switch (result.type) {
 			case STRING:
-				ret = String.format(fmt, result.stringVal);
+				ret = String.format(fmt, result.stringVal);  // no double quotes
 				break;
 			case ENTITY:
-				ret = String.format(fmt, result.entVal.getName());
+				ret = String.format(fmt, result.entVal);  // no square brackets
 				break;
 			case NUMBER:
 				if (result.unitType != unitType) {
-					thisEnt.error("Invalid unit returned by an expression: '%s'%n"
-							+ "Received: %s, expected: %s",
-							exp, thisEnt.getJaamSimModel().getObjectTypeForClass(result.unitType),
+					if (unitType == DimensionlessUnit.class) {
+						JaamSimModel simModel = thisEnt.getJaamSimModel();
+						ret = String.format(fmt, result.getOutputString(simModel));
+						break;
+					}
+					throw new ExpError(exp.source, 0, Input.EXP_ERR_UNIT,
+							thisEnt.getJaamSimModel().getObjectTypeForClass(result.unitType),
 							thisEnt.getJaamSimModel().getObjectTypeForClass(unitType));
 				}
 				ret = String.format(fmt, result.value/siFactor);

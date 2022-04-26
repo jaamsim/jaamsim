@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2021 JaamSim Software Inc.
+ * Copyright (C) 2016-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -136,7 +136,7 @@ public abstract class AbstractCombine extends LinkedService {
 		// Number of values enter by the user
 		int[] ret = new int[waitQueueList.getListSize()];
 		for (int i = 0; i < numberRequired.getListSize(); i++) {
-			int n = (int) numberRequired.getValue().get(i).getNextSample(simTime);
+			int n = (int) numberRequired.getNextSample(i, simTime);
 			ret[i] = n;
 		}
 
@@ -158,7 +158,7 @@ public abstract class AbstractCombine extends LinkedService {
 
 	@Override
 	protected double getStepDuration(double simTime) {
-		return serviceTime.getValue().getNextSample(simTime);
+		return serviceTime.getNextSample(simTime);
 	}
 
 	/**

@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2002-2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016 JaamSim Software Inc.
+ * Copyright (C) 2016-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,17 +26,21 @@ public class InputErrorException extends RuntimeException {
 	public int position;
 
 	public InputErrorException(int pos, String src, String msg) {
-		super(msg);
+		this(pos, src, msg, null);
+	}
+
+	public InputErrorException(int pos, String src, String msg, Throwable cause) {
+		super(msg, cause);
 		source = src;
 		position = pos;
 	}
 
 	public InputErrorException(String format, Object... args) {
-		this(-1, "", String.format(format, args));
+		this(-1, "", String.format(format, args), null);
 	}
 
 	public InputErrorException(ExpError e) {
-		this(e.pos, e.source, e.getMessage());
+		this(e.pos, e.source, e.getMessage(), e);
 	}
 
 }

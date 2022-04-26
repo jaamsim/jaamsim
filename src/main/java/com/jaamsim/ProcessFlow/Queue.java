@@ -261,10 +261,10 @@ public class Queue extends LinkedComponent {
 		long n = this.getTotalNumberAdded();
 		if (!fifo.getValue())
 			n *= -1;
-		int pri = (int) priority.getValue().getNextSample(simTime);
+		int pri = (int) priority.getNextSample(simTime);
 		String m = null;
-		if (match.getValue() != null)
-			m = match.getValue().getNextString(simTime, 1.0d, true);
+		if (!match.isDefault())
+			m = match.getNextString(simTime, 1.0d, true);
 
 		EventHandle rh = null;
 		if (renegeTime.getValue() != null)
@@ -282,7 +282,7 @@ public class Queue extends LinkedComponent {
 
 		// Schedule the time to check the renege condition
 		if (renegeTime.getValue() != null) {
-			double dur = renegeTime.getValue().getNextSample(getSimTime());
+			double dur = renegeTime.getNextSample(getSimTime());
 			// Schedule the renege tests in FIFO order so that if two or more entities are added to
 			// the queue at the same time, the one nearest the front of the queue is tested first
 			EventManager.scheduleSeconds(dur, 5, true, new RenegeActionTarget(this, entry), rh);
@@ -311,7 +311,7 @@ public class Queue extends LinkedComponent {
 		this.setReceivedEntity(entry.entity);
 
 		// Check the condition for reneging
-		boolean bool = (renegeCondition.getValue().getNextSample(simTime) == 0.0d);
+		boolean bool = (renegeCondition.getNextSample(simTime) == 0.0d);
 		this.setReceivedEntity(oldEnt);
 		if (bool) {
 			return;

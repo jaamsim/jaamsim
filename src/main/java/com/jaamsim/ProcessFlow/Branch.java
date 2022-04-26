@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2021 JaamSim Software Inc.
+ * Copyright (C) 2016-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -60,7 +60,7 @@ public class Branch extends LinkedComponent {
 		double simTime = getSimTime();
 
 		// Choose the next component for this entity
-		int i = (int) choice.getValue().getNextSample(simTime);
+		int i = (int) choice.getNextSample(simTime);
 		if (i<1 || i>nextComponentList.getValue().size())
 			error("Chosen index i=%s is out of range for NextComponentList: %s.",
 			      i, nextComponentList.getValue());

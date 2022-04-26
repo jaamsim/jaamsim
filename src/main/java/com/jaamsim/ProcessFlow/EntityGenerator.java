@@ -143,14 +143,14 @@ public class EntityGenerator extends LinkedService implements EntityGen {
 
 		// Stop if the last entity been generated
 		if (maxNumber.getValue() != null
-				&& numberGenerated >= maxNumber.getValue().getNextSample(simTime))
+				&& numberGenerated >= maxNumber.getNextSample(simTime))
 			return false;
 
 		// Select the inter-arrival time for the next entity
 		if (numberGenerated == 0)
-			presentIAT = firstArrivalTime.getValue().getNextSample(simTime);
+			presentIAT = firstArrivalTime.getNextSample(simTime);
 		else
-			presentIAT = interArrivalTime.getValue().getNextSample(simTime);
+			presentIAT = interArrivalTime.getNextSample(simTime);
 
 		if (presentIAT == Double.POSITIVE_INFINITY)
 			return false;
@@ -174,10 +174,10 @@ public class EntityGenerator extends LinkedService implements EntityGen {
 		}
 
 		// Create the new entities
-		int num = (int) entitiesPerArrival.getValue().getNextSample(getSimTime());
+		int num = (int) entitiesPerArrival.getNextSample(getSimTime());
 		for (int i=0; i<num; i++) {
 			numberGenerated++;
-			DisplayEntity proto = prototypeEntity.getValue().getNextEntity(simTime);
+			DisplayEntity proto = prototypeEntity.getNextEntity(simTime);
 			StringBuilder sb = new StringBuilder();
 			sb.append(name).append(numberGenerated);
 			DisplayEntity ent = InputAgent.generateEntityWithName(getJaamSimModel(), proto.getClass(), sb.toString());
@@ -212,9 +212,9 @@ public class EntityGenerator extends LinkedService implements EntityGen {
 	@Override
 	public ArrayList<DisplayEntity> getSourceEntities() {
 		ArrayList<DisplayEntity> ret = new ArrayList<>();
-		if (prototypeEntity.getValue() == null)
+		if (prototypeEntity.isDefault())
 			return ret;
-		DisplayEntity ent = prototypeEntity.getValue().getNextEntity(0.0d);
+		DisplayEntity ent = prototypeEntity.getNextEntity(0.0d);
 		if (ent != null) {
 			ret.add(ent);
 		}
