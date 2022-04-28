@@ -205,10 +205,6 @@ public class ExpressionLogger extends Logger implements StateEntityListener, Obs
 
 	@Override
 	public void observerUpdate(SubjectEntity subj) {
-		performUpdate();
-	}
-
-	public void performUpdate() {
 		if (recordLogEntryHandle.isScheduled())
 			return;
 		EventManager.scheduleTicks(0L, 11, true, recordLogEntryTarget, recordLogEntryHandle);

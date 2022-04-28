@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2020-2021 JaamSim Software Inc.
+ * Copyright (C) 2020-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -96,16 +96,12 @@ public class EntitySystem extends AbstractStateUserEntity implements ObserverEnt
 	}
 
 	@Override
-	public void observerUpdate(SubjectEntity subj) {
-		performUpdate();
-	}
-
-	@Override
 	public ArrayList<SubjectEntity> getWatchList() {
 		return watchList.getValue();
 	}
 
-	public void performUpdate() {
+	@Override
+	public void observerUpdate(SubjectEntity subj) {
 		if (updateHandle.isScheduled())
 			return;
 		EventManager.scheduleTicks(0L, 11, false, updateTarget, updateHandle);
