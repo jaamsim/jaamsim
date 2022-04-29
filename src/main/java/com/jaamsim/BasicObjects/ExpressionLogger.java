@@ -38,6 +38,7 @@ import com.jaamsim.input.InputCallback;
 import com.jaamsim.input.IntegerListInput;
 import com.jaamsim.input.InterfaceEntityListInput;
 import com.jaamsim.input.Keyword;
+import com.jaamsim.input.Output;
 import com.jaamsim.input.UnitTypeListInput;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.states.StateEntity;
@@ -108,6 +109,7 @@ public class ExpressionLogger extends Logger implements StateEntityListener, Obs
 	private final BooleanInput verifyWatchList;
 
 	private final ArrayList<String> lastValueList = new ArrayList<>();
+	private Entity watchedEntity;  // last subject entity that triggered a log entry
 
 	{
 		interval = new ValueInput("Interval", KEY_INPUTS, null);
@@ -208,24 +210,32 @@ public class ExpressionLogger extends Logger implements StateEntityListener, Obs
 	public void observerUpdate(SubjectEntity subj) {
 		if (recordLogEntryHandle.isScheduled())
 			return;
-		EventManager.scheduleTicks(0L, 11, true, recordLogEntryTarget, recordLogEntryHandle);
+		DisplayEntity ent = (DisplayEntity) subj;
+		EventManager.scheduleTicks(0L, 11, true, new RecordLogEntryTarget(ent), recordLogEntryHandle);
 	}
 
 	private final EventHandle recordLogEntryHandle = new EventHandle();
-	private final ProcessTarget recordLogEntryTarget = new ProcessTarget() {
+
+	private class RecordLogEntryTarget extends ProcessTarget {
+		DisplayEntity ent;
+
+		public RecordLogEntryTarget(DisplayEntity ent) {
+			this.ent = ent;
+		}
 
 		@Override
 		public void process() {
-			if (valueChanged())
-				recordLogEntry(getSimTime(), null);
+			if (valueChanged()) {
+				watchedEntity = ent;
+				recordLogEntry(getSimTime(), ent);
+			}
 		}
 
 		@Override
 		public String getDescription() {
 			return "recordLogEntry";
 		}
-
-	};
+	}
 
 	@Override
 	protected void printColumnTitles(FileEntity file) {
@@ -373,5 +383,12 @@ public class ExpressionLogger extends Logger implements StateEntityListener, Obs
 		}
 	}
 	private final ProcessTarget doValueTrace = new DoValueTraceTarget();
+
+	@Output(name = "WatchedEntity",
+	 description = "The entity in the WatchList input that triggered the most recent log entry.",
+	    sequence = 1)
+	public Entity getWatchedEntity(double simTime) {
+		return watchedEntity;
+	}
 
 }
