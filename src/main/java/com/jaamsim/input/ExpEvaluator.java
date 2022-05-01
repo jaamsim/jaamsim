@@ -378,6 +378,8 @@ public class ExpEvaluator {
 		constants.put("this", ExpResult.makeEntityResult(thisEnt));
 		constants.put("parent", ExpResult.makeEntityResult(parent));
 		constants.put("sub", ExpResult.makeEntityResult(parent));
+		constants.put("TRUE", ExpResult.makeNumResult(1, DimensionlessUnit.class));
+		constants.put("FALSE", ExpResult.makeNumResult(0, DimensionlessUnit.class));
 
 		return new EntityParseContext(thisEnt, constants, source);
 	}
