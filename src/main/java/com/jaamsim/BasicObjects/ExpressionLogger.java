@@ -24,6 +24,7 @@ import com.jaamsim.StringProviders.StringProvListInput;
 import com.jaamsim.StringProviders.StringProvider;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.EntityTarget;
+import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.basicsim.FileEntity;
 import com.jaamsim.basicsim.ObserverEntity;
 import com.jaamsim.basicsim.SubjectEntity;
@@ -33,6 +34,10 @@ import com.jaamsim.events.EventManager;
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.EntityListInput;
+import com.jaamsim.input.ExpError;
+import com.jaamsim.input.ExpEvaluator;
+import com.jaamsim.input.ExpResType;
+import com.jaamsim.input.ExpressionInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputCallback;
 import com.jaamsim.input.IntegerListInput;
@@ -41,9 +46,11 @@ import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.UnitTypeListInput;
 import com.jaamsim.input.ValueInput;
+import com.jaamsim.input.ExpParser.Expression;
 import com.jaamsim.states.StateEntity;
 import com.jaamsim.states.StateEntityListener;
 import com.jaamsim.states.StateRecord;
+import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
 
 public class ExpressionLogger extends Logger implements StateEntityListener, ObserverEntity {
@@ -108,6 +115,16 @@ public class ExpressionLogger extends Logger implements StateEntityListener, Obs
 	         exampleList = { "TRUE" })
 	private final BooleanInput verifyWatchList;
 
+	@Keyword(description = "A logical condition that determines whether to record a log entry "
+	                     + "that is triggered by a change to one of the objects in the "
+	                     + "'WatchList'. "
+	                     + "An entry in the 'ValueTraceList' is not required to trigger this type "
+	                     + "of log entry. "
+	                     + "The output 'WatchedEntity' can be used in the expression to represent "
+	                     + "the 'WatchList' entity that changed.",
+	         exampleList = { "'[Queue1].QueueLength > 3'" })
+	private final ExpressionInput watchListCondition;
+
 	private final ArrayList<String> lastValueList = new ArrayList<>();
 	private Entity watchedEntity;  // last subject entity that triggered a log entry
 
@@ -141,6 +158,12 @@ public class ExpressionLogger extends Logger implements StateEntityListener, Obs
 
 		verifyWatchList = new BooleanInput("VerifyWatchList", KEY_INPUTS, false);
 		this.addInput(verifyWatchList);
+
+		watchListCondition = new ExpressionInput("WatchListCondition", KEY_INPUTS, null);
+		watchListCondition.setUnitType(DimensionlessUnit.class);
+		watchListCondition.setResultType(ExpResType.NUMBER);
+		watchListCondition.setDefaultText(BooleanInput.FALSE);
+		this.addInput(watchListCondition);
 	}
 
 	public ExpressionLogger() {}
@@ -225,7 +248,7 @@ public class ExpressionLogger extends Logger implements StateEntityListener, Obs
 
 		@Override
 		public void process() {
-			if (valueChanged()) {
+			if (valueChanged() || testWatchListCondition(ent)) {
 				watchedEntity = ent;
 				recordLogEntry(getSimTime(), ent);
 			}
@@ -235,6 +258,31 @@ public class ExpressionLogger extends Logger implements StateEntityListener, Obs
 		public String getDescription() {
 			return "recordLogEntry";
 		}
+	}
+
+	private boolean testWatchListCondition(Entity ent) {
+		Expression exp = watchListCondition.getValue();
+		if (exp == null)
+			return false;
+
+		// Temporarily set the watched entity so that the expression can be evaluated
+		Entity lastEnt = watchedEntity;
+		watchedEntity = ent;
+
+		// Evaluate the open condition (0 = false, non-zero = true)
+		boolean ret = false;
+		double simTime = getSimTime();
+		try {
+			ret = ExpEvaluator.evaluateExpression(exp, simTime).value != 0;
+		}
+		catch (ExpError e) {
+			throw new ErrorException(this, e);
+		}
+
+		// Reset the original watched entity
+		watchedEntity = lastEnt;
+
+		return ret;
 	}
 
 	@Override
