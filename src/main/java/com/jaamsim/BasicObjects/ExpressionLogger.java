@@ -98,11 +98,12 @@ public class ExpressionLogger extends Logger implements StateEntityListener, Obs
 	protected final InterfaceEntityListInput<SubjectEntity> watchList;
 
 	@Keyword(description = "Allows the user to verify that the input to the 'WatchList' keyword "
-	                     + "includes all the objects that affect the ExpressionThreshold's state. "
+	                     + "includes all the objects that can trigger a change in a "
+	                     + "ValueTraceList expression. "
 	                     + "When set to TRUE, the ExpressionThreshold uses both the normal logic "
-	                     + "and the WatchList logic to set its state. "
-	                     + "An error message is generated if the threshold changes state without "
-	                     + "being triggered by a WatchList object.",
+	                     + "and the WatchList logic to test the ValueTraceList expressions. "
+	                     + "An error message is generated if a ValueTraceList expression changes "
+	                     + "its value without being triggered by a WatchList object.",
 	         exampleList = { "TRUE" })
 	private final BooleanInput verifyWatchList;
 
