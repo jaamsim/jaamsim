@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016 JaamSim Software Inc.
+ * Copyright (C) 2016-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ package com.jaamsim.ProbabilityDistributions;
 
 import java.util.Arrays;
 
-import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
@@ -184,14 +183,10 @@ public class DiscreteDistribution extends Distribution {
 		return  Math.sqrt( sum - (mean * mean) );
 	}
 
-	@Output( name="SampleCount",
-			 description="The number of samples selected for each value.")
-	public DoubleVector getSampleCount(double simTime) {
-		DoubleVector ret = new DoubleVector(sampleCount.length);
-		for (int i=0; i<sampleCount.length; i++) {
-			ret.add(sampleCount[i]);
-		}
-		return ret;
+	@Output(name = "SampleCount",
+	 description = "The number of samples selected for each value.")
+	public int[] getSampleCount(double simTime) {
+		return sampleCount;
 	}
 
 }
