@@ -362,12 +362,14 @@ public class ExpEvaluator {
 
 	}
 
-	private static class EntityEvalContext extends ExpParser.EvalContext {
+	public static class EntityEvalContext extends ExpParser.EvalContext {
 
-		private final double simTime;
+		public final double simTime;
+		public final Entity thisEnt;
 
-		public EntityEvalContext(double simTime) {
+		public EntityEvalContext(Entity thisEnt, double simTime) {
 			this.simTime = simTime;
+			this.thisEnt = thisEnt;
 		}
 
 	}
@@ -386,9 +388,14 @@ public class ExpEvaluator {
 
 	public static ExpResult evaluateExpression(ExpParser.Expression exp, double simTime) throws ExpError
 	{
+		return evaluateExpression(exp, null, simTime);
+	}
+
+	public static ExpResult evaluateExpression(ExpParser.Expression exp, Entity thisEnt, double simTime) throws ExpError
+	{
 		if (exp == null)
 			return ExpResult.makeEntityResult(null);
-		EntityEvalContext evalContext = new EntityEvalContext(simTime);
+		EntityEvalContext evalContext = new EntityEvalContext(thisEnt, simTime);
 		return exp.evaluate(evalContext);
 	}
 }
