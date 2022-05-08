@@ -65,24 +65,24 @@ public class ExponentialDistribution extends Distribution {
 		return getSample(mean, rng);
 	}
 
-	public static double getSample(double mean, MRG1999a rng) {
-		return (-mean * Math.log(rng.nextUniform()));
-	}
-
 	@Override
 	protected double getMean(double simTime) {
 		double mean = meanInput.getNextSample(simTime);
 		return getMeanVal(mean);
 	}
 
-	public static double getMeanVal(double mean) {
-		return mean;
-	}
-
 	@Override
 	protected double getStandardDev(double simTime) {
 		double mean = meanInput.getNextSample(simTime);
 		return getStandardDevVal(mean);
+	}
+
+	public static double getSample(double mean, MRG1999a rng) {
+		return (-mean * Math.log(rng.nextUniform()));
+	}
+
+	public static double getMeanVal(double mean) {
+		return mean;
 	}
 
 	public static double getStandardDevVal(double mean) {

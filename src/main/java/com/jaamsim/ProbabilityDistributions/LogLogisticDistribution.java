@@ -76,11 +76,6 @@ public class LogLogisticDistribution extends Distribution {
 		return getSample(scale, shape, rng);
 	}
 
-	public static double getSample(double scale, double shape, MRG1999a rng) {
-		double u = rng.nextUniform();
-		return scale * Math.pow( u / (1 - u), 1.0 / shape );
-	}
-
 	@Override
 	protected double getMean(double simTime) {
 		double scale = scaleInput.getNextSample(simTime);
@@ -88,16 +83,21 @@ public class LogLogisticDistribution extends Distribution {
 		return getMean(scale, shape);
 	}
 
-	public static double getMean(double scale, double shape) {
-		double theta = Math.PI / shape;
-		return scale * theta / Math.sin( theta );
-	}
-
 	@Override
 	protected double getStandardDev(double simTime) {
 		double scale = scaleInput.getNextSample(simTime);
 		double shape = shapeInput.getNextSample(simTime);
 		return getStandardDev(scale, shape);
+	}
+
+	public static double getSample(double scale, double shape, MRG1999a rng) {
+		double u = rng.nextUniform();
+		return scale * Math.pow( u / (1 - u), 1.0 / shape );
+	}
+
+	public static double getMean(double scale, double shape) {
+		double theta = Math.PI / shape;
+		return scale * theta / Math.sin( theta );
 	}
 
 	public static double getStandardDev(double scale, double shape) {

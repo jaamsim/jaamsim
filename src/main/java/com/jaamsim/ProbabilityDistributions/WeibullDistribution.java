@@ -87,10 +87,6 @@ public class WeibullDistribution extends Distribution {
 		return loc + getSample(scale, shape, rng);
 	}
 
-	public static double getSample(double scale, double shape, MRG1999a rng) {
-		return scale * Math.pow( - Math.log(rng.nextUniform()), 1.0/shape );
-	}
-
 	@Override
 	protected double getMean(double simTime) {
 		double scale = scaleInput.getNextSample(simTime);
@@ -99,15 +95,19 @@ public class WeibullDistribution extends Distribution {
 		return loc + getMean(scale, shape);
 	}
 
-	public static double getMean(double scale, double shape) {
-		return scale/shape * Gamma.gamma(1.0/shape);
-	}
-
 	@Override
 	protected double getStandardDev(double simTime) {
 		double scale = scaleInput.getNextSample(simTime);
 		double shape = shapeInput.getNextSample(simTime);
 		return getStandardDev(scale, shape);
+	}
+
+	public static double getSample(double scale, double shape, MRG1999a rng) {
+		return scale * Math.pow( - Math.log(rng.nextUniform()), 1.0/shape );
+	}
+
+	public static double getMean(double scale, double shape) {
+		return scale/shape * Gamma.gamma(1.0/shape);
 	}
 
 	public static double getStandardDev(double scale, double shape) {

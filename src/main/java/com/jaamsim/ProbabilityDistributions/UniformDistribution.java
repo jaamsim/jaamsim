@@ -49,10 +49,6 @@ public class UniformDistribution extends Distribution {
 		return getSample(minVal, maxVal, rng);
 	}
 
-	public static double getSample(double minVal, double maxVal, MRG1999a rng) {
-		return minVal + rng.nextUniform()*(maxVal - minVal);
-	}
-
 	@Override
 	protected double getMean(double simTime) {
 		double minVal = minValueInput.getNextSample(simTime);
@@ -60,15 +56,19 @@ public class UniformDistribution extends Distribution {
 		return getMean(minVal, maxVal);
 	}
 
-	public static double getMean(double minVal, double maxVal) {
-		return 0.5 *(minVal + maxVal);
-	}
-
 	@Override
 	protected double getStandardDev(double simTime) {
 		double minVal = minValueInput.getNextSample(simTime);
 		double maxVal = maxValueInput.getNextSample(simTime);
 		return getStandardDev(minVal, maxVal);
+	}
+
+	public static double getSample(double minVal, double maxVal, MRG1999a rng) {
+		return minVal + rng.nextUniform()*(maxVal - minVal);
+	}
+
+	public static double getMean(double minVal, double maxVal) {
+		return 0.5 *(minVal + maxVal);
 	}
 
 	public static double getStandardDev(double minVal, double maxVal) {

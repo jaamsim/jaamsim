@@ -111,24 +111,6 @@ public class DiscreteDistribution extends Distribution {
 		return getSample(values, cumProbList, sampleCount, rng);
 	}
 
-	public static double getSample(double[] values, double[] cumProbs, int[] count, MRG1999a rng) {
-		double rand = rng.nextUniform();
-		int index = -1;
-
-		// Binary search the cumulative probabilities
-		int k = Arrays.binarySearch(cumProbs, rand);
-		if (k >= 0)
-			index = k;
-		else
-			index = -k - 1;
-
-		if (index < 0 || index >= values.length)
-			throw new RuntimeException("Bad index returned from binary search.");
-
-		count[index]++;
-		return values[index];
-	}
-
 	@Override
 	public double getMinValue() {
 		if (probabilityListInput.getValue() == null || valueListInput.getValue() == null)
@@ -167,6 +149,32 @@ public class DiscreteDistribution extends Distribution {
 		return getMean(values, cumProbList);
 	}
 
+	@Override
+	protected double getStandardDev(double simTime) {
+		if (probabilityListInput.isDefault() || valueListInput.isDefault())
+			return Double.NaN;
+		double[] values = valueListInput.getValue().toArray();
+		return getStandardDev(values, cumProbList);
+	}
+
+	public static double getSample(double[] values, double[] cumProbs, int[] count, MRG1999a rng) {
+		double rand = rng.nextUniform();
+		int index = -1;
+
+		// Binary search the cumulative probabilities
+		int k = Arrays.binarySearch(cumProbs, rand);
+		if (k >= 0)
+			index = k;
+		else
+			index = -k - 1;
+
+		if (index < 0 || index >= values.length)
+			throw new RuntimeException("Bad index returned from binary search.");
+
+		count[index]++;
+		return values[index];
+	}
+
 	public static double getMean(double[] values, double[] cumProbs) {
 		double ret = 0.0;
 		for (int i = 0; i < cumProbs.length; i++) {
@@ -176,14 +184,6 @@ public class DiscreteDistribution extends Distribution {
 			ret += prob * values[i];
 		}
 		return ret;
-	}
-
-	@Override
-	protected double getStandardDev(double simTime) {
-		if (probabilityListInput.isDefault() || valueListInput.isDefault())
-			return Double.NaN;
-		double[] values = valueListInput.getValue().toArray();
-		return getStandardDev(values, cumProbList);
 	}
 
 	public static double getStandardDev(double[] values, double[] cumProbs) {

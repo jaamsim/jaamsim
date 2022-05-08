@@ -81,6 +81,22 @@ public class TriangularDistribution extends Distribution {
 		return getSample(minVal, mode, maxVal, rng);
 	}
 
+	@Override
+	protected double getMean(double simTime) {
+		double minVal = minValueInput.getNextSample(simTime);
+		double maxVal = maxValueInput.getNextSample(simTime);
+		double mode = modeInput.getNextSample(simTime);
+		return getMean(minVal, mode, maxVal);
+	}
+
+	@Override
+	protected double getStandardDev(double simTime) {
+		double a = minValueInput.getNextSample(simTime);
+		double b = maxValueInput.getNextSample(simTime);
+		double m = modeInput.getNextSample(simTime);
+		return  getStandardDev(a, m, b);
+	}
+
 	public static double getSample(double minVal, double mode, double maxVal, MRG1999a rng) {
 
 		// Select the random value
@@ -103,24 +119,8 @@ public class TriangularDistribution extends Distribution {
 		return  minVal + sample*(maxVal - minVal);
 	}
 
-	@Override
-	protected double getMean(double simTime) {
-		double minVal = minValueInput.getNextSample(simTime);
-		double maxVal = maxValueInput.getNextSample(simTime);
-		double mode = modeInput.getNextSample(simTime);
-		return getMean(minVal, mode, maxVal);
-	}
-
 	public static double getMean(double minVal, double mode, double maxVal) {
 		return (minVal + mode + maxVal)/3.0;
-	}
-
-	@Override
-	protected double getStandardDev(double simTime) {
-		double a = minValueInput.getNextSample(simTime);
-		double b = maxValueInput.getNextSample(simTime);
-		double m = modeInput.getNextSample(simTime);
-		return  getStandardDev(a, m, b);
 	}
 
 	public static double getStandardDev(double minVal, double mode, double maxVal) {

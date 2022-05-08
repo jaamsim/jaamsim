@@ -90,20 +90,6 @@ public class ContinuousDistribution extends Distribution {
 		return getSample(values, cumProbs, rng);
 	}
 
-	public static double getSample(double[] values, double[] cumProbs, MRG1999a rng) {
-		double rand = rng.nextUniform();
-		int k = Arrays.binarySearch(cumProbs, rand);
-		if (k > 0)
-			return values[k];
-		int i = -k - 1;  // index of first cumProb > rand
-		if (i == values.length)
-			return values[values.length - 1];
-		if (i == 0)
-			return values[0];
-		double ret = values[i - 1] + (rand - cumProbs[i - 1])*(values[i] - values[i - 1])/(cumProbs[i] - cumProbs[i - 1]);
-		return ret;
-	}
-
 	@Override
 	public double getMinValue() {
 		return Math.max( valueListInput.getValue().get(0), super.getMinValue());
@@ -123,14 +109,6 @@ public class ContinuousDistribution extends Distribution {
 		return getMean(values, cumProbs);
 	}
 
-	public static double getMean(double[] values, double[] cumProbs) {
-		double sum = 0.0;
-		for (int i = 1; i < cumProbs.length; i++) {
-			sum += (cumProbs[i] - cumProbs[i - 1]) * (values[i] + values[i - 1]);
-		}
-		return 0.5 * sum;
-	}
-
 	@Override
 	protected double getStandardDev(double simTime) {
 		if (cumulativeProbabilityListInput.isDefault() || valueListInput.isDefault())
@@ -138,6 +116,28 @@ public class ContinuousDistribution extends Distribution {
 		double[] values = valueListInput.getValue().toArray();
 		double[] cumProbs = cumulativeProbabilityListInput.getValue().toArray();
 		return getStandardDev(values, cumProbs);
+	}
+
+	public static double getSample(double[] values, double[] cumProbs, MRG1999a rng) {
+		double rand = rng.nextUniform();
+		int k = Arrays.binarySearch(cumProbs, rand);
+		if (k > 0)
+			return values[k];
+		int i = -k - 1;  // index of first cumProb > rand
+		if (i == values.length)
+			return values[values.length - 1];
+		if (i == 0)
+			return values[0];
+		double ret = values[i - 1] + (rand - cumProbs[i - 1])*(values[i] - values[i - 1])/(cumProbs[i] - cumProbs[i - 1]);
+		return ret;
+	}
+
+	public static double getMean(double[] values, double[] cumProbs) {
+		double sum = 0.0;
+		for (int i = 1; i < cumProbs.length; i++) {
+			sum += (cumProbs[i] - cumProbs[i - 1]) * (values[i] + values[i - 1]);
+		}
+		return 0.5 * sum;
 	}
 
 	public static double getStandardDev(double[] values, double[] cumProbs) {

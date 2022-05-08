@@ -90,6 +90,21 @@ public class LogNormalDistribution extends Distribution {
 		return scale * getSample(mean, sd, rng1, rng2);
 	}
 
+	@Override
+	protected double getMean(double simTime) {
+		double mean = normalMeanInput.getNextSample(simTime);
+		double sd = normalStandardDeviationInput.getNextSample(simTime);
+		double scale = scaleInput.getNextSample(simTime);
+		return scale * getMean(mean, sd);
+	}
+
+	@Override
+	protected double getStandardDev(double simTime) {
+		double mean = normalMeanInput.getNextSample(simTime);
+		double sd = normalStandardDeviationInput.getNextSample(simTime);
+		return getStandardDev(mean, sd);
+	}
+
 	public static double getSample(double normalMean, double normalSD, MRG1999a rng1, MRG1999a rng2) {
 
 		// Loop until we have a random x-y coordinate in the unit circle
@@ -111,23 +126,8 @@ public class LogNormalDistribution extends Distribution {
 		return Math.exp(sample);
 	}
 
-	@Override
-	protected double getMean(double simTime) {
-		double mean = normalMeanInput.getNextSample(simTime);
-		double sd = normalStandardDeviationInput.getNextSample(simTime);
-		double scale = scaleInput.getNextSample(simTime);
-		return scale * getMean(mean, sd);
-	}
-
 	public static double getMean(double normalMean, double normalSD) {
 		return Math.exp(normalMean + normalSD*normalSD/2.0);
-	}
-
-	@Override
-	protected double getStandardDev(double simTime) {
-		double mean = normalMeanInput.getNextSample(simTime);
-		double sd = normalStandardDeviationInput.getNextSample(simTime);
-		return getStandardDev(mean, sd);
 	}
 
 	public static double getStandardDev(double normalMean, double normalSD) {

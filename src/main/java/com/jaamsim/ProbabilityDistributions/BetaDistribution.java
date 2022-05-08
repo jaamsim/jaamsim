@@ -83,6 +83,22 @@ public class BetaDistribution extends Distribution {
 		return getSample(alpha, beta, scale, rng);
 	}
 
+	@Override
+	protected double getMean(double simTime) {
+		double alpha = alphaInput.getNextSample(simTime);
+		double beta = betaInput.getNextSample(simTime);
+		double scale = scaleInput.getNextSample(simTime);
+		return getMean(alpha, beta, scale);
+	}
+
+	@Override
+	protected double getStandardDev(double simTime) {
+		double alpha = alphaInput.getNextSample(simTime);
+		double beta = betaInput.getNextSample(simTime);
+		double scale = scaleInput.getNextSample(simTime);
+		return getStandardDev(alpha, beta, scale);
+	}
+
 	public static double getSample(double alpha, double beta, double scale, MRG1999a rng) {
 		// Effectively calculate the inverse CDF
 		double val = rng.nextUniform();
@@ -115,24 +131,8 @@ public class BetaDistribution extends Distribution {
 		}
 	}
 
-	@Override
-	protected double getMean(double simTime) {
-		double alpha = alphaInput.getNextSample(simTime);
-		double beta = betaInput.getNextSample(simTime);
-		double scale = scaleInput.getNextSample(simTime);
-		return getMean(alpha, beta, scale);
-	}
-
 	public static double getMean(double alpha, double beta, double scale) {
 		return (alpha / (alpha + beta)) * scale;
-	}
-
-	@Override
-	protected double getStandardDev(double simTime) {
-		double alpha = alphaInput.getNextSample(simTime);
-		double beta = betaInput.getNextSample(simTime);
-		double scale = scaleInput.getNextSample(simTime);
-		return getStandardDev(alpha, beta, scale);
 	}
 
 	public static double getStandardDev(double alpha, double beta, double scale) {
