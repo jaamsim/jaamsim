@@ -72,28 +72,43 @@ public class ErlangDistribution extends Distribution {
 
 	@Override
 	protected double getSample(double simTime) {
+		double mean = meanInput.getNextSample(simTime);
+		int shape = shapeInput.getValue();
+		return getSample(mean, shape, rng);
+	}
+
+	public static double getSample(double mean, int shape, MRG1999a rng) {
 
 		// Calculate the product of k random values
 		double u = 1.0;
-		int k = shapeInput.getValue();
-		for( int i=0; i<k; i++) {
+		for (int i = 0; i < shape; i++) {
 			u *= rng.nextUniform();
 		}
 
 		// Inverse transform method
-		double mean = meanInput.getNextSample(simTime);
-		return (- mean / shapeInput.getValue() * Math.log( u ));
+		return (- mean/shape * Math.log(u));
 	}
 
 	@Override
 	protected double getMean(double simTime) {
-		return meanInput.getNextSample(simTime);
+		double mean = meanInput.getNextSample(simTime);
+		int shape = shapeInput.getValue();
+		return getMean(mean, shape);
+	}
+
+	public static double getMean(double mean, int shape) {
+		return mean;
 	}
 
 	@Override
 	protected double getStandardDev(double simTime) {
 		double mean = meanInput.getNextSample(simTime);
-		return mean / Math.sqrt( shapeInput.getValue() );
+		int shape = shapeInput.getValue();
+		return getStandardDev(mean, shape);
+	}
+
+	public static double getStandardDev(double mean, int shape) {
+		return mean / Math.sqrt(shape);
 	}
 
 }

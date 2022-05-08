@@ -46,6 +46,10 @@ public class UniformDistribution extends Distribution {
 		// Select the sample from a uniform distribution between the min and max values
 		double minVal = minValueInput.getNextSample(simTime);
 		double maxVal = maxValueInput.getNextSample(simTime);
+		return getSample(minVal, maxVal, rng);
+	}
+
+	public static double getSample(double minVal, double maxVal, MRG1999a rng) {
 		return minVal + rng.nextUniform()*(maxVal - minVal);
 	}
 
@@ -53,6 +57,10 @@ public class UniformDistribution extends Distribution {
 	protected double getMean(double simTime) {
 		double minVal = minValueInput.getNextSample(simTime);
 		double maxVal = maxValueInput.getNextSample(simTime);
+		return getMean(minVal, maxVal);
+	}
+
+	public static double getMean(double minVal, double maxVal) {
 		return 0.5 *(minVal + maxVal);
 	}
 
@@ -60,6 +68,10 @@ public class UniformDistribution extends Distribution {
 	protected double getStandardDev(double simTime) {
 		double minVal = minValueInput.getNextSample(simTime);
 		double maxVal = maxValueInput.getNextSample(simTime);
+		return getStandardDev(minVal, maxVal);
+	}
+
+	public static double getStandardDev(double minVal, double maxVal) {
 		return 0.5*(maxVal - minVal) / Math.sqrt(3.0);
 	}
 

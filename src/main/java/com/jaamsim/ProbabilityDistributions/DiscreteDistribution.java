@@ -51,7 +51,6 @@ public class DiscreteDistribution extends Distribution {
 
 	private final MRG1999a rng = new MRG1999a();
 	private int[] sampleCount;  // number of times each index has been selected
-	private double[] valueList;
 	private double[] cumProbList;
 
 	{
@@ -70,7 +69,6 @@ public class DiscreteDistribution extends Distribution {
 
 	public DiscreteDistribution() {
 		sampleCount = new int[0];
-		valueList = new double[0];
 		cumProbList = new double[0];
 	}
 
@@ -92,11 +90,9 @@ public class DiscreteDistribution extends Distribution {
 		sampleCount = new int[n];
 
 		// Store the values and cumulative probabilities for binary searching
-		valueList = new double[n];
 		cumProbList = new double[n];
 		double total = 0.0d;
 		for (int i=0; i<n; i++) {
-			valueList[i] = valueListInput.getValue().get(i);
 			total += probabilityListInput.getValue().get(i);
 			cumProbList[i] = total;
 		}
@@ -111,22 +107,26 @@ public class DiscreteDistribution extends Distribution {
 
 	@Override
 	protected double getSample(double simTime) {
+		double[] values = valueListInput.getValue().toArray();
+		return getSample(values, cumProbList, sampleCount, rng);
+	}
 
+	public static double getSample(double[] values, double[] cumProbs, int[] count, MRG1999a rng) {
 		double rand = rng.nextUniform();
 		int index = -1;
 
 		// Binary search the cumulative probabilities
-		int k = Arrays.binarySearch(cumProbList, rand);
+		int k = Arrays.binarySearch(cumProbs, rand);
 		if (k >= 0)
 			index = k;
 		else
 			index = -k - 1;
 
-		if (index < 0 || index >= valueList.length)
-			error("Bad index returned from binary search.");
+		if (index < 0 || index >= values.length)
+			throw new RuntimeException("Bad index returned from binary search.");
 
-		sampleCount[index]++;
-		return valueList[index];
+		count[index]++;
+		return values[index];
 	}
 
 	@Override
@@ -161,25 +161,40 @@ public class DiscreteDistribution extends Distribution {
 
 	@Override
 	protected double getMean(double simTime) {
-		if (probabilityListInput.getValue() == null || valueListInput.getValue() == null)
+		if (probabilityListInput.isDefault() || valueListInput.isDefault())
 			return Double.NaN;
+		double[] values = valueListInput.getValue().toArray();
+		return getMean(values, cumProbList);
+	}
+
+	public static double getMean(double[] values, double[] cumProbs) {
 		double ret = 0.0;
-		for( int i=0; i<probabilityListInput.getValue().size(); i++) {
-			ret += probabilityListInput.getValue().get(i) * valueListInput.getValue().get(i);
+		for (int i = 0; i < cumProbs.length; i++) {
+			double prob = cumProbs[i];
+			if (i > 0)
+				prob -= cumProbs[i - 1];
+			ret += prob * values[i];
 		}
 		return ret;
 	}
 
 	@Override
 	protected double getStandardDev(double simTime) {
-		if (probabilityListInput.getValue() == null || valueListInput.getValue() == null)
+		if (probabilityListInput.isDefault() || valueListInput.isDefault())
 			return Double.NaN;
+		double[] values = valueListInput.getValue().toArray();
+		return getStandardDev(values, cumProbList);
+	}
+
+	public static double getStandardDev(double[] values, double[] cumProbs) {
 		double sum = 0.0;
-		for( int i=0; i<probabilityListInput.getValue().size(); i++) {
-			double val = valueListInput.getValue().get(i);
-			sum += probabilityListInput.getValue().get(i) * val * val;
+		for (int i = 0; i < cumProbs.length; i++) {
+			double prob = cumProbs[i];
+			if (i > 0)
+				prob -= cumProbs[i - 1];
+			sum += prob * values[i] * values[i];
 		}
-		double mean = getMean(simTime);
+		double mean = getMean(values, cumProbs);
 		return  Math.sqrt( sum - (mean * mean) );
 	}
 

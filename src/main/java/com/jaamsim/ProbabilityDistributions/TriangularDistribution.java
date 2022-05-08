@@ -75,11 +75,13 @@ public class TriangularDistribution extends Distribution {
 
 	@Override
 	protected double getSample(double simTime) {
-
-		double sample;
 		double minVal = minValueInput.getNextSample(simTime);
 		double maxVal = maxValueInput.getNextSample(simTime);
 		double mode = modeInput.getNextSample(simTime);
+		return getSample(minVal, mode, maxVal, rng);
+	}
+
+	public static double getSample(double minVal, double mode, double maxVal, MRG1999a rng) {
 
 		// Select the random value
 		double rand = rng.nextUniform();
@@ -89,6 +91,7 @@ public class TriangularDistribution extends Distribution {
 
 		// Use the inverse transform method to calculate the normalised random sample
 		// (triangular distribution with min = 0, max = 1, and mode = m)
+		double sample;
 		if (rand <= m) {
 			sample = Math.sqrt( m * rand );
 		}
@@ -105,6 +108,10 @@ public class TriangularDistribution extends Distribution {
 		double minVal = minValueInput.getNextSample(simTime);
 		double maxVal = maxValueInput.getNextSample(simTime);
 		double mode = modeInput.getNextSample(simTime);
+		return getMean(minVal, mode, maxVal);
+	}
+
+	public static double getMean(double minVal, double mode, double maxVal) {
 		return (minVal + mode + maxVal)/3.0;
 	}
 
@@ -113,7 +120,11 @@ public class TriangularDistribution extends Distribution {
 		double a = minValueInput.getNextSample(simTime);
 		double b = maxValueInput.getNextSample(simTime);
 		double m = modeInput.getNextSample(simTime);
-		return  Math.sqrt( ( a*a + b*b + m*m - a*b - a*m - b*m ) / 18.0 );
+		return  getStandardDev(a, m, b);
+	}
+
+	public static double getStandardDev(double minVal, double mode, double maxVal) {
+		return  Math.sqrt( ( minVal*minVal + maxVal*maxVal + mode*mode - minVal*maxVal - minVal*mode - maxVal*mode ) / 18.0 );
 	}
 
 }

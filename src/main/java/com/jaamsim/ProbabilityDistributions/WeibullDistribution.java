@@ -81,13 +81,14 @@ public class WeibullDistribution extends Distribution {
 
 	@Override
 	protected double getSample(double simTime) {
-
 		double scale = scaleInput.getNextSample(simTime);
 		double shape = shapeInput.getNextSample(simTime);
 		double loc = locationInput.getNextSample(simTime);
+		return loc + getSample(scale, shape, rng);
+	}
 
-		// Inverse transform method
-		return  scale * Math.pow( - Math.log(rng.nextUniform()), 1.0/shape ) + loc;
+	public static double getSample(double scale, double shape, MRG1999a rng) {
+		return scale * Math.pow( - Math.log(rng.nextUniform()), 1.0/shape );
 	}
 
 	@Override
@@ -95,13 +96,21 @@ public class WeibullDistribution extends Distribution {
 		double scale = scaleInput.getNextSample(simTime);
 		double shape = shapeInput.getNextSample(simTime);
 		double loc = locationInput.getNextSample(simTime);
-		return scale/shape * Gamma.gamma(1.0/shape) + loc;
+		return loc + getMean(scale, shape);
+	}
+
+	public static double getMean(double scale, double shape) {
+		return scale/shape * Gamma.gamma(1.0/shape);
 	}
 
 	@Override
 	protected double getStandardDev(double simTime) {
 		double scale = scaleInput.getNextSample(simTime);
 		double shape = shapeInput.getNextSample(simTime);
+		return getStandardDev(scale, shape);
+	}
+
+	public static double getStandardDev(double scale, double shape) {
 		return scale/shape * Math.sqrt( 2.0*shape*Gamma.gamma(2.0/shape) - Math.pow(Gamma.gamma(1.0/shape), 2.0) );
 	}
 

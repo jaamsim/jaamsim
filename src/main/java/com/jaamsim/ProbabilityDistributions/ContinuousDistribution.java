@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016 JaamSim Software Inc.
+ * Copyright (C) 2016-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,8 @@
  */
 package com.jaamsim.ProbabilityDistributions;
 
-import com.jaamsim.datatypes.DoubleVector;
+import java.util.Arrays;
+
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.ValueListInput;
@@ -84,19 +85,23 @@ public class ContinuousDistribution extends Distribution {
 
 	@Override
 	protected double getSample(double simTime) {
+		double[] values = valueListInput.getValue().toArray();
+		double[] cumProbs = cumulativeProbabilityListInput.getValue().toArray();
+		return getSample(values, cumProbs, rng);
+	}
 
+	public static double getSample(double[] values, double[] cumProbs, MRG1999a rng) {
 		double rand = rng.nextUniform();
-		DoubleVector cumList = cumulativeProbabilityListInput.getValue();
-		for( int i=1; i<cumList.size(); i++) {
-			if( rand < cumList.get(i) ) {
-				double cum = cumList.get(i);
-				double lastCum = cumList.get(i-1);
-				double val = valueListInput.getValue().get(i);
-				double lastVal = valueListInput.getValue().get(i-1);
-				return lastVal + (rand-lastCum)*(val-lastVal)/(cum-lastCum);
-			}
-		}
-		return valueListInput.getValue().get( cumList.size()-1 );
+		int k = Arrays.binarySearch(cumProbs, rand);
+		if (k > 0)
+			return values[k];
+		int i = -k - 1;  // index of first cumProb > rand
+		if (i == values.length)
+			return values[values.length - 1];
+		if (i == 0)
+			return values[0];
+		double ret = values[i - 1] + (rand - cumProbs[i - 1])*(values[i] - values[i - 1])/(cumProbs[i] - cumProbs[i - 1]);
+		return ret;
 	}
 
 	@Override
@@ -111,31 +116,40 @@ public class ContinuousDistribution extends Distribution {
 
 	@Override
 	protected double getMean(double simTime) {
-		double sum = 0.0;
-		DoubleVector cumList = cumulativeProbabilityListInput.getValue();
-		DoubleVector valueList = valueListInput.getValue();
-		if (cumList == null || valueList == null)
+		if (cumulativeProbabilityListInput.isDefault() || valueListInput.isDefault())
 			return Double.NaN;
-		for( int i=1; i<cumList.size(); i++) {
-			sum += ( cumList.get(i) - cumList.get(i-1) ) * ( valueList.get(i) + valueList.get(i-1) );
+		double[] values = valueListInput.getValue().toArray();
+		double[] cumProbs = cumulativeProbabilityListInput.getValue().toArray();
+		return getMean(values, cumProbs);
+	}
+
+	public static double getMean(double[] values, double[] cumProbs) {
+		double sum = 0.0;
+		for (int i = 1; i < cumProbs.length; i++) {
+			sum += (cumProbs[i] - cumProbs[i - 1]) * (values[i] + values[i - 1]);
 		}
 		return 0.5 * sum;
 	}
 
 	@Override
 	protected double getStandardDev(double simTime) {
-		double sum = 0.0;
-		DoubleVector cumList = cumulativeProbabilityListInput.getValue();
-		DoubleVector valueList = valueListInput.getValue();
-		if (cumList == null || valueList == null)
+		if (cumulativeProbabilityListInput.isDefault() || valueListInput.isDefault())
 			return Double.NaN;
-		for( int i=1; i<cumList.size(); i++) {
-			double val = valueList.get(i);
-			double lastVal = valueList.get(i-1);
-			sum += ( cumList.get(i) - cumList.get(i-1) ) * ( val*val + val*lastVal + lastVal*lastVal );
+		double[] values = valueListInput.getValue().toArray();
+		double[] cumProbs = cumulativeProbabilityListInput.getValue().toArray();
+		return getStandardDev(values, cumProbs);
+	}
+
+	public static double getStandardDev(double[] values, double[] cumProbs) {
+		double sum = 0.0;
+		for (int i = 1; i < cumProbs.length; i++) {
+			double val = values[i];
+			double lastVal = values[i - 1];
+			sum += (cumProbs[i] - cumProbs[i - 1]) * (val*val + val*lastVal + lastVal*lastVal);
 		}
 
-		double mean = getMean(simTime);
+		double mean = getMean(values, cumProbs);
 		return  Math.sqrt( sum/3.0 - (mean * mean) );
 	}
+
 }

@@ -76,9 +76,13 @@ public class GammaDistribution extends Distribution {
 
 	@Override
 	protected double getSample(double simTime) {
-		double u2, b, sample;
 		double mean = meanInput.getNextSample(simTime);
 		double shape = shapeInput.getNextSample(simTime);
+		return getSample(mean, shape, rng1, rng2);
+	}
+
+	public static double getSample(double mean, double shape, MRG1999a rng1, MRG1999a rng2) {
+		double u2, b, sample;
 
 		// Case 1 - Shape parameter < 1
 		if( shape < 1.0 ) {
@@ -123,13 +127,23 @@ public class GammaDistribution extends Distribution {
 
 	@Override
 	protected double getMean(double simTime) {
-		return meanInput.getNextSample(simTime);
+		double mean = meanInput.getNextSample(simTime);
+		double shape = shapeInput.getNextSample(simTime);
+		return getMean(mean, shape);
+	}
+
+	public static double getMean(double mean, double shape) {
+		return mean;
 	}
 
 	@Override
 	protected double getStandardDev(double simTime) {
 		double mean = meanInput.getNextSample(simTime);
 		double shape = shapeInput.getNextSample(simTime);
+		return getStandardDev(mean, shape);
+	}
+
+	public static double getStandardDev(double mean, double shape) {
 		return mean / Math.sqrt(shape);
 	}
 

@@ -75,6 +75,12 @@ public class NormalDistribution extends Distribution {
 
 	@Override
 	protected double getSample(double simTime) {
+		double mean = meanInput.getNextSample(simTime);
+		double sdev = standardDeviationInput.getNextSample(simTime);
+		return getSample(mean, sdev, rng1, rng2);
+	}
+
+	public static double getSample(double mean, double sdev, MRG1999a rng1, MRG1999a rng2) {
 
 		// Loop until we have a random x-y coordinate in the unit circle
 		double w, v1, v2, sample;
@@ -89,18 +95,28 @@ public class NormalDistribution extends Distribution {
 		sample = v1 * Math.sqrt( -2.0 * Math.log( w ) / w );
 
 		// Adjust for the desired mode and standard deviation
-		double mean = meanInput.getNextSample(simTime);
-		double sdev = standardDeviationInput.getNextSample(simTime);
 		return mean + sample*sdev;
 	}
 
 	@Override
 	protected double getMean(double simTime) {
-		return meanInput.getNextSample(simTime);
+		double mean = meanInput.getNextSample(simTime);
+		double sdev = standardDeviationInput.getNextSample(simTime);
+		return getMean(mean, sdev);
+	}
+
+	public static double getMean(double mean, double sdev) {
+		return mean;
 	}
 
 	@Override
 	protected double getStandardDev(double simTime) {
-		return  standardDeviationInput.getNextSample(simTime);
+		double mean = meanInput.getNextSample(simTime);
+		double sdev = standardDeviationInput.getNextSample(simTime);
+		return getStandardDev(mean, sdev);
+	}
+
+	public static double getStandardDev(double mean, double sdev) {
+		return sdev;
 	}
 }

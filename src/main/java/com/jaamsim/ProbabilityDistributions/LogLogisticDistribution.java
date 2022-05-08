@@ -71,11 +71,13 @@ public class LogLogisticDistribution extends Distribution {
 
 	@Override
 	protected double getSample(double simTime) {
-
-		// Inverse transform method
-		double u = rng.nextUniform();
 		double scale = scaleInput.getNextSample(simTime);
 		double shape = shapeInput.getNextSample(simTime);
+		return getSample(scale, shape, rng);
+	}
+
+	public static double getSample(double scale, double shape, MRG1999a rng) {
+		double u = rng.nextUniform();
 		return scale * Math.pow( u / (1 - u), 1.0 / shape );
 	}
 
@@ -83,6 +85,10 @@ public class LogLogisticDistribution extends Distribution {
 	protected double getMean(double simTime) {
 		double scale = scaleInput.getNextSample(simTime);
 		double shape = shapeInput.getNextSample(simTime);
+		return getMean(scale, shape);
+	}
+
+	public static double getMean(double scale, double shape) {
 		double theta = Math.PI / shape;
 		return scale * theta / Math.sin( theta );
 	}
@@ -91,7 +97,12 @@ public class LogLogisticDistribution extends Distribution {
 	protected double getStandardDev(double simTime) {
 		double scale = scaleInput.getNextSample(simTime);
 		double shape = shapeInput.getNextSample(simTime);
+		return getStandardDev(scale, shape);
+	}
+
+	public static double getStandardDev(double scale, double shape) {
 		double theta = Math.PI / shape;
 		return scale * Math.sqrt( theta * ( 2.0/Math.sin(2.0*theta) - theta/Math.pow( Math.sin(theta), 2.0) ) );
 	}
+
 }

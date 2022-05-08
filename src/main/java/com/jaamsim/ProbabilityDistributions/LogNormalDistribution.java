@@ -84,6 +84,13 @@ public class LogNormalDistribution extends Distribution {
 
 	@Override
 	protected double getSample(double simTime) {
+		double mean = normalMeanInput.getNextSample(simTime);
+		double sd = normalStandardDeviationInput.getNextSample(simTime);
+		double scale = scaleInput.getNextSample(simTime);
+		return scale * getSample(mean, sd, rng1, rng2);
+	}
+
+	public static double getSample(double normalMean, double normalSD, MRG1999a rng1, MRG1999a rng2) {
 
 		// Loop until we have a random x-y coordinate in the unit circle
 		double w, v1, v2, sample;
@@ -98,13 +105,10 @@ public class LogNormalDistribution extends Distribution {
 		sample = v1 * Math.sqrt( -2.0 * Math.log( w ) / w );
 
 		// Adjust for the desired mode and standard deviation
-		double mean = normalMeanInput.getNextSample(simTime);
-		double sd = normalStandardDeviationInput.getNextSample(simTime);
-		sample = mean + sample*sd;
+		sample = normalMean + sample*normalSD;
 
 		// Convert to lognormal
-		double scale = scaleInput.getNextSample(simTime);
-		return scale * Math.exp(sample);
+		return Math.exp(sample);
 	}
 
 	@Override
@@ -112,13 +116,22 @@ public class LogNormalDistribution extends Distribution {
 		double mean = normalMeanInput.getNextSample(simTime);
 		double sd = normalStandardDeviationInput.getNextSample(simTime);
 		double scale = scaleInput.getNextSample(simTime);
-		return scale * Math.exp(mean + sd*sd/2.0);
+		return scale * getMean(mean, sd);
+	}
+
+	public static double getMean(double normalMean, double normalSD) {
+		return Math.exp(normalMean + normalSD*normalSD/2.0);
 	}
 
 	@Override
 	protected double getStandardDev(double simTime) {
+		double mean = normalMeanInput.getNextSample(simTime);
 		double sd = normalStandardDeviationInput.getNextSample(simTime);
-		return this.getMean(simTime) * Math.sqrt( Math.exp(sd*sd) - 1.0 );
+		return getStandardDev(mean, sd);
+	}
+
+	public static double getStandardDev(double normalMean, double normalSD) {
+		return getMean(normalMean, normalSD) * Math.sqrt( Math.exp(normalSD*normalSD) - 1.0 );
 	}
 
 }

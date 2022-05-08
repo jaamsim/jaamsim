@@ -61,19 +61,31 @@ public class ExponentialDistribution extends Distribution {
 
 	@Override
 	protected double getSample(double simTime) {
-
-		// Inverse transform method
 		double mean = meanInput.getNextSample(simTime);
+		return getSample(mean, rng);
+	}
+
+	public static double getSample(double mean, MRG1999a rng) {
 		return (-mean * Math.log(rng.nextUniform()));
 	}
 
 	@Override
 	protected double getMean(double simTime) {
-		return meanInput.getNextSample(simTime);
+		double mean = meanInput.getNextSample(simTime);
+		return getMeanVal(mean);
+	}
+
+	public static double getMeanVal(double mean) {
+		return mean;
 	}
 
 	@Override
 	protected double getStandardDev(double simTime) {
-		return meanInput.getNextSample(simTime);
+		double mean = meanInput.getNextSample(simTime);
+		return getStandardDevVal(mean);
+	}
+
+	public static double getStandardDevVal(double mean) {
+		return mean;
 	}
 }
