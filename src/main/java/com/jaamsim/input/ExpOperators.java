@@ -20,6 +20,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
+import com.jaamsim.ProbabilityDistributions.NormalDistribution;
+import com.jaamsim.basicsim.Entity;
+import com.jaamsim.basicsim.JaamSimModel;
+import com.jaamsim.events.EventManager;
+import com.jaamsim.input.ExpEvaluator.EntityEvalContext;
 import com.jaamsim.input.ExpParser.BinOpFunc;
 import com.jaamsim.input.ExpParser.CallableFunc;
 import com.jaamsim.input.ExpParser.EvalContext;
@@ -27,6 +32,7 @@ import com.jaamsim.input.ExpParser.LambdaClosure;
 import com.jaamsim.input.ExpParser.LazyBinOpFunc;
 import com.jaamsim.input.ExpParser.ParseContext;
 import com.jaamsim.input.ExpParser.UnOpFunc;
+import com.jaamsim.rng.MRG1999a;
 import com.jaamsim.units.AngleUnit;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
@@ -2349,6 +2355,39 @@ public class ExpOperators {
 					return ExpValResult.makeErrorRes(error);
 				}
 				return ExpValResult.makeValidRes(ExpResType.NUMBER, DimensionlessUnit.class);
+			}
+		});
+
+		///////////////////////////////////////////////////
+		// Random Distribution Functions
+		addFunction("normal", 2, 3, new CallableFunc() {
+			@Override
+			public void checkUnits(ParseContext context, ExpResult[] args, String source, int pos) throws ExpError {
+				if (args[0].unitType != args[1].unitType)
+					throw new ExpError(source, pos, "Standard deviation must have the same units as the Mean");
+				if (args.length > 2 && args[2].unitType != DimensionlessUnit.class)
+					throw new ExpError(source, pos, "Input 'seed' must be dimensionless");
+			}
+			@Override
+			public ExpResult call(EvalContext context, ExpResult[] args, String source, int pos) throws ExpError {
+				Entity thisEnt = ((EntityEvalContext) context).thisEnt;
+				JaamSimModel simModel = thisEnt.getJaamSimModel();
+				int seed = -1;
+				if (args.length > 2)
+					seed = (int) args[2].value;
+				String key = seed + "normal" + thisEnt.getEntityNumber();
+				MRG1999a[] rngs = simModel.getRandomGenerators(key, seed, 2);
+				double val = 0.0d;
+				if (EventManager.hasCurrent()) {
+					double mean = args[0].value;
+					double sdev = args[1].value;
+					val = NormalDistribution.getSample(mean, sdev, rngs[0], rngs[1]);
+				}
+				return ExpResult.makeNumResult(val, args[0].unitType);
+			}
+			@Override
+			public ExpValResult validate(ParseContext context, ExpValResult[] args, String source, int pos) {
+				return ExpValResult.makeValidRes(ExpResType.NUMBER, args[0].unitType);
 			}
 		});
 	}
