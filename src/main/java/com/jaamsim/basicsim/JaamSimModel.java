@@ -48,6 +48,7 @@ import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.NamedExpressionListInput;
 import com.jaamsim.input.ParseContext;
 import com.jaamsim.math.Vec3d;
+import com.jaamsim.rng.MRG1999a;
 import com.jaamsim.states.StateEntity;
 import com.jaamsim.ui.EventViewer;
 import com.jaamsim.ui.LogBox;
@@ -106,6 +107,8 @@ public class JaamSimModel implements EventTimeListener {
 	private long startMillis;  // start time in milliseonds from the epoch
 	private boolean calendarUsed;  // records whether the calendar has been used
 	private boolean reloadReqd;  // indicates that the simulation must be saved and reloaded
+
+	private final HashMap<String, MRG1999a[]> rngMap = new HashMap<>();
 
 	private int simState;
 
@@ -617,6 +620,7 @@ public class JaamSimModel implements EventTimeListener {
 		eventManager.pause();
 		eventManager.clear();
 		killGeneratedEntities();
+		rngMap.clear();
 
 		// Perform earlyInit
 		for (Entity each : getClonesOfIterator(Entity.class)) {
@@ -1733,6 +1737,33 @@ public class JaamSimModel implements EventTimeListener {
 		double factor = getDisplayedUnitFactor(DistanceUnit.class);
 		String unitStr = getDisplayedUnit(DistanceUnit.class);
 		return InputAgent.formatPointsInputs(keyword, points, offset, factor, unitStr);
+	}
+
+	/**
+	 * Returns an array of random number generators to be used by the random distribution functions
+	 * provided by the expression system. If the seed input is set to -1, the next available random
+	 * stream number is selected.
+	 * @param key - identifies the random distribution function caller
+	 * @param seed - stream number for the first random generator
+	 * @param num - number of random generators required for the distribution function
+	 * @return array of random generators
+	 */
+	public MRG1999a[] getRandomGenerators(String key, int seed, int num) {
+		MRG1999a[] ret = rngMap.get(key);
+		if (ret == null) {
+			ret = new MRG1999a[num];
+			int streamNumber = seed;
+			if (seed == -1)
+				streamNumber = rngMap.size();
+			int substreamNumber = getSimulation().getSubstreamNumber();
+			for (int i = 0; i < num; i++) {
+				ret[i] = new MRG1999a(streamNumber + i, substreamNumber);
+			}
+			rngMap.put(key, ret);
+		}
+		if (ret.length != num)
+			throw new ErrorException("Incorrect number of random generators");
+		return ret;
 	}
 
 	public void showTemporaryLabels(boolean bool) {
