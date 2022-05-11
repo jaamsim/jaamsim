@@ -386,13 +386,7 @@ public class ExpEvaluator {
 		return new EntityParseContext(thisEnt, constants, source);
 	}
 
-	public static ExpResult evaluateExpression(ExpParser.Expression exp, double simTime) throws ExpError
-	{
-		return evaluateExpression(exp, null, simTime);
-	}
-
-	public static ExpResult evaluateExpression(ExpParser.Expression exp, Entity thisEnt, double simTime) throws ExpError
-	{
+	public static ExpResult evaluateExpression(ExpParser.Expression exp, Entity thisEnt, double simTime) throws ExpError {
 		if (exp == null)
 			return ExpResult.makeEntityResult(null);
 		EntityEvalContext evalContext = new EntityEvalContext(thisEnt, simTime);
