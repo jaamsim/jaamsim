@@ -48,7 +48,7 @@ public class EntityProvExpression<T extends Entity> implements EntityProvider<T>
 	public T getNextEntity(double simTime) {
 		T ret = null;
 		try {
-			ExpResult result = ExpEvaluator.evaluateExpression(exp, simTime);
+			ExpResult result = ExpEvaluator.evaluateExpression(exp, thisEnt, simTime);
 
 			if (result.type != ExpResType.ENTITY) {
 				throw new ExpError(exp.source, 0, Input.EXP_ERR_RESULT_TYPE,

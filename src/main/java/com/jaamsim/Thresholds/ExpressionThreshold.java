@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2021 JaamSim Software Inc.
+ * Copyright (C) 2016-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -257,7 +257,7 @@ public class ExpressionThreshold extends Threshold implements ObserverEntity {
 
 			// Evaluate the open condition (0 = false, non-zero = true)
 			boolean openCond = ExpEvaluator.evaluateExpression(openCondition.getValue(),
-					simTime).value != 0;
+					this, simTime).value != 0;
 
 			// If the open condition is satisfied or there is no close condition, then we are done
 			boolean ret;
@@ -270,7 +270,7 @@ public class ExpressionThreshold extends Threshold implements ObserverEntity {
 
 				// If the close condition is satisfied, then the threshold is closed
 				boolean closeCond = ExpEvaluator.evaluateExpression(closeCondition.getValue(),
-						simTime).value != 0;
+						this, simTime).value != 0;
 				if (closeCond) {
 					ret = false;
 				}

@@ -240,7 +240,7 @@ public abstract class LinkedService extends LinkedDevice implements QueueUser {
 		DisplayEntity ret = null;
 		Expression exp = nextEntity.getValue();
 		try {
-			ret = (DisplayEntity) ExpEvaluator.evaluateExpression(exp, simTime).entVal;
+			ret = (DisplayEntity) ExpEvaluator.evaluateExpression(exp, this, simTime).entVal;
 		}
 		catch (ExpError e) {
 			throw new ErrorException(this, e);
@@ -287,7 +287,7 @@ public abstract class LinkedService extends LinkedDevice implements QueueUser {
 		// Evaluate the condition for the proposed user
 		boolean ret = false;
 		try {
-			ret = ExpEvaluator.evaluateExpression(exp, simTime).value != 0;
+			ret = ExpEvaluator.evaluateExpression(exp, this, simTime).value != 0;
 		}
 		catch (ExpError e) {
 			throw new ErrorException(this, e);

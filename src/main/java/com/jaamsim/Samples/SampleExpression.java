@@ -61,7 +61,7 @@ public class SampleExpression implements SampleProvider {
 	public double getNextSample(double simTime) {
 		double ret = 0.0;
 		try {
-			ExpResult res = ExpEvaluator.evaluateExpression(exp, simTime);
+			ExpResult res = ExpEvaluator.evaluateExpression(exp, thisEnt, simTime);
 
 			if (res.type != ExpResType.NUMBER)
 				throw new ExpError(exp.source, 0, Input.EXP_ERR_RESULT_TYPE,

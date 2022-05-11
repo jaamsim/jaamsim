@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2017-2019 JaamSim Software Inc.
+ * Copyright (C) 2017-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -142,7 +142,7 @@ public abstract class FileToArray extends LinkedComponent {
 		try {
 			ExpEvaluator.EntityParseContext pc = ExpEvaluator.getParseContext(thisEnt, str);
 			Expression exp = ExpParser.parseExpression(pc, str);
-			return ExpEvaluator.evaluateExpression(exp, simTime);
+			return ExpEvaluator.evaluateExpression(exp, thisEnt, simTime);
 		}
 		catch (ExpError e) {}
 

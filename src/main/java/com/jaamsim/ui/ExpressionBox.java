@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2018-2021 JaamSim Software Inc.
+ * Copyright (C) 2018-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -653,7 +653,7 @@ public class ExpressionBox extends JDialog {
 				Expression exp = ExpParser.parseExpression(pc, expString);
 				ExpParser.assertResultType(exp, ExpResType.ENTITY);
 
-				ExpResult res = ExpEvaluator.evaluateExpression(exp, simTime);
+				ExpResult res = ExpEvaluator.evaluateExpression(exp, thisEnt, simTime);
 				//System.out.println(res.entVal);
 				return res.entVal;
 			}

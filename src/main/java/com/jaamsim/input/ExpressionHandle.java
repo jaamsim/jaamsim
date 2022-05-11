@@ -58,7 +58,7 @@ public class ExpressionHandle extends ValueHandle {
 
 	private ExpResult evaluateExp(double simTime) {
 		try {
-			ExpResult er = ExpEvaluator.evaluateExpression(exp, simTime);
+			ExpResult er = ExpEvaluator.evaluateExpression(exp, ent, simTime);
 			if (er.type == ExpResType.NUMBER && er.unitType != unitType) {
 				throw new ExpError(exp.source, 0, Input.EXP_ERR_UNIT,
 						er.unitType.getSimpleName(), unitType.getSimpleName());

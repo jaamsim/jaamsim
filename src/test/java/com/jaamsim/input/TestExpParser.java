@@ -960,7 +960,7 @@ public class TestExpParser {
 		String assignStr = "[foo].arg = 40 + 2";
 		ExpEvaluator.EntityParseContext pc = ExpEvaluator.getParseContext(foo, assignStr);
 		ExpParser.Assignment assign = ExpParser.parseAssignment(pc, assignStr);
-		ExpResult res = ExpEvaluator.evaluateExpression(assign, 0.0d);
+		ExpResult res = ExpEvaluator.evaluateExpression(assign, foo, 0.0d);
 		assertTrue(res.value == 42.0);
 		assertTrue(res.type == ExpResType.NUMBER);
 
@@ -968,7 +968,7 @@ public class TestExpParser {
 		assignStr = "[foo].blarg(2)(3 + 2) = 40 + 5";
 		pc = ExpEvaluator.getParseContext(foo, assignStr);
 		assign = ExpParser.parseAssignment(pc, assignStr);
-		res = ExpEvaluator.evaluateExpression(assign, 0.0d);
+		res = ExpEvaluator.evaluateExpression(assign, foo, 0.0d);
 		assertTrue(res.value == 45.0);
 		assertTrue(res.type == ExpResType.NUMBER);
 
@@ -976,7 +976,7 @@ public class TestExpParser {
 		assignStr = "[foo].map(\"bar\") = 42";
 		pc = ExpEvaluator.getParseContext(foo, assignStr);
 		assign = ExpParser.parseAssignment(pc, assignStr);
-		res = ExpEvaluator.evaluateExpression(assign, 0.0d);
+		res = ExpEvaluator.evaluateExpression(assign, foo, 0.0d);
 		assertTrue(res.value == 42.0);
 		assertTrue(res.type == ExpResType.NUMBER);
 	}

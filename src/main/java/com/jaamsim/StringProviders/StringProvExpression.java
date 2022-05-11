@@ -59,7 +59,7 @@ public class StringProvExpression implements StringProvider {
 	public String getNextString(double simTime, double siFactor, boolean integerValue) {
 		String ret = "";
 		try {
-			ExpResult result = ExpEvaluator.evaluateExpression(exp, simTime);
+			ExpResult result = ExpEvaluator.evaluateExpression(exp, thisEnt, simTime);
 			switch (result.type) {
 			case STRING:
 				ret = result.stringVal;
@@ -102,7 +102,7 @@ public class StringProvExpression implements StringProvider {
 	public String getNextString(double simTime, String fmt, double siFactor) {
 		String ret = "";
 		try {
-			ExpResult result = ExpEvaluator.evaluateExpression(exp, simTime);
+			ExpResult result = ExpEvaluator.evaluateExpression(exp, thisEnt, simTime);
 			switch (result.type) {
 			case STRING:
 				ret = String.format(fmt, result.stringVal);  // no double quotes
@@ -150,7 +150,7 @@ public class StringProvExpression implements StringProvider {
 	public double getNextValue(double simTime) {
 		double ret = Double.NaN;
 		try {
-			ExpResult result = ExpEvaluator.evaluateExpression(exp, simTime);
+			ExpResult result = ExpEvaluator.evaluateExpression(exp, thisEnt, simTime);
 			if (result.type  == ExpResType.NUMBER) {
 				ret = result.value;
 			}

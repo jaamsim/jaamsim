@@ -83,7 +83,7 @@ public class AttributeDefinitionListInput extends ListInput<ArrayList<AttributeH
 				String expString = subArg.getArg(1);
 				EntityParseContext pc = ExpEvaluator.getParseContext(thisEnt, expString);
 				ExpParser.Expression exp = ExpParser.parseExpression(pc, expString);
-				expVal = ExpEvaluator.evaluateExpression(exp, 0);
+				expVal = ExpEvaluator.evaluateExpression(exp, thisEnt, 0);
 				if (expVal.type == ExpResType.NUMBER) {
 					unitType = expVal.unitType;
 				}

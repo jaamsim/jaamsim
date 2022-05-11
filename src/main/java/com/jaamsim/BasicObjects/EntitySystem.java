@@ -211,7 +211,7 @@ public class EntitySystem extends AbstractStateUserEntity implements ObserverEnt
 		// Calculate the state from the StateExpression input
 		double simTime = getSimTime();
 		try {
-			ExpResult res = ExpEvaluator.evaluateExpression(stateExp.getValue(), simTime);
+			ExpResult res = ExpEvaluator.evaluateExpression(stateExp.getValue(), this, simTime);
 			setPresentState(res.stringVal);
 		}
 		catch (ExpError e) {

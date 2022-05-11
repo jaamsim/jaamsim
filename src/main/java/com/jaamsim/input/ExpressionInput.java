@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2021 JaamSim Software Inc.
+ * Copyright (C) 2016-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 
 public class ExpressionInput extends Input<ExpParser.Expression> {
+	private Entity thisEnt;
 	private Class<? extends Unit> unitType;
 	private ExpEvaluator.EntityParseContext parseContext;
 	private ExpResType resType;
@@ -79,6 +80,7 @@ public class ExpressionInput extends Input<ExpParser.Expression> {
 			// Save the expression
 			parseContext = pc;
 			value = exp;
+			this.thisEnt = thisEnt;
 			this.setValid(true);
 
 		} catch (ExpError e) {
@@ -133,7 +135,7 @@ public class ExpressionInput extends Input<ExpParser.Expression> {
 			return "";
 
 		try {
-			ExpResult res = ExpEvaluator.evaluateExpression(value, simTime);
+			ExpResult res = ExpEvaluator.evaluateExpression(value, thisEnt, simTime);
 			return res.toString();
 		}
 		catch (ExpError e) {

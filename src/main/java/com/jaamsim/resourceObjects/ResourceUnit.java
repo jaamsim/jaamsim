@@ -174,7 +174,7 @@ public class ResourceUnit extends StateUserEntity implements Seizable, ResourceP
 		boolean ret = false;
 		double simTime = getSimTime();
 		try {
-			ret = ExpEvaluator.evaluateExpression(exp, simTime).value != 0;
+			ret = ExpEvaluator.evaluateExpression(exp, this, simTime).value != 0;
 		}
 		catch (ExpError e) {
 			throw new ErrorException(this, e);
@@ -264,7 +264,7 @@ public class ResourceUnit extends StateUserEntity implements Seizable, ResourceP
 		int ret = 0;
 		double simTime = getSimTime();
 		try {
-			ret = (int) ExpEvaluator.evaluateExpression(exp, simTime).value;
+			ret = (int) ExpEvaluator.evaluateExpression(exp, this, simTime).value;
 		}
 		catch (ExpError e) {
 			throw new ErrorException(this, e);
