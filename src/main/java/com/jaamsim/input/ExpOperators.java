@@ -302,6 +302,23 @@ public class ExpOperators {
 		return ExpValResult.makeValidRes(ExpResType.STRING, null);
 	}
 
+	private static ExpValResult validateRandomFunction(ParseContext context, ExpValResult[] args, String source, int pos) {
+		for (ExpValResult arg : args) {
+			if (  arg.state == ExpValResult.State.ERROR ||
+			      arg.state == ExpValResult.State.UNDECIDABLE) {
+				return arg;
+			}
+		}
+		// Check that arguments are numbers
+		for (ExpValResult arg : args) {
+			if (arg.type != ExpResType.NUMBER) {
+				ExpError error = new ExpError(source, pos, "Argument must be a number");
+				return ExpValResult.makeErrorRes(error);
+			}
+		}
+		return ExpValResult.makeValidRes(ExpResType.NUMBER, args[0].unitType);
+	}
+
 
 	private static String unitToString(Class<? extends Unit> unit) {
 		if (unit == null)
@@ -2389,7 +2406,7 @@ public class ExpOperators {
 			}
 			@Override
 			public ExpValResult validate(ParseContext context, ExpValResult[] args, String source, int pos) {
-				return ExpValResult.makeValidRes(ExpResType.NUMBER, args[0].unitType);
+				return validateRandomFunction(context, args, source, pos);
 			}
 		});
 	}
