@@ -1204,7 +1204,8 @@ public class ExpParser {
 				}
 				if (constArgs) {
 					ExpResult val = fc.evaluate(null);
-					return new Constant(fc.context, val, origNode.exp, fc.tokenPos);
+					if (val != null)
+						return new Constant(fc.context, val, origNode.exp, fc.tokenPos);
 				}
 			}
 			if (origNode instanceof BuildArray) {

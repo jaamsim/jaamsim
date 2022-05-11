@@ -2370,6 +2370,8 @@ public class ExpOperators {
 			}
 			@Override
 			public ExpResult call(EvalContext context, ExpResult[] args, String source, int pos) throws ExpError {
+				if (context == null)  // trap call from ConstOptimizer.updateRef
+					return null;
 				Entity thisEnt = ((EntityEvalContext) context).thisEnt;
 				JaamSimModel simModel = thisEnt.getJaamSimModel();
 				int seed = -1;
