@@ -89,6 +89,8 @@ public class SampleStatistics {
 	}
 
 	public double getVariance() {
+		if (count <= 1L)
+			return Double.NaN;
 		return q/(count - 1L);
 	}
 
@@ -97,7 +99,7 @@ public class SampleStatistics {
 	}
 
 	public double getConfidenceInterval95() {
-		if (count == 0L)
+		if (count <= 1L)
 			return Double.NaN;
 		int n = (int) count - 1;
 		double factor = StudentsTDistribution.getConfidenceIntervalFactor95(n);
