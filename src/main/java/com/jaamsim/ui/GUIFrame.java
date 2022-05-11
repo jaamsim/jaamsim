@@ -3385,7 +3385,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		update2dButton();
 		updateShowAxesButton();
 		updateShowGridButton();
-		updateNextPrevButtons();
+		updateNextPrevButtons(simulation);
 		updateFindButton();
 		updateFormatButtons(selectedEntity);
 		updateForSnapToGrid(simulation.isSnapToGrid());
@@ -3749,8 +3749,9 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		grid.setSelected(ent != null && ent.getShow());
 	}
 
-	private void updateNextPrevButtons() {
-		if (selectedEntity != null && selectedEntity instanceof DisplayEntity) {
+	private void updateNextPrevButtons(Simulation simulation) {
+		if (selectedEntity != null && selectedEntity instanceof DisplayEntity
+				&& (!getJaamSimModel().isRunning() || simulation.isRealTime())) {
 			boolean dir = !reverseButton.isSelected();
 			DisplayEntity selectedDEnt = (DisplayEntity) selectedEntity;
 			prevButton.setEnabled(!selectedDEnt.getPreviousList(dir).isEmpty());
