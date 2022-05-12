@@ -764,7 +764,7 @@ public class JaamSimModel implements EventTimeListener {
 			InputAgent.defineEntityWithUniqueName(this, klass, name, "_", true);
 		}
 		catch (InputErrorException e) {
-			return;
+			throw new RuntimeException(e);
 		}
 	}
 
@@ -777,6 +777,8 @@ public class JaamSimModel implements EventTimeListener {
 	public void setInput(String entName, String keyword, String arg) {
 		setRecordEdits(true);
 		Entity ent = getNamedEntity(entName);
+		if (ent == null)
+			throw new ErrorException("Entity '%s' not found", entName);
 		KeywordIndex kw = InputAgent.formatInput(keyword, arg);
 		InputAgent.apply(ent, kw);
 	}

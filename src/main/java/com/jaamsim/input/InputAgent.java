@@ -578,11 +578,9 @@ public class InputAgent {
 	public static final void apply(Entity ent, KeywordIndex kw) {
 		Input<?> in = ent.getInput(kw.keyword);
 		if (in == null) {
-			InputAgent.logError(ent.getJaamSimModel(),
-					"Keyword %s could not be found for Entity %s.", kw.keyword, ent.getName());
-			return;
+			String msg = String.format("Keyword '%s' could not be found", kw.keyword);
+			throw new ErrorException(ent, msg);
 		}
-
 		InputAgent.apply(ent, in, kw);
 	}
 
