@@ -20,8 +20,10 @@ package com.jaamsim.input;
 import java.util.ArrayList;
 
 import com.jaamsim.basicsim.Entity;
+import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.basicsim.ObjectType;
 import com.jaamsim.units.Unit;
+import com.jaamsim.units.UserSpecifiedUnit;
 
 public class UnitTypeInput extends Input<ObjectType> {
 	private Class<? extends Unit> unitType;
@@ -36,6 +38,13 @@ public class UnitTypeInput extends Input<ObjectType> {
 		super.setDefaultValue(null);  // getValue is never used
 		unitType = ut;
 		defaultUnitType = ut;
+	}
+
+	@Override
+	public String getDefaultString(JaamSimModel simModel) {
+		if (defaultUnitType == null || defaultUnitType == UserSpecifiedUnit.class)
+			return null;  // Shown as 'None' in the Input Editor
+		return defaultUnitType.getSimpleName();
 	}
 
 	@Override
