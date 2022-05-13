@@ -2765,6 +2765,8 @@ public class ExpOperators {
 		addFunction("poisson", 1, 2, new CallableFunc() {
 			@Override
 			public void checkUnits(ParseContext context, ExpResult[] args, String source, int pos) throws ExpError {
+				if (args[0].unitType != DimensionlessUnit.class)
+					throw new ExpError(source, pos, "Input 'mean' must be dimensionless");
 				if (args.length > 1 && args[1].unitType != DimensionlessUnit.class)
 					throw new ExpError(source, pos, "Input 'seed' must be dimensionless");
 			}
@@ -2784,7 +2786,7 @@ public class ExpOperators {
 					double mean = args[0].value;
 					val = PoissonDistribution.getSample(mean, rngs[0]);
 				}
-				return ExpResult.makeNumResult(val, args[0].unitType);
+				return ExpResult.makeNumResult(val, DimensionlessUnit.class);
 			}
 			@Override
 			public ExpValResult validate(ParseContext context, ExpValResult[] args, String source, int pos) {

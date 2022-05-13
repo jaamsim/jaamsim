@@ -1892,14 +1892,13 @@ public class ExpressionBox extends JDialog {
 				"Returns a random sample from the Poisson distribution, i.e. the number of "
 						+ "independent events that occur in a given period of time.",
 				"Accepts input parmeters of mean and seed. "
-						+ "Returns a randomly selected integer value with the same units as the "
-						+ "mean input. "
+						+ "Returns a randomly selected dimensionless integer value. "
 						+ "The seed input is dimensionless. "
 						+ "If a seed value is not entered, the model will chose the next unused "
 						+ "value.",
 				"poisson(mean, seed)",
 				-1,
-				"'poisson(10[s], 5)' returns an integer value with units of time using a seed of 5",
+				"'poisson(10, 5)' returns a dimensionless integer value using a seed of 5",
 				"'poisson(10)' returns a dimensionless integer value using a selected seed"));
 
 		functions.add(new ButtonDesc("triangular", "Triangular distribution function ('triangular')",
