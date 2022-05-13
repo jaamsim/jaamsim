@@ -1747,6 +1747,141 @@ public class ExpressionBox extends JDialog {
 				-1,
 				"'length(\"abc\")' returns 3"));
 
+		functions.add(new ButtonDesc("beta", "Beta distribution function ('beta')",
+				"Returns a random sample from the beta distribution.",
+				"Accepts input parmeters of alpha, beta, scale, and seed. "
+						+ "Returns a random sample with the same units as the scale input. "
+						+ "The alpha, beta, and seed inputs are dimensionless. "
+						+ "If a seed value is not entered, the model will chose the next unused "
+						+ "value.",
+				"beta(alpha, beta, scale, seed)",
+				-1,
+				"'beta(2, 1, 1[s], 5)' returns a sample with units of time using a seed of 5",
+				"'beta(2, 1, 1)' returns a dimensionless sample using a selected seed"));
+
+		functions.add(new ButtonDesc("erlang", "Erlang distribution function ('erlang')",
+				"Returns a random sample from the Erlang distribution.",
+				"Accepts input parmeters of mean, shape, and seed. "
+						+ "Returns a random sample with the same units as the mean input. "
+						+ "The shape and seed input are dimensionless. "
+						+ "If a seed value is not entered, the model will chose the next unused "
+						+ "value.",
+				"erlang(mean, shape, seed)",
+				-1,
+				"'erlang(10[s], 2, 5)' returns a sample with units of time using a seed of 5",
+				"'erlang(10, 2)' returns a dimensionless sample using a selected seed"));
+
+		functions.add(new ButtonDesc("exponential", "Exponential distribution function ('exponential')",
+				"Returns a random sample from the exponential distribution.",
+				"Accepts input parmeters of mean and seed. "
+						+ "Returns a random sample with the same units as the mean input. "
+						+ "The seed input is dimensionless. "
+						+ "If a seed value is not entered, the model will chose the next unused "
+						+ "value.",
+				"exponential(mean, seed)",
+				-1,
+				"'exponential(10[s], 5)' returns a sample with units of time using a seed of 5",
+				"'exponential(10)' returns a dimensionless sample using a selected seed"));
+
+		functions.add(new ButtonDesc("gamma", "Gamma distribution function ('gamma')",
+				"Returns a random sample from the gamma distribution.",
+				"Accepts input parmeters of mean, shape, and seed. "
+						+ "Returns a random sample with the same units as the mean input. "
+						+ "The shape and seed inputs are dimensionless. "
+						+ "If a seed value is not entered, the model will chose the next unused "
+						+ "value.",
+				"gamma(mean, shape, seed)",
+				-1,
+				"'gamma(10[s], 2, 5)' returns a sample with units of time using a seed of 5",
+				"'gamma(10, 2)' returns a dimensionless sample using a selected seed"));
+
+		functions.add(new ButtonDesc("loglogistic", "LogLogistic distribution function ('loglogistic')",
+				"Returns a random sample from the loglogistic distribution.",
+				"Accepts input parmeters of scale, shape, and seed. "
+						+ "Returns a random sample with the same units as the scale input. "
+						+ "The shape and seed inputs are dimensionless. "
+						+ "If a seed value is not entered, the model will chose the next unused "
+						+ "value.",
+				"loglogistic(scale, shape, seed)",
+				-1,
+				"'loglogistic(10[s], 4, 5)' returns a sample with units of time using a seed of 5",
+				"'loglogistic(10, 4)' returns a dimensionless sample using a selected seed"));
+
+		functions.add(new ButtonDesc("lognormal", "LogNormal distribution function ('lognormal')",
+				"Returns a random sample from the lognormal distribution.",
+				"Accepts input parmeters of scale, normalMean, normalStandardDeviation, and seed. "
+						+ "Returns a random sample with the same units as the scale input. "
+						+ "The normalMean, normalStandardDeviation, and seed inputs are dimensionless. "
+						+ "If a seed value is not entered, the model will chose the next unused "
+						+ "value.",
+				"lognormal(scale, normalMean, normalStandardDeviation, seed)",
+				-1,
+				"'lognormal(10[s], 1, 0.2, 5)' returns a sample with units of time using a seed of 5",
+				"'lognormal(10, 1, 0.2)' returns a dimensionless sample using a selected seed"));
+
+		functions.add(new ButtonDesc("normal", "Normal distribution function ('normal')",
+				"Returns a random sample from the normal distribution.",
+				"Accepts input parmeters of mean, standardDeviation, and seed. "
+						+ "Returns a random sample with the same units as the scale input. "
+						+ "The standardDeviation input must have the unit type as the mean. "
+						+ "The seed input is dimensionless. "
+						+ "If a seed value is not entered, the model will chose the next unused "
+						+ "value.",
+				"normal(scale, normalMean, normalStandardDeviation, seed)",
+				-1,
+				"'normal(10[s], 2[s], 5)' returns a sample with units of time using a seed of 5",
+				"'normal(10, 2)' returns a dimensionless sample using a selected seed"));
+
+		functions.add(new ButtonDesc("poisson", "Poisson distribution function ('poisson')",
+				"Returns a random sample from the Poisson distribution.",
+				"Accepts input parmeters of mean and seed. "
+						+ "Returns a random sample with the same units as the mean input. "
+						+ "The seed input is dimensionless. "
+						+ "If a seed value is not entered, the model will chose the next unused "
+						+ "value.",
+				"poisson(mean, seed)",
+				-1,
+				"'poisson(10[s], 5)' returns a sample with units of time using a seed of 5",
+				"'poisson(10)' returns a dimensionless sample using a selected seed"));
+
+		functions.add(new ButtonDesc("triangular", "Triangular distribution function ('triangular')",
+				"Returns a random sample from the triangular distribution.",
+				"Accepts input parmeters of minValue, mode, maxValue, and seed. "
+						+ "Returns a random sample with the same units as the minValue input. "
+						+ "The mode and maxValue inputs must have the same unit type as the minValue. "
+						+ "The seed input is dimensionless. "
+						+ "If a seed value is not entered, the model will chose the next unused "
+						+ "value.",
+				"triangular(minValue, mode, maxValue, seed)",
+				-1,
+				"'triangular(2[s], 4[s], 5[s], 5)' returns a sample with units of time using a seed of 5",
+				"'triangular(2, 4, 5)' returns a dimensionless sample using a selected seed"));
+
+		functions.add(new ButtonDesc("uniform", "Uniform distribution function ('uniform')",
+				"Returns a random sample from the uniform distribution.",
+				"Accepts input parmeters of minValue, maxValue, and seed. "
+						+ "Returns a random sample with the same units as the minValue input. "
+						+ "The maxValue input must have the same unit type as the minValue. "
+						+ "The seed input is dimensionless. "
+						+ "If a seed value is not entered, the model will chose the next unused "
+						+ "value.",
+				"uniform(minValue, mode, maxValue, seed)",
+				-1,
+				"'uniform(2[s], 5[s], 5)' returns a sample with units of time using a seed of 5",
+				"'uniform(2, 5)' returns a dimensionless sample using a selected seed"));
+
+		functions.add(new ButtonDesc("weibull", "Weibull distribution function ('weibull')",
+				"Returns a random sample from the Weibull distribution.",
+				"Accepts input parmeters of scale, shape, and seed. "
+						+ "Returns a random sample with the same units as the scale input. "
+						+ "The shape and seed inputs are dimensionless. "
+						+ "If a seed value is not entered, the model will chose the next unused "
+						+ "value.",
+				"weibull(scale, shape, seed)",
+				-1,
+				"'weibull(10[s], 2, 5)' returns a sample with units of time using a seed of 5",
+				"'weibull(10, 2)' returns a dimensionless sample using a selected seed"));
+
 	}
 
 }
