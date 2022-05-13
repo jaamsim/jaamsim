@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2019 JaamSim Software Inc.
+ * Copyright (C) 2019-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@
  */
 package com.jaamsim.basicsim;
 
+import static org.junit.Assert.assertTrue;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.TimeZone;
@@ -26,13 +28,13 @@ public class TestSimCalendar {
 
 	@Test
 	public void testGetMonthForDay() {
-		assert(SimCalendar.getMonthForDay(1) == 0);
-		assert(SimCalendar.getMonthForDay(31) == 0);
-		assert(SimCalendar.getMonthForDay(32) == 1);
-		assert(SimCalendar.getMonthForDay(31 + 28) == 1);
-		assert(SimCalendar.getMonthForDay(31 + 28 + 1) == 2);
-		assert(SimCalendar.getMonthForDay(365 - 31 + 1) == 11);
-		assert(SimCalendar.getMonthForDay(365) == 11);
+		assertTrue(SimCalendar.getMonthForDay(1) == 0);
+		assertTrue(SimCalendar.getMonthForDay(31) == 0);
+		assertTrue(SimCalendar.getMonthForDay(32) == 1);
+		assertTrue(SimCalendar.getMonthForDay(31 + 28) == 1);
+		assertTrue(SimCalendar.getMonthForDay(31 + 28 + 1) == 2);
+		assertTrue(SimCalendar.getMonthForDay(365 - 31 + 1) == 11);
+		assertTrue(SimCalendar.getMonthForDay(365) == 11);
 	}
 
 	@Test
@@ -60,15 +62,15 @@ public class TestSimCalendar {
 		calendar.setTimeInMillis(millis);
 		//System.out.println(dateFormat.format(calendar.getTime()));
 
-		assert(calendar.get(Calendar.YEAR) == 1972);
-		assert(calendar.get(Calendar.MONTH) == 2);
-		assert(calendar.get(Calendar.DAY_OF_MONTH) == 4);
-		assert(calendar.get(Calendar.HOUR_OF_DAY) == 10);
-		assert(calendar.get(Calendar.MINUTE) == 5);
-		assert(calendar.get(Calendar.SECOND) == 20);
-		assert(calendar.get(Calendar.MILLISECOND) == 500);
+		assertTrue(calendar.get(Calendar.YEAR) == 1972);
+		assertTrue(calendar.get(Calendar.MONTH) == 2);
+		assertTrue(calendar.get(Calendar.DAY_OF_MONTH) == 4);
+		assertTrue(calendar.get(Calendar.HOUR_OF_DAY) == 10);
+		assertTrue(calendar.get(Calendar.MINUTE) == 5);
+		assertTrue(calendar.get(Calendar.SECOND) == 20);
+		assertTrue(calendar.get(Calendar.MILLISECOND) == 500);
 
-		assert(calendar.getTimeInMillis(1972, 2, 4, 10, 5, 20, 500) == millis);
+		assertTrue(calendar.getTimeInMillis(1972, 2, 4, 10, 5, 20, 500) == millis);
 
 		// Gregorian calendar
 		calendar.setGregorian(true);
@@ -76,13 +78,13 @@ public class TestSimCalendar {
 		calendar.setTimeInMillis(millis);
 		//System.out.println(dateFormat.format(calendar.getTime()));
 
-		assert(calendar.get(Calendar.YEAR) == 1972);
-		assert(calendar.get(Calendar.MONTH) == 2);
-		assert(calendar.get(Calendar.DAY_OF_MONTH) == 4);
-		assert(calendar.get(Calendar.HOUR_OF_DAY) == 10);
-		assert(calendar.get(Calendar.MINUTE) == 5);
-		assert(calendar.get(Calendar.SECOND) == 20);
-		assert(calendar.get(Calendar.MILLISECOND) == 500);
+		assertTrue(calendar.get(Calendar.YEAR) == 1972);
+		assertTrue(calendar.get(Calendar.MONTH) == 2);
+		assertTrue(calendar.get(Calendar.DAY_OF_MONTH) == 4);
+		assertTrue(calendar.get(Calendar.HOUR_OF_DAY) == 10);
+		assertTrue(calendar.get(Calendar.MINUTE) == 5);
+		assertTrue(calendar.get(Calendar.SECOND) == 20);
+		assertTrue(calendar.get(Calendar.MILLISECOND) == 500);
 	}
 
 }

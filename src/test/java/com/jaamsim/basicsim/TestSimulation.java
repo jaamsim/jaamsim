@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2018-2021 JaamSim Software Inc.
+ * Copyright (C) 2018-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -46,7 +48,7 @@ public class TestSimulation {
 			if (proto == Simulation.class)
 				continue;
 			Entity ent = InputAgent.defineEntityWithUniqueName(simModel, proto, each.getName(), "-", true);
-			assert(ent != null);
+			assertTrue(ent != null);
 		}
 	}
 
@@ -121,9 +123,9 @@ public class TestSimulation {
 		listener.waitForPause(1000L);
 
 		// Test the results
-		assert(simModel.getSimTime() == 9.0d);
-		assert(simModel.getDoubleValue("[Gen].NumberGenerated") == 5.0d);
-		assert(simModel.getDoubleValue("[Sink].NumberAdded") == 5.0d);
+		assertTrue(simModel.getSimTime() == 9.0d);
+		assertTrue(simModel.getDoubleValue("[Gen].NumberGenerated") == 5.0d);
+		assertTrue(simModel.getDoubleValue("[Sink].NumberAdded") == 5.0d);
 	}
 
 	@Test
@@ -170,13 +172,13 @@ public class TestSimulation {
 		listener2.waitForPause(1000L);
 
 		// Test the results
-		assert(simModel.getSimTime() == 1000.0d);
-		assert(simModel.getDoubleValue("[Gen].NumberGenerated") == 500.0d);
-		assert(simModel.getDoubleValue("[Sink].NumberAdded") == 500.0d);
+		assertTrue(simModel.getSimTime() == 1000.0d);
+		assertTrue(simModel.getDoubleValue("[Gen].NumberGenerated") == 500.0d);
+		assertTrue(simModel.getDoubleValue("[Sink].NumberAdded") == 500.0d);
 
-		assert(simModel2.getSimTime() == 1000.0d);
-		assert(simModel2.getDoubleValue("[Gen].NumberGenerated") == 500.0d);
-		assert(simModel2.getDoubleValue("[Sink].NumberAdded") == 500.0d);
+		assertTrue(simModel2.getSimTime() == 1000.0d);
+		assertTrue(simModel2.getDoubleValue("[Gen].NumberGenerated") == 500.0d);
+		assertTrue(simModel2.getDoubleValue("[Sink].NumberAdded") == 500.0d);
 	}
 
 	@Test
