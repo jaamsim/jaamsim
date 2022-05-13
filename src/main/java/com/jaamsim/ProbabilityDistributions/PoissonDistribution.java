@@ -20,8 +20,7 @@ import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.rng.MRG1999a;
-import com.jaamsim.units.Unit;
-import com.jaamsim.units.UserSpecifiedUnit;
+import com.jaamsim.units.DimensionlessUnit;
 
 /**
  * Exponential Distribution.
@@ -36,10 +35,14 @@ public class PoissonDistribution extends Distribution {
 	private final MRG1999a rng = new MRG1999a();
 
 	{
+		unitType.setDefaultValue(DimensionlessUnit.class);
+		setUnitType(getUnitType());
+		unitType.setHidden(true);
+
 		minValueInput.setDefaultValue(new SampleConstant(0.0d));
 
 		meanInput = new SampleInput("Mean", KEY_INPUTS, new SampleConstant(1.0d));
-		meanInput.setUnitType(UserSpecifiedUnit.class);
+		meanInput.setUnitType(DimensionlessUnit.class);
 		meanInput.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		this.addInput(meanInput);
 	}
@@ -50,12 +53,6 @@ public class PoissonDistribution extends Distribution {
 	public void earlyInit() {
 		super.earlyInit();
 		rng.setSeedStream(getStreamNumber(), getSubstreamNumber());
-	}
-
-	@Override
-	protected void setUnitType(Class<? extends Unit> specified) {
-		super.setUnitType(specified);
-		meanInput.setUnitType(specified);
 	}
 
 	@Override

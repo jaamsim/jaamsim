@@ -39,6 +39,10 @@ public class BinomialDistribution extends Distribution {
 	private final MRG1999a rng = new MRG1999a();
 
 	{
+		unitType.setDefaultValue(DimensionlessUnit.class);
+		setUnitType(getUnitType());
+		unitType.setHidden(true);
+
 		minValueInput.setDefaultValue(new SampleConstant(0.0d));
 
 		numberOfTrials = new SampleInput("NumberOfTrials", KEY_INPUTS, new SampleConstant(1.0d));

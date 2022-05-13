@@ -17,6 +17,7 @@
 package com.jaamsim.ProbabilityDistributions;
 
 import com.jaamsim.rng.MRG1999a;
+import com.jaamsim.units.DimensionlessUnit;
 
 /**
  * Discrete Uniform Distribution.
@@ -27,6 +28,12 @@ public class DiscreteUniformDistribution extends Distribution {
 	private final MRG1999a rng = new MRG1999a();
 
 	public DiscreteUniformDistribution() {}
+
+	{
+		unitType.setDefaultValue(DimensionlessUnit.class);
+		setUnitType(getUnitType());
+		unitType.setHidden(true);
+	}
 
 	@Override
 	public void earlyInit() {

@@ -36,6 +36,10 @@ public class GeometricDistribution extends Distribution {
 	private final MRG1999a rng = new MRG1999a();
 
 	{
+		unitType.setDefaultValue(DimensionlessUnit.class);
+		setUnitType(getUnitType());
+		unitType.setHidden(true);
+
 		minValueInput.setDefaultValue(new SampleConstant(0.0d));
 
 		probability = new SampleInput("Probability", KEY_INPUTS, new SampleConstant(1.0d));
