@@ -21,11 +21,15 @@ import java.util.Collections;
 import java.util.Comparator;
 
 import com.jaamsim.ProbabilityDistributions.BetaDistribution;
+import com.jaamsim.ProbabilityDistributions.BinomialDistribution;
+import com.jaamsim.ProbabilityDistributions.DiscreteUniformDistribution;
 import com.jaamsim.ProbabilityDistributions.ErlangDistribution;
 import com.jaamsim.ProbabilityDistributions.ExponentialDistribution;
 import com.jaamsim.ProbabilityDistributions.GammaDistribution;
+import com.jaamsim.ProbabilityDistributions.GeometricDistribution;
 import com.jaamsim.ProbabilityDistributions.LogLogisticDistribution;
 import com.jaamsim.ProbabilityDistributions.LogNormalDistribution;
+import com.jaamsim.ProbabilityDistributions.NegativeBinomialDistribution;
 import com.jaamsim.ProbabilityDistributions.NormalDistribution;
 import com.jaamsim.ProbabilityDistributions.PoissonDistribution;
 import com.jaamsim.ProbabilityDistributions.TriangularDistribution;
@@ -2423,6 +2427,76 @@ public class ExpOperators {
 			}
 		});
 
+		addFunction("binomial", 2, 3, new CallableFunc() {
+			@Override
+			public void checkUnits(ParseContext context, ExpResult[] args, String source, int pos) throws ExpError {
+				if (args[0].unitType != DimensionlessUnit.class)
+					throw new ExpError(source, pos, "Input 'numberOfTrials' must be dimensionless");
+				if (args[1].unitType != DimensionlessUnit.class)
+					throw new ExpError(source, pos, "Input 'probability' must be dimensionless");
+				if (args.length > 2 && args[2].unitType != DimensionlessUnit.class)
+					throw new ExpError(source, pos, "Input 'seed' must be dimensionless");
+			}
+			@Override
+			public ExpResult call(EvalContext context, ExpResult[] args, String source, int pos) throws ExpError {
+				if (context == null)  // trap call from ConstOptimizer.updateRef
+					return null;
+				Entity thisEnt = ((EntityEvalContext) context).thisEnt;
+				JaamSimModel simModel = thisEnt.getJaamSimModel();
+				int seed = -1;
+				if (args.length > 2)
+					seed = (int) args[2].value;
+				String key = seed + "binomial" + thisEnt.getEntityNumber();
+				MRG1999a[] rngs = simModel.getRandomGenerators(key, seed, 1);
+				double val = 0.0d;
+				if (EventManager.hasCurrent()) {
+					int numberOfTrials = (int) args[0].value;
+					double probability = args[1].value;
+					val = BinomialDistribution.getSample(numberOfTrials, probability, rngs[0]);
+				}
+				return ExpResult.makeNumResult(val, DimensionlessUnit.class);
+			}
+			@Override
+			public ExpValResult validate(ParseContext context, ExpValResult[] args, String source, int pos) {
+				return validateRandomFunction(context, args, source, pos);
+			}
+		});
+
+		addFunction("discreteUniform", 2, 3, new CallableFunc() {
+			@Override
+			public void checkUnits(ParseContext context, ExpResult[] args, String source, int pos) throws ExpError {
+				if (args[0].unitType != DimensionlessUnit.class)
+					throw new ExpError(source, pos, "Input 'minIndex' must be dimensionless");
+				if (args[1].unitType != DimensionlessUnit.class)
+					throw new ExpError(source, pos, "Input 'maxIndex' must be dimensionless");
+				if (args.length > 2 && args[2].unitType != DimensionlessUnit.class)
+					throw new ExpError(source, pos, "Input 'seed' must be dimensionless");
+			}
+			@Override
+			public ExpResult call(EvalContext context, ExpResult[] args, String source, int pos) throws ExpError {
+				if (context == null)  // trap call from ConstOptimizer.updateRef
+					return null;
+				Entity thisEnt = ((EntityEvalContext) context).thisEnt;
+				JaamSimModel simModel = thisEnt.getJaamSimModel();
+				int seed = -1;
+				if (args.length > 2)
+					seed = (int) args[2].value;
+				String key = seed + "discreteUniform" + thisEnt.getEntityNumber();
+				MRG1999a[] rngs = simModel.getRandomGenerators(key, seed, 1);
+				double val = 0.0d;
+				if (EventManager.hasCurrent()) {
+					int minIndex = (int) args[0].value;
+					int maxIndex = (int) args[1].value;
+					val = DiscreteUniformDistribution.getSample(minIndex, maxIndex, rngs[0]);
+				}
+				return ExpResult.makeNumResult(val, DimensionlessUnit.class);
+			}
+			@Override
+			public ExpValResult validate(ParseContext context, ExpValResult[] args, String source, int pos) {
+				return validateRandomFunction(context, args, source, pos);
+			}
+		});
+
 		addFunction("erlang", 2, 3, new CallableFunc() {
 			@Override
 			public void checkUnits(ParseContext context, ExpResult[] args, String source, int pos) throws ExpError {
@@ -2519,6 +2593,38 @@ public class ExpOperators {
 			}
 		});
 
+		addFunction("geometric", 1, 2, new CallableFunc() {
+			@Override
+			public void checkUnits(ParseContext context, ExpResult[] args, String source, int pos) throws ExpError {
+				if (args[0].unitType != DimensionlessUnit.class)
+					throw new ExpError(source, pos, "Input 'probability' must be dimensionless");
+				if (args.length > 1 && args[1].unitType != DimensionlessUnit.class)
+					throw new ExpError(source, pos, "Input 'seed' must be dimensionless");
+			}
+			@Override
+			public ExpResult call(EvalContext context, ExpResult[] args, String source, int pos) throws ExpError {
+				if (context == null)  // trap call from ConstOptimizer.updateRef
+					return null;
+				Entity thisEnt = ((EntityEvalContext) context).thisEnt;
+				JaamSimModel simModel = thisEnt.getJaamSimModel();
+				int seed = -1;
+				if (args.length > 1)
+					seed = (int) args[1].value;
+				String key = seed + "geometric" + thisEnt.getEntityNumber();
+				MRG1999a[] rngs = simModel.getRandomGenerators(key, seed, 1);
+				double val = 0.0d;
+				if (EventManager.hasCurrent()) {
+					double probability = args[0].value;
+					val = GeometricDistribution.getSample(probability, rngs[0]);
+				}
+				return ExpResult.makeNumResult(val, DimensionlessUnit.class);
+			}
+			@Override
+			public ExpValResult validate(ParseContext context, ExpValResult[] args, String source, int pos) {
+				return validateRandomFunction(context, args, source, pos);
+			}
+		});
+
 		addFunction("loglogistic", 2, 3, new CallableFunc() {
 			@Override
 			public void checkUnits(ParseContext context, ExpResult[] args, String source, int pos) throws ExpError {
@@ -2581,6 +2687,41 @@ public class ExpOperators {
 					val = scale * LogNormalDistribution.getSample(normalMean, normalSD, rngs[0], rngs[1]);
 				}
 				return ExpResult.makeNumResult(val, args[0].unitType);
+			}
+			@Override
+			public ExpValResult validate(ParseContext context, ExpValResult[] args, String source, int pos) {
+				return validateRandomFunction(context, args, source, pos);
+			}
+		});
+
+		addFunction("negativeBinomial", 2, 3, new CallableFunc() {
+			@Override
+			public void checkUnits(ParseContext context, ExpResult[] args, String source, int pos) throws ExpError {
+				if (args[0].unitType != DimensionlessUnit.class)
+					throw new ExpError(source, pos, "Input 'successfulTrials' must be dimensionless");
+				if (args[1].unitType != DimensionlessUnit.class)
+					throw new ExpError(source, pos, "Input 'probability' must be dimensionless");
+				if (args.length > 2 && args[2].unitType != DimensionlessUnit.class)
+					throw new ExpError(source, pos, "Input 'seed' must be dimensionless");
+			}
+			@Override
+			public ExpResult call(EvalContext context, ExpResult[] args, String source, int pos) throws ExpError {
+				if (context == null)  // trap call from ConstOptimizer.updateRef
+					return null;
+				Entity thisEnt = ((EntityEvalContext) context).thisEnt;
+				JaamSimModel simModel = thisEnt.getJaamSimModel();
+				int seed = -1;
+				if (args.length > 2)
+					seed = (int) args[2].value;
+				String key = seed + "negativeBinomial" + thisEnt.getEntityNumber();
+				MRG1999a[] rngs = simModel.getRandomGenerators(key, seed, 1);
+				double val = 0.0d;
+				if (EventManager.hasCurrent()) {
+					int successfulTrials = (int) args[0].value;
+					double probability = args[1].value;
+					val = NegativeBinomialDistribution.getSample(successfulTrials, probability, rngs[0]);
+				}
+				return ExpResult.makeNumResult(val, DimensionlessUnit.class);
 			}
 			@Override
 			public ExpValResult validate(ParseContext context, ExpValResult[] args, String source, int pos) {
