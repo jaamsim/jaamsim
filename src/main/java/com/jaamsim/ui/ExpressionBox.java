@@ -1759,6 +1759,33 @@ public class ExpressionBox extends JDialog {
 				"'beta(2, 1, 1[s], 5)' returns a sample with units of time using a seed of 5",
 				"'beta(2, 1, 1)' returns a dimensionless sample using a selected seed"));
 
+		functions.add(new ButtonDesc("binomial", "Binomial distribution function ('binomial')",
+				"Returns a random sample from the binomial distribution, i.e. the number of "
+						+ "successes in n independent trials with probability p.",
+				"Accepts input parmeters of numberOfTrials, probability, and seed. "
+						+ "Returns a randomly selected dimensionless integer value. "
+						+ "The numberOfTrials, probability, and seed inputs are dimensionless. "
+						+ "If a seed value is not entered, the model will chose the next unused "
+						+ "value.",
+				"binomial(numberOfTrials, probability, seed)",
+				-1,
+				"'binomial(10, 0.4, 5)' returns a dimensionless integer value using a seed of 5",
+				"'binomial(10, 0.4)' returns a dimensionless integer value using a selected seed"));
+
+		functions.add(new ButtonDesc("discreteUniform", "Discrete uniform distribution function "
+						+ "('discreteUniform')",
+				"Returns a random sample from the discrete uniform distribution, i.e. a randomly "
+						+ "selected index in the range i to j.",
+				"Accepts input parmeters of minIndex, maxIndex, and seed. "
+						+ "Returns a randomly selected dimensionless integer value. "
+						+ "The minIndex, maxIndex, and seed inputs are dimensionless. "
+						+ "If a seed value is not entered, the model will chose the next unused "
+						+ "value.",
+				"discreteUniform(minIndex, maxIndex, seed)",
+				-1,
+				"'discreteUniform(3, 8, 5)' returns a dimensionless integer value using a seed of 5",
+				"'discreteUniform(3, 8)' returns a dimensionless integer value using a selected seed"));
+
 		functions.add(new ButtonDesc("erlang", "Erlang distribution function ('erlang')",
 				"Returns a random sample from the Erlang distribution.",
 				"Accepts input parmeters of mean, shape, and seed. "
@@ -1795,6 +1822,20 @@ public class ExpressionBox extends JDialog {
 				"'gamma(10[s], 2, 5)' returns a sample with units of time using a seed of 5",
 				"'gamma(10, 2)' returns a dimensionless sample using a selected seed"));
 
+		functions.add(new ButtonDesc("geometric", "Geometric distribution function ('geometric')",
+				"Returns a random sample from the geometric distribution, i.e. the number of "
+						+ "failures before the first success in a sequence of independent trials "
+						+ "with probability p.",
+				"Accepts input parmeters of probability and seed. "
+						+ "Returns a randomly selected dimensionless integer value. "
+						+ "The probability and seed inputs are dimensionless. "
+						+ "If a seed value is not entered, the model will chose the next unused "
+						+ "value.",
+				"geometric(probability, seed)",
+				-1,
+				"'geometric(0.4, 5)' returns a dimensionless integer value using a seed of 5",
+				"'geometric(0.4)' returns a dimensionless integer value using a selected seed"));
+
 		functions.add(new ButtonDesc("loglogistic", "LogLogistic distribution function ('loglogistic')",
 				"Returns a random sample from the loglogistic distribution.",
 				"Accepts input parmeters of scale, shape, and seed. "
@@ -1819,6 +1860,21 @@ public class ExpressionBox extends JDialog {
 				"'lognormal(10[s], 1, 0.2, 5)' returns a sample with units of time using a seed of 5",
 				"'lognormal(10, 1, 0.2)' returns a dimensionless sample using a selected seed"));
 
+		functions.add(new ButtonDesc("negativeBinomial", "Negative binomial distribution function "
+						+ "('negativeBinomial')",
+				"Returns a random sample from the negative binomial distribution, i.e. the number "
+						+ "of failures before s successes in a sequence of independent trials "
+						+ "with probability p.",
+				"Accepts input parmeters of successfulTrials, probability, and seed. "
+						+ "Returns a randomly selected dimensionless integer value. "
+						+ "The successfulTrials, probability, and seed inputs are dimensionless. "
+						+ "If a seed value is not entered, the model will chose the next unused "
+						+ "value.",
+				"negativeBinomial(successfulTrials, probability, seed)",
+				-1,
+				"'negativeBinomial(3, 0.4, 5)' returns a dimensionless integer value using a seed of 5",
+				"'negativeBinomial(3, 0.4)' returns a dimensionless integer value using a selected seed"));
+
 		functions.add(new ButtonDesc("normal", "Normal distribution function ('normal')",
 				"Returns a random sample from the normal distribution.",
 				"Accepts input parmeters of mean, standardDeviation, and seed. "
@@ -1833,16 +1889,18 @@ public class ExpressionBox extends JDialog {
 				"'normal(10, 2)' returns a dimensionless sample using a selected seed"));
 
 		functions.add(new ButtonDesc("poisson", "Poisson distribution function ('poisson')",
-				"Returns a random sample from the Poisson distribution.",
+				"Returns a random sample from the Poisson distribution, i.e. the number of "
+						+ "independent events that occur in a given period of time.",
 				"Accepts input parmeters of mean and seed. "
-						+ "Returns a random sample with the same units as the mean input. "
+						+ "Returns a randomly selected integer value with the same units as the "
+						+ "mean input. "
 						+ "The seed input is dimensionless. "
 						+ "If a seed value is not entered, the model will chose the next unused "
 						+ "value.",
 				"poisson(mean, seed)",
 				-1,
-				"'poisson(10[s], 5)' returns a sample with units of time using a seed of 5",
-				"'poisson(10)' returns a dimensionless sample using a selected seed"));
+				"'poisson(10[s], 5)' returns an integer value with units of time using a seed of 5",
+				"'poisson(10)' returns a dimensionless integer value using a selected seed"));
 
 		functions.add(new ButtonDesc("triangular", "Triangular distribution function ('triangular')",
 				"Returns a random sample from the triangular distribution.",
