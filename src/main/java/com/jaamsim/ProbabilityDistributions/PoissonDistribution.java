@@ -76,7 +76,7 @@ public class PoissonDistribution extends Distribution {
 		return getStandardDevVal(mean);
 	}
 
-	public static double getSample(double mean, MRG1999a rng) {
+	public static int getSample(double mean, MRG1999a rng) {
 		double a = Math.exp(-mean);
 		double b = 1;
 		int i = 0;

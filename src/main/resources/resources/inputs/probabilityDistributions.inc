@@ -10,6 +10,10 @@ Define ObjectType {
 					WeibullDistribution
 					LogNormalDistribution
 					LogLogisticDistribution
+					BinomialDistribution
+					DiscreteUniformDistribution
+					GeometricDistribution
+					NegativeBinomialDistribution
 					PoissonDistribution
 					DiscreteDistribution
 					ContinuousDistribution
@@ -27,7 +31,11 @@ BetaDistribution			JavaClass { com.jaamsim.ProbabilityDistributions.BetaDistribu
 WeibullDistribution			JavaClass { com.jaamsim.ProbabilityDistributions.WeibullDistribution		} Palette { 'Probability Distributions' } IconFile { '<res>/images/ErlangDist-24.png'     }
 LogNormalDistribution		JavaClass { com.jaamsim.ProbabilityDistributions.LogNormalDistribution		} Palette { 'Probability Distributions' } IconFile { '<res>/images/ErlangDist-24.png'     }
 LogLogisticDistribution	    JavaClass { com.jaamsim.ProbabilityDistributions.LogLogisticDistribution	} Palette { 'Probability Distributions' } IconFile { '<res>/images/ErlangDist-24.png'     }
-PoissonDistribution			JavaClass { com.jaamsim.ProbabilityDistributions.PoissonDistribution		} Palette { 'Probability Distributions' } IconFile { '<res>/images/DiscreteDist-24.png'   }
+BinomialDistribution           JavaClass { com.jaamsim.ProbabilityDistributions.BinomialDistribution         } Palette { 'Probability Distributions' } IconFile { '<res>/images/DiscreteDist-24.png' }
+DiscreteUniformDistribution    JavaClass { com.jaamsim.ProbabilityDistributions.DiscreteUniformDistribution  } Palette { 'Probability Distributions' } IconFile { '<res>/images/DiscreteDist-24.png' }
+GeometricDistribution          JavaClass { com.jaamsim.ProbabilityDistributions.GeometricDistribution        } Palette { 'Probability Distributions' } IconFile { '<res>/images/DiscreteDist-24.png' }
+NegativeBinomialDistribution   JavaClass { com.jaamsim.ProbabilityDistributions.NegativeBinomialDistribution } Palette { 'Probability Distributions' } IconFile { '<res>/images/DiscreteDist-24.png' }
+PoissonDistribution            JavaClass { com.jaamsim.ProbabilityDistributions.PoissonDistribution          } Palette { 'Probability Distributions' } IconFile { '<res>/images/DiscreteDist-24.png' }
 DiscreteDistribution		JavaClass { com.jaamsim.ProbabilityDistributions.DiscreteDistribution		} Palette { 'Probability Distributions' } IconFile { '<res>/images/DiscreteDist-24.png'   }
 ContinuousDistribution		JavaClass { com.jaamsim.ProbabilityDistributions.ContinuousDistribution		} Palette { 'Probability Distributions' } IconFile { '<res>/images/ContinuousDist-24.png' }
 BooleanSelector				JavaClass { com.jaamsim.ProbabilityDistributions.BooleanSelector			} Palette { 'Probability Distributions' } IconFile { '<res>/images/Selector-24.png'       }
@@ -67,7 +75,11 @@ BetaDistribution			DefaultDisplayModel { ProbabilityDistributionIconModel }
 WeibullDistribution			DefaultDisplayModel { ProbabilityDistributionIconModel }
 LogNormalDistribution		DefaultDisplayModel { ProbabilityDistributionIconModel }
 LogLogisticDistribution	    DefaultDisplayModel { ProbabilityDistributionIconModel }
-PoissonDistribution			DefaultDisplayModel { DiscreteDistributionIconModel    }
+BinomialDistribution          DefaultDisplayModel { DiscreteDistributionIconModel  }
+DiscreteUniformDistribution   DefaultDisplayModel { DiscreteDistributionIconModel  }
+GeometricDistribution         DefaultDisplayModel { DiscreteDistributionIconModel  }
+NegativeBinomialDistribution  DefaultDisplayModel { DiscreteDistributionIconModel  }
+PoissonDistribution           DefaultDisplayModel { DiscreteDistributionIconModel  }
 DiscreteDistribution		DefaultDisplayModel { DiscreteDistributionIconModel    }
 ContinuousDistribution		DefaultDisplayModel { ContinuousDistributionIconModel  }
 BooleanSelector				DefaultDisplayModel { BooleanSelectorIconModel         }
@@ -83,7 +95,11 @@ BetaDistribution        Description { 'Generates random numbers from a beta prob
 WeibullDistribution      Description { 'Generates random numbers from a Weibull probability density function.' }
 LogNormalDistribution    Description { 'Generates random numbers from a log-normal probability density function.' }
 LogLogisticDistribution  Description { 'Generates random numbers from a log-logistic probability density function.' }
-PoissonDistribution      Description { 'Generates random numbers from a Poisson distribution.' }
+BinomialDistribution          Description { 'Generates random numbers from a binomial distribution, i.e. the number of successes in n independent trials with probability p.' }
+DiscreteUniformDistribution   Description { 'Generates random numbers from a discrete uniform distribution, i.e. a randomly selected index in the range i to j.' }
+GeometricDistribution         Description { 'Generates random numbers from a geometric distribution, i.e. the number of failures before the first success in a sequence of independent trials with probability p.' }
+NegativeBinomialDistribution  Description { 'Generates random numbers from a negative binomial distribution, i.e. the number of failures before s successes in a sequence of independent trials with probability p.' }
+PoissonDistribution           Description { 'Generates random numbers from a Poisson distribution, i.e. the number of independent events that occur in a given period of time.' }
 DiscreteDistribution     Description { 'Generates random numbers from a user-specified set of values and probabilities.' }
 ContinuousDistribution   Description { 'Generates random numbers from a user-specified probability density function.' }
 BooleanSelector          Description { 'Randomly selects true/false with a user-selectable probability of true.' }
