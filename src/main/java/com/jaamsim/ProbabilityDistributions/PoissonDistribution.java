@@ -16,7 +16,6 @@
  */
 package com.jaamsim.ProbabilityDistributions;
 
-import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.rng.MRG1999a;
@@ -39,9 +38,9 @@ public class PoissonDistribution extends Distribution {
 		setUnitType(getUnitType());
 		unitType.setHidden(true);
 
-		minValueInput.setDefaultValue(new SampleConstant(0.0d));
+		minValueInput.setDefaultValue(0.0d);
 
-		meanInput = new SampleInput("Mean", KEY_INPUTS, new SampleConstant(1.0d));
+		meanInput = new SampleInput("Mean", KEY_INPUTS, 1.0d);
 		meanInput.setUnitType(DimensionlessUnit.class);
 		meanInput.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		this.addInput(meanInput);

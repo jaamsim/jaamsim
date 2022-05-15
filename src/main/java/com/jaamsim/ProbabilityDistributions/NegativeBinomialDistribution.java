@@ -16,7 +16,6 @@
  */
 package com.jaamsim.ProbabilityDistributions;
 
-import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.rng.MRG1999a;
@@ -43,14 +42,14 @@ public class NegativeBinomialDistribution extends Distribution {
 		setUnitType(getUnitType());
 		unitType.setHidden(true);
 
-		minValueInput.setDefaultValue(new SampleConstant(0.0d));
+		minValueInput.setDefaultValue(0.0d);
 
-		successfulTrials = new SampleInput("SuccessfulTrials", KEY_INPUTS, new SampleConstant(1.0d));
+		successfulTrials = new SampleInput("SuccessfulTrials", KEY_INPUTS, 1.0d);
 		successfulTrials.setUnitType(DimensionlessUnit.class);
 		successfulTrials.setValidRange(1.0d, Double.POSITIVE_INFINITY);
 		this.addInput(successfulTrials);
 
-		probability = new SampleInput("Probability", KEY_INPUTS, new SampleConstant(1.0d));
+		probability = new SampleInput("Probability", KEY_INPUTS, 1.0d);
 		probability.setUnitType(DimensionlessUnit.class);
 		probability.setValidRange(0.0d, 1.0d);
 		this.addInput(probability);

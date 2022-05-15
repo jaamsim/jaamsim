@@ -17,7 +17,6 @@
  */
 package com.jaamsim.ProbabilityDistributions;
 
-import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.Samples.TimeSeries;
 import com.jaamsim.Samples.TimeSeriesProvider;
@@ -49,7 +48,7 @@ public class NonStatExponentialDist extends Distribution {
 	private final MRG1999a rng = new MRG1999a();
 
 	{
-		minValueInput.setDefaultValue(new SampleConstant(0.0d));
+		minValueInput.setDefaultValue(0.0d);
 
 		unitType.setHidden(true);
 		unitType.setDefaultValue(TimeUnit.class);
@@ -60,7 +59,7 @@ public class NonStatExponentialDist extends Distribution {
 		expectedArrivals.setRequired(true);
 		this.addInput(expectedArrivals);
 
-		scaleFactor = new SampleInput("ScaleFactor", KEY_INPUTS, new SampleConstant(1.0d));
+		scaleFactor = new SampleInput("ScaleFactor", KEY_INPUTS, 1.0d);
 		scaleFactor.setUnitType(DimensionlessUnit.class);
 		this.addInput(scaleFactor);
 	}

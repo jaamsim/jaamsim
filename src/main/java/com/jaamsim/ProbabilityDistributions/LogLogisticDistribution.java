@@ -17,7 +17,6 @@
  */
 package com.jaamsim.ProbabilityDistributions;
 
-import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.rng.MRG1999a;
@@ -42,14 +41,14 @@ public class LogLogisticDistribution extends Distribution {
 	private final MRG1999a rng = new MRG1999a();
 
 	{
-		minValueInput.setDefaultValue(new SampleConstant(0.0d));
+		minValueInput.setDefaultValue(0.0d);
 
-		scaleInput = new SampleInput("Scale", KEY_INPUTS, new SampleConstant(1.0d));
+		scaleInput = new SampleInput("Scale", KEY_INPUTS, 1.0d);
 		scaleInput.setValidRange(0.0, Double.POSITIVE_INFINITY);
 		scaleInput.setUnitType(UserSpecifiedUnit.class);
 		this.addInput(scaleInput);
 
-		shapeInput = new SampleInput("Shape", KEY_INPUTS, new SampleConstant(1.0d));
+		shapeInput = new SampleInput("Shape", KEY_INPUTS, 1.0d);
 		shapeInput.setValidRange(2.000001d, Double.POSITIVE_INFINITY);
 		shapeInput.setUnitType(DimensionlessUnit.class);
 		this.addInput(shapeInput);

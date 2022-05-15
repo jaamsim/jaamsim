@@ -18,7 +18,6 @@
 package com.jaamsim.ProbabilityDistributions;
 
 import com.jaamsim.Graphics.DisplayEntity;
-import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.Samples.SampleProvider;
 import com.jaamsim.Statistics.SampleStatistics;
@@ -88,13 +87,11 @@ implements SampleProvider, RandomStreamUser {
 		randomSeedInput.setDefaultText("None");
 		this.addInput(randomSeedInput);
 
-		SampleConstant negInf = new SampleConstant(Double.NEGATIVE_INFINITY);
-		minValueInput = new SampleInput("MinValue", KEY_INPUTS, negInf);
+		minValueInput = new SampleInput("MinValue", KEY_INPUTS, Double.NEGATIVE_INFINITY);
 		minValueInput.setUnitType(UserSpecifiedUnit.class);
 		this.addInput(minValueInput);
 
-		SampleConstant posInf = new SampleConstant(Double.POSITIVE_INFINITY);
-		maxValueInput = new SampleInput("MaxValue", KEY_INPUTS, posInf);
+		maxValueInput = new SampleInput("MaxValue", KEY_INPUTS, Double.POSITIVE_INFINITY);
 		maxValueInput.setUnitType(UserSpecifiedUnit.class);
 		this.addInput(maxValueInput);
 	}

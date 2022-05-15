@@ -17,7 +17,6 @@
  */
 package com.jaamsim.ProbabilityDistributions;
 
-import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
@@ -44,9 +43,9 @@ public class ErlangDistribution extends Distribution {
 	private final MRG1999a rng = new MRG1999a();
 
 	{
-		minValueInput.setDefaultValue(new SampleConstant(0.0d));
+		minValueInput.setDefaultValue(0.0d);
 
-		meanInput = new SampleInput("Mean", KEY_INPUTS, new SampleConstant(1.0d));
+		meanInput = new SampleInput("Mean", KEY_INPUTS, 1.0d);
 		meanInput.setUnitType(UserSpecifiedUnit.class);
 		meanInput.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		this.addInput(meanInput);

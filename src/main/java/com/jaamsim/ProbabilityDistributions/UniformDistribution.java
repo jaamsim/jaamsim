@@ -17,7 +17,6 @@
  */
 package com.jaamsim.ProbabilityDistributions;
 
-import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.rng.MRG1999a;
 
 /**
@@ -28,8 +27,8 @@ public class UniformDistribution extends Distribution {
 	private final MRG1999a rng = new MRG1999a();
 
 	{
-		minValueInput.setDefaultValue(new SampleConstant(0.0d));
-		maxValueInput.setDefaultValue(new SampleConstant(1.0d));
+		minValueInput.setDefaultValue(0.0d);
+		maxValueInput.setDefaultValue(1.0d);
 	}
 
 	public UniformDistribution() {}

@@ -17,7 +17,6 @@
  */
 package com.jaamsim.ProbabilityDistributions;
 
-import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Keyword;
@@ -38,10 +37,10 @@ public class TriangularDistribution extends Distribution {
 	private final MRG1999a rng = new MRG1999a();
 
 	{
-		minValueInput.setDefaultValue(new SampleConstant(0.0d));
-		maxValueInput.setDefaultValue(new SampleConstant(2.0d));
+		minValueInput.setDefaultValue(0.0d);
+		maxValueInput.setDefaultValue(2.0d);
 
-		modeInput = new SampleInput("Mode", KEY_INPUTS, new SampleConstant(1.0d));
+		modeInput = new SampleInput("Mode", KEY_INPUTS, 1.0d);
 		modeInput.setUnitType(UserSpecifiedUnit.class);
 		this.addInput(modeInput);
 	}

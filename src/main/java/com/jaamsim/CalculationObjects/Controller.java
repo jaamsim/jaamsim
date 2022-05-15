@@ -22,7 +22,6 @@ import java.util.Collections;
 import java.util.Comparator;
 
 import com.jaamsim.Graphics.DisplayEntity;
-import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.EntityTarget;
@@ -63,7 +62,7 @@ public class Controller extends DisplayEntity implements SubjectEntity {
 	private final SubjectEntityDelegate subject = new SubjectEntityDelegate(this);
 
 	{
-		firstTime = new SampleInput("FirstTime", KEY_INPUTS, new SampleConstant(0.0d));
+		firstTime = new SampleInput("FirstTime", KEY_INPUTS, 0.0d);
 		firstTime.setUnitType(TimeUnit.class);
 		firstTime.setValidRange(0.0, Double.POSITIVE_INFINITY);
 		this.addInput(firstTime);

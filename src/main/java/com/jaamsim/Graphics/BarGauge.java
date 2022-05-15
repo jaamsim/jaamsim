@@ -17,7 +17,6 @@
 package com.jaamsim.Graphics;
 
 import com.jaamsim.DisplayModels.ShapeModel;
-import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.Keyword;
@@ -40,7 +39,7 @@ public class BarGauge extends DisplayEntity {
 	private final ColourInput backgroundColour;
 
 	{
-		dataSource = new SampleInput("DataSource", KEY_INPUTS, new SampleConstant(0.5));
+		dataSource = new SampleInput("DataSource", KEY_INPUTS, 0.5d);
 		dataSource.setUnitType(DimensionlessUnit.class);
 		dataSource.setValidRange(0.0d, 1.0d);
 		this.addInput(dataSource);

@@ -17,7 +17,6 @@
  */
 package com.jaamsim.CalculationObjects;
 
-import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.units.DimensionlessUnit;
@@ -39,7 +38,7 @@ public class Integrator extends DoubleCalculation {
 	protected Class<? extends Unit> outUnitType;  // Unit type for the output from this calculation
 
 	{
-		initialValue = new SampleInput("InitialValue", KEY_INPUTS, new SampleConstant(0.0));
+		initialValue = new SampleInput("InitialValue", KEY_INPUTS, 0.0d);
 		initialValue.setUnitType(UserSpecifiedUnit.class);
 		this.addInput(initialValue);
 	}

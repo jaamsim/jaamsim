@@ -18,7 +18,6 @@
 package com.jaamsim.ProbabilityDistributions;
 
 import com.jaamsim.Graphics.DisplayEntity;
-import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.input.InputAgent;
@@ -47,7 +46,7 @@ public class BooleanSelector extends DisplayEntity implements RandomStreamUser {
 		randomSeedInput.setDefaultText("None");
 		this.addInput(randomSeedInput);
 
-		trueProbInput = new SampleInput("TrueProbability", KEY_INPUTS, new SampleConstant(1.0d));
+		trueProbInput = new SampleInput("TrueProbability", KEY_INPUTS, 1.0d);
 		trueProbInput.setUnitType(DimensionlessUnit.class);
 		trueProbInput.setValidRange(0.0d, 1.0d);
 		this.addInput(trueProbInput);

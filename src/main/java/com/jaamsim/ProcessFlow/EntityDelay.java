@@ -25,7 +25,6 @@ import com.jaamsim.DisplayModels.PolylineModel;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.LineEntity;
 import com.jaamsim.Graphics.PolylineInfo;
-import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.SubModels.CompoundEntity;
 import com.jaamsim.basicsim.Entity;
@@ -100,7 +99,7 @@ public class EntityDelay extends LinkedComponent implements LineEntity {
 		allowOvertaking = new BooleanInput("AllowOvertaking", KEY_INPUTS, true);
 		this.addInput(allowOvertaking);
 
-		minSeparation = new SampleInput("MinSeparation", KEY_INPUTS, new SampleConstant(0.0d));
+		minSeparation = new SampleInput("MinSeparation", KEY_INPUTS, 0.0d);
 		minSeparation.setUnitType(TimeUnit.class);
 		minSeparation.setValidRange(0, Double.POSITIVE_INFINITY);
 		this.addInput(minSeparation);

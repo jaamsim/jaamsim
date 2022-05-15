@@ -19,7 +19,6 @@ package com.jaamsim.ProcessFlow;
 
 import com.jaamsim.BasicObjects.DowntimeEntity;
 import com.jaamsim.Graphics.DisplayEntity;
-import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
@@ -41,13 +40,12 @@ public class EntityGate extends LinkedService {
 	private int num = 0;  // number released since the gate opened
 
 	{
-		releaseDelay = new SampleInput("ReleaseDelay", KEY_INPUTS, new SampleConstant(0.0));
+		releaseDelay = new SampleInput("ReleaseDelay", KEY_INPUTS, 0.0);
 		releaseDelay.setUnitType(TimeUnit.class);
 		releaseDelay.setValidRange(0.0, Double.POSITIVE_INFINITY);
 		this.addInput(releaseDelay);
 
-		SampleConstant def = new SampleConstant(Double.POSITIVE_INFINITY);
-		numberToRelease = new SampleInput("NumberToRelease", KEY_INPUTS, def);
+		numberToRelease = new SampleInput("NumberToRelease", KEY_INPUTS, Double.POSITIVE_INFINITY);
 		numberToRelease.setUnitType(DimensionlessUnit.class);
 		numberToRelease.setIntegerValue(true);
 		numberToRelease.setValidRange(0.0, Double.POSITIVE_INFINITY);

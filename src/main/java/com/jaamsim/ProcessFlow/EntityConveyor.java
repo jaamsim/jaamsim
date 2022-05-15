@@ -24,7 +24,6 @@ import com.jaamsim.DisplayModels.PolylineModel;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.LineEntity;
 import com.jaamsim.Graphics.PolylineInfo;
-import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.SubModels.CompoundEntity;
 import com.jaamsim.input.BooleanInput;
@@ -77,7 +76,7 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 		selectionCondition.setHidden(true);
 		nextEntity.setHidden(true);
 
-		travelTimeInput = new SampleInput("TravelTime", KEY_INPUTS, new SampleConstant(0.0d));
+		travelTimeInput = new SampleInput("TravelTime", KEY_INPUTS, 0.0d);
 		travelTimeInput.setValidRange(0.0, Double.POSITIVE_INFINITY);
 		travelTimeInput.setUnitType(TimeUnit.class);
 		this.addInput(travelTimeInput);

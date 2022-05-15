@@ -17,7 +17,6 @@
  */
 package com.jaamsim.ProbabilityDistributions;
 
-import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.rng.MRG1999a;
@@ -45,12 +44,11 @@ public class NormalDistribution extends Distribution {
 	private final MRG1999a rng2 = new MRG1999a();
 
 	{
-		meanInput = new SampleInput("Mean", KEY_INPUTS, new SampleConstant(0.0d));
+		meanInput = new SampleInput("Mean", KEY_INPUTS, 0.0d);
 		meanInput.setUnitType(UserSpecifiedUnit.class);
 		this.addInput(meanInput);
 
-		standardDeviationInput = new SampleInput("StandardDeviation", KEY_INPUTS,
-				new SampleConstant(1.0d));
+		standardDeviationInput = new SampleInput("StandardDeviation", KEY_INPUTS, 1.0d);
 		standardDeviationInput.setUnitType(UserSpecifiedUnit.class);
 		standardDeviationInput.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		this.addInput(standardDeviationInput);

@@ -17,7 +17,6 @@
  */
 package com.jaamsim.ProbabilityDistributions;
 
-import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.math.Gamma;
@@ -43,19 +42,19 @@ public class BetaDistribution extends Distribution {
 	private final MRG1999a rng = new MRG1999a();
 
 	{
-		minValueInput.setDefaultValue(new SampleConstant(0.0d));
+		minValueInput.setDefaultValue(0.0d);
 
-		alphaInput = new SampleInput("AlphaParam", KEY_INPUTS, new SampleConstant(1.0d));
+		alphaInput = new SampleInput("AlphaParam", KEY_INPUTS, 1.0d);
 		alphaInput.setUnitType(DimensionlessUnit.class);
 		alphaInput.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		this.addInput(alphaInput);
 
-		betaInput = new SampleInput("BetaParam", KEY_INPUTS, new SampleConstant(1.0d));
+		betaInput = new SampleInput("BetaParam", KEY_INPUTS, 1.0d);
 		betaInput.setUnitType(DimensionlessUnit.class);
 		betaInput.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		this.addInput(betaInput);
 
-		scaleInput = new SampleInput("Scale", KEY_INPUTS, new SampleConstant(1.0d));
+		scaleInput = new SampleInput("Scale", KEY_INPUTS, 1.0d);
 		scaleInput.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		scaleInput.setUnitType(UserSpecifiedUnit.class);
 		this.addInput(scaleInput);

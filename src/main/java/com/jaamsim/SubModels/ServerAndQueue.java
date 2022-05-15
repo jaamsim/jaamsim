@@ -19,7 +19,6 @@ package com.jaamsim.SubModels;
 import com.jaamsim.Graphics.Region;
 import com.jaamsim.ProcessFlow.Queue;
 import com.jaamsim.ProcessFlow.Server;
-import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.Thresholds.ExpressionThreshold;
 import com.jaamsim.basicsim.JaamSimModel;
@@ -37,8 +36,7 @@ public class ServerAndQueue extends CompoundEntity {
 	private SampleInput maxQueueLength;
 
 	{
-		SampleConstant def = new SampleConstant(Double.POSITIVE_INFINITY);
-		maxQueueLength = new SampleInput("MaxQueueLength", KEY_INPUTS, def);
+		maxQueueLength = new SampleInput("MaxQueueLength", KEY_INPUTS, Double.POSITIVE_INFINITY);
 		maxQueueLength.setUnitType(DimensionlessUnit.class);
 		maxQueueLength.setIntegerValue(true);
 		maxQueueLength.setValidRange(0.0d, Double.POSITIVE_INFINITY);
