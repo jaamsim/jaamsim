@@ -1481,4 +1481,12 @@ public class Simulation extends Entity {
 		return Calendar.getInstance().get(Calendar.DAY_OF_WEEK);
 	}
 
+	@Output(name = "PresentTime",
+	 description = "The present elapsed time since the epoch (1970-01-01 00:00:00).",
+	    unitType = TimeUnit.class,
+	    sequence = 16)
+	public double getPresentMilliseconds(double simTime) {
+		return Calendar.getInstance().getTimeInMillis()/1000.0d;
+	}
+
 }
