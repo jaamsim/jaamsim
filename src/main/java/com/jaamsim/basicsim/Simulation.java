@@ -60,7 +60,7 @@ public class Simulation extends Entity {
 	// Key Inputs tab
 	@Keyword(description = "The duration of the simulation run in which all statistics will be recorded.",
 	         exampleList = {"8760 h"})
-	private final ValueInput runDuration;
+	private final SampleInput runDuration;
 
 	@Keyword(description = "The initialization interval for the simulation run. The model will "
 	                     + "run for the InitializationDuration interval and then clear the "
@@ -68,7 +68,7 @@ public class Simulation extends Entity {
 	                     + "The total length of the simulation run will be the sum of the "
 	                     + "InitializationDuration and RunDuration inputs.",
 	         exampleList = {"720 h"})
-	private final ValueInput initializationTime;
+	private final SampleInput initializationTime;
 
 	@Keyword(description = "If TRUE, the simulation uses the standard Gregorian calendar that "
 	                     + "includes leap years. "
@@ -401,12 +401,12 @@ public class Simulation extends Entity {
 
 	{
 		// Key Inputs tab
-		runDuration = new ValueInput("RunDuration", KEY_INPUTS, 31536000.0d);
+		runDuration = new SampleInput("RunDuration", KEY_INPUTS, 31536000.0d);
 		runDuration.setUnitType(TimeUnit.class);
 		runDuration.setValidRange(1e-15d, Double.POSITIVE_INFINITY);
 		this.addInput(runDuration);
 
-		initializationTime = new ValueInput("InitializationDuration", KEY_INPUTS, 0.0);
+		initializationTime = new SampleInput("InitializationDuration", KEY_INPUTS, 0.0);
 		initializationTime.setUnitType(TimeUnit.class);
 		initializationTime.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		this.addInput(initializationTime);
@@ -801,7 +801,7 @@ public class Simulation extends Entity {
 					+ "Re-open the model to process these inputs in the correct order.");
 
 		double maxRunDuration = Long.MAX_VALUE*tickLengthInput.getValue();
-		if (runDuration.getValue() > maxRunDuration) {
+		if (getRunDuration() > maxRunDuration) {
 			throw new ErrorException("RunDuration exceeds the maximum value of %g seconds.\n"
 					+ "Received: %g seconds.\n"
 					+ "The maximum value can be increased by increasing the TickLength input.\n"
@@ -921,14 +921,14 @@ public class Simulation extends Entity {
 	 * Returns the duration of the run (not including intialization)
 	 */
 	public double getRunDuration() {
-		return runDuration.getValue();
+		return runDuration.getNextSample(0.0d);
 	}
 
 	/**
 	 * Returns the duration of the initialization period
 	 */
 	public double getInitializationTime() {
-		return initializationTime.getValue();
+		return initializationTime.getNextSample(0.0d);
 	}
 
 	/**
@@ -1422,7 +1422,7 @@ public class Simulation extends Entity {
 	  reportable = true,
 	    sequence = 9)
 	public double getInitializationDuration(double simTime) {
-		return initializationTime.getValue();
+		return getInitializationTime();
 	}
 
 	@Output(name = "RunDuration",
@@ -1431,7 +1431,7 @@ public class Simulation extends Entity {
 	  reportable = true,
 	    sequence = 10)
 	public double getRunDuration(double simTime) {
-		return runDuration.getValue();
+		return getRunDuration();
 	}
 
 	@Output(name = "PresentSimulationTime",
