@@ -41,6 +41,15 @@ public class SampleInput extends Input<SampleProvider> {
 		super(key, cat, def);
 	}
 
+	@Override
+	public void setDefaultValue(SampleProvider def) {
+		super.setDefaultValue(def);
+		if (defValue instanceof SampleConstant)
+			((SampleConstant)defValue).setUnitType(unitType);
+		if (defValue instanceof TimeSeriesConstantDouble)
+			((TimeSeriesConstantDouble)defValue).setUnitType(unitType);
+	}
+
 	public void setUnitType(Class<? extends Unit> u) {
 
 		if (u == unitType)
