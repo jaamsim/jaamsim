@@ -41,7 +41,7 @@ public class SampleExpression implements SampleProvider {
 
 		// Check that a unit type has been specified
 		if (ut == UserSpecifiedUnit.class) {
-			throw new InputErrorException("Unit type has not been specified");
+			throw new InputErrorException(Input.INP_ERR_UNITUNSPECIFIED);
 		}
 
 		thisEnt = ent;

@@ -76,7 +76,7 @@ public abstract class Input<T> {
 	protected static final String INP_ERR_ENTCLASS = "Expected a %s, %s is a %s";
 	protected static final String INP_ERR_INTERFACE = "Expected an object implementing %s, %s does not";
 	protected static final String INP_ERR_UNITS = "Unit types do not match";
-	protected static final String INP_ERR_UNITUNSPECIFIED = "Unit type has not been specified";
+	public    static final String INP_ERR_UNITUNSPECIFIED = "Unit type has not been specified";
 	protected static final String INP_ERR_NOTSUBCLASS = "Expected a subclass of %s, got %s";
 	protected static final String INP_ERR_BADDATE = "Expected a valid RFC8601 datetime, got: %s";
 	protected static final String INP_ERR_BADEXP = "Error parsing expression: %s";
