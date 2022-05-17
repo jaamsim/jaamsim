@@ -5117,7 +5117,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		int seed = rsu.getStreamNumber();
 		if (seed >= 0 && simulation.getRandomStreamUsers(seed).size() <= 1)
 			return;
-		seed = simulation.getLargestStreamNumber() + 1;
+		seed = getJaamSimModel().getSmallestAvailableStreamNumber();
 		String key = rsu.getStreamNumberKeyword();
 		InputAgent.applyIntegers((Entity) rsu, key, seed);
 	}

@@ -1758,7 +1758,7 @@ public class JaamSimModel implements EventTimeListener {
 			ret = new MRG1999a[num];
 			int streamNumber = seed;
 			if (seed == -1)
-				streamNumber = rngMap.size();
+				streamNumber = getSmallestAvailableStreamNumber();
 			int substreamNumber = getSimulation().getSubstreamNumber();
 			for (int i = 0; i < num; i++) {
 				ret[i] = new MRG1999a(streamNumber + i, substreamNumber);

@@ -177,7 +177,7 @@ public class SubModelClone extends AbstractSubModel {
 			// Assign a new seed if it is the same as the seed for the parent component
 			int seed = entry.getValue().intValue();
 			if (seed == -1 || seed == ((RandomStreamUser) protoComp).getStreamNumber())
-				seed = getSimulation().getLargestStreamNumber() + 1;
+				seed = getJaamSimModel().getSmallestAvailableStreamNumber();
 
 			//System.out.format("comp=%s, seed=%s%n", comp, seed);
 			String key = ((RandomStreamUser) comp).getStreamNumberKeyword();

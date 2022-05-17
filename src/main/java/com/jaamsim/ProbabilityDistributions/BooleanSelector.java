@@ -58,11 +58,9 @@ public class BooleanSelector extends DisplayEntity implements RandomStreamUser {
 	public void setInputsForDragAndDrop() {
 		super.setInputsForDragAndDrop();
 
-		// Find the largest seed used so far
-		int seed = getSimulation().getLargestStreamNumber();
-
-		// Set the random number seed next unused value
-		InputAgent.applyIntegers(this, randomSeedInput.getKeyword(), seed + 1);
+		// Set the random number seed to the smallest unused value
+		int seed = getJaamSimModel().getSmallestAvailableStreamNumber();
+		InputAgent.applyIntegers(this, randomSeedInput.getKeyword(), seed);
 	}
 
 	@Override
