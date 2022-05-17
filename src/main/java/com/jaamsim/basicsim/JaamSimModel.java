@@ -1805,6 +1805,22 @@ public class JaamSimModel implements EventTimeListener {
 		return ret;
 	}
 
+	/**
+	 * Returns a list of objects that use the specified random stream.
+	 * @param seed - random stream number
+	 * @return users of the random stream
+	 */
+	public ArrayList<RandomStreamUser> getRandomStreamUsers(int seed) {
+		ArrayList<RandomStreamUser> ret = new ArrayList<>();
+		for (Entity each : getClonesOfIterator(Entity.class, RandomStreamUser.class)) {
+			RandomStreamUser user = (RandomStreamUser) each;
+			if (user.getStreamNumber() == seed) {
+				ret.add(user);
+			}
+		}
+		return ret;
+	}
+
 	public void showTemporaryLabels(boolean bool) {
 		for (DisplayEntity ent : getClonesOfIterator(DisplayEntity.class)) {
 			if (!EntityLabel.canLabel(ent))

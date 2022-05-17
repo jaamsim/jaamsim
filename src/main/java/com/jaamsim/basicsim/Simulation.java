@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 import com.jaamsim.Commands.KeywordCommand;
-import com.jaamsim.ProbabilityDistributions.RandomStreamUser;
 import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.StringProviders.StringProvListInput;
@@ -846,22 +845,6 @@ public class Simulation extends Entity {
 		if (globalSeedInput.isDefault())
 			return getJaamSimModel().getReplicationNumber();
 		return (int)globalSeedInput.getNextSample(0.0);
-	}
-
-	/**
-	 * Returns a list of objects that use the specified random stream.
-	 * @param seed - random stream number
-	 * @return users of the random stream
-	 */
-	public ArrayList<RandomStreamUser> getRandomStreamUsers(int seed) {
-		ArrayList<RandomStreamUser> ret = new ArrayList<>();
-		for (Entity each : getJaamSimModel().getClonesOfIterator(Entity.class, RandomStreamUser.class)) {
-			RandomStreamUser user = (RandomStreamUser) each;
-			if (user.getStreamNumber() == seed) {
-				ret.add(user);
-			}
-		}
-		return ret;
 	}
 
 	public boolean getPrintReport() {

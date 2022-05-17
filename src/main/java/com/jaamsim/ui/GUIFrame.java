@@ -5113,9 +5113,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	}
 
 	public void setUniqueRandomSeed(RandomStreamUser rsu) {
-		Simulation simulation = getJaamSimModel().getSimulation();
 		int seed = rsu.getStreamNumber();
-		if (seed >= 0 && simulation.getRandomStreamUsers(seed).size() <= 1)
+		if (seed >= 0 && getJaamSimModel().getRandomStreamUsers(seed).size() <= 1)
 			return;
 		seed = getJaamSimModel().getSmallestAvailableStreamNumber();
 		String key = rsu.getStreamNumberKeyword();
