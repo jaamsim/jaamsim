@@ -20,6 +20,7 @@ import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -28,6 +29,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.EntityLabel;
+import com.jaamsim.ProbabilityDistributions.RandomStreamUser;
 import com.jaamsim.Samples.SampleExpression;
 import com.jaamsim.StringProviders.StringProvExpression;
 import com.jaamsim.SubModels.CompoundEntity;
@@ -1765,6 +1767,41 @@ public class JaamSimModel implements EventTimeListener {
 		}
 		if (ret.length != num)
 			throw new ErrorException("Incorrect number of random generators");
+		return ret;
+	}
+
+	/**
+	 * Returns the smallest random stream number that has not been used.
+	 * @return smallest unused stream number
+	 */
+	public int getSmallestAvailableStreamNumber() {
+
+		// Construct a list of stream numbers that have been used
+		ArrayList<RandomStreamUser> userList = new ArrayList<>();
+		for (Entity each : getClonesOfIterator(Entity.class, RandomStreamUser.class)) {
+			userList.add((RandomStreamUser) each);
+		}
+		int[] streamNumbers = new int[userList.size() + rngMap.size()];
+
+		for (int i = 0; i < userList.size(); i++) {
+			streamNumbers[i] = userList.get(i).getStreamNumber();
+		}
+
+		int k = userList.size();
+		for (MRG1999a[] rngArray : rngMap.values()) {
+			streamNumbers[k] = rngArray[0].getStreamNumber();
+			k++;
+		}
+
+		// Sort the stream number list and return the first unused integer
+		Arrays.sort(streamNumbers);
+		int ret = 1;
+		for (int i = 0; i < streamNumbers.length; i++) {
+			if (streamNumbers[i] > ret)
+				return ret;
+			if (streamNumbers[i] == ret)
+				ret++;
+		}
 		return ret;
 	}
 
