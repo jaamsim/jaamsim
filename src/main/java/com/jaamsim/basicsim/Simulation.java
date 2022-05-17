@@ -849,19 +849,6 @@ public class Simulation extends Entity {
 	}
 
 	/**
-	 * Returns the largest random seed used by the objects in the simulation.
-	 * @return largest random seed
-	 */
-	public int getLargestStreamNumber() {
-		int seed = 0;
-		for (Entity each : getJaamSimModel().getClonesOfIterator(Entity.class, RandomStreamUser.class)) {
-			RandomStreamUser user = (RandomStreamUser) each;
-			seed = Math.max(seed, user.getStreamNumber());
-		}
-		return seed;
-	}
-
-	/**
 	 * Returns a list of objects that use the specified random stream.
 	 * @param seed - random stream number
 	 * @return users of the random stream
