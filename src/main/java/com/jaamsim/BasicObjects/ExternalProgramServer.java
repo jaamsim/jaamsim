@@ -24,6 +24,7 @@ import com.jaamsim.input.InputCallback;
 import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
+import com.jaamsim.input.StringInput;
 import com.jaamsim.ui.LogBox;
 import com.jaamsim.units.DimensionlessUnit;
 
@@ -42,6 +43,10 @@ public class ExternalProgramServer extends LinkedComponent {
 	                     + "is the python code file (*.py)",
 	         exampleList = {"'c:/test/inputs.dat'", "code.py"})
 	private final FileInput inFile;
+
+	@Keyword(description = "Name of the RPC method to call in the external program",
+	                     exampleList = {"calculateDelay"})
+	private final StringInput methodInput;
 
 	@Keyword(description = "A list of expressions that provide the parameters to the external "
 	                     + "program. The inputs must be provided in the order in which they are "
@@ -73,6 +78,10 @@ public class ExternalProgramServer extends LinkedComponent {
 
 		inFile = new FileInput("InputFile", KEY_INPUTS, null);
 		this.addInput(inFile);
+
+		methodInput = new StringInput("MethodName", KEY_INPUTS, "method");
+		methodInput.setRequired(true);
+		this.addInput(methodInput);
 
 		dataSource = new StringProvListInput("DataSource", KEY_INPUTS, null);
 		this.addInput(dataSource);
@@ -233,7 +242,7 @@ public class ExternalProgramServer extends LinkedComponent {
 			JSONParser.Value request = JSONParser.Value.makeObject();
 			request.mapVal.put("jsonrpc", JSONParser.Value.makeStringVal("2.0"));
 			request.mapVal.put("id", JSONParser.Value.makeNumVal(++nextID));
-			request.mapVal.put("method", JSONParser.Value.makeStringVal("add"));
+			request.mapVal.put("method", JSONParser.Value.makeStringVal(methodInput.getValue()));
 			request.mapVal.put("params", jsonArgs);
 
 			String reqJSON = JSONWriter.writeJSONValue(request);
