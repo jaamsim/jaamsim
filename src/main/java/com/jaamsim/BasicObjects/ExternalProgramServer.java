@@ -13,6 +13,7 @@ import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.JSON.JSONConverter;
 import com.jaamsim.JSON.JSONParser;
 import com.jaamsim.JSON.JSONWriter;
+import com.jaamsim.JSON.JSONValue;
 import com.jaamsim.ProcessFlow.LinkedComponent;
 import com.jaamsim.StringProviders.StringProvListInput;
 import com.jaamsim.basicsim.Entity;
@@ -237,12 +238,12 @@ public class ExternalProgramServer extends LinkedComponent {
 		try {
 
 			ExpResult expArgs = ExpCollections.wrapCollection(args, DimensionlessUnit.class);
-			JSONParser.Value jsonArgs = JSONConverter.fromExpResult(expArgs);
+			JSONValue jsonArgs = JSONConverter.fromExpResult(expArgs);
 
-			JSONParser.Value request = JSONParser.Value.makeObject();
-			request.mapVal.put("jsonrpc", JSONParser.Value.makeStringVal("2.0"));
-			request.mapVal.put("id", JSONParser.Value.makeNumVal(++nextID));
-			request.mapVal.put("method", JSONParser.Value.makeStringVal(methodInput.getValue()));
+			JSONValue request = JSONValue.makeObject();
+			request.mapVal.put("jsonrpc", JSONValue.makeStringVal("2.0"));
+			request.mapVal.put("id", JSONValue.makeNumVal(++nextID));
+			request.mapVal.put("method", JSONValue.makeStringVal(methodInput.getValue()));
 			request.mapVal.put("params", jsonArgs);
 
 			String reqJSON = JSONWriter.writeJSONValue(request);
@@ -265,13 +266,13 @@ public class ExternalProgramServer extends LinkedComponent {
 			if (!resParser.isElementComplete()) {
 				throw new Exception("External program returned invalid JSON");
 			}
-			JSONParser.Value response = resParser.parse();
+			JSONValue response = resParser.parse();
 			// Validate the response
 			if (!response.isMap() || !response.mapVal.get("jsonrpc").isString() || !response.mapVal.get("jsonrpc").stringVal.equals("2.0")) {
 				throw new Exception("External server returned invalid JSON");
 			}
 			// Check for returned error
-			JSONParser.Value err = response.mapVal.get("error");
+			JSONValue err = response.mapVal.get("error");
 			if (err != null) {
 				// returned error
 				if (!err.isMap()) throw new Exception("External server program returned invalid error object");
@@ -280,7 +281,7 @@ public class ExternalProgramServer extends LinkedComponent {
 			}
 
 			// Set the new output value
-			JSONParser.Value result = response.mapVal.get("result");
+			JSONValue result = response.mapVal.get("result");
 			if (result == null) {
 				throw new Exception(String.format("JSON-RPC response missing result field"));
 			}

@@ -22,7 +22,7 @@ import java.util.Iterator;
 
 public class JSONWriter {
 
-	public static String writeJSONValue(JSONParser.Value val) {
+	public static String writeJSONValue(JSONValue val) {
 		StringBuilder out = new StringBuilder();
 		writeVal(val, out);
 		return out.toString();
@@ -70,7 +70,7 @@ public class JSONWriter {
 		return out.toString();
 	}
 
-	private static void writeVal(JSONParser.Value val, StringBuilder out) {
+	private static void writeVal(JSONValue val, StringBuilder out) {
 		if (val.isNumber()) {
 			out.append(val.numVal);
 			return;
@@ -101,11 +101,11 @@ public class JSONWriter {
 		assert(false);
 	}
 
-	private static void writeList(ArrayList<JSONParser.Value> list, StringBuilder out) {
-		Iterator<JSONParser.Value > it  = list.iterator();
+	private static void writeList(ArrayList<JSONValue> list, StringBuilder out) {
+		Iterator<JSONValue > it  = list.iterator();
 		out.append("[");
 		while(it.hasNext()) {
-			JSONParser.Value val = it.next();
+			JSONValue val = it.next();
 			writeVal(val, out);
 			if (it.hasNext()) {
 				out.append(", ");
@@ -113,11 +113,11 @@ public class JSONWriter {
 		}
 		out.append("]");
 	}
-	private static void writeMap(HashMap<String, JSONParser.Value> map, StringBuilder out) {
-		Iterator<HashMap.Entry<String, JSONParser.Value>> it = map.entrySet().iterator();
+	private static void writeMap(HashMap<String, JSONValue> map, StringBuilder out) {
+		Iterator<HashMap.Entry<String, JSONValue>> it = map.entrySet().iterator();
 		out.append("{");
 		while(it.hasNext()) {
-			HashMap.Entry<String, JSONParser.Value> entry = it.next();
+			HashMap.Entry<String, JSONValue> entry = it.next();
 			out.append("\"");
 			out.append(escapeString(entry.getKey()));
 			out.append("\": ");

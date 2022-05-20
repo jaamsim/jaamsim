@@ -54,7 +54,7 @@ public class TestJSON {
 		String testList = "[1, 2, 3, 4, \"foo\"]";
 		ArrayList<JSONTokenizer.Token> listToks =  JSONTokenizer.tokenize(testList);
 
-		JSONParser.Value listVal = JSONParser.parse(listToks);
+		JSONValue listVal = JSONParser.parse(listToks);
 
 		assertTrue(listVal.isList());
 		assertTrue(listVal.listVal.size() == 5);
@@ -65,7 +65,7 @@ public class TestJSON {
 		String testMap = "{\"foo\" : 1, \"bar\": 2 }";
 		ArrayList<JSONTokenizer.Token> mapToks =  JSONTokenizer.tokenize(testMap);
 
-		JSONParser.Value mapVal = JSONParser.parse(mapToks);
+		JSONValue mapVal = JSONParser.parse(mapToks);
 
 		assertTrue(mapVal.isMap());
 		assertTrue(mapVal.mapVal.size() == 2);
@@ -74,7 +74,7 @@ public class TestJSON {
 		String testNested = "[{\"foo\":[1,2,3],\"bar\":42.24},[42,24,\"}}]]\"]]";
 		ArrayList<JSONTokenizer.Token> nestedToks =  JSONTokenizer.tokenize(testNested);
 
-		JSONParser.Value nestedVal = JSONParser.parse(nestedToks);
+		JSONValue nestedVal = JSONParser.parse(nestedToks);
 
 		assertTrue(nestedVal.isList());
 	}
@@ -92,7 +92,7 @@ public class TestJSON {
 		assertTrue(parser.isElementComplete());
 		assertTrue(!parser.scanningError());
 
-		JSONParser.Value val = parser.parse();
+		JSONValue val = parser.parse();
 
 		assertTrue(val.isList());
 
@@ -100,17 +100,17 @@ public class TestJSON {
 
 	@Test
 	public void testWriteJSON() throws Throwable {
-		JSONParser.Value mapVal = new JSONParser.Value();
+		JSONValue mapVal = new JSONValue();
 		mapVal.mapVal = new HashMap<>();
-		mapVal.mapVal.put("foo", JSONParser.Value.makeStringVal("fooey"));
-		mapVal.mapVal.put("bar", JSONParser.Value.makeStringVal("baz"));
-		mapVal.mapVal.put("num", JSONParser.Value.makeNumVal(42));
-		mapVal.mapVal.put("truey", JSONParser.Value.makeTrueVal());
+		mapVal.mapVal.put("foo", JSONValue.makeStringVal("fooey"));
+		mapVal.mapVal.put("bar", JSONValue.makeStringVal("baz"));
+		mapVal.mapVal.put("num", JSONValue.makeNumVal(42));
+		mapVal.mapVal.put("truey", JSONValue.makeTrueVal());
 
 		String messyString = " \t\b\r\f \"Quote\" \\Slashquote\\ \n ";
 		char shiftOut = 0xf; // And one random control character
 		messyString = messyString + shiftOut;
-		mapVal.mapVal.put("\"messy\"", JSONParser.Value.makeStringVal(messyString));
+		mapVal.mapVal.put("\"messy\"", JSONValue.makeStringVal(messyString));
 
 		String mapRes = JSONWriter.writeJSONValue(mapVal);
 		assertTrue(mapRes.contains("\"foo\": \"fooey\""));
@@ -122,19 +122,19 @@ public class TestJSON {
 		assertTrue(mapRes.startsWith("{"));
 		assertTrue(mapRes.endsWith("}"));
 
-		JSONParser.Value listVal = new JSONParser.Value();
+		JSONValue listVal = new JSONValue();
 		listVal.listVal = new ArrayList<>();
 
-		listVal.listVal.add(JSONParser.Value.makeNumVal(42));
-		listVal.listVal.add(JSONParser.Value.makeNumVal(24));
-		listVal.listVal.add(JSONParser.Value.makeStringVal("foo"));
-		listVal.listVal.add(JSONParser.Value.makeFalseVal());
-		listVal.listVal.add(JSONParser.Value.makeNullVal());
+		listVal.listVal.add(JSONValue.makeNumVal(42));
+		listVal.listVal.add(JSONValue.makeNumVal(24));
+		listVal.listVal.add(JSONValue.makeStringVal("foo"));
+		listVal.listVal.add(JSONValue.makeFalseVal());
+		listVal.listVal.add(JSONValue.makeNullVal());
 
 		String listRes = JSONWriter.writeJSONValue(listVal);
 		assertTrue(listRes.equals("[42.0, 24.0, \"foo\", false, null]"));
 
-		JSONParser.Value topMap = new JSONParser.Value();
+		JSONValue topMap = new JSONValue();
 		topMap.mapVal = new HashMap<>();
 		topMap.mapVal.put("mappy", mapVal);
 		topMap.mapVal.put("listy", listVal);
@@ -150,7 +150,7 @@ public class TestJSON {
 		assertTrue(topRes.contains("\"num\": 42.0"));
 		assertTrue(mapRes.contains("\"\\\"messy\\\"\": \" \\t\\b\\r\\f \\\"Quote\\\" \\\\Slashquote\\\\ \\n \\u000f\""));
 
-		JSONParser.Value val = JSONParser.parse(topRes);
+		JSONValue val = JSONParser.parse(topRes);
 
 		assertTrue(val.isMap());
 		assertTrue(val.mapVal.get("mappy").mapVal.get("num").numVal == 42);
@@ -166,15 +166,15 @@ public class TestJSON {
 
 		ExpResult mapVal = ExpCollections.wrapCollection(map, null);
 
-		JSONParser.Value convMap = JSONConverter.fromExpResult(mapVal);
+		JSONValue convMap = JSONConverter.fromExpResult(mapVal);
 
 		assertTrue(convMap.isMap());
 
-		JSONParser.Value mapFoo = convMap.mapVal.get("foo");
+		JSONValue mapFoo = convMap.mapVal.get("foo");
 		assertTrue(mapFoo.isString());
 		assertTrue(mapFoo.stringVal.equals("fooey"));
 
-		JSONParser.Value mapNum = convMap.mapVal.get("num");
+		JSONValue mapNum = convMap.mapVal.get("num");
 		assertTrue(mapNum.isNumber());
 		assertTrue(mapNum.numVal == 42);
 
@@ -186,7 +186,7 @@ public class TestJSON {
 
 		ExpResult arrayVal = ExpCollections.wrapCollection(list, null);
 
-		JSONParser.Value convList = JSONConverter.fromExpResult(arrayVal);
+		JSONValue convList = JSONConverter.fromExpResult(arrayVal);
 
 		assertTrue(convList.isList());
 		assertTrue(convList.listVal.get(0).isNumber());
@@ -201,7 +201,7 @@ public class TestJSON {
 	public void testJSONToExpResult() throws Throwable {
 		String testJSON = "{\"foo\":42, \"bar\": [\"baz\", \"batz\"]}";
 
-		JSONParser.Value val = JSONParser.parse(testJSON);
+		JSONValue val = JSONParser.parse(testJSON);
 
 		ExpResult res = JSONConverter.toExpResult(val);
 

@@ -28,16 +28,16 @@ import com.jaamsim.units.DimensionlessUnit;
 
 public class JSONConverter {
 
-	public static JSONParser.Value fromExpResult(ExpResult val) throws ExpError {
+	public static JSONValue fromExpResult(ExpResult val) throws ExpError {
 		if (val.type == ExpResType.NUMBER) {
-			return JSONParser.Value.makeNumVal(val.value);
+			return JSONValue.makeNumVal(val.value);
 		}
 		if (val.type == ExpResType.STRING) {
-			return JSONParser.Value.makeStringVal(val.stringVal);
+			return JSONValue.makeStringVal(val.stringVal);
 		}
 
 		if (val.type == ExpResType.ENTITY) {
-			return JSONParser.Value.makeStringVal(val.entVal.getName());
+			return JSONValue.makeStringVal(val.entVal.getName());
 		}
 
 		if (val.type == ExpResType.LAMBDA) {
@@ -52,9 +52,9 @@ public class JSONConverter {
 
 	}
 
-	private static JSONParser.Value fromCollection(ExpResult.Collection col) throws ExpError {
+	private static JSONValue fromCollection(ExpResult.Collection col) throws ExpError {
 		ExpResult.Iterator it = col.getIter();
-		JSONParser.Value ret = new JSONParser.Value();
+		JSONValue ret = new JSONValue();
 		if (!it.hasNext()) {
 			// Emit an empty list for any empty object type
 			ret.listVal = new ArrayList<>();
@@ -98,17 +98,17 @@ public class JSONConverter {
 		return ret;
 	}
 
-	public static ExpResult toExpResult(JSONParser.Value val) {
+	public static ExpResult toExpResult(JSONValue val) {
 		if (val.isMap()) {
 			HashMap<String, ExpResult> expMap = new HashMap<>();
-			for (Map.Entry<String, JSONParser.Value> s : val.mapVal.entrySet()) {
+			for (Map.Entry<String, JSONValue> s : val.mapVal.entrySet()) {
 				expMap.put(s.getKey(), toExpResult(s.getValue()));
 			}
 			return ExpCollections.wrapCollection(expMap, DimensionlessUnit.class);
 		}
 		if (val.isList()) {
 			ArrayList<ExpResult> expList = new ArrayList<>();
-			for (JSONParser.Value v : val.listVal) {
+			for (JSONValue v : val.listVal) {
 				expList.add(toExpResult(v));
 			}
 			return ExpCollections.wrapCollection(expList, DimensionlessUnit.class);

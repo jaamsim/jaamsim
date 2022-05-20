@@ -21,77 +21,6 @@ import java.util.HashMap;
 
 public class JSONParser {
 
-	public static class Value {
-		public HashMap<String, Value> mapVal;
-		public ArrayList<Value> listVal;
-		public String stringVal;
-		public double numVal;
-		public boolean isKey = false;
-
-		// If isKey is true, numVal will be one of the following values
-		public static double NULL_VAL = 0.0;
-		public static double TRUE_VAL = 1.0;
-		public static double FALSE_VAL = 2.0;
-
-		public boolean isMap() { return mapVal != null; }
-		public boolean isList() { return listVal != null; }
-		public boolean isString() { return stringVal != null; }
-		public boolean isKeyword() { return isKey; }
-		public boolean isNumber() {
-			return mapVal == null && listVal == null && stringVal == null && !isKey;
-		}
-
-		// Helpers
-		public boolean isNull() {
-			return isKey && numVal == NULL_VAL;
-		}
-		public boolean isTrue() {
-			return isKey && numVal == TRUE_VAL;
-		}
-		public boolean isFalse() {
-			return isKey && numVal == FALSE_VAL;
-		}
-
-		public static Value makeStringVal(String s) {
-			Value ret = new Value();
-			ret.stringVal = s;
-			return ret;
-		}
-		public static Value makeNumVal(double num) {
-			Value ret = new Value();
-			ret.numVal = num;
-			return ret;
-		}
-		public static Value makeTrueVal() {
-			Value ret = new Value();
-			ret.numVal = TRUE_VAL;
-			ret.isKey = true;
-			return ret;
-		}
-		public static Value makeFalseVal() {
-			Value ret = new Value();
-			ret.numVal = FALSE_VAL;
-			ret.isKey = true;
-			return ret;
-		}
-		public static Value makeNullVal() {
-			Value ret = new Value();
-			ret.numVal = NULL_VAL;
-			ret.isKey = true;
-			return ret;
-		}
-		public static Value makeObject() {
-			Value ret = new Value();
-			ret.mapVal = new HashMap<>();
-			return ret;
-		}
-		public static Value makeArray() {
-			Value ret = new Value();
-			ret.listVal = new ArrayList<>();
-			return ret;
-		}
-	}
-
 	public static boolean isSymTok(JSONTokenizer.Token tok, String sym) {
 		return tok.type == JSONTokenizer.SYM_TYPE && tok.value.equals(sym);
 	}
@@ -99,11 +28,11 @@ public class JSONParser {
 		return tok.type == JSONTokenizer.STRING_TYPE;
 	}
 
-	private static int parseMap(ArrayList<JSONTokenizer.Token> toks, int startPos, Value outVal) throws JSONError {
+	private static int parseMap(ArrayList<JSONTokenizer.Token> toks, int startPos, JSONValue outVal) throws JSONError {
 		// Consume the opening token
 		int pos = startPos;
 		JSONTokenizer.Token tok = toks.get(pos);
-		HashMap<String, Value> vals = new HashMap<>();
+		HashMap<String, JSONValue> vals = new HashMap<>();
 
 		// special case: empty list
 		if (isSymTok(tok, "]")) {
@@ -125,7 +54,7 @@ public class JSONParser {
 			}
 			pos++;
 
-			Value val = new Value();
+			JSONValue val = new JSONValue();
 			pos = parseElement(toks, pos, val);
 			vals.put(key, val);
 
@@ -148,11 +77,11 @@ public class JSONParser {
 		throw new JSONError(null, tok.pos, "Unterminated list");
 	}
 
-	private static int parseList(ArrayList<JSONTokenizer.Token> toks, int startPos, Value outVal) throws JSONError {
+	private static int parseList(ArrayList<JSONTokenizer.Token> toks, int startPos, JSONValue outVal) throws JSONError {
 		// Consume the opening token
 		int pos = startPos;
 		JSONTokenizer.Token tok = toks.get(pos);
-		ArrayList<Value> vals = new ArrayList<>();
+		ArrayList<JSONValue> vals = new ArrayList<>();
 
 		// special case: empty list
 		if (isSymTok(tok, "]")) {
@@ -162,7 +91,7 @@ public class JSONParser {
 		}
 
 		while(pos < toks.size()) {
-			Value val = new Value();
+			JSONValue val = new JSONValue();
 			pos = parseElement(toks, pos, val);
 			vals.add(val);
 
@@ -184,7 +113,7 @@ public class JSONParser {
 		throw new JSONError(null, tok.pos, "Unterminated list");
 	}
 
-	private static int parseElement(ArrayList<JSONTokenizer.Token> toks, int startPos, Value outVal) throws JSONError {
+	private static int parseElement(ArrayList<JSONTokenizer.Token> toks, int startPos, JSONValue outVal) throws JSONError {
 		int pos = startPos;
 		JSONTokenizer.Token startTok = toks.get(pos++);
 		switch(startTok.type) {
@@ -210,13 +139,13 @@ public class JSONParser {
 		case JSONTokenizer.KEYWORD_TYPE:
 			outVal.isKey = true;
 			if (startTok.value.equals("true")) {
-				outVal.numVal = JSONParser.Value.TRUE_VAL;
+				outVal.numVal = JSONValue.TRUE_VAL;
 			}
 			if (startTok.value.equals("false")) {
-				outVal.numVal = JSONParser.Value.FALSE_VAL;
+				outVal.numVal = JSONValue.FALSE_VAL;
 			}
 			if (startTok.value.equals("null")) {
-				outVal.numVal = JSONParser.Value.NULL_VAL;
+				outVal.numVal = JSONValue.NULL_VAL;
 			}
 			return pos;
 
@@ -226,13 +155,13 @@ public class JSONParser {
 
 	}
 
-	public static Value parse(ArrayList<JSONTokenizer.Token> toks) throws JSONError {
-		Value ret = new Value();
+	public static JSONValue parse(ArrayList<JSONTokenizer.Token> toks) throws JSONError {
+		JSONValue ret = new JSONValue();
 		parseElement(toks, 0, ret);
 		return ret;
 	}
 
-	public static Value parse(String json) throws JSONError {
+	public static JSONValue parse(String json) throws JSONError {
 		ArrayList<JSONTokenizer.Token> toks =  JSONTokenizer.tokenize(json);
 		return parse(toks);
 	}
@@ -355,7 +284,7 @@ public class JSONParser {
 		return false;
 	}
 
-	public Value parse() throws JSONError {
+	public JSONValue parse() throws JSONError {
 		// Build up a single string (this is not super efficient...)
 		StringBuilder sb = new StringBuilder();
 		for (String s: pieces) {
