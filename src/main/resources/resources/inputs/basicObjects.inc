@@ -19,6 +19,7 @@ Define ObjectType {
                     FileToMatrix
                     FileToHashMap
                     ExternalProgram
+                    ExternalProgramServer
                     EntitySystem
                   }
 
@@ -76,26 +77,28 @@ FileToVector            JavaClass { com.jaamsim.BasicObjects.FileToVector       
 FileToMatrix            JavaClass { com.jaamsim.BasicObjects.FileToMatrix               } Palette { 'Basic Objects' } DefaultDisplayModel { FileToMatrixIconModel  } IconFile { '<res>/images/FileToMatrix-24.png'  }
 FileToHashMap           JavaClass { com.jaamsim.BasicObjects.FileToHashMap              } Palette { 'Basic Objects' } DefaultDisplayModel { FileToHashMapIconModel } IconFile { '<res>/images/FileToHashMap-24.png'  }
 ExternalProgram         JavaClass { com.jaamsim.BasicObjects.ExternalProgram            } Palette { 'Basic Objects' } DefaultDisplayModel { ExternalProgramIconModel } IconFile { '<res>/images/ExternalProgram-24.png'  }
+ExternalProgramServer   JavaClass { com.jaamsim.BasicObjects.ExternalProgramServer      } Palette { 'Basic Objects' } DefaultDisplayModel { ExternalProgramIconModel } IconFile { '<res>/images/ExternalProgram-24.png'  }
 EntitySystem            JavaClass { com.jaamsim.BasicObjects.EntitySystem               } Palette { 'Basic Objects' } DefaultDisplayModel { EntitySystemIconModel  } IconFile { '<res>/images/EntitySystem-24.png'  }
 
-Group               Description { 'Collection of entities used as an convenience for specifying model inputs.' }
-ScriptEntity        Description { 'Executes a series of commands in simulated time. Used primarily for recording videos.' }
-Output              Description { '???' }
-Controller          Description { 'Signals modelled objects to perform an update.' }
-InputValue          Description { 'Provides a way to enter a numerical value directly into the simulation model screen.' }
-InputBox            Description { 'Text that provides an input value for the model.' }
-ToggleButton        Description { 'Button that can be clicked by the user.' }
-TimeSeries          Description { 'Provides a floating point number that changes in simulated time following a series of input values.' }
-TimeSeriesThreshold Description { 'Specifies a range of values from a TimeSeries for which an activity is permitted.' }
-ExpressionThreshold Description { 'Specifies a logical condition for which an activity is permitted.' }
-ExpressionLogger    Description { 'Records the values for one or more expressions to a log file at regular intervals.' }
-EntitlementSelector Description { 'Selects an index on the basis of entitlement from a given set of proportions.' }
-ExpressionEntity    Description { 'Calculates the value for a specified expression.' }
-DowntimeEntity      Description { 'Provides Breakdown and Maintenance controls.' }
-ValueSequence       Description { 'Generates a repeating sequence of numerical values.' }
-EventSchedule       Description { 'Generates a sequence inter-arrival times from a list of event times.' }
-FileToVector        Description { 'Populates a one-dimensional array with data from a specified file.' }
-FileToMatrix        Description { 'Populates a two-dimensional array with data from a specified file.' }
-FileToHashMap       Description { 'Populates a hashmap with data from a specified file.' }
-ExternalProgram     Description { 'Executes an external program when an entity is received.' }
-EntitySystem        Description { 'Represents a group of entities whose state is determined by the states of those entities.' }
+Group                 Description { 'Collection of entities used as an convenience for specifying model inputs.' }
+ScriptEntity          Description { 'Executes a series of commands in simulated time. Used primarily for recording videos.' }
+Output                Description { '???' }
+Controller            Description { 'Signals modelled objects to perform an update.' }
+InputValue            Description { 'Provides a way to enter a numerical value directly into the simulation model screen.' }
+InputBox              Description { 'Text that provides an input value for the model.' }
+ToggleButton          Description { 'Button that can be clicked by the user.' }
+TimeSeries            Description { 'Provides a floating point number that changes in simulated time following a series of input values.' }
+TimeSeriesThreshold   Description { 'Specifies a range of values from a TimeSeries for which an activity is permitted.' }
+ExpressionThreshold   Description { 'Specifies a logical condition for which an activity is permitted.' }
+ExpressionLogger      Description { 'Records the values for one or more expressions to a log file at regular intervals.' }
+EntitlementSelector   Description { 'Selects an index on the basis of entitlement from a given set of proportions.' }
+ExpressionEntity      Description { 'Calculates the value for a specified expression.' }
+DowntimeEntity        Description { 'Provides Breakdown and Maintenance controls.' }
+ValueSequence         Description { 'Generates a repeating sequence of numerical values.' }
+EventSchedule         Description { 'Generates a sequence inter-arrival times from a list of event times.' }
+FileToVector          Description { 'Populates a one-dimensional array with data from a specified file.' }
+FileToMatrix          Description { 'Populates a two-dimensional array with data from a specified file.' }
+FileToHashMap         Description { 'Populates a hashmap with data from a specified file.' }
+ExternalProgram       Description { 'Executes an external program when an entity is received.' }
+ExternalProgramServer Description { 'Executes a long running external program that can respond to multiple requests.' }
+EntitySystem          Description { 'Represents a group of entities whose state is determined by the states of those entities.' }
