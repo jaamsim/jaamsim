@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2012 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2021 JaamSim Software Inc.
+ * Copyright (C) 2016-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -2427,9 +2427,16 @@ public class RenderManager implements DragSourceListener {
 			if (ent.getCurrentRegion() != null)
 				arrowSize *= ent.getCurrentRegion().getGlobalScale();
 
-			// Loop through the entity references for this entity
-			ArrayList<DisplayEntity> srcList = ent.getSourceEntities();
-			ArrayList<DisplayEntity> destList = ent.getDestinationEntities();
+			// Find the sources and destinations for this entity
+			ArrayList<DisplayEntity> srcList = new ArrayList<>(0);
+			ArrayList<DisplayEntity> destList = new ArrayList<>(0);
+			try {
+				srcList = ent.getSourceEntities();
+				destList = ent.getDestinationEntities();
+			}
+			catch (Exception e) {}
+
+			// Loop through the entity's references, ignoring its sources and destinations
 			for (Entity ref : ent.getEntityReferences()) {
 				if (!(ref instanceof DisplayEntity) || !((DisplayEntity) ref).getShow()
 						|| ref instanceof OverlayEntity || ref instanceof Region

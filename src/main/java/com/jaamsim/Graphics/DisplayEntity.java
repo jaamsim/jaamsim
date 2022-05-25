@@ -1337,15 +1337,23 @@ public class DisplayEntity extends Entity {
 		return new ArrayList<>();
 	}
 
-	public ArrayList<DirectedEntity> getDestinationDirEnts(boolean dir) {
-		if (dir)
-			return DirectedEntity.getList(getDestinationEntities(), true);
+	public final ArrayList<DirectedEntity> getDestinationDirEnts(boolean dir) {
+		if (dir) {
+			try {
+				return DirectedEntity.getList(getDestinationEntities(), true);
+			}
+			catch (Exception e) {}
+		}
 		return new ArrayList<>();
 	}
 
-	public ArrayList<DirectedEntity> getSourceDirEnts(boolean dir) {
-		if (dir)
-			return DirectedEntity.getList(getSourceEntities(), true);
+	public final ArrayList<DirectedEntity> getSourceDirEnts(boolean dir) {
+		if (dir) {
+			try {
+				return DirectedEntity.getList(getSourceEntities(), true);
+			}
+			catch (Exception e) {}
+		}
 		return new ArrayList<>();
 	}
 
