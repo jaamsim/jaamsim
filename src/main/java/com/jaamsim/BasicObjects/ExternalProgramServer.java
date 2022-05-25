@@ -23,64 +23,25 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.util.ArrayList;
 
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.JSON.JSONConverter;
 import com.jaamsim.JSON.JSONParser;
 import com.jaamsim.JSON.JSONWriter;
 import com.jaamsim.JSON.JSONValue;
-import com.jaamsim.ProcessFlow.LinkedComponent;
-import com.jaamsim.StringProviders.StringProvListInput;
-import com.jaamsim.basicsim.Entity;
 import com.jaamsim.input.ExpCollections;
 import com.jaamsim.input.ExpResult;
-import com.jaamsim.input.FileInput;
-import com.jaamsim.input.Input;
-import com.jaamsim.input.InputCallback;
-import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
-import com.jaamsim.input.Output;
 import com.jaamsim.input.StringInput;
 import com.jaamsim.ui.LogBox;
 import com.jaamsim.units.DimensionlessUnit;
 
-public class ExternalProgramServer extends LinkedComponent {
-
-
-	@Keyword(description = "External program file. "
-	                     + "If the external program is written in Python, the program file "
-	                     + "is the executable for Python interpreter (python.exe).",
-	         exampleList = {"'c:/Program Files/program.exe'",
-	                        "'c:/ProgramData/Anaconda3/python.exe'"})
-	private final FileInput programFile;
-
-	@Keyword(description = "Optional input file for the external program. "
-	                     + "If the external program is written in Python, the input file "
-	                     + "is the python code file (*.py)",
-	         exampleList = {"'c:/test/inputs.dat'", "code.py"})
-	private final FileInput inFile;
+public class ExternalProgramServer extends AbstractExternalProgram {
 
 	@Keyword(description = "Name of the RPC method to call in the external program",
 	                     exampleList = {"calculateDelay"})
 	private final StringInput methodInput;
 
-	@Keyword(description = "A list of expressions that provide the parameters to the external "
-	                     + "program. The inputs must be provided in the order in which they are "
-	                     + "to be entered in the external program's command line.",
-	         exampleList = {"{ [Server1].Working } { '[Queue1].AverageQueueTime / 1[h]' }"})
-	private final StringProvListInput dataSource;
-
-	@Keyword(description = "The 'Value' output prior to receiving the first entity.",
-	         exampleList = {"{ 0 }"})
-	private final StringProvListInput initialValue;
-
-	@Keyword(description = "Maximum time in milliseconds for the external program to finish "
-	                     + "executing.",
-	         exampleList = {"2000"})
-	private final IntegerInput timeOut;
-
-	private ExpResult value;  // outputs returned by the external program
 	private Process process;
 	private int nextID = 1;
 
@@ -89,61 +50,16 @@ public class ExternalProgramServer extends LinkedComponent {
 	private Thread errorThread;
 
 	{
-		programFile = new FileInput("ProgramFile", KEY_INPUTS, null);
-		programFile.setRequired(true);
-		this.addInput(programFile);
-
-		inFile = new FileInput("InputFile", KEY_INPUTS, null);
-		this.addInput(inFile);
-
 		methodInput = new StringInput("MethodName", KEY_INPUTS, "method");
 		methodInput.setRequired(true);
 		this.addInput(methodInput);
-
-		dataSource = new StringProvListInput("DataSource", KEY_INPUTS, null);
-		this.addInput(dataSource);
-
-		initialValue = new StringProvListInput("InitialValue", KEY_INPUTS, null);
-		initialValue.setCallback(initialValueCallback);
-		this.addInput(initialValue);
-
-		timeOut = new IntegerInput("TimeOut", KEY_INPUTS, 1000);
-		timeOut.setValidRange(1, Integer.MAX_VALUE);
-		this.addInput(timeOut);
 	}
 
-	public ExternalProgramServer() {
-		value = ExpCollections.wrapCollection(new ArrayList<ExpResult>(), DimensionlessUnit.class);
-	}
-
-	static final InputCallback initialValueCallback = new InputCallback() {
-		@Override
-		public void callback(Entity ent, Input<?> inp) {
-			((ExternalProgramServer)ent).updateInitialValue();
-		}
-	};
-
-	void updateInitialValue() {
-		value = getInitialValue();
-	}
-
-	protected ExpResult getInitialValue() {
-		int n = 0;
-		if (!initialValue.isDefault())
-			n = initialValue.getListSize();
-
-		ArrayList<String> list = new ArrayList<>(n);
-		for (int i = 0; i < n; i++) {
-			list.add(initialValue.getNextString(i, 0.0d));
-		}
-		ArrayList<ExpResult> resList = FileToArray.getExpResultList(list, this, 0.0d);
-		return ExpCollections.wrapCollection(resList, DimensionlessUnit.class);
-	}
+	public ExternalProgramServer() {}
 
 	@Override
 	public void earlyInit() {
 		super.earlyInit();
-		value = getInitialValue();
 
 		startProcess();
 	}
@@ -310,17 +226,6 @@ public class ExternalProgramServer extends LinkedComponent {
 
 		// Pass the entity to the next component
 		sendToNextComponent(ent);
-	}
-
-	@Output(name = "Value",
-	 description = "An array of values returned by the external program after parsing. "
-	             + "Returned strings are converted automatically to numbers, times, or entities, "
-	             + "if appropriate. "
-	             + "For example, if the external program returns a single number, its value is "
-	             + "'this.Value(1)'",
-	    sequence = 1)
-	public ExpResult getValue(double simTime) {
-		return value;
 	}
 
 }
