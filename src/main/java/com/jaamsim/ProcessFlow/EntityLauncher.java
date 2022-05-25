@@ -119,7 +119,7 @@ public class EntityLauncher extends GameEntity implements EntityGen {
 
 	@Override
 	public ArrayList<DisplayEntity> getDestinationEntities() {
-		ArrayList<DisplayEntity> ret = new ArrayList<>();
+		ArrayList<DisplayEntity> ret = super.getDestinationEntities();
 		Linkable l = nextComponent.getValue();
 		if (l != null && (l instanceof DisplayEntity)) {
 			ret.add((DisplayEntity)l);
@@ -129,7 +129,7 @@ public class EntityLauncher extends GameEntity implements EntityGen {
 
 	@Override
 	public ArrayList<DisplayEntity> getSourceEntities() {
-		ArrayList<DisplayEntity> ret = new ArrayList<>();
+		ArrayList<DisplayEntity> ret = super.getSourceEntities();
 		if (prototypeEntity.isDefault())
 			return ret;
 		DisplayEntity ent = prototypeEntity.getNextEntity(0.0d);

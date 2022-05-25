@@ -74,7 +74,7 @@ public class Branch extends LinkedComponent {
 
 	@Override
 	public ArrayList<DisplayEntity> getDestinationEntities() {
-		ArrayList<DisplayEntity> ret = new ArrayList<>();
+		ArrayList<DisplayEntity> ret = super.getDestinationEntities();
 		ArrayList<Linkable> ls = nextComponentList.getValue();
 		if (ls == null)
 			return ret;

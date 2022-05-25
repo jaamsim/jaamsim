@@ -211,7 +211,7 @@ public class EntityGenerator extends LinkedService implements EntityGen {
 
 	@Override
 	public ArrayList<DisplayEntity> getSourceEntities() {
-		ArrayList<DisplayEntity> ret = new ArrayList<>();
+		ArrayList<DisplayEntity> ret = super.getSourceEntities();
 		if (prototypeEntity.isDefault())
 			return ret;
 		DisplayEntity ent = prototypeEntity.getNextEntity(0.0d);

@@ -224,7 +224,7 @@ public abstract class LinkedComponent extends StateEntity implements SubjectEnti
 
 	@Override
 	public ArrayList<DisplayEntity> getDestinationEntities() {
-		ArrayList<DisplayEntity> ret = new ArrayList<>();
+		ArrayList<DisplayEntity> ret = super.getDestinationEntities();
 		Linkable l = nextComponent.getValue();
 		if (l != null && (l instanceof DisplayEntity)) {
 			ret.add((DisplayEntity)l);
