@@ -63,7 +63,7 @@ public class JSONTokenizer {
 		int closePos = startPos + 1;
 
 		while (closePos < input.length()) {
-			char c = nextChar(input, closePos);;
+			char c = nextChar(input, closePos);
 			if (c == '"' && nextChar(input, closePos-1) != '\\')
 				break;
 
