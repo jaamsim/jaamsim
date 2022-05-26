@@ -130,12 +130,13 @@ public class EntityLauncher extends GameEntity implements EntityGen {
 	@Override
 	public ArrayList<DisplayEntity> getSourceEntities() {
 		ArrayList<DisplayEntity> ret = super.getSourceEntities();
-		if (prototypeEntity.isDefault())
-			return ret;
-		DisplayEntity ent = prototypeEntity.getNextEntity(0.0d);
-		if (ent != null) {
-			ret.add(ent);
+		try {
+			DisplayEntity ent = prototypeEntity.getNextEntity(0.0d);
+			if (ent != null) {
+				ret.add(ent);
+			}
 		}
+		catch (Exception e) {}
 		return ret;
 	}
 

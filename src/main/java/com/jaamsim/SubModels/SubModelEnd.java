@@ -89,12 +89,13 @@ public class SubModelEnd extends DisplayEntity implements Linkable {
 	@Override
 	public ArrayList<DisplayEntity> getDestinationEntities() {
 		ArrayList<DisplayEntity> ret = super.getDestinationEntities();
-		if (nextComponent.isDefault())
-			return ret;
-		DisplayEntity ent = nextComponent.getNextEntity(0.0d);
-		if (ent != null) {
-			ret.add(ent);
+		try {
+			DisplayEntity ent = nextComponent.getNextEntity(0.0d);
+			if (ent != null) {
+				ret.add(ent);
+			}
 		}
+		catch (Exception e) {}
 		return ret;
 	}
 
