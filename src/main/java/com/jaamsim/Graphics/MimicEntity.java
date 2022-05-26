@@ -54,21 +54,26 @@ public class MimicEntity extends DisplayEntity {
 
 	@Override
 	public ArrayList<DisplayModel> getDisplayModelList() {
-		if (sourceEntity.isDefault()) {
-			return super.getDisplayModelList();
+		try {
+			DisplayEntity ent = sourceEntity.getNextEntity(0.0d);
+			if (ent != null) {
+				return ent.getDisplayModelList();
+			}
 		}
-		return sourceEntity.getNextEntity(0.0d).getDisplayModelList();
+		catch (Exception e) {}
+		return super.getDisplayModelList();
 	}
 
 	@Override
 	public ArrayList<DisplayModelBinding> getDisplayBindings() {
-		if (!sourceEntity.isDefault()) {
+		try {
 			DisplayEntity ent = sourceEntity.getNextEntity(0.0d);
-			if (sourceBindings != ent.getDisplayBindings()) {
+			if (ent != null && sourceBindings != ent.getDisplayBindings()) {
 				sourceBindings = ent.getDisplayBindings();
 				this.clearBindings();
 			}
 		}
+		catch (Exception e) {}
 		return super.getDisplayBindings();
 	}
 
