@@ -152,6 +152,8 @@ public class EntityProvInput<T extends Entity> extends Input<EntityProvider<T>> 
 	}
 
 	public T getNextEntity(double simTime) {
+		if (value == null)
+			return null;
 		try {
 			return value.getNextEntity(simTime);
 		}
