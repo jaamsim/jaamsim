@@ -26,7 +26,6 @@ import com.jaamsim.input.ExpResult;
 import com.jaamsim.input.FileInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputCallback;
-import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.units.DimensionlessUnit;
@@ -57,11 +56,6 @@ public abstract class AbstractExternalProgram extends LinkedComponent {
 	         exampleList = {"{ 0 }"})
 	protected final StringProvListInput initialValue;
 
-	@Keyword(description = "Maximum time in milliseconds for the external program to finish "
-	                     + "executing.",
-	         exampleList = {"2000"})
-	protected final IntegerInput timeOut;
-
 	protected ExpResult value;  // outputs returned by the external program
 
 	{
@@ -78,10 +72,6 @@ public abstract class AbstractExternalProgram extends LinkedComponent {
 		initialValue = new StringProvListInput("InitialValue", KEY_INPUTS, null);
 		initialValue.setCallback(initialValueCallback);
 		this.addInput(initialValue);
-
-		timeOut = new IntegerInput("TimeOut", KEY_INPUTS, 1000);
-		timeOut.setValidRange(1, Integer.MAX_VALUE);
-		this.addInput(timeOut);
 	}
 
 	public AbstractExternalProgram() {

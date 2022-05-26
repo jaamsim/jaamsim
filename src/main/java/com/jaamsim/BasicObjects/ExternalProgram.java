@@ -26,10 +26,23 @@ import java.util.concurrent.TimeUnit;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.input.ExpCollections;
 import com.jaamsim.input.ExpResult;
+import com.jaamsim.input.IntegerInput;
+import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Parser;
 import com.jaamsim.units.DimensionlessUnit;
 
 public class ExternalProgram extends AbstractExternalProgram {
+
+	@Keyword(description = "Maximum time in milliseconds for the external program to finish "
+	                     + "executing.",
+	         exampleList = {"2000"})
+	private final IntegerInput timeOut;
+
+	{
+		timeOut = new IntegerInput("TimeOut", KEY_INPUTS, 1000);
+		timeOut.setValidRange(1, Integer.MAX_VALUE);
+		this.addInput(timeOut);
+	}
 
 	public ExternalProgram() {}
 
