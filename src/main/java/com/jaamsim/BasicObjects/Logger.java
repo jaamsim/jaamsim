@@ -76,6 +76,7 @@ public abstract class Logger extends DisplayEntity {
 
 	private FileEntity file;
 	private double logTime;
+	private DisplayEntity logEntity;
 
 	{
 		active.setHidden(false);
@@ -114,6 +115,7 @@ public abstract class Logger extends DisplayEntity {
 		unitTypeListInput.reset();  // Delete an unnecessary input
 
 		logTime = 0.0d;
+		logEntity = null;
 
 		// Close the file if it is already open
 		JaamSimModel simModel = getJaamSimModel();
@@ -203,6 +205,7 @@ public abstract class Logger extends DisplayEntity {
 
 		// Record the time for the log entry
 		logTime = simTime;
+		logEntity = ent;
 
 		// Write the time for the log entry
 		double factor = getJaamSimModel().getDisplayedUnitFactor(TimeUnit.class);
@@ -269,6 +272,12 @@ public abstract class Logger extends DisplayEntity {
 	    unitType = TimeUnit.class)
 	public double getLogTime(double simTime) {
 		return logTime;
+	}
+
+	@Output(name = "LogEntity",
+	 description = "The entity that triggered the last log entry.")
+	public DisplayEntity getLogEntity(double simTime) {
+		return logEntity;
 	}
 
 }
