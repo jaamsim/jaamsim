@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2002-2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2017-2020 JaamSim Software Inc.
+ * Copyright (C) 2017-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -278,6 +278,13 @@ public final class EventManager {
 					nextTick = eventTree.getNextNode().schedTick;
 					if (nextTick == currentTick.get())
 						continue;
+
+					// If 'Next Time' button was clicked, then stop without advancing time
+					if (oneSimTime ) {
+						executeEvents = false;
+						oneSimTime = false;
+						continue;
+					}
 				}
 
 				// Advance to the next event time
@@ -301,11 +308,6 @@ public final class EventManager {
 					currentTick.set(nextTick);
 
 				timelistener.tickUpdate(currentTick.get());
-
-				if (oneSimTime) {
-					executeEvents = false;
-					oneSimTime = false;
-				}
 			}
 		}
 	}
