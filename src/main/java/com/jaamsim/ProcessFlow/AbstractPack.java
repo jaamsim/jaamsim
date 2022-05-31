@@ -128,8 +128,10 @@ public abstract class AbstractPack extends LinkedService {
 		// Are there sufficient entities in the queue to start packing?
 		if (!startedPacking) {
 			String m = this.getNextMatchValue(simTime);
-			if (numberToStartPacking < 0)
+			if (numberToStartPacking < 0) {
+				numberToInsert = this.getNumberToInsert(simTime);
 				numberToStartPacking = this.getNumberToStart(simTime);
+			}
 			if (getQueue(simTime).getCount(m) < numberToStartPacking) {
 				return false;
 			}
@@ -142,7 +144,6 @@ public abstract class AbstractPack extends LinkedService {
 
 			// Start packing
 			numberInserted = 0;
-			numberToInsert = this.getNumberToInsert(simTime);
 			startedPacking = true;
 			this.setMatchValue(m);
 		}
