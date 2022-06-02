@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2019 JaamSim Software Inc.
+ * Copyright (C) 2019-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,14 +43,18 @@ public class TimeSeriesThreshold extends Threshold {
 	private final TimeSeriesInput timeSeries;
 
 	@Keyword(description = "The largest TimeSeries value for which the threshold is open. "
-	                     + "The threshold is closed for TimeSeries values greater than "
-	                     + "MaxOpenLimit.",
+	                     + "The threshold is open for TimeSeries values x that satisfy "
+	                     + "MinOpenLimit <= x <= MaxOpenLimit. "
+	                     + "Note that the inputs for 'LookAhead' and 'Offset' can be used to "
+	                     + "modify this behaviour.",
 	         exampleList = {"2.0 m", "TimeSeries2"})
 	private final TimeSeriesInput maxOpenLimit;
 
 	@Keyword(description = "The smallest TimeSeries value for which the threshold is open. "
-	                     + "The threshold is closed for TimeSeries values smaller than "
-	                     + "MinOpenLimit.",
+	                     + "The threshold is open for TimeSeries values x that satisfy "
+	                     + "MinOpenLimit <= x <= MaxOpenLimit. "
+	                     + "Note that the inputs for 'LookAhead' and 'Offset' can be used to "
+	                     + "modify this behaviour.",
 	         exampleList = {"2.0 m", "TimeSeries3"})
 	private final TimeSeriesInput minOpenLimit;
 
