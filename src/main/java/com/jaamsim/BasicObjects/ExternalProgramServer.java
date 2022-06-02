@@ -68,7 +68,9 @@ public class ExternalProgramServer extends AbstractExternalProgram {
 	public void kill() {
 		super.kill();
 
-		killProcess();
+		if (process != null) {
+			killProcess();
+		}
 	}
 
 	private void startProcess() {
