@@ -419,6 +419,10 @@ public abstract class Device extends StateUserEntity implements ObserverEntity, 
 		return lastUpdateTime;
 	}
 
+	public final boolean isUpdated(double simTime) {
+		return (simTime == lastUpdateTime);
+	}
+
 	protected final double getRemainingDuration() {
 		return duration;
 	}
