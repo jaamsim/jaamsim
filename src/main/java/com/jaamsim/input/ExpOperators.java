@@ -1465,7 +1465,7 @@ public class ExpOperators {
 					}
 					results.add(result);
 				}
-				return ExpCollections.wrapCollection(results, unitType);
+				return ExpCollections.makeAssignableArrrayCollection(results, false);
 			}
 
 			@Override
@@ -1505,10 +1505,7 @@ public class ExpOperators {
 				ExpResult.Collection col = args[1].colVal;
 				ExpResult.Iterator it = col.getIter();
 
-				Class<? extends Unit> unitType = null;
-				boolean firstVal = true;
 				ArrayList<ExpResult> params = new ArrayList<>(1);
-
 				ArrayList<ExpResult> results = new ArrayList<>();
 				params.add(null);
 				if (numParams == 2)
@@ -1526,12 +1523,8 @@ public class ExpOperators {
 						results.add(val);
 					}
 
-					Class<? extends Unit> resUnitType = result.type == ExpResType.NUMBER ? result.unitType : null;
-					if (firstVal) {
-						unitType = resUnitType;
-					}
 				}
-				return ExpCollections.wrapCollection(results, unitType);
+				return ExpCollections.makeAssignableArrrayCollection(results, false);
 			}
 
 			@Override
@@ -1623,8 +1616,6 @@ public class ExpOperators {
 				ExpResult.Collection col = args[1].colVal;
 				ExpResult.Iterator it = col.getIter();
 
-				Class<? extends Unit> unitType = null;
-
 				ArrayList<ExpResult> results = new ArrayList<>();
 				while (it.hasNext()) {
 					ExpResult key = it.nextKey();
@@ -1666,7 +1657,7 @@ public class ExpOperators {
 						throw e;
 					}
 				}
-				return ExpCollections.wrapCollection(results, unitType);
+				return ExpCollections.makeAssignableArrrayCollection(results, false);
 			}
 
 			@Override
@@ -1734,7 +1725,7 @@ public class ExpOperators {
 				}
 
 				if (startVal > endVal) {
-					return ExpCollections.wrapCollection(new ArrayList<ExpResult>(), args[0].unitType);
+					return ExpCollections.makeAssignableArrrayCollection(new ArrayList<ExpResult>(), false);
 				}
 
 				double inc = 1;
@@ -1747,7 +1738,7 @@ public class ExpOperators {
 					res.add(ExpResult.makeNumResult(val, args[0].unitType));
 					val += inc;
 				}
-				return ExpCollections.wrapCollection(res, args[0].unitType);
+				return ExpCollections.makeAssignableArrrayCollection(res, false);
 
 			}
 
