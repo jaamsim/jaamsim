@@ -1337,7 +1337,7 @@ public class DisplayEntity extends Entity {
 		return new ArrayList<>();
 	}
 
-	public final ArrayList<DirectedEntity> getDestinationDirEnts(boolean dir) {
+	public ArrayList<DirectedEntity> getDestinationDirEnts(boolean dir) {
 		if (dir) {
 			try {
 				return DirectedEntity.getList(getDestinationEntities(), true);
@@ -1347,7 +1347,7 @@ public class DisplayEntity extends Entity {
 		return new ArrayList<>();
 	}
 
-	public final ArrayList<DirectedEntity> getSourceDirEnts(boolean dir) {
+	public ArrayList<DirectedEntity> getSourceDirEnts(boolean dir) {
 		if (dir) {
 			try {
 				return DirectedEntity.getList(getSourceEntities(), true);
