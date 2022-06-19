@@ -71,9 +71,10 @@ public class ExpParser {
 	}
 
 	public static abstract class ParseContext {
-		public ParseContext(HashMap<String, ExpResult> constVals) {
+		public ParseContext(HashMap<String, ExpResult> constVals, ArrayList<String> dynVars) {
 			ParseClosure initClosure = new ParseClosure();
 			initClosure.parseConstants = constVals;
+			initClosure.boundVars = dynVars;
 			closureStack.add(initClosure);
 		}
 		public abstract UnitData getUnitByName(String name);
@@ -164,8 +165,8 @@ public class ExpParser {
 	public static class EvalContext {
 		private final ArrayList<ArrayList<ExpResult> > closureStack = new ArrayList<>();
 
-		public EvalContext() {
-			closureStack.add(new ArrayList<ExpResult>());
+		public EvalContext(ArrayList<ExpResult> dynamicVals) {
+			closureStack.add(dynamicVals);
 		}
 
 		public void pushClosure(ArrayList<ExpResult> closure) {
@@ -206,6 +207,7 @@ public class ExpParser {
 
 				executingThreads.add(Thread.currentThread());
 			}
+
 			ExpResult res = null;
 			try {
 				res = rootNode.evaluate(ec);

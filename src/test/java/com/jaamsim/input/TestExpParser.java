@@ -73,7 +73,7 @@ public class TestExpParser {
 
 	private static class PC extends ExpParser.ParseContext {
 		public PC() {
-			super(new HashMap<String, ExpResult>());
+			super(new HashMap<String, ExpResult>(), new ArrayList<String>());
 		}
 
 		@Override
@@ -132,7 +132,7 @@ public class TestExpParser {
 
 	class UnitPC extends ExpParser.ParseContext {
 		public UnitPC() {
-			super(new HashMap<String, ExpResult>());
+			super(new HashMap<String, ExpResult>(), new ArrayList<String>());
 		}
 
 		@Override
@@ -237,9 +237,12 @@ public class TestExpParser {
 
 	private static class EC extends ExpParser.EvalContext {
 
+		public EC(ArrayList<ExpResult> dynamicVals) {
+			super(dynamicVals);
+		}
 
 	}
-	static EC ec = new EC();
+	static EC ec = new EC(new ArrayList<ExpResult>());
 
 	private static void testToken(ExpTokenizer.Token tok, int type, String val) {
 		assertTrue(tok.type == type);
