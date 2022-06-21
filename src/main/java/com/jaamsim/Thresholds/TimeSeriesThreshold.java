@@ -544,4 +544,30 @@ public class TimeSeriesThreshold extends Threshold {
 		return evt.ticksToSeconds(ticks);
 	}
 
+	@Output(name = "NextOpenDuration",
+	 description = "The duration for which the threshold will be open at the next open time.",
+	    unitType = TimeUnit.class,
+	    sequence = 8)
+	public double getNextOpenDuration(double simTime) {
+		if (timeSeries.getValue() == null)
+			return Double.NaN;
+		EventManager evt = this.getJaamSimModel().getEventManager();
+		long simTicks = evt.secondsToNearestTick(simTime);
+		long ticks = calcOpenTicksFromTicks(simTicks + calcClosedTicksFromTicks(simTicks));
+		return evt.ticksToSeconds(ticks);
+	}
+
+	@Output(name = "NextCloseDuration",
+	 description = "The duration for which the threshold will be closed at the next close time.",
+	    unitType = TimeUnit.class,
+	    sequence = 9)
+	public double getNextCloseDuration(double simTime) {
+		if (timeSeries.getValue() == null)
+			return Double.NaN;
+		EventManager evt = this.getJaamSimModel().getEventManager();
+		long simTicks = evt.secondsToNearestTick(simTime);
+		long ticks = calcClosedTicksFromTicks(simTicks + calcOpenTicksFromTicks(simTicks));
+		return evt.ticksToSeconds(ticks);
+	}
+
 }
