@@ -137,14 +137,18 @@ public class EntityProvInput<T extends Entity> extends Input<EntityProvider<T>> 
 		if (value == null)
 			return "";
 
-		return String.format("[%s]", value.getNextEntity(simTime));
+		return String.format("[%s]", value.getNextEntity(thisEnt, simTime));
 	}
 
 	public T getNextEntity(double simTime) {
+		return getNextEntity(null, simTime);
+	}
+
+	public T getNextEntity(Entity thisEnt, double simTime) {
 		if (value == null)
 			return null;
 		try {
-			return value.getNextEntity(simTime);
+			return value.getNextEntity(thisEnt, simTime);
 		}
 		catch (ErrorException e) {
 			e.keyword = getKeyword();

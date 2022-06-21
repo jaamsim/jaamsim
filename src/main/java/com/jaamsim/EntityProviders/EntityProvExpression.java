@@ -45,8 +45,10 @@ public class EntityProvExpression<T extends Entity> implements EntityProvider<T>
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public T getNextEntity(double simTime) {
+	public T getNextEntity(Entity thisEnt, double simTime) {
 		T ret = null;
+		if (thisEnt == null)
+			thisEnt = this.thisEnt;
 		try {
 			ExpResult result = ExpEvaluator.evaluateExpression(exp, thisEnt, simTime);
 

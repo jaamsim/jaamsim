@@ -31,7 +31,7 @@ public class EntityProvConstant<T extends Entity> implements EntityProvider<T> {
 	}
 
 	@Override
-	public T getNextEntity(double simTime) {
+	public T getNextEntity(Entity thisEnt, double simTime) {
 		return ent;
 	}
 
