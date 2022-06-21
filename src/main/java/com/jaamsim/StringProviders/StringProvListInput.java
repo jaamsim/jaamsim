@@ -164,7 +164,7 @@ public class StringProvListInput extends ListInput<ArrayList<StringProvider>> {
 	}
 
 	@Override
-	public String getPresentValueString(JaamSimModel simModel, double simTime) {
+	public String getPresentValueString(Entity thisEnt, double simTime) {
 		if (value == null)
 			return "";
 

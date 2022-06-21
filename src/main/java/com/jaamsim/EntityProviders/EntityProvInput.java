@@ -22,7 +22,6 @@ import java.util.Collections;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ErrorException;
-import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.KeywordIndex;
@@ -144,7 +143,7 @@ public class EntityProvInput<T extends Entity> extends Input<EntityProvider<T>> 
 	}
 
 	@Override
-	public String getPresentValueString(JaamSimModel simModel, double simTime) {
+	public String getPresentValueString(Entity thisEnt, double simTime) {
 		if (value == null)
 			return "";
 

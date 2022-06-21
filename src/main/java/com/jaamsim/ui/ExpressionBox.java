@@ -364,7 +364,7 @@ public class ExpressionBox extends JDialog {
 		try {
 			JaamSimModel simModel = GUIFrame.getJaamSimModel();
 			double simTime = simModel.getSimTime();
-			valStr = input.getPresentValueString(simModel, simTime);
+			valStr = input.getPresentValueString(ent, simTime);
 		}
 		catch (Exception e) {
 			valStr = "Cannot evaluate at this time";

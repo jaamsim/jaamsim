@@ -20,13 +20,11 @@ package com.jaamsim.input;
 import java.util.ArrayList;
 
 import com.jaamsim.basicsim.Entity;
-import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.input.ExpParser.Expression;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 
 public class ExpressionInput extends Input<ExpParser.Expression> {
-	private Entity thisEnt;
 	private Class<? extends Unit> unitType;
 	private ExpEvaluator.EntityParseContext parseContext;
 	private ExpResType resType;
@@ -80,7 +78,6 @@ public class ExpressionInput extends Input<ExpParser.Expression> {
 			// Save the expression
 			parseContext = pc;
 			value = exp;
-			this.thisEnt = thisEnt;
 			this.setValid(true);
 
 		} catch (ExpError e) {
@@ -130,7 +127,7 @@ public class ExpressionInput extends Input<ExpParser.Expression> {
 	}
 
 	@Override
-	public String getPresentValueString(JaamSimModel simModel, double simTime) {
+	public String getPresentValueString(Entity thisEnt, double simTime) {
 		if (value == null)
 			return "";
 

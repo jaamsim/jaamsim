@@ -253,9 +253,10 @@ public class SampleListInput extends ListInput<ArrayList<SampleProvider>> {
 	}
 
 	@Override
-	public String getPresentValueString(JaamSimModel simModel, double simTime) {
+	public String getPresentValueString(Entity thisEnt, double simTime) {
 		if (value == null)
 			return "";
+		JaamSimModel simModel = thisEnt.getJaamSimModel();
 
 		StringBuilder sb = new StringBuilder();
 		boolean first = true;

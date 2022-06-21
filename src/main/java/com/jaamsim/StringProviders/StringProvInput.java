@@ -141,9 +141,10 @@ public class StringProvInput extends Input<StringProvider> {
 	}
 
 	@Override
-	public String getPresentValueString(JaamSimModel simModel, double simTime) {
+	public String getPresentValueString(Entity thisEnt, double simTime) {
 		if (value == null)
 			return "";
+		JaamSimModel simModel = thisEnt.getJaamSimModel();
 
 		StringBuilder sb = new StringBuilder();
 		if (unitType == null || unitType == DimensionlessUnit.class
