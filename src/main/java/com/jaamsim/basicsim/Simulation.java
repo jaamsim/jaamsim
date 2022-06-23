@@ -942,7 +942,7 @@ public class Simulation extends Entity {
 	public ArrayList<String> getRunOutputStrings(double simTime) {
 		ArrayList<String> ret = new ArrayList<>(runOutputList.getListSize());
 		for (int i = 0; i < runOutputList.getListSize(); i++) {
-			ret.add(runOutputList.getNextString(i, simTime));
+			ret.add(runOutputList.getNextString(i, this, simTime));
 		}
 		return ret;
 	}
@@ -950,7 +950,7 @@ public class Simulation extends Entity {
 	public ArrayList<Double> getRunOutputValues(double simTime) {
 		ArrayList<Double> ret = new ArrayList<>(runOutputList.getListSize());
 		for (int i = 0; i < runOutputList.getListSize(); i++) {
-			ret.add(runOutputList.getNextValue(i, simTime));
+			ret.add(runOutputList.getNextValue(i, this, simTime));
 		}
 		return ret;
 	}
@@ -966,7 +966,7 @@ public class Simulation extends Entity {
 	public ArrayList<String> getRunParameterStrings(double simTime) {
 		ArrayList<String> ret = new ArrayList<>(runParameterList.getListSize());
 		for (int i = 0; i < runParameterList.getListSize(); i++) {
-			ret.add(runParameterList.getNextString(i, simTime));
+			ret.add(runParameterList.getNextString(i, this, simTime));
 		}
 		return ret;
 	}

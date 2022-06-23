@@ -218,7 +218,7 @@ public abstract class Logger extends DisplayEntity {
 		for (int i=0; i<dataSource.getListSize(); i++) {
 			String str;
 			try {
-				str = dataSource.getNextString(i, simTime);
+				str = dataSource.getNextString(i, this, simTime);
 			}
 			catch (Exception e) {
 				str = e.getMessage();
