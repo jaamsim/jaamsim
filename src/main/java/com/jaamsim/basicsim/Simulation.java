@@ -966,7 +966,7 @@ public class Simulation extends Entity {
 	public ArrayList<String> getRunParameterStrings(double simTime) {
 		ArrayList<String> ret = new ArrayList<>(runParameterList.getListSize());
 		for (int i = 0; i < runParameterList.getListSize(); i++) {
-			ret.add(runParameterList.getValue().get(i).getNextString(simTime));
+			ret.add(runParameterList.getNextString(i, simTime));
 		}
 		return ret;
 	}

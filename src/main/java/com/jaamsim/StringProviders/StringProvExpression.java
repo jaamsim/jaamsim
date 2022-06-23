@@ -46,18 +46,20 @@ public class StringProvExpression implements StringProvider {
 	}
 
 	@Override
-	public String getNextString(double simTime) {
-		return getNextString(simTime, 1.0d, false);
+	public String getNextString(Entity thisEnt, double simTime) {
+		return getNextString(thisEnt, simTime, 1.0d, false);
 	}
 
 	@Override
-	public String getNextString(double simTime, double siFactor) {
-		return getNextString(simTime, siFactor, false);
+	public String getNextString(Entity thisEnt, double simTime, double siFactor) {
+		return getNextString(thisEnt, simTime, siFactor, false);
 	}
 
 	@Override
-	public String getNextString(double simTime, double siFactor, boolean integerValue) {
+	public String getNextString(Entity thisEnt, double simTime, double siFactor, boolean integerValue) {
 		String ret = "";
+		if (thisEnt == null)
+			thisEnt = this.thisEnt;
 		try {
 			ExpResult result = ExpEvaluator.evaluateExpression(exp, thisEnt, simTime);
 			switch (result.type) {
@@ -99,8 +101,10 @@ public class StringProvExpression implements StringProvider {
 	}
 
 	@Override
-	public String getNextString(double simTime, String fmt, double siFactor) {
+	public String getNextString(Entity thisEnt, double simTime, String fmt, double siFactor) {
 		String ret = "";
+		if (thisEnt == null)
+			thisEnt = this.thisEnt;
 		try {
 			ExpResult result = ExpEvaluator.evaluateExpression(exp, thisEnt, simTime);
 			switch (result.type) {
@@ -147,8 +151,10 @@ public class StringProvExpression implements StringProvider {
 	}
 
 	@Override
-	public double getNextValue(double simTime) {
+	public double getNextValue(Entity thisEnt, double simTime) {
 		double ret = Double.NaN;
+		if (thisEnt == null)
+			thisEnt = this.thisEnt;
 		try {
 			ExpResult result = ExpEvaluator.evaluateExpression(exp, thisEnt, simTime);
 			if (result.type  == ExpResType.NUMBER) {

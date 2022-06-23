@@ -726,7 +726,7 @@ public class JaamSimModel implements EventTimeListener {
 			Class<? extends Unit> unitType = DimensionlessUnit.class;
 			Entity thisEnt = getSimulation();
 			StringProvExpression strProv = new StringProvExpression(expString, thisEnt, unitType);
-			return strProv.getNextString(simTime);
+			return strProv.getNextString(thisEnt, simTime);
 		}
 		catch (ExpError e) {
 			return "Cannot evaluate";

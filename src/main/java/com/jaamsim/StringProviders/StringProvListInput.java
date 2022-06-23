@@ -163,7 +163,6 @@ public class StringProvListInput extends ListInput<ArrayList<StringProvider>> {
 		StringBuilder sb = new StringBuilder();
 		boolean first = true;
 		for (int i = 0; i < value.size(); i++) {
-			StringProvider prov = value.get(i);
 			if (!first) {
 				first = false;
 			}
@@ -171,15 +170,19 @@ public class StringProvListInput extends ListInput<ArrayList<StringProvider>> {
 				sb.append(Input.SEPARATOR);
 			}
 			sb.append("{").append(Input.BRACE_SEPARATOR);
-			sb.append(prov.getNextString(simTime));
+			sb.append(getNextString(i, thisEnt, simTime));
 			sb.append(Input.BRACE_SEPARATOR).append("}");
 		}
 		return sb.toString();
 	}
 
 	public String getNextString(int i, double simTime) {
+		return getNextString(i, null, simTime);
+	}
+
+	public String getNextString(int i, Entity thisEnt, double simTime) {
 		try {
-			return value.get(i).getNextString(simTime);
+			return value.get(i).getNextString(thisEnt, simTime);
 		}
 		catch (ErrorException e) {
 			e.keyword = getKeyword();
@@ -189,8 +192,12 @@ public class StringProvListInput extends ListInput<ArrayList<StringProvider>> {
 	}
 
 	public double getNextValue(int i, double simTime) {
+		return getNextValue(i, null, simTime);
+	}
+
+	public double getNextValue(int i, Entity thisEnt, double simTime) {
 		try {
-			return value.get(i).getNextValue(simTime);
+			return value.get(i).getNextValue(thisEnt, simTime);
 		}
 		catch (ErrorException e) {
 			e.keyword = getKeyword();

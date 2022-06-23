@@ -119,7 +119,7 @@ public class Assemble extends AbstractCombine implements EntityGen {
 
 		// Set the state for the assembled part
 		if (!stateAssignment.isDefault() && assembledEntity instanceof StateEntity) {
-			String state = stateAssignment.getValue().getNextString(simTime);
+			String state = stateAssignment.getNextString(simTime);
 			((StateEntity)assembledEntity).setPresentState(state);
 		}
 		return true;
