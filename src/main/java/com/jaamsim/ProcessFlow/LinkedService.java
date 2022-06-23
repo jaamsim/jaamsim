@@ -268,7 +268,7 @@ public abstract class LinkedService extends LinkedDevice implements QueueUser {
 		if (match.isDefault())
 			return null;
 
-		return match.getNextString(simTime, 1.0d, true);
+		return match.getNextString(this, simTime, 1.0d, true);
 	}
 
 	protected void setMatchValue(String m) {

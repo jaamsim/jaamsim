@@ -104,7 +104,7 @@ public abstract class AbstractPack extends LinkedService {
 	private void setContainerState() {
 		if (!containerStateAssignment.isDefault()) {
 			double simTime = getSimTime();
-			String state = containerStateAssignment.getNextString(simTime);
+			String state = containerStateAssignment.getNextString(this, simTime);
 			container.setPresentState(state);
 		}
 	}

@@ -141,7 +141,7 @@ public abstract class LinkedDevice extends Device implements Linkable {
 	protected void setEntityState(DisplayEntity ent) {
 		if (stateAssignment.isDefault() || !(ent instanceof StateEntity))
 			return;
-		String state = stateAssignment.getNextString(getSimTime());
+		String state = stateAssignment.getNextString(this, getSimTime());
 		((StateEntity) ent).setPresentState(state);
 	}
 
