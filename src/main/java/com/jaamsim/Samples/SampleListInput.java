@@ -293,10 +293,6 @@ public class SampleListInput extends ListInput<ArrayList<SampleProvider>> {
 		return sb.toString();
 	}
 
-	public double getNextSample(int i, double simTime) {
-		return getNextSample(i, null, simTime);
-	}
-
 	public double getNextSample(int i, Entity thisEnt, double simTime) {
 		try {
 			return value.get(i).getNextSample(thisEnt, simTime);

@@ -212,10 +212,6 @@ public class SampleInput extends Input<SampleProvider> {
 		return sb.toString();
 	}
 
-	public double getNextSample(double simTime) {
-		return getNextSample(null, simTime);
-	}
-
 	public double getNextSample(Entity thisEnt, double simTime) {
 		try {
 			double ret = value.getNextSample(thisEnt, simTime);
