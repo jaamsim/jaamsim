@@ -194,10 +194,6 @@ public class StringProvInput extends Input<StringProvider> {
 		}
 	}
 
-	public double getNextValue(double simTime) {
-		return getNextValue(null, simTime);
-	}
-
 	public double getNextValue(Entity thisEnt, double simTime) {
 		try {
 			return value.getNextValue(thisEnt, simTime);

@@ -191,10 +191,6 @@ public class StringProvListInput extends ListInput<ArrayList<StringProvider>> {
 		}
 	}
 
-	public double getNextValue(int i, double simTime) {
-		return getNextValue(i, null, simTime);
-	}
-
 	public double getNextValue(int i, Entity thisEnt, double simTime) {
 		try {
 			return value.get(i).getNextValue(thisEnt, simTime);
