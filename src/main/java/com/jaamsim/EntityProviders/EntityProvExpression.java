@@ -31,12 +31,10 @@ import com.jaamsim.input.Input;
 public class EntityProvExpression<T extends Entity> implements EntityProvider<T> {
 
 	private final Expression exp;
-	private final Entity thisEnt;
 	private final ExpEvaluator.EntityParseContext parseContext;
 	private final Class<T> entClass;
 
-	public EntityProvExpression(String expString, Entity ent, Class<T> aClass) throws ExpError {
-		thisEnt = ent;
+	public EntityProvExpression(String expString, Entity thisEnt, Class<T> aClass) throws ExpError {
 		parseContext = ExpEvaluator.getParseContext(thisEnt, expString);
 		exp = ExpParser.parseExpression(parseContext, expString);
 		ExpParser.assertResultType(exp, ExpResType.ENTITY);
@@ -47,8 +45,6 @@ public class EntityProvExpression<T extends Entity> implements EntityProvider<T>
 	@Override
 	public T getNextEntity(Entity thisEnt, double simTime) {
 		T ret = null;
-		if (thisEnt == null)
-			thisEnt = this.thisEnt;
 		try {
 			ExpResult result = ExpEvaluator.evaluateExpression(exp, thisEnt, simTime);
 
