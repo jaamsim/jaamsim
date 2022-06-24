@@ -117,6 +117,7 @@ implements SampleProvider {
 	 * @return input value to this calculation object.
 	 */
 	public double getInputValue(double simTime) {
+		if (isTraceFlag()) trace(0, "getInputValue - lastInputValue=%s", lastInputValue);
 
 		// An exception will be generated if the model has an infinite loop causing the
 		// call stack size to be exceeded
