@@ -130,7 +130,7 @@ public class WeightedSum extends DisplayEntity implements SampleProvider {
 		// Calculate the unweighted sum of the inputs
 		if (coefficientList.getValue() == null) {
 			for (int i = 0; i < inputValueList.getListSize(); i++) {
-				val += inputValueList.getNextSample(i, simTime);
+				val += inputValueList.getNextSample(i, thisEnt, simTime);
 			}
 		}
 
@@ -138,7 +138,7 @@ public class WeightedSum extends DisplayEntity implements SampleProvider {
 		else {
 			for (int i = 0; i < inputValueList.getListSize(); i++) {
 				val += coefficientList.getValue().get(i)
-						* inputValueList.getNextSample(i, simTime);
+						* inputValueList.getNextSample(i, thisEnt, simTime);
 			}
 		}
 

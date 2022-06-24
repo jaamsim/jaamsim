@@ -75,7 +75,7 @@ public class Release extends LinkedComponent {
 		// Release the Resources
 		for(int i=0; i<resList.size(); i++) {
 			int ind = Math.min(i, numberOfUnitsList.getListSize() - 1);
-			int n = (int) numberOfUnitsList.getNextSample(ind, simTime);
+			int n = (int) numberOfUnitsList.getNextSample(ind, this, simTime);
 			if (n == 0)
 				continue;
 			resList.get(i).release(n, ent);

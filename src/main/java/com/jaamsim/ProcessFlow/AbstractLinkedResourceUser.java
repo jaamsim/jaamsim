@@ -151,7 +151,7 @@ public abstract class AbstractLinkedResourceUser extends LinkedService implement
 		ArrayList<ResourceProvider> resList = getResourceList();
 		for (int i=0; i<resList.size(); i++) {
 			int ind = Math.min(i, numberOfUnitsList.getListSize() - 1);
-			int n = (int) numberOfUnitsList.getNextSample(ind, simTime);
+			int n = (int) numberOfUnitsList.getNextSample(ind, this, simTime);
 			if (!resList.get(i).canSeize(simTime, n, ent)) {
 				this.setReceivedEntity(oldEnt);
 				return false;
@@ -173,7 +173,7 @@ public abstract class AbstractLinkedResourceUser extends LinkedService implement
 		ArrayList<ResourceProvider> resList = getResourceList();
 		for (int i = 0; i < numberOfUnitsList.getListSize(); i++) {
 			int ind = Math.min(i, numberOfUnitsList.getListSize() - 1);
-			seizedUnits[i] = (int) numberOfUnitsList.getNextSample(ind, simTime);
+			seizedUnits[i] = (int) numberOfUnitsList.getNextSample(ind, this, simTime);
 		}
 
 		// Seize the resources

@@ -133,7 +133,7 @@ public abstract class AbstractCombine extends LinkedService {
 		// Number of values enter by the user
 		int[] ret = new int[waitQueueList.getListSize()];
 		for (int i = 0; i < numberRequired.getListSize(); i++) {
-			int n = (int) numberRequired.getNextSample(i, simTime);
+			int n = (int) numberRequired.getNextSample(i, this, simTime);
 			ret[i] = n;
 		}
 

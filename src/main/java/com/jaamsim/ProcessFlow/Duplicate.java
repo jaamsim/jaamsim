@@ -74,7 +74,7 @@ public class Duplicate extends LinkedComponent {
 		// Number of targets entered by the user
 		int[] ret = new int[targetComponentList.getListSize()];
 		for (int i = 0; i < numberOfDuplicates.getListSize(); i++) {
-			int n = (int) numberOfDuplicates.getNextSample(i, simTime);
+			int n = (int) numberOfDuplicates.getNextSample(i, this, simTime);
 			ret[i] = n;
 		}
 
