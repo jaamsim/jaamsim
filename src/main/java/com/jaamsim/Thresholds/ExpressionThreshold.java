@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import com.jaamsim.DisplayModels.ShapeModel;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.EntityTarget;
-import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.basicsim.ObserverEntity;
 import com.jaamsim.basicsim.SubjectEntity;
 import com.jaamsim.events.Conditional;
@@ -31,8 +30,6 @@ import com.jaamsim.events.EventManager;
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.ColourInput;
-import com.jaamsim.input.ExpError;
-import com.jaamsim.input.ExpEvaluator;
 import com.jaamsim.input.ExpResType;
 import com.jaamsim.input.ExpressionInput;
 import com.jaamsim.input.Input;
@@ -251,47 +248,40 @@ public class ExpressionThreshold extends Threshold implements ObserverEntity {
 	 * @return state implied by the OpenCondition and CloseCondition expressions.
 	 */
 	private boolean getOpenConditionValue(double simTime, boolean val) {
-		try {
-			if (openCondition.getValue() == null)
-				return super.isOpen();
+		if (openCondition.isDefault())
+			return super.isOpen();
 
-			// Evaluate the open condition (0 = false, non-zero = true)
-			boolean openCond = ExpEvaluator.evaluateExpression(openCondition.getValue(),
-					this, simTime).value != 0;
+		// Evaluate the open condition (0 = false, non-zero = true)
+		boolean openCond = openCondition.getNextResult(this, simTime).value != 0;
 
-			// If the open condition is satisfied or there is no close condition, then we are done
-			boolean ret;
-			if (openCond || closeCondition.getValue() == null) {
-				ret = openCond;
+		// If the open condition is satisfied or there is no close condition, then we are done
+		boolean ret;
+		if (openCond || closeCondition.isDefault()) {
+			ret = openCond;
+		}
+
+		// The open condition is false
+		else {
+
+			// If the close condition is satisfied, then the threshold is closed
+			boolean closeCond = closeCondition.getNextResult(this, simTime).value != 0;
+			if (closeCond) {
+				ret = false;
 			}
 
-			// The open condition is false
+			// If the open and close conditions are both false, then the state is unchanged
 			else {
-
-				// If the close condition is satisfied, then the threshold is closed
-				boolean closeCond = ExpEvaluator.evaluateExpression(closeCondition.getValue(),
-						this, simTime).value != 0;
-				if (closeCond) {
-					ret = false;
-				}
-
-				// If the open and close conditions are both false, then the state is unchanged
-				else {
-					ret = val;
-				}
+				ret = val;
 			}
+		}
 
-			// Save the threshold's last state (unless called by the UI thread)
-			if (EventManager.hasCurrent()) {
-				lastOpenValue = ret;
-				numCalls++;
-				numEvals++;
-			}
-			return ret;
+		// Save the threshold's last state (unless called by the UI thread)
+		if (EventManager.hasCurrent()) {
+			lastOpenValue = ret;
+			numCalls++;
+			numEvals++;
 		}
-		catch (ExpError e) {
-			throw new ErrorException(this, e);
-		}
+		return ret;
 	}
 
 	@Override

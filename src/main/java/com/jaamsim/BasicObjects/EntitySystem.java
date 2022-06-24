@@ -19,17 +19,13 @@ package com.jaamsim.BasicObjects;
 import java.util.ArrayList;
 
 import com.jaamsim.ProcessFlow.AbstractStateUserEntity;
-import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.basicsim.ObserverEntity;
 import com.jaamsim.basicsim.SubjectEntity;
 import com.jaamsim.basicsim.SubjectEntityDelegate;
 import com.jaamsim.events.EventHandle;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.events.ProcessTarget;
-import com.jaamsim.input.ExpError;
-import com.jaamsim.input.ExpEvaluator;
 import com.jaamsim.input.ExpResType;
-import com.jaamsim.input.ExpResult;
 import com.jaamsim.input.ExpressionInput;
 import com.jaamsim.input.InterfaceEntityListInput;
 import com.jaamsim.input.Keyword;
@@ -209,14 +205,8 @@ public class EntitySystem extends AbstractStateUserEntity implements ObserverEnt
 		}
 
 		// Calculate the state from the StateExpression input
-		double simTime = getSimTime();
-		try {
-			ExpResult res = ExpEvaluator.evaluateExpression(stateExp.getValue(), this, simTime);
-			setPresentState(res.stringVal);
-		}
-		catch (ExpError e) {
-			throw new ErrorException(this, e);
-		}
+		String state = stateExp.getNextResult(this, getSimTime()).stringVal;
+		setPresentState(state);
 	}
 
 	@Override

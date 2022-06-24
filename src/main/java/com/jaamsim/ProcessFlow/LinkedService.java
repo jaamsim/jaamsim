@@ -26,8 +26,6 @@ import com.jaamsim.StringProviders.StringProvInput;
 import com.jaamsim.SubModels.CompoundEntity;
 import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.basicsim.SubjectEntity;
-import com.jaamsim.input.ExpError;
-import com.jaamsim.input.ExpEvaluator;
 import com.jaamsim.input.ExpResType;
 import com.jaamsim.input.ExpressionInput;
 import com.jaamsim.input.InputAgent;
@@ -36,7 +34,6 @@ import com.jaamsim.input.Keyword;
 import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.Vec3dInput;
-import com.jaamsim.input.ExpParser.Expression;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.DistanceUnit;
@@ -242,15 +239,7 @@ public abstract class LinkedService extends LinkedDevice implements QueueUser {
 	}
 
 	private DisplayEntity getNextEntityValue(double simTime) {
-		DisplayEntity ret = null;
-		Expression exp = nextEntity.getValue();
-		try {
-			ret = (DisplayEntity) ExpEvaluator.evaluateExpression(exp, this, simTime).entVal;
-		}
-		catch (ExpError e) {
-			throw new ErrorException(this, e);
-		}
-		return ret;
+		return (DisplayEntity) nextEntity.getNextResult(this, simTime).entVal;
 	}
 
 	/**
@@ -281,8 +270,7 @@ public abstract class LinkedService extends LinkedDevice implements QueueUser {
 	 * @return true if the entity satisfies the SelectionCondition
 	 */
 	public boolean isAllowed(DisplayEntity ent, double simTime) {
-		Expression exp = selectionCondition.getValue();
-		if (exp == null)
+		if (selectionCondition.isDefault())
 			return true;
 
 		// Temporarily set the output 'obj' so that the expression can be evaluated
@@ -290,13 +278,7 @@ public abstract class LinkedService extends LinkedDevice implements QueueUser {
 		setReceivedEntity(ent);
 
 		// Evaluate the condition for the proposed user
-		boolean ret = false;
-		try {
-			ret = ExpEvaluator.evaluateExpression(exp, this, simTime).value != 0;
-		}
-		catch (ExpError e) {
-			throw new ErrorException(this, e);
-		}
+		boolean ret = selectionCondition.getNextResult(this, simTime).value != 0;
 
 		// Reset the output 'obj' to the original entity
 		setReceivedEntity(oldEnt);

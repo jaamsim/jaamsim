@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2018-2021 JaamSim Software Inc.
+ * Copyright (C) 2018-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,13 +24,9 @@ import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.ProcessFlow.StateUserEntity;
 import com.jaamsim.Statistics.TimeBasedFrequency;
 import com.jaamsim.Statistics.TimeBasedStatistics;
-import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.EntityInput;
-import com.jaamsim.input.ExpError;
-import com.jaamsim.input.ExpEvaluator;
-import com.jaamsim.input.ExpParser.Expression;
 import com.jaamsim.input.ExpResType;
 import com.jaamsim.input.ExpressionInput;
 import com.jaamsim.input.Keyword;
@@ -162,8 +158,7 @@ public class ResourceUnit extends StateUserEntity implements Seizable, ResourceP
 	 * @return true if the entity is eligible
 	 */
 	public boolean isAllowed(DisplayEntity ent) {
-		Expression exp = assignmentCondition.getValue();
-		if (exp == null)
+		if (assignmentCondition.isDefault())
 			return true;
 
 		// Temporarily set the present user so that the expression can be evaluated
@@ -171,14 +166,7 @@ public class ResourceUnit extends StateUserEntity implements Seizable, ResourceP
 		presentAssignment = ent;
 
 		// Evaluate the condition for the proposed user
-		boolean ret = false;
-		double simTime = getSimTime();
-		try {
-			ret = ExpEvaluator.evaluateExpression(exp, this, simTime).value != 0;
-		}
-		catch (ExpError e) {
-			throw new ErrorException(this, e);
-		}
+		boolean ret = assignmentCondition.getNextResult(this, getSimTime()).value != 0;
 
 		// Reset the original user
 		presentAssignment = oldAssignment;
@@ -252,8 +240,7 @@ public class ResourceUnit extends StateUserEntity implements Seizable, ResourceP
 
 	@Override
 	public int getPriority(DisplayEntity ent) {
-		Expression exp = assignmentPriority.getValue();
-		if (exp == null)
+		if (assignmentPriority.isDefault())
 			return 1;
 
 		// Temporarily set the present user so that the expression can be evaluated
@@ -261,14 +248,7 @@ public class ResourceUnit extends StateUserEntity implements Seizable, ResourceP
 		presentAssignment = ent;
 
 		// Evaluate the condition for the proposed user
-		int ret = 0;
-		double simTime = getSimTime();
-		try {
-			ret = (int) ExpEvaluator.evaluateExpression(exp, this, simTime).value;
-		}
-		catch (ExpError e) {
-			throw new ErrorException(this, e);
-		}
+		int ret = (int) assignmentPriority.getNextResult(this, getSimTime()).value;
 
 		// Reset the original user
 		presentAssignment = oldAssignment;

@@ -24,7 +24,6 @@ import com.jaamsim.StringProviders.StringProvListInput;
 import com.jaamsim.StringProviders.StringProvider;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.EntityTarget;
-import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.basicsim.FileEntity;
 import com.jaamsim.basicsim.ObserverEntity;
 import com.jaamsim.basicsim.SubjectEntity;
@@ -34,8 +33,6 @@ import com.jaamsim.events.EventManager;
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.EntityListInput;
-import com.jaamsim.input.ExpError;
-import com.jaamsim.input.ExpEvaluator;
 import com.jaamsim.input.ExpResType;
 import com.jaamsim.input.ExpressionInput;
 import com.jaamsim.input.Input;
@@ -46,7 +43,6 @@ import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.UnitTypeListInput;
 import com.jaamsim.input.ValueInput;
-import com.jaamsim.input.ExpParser.Expression;
 import com.jaamsim.states.StateEntity;
 import com.jaamsim.states.StateEntityListener;
 import com.jaamsim.states.StateRecord;
@@ -261,8 +257,7 @@ public class ExpressionLogger extends Logger implements StateEntityListener, Obs
 	}
 
 	private boolean testWatchListCondition(Entity ent) {
-		Expression exp = watchListCondition.getValue();
-		if (exp == null)
+		if (watchListCondition.isDefault())
 			return false;
 
 		// Temporarily set the watched entity so that the expression can be evaluated
@@ -270,14 +265,7 @@ public class ExpressionLogger extends Logger implements StateEntityListener, Obs
 		watchedEntity = ent;
 
 		// Evaluate the open condition (0 = false, non-zero = true)
-		boolean ret = false;
-		double simTime = getSimTime();
-		try {
-			ret = ExpEvaluator.evaluateExpression(exp, this, simTime).value != 0;
-		}
-		catch (ExpError e) {
-			throw new ErrorException(this, e);
-		}
+		boolean ret = watchListCondition.getNextResult(this, getSimTime()).value != 0;
 
 		// Reset the original watched entity
 		watchedEntity = lastEnt;
