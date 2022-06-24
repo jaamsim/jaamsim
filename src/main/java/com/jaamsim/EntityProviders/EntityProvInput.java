@@ -140,10 +140,6 @@ public class EntityProvInput<T extends Entity> extends Input<EntityProvider<T>> 
 		return String.format("[%s]", value.getNextEntity(thisEnt, simTime));
 	}
 
-	public T getNextEntity(double simTime) {
-		return getNextEntity(null, simTime);
-	}
-
 	public T getNextEntity(Entity thisEnt, double simTime) {
 		if (value == null)
 			return null;
