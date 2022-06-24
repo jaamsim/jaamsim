@@ -83,7 +83,7 @@ public class ExpressionEntity extends DisplayEntity implements SampleProvider {
 	 description = "The present value for the expression.",
 	    unitType = UserSpecifiedUnit.class,
 	  reportable = true)
-	public double getNextSample(double simTime) {
+	public final double getNextSample(double simTime) {
 		return getNextSample(this, simTime);
 	}
 

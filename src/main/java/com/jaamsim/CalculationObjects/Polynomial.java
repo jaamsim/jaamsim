@@ -63,7 +63,7 @@ public class Polynomial extends DisplayEntity implements SampleProvider {
 	@Output(name = "Value",
 	 description = "The calculated value for the polynomial.",
 	    unitType = DimensionlessUnit.class)
-	public double getNextSample(double simTime) {
+	public final double getNextSample(double simTime) {
 		return getNextSample(this, simTime);
 	}
 

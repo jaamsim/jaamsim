@@ -107,7 +107,7 @@ public class EventSchedule extends DisplayEntity implements SampleProvider{
 	             + "is evaluated.",
 	    unitType = TimeUnit.class,
 	    sequence = 1)
-	public double getNextSample(double simTime) {
+	public final double getNextSample(double simTime) {
 		return getNextSample(this, simTime);
 	}
 

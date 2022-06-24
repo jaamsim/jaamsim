@@ -123,7 +123,7 @@ public class InputValue extends TextBasics implements SampleProvider {
 	@Output(name = "Value",
 	        description = "The present value for this input.",
 	        unitType = UserSpecifiedUnit.class)
-	public double getNextSample(double simTime) {
+	public final double getNextSample(double simTime) {
 		return getNextSample(this, simTime);
 	}
 

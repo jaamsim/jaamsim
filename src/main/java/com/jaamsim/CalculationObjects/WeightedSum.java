@@ -119,7 +119,7 @@ public class WeightedSum extends DisplayEntity implements SampleProvider {
 	@Output(name = "Value",
 	 description = "The calculated value for the weighted sum.",
 	    unitType = UserSpecifiedUnit.class)
-	public double getNextSample(double simTime) {
+	public final double getNextSample(double simTime) {
 		return getNextSample(this, simTime);
 	}
 

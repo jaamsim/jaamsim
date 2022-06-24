@@ -170,7 +170,7 @@ implements SampleProvider {
 	@Output(name = "Value",
 	 description = "The result of the calculation at the present time.",
 	    unitType = UserSpecifiedUnit.class)
-	public double getNextSample(double simTime) {
+	public final double getNextSample(double simTime) {
 		return getNextSample(this, simTime);
 	}
 

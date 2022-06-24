@@ -104,7 +104,7 @@ public class ValueSequence extends DisplayEntity implements SampleProvider {
 	             + "is evaluated.",
 	    unitType = UserSpecifiedUnit.class,
 	    sequence = 1)
-	public double getNextSample(double simTime) {
+	public final double getNextSample(double simTime) {
 		return getNextSample(this, simTime);
 	}
 

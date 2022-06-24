@@ -118,7 +118,7 @@ public abstract class WaveGenerator extends DisplayEntity implements SampleProvi
 	@Output(name = "Value",
 	 description = "The present value for the wave.",
 	    unitType = UserSpecifiedUnit.class)
-	public double getNextSample(double simTime) {
+	public final double getNextSample(double simTime) {
 		return getNextSample(this, simTime);
 	}
 
