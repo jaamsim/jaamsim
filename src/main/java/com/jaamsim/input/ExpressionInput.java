@@ -20,6 +20,7 @@ package com.jaamsim.input;
 import java.util.ArrayList;
 
 import com.jaamsim.basicsim.Entity;
+import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.input.ExpParser.Expression;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
@@ -137,6 +138,22 @@ public class ExpressionInput extends Input<ExpParser.Expression> {
 		}
 		catch (ExpError e) {
 			return getValueString();
+		}
+	}
+
+	public ExpResult getNextResult(Entity thisEnt, double simTime) {
+		try {
+			ExpResult ret = ExpEvaluator.evaluateExpression(value, thisEnt, simTime);
+			if (ret.type != resType)
+				throw new ExpError(parseContext.getUpdatedSource(), 0, EXP_ERR_RESULT_TYPE,
+						ret.type, resType);
+			if (ret.type == ExpResType.NUMBER && ret.unitType != unitType)
+				throw new ExpError(parseContext.getUpdatedSource(), 0, EXP_ERR_UNIT,
+						ret.unitType.getSimpleName(), unitType.getSimpleName());
+			return ret;
+		}
+		catch (ExpError e) {
+			throw new ErrorException(thisEnt, getKeyword(), e);
 		}
 	}
 
