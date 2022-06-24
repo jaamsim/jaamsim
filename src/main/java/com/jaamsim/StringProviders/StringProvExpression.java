@@ -34,12 +34,10 @@ import com.jaamsim.units.Unit;
 public class StringProvExpression implements StringProvider {
 
 	private final Expression exp;
-	private final Entity thisEnt;
 	private final Class<? extends Unit> unitType;
 	private final ExpEvaluator.EntityParseContext parseContext;
 
-	public StringProvExpression(String expString, Entity ent, Class<? extends Unit> ut) throws ExpError {
-		thisEnt = ent;
+	public StringProvExpression(String expString, Entity thisEnt, Class<? extends Unit> ut) throws ExpError {
 		unitType = ut;
 		parseContext = ExpEvaluator.getParseContext(thisEnt, expString);
 		exp = ExpParser.parseExpression(parseContext, expString);
@@ -58,8 +56,6 @@ public class StringProvExpression implements StringProvider {
 	@Override
 	public String getNextString(Entity thisEnt, double simTime, double siFactor, boolean integerValue) {
 		String ret = "";
-		if (thisEnt == null)
-			thisEnt = this.thisEnt;
 		try {
 			ExpResult result = ExpEvaluator.evaluateExpression(exp, thisEnt, simTime);
 			switch (result.type) {
@@ -103,8 +99,6 @@ public class StringProvExpression implements StringProvider {
 	@Override
 	public String getNextString(Entity thisEnt, double simTime, String fmt, double siFactor) {
 		String ret = "";
-		if (thisEnt == null)
-			thisEnt = this.thisEnt;
 		try {
 			ExpResult result = ExpEvaluator.evaluateExpression(exp, thisEnt, simTime);
 			switch (result.type) {
@@ -153,8 +147,6 @@ public class StringProvExpression implements StringProvider {
 	@Override
 	public double getNextValue(Entity thisEnt, double simTime) {
 		double ret = Double.NaN;
-		if (thisEnt == null)
-			thisEnt = this.thisEnt;
 		try {
 			ExpResult result = ExpEvaluator.evaluateExpression(exp, thisEnt, simTime);
 			if (result.type  == ExpResType.NUMBER) {
