@@ -131,7 +131,7 @@ public abstract class LinkedService extends LinkedDevice implements QueueUser {
 		this.addInput(selectionCondition);
 
 		nextEntity = new ExpressionInput("NextEntity", KEY_INPUTS, null);
-		selectionCondition.setResultType(ExpResType.ENTITY);
+		nextEntity.setResultType(ExpResType.ENTITY);
 		this.addInput(nextEntity);
 
 		watchList = new InterfaceEntityListInput<>(SubjectEntity.class, "WatchList", KEY_INPUTS, new ArrayList<>());
