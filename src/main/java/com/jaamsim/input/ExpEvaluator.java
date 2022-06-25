@@ -27,6 +27,7 @@ import com.jaamsim.input.ExpParser.Assigner;
 import com.jaamsim.input.ExpParser.EvalContext;
 import com.jaamsim.input.ExpParser.OutputResolver;
 import com.jaamsim.units.DimensionlessUnit;
+import com.jaamsim.units.TimeUnit;
 import com.jaamsim.units.Unit;
 
 /**
@@ -387,6 +388,7 @@ public class ExpEvaluator {
 		varNames.add("this");
 		varNames.add("parent");
 		varNames.add("sub");
+		varNames.add("simTime");
 		return new EntityParseContext(thisEnt, constants, varNames, source);
 	}
 
@@ -399,6 +401,7 @@ public class ExpEvaluator {
 		varVals.add(ExpResult.makeEntityResult(thisEnt));
 		varVals.add(ExpResult.makeEntityResult(parent));
 		varVals.add(ExpResult.makeEntityResult(parent));
+		varVals.add(ExpResult.makeNumResult(simTime, TimeUnit.class));
 
 		EntityEvalContext evalContext = new EntityEvalContext(thisEnt, simTime, varVals);
 		return exp.evaluate(evalContext);
