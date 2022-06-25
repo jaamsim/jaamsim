@@ -1878,12 +1878,12 @@ public class ExpressionBox extends JDialog {
 		functions.add(new ButtonDesc("normal", "Normal distribution function ('normal')",
 				"Returns a random sample from the normal distribution.",
 				"Accepts input parmeters of mean, standardDeviation, and seed. "
-						+ "Returns a random sample with the same units as the scale input. "
+						+ "Returns a random sample with the same units as the mean input. "
 						+ "The standardDeviation input must have the unit type as the mean. "
 						+ "The seed input is dimensionless. "
 						+ "If a seed value is not entered, the model will chose the next unused "
 						+ "value.",
-				"normal(scale, normalMean, normalStandardDeviation, seed)",
+				"normal(mean, standardDeviation, seed)",
 				-1,
 				"'normal(10[s], 2[s], 5)' returns a sample with units of time using a seed of 5",
 				"'normal(10, 2)' returns a dimensionless sample using a selected seed"));
