@@ -376,15 +376,17 @@ public class ExpEvaluator {
 
 	}
 
+	private final static HashMap<String, ExpResult> constants = new HashMap<>();
+	static {
+		constants.put("TRUE", ExpResult.makeNumResult(1, DimensionlessUnit.class));
+		constants.put("FALSE", ExpResult.makeNumResult(0, DimensionlessUnit.class));
+	}
+
 	public static EntityParseContext getParseContext(Entity thisEnt, String source) {
-		HashMap<String, ExpResult> constants = new HashMap<>();
 		ArrayList<String> varNames = new ArrayList<>();
 		varNames.add("this");
 		varNames.add("parent");
 		varNames.add("sub");
-		constants.put("TRUE", ExpResult.makeNumResult(1, DimensionlessUnit.class));
-		constants.put("FALSE", ExpResult.makeNumResult(0, DimensionlessUnit.class));
-
 		return new EntityParseContext(thisEnt, constants, varNames, source);
 	}
 
