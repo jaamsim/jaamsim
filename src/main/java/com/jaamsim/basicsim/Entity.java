@@ -85,6 +85,8 @@ public class Entity {
 
 	Entity parent;
 
+	Entity prototype;
+
 	private final ArrayList<Input<?>> inpList = new ArrayList<>();
 
 	private final HashMap<String, AttributeHandle> attributeMap = new LinkedHashMap<>();
@@ -1029,6 +1031,18 @@ public class Entity {
 		}
 	}
 
+	public void setPrototype(Entity proto) {
+		prototype = proto;
+	}
+
+	public Entity getPrototype() {
+		return prototype;
+	}
+
+	public boolean isClone() {
+		return prototype != null;
+	}
+
 	/**
 	 * Returns the object type for this entity.
 	 * Null is returned if the entity itself is an instance of ObjectType.
@@ -1072,6 +1086,13 @@ public class Entity {
 	    sequence = 3)
 	public Entity getParentOutput(double simTime) {
 		return getParent();
+	}
+
+	@Output(name = "Prototype",
+	 description = "The entity that provides the default inputs for this entity.",
+	    sequence = 4)
+	public Entity getPrototype(double simTime) {
+		return getPrototype();
 	}
 
 }
