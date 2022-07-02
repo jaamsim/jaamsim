@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2019-2021 JaamSim Software Inc.
+ * Copyright (C) 2019-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -92,11 +92,17 @@ public class Threshold extends StateEntity implements SubjectEntity {
 		for (Entity each : getJaamSimModel().getClonesOfIterator(Entity.class, ThresholdUser.class)) {
 			ThresholdUser tu = (ThresholdUser) each;
 			if (tu.getThresholds().contains(this))
-				userList.add(tu);
+				registerThresholdUser(tu);
 		}
 
 		// Clear the list of observers
 		subject.clear();
+	}
+
+	public void registerThresholdUser(ThresholdUser tu) {
+		if (!isActive() || userList.contains(tu))
+			return;
+		userList.add(tu);
 	}
 
 	public boolean getInitialOpenValue() {
