@@ -197,6 +197,10 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 		downtimeUserList.add(du);
 	}
 
+	public void unregisterDowntimeUser(DowntimeUser du) {
+		downtimeUserList.remove(du);
+	}
+
 	@Override
     public void startUp() {
 		super.startUp();

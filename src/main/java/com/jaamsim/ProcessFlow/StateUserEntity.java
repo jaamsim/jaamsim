@@ -166,6 +166,17 @@ public abstract class StateUserEntity extends AbstractStateUserEntity implements
 		this.addState(STATE_STOPPED);
 	}
 
+	@Override
+	public void kill() {
+		super.kill();
+		for (Threshold thresh : getThresholds()) {
+			thresh.unregisterThresholdUser(this);
+		}
+		for (DowntimeEntity de : getDowntimeEntities()) {
+			de.unregisterDowntimeUser(this);
+		}
+	}
+
 	// ********************************************************************************************
 	// THRESHOLDS
 	// ********************************************************************************************

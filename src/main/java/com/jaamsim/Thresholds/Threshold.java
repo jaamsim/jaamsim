@@ -105,6 +105,10 @@ public class Threshold extends StateEntity implements SubjectEntity {
 		userList.add(tu);
 	}
 
+	public void unregisterThresholdUser(ThresholdUser tu) {
+		userList.remove(tu);
+	}
+
 	public boolean getInitialOpenValue() {
 		return true;
 	}
