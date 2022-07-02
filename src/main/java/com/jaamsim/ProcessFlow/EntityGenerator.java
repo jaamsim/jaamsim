@@ -183,6 +183,7 @@ public class EntityGenerator extends LinkedService implements EntityGen {
 			DisplayEntity ent = InputAgent.generateEntityWithName(getJaamSimModel(), proto.getClass(), sb.toString());
 			Entity.fastCopyInputs(proto, ent);
 			ent.earlyInit();
+			ent.lateInit();
 
 			// Set the obj output to the assembled part
 			receiveEntity(ent);
