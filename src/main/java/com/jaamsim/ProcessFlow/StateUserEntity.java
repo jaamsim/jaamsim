@@ -147,6 +147,9 @@ public abstract class StateUserEntity extends AbstractStateUserEntity implements
 		for (Threshold thresh : getThresholds()) {
 			thresh.registerThresholdUser(this);
 		}
+		for (DowntimeEntity de : getDowntimeEntities()) {
+			de.registerDowntimeUser(this);
+		}
 	}
 
 	@Override
@@ -338,6 +341,16 @@ public abstract class StateUserEntity extends AbstractStateUserEntity implements
 	// ********************************************************************************************
 	// MAINTENANCE AND BREAKDOWNS
 	// ********************************************************************************************
+
+	public ArrayList<DowntimeEntity> getDowntimeEntities() {
+		ArrayList<DowntimeEntity> ret = new ArrayList<>(immediateMaintenanceList.getValue());
+		ret.addAll(immediateBreakdownList.getValue());
+		ret.addAll(forcedMaintenanceList.getValue());
+		ret.addAll(forcedBreakdownList.getValue());
+		ret.addAll(opportunisticMaintenanceList.getValue());
+		ret.addAll(opportunisticBreakdownList.getValue());
+		return ret;
+	}
 
 	@Override
 	public boolean isDowntimeUser(DowntimeEntity down) {

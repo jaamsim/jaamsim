@@ -176,7 +176,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 
 			DowntimeUser du = (DowntimeUser)each;
 			if (du.isDowntimeUser(this))
-				downtimeUserList.add(du);
+				registerDowntimeUser(du);
 		}
 	}
 
@@ -189,6 +189,12 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 			secondsForNextFailure = getNextDowntimeIAT();
 		else
 			secondsForNextFailure = firstDowntime.getNextSample(getSimTime());
+	}
+
+	public void registerDowntimeUser(DowntimeUser du) {
+		if (!isActive() || downtimeUserList.contains(du))
+			return;
+		downtimeUserList.add(du);
 	}
 
 	@Override
