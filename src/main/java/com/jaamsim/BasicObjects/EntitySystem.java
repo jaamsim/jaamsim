@@ -117,7 +117,7 @@ public class EntitySystem extends AbstractStateUserEntity implements ObserverEnt
 
 		@Override
 		public String getDescription() {
-			return "setPresentState";
+			return getName() + ".setPresentState";
 		}
 
 	};
