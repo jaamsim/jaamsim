@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2018-2020 JaamSim Software Inc.
+ * Copyright (C) 2018-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,11 +22,6 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 import javax.swing.JMenuItem;
-
-import com.jaamsim.Commands.KeywordCommand;
-import com.jaamsim.basicsim.Entity;
-import com.jaamsim.input.InputAgent;
-import com.jaamsim.input.KeywordIndex;
 
 public class ExpressionEditor extends CellEditor {
 
@@ -110,12 +105,7 @@ public class ExpressionEditor extends CellEditor {
 		}
 		else {
 			// Reset the original value
-			Entity ent = EditBox.getInstance().getCurrentEntity();
-			try {
-				KeywordIndex kw = InputAgent.formatInput(input.getKeyword(), str);
-				InputAgent.storeAndExecute(new KeywordCommand(ent, kw));
-			}
-			catch (Exception e) {}
+			setValue(str);
 		}
 
 		// Apply editing
