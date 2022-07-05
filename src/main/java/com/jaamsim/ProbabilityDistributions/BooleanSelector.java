@@ -28,9 +28,18 @@ import com.jaamsim.rng.MRG1999a;
 import com.jaamsim.units.DimensionlessUnit;
 
 public class BooleanSelector extends DisplayEntity implements RandomStreamUser {
-	@Keyword(description = "Seed for the random number generator.  Must be an integer >= 0.",
-	         exampleList = {"547"})
-	private IntegerInput randomSeedInput;
+	@Keyword(description = "Random stream number for the random number generator used by this "
+	                     + "object. "
+	                     + "Accepts an integer value >= 0.\n\n"
+	                     + "The 'RandomSeed' keyword works together with the "
+	                     + "'GlobalSubstreamSeed' keyword for Simulation to determine the random "
+	                     + "sequence. "
+	                     + "The 'GlobalSubsteamSeed' keyword allows the user to change all the "
+	                     + "random sequences in a model with a single input.\n\n"
+	                     + "When an object with this input is copied and pasted, the RandomSeed "
+	                     + "input is reset to an unused value for each copy that is pasted.",
+			 exampleList = {"547"})
+	private final IntegerInput randomSeedInput;
 
 	@Keyword(description = "The probability of the Selector returning true.",
 	         exampleList = {"0.5", "InputValue1", "'2 * [InputValue1].Value'"})

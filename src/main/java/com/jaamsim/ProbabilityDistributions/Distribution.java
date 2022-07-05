@@ -48,8 +48,9 @@ implements SampleProvider, RandomStreamUser {
 	         exampleList = {"DistanceUnit"})
 	protected final UnitTypeInput unitType;
 
-	@Keyword(description = "Seed for the random number generator. "
-	                     + "Must be an integer >= 0. \n\n"
+	@Keyword(description = "Random stream number for the random number generator used by this "
+	                     + "probability distribution. "
+	                     + "Accepts an integer value >= 0.\n\n"
 	                     + "The 'RandomSeed' keyword works together with the "
 	                     + "'GlobalSubstreamSeed' keyword for Simulation to determine the random "
 	                     + "sequence. "

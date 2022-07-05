@@ -97,13 +97,15 @@ public class Simulation extends Entity {
 	         exampleList = {"TRUE"})
 	private final BooleanInput exitAtStop;
 
-	@Keyword(description = "Global seed that sets the substream for each probability "
-	                     + "distribution. Must be an integer >= 0. GlobalSubstreamSeed works "
-	                     + "together with each probability distribution's RandomSeed keyword to "
-	                     + "determine its random sequence. It allows the user to change all the "
-	                     + "random sequences in a model with a single input.\n\n"
+	@Keyword(description = "Substream number applied to each probability distribution in the "
+	                     + "model. "
+	                     + "Accepts an integer value >= 0.\n\n"
+	                     + "GlobalSubstreamSeed works together with the 'RandomSeed' input for "
+	                     + "each probability distribution to determine its random sequence. "
+	                     + "It allows the user to change all the random sequences in a model with "
+	                     + "a single input.\n\n"
 	                     + "The default value is the replication number for the simulation run "
-	                     + "being executed.",
+	                     + "being executed, which is appropriate for most applications.",
 	         exampleList = {"5", "'this.ReplicationNumber + 100'"})
 	private final SampleInput globalSeedInput;
 
