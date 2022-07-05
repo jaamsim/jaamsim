@@ -1749,195 +1749,196 @@ public class ExpressionBox extends JDialog {
 
 		functions.add(new ButtonDesc("beta", "Beta distribution function ('beta')",
 				"Returns a random sample from the beta distribution.",
-				"Accepts input parameters of alpha, beta, scale, and seed. "
+				"Accepts input parameters of alpha, beta, scale, and random stream. "
 						+ "Returns a random sample with the same units as the scale input. "
-						+ "The alpha, beta, and seed inputs are dimensionless. "
-						+ "If a seed value is not entered, the model will chose the next unused "
-						+ "value.",
-				"beta(alpha, beta, scale, seed)",
+						+ "The alpha, beta, and random stream inputs are dimensionless. "
+						+ "If a random stream value is not entered, the model will chose the next "
+						+ "unused value.",
+				"beta(alpha, beta, scale, stream)",
 				-1,
-				"'beta(2, 1, 1[s], 5)' returns a sample with units of time using a seed of 5",
-				"'beta(2, 1, 1)' returns a dimensionless sample using a selected seed"));
+				"'beta(2, 1, 1[s], 5)' returns a sample with units of time using random stream 5",
+				"'beta(2, 1, 1)' returns a dimensionless sample using a selected random stream"));
 
 		functions.add(new ButtonDesc("binomial", "Binomial distribution function ('binomial')",
 				"Returns a random sample from the binomial distribution, i.e. the number of "
 						+ "successes in n independent trials with probability p.",
-				"Accepts input parameters of numberOfTrials, probability, and seed. "
+				"Accepts input parameters of numberOfTrials, probability, and random stream. "
 						+ "Returns a randomly selected dimensionless integer value. "
-						+ "The numberOfTrials, probability, and seed inputs are dimensionless. "
-						+ "If a seed value is not entered, the model will chose the next unused "
-						+ "value.",
-				"binomial(numberOfTrials, probability, seed)",
+						+ "The numberOfTrials, probability, and random stream inputs are "
+						+ "dimensionless. "
+						+ "If a random stream value is not entered, the model will chose the next "
+						+ "unused value.",
+				"binomial(numberOfTrials, probability, stream)",
 				-1,
-				"'binomial(10, 0.4, 5)' returns a dimensionless integer value using a seed of 5",
-				"'binomial(10, 0.4)' returns a dimensionless integer value using a selected seed"));
+				"'binomial(10, 0.4, 5)' returns a dimensionless integer value using random stream 5",
+				"'binomial(10, 0.4)' returns a dimensionless integer value using a selected random stream"));
 
 		functions.add(new ButtonDesc("discreteUniform", "Discrete uniform distribution function "
 						+ "('discreteUniform')",
 				"Returns a random sample from the discrete uniform distribution, i.e. a randomly "
 						+ "selected index in the range i to j.",
-				"Accepts input parameters of minIndex, maxIndex, and seed. "
+				"Accepts input parameters of minIndex, maxIndex, and random stream. "
 						+ "Returns a randomly selected dimensionless integer value. "
-						+ "The minIndex, maxIndex, and seed inputs are dimensionless. "
-						+ "If a seed value is not entered, the model will chose the next unused "
-						+ "value.",
-				"discreteUniform(minIndex, maxIndex, seed)",
+						+ "The minIndex, maxIndex, and random stream inputs are dimensionless. "
+						+ "If a random stream value is not entered, the model will chose the next "
+						+ "unused value.",
+				"discreteUniform(minIndex, maxIndex, stream)",
 				-1,
-				"'discreteUniform(3, 8, 5)' returns a dimensionless integer value using a seed of 5",
-				"'discreteUniform(3, 8)' returns a dimensionless integer value using a selected seed"));
+				"'discreteUniform(3, 8, 5)' returns a dimensionless integer value using random stream 5",
+				"'discreteUniform(3, 8)' returns a dimensionless integer value using a selected random stream"));
 
 		functions.add(new ButtonDesc("erlang", "Erlang distribution function ('erlang')",
 				"Returns a random sample from the Erlang distribution.",
-				"Accepts input parameters of mean, shape, and seed. "
+				"Accepts input parameters of mean, shape, and random stream. "
 						+ "Returns a random sample with the same units as the mean input. "
-						+ "The shape and seed input are dimensionless. "
-						+ "If a seed value is not entered, the model will chose the next unused "
-						+ "value.",
-				"erlang(mean, shape, seed)",
+						+ "The shape and random stream input are dimensionless. "
+						+ "If a random stream value is not entered, the model will chose the next "
+						+ "unused value.",
+				"erlang(mean, shape, stream)",
 				-1,
-				"'erlang(10[s], 2, 5)' returns a sample with units of time using a seed of 5",
-				"'erlang(10, 2)' returns a dimensionless sample using a selected seed"));
+				"'erlang(10[s], 2, 5)' returns a sample with units of time using random stream 5",
+				"'erlang(10, 2)' returns a dimensionless sample using a selected random stream"));
 
 		functions.add(new ButtonDesc("exponential", "Exponential distribution function ('exponential')",
 				"Returns a random sample from the exponential distribution.",
-				"Accepts input parameters of mean and seed. "
+				"Accepts input parameters of mean and random stream. "
 						+ "Returns a random sample with the same units as the mean input. "
-						+ "The seed input is dimensionless. "
-						+ "If a seed value is not entered, the model will chose the next unused "
-						+ "value.",
-				"exponential(mean, seed)",
+						+ "The random stream input is dimensionless. "
+						+ "If a random stream value is not entered, the model will chose the next "
+						+ "unused value.",
+				"exponential(mean, stream)",
 				-1,
-				"'exponential(10[s], 5)' returns a sample with units of time using a seed of 5",
-				"'exponential(10)' returns a dimensionless sample using a selected seed"));
+				"'exponential(10[s], 5)' returns a sample with units of time using random stream 5",
+				"'exponential(10)' returns a dimensionless sample using a selected random stream"));
 
 		functions.add(new ButtonDesc("gamma", "Gamma distribution function ('gamma')",
 				"Returns a random sample from the gamma distribution.",
-				"Accepts input parameters of mean, shape, and seed. "
+				"Accepts input parameters of mean, shape, and random stream. "
 						+ "Returns a random sample with the same units as the mean input. "
-						+ "The shape and seed inputs are dimensionless. "
-						+ "If a seed value is not entered, the model will chose the next unused "
-						+ "value.",
-				"gamma(mean, shape, seed)",
+						+ "The shape and random stream inputs are dimensionless. "
+						+ "If a random stream value is not entered, the model will chose the next "
+						+ "unused value.",
+				"gamma(mean, shape, stream)",
 				-1,
-				"'gamma(10[s], 2, 5)' returns a sample with units of time using a seed of 5",
-				"'gamma(10, 2)' returns a dimensionless sample using a selected seed"));
+				"'gamma(10[s], 2, 5)' returns a sample with units of time using random stream 5",
+				"'gamma(10, 2)' returns a dimensionless sample using a selected random stream"));
 
 		functions.add(new ButtonDesc("geometric", "Geometric distribution function ('geometric')",
 				"Returns a random sample from the geometric distribution, i.e. the number of "
 						+ "failures before the first success in a sequence of independent trials "
 						+ "with probability p.",
-				"Accepts input parameters of probability and seed. "
+				"Accepts input parameters of probability and random stream. "
 						+ "Returns a randomly selected dimensionless integer value. "
-						+ "The probability and seed inputs are dimensionless. "
-						+ "If a seed value is not entered, the model will chose the next unused "
-						+ "value.",
-				"geometric(probability, seed)",
+						+ "The probability and random stream inputs are dimensionless. "
+						+ "If a random stream value is not entered, the model will chose the next "
+						+ "unused value.",
+				"geometric(probability, stream)",
 				-1,
-				"'geometric(0.4, 5)' returns a dimensionless integer value using a seed of 5",
-				"'geometric(0.4)' returns a dimensionless integer value using a selected seed"));
+				"'geometric(0.4, 5)' returns a dimensionless integer value using random stream 5",
+				"'geometric(0.4)' returns a dimensionless integer value using a selected random stream"));
 
 		functions.add(new ButtonDesc("loglogistic", "LogLogistic distribution function ('loglogistic')",
 				"Returns a random sample from the loglogistic distribution.",
-				"Accepts input parameters of scale, shape, and seed. "
+				"Accepts input parameters of scale, shape, and random stream. "
 						+ "Returns a random sample with the same units as the scale input. "
-						+ "The shape and seed inputs are dimensionless. "
-						+ "If a seed value is not entered, the model will chose the next unused "
-						+ "value.",
-				"loglogistic(scale, shape, seed)",
+						+ "The shape and random stream inputs are dimensionless. "
+						+ "If a random stream value is not entered, the model will chose the next "
+						+ "unused value.",
+				"loglogistic(scale, shape, stream)",
 				-1,
-				"'loglogistic(10[s], 4, 5)' returns a sample with units of time using a seed of 5",
-				"'loglogistic(10, 4)' returns a dimensionless sample using a selected seed"));
+				"'loglogistic(10[s], 4, 5)' returns a sample with units of time using random stream 5",
+				"'loglogistic(10, 4)' returns a dimensionless sample using a selected random stream"));
 
 		functions.add(new ButtonDesc("lognormal", "LogNormal distribution function ('lognormal')",
 				"Returns a random sample from the lognormal distribution.",
-				"Accepts input parameters of scale, normalMean, normalStandardDeviation, and seed. "
+				"Accepts input parameters of scale, normalMean, normalStandardDeviation, and random stream. "
 						+ "Returns a random sample with the same units as the scale input. "
-						+ "The normalMean, normalStandardDeviation, and seed inputs are dimensionless. "
-						+ "If a seed value is not entered, the model will chose the next unused "
-						+ "value.",
-				"lognormal(scale, normalMean, normalStandardDeviation, seed)",
+						+ "The normalMean, normalStandardDeviation, and random stream inputs are dimensionless. "
+						+ "If a random stream value is not entered, the model will chose the next "
+						+ "unused value.",
+				"lognormal(scale, normalMean, normalStandardDeviation, stream)",
 				-1,
-				"'lognormal(10[s], 1, 0.2, 5)' returns a sample with units of time using a seed of 5",
-				"'lognormal(10, 1, 0.2)' returns a dimensionless sample using a selected seed"));
+				"'lognormal(10[s], 1, 0.2, 5)' returns a sample with units of time using random stream 5",
+				"'lognormal(10, 1, 0.2)' returns a dimensionless sample using a selected random stream"));
 
 		functions.add(new ButtonDesc("negativeBinomial", "Negative binomial distribution function "
 						+ "('negativeBinomial')",
 				"Returns a random sample from the negative binomial distribution, i.e. the number "
 						+ "of failures before s successes in a sequence of independent trials "
 						+ "with probability p.",
-				"Accepts input parameters of successfulTrials, probability, and seed. "
+				"Accepts input parameters of successfulTrials, probability, and random stream. "
 						+ "Returns a randomly selected dimensionless integer value. "
-						+ "The successfulTrials, probability, and seed inputs are dimensionless. "
-						+ "If a seed value is not entered, the model will chose the next unused "
-						+ "value.",
-				"negativeBinomial(successfulTrials, probability, seed)",
+						+ "The successfulTrials, probability, and random stream inputs are dimensionless. "
+						+ "If a random stream value is not entered, the model will chose the next "
+						+ "unused value.",
+				"negativeBinomial(successfulTrials, probability, stream)",
 				-1,
-				"'negativeBinomial(3, 0.4, 5)' returns a dimensionless integer value using a seed of 5",
-				"'negativeBinomial(3, 0.4)' returns a dimensionless integer value using a selected seed"));
+				"'negativeBinomial(3, 0.4, 5)' returns a dimensionless integer value using random stream 5",
+				"'negativeBinomial(3, 0.4)' returns a dimensionless integer value using a selected random stream"));
 
 		functions.add(new ButtonDesc("normal", "Normal distribution function ('normal')",
 				"Returns a random sample from the normal distribution.",
-				"Accepts input parmeters of mean, standardDeviation, and seed. "
+				"Accepts input parmeters of mean, standardDeviation, and random stream. "
 						+ "Returns a random sample with the same units as the scale input. "
 						+ "The standardDeviation input must have the unit type as the mean. "
-						+ "The seed input is dimensionless. "
-						+ "If a seed value is not entered, the model will chose the next unused "
-						+ "value.",
-				"normal(mean, standardDeviation, seed)",
+						+ "The random stream input is dimensionless. "
+						+ "If a random stream value is not entered, the model will chose the next "
+						+ "unused value.",
+				"normal(mean, standardDeviation, stream)",
 				-1,
-				"'normal(10[s], 2[s], 5)' returns a sample with units of time using a seed of 5",
-				"'normal(10, 2)' returns a dimensionless sample using a selected seed"));
+				"'normal(10[s], 2[s], 5)' returns a sample with units of time using random stream 5",
+				"'normal(10, 2)' returns a dimensionless sample using a selected random stream"));
 
 		functions.add(new ButtonDesc("poisson", "Poisson distribution function ('poisson')",
 				"Returns a random sample from the Poisson distribution, i.e. the number of "
 						+ "independent events that occur in a given period of time.",
-				"Accepts input parameters of mean and seed. "
+				"Accepts input parameters of mean and random stream. "
 						+ "Returns a randomly selected dimensionless integer value. "
-						+ "The seed input is dimensionless. "
-						+ "If a seed value is not entered, the model will chose the next unused "
-						+ "value.",
-				"poisson(mean, seed)",
+						+ "The random stream input is dimensionless. "
+						+ "If a random stream value is not entered, the model will chose the next "
+						+ "unused value.",
+				"poisson(mean, stream)",
 				-1,
-				"'poisson(10, 5)' returns a dimensionless integer value using a seed of 5",
-				"'poisson(10)' returns a dimensionless integer value using a selected seed"));
+				"'poisson(10, 5)' returns a dimensionless integer value using random stream 5",
+				"'poisson(10)' returns a dimensionless integer value using a selected random stream"));
 
 		functions.add(new ButtonDesc("triangular", "Triangular distribution function ('triangular')",
 				"Returns a random sample from the triangular distribution.",
-				"Accepts input parameters of minValue, mode, maxValue, and seed. "
+				"Accepts input parameters of minValue, mode, maxValue, and random stream. "
 						+ "Returns a random sample with the same units as the minValue input. "
 						+ "The mode and maxValue inputs must have the same unit type as the minValue. "
-						+ "The seed input is dimensionless. "
-						+ "If a seed value is not entered, the model will chose the next unused "
-						+ "value.",
-				"triangular(minValue, mode, maxValue, seed)",
+						+ "The random stream input is dimensionless. "
+						+ "If a random stream value is not entered, the model will chose the next "
+						+ "unused value.",
+				"triangular(minValue, mode, maxValue, stream)",
 				-1,
-				"'triangular(2[s], 4[s], 5[s], 5)' returns a sample with units of time using a seed of 5",
-				"'triangular(2, 4, 5)' returns a dimensionless sample using a selected seed"));
+				"'triangular(2[s], 4[s], 5[s], 5)' returns a sample with units of time using random stream 5",
+				"'triangular(2, 4, 5)' returns a dimensionless sample using a selected random stream"));
 
 		functions.add(new ButtonDesc("uniform", "Uniform distribution function ('uniform')",
 				"Returns a random sample from the uniform distribution.",
-				"Accepts input parameters of minValue, maxValue, and seed. "
+				"Accepts input parameters of minValue, maxValue, and random stream. "
 						+ "Returns a random sample with the same units as the minValue input. "
 						+ "The maxValue input must have the same unit type as the minValue. "
-						+ "The seed input is dimensionless. "
-						+ "If a seed value is not entered, the model will chose the next unused "
-						+ "value.",
-				"uniform(minValue, mode, maxValue, seed)",
+						+ "The random stream input is dimensionless. "
+						+ "If a random stream value is not entered, the model will chose the next "
+						+ "unused value.",
+				"uniform(minValue, mode, maxValue, stream)",
 				-1,
-				"'uniform(2[s], 5[s], 5)' returns a sample with units of time using a seed of 5",
-				"'uniform(2, 5)' returns a dimensionless sample using a selected seed"));
+				"'uniform(2[s], 5[s], 5)' returns a sample with units of time using random stream 5",
+				"'uniform(2, 5)' returns a dimensionless sample using a selected random stream"));
 
 		functions.add(new ButtonDesc("weibull", "Weibull distribution function ('weibull')",
 				"Returns a random sample from the Weibull distribution.",
-				"Accepts input parameters of scale, shape, and seed. "
+				"Accepts input parameters of scale, shape, and random stream. "
 						+ "Returns a random sample with the same units as the scale input. "
-						+ "The shape and seed inputs are dimensionless. "
-						+ "If a seed value is not entered, the model will chose the next unused "
-						+ "value.",
-				"weibull(scale, shape, seed)",
+						+ "The shape and random stream inputs are dimensionless. "
+						+ "If a random stream value is not entered, the model will chose the next "
+						+ "unused value.",
+				"weibull(scale, shape, stream)",
 				-1,
-				"'weibull(10[s], 2, 5)' returns a sample with units of time using a seed of 5",
-				"'weibull(10, 2)' returns a dimensionless sample using a selected seed"));
+				"'weibull(10[s], 2, 5)' returns a sample with units of time using random stream 5",
+				"'weibull(10, 2)' returns a dimensionless sample using a selected random stream"));
 
 	}
 
