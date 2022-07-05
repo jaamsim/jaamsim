@@ -70,6 +70,7 @@ import com.jaamsim.input.ValueHandle;
 import com.jaamsim.units.Unit;
 
 public class ExpressionBox extends JDialog {
+	private static ExpressionBox instance;
 
 	private final Input<?> input;
 	private final JTextArea editArea;
@@ -102,6 +103,7 @@ public class ExpressionBox extends JDialog {
 
 	public ExpressionBox(Input<?> in, String str) {
 		super((JDialog)null, DIALOG_NAME, true);
+		instance = this;
 		setType(Type.UTILITY);
 
 		getContentPane().setLayout( new BorderLayout() );
@@ -308,6 +310,15 @@ public class ExpressionBox extends JDialog {
 				setEditMode(EDIT_MODE_NORMAL);
 			}
 	    });
+	}
+
+	public static synchronized ExpressionBox getInstance() {
+		return instance;
+	}
+
+	public static boolean isInstanceVisible() {
+		ExpressionBox inst = getInstance();
+		return inst != null && inst.isVisible();
 	}
 
 	private void setEditMode(int mode) {
