@@ -1749,7 +1749,7 @@ public class ExpressionBox extends JDialog {
 
 		functions.add(new ButtonDesc("beta", "Beta distribution function ('beta')",
 				"Returns a random sample from the beta distribution.",
-				"Accepts input parmeters of alpha, beta, scale, and seed. "
+				"Accepts input parameters of alpha, beta, scale, and seed. "
 						+ "Returns a random sample with the same units as the scale input. "
 						+ "The alpha, beta, and seed inputs are dimensionless. "
 						+ "If a seed value is not entered, the model will chose the next unused "
@@ -1762,7 +1762,7 @@ public class ExpressionBox extends JDialog {
 		functions.add(new ButtonDesc("binomial", "Binomial distribution function ('binomial')",
 				"Returns a random sample from the binomial distribution, i.e. the number of "
 						+ "successes in n independent trials with probability p.",
-				"Accepts input parmeters of numberOfTrials, probability, and seed. "
+				"Accepts input parameters of numberOfTrials, probability, and seed. "
 						+ "Returns a randomly selected dimensionless integer value. "
 						+ "The numberOfTrials, probability, and seed inputs are dimensionless. "
 						+ "If a seed value is not entered, the model will chose the next unused "
@@ -1776,7 +1776,7 @@ public class ExpressionBox extends JDialog {
 						+ "('discreteUniform')",
 				"Returns a random sample from the discrete uniform distribution, i.e. a randomly "
 						+ "selected index in the range i to j.",
-				"Accepts input parmeters of minIndex, maxIndex, and seed. "
+				"Accepts input parameters of minIndex, maxIndex, and seed. "
 						+ "Returns a randomly selected dimensionless integer value. "
 						+ "The minIndex, maxIndex, and seed inputs are dimensionless. "
 						+ "If a seed value is not entered, the model will chose the next unused "
@@ -1788,7 +1788,7 @@ public class ExpressionBox extends JDialog {
 
 		functions.add(new ButtonDesc("erlang", "Erlang distribution function ('erlang')",
 				"Returns a random sample from the Erlang distribution.",
-				"Accepts input parmeters of mean, shape, and seed. "
+				"Accepts input parameters of mean, shape, and seed. "
 						+ "Returns a random sample with the same units as the mean input. "
 						+ "The shape and seed input are dimensionless. "
 						+ "If a seed value is not entered, the model will chose the next unused "
@@ -1800,7 +1800,7 @@ public class ExpressionBox extends JDialog {
 
 		functions.add(new ButtonDesc("exponential", "Exponential distribution function ('exponential')",
 				"Returns a random sample from the exponential distribution.",
-				"Accepts input parmeters of mean and seed. "
+				"Accepts input parameters of mean and seed. "
 						+ "Returns a random sample with the same units as the mean input. "
 						+ "The seed input is dimensionless. "
 						+ "If a seed value is not entered, the model will chose the next unused "
@@ -1812,7 +1812,7 @@ public class ExpressionBox extends JDialog {
 
 		functions.add(new ButtonDesc("gamma", "Gamma distribution function ('gamma')",
 				"Returns a random sample from the gamma distribution.",
-				"Accepts input parmeters of mean, shape, and seed. "
+				"Accepts input parameters of mean, shape, and seed. "
 						+ "Returns a random sample with the same units as the mean input. "
 						+ "The shape and seed inputs are dimensionless. "
 						+ "If a seed value is not entered, the model will chose the next unused "
@@ -1826,7 +1826,7 @@ public class ExpressionBox extends JDialog {
 				"Returns a random sample from the geometric distribution, i.e. the number of "
 						+ "failures before the first success in a sequence of independent trials "
 						+ "with probability p.",
-				"Accepts input parmeters of probability and seed. "
+				"Accepts input parameters of probability and seed. "
 						+ "Returns a randomly selected dimensionless integer value. "
 						+ "The probability and seed inputs are dimensionless. "
 						+ "If a seed value is not entered, the model will chose the next unused "
@@ -1838,7 +1838,7 @@ public class ExpressionBox extends JDialog {
 
 		functions.add(new ButtonDesc("loglogistic", "LogLogistic distribution function ('loglogistic')",
 				"Returns a random sample from the loglogistic distribution.",
-				"Accepts input parmeters of scale, shape, and seed. "
+				"Accepts input parameters of scale, shape, and seed. "
 						+ "Returns a random sample with the same units as the scale input. "
 						+ "The shape and seed inputs are dimensionless. "
 						+ "If a seed value is not entered, the model will chose the next unused "
@@ -1850,7 +1850,7 @@ public class ExpressionBox extends JDialog {
 
 		functions.add(new ButtonDesc("lognormal", "LogNormal distribution function ('lognormal')",
 				"Returns a random sample from the lognormal distribution.",
-				"Accepts input parmeters of scale, normalMean, normalStandardDeviation, and seed. "
+				"Accepts input parameters of scale, normalMean, normalStandardDeviation, and seed. "
 						+ "Returns a random sample with the same units as the scale input. "
 						+ "The normalMean, normalStandardDeviation, and seed inputs are dimensionless. "
 						+ "If a seed value is not entered, the model will chose the next unused "
@@ -1865,7 +1865,7 @@ public class ExpressionBox extends JDialog {
 				"Returns a random sample from the negative binomial distribution, i.e. the number "
 						+ "of failures before s successes in a sequence of independent trials "
 						+ "with probability p.",
-				"Accepts input parmeters of successfulTrials, probability, and seed. "
+				"Accepts input parameters of successfulTrials, probability, and seed. "
 						+ "Returns a randomly selected dimensionless integer value. "
 						+ "The successfulTrials, probability, and seed inputs are dimensionless. "
 						+ "If a seed value is not entered, the model will chose the next unused "
@@ -1878,7 +1878,7 @@ public class ExpressionBox extends JDialog {
 		functions.add(new ButtonDesc("normal", "Normal distribution function ('normal')",
 				"Returns a random sample from the normal distribution.",
 				"Accepts input parmeters of mean, standardDeviation, and seed. "
-						+ "Returns a random sample with the same units as the mean input. "
+						+ "Returns a random sample with the same units as the scale input. "
 						+ "The standardDeviation input must have the unit type as the mean. "
 						+ "The seed input is dimensionless. "
 						+ "If a seed value is not entered, the model will chose the next unused "
@@ -1891,7 +1891,7 @@ public class ExpressionBox extends JDialog {
 		functions.add(new ButtonDesc("poisson", "Poisson distribution function ('poisson')",
 				"Returns a random sample from the Poisson distribution, i.e. the number of "
 						+ "independent events that occur in a given period of time.",
-				"Accepts input parmeters of mean and seed. "
+				"Accepts input parameters of mean and seed. "
 						+ "Returns a randomly selected dimensionless integer value. "
 						+ "The seed input is dimensionless. "
 						+ "If a seed value is not entered, the model will chose the next unused "
@@ -1903,7 +1903,7 @@ public class ExpressionBox extends JDialog {
 
 		functions.add(new ButtonDesc("triangular", "Triangular distribution function ('triangular')",
 				"Returns a random sample from the triangular distribution.",
-				"Accepts input parmeters of minValue, mode, maxValue, and seed. "
+				"Accepts input parameters of minValue, mode, maxValue, and seed. "
 						+ "Returns a random sample with the same units as the minValue input. "
 						+ "The mode and maxValue inputs must have the same unit type as the minValue. "
 						+ "The seed input is dimensionless. "
@@ -1916,7 +1916,7 @@ public class ExpressionBox extends JDialog {
 
 		functions.add(new ButtonDesc("uniform", "Uniform distribution function ('uniform')",
 				"Returns a random sample from the uniform distribution.",
-				"Accepts input parmeters of minValue, maxValue, and seed. "
+				"Accepts input parameters of minValue, maxValue, and seed. "
 						+ "Returns a random sample with the same units as the minValue input. "
 						+ "The maxValue input must have the same unit type as the minValue. "
 						+ "The seed input is dimensionless. "
@@ -1929,7 +1929,7 @@ public class ExpressionBox extends JDialog {
 
 		functions.add(new ButtonDesc("weibull", "Weibull distribution function ('weibull')",
 				"Returns a random sample from the Weibull distribution.",
-				"Accepts input parmeters of scale, shape, and seed. "
+				"Accepts input parameters of scale, shape, and seed. "
 						+ "Returns a random sample with the same units as the scale input. "
 						+ "The shape and seed inputs are dimensionless. "
 						+ "If a seed value is not entered, the model will chose the next unused "
