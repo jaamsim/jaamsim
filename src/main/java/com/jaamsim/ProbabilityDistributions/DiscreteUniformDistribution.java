@@ -30,6 +30,9 @@ public class DiscreteUniformDistribution extends Distribution {
 	public DiscreteUniformDistribution() {}
 
 	{
+		minValueInput.setDefaultValue(1.0d);
+		maxValueInput.setDefaultValue(10.0d);
+
 		unitType.setDefaultValue(DimensionlessUnit.class);
 		setUnitType(getUnitType());
 		unitType.setHidden(true);
