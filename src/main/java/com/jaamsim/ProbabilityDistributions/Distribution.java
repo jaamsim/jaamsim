@@ -104,7 +104,7 @@ implements SampleProvider, RandomStreamUser {
 		super.validate();
 
 		// The maximum value must be greater than or equal to the minimum value
-		if( this.getMaxValue() < this.getMinValue() ) {
+		if( getMaxValue(0.0d) < getMinValue(0.0d) ) {
 			throw new InputErrorException( "The input for MaxValue must be greater than or equal to the input for MinValue.");
 		}
 	}
@@ -215,12 +215,12 @@ implements SampleProvider, RandomStreamUser {
 		return nextSample;
 	}
 
-	public double getMinValue() {
-		return minValueInput.getNextSample(getSimTime());
+	public double getMinValue(double simTime) {
+		return minValueInput.getNextSample(simTime);
 	}
 
-	public double getMaxValue() {
-		return maxValueInput.getNextSample(getSimTime());
+	public double getMaxValue(double simTime) {
+		return maxValueInput.getNextSample(simTime);
 	}
 
 	/**

@@ -52,10 +52,10 @@ public class TriangularDistribution extends Distribution {
 		super.validate();
 
 		// The mode must be between the minimum and maximum values
-		if (this.getMinValue() > modeInput.getNextSample(0.0d)) {
+		if (getMinValue(0.0d) > modeInput.getNextSample(0.0d)) {
 			throw new InputErrorException("The input for Mode must be >= than that for MinValue.");
 		}
-		if (this.getMaxValue() < modeInput.getNextSample(0.0d)) {
+		if (getMaxValue(0.0d) < modeInput.getNextSample(0.0d)) {
 			throw new InputErrorException("The input for Mode must be <= than that for MaxValue.");
 		}
 	}
