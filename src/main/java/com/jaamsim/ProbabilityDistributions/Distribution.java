@@ -270,10 +270,32 @@ implements SampleProvider, RandomStreamUser {
 		return this.getStandardDev(simTime);
 	}
 
+	@Output(name = "CalculatedMin",
+	 description = "The smallest value that can be returned by the probability distribution "
+	             + "calculated directly from the inputs. "
+	             + "It is NOT the minimum of the sampled values. "
+	             + "The inputs for MinValue and MaxValue are ignored.",
+	    unitType = UserSpecifiedUnit.class,
+	    sequence = 3)
+	public double getCalculatedMin(double simTime) {
+		return this.getMin(simTime);
+	}
+
+	@Output(name = "CalculatedMax",
+	 description = "The largest value that can be returned by the probability distribution "
+	             + "calculated directly from the inputs. "
+	             + "It is NOT the maximum of the sampled values. "
+	             + "The inputs for MinValue and MaxValue are ignored.",
+	    unitType = UserSpecifiedUnit.class,
+	    sequence = 4)
+	public double getCalculatedMax(double simTime) {
+		return this.getMax(simTime);
+	}
+
 	@Output(name = "NumberOfSamples",
 	 description = "The number of times the probability distribution has been sampled.",
 	    unitType = DimensionlessUnit.class,
-	    sequence = 3)
+	    sequence = 5)
 	public long getNumberOfSamples(double simTime) {
 		return stats.getCount();
 	}
@@ -281,7 +303,7 @@ implements SampleProvider, RandomStreamUser {
 	@Output(name = "SampleMean",
 	 description = "The mean of the values sampled from the probability distribution.",
 	    unitType = UserSpecifiedUnit.class,
-	    sequence = 4)
+	    sequence = 6)
 	public double getSampleMean(double simTime) {
 		return stats.getMean();
 	}
@@ -290,7 +312,7 @@ implements SampleProvider, RandomStreamUser {
 	 description = "The standard deviation of the values sampled from the probability "
 	             + "distribution.",
 	    unitType = UserSpecifiedUnit.class,
-	    sequence = 5)
+	    sequence = 7)
 	public double getSampleStandardDeviation(double simTime) {
 		return stats.getStandardDeviation();
 	}
@@ -298,7 +320,7 @@ implements SampleProvider, RandomStreamUser {
 	@Output(name = "SampleMin",
 	 description = "The minimum of the values sampled from the probability distribution.",
 	    unitType = UserSpecifiedUnit.class,
-	    sequence = 6)
+	    sequence = 8)
 	public double getSampleMin(double simTime) {
 		return stats.getMin();
 	}
@@ -306,7 +328,7 @@ implements SampleProvider, RandomStreamUser {
 	@Output(name = "SampleMax",
 	 description = "The maximum of the values sampled from the probability distribution.",
 	    unitType = UserSpecifiedUnit.class,
-	    sequence = 7)
+	    sequence = 9)
 	public double getSampleMax(double simTime) {
 		return stats.getMax();
 	}
