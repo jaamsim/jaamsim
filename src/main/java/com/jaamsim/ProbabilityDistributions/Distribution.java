@@ -224,12 +224,18 @@ implements SampleProvider, RandomStreamUser {
 	}
 
 	/**
-	 * Returns the mean value for the distribution calculated from the inputs.  It is NOT the mean of the sampled values.
+	 * Returns the mean value for the distribution calculated from the inputs.
+	 * It is NOT the mean of the sampled values.
+	 * @param simTime - present simulation time
+	 * @return calculated mean
 	 */
 	protected abstract double getMean(double simTime);
 
 	/**
-	 * Returns the standard deviation for the distribution calculated from the inputs.  It is NOT the standard deviation of the sampled values.
+	 * Returns the standard deviation for the distribution calculated from the inputs.
+	 * It is NOT the standard deviation of the sampled values.
+	 * @param simTime - present simulation time
+	 * @return calculated standard deviation
 	 */
 	protected abstract double getStandardDev(double simTime);
 
