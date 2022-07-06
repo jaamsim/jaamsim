@@ -133,14 +133,4 @@ public class InputValue extends TextBasics implements SampleProvider {
 		return valInput.getValue();
 	}
 
-	@Override
-	public double getMinValue() {
-		return valInput.getValue();
-	}
-
-	@Override
-	public double getMaxValue() {
-		return valInput.getValue();
-	}
-
 }

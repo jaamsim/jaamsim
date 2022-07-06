@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +23,4 @@ public interface SampleProvider {
 	public Class<? extends Unit> getUnitType();
 	public double getNextSample(double simTime);
 	public double getMeanValue(double simTime);
-	public double getMinValue();
-	public double getMaxValue();
 }

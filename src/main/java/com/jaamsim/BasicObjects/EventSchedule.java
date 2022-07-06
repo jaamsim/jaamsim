@@ -91,16 +91,6 @@ public class EventSchedule extends DisplayEntity implements SampleProvider{
 		return 0;
 	}
 
-	@Override
-	public double getMinValue() {
-		return 0;
-	}
-
-	@Override
-	public double getMaxValue() {
-		return 0;
-	}
-
 	@Output(name = "Index",
 	 description = "The position of the event time in the list for the last inter-arrival time "
 	             + "that was returned.",

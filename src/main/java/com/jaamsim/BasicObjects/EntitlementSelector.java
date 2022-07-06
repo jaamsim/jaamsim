@@ -127,16 +127,6 @@ public class EntitlementSelector extends DisplayEntity implements SampleProvider
 		return 0;
 	}
 
-	@Override
-	public double getMinValue() {
-		return 1;
-	}
-
-	@Override
-	public double getMaxValue() {
-		return proportionList.getValue().size();
-	}
-
 	@Output(name = "NumberOfSamples",
 	 description = "The number of times the distribution has been sampled.",
 	    sequence = 1)

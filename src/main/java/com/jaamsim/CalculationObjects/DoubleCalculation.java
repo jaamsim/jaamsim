@@ -188,16 +188,6 @@ implements SampleProvider {
 	}
 
 	@Override
-	public double getMinValue() {
-		return lastValue;
-	}
-
-	@Override
-	public double getMaxValue() {
-		return lastValue;
-	}
-
-	@Override
 	public boolean canLink(boolean dir) {
 		// UnitType input must be set or hidden
 		return dir && (!unitType.isDefault() || unitType.getHidden());

@@ -215,14 +215,12 @@ implements SampleProvider, RandomStreamUser {
 		return nextSample;
 	}
 
-	@Override
 	public double getMinValue() {
-		return minValueInput.getValue().getMinValue();
+		return minValueInput.getNextSample(getSimTime());
 	}
 
-	@Override
 	public double getMaxValue() {
-		return maxValueInput.getValue().getMaxValue();
+		return maxValueInput.getNextSample(getSimTime());
 	}
 
 	/**

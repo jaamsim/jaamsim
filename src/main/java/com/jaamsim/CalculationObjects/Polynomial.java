@@ -86,14 +86,4 @@ public class Polynomial extends DisplayEntity implements SampleProvider {
 		return 0;
 	}
 
-	@Override
-	public double getMinValue() {
-		return Double.NEGATIVE_INFINITY;
-	}
-
-	@Override
-	public double getMaxValue() {
-		return Double.POSITIVE_INFINITY;
-	}
-
 }

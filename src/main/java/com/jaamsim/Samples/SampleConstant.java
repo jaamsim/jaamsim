@@ -63,16 +63,6 @@ public class SampleConstant implements SampleProvider {
 		return val;
 	}
 
-	@Override
-	public double getMinValue() {
-		return val;
-	}
-
-	@Override
-	public double getMaxValue() {
-		return val;
-	}
-
 	public String getValueString(JaamSimModel simModel) {
 		if (integerValue)
 			return Integer.toString((int) val);

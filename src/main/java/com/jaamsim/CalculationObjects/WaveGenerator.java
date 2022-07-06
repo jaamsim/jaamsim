@@ -134,16 +134,6 @@ public abstract class WaveGenerator extends DisplayEntity implements SampleProvi
 	}
 
 	@Override
-	public double getMinValue() {
-		return offset.getValue() - amplitude.getValue();
-	}
-
-	@Override
-	public double getMaxValue() {
-		return offset.getValue() + amplitude.getValue();
-	}
-
-	@Override
 	public boolean canLink(boolean dir) {
 		// UnitType input must be set or hidden
 		return dir && (!unitType.isDefault() || unitType.getHidden());

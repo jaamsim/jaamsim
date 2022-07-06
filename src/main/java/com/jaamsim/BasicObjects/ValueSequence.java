@@ -89,16 +89,6 @@ public class ValueSequence extends DisplayEntity implements SampleProvider {
 		return valueList.getValue().sum()/valueList.getListSize();
 	}
 
-	@Override
-	public double getMinValue() {
-		return valueList.getValue().getMin();
-	}
-
-	@Override
-	public double getMaxValue() {
-		return valueList.getValue().getMax();
-	}
-
 	@Output(name = "Index",
 	 description = "The position of the last value returned in the list.",
 	    unitType = DimensionlessUnit.class,

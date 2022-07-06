@@ -147,16 +147,6 @@ public class WeightedSum extends DisplayEntity implements SampleProvider {
 	}
 
 	@Override
-	public double getMinValue() {
-		return Double.NEGATIVE_INFINITY;
-	}
-
-	@Override
-	public double getMaxValue() {
-		return Double.POSITIVE_INFINITY;
-	}
-
-	@Override
 	public boolean canLink(boolean dir) {
 		// UnitType input must be set or hidden
 		return dir && (!unitType.isDefault() || unitType.getHidden());

@@ -80,16 +80,6 @@ public class ExpressionEntity extends DisplayEntity implements SampleProvider {
 	}
 
 	@Override
-	public double getMinValue() {
-		return Double.NEGATIVE_INFINITY;
-	}
-
-	@Override
-	public double getMaxValue() {
-		return Double.POSITIVE_INFINITY;
-	}
-
-	@Override
 	@Output(name = "Value",
 	 description = "The present value for the expression.",
 	    unitType = UserSpecifiedUnit.class,
