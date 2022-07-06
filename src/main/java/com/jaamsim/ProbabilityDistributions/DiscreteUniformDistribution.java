@@ -62,6 +62,18 @@ public class DiscreteUniformDistribution extends Distribution {
 		return getStandardDev(i, j);
 	}
 
+	@Override
+	protected double getMin(double simTime) {
+		int i = (int) minValueInput.getNextSample(simTime);
+		return i;
+	}
+
+	@Override
+	protected double getMax(double simTime) {
+		int j = (int) maxValueInput.getNextSample(simTime);
+		return j;
+	}
+
 	public static int getSample(int i, double j, MRG1999a rng) {
 		return (int) (i + rng.nextUniform() * (j - i + 1));
 	}

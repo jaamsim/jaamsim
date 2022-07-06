@@ -101,6 +101,16 @@ public class WeibullDistribution extends Distribution {
 		return getStandardDev(scale, shape);
 	}
 
+	@Override
+	protected double getMin(double simTime) {
+		return 0.0d;
+	}
+
+	@Override
+	protected double getMax(double simTime) {
+		return Double.POSITIVE_INFINITY;
+	}
+
 	public static double getSample(double scale, double shape, MRG1999a rng) {
 		return scale * Math.pow( - Math.log(rng.nextUniform()), 1.0/shape );
 	}

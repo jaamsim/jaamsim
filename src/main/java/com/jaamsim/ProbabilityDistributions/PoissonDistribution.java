@@ -72,6 +72,16 @@ public class PoissonDistribution extends Distribution {
 		return getStandardDevVal(mean);
 	}
 
+	@Override
+	protected double getMin(double simTime) {
+		return 0.0d;
+	}
+
+	@Override
+	protected double getMax(double simTime) {
+		return Double.POSITIVE_INFINITY;
+	}
+
 	public static int getSample(double mean, MRG1999a rng) {
 		double a = Math.exp(-mean);
 		double b = 1;

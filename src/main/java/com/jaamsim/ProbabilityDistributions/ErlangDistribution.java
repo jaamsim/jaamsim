@@ -90,6 +90,16 @@ public class ErlangDistribution extends Distribution {
 		return getStandardDev(mean, shape);
 	}
 
+	@Override
+	protected double getMin(double simTime) {
+		return 0.0d;
+	}
+
+	@Override
+	protected double getMax(double simTime) {
+		return Double.POSITIVE_INFINITY;
+	}
+
 	public static double getSample(double mean, int shape, MRG1999a rng) {
 
 		// Calculate the product of k random values

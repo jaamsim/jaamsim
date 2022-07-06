@@ -233,6 +233,22 @@ implements SampleProvider, RandomStreamUser {
 	 */
 	protected abstract double getStandardDev(double simTime);
 
+	/**
+	 * Returns the minimum value that can be sampled calculated from the inputs.
+	 * It is NOT the minimum of the sampled values.
+	 * @param simTime - present simulation time
+	 * @return calculated minimum value
+	 */
+	protected abstract double getMin(double simTime);
+
+	/**
+	 * Returns the maximum value that can be sampled calculated from the inputs.
+	 * It is NOT the maximum of the sampled values.
+	 * @param simTime - present simulation time
+	 * @return calculated maximum value
+	 */
+	protected abstract double getMax(double simTime);
+
 	@Output(name = "CalculatedMean",
 	 description = "The mean of the probability distribution calculated directly from the inputs. "
 	             + "It is NOT the mean of the sampled values. "

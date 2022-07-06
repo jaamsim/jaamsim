@@ -92,6 +92,16 @@ public class NormalDistribution extends Distribution {
 		return getStandardDev(mean, sdev);
 	}
 
+	@Override
+	protected double getMin(double simTime) {
+		return Double.NEGATIVE_INFINITY;
+	}
+
+	@Override
+	protected double getMax(double simTime) {
+		return Double.POSITIVE_INFINITY;
+	}
+
 	public static double getSample(double mean, double sdev, MRG1999a rng1, MRG1999a rng2) {
 
 		// Loop until we have a random x-y coordinate in the unit circle

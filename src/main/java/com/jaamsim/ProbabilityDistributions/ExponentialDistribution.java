@@ -76,6 +76,16 @@ public class ExponentialDistribution extends Distribution {
 		return getStandardDevVal(mean);
 	}
 
+	@Override
+	protected double getMin(double simTime) {
+		return 0.0d;
+	}
+
+	@Override
+	protected double getMax(double simTime) {
+		return Double.POSITIVE_INFINITY;
+	}
+
 	public static double getSample(double mean, MRG1999a rng) {
 		return (-mean * Math.log(rng.nextUniform()));
 	}

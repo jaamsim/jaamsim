@@ -91,19 +91,17 @@ public class ContinuousDistribution extends Distribution {
 	}
 
 	@Override
-	public double getMinValue(double simTime) {
+	protected double getMin(double simTime) {
 		if (cumulativeProbabilityListInput.isDefault() || valueListInput.isDefault())
 			return Double.NaN;
-		double ret = super.getMinValue(simTime);
-		return Math.max(ret, valueListInput.getValue().get(0));
+		return valueListInput.getValue().get(0);
 	}
 
 	@Override
-	public double getMaxValue(double simTime) {
+	protected double getMax(double simTime) {
 		if (cumulativeProbabilityListInput.isDefault() || valueListInput.isDefault())
 			return Double.NaN;
-		double ret = super.getMaxValue(simTime);
-		return Math.min(ret, valueListInput.getValue().lastElement());
+		return valueListInput.getValue().lastElement();
 	}
 
 	@Override

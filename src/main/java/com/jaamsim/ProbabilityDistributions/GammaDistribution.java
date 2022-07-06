@@ -94,6 +94,16 @@ public class GammaDistribution extends Distribution {
 		return getStandardDev(mean, shape);
 	}
 
+	@Override
+	protected double getMin(double simTime) {
+		return 0.0d;
+	}
+
+	@Override
+	protected double getMax(double simTime) {
+		return Double.POSITIVE_INFINITY;
+	}
+
 	public static double getSample(double mean, double shape, MRG1999a rng1, MRG1999a rng2) {
 		double u2, b, sample;
 

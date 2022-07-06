@@ -129,4 +129,18 @@ public class NonStatExponentialDist extends Distribution {
 		return Double.NaN;
 	}
 
+	@Override
+	protected double getMin(double simTime) {
+		if (expectedArrivals.isDefault())
+			return Double.NaN;
+		return expectedArrivals.getValue().getMinValue();
+	}
+
+	@Override
+	protected double getMax(double simTime) {
+		if (expectedArrivals.isDefault())
+			return Double.NaN;
+		return expectedArrivals.getValue().getMaxValue();
+	}
+
 }

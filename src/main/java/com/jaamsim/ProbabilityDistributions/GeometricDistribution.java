@@ -73,6 +73,16 @@ public class GeometricDistribution extends Distribution {
 		return getStandardDevVal(p);
 	}
 
+	@Override
+	protected double getMin(double simTime) {
+		return 0.0d;
+	}
+
+	@Override
+	protected double getMax(double simTime) {
+		return Double.POSITIVE_INFINITY;
+	}
+
 	public static int getSample(double p, MRG1999a rng) {
 		if (MathUtils.near(p, 1.0d))
 			return 0;

@@ -96,6 +96,16 @@ public class TriangularDistribution extends Distribution {
 		return  getStandardDev(a, m, b);
 	}
 
+	@Override
+	protected double getMin(double simTime) {
+		return getMinValue(simTime);
+	}
+
+	@Override
+	protected double getMax(double simTime) {
+		return getMaxValue(simTime);
+	}
+
 	public static double getSample(double minVal, double mode, double maxVal, MRG1999a rng) {
 
 		// Select the random value

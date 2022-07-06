@@ -112,19 +112,17 @@ public class DiscreteDistribution extends Distribution {
 	}
 
 	@Override
-	public double getMinValue(double simTime) {
+	protected double getMin(double simTime) {
 		if (probabilityListInput.getValue() == null || valueListInput.getValue() == null)
 			return Double.NaN;
-		double ret = super.getMinValue(simTime);
-		return Math.max(ret, probabilityListInput.getValue().getMin());
+		return probabilityListInput.getValue().getMin();
 	}
 
 	@Override
-	public double getMaxValue(double simTime) {
+	protected double getMax(double simTime) {
 		if (probabilityListInput.getValue() == null || valueListInput.getValue() == null)
 			return Double.NaN;
-		double ret = super.getMaxValue(simTime);
-		return Math.min(ret, probabilityListInput.getValue().getMax());
+		return probabilityListInput.getValue().getMax();
 	}
 
 	@Override

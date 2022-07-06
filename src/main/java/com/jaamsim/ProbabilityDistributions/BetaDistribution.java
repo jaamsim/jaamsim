@@ -98,6 +98,17 @@ public class BetaDistribution extends Distribution {
 		return getStandardDev(alpha, beta, scale);
 	}
 
+	@Override
+	protected double getMin(double simTime) {
+		return 0.0d;
+	}
+
+	@Override
+	protected double getMax(double simTime) {
+		double scale = scaleInput.getNextSample(simTime);
+		return scale;
+	}
+
 	public static double getSample(double alpha, double beta, double scale, MRG1999a rng) {
 		// Effectively calculate the inverse CDF
 		double val = rng.nextUniform();

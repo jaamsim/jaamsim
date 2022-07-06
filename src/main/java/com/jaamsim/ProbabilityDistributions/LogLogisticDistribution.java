@@ -89,6 +89,16 @@ public class LogLogisticDistribution extends Distribution {
 		return getStandardDev(scale, shape);
 	}
 
+	@Override
+	protected double getMin(double simTime) {
+		return 0.0d;
+	}
+
+	@Override
+	protected double getMax(double simTime) {
+		return Double.POSITIVE_INFINITY;
+	}
+
 	public static double getSample(double scale, double shape, MRG1999a rng) {
 		double u = rng.nextUniform();
 		return scale * Math.pow( u / (1 - u), 1.0 / shape );

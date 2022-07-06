@@ -84,6 +84,17 @@ public class BinomialDistribution extends Distribution {
 		return getStandardDev(n, p);
 	}
 
+	@Override
+	protected double getMin(double simTime) {
+		return 0.0d;
+	}
+
+	@Override
+	protected double getMax(double simTime) {
+		int n = (int) numberOfTrials.getNextSample(simTime);
+		return n;
+	}
+
 	public static int getSample(int n, double p, MRG1999a rng) {
 		int ret = 0;
 		for (int i = 0; i < n; i++) {
