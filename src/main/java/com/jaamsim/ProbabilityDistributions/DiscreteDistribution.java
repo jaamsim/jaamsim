@@ -115,14 +115,14 @@ public class DiscreteDistribution extends Distribution {
 	protected double getMin(double simTime) {
 		if (probabilityListInput.getValue() == null || valueListInput.getValue() == null)
 			return Double.NaN;
-		return probabilityListInput.getValue().getMin();
+		return valueListInput.getValue().getMin();
 	}
 
 	@Override
 	protected double getMax(double simTime) {
 		if (probabilityListInput.getValue() == null || valueListInput.getValue() == null)
 			return Double.NaN;
-		return probabilityListInput.getValue().getMax();
+		return valueListInput.getValue().getMax();
 	}
 
 	@Override
