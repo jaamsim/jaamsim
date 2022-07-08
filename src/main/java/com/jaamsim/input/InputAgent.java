@@ -1680,13 +1680,16 @@ public class InputAgent {
 			LinkedHashMap<?, ?> map = out.getValue(simTime, LinkedHashMap.class);
 			boolean first = true;
 			for (Entry<?, ?> mapEntry : map.entrySet()) {
+				Object obj = mapEntry.getValue();
+				if (obj instanceof Double && ((Double) obj).doubleValue() == 0.0d)
+					continue;
+
 				if (first)
 					first = false;
 				else
 					sb.append(COMMA_SEPARATOR);
-
 				sb.append(String.format("%s=", mapEntry.getKey()));
-				Object obj = mapEntry.getValue();
+
 				if (obj instanceof Double) {
 					double val = (Double)obj;
 					sb.append(String.format(floatFmt, val/factor));
