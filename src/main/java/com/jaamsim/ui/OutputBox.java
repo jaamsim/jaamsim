@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2019-2021 JaamSim Software Inc.
+ * Copyright (C) 2019-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -228,16 +228,10 @@ public class OutputBox extends FrameBox {
 					Class<? extends Unit> ut = out.getUnitType();
 					double factor = simModel.getDisplayedUnitFactor(ut);
 
-					// Select the appropriate format
-					String fmt = "%s";
-					if (out.isNumericValue()) {
-						if (out.isIntegerValue() && out.getUnitType() == DimensionlessUnit.class) {
-							fmt = "%.0f";
-						}
-						else {
-							fmt = "%g";
-						}
-					}
+					// Select the appropriate format for numbers
+					String fmt = "%g";
+					if (out.isIntegerValue() && out.getUnitType() == DimensionlessUnit.class)
+						fmt = "%.0f";
 
 					// Evaluate the output
 					StringBuilder sb = new StringBuilder();
