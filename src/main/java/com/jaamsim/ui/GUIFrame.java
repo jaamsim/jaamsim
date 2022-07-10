@@ -128,6 +128,7 @@ import com.jaamsim.Graphics.TextBasics;
 import com.jaamsim.Graphics.TextEntity;
 import com.jaamsim.Graphics.View;
 import com.jaamsim.ProbabilityDistributions.RandomStreamUser;
+import com.jaamsim.SubModels.SubModel;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.basicsim.GUIListener;
@@ -3516,6 +3517,9 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 		if (ent instanceof DisplayEntity && !((DisplayEntity) ent).isMovable())
 			throw new ErrorException("Cannot delete an entity that is not movable.");
+
+		if (ent instanceof SubModel && ((SubModel) ent).hasClone())
+			throw new ErrorException("Cannot delete a SubModel that has one or more clones.");
 
 		// Delete any child entities
 		for (Entity child : ent.getChildren()) {
