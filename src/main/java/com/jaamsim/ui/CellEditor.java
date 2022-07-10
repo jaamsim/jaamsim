@@ -411,12 +411,14 @@ public abstract class CellEditor extends AbstractCellEditor implements TableCell
 					return;
 				}
 
+				isErrorDialogShown = true;  // trap call to editingStopped on loss of focus
 				GUIFrame.showErrorDialog("Input Error",
 						exep.source,
 						exep.position,
 						"Input error:",
 						exep.getMessage(),
 						"Value will be cleared.");
+				isErrorDialogShown = false;
 
 				GUIFrame.updateUI();
 				return;
