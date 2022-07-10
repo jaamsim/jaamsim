@@ -92,7 +92,12 @@ public abstract class LinkedService extends LinkedDevice implements QueueUser {
 	                     + "No entity is removed if the expression returns null or the entity is "
 	                     + "not present in the queue. "
 	                     + "To be removed, the entity must also satisfy the Match and "
-	                     + "SelectionCondition inputs if these are entered.",
+	                     + "SelectionCondition inputs if these are entered."
+	                     + "\n\n"
+	                     + "Note that a change in the value of the 'NextEntity' input does not "
+	                     + "trigger the processor to automatically to re-check the Queue. "
+	                     + "The processor can be triggered by adding one or more objects to the "
+	                     + "'WatchList' input.",
 	         exampleList = {"'this.nextEntity'"})
 	protected final ExpressionInput nextEntity;
 
