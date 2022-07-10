@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2018-2021 JaamSim Software Inc.
+ * Copyright (C) 2018-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -85,7 +85,7 @@ public class SubModel extends AbstractSubModel implements DragAndDropable {
 	@Override
 	public void validate() {
 		// If there are clones, only the clones need to be validated
-		if (!getClones().isEmpty())
+		if (hasClone())
 			return;
 		super.validate();
 	}
@@ -109,6 +109,16 @@ public class SubModel extends AbstractSubModel implements DragAndDropable {
 			}
 		}
 		return ret;
+	}
+
+	public boolean hasClone() {
+		JaamSimModel simModel = getJaamSimModel();
+		for (SubModelClone clone : simModel.getClonesOfIterator(SubModelClone.class)) {
+			if (clone.isClone(this)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	@Override
