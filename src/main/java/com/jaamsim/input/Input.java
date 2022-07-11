@@ -61,6 +61,7 @@ public abstract class Input<T> {
 	protected static final String INP_ERR_INTEGERRANGE = "Expected an integer between %d and %d, received: %d";
 	protected static final String INP_ERR_DOUBLE = "Expected an numeric value, received: %s";
 	protected static final String INP_ERR_DOUBLERANGE = "Expected a number between %f and %f, received: %f";
+	protected static final String INP_ERR_SAMPLERANGE = "Expected a number between %f and %f, received: %s which returns values between %f and %f";
 	protected static final String INP_ERR_TIME = "Expected a time value (hh:mm or hh:mm:ss), received: %s";
 	protected static final String INP_ERR_TIMEVALUE = "Expected a numeric value, 12 numeric values, or a probabilty distribution, received: %s";
 	protected static final String INP_ERR_BADSUM = "List must sum to %f, received:%f";

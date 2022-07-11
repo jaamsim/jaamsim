@@ -20,6 +20,7 @@ package com.jaamsim.Samples;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import com.jaamsim.ProbabilityDistributions.Distribution;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.basicsim.JaamSimModel;
@@ -223,6 +224,27 @@ public class SampleInput extends Input<SampleProvider> {
 		catch (ErrorException e) {
 			e.keyword = getKeyword();
 			throw e;
+		}
+	}
+
+	@Override
+	public void validate() {
+		super.validate();
+
+		if (value instanceof Distribution) {
+			Distribution d = (Distribution) value;
+			double minSample = d.getMinValue(0.0d);
+			double maxSample = d.getMaxValue(0.0d);
+			if (minSample < minValue || maxSample > maxValue)
+				throw new ErrorException(INP_ERR_SAMPLERANGE, minValue, maxValue, value, minSample, maxSample);
+		}
+
+		if (value instanceof TimeSeries) {
+			TimeSeries ts = (TimeSeries) value;
+			double minSample = ts.getMinValue();
+			double maxSample = ts.getMaxValue();
+			if (minSample < minValue || maxSample > maxValue)
+				throw new ErrorException(INP_ERR_SAMPLERANGE, minValue, maxValue, value, minSample, maxSample);
 		}
 	}
 

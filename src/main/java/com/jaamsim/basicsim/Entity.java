@@ -213,7 +213,14 @@ public class Entity {
 
 	public void validate() throws InputErrorException {
 		for (Input<?> in : inpList) {
-			in.validate();
+			try {
+				in.validate();
+			}
+			catch (ErrorException e) {
+				e.entName = getName();
+				e.keyword = in.getKeyword();
+				throw e;
+			}
 		}
 	}
 
