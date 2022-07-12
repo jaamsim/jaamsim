@@ -5471,6 +5471,9 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			scrollPane.setBorder(new EmptyBorder(10, 0, 10, 0));
 			panel.add(scrollPane, BorderLayout.CENTER);
 		}
+		else {
+			panel.add(new JPanel(), BorderLayout.CENTER);
+		}
 
 		// Additional information
 		JTextPane postPane = new JTextPane();
