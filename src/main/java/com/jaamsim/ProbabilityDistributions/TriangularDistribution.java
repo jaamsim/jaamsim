@@ -52,10 +52,10 @@ public class TriangularDistribution extends Distribution {
 		super.validate();
 
 		// The mode must be between the minimum and maximum values
-		if (getMinValue(0.0d) > modeInput.getNextSample(0.0d)) {
+		if (getMinValueInput(0.0d) > modeInput.getNextSample(0.0d)) {
 			throw new InputErrorException("The input for Mode must be >= than that for MinValue.");
 		}
-		if (getMaxValue(0.0d) < modeInput.getNextSample(0.0d)) {
+		if (getMaxValueInput(0.0d) < modeInput.getNextSample(0.0d)) {
 			throw new InputErrorException("The input for Mode must be <= than that for MaxValue.");
 		}
 	}
@@ -98,12 +98,12 @@ public class TriangularDistribution extends Distribution {
 
 	@Override
 	protected double getMin(double simTime) {
-		return getMinValue(simTime);
+		return getMinValueInput(simTime);
 	}
 
 	@Override
 	protected double getMax(double simTime) {
-		return getMaxValue(simTime);
+		return getMaxValueInput(simTime);
 	}
 
 	public static double getSample(double minVal, double mode, double maxVal, MRG1999a rng) {

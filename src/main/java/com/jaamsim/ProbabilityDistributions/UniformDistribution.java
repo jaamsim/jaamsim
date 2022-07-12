@@ -64,12 +64,12 @@ public class UniformDistribution extends Distribution {
 
 	@Override
 	protected double getMin(double simTime) {
-		return getMinValue(simTime);
+		return getMinValueInput(simTime);
 	}
 
 	@Override
 	protected double getMax(double simTime) {
-		return getMaxValue(simTime);
+		return getMaxValueInput(simTime);
 	}
 
 	public static double getSample(double minVal, double maxVal, MRG1999a rng) {
