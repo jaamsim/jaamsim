@@ -69,16 +69,15 @@ public class ErrorException extends RuntimeException {
 
 	@Override
 	public String getMessage() {
-		if (entName == null || entName.isEmpty()) {
-			return super.getMessage();
-		}
 		StringBuilder sb = new StringBuilder();
-		sb.append(entName);
+		if (entName != null && !entName.isEmpty())
+			sb.append(entName);
 		if (!keyword.isEmpty())
 			sb.append(String.format(" keyword '%s'", keyword));
 		if (index > 0)
 			sb.append(String.format(", index (%d)", index));
-		sb.append(": ");
+		if (sb.length() > 0)
+			sb.append(":\n");
 		sb.append(super.getMessage());
 		return sb.toString();
 	}
