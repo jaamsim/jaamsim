@@ -4701,7 +4701,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			msg = "null";
 		String source = "";
 		int pos = -1;
-		String message = String.format("%s: %-70s", ent.getName(), msg);
+		String message = String.format("%s: %s", ent.getName(), msg);
 		if (t instanceof InputErrorException) {
 			source = ((InputErrorException) t).source;
 			pos = ((InputErrorException) t).position;
@@ -5451,6 +5451,13 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		msgPane.setOpaque(false);
 		msgPane.setFont(messageFont);
 		msgPane.setText(pre + "\n\n" + message);
+
+		Dimension size = msgPane.getPreferredSize();
+		size.width = Math.min(size.width, 900);
+		msgPane.setSize(size);
+		size.height = msgPane.getPreferredSize().height;
+		msgPane.setPreferredSize(size);
+
 		panel.add(msgPane, BorderLayout.NORTH);
 
 		// Source
