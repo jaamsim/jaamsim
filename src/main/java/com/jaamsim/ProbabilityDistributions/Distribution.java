@@ -103,10 +103,20 @@ implements SampleProvider, RandomStreamUser {
 	public void validate() {
 		super.validate();
 
-		// The maximum value must be greater than or equal to the minimum value
-		if( getMaxValueInput(0.0d) < getMinValueInput(0.0d) ) {
-			throw new InputErrorException( "The input for MaxValue must be greater than or equal to the input for MinValue.");
-		}
+		if (getMinValueInput(0.0d) > getMaxValueInput(0.0d))
+			throw new InputErrorException( "'MinValue' input is greater than the 'MaxValue' "
+					+ "input. MinValue: %s, MaxValue: %s",
+					getMinValueInput(0.0d), getMaxValueInput(0.0d));
+
+		if (getMinValue(0.0d) > getMax(0.0d))
+			throw new InputErrorException("'MinValue' input is greater than the maximum value "
+					+ "returned by the distribution function. MinValue: %s, distribution max.: %s",
+					getMinValueInput(0.0d), getMax(0.0d));
+
+		if (getMaxValue(0.0d) < getMin(0.0d))
+			throw new InputErrorException("'MaxValue' input is less than the minimum value "
+					+ "returned by the distribution function. MaxValue: %s, distribution min.: %s",
+					getMaxValueInput(0.0d), getMin(0.0d));
 	}
 
 	@Override
