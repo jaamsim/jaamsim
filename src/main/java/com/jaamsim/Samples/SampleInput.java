@@ -219,7 +219,15 @@ public class SampleInput extends Input<SampleProvider> {
 
 	public double getNextSample(double simTime) {
 		try {
-			return value.getNextSample(simTime);
+			double ret = value.getNextSample(simTime);
+
+			if (value instanceof SampleExpression && (ret < minValue || ret > maxValue)) {
+				String msg = String.format(INP_ERR_DOUBLERANGE, minValue, maxValue, ret);
+				String source = ((SampleExpression) value).getExpressionString();
+				throw new ErrorException(source, 0, "", msg);
+			}
+
+			return ret;
 		}
 		catch (ErrorException e) {
 			e.keyword = getKeyword();
