@@ -224,6 +224,26 @@ implements SampleProvider, RandomStreamUser {
 	}
 
 	/**
+	 * Returns the minimum value that can be sampled from the distribution object, including the
+	 * limits imposed by the 'MinValue' and 'MaxValue' inputs.
+	 * @param simTime - present simulation time
+	 * @return minimum value that can be sampled
+	 */
+	public double getMinValue(double simTime) {
+		return Math.max(getMin(simTime), getMinValueInput(simTime));
+	}
+
+	/**
+	 * Returns the maximum value that can be sampled from the distribution object, including the
+	 * limits imposed by the 'MinValue' and 'MaxValue' inputs.
+	 * @param simTime - present simulation time
+	 * @return maximum value that can be sampled
+	 */
+	public double getMaxValue(double simTime) {
+		return Math.min(getMax(simTime), getMaxValueInput(simTime));
+	}
+
+	/**
 	 * Returns the mean value for the distribution calculated from the inputs.
 	 * It is NOT the mean of the sampled values.
 	 * @param simTime - present simulation time
