@@ -48,15 +48,15 @@ public class ErrorException extends RuntimeException {
 	}
 
 	public ErrorException(String format, Object... args) {
-		this("", -1, "", String.format(format, args));
+		this("", -1, "",  "", -1, String.format(format, args), null);
 	}
 
 	public ErrorException(Entity ent, String msg) {
-		this("", -1, ent.getName(), msg);
+		this("", -1, ent.getName(), "", -1, msg, null);
 	}
 
 	public ErrorException(Entity ent, ExpError e) {
-		this(e.source, e.pos, ent.getName(), e.getMessage(), e);
+		this(e.source, e.pos, ent.getName(), "", -1, e.getMessage(), e);
 	}
 
 	public ErrorException(Entity ent, String key, ExpError e) {
@@ -64,11 +64,11 @@ public class ErrorException extends RuntimeException {
 	}
 
 	public ErrorException(Entity ent, Throwable cause) {
-		this("", -1, ent.getName(), cause.getMessage(), cause);
+		this("", -1, ent.getName(), "", -1, cause.getMessage(), cause);
 	}
 
 	public ErrorException( Throwable cause ) {
-		this("", -1, "", cause.getMessage(), cause);
+		this("", -1, "", "", -1, cause.getMessage(), cause);
 	}
 
 	@Override
