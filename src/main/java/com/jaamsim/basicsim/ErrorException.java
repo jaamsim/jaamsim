@@ -59,6 +59,10 @@ public class ErrorException extends RuntimeException {
 		this(e.source, e.pos, ent.getName(), e.getMessage(), e);
 	}
 
+	public ErrorException(Entity ent, String key, ExpError e) {
+		this(e.source, e.pos, ent.getName(), key, -1, e.getMessage(), e);
+	}
+
 	public ErrorException(Entity ent, Throwable cause) {
 		this("", -1, ent.getName(), cause.getMessage(), cause);
 	}
