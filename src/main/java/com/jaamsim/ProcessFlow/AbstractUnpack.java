@@ -122,6 +122,7 @@ public abstract class AbstractUnpack extends LinkedService {
 			unpackedEntity = container.removeEntity(entityMatch);
 			receiveEntity(unpackedEntity);
 			setEntityState(unpackedEntity);
+			assignAttributesAtStart(simTime);
 		}
 
 		return true;

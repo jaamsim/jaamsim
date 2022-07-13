@@ -74,6 +74,9 @@ public class Server extends LinkedService {
 		// Set the service duration
 		serviceDuration = serviceTime.getNextSample(simTime);
 
+		// Assign attributes
+		assignAttributesAtStart(simTime);
+
 		return true;
 	}
 

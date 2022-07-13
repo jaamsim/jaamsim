@@ -144,6 +144,9 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 		ConveyorEntry entry = new ConveyorEntry(ent, 0.0d);
 		entryList.add(entry);
 
+		// Assign attributes
+		assignAttributesAtStart(simTime);
+
 		// If necessary, wake up the conveyor
 		this.restart();
 	}

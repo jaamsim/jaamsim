@@ -156,6 +156,9 @@ public class EntityProcessor extends AbstractLinkedResourceUser {
 		double simTime = getSimTime();
 		DisplayEntity ent = getReceivedEntity(simTime);
 
+		// Assign attributes
+		assignAttributesAtStart(simTime);
+
 		// Set the service duration
 		double dur = serviceTime.getNextSample(simTime);
 		long ticks = EventManager.current().secondsToNearestTick(dur);

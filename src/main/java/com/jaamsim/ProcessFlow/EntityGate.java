@@ -100,6 +100,9 @@ public class EntityGate extends LinkedService {
 		setEntityState(servedEntity);
 		num++;
 
+		// Assign attributes
+		assignAttributesAtStart(simTime);
+
 		return true;
 	}
 

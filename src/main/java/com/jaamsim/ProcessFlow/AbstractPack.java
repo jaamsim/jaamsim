@@ -156,6 +156,7 @@ public abstract class AbstractPack extends LinkedService {
 
 			receiveEntity(packedEntity);
 			setEntityState(packedEntity);
+			assignAttributesAtStart(simTime);
 		}
 		return true;
 	}

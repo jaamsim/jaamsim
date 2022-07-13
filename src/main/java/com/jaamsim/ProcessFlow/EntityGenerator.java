@@ -189,6 +189,9 @@ public class EntityGenerator extends LinkedService implements EntityGen {
 			receiveEntity(ent);
 			setEntityState(ent);
 
+			// Assign attributes
+			assignAttributesAtStart(simTime);
+
 			// Send the entity to the next element in the chain
 			this.sendToNextComponent(ent);
 		}
