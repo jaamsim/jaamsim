@@ -1951,6 +1951,19 @@ public class ExpressionBox extends JDialog {
 				"'weibull(10[s], 2, 5)' returns a sample with units of time using random stream 5",
 				"'weibull(10, 2)' returns a dimensionless sample using a selected random stream"));
 
+		functions.add(new ButtonDesc("date", "Calendar date and time function ('date')",
+				"Returns the calendar date and time of day for the specified simulation time.",
+				"Accepts a simulation time and returns the calendar date and time of day "
+						+ "expressed as an array of integer values in the format "
+						+ "(YYYY, MM, DD, hh, mm, ss, milliseconds). "
+						+ "The returned date reflects the inputs to 'GeorgianCalendar' and "
+						+ "'StartDate' keyword for the Simulation object.",
+				"date(simTime)",
+				-1,
+				"'date(0[s])' returns the array {1970, 1, 1, 0, 0, 0, 0}",
+				"'date(10.5[s])' returns the array {1970, 1, 1, 0, 0, 10, 500}",
+				"'date(31[d])' returns the array {1970, 2, 1, 0, 0, 0, 0}"));
+
 	}
 
 }

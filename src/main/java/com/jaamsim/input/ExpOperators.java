@@ -49,6 +49,7 @@ import com.jaamsim.input.ExpParser.UnOpFunc;
 import com.jaamsim.rng.MRG1999a;
 import com.jaamsim.units.AngleUnit;
 import com.jaamsim.units.DimensionlessUnit;
+import com.jaamsim.units.TimeUnit;
 import com.jaamsim.units.Unit;
 
 public class ExpOperators {
@@ -2886,6 +2887,45 @@ public class ExpOperators {
 			@Override
 			public ExpValResult validate(ParseContext context, ExpValResult[] args, String source, int pos) {
 				return validateRandomFunction(context, args, source, pos);
+			}
+		});
+
+		addFunction("date", 1, 1, new CallableFunc() {
+			@Override
+			public void checkUnits(ParseContext context, ExpResult[] args, String source, int pos) throws ExpError {
+				if (args[0].unitType != TimeUnit.class)
+					throw new ExpError(source, pos, "Input 'simTime' must be have units of time");
+			}
+			@Override
+			public ExpResult call(EvalContext context, ExpResult[] args, String source, int pos) throws ExpError {
+				if (context == null)  // trap call from ConstOptimizer.updateRef
+					return null;
+				Entity thisEnt = ((EntityEvalContext) context).thisEnt;
+				JaamSimModel simModel = thisEnt.getJaamSimModel();
+				long millis = simModel.simTimeToCalendarMillis(args[0].value);
+				int[] date = simModel.getSimDate(millis).toArray();
+				ArrayList<ExpResult> list = new ArrayList<>(date.length);
+				for (int val : date) {
+					list.add( ExpResult.makeNumResult(val, DimensionlessUnit.class) );
+				}
+				return ExpCollections.makeAssignableArrrayCollection(list, false);
+			}
+			@Override
+			public ExpValResult validate(ParseContext context, ExpValResult[] args, String source, int pos) {
+				for (ExpValResult arg : args) {
+					if (  arg.state == ExpValResult.State.ERROR ||
+					      arg.state == ExpValResult.State.UNDECIDABLE) {
+						return arg;
+					}
+				}
+				// Check that arguments are numbers
+				for (ExpValResult arg : args) {
+					if (arg.type != ExpResType.NUMBER) {
+						ExpError error = new ExpError(source, pos, "Argument must be a number");
+						return ExpValResult.makeErrorRes(error);
+					}
+				}
+				return ExpValResult.makeValidRes(ExpResType.COLLECTION, DimensionlessUnit.class);
 			}
 		});
 	}
