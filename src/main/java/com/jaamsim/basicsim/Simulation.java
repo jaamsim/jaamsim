@@ -1416,8 +1416,9 @@ public class Simulation extends Entity {
 	}
 
 	@Output(name = "SimDate",
-	 description = "The calendar date and time for the present simulation time expressed as an "
-	             + "array of integer values in the format (YY, MM, DD, hh, mm, ss, milliseconds).",
+	 description = "The calendar date and time of day for the present simulation time expressed "
+	             + "as an array of integer values in the format "
+	             + "(YYYY, MM, DD, hh, mm, ss, milliseconds).",
 	    unitType = DimensionlessUnit.class,
 	    sequence = 12)
 	public int[] getSimDate(double simTime) {
@@ -1436,8 +1437,9 @@ public class Simulation extends Entity {
 	}
 
 	@Output(name = "PresentDate",
-	 description = "The present local time and date expressed as an array of integer values in "
-	             + "the format (YY, MM, DD, hh, mm, ss, milliseconds).",
+	 description = "The present local calendar date and time of day expressed "
+	             + "as an array of integer values in the format "
+	             + "(YYYY, MM, DD, hh, mm, ss, milliseconds).",
 	    sequence = 14)
 	public int[] getPresentDate(double simTime) {
 		SimDate simDate = new SimDate(Calendar.getInstance());
