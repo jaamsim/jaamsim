@@ -20,10 +20,7 @@ package com.jaamsim.ProcessFlow;
 import java.util.ArrayList;
 
 import com.jaamsim.Graphics.DisplayEntity;
-import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.input.AssignmentListInput;
-import com.jaamsim.input.ExpError;
-import com.jaamsim.input.ExpEvaluator;
 import com.jaamsim.input.ExpParser;
 import com.jaamsim.input.Keyword;
 
@@ -54,13 +51,7 @@ public class Assign extends LinkedComponent {
 		super.addEntity(ent);
 
 		// Evaluate the assignment expressions
-		for (ExpParser.Assignment ass : assignmentList.getValue()) {
-			try {
-				ExpEvaluator.evaluateExpression(ass, this, getSimTime());
-			} catch (ExpError err) {
-				throw new ErrorException(this, err);
-			}
-		}
+		assignmentList.executeAssignments(this, getSimTime());
 
 		// Pass the entity to the next component
 		this.sendToNextComponent(ent);
