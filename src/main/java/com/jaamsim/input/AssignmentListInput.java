@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2021 JaamSim Software Inc.
+ * Copyright (C) 2016-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ package com.jaamsim.input;
 import java.util.ArrayList;
 
 import com.jaamsim.basicsim.Entity;
+import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.basicsim.JaamSimModel;
 
 
@@ -111,6 +112,17 @@ public class AssignmentListInput extends ListInput<ArrayList<ExpParser.Assignmen
 	@Override
 	public boolean useExpressionBuilder() {
 		return true;
+	}
+
+	public void executeAssignments(Entity thisEnt, double simTime) {
+		try {
+			for (ExpParser.Assignment ass : value) {
+				ExpEvaluator.evaluateExpression(ass, thisEnt, simTime);
+			}
+		}
+		catch (ExpError e) {
+			throw new ErrorException(thisEnt, getKeyword(), e);
+		}
 	}
 
 }
