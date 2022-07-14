@@ -26,6 +26,8 @@ import com.jaamsim.StringProviders.StringProvInput;
 import com.jaamsim.SubModels.CompoundEntity;
 import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.basicsim.SubjectEntity;
+import com.jaamsim.input.AssignmentListInput;
+import com.jaamsim.input.ExpParser;
 import com.jaamsim.input.ExpResType;
 import com.jaamsim.input.ExpressionInput;
 import com.jaamsim.input.InputAgent;
@@ -104,6 +106,12 @@ public abstract class LinkedService extends LinkedDevice implements QueueUser {
 	         exampleList = {"Object1  Object2"})
 	protected final InterfaceEntityListInput<SubjectEntity> watchList;
 
+	@Keyword(description = "A list of attribute assignments that are triggered at the start of "
+	                     + "processing for each new entity.",
+	         exampleList = {"{ 'this.A = 1' } { 'this.obj.B = 1' } { '[Ent1].C = 1' }",
+	                        "{ 'this.D = 1[s] + 0.5*this.SimTime' }"})
+	protected final AssignmentListInput assignmentsAtStart;
+
 	private String matchValue;
 
 	{
@@ -135,6 +143,9 @@ public abstract class LinkedService extends LinkedDevice implements QueueUser {
 		watchList.setIncludeSelf(false);
 		watchList.setUnique(true);
 		this.addInput(watchList);
+
+		assignmentsAtStart = new AssignmentListInput("AssignmentsAtStart", OPTIONS, new ArrayList<ExpParser.Assignment>());
+		this.addInput(assignmentsAtStart);
 	}
 
 	public LinkedService() {}
@@ -284,6 +295,10 @@ public abstract class LinkedService extends LinkedDevice implements QueueUser {
 		setReceivedEntity(oldEnt);
 
 		return ret;
+	}
+
+	public void assignAttributesAtStart(double simTime) {
+		assignmentsAtStart.executeAssignments(this, simTime);
 	}
 
 	// ********************************************************************************************
