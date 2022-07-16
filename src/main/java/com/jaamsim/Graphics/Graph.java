@@ -420,7 +420,7 @@ public class Graph extends GraphBasics  {
 	 * @return double
 	 */
 	protected double getCurrentValue(double simTime, SeriesInfo info) {
-		return info.samp.getNextSample(simTime);
+		return info.samp.getNextSample(this, simTime);
 	}
 
 	public ArrayList<SeriesInfo> getPrimarySeries() {

@@ -20,6 +20,7 @@ package com.jaamsim.CalculationObjects;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.Samples.SampleProvider;
+import com.jaamsim.basicsim.Entity;
 import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
@@ -59,11 +60,15 @@ public class Polynomial extends DisplayEntity implements SampleProvider {
 
 	public Polynomial() {}
 
-	@Override
 	@Output(name = "Value",
 	 description = "The calculated value for the polynomial.",
 	    unitType = DimensionlessUnit.class)
 	public double getNextSample(double simTime) {
+		return getNextSample(this, simTime);
+	}
+
+	@Override
+	public double getNextSample(Entity thisEnt, double simTime) {
 		double x = inputValue.getNextSample(simTime);
 		double pow = 1.0;
 		double val = 0.0;

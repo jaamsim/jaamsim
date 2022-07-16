@@ -116,11 +116,15 @@ public class WeightedSum extends DisplayEntity implements SampleProvider {
 		}
 	}
 
-	@Override
 	@Output(name = "Value",
 	 description = "The calculated value for the weighted sum.",
 	    unitType = UserSpecifiedUnit.class)
 	public double getNextSample(double simTime) {
+		return getNextSample(this, simTime);
+	}
+
+	@Override
+	public double getNextSample(Entity thisEnt, double simTime) {
 		double val = 0.0;
 
 		// Calculate the unweighted sum of the inputs

@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2015 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018-2021 JaamSim Software Inc.
+ * Copyright (C) 2018-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -123,8 +123,12 @@ public class InputValue extends TextBasics implements SampleProvider {
 	@Output(name = "Value",
 	        description = "The present value for this input.",
 	        unitType = UserSpecifiedUnit.class)
-	@Override
 	public double getNextSample(double simTime) {
+		return getNextSample(this, simTime);
+	}
+
+	@Override
+	public double getNextSample(Entity thisEnt, double simTime) {
 		return valInput.getValue();
 	}
 

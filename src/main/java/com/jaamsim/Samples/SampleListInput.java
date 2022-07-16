@@ -120,7 +120,7 @@ public class SampleListInput extends ListInput<ArrayList<SampleProvider>> {
 				try {
 					SampleProvider sp = Input.parseSampleExp(argKw, thisEnt, minValue, maxValue, getUnitType(i));
 					if (integerValue && sp instanceof SampleConstant)
-						sp = new SampleConstant((int) sp.getNextSample(0.0d));
+						sp = new SampleConstant((int) sp.getNextSample(thisEnt, 0.0d));
 					temp.add(sp);
 				}
 				catch (InputErrorException e) {
@@ -142,7 +142,7 @@ public class SampleListInput extends ListInput<ArrayList<SampleProvider>> {
 			try {
 				SampleProvider sp = Input.parseSampleExp(subArg, thisEnt, minValue, maxValue, getUnitType(i));
 				if (integerValue && sp instanceof SampleConstant)
-					sp = new SampleConstant((int) sp.getNextSample(0.0d));
+					sp = new SampleConstant((int) sp.getNextSample(thisEnt, 0.0d));
 				temp.add(sp);
 			}
 			catch (InputErrorException e) {
@@ -280,12 +280,12 @@ public class SampleListInput extends ListInput<ArrayList<SampleProvider>> {
 			sb.append("{").append(Input.BRACE_SEPARATOR);
 			Class<? extends Unit> ut = samp.getUnitType();
 			if (ut == DimensionlessUnit.class) {
-				sb.append(Double.toString(samp.getNextSample(simTime)));
+				sb.append(Double.toString(samp.getNextSample(thisEnt, simTime)));
 			}
 			else {
 				String unitString = simModel.getDisplayedUnit(ut);
 				double sifactor = simModel.getDisplayedUnitFactor(ut);
-				sb.append(Double.toString(samp.getNextSample(simTime)/sifactor));
+				sb.append(Double.toString(samp.getNextSample(thisEnt, simTime)/sifactor));
 				sb.append("[").append(unitString).append("]");
 			}
 			sb.append(Input.BRACE_SEPARATOR).append("}");
@@ -294,8 +294,12 @@ public class SampleListInput extends ListInput<ArrayList<SampleProvider>> {
 	}
 
 	public double getNextSample(int i, double simTime) {
+		return getNextSample(i, null, simTime);
+	}
+
+	public double getNextSample(int i, Entity thisEnt, double simTime) {
 		try {
-			return value.get(i).getNextSample(simTime);
+			return value.get(i).getNextSample(thisEnt, simTime);
 		}
 		catch (ErrorException e) {
 			e.keyword = getKeyword();

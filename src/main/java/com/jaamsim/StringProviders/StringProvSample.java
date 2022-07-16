@@ -29,32 +29,32 @@ public class StringProvSample implements StringProvider {
 
 	@Override
 	public String getNextString(Entity thisEnt, double simTime) {
-		return Double.toString(samp.getNextSample(simTime));
+		return Double.toString(samp.getNextSample(thisEnt, simTime));
 	}
 
 	@Override
 	public String getNextString(Entity thisEnt, double simTime, double siFactor) {
-		return Double.toString(samp.getNextSample(simTime)/siFactor);
+		return Double.toString(samp.getNextSample(thisEnt, simTime)/siFactor);
 	}
 
 	@Override
 	public String getNextString(Entity thisEnt, double simTime, double siFactor, boolean integerValue) {
 		if (integerValue) {
-			return Double.toString((int)(samp.getNextSample(simTime)/siFactor));
+			return Double.toString((int)(samp.getNextSample(thisEnt, simTime)/siFactor));
 		}
 		else {
-			return Double.toString(samp.getNextSample(simTime)/siFactor);
+			return Double.toString(samp.getNextSample(thisEnt, simTime)/siFactor);
 		}
 	}
 
 	@Override
 	public String getNextString(Entity thisEnt, double simTime, String fmt, double siFactor) {
-		return String.format(fmt, samp.getNextSample(simTime)/siFactor);
+		return String.format(fmt, samp.getNextSample(thisEnt, simTime)/siFactor);
 	}
 
 	@Override
 	public double getNextValue(Entity thisEnt, double simTime) {
-		return samp.getNextSample(simTime);
+		return samp.getNextSample(thisEnt, simTime);
 	}
 
 	@Override

@@ -61,7 +61,7 @@ public class TestContinuousDistribution {
 		public void process() {
 			total = 0.0d;
 			for (int i = 0; i < numSamples; i++)
-				total += dist.getNextSample(0.0d);
+				total += dist.getNextSample(null, 0.0d);
 		}
 	}
 

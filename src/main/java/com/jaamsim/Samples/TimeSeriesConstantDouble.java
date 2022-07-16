@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2020 JaamSim Software Inc.
+ * Copyright (C) 2020-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
  */
 package com.jaamsim.Samples;
 
+import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.input.Input;
 import com.jaamsim.units.DimensionlessUnit;
@@ -45,8 +46,12 @@ public class TimeSeriesConstantDouble implements TimeSeriesProvider {
 		return unitType;
 	}
 
-	@Override
 	public double getNextSample(double simTime) {
+		return val;
+	}
+
+	@Override
+	public double getNextSample(Entity thisEnt, double simTime) {
 		return val;
 	}
 

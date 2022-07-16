@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2021 JaamSim Software Inc.
+ * Copyright (C) 2021-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package com.jaamsim.BasicObjects;
 
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleProvider;
+import com.jaamsim.basicsim.Entity;
 import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.input.InputErrorException;
@@ -106,8 +107,12 @@ public class EventSchedule extends DisplayEntity implements SampleProvider{
 	             + "is evaluated.",
 	    unitType = TimeUnit.class,
 	    sequence = 1)
-	@Override
 	public double getNextSample(double simTime) {
+		return getNextSample(this, simTime);
+	}
+
+	@Override
+	public double getNextSample(Entity thisEnt, double simTime) {
 		DoubleVector list = timeList.getValue();
 
 		if (list == null)

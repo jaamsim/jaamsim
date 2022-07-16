@@ -193,8 +193,12 @@ implements SampleProvider, RandomStreamUser {
 	             + "is evaluated.",
 	    unitType = UserSpecifiedUnit.class,
 	    sequence = 0)
-	@Override
 	public final double getNextSample(double simTime) {
+		return getNextSample(this, simTime);
+	}
+
+	@Override
+	public final double getNextSample(Entity thisEnt, double simTime) {
 		// If we are not in a model context, do not perturb the distribution by sampling,
 		// instead simply return the last sampled value
 		if (!EventManager.hasCurrent()) {

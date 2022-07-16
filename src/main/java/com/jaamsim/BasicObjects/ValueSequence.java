@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2015 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -103,9 +104,12 @@ public class ValueSequence extends DisplayEntity implements SampleProvider {
 	             + "is evaluated.",
 	    unitType = UserSpecifiedUnit.class,
 	    sequence = 1)
-	@Override
 	public double getNextSample(double simTime) {
+		return getNextSample(this, simTime);
+	}
 
+	@Override
+	public double getNextSample(Entity thisEnt, double simTime) {
 		if (valueList.getValue() == null)
 			return Double.NaN;
 

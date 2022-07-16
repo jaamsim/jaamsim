@@ -746,7 +746,7 @@ public class JaamSimModel implements EventTimeListener {
 			Class<? extends Unit> unitType = DimensionlessUnit.class;
 			Entity thisEnt = getSimulation();
 			SampleExpression sampleExp = new SampleExpression(expString, thisEnt, unitType);
-			return sampleExp.getNextSample(simTime);
+			return sampleExp.getNextSample(thisEnt, simTime);
 		}
 		catch (ExpError e) {
 			return Double.NaN;

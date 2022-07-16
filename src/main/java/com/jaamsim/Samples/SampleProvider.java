@@ -17,10 +17,11 @@
  */
 package com.jaamsim.Samples;
 
+import com.jaamsim.basicsim.Entity;
 import com.jaamsim.units.Unit;
 
 public interface SampleProvider {
 	public Class<? extends Unit> getUnitType();
-	public double getNextSample(double simTime);
+	public double getNextSample(Entity thisEnt, double simTime);
 	public double getMeanValue(double simTime);
 }

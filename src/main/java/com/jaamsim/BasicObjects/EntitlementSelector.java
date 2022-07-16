@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +19,7 @@ package com.jaamsim.BasicObjects;
 
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleProvider;
+import com.jaamsim.basicsim.Entity;
 import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.input.InputErrorException;
@@ -86,8 +88,12 @@ public class EntitlementSelector extends DisplayEntity implements SampleProvider
 	 description = "The last sampled index (from 1 to N).",
 	    unitType = UserSpecifiedUnit.class,
 	    sequence = 0)
-	@Override
 	public final double getNextSample(double simTime) {
+		return getNextSample(this, simTime);
+	}
+
+	@Override
+	public final double getNextSample(Entity thisEnt, double simTime) {
 		// If we are not in a model context, do not perturb the distribution by sampling,
 		// instead simply return the last sampled value
 		if (!EventManager.hasCurrent()) {

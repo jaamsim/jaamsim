@@ -58,8 +58,10 @@ public class SampleExpression implements SampleProvider {
 	}
 
 	@Override
-	public double getNextSample(double simTime) {
+	public double getNextSample(Entity thisEnt, double simTime) {
 		double ret = 0.0;
+		if (thisEnt == null)
+			thisEnt = this.thisEnt;
 		try {
 			ExpResult res = ExpEvaluator.evaluateExpression(exp, thisEnt, simTime);
 
