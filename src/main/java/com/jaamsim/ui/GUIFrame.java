@@ -396,6 +396,9 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			@Override
 			public void componentResized(ComponentEvent e) {
 				JaamSimModel sim = getJaamSimModel();
+				if (sim == null)
+					return;
+
 				if (sim.getSimulation() == null)
 					return;
 				sim.getSimulation().setControlPanelWidth(getSize().width);
