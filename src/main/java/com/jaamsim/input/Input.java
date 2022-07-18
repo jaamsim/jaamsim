@@ -200,8 +200,6 @@ public abstract class Input<T> {
 	public void doCallback(Entity ent) {
 		if (callback != null)
 			callback.callback(ent, this);
-		else
-			ent.updateForInput(this);
 	}
 
 	public void setCallback(InputCallback back) {
