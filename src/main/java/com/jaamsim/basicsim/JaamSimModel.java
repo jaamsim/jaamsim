@@ -1031,12 +1031,14 @@ public class JaamSimModel implements EventTimeListener {
 		return ent;
 	}
 
+	private static final Class<?>[] defArgClasses = new Class[0];
+	private static final Object[] defArgs = new Object[0];
 	public final <T extends Entity> T createInstance(Class<T> proto) {
 		T ent = null;
 		try {
 			synchronized (createLock) {
 				createModel = this;
-				ent = proto.newInstance();
+				ent = proto.getConstructor(defArgClasses).newInstance(defArgs);
 			}
 			addInstance(ent);
 		}
