@@ -139,6 +139,7 @@ private static class ClassFields implements Comparator<Field> {
 			if (name.toUpperCase().equals(name))
 				continue;
 
+			each.setAccessible(true);
 			fields.add(each);
 		}
 		Collections.sort(fields, this);
@@ -299,19 +300,15 @@ private static class PropertyTableModel extends AbstractTableModel {
 			return field.getType().getSimpleName();
 
 		try {
-			// save the field's accessibility, reset after reading
-			boolean accessible = field.isAccessible();
-			field.setAccessible(true);
-
 			Object o = field.get(ent);
-			field.setAccessible(accessible);
 			return format(o);
 		}
 		catch (SecurityException e) {}
 		catch (IllegalArgumentException e) {}
 		catch (IllegalAccessException e) {}
 
-		return "";
+		System.out.println("Failure to reflect field:" + field.getName());
+		return "Failure to reflect field value";
 	}
 }
 }
