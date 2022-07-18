@@ -50,10 +50,10 @@ private static final HashMap<String, Color4d> colorMap;
 private static final HashMap<Color4d, String> colorNameMap;
 private static final HashMap<String, ArrayList<String>> colorFamilyMap;
 
-public static final String[] colorFamilies = new String[]{"Pink", "Red", "Orange", "Yellow",
+private static final String[] colorFamilies = new String[]{"Pink", "Red", "Orange", "Yellow",
 		"Brown", "Green", "Cyan", "Blue", "Purple", "White", "Black"};
 
-public static Comparator<Color4d> colourComparator = new Comparator<Color4d>() {
+public static final Comparator<Color4d> colourComparator = new Comparator<Color4d>() {
 	@Override
 	public int compare(Color4d col1, Color4d col2) {
 		String str1 = ColourInput.toString(col1);
@@ -62,7 +62,7 @@ public static Comparator<Color4d> colourComparator = new Comparator<Color4d>() {
 	}
 };
 
-public static Comparator<String> luminosityComparator = new Comparator<String>() {
+public static final Comparator<String> luminosityComparator = new Comparator<String>() {
 	@Override
 	public int compare(String name1, String name2) {
 		Color4d col1 = ColourInput.getColorWithName(name1);

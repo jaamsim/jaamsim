@@ -29,8 +29,8 @@ public class KeyEventInput extends Input<Integer> {
 		super(key, cat, def);
 	}
 
-	public static HashMap<String, Integer> keyCodeMap; // key code for a given key name
-	public static HashMap<Integer, String> keyNameMap; // key name for a given key code
+	private static final HashMap<String, Integer> keyCodeMap; // key code for a given key name
+	private static final HashMap<Integer, String> keyNameMap; // key name for a given key code
 
 	static {
 		keyCodeMap = new HashMap<>();
