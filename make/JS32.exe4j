@@ -31,10 +31,10 @@ limitations under the License.
       <versionLine x="20" y="40" text="" fontSize="8" fontColor="0,0,0" bold="false" />
     </text>
   </splashScreen>
-  <java mainClass="com.jaamsim.ui.GUIFrame" mainMode="1" vmParameters="-Xmx4096m" arguments="" allowVMPassthroughParameters="true" preferredVM="" bundleRuntime="true" minVersion="1.5" maxVersion="" allowBetaVM="false" jdkOnly="false">
+  <java mainClass="com.jaamsim.ui.GUIFrame" mainMode="1" vmParameters="-Xmx4096m -XX:+UseParallelGC --add-exports java.desktop/sun.awt=ALL-UNNAMED" arguments="" allowVMPassthroughParameters="true" preferredVM="" bundleRuntime="true" minVersion="1.8" maxVersion="" allowBetaVM="false" jdkOnly="false">
     <searchSequence>
-      <registry />
       <envVar name="JAVA_HOME" />
+      <registry />
       <envVar name="JDK_HOME" />
     </searchSequence>
     <classPath>
