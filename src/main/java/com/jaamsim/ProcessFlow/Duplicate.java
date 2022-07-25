@@ -21,9 +21,7 @@ import java.util.ArrayList;
 
 import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.Graphics.DisplayEntity;
-import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleListInput;
-import com.jaamsim.Samples.SampleProvider;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InterfaceEntityListInput;
@@ -58,9 +56,7 @@ public class Duplicate extends LinkedComponent {
 		targetComponentList.setRequired(true);
 		this.addInput( targetComponentList);
 
-		ArrayList<SampleProvider> def = new ArrayList<>();
-		def.add(new SampleConstant(1));
-		numberOfDuplicates = new SampleListInput("NumberOfDuplicates", KEY_INPUTS, def);
+		numberOfDuplicates = new SampleListInput("NumberOfDuplicates", KEY_INPUTS, 1);
 		numberOfDuplicates.setDimensionless(true);
 		numberOfDuplicates.setUnitType(DimensionlessUnit.class);
 		numberOfDuplicates.setIntegerValue(true);

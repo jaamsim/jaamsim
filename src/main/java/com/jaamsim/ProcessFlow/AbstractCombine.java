@@ -21,10 +21,8 @@ import java.util.ArrayList;
 
 import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.Graphics.DisplayEntity;
-import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.Samples.SampleListInput;
-import com.jaamsim.Samples.SampleProvider;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.EntityListInput;
 import com.jaamsim.input.InputAgent;
@@ -89,9 +87,7 @@ public abstract class AbstractCombine extends LinkedService {
 		waitQueueList.setRequired(true);
 		this.addInput(waitQueueList);
 
-		ArrayList<SampleProvider> def = new ArrayList<>();
-		def.add(new SampleConstant(1));
-		numberRequired = new SampleListInput("NumberRequired", KEY_INPUTS, def);
+		numberRequired = new SampleListInput("NumberRequired", KEY_INPUTS, 1);
 		numberRequired.setDimensionless(true);
 		numberRequired.setUnitType(DimensionlessUnit.class);
 		numberRequired.setIntegerValue(true);

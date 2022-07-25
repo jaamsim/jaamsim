@@ -20,9 +20,7 @@ package com.jaamsim.ProcessFlow;
 import java.util.ArrayList;
 
 import com.jaamsim.Graphics.DisplayEntity;
-import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleListInput;
-import com.jaamsim.Samples.SampleProvider;
 import com.jaamsim.input.InterfaceEntityListInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.resourceObjects.AbstractResourceProvider;
@@ -50,9 +48,7 @@ public class Release extends LinkedComponent {
 		this.addInput( resourceList);
 		this.addSynonym(resourceList, "Resource");
 
-		ArrayList<SampleProvider> def = new ArrayList<>();
-		def.add(new SampleConstant(1));
-		numberOfUnitsList = new SampleListInput("NumberOfUnits", KEY_INPUTS, def);
+		numberOfUnitsList = new SampleListInput("NumberOfUnits", KEY_INPUTS, 1);
 		numberOfUnitsList.setValidRange(0, Double.POSITIVE_INFINITY);
 		numberOfUnitsList.setDimensionless(true);
 		numberOfUnitsList.setUnitType(DimensionlessUnit.class);
