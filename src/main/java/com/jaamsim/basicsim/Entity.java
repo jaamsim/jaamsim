@@ -692,13 +692,6 @@ public class Entity {
 		return ret;
 	}
 
-	public static final InputCallback updateForInputCallback = new InputCallback() {
-		@Override
-		public void callback(Entity ent, Input<?> inp) {
-			ent.updateForInput(inp);
-		}
-	};
-
 	static final InputCallback traceInputCallback = new InputCallback() {
 		@Override
 		public void callback(Entity ent, Input<?> inp) {
@@ -738,11 +731,6 @@ public class Entity {
 			addCustomOutput(ne.getName(), ne.getExpression(), ne.getUnitType());
 		}
 	}
-
-	/**
-	 * This method updates the Entity for changes in the given input
-	 */
-	public void updateForInput(Input<?> in) {}
 
 	public final void startProcess(String methodName, Object... args) {
 		EventManager.startProcess(new ReflectionTarget(this, methodName, args));
