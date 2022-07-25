@@ -37,13 +37,13 @@ public class SubModelClone extends AbstractSubModel {
 
 	@Keyword(description = "The prototype sub-model from which this sub-model is cloned.",
 	         exampleList = {"SubModel1"})
-	protected final EntityInput<SubModel> prototype;
+	protected final EntityInput<SubModel> prototypeSubModel;
 
 	{
-		prototype = new EntityInput<>(SubModel.class, "Prototype", KEY_INPUTS, null);
-		prototype.setHidden(true);
-		prototype.setCallback(prototypeKeywordCallback);
-		this.addInput(prototype);
+		prototypeSubModel = new EntityInput<>(SubModel.class, "Prototype", KEY_INPUTS, null);
+		prototypeSubModel.setHidden(true);
+		prototypeSubModel.setCallback(prototypeKeywordCallback);
+		this.addInput(prototypeSubModel);
 	}
 
 	public SubModelClone() {}
@@ -51,7 +51,7 @@ public class SubModelClone extends AbstractSubModel {
 	@Override
 	public void setInputsForDragAndDrop() {
 		super.setInputsForDragAndDrop();
-		SubModel proto = prototype.getValue();
+		SubModel proto = getPrototypeSubModel();
 
 		// Set the new keywords for the clone
 		updateKeywords(proto.getKeywordList());
@@ -87,14 +87,14 @@ public class SubModelClone extends AbstractSubModel {
 	 * @return true is this sub-model is a clone of the specified prototype.
 	 */
 	public boolean isClone(SubModel proto) {
-		return prototype.getValue() == proto;
+		return getPrototypeSubModel() == proto;
 	}
 
 	/**
 	 * Adjusts the clone to match the present setting for its prototype sub-model.
 	 */
 	public void update() {
-		SubModel proto = prototype.getValue();
+		SubModel proto = getPrototypeSubModel();
 
 		// Do not record the components and their inputs to be 'edited'
 		boolean bool = getJaamSimModel().isRecordEdits();
@@ -122,7 +122,7 @@ public class SubModelClone extends AbstractSubModel {
 	 * @param protoCompList - components for the prototype
 	 */
 	protected void createComponents() {
-		AbstractSubModel proto = prototype.getValue();
+		AbstractSubModel proto = getPrototypeSubModel();
 		//System.out.format("%s.createComponents - protoComp=%s%n", this, protoCompList);
 
 		// Delete any components that are not in the prototype
@@ -149,7 +149,7 @@ public class SubModelClone extends AbstractSubModel {
 	}
 
 	protected void setComponentInputs() {
-		AbstractSubModel proto = prototype.getValue();
+		AbstractSubModel proto = getPrototypeSubModel();
 
 		// Save the seeds for the components that use a random distribution
 		LinkedHashMap<Entity, Integer> seedMap = new LinkedHashMap<>();
@@ -195,15 +195,15 @@ public class SubModelClone extends AbstractSubModel {
 		showTemporaryComponents(bool);
 	}
 
-	public SubModel getPrototype() {
-		return prototype.getValue();
+	public SubModel getPrototypeSubModel() {
+		return prototypeSubModel.getValue();
 	}
 
-	@Output(name = "Prototype",
+	@Output(name = "PrototypeSubModel",
 	 description = "The prototype SubModel from which this sub-model was cloned.",
 	    sequence = 0)
-	public SubModel getPrototype(double simTime) {
-		return getPrototype();
+	public SubModel getPrototypeSubModel(double simTime) {
+		return getPrototypeSubModel();
 	}
 
 }
