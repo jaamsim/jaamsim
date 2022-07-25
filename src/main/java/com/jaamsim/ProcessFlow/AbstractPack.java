@@ -18,7 +18,6 @@
 package com.jaamsim.ProcessFlow;
 
 import com.jaamsim.Graphics.DisplayEntity;
-import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.StringProviders.StringProvInput;
 import com.jaamsim.input.BooleanInput;
@@ -59,13 +58,13 @@ public abstract class AbstractPack extends LinkedService {
 	private DisplayEntity packedEntity;  // the entity being packed
 
 	{
-		numberOfEntities = new SampleInput("NumberOfEntities", KEY_INPUTS, new SampleConstant(1));
+		numberOfEntities = new SampleInput("NumberOfEntities", KEY_INPUTS, 1);
 		numberOfEntities.setUnitType(DimensionlessUnit.class);
 		numberOfEntities.setIntegerValue(true);
 		numberOfEntities.setValidRange(1, Double.POSITIVE_INFINITY);
 		this.addInput(numberOfEntities);
 
-		serviceTime = new SampleInput("ServiceTime", KEY_INPUTS, new SampleConstant(TimeUnit.class, 0.0));
+		serviceTime = new SampleInput("ServiceTime", KEY_INPUTS, 0.0d);
 		serviceTime.setUnitType(TimeUnit.class);
 		serviceTime.setValidRange(0, Double.POSITIVE_INFINITY);
 		this.addInput(serviceTime);

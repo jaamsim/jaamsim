@@ -18,7 +18,6 @@
 package com.jaamsim.CalculationObjects;
 
 import com.jaamsim.Graphics.DisplayEntity;
-import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.Samples.SampleProvider;
 import com.jaamsim.datatypes.DoubleVector;
@@ -47,8 +46,7 @@ public class Polynomial extends DisplayEntity implements SampleProvider {
 	private final ValueListInput coefficientList;
 
 	{
-		SampleConstant def = new SampleConstant(DimensionlessUnit.class, 0.0d);
-		inputValue = new SampleInput("InputValue", KEY_INPUTS, def);
+		inputValue = new SampleInput("InputValue", KEY_INPUTS, 0.0d);
 		inputValue.setUnitType(DimensionlessUnit.class);
 		this.addInput(inputValue);
 

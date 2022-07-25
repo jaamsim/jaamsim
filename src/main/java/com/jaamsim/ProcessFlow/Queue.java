@@ -25,7 +25,6 @@ import java.util.Set;
 
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.ProcessFlow.EntStorage.StorageEntry;
-import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.Statistics.TimeBasedFrequency;
 import com.jaamsim.Statistics.TimeBasedStatistics;
@@ -126,7 +125,7 @@ public class Queue extends LinkedComponent {
 		defaultEntity.setHidden(true);
 		nextComponent.setHidden(true);
 
-		priority = new SampleInput("Priority", KEY_INPUTS, new SampleConstant(0));
+		priority = new SampleInput("Priority", KEY_INPUTS, 0);
 		priority.setUnitType(DimensionlessUnit.class);
 		priority.setIntegerValue(true);
 		priority.setValidRange(0.0d, Double.POSITIVE_INFINITY);
@@ -145,7 +144,7 @@ public class Queue extends LinkedComponent {
 		renegeTime.setCallback(inputCallback);
 		this.addInput(renegeTime);
 
-		renegeCondition = new SampleInput("RenegeCondition", KEY_INPUTS, new SampleConstant(1));
+		renegeCondition = new SampleInput("RenegeCondition", KEY_INPUTS, 1);
 		renegeCondition.setUnitType(DimensionlessUnit.class);
 		renegeCondition.setValidRange(0.0d, 1.0d);
 		this.addInput(renegeCondition);

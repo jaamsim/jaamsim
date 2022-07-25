@@ -80,7 +80,7 @@ public abstract class AbstractCombine extends LinkedService {
 		nextEntity.setHidden(true);
 		assignmentsAtStart.setHidden(true);
 
-		serviceTime = new SampleInput("ServiceTime", KEY_INPUTS, new SampleConstant(TimeUnit.class, 0.0));
+		serviceTime = new SampleInput("ServiceTime", KEY_INPUTS, 0.0d);
 		serviceTime.setUnitType(TimeUnit.class);
 		serviceTime.setValidRange(0, Double.POSITIVE_INFINITY);
 		this.addInput(serviceTime);

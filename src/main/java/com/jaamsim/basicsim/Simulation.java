@@ -430,7 +430,7 @@ public class Simulation extends Entity {
 		exitAtStop = new BooleanInput("ExitAtStop", KEY_INPUTS, false);
 		this.addInput(exitAtStop);
 
-		globalSeedInput = new SampleInput("GlobalSubstreamSeed", KEY_INPUTS, new SampleConstant(0));
+		globalSeedInput = new SampleInput("GlobalSubstreamSeed", KEY_INPUTS, 0);
 		globalSeedInput.setUnitType(DimensionlessUnit.class);
 		globalSeedInput.setIntegerValue(true);
 		globalSeedInput.setValidRange(0, Integer.MAX_VALUE);

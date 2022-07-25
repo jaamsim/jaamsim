@@ -20,7 +20,6 @@ package com.jaamsim.ProcessFlow;
 import java.util.ArrayList;
 
 import com.jaamsim.Graphics.DisplayEntity;
-import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.input.InterfaceEntityInput;
 import com.jaamsim.input.Keyword;
@@ -37,7 +36,7 @@ public class RemoveFrom extends AbstractUnpack {
 	protected final InterfaceEntityInput<Linkable> nextForContainers;
 
 	{
-		numberOfEntities = new SampleInput("NumberOfEntities", KEY_INPUTS, new SampleConstant(1));
+		numberOfEntities = new SampleInput("NumberOfEntities", KEY_INPUTS, 1);
 		numberOfEntities.setUnitType(DimensionlessUnit.class);
 		numberOfEntities.setIntegerValue(true);
 		numberOfEntities.setValidRange(0, Double.POSITIVE_INFINITY);

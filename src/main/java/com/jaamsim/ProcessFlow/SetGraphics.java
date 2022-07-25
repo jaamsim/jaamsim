@@ -22,7 +22,6 @@ import com.jaamsim.EntityProviders.EntityProvInput;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.OverlayEntity;
 import com.jaamsim.Graphics.TextBasics;
-import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.input.EntityListInput;
 import com.jaamsim.input.Keyword;
@@ -59,7 +58,7 @@ public class SetGraphics extends LinkedComponent {
 		graphicsList.addInvalidClass(OverlayEntity.class);
 		this.addInput(graphicsList);
 
-		choice = new SampleInput("Choice", KEY_INPUTS, new SampleConstant(1));
+		choice = new SampleInput("Choice", KEY_INPUTS, 1);
 		choice.setUnitType(DimensionlessUnit.class);
 		choice.setIntegerValue(true);
 		choice.setValidRange(1, Double.POSITIVE_INFINITY);
