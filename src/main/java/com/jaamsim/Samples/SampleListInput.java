@@ -18,6 +18,7 @@
 package com.jaamsim.Samples;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 
 import com.jaamsim.basicsim.Entity;
@@ -41,6 +42,10 @@ public class SampleListInput extends ListInput<ArrayList<SampleProvider>> {
 	public SampleListInput(String key, String cat, ArrayList<SampleProvider> def) {
 		super(key, cat, def);
 		unitTypeList = new ArrayList<>();
+	}
+
+	public SampleListInput(String key, String cat, int def) {
+		this(key, cat, new ArrayList<SampleProvider>(Arrays.asList(new SampleConstant(def))));
 	}
 
 	public void setUnitTypeList(ArrayList<Class<? extends Unit>> utList) {

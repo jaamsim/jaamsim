@@ -46,6 +46,10 @@ public class SampleInput extends Input<SampleProvider> {
 		super(key, cat, new SampleConstant(def));
 	}
 
+	public SampleInput(String key, String cat, int def) {
+		super(key, cat, new SampleConstant(def));
+	}
+
 	public void setDefaultValue(double def) {
 		setDefaultValue(new SampleConstant(def));
 	}

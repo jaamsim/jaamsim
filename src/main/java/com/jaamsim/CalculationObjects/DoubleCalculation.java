@@ -21,7 +21,6 @@ import java.util.ArrayList;
 
 import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.Graphics.DisplayEntity;
-import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.Samples.SampleProvider;
 import com.jaamsim.basicsim.Entity;
@@ -62,8 +61,7 @@ implements SampleProvider {
 		unitType.setCallback(unitTypeInputCallback);
 		this.addInput(unitType);
 
-		SampleConstant def = new SampleConstant(UserSpecifiedUnit.class, 0.0d);
-		inputValue = new SampleInput("InputValue", KEY_INPUTS, def);
+		inputValue = new SampleInput("InputValue", KEY_INPUTS, 0.0d);
 		inputValue.setUnitType(UserSpecifiedUnit.class);
 		this.addInput(inputValue);
 	}

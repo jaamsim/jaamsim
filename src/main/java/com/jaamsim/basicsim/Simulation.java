@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 import com.jaamsim.Commands.KeywordCommand;
-import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.StringProviders.StringProvListInput;
 import com.jaamsim.datatypes.IntegerVector;
@@ -430,7 +429,7 @@ public class Simulation extends Entity {
 		exitAtStop = new BooleanInput("ExitAtStop", KEY_INPUTS, false);
 		this.addInput(exitAtStop);
 
-		globalSeedInput = new SampleInput("GlobalSubstreamSeed", KEY_INPUTS, new SampleConstant(0));
+		globalSeedInput = new SampleInput("GlobalSubstreamSeed", KEY_INPUTS, 0);
 		globalSeedInput.setUnitType(DimensionlessUnit.class);
 		globalSeedInput.setIntegerValue(true);
 		globalSeedInput.setValidRange(0, Integer.MAX_VALUE);
@@ -476,7 +475,7 @@ public class Simulation extends Entity {
 		this.addInput(scenarioIndexDefinitionList);
 		this.addSynonym(scenarioIndexDefinitionList, "RunIndexDefinitionList");
 
-		startingScenarioNumber = new RunNumberInput("StartingScenarioNumber", MULTIPLE_RUNS, new SampleConstant(1));
+		startingScenarioNumber = new RunNumberInput("StartingScenarioNumber", MULTIPLE_RUNS, 1);
 		startingScenarioNumber.setUnitType(DimensionlessUnit.class);
 		startingScenarioNumber.setIntegerValue(true);
 		startingScenarioNumber.setValidRange(1, Integer.MAX_VALUE);
@@ -484,14 +483,14 @@ public class Simulation extends Entity {
 		this.addInput(startingScenarioNumber);
 		this.addSynonym(startingScenarioNumber, "StartingRunNumber");
 
-		endingScenarioNumber = new RunNumberInput("EndingScenarioNumber", MULTIPLE_RUNS, new SampleConstant(1));
+		endingScenarioNumber = new RunNumberInput("EndingScenarioNumber", MULTIPLE_RUNS, 1);
 		endingScenarioNumber.setUnitType(DimensionlessUnit.class);
 		endingScenarioNumber.setIntegerValue(true);
 		endingScenarioNumber.setValidRange(1, Integer.MAX_VALUE);
 		this.addInput(endingScenarioNumber);
 		this.addSynonym(endingScenarioNumber, "EndingRunNumber");
 
-		numberOfReplications = new SampleInput("NumberOfReplications", MULTIPLE_RUNS, new SampleConstant(1));
+		numberOfReplications = new SampleInput("NumberOfReplications", MULTIPLE_RUNS, 1);
 		numberOfReplications.setUnitType(DimensionlessUnit.class);
 		numberOfReplications.setIntegerValue(true);
 		numberOfReplications.setValidRange(1, Integer.MAX_VALUE);

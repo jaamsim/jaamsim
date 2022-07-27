@@ -23,7 +23,6 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 
 import com.jaamsim.Graphics.DisplayEntity;
-import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.StringProviders.StringProvInput;
 import com.jaamsim.input.BooleanInput;
@@ -98,7 +97,7 @@ public class EntityContainer extends SimEntity implements EntContainer {
 	private EntContainerDelegate container;
 
 	{
-		priority = new SampleInput("Priority", KEY_INPUTS, new SampleConstant(0));
+		priority = new SampleInput("Priority", KEY_INPUTS, 0);
 		priority.setUnitType(DimensionlessUnit.class);
 		priority.setIntegerValue(true);
 		priority.setValidRange(0.0d, Double.POSITIVE_INFINITY);

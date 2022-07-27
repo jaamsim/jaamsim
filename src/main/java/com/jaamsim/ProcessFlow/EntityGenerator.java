@@ -24,7 +24,6 @@ import com.jaamsim.EntityProviders.EntityProvInput;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.OverlayEntity;
 import com.jaamsim.Graphics.TextBasics;
-import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.input.Input;
@@ -82,17 +81,17 @@ public class EntityGenerator extends LinkedService implements EntityGen {
 		selectionCondition.setHidden(true);
 		nextEntity.setHidden(true);
 
-		firstArrivalTime = new SampleInput("FirstArrivalTime", KEY_INPUTS, new SampleConstant(TimeUnit.class, 0.0));
+		firstArrivalTime = new SampleInput("FirstArrivalTime", KEY_INPUTS, 0.0d);
 		firstArrivalTime.setUnitType(TimeUnit.class);
 		firstArrivalTime.setValidRange(0, Double.POSITIVE_INFINITY);
 		this.addInput(firstArrivalTime);
 
-		interArrivalTime = new SampleInput("InterArrivalTime", KEY_INPUTS, new SampleConstant(TimeUnit.class, 1.0));
+		interArrivalTime = new SampleInput("InterArrivalTime", KEY_INPUTS, 1.0d);
 		interArrivalTime.setUnitType(TimeUnit.class);
 		interArrivalTime.setValidRange(0, Double.POSITIVE_INFINITY);
 		this.addInput(interArrivalTime);
 
-		entitiesPerArrival = new SampleInput("EntitiesPerArrival", KEY_INPUTS, new SampleConstant(1));
+		entitiesPerArrival = new SampleInput("EntitiesPerArrival", KEY_INPUTS, 1);
 		entitiesPerArrival.setUnitType(DimensionlessUnit.class);
 		entitiesPerArrival.setIntegerValue(true);
 		entitiesPerArrival.setValidRange(1, Double.POSITIVE_INFINITY);
