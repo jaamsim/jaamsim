@@ -24,6 +24,9 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import com.jaamsim.BooleanProviders.BooleanProvConstant;
+import com.jaamsim.BooleanProviders.BooleanProvExpression;
+import com.jaamsim.BooleanProviders.BooleanProvider;
 import com.jaamsim.EntityProviders.EntityProvConstant;
 import com.jaamsim.EntityProviders.EntityProvExpression;
 import com.jaamsim.EntityProviders.EntityProvider;
@@ -102,6 +105,8 @@ public abstract class Input<T> {
 	                                                + "Also accepts other types of expressions whose outputs will be converted to a string.";
 	protected static final String VALID_ENTITY_PROV = "Accepts an entity name or an expression that returns an entity.";
 	protected static final String VALID_ENTITY_PROV_TYPE = "Accepts the name of an entity of type %s or an expression that returns such an entity.";
+	protected static final String VALID_BOOLEAN_PROV = "Accepts the text TRUE or FALSE or an expression that returns a dimensionless number (non-zero indicates TRUE, zero indicates FALSE). "
+	                                                 + "Inputs of T, t, and 1 are interpreted as TRUE, while F, f, and 0 are interpreted as FALSE.";
 	protected static final String VALID_COLOUR = "Accepts a colour name, an RGB value, or an RGB/transparency value.";
 	protected static final String VALID_INTEGER = "Accepts a dimensionless integer value.";
 	protected static final String VALID_VALUE = "Accepts a number with units of type %s.";
@@ -1583,6 +1588,25 @@ public abstract class Input<T> {
 			}
 
 			return new Color4d(r, g, b, a);
+		}
+	}
+
+	public static BooleanProvider parseBooleanProvider(KeywordIndex kw, Entity thisEnt) {
+		assertCount(kw, 1);
+
+		// Parse the input as an boolean constant
+		if (kw.getArg(0).equals(BooleanInput.TRUE))
+			return new BooleanProvConstant(true);
+
+		if (kw.getArg(0).equals(BooleanInput.FALSE))
+			return new BooleanProvConstant(false);
+
+		// Parse the input as an expression
+		try {
+			return new BooleanProvExpression(kw.getArg(0), thisEnt);
+		}
+		catch (ExpError e) {
+			throw new InputErrorException(e);
 		}
 	}
 

@@ -25,7 +25,7 @@ import com.jaamsim.basicsim.JaamSimModel;
 
 public class BooleanInput extends Input<Boolean> {
 
-	private static final ArrayList<String> validOptions;
+	public static final ArrayList<String> validOptions;
 
 	public static final String TRUE = "TRUE";
 	public static final String FALSE = "FALSE";
