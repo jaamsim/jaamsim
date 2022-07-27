@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2015 Ausenco Engineering Canada Inc.
- * Copyright (C) 2019-2020 JaamSim Software Inc.
+ * Copyright (C) 2019-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -338,7 +338,7 @@ public class PolylineInfo {
 	public static Vec3d getPositionOnPolyline(ArrayList<Vec3d> pts, double frac) {
 
 		if (pts.isEmpty())
-			return null;
+			return new Vec3d();
 
 		// Calculate the cumulative graphical lengths along the polyline
 		double[] cumLengthList = PolylineInfo.getCumulativeLengths(pts);
