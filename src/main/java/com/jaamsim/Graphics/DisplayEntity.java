@@ -20,6 +20,7 @@ package com.jaamsim.Graphics;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import com.jaamsim.BooleanProviders.BooleanProvInput;
 import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.DisplayModels.ColladaModel;
 import com.jaamsim.DisplayModels.DisplayModel;
@@ -124,7 +125,7 @@ public class DisplayEntity extends Entity {
 
 	@Keyword(description = "If TRUE, the object is displayed in the View windows.",
 	         exampleList = {"FALSE"})
-	private final BooleanInput showInput;
+	private final BooleanProvInput showInput;
 
 	@Keyword(description = "If TRUE, the object will respond to mouse clicks and can be "
 	                     + "positioned by dragging with the mouse.",
@@ -213,7 +214,7 @@ public class DisplayEntity extends Entity {
 		this.addInput(displayModelListInput);
 		displayModelListInput.setUnique(false);
 
-		showInput = new BooleanInput("Show", GRAPHICS, true);
+		showInput = new BooleanProvInput("Show", GRAPHICS, true);
 		showInput.setCallback(showCallback);
 		this.addInput(showInput);
 
@@ -254,7 +255,7 @@ public class DisplayEntity extends Entity {
 		alignmentInput.setDefaultValue(type.getDefaultAlignment());
 		this.setAlignment(type.getDefaultAlignment());
 
-		this.setShow(showInput.getValue());
+		this.setShow(getShowInput());
 
 		// Choose which set of keywords to show
 		this.setGraphicsKeywords();
@@ -338,9 +339,7 @@ public class DisplayEntity extends Entity {
 		@Override
 		public void callback(Entity ent, Input<?> inp) {
 			DisplayEntity de = (DisplayEntity)ent;
-			BooleanInput boolinp = (BooleanInput)inp;
-
-			de.setShow(boolinp.getValue());
+			de.setShow(de.getShowInput());
 		}
 	};
 
@@ -456,7 +455,7 @@ public class DisplayEntity extends Entity {
 		this.setOrientation(orientationInput.getValue());
 		this.setDisplayModelList(displayModelListInput.getValue());
 		this.setRegion(regionInput.getValue());
-		this.setShow(showInput.getValue());
+		this.setShow(getShowInput());
 	}
 
 	public boolean isPositionNominal() {
@@ -489,7 +488,7 @@ public class DisplayEntity extends Entity {
 	}
 
 	public boolean isShowNominal() {
-		return show == showInput.getValue();
+		return show == getShowInput();
 	}
 
 	public boolean isGraphicsNominal() {
@@ -590,7 +589,7 @@ public class DisplayEntity extends Entity {
 	}
 
 	public boolean getShowInput() {
-		return showInput.getValue();
+		return showInput.getNextBoolean(0.0d);
 	}
 
 	public boolean getShow() {

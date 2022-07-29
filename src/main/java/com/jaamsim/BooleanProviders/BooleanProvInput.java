@@ -103,4 +103,8 @@ public class BooleanProvInput extends Input<BooleanProvider> {
 		}
 	}
 
+	public boolean isConstant() {
+		return (value instanceof BooleanProvConstant);
+	}
+
 }
