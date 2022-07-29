@@ -250,4 +250,9 @@ public class EntityLabel extends TextBasics {
 		return getPosition().near3(pos) && super.isDefault();
 	}
 
+	@Override
+	public boolean getShow() {
+		return super.getShow() && getTarget().getShow() && getTarget().isMovable();
+	}
+
 }
