@@ -593,6 +593,8 @@ public class DisplayEntity extends Entity {
 	}
 
 	public boolean getShow() {
+		if (!showInput.isConstant())
+			return getShowInput();
 		synchronized (position) {
 			return show;
 		}
