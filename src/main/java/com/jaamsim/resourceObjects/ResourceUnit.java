@@ -24,6 +24,7 @@ import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.ProcessFlow.StateUserEntity;
 import com.jaamsim.Statistics.TimeBasedFrequency;
 import com.jaamsim.Statistics.TimeBasedStatistics;
+import com.jaamsim.events.EventManager;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.EntityInput;
@@ -73,6 +74,7 @@ public class ResourceUnit extends StateUserEntity implements Seizable, ResourceP
 	protected final Vec3dInput assignmentOffset;
 
 	private DisplayEntity presentAssignment;  // entity to which this unit is assigned
+	private long assignmentTicks;   // clock ticks at which the unit was assigned
 	private long lastReleaseTicks;  // clock ticks at which the unit was unassigned
 	private ArrayList<ResourceUser> userList;  // objects that can use this resource
 
@@ -125,6 +127,7 @@ public class ResourceUnit extends StateUserEntity implements Seizable, ResourceP
 	public void earlyInit() {
 		super.earlyInit();
 		presentAssignment = null;
+		assignmentTicks = -1L;
 		lastReleaseTicks = 0L;
 		userList = AbstractResourceProvider.getUserList(this);
 
@@ -186,6 +189,7 @@ public class ResourceUnit extends StateUserEntity implements Seizable, ResourceP
 			error("Unit is already in use: assignment=%s, entity=%s", presentAssignment, ent);
 		}
 		presentAssignment = ent;
+		assignmentTicks = getSimTicks();
 		unitsSeized++;
 		setPresentState();
 		collectStatistics(simTime, getUnitsInUse());
@@ -195,6 +199,7 @@ public class ResourceUnit extends StateUserEntity implements Seizable, ResourceP
 	public void release() {
 		double simTime = this.getSimTime();
 		presentAssignment = null;
+		assignmentTicks = -1L;
 		lastReleaseTicks = getSimTicks();
 		unitsReleased++;
 		setPresentState();
@@ -443,6 +448,30 @@ public class ResourceUnit extends StateUserEntity implements Seizable, ResourceP
 	    sequence = 12)
 	public DisplayEntity getAssignment(double simTime) {
 		return presentAssignment;
+	}
+
+	@Output(name = "AssignmentTime",
+	 description = "Time at which this unit became assigned to its present entity. "
+	             + "NaN is returned if the unit is unassigned.",
+	    unitType = TimeUnit.class,
+	    sequence = 13)
+	public double getAssignmentTime(double simTime) {
+		if (presentAssignment == null)
+			return Double.NaN;
+		EventManager evt = getJaamSimModel().getEventManager();
+		return evt.ticksToSeconds(assignmentTicks);
+	}
+
+	@Output(name = "ReleaseTime",
+	 description = "Time at which this unit became unassigned. "
+	             + "NaN is returned if the unit is assigned.",
+	    unitType = TimeUnit.class,
+	    sequence = 14)
+	public double getReleaseTime(double simTime) {
+		if (presentAssignment != null)
+			return Double.NaN;
+		EventManager evt = getJaamSimModel().getEventManager();
+		return evt.ticksToSeconds(lastReleaseTicks);
 	}
 
 }
