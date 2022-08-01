@@ -66,6 +66,10 @@ public class EntityGenerator extends LinkedService implements EntityGen {
 	         exampleList = {"3", "InputValue1", "[InputValue1].Value"})
 	private final SampleInput maxNumber;
 
+	@Keyword(description = "The number of entities to be generated simultaneously at the start of the run.",
+	         exampleList = {"3", "InputValue1", "[InputValue1].Value"})
+	private final SampleInput initialNumber;
+
 	private int numberGenerated = 0;  // Number of entities generated so far
 	private double presentIAT;
 
@@ -113,6 +117,12 @@ public class EntityGenerator extends LinkedService implements EntityGen {
 		maxNumber.setValidRange(1, Double.POSITIVE_INFINITY);
 		maxNumber.setDefaultText(Input.POSITIVE_INFINITY);
 		this.addInput(maxNumber);
+
+		initialNumber = new SampleInput("InitialNumber", KEY_INPUTS, 0);
+		initialNumber.setUnitType(DimensionlessUnit.class);
+		initialNumber.setIntegerValue(true);
+		initialNumber.setValidRange(0, Double.POSITIVE_INFINITY);
+		this.addInput(initialNumber);
 	}
 
 	public EntityGenerator() {}
@@ -146,7 +156,10 @@ public class EntityGenerator extends LinkedService implements EntityGen {
 			return false;
 
 		// Select the inter-arrival time for the next entity
-		if (numberGenerated == 0)
+		int initNumber = (int) initialNumber.getNextSample(simTime);
+		if (numberGenerated < initNumber)
+			presentIAT = 0.0d;
+		else if (numberGenerated == initNumber)
 			presentIAT = firstArrivalTime.getNextSample(simTime);
 		else
 			presentIAT = interArrivalTime.getNextSample(simTime);
