@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2021 JaamSim Software Inc.
+ * Copyright (C) 2021-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,17 +47,19 @@ public class KeyedVec3dInput extends Input<Vec3d> {
 
 	@Override
 	public void parse(Entity thisEnt, KeywordIndex kw) throws InputErrorException {
+		KeyedVec3dCurve temp = new KeyedVec3dCurve();
 		ArrayList<String> strings = new ArrayList<>(kw.numArgs());
 		for (int i = 0; i < kw.numArgs(); i++) {
 			strings.add(kw.getArg(i));
 		}
 		ArrayList<ArrayList<String>> keys = InputAgent.splitForNestedBraces(strings);
 		for( ArrayList<String> key : keys) {
-			parseKey(thisEnt.getJaamSimModel(), key);
+			parseKey(thisEnt.getJaamSimModel(), key, temp);
 		}
+		curve = temp;
 	}
 
-	private void parseKey(JaamSimModel simModel, ArrayList<String> key) throws InputErrorException {
+	private void parseKey(JaamSimModel simModel, ArrayList<String> key, KeyedVec3dCurve temp) throws InputErrorException {
 		if (key.size() <= 2 || !key.get(0).equals("{") || !key.get(key.size()-1).equals("}")) {
 			throw new InputErrorException("Malformed key entry: %s", key.toString());
 		}
@@ -84,7 +86,7 @@ public class KeyedVec3dInput extends Input<Vec3d> {
 		DoubleVector vals = Input.parseDoubles(simModel, valKw, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, unitType);
 
 		Vec3d val = new Vec3d(vals.get(0), vals.get(1), vals.get(2));
-		curve.addKey(time.get(0), val);
+		temp.addKey(time.get(0), val);
 	}
 
 	@Override
