@@ -44,6 +44,10 @@ public class SampleListInput extends ListInput<ArrayList<SampleProvider>> {
 		unitTypeList = new ArrayList<>();
 	}
 
+	public SampleListInput(String key, String cat, double def) {
+		this(key, cat, new ArrayList<SampleProvider>(Arrays.asList(new SampleConstant(def))));
+	}
+
 	public SampleListInput(String key, String cat, int def) {
 		this(key, cat, new ArrayList<SampleProvider>(Arrays.asList(new SampleConstant(def))));
 	}
