@@ -27,9 +27,8 @@ import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
 import com.jaamsim.units.Unit;
 
-public class KeyedVec3dInput extends Input<Vec3d> {
+public class KeyedVec3dInput extends Input<KeyedVec3dCurve> {
 	private Class<? extends Unit> unitType = DimensionlessUnit.class;
-	private KeyedVec3dCurve curve = new KeyedVec3dCurve();
 
 	public KeyedVec3dInput(String key, String cat) {
 		super(key, cat, null);
@@ -37,12 +36,6 @@ public class KeyedVec3dInput extends Input<Vec3d> {
 
 	public void setUnitType(Class<? extends Unit> units) {
 		unitType = units;
-	}
-
-	@Override
-	public void copyFrom(Entity thisEnt, Input<?> in) {
-		super.copyFrom(thisEnt, in);
-		curve = ((KeyedVec3dInput) in).curve;
 	}
 
 	@Override
@@ -56,7 +49,7 @@ public class KeyedVec3dInput extends Input<Vec3d> {
 		for( ArrayList<String> key : keys) {
 			parseKey(thisEnt.getJaamSimModel(), key, temp);
 		}
-		curve = temp;
+		value = temp;
 	}
 
 	private void parseKey(JaamSimModel simModel, ArrayList<String> key, KeyedVec3dCurve temp) throws InputErrorException {
@@ -89,22 +82,12 @@ public class KeyedVec3dInput extends Input<Vec3d> {
 		temp.addKey(time.get(0), val);
 	}
 
-	@Override
-	public Vec3d getValue() {
-		return null;
-	}
-
 	public Vec3d getValueForTime(double time) {
-		return curve.getValAtTime(time);
+		return value.getValAtTime(time);
 	}
 
 	public boolean hasKeys() {
-		return curve.hasKeys();
-	}
-
-	@Override
-	public String getDefaultString(JaamSimModel simModel) {
-		return "";
+		return value != null && value.hasKeys();
 	}
 
 }
