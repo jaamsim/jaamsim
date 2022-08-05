@@ -252,7 +252,8 @@ public class EntityLabel extends TextBasics {
 
 	@Override
 	public boolean getShow() {
-		return super.getShow() && getTarget().getShow() && getTarget().isMovable();
+		return super.getShow() && getTarget() != null
+				&& getTarget().getShow() && getTarget().isMovable();
 	}
 
 }
