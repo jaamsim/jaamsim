@@ -588,6 +588,36 @@ public abstract class Input<T> {
 	}
 
 	/**
+	 * Adds the value tokens within a specified pair of opening and closing braces.
+	 * @param n - specifies the pair of opening and closing braces to choose
+	 * @param toks - array of strings to be populated
+	 */
+	public void getSubValueTokens(int n, ArrayList<String> toks) {
+		if (valueTokens == null)
+			return;
+
+		int index = -1;
+		int level = 0;
+		for (int i = 0; i < valueTokens.length; i++) {
+			if (valueTokens[i].equals("{")) {
+				level++;
+				if (level == 1)
+					index++;
+				continue;
+			}
+			if (valueTokens[i].equals("}")) {
+				level--;
+				if (level == 0 && index == n)
+					return;
+				continue;
+			}
+			if (index == n) {
+				toks.add(valueTokens[i]);
+			}
+		}
+	}
+
+	/**
 	 * Returns the input file entry for this input value.
 	 * @return input file text
 	 */
