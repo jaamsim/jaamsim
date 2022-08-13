@@ -698,13 +698,13 @@ public class DisplayEntity extends Entity {
 	}
 
 	/**
-	 * Returns the local coordinates corresponding to a specified alignment in the entity's
-	 * internal coordinate system.
-	 * @param a - specified alignment
+	 * Returns the local coordinates corresponding to a specified position in the entity's
+	 * internal coordinate system relative to its centre.
+	 * @param pos - internal position
 	 * @return local position
 	 */
-	public Vec3d getPositionForAlignment(Vec3d a) {
-		Vec3d temp = new Vec3d(a);
+	public Vec3d getPositionForAlignment(Vec3d pos) {
+		Vec3d temp = new Vec3d(pos);
 		synchronized (position) {
 			temp.sub3(align);
 			temp.mul3(size);
@@ -712,6 +712,30 @@ public class DisplayEntity extends Entity {
 			temp.add3(position);
 		}
 		return temp;
+	}
+
+	/**
+	 * Returns the local coordinates for the centre of the entity.
+	 * @return local coordinates for the entity's centre
+	 */
+	public Vec3d getCentre() {
+		return getPositionForAlignment(new Vec3d());
+	}
+
+	/**
+	 * Sets the position of the entity so that its centre is located at the specified position.
+	 * @param pos - local coordinates for the entity's centre
+	 */
+	public void setCentre(Vec3d pos) {
+		Vec3d newPos = new Vec3d(pos);
+		Vec3d temp = new Vec3d();
+		synchronized (position) {
+			temp.sub3(align);
+			temp.mul3(size);
+			calculateEulerRotation(temp, orient);
+			newPos.sub3(temp);
+			position.set3(newPos);
+		}
 	}
 
 	/**
