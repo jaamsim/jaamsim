@@ -204,6 +204,7 @@ public class InputAgent {
 					break;
 				line = str;
 
+				ArrayList<String> previousRecord = new ArrayList<>(record);
 				int previousRecordSize = record.size();
 				boolean quoted = Parser.tokenize(record, line, true);
 
@@ -220,7 +221,7 @@ public class InputAgent {
 					line = sb.toString();
 
 					// Clear the record and tokenize the now longer line
-					record.clear();
+					record = new ArrayList<>(previousRecord);
 					quoted = Parser.tokenize(record, line, true);
 				}
 
