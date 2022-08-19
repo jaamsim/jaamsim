@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2002-2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2019 JaamSim Software Inc.
+ * Copyright (C) 2019-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -186,7 +186,7 @@ public class Group extends Entity {
 	}
 
 
-	public void saveGroupKeyword(JaamSimModel simModel, KeywordIndex kw) {
+	public void saveGroupKeyword(KeywordIndex kw) {
 		ArrayList<String> toks = new ArrayList<>(kw.numArgs());
 		for (int i = 0; i < kw.numArgs(); i++)
 			toks.add(kw.getArg(i));
@@ -196,7 +196,7 @@ public class Group extends Entity {
 
 		// If there can never be elements in the group, throw a warning
 		if( type == null && list.size() == 0 ) {
-			InputAgent.logWarning(simModel,
+			InputAgent.logWarning(getJaamSimModel(),
 					"The group %s has no elements to apply keyword: %s", this, kw.keyword);
 		}
 	}

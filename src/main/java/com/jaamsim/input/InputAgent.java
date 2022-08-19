@@ -603,11 +603,10 @@ public class InputAgent {
 			throw new InputErrorException("Not a valid keyword");
 
 		Group grp = (Group)entity;
-		grp.saveGroupKeyword(entity.getJaamSimModel(), key);
+		grp.saveGroupKeyword(key);
 
 		// Store the keyword data for use in the edit table
-		for( int i = 0; i < grp.getList().size(); i++ ) {
-			Entity ent = grp.getList().get( i );
+		for (Entity ent : grp.getList()) {
 			InputAgent.apply(ent, key);
 		}
 	}
