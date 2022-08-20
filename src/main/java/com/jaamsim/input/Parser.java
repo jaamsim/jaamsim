@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018 JaamSim Software Inc.
+ * Copyright (C) 2018-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,6 +32,30 @@ public class Parser {
  * @return true if in quoted context
  */
 public static final boolean tokenize(ArrayList<String> tokens, String rec, boolean stripComments) {
+	return tokenize(tokens, rec, false, stripComments);
+}
+
+public static final boolean tokenize(ArrayList<String> tokens, String rec, boolean quoted, boolean stripComments) {
+
+	// Already in the quoted state
+	int recStart = 0;
+	if (quoted) {
+		for (int i = 0; i < rec.length(); i++) {
+			char c = rec.charAt(i);
+			if (c == '\'') {
+				String lastRec = tokens.remove(tokens.size() - 1);
+				tokens.add(lastRec + rec.substring(0, i));
+				recStart = i + 1;
+				break;
+			}
+		}
+		if (recStart == 0) {
+			String lastRec = tokens.remove(tokens.size() - 1);
+			tokens.add(lastRec + rec);
+			return true;
+		}
+	}
+
 	// Records can be divided into two pieces, the contents portion and possibly
 	// a commented portion, the division point is the first " character, if no
 	// quoting in a record, the entire line is contents for tokenizing
@@ -39,7 +63,7 @@ public static final boolean tokenize(ArrayList<String> tokens, String rec, boole
 	int quoteStart = -1;
 	int cIndex = -1;
 	int endOfRec = rec.length();
-	for (int i = 0; i < rec.length(); i++) {
+	for (int i = recStart; i < rec.length(); i++) {
 		char c = rec.charAt(i);
 		if (c == '\'') {
 			// end the current token

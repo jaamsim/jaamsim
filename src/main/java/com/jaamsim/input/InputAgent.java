@@ -193,6 +193,7 @@ public class InputAgent {
 		try {
 			ArrayList<String> record = new ArrayList<>();
 			int braceDepth = 0;
+			boolean quoted = false;
 
 			ParseContext pc = new ParseContext(resolved, root);
 
@@ -204,26 +205,8 @@ public class InputAgent {
 					break;
 				line = str;
 
-				ArrayList<String> previousRecord = new ArrayList<>(record);
 				int previousRecordSize = record.size();
-				boolean quoted = Parser.tokenize(record, line, true);
-
-				// Keep reading lines if the end of line was hit while in quoted context
-				while (quoted) {
-
-					// Append the next line to the line
-					String nextLine = buf.readLine();
-					if (nextLine == null)  // end of file
-						break;
-					StringBuilder sb = new StringBuilder(line);
-					sb.append('\n');
-					sb.append(nextLine);
-					line = sb.toString();
-
-					// Clear the record and tokenize the now longer line
-					record = new ArrayList<>(previousRecord);
-					quoted = Parser.tokenize(record, line, true);
-				}
+				quoted = Parser.tokenize(record, line, quoted, true);
 
 				// Print the inputs to the .log file
 				simModel.logMessage(line);
@@ -235,12 +218,10 @@ public class InputAgent {
 					InputAgent.logError(simModel, "Invalid brace depth: %s", braceDepth);
 					record.clear();
 					braceDepth = 0;
+					quoted = false;
 				}
 
-				if( braceDepth > 0 )
-					continue;
-
-				if (record.size() == 0)
+				if( braceDepth > 0 || quoted || record.isEmpty())
 					continue;
 
 				// Process the input lines
