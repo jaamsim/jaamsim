@@ -82,7 +82,12 @@ public abstract class LinkedService extends LinkedDevice implements QueueUser {
 	                     + "first enters the queue, the SelectionCondition is evaluated when an "
 	                     + "entity is to be removed from the queue. "
 	                     + "Consequently, a SelectionCondition is more flexible than a Match "
-	                     + "value, but is significantly less efficient.",
+	                     + "value, but is significantly less efficient."
+	                     + "\n\n"
+	                     + "Note that a change in the 'SelectionCondition' value does not "
+	                     + "trigger the processor automatically to re-check the Queue. "
+	                     + "The processor can be triggered by adding one or more objects to the "
+	                     + "'WatchList' input.",
 	         exampleList = {"'this.obj.attrib > 10'"})
 	protected final ExpressionInput selectionCondition;
 
