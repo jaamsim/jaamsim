@@ -58,14 +58,14 @@ public abstract class LinkedService extends LinkedDevice implements QueueUser {
 	@Keyword(description = "An expression returning a string value that determines which of the "
 	                     + "queued entities are eligible to be selected. "
 	                     + "If used, the only entities eligible for selection are the ones whose "
-	                     + "inputs for the Queue's Match keyword are equal to value returned by "
-	                     + "the expression entered for this Match keyword. "
+	                     + "inputs for the Queue's 'Match' keyword are equal to value returned by "
+	                     + "the expression entered for this 'Match' keyword. "
 	                     + "Expressions that return a dimensionless integer or an object are also "
 	                     + "valid. The returned number or object is converted to a string "
 	                     + "automatically. A floating point number is truncated to an integer."
 	                     + "\n\n"
-	                     + "Note that a change in the Match value does not trigger the processor "
-	                     + "automatically to re-check the Queue. "
+	                     + "Note that a change in the 'Match' value does not trigger "
+	                     + "the processor automatically to re-check the Queue. "
 	                     + "The processor can be triggered by adding one or more objects to the "
 	                     + "'WatchList' input.",
 	         exampleList = {"this.obj.Attrib1"})
@@ -75,13 +75,13 @@ public abstract class LinkedService extends LinkedDevice implements QueueUser {
 	                     + "eligible to be processed. "
 	                     + "The expression should return 1 (true) if the entity is eligible. "
 	                     + "The entity chosen for processing is the first one in the queue that "
-	                     + "satisfies both the SelectionCondition expression and the Match value "
-	                     + "(if specified)."
+	                     + "satisfies both the 'SelectionCondition' expression and the 'Match' "
+	                     + "value (if specified)."
 	                     + "\n\n"
-	                     + "Unlike the Match value, which must be specified when an entity "
-	                     + "first enters the queue, the SelectionCondition is evaluated when an "
+	                     + "Unlike the 'Match' value, which must be specified when an entity "
+	                     + "first enters the queue, the 'SelectionCondition' is evaluated when an "
 	                     + "entity is to be removed from the queue. "
-	                     + "Consequently, a SelectionCondition is more flexible than a Match "
+	                     + "Consequently, a 'SelectionCondition' is more flexible than a 'Match' "
 	                     + "value, but is significantly less efficient."
 	                     + "\n\n"
 	                     + "Note that a change in the 'SelectionCondition' value does not "
@@ -95,8 +95,8 @@ public abstract class LinkedService extends LinkedDevice implements QueueUser {
 	                     + "from the queue. "
 	                     + "No entity is removed if the expression returns null or the entity is "
 	                     + "not present in the queue. "
-	                     + "To be removed, the entity must also satisfy the Match and "
-	                     + "SelectionCondition inputs if these are entered."
+	                     + "To be removed, the entity must also satisfy the 'Match' and "
+	                     + "'SelectionCondition' inputs if these are entered."
 	                     + "\n\n"
 	                     + "Note that a change in the value of the 'NextEntity' input does not "
 	                     + "trigger the processor to automatically to re-check the Queue. "
@@ -107,7 +107,7 @@ public abstract class LinkedService extends LinkedDevice implements QueueUser {
 
 	@Keyword(description = "An optional list of objects to monitor.\n\n"
 	                     + "The queue will be inspected for an entity to process whenever one of "
-	                     + "the WatchList objects changes state.",
+	                     + "the 'WatchList' objects changes state.",
 	         exampleList = {"Object1  Object2"})
 	protected final InterfaceEntityListInput<SubjectEntity> watchList;
 
