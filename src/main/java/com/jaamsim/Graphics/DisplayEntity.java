@@ -589,12 +589,20 @@ public class DisplayEntity extends Entity {
 	}
 
 	public boolean getShowInput() {
-		return showInput.getNextBoolean(0.0d);
+		return getShowInput(0.0d);
 	}
 
 	public boolean getShow() {
+		return getShow(0.0d);
+	}
+
+	public boolean getShowInput(double simTime) {
+		return showInput.getNextBoolean(simTime);
+	}
+
+	public boolean getShow(double simTime) {
 		if (!showInput.isConstant())
-			return getShowInput();
+			return getShowInput(simTime);
 		synchronized (position) {
 			return show;
 		}
