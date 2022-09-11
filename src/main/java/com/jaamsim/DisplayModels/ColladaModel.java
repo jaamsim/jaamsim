@@ -243,7 +243,7 @@ public class ColladaModel extends DisplayModel {
 
 		@Override
 		public void collectProxies(double simTime, ArrayList<RenderProxy> out) {
-			if (dispEnt == null || !dispEnt.getShow()) {
+			if (dispEnt == null || !dispEnt.getShow(simTime)) {
 				return;
 			}
 

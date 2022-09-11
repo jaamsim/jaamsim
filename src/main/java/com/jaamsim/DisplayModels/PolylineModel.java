@@ -318,7 +318,7 @@ public class PolylineModel extends AbstractShapeModel {
 		@Override
 		public void collectProxies(double simTime, ArrayList<RenderProxy> out) {
 
-			if (displayObservee == null || !displayObservee.getShow()) {
+			if (displayObservee == null || !displayObservee.getShow(simTime)) {
 				return;
 			}
 
@@ -334,7 +334,7 @@ public class PolylineModel extends AbstractShapeModel {
 		public void collectSelectionProxies(double simTime, ArrayList<RenderProxy> out) {
 
 			if (displayObservee == null ||
-			    !displayObservee.getShow() ||
+			    !displayObservee.getShow(simTime) ||
 			    !displayObservee.selectable()) {
 				return;
 			}

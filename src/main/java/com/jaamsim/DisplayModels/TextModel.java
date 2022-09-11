@@ -336,7 +336,7 @@ public class TextModel extends AbstractShapeModel implements TextEntity {
 
 		@Override
 		public void collectProxies(double simTime, ArrayList<RenderProxy> out) {
-			if (labelObservee == null || !labelObservee.getShow()) {
+			if (labelObservee == null || !labelObservee.getShow(simTime)) {
 				return;
 			}
 
@@ -539,7 +539,7 @@ public class TextModel extends AbstractShapeModel implements TextEntity {
 
 		@Override
 		public void collectProxies(double simTime, ArrayList<RenderProxy> out) {
-			if (labelObservee == null || !labelObservee.getShow()) {
+			if (labelObservee == null || !labelObservee.getShow(simTime)) {
 				return;
 			}
 
@@ -727,7 +727,7 @@ public class TextModel extends AbstractShapeModel implements TextEntity {
 
 		@Override
 		public void collectProxies(double simTime, ArrayList<RenderProxy> out) {
-			if (labelObservee == null || !labelObservee.getShow()) {
+			if (labelObservee == null || !labelObservee.getShow(simTime)) {
 				return;
 			}
 

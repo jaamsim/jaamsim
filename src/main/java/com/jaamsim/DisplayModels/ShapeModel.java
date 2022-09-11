@@ -231,7 +231,7 @@ public class ShapeModel extends AbstractShapeModel {
 		@Override
 		public void collectProxies(double simTime, ArrayList<RenderProxy> out) {
 			// This is slightly quirky behaviour, as a null entity will be shown because we use that for previews
-			if (dispEnt == null || !dispEnt.getShow()) {
+			if (dispEnt == null || !dispEnt.getShow(simTime)) {
 				return;
 			}
 

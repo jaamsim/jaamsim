@@ -537,7 +537,7 @@ public class RenderManager implements DragSourceListener {
 
 		// Collect the render proxies for each entity
 		for (DisplayEntity de : simModel.getClonesOfIterator(DisplayEntity.class)) {
-			if (!de.getShow())
+			if (!de.getShow(simTime))
 				continue;
 
 			numEnts++;

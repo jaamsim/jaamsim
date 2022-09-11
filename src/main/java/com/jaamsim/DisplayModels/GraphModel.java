@@ -295,7 +295,7 @@ public class GraphModel extends DisplayModel {
 
 		@Override
 		public void collectProxies(double simTime, ArrayList<RenderProxy> out) {
-			if (graphObservee == null || !graphObservee.getShow()) {
+			if (graphObservee == null || !graphObservee.getShow(simTime)) {
 				return;
 			}
 
