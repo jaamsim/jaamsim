@@ -38,6 +38,10 @@ public class Group extends Entity {
 
 	private final ArrayList<Entity> list; // list of objects in group
 
+	@Keyword(description = "A free-form string describing the Group.",
+	         exampleList = {"'A very useful group'"})
+	protected final StringInput groupDescription;
+
 	@Keyword(description = "The list of objects included in the group.",
 	         exampleList = {"DisplayEntity1 DisplayEntity2"})
 	private final GroupListInput groupListInput;
@@ -56,6 +60,9 @@ public class Group extends Entity {
 		// Remove all the inputs inherited from Entity
 		this.clearInputs();
 
+		groupDescription = new StringInput("GroupDescription", KEY_INPUTS, "");
+		this.addInput(groupDescription);
+
 		groupListInput = new Group.GroupListInput();
 		this.addInput(groupListInput);
 
@@ -70,6 +77,11 @@ public class Group extends Entity {
 		list = new ArrayList<>();
 		type = null;
 		groupKeywordValues = new ArrayList<>();
+	}
+
+	@Override
+	public String getDescription() {
+		return groupDescription.getValue();
 	}
 
 	private class GroupListInput extends Input<String> {
