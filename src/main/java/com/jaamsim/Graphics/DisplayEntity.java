@@ -588,11 +588,11 @@ public class DisplayEntity extends Entity {
 		}
 	}
 
-	public boolean getShowInput() {
+	public final boolean getShowInput() {
 		return getShowInput(0.0d);
 	}
 
-	public boolean getShow() {
+	public final boolean getShow() {
 		return getShow(0.0d);
 	}
 

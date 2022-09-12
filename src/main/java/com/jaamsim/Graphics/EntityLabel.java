@@ -251,9 +251,9 @@ public class EntityLabel extends TextBasics {
 	}
 
 	@Override
-	public boolean getShow() {
-		return super.getShow() && getTarget() != null
-				&& getTarget().getShow() && getTarget().isMovable();
+	public boolean getShow(double simTime) {
+		return super.getShow(simTime) && getTarget() != null
+				&& getTarget().getShow(simTime) && getTarget().isMovable();
 	}
 
 }
