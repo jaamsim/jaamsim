@@ -372,6 +372,10 @@ public class Entity {
 		return EventManager.simSeconds();
 	}
 
+	protected void clearInputs() {
+		inpList.clear();
+	}
+
 	protected void addInput(Input<?> in) {
 		inpList.add(in);
 	}

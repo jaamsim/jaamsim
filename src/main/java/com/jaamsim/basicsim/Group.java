@@ -53,6 +53,9 @@ public class Group extends Entity {
 	private final GroupTypeInput groupTypeInput;
 
 	{
+		// Remove all the inputs inherited from Entity
+		this.clearInputs();
+
 		groupListInput = new Group.GroupListInput();
 		this.addInput(groupListInput);
 
@@ -61,8 +64,6 @@ public class Group extends Entity {
 
 		groupTypeInput = new Group.GroupTypeInput();
 		this.addInput(groupTypeInput);
-
-		this.removeInput(active);
 	}
 
 	public Group() {
