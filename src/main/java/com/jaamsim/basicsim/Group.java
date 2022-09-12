@@ -24,6 +24,8 @@ import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.KeywordIndex;
+import com.jaamsim.input.Output;
+import com.jaamsim.input.StringInput;
 
 /**
  * Group class - for storing a list of objects
@@ -224,11 +226,32 @@ public class Group extends Entity {
 		}
 	}
 
-	// ******************************************************************************************
-	// ACCESSING
-	// ******************************************************************************************
-
 	public ArrayList<Entity> getList() {
 		return list;
+	}
+
+	@Output(name = "Members",
+	 description = "Members of the Group.",
+	    sequence = 1)
+	public final ArrayList<Entity> getMembers(double simTime) {
+		return list;
+	}
+
+	@Output(name = "InputValues",
+	 description = "Inputs that have been set for the Group.",
+	    sequence = 2)
+	public final String getGroupKeywordValues(double simTime) {
+		StringBuilder sb = new StringBuilder();
+		boolean first = true;
+		for (KeywordIndex key : groupKeywordValues) {
+			if (first)
+				first = false;
+			else
+				sb.append(", ");
+
+			sb.append(key.keyword);
+			sb.append(" { ").append(key.argString()).append(" }");
+		}
+		return sb.toString();
 	}
 }
