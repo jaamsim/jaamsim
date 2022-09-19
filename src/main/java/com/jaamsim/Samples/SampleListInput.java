@@ -203,7 +203,7 @@ public class SampleListInput extends ListInput<ArrayList<SampleProvider>> {
 		// No inner braces
 		if (!valueTokens[0].equals("{")) {
 			for (int i = 0; i < value.size(); i++) {
-				if (value.get(i) instanceof SampleConstant)
+				if (value.get(i) instanceof SampleConstant && !integerValue)
 					toks.add(valueTokens[i]);
 				else
 					toks.add(value.get(i).toString());
@@ -214,7 +214,7 @@ public class SampleListInput extends ListInput<ArrayList<SampleProvider>> {
 		// With inner braces
 		for (int i = 0; i < value.size(); i++) {
 			toks.add("{");
-			if (value.get(i) instanceof SampleConstant)
+			if (value.get(i) instanceof SampleConstant && !integerValue)
 				getSubValueTokens(i, toks);
 			else
 				toks.add(value.get(i).toString());
