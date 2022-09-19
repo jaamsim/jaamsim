@@ -200,6 +200,18 @@ public class SampleListInput extends ListInput<ArrayList<SampleProvider>> {
 		if (value == null || valueTokens == null || isDefault())
 			return;
 
+		// No inner braces
+		if (!valueTokens[0].equals("{")) {
+			for (int i = 0; i < value.size(); i++) {
+				if (value.get(i) instanceof SampleConstant)
+					toks.add(valueTokens[i]);
+				else
+					toks.add(value.get(i).toString());
+			}
+			return;
+		}
+
+		// With inner braces
 		for (int i = 0; i < value.size(); i++) {
 			toks.add("{");
 			if (value.get(i) instanceof SampleConstant)
