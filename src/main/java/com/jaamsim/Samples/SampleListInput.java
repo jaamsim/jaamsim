@@ -232,10 +232,7 @@ public class SampleListInput extends ListInput<ArrayList<SampleProvider>> {
 		for (int i = 0; i < defValue.size(); i++) {
 			if (i > 0)
 				tmp.append(SEPARATOR);
-
-			tmp.append("{ ");
 			tmp.append(defValue.get(i));
-			tmp.append(" }");
 		}
 
 		return tmp.toString();
