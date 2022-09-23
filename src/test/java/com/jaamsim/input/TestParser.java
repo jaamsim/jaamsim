@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,7 +53,7 @@ public void testTokenize() {
 
 	tok.clear();
 	Parser.tokenize(tok, "'OBJECT''KEYWORD''   ", false);
-	tokenMatch(tok, "OBJECT", "KEYWORD", "   ");
+	tokenMatch(tok, "OBJECT", "KEYWORD", "   \n");
 
 	tok.clear();
 	Parser.tokenize(tok, "'OBJECT\"{#}''KEYWORD''   'a#bcd ", false);

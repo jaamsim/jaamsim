@@ -40,6 +40,8 @@ public static final boolean tokenize(ArrayList<String> tokens, String rec, boole
 	// Already in the quoted state
 	int recStart = 0;
 	if (quoted) {
+
+		// Find the closing single quote
 		for (int i = 0; i < rec.length(); i++) {
 			char c = rec.charAt(i);
 			if (c == '\'') {
@@ -49,9 +51,11 @@ public static final boolean tokenize(ArrayList<String> tokens, String rec, boole
 				break;
 			}
 		}
+
+		// If no closing single quote is found, then append the entire record to the previous token
 		if (recStart == 0) {
 			String lastRec = tokens.remove(tokens.size() - 1);
-			tokens.add(lastRec + rec);
+			tokens.add(lastRec + rec + '\n');
 			return true;
 		}
 	}
@@ -118,7 +122,7 @@ public static final boolean tokenize(ArrayList<String> tokens, String rec, boole
 		tokens.add(rec.substring(tokStart, endOfRec));
 
 	if (quoteStart != -1)
-		tokens.add(rec.substring(quoteStart + 1, endOfRec));
+		tokens.add(rec.substring(quoteStart + 1, endOfRec) + '\n');
 
 	// add comments if they exist including the leading # to denote it as commented
 	if (!stripComments && cIndex > -1)
