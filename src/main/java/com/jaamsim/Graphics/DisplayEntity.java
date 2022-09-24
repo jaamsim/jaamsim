@@ -600,14 +600,6 @@ public class DisplayEntity extends Entity {
 		return showInput.getNextBoolean(simTime);
 	}
 
-	public boolean getShow(double simTime) {
-		if (!showInput.isConstant())
-			return getShowInput(simTime);
-		synchronized (position) {
-			return show;
-		}
-	}
-
 	public void setShow(boolean bool) {
 		synchronized (position) {
 			show = bool;
@@ -1486,12 +1478,23 @@ public class DisplayEntity extends Entity {
 		return getAlignment();
 	}
 
+	@Output(name = "Show",
+	 description = "Returns TRUE if the object is shown in one or more view windows.",
+	    sequence = 4)
+	public boolean getShow(double simTime) {
+		if (!showInput.isConstant())
+			return getShowInput(simTime);
+		synchronized (position) {
+			return show;
+		}
+	}
+
 	@Output(name = "GraphicalLength",
 	 description = "Polyline type objects: the length of the polyline determined by its "
 	             + "Points and CurveType inputs.\n"
 	             + "Non-polyline type objects: the largest of the Size inputs.",
 	    unitType = DistanceUnit.class,
-	    sequence = 4)
+	    sequence = 5)
 	public double getGraphicalLength(double simTime) {
 		if (usePointsInput()) {
 			return PolylineInfo.getLength(getCurvePoints());
@@ -1502,28 +1505,28 @@ public class DisplayEntity extends Entity {
 
 	@Output(name = "ObserverList",
 	 description = "The observers that are monitoring the state of this entity.",
-	    sequence = 5)
+	    sequence = 6)
 	public ArrayList<ObserverEntity> getObserverList(double simTime) {
 		return getObserverList();
 	}
 
 	@Output(name = "NextList",
 	 description = "The entities that are immediately downstream from this entity.",
-	    sequence = 6)
+	    sequence = 7)
 	public ArrayList<DirectedEntity> getNextList(double simTime) {
 		return getNextList(true);
 	}
 
 	@Output(name = "PreviousList",
 	 description = "The entities that are immediately upstream from this entity.",
-	    sequence = 7)
+	    sequence = 8)
 	public ArrayList<DirectedEntity> getPreviousList(double simTime) {
 		return getPreviousList(true);
 	}
 
 	@Output(name = "EntityReferenceList",
 	 description = "The entities that appear in the inputs to this entity.",
-	    sequence = 8)
+	    sequence = 9)
 	public ArrayList<DisplayEntity> getEntityReferenceList(double simTime) {
 		ArrayList<Entity> list = getEntityReferences();
 		ArrayList<DisplayEntity> ret = new ArrayList<>(list.size());
