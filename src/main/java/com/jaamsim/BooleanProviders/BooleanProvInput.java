@@ -72,6 +72,13 @@ public class BooleanProvInput extends Input<BooleanProvider> {
 	}
 
 	@Override
+	public void getValueTokens(ArrayList<String> toks) {
+		if (value == null || isDefault())
+			return;
+		toks.add(value.toString());
+	}
+
+	@Override
 	public void appendEntityReferences(ArrayList<Entity> list) {
 		if (value == null)
 			return;
