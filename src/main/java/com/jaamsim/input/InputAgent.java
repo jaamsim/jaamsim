@@ -72,6 +72,7 @@ public class InputAgent {
 	static final char[] INVALID_ENTITY_CHARS = new char[]{' ', '\t', '\n', '{', '}', '\'', '"', '[', ']', '#','.'};
 
 	public static final String[] EARLY_KEYWORDS = { "Prototype",
+	                                                "TickLength",
 	                                                "ConversionFactorToSI",
 	                                                "UnitType", "UnitTypeList", "OutputUnitType",
 	                                                "SecondaryUnitType",
