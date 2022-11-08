@@ -1547,17 +1547,20 @@ public class InputAgent {
 		String str;
 		String COMMA_SEPARATOR = ", ";
 
-		Class<?> retType = out.getReturnType();
-
 		// Numeric outputs
 		if (out.isNumericValue()) {
 			double val = out.getValueAsDouble(simTime, Double.NaN);
 			return String.format(floatFmt, val/factor);
 		}
 
+		Class<?> retType = out.getReturnType();
+		Object ret = out.getValue(simTime, retType);
+		if (ret == null)
+			return "null";
+
 		// double[] outputs
 		if (retType == double[].class) {
-			double[] val = out.getValue(simTime, double[].class);
+			double[] val = (double[]) ret;
 			sb.append("{");
 			for (int i=0; i<val.length; i++) {
 				if (i > 0)
@@ -1571,7 +1574,7 @@ public class InputAgent {
 
 		// double[][] outputs
 		if (retType == double[][].class) {
-			double[][] val = out.getValue(simTime, double[][].class);
+			double[][] val = (double[][]) ret;
 			sb.append("{");
 			for (int i=0; i<val.length; i++) {
 				if (i > 0)
@@ -1591,7 +1594,7 @@ public class InputAgent {
 
 		// int[] outputs
 		if (retType == int[].class) {
-			int[] val = out.getValue(simTime, int[].class);
+			int[] val = (int[]) ret;
 			sb.append("{");
 			for (int i=0; i<val.length; i++) {
 				if (i > 0)
@@ -1605,7 +1608,7 @@ public class InputAgent {
 
 		// Vec3d outputs
 		if (retType == Vec3d.class) {
-			Vec3d vec = out.getValue(simTime, Vec3d.class);
+			Vec3d vec = (Vec3d) ret;
 			sb.append(vec.x/factor);
 			sb.append(Input.SEPARATOR).append(vec.y/factor);
 			sb.append(Input.SEPARATOR).append(vec.z/factor);
@@ -1615,7 +1618,7 @@ public class InputAgent {
 		// DoubleVector output
 		if (retType == DoubleVector.class) {
 			sb.append("{");
-			DoubleVector vec = out.getValue(simTime, DoubleVector.class);
+			DoubleVector vec = (DoubleVector) ret;
 			for (int i=0; i<vec.size(); i++) {
 				str = String.format(floatFmt, vec.get(i)/factor);
 				sb.append(str);
@@ -1630,7 +1633,7 @@ public class InputAgent {
 		// ArrayList output
 		if (retType == ArrayList.class) {
 			sb.append("{");
-			ArrayList<?> array = out.getValue(simTime, ArrayList.class);
+			ArrayList<?> array = (ArrayList<?>) ret;
 			for (int i=0; i<array.size(); i++) {
 				if (i > 0)
 					sb.append(COMMA_SEPARATOR);
@@ -1660,7 +1663,7 @@ public class InputAgent {
 		// Keyed outputs
 		if (retType == LinkedHashMap.class) {
 			sb.append("{");
-			LinkedHashMap<?, ?> map = out.getValue(simTime, LinkedHashMap.class);
+			LinkedHashMap<?, ?> map = (LinkedHashMap<?, ?>) ret;
 			boolean first = true;
 			for (Entry<?, ?> mapEntry : map.entrySet()) {
 				Object obj = mapEntry.getValue();
@@ -1708,7 +1711,7 @@ public class InputAgent {
 		}
 
 		if (retType == ExpResult.class) {
-			ExpResult result = out.getValue(simTime, ExpResult.class);
+			ExpResult result = (ExpResult) ret;
 			switch (result.type) {
 			case STRING:
 				sb.append(result.stringVal);
@@ -1732,12 +1735,9 @@ public class InputAgent {
 			}
 			return sb.toString();
 		}
+
 		// All other outputs
-		final Object ret = out.getValue(simTime, retType);
-		if (ret != null)
-			return ret.toString();
-		else
-			return "null";
+		return ret.toString();
 	}
 
 	/**
