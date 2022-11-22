@@ -334,7 +334,6 @@ public class ExpOperators {
 		return ExpValResult.makeValidRes(ExpResType.NUMBER, args[0].unitType);
 	}
 
-
 	private static String unitToString(Class<? extends Unit> unit) {
 		if (unit == null)
 			return "null";
@@ -2926,6 +2925,25 @@ public class ExpOperators {
 					}
 				}
 				return ExpValResult.makeValidRes(ExpResType.COLLECTION, DimensionlessUnit.class);
+			}
+		});
+
+		addFunction("typeName", 1, 1, new CallableFunc() {
+			@Override
+			public void checkUnits(ParseContext context, ExpResult[] args, String source, int pos) throws ExpError {}
+			@Override
+			public ExpResult call(EvalContext context, ExpResult[] args, String source, int pos) throws ExpError {
+				return ExpResult.makeStringResult(args[0].getTypeName());
+			}
+			@Override
+			public ExpValResult validate(ParseContext context, ExpValResult[] args, String source, int pos) {
+				for (ExpValResult arg : args) {
+					if (  arg.state == ExpValResult.State.ERROR ||
+					      arg.state == ExpValResult.State.UNDECIDABLE) {
+						return arg;
+					}
+				}
+				return ExpValResult.makeValidRes(ExpResType.STRING, null);
 			}
 		});
 	}

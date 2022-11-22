@@ -1964,6 +1964,16 @@ public class ExpressionBox extends JDialog {
 				"'date(10.5[s])' returns the array {1970, 1, 1, 0, 0, 10, 500}",
 				"'date(31[d])' returns the array {1970, 2, 1, 0, 0, 0, 0}"));
 
+		functions.add(new ButtonDesc("typeName", "Variable type ('typeName')",
+				"Returns a string describing the type of the variable that is specified.",
+				"Accepts any valid input and returns one of the following strings: "
+						+ "\"NUMBER\", \"STRING\", \"ENTITY\", \"COLLECTION\", or \"LAMBDA\".",
+				"typeName()",
+				-1,
+				"'typeName(5)' returns \"NUMBER\"",
+				"'typeName(\"abd\")' returns \"STRING\"",
+				"'typeName([Simulation])' returns \"ENTITY\""));
+
 	}
 
 }

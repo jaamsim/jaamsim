@@ -167,6 +167,25 @@ public class ExpResult {
 		}
 	}
 
+	public String getTypeName() {
+		switch (type) {
+		case NUMBER:
+			return "NUMBER";
+		case STRING:
+			return "STRING";
+		case ENTITY:
+			return "ENTITY";
+		case COLLECTION:
+			return "COLLECTION";
+		case LAMBDA:
+			return "LAMBDA";
+
+		default:
+			assert(false);
+			return "???";
+		}
+	}
+
 	@Override
 	public String toString() {
 		return getOutputString(null);
