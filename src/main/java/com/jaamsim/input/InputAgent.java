@@ -286,12 +286,23 @@ public class InputAgent {
 		}
 
 		Class<? extends Entity> klass = null;
+		Entity proto = null;
 		try {
 			if( record.get( 1 ).equalsIgnoreCase( "ObjectType" ) ) {
 				klass = ObjectType.class;
 			}
 			else {
-				klass = Input.parseEntityType(simModel, record.get(1));
+				Entity type = simModel.getNamedEntity(record.get(1));
+				if (type == null)
+					throw new InputErrorException("Entity type not found: %s", record.get(1));
+
+				if (type instanceof ObjectType) {
+					klass = Input.parseEntityType(simModel, record.get(1));
+				}
+				else {
+					proto = type;
+					klass = proto.getClass();
+				}
 			}
 		}
 		catch (InputErrorException e) {
@@ -302,7 +313,7 @@ public class InputAgent {
 
 		// Loop over all the new Entity names
 		for (int i = 3; i < record.size() - 1; i++) {
-			InputAgent.defineEntity(simModel, klass, record.get(i), simModel.isRecordEdits());
+			InputAgent.defineEntity(simModel, klass, proto, record.get(i), simModel.isRecordEdits());
 		}
 	}
 
@@ -328,7 +339,7 @@ public class InputAgent {
 		if (!isValidName(key))
 			throw new ErrorException(INP_ERR_BADNAME, key);
 
-		T ent = simModel.createInstance(klass, key, parent, false, true, reg, retain);
+		T ent = simModel.createInstance(klass, null, key, parent, false, true, reg, retain);
 		if (ent == null)
 			throw new ErrorException("Could not create new Entity: %s", key);
 
@@ -366,7 +377,7 @@ public class InputAgent {
 	 */
 	public static <T extends Entity> T defineEntityWithUniqueName(JaamSimModel simModel, Class<T> klass, String key, String sep, boolean addedEntity) {
 		String name = getUniqueName(simModel, key, sep);
-		return defineEntity(simModel, klass, name, addedEntity);
+		return defineEntity(simModel, klass, null, name, addedEntity);
 	}
 
 	public static boolean isValidName(String key) {
@@ -388,11 +399,12 @@ public class InputAgent {
 	 * file.
 	 * @param simModel - JaamSimModel in which to create the entity
 	 * @param klass - class for the entity to be created
+	 * @param proto - prototype for the entity
 	 * @param key - absolute name for the entity to be created
 	 * @param addedEntity - true if the entity is new to the model
 	 * @return new entity
 	 */
-	private static <T extends Entity> T defineEntity(JaamSimModel simModel, Class<T> klass, String key, boolean addedEntity) {
+	private static <T extends Entity> T defineEntity(JaamSimModel simModel, Class<T> klass, Entity proto, String key, boolean addedEntity) {
 		Entity existingEnt = Input.tryParseEntity(simModel, key, Entity.class);
 		if (existingEnt != null) {
 			InputAgent.logError(simModel,
@@ -415,17 +427,17 @@ public class InputAgent {
 			}
 		}
 
-		return defineEntity(simModel, klass, localName, parent, addedEntity);
+		return defineEntity(simModel, klass, proto, localName, parent, addedEntity);
 	}
 
-	private static <T extends Entity> T defineEntity(JaamSimModel simModel, Class<T> klass, String localName, Entity parent, boolean addedEntity) {
+	private static <T extends Entity> T defineEntity(JaamSimModel simModel, Class<T> klass, Entity proto, String localName, Entity parent, boolean addedEntity) {
 
 		if (!isValidName(localName)) {
 			InputAgent.logError(simModel, INP_ERR_BADNAME, localName);
 			return null;
 		}
 
-		T ent = simModel.createInstance(klass, localName, parent, addedEntity, false, true, true);
+		T ent = simModel.createInstance(klass, proto, localName, parent, addedEntity, false, true, true);
 
 		if (ent == null) {
 			InputAgent.logError(simModel,

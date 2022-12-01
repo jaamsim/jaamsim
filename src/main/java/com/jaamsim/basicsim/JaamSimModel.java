@@ -991,6 +991,7 @@ public class JaamSimModel implements EventTimeListener {
 	/**
 	 * Creates a new entity.
 	 * @param klass - class for the entity
+	 * @param proto - prototype for the entity
 	 * @param name - entity local name
 	 * @param parent - entity's parent
 	 * @param added - true if the entity was defined after the 'RecordEdits' flag
@@ -999,7 +1000,7 @@ public class JaamSimModel implements EventTimeListener {
 	 * @param retain - true if the entity is retained when the model is reset between runs
 	 * @return new entity
 	 */
-	public final <T extends Entity> T createInstance(Class<T> klass, String name, Entity parent,
+	public final <T extends Entity> T createInstance(Class<T> klass, Entity proto, String name, Entity parent,
 			boolean added, boolean gen, boolean reg, boolean retain) {
 		T ent = createInstance(klass);
 		if (ent == null)
@@ -1015,6 +1016,7 @@ public class JaamSimModel implements EventTimeListener {
 		if (retain)
 			ent.setFlag(Entity.FLAG_RETAINED);
 
+		ent.setPrototype(proto);
 		ent.parent = parent;
 		ent.entityName = name;
 		if (reg)
