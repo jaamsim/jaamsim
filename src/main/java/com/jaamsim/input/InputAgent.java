@@ -1011,6 +1011,8 @@ public class InputAgent {
 		Class<? extends Entity> entClass = null;
 		int level = 0;
 		for (Entity ent : newEntities) {
+			if (ent.isClone())
+				continue;
 
 			// Is the class different from the last one
 			if (ent.getClass() != entClass) {
@@ -1038,6 +1040,34 @@ public class InputAgent {
 
 		// Close the define statement
 		if (!newEntities.isEmpty())
+			file.format("}%n");
+
+		// 2.5) WRITE THE DEFINITION STATEMENTS FOR CLONES
+		Entity proto = null;
+		for (Entity ent : newEntities) {
+			if (!ent.isClone())
+				continue;
+
+			// Is the prototype different from the last one
+			if (ent.getPrototype() != proto) {
+
+				// Close the previous Define statement
+				if (proto != null) {
+					file.format("}");
+				}
+				file.format("%n");
+
+				// Start the new Define statement
+				proto = ent.getPrototype();
+				file.format("Define %s {", proto);
+			}
+
+			// Print the entity name to the Define statement
+			file.format(" %s ", ent.getName());
+		}
+
+		// Close the define statement
+		if (proto != null)
 			file.format("}%n");
 
 		// 3) WRITE THE INPUTS FOR SPECIAL KEYWORDS THAT MUST COME BEFORE THE OTHERS
@@ -1515,6 +1545,11 @@ public class InputAgent {
 			if (ret != 0)
 				return ret;
 
+			// If the sub-model levels are the same, then sort by clone level
+			ret = Integer.compare(ent0.getCloneLevel(), ent1.getCloneLevel());
+			if (ret != 0)
+				return ret;
+
 			Class<? extends Entity> class0 = ent0.getClass();
 			Class<? extends Entity> class1 = ent1.getClass();
 			ObjectType ot0 = ent0.getJaamSimModel().getObjectTypeForClass(class0);
@@ -1539,7 +1574,14 @@ public class InputAgent {
 			if (ret != 0)
 				return ret;
 
-			// If the classes are the same, then sort alphabetically by entity name
+			// If the classes are the same, then sort alphabetically by prototype name
+			if (ent0.isClone() && ent1.isClone()) {
+				ret = Input.uiSortOrder.compare(ent0.getPrototype(), ent1.getPrototype());
+				if (ret != 0)
+					return ret;
+			}
+
+			// If the prototypes are the same, then sort alphabetically by entity name
 			return Input.uiSortOrder.compare(ent0, ent1);
 		}
 	}

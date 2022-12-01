@@ -1043,6 +1043,12 @@ public class Entity {
 		return prototype != null;
 	}
 
+	public int getCloneLevel() {
+		if (prototype == null)
+			return 0;
+		return prototype.getCloneLevel() + 1;
+	}
+
 	/**
 	 * Returns the object type for this entity.
 	 * Null is returned if the entity itself is an instance of ObjectType.
