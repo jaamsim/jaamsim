@@ -176,6 +176,7 @@ public abstract class Input<T> {
 
 	protected T defValue;
 	protected T value;
+	protected Input<T> protoInput;
 
 	private boolean edited; // indicates if input has been edited for this entity
 	private boolean promptReqd; // indicates whether to prompt the user to save the configuration file
@@ -344,7 +345,14 @@ public abstract class Input<T> {
 	}
 
 	public T getValue() {
+		if (isDefault() && protoInput != null)
+			return protoInput.getValue();
 		return value;
+	}
+
+	@SuppressWarnings("unchecked")
+	public void setProtoInput(Input<?> in) {
+		protoInput = (Input<T>) in;
 	}
 
 	public void setHidden(boolean hide) {
@@ -622,6 +630,9 @@ public abstract class Input<T> {
 	 * @return input file text
 	 */
 	public final String getValueString() {
+		if (isDefault() && protoInput != null)
+			return protoInput.getValueString();
+
 		if (isDefault()) return "";
 		ArrayList<String> tmp = new ArrayList<>();
 		try {

@@ -1028,7 +1028,17 @@ public class Entity {
 	}
 
 	public void setPrototype(Entity proto) {
+		if (proto == prototype)
+			return;
+		if (prototype != null)
+			error("Cannot re-assign the prototype for an entity");
+		if (proto.getClass() != getClass())
+			error("An entity and its prototype must be instances of the same class");
 		prototype = proto;
+		for (int i = 0; i < inpList.size(); i++) {
+			Input<?> in = inpList.get(i);
+			in.setProtoInput(prototype.inpList.get(i));
+		}
 	}
 
 	public Entity getPrototype() {
