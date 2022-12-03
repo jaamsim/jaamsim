@@ -689,13 +689,9 @@ public class Entity {
 	}
 
 	public int getSubModelLevel() {
-		int ret = 0;
-		Entity ent = parent;
-		while (ent != null) {
-			ret++;
-			ent = ent.parent;
-		}
-		return ret;
+		if (parent == null)
+			return 0;
+		return parent.getSubModelLevel() + 1;
 	}
 
 	static final InputCallback traceInputCallback = new InputCallback() {
