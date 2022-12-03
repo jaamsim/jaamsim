@@ -599,7 +599,16 @@ public class InputAgent {
 			ent.setEdited();
 		}
 
+		// Execute the input callback for the entity and its clones
 		in.doCallback(ent);
+		if (ent.isCloned()) {
+			for (Entity clone : ent.getCloneList()) {
+				Input<?> cloneIn = clone.getInput(in.getKeyword());
+				cloneIn.doCallback(clone);
+			}
+		}
+
+		// Refresh the graphics
 		GUIListener gui = ent.getJaamSimModel().getGUIListener();
 		if (gui != null)
 			gui.updateAll();
