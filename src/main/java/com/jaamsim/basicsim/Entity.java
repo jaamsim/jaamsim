@@ -1038,6 +1038,9 @@ public class Entity {
 		for (int i = 0; i < inpList.size(); i++) {
 			Input<?> in = inpList.get(i);
 			in.setProtoInput(prototype.inpList.get(i));
+			if (!in.isDefault())
+				continue;
+			in.doCallback(this);
 		}
 	}
 
