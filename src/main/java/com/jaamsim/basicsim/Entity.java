@@ -86,6 +86,7 @@ public class Entity {
 	Entity parent;
 
 	Entity prototype;
+	ArrayList<Entity> cloneList;
 
 	private final ArrayList<Input<?>> inpList = new ArrayList<>();
 
@@ -270,6 +271,10 @@ public class Entity {
 		for (Entity ent : getChildren()) {
 			ent.kill();
 		}
+
+		if (prototype != null)
+			prototype.removeClone(this);
+
 		if (this.isDead())
 			return;
 		simModel.removeInstance(this);
@@ -1035,6 +1040,7 @@ public class Entity {
 		if (proto.getClass() != getClass())
 			error("An entity and its prototype must be instances of the same class");
 		prototype = proto;
+		prototype.addClone(this);
 		for (int i = 0; i < inpList.size(); i++) {
 			Input<?> in = inpList.get(i);
 			in.setProtoInput(prototype.inpList.get(i));
@@ -1056,6 +1062,28 @@ public class Entity {
 		if (prototype == null)
 			return 0;
 		return prototype.getCloneLevel() + 1;
+	}
+
+	private synchronized void addClone(Entity ent) {
+		if (cloneList == null)
+			cloneList = new ArrayList<>();
+		cloneList.add(ent);
+	}
+
+	private synchronized boolean removeClone(Entity ent) {
+		if (cloneList == null)
+			return false;
+		return cloneList.remove(ent);
+	}
+
+	public synchronized boolean isCloned() {
+		return (cloneList != null && !cloneList.isEmpty());
+	}
+
+	public synchronized ArrayList<Entity> getCloneList() {
+		if (cloneList == null)
+			return new ArrayList<>();
+		return cloneList;
 	}
 
 	/**
@@ -1108,6 +1136,13 @@ public class Entity {
 	    sequence = 4)
 	public Entity getPrototype(double simTime) {
 		return getPrototype();
+	}
+
+	@Output(name = "CloneList",
+	 description = "List of entities whose prototype is this entity.",
+	    sequence = 5)
+	public ArrayList<Entity> getCloneList(double simTime) {
+		return getCloneList();
 	}
 
 }
