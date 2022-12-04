@@ -58,9 +58,6 @@ public class AttributeHandle extends ValueHandle {
 	}
 
 	public <T> T getValue(Class<T> klass) {
-		if (!ent.hasAttribute(attributeName)) {
-			return null;
-		}
 		if (value == null) {
 			return null;
 		}
@@ -68,9 +65,6 @@ public class AttributeHandle extends ValueHandle {
 	}
 
 	public ExpResult copyValue() {
-		if (!ent.hasAttribute(attributeName)) {
-			return null;
-		}
 		if (value == null) {
 			return null;
 		}
