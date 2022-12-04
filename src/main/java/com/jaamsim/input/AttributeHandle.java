@@ -22,14 +22,9 @@ import com.jaamsim.units.Unit;
 
 public class AttributeHandle extends ValueHandle {
 	private final String attributeName;
-	private ExpResult initialValue;
+	private final ExpResult initialValue;
 	private ExpResult value;
-	private Class<? extends Unit> unitType;
-
-	public AttributeHandle(Entity e, String outputName) {
-		super(e);
-		this.attributeName = outputName;
-	}
+	private final Class<? extends Unit> unitType;
 
 	public AttributeHandle(Entity e, String name, ExpResult initVal, ExpResult val, Class<? extends Unit> ut) {
 		super(e);
@@ -39,17 +34,9 @@ public class AttributeHandle extends ValueHandle {
 		unitType = ut;
 	}
 
-	public void setUnitType(Class<? extends Unit> ut) {
-		unitType = ut;
-	}
-
 	@Override
 	public Class<? extends Unit> getUnitType() {
 		return unitType;
-	}
-
-	public void setInitialValue(ExpResult val) {
-		initialValue = val;
 	}
 
 	public ExpResult getInitialValue() {
