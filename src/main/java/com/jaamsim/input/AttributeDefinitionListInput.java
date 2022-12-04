@@ -89,10 +89,7 @@ public class AttributeDefinitionListInput extends ListInput<ArrayList<AttributeH
 				}
 
 				// Save the data for this attribute
-				AttributeHandle h = new AttributeHandle(thisEnt, name);
-				h.setUnitType(unitType);
-				h.setInitialValue(expVal);
-				h.setValue(expVal);
+				AttributeHandle h = new AttributeHandle(thisEnt, name, expVal, expVal, unitType);
 				temp.add(h);
 				pcList.add(pc);
 
@@ -133,10 +130,7 @@ public class AttributeDefinitionListInput extends ListInput<ArrayList<AttributeH
 		@SuppressWarnings("unchecked")
 		ArrayList<AttributeHandle> inValue = (ArrayList<AttributeHandle>) (in.value);
 		for (AttributeHandle h : inValue) {
-			AttributeHandle hNew = new AttributeHandle(thisEnt, h.getName());
-			hNew.setUnitType(h.getUnitType());
-			hNew.setInitialValue(h.getInitialValue());
-			hNew.setValue(h.copyValue());
+			AttributeHandle hNew = new AttributeHandle(thisEnt, h.getName(), h.getInitialValue(), h.copyValue(), h.getUnitType());
 			value.add(hNew);
 		}
 		parseContextList = new ArrayList<>(((AttributeDefinitionListInput) in).parseContextList);

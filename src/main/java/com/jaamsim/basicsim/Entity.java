@@ -735,7 +735,7 @@ public class Entity {
 	void updateAttributeMap() {
 		attributeMap.clear();
 		for (AttributeHandle h : attributeDefinitionList.getValue()) {
-			this.addAttribute(h.getName(), h);
+			addAttribute(h.getName(), h.getInitialValue(), h.copyValue(), h.getUnitType());
 		}
 	}
 
@@ -937,11 +937,8 @@ public class Entity {
 		return desc.getValue();
 	}
 
-	private void addAttribute(String name, AttributeHandle h) {
-		AttributeHandle ah = new AttributeHandle(this, h.getName());
-		ah.setInitialValue(h.getInitialValue());
-		ah.setValue(h.copyValue());
-		ah.setUnitType(h.getUnitType());
+	private void addAttribute(String name, ExpResult initVal, ExpResult val, Class<? extends Unit> ut) {
+		AttributeHandle ah = new AttributeHandle(this, name, initVal, val, ut);
 		attributeMap.put(name, ah);
 	}
 
