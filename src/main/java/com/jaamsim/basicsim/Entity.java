@@ -272,6 +272,14 @@ public class Entity {
 			ent.kill();
 		}
 
+		if (cloneList != null) {
+			for (Entity clone : cloneList) {
+				clone.prototype = null;
+				clone.kill();
+			}
+			cloneList = null;
+		}
+
 		if (prototype != null)
 			prototype.removeClone(this);
 
