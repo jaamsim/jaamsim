@@ -31,6 +31,14 @@ public class AttributeHandle extends ValueHandle {
 		this.attributeName = outputName;
 	}
 
+	public AttributeHandle(Entity e, String name, ExpResult initVal, ExpResult val, Class<? extends Unit> ut) {
+		super(e);
+		attributeName = name;
+		initialValue = initVal;
+		value = val;
+		unitType = ut;
+	}
+
 	public void setUnitType(Class<? extends Unit> ut) {
 		unitType = ut;
 	}
