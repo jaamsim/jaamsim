@@ -924,7 +924,11 @@ public class Entity {
 	}
 
 	private void addAttribute(String name, AttributeHandle h) {
-		attributeMap.put(name, h);
+		AttributeHandle ah = new AttributeHandle(this, h.getName());
+		ah.setInitialValue(h.getInitialValue());
+		ah.setValue(h.copyValue());
+		ah.setUnitType(h.getUnitType());
+		attributeMap.put(name, ah);
 	}
 
 	public boolean hasAttribute(String name) {
