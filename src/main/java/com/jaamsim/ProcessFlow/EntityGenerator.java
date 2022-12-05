@@ -25,7 +25,6 @@ import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.OverlayEntity;
 import com.jaamsim.Graphics.TextBasics;
 import com.jaamsim.Samples.SampleInput;
-import com.jaamsim.basicsim.Entity;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
@@ -190,10 +189,9 @@ public class EntityGenerator extends LinkedService implements EntityGen {
 		for (int i=0; i<num; i++) {
 			DisplayEntity proto = prototypeEntity.getNextEntity(simTime);
 			numberGenerated++;
-			StringBuilder sb = new StringBuilder();
-			sb.append(name).append(numberGenerated);
-			DisplayEntity ent = InputAgent.generateEntityWithName(getJaamSimModel(), proto.getClass(), sb.toString());
-			Entity.fastCopyInputs(proto, ent);
+			String entName = name + numberGenerated;
+			DisplayEntity ent = InputAgent.generateEntityWithName(getJaamSimModel(),
+					proto.getClass(), proto, entName, null, false, false);
 			ent.earlyInit();
 			ent.lateInit();
 
