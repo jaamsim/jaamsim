@@ -87,6 +87,7 @@ public class Entity {
 
 	Entity prototype;
 	ArrayList<Entity> cloneList;
+	ArrayList<Entity> clonePool;  // generated clones available for re-use
 
 	private final ArrayList<Input<?>> inpList = new ArrayList<>();
 
@@ -239,6 +240,9 @@ public class Entity {
 		for (AttributeHandle h : attributeMap.values()) {
 			h.setValue(h.getInitialValue());
 		}
+
+		// Clear the clone pool
+		clonePool = null;
 	}
 
 	/**
@@ -279,6 +283,7 @@ public class Entity {
 			}
 			cloneList = null;
 		}
+		clonePool = null;
 
 		if (prototype != null)
 			prototype.removeClone(this);
@@ -1082,6 +1087,24 @@ public class Entity {
 		if (cloneList == null)
 			return new ArrayList<>();
 		return cloneList;
+	}
+
+	public void addToClonePool() {
+		if (prototype == null)
+			return;
+		prototype.addCloneToPool(this);
+	}
+
+	public void addCloneToPool(Entity clone) {
+		if (clonePool == null)
+			clonePool = new ArrayList<>();
+		clonePool.add(clone);
+	}
+
+	public Entity getCloneFromPool() {
+		if (clonePool == null || clonePool.isEmpty())
+			return null;
+		return clonePool.remove(clonePool.size() - 1);
 	}
 
 	/**
