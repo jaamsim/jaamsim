@@ -40,7 +40,6 @@ import javax.swing.JToggleButton;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
 
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.events.EventData;
@@ -194,7 +193,7 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 		buttonPanel.add( conditionalsButton );
 
 		// Event List
-		eventList = new EventTable(new DefaultTableModel(0, headers.length));
+		eventList = new EventTable(timeUnit);
 		sp = new JScrollPane();
 		sp.getViewport().add(eventList);
 		sp.setPreferredSize(new Dimension( 800, 300 ));
@@ -249,7 +248,7 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 		profButtonPanel.add( classButton );
 
 		// Profiler List
-		profList = new ProfileTable(new DefaultTableModel(0, profHeaders.length));
+		profList = new ProfileTable(timeUnit);
 		profList.setDefaultRenderer(Object.class, colRenderer);
 		profSp = new JScrollPane();
 		profSp.getViewport().add(profList);
@@ -313,9 +312,9 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 		evtMan.setTraceListener(null);
 	}
 
-	private class EventTable extends JTable {
-		public EventTable(TableModel model) {
-			super(model);
+	private static class EventTable extends JTable {
+		public EventTable(String tu) {
+			super(new DefaultTableModel(0, headers.length));
 			setFillsViewportHeight(true);
 
 			for (int i = 0; i < headers.length; i++) {
@@ -323,7 +322,7 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 				getColumnModel().getColumn(i).setWidth(colWidth[i]);
 			}
 
-			this.updateHeader(timeUnit);
+			this.updateHeader(tu);
 
 			this.getTableHeader().setFont(FrameBox.boldFont);
 			this.getTableHeader().setReorderingAllowed(false);
@@ -353,7 +352,7 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 		}
 
 		public Color getColor(int i) {
-			String status = (String)eventList.getModel().getValueAt(i, 4);
+			String status = (String)this.getModel().getValueAt(i, 4);
 			switch (status) {
 				case STATE_COMPLETED:   return COLOR_COMPLETED;
 				case STATE_INTERRUPTED: return COLOR_INTERRUPTED;
@@ -364,9 +363,9 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 		}
 	}
 
-	private class ProfileTable extends JTable {
-		public ProfileTable(TableModel model) {
-			super(model);
+	private static class ProfileTable extends JTable {
+		public ProfileTable(String tu) {
+			super(new DefaultTableModel(0, profHeaders.length));
 
 			setFillsViewportHeight(true);
 
@@ -375,7 +374,7 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 				getColumnModel().getColumn(i).setWidth(profColWidth[i]);
 			}
 
-			this.updateHeader(timeUnit);
+			this.updateHeader(tu);
 
 			this.getTableHeader().setFont(FrameBox.boldFont);
 			this.getTableHeader().setReorderingAllowed(false);
