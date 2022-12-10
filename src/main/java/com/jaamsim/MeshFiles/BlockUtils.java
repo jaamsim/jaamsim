@@ -23,8 +23,8 @@ import java.util.zip.CRC32;
 
 public class BlockUtils {
 
-	public static final byte[] header;
-	public static final byte[] footer;
+	static final byte[] header;
+	static final byte[] footer;
 
 	static {
 		header = new byte[4];
