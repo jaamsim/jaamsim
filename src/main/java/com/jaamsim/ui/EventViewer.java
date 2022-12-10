@@ -351,6 +351,17 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 		public void doLayout() {
 			FrameBox.fitTableToLastColumn(this);
 		}
+
+		public Color getColor(int i) {
+			String status = (String)eventList.getModel().getValueAt(i, 4);
+			switch (status) {
+				case STATE_COMPLETED:   return COLOR_COMPLETED;
+				case STATE_INTERRUPTED: return COLOR_INTERRUPTED;
+				case STATE_TERMINATED:  return COLOR_TERMINATED;
+				case STATE_EVALUATED:   return COLOR_EVALUATED;
+				default: return null;
+			}
+		}
 	}
 
 	private class ProfileTable extends JTable {
@@ -662,17 +673,6 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 
 		public double getAvgRate(double dur) {
 			return count / dur;
-		}
-	}
-
-	public Color getColor(int i) {
-		String status = (String) eventList.getModel().getValueAt(i, 4);
-		switch (status) {
-			case STATE_COMPLETED:   return COLOR_COMPLETED;
-			case STATE_INTERRUPTED: return COLOR_INTERRUPTED;
-			case STATE_TERMINATED:  return COLOR_TERMINATED;
-			case STATE_EVALUATED:   return COLOR_EVALUATED;
-			default: return null;
 		}
 	}
 
