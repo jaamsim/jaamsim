@@ -91,12 +91,6 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 	private long nanoseconds;
 	private RetiredEventData retiredEvent;
 
-	private static final String[] headers= {"Ticks", "Time", "Pri", "Description", "State", "Nanos"};
-	private static final int[] colWidth = {100, 80, 30, 160, 80, 60};
-
-	private static final String[] profHeaders= {"Event Type", "% of Total Time", "Rate", "Avg. Nanos"};
-	private static final int[] profColWidth = {200, 100, 100, 100};
-
 	private static final int SCROLL_POSITION = 5;
 
 	private static final String STATE_COMPLETED   = "Completed";    // event executed
@@ -312,7 +306,11 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 		evtMan.setTraceListener(null);
 	}
 
-	private static class EventTable extends JTable {
+	private static final class EventTable extends JTable {
+
+		private static final String[] headers= {"Ticks", "Time", "Pri", "Description", "State", "Nanos"};
+		private static final int[] colWidth = {100, 80, 30, 160, 80, 60};
+
 		public EventTable(String tu) {
 			super(new DefaultTableModel(0, headers.length));
 			setFillsViewportHeight(true);
@@ -363,7 +361,10 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 		}
 	}
 
-	private static class ProfileTable extends JTable {
+	private static final class ProfileTable extends JTable {
+		private static final String[] profHeaders= {"Event Type", "% of Total Time", "Rate", "Avg. Nanos"};
+		private static final int[] profColWidth = {200, 100, 100, 100};
+
 		public ProfileTable(String tu) {
 			super(new DefaultTableModel(0, profHeaders.length));
 
