@@ -78,11 +78,11 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 	private double startTime;
 
 	private JTabbedPane jTabbedFrame;
-	private JTable eventList;
+	private EventTable eventList;
 	private JScrollPane sp;
 	private JTable condList;
 	private JScrollPane condSp;
-	private JTable profList;
+	private ProfileTable profList;
 	private JScrollPane profSp;
 	private EventManager evtMan;
 	private JToggleButton conditionalsButton;
@@ -323,8 +323,7 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 				getColumnModel().getColumn(i).setWidth(colWidth[i]);
 			}
 
-			getColumnModel().getColumn(1).setHeaderValue(String.format("%s (%s)",
-					headers[1], timeUnit));
+			this.updateHeader(timeUnit);
 
 			this.getTableHeader().setFont(FrameBox.boldFont);
 			this.getTableHeader().setReorderingAllowed(false);
@@ -341,6 +340,11 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 					return cell;
 				}
 			});
+		}
+
+		public void updateHeader(String tu) {
+			String header = String.format("%s (%s)", headers[1], tu);
+			getColumnModel().getColumn(1).setHeaderValue(header);
 		}
 
 		@Override
@@ -360,11 +364,15 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 				getColumnModel().getColumn(i).setWidth(profColWidth[i]);
 			}
 
-			getColumnModel().getColumn(2).setHeaderValue(String.format("%s (/%s)",
-					profHeaders[2], timeUnit));
+			this.updateHeader(timeUnit);
 
 			this.getTableHeader().setFont(FrameBox.boldFont);
 			this.getTableHeader().setReorderingAllowed(false);
+		}
+
+		public void updateHeader(String tu) {
+			String header = String.format("%s (/%s)", profHeaders[2], tu);
+			getColumnModel().getColumn(2).setHeaderValue(header);
 		}
 
 		@Override
@@ -389,10 +397,8 @@ public class EventViewer extends FrameBox implements EventTraceListener {
 		// Update the headers if the time unit has changed
 		if (!GUIFrame.getJaamSimModel().getDisplayedUnit(TimeUnit.class).equals(timeUnit)) {
 			timeUnit = GUIFrame.getJaamSimModel().getDisplayedUnit(TimeUnit.class);
-			eventList.getColumnModel().getColumn(1).setHeaderValue(String.format("%s (%s)",
-					headers[1], timeUnit));
-			profList.getColumnModel().getColumn(2).setHeaderValue(String.format("%s (/%s)",
-					profHeaders[2], timeUnit));
+			eventList.updateHeader(timeUnit);
+			profList.updateHeader(timeUnit);
 			repaint();
 			setDirty(true);
 		}
