@@ -66,12 +66,6 @@ public class UnitTypeListInput extends ListInput<ArrayList<ObjectType>> {
 	}
 
 	@Override
-	public void copyFrom(Entity thisEnt, Input<?> in) {
-		super.copyFrom(thisEnt, in);
-		setUnitTypeList(value);
-	}
-
-	@Override
 	public void parse(Entity thisEnt, KeywordIndex kw) throws InputErrorException {
 		Input.assertCountRange(kw, minCount, maxCount);
 		value = Input.parseEntityList(thisEnt.getJaamSimModel(), kw, ObjectType.class, false);

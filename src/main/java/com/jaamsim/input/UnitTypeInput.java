@@ -54,13 +54,6 @@ public class UnitTypeInput extends Input<ObjectType> {
 	}
 
 	@Override
-	public void copyFrom(Entity thisEnt, Input<?> in) {
-		super.copyFrom(thisEnt, in);
-		UnitTypeInput inp = (UnitTypeInput) in;
-		unitType = inp.unitType;
-	}
-
-	@Override
 	public void parse(Entity thisEnt, KeywordIndex kw)
 	throws InputErrorException {
 		Input.assertCount(kw, 1);

@@ -226,25 +226,6 @@ public abstract class Input<T> {
 	/**
 	 * Assigns the internal state for this input to the same values as the
 	 * specified input.
-	 * @param thisEnt TODO
-	 * @param in - input object to be copied.
-	 */
-	public void copyFrom(Entity thisEnt, Input<?> in) {
-
-		@SuppressWarnings("unchecked")
-		Input<T> inp = (Input<T>) in;
-
-		// Copy the internal state
-		value = inp.value;
-		valueTokens = inp.valueTokens;
-		isDef = false;
-		edited = true;
-		isValid = true;
-	}
-
-	/**
-	 * Assigns the internal state for this input to the same values as the
-	 * specified input.
 	 * <p>
 	 * This method provides the same function as copyFrom by re-parsing the input data instead of
 	 * copying the internal variables. This operation is much slower, but is needed for inputs that

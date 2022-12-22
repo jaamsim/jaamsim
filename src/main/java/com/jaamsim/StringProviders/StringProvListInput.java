@@ -45,14 +45,6 @@ public class StringProvListInput extends ListInput<ArrayList<StringProvider>> {
 	}
 
 	@Override
-	public void copyFrom(Entity thisEnt, Input<?> in) {
-		super.copyFrom(thisEnt, in);
-
-		// An expression input must be re-parsed to reset the entity referred to by "this"
-		parseFrom(thisEnt, in);
-	}
-
-	@Override
 	public void parse(Entity thisEnt, KeywordIndex kw) throws InputErrorException {
 		ArrayList<KeywordIndex> subArgs = kw.getSubArgs();
 		ArrayList<StringProvider> temp = new ArrayList<>(subArgs.size());

@@ -88,16 +88,6 @@ public class SampleInput extends Input<SampleProvider> {
 	}
 
 	@Override
-	public void copyFrom(Entity thisEnt, Input<?> in) {
-		super.copyFrom(thisEnt, in);
-
-		// SampleExpressions must be re-parsed to reset the entity referred to by "this"
-		if (value instanceof SampleExpression) {
-			parseFrom(thisEnt, in);
-		}
-	}
-
-	@Override
 	public String applyConditioning(String str) {
 
 		// No changes required if the input is a number and unit

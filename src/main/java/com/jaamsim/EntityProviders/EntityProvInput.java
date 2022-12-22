@@ -39,16 +39,6 @@ public class EntityProvInput<T extends Entity> extends Input<EntityProvider<T>> 
 	}
 
 	@Override
-	public void copyFrom(Entity thisEnt, Input<?> in) {
-		super.copyFrom(thisEnt, in);
-
-		// An expression input must be re-parsed to reset the entity referred to by "this"
-		if (value instanceof EntityProvExpression<?>) {
-			parseFrom(thisEnt, in);
-		}
-	}
-
-	@Override
 	public String applyConditioning(String str) {
 		return Parser.addQuotesIfNeeded(str);
 	}

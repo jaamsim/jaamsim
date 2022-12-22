@@ -33,14 +33,6 @@ public class KeywordInput extends Input<String> {
 	}
 
 	@Override
-	public void copyFrom(Entity thisEnt, Input<?> in) {
-		super.copyFrom(thisEnt, in);
-		KeywordInput inp = (KeywordInput) in;
-		targetEntity = inp.targetEntity;
-		targetInput = inp.targetInput;
-	}
-
-	@Override
 	public void parse(Entity thisEnt, KeywordIndex kw) throws InputErrorException {
 		Input.assertCount(kw, 2);
 		try {

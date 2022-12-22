@@ -123,14 +123,6 @@ public class NamedExpressionListInput extends ListInput<ArrayList<NamedExpressio
 	}
 
 	@Override
-	public void copyFrom(Entity thisEnt, Input<?> in) {
-		super.copyFrom(thisEnt, in);
-
-		// An expression input must be re-parsed to reset the entity referred to by "this"
-		parseFrom(thisEnt, in);
-	}
-
-	@Override
 	public String getDefaultString(JaamSimModel simModel) {
 		if (defValue == null || defValue.isEmpty())
 			return "";
