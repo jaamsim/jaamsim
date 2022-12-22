@@ -317,20 +317,6 @@ public class InputAgent {
 		}
 	}
 
-	public static <T extends Entity> T generateEntityWithName(JaamSimModel simModel, Class<T> klass, String key) {
-		return generateEntityWithName(simModel, klass, key, null, false, false);
-	}
-
-	public static <T extends Entity> T generateEntityWithName(JaamSimModel simModel, Class<T> klass, String key,
-			boolean reg) {
-		return generateEntityWithName(simModel, klass, key, null, reg, false);
-	}
-
-	public static <T extends Entity> T generateEntityWithName(JaamSimModel simModel, Class<T> klass, String key,
-			boolean reg, boolean retain) {
-		return generateEntityWithName(simModel, klass, key, null, reg, retain);
-	}
-
 	public static <T extends Entity> T generateEntityWithName(JaamSimModel simModel, Class<T> klass, String key, Entity parent,
 			boolean reg, boolean retain) {
 		return generateEntityWithName(simModel, klass, null, key, parent, reg, retain);
