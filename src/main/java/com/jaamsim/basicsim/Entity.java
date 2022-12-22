@@ -531,32 +531,7 @@ public class Entity {
 		}
 	}
 
-	/**
-	 * Copies the input values from one entity to another. This method is significantly faster
-	 * than copying and re-parsing the input data.
-	 * @param ent - entity whose inputs are to be copied.
-	 * @param target - entity whose inputs are to be assigned.
-	 */
-	public static void fastCopyInputs(Entity ent, Entity target) {
-		// Loop through the original entity's inputs
-		ArrayList<Input<?>> orig = ent.getEditableInputs();
-		for (int i = 0; i < orig.size(); i++) {
-			Input<?> sourceInput = orig.get(i);
 
-			// Default values do not need to be copied
-			if (sourceInput.isDefault() || sourceInput.isSynonym())
-				continue;
-
-			// Get the matching input for the new entity
-			Input<?> targetInput = target.getEditableInputs().get(i);
-
-			// Assign the value to the copied entity's input
-			targetInput.copyFrom(target, sourceInput);
-
-			// Further processing related to this input
-			targetInput.doCallback(target);
-		}
-	}
 
 	/**
 	 * Copies the present attribute values from one entity to another.
