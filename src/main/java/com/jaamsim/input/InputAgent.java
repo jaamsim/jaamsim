@@ -333,13 +333,18 @@ public class InputAgent {
 
 	public static <T extends Entity> T generateEntityWithName(JaamSimModel simModel, Class<T> klass, String key, Entity parent,
 			boolean reg, boolean retain) {
+		return generateEntityWithName(simModel, klass, null, key, parent, reg, retain);
+	}
+
+	public static <T extends Entity> T generateEntityWithName(JaamSimModel simModel, Class<T> klass, Entity proto, String key, Entity parent,
+			boolean reg, boolean retain) {
 		if (key == null)
 			throw new ErrorException("Must provide a name for generated Entities");
 
 		if (!isValidName(key))
 			throw new ErrorException(INP_ERR_BADNAME, key);
 
-		T ent = simModel.createInstance(klass, null, key, parent, false, true, reg, retain);
+		T ent = simModel.createInstance(klass, proto, key, parent, false, true, reg, retain);
 		if (ent == null)
 			throw new ErrorException("Could not create new Entity: %s", key);
 
