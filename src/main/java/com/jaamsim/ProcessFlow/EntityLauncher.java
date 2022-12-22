@@ -24,7 +24,6 @@ import com.jaamsim.GameObjects.GameEntity;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.OverlayEntity;
 import com.jaamsim.Graphics.TextBasics;
-import com.jaamsim.basicsim.Entity;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InterfaceEntityInput;
 import com.jaamsim.input.Keyword;
@@ -87,8 +86,8 @@ public class EntityLauncher extends GameEntity implements EntityGen {
 		numberGenerated++;
 		DisplayEntity proto = prototypeEntity.getNextEntity(0.0d);
 		name = name + numberGenerated;
-		DisplayEntity ent = InputAgent.generateEntityWithName(getJaamSimModel(), proto.getClass(), name);
-		Entity.fastCopyInputs(proto, ent);
+		DisplayEntity ent = InputAgent.generateEntityWithName(getJaamSimModel(),
+				proto.getClass(), proto, name, null, false, false);
 		ent.earlyInit();
 
 		// Send the entity to the next element in the chain

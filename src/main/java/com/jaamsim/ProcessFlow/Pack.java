@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2020 JaamSim Software Inc.
+ * Copyright (C) 2016-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@
 package com.jaamsim.ProcessFlow;
 
 import com.jaamsim.Graphics.DisplayEntity;
-import com.jaamsim.basicsim.Entity;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InterfaceEntityInput;
 import com.jaamsim.input.Keyword;
@@ -74,8 +73,8 @@ public class Pack extends AbstractPack {
 		name = name + numberGenerated;
 
 		DisplayEntity proto = (DisplayEntity)prototypeEntityContainer.getValue();
-		DisplayEntity ret = InputAgent.generateEntityWithName(getJaamSimModel(), proto.getClass(), name);
-		Entity.fastCopyInputs(proto, ret);
+		DisplayEntity ret = InputAgent.generateEntityWithName(getJaamSimModel(),
+				proto.getClass(), proto, name, null, false, false);
 		ret.earlyInit();
 		return (EntContainer)ret;
 	}
