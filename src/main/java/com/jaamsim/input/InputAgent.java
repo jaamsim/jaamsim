@@ -337,6 +337,16 @@ public class InputAgent {
 		return ent;
 	}
 
+	public static Entity getGeneratedClone(Entity proto, String name) {
+		Entity ret = proto.getCloneFromPool();
+		if (ret == null)
+			return InputAgent.generateEntityWithName(proto.getJaamSimModel(),
+					proto.getClass(), proto, name, null, false, false);
+
+		ret.setName(name);
+		return ret;
+	}
+
 	public static String getUniqueName(JaamSimModel sim, String name, String sep) {
 
 		// Is the provided name unused?

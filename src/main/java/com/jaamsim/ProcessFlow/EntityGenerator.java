@@ -190,8 +190,7 @@ public class EntityGenerator extends LinkedService implements EntityGen {
 			DisplayEntity proto = prototypeEntity.getNextEntity(simTime);
 			numberGenerated++;
 			String entName = name + numberGenerated;
-			DisplayEntity ent = InputAgent.generateEntityWithName(getJaamSimModel(),
-					proto.getClass(), proto, entName, null, false, false);
+			DisplayEntity ent = (DisplayEntity) InputAgent.getGeneratedClone(proto, entName);
 			ent.earlyInit();
 			ent.lateInit();
 
