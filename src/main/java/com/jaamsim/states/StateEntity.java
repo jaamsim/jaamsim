@@ -165,8 +165,6 @@ public abstract class StateEntity extends DisplayEntity implements StateUser {
 		init.setStartTick(lastStateCollectionTick);
 		presentState = init;
 		states.put(init.getName(), init);
-
-		this.setGraphicsForState(init.getName());
 	}
 
 	public void addStateListener(StateEntityListener listener) {
@@ -223,31 +221,12 @@ public abstract class StateEntity extends DisplayEntity implements StateUser {
 			states.put(nextState.getName(), nextState);
 		}
 
-		this.setGraphicsForState(state);
-
 		updateStateStats();
 		nextState.setStartTick(lastStateCollectionTick);
 
 		StateRecord prev = presentState;
 		presentState = nextState;
 		stateChanged(prev, presentState);
-	}
-
-	private void setGraphicsForState(String state) {
-
-		if (stateGraphics.getValue() == null)
-			return;
-
-		DisplayEntity ent = stateGraphics.getValueFor(state);
-		if (ent == null) {
-			this.resetGraphics();
-			return;
-		}
-
-		this.setDisplayModelList(ent.getDisplayModelList());
-		this.setSize(ent.getSize());
-		this.setOrientation(ent.getOrientation());
-		this.setAlignment(ent.getAlignment());
 	}
 
 	/**
@@ -490,6 +469,25 @@ public abstract class StateEntity extends DisplayEntity implements StateUser {
 			ticks += getTicksInState(simTicks, rec);
 		}
 		return evt.ticksToSeconds(ticks);
+	}
+
+	@Override
+	public void updateGraphics(double simTime) {
+		super.updateGraphics(simTime);
+
+		if (stateGraphics.getValue() == null)
+			return;
+
+		DisplayEntity ent = stateGraphics.getValueFor(presentState.getName());
+		if (ent == null) {
+			this.resetGraphics();
+			return;
+		}
+
+		this.setDisplayModelList(ent.getDisplayModelList());
+		this.setSize(ent.getSize());
+		this.setOrientation(ent.getOrientation());
+		this.setAlignment(ent.getAlignment());
 	}
 
 	@Output(name = "State",
