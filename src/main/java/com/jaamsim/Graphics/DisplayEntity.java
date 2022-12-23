@@ -971,6 +971,8 @@ public class DisplayEntity extends Entity {
 	}
 
 	public void setDisplayModelList(ArrayList<DisplayModel> dmList) {
+		if (dmList != null && dmList.equals(displayModelList))
+			return;
 		displayModelList.clear();
 		if (dmList == null)
 			return;
