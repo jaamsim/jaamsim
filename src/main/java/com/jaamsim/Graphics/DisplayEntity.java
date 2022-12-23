@@ -418,9 +418,7 @@ public class DisplayEntity extends Entity {
 	@Override
 	public void earlyInit() {
 		super.earlyInit();
-		if (!this.isGenerated()) {
-			this.resetGraphics();
-		}
+		resetGraphics();
 	}
 
 	public void updateForPointsInput(ArrayList<Vec3d> pts) {
