@@ -81,6 +81,7 @@ public class Entity {
 	static final int FLAG_DEAD = 0x0100;  // entity has been deleted
 	static final int FLAG_REGISTERED = 0x0200;  // entity is included in the namedEntities HashMap
 	static final int FLAG_RETAINED = 0x0400;  // entity is retained when the model is reset between runs
+	static final int FLAG_POOLED = 0x0800;  // entity is held in its prototype's clone pool
 	private int flags;
 
 	Entity parent;
@@ -347,6 +348,14 @@ public class Entity {
 
 	public final void setEdited() {
 		this.setFlag(Entity.FLAG_EDITED);
+	}
+
+	/**
+	 * Returns whether the entity is being held its prototype's clone pool, ready for re-use
+	 * @return true if the entity is pooled for re-use
+	 */
+	public final boolean isPooled() {
+		return this.testFlag(Entity.FLAG_POOLED);
 	}
 
 	/**
@@ -1098,13 +1107,16 @@ public class Entity {
 	public void addCloneToPool(Entity clone) {
 		if (clonePool == null)
 			clonePool = new ArrayList<>();
+		clone.setFlag(Entity.FLAG_POOLED);
 		clonePool.add(clone);
 	}
 
 	public Entity getCloneFromPool() {
 		if (clonePool == null || clonePool.isEmpty())
 			return null;
-		return clonePool.remove(clonePool.size() - 1);
+		Entity ret = clonePool.remove(clonePool.size() - 1);
+		ret.clearFlag(Entity.FLAG_POOLED);
+		return ret;
 	}
 
 	/**

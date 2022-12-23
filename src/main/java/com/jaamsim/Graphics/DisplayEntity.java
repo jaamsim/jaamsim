@@ -1482,6 +1482,8 @@ public class DisplayEntity extends Entity {
 	 description = "Returns TRUE if the object is shown in one or more view windows.",
 	    sequence = 4)
 	public boolean getShow(double simTime) {
+		if (isPooled())
+			return false;
 		if (!showInput.isConstant())
 			return getShowInput(simTime);
 		synchronized (position) {
