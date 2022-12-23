@@ -73,8 +73,7 @@ public class Pack extends AbstractPack {
 		name = name + numberGenerated;
 
 		DisplayEntity proto = (DisplayEntity)prototypeEntityContainer.getValue();
-		DisplayEntity ret = InputAgent.generateEntityWithName(getJaamSimModel(),
-				proto.getClass(), proto, name, null, false, false);
+		DisplayEntity ret = (DisplayEntity) InputAgent.getGeneratedClone(proto, name);
 		ret.earlyInit();
 		return (EntContainer)ret;
 	}

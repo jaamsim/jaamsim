@@ -107,8 +107,7 @@ public class Duplicate extends LinkedComponent {
 
 				// Create the duplicated entity
 				Entity proto = ent.getPrototype();
-				DisplayEntity dup = InputAgent.generateEntityWithName(getJaamSimModel(),
-						ent.getClass(), proto, name + n, null, false, false);
+				DisplayEntity dup = (DisplayEntity) InputAgent.getGeneratedClone(proto, name + n);
 				Entity.copyAttributeValues(ent, dup);
 
 				// Set the state for the duplicated entity

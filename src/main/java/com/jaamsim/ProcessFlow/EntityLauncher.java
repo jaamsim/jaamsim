@@ -86,8 +86,7 @@ public class EntityLauncher extends GameEntity implements EntityGen {
 		numberGenerated++;
 		DisplayEntity proto = prototypeEntity.getNextEntity(0.0d);
 		name = name + numberGenerated;
-		DisplayEntity ent = InputAgent.generateEntityWithName(getJaamSimModel(),
-				proto.getClass(), proto, name, null, false, false);
+		DisplayEntity ent = (DisplayEntity) InputAgent.getGeneratedClone(proto, name);
 		ent.earlyInit();
 
 		// Send the entity to the next element in the chain
