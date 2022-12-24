@@ -1188,7 +1188,9 @@ public class Entity {
 	 description = "List of entities whose prototype is this entity.",
 	    sequence = 5)
 	public ArrayList<Entity> getCloneList(double simTime) {
-		return getActiveCloneList();
+		ArrayList<Entity> ret = getActiveCloneList();
+		Collections.sort(ret, InputAgent.uiEntitySortOrder);
+		return ret;
 	}
 
 }
