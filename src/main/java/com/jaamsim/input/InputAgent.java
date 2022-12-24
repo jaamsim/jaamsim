@@ -343,7 +343,7 @@ public class InputAgent {
 			return InputAgent.generateEntityWithName(proto.getJaamSimModel(),
 					proto.getClass(), proto, name, null, false, false);
 
-		ret.setName(name);
+		ret.setLocalName(name);
 		return ret;
 	}
 
