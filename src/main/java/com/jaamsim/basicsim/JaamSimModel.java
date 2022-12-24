@@ -1082,6 +1082,8 @@ public class JaamSimModel implements EventTimeListener {
 	final void renameEntity(Entity ent, String newName) {
 		if (!ent.isRegistered()) {
 			ent.entityName = newName;
+			if (gui != null)
+				gui.updateObjectSelector();
 			return;
 		}
 
@@ -1090,6 +1092,8 @@ public class JaamSimModel implements EventTimeListener {
 		}
 		ent.entityName = newName;
 		addNamedEntity(ent);
+		if (gui != null)
+			gui.updateObjectSelector();
 	}
 
 	private void validateEntList() {
