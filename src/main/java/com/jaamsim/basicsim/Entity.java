@@ -1120,6 +1120,7 @@ public class Entity {
 		if (clonePool == null)
 			clonePool = new ArrayList<>();
 		clone.setFlag(Entity.FLAG_POOLED);
+		clone.setLocalName("");
 		clonePool.add(clone);
 	}
 
