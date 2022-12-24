@@ -282,6 +282,10 @@ public class ObjectSelector extends FrameBox {
 				if (ent instanceof IconModel)
 					continue;
 
+				// Do not include pool entities
+				if (ent.isPooled())
+					continue;
+
 				entityList.add(ent);
 			}
 			catch (IndexOutOfBoundsException e) {}
