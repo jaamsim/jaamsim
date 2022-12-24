@@ -176,7 +176,8 @@ public class ObjectSelector extends FrameBox {
 		JaamSimModel simModel = GUIFrame.getJaamSimModel();
 		if (simModel == null || simModel.getSimulation() == null)
 			return;
-		if (!this.isVisible() || gui == null || simModel.getSimState() == JaamSimModel.SIM_STATE_RUNNING)
+		if (!this.isVisible() || gui == null || (simModel.getSimState() == JaamSimModel.SIM_STATE_RUNNING
+				&& !simModel.getSimulation().isRealTime()))
 			return;
 
 		long curSequence = simModel.getEntitySequence();
