@@ -261,6 +261,7 @@ public class EntityDelay extends LinkedComponent implements LineEntity {
 
 	@Override
 	public void updateGraphics(double simTime) {
+		super.updateGraphics(simTime);
 
 		if (!usePointsInput())
 			return;

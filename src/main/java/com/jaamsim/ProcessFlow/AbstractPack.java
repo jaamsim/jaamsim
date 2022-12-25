@@ -222,6 +222,8 @@ public abstract class AbstractPack extends LinkedService {
 
 	@Override
 	public void updateGraphics(double simTime) {
+		super.updateGraphics(simTime);
+
 		if (container != null)
 			moveToProcessPosition((DisplayEntity)container);
 		if (packedEntity != null)

@@ -284,6 +284,7 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 
 	@Override
 	public void updateGraphics(double simTime) {
+		super.updateGraphics(simTime);
 
 		if (presentTravelTime == 0.0d || !usePointsInput())
 			return;

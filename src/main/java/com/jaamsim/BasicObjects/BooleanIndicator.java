@@ -78,6 +78,8 @@ public class BooleanIndicator extends DisplayEntity {
 
 	@Override
 	public void updateGraphics(double simTime) {
+		super.updateGraphics(simTime);
+
 		if (expInput.getValue() == null)
 			return;
 		if (expInput.getNextSample(simTime) != 0.0d)

@@ -157,6 +157,7 @@ public class DemoEntity extends DisplayEntity {
 
 	@Override
 	public void updateGraphics(double simTime) {
+		super.updateGraphics(simTime);
 
 		// Leave the entity in its present position until the simulation starts
 		if (simTime == 0.0)

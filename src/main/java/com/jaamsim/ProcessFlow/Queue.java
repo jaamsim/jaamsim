@@ -545,6 +545,7 @@ public class Queue extends LinkedComponent {
 	 */
 	@Override
 	public void updateGraphics(double simTime) {
+		super.updateGraphics(simTime);
 
 		boolean visible = showEntities.getValue();
 		Vec3d queueOrientation = getOrientation();

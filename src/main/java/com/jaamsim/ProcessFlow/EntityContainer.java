@@ -221,6 +221,7 @@ public class EntityContainer extends SimEntity implements EntContainer {
 	 */
 	@Override
 	public void updateGraphics( double simTime ) {
+		super.updateGraphics(simTime);
 
 		boolean visible = showEntities.getValue();
 		Vec3d orient = getOrientation();

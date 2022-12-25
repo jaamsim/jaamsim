@@ -166,6 +166,8 @@ public abstract class AbstractUnpack extends LinkedService {
 
 	@Override
 	public void updateGraphics(double simTime) {
+		super.updateGraphics(simTime);
+
 		if (container != null)
 			moveToProcessPosition((DisplayEntity)container);
 		if (unpackedEntity != null)

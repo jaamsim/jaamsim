@@ -111,6 +111,8 @@ public class Server extends LinkedService {
 
 	@Override
 	public void updateGraphics(double simTime) {
+		super.updateGraphics(simTime);
+
 		if (servedEntity == null)
 			return;
 		moveToProcessPosition(servedEntity);

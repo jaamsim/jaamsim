@@ -369,6 +369,7 @@ public class EntityProcessor extends AbstractLinkedResourceUser {
 
 	@Override
 	public void updateGraphics(double simTime) {
+		super.updateGraphics(simTime);
 
 		// Copy the lists to avoid concurrent modification exceptions
 		ArrayList<ProcessorEntry> copiedList;

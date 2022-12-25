@@ -154,6 +154,8 @@ public class Assemble extends AbstractCombine implements EntityGen {
 
 	@Override
 	public void updateGraphics(double simTime) {
+		super.updateGraphics(simTime);
+
 		if (assembledEntity == null)
 			return;
 		moveToProcessPosition(assembledEntity);
