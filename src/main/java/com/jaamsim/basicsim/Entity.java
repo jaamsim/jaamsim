@@ -1129,6 +1129,12 @@ public class Entity {
 			return null;
 		Entity ret = clonePool.remove(clonePool.size() - 1);
 		ret.clearFlag(Entity.FLAG_POOLED);
+		for (Input<?> in : ret.inpList) {
+			if (in.isDefault())
+				continue;
+			in.reset();
+			in.doCallback(ret);
+		}
 		return ret;
 	}
 
