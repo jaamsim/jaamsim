@@ -84,7 +84,7 @@ public class EntityLauncher extends GameEntity implements EntityGen {
 
 		// Create a new entity
 		numberGenerated++;
-		DisplayEntity proto = prototypeEntity.getNextEntity(0.0d);
+		DisplayEntity proto = prototypeEntity.getNextEntity(this, 0.0d);
 		name = name + numberGenerated;
 		DisplayEntity ent = (DisplayEntity) InputAgent.getGeneratedClone(proto, name);
 		ent.earlyInit();
@@ -129,7 +129,7 @@ public class EntityLauncher extends GameEntity implements EntityGen {
 	public ArrayList<DisplayEntity> getSourceEntities() {
 		ArrayList<DisplayEntity> ret = super.getSourceEntities();
 		try {
-			DisplayEntity ent = prototypeEntity.getNextEntity(0.0d);
+			DisplayEntity ent = prototypeEntity.getNextEntity(this, 0.0d);
 			if (ent != null) {
 				ret.add(ent);
 			}

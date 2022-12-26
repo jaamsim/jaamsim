@@ -187,7 +187,7 @@ public class EntityGenerator extends LinkedService implements EntityGen {
 		// Create the new entities
 		int num = (int) entitiesPerArrival.getNextSample(getSimTime());
 		for (int i=0; i<num; i++) {
-			DisplayEntity proto = prototypeEntity.getNextEntity(simTime);
+			DisplayEntity proto = prototypeEntity.getNextEntity(this, simTime);
 			numberGenerated++;
 			String entName = name + numberGenerated;
 			DisplayEntity ent = (DisplayEntity) InputAgent.getGeneratedClone(proto, entName);
@@ -226,7 +226,7 @@ public class EntityGenerator extends LinkedService implements EntityGen {
 	public ArrayList<DisplayEntity> getSourceEntities() {
 		ArrayList<DisplayEntity> ret = super.getSourceEntities();
 		try {
-			DisplayEntity ent = prototypeEntity.getNextEntity(0.0d);
+			DisplayEntity ent = prototypeEntity.getNextEntity(this, 0.0d);
 			if (ent != null) {
 				ret.add(ent);
 			}

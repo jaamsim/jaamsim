@@ -322,7 +322,7 @@ public abstract class LinkedService extends LinkedDevice implements QueueUser {
 	}
 
 	public Queue getQueue(double simTime) {
-		return waitQueue.getNextEntity(simTime);
+		return waitQueue.getNextEntity(this, simTime);
 	}
 
 	@Override
