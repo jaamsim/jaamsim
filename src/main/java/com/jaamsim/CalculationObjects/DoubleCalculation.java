@@ -123,7 +123,7 @@ implements SampleProvider {
 		// call stack size to be exceeded
 		double ret = lastInputValue;
 		try {
-			ret = inputValue.getNextSample(simTime);
+			ret = inputValue.getNextSample(this, simTime);
 		} catch(Exception e) {
 			if (EventManager.hasCurrent()) {
 				error("Closed loop detected in calculation. Insert a UnitDelay object.");

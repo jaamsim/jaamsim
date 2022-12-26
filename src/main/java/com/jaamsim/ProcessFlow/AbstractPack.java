@@ -183,13 +183,13 @@ public abstract class AbstractPack extends LinkedService {
 	}
 
 	protected int getNumberToInsert(double simTime) {
-		return (int) numberOfEntities.getNextSample(simTime);
+		return (int) numberOfEntities.getNextSample(this, simTime);
 	}
 
 	private int getNumberToStart(double simTime) {
 		int ret = numberToInsert;
 		if (!numberToStart.isDefault() && numberToInsert > 0) {
-			ret = (int) numberToStart.getNextSample(simTime);
+			ret = (int) numberToStart.getNextSample(this, simTime);
 			ret = Math.max(ret, 1);
 		}
 		return ret;
@@ -197,7 +197,7 @@ public abstract class AbstractPack extends LinkedService {
 
 	@Override
 	protected double getStepDuration(double simTime) {
-		return serviceTime.getNextSample(simTime);
+		return serviceTime.getNextSample(this, simTime);
 	}
 
 	@Override

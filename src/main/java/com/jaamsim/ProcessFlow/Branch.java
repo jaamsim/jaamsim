@@ -60,7 +60,7 @@ public class Branch extends LinkedComponent {
 		double simTime = getSimTime();
 
 		// Choose the next component for this entity
-		int i = (int) choice.getNextSample(simTime);
+		int i = (int) choice.getNextSample(this, simTime);
 		if (i<1 || i>nextComponentList.getValue().size())
 			error("Chosen index i=%s is out of range for NextComponentList: %s.",
 			      i, nextComponentList.getValue());

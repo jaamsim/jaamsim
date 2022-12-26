@@ -65,22 +65,22 @@ public class NegativeBinomialDistribution extends Distribution {
 
 	@Override
 	protected double getSample(double simTime) {
-		int s = (int) successfulTrials.getNextSample(simTime);
-		double p = probability.getNextSample(simTime);
+		int s = (int) successfulTrials.getNextSample(this, simTime);
+		double p = probability.getNextSample(this, simTime);
 		return getSample(s, p, rng);
 	}
 
 	@Override
 	protected double getMean(double simTime) {
-		int s = (int) successfulTrials.getNextSample(simTime);
-		double p = probability.getNextSample(simTime);
+		int s = (int) successfulTrials.getNextSample(this, simTime);
+		double p = probability.getNextSample(this, simTime);
 		return getMean(s, p);
 	}
 
 	@Override
 	protected double getStandardDev(double simTime) {
-		int s = (int) successfulTrials.getNextSample(simTime);
-		double p = probability.getNextSample(simTime);
+		int s = (int) successfulTrials.getNextSample(this, simTime);
+		double p = probability.getNextSample(this, simTime);
 		return getStandardDev(s, p);
 	}
 

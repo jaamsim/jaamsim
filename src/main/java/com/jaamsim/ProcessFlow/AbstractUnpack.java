@@ -178,7 +178,7 @@ public abstract class AbstractUnpack extends LinkedService {
 	protected double getStepDuration(double simTime) {
 		double dur = 0.0;
 		if (unpackedEntity != null)
-			dur = serviceTime.getNextSample(simTime);
+			dur = serviceTime.getNextSample(this, simTime);
 		return dur;
 	}
 

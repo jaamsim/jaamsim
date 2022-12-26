@@ -73,22 +73,22 @@ public class NormalDistribution extends Distribution {
 
 	@Override
 	protected double getSample(double simTime) {
-		double mean = meanInput.getNextSample(simTime);
-		double sdev = standardDeviationInput.getNextSample(simTime);
+		double mean = meanInput.getNextSample(this, simTime);
+		double sdev = standardDeviationInput.getNextSample(this, simTime);
 		return getSample(mean, sdev, rng1, rng2);
 	}
 
 	@Override
 	protected double getMean(double simTime) {
-		double mean = meanInput.getNextSample(simTime);
-		double sdev = standardDeviationInput.getNextSample(simTime);
+		double mean = meanInput.getNextSample(this, simTime);
+		double sdev = standardDeviationInput.getNextSample(this, simTime);
 		return getMean(mean, sdev);
 	}
 
 	@Override
 	protected double getStandardDev(double simTime) {
-		double mean = meanInput.getNextSample(simTime);
-		double sdev = standardDeviationInput.getNextSample(simTime);
+		double mean = meanInput.getNextSample(this, simTime);
+		double sdev = standardDeviationInput.getNextSample(this, simTime);
 		return getStandardDev(mean, sdev);
 	}
 

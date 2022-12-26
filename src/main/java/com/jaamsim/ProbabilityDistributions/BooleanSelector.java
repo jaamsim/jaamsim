@@ -91,7 +91,7 @@ public class BooleanSelector extends DisplayEntity implements RandomStreamUser {
 
 	public boolean getNextValue() {
 		double samp = rng.nextUniform();
-		double prob = trueProbInput.getNextSample(0);
+		double prob = trueProbInput.getNextSample(this, 0);
 		lastValue = samp < prob;
 		return lastValue;
 	}
@@ -110,7 +110,7 @@ public class BooleanSelector extends DisplayEntity implements RandomStreamUser {
 
 		// Select the next sample
 		double samp = rng.nextUniform();
-		double prob = trueProbInput.getNextSample(simTime);
+		double prob = trueProbInput.getNextSample(this, simTime);
 		lastValue = samp < prob;
 		return lastValue;
 	}

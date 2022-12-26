@@ -845,7 +845,7 @@ public class Simulation extends Entity {
 	public int getSubstreamNumber() {
 		if (globalSeedInput.isDefault())
 			return getJaamSimModel().getReplicationNumber();
-		return (int)globalSeedInput.getNextSample(0.0);
+		return (int)globalSeedInput.getNextSample(this, 0.0);
 	}
 
 	public boolean getPrintReport() {
@@ -892,14 +892,14 @@ public class Simulation extends Entity {
 	 * Returns the duration of the run (not including intialization)
 	 */
 	public double getRunDuration() {
-		return runDuration.getNextSample(0.0d);
+		return runDuration.getNextSample(this, 0.0d);
 	}
 
 	/**
 	 * Returns the duration of the initialization period
 	 */
 	public double getInitializationTime() {
-		return initializationTime.getNextSample(0.0d);
+		return initializationTime.getNextSample(this, 0.0d);
 	}
 
 	/**
@@ -1025,7 +1025,7 @@ public class Simulation extends Entity {
 
 	public boolean isPauseConditionSatisfied(double simTime) {
 		return pauseConditionInput.getValue() != null &&
-				pauseConditionInput.getNextSample(simTime) != 0.0d;
+				pauseConditionInput.getNextSample(this, simTime) != 0.0d;
 	}
 
 	public Vec3d getSnapGridPosition(Vec3d pos) {
@@ -1261,7 +1261,7 @@ public class Simulation extends Entity {
 	}
 
 	public int getNumberOfReplications() {
-		return (int) numberOfReplications.getNextSample(0.0d);
+		return (int) numberOfReplications.getNextSample(this, 0.0d);
 	}
 
 	public int getNumberOfThreads() {
@@ -1283,11 +1283,11 @@ public class Simulation extends Entity {
 	}
 
 	public int getStartingScenarioNumber() {
-		return (int) startingScenarioNumber.getNextSample(0.0d);
+		return (int) startingScenarioNumber.getNextSample(this, 0.0d);
 	}
 
 	public int getEndingScenarioNumber() {
-		return (int) endingScenarioNumber.getNextSample(0.0d);
+		return (int) endingScenarioNumber.getNextSample(this, 0.0d);
 	}
 
 	public int getNumberOfScenarios() {

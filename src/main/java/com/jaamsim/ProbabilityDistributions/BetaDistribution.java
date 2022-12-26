@@ -76,25 +76,25 @@ public class BetaDistribution extends Distribution {
 
 	@Override
 	protected double getSample(double simTime) {
-		double alpha = alphaInput.getNextSample(simTime);
-		double beta = betaInput.getNextSample(simTime);
-		double scale = scaleInput.getNextSample(simTime);
+		double alpha = alphaInput.getNextSample(this, simTime);
+		double beta = betaInput.getNextSample(this, simTime);
+		double scale = scaleInput.getNextSample(this, simTime);
 		return getSample(alpha, beta, scale, rng);
 	}
 
 	@Override
 	protected double getMean(double simTime) {
-		double alpha = alphaInput.getNextSample(simTime);
-		double beta = betaInput.getNextSample(simTime);
-		double scale = scaleInput.getNextSample(simTime);
+		double alpha = alphaInput.getNextSample(this, simTime);
+		double beta = betaInput.getNextSample(this, simTime);
+		double scale = scaleInput.getNextSample(this, simTime);
 		return getMean(alpha, beta, scale);
 	}
 
 	@Override
 	protected double getStandardDev(double simTime) {
-		double alpha = alphaInput.getNextSample(simTime);
-		double beta = betaInput.getNextSample(simTime);
-		double scale = scaleInput.getNextSample(simTime);
+		double alpha = alphaInput.getNextSample(this, simTime);
+		double beta = betaInput.getNextSample(this, simTime);
+		double scale = scaleInput.getNextSample(this, simTime);
 		return getStandardDev(alpha, beta, scale);
 	}
 
@@ -105,7 +105,7 @@ public class BetaDistribution extends Distribution {
 
 	@Override
 	protected double getMax(double simTime) {
-		double scale = scaleInput.getNextSample(simTime);
+		double scale = scaleInput.getNextSample(this, simTime);
 		return scale;
 	}
 

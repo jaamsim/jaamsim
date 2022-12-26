@@ -104,7 +104,7 @@ public class ServerAndQueue extends CompoundEntity {
 	 description = "The queue length at which the Threshold output closes.",
 	    sequence = 0)
 	public int getMaxQueueLength(double simTime) {
-		return (int) maxQueueLength.getNextSample(simTime);
+		return (int) maxQueueLength.getNextSample(this, simTime);
 	}
 
 }

@@ -67,7 +67,7 @@ public class Integrator extends DoubleCalculation {
 
 	@Override
 	public double getInitialValue() {
-		return initialValue.getNextSample(0.0d);
+		return initialValue.getNextSample(this, 0.0d);
 	}
 
 	@Override

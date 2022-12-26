@@ -56,19 +56,19 @@ public class PoissonDistribution extends Distribution {
 
 	@Override
 	protected double getSample(double simTime) {
-		double mean = meanInput.getNextSample(simTime);
+		double mean = meanInput.getNextSample(this, simTime);
 		return getSample(mean, rng);
 	}
 
 	@Override
 	protected double getMean(double simTime) {
-		double mean = meanInput.getNextSample(simTime);
+		double mean = meanInput.getNextSample(this, simTime);
 		return getMeanVal(mean);
 	}
 
 	@Override
 	protected double getStandardDev(double simTime) {
-		double mean = meanInput.getNextSample(simTime);
+		double mean = meanInput.getNextSample(this, simTime);
 		return getStandardDevVal(mean);
 	}
 

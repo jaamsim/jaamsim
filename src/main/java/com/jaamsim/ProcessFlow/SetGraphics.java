@@ -79,7 +79,7 @@ public class SetGraphics extends LinkedComponent {
 		}
 
 		// Choose the new graphics for this entity
-		int i = (int) choice.getNextSample(simTime);
+		int i = (int) choice.getNextSample(this, simTime);
 		if (i<1 || i>graphicsList.getValue().size())
 			error("Chosen index i=%s is out of range for GraphicList: %s.", i, graphicsList.getValue());
 		DisplayEntity chosen = graphicsList.getValue().get(i-1);

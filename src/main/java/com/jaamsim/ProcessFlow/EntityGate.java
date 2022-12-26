@@ -119,7 +119,7 @@ public class EntityGate extends LinkedService {
 
 	@Override
 	protected double getStepDuration(double simTime) {
-		return releaseDelay.getNextSample(simTime);
+		return releaseDelay.getNextSample(this, simTime);
 	}
 	@Override
 	public void thresholdChanged() {
@@ -136,7 +136,7 @@ public class EntityGate extends LinkedService {
 	}
 
 	public int getNumberToRelease(double simTime) {
-		return (int) numberToRelease.getNextSample(simTime);
+		return (int) numberToRelease.getNextSample(this, simTime);
 	}
 
 	@Override

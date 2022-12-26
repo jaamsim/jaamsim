@@ -71,7 +71,7 @@ public class Server extends LinkedService {
 		setEntityState(servedEntity);
 
 		// Set the service duration
-		serviceDuration = serviceTime.getNextSample(simTime);
+		serviceDuration = serviceTime.getNextSample(this, simTime);
 
 		// Assign attributes
 		assignAttributesAtStart(simTime);

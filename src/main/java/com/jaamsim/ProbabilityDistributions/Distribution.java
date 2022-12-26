@@ -209,8 +209,8 @@ implements SampleProvider, RandomStreamUser {
 
 		// Loop until the select sample falls within the desired min and max values
 		double nextSample;
-		double minVal = this.minValueInput.getNextSample(simTime);
-		double maxVal = this.maxValueInput.getNextSample(simTime);
+		double minVal = this.minValueInput.getNextSample(this, simTime);
+		double maxVal = this.maxValueInput.getNextSample(this, simTime);
 		int n = 0;
 		do {
 			if (n > MAX_ATTEMPTS) {
@@ -230,11 +230,11 @@ implements SampleProvider, RandomStreamUser {
 	}
 
 	public double getMinValueInput(double simTime) {
-		return minValueInput.getNextSample(simTime);
+		return minValueInput.getNextSample(this, simTime);
 	}
 
 	public double getMaxValueInput(double simTime) {
-		return maxValueInput.getNextSample(simTime);
+		return maxValueInput.getNextSample(this, simTime);
 	}
 
 	/**

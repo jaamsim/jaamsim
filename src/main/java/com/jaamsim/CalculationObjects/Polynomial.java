@@ -69,7 +69,7 @@ public class Polynomial extends DisplayEntity implements SampleProvider {
 
 	@Override
 	public double getNextSample(Entity thisEnt, double simTime) {
-		double x = inputValue.getNextSample(simTime);
+		double x = inputValue.getNextSample(thisEnt, simTime);
 		double pow = 1.0;
 		double val = 0.0;
 		for(int i=0; i<coefficientList.getValue().size(); i++ ) {

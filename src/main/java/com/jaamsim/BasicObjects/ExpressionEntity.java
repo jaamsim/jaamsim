@@ -92,7 +92,7 @@ public class ExpressionEntity extends DisplayEntity implements SampleProvider {
 		if (sampleValue.getValue() == null)
 			return 0.0d;
 
-		return sampleValue.getNextSample(simTime);
+		return sampleValue.getNextSample(thisEnt, simTime);
 	}
 
 }

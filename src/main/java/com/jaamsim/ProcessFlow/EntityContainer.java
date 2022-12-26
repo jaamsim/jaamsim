@@ -157,7 +157,7 @@ public class EntityContainer extends SimEntity implements EntContainer {
 		registerEntity(ent);
 
 		// Determine the priority and match value for the received entity
-		int pri = (int) priority.getNextSample(simTime);
+		int pri = (int) priority.getNextSample(this, simTime);
 
 		String m = null;
 		if (!match.isDefault())

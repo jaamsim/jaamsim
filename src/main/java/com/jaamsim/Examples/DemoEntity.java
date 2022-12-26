@@ -94,7 +94,7 @@ public class DemoEntity extends DisplayEntity {
 
 		// Set the duration for the trip
 		double simTime = this.getSimTime();
-		double duration = travelTime.getNextSample(simTime);
+		double duration = travelTime.getNextSample(this, simTime);
 
 		// Set the speed
 		speed = 1.0 / duration;

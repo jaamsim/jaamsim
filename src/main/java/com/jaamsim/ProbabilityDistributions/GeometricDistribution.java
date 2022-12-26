@@ -57,19 +57,19 @@ public class GeometricDistribution extends Distribution {
 
 	@Override
 	protected double getSample(double simTime) {
-		double p = probability.getNextSample(simTime);
+		double p = probability.getNextSample(this, simTime);
 		return getSample(p, rng);
 	}
 
 	@Override
 	protected double getMean(double simTime) {
-		double p = probability.getNextSample(simTime);
+		double p = probability.getNextSample(this, simTime);
 		return getMeanVal(p);
 	}
 
 	@Override
 	protected double getStandardDev(double simTime) {
-		double p = probability.getNextSample(simTime);
+		double p = probability.getNextSample(this, simTime);
 		return getStandardDevVal(p);
 	}
 

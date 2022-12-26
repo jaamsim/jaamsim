@@ -155,7 +155,7 @@ public abstract class AbstractCombine extends LinkedService {
 
 	@Override
 	protected double getStepDuration(double simTime) {
-		return serviceTime.getNextSample(simTime);
+		return serviceTime.getNextSample(this, simTime);
 	}
 
 	/**
