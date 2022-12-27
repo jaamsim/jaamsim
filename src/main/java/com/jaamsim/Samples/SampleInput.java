@@ -228,6 +228,10 @@ public class SampleInput extends Input<SampleProvider> {
 			e.keyword = getKeyword();
 			throw e;
 		}
+		catch (Exception e) {
+			throw new ErrorException("", -1, thisEnt.getName(), getKeyword(), -1,
+					e.getMessage(), e);
+		}
 	}
 
 	@Override

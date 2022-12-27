@@ -300,6 +300,10 @@ public class SampleListInput extends ArrayListInput<SampleProvider> {
 			e.index = i + 1;
 			throw e;
 		}
+		catch (Exception e) {
+			throw new ErrorException("", -1, thisEnt.getName(), getKeyword(), i + 1,
+					e.getMessage(), e);
+		}
 	}
 
 }

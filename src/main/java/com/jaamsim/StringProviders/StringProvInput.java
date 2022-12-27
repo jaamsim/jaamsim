@@ -178,6 +178,10 @@ public class StringProvInput extends Input<StringProvider> {
 			e.keyword = getKeyword();
 			throw e;
 		}
+		catch (Exception e) {
+			throw new ErrorException("", -1, thisEnt.getName(), getKeyword(), -1,
+					e.getMessage(), e);
+		}
 	}
 
 	public String getNextString(double simTime, String fmt, double siFactor) {
@@ -192,6 +196,10 @@ public class StringProvInput extends Input<StringProvider> {
 			e.keyword = getKeyword();
 			throw e;
 		}
+		catch (Exception e) {
+			throw new ErrorException("", -1, thisEnt.getName(), getKeyword(), -1,
+					e.getMessage(), e);
+		}
 	}
 
 	public double getNextValue(Entity thisEnt, double simTime) {
@@ -201,6 +209,10 @@ public class StringProvInput extends Input<StringProvider> {
 		catch (ErrorException e) {
 			e.keyword = getKeyword();
 			throw e;
+		}
+		catch (Exception e) {
+			throw new ErrorException("", -1, thisEnt.getName(), getKeyword(), -1,
+					e.getMessage(), e);
 		}
 	}
 

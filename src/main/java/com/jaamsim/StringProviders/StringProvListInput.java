@@ -181,6 +181,10 @@ public class StringProvListInput extends ArrayListInput<StringProvider> {
 			e.index = i + 1;
 			throw e;
 		}
+		catch (Exception e) {
+			throw new ErrorException("", -1, thisEnt.getName(), getKeyword(), i + 1,
+					e.getMessage(), e);
+		}
 	}
 
 	public double getNextValue(int i, Entity thisEnt, double simTime) {
@@ -191,6 +195,10 @@ public class StringProvListInput extends ArrayListInput<StringProvider> {
 			e.keyword = getKeyword();
 			e.index = i + 1;
 			throw e;
+		}
+		catch (Exception e) {
+			throw new ErrorException("", -1, thisEnt.getName(), getKeyword(), i + 1,
+					e.getMessage(), e);
 		}
 	}
 

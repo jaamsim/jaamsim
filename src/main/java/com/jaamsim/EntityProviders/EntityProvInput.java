@@ -150,6 +150,10 @@ public class EntityProvInput<T extends Entity> extends Input<EntityProvider<T>> 
 			e.keyword = getKeyword();
 			throw e;
 		}
+		catch (Exception e) {
+			throw new ErrorException("", -1, thisEnt.getName(), getKeyword(), -1,
+					e.getMessage(), e);
+		}
 	}
 
 }
