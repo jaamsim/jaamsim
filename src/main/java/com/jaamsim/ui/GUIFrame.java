@@ -4463,11 +4463,12 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			splashScreen.setVisible(true);
 		}
 
-		// Record info on the operating system and Java version
+		// Record info on the operating system, Java version, and JaamSim version
 		LogBox.format("Operating System: %s (version: %s)",
 				System.getProperty("os.name"), System.getProperty("os.version"));
-		LogBox.format("Java: %s (version: %s)%n",
+		LogBox.format("Java: %s (version: %s)",
 				System.getProperty("java.vendor"), System.getProperty("java.version"));
+		LogBox.format("Software: %s (version: %s)%n", AboutBox.softwareName, AboutBox.version);
 
 		// create a graphic simulation
 		LogBox.logLine("Loading Simulation Environment ... ");
