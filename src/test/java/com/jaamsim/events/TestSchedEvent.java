@@ -181,7 +181,7 @@ public class TestSchedEvent {
 		outputResults("Different Time Events", nanoStamps, endSchedNanos, endExecNanos);
 	}
 
-	private final void outputResults(String test, long[] nanoStamps, long endSchedNanos, long endExecNanos) {
+	private static final void outputResults(String test, long[] nanoStamps, long endSchedNanos, long endExecNanos) {
 		long execNanos = endExecNanos - endSchedNanos;
 		double perEvtExec = execNanos / 1000000.0d;
 		System.out.println(test);
@@ -213,6 +213,52 @@ public class TestSchedEvent {
 		public void process() {
 			//System.out.println("Running init:" + num);
 			//System.out.flush();
+		}
+	}
+
+	@Test
+	public void testStartProcessEvents() {
+		EventManager evt = new EventManager("TestEVT");
+		evt.clear();
+
+		evt.scheduleProcessExternal(0, 0, true, new StartTarget(), null);
+
+		TestFrameworkHelpers.runEventsToTick(evt, 100, Long.MAX_VALUE);
+	}
+
+	private static class StartTarget extends ProcessTarget {
+		@Override
+		public String getDescription() {
+			return "StartProcessLoop";
+		}
+
+		@Override
+		public void process() {
+			EmptyTarget target = new EmptyTarget();
+			long[] nanoStamps = new long[11];
+			for (int i = 0; i <= 1000000; i++) {
+				if (i % 100000 == 0) {
+					int idx = i / 100000;
+					nanoStamps[idx] = System.nanoTime();
+				}
+				EventManager.startProcess(target);
+			}
+			long endSchedNanos = System.nanoTime();
+
+			long endExecNanos = System.nanoTime();
+
+			outputResults("StartProcess Events", nanoStamps, endSchedNanos, endExecNanos);
+		}
+	}
+
+	private static class EmptyTarget extends ProcessTarget {
+		@Override
+		public String getDescription() {
+			return "EmptyEvent";
+		}
+
+		@Override
+		public void process() {
 		}
 	}
 }
