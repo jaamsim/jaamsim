@@ -187,8 +187,14 @@ public class SampleListInput extends ArrayListInput<SampleProvider> {
 		// No inner braces
 		if (!valueTokens[0].equals("{")) {
 			for (int i = 0; i < value.size(); i++) {
-				if (value.get(i) instanceof SampleConstant && !integerValue)
+				if (value.get(i) instanceof SampleConstant && !integerValue) {
 					toks.add(valueTokens[i]);
+					// Single input value with dimensions
+					if (!dimensionless) {
+						toks.add(valueTokens[i + 1]);
+						return;
+					}
+				}
 				else
 					toks.add(value.get(i).toString());
 			}
