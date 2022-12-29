@@ -326,7 +326,7 @@ public abstract class Input<T> {
 	}
 
 	public T getValue() {
-		if (isDefault() && protoInput != null)
+		if (isDef && protoInput != null)
 			return protoInput.getValue();
 		return value;
 	}
@@ -542,7 +542,19 @@ public abstract class Input<T> {
 		valueTokens = newValueTokens;
 	}
 
+	/**
+	 * Returns whether the input has been set or is inherited from its protoInput
+	 * @return true if the input has been set or is inherited
+	 */
 	public boolean isDefault() {
+		return isDef && (protoInput == null || protoInput.isDefault());
+	}
+
+	/**
+	 * Returns whether the input has been set.
+	 * @return true if the input has been set
+	 */
+	public boolean isDef() {
 		return isDef;
 	}
 
@@ -611,10 +623,10 @@ public abstract class Input<T> {
 	 * @return input file text
 	 */
 	public final String getValueString() {
-		if (isDefault() && protoInput != null)
+		if (isDef && protoInput != null)
 			return protoInput.getValueString();
 
-		if (isDefault()) return "";
+		if (isDef) return "";
 		ArrayList<String> tmp = new ArrayList<>();
 		try {
 			getValueTokens(tmp);
