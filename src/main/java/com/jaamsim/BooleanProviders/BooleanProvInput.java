@@ -92,7 +92,7 @@ public class BooleanProvInput extends Input<BooleanProvider> {
 
 	public boolean getNextBoolean(double simTime) {
 		try {
-			return value.getNextBoolean(simTime);
+			return getValue().getNextBoolean(simTime);
 		}
 		catch (ErrorException e) {
 			e.keyword = getKeyword();

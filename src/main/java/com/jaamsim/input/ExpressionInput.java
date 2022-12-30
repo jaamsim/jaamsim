@@ -135,7 +135,7 @@ public class ExpressionInput extends Input<ExpParser.Expression> {
 
 	public ExpResult getNextResult(Entity thisEnt, double simTime) {
 		try {
-			ExpResult ret = ExpEvaluator.evaluateExpression(value, thisEnt, simTime);
+			ExpResult ret = ExpEvaluator.evaluateExpression(getValue(), thisEnt, simTime);
 			if (ret.type != resType)
 				throw new ExpError(parseContext.getUpdatedSource(), 0, EXP_ERR_RESULT_TYPE,
 						ret.type, resType);

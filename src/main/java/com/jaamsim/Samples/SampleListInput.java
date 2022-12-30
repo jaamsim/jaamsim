@@ -287,7 +287,7 @@ public class SampleListInput extends ArrayListInput<SampleProvider> {
 
 	public double getNextSample(int i, Entity thisEnt, double simTime) {
 		try {
-			return value.get(i).getNextSample(thisEnt, simTime);
+			return getValue().get(i).getNextSample(thisEnt, simTime);
 		}
 		catch (ErrorException e) {
 			e.keyword = getKeyword();

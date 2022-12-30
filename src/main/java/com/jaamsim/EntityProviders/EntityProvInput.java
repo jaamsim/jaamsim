@@ -141,10 +141,10 @@ public class EntityProvInput<T extends Entity> extends Input<EntityProvider<T>> 
 	}
 
 	public T getNextEntity(Entity thisEnt, double simTime) {
-		if (value == null)
+		if (getValue() == null)
 			return null;
 		try {
-			return value.getNextEntity(thisEnt, simTime);
+			return getValue().getNextEntity(thisEnt, simTime);
 		}
 		catch (ErrorException e) {
 			e.keyword = getKeyword();

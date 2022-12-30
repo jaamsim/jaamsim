@@ -172,7 +172,7 @@ public class StringProvInput extends Input<StringProvider> {
 
 	public String getNextString(Entity thisEnt, double simTime, double siFactor, boolean integerValue) {
 		try {
-			return value.getNextString(thisEnt, simTime, siFactor, integerValue);
+			return getValue().getNextString(thisEnt, simTime, siFactor, integerValue);
 		}
 		catch (ErrorException e) {
 			e.keyword = getKeyword();
@@ -186,7 +186,7 @@ public class StringProvInput extends Input<StringProvider> {
 
 	public String getNextString(Entity thisEnt, double simTime, String fmt, double siFactor) {
 		try {
-			return value.getNextString(thisEnt, simTime, fmt, siFactor);
+			return getValue().getNextString(thisEnt, simTime, fmt, siFactor);
 		}
 		catch (ErrorException e) {
 			e.keyword = getKeyword();
@@ -196,7 +196,7 @@ public class StringProvInput extends Input<StringProvider> {
 
 	public double getNextValue(Entity thisEnt, double simTime) {
 		try {
-			return value.getNextValue(thisEnt, simTime);
+			return getValue().getNextValue(thisEnt, simTime);
 		}
 		catch (ErrorException e) {
 			e.keyword = getKeyword();

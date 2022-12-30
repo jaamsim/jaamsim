@@ -174,7 +174,7 @@ public class StringProvListInput extends ArrayListInput<StringProvider> {
 
 	public String getNextString(int i, Entity thisEnt, double simTime) {
 		try {
-			return value.get(i).getNextString(thisEnt, simTime);
+			return getValue().get(i).getNextString(thisEnt, simTime);
 		}
 		catch (ErrorException e) {
 			e.keyword = getKeyword();
@@ -185,7 +185,7 @@ public class StringProvListInput extends ArrayListInput<StringProvider> {
 
 	public double getNextValue(int i, Entity thisEnt, double simTime) {
 		try {
-			return value.get(i).getNextValue(thisEnt, simTime);
+			return getValue().get(i).getNextValue(thisEnt, simTime);
 		}
 		catch (ErrorException e) {
 			e.keyword = getKeyword();

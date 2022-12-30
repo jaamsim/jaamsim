@@ -214,9 +214,9 @@ public class SampleInput extends Input<SampleProvider> {
 
 	public double getNextSample(Entity thisEnt, double simTime) {
 		try {
-			double ret = value.getNextSample(thisEnt, simTime);
+			double ret = getValue().getNextSample(thisEnt, simTime);
 
-			if (value instanceof SampleExpression && (ret < minValue || ret > maxValue)) {
+			if (getValue() instanceof SampleExpression && (ret < minValue || ret > maxValue)) {
 				String msg = String.format(INP_ERR_DOUBLERANGE, minValue, maxValue, ret);
 				String source = ((SampleExpression) value).getExpressionString();
 				throw new ErrorException(source, 0, thisEnt.getName(), "", -1, msg, null);
