@@ -1,6 +1,5 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2010-2011 Ausenco Engineering Canada Inc.
  * Copyright (C) 2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,33 +16,21 @@
  */
 package com.jaamsim.input;
 
+import java.util.ArrayList;
 
-public abstract class ListInput<T> extends Input<T> {
-	protected int minCount;
-	protected int maxCount;
+public abstract class ArrayListInput<T> extends ListInput<ArrayList<T>> {
 
-	{
-		minCount = 0;
-		maxCount = Integer.MAX_VALUE;
-	}
-
-	public ListInput(String key, String cat, T def) {
+	public ArrayListInput(String key, String cat, ArrayList<T> def) {
 		super(key, cat, def);
 	}
 
-	public void setValidCount(int count) {
-		this.setValidCountRange(count, count);
+	@Override
+	public int getListSize() {
+		ArrayList<T> val = getValue();
+		if (val == null)
+			return 0;
+		else
+			return val.size();
 	}
 
-	public void setValidCountRange(int min, int max) {
-		minCount = min;
-		maxCount = max;
-	}
-
-	/**
-	 * Returns the number of individual values that were entered to the input or were inherited
-	 * from its prototype.
-	 * @return number of values
-	 */
-	public abstract int getListSize();
 }
