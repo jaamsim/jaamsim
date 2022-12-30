@@ -193,7 +193,7 @@ public class JaamSimModel implements EventTimeListener {
 			if (ent.isGenerated())
 				continue;
 			NamedExpressionListInput in = (NamedExpressionListInput) ent.getInput("CustomOutputList");
-			if (in == null || in.isDefault())
+			if (in == null || in.isDef())
 				continue;
 			Entity newEnt = getNamedEntity(ent.getName());
 			if (newEnt == null)

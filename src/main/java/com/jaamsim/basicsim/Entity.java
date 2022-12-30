@@ -462,7 +462,7 @@ public class Entity {
 		// Provide stub definitions for the custom outputs
 		if (seq == 0) {
 			NamedExpressionListInput in = (NamedExpressionListInput) ent.getInput("CustomOutputList");
-			if (in != null && !in.isDefault()) {
+			if (in != null && !in.isDef()) {
 				KeywordIndex kw = InputAgent.formatInput(in.getKeyword(), in.getStubDefinition());
 				InputAgent.apply(this, kw);
 			}
@@ -494,7 +494,7 @@ public class Entity {
 
 		// Ignore a default input for a source entity
 		// (default inputs for the source entity can be assigned later for the target entity)
-		if (ignoreDef && sourceInput.isDefault())
+		if (ignoreDef && sourceInput.isDef())
 			return;
 
 		// Ignore locked inputs for generated entities.
@@ -1056,7 +1056,7 @@ public class Entity {
 		for (int i = 0; i < inpList.size(); i++) {
 			Input<?> in = inpList.get(i);
 			in.setProtoInput(prototype.inpList.get(i));
-			if (!in.isDefault())
+			if (!in.isDef())
 				continue;
 			in.doCallback(this);
 		}
@@ -1130,7 +1130,7 @@ public class Entity {
 		Entity ret = clonePool.remove(clonePool.size() - 1);
 		ret.clearFlag(Entity.FLAG_POOLED);
 		for (Input<?> in : ret.inpList) {
-			if (in.isDefault())
+			if (in.isDef())
 				continue;
 			in.reset();
 			in.doCallback(ret);

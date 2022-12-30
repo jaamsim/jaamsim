@@ -77,7 +77,7 @@ public class ExpressionEditor extends CellEditor {
 			menu.show(panel, 0, panel.getHeight());
 
 			// Scroll to show the present value
-			if (input.isDefault())
+			if (input.isDef())
 				return;
 			int index = array.indexOf(valStr);
 			if (index != -1) {

@@ -2156,7 +2156,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				ArrayList<KeywordIndex> kwList = new ArrayList<>();
 				for (Input<?> in : selectedEntity.getEditableInputs()) {
 					String cat = in.getCategory();
-					if (in.isDefault() || !cat.equals(Entity.FORMAT) && !cat.equals(Entity.FONT))
+					if (in.isDef() || !cat.equals(Entity.FORMAT) && !cat.equals(Entity.FONT))
 						continue;
 					KeywordIndex kw = InputAgent.formatArgs(in.getKeyword());
 					kwList.add(kw);
@@ -3835,7 +3835,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			String cat = in.getCategory();
 			if (!cat.equals(Entity.FORMAT) && !cat.equals(Entity.FONT))
 				continue;
-			if (!in.isDefault()) {
+			if (!in.isDef()) {
 				bool = true;
 				break;
 			}

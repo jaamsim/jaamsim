@@ -79,7 +79,7 @@ public Component getTableCellRendererComponent(JTable table, Object value,
 		else if (str.isEmpty() && in.isRequired())
 			str = EditBox.REQD;
 		// Input value that is inherited from the prototype entity
-		else if (!str.isEmpty() && in.isDefault())
+		else if (!str.isEmpty() && in.isDef())
 			str = EditBox.formatInheritedText(str);
 		// Input value that is locked
 		else if (in.isLocked())

@@ -584,7 +584,7 @@ public class InputAgent {
 	public static final void apply(Entity ent, Input<?> in, KeywordIndex kw) {
 		// If the input value is blank, restore the default
 		if (kw.numArgs() == 0) {
-			if (in.isDefault())
+			if (in.isDef())
 				return;
 			in.reset();
 		}
@@ -1228,7 +1228,7 @@ public class InputAgent {
 
 	static void writeStubOutputDefs(FileEntity file, Entity ent) {
 		NamedExpressionListInput in = (NamedExpressionListInput) ent.getInput("CustomOutputList");
-		if (in == null || in.isDefault()) {
+		if (in == null || in.isDef()) {
 			return;
 		}
 		file.format("%s %s { %s }%n", ent.getName(), in.getKeyword(), in.getStubDefinition());
