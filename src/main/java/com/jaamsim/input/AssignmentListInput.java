@@ -24,7 +24,7 @@ import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.basicsim.JaamSimModel;
 
 
-public class AssignmentListInput extends ListInput<ArrayList<ExpParser.Assignment>> {
+public class AssignmentListInput extends ArrayListInput<ExpParser.Assignment> {
 
 	private ArrayList<ExpEvaluator.EntityParseContext> parseContextList;
 
@@ -74,14 +74,6 @@ public class AssignmentListInput extends ListInput<ArrayList<ExpParser.Assignmen
 			toks.add(parseContextList.get(i).getUpdatedSource());
 			toks.add("}");
 		}
-	}
-
-	@Override
-	public int getListSize() {
-		if (value == null)
-			return 0;
-		else
-			return value.size();
 	}
 
 	@Override

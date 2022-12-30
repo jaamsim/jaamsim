@@ -27,11 +27,11 @@ import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.KeywordIndex;
-import com.jaamsim.input.ListInput;
+import com.jaamsim.input.ArrayListInput;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 
-public class SampleListInput extends ListInput<ArrayList<SampleProvider>> {
+public class SampleListInput extends ArrayListInput<SampleProvider> {
 
 	private ArrayList<Class<? extends Unit>> unitTypeList;
 	private boolean dimensionless = false;
@@ -164,14 +164,6 @@ public class SampleListInput extends ListInput<ArrayList<SampleProvider>> {
 			return Input.VALID_SAMPLE_LIST_DIMLESS;
 		}
 		return Input.VALID_SAMPLE_LIST;
-	}
-
-	@Override
-	public int getListSize() {
-		if (value == null)
-			return 0;
-		else
-			return value.size();
 	}
 
 	@Override

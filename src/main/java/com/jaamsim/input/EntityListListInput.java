@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018-2021 JaamSim Software Inc.
+ * Copyright (C) 2018-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ import java.util.Collections;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.JaamSimModel;
 
-public class EntityListListInput<T extends Entity> extends ListInput<ArrayList<ArrayList<T>>> {
+public class EntityListListInput<T extends Entity> extends ArrayListInput<ArrayList<T>> {
 	private Class<T> entClass;
 	private boolean unique; // flag to determine if inner lists must be unique or not
 
@@ -42,14 +42,6 @@ public class EntityListListInput<T extends Entity> extends ListInput<ArrayList<A
 			throw new InputErrorException(INP_ERR_RANGECOUNT, minCount, maxCount, kw.argString());
 
 		value = Input.parseListOfEntityLists(thisEnt.getJaamSimModel(), kw, entClass, unique);
-	}
-
-	@Override
-	public int getListSize() {
-		if (value == null)
-			return 0;
-		else
-			return value.size();
 	}
 
 	public void setUnique(boolean unique) {

@@ -26,18 +26,10 @@ import com.jaamsim.input.ExpParser.Expression;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 
-public class NamedExpressionListInput extends ListInput<ArrayList<NamedExpression>> {
+public class NamedExpressionListInput extends ArrayListInput<NamedExpression> {
 
 	public NamedExpressionListInput(String key, String cat, ArrayList<NamedExpression> def) {
 		super(key, cat, def);
-	}
-
-	@Override
-	public int getListSize() {
-		if (value == null)
-			return 0;
-		else
-			return value.size();
 	}
 
 	@Override

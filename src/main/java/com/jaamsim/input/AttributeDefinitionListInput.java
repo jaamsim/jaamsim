@@ -32,7 +32,7 @@ import com.jaamsim.units.Unit;
  * Entity AttributeDefinitionList { { AttibuteName1 Value1 Unit1 } { AttibuteName2 Value2 Unit2 } ... }
  * @author Harry King
  */
-public class AttributeDefinitionListInput extends ListInput<ArrayList<AttributeHandle>> {
+public class AttributeDefinitionListInput extends ArrayListInput<AttributeHandle> {
 
 	private ArrayList<ExpEvaluator.EntityParseContext> parseContextList;
 
@@ -121,14 +121,6 @@ public class AttributeDefinitionListInput extends ListInput<ArrayList<AttributeH
 			toks.add(parseContextList.get(i).getUpdatedSource());
 			toks.add("}");
 		}
-	}
-
-	@Override
-	public int getListSize() {
-		if (value == null)
-			return 0;
-		else
-			return value.size();
 	}
 
 	@Override

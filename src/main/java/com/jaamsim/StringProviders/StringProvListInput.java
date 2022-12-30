@@ -27,21 +27,13 @@ import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.KeywordIndex;
-import com.jaamsim.input.ListInput;
+import com.jaamsim.input.ArrayListInput;
 import com.jaamsim.units.DimensionlessUnit;
 
-public class StringProvListInput extends ListInput<ArrayList<StringProvider>> {
+public class StringProvListInput extends ArrayListInput<StringProvider> {
 
 	public StringProvListInput(String key, String cat, ArrayList<StringProvider> def) {
 		super(key, cat, def);
-	}
-
-	@Override
-	public int getListSize() {
-		if (value == null)
-			return 0;
-		else
-			return value.size();
 	}
 
 	@Override

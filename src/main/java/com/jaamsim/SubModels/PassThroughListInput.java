@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2018-2021 JaamSim Software Inc.
+ * Copyright (C) 2018-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,21 +23,14 @@ import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.KeywordIndex;
-import com.jaamsim.input.ListInput;
+import com.jaamsim.input.ArrayListInput;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 
-public class PassThroughListInput extends ListInput<ArrayList<PassThroughData>> {
+public class PassThroughListInput extends ArrayListInput<PassThroughData> {
 
 	public PassThroughListInput(String key, String cat, ArrayList<PassThroughData> def) {
 		super(key, cat, def);
-	}
-
-	@Override
-	public int getListSize() {
-		if (value == null)
-			return 0;
-		return value.size();
 	}
 
 	@Override

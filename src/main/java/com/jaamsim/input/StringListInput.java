@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2019-2021 JaamSim Software Inc.
+ * Copyright (C) 2019-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.JaamSimModel;
 
 
-public class StringListInput extends ListInput<ArrayList<String>> {
+public class StringListInput extends ArrayListInput<String> {
 	private ArrayList<String> validOptions;
 
 	 // If true convert all the the items to uppercase
@@ -120,14 +120,6 @@ public class StringListInput extends ListInput<ArrayList<String>> {
 		}
 
 		valueTokens = args;
-	}
-
-	@Override
-	public int getListSize() {
-		if (value == null)
-			return 0;
-		else
-			return value.size();
 	}
 
 	public void setValidOptions(ArrayList<String> list) {
