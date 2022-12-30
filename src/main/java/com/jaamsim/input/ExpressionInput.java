@@ -99,7 +99,7 @@ public class ExpressionInput extends Input<ExpParser.Expression> {
 
 	@Override
 	public void getValueTokens(ArrayList<String> toks) {
-		if (value == null || isDefault())
+		if (value == null || isDef)
 			return;
 		toks.add(parseContext.getUpdatedSource());
 	}

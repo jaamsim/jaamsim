@@ -58,7 +58,7 @@ public class SampleListInput extends ArrayListInput<SampleProvider> {
 			return;
 
 		// Save the new unit types
-		if (!isDefault())
+		if (!isDef)
 			setValid(false);
 		unitTypeList = new ArrayList<>(utList);
 
@@ -181,7 +181,7 @@ public class SampleListInput extends ArrayListInput<SampleProvider> {
 
 	@Override
 	public void getValueTokens(ArrayList<String> toks) {
-		if (value == null || valueTokens == null || isDefault())
+		if (value == null || valueTokens == null || isDef)
 			return;
 
 		// No inner braces

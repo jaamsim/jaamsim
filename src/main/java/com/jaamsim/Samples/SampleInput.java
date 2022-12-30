@@ -68,7 +68,7 @@ public class SampleInput extends Input<SampleProvider> {
 		if (u == unitType)
 			return;
 
-		if (!isDefault())
+		if (!isDef)
 			setValid(false);
 		unitType = u;
 
@@ -138,7 +138,7 @@ public class SampleInput extends Input<SampleProvider> {
 
 	@Override
 	public void getValueTokens(ArrayList<String> toks) {
-		if (value == null || isDefault())
+		if (value == null || isDef)
 			return;
 
 		// Preserve the exact text for a constant value input

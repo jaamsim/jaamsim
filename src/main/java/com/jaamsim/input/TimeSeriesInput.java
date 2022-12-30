@@ -82,7 +82,7 @@ public class TimeSeriesInput extends Input<TimeSeriesProvider> {
 
 	@Override
 	public void getValueTokens(ArrayList<String> toks) {
-		if (value == null || isDefault())
+		if (value == null || isDef)
 			return;
 
 		if (value instanceof TimeSeriesConstantDouble) {

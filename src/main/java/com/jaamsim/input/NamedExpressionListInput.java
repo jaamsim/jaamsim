@@ -102,7 +102,7 @@ public class NamedExpressionListInput extends ArrayListInput<NamedExpression> {
 
 	@Override
 	public void getValueTokens(ArrayList<String> toks) {
-		if (value == null || isDefault())
+		if (value == null || isDef)
 			return;
 		for (NamedExpression ne : value) {
 			toks.add("{");

@@ -77,7 +77,7 @@ public class StringProvListInput extends ArrayListInput<StringProvider> {
 
 	@Override
 	public void getValueTokens(ArrayList<String> toks) {
-		if (value == null || isDefault())
+		if (value == null || isDef)
 			return;
 
 		for (int i = 0; i < value.size(); i++) {

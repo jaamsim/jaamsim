@@ -109,7 +109,7 @@ public class RunNumberInput extends SampleInput {
 
 	@Override
 	public void getValueTokens(ArrayList<String> toks) {
-		if (value == null || isDefault())
+		if (value == null || isDef)
 			return;
 
 		if (rangeList.size() == 0) {

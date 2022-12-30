@@ -63,7 +63,7 @@ public class BooleanProvInput extends Input<BooleanProvider> {
 
 	@Override
 	public void getValueTokens(ArrayList<String> toks) {
-		if (value == null || isDefault())
+		if (value == null || isDef)
 			return;
 		toks.add(value.toString());
 	}
