@@ -397,8 +397,6 @@ public class Simulation extends Entity {
 	         exampleList = {"TRUE"})
 	private final BooleanInput printInputReport;
 
-	private String modelName = "JaamSim";
-
 	{
 		// Key Inputs tab
 		runDuration = new SampleInput("RunDuration", KEY_INPUTS, 31536000.0d);
@@ -1082,14 +1080,6 @@ public class Simulation extends Entity {
 		return ret;
 	}
 
-	public void setModelName(String newModelName) {
-		modelName = newModelName;
-	}
-
-	public String getModelName() {
-		return modelName;
-	}
-
 	public boolean getExitAtStop() {
 		return exitAtStop.getValue();
 	}
@@ -1307,7 +1297,7 @@ public class Simulation extends Entity {
 	  reportable = true,
 	    sequence = 0)
 	public String getSoftwareName(double simTime) {
-		return modelName;
+		return AboutBox.softwareName;
 	}
 
 	@Output(name = "SoftwareVersion",

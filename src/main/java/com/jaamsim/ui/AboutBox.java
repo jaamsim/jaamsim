@@ -33,6 +33,7 @@ import javax.swing.JTextArea;
  */
 public class AboutBox extends JDialog {
 
+	public static final String softwareName = "JaamSim";
 	public static final String version = "2022-07";
 
 	public AboutBox() {
@@ -56,8 +57,7 @@ public class AboutBox extends JDialog {
 		constraints.insets = new Insets( 15, 15, 0, 15 );
 
 		// display the model's name
-		String name = GUIFrame.getJaamSimModel().getSimulation().getModelName();
-		JLabel lab = new JLabel(name + " Version: " + version);
+		JLabel lab = new JLabel(softwareName + " Version: " + version);
 		lab.setFont(FrameBox.boldFont);
 		layout.setConstraints( lab, constraints );
 		getContentPane().add( lab );
