@@ -57,7 +57,10 @@ public class AboutBox extends JDialog {
 		constraints.insets = new Insets( 15, 15, 0, 15 );
 
 		// display the model's name
-		JLabel lab = new JLabel(softwareName + " Version: " + version);
+		StringBuilder name = new StringBuilder("<html>");
+		name.append(softwareName).append("<br>");
+		name.append("Version: ").append(version).append("</html>");
+		JLabel lab = new JLabel(name.toString());
 		lab.setFont(FrameBox.boldFont);
 		layout.setConstraints( lab, constraints );
 		getContentPane().add( lab );
