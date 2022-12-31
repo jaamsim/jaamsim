@@ -218,7 +218,7 @@ public class SampleInput extends Input<SampleProvider> {
 
 			if (getValue() instanceof SampleExpression && (ret < minValue || ret > maxValue)) {
 				String msg = String.format(INP_ERR_DOUBLERANGE, minValue, maxValue, ret);
-				String source = ((SampleExpression) value).getExpressionString();
+				String source = ((SampleExpression) getValue()).getExpressionString();
 				throw new ErrorException(source, 0, thisEnt.getName(), "", -1, msg, null);
 			}
 

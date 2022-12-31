@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2015 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,9 +45,10 @@ public class StringKeyInput<T extends Entity> extends Input<HashMap<String,T>> {
 	}
 
 	public T getValueFor(String str) {
-		if (value == null)
+		HashMap<String, T> val = getValue();
+		if (val == null)
 			return null;
-		return value.get(str);
+		return val.get(str);
 	}
 
 }
