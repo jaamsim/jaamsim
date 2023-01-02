@@ -115,22 +115,6 @@ final class Process extends Thread {
 		return evt;
 	}
 
-	// Useful to filter pooled threads when staring at stack traces.
-	private void waitInPool() {
-		synchronized (pool) {
-			// Add ourselves to the pool and wait to be assigned work
-			pool.add(this);
-			// Set the present process to sleep, and release its lock
-			// (done by pool.wait();)
-			// Note: the try/while(true)/catch construct is needed to avoid
-			// spurious wake ups allowed as of Java 5.  All legitimate wake
-			// ups are done through the InterruptedException.
-			try {
-				while (true) { pool.wait(); }
-			} catch (InterruptedException e) {}
-		}
-	}
-
 	/*
 	 * Setup the process state for execution.
 	 */
@@ -156,6 +140,22 @@ final class Process extends Thread {
 		Process newProcess = Process.getProcess();
 		newProcess.setup(eventManager, next, proc);
 		return newProcess;
+	}
+
+	// Useful to filter pooled threads when staring at stack traces.
+	private void waitInPool() {
+		synchronized (pool) {
+			// Add ourselves to the pool and wait to be assigned work
+			pool.add(this);
+			// Set the present process to sleep, and release its lock
+			// (done by pool.wait();)
+			// Note: the try/while(true)/catch construct is needed to avoid
+			// spurious wake ups allowed as of Java 5.  All legitimate wake
+			// ups are done through the InterruptedException.
+			try {
+				while (true) { pool.wait(); }
+			} catch (InterruptedException e) {}
+		}
 	}
 
 	// Return a process from the pool or create a new one
