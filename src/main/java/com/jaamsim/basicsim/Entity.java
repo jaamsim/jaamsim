@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2002-2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2022 JaamSim Software Inc.
+ * Copyright (C) 2016-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -1136,6 +1136,19 @@ public class Entity {
 			in.doCallback(ret);
 		}
 		return ret;
+	}
+
+	/**
+	 * Removes a generated entity from the model by either pooling or killing it.
+	 */
+	public void dispose() {
+		if (!isGenerated())
+			return;
+		if (isClone()) {
+			addToClonePool();
+			return;
+		}
+		kill();
 	}
 
 	/**
