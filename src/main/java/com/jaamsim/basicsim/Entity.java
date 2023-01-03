@@ -506,6 +506,7 @@ public class Entity {
 		ArrayList<String> tmp = sourceInput.getValueTokens();
 		String oldParent = ent.getParent().getName();
 		String newParent = this.getParent().getName();
+		boolean changed = false;
 		if (!newParent.equals(oldParent)) {
 			String oldParent1 = String.format("[%s]", oldParent);
 			String oldParent2 = String.format("%s.", oldParent);
@@ -518,8 +519,16 @@ public class Entity {
 					str = newParent;
 				str = str.replace(oldParent1, newParent1);
 				str = str.replace(oldParent2, newParent2);
+				changed = changed || !str.equals(tmp.get(i));
 				tmp.set(i, str);
 			}
+		}
+
+		// Ignore an input that is inherited from the entity's prototype
+		if (getPrototype() == ent && !changed) {
+			// Clear the stub value set for a custom output
+			targetInput.reset();
+			return;
 		}
 
 		// Ignore inputs that have already been set for the target entity by either the
