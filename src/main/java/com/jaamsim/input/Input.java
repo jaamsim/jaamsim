@@ -405,7 +405,7 @@ public abstract class Input<T> {
 	}
 
 	public void validate() throws InputErrorException {
-		if (isReqd && isDef && !hidden)
+		if (isReqd && isDefault() && !hidden)
 			throw new InputErrorException("An input must be provided for the keyword '%s'.", keyword);
 	}
 
