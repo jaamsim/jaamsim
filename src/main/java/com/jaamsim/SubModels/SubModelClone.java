@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2018-2022 JaamSim Software Inc.
+ * Copyright (C) 2018-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -139,7 +139,8 @@ public class SubModelClone extends AbstractSubModel {
 			String name = protoComp.getLocalName();
 			if (getChild(name) != null)
 				continue;
-			Entity comp = InputAgent.generateEntityWithName(getJaamSimModel(), protoComp.getClass(), name, this, true, true);
+			Entity comp = InputAgent.generateEntityWithName(getJaamSimModel(),
+					protoComp.getClass(), protoComp, name, this, true, true);
 			//System.out.format("protoComp=%s, comp=%s%n", protoComp, comp);
 			if (comp instanceof DisplayEntity && !(comp instanceof Region)) {
 				InputAgent.applyArgs(comp, "Region", proto.getSubModelRegion().getName());
