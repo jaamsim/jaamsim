@@ -89,6 +89,7 @@ public class Entity {
 	Entity prototype;
 	ArrayList<Entity> cloneList;
 	ArrayList<Entity> clonePool;  // generated clones available for re-use
+	private static final int MAX_POOL = 100;
 
 	private final ArrayList<Input<?>> inpList = new ArrayList<>();
 
@@ -1153,7 +1154,7 @@ public class Entity {
 	public void dispose() {
 		if (!isGenerated())
 			return;
-		if (isClone()) {
+		if (isClone() && (clonePool == null || clonePool.size() < MAX_POOL)) {
 			addToClonePool();
 			return;
 		}
