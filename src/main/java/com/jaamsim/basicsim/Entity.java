@@ -1124,18 +1124,6 @@ public class Entity {
 		return ret;
 	}
 
-	public synchronized ArrayList<Entity> getActiveCloneList() {
-		if (cloneList == null)
-			return new ArrayList<>();
-		ArrayList<Entity> ret = new ArrayList<>(cloneList.size());
-		for (Entity ent : cloneList) {
-			if (ent.isPooled())
-				continue;
-			ret.add(ent);
-		}
-		return ret;
-	}
-
 	public void addToClonePool() {
 		if (prototype == null)
 			return;
@@ -1233,7 +1221,7 @@ public class Entity {
 	 description = "List of entities whose prototype is this entity.",
 	    sequence = 5)
 	public ArrayList<Entity> getCloneList(double simTime) {
-		ArrayList<Entity> ret = getActiveCloneList();
+		ArrayList<Entity> ret = getCloneList();
 		Collections.sort(ret, InputAgent.uiEntitySortOrder);
 		return ret;
 	}
