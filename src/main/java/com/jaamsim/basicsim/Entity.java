@@ -87,7 +87,7 @@ public class Entity {
 	Entity parent;
 
 	Entity prototype;
-	ArrayList<Entity> cloneList;
+	ArrayList<Entity> cloneList;  // registered clones
 	ArrayList<Entity> clonePool;  // generated clones available for re-use
 	private static final int MAX_POOL = 100;
 
@@ -287,7 +287,7 @@ public class Entity {
 		}
 		clonePool = null;
 
-		if (prototype != null)
+		if (prototype != null && isRegistered())
 			prototype.removeClone(this);
 
 		if (this.isDead())
@@ -1061,11 +1061,20 @@ public class Entity {
 			error("Cannot re-assign the prototype for an entity");
 		if (proto.getClass() != getClass())
 			error("An entity and its prototype must be instances of the same class");
+
+		// Record the clone with its prototype
 		prototype = proto;
-		prototype.addClone(this);
+		if (isRegistered())
+			prototype.addClone(this);
+
+		// Loop through the inputs for this entity
 		for (int i = 0; i < inpList.size(); i++) {
 			Input<?> in = inpList.get(i);
+
+			// Set the prototype input
 			in.setProtoInput(prototype.inpList.get(i));
+
+			// If the inherited value is used, then perform its callback
 			if (!in.isDef())
 				continue;
 			in.doCallback(this);
@@ -1103,9 +1112,20 @@ public class Entity {
 	}
 
 	public synchronized ArrayList<Entity> getCloneList() {
-		if (cloneList == null)
-			return new ArrayList<>();
-		return cloneList;
+		ArrayList<Entity> ret = cloneList;
+		if (ret == null)
+			ret = new ArrayList<>();
+
+		// Include the generated entities that have not been registered
+		if (simModel.getSimState() >= JaamSimModel.SIM_STATE_RUNNING) {
+			ret = new ArrayList<>(ret);
+			for (Entity ent : simModel.getClonesOfIterator(Entity.class)) {
+				if (ent.getPrototype() != this || ent.isRegistered() || ent.isPooled())
+					continue;
+				ret.add(ent);
+			}
+		}
+		return ret;
 	}
 
 	public synchronized ArrayList<Entity> getActiveCloneList() {
