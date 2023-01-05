@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2009-2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018-2022 JaamSim Software Inc.
+ * Copyright (C) 2018-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -602,11 +602,9 @@ public class InputAgent {
 
 		// Execute the input callback for the entity and its clones
 		in.doCallback(ent);
-		if (ent.isCloned()) {
-			for (Entity clone : ent.getCloneList()) {
-				Input<?> cloneIn = clone.getInput(in.getKeyword());
-				cloneIn.doCallback(clone);
-			}
+		for (Entity clone : ent.getCloneList()) {
+			Input<?> cloneIn = clone.getInput(in.getKeyword());
+			cloneIn.doCallback(clone);
 		}
 
 		// Refresh the graphics

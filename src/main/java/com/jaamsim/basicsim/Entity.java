@@ -1107,10 +1107,6 @@ public class Entity {
 		return cloneList.remove(ent);
 	}
 
-	public synchronized boolean isCloned() {
-		return (cloneList != null && !cloneList.isEmpty());
-	}
-
 	public synchronized ArrayList<Entity> getCloneList() {
 		ArrayList<Entity> ret = cloneList;
 		if (ret == null)
