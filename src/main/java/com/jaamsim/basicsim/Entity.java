@@ -1125,8 +1125,6 @@ public class Entity {
 	}
 
 	public void addToClonePool() {
-		if (prototype == null)
-			return;
 		prototype.addCloneToPool(this);
 	}
 
