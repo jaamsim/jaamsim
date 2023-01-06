@@ -1143,12 +1143,18 @@ public class Entity {
 			return null;
 		Entity ret = clonePool.remove(clonePool.size() - 1);
 		ret.clearFlag(Entity.FLAG_POOLED);
-		for (Input<?> in : ret.inpList) {
-			if (in.isDef())
-				continue;
-			in.reset();
-			in.doCallback(ret);
+
+		// Reset any inputs that were changed
+		if (ret.isEdited()) {
+			for (Input<?> in : ret.inpList) {
+				if (in.isDef())
+					continue;
+				in.reset();
+				in.doCallback(ret);
+			}
+			ret.clearFlag(Entity.FLAG_EDITED);
 		}
+
 		return ret;
 	}
 
