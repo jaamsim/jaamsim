@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2016-2022 JaamSim Software Inc.
+ * Copyright (C) 2016-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -99,8 +99,6 @@ public class JaamSimModel implements EventTimeListener {
 
 	private long lastTickForTrace = -1L;
 	private long preDefinedEntityCount = 0L;  // Number of entities after loading autoload.cfg
-
-	private final HashMap<String, String> stringCache = new HashMap<>();
 
 	private final ArrayList<ObjectType> objectTypes = new ArrayList<>();
 	private final HashMap<Class<? extends Entity>, ObjectType> objectTypeMap = new HashMap<>();
@@ -363,8 +361,6 @@ public class JaamSimModel implements EventTimeListener {
 		// close warning/error trace file
 		closeLogFile();
 
-		stringCache.clear();
-
 		// Reset the run number and run indices
 		scenarioNumber = 1;
 		replicationNumber = 1;
@@ -377,17 +373,6 @@ public class JaamSimModel implements EventTimeListener {
 		numErrors = 0;
 		numWarnings = 0;
 		lastTickForTrace = -1L;
-	}
-
-	public final String internString(String str) {
-		synchronized (stringCache) {
-			String ret = stringCache.get(str);
-			if (ret == null) {
-				stringCache.put(str, str);
-				ret = str;
-			}
-			return ret;
-		}
 	}
 
 	/**
