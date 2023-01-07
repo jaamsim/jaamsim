@@ -118,10 +118,10 @@ public abstract class StateEntity extends DisplayEntity implements StateUser {
 	public void lateInit() {
 		super.lateInit();
 
-		stateListeners.clear();
 		if (!isRegistered())
 			return;
 
+		stateListeners.clear();
 		for (Entity ent : getJaamSimModel().getClonesOfIterator(Entity.class, StateEntityListener.class)) {
 			StateEntityListener sel = (StateEntityListener)ent;
 			if (sel.isWatching(this))
