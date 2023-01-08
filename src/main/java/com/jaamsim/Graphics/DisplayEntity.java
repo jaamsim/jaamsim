@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2002-2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2017-2022 JaamSim Software Inc.
+ * Copyright (C) 2017-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -413,12 +413,6 @@ public class DisplayEntity extends Entity {
 				}
 			}
 		}
-	}
-
-	@Override
-	public void earlyInit() {
-		super.earlyInit();
-		resetGraphics();
 	}
 
 	public void updateForPointsInput(ArrayList<Vec3d> pts) {

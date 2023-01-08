@@ -609,6 +609,11 @@ public class JaamSimModel implements EventTimeListener {
 		killGeneratedEntities();
 		rngMap.clear();
 
+		// Reset the graphics for each entity
+		for (DisplayEntity ent : getClonesOfIterator(DisplayEntity.class)) {
+			ent.resetGraphics();
+		}
+
 		// Perform earlyInit
 		for (Entity each : getClonesOfIterator(Entity.class)) {
 			// Try/catch is required because some earlyInit methods use simTime which is only
