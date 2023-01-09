@@ -33,7 +33,7 @@ import com.jaamsim.input.Keyword;
 import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.Output;
 
-public class SubModelClone extends AbstractSubModel {
+public class SubModelClone extends SubModel {
 
 	@Keyword(description = "The prototype sub-model from which this sub-model is cloned.",
 	         exampleList = {"SubModel1"})
