@@ -122,7 +122,7 @@ public class SubModelClone extends SubModel {
 	 * @param protoCompList - components for the prototype
 	 */
 	protected void createComponents() {
-		AbstractSubModel proto = getPrototypeSubModel();
+		SubModel proto = getPrototypeSubModel();
 		//System.out.format("%s.createComponents - protoComp=%s%n", this, protoCompList);
 
 		// Delete any components that are not in the prototype
@@ -150,7 +150,7 @@ public class SubModelClone extends SubModel {
 	}
 
 	protected void setComponentInputs() {
-		AbstractSubModel proto = getPrototypeSubModel();
+		SubModel proto = getPrototypeSubModel();
 
 		// Save the seeds for the components that use a random distribution
 		LinkedHashMap<Entity, Integer> seedMap = new LinkedHashMap<>();

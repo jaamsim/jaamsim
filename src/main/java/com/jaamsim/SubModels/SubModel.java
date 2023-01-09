@@ -34,7 +34,7 @@ import com.jaamsim.input.ExpParser.Expression;
 import com.jaamsim.ui.DragAndDropable;
 import com.jaamsim.units.Unit;
 
-public class SubModel extends AbstractSubModel implements DragAndDropable {
+public class SubModel extends CompoundEntity implements DragAndDropable {
 
 	@Keyword(description = "Defines new keywords for the sub-model and creates new outputs with "
 	                     + "the same names. "
