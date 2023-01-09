@@ -1075,7 +1075,7 @@ public class Entity {
 			in.setProtoInput(prototype.inpList.get(i));
 
 			// If the inherited value is used, then perform its callback
-			if (!in.isDef())
+			if (!in.isDef() || in.isDefault())
 				continue;
 			in.doCallback(this);
 		}
