@@ -393,10 +393,6 @@ public class SubModel extends CompoundEntity implements DragAndDropable {
 		showTemporaryComponents(bool);
 	}
 
-	public SubModel getPrototypeSubModel() {
-		return prototypeSubModel.getValue();
-	}
-
 	@Override
 	public Class<? extends Entity> getJavaClass() {
 		return SubModel.class;
