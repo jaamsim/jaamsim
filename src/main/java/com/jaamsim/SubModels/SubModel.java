@@ -36,7 +36,6 @@ import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InputCallback;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.KeywordIndex;
-import com.jaamsim.input.Output;
 import com.jaamsim.input.ValueHandle;
 import com.jaamsim.input.ExpParser.Expression;
 import com.jaamsim.ui.DragAndDropable;
@@ -421,13 +420,6 @@ public class SubModel extends CompoundEntity implements DragAndDropable {
 	@Override
 	public BufferedImage getIconImage() {
 		return getObjectType().getIconImage();
-	}
-
-	@Output(name = "PrototypeSubModel",
-	 description = "The prototype SubModel from which this sub-model was cloned.",
-	    sequence = 0)
-	public SubModel getPrototypeSubModel(double simTime) {
-		return getPrototypeSubModel();
 	}
 
 }
