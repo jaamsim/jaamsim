@@ -316,9 +316,9 @@ public class SubModel extends CompoundEntity implements DragAndDropable {
 	 * Creates this sub-model's components and sets their inputs to match its prototype's components.
 	 * @param protoCompList - components for the prototype
 	 */
-	protected void createComponents() {
+	public void createComponents() {
 		SubModel proto = (SubModel) getPrototype();
-		//System.out.format("%s.createComponents - protoComp=%s%n", this, protoCompList);
+		//System.out.format("%s.createComponents%n", this);
 
 		// Delete any components that are not in the prototype
 		for (Entity comp : getChildren()) {
