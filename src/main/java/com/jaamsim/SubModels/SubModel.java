@@ -83,14 +83,9 @@ public class SubModel extends CompoundEntity implements DragAndDropable {
 	static final InputCallback prototypeKeywordCallback = new InputCallback() {
 		@Override
 		public void callback(Entity ent, Input<?> inp) {
+			// Set the prototype property and clear the Prototype input so that it is not saved
 			ent.setPrototype((SubModel) inp.getValue());
-
-			JaamSimModel sim = ent.getJaamSimModel();
-			SubModel smc = (SubModel) ent;
-			boolean bool = sim.isRecordEdits();
-			sim.setRecordEdits(false);
-			smc.createComponents();
-			sim.setRecordEdits(bool);
+			inp.reset();
 		}
 	};
 
@@ -118,6 +113,20 @@ public class SubModel extends CompoundEntity implements DragAndDropable {
 			subModel.addInputAsOutput(expIn.getKeyword(), expIn.getValue(), expIn.getUnitType());
 		}
 	};
+
+	@Override
+	public void setPrototype(Entity proto) {
+		super.setPrototype(proto);
+		if (proto == null)
+			return;
+
+		//System.out.format("%s.setPrototype(%s)%n", this, proto);
+		JaamSimModel simModel = getJaamSimModel();
+		boolean bool = simModel.isRecordEdits();
+		simModel.setRecordEdits(false);
+		createComponents();
+		simModel.setRecordEdits(bool);
+	}
 
 	@Override
 	public void setInputsForDragAndDrop() {
