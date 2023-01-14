@@ -1831,13 +1831,13 @@ public class RenderManager implements DragSourceListener {
 		}
 
 		// Create a new instance
-		Class<? extends Entity> proto  = dndObjectType.getJavaClass();
+		Class<? extends Entity> klass  = dndObjectType.getJavaClass();
 		String name = dndObjectType.getName();
-		if (parent != null && !(OverlayEntity.class.isAssignableFrom(proto))) {
+		if (parent != null && !(OverlayEntity.class.isAssignableFrom(klass))) {
 			name = parent.getName() + "." + name;
 		}
 		name = InputAgent.getUniqueName(simModel, name, "");
-		InputAgent.storeAndExecute(new DefineCommand(simModel, proto, name));
+		InputAgent.storeAndExecute(new DefineCommand(simModel, klass, name));
 		Entity ent = simModel.getNamedEntity(name);
 
 		if (ent instanceof SubModelClone) {
