@@ -409,7 +409,7 @@ public class SubModel extends CompoundEntity implements DragAndDropable {
 
 	@Override
 	public boolean isDragAndDrop() {
-		return true;
+		return !isClone();
 	}
 
 	@Override
