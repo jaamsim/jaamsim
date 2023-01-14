@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2017-2020 JaamSim Software Inc.
+ * Copyright (C) 2017-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,12 +25,18 @@ public class DefineCommand implements Command {
 
 	private final JaamSimModel simModel;
 	private final Class<? extends Entity> klass;
+	private final Entity proto;
 	private Entity entity;
 	private final String entityName;
 
 	public DefineCommand(JaamSimModel sim, Class<? extends Entity> cls, String name) {
+		this(sim, cls, null, name);
+	}
+
+	public DefineCommand(JaamSimModel sim, Class<? extends Entity> cls, Entity pr, String name) {
 		simModel = sim;
 		klass = cls;
+		proto = pr;
 		entity = null;
 		entityName = name;
 	}
@@ -49,7 +55,7 @@ public class DefineCommand implements Command {
 		if (simModel.getNamedEntity(entityName) != null) {
 			throw new ErrorException("Name is already in use. Should never happen.");
 		}
-		entity = InputAgent.defineEntityWithUniqueName(simModel, klass, entityName, "", true);
+		entity = InputAgent.defineEntityWithUniqueName(simModel, klass, proto, entityName, "", true);
 		simModel.setSessionEdited(true);
 	}
 
