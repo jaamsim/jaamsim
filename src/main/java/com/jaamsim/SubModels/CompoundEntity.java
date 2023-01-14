@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2019-2022 JaamSim Software Inc.
+ * Copyright (C) 2019-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -71,6 +71,11 @@ public abstract class CompoundEntity extends LinkedComponent {
 	@Override
 	public void postDefine() {
 		super.postDefine();
+
+		// If a clone, the region and its inputs are copied from the prototype
+		smRegion = (Region) getChild("Region");
+		if (smRegion != null)
+			return;
 
 		// Create the region
 		JaamSimModel simModel = getJaamSimModel();
