@@ -135,9 +135,6 @@ public class SubModel extends CompoundEntity implements DragAndDropable {
 		if (proto == null)
 			return;
 
-		// Set the new keywords for the clone
-		updateKeywords(proto.getKeywordList());
-
 		// Set the inputs for the clone to those for the prototype SubModel
 		copyInputs(proto, true, false);
 
