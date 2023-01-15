@@ -165,14 +165,6 @@ public class SubModel extends CompoundEntity implements DragAndDropable {
 		super.validate();
 	}
 
-	public void setKeywordList(ArrayList<PassThroughData> list) {
-		keywordList = new ArrayList<>(list);
-	}
-
-	public ArrayList<PassThroughData> getKeywordList() {
-		return keywordList;
-	}
-
 	/**
 	 * Updates the added keywords to match the specified list.
 	 * @param newDataList - data for the new list of added keywords
@@ -216,7 +208,7 @@ public class SubModel extends CompoundEntity implements DragAndDropable {
 			list.add(in);
 		}
 		newInputList = list;
-		setKeywordList(newDataList);
+		keywordList = new ArrayList<>(newDataList);
 	}
 
 	private void addInputAsOutput(String name, Expression exp, Class<? extends Unit> unitType) {
