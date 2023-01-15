@@ -93,12 +93,7 @@ public class SubModel extends CompoundEntity implements DragAndDropable {
 		@Override
 		public void callback(Entity ent, Input<?> inp) {
 			SubModel sm = (SubModel)ent;
-			PassThroughListInput ptl = (PassThroughListInput)inp;
-
-			sm.updateKeywords(ptl.getValue());
-			for (SubModel clone : sm.getClones()) {
-				clone.updateKeywords(ptl.getValue());
-			}
+			sm.updateKeywords();
 			GUIListener gui = sm.getJaamSimModel().getGUIListener();
 			if (gui != null && gui.isSelected(sm))
 				gui.updateInputEditor();
@@ -184,7 +179,8 @@ public class SubModel extends CompoundEntity implements DragAndDropable {
 	 * Updates the added keywords to match the specified list.
 	 * @param newDataList - data for the new list of added keywords
 	 */
-	void updateKeywords(ArrayList<PassThroughData> newDataList) {
+	void updateKeywords() {
+		ArrayList<PassThroughData> newDataList = keywordListInput.getValue();
 
 		// Do nothing if the keywords are unchanged
 		if (newDataList.equals(keywordList))
