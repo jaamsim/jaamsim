@@ -207,8 +207,15 @@ public class SubModel extends CompoundEntity implements DragAndDropable {
 			if (index == -1) {
 				in = new ExpressionInput(data.getName(), KEY_INPUTS, null);
 				in.setUnitType(data.getUnitType());
+				in.setValid(true);
 				in.setCallback(subModelKeywordCallback);
 				in.setRequired(true);
+				if (isClone()) {
+					String key = data.getName();
+					in.setProtoInput(getPrototype().getInput(key));
+					if (!in.isDefault())
+						in.doCallback(this);
+				}
 			}
 			else {
 				in = newInputList.get(index);
