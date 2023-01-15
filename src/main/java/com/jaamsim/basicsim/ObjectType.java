@@ -131,11 +131,6 @@ public class ObjectType extends Entity implements DragAndDropable {
 	}
 
 	@Override
-	public Entity getPrototypeForDragAndDrop() {
-		return null;
-	}
-
-	@Override
 	public String getPaletteName() {
 		String s = palette.getValue();
 		if (s != null)

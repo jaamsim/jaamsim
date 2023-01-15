@@ -408,11 +408,6 @@ public class SubModel extends CompoundEntity implements DragAndDropable {
 	}
 
 	@Override
-	public Entity getPrototypeForDragAndDrop() {
-		return this;
-	}
-
-	@Override
 	public boolean isDragAndDrop() {
 		return true;
 	}

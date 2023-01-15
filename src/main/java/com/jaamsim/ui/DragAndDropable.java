@@ -25,8 +25,6 @@ public interface DragAndDropable {
 
 	public Class<? extends Entity> getJavaClass();
 
-	public Entity getPrototypeForDragAndDrop();
-
 	public String getName();
 
 	public boolean isDragAndDrop();
