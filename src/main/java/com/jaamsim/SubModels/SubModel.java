@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 
-import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.Region;
 import com.jaamsim.ProbabilityDistributions.RandomStreamUser;
@@ -35,7 +34,6 @@ import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InputCallback;
 import com.jaamsim.input.Keyword;
-import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.ValueHandle;
 import com.jaamsim.input.ExpParser.Expression;
 import com.jaamsim.ui.DragAndDropable;
@@ -303,15 +301,6 @@ public class SubModel extends CompoundEntity implements DragAndDropable {
 		// Do not record the components and their inputs to be 'edited'
 		boolean bool = getJaamSimModel().isRecordEdits();
 		getJaamSimModel().setRecordEdits(false);
-
-		// Update the AttributeDefinitionList input
-		String oldStr = attributeDefinitionList.getValueString();
-		String key = attributeDefinitionList.getKeyword();
-		String newStr = proto.getInput(key).getValueString();
-		if (!newStr.equals(oldStr)) {
-			KeywordIndex kw = InputAgent.formatInput(key, newStr);
-			InputAgent.storeAndExecute(new KeywordCommand(this, kw));
-		}
 
 		// Update the components
 		createComponents();
