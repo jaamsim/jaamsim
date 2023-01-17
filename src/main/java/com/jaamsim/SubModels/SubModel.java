@@ -24,6 +24,7 @@ import java.util.Map.Entry;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.GUIListener;
 import com.jaamsim.basicsim.JaamSimModel;
+import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.ExpressionHandle;
 import com.jaamsim.input.ExpressionInput;
 import com.jaamsim.input.Input;
@@ -35,6 +36,10 @@ import com.jaamsim.ui.DragAndDropable;
 import com.jaamsim.units.Unit;
 
 public class SubModel extends CompoundEntity implements DragAndDropable {
+
+	@Keyword(description = "The prototype sub-model from which this sub-model is cloned.",
+	         exampleList = {"SubModel1"})
+	protected final EntityInput<SubModel> prototypeSubModel;
 
 	@Keyword(description = "Defines new keywords for the sub-model and creates new outputs with "
 	                     + "the same names. "
@@ -50,6 +55,11 @@ public class SubModel extends CompoundEntity implements DragAndDropable {
 	public static final String PALETTE_NAME = "Pre-built SubModels";
 
 	{
+		prototypeSubModel = new EntityInput<>(SubModel.class, "Prototype", KEY_INPUTS, null);
+		prototypeSubModel.setHidden(true);
+		prototypeSubModel.setCallback(prototypeKeywordCallback);
+		this.addInput(prototypeSubModel);
+
 		keywordListInput = new PassThroughListInput("KeywordList", OPTIONS, new ArrayList<PassThroughData>());
 		keywordListInput.setCallback(keywordListKeywordCallback);
 		this.addInput(keywordListInput);
@@ -63,6 +73,18 @@ public class SubModel extends CompoundEntity implements DragAndDropable {
 		if (gui != null)
 			gui.updateModelBuilder();
 	}
+
+	static final InputCallback prototypeKeywordCallback = new InputCallback() {
+		@Override
+		public void callback(Entity ent, Input<?> inp) {
+			JaamSimModel sim = ent.getJaamSimModel();
+			SubModelClone smc = (SubModelClone)ent;
+			boolean bool = sim.isRecordEdits();
+			sim.setRecordEdits(false);
+			smc.createComponents();
+			sim.setRecordEdits(bool);
+		}
+	};
 
 	static final InputCallback keywordListKeywordCallback = new InputCallback() {
 		@Override

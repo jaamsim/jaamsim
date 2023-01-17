@@ -24,27 +24,11 @@ import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.Region;
 import com.jaamsim.ProbabilityDistributions.RandomStreamUser;
 import com.jaamsim.basicsim.Entity;
-import com.jaamsim.basicsim.JaamSimModel;
-import com.jaamsim.input.EntityInput;
-import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
-import com.jaamsim.input.InputCallback;
-import com.jaamsim.input.Keyword;
 import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.Output;
 
 public class SubModelClone extends SubModel {
-
-	@Keyword(description = "The prototype sub-model from which this sub-model is cloned.",
-	         exampleList = {"SubModel1"})
-	protected final EntityInput<SubModel> prototypeSubModel;
-
-	{
-		prototypeSubModel = new EntityInput<>(SubModel.class, "Prototype", KEY_INPUTS, null);
-		prototypeSubModel.setHidden(true);
-		prototypeSubModel.setCallback(prototypeKeywordCallback);
-		this.addInput(prototypeSubModel);
-	}
 
 	public SubModelClone() {}
 
@@ -68,18 +52,6 @@ public class SubModelClone extends SubModel {
 		super.postLoad();
 		update();
 	}
-
-	static final InputCallback prototypeKeywordCallback = new InputCallback() {
-		@Override
-		public void callback(Entity ent, Input<?> inp) {
-			JaamSimModel sim = ent.getJaamSimModel();
-			SubModelClone smc = (SubModelClone)ent;
-			boolean bool = sim.isRecordEdits();
-			sim.setRecordEdits(false);
-			smc.createComponents();
-			sim.setRecordEdits(bool);
-		}
-	};
 
 	/**
 	 * Returns whether this sub-model is a clone of the specified prototype.
