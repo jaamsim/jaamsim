@@ -122,6 +122,8 @@ public class SubModel extends CompoundEntity implements DragAndDropable {
 	public void setInputsForDragAndDrop() {
 		super.setInputsForDragAndDrop();
 		SubModel proto = getPrototypeSubModel();
+		if (proto == null)
+			return;
 
 		// Set the new keywords for the clone
 		updateKeywords(proto.getKeywordList());
@@ -285,6 +287,8 @@ public class SubModel extends CompoundEntity implements DragAndDropable {
 	 */
 	public void update() {
 		SubModel proto = getPrototypeSubModel();
+		if (proto == null)
+			return;
 
 		// Do not record the components and their inputs to be 'edited'
 		boolean bool = getJaamSimModel().isRecordEdits();
@@ -341,6 +345,8 @@ public class SubModel extends CompoundEntity implements DragAndDropable {
 
 	protected void setComponentInputs() {
 		SubModel proto = getPrototypeSubModel();
+		if (proto == null)
+			return;
 
 		// Save the seeds for the components that use a random distribution
 		LinkedHashMap<Entity, Integer> seedMap = new LinkedHashMap<>();
