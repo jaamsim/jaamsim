@@ -53,11 +53,11 @@ import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.Editable;
 import com.jaamsim.Graphics.EntityLabel;
 import com.jaamsim.Graphics.OverlayEntity;
-import com.jaamsim.SubModels.SubModel;
 import com.jaamsim.Graphics.Region;
 import com.jaamsim.Graphics.View;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.JaamSimModel;
+import com.jaamsim.basicsim.ObjectType;
 import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.datatypes.IntegerVector;
 import com.jaamsim.input.ColourInput;
@@ -1839,11 +1839,10 @@ public class RenderManager implements DragSourceListener {
 		name = InputAgent.getUniqueName(simModel, name, "");
 		InputAgent.storeAndExecute(new DefineCommand(simModel, klass, name));
 		Entity ent = simModel.getNamedEntity(name);
-
-		Entity proto = dndObjectType.getPrototypeForDragAndDrop();
-		if (ent instanceof SubModel && proto != null) {
-			InputAgent.applyArgs(ent, "Prototype", proto.getName());
-		}
+		Entity proto = (Entity) dndObjectType;
+		if (proto instanceof ObjectType)
+			proto = null;
+		ent.setPrototype(proto);
 
 		// Set input values for a dragged and dropped entity
 		ent.setInputsForDragAndDrop();
