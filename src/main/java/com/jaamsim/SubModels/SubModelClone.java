@@ -57,7 +57,7 @@ public class SubModelClone extends SubModel {
 		updateKeywords(proto.getKeywordList());
 
 		// Set the inputs for the clone to those for the prototype SubModel
-		copyInputs(proto);
+		copyInputs(proto, true, false);
 
 		// Create the clone's components
 		update();
