@@ -1841,7 +1841,7 @@ public class RenderManager implements DragSourceListener {
 		Entity ent = simModel.getNamedEntity(name);
 
 		if (ent instanceof SubModelClone) {
-			InputAgent.applyArgs(ent, "Prototype", dndObjectType.getPrototype().getName());
+			InputAgent.applyArgs(ent, "Prototype", dndObjectType.getPrototypeForDragAndDrop().getName());
 		}
 
 		// Set input values for a dragged and dropped entity
