@@ -85,7 +85,7 @@ public class SubModel extends CompoundEntity implements DragAndDropable {
 		@Override
 		public void callback(Entity ent, Input<?> inp) {
 			JaamSimModel sim = ent.getJaamSimModel();
-			SubModelClone smc = (SubModelClone)ent;
+			SubModel smc = (SubModel) ent;
 			boolean bool = sim.isRecordEdits();
 			sim.setRecordEdits(false);
 			smc.createComponents();
@@ -100,7 +100,7 @@ public class SubModel extends CompoundEntity implements DragAndDropable {
 			PassThroughListInput ptl = (PassThroughListInput)inp;
 
 			sm.updateKeywords(ptl.getValue());
-			for (SubModelClone clone : sm.getClones()) {
+			for (SubModel clone : sm.getClones()) {
 				clone.updateKeywords(ptl.getValue());
 			}
 			GUIListener gui = sm.getJaamSimModel().getGUIListener();
@@ -243,7 +243,7 @@ public class SubModel extends CompoundEntity implements DragAndDropable {
 
 
 	public void updateClones() {
-		for (SubModelClone clone : getClones()) {
+		for (SubModel clone : getClones()) {
 			clone.update();
 		}
 	}
@@ -252,10 +252,10 @@ public class SubModel extends CompoundEntity implements DragAndDropable {
 	 * Returns the clones that were made from this prototype sub-model.
 	 * @return list of clones of this prototype.
 	 */
-	public ArrayList<SubModelClone> getClones() {
-		ArrayList<SubModelClone> ret = new ArrayList<>();
+	public ArrayList<SubModel> getClones() {
+		ArrayList<SubModel> ret = new ArrayList<>();
 		JaamSimModel simModel = getJaamSimModel();
-		for (SubModelClone clone : simModel.getClonesOfIterator(SubModelClone.class)) {
+		for (SubModel clone : simModel.getClonesOfIterator(SubModel.class)) {
 			if (clone.isClone(this)) {
 				ret.add(clone);
 			}
@@ -265,7 +265,7 @@ public class SubModel extends CompoundEntity implements DragAndDropable {
 
 	public boolean hasClone() {
 		JaamSimModel simModel = getJaamSimModel();
-		for (SubModelClone clone : simModel.getClonesOfIterator(SubModelClone.class)) {
+		for (SubModel clone : simModel.getClonesOfIterator(SubModel.class)) {
 			if (clone.isClone(this)) {
 				return true;
 			}
@@ -398,7 +398,7 @@ public class SubModel extends CompoundEntity implements DragAndDropable {
 
 	@Override
 	public Class<? extends Entity> getJavaClass() {
-		return SubModelClone.class;
+		return SubModel.class;
 	}
 
 	@Override

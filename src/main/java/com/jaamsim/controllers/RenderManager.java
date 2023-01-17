@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2012 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2022 JaamSim Software Inc.
+ * Copyright (C) 2016-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,7 +53,7 @@ import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.Editable;
 import com.jaamsim.Graphics.EntityLabel;
 import com.jaamsim.Graphics.OverlayEntity;
-import com.jaamsim.SubModels.SubModelClone;
+import com.jaamsim.SubModels.SubModel;
 import com.jaamsim.Graphics.Region;
 import com.jaamsim.Graphics.View;
 import com.jaamsim.basicsim.Entity;
@@ -1840,8 +1840,9 @@ public class RenderManager implements DragSourceListener {
 		InputAgent.storeAndExecute(new DefineCommand(simModel, klass, name));
 		Entity ent = simModel.getNamedEntity(name);
 
-		if (ent instanceof SubModelClone) {
-			InputAgent.applyArgs(ent, "Prototype", dndObjectType.getPrototypeForDragAndDrop().getName());
+		Entity proto = dndObjectType.getPrototypeForDragAndDrop();
+		if (ent instanceof SubModel && proto != null) {
+			InputAgent.applyArgs(ent, "Prototype", proto.getName());
 		}
 
 		// Set input values for a dragged and dropped entity

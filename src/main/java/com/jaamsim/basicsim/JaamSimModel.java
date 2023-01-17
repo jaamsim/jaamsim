@@ -35,7 +35,6 @@ import com.jaamsim.Samples.SampleExpression;
 import com.jaamsim.StringProviders.StringProvExpression;
 import com.jaamsim.SubModels.CompoundEntity;
 import com.jaamsim.SubModels.SubModel;
-import com.jaamsim.SubModels.SubModelClone;
 import com.jaamsim.Thresholds.ThresholdUser;
 import com.jaamsim.datatypes.IntegerVector;
 import com.jaamsim.events.Conditional;
@@ -159,9 +158,9 @@ public class JaamSimModel implements EventTimeListener {
 				continue;
 
 			// Generate all the sub-model components when the first one is found
-			if (ent.isGenerated() && ent.getParent() instanceof SubModelClone) {
+			if (ent.isGenerated() && ent.getParent() instanceof SubModel) {
 				Entity clone = getNamedEntity(ent.getParent().getName());
-				SubModel proto = ((SubModelClone) ent.getParent()).getPrototypeSubModel();
+				SubModel proto = ((SubModel) ent.getParent()).getPrototypeSubModel();
 				if (clone == null || proto == null)
 					continue;
 				KeywordIndex kw = InputAgent.formatInput("Prototype", proto.getName());
