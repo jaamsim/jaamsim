@@ -123,7 +123,7 @@ public class SubModel extends CompoundEntity implements DragAndDropable {
 	@Override
 	public void setInputsForDragAndDrop() {
 		super.setInputsForDragAndDrop();
-		SubModel proto = getPrototypeSubModel();
+		SubModel proto = (SubModel) getPrototype();
 		if (proto == null)
 			return;
 
@@ -281,14 +281,14 @@ public class SubModel extends CompoundEntity implements DragAndDropable {
 	 * @return true is this sub-model is a clone of the specified prototype.
 	 */
 	public boolean isClone(SubModel proto) {
-		return getPrototypeSubModel() == proto;
+		return getPrototype() == proto;
 	}
 
 	/**
 	 * Adjusts the clone to match the present setting for its prototype sub-model.
 	 */
 	public void update() {
-		SubModel proto = getPrototypeSubModel();
+		SubModel proto = (SubModel) getPrototype();
 		if (proto == null)
 			return;
 
@@ -318,7 +318,7 @@ public class SubModel extends CompoundEntity implements DragAndDropable {
 	 * @param protoCompList - components for the prototype
 	 */
 	protected void createComponents() {
-		SubModel proto = getPrototypeSubModel();
+		SubModel proto = (SubModel) getPrototype();
 		//System.out.format("%s.createComponents - protoComp=%s%n", this, protoCompList);
 
 		// Delete any components that are not in the prototype
@@ -346,7 +346,7 @@ public class SubModel extends CompoundEntity implements DragAndDropable {
 	}
 
 	protected void setComponentInputs() {
-		SubModel proto = getPrototypeSubModel();
+		SubModel proto = (SubModel) getPrototype();
 		if (proto == null)
 			return;
 
