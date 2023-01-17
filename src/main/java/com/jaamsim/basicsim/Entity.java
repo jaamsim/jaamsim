@@ -437,8 +437,12 @@ public class Entity {
 	 * @param ent = entity whose inputs are to be copied
 	 */
 	public void copyInputs(Entity ent) {
+		copyInputs(ent, false, false);
+	}
+
+	public void copyInputs(Entity ent, boolean ignoreDef, boolean lock) {
 		for (int seq = 0; seq < 2; seq++) {
-			copyInputs(ent, seq, false, false);
+			copyInputs(ent, seq, ignoreDef, lock);
 		}
 	}
 
