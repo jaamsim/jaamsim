@@ -474,7 +474,7 @@ public abstract class StateEntity extends DisplayEntity implements StateUser {
 	public void updateGraphics(double simTime) {
 		super.updateGraphics(simTime);
 
-		if (stateGraphics.getValue() == null)
+		if (stateGraphics.getValue() == null || presentState == null)
 			return;
 
 		DisplayEntity ent = stateGraphics.getValueFor(presentState.getName());
