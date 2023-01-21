@@ -479,7 +479,10 @@ public abstract class StateEntity extends DisplayEntity implements StateUser {
 
 		DisplayEntity ent = stateGraphics.getValueFor(presentState.getName());
 		if (ent == null) {
-			this.resetGraphics();
+			setDisplayModelList(displayModelListInput.getValue());
+			setSize(sizeInput.getValue());
+			setOrientation(orientationInput.getValue());
+			setAlignment(alignmentInput.getValue());
 			return;
 		}
 
