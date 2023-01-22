@@ -4871,6 +4871,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		}
 
 		InputAgent.logMessage(sim, "Fatal Error while loading file '%s': %s\n", file.getName(), t.getMessage());
+		InputAgent.logStackTrace(sim, t);
 		GUIFrame.showErrorDialog("Fatal Error",
 				String.format("A fatal error has occured while loading the file '%s':", file.getName()),
 				t.getMessage(),
