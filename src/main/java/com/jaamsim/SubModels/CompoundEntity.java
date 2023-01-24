@@ -50,7 +50,8 @@ public abstract class CompoundEntity extends LinkedComponent {
 
 	private final LinkedHashMap<String, Entity> namedChildren = new LinkedHashMap<>();
 	private SubModelStart smStart;
-	private Region smRegion;
+
+	private static final String smRegionName = "Region";
 
 	{
 		nextComponent.setRequired(false);
@@ -73,13 +74,13 @@ public abstract class CompoundEntity extends LinkedComponent {
 		super.postDefine();
 
 		// If a clone, the region and its inputs are copied from the prototype
-		smRegion = (Region) getChild("Region");
+		Region smRegion = getSubModelRegion();
 		if (smRegion != null)
 			return;
 
 		// Create the region
 		JaamSimModel simModel = getJaamSimModel();
-		smRegion = InputAgent.generateEntityWithName(simModel, Region.class, "Region", this, true, true);
+		smRegion = InputAgent.generateEntityWithName(simModel, Region.class, smRegionName, this, true, true);
 
 		// Set the default inputs for the region
 		InputAgent.applyArgs( smRegion, "RelativeEntity", this.getName());
@@ -119,7 +120,8 @@ public abstract class CompoundEntity extends LinkedComponent {
 		this.setRegion(regionInput.getValue());
 		if (getCurrentRegion() == null)
 			return;
-		InputAgent.applyArgs(smRegion, "Region", getCurrentRegion().getName());
+		String key = regionInput.getKeyword();
+		InputAgent.applyArgs(getSubModelRegion(), key, getCurrentRegion().getName());
 	}
 
 	@Override
@@ -174,7 +176,7 @@ public abstract class CompoundEntity extends LinkedComponent {
 	}
 
 	public Region getSubModelRegion() {
-		return smRegion;
+		return (Region) getChild(smRegionName);
 	}
 
 	/**
