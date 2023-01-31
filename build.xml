@@ -17,7 +17,7 @@ limitations under the License.
 -->
 <project name="jaamsim" basedir="." default="jar">
   <property name="ver.major"           value="2022"/>
-  <property name="ver.minor"           value="07-jogltest1"/>
+  <property name="ver.minor"           value="07-jogltest2"/>
   <property name="ver"                 value="${ver.major}-${ver.minor}"/>
   <property name="src.dir"       location="src/main"/>
   <property name="res.dir"       location="src/main/resources"/>
