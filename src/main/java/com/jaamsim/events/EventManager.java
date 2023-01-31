@@ -566,9 +566,9 @@ public final class EventManager {
 	}
 
 	private void start(Process cur, ProcessTarget t) {
-		Process newProcess = Process.allocate(this, cur, t);
-		// Notify the eventManager that a new process has been started
 		assertCanSchedule();
+		Process newProcess = Process.allocate(this, cur, t);
+
 		if (trcListener != null) {
 			disableSchedule();
 			trcListener.traceProcessStart(t);
