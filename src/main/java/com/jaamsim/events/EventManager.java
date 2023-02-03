@@ -185,10 +185,7 @@ public final class EventManager {
 				return false;
 
 			// Tear down any threads waiting for this to finish
-			Process next = cur.forceKillNext();
-			while (next != null) {
-				next = next.forceKillNext();
-			}
+			cur.tearDownRunningProcesses();
 			executeEvents = false;
 			processRunning = false;
 			isRunning.set(false);

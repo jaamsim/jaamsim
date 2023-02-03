@@ -200,13 +200,13 @@ final class Process extends Thread {
 	 * This is used to tear down a live threadstack when an error is received from
 	 * the model.
 	 */
-	Process forceKillNext() {
-		Process ret = nextProcess.getAndSet(null);
-		if (ret != null) {
-			ret.dieFlag.set(true);
-			ret.wake();
+	final void tearDownRunningProcesses() {
+		Process next = nextProcess.getAndSet(null);
+		while (next != null) {
+			next.dieFlag.set(true);
+			next.wake();
+			next = next.nextProcess.getAndSet(null);
 		}
-		return ret;
 	}
 
 	boolean shouldDie() {
