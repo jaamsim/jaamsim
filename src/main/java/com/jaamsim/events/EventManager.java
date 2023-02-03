@@ -734,7 +734,10 @@ public final class EventManager {
 			 * spurious wakeups from waking us early....which causes the
 			 * model to get into an inconsistent state causing crashes.
 			 */
-			while (true) { lockObject.wait(); }
+			while (true) {
+				lockObject.wait();
+				System.out.println("Spurious wakeup in EventManager wait.");
+			}
 		}
 		// Catch the exception when the thread is interrupted
 		catch( InterruptedException e ) {}
