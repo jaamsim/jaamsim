@@ -401,11 +401,10 @@ public final class EventManager {
 		Process next = cur.preCapture();
 		if (next == null) {
 			processRunning = false;
-			Process.processEvents(this);
+			next = Process.allocate(this, null, null);
 		}
-		else {
-			next.wake();
-		}
+
+		next.wake();
 
 		threadWait(cur);
 		cur.postCapture();
@@ -857,7 +856,7 @@ public final class EventManager {
 				return;
 
 			executeEvents = true;
-			Process.processEvents(this);
+			Process.allocate(this, null, null).wake();
 		}
 	}
 
