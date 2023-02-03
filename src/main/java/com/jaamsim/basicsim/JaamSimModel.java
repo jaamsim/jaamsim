@@ -335,6 +335,10 @@ public class JaamSimModel implements EventTimeListener {
 		return simState >= SIM_STATE_RUNNING;
 	}
 
+	public boolean isRealTime() {
+		return simulation.isRealTime();
+	}
+
 	public String getName() {
 		return name;
 	}

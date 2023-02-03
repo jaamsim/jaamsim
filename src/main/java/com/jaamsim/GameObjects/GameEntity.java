@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2017-2021 JaamSim Software Inc.
+ * Copyright (C) 2017-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -80,7 +80,7 @@ public abstract class GameEntity extends DisplayEntity {
 	private void scheduleAction() {
 		setState();
 		EventManager evt = getJaamSimModel().getEventManager();
-		if (evt == null || doActionHandle.isScheduled() || !getSimulation().isRealTime())
+		if (evt == null || doActionHandle.isScheduled() || !getJaamSimModel().isRealTime())
 			return;
 		evt.scheduleProcessExternal(0L, 0, false, doActionTarget, doActionHandle);
 	}
