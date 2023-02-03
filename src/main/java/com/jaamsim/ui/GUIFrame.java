@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2002-2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2022 JaamSim Software Inc.
+ * Copyright (C) 2016-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -2855,7 +2855,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			@Override
 			public void actionPerformed( ActionEvent event ) {
 				JaamSimModel sim = getJaamSimModel();
-				if (sim.getSimState() == JaamSimModel.SIM_STATE_RUNNING) {
+				if (sim.isRunningState()) {
 					GUIFrame.this.pauseSimulation();
 				}
 				controlStartResume.requestFocusInWindow();
@@ -3056,7 +3056,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		}
 
 		// Do nothing further if the simulation is not executing events
-		if (sim.getSimState() != JaamSimModel.SIM_STATE_RUNNING)
+		if (!sim.isRunningState())
 			return;
 
 		// Set the speedup factor display
@@ -3148,7 +3148,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	public boolean startSimulation() {
 		JaamSimModel sim = getJaamSimModel();
 		double pauseTime = sim.getSimulation().getPauseTime();
-		if (sim.getSimState() <= JaamSimModel.SIM_STATE_CONFIGURED) {
+		if (!sim.isStarted()) {
 			boolean confirmed = true;
 			if (sim.isSessionEdited()) {
 				confirmed = GUIFrame.showSaveChangesDialog(this);
@@ -3167,7 +3167,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			}
 			return confirmed;
 		}
-		else if (sim.getSimState() == JaamSimModel.SIM_STATE_PAUSED) {
+		else if (sim.isPausedState()) {
 			if (!sim.getSimulation().isRealTime()
 					&& runManager.getNumberOfRuns() > 1) {
 				RunProgressBox.getInstance().setShow(true);
@@ -3188,7 +3188,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	 * Pauses the simulation run.
 	 */
 	private void pauseSimulation() {
-		if (getJaamSimModel().getSimState() == JaamSimModel.SIM_STATE_RUNNING)
+		if (getJaamSimModel().isRunningState())
 			new Thread(new Runnable() {
 				@Override
 				public void run() {
@@ -3204,9 +3204,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	 */
 	public void stopSimulation() {
 		JaamSimModel sim = getJaamSimModel();
-		if (sim.getSimState() == JaamSimModel.SIM_STATE_RUNNING ||
-		    sim.getSimState() == JaamSimModel.SIM_STATE_PAUSED ||
-		    sim.getSimState() == JaamSimModel.SIM_STATE_ENDED) {
+		if (sim.isStarted()) {
 			new Thread(new Runnable() {
 				@Override
 				public void run() {

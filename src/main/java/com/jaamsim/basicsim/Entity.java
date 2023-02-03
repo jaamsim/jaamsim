@@ -1107,7 +1107,7 @@ public class Entity {
 			ret = new ArrayList<>();
 
 		// Include the generated entities that have not been registered
-		if (simModel.getSimState() >= JaamSimModel.SIM_STATE_RUNNING) {
+		if (simModel.isStarted()) {
 			ret = new ArrayList<>(ret);
 			for (Entity ent : simModel.getClonesOfIterator(Entity.class)) {
 				if (ent.getPrototype() != this || ent.isRegistered() || ent.isPooled())

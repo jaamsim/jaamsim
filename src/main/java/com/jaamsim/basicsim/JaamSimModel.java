@@ -323,6 +323,18 @@ public class JaamSimModel implements EventTimeListener {
 		simState = state;
 	}
 
+	public boolean isRunningState() {
+		return simState == SIM_STATE_RUNNING;
+	}
+
+	public boolean isPausedState() {
+		return simState == SIM_STATE_PAUSED;
+	}
+
+	public boolean isStarted() {
+		return simState >= SIM_STATE_RUNNING;
+	}
+
 	public String getName() {
 		return name;
 	}
