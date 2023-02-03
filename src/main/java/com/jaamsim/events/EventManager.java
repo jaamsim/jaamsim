@@ -176,13 +176,8 @@ public final class EventManager {
 				trcListener.traceProcessEnd();
 				enableSchedule();
 			}
-			if (cur.hasNext()) {
-				cur.wakeNextProcess();
-				return false;
-			}
-			else {
-				return true;
-			}
+
+			return cur.wakeNextProcess();
 		}
 		catch (Throwable e) {
 			// This is how kill() is implemented for sleeping processes.

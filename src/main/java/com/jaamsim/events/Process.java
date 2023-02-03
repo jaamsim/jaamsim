@@ -41,6 +41,7 @@ final class Process extends Thread {
 	private static final int maxPoolSize = 100; // Maximum number of Processes allowed to be pooled at a given time
 	private static int numProcesses = 0; // Total of all created processes to date (used to name new Processes)
 
+	// These refs are only used under the pool lock to communciate to the newly woken threads
 	private EventManager eventManager; // The EventManager that is currently managing this Process
 	private ProcessTarget target; // The entity whose method is to be executed
 
@@ -52,8 +53,6 @@ final class Process extends Thread {
 	// executing Process, they are essentially Threadlocal variables that are only valid
 	// when activeFlag == true
 	private EventManager evt;
-	private boolean hasNext;
-
 
 	// Initialize the storage for the pooled Processes
 	static {
@@ -93,7 +92,6 @@ final class Process extends Thread {
 			synchronized (pool) {
 				// Ensure all state is cleared before returning to the pool
 				evt = null;
-				hasNext = false;
 				nextProcess.set(null);
 				activeFlag.set(false);
 				dieFlag.set(false);
@@ -117,15 +115,10 @@ final class Process extends Thread {
 				t = target;
 				target = null;
 				activeFlag.set(true);
-				hasNext = (nextProcess.get() != null);
 			}
 
 			evt.execute(this, t);
 		}
-	}
-
-	final boolean hasNext() {
-		return hasNext;
 	}
 
 	final EventManager evt() {
@@ -185,12 +178,18 @@ final class Process extends Thread {
 	/**
 	 * Returns true if we woke a next Process, otherwise return false.
 	 */
-	synchronized final void wakeNextProcess() {
-		nextProcess.getAndSet(null).wake();
-		hasNext = false;
+	final boolean wakeNextProcess() {
+		Process next = nextProcess.getAndSet(null);
+		if (next != null) {
+			next.wake();
+			return false;
+		}
+		else {
+			return true;
+		}
 	}
 
-	synchronized void kill() {
+	void kill() {
 		if (activeFlag.get())
 			throw new ProcessError("Cannot terminate an active thread");
 		dieFlag.set(true);
@@ -201,7 +200,7 @@ final class Process extends Thread {
 	 * This is used to tear down a live threadstack when an error is received from
 	 * the model.
 	 */
-	synchronized Process forceKillNext() {
+	Process forceKillNext() {
 		Process ret = nextProcess.getAndSet(null);
 		if (ret != null) {
 			ret.dieFlag.set(true);
@@ -214,15 +213,12 @@ final class Process extends Thread {
 		return dieFlag.get();
 	}
 
-	synchronized final Process preCapture() {
+	final Process preCapture() {
 		activeFlag.set(false);
-		Process ret = nextProcess.getAndSet(null);
-		hasNext = false;
-		return ret;
+		return nextProcess.getAndSet(null);
 	}
 
-	synchronized final void postCapture() {
+	final void postCapture() {
 		activeFlag.set(true);
-		hasNext = (nextProcess.get() != null);
 	}
 }
