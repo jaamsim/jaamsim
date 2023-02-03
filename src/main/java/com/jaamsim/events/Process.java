@@ -18,6 +18,7 @@
 package com.jaamsim.events;
 
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Process is a subclass of Thread that can be managed by the discrete event
@@ -40,8 +41,9 @@ final class Process extends Thread {
 	private static int numProcesses = 0; // Total of all created processes to date (used to name new Processes)
 
 	private EventManager eventManager; // The EventManager that is currently managing this Process
-	private Process nextProcess; // The Process from which the present process was created
 	private ProcessTarget target; // The entity whose method is to be executed
+
+	private final AtomicReference<Process> nextProcess = new AtomicReference<>(); // The Process from which the present process was created
 
 	// These are a very special references that is only safe to use from the currently
 	// executing Process, they are essentially Threadlocal variables that are only valid
@@ -110,7 +112,7 @@ final class Process extends Thread {
 				t = target;
 				target = null;
 				activeFlag = true;
-				hasNext = (nextProcess != null);
+				hasNext = (nextProcess.get() != null);
 			}
 
 			evt.execute(this, t);
@@ -135,7 +137,7 @@ final class Process extends Thread {
 	 */
 	private synchronized void setup(EventManager evt, Process next, ProcessTarget targ) {
 		eventManager = evt;
-		nextProcess = next;
+		nextProcess.set(next);
 		target = targ;
 		activeFlag = false;
 		dieFlag = false;
@@ -191,16 +193,15 @@ final class Process extends Thread {
 		super.interrupt();
 	}
 
-	synchronized void setNextProcess(Process next) {
-		nextProcess = next;
+	void setNextProcess(Process next) {
+		nextProcess.set(next);
 	}
 
 	/**
 	 * Returns true if we woke a next Process, otherwise return false.
 	 */
 	synchronized final void wakeNextProcess() {
-		nextProcess.wake();
-		nextProcess = null;
+		nextProcess.getAndSet(null).wake();
 		hasNext = false;
 	}
 
@@ -216,8 +217,7 @@ final class Process extends Thread {
 	 * the model.
 	 */
 	synchronized Process forceKillNext() {
-		Process ret = nextProcess;
-		nextProcess = null;
+		Process ret = nextProcess.getAndSet(null);
 		if (ret != null) {
 			ret.dieFlag = true;
 			ret.wake();
@@ -231,14 +231,13 @@ final class Process extends Thread {
 
 	synchronized final Process preCapture() {
 		activeFlag = false;
-		Process ret = nextProcess;
-		nextProcess = null;
+		Process ret = nextProcess.getAndSet(null);
 		hasNext = false;
 		return ret;
 	}
 
 	synchronized final void postCapture() {
 		activeFlag = true;
-		hasNext = (nextProcess != null);
+		hasNext = (nextProcess.get() != null);
 	}
 }
