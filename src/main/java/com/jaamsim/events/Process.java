@@ -18,6 +18,7 @@
 package com.jaamsim.events;
 
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -44,6 +45,8 @@ final class Process extends Thread {
 	private ProcessTarget target; // The entity whose method is to be executed
 
 	private final AtomicReference<Process> nextProcess = new AtomicReference<>(); // The Process from which the present process was created
+	private final AtomicBoolean dieFlag = new AtomicBoolean();
+	private final AtomicBoolean activeFlag = new AtomicBoolean();
 
 	// These are a very special references that is only safe to use from the currently
 	// executing Process, they are essentially Threadlocal variables that are only valid
@@ -51,8 +54,6 @@ final class Process extends Thread {
 	private EventManager evt;
 	private boolean hasNext;
 
-	private boolean dieFlag;
-	private boolean activeFlag;
 
 	// Initialize the storage for the pooled Processes
 	static {
@@ -111,7 +112,7 @@ final class Process extends Thread {
 				eventManager = null;
 				t = target;
 				target = null;
-				activeFlag = true;
+				activeFlag.set(true);
 				hasNext = (nextProcess.get() != null);
 			}
 
@@ -139,8 +140,8 @@ final class Process extends Thread {
 		eventManager = evt;
 		nextProcess.set(next);
 		target = targ;
-		activeFlag = false;
-		dieFlag = false;
+		activeFlag.set(false);
+		dieFlag.set(false);
 	}
 
 	// Set up a new process for the given entity, method, and arguments
@@ -206,9 +207,9 @@ final class Process extends Thread {
 	}
 
 	synchronized void kill() {
-		if (activeFlag)
+		if (activeFlag.get())
 			throw new ProcessError("Cannot terminate an active thread");
-		dieFlag = true;
+		dieFlag.set(true);
 		this.wake();
 	}
 
@@ -219,25 +220,25 @@ final class Process extends Thread {
 	synchronized Process forceKillNext() {
 		Process ret = nextProcess.getAndSet(null);
 		if (ret != null) {
-			ret.dieFlag = true;
+			ret.dieFlag.set(true);
 			ret.wake();
 		}
 		return ret;
 	}
 
-	synchronized boolean shouldDie() {
-		return dieFlag;
+	boolean shouldDie() {
+		return dieFlag.get();
 	}
 
 	synchronized final Process preCapture() {
-		activeFlag = false;
+		activeFlag.set(false);
 		Process ret = nextProcess.getAndSet(null);
 		hasNext = false;
 		return ret;
 	}
 
 	synchronized final void postCapture() {
-		activeFlag = true;
+		activeFlag.set(true);
 		hasNext = (nextProcess.get() != null);
 	}
 }
