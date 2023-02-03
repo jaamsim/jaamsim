@@ -89,7 +89,15 @@ final class Process extends Thread {
 	@Override
 	public void run() {
 		while (true) {
+			ProcessTarget t;
 			synchronized (pool) {
+				// Ensure all state is cleared before returning to the pool
+				evt = null;
+				hasNext = false;
+				nextProcess.set(null);
+				activeFlag.set(false);
+				dieFlag.set(false);
+
 				// Add ourselves to the pool and wait to be assigned work
 				pool.add(this);
 				// Set the present process to sleep, and release its lock
@@ -103,11 +111,7 @@ final class Process extends Thread {
 						System.out.println("Spurious wakeup in process pool.");
 					}
 				} catch (InterruptedException e) {}
-			}
 
-			// Process has been woken up, execute the method we have been assigned
-			ProcessTarget t;
-			synchronized (this) {
 				evt = eventManager;
 				eventManager = null;
 				t = target;
@@ -117,11 +121,6 @@ final class Process extends Thread {
 			}
 
 			evt.execute(this, t);
-
-			// Ensure all state is cleared before returning to the pool
-			evt = null;
-			hasNext = false;
-			setup(null, null, null);
 		}
 	}
 
@@ -133,32 +132,17 @@ final class Process extends Thread {
 		return evt;
 	}
 
-	/*
-	 * Setup the process state for execution.
-	 */
-	private synchronized void setup(EventManager evt, Process next, ProcessTarget targ) {
-		eventManager = evt;
-		nextProcess.set(next);
-		target = targ;
-		activeFlag.set(false);
-		dieFlag.set(false);
-	}
-
-	// Set up a new process for the given entity, method, and arguments
-	// Called from Process.start() and from EventManager.startExternalProcess()
-	static Process allocate(EventManager eventManager, Process next, ProcessTarget proc) {
-		Process newProcess = Process.getProcess();
-		newProcess.setup(eventManager, next, proc);
-		return newProcess;
-	}
-
-	// Return a process from the pool or create a new one
-	private static Process getProcess() {
+	// Set up a new process for the given entity, method, and arguments and return a process from the pool or create a new one.
+	static Process allocate(EventManager evt, Process next, ProcessTarget targ) {
 		while (true) {
 			synchronized (pool) {
 				// If there is an available process in the pool, then use it
 				if (pool.size() > 0) {
-					return pool.remove(pool.size() - 1);
+					Process proc = pool.remove(pool.size() - 1);
+					proc.eventManager = evt;
+					proc.target = targ;
+					proc.nextProcess.set(next);
+					return proc;
 				}
 				// If there are no process in the pool, then create a new one and add it to the pool
 				else {
