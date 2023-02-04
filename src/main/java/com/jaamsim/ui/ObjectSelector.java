@@ -67,6 +67,8 @@ public class ObjectSelector extends FrameBox {
 
 	private long entSequence;
 
+	private final static int MAX_FOR_REALTIME_UPDATE = 10000;
+
 	public ObjectSelector() {
 		super( "Object Selector" );
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -177,7 +179,7 @@ public class ObjectSelector extends FrameBox {
 		if (simModel == null || simModel.getSimulation() == null)
 			return;
 		if (!this.isVisible() || gui == null || (simModel.isRunningState()
-				&& !simModel.isRealTime()))
+				&& (!simModel.isRealTime() || simModel.getEntityCount() > MAX_FOR_REALTIME_UPDATE)))
 			return;
 
 		long curSequence = simModel.getEntitySequence();

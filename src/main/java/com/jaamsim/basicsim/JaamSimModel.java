@@ -1269,6 +1269,10 @@ public class JaamSimModel implements EventTimeListener {
 		}
 	}
 
+	public int getEntityCount() {
+		return numLiveEnts;
+	}
+
 	/**
 	 * Returns an Iterator that loops over the instances of the specified class. It does not
 	 * include instances of any sub-classes of the class.
