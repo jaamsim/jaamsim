@@ -726,6 +726,10 @@ public class Entity {
 		}
 	};
 
+	public void enableTracing(boolean bool) {
+		trace.setHidden(!bool);
+	}
+
 	static final InputCallback attributeDefinitionListCallback = new InputCallback() {
 		@Override
 		public void callback(Entity ent, Input<?> inp) {

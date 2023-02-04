@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2002-2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2022 JaamSim Software Inc.
+ * Copyright (C) 2016-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -158,6 +158,15 @@ public class Simulation extends Entity {
 	                     + "the computer.",
 	         exampleList = {"100000"})
 	private final IntegerInput maxEntitiesToDisplay;
+
+	@Keyword(description = "If TRUE, the 'Trace' keyword for each object is activated. "
+	                     + "Trace outputs are written to standard out and can used by a "
+	                     + "programmer to track the interal logic for one or more selected "
+	                     + "objects as the model is executed. "
+	                     + "They are an essential tool for testing and debugging the Java code "
+	                     + "for JaamSim.",
+	         exampleList = {"TRUE"})
+	private final BooleanInput enableTracing;
 
 	@Keyword(description = "If TRUE, an additional output file is generated that traces the exact "
 	                     + "sequence of events executed by the model. "
@@ -456,6 +465,10 @@ public class Simulation extends Entity {
 		maxEntitiesToDisplay.setValidRange(0, Integer.MAX_VALUE);
 		this.addInput(maxEntitiesToDisplay);
 
+		enableTracing = new BooleanInput("EnableTracing", OPTIONS, false);
+		enableTracing.setCallback(enableTracingCallback);
+		this.addInput(enableTracing);
+
 		traceEventsInput = new BooleanInput("TraceEvents", OPTIONS, false);
 		this.addInput(traceEventsInput);
 
@@ -753,6 +766,16 @@ public class Simulation extends Entity {
 			Simulation sim = (Simulation)ent;
 			DirInput dirinp = (DirInput)inp;
 			sim.getJaamSimModel().setReportDirectory(dirinp.getDir());
+		}
+	};
+
+	static final InputCallback enableTracingCallback = new InputCallback() {
+		@Override
+		public void callback(Entity ent, Input<?> inp) {
+			boolean bool = ((BooleanInput) inp).getValue();
+			for (Entity e : ent.getJaamSimModel().getClonesOfIterator(Entity.class)) {
+				e.enableTracing(bool);
+			}
 		}
 	};
 
