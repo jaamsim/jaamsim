@@ -20,6 +20,8 @@ package com.jaamsim.events;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Process is a subclass of Thread that can be managed by the discrete event
@@ -40,6 +42,10 @@ final class Process extends Thread {
 	private static final ArrayList<Process> pool; // storage for all available Processes
 	private static final int maxPoolSize = 100; // Maximum number of Processes allowed to be pooled at a given time
 	private static int numProcesses = 0; // Total of all created processes to date (used to name new Processes)
+
+	private static final ReentrantLock poolLock = new ReentrantLock();
+	private static final Condition waitForProcess = poolLock.newCondition();
+	private static final Condition waitInPool = poolLock.newCondition();
 
 	// These refs are only used under the pool lock to communciate to the newly woken threads
 	private EventManager eventManager; // The EventManager that is currently managing this Process
@@ -89,7 +95,8 @@ final class Process extends Thread {
 	public void run() {
 		while (true) {
 			ProcessTarget t;
-			synchronized (pool) {
+			poolLock.lock();
+			try {
 				// Ensure all state is cleared before returning to the pool
 				evt = null;
 				nextProcess.set(null);
@@ -98,6 +105,7 @@ final class Process extends Thread {
 
 				// Add ourselves to the pool and wait to be assigned work
 				pool.add(this);
+				waitForProcess.signal();
 				// Set the present process to sleep, and release its lock
 				// (done by pool.wait();)
 				// Note: the try/while(true)/catch construct is needed to avoid
@@ -105,7 +113,7 @@ final class Process extends Thread {
 				// ups are done through the InterruptedException.
 				try {
 					while (true) {
-						pool.wait();
+						waitInPool.await();
 						System.out.println("Spurious wakeup in process pool.");
 					}
 				} catch (InterruptedException e) {}
@@ -115,6 +123,9 @@ final class Process extends Thread {
 				t = target;
 				target = null;
 				activeFlag.set(true);
+			}
+			finally {
+				poolLock.unlock();
 			}
 
 			evt.execute(this, t);
@@ -128,7 +139,8 @@ final class Process extends Thread {
 	// Set up a new process for the given entity, method, and arguments and return a process from the pool or create a new one.
 	static Process allocate(EventManager evt, Process next, ProcessTarget targ) {
 		while (true) {
-			synchronized (pool) {
+			poolLock.lock();
+			try {
 				// If there is an available process in the pool, then use it
 				if (pool.size() > 0) {
 					Process proc = pool.remove(pool.size() - 1);
@@ -143,13 +155,12 @@ final class Process extends Thread {
 					Process temp = new Process("processthread-" + numProcesses);
 					temp.start(); // Note: Thread.start() calls Process.run which adds the new process to the pool
 				}
-			}
 
-			// Allow the Process.run method to execute so that it can add the
-			// new process to the pool
-			// Note: that the lock on the pool has been dropped, so that the
-			// Process.run method can grab it.
-			try { Thread.sleep(10); } catch (InterruptedException e) {}
+				waitForProcess.awaitUninterruptibly();
+			}
+			finally {
+				poolLock.unlock();
+			}
 		}
 	}
 
