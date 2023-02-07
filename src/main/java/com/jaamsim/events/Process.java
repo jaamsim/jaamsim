@@ -48,6 +48,7 @@ final class Process extends Thread {
 	private final Condition waitInPool = poolLock.newCondition();
 
 	private final AtomicReference<EventManager> evt = new AtomicReference<>(); // The EventManager that is currently managing this Process
+	final AtomicReference<Condition> waitInEvt = new AtomicReference<>(); // The EventManager that is currently managing this Process
 	private final AtomicReference<Process> nextProcess = new AtomicReference<>(); // The Process from which the present process was created
 	private final AtomicBoolean dieFlag = new AtomicBoolean();
 	private final AtomicBoolean activeFlag = new AtomicBoolean();
@@ -90,6 +91,7 @@ final class Process extends Thread {
 			try {
 				// Ensure all state is cleared before returning to the pool
 				evt.set(null);
+				waitInEvt.set(null);
 				nextProcess.set(null);
 				activeFlag.set(false);
 				dieFlag.set(false);
@@ -133,6 +135,7 @@ final class Process extends Thread {
 				if (pool.size() > 0) {
 					Process proc = pool.remove(pool.size() - 1);
 					proc.evt.set(evt);
+					proc.waitInEvt.set(evt.getWaitCondition());
 					proc.nextProcess.set(next);
 					proc.waitInPool.signal();
 					return proc;
@@ -167,7 +170,7 @@ final class Process extends Thread {
 	 * a Process.
 	 */
 	final void wake() {
-		super.interrupt();
+		waitInEvt.get().signal();
 	}
 
 	void setNextProcess(Process next) {

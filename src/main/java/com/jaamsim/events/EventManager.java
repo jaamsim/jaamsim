@@ -20,6 +20,8 @@ package com.jaamsim.events;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * The EventManager is responsible for scheduling future events, controlling
@@ -42,7 +44,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public final class EventManager {
 	public final String name;
 
-	private final Object lockObject; // Object used as global lock for synchronization
+	private final ReentrantLock evtLock; // Object used as global lock for synchronization
 
 	private final EventTree eventTree;
 	private final AtomicReference<Process> runningProc;
@@ -80,7 +82,7 @@ public final class EventManager {
 	public EventManager(String name) {
 		// Basic initialization
 		this.name = name;
-		lockObject = new Object();
+		evtLock = new ReentrantLock();
 
 		// Initialize and event lists and timekeeping variables
 		currentTick = new AtomicLong(0);
@@ -103,22 +105,31 @@ public final class EventManager {
 	}
 
 	public final void setTimeListener(EventTimeListener l) {
-		synchronized (lockObject) {
+		evtLock.lock();
+		try {
 			if (l != null)
 				timelistener = l;
 			else
 				timelistener = new NoopListener();
 		}
+		finally {
+			evtLock.unlock();
+		}
 	}
 
 	public final void setTraceListener(EventTraceListener l) {
-		synchronized (lockObject) {
+		evtLock.lock();
+		try {
 			trcListener = l;
+		}
+		finally {
+			evtLock.unlock();
 		}
 	}
 
 	public void clear() {
-		synchronized (lockObject) {
+		evtLock.lock();
+		try {
 			currentTick.set(0);
 			nextTick = 0;
 			targetTick = Long.MAX_VALUE;
@@ -135,6 +146,9 @@ public final class EventManager {
 				}
 			}
 			condEvents.clear();
+		}
+		finally {
+			evtLock.unlock();
 		}
 	}
 
@@ -192,8 +206,11 @@ public final class EventManager {
 			executeEvents = false;
 			runningProc.set(null);
 			timelistener.handleError(e);
-			return;
 		}
+	}
+
+	final Condition getWaitCondition() {
+		return evtLock.newCondition();
 	}
 
 	/**
@@ -201,7 +218,8 @@ public final class EventManager {
 	 * for Process objects taken out of the pool.
 	 */
 	final void execute(Process cur) {
-		synchronized (lockObject) {
+		evtLock.lock();
+		try {
 			if (runningProc.get() != cur) {
 				System.out.println("Invalid Process Entering EventManager:" + cur);
 				return;
@@ -246,17 +264,19 @@ public final class EventManager {
 
 					removeEvent(nextEvent);
 
-					// the return from execute target informs whether or not this
-					// thread should grab an new Event, or return to the pool
-					executeTarget(cur, nextTarget);
 					if (oneEvent) {
 						oneEvent = false;
 						executeEvents = false;
 					}
-					if (runningProc.get() == cur)
-						continue;
-					else
+
+					executeTarget(cur, nextTarget);
+
+					// If the current Process is the runningProc, continue executing events
+					// otherwise exit and return to Process pool
+					if (runningProc.get() != cur)
 						return;
+
+					continue;
 				}
 
 				// If the next event would require us to advance the time, check the
@@ -291,7 +311,7 @@ public final class EventManager {
 						currentTick.set(realTick);
 						timelistener.tickUpdate(currentTick.get());
 						//Halt the thread for 20ms and then reevaluate the loop
-						try { lockObject.wait(20); } catch( InterruptedException e ) {}
+						try { cur.waitInEvt.get().awaitNanos(20000000); } catch( InterruptedException e ) {}
 						continue;
 					}
 				}
@@ -304,6 +324,9 @@ public final class EventManager {
 
 				timelistener.tickUpdate(currentTick.get());
 			}
+		}
+		finally {
+			evtLock.unlock();
 		}
 	}
 
@@ -725,29 +748,28 @@ public final class EventManager {
 	 * and then wait() the current thread.
 	 */
 	private void threadWait(Process cur) {
-		// Ensure that the thread owns the global thread lock
-		try {
-			/*
-			 * Halt the thread and only wake up by being interrupted.
-			 *
-			 * The infinite loop is _absolutely_ necessary to prevent
-			 * spurious wakeups from waking us early....which causes the
-			 * model to get into an inconsistent state causing crashes.
-			 */
-			while (true) {
-				lockObject.wait();
-				if (runningProc.get() != cur)
-					System.out.println("Spurious wakeup in EventManager wait.");
-			}
+		/*
+		 * Halt the thread and only wake up by being interrupted.
+		 *
+		 * The infinite loop is _absolutely_ necessary to prevent
+		 * spurious wakeups from waking us early....which causes the
+		 * model to get into an inconsistent state causing crashes.
+		 */
+		while (true) {
+			cur.waitInEvt.get().awaitUninterruptibly();
+			if (cur.shouldDie())
+				throw new ThreadKilledException("Thread killed");
+
+			if (runningProc.get() == cur)
+				break;
+
+			System.out.println("Spurious wakeup in EventManager wait." + Thread.currentThread());
 		}
-		// Catch the exception when the thread is interrupted
-		catch( InterruptedException e ) {}
-		if (cur.shouldDie())
-			throw new ThreadKilledException("Thread killed");
 	}
 
 	public void scheduleProcessExternal(long waitLength, int eventPriority, boolean fifo, ProcessTarget t, EventHandle handle) {
-		synchronized (lockObject) {
+		evtLock.lock();
+		try {
 			long schedTick = calculateEventTime(waitLength);
 			EventNode node = getEventNode(schedTick, eventPriority);
 			Event evt = getEvent();
@@ -769,6 +791,9 @@ public final class EventManager {
 			// execute this event, leading to the state machine becoming broken
 			if (nextTick > eventTree.getNextNode().schedTick)
 				nextTick = eventTree.getNextNode().schedTick;
+		}
+		finally {
+			evtLock.unlock();
 		}
 	}
 
@@ -845,7 +870,8 @@ public final class EventManager {
 	 * @param targetTicks - clock ticks at which to pause
 	 */
 	public void resume(long targetTicks) {
-		synchronized (lockObject) {
+		evtLock.lock();
+		try {
 
 			// Ignore the pause time if it has already been reached
 			if (currentTick.get() < targetTicks)
@@ -860,6 +886,9 @@ public final class EventManager {
 			executeEvents = true;
 			Process proc = Process.allocate(this, null);
 			runningProc.set(proc);
+		}
+		finally {
+			evtLock.unlock();
 		}
 	}
 
