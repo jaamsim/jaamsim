@@ -18,8 +18,8 @@
 package com.jaamsim.events;
 
 import java.util.ArrayList;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * The EventManager is responsible for scheduling future events, controlling
@@ -45,11 +45,9 @@ public final class EventManager {
 	private final Object lockObject; // Object used as global lock for synchronization
 
 	private final EventTree eventTree;
-
-	private final AtomicBoolean isRunning;
+	private final AtomicReference<Process> runningProc;
 	private final AtomicLong currentTick;
 	private volatile boolean executeEvents;
-	private boolean processRunning;
 	private boolean disableSchedule;
 
 	private final ArrayList<ConditionalEvent> condEvents;
@@ -94,9 +92,8 @@ public final class EventManager {
 		eventTree = new EventTree();
 		condEvents = new ArrayList<>();
 
-		isRunning = new AtomicBoolean(false);
+		runningProc = new AtomicReference<>(null);
 		executeEvents = false;
-		processRunning = false;
 		disableSchedule = false;
 		executeRealTime = false;
 		realTimeFactor = 1;
@@ -187,8 +184,7 @@ public final class EventManager {
 			// Tear down any threads waiting for this to finish
 			cur.tearDownRunningProcesses();
 			executeEvents = false;
-			processRunning = false;
-			isRunning.set(false);
+			runningProc.set(null);
 			timelistener.handleError(e);
 			return false;
 		}
@@ -200,6 +196,11 @@ public final class EventManager {
 	 */
 	final void execute(Process cur, ProcessTarget t) {
 		synchronized (lockObject) {
+			if (runningProc.get() != cur) {
+				System.out.println("Invalid Process Entering EventManager:" + cur);
+				return;
+			}
+
 			// This occurs in the startProcess or interrupt case where we start
 			// a process with a target already assigned
 			if (t != null) {
@@ -207,12 +208,7 @@ public final class EventManager {
 				return;
 			}
 
-			if (processRunning)
-				return;
-
-			processRunning = true;
 			enableSchedule();
-			isRunning.set(true);
 			timelistener.timeRunning();
 
 			// Loop continuously
@@ -224,8 +220,7 @@ public final class EventManager {
 				}
 
 				if (!executeEvents) {
-					processRunning = false;
-					isRunning.set(false);
+					runningProc.set(null);
 					timelistener.timeRunning();
 					return;
 				}
@@ -319,7 +314,7 @@ public final class EventManager {
 	}
 
 	public final boolean isRunning() {
-		return isRunning.get();
+		return runningProc.get() != null;
 	}
 
 	private void evaluateConditions() {
@@ -353,8 +348,7 @@ public final class EventManager {
 		}
 		catch (Throwable e) {
 			executeEvents = false;
-			processRunning = false;
-			isRunning.set(false);
+			runningProc.set(null);
 			timelistener.handleError(e);
 		}
 
@@ -392,8 +386,8 @@ public final class EventManager {
 		// if we don't wake a new process, take one from the pool
 		Process next = cur.preCapture();
 		if (next == null) {
-			processRunning = false;
 			next = Process.allocate(this, null, null);
+			runningProc.set(next);
 		}
 
 		next.wake();
@@ -558,15 +552,16 @@ public final class EventManager {
 
 	private void start(Process cur, ProcessTarget t) {
 		assertCanSchedule();
-		Process newProcess = Process.allocate(this, cur, t);
 
 		if (trcListener != null) {
 			disableSchedule();
 			trcListener.traceProcessStart(t);
 			enableSchedule();
 		}
-		// Transfer control to the new process
-		newProcess.wake();
+
+		Process proc = Process.allocate(this, cur, t);
+		runningProc.set(proc);
+		proc.wake();
 		threadWait(cur);
 	}
 
@@ -679,6 +674,7 @@ public final class EventManager {
 		if (proc == null)
 			proc = Process.allocate(this, cur, t);
 		proc.setNextProcess(cur);
+		runningProc.set(proc);
 		proc.wake();
 		threadWait(cur);
 	}
@@ -848,7 +844,9 @@ public final class EventManager {
 				return;
 
 			executeEvents = true;
-			Process.allocate(this, null, null).wake();
+			Process proc = Process.allocate(this, null, null);
+			runningProc.set(proc);
+			proc.wake();
 		}
 	}
 
