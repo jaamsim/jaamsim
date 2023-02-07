@@ -177,15 +177,8 @@ final class Process extends Thread {
 	/**
 	 * Returns true if we woke a next Process, otherwise return false.
 	 */
-	final boolean wakeNextProcess() {
-		Process next = nextProcess.getAndSet(null);
-		if (next != null) {
-			next.wake();
-			return false;
-		}
-		else {
-			return true;
-		}
+	final Process getNextProcess() {
+		return nextProcess.getAndSet(null);
 	}
 
 	void kill() {

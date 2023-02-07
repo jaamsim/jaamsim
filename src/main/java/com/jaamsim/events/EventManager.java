@@ -154,15 +154,16 @@ public final class EventManager {
 		}
 	}
 
-	private boolean executeTarget(Process cur, ProcessTarget t) {
+	private void executeTarget(Process cur, ProcessTarget t) {
 		try {
 			// If the event has a captured process, pass control to it
 			Process p = t.getProcess();
 			if (p != null) {
 				p.setNextProcess(cur);
 				p.wake();
+				runningProc.set(p);
 				threadWait(cur);
-				return true;
+				return;
 			}
 
 			// Execute the method
@@ -175,19 +176,23 @@ public final class EventManager {
 				enableSchedule();
 			}
 
-			return cur.wakeNextProcess();
+			p = cur.getNextProcess();
+			if (p != null) {
+				p.wake();
+				runningProc.set(p);
+			}
 		}
 		catch (Throwable e) {
 			// This is how kill() is implemented for sleeping processes.
 			if (e instanceof ThreadKilledException)
-				return false;
+				return;
 
 			// Tear down any threads waiting for this to finish
 			cur.tearDownRunningProcesses();
 			executeEvents = false;
 			runningProc.set(null);
 			timelistener.handleError(e);
-			return false;
+			return;
 		}
 	}
 
@@ -243,12 +248,12 @@ public final class EventManager {
 
 					// the return from execute target informs whether or not this
 					// thread should grab an new Event, or return to the pool
-					boolean bool = executeTarget(cur, nextTarget);
+					executeTarget(cur, nextTarget);
 					if (oneEvent) {
 						oneEvent = false;
 						executeEvents = false;
 					}
-					if (bool)
+					if (runningProc.get() == cur)
 						continue;
 					else
 						return;
@@ -395,6 +400,7 @@ public final class EventManager {
 			next.wake();
 		}
 
+		runningProc.set(next);
 		threadWait(cur);
 		cur.postCapture();
 	}
@@ -677,13 +683,12 @@ public final class EventManager {
 		if (proc == null) {
 			proc = Process.allocate(this, cur);
 			nextTarget = t;
-			runningProc.set(proc);
 		}
 		else {
 			proc.setNextProcess(cur);
-			runningProc.set(proc);
 			proc.wake();
 		}
+		runningProc.set(proc);
 		threadWait(cur);
 	}
 
