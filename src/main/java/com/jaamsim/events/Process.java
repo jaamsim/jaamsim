@@ -47,9 +47,6 @@ final class Process extends Thread {
 	private static final Condition waitForProcess = poolLock.newCondition();
 	private static final Condition waitInPool = poolLock.newCondition();
 
-	// These refs are only used under the pool lock to communciate to the newly woken threads
-	private ProcessTarget target; // The entity whose method is to be executed
-
 	private final AtomicReference<EventManager> evt = new AtomicReference<>(); // The EventManager that is currently managing this Process
 	private final AtomicReference<Process> nextProcess = new AtomicReference<>(); // The Process from which the present process was created
 	private final AtomicBoolean dieFlag = new AtomicBoolean();
@@ -89,7 +86,6 @@ final class Process extends Thread {
 	@Override
 	public void run() {
 		while (true) {
-			ProcessTarget t;
 			poolLock.lock();
 			try {
 				// Ensure all state is cleared before returning to the pool
@@ -114,15 +110,13 @@ final class Process extends Thread {
 					}
 				} catch (InterruptedException e) {}
 
-				t = target;
-				target = null;
 				activeFlag.set(true);
 			}
 			finally {
 				poolLock.unlock();
 			}
 
-			evt.get().execute(this, t);
+			evt.get().execute(this);
 		}
 	}
 
@@ -131,7 +125,7 @@ final class Process extends Thread {
 	}
 
 	// Set up a new process for the given entity, method, and arguments and return a process from the pool or create a new one.
-	static Process allocate(EventManager evt, Process next, ProcessTarget targ) {
+	static Process allocate(EventManager evt, Process next) {
 		while (true) {
 			poolLock.lock();
 			try {
@@ -139,7 +133,6 @@ final class Process extends Thread {
 				if (pool.size() > 0) {
 					Process proc = pool.remove(pool.size() - 1);
 					proc.evt.set(evt);
-					proc.target = targ;
 					proc.nextProcess.set(next);
 					return proc;
 				}

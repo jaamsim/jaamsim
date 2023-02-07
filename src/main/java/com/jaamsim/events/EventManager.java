@@ -46,6 +46,7 @@ public final class EventManager {
 
 	private final EventTree eventTree;
 	private final AtomicReference<Process> runningProc;
+	private ProcessTarget nextTarget;
 	private final AtomicLong currentTick;
 	private volatile boolean executeEvents;
 	private boolean disableSchedule;
@@ -194,7 +195,7 @@ public final class EventManager {
 	 * Main event execution method the eventManager, this is the only entrypoint
 	 * for Process objects taken out of the pool.
 	 */
-	final void execute(Process cur, ProcessTarget t) {
+	final void execute(Process cur) {
 		synchronized (lockObject) {
 			if (runningProc.get() != cur) {
 				System.out.println("Invalid Process Entering EventManager:" + cur);
@@ -203,7 +204,9 @@ public final class EventManager {
 
 			// This occurs in the startProcess or interrupt case where we start
 			// a process with a target already assigned
-			if (t != null) {
+			if (nextTarget != null) {
+				ProcessTarget t = nextTarget;
+				nextTarget = null;
 				executeTarget(cur, t);
 				return;
 			}
@@ -386,7 +389,7 @@ public final class EventManager {
 		// if we don't wake a new process, take one from the pool
 		Process next = cur.preCapture();
 		if (next == null) {
-			next = Process.allocate(this, null, null);
+			next = Process.allocate(this, null);
 			runningProc.set(next);
 		}
 
@@ -559,7 +562,8 @@ public final class EventManager {
 			enableSchedule();
 		}
 
-		Process proc = Process.allocate(this, cur, t);
+		Process proc = Process.allocate(this, cur);
+		nextTarget = t;
 		runningProc.set(proc);
 		proc.wake();
 		threadWait(cur);
@@ -671,8 +675,10 @@ public final class EventManager {
 		ProcessTarget t = rem(handle);
 
 		Process proc = t.getProcess();
-		if (proc == null)
-			proc = Process.allocate(this, cur, t);
+		if (proc == null) {
+			proc = Process.allocate(this, cur);
+			nextTarget = t;
+		}
 		proc.setNextProcess(cur);
 		runningProc.set(proc);
 		proc.wake();
@@ -844,7 +850,7 @@ public final class EventManager {
 				return;
 
 			executeEvents = true;
-			Process proc = Process.allocate(this, null, null);
+			Process proc = Process.allocate(this, null);
 			runningProc.set(proc);
 			proc.wake();
 		}
