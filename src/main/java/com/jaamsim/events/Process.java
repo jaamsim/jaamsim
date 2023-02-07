@@ -45,7 +45,7 @@ final class Process extends Thread {
 
 	private static final ReentrantLock poolLock = new ReentrantLock();
 	private static final Condition waitForProcess = poolLock.newCondition();
-	private static final Condition waitInPool = poolLock.newCondition();
+	private final Condition waitInPool = poolLock.newCondition();
 
 	private final AtomicReference<EventManager> evt = new AtomicReference<>(); // The EventManager that is currently managing this Process
 	private final AtomicReference<Process> nextProcess = new AtomicReference<>(); // The Process from which the present process was created
@@ -102,13 +102,13 @@ final class Process extends Thread {
 				// Note: the try/while(true)/catch construct is needed to avoid
 				// spurious wake ups allowed as of Java 5.  All legitimate wake
 				// ups are done through the InterruptedException.
-				try {
-					while (true) {
-						waitInPool.await();
-						if (evt.get() == null)
-							System.out.println("Spurious wakeup in process pool.");
-					}
-				} catch (InterruptedException e) {}
+				while (true) {
+					waitInPool.awaitUninterruptibly();
+					if (evt.get() == null)
+						System.out.println("Spurious wakeup in process pool.");
+					else
+						break;
+				}
 
 				activeFlag.set(true);
 			}
@@ -134,6 +134,7 @@ final class Process extends Thread {
 					Process proc = pool.remove(pool.size() - 1);
 					proc.evt.set(evt);
 					proc.nextProcess.set(next);
+					proc.waitInPool.signal();
 					return proc;
 				}
 				// If there are no process in the pool, then create a new one and add it to the pool

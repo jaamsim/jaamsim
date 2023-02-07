@@ -390,10 +390,10 @@ public final class EventManager {
 		Process next = cur.preCapture();
 		if (next == null) {
 			next = Process.allocate(this, null);
-			runningProc.set(next);
 		}
-
-		next.wake();
+		else {
+			next.wake();
+		}
 
 		threadWait(cur);
 		cur.postCapture();
@@ -565,7 +565,6 @@ public final class EventManager {
 		Process proc = Process.allocate(this, cur);
 		nextTarget = t;
 		runningProc.set(proc);
-		proc.wake();
 		threadWait(cur);
 	}
 
@@ -678,10 +677,13 @@ public final class EventManager {
 		if (proc == null) {
 			proc = Process.allocate(this, cur);
 			nextTarget = t;
+			runningProc.set(proc);
 		}
-		proc.setNextProcess(cur);
-		runningProc.set(proc);
-		proc.wake();
+		else {
+			proc.setNextProcess(cur);
+			runningProc.set(proc);
+			proc.wake();
+		}
 		threadWait(cur);
 	}
 
@@ -729,7 +731,8 @@ public final class EventManager {
 			 */
 			while (true) {
 				lockObject.wait();
-				System.out.println("Spurious wakeup in EventManager wait.");
+				if (runningProc.get() != cur)
+					System.out.println("Spurious wakeup in EventManager wait.");
 			}
 		}
 		// Catch the exception when the thread is interrupted
@@ -852,7 +855,6 @@ public final class EventManager {
 			executeEvents = true;
 			Process proc = Process.allocate(this, null);
 			runningProc.set(proc);
-			proc.wake();
 		}
 	}
 
