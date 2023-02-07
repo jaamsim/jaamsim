@@ -48,17 +48,12 @@ final class Process extends Thread {
 	private static final Condition waitInPool = poolLock.newCondition();
 
 	// These refs are only used under the pool lock to communciate to the newly woken threads
-	private EventManager eventManager; // The EventManager that is currently managing this Process
 	private ProcessTarget target; // The entity whose method is to be executed
 
+	private final AtomicReference<EventManager> evt = new AtomicReference<>(); // The EventManager that is currently managing this Process
 	private final AtomicReference<Process> nextProcess = new AtomicReference<>(); // The Process from which the present process was created
 	private final AtomicBoolean dieFlag = new AtomicBoolean();
 	private final AtomicBoolean activeFlag = new AtomicBoolean();
-
-	// These are a very special references that is only safe to use from the currently
-	// executing Process, they are essentially Threadlocal variables that are only valid
-	// when activeFlag == true
-	private EventManager evt;
 
 	// Initialize the storage for the pooled Processes
 	static {
@@ -98,7 +93,7 @@ final class Process extends Thread {
 			poolLock.lock();
 			try {
 				// Ensure all state is cleared before returning to the pool
-				evt = null;
+				evt.set(null);
 				nextProcess.set(null);
 				activeFlag.set(false);
 				dieFlag.set(false);
@@ -114,12 +109,11 @@ final class Process extends Thread {
 				try {
 					while (true) {
 						waitInPool.await();
-						System.out.println("Spurious wakeup in process pool.");
+						if (evt.get() == null)
+							System.out.println("Spurious wakeup in process pool.");
 					}
 				} catch (InterruptedException e) {}
 
-				evt = eventManager;
-				eventManager = null;
 				t = target;
 				target = null;
 				activeFlag.set(true);
@@ -128,12 +122,12 @@ final class Process extends Thread {
 				poolLock.unlock();
 			}
 
-			evt.execute(this, t);
+			evt.get().execute(this, t);
 		}
 	}
 
 	final EventManager evt() {
-		return evt;
+		return evt.get();
 	}
 
 	// Set up a new process for the given entity, method, and arguments and return a process from the pool or create a new one.
@@ -144,7 +138,7 @@ final class Process extends Thread {
 				// If there is an available process in the pool, then use it
 				if (pool.size() > 0) {
 					Process proc = pool.remove(pool.size() - 1);
-					proc.eventManager = evt;
+					proc.evt.set(evt);
 					proc.target = targ;
 					proc.nextProcess.set(next);
 					return proc;
