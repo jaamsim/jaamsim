@@ -48,7 +48,7 @@ public final class EventManager {
 
 	private final EventTree eventTree;
 	private final AtomicReference<Process> runningProc;
-	private ProcessTarget nextTarget;
+	private ProcessTarget startTarget;
 	private final AtomicLong currentTick;
 	private volatile boolean executeEvents;
 	private boolean disableSchedule;
@@ -227,9 +227,9 @@ public final class EventManager {
 
 			// This occurs in the startProcess or interrupt case where we start
 			// a process with a target already assigned
-			if (nextTarget != null) {
-				ProcessTarget t = nextTarget;
-				nextTarget = null;
+			if (startTarget != null) {
+				ProcessTarget t = startTarget;
+				startTarget = null;
 				executeTarget(cur, t);
 				return;
 			}
@@ -592,7 +592,7 @@ public final class EventManager {
 		}
 
 		Process proc = Process.allocate(this, cur);
-		nextTarget = t;
+		startTarget = t;
 		runningProc.set(proc);
 		threadWait(cur);
 	}
@@ -705,7 +705,7 @@ public final class EventManager {
 		Process proc = t.getProcess();
 		if (proc == null) {
 			proc = Process.allocate(this, cur);
-			nextTarget = t;
+			startTarget = t;
 		}
 		else {
 			proc.setNextProcess(cur);
