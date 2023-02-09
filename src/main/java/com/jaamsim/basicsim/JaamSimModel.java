@@ -26,6 +26,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicReference;
 
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.EntityLabel;
@@ -62,9 +63,6 @@ import com.jaamsim.units.Unit;
 public class JaamSimModel implements EventTimeListener {
 	// Perform debug only entity list validation logic
 	private static final boolean VALIDATE_ENT_LIST = false;
-
-	private static final Object createLock = new Object();
-	private static JaamSimModel createModel = null;
 
 	private final EventManager eventManager;
 	private Simulation simulation;
@@ -980,14 +978,6 @@ public class JaamSimModel implements EventTimeListener {
 		}
 	}
 
-	static JaamSimModel getCreateModel() {
-		synchronized (createLock) {
-			JaamSimModel mod = createModel;
-			createModel = null;
-			return mod;
-		}
-	}
-
 	/**
 	 * Creates a new entity.
 	 * @param proto - class for the entity
@@ -1031,15 +1021,20 @@ public class JaamSimModel implements EventTimeListener {
 		return ent;
 	}
 
+
+	private static AtomicReference<JaamSimModel> createModel = new AtomicReference<>();
+
+	static JaamSimModel getCreateModel() {
+		return createModel.getAndSet(null);
+	}
+
 	private static final Class<?>[] defArgClasses = new Class[0];
 	private static final Object[] defArgs = new Object[0];
 	public final <T extends Entity> T createInstance(Class<T> proto) {
 		T ent = null;
 		try {
-			synchronized (createLock) {
-				createModel = this;
-				ent = proto.getConstructor(defArgClasses).newInstance(defArgs);
-			}
+			while (!createModel.compareAndSet(null, this)) {}
+			ent = proto.getConstructor(defArgClasses).newInstance(defArgs);
 			addInstance(ent);
 		}
 		catch (Throwable e) {}
