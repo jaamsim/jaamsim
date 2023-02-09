@@ -278,12 +278,12 @@ public class Entity {
 			ent.kill();
 		}
 
-		if (cloneList != null) {
-			for (Entity clone : cloneList) {
+		ArrayList<Entity> list = getCloneList();
+		if (list != null) {
+			for (Entity clone : list) {
 				clone.prototype = null;
 				clone.kill();
 			}
-			cloneList = null;
 		}
 		clonePool = null;
 
@@ -1101,8 +1101,12 @@ public class Entity {
 		return cloneList.remove(ent);
 	}
 
-	public synchronized ArrayList<Entity> getCloneList() {
-		ArrayList<Entity> ret = cloneList;
+	private synchronized ArrayList<Entity> getCloneList() {
+		return cloneList;
+	}
+
+	public ArrayList<Entity> getAllClones() {
+		ArrayList<Entity> ret = getCloneList();
 		if (ret == null)
 			ret = new ArrayList<>();
 
@@ -1219,7 +1223,7 @@ public class Entity {
 	 description = "List of entities whose prototype is this entity.",
 	    sequence = 5)
 	public ArrayList<Entity> getCloneList(double simTime) {
-		ArrayList<Entity> ret = getCloneList();
+		ArrayList<Entity> ret = getAllClones();
 		Collections.sort(ret, InputAgent.uiEntitySortOrder);
 		return ret;
 	}

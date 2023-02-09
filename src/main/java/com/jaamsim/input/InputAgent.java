@@ -602,7 +602,7 @@ public class InputAgent {
 
 		// Execute the input callback for the entity and its clones
 		in.doCallback(ent);
-		for (Entity clone : ent.getCloneList()) {
+		for (Entity clone : ent.getAllClones()) {
 			Input<?> cloneIn = clone.getInput(in.getKeyword());
 			cloneIn.doCallback(clone);
 		}
