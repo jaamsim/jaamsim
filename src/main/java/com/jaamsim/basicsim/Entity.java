@@ -550,6 +550,20 @@ public class Entity {
 		}
 	}
 
+	/**
+	 * Copies the present attribute values from one entity to another.
+	 * @param ent - entity whose attribute values are to be copied
+	 * @param target - entity whose attribute values are to be assigned
+	 */
+	public static void copyAttributeValues(Entity ent, Entity target) {
+		for (AttributeHandle sourceHandle : ent.attributeMap.values()) {
+			AttributeHandle targetHandle = target.attributeMap.get(sourceHandle.getName());
+			if (targetHandle == null)
+				continue;
+			targetHandle.setValue(sourceHandle.copyValue());
+		}
+	}
+
 	public ArrayList<Entity> getEntityReferences() {
 		ArrayList<Entity> ret = new ArrayList<>();
 		for (Input<?> inp : inpList) {
