@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2012 Ausenco Engineering Canada Inc.
- * Copyright (C) 2020-2022 JaamSim Software Inc.
+ * Copyright (C) 2020-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,6 +55,8 @@ public Component getTableCellRendererComponent(JTable table, Object value,
 	// 1) Keyword
 	if (column == 0) {
 		str = in.getKeyword();
+		if (in.isLocked())
+			str = EditBox.formatLockedText(str);
 	}
 
 	// 2) Default value
