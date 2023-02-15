@@ -160,6 +160,8 @@ public class Simulation extends Entity {
 	private final IntegerInput maxEntitiesToDisplay;
 
 	@Keyword(description = "If TRUE, the 'Trace' keyword for each object is activated. "
+	                     + "For an object to be traced, both the 'EnableTracing' input for "
+	                     + "Simulation and the 'Trace' input for the object must be set to TRUE. "
 	                     + "Trace outputs are written to standard out and can used by a "
 	                     + "programmer to track the interal logic for one or more selected "
 	                     + "objects as the model is executed. "
@@ -994,6 +996,11 @@ public class Simulation extends Entity {
 
 	public int getMaxEntitiesToDisplay() {
 		return maxEntitiesToDisplay.getValue();
+	}
+
+	@Override
+	public boolean isEnableTracing() {
+		return enableTracing.getValue();
 	}
 
 	public boolean isShowLabels() {

@@ -593,6 +593,13 @@ public class Entity {
 		this.clearFlag(FLAG_TRACE);
 	}
 
+	public void setTraceFlag(boolean bool) {
+		if (bool)
+			setFlag(FLAG_TRACE);
+		else
+			clearFlag(FLAG_TRACE);
+	}
+
 	public final boolean isTraceFlag() {
 		return this.testFlag(FLAG_TRACE);
 	}
@@ -718,16 +725,17 @@ public class Entity {
 		@Override
 		public void callback(Entity ent, Input<?> inp) {
 			BooleanInput trc = (BooleanInput)inp;
-			if (trc.getValue())
-				ent.setTraceFlag();
-			else
-				ent.clearTraceFlag();
-
+			ent.setTraceFlag(trc.getValue() && ent.isEnableTracing());
 		}
 	};
 
+	public boolean isEnableTracing() {
+		return getSimulation() != null && getSimulation().isEnableTracing();
+	}
+
 	public void enableTracing(boolean bool) {
 		trace.setHidden(!bool);
+		setTraceFlag(bool && trace.getValue());
 	}
 
 	static final InputCallback attributeDefinitionListCallback = new InputCallback() {
