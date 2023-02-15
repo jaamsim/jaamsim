@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2015 Ausenco Engineering Canada Inc.
- * Copyright (C) 2017-2021 JaamSim Software Inc.
+ * Copyright (C) 2017-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.basicsim.ObjectType;
 import com.jaamsim.units.Unit;
 
-public class UnitTypeListInput extends ListInput<ArrayList<ObjectType>> {
+public class UnitTypeListInput extends ArrayListInput<ObjectType> {
 	private ArrayList<Class<? extends Unit>> unitTypeList;
 	private ArrayList<Class<? extends Unit>> defaultUnitTypeList;
 
@@ -49,26 +49,15 @@ public class UnitTypeListInput extends ListInput<ArrayList<ObjectType>> {
 	}
 
 	public ArrayList<Class<? extends Unit>> getUnitTypeList() {
+		if (isDef && protoInput != null)
+			return ((UnitTypeListInput) protoInput).getUnitTypeList();
 		return unitTypeList;
-	}
-
-	@Override
-	public int getListSize() {
-		if (unitTypeList == null)
-			return 0;
-		return unitTypeList.size();
 	}
 
 	@Override
 	public void reset() {
 		super.reset();
 		unitTypeList = defaultUnitTypeList;
-	}
-
-	@Override
-	public void copyFrom(Entity thisEnt, Input<?> in) {
-		super.copyFrom(thisEnt, in);
-		setUnitTypeList(value);
 	}
 
 	@Override

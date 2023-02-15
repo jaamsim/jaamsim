@@ -75,7 +75,7 @@ public class FileInput extends Input<URI> {
 
 	@Override
 	public void getValueTokens(ArrayList<String> toks) {
-		if (value == null || ent == null || isDefault())
+		if (value == null || ent == null || isDef)
 			return;
 
 		toks.add(InputAgent.getRelativeFilePath(ent.getJaamSimModel(), value));

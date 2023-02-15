@@ -55,7 +55,7 @@ public class MimicEntity extends DisplayEntity {
 	@Override
 	public ArrayList<DisplayModel> getDisplayModelList() {
 		try {
-			DisplayEntity ent = sourceEntity.getNextEntity(0.0d);
+			DisplayEntity ent = sourceEntity.getNextEntity(this, 0.0d);
 			if (ent != null) {
 				return ent.getDisplayModelList();
 			}
@@ -67,7 +67,7 @@ public class MimicEntity extends DisplayEntity {
 	@Override
 	public ArrayList<DisplayModelBinding> getDisplayBindings() {
 		try {
-			DisplayEntity ent = sourceEntity.getNextEntity(0.0d);
+			DisplayEntity ent = sourceEntity.getNextEntity(this, 0.0d);
 			if (ent != null && sourceBindings != ent.getDisplayBindings()) {
 				sourceBindings = ent.getDisplayBindings();
 				this.clearBindings();

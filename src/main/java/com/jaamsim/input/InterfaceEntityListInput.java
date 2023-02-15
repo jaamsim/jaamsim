@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018-2021 JaamSim Software Inc.
+ * Copyright (C) 2018-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ import java.util.Collections;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.JaamSimModel;
 
-public class InterfaceEntityListInput<T> extends ListInput<ArrayList<T>> {
+public class InterfaceEntityListInput<T> extends ArrayListInput<T> {
 	private Class<T> entClass;
 	private boolean unique; // flag to determine if list must be unique or not
 	private boolean even;  // flag to determine if there must be an even number of entries
@@ -49,14 +49,6 @@ public class InterfaceEntityListInput<T> extends ListInput<ArrayList<T>> {
 			Input.assertCountEven(kw);
 
 		value = Input.parseInterfaceEntityList(thisEnt.getJaamSimModel(), kw, entClass, unique);
-	}
-
-	@Override
-	public int getListSize() {
-		if (value == null)
-			return 0;
-		else
-			return value.size();
 	}
 
 	public void setUnique(boolean unique) {
@@ -138,7 +130,7 @@ public class InterfaceEntityListInput<T> extends ListInput<ArrayList<T>> {
 
 	@Override
 	public void getValueTokens(ArrayList<String> toks) {
-		if (value == null || isDefault())
+		if (value == null || isDef)
 			return;
 
 		for (int i = 0; i < value.size(); i++) {

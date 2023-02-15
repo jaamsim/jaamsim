@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2019 JaamSim Software Inc.
+ * Copyright (C) 2019-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,13 +54,6 @@ public class UnitTypeInput extends Input<ObjectType> {
 	}
 
 	@Override
-	public void copyFrom(Entity thisEnt, Input<?> in) {
-		super.copyFrom(thisEnt, in);
-		UnitTypeInput inp = (UnitTypeInput) in;
-		unitType = inp.unitType;
-	}
-
-	@Override
 	public void parse(Entity thisEnt, KeywordIndex kw)
 	throws InputErrorException {
 		Input.assertCount(kw, 1);
@@ -77,6 +70,8 @@ public class UnitTypeInput extends Input<ObjectType> {
 	}
 
 	public Class<? extends Unit> getUnitType() {
+		if (isDef && protoInput != null)
+			return ((UnitTypeInput) protoInput).getUnitType();
 		return unitType;
 	}
 

@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2002-2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2022 JaamSim Software Inc.
+ * Copyright (C) 2016-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -494,13 +494,10 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	}
 
 	public void setTitle(JaamSimModel sm, int val) {
-		String str = "JaamSim";
-		if (sm.getSimulation() != null)
-			str = sm.getSimulation().getModelName();
 		StringBuilder sb = new StringBuilder();
 		if (val > 0)
 			sb.append(val).append("% ");
-		sb.append(sm.getName()).append(" - ").append(str);
+		sb.append(sm.getName()).append(" - ").append(AboutBox.softwareName);
 		setTitle(sb.toString());
 	}
 
@@ -2156,7 +2153,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				ArrayList<KeywordIndex> kwList = new ArrayList<>();
 				for (Input<?> in : selectedEntity.getEditableInputs()) {
 					String cat = in.getCategory();
-					if (in.isDefault() || !cat.equals(Entity.FORMAT) && !cat.equals(Entity.FONT))
+					if (in.isDef() || !cat.equals(Entity.FORMAT) && !cat.equals(Entity.FONT))
 						continue;
 					KeywordIndex kw = InputAgent.formatArgs(in.getKeyword());
 					kwList.add(kw);
@@ -2858,7 +2855,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			@Override
 			public void actionPerformed( ActionEvent event ) {
 				JaamSimModel sim = getJaamSimModel();
-				if (sim.getSimState() == JaamSimModel.SIM_STATE_RUNNING) {
+				if (sim.isRunningState()) {
 					GUIFrame.this.pauseSimulation();
 				}
 				controlStartResume.requestFocusInWindow();
@@ -3059,7 +3056,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		}
 
 		// Do nothing further if the simulation is not executing events
-		if (sim.getSimState() != JaamSimModel.SIM_STATE_RUNNING)
+		if (!sim.isRunningState())
 			return;
 
 		// Set the speedup factor display
@@ -3151,14 +3148,13 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	public boolean startSimulation() {
 		JaamSimModel sim = getJaamSimModel();
 		double pauseTime = sim.getSimulation().getPauseTime();
-		if (sim.getSimState() <= JaamSimModel.SIM_STATE_CONFIGURED) {
+		if (!sim.isStarted()) {
 			boolean confirmed = true;
 			if (sim.isSessionEdited()) {
 				confirmed = GUIFrame.showSaveChangesDialog(this);
 			}
 			if (confirmed) {
-				if (!sim.getSimulation().isRealTime()
-						&& runManager.getNumberOfRuns() > 1) {
+				if (!sim.isRealTime() && runManager.getNumberOfRuns() > 1) {
 					RunProgressBox.getInstance().setShow(true);
 				}
 				new Thread(new Runnable() {
@@ -3170,9 +3166,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			}
 			return confirmed;
 		}
-		else if (sim.getSimState() == JaamSimModel.SIM_STATE_PAUSED) {
-			if (!sim.getSimulation().isRealTime()
-					&& runManager.getNumberOfRuns() > 1) {
+		else if (sim.isPausedState()) {
+			if (!sim.isRealTime() && runManager.getNumberOfRuns() > 1) {
 				RunProgressBox.getInstance().setShow(true);
 			}
 			new Thread(new Runnable() {
@@ -3191,7 +3186,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	 * Pauses the simulation run.
 	 */
 	private void pauseSimulation() {
-		if (getJaamSimModel().getSimState() == JaamSimModel.SIM_STATE_RUNNING)
+		if (getJaamSimModel().isRunningState())
 			new Thread(new Runnable() {
 				@Override
 				public void run() {
@@ -3207,9 +3202,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	 */
 	public void stopSimulation() {
 		JaamSimModel sim = getJaamSimModel();
-		if (sim.getSimState() == JaamSimModel.SIM_STATE_RUNNING ||
-		    sim.getSimState() == JaamSimModel.SIM_STATE_PAUSED ||
-		    sim.getSimState() == JaamSimModel.SIM_STATE_ENDED) {
+		if (sim.isStarted()) {
 			new Thread(new Runnable() {
 				@Override
 				public void run() {
@@ -3835,7 +3828,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			String cat = in.getCategory();
 			if (!cat.equals(Entity.FORMAT) && !cat.equals(Entity.FONT))
 				continue;
-			if (!in.isDefault()) {
+			if (!in.isDef()) {
 				bool = true;
 				break;
 			}
@@ -4466,11 +4459,12 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			splashScreen.setVisible(true);
 		}
 
-		// Record info on the operating system and Java version
+		// Record info on the operating system, Java version, and JaamSim version
 		LogBox.format("Operating System: %s (version: %s)",
 				System.getProperty("os.name"), System.getProperty("os.version"));
-		LogBox.format("Java: %s (version: %s)%n",
+		LogBox.format("Java: %s (version: %s)",
 				System.getProperty("java.vendor"), System.getProperty("java.version"));
+		LogBox.format("Software: %s (version: %s)%n", AboutBox.softwareName, AboutBox.version);
 
 		// create a graphic simulation
 		LogBox.logLine("Loading Simulation Environment ... ");
@@ -4873,6 +4867,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		}
 
 		InputAgent.logMessage(sim, "Fatal Error while loading file '%s': %s\n", file.getName(), t.getMessage());
+		InputAgent.logStackTrace(sim, t);
 		GUIFrame.showErrorDialog("Fatal Error",
 				String.format("A fatal error has occured while loading the file '%s':", file.getName()),
 				t.getMessage(),

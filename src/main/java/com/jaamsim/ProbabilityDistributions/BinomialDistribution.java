@@ -65,22 +65,22 @@ public class BinomialDistribution extends Distribution {
 
 	@Override
 	protected double getSample(double simTime) {
-		int n = (int) numberOfTrials.getNextSample(simTime);
-		double p = probability.getNextSample(simTime);
+		int n = (int) numberOfTrials.getNextSample(this, simTime);
+		double p = probability.getNextSample(this, simTime);
 		return getSample(n, p, rng);
 	}
 
 	@Override
 	protected double getMean(double simTime) {
-		int n = (int) numberOfTrials.getNextSample(simTime);
-		double p = probability.getNextSample(simTime);
+		int n = (int) numberOfTrials.getNextSample(this, simTime);
+		double p = probability.getNextSample(this, simTime);
 		return getMean(n, p);
 	}
 
 	@Override
 	protected double getStandardDev(double simTime) {
-		int n = (int) numberOfTrials.getNextSample(simTime);
-		double p = probability.getNextSample(simTime);
+		int n = (int) numberOfTrials.getNextSample(this, simTime);
+		double p = probability.getNextSample(this, simTime);
 		return getStandardDev(n, p);
 	}
 
@@ -91,7 +91,7 @@ public class BinomialDistribution extends Distribution {
 
 	@Override
 	protected double getMax(double simTime) {
-		int n = (int) numberOfTrials.getNextSample(simTime);
+		int n = (int) numberOfTrials.getNextSample(this, simTime);
 		return n;
 	}
 

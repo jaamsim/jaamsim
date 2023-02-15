@@ -131,7 +131,7 @@ public class Statistics extends LinkedComponent {
 
 		// Update the statistics
 		if (!sampleValue.isDefault()) {
-			double val = sampleValue.getNextSample(simTime);
+			double val = sampleValue.getNextSample(this, simTime);
 			sampStats.addValue(val);
 			timeStats.addValue(simTime, val);
 			if (!histogramBinWidth.isDefault()) {

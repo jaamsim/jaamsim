@@ -37,16 +37,6 @@ public class BooleanProvInput extends Input<BooleanProvider> {
 	}
 
 	@Override
-	public void copyFrom(Entity thisEnt, Input<?> in) {
-		super.copyFrom(thisEnt, in);
-
-		// An expression input must be re-parsed to reset the entity referred to by "this"
-		if (value instanceof BooleanProvExpression) {
-			parseFrom(thisEnt, in);
-		}
-	}
-
-	@Override
 	public String applyConditioning(String str) {
 		if (str.equals("t") || str.equals("T") || str.equals("1"))
 			return BooleanInput.TRUE;
@@ -73,7 +63,7 @@ public class BooleanProvInput extends Input<BooleanProvider> {
 
 	@Override
 	public void getValueTokens(ArrayList<String> toks) {
-		if (value == null || isDefault())
+		if (value == null || isDef)
 			return;
 		toks.add(value.toString());
 	}
@@ -102,7 +92,7 @@ public class BooleanProvInput extends Input<BooleanProvider> {
 
 	public boolean getNextBoolean(double simTime) {
 		try {
-			return value.getNextBoolean(simTime);
+			return getValue().getNextBoolean(simTime);
 		}
 		catch (ErrorException e) {
 			e.keyword = getKeyword();

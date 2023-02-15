@@ -1,7 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2023 JaamSim Software Inc.
+ * Copyright (C) 2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,22 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.jaamsim.ProcessFlow;
+package com.jaamsim.input;
 
-import com.jaamsim.Graphics.DisplayEntity;
+import java.util.ArrayList;
 
-public class Unpack extends AbstractUnpack {
+public abstract class ArrayListInput<T> extends ListInput<ArrayList<T>> {
 
-	public Unpack() {}
-
-	@Override
-	protected void disposeContainer(EntContainer c) {
-		((DisplayEntity)c).dispose();
+	public ArrayListInput(String key, String cat, ArrayList<T> def) {
+		super(key, cat, def);
 	}
 
 	@Override
-	protected int getNumberToRemove() {
-		return Integer.MAX_VALUE;
+	public int getListSize() {
+		ArrayList<T> val = getValue();
+		if (val == null)
+			return 0;
+		else
+			return val.size();
 	}
 
 }

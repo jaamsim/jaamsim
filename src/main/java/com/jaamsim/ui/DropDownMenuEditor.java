@@ -62,7 +62,7 @@ public class DropDownMenuEditor extends CellEditor {
 			menu.show(panel, 0, panel.getHeight());
 
 			// Scroll to show the present value
-			if (input.isDefault())
+			if (input.isDef())
 				return;
 			int index = options.indexOf(valStr);
 			if (index != -1) {

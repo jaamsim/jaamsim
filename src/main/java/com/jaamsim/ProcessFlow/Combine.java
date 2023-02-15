@@ -117,6 +117,7 @@ public class Combine extends AbstractCombine {
 
 	@Override
 	public void updateGraphics(double simTime) {
+		super.updateGraphics(simTime);
 
 		// Copy the list to avoid concurrent modification exceptions
 		ArrayList<DisplayEntity> copiedList;

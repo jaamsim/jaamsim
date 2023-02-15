@@ -24,20 +24,12 @@ import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.basicsim.JaamSimModel;
 
 
-public class AssignmentListInput extends ListInput<ArrayList<ExpParser.Assignment>> {
+public class AssignmentListInput extends ArrayListInput<ExpParser.Assignment> {
 
 	private ArrayList<ExpEvaluator.EntityParseContext> parseContextList;
 
 	public AssignmentListInput(String key, String cat, ArrayList<ExpParser.Assignment> def){
 		super(key, cat, def);
-	}
-
-	@Override
-	public void copyFrom(Entity thisEnt, Input<?> in) {
-		super.copyFrom(thisEnt, in);
-
-		// An expression input must be re-parsed to reset the entity referred to by "this"
-		parseFrom(thisEnt, in);
 	}
 
 	@Override
@@ -74,7 +66,7 @@ public class AssignmentListInput extends ListInput<ArrayList<ExpParser.Assignmen
 
 	@Override
 	public void getValueTokens(ArrayList<String> toks) {
-		if (value == null || isDefault())
+		if (value == null || isDef)
 			return;
 
 		for (int i = 0; i < value.size(); i++) {
@@ -82,14 +74,6 @@ public class AssignmentListInput extends ListInput<ArrayList<ExpParser.Assignmen
 			toks.add(parseContextList.get(i).getUpdatedSource());
 			toks.add("}");
 		}
-	}
-
-	@Override
-	public int getListSize() {
-		if (value == null)
-			return 0;
-		else
-			return value.size();
 	}
 
 	@Override

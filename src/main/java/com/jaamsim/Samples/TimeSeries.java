@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018-2020 JaamSim Software Inc.
+ * Copyright (C) 2018-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -484,8 +484,12 @@ public class TimeSeries extends DisplayEntity implements TimeSeriesProvider, Sub
 		return valueLow + (ticks - ticksLow)*(valueHigh - valueLow)/(ticksHigh - ticksLow);
 	}
 
-	@Override
 	public final double getNextSample(double simTime) {
+		return getNextSample(this, simTime);
+	}
+
+	@Override
+	public final double getNextSample(Entity thisEnt, double simTime) {
 		return getValue(getTSPointForTicks(getTicks(simTime)));
 	}
 

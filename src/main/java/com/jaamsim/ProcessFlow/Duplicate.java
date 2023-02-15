@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2022 JaamSim Software Inc.
+ * Copyright (C) 2016-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -74,7 +74,7 @@ public class Duplicate extends LinkedComponent {
 		// Number of targets entered by the user
 		int[] ret = new int[targetComponentList.getListSize()];
 		for (int i = 0; i < numberOfDuplicates.getListSize(); i++) {
-			int n = (int) numberOfDuplicates.getNextSample(i, simTime);
+			int n = (int) numberOfDuplicates.getNextSample(i, this, simTime);
 			ret[i] = n;
 		}
 
@@ -106,8 +106,9 @@ public class Duplicate extends LinkedComponent {
 			for (int i = 0; i < num[index]; i++) {
 
 				// Create the duplicated entity
-				DisplayEntity dup = InputAgent.generateEntityWithName(getJaamSimModel(), ent.getClass(), name + n);
-				Entity.fastCopyInputs(ent, dup);
+				Entity proto = ent.getPrototype();
+				DisplayEntity dup = (DisplayEntity) InputAgent.getGeneratedClone(proto, name + n);
+				Entity.copyAttributeValues(ent, dup);
 
 				// Set the state for the duplicated entity
 				if (dup instanceof StateEntity) {

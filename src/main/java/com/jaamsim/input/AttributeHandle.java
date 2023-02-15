@@ -22,26 +22,21 @@ import com.jaamsim.units.Unit;
 
 public class AttributeHandle extends ValueHandle {
 	private final String attributeName;
-	private ExpResult initialValue;
+	private final ExpResult initialValue;
 	private ExpResult value;
-	private Class<? extends Unit> unitType;
+	private final Class<? extends Unit> unitType;
 
-	public AttributeHandle(Entity e, String outputName) {
+	public AttributeHandle(Entity e, String name, ExpResult initVal, ExpResult val, Class<? extends Unit> ut) {
 		super(e);
-		this.attributeName = outputName;
-	}
-
-	public void setUnitType(Class<? extends Unit> ut) {
+		attributeName = name;
+		initialValue = initVal;
+		value = val;
 		unitType = ut;
 	}
 
 	@Override
 	public Class<? extends Unit> getUnitType() {
 		return unitType;
-	}
-
-	public void setInitialValue(ExpResult val) {
-		initialValue = val;
 	}
 
 	public ExpResult getInitialValue() {
@@ -58,9 +53,6 @@ public class AttributeHandle extends ValueHandle {
 	}
 
 	public <T> T getValue(Class<T> klass) {
-		if (!ent.hasAttribute(attributeName)) {
-			return null;
-		}
 		if (value == null) {
 			return null;
 		}
@@ -68,9 +60,6 @@ public class AttributeHandle extends ValueHandle {
 	}
 
 	public ExpResult copyValue() {
-		if (!ent.hasAttribute(attributeName)) {
-			return null;
-		}
 		if (value == null) {
 			return null;
 		}

@@ -27,11 +27,11 @@ import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.KeywordIndex;
-import com.jaamsim.input.ListInput;
+import com.jaamsim.input.ArrayListInput;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 
-public class SampleListInput extends ListInput<ArrayList<SampleProvider>> {
+public class SampleListInput extends ArrayListInput<SampleProvider> {
 
 	private ArrayList<Class<? extends Unit>> unitTypeList;
 	private boolean dimensionless = false;
@@ -58,7 +58,7 @@ public class SampleListInput extends ListInput<ArrayList<SampleProvider>> {
 			return;
 
 		// Save the new unit types
-		if (!isDefault())
+		if (!isDef)
 			setValid(false);
 		unitTypeList = new ArrayList<>(utList);
 
@@ -107,14 +107,6 @@ public class SampleListInput extends ListInput<ArrayList<SampleProvider>> {
 	}
 
 	@Override
-	public void copyFrom(Entity thisEnt, Input<?> in) {
-		super.copyFrom(thisEnt, in);
-
-		// An expression input must be re-parsed to reset the entity referred to by "this"
-		parseFrom(thisEnt, in);
-	}
-
-	@Override
 	public void parse(Entity thisEnt, KeywordIndex kw)
 	throws InputErrorException {
 		ArrayList<KeywordIndex> subArgs = kw.getSubArgs();
@@ -128,7 +120,7 @@ public class SampleListInput extends ListInput<ArrayList<SampleProvider>> {
 				try {
 					SampleProvider sp = Input.parseSampleExp(argKw, thisEnt, minValue, maxValue, getUnitType(i));
 					if (integerValue && sp instanceof SampleConstant)
-						sp = new SampleConstant((int) sp.getNextSample(0.0d));
+						sp = new SampleConstant((int) sp.getNextSample(thisEnt, 0.0d));
 					temp.add(sp);
 				}
 				catch (InputErrorException e) {
@@ -150,7 +142,7 @@ public class SampleListInput extends ListInput<ArrayList<SampleProvider>> {
 			try {
 				SampleProvider sp = Input.parseSampleExp(subArg, thisEnt, minValue, maxValue, getUnitType(i));
 				if (integerValue && sp instanceof SampleConstant)
-					sp = new SampleConstant((int) sp.getNextSample(0.0d));
+					sp = new SampleConstant((int) sp.getNextSample(thisEnt, 0.0d));
 				temp.add(sp);
 			}
 			catch (InputErrorException e) {
@@ -175,14 +167,6 @@ public class SampleListInput extends ListInput<ArrayList<SampleProvider>> {
 	}
 
 	@Override
-	public int getListSize() {
-		if (value == null)
-			return 0;
-		else
-			return value.size();
-	}
-
-	@Override
 	public ArrayList<String> getValidOptions(Entity ent) {
 		ArrayList<String> list = new ArrayList<>();
 		JaamSimModel simModel = ent.getJaamSimModel();
@@ -197,14 +181,20 @@ public class SampleListInput extends ListInput<ArrayList<SampleProvider>> {
 
 	@Override
 	public void getValueTokens(ArrayList<String> toks) {
-		if (value == null || valueTokens == null || isDefault())
+		if (value == null || valueTokens == null || isDef)
 			return;
 
 		// No inner braces
 		if (!valueTokens[0].equals("{")) {
 			for (int i = 0; i < value.size(); i++) {
-				if (value.get(i) instanceof SampleConstant && !integerValue)
+				if (value.get(i) instanceof SampleConstant && !integerValue) {
 					toks.add(valueTokens[i]);
+					// Single input value with dimensions
+					if (!dimensionless) {
+						toks.add(valueTokens[i + 1]);
+						return;
+					}
+				}
 				else
 					toks.add(value.get(i).toString());
 			}
@@ -288,12 +278,12 @@ public class SampleListInput extends ListInput<ArrayList<SampleProvider>> {
 			sb.append("{").append(Input.BRACE_SEPARATOR);
 			Class<? extends Unit> ut = samp.getUnitType();
 			if (ut == DimensionlessUnit.class) {
-				sb.append(Double.toString(samp.getNextSample(simTime)));
+				sb.append(Double.toString(samp.getNextSample(thisEnt, simTime)));
 			}
 			else {
 				String unitString = simModel.getDisplayedUnit(ut);
 				double sifactor = simModel.getDisplayedUnitFactor(ut);
-				sb.append(Double.toString(samp.getNextSample(simTime)/sifactor));
+				sb.append(Double.toString(samp.getNextSample(thisEnt, simTime)/sifactor));
 				sb.append("[").append(unitString).append("]");
 			}
 			sb.append(Input.BRACE_SEPARATOR).append("}");
@@ -301,14 +291,18 @@ public class SampleListInput extends ListInput<ArrayList<SampleProvider>> {
 		return sb.toString();
 	}
 
-	public double getNextSample(int i, double simTime) {
+	public double getNextSample(int i, Entity thisEnt, double simTime) {
 		try {
-			return value.get(i).getNextSample(simTime);
+			return getValue().get(i).getNextSample(thisEnt, simTime);
 		}
 		catch (ErrorException e) {
 			e.keyword = getKeyword();
 			e.index = i + 1;
 			throw e;
+		}
+		catch (Exception e) {
+			throw new ErrorException("", -1, thisEnt.getName(), getKeyword(), i + 1,
+					e.getMessage(), e);
 		}
 	}
 

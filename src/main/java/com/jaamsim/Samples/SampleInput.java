@@ -68,7 +68,7 @@ public class SampleInput extends Input<SampleProvider> {
 		if (u == unitType)
 			return;
 
-		if (!isDefault())
+		if (!isDef)
 			setValid(false);
 		unitType = u;
 
@@ -88,16 +88,6 @@ public class SampleInput extends Input<SampleProvider> {
 	}
 
 	@Override
-	public void copyFrom(Entity thisEnt, Input<?> in) {
-		super.copyFrom(thisEnt, in);
-
-		// SampleExpressions must be re-parsed to reset the entity referred to by "this"
-		if (value instanceof SampleExpression) {
-			parseFrom(thisEnt, in);
-		}
-	}
-
-	@Override
 	public String applyConditioning(String str) {
 
 		// No changes required if the input is a number and unit
@@ -114,7 +104,7 @@ public class SampleInput extends Input<SampleProvider> {
 	throws InputErrorException {
 		SampleProvider sp = Input.parseSampleExp(kw, thisEnt, minValue, maxValue, unitType);
 		if (integerValue && sp instanceof SampleConstant)
-			sp = new SampleConstant((int) sp.getNextSample(0.0d));
+			sp = new SampleConstant((int) sp.getNextSample(thisEnt, 0.0d));
 		value = sp;
 		this.setValid(true);
 	}
@@ -148,7 +138,7 @@ public class SampleInput extends Input<SampleProvider> {
 
 	@Override
 	public void getValueTokens(ArrayList<String> toks) {
-		if (value == null || isDefault())
+		if (value == null || isDef)
 			return;
 
 		// Preserve the exact text for a constant value input
@@ -211,25 +201,25 @@ public class SampleInput extends Input<SampleProvider> {
 		StringBuilder sb = new StringBuilder();
 		Class<? extends Unit> ut = value.getUnitType();
 		if (ut == DimensionlessUnit.class) {
-			sb.append(Double.toString(value.getNextSample(simTime)));
+			sb.append(Double.toString(value.getNextSample(thisEnt, simTime)));
 		}
 		else {
 			String unitString = simModel.getDisplayedUnit(ut);
 			double sifactor = simModel.getDisplayedUnitFactor(ut);
-			sb.append(Double.toString(value.getNextSample(simTime)/sifactor));
+			sb.append(Double.toString(value.getNextSample(thisEnt, simTime)/sifactor));
 			sb.append("[").append(unitString).append("]");
 		}
 		return sb.toString();
 	}
 
-	public double getNextSample(double simTime) {
+	public double getNextSample(Entity thisEnt, double simTime) {
 		try {
-			double ret = value.getNextSample(simTime);
+			double ret = getValue().getNextSample(thisEnt, simTime);
 
-			if (value instanceof SampleExpression && (ret < minValue || ret > maxValue)) {
+			if (getValue() instanceof SampleExpression && (ret < minValue || ret > maxValue)) {
 				String msg = String.format(INP_ERR_DOUBLERANGE, minValue, maxValue, ret);
-				String source = ((SampleExpression) value).getExpressionString();
-				throw new ErrorException(source, 0, "", msg);
+				String source = ((SampleExpression) getValue()).getExpressionString();
+				throw new ErrorException(source, 0, thisEnt.getName(), "", -1, msg, null);
 			}
 
 			return ret;
@@ -237,6 +227,10 @@ public class SampleInput extends Input<SampleProvider> {
 		catch (ErrorException e) {
 			e.keyword = getKeyword();
 			throw e;
+		}
+		catch (Exception e) {
+			throw new ErrorException("", -1, thisEnt.getName(), getKeyword(), -1,
+					e.getMessage(), e);
 		}
 	}
 

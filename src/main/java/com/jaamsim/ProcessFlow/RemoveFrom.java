@@ -57,7 +57,7 @@ public class RemoveFrom extends AbstractUnpack {
 
 	@Override
 	protected int getNumberToRemove() {
-		return (int) numberOfEntities.getNextSample(this.getSimTime());
+		return (int) numberOfEntities.getNextSample(this, getSimTime());
 	}
 
 	// LinkDisplayable

@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2002-2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2017-2022 JaamSim Software Inc.
+ * Copyright (C) 2017-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -412,14 +412,6 @@ public class DisplayEntity extends Entity {
 							dm.getName());
 				}
 			}
-		}
-	}
-
-	@Override
-	public void earlyInit() {
-		super.earlyInit();
-		if (!this.isGenerated()) {
-			this.resetGraphics();
 		}
 	}
 
@@ -973,6 +965,8 @@ public class DisplayEntity extends Entity {
 	}
 
 	public void setDisplayModelList(ArrayList<DisplayModel> dmList) {
+		if (dmList != null && dmList.equals(displayModelList))
+			return;
 		displayModelList.clear();
 		if (dmList == null)
 			return;
@@ -1482,6 +1476,8 @@ public class DisplayEntity extends Entity {
 	 description = "Returns TRUE if the object is shown in one or more view windows.",
 	    sequence = 4)
 	public boolean getShow(double simTime) {
+		if (isPooled())
+			return false;
 		if (!showInput.isConstant())
 			return getShowInput(simTime);
 		synchronized (position) {

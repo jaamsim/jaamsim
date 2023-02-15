@@ -92,7 +92,7 @@ public class NonStatExponentialDist extends Distribution {
 	}
 
 	private double getScaleFactor(double simTime) {
-		return scaleFactor.getNextSample(simTime);
+		return scaleFactor.getNextSample(this, simTime);
 	}
 
 	@Override

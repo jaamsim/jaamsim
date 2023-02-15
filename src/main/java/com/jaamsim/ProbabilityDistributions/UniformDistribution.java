@@ -43,22 +43,22 @@ public class UniformDistribution extends Distribution {
 	protected double getSample(double simTime) {
 
 		// Select the sample from a uniform distribution between the min and max values
-		double minVal = minValueInput.getNextSample(simTime);
-		double maxVal = maxValueInput.getNextSample(simTime);
+		double minVal = minValueInput.getNextSample(this, simTime);
+		double maxVal = maxValueInput.getNextSample(this, simTime);
 		return getSample(minVal, maxVal, rng);
 	}
 
 	@Override
 	protected double getMean(double simTime) {
-		double minVal = minValueInput.getNextSample(simTime);
-		double maxVal = maxValueInput.getNextSample(simTime);
+		double minVal = minValueInput.getNextSample(this, simTime);
+		double maxVal = maxValueInput.getNextSample(this, simTime);
 		return getMean(minVal, maxVal);
 	}
 
 	@Override
 	protected double getStandardDev(double simTime) {
-		double minVal = minValueInput.getNextSample(simTime);
-		double maxVal = maxValueInput.getNextSample(simTime);
+		double minVal = minValueInput.getNextSample(this, simTime);
+		double maxVal = maxValueInput.getNextSample(this, simTime);
 		return getStandardDev(minVal, maxVal);
 	}
 

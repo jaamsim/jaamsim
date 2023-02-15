@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2015 Ausenco Engineering Canada Inc.
- * Copyright (C) 2017-2021 JaamSim Software Inc.
+ * Copyright (C) 2017-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@
 package com.jaamsim.StringProviders;
 
 import com.jaamsim.Samples.SampleProvider;
+import com.jaamsim.basicsim.Entity;
 
 public class StringProvSample implements StringProvider {
 	private final SampleProvider samp;
@@ -27,33 +28,33 @@ public class StringProvSample implements StringProvider {
 	}
 
 	@Override
-	public String getNextString(double simTime) {
-		return Double.toString(samp.getNextSample(simTime));
+	public String getNextString(Entity thisEnt, double simTime) {
+		return Double.toString(samp.getNextSample(thisEnt, simTime));
 	}
 
 	@Override
-	public String getNextString(double simTime, double siFactor) {
-		return Double.toString(samp.getNextSample(simTime)/siFactor);
+	public String getNextString(Entity thisEnt, double simTime, double siFactor) {
+		return Double.toString(samp.getNextSample(thisEnt, simTime)/siFactor);
 	}
 
 	@Override
-	public String getNextString(double simTime, double siFactor, boolean integerValue) {
+	public String getNextString(Entity thisEnt, double simTime, double siFactor, boolean integerValue) {
 		if (integerValue) {
-			return Double.toString((int)(samp.getNextSample(simTime)/siFactor));
+			return Double.toString((int)(samp.getNextSample(thisEnt, simTime)/siFactor));
 		}
 		else {
-			return Double.toString(samp.getNextSample(simTime)/siFactor);
+			return Double.toString(samp.getNextSample(thisEnt, simTime)/siFactor);
 		}
 	}
 
 	@Override
-	public String getNextString(double simTime, String fmt, double siFactor) {
-		return String.format(fmt, samp.getNextSample(simTime)/siFactor);
+	public String getNextString(Entity thisEnt, double simTime, String fmt, double siFactor) {
+		return String.format(fmt, samp.getNextSample(thisEnt, simTime)/siFactor);
 	}
 
 	@Override
-	public double getNextValue(double simTime) {
-		return samp.getNextSample(simTime);
+	public double getNextValue(Entity thisEnt, double simTime) {
+		return samp.getNextSample(thisEnt, simTime);
 	}
 
 	@Override

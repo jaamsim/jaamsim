@@ -117,12 +117,13 @@ implements SampleProvider {
 	 * @return input value to this calculation object.
 	 */
 	public double getInputValue(double simTime) {
+		if (isTraceFlag()) trace(0, "getInputValue - lastInputValue=%s", lastInputValue);
 
 		// An exception will be generated if the model has an infinite loop causing the
 		// call stack size to be exceeded
 		double ret = lastInputValue;
 		try {
-			ret = inputValue.getNextSample(simTime);
+			ret = inputValue.getNextSample(this, simTime);
 		} catch(Exception e) {
 			if (EventManager.hasCurrent()) {
 				error("Closed loop detected in calculation. Insert a UnitDelay object.");
@@ -167,11 +168,15 @@ implements SampleProvider {
 		lastValue = newValue;
 	}
 
-	@Override
 	@Output(name = "Value",
 	 description = "The result of the calculation at the present time.",
 	    unitType = UserSpecifiedUnit.class)
-	public double getNextSample(double simTime) {
+	public final double getNextSample(double simTime) {
+		return getNextSample(this, simTime);
+	}
+
+	@Override
+	public double getNextSample(Entity thisEnt, double simTime) {
 
 		// Calculate the new input value to the calculation
 		double inputVal = getInputValue(simTime);

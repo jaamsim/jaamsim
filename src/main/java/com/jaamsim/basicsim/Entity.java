@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2002-2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2022 JaamSim Software Inc.
+ * Copyright (C) 2016-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -81,9 +81,15 @@ public class Entity {
 	static final int FLAG_DEAD = 0x0100;  // entity has been deleted
 	static final int FLAG_REGISTERED = 0x0200;  // entity is included in the namedEntities HashMap
 	static final int FLAG_RETAINED = 0x0400;  // entity is retained when the model is reset between runs
+	static final int FLAG_POOLED = 0x0800;  // entity is held in its prototype's clone pool
 	private int flags;
 
 	Entity parent;
+
+	Entity prototype;
+	ArrayList<Entity> cloneList;  // registered clones
+	ArrayList<Entity> clonePool;  // generated clones available for re-use
+	private static final int MAX_POOL = 100;
 
 	private final ArrayList<Input<?>> inpList = new ArrayList<>();
 
@@ -236,6 +242,9 @@ public class Entity {
 		for (AttributeHandle h : attributeMap.values()) {
 			h.setValue(h.getInitialValue());
 		}
+
+		// Clear the clone pool
+		clonePool = null;
 	}
 
 	/**
@@ -268,6 +277,19 @@ public class Entity {
 		for (Entity ent : getChildren()) {
 			ent.kill();
 		}
+
+		ArrayList<Entity> list = getCloneList();
+		if (list != null) {
+			for (Entity clone : list) {
+				clone.prototype = null;
+				clone.kill();
+			}
+		}
+		clonePool = null;
+
+		if (prototype != null && isRegistered())
+			prototype.removeClone(this);
+
 		if (this.isDead())
 			return;
 		simModel.removeInstance(this);
@@ -327,6 +349,14 @@ public class Entity {
 
 	public final void setEdited() {
 		this.setFlag(Entity.FLAG_EDITED);
+	}
+
+	/**
+	 * Returns whether the entity is being held its prototype's clone pool, ready for re-use
+	 * @return true if the entity is pooled for re-use
+	 */
+	public final boolean isPooled() {
+		return this.testFlag(Entity.FLAG_POOLED);
 	}
 
 	/**
@@ -433,7 +463,7 @@ public class Entity {
 		// Provide stub definitions for the custom outputs
 		if (seq == 0) {
 			NamedExpressionListInput in = (NamedExpressionListInput) ent.getInput("CustomOutputList");
-			if (in != null && !in.isDefault()) {
+			if (in != null && !in.isDef()) {
 				KeywordIndex kw = InputAgent.formatInput(in.getKeyword(), in.getStubDefinition());
 				InputAgent.apply(this, kw);
 			}
@@ -465,7 +495,7 @@ public class Entity {
 
 		// Ignore a default input for a source entity
 		// (default inputs for the source entity can be assigned later for the target entity)
-		if (ignoreDef && sourceInput.isDefault())
+		if (ignoreDef && sourceInput.isDef())
 			return;
 
 		// Ignore locked inputs for generated entities.
@@ -477,6 +507,7 @@ public class Entity {
 		ArrayList<String> tmp = sourceInput.getValueTokens();
 		String oldParent = ent.getParent().getName();
 		String newParent = this.getParent().getName();
+		boolean changed = false;
 		if (!newParent.equals(oldParent)) {
 			String oldParent1 = String.format("[%s]", oldParent);
 			String oldParent2 = String.format("%s.", oldParent);
@@ -489,8 +520,16 @@ public class Entity {
 					str = newParent;
 				str = str.replace(oldParent1, newParent1);
 				str = str.replace(oldParent2, newParent2);
+				changed = changed || !str.equals(tmp.get(i));
 				tmp.set(i, str);
 			}
+		}
+
+		// Ignore an input that is inherited from the entity's prototype
+		if (getPrototype() == ent && !changed) {
+			// Clear the stub value set for a custom output
+			targetInput.reset();
+			return;
 		}
 
 		// Ignore inputs that have already been set for the target entity by either the
@@ -506,40 +545,21 @@ public class Entity {
 			targetInput.setLocked(bool);
 		}
 		catch (Exception e) {
-			String msg = String.format("%s, keyword: %s, value: %s%n%s", this, key, tmp, e.getMessage());
-			System.out.println(msg);
-			e.printStackTrace();
-			GUIListener gui = getJaamSimModel().getGUIListener();
-			if (gui != null) {
-				gui.invokeErrorDialogBox("Runtime Error", msg);
-			}
+			throw new ErrorException("", -1, getName(), key, -1, e.getMessage(), e);
 		}
 	}
 
 	/**
-	 * Copies the input values from one entity to another. This method is significantly faster
-	 * than copying and re-parsing the input data.
-	 * @param ent - entity whose inputs are to be copied.
-	 * @param target - entity whose inputs are to be assigned.
+	 * Copies the present attribute values from one entity to another.
+	 * @param ent - entity whose attribute values are to be copied
+	 * @param target - entity whose attribute values are to be assigned
 	 */
-	public static void fastCopyInputs(Entity ent, Entity target) {
-		// Loop through the original entity's inputs
-		ArrayList<Input<?>> orig = ent.getEditableInputs();
-		for (int i = 0; i < orig.size(); i++) {
-			Input<?> sourceInput = orig.get(i);
-
-			// Default values do not need to be copied
-			if (sourceInput.isDefault() || sourceInput.isSynonym())
+	public static void copyAttributeValues(Entity ent, Entity target) {
+		for (AttributeHandle sourceHandle : ent.attributeMap.values()) {
+			AttributeHandle targetHandle = target.attributeMap.get(sourceHandle.getName());
+			if (targetHandle == null)
 				continue;
-
-			// Get the matching input for the new entity
-			Input<?> targetInput = target.getEditableInputs().get(i);
-
-			// Assign the value to the copied entity's input
-			targetInput.copyFrom(target, sourceInput);
-
-			// Further processing related to this input
-			targetInput.doCallback(target);
+			targetHandle.setValue(sourceHandle.copyValue());
 		}
 	}
 
@@ -569,6 +589,13 @@ public class Entity {
 
 	public final void clearTraceFlag() {
 		this.clearFlag(FLAG_TRACE);
+	}
+
+	public void setTraceFlag(boolean bool) {
+		if (bool)
+			setFlag(FLAG_TRACE);
+		else
+			clearFlag(FLAG_TRACE);
 	}
 
 	public final boolean isTraceFlag() {
@@ -687,26 +714,27 @@ public class Entity {
 	}
 
 	public int getSubModelLevel() {
-		int ret = 0;
-		Entity ent = parent;
-		while (ent != null) {
-			ret++;
-			ent = ent.parent;
-		}
-		return ret;
+		if (parent == null)
+			return 0;
+		return parent.getSubModelLevel() + 1;
 	}
 
 	static final InputCallback traceInputCallback = new InputCallback() {
 		@Override
 		public void callback(Entity ent, Input<?> inp) {
 			BooleanInput trc = (BooleanInput)inp;
-			if (trc.getValue())
-				ent.setTraceFlag();
-			else
-				ent.clearTraceFlag();
-
+			ent.setTraceFlag(trc.getValue() && ent.isEnableTracing());
 		}
 	};
+
+	public boolean isEnableTracing() {
+		return getSimulation() != null && getSimulation().isEnableTracing();
+	}
+
+	public void enableTracing(boolean bool) {
+		trace.setHidden(!bool);
+		setTraceFlag(bool && trace.getValue());
+	}
 
 	static final InputCallback attributeDefinitionListCallback = new InputCallback() {
 		@Override
@@ -718,7 +746,7 @@ public class Entity {
 	void updateAttributeMap() {
 		attributeMap.clear();
 		for (AttributeHandle h : attributeDefinitionList.getValue()) {
-			this.addAttribute(h.getName(), h);
+			addAttribute(h.getName(), h.getInitialValue(), h.copyValue(), h.getUnitType());
 		}
 	}
 
@@ -920,8 +948,9 @@ public class Entity {
 		return desc.getValue();
 	}
 
-	private void addAttribute(String name, AttributeHandle h) {
-		attributeMap.put(name, h);
+	private void addAttribute(String name, ExpResult initVal, ExpResult val, Class<? extends Unit> ut) {
+		AttributeHandle ah = new AttributeHandle(this, name, initVal, val, ut);
+		attributeMap.put(name, ah);
 	}
 
 	public boolean hasAttribute(String name) {
@@ -1029,6 +1058,125 @@ public class Entity {
 		}
 	}
 
+	public void setPrototype(Entity proto) {
+		if (proto == prototype)
+			return;
+		if (prototype != null)
+			error("Cannot re-assign the prototype for an entity");
+		if (proto.getClass() != getClass())
+			error("An entity and its prototype must be instances of the same class");
+
+		// Record the clone with its prototype
+		prototype = proto;
+		if (isRegistered())
+			prototype.addClone(this);
+
+		// Loop through the inputs for this entity
+		for (int i = 0; i < inpList.size(); i++) {
+			Input<?> in = inpList.get(i);
+
+			// Set the prototype input
+			in.setProtoInput(prototype.inpList.get(i));
+
+			// If the inherited value is used, then perform its callback
+			if (!in.isDef() || in.isDefault())
+				continue;
+			in.doCallback(this);
+		}
+	}
+
+	public Entity getPrototype() {
+		return prototype;
+	}
+
+	public boolean isClone() {
+		return prototype != null;
+	}
+
+	public int getCloneLevel() {
+		if (prototype == null)
+			return 0;
+		return prototype.getCloneLevel() + 1;
+	}
+
+	private synchronized void addClone(Entity ent) {
+		if (cloneList == null)
+			cloneList = new ArrayList<>();
+		cloneList.add(ent);
+	}
+
+	private synchronized boolean removeClone(Entity ent) {
+		if (cloneList == null)
+			return false;
+		return cloneList.remove(ent);
+	}
+
+	private synchronized ArrayList<Entity> getCloneList() {
+		return cloneList;
+	}
+
+	public ArrayList<Entity> getAllClones() {
+		ArrayList<Entity> ret = getCloneList();
+		if (ret == null)
+			ret = new ArrayList<>();
+
+		// Include the generated entities that have not been registered
+		if (simModel.isStarted()) {
+			ret = new ArrayList<>(ret);
+			for (Entity ent : simModel.getClonesOfIterator(Entity.class)) {
+				if (ent.getPrototype() != this || ent.isRegistered() || ent.isPooled())
+					continue;
+				ret.add(ent);
+			}
+		}
+		return ret;
+	}
+
+	public void addToClonePool() {
+		prototype.addCloneToPool(this);
+	}
+
+	public void addCloneToPool(Entity clone) {
+		if (clonePool == null)
+			clonePool = new ArrayList<>();
+		clone.setFlag(Entity.FLAG_POOLED);
+		clone.setLocalName("");
+		clonePool.add(clone);
+	}
+
+	public Entity getCloneFromPool() {
+		if (clonePool == null || clonePool.isEmpty())
+			return null;
+		Entity ret = clonePool.remove(clonePool.size() - 1);
+		ret.clearFlag(Entity.FLAG_POOLED);
+
+		// Reset any inputs that were changed
+		if (ret.isEdited()) {
+			for (Input<?> in : ret.inpList) {
+				if (in.isDef())
+					continue;
+				in.reset();
+				in.doCallback(ret);
+			}
+			ret.clearFlag(Entity.FLAG_EDITED);
+		}
+
+		return ret;
+	}
+
+	/**
+	 * Removes a generated entity from the model by either pooling or killing it.
+	 */
+	public void dispose() {
+		if (!isGenerated())
+			return;
+		if (isClone() && (clonePool == null || clonePool.size() < MAX_POOL)) {
+			addToClonePool();
+			return;
+		}
+		kill();
+	}
+
 	/**
 	 * Returns the object type for this entity.
 	 * Null is returned if the entity itself is an instance of ObjectType.
@@ -1072,6 +1220,22 @@ public class Entity {
 	    sequence = 3)
 	public Entity getParentOutput(double simTime) {
 		return getParent();
+	}
+
+	@Output(name = "Prototype",
+	 description = "The entity that provides the default inputs for this entity.",
+	    sequence = 4)
+	public Entity getPrototype(double simTime) {
+		return getPrototype();
+	}
+
+	@Output(name = "CloneList",
+	 description = "List of entities whose prototype is this entity.",
+	    sequence = 5)
+	public ArrayList<Entity> getCloneList(double simTime) {
+		ArrayList<Entity> ret = getAllClones();
+		Collections.sort(ret, InputAgent.uiEntitySortOrder);
+		return ret;
 	}
 
 }

@@ -71,21 +71,21 @@ public class ErlangDistribution extends Distribution {
 
 	@Override
 	protected double getSample(double simTime) {
-		double mean = meanInput.getNextSample(simTime);
+		double mean = meanInput.getNextSample(this, simTime);
 		int shape = shapeInput.getValue();
 		return getSample(mean, shape, rng);
 	}
 
 	@Override
 	protected double getMean(double simTime) {
-		double mean = meanInput.getNextSample(simTime);
+		double mean = meanInput.getNextSample(this, simTime);
 		int shape = shapeInput.getValue();
 		return getMean(mean, shape);
 	}
 
 	@Override
 	protected double getStandardDev(double simTime) {
-		double mean = meanInput.getNextSample(simTime);
+		double mean = meanInput.getNextSample(this, simTime);
 		int shape = shapeInput.getValue();
 		return getStandardDev(mean, shape);
 	}

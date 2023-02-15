@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2010-2011 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,5 +40,10 @@ public abstract class ListInput<T> extends Input<T> {
 		maxCount = max;
 	}
 
+	/**
+	 * Returns the number of individual values that were entered to the input or were inherited
+	 * from its prototype.
+	 * @return number of values
+	 */
 	public abstract int getListSize();
 }

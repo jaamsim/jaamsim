@@ -80,24 +80,24 @@ public class WeibullDistribution extends Distribution {
 
 	@Override
 	protected double getSample(double simTime) {
-		double scale = scaleInput.getNextSample(simTime);
-		double shape = shapeInput.getNextSample(simTime);
-		double loc = locationInput.getNextSample(simTime);
+		double scale = scaleInput.getNextSample(this, simTime);
+		double shape = shapeInput.getNextSample(this, simTime);
+		double loc = locationInput.getNextSample(this, simTime);
 		return loc + getSample(scale, shape, rng);
 	}
 
 	@Override
 	protected double getMean(double simTime) {
-		double scale = scaleInput.getNextSample(simTime);
-		double shape = shapeInput.getNextSample(simTime);
-		double loc = locationInput.getNextSample(simTime);
+		double scale = scaleInput.getNextSample(this, simTime);
+		double shape = shapeInput.getNextSample(this, simTime);
+		double loc = locationInput.getNextSample(this, simTime);
 		return loc + getMean(scale, shape);
 	}
 
 	@Override
 	protected double getStandardDev(double simTime) {
-		double scale = scaleInput.getNextSample(simTime);
-		double shape = shapeInput.getNextSample(simTime);
+		double scale = scaleInput.getNextSample(this, simTime);
+		double shape = shapeInput.getNextSample(this, simTime);
 		return getStandardDev(scale, shape);
 	}
 

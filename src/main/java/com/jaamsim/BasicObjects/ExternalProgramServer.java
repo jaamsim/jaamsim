@@ -166,7 +166,7 @@ public class ExternalProgramServer extends AbstractExternalProgram {
 		String[] args = new String[n];
 
 		for (int i = 0; i < n; i++) {
-			args[i] = dataSource.getNextString(i, simTime);
+			args[i] = dataSource.getNextString(i, this, simTime);
 		}
 
 		try {

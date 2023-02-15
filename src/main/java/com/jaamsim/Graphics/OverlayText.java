@@ -397,7 +397,7 @@ public class OverlayText extends OverlayEntity implements TextEntity, EditableTe
 
 		// Default Format
 		if (formatText.isDefault()) {
-			String ret = dataSource.getNextString(simTime, siFactor);
+			String ret = dataSource.getNextString(this, simTime, siFactor);
 			if (ret == null)
 				ret = "null";
 			return ret;
@@ -405,7 +405,7 @@ public class OverlayText extends OverlayEntity implements TextEntity, EditableTe
 
 		// Dynamic text is to be displayed
 		try {
-			String ret = dataSource.getNextString(simTime, formatText.getValue(), siFactor);
+			String ret = dataSource.getNextString(this, simTime, formatText.getValue(), siFactor);
 			if (ret == null)
 				ret = "null";
 			return ret;

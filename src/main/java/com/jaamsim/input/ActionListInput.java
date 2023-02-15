@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2021 JaamSim Software Inc.
+ * Copyright (C) 2021-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.render.Action;
 
-public class ActionListInput extends ListInput<ArrayList<Action.Binding>>{
+public class ActionListInput extends ArrayListInput<Action.Binding>{
 
 	public ActionListInput(String key, String cat, ArrayList<Action.Binding> def) {
 		super(key, cat, def);
@@ -57,16 +57,8 @@ public class ActionListInput extends ListInput<ArrayList<Action.Binding>>{
 	}
 
 	@Override
-	public int getListSize() {
-		if (value == null)
-			return 0;
-		else
-			return value.size();
-	}
-
-	@Override
 	public void getValueTokens(ArrayList<String> toks) {
-		if (value == null || isDefault())
+		if (value == null || isDef)
 			return;
 
 		for (int i = 0; i < value.size(); i++) {

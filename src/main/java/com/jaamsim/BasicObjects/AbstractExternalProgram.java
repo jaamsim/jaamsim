@@ -96,7 +96,7 @@ public abstract class AbstractExternalProgram extends LinkedComponent {
 
 		ArrayList<String> list = new ArrayList<>(n);
 		for (int i = 0; i < n; i++) {
-			list.add(initialValue.getNextString(i, 0.0d));
+			list.add(initialValue.getNextString(i, this, 0.0d));
 		}
 		ArrayList<ExpResult> resList = FileToArray.getExpResultList(list, this, 0.0d);
 		return ExpCollections.wrapCollection(resList, DimensionlessUnit.class);

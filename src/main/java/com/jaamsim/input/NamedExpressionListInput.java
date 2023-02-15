@@ -26,18 +26,10 @@ import com.jaamsim.input.ExpParser.Expression;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 
-public class NamedExpressionListInput extends ListInput<ArrayList<NamedExpression>> {
+public class NamedExpressionListInput extends ArrayListInput<NamedExpression> {
 
 	public NamedExpressionListInput(String key, String cat, ArrayList<NamedExpression> def) {
 		super(key, cat, def);
-	}
-
-	@Override
-	public int getListSize() {
-		if (value == null)
-			return 0;
-		else
-			return value.size();
 	}
 
 	@Override
@@ -110,7 +102,7 @@ public class NamedExpressionListInput extends ListInput<ArrayList<NamedExpressio
 
 	@Override
 	public void getValueTokens(ArrayList<String> toks) {
-		if (value == null || isDefault())
+		if (value == null || isDef)
 			return;
 		for (NamedExpression ne : value) {
 			toks.add("{");
@@ -120,14 +112,6 @@ public class NamedExpressionListInput extends ListInput<ArrayList<NamedExpressio
 				toks.add(ne.getUnitType().getSimpleName());
 			toks.add("}");
 		}
-	}
-
-	@Override
-	public void copyFrom(Entity thisEnt, Input<?> in) {
-		super.copyFrom(thisEnt, in);
-
-		// An expression input must be re-parsed to reset the entity referred to by "this"
-		parseFrom(thisEnt, in);
 	}
 
 	@Override

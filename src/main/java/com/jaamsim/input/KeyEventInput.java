@@ -61,7 +61,7 @@ public class KeyEventInput extends Input<Integer> {
 
 	@Override
 	public void getValueTokens(ArrayList<String> toks) {
-		if (value == null || isDefault())
+		if (value == null || isDef)
 			return;
 
 		toks.add(getKeyName(value));

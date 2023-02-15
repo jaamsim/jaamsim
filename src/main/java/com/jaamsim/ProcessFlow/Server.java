@@ -71,7 +71,7 @@ public class Server extends LinkedService {
 		setEntityState(servedEntity);
 
 		// Set the service duration
-		serviceDuration = serviceTime.getNextSample(simTime);
+		serviceDuration = serviceTime.getNextSample(this, simTime);
 
 		// Assign attributes
 		assignAttributesAtStart(simTime);
@@ -111,6 +111,8 @@ public class Server extends LinkedService {
 
 	@Override
 	public void updateGraphics(double simTime) {
+		super.updateGraphics(simTime);
+
 		if (servedEntity == null)
 			return;
 		moveToProcessPosition(servedEntity);

@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2020 JaamSim Software Inc.
+ * Copyright (C) 2020-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ import com.jaamsim.math.Vec3d;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 
-public class Vec3dListInput extends ListInput<ArrayList<Vec3d>> {
+public class Vec3dListInput extends ArrayListInput<Vec3d> {
 	private Class<? extends Unit> unitType = DimensionlessUnit.class;
 
 	public Vec3dListInput(String key, String cat, ArrayList<Vec3d> def) {
@@ -66,14 +66,6 @@ public class Vec3dListInput extends ListInput<ArrayList<Vec3d>> {
 	@Override
 	public String getValidInputDesc() {
 		return String.format(Input.VALID_VEC3D_LIST, unitType.getSimpleName());
-	}
-
-	@Override
-	public int getListSize() {
-		if (value == null)
-			return 0;
-		else
-			return value.size();
 	}
 
 	@Override

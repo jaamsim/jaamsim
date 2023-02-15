@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2010-2012 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2022 JaamSim Software Inc.
+ * Copyright (C) 2016-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -176,6 +176,7 @@ public abstract class Input<T> {
 
 	protected T defValue;
 	protected T value;
+	protected Input<T> protoInput;
 
 	private boolean edited; // indicates if input has been edited for this entity
 	private boolean promptReqd; // indicates whether to prompt the user to save the configuration file
@@ -219,25 +220,6 @@ public abstract class Input<T> {
 		valueTokens = null;
 		edited = false;
 		isDef = true;
-		isValid = true;
-	}
-
-	/**
-	 * Assigns the internal state for this input to the same values as the
-	 * specified input.
-	 * @param thisEnt TODO
-	 * @param in - input object to be copied.
-	 */
-	public void copyFrom(Entity thisEnt, Input<?> in) {
-
-		@SuppressWarnings("unchecked")
-		Input<T> inp = (Input<T>) in;
-
-		// Copy the internal state
-		value = inp.value;
-		valueTokens = inp.valueTokens;
-		isDef = false;
-		edited = true;
 		isValid = true;
 	}
 
@@ -344,7 +326,18 @@ public abstract class Input<T> {
 	}
 
 	public T getValue() {
+		if (isDef && protoInput != null)
+			return protoInput.getValue();
 		return value;
+	}
+
+	@SuppressWarnings("unchecked")
+	public void setProtoInput(Input<?> in) {
+		protoInput = (Input<T>) in;
+	}
+
+	public Input<T> getProtoInput() {
+		return protoInput;
 	}
 
 	public void setHidden(boolean hide) {
@@ -412,7 +405,7 @@ public abstract class Input<T> {
 	}
 
 	public void validate() throws InputErrorException {
-		if (isReqd && isDef && !hidden)
+		if (isReqd && isDefault() && !hidden)
 			throw new InputErrorException("An input must be provided for the keyword '%s'.", keyword);
 	}
 
@@ -553,7 +546,19 @@ public abstract class Input<T> {
 		valueTokens = newValueTokens;
 	}
 
+	/**
+	 * Returns whether the input has been set or is inherited from its protoInput
+	 * @return true if the input has been set or is inherited
+	 */
 	public boolean isDefault() {
+		return isDef && (protoInput == null || protoInput.isDefault());
+	}
+
+	/**
+	 * Returns whether the input has been set.
+	 * @return true if the input has been set
+	 */
+	public boolean isDef() {
 		return isDef;
 	}
 
@@ -622,7 +627,10 @@ public abstract class Input<T> {
 	 * @return input file text
 	 */
 	public final String getValueString() {
-		if (isDefault()) return "";
+		if (isDef && protoInput != null)
+			return protoInput.getValueString();
+
+		if (isDef) return "";
 		ArrayList<String> tmp = new ArrayList<>();
 		try {
 			getValueTokens(tmp);

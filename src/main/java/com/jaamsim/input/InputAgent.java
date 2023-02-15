@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2009-2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018-2022 JaamSim Software Inc.
+ * Copyright (C) 2018-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -285,13 +285,24 @@ public class InputAgent {
 			return;
 		}
 
-		Class<? extends Entity> proto = null;
+		Class<? extends Entity> klass = null;
+		Entity proto = null;
 		try {
 			if( record.get( 1 ).equalsIgnoreCase( "ObjectType" ) ) {
-				proto = ObjectType.class;
+				klass = ObjectType.class;
 			}
 			else {
-				proto = Input.parseEntityType(simModel, record.get(1));
+				Entity type = simModel.getNamedEntity(record.get(1));
+				if (type == null)
+					throw new InputErrorException("Entity type not found: %s", record.get(1));
+
+				if (type instanceof ObjectType) {
+					klass = Input.parseEntityType(simModel, record.get(1));
+				}
+				else {
+					proto = type;
+					klass = proto.getClass();
+				}
 			}
 		}
 		catch (InputErrorException e) {
@@ -302,25 +313,16 @@ public class InputAgent {
 
 		// Loop over all the new Entity names
 		for (int i = 3; i < record.size() - 1; i++) {
-			InputAgent.defineEntity(simModel, proto, record.get(i), simModel.isRecordEdits());
+			InputAgent.defineEntity(simModel, klass, proto, record.get(i), simModel.isRecordEdits());
 		}
 	}
 
-	public static <T extends Entity> T generateEntityWithName(JaamSimModel simModel, Class<T> proto, String key) {
-		return generateEntityWithName(simModel, proto, key, null, false, false);
-	}
-
-	public static <T extends Entity> T generateEntityWithName(JaamSimModel simModel, Class<T> proto, String key,
-			boolean reg) {
-		return generateEntityWithName(simModel, proto, key, null, reg, false);
-	}
-
-	public static <T extends Entity> T generateEntityWithName(JaamSimModel simModel, Class<T> proto, String key,
+	public static <T extends Entity> T generateEntityWithName(JaamSimModel simModel, Class<T> klass, String key, Entity parent,
 			boolean reg, boolean retain) {
-		return generateEntityWithName(simModel, proto, key, null, reg, retain);
+		return generateEntityWithName(simModel, klass, null, key, parent, reg, retain);
 	}
 
-	public static <T extends Entity> T generateEntityWithName(JaamSimModel simModel, Class<T> proto, String key, Entity parent,
+	public static <T extends Entity> T generateEntityWithName(JaamSimModel simModel, Class<T> klass, Entity proto, String key, Entity parent,
 			boolean reg, boolean retain) {
 		if (key == null)
 			throw new ErrorException("Must provide a name for generated Entities");
@@ -328,11 +330,21 @@ public class InputAgent {
 		if (!isValidName(key))
 			throw new ErrorException(INP_ERR_BADNAME, key);
 
-		T ent = simModel.createInstance(proto, key, parent, false, true, reg, retain);
+		T ent = simModel.createInstance(klass, proto, key, parent, false, true, reg, retain);
 		if (ent == null)
 			throw new ErrorException("Could not create new Entity: %s", key);
 
 		return ent;
+	}
+
+	public static Entity getGeneratedClone(Entity proto, String name) {
+		Entity ret = proto.getCloneFromPool();
+		if (ret == null)
+			return InputAgent.generateEntityWithName(proto.getJaamSimModel(),
+					proto.getClass(), proto, name, null, false, false);
+
+		ret.setLocalName(name);
+		return ret;
 	}
 
 	public static String getUniqueName(JaamSimModel sim, String name, String sep) {
@@ -358,15 +370,15 @@ public class InputAgent {
 	 * the name unique. If addedEntity is true then this is an entity defined by user interaction
 	 * or after the 'AddedRecord' flag is found in the configuration file.
 	 * @param simModel - JaamSimModel in which to create the entity
-	 * @param proto - class for the entity to be created
+	 * @param klass - class for the entity to be created
 	 * @param key - base absolute name for the entity to be created
 	 * @param sep - string to append to the name if it is already in use
 	 * @param addedEntity - true if the entity is new to the model
 	 * @return new entity
 	 */
-	public static <T extends Entity> T defineEntityWithUniqueName(JaamSimModel simModel, Class<T> proto, String key, String sep, boolean addedEntity) {
+	public static <T extends Entity> T defineEntityWithUniqueName(JaamSimModel simModel, Class<T> klass, String key, String sep, boolean addedEntity) {
 		String name = getUniqueName(simModel, key, sep);
-		return defineEntity(simModel, proto, name, addedEntity);
+		return defineEntity(simModel, klass, null, name, addedEntity);
 	}
 
 	public static boolean isValidName(String key) {
@@ -387,12 +399,13 @@ public class InputAgent {
 	 * defined by user interaction or after the 'AddedRecord' flag is found in the configuration
 	 * file.
 	 * @param simModel - JaamSimModel in which to create the entity
-	 * @param proto - class for the entity to be created
+	 * @param klass - class for the entity to be created
+	 * @param proto - prototype for the entity
 	 * @param key - absolute name for the entity to be created
 	 * @param addedEntity - true if the entity is new to the model
 	 * @return new entity
 	 */
-	private static <T extends Entity> T defineEntity(JaamSimModel simModel, Class<T> proto, String key, boolean addedEntity) {
+	private static <T extends Entity> T defineEntity(JaamSimModel simModel, Class<T> klass, Entity proto, String key, boolean addedEntity) {
 		Entity existingEnt = Input.tryParseEntity(simModel, key, Entity.class);
 		if (existingEnt != null) {
 			InputAgent.logError(simModel,
@@ -415,17 +428,17 @@ public class InputAgent {
 			}
 		}
 
-		return defineEntity(simModel, proto, localName, parent, addedEntity);
+		return defineEntity(simModel, klass, proto, localName, parent, addedEntity);
 	}
 
-	private static <T extends Entity> T defineEntity(JaamSimModel simModel, Class<T> proto, String localName, Entity parent, boolean addedEntity) {
+	private static <T extends Entity> T defineEntity(JaamSimModel simModel, Class<T> klass, Entity proto, String localName, Entity parent, boolean addedEntity) {
 
 		if (!isValidName(localName)) {
 			InputAgent.logError(simModel, INP_ERR_BADNAME, localName);
 			return null;
 		}
 
-		T ent = simModel.createInstance(proto, localName, parent, addedEntity, false, true, true);
+		T ent = simModel.createInstance(klass, proto, localName, parent, addedEntity, false, true, true);
 
 		if (ent == null) {
 			InputAgent.logError(simModel,
@@ -571,7 +584,7 @@ public class InputAgent {
 	public static final void apply(Entity ent, Input<?> in, KeywordIndex kw) {
 		// If the input value is blank, restore the default
 		if (kw.numArgs() == 0) {
-			if (in.isDefault())
+			if (in.isDef())
 				return;
 			in.reset();
 		}
@@ -587,7 +600,14 @@ public class InputAgent {
 			ent.setEdited();
 		}
 
+		// Execute the input callback for the entity and its clones
 		in.doCallback(ent);
+		for (Entity clone : ent.getAllClones()) {
+			Input<?> cloneIn = clone.getInput(in.getKeyword());
+			cloneIn.doCallback(clone);
+		}
+
+		// Refresh the graphics
 		GUIListener gui = ent.getJaamSimModel().getGUIListener();
 		if (gui != null)
 			gui.updateAll();
@@ -999,6 +1019,8 @@ public class InputAgent {
 		Class<? extends Entity> entClass = null;
 		int level = 0;
 		for (Entity ent : newEntities) {
+			if (ent.isClone())
+				continue;
 
 			// Is the class different from the last one
 			if (ent.getClass() != entClass) {
@@ -1026,6 +1048,34 @@ public class InputAgent {
 
 		// Close the define statement
 		if (!newEntities.isEmpty())
+			file.format("}%n");
+
+		// 2.5) WRITE THE DEFINITION STATEMENTS FOR CLONES
+		Entity proto = null;
+		for (Entity ent : newEntities) {
+			if (!ent.isClone())
+				continue;
+
+			// Is the prototype different from the last one
+			if (ent.getPrototype() != proto) {
+
+				// Close the previous Define statement
+				if (proto != null) {
+					file.format("}");
+				}
+				file.format("%n");
+
+				// Start the new Define statement
+				proto = ent.getPrototype();
+				file.format("Define %s {", proto);
+			}
+
+			// Print the entity name to the Define statement
+			file.format(" %s ", ent.getName());
+		}
+
+		// Close the define statement
+		if (proto != null)
 			file.format("}%n");
 
 		// 3) WRITE THE INPUTS FOR SPECIAL KEYWORDS THAT MUST COME BEFORE THE OTHERS
@@ -1176,7 +1226,7 @@ public class InputAgent {
 
 	static void writeStubOutputDefs(FileEntity file, Entity ent) {
 		NamedExpressionListInput in = (NamedExpressionListInput) ent.getInput("CustomOutputList");
-		if (in == null || in.isDefault()) {
+		if (in == null || in.isDef()) {
 			return;
 		}
 		file.format("%s %s { %s }%n", ent.getName(), in.getKeyword(), in.getStubDefinition());
@@ -1503,6 +1553,11 @@ public class InputAgent {
 			if (ret != 0)
 				return ret;
 
+			// If the sub-model levels are the same, then sort by clone level
+			ret = Integer.compare(ent0.getCloneLevel(), ent1.getCloneLevel());
+			if (ret != 0)
+				return ret;
+
 			Class<? extends Entity> class0 = ent0.getClass();
 			Class<? extends Entity> class1 = ent1.getClass();
 			ObjectType ot0 = ent0.getJaamSimModel().getObjectTypeForClass(class0);
@@ -1527,7 +1582,14 @@ public class InputAgent {
 			if (ret != 0)
 				return ret;
 
-			// If the classes are the same, then sort alphabetically by entity name
+			// If the classes are the same, then sort alphabetically by prototype name
+			if (ent0.isClone() && ent1.isClone()) {
+				ret = Input.uiSortOrder.compare(ent0.getPrototype(), ent1.getPrototype());
+				if (ret != 0)
+					return ret;
+			}
+
+			// If the prototypes are the same, then sort alphabetically by entity name
 			return Input.uiSortOrder.compare(ent0, ent1);
 		}
 	}

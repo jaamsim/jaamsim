@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2016-2019 JaamSim Software Inc.
+ * Copyright (C) 2016-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,8 @@
  */
 package com.jaamsim.CalculationObjects;
 
+import com.jaamsim.basicsim.Entity;
 import com.jaamsim.input.Keyword;
-import com.jaamsim.input.Output;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
@@ -53,10 +53,7 @@ public class UnitDelay extends DoubleCalculation {
 	}
 
 	@Override
-	@Output(name = "Value",
-	 description = "The result of the calculation at the present time.",
-	    unitType = UserSpecifiedUnit.class)
-	public double getNextSample(double simTime) {
+	public double getNextSample(Entity thisEnt, double simTime) {
 		return this.getLastValue();
 	}
 

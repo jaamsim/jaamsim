@@ -32,7 +32,7 @@ import com.jaamsim.units.Unit;
  * Entity AttributeDefinitionList { { AttibuteName1 Value1 Unit1 } { AttibuteName2 Value2 Unit2 } ... }
  * @author Harry King
  */
-public class AttributeDefinitionListInput extends ListInput<ArrayList<AttributeHandle>> {
+public class AttributeDefinitionListInput extends ArrayListInput<AttributeHandle> {
 
 	private ArrayList<ExpEvaluator.EntityParseContext> parseContextList;
 
@@ -89,12 +89,7 @@ public class AttributeDefinitionListInput extends ListInput<ArrayList<AttributeH
 				}
 
 				// Save the data for this attribute
-				AttributeHandle h = (AttributeHandle) thisEnt.getOutputHandle(name);
-				if (h == null)
-					h = new AttributeHandle(thisEnt, name);
-				h.setUnitType(unitType);
-				h.setInitialValue(expVal);
-				h.setValue(expVal);
+				AttributeHandle h = new AttributeHandle(thisEnt, name, expVal, expVal, unitType);
 				temp.add(h);
 				pcList.add(pc);
 
@@ -117,7 +112,7 @@ public class AttributeDefinitionListInput extends ListInput<ArrayList<AttributeH
 
 	@Override
 	public void getValueTokens(ArrayList<String> toks) {
-		if (value == null || isDefault())
+		if (value == null || isDef)
 			return;
 		for (int i = 0; i < value.size(); i++) {
 			AttributeHandle h = value.get(i);
@@ -126,30 +121,6 @@ public class AttributeDefinitionListInput extends ListInput<ArrayList<AttributeH
 			toks.add(parseContextList.get(i).getUpdatedSource());
 			toks.add("}");
 		}
-	}
-
-	@Override
-	public void copyFrom(Entity thisEnt, Input<?> in) {
-		super.copyFrom(thisEnt, in);
-		value = new ArrayList<>();
-		@SuppressWarnings("unchecked")
-		ArrayList<AttributeHandle> inValue = (ArrayList<AttributeHandle>) (in.value);
-		for (AttributeHandle h : inValue) {
-			AttributeHandle hNew = new AttributeHandle(thisEnt, h.getName());
-			hNew.setUnitType(h.getUnitType());
-			hNew.setInitialValue(h.getInitialValue());
-			hNew.setValue(h.copyValue());
-			value.add(hNew);
-		}
-		parseContextList = new ArrayList<>(((AttributeDefinitionListInput) in).parseContextList);
-	}
-
-	@Override
-	public int getListSize() {
-		if (value == null)
-			return 0;
-		else
-			return value.size();
 	}
 
 	@Override

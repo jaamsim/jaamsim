@@ -52,10 +52,10 @@ public class TriangularDistribution extends Distribution {
 		super.validate();
 
 		// The mode must be between the minimum and maximum values
-		if (getMinValueInput(0.0d) > modeInput.getNextSample(0.0d)) {
+		if (getMinValueInput(0.0d) > modeInput.getNextSample(this, 0.0d)) {
 			throw new InputErrorException("The input for Mode must be >= than that for MinValue.");
 		}
-		if (getMaxValueInput(0.0d) < modeInput.getNextSample(0.0d)) {
+		if (getMaxValueInput(0.0d) < modeInput.getNextSample(this, 0.0d)) {
 			throw new InputErrorException("The input for Mode must be <= than that for MaxValue.");
 		}
 	}
@@ -74,25 +74,25 @@ public class TriangularDistribution extends Distribution {
 
 	@Override
 	protected double getSample(double simTime) {
-		double minVal = minValueInput.getNextSample(simTime);
-		double maxVal = maxValueInput.getNextSample(simTime);
-		double mode = modeInput.getNextSample(simTime);
+		double minVal = minValueInput.getNextSample(this, simTime);
+		double maxVal = maxValueInput.getNextSample(this, simTime);
+		double mode = modeInput.getNextSample(this, simTime);
 		return getSample(minVal, mode, maxVal, rng);
 	}
 
 	@Override
 	protected double getMean(double simTime) {
-		double minVal = minValueInput.getNextSample(simTime);
-		double maxVal = maxValueInput.getNextSample(simTime);
-		double mode = modeInput.getNextSample(simTime);
+		double minVal = minValueInput.getNextSample(this, simTime);
+		double maxVal = maxValueInput.getNextSample(this, simTime);
+		double mode = modeInput.getNextSample(this, simTime);
 		return getMean(minVal, mode, maxVal);
 	}
 
 	@Override
 	protected double getStandardDev(double simTime) {
-		double a = minValueInput.getNextSample(simTime);
-		double b = maxValueInput.getNextSample(simTime);
-		double m = modeInput.getNextSample(simTime);
+		double a = minValueInput.getNextSample(this, simTime);
+		double b = maxValueInput.getNextSample(this, simTime);
+		double m = modeInput.getNextSample(this, simTime);
 		return  getStandardDev(a, m, b);
 	}
 

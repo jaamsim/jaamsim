@@ -84,7 +84,7 @@ public abstract class AbstractUnpack extends LinkedService {
 	private void setContainerState() {
 		if (!containerStateAssignment.isDefault()) {
 			double simTime = getSimTime();
-			String state = containerStateAssignment.getNextString(simTime);
+			String state = containerStateAssignment.getNextString(this, simTime);
 			container.setPresentState(state);
 		}
 	}
@@ -109,7 +109,7 @@ public abstract class AbstractUnpack extends LinkedService {
 			// Set the match value for the entities to remove
 			entityMatch = null;
 			if (!matchForEntities.isDefault())
-				entityMatch = matchForEntities.getNextString(simTime, 1.0d, true);
+				entityMatch = matchForEntities.getNextString(this, simTime, 1.0d, true);
 
 			// Set the number of entities to remove
 			numberToRemove = getNumberToRemove();
@@ -166,6 +166,8 @@ public abstract class AbstractUnpack extends LinkedService {
 
 	@Override
 	public void updateGraphics(double simTime) {
+		super.updateGraphics(simTime);
+
 		if (container != null)
 			moveToProcessPosition((DisplayEntity)container);
 		if (unpackedEntity != null)
@@ -176,7 +178,7 @@ public abstract class AbstractUnpack extends LinkedService {
 	protected double getStepDuration(double simTime) {
 		double dur = 0.0;
 		if (unpackedEntity != null)
-			dur = serviceTime.getNextSample(simTime);
+			dur = serviceTime.getNextSample(this, simTime);
 		return dur;
 	}
 

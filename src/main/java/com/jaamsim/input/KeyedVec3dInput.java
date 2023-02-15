@@ -83,11 +83,12 @@ public class KeyedVec3dInput extends Input<KeyedVec3dCurve> {
 	}
 
 	public Vec3d getValueForTime(double time) {
-		return value.getValAtTime(time);
+		return getValue().getValAtTime(time);
 	}
 
 	public boolean hasKeys() {
-		return value != null && value.hasKeys();
+		KeyedVec3dCurve val = getValue();
+		return val != null && val.hasKeys();
 	}
 
 }

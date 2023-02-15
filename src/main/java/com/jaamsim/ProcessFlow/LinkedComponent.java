@@ -175,7 +175,7 @@ public abstract class LinkedComponent extends StateEntity implements SubjectEnti
 	protected void setEntityState(DisplayEntity ent) {
 		if (stateAssignment.isDefault() || !(ent instanceof StateEntity))
 			return;
-		String state = stateAssignment.getNextString(getSimTime());
+		String state = stateAssignment.getNextString(this, getSimTime());
 		((StateEntity) ent).setPresentState(state);
 	}
 

@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2005-2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2022 JaamSim Software Inc.
+ * Copyright (C) 2016-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -357,6 +357,10 @@ public abstract class CellEditor extends AbstractCellEditor implements TableCell
 			String str = newValue.trim();
 			if (!str.isEmpty())
 				str = in.applyConditioning(str);
+
+			// New value is the same as the inherited value
+			if (in.getProtoInput() != null && str.equals(in.getProtoInput().getValueString()))
+				str = "";
 
 			// The value has not changed
 			if (in.getValueString().replace('\n', ' ').equals(str) && in.isValid()) {

@@ -78,9 +78,11 @@ public class BooleanIndicator extends DisplayEntity {
 
 	@Override
 	public void updateGraphics(double simTime) {
+		super.updateGraphics(simTime);
+
 		if (expInput.getValue() == null)
 			return;
-		if (expInput.getNextSample(simTime) != 0.0d)
+		if (expInput.getNextSample(this, simTime) != 0.0d)
 			setTagColour(ShapeModel.TAG_CONTENTS, trueColor.getValue());
 		else
 			setTagColour(ShapeModel.TAG_CONTENTS, falseColor.getValue());
@@ -93,7 +95,7 @@ public class BooleanIndicator extends DisplayEntity {
 	public String getText(double simTime) {
 		if (expInput.getValue() == null)
 			return "";
-		if (expInput.getNextSample(simTime) != 0.0d)
+		if (expInput.getNextSample(this, simTime) != 0.0d)
 			return trueText.getValue();
 		else
 			return falseText.getValue();

@@ -104,7 +104,7 @@ public abstract class AbstractPack extends LinkedService {
 	private void setContainerState() {
 		if (!containerStateAssignment.isDefault()) {
 			double simTime = getSimTime();
-			String state = containerStateAssignment.getNextString(simTime);
+			String state = containerStateAssignment.getNextString(this, simTime);
 			container.setPresentState(state);
 		}
 	}
@@ -183,13 +183,13 @@ public abstract class AbstractPack extends LinkedService {
 	}
 
 	protected int getNumberToInsert(double simTime) {
-		return (int) numberOfEntities.getNextSample(simTime);
+		return (int) numberOfEntities.getNextSample(this, simTime);
 	}
 
 	private int getNumberToStart(double simTime) {
 		int ret = numberToInsert;
 		if (!numberToStart.isDefault() && numberToInsert > 0) {
-			ret = (int) numberToStart.getNextSample(simTime);
+			ret = (int) numberToStart.getNextSample(this, simTime);
 			ret = Math.max(ret, 1);
 		}
 		return ret;
@@ -197,7 +197,7 @@ public abstract class AbstractPack extends LinkedService {
 
 	@Override
 	protected double getStepDuration(double simTime) {
-		return serviceTime.getNextSample(simTime);
+		return serviceTime.getNextSample(this, simTime);
 	}
 
 	@Override
@@ -222,6 +222,8 @@ public abstract class AbstractPack extends LinkedService {
 
 	@Override
 	public void updateGraphics(double simTime) {
+		super.updateGraphics(simTime);
+
 		if (container != null)
 			moveToProcessPosition((DisplayEntity)container);
 		if (packedEntity != null)

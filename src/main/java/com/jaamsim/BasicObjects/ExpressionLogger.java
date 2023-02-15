@@ -198,7 +198,7 @@ public class ExpressionLogger extends Logger implements StateEntityListener, Obs
 		// Start tracing the expression values
 		if (valueTraceList.getListSize() > 0) {
 			for (int i=0; i<valueTraceList.getListSize(); i++) {
-				String str = valueTraceList.getNextString(i, getSimTime());
+				String str = valueTraceList.getNextString(i, this, getSimTime());
 				lastValueList.set(i, str);
 			}
 
@@ -335,7 +335,7 @@ public class ExpressionLogger extends Logger implements StateEntityListener, Obs
 		try {
 			// Write the traced expression values
 			for (int i=0; i<valueTraceList.getListSize(); i++) {
-				String str = valueTraceList.getNextString(i, simTime);
+				String str = valueTraceList.getNextString(i, this, simTime);
 				file.format("\t%s", str);
 			}
 		}
@@ -362,7 +362,7 @@ public class ExpressionLogger extends Logger implements StateEntityListener, Obs
 		double simTime = getSimTime();
 		try {
 			for (int i=0; i<valueTraceList.getListSize(); i++) {
-				String str = valueTraceList.getNextString(i, simTime);
+				String str = valueTraceList.getNextString(i, this, simTime);
 				if (!str.equals(lastValueList.get(i))) {
 					lastValueList.set(i, str);
 					ret = true;

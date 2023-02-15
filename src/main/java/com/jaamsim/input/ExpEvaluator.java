@@ -17,6 +17,7 @@
  */
 package com.jaamsim.input;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,6 +27,7 @@ import com.jaamsim.input.ExpParser.Assigner;
 import com.jaamsim.input.ExpParser.EvalContext;
 import com.jaamsim.input.ExpParser.OutputResolver;
 import com.jaamsim.units.DimensionlessUnit;
+import com.jaamsim.units.TimeUnit;
 import com.jaamsim.units.Unit;
 
 /**
@@ -134,8 +136,8 @@ public class ExpEvaluator {
 			return ret;
 		}
 
-		public EntityParseContext(Entity ent, HashMap<String, ExpResult> constants, String source) {
-			super(constants);
+		public EntityParseContext(Entity ent, HashMap<String, ExpResult> constants, ArrayList<String> dynamicVars, String source) {
+			super(constants, dynamicVars);
 			this.model = ent.getJaamSimModel();
 			this.source = source;
 		}
@@ -367,29 +369,42 @@ public class ExpEvaluator {
 		public final double simTime;
 		public final Entity thisEnt;
 
-		public EntityEvalContext(Entity thisEnt, double simTime) {
+		public EntityEvalContext(Entity thisEnt, double simTime, ArrayList<ExpResult> dynamicVals) {
+			super(dynamicVals);
 			this.simTime = simTime;
 			this.thisEnt = thisEnt;
 		}
 
 	}
 
-	public static EntityParseContext getParseContext(Entity thisEnt, String source) {
-		HashMap<String, ExpResult> constants = new HashMap<>();
-		Entity parent = thisEnt.getParent();
-		constants.put("this", ExpResult.makeEntityResult(thisEnt));
-		constants.put("parent", ExpResult.makeEntityResult(parent));
-		constants.put("sub", ExpResult.makeEntityResult(parent));
+	private final static HashMap<String, ExpResult> constants = new HashMap<>();
+	static {
 		constants.put("TRUE", ExpResult.makeNumResult(1, DimensionlessUnit.class));
 		constants.put("FALSE", ExpResult.makeNumResult(0, DimensionlessUnit.class));
+	}
 
-		return new EntityParseContext(thisEnt, constants, source);
+	public static EntityParseContext getParseContext(Entity thisEnt, String source) {
+		ArrayList<String> varNames = new ArrayList<>();
+		varNames.add("this");
+		varNames.add("parent");
+		varNames.add("sub");
+		varNames.add("simTime");
+		return new EntityParseContext(thisEnt, constants, varNames, source);
 	}
 
 	public static ExpResult evaluateExpression(ExpParser.Expression exp, Entity thisEnt, double simTime) throws ExpError {
 		if (exp == null)
 			return ExpResult.makeEntityResult(null);
-		EntityEvalContext evalContext = new EntityEvalContext(thisEnt, simTime);
+
+		ArrayList<ExpResult> varVals = new ArrayList<>();
+		Entity parent = thisEnt.getParent();
+		varVals.add(ExpResult.makeEntityResult(thisEnt));
+		varVals.add(ExpResult.makeEntityResult(parent));
+		varVals.add(ExpResult.makeEntityResult(parent));
+		varVals.add(ExpResult.makeNumResult(simTime, TimeUnit.class));
+
+		EntityEvalContext evalContext = new EntityEvalContext(thisEnt, simTime, varVals);
 		return exp.evaluate(evalContext);
 	}
+
 }

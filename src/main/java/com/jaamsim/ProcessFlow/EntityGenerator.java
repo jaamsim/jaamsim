@@ -25,7 +25,6 @@ import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.OverlayEntity;
 import com.jaamsim.Graphics.TextBasics;
 import com.jaamsim.Samples.SampleInput;
-import com.jaamsim.basicsim.Entity;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
@@ -152,17 +151,17 @@ public class EntityGenerator extends LinkedService implements EntityGen {
 
 		// Stop if the last entity been generated
 		if (maxNumber.getValue() != null
-				&& numberGenerated >= maxNumber.getNextSample(simTime))
+				&& numberGenerated >= maxNumber.getNextSample(this, simTime))
 			return false;
 
 		// Select the inter-arrival time for the next entity
-		int initNumber = (int) initialNumber.getNextSample(simTime);
+		int initNumber = (int) initialNumber.getNextSample(this, simTime);
 		if (numberGenerated < initNumber)
 			presentIAT = 0.0d;
 		else if (numberGenerated == initNumber)
-			presentIAT = firstArrivalTime.getNextSample(simTime);
+			presentIAT = firstArrivalTime.getNextSample(this, simTime);
 		else
-			presentIAT = interArrivalTime.getNextSample(simTime);
+			presentIAT = interArrivalTime.getNextSample(this, simTime);
 
 		if (presentIAT == Double.POSITIVE_INFINITY)
 			return false;
@@ -186,14 +185,12 @@ public class EntityGenerator extends LinkedService implements EntityGen {
 		}
 
 		// Create the new entities
-		int num = (int) entitiesPerArrival.getNextSample(getSimTime());
+		int num = (int) entitiesPerArrival.getNextSample(this, getSimTime());
 		for (int i=0; i<num; i++) {
-			DisplayEntity proto = prototypeEntity.getNextEntity(simTime);
+			DisplayEntity proto = prototypeEntity.getNextEntity(this, simTime);
 			numberGenerated++;
-			StringBuilder sb = new StringBuilder();
-			sb.append(name).append(numberGenerated);
-			DisplayEntity ent = InputAgent.generateEntityWithName(getJaamSimModel(), proto.getClass(), sb.toString());
-			Entity.fastCopyInputs(proto, ent);
+			String entName = name + numberGenerated;
+			DisplayEntity ent = (DisplayEntity) InputAgent.getGeneratedClone(proto, entName);
 			ent.earlyInit();
 			ent.lateInit();
 
@@ -229,7 +226,7 @@ public class EntityGenerator extends LinkedService implements EntityGen {
 	public ArrayList<DisplayEntity> getSourceEntities() {
 		ArrayList<DisplayEntity> ret = super.getSourceEntities();
 		try {
-			DisplayEntity ent = prototypeEntity.getNextEntity(0.0d);
+			DisplayEntity ent = prototypeEntity.getNextEntity(this, 0.0d);
 			if (ent != null) {
 				ret.add(ent);
 			}

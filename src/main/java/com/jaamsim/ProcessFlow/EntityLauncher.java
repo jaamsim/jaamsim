@@ -24,7 +24,6 @@ import com.jaamsim.GameObjects.GameEntity;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.OverlayEntity;
 import com.jaamsim.Graphics.TextBasics;
-import com.jaamsim.basicsim.Entity;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InterfaceEntityInput;
 import com.jaamsim.input.Keyword;
@@ -85,10 +84,9 @@ public class EntityLauncher extends GameEntity implements EntityGen {
 
 		// Create a new entity
 		numberGenerated++;
-		DisplayEntity proto = prototypeEntity.getNextEntity(0.0d);
+		DisplayEntity proto = prototypeEntity.getNextEntity(this, 0.0d);
 		name = name + numberGenerated;
-		DisplayEntity ent = InputAgent.generateEntityWithName(getJaamSimModel(), proto.getClass(), name);
-		Entity.fastCopyInputs(proto, ent);
+		DisplayEntity ent = (DisplayEntity) InputAgent.getGeneratedClone(proto, name);
 		ent.earlyInit();
 
 		// Send the entity to the next element in the chain
@@ -131,7 +129,7 @@ public class EntityLauncher extends GameEntity implements EntityGen {
 	public ArrayList<DisplayEntity> getSourceEntities() {
 		ArrayList<DisplayEntity> ret = super.getSourceEntities();
 		try {
-			DisplayEntity ent = prototypeEntity.getNextEntity(0.0d);
+			DisplayEntity ent = prototypeEntity.getNextEntity(this, 0.0d);
 			if (ent != null) {
 				ret.add(ent);
 			}

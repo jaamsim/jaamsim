@@ -183,8 +183,8 @@ public class PIDController extends DoubleCalculation {
 	public double getError(double simTime) {
 		if (setPoint.getValue() == null || processVariable.getValue() == null)
 			return Double.NaN;
-		double diff = setPoint.getNextSample(simTime)
-				- processVariable.getNextSample(simTime);
+		double diff = setPoint.getNextSample(this, simTime)
+				- processVariable.getNextSample(this, simTime);
 		return diff/processVariableScale.getValue();
 	}
 

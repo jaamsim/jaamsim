@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018-2021 JaamSim Software Inc.
+ * Copyright (C) 2018-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -66,6 +66,8 @@ public class ObjectSelector extends FrameBox {
 	static Entity currentEntity;
 
 	private long entSequence;
+
+	private final static int MAX_FOR_REALTIME_UPDATE = 10000;
 
 	public ObjectSelector() {
 		super( "Object Selector" );
@@ -176,7 +178,8 @@ public class ObjectSelector extends FrameBox {
 		JaamSimModel simModel = GUIFrame.getJaamSimModel();
 		if (simModel == null || simModel.getSimulation() == null)
 			return;
-		if (!this.isVisible() || gui == null || simModel.getSimState() == JaamSimModel.SIM_STATE_RUNNING)
+		if (!this.isVisible() || gui == null || (simModel.isRunningState()
+				&& (!simModel.isRealTime() || simModel.getEntityCount() > MAX_FOR_REALTIME_UPDATE)))
 			return;
 
 		long curSequence = simModel.getEntitySequence();
@@ -280,6 +283,10 @@ public class ObjectSelector extends FrameBox {
 
 				// Do not include the icons for objects
 				if (ent instanceof IconModel)
+					continue;
+
+				// Do not include pool entities
+				if (ent.isPooled())
 					continue;
 
 				entityList.add(ent);

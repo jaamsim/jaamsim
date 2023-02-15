@@ -188,7 +188,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 		if (firstDowntime.getValue() == null)
 			secondsForNextFailure = getNextDowntimeIAT();
 		else
-			secondsForNextFailure = firstDowntime.getNextSample(getSimTime());
+			secondsForNextFailure = firstDowntime.getNextSample(this, getSimTime());
 	}
 
 	public void registerDowntimeUser(DowntimeUser du) {
@@ -464,7 +464,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 	 * Return the time in seconds of the next downtime IAT
 	 */
 	private double getNextDowntimeIAT() {
-		return downtimeIATDistribution.getNextSample(getSimTime());
+		return downtimeIATDistribution.getNextSample(this, getSimTime());
 	}
 
 	/**
@@ -492,7 +492,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 	 * Return the time in seconds of the next downtime duration
 	 */
 	private double getDowntimeDuration() {
-		return downtimeDurationDistribution.getNextSample(getSimTime());
+		return downtimeDurationDistribution.getNextSample(this, getSimTime());
 	}
 
 	public SampleProvider getDowntimeDurationDistribution() {

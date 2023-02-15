@@ -33,14 +33,6 @@ public class KeywordInput extends Input<String> {
 	}
 
 	@Override
-	public void copyFrom(Entity thisEnt, Input<?> in) {
-		super.copyFrom(thisEnt, in);
-		KeywordInput inp = (KeywordInput) in;
-		targetEntity = inp.targetEntity;
-		targetInput = inp.targetInput;
-	}
-
-	@Override
 	public void parse(Entity thisEnt, KeywordIndex kw) throws InputErrorException {
 		Input.assertCount(kw, 2);
 		try {
@@ -70,7 +62,7 @@ public class KeywordInput extends Input<String> {
 
 	@Override
 	public void getValueTokens(ArrayList<String> toks) {
-		if (value == null || isDefault())
+		if (value == null || isDef)
 			return;
 		toks.add(targetEntity.getName());
 		toks.add(value);

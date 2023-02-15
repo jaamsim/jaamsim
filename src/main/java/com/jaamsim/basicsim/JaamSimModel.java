@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2016-2022 JaamSim Software Inc.
+ * Copyright (C) 2016-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -98,8 +98,6 @@ public class JaamSimModel implements EventTimeListener {
 	private long lastTickForTrace = -1L;
 	private long preDefinedEntityCount = 0L;  // Number of entities after loading autoload.cfg
 
-	private final HashMap<String, String> stringCache = new HashMap<>();
-
 	private final ArrayList<ObjectType> objectTypes = new ArrayList<>();
 	private final HashMap<Class<? extends Entity>, ObjectType> objectTypeMap = new HashMap<>();
 
@@ -163,7 +161,7 @@ public class JaamSimModel implements EventTimeListener {
 			// Generate all the sub-model components when the first one is found
 			if (ent.isGenerated() && ent.getParent() instanceof SubModelClone) {
 				Entity clone = getNamedEntity(ent.getParent().getName());
-				SubModel proto = ((SubModelClone) ent.getParent()).getPrototype();
+				SubModel proto = ((SubModelClone) ent.getParent()).getPrototypeSubModel();
 				if (clone == null || proto == null)
 					continue;
 				KeywordIndex kw = InputAgent.formatInput("Prototype", proto.getName());
@@ -191,7 +189,7 @@ public class JaamSimModel implements EventTimeListener {
 			if (ent.isGenerated())
 				continue;
 			NamedExpressionListInput in = (NamedExpressionListInput) ent.getInput("CustomOutputList");
-			if (in == null || in.isDefault())
+			if (in == null || in.isDef())
 				continue;
 			Entity newEnt = getNamedEntity(ent.getName());
 			if (newEnt == null)
@@ -323,6 +321,22 @@ public class JaamSimModel implements EventTimeListener {
 		simState = state;
 	}
 
+	public boolean isRunningState() {
+		return simState == SIM_STATE_RUNNING;
+	}
+
+	public boolean isPausedState() {
+		return simState == SIM_STATE_PAUSED;
+	}
+
+	public boolean isStarted() {
+		return simState >= SIM_STATE_RUNNING;
+	}
+
+	public boolean isRealTime() {
+		return simulation.isRealTime();
+	}
+
 	public String getName() {
 		return name;
 	}
@@ -361,8 +375,6 @@ public class JaamSimModel implements EventTimeListener {
 		// close warning/error trace file
 		closeLogFile();
 
-		stringCache.clear();
-
 		// Reset the run number and run indices
 		scenarioNumber = 1;
 		replicationNumber = 1;
@@ -375,17 +387,6 @@ public class JaamSimModel implements EventTimeListener {
 		numErrors = 0;
 		numWarnings = 0;
 		lastTickForTrace = -1L;
-	}
-
-	public final String internString(String str) {
-		synchronized (stringCache) {
-			String ret = stringCache.get(str);
-			if (ret == null) {
-				stringCache.put(str, str);
-				ret = str;
-			}
-			return ret;
-		}
 	}
 
 	/**
@@ -622,6 +623,11 @@ public class JaamSimModel implements EventTimeListener {
 		killGeneratedEntities();
 		rngMap.clear();
 
+		// Reset the graphics for each entity
+		for (DisplayEntity ent : getClonesOfIterator(DisplayEntity.class)) {
+			ent.resetGraphics();
+		}
+
 		// Perform earlyInit
 		for (Entity each : getClonesOfIterator(Entity.class)) {
 			// Try/catch is required because some earlyInit methods use simTime which is only
@@ -724,7 +730,7 @@ public class JaamSimModel implements EventTimeListener {
 			Class<? extends Unit> unitType = DimensionlessUnit.class;
 			Entity thisEnt = getSimulation();
 			StringProvExpression strProv = new StringProvExpression(expString, thisEnt, unitType);
-			return strProv.getNextString(simTime);
+			return strProv.getNextString(thisEnt, simTime);
 		}
 		catch (ExpError e) {
 			return "Cannot evaluate";
@@ -744,7 +750,7 @@ public class JaamSimModel implements EventTimeListener {
 			Class<? extends Unit> unitType = DimensionlessUnit.class;
 			Entity thisEnt = getSimulation();
 			SampleExpression sampleExp = new SampleExpression(expString, thisEnt, unitType);
-			return sampleExp.getNextSample(simTime);
+			return sampleExp.getNextSample(thisEnt, simTime);
 		}
 		catch (ExpError e) {
 			return Double.NaN;
@@ -980,7 +986,8 @@ public class JaamSimModel implements EventTimeListener {
 
 	/**
 	 * Creates a new entity.
-	 * @param proto - class for the entity
+	 * @param klass - class for the entity
+	 * @param proto - prototype for the entity
 	 * @param name - entity local name
 	 * @param parent - entity's parent
 	 * @param added - true if the entity was defined after the 'RecordEdits' flag
@@ -989,9 +996,9 @@ public class JaamSimModel implements EventTimeListener {
 	 * @param retain - true if the entity is retained when the model is reset between runs
 	 * @return new entity
 	 */
-	public final <T extends Entity> T createInstance(Class<T> proto, String name, Entity parent,
+	public final <T extends Entity> T createInstance(Class<T> klass, Entity proto, String name, Entity parent,
 			boolean added, boolean gen, boolean reg, boolean retain) {
-		T ent = createInstance(proto);
+		T ent = createInstance(klass);
 		if (ent == null)
 			return null;
 
@@ -1007,6 +1014,7 @@ public class JaamSimModel implements EventTimeListener {
 
 		ent.parent = parent;
 		ent.entityName = name;
+		ent.setPrototype(proto);
 		if (reg)
 			addNamedEntity(ent);
 
@@ -1030,11 +1038,11 @@ public class JaamSimModel implements EventTimeListener {
 
 	private static final Class<?>[] defArgClasses = new Class[0];
 	private static final Object[] defArgs = new Object[0];
-	public final <T extends Entity> T createInstance(Class<T> proto) {
+	public final <T extends Entity> T createInstance(Class<T> klass) {
 		T ent = null;
 		try {
 			while (!createModel.compareAndSet(null, this)) {}
-			ent = proto.getConstructor(defArgClasses).newInstance(defArgs);
+			ent = klass.getConstructor(defArgClasses).newInstance(defArgs);
 			addInstance(ent);
 		}
 		catch (Throwable e) {}
@@ -1075,6 +1083,8 @@ public class JaamSimModel implements EventTimeListener {
 	final void renameEntity(Entity ent, String newName) {
 		if (!ent.isRegistered()) {
 			ent.entityName = newName;
+			if (gui != null)
+				gui.updateObjectSelector();
 			return;
 		}
 
@@ -1083,6 +1093,8 @@ public class JaamSimModel implements EventTimeListener {
 		}
 		ent.entityName = newName;
 		addNamedEntity(ent);
+		if (gui != null)
+			gui.updateObjectSelector();
 	}
 
 	private void validateEntList() {
@@ -1250,6 +1262,10 @@ public class JaamSimModel implements EventTimeListener {
 			// can finish traversing the list
 			validateEntList();
 		}
+	}
+
+	public int getEntityCount() {
+		return numLiveEnts;
 	}
 
 	/**

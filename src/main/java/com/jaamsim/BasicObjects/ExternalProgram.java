@@ -69,7 +69,7 @@ public class ExternalProgram extends AbstractExternalProgram {
 
 		// 3) Command line parameters
 		for (int i = 0; i < n; i++) {
-			command[i + m] = dataSource.getNextString(i, simTime);
+			command[i + m] = dataSource.getNextString(i, this, simTime);
 		}
 
 		try {

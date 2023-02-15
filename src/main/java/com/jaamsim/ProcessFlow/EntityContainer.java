@@ -157,11 +157,11 @@ public class EntityContainer extends SimEntity implements EntContainer {
 		registerEntity(ent);
 
 		// Determine the priority and match value for the received entity
-		int pri = (int) priority.getNextSample(simTime);
+		int pri = (int) priority.getNextSample(this, simTime);
 
 		String m = null;
 		if (!match.isDefault())
-			m = match.getNextString(simTime, 1.0d, true);
+			m = match.getNextString(this, simTime, 1.0d, true);
 
 		container.addEntity(ent, m, pri, fifo.getValue(), simTime);
 	}
@@ -221,6 +221,7 @@ public class EntityContainer extends SimEntity implements EntContainer {
 	 */
 	@Override
 	public void updateGraphics( double simTime ) {
+		super.updateGraphics(simTime);
 
 		boolean visible = showEntities.getValue();
 		Vec3d orient = getOrientation();

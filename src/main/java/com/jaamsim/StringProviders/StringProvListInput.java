@@ -27,29 +27,13 @@ import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.KeywordIndex;
-import com.jaamsim.input.ListInput;
+import com.jaamsim.input.ArrayListInput;
 import com.jaamsim.units.DimensionlessUnit;
 
-public class StringProvListInput extends ListInput<ArrayList<StringProvider>> {
+public class StringProvListInput extends ArrayListInput<StringProvider> {
 
 	public StringProvListInput(String key, String cat, ArrayList<StringProvider> def) {
 		super(key, cat, def);
-	}
-
-	@Override
-	public int getListSize() {
-		if (value == null)
-			return 0;
-		else
-			return value.size();
-	}
-
-	@Override
-	public void copyFrom(Entity thisEnt, Input<?> in) {
-		super.copyFrom(thisEnt, in);
-
-		// An expression input must be re-parsed to reset the entity referred to by "this"
-		parseFrom(thisEnt, in);
 	}
 
 	@Override
@@ -93,7 +77,7 @@ public class StringProvListInput extends ListInput<ArrayList<StringProvider>> {
 
 	@Override
 	public void getValueTokens(ArrayList<String> toks) {
-		if (value == null || isDefault())
+		if (value == null || isDef)
 			return;
 
 		for (int i = 0; i < value.size(); i++) {
@@ -171,7 +155,6 @@ public class StringProvListInput extends ListInput<ArrayList<StringProvider>> {
 		StringBuilder sb = new StringBuilder();
 		boolean first = true;
 		for (int i = 0; i < value.size(); i++) {
-			StringProvider prov = value.get(i);
 			if (!first) {
 				first = false;
 			}
@@ -179,31 +162,43 @@ public class StringProvListInput extends ListInput<ArrayList<StringProvider>> {
 				sb.append(Input.SEPARATOR);
 			}
 			sb.append("{").append(Input.BRACE_SEPARATOR);
-			sb.append(prov.getNextString(simTime));
+			sb.append(getNextString(i, thisEnt, simTime));
 			sb.append(Input.BRACE_SEPARATOR).append("}");
 		}
 		return sb.toString();
 	}
 
 	public String getNextString(int i, double simTime) {
+		return getNextString(i, null, simTime);
+	}
+
+	public String getNextString(int i, Entity thisEnt, double simTime) {
 		try {
-			return value.get(i).getNextString(simTime);
+			return getValue().get(i).getNextString(thisEnt, simTime);
 		}
 		catch (ErrorException e) {
 			e.keyword = getKeyword();
 			e.index = i + 1;
 			throw e;
+		}
+		catch (Exception e) {
+			throw new ErrorException("", -1, thisEnt.getName(), getKeyword(), i + 1,
+					e.getMessage(), e);
 		}
 	}
 
-	public double getNextValue(int i, double simTime) {
+	public double getNextValue(int i, Entity thisEnt, double simTime) {
 		try {
-			return value.get(i).getNextValue(simTime);
+			return getValue().get(i).getNextValue(thisEnt, simTime);
 		}
 		catch (ErrorException e) {
 			e.keyword = getKeyword();
 			e.index = i + 1;
 			throw e;
+		}
+		catch (Exception e) {
+			throw new ErrorException("", -1, thisEnt.getName(), getKeyword(), i + 1,
+					e.getMessage(), e);
 		}
 	}
 

@@ -160,7 +160,7 @@ public class EntityProcessor extends AbstractLinkedResourceUser {
 		assignAttributesAtStart(simTime);
 
 		// Set the service duration
-		double dur = serviceTime.getNextSample(simTime);
+		double dur = serviceTime.getNextSample(this, simTime);
 		long ticks = EventManager.current().secondsToNearestTick(dur);
 
 		// Add the entity to the list of entities to be processed
@@ -369,6 +369,7 @@ public class EntityProcessor extends AbstractLinkedResourceUser {
 
 	@Override
 	public void updateGraphics(double simTime) {
+		super.updateGraphics(simTime);
 
 		// Copy the lists to avoid concurrent modification exceptions
 		ArrayList<ProcessorEntry> copiedList;
@@ -390,7 +391,7 @@ public class EntityProcessor extends AbstractLinkedResourceUser {
 	    unitType = DimensionlessUnit.class,
 	    sequence = 0)
 	public int getCapacity(double simTime) {
-		return (int) capacity.getNextSample(simTime);
+		return (int) capacity.getNextSample(this, simTime);
 	}
 
 	@Output(name = "UnitsInUse",

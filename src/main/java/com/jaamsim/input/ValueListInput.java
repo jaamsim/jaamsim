@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2017-2020 JaamSim Software Inc.
+ * Copyright (C) 2017-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -68,10 +68,11 @@ public class ValueListInput extends ListInput<DoubleVector> {
 
 	@Override
 	public int getListSize() {
-		if (value == null)
+		DoubleVector val = getValue();
+		if (val == null)
 			return 0;
 		else
-			return value.size();
+			return val.size();
 	}
 
 	public void setValidRange(double min, double max) {

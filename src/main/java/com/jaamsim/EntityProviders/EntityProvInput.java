@@ -39,16 +39,6 @@ public class EntityProvInput<T extends Entity> extends Input<EntityProvider<T>> 
 	}
 
 	@Override
-	public void copyFrom(Entity thisEnt, Input<?> in) {
-		super.copyFrom(thisEnt, in);
-
-		// An expression input must be re-parsed to reset the entity referred to by "this"
-		if (value instanceof EntityProvExpression<?>) {
-			parseFrom(thisEnt, in);
-		}
-	}
-
-	@Override
 	public String applyConditioning(String str) {
 		return Parser.addQuotesIfNeeded(str);
 	}
@@ -101,7 +91,7 @@ public class EntityProvInput<T extends Entity> extends Input<EntityProvider<T>> 
 
 	@Override
 	public void getValueTokens(ArrayList<String> toks) {
-		if (value == null || isDefault())
+		if (value == null || isDef)
 			return;
 
 		toks.add(value.toString());
@@ -147,18 +137,22 @@ public class EntityProvInput<T extends Entity> extends Input<EntityProvider<T>> 
 		if (value == null)
 			return "";
 
-		return String.format("[%s]", value.getNextEntity(simTime));
+		return String.format("[%s]", value.getNextEntity(thisEnt, simTime));
 	}
 
-	public T getNextEntity(double simTime) {
-		if (value == null)
+	public T getNextEntity(Entity thisEnt, double simTime) {
+		if (getValue() == null)
 			return null;
 		try {
-			return value.getNextEntity(simTime);
+			return getValue().getNextEntity(thisEnt, simTime);
 		}
 		catch (ErrorException e) {
 			e.keyword = getKeyword();
 			throw e;
+		}
+		catch (Exception e) {
+			throw new ErrorException("", -1, thisEnt.getName(), getKeyword(), -1,
+					e.getMessage(), e);
 		}
 	}
 

@@ -51,14 +51,6 @@ public class ExpressionInput extends Input<ExpParser.Expression> {
 	}
 
 	@Override
-	public void copyFrom(Entity thisEnt, Input<?> in) {
-		super.copyFrom(thisEnt, in);
-
-		// An expression input must be re-parsed to reset the entity referred to by "this"
-		parseFrom(thisEnt, in);
-	}
-
-	@Override
 	public String applyConditioning(String str) {
 		return Parser.addQuotesIfNeeded(str);
 	}
@@ -107,7 +99,7 @@ public class ExpressionInput extends Input<ExpParser.Expression> {
 
 	@Override
 	public void getValueTokens(ArrayList<String> toks) {
-		if (value == null || isDefault())
+		if (value == null || isDef)
 			return;
 		toks.add(parseContext.getUpdatedSource());
 	}
@@ -143,7 +135,7 @@ public class ExpressionInput extends Input<ExpParser.Expression> {
 
 	public ExpResult getNextResult(Entity thisEnt, double simTime) {
 		try {
-			ExpResult ret = ExpEvaluator.evaluateExpression(value, thisEnt, simTime);
+			ExpResult ret = ExpEvaluator.evaluateExpression(getValue(), thisEnt, simTime);
 			if (ret.type != resType)
 				throw new ExpError(parseContext.getUpdatedSource(), 0, EXP_ERR_RESULT_TYPE,
 						ret.type, resType);

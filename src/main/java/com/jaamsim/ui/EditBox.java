@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2005-2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2021 JaamSim Software Inc.
+ * Copyright (C) 2016-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -238,6 +238,11 @@ public class EditBox extends FrameBox {
 	public static String formatLockedText(String str) {
 		str = GUIFrame.html_replace(str);
 		return String.format("<html><font color=\"gray\">%s</font></html>", str);
+	}
+
+	public static String formatInheritedText(String str) {
+		str = GUIFrame.html_replace(str);
+		return String.format("<html><font color=\"blue\">%s</font></html>", str);
 	}
 
 private static class CategoryInputs {

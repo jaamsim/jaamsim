@@ -52,16 +52,6 @@ public class StringProvInput extends Input<StringProvider> {
 	}
 
 	@Override
-	public void copyFrom(Entity thisEnt, Input<?> in) {
-		super.copyFrom(thisEnt, in);
-
-		// An expression input must be re-parsed to reset the entity referred to by "this"
-		if (value instanceof StringProvExpression) {
-			parseFrom(thisEnt, in);
-		}
-	}
-
-	@Override
 	public String applyConditioning(String str) {
 		return Parser.addQuotesIfNeeded(str);
 	}
@@ -92,7 +82,7 @@ public class StringProvInput extends Input<StringProvider> {
 
 	@Override
 	public void getValueTokens(ArrayList<String> toks) {
-		if (value == null || isDefault())
+		if (value == null || isDef)
 			return;
 
 		// Preserve the exact text for a constant value input
@@ -149,52 +139,80 @@ public class StringProvInput extends Input<StringProvider> {
 		StringBuilder sb = new StringBuilder();
 		if (unitType == null || unitType == DimensionlessUnit.class
 				|| unitType == UserSpecifiedUnit.class) {
-			sb.append(value.getNextString(simTime));
+			sb.append(value.getNextString(thisEnt, simTime));
 		}
 		else {
 			String unitString = simModel.getDisplayedUnit(unitType);
 			double sifactor = simModel.getDisplayedUnitFactor(unitType);
-			sb.append(value.getNextString(simTime, sifactor));
+			sb.append(value.getNextString(thisEnt, simTime, sifactor));
 			sb.append("[").append(unitString).append("]");
 		}
 		return sb.toString();
 	}
 
 	public String getNextString(double simTime) {
-		return getNextString(simTime, 1.0d, false);
+		return getNextString(null, simTime);
+	}
+
+	public String getNextString(Entity thisEnt, double simTime) {
+		return getNextString(thisEnt, simTime, 1.0d, false);
 	}
 
 	public String getNextString(double simTime, double siFactor) {
-		return getNextString(simTime, siFactor, false);
+		return getNextString(null, simTime, siFactor);
+	}
+
+	public String getNextString(Entity thisEnt, double simTime, double siFactor) {
+		return getNextString(thisEnt, simTime, siFactor, false);
 	}
 
 	public String getNextString(double simTime, double siFactor, boolean integerValue) {
+		return getNextString(null, simTime, siFactor, integerValue);
+	}
+
+	public String getNextString(Entity thisEnt, double simTime, double siFactor, boolean integerValue) {
 		try {
-			return value.getNextString(simTime, siFactor, integerValue);
+			return getValue().getNextString(thisEnt, simTime, siFactor, integerValue);
 		}
 		catch (ErrorException e) {
 			e.keyword = getKeyword();
 			throw e;
+		}
+		catch (Exception e) {
+			throw new ErrorException("", -1, thisEnt.getName(), getKeyword(), -1,
+					e.getMessage(), e);
 		}
 	}
 
 	public String getNextString(double simTime, String fmt, double siFactor) {
+		return getNextString(null, simTime, fmt, siFactor);
+	}
+
+	public String getNextString(Entity thisEnt, double simTime, String fmt, double siFactor) {
 		try {
-			return value.getNextString(simTime, fmt, siFactor);
+			return getValue().getNextString(thisEnt, simTime, fmt, siFactor);
 		}
 		catch (ErrorException e) {
 			e.keyword = getKeyword();
 			throw e;
+		}
+		catch (Exception e) {
+			throw new ErrorException("", -1, thisEnt.getName(), getKeyword(), -1,
+					e.getMessage(), e);
 		}
 	}
 
-	public double getNextValue(double simTime) {
+	public double getNextValue(Entity thisEnt, double simTime) {
 		try {
-			return value.getNextValue(simTime);
+			return getValue().getNextValue(thisEnt, simTime);
 		}
 		catch (ErrorException e) {
 			e.keyword = getKeyword();
 			throw e;
+		}
+		catch (Exception e) {
+			throw new ErrorException("", -1, thisEnt.getName(), getKeyword(), -1,
+					e.getMessage(), e);
 		}
 	}
 

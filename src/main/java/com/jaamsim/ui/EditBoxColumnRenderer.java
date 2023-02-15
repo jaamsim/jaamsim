@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2012 Ausenco Engineering Canada Inc.
- * Copyright (C) 2020 JaamSim Software Inc.
+ * Copyright (C) 2020-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,6 +55,8 @@ public Component getTableCellRendererComponent(JTable table, Object value,
 	// 1) Keyword
 	if (column == 0) {
 		str = in.getKeyword();
+		if (in.isLocked())
+			str = EditBox.formatLockedText(str);
 	}
 
 	// 2) Default value
@@ -71,11 +73,18 @@ public Component getTableCellRendererComponent(JTable table, Object value,
 	// 3) Present value
 	else {
 		str = in.getValueString();
+
+		// Input value with error
 		if (!in.isValid())
 			str = EditBox.formatErrorText(str);
-		if (in.isDefault() && in.isRequired())
+		// Input that is required
+		else if (str.isEmpty() && in.isRequired())
 			str = EditBox.REQD;
-		if (in.isLocked())
+		// Input value that is inherited from the prototype entity
+		else if (!str.isEmpty() && in.isDef())
+			str = EditBox.formatInheritedText(str);
+		// Input value that is locked
+		else if (in.isLocked())
 			str = EditBox.formatLockedText(str);
 	}
 

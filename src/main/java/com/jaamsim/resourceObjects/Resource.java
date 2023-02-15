@@ -96,7 +96,7 @@ public class Resource extends AbstractResourceProvider {
 
 	@Override
 	public int getCapacity(double simTime) {
-		return (int) capacity.getNextSample(simTime);
+		return (int) capacity.getNextSample(this, simTime);
 	}
 
 	@Override

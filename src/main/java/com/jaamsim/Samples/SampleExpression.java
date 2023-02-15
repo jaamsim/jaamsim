@@ -33,18 +33,16 @@ import com.jaamsim.units.UserSpecifiedUnit;
 
 public class SampleExpression implements SampleProvider {
 	private final ExpParser.Expression exp;
-	private final Entity thisEnt;
 	private final Class<? extends Unit> unitType;
 	private final ExpEvaluator.EntityParseContext parseContext;
 
-	public SampleExpression(String expString, Entity ent, Class<? extends Unit> ut) throws ExpError {
+	public SampleExpression(String expString, Entity thisEnt, Class<? extends Unit> ut) throws ExpError {
 
 		// Check that a unit type has been specified
 		if (ut == UserSpecifiedUnit.class) {
 			throw new InputErrorException(Input.INP_ERR_UNITUNSPECIFIED);
 		}
 
-		thisEnt = ent;
 		unitType = ut;
 		parseContext = ExpEvaluator.getParseContext(thisEnt, expString);
 		exp = ExpParser.parseExpression(parseContext, expString);
@@ -58,7 +56,7 @@ public class SampleExpression implements SampleProvider {
 	}
 
 	@Override
-	public double getNextSample(double simTime) {
+	public double getNextSample(Entity thisEnt, double simTime) {
 		double ret = 0.0;
 		try {
 			ExpResult res = ExpEvaluator.evaluateExpression(exp, thisEnt, simTime);

@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2002-2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2022 JaamSim Software Inc.
+ * Copyright (C) 2016-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -158,6 +158,17 @@ public class Simulation extends Entity {
 	                     + "the computer.",
 	         exampleList = {"100000"})
 	private final IntegerInput maxEntitiesToDisplay;
+
+	@Keyword(description = "If TRUE, the 'Trace' keyword for each object is activated. "
+	                     + "For an object to be traced, both the 'EnableTracing' input for "
+	                     + "Simulation and the 'Trace' input for the object must be set to TRUE. "
+	                     + "Trace outputs are written to standard out and can used by a "
+	                     + "programmer to track the interal logic for one or more selected "
+	                     + "objects as the model is executed. "
+	                     + "They are an essential tool for testing and debugging the Java code "
+	                     + "for JaamSim.",
+	         exampleList = {"TRUE"})
+	private final BooleanInput enableTracing;
 
 	@Keyword(description = "If TRUE, an additional output file is generated that traces the exact "
 	                     + "sequence of events executed by the model. "
@@ -397,8 +408,6 @@ public class Simulation extends Entity {
 	         exampleList = {"TRUE"})
 	private final BooleanInput printInputReport;
 
-	private String modelName = "JaamSim";
-
 	{
 		// Key Inputs tab
 		runDuration = new SampleInput("RunDuration", KEY_INPUTS, 31536000.0d);
@@ -457,6 +466,10 @@ public class Simulation extends Entity {
 		maxEntitiesToDisplay = new IntegerInput("MaxEntitiesToDisplay", OPTIONS, 10000);
 		maxEntitiesToDisplay.setValidRange(0, Integer.MAX_VALUE);
 		this.addInput(maxEntitiesToDisplay);
+
+		enableTracing = new BooleanInput("EnableTracing", OPTIONS, false);
+		enableTracing.setCallback(enableTracingCallback);
+		this.addInput(enableTracing);
 
 		traceEventsInput = new BooleanInput("TraceEvents", OPTIONS, false);
 		this.addInput(traceEventsInput);
@@ -758,6 +771,16 @@ public class Simulation extends Entity {
 		}
 	};
 
+	static final InputCallback enableTracingCallback = new InputCallback() {
+		@Override
+		public void callback(Entity ent, Input<?> inp) {
+			boolean bool = ((BooleanInput) inp).getValue();
+			for (Entity e : ent.getJaamSimModel().getClonesOfIterator(Entity.class)) {
+				e.enableTracing(bool);
+			}
+		}
+	};
+
 	static final InputCallback startingScenarioNumberCallback = new InputCallback() {
 		@Override
 		public void callback(Entity ent, Input<?> inp) {
@@ -845,7 +868,7 @@ public class Simulation extends Entity {
 	public int getSubstreamNumber() {
 		if (globalSeedInput.isDefault())
 			return getJaamSimModel().getReplicationNumber();
-		return (int)globalSeedInput.getNextSample(0.0);
+		return (int)globalSeedInput.getNextSample(this, 0.0);
 	}
 
 	public boolean getPrintReport() {
@@ -892,14 +915,14 @@ public class Simulation extends Entity {
 	 * Returns the duration of the run (not including intialization)
 	 */
 	public double getRunDuration() {
-		return runDuration.getNextSample(0.0d);
+		return runDuration.getNextSample(this, 0.0d);
 	}
 
 	/**
 	 * Returns the duration of the initialization period
 	 */
 	public double getInitializationTime() {
-		return initializationTime.getNextSample(0.0d);
+		return initializationTime.getNextSample(this, 0.0d);
 	}
 
 	/**
@@ -942,7 +965,7 @@ public class Simulation extends Entity {
 	public ArrayList<String> getRunOutputStrings(double simTime) {
 		ArrayList<String> ret = new ArrayList<>(runOutputList.getListSize());
 		for (int i = 0; i < runOutputList.getListSize(); i++) {
-			ret.add(runOutputList.getNextString(i, simTime));
+			ret.add(runOutputList.getNextString(i, this, simTime));
 		}
 		return ret;
 	}
@@ -950,7 +973,7 @@ public class Simulation extends Entity {
 	public ArrayList<Double> getRunOutputValues(double simTime) {
 		ArrayList<Double> ret = new ArrayList<>(runOutputList.getListSize());
 		for (int i = 0; i < runOutputList.getListSize(); i++) {
-			ret.add(runOutputList.getNextValue(i, simTime));
+			ret.add(runOutputList.getNextValue(i, this, simTime));
 		}
 		return ret;
 	}
@@ -966,13 +989,18 @@ public class Simulation extends Entity {
 	public ArrayList<String> getRunParameterStrings(double simTime) {
 		ArrayList<String> ret = new ArrayList<>(runParameterList.getListSize());
 		for (int i = 0; i < runParameterList.getListSize(); i++) {
-			ret.add(runParameterList.getValue().get(i).getNextString(simTime));
+			ret.add(runParameterList.getNextString(i, this, simTime));
 		}
 		return ret;
 	}
 
 	public int getMaxEntitiesToDisplay() {
 		return maxEntitiesToDisplay.getValue();
+	}
+
+	@Override
+	public boolean isEnableTracing() {
+		return enableTracing.getValue();
 	}
 
 	public boolean isShowLabels() {
@@ -1025,7 +1053,7 @@ public class Simulation extends Entity {
 
 	public boolean isPauseConditionSatisfied(double simTime) {
 		return pauseConditionInput.getValue() != null &&
-				pauseConditionInput.getNextSample(simTime) != 0.0d;
+				pauseConditionInput.getNextSample(this, simTime) != 0.0d;
 	}
 
 	public Vec3d getSnapGridPosition(Vec3d pos) {
@@ -1080,14 +1108,6 @@ public class Simulation extends Entity {
 			ret.z = oldPos.z;
 		}
 		return ret;
-	}
-
-	public void setModelName(String newModelName) {
-		modelName = newModelName;
-	}
-
-	public String getModelName() {
-		return modelName;
 	}
 
 	public boolean getExitAtStop() {
@@ -1261,7 +1281,7 @@ public class Simulation extends Entity {
 	}
 
 	public int getNumberOfReplications() {
-		return (int) numberOfReplications.getNextSample(0.0d);
+		return (int) numberOfReplications.getNextSample(this, 0.0d);
 	}
 
 	public int getNumberOfThreads() {
@@ -1283,11 +1303,11 @@ public class Simulation extends Entity {
 	}
 
 	public int getStartingScenarioNumber() {
-		return (int) startingScenarioNumber.getNextSample(0.0d);
+		return (int) startingScenarioNumber.getNextSample(this, 0.0d);
 	}
 
 	public int getEndingScenarioNumber() {
-		return (int) endingScenarioNumber.getNextSample(0.0d);
+		return (int) endingScenarioNumber.getNextSample(this, 0.0d);
 	}
 
 	public int getNumberOfScenarios() {
@@ -1307,7 +1327,7 @@ public class Simulation extends Entity {
 	  reportable = true,
 	    sequence = 0)
 	public String getSoftwareName(double simTime) {
-		return modelName;
+		return AboutBox.softwareName;
 	}
 
 	@Output(name = "SoftwareVersion",

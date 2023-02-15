@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2021 JaamSim Software Inc.
+ * Copyright (C) 2016-2022 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,6 @@ import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.OverlayEntity;
 import com.jaamsim.Graphics.TextBasics;
-import com.jaamsim.basicsim.Entity;
 import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
@@ -111,8 +110,7 @@ public class Assemble extends AbstractCombine implements EntityGen {
 		name = name + numberGenerated;
 
 		// Create the new entity
-		assembledEntity = InputAgent.generateEntityWithName(getJaamSimModel(), proto.getClass(), name);
-		Entity.fastCopyInputs(proto, assembledEntity);
+		assembledEntity = (DisplayEntity) InputAgent.getGeneratedClone(proto, name);
 		assembledEntity.earlyInit();
 
 		// Set the obj output to the assembled part
@@ -121,7 +119,7 @@ public class Assemble extends AbstractCombine implements EntityGen {
 
 		// Set the state for the assembled part
 		if (!stateAssignment.isDefault() && assembledEntity instanceof StateEntity) {
-			String state = stateAssignment.getValue().getNextString(simTime);
+			String state = stateAssignment.getNextString(this, simTime);
 			((StateEntity)assembledEntity).setPresentState(state);
 		}
 		return true;
@@ -156,6 +154,8 @@ public class Assemble extends AbstractCombine implements EntityGen {
 
 	@Override
 	public void updateGraphics(double simTime) {
+		super.updateGraphics(simTime);
+
 		if (assembledEntity == null)
 			return;
 		moveToProcessPosition(assembledEntity);

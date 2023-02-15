@@ -46,34 +46,34 @@ public class DiscreteUniformDistribution extends Distribution {
 
 	@Override
 	protected double getSample(double simTime) {
-		int i = (int) minValueInput.getNextSample(simTime);
-		int j = (int) maxValueInput.getNextSample(simTime);
+		int i = (int) minValueInput.getNextSample(this, simTime);
+		int j = (int) maxValueInput.getNextSample(this, simTime);
 		return getSample(i, j, rng);
 	}
 
 	@Override
 	protected double getMean(double simTime) {
-		int i = (int) minValueInput.getNextSample(simTime);
-		int j = (int) maxValueInput.getNextSample(simTime);
+		int i = (int) minValueInput.getNextSample(this, simTime);
+		int j = (int) maxValueInput.getNextSample(this, simTime);
 		return getMean(i, j);
 	}
 
 	@Override
 	protected double getStandardDev(double simTime) {
-		int i = (int) minValueInput.getNextSample(simTime);
-		int j = (int) maxValueInput.getNextSample(simTime);
+		int i = (int) minValueInput.getNextSample(this, simTime);
+		int j = (int) maxValueInput.getNextSample(this, simTime);
 		return getStandardDev(i, j);
 	}
 
 	@Override
 	protected double getMin(double simTime) {
-		int i = (int) minValueInput.getNextSample(simTime);
+		int i = (int) minValueInput.getNextSample(this, simTime);
 		return i;
 	}
 
 	@Override
 	protected double getMax(double simTime) {
-		int j = (int) maxValueInput.getNextSample(simTime);
+		int j = (int) maxValueInput.getNextSample(this, simTime);
 		return j;
 	}
 

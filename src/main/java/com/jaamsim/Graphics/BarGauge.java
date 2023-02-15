@@ -57,7 +57,7 @@ public class BarGauge extends DisplayEntity {
 	 description = "Value displayed by the gauge.",
 	    unitType = DimensionlessUnit.class)
 	public double getValue(double simTime) {
-		double ret = dataSource.getNextSample(simTime);
+		double ret = dataSource.getNextSample(this, simTime);
 		ret = Math.min(ret, 1.0d);
 		ret = Math.max(ret, 0.0d);
 		return ret;

@@ -34,29 +34,27 @@ import com.jaamsim.units.Unit;
 public class StringProvExpression implements StringProvider {
 
 	private final Expression exp;
-	private final Entity thisEnt;
 	private final Class<? extends Unit> unitType;
 	private final ExpEvaluator.EntityParseContext parseContext;
 
-	public StringProvExpression(String expString, Entity ent, Class<? extends Unit> ut) throws ExpError {
-		thisEnt = ent;
+	public StringProvExpression(String expString, Entity thisEnt, Class<? extends Unit> ut) throws ExpError {
 		unitType = ut;
 		parseContext = ExpEvaluator.getParseContext(thisEnt, expString);
 		exp = ExpParser.parseExpression(parseContext, expString);
 	}
 
 	@Override
-	public String getNextString(double simTime) {
-		return getNextString(simTime, 1.0d, false);
+	public String getNextString(Entity thisEnt, double simTime) {
+		return getNextString(thisEnt, simTime, 1.0d, false);
 	}
 
 	@Override
-	public String getNextString(double simTime, double siFactor) {
-		return getNextString(simTime, siFactor, false);
+	public String getNextString(Entity thisEnt, double simTime, double siFactor) {
+		return getNextString(thisEnt, simTime, siFactor, false);
 	}
 
 	@Override
-	public String getNextString(double simTime, double siFactor, boolean integerValue) {
+	public String getNextString(Entity thisEnt, double simTime, double siFactor, boolean integerValue) {
 		String ret = "";
 		try {
 			ExpResult result = ExpEvaluator.evaluateExpression(exp, thisEnt, simTime);
@@ -99,7 +97,7 @@ public class StringProvExpression implements StringProvider {
 	}
 
 	@Override
-	public String getNextString(double simTime, String fmt, double siFactor) {
+	public String getNextString(Entity thisEnt, double simTime, String fmt, double siFactor) {
 		String ret = "";
 		try {
 			ExpResult result = ExpEvaluator.evaluateExpression(exp, thisEnt, simTime);
@@ -147,7 +145,7 @@ public class StringProvExpression implements StringProvider {
 	}
 
 	@Override
-	public double getNextValue(double simTime) {
+	public double getNextValue(Entity thisEnt, double simTime) {
 		double ret = Double.NaN;
 		try {
 			ExpResult result = ExpEvaluator.evaluateExpression(exp, thisEnt, simTime);
