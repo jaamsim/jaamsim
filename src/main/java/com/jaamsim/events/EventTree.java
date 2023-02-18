@@ -26,8 +26,8 @@ import java.util.Arrays;
  *
  */
 class EventTree {
-
-	private EventNode root = EventNode.nilNode;
+	private final EventNode nilNode = new EventNode(0, 0, null);
+	private EventNode root = nilNode;
 	private EventNode lowest = null;
 
 	///////////////////////////////////////////
@@ -56,7 +56,7 @@ class EventTree {
 	}
 
 	final void reset() {
-		root = EventNode.nilNode;
+		root = nilNode;
 		lowest = null;
 		clearFreeList();
 		resetScratch();
@@ -64,12 +64,12 @@ class EventTree {
 	}
 
 	private void updateLowest() {
-		if (root == EventNode.nilNode) {
+		if (root == nilNode) {
 			lowest = null;
 			return;
 		}
 		EventNode current = root;
-		while (current.left != EventNode.nilNode)
+		while (current.left != nilNode)
 			current = current.left;
 
 		lowest = current;
@@ -77,7 +77,7 @@ class EventTree {
 
 	final EventNode createOrFindNode(long schedTick, int priority) {
 
-		if (root == EventNode.nilNode) {
+		if (root == nilNode) {
 			root = getNewNode(schedTick, priority);
 			lowest = root;
 			return root;
@@ -93,7 +93,7 @@ class EventTree {
 				return n; // Found existing node
 			}
 			EventNode next = comp > 0 ? n.left : n.right;
-			if (next != EventNode.nilNode) {
+			if (next != nilNode) {
 				pushScratch(n);
 				n = next;
 				continue;
@@ -187,7 +187,7 @@ class EventTree {
 				current = current.left;
 			else
 				current = current.right;
-			if (current == EventNode.nilNode) {
+			if (current == nilNode) {
 				return false; // Node not found
 			}
 		}
@@ -197,7 +197,7 @@ class EventTree {
 			throw new RuntimeException("Removing non-empy node");
 
 		// We have the node to remove
-		if (current.left != EventNode.nilNode && current.right != EventNode.nilNode) {
+		if (current.left != nilNode && current.right != nilNode) {
 			current = swapToLeaf(current);
 		}
 
@@ -212,7 +212,7 @@ class EventTree {
 //			}
 //		}
 
-		EventNode child = current.left != EventNode.nilNode ? current.left : current.right;
+		EventNode child = current.left != nilNode ? current.left : current.right;
 
 		EventNode parent = getScratch(1);
 
@@ -248,7 +248,7 @@ class EventTree {
 	private EventNode swapToLeaf(EventNode node) {
 		pushScratch(node);
 		EventNode curr = node.left;
-		while (curr.right != EventNode.nilNode) {
+		while (curr.right != nilNode) {
 			pushScratch(curr);
 			curr = curr.right;
 		}
@@ -342,7 +342,7 @@ class EventTree {
 	}
 
 	private void runOnNode(EventNode node, EventNode.Runner runner) {
-		if (node == EventNode.nilNode)
+		if (node == nilNode)
 			return;
 
 		runOnNode(node.left, runner);
@@ -354,9 +354,9 @@ class EventTree {
 
 	// Verify the sorting structure and return the number of nodes
 	final int verify() {
-		if (root == EventNode.nilNode) return 0;
+		if (root == nilNode) return 0;
 
-		if (EventNode.nilNode.red == true)
+		if (nilNode.red == true)
 			throw new RuntimeException("nil node corrupted, turned red");
 		return verifyNode(root);
 	}
@@ -365,12 +365,12 @@ class EventTree {
 		int lBlacks = 0;
 		int rBlacks = 0;
 
-		if (n.left != EventNode.nilNode) {
+		if (n.left != nilNode) {
 			if (n.compareToNode(n.left) != 1)
 				throw new RuntimeException("RB tree order verify failed");
 			lBlacks = verifyNode(n.left);
 		}
-		if (n.right != EventNode.nilNode) {
+		if (n.right != nilNode) {
 			if (n.compareToNode(n.right) != -1)
 				throw new RuntimeException("RB tree order verify failed");
 			rBlacks = verifyNode(n.right);
@@ -392,7 +392,7 @@ class EventTree {
 	final EventNode find(long schedTick, int priority) {
 		EventNode curr = root;
 		while (true) {
-			if (curr == EventNode.nilNode) return null;
+			if (curr == nilNode) return null;
 			int comp = curr.compare(schedTick, priority);
 			if (comp == 0) {
 				return curr;
@@ -407,14 +407,14 @@ class EventTree {
 	}
 
 	final int verifyNodeCount() {
-		if (root == EventNode.nilNode) return 0;
+		if (root == nilNode) return 0;
 		return countNodes(root);
 	}
 	private int countNodes(EventNode n) {
 		int count = 1;
-		if (n.left != EventNode.nilNode)
+		if (n.left != nilNode)
 			count += countNodes(n.left);
-		if (n.right != EventNode.nilNode)
+		if (n.right != nilNode)
 			count += countNodes(n.right);
 
 		return count;
@@ -424,7 +424,7 @@ class EventTree {
 
 	private EventNode getNewNode(long schedTick, int priority) {
 		if (freeList == null) {
-			return new EventNode(schedTick, priority);
+			return new EventNode(schedTick, priority, nilNode);
 		}
 
 		EventNode ret = freeList;
@@ -435,8 +435,8 @@ class EventTree {
 		ret.head = null;
 		ret.tail = null;
 
-		ret.left = EventNode.nilNode;
-		ret.right = EventNode.nilNode;
+		ret.left = nilNode;
+		ret.right = nilNode;
 		ret.red = false;
 
 		return ret;

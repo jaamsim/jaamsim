@@ -31,11 +31,12 @@ class EventNode {
 	EventNode left;
 	EventNode right;
 
-	EventNode(long tick, int prio) {
+	EventNode(long tick, int prio, EventNode def) {
 		schedTick = tick;
 		priority = prio;
-		left = nilNode;
-		right = nilNode;
+		left = def;
+		right = def;
+		red = false;
 	}
 
 	final void addEvent(Event e, boolean fifo) {
@@ -127,14 +128,5 @@ class EventNode {
 			next.node = this;
 			next = next.next;
 		}
-	}
-
-	static final EventNode nilNode;
-
-	static {
-		nilNode = new EventNode(0, 0);
-		nilNode.left = null;
-		nilNode.right = null;
-		nilNode.red = false;
 	}
 }
