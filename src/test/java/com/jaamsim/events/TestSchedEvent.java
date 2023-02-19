@@ -261,4 +261,39 @@ public class TestSchedEvent {
 		public void process() {
 		}
 	}
+
+	@Test
+	public void testWaitTickEvents() {
+		EventManager evt = new EventManager("TestEVT");
+		evt.clear();
+
+		evt.scheduleProcessExternal(0, 0, true, new WaitTickTarget(), null);
+
+		TestFrameworkHelpers.runEventsToTick(evt, 1000002, Long.MAX_VALUE);
+	}
+
+	private static class WaitTickTarget extends ProcessTarget {
+		@Override
+		public String getDescription() {
+			return "WaitTickLoop";
+		}
+
+		@Override
+		public void process() {
+			long[] nanoStamps = new long[11];
+			for (int i = 0; i <= 1000000; i++) {
+				if (i % 100000 == 0) {
+					int idx = i / 100000;
+					nanoStamps[idx] = System.nanoTime();
+				}
+				EventManager.waitTicks(1, 0, true, null);
+			}
+			long endSchedNanos = System.nanoTime();
+
+			long endExecNanos = System.nanoTime();
+
+			outputResults("Wait Ticks Events", nanoStamps, endSchedNanos, endExecNanos);
+		}
+	}
+
 }
