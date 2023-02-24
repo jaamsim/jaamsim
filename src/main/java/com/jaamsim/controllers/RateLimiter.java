@@ -32,7 +32,6 @@ public class RateLimiter implements Runnable {
 	private final Object timingLock = new Object();
 	private final double ups;
 	private final long frameTime;
-	private boolean running = true;
 
 	private final ArrayList<Runnable> callbacks = new ArrayList<>();
 
@@ -54,7 +53,7 @@ public class RateLimiter implements Runnable {
 	@Override
 	public void run() {
 		synchronized(timingLock) {
-			while(running) {
+			while (true) {
 				// Is a redraw scheduled
 				long currentTime = System.currentTimeMillis();
 				long waitLength = schedTime.get() - currentTime;
@@ -92,12 +91,6 @@ public class RateLimiter implements Runnable {
 	public void registerCallback(Runnable r) {
 		synchronized (timingLock) {
 			callbacks.add(r);
-		}
-	}
-
-	public void cancel() {
-		synchronized (timingLock) {
-			running = false;
 		}
 	}
 }
