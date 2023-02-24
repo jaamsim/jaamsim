@@ -25,29 +25,24 @@ import java.util.concurrent.atomic.AtomicLong;
  *
  */
 public class RateLimiter implements Runnable {
-	private final Thread refreshThread;
-
 	private long lastCallbackTime = 0;
 	private final AtomicLong schedTime = new AtomicLong(Long.MAX_VALUE);
 	private final Object timingLock = new Object();
-	private final double ups;
 	private final long frameTime;
 
 	private final ArrayList<Runnable> callbacks = new ArrayList<>();
 
 	public static RateLimiter create(double updatesPerSecond) {
 		RateLimiter ret = new RateLimiter(updatesPerSecond);
-		ret.refreshThread.start();
+		Thread refreshThread = new Thread(ret, "RefreshThread");
+		refreshThread.setDaemon(true);
+		refreshThread.start();
 		return ret;
 	}
 
 	private RateLimiter(double updatesPerSecond) {
 		// Start the display timer
-		ups = updatesPerSecond;
-		frameTime = (long)(1000.0d / ups);
-
-		refreshThread = new Thread(this, "RefreshThread");
-		refreshThread.setDaemon(true);
+		frameTime = (long)(1000.0d / updatesPerSecond);
 	}
 
 	@Override
