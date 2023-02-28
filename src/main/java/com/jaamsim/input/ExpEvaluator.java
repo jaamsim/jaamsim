@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2022 JaamSim Software Inc.
+ * Copyright (C) 2016-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.jaamsim.Graphics.AbstractDirectedEntity;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.input.ExpParser.Assigner;
@@ -49,6 +50,8 @@ public class ExpEvaluator {
 			return ExpResType.NUMBER;
 		} else if (ExpCollections.isCollectionClass(klass)){
 			return ExpResType.COLLECTION;
+		} else if (AbstractDirectedEntity.class.isAssignableFrom(klass)){
+			return ExpResType.ENTITY;
 		} else {
 			return null;
 		}
@@ -76,6 +79,11 @@ public class ExpEvaluator {
 			return ExpCollections.wrapCollection(oh.getValue(simTime, retType), oh.getUnitType());
 		}
 
+		if (AbstractDirectedEntity.class.isAssignableFrom(retType)) {
+			AbstractDirectedEntity<?> de = oh.getValue(simTime, AbstractDirectedEntity.class);
+			return ExpResult.makeEntityResult(de.getEntity());
+		}
+
 		// No known type
 		return null;
 	}
@@ -101,6 +109,10 @@ public class ExpEvaluator {
 		}
 		if (ExpCollections.isCollectionClass(val.getClass())) {
 			return ExpCollections.wrapCollection(val, unitType);
+		}
+		if (AbstractDirectedEntity.class.isAssignableFrom(val.getClass())) {
+			AbstractDirectedEntity<?> de = (AbstractDirectedEntity<?>) val;
+			return ExpResult.makeEntityResult(de.getEntity());
 		}
 		throw new ExpError(null, 0, "Unknown type in expression: %s", val.getClass().getSimpleName());
 	}
