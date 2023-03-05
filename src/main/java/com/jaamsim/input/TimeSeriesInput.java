@@ -36,6 +36,10 @@ public class TimeSeriesInput extends Input<TimeSeriesProvider> {
 		super(key, cat, def);
 	}
 
+	public TimeSeriesInput(String key, String cat, double def) {
+		super(key, cat, new TimeSeriesConstantDouble(def));
+	}
+
 	public void setUnitType(Class<? extends Unit> u) {
 		if (u != unitType)
 			this.reset();

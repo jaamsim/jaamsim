@@ -19,7 +19,6 @@ package com.jaamsim.Thresholds;
 
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.Samples.TimeSeries;
-import com.jaamsim.Samples.TimeSeriesConstantDouble;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.EntityTarget;
 import com.jaamsim.events.EventManager;
@@ -89,11 +88,11 @@ public class TimeSeriesThreshold extends Threshold {
 		timeSeries.setRequired(true);
 		this.addInput(timeSeries);
 
-		maxOpenLimit = new TimeSeriesInput("MaxOpenLimit", KEY_INPUTS, new TimeSeriesConstantDouble(Double.POSITIVE_INFINITY));
+		maxOpenLimit = new TimeSeriesInput("MaxOpenLimit", KEY_INPUTS, Double.POSITIVE_INFINITY);
 		maxOpenLimit.setUnitType(UserSpecifiedUnit.class);
 		this.addInput( maxOpenLimit );
 
-		minOpenLimit = new TimeSeriesInput("MinOpenLimit", KEY_INPUTS, new TimeSeriesConstantDouble(Double.NEGATIVE_INFINITY));
+		minOpenLimit = new TimeSeriesInput("MinOpenLimit", KEY_INPUTS, Double.NEGATIVE_INFINITY);
 		minOpenLimit.setUnitType(UserSpecifiedUnit.class);
 		this.addInput( minOpenLimit );
 
