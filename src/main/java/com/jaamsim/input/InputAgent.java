@@ -1620,6 +1620,12 @@ public class InputAgent {
 		if (ret == null)
 			return "null";
 
+		// String outputs
+		if (retType == String.class) {
+			sb.append("\"").append(ret).append("\"");
+			return sb.toString();
+		}
+
 		// double[] outputs
 		if (retType == double[].class) {
 			double[] val = (double[]) ret;
@@ -1776,7 +1782,7 @@ public class InputAgent {
 			ExpResult result = (ExpResult) ret;
 			switch (result.type) {
 			case STRING:
-				sb.append(result.stringVal);
+				sb.append("\"").append(result.stringVal).append("\"");
 				break;
 			case ENTITY:
 				if (result.entVal == null)
