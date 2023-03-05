@@ -1626,6 +1626,12 @@ public class InputAgent {
 			return sb.toString();
 		}
 
+		// Entity outputs
+		if (retType.isAssignableFrom(Entity.class)) {
+			sb.append("[").append(ret).append("]");
+			return sb.toString();
+		}
+
 		// double[] outputs
 		if (retType == double[].class) {
 			double[] val = (double[]) ret;
