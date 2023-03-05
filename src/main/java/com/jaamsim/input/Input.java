@@ -107,6 +107,10 @@ public abstract class Input<T> {
 	protected static final String VALID_ENTITY_PROV_TYPE = "Accepts the name of an entity of type %s or an expression that returns such an entity.";
 	protected static final String VALID_BOOLEAN_PROV = "Accepts the text TRUE or FALSE or an expression that returns a dimensionless number (non-zero indicates TRUE, zero indicates FALSE). "
 	                                                 + "Inputs of T, t, and 1 are interpreted as TRUE, while F, f, and 0 are interpreted as FALSE.";
+	protected static final String VALID_TIMESERIES_PROV = "Accepts a number with units of type %s or a TimeSeries that returns such a number.";
+	protected static final String VALID_TIMESERIES_PROV_UNIT = "Accepts a number with or without units or a TimeSeries that returns such a number. "
+	                                                         + "An input to the UnitType keyword MUST BE PROVIDED before an input to this keyword can be entered.";
+
 	protected static final String VALID_COLOUR = "Accepts a colour name, an RGB value, or an RGB/transparency value.";
 	protected static final String VALID_INTEGER = "Accepts a dimensionless integer value.";
 	protected static final String VALID_VALUE = "Accepts a number with units of type %s.";
