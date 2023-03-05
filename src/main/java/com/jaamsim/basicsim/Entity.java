@@ -1200,11 +1200,8 @@ public class Entity {
 	@Output(name = "ObjectType",
 	 description = "The class of objects that this entity belongs to.",
 	    sequence = 1)
-	public String getObjectTypeName(double simTime) {
-		ObjectType ot = this.getObjectType();
-		if (ot == null)
-			return null;
-		return ot.getName();
+	public ObjectType getObjectTypeName(double simTime) {
+		 return getObjectType();
 	}
 
 	@Output(name = "SimTime",
