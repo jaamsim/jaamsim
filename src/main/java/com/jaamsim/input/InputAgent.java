@@ -1605,9 +1605,6 @@ public class InputAgent {
 	 * @return formated string for the output
 	 */
 	public static String getValueAsString(JaamSimModel simModel, ValueHandle out, double simTime, String floatFmt, double factor) {
-		StringBuilder sb = new StringBuilder();
-		String str;
-		String COMMA_SEPARATOR = ", ";
 
 		// Numeric outputs
 		if (out.isNumericValue()) {
@@ -1617,23 +1614,32 @@ public class InputAgent {
 
 		Class<?> retType = out.getReturnType();
 		Object ret = out.getValue(simTime, retType);
+		return getOutputString(simModel, ret, floatFmt, factor);
+	}
+
+	public static String getOutputString(JaamSimModel simModel, Object ret, String floatFmt, double factor) {
+		StringBuilder sb = new StringBuilder();
+		String str;
+		String COMMA_SEPARATOR = ", ";
+
 		if (ret == null)
 			return "null";
 
 		// String outputs
-		if (retType == String.class) {
+		if (ret instanceof String) {
 			sb.append("\"").append(ret).append("\"");
 			return sb.toString();
 		}
 
 		// Entity outputs
-		if (retType.isAssignableFrom(Entity.class)) {
+		if (ret instanceof Entity) {
 			sb.append("[").append(ret).append("]");
 			return sb.toString();
 		}
 
+
 		// double[] outputs
-		if (retType == double[].class) {
+		if (ret instanceof double[]) {
 			double[] val = (double[]) ret;
 			sb.append("{");
 			for (int i=0; i<val.length; i++) {
@@ -1647,7 +1653,7 @@ public class InputAgent {
 		}
 
 		// double[][] outputs
-		if (retType == double[][].class) {
+		if (ret instanceof double[][]) {
 			double[][] val = (double[][]) ret;
 			sb.append("{");
 			for (int i=0; i<val.length; i++) {
@@ -1667,7 +1673,7 @@ public class InputAgent {
 		}
 
 		// int[] outputs
-		if (retType == int[].class) {
+		if (ret instanceof int[]) {
 			int[] val = (int[]) ret;
 			sb.append("{");
 			for (int i=0; i<val.length; i++) {
@@ -1681,7 +1687,7 @@ public class InputAgent {
 		}
 
 		// Vec3d outputs
-		if (retType == Vec3d.class) {
+		if (ret instanceof Vec3d) {
 			Vec3d vec = (Vec3d) ret;
 			sb.append(vec.x/factor);
 			sb.append(Input.SEPARATOR).append(vec.y/factor);
@@ -1690,7 +1696,7 @@ public class InputAgent {
 		}
 
 		// DoubleVector output
-		if (retType == DoubleVector.class) {
+		if (ret instanceof DoubleVector) {
 			sb.append("{");
 			DoubleVector vec = (DoubleVector) ret;
 			for (int i=0; i<vec.size(); i++) {
@@ -1705,7 +1711,7 @@ public class InputAgent {
 		}
 
 		// ArrayList output
-		if (retType == ArrayList.class) {
+		if (ret instanceof ArrayList) {
 			sb.append("{");
 			ArrayList<?> array = (ArrayList<?>) ret;
 			for (int i=0; i<array.size(); i++) {
@@ -1735,7 +1741,7 @@ public class InputAgent {
 		}
 
 		// Keyed outputs
-		if (retType == LinkedHashMap.class) {
+		if (ret instanceof LinkedHashMap) {
 			sb.append("{");
 			LinkedHashMap<?, ?> map = (LinkedHashMap<?, ?>) ret;
 			boolean first = true;
@@ -1784,7 +1790,7 @@ public class InputAgent {
 			return sb.toString();
 		}
 
-		if (retType == ExpResult.class) {
+		if (ret instanceof ExpResult) {
 			ExpResult result = (ExpResult) ret;
 			switch (result.type) {
 			case STRING:
