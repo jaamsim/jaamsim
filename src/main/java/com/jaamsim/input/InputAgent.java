@@ -43,6 +43,7 @@ import java.util.Locale;
 import java.util.Map.Entry;
 
 import com.jaamsim.Commands.Command;
+import com.jaamsim.Graphics.AbstractDirectedEntity;
 import com.jaamsim.Graphics.EntityLabel;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ErrorException;
@@ -1635,7 +1636,7 @@ public class InputAgent {
 		}
 
 		// Entity outputs
-		if (ret instanceof Entity) {
+		if (ret instanceof Entity || ret instanceof AbstractDirectedEntity) {
 			sb.append("[").append(ret).append("]");
 			return sb.toString();
 		}
