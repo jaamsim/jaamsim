@@ -82,6 +82,8 @@ public class InputAgent {
 	private static final String[] GRAPHICS_PALETTES = {"Graphics Objects", "View", "Display Models"};
 	private static final String[] GRAPHICS_CATEGORIES = {Entity.GRAPHICS, Entity.FONT, Entity.FORMAT, Entity.GUI};
 
+	private static final String COMMA_SEPARATOR = ", ";
+
 	private static final int MAX_BRACE_DEPTH = 3;
 
 	public static void storeAndExecute(Command cmd) {
@@ -1619,8 +1621,6 @@ public class InputAgent {
 
 	public static String getOutputString(JaamSimModel simModel, Object ret, String floatFmt, double factor) {
 		StringBuilder sb = new StringBuilder();
-		String str;
-		String COMMA_SEPARATOR = ", ";
 
 		if (ret == null)
 			return "null";
@@ -1650,7 +1650,7 @@ public class InputAgent {
 			for (int i=0; i<val.length; i++) {
 				if (i > 0)
 					sb.append(COMMA_SEPARATOR);
-				str = String.format(floatFmt, val[i]/factor);
+				String str = String.format(floatFmt, val[i]/factor);
 				sb.append(str);
 			}
 			sb.append("}");
@@ -1668,7 +1668,7 @@ public class InputAgent {
 				for (int j=0; j<val[i].length; j++) {
 					if (j > 0)
 						sb.append(COMMA_SEPARATOR);
-					str = String.format(floatFmt, val[i][j]/factor);
+					String str = String.format(floatFmt, val[i][j]/factor);
 					sb.append(str);
 				}
 				sb.append("}");
@@ -1684,7 +1684,7 @@ public class InputAgent {
 			for (int i=0; i<val.length; i++) {
 				if (i > 0)
 					sb.append(COMMA_SEPARATOR);
-				str = String.format("%s", val[i]);
+				String str = String.format("%s", val[i]);
 				sb.append(str);
 			}
 			sb.append("}");
@@ -1705,7 +1705,7 @@ public class InputAgent {
 			sb.append("{");
 			DoubleVector vec = (DoubleVector) ret;
 			for (int i=0; i<vec.size(); i++) {
-				str = String.format(floatFmt, vec.get(i)/factor);
+				String str = String.format(floatFmt, vec.get(i)/factor);
 				sb.append(str);
 				if (i < vec.size()-1) {
 					sb.append(COMMA_SEPARATOR);
