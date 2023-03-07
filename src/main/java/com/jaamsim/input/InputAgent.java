@@ -1758,30 +1758,14 @@ public class InputAgent {
 			return sb.toString();
 		}
 
+		// Expression result
 		if (ret instanceof ExpResult) {
 			ExpResult result = (ExpResult) ret;
-			switch (result.type) {
-			case STRING:
-				sb.append("\"").append(result.stringVal).append("\"");
-				break;
-			case ENTITY:
-				if (result.entVal == null)
-					sb.append("null");
-				else
-					sb.append("[").append(result.entVal.getName()).append("]");
-				break;
-			case NUMBER:
+			if (result.type == ExpResType.NUMBER) {
 				sb.append(String.format(floatFmt, result.value/factor)).append(unitString);
-				break;
-			case COLLECTION:
-				sb.append(result.colVal.getOutputString(simModel));
-				break;
-			default:
-				assert(false);
-				sb.append("???");
-				break;
+				return sb.toString();
 			}
-			return sb.toString();
+			return result.getOutputString(simModel);
 		}
 
 		// All other outputs
