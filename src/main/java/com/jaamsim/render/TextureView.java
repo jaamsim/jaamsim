@@ -42,7 +42,6 @@ public class TextureView implements Renderable {
 	private final Vec3d _scale;
 	private final long _pickingID;
 	private ArrayList<Vec2d> _texCoords;
-	private GraphicsMemManager.BufferHandle _texCoordHandle;
 
 	private final AABB _bounds;
 
@@ -51,9 +50,14 @@ public class TextureView implements Renderable {
 	// Initialize the very simple buffers needed to render this image
 	static private boolean staticInit = false;
 	static private int vertBuff;
-	static private int texCoordBuff;
 	static private int normalBuff;
 	static private HashMap<Integer, Integer> VAOMap = new HashMap<>();
+
+	// The texture coordinates to use when none are provided
+	static private int defaultTexCoordBuff;
+
+	// A buffer handle for when custom texture coordinates are provided
+	static private int customTexCoordBuff;
 
 	static private int progHandle;
 	static private int projMatVar;
@@ -113,11 +117,12 @@ public class TextureView implements Renderable {
 	private static void initStaticBuffers(Renderer r) {
 		GL2GL3 gl = r.getGL();
 
-		int[] buffs = new int[3];
-		gl.glGenBuffers(3, buffs, 0);
+		int[] buffs = new int[4];
+		gl.glGenBuffers(4, buffs, 0);
 		vertBuff = buffs[0];
-		texCoordBuff = buffs[1];
+		defaultTexCoordBuff = buffs[1];
 		normalBuff = buffs[2];
+		customTexCoordBuff = buffs[3];
 
 		FloatBuffer verts = FloatBuffer.allocate(6*3); // 2 triangles * 3 coordinates
 		verts.put(-0.5f); verts.put(-0.5f); verts.put(0.0f);
@@ -143,7 +148,7 @@ public class TextureView implements Renderable {
 		texCoords.put(0.0f); texCoords.put(1.0f);
 
 		texCoords.flip();
-		gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, texCoordBuff);
+		gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, defaultTexCoordBuff);
 		gl.glBufferData(GL2GL3.GL_ARRAY_BUFFER, 6*2*4, texCoords, GL2GL3.GL_STATIC_DRAW);
 
 		FloatBuffer normals = FloatBuffer.allocate(6*3); // 2 triangles * 3 coordinates
@@ -208,26 +213,22 @@ public class TextureView implements Renderable {
 		gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, normalBuff);
 		gl.glVertexAttribPointer(normalVar, 3, GL2GL3.GL_FLOAT, false, 0, 0);
 
-		// TexCoords
-		if (_texCoords == null) {
-			// Use default buffer if custom coords have not been included
-			int texCoordVar = gl.glGetAttribLocation(progHandle, "texCoord");
-			gl.glEnableVertexAttribArray(texCoordVar);
-
-			gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, texCoordBuff);
-			gl.glVertexAttribPointer(texCoordVar, 2, GL2GL3.GL_FLOAT, false, 0, 0);
-
-			gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, 0);
-		}
 		gl.glBindVertexArray(0);
 
 	}
 
-	private void updateTexCoordBuffer(Renderer renderer) {
+	private void bindDefaultTexCoords(Renderer renderer) {
+		GL2GL3 gl = renderer.getGL();
+		int texCoordVar = gl.glGetAttribLocation(progHandle, "texCoord");
+		gl.glEnableVertexAttribArray(texCoordVar);
+
+		gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, defaultTexCoordBuff);
+		gl.glVertexAttribPointer(texCoordVar, 2, GL2GL3.GL_FLOAT, false, 0, 0);
+	}
+
+	private void updateCustomTexCoordBuffer(Renderer renderer) {
 		GL2GL3 gl = renderer.getGL();
 		int texCoordBuffSize = _texCoords.size()*2*4;
-		_texCoordHandle = renderer.getTexMemManager().allocateBuffer(texCoordBuffSize, gl);
-		int buffID = _texCoordHandle.bind();
 
 		FloatBuffer texData = FloatBuffer.allocate(_texCoords.size()*2);
 
@@ -235,13 +236,13 @@ public class TextureView implements Renderable {
 			texData.put((float)v.x); texData.put((float)v.y);
 		}
 		texData.flip();
-		gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, buffID);
+		gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, customTexCoordBuff);
 		gl.glBufferData(GL2GL3.GL_ARRAY_BUFFER, texCoordBuffSize, texData, GL2GL3.GL_STATIC_DRAW);
 
 		int texCoordVar = gl.glGetAttribLocation(progHandle, "texCoord");
 		gl.glEnableVertexAttribArray(texCoordVar);
 
-		gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, buffID);
+		gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, customTexCoordBuff);
 		gl.glVertexAttribPointer(texCoordVar, 2, GL2GL3.GL_FLOAT, false, 0, 0);
 
 	}
@@ -277,9 +278,10 @@ public class TextureView implements Renderable {
 		int vao = VAOMap.get(contextID);
 		gl.glBindVertexArray(vao);
 
-		if (	_texCoords != null &&
-				(_texCoordHandle == null || !_texCoordHandle.isValid()) ) {
-			updateTexCoordBuffer(renderer);
+		if (_texCoords == null) {
+			bindDefaultTexCoords(renderer);
+		} else {
+			updateCustomTexCoordBuffer(renderer);
 		}
 
 		Mat4d modelViewMat = new Mat4d();
