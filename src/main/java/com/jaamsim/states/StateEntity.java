@@ -435,6 +435,24 @@ public abstract class StateEntity extends DisplayEntity implements StateUser {
 
 	/**
 	 * Returns the total elapsed time in seconds after the completion of the initialisation period
+	 * during which the entity has been in a state that has been labelled as 'working'.
+	 * @param simTime - present simulation time
+	 * @return total time in a 'working' state
+	 */
+	public double getTimeInWorkingState(double simTime) {
+		EventManager evt = this.getJaamSimModel().getEventManager();
+		long simTicks = evt.secondsToNearestTick(simTime);
+		long ticks = 0L;
+		for (StateRecord rec : states.values()) {
+			if (!rec.isWorking())
+				continue;
+			ticks += getTicksInState(simTicks, rec);
+		}
+		return evt.ticksToSeconds(ticks);
+	}
+
+	/**
+	 * Returns the total elapsed time in seconds after the completion of the initialisation period
 	 * the entity has been in any state that ends in the specified string.
 	 * @param simTime - present simulation time
 	 * @param state - string representing the specified type of state
@@ -504,7 +522,7 @@ public abstract class StateEntity extends DisplayEntity implements StateUser {
 	}
 
 	@Output(name = "WorkingState",
-	 description = "Returns TRUE if the present state is one of the working states.",
+	 description = "Returns TRUE if the present state is one of the 'working' states.",
 	    sequence = 1)
 	public boolean isWorkingState(double simTime) {
 		if (presentState == null) {
