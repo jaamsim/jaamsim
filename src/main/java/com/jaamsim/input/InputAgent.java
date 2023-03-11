@@ -1637,6 +1637,11 @@ public class InputAgent {
 			return sb.toString();
 		}
 
+		// Floating point number
+		if (ret instanceof Double || ret instanceof Float) {
+			double val = (double) ret;
+			return String.format(floatFmt, val/factor);
+		}
 
 		// double[] outputs
 		if (ret instanceof double[]) {
@@ -1718,23 +1723,7 @@ public class InputAgent {
 				if (i > 0)
 					sb.append(COMMA_SEPARATOR);
 				Object obj = array.get(i);
-				if (obj instanceof Double) {
-					double val = (Double)obj;
-					sb.append(String.format(floatFmt, val/factor));
-				}
-				else if (obj instanceof ArrayList) {
-					ArrayList<?> list = (ArrayList<?>) obj;
-					sb.append("{");
-					for (int j=0; j<list.size(); j++) {
-						if (j > 0)
-							sb.append(COMMA_SEPARATOR);
-						sb.append(list.get(j).toString());
-					}
-					sb.append("}");
-				}
-				else {
-					sb.append(String.format("%s", obj));
-				}
+				sb.append(getOutputString(simModel, obj, floatFmt, factor));
 			}
 			sb.append("}");
 			return sb.toString();
@@ -1754,37 +1743,11 @@ public class InputAgent {
 					first = false;
 				else
 					sb.append(COMMA_SEPARATOR);
-				sb.append(String.format("%s=", mapEntry.getKey()));
 
-				if (obj instanceof Double) {
-					double val = (Double)obj;
-					sb.append(String.format(floatFmt, val/factor));
-				}
-				else if (obj instanceof LinkedHashMap) {
-					sb.append("{");
-					LinkedHashMap<?, ?> innerMap = (LinkedHashMap<?, ?>)obj;
-					boolean innerFirst = true;
-					for (Entry<?, ?> innerMapEntry : innerMap.entrySet()) {
-						if (innerFirst)
-							innerFirst = false;
-						else
-							sb.append(COMMA_SEPARATOR);
-
-						sb.append(String.format("%s=", innerMapEntry.getKey()));
-						Object innerMapObj = innerMapEntry.getValue();
-						if (innerMapObj instanceof Double) {
-							double val = (Double)innerMapObj;
-							sb.append(String.format(floatFmt, val/factor));
-						}
-						else {
-							sb.append(String.format("%s", obj));
-						}
-					}
-					sb.append("}");
-				}
-				else {
-					sb.append(String.format("%s", obj));
-				}
+				Object key = mapEntry.getKey();
+				sb.append(getOutputString(simModel, key, floatFmt, factor));
+				sb.append("=");
+				sb.append(getOutputString(simModel, obj, floatFmt, factor));
 			}
 			sb.append("}");
 			return sb.toString();
