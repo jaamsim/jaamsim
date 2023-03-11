@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2019-2022 JaamSim Software Inc.
+ * Copyright (C) 2019-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,7 +34,6 @@ import javax.swing.table.TableModel;
 
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.JaamSimModel;
-import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.ValueHandle;
 import com.jaamsim.units.DimensionlessUnit;
@@ -226,7 +225,11 @@ public class OutputBox extends FrameBox {
 					JaamSimModel simModel = GUIFrame.getJaamSimModel();
 					ValueHandle out = (ValueHandle)entry;
 					Class<? extends Unit> ut = out.getUnitType();
-					double factor = simModel.getDisplayedUnitFactor(ut);
+					double factor = 1.0d;
+					String unitString = simModel.getDisplayedUnit(ut);
+					if (!unitString.isEmpty()) {
+						factor = simModel.getDisplayedUnitFactor(ut);
+					}
 
 					// Select the appropriate format for numbers
 					String fmt = "%g";
@@ -234,16 +237,7 @@ public class OutputBox extends FrameBox {
 						fmt = "%.0f";
 
 					// Evaluate the output
-					StringBuilder sb = new StringBuilder();
-					sb.append(InputAgent.getValueAsString(simModel, out, simTime, fmt, factor));
-
-					// Append the appropriate unit
-					if (ut != Unit.class && ut != DimensionlessUnit.class) {
-						String unitString = simModel.getDisplayedUnit(ut);
-						sb.append(Input.SEPARATOR).append(unitString);
-					}
-
-					return sb.toString();
+					return InputAgent.getValueAsString(simModel, out, simTime, fmt, factor, unitString);
 				}
 				catch (Throwable e) {
 					return "Cannot evaluate";

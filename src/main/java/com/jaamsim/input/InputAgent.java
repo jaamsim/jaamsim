@@ -1470,7 +1470,7 @@ public class InputAgent {
 			}
 			// Expression based custom outputs
 			else if (out.getReturnType() == ExpResult.class) {
-				String val = InputAgent.getValueAsString(simModel, out, simTime, "%s", factor);
+				String val = InputAgent.getValueAsString(simModel, out, simTime, "%s", factor, "");
 				file.format(OUTPUT_FORMAT,
 						ent.getName(), out.getName(), val, unitString);
 			}
@@ -1604,22 +1604,25 @@ public class InputAgent {
 	 * @param simTime - present simulation time
 	 * @param floatFmt - format string for numerical values
 	 * @param factor - divisor to be applied to numerical values
+	 * @param unitString - unit to be appended to numerical values
 	 * @return formated string for the output
 	 */
-	public static String getValueAsString(JaamSimModel simModel, ValueHandle out, double simTime, String floatFmt, double factor) {
+	public static String getValueAsString(JaamSimModel simModel, ValueHandle out, double simTime, String floatFmt, double factor, String unitString) {
 
 		// Numeric outputs
 		if (out.isNumericValue()) {
 			double val = out.getValueAsDouble(simTime, Double.NaN);
-			return String.format(floatFmt, val/factor);
+			return String.format(floatFmt, val/factor) + Input.SEPARATOR + unitString;
 		}
 
 		Class<?> retType = out.getReturnType();
 		Object ret = out.getValue(simTime, retType);
-		return getOutputString(simModel, ret, floatFmt, factor);
+		if (!unitString.isEmpty())
+			unitString = "[" + unitString +"]";
+		return getOutputString(simModel, ret, floatFmt, factor, unitString);
 	}
 
-	public static String getOutputString(JaamSimModel simModel, Object ret, String floatFmt, double factor) {
+	public static String getOutputString(JaamSimModel simModel, Object ret, String floatFmt, double factor, String unitString) {
 		StringBuilder sb = new StringBuilder();
 
 		if (ret == null)
@@ -1640,7 +1643,7 @@ public class InputAgent {
 		// Floating point number
 		if (ret instanceof Double || ret instanceof Float) {
 			double val = (double) ret;
-			return String.format(floatFmt, val/factor);
+			return String.format(floatFmt, val/factor) + unitString;
 		}
 
 		// double[] outputs
@@ -1651,7 +1654,7 @@ public class InputAgent {
 				if (i > 0)
 					sb.append(COMMA_SEPARATOR);
 				String str = String.format(floatFmt, val[i]/factor);
-				sb.append(str);
+				sb.append(str).append(unitString);
 			}
 			sb.append("}");
 			return sb.toString();
@@ -1669,7 +1672,7 @@ public class InputAgent {
 					if (j > 0)
 						sb.append(COMMA_SEPARATOR);
 					String str = String.format(floatFmt, val[i][j]/factor);
-					sb.append(str);
+					sb.append(str).append(unitString);
 				}
 				sb.append("}");
 			}
@@ -1697,6 +1700,7 @@ public class InputAgent {
 			sb.append(vec.x/factor);
 			sb.append(Input.SEPARATOR).append(vec.y/factor);
 			sb.append(Input.SEPARATOR).append(vec.z/factor);
+			sb.append(Input.SEPARATOR).append(unitString);
 			return sb.toString();
 		}
 
@@ -1706,7 +1710,7 @@ public class InputAgent {
 			DoubleVector vec = (DoubleVector) ret;
 			for (int i=0; i<vec.size(); i++) {
 				String str = String.format(floatFmt, vec.get(i)/factor);
-				sb.append(str);
+				sb.append(str).append(unitString);
 				if (i < vec.size()-1) {
 					sb.append(COMMA_SEPARATOR);
 				}
@@ -1723,7 +1727,7 @@ public class InputAgent {
 				if (i > 0)
 					sb.append(COMMA_SEPARATOR);
 				Object obj = array.get(i);
-				sb.append(getOutputString(simModel, obj, floatFmt, factor));
+				sb.append(getOutputString(simModel, obj, floatFmt, factor, unitString));
 			}
 			sb.append("}");
 			return sb.toString();
@@ -1745,9 +1749,9 @@ public class InputAgent {
 					sb.append(COMMA_SEPARATOR);
 
 				Object key = mapEntry.getKey();
-				sb.append(getOutputString(simModel, key, floatFmt, factor));
+				sb.append(getOutputString(simModel, key, floatFmt, factor, unitString));
 				sb.append("=");
-				sb.append(getOutputString(simModel, obj, floatFmt, factor));
+				sb.append(getOutputString(simModel, obj, floatFmt, factor, unitString));
 			}
 			sb.append("}");
 			return sb.toString();
@@ -1766,7 +1770,7 @@ public class InputAgent {
 					sb.append("[").append(result.entVal.getName()).append("]");
 				break;
 			case NUMBER:
-				sb.append(String.format(floatFmt, result.value/factor));
+				sb.append(String.format(floatFmt, result.value/factor)).append(unitString);
 				break;
 			case COLLECTION:
 				sb.append(result.colVal.getOutputString(simModel));
