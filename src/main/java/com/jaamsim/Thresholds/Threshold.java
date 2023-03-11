@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2019-2022 JaamSim Software Inc.
+ * Copyright (C) 2019-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,6 +55,9 @@ public class Threshold extends StateEntity implements SubjectEntity {
 	private boolean open;
 	private long openCount;
 	private long closedCount;
+
+	private static final String STATE_OPEN = "Open";
+	private static final String STATE_CLOSED = "Closed";
 
 	private final SubjectEntityDelegate subject = new SubjectEntityDelegate(this);
 
@@ -131,19 +134,19 @@ public class Threshold extends StateEntity implements SubjectEntity {
 	@Override
 	public String getInitialState() {
 		if (getInitialOpenValue())
-			return "Open";
+			return STATE_OPEN;
 		else
-			return "Closed";
+			return STATE_CLOSED;
 	}
 
 	@Override
 	public boolean isValidState(String state) {
-		return "Open".equals(state) || "Closed".equals(state);
+		return STATE_OPEN.equals(state) || STATE_CLOSED.equals(state);
 	}
 
 	@Override
 	public boolean isValidWorkingState(String state) {
-		return "Open".equals(state);
+		return STATE_OPEN.equals(state);
 	}
 
 	public boolean isOpen() {
@@ -176,10 +179,10 @@ public class Threshold extends StateEntity implements SubjectEntity {
 
 	public void setPresentState() {
 		if (open) {
-			setPresentState("Open");
+			setPresentState(STATE_OPEN);
 		}
 		else {
-			setPresentState("Closed");
+			setPresentState(STATE_CLOSED);
 		}
 	}
 
@@ -235,8 +238,8 @@ public class Threshold extends StateEntity implements SubjectEntity {
 	public double getOpenFraction(double simTime) {
 		EventManager evt = this.getJaamSimModel().getEventManager();
 		long simTicks = evt.secondsToNearestTick(simTime);
-		long openTicks = this.getTicksInState(simTicks, getState("Open"));
-		long closedTicks = this.getTicksInState(simTicks, getState("Closed"));
+		long openTicks = this.getTicksInState(simTicks, getState(STATE_OPEN));
+		long closedTicks = this.getTicksInState(simTicks, getState(STATE_CLOSED));
 		long totTicks = openTicks + closedTicks;
 
 		return (double)openTicks / totTicks;
@@ -249,8 +252,8 @@ public class Threshold extends StateEntity implements SubjectEntity {
 	public double getClosedFraction(double simTime) {
 		EventManager evt = this.getJaamSimModel().getEventManager();
 		long simTicks = evt.secondsToNearestTick(simTime);
-		long openTicks = this.getTicksInState(simTicks, getState("Open"));
-		long closedTicks = this.getTicksInState(simTicks, getState("Closed"));
+		long openTicks = this.getTicksInState(simTicks, getState(STATE_OPEN));
+		long closedTicks = this.getTicksInState(simTicks, getState(STATE_CLOSED));
 		long totTicks = openTicks + closedTicks;
 
 		return (double)closedTicks / totTicks;
