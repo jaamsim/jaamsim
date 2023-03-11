@@ -216,10 +216,6 @@ public abstract class AbstractStateUserEntity extends StateEntity {
 		return getTimeInState(simTime, STATE_IDLE);
 	}
 
-	public double getTimeInState_Working(double simTime) {
-		return getTimeInState(simTime, STATE_WORKING);
-	}
-
 	public double getTimeInState_Maintenance(double simTime) {
 		return getTimeInState(simTime, STATE_MAINTENANCE);
 	}
