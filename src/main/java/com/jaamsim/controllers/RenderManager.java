@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2012 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2022 JaamSim Software Inc.
+ * Copyright (C) 2016-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,11 +53,11 @@ import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.Editable;
 import com.jaamsim.Graphics.EntityLabel;
 import com.jaamsim.Graphics.OverlayEntity;
-import com.jaamsim.SubModels.SubModelClone;
 import com.jaamsim.Graphics.Region;
 import com.jaamsim.Graphics.View;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.JaamSimModel;
+import com.jaamsim.basicsim.ObjectType;
 import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.datatypes.IntegerVector;
 import com.jaamsim.input.ColourInput;
@@ -1831,18 +1831,17 @@ public class RenderManager implements DragSourceListener {
 		}
 
 		// Create a new instance
-		Class<? extends Entity> proto  = dndObjectType.getJavaClass();
+		Class<? extends Entity> klass  = dndObjectType.getJavaClass();
 		String name = dndObjectType.getName();
-		if (parent != null && !(OverlayEntity.class.isAssignableFrom(proto))) {
+		if (parent != null && !(OverlayEntity.class.isAssignableFrom(klass))) {
 			name = parent.getName() + "." + name;
 		}
 		name = InputAgent.getUniqueName(simModel, name, "");
-		InputAgent.storeAndExecute(new DefineCommand(simModel, proto, name));
+		Entity proto = (Entity) dndObjectType;
+		if (proto instanceof ObjectType)
+			proto = null;
+		InputAgent.storeAndExecute(new DefineCommand(simModel, klass, proto, name));
 		Entity ent = simModel.getNamedEntity(name);
-
-		if (ent instanceof SubModelClone) {
-			InputAgent.applyArgs(ent, "Prototype", dndObjectType.getPrototype().getName());
-		}
 
 		// Set input values for a dragged and dropped entity
 		ent.setInputsForDragAndDrop();

@@ -380,8 +380,12 @@ public class InputAgent {
 	 * @return new entity
 	 */
 	public static <T extends Entity> T defineEntityWithUniqueName(JaamSimModel simModel, Class<T> klass, String key, String sep, boolean addedEntity) {
+		return defineEntityWithUniqueName(simModel, klass, null, key, sep, addedEntity);
+	}
+
+	public static <T extends Entity> T defineEntityWithUniqueName(JaamSimModel simModel, Class<T> klass, Entity proto, String key, String sep, boolean addedEntity) {
 		String name = getUniqueName(simModel, key, sep);
-		return defineEntity(simModel, klass, null, name, addedEntity);
+		return defineEntity(simModel, klass, proto, name, addedEntity);
 	}
 
 	public static boolean isValidName(String key) {

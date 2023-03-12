@@ -35,7 +35,6 @@ import com.jaamsim.Samples.SampleExpression;
 import com.jaamsim.StringProviders.StringProvExpression;
 import com.jaamsim.SubModels.CompoundEntity;
 import com.jaamsim.SubModels.SubModel;
-import com.jaamsim.SubModels.SubModelClone;
 import com.jaamsim.Thresholds.ThresholdUser;
 import com.jaamsim.datatypes.IntegerVector;
 import com.jaamsim.events.Conditional;
@@ -140,6 +139,7 @@ public class JaamSimModel implements EventTimeListener {
 
 	public JaamSimModel(JaamSimModel sm) {
 		this(sm.name);
+		//System.out.format("%nJaamSimModel constructor%n");
 		autoLoad();
 		simulation = getSimulation();
 		setRecordEdits(true);
@@ -159,18 +159,20 @@ public class JaamSimModel implements EventTimeListener {
 				continue;
 
 			// Generate all the sub-model components when the first one is found
-			if (ent.isGenerated() && ent.getParent() instanceof SubModelClone) {
-				Entity clone = getNamedEntity(ent.getParent().getName());
-				SubModel proto = ((SubModelClone) ent.getParent()).getPrototypeSubModel();
-				if (clone == null || proto == null)
+			if (ent.isGenerated() && ent.getParent() instanceof SubModel) {
+				SubModel clone = (SubModel) getNamedEntity(ent.getParent().getName());
+				if (clone == null)
 					continue;
-				KeywordIndex kw = InputAgent.formatInput("Prototype", proto.getName());
-				InputAgent.apply(clone, kw);
+				clone.createComponents();
 				continue;
 			}
 
 			// Define the new object
-			defineEntity(ent.getObjectType().getName(), ent.getName());
+			Entity proto = ent.getPrototype();
+			if (proto != null)
+				proto = getNamedEntity(proto.getName());
+			//System.out.format("defineEntity - ent=%s, proto=%s%n", ent, proto);
+			InputAgent.defineEntityWithUniqueName(this, ent.getClass(), proto, ent.getName(), "_", true);
 		}
 
 		// Prepare a sorted list of registered entities on which to set inputs
