@@ -4737,14 +4737,19 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			source = ((ErrorException) t).source;
 			pos = ((ErrorException) t).position;
 		}
+		JaamSimModel simModel = getJaamSimModel();
+		double simTime = 0.0d;
+		if (simModel != null)
+			simTime = simModel.getSimTime();
 		GUIFrame.invokeErrorDialog("Runtime Error",
 				source,
 				pos,
 				"JaamSim has detected the following runtime error condition:",
 				msg,
-				"Programmers can find more information by opening the Log Viewer.\n"
+				String.format("Time = %.6f seconds%n%n"
+						+ "Programmers can find more information by opening the Log Viewer.%n"
 						+ "The simulation run must be reset to zero simulation time before it "
-						+ "can be restarted.");
+						+ "can be restarted.", simTime));
 	}
 
 	void newModel() {
