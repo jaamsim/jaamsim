@@ -1022,7 +1022,51 @@ public class InputAgent {
 		if (!newEntities.isEmpty())
 			file.format("%n");
 
-		// Print the first part of the "Define" statement for this object type
+		// Print the Define statements for the entities
+		saveDefinitions(newEntities, file);
+
+		// 3) WRITE THE INPUTS
+
+		// Prepare a sorted list of all the entities that were edited
+		ArrayList<Entity> entityList = new ArrayList<>();
+		for (Entity ent : simModel.getClonesOfIterator(Entity.class)) {
+			if (!ent.isEdited() || !ent.isRegistered() || ent instanceof ObjectType)
+				continue;
+			if (ent instanceof EntityLabel && !((EntityLabel) ent).getShowInput()
+					&& ((EntityLabel) ent).isDefault())
+				continue;
+			if (simModel.getObjectTypeForClass(ent.getClass()) == null) {
+				String msg = String.format("Inputs for object cannot be saved: %s", ent);
+				LogBox.logLine(msg);
+				GUIListener gui = simModel.getGUIListener();
+				if (gui != null)
+					gui.invokeErrorDialogBox("Save Error", msg);
+				continue;
+			}
+			entityList.add(ent);
+		}
+		Collections.sort(entityList, uiEntitySortOrder);
+
+		// Save the inputs for each entity
+		saveInputs(entityList, file);
+
+		// Close the new configuration file
+		file.flush();
+		file.close();
+
+		simModel.setSessionEdited(false);
+	}
+
+	/**
+	 * Prints the Define statements for the specified lists of entities.
+	 * @param newEntities - entities to be defined
+	 * @param file - file to which the definitions are to be printed
+	 */
+	public static void saveDefinitions(ArrayList<Entity> newEntities, FileEntity file) {
+
+		// 1) WRITE THE DEFINITION STATEMENTS FOR NON-CLONES
+
+		// Loop through the entities that are not clones
 		Class<? extends Entity> entClass = null;
 		int level = 0;
 		for (Entity ent : newEntities) {
@@ -1045,19 +1089,20 @@ public class InputAgent {
 
 				// Start the new Define statement
 				entClass = ent.getClass();
-				ObjectType ot = simModel.getObjectTypeForClass(entClass);
-				file.format("Define %s {", ot.getName());
+				file.format("Define %s {", ent.getObjectType());
 			}
 
 			// Print the entity name to the Define statement
-			file.format(" %s ", ent.getName());
+			file.format(" %s ", ent);
 		}
 
 		// Close the define statement
 		if (!newEntities.isEmpty())
 			file.format("}%n");
 
-		// 2.5) WRITE THE DEFINITION STATEMENTS FOR CLONES
+		// 2) WRITE THE DEFINITION STATEMENTS FOR CLONES
+
+		// Loop through the entities that are clones
 		Entity proto = null;
 		for (Entity ent : newEntities) {
 			if (!ent.isClone())
@@ -1078,34 +1123,20 @@ public class InputAgent {
 			}
 
 			// Print the entity name to the Define statement
-			file.format(" %s ", ent.getName());
+			file.format(" %s ", ent);
 		}
 
 		// Close the define statement
 		if (proto != null)
 			file.format("}%n");
+	}
 
-		// 3) WRITE THE INPUTS FOR SPECIAL KEYWORDS THAT MUST COME BEFORE THE OTHERS
-
-		// Prepare a sorted list of all the entities that were edited
-		ArrayList<Entity> entityList = new ArrayList<>();
-		for (Entity ent : simModel.getClonesOfIterator(Entity.class)) {
-			if (!ent.isEdited() || !ent.isRegistered() || ent instanceof ObjectType)
-				continue;
-			if (ent instanceof EntityLabel && !((EntityLabel) ent).getShowInput()
-					&& ((EntityLabel) ent).isDefault())
-				continue;
-			if (simModel.getObjectTypeForClass(ent.getClass()) == null) {
-				String msg = String.format("Inputs for object cannot be saved: %s", ent);
-				LogBox.logLine(msg);
-				GUIListener gui = simModel.getGUIListener();
-				if (gui != null)
-					gui.invokeErrorDialogBox("Save Error", msg);
-				continue;
-			}
-			entityList.add(ent);
-		}
-		Collections.sort(entityList, uiEntitySortOrder);
+	/**
+	 * Prints the input statements for the specified lists of entities.
+	 * @param entityList - entities whose inputs are to be printed
+	 * @param file - file to which the inputs are to be printed
+	 */
+	public static void saveInputs(ArrayList<Entity> entityList, FileEntity file) {
 
 		// Write a stub definition for the Custom Outputs for each entity
 		boolean blankLinePrinted = false;
@@ -1139,10 +1170,8 @@ public class InputAgent {
 			}
 		}
 
-		// 4) WRITE THE INPUTS FOR THE REMAINING KEYWORDS
-
-		// 4.1) Non-graphics inputs for non-graphic entities
-		entClass = null;
+		// Non-graphics inputs for non-graphic entities
+		Class<? extends Entity> entClass = null;
 		for (Entity ent : entityList) {
 			if (isGraphicsEntity(ent))
 				continue;
@@ -1151,9 +1180,8 @@ public class InputAgent {
 			if (ent.getClass() != entClass) {
 				entClass = ent.getClass();
 				if (entClass != Simulation.class) {
-					ObjectType ot = simModel.getObjectTypeForClass(entClass);
 					file.format("%n");
-					file.format("# *** %s ***%n", ot);
+					file.format("# *** %s ***%n", ent.getObjectType());
 				}
 			}
 			file.format("%n");
@@ -1165,7 +1193,7 @@ public class InputAgent {
 			}
 		}
 
-		// 4.2) Graphics inputs for non-graphic entities
+		// Graphics inputs for non-graphic entities
 		file.format("%n");
 		file.format("# *** GRAPHICS INPUTS ***%n");
 		for (Entity ent : entityList) {
@@ -1180,7 +1208,7 @@ public class InputAgent {
 			}
 		}
 
-		// 4.3) All inputs for graphic entities
+		// All inputs for graphic entities
 		entClass = null;
 		for (Entity ent : entityList) {
 			if (!isGraphicsEntity(ent))
@@ -1190,9 +1218,8 @@ public class InputAgent {
 			if (ent.getClass() != entClass) {
 				entClass = ent.getClass();
 				if (entClass != Simulation.class) {
-					ObjectType ot = simModel.getObjectTypeForClass(entClass);
 					file.format("%n");
-					file.format("# *** %s ***%n", ot);
+					file.format("# *** %s ***%n", ent.getObjectType());
 				}
 			}
 			file.format("%n");
@@ -1203,12 +1230,6 @@ public class InputAgent {
 				writeInputOnFile_ForEntity(file, ent, in);
 			}
 		}
-
-		// Close the new configuration file
-		file.flush();
-		file.close();
-
-		simModel.setSessionEdited(false);
 	}
 
 	public static boolean isEarlyInput(Input<?> in) {
