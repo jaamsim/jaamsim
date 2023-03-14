@@ -575,6 +575,27 @@ public class Entity {
 		return ret;
 	}
 
+	/**
+	 * Returns a list of entities that are appear in the inputs to this entity and its children,
+	 * grand-children, etc., but are not the entity or one of its children, grand-children, etc.
+	 * or one of the entities that is defined automatically when JaamSim is launched.
+	 * @return list of entities that are external references
+	 */
+	public ArrayList<Entity> getExternalReferences() {
+		ArrayList<Entity> ret = new ArrayList<>();
+		ArrayList<Entity> entityList = new ArrayList<>(getDescendants());
+		entityList.add(0, this);
+		for (Entity ent : entityList) {
+			for (Entity reference : ent.getEntityReferences()) {
+				if (reference.isPreDefined() || entityList.contains(reference)
+						|| ret.contains(reference))
+					continue;
+				ret.add(reference);
+			}
+		}
+		return ret;
+	}
+
 	final void setFlag(int flag) {
 		flags |= flag;
 	}
@@ -715,6 +736,19 @@ public class Entity {
 	 */
 	public ArrayList<Entity> getChildren() {
 		return new ArrayList<>();
+	}
+
+	/**
+	 * Returns a list of all the children, grand-children, etc. of this entity.
+	 * @return array of descendant entities
+	 */
+	public ArrayList<Entity> getDescendants() {
+		ArrayList<Entity> ret = new ArrayList<>();
+		for (Entity ent : getChildren()) {
+			ret.add(ent);
+			ret.addAll(ent.getDescendants());
+		}
+		return ret;
 	}
 
 	public int getSubModelLevel() {
