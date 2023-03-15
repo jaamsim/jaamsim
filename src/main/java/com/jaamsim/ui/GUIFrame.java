@@ -174,6 +174,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	private JMenu fileMenu;
 	private JMenu editMenu;
 	private JMenu toolsMenu;
+	private JMenu importMenu;
 	private JMenu viewsMenu;
 	private JMenu optionMenu;
 	private JMenu unitsMenu;
@@ -590,6 +591,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		this.initializeFileMenu();
 		this.initializeEditMenu();
 		this.initializeToolsMenu();
+		this.initializeImportMenu();
 		this.initializeViewsMenu();
 		this.initializeOptionsMenu();
 		this.initializeUnitsMenu();
@@ -601,6 +603,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		mainMenuBar.add( fileMenu );
 		mainMenuBar.add( editMenu );
 		mainMenuBar.add( toolsMenu );
+		mainMenuBar.add( importMenu );
 		mainMenuBar.add( viewsMenu );
 		mainMenuBar.add( optionMenu );
 		mainMenuBar.add( unitsMenu );
@@ -685,33 +688,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		fileMenu.add( saveConfigurationAsMenuItem );
 		fileMenu.addSeparator();
 
-		// 5) "Import..." menu item
-		JMenu importGraphicsMenuItem = new JMenu( "Import..." );
-		importGraphicsMenuItem.setMnemonic(KeyEvent.VK_I);
-
-		JMenuItem importImages = new JMenuItem( "Images..." );
-		importImages.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed( ActionEvent event ) {
-				DisplayEntityFactory.importImages(GUIFrame.this);
-			}
-		} );
-		importGraphicsMenuItem.add( importImages );
-
-		JMenuItem import3D = new JMenuItem( "3D Assets..." );
-		import3D.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed( ActionEvent event ) {
-				DisplayEntityFactory.import3D(GUIFrame.this);
-			}
-		} );
-		importGraphicsMenuItem.add( import3D );
-
-		fileMenu.add( importGraphicsMenuItem );
-
-		// 6) "Print Input Report" menu item
+		// 5) "Print Input Report" menu item
 		printInputItem = new JMenuItem( "Print Input Report" );
 		printInputItem.setMnemonic(KeyEvent.VK_I);
 		printInputItem.addActionListener( new ActionListener() {
@@ -724,7 +701,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		} );
 		fileMenu.add( printInputItem );
 
-		// 7) "Exit" menu item
+		// 6) "Exit" menu item
 		JMenuItem exitMenuItem = new JMenuItem( "Exit" );
 		exitMenuItem.setMnemonic(KeyEvent.VK_X);
 		exitMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F4, ActionEvent.ALT_MASK));
@@ -1034,6 +1011,38 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		} );
 		toolsMenu.addSeparator();
 		toolsMenu.add( resetItem );
+	}
+
+	/**
+	 * Sets up the 'Import' menu in the menu bar.
+	 */
+	private void initializeImportMenu() {
+
+		// Tools menu creation
+		importMenu = new JMenu( "Import" );
+		importMenu.setMnemonic(KeyEvent.VK_I);
+
+		// 1) 'Images' menu item
+		JMenuItem importImages = new JMenuItem( "Images..." );
+		importImages.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed( ActionEvent event ) {
+				DisplayEntityFactory.importImages(GUIFrame.this);
+			}
+		} );
+		importMenu.add( importImages );
+
+		// 2) '3D Assets' menu item
+		JMenuItem import3D = new JMenuItem( "3D Assets..." );
+		import3D.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed( ActionEvent event ) {
+				DisplayEntityFactory.import3D(GUIFrame.this);
+			}
+		} );
+		importMenu.add( import3D );
 	}
 
 	/**
