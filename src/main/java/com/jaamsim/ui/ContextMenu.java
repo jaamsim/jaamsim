@@ -210,15 +210,13 @@ public class ContextMenu {
 			ContextMenu.populateDisplayEntityMenu(menu, (DisplayEntity)ent, nodeIndex, c, x, y);
 		}
 
-		// SubModel menu items
-		if (ent instanceof SubModel) {
-			ContextMenu.populateSubModelMenu(menu, (SubModel)ent, nodeIndex, c, x, y);
-		}
-
 		// CompoundEntity menu items
 		if (ent instanceof CompoundEntity) {
 			menu.addSeparator();
 			ContextMenu.populateCompoundEntityMenu(menu, (CompoundEntity)ent, nodeIndex, c, x, y);
+			if (ent instanceof SubModel && !ent.isClone()) {
+				ContextMenu.populateSubModelMenu(menu, (SubModel)ent, nodeIndex, c, x, y);
+			}
 		}
 
 		synchronized (menuItems) {
