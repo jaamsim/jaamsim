@@ -4956,6 +4956,49 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		return true;
 	}
 
+	public boolean saveEntity(Entity entity) {
+		LogBox.logLine("Save Entity: " + entity);
+
+		// Create a file chooser
+		final JFileChooser chooser = new JFileChooser(getConfigFolder());
+
+		// Set the file extension filters
+		chooser.setAcceptAllFileFilterUsed(true);
+		FileNameExtensionFilter cfgFilter =
+				new FileNameExtensionFilter("JaamSim SubModel File (*.sub)", "SUB");
+		chooser.addChoosableFileFilter(cfgFilter);
+		chooser.setFileFilter(cfgFilter);
+		chooser.setSelectedFile(new File(entity.getName() + ".sub"));
+
+		// Show the file chooser and wait for selection
+		int returnVal = chooser.showSaveDialog(this);
+
+		if (returnVal != JFileChooser.APPROVE_OPTION)
+			return false;
+
+		File file = chooser.getSelectedFile();
+
+		// Add the file extension ".sub" if needed
+		String filePath = file.getPath();
+		filePath = filePath.trim();
+		if (file.getName().trim().indexOf('.') == -1) {
+			filePath = filePath.concat(".sub");
+			file = new File(filePath);
+		}
+
+		// Confirm overwrite if file already exists
+		if (file.exists()) {
+			boolean confirmed = GUIFrame.showSaveAsDialog(file.getName());
+			if (!confirmed) {
+				return false;
+			}
+		}
+
+		// Save the configuration file
+		InputAgent.saveEntity(entity, file);
+		return true;
+	}
+
 	public void copyToClipboard(Entity ent) {
 		if (ent == getJaamSimModel().getSimulation())
 			return;

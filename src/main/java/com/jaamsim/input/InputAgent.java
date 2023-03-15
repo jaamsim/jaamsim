@@ -1220,6 +1220,18 @@ public class InputAgent {
 		}
 	}
 
+	public static void saveEntity(Entity entity, File f) {
+		ArrayList<Entity> entityList = new ArrayList<>(entity.getDescendants());
+		entityList.add(0, entity);
+		Collections.sort(entityList, uiEntitySortOrder);
+
+		FileEntity file = new FileEntity(f);
+		saveDefinitions(entityList, file);
+		saveInputs(entityList, file);
+		file.flush();
+		file.close();
+	}
+
 	public static boolean isEarlyInput(Input<?> in) {
 		String key = in.getKeyword();
 		return Arrays.asList(EARLY_KEYWORDS).contains(key);
