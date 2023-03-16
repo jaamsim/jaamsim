@@ -412,9 +412,36 @@ public class JaamSimModel implements EventTimeListener {
 	 */
 	public void configure(File file) throws URISyntaxException {
 		configFile = file;
-		openLogFile();
-		InputAgent.loadConfigurationFile(this, file);
 		name = file.getName();
+		openLogFile();
+
+		// Load the input file
+		loadFile(file);
+
+		// Perform any actions that are required after loading the input file
+		postLoad();
+
+		// Validate the inputs
+		for (Entity each : getClonesOfIterator(Entity.class)) {
+			try {
+				each.validate();
+			}
+			catch (Throwable e) {
+				recordError();
+				String msg = String.format("Validation Error - %s: %s%n", each, e.getMessage());
+				if (e instanceof ErrorException)
+					msg = String.format("Validation Error - %s%n", e.getMessage());
+				InputAgent.logMessage(this, msg);
+			}
+		}
+
+		//  Check for found errors
+		if (getNumErrors() > 0)
+			throw new InputErrorException("%d input errors and %d warnings found",
+					getNumErrors(), getNumWarnings());
+
+		if (getSimulation().getPrintInputReport())
+			InputAgent.printInputFileKeywords(this);
 
 		// The session is not considered to be edited after loading a configuration file
 		setSessionEdited(false);
@@ -426,6 +453,16 @@ public class JaamSimModel implements EventTimeListener {
 			// Open a fresh log file for the simulation run
 			openLogFile();
 		}
+	}
+
+	/**
+	 * Parses configuration file records from the specified file.
+	 * @param file - file containing the input records
+	 * @throws URISyntaxException
+	 */
+	public void loadFile(File file) throws URISyntaxException {
+		URI dirURI = file.getParentFile().toURI();
+		InputAgent.readStream(this, "", dirURI, file.getName());
 	}
 
 	/**

@@ -514,39 +514,6 @@ public class InputAgent {
 		return ret;
 	}
 
-	// Load the run file
-	public static void loadConfigurationFile(JaamSimModel simModel, File file) throws URISyntaxException {
-
-		// Load the input file
-		URI dirURI = file.getParentFile().toURI();
-		InputAgent.readStream(simModel, "", dirURI, file.getName());
-
-		// Perform any actions that are required after loading the input file
-		simModel.postLoad();
-
-		// Validate the inputs
-		for (Entity each : simModel.getClonesOfIterator(Entity.class)) {
-			try {
-				each.validate();
-			}
-			catch (Throwable e) {
-				simModel.recordError();
-				String msg = String.format("Validation Error - %s: %s%n", each, e.getMessage());
-				if (e instanceof ErrorException)
-					msg = String.format("Validation Error - %s%n", e.getMessage());
-				InputAgent.logMessage(simModel, msg);
-			}
-		}
-
-		//  Check for found errors
-		if (simModel.getNumErrors() > 0 )
-			throw new InputErrorException("%d input errors and %d warnings found",
-					simModel.getNumErrors(), simModel.getNumWarnings());
-
-		if (simModel.getSimulation().getPrintInputReport())
-			InputAgent.printInputFileKeywords(simModel);
-	}
-
 	/**
 	 * Prepares the keyword and input value for processing.
 	 *
