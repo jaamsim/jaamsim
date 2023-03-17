@@ -1043,6 +1043,49 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			}
 		} );
 		importMenu.add( import3D );
+
+		// 3) 'SubModel' menu item
+		JMenuItem importSubModel = new JMenuItem( "SubModel..." );
+		importSubModel.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed( ActionEvent event ) {
+				LogBox.logLine("Importing SubModel...");
+
+				// Create a file chooser
+				final JFileChooser chooser = new JFileChooser(getConfigFolder());
+
+				// Set the file extension filters
+				chooser.setAcceptAllFileFilterUsed(true);
+				FileNameExtensionFilter subFilter =
+						new FileNameExtensionFilter("JaamSim SubModel File (*.sub)", "SUB");
+				chooser.addChoosableFileFilter(subFilter);
+				chooser.setFileFilter(subFilter);
+
+				// Show the file chooser and wait for selection
+				int returnVal = chooser.showOpenDialog(GUIFrame.getInstance());
+
+				// Load the chosen file
+				if (returnVal == JFileChooser.APPROVE_OPTION) {
+					JaamSimModel simModel = getJaamSimModel();
+					int numErrors = simModel.getNumErrors();
+					int numWarnings = simModel.getNumWarnings();
+					File file = chooser.getSelectedFile();
+					try {
+						simModel.loadFile(file);
+						if (simModel.getNumErrors() > numErrors) {
+							throw new InputErrorException("%d input errors and %d warnings found",
+									simModel.getNumErrors() - numErrors,
+									simModel.getNumWarnings() - numWarnings);
+						}
+					}
+					catch (Throwable t) {
+						handleConfigError(t, file);
+					}
+				}
+			}
+		} );
+		importMenu.add( importSubModel );
 	}
 
 	/**
