@@ -1001,19 +1001,13 @@ public class InputAgent {
 		// Prepare a sorted list of all the entities that were added to the model
 		ArrayList<Entity> newEntities = new ArrayList<>();
 		for (Entity ent : simModel.getClonesOfIterator(Entity.class)) {
-			if (!ent.isAdded() || ent.isGenerated() || ent instanceof ObjectType)
+			if (!ent.isAdded() || ent.isGenerated())
+				continue;
+			if (ent instanceof ObjectType || ent.getObjectType() == null)
 				continue;
 			if (ent instanceof EntityLabel && !((EntityLabel) ent).getShowInput()
 					&& ((EntityLabel) ent).isDefault())
 				continue;
-			if (simModel.getObjectTypeForClass(ent.getClass()) == null) {
-				String msg = String.format("Object cannot be defined: %s", ent);
-				LogBox.logLine(msg);
-				GUIListener gui = simModel.getGUIListener();
-				if (gui != null)
-					gui.invokeErrorDialogBox("Save Error", msg);
-				continue;
-			}
 			newEntities.add(ent);
 		}
 		Collections.sort(newEntities, uiEntitySortOrder);
@@ -1030,19 +1024,13 @@ public class InputAgent {
 		// Prepare a sorted list of all the entities that were edited
 		ArrayList<Entity> entityList = new ArrayList<>();
 		for (Entity ent : simModel.getClonesOfIterator(Entity.class)) {
-			if (!ent.isEdited() || !ent.isRegistered() || ent instanceof ObjectType)
+			if (!ent.isEdited() || !ent.isRegistered())
+				continue;
+			if (ent instanceof ObjectType || ent.getObjectType() == null)
 				continue;
 			if (ent instanceof EntityLabel && !((EntityLabel) ent).getShowInput()
 					&& ((EntityLabel) ent).isDefault())
 				continue;
-			if (simModel.getObjectTypeForClass(ent.getClass()) == null) {
-				String msg = String.format("Inputs for object cannot be saved: %s", ent);
-				LogBox.logLine(msg);
-				GUIListener gui = simModel.getGUIListener();
-				if (gui != null)
-					gui.invokeErrorDialogBox("Save Error", msg);
-				continue;
-			}
 			entityList.add(ent);
 		}
 		Collections.sort(entityList, uiEntitySortOrder);
