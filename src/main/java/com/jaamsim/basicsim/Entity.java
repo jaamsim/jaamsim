@@ -551,6 +551,7 @@ public class Entity {
 			return;
 
 		try {
+			targetInput.setLocked(false);
 			KeywordIndex kw = new KeywordIndex(key, tmp, context);
 			InputAgent.apply(this, targetInput, kw);
 			targetInput.setLocked(lock);

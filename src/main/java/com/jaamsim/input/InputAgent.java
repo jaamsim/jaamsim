@@ -556,6 +556,9 @@ public class InputAgent {
 	}
 
 	public static final void apply(Entity ent, Input<?> in, KeywordIndex kw) {
+		if (in.isLocked())
+			throw new InputErrorException("Input value is locked");
+
 		// If the input value is blank, restore the default
 		if (kw.numArgs() == 0) {
 			if (in.isDef())
