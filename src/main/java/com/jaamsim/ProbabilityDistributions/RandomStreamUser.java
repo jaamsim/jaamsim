@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2018 JaamSim Software Inc.
+ * Copyright (C) 2018-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,10 @@
  */
 package com.jaamsim.ProbabilityDistributions;
 
+import com.jaamsim.basicsim.Entity;
+import com.jaamsim.basicsim.JaamSimModel;
+import com.jaamsim.input.InputAgent;
+
 public interface RandomStreamUser {
 
 	/**
@@ -29,5 +33,20 @@ public interface RandomStreamUser {
 	 * @return random seed keyword
 	 */
 	public String getStreamNumberKeyword();
+
+	public static void setUniqueRandomSeed(RandomStreamUser rsu) {
+		Entity ent = (Entity) rsu;
+		JaamSimModel simModel = ent.getJaamSimModel();
+
+		// Do nothing if a valid seed has been set previously
+		int seed = rsu.getStreamNumber();
+		if (seed >= 0 && simModel.getRandomStreamUsers(seed).size() <= 1)
+			return;
+
+		// Set the smallest seed value that has not been used already
+		seed = simModel.getSmallestAvailableStreamNumber();
+		String key = rsu.getStreamNumberKeyword();
+		InputAgent.applyIntegers(ent, key, seed);
+	}
 
 }

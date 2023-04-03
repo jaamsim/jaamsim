@@ -5110,7 +5110,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		// Ensure that a random generator has a unique stream number
 		if (copiedEnt instanceof RandomStreamUser) {
 			RandomStreamUser rsu = (RandomStreamUser) copiedEnt;
-			setUniqueRandomSeed(rsu);
+			RandomStreamUser.setUniqueRandomSeed(rsu);
 		}
 
 		// Set the region
@@ -5203,7 +5203,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			if (!(copiedChild instanceof RandomStreamUser))
 				continue;
 			RandomStreamUser rsu = (RandomStreamUser) copiedChild;
-			setUniqueRandomSeed(rsu);
+			RandomStreamUser.setUniqueRandomSeed(rsu);
 		}
 
 		// Copy each child's children
@@ -5212,15 +5212,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			Entity copiedChild = parent1.getChild(localName);
 			copyChildren(child, copiedChild);
 		}
-	}
-
-	public void setUniqueRandomSeed(RandomStreamUser rsu) {
-		int seed = rsu.getStreamNumber();
-		if (seed >= 0 && getJaamSimModel().getRandomStreamUsers(seed).size() <= 1)
-			return;
-		seed = getJaamSimModel().getSmallestAvailableStreamNumber();
-		String key = rsu.getStreamNumberKeyword();
-		InputAgent.applyIntegers((Entity) rsu, key, seed);
 	}
 
 	public void invokeNew() {
