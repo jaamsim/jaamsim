@@ -47,6 +47,11 @@ public interface RandomStreamUser {
 		seed = simModel.getSmallestAvailableStreamNumber();
 		String key = rsu.getStreamNumberKeyword();
 		InputAgent.applyIntegers(ent, key, seed);
+
+		// Always mark the entity and keyword as 'edited' so that the seed value is saved to the
+		// configuration file (required for SubModel.update)
+		ent.getInput(key).setEdited(true);
+		ent.setEdited();
 	}
 
 }
