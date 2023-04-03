@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2022 JaamSim Software Inc.
+ * Copyright (C) 2016-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
+import com.jaamsim.input.ParseContext;
 import com.jaamsim.input.UnitTypeInput;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
@@ -288,6 +289,16 @@ implements SampleProvider, RandomStreamUser {
 	 * @return calculated maximum value
 	 */
 	protected abstract double getMax(double simTime);
+
+	@Override
+	public void copyInput(Entity ent, String key, ParseContext context, boolean ignoreDef, boolean lock) {
+		if (key.equals(getStreamNumberKeyword())) {
+			RandomStreamUser.setUniqueRandomSeed(this);
+			randomSeedInput.setLocked(lock);
+			return;
+		}
+		super.copyInput(ent, key, context, ignoreDef, lock);
+	}
 
 	@Output(name = "CalculatedMean",
 	 description = "The mean of the probability distribution calculated directly from the inputs. "
