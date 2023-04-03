@@ -127,7 +127,6 @@ import com.jaamsim.Graphics.Text;
 import com.jaamsim.Graphics.TextBasics;
 import com.jaamsim.Graphics.TextEntity;
 import com.jaamsim.Graphics.View;
-import com.jaamsim.ProbabilityDistributions.RandomStreamUser;
 import com.jaamsim.SubModels.SubModel;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ErrorException;
@@ -5107,12 +5106,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		Entity copiedEnt = sim.getNamedEntity(copyName);
 		copiedEnt.copyInputs(ent);
 
-		// Ensure that a random generator has a unique stream number
-		if (copiedEnt instanceof RandomStreamUser) {
-			RandomStreamUser rsu = (RandomStreamUser) copiedEnt;
-			RandomStreamUser.setUniqueRandomSeed(rsu);
-		}
-
 		// Set the region
 		if (region != null)
 			InputAgent.applyArgs(copiedEnt, "Region", region.getName());
@@ -5196,14 +5189,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				Entity copiedChild = parent1.getChild(localName);
 				copiedChild.copyInputs(child, seq, false, false);
 			}
-		}
-
-		// Ensure that any random stream inputs have a unique stream number
-		for (Entity copiedChild : parent1.getChildren()) {
-			if (!(copiedChild instanceof RandomStreamUser))
-				continue;
-			RandomStreamUser rsu = (RandomStreamUser) copiedChild;
-			RandomStreamUser.setUniqueRandomSeed(rsu);
 		}
 
 		// Copy each child's children
