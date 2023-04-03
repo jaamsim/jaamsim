@@ -23,7 +23,6 @@ import java.util.Map.Entry;
 
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.Region;
-import com.jaamsim.ProbabilityDistributions.RandomStreamUser;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.GUIListener;
 import com.jaamsim.basicsim.JaamSimModel;
@@ -339,15 +338,6 @@ public class SubModel extends CompoundEntity implements DragAndDropable {
 		if (proto == null)
 			return;
 
-		// Save the seeds for the components that use a random distribution
-		LinkedHashMap<Entity, Integer> seedMap = new LinkedHashMap<>();
-		for (Entity comp : getChildren()) {
-			if (!(comp instanceof RandomStreamUser))
-				continue;
-			seedMap.put(comp, ((RandomStreamUser) comp).getStreamNumber());
-		}
-		//System.out.println(seedMap);
-
 		// Set the early and normal keywords for each component
 		for (int seq = 0; seq < 2; seq++) {
 			for (Entity protoComp : proto.getChildren()) {
@@ -355,27 +345,6 @@ public class SubModel extends CompoundEntity implements DragAndDropable {
 				Entity comp = getChild(localName);
 				comp.copyInputs(protoComp, seq, true, true);
 			}
-		}
-
-		// Reset the stream number inputs for the random distributions to the saved values
-		for (Entry<Entity, Integer> entry : seedMap.entrySet()) {
-			Entity comp = entry.getKey();
-			Entity protoComp = proto.getChild(comp.getLocalName());
-
-			// Assign a new seed if it is the same as the seed for the parent component
-			int seed = entry.getValue().intValue();
-			if (seed == -1 || seed == ((RandomStreamUser) protoComp).getStreamNumber())
-				seed = getJaamSimModel().getSmallestAvailableStreamNumber();
-
-			//System.out.format("comp=%s, seed=%s%n", comp, seed);
-			String key = ((RandomStreamUser) comp).getStreamNumberKeyword();
-			InputAgent.applyIntegers(comp, key, seed);
-			comp.getInput(key).setLocked(true);
-
-			// Mark the seed input and clone as edited so that the seed value is saved in the
-			// configuration file
-			comp.getInput(key).setEdited(true);
-			comp.setEdited();
 		}
 
 		// Set the "Show" input for each component
