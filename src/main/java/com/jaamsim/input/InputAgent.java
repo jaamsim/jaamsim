@@ -574,11 +574,12 @@ public class InputAgent {
 			ent.setEdited();
 		}
 
-		// Execute the input callback for the entity and its clones
+		// Execute the input callback for the entity
 		in.doCallback(ent);
+
+		// Copy the input value to any clones
 		for (Entity clone : ent.getAllClones()) {
-			Input<?> cloneIn = clone.getInput(in.getKeyword());
-			cloneIn.doCallback(clone);
+			clone.copyInput(ent, in.getKeyword(), kw.context, true);
 		}
 
 		// Refresh the graphics

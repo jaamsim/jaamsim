@@ -527,6 +527,7 @@ public class Entity {
 		if (getPrototype() == ent && !changed) {
 			// Clear the stub value set for a custom output
 			targetInput.reset();
+			targetInput.doCallback(this);
 			return;
 		}
 
