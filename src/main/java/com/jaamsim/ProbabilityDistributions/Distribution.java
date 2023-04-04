@@ -291,13 +291,13 @@ implements SampleProvider, RandomStreamUser {
 	protected abstract double getMax(double simTime);
 
 	@Override
-	public void copyInput(Entity ent, String key, ParseContext context, boolean ignoreDef, boolean lock) {
+	public void copyInput(Entity ent, String key, ParseContext context, boolean lock) {
 		if (key.equals(getStreamNumberKeyword())) {
 			RandomStreamUser.setUniqueRandomSeed(this);
 			randomSeedInput.setLocked(lock);
 			return;
 		}
-		super.copyInput(ent, key, context, ignoreDef, lock);
+		super.copyInput(ent, key, context, lock);
 	}
 
 	@Output(name = "CalculatedMean",

@@ -128,7 +128,7 @@ public class SubModel extends CompoundEntity implements DragAndDropable {
 			return;
 
 		// Set the inputs for the clone to those for the prototype SubModel
-		copyInputs(proto, true, false);
+		copyInputs(proto, false);
 
 		// Create the clone's components
 		update();
@@ -343,7 +343,7 @@ public class SubModel extends CompoundEntity implements DragAndDropable {
 			for (Entity protoComp : proto.getChildren()) {
 				String localName = protoComp.getLocalName();
 				Entity comp = getChild(localName);
-				comp.copyInputs(protoComp, seq, false, true);
+				comp.copyInputs(protoComp, seq, true);
 			}
 		}
 

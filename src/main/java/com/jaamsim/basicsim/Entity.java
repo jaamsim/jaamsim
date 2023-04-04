@@ -437,32 +437,31 @@ public class Entity {
 	 * @param ent = entity whose inputs are to be copied
 	 */
 	public void copyInputs(Entity ent) {
-		copyInputs(ent, false, false);
+		copyInputs(ent, false);
 	}
 
-	public void copyInputs(Entity ent, boolean ignoreDef, boolean lock) {
+	public void copyInputs(Entity ent, boolean lock) {
 		for (int seq = 0; seq < 2; seq++) {
-			copyInputs(ent, seq, ignoreDef, lock);
+			copyInputs(ent, seq, lock);
 		}
 	}
 
-	public void copyInputs(Entity ent, int seq, boolean ignoreDef, boolean lock) {
+	public void copyInputs(Entity ent, int seq, boolean lock) {
 		ParseContext context = null;
 		if (ent.getJaamSimModel().getConfigFile() != null) {
 			URI uri = ent.getJaamSimModel().getConfigFile().getParentFile().toURI();
 			context = new ParseContext(uri, null);
 		}
-		copyInputs(ent, seq, context, ignoreDef, lock);
+		copyInputs(ent, seq, context, lock);
 	}
 
 	/**
 	 * Copy the inputs for the keywords with the specified sequence number to the caller.
 	 * @param ent = entity whose inputs are to be copied
 	 * @param seq = sequence number for the keyword (0 = early keyword, 1 = normal keyword)
-	 * @param ignoreDef - true if a default input is not copied
 	 * @param lock = true if each copied input is locked after its value is set
 	 */
-	public void copyInputs(Entity ent, int seq, ParseContext context, boolean ignoreDef, boolean lock) {
+	public void copyInputs(Entity ent, int seq, ParseContext context, boolean lock) {
 
 		// Provide stub definitions for the custom outputs
 		if (seq == 0) {
@@ -478,7 +477,7 @@ public class Entity {
 			if (sourceInput.isSynonym() || sourceInput.getSequenceNumber() != seq)
 				continue;
 			String key = sourceInput.getKeyword();
-			copyInput(ent, key, context, ignoreDef, lock);
+			copyInput(ent, key, context, lock);
 		}
 	}
 
@@ -490,16 +489,11 @@ public class Entity {
 	 * @param ignoreDef - true if a default input is not copied
 	 * @param lock - true if the copied input is locked after its value is set
 	 */
-	public void copyInput(Entity ent, String key, ParseContext context, boolean ignoreDef, boolean lock) {
+	public void copyInput(Entity ent, String key, ParseContext context, boolean lock) {
 
 		Input<?> sourceInput = ent.getInput(key);
 		Input<?> targetInput = this.getInput(key);
 		if (sourceInput == null || targetInput == null)
-			return;
-
-		// Ignore a default input for a source entity
-		// (default inputs for the source entity can be assigned later for the target entity)
-		if (ignoreDef && sourceInput.isDef())
 			return;
 
 		// Ignore locked inputs for generated entities.
