@@ -294,7 +294,6 @@ implements SampleProvider, RandomStreamUser {
 	public void copyInput(Entity ent, String key, ParseContext context, boolean lock) {
 		if (key.equals(getStreamNumberKeyword())) {
 			RandomStreamUser.setUniqueRandomSeed(this);
-			randomSeedInput.setLocked(lock);
 			return;
 		}
 		super.copyInput(ent, key, context, lock);
