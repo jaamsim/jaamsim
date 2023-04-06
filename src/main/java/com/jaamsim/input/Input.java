@@ -551,16 +551,16 @@ public abstract class Input<T> {
 	}
 
 	/**
-	 * Returns whether the input has been set or is inherited from its protoInput
-	 * @return true if the input has been set or is inherited
+	 * Returns whether the input has not been set and is not inherited from its protoInput
+	 * @return true if the input has not been set and is not inherited
 	 */
 	public boolean isDefault() {
 		return isDef && (protoInput == null || protoInput.isDefault());
 	}
 
 	/**
-	 * Returns whether the input has been set.
-	 * @return true if the input has been set
+	 * Returns whether the input has not been set.
+	 * @return true if the input has not been set
 	 */
 	public boolean isDef() {
 		return isDef;
