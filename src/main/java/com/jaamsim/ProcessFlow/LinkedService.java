@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2022 JaamSim Software Inc.
+ * Copyright (C) 2016-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -112,7 +112,7 @@ public abstract class LinkedService extends LinkedDevice implements QueueUser {
 	protected final InterfaceEntityListInput<SubjectEntity> watchList;
 
 	@Keyword(description = "A list of attribute assignments that are triggered at the start of "
-	                     + "processing for each new entity.",
+	                     + "processing for each new entity, after any resources have been sezied.",
 	         exampleList = {"{ 'this.A = 1' } { 'this.obj.B = 1' } { '[Ent1].C = 1' }",
 	                        "{ 'this.D = 1[s] + 0.5*this.SimTime' }"})
 	protected final AssignmentListInput assignmentsAtStart;
