@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2022 JaamSim Software Inc.
+ * Copyright (C) 2016-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,6 +34,7 @@ import com.jaamsim.input.Output;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.MathUtils;
 import com.jaamsim.math.Vec3d;
+import com.jaamsim.units.DistanceUnit;
 import com.jaamsim.units.TimeUnit;
 
 /**
@@ -44,6 +45,15 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 	@Keyword(description = "The travel time for the conveyor.",
 	         exampleList = {"10.0 s"})
 	private final SampleInput travelTimeInput;
+
+	@Keyword(description = "Length of the conveyor.",
+	         exampleList = {"10.0 m"})
+	private final SampleInput length;
+
+	@Keyword(description = "Unused distance along the conveyor that is required to add the "
+	                     + "present entity.",
+	         exampleList = {"1.0 m"})
+	private final SampleInput entitySpace;
 
 	@Keyword(description = "If TRUE, the entities are rotated to match the direction of "
 	                     + "the path.",
@@ -80,6 +90,16 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 		travelTimeInput.setValidRange(0.0, Double.POSITIVE_INFINITY);
 		travelTimeInput.setUnitType(TimeUnit.class);
 		this.addInput(travelTimeInput);
+
+		length = new SampleInput("Length", KEY_INPUTS, 0.0d);
+		length.setValidRange(0.0, Double.POSITIVE_INFINITY);
+		length.setUnitType(DistanceUnit.class);
+		this.addInput(length);
+
+		entitySpace = new SampleInput("EntitySpace", KEY_INPUTS, 0.0d);
+		entitySpace.setValidRange(0.0, Double.POSITIVE_INFINITY);
+		entitySpace.setUnitType(DistanceUnit.class);
+		this.addInput(entitySpace);
 
 		rotateEntities = new BooleanInput("RotateEntities", FORMAT, false);
 		this.addInput(rotateEntities);
@@ -141,7 +161,14 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 		this.updateTravelTime(simTime);
 
 		// Add the entity to the conveyor
-		ConveyorEntry entry = new ConveyorEntry(ent, 0.0d);
+		double convLength = length.getNextSample(this, simTime);
+		double reqdLength = entitySpace.getNextSample(this, simTime);
+		double position = 0.0d;
+		if (!entryList.isEmpty() && convLength > 0.0d) {
+			position = entryList.get(entryList.size() - 1).position - reqdLength/convLength;
+			position = Math.min(position, 0.0d);
+		}
+		ConveyorEntry entry = new ConveyorEntry(ent, position);
 		entryList.add(entry);
 
 		// Assign attributes
@@ -316,7 +343,9 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 
 			entry.entity.setRegion(this.getCurrentRegion());
 
-			Vec3d localPos = PolylineInfo.getPositionOnPolyline(getCurvePoints(), entry.position + frac);
+			double convPos = Math.min(entry.position + frac,  1.0d);
+			convPos = Math.max(convPos, 0.0d);
+			Vec3d localPos = PolylineInfo.getPositionOnPolyline(getCurvePoints(), convPos);
 			entry.entity.setGlobalPosition(this.getGlobalPosition(localPos));
 
 			Vec3d orient = new Vec3d();
