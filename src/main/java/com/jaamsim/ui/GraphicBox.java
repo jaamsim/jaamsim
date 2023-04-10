@@ -253,7 +253,7 @@ public class GraphicBox extends JDialog {
 				if (dm instanceof ColladaModel) {
 					ColladaModel dmc = (ColladaModel)dm;
 					MeshProtoKey key = RenderUtils.FileNameToMeshProtoKey(dmc.getColladaFile());
-					modelBounds = RenderManager.inst().getMeshBounds(key, true);
+					modelBounds = RenderManager.inst().getMeshBounds(key);
 
 					Vec3d modelSize = new Vec3d(modelBounds.radius);
 
