@@ -55,6 +55,22 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 	         exampleList = {"1.0 m"})
 	private final SampleInput entitySpace;
 
+	@Keyword(description = "Distance along the conveyor that is occupied by the present entity "
+	                     + "when it is accumulated.",
+	         exampleList = {"1.0 m"})
+	private final SampleInput accumulationLength;
+
+	@Keyword(description = "Specifies whether the conveyor is accumulating (TRUE) or "
+	                     + "non-accumulating (FALSE). "
+	                     + "This property determines the conveyor's behaviour when its exit is "
+	                     + "blocked. "
+	                     + "If accumulating, the conveyor will continue running until all the "
+	                     + "entities are bunched together at the end. "
+	                     + "If non-accumulating, the conveyor will stop when the first entity "
+	                     + "reaches the end and cannot exit.",
+	         exampleList = {"TRUE"})
+	private final BooleanInput accumulating;
+
 	@Keyword(description = "If TRUE, the entities are rotated to match the direction of "
 	                     + "the path.",
 	         exampleList = {"TRUE"})
@@ -101,6 +117,14 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 		entitySpace.setUnitType(DistanceUnit.class);
 		this.addInput(entitySpace);
 
+		accumulationLength = new SampleInput("AccumulationLength", KEY_INPUTS, 0.0d);
+		accumulationLength.setValidRange(0.0, Double.POSITIVE_INFINITY);
+		accumulationLength.setUnitType(DistanceUnit.class);
+		this.addInput(accumulationLength);
+
+		accumulating = new BooleanInput("Accumulating", KEY_INPUTS, false);
+		this.addInput(accumulating);
+
 		rotateEntities = new BooleanInput("RotateEntities", FORMAT, false);
 		this.addInput(rotateEntities);
 
@@ -134,18 +158,24 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 		presentTravelTime = travelTimeInput.getNextSample(this, 0.0);
 	}
 
+	public boolean isAccumulating() {
+		return accumulating.getValue();
+	}
+
 	private static class ConveyorEntry {
 		final DisplayEntity entity;
+		double length;
 		double position;
 
-		public ConveyorEntry(DisplayEntity ent, double pos) {
+		public ConveyorEntry(DisplayEntity ent, double lgth, double pos) {
 			entity = ent;
+			length = lgth;
 			position = pos;
 		}
 
 		@Override
 		public String toString() {
-			return String.format("(%s, %.6f)", entity, position);
+			return String.format("(%s, %.6f, %.6f)", entity, length, position);
 		}
 	}
 
@@ -163,12 +193,13 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 		// Add the entity to the conveyor
 		double convLength = length.getNextSample(this, simTime);
 		double reqdLength = entitySpace.getNextSample(this, simTime);
+		double entLength = accumulationLength.getNextSample(this, simTime);
 		double position = 0.0d;
 		if (!entryList.isEmpty() && convLength > 0.0d) {
 			position = entryList.get(entryList.size() - 1).position - reqdLength/convLength;
 			position = Math.min(position, 0.0d);
 		}
-		ConveyorEntry entry = new ConveyorEntry(ent, position);
+		ConveyorEntry entry = new ConveyorEntry(ent, entLength, position);
 		entryList.add(entry);
 
 		// Assign attributes
