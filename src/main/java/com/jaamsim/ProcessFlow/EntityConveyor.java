@@ -26,6 +26,7 @@ import com.jaamsim.Graphics.LineEntity;
 import com.jaamsim.Graphics.PolylineInfo;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.SubModels.CompoundEntity;
+import com.jaamsim.events.EventManager;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.IntegerInput;
@@ -86,6 +87,7 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 
 	private final ArrayList<ConveyorEntry> entryList;  // List of the entities being conveyed
 	private double presentTravelTime;
+	private double nextDuration;
 
 	{
 		displayModelListInput.clearValidClasses();
@@ -206,12 +208,41 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 		assignAttributesAtStart(simTime);
 
 		// If necessary, wake up the conveyor
-		this.restart();
+		performUnscheduledUpdate();
 	}
 
 	@Override
 	protected boolean startProcessing(double simTime) {
-		return !entryList.isEmpty();
+		if (entryList.isEmpty())
+			return false;
+
+		double convLength = length.getNextSample(this, simTime);
+		EventManager evt = EventManager.current();
+		long durTicks = Long.MAX_VALUE;
+
+		// Time for the last entity to accumulate at the end of the conveyor
+		if (isAccumulating() && isReleaseThresholdClosure()) {
+			double maxPos = 1.0d;
+			ConveyorEntry lastEntry = null;
+			for (ConveyorEntry entry : entryList) {
+				if (lastEntry != null)
+					maxPos -= entry.length/convLength;
+				lastEntry = entry;
+			}
+			double reqdFrac = Math.max(maxPos - lastEntry.position, 0.0d);
+			long ticks = evt.secondsToNearestTick(reqdFrac * presentTravelTime);
+			if (ticks > 0L)
+				durTicks = ticks;
+		}
+
+		// Time for the first entity to reach the end of the conveyor
+		else {
+			double reqdFrac = Math.max(1.0d - entryList.get(0).position, 0.0d);
+			durTicks = evt.secondsToNearestTick(reqdFrac * presentTravelTime);
+		}
+
+		nextDuration = evt.ticksToSeconds(durTicks);
+		return durTicks != Long.MAX_VALUE;
 	}
 
 	@Override
@@ -245,13 +276,12 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 
 	@Override
 	protected double getStepDuration(double simTime) {
+		return nextDuration;
+	}
 
-		// Calculate the time for the first entity to reach the end of the conveyor
-		double dt = simTime - this.getLastUpdateTime();
-		double dur = (1.0d - entryList.get(0).position)*presentTravelTime - dt;
-		dur = Math.max(dur, 0);  // Round-off to the nearest tick can cause a negative value
-		if (isTraceFlag()) trace(1, "getProcessingTime = %.6f", dur);
-		return dur;
+	@Override
+	protected boolean isNewStepReqd(boolean completed) {
+		return true;
 	}
 
 	@Override
@@ -267,9 +297,17 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 
 		// Increment the positions of the entities on the conveyor
 		if (isTraceFlag()) traceLine(2, "BEFORE - entryList=%s", entryList);
+
+		ConveyorEntry lastEntry = null;
+		double convLength = length.getNextSample(this, getSimTime());
+		double maxPos = 1.0d;
 		for (ConveyorEntry entry : entryList) {
-			entry.position += frac;
+			if (lastEntry != null && convLength > 0.0d)
+				maxPos = lastEntry.position - entry.length/convLength;
+			entry.position = Math.min(entry.position + frac, maxPos);
+			lastEntry = entry;
 		}
+
 		if (isTraceFlag()) traceLine(2, "AFTER - entryList=%s", entryList);
 	}
 
@@ -300,12 +338,23 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 				entry.position = 1.0d;
 			}
 		}
+		if (isBusy() && isAccumulating()) {
+			performUnscheduledUpdate();
+			return;
+		}
 		super.thresholdChanged();
 	}
 
 	@Override
 	public boolean isFinished() {
 		return entryList.isEmpty();
+	}
+
+	@Override
+	public boolean isStopped() {
+		return isImmediateThresholdClosure() || isImmediateReleaseThresholdClosure()
+				|| (isOperatingThresholdClosure() && isFinished())
+				|| (isReleaseThresholdClosure() && isReadyToRelease() && !isAccumulating());
 	}
 
 	// ********************************************************************************************
@@ -370,18 +419,27 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 		if (isBusy()) {
 			frac = (simTime - this.getLastUpdateTime())/presentTravelTime;
 		}
+		double convLength = length.getNextSample(this, simTime);
+		ConveyorEntry lastEntry = null;
+		double lastPos = 0.0d;
 		for (ConveyorEntry entry : copiedList) {
 
 			entry.entity.setRegion(this.getCurrentRegion());
 
-			double convPos = Math.min(entry.position + frac,  1.0d);
+			double maxPos = 1.0d;
+			if (lastEntry != null && convLength > 0.0d)
+				maxPos = lastPos - entry.length/convLength;
+			double convPos = Math.min(entry.position + frac, maxPos);
+			lastPos = convPos;
+			lastEntry = entry;
+
 			convPos = Math.max(convPos, 0.0d);
 			Vec3d localPos = PolylineInfo.getPositionOnPolyline(getCurvePoints(), convPos);
 			entry.entity.setGlobalPosition(this.getGlobalPosition(localPos));
 
 			Vec3d orient = new Vec3d();
 			if (rotateEntities.getValue()) {
-				orient.z = PolylineInfo.getAngleOnPolyline(getCurvePoints(), entry.position + frac);
+				orient.z = PolylineInfo.getAngleOnPolyline(getCurvePoints(), convPos);
 			}
 			entry.entity.setRelativeOrientation(orient);
 		}
