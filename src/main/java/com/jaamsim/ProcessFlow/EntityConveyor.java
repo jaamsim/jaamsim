@@ -404,6 +404,15 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 				|| (isReleaseThresholdClosure() && isReadyToRelease() && !isAccumulating());
 	}
 
+	@Override
+	public void setPresentState() {
+		if (isIdle() && !entryList.isEmpty()) {
+			setPresentState(STATE_BLOCKED);
+			return;
+		}
+		super.setPresentState();
+	}
+
 	// ********************************************************************************************
 	// GRAPHICS
 	// ********************************************************************************************
