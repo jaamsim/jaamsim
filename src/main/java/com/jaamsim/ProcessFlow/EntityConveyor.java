@@ -29,6 +29,7 @@ import com.jaamsim.SubModels.CompoundEntity;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.ColourInput;
+import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
@@ -149,6 +150,14 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 
 	public EntityConveyor() {
 		entryList = new ArrayList<>();
+	}
+
+	@Override
+	public void validate() {
+		super.validate();
+		if (isAccumulating() && length.getNextSample(this, 0.0d) <= 0.0d)
+			throw new InputErrorException("A non-zero 'Length' input must be specified when the "
+					+ "'Accumulating' input is TRUE");
 	}
 
 	@Override
