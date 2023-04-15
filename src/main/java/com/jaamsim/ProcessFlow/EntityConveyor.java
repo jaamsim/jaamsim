@@ -223,6 +223,9 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 		// Assign attributes
 		assignAttributesAtStart(simTime);
 
+		// Notify any observers
+		notifyObservers();
+
 		// If necessary, wake up the conveyor
 		performUnscheduledUpdate();
 	}
