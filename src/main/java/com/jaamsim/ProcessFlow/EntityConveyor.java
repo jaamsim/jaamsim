@@ -88,6 +88,10 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 	private final ArrayList<ConveyorEntry> entryList;  // List of the entities being conveyed
 	private double presentTravelTime;
 	private double nextDuration;
+	private boolean readyForNext;
+
+	private boolean exitFlag;
+	private boolean nextEntFlag;
 
 	{
 		displayModelListInput.clearValidClasses();
@@ -152,6 +156,7 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 		super.earlyInit();
 		entryList.clear();
 		presentTravelTime = 0.0d;
+		readyForNext = true;
 	}
 
 	@Override
@@ -204,6 +209,8 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 		ConveyorEntry entry = new ConveyorEntry(ent, entLength, position);
 		entryList.add(entry);
 
+		readyForNext = (position * convLength >= reqdLength);
+
 		// Assign attributes
 		assignAttributesAtStart(simTime);
 
@@ -213,12 +220,26 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 
 	@Override
 	protected boolean startProcessing(double simTime) {
-		if (entryList.isEmpty())
+		if (entryList.isEmpty()) {
+			readyForNext = true;
 			return false;
+		}
 
 		double convLength = length.getNextSample(this, simTime);
+		double reqdLength = entitySpace.getNextSample(this, simTime);
+
+		long nextEntTicks = Long.MAX_VALUE;
+		long exitTicks = Long.MAX_VALUE;
+		long accumTicks = Long.MAX_VALUE;
 		EventManager evt = EventManager.current();
-		long durTicks = Long.MAX_VALUE;
+
+		// Time for the conveyor to be ready for the next entity
+		if (!readyForNext) {
+			ConveyorEntry entry = entryList.get(entryList.size() - 1);
+			double reqdPos = reqdLength/convLength;
+			double reqdFrac = Math.max(reqdPos - entry.position, 0.0d);
+			nextEntTicks = evt.secondsToNearestTick(reqdFrac * presentTravelTime);
+		}
 
 		// Time for the last entity to accumulate at the end of the conveyor
 		if (isAccumulating() && isReleaseThresholdClosure()) {
@@ -232,43 +253,57 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 			double reqdFrac = Math.max(maxPos - lastEntry.position, 0.0d);
 			long ticks = evt.secondsToNearestTick(reqdFrac * presentTravelTime);
 			if (ticks > 0L)
-				durTicks = ticks;
+				accumTicks = ticks;
+
+			// Ensure that there is room for the next entity to be added
+			if (reqdLength/convLength > maxPos)
+				nextEntTicks = Long.MAX_VALUE;
 		}
 
 		// Time for the first entity to reach the end of the conveyor
 		else {
 			double reqdFrac = Math.max(1.0d - entryList.get(0).position, 0.0d);
-			durTicks = evt.secondsToNearestTick(reqdFrac * presentTravelTime);
+			exitTicks = evt.secondsToNearestTick(reqdFrac * presentTravelTime);
 		}
 
+		// Determine the type of event to occur at the end of the time step
+		long durTicks = Math.min(nextEntTicks, Math.min(exitTicks, accumTicks));
+		exitFlag = (exitTicks == durTicks);
+		nextEntFlag = (nextEntTicks == durTicks);
 		nextDuration = evt.ticksToSeconds(durTicks);
+
+		if (isTraceFlag()) {
+			traceLine(2, "nextEntTicks=%s, exitTicks=%s, accumTicks=%s",
+					nextEntTicks, exitTicks, accumTicks);
+			traceLine(2, "nextEntFlag=%s, exitFlag=%s", nextEntFlag, exitFlag);
+		}
+
 		return durTicks != Long.MAX_VALUE;
 	}
 
 	@Override
 	protected void processStep(double simTime) {
 
-		// Check for a release threshold closure
-		if (isReleaseThresholdClosure()) {
-			setReadyToRelease(true);
-			return;
-		}
-
-		// Remove the first entity from the conveyor and send it to the next component
-		ConveyorEntry entry = entryList.remove(0);
-		DisplayEntity ent = entry.entity;
-		this.sendToNextComponent(ent);
-
-		// Remove any other entities that have also reached the end
-		double maxPos = Math.min(entry.position, 1.0d);
-		while (!entryList.isEmpty() && entryList.get(0).position >= maxPos) {
+		// Release the entity at the exit of the conveyor
+		if (exitFlag) {
 			if (isReleaseThresholdClosure()) {
 				setReadyToRelease(true);
-				return;
 			}
-			ent = entryList.remove(0).entity;
-			this.sendToNextComponent(ent);
+			else {
+				ConveyorEntry entry = entryList.remove(0);
+				DisplayEntity ent = entry.entity;
+				sendToNextComponent(ent);
+			}
 		}
+
+		// Allow the next entity to be added to the conveyor
+		if (nextEntFlag) {
+			readyForNext = true;
+		}
+
+		// Reset all flags
+		exitFlag = false;
+		nextEntFlag = false;
 
 		// Update the travel time
 		this.updateTravelTime(simTime);
