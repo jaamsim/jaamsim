@@ -491,4 +491,12 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 		return ret;
 	}
 
+	@Output(name = "ReadyForNextEntity",
+	 description = "Returns true if there is enough space on the conveyor to accept the next "
+	             + "entity.",
+	    sequence = 2)
+	public boolean readyForNextEntity(double simTime) {
+		return readyForNext;
+	}
+
 }
