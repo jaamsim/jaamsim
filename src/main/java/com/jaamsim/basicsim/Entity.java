@@ -1186,6 +1186,12 @@ public class Entity {
 		clonePool.add(clone);
 	}
 
+	public int getClonePoolSize() {
+		if (clonePool == null)
+			return 0;
+		return clonePool.size();
+	}
+
 	public Entity getCloneFromPool() {
 		if (clonePool == null || clonePool.isEmpty())
 			return null;
@@ -1212,7 +1218,7 @@ public class Entity {
 	public void dispose() {
 		if (!isGenerated())
 			return;
-		if (isClone() && (clonePool == null || clonePool.size() < MAX_POOL)) {
+		if (isClone() && prototype.getClonePoolSize() < MAX_POOL) {
 			prototype.addCloneToPool(this);
 			return;
 		}
