@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018-2022 JaamSim Software Inc.
+ * Copyright (C) 2018-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -207,6 +207,17 @@ public class EntityContainer extends SimEntity implements EntContainer {
 			ent.kill();
 		}
 		super.kill();
+	}
+
+	@Override
+	public void dispose() {
+		Iterator<DisplayEntity> itr = container.iterator();
+		while (itr.hasNext()) {
+			DisplayEntity ent = itr.next();
+			ent.dispose();
+		}
+		container.clear();
+		super.dispose();
 	}
 
 	@Override
