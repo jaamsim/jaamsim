@@ -273,7 +273,8 @@ public class Queue extends LinkedComponent {
 		storage.add(entry);
 
 		if (storage.size() > maxValidLength.getValue())
-			error("Maximum valid queue length of %s has been exceeded", maxValidLength.getValue());
+			error("Number of objects in the queue exceeds the limit of %s set by the "
+					+ "'MaxValidLength' input.", maxValidLength.getValue());
 
 		// Notify the users of this queue
 		if (!userUpdateHandle.isScheduled())
