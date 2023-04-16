@@ -1178,10 +1178,6 @@ public class Entity {
 		return ret;
 	}
 
-	public void addToClonePool() {
-		prototype.addCloneToPool(this);
-	}
-
 	public void addCloneToPool(Entity clone) {
 		if (clonePool == null)
 			clonePool = new ArrayList<>();
@@ -1217,7 +1213,7 @@ public class Entity {
 		if (!isGenerated())
 			return;
 		if (isClone() && (clonePool == null || clonePool.size() < MAX_POOL)) {
-			addToClonePool();
+			prototype.addCloneToPool(this);
 			return;
 		}
 		kill();
