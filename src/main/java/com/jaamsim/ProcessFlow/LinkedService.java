@@ -24,13 +24,13 @@ import com.jaamsim.EntityProviders.EntityProvInput;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.StringProviders.StringProvInput;
 import com.jaamsim.SubModels.CompoundEntity;
-import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.basicsim.SubjectEntity;
 import com.jaamsim.input.AssignmentListInput;
 import com.jaamsim.input.ExpParser;
 import com.jaamsim.input.ExpResType;
 import com.jaamsim.input.ExpressionInput;
 import com.jaamsim.input.InputAgent;
+import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.InterfaceEntityListInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.KeywordIndex;
@@ -163,7 +163,7 @@ public abstract class LinkedService extends LinkedDevice implements QueueUser {
 		if (!waitQueue.isDefault()) {
 			Queue q = getQueue(0.0d);  // Ensures that the expression can be evaluated
 			if (q == null)
-				throw new ErrorException(waitQueue.getValueString(), 0, getName(),
+				throw new InputErrorException(waitQueue.getValueString(), 0, getName(),
 						"Input to 'WaitQueue' returns null");
 		}
 	}
