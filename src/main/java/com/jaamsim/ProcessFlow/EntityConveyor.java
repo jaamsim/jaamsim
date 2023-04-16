@@ -73,6 +73,15 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 	         exampleList = {"TRUE"})
 	private final BooleanInput accumulating;
 
+	@Keyword(description = "Maximum number of objects that can be moved by the conveyor at one "
+	                     + "time. "
+	                     + "An error message is generated if this limit is exceeded.\n\n"
+	                     + "This input is intended to trap a model error that causes the number "
+	                     + "of objects to grow without bound. "
+	                     + "It has no effect on model logic.",
+	         exampleList = {"100"})
+	protected final IntegerInput maxValidNumber;
+
 	@Keyword(description = "If TRUE, the entities are rotated to match the direction of "
 	                     + "the path.",
 	         exampleList = {"TRUE"})
@@ -131,6 +140,9 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 
 		accumulating = new BooleanInput("Accumulating", KEY_INPUTS, false);
 		this.addInput(accumulating);
+
+		maxValidNumber = new IntegerInput("MaxValidNumber", KEY_INPUTS, 10000);
+		this.addInput(maxValidNumber);
 
 		rotateEntities = new BooleanInput("RotateEntities", FORMAT, false);
 		this.addInput(rotateEntities);
@@ -217,6 +229,10 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 		}
 		ConveyorEntry entry = new ConveyorEntry(ent, entLength, position);
 		entryList.add(entry);
+
+		if (entryList.size() > maxValidNumber.getValue())
+			error("Number of objects on the conveyor exceeds the limit of %s set by the "
+					+ "'MaxValidNumber' input.", maxValidNumber.getValue());
 
 		readyForNext = (position * convLength >= reqdLength);
 
