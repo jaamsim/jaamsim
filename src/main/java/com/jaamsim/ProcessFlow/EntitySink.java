@@ -38,6 +38,9 @@ public class EntitySink extends LinkedComponent {
 		// Increment the number processed
 		releaseEntity(simTime);
 
+		// Clear the 'obj' output
+		setReceivedEntity(null);
+
 		// Kill the added entity
 		ent.dispose();
 	}
