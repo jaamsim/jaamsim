@@ -667,6 +667,10 @@ public class JaamSimModel implements EventTimeListener {
 			ent.resetGraphics();
 		}
 
+		// Keep the labels and sub-models consistent with the gui
+		showSubModels(getSimulation().isShowSubModels());
+		showTemporaryLabels(getSimulation().isShowLabels());
+
 		// Perform earlyInit
 		for (Entity each : getClonesOfIterator(Entity.class)) {
 			// Try/catch is required because some earlyInit methods use simTime which is only
