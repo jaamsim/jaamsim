@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018-2021 JaamSim Software Inc.
+ * Copyright (C) 2018-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,6 +36,10 @@ public class TimeSeriesInput extends Input<TimeSeriesProvider> {
 		super(key, cat, def);
 	}
 
+	public TimeSeriesInput(String key, String cat, double def) {
+		super(key, cat, new TimeSeriesConstantDouble(def));
+	}
+
 	public void setUnitType(Class<? extends Unit> u) {
 		if (u != unitType)
 			this.reset();
@@ -65,6 +69,14 @@ public class TimeSeriesInput extends Input<TimeSeriesProvider> {
 		if( s.getUnitType() != UserSpecifiedUnit.class )
 			Input.assertUnitsMatch(unitType, s.getUnitType());
 		value = s;
+	}
+
+	@Override
+	public String getValidInputDesc() {
+		if (unitType == UserSpecifiedUnit.class) {
+			return Input.VALID_TIMESERIES_PROV_UNIT;
+		}
+		return String.format(Input.VALID_TIMESERIES_PROV, unitType.getSimpleName());
 	}
 
 	@Override

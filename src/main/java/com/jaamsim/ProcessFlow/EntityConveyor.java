@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2022 JaamSim Software Inc.
+ * Copyright (C) 2016-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,14 +26,17 @@ import com.jaamsim.Graphics.LineEntity;
 import com.jaamsim.Graphics.PolylineInfo;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.SubModels.CompoundEntity;
+import com.jaamsim.events.EventManager;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.ColourInput;
+import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.MathUtils;
 import com.jaamsim.math.Vec3d;
+import com.jaamsim.units.DistanceUnit;
 import com.jaamsim.units.TimeUnit;
 
 /**
@@ -44,6 +47,40 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 	@Keyword(description = "The travel time for the conveyor.",
 	         exampleList = {"10.0 s"})
 	private final SampleInput travelTimeInput;
+
+	@Keyword(description = "Length of the conveyor.",
+	         exampleList = {"10.0 m"})
+	private final SampleInput length;
+
+	@Keyword(description = "Unused distance along the conveyor that is required to add the "
+	                     + "present entity.",
+	         exampleList = {"1.0 m"})
+	private final SampleInput entitySpace;
+
+	@Keyword(description = "Distance along the conveyor that is occupied by the present entity "
+	                     + "when it is accumulated.",
+	         exampleList = {"1.0 m"})
+	private final SampleInput accumulationLength;
+
+	@Keyword(description = "Specifies whether the conveyor is accumulating (TRUE) or "
+	                     + "non-accumulating (FALSE). "
+	                     + "This property determines the conveyor's behaviour when its exit is "
+	                     + "blocked. "
+	                     + "If accumulating, the conveyor will continue running until all the "
+	                     + "entities are bunched together at the end. "
+	                     + "If non-accumulating, the conveyor will stop when the first entity "
+	                     + "reaches the end and cannot exit.",
+	         exampleList = {"TRUE"})
+	private final BooleanInput accumulating;
+
+	@Keyword(description = "Maximum number of objects that can be moved by the conveyor at one "
+	                     + "time. "
+	                     + "An error message is generated if this limit is exceeded.\n\n"
+	                     + "This input is intended to trap a model error that causes the number "
+	                     + "of objects to grow without bound. "
+	                     + "It has no effect on model logic.",
+	         exampleList = {"100"})
+	protected final IntegerInput maxValidNumber;
 
 	@Keyword(description = "If TRUE, the entities are rotated to match the direction of "
 	                     + "the path.",
@@ -60,6 +97,11 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 
 	private final ArrayList<ConveyorEntry> entryList;  // List of the entities being conveyed
 	private double presentTravelTime;
+	private double nextDuration;
+	private boolean readyForNext;
+
+	private boolean exitFlag;
+	private boolean nextEntFlag;
 
 	{
 		displayModelListInput.clearValidClasses();
@@ -80,6 +122,27 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 		travelTimeInput.setValidRange(0.0, Double.POSITIVE_INFINITY);
 		travelTimeInput.setUnitType(TimeUnit.class);
 		this.addInput(travelTimeInput);
+
+		length = new SampleInput("Length", KEY_INPUTS, 0.0d);
+		length.setValidRange(0.0, Double.POSITIVE_INFINITY);
+		length.setUnitType(DistanceUnit.class);
+		this.addInput(length);
+
+		entitySpace = new SampleInput("EntitySpace", KEY_INPUTS, 0.0d);
+		entitySpace.setValidRange(0.0, Double.POSITIVE_INFINITY);
+		entitySpace.setUnitType(DistanceUnit.class);
+		this.addInput(entitySpace);
+
+		accumulationLength = new SampleInput("AccumulationLength", KEY_INPUTS, 0.0d);
+		accumulationLength.setValidRange(0.0, Double.POSITIVE_INFINITY);
+		accumulationLength.setUnitType(DistanceUnit.class);
+		this.addInput(accumulationLength);
+
+		accumulating = new BooleanInput("Accumulating", KEY_INPUTS, false);
+		this.addInput(accumulating);
+
+		maxValidNumber = new IntegerInput("MaxValidNumber", KEY_INPUTS, 10000);
+		this.addInput(maxValidNumber);
 
 		rotateEntities = new BooleanInput("RotateEntities", FORMAT, false);
 		this.addInput(rotateEntities);
@@ -102,10 +165,19 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 	}
 
 	@Override
+	public void validate() {
+		super.validate();
+		if (isAccumulating() && length.getNextSample(this, 0.0d) <= 0.0d)
+			throw new InputErrorException("A non-zero 'Length' input must be specified when the "
+					+ "'Accumulating' input is TRUE");
+	}
+
+	@Override
 	public void earlyInit() {
 		super.earlyInit();
 		entryList.clear();
 		presentTravelTime = 0.0d;
+		readyForNext = true;
 	}
 
 	@Override
@@ -114,18 +186,24 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 		presentTravelTime = travelTimeInput.getNextSample(this, 0.0);
 	}
 
+	public boolean isAccumulating() {
+		return accumulating.getValue();
+	}
+
 	private static class ConveyorEntry {
 		final DisplayEntity entity;
+		double length;
 		double position;
 
-		public ConveyorEntry(DisplayEntity ent, double pos) {
+		public ConveyorEntry(DisplayEntity ent, double lgth, double pos) {
 			entity = ent;
+			length = lgth;
 			position = pos;
 		}
 
 		@Override
 		public String toString() {
-			return String.format("(%s, %.6f)", entity, position);
+			return String.format("(%s, %.6f, %.6f)", entity, length, position);
 		}
 	}
 
@@ -141,45 +219,119 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 		this.updateTravelTime(simTime);
 
 		// Add the entity to the conveyor
-		ConveyorEntry entry = new ConveyorEntry(ent, 0.0d);
+		double convLength = length.getNextSample(this, simTime);
+		double reqdLength = entitySpace.getNextSample(this, simTime);
+		double entLength = accumulationLength.getNextSample(this, simTime);
+		double position = 0.0d;
+		if (!entryList.isEmpty() && convLength > 0.0d) {
+			position = entryList.get(entryList.size() - 1).position - reqdLength/convLength;
+			position = Math.min(position, 0.0d);
+		}
+		ConveyorEntry entry = new ConveyorEntry(ent, entLength, position);
 		entryList.add(entry);
+
+		if (entryList.size() > maxValidNumber.getValue())
+			error("Number of objects on the conveyor exceeds the limit of %s set by the "
+					+ "'MaxValidNumber' input.", maxValidNumber.getValue());
+
+		readyForNext = (position * convLength >= reqdLength);
 
 		// Assign attributes
 		assignAttributesAtStart(simTime);
 
+		// Notify any observers
+		notifyObservers();
+
 		// If necessary, wake up the conveyor
-		this.restart();
+		performUnscheduledUpdate();
 	}
 
 	@Override
 	protected boolean startProcessing(double simTime) {
-		return !entryList.isEmpty();
+		if (entryList.isEmpty()) {
+			readyForNext = true;
+			return false;
+		}
+
+		double convLength = length.getNextSample(this, simTime);
+		double reqdLength = entitySpace.getNextSample(this, simTime);
+
+		long nextEntTicks = Long.MAX_VALUE;
+		long exitTicks = Long.MAX_VALUE;
+		long accumTicks = Long.MAX_VALUE;
+		EventManager evt = EventManager.current();
+
+		// Time for the conveyor to be ready for the next entity
+		if (!readyForNext) {
+			ConveyorEntry entry = entryList.get(entryList.size() - 1);
+			double reqdPos = reqdLength/convLength;
+			double reqdFrac = Math.max(reqdPos - entry.position, 0.0d);
+			nextEntTicks = evt.secondsToNearestTick(reqdFrac * presentTravelTime);
+		}
+
+		// Time for the last entity to accumulate at the end of the conveyor
+		if (isAccumulating() && isReleaseThresholdClosure()) {
+			double maxPos = 1.0d;
+			ConveyorEntry lastEntry = null;
+			for (ConveyorEntry entry : entryList) {
+				if (lastEntry != null)
+					maxPos -= entry.length/convLength;
+				lastEntry = entry;
+			}
+			double reqdFrac = Math.max(maxPos - lastEntry.position, 0.0d);
+			long ticks = evt.secondsToNearestTick(reqdFrac * presentTravelTime);
+			if (ticks > 0L)
+				accumTicks = ticks;
+
+			// Ensure that there is room for the next entity to be added
+			if (reqdLength/convLength > maxPos)
+				nextEntTicks = Long.MAX_VALUE;
+		}
+
+		// Time for the first entity to reach the end of the conveyor
+		else {
+			double reqdFrac = Math.max(1.0d - entryList.get(0).position, 0.0d);
+			exitTicks = evt.secondsToNearestTick(reqdFrac * presentTravelTime);
+		}
+
+		// Determine the type of event to occur at the end of the time step
+		long durTicks = Math.min(nextEntTicks, Math.min(exitTicks, accumTicks));
+		exitFlag = (exitTicks == durTicks);
+		nextEntFlag = (nextEntTicks == durTicks);
+		nextDuration = evt.ticksToSeconds(durTicks);
+
+		if (isTraceFlag()) {
+			traceLine(2, "nextEntTicks=%s, exitTicks=%s, accumTicks=%s",
+					nextEntTicks, exitTicks, accumTicks);
+			traceLine(2, "nextEntFlag=%s, exitFlag=%s", nextEntFlag, exitFlag);
+		}
+
+		return durTicks != Long.MAX_VALUE;
 	}
 
 	@Override
 	protected void processStep(double simTime) {
 
-		// Check for a release threshold closure
-		if (isReleaseThresholdClosure()) {
-			setReadyToRelease(true);
-			return;
-		}
-
-		// Remove the first entity from the conveyor and send it to the next component
-		ConveyorEntry entry = entryList.remove(0);
-		DisplayEntity ent = entry.entity;
-		this.sendToNextComponent(ent);
-
-		// Remove any other entities that have also reached the end
-		double maxPos = Math.min(entry.position, 1.0d);
-		while (!entryList.isEmpty() && entryList.get(0).position >= maxPos) {
+		// Release the entity at the exit of the conveyor
+		if (exitFlag) {
 			if (isReleaseThresholdClosure()) {
 				setReadyToRelease(true);
-				return;
 			}
-			ent = entryList.remove(0).entity;
-			this.sendToNextComponent(ent);
+			else {
+				ConveyorEntry entry = entryList.remove(0);
+				DisplayEntity ent = entry.entity;
+				sendToNextComponent(ent);
+			}
 		}
+
+		// Allow the next entity to be added to the conveyor
+		if (nextEntFlag) {
+			readyForNext = true;
+		}
+
+		// Reset all flags
+		exitFlag = false;
+		nextEntFlag = false;
 
 		// Update the travel time
 		this.updateTravelTime(simTime);
@@ -187,13 +339,12 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 
 	@Override
 	protected double getStepDuration(double simTime) {
+		return nextDuration;
+	}
 
-		// Calculate the time for the first entity to reach the end of the conveyor
-		double dt = simTime - this.getLastUpdateTime();
-		double dur = (1.0d - entryList.get(0).position)*presentTravelTime - dt;
-		dur = Math.max(dur, 0);  // Round-off to the nearest tick can cause a negative value
-		if (isTraceFlag()) trace(1, "getProcessingTime = %.6f", dur);
-		return dur;
+	@Override
+	protected boolean isNewStepReqd(boolean completed) {
+		return true;
 	}
 
 	@Override
@@ -209,9 +360,17 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 
 		// Increment the positions of the entities on the conveyor
 		if (isTraceFlag()) traceLine(2, "BEFORE - entryList=%s", entryList);
+
+		ConveyorEntry lastEntry = null;
+		double convLength = length.getNextSample(this, getSimTime());
+		double maxPos = 1.0d;
 		for (ConveyorEntry entry : entryList) {
-			entry.position += frac;
+			if (lastEntry != null && convLength > 0.0d)
+				maxPos = lastEntry.position - entry.length/convLength;
+			entry.position = Math.min(entry.position + frac, maxPos);
+			lastEntry = entry;
 		}
+
 		if (isTraceFlag()) traceLine(2, "AFTER - entryList=%s", entryList);
 	}
 
@@ -242,12 +401,32 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 				entry.position = 1.0d;
 			}
 		}
+		if (isBusy() && isAccumulating()) {
+			performUnscheduledUpdate();
+			return;
+		}
 		super.thresholdChanged();
 	}
 
 	@Override
 	public boolean isFinished() {
 		return entryList.isEmpty();
+	}
+
+	@Override
+	public boolean isStopped() {
+		return isImmediateThresholdClosure() || isImmediateReleaseThresholdClosure()
+				|| (isOperatingThresholdClosure() && isFinished())
+				|| (isReleaseThresholdClosure() && isReadyToRelease() && !isAccumulating());
+	}
+
+	@Override
+	public void setPresentState() {
+		if (isIdle() && !entryList.isEmpty()) {
+			setPresentState(STATE_BLOCKED);
+			return;
+		}
+		super.setPresentState();
 	}
 
 	// ********************************************************************************************
@@ -312,16 +491,27 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 		if (isBusy()) {
 			frac = (simTime - this.getLastUpdateTime())/presentTravelTime;
 		}
+		double convLength = length.getNextSample(this, simTime);
+		ConveyorEntry lastEntry = null;
+		double lastPos = 0.0d;
 		for (ConveyorEntry entry : copiedList) {
 
 			entry.entity.setRegion(this.getCurrentRegion());
 
-			Vec3d localPos = PolylineInfo.getPositionOnPolyline(getCurvePoints(), entry.position + frac);
+			double maxPos = 1.0d;
+			if (lastEntry != null && convLength > 0.0d)
+				maxPos = lastPos - entry.length/convLength;
+			double convPos = Math.min(entry.position + frac, maxPos);
+			lastPos = convPos;
+			lastEntry = entry;
+
+			convPos = Math.max(convPos, 0.0d);
+			Vec3d localPos = PolylineInfo.getPositionOnPolyline(getCurvePoints(), convPos);
 			entry.entity.setGlobalPosition(this.getGlobalPosition(localPos));
 
 			Vec3d orient = new Vec3d();
 			if (rotateEntities.getValue()) {
-				orient.z = PolylineInfo.getAngleOnPolyline(getCurvePoints(), entry.position + frac);
+				orient.z = PolylineInfo.getAngleOnPolyline(getCurvePoints(), convPos);
 			}
 			entry.entity.setRelativeOrientation(orient);
 		}
@@ -336,6 +526,14 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 			ret.add(entry.entity);
 		}
 		return ret;
+	}
+
+	@Output(name = "ReadyForNextEntity",
+	 description = "Returns true if there is enough space on the conveyor to accept the next "
+	             + "entity.",
+	    sequence = 2)
+	public boolean readyForNextEntity(double simTime) {
+		return readyForNext;
 	}
 
 }

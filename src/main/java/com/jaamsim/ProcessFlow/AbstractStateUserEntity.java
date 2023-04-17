@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2020-2022 JaamSim Software Inc.
+ * Copyright (C) 2020-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -216,10 +216,6 @@ public abstract class AbstractStateUserEntity extends StateEntity {
 		return getTimeInState(simTime, STATE_IDLE);
 	}
 
-	public double getTimeInState_Working(double simTime) {
-		return getTimeInState(simTime, STATE_WORKING);
-	}
-
 	public double getTimeInState_Maintenance(double simTime) {
 		return getTimeInState(simTime, STATE_MAINTENANCE);
 	}
@@ -333,12 +329,12 @@ public abstract class AbstractStateUserEntity extends StateEntity {
 
 	@Output(name = "Utilisation",
 	 description = "The fraction of calendar time (excluding the initialisation period) that "
-	             + "this object is in the Working state. Includes any completed cycles.",
+	             + "this object is in one of the 'working' states. Includes any completed cycles.",
 	  reportable = true,
 	    sequence = 8)
 	public double getUtilisation(double simTime) {
 		double total = this.getTotalTime(simTime);
-		double working = getTimeInState_Working(simTime);
+		double working = getTimeInWorkingState(simTime);
 		return working/total;
 	}
 
@@ -368,11 +364,12 @@ public abstract class AbstractStateUserEntity extends StateEntity {
 
 	@Output(name = "Reliability",
 	 description = "The ratio of Working time to the sum of Working time and Breakdown time. "
+	             + "Working time is the total time spent in any of the 'working' states. "
 	             + "All times exclude the initialisation period and include any completed cycles.",
 	  reportable = true,
 	    sequence = 11)
 	public double getReliability(double simTime) {
-		double working = getTimeInState_Working(simTime);
+		double working = getTimeInWorkingState(simTime);
 		double breakdown = getTimeInState_Breakdown(simTime);
 		return working / (working + breakdown);
 	}

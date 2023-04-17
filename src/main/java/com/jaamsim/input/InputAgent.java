@@ -43,6 +43,7 @@ import java.util.Locale;
 import java.util.Map.Entry;
 
 import com.jaamsim.Commands.Command;
+import com.jaamsim.Graphics.AbstractDirectedEntity;
 import com.jaamsim.Graphics.EntityLabel;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ErrorException;
@@ -81,6 +82,8 @@ public class InputAgent {
 	                                                "KeywordList"};
 	private static final String[] GRAPHICS_PALETTES = {"Graphics Objects", "View", "Display Models"};
 	private static final String[] GRAPHICS_CATEGORIES = {Entity.GRAPHICS, Entity.FONT, Entity.FORMAT, Entity.GUI};
+
+	private static final String COMMA_SEPARATOR = ", ";
 
 	private static final int MAX_BRACE_DEPTH = 3;
 
@@ -377,8 +380,12 @@ public class InputAgent {
 	 * @return new entity
 	 */
 	public static <T extends Entity> T defineEntityWithUniqueName(JaamSimModel simModel, Class<T> klass, String key, String sep, boolean addedEntity) {
+		return defineEntityWithUniqueName(simModel, klass, null, key, sep, addedEntity);
+	}
+
+	public static <T extends Entity> T defineEntityWithUniqueName(JaamSimModel simModel, Class<T> klass, Entity proto, String key, String sep, boolean addedEntity) {
 		String name = getUniqueName(simModel, key, sep);
-		return defineEntity(simModel, klass, null, name, addedEntity);
+		return defineEntity(simModel, klass, proto, name, addedEntity);
 	}
 
 	public static boolean isValidName(String key) {
@@ -507,39 +514,6 @@ public class InputAgent {
 		return ret;
 	}
 
-	// Load the run file
-	public static void loadConfigurationFile(JaamSimModel simModel, File file) throws URISyntaxException {
-
-		// Load the input file
-		URI dirURI = file.getParentFile().toURI();
-		InputAgent.readStream(simModel, "", dirURI, file.getName());
-
-		// Perform any actions that are required after loading the input file
-		simModel.postLoad();
-
-		// Validate the inputs
-		for (Entity each : simModel.getClonesOfIterator(Entity.class)) {
-			try {
-				each.validate();
-			}
-			catch (Throwable e) {
-				simModel.recordError();
-				String msg = String.format("Validation Error - %s: %s%n", each, e.getMessage());
-				if (e instanceof ErrorException)
-					msg = String.format("Validation Error - %s%n", e.getMessage());
-				InputAgent.logMessage(simModel, msg);
-			}
-		}
-
-		//  Check for found errors
-		if (simModel.getNumErrors() > 0 )
-			throw new InputErrorException("%d input errors and %d warnings found",
-					simModel.getNumErrors(), simModel.getNumWarnings());
-
-		if (simModel.getSimulation().getPrintInputReport())
-			InputAgent.printInputFileKeywords(simModel);
-	}
-
 	/**
 	 * Prepares the keyword and input value for processing.
 	 *
@@ -582,6 +556,9 @@ public class InputAgent {
 	}
 
 	public static final void apply(Entity ent, Input<?> in, KeywordIndex kw) {
+		if (in.isLocked())
+			throw new InputErrorException("Input value is locked");
+
 		// If the input value is blank, restore the default
 		if (kw.numArgs() == 0) {
 			if (in.isDef())
@@ -600,11 +577,12 @@ public class InputAgent {
 			ent.setEdited();
 		}
 
-		// Execute the input callback for the entity and its clones
+		// Execute the input callback for the entity
 		in.doCallback(ent);
+
+		// Copy the input value to any clones
 		for (Entity clone : ent.getAllClones()) {
-			Input<?> cloneIn = clone.getInput(in.getKeyword());
-			cloneIn.doCallback(clone);
+			clone.copyInput(ent, in.getKeyword(), kw.context, true);
 		}
 
 		// Refresh the graphics
@@ -994,19 +972,13 @@ public class InputAgent {
 		// Prepare a sorted list of all the entities that were added to the model
 		ArrayList<Entity> newEntities = new ArrayList<>();
 		for (Entity ent : simModel.getClonesOfIterator(Entity.class)) {
-			if (!ent.isAdded() || ent.isGenerated() || ent instanceof ObjectType)
+			if (!ent.isAdded() || ent.isGenerated())
+				continue;
+			if (ent instanceof ObjectType || ent.getObjectType() == null)
 				continue;
 			if (ent instanceof EntityLabel && !((EntityLabel) ent).getShowInput()
 					&& ((EntityLabel) ent).isDefault())
 				continue;
-			if (simModel.getObjectTypeForClass(ent.getClass()) == null) {
-				String msg = String.format("Object cannot be defined: %s", ent);
-				LogBox.logLine(msg);
-				GUIListener gui = simModel.getGUIListener();
-				if (gui != null)
-					gui.invokeErrorDialogBox("Save Error", msg);
-				continue;
-			}
 			newEntities.add(ent);
 		}
 		Collections.sort(newEntities, uiEntitySortOrder);
@@ -1015,7 +987,45 @@ public class InputAgent {
 		if (!newEntities.isEmpty())
 			file.format("%n");
 
-		// Print the first part of the "Define" statement for this object type
+		// Print the Define statements for the entities
+		saveDefinitions(newEntities, file);
+
+		// 3) WRITE THE INPUTS
+
+		// Prepare a sorted list of all the entities that were edited
+		ArrayList<Entity> entityList = new ArrayList<>();
+		for (Entity ent : simModel.getClonesOfIterator(Entity.class)) {
+			if (!ent.isEdited() || !ent.isRegistered())
+				continue;
+			if (ent instanceof ObjectType || ent.getObjectType() == null)
+				continue;
+			if (ent instanceof EntityLabel && !((EntityLabel) ent).getShowInput()
+					&& ((EntityLabel) ent).isDefault())
+				continue;
+			entityList.add(ent);
+		}
+		Collections.sort(entityList, uiEntitySortOrder);
+
+		// Save the inputs for each entity
+		saveInputs(entityList, file);
+
+		// Close the new configuration file
+		file.flush();
+		file.close();
+
+		simModel.setSessionEdited(false);
+	}
+
+	/**
+	 * Prints the Define statements for the specified lists of entities.
+	 * @param newEntities - entities to be defined
+	 * @param file - file to which the definitions are to be printed
+	 */
+	public static void saveDefinitions(ArrayList<Entity> newEntities, FileEntity file) {
+
+		// 1) WRITE THE DEFINITION STATEMENTS FOR NON-CLONES
+
+		// Loop through the entities that are not clones
 		Class<? extends Entity> entClass = null;
 		int level = 0;
 		for (Entity ent : newEntities) {
@@ -1038,19 +1048,20 @@ public class InputAgent {
 
 				// Start the new Define statement
 				entClass = ent.getClass();
-				ObjectType ot = simModel.getObjectTypeForClass(entClass);
-				file.format("Define %s {", ot.getName());
+				file.format("Define %s {", ent.getObjectType());
 			}
 
 			// Print the entity name to the Define statement
-			file.format(" %s ", ent.getName());
+			file.format(" %s ", ent);
 		}
 
 		// Close the define statement
 		if (!newEntities.isEmpty())
 			file.format("}%n");
 
-		// 2.5) WRITE THE DEFINITION STATEMENTS FOR CLONES
+		// 2) WRITE THE DEFINITION STATEMENTS FOR CLONES
+
+		// Loop through the entities that are clones
 		Entity proto = null;
 		for (Entity ent : newEntities) {
 			if (!ent.isClone())
@@ -1071,34 +1082,20 @@ public class InputAgent {
 			}
 
 			// Print the entity name to the Define statement
-			file.format(" %s ", ent.getName());
+			file.format(" %s ", ent);
 		}
 
 		// Close the define statement
 		if (proto != null)
 			file.format("}%n");
+	}
 
-		// 3) WRITE THE INPUTS FOR SPECIAL KEYWORDS THAT MUST COME BEFORE THE OTHERS
-
-		// Prepare a sorted list of all the entities that were edited
-		ArrayList<Entity> entityList = new ArrayList<>();
-		for (Entity ent : simModel.getClonesOfIterator(Entity.class)) {
-			if (!ent.isEdited() || !ent.isRegistered() || ent instanceof ObjectType)
-				continue;
-			if (ent instanceof EntityLabel && !((EntityLabel) ent).getShowInput()
-					&& ((EntityLabel) ent).isDefault())
-				continue;
-			if (simModel.getObjectTypeForClass(ent.getClass()) == null) {
-				String msg = String.format("Inputs for object cannot be saved: %s", ent);
-				LogBox.logLine(msg);
-				GUIListener gui = simModel.getGUIListener();
-				if (gui != null)
-					gui.invokeErrorDialogBox("Save Error", msg);
-				continue;
-			}
-			entityList.add(ent);
-		}
-		Collections.sort(entityList, uiEntitySortOrder);
+	/**
+	 * Prints the input statements for the specified lists of entities.
+	 * @param entityList - entities whose inputs are to be printed
+	 * @param file - file to which the inputs are to be printed
+	 */
+	public static void saveInputs(ArrayList<Entity> entityList, FileEntity file) {
 
 		// Write a stub definition for the Custom Outputs for each entity
 		boolean blankLinePrinted = false;
@@ -1132,10 +1129,8 @@ public class InputAgent {
 			}
 		}
 
-		// 4) WRITE THE INPUTS FOR THE REMAINING KEYWORDS
-
-		// 4.1) Non-graphics inputs for non-graphic entities
-		entClass = null;
+		// Non-graphics inputs for non-graphic entities
+		Class<? extends Entity> entClass = null;
 		for (Entity ent : entityList) {
 			if (isGraphicsEntity(ent))
 				continue;
@@ -1144,9 +1139,8 @@ public class InputAgent {
 			if (ent.getClass() != entClass) {
 				entClass = ent.getClass();
 				if (entClass != Simulation.class) {
-					ObjectType ot = simModel.getObjectTypeForClass(entClass);
 					file.format("%n");
-					file.format("# *** %s ***%n", ot);
+					file.format("# *** %s ***%n", ent.getObjectType());
 				}
 			}
 			file.format("%n");
@@ -1158,7 +1152,7 @@ public class InputAgent {
 			}
 		}
 
-		// 4.2) Graphics inputs for non-graphic entities
+		// Graphics inputs for non-graphic entities
 		file.format("%n");
 		file.format("# *** GRAPHICS INPUTS ***%n");
 		for (Entity ent : entityList) {
@@ -1173,7 +1167,7 @@ public class InputAgent {
 			}
 		}
 
-		// 4.3) All inputs for graphic entities
+		// All inputs for graphic entities
 		entClass = null;
 		for (Entity ent : entityList) {
 			if (!isGraphicsEntity(ent))
@@ -1183,9 +1177,8 @@ public class InputAgent {
 			if (ent.getClass() != entClass) {
 				entClass = ent.getClass();
 				if (entClass != Simulation.class) {
-					ObjectType ot = simModel.getObjectTypeForClass(entClass);
 					file.format("%n");
-					file.format("# *** %s ***%n", ot);
+					file.format("# *** %s ***%n", ent.getObjectType());
 				}
 			}
 			file.format("%n");
@@ -1196,12 +1189,18 @@ public class InputAgent {
 				writeInputOnFile_ForEntity(file, ent, in);
 			}
 		}
+	}
 
-		// Close the new configuration file
+	public static void saveEntity(Entity entity, File f) {
+		ArrayList<Entity> entityList = new ArrayList<>(entity.getDescendants());
+		entityList.add(0, entity);
+		Collections.sort(entityList, uiEntitySortOrder);
+
+		FileEntity file = new FileEntity(f);
+		saveDefinitions(entityList, file);
+		saveInputs(entityList, file);
 		file.flush();
 		file.close();
-
-		simModel.setSessionEdited(false);
 	}
 
 	public static boolean isEarlyInput(Input<?> in) {
@@ -1468,7 +1467,7 @@ public class InputAgent {
 			}
 			// Expression based custom outputs
 			else if (out.getReturnType() == ExpResult.class) {
-				String val = InputAgent.getValueAsString(simModel, out, simTime, "%s", factor);
+				String val = InputAgent.getValueAsString(simModel, out, simTime, "%s", factor, "");
 				file.format(OUTPUT_FORMAT,
 						ent.getName(), out.getName(), val, unitString);
 			}
@@ -1602,40 +1601,64 @@ public class InputAgent {
 	 * @param simTime - present simulation time
 	 * @param floatFmt - format string for numerical values
 	 * @param factor - divisor to be applied to numerical values
+	 * @param unitString - unit to be appended to numerical values
 	 * @return formated string for the output
 	 */
-	public static String getValueAsString(JaamSimModel simModel, ValueHandle out, double simTime, String floatFmt, double factor) {
-		StringBuilder sb = new StringBuilder();
-		String str;
-		String COMMA_SEPARATOR = ", ";
+	public static String getValueAsString(JaamSimModel simModel, ValueHandle out, double simTime, String floatFmt, double factor, String unitString) {
 
 		// Numeric outputs
 		if (out.isNumericValue()) {
 			double val = out.getValueAsDouble(simTime, Double.NaN);
-			return String.format(floatFmt, val/factor);
+			return String.format(floatFmt, val/factor) + Input.SEPARATOR + unitString;
 		}
 
 		Class<?> retType = out.getReturnType();
 		Object ret = out.getValue(simTime, retType);
+		if (!unitString.isEmpty())
+			unitString = "[" + unitString +"]";
+		return getOutputString(simModel, ret, floatFmt, factor, unitString);
+	}
+
+	public static String getOutputString(JaamSimModel simModel, Object ret, String floatFmt, double factor, String unitString) {
+		StringBuilder sb = new StringBuilder();
+
 		if (ret == null)
 			return "null";
 
+		// String outputs
+		if (ret instanceof String) {
+			sb.append("\"").append(ret).append("\"");
+			return sb.toString();
+		}
+
+		// Entity outputs
+		if (ret instanceof Entity || ret instanceof AbstractDirectedEntity) {
+			sb.append("[").append(ret).append("]");
+			return sb.toString();
+		}
+
+		// Floating point number
+		if (ret instanceof Double || ret instanceof Float) {
+			double val = (double) ret;
+			return String.format(floatFmt, val/factor) + unitString;
+		}
+
 		// double[] outputs
-		if (retType == double[].class) {
+		if (ret instanceof double[]) {
 			double[] val = (double[]) ret;
 			sb.append("{");
 			for (int i=0; i<val.length; i++) {
 				if (i > 0)
 					sb.append(COMMA_SEPARATOR);
-				str = String.format(floatFmt, val[i]/factor);
-				sb.append(str);
+				String str = String.format(floatFmt, val[i]/factor);
+				sb.append(str).append(unitString);
 			}
 			sb.append("}");
 			return sb.toString();
 		}
 
 		// double[][] outputs
-		if (retType == double[][].class) {
+		if (ret instanceof double[][]) {
 			double[][] val = (double[][]) ret;
 			sb.append("{");
 			for (int i=0; i<val.length; i++) {
@@ -1645,8 +1668,8 @@ public class InputAgent {
 				for (int j=0; j<val[i].length; j++) {
 					if (j > 0)
 						sb.append(COMMA_SEPARATOR);
-					str = String.format(floatFmt, val[i][j]/factor);
-					sb.append(str);
+					String str = String.format(floatFmt, val[i][j]/factor);
+					sb.append(str).append(unitString);
 				}
 				sb.append("}");
 			}
@@ -1655,13 +1678,13 @@ public class InputAgent {
 		}
 
 		// int[] outputs
-		if (retType == int[].class) {
+		if (ret instanceof int[]) {
 			int[] val = (int[]) ret;
 			sb.append("{");
 			for (int i=0; i<val.length; i++) {
 				if (i > 0)
 					sb.append(COMMA_SEPARATOR);
-				str = String.format("%s", val[i]);
+				String str = String.format("%s", val[i]);
 				sb.append(str);
 			}
 			sb.append("}");
@@ -1669,21 +1692,22 @@ public class InputAgent {
 		}
 
 		// Vec3d outputs
-		if (retType == Vec3d.class) {
+		if (ret instanceof Vec3d) {
 			Vec3d vec = (Vec3d) ret;
 			sb.append(vec.x/factor);
 			sb.append(Input.SEPARATOR).append(vec.y/factor);
 			sb.append(Input.SEPARATOR).append(vec.z/factor);
+			sb.append(Input.SEPARATOR).append(unitString);
 			return sb.toString();
 		}
 
 		// DoubleVector output
-		if (retType == DoubleVector.class) {
+		if (ret instanceof DoubleVector) {
 			sb.append("{");
 			DoubleVector vec = (DoubleVector) ret;
 			for (int i=0; i<vec.size(); i++) {
-				str = String.format(floatFmt, vec.get(i)/factor);
-				sb.append(str);
+				String str = String.format(floatFmt, vec.get(i)/factor);
+				sb.append(str).append(unitString);
 				if (i < vec.size()-1) {
 					sb.append(COMMA_SEPARATOR);
 				}
@@ -1693,37 +1717,21 @@ public class InputAgent {
 		}
 
 		// ArrayList output
-		if (retType == ArrayList.class) {
+		if (ret instanceof ArrayList) {
 			sb.append("{");
 			ArrayList<?> array = (ArrayList<?>) ret;
 			for (int i=0; i<array.size(); i++) {
 				if (i > 0)
 					sb.append(COMMA_SEPARATOR);
 				Object obj = array.get(i);
-				if (obj instanceof Double) {
-					double val = (Double)obj;
-					sb.append(String.format(floatFmt, val/factor));
-				}
-				else if (obj instanceof ArrayList) {
-					ArrayList<?> list = (ArrayList<?>) obj;
-					sb.append("{");
-					for (int j=0; j<list.size(); j++) {
-						if (j > 0)
-							sb.append(COMMA_SEPARATOR);
-						sb.append(list.get(j).toString());
-					}
-					sb.append("}");
-				}
-				else {
-					sb.append(String.format("%s", obj));
-				}
+				sb.append(getOutputString(simModel, obj, floatFmt, factor, unitString));
 			}
 			sb.append("}");
 			return sb.toString();
 		}
 
 		// Keyed outputs
-		if (retType == LinkedHashMap.class) {
+		if (ret instanceof LinkedHashMap) {
 			sb.append("{");
 			LinkedHashMap<?, ?> map = (LinkedHashMap<?, ?>) ret;
 			boolean first = true;
@@ -1736,66 +1744,24 @@ public class InputAgent {
 					first = false;
 				else
 					sb.append(COMMA_SEPARATOR);
-				sb.append(String.format("%s=", mapEntry.getKey()));
 
-				if (obj instanceof Double) {
-					double val = (Double)obj;
-					sb.append(String.format(floatFmt, val/factor));
-				}
-				else if (obj instanceof LinkedHashMap) {
-					sb.append("{");
-					LinkedHashMap<?, ?> innerMap = (LinkedHashMap<?, ?>)obj;
-					boolean innerFirst = true;
-					for (Entry<?, ?> innerMapEntry : innerMap.entrySet()) {
-						if (innerFirst)
-							innerFirst = false;
-						else
-							sb.append(COMMA_SEPARATOR);
-
-						sb.append(String.format("%s=", innerMapEntry.getKey()));
-						Object innerMapObj = innerMapEntry.getValue();
-						if (innerMapObj instanceof Double) {
-							double val = (Double)innerMapObj;
-							sb.append(String.format(floatFmt, val/factor));
-						}
-						else {
-							sb.append(String.format("%s", obj));
-						}
-					}
-					sb.append("}");
-				}
-				else {
-					sb.append(String.format("%s", obj));
-				}
+				Object key = mapEntry.getKey();
+				sb.append(getOutputString(simModel, key, floatFmt, factor, unitString));
+				sb.append("=");
+				sb.append(getOutputString(simModel, obj, floatFmt, factor, unitString));
 			}
 			sb.append("}");
 			return sb.toString();
 		}
 
-		if (retType == ExpResult.class) {
+		// Expression result
+		if (ret instanceof ExpResult) {
 			ExpResult result = (ExpResult) ret;
-			switch (result.type) {
-			case STRING:
-				sb.append(result.stringVal);
-				break;
-			case ENTITY:
-				if (result.entVal == null)
-					sb.append("null");
-				else
-					sb.append("[").append(result.entVal.getName()).append("]");
-				break;
-			case NUMBER:
-				sb.append(String.format(floatFmt, result.value/factor));
-				break;
-			case COLLECTION:
-				sb.append(result.colVal.getOutputString(simModel));
-				break;
-			default:
-				assert(false);
-				sb.append("???");
-				break;
+			if (result.type == ExpResType.NUMBER) {
+				sb.append(String.format(floatFmt, result.value/factor)).append(unitString);
+				return sb.toString();
 			}
-			return sb.toString();
+			return result.getOutputString(simModel);
 		}
 
 		// All other outputs

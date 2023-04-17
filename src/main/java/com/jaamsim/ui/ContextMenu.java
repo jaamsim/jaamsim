@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2016-2021 JaamSim Software Inc.
+ * Copyright (C) 2016-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -210,15 +210,13 @@ public class ContextMenu {
 			ContextMenu.populateDisplayEntityMenu(menu, (DisplayEntity)ent, nodeIndex, c, x, y);
 		}
 
-		// SubModel menu items
-		if (ent instanceof SubModel) {
-			ContextMenu.populateSubModelMenu(menu, (SubModel)ent, nodeIndex, c, x, y);
-		}
-
 		// CompoundEntity menu items
 		if (ent instanceof CompoundEntity) {
 			menu.addSeparator();
 			ContextMenu.populateCompoundEntityMenu(menu, (CompoundEntity)ent, nodeIndex, c, x, y);
+			if (ent instanceof SubModel && !ent.isClone()) {
+				ContextMenu.populateSubModelMenu(menu, (SubModel)ent, nodeIndex, c, x, y);
+			}
 		}
 
 		synchronized (menuItems) {
@@ -512,6 +510,25 @@ public class ContextMenu {
 			}
 		} );
 		menu.add( updateClonesItem );
+
+		// Save SubModel
+		JMenuItem saveSubModelItem = new JMenuItem( "Save SubModel" );
+		saveSubModelItem.addActionListener( new ActionListener() {
+
+			@Override
+			public void actionPerformed( ActionEvent event ) {
+				ArrayList<Entity> refList = submodel.getExternalReferences();
+				if (!refList.isEmpty()) {
+					String msg = String.format("SubModel cannot be saved because contains "
+							+ "external references: %s", refList);
+					LogBox.logLine(msg);
+					GUIFrame.getInstance().invokeErrorDialogBox("Save Error", msg);
+					return;
+				}
+				GUIFrame.getInstance().saveEntity(submodel);
+			}
+		} );
+		menu.add( saveSubModelItem );
 	}
 
 	public static void populateCompoundEntityMenu(JPopupMenu menu, final CompoundEntity ent, final int nodeIndex,

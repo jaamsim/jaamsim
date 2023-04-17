@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2019-2022 JaamSim Software Inc.
+ * Copyright (C) 2019-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,8 +17,8 @@
  */
 package com.jaamsim.Thresholds;
 
+import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.Samples.TimeSeries;
-import com.jaamsim.Samples.TimeSeriesConstantDouble;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.EntityTarget;
 import com.jaamsim.events.EventManager;
@@ -31,7 +31,6 @@ import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.TimeSeriesInput;
 import com.jaamsim.input.UnitTypeInput;
-import com.jaamsim.input.ValueInput;
 import com.jaamsim.units.TimeUnit;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
@@ -64,7 +63,7 @@ public class TimeSeriesThreshold extends Threshold {
 	                     + "MinOpenLimit <= x(t) <= MaxOpenLimit for simulation times t from "
 	                     + "(SimTime + Offset) to (SimTime + Offset + LookAhead).",
 	         exampleList = {"5.0 h"})
-	private final ValueInput lookAhead;
+	private final SampleInput lookAhead;
 
 	@Keyword(description = "The amount of time that the threshold adds on to every time series "
 	                     + "lookup.\n"
@@ -72,7 +71,7 @@ public class TimeSeriesThreshold extends Threshold {
 	                     + "MinOpenLimit <= x(t) <= MaxOpenLimit for simulation times t from "
 	                     + "(SimTime + Offset) to (SimTime + Offset + LookAhead).",
 	         exampleList = {"5.0 h"})
-	private final ValueInput offset;
+	private final SampleInput offset;
 
 	@Keyword(description = "The unit type for the threshold (e.g. DistanceUnit, TimeUnit, MassUnit).",
 	         exampleList = {"DistanceUnit"})
@@ -89,19 +88,19 @@ public class TimeSeriesThreshold extends Threshold {
 		timeSeries.setRequired(true);
 		this.addInput(timeSeries);
 
-		maxOpenLimit = new TimeSeriesInput("MaxOpenLimit", KEY_INPUTS, new TimeSeriesConstantDouble(Double.POSITIVE_INFINITY));
+		maxOpenLimit = new TimeSeriesInput("MaxOpenLimit", KEY_INPUTS, Double.POSITIVE_INFINITY);
 		maxOpenLimit.setUnitType(UserSpecifiedUnit.class);
 		this.addInput( maxOpenLimit );
 
-		minOpenLimit = new TimeSeriesInput("MinOpenLimit", KEY_INPUTS, new TimeSeriesConstantDouble(Double.NEGATIVE_INFINITY));
+		minOpenLimit = new TimeSeriesInput("MinOpenLimit", KEY_INPUTS, Double.NEGATIVE_INFINITY);
 		minOpenLimit.setUnitType(UserSpecifiedUnit.class);
 		this.addInput( minOpenLimit );
 
-		lookAhead = new ValueInput( "LookAhead", KEY_INPUTS, 0.0d );
+		lookAhead = new SampleInput("LookAhead", KEY_INPUTS, 0.0d);
 		lookAhead.setUnitType(TimeUnit.class);
 		this.addInput( lookAhead );
 
-		offset = new ValueInput( "Offset", KEY_INPUTS, 0.0d );
+		offset = new SampleInput("Offset", KEY_INPUTS, 0.0d);
 		offset.setUnitType(TimeUnit.class);
 		this.addInput( offset );
 	}
@@ -216,8 +215,9 @@ public class TimeSeriesThreshold extends Threshold {
 	private boolean isOpenAtTicks(long ticks) {
 
 		// Add offset from input
+		double simTime = getSimTime();
 		EventManager evt = this.getJaamSimModel().getEventManager();
-		ticks += evt.secondsToNearestTick(offset.getValue());
+		ticks += evt.secondsToNearestTick(offset.getNextSample(this, simTime));
 		ticks = Math.max(ticks, 0);
 
 		long changeTime = ticks;
@@ -227,7 +227,7 @@ public class TimeSeriesThreshold extends Threshold {
 			return false;
 
 		// If there is no lookahead, then the threshold is open
-		long lookAheadInTicks = evt.secondsToNearestTick(lookAhead.getValue());
+		long lookAheadInTicks = evt.secondsToNearestTick(lookAhead.getNextSample(this, simTime));
 		if (lookAheadInTicks == 0)
 			return true;
 
@@ -266,14 +266,15 @@ public class TimeSeriesThreshold extends Threshold {
 
 		EventManager evt = this.getJaamSimModel().getEventManager();
 		// Add offset from input
-		ticks += evt.secondsToNearestTick(offset.getValue());
+		double simTime = getSimTime();
+		ticks += evt.secondsToNearestTick(offset.getNextSample(this, simTime));
 		ticks = Math.max(ticks, 0);
 
 		// Threshold is currently closed. Find the next open point
 		long openTime = -1;
 		long changeTime = ticks;
 		long maxTicksValueFromTimeSeries = this.getMaxTicksValueFromTimeSeries();
-		long lookAheadInTicks = evt.secondsToNearestTick(lookAhead.getValue());
+		long lookAheadInTicks = evt.secondsToNearestTick(lookAhead.getNextSample(this, simTime));
 		while( true ) {
 			changeTime = this.getNextChangeAfterTicks(changeTime);
 
@@ -355,14 +356,15 @@ public class TimeSeriesThreshold extends Threshold {
 			return 0;
 
 		// Add offset from input
+		double simTime = getSimTime();
 		EventManager evt = this.getJaamSimModel().getEventManager();
-		ticks += evt.secondsToNearestTick(offset.getValue());
+		ticks += evt.secondsToNearestTick(offset.getNextSample(this, simTime));
 		ticks = Math.max(ticks, 0);
 
 		// Find the next change point after startTime
 		long changeTime = ticks;
 		long maxTicksValueFromTimeSeries = this.getMaxTicksValueFromTimeSeries();
-		long lookAheadInTicks = evt.secondsToNearestTick(lookAhead.getValue());
+		long lookAheadInTicks = evt.secondsToNearestTick(lookAhead.getNextSample(this, simTime));
 		while( true ) {
 			changeTime = this.getNextChangeAfterTicks(changeTime);
 
@@ -519,7 +521,7 @@ public class TimeSeriesThreshold extends Threshold {
 	public double getTimeSeriesValue(double simTime) {
 		if (timeSeries.getValue() == null)
 			return Double.NaN;
-		return ((TimeSeries)timeSeries.getValue()).getPresentValue(simTime + offset.getValue());
+		return ((TimeSeries)timeSeries.getValue()).getPresentValue(simTime + offset.getNextSample(this, simTime));
 	}
 
 	@Output(name = "NextOpenTime",

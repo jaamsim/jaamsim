@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2020 JaamSim Software Inc.
+ * Copyright (C) 2020-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,20 +20,14 @@ import java.util.ArrayList;
 
 import com.jaamsim.math.Vec3d;
 
-public class DirectedEntity {
-
-	public final DisplayEntity entity;
-	public final boolean direction;
-
-	public static final String REVERSE = "(R)";
+public class DirectedEntity extends AbstractDirectedEntity<DisplayEntity> {
 
 	public DirectedEntity(DisplayEntity ent) {
-		this(ent, true);
+		super(ent, true);
 	}
 
 	public DirectedEntity(DisplayEntity ent, boolean dir) {
-		entity = ent;
-		direction = dir;
+		super(ent, dir);
 	}
 
 	public Vec3d getSourcePoint() {
@@ -50,23 +44,6 @@ public class DirectedEntity {
 			ret.add(new DirectedEntity(ent, dir));
 		}
 		return ret;
-	}
-
-	@Override
-	public String toString() {
-		String ret = entity.getName();
-		if (!direction)
-			ret = ret + REVERSE;
-		return ret;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (obj == null) return false;
-		if (obj == this) return true;
-		if (!(obj instanceof DirectedEntity)) return false;
-		DirectedEntity de = (DirectedEntity) obj;
-		return de.entity == entity && de.direction == direction;
 	}
 
 }

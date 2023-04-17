@@ -32,6 +32,7 @@ import com.jaamsim.input.EntityListInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InputCallback;
+import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.IntegerListInput;
 import com.jaamsim.input.Keyword;
@@ -163,9 +164,9 @@ public class Simulation extends Entity {
 	                     + "For an object to be traced, both the 'EnableTracing' input for "
 	                     + "Simulation and the 'Trace' input for the object must be set to TRUE. "
 	                     + "Trace outputs are written to standard out and can used by a "
-	                     + "programmer to track the interal logic for one or more selected "
+	                     + "programmer to track the internal logic for one or more selected "
 	                     + "objects as the model is executed. "
-	                     + "They are an essential tool for testing and debugging the Java code "
+	                     + "Tracing is an essential tool for testing and debugging the Java code "
 	                     + "for JaamSim.",
 	         exampleList = {"TRUE"})
 	private final BooleanInput enableTracing;
@@ -819,13 +820,13 @@ public class Simulation extends Entity {
 		super.validate();
 
 		if (getJaamSimModel().isReloadReqd())
-			throw new ErrorException("Inputs to GregorianCalendar or StartDate have changed "
+			throw new InputErrorException("Inputs to GregorianCalendar or StartDate have changed "
 					+ "AFTER the simulation calendar has been used to process another input.%n"
 					+ "Re-open the model to process these inputs in the correct order.");
 
 		double maxRunDuration = Long.MAX_VALUE*tickLengthInput.getValue();
 		if (getRunDuration() > maxRunDuration) {
-			throw new ErrorException("RunDuration exceeds the maximum value of %g seconds.\n"
+			throw new InputErrorException("RunDuration exceeds the maximum value of %g seconds.\n"
 					+ "Received: %g seconds.\n"
 					+ "The maximum value can be increased by increasing the TickLength input.\n"
 					+ "Present value: %g seconds.",

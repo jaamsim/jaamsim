@@ -437,28 +437,31 @@ public class Entity {
 	 * @param ent = entity whose inputs are to be copied
 	 */
 	public void copyInputs(Entity ent) {
+		copyInputs(ent, false);
+	}
+
+	public void copyInputs(Entity ent, boolean lock) {
 		for (int seq = 0; seq < 2; seq++) {
-			copyInputs(ent, seq, false, false);
+			copyInputs(ent, seq, lock);
 		}
 	}
 
-	public void copyInputs(Entity ent, int seq, boolean ignoreDef, boolean bool) {
+	public void copyInputs(Entity ent, int seq, boolean lock) {
 		ParseContext context = null;
 		if (ent.getJaamSimModel().getConfigFile() != null) {
 			URI uri = ent.getJaamSimModel().getConfigFile().getParentFile().toURI();
 			context = new ParseContext(uri, null);
 		}
-		copyInputs(ent, seq, context, ignoreDef, bool);
+		copyInputs(ent, seq, context, lock);
 	}
 
 	/**
 	 * Copy the inputs for the keywords with the specified sequence number to the caller.
 	 * @param ent = entity whose inputs are to be copied
 	 * @param seq = sequence number for the keyword (0 = early keyword, 1 = normal keyword)
-	 * @param ignoreDef - true if a default input is not copied
-	 * @param bool = true if each copied input is locked after its value is set
+	 * @param lock = true if each copied input is locked after its value is set
 	 */
-	public void copyInputs(Entity ent, int seq, ParseContext context, boolean ignoreDef, boolean bool) {
+	public void copyInputs(Entity ent, int seq, ParseContext context, boolean lock) {
 
 		// Provide stub definitions for the custom outputs
 		if (seq == 0) {
@@ -474,7 +477,7 @@ public class Entity {
 			if (sourceInput.isSynonym() || sourceInput.getSequenceNumber() != seq)
 				continue;
 			String key = sourceInput.getKeyword();
-			copyInput(ent, key, context, ignoreDef, bool);
+			copyInput(ent, key, context, lock);
 		}
 	}
 
@@ -484,18 +487,13 @@ public class Entity {
 	 * @param key - keyword for the input to be copied
 	 * @param context - specifies the file path to the folder containing the configuration file
 	 * @param ignoreDef - true if a default input is not copied
-	 * @param bool - true if the copied input is locked after its value is set
+	 * @param lock - true if the copied input is locked after its value is set
 	 */
-	public void copyInput(Entity ent, String key, ParseContext context, boolean ignoreDef, boolean bool) {
+	public void copyInput(Entity ent, String key, ParseContext context, boolean lock) {
 
 		Input<?> sourceInput = ent.getInput(key);
 		Input<?> targetInput = this.getInput(key);
 		if (sourceInput == null || targetInput == null)
-			return;
-
-		// Ignore a default input for a source entity
-		// (default inputs for the source entity can be assigned later for the target entity)
-		if (ignoreDef && sourceInput.isDef())
 			return;
 
 		// Ignore locked inputs for generated entities.
@@ -525,10 +523,23 @@ public class Entity {
 			}
 		}
 
-		// Ignore an input that is inherited from the entity's prototype
+		// Is the entity's input inherited from its prototype?
 		if (getPrototype() == ent && !changed) {
-			// Clear the stub value set for a custom output
-			targetInput.reset();
+
+			// The present input is cleared under the following conditions so that its value can
+			// be inherited from the prototype:
+			// - The present input is locked because it had a reference to the parent entity and
+			//   had to be set instead of being inherited from the prototype
+			// - The input is for the CustomOutputList keyword and has a stub value that must be
+			//   cleared
+			// An unlocked input was set by user to override the prototype's value and must be
+			// retained.
+			if (targetInput.isLocked() || targetInput.getKeyword().equals("CustomOutputList")) {
+				targetInput.reset();
+				targetInput.setLocked(false);
+			}
+
+			targetInput.doCallback(this);
 			return;
 		}
 
@@ -540,9 +551,10 @@ public class Entity {
 			return;
 
 		try {
+			targetInput.setLocked(false);
 			KeywordIndex kw = new KeywordIndex(key, tmp, context);
 			InputAgent.apply(this, targetInput, kw);
-			targetInput.setLocked(bool);
+			targetInput.setLocked(lock);
 		}
 		catch (Exception e) {
 			throw new ErrorException("", -1, getName(), key, -1, e.getMessage(), e);
@@ -567,6 +579,27 @@ public class Entity {
 		ArrayList<Entity> ret = new ArrayList<>();
 		for (Input<?> inp : inpList) {
 			inp.appendEntityReferences(ret);
+		}
+		return ret;
+	}
+
+	/**
+	 * Returns a list of entities that are appear in the inputs to this entity and its children,
+	 * grand-children, etc., but are not the entity or one of its children, grand-children, etc.
+	 * or one of the entities that is defined automatically when JaamSim is launched.
+	 * @return list of entities that are external references
+	 */
+	public ArrayList<Entity> getExternalReferences() {
+		ArrayList<Entity> ret = new ArrayList<>();
+		ArrayList<Entity> entityList = new ArrayList<>(getDescendants());
+		entityList.add(0, this);
+		for (Entity ent : entityList) {
+			for (Entity reference : ent.getEntityReferences()) {
+				if (reference.isPreDefined() || entityList.contains(reference)
+						|| ret.contains(reference))
+					continue;
+				ret.add(reference);
+			}
 		}
 		return ret;
 	}
@@ -711,6 +744,19 @@ public class Entity {
 	 */
 	public ArrayList<Entity> getChildren() {
 		return new ArrayList<>();
+	}
+
+	/**
+	 * Returns a list of all the children, grand-children, etc. of this entity.
+	 * @return array of descendant entities
+	 */
+	public ArrayList<Entity> getDescendants() {
+		ArrayList<Entity> ret = new ArrayList<>();
+		for (Entity ent : getChildren()) {
+			ret.add(ent);
+			ret.addAll(ent.getDescendants());
+		}
+		return ret;
 	}
 
 	public int getSubModelLevel() {
@@ -1132,16 +1178,18 @@ public class Entity {
 		return ret;
 	}
 
-	public void addToClonePool() {
-		prototype.addCloneToPool(this);
-	}
-
 	public void addCloneToPool(Entity clone) {
 		if (clonePool == null)
 			clonePool = new ArrayList<>();
 		clone.setFlag(Entity.FLAG_POOLED);
 		clone.setLocalName("");
 		clonePool.add(clone);
+	}
+
+	public int getClonePoolSize() {
+		if (clonePool == null)
+			return 0;
+		return clonePool.size();
 	}
 
 	public Entity getCloneFromPool() {
@@ -1170,8 +1218,8 @@ public class Entity {
 	public void dispose() {
 		if (!isGenerated())
 			return;
-		if (isClone() && (clonePool == null || clonePool.size() < MAX_POOL)) {
-			addToClonePool();
+		if (isClone() && prototype.getClonePoolSize() < MAX_POOL) {
+			prototype.addCloneToPool(this);
 			return;
 		}
 		kill();
@@ -1200,11 +1248,8 @@ public class Entity {
 	@Output(name = "ObjectType",
 	 description = "The class of objects that this entity belongs to.",
 	    sequence = 1)
-	public String getObjectTypeName(double simTime) {
-		ObjectType ot = this.getObjectType();
-		if (ot == null)
-			return null;
-		return ot.getName();
+	public ObjectType getObjectTypeName(double simTime) {
+		 return getObjectType();
 	}
 
 	@Output(name = "SimTime",

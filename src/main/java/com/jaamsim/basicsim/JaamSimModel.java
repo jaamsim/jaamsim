@@ -35,7 +35,6 @@ import com.jaamsim.Samples.SampleExpression;
 import com.jaamsim.StringProviders.StringProvExpression;
 import com.jaamsim.SubModels.CompoundEntity;
 import com.jaamsim.SubModels.SubModel;
-import com.jaamsim.SubModels.SubModelClone;
 import com.jaamsim.Thresholds.ThresholdUser;
 import com.jaamsim.datatypes.IntegerVector;
 import com.jaamsim.events.Conditional;
@@ -140,6 +139,7 @@ public class JaamSimModel implements EventTimeListener {
 
 	public JaamSimModel(JaamSimModel sm) {
 		this(sm.name);
+		//System.out.format("%nJaamSimModel constructor%n");
 		autoLoad();
 		simulation = getSimulation();
 		setRecordEdits(true);
@@ -159,18 +159,20 @@ public class JaamSimModel implements EventTimeListener {
 				continue;
 
 			// Generate all the sub-model components when the first one is found
-			if (ent.isGenerated() && ent.getParent() instanceof SubModelClone) {
-				Entity clone = getNamedEntity(ent.getParent().getName());
-				SubModel proto = ((SubModelClone) ent.getParent()).getPrototypeSubModel();
-				if (clone == null || proto == null)
+			if (ent.isGenerated() && ent.getParent() instanceof SubModel) {
+				SubModel clone = (SubModel) getNamedEntity(ent.getParent().getName());
+				if (clone == null)
 					continue;
-				KeywordIndex kw = InputAgent.formatInput("Prototype", proto.getName());
-				InputAgent.apply(clone, kw);
+				clone.createComponents();
 				continue;
 			}
 
 			// Define the new object
-			defineEntity(ent.getObjectType().getName(), ent.getName());
+			Entity proto = ent.getPrototype();
+			if (proto != null)
+				proto = getNamedEntity(proto.getName());
+			//System.out.format("defineEntity - ent=%s, proto=%s%n", ent, proto);
+			InputAgent.defineEntityWithUniqueName(this, ent.getClass(), proto, ent.getName(), "_", true);
 		}
 
 		// Prepare a sorted list of registered entities on which to set inputs
@@ -210,7 +212,7 @@ public class JaamSimModel implements EventTimeListener {
 				Entity newEnt = getNamedEntity(ent.getName());
 				if (newEnt == null)
 					throw new ErrorException("New entity not found: %s", ent.getName());
-				newEnt.copyInput(ent, key, context, false, false);
+				newEnt.copyInput(ent, key, context, false);
 			}
 		}
 
@@ -223,7 +225,7 @@ public class JaamSimModel implements EventTimeListener {
 				if (in.isSynonym() || InputAgent.isEarlyInput(in))
 					continue;
 				String key = in.getKeyword();
-				newEnt.copyInput(ent, key, context, false, false);
+				newEnt.copyInput(ent, key, context, false);
 			}
 		}
 
@@ -410,9 +412,34 @@ public class JaamSimModel implements EventTimeListener {
 	 */
 	public void configure(File file) throws URISyntaxException {
 		configFile = file;
-		openLogFile();
-		InputAgent.loadConfigurationFile(this, file);
 		name = file.getName();
+		openLogFile();
+
+		// Load the input file
+		loadFile(file);
+
+		// Perform any actions that are required after loading the input file
+		postLoad();
+
+		// Validate the inputs
+		for (Entity each : getClonesOfIterator(Entity.class)) {
+			try {
+				each.validate();
+			}
+			catch (Throwable e) {
+				recordError();
+				String msg = String.format("Validation Error - %s: %s%n", each, e.getMessage());
+				InputAgent.logMessage(this, msg);
+			}
+		}
+
+		//  Check for found errors
+		if (getNumErrors() > 0)
+			throw new InputErrorException("%d input errors and %d warnings found",
+					getNumErrors(), getNumWarnings());
+
+		if (getSimulation().getPrintInputReport())
+			InputAgent.printInputFileKeywords(this);
 
 		// The session is not considered to be edited after loading a configuration file
 		setSessionEdited(false);
@@ -424,6 +451,16 @@ public class JaamSimModel implements EventTimeListener {
 			// Open a fresh log file for the simulation run
 			openLogFile();
 		}
+	}
+
+	/**
+	 * Parses configuration file records from the specified file.
+	 * @param file - file containing the input records
+	 * @throws URISyntaxException
+	 */
+	public void loadFile(File file) throws URISyntaxException {
+		URI dirURI = file.getParentFile().toURI();
+		InputAgent.readStream(this, "", dirURI, file.getName());
 	}
 
 	/**
@@ -627,6 +664,10 @@ public class JaamSimModel implements EventTimeListener {
 		for (DisplayEntity ent : getClonesOfIterator(DisplayEntity.class)) {
 			ent.resetGraphics();
 		}
+
+		// Keep the labels and sub-models consistent with the gui
+		showSubModels(getSimulation().isShowSubModels());
+		showTemporaryLabels(getSimulation().isShowLabels());
 
 		// Perform earlyInit
 		for (Entity each : getClonesOfIterator(Entity.class)) {

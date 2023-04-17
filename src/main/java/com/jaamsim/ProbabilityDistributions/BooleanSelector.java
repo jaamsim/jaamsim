@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2022 JaamSim Software Inc.
+ * Copyright (C) 2016-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,11 +19,13 @@ package com.jaamsim.ProbabilityDistributions;
 
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleInput;
+import com.jaamsim.basicsim.Entity;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
+import com.jaamsim.input.ParseContext;
 import com.jaamsim.rng.MRG1999a;
 import com.jaamsim.units.DimensionlessUnit;
 
@@ -94,6 +96,15 @@ public class BooleanSelector extends DisplayEntity implements RandomStreamUser {
 		double prob = trueProbInput.getNextSample(this, 0);
 		lastValue = samp < prob;
 		return lastValue;
+	}
+
+	@Override
+	public void copyInput(Entity ent, String key, ParseContext context, boolean lock) {
+		if (key.equals(getStreamNumberKeyword())) {
+			RandomStreamUser.setUniqueRandomSeed(this);
+			return;
+		}
+		super.copyInput(ent, key, context, lock);
 	}
 
 	@Output(name = "Value",

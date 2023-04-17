@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2018-2022 JaamSim Software Inc.
+ * Copyright (C) 2018-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -1934,7 +1934,7 @@ public class ExpressionBox extends JDialog {
 						+ "The random stream input is dimensionless. "
 						+ "If a random stream value is not entered, the model will chose the next "
 						+ "unused value.",
-				"uniform(minValue, mode, maxValue, stream)",
+				"uniform(minValue, maxValue, stream)",
 				-1,
 				"'uniform(2[s], 5[s], 5)' returns a sample with units of time using random stream 5",
 				"'uniform(2, 5)' returns a dimensionless sample using a selected random stream"));
