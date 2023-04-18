@@ -1108,9 +1108,11 @@ public class Entity {
 		if (proto == prototype)
 			return;
 		if (prototype != null)
-			error("Cannot re-assign the prototype for an entity");
+			throw new ErrorException("Cannot re-assign the prototype for an entity: "
+					+ "old=%s, new=%s", prototype, proto);
 		if (proto.getClass() != getClass())
-			error("An entity and its prototype must be instances of the same class");
+			throw new ErrorException("An entity and its prototype must be instances of the same "
+					+ "class");
 
 		// Record the clone with its prototype
 		prototype = proto;
