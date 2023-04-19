@@ -475,7 +475,8 @@ public class Entity {
 
 		// Apply the inputs based on the source entity
 		for (Input<?> sourceInput : ent.getEditableInputs()) {
-			if (sourceInput.isSynonym() || sourceInput.getSequenceNumber() != seq)
+			if (sourceInput.isSynonym() || sourceInput.getHidden()
+					|| sourceInput.getSequenceNumber() != seq)
 				continue;
 			String key = sourceInput.getKeyword();
 			try {
