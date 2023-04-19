@@ -524,33 +524,33 @@ public class Entity {
 		}
 
 		// Is the entity's input inherited from its prototype?
-		if (getPrototype() == ent && !changed) {
+		try {
+			if (getPrototype() == ent && !changed) {
 
-			// The present input is cleared under the following conditions so that its value can
-			// be inherited from the prototype:
-			// - The present input is locked because it had a reference to the parent entity and
-			//   had to be set instead of being inherited from the prototype
-			// - The input is for the CustomOutputList keyword and has a stub value that must be
-			//   cleared
-			// An unlocked input was set by user to override the prototype's value and must be
-			// retained.
-			if (targetInput.isLocked() || targetInput.getKeyword().equals("CustomOutputList")) {
-				targetInput.reset();
-				targetInput.setLocked(false);
+				// The present input is cleared under the following conditions so that its value can
+				// be inherited from the prototype:
+				// - The present input is locked because it had a reference to the parent entity and
+				//   had to be set instead of being inherited from the prototype
+				// - The input is for the CustomOutputList keyword and has a stub value that must be
+				//   cleared
+				// An unlocked input was set by user to override the prototype's value and must be
+				// retained.
+				if (targetInput.isLocked() || targetInput.getKeyword().equals("CustomOutputList")) {
+					targetInput.reset();
+					targetInput.setLocked(false);
+				}
+
+				targetInput.doCallback(this);
+				return;
 			}
 
-			targetInput.doCallback(this);
-			return;
-		}
+			// Ignore inputs that have already been set for the target entity by either the
+			// autoload or postDefine methods. This prevents such an input from being set as
+			// 'edited' causing it to be written to the saved configuration file for verification.
+			ArrayList<String> targetToks = targetInput.getValueTokens();
+			if (targetToks.equals(tmp))
+				return;
 
-		// Ignore inputs that have already been set for the target entity by either the
-		// autoload or postDefine methods. This prevents such an input from being set as
-		// 'edited' causing it to be written to the saved configuration file for verification.
-		ArrayList<String> targetToks = targetInput.getValueTokens();
-		if (targetToks.equals(tmp))
-			return;
-
-		try {
 			targetInput.setLocked(false);
 			KeywordIndex kw = new KeywordIndex(key, tmp, context);
 			InputAgent.apply(this, targetInput, kw);
