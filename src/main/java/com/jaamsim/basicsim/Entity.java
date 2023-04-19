@@ -52,6 +52,7 @@ import com.jaamsim.input.ParseContext;
 import com.jaamsim.input.StringInput;
 import com.jaamsim.input.SynonymInput;
 import com.jaamsim.input.ValueHandle;
+import com.jaamsim.ui.LogBox;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
 import com.jaamsim.units.Unit;
@@ -477,7 +478,12 @@ public class Entity {
 			if (sourceInput.isSynonym() || sourceInput.getSequenceNumber() != seq)
 				continue;
 			String key = sourceInput.getKeyword();
-			copyInput(ent, key, context, lock);
+			try {
+				copyInput(ent, key, context, lock);
+			}
+			catch (Throwable t) {
+				LogBox.logException(t);
+			}
 		}
 	}
 
