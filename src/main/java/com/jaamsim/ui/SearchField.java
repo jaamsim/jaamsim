@@ -89,7 +89,7 @@ public abstract class SearchField extends JPanel {
 		topicSearch.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				String str = topicSearch.getText().trim();
+				String str = topicSearch.getText();
 				ArrayList<String> topicList = getTopicList(str);
 				if (topicList.isEmpty())
 					return;
@@ -107,7 +107,7 @@ public abstract class SearchField extends JPanel {
 				int keyCode = e.getKeyCode();
 				if (keyCode == KeyEvent.VK_DOWN && topicMenu != null) {
 					topicMenu.setVisible(false);
-					String name = topicSearch.getText().trim();
+					String name = topicSearch.getText();
 					showTopicMenu(name, true);
 
 					// Set the pop-up menu to the second item on the list
@@ -131,13 +131,13 @@ public abstract class SearchField extends JPanel {
 			public void insertUpdate(DocumentEvent e) {
 				if (e.getLength() != 1)  // single character entered
 					return;
-				String topic = topicSearch.getText().trim();
+				String topic = topicSearch.getText();
 				showTopicMenu(topic, false);
 			}
 
 			@Override
 			public void removeUpdate(DocumentEvent e) {
-				String topic = topicSearch.getText().trim();
+				String topic = topicSearch.getText();
 				showTopicMenu(topic, false);
 			}
 
