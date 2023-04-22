@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2020-2021 JaamSim Software Inc.
+ * Copyright (C) 2020-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -60,6 +60,7 @@ public class ExampleBox extends JDialog {
 	private final ArrayList<String> exampleList = new ArrayList<>();
 	private JList<String> list;
 	private final SearchField exampleSearch;
+	private final AutoCompleteComparator autoCompleteComparator = new AutoCompleteComparator();
 
 	private final JLabel previewLabel;
 	private final ImageIcon previewIcon = new ImageIcon();
@@ -103,6 +104,8 @@ public class ExampleBox extends JDialog {
 						continue;
 					ret.add(topic);
 				}
+				autoCompleteComparator.setName(str);
+				Collections.sort(ret, autoCompleteComparator);
 				return ret;
 			}
 		};
