@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2019-2021 JaamSim Software Inc.
+ * Copyright (C) 2019-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,12 +35,12 @@ import com.jaamsim.Graphics.EntityLabel;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.basicsim.ObjectType;
-import com.jaamsim.input.Input;
 import com.jaamsim.units.Unit;
 
 public class FindBox extends JDialog {
 
 	private SearchField searchText;
+	private final AutoCompleteComparator autoCompleteComparator = new AutoCompleteComparator();
 
 	private static FindBox myInstance;
 	public static final String DIALOG_NAME = "Entity Finder";
@@ -172,6 +172,7 @@ public class FindBox extends JDialog {
 
 	private ArrayList<String> getNameList(String name) {
 		ArrayList<String> nameList = new ArrayList<>();
+		boolean more = false;
 		JaamSimModel simModel = GUIFrame.getJaamSimModel();
 		for (Entity ent: simModel.getClonesOfIterator(Entity.class)) {
 			if (ent instanceof ObjectType || ent instanceof Unit || ent instanceof IconModel
@@ -181,11 +182,14 @@ public class FindBox extends JDialog {
 				continue;
 			nameList.add(ent.getName());
 			if (nameList.size() >= MAX_LIST_SIZE) {
-				nameList.add("more ...");
+				more = true;
 				break;
 			}
 		}
-		Collections.sort(nameList, Input.uiSortOrder);
+		autoCompleteComparator.setName(name);
+		Collections.sort(nameList, autoCompleteComparator);
+		if (more)
+			nameList.add("more ...");
 		return nameList;
 	}
 
