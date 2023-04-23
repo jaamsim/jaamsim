@@ -87,6 +87,7 @@ public class ExpressionBox extends JDialog {
 	private final ArrayList<String> nameList = new ArrayList<>();
 	private final ArrayList<String> compList = new ArrayList<>();
 	private final ArrayList<ValueHandle> handles = new ArrayList<>();
+	private final AutoCompleteComparator autoCompleteComparator = new AutoCompleteComparator();
 
 	private static final int EDIT_MODE_NORMAL = 0;
 	private static final int EDIT_MODE_ENTITY = 1;
@@ -497,21 +498,19 @@ public class ExpressionBox extends JDialog {
 		for (DisplayEntity each: simModel.getClonesOfIterator(DisplayEntity.class)) {
 			if (!each.isRegistered())
 				continue;
-
 			if (each instanceof OverlayEntity || each instanceof Region
 					|| each instanceof EntityLabel)
 				continue;
-
 			if (!each.getName().toUpperCase().contains(name.toUpperCase()))
 				continue;
-
 			nameList.add(each.getName());
 		}
 		String simName = GUIFrame.getJaamSimModel().getSimulation().getName();
 		if (simName.toUpperCase().contains(name.toUpperCase())) {
 			nameList.add(simName);
 		}
-		Collections.sort(nameList, Input.uiSortOrder);
+		autoCompleteComparator.setName(name);
+		Collections.sort(nameList, autoCompleteComparator);
 
 		boolean first = true;
 		for (final String entName : nameList) {
@@ -571,7 +570,8 @@ public class ExpressionBox extends JDialog {
 				continue;
 			compList.add(comp.getLocalName());
 		}
-		Collections.sort(compList);
+		autoCompleteComparator.setName(name);
+		Collections.sort(compList, autoCompleteComparator);
 
 		boolean first = true;
 		for (String compName : compList) {
@@ -608,13 +608,11 @@ public class ExpressionBox extends JDialog {
 		for (ValueHandle hand : ent.getAllOutputs()) {
 			if (hand.getName().contains(" "))
 				continue;
-
 			if (!hand.getName().toUpperCase().contains(name.toUpperCase()))
 				continue;
-
 			handles.add(hand);
 		}
-		Collections.sort(handles, Input.uiSortOrder);
+		Collections.sort(handles, autoCompleteComparator);
 
 		for (final ValueHandle hand : handles) {
 			JMenuItem item = new JMenuItem(hand.getName()) {
