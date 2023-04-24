@@ -25,6 +25,7 @@ import java.awt.Rectangle;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 
@@ -32,6 +33,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollBar;
 import javax.swing.SwingUtilities;
+import javax.swing.ToolTipManager;
 import javax.swing.event.MenuKeyEvent;
 import javax.swing.event.MenuKeyListener;
 
@@ -168,6 +170,27 @@ public class ScrollablePopupMenu extends JPopupMenu {
 			}
 		}
 		return -1;
+	}
+
+	/**
+	 * Displays the tool tip for the specified component.
+	 * @param comp - component
+	 */
+	public static void showToolTip(Component comp) {
+
+		// Clear the present position of the tooltip popup
+		ToolTipManager.sharedInstance().setEnabled(false);
+		ToolTipManager.sharedInstance().setEnabled(true);
+
+		// Trick the ToolTipManager to display the item's tooltip
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				MouseEvent evt = new MouseEvent(comp, MouseEvent.MOUSE_MOVED,
+		                System.currentTimeMillis(), 0, 10, 10, 0, false);
+				ToolTipManager.sharedInstance().mouseMoved(evt);
+			}
+		});
 	}
 
 	protected static class ScrollableMenuLayout implements LayoutManager{
