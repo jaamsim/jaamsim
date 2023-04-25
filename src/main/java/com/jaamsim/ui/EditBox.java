@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2005-2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2022 JaamSim Software Inc.
+ * Copyright (C) 2016-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -150,13 +150,23 @@ public class EditBox extends FrameBox {
 		if(currentEntity == null)
 			return;
 
-		EditTable propTable = (EditTable)(((JScrollPane)jTabbedFrame.getSelectedComponent()).getViewport().getComponent(0));
+		JScrollPane scrollPane = (JScrollPane) jTabbedFrame.getSelectedComponent();
+		EditTable propTable = (EditTable)(scrollPane.getViewport().getComponent(0));
+
 		int row = propTable.getSelectedRow();
+		int horizontalVal = scrollPane.getHorizontalScrollBar().getValue();
+		int verticalVal = scrollPane.getVerticalScrollBar().getValue();
+
+		// Redraw the table
 		((EditTableModel)propTable.getModel()).fireTableDataChanged();
 
 		// Restore the selected cell
 		if (row != -1)
 			propTable.changeSelection(row, VALUE_COLUMN, false, false);
+
+		// Restore the scroll bar positions
+		scrollPane.getHorizontalScrollBar().setValue(horizontalVal);
+		scrollPane.getVerticalScrollBar().setValue(verticalVal);
 
 		// Update the value in the selected cell
 		if (propTable.getPresentCellEditor() != null) {
