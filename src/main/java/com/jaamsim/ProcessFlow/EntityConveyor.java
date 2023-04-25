@@ -511,7 +511,7 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 
 			Vec3d orient = new Vec3d();
 			if (rotateEntities.getValue()) {
-				orient.z = PolylineInfo.getAngleOnPolyline(getCurvePoints(), convPos);
+				orient = PolylineInfo.getOrientationOnPolyline(getCurvePoints(), convPos);
 			}
 			entry.entity.setRelativeOrientation(orient);
 		}
