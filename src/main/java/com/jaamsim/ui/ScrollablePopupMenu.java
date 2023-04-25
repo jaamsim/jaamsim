@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2018-2020 JaamSim Software Inc.
+ * Copyright (C) 2018-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -90,6 +90,10 @@ public class ScrollablePopupMenu extends JPopupMenu {
 						public void run() {
 							int index = getSelection();
 							ensureIndexIsVisible(index);
+							JMenuItem item = getMenuItem(index);
+							if (item == null)
+								return;
+							showToolTip(item);
 						}
 					});
 				}
@@ -170,6 +174,12 @@ public class ScrollablePopupMenu extends JPopupMenu {
 			}
 		}
 		return -1;
+	}
+
+	public JMenuItem getMenuItem(int i) {
+		if (i >= getComponentCount() - 1)
+			return null;
+		return (JMenuItem) getComponent(i + 1);
 	}
 
 	/**
