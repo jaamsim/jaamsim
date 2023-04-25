@@ -39,7 +39,6 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -81,8 +80,8 @@ public class ExpressionBox extends JDialog {
 
 	private int editMode;
 	private Point menuPos;
-	private JPopupMenu entityMenu;
-	private JPopupMenu outputMenu;
+	private ScrollablePopupMenu entityMenu;
+	private ScrollablePopupMenu outputMenu;
 
 	private final ArrayList<String> nameList = new ArrayList<>();
 	private final ArrayList<String> compList = new ArrayList<>();
@@ -512,7 +511,6 @@ public class ExpressionBox extends JDialog {
 		autoCompleteComparator.setName(name);
 		Collections.sort(nameList, autoCompleteComparator);
 
-		boolean first = true;
 		for (final String entName : nameList) {
 			JMenuItem item = new JMenuItem(entName) {
 				@Override
@@ -538,15 +536,16 @@ public class ExpressionBox extends JDialog {
 				}
 			} );
 			entityMenu.add(item);
-			if (first && !focusable) {
-				item.setArmed(true);
-				first = false;
-			}
 		}
 
 		if (!focusable)
 			entityMenu.setFocusable(false);
 		entityMenu.show(editArea, menuPos.x, menuPos.y);
+		JMenuItem item = entityMenu.getMenuItem(0);
+		if (item == null)
+			return;
+		item.setArmed(true);
+		ScrollablePopupMenu.showToolTip(item);
 	}
 
 	/**
@@ -573,7 +572,6 @@ public class ExpressionBox extends JDialog {
 		autoCompleteComparator.setName(name);
 		Collections.sort(compList, autoCompleteComparator);
 
-		boolean first = true;
 		for (String compName : compList) {
 			String str = String.format("[%s]", compName);
 			JMenuItem item = new JMenuItem(str) {
@@ -597,10 +595,6 @@ public class ExpressionBox extends JDialog {
 				}
 			} );
 			outputMenu.add(item);
-			if (first && !focusable) {
-				item.setArmed(true);
-				first = false;
-			}
 		}
 
 		// Outputs
@@ -636,15 +630,16 @@ public class ExpressionBox extends JDialog {
 				}
 			} );
 			outputMenu.add(item);
-			if (first && !focusable) {
-				item.setArmed(true);
-				first = false;
-			}
 		}
 
 		if (!focusable)
 			outputMenu.setFocusable(false);
 		outputMenu.show(editArea, menuPos.x, menuPos.y);
+		JMenuItem item = outputMenu.getMenuItem(0);
+		if (item == null)
+			return;
+		item.setArmed(true);
+		ScrollablePopupMenu.showToolTip(item);
 	}
 
 	private Entity getEntityReference(String text, int dotIndex) {
