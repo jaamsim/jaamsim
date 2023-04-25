@@ -956,6 +956,11 @@ public class ExpressionBox extends JDialog {
 						funcMenu.add(item);
 					}
 					funcMenu.show(FunctionButton.this, 0, height);
+					JMenuItem item = funcMenu.getMenuItem(0);
+					if (item == null)
+						return;
+					item.setArmed(true);
+					ScrollablePopupMenu.showToolTip(item);
 				}
 			});
 		}
