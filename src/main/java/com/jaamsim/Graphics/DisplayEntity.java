@@ -719,8 +719,18 @@ public class DisplayEntity extends Entity {
 	 * @param pos - local coordinates for the entity's centre
 	 */
 	public void setCentre(Vec3d pos) {
+		setPositionForAlignment(pos, new Vec3d());
+	}
+
+	/**
+	 * Sets the position of the entity so that its specified alignment point is located at the
+	 * specified position.
+	 * @param pos - local coordinates
+	 * @param algn - alignment point within the entity
+	 */
+	public void setPositionForAlignment(Vec3d pos, Vec3d algn) {
 		Vec3d newPos = new Vec3d(pos);
-		Vec3d temp = new Vec3d();
+		Vec3d temp = new Vec3d(algn);
 		synchronized (position) {
 			temp.sub3(align);
 			temp.mul3(size);
@@ -891,6 +901,10 @@ public class DisplayEntity extends Entity {
 
 	public void setGlobalPosition(Vec3d pos) {
 		setPosition(getLocalPosition(pos));
+	}
+
+	public void setGlobalPositionForAlignment(Vec3d pos, Vec3d algn) {
+		setPositionForAlignment(getLocalPosition(pos), algn);
 	}
 
 	/**
