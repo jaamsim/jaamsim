@@ -507,7 +507,9 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 
 			convPos = Math.max(convPos, 0.0d);
 			Vec3d localPos = PolylineInfo.getPositionOnPolyline(getCurvePoints(), convPos);
-			entry.entity.setGlobalPosition(this.getGlobalPosition(localPos));
+			Vec3d alignment = entry.entity.getAlignment();
+			alignment.x = -0.5d;
+			entry.entity.setGlobalPositionForAlignment(getGlobalPosition(localPos), alignment);
 
 			Vec3d orient = new Vec3d();
 			if (rotateEntities.getValue()) {
