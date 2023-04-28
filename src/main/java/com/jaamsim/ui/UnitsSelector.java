@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2017-2019 JaamSim Software Inc.
+ * Copyright (C) 2017-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,10 @@
  */
 package com.jaamsim.ui;
 
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 import javax.swing.JMenu;
@@ -44,7 +46,14 @@ public class UnitsSelector {
 			String selectedUnitName = GUIFrame.getJaamSimModel().getDisplayedUnit(ut);
 			JMenu subMenu = new JMenu(utName);
 			for (final Unit u : unitList) {
-				JRadioButtonMenuItem item = new JRadioButtonMenuItem(u.getName());
+				final JRadioButtonMenuItem item = new JRadioButtonMenuItem(u.getName()) {
+					@Override
+					public Point getToolTipLocation(MouseEvent e) {
+						return new Point(getWidth(), 0);
+					}
+				};
+				item.setToolTipText(u.getDescription());
+
 				if (u.getName().equals(selectedUnitName)) {
 					item.setSelected(true);
 				}
