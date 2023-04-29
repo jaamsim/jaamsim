@@ -371,10 +371,6 @@ public class PolylineInfo {
 		return vec;
 	}
 
-	public static double getAngleOnPolyline(ArrayList<Vec3d> pts, double frac) {
-		return getOrientationOnPolyline(pts, frac).z;
-	}
-
 	public static Vec3d getOrientationOnPolyline(ArrayList<Vec3d> pts, double frac) {
 
 		if (pts.isEmpty())
