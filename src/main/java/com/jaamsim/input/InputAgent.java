@@ -581,9 +581,12 @@ public class InputAgent {
 		in.doCallback(ent);
 
 		// Copy the input value to any clones
+		boolean bool = simModel.isRecordEdits();
+		simModel.setRecordEdits(false);
 		for (Entity clone : ent.getAllClones()) {
 			clone.copyInput(ent, in.getKeyword(), kw.context, true);
 		}
+		simModel.setRecordEdits(bool);
 
 		// Refresh the graphics
 		GUIListener gui = ent.getJaamSimModel().getGUIListener();
