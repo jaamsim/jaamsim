@@ -1134,61 +1134,80 @@ public class InputAgent {
 
 		// Non-graphics inputs for non-graphic entities
 		Class<? extends Entity> entClass = null;
+		Entity lastEnt = null;
 		for (Entity ent : entityList) {
 			if (isGraphicsEntity(ent))
 				continue;
 
-			// Print a header if the entity class is new
-			if (ent.getClass() != entClass) {
-				entClass = ent.getClass();
-				if (entClass != Simulation.class) {
-					file.format("%n");
-					file.format("# *** %s ***%n", ent.getObjectType());
-				}
-			}
-			file.format("%n");
-
 			for (Input<?> in : ent.getEditableInputs()) {
 				if (in.isSynonym() || !in.isEdited() || isEarlyInput(in) || isGraphicsInput(in))
 					continue;
+
+				// Print a header if the entity class is new
+				if (ent.getClass() != entClass) {
+					entClass = ent.getClass();
+					if (entClass != Simulation.class) {
+						file.format("%n");
+						file.format("# *** %s ***%n", ent.getObjectType());
+					}
+				}
+				if (ent != lastEnt) {
+					lastEnt = ent;
+					file.format("%n");
+				}
+
 				writeInputOnFile_ForEntity(file, ent, in);
 			}
 		}
 
 		// Graphics inputs for non-graphic entities
-		file.format("%n");
-		file.format("# *** GRAPHICS INPUTS ***%n");
+		lastEnt = null;
 		for (Entity ent : entityList) {
 			if (isGraphicsEntity(ent))
 				continue;
-			file.format("%n");
 
 			for (Input<?> in : ent.getEditableInputs()) {
 				if (in.isSynonym() || !in.isEdited() || isEarlyInput(in) || !isGraphicsInput(in))
 					continue;
+
+				// Print a header
+				if (lastEnt == null) {
+					file.format("%n");
+					file.format("# *** GRAPHICS INPUTS ***%n");
+				}
+				if (ent != lastEnt) {
+					lastEnt = ent;
+					file.format("%n");
+				}
+
 				writeInputOnFile_ForEntity(file, ent, in);
 			}
 		}
 
 		// All inputs for graphic entities
 		entClass = null;
+		lastEnt = null;
 		for (Entity ent : entityList) {
 			if (!isGraphicsEntity(ent))
 				continue;
 
-			// Print a header if the entity class is new
-			if (ent.getClass() != entClass) {
-				entClass = ent.getClass();
-				if (entClass != Simulation.class) {
-					file.format("%n");
-					file.format("# *** %s ***%n", ent.getObjectType());
-				}
-			}
-			file.format("%n");
-
 			for (Input<?> in : ent.getEditableInputs()) {
 				if (in.isSynonym() || !in.isEdited() || isEarlyInput(in))
 					continue;
+
+				// Print a header if the entity class is new
+				if (ent.getClass() != entClass) {
+					entClass = ent.getClass();
+					if (entClass != Simulation.class) {
+						file.format("%n");
+						file.format("# *** %s ***%n", ent.getObjectType());
+					}
+				}
+				if (ent != lastEnt) {
+					lastEnt = ent;
+					file.format("%n");
+				}
+
 				writeInputOnFile_ForEntity(file, ent, in);
 			}
 		}
