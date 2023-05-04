@@ -72,7 +72,7 @@ public Component getTableCellRendererComponent(JTable table, Object value,
 
 	// 3) Present value
 	else {
-		str = in.getValueString();
+		str = in.getValueString().replace('\n', ' ');
 
 		// Input value with error
 		if (!in.isValid())
