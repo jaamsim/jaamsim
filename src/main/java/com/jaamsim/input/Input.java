@@ -648,6 +648,16 @@ public abstract class Input<T> {
 	}
 
 	/**
+	 * Returns the input value that has been inherited from the input's prototype.
+	 * @return input file text
+	 */
+	public final String getInheritedValueString() {
+		if (protoInput == null)
+			return "";
+		return protoInput.getValueString();
+	}
+
+	/**
 	 * Returns the input file entry for the specified array of white-space delimited strings.
 	 * @param tokens - array of strings for the input
 	 * @param addLF - true if a newline character is to be added before each inner brace
