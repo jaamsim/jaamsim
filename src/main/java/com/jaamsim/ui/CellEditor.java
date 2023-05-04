@@ -359,7 +359,8 @@ public abstract class CellEditor extends AbstractCellEditor implements TableCell
 				str = in.applyConditioning(str);
 
 			// New value is the same as the inherited value
-			if (in.getProtoInput() != null && str.equals(in.getProtoInput().getValueString()))
+			if (in.getProtoInput() != null
+					&& in.getProtoInput().getValueString().replace('\n', ' ').equals(str))
 				str = "";
 
 			// The value has not changed
