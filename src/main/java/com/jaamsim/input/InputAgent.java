@@ -559,12 +559,15 @@ public class InputAgent {
 		if (in.isLocked())
 			throw new InputErrorException("Input value is locked");
 
-		// If the input value is blank, restore the default
-		if (kw.numArgs() == 0) {
+		// Restore the default if the input value is blank or is equal to its inherited value
+		if (kw.numArgs() == 0 || (in.getProtoInput() != null
+				&& in.getInheritedValueString().equals(kw.argString()))) {
 			if (in.isDef())
 				return;
 			in.reset();
 		}
+
+		// Otherwise, set the new input value
 		else {
 			in.parse(ent, kw);
 			in.setTokens(kw);
