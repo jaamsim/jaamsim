@@ -556,8 +556,12 @@ public class InputAgent {
 	}
 
 	public static final void apply(Entity ent, Input<?> in, KeywordIndex kw) {
-		if (in.isLocked())
+		if (in.isLocked()) {
+			if (in.isDef() && kw.numArgs() == 0
+					|| Arrays.equals(in.valueTokens, kw.getArgArray()))
+				return;
 			throw new InputErrorException("Input value is locked");
+		}
 
 		// Restore the default if the input value is blank or is equal to its inherited value
 		boolean changed = true;
