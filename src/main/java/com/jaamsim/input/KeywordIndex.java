@@ -18,6 +18,7 @@
 package com.jaamsim.input;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 
 public class KeywordIndex {
@@ -52,18 +53,8 @@ public class KeywordIndex {
 	}
 
 	public String argString() {
-		StringBuilder sb = new StringBuilder();
-		for (int i = start; i < end; i++) {
-			String dat = this.input.get(i);
-			if (i > start)
-				sb.append(Input.SEPARATOR);
-
-			if (Parser.needsQuoting(dat) && !dat.equals("{") && !dat.equals("}"))
-				sb.append("'").append(dat).append("'");
-			else
-				sb.append(dat);
-		}
-		return sb.toString();
+		ArrayList<String> tokens = new ArrayList<>(Arrays.asList(getArgArray()));
+		return Input.getValueString(tokens, false);
 	}
 
 	public String[] getArgArray() {
