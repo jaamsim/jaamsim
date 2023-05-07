@@ -516,18 +516,26 @@ public class JaamSimModel implements EventTimeListener {
 
 		// Set up any tracing to be performed
 		eventManager.setTraceListener(null);
-		if (getSimulation().traceEvents()) {
-			String evtName = configFile.getParentFile() + File.separator + getRunName() + ".evt";
-			EventRecorder rec = new EventRecorder(evtName);
-			eventManager.setTraceListener(rec);
+		try {
+			if (getSimulation().traceEvents()) {
+				String evtName = configFile.getParentFile() + File.separator + getRunName() + ".evt";
+				EventRecorder rec = new EventRecorder(evtName);
+				eventManager.setTraceListener(rec);
+			}
+			else if (getSimulation().verifyEvents()) {
+				String evtName = configFile.getParentFile() + File.separator + getRunName() + ".evt";
+				EventTracer trc = new EventTracer(evtName);
+				eventManager.setTraceListener(trc);
+			}
+			else if (getSimulation().isEventViewerVisible() && gui != null) {
+				eventManager.setTraceListener(EventViewer.getInstance());
+			}
 		}
-		else if (getSimulation().verifyEvents()) {
-			String evtName = configFile.getParentFile() + File.separator + getRunName() + ".evt";
-			EventTracer trc = new EventTracer(evtName);
-			eventManager.setTraceListener(trc);
-		}
-		else if (getSimulation().isEventViewerVisible() && gui != null) {
-			eventManager.setTraceListener(EventViewer.getInstance());
+		catch (Exception e) {
+			if (gui != null) {
+				gui.handleInputError(e, getSimulation());
+			}
+			return;
 		}
 
 		eventManager.setTickLength(getSimulation().getTickLength());

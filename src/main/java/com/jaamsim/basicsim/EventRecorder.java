@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,13 +37,16 @@ public class EventRecorder implements EventTraceListener {
 			outputStream = new BufferedWriter(new FileWriter(backingFileObject, false));
 		}
 		catch (IOException e) {
-			throw new InputErrorException("IOException thrown trying to open FileEntity: " + e);
+			throw new InputErrorException("IOException thrown trying to open event recording file:%n%s",
+					e.getMessage());
 		}
 		catch (IllegalArgumentException e) {
-			throw new InputErrorException("IllegalArgumentException thrown trying to open File (Should not happen): " + e);
+			throw new InputErrorException("IllegalArgumentException thrown trying to open event recording file:%n%s",
+					e.getMessage());
 		}
 		catch (SecurityException e) {
-			throw new InputErrorException("SecurityException thrown trying to open File: " + e);
+			throw new InputErrorException("SecurityException thrown trying to open event recording file:%n%s",
+					e.getMessage());
 		}
 	}
 

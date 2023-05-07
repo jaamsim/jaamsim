@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2021 JaamSim Software Inc.
+ * Copyright (C) 2021-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.events.EventTraceListener;
 import com.jaamsim.events.ProcessTarget;
+import com.jaamsim.input.InputErrorException;
 import com.jaamsim.ui.GUIFrame;
 import com.jaamsim.ui.LogBox;
 
@@ -43,15 +44,8 @@ class EventTracer implements EventTraceListener {
 		try {
 			eventVerifyReader = new BufferedReader(new FileReader(evtFile));
 		}
-		catch (FileNotFoundException e) {}
-		if (eventVerifyReader == null) {
-			String msg = "Unable to open the event verification file.";
-			System.out.println(msg);
-			LogBox.logLine(msg);
-			if (GUIFrame.getInstance() != null) {
-				GUIFrame.getRunManager().pause();
-				GUIFrame.invokeErrorDialog("Event Verification Error", msg);
-			}
+		catch (FileNotFoundException e) {
+			throw new InputErrorException("Unable to open the event verification file:%n%s", evtName);
 		}
 
 		reader = new EventTraceRecord();
