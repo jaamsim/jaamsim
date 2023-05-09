@@ -1144,6 +1144,10 @@ public class Entity {
 		return prototype;
 	}
 
+	public boolean hasClone() {
+		return cloneList != null && !cloneList.isEmpty();
+	}
+
 	public boolean isClone() {
 		return prototype != null;
 	}

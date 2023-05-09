@@ -262,16 +262,6 @@ public class SubModel extends CompoundEntity implements DragAndDropable {
 		return ret;
 	}
 
-	public boolean hasClone() {
-		JaamSimModel simModel = getJaamSimModel();
-		for (SubModel clone : simModel.getClonesOfIterator(SubModel.class)) {
-			if (clone.isClone(this)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
 	/**
 	 * Returns whether this sub-model is a clone of the specified prototype.
 	 * @param proto - prototype sub-model.
