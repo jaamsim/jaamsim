@@ -627,13 +627,20 @@ public abstract class Input<T> {
 	}
 
 	/**
-	 * Returns the input file entry for this input value.
+	 * Returns the input file entry for this input or the entry inherited from its prototype.
 	 * @return input file text
 	 */
 	public final String getValueString() {
 		if (isDef && protoInput != null)
 			return protoInput.getValueString();
+		return getInputString();
+	}
 
+	/**
+	 * Returns the input file entry for this input value.
+	 * @return input file text
+	 */
+	public final String getInputString() {
 		if (isDef) return "";
 		ArrayList<String> tmp = new ArrayList<>();
 		try {

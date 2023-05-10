@@ -1246,7 +1246,7 @@ public class InputAgent {
 
 	static void writeInputOnFile_ForEntity(FileEntity file, Entity ent, Input<?> in) {
 		file.format("%s %s { %s }%n",
-		            ent.getName(), in.getKeyword(), in.getValueString());
+		            ent.getName(), in.getKeyword(), in.getInputString());
 	}
 
 	static void writeStubOutputDefs(FileEntity file, Entity ent) {
