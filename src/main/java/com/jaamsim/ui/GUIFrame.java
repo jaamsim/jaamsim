@@ -4753,7 +4753,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			msg = "null";
 		String source = "";
 		int pos = -1;
-		String message = String.format("%s: %s", ent.getName(), msg);
+		String message = String.format("%s:%n%s", ent.getName(), msg);
 		if (t instanceof InputErrorException) {
 			source = ((InputErrorException) t).source;
 			pos = ((InputErrorException) t).position;
