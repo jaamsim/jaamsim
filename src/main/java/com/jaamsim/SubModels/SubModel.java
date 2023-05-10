@@ -240,10 +240,9 @@ public class SubModel extends CompoundEntity implements DragAndDropable {
 		return ret;
 	}
 
-
 	public void updateClones() {
-		for (SubModel clone : getClones()) {
-			clone.update();
+		for (Entity clone : getAllClones()) {
+			((SubModel) clone).update();
 		}
 	}
 
