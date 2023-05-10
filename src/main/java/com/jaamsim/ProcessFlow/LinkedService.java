@@ -163,7 +163,7 @@ public abstract class LinkedService extends LinkedDevice implements QueueUser {
 		if (!waitQueue.isDefault()) {
 			Queue q = getQueue(0.0d);  // Ensures that the expression can be evaluated
 			if (q == null)
-				throw new InputErrorException(waitQueue.getValueString(), 0, getName(),
+				throw new InputErrorException(0, waitQueue.getValueString(),
 						"Input to 'WaitQueue' returns null");
 		}
 	}
