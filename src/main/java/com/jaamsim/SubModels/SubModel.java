@@ -247,30 +247,6 @@ public class SubModel extends CompoundEntity implements DragAndDropable {
 	}
 
 	/**
-	 * Returns the clones that were made from this prototype sub-model.
-	 * @return list of clones of this prototype.
-	 */
-	public ArrayList<SubModel> getClones() {
-		ArrayList<SubModel> ret = new ArrayList<>();
-		JaamSimModel simModel = getJaamSimModel();
-		for (SubModel clone : simModel.getClonesOfIterator(SubModel.class)) {
-			if (clone.isClone(this)) {
-				ret.add(clone);
-			}
-		}
-		return ret;
-	}
-
-	/**
-	 * Returns whether this sub-model is a clone of the specified prototype.
-	 * @param proto - prototype sub-model.
-	 * @return true is this sub-model is a clone of the specified prototype.
-	 */
-	public boolean isClone(SubModel proto) {
-		return getPrototype() == proto;
-	}
-
-	/**
 	 * Adjusts the clone to match the present setting for its prototype sub-model.
 	 */
 	public void update() {
