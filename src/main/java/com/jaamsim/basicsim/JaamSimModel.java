@@ -423,6 +423,9 @@ public class JaamSimModel implements EventTimeListener {
 
 		// Validate the inputs
 		for (Entity each : getClonesOfIterator(Entity.class)) {
+			if (each.hasClone())
+				continue;
+
 			try {
 				each.validate();
 			}
@@ -479,6 +482,9 @@ public class JaamSimModel implements EventTimeListener {
 	 */
 	public boolean validate() {
 		for (Entity each : getClonesOfIterator(Entity.class)) {
+			if (each.hasClone())
+				continue;
+
 			try {
 				each.validate();
 			}

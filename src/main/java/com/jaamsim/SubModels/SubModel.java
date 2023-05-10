@@ -156,14 +156,6 @@ public class SubModel extends CompoundEntity implements DragAndDropable {
 			gui.updateModelBuilder();
 	}
 
-	@Override
-	public void validate() {
-		// If there are clones, only the clones need to be validated
-		if (hasClone())
-			return;
-		super.validate();
-	}
-
 	/**
 	 * Updates the added keywords to match the specified list.
 	 * @param newDataList - data for the new list of added keywords
