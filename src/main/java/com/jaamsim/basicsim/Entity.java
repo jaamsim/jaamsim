@@ -573,11 +573,15 @@ public class Entity {
 			targetInput.setLocked(false);
 			KeywordIndex kw = new KeywordIndex(key, tmp, context);
 			InputAgent.apply(this, targetInput, kw);
-			targetInput.setLocked(lock);
 		}
 		catch (Exception e) {
 			throw new ErrorException("", -1, getName(), key, -1, e.getMessage(), e);
 		}
+
+		// Lock the input if it had to be changed from its inherited value because of an
+		// explicit reference to its prototype
+		targetInput.setLocked(lock && changed && !targetInput.isDef()
+				 && getPrototype() == ent);
 	}
 
 	/**
