@@ -530,7 +530,19 @@ public class Entity {
 			}
 		}
 
-		// Is the entity's input inherited from its prototype?
+		// An overwritten input for a clone cannot be changed by the prototype, except in the
+		// following circumstances:
+		// - the input was locked because it contains an explicit reference to the prototype
+		//   entity
+		// - the new input value from the prototype is equal to the present value (handled in the
+		//   'assign' method)
+		// - the input is for the CustomOutputList keyword which had been assigned a stub value
+		if (getPrototype() == ent && !targetInput.isDef() && !targetInput.isLocked()
+				&& !targetInput.getValueTokens().equals(tmp)
+				&& !targetInput.getKeyword().equals("CustomOutputList"))
+			return;
+
+		// Set the new input value
 		try {
 			if (getPrototype() == ent && !changed) {
 
