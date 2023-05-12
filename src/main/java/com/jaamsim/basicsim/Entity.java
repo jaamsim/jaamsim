@@ -563,13 +563,6 @@ public class Entity {
 				return;
 			}
 
-			// Ignore inputs that have already been set for the target entity by either the
-			// autoload or postDefine methods. This prevents such an input from being set as
-			// 'edited' causing it to be written to the saved configuration file for verification.
-			ArrayList<String> targetToks = targetInput.getValueTokens();
-			if (targetToks.equals(tmp))
-				return;
-
 			targetInput.setLocked(false);
 			KeywordIndex kw = new KeywordIndex(key, tmp, context);
 			InputAgent.apply(this, targetInput, kw);
