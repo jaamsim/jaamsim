@@ -3576,6 +3576,14 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				deleteEntity(child);
 		}
 
+		// Delete any clones
+		for (Entity clone : ent.getAllClones()) {
+			if (clone.isGenerated() || clone instanceof EntityLabel)
+				clone.kill();
+			else
+				deleteEntity(clone);
+		}
+
 		// Region
 		if (ent instanceof Region) {
 
