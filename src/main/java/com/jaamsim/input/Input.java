@@ -702,6 +702,28 @@ public abstract class Input<T> {
 		return sb.toString();
 	}
 
+	/**
+	 * Returns the value tokens for this input or that were inherited from its prototype input.
+	 * @return value tokens
+	 */
+	public final String[] getValueArray() {
+		if (isDef && protoInput != null)
+			return protoInput.getValueArray();
+		if (isDef)
+			return new String[0];
+		return valueTokens;
+	}
+
+	/**
+	 * Returns the value tokens that has been inherited from the input's prototype.
+	 * @return value tokens for the prototype
+	 */
+	public final String[] getInheritedValueArray() {
+		if (protoInput == null)
+			return new String[0];
+		return protoInput.getValueArray();
+	}
+
 	public abstract void parse(Entity thisEnt, KeywordIndex kw) throws InputErrorException;
 
 

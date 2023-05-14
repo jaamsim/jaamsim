@@ -566,7 +566,7 @@ public class InputAgent {
 		// Restore the default if the input value is blank or is equal to its inherited value
 		boolean changed = true;
 		if (kw.numArgs() == 0 || (in.getProtoInput() != null
-				&& in.getInheritedValueString().equals(kw.argString()))) {
+				&& Arrays.equals(in.getInheritedValueArray(), kw.getArgArray()))) {
 			if (in.isDef())
 				changed = false;
 			in.reset();
