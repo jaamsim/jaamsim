@@ -560,10 +560,11 @@ public class InputAgent {
 			throw new InputErrorException("Input value is locked");
 
 		// Restore the default if the input value is blank or is equal to its inherited value
+		boolean changed = true;
 		if (kw.numArgs() == 0 || (in.getProtoInput() != null
 				&& in.getInheritedValueString().equals(kw.argString()))) {
 			if (in.isDef())
-				return;
+				changed = false;
 			in.reset();
 		}
 
@@ -575,7 +576,7 @@ public class InputAgent {
 
 		// Only mark the keyword edited if we have finished initial configuration
 		JaamSimModel simModel = ent.getJaamSimModel();
-		if (simModel.isRecordEdits()) {
+		if (changed && simModel.isRecordEdits()) {
 			in.setEdited(true);
 			ent.setEdited();
 		}
