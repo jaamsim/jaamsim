@@ -25,6 +25,7 @@ import javax.swing.JTable;
 import javax.swing.border.Border;
 import javax.swing.table.DefaultTableCellRenderer;
 
+import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.input.Input;
 
@@ -50,7 +51,8 @@ public Component getTableCellRendererComponent(JTable table, Object value,
 
 	Input<?> in = (Input<?>)value;
 	String str;
-	JaamSimModel simModel = EditBox.getInstance().getCurrentEntity().getJaamSimModel();
+	Entity ent = EditBox.getInstance().getCurrentEntity();
+	JaamSimModel simModel = ent.getJaamSimModel();
 
 	// 1) Keyword
 	if (column == 0) {
@@ -78,7 +80,7 @@ public Component getTableCellRendererComponent(JTable table, Object value,
 		if (!in.isValid())
 			str = EditBox.formatErrorText(str);
 		// Input that is required
-		else if (str.isEmpty() && in.isRequired())
+		else if (str.isEmpty() && in.isRequired() && !ent.hasClone())
 			str = EditBox.REQD;
 		// Input value that is inherited from the prototype entity
 		else if (!str.isEmpty() && in.isDef())
