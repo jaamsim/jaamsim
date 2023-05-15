@@ -415,6 +415,14 @@ public class DisplayEntity extends Entity {
 		}
 	}
 
+	@Override
+	public void earlyInit() {
+		super.earlyInit();
+
+		// Required for a pooled clone that was modified by a 'SetGraphics' object
+		resetGraphics();
+	}
+
 	public void updateForPointsInput(ArrayList<Vec3d> pts) {
 		setPoints(pts);
 

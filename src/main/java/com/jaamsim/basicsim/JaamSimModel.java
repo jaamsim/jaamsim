@@ -674,11 +674,6 @@ public class JaamSimModel implements EventTimeListener {
 		killGeneratedEntities();
 		rngMap.clear();
 
-		// Reset the graphics for each entity
-		for (DisplayEntity ent : getClonesOfIterator(DisplayEntity.class)) {
-			ent.resetGraphics();
-		}
-
 		// Keep the labels and sub-models consistent with the gui
 		showSubModels(getSimulation().isShowSubModels());
 		showTemporaryLabels(getSimulation().isShowLabels());
