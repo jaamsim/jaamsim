@@ -279,12 +279,9 @@ public class Entity {
 			ent.kill();
 		}
 
-		ArrayList<Entity> list = getCloneList();
-		if (list != null) {
-			for (Entity clone : list) {
-				clone.prototype = null;
-				clone.kill();
-			}
+		for (Entity clone : getCloneList()) {
+			clone.prototype = null;
+			clone.kill();
 		}
 		clonePool = null;
 
@@ -1161,17 +1158,16 @@ public class Entity {
 	}
 
 	private synchronized ArrayList<Entity> getCloneList() {
-		return cloneList;
+		if (cloneList == null)
+			return new ArrayList<>();
+		return new ArrayList<>(cloneList);
 	}
 
 	public ArrayList<Entity> getAllClones() {
 		ArrayList<Entity> ret = getCloneList();
-		if (ret == null)
-			ret = new ArrayList<>();
 
 		// Include the generated entities that have not been registered
 		if (simModel.isStarted()) {
-			ret = new ArrayList<>(ret);
 			for (Entity ent : simModel.getClonesOfIterator(Entity.class)) {
 				if (ent.getPrototype() != this || ent.isRegistered() || ent.isPooled())
 					continue;
