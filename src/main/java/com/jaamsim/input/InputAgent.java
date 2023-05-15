@@ -572,6 +572,11 @@ public class InputAgent {
 			in.reset();
 		}
 
+		// Ignore the input if it is the same as the present value
+		else if (Arrays.equals(in.valueTokens, kw.getArgArray())) {
+			changed = false;
+		}
+
 		// Otherwise, set the new input value
 		else {
 			in.parse(ent, kw);
