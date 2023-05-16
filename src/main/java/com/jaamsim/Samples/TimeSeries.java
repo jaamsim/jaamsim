@@ -50,6 +50,19 @@ public class TimeSeries extends DisplayEntity implements TimeSeriesProvider, Sub
 	         exampleList = {"TRUE"})
 	private final BooleanInput offsetToFirst;
 
+	@Keyword(description = "Increment applied to the event times entered to the 'Value' input. "
+	                     + "For example, if the OffsetTime is set to 1.0 h and an event time is "
+	                     + "set to 24 h in the Value input, then this event will occur at "
+	                     + "25 hours instead of 24 hours.\n\n"
+	                     + "If an expression is entered, it must return a value that remains "
+	                     + "constant for the entire simulation run.\n\n"
+	                     + "The offset time is applied to the TimeSeries values at run time. "
+	                     + "Unlike the 'OffsetToFirst' input and the 'StartTime' input for "
+	                     + "Simulation, the 'OffsetTime' input can be changed without reloading the "
+	                     + "'Value' input",
+	         exampleList = { "3.0 h", "[InputData].Offset" })
+	private final SampleInput offsetTime;
+
 	@Keyword(description = "The unit type for the time series. The UnitType input must be "
 	                     + "specified before the Value input.",
 	         exampleList = {"DistanceUnit", "MassUnit", "DimensionlessUnit"})
@@ -74,6 +87,10 @@ public class TimeSeries extends DisplayEntity implements TimeSeriesProvider, Sub
 	{
 		offsetToFirst = new BooleanInput("OffsetToFirst", KEY_INPUTS, true);
 		this.addInput(offsetToFirst);
+
+		offsetTime = new SampleInput("OffsetTime", KEY_INPUTS, 0.0d);
+		offsetTime.setUnitType(TimeUnit.class);
+		this.addInput(offsetTime);
 
 		unitType = new UnitTypeInput("UnitType", KEY_INPUTS, UserSpecifiedUnit.class);
 		unitType.setRequired(true);
@@ -152,6 +169,10 @@ public class TimeSeries extends DisplayEntity implements TimeSeriesProvider, Sub
 
 	public long getCycleTicks() {
 		return getTicks( cycleTime.getValue() );
+	}
+
+	public long getOffsetTicks() {
+		return getTicks( offsetTime.getNextSample(this, 0.0d) );
 	}
 
 	/**
