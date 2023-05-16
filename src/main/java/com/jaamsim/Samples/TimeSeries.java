@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018-2022 JaamSim Software Inc.
+ * Copyright (C) 2018-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -109,7 +109,7 @@ public class TimeSeries extends DisplayEntity implements TimeSeriesProvider, Sub
 					"The configuration file must be saved and reloaded before the simulation can be executed.");
 
 		long[] ticksList = value.getValue().ticksList;
-		if (getTicks(cycleTime.getValue()) < ticksList[ticksList.length - 1] - ticksList[0])
+		if (getCycleTicks() < ticksList[ticksList.length - 1] - ticksList[0])
 			throw new InputErrorException( "CycleTime must be larger than the difference between "
 					+ "the first and last times in the series." );
 	}
@@ -148,6 +148,10 @@ public class TimeSeries extends DisplayEntity implements TimeSeriesProvider, Sub
 
 	public boolean isOffsetToFirst() {
 		return offsetToFirst.getValue();
+	}
+
+	public long getCycleTicks() {
+		return getTicks( cycleTime.getValue() );
 	}
 
 	/**
@@ -237,7 +241,7 @@ public class TimeSeries extends DisplayEntity implements TimeSeriesProvider, Sub
 	@Override
 	public long getMaxTicksValue() {
 		if (cycleTime.getValue() < Double.POSITIVE_INFINITY)
-			return getTicks(cycleTime.getValue());
+			return getCycleTicks();
 
 		long[] ticksList = value.getValue().ticksList;
 		return ticksList[ ticksList.length-1 ];
@@ -286,7 +290,7 @@ public class TimeSeries extends DisplayEntity implements TimeSeriesProvider, Sub
 		}
 
 		// Find the time within the present cycle
-		final long cycleTicks = getTicks(cycleTime.getValue());
+		long cycleTicks = getCycleTicks();
 		long numberOfCycles = (ticks - ticksList[0]) / cycleTicks;
 		long ticksInCycle = (ticks - ticksList[0]) % cycleTicks + ticksList[0];
 
@@ -360,7 +364,7 @@ public class TimeSeries extends DisplayEntity implements TimeSeriesProvider, Sub
 			return Long.MAX_VALUE;
 		if (cycleTime.getValue() == Double.POSITIVE_INFINITY)
 			return value.getValue().ticksList[pt.index];
-		return value.getValue().ticksList[pt.index] + pt.numberOfCycles*getTicks(cycleTime.getValue());
+		return value.getValue().ticksList[pt.index] + pt.numberOfCycles*getCycleTicks();
 	}
 
 	/**
