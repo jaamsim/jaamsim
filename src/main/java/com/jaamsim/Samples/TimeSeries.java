@@ -314,9 +314,13 @@ public class TimeSeries extends DisplayEntity implements TimeSeriesProvider, Sub
 		ticks -= getOffsetTicks();
 
 		// Find the time within the present cycle
-		long cycleTicks = getCycleTicks();
-		long numberOfCycles = (ticks - ticksList[0]) / cycleTicks;
-		long ticksInCycle = (ticks - ticksList[0]) % cycleTicks + ticksList[0];
+		long ticksInCycle = Math.max(ticks, 0L);
+		long numberOfCycles = 0L;
+		if (cycleTime.getValue() != Double.POSITIVE_INFINITY) {
+			long cycleTicks = getCycleTicks();
+			numberOfCycles = Math.floorDiv(ticks - ticksList[0], cycleTicks);
+			ticksInCycle = ticks - numberOfCycles*cycleTicks;
+		}
 
 		// If the time in the cycle is greater than the last time, return the last value
 		if (ticksInCycle >= ticksList[ticksList.length - 1]) {
