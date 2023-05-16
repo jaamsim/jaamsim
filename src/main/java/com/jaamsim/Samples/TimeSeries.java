@@ -310,6 +310,9 @@ public class TimeSeries extends DisplayEntity implements TimeSeriesProvider, Sub
 			return new TSPoint(ticksList.length - 1, Long.MAX_VALUE);
 		}
 
+		// Calculate the offset internal clock ticks
+		ticks -= getOffsetTicks();
+
 		// Find the time within the present cycle
 		long cycleTicks = getCycleTicks();
 		long numberOfCycles = (ticks - ticksList[0]) / cycleTicks;
@@ -329,7 +332,7 @@ public class TimeSeries extends DisplayEntity implements TimeSeriesProvider, Sub
 			return new TSPoint(k, numberOfCycles);
 
 		if (k == -1)
-			error("No value found at time: %f", getSimTime(ticks));
+			error("No value found at time: %f", getSimTime(ticks + getOffsetTicks()));
 
 		// If the returned index is negative, then (insertion index) = -k-1
 		// Return the index before the insertion index
@@ -384,8 +387,8 @@ public class TimeSeries extends DisplayEntity implements TimeSeriesProvider, Sub
 		if (pt.index == -1)
 			return Long.MAX_VALUE;
 		if (cycleTime.getValue() == Double.POSITIVE_INFINITY)
-			return value.getValue().ticksList[pt.index];
-		return value.getValue().ticksList[pt.index] + pt.numberOfCycles*getCycleTicks();
+			return value.getValue().ticksList[pt.index] + getOffsetTicks();
+		return value.getValue().ticksList[pt.index] + getOffsetTicks() + pt.numberOfCycles*getCycleTicks();
 	}
 
 	/**
