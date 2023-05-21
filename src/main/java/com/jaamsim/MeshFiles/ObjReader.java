@@ -308,13 +308,13 @@ public class ObjReader {
 
 			// Check for relative indexing
 			if (fvs[i].v < 0) {
-				fvs[i].v = vertices.size() + 1 - fvs[i].v;
+				fvs[i].v = vertices.size() + 1 + fvs[i].v;
 			}
 			if (fvs[i].t < 0 && hasTex) {
-				fvs[i].t = texCoords.size() + 1 - fvs[i].t;
+				fvs[i].t = texCoords.size() + 1 + fvs[i].t;
 			}
 			if (fvs[i].n < 0 && hasNormal) {
-				fvs[i].n = normals.size() + 1 - fvs[i].n;
+				fvs[i].n = normals.size() + 1 + fvs[i].n;
 			}
 		}
 
