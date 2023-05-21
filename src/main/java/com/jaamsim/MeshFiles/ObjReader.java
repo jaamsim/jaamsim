@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2015 JaamSim Software Inc.
+ * Copyright (C) 2015-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -119,9 +119,10 @@ public class ObjReader {
 				parseLine(line);
 			}
 
-		} catch (IOException ex) {
-			System.err.println(ex.getLocalizedMessage());
-			return;
+		} catch (Exception ex) {
+			String msg = String.format("An error occurred while parsing line %s:%n%s",
+					lineNum, ex.getLocalizedMessage());
+			throw new RenderException(msg, ex);
 		}
 
 		finishCurrentMesh();
