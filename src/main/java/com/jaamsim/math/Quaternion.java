@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2012 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -87,6 +88,19 @@ public void setEuler3(Vec3d v) {
 
 	tmp.setRotZAxis(v.z);
 	this.mult(tmp, this);
+}
+
+/**
+ * Returns the Euler angles corresponding to the quaternion.
+ * @return Euler angles
+ */
+public Vec3d getEuler3() {
+	Vec3d ret = new Vec3d();
+	ret.x = Math.atan2(2*(w*x + y*z), 1 - 2*(x*x + y*y));
+	double val = 2*(w*y - x*z);
+	ret.y = -Math.PI/2 + 2*Math.atan2(Math.sqrt(1 + val), Math.sqrt(1 - val));
+	ret.z = Math.atan2(2*(w*z + x*y), 1 - 2*(y*y + z*z));
+	return ret;
 }
 
 /**

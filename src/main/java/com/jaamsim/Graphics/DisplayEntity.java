@@ -640,12 +640,19 @@ public class DisplayEntity extends Entity {
 
 	/**
 	 * Sets the orientation to the specified value relative its its normal orientation.
-	 * @param relOrient - relative orientation
+	 * @param relOrient - Euler angles for relative orientation
 	 */
 	public void setRelativeOrientation(Vec3d relOrient) {
-		Vec3d val = new Vec3d(orientationInput.getValue());
-		val.add3(relOrient);
-		setOrientation(val);
+		Quaternion rotQ = new Quaternion();
+		rotQ.setEuler3(relOrient);
+		setRelativeOrientation(rotQ);
+	}
+
+	public void setRelativeOrientation(Quaternion rotQ) {
+		Quaternion q = new Quaternion();
+		q.setEuler3(orientationInput.getValue());
+		q.mult(rotQ, q);
+		setOrientation(q.getEuler3());
 	}
 
 	/**
