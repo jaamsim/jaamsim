@@ -994,6 +994,7 @@ public class ColParser {
 		String img = _images.get(imageName);
 		parseAssert(img != null);
 		try {
+			img = img.replaceFirst("file:\\/\\/", "./");
 			ret.texture = new URL(_contextURL, img).toURI();
 			ret.relTexture = img;
 			ret.texCoordName = texCoord;
