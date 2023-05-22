@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2012 Ausenco Engineering Canada Inc.
- * Copyright (C) 2015-2020 JaamSim Software Inc.
+ * Copyright (C) 2015-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -942,11 +942,9 @@ public class ColParser {
 	}
 
 	private ColorTex getColorTex(XmlNode node, HashMap<String, XmlNode> paramMap) {
-		if (node.getNumChildren() != 1) {
-			parseAssert(false);
-			return null;
-		}
 
+		// Use the first child entry
+		// (ignore the duplicated <texture> entries added by the FBX Collada exporter)
 		XmlNode valNode = node.getChild(0);
 
 		String tag = valNode.getTag();
