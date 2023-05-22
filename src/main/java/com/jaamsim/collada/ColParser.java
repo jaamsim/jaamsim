@@ -969,25 +969,27 @@ public class ColParser {
 		String texCoord = valNode.getAttrib("texcoord");
 
 		// Find this sampler in the map
+		// If no sampler is found, the image name defaults to the texture name
+		String imageName = texName;
 		XmlNode sampler = paramMap.get(texName);
-		parseAssert(sampler != null);
+		if (sampler != null) {
+			XmlNode sampler2D = sampler.findChildTag("sampler2D", false);
+			parseAssert(sampler2D != null);
+			XmlNode source = sampler2D.findChildTag("source", false);
+			parseAssert(source != null);
 
-		XmlNode sampler2D = sampler.findChildTag("sampler2D", false);
-		parseAssert(sampler2D != null);
-		XmlNode source = sampler2D.findChildTag("source", false);
-		parseAssert(source != null);
+			String surfaceName = (String)source.getContent();
 
-		String surfaceName = (String)source.getContent();
+			XmlNode surfaceParam = paramMap.get(surfaceName);
+			XmlNode surface = surfaceParam.findChildTag("surface", false);
+			parseAssert(surface != null);
+			parseAssert(surface.getAttrib("type").equals("2D"));
 
-		XmlNode surfaceParam = paramMap.get(surfaceName);
-		XmlNode surface = surfaceParam.findChildTag("surface", false);
-		parseAssert(surface != null);
-		parseAssert(surface.getAttrib("type").equals("2D"));
+			XmlNode initFrom = surface.findChildTag("init_from", false);
+			parseAssert(initFrom != null);
 
-		XmlNode initFrom = surface.findChildTag("init_from", false);
-		parseAssert(initFrom != null);
-
-		String imageName = (String)initFrom.getContent();
+			imageName = (String)initFrom.getContent();
+		}
 
 		String img = _images.get(imageName);
 		parseAssert(img != null);
