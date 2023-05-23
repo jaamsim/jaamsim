@@ -32,6 +32,7 @@ import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.input.Vec3dInput;
+import com.jaamsim.math.Quaternion;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.states.StateEntity;
 import com.jaamsim.states.StateRecord;
@@ -235,7 +236,8 @@ public class EntityContainer extends SimEntity implements EntContainer {
 		super.updateGraphics(simTime);
 
 		boolean visible = showEntities.getValue();
-		Vec3d orient = getOrientation();
+		Quaternion orientQ = new Quaternion();
+		orientQ.setEuler3(getOrientation());
 		Vec3d size = this.getSize();
 		Vec3d tmp = new Vec3d();
 
@@ -277,7 +279,7 @@ public class EntityContainer extends SimEntity implements EntContainer {
 
 			// Rotate each entity about its center so it points to the right direction
 			ent.setShow(visible);
-			ent.setRelativeOrientation(orient);
+			ent.setRelativeOrientation(orientQ);
 
 			// Calculate the y- and z- coordinates
 			double distanceY = distanceY0 + row * (spacingInput.getValue() + maxWidth);

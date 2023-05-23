@@ -43,6 +43,7 @@ import com.jaamsim.input.InterfaceEntityInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.ValueInput;
+import com.jaamsim.math.Quaternion;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.DistanceUnit;
@@ -549,7 +550,8 @@ public class Queue extends LinkedComponent {
 		super.updateGraphics(simTime);
 
 		boolean visible = showEntities.getValue();
-		Vec3d queueOrientation = getOrientation();
+		Quaternion orientQ = new Quaternion();
+		orientQ.setEuler3(getOrientation());
 		Vec3d qSize = this.getSize();
 		Vec3d tmp = new Vec3d();
 
@@ -603,7 +605,7 @@ public class Queue extends LinkedComponent {
 			ent.setRegion(this.getCurrentRegion());
 
 			// Rotate each transporter about its center so it points to the right direction
-			ent.setRelativeOrientation(queueOrientation);
+			ent.setRelativeOrientation(orientQ);
 			ent.setShow(visible);
 
 			// Calculate the y- and z- coordinates
