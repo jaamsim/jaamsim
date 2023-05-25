@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2017-2021 JaamSim Software Inc.
+ * Copyright (C) 2017-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import com.jaamsim.Graphics.Arrow;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.FillEntity;
 import com.jaamsim.Graphics.LineEntity;
+import com.jaamsim.Graphics.Polyline;
 import com.jaamsim.Graphics.PolylineInfo;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.controllers.RenderManager;
@@ -47,6 +48,13 @@ import com.jaamsim.units.DistanceUnit;
 
 public class PolylineModel extends AbstractShapeModel {
 
+	@Keyword(description = "Determines whether or not to show a line between the last point of "
+	                     + "the polyline and its first point. "
+	                     + "If TRUE, the closing line is displayed. "
+	                     + "If FALSE, the closing line is not displayed.",
+	         exampleList = {"TRUE", "FALSE"})
+	protected final BooleanInput closed;
+
 	@Keyword(description = "If TRUE, an arrow head is displayed at the end of the polyline.",
 	         exampleList = {"TRUE", "FALSE"})
 	protected final BooleanInput showArrowHead;
@@ -64,6 +72,9 @@ public class PolylineModel extends AbstractShapeModel {
 		this.addSynonym(lineWidth, "Width");
 
 		this.addSynonym(fillColour, "FillColor");
+
+		closed = new BooleanInput("Closed", KEY_INPUTS, false);
+		this.addInput(closed);
 
 		showArrowHead = new BooleanInput("ShowArrowHead", KEY_INPUTS, false);
 		this.addInput(showArrowHead);
@@ -96,6 +107,10 @@ public class PolylineModel extends AbstractShapeModel {
 		return (ent instanceof DisplayEntity);
 	}
 
+	public boolean isClosed() {
+		return closed.getValue();
+	}
+
 	public boolean getShowArrowHead() {
 		return showArrowHead.getValue();
 	}
@@ -109,6 +124,7 @@ public class PolylineModel extends AbstractShapeModel {
 		private Arrow arrowObservee;
 		private LineEntity lineEnt;
 		private FillEntity fillEnt;
+		private Polyline polylineEnt;
 
 		private ArrayList<Vec4d> headPoints = null;
 		private Vec3d arrowSizeCache;
@@ -118,6 +134,7 @@ public class PolylineModel extends AbstractShapeModel {
 		private boolean filledCache;
 		private Color4d fillColourCache;
 		private boolean showArrowHeadCache;
+		private boolean closedCache;
 
 		private Transform globalTransCache;
 
@@ -145,6 +162,8 @@ public class PolylineModel extends AbstractShapeModel {
 				lineEnt = (LineEntity) observee;
 			if (ent instanceof FillEntity)
 				fillEnt = (FillEntity) ent;
+			if (ent instanceof Polyline)
+				polylineEnt = (Polyline) ent;
 		}
 
 		/**
@@ -168,6 +187,8 @@ public class PolylineModel extends AbstractShapeModel {
 			boolean fill = fillEnt == null ? filled.getValue() : fillEnt.isFilled();
 			Color4d fc = fillEnt == null ? fillColour.getValue() : fillEnt.getFillColour();
 
+			boolean closed = polylineEnt == null ? isClosed() : polylineEnt.isClosed();
+
 			Vec3d arrowSize = getArrowHeadSize();
 			if (arrowObservee != null)
 				arrowSize = arrowObservee.getArrowHeadSize();
@@ -182,6 +203,7 @@ public class PolylineModel extends AbstractShapeModel {
 			dirty = dirty || outlinedCache != outln;
 			dirty = dirty || filledCache != fill;
 			dirty = dirty || fillColourCache != fc;
+			dirty = dirty || closedCache != closed;
 			dirty = dirty || showArrowHeadCache != getShowArrowHead();
 			dirty = dirty || dirty_vec3d(arrowSizeCache, arrowSize);
 			dirty = dirty || !compare(globalTransCache, globalTrans);
@@ -193,6 +215,7 @@ public class PolylineModel extends AbstractShapeModel {
 			outlinedCache = outln;
 			filledCache = fill;
 			fillColourCache = fc;
+			closedCache = closed;
 			showArrowHeadCache = getShowArrowHead();
 			arrowSizeCache = arrowSize;
 			globalTransCache = globalTrans;
@@ -223,6 +246,13 @@ public class PolylineModel extends AbstractShapeModel {
 				selectionPoints.add(new Vec4d(end.x, end.y, end.z, 1.0d));
 			}
 
+			if (closed) {
+				Vec3d start = basePoints.get(basePoints.size() - 1);
+				Vec3d end = basePoints.get(0);
+				selectionPoints.add(new Vec4d(start.x, start.y, start.z, 1.0d));
+				selectionPoints.add(new Vec4d(end.x, end.y, end.z, 1.0d));
+			}
+
 			for (int i = 0; i < basePoints.size(); ++i) {
 				// Save the point list as is for control nodes
 				Vec3d p = basePoints.get(i);
@@ -235,16 +265,18 @@ public class PolylineModel extends AbstractShapeModel {
 			}
 
 			// Add the line proxies
-			cachedProxies = new ArrayList<>(pis.length + 1);
+			cachedProxies = new ArrayList<>();
 
 			for (PolylineInfo pi : pis) {
 				List<Vec4d> points = new ArrayList<>();
 
-				ArrayList<Vec3d> curvePoints = pi.getCurvePoints();
+				ArrayList<Vec3d> curvePoints = new ArrayList<>(pi.getCurvePoints());
+				if (closed)
+					curvePoints.add(curvePoints.get(0));
+
 				for (int i = 1; i < curvePoints.size(); ++i) { // Skip the first point
 					Vec3d start = curvePoints.get(i - 1);
 					Vec3d end = curvePoints.get(i);
-
 					points.add(new Vec4d(start.x, start.y, start.z, 1.0d));
 					points.add(new Vec4d(end.x, end.y, end.z, 1.0d));
 				}
