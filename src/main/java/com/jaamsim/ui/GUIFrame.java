@@ -122,6 +122,7 @@ import com.jaamsim.Graphics.FillEntity;
 import com.jaamsim.Graphics.LineEntity;
 import com.jaamsim.Graphics.OverlayEntity;
 import com.jaamsim.Graphics.OverlayText;
+import com.jaamsim.Graphics.PolylineEntity;
 import com.jaamsim.Graphics.Region;
 import com.jaamsim.Graphics.Text;
 import com.jaamsim.Graphics.TextBasics;
@@ -3997,7 +3998,9 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 		FillEntity fillEnt = (FillEntity) ent;
 		fill.setSelected(fillEnt.isFilled());
-		fillColour.setEnabled(fillEnt.isFilled());
+		bool = fillEnt.isFilled() || (ent instanceof PolylineEntity
+				&& ((PolylineEntity) ent).getPolylineWidth() > 0.0d);
+		fillColour.setEnabled(bool);
 
 		Color4d col = fillEnt.getFillColour();
 		fillColourIcon.setFillColor(new Color((float)col.r, (float)col.g, (float)col.b, (float)col.a));
