@@ -26,11 +26,13 @@ import com.jaamsim.Graphics.FillEntity;
 import com.jaamsim.Graphics.LineEntity;
 import com.jaamsim.Graphics.Polyline;
 import com.jaamsim.Graphics.PolylineInfo;
+import com.jaamsim.Graphics.PolylineEntity;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.Keyword;
+import com.jaamsim.input.ValueInput;
 import com.jaamsim.input.Vec3dInput;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Mat4d;
@@ -46,7 +48,7 @@ import com.jaamsim.render.RenderUtils;
 import com.jaamsim.render.VisibilityInfo;
 import com.jaamsim.units.DistanceUnit;
 
-public class PolylineModel extends AbstractShapeModel {
+public class PolylineModel extends AbstractShapeModel implements PolylineEntity {
 
 	@Keyword(description = "Determines whether or not to show a line between the last point of "
 	                     + "the polyline and its first point. "
@@ -54,6 +56,10 @@ public class PolylineModel extends AbstractShapeModel {
 	                     + "If FALSE, the closing line is not displayed.",
 	         exampleList = {"TRUE", "FALSE"})
 	protected final BooleanInput closed;
+
+	@Keyword(description = "Physical width of the polyline with units of distance.",
+	         exampleList = { "0.5 m" })
+	protected final ValueInput polylineWidth;
 
 	@Keyword(description = "If TRUE, an arrow head is displayed at the end of the polyline.",
 	         exampleList = {"TRUE", "FALSE"})
@@ -72,6 +78,11 @@ public class PolylineModel extends AbstractShapeModel {
 		this.addSynonym(lineWidth, "Width");
 
 		this.addSynonym(fillColour, "FillColor");
+
+		polylineWidth = new ValueInput("PolylineWidth", KEY_INPUTS, 0.0d);
+		polylineWidth.setUnitType(DistanceUnit.class);
+		polylineWidth.setValidRange(0.0d, Double.POSITIVE_INFINITY);
+		this.addInput(polylineWidth);
 
 		closed = new BooleanInput("Closed", KEY_INPUTS, false);
 		this.addInput(closed);
@@ -107,8 +118,14 @@ public class PolylineModel extends AbstractShapeModel {
 		return (ent instanceof DisplayEntity);
 	}
 
+	@Override
 	public boolean isClosed() {
 		return closed.getValue();
+	}
+
+	@Override
+	public double getPolylineWidth() {
+		return polylineWidth.getValue();
 	}
 
 	public boolean getShowArrowHead() {

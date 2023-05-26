@@ -19,6 +19,8 @@ package com.jaamsim.Graphics;
 import com.jaamsim.DisplayModels.PolylineModel;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.Keyword;
+import com.jaamsim.input.ValueInput;
+import com.jaamsim.units.DistanceUnit;
 
 /**
  * A series of nodes that are connected by straight or curved lines. A filled polyline can be used
@@ -26,7 +28,7 @@ import com.jaamsim.input.Keyword;
  * @author Harry King
  *
  */
-public class Polyline extends AbstractShape  {
+public class Polyline extends AbstractShape implements PolylineEntity  {
 
 	@Keyword(description = "Determines whether or not to show a line between the last point of "
 	                     + "the polyline and its first point. "
@@ -34,6 +36,10 @@ public class Polyline extends AbstractShape  {
 	                     + "If FALSE, the closing line is not displayed.",
 	         exampleList = {"TRUE", "FALSE"})
 	protected final BooleanInput closed;
+
+	@Keyword(description = "Physical width of the polyline with units of distance.",
+	         exampleList = { "0.5 m" })
+	protected final ValueInput polylineWidth;
 
 	{
 		displayModelListInput.clearValidClasses();
@@ -44,16 +50,32 @@ public class Polyline extends AbstractShape  {
 		closed = new BooleanInput("Closed", FORMAT, false);
 		closed.setDefaultText("DisplayModel value");
 		this.addInput(closed);
+
+		polylineWidth = new ValueInput("PolylineWidth", FORMAT, 0.0d);
+		polylineWidth.setUnitType(DistanceUnit.class);
+		polylineWidth.setValidRange(0.0d, Double.POSITIVE_INFINITY);
+		polylineWidth.setDefaultText("DisplayModel value");
+		this.addInput(polylineWidth);
 	}
 
 	public Polyline() {}
 
+	@Override
 	public boolean isClosed() {
-		if (closed.isDefault() && getDisplayModel() instanceof PolylineModel) {
-			PolylineModel model = (PolylineModel) getDisplayModel();
+		if (closed.isDefault() && getDisplayModel() instanceof PolylineEntity) {
+			PolylineEntity model = (PolylineEntity) getDisplayModel();
 			return model.isClosed();
 		}
 		return closed.getValue();
+	}
+
+	@Override
+	public double getPolylineWidth() {
+		if (polylineWidth.isDefault() && getDisplayModel() instanceof PolylineEntity) {
+			PolylineEntity model = (PolylineEntity) getDisplayModel();
+			return model.getPolylineWidth();
+		}
+		return polylineWidth.getValue();
 	}
 
 }
