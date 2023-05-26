@@ -291,11 +291,21 @@ public class PolylineModel extends AbstractShapeModel implements PolylineEntity 
 				addWidePolylineProxies();
 
 			// Add the line proxies
-			for (PolylineInfo pi : pis) {
+			addLineAndFillProxies();
+
+			// Add the arrowhead proxies
+			if (showArrowHeadCache)
+				addArrowHeadProxies();
+		}
+
+		private void addLineAndFillProxies() {
+			long id = displayObservee.getEntityNumber();
+
+			for (PolylineInfo pi : pisCache) {
 				List<Vec4d> points = new ArrayList<>();
 
 				ArrayList<Vec3d> curvePoints = new ArrayList<>(pi.getCurvePoints());
-				if (closed)
+				if (closedCache)
 					curvePoints.add(curvePoints.get(0));
 
 				for (int i = 1; i < curvePoints.size(); ++i) { // Skip the first point
@@ -305,41 +315,40 @@ public class PolylineModel extends AbstractShapeModel implements PolylineEntity 
 					points.add(new Vec4d(end.x, end.y, end.z, 1.0d));
 				}
 
-				if (globalTrans != null) {
-					RenderUtils.transformPointsLocal(globalTrans, points, 0);
+				if (globalTransCache != null) {
+					RenderUtils.transformPointsLocal(globalTransCache, points, 0);
 				}
 
 				// Draw the outline
-				if (outln) {
+				if (outlinedCache) {
 					int wid = pi.getWidth();
 					if (wid == -1)
-						wid = lineWidth;
+						wid = lineWidthCache;
 
 					Color4d col = pi.getColor();
 					if (col == null)
-						col = lineColour;
-					cachedProxies.add(new LineProxy(points, col, wid, vi, displayObservee.getEntityNumber()));
+						col = lineColourCache;
+					cachedProxies.add(new LineProxy(points, col, wid, viCache, id));
 				}
 
 				// Draw the fill
-				if (fill) {
-					Vec3d scale = new Vec3d(1.0d, 1.0d, 1.0d);
-					Transform trans = new Transform();
-					cachedProxies.add(new PolygonProxy(points, trans, scale, fc, false, 1, getVisibilityInfo(), displayObservee.getEntityNumber()));
+				if (filledCache) {
+					cachedProxies.add(new PolygonProxy(points, Transform.ident, DisplayModel.ONES,
+							fillColourCache, false, 1, getVisibilityInfo(), id));
 				}
 			}
+		}
 
-			// Add the arrowhead
-			if (!getShowArrowHead())
-				return;
+		private void addArrowHeadProxies() {
+			long id = displayObservee.getEntityNumber();
 
-			ArrayList<Vec3d> curvePts = pis[0].getCurvePoints();
+			ArrayList<Vec3d> curvePts = pisCache[0].getCurvePoints();
 			Vec3d startPoint = curvePts.get(curvePts.size() - 1);
 			Vec3d fromPoint = curvePts.get(curvePts.size() - 2);
 
-			Color4d color = pis[0].getColor();
+			Color4d color = pisCache[0].getColor();
 			if (color == null)
-				color = lineColour;
+				color = lineColourCache;
 
 			// Draw an arrow head at the last two points
 			if (selectionPoints.size() < 2) {
@@ -353,7 +362,7 @@ public class PolylineModel extends AbstractShapeModel implements PolylineEntity 
 
 			Mat4d trans = new Mat4d();
 			trans.setEuler3(zRot);
-			trans.scaleCols3(arrowSize);
+			trans.scaleCols3(arrowSizeCache);
 			trans.setTranslate3(startPoint);
 
 			headPoints = new ArrayList<>(arrowHeadVerts.size());
@@ -363,12 +372,12 @@ public class PolylineModel extends AbstractShapeModel implements PolylineEntity 
 				headPoints.add(tmp);
 			}
 
-			if (globalTrans != null) {
-				RenderUtils.transformPointsLocal(globalTrans, headPoints, 0);
+			if (globalTransCache != null) {
+				RenderUtils.transformPointsLocal(globalTransCache, headPoints, 0);
 			}
 
-			cachedProxies.add(new PolygonProxy(headPoints, Transform.ident, DisplayModel.ONES, color,
-			        false, 1, getVisibilityInfo(), observee.getEntityNumber()));
+			cachedProxies.add(new PolygonProxy(headPoints, Transform.ident, DisplayModel.ONES,
+					color, false, 1, viCache, id));
 		}
 
 		private void addWidePolylineProxies() {
