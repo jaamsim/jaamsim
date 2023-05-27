@@ -390,7 +390,9 @@ public class PolylineModel extends AbstractShapeModel implements PolylineEntity 
 				if (closedCache)
 					curvePoints.add(curvePoints.get(0));
 
-				for (int i = 1; i < curvePoints.size(); ++i) { // Skip the first point
+				List<Vec4d> points1 = new ArrayList<>();  // points on side 1
+				List<Vec4d> points2 = new ArrayList<>();  // points on side 2
+				for (int i = 1; i < curvePoints.size(); ++i) {
 					Vec3d start = curvePoints.get(i - 1);
 					Vec3d end = curvePoints.get(i);
 					Vec3d norm = new Vec3d(end);
@@ -398,16 +400,16 @@ public class PolylineModel extends AbstractShapeModel implements PolylineEntity 
 					norm.cross3(zDir);
 					norm.normalize3();
 					norm.scale2(halfWidth);
-					List<Vec4d> points = new ArrayList<>(4);
-					points.add(new Vec4d(start.x + norm.x, start.y + norm.y, start.z, 1.0d));
-					points.add(new Vec4d(end.x + norm.x, end.y + norm.y, end.z, 1.0d));
-					points.add(new Vec4d(end.x - norm.x, end.y - norm.y, end.z, 1.0d));
-					points.add(new Vec4d(start.x - norm.x, start.y - norm.y, start.z, 1.0d));
-					if (globalTransCache != null)
-						RenderUtils.transformPointsLocal(globalTransCache, points, 0);
-					cachedProxies.add(new PolygonProxy(points, Transform.ident, DisplayModel.ONES,
-							fillColourCache, false, 1, viCache, id));
+					points1.add(new Vec4d(start.x + norm.x, start.y + norm.y, start.z, 1.0d));
+					points1.add(new Vec4d(  end.x + norm.x,   end.y + norm.y,   end.z, 1.0d));
+					points2.add(0, new Vec4d(start.x - norm.x, start.y - norm.y, start.z, 1.0d));
+					points2.add(0, new Vec4d(  end.x - norm.x,   end.y - norm.y,   end.z, 1.0d));
 				}
+				points1.addAll(points2);
+				if (globalTransCache != null)
+					RenderUtils.transformPointsLocal(globalTransCache, points1, 0);
+				cachedProxies.add(new PolygonProxy(points1, Transform.ident, DisplayModel.ONES,
+						fillColourCache, false, 1, viCache, id));
 			}
 		}
 
