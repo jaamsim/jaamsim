@@ -383,6 +383,8 @@ public class PolylineModel extends AbstractShapeModel implements PolylineEntity 
 			double halfWidth = 0.5d * widthCache;
 			Vec3d zDir = new Vec3d(0.0d, 0.0d, 1.0d);
 			long id = displayObservee.getEntityNumber();
+			Vec4d lastPoint1 = null;
+			Vec4d lastPoint2 = null;
 
 			for (PolylineInfo pi : pisCache) {
 				ArrayList<Vec3d> curvePoints = new ArrayList<>(pi.getCurvePoints());
@@ -529,12 +531,24 @@ public class PolylineModel extends AbstractShapeModel implements PolylineEntity 
 							points2.add(0, new Vec4d(pOut, 1.0d));
 						}
 					}
+
+					// Show the polygon formed by the present points and the last points
+					if (lastPoint1 != null && lastPoint2 != null) {
+						ArrayList<Vec4d> points = new ArrayList<>();
+						points.add(lastPoint1);
+						points.addAll(points1);
+						points.addAll(points2);
+						points.add(lastPoint2);
+						if (globalTransCache != null)
+							RenderUtils.transformPointsLocal(globalTransCache, points, 0);
+						cachedProxies.add(new PolygonProxy(points, Transform.ident, DisplayModel.ONES,
+								fillColourCache, false, 1, viCache, id));
+					}
+					lastPoint1 = points1.get(points1.size() - 1);
+					lastPoint2 = points2.get(0);
+					points1.clear();
+					points2.clear();
 				}
-				points1.addAll(points2);
-				if (globalTransCache != null)
-					RenderUtils.transformPointsLocal(globalTransCache, points1, 0);
-				cachedProxies.add(new PolygonProxy(points1, Transform.ident, DisplayModel.ONES,
-						fillColourCache, false, 1, viCache, id));
 			}
 		}
 
