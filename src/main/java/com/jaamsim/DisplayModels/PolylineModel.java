@@ -344,17 +344,14 @@ public class PolylineModel extends AbstractShapeModel implements PolylineEntity 
 			long id = displayObservee.getEntityNumber();
 
 			ArrayList<Vec3d> curvePts = pisCache[0].getCurvePoints();
+			if (curvePts.size() < 2)
+				return;
 			Vec3d startPoint = curvePts.get(curvePts.size() - 1);
 			Vec3d fromPoint = curvePts.get(curvePts.size() - 2);
 
 			Color4d color = pisCache[0].getColor();
 			if (color == null)
 				color = lineColourCache;
-
-			// Draw an arrow head at the last two points
-			if (selectionPoints.size() < 2) {
-				return;
-			}
 
 			// Calculate a z-rotation in the XY-plane
 			Vec3d zRot = new Vec3d();
