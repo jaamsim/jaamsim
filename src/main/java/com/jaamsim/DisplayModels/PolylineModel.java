@@ -402,11 +402,19 @@ public class PolylineModel extends AbstractShapeModel implements PolylineEntity 
 						vecIn = new Vec3d(pt);
 						vecIn.sub3(curvePoints.get(i - 1));
 					}
+					else if (i == 0 && closedCache) {
+						vecIn = new Vec3d(pt);
+						vecIn.sub3(curvePoints.get(curvePoints.size() - 2));
+					}
 
 					// Vector away from the point
 					Vec3d vecOut = null;
 					if (i + 1 < curvePoints.size()) {
 						vecOut = new Vec3d(curvePoints.get(i + 1));
+						vecOut.sub3(pt);
+					}
+					else if (i == curvePoints.size() - 1 && closedCache) {
+						vecOut = new Vec3d(curvePoints.get(1));
 						vecOut.sub3(pt);
 					}
 
