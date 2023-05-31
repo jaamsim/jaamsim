@@ -35,6 +35,7 @@ import com.jaamsim.input.ValueInput;
 import com.jaamsim.input.Vec3dInput;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Mat4d;
+import com.jaamsim.math.MathUtils;
 import com.jaamsim.math.Transform;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.math.Vec4d;
@@ -392,18 +393,136 @@ public class PolylineModel extends AbstractShapeModel implements PolylineEntity 
 
 				List<Vec4d> points1 = new ArrayList<>();  // points on side 1
 				List<Vec4d> points2 = new ArrayList<>();  // points on side 2
-				for (int i = 1; i < curvePoints.size(); ++i) {
-					Vec3d start = curvePoints.get(i - 1);
-					Vec3d end = curvePoints.get(i);
-					Vec3d norm = new Vec3d(end);
-					norm.sub3(start);
-					norm.cross3(zDir);
-					norm.normalize3();
-					norm.scale2(halfWidth);
-					points1.add(new Vec4d(start.x + norm.x, start.y + norm.y, start.z, 1.0d));
-					points1.add(new Vec4d(  end.x + norm.x,   end.y + norm.y,   end.z, 1.0d));
-					points2.add(0, new Vec4d(start.x - norm.x, start.y - norm.y, start.z, 1.0d));
-					points2.add(0, new Vec4d(  end.x - norm.x,   end.y - norm.y,   end.z, 1.0d));
+				for (int i = 0; i < curvePoints.size(); ++i) {
+					Vec3d pt = curvePoints.get(i);
+
+					// Vector towards the point
+					Vec3d vecIn = null;
+					if (i > 0) {
+						vecIn = new Vec3d(pt);
+						vecIn.sub3(curvePoints.get(i - 1));
+					}
+
+					// Vector away from the point
+					Vec3d vecOut = null;
+					if (i + 1 < curvePoints.size()) {
+						vecOut = new Vec3d(curvePoints.get(i + 1));
+						vecOut.sub3(pt);
+					}
+
+					// Normal vectors
+					Vec3d nIn = null;  // normal to vecIn in the common plane
+					Vec3d nOut = null;  // normal to vecOut in the common plane
+					if (vecIn != null && vecOut != null) {
+						Vec3d normal = new Vec3d();  // normal to vecIn and vecOut
+						normal.cross3(vecIn, vecOut);
+						if (MathUtils.isSmall(normal.mag3()/(vecIn.mag3()*vecOut.mag3())))
+							normal = zDir;
+						nIn = new Vec3d();
+						nIn.cross3(vecIn, normal);
+						nOut = new Vec3d();
+						nOut.cross3(vecOut, normal);
+					}
+
+					// Horizontal vectors that are perpendicular to vecIn and vecOut
+					Vec3d deltaIn = null;
+					if (vecIn != null) {
+						deltaIn = new Vec3d();
+						deltaIn.cross3(vecIn, zDir);
+						deltaIn.normalize3();
+						deltaIn.scale3(halfWidth);
+					}
+					Vec3d deltaOut = null;
+					if (vecOut != null) {
+						deltaOut = new Vec3d();
+						deltaOut.cross3(vecOut, zDir);
+						deltaOut.normalize3();
+						deltaOut.scale3(halfWidth);
+					}
+
+					// Side 1
+					Vec3d pIn = null;
+					if (vecIn != null) {
+						pIn = new Vec3d(pt);
+						pIn.add3(deltaIn);
+					}
+					Vec3d pOut = null;
+					if (vecOut != null) {
+						pOut = new Vec3d(pt);
+						pOut.add3(deltaOut);
+					}
+
+					if (pIn == null) {
+						points1.add(new Vec4d(pOut, 1.0d));
+					}
+					else if (pOut == null) {
+						points1.add(new Vec4d(pIn, 1.0d));
+					}
+					else {
+						// Intersection points
+						Vec3d diff = new Vec3d(pOut);
+						diff.sub3(pIn);
+						Vec3d delta = new Vec3d(vecIn);
+						delta.scale3(diff.dot3(nOut)/vecIn.dot3(nOut));
+						if (delta.mag3()/halfWidth < 4.0d) {
+							// Midpoint between the closest points along vecIn and vecOut
+							Vec3d p0 = new Vec3d(pIn);
+							p0.add3(delta);
+
+							delta = new Vec3d(vecOut);
+							delta.scale3(-diff.dot3(nIn)/vecOut.dot3(nIn));
+							p0.add3(pOut);
+							p0.add3(delta);
+							p0.scale3(0.5d);
+							points1.add(new Vec4d(p0, 1.0d));
+						}
+						else {
+							points1.add(new Vec4d(pIn, 1.0d));
+							points1.add(new Vec4d(pOut, 1.0d));
+						}
+					}
+
+					// Side2
+					pIn = null;
+					if (deltaIn != null) {
+						pIn = new Vec3d(pt);
+						pIn.sub3(deltaIn);
+					}
+					pOut = null;
+					if (deltaOut != null) {
+						pOut = new Vec3d(pt);
+						pOut.sub3(deltaOut);
+					}
+
+					if (pIn == null) {
+						points2.add(0, new Vec4d(pOut, 1.0d));
+					}
+					else if (pOut == null) {
+						points2.add(0, new Vec4d(pIn, 1.0d));
+					}
+					else {
+						// Intersection points
+						Vec3d diff = new Vec3d(pOut);
+						diff.sub3(pIn);
+						Vec3d delta = new Vec3d(vecIn);
+						delta.scale3(diff.dot3(nOut)/vecIn.dot3(nOut));
+						if (delta.mag3()/halfWidth < 4.0d) {
+							// Midpoint between the closest points along vecIn and vecOut
+							Vec3d p0 = new Vec3d(pIn);
+							p0.add3(delta);
+
+							delta = new Vec3d(vecOut);
+							delta.scale3(-diff.dot3(nIn)/vecOut.dot3(nIn));
+							p0.add3(pOut);
+							p0.add3(delta);
+							p0.scale3(0.5d);
+							points2.add(0, new Vec4d(p0, 1.0d));
+						}
+						else {
+							points2.add(0, new Vec4d(pIn, 1.0d));
+							points2.add(0, new Vec4d(pOut, 1.0d));
+						}
+					}
 				}
 				points1.addAll(points2);
 				if (globalTransCache != null)
