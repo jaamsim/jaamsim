@@ -24,7 +24,6 @@ import com.jaamsim.Graphics.Arrow;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.FillEntity;
 import com.jaamsim.Graphics.LineEntity;
-import com.jaamsim.Graphics.Polyline;
 import com.jaamsim.Graphics.PolylineInfo;
 import com.jaamsim.Graphics.PolylineEntity;
 import com.jaamsim.basicsim.Entity;
@@ -141,7 +140,7 @@ public class PolylineModel extends AbstractShapeModel implements PolylineEntity 
 		private Arrow arrowObservee;
 		private LineEntity lineEnt;
 		private FillEntity fillEnt;
-		private Polyline polylineEnt;
+		private PolylineEntity polylineEnt;
 
 		private ArrayList<Vec4d> headPoints = null;
 		private Vec3d arrowSizeCache;
@@ -152,6 +151,7 @@ public class PolylineModel extends AbstractShapeModel implements PolylineEntity 
 		private Color4d fillColourCache;
 		private boolean showArrowHeadCache;
 		private boolean closedCache;
+		private double widthCache;
 
 		private Transform globalTransCache;
 
@@ -179,8 +179,8 @@ public class PolylineModel extends AbstractShapeModel implements PolylineEntity 
 				lineEnt = (LineEntity) observee;
 			if (ent instanceof FillEntity)
 				fillEnt = (FillEntity) ent;
-			if (ent instanceof Polyline)
-				polylineEnt = (Polyline) ent;
+			if (ent instanceof PolylineEntity)
+				polylineEnt = (PolylineEntity) ent;
 		}
 
 		/**
@@ -205,6 +205,7 @@ public class PolylineModel extends AbstractShapeModel implements PolylineEntity 
 			Color4d fc = fillEnt == null ? fillColour.getValue() : fillEnt.getFillColour();
 
 			boolean closed = polylineEnt == null ? isClosed() : polylineEnt.isClosed();
+			double width = polylineEnt == null ? getPolylineWidth() : polylineEnt.getPolylineWidth();
 
 			Vec3d arrowSize = getArrowHeadSize();
 			if (arrowObservee != null)
@@ -221,6 +222,7 @@ public class PolylineModel extends AbstractShapeModel implements PolylineEntity 
 			dirty = dirty || filledCache != fill;
 			dirty = dirty || fillColourCache != fc;
 			dirty = dirty || closedCache != closed;
+			dirty = dirty || widthCache != width;
 			dirty = dirty || showArrowHeadCache != getShowArrowHead();
 			dirty = dirty || dirty_vec3d(arrowSizeCache, arrowSize);
 			dirty = dirty || !compare(globalTransCache, globalTrans);
@@ -233,6 +235,7 @@ public class PolylineModel extends AbstractShapeModel implements PolylineEntity 
 			filledCache = fill;
 			fillColourCache = fc;
 			closedCache = closed;
+			widthCache = width;
 			showArrowHeadCache = getShowArrowHead();
 			arrowSizeCache = arrowSize;
 			globalTransCache = globalTrans;
@@ -281,9 +284,13 @@ public class PolylineModel extends AbstractShapeModel implements PolylineEntity 
 				RenderUtils.transformPointsLocal(globalTrans, nodePoints, 0);
 			}
 
-			// Add the line proxies
 			cachedProxies = new ArrayList<>();
 
+			// Add wide-polyline proxies
+			if (width > 0.0d)
+				addWidePolylineProxies();
+
+			// Add the line proxies
 			for (PolylineInfo pi : pis) {
 				List<Vec4d> points = new ArrayList<>();
 
@@ -362,6 +369,37 @@ public class PolylineModel extends AbstractShapeModel implements PolylineEntity 
 
 			cachedProxies.add(new PolygonProxy(headPoints, Transform.ident, DisplayModel.ONES, color,
 			        false, 1, getVisibilityInfo(), observee.getEntityNumber()));
+		}
+
+		private void addWidePolylineProxies() {
+			double halfWidth = 0.5d * widthCache;
+			Vec3d zDir = new Vec3d(0.0d, 0.0d, 1.0d);
+			long id = displayObservee.getEntityNumber();
+
+			for (PolylineInfo pi : pisCache) {
+				ArrayList<Vec3d> curvePoints = new ArrayList<>(pi.getCurvePoints());
+				if (closedCache)
+					curvePoints.add(curvePoints.get(0));
+
+				for (int i = 1; i < curvePoints.size(); ++i) { // Skip the first point
+					Vec3d start = curvePoints.get(i - 1);
+					Vec3d end = curvePoints.get(i);
+					Vec3d norm = new Vec3d(end);
+					norm.sub3(start);
+					norm.cross3(zDir);
+					norm.normalize3();
+					norm.scale2(halfWidth);
+					List<Vec4d> points = new ArrayList<>(4);
+					points.add(new Vec4d(start.x + norm.x, start.y + norm.y, start.z, 1.0d));
+					points.add(new Vec4d(end.x + norm.x, end.y + norm.y, end.z, 1.0d));
+					points.add(new Vec4d(end.x - norm.x, end.y - norm.y, end.z, 1.0d));
+					points.add(new Vec4d(start.x - norm.x, start.y - norm.y, start.z, 1.0d));
+					if (globalTransCache != null)
+						RenderUtils.transformPointsLocal(globalTransCache, points, 0);
+					cachedProxies.add(new PolygonProxy(points, Transform.ident, DisplayModel.ONES,
+							fillColourCache, false, 1, viCache, id));
+				}
+			}
 		}
 
 		@Override
