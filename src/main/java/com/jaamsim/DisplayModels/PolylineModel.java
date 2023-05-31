@@ -353,10 +353,11 @@ public class PolylineModel extends AbstractShapeModel implements PolylineEntity 
 			if (color == null)
 				color = lineColourCache;
 
-			// Calculate a z-rotation in the XY-plane
+			// Calculate the Euler angles for the arrowhead
 			Vec3d zRot = new Vec3d();
 			zRot.sub3(fromPoint, startPoint);
-			zRot.set3(0.0d, 0.0d, Math.atan2(zRot.y, zRot.x));
+			zRot.normalize3();
+			zRot.set3(0.0d, Math.asin(-zRot.z), Math.atan2(zRot.y, zRot.x));
 
 			Mat4d trans = new Mat4d();
 			trans.setEuler3(zRot);
