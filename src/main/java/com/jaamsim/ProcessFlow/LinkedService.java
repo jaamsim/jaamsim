@@ -64,6 +64,9 @@ public abstract class LinkedService extends LinkedDevice implements QueueUser {
 	                     + "valid. The returned number or object is converted to a string "
 	                     + "automatically. A floating point number is truncated to an integer."
 	                     + "\n\n"
+	                     + "A match value of null or an empty string allows any entity in the "
+	                     + "Queue to be eligible for selection, regardless of its match value."
+	                     + "\n\n"
 	                     + "Note that a change in the 'Match' value does not trigger "
 	                     + "the processor automatically to re-check the Queue. "
 	                     + "The processor can be triggered by adding one or more objects to the "
@@ -267,8 +270,10 @@ public abstract class LinkedService extends LinkedDevice implements QueueUser {
 	protected String getNextMatchValue(double simTime) {
 		if (match.isDefault())
 			return null;
-
-		return match.getNextString(this, simTime, 1.0d, true);
+		String ret = match.getNextString(this, simTime, 1.0d, true);
+		if (ret == null || ret.isEmpty() || ret.equals("null"))
+			return null;
+		return ret;
 	}
 
 	protected void setMatchValue(String m) {
