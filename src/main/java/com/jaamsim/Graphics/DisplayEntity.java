@@ -677,31 +677,9 @@ public class DisplayEntity extends Entity {
 	}
 
 	private void calculateEulerRotation(Vec3d val, Vec3d euler) {
-		double sinx = Math.sin(euler.x);
-		double siny = Math.sin(euler.y);
-		double sinz = Math.sin(euler.z);
-		double cosx = Math.cos(euler.x);
-		double cosy = Math.cos(euler.y);
-		double cosz = Math.cos(euler.z);
-
-		// Calculate a 3x3 rotation matrix
-		double m00 = cosy * cosz;
-		double m01 = -(cosx * sinz) + (sinx * siny * cosz);
-		double m02 = (sinx * sinz) + (cosx * siny * cosz);
-
-		double m10 = cosy * sinz;
-		double m11 = (cosx * cosz) + (sinx * siny * sinz);
-		double m12 = -(sinx * cosz) + (cosx * siny * sinz);
-
-		double m20 = -siny;
-		double m21 = sinx * cosy;
-		double m22 = cosx * cosy;
-
-		double x = m00 * val.x + m01 * val.y + m02 * val.z;
-		double y = m10 * val.x + m11 * val.y + m12 * val.z;
-		double z = m20 * val.x + m21 * val.y + m22 * val.z;
-
-		val.set3(x, y, z);
+		Mat4d mat = new Mat4d();
+		mat.setEuler3(euler);
+		val.mult3(mat, val);
 	}
 
 	/**
