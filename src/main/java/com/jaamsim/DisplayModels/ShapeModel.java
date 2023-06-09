@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018-2021 JaamSim Software Inc.
+ * Copyright (C) 2018-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -275,6 +275,12 @@ public class ShapeModel extends AbstractShapeModel {
 			Vec3d scale = getScale();
 			long pickingID = getPickingID();
 
+			// Calculate the z-coordinate offset for the layers
+			Vec3d entSize = dispEnt.getSize();
+			double zBump = 0.001d;
+			if (entSize.z > 0.0d)
+				zBump *= entSize.x / entSize.z;
+
 			// Height for each bar
 			Tag tag_contents = tagsCache.get(ShapeModel.TAG_CONTENTS);
 			if (tag_contents == null || tag_contents.sizes == null || tag_contents.colors == null ||
@@ -338,10 +344,10 @@ public class ShapeModel extends AbstractShapeModel {
 				double endY = size - 0.5;
 
 				List<Vec4d> contentsPoints = new ArrayList<>();
-				contentsPoints.add(new Vec4d(  endX, startY, 0, 1.0d));
-				contentsPoints.add(new Vec4d(  endX,   endY, 0, 1.0d));
-				contentsPoints.add(new Vec4d(startX,   endY, 0, 1.0d));
-				contentsPoints.add(new Vec4d(startX, startY, 0, 1.0d));
+				contentsPoints.add(new Vec4d(  endX, startY, zBump, 1.0d));
+				contentsPoints.add(new Vec4d(  endX,   endY, zBump, 1.0d));
+				contentsPoints.add(new Vec4d(startX,   endY, zBump, 1.0d));
+				contentsPoints.add(new Vec4d(startX, startY, zBump, 1.0d));
 
 				cachedProxies.add(new PolygonProxy(contentsPoints, trans, scale, tag_contents.colors[i], false, 1, getVisibilityInfo(), pickingID));
 
@@ -350,10 +356,10 @@ public class ShapeModel extends AbstractShapeModel {
 					double startResY = endY;
 					double endResY = startResY + rescapacities[i];
 					List<Vec4d> rescontentsPoints = new ArrayList<>();
-					rescontentsPoints.add(new Vec4d(  endX, startResY, 0, 1.0d));
-					rescontentsPoints.add(new Vec4d(  endX,   endResY, 0, 1.0d));
-					rescontentsPoints.add(new Vec4d(startX,   endResY, 0, 1.0d));
-					rescontentsPoints.add(new Vec4d(startX, startResY, 0, 1.0d));
+					rescontentsPoints.add(new Vec4d(  endX, startResY, zBump, 1.0d));
+					rescontentsPoints.add(new Vec4d(  endX,   endResY, zBump, 1.0d));
+					rescontentsPoints.add(new Vec4d(startX,   endResY, zBump, 1.0d));
+					rescontentsPoints.add(new Vec4d(startX, startResY, zBump, 1.0d));
 
 					cachedProxies.add(new PolygonProxy(rescontentsPoints, trans, scale, rescolours[i], false, 1, getVisibilityInfo(), pickingID));
 				}
