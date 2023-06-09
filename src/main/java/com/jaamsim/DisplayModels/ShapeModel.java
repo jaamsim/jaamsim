@@ -206,13 +206,13 @@ public class ShapeModel extends AbstractShapeModel {
 			if (outlinedCache && isTagVisible(ShapeModel.TAG_OUTLINES))
 			{
 				Color4d colour = getTagColor(ShapeModel.TAG_OUTLINES, outlineColourCache);
-				cachedProxies.add(new PolygonProxy(points, trans, scale, colour, true, width, getVisibilityInfo(), pickingID));
+				cachedProxies.add(new PolygonProxy(points, trans, scale, colour, true, width, vi, pickingID));
 			}
 
 			if (filledCache && isTagVisible(ShapeModel.TAG_CONTENTS))
 			{
 				Color4d colour = getTagColor(ShapeModel.TAG_CONTENTS, fillColourCache);
-				cachedProxies.add(new PolygonProxy(points, trans, scale, colour, false, 1, getVisibilityInfo(), pickingID));
+				cachedProxies.add(new PolygonProxy(points, trans, scale, colour, false, 1, vi, pickingID));
 			}
 		}
 
@@ -269,10 +269,6 @@ public class ShapeModel extends AbstractShapeModel {
 		}
 
 		private void addBarGaugeProxies(double simTime) {
-
-			// Gather some inputs
-			Transform trans = getTransform(simTime);
-			Vec3d scale = getScale();
 			long pickingID = getPickingID();
 
 			// Calculate the z-coordinate offset for the layers
@@ -323,8 +319,8 @@ public class ShapeModel extends AbstractShapeModel {
 			// Draw the background and outline
 			Color4d outlineColour = getTagColor(ShapeModel.TAG_OUTLINES, ColourInput.BLACK);
 			Color4d backgroundColour = getTagColor(ShapeModel.TAG_BODY, ColourInput.WHITE);
-			cachedProxies.add(new PolygonProxy(RenderUtils.RECT_POINTS, trans, scale, backgroundColour, false, 1, getVisibilityInfo(), pickingID));
-			cachedProxies.add(new PolygonProxy(RenderUtils.RECT_POINTS, trans, scale, outlineColour, true, 1, getVisibilityInfo(), pickingID));
+			cachedProxies.add(new PolygonProxy(RenderUtils.RECT_POINTS, transCache, scaleCache, backgroundColour, false, 1, viCache, pickingID));
+			cachedProxies.add(new PolygonProxy(RenderUtils.RECT_POINTS, transCache, scaleCache, outlineColour, true, 1, viCache, pickingID));
 
 			// Loop through the values to be displayed
 			double accumWidth = 0;
@@ -349,7 +345,7 @@ public class ShapeModel extends AbstractShapeModel {
 				contentsPoints.add(new Vec4d(startX,   endY, zBump, 1.0d));
 				contentsPoints.add(new Vec4d(startX, startY, zBump, 1.0d));
 
-				cachedProxies.add(new PolygonProxy(contentsPoints, trans, scale, tag_contents.colors[i], false, 1, getVisibilityInfo(), pickingID));
+				cachedProxies.add(new PolygonProxy(contentsPoints, transCache, scaleCache, tag_contents.colors[i], false, 1, viCache, pickingID));
 
 				// Draw a second vertical bar above the first one
 				if (rescapacities != null) {
@@ -361,7 +357,7 @@ public class ShapeModel extends AbstractShapeModel {
 					rescontentsPoints.add(new Vec4d(startX,   endResY, zBump, 1.0d));
 					rescontentsPoints.add(new Vec4d(startX, startResY, zBump, 1.0d));
 
-					cachedProxies.add(new PolygonProxy(rescontentsPoints, trans, scale, rescolours[i], false, 1, getVisibilityInfo(), pickingID));
+					cachedProxies.add(new PolygonProxy(rescontentsPoints, transCache, scaleCache, rescolours[i], false, 1, viCache, pickingID));
 				}
 			}
 		}
