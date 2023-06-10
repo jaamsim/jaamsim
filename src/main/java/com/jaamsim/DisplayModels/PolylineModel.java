@@ -406,6 +406,8 @@ public class PolylineModel extends AbstractShapeModel implements PolylineEntity 
 						vecIn = new Vec3d(pt);
 						vecIn.sub3(curvePoints.get(curvePoints.size() - 2));
 					}
+					if (vecIn != null && MathUtils.isSmall(vecIn.mag3()))
+						vecIn = null;
 
 					// Vector away from the point
 					Vec3d vecOut = null;
@@ -417,7 +419,12 @@ public class PolylineModel extends AbstractShapeModel implements PolylineEntity 
 						vecOut = new Vec3d(curvePoints.get(1));
 						vecOut.sub3(pt);
 					}
+					if (vecOut != null && MathUtils.isSmall(vecOut.mag3()))
+						vecOut = null;
 					//System.out.format("vecIn=%s, vecOut=%s%n", vecIn, vecOut);
+
+					if (vecIn == null && vecOut == null)
+						continue;
 
 					// Normal vectors
 					Vec3d nIn = null;  // normal to vecIn in the common plane
@@ -470,6 +477,7 @@ public class PolylineModel extends AbstractShapeModel implements PolylineEntity 
 					else if (pOut == null) {
 						points1.add(new Vec4d(pIn, 1.0d));
 					}
+
 					else {
 						// Intersection points
 						Vec3d diff = new Vec3d(pOut);
