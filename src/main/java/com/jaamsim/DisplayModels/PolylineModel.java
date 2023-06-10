@@ -417,6 +417,7 @@ public class PolylineModel extends AbstractShapeModel implements PolylineEntity 
 						vecOut = new Vec3d(curvePoints.get(1));
 						vecOut.sub3(pt);
 					}
+					//System.out.format("vecIn=%s, vecOut=%s%n", vecIn, vecOut);
 
 					// Normal vectors
 					Vec3d nIn = null;  // normal to vecIn in the common plane
@@ -430,7 +431,9 @@ public class PolylineModel extends AbstractShapeModel implements PolylineEntity 
 						nIn.cross3(vecIn, normal);
 						nOut = new Vec3d();
 						nOut.cross3(vecOut, normal);
+						//System.out.format("normal=%s%n", normal);
 					}
+					//System.out.format("nIn=%s, nOut=%s%n", nIn, nOut);
 
 					// Horizontal vectors that are perpendicular to vecIn and vecOut
 					Vec3d deltaIn = null;
@@ -447,6 +450,7 @@ public class PolylineModel extends AbstractShapeModel implements PolylineEntity 
 						deltaOut.normalize3();
 						deltaOut.scale3(halfWidth);
 					}
+					//System.out.format("deltaIn=%s, deltaOut=%s%n", deltaIn, deltaOut);
 
 					// Side 1
 					Vec3d pIn = null;
@@ -487,6 +491,7 @@ public class PolylineModel extends AbstractShapeModel implements PolylineEntity 
 						else {
 							points1.add(new Vec4d(pIn, 1.0d));
 							points1.add(new Vec4d(pOut, 1.0d));
+							//System.out.format("delta=%s, pIn=%s, pOut=%s%n", delta, pIn, pOut);
 						}
 					}
 
@@ -543,6 +548,7 @@ public class PolylineModel extends AbstractShapeModel implements PolylineEntity 
 							RenderUtils.transformPointsLocal(globalTransCache, points, 0);
 						cachedProxies.add(new PolygonProxy(points, Transform.ident, DisplayModel.ONES,
 								fillColourCache, false, 1, viCache, id));
+						//System.out.format("lastPoint1=%s, lastPoint2=%s, points1=%s, points2=%s%n%n", lastPoint1, lastPoint2, points1, points2);
 					}
 					lastPoint1 = points1.get(points1.size() - 1);
 					lastPoint2 = points2.get(0);
