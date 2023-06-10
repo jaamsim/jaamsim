@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -299,8 +300,6 @@ public class GraphModel extends DisplayModel {
 				return;
 			}
 
-			updateObjectTrans(simTime);
-
 			registerCacheMiss("Graph");
 
 			// This factor is applied to lengths expressed as a fraction of the graph's y-extent and
@@ -354,7 +353,12 @@ public class GraphModel extends DisplayModel {
 			xAxisTickSize = labelHeight/2; // vertical tick marks for the x-axis
 			yAxisTickSize = xAxisTickSize * xScaleFactor; // horizontal tick marks for the y-axis
 
-			zBump = 0.001 * objectSize.x;  // z-coordinate;
+			// Calculate the z-coordinate offset for the layers
+			zBump = 0.001d;
+			if (objectSize.z > 0.0d)
+				zBump *= objectSize.x / objectSize.z;
+
+			updateObjectTrans(simTime);
 
 			// Draw the main frame
 			out.add(new PolygonProxy(RenderUtils.RECT_POINTS, objectTrans, objectScale, backgroundColor.getValue(), false, 1, getVisibilityInfo(), pickingID));
@@ -699,7 +703,7 @@ public class GraphModel extends DisplayModel {
 
 			// Center position of the graph
 			graphCenter = new Vec3d( leftMargin.getValue()/2 - rightMargin.getValue()/2,
-					bottomMargin.getValue()/2 - topMargin.getValue()/2, 0.0 );
+					bottomMargin.getValue()/2 - topMargin.getValue()/2, 0.5d*zBump );
 
 			graphOrigin = new Vec3d( graphCenter.x - graphSize.x/2, graphCenter.y - graphSize.y/2, 0.0  );
 
