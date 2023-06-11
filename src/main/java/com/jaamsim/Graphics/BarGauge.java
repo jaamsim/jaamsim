@@ -21,6 +21,7 @@ import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
+import com.jaamsim.math.Vec3d;
 import com.jaamsim.units.DimensionlessUnit;
 
 public class BarGauge extends DisplayEntity {
@@ -60,6 +61,13 @@ public class BarGauge extends DisplayEntity {
 		double ret = dataSource.getNextSample(this, simTime);
 		ret = Math.min(ret, 1.0d);
 		ret = Math.max(ret, 0.0d);
+		return ret;
+	}
+
+	@Override
+		public Vec3d getSize() {
+		Vec3d ret = super.getSize();
+		ret.z = Math.max(ret.z, 0.001d);
 		return ret;
 	}
 

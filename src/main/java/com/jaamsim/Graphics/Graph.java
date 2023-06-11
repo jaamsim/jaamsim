@@ -34,6 +34,7 @@ import com.jaamsim.input.Keyword;
 import com.jaamsim.input.UnitTypeInput;
 import com.jaamsim.input.ValueListInput;
 import com.jaamsim.math.Color4d;
+import com.jaamsim.math.Vec3d;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
 import com.jaamsim.units.Unit;
@@ -261,6 +262,13 @@ public class Graph extends GraphBasics  {
 		// Populate the primary series data structures
 		populateSeriesInfo(primarySeries, dataSource);
 		populateSeriesInfo(secondarySeries, secondaryDataSource);
+	}
+
+	@Override
+		public Vec3d getSize() {
+		Vec3d ret = super.getSize();
+		ret.z = Math.max(ret.z, 0.001d);
+		return ret;
 	}
 
 	private void populateSeriesInfo(ArrayList<SeriesInfo> infos, SampleListInput data) {
