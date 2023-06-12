@@ -16,7 +16,7 @@
  */
 package com.jaamsim.Graphics;
 
-public interface PolylineEntity extends LineEntity {
+public interface PolylineEntity extends LineEntity, FillEntity {
 	public double getPolylineWidth();
 	public boolean isClosed();
 }
