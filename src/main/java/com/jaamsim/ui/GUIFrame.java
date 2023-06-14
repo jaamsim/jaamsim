@@ -358,8 +358,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		this.setIconImages(GUIFrame.getWindowIcons());
 
 		//Set window size
-		setResizable( true );  //FIXME should be false, but this causes the window to be sized
-		                       //      and positioned incorrectly in the Windows 7 Aero theme
+		setResizable( false );
+
 		pack();
 
 		controlStartResume.requestFocusInWindow();
