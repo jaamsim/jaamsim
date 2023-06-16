@@ -433,7 +433,7 @@ public class PolylineModel extends AbstractShapeModel implements PolylineEntity 
 						Vec3d normal = new Vec3d();  // normal to vecIn and vecOut
 						normal.cross3(vecIn, vecOut);
 						if (MathUtils.isSmall(normal.mag3()/(vecIn.mag3()*vecOut.mag3())))
-							normal = zDir;
+							continue;
 						nIn = new Vec3d();
 						nIn.cross3(vecIn, normal);
 						nOut = new Vec3d();
