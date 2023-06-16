@@ -557,11 +557,11 @@ public class PolylineModel extends AbstractShapeModel implements PolylineEntity 
 						cachedProxies.add(new PolygonProxy(points, Transform.ident, DisplayModel.ONES,
 								fillColourCache, false, 1, viCache, id));
 						//System.out.format("lastPoint1=%s, lastPoint2=%s, points1=%s, points2=%s%n%n", lastPoint1, lastPoint2, points1, points2);
+						points1.clear();
+						points2.clear();
 					}
 					lastPoint1 = points1.get(points1.size() - 1);
 					lastPoint2 = points2.get(0);
-					points1.clear();
-					points2.clear();
 				}
 			}
 		}
