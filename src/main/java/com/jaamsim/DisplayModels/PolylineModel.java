@@ -546,6 +546,8 @@ public class PolylineModel extends AbstractShapeModel implements PolylineEntity 
 					}
 
 					// Show the polygon formed by the present points and the last points
+					Vec4d lastPt1 = new Vec4d(points1.get(points1.size() - 1));
+					Vec4d lastPt2 = new Vec4d(points2.get(0));
 					if (lastPoint1 != null && lastPoint2 != null) {
 						ArrayList<Vec4d> points = new ArrayList<>();
 						points.add(lastPoint1);
@@ -560,8 +562,8 @@ public class PolylineModel extends AbstractShapeModel implements PolylineEntity 
 						points1.clear();
 						points2.clear();
 					}
-					lastPoint1 = points1.get(points1.size() - 1);
-					lastPoint2 = points2.get(0);
+					lastPoint1 = lastPt1;
+					lastPoint2 = lastPt2;
 				}
 			}
 		}
