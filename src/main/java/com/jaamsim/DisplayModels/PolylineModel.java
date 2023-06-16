@@ -483,8 +483,9 @@ public class PolylineModel extends AbstractShapeModel implements PolylineEntity 
 						Vec3d diff = new Vec3d(pOut);
 						diff.sub3(pIn);
 						Vec3d delta = new Vec3d(vecIn);
-						delta.scale3(diff.dot3(nOut)/vecIn.dot3(nOut));
-						if (delta.mag3()/halfWidth < 4.0d) {
+						double factor = diff.dot3(nOut)/vecIn.dot3(nOut);
+						delta.scale3(factor);
+						if (factor < 0.0d || delta.mag3()/halfWidth < 4.0d) {
 							// Midpoint between the closest points along vecIn and vecOut
 							Vec3d p0 = new Vec3d(pIn);
 							p0.add3(delta);
@@ -526,8 +527,9 @@ public class PolylineModel extends AbstractShapeModel implements PolylineEntity 
 						Vec3d diff = new Vec3d(pOut);
 						diff.sub3(pIn);
 						Vec3d delta = new Vec3d(vecIn);
-						delta.scale3(diff.dot3(nOut)/vecIn.dot3(nOut));
-						if (delta.mag3()/halfWidth < 4.0d) {
+						double factor = diff.dot3(nOut)/vecIn.dot3(nOut);
+						delta.scale3(factor);
+						if (factor < 0.0d || delta.mag3()/halfWidth < 4.0d) {
 							// Midpoint between the closest points along vecIn and vecOut
 							Vec3d p0 = new Vec3d(pIn);
 							p0.add3(delta);
