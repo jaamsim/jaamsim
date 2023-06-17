@@ -1452,10 +1452,18 @@ public class DisplayEntity extends Entity {
 	// Outputs
 	////////////////////////////////////////////////////////////////////////
 
+	@Output(name = "Region",
+	 description = "The present coordinate system in which the DisplayEntity's position and"
+	             + "orientation are given.",
+	    sequence = 1)
+	public Region getRegionOutput(double simTime) {
+		return getCurrentRegion();
+	}
+
 	@Output(name = "Position",
 	 description = "The present {x, y, z} coordinates of the DisplayEntity in its Region.",
 	    unitType = DistanceUnit.class,
-	    sequence = 0)
+	    sequence = 2)
 	public Vec3d getPosOutput(double simTime) {
 		return getPosition();
 	}
@@ -1463,7 +1471,7 @@ public class DisplayEntity extends Entity {
 	@Output(name = "Size",
 	 description = "The present {x, y, z} components of the DisplayEntity's size.",
 	    unitType = DistanceUnit.class,
-	    sequence = 1)
+	    sequence = 3)
 	public Vec3d getSizeOutput(double simTime) {
 		return getSize();
 	}
@@ -1471,7 +1479,7 @@ public class DisplayEntity extends Entity {
 	@Output(name = "Orientation",
 	 description = "The present {x, y, z} Euler angles of the DisplayEntity's rotation.",
 	    unitType = AngleUnit.class,
-	    sequence = 2)
+	    sequence = 4)
 	public Vec3d getOrientOutput(double simTime) {
 		return getOrientation();
 	}
@@ -1481,14 +1489,14 @@ public class DisplayEntity extends Entity {
 	             + "direction with the position output. Each component should be in the range "
 	             + "[-0.5, 0.5].",
 	    unitType = DimensionlessUnit.class,
-	    sequence = 3)
+	    sequence = 5)
 	public Vec3d getAlignOutput(double simTime) {
 		return getAlignment();
 	}
 
 	@Output(name = "Show",
 	 description = "Returns TRUE if the object is shown in one or more view windows.",
-	    sequence = 4)
+	    sequence = 6)
 	public boolean getShow(double simTime) {
 		if (isPooled())
 			return false;
@@ -1504,7 +1512,7 @@ public class DisplayEntity extends Entity {
 	             + "Points and CurveType inputs.\n"
 	             + "Non-polyline type objects: the largest of the Size inputs.",
 	    unitType = DistanceUnit.class,
-	    sequence = 5)
+	    sequence = 7)
 	public double getGraphicalLength(double simTime) {
 		if (usePointsInput()) {
 			return PolylineInfo.getLength(getCurvePoints());
@@ -1515,28 +1523,28 @@ public class DisplayEntity extends Entity {
 
 	@Output(name = "ObserverList",
 	 description = "The observers that are monitoring the state of this entity.",
-	    sequence = 6)
+	    sequence = 8)
 	public ArrayList<ObserverEntity> getObserverList(double simTime) {
 		return getObserverList();
 	}
 
 	@Output(name = "NextList",
 	 description = "The entities that are immediately downstream from this entity.",
-	    sequence = 7)
+	    sequence = 9)
 	public ArrayList<DirectedEntity> getNextList(double simTime) {
 		return getNextList(true);
 	}
 
 	@Output(name = "PreviousList",
 	 description = "The entities that are immediately upstream from this entity.",
-	    sequence = 8)
+	    sequence = 10)
 	public ArrayList<DirectedEntity> getPreviousList(double simTime) {
 		return getPreviousList(true);
 	}
 
 	@Output(name = "EntityReferenceList",
 	 description = "The entities that appear in the inputs to this entity.",
-	    sequence = 9)
+	    sequence = 11)
 	public ArrayList<DisplayEntity> getEntityReferenceList(double simTime) {
 		ArrayList<Entity> list = getEntityReferences();
 		ArrayList<DisplayEntity> ret = new ArrayList<>(list.size());
