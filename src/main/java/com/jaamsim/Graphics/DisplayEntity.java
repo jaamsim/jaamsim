@@ -540,6 +540,18 @@ public class DisplayEntity extends Entity {
 		showPolylineGraphicsKeywords(false);
 	}
 
+	public Region getCurrentRegion() {
+		synchronized (position) {
+			return currentRegion;
+		}
+	}
+
+	public void setRegion(Region newRegion) {
+		synchronized (position) {
+			currentRegion = newRegion;
+		}
+	}
+
 	public Vec3d getPosition() {
 		synchronized (position) {
 			return new Vec3d(position);
@@ -620,18 +632,6 @@ public class DisplayEntity extends Entity {
 
 	public ArrayList<String> getRegionOptions() {
 		return regionInput.getValidOptions(this);
-	}
-
-	public Region getCurrentRegion() {
-		return currentRegion;
-	}
-
-	/**
-	 * Removes the entity from its current region and assigns a new region
-	 * @param newRegion - the region the entity will be assigned to
-	 */
-	public void setRegion( Region newRegion ) {
-		currentRegion = newRegion;
 	}
 
 	public ArrayList<View> getVisibleViews() {
