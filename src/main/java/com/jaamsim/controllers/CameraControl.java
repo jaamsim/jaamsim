@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2012 Ausenco Engineering Canada Inc.
- * Copyright (C) 2019-2020 JaamSim Software Inc.
+ * Copyright (C) 2019-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -383,27 +383,22 @@ public class CameraControl implements WindowInteractionListener {
 	public void mouseButtonDown(int windowID, int x, int y, int button, boolean isDown, int modifiers) {
 		if (!RenderManager.isGood()) { return; }
 
-		// We need to cache dragging
+		// If the left mouse button is down, set the point of interest for zooming and rotating
 		if (button == 1 && isDown) {
 			Vec3d clickPoint = RenderManager.inst().getNearestPick(_windowID);
-			if (clickPoint != null) {
-				setPOI(clickPoint);
-				//dragPlane = new Plane(Vec4d.Z_AXIS, clickPoint.z);
-			} else {
-				// Set the drag plane to the XY_PLANE
+
+			// If no object is under the mouse then default to the xy-plane
+			if (clickPoint == null) {
 				Renderer.WindowMouseInfo info = _renderer.getMouseInfo(_windowID);
-				if (info == null) return;
-
-				//Cast a ray into the XY plane both for now, and for the previous mouse position
-				Ray mouseRay = RenderUtils.getPickRayForPosition(info.cameraInfo, x, y, info.width, info.height);
-				double dist = RenderManager.XY_PLANE.collisionDist(mouseRay);
-				if (dist < 0) {
-					return;
+				if (info != null) {
+					Ray mouseRay = RenderUtils.getPickRayForPosition(info.cameraInfo, x, y, info.width, info.height);
+					double dist = RenderManager.XY_PLANE.collisionDist(mouseRay);
+					if (dist >= 0.0d)
+						clickPoint = mouseRay.getPointAtDist(dist);
 				}
-				setPOI(mouseRay.getPointAtDist(dist));
-				//dragPlane = Plane.XY_PLANE;
-
 			}
+			if (clickPoint != null)
+				setPOI(clickPoint);
 		}
 
 		RenderManager.inst().handleMouseButton(windowID, x, y, button, isDown, modifiers);
