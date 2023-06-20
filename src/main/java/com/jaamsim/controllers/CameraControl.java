@@ -384,7 +384,8 @@ public class CameraControl implements WindowInteractionListener {
 		if (!RenderManager.isGood()) { return; }
 
 		// If the left mouse button is down, set the point of interest for zooming and rotating
-		if (button == 1 && isDown) {
+		// (except when the shift/ctrl/alt buttons are pressed)
+		if (button == 1 && isDown && modifiers == 0) {
 			Vec3d clickPoint = RenderManager.inst().getNearestPick(_windowID);
 
 			// If no object is under the mouse then default to the xy-plane
