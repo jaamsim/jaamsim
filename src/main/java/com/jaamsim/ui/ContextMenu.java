@@ -254,7 +254,7 @@ public class ContextMenu {
 
 		// 2) Show Label
 		final EntityLabel label = EntityLabel.getLabel(ent);
-		boolean bool = label != null && label.getShow();
+		boolean bool = label != null && label.getShowInput();
 		final JMenuItem showLabelMenuItem = new JCheckBoxMenuItem( "Show Label", bool );
 		showLabelMenuItem.addActionListener( new ActionListener() {
 

@@ -214,7 +214,7 @@ public class EntityLabel extends TextBasics {
 		}
 
 		// Show or hide the label
-		if (label.getShow() == bool)
+		if (label.getShowInput() == bool)
 			return;
 		InputAgent.applyBoolean(label, "Show", bool);
 	}
