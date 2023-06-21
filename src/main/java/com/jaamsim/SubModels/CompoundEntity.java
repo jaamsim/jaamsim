@@ -198,10 +198,8 @@ public abstract class CompoundEntity extends LinkedComponent {
 			if (!(ent instanceof DisplayEntity))
 				continue;
 			DisplayEntity comp = (DisplayEntity) ent;
-			if (comp instanceof EntityLabel) {
-				comp.setShow(bool && getSimulation().isShowLabels());
+			if (comp instanceof EntityLabel)
 				continue;
-			}
 			comp.setShow(bool);
 		}
 	}

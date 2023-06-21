@@ -229,9 +229,6 @@ public class EntityLabel extends TextBasics {
 			label = EntityLabel.createLabel(ent, undo);
 			InputAgent.applyBoolean(label, "Show", false);
 		}
-
-		// Show or hide the label
-		label.setShow(bool || label.getShowInput());
 	}
 
 	public static boolean canLabel(DisplayEntity ent) {
@@ -252,8 +249,8 @@ public class EntityLabel extends TextBasics {
 
 	@Override
 	public boolean getShow(double simTime) {
-		return super.getShow(simTime) && getTarget() != null
-				&& getTarget().getShow(simTime) && getTarget().isMovable();
+		return (super.getShow(simTime) || getSimulation().isShowLabels())
+				&& getTarget() != null && getTarget().getShow(simTime) && getTarget().isMovable();
 	}
 
 }
