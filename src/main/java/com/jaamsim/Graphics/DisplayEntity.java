@@ -608,6 +608,16 @@ public class DisplayEntity extends Entity {
 		return getShow(0.0d);
 	}
 
+	public boolean getShow(double simTime) {
+		if (isPooled())
+			return false;
+		if (!showInput.isConstant())
+			return getShowInput(simTime);
+		synchronized (position) {
+			return show;
+		}
+	}
+
 	public boolean getShowInput(double simTime) {
 		return showInput.getNextBoolean(simTime);
 	}
@@ -1497,14 +1507,8 @@ public class DisplayEntity extends Entity {
 	@Output(name = "Show",
 	 description = "Returns TRUE if the object is shown in one or more view windows.",
 	    sequence = 6)
-	public boolean getShow(double simTime) {
-		if (isPooled())
-			return false;
-		if (!showInput.isConstant())
-			return getShowInput(simTime);
-		synchronized (position) {
-			return show;
-		}
+	public boolean getShowOutput(double simTime) {
+		return getShow(simTime);
 	}
 
 	@Output(name = "GraphicalLength",
