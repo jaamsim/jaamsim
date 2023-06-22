@@ -49,9 +49,6 @@ public class EntityLabel extends TextBasics {
 		this.addInput(targetEntity);
 
 		textHeight.setCallback(textHeightCallback);
-		targetEntity.setHidden(true);
-		relativeEntity.setHidden(true);
-		regionInput.setHidden(true);
 	}
 
 	public EntityLabel() {}
@@ -174,6 +171,9 @@ public class EntityLabel extends TextBasics {
 		InputAgent.applyArgs(label, "RelativeEntity", ent.getName());
 		if (ent.getCurrentRegion() != null)
 			InputAgent.applyArgs(label, "Region", ent.getCurrentRegion().getName());
+		label.getInput("TargetEntity").setLocked(true);
+		label.getInput("RelativeEntity").setLocked(true);
+		label.getInput("Region").setLocked(true);
 
 		// Set the visible views to match its target entity
 		if (ent.getVisibleViews() != null) {
