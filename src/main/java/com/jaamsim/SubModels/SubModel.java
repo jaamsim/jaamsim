@@ -25,7 +25,6 @@ import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.Region;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.GUIListener;
-import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.ExpressionHandle;
 import com.jaamsim.input.ExpressionInput;
@@ -107,17 +106,15 @@ public class SubModel extends CompoundEntity implements DragAndDropable {
 	};
 
 	@Override
+	public void postDefine() {
+		super.postDefine();
+		update();
+	}
+
+	@Override
 	public void setPrototype(Entity proto) {
 		super.setPrototype(proto);
-		if (proto == null)
-			return;
-
-		//System.out.format("%s.setPrototype(%s)%n", this, proto);
-		JaamSimModel simModel = getJaamSimModel();
-		boolean bool = simModel.isRecordEdits();
-		simModel.setRecordEdits(false);
-		createComponents();
-		simModel.setRecordEdits(bool);
+		update();
 	}
 
 	@Override
@@ -242,8 +239,9 @@ public class SubModel extends CompoundEntity implements DragAndDropable {
 	 * Adjusts the clone to match the present setting for its prototype sub-model.
 	 */
 	public void update() {
-		SubModel proto = (SubModel) getPrototype();
-		if (proto == null)
+
+		// Both the prototype and region must be set
+		if (getPrototype() == null || getSubModelRegion() == null)
 			return;
 
 		// Do not record the components and their inputs to be 'edited'
