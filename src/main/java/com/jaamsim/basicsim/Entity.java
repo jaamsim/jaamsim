@@ -472,8 +472,7 @@ public class Entity {
 
 		// Apply the inputs based on the source entity
 		for (Input<?> sourceInput : ent.getEditableInputs()) {
-			if (sourceInput.isSynonym() || sourceInput.getHidden()
-					|| sourceInput.getSequenceNumber() != seq)
+			if (sourceInput.isSynonym() || sourceInput.getSequenceNumber() != seq)
 				continue;
 			String key = sourceInput.getKeyword();
 			try {
@@ -1116,6 +1115,8 @@ public class Entity {
 		// Loop through the inputs for this entity
 		for (int i = 0; i < inpList.size(); i++) {
 			Input<?> in = inpList.get(i);
+			if (in.getKeyword().equals("Prototype"))
+				continue;
 
 			// Set the prototype input
 			in.setProtoInput(prototype.inpList.get(i));
