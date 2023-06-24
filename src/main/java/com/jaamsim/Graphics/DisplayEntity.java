@@ -29,6 +29,7 @@ import com.jaamsim.DisplayModels.ImageModel;
 import com.jaamsim.DisplayModels.PolylineModel;
 import com.jaamsim.DisplayModels.ShapeModel;
 import com.jaamsim.DisplayModels.TextModel;
+import com.jaamsim.SubModels.CompoundEntity;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.basicsim.GUIListener;
@@ -611,11 +612,17 @@ public class DisplayEntity extends Entity {
 	public boolean getShow(double simTime) {
 		if (isPooled())
 			return false;
+		boolean ret;
 		if (!showInput.isConstant())
-			return getShowInput(simTime);
+			ret = getShowInput(simTime);
 		synchronized (position) {
-			return show;
+			ret = show;
 		}
+		if (getParent() instanceof CompoundEntity) {
+			CompoundEntity sub = (CompoundEntity) getParent();
+			ret = ret && (sub.getShowComponents() || getSimulation().isShowSubModels());
+		}
+		return ret;
 	}
 
 	public boolean getShowInput(double simTime) {
