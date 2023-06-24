@@ -118,20 +118,6 @@ public class SubModel extends CompoundEntity implements DragAndDropable {
 	}
 
 	@Override
-	public void setInputsForDragAndDrop() {
-		super.setInputsForDragAndDrop();
-		SubModel proto = (SubModel) getPrototype();
-		if (proto == null)
-			return;
-
-		// Set the inputs for the clone to those for the prototype SubModel
-		copyInputs(proto, false);
-
-		// Create the clone's components
-		update();
-	}
-
-	@Override
 	public void postLoad() {
 		super.postLoad();
 		update();
