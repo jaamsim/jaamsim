@@ -33,7 +33,6 @@ import com.jaamsim.Graphics.EntityLabel;
 import com.jaamsim.ProbabilityDistributions.RandomStreamUser;
 import com.jaamsim.Samples.SampleExpression;
 import com.jaamsim.StringProviders.StringProvExpression;
-import com.jaamsim.SubModels.CompoundEntity;
 import com.jaamsim.SubModels.SubModel;
 import com.jaamsim.Thresholds.ThresholdUser;
 import com.jaamsim.datatypes.IntegerVector;
@@ -675,7 +674,6 @@ public class JaamSimModel implements EventTimeListener {
 		rngMap.clear();
 
 		// Keep the labels and sub-models consistent with the gui
-		showSubModels(getSimulation().isShowSubModels());
 		showTemporaryLabels(getSimulation().isShowLabels());
 
 		// Perform earlyInit
@@ -1889,12 +1887,6 @@ public class JaamSimModel implements EventTimeListener {
 			if (!EntityLabel.canLabel(ent))
 				continue;
 			EntityLabel.showTemporaryLabel(ent, bool, false);
-		}
-	}
-
-	public void showSubModels(boolean bool) {
-		for (CompoundEntity submodel : getClonesOfIterator(CompoundEntity.class)) {
-			submodel.showTemporaryComponents(bool);
 		}
 	}
 

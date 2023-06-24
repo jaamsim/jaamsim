@@ -1791,7 +1791,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				boolean bool = showSubModels.isSelected();
 				KeywordIndex kw = InputAgent.formatBoolean("ShowSubModels", bool);
 				InputAgent.storeAndExecute(new KeywordCommand(sim.getSimulation(), kw));
-				sim.showSubModels(bool);
 				updateUI();
 				controlStartResume.requestFocusInWindow();
 			}
@@ -4126,7 +4125,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		if (showSubModels.isSelected() == bool)
 			return;
 		showSubModels.setSelected(bool);
-		getJaamSimModel().showSubModels(bool);
 		updateUI();
 	}
 

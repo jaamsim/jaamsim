@@ -303,10 +303,6 @@ public class SubModel extends CompoundEntity implements DragAndDropable {
 				comp.copyInputs(protoComp, seq, true);
 			}
 		}
-
-		// Set the "Show" input for each component
-		boolean bool = getJaamSimModel().getSimulation().isShowSubModels();
-		showTemporaryComponents(bool);
 	}
 
 	@Override

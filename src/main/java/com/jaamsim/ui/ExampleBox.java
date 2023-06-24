@@ -322,7 +322,6 @@ public class ExampleBox extends JDialog {
 			// Add labels and sub-models
 			Simulation simulation = simModel.getSimulation();
 			simModel.showTemporaryLabels( simulation.isShowLabels() );
-			simModel.showSubModels( simulation.isShowSubModels() );
 
 			// Get the View to render
 			View view = null;
@@ -363,7 +362,6 @@ public class ExampleBox extends JDialog {
 
 		// Add labels and sub-models
 		simModel.showTemporaryLabels( simulation.isShowLabels() );
-		simModel.showSubModels( simulation.isShowSubModels() );
 
 		// Display the new model
 		GUIFrame.setRunManager(runMgr);

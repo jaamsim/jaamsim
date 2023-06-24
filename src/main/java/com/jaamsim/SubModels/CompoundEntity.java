@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
 import com.jaamsim.Graphics.DisplayEntity;
-import com.jaamsim.Graphics.EntityLabel;
 import com.jaamsim.Graphics.Region;
 import com.jaamsim.ProcessFlow.LinkedComponent;
 import com.jaamsim.basicsim.Entity;
@@ -59,7 +58,6 @@ public abstract class CompoundEntity extends LinkedComponent {
 		regionInput.setCallback(regionCallback);
 
 		showComponents = new BooleanInput("ShowComponents", FORMAT, false);
-		showComponents.setCallback(showComponentsCallback);
 		this.addInput(showComponents);
 
 		processPosition = new Vec3dInput("ProcessPosition", FORMAT, new Vec3d(0.0d, 0.0d, 0.01d));
@@ -89,24 +87,6 @@ public abstract class CompoundEntity extends LinkedComponent {
 		InputAgent.applyVec3d(smRegion, "Size",           new Vec3d(2.0d,  1.0d, 0.0d), DistanceUnit.class);
 		InputAgent.applyVec3d(smRegion, "Position",       new Vec3d(0.0d, -1.5d, 0.0d), DistanceUnit.class);
 		InputAgent.applyVec3d(smRegion, "Alignment",      new Vec3d(), DimensionlessUnit.class);
-	}
-
-	@Override
-	public void setInputsForDragAndDrop() {
-		super.setInputsForDragAndDrop();
-		boolean bool = getJaamSimModel().getSimulation().isShowSubModels();
-		showTemporaryComponents(bool);
-	}
-
-	static final InputCallback showComponentsCallback = new InputCallback() {
-		@Override
-		public void callback(Entity ent, Input<?> inp) {
-			((CompoundEntity)ent).updateShowComponents();
-		}
-	};
-
-	void updateShowComponents() {
-		showComponents(showComponents.getValue());
 	}
 
 	static final InputCallback regionCallback = new InputCallback() {
@@ -177,31 +157,6 @@ public abstract class CompoundEntity extends LinkedComponent {
 
 	public Region getSubModelRegion() {
 		return (Region) getChild(smRegionName);
-	}
-
-	/**
-	 * Displays or hides the sub-model's components.
-	 * @param bool - if true, the components are displayed; if false, they are hidden.
-	 */
-	public void showComponents(boolean bool) {
-		for (Entity ent : getChildren()) {
-			if (!(ent instanceof DisplayEntity))
-				continue;
-			DisplayEntity comp = (DisplayEntity) ent;
-			InputAgent.applyBoolean(comp, "Show", bool);
-		}
-	}
-
-	public void showTemporaryComponents(boolean bool) {
-		bool = bool || getShowComponents();
-		for (Entity ent : getChildren()) {
-			if (!(ent instanceof DisplayEntity))
-				continue;
-			DisplayEntity comp = (DisplayEntity) ent;
-			if (comp instanceof EntityLabel)
-				continue;
-			comp.setShow(bool);
-		}
 	}
 
 	public boolean getShowComponents() {
