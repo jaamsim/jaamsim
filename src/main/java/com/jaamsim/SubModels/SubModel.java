@@ -250,7 +250,15 @@ public class SubModel extends CompoundEntity implements DragAndDropable {
 
 		// Update the components
 		createComponents();
-		setComponentInputs();
+
+		// Set the inputs for each component
+		for (int seq = 0; seq < 2; seq++) {
+			for (Entity protoComp : getPrototype().getChildren()) {
+				String localName = protoComp.getLocalName();
+				Entity comp = getChild(localName);
+				comp.copyInputs(protoComp, seq, true);
+			}
+		}
 
 		// Reset the record edits state
 		getJaamSimModel().setRecordEdits(bool);
@@ -284,21 +292,6 @@ public class SubModel extends CompoundEntity implements DragAndDropable {
 			if (comp instanceof DisplayEntity && !(comp instanceof Region)) {
 				InputAgent.applyArgs(comp, "Region", proto.getSubModelRegion().getName());
 				comp.getInput("Region").setLocked(true);
-			}
-		}
-	}
-
-	protected void setComponentInputs() {
-		SubModel proto = (SubModel) getPrototype();
-		if (proto == null)
-			return;
-
-		// Set the early and normal keywords for each component
-		for (int seq = 0; seq < 2; seq++) {
-			for (Entity protoComp : proto.getChildren()) {
-				String localName = protoComp.getLocalName();
-				Entity comp = getChild(localName);
-				comp.copyInputs(protoComp, seq, true);
 			}
 		}
 	}
