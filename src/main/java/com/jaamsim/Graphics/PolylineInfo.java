@@ -37,10 +37,16 @@ public class PolylineInfo {
 	private final ArrayList<Vec3d> curvePoints;
 	private final Color4d color;
 	private final int width; // Line width in pixels
+	private final double polylineWidth; // Line width in metres
 
 	public PolylineInfo(ArrayList<Vec3d> pts, Color4d col, int w) {
+		this(pts, col, w, -1.0d);
+	}
+
+	public PolylineInfo(ArrayList<Vec3d> pts, Color4d col, int w, double pw) {
 		color = col;
 		width = w;
+		polylineWidth = pw;
 		curvePoints = pts;
 	}
 
@@ -51,9 +57,10 @@ public class PolylineInfo {
 
 		PolylineInfo pi = (PolylineInfo)o;
 
-		return curvePoints != null && curvePoints.equals(pi.curvePoints) &&
-		       color != null && color.equals(pi.color) &&
-		       width == pi.width;
+		return curvePoints != null && curvePoints.equals(pi.curvePoints)
+		       && color != null && color.equals(pi.color)
+		       && width == pi.width
+		       && polylineWidth == pi.polylineWidth;
 	}
 
 	public ArrayList<Vec3d> getCurvePoints() {
@@ -66,6 +73,10 @@ public class PolylineInfo {
 
 	public int getWidth() {
 		return width;
+	}
+
+	public double getPolylineWidth() {
+		return polylineWidth;
 	}
 
 	@Override
