@@ -367,7 +367,8 @@ public class ExpressionBox extends JDialog {
 			valStr = input.getPresentValueString(ent, simTime);
 		}
 		catch (Exception e) {
-			valStr = "Cannot evaluate at this time";
+			msgText.setText("CANNOT EVALUATE: " + e.getMessage());
+			return;
 		}
 		msgText.setText(formatMessage(true, valStr));
 	}
