@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2016 JaamSim Software Inc.
+ * Copyright (C) 2016-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package com.jaamsim.input;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +27,7 @@ import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.datatypes.IntegerVector;
 import com.jaamsim.input.ExpResult.Iterator;
+import com.jaamsim.math.Vec3d;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 
@@ -42,6 +44,9 @@ public class ExpCollections {
 			return true;
 		}
 		if (IntegerVector.class.isAssignableFrom(klass)) {
+			return true;
+		}
+		if (Vec3d.class.isAssignableFrom(klass)) {
 			return true;
 		}
 		if (klass.isArray()) {
@@ -81,6 +86,15 @@ public class ExpCollections {
 
 		if (obj instanceof IntegerVector) {
 			IntegerVectorCollection col = new IntegerVectorCollection((IntegerVector)obj, ut);
+			return ExpResult.makeCollectionResult(col);
+		}
+
+		if (obj instanceof Vec3d) {
+			Vec3d v = (Vec3d) obj;
+			ListCollection col = new ListCollection(Arrays.asList(
+					ExpResult.makeNumResult(v.x, ut),
+					ExpResult.makeNumResult(v.y, ut),
+					ExpResult.makeNumResult(v.z, ut)), ut);
 			return ExpResult.makeCollectionResult(col);
 		}
 
