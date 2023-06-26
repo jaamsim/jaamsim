@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2016 JaamSim Software Inc.
+ * Copyright (C) 2016-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -82,4 +82,14 @@ public class ExpValResult {
 		else
 			errors = es;
 	}
+
+	@Override
+	public String toString() {
+		String utStr = "null";
+		if (unitType != null)
+			utStr = unitType.getSimpleName();
+		return String.format("state=%s, errors=%s, unitType=%s, type=%s",
+				state, errors, utStr, type);
+	}
+
 }
