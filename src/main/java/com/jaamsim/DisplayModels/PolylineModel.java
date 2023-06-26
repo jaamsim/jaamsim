@@ -380,7 +380,6 @@ public class PolylineModel extends AbstractShapeModel implements PolylineEntity 
 		}
 
 		private void addWidePolylineProxies() {
-			double halfWidth = 0.5d * widthCache;
 			Vec3d zDir = new Vec3d(0.0d, 0.0d, 1.0d);
 			long id = displayObservee.getEntityNumber();
 			Vec4d lastPoint1 = null;
@@ -395,6 +394,15 @@ public class PolylineModel extends AbstractShapeModel implements PolylineEntity 
 				List<Vec4d> points2 = new ArrayList<>();  // points on side 2
 				for (int i = 0; i < curvePoints.size(); ++i) {
 					Vec3d pt = curvePoints.get(i);
+
+					double halfWidth = pi.getPolylineWidth();
+					if (halfWidth < 0.0d)
+						halfWidth = widthCache;
+					halfWidth *= 0.5d;
+
+					Color4d col = pi.getColor();
+					if (col == null)
+						col = fillColourCache;
 
 					// Vector towards the point
 					Vec3d vecIn = null;
@@ -559,7 +567,7 @@ public class PolylineModel extends AbstractShapeModel implements PolylineEntity 
 						if (globalTransCache != null)
 							RenderUtils.transformPointsLocal(globalTransCache, points, 0);
 						cachedProxies.add(new PolygonProxy(points, Transform.ident, DisplayModel.ONES,
-								fillColourCache, false, 1, viCache, id));
+								col, false, 1, viCache, id));
 						//System.out.format("lastPoint1=%s, lastPoint2=%s, points1=%s, points2=%s%n%n", lastPoint1, lastPoint2, points1, points2);
 						points1.clear();
 						points2.clear();
