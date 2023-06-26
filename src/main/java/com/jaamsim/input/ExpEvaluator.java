@@ -252,8 +252,10 @@ public class ExpEvaluator {
 				isExpResult = false;
 				type = getTypeForClass(retType);
 				if (type == null) {
-					throw new ExpError(null, 0, "Output '%s' on entity '%s does not return a type compatible with the expression engine'",
-					                   oh.getName(), oh.ent.getName());
+					throw new ExpError(null, 0,
+							"Output '%s' on entity '%s' returns a type that is incompatible with "
+							+ "the expression engine",
+							oh.getName(), oh.ent.getName());
 				}
 			}
 		}
