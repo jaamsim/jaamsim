@@ -354,7 +354,7 @@ public class ExpressionBox extends JDialog {
 			acceptButton.setEnabled(true);
 		}
 		catch (Exception e) {
-			msgText.setText(formatMessage(false, e.getMessage()));
+			msgText.setText("SYNTAX ERROR: " + e.getMessage());
 			acceptButton.setEnabled(false);
 			return;
 		}
@@ -370,14 +370,7 @@ public class ExpressionBox extends JDialog {
 			msgText.setText("CANNOT EVALUATE: " + e.getMessage());
 			return;
 		}
-		msgText.setText(formatMessage(true, valStr));
-	}
-
-	private static String formatMessage(boolean isValid, String str) {
-		if (isValid)
-			return "PRESENT VALUE: " + str;
-		else
-			return "ERROR: " + str;
+		msgText.setText("PRESENT VALUE: " + valStr);
 	}
 
 	public int showDialog() {
