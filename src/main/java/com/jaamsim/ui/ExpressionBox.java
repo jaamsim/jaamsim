@@ -41,10 +41,10 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -73,7 +73,7 @@ public class ExpressionBox extends JDialog {
 
 	private final Input<?> input;
 	private final JTextArea editArea;
-	private final JTextField msgText;
+	private final JTextArea msgText;
 	private final JButton acceptButton;
 	private final JButton cancelButton;
 	private int result;
@@ -130,23 +130,25 @@ public class ExpressionBox extends JDialog {
 		getContentPane().add( buttonBar, BorderLayout.NORTH );
 
 		// Result value or error message
-		msgText = new JTextField("", 80);
+		msgText = new JTextArea(3, 80);
+		msgText.setFont(UIManager.getFont("TextField.font"));
+		msgText.setText("");
 		msgText.setEditable(false);
 		msgText.setToolTipText(GUIFrame.formatToolTip("Result",
 				"The value returned by a valid input or "
 				+ "the error message returned an invalid input."));
+		JScrollPane msgPane = new JScrollPane(msgText);
 		int msgHeight = msgText.getPreferredSize().height;
 
 		// Entity and keyword
 		Entity ent = EditBox.getInstance().getCurrentEntity();
 		JLabel keyText = new JLabel(String.format("%s - %s", ent, input.getKeyword()));
 		keyText.setToolTipText(EditBox.getInputDesc(ent, input));
-		keyText.setPreferredSize(new Dimension(keyText.getPreferredSize().width, msgHeight));
 
 		JPanel leftPanel = new JPanel();
 		leftPanel.setLayout( new BorderLayout() );
 		leftPanel.add(keyText, BorderLayout.NORTH);
-		leftPanel.add(msgText, BorderLayout.SOUTH);
+		leftPanel.add(msgPane, BorderLayout.SOUTH);
 
 		// Buttons
 		acceptButton = new JButton("Accept");
@@ -168,7 +170,7 @@ public class ExpressionBox extends JDialog {
 		southPanel.add(leftPanel);
 		southPanel.add(Box.createRigidArea(new Dimension(10, msgHeight)));
 		southPanel.add(rightPanel);
-		southPanel.setBorder(new EmptyBorder(0, 10, 0, 0));
+		southPanel.setBorder(new EmptyBorder(0, 5, 0, 5));
 		getContentPane().add(southPanel, BorderLayout.SOUTH);
 
 		pack();
