@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2022 JaamSim Software Inc.
+ * Copyright (C) 2016-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -1327,9 +1327,8 @@ public class ExpParser {
 			return;
 
 		if (exp.validationResult.unitType != unitType) {
-			throw new InputErrorException("Invalid unit returned by an expression: '%s'%n"
+			throw new InputErrorException("Invalid unit returned by an expression.%n"
 					+ "Received: %s, expected: %s",
-					exp,
 					exp.validationResult.unitType.getSimpleName(),
 					unitType.getSimpleName());
 		}
@@ -1340,9 +1339,9 @@ public class ExpParser {
 			return;
 
 		if (exp.validationResult.type != type) {
-			throw new InputErrorException("Incorrect result type returned by expression: '%s'%n"
+			throw new InputErrorException("Incorrect result type returned by expression.%n"
 					+ "Received: %s, expected: %s",
-					exp, exp.validationResult.type, type);
+					exp.validationResult.type, type);
 		}
 	}
 
