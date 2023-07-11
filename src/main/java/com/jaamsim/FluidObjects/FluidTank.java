@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +18,10 @@
 package com.jaamsim.FluidObjects;
 
 import com.jaamsim.DisplayModels.ShapeModel;
+import com.jaamsim.basicsim.Entity;
 import com.jaamsim.input.ColourInput;
+import com.jaamsim.input.Input;
+import com.jaamsim.input.InputCallback;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.ValueInput;
@@ -62,6 +66,7 @@ public class FluidTank extends FluidComponent {
 		initialVolumeInput = new ValueInput( "InitialVolume", KEY_INPUTS, 0.0d);
 		initialVolumeInput.setValidRange( 0.0, Double.POSITIVE_INFINITY);
 		initialVolumeInput.setUnitType( VolumeUnit.class );
+		initialVolumeInput.setCallback(updateInitialVolumeInputCallback);
 		this.addInput( initialVolumeInput);
 
 		ambientPressureInput = new ValueInput( "AmbientPressure", KEY_INPUTS, 0.0d);
@@ -74,10 +79,18 @@ public class FluidTank extends FluidComponent {
 		this.addInput( inletHeightInput);
 	}
 
+	static final InputCallback updateInitialVolumeInputCallback = new InputCallback() {
+		@Override
+		public void callback(Entity ent, Input<?> inp) {
+			double val = ((ValueInput) inp).getValue();
+			((FluidTank) ent).setFluidVolume(val);
+		}
+	};
+
 	@Override
 	public void earlyInit() {
 		super.earlyInit();
-		fluidVolume = initialVolumeInput.getValue();
+		setFluidVolume(initialVolumeInput.getValue());
 	}
 
 	@Override
@@ -105,6 +118,10 @@ public class FluidTank extends FluidComponent {
 			pres += ( fluidLevel - h) * this.getFluid().getDensityxGravity();
 		}
 		return pres;
+	}
+
+	public void setFluidVolume(double val) {
+		fluidVolume = val;
 	}
 
 	@Override
