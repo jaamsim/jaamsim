@@ -1192,7 +1192,7 @@ public class DisplayEntity extends Entity {
 
 	public PolylineInfo[] buildScreenPoints(double simTime) {
 		PolylineInfo[] ret = new PolylineInfo[1];
-		ret[0] = new PolylineInfo(getCurvePoints(), null, -1);
+		ret[0] = new PolylineInfo(getCurvePoints(), null, -1, -1.0d);
 		return ret;
 	}
 

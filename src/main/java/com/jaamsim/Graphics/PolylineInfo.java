@@ -39,10 +39,6 @@ public class PolylineInfo {
 	private final int width; // Line width in pixels
 	private final double polylineWidth; // Line width in metres
 
-	public PolylineInfo(ArrayList<Vec3d> pts, Color4d col, int w) {
-		this(pts, col, w, -1.0d);
-	}
-
 	public PolylineInfo(ArrayList<Vec3d> pts, Color4d col, int w, double pw) {
 		color = col;
 		width = w;
