@@ -62,18 +62,20 @@ public class Polyline extends AbstractShape implements PolylineEntity  {
 
 	@Override
 	public boolean isClosed() {
-		if (closed.isDefault() && getDisplayModel() instanceof PolylineEntity) {
-			PolylineEntity model = (PolylineEntity) getDisplayModel();
-			return model.isClosed();
+		if (closed.isDefault()) {
+			PolylineEntity model = getDisplayModel(PolylineEntity.class);
+			if (model != null)
+				return model.isClosed();
 		}
 		return closed.getValue();
 	}
 
 	@Override
 	public double getPolylineWidth() {
-		if (polylineWidth.isDefault() && getDisplayModel() instanceof PolylineEntity) {
-			PolylineEntity model = (PolylineEntity) getDisplayModel();
-			return model.getPolylineWidth();
+		if (polylineWidth.isDefault()) {
+			PolylineEntity model = getDisplayModel(PolylineEntity.class);
+			if (model != null)
+				return model.getPolylineWidth();
 		}
 		return polylineWidth.getValue();
 	}
