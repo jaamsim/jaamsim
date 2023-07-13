@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2021 JaamSim Software Inc.
+ * Copyright (C) 2021-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -80,45 +80,50 @@ public abstract class AbstractShape extends DisplayEntity implements LineEntity,
 
 	@Override
 	public boolean isFilled() {
-		if (filled.isDefault() && getDisplayModel() instanceof FillEntity) {
-			FillEntity model = (FillEntity) getDisplayModel();
-			return model.isFilled();
+		if (filled.isDefault()) {
+			FillEntity model = getDisplayModel(FillEntity.class);
+			if (model != null)
+				return model.isFilled();
 		}
 		return filled.getValue();
 	}
 
 	@Override
 	public Color4d getFillColour() {
-		if (fillColour.isDefault() && getDisplayModel() instanceof FillEntity) {
-			FillEntity model = (FillEntity) getDisplayModel();
-			return model.getFillColour();
+		if (fillColour.isDefault()) {
+			FillEntity model = getDisplayModel(FillEntity.class);
+			if (model != null)
+				return model.getFillColour();
 		}
 		return fillColour.getValue();
 	}
 
 	@Override
 	public boolean isOutlined() {
-		if (outlined.isDefault() && getDisplayModel() instanceof LineEntity) {
-			LineEntity model = (LineEntity) getDisplayModel();
-			return model.isOutlined();
+		if (outlined.isDefault()) {
+			LineEntity model = getDisplayModel(LineEntity.class);
+			if (model != null)
+				return model.isOutlined();
 		}
 		return outlined.getValue();
 	}
 
 	@Override
 	public int getLineWidth() {
-		if (lineWidth.isDefault() && getDisplayModel() instanceof LineEntity) {
-			LineEntity model = (LineEntity) getDisplayModel();
-			return model.getLineWidth();
+		if (lineWidth.isDefault()) {
+			LineEntity model = getDisplayModel(LineEntity.class);
+			if (model != null)
+				return model.getLineWidth();
 		}
 		return lineWidth.getValue();
 	}
 
 	@Override
 	public Color4d getLineColour() {
-		if (lineColour.isDefault() && getDisplayModel() instanceof LineEntity) {
-			LineEntity model = (LineEntity) getDisplayModel();
-			return model.getLineColour();
+		if (lineColour.isDefault()) {
+			LineEntity model = getDisplayModel(LineEntity.class);
+			if (model != null)
+				return model.getLineColour();
 		}
 		return lineColour.getValue();
 	}
