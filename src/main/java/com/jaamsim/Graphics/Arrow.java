@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2009-2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2017-2019 JaamSim Software Inc.
+ * Copyright (C) 2017-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@
  */
 package com.jaamsim.Graphics;
 
-import com.jaamsim.DisplayModels.DisplayModel;
 import com.jaamsim.DisplayModels.PolylineModel;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.IntegerInput;
@@ -66,17 +65,12 @@ public class Arrow extends DisplayEntity implements LineEntity {
 
 	public Arrow() {}
 
-	public PolylineModel getPolylineModel() {
-		DisplayModel dm = getDisplayModel();
-		if (dm instanceof PolylineModel)
-			return (PolylineModel) dm;
-		return null;
-	}
-
 	public Vec3d getArrowHeadSize() {
-		PolylineModel plModel = getPolylineModel();
-		if (arrowHeadSize.isDefault() && plModel != null)
-			return plModel.getArrowHeadSize();
+		if (arrowHeadSize.isDefault()) {
+			PolylineModel model = getDisplayModel(PolylineModel.class);
+			if (model != null)
+				return model.getArrowHeadSize();
+		}
 		return arrowHeadSize.getValue();
 	}
 
@@ -87,17 +81,21 @@ public class Arrow extends DisplayEntity implements LineEntity {
 
 	@Override
 	public int getLineWidth() {
-		PolylineModel model = getPolylineModel();
-		if (width.isDefault() && model != null)
-			return model.getLineWidth();
+		if (width.isDefault()) {
+			LineEntity model = getDisplayModel(LineEntity.class);
+			if (model != null)
+				return model.getLineWidth();
+		}
 		return width.getValue();
 	}
 
 	@Override
 	public Color4d getLineColour() {
-		PolylineModel model = getPolylineModel();
-		if (color.isDefault() && model != null)
-			return model.getLineColour();
+		if (color.isDefault()) {
+			LineEntity model = getDisplayModel(LineEntity.class);
+			if (model != null)
+				return model.getLineColour();
+		}
 		return color.getValue();
 	}
 
