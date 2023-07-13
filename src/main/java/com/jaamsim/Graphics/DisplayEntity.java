@@ -978,19 +978,11 @@ public class DisplayEntity extends Entity {
 	}
 
 	/**
-	 * Returns the first display model for the entity.
-	 * Null is returned if the entity does not have a display model.
-	 * @return first DisplayModel
+	 * Returns the first entry in the 'DisplayModel' input that is an instance of the specified
+	 * class (or sub-class) or that implements the specified interface.
+	 * Null is returned if no such DisplayModel is found.
+	 * @return first DisplayModel that is an instance of the class or implements the interface
 	 */
-	public DisplayModel getDisplayModel() {
-		ArrayList<DisplayModel> list = displayModelListInput.getValue();
-		if (displayModelListInput.isDefault())
-			list = displayModelListInput.getDefaultValue();
-		if (list == null || list.isEmpty())
-			return null;
-		return list.get(0);
-	}
-
 	@SuppressWarnings("unchecked")
 	public <T> T getDisplayModel(Class<T> klass) {
 		ArrayList<DisplayModel> list = displayModelListInput.getValue();
