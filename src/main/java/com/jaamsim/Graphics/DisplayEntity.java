@@ -991,6 +991,18 @@ public class DisplayEntity extends Entity {
 		return list.get(0);
 	}
 
+	@SuppressWarnings("unchecked")
+	public <T> T getDisplayModel(Class<T> klass) {
+		ArrayList<DisplayModel> list = displayModelListInput.getValue();
+		if (list == null)
+			return null;
+		for (DisplayModel model : list) {
+			if (klass.isAssignableFrom(model.getClass()))
+				return (T) model;
+		}
+		return null;
+	}
+
 	public ArrayList<DisplayModel> getDisplayModelList() {
 		return displayModelList;
 	}
