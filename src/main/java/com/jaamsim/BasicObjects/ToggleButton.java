@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2021 JaamSim Software Inc.
+ * Copyright (C) 2021-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -140,36 +140,40 @@ public class ToggleButton extends GameEntity implements SubjectEntity, LineEntit
 
 	@Override
 	public Color4d getFillColour() {
-		if (pressedColour.isDefault() && getDisplayModel() instanceof FillEntity) {
-			FillEntity model = (FillEntity) getDisplayModel();
-			return model.getFillColour();
+		if (pressedColour.isDefault()) {
+			FillEntity model = getDisplayModel(FillEntity.class);
+			if (model != null)
+				return model.getFillColour();
 		}
 		return pressedColour.getValue();
 	}
 
 	@Override
 	public boolean isOutlined() {
-		if (outlined.isDefault() && getDisplayModel() instanceof LineEntity) {
-			LineEntity model = (LineEntity) getDisplayModel();
-			return model.isOutlined();
+		if (outlined.isDefault()) {
+			LineEntity model = getDisplayModel(LineEntity.class);
+			if (model != null)
+				return model.isOutlined();
 		}
 		return outlined.getValue();
 	}
 
 	@Override
 	public int getLineWidth() {
-		if (lineWidth.isDefault() && getDisplayModel() instanceof LineEntity) {
-			LineEntity model = (LineEntity) getDisplayModel();
-			return model.getLineWidth();
+		if (lineWidth.isDefault()) {
+			LineEntity model = getDisplayModel(LineEntity.class);
+			if (model != null)
+				return model.getLineWidth();
 		}
 		return lineWidth.getValue();
 	}
 
 	@Override
 	public Color4d getLineColour() {
-		if (lineColour.isDefault() && getDisplayModel() instanceof LineEntity) {
-			LineEntity model = (LineEntity) getDisplayModel();
-			return model.getLineColour();
+		if (lineColour.isDefault()) {
+			LineEntity model = getDisplayModel(LineEntity.class);
+			if (model != null)
+				return model.getLineColour();
 		}
 		return lineColour.getValue();
 	}
