@@ -18,12 +18,15 @@
 package com.jaamsim.FluidObjects;
 
 import com.jaamsim.DisplayModels.PolylineModel;
+import com.jaamsim.Graphics.FillEntity;
 import com.jaamsim.Graphics.LineEntity;
+import com.jaamsim.Graphics.PolylineEntity;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.math.Color4d;
+import com.jaamsim.units.DistanceUnit;
 import com.jaamsim.units.VolumeFlowUnit;
 
 /**
@@ -33,11 +36,15 @@ import com.jaamsim.units.VolumeFlowUnit;
  * @author Harry King
  *
  */
-public class FluidFixedFlow extends FluidFlowCalculation implements LineEntity {
+public class FluidFixedFlow extends FluidFlowCalculation implements LineEntity, FillEntity, PolylineEntity {
 
 	@Keyword(description = "The constant volumetric flow rate from the source to the destination.",
 	         exampleList = {"1.0 m3/s"})
 	private final ValueInput flowRateInput;
+
+	@Keyword(description = "Physical width of the pipe segments with units of distance.",
+	         exampleList = { "0.5 m" })
+	protected final ValueInput polylineWidth;
 
 	@Keyword(description = "The width of the pipe segments in pixels.",
 	         exampleList = {"1"})
@@ -56,6 +63,12 @@ public class FluidFixedFlow extends FluidFlowCalculation implements LineEntity {
 		flowRateInput.setUnitType( VolumeFlowUnit.class );
 		this.addInput( flowRateInput);
 
+		polylineWidth = new ValueInput("PolylineWidth", FORMAT, 0.0d);
+		polylineWidth.setUnitType(DistanceUnit.class);
+		polylineWidth.setValidRange(0.0d, Double.POSITIVE_INFINITY);
+		polylineWidth.setDefaultText("PolylineModel");
+		this.addInput(polylineWidth);
+
 		widthInput = new IntegerInput("LineWidth", FORMAT, 1);
 		widthInput.setValidRange(1, Integer.MAX_VALUE);
 		widthInput.setDefaultText("PolylineModel");
@@ -64,6 +77,7 @@ public class FluidFixedFlow extends FluidFlowCalculation implements LineEntity {
 
 		colourInput = new ColourInput("LineColour", FORMAT, ColourInput.BLACK);
 		colourInput.setDefaultText("PolylineModel");
+		colourInput.setHidden(true);
 		this.addInput(colourInput);
 		this.addSynonym(colourInput, "Color");
 		this.addSynonym(colourInput, "Colour");
@@ -78,7 +92,7 @@ public class FluidFixedFlow extends FluidFlowCalculation implements LineEntity {
 
 	@Override
 	public boolean isOutlined() {
-		return true;
+		return (getPolylineWidth() <= 0.0d);
 	}
 
 	@Override
@@ -99,6 +113,33 @@ public class FluidFixedFlow extends FluidFlowCalculation implements LineEntity {
 				return model.getLineColour();
 		}
 		return colourInput.getValue();
+	}
+
+	@Override
+	public boolean isFilled() {
+		return false;
+	}
+
+	@Override
+	public Color4d getFillColour() {
+		if (getFluid() == null)
+			return ColourInput.BLACK;
+		return getFluid().getColour();
+	}
+
+	@Override
+	public boolean isClosed() {
+		return false;
+	}
+
+	@Override
+	public double getPolylineWidth() {
+		if (polylineWidth.isDefault()) {
+			PolylineEntity model = getDisplayModel(PolylineEntity.class);
+			if (model != null)
+				return model.getPolylineWidth();
+		}
+		return polylineWidth.getValue();
 	}
 
 }
