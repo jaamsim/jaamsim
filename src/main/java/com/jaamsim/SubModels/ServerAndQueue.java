@@ -51,11 +51,11 @@ public class ServerAndQueue extends CompoundEntity {
 
 		// Create the sub-model components
 		JaamSimModel simModel = getJaamSimModel();
-		SubModelStart start = InputAgent.generateEntityWithName(simModel, SubModelStart.class, "Start", this, true, true);
-		Queue queue = InputAgent.generateEntityWithName(simModel, Queue.class, "Queue", this, true, true);
-		ExpressionThreshold threshold = InputAgent.generateEntityWithName(simModel, ExpressionThreshold.class, "Threshold", this, true, true);
-		Server server = InputAgent.generateEntityWithName(simModel, Server.class, "Server", this, true, true);
-		SubModelEnd end = InputAgent.generateEntityWithName(simModel, SubModelEnd.class, "End", this, true, true);
+		SubModelStart start = InputAgent.generateEntityWithName(simModel, SubModelStart.class, null, "Start", this, true, true);
+		Queue queue = InputAgent.generateEntityWithName(simModel, Queue.class, null, "Queue", this, true, true);
+		ExpressionThreshold threshold = InputAgent.generateEntityWithName(simModel, ExpressionThreshold.class, null, "Threshold", this, true, true);
+		Server server = InputAgent.generateEntityWithName(simModel, Server.class, null, "Server", this, true, true);
+		SubModelEnd end = InputAgent.generateEntityWithName(simModel, SubModelEnd.class, null, "End", this, true, true);
 
 		// SubModelStart inputs
 		InputAgent.applyArgs(start, "NextComponent", queue.getName());
