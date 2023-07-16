@@ -78,7 +78,10 @@ public abstract class CompoundEntity extends LinkedComponent {
 
 		// Create the region
 		JaamSimModel simModel = getJaamSimModel();
-		smRegion = InputAgent.generateEntityWithName(simModel, Region.class, smRegionName, this, true, true);
+		Region proto = null;
+		if (getPrototype() != null)
+			proto = ((CompoundEntity) getPrototype()).getSubModelRegion();
+		smRegion = InputAgent.generateEntityWithName(simModel, Region.class, proto, smRegionName, this, true, true);
 
 		// Set the default inputs for the region
 		InputAgent.applyArgs( smRegion, "RelativeEntity", this.getName());
