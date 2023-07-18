@@ -63,7 +63,10 @@ public class Statistics extends LinkedComponent {
 	private final ValueInput histogramBinWidth;
 
 	@Keyword(description = "If TRUE, the state times for received entities are recorded for "
-	                     + "statistics generation.",
+	                     + "statistics generation. "
+	                     + "The statistics for each state are returned by the outputs: "
+	                     + "'EntityTimeMinimum', 'EntityTimeMaximum', 'EntityTimeAverage', and "
+	                     + "'EntityTimeStandardDeviation'.",
 	         exampleList = {"TRUE"})
 	private final BooleanInput recordEntityStateTimes;
 
