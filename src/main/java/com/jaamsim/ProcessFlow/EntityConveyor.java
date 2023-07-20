@@ -507,11 +507,10 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 			alignment.x = -0.5d;
 			entry.entity.setGlobalPositionForAlignment(getGlobalPosition(localPos), alignment);
 
-			Vec3d orient = new Vec3d();
 			if (rotateEntities.getValue()) {
-				orient = PolylineInfo.getOrientationOnPolyline(getCurvePoints(), convPos);
+				Vec3d orient = PolylineInfo.getOrientationOnPolyline(getCurvePoints(), convPos);
+				entry.entity.setRelativeOrientation(orient);
 			}
-			entry.entity.setRelativeOrientation(orient);
 		}
 	}
 
