@@ -279,12 +279,8 @@ public class ShapeModel extends AbstractShapeModel {
 
 			// Height for each bar
 			Tag tag_contents = tagsCache.get(ShapeModel.TAG_CONTENTS);
-			if (tag_contents == null || tag_contents.sizes == null || tag_contents.colors == null ||
-			    tag_contents.colors.length < tag_contents.sizes.length) {
-				// Bail out, not properly initialized
-				return;
-			}
-
+			if (tag_contents == null)
+				tag_contents = tag_contents_def;
 			double[] sizes = tag_contents.sizes;
 
 			// Height for the background above each bar
@@ -318,7 +314,7 @@ public class ShapeModel extends AbstractShapeModel {
 
 			// Draw the background and outline
 			Color4d outlineColour = getTagColor(ShapeModel.TAG_OUTLINES, ColourInput.BLACK);
-			Color4d backgroundColour = getTagColor(ShapeModel.TAG_BODY, ColourInput.WHITE);
+			Color4d backgroundColour = getTagColor(ShapeModel.TAG_BODY, ColourInput.LIGHT_GREY);
 			cachedProxies.add(new PolygonProxy(RenderUtils.RECT_POINTS, transCache, scaleCache, backgroundColour, false, 1, viCache, pickingID));
 			cachedProxies.add(new PolygonProxy(RenderUtils.RECT_POINTS, transCache, scaleCache, outlineColour, true, 1, viCache, pickingID));
 
@@ -365,4 +361,5 @@ public class ShapeModel extends AbstractShapeModel {
 	}
 
 	private static final HashMap<String, Tag> emptyTagSet = new HashMap<>(0);
+	private static final Tag tag_contents_def = new Tag(new Color4d[]{ColourInput.BLUE}, new double[]{0.5d}, true);
 }
