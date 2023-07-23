@@ -317,6 +317,21 @@ public abstract class TextBasics extends AbstractShape implements TextEntity, Ed
 		return editableText.getNumberSelected();
 	}
 
+	@Override
+	public void copyToClipboard() {
+		editableText.copyToClipboard();
+	}
+
+	@Override
+	public void pasteFromClipboard() {
+		editableText.pasteFromClipboard();
+	}
+
+	@Override
+	public void deleteSelection() {
+		editableText.deleteSelection();
+	}
+
 	public TextModel getTextModel() {
 		return getDisplayModel(TextModel.class);
 	}

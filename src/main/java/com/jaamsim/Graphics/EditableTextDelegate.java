@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2018-2021 JaamSim Software Inc.
+ * Copyright (C) 2018-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -266,7 +266,8 @@ public class EditableTextDelegate implements EditableText {
 		numSelected = start - end;
 	}
 
-	private void deleteSelection() {
+	@Override
+	public void deleteSelection() {
 		if (numSelected == 0)
 			return;
 		int start = Math.min(insertPos, insertPos+numSelected);
@@ -322,7 +323,8 @@ public class EditableTextDelegate implements EditableText {
 		return Math.min(end + 1 + linePos, getLineEnd(end + 1));
 	}
 
-	private void copyToClipboard() {
+	@Override
+	public void copyToClipboard() {
 		Clipboard clpbrd = Toolkit.getDefaultToolkit().getSystemClipboard();
 		int start = Math.min(insertPos, insertPos + numSelected);
 		int end = Math.max(insertPos, insertPos + numSelected);
@@ -331,7 +333,8 @@ public class EditableTextDelegate implements EditableText {
 		clpbrd.setContents(new StringSelection(copiedText), null);
 	}
 
-	private void pasteFromClipboard() {
+	@Override
+	public void pasteFromClipboard() {
 		Clipboard clpbrd = Toolkit.getDefaultToolkit().getSystemClipboard();
 		try {
 			String newText = (String)clpbrd.getData(DataFlavor.stringFlavor);

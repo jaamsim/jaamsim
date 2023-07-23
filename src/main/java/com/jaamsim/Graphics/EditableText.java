@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2018 JaamSim Software Inc.
+ * Copyright (C) 2018-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,5 +55,20 @@ public interface EditableText extends Editable {
 	 * @return number of selected characters
 	 */
 	public int getNumberSelected();
+
+	/**
+	 * Copies the selected characters to the system clipboard.
+	 */
+	public void copyToClipboard();
+
+	/**
+	 * Copies the string saved to the system clipboard to the present insert location.
+	 */
+	public void pasteFromClipboard();
+
+	/**
+	 * Deletes the selected characters.
+	 */
+	public void deleteSelection();
 
 }
