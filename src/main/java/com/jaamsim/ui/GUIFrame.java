@@ -2063,8 +2063,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		copyButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				if (selectedEntity != null)
-					copyToClipboard(selectedEntity);
+				copyAction(selectedEntity);
 				controlStartResume.requestFocusInWindow();
 			}
 		});
@@ -2082,7 +2081,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		pasteButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				pasteEntityFromClipboard();
+				pasteAction(selectedEntity);
 				controlStartResume.requestFocusInWindow();
 			}
 		});
