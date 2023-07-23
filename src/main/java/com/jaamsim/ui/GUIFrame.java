@@ -117,6 +117,7 @@ import com.jaamsim.DisplayModels.TextModel;
 import com.jaamsim.Graphics.BillboardText;
 import com.jaamsim.Graphics.DirectedEntity;
 import com.jaamsim.Graphics.DisplayEntity;
+import com.jaamsim.Graphics.EditableText;
 import com.jaamsim.Graphics.EntityLabel;
 import com.jaamsim.Graphics.FillEntity;
 import com.jaamsim.Graphics.LineEntity;
@@ -5053,16 +5054,31 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	public void copyAction(Entity ent) {
 		if (ent == null)
 			return;
+		if (ent instanceof EditableText && ((EditableText) ent).isEditMode()) {
+			((EditableText) ent).copyToClipboard();
+			return;
+		}
 		copyToClipboard(ent);
 	}
 
 	public void pasteAction(Entity ent) {
+		if (ent instanceof EditableText && ((EditableText) ent).isEditMode()) {
+			((EditableText) ent).deleteSelection();
+			((EditableText) ent).pasteFromClipboard();
+			updateUI();
+			return;
+		}
 		pasteEntityFromClipboard();
 	}
 
 	public void deleteAction(Entity ent) {
 		if (ent == null)
 			return;
+		if (ent instanceof EditableText && ((EditableText) ent).isEditMode()) {
+			((EditableText) ent).deleteSelection();
+			updateUI();
+			return;
+		}
 		try {
 			deleteEntity(ent);
 			FrameBox.setSelectedEntity(null, false);
