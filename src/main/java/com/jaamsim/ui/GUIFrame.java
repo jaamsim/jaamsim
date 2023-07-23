@@ -5088,7 +5088,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		}
 	}
 
-	public void copyToClipboard(Entity ent) {
+	private void copyToClipboard(Entity ent) {
 		if (ent == getJaamSimModel().getSimulation())
 			return;
 		Clipboard clpbrd = Toolkit.getDefaultToolkit().getSystemClipboard();
@@ -5106,7 +5106,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		}
 	}
 
-	public void pasteEntityFromClipboard() {
+	private void pasteEntityFromClipboard() {
 		Entity ent = getEntityFromClipboard();
 		JaamSimModel sim = getJaamSimModel();
 		if (ent == null || ent == sim.getSimulation())
