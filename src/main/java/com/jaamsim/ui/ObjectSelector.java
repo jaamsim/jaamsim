@@ -568,11 +568,11 @@ public class ObjectSelector extends FrameBox {
 			boolean control = e.isControlDown();
 			if (control && keyCode == KeyEvent.VK_C) {
 				if (currentEntity != null) {
-					GUIFrame.getInstance().copyToClipboard(currentEntity);
+					GUIFrame.getInstance().copyAction(currentEntity);
 				}
 			}
 			if (control && keyCode == KeyEvent.VK_V) {
-				GUIFrame.getInstance().pasteEntityFromClipboard();
+				GUIFrame.getInstance().pasteAction(currentEntity);
 			}
 			if (keyCode == KeyEvent.VK_F1) {
 				String topic = "";
