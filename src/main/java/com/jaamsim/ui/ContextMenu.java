@@ -40,7 +40,6 @@ import com.jaamsim.Graphics.PolylineInfo;
 import com.jaamsim.Graphics.View;
 import com.jaamsim.SubModels.CompoundEntity;
 import com.jaamsim.basicsim.Entity;
-import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.controllers.RenderManager;
@@ -157,7 +156,7 @@ public class ContextMenu {
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				GUIFrame.getInstance().copyToClipboard(ent);
+				GUIFrame.getInstance().copyAction(ent);
 			}
 		} );
 		if (ent == null || ent.isGenerated() || ent == ent.getSimulation()) {
@@ -175,7 +174,7 @@ public class ContextMenu {
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				GUIFrame.getInstance().pasteEntityFromClipboard();
+				GUIFrame.getInstance().pasteAction(ent);
 			}
 		} );
 		if (GUIFrame.getInstance().getEntityFromClipboard() == null) {
@@ -188,15 +187,10 @@ public class ContextMenu {
 		deleteMenuItem.setAccelerator(KeyStroke.getKeyStroke(
 		        KeyEvent.VK_DELETE, 0));
 		deleteMenuItem.addActionListener( new ActionListener() {
+
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				try {
-					GUIFrame.getInstance().deleteEntity(ent);
-					FrameBox.setSelectedEntity(null, false);
-				}
-				catch (ErrorException e) {
-					GUIFrame.invokeErrorDialog("User Error", e.getMessage());
-				}
+				GUIFrame.getInstance().deleteAction(ent);
 			}
 		} );
 		if (ent == null) {
