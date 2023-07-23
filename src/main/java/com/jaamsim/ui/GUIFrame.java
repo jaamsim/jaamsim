@@ -771,9 +771,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				if (selectedEntity == null)
-					return;
-				copyToClipboard(selectedEntity);
+				copyAction(selectedEntity);
 			}
 		} );
 		editMenu.add( copyMenuItem );
@@ -789,7 +787,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				pasteEntityFromClipboard();
+				pasteAction(selectedEntity);
 			}
 		} );
 		editMenu.add( pasteMenuItem );
@@ -803,15 +801,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				if (selectedEntity == null)
-					return;
-				try {
-					deleteEntity(selectedEntity);
-					FrameBox.setSelectedEntity(null, false);
-				}
-				catch (ErrorException e) {
-					GUIFrame.showErrorDialog("User Error", e.getMessage());
-				}
+				deleteAction(selectedEntity);
 			}
 		} );
 		editMenu.add( deleteMenuItem );
@@ -5059,6 +5049,28 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		// Save the configuration file
 		InputAgent.saveEntity(entity, file);
 		return true;
+	}
+
+	public void copyAction(Entity ent) {
+		if (ent == null)
+			return;
+		copyToClipboard(ent);
+	}
+
+	public void pasteAction(Entity ent) {
+		pasteEntityFromClipboard();
+	}
+
+	public void deleteAction(Entity ent) {
+		if (ent == null)
+			return;
+		try {
+			deleteEntity(ent);
+			FrameBox.setSelectedEntity(null, false);
+		}
+		catch (ErrorException e) {
+			GUIFrame.showErrorDialog("User Error", e.getMessage());
+		}
 	}
 
 	public void copyToClipboard(Entity ent) {
