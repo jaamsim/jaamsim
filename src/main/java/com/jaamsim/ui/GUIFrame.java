@@ -3848,6 +3848,11 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		copyButton.setEnabled(bool);
 		copyMenuItem.setEnabled(bool);
 		deleteMenuItem.setEnabled(bool);
+
+		bool = ent instanceof EditableText && ((EditableText) ent).isEditMode()
+				|| GUIFrame.getInstance().getEntityFromClipboard() != null;
+		pasteButton.setEnabled(bool);
+		pasteMenuItem.setEnabled(bool);
 	}
 
 	public void updateDisplayModelButtons(Entity ent) {

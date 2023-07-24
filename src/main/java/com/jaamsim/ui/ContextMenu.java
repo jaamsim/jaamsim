@@ -33,6 +33,7 @@ import com.jaamsim.Commands.CoordinateCommand;
 import com.jaamsim.Commands.DefineCommand;
 import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.Graphics.DisplayEntity;
+import com.jaamsim.Graphics.EditableText;
 import com.jaamsim.Graphics.EntityLabel;
 import com.jaamsim.SubModels.SubModel;
 import com.jaamsim.Graphics.OverlayEntity;
@@ -177,7 +178,8 @@ public class ContextMenu {
 				GUIFrame.getInstance().pasteAction(ent);
 			}
 		} );
-		if (GUIFrame.getInstance().getEntityFromClipboard() == null) {
+		if (!(ent instanceof EditableText && ((EditableText) ent).isEditMode())
+				&& GUIFrame.getInstance().getEntityFromClipboard() == null) {
 			pasteMenuItem.setEnabled(false);
 		}
 		menu.add( pasteMenuItem );
