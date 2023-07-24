@@ -2083,7 +2083,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			@Override
 			public void actionPerformed( ActionEvent event ) {
 				pasteAction(selectedEntity);
-				controlStartResume.requestFocusInWindow();
+				RenderManager.inst().focusActiveWindow();
 			}
 		});
 		buttonBar.add( pasteButton );

@@ -1996,6 +1996,10 @@ public class RenderManager implements DragSourceListener {
 		renderer.focusWindow(windowID);
 	}
 
+	public void focusActiveWindow() {
+		renderer.requestFocus(activeWindowID);
+	}
+
 	private int getWindowID(View view) {
 		for (Map.Entry<Integer, View> entry : windowToViewMap.entrySet()) {
 			if (entry.getValue() == view) {
