@@ -1882,9 +1882,7 @@ public class RenderManager implements DragSourceListener {
 			simModel.showTemporaryLabels(simulation.isShowLabels());
 
 			// Set the focus on the window that received the entity
-			Frame awtRef = renderer.getAWTFrame(windowID);
-			if (awtRef != null)
-				awtRef.requestFocus();
+			renderer.requestFocus(windowID);
 		}
 	}
 
