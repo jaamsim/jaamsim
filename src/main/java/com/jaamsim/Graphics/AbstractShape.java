@@ -16,6 +16,7 @@
  */
 package com.jaamsim.Graphics;
 
+import com.jaamsim.ColourProviders.ColourProvInput;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.IntegerInput;
@@ -37,7 +38,7 @@ public abstract class AbstractShape extends DisplayEntity implements LineEntity,
 
 	@Keyword(description = "The colour with which the object is filled.",
 	         exampleList = {"red"})
-	protected final ColourInput fillColour;
+	protected final ColourProvInput fillColour;
 
 	@Keyword(description = "Determines whether or not the object is outlined. "
 	                     + "If TRUE, it is outlined with a specified colour. "
@@ -47,7 +48,7 @@ public abstract class AbstractShape extends DisplayEntity implements LineEntity,
 
 	@Keyword(description = "The colour with which the object is outlined.",
 	         exampleList = {"red"})
-	protected final ColourInput lineColour;
+	protected final ColourProvInput lineColour;
 
 	@Keyword(description = "Width of the outline in pixels.",
 	         exampleList = { "3" })
@@ -58,7 +59,7 @@ public abstract class AbstractShape extends DisplayEntity implements LineEntity,
 		filled.setDefaultText("DisplayModel value");
 		this.addInput(filled);
 
-		fillColour = new ColourInput("FillColour", FORMAT, ColourInput.MED_GREY);
+		fillColour = new ColourProvInput("FillColour", FORMAT, ColourInput.MED_GREY);
 		fillColour.setDefaultText("DisplayModel value");
 		this.addInput(fillColour);
 
@@ -66,7 +67,7 @@ public abstract class AbstractShape extends DisplayEntity implements LineEntity,
 		outlined.setDefaultText("DisplayModel value");
 		this.addInput(outlined);
 
-		lineColour = new ColourInput("LineColour", FORMAT, ColourInput.BLACK);
+		lineColour = new ColourProvInput("LineColour", FORMAT, ColourInput.BLACK);
 		lineColour.setDefaultText("DisplayModel value");
 		this.addInput(lineColour);
 
@@ -90,12 +91,16 @@ public abstract class AbstractShape extends DisplayEntity implements LineEntity,
 
 	@Override
 	public Color4d getFillColour() {
+		return getFillColour(0.0d);
+	}
+
+	public Color4d getFillColour(double simTime) {
 		if (fillColour.isDefault()) {
 			FillEntity model = getDisplayModel(FillEntity.class);
 			if (model != null)
 				return model.getFillColour();
 		}
-		return fillColour.getValue();
+		return fillColour.getNextColour(this, simTime);
 	}
 
 	@Override
@@ -120,12 +125,16 @@ public abstract class AbstractShape extends DisplayEntity implements LineEntity,
 
 	@Override
 	public Color4d getLineColour() {
+		return getLineColour(0.0d);
+	}
+
+	public Color4d getLineColour(double simTime) {
 		if (lineColour.isDefault()) {
 			LineEntity model = getDisplayModel(LineEntity.class);
 			if (model != null)
 				return model.getLineColour();
 		}
-		return lineColour.getValue();
+		return lineColour.getNextColour(this, simTime);
 	}
 
 }
