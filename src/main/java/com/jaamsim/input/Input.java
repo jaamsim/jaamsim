@@ -83,6 +83,7 @@ public abstract class Input<T> {
 	public    static final String INP_ERR_UNITUNSPECIFIED = "Unit type has not been specified";
 	protected static final String INP_ERR_NOTSUBCLASS = "Expected a subclass of %s, got %s";
 	protected static final String INP_ERR_BADDATE = "Expected a valid RFC8601 datetime, got: %s";
+	public    static final String INP_ERR_BADCOLOUR = "Expected a valid colour name or RGB value with or without transparency, got: %s";
 	protected static final String INP_ERR_BADEXP = "Error parsing expression: %s";
 	protected static final String INP_VAL_LISTSET = "Values found for %s without %s being set";
 	protected static final String INP_VAL_LISTSIZE = "%s and %s must be of equal size";
@@ -1638,7 +1639,7 @@ public abstract class Input<T> {
 		if (kw.numArgs() <= 2) {
 			Color4d colAtt = ColourInput.getColorWithName(kw.getArg(0));
 			if( colAtt == null )
-				throw new InputErrorException( "Color " + kw.getArg( 0 ) + " not found" );
+				throw new InputErrorException(Input.INP_ERR_BADCOLOUR, kw.getArg(0));
 
 			if (kw.numArgs() == 1)
 				return colAtt;
