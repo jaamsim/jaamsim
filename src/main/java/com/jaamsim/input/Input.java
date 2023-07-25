@@ -27,6 +27,9 @@ import java.util.regex.Pattern;
 import com.jaamsim.BooleanProviders.BooleanProvConstant;
 import com.jaamsim.BooleanProviders.BooleanProvExpression;
 import com.jaamsim.BooleanProviders.BooleanProvider;
+import com.jaamsim.ColourProviders.ColourProvConstant;
+import com.jaamsim.ColourProviders.ColourProvExpression;
+import com.jaamsim.ColourProviders.ColourProvider;
 import com.jaamsim.EntityProviders.EntityProvConstant;
 import com.jaamsim.EntityProviders.EntityProvExpression;
 import com.jaamsim.EntityProviders.EntityProvider;
@@ -108,11 +111,15 @@ public abstract class Input<T> {
 	protected static final String VALID_ENTITY_PROV_TYPE = "Accepts the name of an entity of type %s or an expression that returns such an entity.";
 	protected static final String VALID_BOOLEAN_PROV = "Accepts the text TRUE or FALSE or an expression that returns a dimensionless number (non-zero indicates TRUE, zero indicates FALSE). "
 	                                                 + "Inputs of T, t, and 1 are interpreted as TRUE, while F, f, and 0 are interpreted as FALSE.";
+	protected static final String VALID_COLOUR_PROV = "Accepts a colour name or an RGB value, with or without an optional transparency value, "
+	                                                + "or an expression that returns a colour name or an array that contains an RGB value with or without a transparency value. "
+	                                                + "The RGB and transparency value can be in either integer format (0 - 255) or decimal format (0.0 - 1.0)";
 	protected static final String VALID_TIMESERIES_PROV = "Accepts a number with units of type %s or a TimeSeries that returns such a number.";
 	protected static final String VALID_TIMESERIES_PROV_UNIT = "Accepts a number with or without units or a TimeSeries that returns such a number. "
 	                                                         + "An input to the UnitType keyword MUST BE PROVIDED before an input to this keyword can be entered.";
 
-	protected static final String VALID_COLOUR = "Accepts a colour name, an RGB value, or an RGB/transparency value.";
+	protected static final String VALID_COLOUR = "Accepts a colour name or an RGB value, with or without an optional transparency value. "
+	                                           + "The RGB and transparency value can be in either integer format (0 - 255) or decimal format (0.0 - 1.0)";
 	protected static final String VALID_INTEGER = "Accepts a dimensionless integer value.";
 	protected static final String VALID_VALUE = "Accepts a number with units of type %s.";
 	protected static final String VALID_VALUE_DIMLESS = "Accepts a dimensionless number.";
@@ -1670,6 +1677,29 @@ public abstract class Input<T> {
 			}
 
 			return new Color4d(r, g, b, a);
+		}
+	}
+
+	public static ColourProvider parseColourProvider(KeywordIndex kw, Entity thisEnt) {
+		assertCountRange(kw, 1, 4);
+
+		// Parse the input as a colour constant
+		try {
+			JaamSimModel simModel = thisEnt.getJaamSimModel();
+			Color4d col = parseColour(simModel, kw);
+			return new ColourProvConstant(col);
+		}
+		catch (Exception e) {
+			if (kw.numArgs() > 1)
+				throw e;
+		}
+
+		// Parse the input as an expression
+		try {
+			return new ColourProvExpression(kw.getArg(0), thisEnt);
+		}
+		catch (ExpError e) {
+			throw new InputErrorException(e);
 		}
 	}
 
