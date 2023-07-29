@@ -2666,7 +2666,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 						|| selectedEntity.getInput("LineColour") == null)
 					return;
 				final LineEntity lineEnt = (LineEntity) selectedEntity;
-				final Color4d presentColour = lineEnt.getLineColour();
+				final Color4d presentColour = lineEnt.getLineColour(0.0d);
 				ArrayList<Color4d> coloursInUse = GUIFrame.getLineColoursInUse(sim);
 				ColourMenu menu = new ColourMenu(presentColour, coloursInUse, true) {
 
@@ -2733,7 +2733,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 						|| selectedEntity.getInput("FillColour") == null)
 					return;
 				final FillEntity fillEnt = (FillEntity) selectedEntity;
-				final Color4d presentColour = fillEnt.getFillColour();
+				final Color4d presentColour = fillEnt.getFillColour(0.0d);
 				ArrayList<Color4d> coloursInUse = GUIFrame.getFillColoursInUse(sim);
 				ColourMenu menu = new ColourMenu(presentColour, coloursInUse, true) {
 
@@ -3976,7 +3976,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 		lineWidth.setValue(Integer.valueOf(lineEnt.getLineWidth()));
 
-		Color4d col = lineEnt.getLineColour();
+		Color4d col = lineEnt.getLineColour(0.0d);
 		lineColourIcon.setFillColor(new Color((float)col.r, (float)col.g, (float)col.b, (float)col.a));
 		lineColourIcon.setOutlineColor(Color.DARK_GRAY);
 		lineColour.repaint();
@@ -3998,7 +3998,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				&& ((PolylineEntity) ent).getPolylineWidth() > 0.0d);
 		fillColour.setEnabled(bool);
 
-		Color4d col = fillEnt.getFillColour();
+		Color4d col = fillEnt.getFillColour(0.0d);
 		fillColourIcon.setFillColor(new Color((float)col.r, (float)col.g, (float)col.b, (float)col.a));
 		fillColourIcon.setOutlineColor(Color.DARK_GRAY);
 		fillColour.repaint();
@@ -5799,9 +5799,9 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		ArrayList<Color4d> ret = new ArrayList<>();
 		for (DisplayEntity ent : simModel.getClonesOfIterator(DisplayEntity.class, FillEntity.class)) {
 			FillEntity fillEnt = (FillEntity) ent;
-			if (ret.contains(fillEnt.getFillColour()))
+			if (ret.contains(fillEnt.getFillColour(0.0d)))
 				continue;
-			ret.add(fillEnt.getFillColour());
+			ret.add(fillEnt.getFillColour(0.0d));
 		}
 		Collections.sort(ret, ColourInput.colourComparator);
 		return ret;
@@ -5811,9 +5811,9 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		ArrayList<Color4d> ret = new ArrayList<>();
 		for (DisplayEntity ent : simModel.getClonesOfIterator(DisplayEntity.class, LineEntity.class)) {
 			LineEntity lineEnt = (LineEntity) ent;
-			if (ret.contains(lineEnt.getLineColour()))
+			if (ret.contains(lineEnt.getLineColour(0.0d)))
 				continue;
-			ret.add(lineEnt.getLineColour());
+			ret.add(lineEnt.getLineColour(0.0d));
 		}
 		Collections.sort(ret, ColourInput.colourComparator);
 		return ret;

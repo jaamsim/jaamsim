@@ -125,8 +125,8 @@ public class ShapeModel extends AbstractShapeModel {
 			HashMap<String, Tag> tags = getTags();
 			VisibilityInfo vi = getVisibilityInfo();
 			ValidShapes sc = shape.getValue();
-			Color4d fc = (fillEnt == null) ? getFillColour() : fillEnt.getFillColour();
-			Color4d oc =  (lineEnt == null) ? getLineColour() : lineEnt.getLineColour();
+			Color4d fc = (fillEnt == null) ? getFillColour(simTime) : fillEnt.getFillColour(simTime);
+			Color4d oc =  (lineEnt == null) ? getLineColour(simTime) : lineEnt.getLineColour(simTime);
 			boolean fill = (fillEnt == null) ? isFilled() : fillEnt.isFilled();
 			boolean outln = (lineEnt == null) ? isOutlined() : lineEnt.isOutlined();
 			int width = (lineEnt == null) ? getLineWidth() : lineEnt.getLineWidth();

@@ -199,11 +199,11 @@ public class PolylineModel extends AbstractShapeModel implements PolylineEntity 
 			}
 
 			boolean outln = lineEnt == null ? outlined.getValue() : lineEnt.isOutlined();
-			Color4d lineColour = lineEnt == null ? getLineColour() : lineEnt.getLineColour();
+			Color4d lineColour = lineEnt == null ? getLineColour(simTime) : lineEnt.getLineColour(simTime);
 			int lineWidth = lineEnt == null ? getLineWidth() : lineEnt.getLineWidth();
 
 			boolean fill = fillEnt == null ? filled.getValue() : fillEnt.isFilled();
-			Color4d fc = fillEnt == null ? fillColour.getValue() : fillEnt.getFillColour();
+			Color4d fc = fillEnt == null ? fillColour.getValue() : fillEnt.getFillColour(simTime);
 
 			boolean closed = polylineEnt == null ? isClosed() : polylineEnt.isClosed();
 			double width = polylineEnt == null ? getPolylineWidth() : polylineEnt.getPolylineWidth();

@@ -195,7 +195,7 @@ public class ToggleButton extends GameEntity implements SubjectEntity, LineEntit
 		// Select the colour
 		Color4d col;
 		if (value) {
-			col = getFillColour();
+			col = getFillColour(simTime);
 		}
 		else {
 			col = unpressedColour.getValue();
