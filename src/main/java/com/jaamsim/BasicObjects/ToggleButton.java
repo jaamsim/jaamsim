@@ -139,11 +139,6 @@ public class ToggleButton extends GameEntity implements SubjectEntity, LineEntit
 	}
 
 	@Override
-	public Color4d getFillColour() {
-		return getFillColour(0.0d);
-	}
-
-	@Override
 	public Color4d getFillColour(double simTime) {
 		if (pressedColour.isDefault()) {
 			FillEntity model = getDisplayModel(FillEntity.class);
@@ -171,11 +166,6 @@ public class ToggleButton extends GameEntity implements SubjectEntity, LineEntit
 				return model.getLineWidth();
 		}
 		return lineWidth.getValue();
-	}
-
-	@Override
-	public Color4d getLineColour() {
-		return getLineColour(0.0d);
 	}
 
 	@Override

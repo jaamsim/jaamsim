@@ -448,11 +448,6 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 	}
 
 	@Override
-	public Color4d getLineColour() {
-		return getLineColour(0.0d);
-	}
-
-	@Override
 	public Color4d getLineColour(double simTime) {
 		if (colorInput.isDefault()) {
 			LineEntity model = getDisplayModel(LineEntity.class);

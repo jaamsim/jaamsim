@@ -23,8 +23,5 @@ public interface LineEntity {
 	public JaamSimModel getJaamSimModel();
 	public boolean isOutlined();
 	public int getLineWidth();
-	public Color4d getLineColour();
-	default Color4d getLineColour(double simTime) {
-		return getLineColour();
-	}
+	public Color4d getLineColour(double simTime);
 }

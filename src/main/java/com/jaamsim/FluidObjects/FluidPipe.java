@@ -204,11 +204,6 @@ public class FluidPipe extends FluidComponent implements LineEntity, FillEntity,
 	}
 
 	@Override
-	public Color4d getLineColour() {
-		return getLineColour(0.0d);
-	}
-
-	@Override
 	public Color4d getLineColour(double simTime) {
 		if (colourInput.isDefault()) {
 			LineEntity model = getDisplayModel(LineEntity.class);
@@ -221,11 +216,6 @@ public class FluidPipe extends FluidComponent implements LineEntity, FillEntity,
 	@Override
 	public boolean isFilled() {
 		return false;
-	}
-
-	@Override
-	public Color4d getFillColour() {
-		return getFillColour(0.0d);
 	}
 
 	@Override

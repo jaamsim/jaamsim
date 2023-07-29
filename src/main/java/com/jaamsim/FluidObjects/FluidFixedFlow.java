@@ -106,11 +106,6 @@ public class FluidFixedFlow extends FluidFlowCalculation implements LineEntity, 
 	}
 
 	@Override
-	public Color4d getLineColour() {
-		return getLineColour(0.0d);
-	}
-
-	@Override
 	public Color4d getLineColour(double simTime) {
 		if (colourInput.isDefault()) {
 			LineEntity model = getDisplayModel(LineEntity.class);
@@ -123,11 +118,6 @@ public class FluidFixedFlow extends FluidFlowCalculation implements LineEntity, 
 	@Override
 	public boolean isFilled() {
 		return false;
-	}
-
-	@Override
-	public Color4d getFillColour() {
-		return getFillColour(0.0d);
 	}
 
 	@Override
