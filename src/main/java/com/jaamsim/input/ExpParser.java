@@ -18,6 +18,7 @@
 package com.jaamsim.input;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -1343,6 +1344,19 @@ public class ExpParser {
 					+ "Received: %s, expected: %s",
 					exp.validationResult.type, type);
 		}
+	}
+
+	public static void assertResultType(Expression exp, ExpResType... types) {
+		if (exp.validationResult.state != ExpValResult.State.VALID)
+			return;
+
+		for (ExpResType type : types) {
+			if (type == exp.validationResult.type)
+				return;
+		}
+		throw new InputErrorException("Incorrect result type returned by expression.%n"
+				+ "Received: %s, expected one of: %s",
+				exp.validationResult.type, Arrays.toString(types));
 	}
 
 

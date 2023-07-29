@@ -37,6 +37,7 @@ public class ColourProvExpression implements ColourProvider {
 	public ColourProvExpression(String expString, Entity thisEnt) throws ExpError {
 		parseContext = ExpEvaluator.getParseContext(thisEnt, expString);
 		exp = ExpParser.parseExpression(parseContext, expString);
+		ExpParser.assertResultType(exp, ExpResType.STRING, ExpResType.COLLECTION);
 	}
 
 	@Override
