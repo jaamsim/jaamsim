@@ -613,11 +613,15 @@ public class DisplayEntity extends Entity {
 		if (isPooled())
 			return false;
 		boolean ret;
-		if (!showInput.isConstant())
+		if (!showInput.isConstant()) {
 			ret = getShowInput(simTime);
-		synchronized (position) {
-			ret = show;
 		}
+		else {
+			synchronized (position) {
+				ret = show;
+			}
+		}
+
 		if (getParent() instanceof CompoundEntity) {
 			CompoundEntity sub = (CompoundEntity) getParent();
 			ret = ret && (sub.getShowComponents() || getSimulation().isShowSubModels());
