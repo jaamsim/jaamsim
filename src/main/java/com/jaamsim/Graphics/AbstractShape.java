@@ -94,11 +94,12 @@ public abstract class AbstractShape extends DisplayEntity implements LineEntity,
 		return getFillColour(0.0d);
 	}
 
+	@Override
 	public Color4d getFillColour(double simTime) {
 		if (fillColour.isDefault()) {
 			FillEntity model = getDisplayModel(FillEntity.class);
 			if (model != null)
-				return model.getFillColour();
+				return model.getFillColour(simTime);
 		}
 		return fillColour.getNextColour(this, simTime);
 	}
@@ -128,11 +129,12 @@ public abstract class AbstractShape extends DisplayEntity implements LineEntity,
 		return getLineColour(0.0d);
 	}
 
+	@Override
 	public Color4d getLineColour(double simTime) {
 		if (lineColour.isDefault()) {
 			LineEntity model = getDisplayModel(LineEntity.class);
 			if (model != null)
-				return model.getLineColour();
+				return model.getLineColour(simTime);
 		}
 		return lineColour.getNextColour(this, simTime);
 	}

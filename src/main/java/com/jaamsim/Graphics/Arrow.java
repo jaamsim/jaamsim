@@ -91,10 +91,15 @@ public class Arrow extends DisplayEntity implements LineEntity {
 
 	@Override
 	public Color4d getLineColour() {
+		return getLineColour(0.0d);
+	}
+
+	@Override
+	public Color4d getLineColour(double simTime) {
 		if (color.isDefault()) {
 			LineEntity model = getDisplayModel(LineEntity.class);
 			if (model != null)
-				return model.getLineColour();
+				return model.getLineColour(simTime);
 		}
 		return color.getValue();
 	}

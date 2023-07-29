@@ -96,11 +96,21 @@ public abstract class AbstractShapeModel extends DisplayModel implements LineEnt
 
 	@Override
 	public Color4d getFillColour() {
+		return getFillColour(0.0d);
+	}
+
+	@Override
+	public Color4d getFillColour(double simTime) {
 		return fillColour.getValue();
 	}
 
 	@Override
 	public Color4d getLineColour() {
+		return getLineColour(0.0d);
+	}
+
+	@Override
+	public Color4d getLineColour(double simTime) {
 		return lineColour.getValue();
 	}
 
