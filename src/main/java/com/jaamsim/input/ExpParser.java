@@ -25,6 +25,7 @@ import java.util.LinkedList;
 
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.units.DimensionlessUnit;
+import com.jaamsim.units.TimeUnit;
 import com.jaamsim.units.Unit;
 
 public class ExpParser {
@@ -337,6 +338,16 @@ public class ExpParser {
 
 		@Override
 		public ExpValResult validate() {
+
+			// Predefined variables
+			ParseClosure topClose = context.closureStack.get(context.closureStack.size() - 1);
+			String varName = topClose.boundVars.get(varIndex);
+			if (varName.equals("this") || varName.equals("parent") || varName.equals("sub"))
+				return ExpValResult.makeValidRes(ExpResType.ENTITY, null);
+			if (varName.equals("simTime"))
+				return ExpValResult.makeValidRes(ExpResType.NUMBER, TimeUnit.class);
+
+			// User-defined local variables
 			return ExpValResult.makeUndecidableRes();
 		}
 
