@@ -20,6 +20,7 @@ import java.util.ArrayList;
 
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ErrorException;
+import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.KeywordIndex;
@@ -38,6 +39,22 @@ public class ColourProvInput extends Input<ColourProvider> {
 
 	@Override
 	public String applyConditioning(String str) {
+
+		// No changes required if the input is a constant colour value
+		ArrayList<String> tokens = new ArrayList<>();
+		Parser.tokenize(tokens, str, true);
+		if (tokens.size() == 1 && ColourInput.getColorWithName(tokens.get(0)) != null)
+			return str;
+		if (tokens.size() == 2 && ColourInput.getColorWithName(tokens.get(0)) != null
+				&& isDouble(tokens.get(1)))
+			return str;
+		if (tokens.size() == 3 && isDouble(tokens.get(0)) && isDouble(tokens.get(1))
+				&& isDouble(tokens.get(2)))
+			return str;
+		if (tokens.size() == 4 && isDouble(tokens.get(0)) && isDouble(tokens.get(1))
+				&& isDouble(tokens.get(2)) && isDouble(tokens.get(3)))
+			return str;
+
 		return Parser.addQuotesIfNeeded(str);
 	}
 
