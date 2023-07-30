@@ -73,6 +73,14 @@ public class ColourProvInput extends Input<ColourProvider> {
 	public void getValueTokens(ArrayList<String> toks) {
 		if (value == null || isDef)
 			return;
+
+		// Preserve the exact text for a constant value input
+		if (isConstant()) {
+			super.getValueTokens(toks);
+			return;
+		}
+
+		// All other inputs can be built from scratch
 		toks.add(value.toString());
 	}
 
