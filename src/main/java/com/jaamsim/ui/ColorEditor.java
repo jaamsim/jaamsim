@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2005-2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2020 JaamSim Software Inc.
+ * Copyright (C) 2016-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,9 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 
+import com.jaamsim.ColourProviders.ColourProvInput;
+import com.jaamsim.basicsim.Entity;
+import com.jaamsim.input.ColourInput;
 import com.jaamsim.math.Color4d;
 
 /**
@@ -38,10 +41,18 @@ public class ColorEditor extends CellEditor {
 		if("button".equals(e.getActionCommand())) {
 
 			// Present colour
-			Color4d col = (Color4d) input.getValue();
+			Color4d col = null;
+			if (input instanceof ColourInput) {
+				col = (Color4d) input.getValue();
+			}
+			if (input instanceof ColourProvInput && ((ColourProvInput) input).isConstant()) {
+				Entity ent = getTable().getEntity();
+				col = ((ColourProvInput) input).getNextColour(ent, 0.0d);
+			}
 			ArrayList<Color4d> coloursInUse = new ArrayList<>(1);
 			if (col != null)
 				coloursInUse.add(col);
+
 			ColourMenu menu = new ColourMenu(col, coloursInUse, false) {
 
 				@Override

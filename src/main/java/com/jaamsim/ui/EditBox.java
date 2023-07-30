@@ -37,6 +37,7 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
 
+import com.jaamsim.ColourProviders.ColourProvInput;
 import com.jaamsim.Samples.SampleListInput;
 import com.jaamsim.StringProviders.StringProvListInput;
 import com.jaamsim.basicsim.Entity;
@@ -441,7 +442,7 @@ public static class EditTable extends JTable {
 		int height = getRowHeight();
 
 		// 1) Colour input
-		if (in instanceof ColourInput) {
+		if (in instanceof ColourInput || in instanceof ColourProvInput) {
 			ret = new ColorEditor(width, height);
 		}
 
