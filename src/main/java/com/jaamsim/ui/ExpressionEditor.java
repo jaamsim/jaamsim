@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2018-2022 JaamSim Software Inc.
+ * Copyright (C) 2018-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -85,31 +85,6 @@ public class ExpressionEditor extends CellEditor {
 			}
 			return;
 		}
-	}
-
-	private void launchExpressionBox() {
-
-		// Use the input from the Input Editor if it has been changed already,
-		// otherwise use the input's value which includes any newline characters
-		String str = input.getValueString();
-		if (!str.replace('\n', ' ').equals(getValue()))
-			str = getValue();
-
-		// Launch the dialog box and wait for editing to finish
-		ExpressionBox expDialog = new ExpressionBox(input, str);
-		int result = expDialog.showDialog();
-
-		// Return the new expression
-		if (result == ExpressionBox.APPROVE_OPTION) {
-			setValue(expDialog.getInputString());
-		}
-		else {
-			// Reset the original value
-			setValue(str);
-		}
-
-		// Apply editing
-		stopCellEditing();
 	}
 
 }

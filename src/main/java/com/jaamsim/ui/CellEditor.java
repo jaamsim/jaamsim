@@ -306,6 +306,31 @@ public abstract class CellEditor extends AbstractCellEditor implements TableCell
 		text.setText(input.getValueString());
 	}
 
+	protected void launchExpressionBox() {
+
+		// Use the input from the Input Editor if it has been changed already,
+		// otherwise use the input's value which includes any newline characters
+		String str = input.getValueString();
+		if (!str.replace('\n', ' ').equals(getValue()))
+			str = getValue();
+
+		// Launch the dialog box and wait for editing to finish
+		ExpressionBox expDialog = new ExpressionBox(input, str);
+		int result = expDialog.showDialog();
+
+		// Return the new expression
+		if (result == ExpressionBox.APPROVE_OPTION) {
+			setValue(expDialog.getInputString());
+		}
+		else {
+			// Reset the original value
+			setValue(str);
+		}
+
+		// Apply editing
+		stopCellEditing();
+	}
+
 	@Override
 	public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
 
