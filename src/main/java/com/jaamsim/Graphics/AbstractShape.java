@@ -37,7 +37,9 @@ public abstract class AbstractShape extends DisplayEntity implements LineEntity,
 	protected final BooleanInput filled;
 
 	@Keyword(description = "The colour with which the object is filled.",
-	         exampleList = {"red"})
+	         exampleList = {"red", "255 0 0", "red 0.5", "255 0 0 0.5",
+	                        "'simTime%1[s] < 0.5[s] ? \"red\" : \"yellow\"'",
+	                        "'simTime%1[s] < 0.5[s] ? {255, 0, 0} : {255, 255, 0}'"})
 	protected final ColourProvInput fillColour;
 
 	@Keyword(description = "Determines whether or not the object is outlined. "
@@ -47,7 +49,9 @@ public abstract class AbstractShape extends DisplayEntity implements LineEntity,
 	protected final BooleanInput outlined;
 
 	@Keyword(description = "The colour with which the object is outlined.",
-	         exampleList = {"red"})
+	         exampleList = {"red", "255 0 0", "red 0.5", "255 0 0 0.5",
+	                        "'simTime%1[s] < 0.5[s] ? \"red\" : \"yellow\"'",
+	                        "'simTime%1[s] < 0.5[s] ? {255, 0, 0} : {255, 255, 0}'"})
 	protected final ColourProvInput lineColour;
 
 	@Keyword(description = "Width of the outline in pixels.",
