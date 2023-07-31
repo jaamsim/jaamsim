@@ -331,6 +331,34 @@ public abstract class CellEditor extends AbstractCellEditor implements TableCell
 		stopCellEditing();
 	}
 
+	protected void setInputValue(String str) {
+
+		// Adjust the user's entry to standardise the syntax
+		str = str.trim();
+		if (!str.isEmpty())
+			str = input.applyConditioning(str);
+
+		// New value is the same as the inherited value
+		if (input.getInheritedValueString().replace('\n', ' ').equals(str))
+			str = "";
+
+		// The value has not changed
+		if (input.getValueString().replace('\n', ' ').equals(str) && input.isValid()) {
+			return;
+		}
+
+		// Parse the keyword inputs
+		ParseContext pc = null;
+		if (GUIFrame.getJaamSimModel().getConfigFile() != null) {
+			URI configDirURI = GUIFrame.getJaamSimModel().getConfigFile().getParentFile().toURI();
+			pc = new ParseContext(configDirURI, null);
+		}
+		Entity ent = table.getEntity();
+		KeywordIndex kw = InputAgent.formatInput(input.getKeyword(), str, pc);
+		InputAgent.storeAndExecute(new KeywordCommand(ent, kw));
+		input.setValid(true);
+	}
+
 	@Override
 	public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
 
@@ -373,37 +401,10 @@ public abstract class CellEditor extends AbstractCellEditor implements TableCell
 				return;
 
 			CellEditor editor = (CellEditor)evt.getSource();
-			Input<?> in = (Input<?>)editor.getCellEditorValue();
 			Entity ent = editor.getTable().getEntity();
-
 			final String newValue = editor.getValue();
-
-			// Adjust the user's entry to standardise the syntax
-			String str = newValue.trim();
-			if (!str.isEmpty())
-				str = in.applyConditioning(str);
-
-			// New value is the same as the inherited value
-			if (in.getInheritedValueString().replace('\n', ' ').equals(str))
-				str = "";
-
-			// The value has not changed
-			if (in.getValueString().replace('\n', ' ').equals(str) && in.isValid()) {
-				editor.getTable().setPresentCellEditor(null);
-				editor.getTable().requestFocusInWindow();
-				return;
-			}
-
 			try {
-				// Parse the keyword inputs
-				ParseContext pc = null;
-				if (GUIFrame.getJaamSimModel().getConfigFile() != null) {
-					URI configDirURI = GUIFrame.getJaamSimModel().getConfigFile().getParentFile().toURI();
-					pc = new ParseContext(configDirURI, null);
-				}
-				KeywordIndex kw = InputAgent.formatInput(in.getKeyword(), str, pc);
-				InputAgent.storeAndExecute(new KeywordCommand(ent, kw));
-				in.setValid(true);
+				editor.setInputValue(newValue);
 			}
 			catch (InputErrorException exep) {
 				boolean entityChanged = (EditBox.getInstance().getCurrentEntity() !=  ent);
