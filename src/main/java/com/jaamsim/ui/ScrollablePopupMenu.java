@@ -179,7 +179,10 @@ public class ScrollablePopupMenu extends JPopupMenu {
 	public JMenuItem getMenuItem(int i) {
 		if (i >= getComponentCount() - 1)
 			return null;
-		return (JMenuItem) getComponent(i + 1);
+		Component comp = getComponent(i + 1);
+		if (!(comp instanceof JMenuItem))
+			return null;
+		return (JMenuItem) comp;
 	}
 
 	/**
