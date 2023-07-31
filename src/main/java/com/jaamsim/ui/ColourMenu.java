@@ -65,12 +65,12 @@ public abstract class ColourMenu extends ScrollablePopupMenu {
 				if (!(e.getSource() instanceof JMenuItem))
 					return;
 				JMenuItem item = (JMenuItem) e.getSource();
-				setColour(item.getText());
+				showPreview(item.getText());
 			}
 			@Override
 			public void mouseExited(MouseEvent e) {
 				String colStr = ColourInput.toString(presentColour);
-				setColour(colStr);
+				showPreview(colStr);
 			}
 		};
 

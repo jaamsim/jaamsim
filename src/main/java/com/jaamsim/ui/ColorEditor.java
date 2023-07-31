@@ -70,12 +70,17 @@ public class ColorEditor extends CellEditor {
 				});
 			}
 
-			ColourMenu menu = new ColourMenu(col, coloursInUse, builderItem, false) {
+			ColourMenu menu = new ColourMenu(col, coloursInUse, builderItem, true) {
 
 				@Override
 				public void setColour(String colStr) {
 					setValue(colStr);
 					stopCellEditing();
+				}
+
+				@Override
+				public void showPreview(String colStr) {
+					setInputValue(colStr);
 				}
 
 			};
