@@ -94,6 +94,7 @@ public class ScrollablePopupMenu extends JPopupMenu {
 							if (item == null)
 								return;
 							showToolTip(item);
+							showPreview(item.getText());
 						}
 					});
 				}
@@ -205,6 +206,8 @@ public class ScrollablePopupMenu extends JPopupMenu {
 			}
 		});
 	}
+
+	public void showPreview(String str) {}
 
 	protected static class ScrollableMenuLayout implements LayoutManager{
 
