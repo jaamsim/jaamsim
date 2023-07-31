@@ -19,7 +19,10 @@ package com.jaamsim.ui;
 
 import java.awt.Component;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
+
+import javax.swing.JMenuItem;
 
 import com.jaamsim.ColourProviders.ColourProvInput;
 import com.jaamsim.basicsim.Entity;
@@ -31,6 +34,8 @@ import com.jaamsim.math.Color4d;
  *
  */
 public class ColorEditor extends CellEditor {
+
+	public static final String OPTION_INPUT_BUILDER = String.format("*** %s ***", ExpressionBox.DIALOG_NAME);
 
 	public ColorEditor(int width, int height) {
 		super(width, height, true);
@@ -53,7 +58,19 @@ public class ColorEditor extends CellEditor {
 			if (col != null)
 				coloursInUse.add(col);
 
-			ColourMenu menu = new ColourMenu(col, coloursInUse, false) {
+			// Input Builder
+			JMenuItem builderItem = null;
+			if (input.useExpressionBuilder()) {
+				builderItem = new JMenuItem(OPTION_INPUT_BUILDER);
+				builderItem.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent event) {
+						launchExpressionBox();
+					}
+				});
+			}
+
+			ColourMenu menu = new ColourMenu(col, coloursInUse, builderItem, false) {
 
 				@Override
 				public void setColour(String colStr) {
@@ -62,6 +79,7 @@ public class ColorEditor extends CellEditor {
 				}
 
 			};
+
 			Component button = (Component)e.getSource();
 			Component panel = button.getParent();
 			menu.show(panel, 0, panel.getHeight());

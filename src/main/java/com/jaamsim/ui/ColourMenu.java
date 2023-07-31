@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2020 JaamSim Software Inc.
+ * Copyright (C) 2020-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,6 +38,10 @@ public abstract class ColourMenu extends ScrollablePopupMenu {
 	public static final String OPTION_COLOUR_CHOOSER = String.format("*** %s ***", DIALOG_NAME);
 
 	public ColourMenu(Color4d presentColour, ArrayList<Color4d> coloursInUse, boolean preview) {
+		this(presentColour, coloursInUse, null, preview);
+	}
+
+	public ColourMenu(Color4d presentColour, ArrayList<Color4d> coloursInUse, JMenuItem builderItem, boolean preview) {
 
 		ActionListener actionListener = new ActionListener() {
 			@Override
@@ -96,6 +100,11 @@ public abstract class ColourMenu extends ScrollablePopupMenu {
 			add(item);
 		}
 		addSeparator();
+
+		// Input Builder
+		if (builderItem != null) {
+			add(builderItem);
+		}
 
 		// Colour chooser
 		JMenuItem chooserItem = new JMenuItem(OPTION_COLOUR_CHOOSER);
