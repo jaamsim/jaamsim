@@ -2510,9 +2510,14 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 					@Override
 					public void setColour(String colStr) {
+						showPreview(colStr);
+						controlStartResume.requestFocusInWindow();
+					}
+
+					@Override
+					public void showPreview(String colStr) {
 						KeywordIndex kw = InputAgent.formatInput("FontColour", colStr);
 						InputAgent.storeAndExecute(new KeywordCommand(selectedEntity, kw));
-						controlStartResume.requestFocusInWindow();
 					}
 
 				};
@@ -2672,9 +2677,14 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 					@Override
 					public void setColour(String colStr) {
+						showPreview(colStr);
+						controlStartResume.requestFocusInWindow();
+					}
+
+					@Override
+					public void showPreview(String colStr) {
 						KeywordIndex kw = InputAgent.formatInput("LineColour", colStr);
 						InputAgent.storeAndExecute(new KeywordCommand(selectedEntity, kw));
-						controlStartResume.requestFocusInWindow();
 					}
 
 				};
@@ -2739,9 +2749,14 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 					@Override
 					public void setColour(String colStr) {
+						showPreview(colStr);
+						controlStartResume.requestFocusInWindow();
+					}
+
+					@Override
+					public void showPreview(String colStr) {
 						KeywordIndex kw = InputAgent.formatInput("FillColour", colStr);
 						InputAgent.storeAndExecute(new KeywordCommand(selectedEntity, kw));
-						controlStartResume.requestFocusInWindow();
 					}
 
 				};
