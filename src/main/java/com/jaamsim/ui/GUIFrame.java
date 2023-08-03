@@ -2143,9 +2143,14 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 					@Override
 					public void setValue(String str) {
 						dispModel.setText(str);
+						showPreview(str);
+						controlStartResume.requestFocusInWindow();
+					}
+
+					@Override
+					public void showPreview(String str) {
 						KeywordIndex kw = InputAgent.formatArgs("DisplayModel", str);
 						InputAgent.storeAndExecute(new KeywordCommand(dispEnt, kw));
-						controlStartResume.requestFocusInWindow();
 					}
 
 				};
@@ -2361,6 +2366,12 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 					@Override
 					public void setValue(String str) {
 						font.setText(str);
+						showPreview(str);
+						controlStartResume.requestFocusInWindow();
+					}
+
+					@Override
+					public void showPreview(String str) {
 						String name = Parser.addQuotesIfNeeded(str);
 						ArrayList<KeywordIndex> kwList = new ArrayList<>(2);
 						kwList.add( InputAgent.formatInput("FontName", name) );
@@ -2374,7 +2385,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 						KeywordIndex[] kws = new KeywordIndex[kwList.size()];
 						kwList.toArray(kws);
 						InputAgent.storeAndExecute(new KeywordCommand(selectedEntity, kws));
-						controlStartResume.requestFocusInWindow();
 					}
 
 				};

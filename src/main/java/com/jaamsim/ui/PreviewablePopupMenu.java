@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2020 JaamSim Software Inc.
+ * Copyright (C) 2020-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -62,11 +62,11 @@ public abstract class PreviewablePopupMenu extends ScrollablePopupMenu {
 				if (!(e.getSource() instanceof JMenuItem))
 					return;
 				JMenuItem item = (JMenuItem) e.getSource();
-				setValue(item.getText());
+				showPreview(item.getText());
 			}
 			@Override
 			public void mouseExited(MouseEvent e) {
-				setValue(presentValue);
+				showPreview(presentValue);
 			}
 		};
 
