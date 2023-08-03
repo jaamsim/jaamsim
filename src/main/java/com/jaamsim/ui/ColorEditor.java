@@ -92,4 +92,9 @@ public class ColorEditor extends CellEditor {
 		}
 	}
 
+	@Override
+	public boolean canRetry() {
+		return true;
+	}
+
 }
