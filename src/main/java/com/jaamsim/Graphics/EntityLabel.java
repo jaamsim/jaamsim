@@ -107,7 +107,7 @@ public class EntityLabel extends TextBasics {
 		if (isEditMode())
 			return super.getText();
 		Entity ent = targetEntity.getValue();
-		if (ent == null)
+		if (ent == null || ent.getName() == null)
 			return "ERROR";
 		return ent.getName();
 	}
