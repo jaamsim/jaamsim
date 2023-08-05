@@ -392,7 +392,7 @@ public class OverlayText extends OverlayEntity implements TextEntity, EditableTe
 	 * @return insert position in the text string
 	 */
 	public int getStringPosition(int x, int y, int windowWidth, int windowHeight) {
-		double height = getTextHeight();
+		double height = getTextHeight(0.0d);
 		TessFontKey fontKey = getTessFontKey();
 		Vec3d size = RenderManager.inst().getRenderedStringSize(fontKey, height, getText());
 		IntegerVector pos = getScreenPosition();
@@ -471,7 +471,7 @@ public class OverlayText extends OverlayEntity implements TextEntity, EditableTe
 	}
 
 	@Override
-	public double getTextHeight() {
+	public double getTextHeight(double simTime) {
 		if (textHeight.isDefault()) {
 			return getTextModel().getTextHeightInPixels();
 		}

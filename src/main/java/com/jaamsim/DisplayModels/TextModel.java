@@ -235,7 +235,7 @@ public class TextModel extends AbstractShapeModel implements TextEntity {
 	}
 
 	@Override
-	public double getTextHeight() {
+	public double getTextHeight(double simTime) {
 		return textHeight.getValue();
 	}
 
@@ -342,7 +342,7 @@ public class TextModel extends AbstractShapeModel implements TextEntity {
 			}
 
 			String text = labelObservee.getCachedText();
-			double height = labelObservee.getTextHeight();
+			double height = labelObservee.getTextHeight(simTime);
 			Color4d color = labelObservee.getFontColor(simTime);
 			TessFontKey fk = labelObservee.getTessFontKey();
 			Vec3d textSize = RenderManager.inst().getRenderedStringSize(fk, height, text);
@@ -546,7 +546,7 @@ public class TextModel extends AbstractShapeModel implements TextEntity {
 
 			String text = labelObservee.getCachedText();
 			IntegerVector pos = labelObservee.getScreenPosition();
-			int height = (int) labelObservee.getTextHeight();
+			int height = (int) labelObservee.getTextHeight(simTime);
 			boolean alignRight = labelObservee.getAlignRight();
 			boolean alignBottom = labelObservee.getAlignBottom();
 			Color4d color = labelObservee.getFontColor(simTime);
@@ -733,7 +733,7 @@ public class TextModel extends AbstractShapeModel implements TextEntity {
 			}
 
 			String text = labelObservee.getCachedText();
-			int height = (int)labelObservee.getTextHeight();
+			int height = (int)labelObservee.getTextHeight(simTime);
 			Color4d color = labelObservee.getFontColor(simTime);
 			TessFontKey fk = labelObservee.getTessFontKey();
 			boolean ds = labelObservee.getDropShadow();

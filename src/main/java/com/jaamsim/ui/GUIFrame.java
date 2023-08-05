@@ -2303,7 +2303,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				if (textEnt instanceof Text && ((Text) textEnt).isAutoSize()) {
 					Text t = (Text) textEnt;
 					int style = (bold.isSelected() ? Font.BOLD : 0) + (italic.isSelected() ? Font.ITALIC : 0);
-					Vec3d size = t.getAutoSize(t.getFontName(), style, t.getTextHeight());
+					Vec3d size = t.getAutoSize(t.getFontName(), style, t.getTextHeight(0.0d));
 					if (Double.isFinite(size.x) && Double.isFinite(size.y)) {
 						kwList.add( getJaamSimModel().formatVec3dInput("Size", size, DistanceUnit.class) );
 					}
@@ -2377,7 +2377,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 						kwList.add( InputAgent.formatInput("FontName", name) );
 						if (textEnt instanceof Text && ((Text) textEnt).isAutoSize()) {
 							Text t = (Text) textEnt;
-							Vec3d size = t.getAutoSize(str, t.getStyle(), t.getTextHeight());
+							Vec3d size = t.getAutoSize(str, t.getStyle(), t.getTextHeight(0.0d));
 							if (Double.isFinite(size.x) && Double.isFinite(size.y)) {
 								kwList.add( getJaamSimModel().formatVec3dInput("Size", size, DistanceUnit.class) );
 							}
@@ -2437,7 +2437,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 					return;
 				TextEntity textEnt = (TextEntity) selectedEntity;
 
-				double height = textEnt.getTextHeight();
+				double height = textEnt.getTextHeight(0.0d);
 				double spacing = sim.getSimulation().getSnapGridSpacing();
 				if (textEnt instanceof OverlayText || textEnt instanceof BillboardText)
 					spacing = 1.0d;

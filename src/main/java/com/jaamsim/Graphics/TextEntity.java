@@ -23,7 +23,7 @@ import com.jaamsim.math.Vec3d;
 public interface TextEntity {
 	public JaamSimModel getJaamSimModel();
 	public String getFontName();
-	public double getTextHeight();
+	public double getTextHeight(double simTime);
 	public String getTextHeightString();
 	public int getStyle();
 	public boolean isBold();

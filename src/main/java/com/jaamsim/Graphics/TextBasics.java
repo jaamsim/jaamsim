@@ -258,7 +258,7 @@ public abstract class TextBasics extends AbstractShape implements TextEntity, Ed
 	 * @return insert position in the text string
 	 */
 	public int getStringPosition(Vec3d globalCoord) {
-		double height = getTextHeight();
+		double height = getTextHeight(0.0d);
 		TessFontKey fontKey = getTessFontKey();
 
 		// Set up the transformation from global coordinates to the entity's coordinates
@@ -294,7 +294,7 @@ public abstract class TextBasics extends AbstractShape implements TextEntity, Ed
 	public void resizeForText() {
 		if (!RenderManager.isGood())
 			return;
-		Vec3d newSize = getAutoSize(getFontName(), getStyle(), getTextHeight());
+		Vec3d newSize = getAutoSize(getFontName(), getStyle(), getTextHeight(0.0d));
 		InputAgent.apply(this, getJaamSimModel().formatVec3dInput("Size", newSize, DistanceUnit.class));
 	}
 
@@ -352,9 +352,9 @@ public abstract class TextBasics extends AbstractShape implements TextEntity, Ed
 	}
 
 	@Override
-	public double getTextHeight() {
+	public double getTextHeight(double simTime) {
 		if (textHeight.isDefault()) {
-			return getTextModel().getTextHeight();
+			return getTextModel().getTextHeight(simTime);
 		}
 		return textHeight.getValue();
 	}
