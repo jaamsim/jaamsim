@@ -28,6 +28,7 @@ import com.jaamsim.Graphics.EntityLabel;
 import com.jaamsim.Graphics.OverlayText;
 import com.jaamsim.Graphics.TextBasics;
 import com.jaamsim.Graphics.TextEntity;
+import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.datatypes.IntegerVector;
@@ -39,7 +40,6 @@ import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.StringChoiceInput;
 import com.jaamsim.input.StringListInput;
-import com.jaamsim.input.ValueInput;
 import com.jaamsim.input.Vec3dInput;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Transform;
@@ -68,7 +68,7 @@ public class TextModel extends AbstractShapeModel implements TextEntity {
 
 	@Keyword(description = "The height of the text as displayed in the view window.",
 	         exampleList = {"15 m"})
-	protected final ValueInput textHeight;
+	protected final SampleInput textHeight;
 
 	@Keyword(description = "The height of the text in pixels, used by billboard text and "
 	                     + "overlay text.",
@@ -123,7 +123,7 @@ public class TextModel extends AbstractShapeModel implements TextEntity {
 		fontName.setChoices(validFontNames);
 		this.addInput(fontName);
 
-		textHeight = new ValueInput("TextHeight", KEY_INPUTS, 0.3d);
+		textHeight = new SampleInput("TextHeight", KEY_INPUTS, 0.3d);
 		textHeight.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		textHeight.setUnitType(DistanceUnit.class);
 		textHeight.setCallback(textheightCallback);
@@ -236,7 +236,7 @@ public class TextModel extends AbstractShapeModel implements TextEntity {
 
 	@Override
 	public double getTextHeight(double simTime) {
-		return textHeight.getValue();
+		return textHeight.getNextSample(this, simTime);
 	}
 
 	public int getTextHeightInPixels() {

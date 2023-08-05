@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018-2021 JaamSim Software Inc.
+ * Copyright (C) 2018-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,7 +44,7 @@ public class BillboardText extends Text {
 		if (textHeight.isDefault()) {
 			return getTextModel().getTextHeightInPixels();
 		}
-		return textHeight.getValue();
+		return textHeight.getNextSample(this, simTime);
 	}
 
 	@Override

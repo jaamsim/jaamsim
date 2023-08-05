@@ -21,6 +21,7 @@ import java.util.ArrayList;
 
 import com.jaamsim.ColourProviders.ColourProvInput;
 import com.jaamsim.DisplayModels.TextModel;
+import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.basicsim.GUIListener;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.input.BooleanInput;
@@ -30,7 +31,6 @@ import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.StringChoiceInput;
 import com.jaamsim.input.StringListInput;
-import com.jaamsim.input.ValueInput;
 import com.jaamsim.input.Vec3dInput;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Transform;
@@ -52,7 +52,7 @@ public abstract class TextBasics extends AbstractShape implements TextEntity, Ed
 
 	@Keyword(description = "The height of the font as displayed in the view window.",
 	         exampleList = {"15 m"})
-	protected final ValueInput textHeight;
+	protected final SampleInput textHeight;
 
 	@Keyword(description = "The font styles to be applied to the text, e.g. Bold, Italic. ",
 	         exampleList = { "Bold" })
@@ -86,7 +86,7 @@ public abstract class TextBasics extends AbstractShape implements TextEntity, Ed
 		fontName.setDefaultText("TextModel");
 		this.addInput(fontName);
 
-		textHeight = new ValueInput("TextHeight", FONT, 0.3d);
+		textHeight = new SampleInput("TextHeight", FONT, 0.3d);
 		textHeight.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		textHeight.setUnitType(DistanceUnit.class);
 		textHeight.setDefaultText("TextModel");
@@ -356,7 +356,7 @@ public abstract class TextBasics extends AbstractShape implements TextEntity, Ed
 		if (textHeight.isDefault()) {
 			return getTextModel().getTextHeight(simTime);
 		}
-		return textHeight.getValue();
+		return textHeight.getNextSample(this, simTime);
 	}
 
 	@Override
