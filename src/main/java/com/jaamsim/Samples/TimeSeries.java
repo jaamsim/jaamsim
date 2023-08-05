@@ -36,7 +36,6 @@ import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.TimeSeriesDataInput;
 import com.jaamsim.input.UnitTypeInput;
-import com.jaamsim.input.ValueInput;
 import com.jaamsim.units.TimeUnit;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
@@ -80,7 +79,7 @@ public class TimeSeries extends DisplayEntity implements TimeSeriesProvider, Sub
 
 	@Keyword(description = "The time at which the time series will repeat from the start.",
 	         exampleList = {"8760.0 h"})
-	private final ValueInput cycleTime;
+	private final SampleInput cycleTime;
 
 	private final SubjectEntityDelegate subject = new SubjectEntityDelegate(this);
 
@@ -103,7 +102,7 @@ public class TimeSeries extends DisplayEntity implements TimeSeriesProvider, Sub
 		value.setRequired(true);
 		this.addInput(value);
 
-		cycleTime = new ValueInput("CycleTime", KEY_INPUTS, Double.POSITIVE_INFINITY);
+		cycleTime = new SampleInput("CycleTime", KEY_INPUTS, Double.POSITIVE_INFINITY);
 		cycleTime.setUnitType(TimeUnit.class);
 		this.addInput(cycleTime);
 	}
@@ -167,8 +166,12 @@ public class TimeSeries extends DisplayEntity implements TimeSeriesProvider, Sub
 		return offsetToFirst.getValue();
 	}
 
+	public boolean isCycleTimeInfinite() {
+		return (cycleTime.getNextSample(this, 0.0d) == Double.POSITIVE_INFINITY);
+	}
+
 	public long getCycleTicks() {
-		return getTicks( cycleTime.getValue() );
+		return getTicks( cycleTime.getNextSample(this, 0.0d) );
 	}
 
 	public long getOffsetTicks() {
@@ -261,7 +264,7 @@ public class TimeSeries extends DisplayEntity implements TimeSeriesProvider, Sub
 
 	@Override
 	public long getMaxTicksValue() {
-		if (cycleTime.getValue() < Double.POSITIVE_INFINITY)
+		if (!isCycleTimeInfinite())
 			return getCycleTicks();
 
 		long[] ticksList = value.getValue().ticksList;
@@ -305,7 +308,7 @@ public class TimeSeries extends DisplayEntity implements TimeSeriesProvider, Sub
 		long[] ticksList = value.getValue().ticksList;
 
 		if (ticks == Long.MAX_VALUE) {
-			if (cycleTime.getValue() == Double.POSITIVE_INFINITY)
+			if (isCycleTimeInfinite())
 				return new TSPoint(ticksList.length - 1, 0);
 			return new TSPoint(ticksList.length - 1, Long.MAX_VALUE);
 		}
@@ -316,7 +319,7 @@ public class TimeSeries extends DisplayEntity implements TimeSeriesProvider, Sub
 		// Find the time within the present cycle
 		long ticksInCycle = Math.max(ticks, 0L);
 		long numberOfCycles = 0L;
-		if (cycleTime.getValue() != Double.POSITIVE_INFINITY) {
+		if (!isCycleTimeInfinite()) {
 			long cycleTicks = getCycleTicks();
 			numberOfCycles = Math.floorDiv(ticks - ticksList[0], cycleTicks);
 			ticksInCycle = ticks - numberOfCycles*cycleTicks;
@@ -354,7 +357,7 @@ public class TimeSeries extends DisplayEntity implements TimeSeriesProvider, Sub
 	private TSPoint getTSPointForValue(double val) {
 
 		double[] valueList = value.getValue().valueList;
-		if (val > getMaxValue() && cycleTime.getValue() == Double.POSITIVE_INFINITY)
+		if (val > getMaxValue() && isCycleTimeInfinite())
 			return new TSPoint(valueList.length - 1, 0);
 
 		// Find the value within the present cycle
@@ -390,7 +393,7 @@ public class TimeSeries extends DisplayEntity implements TimeSeriesProvider, Sub
 	private long getTicks(TSPoint pt) {
 		if (pt.index == -1)
 			return Long.MAX_VALUE;
-		if (cycleTime.getValue() == Double.POSITIVE_INFINITY)
+		if (isCycleTimeInfinite())
 			return value.getValue().ticksList[pt.index] + getOffsetTicks();
 		return value.getValue().ticksList[pt.index] + getOffsetTicks() + pt.numberOfCycles*getCycleTicks();
 	}
@@ -417,7 +420,7 @@ public class TimeSeries extends DisplayEntity implements TimeSeriesProvider, Sub
 	 * @return total value for the time series.
 	 */
 	private double getCumulativeValue(TSPoint pt) {
-		if (cycleTime.getValue() == Double.POSITIVE_INFINITY)
+		if (isCycleTimeInfinite())
 			return getValue(pt);
 		return getValue(pt) + pt.numberOfCycles*getMaxValue();
 	}
@@ -436,7 +439,7 @@ public class TimeSeries extends DisplayEntity implements TimeSeriesProvider, Sub
 			return new TSPoint(pt.index, pt.numberOfCycles);
 
 		if (pt.index == 0) {
-			if (cycleTime.getValue() == Double.POSITIVE_INFINITY)
+			if (isCycleTimeInfinite())
 				return new TSPoint(-1, pt.numberOfCycles);
 
 			return new TSPoint(value.getValue().ticksList.length - 1, pt.numberOfCycles - 1);
@@ -459,7 +462,7 @@ public class TimeSeries extends DisplayEntity implements TimeSeriesProvider, Sub
 			return new TSPoint(pt.index, pt.numberOfCycles);
 
 		if (pt.index == value.getValue().ticksList.length - 1) {
-			if (cycleTime.getValue() == Double.POSITIVE_INFINITY)
+			if (isCycleTimeInfinite())
 				return new TSPoint(-1, pt.numberOfCycles);
 
 			return new TSPoint(0, pt.numberOfCycles + 1);
