@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2022 JaamSim Software Inc.
+ * Copyright (C) 2016-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package com.jaamsim.Thresholds;
 
 import java.util.ArrayList;
 
+import com.jaamsim.ColourProviders.ColourProvInput;
 import com.jaamsim.DisplayModels.ShapeModel;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.EntityTarget;
@@ -66,12 +67,12 @@ public class ExpressionThreshold extends Threshold implements ObserverEntity {
 	@Keyword(description = "The colour of the ExpressionThreshold graphic when the threshold "
 	                     + "condition is open, but the gate is still closed.",
 	         exampleList = { "yellow" })
-	private final ColourInput pendingOpenColour;
+	private final ColourProvInput pendingOpenColour;
 
 	@Keyword(description = "The colour of the ExpressionThreshold graphic when the threshold "
 	                     + "condition is closed, but the gate is still open.",
 	         exampleList = { "magenta" })
-	private final ColourInput pendingClosedColour;
+	private final ColourProvInput pendingClosedColour;
 
 	@Keyword(description = "A Boolean value. If TRUE, the ExpressionThreshold displays the "
 	                     + "pending open and pending closed states.",
@@ -128,11 +129,11 @@ public class ExpressionThreshold extends Threshold implements ObserverEntity {
 		initialOpenValue.setCallback(inputCallback);
 		this.addInput(initialOpenValue);
 
-		pendingOpenColour = new ColourInput("PendingOpenColour", FORMAT, ColourInput.YELLOW);
+		pendingOpenColour = new ColourProvInput("PendingOpenColour", FORMAT, ColourInput.YELLOW);
 		this.addInput(pendingOpenColour);
 		this.addSynonym(pendingOpenColour, "PendingOpenColor");
 
-		pendingClosedColour = new ColourInput("PendingClosedColour", FORMAT, ColourInput.PURPLE);
+		pendingClosedColour = new ColourProvInput("PendingClosedColour", FORMAT, ColourInput.PURPLE);
 		this.addInput(pendingClosedColour);
 		this.addSynonym(pendingClosedColour, "PendingClosedColor");
 
@@ -360,9 +361,9 @@ public class ExpressionThreshold extends Threshold implements ObserverEntity {
 		// Select the colour
 		Color4d col;
 		if (threshOpen)
-			col = pendingClosedColour.getValue();
+			col = pendingClosedColour.getNextColour(this, simTime);
 		else
-			col = pendingOpenColour.getValue();
+			col = pendingOpenColour.getNextColour(this, simTime);
 
 		// Display the threshold icon
 		setTagVisibility(ShapeModel.TAG_CONTENTS, true);

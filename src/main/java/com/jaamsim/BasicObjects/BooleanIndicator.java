@@ -17,6 +17,7 @@
  */
 package com.jaamsim.BasicObjects;
 
+import com.jaamsim.ColourProviders.ColourProvInput;
 import com.jaamsim.DisplayModels.ShapeModel;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleInput;
@@ -35,11 +36,11 @@ public class BooleanIndicator extends DisplayEntity {
 
 	@Keyword(description = "The colour of the indicator when the DataSource expression is TRUE.",
 	         exampleList = {"green"})
-	private final ColourInput trueColor;
+	private final ColourProvInput trueColor;
 
 	@Keyword(description = "The colour of the indicator when the DataSource expression is FALSE.",
 	         exampleList = {"red"})
-	private final ColourInput falseColor;
+	private final ColourProvInput falseColor;
 
 	@Keyword(description = "The string returned by the Text output when the DataSource expression "
 	                     + "is TRUE.",
@@ -58,11 +59,11 @@ public class BooleanIndicator extends DisplayEntity {
 		this.addInput(expInput);
 		this.addSynonym(expInput, "OutputName");
 
-		trueColor = new ColourInput("TrueColour", KEY_INPUTS, ColourInput.GREEN);
+		trueColor = new ColourProvInput("TrueColour", KEY_INPUTS, ColourInput.GREEN);
 		this.addInput(trueColor);
 		this.addSynonym(trueColor, "TrueColor");
 
-		falseColor = new ColourInput("FalseColour", KEY_INPUTS, ColourInput.RED);
+		falseColor = new ColourProvInput("FalseColour", KEY_INPUTS, ColourInput.RED);
 		this.addInput(falseColor);
 		this.addSynonym(falseColor, "FalseColor");
 
@@ -83,9 +84,9 @@ public class BooleanIndicator extends DisplayEntity {
 		if (expInput.getValue() == null)
 			return;
 		if (expInput.getNextSample(this, simTime) != 0.0d)
-			setTagColour(ShapeModel.TAG_CONTENTS, trueColor.getValue());
+			setTagColour(ShapeModel.TAG_CONTENTS, trueColor.getNextColour(this, simTime));
 		else
-			setTagColour(ShapeModel.TAG_CONTENTS, falseColor.getValue());
+			setTagColour(ShapeModel.TAG_CONTENTS, falseColor.getNextColour(this, simTime));
 	}
 
 	@Output(name = "Text",

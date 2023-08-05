@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2016-2022 JaamSim Software Inc.
+ * Copyright (C) 2016-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
  */
 package com.jaamsim.Graphics;
 
+import com.jaamsim.ColourProviders.ColourProvInput;
 import com.jaamsim.DisplayModels.ShapeModel;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.input.ColourInput;
@@ -33,11 +34,11 @@ public class BarGauge extends DisplayEntity {
 
 	@Keyword(description = "Colour of the bar.",
 	         exampleList = {"red"})
-	private final ColourInput colour;
+	private final ColourProvInput colour;
 
 	@Keyword(description = "Colour of the gauge's body.",
 	         exampleList = {"white"})
-	private final ColourInput backgroundColour;
+	private final ColourProvInput backgroundColour;
 
 	{
 		dataSource = new SampleInput("DataSource", KEY_INPUTS, 0.5d);
@@ -45,11 +46,11 @@ public class BarGauge extends DisplayEntity {
 		dataSource.setValidRange(0.0d, 1.0d);
 		this.addInput(dataSource);
 
-		colour = new ColourInput("Colour", KEY_INPUTS, ColourInput.BLUE);
+		colour = new ColourProvInput("Colour", KEY_INPUTS, ColourInput.BLUE);
 		this.addInput(colour);
 		this.addSynonym(colour, "Color");
 
-		backgroundColour = new ColourInput("BackgroundColour", KEY_INPUTS, ColourInput.LIGHT_GREY);
+		backgroundColour = new ColourProvInput("BackgroundColour", KEY_INPUTS, ColourInput.LIGHT_GREY);
 		this.addInput(backgroundColour);
 		this.addSynonym(backgroundColour, "BackgroundColor");
 	}
@@ -81,8 +82,8 @@ public class BarGauge extends DisplayEntity {
 		}
 
 		setTagSize(ShapeModel.TAG_CONTENTS, val);
-		setTagColour(ShapeModel.TAG_CONTENTS, colour.getValue());
-		setTagColour(ShapeModel.TAG_BODY, backgroundColour.getValue());
+		setTagColour(ShapeModel.TAG_CONTENTS, colour.getNextColour(this, simTime));
+		setTagColour(ShapeModel.TAG_BODY, backgroundColour.getNextColour(this, simTime));
 	}
 
 }

@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2019-2021 JaamSim Software Inc.
+ * Copyright (C) 2019-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
 
+import com.jaamsim.ColourProviders.ColourProvInput;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.View;
 import com.jaamsim.basicsim.Entity;
@@ -42,6 +43,7 @@ import com.jaamsim.input.IntegerListInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.StringInput;
 import com.jaamsim.input.ValueInput;
+import com.jaamsim.math.Color4d;
 import com.jaamsim.units.TimeUnit;
 
 public class VideoRecorderEntity extends DisplayEntity {
@@ -80,7 +82,7 @@ public class VideoRecorderEntity extends DisplayEntity {
 	                     + "The remainder of the frame, such as the Control Panel or any gaps "
 	                     + "between the view windows, will be replaced by the background color.",
 	         exampleList = {"skyblue", "135 206 235"})
-	private final ColourInput videoBGColor;
+	private final ColourProvInput videoBGColor;
 
 	@Keyword(description = "A label to append to the run name when the AVI file is saved.\n"
 	                     + "The saved file will be named <run name>_<VideoName>.avi.",
@@ -133,7 +135,7 @@ public class VideoRecorderEntity extends DisplayEntity {
 		captureViews.setRequired(true);
 		this.addInput(captureViews);
 
-		videoBGColor = new ColourInput("VideoBackgroundColor", KEY_INPUTS, ColourInput.WHITE);
+		videoBGColor = new ColourProvInput("VideoBackgroundColor", KEY_INPUTS, ColourInput.WHITE);
 		this.addInput(videoBGColor);
 		this.addSynonym(videoBGColor, "Colour");
 
@@ -231,8 +233,9 @@ public class VideoRecorderEntity extends DisplayEntity {
 		String fileName = simModel.getReportFileName("_" + videoName.getValue());
 		if (fileName == null)
 			JOptionPane.showMessageDialog(null, "Cannot create the file for the Video Recording.");
+		Color4d backgroundCol = videoBGColor.getNextColour(this, getSimTime());
 		VideoRecorder recorder = new VideoRecorder(views, fileName, width, height, captureFrames.getDefaultValue(),
-		                             saveImages.getValue(), saveVideo.getValue(), videoBGColor.getValue());
+		                             saveImages.getValue(), saveVideo.getValue(), backgroundCol);
 
 		// Otherwise, start capturing
 		while (saveVideo.getValue() || saveImages.getValue()) {

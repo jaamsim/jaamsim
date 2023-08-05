@@ -19,6 +19,7 @@ package com.jaamsim.Thresholds;
 
 import java.util.ArrayList;
 
+import com.jaamsim.ColourProviders.ColourProvInput;
 import com.jaamsim.DisplayModels.ShapeModel;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ObserverEntity;
@@ -37,11 +38,11 @@ public class Threshold extends StateEntity implements SubjectEntity {
 
 	@Keyword(description = "The colour of the threshold graphic when the threshold is open.",
 	         exampleList = { "green" })
-	private final ColourInput openColour;
+	private final ColourProvInput openColour;
 
 	@Keyword(description = "The colour of the threshold graphic when the threshold is closed.",
 	         exampleList = { "red" })
-	private final ColourInput closedColour;
+	private final ColourProvInput closedColour;
 
 	@Keyword(description = "A Boolean value.  If TRUE, the threshold is displayed when it is open.",
 	         exampleList = { "FALSE" })
@@ -64,11 +65,11 @@ public class Threshold extends StateEntity implements SubjectEntity {
 	{
 		workingStateListInput.setHidden(true);
 
-		openColour = new ColourInput("OpenColour", FORMAT, ColourInput.GREEN);
+		openColour = new ColourProvInput("OpenColour", FORMAT, ColourInput.GREEN);
 		this.addInput(openColour);
 		this.addSynonym(openColour, "OpenColor");
 
-		closedColour = new ColourInput("ClosedColour", FORMAT, ColourInput.RED);
+		closedColour = new ColourProvInput("ClosedColour", FORMAT, ColourInput.RED);
 		this.addInput(closedColour);
 		this.addSynonym(closedColour, "ClosedColor");
 
@@ -193,15 +194,15 @@ public class Threshold extends StateEntity implements SubjectEntity {
 	}
 
 	@Override
-	public void updateGraphics( double time ) {
-		super.updateGraphics(time);
+	public void updateGraphics(double simTime ) {
+		super.updateGraphics(simTime);
 
 		// Determine the colour for the square
 		Color4d col;
 		if (open)
-			col = openColour.getValue();
+			col = openColour.getNextColour(this, simTime);
 		else
-			col = closedColour.getValue();
+			col = closedColour.getNextColour(this, simTime);
 
 		// Show or hide the threshold
 		if (!showWhenOpen.isDefault() || !showWhenClosed.isDefault()) {

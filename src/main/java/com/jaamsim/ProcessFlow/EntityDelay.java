@@ -20,6 +20,7 @@ package com.jaamsim.ProcessFlow;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
+import com.jaamsim.ColourProviders.ColourProvInput;
 import com.jaamsim.DisplayModels.PolylineModel;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.LineEntity;
@@ -78,7 +79,7 @@ public class EntityDelay extends LinkedComponent implements LineEntity {
 
 	@Keyword(description = "The colour of the line representing the EntityDelay.",
 	         exampleList = {"red"})
-	private final ColourInput colorInput;
+	private final ColourProvInput colorInput;
 
 	private long exitTicks;  // ticks at which the previous entity will leave the path
 	private final LinkedHashMap<Long, EntityDelayEntry> entityMap = new LinkedHashMap<>();  // Entities being handled
@@ -116,7 +117,7 @@ public class EntityDelay extends LinkedComponent implements LineEntity {
 		this.addInput(widthInput);
 		this.addSynonym(widthInput, "Width");
 
-		colorInput = new ColourInput("LineColour", FORMAT, ColourInput.BLACK);
+		colorInput = new ColourProvInput("LineColour", FORMAT, ColourInput.BLACK);
 		colorInput.setDefaultText("PolylineModel");
 		this.addInput(colorInput);
 		this.addSynonym(colorInput, "Colour");
@@ -252,7 +253,7 @@ public class EntityDelay extends LinkedComponent implements LineEntity {
 			if (model != null)
 				return model.getLineColour(simTime);
 		}
-		return colorInput.getValue();
+		return colorInput.getNextColour(this, simTime);
 	}
 
 	@Override

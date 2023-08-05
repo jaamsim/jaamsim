@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2021 JaamSim Software Inc.
+ * Copyright (C) 2021-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
  */
 package com.jaamsim.DisplayModels;
 
+import com.jaamsim.ColourProviders.ColourProvInput;
 import com.jaamsim.Graphics.FillEntity;
 import com.jaamsim.Graphics.LineEntity;
 import com.jaamsim.input.BooleanInput;
@@ -40,7 +41,7 @@ public abstract class AbstractShapeModel extends DisplayModel implements LineEnt
 
 	@Keyword(description = "The colour with which the object is filled.",
 	         exampleList = {"red"})
-	protected final ColourInput fillColour;
+	protected final ColourProvInput fillColour;
 
 	@Keyword(description = "Determines whether or not the object is outlined. "
 	                     + "If TRUE, it is outlined with a specified colour. "
@@ -50,18 +51,18 @@ public abstract class AbstractShapeModel extends DisplayModel implements LineEnt
 
 	@Keyword(description = "The colour with which the object is outlined.",
 	         exampleList = {"red"})
-	protected final ColourInput lineColour;
+	protected final ColourProvInput lineColour;
 
 	@Keyword(description = "Width of the outline in pixels.",
 	         exampleList = { "3" })
 	protected final IntegerInput lineWidth;
 
 	{
-		fillColour = new ColourInput("FillColour", KEY_INPUTS, ColourInput.MED_GREY);
+		fillColour = new ColourProvInput("FillColour", KEY_INPUTS, ColourInput.MED_GREY);
 		this.addInput(fillColour);
 		this.addSynonym(fillColour, "FillColor");
 
-		lineColour = new ColourInput("LineColour", KEY_INPUTS, ColourInput.BLACK);
+		lineColour = new ColourProvInput("LineColour", KEY_INPUTS, ColourInput.BLACK);
 		this.addInput(lineColour);
 		this.addSynonym(lineColour, "OutlineColour");
 		this.addSynonym(lineColour, "OutlineColor");
@@ -96,12 +97,12 @@ public abstract class AbstractShapeModel extends DisplayModel implements LineEnt
 
 	@Override
 	public Color4d getFillColour(double simTime) {
-		return fillColour.getValue();
+		return fillColour.getNextColour(this, simTime);
 	}
 
 	@Override
 	public Color4d getLineColour(double simTime) {
-		return lineColour.getValue();
+		return lineColour.getNextColour(this, simTime);
 	}
 
 }

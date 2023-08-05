@@ -17,6 +17,7 @@
  */
 package com.jaamsim.FluidObjects;
 
+import com.jaamsim.ColourProviders.ColourProvInput;
 import com.jaamsim.DisplayModels.PolylineModel;
 import com.jaamsim.Graphics.FillEntity;
 import com.jaamsim.Graphics.LineEntity;
@@ -67,7 +68,7 @@ public class FluidPipe extends FluidComponent implements LineEntity, FillEntity,
 
 	@Keyword(description = "The colour of the pipe.",
 	         exampleList = {"red"})
-	private final ColourInput colourInput;
+	private final ColourProvInput colourInput;
 
 	private double darcyFrictionFactor;  // The Darcy Friction Factor for the pipe flow.
 
@@ -107,7 +108,7 @@ public class FluidPipe extends FluidComponent implements LineEntity, FillEntity,
 		this.addInput(widthInput);
 		this.addSynonym(widthInput, "Width");
 
-		colourInput = new ColourInput("LineColour", FORMAT, ColourInput.BLACK);
+		colourInput = new ColourProvInput("LineColour", FORMAT, ColourInput.BLACK);
 		colourInput.setDefaultText("PolylineModel");
 		colourInput.setHidden(true);
 		this.addInput(colourInput);
@@ -210,7 +211,7 @@ public class FluidPipe extends FluidComponent implements LineEntity, FillEntity,
 			if (model != null)
 				return model.getLineColour(simTime);
 		}
-		return colourInput.getValue();
+		return colourInput.getNextColour(this, simTime);
 	}
 
 	@Override
@@ -222,7 +223,7 @@ public class FluidPipe extends FluidComponent implements LineEntity, FillEntity,
 	public Color4d getFillColour(double simTime) {
 		if (getFluid() == null)
 			return ColourInput.BLACK;
-		return getFluid().getColour();
+		return getFluid().getColour(simTime);
 	}
 
 	@Override

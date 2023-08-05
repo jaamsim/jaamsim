@@ -19,6 +19,7 @@ package com.jaamsim.Graphics;
 
 import java.util.ArrayList;
 
+import com.jaamsim.ColourProviders.ColourProvInput;
 import com.jaamsim.DisplayModels.TextModel;
 import com.jaamsim.basicsim.GUIListener;
 import com.jaamsim.controllers.RenderManager;
@@ -59,7 +60,7 @@ public abstract class TextBasics extends AbstractShape implements TextEntity, Ed
 
 	@Keyword(description = "The colour of the text.",
 	         exampleList = { "red", "skyblue", "135 206 235" })
-	private final ColourInput fontColor;
+	private final ColourProvInput fontColor;
 
 	@Keyword(description = "If TRUE, then a drop shadow appears for the text.",
 	         exampleList = { "TRUE" })
@@ -67,7 +68,7 @@ public abstract class TextBasics extends AbstractShape implements TextEntity, Ed
 
 	@Keyword(description = "The colour for the drop shadow.",
 	         exampleList = { "red", "skyblue", "135 206 235" })
-	private final ColourInput dropShadowColor;
+	private final ColourProvInput dropShadowColor;
 
 	@Keyword(description = "The { x, y, z } coordinates of the drop shadow's offset, expressed "
 	                     + "as a decimal fraction of the text height.",
@@ -91,7 +92,7 @@ public abstract class TextBasics extends AbstractShape implements TextEntity, Ed
 		textHeight.setDefaultText("TextModel");
 		this.addInput(textHeight);
 
-		fontColor = new ColourInput("FontColour", FONT, ColourInput.BLACK);
+		fontColor = new ColourProvInput("FontColour", FONT, ColourInput.BLACK);
 		fontColor.setDefaultText("TextModel");
 		this.addInput(fontColor);
 		this.addSynonym(fontColor, "FontColor");
@@ -106,7 +107,7 @@ public abstract class TextBasics extends AbstractShape implements TextEntity, Ed
 		dropShadow.setDefaultText("TextModel");
 		this.addInput(dropShadow);
 
-		dropShadowColor = new ColourInput("DropShadowColour", FONT, ColourInput.BLACK);
+		dropShadowColor = new ColourProvInput("DropShadowColour", FONT, ColourInput.BLACK);
 		dropShadowColor.setDefaultText("TextModel");
 		this.addInput(dropShadowColor);
 		this.addSynonym(dropShadowColor, "DropShadowColor");
@@ -393,7 +394,7 @@ public abstract class TextBasics extends AbstractShape implements TextEntity, Ed
 		if (fontColor.isDefault()) {
 			return getTextModel().getFontColor(simTime);
 		}
-		return fontColor.getValue();
+		return fontColor.getNextColour(this, simTime);
 	}
 
 	@Override
@@ -409,7 +410,7 @@ public abstract class TextBasics extends AbstractShape implements TextEntity, Ed
 		if (dropShadowColor.isDefault()) {
 			return getTextModel().getDropShadowColor(simTime);
 		}
-		return dropShadowColor.getValue();
+		return dropShadowColor.getNextColour(this, simTime);
 	}
 
 	@Override

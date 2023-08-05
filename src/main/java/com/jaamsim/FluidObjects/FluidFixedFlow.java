@@ -17,6 +17,7 @@
  */
 package com.jaamsim.FluidObjects;
 
+import com.jaamsim.ColourProviders.ColourProvInput;
 import com.jaamsim.DisplayModels.PolylineModel;
 import com.jaamsim.Graphics.FillEntity;
 import com.jaamsim.Graphics.LineEntity;
@@ -52,7 +53,7 @@ public class FluidFixedFlow extends FluidFlowCalculation implements LineEntity, 
 
 	@Keyword(description = "The colour of the pipe.",
 	         exampleList = {"red"})
-	private final ColourInput colourInput;
+	private final ColourProvInput colourInput;
 
 	{
 		displayModelListInput.clearValidClasses();
@@ -75,7 +76,7 @@ public class FluidFixedFlow extends FluidFlowCalculation implements LineEntity, 
 		this.addInput(widthInput);
 		this.addSynonym(widthInput, "Width");
 
-		colourInput = new ColourInput("LineColour", FORMAT, ColourInput.BLACK);
+		colourInput = new ColourProvInput("LineColour", FORMAT, ColourInput.BLACK);
 		colourInput.setDefaultText("PolylineModel");
 		colourInput.setHidden(true);
 		this.addInput(colourInput);
@@ -112,7 +113,7 @@ public class FluidFixedFlow extends FluidFlowCalculation implements LineEntity, 
 			if (model != null)
 				return model.getLineColour(simTime);
 		}
-		return colourInput.getValue();
+		return colourInput.getNextColour(this, simTime);
 	}
 
 	@Override
@@ -124,7 +125,7 @@ public class FluidFixedFlow extends FluidFlowCalculation implements LineEntity, 
 	public Color4d getFillColour(double simTime) {
 		if (getFluid() == null)
 			return ColourInput.BLACK;
-		return getFluid().getColour();
+		return getFluid().getColour(simTime);
 	}
 
 	@Override

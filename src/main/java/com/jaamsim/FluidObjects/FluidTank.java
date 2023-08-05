@@ -142,7 +142,7 @@ public class FluidTank extends FluidComponent {
 		setTagSize(ShapeModel.TAG_CONTENTS, ratio);
 
 		if( this.getFluid() != null )
-			setTagColour(ShapeModel.TAG_CONTENTS, this.getFluid().getColour());
+			setTagColour(ShapeModel.TAG_CONTENTS, this.getFluid().getColour(simTime));
 		else
 			setTagColour(ShapeModel.TAG_CONTENTS, ColourInput.getColorWithName("black"));
 	}

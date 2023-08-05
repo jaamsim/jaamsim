@@ -19,6 +19,7 @@ package com.jaamsim.ProcessFlow;
 
 import java.util.ArrayList;
 
+import com.jaamsim.ColourProviders.ColourProvInput;
 import com.jaamsim.DisplayModels.PolylineModel;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.LineEntity;
@@ -92,7 +93,7 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 
 	@Keyword(description = "The colour of the conveyor.",
 	         exampleList = {"red"})
-	private final ColourInput colorInput;
+	private final ColourProvInput colorInput;
 
 	private final ArrayList<ConveyorEntry> entryList;  // List of the entities being conveyed
 	private double presentTravelTime;
@@ -152,7 +153,7 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 		this.addInput(widthInput);
 		this.addSynonym(widthInput, "Width");
 
-		colorInput = new ColourInput("LineColour", FORMAT, ColourInput.BLACK);
+		colorInput = new ColourProvInput("LineColour", FORMAT, ColourInput.BLACK);
 		colorInput.setDefaultText("PolylineModel");
 		this.addInput(colorInput);
 		this.addSynonym(colorInput, "Colour");
@@ -454,7 +455,7 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 			if (model != null)
 				return model.getLineColour(simTime);
 		}
-		return colorInput.getValue();
+		return colorInput.getNextColour(this, simTime);
 	}
 
 	@Override

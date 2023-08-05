@@ -20,6 +20,7 @@ package com.jaamsim.DisplayModels;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.jaamsim.ColourProviders.ColourProvInput;
 import com.jaamsim.Graphics.Graph;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.controllers.RenderManager;
@@ -128,15 +129,15 @@ public class GraphModel extends DisplayModel {
 
 	@Keyword(description = "The color of the graph background.",
 	         exampleList = {"floralwhite"})
-	private final ColourInput graphColor;
+	private final ColourProvInput graphColor;
 
 	@Keyword(description = "The color for the outer pane background.",
 	         exampleList = {"floralwhite"})
-	private final ColourInput backgroundColor;
+	private final ColourProvInput backgroundColor;
 
 	@Keyword(description = "The color of the graph border.",
 	         exampleList = {"red"})
-	private final ColourInput borderColor;
+	private final ColourProvInput borderColor;
 
 	private static final int maxTicks = 100;
 
@@ -202,15 +203,15 @@ public class GraphModel extends DisplayModel {
 		labelTextModel = new EntityInput<>(TextModel.class, "LabelTextModel", KEY_INPUTS, null);
 		this.addInput(labelTextModel);
 
-		graphColor = new ColourInput("GraphColor", KEY_INPUTS, ColourInput.getColorWithName("ivory"));
+		graphColor = new ColourProvInput("GraphColor", KEY_INPUTS, ColourInput.getColorWithName("ivory"));
 		this.addInput(graphColor);
 		this.addSynonym(graphColor, "GraphColour");
 
-		backgroundColor = new ColourInput("BackgroundColor", KEY_INPUTS, ColourInput.getColorWithName("gray95"));
+		backgroundColor = new ColourProvInput("BackgroundColor", KEY_INPUTS, ColourInput.getColorWithName("gray95"));
 		this.addInput(backgroundColor);
 		this.addSynonym(backgroundColor, "BackgroundColour");
 
-		borderColor = new ColourInput("BorderColor", KEY_INPUTS, ColourInput.BLACK);
+		borderColor = new ColourProvInput("BorderColor", KEY_INPUTS, ColourInput.BLACK);
 		this.addInput(borderColor);
 		this.addSynonym(borderColor, "BorderColour");
 	}
@@ -361,12 +362,15 @@ public class GraphModel extends DisplayModel {
 			updateObjectTrans(simTime);
 
 			// Draw the main frame
-			out.add(new PolygonProxy(RenderUtils.RECT_POINTS, objectTrans, objectScale, backgroundColor.getValue(), false, 1, getVisibilityInfo(), pickingID));
-			out.add(new PolygonProxy(RenderUtils.RECT_POINTS, objectTrans, objectScale, borderColor.getValue(), true, 1, getVisibilityInfo(), pickingID));
+			Color4d backgroundCol = backgroundColor.getNextColour(GraphModel.this, simTime);
+			Color4d borderCol = borderColor.getNextColour(GraphModel.this, simTime);
+			out.add(new PolygonProxy(RenderUtils.RECT_POINTS, objectTrans, objectScale, backgroundCol, false, 1, getVisibilityInfo(), pickingID));
+			out.add(new PolygonProxy(RenderUtils.RECT_POINTS, objectTrans, objectScale, borderCol, true, 1, getVisibilityInfo(), pickingID));
 
 			// Draw the graph frame
-			out.add(new PolygonProxy(graphRectPoints, objectTrans, objectScale, graphColor.getValue(), false, 1, getVisibilityInfo(), pickingID));
-			out.add(new PolygonProxy(graphRectPoints, objectTrans, objectScale, borderColor.getValue(), true, 1, getVisibilityInfo(), pickingID));
+			Color4d graphCol = graphColor.getNextColour(GraphModel.this, simTime);
+			out.add(new PolygonProxy(graphRectPoints, objectTrans, objectScale, graphCol, false, 1, getVisibilityInfo(), pickingID));
+			out.add(new PolygonProxy(graphRectPoints, objectTrans, objectScale, borderCol, true, 1, getVisibilityInfo(), pickingID));
 
 			// Draw the graph title
 			drawGraphTitle(simTime, out);

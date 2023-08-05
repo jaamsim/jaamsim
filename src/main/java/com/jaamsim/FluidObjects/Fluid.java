@@ -16,6 +16,7 @@
  */
 package com.jaamsim.FluidObjects;
 
+import com.jaamsim.ColourProviders.ColourProvInput;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.Keyword;
@@ -42,7 +43,7 @@ public class Fluid extends DisplayEntity {
 
 	@Keyword(description = "The colour used to represent the fluid.",
 	         exampleList = {"red"})
-	private final ColourInput colourInput;
+	private final ColourProvInput colourInput;
 
 	@Keyword(description = "The acceleration of gravity to be used in the fluid flow "
 	                     + "calculations.",
@@ -60,7 +61,7 @@ public class Fluid extends DisplayEntity {
 		viscosityInput.setUnitType( ViscosityUnit.class );
 		this.addInput( viscosityInput);
 
-		colourInput = new ColourInput( "Colour", KEY_INPUTS, ColourInput.RED);
+		colourInput = new ColourProvInput("Colour", KEY_INPUTS, ColourInput.RED);
 		this.addInput(colourInput);
 		this.addSynonym(colourInput, "Color");
 
@@ -78,8 +79,8 @@ public class Fluid extends DisplayEntity {
 		return viscosityInput.getValue();
 	}
 
-	public Color4d getColour() {
-		return colourInput.getValue();
+	public Color4d getColour(double simTime) {
+		return colourInput.getNextColour(this, simTime);
 	}
 
 	public double getGravity() {

@@ -22,6 +22,7 @@ import java.awt.GraphicsEnvironment;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import com.jaamsim.ColourProviders.ColourProvInput;
 import com.jaamsim.Graphics.BillboardText;
 import com.jaamsim.Graphics.EntityLabel;
 import com.jaamsim.Graphics.OverlayText;
@@ -80,7 +81,7 @@ public class TextModel extends AbstractShapeModel implements TextEntity {
 
 	@Keyword(description = "The colour of the text.",
 	         exampleList = { "red", "skyblue", "135 206 235" })
-	private final ColourInput fontColor;
+	private final ColourProvInput fontColor;
 
 	@Keyword(description = "If TRUE, then a drop shadow appears for the text.",
 	         exampleList = { "TRUE" })
@@ -88,7 +89,7 @@ public class TextModel extends AbstractShapeModel implements TextEntity {
 
 	@Keyword(description = "The colour for the drop shadow",
 	         exampleList = { "red", "skyblue", "135 206 235" })
-	private final ColourInput dropShadowColor;
+	private final ColourProvInput dropShadowColor;
 
 	@Keyword(description = "The { x, y, z } coordinates of the drop shadow's offset, expressed "
 	                     + "as a decimal fraction of the text height.",
@@ -132,7 +133,7 @@ public class TextModel extends AbstractShapeModel implements TextEntity {
 		textHeightInPixels.setValidRange(0, Integer.MAX_VALUE);
 		this.addInput(textHeightInPixels);
 
-		fontColor = new ColourInput("FontColour", KEY_INPUTS, ColourInput.BLACK);
+		fontColor = new ColourProvInput("FontColour", KEY_INPUTS, ColourInput.BLACK);
 		this.addInput(fontColor);
 		this.addSynonym(fontColor, "FontColor");
 
@@ -145,7 +146,7 @@ public class TextModel extends AbstractShapeModel implements TextEntity {
 		dropShadow = new BooleanInput("DropShadow", KEY_INPUTS, false);
 		this.addInput(dropShadow);
 
-		dropShadowColor = new ColourInput("DropShadowColour", KEY_INPUTS, ColourInput.BLACK);
+		dropShadowColor = new ColourProvInput("DropShadowColour", KEY_INPUTS, ColourInput.BLACK);
 		this.addInput(dropShadowColor);
 		this.addSynonym(dropShadowColor, "DropShadowColor");
 
@@ -230,7 +231,7 @@ public class TextModel extends AbstractShapeModel implements TextEntity {
 
 	@Override
 	public Color4d getFontColor(double simTime) {
-		return fontColor.getValue();
+		return fontColor.getNextColour(TextModel.this, simTime);
 	}
 
 	@Override
@@ -282,7 +283,7 @@ public class TextModel extends AbstractShapeModel implements TextEntity {
 
 	@Override
 	public Color4d getDropShadowColor(double simTime) {
-		return dropShadowColor.getValue();
+		return dropShadowColor.getNextColour(TextModel.this, simTime);
 	}
 
 	@Override

@@ -17,6 +17,7 @@
  */
 package com.jaamsim.Graphics;
 
+import com.jaamsim.ColourProviders.ColourProvInput;
 import com.jaamsim.DisplayModels.PolylineModel;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.IntegerInput;
@@ -30,7 +31,7 @@ public class Arrow extends DisplayEntity implements LineEntity {
 
 	@Keyword(description = "The colour of the arrow.",
 	         exampleList = {"red"})
-	private final ColourInput color;
+	private final ColourProvInput color;
 
 	@Keyword(description = "The width of the Arrow line segments in pixels.",
 	         exampleList = {"1"})
@@ -44,7 +45,7 @@ public class Arrow extends DisplayEntity implements LineEntity {
 		displayModelListInput.clearValidClasses();
 		displayModelListInput.addValidClass(PolylineModel.class);
 
-		color = new ColourInput("LineColour", FORMAT, ColourInput.BLACK);
+		color = new ColourProvInput("LineColour", FORMAT, ColourInput.BLACK);
 		color.setDefaultText("PolylineModel");
 		this.addInput(color);
 		this.addSynonym(color, "Color");
@@ -96,7 +97,7 @@ public class Arrow extends DisplayEntity implements LineEntity {
 			if (model != null)
 				return model.getLineColour(simTime);
 		}
-		return color.getValue();
+		return color.getNextColour(this, simTime);
 	}
 
 }
