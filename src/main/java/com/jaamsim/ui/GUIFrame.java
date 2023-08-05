@@ -2514,7 +2514,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				if (!(selectedEntity instanceof TextEntity))
 					return;
 				final TextEntity textEnt = (TextEntity) selectedEntity;
-				final Color4d presentColour = textEnt.getFontColor();
+				final Color4d presentColour = textEnt.getFontColor(0.0d);
 				ArrayList<Color4d> coloursInUse = GUIFrame.getFontColoursInUse(sim);
 				ColourMenu fontMenu = new ColourMenu(presentColour, coloursInUse, true) {
 
@@ -3962,7 +3962,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			font.setText(fontName);
 		updateTextHeight(textEnt.getTextHeightString());
 
-		Color4d col = textEnt.getFontColor();
+		Color4d col = textEnt.getFontColor(0.0d);
 		colourIcon.setFillColor(new Color((float)col.r, (float)col.g, (float)col.b, (float)col.a));
 		colourIcon.setOutlineColor(Color.DARK_GRAY);
 		fontColour.repaint();
@@ -5860,9 +5860,9 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		ArrayList<Color4d> ret = new ArrayList<>();
 		for (DisplayEntity ent : simModel.getClonesOfIterator(DisplayEntity.class, TextEntity.class)) {
 			TextEntity textEnt = (TextEntity) ent;
-			if (ret.contains(textEnt.getFontColor()))
+			if (ret.contains(textEnt.getFontColor(0.0d)))
 				continue;
-			ret.add(textEnt.getFontColor());
+			ret.add(textEnt.getFontColor(0.0d));
 		}
 		Collections.sort(ret, ColourInput.colourComparator);
 		return ret;

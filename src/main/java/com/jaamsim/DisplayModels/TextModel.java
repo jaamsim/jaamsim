@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018-2021 JaamSim Software Inc.
+ * Copyright (C) 2018-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -229,7 +229,7 @@ public class TextModel extends AbstractShapeModel implements TextEntity {
 	}
 
 	@Override
-	public Color4d getFontColor() {
+	public Color4d getFontColor(double simTime) {
 		return fontColor.getValue();
 	}
 
@@ -281,7 +281,7 @@ public class TextModel extends AbstractShapeModel implements TextEntity {
 	}
 
 	@Override
-	public Color4d getDropShadowColor() {
+	public Color4d getDropShadowColor(double simTime) {
 		return dropShadowColor.getValue();
 	}
 
@@ -342,12 +342,12 @@ public class TextModel extends AbstractShapeModel implements TextEntity {
 
 			String text = labelObservee.getCachedText();
 			double height = labelObservee.getTextHeight();
-			Color4d color = labelObservee.getFontColor();
+			Color4d color = labelObservee.getFontColor(simTime);
 			TessFontKey fk = labelObservee.getTessFontKey();
 			Vec3d textSize = RenderManager.inst().getRenderedStringSize(fk, height, text);
 			Transform trans = labelObservee.getGlobalTransForSize(textSize);
 			boolean ds = labelObservee.getDropShadow();
-			Color4d dsColor = labelObservee.getDropShadowColor();
+			Color4d dsColor = labelObservee.getDropShadowColor(simTime);
 			Vec3d dsOffset = labelObservee.getDropShadowOffset();
 			boolean editMode = labelObservee.isEditMode();
 			int insertPos = labelObservee.getInsertPosition();
@@ -548,10 +548,10 @@ public class TextModel extends AbstractShapeModel implements TextEntity {
 			int height = (int) labelObservee.getTextHeight();
 			boolean alignRight = labelObservee.getAlignRight();
 			boolean alignBottom = labelObservee.getAlignBottom();
-			Color4d color = labelObservee.getFontColor();
+			Color4d color = labelObservee.getFontColor(simTime);
 			TessFontKey fk = labelObservee.getTessFontKey();
 			boolean ds = labelObservee.getDropShadow();
-			Color4d dsColor = labelObservee.getDropShadowColor();
+			Color4d dsColor = labelObservee.getDropShadowColor(simTime);
 			Vec3d dsOffset = labelObservee.getDropShadowOffset();
 			boolean editMode = labelObservee.isEditMode();
 			int insertPos = labelObservee.getInsertPosition();
@@ -733,10 +733,10 @@ public class TextModel extends AbstractShapeModel implements TextEntity {
 
 			String text = labelObservee.getCachedText();
 			int height = (int)labelObservee.getTextHeight();
-			Color4d color = labelObservee.getFontColor();
+			Color4d color = labelObservee.getFontColor(simTime);
 			TessFontKey fk = labelObservee.getTessFontKey();
 			boolean ds = labelObservee.getDropShadow();
-			Color4d dsColor = labelObservee.getDropShadowColor();
+			Color4d dsColor = labelObservee.getDropShadowColor(simTime);
 			Vec3d dsOffset = labelObservee.getDropShadowOffset();
 			Vec3d pos = labelObservee.getGlobalPosition();
 

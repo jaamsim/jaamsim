@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2018-2019 JaamSim Software Inc.
+ * Copyright (C) 2018-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,8 +28,8 @@ public interface TextEntity {
 	public int getStyle();
 	public boolean isBold();
 	public boolean isItalic();
-	public Color4d getFontColor();
+	public Color4d getFontColor(double simTime);
 	public boolean getDropShadow();
-	public Color4d getDropShadowColor();
+	public Color4d getDropShadowColor(double simTime);
 	public Vec3d getDropShadowOffset();
 }

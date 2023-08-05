@@ -337,7 +337,7 @@ public class GraphModel extends DisplayModel {
 			}
 			else {
 				axisTitleFontKey = axisTitleTextModel.getValue().getTessFontKey();
-				axisTitleFontColor = axisTitleTextModel.getValue().getFontColor();
+				axisTitleFontColor = axisTitleTextModel.getValue().getFontColor(simTime);
 			}
 
 			if( labelTextModel.getValue() == null ) {
@@ -346,7 +346,7 @@ public class GraphModel extends DisplayModel {
 			}
 			else {
 				labelFontKey = labelTextModel.getValue().getTessFontKey();
-				labelFontColor = labelTextModel.getValue().getFontColor();
+				labelFontColor = labelTextModel.getValue().getFontColor(simTime);
 			}
 
 			labelHeight = labelTextHeight.getValue();
@@ -369,7 +369,7 @@ public class GraphModel extends DisplayModel {
 			out.add(new PolygonProxy(graphRectPoints, objectTrans, objectScale, borderColor.getValue(), true, 1, getVisibilityInfo(), pickingID));
 
 			// Draw the graph title
-			drawGraphTitle(out);
+			drawGraphTitle(simTime, out);
 
 			// Draw the x-axis, y-axis, and axis titles
 			drawXAxis(out);
@@ -434,7 +434,7 @@ public class GraphModel extends DisplayModel {
 			out.add(new LineProxy(seriesPoints, series.lineColour, series.lineWidth, getVisibilityInfo(), pickingID));
 		}
 
-		private void drawGraphTitle(ArrayList<RenderProxy> out) {
+		private void drawGraphTitle(double simTime, ArrayList<RenderProxy> out) {
 
 			String titleText = graphObservee.getTitle();
 
@@ -446,7 +446,7 @@ public class GraphModel extends DisplayModel {
 			}
 			else {
 				titleFontKey = titleTextModel.getValue().getTessFontKey();
-				titleFontColor = titleTextModel.getValue().getFontColor();
+				titleFontColor = titleTextModel.getValue().getFontColor(simTime);
 			}
 
 			Vec4d titleCenter = new Vec4d(0, graphOrigin.y + graphSize.y + titleGap.getValue() + titleTextHeight.getValue()/2, zBump, 1.0d);

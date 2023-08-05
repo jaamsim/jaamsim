@@ -498,9 +498,9 @@ public class OverlayText extends OverlayEntity implements TextEntity, EditableTe
 	}
 
 	@Override
-	public Color4d getFontColor() {
+	public Color4d getFontColor(double simTime) {
 		if (fontColor.isDefault()) {
-			return getTextModel().getFontColor();
+			return getTextModel().getFontColor(simTime);
 		}
 		return fontColor.getValue();
 	}
@@ -514,9 +514,9 @@ public class OverlayText extends OverlayEntity implements TextEntity, EditableTe
 	}
 
 	@Override
-	public Color4d getDropShadowColor() {
+	public Color4d getDropShadowColor(double simTime) {
 		if (dropShadowColor.isDefault()) {
-			return getTextModel().getDropShadowColor();
+			return getTextModel().getDropShadowColor(simTime);
 		}
 		return dropShadowColor.getValue();
 	}

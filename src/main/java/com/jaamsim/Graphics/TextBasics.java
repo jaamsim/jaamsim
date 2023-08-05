@@ -389,9 +389,9 @@ public abstract class TextBasics extends AbstractShape implements TextEntity, Ed
 	}
 
 	@Override
-	public Color4d getFontColor() {
+	public Color4d getFontColor(double simTime) {
 		if (fontColor.isDefault()) {
-			return getTextModel().getFontColor();
+			return getTextModel().getFontColor(simTime);
 		}
 		return fontColor.getValue();
 	}
@@ -405,9 +405,9 @@ public abstract class TextBasics extends AbstractShape implements TextEntity, Ed
 	}
 
 	@Override
-	public Color4d getDropShadowColor() {
+	public Color4d getDropShadowColor(double simTime) {
 		if (dropShadowColor.isDefault()) {
-			return getTextModel().getDropShadowColor();
+			return getTextModel().getDropShadowColor(simTime);
 		}
 		return dropShadowColor.getValue();
 	}
