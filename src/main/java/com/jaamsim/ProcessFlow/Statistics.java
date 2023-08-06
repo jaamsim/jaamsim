@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018-2022 JaamSim Software Inc.
+ * Copyright (C) 2018-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,7 +33,6 @@ import com.jaamsim.input.InputCallback;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.UnitTypeInput;
-import com.jaamsim.input.ValueInput;
 import com.jaamsim.states.StateEntity;
 import com.jaamsim.states.StateRecord;
 import com.jaamsim.units.DimensionlessUnit;
@@ -60,7 +59,7 @@ public class Statistics extends LinkedComponent {
 	                     + "placed. Histogram data will not be generated if the input is left "
 	                     + "blank.",
 	         exampleList = {"1 h"})
-	private final ValueInput histogramBinWidth;
+	private final SampleInput histogramBinWidth;
 
 	@Keyword(description = "If TRUE, the state times for received entities are recorded for "
 	                     + "statistics generation. "
@@ -92,7 +91,7 @@ public class Statistics extends LinkedComponent {
 		sampleValue.setUnitType(UserSpecifiedUnit.class);
 		this.addInput(sampleValue);
 
-		histogramBinWidth = new ValueInput("HistogramBinWidth", KEY_INPUTS, null);
+		histogramBinWidth = new SampleInput("HistogramBinWidth", KEY_INPUTS, null);
 		histogramBinWidth.setUnitType(UserSpecifiedUnit.class);
 		this.addInput(histogramBinWidth);
 
@@ -127,6 +126,10 @@ public class Statistics extends LinkedComponent {
 		stateStats.clear();
 	}
 
+	private double getBinWidth() {
+		return histogramBinWidth.getNextSample(this, 0.0d);
+	}
+
 	@Override
 	public void addEntity(DisplayEntity ent) {
 		super.addEntity(ent);
@@ -138,7 +141,7 @@ public class Statistics extends LinkedComponent {
 			sampStats.addValue(val);
 			timeStats.addValue(simTime, val);
 			if (!histogramBinWidth.isDefault()) {
-				freq.addValue((int) Math.round(val/histogramBinWidth.getValue()));
+				freq.addValue((int) Math.round(val/getBinWidth()));
 			}
 		}
 
@@ -265,7 +268,7 @@ public class Statistics extends LinkedComponent {
 		int[] binVals = freq.getBinValues();
 		double[] ret = new double[binVals.length];
 		for (int i = 0; i < binVals.length; i++) {
-			ret[i] = histogramBinWidth.getValue() * binVals[i];
+			ret[i] = getBinWidth() * binVals[i];
 		}
 		return ret;
 	}

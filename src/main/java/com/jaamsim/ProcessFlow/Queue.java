@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2003-2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2022 JaamSim Software Inc.
+ * Copyright (C) 2016-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,7 +42,6 @@ import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.InterfaceEntityInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
-import com.jaamsim.input.ValueInput;
 import com.jaamsim.math.Quaternion;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.units.DimensionlessUnit;
@@ -102,7 +101,7 @@ public class Queue extends LinkedComponent {
 
 	@Keyword(description = "The amount of graphical space shown between objects in the queue.",
 	         exampleList = {"1 m"})
-	private final ValueInput spacing;
+	private final SampleInput spacing;
 
 	@Keyword(description = "Maximum number of objects in each row of the Queue.",
 			exampleList = {"4"})
@@ -156,7 +155,7 @@ public class Queue extends LinkedComponent {
 		maxValidLength = new IntegerInput("MaxValidLength", KEY_INPUTS, 10000);
 		this.addInput(maxValidLength);
 
-		spacing = new ValueInput("Spacing", FORMAT, 0.0d);
+		spacing = new SampleInput("Spacing", FORMAT, 0.0d);
 		spacing.setUnitType(DistanceUnit.class);
 		this.addInput(spacing);
 
@@ -609,8 +608,9 @@ public class Queue extends LinkedComponent {
 			ent.setShow(visible);
 
 			// Calculate the y- and z- coordinates
-			double distanceY = row * (spacing.getValue() + maxWidth);
-			double distanceZ = level * (spacing.getValue() + maxHeight);
+			double space = spacing.getNextSample(this, simTime);
+			double distanceY = row * (space + maxWidth);
+			double distanceZ = level * (space + maxHeight);
 
 			// Calculate the x-coordinate
 			double length = ent.getGlobalSize().x;
@@ -618,7 +618,7 @@ public class Queue extends LinkedComponent {
 			tmp.set3(-distanceX, distanceY, distanceZ);
 
 			// increment total distance
-			distanceX += 0.5d * length + spacing.getValue();
+			distanceX += 0.5d * length + space;
 
 			// Set Position
 			Vec3d pos = this.getGlobalPositionForPosition(tmp);

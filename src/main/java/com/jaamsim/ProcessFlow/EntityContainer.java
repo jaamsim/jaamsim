@@ -30,7 +30,6 @@ import com.jaamsim.input.Input;
 import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
-import com.jaamsim.input.ValueInput;
 import com.jaamsim.input.Vec3dInput;
 import com.jaamsim.math.Quaternion;
 import com.jaamsim.math.Vec3d;
@@ -81,7 +80,7 @@ public class EntityContainer extends SimEntity implements EntContainer {
 
 	@Keyword(description = "The amount of graphical space shown between entities in the EntityContainer.",
 	         exampleList = {"1 m"})
-	private final ValueInput spacingInput;
+	private final SampleInput spacingInput;
 
 	@Keyword(description = "The number of entities in each row inside the EntityContainer.",
 			exampleList = {"4"})
@@ -118,7 +117,7 @@ public class EntityContainer extends SimEntity implements EntContainer {
 		positionOffset.setUnitType(DistanceUnit.class);
 		this.addInput(positionOffset);
 
-		spacingInput = new ValueInput("Spacing", FORMAT, 0.0d);
+		spacingInput = new SampleInput("Spacing", FORMAT, 0.0d);
 		spacingInput.setUnitType(DistanceUnit.class);
 		this.addInput(spacingInput);
 
@@ -282,8 +281,9 @@ public class EntityContainer extends SimEntity implements EntContainer {
 			ent.setRelativeOrientation(orientQ);
 
 			// Calculate the y- and z- coordinates
-			double distanceY = distanceY0 + row * (spacingInput.getValue() + maxWidth);
-			double distanceZ = level * (spacingInput.getValue() + maxHeight);
+			double space = spacingInput.getNextSample(this, simTime);
+			double distanceY = distanceY0 + row * (space + maxWidth);
+			double distanceZ = level * (space + maxHeight);
 
 			// Set Position
 			Vec3d itemSize = ent.getGlobalSize();
@@ -294,7 +294,7 @@ public class EntityContainer extends SimEntity implements EntContainer {
 			ent.setGlobalPositionForAlignment(pos, new Vec3d());
 
 			// increment total distance
-			distanceX += 0.5*itemSize.x + spacingInput.getValue();
+			distanceX += 0.5*itemSize.x + space;
 			i++;
 		}
 	}
