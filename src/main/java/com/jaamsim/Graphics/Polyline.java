@@ -17,9 +17,9 @@
 package com.jaamsim.Graphics;
 
 import com.jaamsim.DisplayModels.PolylineModel;
+import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.Keyword;
-import com.jaamsim.input.ValueInput;
 import com.jaamsim.units.DistanceUnit;
 
 /**
@@ -39,7 +39,7 @@ public class Polyline extends AbstractShape implements PolylineEntity  {
 
 	@Keyword(description = "Physical width of the polyline with units of distance.",
 	         exampleList = { "0.5 m" })
-	protected final ValueInput polylineWidth;
+	protected final SampleInput polylineWidth;
 
 	{
 		displayModelListInput.clearValidClasses();
@@ -51,7 +51,7 @@ public class Polyline extends AbstractShape implements PolylineEntity  {
 		closed.setDefaultText("DisplayModel value");
 		this.addInput(closed);
 
-		polylineWidth = new ValueInput("PolylineWidth", FORMAT, 0.0d);
+		polylineWidth = new SampleInput("PolylineWidth", FORMAT, 0.0d);
 		polylineWidth.setUnitType(DistanceUnit.class);
 		polylineWidth.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		polylineWidth.setDefaultText("DisplayModel value");
@@ -77,7 +77,7 @@ public class Polyline extends AbstractShape implements PolylineEntity  {
 			if (model != null)
 				return model.getPolylineWidth();
 		}
-		return polylineWidth.getValue();
+		return polylineWidth.getNextSample(this, 0.0d);
 	}
 
 }

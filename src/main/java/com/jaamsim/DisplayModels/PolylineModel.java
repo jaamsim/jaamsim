@@ -26,12 +26,12 @@ import com.jaamsim.Graphics.FillEntity;
 import com.jaamsim.Graphics.LineEntity;
 import com.jaamsim.Graphics.PolylineEntity;
 import com.jaamsim.Graphics.PolylineInfo;
+import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.Keyword;
-import com.jaamsim.input.ValueInput;
 import com.jaamsim.input.Vec3dInput;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Mat4d;
@@ -59,7 +59,7 @@ public class PolylineModel extends AbstractShapeModel implements PolylineEntity 
 
 	@Keyword(description = "Physical width of the polyline with units of distance.",
 	         exampleList = { "0.5 m" })
-	protected final ValueInput polylineWidth;
+	protected final SampleInput polylineWidth;
 
 	@Keyword(description = "If TRUE, an arrow head is displayed at the end of the polyline.",
 	         exampleList = {"TRUE", "FALSE"})
@@ -79,7 +79,7 @@ public class PolylineModel extends AbstractShapeModel implements PolylineEntity 
 
 		this.addSynonym(fillColour, "FillColor");
 
-		polylineWidth = new ValueInput("PolylineWidth", KEY_INPUTS, 0.0d);
+		polylineWidth = new SampleInput("PolylineWidth", KEY_INPUTS, 0.0d);
 		polylineWidth.setUnitType(DistanceUnit.class);
 		polylineWidth.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		this.addInput(polylineWidth);
@@ -125,7 +125,7 @@ public class PolylineModel extends AbstractShapeModel implements PolylineEntity 
 
 	@Override
 	public double getPolylineWidth() {
-		return polylineWidth.getValue();
+		return polylineWidth.getNextSample(this, 0.0d);
 	}
 
 	public boolean getShowArrowHead() {
