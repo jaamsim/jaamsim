@@ -22,11 +22,11 @@ import com.jaamsim.DisplayModels.PolylineModel;
 import com.jaamsim.Graphics.FillEntity;
 import com.jaamsim.Graphics.LineEntity;
 import com.jaamsim.Graphics.PolylineEntity;
+import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
-import com.jaamsim.input.ValueInput;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.DistanceUnit;
@@ -40,27 +40,27 @@ public class FluidPipe extends FluidComponent implements LineEntity, FillEntity,
 
 	@Keyword(description = "The length of the pipe.",
 	         exampleList = {"10.0 m"})
-	private final ValueInput lengthInput;
+	private final SampleInput lengthInput;
 
 	@Keyword(description = "The height change over the length of the pipe. "
 	                     + "Equal to (outlet height - inlet height).",
 	         exampleList = {"0.0 m"})
-	private final ValueInput heightChangeInput;
+	private final SampleInput heightChangeInput;
 
 	@Keyword(description = "The roughness height of the inside pipe surface. "
 	                     + "Used to calculate the Darcy friction factor for the pipe.",
 	         exampleList = {"0.01 m"})
-	private final ValueInput roughnessInput;
+	private final SampleInput roughnessInput;
 
 	@Keyword(description = "The pressure loss coefficient or 'K-factor' for the pipe. "
 	                     + "The factor multiplies the dynamic pressure and is applied as a loss "
 	                     + "at the pipe outlet.",
 	         exampleList = {"0.5"})
-	private final ValueInput pressureLossCoefficientInput;
+	private final SampleInput pressureLossCoefficientInput;
 
 	@Keyword(description = "Physical width of the pipe segments with units of distance.",
 	         exampleList = { "0.5 m" })
-	protected final ValueInput polylineWidth;
+	protected final SampleInput polylineWidth;
 
 	@Keyword(description = "The width of the pipe segments in pixels.",
 	         exampleList = {"1"})
@@ -76,27 +76,27 @@ public class FluidPipe extends FluidComponent implements LineEntity, FillEntity,
 		displayModelListInput.clearValidClasses();
 		displayModelListInput.addValidClass(PolylineModel.class);
 
-		lengthInput = new ValueInput( "Length", KEY_INPUTS, 1.0d);
+		lengthInput = new SampleInput("Length", KEY_INPUTS, 1.0d);
 		lengthInput.setValidRange( 0.0, Double.POSITIVE_INFINITY);
 		lengthInput.setUnitType( DistanceUnit.class );
 		this.addInput( lengthInput);
 
-		heightChangeInput = new ValueInput( "HeightChange", KEY_INPUTS, 0.0d);
+		heightChangeInput = new SampleInput("HeightChange", KEY_INPUTS, 0.0d);
 		heightChangeInput.setValidRange( Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
 		heightChangeInput.setUnitType( DistanceUnit.class );
 		this.addInput( heightChangeInput);
 
-		roughnessInput = new ValueInput( "Roughness", KEY_INPUTS, 0.0d);
+		roughnessInput = new SampleInput("Roughness", KEY_INPUTS, 0.0d);
 		roughnessInput.setValidRange( 0.0, Double.POSITIVE_INFINITY);
 		roughnessInput.setUnitType( DistanceUnit.class );
 		this.addInput( roughnessInput);
 
-		pressureLossCoefficientInput = new ValueInput( "PressureLossCoefficient", KEY_INPUTS, 0.0d);
+		pressureLossCoefficientInput = new SampleInput("PressureLossCoefficient", KEY_INPUTS, 0.0d);
 		pressureLossCoefficientInput.setValidRange( 0.0, Double.POSITIVE_INFINITY);
 		pressureLossCoefficientInput.setUnitType( DimensionlessUnit.class );
 		this.addInput( pressureLossCoefficientInput);
 
-		polylineWidth = new ValueInput("PolylineWidth", FORMAT, 0.0d);
+		polylineWidth = new SampleInput("PolylineWidth", FORMAT, 0.0d);
 		polylineWidth.setUnitType(DistanceUnit.class);
 		polylineWidth.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		polylineWidth.setDefaultText("PolylineModel");
@@ -122,22 +122,22 @@ public class FluidPipe extends FluidComponent implements LineEntity, FillEntity,
 
 		double dyn = getDynamicPressure(simTime);  // Note that dynamic pressure is negative for negative velocities
 		double pres = inletPres;
-		pres -= getFluid().getDensityxGravity(simTime) * heightChangeInput.getValue();
-		if( Math.abs(dyn) > 0.0 && getFluid().getViscosity(simTime) > 0.0 ) {
+		pres -= getFluid().getDensityxGravity(simTime) * heightChangeInput.getNextSample(this, simTime);
+		if (Math.abs(dyn) > 0.0 && getFluid().getViscosity(simTime) > 0.0 ) {
 			setDarcyFrictionFactor(simTime);
-			pres -= darcyFrictionFactor * dyn * this.getLength() / this.getDiameter();
+			pres -= darcyFrictionFactor * dyn * getLength(simTime) / getDiameter(simTime);
 		}
 		else {
 			darcyFrictionFactor = 0.0;
 		}
-		pres -= pressureLossCoefficientInput.getValue() * dyn;
-		pres -= flowAccel * getFluid().getDensity(simTime) * lengthInput.getValue() / getFlowArea();
+		pres -= pressureLossCoefficientInput.getNextSample(this, simTime) * dyn;
+		pres -= flowAccel * getFluid().getDensity(simTime) * getLength(simTime) / getFlowArea();
 		return pres;
 	}
 
 	@Override
-	public double getLength() {
-		return lengthInput.getValue();
+	public double getLength(double simTime) {
+		return lengthInput.getNextSample(this, simTime);
 	}
 
 	private void setDarcyFrictionFactor(double simTime) {
@@ -146,33 +146,33 @@ public class FluidPipe extends FluidComponent implements LineEntity, FillEntity,
 
 		// Laminar Flow
 		if( reynoldsNumber < 2300.0 ) {
-			darcyFrictionFactor = this.getLaminarFrictionFactor( reynoldsNumber );
+			darcyFrictionFactor = getLaminarFrictionFactor(simTime, reynoldsNumber);
 		}
 		// Turbulent Flow
 		else if( reynoldsNumber > 4000.0 ) {
-			darcyFrictionFactor = this.getTurbulentFrictionFactor( reynoldsNumber );
+			darcyFrictionFactor = getTurbulentFrictionFactor(simTime, reynoldsNumber);
 		}
 		// Transitional Flow
 		else {
-			darcyFrictionFactor = 0.5 * ( this.getLaminarFrictionFactor(reynoldsNumber) + this.getTurbulentFrictionFactor(reynoldsNumber) );
+			darcyFrictionFactor = 0.5 * (getLaminarFrictionFactor(simTime, reynoldsNumber) + getTurbulentFrictionFactor(simTime, reynoldsNumber));
 		}
 	}
 
 	/*
 	 * Return the Darcy Friction Factor for a laminar flow.
 	 */
-	private double getLaminarFrictionFactor( double reynoldsNumber ) {
+	private double getLaminarFrictionFactor(double simTime, double reynoldsNumber) {
 		return 64.0 / reynoldsNumber;
 	}
 
 	/*
 	 * Return the Darcy Friction Factor for a turbulent flow.
 	 */
-	private double getTurbulentFrictionFactor( double reynoldsNumber ) {
+	private double getTurbulentFrictionFactor(double simTime, double reynoldsNumber) {
 		double x = 1.0;  // The present value for x = 1 / sqrt( frictionfactor ).
 		double lastx = 0.0;
 
-		double a = ( roughnessInput.getValue() / this.getDiameter() ) / 3.7;
+		double a = (roughnessInput.getNextSample(this, simTime) / getDiameter(simTime)) / 3.7;
 		double b = 2.51 / reynoldsNumber;
 
 		int n = 0;
@@ -239,7 +239,7 @@ public class FluidPipe extends FluidComponent implements LineEntity, FillEntity,
 			if (model != null)
 				return model.getPolylineWidth();
 		}
-		return polylineWidth.getValue();
+		return polylineWidth.getNextSample(this, 0.0d);
 	}
 
 	@Output(name = "DarcyFrictionFactor",

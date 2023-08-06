@@ -74,7 +74,7 @@ public class FluidFlow extends FluidFlowCalculation {
 		totalFlowInertia = 0.0;
 		for( FluidComponent each : routeList ) {
 			each.earlyInit();  // Needs to be called to set flowArea
-			totalFlowInertia += each.getLength() / each.getFlowArea();
+			totalFlowInertia += each.getLength(0.0d) / each.getFlowArea();
 		}
 		totalFlowInertia *= getFluid().getDensity(0.0d);
 	}

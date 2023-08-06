@@ -18,10 +18,10 @@
 package com.jaamsim.FluidObjects;
 
 import com.jaamsim.Graphics.DisplayEntity;
+import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
-import com.jaamsim.input.ValueInput;
 import com.jaamsim.units.AreaUnit;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.DistanceUnit;
@@ -42,7 +42,7 @@ public class FluidComponent extends DisplayEntity {
 	@Keyword(description = "The hydraulic diameter of the component. "
 	                     + "Equal to the inside diameter of a pipe with a circular cross-section.",
 	         exampleList = {"1.0 m"})
-	private final ValueInput diameterInput;
+	private final SampleInput diameterInput;
 
 	private FluidFlow fluidFlow;  // The fluid flow object that controls the flow from one component to the next.
 	private double baseInletPressure;  // The static pressure at the component's inlet, ignoring the effect of flow acceleration.
@@ -56,7 +56,7 @@ public class FluidComponent extends DisplayEntity {
 		previousInput = new EntityInput<>( FluidComponent.class, "Previous", KEY_INPUTS, null);
 		this.addInput( previousInput);
 
-		diameterInput = new ValueInput( "Diameter", KEY_INPUTS, Double.POSITIVE_INFINITY);
+		diameterInput = new SampleInput("Diameter", KEY_INPUTS, Double.POSITIVE_INFINITY);
 		diameterInput.setValidRange( 0.0, Double.POSITIVE_INFINITY);
 		diameterInput.setUnitType( DistanceUnit.class );
 		this.addInput( diameterInput);
@@ -65,7 +65,7 @@ public class FluidComponent extends DisplayEntity {
 	@Override
 	public void earlyInit() {
 		super.earlyInit();
-		flowArea = 0.25 * Math.PI * diameterInput.getValue() * diameterInput.getValue();
+		flowArea = 0.25 * Math.PI * getDiameter(0.0d) * getDiameter(0.0d);
 	}
 
 	public void updateVelocity() {
@@ -136,12 +136,12 @@ public class FluidComponent extends DisplayEntity {
 		}
 	}
 
-	public double getLength() {
+	public double getLength(double simTime) {
 		return 0.0;
 	}
 
-	public double getDiameter() {
-		return diameterInput.getValue();
+	public double getDiameter(double simTime) {
+		return diameterInput.getNextSample(this, simTime);
 	}
 
 	public double getFlowArea() {
@@ -210,7 +210,7 @@ public class FluidComponent extends DisplayEntity {
 	public double getReynoldsNumber(double simTime) {
 		if (fluidFlow == null)
 			return 0.0;
-		return Math.abs(velocity) * diameterInput.getValue() / fluidFlow.getFluid().getKinematicViscosity(simTime);
+		return Math.abs(velocity) * getDiameter(simTime) / fluidFlow.getFluid().getKinematicViscosity(simTime);
 	}
 
 	@Output(name = "DynamicPressure",

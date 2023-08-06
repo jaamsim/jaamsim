@@ -22,10 +22,10 @@ import com.jaamsim.DisplayModels.PolylineModel;
 import com.jaamsim.Graphics.FillEntity;
 import com.jaamsim.Graphics.LineEntity;
 import com.jaamsim.Graphics.PolylineEntity;
+import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
-import com.jaamsim.input.ValueInput;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.units.DistanceUnit;
 import com.jaamsim.units.VolumeFlowUnit;
@@ -41,11 +41,11 @@ public class FluidFixedFlow extends FluidFlowCalculation implements LineEntity, 
 
 	@Keyword(description = "The constant volumetric flow rate from the source to the destination.",
 	         exampleList = {"1.0 m3/s"})
-	private final ValueInput flowRateInput;
+	private final SampleInput flowRateInput;
 
 	@Keyword(description = "Physical width of the pipe segments with units of distance.",
 	         exampleList = { "0.5 m" })
-	protected final ValueInput polylineWidth;
+	protected final SampleInput polylineWidth;
 
 	@Keyword(description = "The width of the pipe segments in pixels.",
 	         exampleList = {"1"})
@@ -59,12 +59,12 @@ public class FluidFixedFlow extends FluidFlowCalculation implements LineEntity, 
 		displayModelListInput.clearValidClasses();
 		displayModelListInput.addValidClass(PolylineModel.class);
 
-		flowRateInput = new ValueInput( "FlowRate", KEY_INPUTS, 0.0d);
+		flowRateInput = new SampleInput("FlowRate", KEY_INPUTS, 0.0d);
 		flowRateInput.setValidRange( 0.0d, Double.POSITIVE_INFINITY);
 		flowRateInput.setUnitType( VolumeFlowUnit.class );
 		this.addInput( flowRateInput);
 
-		polylineWidth = new ValueInput("PolylineWidth", FORMAT, 0.0d);
+		polylineWidth = new SampleInput("PolylineWidth", FORMAT, 0.0d);
 		polylineWidth.setUnitType(DistanceUnit.class);
 		polylineWidth.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		polylineWidth.setDefaultText("PolylineModel");
@@ -88,7 +88,7 @@ public class FluidFixedFlow extends FluidFlowCalculation implements LineEntity, 
 	protected void calcFlowRate(FluidComponent source, FluidComponent destination, double dt) {
 
 		// Update the flow rate
-		this.setFlowRate( flowRateInput.getValue() );
+		this.setFlowRate( flowRateInput.getNextSample(this, getSimTime()) );
 	}
 
 	@Override
@@ -140,7 +140,7 @@ public class FluidFixedFlow extends FluidFlowCalculation implements LineEntity, 
 			if (model != null)
 				return model.getPolylineWidth();
 		}
-		return polylineWidth.getValue();
+		return polylineWidth.getNextSample(this, 0.0d);
 	}
 
 }

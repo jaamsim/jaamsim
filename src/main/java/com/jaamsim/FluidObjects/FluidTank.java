@@ -18,13 +18,13 @@
 package com.jaamsim.FluidObjects;
 
 import com.jaamsim.DisplayModels.ShapeModel;
+import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputCallback;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
-import com.jaamsim.input.ValueInput;
 import com.jaamsim.units.DistanceUnit;
 import com.jaamsim.units.PressureUnit;
 import com.jaamsim.units.VolumeUnit;
@@ -38,42 +38,42 @@ public class FluidTank extends FluidComponent {
 
 	@Keyword(description = "The total volume of fluid that can be stored in the tank.",
 	         exampleList = {"1.0 m3"})
-	private final ValueInput capacityInput;
+	private final SampleInput capacityInput;
 
 	@Keyword(description = "The volume of fluid in the tank at the start of the simulation run.",
 	         exampleList = {"1.0 m3"})
-	private final ValueInput initialVolumeInput;
+	private final SampleInput initialVolumeInput;
 
 	@Keyword(description = "The atmospheric pressure acting on the surface of the fluid in the "
 	                     + "tank.",
 	         exampleList = {"1.0 Pa"})
-	private final ValueInput ambientPressureInput;
+	private final SampleInput ambientPressureInput;
 
 	@Keyword(description = "The height of the flow feeding the tank. Measured relative to the "
 	                     + "bottom of the tank.",
 	         exampleList = {"1.0 m"})
-	private final ValueInput inletHeightInput;
+	private final SampleInput inletHeightInput;
 
 	private double fluidVolume;  // The present volume of the fluid in the tank.
 	private double fluidLevel;  // The height of the fluid in the tank.
 
 	{
-		capacityInput = new ValueInput( "Capacity", KEY_INPUTS, 1.0d);
+		capacityInput = new SampleInput("Capacity", KEY_INPUTS, 1.0d);
 		capacityInput.setValidRange( 0.0, Double.POSITIVE_INFINITY);
 		capacityInput.setUnitType( VolumeUnit.class );
 		this.addInput( capacityInput);
 
-		initialVolumeInput = new ValueInput( "InitialVolume", KEY_INPUTS, 0.0d);
+		initialVolumeInput = new SampleInput("InitialVolume", KEY_INPUTS, 0.0d);
 		initialVolumeInput.setValidRange( 0.0, Double.POSITIVE_INFINITY);
 		initialVolumeInput.setUnitType( VolumeUnit.class );
 		initialVolumeInput.setCallback(updateInitialVolumeInputCallback);
 		this.addInput( initialVolumeInput);
 
-		ambientPressureInput = new ValueInput( "AmbientPressure", KEY_INPUTS, 0.0d);
+		ambientPressureInput = new SampleInput("AmbientPressure", KEY_INPUTS, 0.0d);
 		ambientPressureInput.setUnitType( PressureUnit.class );
 		this.addInput( ambientPressureInput);
 
-		inletHeightInput = new ValueInput( "InletHeight", KEY_INPUTS, 0.0d);
+		inletHeightInput = new SampleInput("InletHeight", KEY_INPUTS, 0.0d);
 		inletHeightInput.setValidRange( 0.0, Double.POSITIVE_INFINITY);
 		inletHeightInput.setUnitType( DistanceUnit.class );
 		this.addInput( inletHeightInput);
@@ -82,7 +82,7 @@ public class FluidTank extends FluidComponent {
 	static final InputCallback updateInitialVolumeInputCallback = new InputCallback() {
 		@Override
 		public void callback(Entity ent, Input<?> inp) {
-			double val = ((ValueInput) inp).getValue();
+			double val = ((SampleInput) inp).getNextSample(ent, 0.0d);
 			((FluidTank) ent).setFluidVolume(val);
 		}
 	};
@@ -90,7 +90,7 @@ public class FluidTank extends FluidComponent {
 	@Override
 	public void earlyInit() {
 		super.earlyInit();
-		setFluidVolume(initialVolumeInput.getValue());
+		setFluidVolume(initialVolumeInput.getNextSample(this, 0.0d));
 	}
 
 	@Override
@@ -106,7 +106,8 @@ public class FluidTank extends FluidComponent {
 
 	@Override
 	public double getTargetInletPressure() {
-		return this.getFluidPressure( inletHeightInput.getValue() );
+		double h = inletHeightInput.getNextSample(this, getSimTime());
+		return getFluidPressure(h);
 	}
 
 	/*
@@ -114,7 +115,7 @@ public class FluidTank extends FluidComponent {
 	 */
 	private double getFluidPressure( double h ) {
 		double simTime = getSimTime();
-		double pres = ambientPressureInput.getValue();
+		double pres = ambientPressureInput.getNextSample(this, simTime);
 		if( h < fluidLevel ) {
 			pres += (fluidLevel - h) * getFluid().getDensityxGravity(simTime);
 		}
@@ -138,7 +139,7 @@ public class FluidTank extends FluidComponent {
 	public void updateGraphics(double simTime) {
 		super.updateGraphics(simTime);
 
-		double ratio = Math.min( 1.0, fluidVolume / capacityInput.getValue() );
+		double ratio = Math.min(1.0, fluidVolume / capacityInput.getNextSample(this, simTime));
 
 		setTagSize(ShapeModel.TAG_CONTENTS, ratio);
 
