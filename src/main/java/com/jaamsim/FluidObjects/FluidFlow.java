@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -75,11 +76,12 @@ public class FluidFlow extends FluidFlowCalculation {
 			each.earlyInit();  // Needs to be called to set flowArea
 			totalFlowInertia += each.getLength() / each.getFlowArea();
 		}
-		totalFlowInertia *= this.getFluid().getDensity();
+		totalFlowInertia *= getFluid().getDensity(0.0d);
 	}
 
 	@Override
 	protected void calcFlowRate( FluidComponent source, FluidComponent destination, double dt ) {
+		double simTime = getSimTime();
 
 		// Update the flow rate
 		this.setFlowRate( this.getFlowRate() + flowAcceleration * dt );
@@ -88,7 +90,7 @@ public class FluidFlow extends FluidFlowCalculation {
 		// (base pressure ignores the affect of acceleration)
 		for( FluidComponent each : routeList ) {
 			each.updateVelocity();
-			each.updateBaseInletPressure();
+			each.updateBaseInletPressure(simTime);
 			each.updateBaseOutletPressure();
 		}
 
@@ -100,7 +102,7 @@ public class FluidFlow extends FluidFlowCalculation {
 
 		// Update the pressure in each component of the flow route after allowing for acceleration
 		for( FluidComponent each : routeList ) {
-			each.updateInletPressure();
+			each.updateInletPressure(simTime);
 			each.updateOutletPressure( flowAcceleration );
 		}
 

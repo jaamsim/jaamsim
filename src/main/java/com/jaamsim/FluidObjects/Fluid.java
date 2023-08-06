@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,9 +19,9 @@ package com.jaamsim.FluidObjects;
 
 import com.jaamsim.ColourProviders.ColourProvInput;
 import com.jaamsim.Graphics.DisplayEntity;
+import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.Keyword;
-import com.jaamsim.input.ValueInput;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.units.AccelerationUnit;
 import com.jaamsim.units.DensityUnit;
@@ -35,11 +36,11 @@ public class Fluid extends DisplayEntity {
 
 	@Keyword(description = "The density of the fluid (default = water).",
 	         exampleList = {"1000 kg/m3"})
-	private final ValueInput densityInput;
+	private final SampleInput densityInput;
 
 	@Keyword(description = "The dynamic viscosity of the fluid (default = water).",
 	         exampleList = {"0.001002 Pa-s"})
-	private final ValueInput viscosityInput;
+	private final SampleInput viscosityInput;
 
 	@Keyword(description = "The colour used to represent the fluid.",
 	         exampleList = {"red"})
@@ -48,15 +49,15 @@ public class Fluid extends DisplayEntity {
 	@Keyword(description = "The acceleration of gravity to be used in the fluid flow "
 	                     + "calculations.",
 	         exampleList = {"9.81 m/s2"})
-	private final ValueInput gravityInput;
+	private final SampleInput gravityInput;
 
 	{
-		densityInput = new ValueInput( "Density", KEY_INPUTS, 1000.0d);
+		densityInput = new SampleInput("Density", KEY_INPUTS, 1000.0d);
 		densityInput.setValidRange( 0.0, Double.POSITIVE_INFINITY);
 		densityInput.setUnitType( DensityUnit.class );
 		this.addInput( densityInput);
 
-		viscosityInput = new ValueInput( "Viscosity", KEY_INPUTS, 0.001002d);
+		viscosityInput = new SampleInput("Viscosity", KEY_INPUTS, 0.001002d);
 		viscosityInput.setValidRange( 0.0, Double.POSITIVE_INFINITY);
 		viscosityInput.setUnitType( ViscosityUnit.class );
 		this.addInput( viscosityInput);
@@ -65,33 +66,33 @@ public class Fluid extends DisplayEntity {
 		this.addInput(colourInput);
 		this.addSynonym(colourInput, "Color");
 
-		gravityInput = new ValueInput( "Gravity", KEY_INPUTS, 9.81d);
+		gravityInput = new SampleInput("Gravity", KEY_INPUTS, 9.81d);
 		gravityInput.setValidRange( 0.0, Double.POSITIVE_INFINITY);
 		gravityInput.setUnitType( AccelerationUnit.class );
 		this.addInput( gravityInput);
 	}
 
-	public double getDensity() {
-		return densityInput.getValue();
+	public double getDensity(double simTime) {
+		return densityInput.getNextSample(this, simTime);
 	}
 
-	public double getViscosity() {
-		return viscosityInput.getValue();
+	public double getViscosity(double simTime) {
+		return viscosityInput.getNextSample(this, simTime);
 	}
 
 	public Color4d getColour(double simTime) {
 		return colourInput.getNextColour(this, simTime);
 	}
 
-	public double getGravity() {
-		return gravityInput.getValue();
+	public double getGravity(double simTime) {
+		return gravityInput.getNextSample(this, simTime);
 	}
 
-	public double getDensityxGravity() {
-		return densityInput.getValue() * gravityInput.getValue();
+	public double getDensityxGravity(double simTime) {
+		return getDensity(simTime) * getGravity(simTime);
 	}
 
-	public double getKinematicViscosity() {
-		return viscosityInput.getValue() / densityInput.getValue();
+	public double getKinematicViscosity(double simTime) {
+		return getViscosity(simTime) / getDensity(simTime);
 	}
 }

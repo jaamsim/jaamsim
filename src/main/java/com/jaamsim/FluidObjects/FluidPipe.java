@@ -118,19 +118,20 @@ public class FluidPipe extends FluidComponent implements LineEntity, FillEntity,
 
 	@Override
 	public double calcOutletPressure( double inletPres, double flowAccel ) {
+		double simTime = getSimTime();
 
-		double dyn = this.getDynamicPressure();  // Note that dynamic pressure is negative for negative velocities
+		double dyn = getDynamicPressure(simTime);  // Note that dynamic pressure is negative for negative velocities
 		double pres = inletPres;
-		pres -= this.getFluid().getDensityxGravity() * heightChangeInput.getValue();
-		if( Math.abs(dyn) > 0.0 && this.getFluid().getViscosity() > 0.0 ) {
-			this.setDarcyFrictionFactor();
+		pres -= getFluid().getDensityxGravity(simTime) * heightChangeInput.getValue();
+		if( Math.abs(dyn) > 0.0 && getFluid().getViscosity(simTime) > 0.0 ) {
+			setDarcyFrictionFactor(simTime);
 			pres -= darcyFrictionFactor * dyn * this.getLength() / this.getDiameter();
 		}
 		else {
 			darcyFrictionFactor = 0.0;
 		}
 		pres -= pressureLossCoefficientInput.getValue() * dyn;
-		pres -= flowAccel * this.getFluid().getDensity() * lengthInput.getValue() / this.getFlowArea();
+		pres -= flowAccel * getFluid().getDensity(simTime) * lengthInput.getValue() / getFlowArea();
 		return pres;
 	}
 
@@ -139,9 +140,9 @@ public class FluidPipe extends FluidComponent implements LineEntity, FillEntity,
 		return lengthInput.getValue();
 	}
 
-	private void setDarcyFrictionFactor() {
+	private void setDarcyFrictionFactor(double simTime) {
 
-		double reynoldsNumber = this.getReynoldsNumber();
+		double reynoldsNumber = this.getReynoldsNumber(simTime);
 
 		// Laminar Flow
 		if( reynoldsNumber < 2300.0 ) {

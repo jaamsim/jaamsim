@@ -113,9 +113,10 @@ public class FluidTank extends FluidComponent {
 	 * Return the pressure in the tank at the given height above the outlet.
 	 */
 	private double getFluidPressure( double h ) {
+		double simTime = getSimTime();
 		double pres = ambientPressureInput.getValue();
 		if( h < fluidLevel ) {
-			pres += ( fluidLevel - h) * this.getFluid().getDensityxGravity();
+			pres += (fluidLevel - h) * getFluid().getDensityxGravity(simTime);
 		}
 		return pres;
 	}

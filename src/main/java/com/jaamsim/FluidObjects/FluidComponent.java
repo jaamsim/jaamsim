@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -71,28 +72,28 @@ public class FluidComponent extends DisplayEntity {
 		velocity = fluidFlow.getFlowRate() / flowArea;
 	}
 
-	public void updateBaseInletPressure() {
+	public void updateBaseInletPressure(double simTime) {
 		FluidComponent prev = previousInput.getValue();
 		if( prev != null ) {
-			baseInletPressure = prev.getBaseOutletPressure() + prev.getDynamicPressure()
-				- this.getDynamicPressure();
+			baseInletPressure = prev.getBaseOutletPressure() + prev.getDynamicPressure(simTime)
+				- getDynamicPressure(simTime);
 		}
 		else {
-			baseInletPressure = - this.getDynamicPressure();
+			baseInletPressure = - getDynamicPressure(simTime);
 		}
 	}
 
 	/*
 	 * Calculate the inlet pressure after allowing for acceleration
 	 */
-	public void updateInletPressure() {
+	public void updateInletPressure(double simTime) {
 		FluidComponent prev = previousInput.getValue();
 		if( prev != null ) {
-			inletPressure = prev.getOutletPressure() + prev.getDynamicPressure()
-				- this.getDynamicPressure();
+			inletPressure = prev.getOutletPressure() + prev.getDynamicPressure(simTime)
+				- getDynamicPressure(simTime);
 		}
 		else {
-			inletPressure = - this.getDynamicPressure();
+			inletPressure = - getDynamicPressure(simTime);
 		}
 	}
 
@@ -112,20 +113,6 @@ public class FluidComponent extends DisplayEntity {
 	 */
 	public double calcOutletPressure( double inletPres, double flowAccel ) {
 		return inletPres;
-	}
-
-	/*
-	 * Return the dynamic pressure for a flow.
-	 * (Dynamic pressure is negative for negative velocities.)
-	 */
-	public double getDynamicPressure() {
-		if( fluidFlow == null ) return 0.0;
-		return 0.5 * fluidFlow.getFluid().getDensity() * velocity * Math.abs(velocity);
-	}
-
-	public double getReynoldsNumber() {
-		if( fluidFlow == null )	return 0.0;
-		return Math.abs(velocity) * diameterInput.getValue() / fluidFlow.getFluid().getKinematicViscosity();
 	}
 
 	public void setFluidFlow( FluidFlow flow ) {
@@ -216,19 +203,26 @@ public class FluidComponent extends DisplayEntity {
 	}
 
 	@Output(name = "ReynoldsNumber",
-	 description = "The Reynolds Number for the fluid within the component.  Equal to (velocity)(diameter)/(kinematic viscosity).",
+	 description = "The Reynolds Number for the fluid within the component. "
+	             + "Equal to (velocity)(diameter)/(kinematic viscosity).",
 	    unitType = DimensionlessUnit.class,
 	    sequence = 2)
 	public double getReynoldsNumber(double simTime) {
-		return this.getReynoldsNumber();
+		if (fluidFlow == null)
+			return 0.0;
+		return Math.abs(velocity) * diameterInput.getValue() / fluidFlow.getFluid().getKinematicViscosity(simTime);
 	}
 
 	@Output(name = "DynamicPressure",
-	 description = "The dynamic pressure of the fluid flow.  Equal to (0.5)(density)(velocity^2).",
+	 description = "The dynamic pressure of the fluid flow. "
+	             + "Equal to (0.5)(density)(velocity^2). "
+	             + "Dynamic pressure is negative for negative velocities.",
 	    unitType = PressureUnit.class,
 	    sequence = 3)
 	public double getDynamicPressure(double simTime) {
-		return this.getDynamicPressure();
+		if (fluidFlow == null)
+			return 0.0;
+		return 0.5 * fluidFlow.getFluid().getDensity(simTime) * velocity * Math.abs(velocity);
 	}
 
 	@Output(name = "InletPressure",
