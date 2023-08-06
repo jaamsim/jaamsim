@@ -20,6 +20,7 @@ import java.io.File;
 import java.util.ArrayList;
 
 import com.jaamsim.Graphics.DisplayEntity;
+import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.StringProviders.StringProvListInput;
 import com.jaamsim.StringProviders.StringProvider;
 import com.jaamsim.basicsim.FileEntity;
@@ -29,7 +30,6 @@ import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.UnitTypeListInput;
-import com.jaamsim.input.ValueInput;
 import com.jaamsim.units.TimeUnit;
 
 public abstract class Logger extends DisplayEntity {
@@ -68,11 +68,11 @@ public abstract class Logger extends DisplayEntity {
 
 	@Keyword(description = "The time at which the log starts recording entries.",
 	         exampleList = { "24.0 h" })
-	private final ValueInput startTime;
+	private final SampleInput startTime;
 
 	@Keyword(description = "The time at which the log stops recording entries.",
 	         exampleList = { "8760.0 h" })
-	private final ValueInput endTime;
+	private final SampleInput endTime;
 
 	private FileEntity file;
 	private double logTime;
@@ -95,12 +95,12 @@ public abstract class Logger extends DisplayEntity {
 		includeInitialization = new BooleanInput("IncludeInitialization", KEY_INPUTS, true);
 		this.addInput(includeInitialization);
 
-		startTime = new ValueInput("StartTime", KEY_INPUTS, 0.0d);
+		startTime = new SampleInput("StartTime", KEY_INPUTS, 0.0d);
 		startTime.setUnitType(TimeUnit.class);
 		startTime.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		this.addInput(startTime);
 
-		endTime = new ValueInput("EndTime", KEY_INPUTS, Double.POSITIVE_INFINITY);
+		endTime = new SampleInput("EndTime", KEY_INPUTS, Double.POSITIVE_INFINITY);
 		endTime.setUnitType(TimeUnit.class);
 		endTime.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		this.addInput(endTime);
@@ -200,7 +200,7 @@ public abstract class Logger extends DisplayEntity {
 			return;
 
 		// Skip the log entry if it is outside the time range
-		if (simTime < startTime.getValue() || simTime > endTime.getValue())
+		if (simTime < getStartTime(simTime) || simTime > getEndTime(simTime))
 			return;
 
 		// Record the time for the log entry
@@ -231,12 +231,12 @@ public abstract class Logger extends DisplayEntity {
 			file.flush();
 	}
 
-	protected double getStartTime() {
-		return startTime.getValue();
+	protected double getStartTime(double simTime) {
+		return startTime.getNextSample(this, simTime);
 	}
 
-	protected double getEndTime() {
-		return endTime.getValue();
+	protected double getEndTime(double simTime) {
+		return endTime.getNextSample(this, simTime);
 	}
 
 	protected abstract void printColumnTitles(FileEntity file);

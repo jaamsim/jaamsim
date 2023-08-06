@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2015 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018-2022 JaamSim Software Inc.
+ * Copyright (C) 2018-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package com.jaamsim.BasicObjects;
 
 import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.Graphics.TextBasics;
+import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.Samples.SampleProvider;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.GUIListener;
@@ -30,7 +31,6 @@ import com.jaamsim.input.Keyword;
 import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.UnitTypeInput;
-import com.jaamsim.input.ValueInput;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
 
@@ -42,7 +42,7 @@ public class InputValue extends TextBasics implements SampleProvider {
 
 	@Keyword(description = "The numerical value for the input.",
 	         exampleList = {"1.5 km"})
-	protected final ValueInput valInput;
+	protected final SampleInput valInput;
 
 	private boolean suppressUpdate = false; // prevents the white space in the edited text from changing
 
@@ -52,7 +52,7 @@ public class InputValue extends TextBasics implements SampleProvider {
 		unitType.setCallback(unitTypeInputCallback);
 		this.addInput(unitType);
 
-		valInput = new ValueInput("Value", KEY_INPUTS, 0.0d);
+		valInput = new SampleInput("Value", KEY_INPUTS, 0.0d);
 		valInput.setUnitType(UserSpecifiedUnit.class);
 		valInput.setCallback(valInputCallback);
 		this.addInput(valInput);
@@ -129,12 +129,12 @@ public class InputValue extends TextBasics implements SampleProvider {
 
 	@Override
 	public double getNextSample(Entity thisEnt, double simTime) {
-		return valInput.getValue();
+		return valInput.getNextSample(thisEnt, simTime);
 	}
 
 	@Override
 	public double getMeanValue(double simTime) {
-		return valInput.getValue();
+		return valInput.getNextSample(this, simTime);
 	}
 
 }

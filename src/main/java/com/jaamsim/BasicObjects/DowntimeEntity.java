@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2022 JaamSim Software Inc.
+ * Copyright (C) 2016-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,6 @@ import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
-import com.jaamsim.input.ValueInput;
 import com.jaamsim.states.DowntimeUser;
 import com.jaamsim.states.StateEntity;
 import com.jaamsim.states.StateEntityListener;
@@ -87,7 +86,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 	                     + "time limit is 48 h, the event will be recorded as late in the "
 	                     + "'LateEvents' output if it is not completed by 148h.",
 	         exampleList = {"48 h"})
-	protected final ValueInput completionTimeLimit;
+	protected final SampleInput completionTimeLimit;
 
 
 	private final ArrayList<DowntimeUser> downtimeUserList;  // entities that use this downtime entity
@@ -144,7 +143,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 		maxDowntimesPending.setValidRange(1, Integer.MAX_VALUE);
 		this.addInput(maxDowntimesPending);
 
-		completionTimeLimit = new ValueInput("CompletionTimeLimit","Key Inputs", Double.POSITIVE_INFINITY);
+		completionTimeLimit = new SampleInput("CompletionTimeLimit", KEY_INPUTS, Double.POSITIVE_INFINITY);
 		completionTimeLimit.setUnitType(TimeUnit.class);
 		this.addInput(completionTimeLimit);
 	}
@@ -380,11 +379,12 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 		if (downtimePendings == maxDowntimesPending.getValue())
 			return;
 
+		double simTime = getSimTime();
 		downtimePendings++;
 		if( downtimePendings == 1 )
-			downtimePendingStartTime = this.getSimTime();
+			downtimePendingStartTime = simTime;
 
-		targetCompletionTime = this.getSimTime() + completionTimeLimit.getValue();
+		targetCompletionTime = simTime + completionTimeLimit.getNextSample(this, simTime);
 
 		// Determine the time the next downtime event is due
 		// Calendar time based

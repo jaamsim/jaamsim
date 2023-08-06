@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2015 Ausenco Engineering Canada Inc.
- * Copyright (C) 2015-2022 JaamSim Software Inc.
+ * Copyright (C) 2015-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ package com.jaamsim.BasicObjects;
 import java.util.ArrayList;
 
 import com.jaamsim.Graphics.DisplayEntity;
+import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.StringProviders.StringProvListInput;
 import com.jaamsim.StringProviders.StringProvider;
 import com.jaamsim.basicsim.Entity;
@@ -42,7 +43,6 @@ import com.jaamsim.input.InterfaceEntityListInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.UnitTypeListInput;
-import com.jaamsim.input.ValueInput;
 import com.jaamsim.states.StateEntity;
 import com.jaamsim.states.StateEntityListener;
 import com.jaamsim.states.StateRecord;
@@ -55,7 +55,7 @@ public class ExpressionLogger extends Logger implements StateEntityListener, Obs
 	                     + "This input is optional if state tracing or value tracing is "
 	                     + "specified.",
 	         exampleList = { "24.0 h" })
-	private final ValueInput interval;
+	private final SampleInput interval;
 
 	@Keyword(description = "A list of entities whose states will be traced. "
 	                     + "An entry in the log file is made every time one of the entities "
@@ -125,7 +125,7 @@ public class ExpressionLogger extends Logger implements StateEntityListener, Obs
 	private Entity watchedEntity;  // last subject entity that triggered a log entry
 
 	{
-		interval = new ValueInput("Interval", KEY_INPUTS, null);
+		interval = new SampleInput("Interval", KEY_INPUTS, null);
 		interval.setUnitType(TimeUnit.class);
 		interval.setValidRange(1.0e-10, Double.POSITIVE_INFINITY);
 		this.addInput(interval);
@@ -209,7 +209,7 @@ public class ExpressionLogger extends Logger implements StateEntityListener, Obs
 
 		// Start log entries at fixed intervals
 		if (interval.getValue() != null)
-			this.scheduleProcess(getStartTime(), 5, endActionTarget);
+			this.scheduleProcess(getStartTime(getSimTime()), 5, endActionTarget);
 	}
 
 	@Override
@@ -294,14 +294,15 @@ public class ExpressionLogger extends Logger implements StateEntityListener, Obs
 	private void startAction() {
 
 		// Schedule the next time an entry in the log file will be written
-		this.scheduleProcess(interval.getValue(), 5, endActionTarget);
+		double dur = interval.getNextSample(this, getSimTime());
+		scheduleProcess(dur, 5, endActionTarget);
 	}
 
 	final void endAction() {
 
 		// Stop the log if the end time has been reached
 		double simTime = getSimTime();
-		if (simTime > getEndTime())
+		if (simTime > getEndTime(simTime))
 			return;
 
 		// Record the entry in the log
@@ -382,7 +383,7 @@ public class ExpressionLogger extends Logger implements StateEntityListener, Obs
 
 		// Stop tracing if the end time has been reached
 		double simTime = getSimTime();
-		if (simTime > getEndTime())
+		if (simTime > getEndTime(simTime))
 			return;
 
 		// Record the entry in the log

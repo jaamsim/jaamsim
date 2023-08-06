@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2021-2022 JaamSim Software Inc.
+ * Copyright (C) 2021-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@
 package com.jaamsim.BasicObjects;
 
 import com.jaamsim.Graphics.DisplayEntity;
+import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.Samples.SampleProvider;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.datatypes.DoubleVector;
@@ -25,7 +26,6 @@ import com.jaamsim.events.EventManager;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
-import com.jaamsim.input.ValueInput;
 import com.jaamsim.input.ValueListInput;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
@@ -43,7 +43,7 @@ public class EventSchedule extends DisplayEntity implements SampleProvider{
 
 	@Keyword(description = "Defines when the event times will repeat from the start.",
 	         exampleList = {"8760.0 h"})
-	private final ValueInput cycleTime;
+	private final SampleInput cycleTime;
 
 	private int index = -1;
 	private boolean firstSample = true;
@@ -56,7 +56,7 @@ public class EventSchedule extends DisplayEntity implements SampleProvider{
 		timeList.setRequired(true);
 		this.addInput(timeList);
 
-		cycleTime = new ValueInput("CycleTime", KEY_INPUTS, null);
+		cycleTime = new SampleInput("CycleTime", KEY_INPUTS, null);
 		cycleTime.setUnitType(TimeUnit.class);
 		cycleTime.setValidRange(0.0, Double.POSITIVE_INFINITY);
 		cycleTime.setRequired(true);
@@ -70,7 +70,7 @@ public class EventSchedule extends DisplayEntity implements SampleProvider{
 	public void validate() {
 		super.validate();
 		DoubleVector list = timeList.getValue();
-		if (list.get(list.size()-1) > cycleTime.getValue())
+		if (list.get(list.size()-1) > cycleTime.getNextSample(this, 0.0d))
 			throw new InputErrorException("The input for CycleTime must be greater than or equal "
 					+ "to the last entry for TimeList.");
 	}
@@ -137,7 +137,7 @@ public class EventSchedule extends DisplayEntity implements SampleProvider{
 				return list.get(0);
 
 			// All but the first IATs are referenced to the last time in the list
-			return list.get(0) + cycleTime.getValue() - list.get(list.size()-1);
+			return list.get(0) + cycleTime.getNextSample(this, simTime) - list.get(list.size()-1);
 		}
 
 		return list.get(index) - list.get(index-1);
