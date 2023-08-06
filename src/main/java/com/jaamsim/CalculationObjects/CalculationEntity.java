@@ -18,9 +18,9 @@
 package com.jaamsim.CalculationObjects;
 
 import com.jaamsim.Graphics.DisplayEntity;
+import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.Keyword;
-import com.jaamsim.input.ValueInput;
 import com.jaamsim.units.DimensionlessUnit;
 
 /**
@@ -38,14 +38,14 @@ public abstract class CalculationEntity extends DisplayEntity implements Control
 	                     + "in which calculations are performed. A calculation with a lower value "
 	                     + "is executed before one with a higher value.",
 	         exampleList = {"2.1"})
-	private final ValueInput sequenceNumber;
+	private final SampleInput sequenceNumber;
 
 	{
 		controller = new EntityInput<>(Controller.class, "Controller", KEY_INPUTS, null);
 		controller.setRequired(true);
 		this.addInput(controller);
 
-		sequenceNumber = new ValueInput("SequenceNumber", KEY_INPUTS, 0.0);
+		sequenceNumber = new SampleInput("SequenceNumber", KEY_INPUTS, 0.0);
 		sequenceNumber.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		sequenceNumber.setUnitType(DimensionlessUnit.class);
 		this.addInput(sequenceNumber);
@@ -58,6 +58,6 @@ public abstract class CalculationEntity extends DisplayEntity implements Control
 
 	@Override
 	public double getSequenceNumber() {
-		return sequenceNumber.getValue();
+		return sequenceNumber.getNextSample(this, 0.0d);
 	}
 }

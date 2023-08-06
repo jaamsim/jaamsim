@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016 JaamSim Software Inc.
+ * Copyright (C) 2016-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,9 +17,9 @@
  */
 package com.jaamsim.CalculationObjects;
 
+import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
-import com.jaamsim.input.ValueInput;
 import com.jaamsim.units.TimeUnit;
 import com.jaamsim.units.UserSpecifiedUnit;
 
@@ -34,10 +34,10 @@ public class Lag extends DoubleCalculation {
 	@Keyword(description = "The time constant for this operation: "
 	                     + "output = integral(input - output) / LagTime.",
 	         exampleList = {"15 s"})
-	private final ValueInput lagTime;
+	private final SampleInput lagTime;
 
 	{
-		lagTime = new ValueInput("LagTime", KEY_INPUTS, 1.0d);
+		lagTime = new SampleInput("LagTime", KEY_INPUTS, 1.0d);
 		lagTime.setValidRange(1.0e-10, Double.POSITIVE_INFINITY);
 		lagTime.setUnitType(TimeUnit.class);
 		this.addInput(lagTime);
@@ -49,7 +49,7 @@ public class Lag extends DoubleCalculation {
 	public double calculateValue(double simTime, double inputVal, double lastTime, double lastInputVal, double lastVal) {
 		double dt = simTime - lastTime;
 		double error = inputVal - lastVal;
-		return lastVal + dt*error/lagTime.getValue();
+		return lastVal + dt*error/lagTime.getNextSample(this, simTime);
 	}
 
 	@Output(name = "Error",

@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2022 JaamSim Software Inc.
+ * Copyright (C) 2016-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,6 @@ import com.jaamsim.input.InputCallback;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.UnitTypeInput;
-import com.jaamsim.input.ValueInput;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.RateUnit;
 import com.jaamsim.units.TimeUnit;
@@ -54,7 +53,7 @@ public class PIDController extends DoubleCalculation {
 	                     + "set point. The difference between the process variable and the set "
 	                     + "point is divided by this quantity to make a dimensionless variable.",
 	         exampleList = {"1.0 kg"})
-	private final ValueInput processVariableScale;
+	private final SampleInput processVariableScale;
 
 	@Keyword(description = "The unit type for the output from the PID controller.",
 	         exampleList = {"DistanceUnit"})
@@ -64,23 +63,23 @@ public class PIDController extends DoubleCalculation {
 	                     + "The unit type for the proportional gain is given by the "
 	                     + "outputUnitType keyword.",
 	         exampleList = {"1.3 m"})
-	private final ValueInput proportionalGain;
+	private final SampleInput proportionalGain;
 
 	@Keyword(description = "The time scale applied to the integral feedback loop.",
 	         exampleList = {"1.0 s"})
-	private final ValueInput integralTime;
+	private final SampleInput integralTime;
 
 	@Keyword(description = "The time scale applied to the differential feedback loop.",
 	         exampleList = {"1.0 s"})
-	private final ValueInput derivativeTime;
+	private final SampleInput derivativeTime;
 
 	@Keyword(description = "The lower limit for the output signal.",
 	         exampleList = {"0.0 m"})
-	private final ValueInput outputLow;
+	private final SampleInput outputLow;
 
 	@Keyword(description = "The upper limit for the output signal.",
 	         exampleList = {"1.0 m"})
-	private final ValueInput outputHigh;
+	private final SampleInput outputHigh;
 
 	private double lastUpdateTime;  // The time at which the last update was performed
 	private double lastError;  // The previous value for the error signal
@@ -99,7 +98,7 @@ public class PIDController extends DoubleCalculation {
 		processVariable.setRequired(true);
 		this.addInput(processVariable);
 
-		processVariableScale = new ValueInput("ProcessVariableScale", KEY_INPUTS, 1.0d);
+		processVariableScale = new SampleInput("ProcessVariableScale", KEY_INPUTS, 1.0d);
 		processVariableScale.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		processVariableScale.setUnitType(UserSpecifiedUnit.class);
 		this.addInput(processVariableScale);
@@ -109,26 +108,26 @@ public class PIDController extends DoubleCalculation {
 		outputUnitType.setCallback(unitTypeInputCallback);
 		this.addInput(outputUnitType);
 
-		proportionalGain = new ValueInput("ProportionalGain", KEY_INPUTS, 1.0d);
+		proportionalGain = new SampleInput("ProportionalGain", KEY_INPUTS, 1.0d);
 		proportionalGain.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		proportionalGain.setUnitType(UserSpecifiedUnit.class);
 		this.addInput(proportionalGain);
 
-		integralTime = new ValueInput("IntegralTime", KEY_INPUTS, 1.0d);
+		integralTime = new SampleInput("IntegralTime", KEY_INPUTS, 1.0d);
 		integralTime.setValidRange(1.0e-10, Double.POSITIVE_INFINITY);
 		integralTime.setUnitType(TimeUnit.class );
 		this.addInput(integralTime);
 
-		derivativeTime = new ValueInput("DerivativeTime", KEY_INPUTS, 1.0d);
+		derivativeTime = new SampleInput("DerivativeTime", KEY_INPUTS, 1.0d);
 		derivativeTime.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		derivativeTime.setUnitType(TimeUnit.class );
 		this.addInput(derivativeTime);
 
-		outputLow = new ValueInput("OutputLow", KEY_INPUTS, Double.NEGATIVE_INFINITY);
+		outputLow = new SampleInput("OutputLow", KEY_INPUTS, Double.NEGATIVE_INFINITY);
 		outputLow.setUnitType(UserSpecifiedUnit.class);
 		this.addInput(outputLow);
 
-		outputHigh = new ValueInput("OutputHigh", KEY_INPUTS, Double.POSITIVE_INFINITY);
+		outputHigh = new SampleInput("OutputHigh", KEY_INPUTS, Double.POSITIVE_INFINITY);
 		outputHigh.setUnitType(UserSpecifiedUnit.class);
 		this.addInput(outputHigh);
 	}
@@ -185,7 +184,7 @@ public class PIDController extends DoubleCalculation {
 			return Double.NaN;
 		double diff = setPoint.getNextSample(this, simTime)
 				- processVariable.getNextSample(this, simTime);
-		return diff/processVariableScale.getValue();
+		return diff/processVariableScale.getNextSample(this, simTime);
 	}
 
 	@Override
@@ -204,12 +203,12 @@ public class PIDController extends DoubleCalculation {
 			deriv = (error - lastError)/dt;
 
 		// Calculate the output value
-		double val = (error +  intgrl/integralTime.getValue() + deriv*derivativeTime.getValue());
-		val *= proportionalGain.getValue();
+		double val = (error +  intgrl/integralTime.getNextSample(this, simTime) + deriv*derivativeTime.getNextSample(this, simTime));
+		val *= proportionalGain.getNextSample(this, simTime);
 
 		// Condition the output value
-		val = Math.max(val, outputLow.getValue());
-		val = Math.min(val, outputHigh.getValue());
+		val = Math.max(val, outputLow.getNextSample(this, simTime));
+		val = Math.min(val, outputHigh.getNextSample(this, simTime));
 
 		return val;
 	}
@@ -250,7 +249,7 @@ public class PIDController extends DoubleCalculation {
 	    unitType = UserSpecifiedUnit.class,
 	    sequence = 4)
 	public double getProportionalValue(double simTime) {
-		return getError(simTime) * proportionalGain.getValue();
+		return getError(simTime) * proportionalGain.getNextSample(this, simTime);
 	}
 
 	@Output(name = "IntegralValue",
@@ -258,7 +257,7 @@ public class PIDController extends DoubleCalculation {
 	    unitType = UserSpecifiedUnit.class,
 	    sequence = 5)
 	public double getIntegralValue(double simTime) {
-		return (integral / integralTime.getValue()) * proportionalGain.getValue();
+		return (integral / integralTime.getNextSample(this, simTime)) * proportionalGain.getNextSample(this, simTime);
 	}
 
 	@Output(name = "DerivativeValue",
@@ -266,7 +265,7 @@ public class PIDController extends DoubleCalculation {
 	    unitType = UserSpecifiedUnit.class,
 	    sequence = 6)
 	public double getDifferentialValue(double simTime) {
-		return getDerivative(simTime) * derivativeTime.getValue() * proportionalGain.getValue();
+		return getDerivative(simTime) * derivativeTime.getNextSample(this, simTime) * proportionalGain.getNextSample(this, simTime);
 	}
 
 }

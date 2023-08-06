@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2022 JaamSim Software Inc.
+ * Copyright (C) 2016-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import java.util.ArrayList;
 
 import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.Graphics.DisplayEntity;
+import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.Samples.SampleProvider;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.input.Input;
@@ -30,7 +31,6 @@ import com.jaamsim.input.Keyword;
 import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.UnitTypeInput;
-import com.jaamsim.input.ValueInput;
 import com.jaamsim.units.AngleUnit;
 import com.jaamsim.units.TimeUnit;
 import com.jaamsim.units.Unit;
@@ -49,19 +49,19 @@ public abstract class WaveGenerator extends DisplayEntity implements SampleProvi
 
 	@Keyword(description = "Amplitude of the generated wave.",
 	         exampleList = {"2.0"})
-	private final ValueInput amplitude;
+	private final SampleInput amplitude;
 
 	@Keyword(description = "Period of the generated wave.",
 			exampleList = {"2 s"})
-	private final ValueInput period;
+	private final SampleInput period;
 
 	@Keyword(description = "Initial phase angle of the generated wave.",
 			exampleList = {"45 deg"})
-	private final ValueInput phaseAngle;
+	private final SampleInput phaseAngle;
 
 	@Keyword(description = "Offset added to the output of the generated wave.",
 			exampleList = {"2.0"})
-	private final ValueInput offset;
+	private final SampleInput offset;
 
 	{
 		unitType = new UnitTypeInput("UnitType", KEY_INPUTS, UserSpecifiedUnit.class);
@@ -69,21 +69,21 @@ public abstract class WaveGenerator extends DisplayEntity implements SampleProvi
 		unitType.setCallback(unitTypeInputCallback);
 		this.addInput(unitType);
 
-		amplitude = new ValueInput("Amplitude", KEY_INPUTS, 1.0d);
+		amplitude = new SampleInput("Amplitude", KEY_INPUTS, 1.0d);
 		amplitude.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		amplitude.setUnitType(UserSpecifiedUnit.class);
 		this.addInput(amplitude);
 
-		period = new ValueInput("Period", KEY_INPUTS, 1.0d);
+		period = new SampleInput("Period", KEY_INPUTS, 1.0d);
 		period.setUnitType(TimeUnit.class);
 		period.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		this.addInput(period);
 
-		phaseAngle = new ValueInput("PhaseAngle", KEY_INPUTS, 0.0d);
+		phaseAngle = new SampleInput("PhaseAngle", KEY_INPUTS, 0.0d);
 		phaseAngle.setUnitType(AngleUnit.class);
 		this.addInput(phaseAngle);
 
-		offset = new ValueInput("Offset", KEY_INPUTS, 0.0d);
+		offset = new SampleInput("Offset", KEY_INPUTS, 0.0d);
 		offset.setUnitType(UserSpecifiedUnit.class);
 		this.addInput(offset);
 	}
@@ -126,15 +126,17 @@ public abstract class WaveGenerator extends DisplayEntity implements SampleProvi
 	public double getNextSample(Entity thisEnt, double simTime) {
 
 		// Calculate the present phase angle
-		double angle = 2.0*Math.PI * simTime/period.getValue() + phaseAngle.getValue();
+		double angle = 2.0*Math.PI * simTime/period.getNextSample(thisEnt, simTime)
+				+ phaseAngle.getNextSample(thisEnt, simTime);
 
 		// Set the output value for the wave
-		return amplitude.getValue() * this.getSignal(angle)  +  offset.getValue();
+		return amplitude.getNextSample(thisEnt, simTime) * this.getSignal(angle)
+				+ offset.getNextSample(thisEnt, simTime);
 	}
 
 	@Override
 	public double getMeanValue(double simTime) {
-		return offset.getValue();
+		return offset.getNextSample(this, simTime);
 	}
 
 	@Override
