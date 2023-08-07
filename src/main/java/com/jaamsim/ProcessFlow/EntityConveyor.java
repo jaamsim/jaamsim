@@ -435,15 +435,25 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 
 	@Override
 	public boolean isOutlined() {
+		return isOutlined(0.0d);
+	}
+
+	@Override
+	public boolean isOutlined(double simTime) {
 		return true;
 	}
 
 	@Override
 	public int getLineWidth() {
+		return getLineWidth(0.0d);
+	}
+
+	@Override
+	public int getLineWidth(double simTime) {
 		if (widthInput.isDefault()) {
 			LineEntity model = getDisplayModel(LineEntity.class);
 			if (model != null)
-				return model.getLineWidth();
+				return model.getLineWidth(simTime);
 		}
 		return widthInput.getValue();
 	}

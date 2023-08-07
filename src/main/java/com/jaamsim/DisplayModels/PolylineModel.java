@@ -120,11 +120,21 @@ public class PolylineModel extends AbstractShapeModel implements PolylineEntity 
 
 	@Override
 	public boolean isClosed() {
+		return isClosed(0.0d);
+	}
+
+	@Override
+	public boolean isClosed(double simTime) {
 		return closed.getValue();
 	}
 
 	@Override
 	public double getPolylineWidth() {
+		return getPolylineWidth(0.0d);
+	}
+
+	@Override
+	public double getPolylineWidth(double simTime) {
 		return polylineWidth.getNextSample(this, 0.0d);
 	}
 

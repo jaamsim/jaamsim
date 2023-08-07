@@ -85,10 +85,15 @@ public abstract class AbstractShape extends DisplayEntity implements LineEntity,
 
 	@Override
 	public boolean isFilled() {
+		return isFilled(0.0d);
+	}
+
+	@Override
+	public boolean isFilled(double simTime) {
 		if (filled.isDefault()) {
 			FillEntity model = getDisplayModel(FillEntity.class);
 			if (model != null)
-				return model.isFilled();
+				return model.isFilled(simTime);
 		}
 		return filled.getValue();
 	}
@@ -105,20 +110,30 @@ public abstract class AbstractShape extends DisplayEntity implements LineEntity,
 
 	@Override
 	public boolean isOutlined() {
+		return isOutlined(0.0d);
+	}
+
+	@Override
+	public boolean isOutlined(double simTime) {
 		if (outlined.isDefault()) {
 			LineEntity model = getDisplayModel(LineEntity.class);
 			if (model != null)
-				return model.isOutlined();
+				return model.isOutlined(simTime);
 		}
 		return outlined.getValue();
 	}
 
 	@Override
 	public int getLineWidth() {
+		return getLineWidth(0.0d);
+	}
+
+	@Override
+	public int getLineWidth(double simTime) {
 		if (lineWidth.isDefault()) {
 			LineEntity model = getDisplayModel(LineEntity.class);
 			if (model != null)
-				return model.getLineWidth();
+				return model.getLineWidth(simTime);
 		}
 		return lineWidth.getValue();
 	}

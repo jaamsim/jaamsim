@@ -82,16 +82,31 @@ public abstract class AbstractShapeModel extends DisplayModel implements LineEnt
 
 	@Override
 	public boolean isFilled() {
+		return isFilled(0.0d);
+	}
+
+	@Override
+	public boolean isFilled(double simTime) {
 		return filled.getValue();
 	}
 
 	@Override
 	public boolean isOutlined() {
+		return isOutlined(0.0d);
+	}
+
+	@Override
+	public boolean isOutlined(double simTime) {
 		return outlined.getValue();
 	}
 
 	@Override
 	public int getLineWidth() {
+		return getLineWidth(0.0d);
+	}
+
+	@Override
+	public int getLineWidth(double simTime) {
 		return lineWidth.getValue();
 	}
 
