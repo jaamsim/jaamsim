@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2002-2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2019-2020 JaamSim Software Inc.
+ * Copyright (C) 2019-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,11 +17,11 @@
  */
 package com.jaamsim.Graphics;
 
+import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputCallback;
 import com.jaamsim.input.Keyword;
-import com.jaamsim.input.ValueInput;
 import com.jaamsim.math.Quaternion;
 import com.jaamsim.math.Transform;
 import com.jaamsim.math.Vec3d;
@@ -34,7 +34,7 @@ public class Region extends DisplayEntity {
 	                     + "For example, an input of 0.5 would make objects appear to be one-half "
 	                     + "smaller and closer together.",
 	         exampleList = {"0.5"})
-	protected final ValueInput scaleInput;
+	protected final SampleInput scaleInput;
 
 	private double scale = 1.0d;
 
@@ -43,7 +43,7 @@ public class Region extends DisplayEntity {
 
 		desc.setHidden(true);
 
-		scaleInput = new ValueInput("Scale", KEY_INPUTS, 1.0d);
+		scaleInput = new SampleInput("Scale", KEY_INPUTS, 1.0d);
 		scaleInput.setUnitType(DimensionlessUnit.class);
 		scaleInput.setCallback(inputCallback);
 		this.addInput(scaleInput);
@@ -62,13 +62,13 @@ public class Region extends DisplayEntity {
 	};
 
 	void updateInputValue() {
-		this.setScale(scaleInput.getValue());
+		setScale(scaleInput.getNextSample(this, 0.0d));
 	}
 
 	@Override
 	public void resetGraphics() {
 		super.resetGraphics();
-		setScale(scaleInput.getValue());
+		setScale(scaleInput.getNextSample(this, 0.0d));
 	}
 
 	public void setScale(double val) {
