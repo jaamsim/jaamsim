@@ -264,7 +264,7 @@ public class FluidPipe extends FluidComponent implements LineEntity, FillEntity,
 			if (model != null)
 				return model.getPolylineWidth(simTime);
 		}
-		return polylineWidth.getNextSample(this, 0.0d);
+		return polylineWidth.getNextSample(this, simTime);
 	}
 
 	@Output(name = "DarcyFrictionFactor",

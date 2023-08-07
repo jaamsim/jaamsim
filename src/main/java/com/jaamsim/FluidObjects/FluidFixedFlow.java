@@ -165,7 +165,7 @@ public class FluidFixedFlow extends FluidFlowCalculation implements LineEntity, 
 			if (model != null)
 				return model.getPolylineWidth(simTime);
 		}
-		return polylineWidth.getNextSample(this, 0.0d);
+		return polylineWidth.getNextSample(this, simTime);
 	}
 
 }

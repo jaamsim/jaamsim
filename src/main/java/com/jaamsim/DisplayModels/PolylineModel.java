@@ -135,7 +135,7 @@ public class PolylineModel extends AbstractShapeModel implements PolylineEntity 
 
 	@Override
 	public double getPolylineWidth(double simTime) {
-		return polylineWidth.getNextSample(this, 0.0d);
+		return polylineWidth.getNextSample(this, simTime);
 	}
 
 	public boolean getShowArrowHead() {
