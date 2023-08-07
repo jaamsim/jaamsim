@@ -61,11 +61,6 @@ public class Polyline extends AbstractShape implements PolylineEntity  {
 	public Polyline() {}
 
 	@Override
-	public boolean isClosed() {
-		return isClosed(0.0d);
-	}
-
-	@Override
 	public boolean isClosed(double simTime) {
 		if (closed.isDefault()) {
 			PolylineEntity model = getDisplayModel(PolylineEntity.class);
@@ -73,11 +68,6 @@ public class Polyline extends AbstractShape implements PolylineEntity  {
 				return model.isClosed(simTime);
 		}
 		return closed.getValue();
-	}
-
-	@Override
-	public double getPolylineWidth() {
-		return getPolylineWidth(0.0d);
 	}
 
 	@Override

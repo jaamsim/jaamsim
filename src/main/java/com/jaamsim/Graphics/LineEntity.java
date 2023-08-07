@@ -21,15 +21,7 @@ import com.jaamsim.math.Color4d;
 
 public interface LineEntity {
 	public JaamSimModel getJaamSimModel();
-	public boolean isOutlined();
-	public int getLineWidth();
+	public boolean isOutlined(double simTime);
+	public int getLineWidth(double simTime);
 	public Color4d getLineColour(double simTime);
-
-	default boolean isOutlined(double simTime) {
-		return isOutlined();
-	}
-
-	default int getLineWidth(double simTime) {
-		return getLineWidth();
-	}
 }

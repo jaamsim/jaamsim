@@ -191,18 +191,8 @@ public class FluidPipe extends FluidComponent implements LineEntity, FillEntity,
 	}
 
 	@Override
-	public boolean isOutlined() {
-		return isOutlined(0.0d);
-	}
-
-	@Override
 	public boolean isOutlined(double simTime) {
 		return (getPolylineWidth(simTime) <= 0.0d);
-	}
-
-	@Override
-	public int getLineWidth() {
-		return getLineWidth(0.0d);
 	}
 
 	@Override
@@ -226,11 +216,6 @@ public class FluidPipe extends FluidComponent implements LineEntity, FillEntity,
 	}
 
 	@Override
-	public boolean isFilled() {
-		return isFilled(0.0d);
-	}
-
-	@Override
 	public boolean isFilled(double simTime) {
 		return false;
 	}
@@ -243,18 +228,8 @@ public class FluidPipe extends FluidComponent implements LineEntity, FillEntity,
 	}
 
 	@Override
-	public boolean isClosed() {
-		return isClosed(0.0d);
-	}
-
-	@Override
 	public boolean isClosed(double simTime) {
 		return false;
-	}
-
-	@Override
-	public double getPolylineWidth() {
-		return getPolylineWidth(0.0d);
 	}
 
 	@Override

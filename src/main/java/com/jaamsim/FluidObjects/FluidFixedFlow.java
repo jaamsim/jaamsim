@@ -92,18 +92,8 @@ public class FluidFixedFlow extends FluidFlowCalculation implements LineEntity, 
 	}
 
 	@Override
-	public boolean isOutlined() {
-		return isOutlined(0.0d);
-	}
-
-	@Override
 	public boolean isOutlined(double simTime) {
 		return (getPolylineWidth(0.0d) <= 0.0d);
-	}
-
-	@Override
-	public int getLineWidth() {
-		return getLineWidth(0.0d);
 	}
 
 	@Override
@@ -127,11 +117,6 @@ public class FluidFixedFlow extends FluidFlowCalculation implements LineEntity, 
 	}
 
 	@Override
-	public boolean isFilled() {
-		return isFilled(0.0d);
-	}
-
-	@Override
 	public boolean isFilled(double simTime) {
 		return false;
 	}
@@ -144,18 +129,8 @@ public class FluidFixedFlow extends FluidFlowCalculation implements LineEntity, 
 	}
 
 	@Override
-	public boolean isClosed() {
-		return isClosed(0.0d);
-	}
-
-	@Override
 	public boolean isClosed(double simTime) {
 		return false;
-	}
-
-	@Override
-	public double getPolylineWidth() {
-		return getPolylineWidth(0.0d);
 	}
 
 	@Override

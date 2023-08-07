@@ -21,10 +21,6 @@ import com.jaamsim.math.Color4d;
 
 public interface FillEntity {
 	public JaamSimModel getJaamSimModel();
-	public boolean isFilled();
+	public boolean isFilled(double simTime);
 	public Color4d getFillColour(double simTime);
-
-	default boolean isFilled(double simTime) {
-		return isFilled();
-	}
 }

@@ -17,14 +17,6 @@
 package com.jaamsim.Graphics;
 
 public interface PolylineEntity {
-	public double getPolylineWidth();
-	public boolean isClosed();
-
-	default double getPolylineWidth(double simTime) {
-		return getPolylineWidth();
-	}
-
-	default boolean isClosed(double simTime) {
-		return isClosed();
-	}
+	public double getPolylineWidth(double simTime);
+	public boolean isClosed(double simTime);
 }
