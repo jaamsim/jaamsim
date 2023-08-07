@@ -24,7 +24,6 @@ import com.jaamsim.Graphics.LineEntity;
 import com.jaamsim.Graphics.PolylineEntity;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.input.ColourInput;
-import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.units.DistanceUnit;
@@ -49,7 +48,7 @@ public class FluidFixedFlow extends FluidFlowCalculation implements LineEntity, 
 
 	@Keyword(description = "The width of the pipe segments in pixels.",
 	         exampleList = {"1"})
-	private final IntegerInput widthInput;
+	private final SampleInput widthInput;
 
 	@Keyword(description = "The colour of the pipe.",
 	         exampleList = {"red"})
@@ -70,8 +69,9 @@ public class FluidFixedFlow extends FluidFlowCalculation implements LineEntity, 
 		polylineWidth.setDefaultText("PolylineModel");
 		this.addInput(polylineWidth);
 
-		widthInput = new IntegerInput("LineWidth", FORMAT, 1);
-		widthInput.setValidRange(1, Integer.MAX_VALUE);
+		widthInput = new SampleInput("LineWidth", FORMAT, 1);
+		widthInput.setValidRange(1, Double.POSITIVE_INFINITY);
+		widthInput.setIntegerValue(true);
 		widthInput.setDefaultText("PolylineModel");
 		this.addInput(widthInput);
 		this.addSynonym(widthInput, "Width");
@@ -103,7 +103,7 @@ public class FluidFixedFlow extends FluidFlowCalculation implements LineEntity, 
 			if (model != null)
 				return model.getLineWidth(simTime);
 		}
-		return widthInput.getValue();
+		return (int) widthInput.getNextSample(this, simTime);
 	}
 
 	@Override
