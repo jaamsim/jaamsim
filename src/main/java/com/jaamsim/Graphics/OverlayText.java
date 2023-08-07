@@ -474,7 +474,7 @@ public class OverlayText extends OverlayEntity implements TextEntity, EditableTe
 	@Override
 	public double getTextHeight(double simTime) {
 		if (textHeight.isDefault()) {
-			return getTextModel().getTextHeightInPixels();
+			return getTextModel().getTextHeightInPixels(simTime);
 		}
 		return (int) textHeight.getNextSample(this, simTime);
 	}

@@ -36,7 +36,6 @@ import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputCallback;
-import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.StringChoiceInput;
 import com.jaamsim.input.StringListInput;
@@ -73,7 +72,7 @@ public class TextModel extends AbstractShapeModel implements TextEntity {
 	@Keyword(description = "The height of the text in pixels, used by billboard text and "
 	                     + "overlay text.",
 	         exampleList = {"15"})
-	protected final IntegerInput textHeightInPixels;
+	protected final SampleInput textHeightInPixels;
 
 	@Keyword(description = "The font styles to be applied to the text, e.g. Bold, Italic. ",
 	         exampleList = { "Bold" })
@@ -129,8 +128,9 @@ public class TextModel extends AbstractShapeModel implements TextEntity {
 		textHeight.setCallback(textheightCallback);
 		this.addInput(textHeight);
 
-		textHeightInPixels = new IntegerInput("TextHeightInPixels", KEY_INPUTS, 10);
-		textHeightInPixels.setValidRange(0, Integer.MAX_VALUE);
+		textHeightInPixels = new SampleInput("TextHeightInPixels", KEY_INPUTS, 10);
+		textHeightInPixels.setValidRange(0, Double.POSITIVE_INFINITY);
+		textHeightInPixels.setIntegerValue(true);
 		this.addInput(textHeightInPixels);
 
 		fontColor = new ColourProvInput("FontColour", KEY_INPUTS, ColourInput.BLACK);
@@ -239,8 +239,8 @@ public class TextModel extends AbstractShapeModel implements TextEntity {
 		return textHeight.getNextSample(this, simTime);
 	}
 
-	public int getTextHeightInPixels() {
-		return textHeightInPixels.getValue();
+	public int getTextHeightInPixels(double simTime) {
+		return (int) textHeightInPixels.getNextSample(this, simTime);
 	}
 
 	@Override

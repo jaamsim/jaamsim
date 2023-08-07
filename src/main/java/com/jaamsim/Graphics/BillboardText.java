@@ -42,7 +42,7 @@ public class BillboardText extends Text {
 	@Override
 	public double getTextHeight(double simTime) {
 		if (textHeight.isDefault()) {
-			return getTextModel().getTextHeightInPixels();
+			return getTextModel().getTextHeightInPixels(simTime);
 		}
 		return textHeight.getNextSample(this, simTime);
 	}
