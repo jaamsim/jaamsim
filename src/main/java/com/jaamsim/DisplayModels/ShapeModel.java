@@ -127,9 +127,9 @@ public class ShapeModel extends AbstractShapeModel {
 			ValidShapes sc = shape.getValue();
 			Color4d fc = (fillEnt == null) ? getFillColour(simTime) : fillEnt.getFillColour(simTime);
 			Color4d oc =  (lineEnt == null) ? getLineColour(simTime) : lineEnt.getLineColour(simTime);
-			boolean fill = (fillEnt == null) ? isFilled() : fillEnt.isFilled();
-			boolean outln = (lineEnt == null) ? isOutlined() : lineEnt.isOutlined();
-			int width = (lineEnt == null) ? getLineWidth() : lineEnt.getLineWidth();
+			boolean fill = (fillEnt == null) ? isFilled(simTime) : fillEnt.isFilled(simTime);
+			boolean outln = (lineEnt == null) ? isOutlined(simTime) : lineEnt.isOutlined(simTime);
+			int width = (lineEnt == null) ? getLineWidth(simTime) : lineEnt.getLineWidth(simTime);
 
 			boolean dirty = false;
 

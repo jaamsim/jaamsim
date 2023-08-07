@@ -208,15 +208,15 @@ public class PolylineModel extends AbstractShapeModel implements PolylineEntity 
 				globalTrans = displayObservee.getGlobalPositionTransform();
 			}
 
-			boolean outln = lineEnt == null ? outlined.getValue() : lineEnt.isOutlined();
+			boolean outln = lineEnt == null ? isOutlined(simTime) : lineEnt.isOutlined(simTime);
 			Color4d lineColour = lineEnt == null ? getLineColour(simTime) : lineEnt.getLineColour(simTime);
-			int lineWidth = lineEnt == null ? getLineWidth() : lineEnt.getLineWidth();
+			int lineWidth = lineEnt == null ? getLineWidth(simTime) : lineEnt.getLineWidth(simTime);
 
-			boolean fill = fillEnt == null ? filled.getValue() : fillEnt.isFilled();
+			boolean fill = fillEnt == null ? isFilled(simTime) : fillEnt.isFilled(simTime);
 			Color4d fc = fillEnt == null ? getFillColour(simTime) : fillEnt.getFillColour(simTime);
 
-			boolean closed = polylineEnt == null ? isClosed() : polylineEnt.isClosed();
-			double width = polylineEnt == null ? getPolylineWidth() : polylineEnt.getPolylineWidth();
+			boolean closed = polylineEnt == null ? isClosed(simTime) : polylineEnt.isClosed(simTime);
+			double width = polylineEnt == null ? getPolylineWidth(simTime) : polylineEnt.getPolylineWidth(simTime);
 
 			Vec3d arrowSize = getArrowHeadSize();
 			if (arrowObservee != null)

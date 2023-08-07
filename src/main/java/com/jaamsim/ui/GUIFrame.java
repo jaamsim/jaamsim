@@ -2624,7 +2624,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				LineEntity lineEnt = (LineEntity) selectedEntity;
 				lineWidth.setEnabled(outline.isSelected());
 				lineColour.setEnabled(outline.isSelected());
-				if (lineEnt.isOutlined() == outline.isSelected())
+				if (lineEnt.isOutlined(0.0d) == outline.isSelected())
 					return;
 				KeywordIndex kw = InputAgent.formatBoolean("Outlined", outline.isSelected());
 				InputAgent.storeAndExecute(new KeywordCommand((Entity)lineEnt, kw));
@@ -2647,7 +2647,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 					return;
 				LineEntity lineEnt = (LineEntity) selectedEntity;
 				int val = (int) lineWidth.getValue();
-				if (val == lineEnt.getLineWidth())
+				if (val == lineEnt.getLineWidth(0.0d))
 					return;
 				KeywordIndex kw = InputAgent.formatIntegers("LineWidth", val);
 				InputAgent.storeAndExecute(new KeywordCommand((Entity)lineEnt, kw));
@@ -2722,7 +2722,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 					return;
 				FillEntity fillEnt = (FillEntity) selectedEntity;
 				fillColour.setEnabled(fill.isSelected());
-				if (fillEnt.isFilled() == fill.isSelected())
+				if (fillEnt.isFilled(0.0d) == fill.isSelected())
 					return;
 				KeywordIndex kw = InputAgent.formatBoolean("Filled", fill.isSelected());
 				InputAgent.storeAndExecute(new KeywordCommand((Entity)fillEnt, kw));
@@ -3995,11 +3995,11 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		}
 
 		LineEntity lineEnt = (LineEntity) ent;
-		outline.setSelected(lineEnt.isOutlined());
-		lineWidth.setEnabled(lineEnt.isOutlined());
-		lineColour.setEnabled(lineEnt.isOutlined());
+		outline.setSelected(lineEnt.isOutlined(0.0d));
+		lineWidth.setEnabled(lineEnt.isOutlined(0.0d));
+		lineColour.setEnabled(lineEnt.isOutlined(0.0d));
 
-		lineWidth.setValue(Integer.valueOf(lineEnt.getLineWidth()));
+		lineWidth.setValue(Integer.valueOf(lineEnt.getLineWidth(0.0d)));
 
 		Color4d col = lineEnt.getLineColour(0.0d);
 		lineColourIcon.setFillColor(new Color((float)col.r, (float)col.g, (float)col.b, (float)col.a));
@@ -4018,9 +4018,9 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		}
 
 		FillEntity fillEnt = (FillEntity) ent;
-		fill.setSelected(fillEnt.isFilled());
-		bool = fillEnt.isFilled() || (ent instanceof PolylineEntity
-				&& ((PolylineEntity) ent).getPolylineWidth() > 0.0d);
+		fill.setSelected(fillEnt.isFilled(0.0d));
+		bool = fillEnt.isFilled(0.0d) || (ent instanceof PolylineEntity
+				&& ((PolylineEntity) ent).getPolylineWidth(0.0d) > 0.0d);
 		fillColour.setEnabled(bool);
 
 		Color4d col = fillEnt.getFillColour(0.0d);

@@ -355,11 +355,11 @@ public class TextModel extends AbstractShapeModel implements TextEntity {
 			int numSelected = labelObservee.getNumberSelected();
 			Vec3d scale = labelObservee.getSize();
 			scale.mul3(getModelScale());
-			boolean filled = labelObservee.isFilled();
-			boolean outlined = labelObservee.isOutlined();
+			boolean filled = labelObservee.isFilled(simTime);
+			boolean outlined = labelObservee.isOutlined(simTime);
 			Color4d fillColor = labelObservee.getFillColour(simTime);
 			Color4d outlineColor = labelObservee.getLineColour(simTime);
-			int outlineWidth = labelObservee.getLineWidth();
+			int outlineWidth = labelObservee.getLineWidth(simTime);
 
 			VisibilityInfo vi = getVisibilityInfo();
 
