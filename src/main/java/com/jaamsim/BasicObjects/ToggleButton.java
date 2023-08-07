@@ -23,6 +23,7 @@ import com.jaamsim.DisplayModels.ShapeModel;
 import com.jaamsim.GameObjects.GameEntity;
 import com.jaamsim.Graphics.FillEntity;
 import com.jaamsim.Graphics.LineEntity;
+import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ObserverEntity;
 import com.jaamsim.basicsim.SubjectEntity;
@@ -31,7 +32,6 @@ import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputCallback;
-import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.math.Color4d;
@@ -63,7 +63,7 @@ public class ToggleButton extends GameEntity implements SubjectEntity, LineEntit
 
 	@Keyword(description = "Width of the outline in pixels.",
 	         exampleList = { "3" })
-	protected final IntegerInput lineWidth;
+	protected final SampleInput lineWidth;
 
 	private boolean value;  // true = pressed, false = not pressed
 	private final SubjectEntityDelegate subject = new SubjectEntityDelegate(this);
@@ -92,8 +92,9 @@ public class ToggleButton extends GameEntity implements SubjectEntity, LineEntit
 		lineColour.setDefaultText("ShapeModel value");
 		this.addInput(lineColour);
 
-		lineWidth = new IntegerInput("LineWidth", FORMAT, 1);
-		lineWidth.setValidRange(0, Integer.MAX_VALUE);
+		lineWidth = new SampleInput("LineWidth", FORMAT, 1);
+		lineWidth.setValidRange(0, Double.POSITIVE_INFINITY);
+		lineWidth.setIntegerValue(true);
 		lineWidth.setDefaultText("ShapeModel value");
 		this.addInput(lineWidth);
 	}
@@ -166,7 +167,7 @@ public class ToggleButton extends GameEntity implements SubjectEntity, LineEntit
 			if (model != null)
 				return model.getLineWidth(simTime);
 		}
-		return lineWidth.getValue();
+		return (int) lineWidth.getNextSample(this, simTime);
 	}
 
 	@Override

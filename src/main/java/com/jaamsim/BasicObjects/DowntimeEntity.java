@@ -27,7 +27,6 @@ import com.jaamsim.events.EventManager;
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.EntityInput;
-import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.states.DowntimeUser;
@@ -78,7 +77,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 	                     + "Once this limit is reached, any further downtime activities "
 	                     + "are discarded.",
 	         exampleList = {"1"})
-	protected final IntegerInput maxDowntimesPending;
+	protected final SampleInput maxDowntimesPending;
 
 	@Keyword(description = "The total time from the scheduled start time that the downtime event "
 	                     + "should be completed within. "
@@ -139,8 +138,9 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 		concurrent = new BooleanInput("Concurrent", KEY_INPUTS, false);
 		this.addInput(concurrent);
 
-		maxDowntimesPending = new IntegerInput("MaxDowntimesPending", "Key Inputs", Integer.MAX_VALUE);
-		maxDowntimesPending.setValidRange(1, Integer.MAX_VALUE);
+		maxDowntimesPending = new SampleInput("MaxDowntimesPending", "Key Inputs", Double.POSITIVE_INFINITY);
+		maxDowntimesPending.setValidRange(1, Double.POSITIVE_INFINITY);
+		maxDowntimesPending.setIntegerValue(true);
 		this.addInput(maxDowntimesPending);
 
 		completionTimeLimit = new SampleInput("CompletionTimeLimit", KEY_INPUTS, Double.POSITIVE_INFINITY);
@@ -376,10 +376,10 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 	}
 
 	public void scheduleDowntime() {
-		if (downtimePendings == maxDowntimesPending.getValue())
+		double simTime = getSimTime();
+		if (downtimePendings == getMaxDowntimesPending(simTime))
 			return;
 
-		double simTime = getSimTime();
 		downtimePendings++;
 		if( downtimePendings == 1 )
 			downtimePendingStartTime = simTime;
@@ -547,6 +547,10 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 
 	public boolean isConcurrent() {
 		return concurrent.getValue();
+	}
+
+	public int getMaxDowntimesPending(double simTime) {
+		return (int) maxDowntimesPending.getNextSample(this, simTime);
 	}
 
 	// ******************************************************************************************************

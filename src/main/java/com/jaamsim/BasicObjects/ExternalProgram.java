@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2019-2022 JaamSim Software Inc.
+ * Copyright (C) 2019-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,9 +24,9 @@ import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 import com.jaamsim.Graphics.DisplayEntity;
+import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.input.ExpCollections;
 import com.jaamsim.input.ExpResult;
-import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Parser;
 import com.jaamsim.units.DimensionlessUnit;
@@ -36,11 +36,12 @@ public class ExternalProgram extends AbstractExternalProgram {
 	@Keyword(description = "Maximum time in milliseconds for the external program to finish "
 	                     + "executing.",
 	         exampleList = {"2000"})
-	private final IntegerInput timeOut;
+	private final SampleInput timeOut;
 
 	{
-		timeOut = new IntegerInput("TimeOut", KEY_INPUTS, 1000);
-		timeOut.setValidRange(1, Integer.MAX_VALUE);
+		timeOut = new SampleInput("TimeOut", KEY_INPUTS, 1000);
+		timeOut.setValidRange(1, Double.POSITIVE_INFINITY);
+		timeOut.setIntegerValue(true);
 		this.addInput(timeOut);
 	}
 
@@ -78,7 +79,7 @@ public class ExternalProgram extends AbstractExternalProgram {
 			Process process = pb.start();
 
 			// Wait for the program to terminate
-			process.waitFor(timeOut.getValue(), TimeUnit.MILLISECONDS);
+			process.waitFor((long) timeOut.getNextSample(this, simTime), TimeUnit.MILLISECONDS);
 
 			// Check for an error in the external program
 			InputStream es = process.getErrorStream();
