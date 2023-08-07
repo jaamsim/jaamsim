@@ -30,7 +30,6 @@ import com.jaamsim.events.EventManager;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.InputErrorException;
-import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.math.Color4d;
@@ -80,7 +79,7 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 	                     + "of objects to grow without bound. "
 	                     + "It has no effect on model logic.",
 	         exampleList = {"100"})
-	protected final IntegerInput maxValidNumber;
+	protected final SampleInput maxValidNumber;
 
 	@Keyword(description = "If TRUE, the entities are rotated to match the direction of "
 	                     + "the path.",
@@ -89,7 +88,7 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 
 	@Keyword(description = "The width of the conveyor in pixels.",
 	         exampleList = {"1"})
-	private final IntegerInput widthInput;
+	private final SampleInput widthInput;
 
 	@Keyword(description = "The colour of the conveyor.",
 	         exampleList = {"red"})
@@ -141,14 +140,17 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 		accumulating = new BooleanInput("Accumulating", KEY_INPUTS, false);
 		this.addInput(accumulating);
 
-		maxValidNumber = new IntegerInput("MaxValidNumber", KEY_INPUTS, 10000);
+		maxValidNumber = new SampleInput("MaxValidNumber", KEY_INPUTS, 10000);
+		maxValidNumber.setValidRange(0, Double.POSITIVE_INFINITY);
+		maxValidNumber.setIntegerValue(true);
 		this.addInput(maxValidNumber);
 
 		rotateEntities = new BooleanInput("RotateEntities", FORMAT, false);
 		this.addInput(rotateEntities);
 
-		widthInput = new IntegerInput("LineWidth", FORMAT, 1);
-		widthInput.setValidRange(1, Integer.MAX_VALUE);
+		widthInput = new SampleInput("LineWidth", FORMAT, 1);
+		widthInput.setValidRange(1, Double.POSITIVE_INFINITY);
+		widthInput.setIntegerValue(true);
 		widthInput.setDefaultText("PolylineModel");
 		this.addInput(widthInput);
 		this.addSynonym(widthInput, "Width");
@@ -230,9 +232,10 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 		ConveyorEntry entry = new ConveyorEntry(ent, entLength, position);
 		entryList.add(entry);
 
-		if (entryList.size() > maxValidNumber.getValue())
+		int maxNumber = (int) maxValidNumber.getNextSample(this, simTime);
+		if (entryList.size() > maxNumber)
 			error("Number of objects on the conveyor exceeds the limit of %s set by the "
-					+ "'MaxValidNumber' input.", maxValidNumber.getValue());
+					+ "'MaxValidNumber' input.", maxNumber);
 
 		readyForNext = (position * convLength >= reqdLength);
 
@@ -445,7 +448,7 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 			if (model != null)
 				return model.getLineWidth(simTime);
 		}
-		return widthInput.getValue();
+		return (int) widthInput.getNextSample(this, simTime);
 	}
 
 	@Override

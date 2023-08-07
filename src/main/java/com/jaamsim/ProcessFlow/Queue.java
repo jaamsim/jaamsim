@@ -38,7 +38,6 @@ import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputCallback;
-import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.InterfaceEntityInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
@@ -97,7 +96,7 @@ public class Queue extends LinkedComponent {
 	                     + "length to grow without bound. "
 	                     + "It has no effect on model logic.",
 	         exampleList = {"100"})
-	protected final IntegerInput maxValidLength;
+	protected final SampleInput maxValidLength;
 
 	@Keyword(description = "The amount of graphical space shown between objects in the queue.",
 	         exampleList = {"1 m"})
@@ -105,11 +104,11 @@ public class Queue extends LinkedComponent {
 
 	@Keyword(description = "Maximum number of objects in each row of the Queue.",
 			exampleList = {"4"})
-	protected final IntegerInput maxPerLine; // maximum items per sub line-up of queue
+	protected final SampleInput maxPerLine; // maximum items per sub line-up of queue
 
 	@Keyword(description = "The number of rows in each level of the Queue.",
 			exampleList = {"4"})
-	protected final IntegerInput maxRows;
+	protected final SampleInput maxRows;
 
 	@Keyword(description = "If TRUE, the objects in the Queue are displayed.",
 			exampleList = {"FALSE"})
@@ -152,19 +151,23 @@ public class Queue extends LinkedComponent {
 		renegeDestination = new InterfaceEntityInput<>(Linkable.class, "RenegeDestination", KEY_INPUTS, null);
 		this.addInput(renegeDestination);
 
-		maxValidLength = new IntegerInput("MaxValidLength", KEY_INPUTS, 10000);
+		maxValidLength = new SampleInput("MaxValidLength", KEY_INPUTS, 10000);
+		maxValidLength.setValidRange(0, Double.POSITIVE_INFINITY);
+		maxValidLength.setIntegerValue(true);
 		this.addInput(maxValidLength);
 
 		spacing = new SampleInput("Spacing", FORMAT, 0.0d);
 		spacing.setUnitType(DistanceUnit.class);
 		this.addInput(spacing);
 
-		maxPerLine = new IntegerInput("MaxPerLine", FORMAT, Integer.MAX_VALUE);
-		maxPerLine.setValidRange(1, Integer.MAX_VALUE);
+		maxPerLine = new SampleInput("MaxPerLine", FORMAT, Double.POSITIVE_INFINITY);
+		maxPerLine.setValidRange(1, Double.POSITIVE_INFINITY);
+		maxPerLine.setIntegerValue(true);
 		this.addInput(maxPerLine);
 
-		maxRows = new IntegerInput("MaxRows", FORMAT, Integer.MAX_VALUE);
-		maxRows.setValidRange(1, Integer.MAX_VALUE);
+		maxRows = new SampleInput("MaxRows", FORMAT, Double.POSITIVE_INFINITY);
+		maxRows.setValidRange(1, Double.POSITIVE_INFINITY);
+		maxRows.setIntegerValue(true);
 		this.addInput(maxRows);
 
 		showEntities = new BooleanInput("ShowEntities", FORMAT, true);
@@ -272,9 +275,10 @@ public class Queue extends LinkedComponent {
 		QueueEntry entry = new QueueEntry(ent, m, pri, n, simTime, rh);
 		storage.add(entry);
 
-		if (storage.size() > maxValidLength.getValue())
+		int maxLength = (int) maxValidLength.getNextSample(this, simTime);
+		if (storage.size() > maxLength)
 			error("Number of objects in the queue exceeds the limit of %s set by the "
-					+ "'MaxValidLength' input.", maxValidLength.getValue());
+					+ "'MaxValidLength' input.", maxLength);
 
 		// Notify the users of this queue
 		if (!userUpdateHandle.isScheduled())
@@ -553,6 +557,8 @@ public class Queue extends LinkedComponent {
 		orientQ.setEuler3(getOrientation());
 		Vec3d qSize = this.getSize();
 		Vec3d tmp = new Vec3d();
+		int maxPerLineVal = (int) maxPerLine.getNextSample(this, simTime);
+		int maxRowsVal = (int) maxRows.getNextSample(this, simTime);
 
 		double distanceX = 0.5d * qSize.x;
 		double maxWidth = 0;
@@ -577,7 +583,7 @@ public class Queue extends LinkedComponent {
 		}
 
 		// Find the maximum width and height of the entities
-		if (entityList.size() >  maxPerLine.getValue()){
+		if (entityList.size() >  maxPerLineVal){
 			for (DisplayEntity ent : entityList) {
 				maxWidth = Math.max(maxWidth, ent.getGlobalSize().y);
 				maxHeight = Math.max(maxHeight, ent.getGlobalSize().z);
@@ -589,9 +595,9 @@ public class Queue extends LinkedComponent {
 		for (DisplayEntity ent : entityList) {
 
 			// Calculate the row and level number for the entity
-			int ind = i % maxPerLine.getValue();
-			int row = (i / maxPerLine.getValue()) % maxRows.getValue();
-			int level = (i / maxPerLine.getValue()) / maxRows.getValue();
+			int ind = i % maxPerLineVal;
+			int row = (i / maxPerLineVal) % maxRowsVal;
+			int level = (i / maxPerLineVal) / maxRowsVal;
 
 			// Reset the x-position for the first entity in a row
 			if( i > 0 && ind == 0 ){

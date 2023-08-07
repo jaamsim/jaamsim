@@ -27,7 +27,6 @@ import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.StringProviders.StringProvInput;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.Input;
-import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.Vec3dInput;
@@ -84,11 +83,11 @@ public class EntityContainer extends SimEntity implements EntContainer {
 
 	@Keyword(description = "The number of entities in each row inside the EntityContainer.",
 			exampleList = {"4"})
-	protected final IntegerInput maxPerLineInput;
+	protected final SampleInput maxPerLineInput;
 
 	@Keyword(description = "The number of rows in each level of entities inside the EntityContainer.",
 			exampleList = {"4"})
-	protected final IntegerInput maxRows;
+	protected final SampleInput maxRows;
 
 	@Keyword(description = "If TRUE, the entities in the EntityContainer are displayed.",
 			exampleList = {"FALSE"})
@@ -121,12 +120,14 @@ public class EntityContainer extends SimEntity implements EntContainer {
 		spacingInput.setUnitType(DistanceUnit.class);
 		this.addInput(spacingInput);
 
-		maxPerLineInput = new IntegerInput("MaxPerLine", FORMAT, Integer.MAX_VALUE);
-		maxPerLineInput.setValidRange( 1, Integer.MAX_VALUE);
+		maxPerLineInput = new SampleInput("MaxPerLine", FORMAT, Double.POSITIVE_INFINITY);
+		maxPerLineInput.setValidRange( 1, Double.POSITIVE_INFINITY);
+		maxPerLineInput.setIntegerValue(true);
 		this.addInput(maxPerLineInput);
 
-		maxRows = new IntegerInput("MaxRows", FORMAT, Integer.MAX_VALUE);
-		maxRows.setValidRange(1, Integer.MAX_VALUE);
+		maxRows = new SampleInput("MaxRows", FORMAT, Double.POSITIVE_INFINITY);
+		maxRows.setValidRange(1, Double.POSITIVE_INFINITY);
+		maxRows.setIntegerValue(true);
 		this.addInput(maxRows);
 
 		showEntities = new BooleanInput("ShowEntities", FORMAT, true);
@@ -239,6 +240,8 @@ public class EntityContainer extends SimEntity implements EntContainer {
 		orientQ.setEuler3(getOrientation());
 		Vec3d size = this.getSize();
 		Vec3d tmp = new Vec3d();
+		int maxPerLineVal = (int) maxPerLineInput.getNextSample(this, simTime);
+		int maxRowsVal = (int) maxRows.getNextSample(this, simTime);
 
 		// Copy the storage entries to avoid some concurrent modification exceptions
 		ArrayList<DisplayEntity> entityList;
@@ -264,9 +267,9 @@ public class EntityContainer extends SimEntity implements EntContainer {
 		for (DisplayEntity ent : entityList) {
 
 			// Calculate the row and level number for the entity
-			int ind = i % maxPerLineInput.getValue();
-			int row = (i / maxPerLineInput.getValue()) % maxRows.getValue();
-			int level = (i / maxPerLineInput.getValue()) / maxRows.getValue();
+			int ind = i % maxPerLineVal;
+			int row = (i / maxPerLineVal) % maxRowsVal;
+			int level = (i / maxPerLineVal) / maxRowsVal;
 
 			// Reset the x-position for the first entity in a row
 			if( i > 0 && ind == 0 ){
