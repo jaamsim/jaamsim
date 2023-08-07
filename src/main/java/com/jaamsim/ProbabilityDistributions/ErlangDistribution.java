@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2022 JaamSim Software Inc.
+ * Copyright (C) 2016-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@
 package com.jaamsim.ProbabilityDistributions;
 
 import com.jaamsim.Samples.SampleInput;
-import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.rng.MRG1999a;
 import com.jaamsim.units.Unit;
@@ -38,7 +37,7 @@ public class ErlangDistribution extends Distribution {
 			"Shape = 1 gives the Exponential distribution.  " +
 			"For Shape > 10 it is better to use the Gamma distribution.",
 	         exampleList = {"2"})
-	private final IntegerInput shapeInput;
+	private final SampleInput shapeInput;
 
 	private final MRG1999a rng = new MRG1999a();
 
@@ -50,8 +49,9 @@ public class ErlangDistribution extends Distribution {
 		meanInput.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		this.addInput(meanInput);
 
-		shapeInput = new IntegerInput("Shape", KEY_INPUTS, 1);
-		shapeInput.setValidRange( 1, Integer.MAX_VALUE);
+		shapeInput = new SampleInput("Shape", KEY_INPUTS, 1);
+		shapeInput.setValidRange( 1, Double.POSITIVE_INFINITY);
+		shapeInput.setIntegerValue(true);
 		this.addInput(shapeInput);
 	}
 
@@ -72,21 +72,21 @@ public class ErlangDistribution extends Distribution {
 	@Override
 	protected double getSample(double simTime) {
 		double mean = meanInput.getNextSample(this, simTime);
-		int shape = shapeInput.getValue();
+		int shape = (int) shapeInput.getNextSample(this, simTime);
 		return getSample(mean, shape, rng);
 	}
 
 	@Override
 	protected double getMean(double simTime) {
 		double mean = meanInput.getNextSample(this, simTime);
-		int shape = shapeInput.getValue();
+		int shape = (int) shapeInput.getNextSample(this, simTime);
 		return getMean(mean, shape);
 	}
 
 	@Override
 	protected double getStandardDev(double simTime) {
 		double mean = meanInput.getNextSample(this, simTime);
-		int shape = shapeInput.getValue();
+		int shape = (int) shapeInput.getNextSample(this, simTime);
 		return getStandardDev(mean, shape);
 	}
 

@@ -27,7 +27,6 @@ import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InputCallback;
 import com.jaamsim.input.InputErrorException;
-import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.ParseContext;
@@ -60,7 +59,7 @@ implements SampleProvider, RandomStreamUser {
 	                     + "When an object with this input is copied and pasted, the RandomSeed "
 	                     + "input is reset to an unused value for each copy that is pasted.",
 			 exampleList = {"547"})
-	private final IntegerInput randomSeedInput;
+	private final SampleInput randomSeedInput;
 
 	@Keyword(description = "Minimum value that can be returned. "
 	                     + "Smaller values are rejected and resampled.",
@@ -83,8 +82,9 @@ implements SampleProvider, RandomStreamUser {
 		unitType.setCallback(inputCallback);
 		this.addInput(unitType);
 
-		randomSeedInput = new IntegerInput("RandomSeed", KEY_INPUTS, -1);
-		randomSeedInput.setValidRange(0, Integer.MAX_VALUE);
+		randomSeedInput = new SampleInput("RandomSeed", KEY_INPUTS, -1);
+		randomSeedInput.setValidRange(0, Double.POSITIVE_INFINITY);
+		randomSeedInput.setIntegerValue(true);
 		randomSeedInput.setRequired(true);
 		randomSeedInput.setDefaultText("None");
 		this.addInput(randomSeedInput);
@@ -173,7 +173,7 @@ implements SampleProvider, RandomStreamUser {
 
 	@Override
 	public int getStreamNumber() {
-		return randomSeedInput.getValue();
+		return (int) randomSeedInput.getNextSample(this, 0.0d);
 	}
 
 	@Override

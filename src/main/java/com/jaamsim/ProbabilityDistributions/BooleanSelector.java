@@ -22,7 +22,6 @@ import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.input.InputAgent;
-import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.ParseContext;
@@ -41,7 +40,7 @@ public class BooleanSelector extends DisplayEntity implements RandomStreamUser {
 	                     + "When an object with this input is copied and pasted, the RandomSeed "
 	                     + "input is reset to an unused value for each copy that is pasted.",
 			 exampleList = {"547"})
-	private final IntegerInput randomSeedInput;
+	private final SampleInput randomSeedInput;
 
 	@Keyword(description = "The probability of the Selector returning true.",
 	         exampleList = {"0.5", "InputValue1", "'2 * [InputValue1].Value'"})
@@ -51,8 +50,9 @@ public class BooleanSelector extends DisplayEntity implements RandomStreamUser {
 	private boolean lastValue;
 
 	{
-		randomSeedInput = new IntegerInput("RandomSeed", KEY_INPUTS, -1);
-		randomSeedInput.setValidRange(0, Integer.MAX_VALUE);
+		randomSeedInput = new SampleInput("RandomSeed", KEY_INPUTS, -1);
+		randomSeedInput.setValidRange(0, Double.POSITIVE_INFINITY);
+		randomSeedInput.setIntegerValue(true);
 		randomSeedInput.setRequired(true);
 		randomSeedInput.setDefaultText("None");
 		this.addInput(randomSeedInput);
@@ -83,7 +83,7 @@ public class BooleanSelector extends DisplayEntity implements RandomStreamUser {
 
 	@Override
 	public int getStreamNumber() {
-		return randomSeedInput.getValue();
+		return (int) randomSeedInput.getNextSample(this, 0.0d);
 	}
 
 	@Override
