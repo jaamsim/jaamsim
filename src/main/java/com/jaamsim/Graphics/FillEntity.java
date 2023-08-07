@@ -23,4 +23,8 @@ public interface FillEntity {
 	public JaamSimModel getJaamSimModel();
 	public boolean isFilled();
 	public Color4d getFillColour(double simTime);
+
+	default boolean isFilled(double simTime) {
+		return isFilled();
+	}
 }

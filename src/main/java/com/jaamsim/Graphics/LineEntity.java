@@ -24,4 +24,12 @@ public interface LineEntity {
 	public boolean isOutlined();
 	public int getLineWidth();
 	public Color4d getLineColour(double simTime);
+
+	default boolean isOutlined(double simTime) {
+		return isOutlined();
+	}
+
+	default int getLineWidth(double simTime) {
+		return getLineWidth();
+	}
 }
