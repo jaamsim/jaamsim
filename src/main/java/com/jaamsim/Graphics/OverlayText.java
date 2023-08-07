@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import com.jaamsim.ColourProviders.ColourProvInput;
 import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.DisplayModels.TextModel;
+import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.StringProviders.StringProvConstant;
 import com.jaamsim.StringProviders.StringProvInput;
 import com.jaamsim.basicsim.Entity;
@@ -34,7 +35,6 @@ import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InputCallback;
-import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.StringChoiceInput;
@@ -100,7 +100,7 @@ public class OverlayText extends OverlayEntity implements TextEntity, EditableTe
 
 	@Keyword(description = "The height of the font as displayed in the view window. Unit is in pixels.",
 	         exampleList = {"15"})
-	private final IntegerInput textHeight;
+	private final SampleInput textHeight;
 
 	@Keyword(description = "The font styles to be applied to the text, e.g. Bold, Italic. ",
 	         exampleList = { "Bold" })
@@ -155,8 +155,9 @@ public class OverlayText extends OverlayEntity implements TextEntity, EditableTe
 		fontName.setDefaultText("TextModel");
 		this.addInput(fontName);
 
-		textHeight = new IntegerInput("TextHeight", FONT, 0);
+		textHeight = new SampleInput("TextHeight", FONT, 0);
 		textHeight.setValidRange(0, 1000);
+		textHeight.setIntegerValue(true);
 		textHeight.setDefaultText("TextModel");
 		this.addInput(textHeight);
 
@@ -475,7 +476,7 @@ public class OverlayText extends OverlayEntity implements TextEntity, EditableTe
 		if (textHeight.isDefault()) {
 			return getTextModel().getTextHeightInPixels();
 		}
-		return textHeight.getValue();
+		return (int) textHeight.getNextSample(this, simTime);
 	}
 
 	@Override

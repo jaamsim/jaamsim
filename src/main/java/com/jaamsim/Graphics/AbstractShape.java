@@ -17,9 +17,9 @@
 package com.jaamsim.Graphics;
 
 import com.jaamsim.ColourProviders.ColourProvInput;
+import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.ColourInput;
-import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.math.Color4d;
 
@@ -56,7 +56,7 @@ public abstract class AbstractShape extends DisplayEntity implements LineEntity,
 
 	@Keyword(description = "Width of the outline in pixels.",
 	         exampleList = { "3" })
-	protected final IntegerInput lineWidth;
+	protected final SampleInput lineWidth;
 
 	{
 		filled = new BooleanInput("Filled", FORMAT, false);
@@ -75,8 +75,9 @@ public abstract class AbstractShape extends DisplayEntity implements LineEntity,
 		lineColour.setDefaultText("DisplayModel value");
 		this.addInput(lineColour);
 
-		lineWidth = new IntegerInput("LineWidth", FORMAT, 1);
-		lineWidth.setValidRange(0, Integer.MAX_VALUE);
+		lineWidth = new SampleInput("LineWidth", FORMAT, 1);
+		lineWidth.setValidRange(0, Double.POSITIVE_INFINITY);
+		lineWidth.setIntegerValue(true);
 		lineWidth.setDefaultText("DisplayModel value");
 		this.addInput(lineWidth);
 	}
@@ -120,7 +121,7 @@ public abstract class AbstractShape extends DisplayEntity implements LineEntity,
 			if (model != null)
 				return model.getLineWidth(simTime);
 		}
-		return lineWidth.getValue();
+		return (int) lineWidth.getNextSample(this, simTime);
 	}
 
 	@Override

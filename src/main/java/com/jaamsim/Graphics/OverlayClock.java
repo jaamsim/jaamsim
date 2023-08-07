@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2021 JaamSim Software Inc.
+ * Copyright (C) 2021-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,10 +21,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 
+import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputCallback;
-import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.StringInput;
 
@@ -37,7 +37,7 @@ public class OverlayClock extends OverlayText {
 
 	@Keyword(description = "The year in which the simulation will begin.",
 	         exampleList = {"2000"})
-	private final IntegerInput startingYear;
+	private final SampleInput startingYear;
 
 	@Keyword(description = "The Java date format in which the date and time are to be displayed.  " +
 			"If spaces are included, enclose the text in single quotes.  " +
@@ -53,7 +53,8 @@ public class OverlayClock extends OverlayText {
 		unitType.setHidden(true);
 		unit.setHidden(true);
 
-		startingYear = new IntegerInput("StartingYear", KEY_INPUTS, 2000);
+		startingYear = new SampleInput("StartingYear", KEY_INPUTS, 2000);
+		startingYear.setIntegerValue(true);
 		startingYear.setHidden(true);  // not used
 		this.addInput(startingYear);
 

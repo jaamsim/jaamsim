@@ -19,8 +19,8 @@ package com.jaamsim.Graphics;
 
 import com.jaamsim.ColourProviders.ColourProvInput;
 import com.jaamsim.DisplayModels.PolylineModel;
+import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.input.ColourInput;
-import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Vec3dInput;
 import com.jaamsim.math.Color4d;
@@ -35,7 +35,7 @@ public class Arrow extends DisplayEntity implements LineEntity {
 
 	@Keyword(description = "The width of the Arrow line segments in pixels.",
 	         exampleList = {"1"})
-	private final IntegerInput width;
+	private final SampleInput width;
 
 	@Keyword(description = "A set of (x, y, z) numbers that define the size of the arrowhead.",
 	         exampleList = {"0.165 0.130 0.0 m"})
@@ -51,8 +51,9 @@ public class Arrow extends DisplayEntity implements LineEntity {
 		this.addSynonym(color, "Color");
 		this.addSynonym(color, "Colour");
 
-		width = new IntegerInput("LineWidth", FORMAT, 1);
-		width.setValidRange(1, Integer.MAX_VALUE);
+		width = new SampleInput("LineWidth", FORMAT, 1);
+		width.setValidRange(1, Double.POSITIVE_INFINITY);
+		width.setIntegerValue(true);
 		width.setDefaultText("PolylineModel");
 		this.addInput(width);
 		this.addSynonym(width, "Width");
@@ -87,7 +88,7 @@ public class Arrow extends DisplayEntity implements LineEntity {
 			if (model != null)
 				return model.getLineWidth(simTime);
 		}
-		return width.getValue();
+		return (int) width.getNextSample(this, simTime);
 	}
 
 	@Override

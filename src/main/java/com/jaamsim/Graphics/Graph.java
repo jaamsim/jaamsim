@@ -20,6 +20,7 @@ package com.jaamsim.Graphics;
 
 import java.util.ArrayList;
 
+import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.Samples.SampleListInput;
 import com.jaamsim.Samples.SampleProvider;
 import com.jaamsim.basicsim.Entity;
@@ -29,7 +30,6 @@ import com.jaamsim.input.ColorListInput;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputCallback;
-import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.UnitTypeInput;
 import com.jaamsim.input.ValueListInput;
@@ -45,7 +45,7 @@ public class Graph extends GraphBasics  {
 
 	@Keyword(description = "The number of data points for each line on the graph.",
 	         exampleList = {"200"})
-	protected final IntegerInput numberOfPoints;
+	protected final SampleInput numberOfPoints;
 
 	@Keyword(description = "The unit type for the primary y-axis. "
 	                     + "MUST be entered before most other inputs for this axis.",
@@ -94,8 +94,9 @@ public class Graph extends GraphBasics  {
 	{
 		// Key Inputs category
 
-		numberOfPoints = new IntegerInput("NumberOfPoints", KEY_INPUTS, 100);
-		numberOfPoints.setValidRange(0, Integer.MAX_VALUE);
+		numberOfPoints = new SampleInput("NumberOfPoints", KEY_INPUTS, 100);
+		numberOfPoints.setValidRange(0, Double.POSITIVE_INFINITY);
+		numberOfPoints.setIntegerValue(true);
 		this.addInput(numberOfPoints);
 
 		unitType = new UnitTypeInput("UnitType", KEY_INPUTS, DimensionlessUnit.class);
@@ -275,11 +276,12 @@ public class Graph extends GraphBasics  {
 		ArrayList<SampleProvider> sampList = data.getValue();
 		if( sampList == null )
 			return;
+		int num = getNumberOfPoints();
 		for (int i = 0; i < sampList.size(); ++i) {
 			SeriesInfo info = new SeriesInfo();
 			info.samp = sampList.get(i);
-			info.yValues = new double[numberOfPoints.getValue()];
-			info.xValues = new double[numberOfPoints.getValue()];
+			info.yValues = new double[num];
+			info.xValues = new double[num];
 
 			infos.add(info);
 		}
@@ -304,7 +306,7 @@ public class Graph extends GraphBasics  {
 
 
 		double xLength = xAxisEnd.getValue() - xAxisStart.getValue();
-		double xInterval = xLength/(numberOfPoints.getValue() -1);
+		double xInterval = xLength/(getNumberOfPoints() - 1);
 
 		for (SeriesInfo info : primarySeries) {
 			setupSeriesData(info, xLength, xInterval);
@@ -395,7 +397,7 @@ public class Graph extends GraphBasics  {
 		}
 
 		double xLength = xAxisEnd.getValue() - xAxisStart.getValue();
-		double xInterval = xLength / (numberOfPoints.getValue() - 1);
+		double xInterval = xLength / (getNumberOfPoints() - 1);
 		scheduleProcess(xInterval, 7, processGraph);
 	}
 
@@ -443,7 +445,7 @@ public class Graph extends GraphBasics  {
 	}
 
 	public int getNumberOfPoints() {
-		return numberOfPoints.getValue();
+		return (int) numberOfPoints.getNextSample(this, 0.0d);
 	}
 
 }
