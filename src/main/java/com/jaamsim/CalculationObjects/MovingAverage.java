@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016 JaamSim Software Inc.
+ * Copyright (C) 2016-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
  */
 package com.jaamsim.CalculationObjects;
 
-import com.jaamsim.input.IntegerInput;
+import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.input.Keyword;
 
 /**
@@ -32,7 +32,7 @@ public class MovingAverage extends DoubleCalculation {
 
 	@Keyword(description = "The number of input values over which to average.",
 	         exampleList = {"10"})
-	private final IntegerInput numberOfSamples;
+	private final SampleInput numberOfSamples;
 
 	private double[] samples;  // The previous input values over which to average
 	private int index;  // The next index to overwrite (the oldest value on the list)
@@ -40,8 +40,9 @@ public class MovingAverage extends DoubleCalculation {
 	private double average;  // The present value for the moving average
 
 	{
-		numberOfSamples = new IntegerInput("NumberOfSamples", KEY_INPUTS, 1);
-		numberOfSamples.setValidRange(1, Integer.MAX_VALUE);
+		numberOfSamples = new SampleInput("NumberOfSamples", KEY_INPUTS, 1);
+		numberOfSamples.setValidRange(1, Double.POSITIVE_INFINITY);
+		numberOfSamples.setIntegerValue(true);
 		this.addInput(numberOfSamples);
 	}
 
@@ -52,9 +53,10 @@ public class MovingAverage extends DoubleCalculation {
 	@Override
 	public void earlyInit() {
 		super.earlyInit();
-		samples = new double[numberOfSamples.getValue()];
+		int num = (int) numberOfSamples.getNextSample(this, 0.0d);
+		samples = new double[num];
 		index = 0;
-		n = numberOfSamples.getValue();
+		n = num;
 		average = 0.0;
 	}
 

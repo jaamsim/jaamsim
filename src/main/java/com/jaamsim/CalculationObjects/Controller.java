@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018-2022 JaamSim Software Inc.
+ * Copyright (C) 2018-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,6 @@ import com.jaamsim.basicsim.ObserverEntity;
 import com.jaamsim.basicsim.SubjectEntity;
 import com.jaamsim.basicsim.SubjectEntityDelegate;
 import com.jaamsim.events.ProcessTarget;
-import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.units.DimensionlessUnit;
@@ -52,7 +51,7 @@ public class Controller extends DisplayEntity implements SubjectEntity {
 
 	@Keyword(description = "Maximum number of updates to perform.",
 	         exampleList = {"5"})
-	private final IntegerInput maxUpdates;
+	private final SampleInput maxUpdates;
 
 	private final ArrayList<Controllable> entityList;  // Entities controlled by this Controller.
 	private int count;  // Number of update cycle completed.
@@ -74,8 +73,9 @@ public class Controller extends DisplayEntity implements SubjectEntity {
 		this.addInput(interval);
 		this.addSynonym(interval, "SamplingTime");
 
-		maxUpdates = new IntegerInput("MaxUpdates", KEY_INPUTS, Integer.MAX_VALUE);
-		maxUpdates.setValidRange(0, Integer.MAX_VALUE);
+		maxUpdates = new SampleInput("MaxUpdates", KEY_INPUTS, Double.POSITIVE_INFINITY);
+		maxUpdates.setValidRange(0, Double.POSITIVE_INFINITY);
+		maxUpdates.setIntegerValue(true);
 		this.addInput(maxUpdates);
 	}
 
@@ -131,7 +131,7 @@ public class Controller extends DisplayEntity implements SubjectEntity {
 		super.startUp();
 
 		// Schedule the first update
-		if (maxUpdates.getValue() > 0)
+		if (getMaxUpdates(0.0d) > 0)
 			this.scheduleProcess(firstTime.getNextSample(this, 0.0d), 5, doUpdate);
 	}
 
@@ -161,12 +161,16 @@ public class Controller extends DisplayEntity implements SubjectEntity {
 		count++;
 
 		// Schedule the next update
-		if (count < maxUpdates.getValue())
+		if (count < getMaxUpdates(simTime))
 			this.scheduleProcess(interval.getNextSample(this, simTime), 5, doUpdate);
 	}
 
 	public int getCount() {
 		return count;
+	}
+
+	public int getMaxUpdates(double simTime) {
+		return (int) maxUpdates.getNextSample(this, simTime);
 	}
 
 	@Output(name = "EntityList",
