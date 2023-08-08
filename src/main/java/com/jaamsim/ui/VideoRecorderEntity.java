@@ -24,6 +24,7 @@ import javax.swing.JOptionPane;
 import com.jaamsim.ColourProviders.ColourProvInput;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.View;
+import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.controllers.RenderManager;
@@ -38,11 +39,9 @@ import com.jaamsim.input.EntityListInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputCallback;
 import com.jaamsim.input.InputErrorException;
-import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.IntegerListInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.StringInput;
-import com.jaamsim.input.ValueInput;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.units.TimeUnit;
 
@@ -50,18 +49,18 @@ public class VideoRecorderEntity extends DisplayEntity {
 
 	@Keyword(description = "Simulation time at which to capture the first frame.",
 	         exampleList = {"200 h"})
-	private final ValueInput captureStartTime;
+	private final SampleInput captureStartTime;
 
 	@Keyword(description = "Simulation time between captured frames.",
 	         exampleList = {"60 s"})
-	private final ValueInput captureInterval;
+	private final SampleInput captureInterval;
 
 	@Keyword(description = "Total number of frames to capture for the video.\n"
 	                     + "The recorded video assumes 30 frames per second. Therefore, if a "
 	                     + "2 minute video is required, the number of frames should be set to "
 	                     + "120 x 30 = 3600.",
 	         exampleList = {"3600"})
-	private final IntegerInput captureFrames;
+	private final SampleInput captureFrames;
 
 	@Keyword(description = "The size of the video/image, expressed as the number of horizontal "
 	                     + "and vertical pixels.\n"
@@ -109,18 +108,19 @@ public class VideoRecorderEntity extends DisplayEntity {
 	{
 		attributeDefinitionList.setHidden(true);
 
-		captureStartTime = new ValueInput("CaptureStartTime", KEY_INPUTS, 0.0d);
+		captureStartTime = new SampleInput("CaptureStartTime", KEY_INPUTS, 0.0d);
 		captureStartTime.setUnitType(TimeUnit.class);
 		captureStartTime.setValidRange(0, Double.POSITIVE_INFINITY);
 		this.addInput(captureStartTime);
 
-		captureInterval = new ValueInput("CaptureInterval", KEY_INPUTS, 3600.0d);
+		captureInterval = new SampleInput("CaptureInterval", KEY_INPUTS, 3600.0d);
 		captureInterval.setUnitType(TimeUnit.class);
 		captureInterval.setValidRange(0.1d, Double.POSITIVE_INFINITY);
 		this.addInput(captureInterval);
 
-		captureFrames = new IntegerInput("CaptureFrames", KEY_INPUTS, 0);
+		captureFrames = new SampleInput("CaptureFrames", KEY_INPUTS, 0);
 		captureFrames.setValidRange(0, 30000);
+		captureFrames.setIntegerValue(true);
 		this.addInput(captureFrames);
 
 		IntegerVector defArea = new IntegerVector(2);
@@ -210,10 +210,13 @@ public class VideoRecorderEntity extends DisplayEntity {
 	 * Capture JPEG images of the screen at regular simulated intervals
 	 */
 	public void doCaptureNetwork() {
+		JaamSimModel simModel = getJaamSimModel();
+		double simTime = getSimTime();
+		double startTime = captureStartTime.getNextSample(this, simTime);
 
 		// If the capture network is already in progress, then stop the previous network
 		EventManager.killEvent(captureHandle);
-		simWait(captureStartTime.getValue(), 10, captureHandle);
+		simWait(startTime, 10, captureHandle);
 
 		if (!RenderManager.isGood()) {
 			RenderManager.initialize(false);
@@ -229,12 +232,12 @@ public class VideoRecorderEntity extends DisplayEntity {
 
 		ArrayList<View> views = captureViews.getValue();
 
-		JaamSimModel simModel = getJaamSimModel();
 		String fileName = simModel.getReportFileName("_" + videoName.getValue());
 		if (fileName == null)
 			JOptionPane.showMessageDialog(null, "Cannot create the file for the Video Recording.");
-		Color4d backgroundCol = videoBGColor.getNextColour(this, getSimTime());
-		VideoRecorder recorder = new VideoRecorder(views, fileName, width, height, captureFrames.getDefaultValue(),
+		Color4d backgroundCol = videoBGColor.getNextColour(this, simTime);
+		int numFrames = (int) captureFrames.getNextSample(this, simTime);
+		VideoRecorder recorder = new VideoRecorder(views, fileName, width, height, numFrames,
 		                             saveImages.getValue(), saveVideo.getValue(), backgroundCol);
 
 		// Otherwise, start capturing
@@ -243,13 +246,14 @@ public class VideoRecorderEntity extends DisplayEntity {
 			RenderManager.inst().blockOnScreenShot(recorder);
 			++numFramesWritten;
 
-			if (numFramesWritten == captureFrames.getValue()) {
+			if (numFramesWritten == numFrames) {
 				break;
 			}
 
 			// Wait until the next time to capture a frame
 			// (priority 10 is used to allow higher priority events to complete first)
-			simWait(captureInterval.getValue(), 10, captureHandle);
+			double interval = captureInterval.getNextSample(this, simTime);
+			simWait(interval, 10, captureHandle);
 		}
 
 		recorder.freeResources();
