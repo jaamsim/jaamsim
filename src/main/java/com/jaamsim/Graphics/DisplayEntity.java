@@ -630,7 +630,7 @@ public class DisplayEntity extends Entity {
 	}
 
 	public boolean getShowInput(double simTime) {
-		return showInput.getNextBoolean(simTime);
+		return showInput.getNextBoolean(this, simTime);
 	}
 
 	public void setShow(boolean bool) {

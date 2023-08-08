@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2022 JaamSim Software Inc.
+ * Copyright (C) 2022-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,18 +32,16 @@ import com.jaamsim.input.ExpResType;
 public class BooleanProvExpression implements BooleanProvider {
 
 	private final Expression exp;
-	private final Entity thisEnt;
 	private final ExpEvaluator.EntityParseContext parseContext;
 
-	public BooleanProvExpression(String expString, Entity ent) throws ExpError {
-		thisEnt = ent;
+	public BooleanProvExpression(String expString, Entity thisEnt) throws ExpError {
 		parseContext = ExpEvaluator.getParseContext(thisEnt, expString);
 		exp = ExpParser.parseExpression(parseContext, expString);
 		ExpParser.assertResultType(exp, ExpResType.NUMBER);
 	}
 
 	@Override
-	public boolean getNextBoolean(double simTime) {
+	public boolean getNextBoolean(Entity thisEnt, double simTime) {
 		boolean ret;
 		try {
 			ExpResult res = ExpEvaluator.evaluateExpression(exp, thisEnt, simTime);
