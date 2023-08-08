@@ -18,6 +18,7 @@ package com.jaamsim.BasicObjects;
 
 import java.util.ArrayList;
 
+import com.jaamsim.BooleanProviders.BooleanProvInput;
 import com.jaamsim.ColourProviders.ColourProvInput;
 import com.jaamsim.DisplayModels.ShapeModel;
 import com.jaamsim.GameObjects.GameEntity;
@@ -28,7 +29,6 @@ import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ObserverEntity;
 import com.jaamsim.basicsim.SubjectEntity;
 import com.jaamsim.basicsim.SubjectEntityDelegate;
-import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputCallback;
@@ -41,7 +41,7 @@ public class ToggleButton extends GameEntity implements SubjectEntity, LineEntit
 	@Keyword(description = "The initial state for the button: "
 	                     + "TRUE = button pressed, FALSE = button unpressed.",
 	         exampleList = { "TRUE" })
-	private final BooleanInput initialValue;
+	private final BooleanProvInput initialValue;
 
 	@Keyword(description = "The colour of the button when pressed.",
 	         exampleList = { "yellow" })
@@ -55,7 +55,7 @@ public class ToggleButton extends GameEntity implements SubjectEntity, LineEntit
 	                     + "If TRUE, it is outlined with a specified colour. "
 	                     + "If FALSE, it is drawn without an outline.",
 	         exampleList = {"FALSE"})
-	protected final BooleanInput outlined;
+	protected final BooleanProvInput outlined;
 
 	@Keyword(description = "The colour with which the object is outlined.",
 	         exampleList = {"red"})
@@ -72,7 +72,7 @@ public class ToggleButton extends GameEntity implements SubjectEntity, LineEntit
 		displayModelListInput.clearValidClasses();
 		displayModelListInput.addValidClass(ShapeModel.class);
 
-		initialValue = new BooleanInput("InitialValue", KEY_INPUTS, false);
+		initialValue = new BooleanProvInput("InitialValue", KEY_INPUTS, false);
 		initialValue.setCallback(initialValueCallback);
 		this.addInput(initialValue);
 
@@ -84,7 +84,7 @@ public class ToggleButton extends GameEntity implements SubjectEntity, LineEntit
 		unpressedColour = new ColourProvInput("UnpressedColour", FORMAT, ColourInput.getColorWithName("Ivory"));
 		this.addInput(unpressedColour);
 
-		outlined = new BooleanInput("Outlined", FORMAT, true);
+		outlined = new BooleanProvInput("Outlined", FORMAT, true);
 		outlined.setDefaultText("ShapeModel value");
 		this.addInput(outlined);
 
@@ -107,7 +107,7 @@ public class ToggleButton extends GameEntity implements SubjectEntity, LineEntit
 	};
 
 	void updateInputValue() {
-		value = initialValue.getValue();
+		value = initialValue.getNextBoolean(this, 0.0d);
 	}
 
 	@Override
@@ -157,7 +157,7 @@ public class ToggleButton extends GameEntity implements SubjectEntity, LineEntit
 			if (model != null)
 				return model.isOutlined(simTime);
 		}
-		return outlined.getValue();
+		return outlined.getNextBoolean(this, simTime);
 	}
 
 	@Override

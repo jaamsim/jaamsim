@@ -19,6 +19,7 @@ package com.jaamsim.BasicObjects;
 
 import java.util.ArrayList;
 
+import com.jaamsim.BooleanProviders.BooleanProvInput;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.StringProviders.StringProvListInput;
@@ -109,7 +110,7 @@ public class ExpressionLogger extends Logger implements StateEntityListener, Obs
 	                     + "An error message is generated if a ValueTraceList expression changes "
 	                     + "its value without being triggered by a WatchList object.",
 	         exampleList = { "TRUE" })
-	private final BooleanInput verifyWatchList;
+	private final BooleanProvInput verifyWatchList;
 
 	@Keyword(description = "A logical condition that determines whether to record a log entry "
 	                     + "that is triggered by a change to one of the objects in the "
@@ -152,7 +153,7 @@ public class ExpressionLogger extends Logger implements StateEntityListener, Obs
 		watchList.setUnique(true);
 		this.addInput(watchList);
 
-		verifyWatchList = new BooleanInput("VerifyWatchList", KEY_INPUTS, false);
+		verifyWatchList = new BooleanProvInput("VerifyWatchList", KEY_INPUTS, false);
 		this.addInput(verifyWatchList);
 
 		watchListCondition = new ExpressionInput("WatchListCondition", KEY_INPUTS, null);
@@ -203,7 +204,7 @@ public class ExpressionLogger extends Logger implements StateEntityListener, Obs
 			}
 
 			// If there is no WatchList, the open/close expressions are tested after every event
-			if (!isWatchList() || isVerifyWatchList())
+			if (!isWatchList() || isVerifyWatchList(0.0d))
 				doValueTrace();
 		}
 
@@ -217,8 +218,8 @@ public class ExpressionLogger extends Logger implements StateEntityListener, Obs
 		return watchList.getValue();
 	}
 
-	public boolean isVerifyWatchList() {
-		return verifyWatchList.getValue();
+	public boolean isVerifyWatchList(double simTime) {
+		return verifyWatchList.getNextBoolean(this, simTime);
 	}
 
 	public boolean isWatchList() {
@@ -414,7 +415,8 @@ public class ExpressionLogger extends Logger implements StateEntityListener, Obs
 
 		@Override
 		public void process() {
-			if (isVerifyWatchList())
+			double simTime = ExpressionLogger.this.getSimTime();
+			if (isVerifyWatchList(simTime))
 				error(ERR_WATCHLIST);
 			doValueTrace();
 		}

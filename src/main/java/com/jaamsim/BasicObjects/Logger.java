@@ -19,13 +19,13 @@ package com.jaamsim.BasicObjects;
 import java.io.File;
 import java.util.ArrayList;
 
+import com.jaamsim.BooleanProviders.BooleanProvInput;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.StringProviders.StringProvListInput;
 import com.jaamsim.StringProviders.StringProvider;
 import com.jaamsim.basicsim.FileEntity;
 import com.jaamsim.basicsim.JaamSimModel;
-import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
@@ -60,11 +60,11 @@ public abstract class Logger extends DisplayEntity {
 	                     + "NumberOfThreads input is greater than one, in which case individual "
 	                     + ".log files will be created.",
 	         exampleList = { "FALSE" })
-	private final BooleanInput separateFiles;
+	private final BooleanProvInput separateFiles;
 
 	@Keyword(description = "If TRUE, log entries are recorded during the initialization period.",
 	         exampleList = { "FALSE" })
-	private final BooleanInput includeInitialization;
+	private final BooleanProvInput includeInitialization;
 
 	@Keyword(description = "The time at which the log starts recording entries.",
 	         exampleList = { "24.0 h" })
@@ -89,10 +89,10 @@ public abstract class Logger extends DisplayEntity {
 				new ArrayList<StringProvider>());
 		this.addInput(dataSource);
 
-		separateFiles = new BooleanInput("SeparateFiles", KEY_INPUTS, false);
+		separateFiles = new BooleanProvInput("SeparateFiles", KEY_INPUTS, false);
 		this.addInput(separateFiles);
 
-		includeInitialization = new BooleanInput("IncludeInitialization", KEY_INPUTS, true);
+		includeInitialization = new BooleanProvInput("IncludeInitialization", KEY_INPUTS, true);
 		this.addInput(includeInitialization);
 
 		startTime = new SampleInput("StartTime", KEY_INPUTS, 0.0d);
@@ -119,7 +119,7 @@ public abstract class Logger extends DisplayEntity {
 
 		// Close the file if it is already open
 		JaamSimModel simModel = getJaamSimModel();
-		if (file != null && (simModel.isFirstRun() || isSeparateFiles())) {
+		if (file != null && (simModel.isFirstRun() || isSeparateFiles(0.0d))) {
 			file.close();
 			file = null;
 		}
@@ -131,7 +131,7 @@ public abstract class Logger extends DisplayEntity {
 		if (file == null) {
 			StringBuilder sb = new StringBuilder();
 			sb.append("-").append(this.getName());
-			if (isSeparateFiles()) {
+			if (isSeparateFiles(0.0d)) {
 				sb.append("-s").append(simModel.getScenarioNumber());
 				sb.append("r").append(simModel.getReplicationNumber());
 			}
@@ -146,11 +146,11 @@ public abstract class Logger extends DisplayEntity {
 		}
 
 		// Print the detailed run information to the file
-		if (getJaamSimModel().isFirstRun() || isSeparateFiles())
+		if (getJaamSimModel().isFirstRun() || isSeparateFiles(0.0d))
 			InputAgent.printReport(getSimulation(), file, 0.0d);
 
 		// Print run number header if multiple runs are to be performed
-		if (getJaamSimModel().isMultipleRuns() && !isSeparateFiles()) {
+		if (getJaamSimModel().isMultipleRuns() && !isSeparateFiles(0.0d)) {
 			if (!getJaamSimModel().isFirstRun()) {
 				file.format("%n");
 			}
@@ -178,9 +178,13 @@ public abstract class Logger extends DisplayEntity {
 		file.flush();
 	}
 
-	protected boolean isSeparateFiles() {
+	private boolean isSeparateFiles(double simTime) {
 		int numThreads = getJaamSimModel().getSimulation().getNumberOfThreads();
-		return separateFiles.getValue() || numThreads > 1;
+		return separateFiles.getNextBoolean(this, simTime) || numThreads > 1;
+	}
+
+	private boolean isIncludeInitialization(double simTime) {
+		return includeInitialization.getNextBoolean(this, simTime);
 	}
 
 	/**
@@ -196,7 +200,7 @@ public abstract class Logger extends DisplayEntity {
 			return;
 
 		// Skip the log entry if the run is still initializing
-		if (!includeInitialization.getValue() && simTime < getSimulation().getInitializationTime())
+		if (!isIncludeInitialization(simTime) && simTime < getSimulation().getInitializationTime())
 			return;
 
 		// Skip the log entry if it is outside the time range
@@ -251,7 +255,7 @@ public abstract class Logger extends DisplayEntity {
 		file.flush();
 
 		// Close the report file
-		if (getJaamSimModel().isLastRun() || isSeparateFiles()) {
+		if (getJaamSimModel().isLastRun() || isSeparateFiles(getSimTime())) {
 			file.close();
 			file = null;
 		}

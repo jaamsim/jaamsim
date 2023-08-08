@@ -19,13 +19,13 @@ package com.jaamsim.BasicObjects;
 
 import java.util.ArrayList;
 
+import com.jaamsim.BooleanProviders.BooleanProvInput;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.Samples.SampleProvider;
 import com.jaamsim.basicsim.EntityTarget;
 import com.jaamsim.events.EventHandle;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.events.ProcessTarget;
-import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
@@ -70,7 +70,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 	@Keyword(description = "If TRUE, the downtime event can occur in parallel with another "
 	                     + "downtime event.",
 	         exampleList = {"FALSE"})
-	protected final BooleanInput concurrent;
+	protected final BooleanProvInput concurrent;
 
 	@Keyword(description = "The maximum number of downtime activities that are allowed to become "
 	                     + "backlogged. "
@@ -135,7 +135,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 		this.addInput(downtimeDurationDistribution);
 		this.addSynonym(downtimeDurationDistribution, "TimeToRepair");
 
-		concurrent = new BooleanInput("Concurrent", KEY_INPUTS, false);
+		concurrent = new BooleanProvInput("Concurrent", KEY_INPUTS, false);
 		this.addInput(concurrent);
 
 		maxDowntimesPending = new SampleInput("MaxDowntimesPending", "Key Inputs", Double.POSITIVE_INFINITY);
@@ -545,8 +545,8 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 		return downtimeUserList;
 	}
 
-	public boolean isConcurrent() {
-		return concurrent.getValue();
+	public boolean isConcurrent(double simTime) {
+		return concurrent.getNextBoolean(this, simTime);
 	}
 
 	public int getMaxDowntimesPending(double simTime) {
