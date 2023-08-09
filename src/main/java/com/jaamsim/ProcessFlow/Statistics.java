@@ -20,6 +20,7 @@ package com.jaamsim.ProcessFlow;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import com.jaamsim.BooleanProviders.BooleanProvInput;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.Statistics.SampleFrequency;
@@ -27,7 +28,6 @@ import com.jaamsim.Statistics.SampleStatistics;
 import com.jaamsim.Statistics.TimeBasedStatistics;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.events.EventManager;
-import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputCallback;
 import com.jaamsim.input.Keyword;
@@ -67,12 +67,12 @@ public class Statistics extends LinkedComponent {
 	                     + "'EntityTimeMinimum', 'EntityTimeMaximum', 'EntityTimeAverage', and "
 	                     + "'EntityTimeStandardDeviation'.",
 	         exampleList = {"TRUE"})
-	private final BooleanInput recordEntityStateTimes;
+	private final BooleanProvInput recordEntityStateTimes;
 
 	@Keyword(description = "If TRUE, the state times for received entities are set to zero on "
 	                     + "departure.",
 	         exampleList = {"TRUE"})
-	private final BooleanInput resetEntityStateTimes;
+	private final BooleanProvInput resetEntityStateTimes;
 
 	private final SampleStatistics sampStats = new SampleStatistics();
 	private final TimeBasedStatistics timeStats = new TimeBasedStatistics();
@@ -95,10 +95,10 @@ public class Statistics extends LinkedComponent {
 		histogramBinWidth.setUnitType(UserSpecifiedUnit.class);
 		this.addInput(histogramBinWidth);
 
-		recordEntityStateTimes = new BooleanInput("RecordEntityStateTimes", KEY_INPUTS, false);
+		recordEntityStateTimes = new BooleanProvInput("RecordEntityStateTimes", KEY_INPUTS, false);
 		this.addInput(recordEntityStateTimes);
 
-		resetEntityStateTimes = new BooleanInput("ResetEntityStateTimes", KEY_INPUTS, false);
+		resetEntityStateTimes = new BooleanProvInput("ResetEntityStateTimes", KEY_INPUTS, false);
 		this.addInput(resetEntityStateTimes);
 	}
 
@@ -130,6 +130,14 @@ public class Statistics extends LinkedComponent {
 		return histogramBinWidth.getNextSample(this, 0.0d);
 	}
 
+	public boolean isRecordEntityStateTimes(double simTime) {
+		return recordEntityStateTimes.getNextBoolean(this, simTime);
+	}
+
+	public boolean isResetEntityStateTimes(double simTime) {
+		return resetEntityStateTimes.getNextBoolean(this, simTime);
+	}
+
 	@Override
 	public void addEntity(DisplayEntity ent) {
 		super.addEntity(ent);
@@ -149,7 +157,7 @@ public class Statistics extends LinkedComponent {
 		EventManager evt = EventManager.current();
 		if (ent instanceof StateEntity) {
 			StateEntity se = (StateEntity) ent;
-			if (recordEntityStateTimes.getValue()) {
+			if (isRecordEntityStateTimes(simTime)) {
 				for (StateRecord rec : se.getStateRecs()) {
 					SampleStatistics durStats = stateStats.get(rec.getName());
 					if (durStats == null) {
@@ -157,7 +165,7 @@ public class Statistics extends LinkedComponent {
 						stateStats.put(rec.getName(), durStats);
 					}
 					long ticks = se.getTicksInState(rec);
-					if (resetEntityStateTimes.getValue()) {
+					if (isResetEntityStateTimes(simTime)) {
 						ticks = se.getCurrentCycleTicks(rec);
 					}
 					double dur = evt.ticksToSeconds(ticks);
@@ -166,7 +174,7 @@ public class Statistics extends LinkedComponent {
 			}
 
 			// Reset the entity's statistics
-			if (resetEntityStateTimes.getValue()) {
+			if (isResetEntityStateTimes(simTime)) {
 				se.collectCycleStats();
 			}
 		}

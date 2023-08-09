@@ -19,11 +19,11 @@ package com.jaamsim.ProcessFlow;
 
 import java.util.ArrayList;
 
+import com.jaamsim.BooleanProviders.BooleanProvInput;
 import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.Samples.SampleListInput;
-import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.EntityListInput;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
@@ -57,7 +57,7 @@ public abstract class AbstractCombine extends LinkedService {
 	                     + "its queue. "
 	                     + "The value is calculated when the entity first arrives at its queue.",
 	         exampleList = {"TRUE"})
-	private final BooleanInput matchRequired;
+	private final BooleanProvInput matchRequired;
 
 	@Keyword(description = "Determines which match value to use when several values have the "
 	                     + "required number of entities. "
@@ -66,7 +66,7 @@ public abstract class AbstractCombine extends LinkedService {
 	                     + "If TRUE, the entity with the earliest arrival time in the first "
 	                     + "queue determines the match value.",
 	         exampleList = {"TRUE"})
-	private final BooleanInput firstQueue;
+	private final BooleanProvInput firstQueue;
 
 	private final ArrayList<DisplayEntity> consumedEntityList = new ArrayList<>();
 
@@ -93,10 +93,10 @@ public abstract class AbstractCombine extends LinkedService {
 		numberRequired.setIntegerValue(true);
 		this.addInput(numberRequired);
 
-		matchRequired = new BooleanInput("MatchRequired", KEY_INPUTS, false);
+		matchRequired = new BooleanProvInput("MatchRequired", KEY_INPUTS, false);
 		this.addInput(matchRequired);
 
-		firstQueue = new BooleanInput("FirstQueue", KEY_INPUTS, false);
+		firstQueue = new BooleanProvInput("FirstQueue", KEY_INPUTS, false);
 		this.addInput(firstQueue);
 
 	}
@@ -145,12 +145,12 @@ public abstract class AbstractCombine extends LinkedService {
 		return ret;
 	}
 
-	public boolean isMatchRequired() {
-		return matchRequired.getValue();
+	public boolean isMatchRequired(double simTime) {
+		return matchRequired.getNextBoolean(this, simTime);
 	}
 
-	public boolean isFirstQueue() {
-		return firstQueue.getValue();
+	public boolean isFirstQueue(double simTime) {
+		return firstQueue.getNextBoolean(this, simTime);
 	}
 
 	@Override

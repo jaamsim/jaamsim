@@ -19,6 +19,7 @@ package com.jaamsim.ProcessFlow;
 
 import java.util.ArrayList;
 
+import com.jaamsim.BooleanProviders.BooleanProvInput;
 import com.jaamsim.ColourProviders.ColourProvInput;
 import com.jaamsim.DisplayModels.PolylineModel;
 import com.jaamsim.Graphics.DisplayEntity;
@@ -27,7 +28,6 @@ import com.jaamsim.Graphics.PolylineInfo;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.SubModels.CompoundEntity;
 import com.jaamsim.events.EventManager;
-import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Keyword;
@@ -70,7 +70,7 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 	                     + "If non-accumulating, the conveyor will stop when the first entity "
 	                     + "reaches the end and cannot exit.",
 	         exampleList = {"TRUE"})
-	private final BooleanInput accumulating;
+	private final BooleanProvInput accumulating;
 
 	@Keyword(description = "Maximum number of objects that can be moved by the conveyor at one "
 	                     + "time. "
@@ -84,7 +84,7 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 	@Keyword(description = "If TRUE, the entities are rotated to match the direction of "
 	                     + "the path.",
 	         exampleList = {"TRUE"})
-	private final BooleanInput rotateEntities;
+	private final BooleanProvInput rotateEntities;
 
 	@Keyword(description = "The width of the conveyor in pixels.",
 	         exampleList = {"1"})
@@ -137,7 +137,7 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 		accumulationLength.setUnitType(DistanceUnit.class);
 		this.addInput(accumulationLength);
 
-		accumulating = new BooleanInput("Accumulating", KEY_INPUTS, false);
+		accumulating = new BooleanProvInput("Accumulating", KEY_INPUTS, false);
 		this.addInput(accumulating);
 
 		maxValidNumber = new SampleInput("MaxValidNumber", KEY_INPUTS, 10000);
@@ -145,7 +145,7 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 		maxValidNumber.setIntegerValue(true);
 		this.addInput(maxValidNumber);
 
-		rotateEntities = new BooleanInput("RotateEntities", FORMAT, false);
+		rotateEntities = new BooleanProvInput("RotateEntities", FORMAT, false);
 		this.addInput(rotateEntities);
 
 		widthInput = new SampleInput("LineWidth", FORMAT, 1);
@@ -189,7 +189,11 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 	}
 
 	public boolean isAccumulating() {
-		return accumulating.getValue();
+		return accumulating.getNextBoolean(this, 0.0d);
+	}
+
+	public boolean isRotateEntities(double simTime) {
+		return rotateEntities.getNextBoolean(this, simTime);
 	}
 
 	private static class ConveyorEntry {
@@ -511,7 +515,7 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 			alignment.x = -0.5d;
 			entry.entity.setGlobalPositionForAlignment(getGlobalPosition(localPos), alignment);
 
-			if (rotateEntities.getValue()) {
+			if (isRotateEntities(simTime)) {
 				Vec3d orient = PolylineInfo.getOrientationOnPolyline(getCurvePoints(), convPos);
 				entry.entity.setRelativeOrientation(orient);
 			}

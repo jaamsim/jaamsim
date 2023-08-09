@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2022 JaamSim Software Inc.
+ * Copyright (C) 2016-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -73,8 +73,8 @@ public class Assemble extends AbstractCombine implements EntityGen {
 		// Do the queues have enough entities?
 		ArrayList<Queue> queueList = getQueues();
 		int[] numList = getNumberRequired(simTime);
-		if (isMatchRequired()) {
-			String m = selectMatchValue(queueList, numList, isFirstQueue());
+		if (isMatchRequired(simTime)) {
+			String m = selectMatchValue(queueList, numList, isFirstQueue(simTime));
 			if (m == null) {
 				return false;
 			}

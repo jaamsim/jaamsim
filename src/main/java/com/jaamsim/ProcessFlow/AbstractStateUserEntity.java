@@ -16,10 +16,10 @@
  */
 package com.jaamsim.ProcessFlow;
 
+import com.jaamsim.BooleanProviders.BooleanProvInput;
 import com.jaamsim.events.Conditional;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.events.ProcessTarget;
-import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
@@ -32,10 +32,10 @@ public abstract class AbstractStateUserEntity extends StateEntity {
 	                     + "to verify that it has been set correctly by the program. "
 	                     + "An error message will be generated if the state is not correct.",
 	         exampleList = {"TRUE"})
-	private final BooleanInput verifyState;
+	private final BooleanProvInput verifyState;
 
 	{
-		verifyState = new BooleanInput("VerifyState", OPTIONS, false);
+		verifyState = new BooleanProvInput("VerifyState", OPTIONS, false);
 		verifyState.setHidden(true);
 		this.addInput(verifyState);
 	}
@@ -61,7 +61,7 @@ public abstract class AbstractStateUserEntity extends StateEntity {
 		super.startUp();
 
 		// Track any state changes
-		if (verifyState.getValue())
+		if (verifyState.getNextBoolean(this, 0.0d))
 			doStateVerification();
 	}
 

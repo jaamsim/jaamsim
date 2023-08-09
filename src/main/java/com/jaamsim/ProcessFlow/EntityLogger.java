@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2015-2021 JaamSim Software Inc.
+ * Copyright (C) 2015-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,10 +20,10 @@ package com.jaamsim.ProcessFlow;
 import java.util.ArrayList;
 
 import com.jaamsim.BasicObjects.Logger;
+import com.jaamsim.BooleanProviders.BooleanProvInput;
 import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.basicsim.FileEntity;
-import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InterfaceEntityInput;
 import com.jaamsim.input.Keyword;
@@ -42,14 +42,14 @@ public class EntityLogger extends Logger implements Linkable, StateEntityListene
 	@Keyword(description = "If TRUE, an entry will made in the log file every time one of the "
 	                     + "received entities changes state.",
 	         exampleList = {"TRUE"})
-	private final BooleanInput traceEntityStates;
+	private final BooleanProvInput traceEntityStates;
 
 	{
 		nextComponent = new InterfaceEntityInput<>(Linkable.class, "NextComponent", KEY_INPUTS, null);
 		nextComponent.setRequired(true);
 		this.addInput(nextComponent);
 
-		traceEntityStates = new BooleanInput("TraceEntityStates", KEY_INPUTS, false);
+		traceEntityStates = new BooleanProvInput("TraceEntityStates", KEY_INPUTS, false);
 		this.addInput(traceEntityStates);
 	}
 
@@ -63,13 +63,18 @@ public class EntityLogger extends Logger implements Linkable, StateEntityListene
 		receivedEntity = null;
 	}
 
+	public boolean isTraceEntityStates(double simTime) {
+		return traceEntityStates.getNextBoolean(this, simTime);
+	}
+
 	@Override
 	public void addEntity(DisplayEntity ent) {
 
 		receivedEntity = ent;
 
 		// Trace states for received entities
-		if (traceEntityStates.getValue() && ent instanceof StateEntity) {
+		double simTime = getSimTime();
+		if (isTraceEntityStates(simTime) && ent instanceof StateEntity) {
 			((StateEntity) ent).addStateListener(this);
 			nextComponent.getValue().addEntity(ent);
 			return;
@@ -84,7 +89,8 @@ public class EntityLogger extends Logger implements Linkable, StateEntityListene
 
 	@Override
 	protected void printColumnTitles(FileEntity file) {
-		if (traceEntityStates.getValue()) {
+		double simTime = getSimTime();
+		if (isTraceEntityStates(simTime)) {
 			file.format("\t%s\t%s", "Entity", "State");
 			return;
 		}
@@ -93,7 +99,7 @@ public class EntityLogger extends Logger implements Linkable, StateEntityListene
 
 	@Override
 	protected void recordEntry(FileEntity file, double simTime, DisplayEntity ent) {
-		if (traceEntityStates.getValue() && ent instanceof StateEntity) {
+		if (isTraceEntityStates(simTime) && ent instanceof StateEntity) {
 			file.format("\t%s\t%s", ent, ((StateEntity) ent).getPresentState(simTime));
 			return;
 		}

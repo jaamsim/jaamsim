@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +17,9 @@
  */
 package com.jaamsim.ProcessFlow;
 
+import com.jaamsim.BooleanProviders.BooleanProvInput;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Thresholds.SignalThreshold;
-import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.Keyword;
 
@@ -30,15 +31,19 @@ public class EntitySignal extends LinkedComponent {
 
 	@Keyword(description = "The new state for the target SignalThreshold: TRUE = Open, FALSE = Closed.",
 	         exampleList = {"FALSE"})
-	private final BooleanInput newState;
+	private final BooleanProvInput newState;
 
 	{
 		targetSignalThreshold = new EntityInput<>( SignalThreshold.class, "TargetSignalThreshold", KEY_INPUTS, null);
 		targetSignalThreshold.setRequired(true);
 		this.addInput( targetSignalThreshold);
 
-		newState = new BooleanInput( "NewState", KEY_INPUTS, true);
+		newState = new BooleanProvInput( "NewState", KEY_INPUTS, true);
 		this.addInput( newState);
+	}
+
+	public boolean getNewState(double simTime) {
+		return newState.getNextBoolean(this, simTime);
 	}
 
 	@Override
@@ -46,7 +51,9 @@ public class EntitySignal extends LinkedComponent {
 		super.addEntity(ent);
 
 		// Signal the target threshold
-		targetSignalThreshold.getValue().setOpen(newState.getValue());
+		SignalThreshold target = targetSignalThreshold.getValue();
+		boolean bool = getNewState(getSimTime());
+		target.setOpen(bool);
 
 		// Send the entity to the next component
 		this.sendToNextComponent( ent );

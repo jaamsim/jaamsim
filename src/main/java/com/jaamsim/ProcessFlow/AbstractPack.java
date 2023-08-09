@@ -17,10 +17,10 @@
  */
 package com.jaamsim.ProcessFlow;
 
+import com.jaamsim.BooleanProviders.BooleanProvInput;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.StringProviders.StringProvInput;
-import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.units.DimensionlessUnit;
@@ -48,7 +48,7 @@ public abstract class AbstractPack extends LinkedService {
 	@Keyword(description = "If TRUE, the EntityContainer will be held in its queue until "
 	                     + "sufficient entities are available to start packing.",
 	         exampleList = {"TRUE"})
-	private final BooleanInput waitForEntities;
+	private final BooleanProvInput waitForEntities;
 
 	protected EntContainer container;	// the generated EntityContainer
 	private int numberInserted;   // Number of entities inserted to the EntityContainer
@@ -80,7 +80,7 @@ public abstract class AbstractPack extends LinkedService {
 		numberToStart.setValidRange(0, Double.POSITIVE_INFINITY);
 		this.addInput(numberToStart);
 
-		waitForEntities = new BooleanInput("WaitForEntities", OPTIONS, false);
+		waitForEntities = new BooleanProvInput("WaitForEntities", OPTIONS, false);
 		this.addInput(waitForEntities);
 	}
 
@@ -118,7 +118,7 @@ public abstract class AbstractPack extends LinkedService {
 				return false;
 
 			// If necessary, get a new container
-			if (!waitForEntities.getValue()) {
+			if (!waitForEntities.getNextBoolean(this, simTime)) {
 				container = this.getNextContainer();
 				setContainerState();
 			}

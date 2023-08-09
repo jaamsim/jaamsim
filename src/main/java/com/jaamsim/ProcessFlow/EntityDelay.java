@@ -20,6 +20,7 @@ package com.jaamsim.ProcessFlow;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
+import com.jaamsim.BooleanProviders.BooleanProvInput;
 import com.jaamsim.ColourProviders.ColourProvInput;
 import com.jaamsim.DisplayModels.PolylineModel;
 import com.jaamsim.Graphics.DisplayEntity;
@@ -30,7 +31,6 @@ import com.jaamsim.SubModels.CompoundEntity;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.EntityTarget;
 import com.jaamsim.events.EventManager;
-import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputCallback;
@@ -54,7 +54,7 @@ public class EntityDelay extends LinkedComponent implements LineEntity {
 	                     + "If FALSE, the entity's duration is increased sufficiently for it to "
 	                     + "arrive no earlier than the previous entity.",
 	         exampleList = {"TRUE"})
-	private final BooleanInput allowOvertaking;
+	private final BooleanProvInput allowOvertaking;
 
 	@Keyword(description = "The minimum time between the previous entity leaving the path and "
 	                     + "the present entity leaving the path. "
@@ -65,12 +65,12 @@ public class EntityDelay extends LinkedComponent implements LineEntity {
 	@Keyword(description = "If TRUE, an entity is moved along the specified path to "
 	                     + "indicate its progression through the delay activity.",
 	         exampleList = {"TRUE"})
-	private final BooleanInput animation;
+	private final BooleanProvInput animation;
 
 	@Keyword(description = "If TRUE, the entities are rotated to match the direction of "
 	                     + "the path.",
 	         exampleList = {"TRUE"})
-	private final BooleanInput rotateEntities;
+	private final BooleanProvInput rotateEntities;
 
 	@Keyword(description = "The width in pixels of the line representing the EntityDelay.",
 	         exampleList = {"1"})
@@ -95,7 +95,7 @@ public class EntityDelay extends LinkedComponent implements LineEntity {
 		duration.setRequired(true);
 		this.addInput(duration);
 
-		allowOvertaking = new BooleanInput("AllowOvertaking", KEY_INPUTS, true);
+		allowOvertaking = new BooleanProvInput("AllowOvertaking", KEY_INPUTS, true);
 		this.addInput(allowOvertaking);
 
 		minSeparation = new SampleInput("MinSeparation", KEY_INPUTS, 0.0d);
@@ -103,11 +103,11 @@ public class EntityDelay extends LinkedComponent implements LineEntity {
 		minSeparation.setValidRange(0, Double.POSITIVE_INFINITY);
 		this.addInput(minSeparation);
 
-		animation = new BooleanInput("Animation", FORMAT, true);
+		animation = new BooleanProvInput("Animation", FORMAT, true);
 		animation.setCallback(inputCallback);
 		this.addInput(animation);
 
-		rotateEntities = new BooleanInput("RotateEntities", FORMAT, false);
+		rotateEntities = new BooleanProvInput("RotateEntities", FORMAT, false);
 		this.addInput(rotateEntities);
 
 		widthInput = new SampleInput("LineWidth", FORMAT, 1);
@@ -134,7 +134,7 @@ public class EntityDelay extends LinkedComponent implements LineEntity {
 	};
 
 	void updateAnimationValue() {
-		if (!animation.getValue())
+		if (!isAnimation(0.0d))
 			entityMap.clear();
 	}
 
@@ -172,7 +172,7 @@ public class EntityDelay extends LinkedComponent implements LineEntity {
 		long durTicks = EventManager.current().secondsToNearestTick(dur);
 
 		// Adjust the duration for the previous entity's exit time
-		if (!allowOvertaking.getValue()) {
+		if (!isAllowOvertaking(simTime)) {
 			double sep = minSeparation.getNextSample(this, simTime);
 			long sepTicks = EventManager.current().secondsToNearestTick(sep);
 			long simTicks = getSimTicks();
@@ -181,7 +181,7 @@ public class EntityDelay extends LinkedComponent implements LineEntity {
 		}
 
 		// Add the entity to the list of entities being delayed
-		if (animation.getValue()) {
+		if (isAnimation(simTime)) {
 			dur = EventManager.current().ticksToSeconds(durTicks);
 			EntityDelayEntry entry = new EntityDelayEntry(ent, simTime, dur);
 			entityMap.put(ent.getEntityNumber(), entry);
@@ -211,7 +211,8 @@ public class EntityDelay extends LinkedComponent implements LineEntity {
 	public void removeDisplayEntity(DisplayEntity ent) {
 
 		// Remove the entity from the lists
-		if (animation.getValue())
+		double simTime = getSimTime();
+		if (isAnimation(simTime))
 			entityMap.remove(ent.getEntityNumber());
 
 		// Send the entity to the next component
@@ -256,6 +257,18 @@ public class EntityDelay extends LinkedComponent implements LineEntity {
 		return colorInput.getNextColour(this, simTime);
 	}
 
+	public boolean isAllowOvertaking(double simTime) {
+		return allowOvertaking.getNextBoolean(this, simTime);
+	}
+
+	public boolean isAnimation(double simTime) {
+		return animation.getNextBoolean(this, simTime);
+	}
+
+	public boolean isRotateEntities(double simTime) {
+		return rotateEntities.getNextBoolean(this, simTime);
+	}
+
 	@Override
 	public void updateGraphics(double simTime) {
 		super.updateGraphics(simTime);
@@ -294,7 +307,7 @@ public class EntityDelay extends LinkedComponent implements LineEntity {
 			entry.ent.setGlobalPosition(this.getGlobalPosition(localPos));
 
 			// Set the orientation for the entity
-			if (rotateEntities.getValue()) {
+			if (isRotateEntities(simTime)) {
 				Vec3d orient = PolylineInfo.getOrientationOnPolyline(getCurvePoints(), frac);
 				entry.ent.setRelativeOrientation(orient);
 			}

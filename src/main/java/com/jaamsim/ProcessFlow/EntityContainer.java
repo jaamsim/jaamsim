@@ -22,10 +22,10 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 
+import com.jaamsim.BooleanProviders.BooleanProvInput;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.StringProviders.StringProvInput;
-import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
@@ -64,13 +64,13 @@ public class EntityContainer extends SimEntity implements EntContainer {
 	                     + "TRUE = first in first out (FIFO) order (the default setting),\n"
 	                     + "FALSE = last in first out (LIFO) order.",
 	         exampleList = {"FALSE"})
-	private final BooleanInput fifo;
+	private final BooleanProvInput fifo;
 
 	@Keyword(description = "If TRUE, the states for the entities contained by the EntityContainer "
 	                     + "are set to the same state as the EntityContainer. "
 	                     + "If FALSE, the entities retain their original state.",
 	         exampleList = {"FALSE"})
-	private final BooleanInput setEntityState;
+	private final BooleanProvInput setEntityState;
 
 	@Keyword(description = "The position of the first entity in the EntityContainer relative to "
 	                     + "the EntityContainer.",
@@ -91,7 +91,7 @@ public class EntityContainer extends SimEntity implements EntContainer {
 
 	@Keyword(description = "If TRUE, the entities in the EntityContainer are displayed.",
 			exampleList = {"FALSE"})
-	protected final BooleanInput showEntities;
+	protected final BooleanProvInput showEntities;
 
 	private EntContainerDelegate container;
 
@@ -106,10 +106,10 @@ public class EntityContainer extends SimEntity implements EntContainer {
 		match.setUnitType(DimensionlessUnit.class);
 		this.addInput(match);
 
-		fifo = new BooleanInput("FIFO", KEY_INPUTS, true);
+		fifo = new BooleanProvInput("FIFO", KEY_INPUTS, true);
 		this.addInput(fifo);
 
-		setEntityState = new BooleanInput("SetEntityState", KEY_INPUTS, true);
+		setEntityState = new BooleanProvInput("SetEntityState", KEY_INPUTS, true);
 		this.addInput(setEntityState);
 
 		positionOffset = new Vec3dInput("PositionOffset", FORMAT, new Vec3d(0.0d, 0.0d, 0.01d));
@@ -130,7 +130,7 @@ public class EntityContainer extends SimEntity implements EntContainer {
 		maxRows.setIntegerValue(true);
 		this.addInput(maxRows);
 
-		showEntities = new BooleanInput("ShowEntities", FORMAT, true);
+		showEntities = new BooleanProvInput("ShowEntities", FORMAT, true);
 		this.addInput(showEntities);
 	}
 
@@ -164,7 +164,7 @@ public class EntityContainer extends SimEntity implements EntContainer {
 		if (!match.isDefault())
 			m = match.getNextString(this, simTime, 1.0d, true);
 
-		container.addEntity(ent, m, pri, fifo.getValue(), simTime);
+		container.addEntity(ent, m, pri, isFIFO(simTime), simTime);
 	}
 
 	@Override
@@ -188,7 +188,8 @@ public class EntityContainer extends SimEntity implements EntContainer {
 	public void stateChanged(StateRecord prev, StateRecord next) {
 		super.stateChanged(prev, next);
 
-		if (!setEntityState.getValue())
+		double simTime = getSimTime();
+		if (!isSetEntityState(simTime))
 			return;
 
 		// Set the states for the entities carried by the EntityContainer to the new state
@@ -235,7 +236,7 @@ public class EntityContainer extends SimEntity implements EntContainer {
 	public void updateGraphics( double simTime ) {
 		super.updateGraphics(simTime);
 
-		boolean visible = showEntities.getValue();
+		boolean visible = isShowEntities(simTime);
 		Quaternion orientQ = new Quaternion();
 		orientQ.setEuler3(getOrientation());
 		Vec3d size = this.getSize();
@@ -300,6 +301,18 @@ public class EntityContainer extends SimEntity implements EntContainer {
 			distanceX += 0.5*itemSize.x + space;
 			i++;
 		}
+	}
+
+	public boolean isFIFO(double simTime) {
+		return fifo.getNextBoolean(this, simTime);
+	}
+
+	public boolean isSetEntityState(double simTime) {
+		return setEntityState.getNextBoolean(this, simTime);
+	}
+
+	public boolean isShowEntities(double simTime) {
+		return showEntities.getNextBoolean(this, simTime);
 	}
 
 	@Output(name = "obj",

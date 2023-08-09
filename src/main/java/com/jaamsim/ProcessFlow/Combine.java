@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2022 JaamSim Software Inc.
+ * Copyright (C) 2016-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,8 +19,8 @@ package com.jaamsim.ProcessFlow;
 
 import java.util.ArrayList;
 
+import com.jaamsim.BooleanProviders.BooleanProvInput;
 import com.jaamsim.Graphics.DisplayEntity;
-import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.Keyword;
 
 public class Combine extends AbstractCombine {
@@ -28,14 +28,14 @@ public class Combine extends AbstractCombine {
 	@Keyword(description = "If TRUE, all the matching entities are passed to the next component.\n"
 	                     + "If FALSE, only the entity in the first queue is passed on.",
 	         exampleList = {"TRUE"})
-	private final BooleanInput retainAll;
+	private final BooleanProvInput retainAll;
 
 	private ArrayList<DisplayEntity> processedEntityList;  // entities being processed
 
 	{
 		stateGraphics.setHidden(true);
 
-		retainAll = new BooleanInput("RetainAll", KEY_INPUTS, false);
+		retainAll = new BooleanProvInput("RetainAll", KEY_INPUTS, false);
 		this.addInput(retainAll);
 	}
 
@@ -60,8 +60,8 @@ public class Combine extends AbstractCombine {
 		// Do the queues have enough entities?
 		ArrayList<Queue> queueList = getQueues();
 		int[] numList = getNumberRequired(simTime);
-		if (isMatchRequired()) {
-			String m = selectMatchValue(queueList, numList, isFirstQueue());
+		if (isMatchRequired(simTime)) {
+			String m = selectMatchValue(queueList, numList, isFirstQueue(simTime));
 			if (m == null) {
 				return false;
 			}
@@ -83,7 +83,7 @@ public class Combine extends AbstractCombine {
 							getMatchValue(), queueList.get(i));
 
 				// Destroy all the entities but the first
-				if ((i > 0 || n > 0) && !retainAll.getValue()) {
+				if ((i > 0 || n > 0) && !isRetainAll(simTime)) {
 					addConsumedEntity(ent);
 					ent.setShow(false);
 					continue;
@@ -113,6 +113,10 @@ public class Combine extends AbstractCombine {
 	@Override
 	public boolean isFinished() {
 		return processedEntityList.isEmpty();
+	}
+
+	public boolean isRetainAll(double simTime) {
+		return retainAll.getNextBoolean(this, simTime);
 	}
 
 	@Override

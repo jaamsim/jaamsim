@@ -23,6 +23,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Set;
 
+import com.jaamsim.BooleanProviders.BooleanProvInput;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.ProcessFlow.EntStorage.StorageEntry;
 import com.jaamsim.Samples.SampleInput;
@@ -35,7 +36,6 @@ import com.jaamsim.basicsim.EntityTarget;
 import com.jaamsim.events.EventHandle;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.events.ProcessTarget;
-import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputCallback;
 import com.jaamsim.input.InterfaceEntityInput;
@@ -71,7 +71,7 @@ public class Queue extends LinkedComponent {
 	                     + "TRUE = first in first out (FIFO) order (the default setting),\n"
 	                     + "FALSE = last in first out (LIFO) order.",
 	         exampleList = {"FALSE"})
-	private final BooleanInput fifo;
+	private final BooleanProvInput fifo;
 
 	@Keyword(description = "The time an entity will wait in the queue before deciding whether or "
 	                     + "not to renege. Evaluated when the entity first enters the queue.",
@@ -112,7 +112,7 @@ public class Queue extends LinkedComponent {
 
 	@Keyword(description = "If TRUE, the objects in the Queue are displayed.",
 			exampleList = {"FALSE"})
-	protected final BooleanInput showEntities;
+	protected final BooleanProvInput showEntities;
 
 	private final EntStorage storage;  // stores the entities in the queue
 	private final ArrayList<QueueUser> userList;  // other objects that use this queue
@@ -134,7 +134,7 @@ public class Queue extends LinkedComponent {
 		match.setUnitType(DimensionlessUnit.class);
 		this.addInput(match);
 
-		fifo = new BooleanInput("FIFO", KEY_INPUTS, true);
+		fifo = new BooleanProvInput("FIFO", KEY_INPUTS, true);
 		this.addInput(fifo);
 
 		renegeTime = new SampleInput("RenegeTime", KEY_INPUTS, null);
@@ -170,7 +170,7 @@ public class Queue extends LinkedComponent {
 		maxRows.setIntegerValue(true);
 		this.addInput(maxRows);
 
-		showEntities = new BooleanInput("ShowEntities", FORMAT, true);
+		showEntities = new BooleanProvInput("ShowEntities", FORMAT, true);
 		this.addInput(showEntities);
 	}
 
@@ -214,6 +214,14 @@ public class Queue extends LinkedComponent {
 			if (u.getQueues().contains(this))
 				userList.add(u);
 		}
+	}
+
+	public boolean isFIFO(double simTime) {
+		return fifo.getNextBoolean(this, simTime);
+	}
+
+	public boolean isShowEntities(double simTime) {
+		return showEntities.getNextBoolean(this, simTime);
 	}
 
 	private static class QueueEntry extends EntStorage.StorageEntry {
@@ -261,7 +269,7 @@ public class Queue extends LinkedComponent {
 
 		// Build the entry for the entity
 		long n = this.getTotalNumberAdded();
-		if (!fifo.getValue())
+		if (!isFIFO(simTime))
 			n *= -1;
 		int pri = (int) priority.getNextSample(this, simTime);
 		String m = null;
@@ -552,7 +560,7 @@ public class Queue extends LinkedComponent {
 	public void updateGraphics(double simTime) {
 		super.updateGraphics(simTime);
 
-		boolean visible = showEntities.getValue();
+		boolean visible = isShowEntities(simTime);
 		Quaternion orientQ = new Quaternion();
 		orientQ.setEuler3(getOrientation());
 		Vec3d qSize = this.getSize();
