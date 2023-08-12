@@ -82,13 +82,15 @@ public abstract class CompoundEntity extends LinkedComponent {
 			proto = ((CompoundEntity) getPrototype()).getSubModelRegion();
 		smRegion = InputAgent.generateEntityWithName(simModel, Region.class, proto, smRegionName, this, true, true);
 
-		// Set the default inputs for the region
-		InputAgent.applyArgs( smRegion, "RelativeEntity", this.getName());
-		InputAgent.applyArgs( smRegion, "DisplayModel",   "RegionRectangle");
-		InputAgent.applyValue(smRegion, "Scale",          0.5d, "");
-		InputAgent.applyVec3d(smRegion, "Size",           new Vec3d(2.0d,  1.0d, 0.0d), DistanceUnit.class);
-		InputAgent.applyVec3d(smRegion, "Position",       new Vec3d(0.0d, -1.5d, 0.0d), DistanceUnit.class);
-		InputAgent.applyVec3d(smRegion, "Alignment",      new Vec3d(), DimensionlessUnit.class);
+		// Set the region's default inputs if it has no prototype from which to inherit its inputs
+		if (proto == null) {
+			InputAgent.applyArgs( smRegion, "RelativeEntity", this.getName());
+			InputAgent.applyArgs( smRegion, "DisplayModel",   "RegionRectangle");
+			InputAgent.applyValue(smRegion, "Scale",          0.5d, "");
+			InputAgent.applyVec3d(smRegion, "Size",           new Vec3d(2.0d,  1.0d, 0.0d), DistanceUnit.class);
+			InputAgent.applyVec3d(smRegion, "Position",       new Vec3d(0.0d, -1.5d, 0.0d), DistanceUnit.class);
+			InputAgent.applyVec3d(smRegion, "Alignment",      new Vec3d(), DimensionlessUnit.class);
+		}
 	}
 
 	static final InputCallback regionCallback = new InputCallback() {
