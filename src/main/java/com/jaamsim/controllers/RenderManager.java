@@ -123,11 +123,19 @@ public class RenderManager implements DragSourceListener {
 	 */
 	public static void initialize(boolean safeGraphics) {
 		s_instance = new RenderManager(safeGraphics);
+
+		Thread managerThread = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				s_instance.renderManagerLoop();
+			}
+		}, "RenderManagerThread");
+		managerThread.start();
+
 	}
 
 	public static RenderManager inst() { return s_instance; }
 
-	private final Thread managerThread;
 	private final Renderer renderer;
 	private final AtomicBoolean finished = new AtomicBoolean(false);
 	private final AtomicBoolean fatalError = new AtomicBoolean(false);
@@ -147,8 +155,8 @@ public class RenderManager implements DragSourceListener {
 	private final HashMap<Integer, View> windowToViewMap= new HashMap<>();
 	private int activeWindowID = -1;
 
-	private final Object popupLock;
-	private final Object sceneDragLock;
+	private final Object popupLock = new Object();
+	private final Object sceneDragLock = new Object();
 	private JPopupMenu lastPopup;
 
 	private final ArrayList<DisplayEntity> selectedEntityList = new ArrayList<>();
@@ -203,18 +211,7 @@ public class RenderManager implements DragSourceListener {
 
 		exceptionLogger = new ExceptionLogger(EXCEPTION_STACK_THRESHOLD);
 
-		managerThread = new Thread(new Runnable() {
-			@Override
-			public void run() {
-				renderManagerLoop();
-			}
-		}, "RenderManagerThread");
-		managerThread.start();
-
 		GUIFrame.registerCallback(redraw);
-
-		popupLock = new Object();
-		sceneDragLock = new Object();
 	}
 
 	private class RedrawCallback implements Runnable {
