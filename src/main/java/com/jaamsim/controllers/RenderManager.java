@@ -530,7 +530,7 @@ public class RenderManager implements DragSourceListener {
 		}
 	}
 
-	public int collectProxies(JaamSimModel simModel, double simTime, int maxEnts, ArrayList<RenderProxy> scene) {
+	private int collectProxies(JaamSimModel simModel, double simTime, int maxEnts, ArrayList<RenderProxy> scene) {
 
 		int numEnts = 0;
 		int numBindings = 0;
@@ -559,7 +559,7 @@ public class RenderManager implements DragSourceListener {
 		return numBindings;
 	}
 
-	public void collectSelectionProxies(DisplayEntity ent, double simTime, ArrayList<RenderProxy> scene) {
+	private void collectSelectionProxies(DisplayEntity ent, double simTime, ArrayList<RenderProxy> scene) {
 		for (DisplayModelBinding binding : ent.getDisplayBindings()) {
 			try {
 				binding.collectSelectionProxies(simTime, scene);
@@ -2386,7 +2386,7 @@ public class RenderManager implements DragSourceListener {
 		scene.add(new LineProxy(segments, linkColour, 1, DisplayModel.ALWAYS, 0));
 	}
 
-	public void addLinkDisplays(JaamSimModel simModel, boolean dir, double delta,
+	private void addLinkDisplays(JaamSimModel simModel, boolean dir, double delta,
 			ArrayList<RenderProxy> scene) {
 		Color4d linkColour = dir ? ColourInput.BLUE : ColourInput.RED;
 
@@ -2412,7 +2412,7 @@ public class RenderManager implements DragSourceListener {
 		}
 	}
 
-	public void addEntityReferenceDisplays(JaamSimModel simModel, double delta, ArrayList<RenderProxy> scene) {
+	private void addEntityReferenceDisplays(JaamSimModel simModel, double delta, ArrayList<RenderProxy> scene) {
 
 		// Loop through the displayed objects in the model
 		for (DisplayEntity ent : simModel.getClonesOfIterator(DisplayEntity.class)) {
@@ -2452,7 +2452,7 @@ public class RenderManager implements DragSourceListener {
 				// Show an arrow for each reference
 				Vec3d source = ((DisplayEntity) ref).getGlobalPosition();
 				double sourceRadius = 0.0d;
-				addLink(source, sink, sourceRadius, sinkRadius, REF_LINK_COLOUR, arrowSize, delta, cachedScene);
+				addLink(source, sink, sourceRadius, sinkRadius, REF_LINK_COLOUR, arrowSize, delta, scene);
 			}
 		}
 	}
