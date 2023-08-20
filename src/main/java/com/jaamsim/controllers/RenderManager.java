@@ -151,11 +151,6 @@ public class RenderManager implements DragSourceListener {
 	private final Object sceneDragLock;
 	private JPopupMenu lastPopup;
 
-	/**
-	 * The last scene rendered
-	 */
-	private ArrayList<RenderProxy> cachedScene;
-
 	private final ArrayList<DisplayEntity> selectedEntityList = new ArrayList<>();
 	private Vec3d mousePosition = new Vec3d();
 	private int mouseWindowID = -1;  // window containing the present mouse position
@@ -342,7 +337,7 @@ public class RenderManager implements DragSourceListener {
 	}
 
 	private void renderManagerLoop() {
-
+		boolean loopStarted = false;
 		while (!finished.get() && !fatalError.get()) {
 			try {
 
@@ -384,8 +379,10 @@ public class RenderManager implements DragSourceListener {
 				}
 
 				// Renderer has been initialized successfully
-				if (cachedScene == null)
+				if (!loopStarted) {
 					LogBox.logLine("RenderManager loop started");
+					loopStarted = true;
+				}
 
 				JaamSimModel simModel = GUIFrame.getJaamSimModel();
 				double renderTime = simModel.getEventManager().ticksToSeconds(simTick);
@@ -412,7 +409,7 @@ public class RenderManager implements DragSourceListener {
 
 				synchronized (sceneDragLock) {
 
-					cachedScene = new ArrayList<>();
+					ArrayList<RenderProxy> cachedScene = new ArrayList<>();
 					DisplayModelBinding.clearCacheCounters();
 					DisplayModelBinding.clearCacheMissData();
 
@@ -453,9 +450,8 @@ public class RenderManager implements DragSourceListener {
 					}
 
 					endNanos = System.nanoTime();
+					renderer.setScene(cachedScene);
 				} // sceneDragLock
-
-				renderer.setScene(cachedScene);
 
 				String cacheString = " Hits: " + DisplayModelBinding.getCacheHits() + " Misses: " + DisplayModelBinding.getCacheMisses() +
 				                     " Total: " + totalBindings;
