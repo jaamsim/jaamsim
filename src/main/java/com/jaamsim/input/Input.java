@@ -275,6 +275,14 @@ public abstract class Input<T> {
 	}
 
 	/**
+	 * Provides one or more example input strings for this type of input.
+	 * @return examples of valid inputs
+	 */
+	public String[] getExamples() {
+		return new String[0];
+	}
+
+	/**
 	 * Corrects common input errors that can be detected prior to parsing.
 	 * @param str - uncorrected input string
 	 * @return corrected input string

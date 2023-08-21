@@ -201,9 +201,13 @@ public class EditBox extends FrameBox {
 				if (key == null)
 					return null;
 
+				String[] examples = key.exampleList();
+				if (examples.length == 0)
+					examples = in.getExamples();
+
 				return GUIFrame.formatKeywordToolTip(obj.getClass().getSimpleName(),
 						in.getKeyword(), key.description(), in.getValidInputDesc(),
-						key.exampleList());
+						examples);
 			}
 			catch (IllegalArgumentException e) {}
 			catch (IllegalAccessException e) {}
