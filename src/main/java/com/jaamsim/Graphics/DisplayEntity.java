@@ -37,7 +37,6 @@ import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.basicsim.ObjectType;
 import com.jaamsim.basicsim.ObserverEntity;
 import com.jaamsim.datatypes.DoubleVector;
-import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.EntityListInput;
 import com.jaamsim.input.EnumInput;
@@ -131,7 +130,7 @@ public class DisplayEntity extends Entity {
 	@Keyword(description = "If TRUE, the object will respond to mouse clicks and can be "
 	                     + "positioned by dragging with the mouse.",
 	         exampleList = {"FALSE"})
-	private final BooleanInput movable;
+	private final BooleanProvInput movable;
 
 	@Keyword(description = "The view windows on which this entity will be visible.",
 	         exampleList = {"View2 View3"})
@@ -219,7 +218,7 @@ public class DisplayEntity extends Entity {
 		showInput.setCallback(showCallback);
 		this.addInput(showInput);
 
-		movable = new BooleanInput("Movable", GRAPHICS, true);
+		movable = new BooleanProvInput("Movable", GRAPHICS, true);
 		this.addInput(movable);
 
 		visibleViews = new EntityListInput<>(View.class, "VisibleViews", GRAPHICS, null);
@@ -640,7 +639,7 @@ public class DisplayEntity extends Entity {
 	}
 
 	public boolean isMovable() {
-		return movable.getValue();
+		return movable.getNextBoolean(this, 0.0d);
 	}
 
 	public DisplayEntity getRelativeEntity() {

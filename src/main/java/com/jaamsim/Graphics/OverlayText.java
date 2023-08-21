@@ -19,6 +19,7 @@ package com.jaamsim.Graphics;
 
 import java.util.ArrayList;
 
+import com.jaamsim.BooleanProviders.BooleanProvInput;
 import com.jaamsim.ColourProviders.ColourProvInput;
 import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.DisplayModels.TextModel;
@@ -29,7 +30,6 @@ import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.GUIListener;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.datatypes.IntegerVector;
-import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.Input;
@@ -112,7 +112,7 @@ public class OverlayText extends OverlayEntity implements TextEntity, EditableTe
 
 	@Keyword(description = "If TRUE, then a drop shadow appears for the text.",
 	         exampleList = { "TRUE" })
-	private final BooleanInput dropShadow;
+	private final BooleanProvInput dropShadow;
 
 	@Keyword(description = "The colour for the drop shadow.",
 	         exampleList = { "red", "skyblue", "135 206 235" })
@@ -172,7 +172,7 @@ public class OverlayText extends OverlayEntity implements TextEntity, EditableTe
 		fontStyle.setDefaultText("TextModel");
 		this.addInput(fontStyle);
 
-		dropShadow = new BooleanInput("DropShadow", FONT, false);
+		dropShadow = new BooleanProvInput("DropShadow", FONT, false);
 		dropShadow.setDefaultText("TextModel");
 		this.addInput(dropShadow);
 
@@ -512,7 +512,7 @@ public class OverlayText extends OverlayEntity implements TextEntity, EditableTe
 		if (dropShadow.isDefault()) {
 			return getTextModel().isDropShadow(simTime);
 		}
-		return dropShadow.getValue();
+		return dropShadow.getNextBoolean(this, simTime);
 	}
 
 	@Override

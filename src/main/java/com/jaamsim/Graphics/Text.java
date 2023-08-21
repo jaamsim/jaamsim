@@ -19,12 +19,12 @@ package com.jaamsim.Graphics;
 
 import java.util.ArrayList;
 
+import com.jaamsim.BooleanProviders.BooleanProvInput;
 import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.StringProviders.StringProvConstant;
 import com.jaamsim.StringProviders.StringProvInput;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.GUIListener;
-import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
@@ -88,7 +88,7 @@ public class Text extends TextBasics {
 	                     + "Resizing is performed only when the DataSource input has been left "
 	                     + "blank.",
 	         exampleList = { "TRUE" })
-	protected final BooleanInput autoSize;
+	protected final BooleanProvInput autoSize;
 
 	protected String renderText = "";
 
@@ -113,7 +113,7 @@ public class Text extends TextBasics {
 		failText = new StringInput("FailText", KEY_INPUTS, "Input Error");
 		this.addInput(failText);
 
-		autoSize = new BooleanInput("AutoSize", OPTIONS, true);
+		autoSize = new BooleanProvInput("AutoSize", OPTIONS, true);
 		this.addInput(autoSize);
 	}
 
@@ -206,7 +206,7 @@ public class Text extends TextBasics {
 	}
 
 	public boolean isAutoSize() {
-		return autoSize.getValue() && dataSource.isDefault();
+		return autoSize.getNextBoolean(this, 0.0d) && dataSource.isDefault();
 	}
 
 	@Override

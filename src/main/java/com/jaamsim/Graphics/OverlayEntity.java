@@ -17,9 +17,9 @@
  */
 package com.jaamsim.Graphics;
 
+import com.jaamsim.BooleanProviders.BooleanProvInput;
 import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.datatypes.IntegerVector;
-import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.IntegerListInput;
 import com.jaamsim.input.Keyword;
@@ -42,11 +42,11 @@ public abstract class OverlayEntity extends DisplayEntity {
 
 	@Keyword(description = "If this overlay should be aligned from the right edge of the window (instead of the left)",
 	         exampleList = {"TRUE"})
-	private final BooleanInput alignRight;
+	private final BooleanProvInput alignRight;
 
 	@Keyword(description = "If this overlay should be aligned from the bottom edge of the window (instead of the top)",
 	         exampleList = {"TRUE"})
-	private final BooleanInput alignBottom;
+	private final BooleanProvInput alignBottom;
 
 	{
 		IntegerVector defPos = new IntegerVector(2);
@@ -57,19 +57,19 @@ public abstract class OverlayEntity extends DisplayEntity {
 		screenPosition.setValidRange(0, 2500);
 		this.addInput(screenPosition);
 
-		alignRight = new BooleanInput("AlignRight", GRAPHICS, false);
+		alignRight = new BooleanProvInput("AlignRight", GRAPHICS, false);
 		this.addInput(alignRight);
 
-		alignBottom = new BooleanInput("AlignBottom", GRAPHICS, false);
+		alignBottom = new BooleanProvInput("AlignBottom", GRAPHICS, false);
 		this.addInput(alignBottom);
 	}
 
 	public boolean getAlignRight() {
-		return alignRight.getValue();
+		return alignRight.getNextBoolean(this, 0.0d);
 	}
 
 	public boolean getAlignBottom() {
-		return alignBottom.getValue();
+		return alignBottom.getNextBoolean(this, 0.0d);
 	}
 
 	public IntegerVector getScreenPosition() {

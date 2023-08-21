@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018-2020 JaamSim Software Inc.
+ * Copyright (C) 2018-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,13 +20,13 @@ package com.jaamsim.Graphics;
 import java.net.URI;
 import java.util.ArrayList;
 
+import com.jaamsim.BooleanProviders.BooleanProvInput;
 import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.GUIListener;
 import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.controllers.PolarInfo;
 import com.jaamsim.datatypes.IntegerVector;
-import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.FileInput;
 import com.jaamsim.input.InputAgent;
@@ -78,16 +78,16 @@ public class View extends Entity {
 
 	@Keyword(description = "If TRUE, the view window is displayed on screen.",
 	         exampleList = {"FALSE"})
-	private final BooleanInput showWindow;
+	private final BooleanProvInput showWindow;
 
 	@Keyword(description = "A Boolean indicating whether the view can be panned or rotated.",
 	         exampleList = {"FALSE"})
-	private final BooleanInput movable;
+	private final BooleanProvInput movable;
 
 	@Keyword(description = "A Boolean indicating whether the view is locked to a downward view "
 	                     + "(the 2D default).",
 	         exampleList = {"FALSE"})
-	private final BooleanInput lock2D;
+	private final BooleanProvInput lock2D;
 
 	@Keyword(description = "The (optional) entity for this view to follow. Setting this input "
 	                     + "makes the view ignore ViewCenter and interprets ViewPosition as a "
@@ -151,14 +151,14 @@ public class View extends Entity {
 		titleBar = new StringInput("TitleBarText", GRAPHICS, null);
 		this.addInput(titleBar);
 
-		showWindow = new BooleanInput("ShowWindow", GRAPHICS, false);
+		showWindow = new BooleanProvInput("ShowWindow", GRAPHICS, false);
 		showWindow.setPromptReqd(false);
 		this.addInput(showWindow);
 
-		movable = new BooleanInput("Movable", GRAPHICS, true);
+		movable = new BooleanProvInput("Movable", GRAPHICS, true);
 		this.addInput(movable);
 
-		lock2D = new BooleanInput("Lock2D", GRAPHICS, false);
+		lock2D = new BooleanProvInput("Lock2D", GRAPHICS, false);
 		this.addInput(lock2D);
 
 		followEntityInput = new EntityInput<>(DisplayEntity.class, "FollowEntity", GRAPHICS, null);
@@ -335,7 +335,7 @@ public class View extends Entity {
 	}
 
 	public boolean showWindow() {
-		return showWindow.getValue();
+		return showWindow.getNextBoolean(this, 0.0d);
 	}
 
 	public Region getRegion() {
@@ -378,7 +378,7 @@ public class View extends Entity {
 	}
 
 	public boolean isMovable() {
-		return movable.getValue();
+		return movable.getNextBoolean(this, 0.0d);
 	}
 
 	public boolean isFollowing() {
@@ -420,7 +420,7 @@ public class View extends Entity {
 	}
 
 	public boolean is2DLocked() {
-		return lock2D.getValue();
+		return lock2D.getNextBoolean(this, 0.0d);
 	}
 
 	public URI getSkyboxTexture() {

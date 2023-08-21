@@ -16,9 +16,9 @@
  */
 package com.jaamsim.Graphics;
 
+import com.jaamsim.BooleanProviders.BooleanProvInput;
 import com.jaamsim.DisplayModels.PolylineModel;
 import com.jaamsim.Samples.SampleInput;
-import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.units.DistanceUnit;
 
@@ -35,7 +35,7 @@ public class Polyline extends AbstractShape implements PolylineEntity  {
 	                     + "If TRUE, the closing line is displayed. "
 	                     + "If FALSE, the closing line is not displayed.",
 	         exampleList = {"TRUE", "FALSE"})
-	protected final BooleanInput closed;
+	protected final BooleanProvInput closed;
 
 	@Keyword(description = "Physical width of the polyline with units of distance.",
 	         exampleList = { "0.5 m" })
@@ -47,7 +47,7 @@ public class Polyline extends AbstractShape implements PolylineEntity  {
 
 		outlined.setDefaultValue(true);
 
-		closed = new BooleanInput("Closed", FORMAT, false);
+		closed = new BooleanProvInput("Closed", FORMAT, false);
 		closed.setDefaultText("DisplayModel value");
 		this.addInput(closed);
 
@@ -67,7 +67,7 @@ public class Polyline extends AbstractShape implements PolylineEntity  {
 			if (model != null)
 				return model.isClosed(simTime);
 		}
-		return closed.getValue();
+		return closed.getNextBoolean(this, simTime);
 	}
 
 	@Override

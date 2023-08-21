@@ -16,9 +16,9 @@
  */
 package com.jaamsim.Graphics;
 
+import com.jaamsim.BooleanProviders.BooleanProvInput;
 import com.jaamsim.ColourProviders.ColourProvInput;
 import com.jaamsim.Samples.SampleInput;
-import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.math.Color4d;
@@ -34,7 +34,7 @@ public abstract class AbstractShape extends DisplayEntity implements LineEntity,
 	                     + "If TRUE, it is filled with a specified colour. "
 	                     + "If FALSE, it is hollow.",
 	         exampleList = {"FALSE"})
-	protected final BooleanInput filled;
+	protected final BooleanProvInput filled;
 
 	@Keyword(description = "The colour with which the object is filled.",
 	         exampleList = {"red", "255 0 0", "red 0.5", "255 0 0 0.5",
@@ -46,7 +46,7 @@ public abstract class AbstractShape extends DisplayEntity implements LineEntity,
 	                     + "If TRUE, it is outlined with a specified colour. "
 	                     + "If FALSE, it is drawn without an outline.",
 	         exampleList = {"FALSE"})
-	protected final BooleanInput outlined;
+	protected final BooleanProvInput outlined;
 
 	@Keyword(description = "The colour with which the object is outlined.",
 	         exampleList = {"red", "255 0 0", "red 0.5", "255 0 0 0.5",
@@ -59,7 +59,7 @@ public abstract class AbstractShape extends DisplayEntity implements LineEntity,
 	protected final SampleInput lineWidth;
 
 	{
-		filled = new BooleanInput("Filled", FORMAT, false);
+		filled = new BooleanProvInput("Filled", FORMAT, false);
 		filled.setDefaultText("DisplayModel value");
 		this.addInput(filled);
 
@@ -67,7 +67,7 @@ public abstract class AbstractShape extends DisplayEntity implements LineEntity,
 		fillColour.setDefaultText("DisplayModel value");
 		this.addInput(fillColour);
 
-		outlined = new BooleanInput("Outlined", FORMAT, false);
+		outlined = new BooleanProvInput("Outlined", FORMAT, false);
 		outlined.setDefaultText("DisplayModel value");
 		this.addInput(outlined);
 
@@ -91,7 +91,7 @@ public abstract class AbstractShape extends DisplayEntity implements LineEntity,
 			if (model != null)
 				return model.isFilled(simTime);
 		}
-		return filled.getValue();
+		return filled.getNextBoolean(this, simTime);
 	}
 
 	@Override
@@ -111,7 +111,7 @@ public abstract class AbstractShape extends DisplayEntity implements LineEntity,
 			if (model != null)
 				return model.isOutlined(simTime);
 		}
-		return outlined.getValue();
+		return outlined.getNextBoolean(this, simTime);
 	}
 
 	@Override
