@@ -277,7 +277,7 @@ public class TextModel extends AbstractShapeModel implements TextEntity {
 	}
 
 	@Override
-	public boolean getDropShadow() {
+	public boolean isDropShadow(double simTime) {
 		return dropShadow.getValue();
 	}
 
@@ -347,7 +347,7 @@ public class TextModel extends AbstractShapeModel implements TextEntity {
 			TessFontKey fk = labelObservee.getTessFontKey();
 			Vec3d textSize = RenderManager.inst().getRenderedStringSize(fk, height, text);
 			Transform trans = labelObservee.getGlobalTransForSize(textSize);
-			boolean ds = labelObservee.getDropShadow();
+			boolean ds = labelObservee.isDropShadow(simTime);
 			Color4d dsColor = labelObservee.getDropShadowColor(simTime);
 			Vec3d dsOffset = labelObservee.getDropShadowOffset();
 			boolean editMode = labelObservee.isEditMode();
@@ -551,7 +551,7 @@ public class TextModel extends AbstractShapeModel implements TextEntity {
 			boolean alignBottom = labelObservee.getAlignBottom();
 			Color4d color = labelObservee.getFontColor(simTime);
 			TessFontKey fk = labelObservee.getTessFontKey();
-			boolean ds = labelObservee.getDropShadow();
+			boolean ds = labelObservee.isDropShadow(simTime);
 			Color4d dsColor = labelObservee.getDropShadowColor(simTime);
 			Vec3d dsOffset = labelObservee.getDropShadowOffset();
 			boolean editMode = labelObservee.isEditMode();
@@ -736,7 +736,7 @@ public class TextModel extends AbstractShapeModel implements TextEntity {
 			int height = (int)labelObservee.getTextHeight(simTime);
 			Color4d color = labelObservee.getFontColor(simTime);
 			TessFontKey fk = labelObservee.getTessFontKey();
-			boolean ds = labelObservee.getDropShadow();
+			boolean ds = labelObservee.isDropShadow(simTime);
 			Color4d dsColor = labelObservee.getDropShadowColor(simTime);
 			Vec3d dsOffset = labelObservee.getDropShadowOffset();
 			Vec3d pos = labelObservee.getGlobalPosition();

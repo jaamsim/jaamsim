@@ -508,9 +508,9 @@ public class OverlayText extends OverlayEntity implements TextEntity, EditableTe
 	}
 
 	@Override
-	public boolean getDropShadow() {
+	public boolean isDropShadow(double simTime) {
 		if (dropShadow.isDefault()) {
-			return getTextModel().getDropShadow();
+			return getTextModel().isDropShadow(simTime);
 		}
 		return dropShadow.getValue();
 	}

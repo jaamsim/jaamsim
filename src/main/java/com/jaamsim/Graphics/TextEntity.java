@@ -29,7 +29,7 @@ public interface TextEntity {
 	public boolean isBold();
 	public boolean isItalic();
 	public Color4d getFontColor(double simTime);
-	public boolean getDropShadow();
+	public boolean isDropShadow(double simTime);
 	public Color4d getDropShadowColor(double simTime);
 	public Vec3d getDropShadowOffset();
 }
