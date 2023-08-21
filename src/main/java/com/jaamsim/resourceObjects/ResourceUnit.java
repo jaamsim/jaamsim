@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2018-2022 JaamSim Software Inc.
+ * Copyright (C) 2018-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,13 +19,13 @@ package com.jaamsim.resourceObjects;
 import java.util.ArrayList;
 
 import com.jaamsim.BasicObjects.DowntimeEntity;
+import com.jaamsim.BooleanProviders.BooleanProvInput;
 import com.jaamsim.DisplayModels.ShapeModel;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.ProcessFlow.StateUserEntity;
 import com.jaamsim.Statistics.TimeBasedFrequency;
 import com.jaamsim.Statistics.TimeBasedStatistics;
 import com.jaamsim.events.EventManager;
-import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.ExpResType;
@@ -67,7 +67,7 @@ public class ResourceUnit extends StateUserEntity implements Seizable, ResourceP
 	@Keyword(description = "If TRUE, the ResourceUnit will move next to the entity that has "
 	                     + "seized it, and will follow that entity until it is released.",
 	         exampleList = {"TRUE"})
-	private final BooleanInput followAssignment;
+	private final BooleanProvInput followAssignment;
 
 	@Keyword(description = "The position of the ResourceUnit relative to the entity that has seized it.",
 	         exampleList = {"0.0 1.0 0.01 m"})
@@ -109,7 +109,7 @@ public class ResourceUnit extends StateUserEntity implements Seizable, ResourceP
 		this.addInput(assignmentPriority);
 		this.addSynonym(assignmentPriority, "Priority");
 
-		followAssignment = new BooleanInput("FollowAssignment", FORMAT, false);
+		followAssignment = new BooleanProvInput("FollowAssignment", FORMAT, false);
 		this.addInput(followAssignment);
 
 		assignmentOffset = new Vec3dInput("AssignmentOffset", FORMAT, new Vec3d());
@@ -326,7 +326,7 @@ public class ResourceUnit extends StateUserEntity implements Seizable, ResourceP
 		super.updateGraphics(simTime);
 
 		// Set the resource unit's position
-		if (followAssignment.getValue()) {
+		if (followAssignment.getNextBoolean(this, simTime)) {
 			if (presentAssignment == null) {
 				setPosition(positionInput.getValue());
 			}

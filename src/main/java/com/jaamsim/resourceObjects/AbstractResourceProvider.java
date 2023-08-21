@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2018-2022 JaamSim Software Inc.
+ * Copyright (C) 2018-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,12 +22,12 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 
+import com.jaamsim.BooleanProviders.BooleanProvInput;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Statistics.TimeBasedFrequency;
 import com.jaamsim.Statistics.TimeBasedStatistics;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.JaamSimModel;
-import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.units.DimensionlessUnit;
@@ -45,7 +45,7 @@ public abstract class AbstractResourceProvider extends DisplayEntity implements 
 	                     + "priority and waiting time, but the first entity that is able to seize "
 	                     + "the resource will be allowed to do so.",
 	         exampleList = {"TRUE"})
-	private final BooleanInput strictOrder;
+	private final BooleanProvInput strictOrder;
 
 	private ArrayList<ResourceUser> userList;  // objects that can use this provider's units
 
@@ -58,7 +58,7 @@ public abstract class AbstractResourceProvider extends DisplayEntity implements 
 	public final static String ERR_CAPACITY = "Insufficient resource units: available=%s, req'd=%s";
 
 	{
-		strictOrder = new BooleanInput("StrictOrder", KEY_INPUTS, false);
+		strictOrder = new BooleanProvInput("StrictOrder", KEY_INPUTS, false);
 		this.addInput(strictOrder);
 	}
 
@@ -83,7 +83,7 @@ public abstract class AbstractResourceProvider extends DisplayEntity implements 
 
 	@Override
 	public boolean isStrictOrder() {
-		return strictOrder.getValue();
+		return strictOrder.getNextBoolean(this, getSimTime());
 	}
 
 	@Override
