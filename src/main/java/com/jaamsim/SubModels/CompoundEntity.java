@@ -19,13 +19,13 @@ package com.jaamsim.SubModels;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
+import com.jaamsim.BooleanProviders.BooleanProvInput;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.Region;
 import com.jaamsim.ProcessFlow.LinkedComponent;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.basicsim.JaamSimModel;
-import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InputCallback;
@@ -39,7 +39,7 @@ public abstract class CompoundEntity extends LinkedComponent {
 
 	@Keyword(description = "Determines whether to display the sub-model's components.",
 	         exampleList = {"FALSE"})
-	protected final BooleanInput showComponents;
+	protected final BooleanProvInput showComponents;
 
 	@Keyword(description = "The position of the entities being processed relative to the "
 	                     + "sub-model. "
@@ -57,7 +57,7 @@ public abstract class CompoundEntity extends LinkedComponent {
 
 		regionInput.setCallback(regionCallback);
 
-		showComponents = new BooleanInput("ShowComponents", FORMAT, false);
+		showComponents = new BooleanProvInput("ShowComponents", FORMAT, false);
 		this.addInput(showComponents);
 
 		processPosition = new Vec3dInput("ProcessPosition", FORMAT, new Vec3d(0.0d, 0.0d, 0.01d));
@@ -162,8 +162,8 @@ public abstract class CompoundEntity extends LinkedComponent {
 		return (Region) getChild(smRegionName);
 	}
 
-	public boolean getShowComponents() {
-		return showComponents.getValue();
+	public boolean isShowComponents(double simTime) {
+		return showComponents.getNextBoolean(this, 0.0d);
 	}
 
 	@Override

@@ -534,7 +534,7 @@ public class ContextMenu {
 			return;
 
 		// Show Components
-		boolean show = ent.getShowComponents();
+		boolean show = ent.isShowComponents(0.0d);
 		final JMenuItem showComponentsMenuItem = new JCheckBoxMenuItem( "Show Components", show );
 		showComponentsMenuItem.addActionListener( new ActionListener() {
 

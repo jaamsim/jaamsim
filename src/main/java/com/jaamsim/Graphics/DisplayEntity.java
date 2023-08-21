@@ -624,7 +624,7 @@ public class DisplayEntity extends Entity {
 
 		if (getParent() instanceof CompoundEntity) {
 			CompoundEntity sub = (CompoundEntity) getParent();
-			ret = ret && (sub.getShowComponents() || getSimulation().isShowSubModels());
+			ret = ret && (sub.isShowComponents(simTime) || getSimulation().isShowSubModels());
 		}
 		return ret;
 	}
