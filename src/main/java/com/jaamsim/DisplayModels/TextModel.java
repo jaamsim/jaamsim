@@ -22,6 +22,7 @@ import java.awt.GraphicsEnvironment;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import com.jaamsim.BooleanProviders.BooleanProvInput;
 import com.jaamsim.ColourProviders.ColourProvInput;
 import com.jaamsim.Graphics.BillboardText;
 import com.jaamsim.Graphics.EntityLabel;
@@ -32,7 +33,6 @@ import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.datatypes.IntegerVector;
-import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputCallback;
@@ -84,7 +84,7 @@ public class TextModel extends AbstractShapeModel implements TextEntity {
 
 	@Keyword(description = "If TRUE, then a drop shadow appears for the text.",
 	         exampleList = { "TRUE" })
-	private final BooleanInput dropShadow;
+	private final BooleanProvInput dropShadow;
 
 	@Keyword(description = "The colour for the drop shadow",
 	         exampleList = { "red", "skyblue", "135 206 235" })
@@ -143,7 +143,7 @@ public class TextModel extends AbstractShapeModel implements TextEntity {
 		fontStyle.setCallback(fontstyleCallback);
 		this.addInput(fontStyle);
 
-		dropShadow = new BooleanInput("DropShadow", KEY_INPUTS, false);
+		dropShadow = new BooleanProvInput("DropShadow", KEY_INPUTS, false);
 		this.addInput(dropShadow);
 
 		dropShadowColor = new ColourProvInput("DropShadowColour", KEY_INPUTS, ColourInput.BLACK);
@@ -278,7 +278,7 @@ public class TextModel extends AbstractShapeModel implements TextEntity {
 
 	@Override
 	public boolean isDropShadow(double simTime) {
-		return dropShadow.getValue();
+		return dropShadow.getNextBoolean(this, simTime);
 	}
 
 	@Override

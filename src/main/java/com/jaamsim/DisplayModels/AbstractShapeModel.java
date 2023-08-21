@@ -16,11 +16,11 @@
  */
 package com.jaamsim.DisplayModels;
 
+import com.jaamsim.BooleanProviders.BooleanProvInput;
 import com.jaamsim.ColourProviders.ColourProvInput;
 import com.jaamsim.Graphics.FillEntity;
 import com.jaamsim.Graphics.LineEntity;
 import com.jaamsim.Samples.SampleInput;
-import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.math.Color4d;
@@ -37,7 +37,7 @@ public abstract class AbstractShapeModel extends DisplayModel implements LineEnt
 	                     + "If TRUE, it is filled with a specified colour. "
 	                     + "If FALSE, it is hollow.",
 	         exampleList = {"FALSE"})
-	protected final BooleanInput filled;
+	protected final BooleanProvInput filled;
 
 	@Keyword(description = "The colour with which the object is filled.",
 	         exampleList = {"red"})
@@ -47,7 +47,7 @@ public abstract class AbstractShapeModel extends DisplayModel implements LineEnt
 	                     + "If TRUE, it is outlined with a specified colour. "
 	                     + "If FALSE, it is drawn without an outline.",
 	         exampleList = {"FALSE"})
-	protected final BooleanInput outlined;
+	protected final BooleanProvInput outlined;
 
 	@Keyword(description = "The colour with which the object is outlined.",
 	         exampleList = {"red"})
@@ -67,10 +67,10 @@ public abstract class AbstractShapeModel extends DisplayModel implements LineEnt
 		this.addSynonym(lineColour, "OutlineColour");
 		this.addSynonym(lineColour, "OutlineColor");
 
-		filled = new BooleanInput("Filled", KEY_INPUTS, false);
+		filled = new BooleanProvInput("Filled", KEY_INPUTS, false);
 		this.addInput(filled);
 
-		outlined = new BooleanInput("Outlined", KEY_INPUTS, false);
+		outlined = new BooleanProvInput("Outlined", KEY_INPUTS, false);
 		this.addInput(outlined);
 
 		lineWidth = new SampleInput("LineWidth", KEY_INPUTS, 1);
@@ -83,12 +83,12 @@ public abstract class AbstractShapeModel extends DisplayModel implements LineEnt
 
 	@Override
 	public boolean isFilled(double simTime) {
-		return filled.getValue();
+		return filled.getNextBoolean(this, simTime);
 	}
 
 	@Override
 	public boolean isOutlined(double simTime) {
-		return outlined.getValue();
+		return outlined.getNextBoolean(this, simTime);
 	}
 
 	@Override

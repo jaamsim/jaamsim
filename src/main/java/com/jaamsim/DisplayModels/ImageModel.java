@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018-2019 JaamSim Software Inc.
+ * Copyright (C) 2018-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,12 +20,12 @@ package com.jaamsim.DisplayModels;
 import java.net.URI;
 import java.util.ArrayList;
 
+import com.jaamsim.BooleanProviders.BooleanProvInput;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.OverlayImage;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.datatypes.IntegerVector;
-import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.FileInput;
 import com.jaamsim.input.Keyword;
@@ -48,11 +48,11 @@ public class ImageModel extends DisplayModel {
 
 	@Keyword(description = "Indicates the loaded image has an alpha channel (transparency information) that should be used",
 	         exampleList = {"TRUE"})
-	private final BooleanInput transparent;
+	private final BooleanProvInput transparent;
 
 	@Keyword(description = "Indicates the loaded image should use texture compression in video memory",
 	         exampleList = {"TRUE"})
-	private final BooleanInput compressedTexture;
+	private final BooleanProvInput compressedTexture;
 
 	public static final String[] VALID_FILE_EXTENSIONS = {"JPG", "PNG", "GIF", "BMP", "PCX"};
 	public static final String[] VALID_FILE_DESCRIPTIONS = {
@@ -69,10 +69,10 @@ public class ImageModel extends DisplayModel {
 		imageFile.setValidFileDescriptions(VALID_FILE_DESCRIPTIONS);
 		this.addInput( imageFile);
 
-		transparent = new BooleanInput("Transparent", KEY_INPUTS, false);
+		transparent = new BooleanProvInput("Transparent", KEY_INPUTS, false);
 		this.addInput(transparent);
 
-		compressedTexture = new BooleanInput("CompressedTexture", KEY_INPUTS, false);
+		compressedTexture = new BooleanProvInput("CompressedTexture", KEY_INPUTS, false);
 		this.addInput(compressedTexture);
 
 	}
@@ -145,8 +145,8 @@ public class ImageModel extends DisplayModel {
 			}
 
 			URI imageName = imageFile.getValue();
-			Boolean transp = transparent.getValue();
-			Boolean compressed = compressedTexture.getValue();
+			Boolean transp = transparent.getNextBoolean(ImageModel.this, simTime);
+			Boolean compressed = compressedTexture.getNextBoolean(ImageModel.this, simTime);
 
 			VisibilityInfo vi = getVisibilityInfo();
 
@@ -230,7 +230,7 @@ public class ImageModel extends DisplayModel {
 
 			boolean alignRight = imageObservee.getAlignRight();
 			boolean alignBottom = imageObservee.getAlignBottom();
-			boolean transp = transparent.getValue();
+			boolean transp = transparent.getNextBoolean(ImageModel.this, simTime);
 
 			VisibilityInfo vi = getVisibilityInfo();
 

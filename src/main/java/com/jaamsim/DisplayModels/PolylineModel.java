@@ -20,6 +20,7 @@ package com.jaamsim.DisplayModels;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.jaamsim.BooleanProviders.BooleanProvInput;
 import com.jaamsim.Graphics.Arrow;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.FillEntity;
@@ -29,7 +30,6 @@ import com.jaamsim.Graphics.PolylineInfo;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.controllers.RenderManager;
-import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Vec3dInput;
@@ -55,7 +55,7 @@ public class PolylineModel extends AbstractShapeModel implements PolylineEntity 
 	                     + "If TRUE, the closing line is displayed. "
 	                     + "If FALSE, the closing line is not displayed.",
 	         exampleList = {"TRUE", "FALSE"})
-	protected final BooleanInput closed;
+	protected final BooleanProvInput closed;
 
 	@Keyword(description = "Physical width of the polyline with units of distance.",
 	         exampleList = { "0.5 m" })
@@ -63,7 +63,7 @@ public class PolylineModel extends AbstractShapeModel implements PolylineEntity 
 
 	@Keyword(description = "If TRUE, an arrow head is displayed at the end of the polyline.",
 	         exampleList = {"TRUE", "FALSE"})
-	protected final BooleanInput showArrowHead;
+	protected final BooleanProvInput showArrowHead;
 
 	@Keyword(description = "A set of (x, y, z) numbers that define the size of the arrowhead.",
 	         exampleList = { "0.165 0.130 0.0 m" })
@@ -84,10 +84,10 @@ public class PolylineModel extends AbstractShapeModel implements PolylineEntity 
 		polylineWidth.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		this.addInput(polylineWidth);
 
-		closed = new BooleanInput("Closed", KEY_INPUTS, false);
+		closed = new BooleanProvInput("Closed", KEY_INPUTS, false);
 		this.addInput(closed);
 
-		showArrowHead = new BooleanInput("ShowArrowHead", KEY_INPUTS, false);
+		showArrowHead = new BooleanProvInput("ShowArrowHead", KEY_INPUTS, false);
 		this.addInput(showArrowHead);
 
 		arrowHeadSize = new Vec3dInput("ArrowHeadSize", KEY_INPUTS, new Vec3d(0.1d, 0.1d, 0.0d));
@@ -120,7 +120,7 @@ public class PolylineModel extends AbstractShapeModel implements PolylineEntity 
 
 	@Override
 	public boolean isClosed(double simTime) {
-		return closed.getValue();
+		return closed.getNextBoolean(this, simTime);
 	}
 
 	@Override
@@ -128,8 +128,8 @@ public class PolylineModel extends AbstractShapeModel implements PolylineEntity 
 		return polylineWidth.getNextSample(this, simTime);
 	}
 
-	public boolean getShowArrowHead() {
-		return showArrowHead.getValue();
+	public boolean isShowArrowHead(double simTime) {
+		return showArrowHead.getNextBoolean(this, simTime);
 	}
 
 	public Vec3d getArrowHeadSize() {
@@ -224,7 +224,7 @@ public class PolylineModel extends AbstractShapeModel implements PolylineEntity 
 			dirty = dirty || fillColourCache != fc;
 			dirty = dirty || closedCache != closed;
 			dirty = dirty || widthCache != width;
-			dirty = dirty || showArrowHeadCache != getShowArrowHead();
+			dirty = dirty || showArrowHeadCache != isShowArrowHead(simTime);
 			dirty = dirty || dirty_vec3d(arrowSizeCache, arrowSize);
 			dirty = dirty || !compare(globalTransCache, globalTrans);
 			dirty = dirty || !compare(viCache, vi);
@@ -237,7 +237,7 @@ public class PolylineModel extends AbstractShapeModel implements PolylineEntity 
 			fillColourCache = fc;
 			closedCache = closed;
 			widthCache = width;
-			showArrowHeadCache = getShowArrowHead();
+			showArrowHeadCache = isShowArrowHead(simTime);
 			arrowSizeCache = arrowSize;
 			globalTransCache = globalTrans;
 			viCache = vi;
