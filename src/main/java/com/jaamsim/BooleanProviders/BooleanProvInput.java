@@ -36,6 +36,10 @@ public class BooleanProvInput extends Input<BooleanProvider> {
 		this(key, cat, new BooleanProvConstant(def));
 	}
 
+	public void setDefaultValue(boolean def) {
+		setDefaultValue(new BooleanProvConstant(def));
+	}
+
 	@Override
 	public String applyConditioning(String str) {
 		if (str.equals("t") || str.equals("T") || str.equals("1"))
