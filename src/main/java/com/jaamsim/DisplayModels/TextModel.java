@@ -78,16 +78,14 @@ public class TextModel extends AbstractShapeModel implements TextEntity {
 	         exampleList = { "Bold" })
 	private final StringListInput fontStyle;
 
-	@Keyword(description = "The colour of the text.",
-	         exampleList = { "red", "skyblue", "135 206 235" })
+	@Keyword(description = "The colour of the text.")
 	private final ColourProvInput fontColor;
 
 	@Keyword(description = "If TRUE, then a drop shadow appears for the text.",
 	         exampleList = { "TRUE" })
 	private final BooleanProvInput dropShadow;
 
-	@Keyword(description = "The colour for the drop shadow",
-	         exampleList = { "red", "skyblue", "135 206 235" })
+	@Keyword(description = "The colour for the drop shadow")
 	private final ColourProvInput dropShadowColor;
 
 	@Keyword(description = "The { x, y, z } coordinates of the drop shadow's offset, expressed "

@@ -29,8 +29,7 @@ import com.jaamsim.units.DistanceUnit;
 
 public class Arrow extends DisplayEntity implements LineEntity {
 
-	@Keyword(description = "The colour of the arrow.",
-	         exampleList = {"red"})
+	@Keyword(description = "The colour of the arrow.")
 	private final ColourProvInput color;
 
 	@Keyword(description = "The width of the Arrow line segments in pixels.",

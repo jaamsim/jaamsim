@@ -50,8 +50,7 @@ public class FluidFixedFlow extends FluidFlowCalculation implements LineEntity, 
 	         exampleList = {"1"})
 	private final SampleInput widthInput;
 
-	@Keyword(description = "The colour of the pipe.",
-	         exampleList = {"red"})
+	@Keyword(description = "The colour of the pipe.")
 	private final ColourProvInput colourInput;
 
 	{

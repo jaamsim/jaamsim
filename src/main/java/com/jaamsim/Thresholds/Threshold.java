@@ -36,12 +36,10 @@ import com.jaamsim.units.DimensionlessUnit;
 
 public class Threshold extends StateEntity implements SubjectEntity {
 
-	@Keyword(description = "The colour of the threshold graphic when the threshold is open.",
-	         exampleList = { "green" })
+	@Keyword(description = "The colour of the threshold graphic when the threshold is open.")
 	private final ColourProvInput openColour;
 
-	@Keyword(description = "The colour of the threshold graphic when the threshold is closed.",
-	         exampleList = { "red" })
+	@Keyword(description = "The colour of the threshold graphic when the threshold is closed.")
 	private final ColourProvInput closedColour;
 
 	@Keyword(description = "A Boolean value.  If TRUE, the threshold is displayed when it is open.",

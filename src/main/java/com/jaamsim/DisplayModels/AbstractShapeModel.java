@@ -39,8 +39,7 @@ public abstract class AbstractShapeModel extends DisplayModel implements LineEnt
 	         exampleList = {"FALSE"})
 	protected final BooleanProvInput filled;
 
-	@Keyword(description = "The colour with which the object is filled.",
-	         exampleList = {"red"})
+	@Keyword(description = "The colour with which the object is filled.")
 	protected final ColourProvInput fillColour;
 
 	@Keyword(description = "Determines whether or not the object is outlined. "
@@ -49,8 +48,7 @@ public abstract class AbstractShapeModel extends DisplayModel implements LineEnt
 	         exampleList = {"FALSE"})
 	protected final BooleanProvInput outlined;
 
-	@Keyword(description = "The colour with which the object is outlined.",
-	         exampleList = {"red"})
+	@Keyword(description = "The colour with which the object is outlined.")
 	protected final ColourProvInput lineColour;
 
 	@Keyword(description = "Width of the outline in pixels.",

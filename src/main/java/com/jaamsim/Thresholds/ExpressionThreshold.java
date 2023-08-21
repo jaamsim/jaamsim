@@ -65,13 +65,11 @@ public class ExpressionThreshold extends Threshold implements ObserverEntity {
 	private final BooleanProvInput initialOpenValue;
 
 	@Keyword(description = "The colour of the ExpressionThreshold graphic when the threshold "
-	                     + "condition is open, but the gate is still closed.",
-	         exampleList = { "yellow" })
+	                     + "condition is open, but the gate is still closed.")
 	private final ColourProvInput pendingOpenColour;
 
 	@Keyword(description = "The colour of the ExpressionThreshold graphic when the threshold "
-	                     + "condition is closed, but the gate is still open.",
-	         exampleList = { "magenta" })
+	                     + "condition is closed, but the gate is still open.")
 	private final ColourProvInput pendingClosedColour;
 
 	@Keyword(description = "A Boolean value. If TRUE, the ExpressionThreshold displays the "

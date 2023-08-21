@@ -79,8 +79,7 @@ public class VideoRecorderEntity extends DisplayEntity {
 	@Keyword(description = "The background color for the captured frames.\n"
 	                     + "Only the 3D view portion of the specified windows will be captured. "
 	                     + "The remainder of the frame, such as the Control Panel or any gaps "
-	                     + "between the view windows, will be replaced by the background color.",
-	         exampleList = {"skyblue", "135 206 235"})
+	                     + "between the view windows, will be replaced by the background color.")
 	private final ColourProvInput videoBGColor;
 
 	@Keyword(description = "A label to append to the run name when the AVI file is saved.\n"

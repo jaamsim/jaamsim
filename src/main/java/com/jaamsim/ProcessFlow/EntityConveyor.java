@@ -90,8 +90,7 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 	         exampleList = {"1"})
 	private final SampleInput widthInput;
 
-	@Keyword(description = "The colour of the conveyor.",
-	         exampleList = {"red"})
+	@Keyword(description = "The colour of the conveyor.")
 	private final ColourProvInput colorInput;
 
 	private final ArrayList<ConveyorEntry> entryList;  // List of the entities being conveyed

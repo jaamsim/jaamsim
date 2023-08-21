@@ -76,8 +76,7 @@ public class EntityDelay extends LinkedComponent implements LineEntity {
 	         exampleList = {"1"})
 	private final SampleInput widthInput;
 
-	@Keyword(description = "The colour of the line representing the EntityDelay.",
-	         exampleList = {"red"})
+	@Keyword(description = "The colour of the line representing the EntityDelay.")
 	private final ColourProvInput colorInput;
 
 	private long exitTicks;  // ticks at which the previous entity will leave the path

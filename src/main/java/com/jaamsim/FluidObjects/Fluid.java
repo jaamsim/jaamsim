@@ -42,8 +42,7 @@ public class Fluid extends DisplayEntity {
 	         exampleList = {"0.001002 Pa-s"})
 	private final SampleInput viscosityInput;
 
-	@Keyword(description = "The colour used to represent the fluid.",
-	         exampleList = {"red"})
+	@Keyword(description = "The colour used to represent the fluid.")
 	private final ColourProvInput colourInput;
 
 	@Keyword(description = "The acceleration of gravity to be used in the fluid flow "

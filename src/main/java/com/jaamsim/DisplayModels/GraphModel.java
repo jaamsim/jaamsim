@@ -127,16 +127,13 @@ public class GraphModel extends DisplayModel {
 	         exampleList = {"TextModelDefault"})
 	protected final EntityInput<TextModel> labelTextModel;
 
-	@Keyword(description = "The color of the graph background.",
-	         exampleList = {"floralwhite"})
+	@Keyword(description = "The color of the graph background.")
 	private final ColourProvInput graphColor;
 
-	@Keyword(description = "The color for the outer pane background.",
-	         exampleList = {"floralwhite"})
+	@Keyword(description = "The color for the outer pane background.")
 	private final ColourProvInput backgroundColor;
 
-	@Keyword(description = "The color of the graph border.",
-	         exampleList = {"red"})
+	@Keyword(description = "The color of the graph border.")
 	private final ColourProvInput borderColor;
 
 	private static final int maxTicks = 100;

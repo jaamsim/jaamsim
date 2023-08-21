@@ -32,12 +32,10 @@ public class BarGauge extends DisplayEntity {
 	         exampleList = {"0.5", "'0.5 + 0.5*sin(this.SimTime/10[s])'"})
 	private final SampleInput dataSource;
 
-	@Keyword(description = "Colour of the bar.",
-	         exampleList = {"red"})
+	@Keyword(description = "Colour of the bar.")
 	private final ColourProvInput colour;
 
-	@Keyword(description = "Colour of the gauge's body.",
-	         exampleList = {"white"})
+	@Keyword(description = "Colour of the gauge's body.")
 	private final ColourProvInput backgroundColour;
 
 	{

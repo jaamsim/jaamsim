@@ -43,12 +43,10 @@ public class ToggleButton extends GameEntity implements SubjectEntity, LineEntit
 	         exampleList = { "TRUE" })
 	private final BooleanProvInput initialValue;
 
-	@Keyword(description = "The colour of the button when pressed.",
-	         exampleList = { "yellow" })
+	@Keyword(description = "The colour of the button when pressed.")
 	private final ColourProvInput pressedColour;
 
-	@Keyword(description = "The colour of the button when not pressed.",
-	         exampleList = { "magenta" })
+	@Keyword(description = "The colour of the button when not pressed.")
 	private final ColourProvInput unpressedColour;
 
 	@Keyword(description = "Determines whether or not the object is outlined. "
@@ -57,8 +55,7 @@ public class ToggleButton extends GameEntity implements SubjectEntity, LineEntit
 	         exampleList = {"FALSE"})
 	protected final BooleanProvInput outlined;
 
-	@Keyword(description = "The colour with which the object is outlined.",
-	         exampleList = {"red"})
+	@Keyword(description = "The colour with which the object is outlined.")
 	protected final ColourProvInput lineColour;
 
 	@Keyword(description = "Width of the outline in pixels.",

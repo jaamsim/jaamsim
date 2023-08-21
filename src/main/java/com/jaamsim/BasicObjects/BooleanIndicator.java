@@ -34,12 +34,10 @@ public class BooleanIndicator extends DisplayEntity {
 	         exampleList = {"'[Queue1].QueueLength > 2'", "[Server1].Working"})
 	private final SampleInput expInput;
 
-	@Keyword(description = "The colour of the indicator when the DataSource expression is TRUE.",
-	         exampleList = {"green"})
+	@Keyword(description = "The colour of the indicator when the DataSource expression is TRUE.")
 	private final ColourProvInput trueColor;
 
-	@Keyword(description = "The colour of the indicator when the DataSource expression is FALSE.",
-	         exampleList = {"red"})
+	@Keyword(description = "The colour of the indicator when the DataSource expression is FALSE.")
 	private final ColourProvInput falseColor;
 
 	@Keyword(description = "The string returned by the Text output when the DataSource expression "

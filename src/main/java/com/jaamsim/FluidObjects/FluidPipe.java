@@ -65,8 +65,7 @@ public class FluidPipe extends FluidComponent implements LineEntity, FillEntity,
 	         exampleList = {"1"})
 	private final SampleInput widthInput;
 
-	@Keyword(description = "The colour of the pipe.",
-	         exampleList = {"red"})
+	@Keyword(description = "The colour of the pipe.")
 	private final ColourProvInput colourInput;
 
 	private double darcyFrictionFactor;  // The Darcy Friction Factor for the pipe flow.
