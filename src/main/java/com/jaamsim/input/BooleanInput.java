@@ -66,6 +66,11 @@ public class BooleanInput extends Input<Boolean> {
 	}
 
 	@Override
+	public String[] getExamples() {
+		return Input.EXAMPLE_BOOLEAN;
+	}
+
+	@Override
 	public ArrayList<String> getValidOptions(Entity ent) {
 		return validOptions;
 	}
