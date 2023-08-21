@@ -20,6 +20,7 @@ package com.jaamsim.Samples;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import com.jaamsim.BooleanProviders.BooleanProvInput;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.EntityTarget;
@@ -28,7 +29,6 @@ import com.jaamsim.basicsim.SubjectEntity;
 import com.jaamsim.basicsim.SubjectEntityDelegate;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.events.ProcessTarget;
-import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputCallback;
 import com.jaamsim.input.InputErrorException;
@@ -47,7 +47,7 @@ public class TimeSeries extends DisplayEntity implements TimeSeriesProvider, Sub
 	                     + "first time stamp. This offset sets the simulation time for the first "
 	                     + "time stamp to zero seconds.",
 	         exampleList = {"TRUE"})
-	private final BooleanInput offsetToFirst;
+	private final BooleanProvInput offsetToFirst;
 
 	@Keyword(description = "Increment applied to the event times entered to the 'Value' input. "
 	                     + "For example, if the OffsetTime is set to 1.0 h and an event time is "
@@ -84,7 +84,7 @@ public class TimeSeries extends DisplayEntity implements TimeSeriesProvider, Sub
 	private final SubjectEntityDelegate subject = new SubjectEntityDelegate(this);
 
 	{
-		offsetToFirst = new BooleanInput("OffsetToFirst", KEY_INPUTS, true);
+		offsetToFirst = new BooleanProvInput("OffsetToFirst", KEY_INPUTS, true);
 		this.addInput(offsetToFirst);
 
 		offsetTime = new SampleInput("OffsetTime", KEY_INPUTS, 0.0d);
@@ -163,7 +163,7 @@ public class TimeSeries extends DisplayEntity implements TimeSeriesProvider, Sub
 	}
 
 	public boolean isOffsetToFirst() {
-		return offsetToFirst.getValue();
+		return offsetToFirst.getNextBoolean(this, 0.0d);
 	}
 
 	public boolean isCycleTimeInfinite() {
