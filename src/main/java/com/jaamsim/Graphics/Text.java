@@ -86,8 +86,7 @@ public class Text extends TextBasics {
 	@Keyword(description = "If TRUE, then the size of the background rectangle is adjusted "
 	                     + "whenever the displayed text or its font is changed. "
 	                     + "Resizing is performed only when the DataSource input has been left "
-	                     + "blank.",
-	         exampleList = { "TRUE" })
+	                     + "blank.")
 	protected final BooleanProvInput autoSize;
 
 	protected String renderText = "";

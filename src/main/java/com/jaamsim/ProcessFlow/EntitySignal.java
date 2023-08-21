@@ -29,8 +29,7 @@ public class EntitySignal extends LinkedComponent {
 	         exampleList = {"SignalThreshold1"})
 	private final EntityInput<SignalThreshold> targetSignalThreshold;
 
-	@Keyword(description = "The new state for the target SignalThreshold: TRUE = Open, FALSE = Closed.",
-	         exampleList = {"FALSE"})
+	@Keyword(description = "The new state for the target SignalThreshold: TRUE = Open, FALSE = Closed.")
 	private final BooleanProvInput newState;
 
 	{

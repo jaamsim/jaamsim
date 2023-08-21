@@ -52,8 +52,7 @@ public class EntityDelay extends LinkedComponent implements LineEntity {
 
 	@Keyword(description = "If TRUE, an entity can pass a second entity that started ahead of it. "
 	                     + "If FALSE, the entity's duration is increased sufficiently for it to "
-	                     + "arrive no earlier than the previous entity.",
-	         exampleList = {"TRUE"})
+	                     + "arrive no earlier than the previous entity.")
 	private final BooleanProvInput allowOvertaking;
 
 	@Keyword(description = "The minimum time between the previous entity leaving the path and "
@@ -63,13 +62,11 @@ public class EntityDelay extends LinkedComponent implements LineEntity {
 	private final SampleInput minSeparation;
 
 	@Keyword(description = "If TRUE, an entity is moved along the specified path to "
-	                     + "indicate its progression through the delay activity.",
-	         exampleList = {"TRUE"})
+	                     + "indicate its progression through the delay activity.")
 	private final BooleanProvInput animation;
 
 	@Keyword(description = "If TRUE, the entities are rotated to match the direction of "
-	                     + "the path.",
-	         exampleList = {"TRUE"})
+	                     + "the path.")
 	private final BooleanProvInput rotateEntities;
 
 	@Keyword(description = "The width in pixels of the line representing the EntityDelay.",

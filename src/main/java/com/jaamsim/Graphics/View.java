@@ -76,17 +76,14 @@ public class View extends Entity {
 	         exampleList = {"'An Example Title'"})
 	private final StringInput titleBar;
 
-	@Keyword(description = "If TRUE, the view window is displayed on screen.",
-	         exampleList = {"FALSE"})
+	@Keyword(description = "If TRUE, the view window is displayed on screen.")
 	private final BooleanProvInput showWindow;
 
-	@Keyword(description = "A Boolean indicating whether the view can be panned or rotated.",
-	         exampleList = {"FALSE"})
+	@Keyword(description = "A Boolean indicating whether the view can be panned or rotated.")
 	private final BooleanProvInput movable;
 
 	@Keyword(description = "A Boolean indicating whether the view is locked to a downward view "
-	                     + "(the 2D default).",
-	         exampleList = {"FALSE"})
+	                     + "(the 2D default).")
 	private final BooleanProvInput lock2D;
 
 	@Keyword(description = "The (optional) entity for this view to follow. Setting this input "

@@ -48,8 +48,7 @@ public abstract class StateEntity extends DisplayEntity implements StateUser {
 	         exampleList = {"{ idle DisplayEntity1 } { working DisplayEntity2 }"})
 	protected final StringKeyInput<DisplayEntity> stateGraphics;
 
-	@Keyword(description = "If TRUE, a log file (.trc) will be printed with the time of every state change during the run.",
-	         exampleList = {"TRUE"})
+	@Keyword(description = "If TRUE, a log file (.trc) will be printed with the time of every state change during the run.")
 	private final BooleanProvInput traceState;
 
 	@Keyword(description = "A list of states for which the entity is considered working.",

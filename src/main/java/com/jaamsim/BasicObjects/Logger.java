@@ -58,12 +58,10 @@ public abstract class Logger extends DisplayEntity {
 	                     + "outputs for all the simulation runs. "
 	                     + "This input is ignored if multiple runs are to be executed and the "
 	                     + "NumberOfThreads input is greater than one, in which case individual "
-	                     + ".log files will be created.",
-	         exampleList = { "FALSE" })
+	                     + ".log files will be created.")
 	private final BooleanProvInput separateFiles;
 
-	@Keyword(description = "If TRUE, log entries are recorded during the initialization period.",
-	         exampleList = { "FALSE" })
+	@Keyword(description = "If TRUE, log entries are recorded during the initialization period.")
 	private final BooleanProvInput includeInitialization;
 
 	@Keyword(description = "The time at which the log starts recording entries.",

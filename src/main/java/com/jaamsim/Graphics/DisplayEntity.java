@@ -123,13 +123,11 @@ public class DisplayEntity extends Entity {
 	         exampleList = {"ColladaModel1", "ColladaModel1 ColladaModel2"})
 	protected final EntityListInput<DisplayModel> displayModelListInput;
 
-	@Keyword(description = "If TRUE, the object is displayed in the View windows.",
-	         exampleList = {"FALSE"})
+	@Keyword(description = "If TRUE, the object is displayed in the View windows.")
 	private final BooleanProvInput showInput;
 
 	@Keyword(description = "If TRUE, the object will respond to mouse clicks and can be "
-	                     + "positioned by dragging with the mouse.",
-	         exampleList = {"FALSE"})
+	                     + "positioned by dragging with the mouse.")
 	private final BooleanProvInput movable;
 
 	@Keyword(description = "The view windows on which this entity will be visible.",

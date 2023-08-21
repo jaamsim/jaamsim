@@ -42,12 +42,10 @@ public class Threshold extends StateEntity implements SubjectEntity {
 	@Keyword(description = "The colour of the threshold graphic when the threshold is closed.")
 	private final ColourProvInput closedColour;
 
-	@Keyword(description = "A Boolean value.  If TRUE, the threshold is displayed when it is open.",
-	         exampleList = { "FALSE" })
+	@Keyword(description = "A Boolean value.  If TRUE, the threshold is displayed when it is open.")
 	private final BooleanProvInput showWhenOpen;
 
-	@Keyword(description = "A Boolean value.  If TRUE, the threshold is displayed when it is closed.",
-	         exampleList = { "FALSE" })
+	@Keyword(description = "A Boolean value.  If TRUE, the threshold is displayed when it is closed.")
 	private final BooleanProvInput showWhenClosed;
 
 	private final ArrayList<ThresholdUser> userList;

@@ -46,8 +46,7 @@ public abstract class AbstractPack extends LinkedService {
 	private final SampleInput numberToStart;
 
 	@Keyword(description = "If TRUE, the EntityContainer will be held in its queue until "
-	                     + "sufficient entities are available to start packing.",
-	         exampleList = {"TRUE"})
+	                     + "sufficient entities are available to start packing.")
 	private final BooleanProvInput waitForEntities;
 
 	protected EntContainer container;	// the generated EntityContainer

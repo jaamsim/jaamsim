@@ -39,8 +39,7 @@ import com.jaamsim.math.Color4d;
 public class ToggleButton extends GameEntity implements SubjectEntity, LineEntity, FillEntity {
 
 	@Keyword(description = "The initial state for the button: "
-	                     + "TRUE = button pressed, FALSE = button unpressed.",
-	         exampleList = { "TRUE" })
+	                     + "TRUE = button pressed, FALSE = button unpressed.")
 	private final BooleanProvInput initialValue;
 
 	@Keyword(description = "The colour of the button when pressed.")
@@ -51,8 +50,7 @@ public class ToggleButton extends GameEntity implements SubjectEntity, LineEntit
 
 	@Keyword(description = "Determines whether or not the object is outlined. "
 	                     + "If TRUE, it is outlined with a specified colour. "
-	                     + "If FALSE, it is drawn without an outline.",
-	         exampleList = {"FALSE"})
+	                     + "If FALSE, it is drawn without an outline.")
 	protected final BooleanProvInput outlined;
 
 	@Keyword(description = "The colour with which the object is outlined.")

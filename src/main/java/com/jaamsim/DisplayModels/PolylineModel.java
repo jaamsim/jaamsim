@@ -53,16 +53,14 @@ public class PolylineModel extends AbstractShapeModel implements PolylineEntity 
 	@Keyword(description = "Determines whether or not to show a line between the last point of "
 	                     + "the polyline and its first point. "
 	                     + "If TRUE, the closing line is displayed. "
-	                     + "If FALSE, the closing line is not displayed.",
-	         exampleList = {"TRUE", "FALSE"})
+	                     + "If FALSE, the closing line is not displayed.")
 	protected final BooleanProvInput closed;
 
 	@Keyword(description = "Physical width of the polyline with units of distance.",
 	         exampleList = { "0.5 m" })
 	protected final SampleInput polylineWidth;
 
-	@Keyword(description = "If TRUE, an arrow head is displayed at the end of the polyline.",
-	         exampleList = {"TRUE", "FALSE"})
+	@Keyword(description = "If TRUE, an arrow head is displayed at the end of the polyline.")
 	protected final BooleanProvInput showArrowHead;
 
 	@Keyword(description = "A set of (x, y, z) numbers that define the size of the arrowhead.",

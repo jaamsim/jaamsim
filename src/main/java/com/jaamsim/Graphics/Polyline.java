@@ -33,8 +33,7 @@ public class Polyline extends AbstractShape implements PolylineEntity  {
 	@Keyword(description = "Determines whether or not to show a line between the last point of "
 	                     + "the polyline and its first point. "
 	                     + "If TRUE, the closing line is displayed. "
-	                     + "If FALSE, the closing line is not displayed.",
-	         exampleList = {"TRUE", "FALSE"})
+	                     + "If FALSE, the closing line is not displayed.")
 	protected final BooleanProvInput closed;
 
 	@Keyword(description = "Physical width of the polyline with units of distance.",

@@ -46,12 +46,10 @@ public class ImageModel extends DisplayModel {
 	         exampleList = {"../images/CompanyIcon.png"})
 	private final FileInput imageFile;
 
-	@Keyword(description = "Indicates the loaded image has an alpha channel (transparency information) that should be used",
-	         exampleList = {"TRUE"})
+	@Keyword(description = "Indicates the loaded image has an alpha channel (transparency information) that should be used")
 	private final BooleanProvInput transparent;
 
-	@Keyword(description = "Indicates the loaded image should use texture compression in video memory",
-	         exampleList = {"TRUE"})
+	@Keyword(description = "Indicates the loaded image should use texture compression in video memory")
 	private final BooleanProvInput compressedTexture;
 
 	public static final String[] VALID_FILE_EXTENSIONS = {"JPG", "PNG", "GIF", "BMP", "PCX"};

@@ -29,8 +29,7 @@ import com.jaamsim.input.Keyword;
 public class SignalThreshold extends Threshold {
 
 	@Keyword(description = "The state for the SignalThreshold at the start of "
-			+ "the simulation run: TRUE = Open, FALSE = Closed.",
-	         exampleList = {"FALSE"})
+			+ "the simulation run: TRUE = Open, FALSE = Closed.")
 	private final BooleanProvInput initState;
 
 	{

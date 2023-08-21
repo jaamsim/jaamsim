@@ -68,8 +68,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 	private final SampleInput downtimeDurationDistribution;
 
 	@Keyword(description = "If TRUE, the downtime event can occur in parallel with another "
-	                     + "downtime event.",
-	         exampleList = {"FALSE"})
+	                     + "downtime event.")
 	protected final BooleanProvInput concurrent;
 
 	@Keyword(description = "The maximum number of downtime activities that are allowed to become "

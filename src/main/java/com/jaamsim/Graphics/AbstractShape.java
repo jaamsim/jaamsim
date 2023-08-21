@@ -32,8 +32,7 @@ public abstract class AbstractShape extends DisplayEntity implements LineEntity,
 
 	@Keyword(description = "Determines whether or not the object is filled. "
 	                     + "If TRUE, it is filled with a specified colour. "
-	                     + "If FALSE, it is hollow.",
-	         exampleList = {"FALSE"})
+	                     + "If FALSE, it is hollow.")
 	protected final BooleanProvInput filled;
 
 	@Keyword(description = "The colour with which the object is filled.")
@@ -41,8 +40,7 @@ public abstract class AbstractShape extends DisplayEntity implements LineEntity,
 
 	@Keyword(description = "Determines whether or not the object is outlined. "
 	                     + "If TRUE, it is outlined with a specified colour. "
-	                     + "If FALSE, it is drawn without an outline.",
-	         exampleList = {"FALSE"})
+	                     + "If FALSE, it is drawn without an outline.")
 	protected final BooleanProvInput outlined;
 
 	@Keyword(description = "The colour with which the object is outlined.")

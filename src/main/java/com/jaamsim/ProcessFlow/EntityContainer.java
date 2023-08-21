@@ -62,14 +62,12 @@ public class EntityContainer extends SimEntity implements EntContainer {
 	@Keyword(description = "Determines the order in which entities are placed in the "
 	                     + "EntityContainer (FIFO or LIFO):\n"
 	                     + "TRUE = first in first out (FIFO) order (the default setting),\n"
-	                     + "FALSE = last in first out (LIFO) order.",
-	         exampleList = {"FALSE"})
+	                     + "FALSE = last in first out (LIFO) order.")
 	private final BooleanProvInput fifo;
 
 	@Keyword(description = "If TRUE, the states for the entities contained by the EntityContainer "
 	                     + "are set to the same state as the EntityContainer. "
-	                     + "If FALSE, the entities retain their original state.",
-	         exampleList = {"FALSE"})
+	                     + "If FALSE, the entities retain their original state.")
 	private final BooleanProvInput setEntityState;
 
 	@Keyword(description = "The position of the first entity in the EntityContainer relative to "
@@ -89,8 +87,7 @@ public class EntityContainer extends SimEntity implements EntContainer {
 			exampleList = {"4"})
 	protected final SampleInput maxRows;
 
-	@Keyword(description = "If TRUE, the entities in the EntityContainer are displayed.",
-			exampleList = {"FALSE"})
+	@Keyword(description = "If TRUE, the entities in the EntityContainer are displayed.")
 	protected final BooleanProvInput showEntities;
 
 	private EntContainerDelegate container;

@@ -37,8 +37,7 @@ import com.jaamsim.units.DistanceUnit;
 
 public abstract class CompoundEntity extends LinkedComponent {
 
-	@Keyword(description = "Determines whether to display the sub-model's components.",
-	         exampleList = {"FALSE"})
+	@Keyword(description = "Determines whether to display the sub-model's components.")
 	protected final BooleanProvInput showComponents;
 
 	@Keyword(description = "The position of the entities being processed relative to the "

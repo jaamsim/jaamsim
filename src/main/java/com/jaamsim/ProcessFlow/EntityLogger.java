@@ -40,8 +40,7 @@ public class EntityLogger extends Logger implements Linkable, StateEntityListene
 	protected final InterfaceEntityInput<Linkable> nextComponent;
 
 	@Keyword(description = "If TRUE, an entry will made in the log file every time one of the "
-	                     + "received entities changes state.",
-	         exampleList = {"TRUE"})
+	                     + "received entities changes state.")
 	private final BooleanProvInput traceEntityStates;
 
 	{

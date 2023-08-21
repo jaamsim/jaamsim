@@ -45,8 +45,7 @@ public class TimeSeries extends DisplayEntity implements TimeSeriesProvider, Sub
 	@Keyword(description = "If TRUE, the simulation times corresponding to the time stamps "
 	                     + "entered to the 'Value' keyword are calculated relative to the "
 	                     + "first time stamp. This offset sets the simulation time for the first "
-	                     + "time stamp to zero seconds.",
-	         exampleList = {"TRUE"})
+	                     + "time stamp to zero seconds.")
 	private final BooleanProvInput offsetToFirst;
 
 	@Keyword(description = "Increment applied to the event times entered to the 'Value' input. "

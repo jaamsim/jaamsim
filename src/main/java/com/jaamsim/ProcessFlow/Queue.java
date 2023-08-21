@@ -69,8 +69,7 @@ public class Queue extends LinkedComponent {
 	@Keyword(description = "Determines the order in which entities are placed in the queue (FIFO "
 	                     + "or LIFO):\n"
 	                     + "TRUE = first in first out (FIFO) order (the default setting),\n"
-	                     + "FALSE = last in first out (LIFO) order.",
-	         exampleList = {"FALSE"})
+	                     + "FALSE = last in first out (LIFO) order.")
 	private final BooleanProvInput fifo;
 
 	@Keyword(description = "The time an entity will wait in the queue before deciding whether or "
@@ -110,8 +109,7 @@ public class Queue extends LinkedComponent {
 			exampleList = {"4"})
 	protected final SampleInput maxRows;
 
-	@Keyword(description = "If TRUE, the objects in the Queue are displayed.",
-			exampleList = {"FALSE"})
+	@Keyword(description = "If TRUE, the objects in the Queue are displayed.")
 	protected final BooleanProvInput showEntities;
 
 	private final EntStorage storage;  // stores the entities in the queue

@@ -43,8 +43,7 @@ public abstract class AbstractResourceProvider extends DisplayEntity implements 
 	                     + "priority or shorter waiting time will NOT be allowed to seize the "
 	                     + "resource. If FALSE, the entities will be tested in the same order of "
 	                     + "priority and waiting time, but the first entity that is able to seize "
-	                     + "the resource will be allowed to do so.",
-	         exampleList = {"TRUE"})
+	                     + "the resource will be allowed to do so.")
 	private final BooleanProvInput strictOrder;
 
 	private ArrayList<ResourceUser> userList;  // objects that can use this provider's units

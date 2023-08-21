@@ -40,12 +40,10 @@ public abstract class OverlayEntity extends DisplayEntity {
 	         exampleList = {"20 20"})
 	private final IntegerListInput screenPosition;
 
-	@Keyword(description = "If this overlay should be aligned from the right edge of the window (instead of the left)",
-	         exampleList = {"TRUE"})
+	@Keyword(description = "If this overlay should be aligned from the right edge of the window (instead of the left)")
 	private final BooleanProvInput alignRight;
 
-	@Keyword(description = "If this overlay should be aligned from the bottom edge of the window (instead of the top)",
-	         exampleList = {"TRUE"})
+	@Keyword(description = "If this overlay should be aligned from the bottom edge of the window (instead of the top)")
 	private final BooleanProvInput alignBottom;
 
 	{

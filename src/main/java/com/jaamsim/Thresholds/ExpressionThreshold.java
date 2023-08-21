@@ -60,8 +60,7 @@ public class ExpressionThreshold extends Threshold implements ObserverEntity {
 	                     + "This input is only relevant when the CloseCondition input is used "
 	                     + "and both the OpenCondition and CloseCondition are FALSE at the "
 	                     + "start of the simulation run. Otherwise, the initial state is "
-	                     + "determined explicitly by the OpenCondition and CloseCondition.",
-	         exampleList = { "TRUE" })
+	                     + "determined explicitly by the OpenCondition and CloseCondition.")
 	private final BooleanProvInput initialOpenValue;
 
 	@Keyword(description = "The colour of the ExpressionThreshold graphic when the threshold "
@@ -73,8 +72,7 @@ public class ExpressionThreshold extends Threshold implements ObserverEntity {
 	private final ColourProvInput pendingClosedColour;
 
 	@Keyword(description = "A Boolean value. If TRUE, the ExpressionThreshold displays the "
-	                     + "pending open and pending closed states.",
-	         exampleList = { "FALSE" })
+	                     + "pending open and pending closed states.")
 	private final BooleanProvInput showPendingStates;
 
 	@Keyword(description = "An optional list of objects to monitor.\n\n"
@@ -98,8 +96,7 @@ public class ExpressionThreshold extends Threshold implements ObserverEntity {
 	                     + "When set to TRUE, the ExpressionThreshold uses both the normal logic "
 	                     + "and the WatchList logic to set its state. "
 	                     + "An error message is generated if the threshold changes state without "
-	                     + "being triggered by a WatchList object.",
-	         exampleList = { "TRUE" })
+	                     + "being triggered by a WatchList object.")
 	private final BooleanProvInput verifyWatchList;
 
 	private boolean lastOpenValue; // state of the threshold that was calculated on-demand

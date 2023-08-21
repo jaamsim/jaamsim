@@ -61,8 +61,7 @@ public abstract class TextBasics extends AbstractShape implements TextEntity, Ed
 	@Keyword(description = "The colour of the text.")
 	private final ColourProvInput fontColor;
 
-	@Keyword(description = "If TRUE, then a drop shadow appears for the text.",
-	         exampleList = { "TRUE" })
+	@Keyword(description = "If TRUE, then a drop shadow appears for the text.")
 	private final BooleanProvInput dropShadow;
 
 	@Keyword(description = "The colour for the drop shadow.")

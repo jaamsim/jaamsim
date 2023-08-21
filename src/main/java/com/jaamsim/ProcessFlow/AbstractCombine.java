@@ -55,8 +55,7 @@ public abstract class AbstractCombine extends LinkedService {
 	                     + "value. "
 	                     + "The match value for an entity is determined by the Match keyword for "
 	                     + "its queue. "
-	                     + "The value is calculated when the entity first arrives at its queue.",
-	         exampleList = {"TRUE"})
+	                     + "The value is calculated when the entity first arrives at its queue.")
 	private final BooleanProvInput matchRequired;
 
 	@Keyword(description = "Determines which match value to use when several values have the "
@@ -64,8 +63,7 @@ public abstract class AbstractCombine extends LinkedService {
 	                     + "If FALSE, the entity with the earliest arrival time in any of the "
 	                     + "queues determines the match value. "
 	                     + "If TRUE, the entity with the earliest arrival time in the first "
-	                     + "queue determines the match value.",
-	         exampleList = {"TRUE"})
+	                     + "queue determines the match value.")
 	private final BooleanProvInput firstQueue;
 
 	private final ArrayList<DisplayEntity> consumedEntityList = new ArrayList<>();

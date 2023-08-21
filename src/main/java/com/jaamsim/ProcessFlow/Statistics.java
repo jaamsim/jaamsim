@@ -65,13 +65,11 @@ public class Statistics extends LinkedComponent {
 	                     + "statistics generation. "
 	                     + "The statistics for each state are returned by the outputs: "
 	                     + "'EntityTimeMinimum', 'EntityTimeMaximum', 'EntityTimeAverage', and "
-	                     + "'EntityTimeStandardDeviation'.",
-	         exampleList = {"TRUE"})
+	                     + "'EntityTimeStandardDeviation'.")
 	private final BooleanProvInput recordEntityStateTimes;
 
 	@Keyword(description = "If TRUE, the state times for received entities are set to zero on "
-	                     + "departure.",
-	         exampleList = {"TRUE"})
+	                     + "departure.")
 	private final BooleanProvInput resetEntityStateTimes;
 
 	private final SampleStatistics sampStats = new SampleStatistics();

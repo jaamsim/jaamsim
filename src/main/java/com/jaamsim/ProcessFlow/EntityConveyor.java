@@ -68,8 +68,7 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 	                     + "If accumulating, the conveyor will continue running until all the "
 	                     + "entities are bunched together at the end. "
 	                     + "If non-accumulating, the conveyor will stop when the first entity "
-	                     + "reaches the end and cannot exit.",
-	         exampleList = {"TRUE"})
+	                     + "reaches the end and cannot exit.")
 	private final BooleanProvInput accumulating;
 
 	@Keyword(description = "Maximum number of objects that can be moved by the conveyor at one "
@@ -82,8 +81,7 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 	protected final SampleInput maxValidNumber;
 
 	@Keyword(description = "If TRUE, the entities are rotated to match the direction of "
-	                     + "the path.",
-	         exampleList = {"TRUE"})
+	                     + "the path.")
 	private final BooleanProvInput rotateEntities;
 
 	@Keyword(description = "The width of the conveyor in pixels.",

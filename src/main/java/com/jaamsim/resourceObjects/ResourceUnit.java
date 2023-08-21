@@ -65,8 +65,7 @@ public class ResourceUnit extends StateUserEntity implements Seizable, ResourceP
 	private final ExpressionInput assignmentPriority;
 
 	@Keyword(description = "If TRUE, the ResourceUnit will move next to the entity that has "
-	                     + "seized it, and will follow that entity until it is released.",
-	         exampleList = {"TRUE"})
+	                     + "seized it, and will follow that entity until it is released.")
 	private final BooleanProvInput followAssignment;
 
 	@Keyword(description = "The position of the ResourceUnit relative to the entity that has seized it.",

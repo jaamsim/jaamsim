@@ -26,8 +26,7 @@ import com.jaamsim.input.Keyword;
 public class Combine extends AbstractCombine {
 
 	@Keyword(description = "If TRUE, all the matching entities are passed to the next component.\n"
-	                     + "If FALSE, only the entity in the first queue is passed on.",
-	         exampleList = {"TRUE"})
+	                     + "If FALSE, only the entity in the first queue is passed on.")
 	private final BooleanProvInput retainAll;
 
 	private ArrayList<DisplayEntity> processedEntityList;  // entities being processed

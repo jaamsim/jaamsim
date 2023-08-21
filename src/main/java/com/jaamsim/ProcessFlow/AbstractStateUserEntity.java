@@ -30,8 +30,7 @@ public abstract class AbstractStateUserEntity extends StateEntity {
 
 	@Keyword(description = "If TRUE, the object's state will be recalculated at each event time "
 	                     + "to verify that it has been set correctly by the program. "
-	                     + "An error message will be generated if the state is not correct.",
-	         exampleList = {"TRUE"})
+	                     + "An error message will be generated if the state is not correct.")
 	private final BooleanProvInput verifyState;
 
 	{

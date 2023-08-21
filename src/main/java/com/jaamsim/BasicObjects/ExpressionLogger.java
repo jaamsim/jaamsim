@@ -108,8 +108,7 @@ public class ExpressionLogger extends Logger implements StateEntityListener, Obs
 	                     + "When set to TRUE, the ExpressionThreshold uses both the normal logic "
 	                     + "and the WatchList logic to test the ValueTraceList expressions. "
 	                     + "An error message is generated if a ValueTraceList expression changes "
-	                     + "its value without being triggered by a WatchList object.",
-	         exampleList = { "TRUE" })
+	                     + "its value without being triggered by a WatchList object.")
 	private final BooleanProvInput verifyWatchList;
 
 	@Keyword(description = "A logical condition that determines whether to record a log entry "
