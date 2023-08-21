@@ -61,6 +61,11 @@ public class BooleanProvInput extends Input<BooleanProvider> {
 	}
 
 	@Override
+	public String[] getExamples() {
+		return Input.EXAMPLE_BOOLEAN_PROV;
+	}
+
+	@Override
 	public ArrayList<String> getValidOptions(Entity ent) {
 		return new ArrayList<>(BooleanInput.validOptions);
 	}

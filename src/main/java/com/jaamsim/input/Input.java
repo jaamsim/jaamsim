@@ -111,6 +111,7 @@ public abstract class Input<T> {
 	protected static final String VALID_ENTITY_PROV_TYPE = "Accepts the name of an entity of type %s or an expression that returns such an entity.";
 	protected static final String VALID_BOOLEAN_PROV = "Accepts the text TRUE or FALSE or an expression that returns a dimensionless number (non-zero indicates TRUE, zero indicates FALSE). "
 	                                                 + "Inputs of T, t, and 1 are interpreted as TRUE, while F, f, and 0 are interpreted as FALSE.";
+	protected static final String[] EXAMPLE_BOOLEAN_PROV = new String[] {"TRUE", "FALSE", "'this.attrib > 0'"};
 	protected static final String VALID_COLOUR_PROV = "Accepts a colour name or an RGB value, with or without an optional transparency value, "
 	                                                + "or an expression that returns a colour name or an array that contains an RGB value with or without a transparency value. "
 	                                                + "The RGB and transparency value can be in either integer format (0 - 255) or decimal format (0.0 - 1.0)";
