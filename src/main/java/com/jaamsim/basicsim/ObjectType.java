@@ -48,8 +48,7 @@ public class ObjectType extends Entity implements DragAndDropable {
 	         exampleList = {"This is placeholder example text"})
 	private final EntityInput<DisplayModel> defaultDisplayModel;
 
-	@Keyword(description = "This is placeholder description text",
-	         exampleList = {"This is placeholder example text"})
+	@Keyword(description = "This is placeholder description text")
 	private final BooleanInput dragAndDrop;
 
 	@Keyword(description = "The (optional) image to be used in the Model Builder as the icon for "

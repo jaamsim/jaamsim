@@ -72,8 +72,7 @@ public class Simulation extends Entity {
 	@Keyword(description = "If TRUE, the simulation uses the standard Gregorian calendar that "
 	                     + "includes leap years. "
 	                     + "If FALSE, the simulation uses a simplified calendar that has a fixed "
-	                     + "365 days per year.",
-	         exampleList = {"TRUE"} )
+	                     + "365 days per year.")
 	private final BooleanInput gregorianCalendar;
 
 	@Keyword(description = "The calendar date and time that corresponds to zero simulation time.",
@@ -88,13 +87,11 @@ public class Simulation extends Entity {
 	                     + "PauseCondition expression returns TRUE. If multiple runs have been "
 	                     + "specified, then the next run will be started. If no more runs have "
 	                     + "been specified, the simulation will be paused or terminated "
-	                     + "depending on the input to the ExitAtStop keyword.",
-	         exampleList = {"TRUE"})
+	                     + "depending on the input to the ExitAtStop keyword.")
 	private final BooleanInput exitAtPauseCondition;
 
 	@Keyword(description = "If TRUE, the program will be closed on completion of the last "
-	                     + "simulation run. Otherwise, the last run will be paused.",
-	         exampleList = {"TRUE"})
+	                     + "simulation run. Otherwise, the last run will be paused.")
 	private final BooleanInput exitAtStop;
 
 	@Keyword(description = "Substream number applied to each probability distribution in the "
@@ -110,8 +107,7 @@ public class Simulation extends Entity {
 	private final SampleInput globalSeedInput;
 
 	@Keyword(description = "If TRUE, a full output report is printed to the file "
-	                     + "<configuration file name>.rep at the end of the simulation run.",
-	         exampleList = {"TRUE"})
+	                     + "<configuration file name>.rep at the end of the simulation run.")
 	private final BooleanInput printReport;
 
 	@Keyword(description = "The directory in which to place the output report. Defaults to the "
@@ -167,15 +163,13 @@ public class Simulation extends Entity {
 	                     + "programmer to track the internal logic for one or more selected "
 	                     + "objects as the model is executed. "
 	                     + "Tracing is an essential tool for testing and debugging the Java code "
-	                     + "for JaamSim.",
-	         exampleList = {"TRUE"})
+	                     + "for JaamSim.")
 	private final BooleanInput enableTracing;
 
 	@Keyword(description = "If TRUE, an additional output file is generated that traces the exact "
 	                     + "sequence of events executed by the model. "
 	                     + "The event file is named <configuration file name>.evt and is placed "
-	                     + "in the same folder as the configuration file.",
-	         exampleList = {"TRUE"})
+	                     + "in the same folder as the configuration file.")
 	private final BooleanInput traceEventsInput;
 
 	@Keyword(description = "If TRUE, the events executed by the model are compared to those in an "
@@ -184,8 +178,7 @@ public class Simulation extends Entity {
 	                     + "An error message is generated if an event executed by the model "
 	                     + "differs in any way from the ones specified by the event file. "
 	                     + "The event file must be named <configuration file name>.evt and placed "
-	                     + "in the same folder as the configuration file.",
-	         exampleList = {"TRUE"})
+	                     + "in the same folder as the configuration file.")
 	private final BooleanInput verifyEventsInput;
 
 	@Keyword(description = "The length of time represented by one simulation tick.",
@@ -226,8 +219,7 @@ public class Simulation extends Entity {
 
 	@Keyword(description = "If TRUE, the run output report will include an entry for each "
 	                     + "replication that was performed. "
-	                     + "If FALSE, the report will show entries only for the scenarios.",
-	         exampleList = {"TRUE"})
+	                     + "If FALSE, the report will show entries only for the scenarios.")
 	private final BooleanInput printReplications;
 
 	@Keyword(description = "If TRUE, the run output report will include the 95% confidence "
@@ -235,15 +227,13 @@ public class Simulation extends Entity {
 	                     + "keyword. "
 	                     + "The confidence intervals are calculated using the factor for the "
 	                     + "Student's T distribution corresponding to 95% confidence and the "
-	                     + "standard deviation for the output values over the replications.",
-	         exampleList = {"TRUE"})
+	                     + "standard deviation for the output values over the replications.")
 	private final BooleanInput printConfidenceIntervals;
 
 	@Keyword(description = "If TRUE, the first column of the run output report will show "
 	                     + "the scenario number for each simulation run. "
 	                     + "If the PrintReplications input is also TRUE, then the second column "
-	                     + "will show the replication number.",
-	         exampleList = {"TRUE"})
+	                     + "will show the replication number.")
 	private final BooleanInput printRunLabels;
 
 	// GUI tab
@@ -252,8 +242,7 @@ public class Simulation extends Entity {
 	private final EntityListInput<? extends Unit> displayedUnits;
 
 	@Keyword(description = "If TRUE, a dragged object will be positioned to the nearest grid "
-	                     + "point.",
-	         exampleList = {"TRUE"})
+	                     + "point.")
 	private final BooleanInput snapToGrid;
 
 	@Keyword(description = "The distance between snap grid points.",
@@ -267,8 +256,7 @@ public class Simulation extends Entity {
 
 	@Keyword(description = "If TRUE, the simulation is executed a constant multiple of real time. "
 	                     + "Otherwise, the run is executed as fast as possible, limited only by "
-	                     + "processor speed.",
-	         exampleList = {"TRUE"})
+	                     + "processor speed.")
 	private final BooleanInput realTime;
 
 	@Keyword(description = "The target ratio of elapsed simulation time to elapsed real time.",
@@ -283,52 +271,40 @@ public class Simulation extends Entity {
 	         exampleList = {"200 h"})
 	private final ValueInput pauseTime;
 
-	@Keyword(description = "The state of the 'Show Labels' button on the Control Panel.",
-	         exampleList = {"TRUE"})
+	@Keyword(description = "The state of the 'Show Labels' button on the Control Panel.")
 	private final BooleanInput showLabels;
 
-	@Keyword(description = "The state of the 'Show SubModels' button on the Control Panel.",
-	         exampleList = {"TRUE"})
+	@Keyword(description = "The state of the 'Show SubModels' button on the Control Panel.")
 	private final BooleanInput showSubModels;
 
-	@Keyword(description = "The state of the 'Presentation Mode' button on the Control Panel.",
-	         exampleList = {"TRUE"})
+	@Keyword(description = "The state of the 'Presentation Mode' button on the Control Panel.")
 	private final BooleanInput presentationMode;
 
-	@Keyword(description = "The state of the 'Show References' button on the Control Panel.",
-	         exampleList = {"TRUE"})
+	@Keyword(description = "The state of the 'Show References' button on the Control Panel.")
 	private final BooleanInput showReferences;
 
-	@Keyword(description = "The state of the 'Show Entity Flow' button on the Control Panel.",
-	         exampleList = {"TRUE"})
+	@Keyword(description = "The state of the 'Show Entity Flow' button on the Control Panel.")
 	private final BooleanInput showEntityFlow;
 
-	@Keyword(description = "If TRUE, the Model Builder tool is shown on startup.",
-	         exampleList = {"TRUE"})
+	@Keyword(description = "If TRUE, the Model Builder tool is shown on startup.")
 	private final BooleanInput showModelBuilder;
 
-	@Keyword(description = "If TRUE, the Object Selector tool is shown on startup.",
-	         exampleList = {"TRUE"})
+	@Keyword(description = "If TRUE, the Object Selector tool is shown on startup.")
 	private final BooleanInput showObjectSelector;
 
-	@Keyword(description = "If TRUE, the Input Editor tool is shown on startup.",
-	         exampleList = {"TRUE"})
+	@Keyword(description = "If TRUE, the Input Editor tool is shown on startup.")
 	private final BooleanInput showInputEditor;
 
-	@Keyword(description = "If TRUE, the Output Viewer tool is shown on startup.",
-	         exampleList = {"TRUE"})
+	@Keyword(description = "If TRUE, the Output Viewer tool is shown on startup.")
 	private final BooleanInput showOutputViewer;
 
-	@Keyword(description = "If TRUE, the Property Viewer tool is shown on startup.",
-	         exampleList = {"TRUE"})
+	@Keyword(description = "If TRUE, the Property Viewer tool is shown on startup.")
 	private final BooleanInput showPropertyViewer;
 
-	@Keyword(description = "If TRUE, the Log Viewer tool is shown on startup.",
-	         exampleList = {"TRUE"})
+	@Keyword(description = "If TRUE, the Log Viewer tool is shown on startup.")
 	private final BooleanInput showLogViewer;
 
-	@Keyword(description = "If TRUE, the Event Viewer tool is shown on startup.",
-	         exampleList = {"TRUE"})
+	@Keyword(description = "If TRUE, the Event Viewer tool is shown on startup.")
 	private final BooleanInput showEventViewer;
 
 	@Keyword(description = "The position of the upper left corner of the Model Builder window "
@@ -405,8 +381,7 @@ public class Simulation extends Entity {
 	// Hidden keywords
 	@Keyword(description = "If TRUE, then the input report file will be printed after loading "
 	                     + "the configuration file.  The input report can always be generated "
-	                     + "when needed by selecting \"Print Input Report\" under the File menu.",
-	         exampleList = {"TRUE"})
+	                     + "when needed by selecting \"Print Input Report\" under the File menu.")
 	private final BooleanInput printInputReport;
 
 	{

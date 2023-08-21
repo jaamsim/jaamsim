@@ -112,12 +112,10 @@ public class Entity {
 	protected final StringInput desc;
 
 	@Keyword(description = "Provides the programmer with a detailed trace of the logic executed "
-	                     + "by the entity. Trace information is sent to standard out.",
-	         exampleList = {"TRUE"})
+	                     + "by the entity. Trace information is sent to standard out.")
 	protected final BooleanInput trace;
 
-	@Keyword(description = "If TRUE, the object is used in the simulation run.",
-	         exampleList = {"FALSE"})
+	@Keyword(description = "If TRUE, the object is used in the simulation run.")
 	protected final BooleanInput active;
 
 	@Keyword(description = "Defines one or more attributes for this entity. "

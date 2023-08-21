@@ -42,8 +42,7 @@ public class XYGraph extends GraphBasics {
 	         exampleList = "XYGraph1 SeriesColors { { red } { green } }")
 	protected final ColorListInput seriesColorsList;
 
-	@Keyword(description = "Set to TRUE if the primary series are to be shown as bars instead of lines.",
-	         exampleList = {"TRUE"})
+	@Keyword(description = "Set to TRUE if the primary series are to be shown as bars instead of lines.")
 	protected final BooleanInput showBars;
 
 	@Keyword(description = "One or more sources of data to be graphed on the secondary y-axis.\n"
@@ -58,8 +57,7 @@ public class XYGraph extends GraphBasics {
 	         exampleList = {"{ red } { green }"})
 	protected final ColorListInput secondarySeriesColorsList;
 
-	@Keyword(description = "Set to TRUE if the secondary series are to be shown as bars instead of lines.",
-	         exampleList = {"TRUE"})
+	@Keyword(description = "Set to TRUE if the secondary series are to be shown as bars instead of lines.")
 	protected final BooleanInput secondaryShowBars;
 
 	{

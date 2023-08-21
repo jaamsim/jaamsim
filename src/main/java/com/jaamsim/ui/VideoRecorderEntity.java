@@ -87,8 +87,7 @@ public class VideoRecorderEntity extends DisplayEntity {
 	         exampleList = {"video"})
 	private final StringInput videoName;
 
-	@Keyword(description = "If TRUE, an individual PNG file will be saved for each frame.",
-	         exampleList = {"TRUE"})
+	@Keyword(description = "If TRUE, an individual PNG file will be saved for each frame.")
 	private final BooleanInput saveImages;
 
 	@Keyword(description = "If TRUE, an AVI file containing the video will be saved.\n"
@@ -96,8 +95,7 @@ public class VideoRecorderEntity extends DisplayEntity {
 	                     + "supported by Windows Media Player. Furthermore, the present encoding "
 	                     + "algorithm is quite inefficient making the file size much larger than "
 	                     + "necessary. Both problems can be solved by recoding the video using "
-	                     + "free open-source software such as HandBrake (https://handbrake.fr/).",
-	         exampleList = {"TRUE"})
+	                     + "free open-source software such as HandBrake (https://handbrake.fr/).")
 	private final BooleanInput saveVideo;
 
 	private boolean hasRunStartup;
