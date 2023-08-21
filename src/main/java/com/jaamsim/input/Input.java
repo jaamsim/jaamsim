@@ -114,6 +114,9 @@ public abstract class Input<T> {
 	protected static final String VALID_COLOUR_PROV = "Accepts a colour name or an RGB value, with or without an optional transparency value, "
 	                                                + "or an expression that returns a colour name or an array that contains an RGB value with or without a transparency value. "
 	                                                + "The RGB and transparency value can be in either integer format (0 - 255) or decimal format (0.0 - 1.0)";
+	protected static final String[] EXAMPLE_COLOUR_PROV = new String[] {"red", "255 0 0", "red 0.5", "255 0 0 0.5",
+	                                                      "'simTime%1[s] < 0.5[s] ? \"red\" : \"yellow\"'",
+	                                                      "'simTime%1[s] < 0.5[s] ? {255, 0, 0} : {255, 255, 0}'"};
 	protected static final String VALID_TIMESERIES_PROV = "Accepts a number with units of type %s or a TimeSeries that returns such a number.";
 	protected static final String VALID_TIMESERIES_PROV_UNIT = "Accepts a number with or without units or a TimeSeries that returns such a number. "
 	                                                         + "An input to the UnitType keyword MUST BE PROVIDED before an input to this keyword can be entered.";

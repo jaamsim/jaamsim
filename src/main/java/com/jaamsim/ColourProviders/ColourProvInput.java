@@ -70,6 +70,11 @@ public class ColourProvInput extends Input<ColourProvider> {
 	}
 
 	@Override
+	public String[] getExamples() {
+		return Input.EXAMPLE_COLOUR_PROV;
+	}
+
+	@Override
 	public void getValueTokens(ArrayList<String> toks) {
 		if (value == null || isDef)
 			return;
