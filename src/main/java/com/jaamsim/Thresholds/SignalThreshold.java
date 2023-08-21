@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +17,7 @@
  */
 package com.jaamsim.Thresholds;
 
-import com.jaamsim.input.BooleanInput;
+import com.jaamsim.BooleanProviders.BooleanProvInput;
 import com.jaamsim.input.Keyword;
 
 /**
@@ -30,10 +31,10 @@ public class SignalThreshold extends Threshold {
 	@Keyword(description = "The state for the SignalThreshold at the start of "
 			+ "the simulation run: TRUE = Open, FALSE = Closed.",
 	         exampleList = {"FALSE"})
-	private final BooleanInput initState;
+	private final BooleanProvInput initState;
 
 	{
-		initState = new BooleanInput("InitialState", KEY_INPUTS, false);
+		initState = new BooleanProvInput("InitialState", KEY_INPUTS, false);
 		this.addInput(initState);
 	}
 
@@ -42,12 +43,13 @@ public class SignalThreshold extends Threshold {
 	@Override
 	public void startUp() {
 		super.startUp();
-		this.setOpen(initState.getValue());
+		boolean bool = initState.getNextBoolean(this, 0.0d);
+		this.setOpen(bool);
 	}
 
 	@Override
 	public String getInitialState() {
-		if (initState.getValue())
+		if (initState.getNextBoolean(this, 0.0d))
 			return "Open";
 		else
 			return "Closed";

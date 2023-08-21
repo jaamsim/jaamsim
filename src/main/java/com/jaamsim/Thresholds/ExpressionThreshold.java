@@ -19,6 +19,7 @@ package com.jaamsim.Thresholds;
 
 import java.util.ArrayList;
 
+import com.jaamsim.BooleanProviders.BooleanProvInput;
 import com.jaamsim.ColourProviders.ColourProvInput;
 import com.jaamsim.DisplayModels.ShapeModel;
 import com.jaamsim.basicsim.Entity;
@@ -29,7 +30,6 @@ import com.jaamsim.events.Conditional;
 import com.jaamsim.events.EventHandle;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.events.ProcessTarget;
-import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.ExpResType;
 import com.jaamsim.input.ExpressionInput;
@@ -62,7 +62,7 @@ public class ExpressionThreshold extends Threshold implements ObserverEntity {
 	                     + "start of the simulation run. Otherwise, the initial state is "
 	                     + "determined explicitly by the OpenCondition and CloseCondition.",
 	         exampleList = { "TRUE" })
-	private final BooleanInput initialOpenValue;
+	private final BooleanProvInput initialOpenValue;
 
 	@Keyword(description = "The colour of the ExpressionThreshold graphic when the threshold "
 	                     + "condition is open, but the gate is still closed.",
@@ -77,7 +77,7 @@ public class ExpressionThreshold extends Threshold implements ObserverEntity {
 	@Keyword(description = "A Boolean value. If TRUE, the ExpressionThreshold displays the "
 	                     + "pending open and pending closed states.",
 	         exampleList = { "FALSE" })
-	private final BooleanInput showPendingStates;
+	private final BooleanProvInput showPendingStates;
 
 	@Keyword(description = "An optional list of objects to monitor.\n\n"
 	                     + "If the WatchList input is provided, the ExpressionThreshold evaluates "
@@ -102,7 +102,7 @@ public class ExpressionThreshold extends Threshold implements ObserverEntity {
 	                     + "An error message is generated if the threshold changes state without "
 	                     + "being triggered by a WatchList object.",
 	         exampleList = { "TRUE" })
-	private final BooleanInput verifyWatchList;
+	private final BooleanProvInput verifyWatchList;
 
 	private boolean lastOpenValue; // state of the threshold that was calculated on-demand
 	private boolean useLastValue;
@@ -125,7 +125,7 @@ public class ExpressionThreshold extends Threshold implements ObserverEntity {
 		closeCondition.setCallback(inputCallback);
 		this.addInput(closeCondition);
 
-		initialOpenValue = new BooleanInput("InitialOpenValue", KEY_INPUTS, false);
+		initialOpenValue = new BooleanProvInput("InitialOpenValue", KEY_INPUTS, false);
 		initialOpenValue.setCallback(inputCallback);
 		this.addInput(initialOpenValue);
 
@@ -137,7 +137,7 @@ public class ExpressionThreshold extends Threshold implements ObserverEntity {
 		this.addInput(pendingClosedColour);
 		this.addSynonym(pendingClosedColour, "PendingClosedColor");
 
-		showPendingStates = new BooleanInput("ShowPendingStates", FORMAT, true);
+		showPendingStates = new BooleanProvInput("ShowPendingStates", FORMAT, true);
 		this.addInput(showPendingStates);
 
 		watchList = new InterfaceEntityListInput<>(SubjectEntity.class, "WatchList", KEY_INPUTS, new ArrayList<>());
@@ -145,7 +145,7 @@ public class ExpressionThreshold extends Threshold implements ObserverEntity {
 		watchList.setUnique(true);
 		this.addInput(watchList);
 
-		verifyWatchList = new BooleanInput("VerifyWatchList", KEY_INPUTS, false);
+		verifyWatchList = new BooleanProvInput("VerifyWatchList", KEY_INPUTS, false);
 		this.addInput(verifyWatchList);
 	}
 
@@ -194,7 +194,8 @@ public class ExpressionThreshold extends Threshold implements ObserverEntity {
 
 	@Override
 	public boolean getInitialOpenValue() {
-		return getOpenConditionValue(0.0, initialOpenValue.getValue());
+		boolean bool = initialOpenValue.getNextBoolean(this, 0.0d);
+		return getOpenConditionValue(0.0, bool);
 	}
 
 	@Override
@@ -203,7 +204,7 @@ public class ExpressionThreshold extends Threshold implements ObserverEntity {
 	}
 
 	public boolean isVerifyWatchList() {
-		return verifyWatchList.getValue();
+		return verifyWatchList.getNextBoolean(this, 0.0d);
 	}
 
 	public boolean isWatchList() {
@@ -345,7 +346,7 @@ public class ExpressionThreshold extends Threshold implements ObserverEntity {
 		super.updateGraphics(simTime);
 
 		// Trap the pending cases
-		if (!showPendingStates.getValue())
+		if (!showPendingStates.getNextBoolean(this, simTime))
 			return;
 
 		boolean threshOpen = super.isOpen();

@@ -19,6 +19,7 @@ package com.jaamsim.Thresholds;
 
 import java.util.ArrayList;
 
+import com.jaamsim.BooleanProviders.BooleanProvInput;
 import com.jaamsim.ColourProviders.ColourProvInput;
 import com.jaamsim.DisplayModels.ShapeModel;
 import com.jaamsim.basicsim.Entity;
@@ -26,7 +27,6 @@ import com.jaamsim.basicsim.ObserverEntity;
 import com.jaamsim.basicsim.SubjectEntity;
 import com.jaamsim.basicsim.SubjectEntityDelegate;
 import com.jaamsim.events.EventManager;
-import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
@@ -46,11 +46,11 @@ public class Threshold extends StateEntity implements SubjectEntity {
 
 	@Keyword(description = "A Boolean value.  If TRUE, the threshold is displayed when it is open.",
 	         exampleList = { "FALSE" })
-	private final BooleanInput showWhenOpen;
+	private final BooleanProvInput showWhenOpen;
 
 	@Keyword(description = "A Boolean value.  If TRUE, the threshold is displayed when it is closed.",
 	         exampleList = { "FALSE" })
-	private final BooleanInput showWhenClosed;
+	private final BooleanProvInput showWhenClosed;
 
 	private final ArrayList<ThresholdUser> userList;
 	private boolean open;
@@ -73,10 +73,10 @@ public class Threshold extends StateEntity implements SubjectEntity {
 		this.addInput(closedColour);
 		this.addSynonym(closedColour, "ClosedColor");
 
-		showWhenOpen = new BooleanInput("ShowWhenOpen", FORMAT, true);
+		showWhenOpen = new BooleanProvInput("ShowWhenOpen", FORMAT, true);
 		this.addInput(showWhenOpen);
 
-		showWhenClosed = new BooleanInput("ShowWhenClosed", FORMAT, true);
+		showWhenClosed = new BooleanProvInput("ShowWhenClosed", FORMAT, true);
 		this.addInput(showWhenClosed);
 	}
 
@@ -207,9 +207,9 @@ public class Threshold extends StateEntity implements SubjectEntity {
 		// Show or hide the threshold
 		if (!showWhenOpen.isDefault() || !showWhenClosed.isDefault()) {
 			if (open)
-				setShow(getShowInput() && showWhenOpen.getValue());
+				setShow(getShowInput() && showWhenOpen.getNextBoolean(this, simTime));
 			else
-				setShow(getShowInput() && showWhenClosed.getValue());
+				setShow(getShowInput() && showWhenClosed.getNextBoolean(this, simTime));
 		}
 
 		setTagColour( ShapeModel.TAG_CONTENTS, col );
