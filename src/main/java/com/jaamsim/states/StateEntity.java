@@ -26,12 +26,12 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 
+import com.jaamsim.BooleanProviders.BooleanProvInput;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.FileEntity;
 import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.events.EventManager;
-import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
@@ -50,7 +50,7 @@ public abstract class StateEntity extends DisplayEntity implements StateUser {
 
 	@Keyword(description = "If TRUE, a log file (.trc) will be printed with the time of every state change during the run.",
 	         exampleList = {"TRUE"})
-	private final BooleanInput traceState;
+	private final BooleanProvInput traceState;
 
 	@Keyword(description = "A list of states for which the entity is considered working.",
 		     exampleList = "'Transit - Seg1L' 'Transit - Seg1B'")
@@ -79,7 +79,7 @@ public abstract class StateEntity extends DisplayEntity implements StateUser {
 		stateGraphics.setHidden(true);
 		this.addInput(stateGraphics);
 
-		traceState = new BooleanInput("TraceState", KEY_INPUTS, false);
+		traceState = new BooleanProvInput("TraceState", KEY_INPUTS, false);
 		traceState.setHidden(true);
 		this.addInput(traceState);
 
@@ -102,7 +102,7 @@ public abstract class StateEntity extends DisplayEntity implements StateUser {
 			return;
 
 		// Create state trace file if required
-		if (traceState.getValue()) {
+		if (isTraceState()) {
 			JaamSimModel simModel = getJaamSimModel();
 			String fileName = simModel.getReportFileName("-" + this.getName() + ".trc");
 			if (fileName == null)
@@ -152,6 +152,10 @@ public abstract class StateEntity extends DisplayEntity implements StateUser {
 		stateReportFile.flush();
 		stateReportFile.close();
 		stateReportFile = null;
+	}
+
+	public boolean isTraceState() {
+		return traceState.getNextBoolean(this, 0.0d);
 	}
 
 	private void initStateData() {
@@ -239,7 +243,7 @@ public abstract class StateEntity extends DisplayEntity implements StateUser {
 	 */
 	public void stateChanged(StateRecord prev, StateRecord next) {
 
-		if (traceState.getValue()) {
+		if (isTraceState()) {
 			long curTick = EventManager.simTicks();
 			EventManager evt = EventManager.current();
 			double duration = evt.ticksToSeconds(curTick - prev.getStartTick());
