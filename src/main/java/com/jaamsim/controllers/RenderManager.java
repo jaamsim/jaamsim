@@ -122,7 +122,8 @@ public class RenderManager implements DragSourceListener {
 	 * Basic singleton pattern
 	 */
 	public static void initialize(boolean safeGraphics) {
-		s_instance = new RenderManager(safeGraphics);
+		Renderer render = new Renderer(safeGraphics);
+		s_instance = new RenderManager(render);
 
 		Thread managerThread = new Thread(new Runnable() {
 			@Override
@@ -206,8 +207,8 @@ public class RenderManager implements DragSourceListener {
 
 	public static final Color4d REF_LINK_COLOUR = new Color4d(138, 54, 15);  // Brown
 
-	private RenderManager(boolean safeGraphics) {
-		renderer = new Renderer(safeGraphics);
+	private RenderManager(Renderer r) {
+		renderer = r;
 
 		exceptionLogger = new ExceptionLogger(EXCEPTION_STACK_THRESHOLD);
 

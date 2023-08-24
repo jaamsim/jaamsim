@@ -138,11 +138,11 @@ public class Renderer implements GLAnimatorControl {
 	private final Thread renderThread;
 	private final Object rendererLock = new Object();
 
-	private final Map<MeshProtoKey, MeshProto> protoCache;
-	private final Map<TessFontKey, TessFont> fontCache;
+	private final Map<MeshProtoKey, MeshProto> protoCache = new HashMap<>();
+	private final Map<TessFontKey, TessFont> fontCache = new HashMap<>();
 
-	private final HashMap<Integer, RenderWindow> openWindows;
-	private final HashMap<Integer, Camera> cameras;
+	private final HashMap<Integer, RenderWindow> openWindows = new HashMap<>();
+	private final HashMap<Integer, Camera> cameras = new HashMap<>();
 
 	private final Queue<RenderMessage> renderMessages = new ArrayDeque<>();
 
@@ -188,13 +188,8 @@ public class Renderer implements GLAnimatorControl {
 
 	public Renderer(boolean safeGraphics) throws RenderException {
 		this.safeGraphics = safeGraphics;
-		protoCache = new HashMap<>();
-		fontCache = new HashMap<>();
 
 		exceptionLogger = new ExceptionLogger(1); // Print the call stack on the first exception of any kind
-
-		openWindows = new HashMap<>();
-		cameras = new HashMap<>();
 
 		renderThread = new Thread(new Runnable() {
 			@Override
