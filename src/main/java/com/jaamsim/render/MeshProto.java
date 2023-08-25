@@ -1092,7 +1092,7 @@ private void renderStaticMeshes(int contextID, Renderer renderer, Mat4d modelVie
 
 	// Server side indirect buffer
 	gl4.glBindBuffer(GL4.GL_DRAW_INDIRECT_BUFFER, meshIndirectBuffer);
-	gl4.glMultiDrawElementsIndirect(GL2GL3.GL_TRIANGLES, GL2GL3.GL_UNSIGNED_INT, null, _batches.size(), 0);
+	gl4.glMultiDrawElementsIndirect(GL2GL3.GL_TRIANGLES, GL2GL3.GL_UNSIGNED_INT, 0l, _batches.size(), 0);
 
 	// Client side indirect buffer
 //	gl4.glBindBuffer(GL4.GL_DRAW_INDIRECT_BUFFER, 0);
