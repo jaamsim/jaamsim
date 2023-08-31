@@ -170,6 +170,15 @@ public abstract class Input<T> {
 	protected static final String VALID_ATTRIB_DEF = "Accepts a list of attribute definitions each consisting of an attribute name followed by an expression "
 	                                               + "that sets the initial value for the attribute. "
 	                                               + "Each definition in the list must be enclosed by braces.";
+
+	protected static final String VALID_ATTRIB_ASSIGN = "Accepts a list of attribute assignments each consisting of an left-hand side expression that selects an attribute, "
+	                                                  + "an equal sign, and a right-hand side expression that calculates the new value for the attribute. "
+	                                                  + "Each assignment in the list must be enclosed by braces. "
+	                                                  + "Single quotes are required around assignments that include spaces.";
+	protected static final String[] EXAMPLE_ATTRIB_ASSIGN = new String[] {"{ 'this.A = 1' } { 'this.obj.B = 1' } { '[Ent1].C = 1' }",
+	                                                                      "{ 'this.D = 1[s] + 0.5*this.SimTime' }",
+	                                                                      "{ 'this.Array(this.obj.Index) = 1' }"};
+
 	protected static final String VALID_CUSTOM_OUT = "Accepts a list of custom output definitions each consisting of a custom output name, an expression, and a unit type (if required). "
 	                                               + "Each definition in the list must be enclosed by braces.";
 	protected static final String VALID_PASSTHROUGH = "Accepts a list of passthrough keyword definitions each consisting of the name for the new keyword and output followed by the unit type for the new output. "

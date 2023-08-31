@@ -65,6 +65,16 @@ public class AssignmentListInput extends ArrayListInput<ExpParser.Assignment> {
 	}
 
 	@Override
+	public String getValidInputDesc() {
+		return Input.VALID_ATTRIB_ASSIGN;
+	}
+
+	@Override
+	public String[] getExamples() {
+		return Input.EXAMPLE_ATTRIB_ASSIGN;
+	}
+
+	@Override
 	public void getValueTokens(ArrayList<String> toks) {
 		if (value == null || isDef)
 			return;

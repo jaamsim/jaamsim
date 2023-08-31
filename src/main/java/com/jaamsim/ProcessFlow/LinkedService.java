@@ -115,9 +115,7 @@ public abstract class LinkedService extends LinkedDevice implements QueueUser {
 	protected final InterfaceEntityListInput<SubjectEntity> watchList;
 
 	@Keyword(description = "A list of attribute assignments that are triggered at the start of "
-	                     + "processing for each new entity, after any resources have been sezied.",
-	         exampleList = {"{ 'this.A = 1' } { 'this.obj.B = 1' } { '[Ent1].C = 1' }",
-	                        "{ 'this.D = 1[s] + 0.5*this.SimTime' }"})
+	                     + "processing for each new entity, after any resources have been sezied.")
 	protected final AssignmentListInput assignmentsAtStart;
 
 	private String matchValue;
