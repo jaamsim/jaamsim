@@ -167,9 +167,12 @@ public abstract class Input<T> {
 	protected static final String VALID_VEC3D_LIST = "Accepts a list of vectors enclosed by braces. "
 	                                               + "Each vector consists of three numbers separated by spaces followed by a unit of type %s. "
 	                                               + "If a vector has only two numbers, the third value defaults to zero.";
+
 	protected static final String VALID_ATTRIB_DEF = "Accepts a list of attribute definitions each consisting of an attribute name followed by an expression "
 	                                               + "that sets the initial value for the attribute. "
 	                                               + "Each definition in the list must be enclosed by braces.";
+	protected static final String[] EXAMPLE_ATTRIB_DEF = new String[] {"{ AAA 1 } { bbb 2[s] } { c '\"abc\"' } { d [Queue1] }",
+	                                                                   "{ e '{1,2,3}' } { f '{\"key1\"=10, \"key2\"=4}' } { g '|x|(2*x)' }"};
 
 	protected static final String VALID_ATTRIB_ASSIGN = "Accepts a list of attribute assignments each consisting of an left-hand side expression that selects an attribute, "
 	                                                  + "an equal sign, and a right-hand side expression that calculates the new value for the attribute. "

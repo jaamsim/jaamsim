@@ -120,11 +120,9 @@ public class Entity {
 
 	@Keyword(description = "Defines one or more attributes for this entity. "
 	                     + "An attribute's value can be a number with or without units, "
-	                     + "an entity, a string, an array, a map, or a lambda function. "
+	                     + "an entity, a string, an array, a hashmap, or a lambda function. "
 	                     + "The initial value set by the definition can only be changed by an "
-	                     + "Assign object.",
-	         exampleList = {"{ AAA 1 }  { bbb 2[s] }  { c '\"abc\"' }  { d [Queue1] }",
-	                        "{ e '{1,2,3}' }  { f '|x|(2*x)' }"})
+	                     + "Assign object.")
 	public final AttributeDefinitionListInput attributeDefinitionList;
 
 	@Keyword(description = "Defines one or more custom outputs for this entity. "
