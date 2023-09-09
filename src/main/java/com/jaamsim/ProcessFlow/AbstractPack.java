@@ -49,6 +49,12 @@ public abstract class AbstractPack extends LinkedService {
 	                     + "sufficient entities are available to start packing.")
 	private final BooleanProvInput waitForEntities;
 
+	@Keyword(description = "If TRUE, the 'NumberOfEntities' and 'NumberToStart' inputs "
+	                     + "are recalculated each time the condition to start packing is tested. "
+	                     + "Otherwise, these inputs are assigned fixed values for an "
+	                     + "EntityContainer when they are first evaluated.")
+	private final BooleanProvInput recalculate;
+
 	protected EntContainer container;	// the generated EntityContainer
 	private int numberInserted;   // Number of entities inserted to the EntityContainer
 	private int numberToInsert;   // Number of entities to insert in the present EntityContainer
@@ -81,6 +87,9 @@ public abstract class AbstractPack extends LinkedService {
 
 		waitForEntities = new BooleanProvInput("WaitForEntities", OPTIONS, false);
 		this.addInput(waitForEntities);
+
+		recalculate = new BooleanProvInput("Recalculate", OPTIONS, false);
+		this.addInput(recalculate);
 	}
 
 	public AbstractPack() {}
@@ -127,7 +136,7 @@ public abstract class AbstractPack extends LinkedService {
 		if (!startedPacking) {
 			String m = this.getNextMatchValue(simTime);
 			this.setMatchValue(m);
-			if (numberToStartPacking < 0) {
+			if (numberToStartPacking < 0 || recalculate.getNextBoolean(this, simTime)) {
 				numberToInsert = this.getNumberToInsert(simTime);
 				numberToStartPacking = this.getNumberToStart(simTime);
 			}
