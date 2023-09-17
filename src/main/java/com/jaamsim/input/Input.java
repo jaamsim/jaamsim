@@ -159,7 +159,13 @@ public abstract class Input<T> {
 	                                                     + "Each entry in the list must be enclosed by braces.";
 	protected static final String VALID_COLOR_LIST = "Accepts a list of colours that are expressed as either a colour name or an RGB value. "
 	                                               + "Each entry in the list must be enclosed by braces.";
+
 	protected static final String VALID_ENTITY_LIST = "Accepts a list of entity names separated by spaces.";
+	protected static final String VALID_ENTITY_PROV_LIST = "Accepts a list of entity names or expressions that return an entity. "
+	                                                     + "Each entry in the list can be enclosed by braces.";
+	protected static final String VALID_ENTITY_PROV_LIST_TYPE = "Accepts a list of entity names of type %s or expressions that return such an entity. "
+	                                                          + "Each entry in the list can be enclosed by braces.";
+
 	protected static final String VALID_FORMAT = "Accepts a Java format string for a number. For example, '%.3f' would print a number with three decimal places.";
 	protected static final String VALID_VEC3D = "Accepts three numbers separated by spaces followed by a unit of type %s. "
 	                                          + "If only two numbers are entered, the third value defaults to zero.";
