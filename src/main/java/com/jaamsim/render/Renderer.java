@@ -126,7 +126,9 @@ public class Renderer implements GLAnimatorControl {
 
 	private boolean gl3Supported;
 	private boolean gl4Supported;
+	private boolean isCore;
 	private VersionNumber glVersion;
+	private String glVersionString;
 	private boolean indirectSupported;
 
 	private final TexCache texCache = new TexCache(this);
@@ -202,11 +204,7 @@ public class Renderer implements GLAnimatorControl {
 	}
 
 	private void mainRenderLoop() {
-
-		//long startNanos = System.nanoTime();
-
 		try {
-			// GLProfile.initSingleton();
 			GLProfile glp = GLProfile.get(GLProfile.GL2GL3);
 			caps = new GLCapabilities(glp);
 			caps.setSampleBuffers(true);
@@ -222,12 +220,10 @@ public class Renderer implements GLAnimatorControl {
 			GL gl = sharedContext.getGL();
 			gl3Supported = gl.isGL3();
 			gl4Supported = gl.isGL4();
+			isCore = sharedContext.isGLCoreProfile();
 			glVersion = sharedContext.getGLVersionNumber();
+			glVersionString = sharedContext.getGLSLVersionString();
 			indirectSupported = checkGLVersion(4, 3) && !safeGraphics;
-
-//			long endNanos = System.nanoTime();
-//			long ms = (endNanos - startNanos) /1000000L;
-//			LogBox.formatRenderLog("Creating shared context at:" + ms + "ms");
 
 			initSharedContext();
 
@@ -864,29 +860,25 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 	}
 
 	private void initSharedContext() {
-		assert (Thread.currentThread() == renderThread);
-		assert (drawContext == null);
-
 		int res = sharedContext.makeCurrent();
-		assert (res == GLContext.CONTEXT_CURRENT);
+		if (res != GLContext.CONTEXT_CURRENT)
+			throw new RenderException("Could not make shared context current.");
 
 		if (USE_DEBUG_GL) {
 			sharedContext.setGL(new DebugGL4bc((GL4bc)sharedContext.getGL().getGL2GL3()));
 		}
 
 		LogBox.formatRenderLog("Found OpenGL version: %s", sharedContext.getGLVersion());
-		LogBox.formatRenderLog("Found GLSL: %s", sharedContext.getGLSLVersionString());
-		VersionNumber vn = sharedContext.getGLVersionNumber();
-		boolean isCore = sharedContext.isGLCoreProfile();
-		LogBox.formatRenderLog("OpenGL Major: %d Minor: %d IsCore:%s", vn.getMajor(), vn.getMinor(), isCore);
-		if (vn.getMajor() < 2) {
+		LogBox.formatRenderLog("Found GLSL: %s", glVersionString);
+		LogBox.formatRenderLog("OpenGL Major: %d Minor: %d IsCore:%s", glVersion.getMajor(), glVersion.getMinor(), isCore);
+		if (glVersion.getMajor() < 2) {
 			throw new RenderException("OpenGL version is too low. OpenGL >= 2.1 is required.");
 		}
 		GL2GL3 gl = sharedContext.getGL().getGL2GL3();
 		if (!isCore && (!gl3Supported || safeGraphics))
 			initShaders(gl);
 		else
-			initCoreShaders(gl, sharedContext.getGLSLVersionString());
+			initCoreShaders(gl, glVersionString);
 
 		// Sub system specific initializations
 		DebugUtils.init(this, gl);
