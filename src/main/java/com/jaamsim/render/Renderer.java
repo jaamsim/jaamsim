@@ -211,8 +211,7 @@ public class Renderer implements GLAnimatorControl {
 			caps.setNumSamples(4);
 			caps.setDepthBits(24);
 
-			final boolean createNewDevice = true;
-			dummyDrawable = GLDrawableFactory.getFactory(glp).createDummyAutoDrawable(null, createNewDevice, caps, null);
+			dummyDrawable = GLDrawableFactory.getFactory(glp).createOffscreenAutoDrawable(null, caps, null, 16, 16);
 			dummyDrawable.display(); // triggers GLContext object creation and native realization.
 
 			sharedContext = dummyDrawable.getContext();
