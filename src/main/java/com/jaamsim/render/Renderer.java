@@ -225,7 +225,40 @@ public class Renderer implements GLAnimatorControl {
 			glVersionString = sharedContext.getGLSLVersionString();
 			indirectSupported = checkGLVersion(4, 3) && !safeGraphics;
 
-			initSharedContext();
+			int res = sharedContext.makeCurrent();
+			if (res != GLContext.CONTEXT_CURRENT)
+				throw new RenderException("Could not make shared context current.");
+
+			if (USE_DEBUG_GL) {
+				sharedContext.setGL(new DebugGL4bc((GL4bc)sharedContext.getGL().getGL2GL3()));
+			}
+
+			LogBox.formatRenderLog("Found OpenGL version: %s", sharedContext.getGLVersion());
+			LogBox.formatRenderLog("Found GLSL: %s", glVersionString);
+			LogBox.formatRenderLog("OpenGL Major: %d Minor: %d IsCore:%s", glVersion.getMajor(), glVersion.getMinor(), isCore);
+			if (glVersion.getMajor() < 2) {
+				throw new RenderException("OpenGL version is too low. OpenGL >= 2.1 is required.");
+			}
+			GL2GL3 gl23 = sharedContext.getGL().getGL2GL3();
+			if (!isCore && (!gl3Supported || safeGraphics))
+				initShaders(gl23);
+			else
+				initCoreShaders(gl23, glVersionString);
+
+			// Sub system specific initializations
+			DebugUtils.init(this, gl23);
+			Polygon.init(this, gl23);
+			MeshProto.init(this, gl23);
+			texCache.init(gl23);
+
+			// Load the bad mesh proto
+			badData = MeshDataCache.getBadMesh();
+			badProto = new MeshProto(badData, safeGraphics, false);
+			badProto.loadGPUAssets(gl23, this);
+
+			skybox = new Skybox();
+
+			sharedContext.release();
 
 			// Notify the main thread we're done
 			initialized.set(true);
@@ -857,43 +890,6 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 		if (message instanceof FreeOffscreenTargetMessage) {
 			freeOffscreenTargetImp(((FreeOffscreenTargetMessage)message).target);
 		}
-	}
-
-	private void initSharedContext() {
-		int res = sharedContext.makeCurrent();
-		if (res != GLContext.CONTEXT_CURRENT)
-			throw new RenderException("Could not make shared context current.");
-
-		if (USE_DEBUG_GL) {
-			sharedContext.setGL(new DebugGL4bc((GL4bc)sharedContext.getGL().getGL2GL3()));
-		}
-
-		LogBox.formatRenderLog("Found OpenGL version: %s", sharedContext.getGLVersion());
-		LogBox.formatRenderLog("Found GLSL: %s", glVersionString);
-		LogBox.formatRenderLog("OpenGL Major: %d Minor: %d IsCore:%s", glVersion.getMajor(), glVersion.getMinor(), isCore);
-		if (glVersion.getMajor() < 2) {
-			throw new RenderException("OpenGL version is too low. OpenGL >= 2.1 is required.");
-		}
-		GL2GL3 gl = sharedContext.getGL().getGL2GL3();
-		if (!isCore && (!gl3Supported || safeGraphics))
-			initShaders(gl);
-		else
-			initCoreShaders(gl, glVersionString);
-
-		// Sub system specific initializations
-		DebugUtils.init(this, gl);
-		Polygon.init(this, gl);
-		MeshProto.init(this, gl);
-		texCache.init(gl);
-
-		// Load the bad mesh proto
-		badData = MeshDataCache.getBadMesh();
-		badProto = new MeshProto(badData, safeGraphics, false);
-		badProto.loadGPUAssets(gl, this);
-
-		skybox = new Skybox();
-
-		sharedContext.release();
 	}
 
 	private void loadMeshProtoImp(final MeshProtoKey key) {
