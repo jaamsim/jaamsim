@@ -299,13 +299,8 @@ public class Renderer implements GLAnimatorControl {
 			}
 		});
 
-		// Start the render loop
-		boolean first = true;
+		LogBox.logLine("Renderer loop started");
 		while (!shutdown.get()) {
-			if (first) {
-				LogBox.logLine("Renderer loop started");
-				first = false;
-			}
 			try {
 
 				// If a fatal error was encountered, clean up the renderer
