@@ -30,8 +30,7 @@ public class EntityTracer extends Entity {
          exampleList = {"500 h"})
 private final SampleInput startTime;
 
-@Keyword(description = "The Entities to trace",
-         exampleList = {"Ent1 Ent2 Ent3"})
+@Keyword(description = "The Entities to trace")
 private final EntityListInput<Entity> entities;
 
 {

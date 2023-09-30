@@ -119,8 +119,7 @@ public class DisplayEntity extends Entity {
 	@Keyword(description = "The graphic representation of the object. If a list of DisplayModels "
 	                     + "is entered, each one is displayed provided that its DrawRange "
 	                     + "input is satisfied. This feature allows the object's appearance to "
-	                     + "change with its distance from the View window's camera.",
-	         exampleList = {"ColladaModel1", "ColladaModel1 ColladaModel2"})
+	                     + "change with its distance from the View window's camera.")
 	protected final EntityListInput<DisplayModel> displayModelListInput;
 
 	@Keyword(description = "If TRUE, the object is displayed in the View windows.")
@@ -130,8 +129,7 @@ public class DisplayEntity extends Entity {
 	                     + "positioned by dragging with the mouse.")
 	private final BooleanProvInput movable;
 
-	@Keyword(description = "The view windows on which this entity will be visible.",
-	         exampleList = {"View2 View3"})
+	@Keyword(description = "The view windows on which this entity will be visible.")
 	private final EntityListInput<View> visibleViews;
 
 	@Keyword(description = "The minimum and maximum distance from the camera for which this "

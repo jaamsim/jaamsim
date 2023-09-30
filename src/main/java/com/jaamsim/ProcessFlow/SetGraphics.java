@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2017-2022 JaamSim Software Inc.
+ * Copyright (C) 2017-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,8 +35,7 @@ public class SetGraphics extends LinkedComponent {
 	private final EntityProvInput<DisplayEntity> targetEntity;
 
 	@Keyword(description = "List of entities whose graphics can chosen for assignment to the "
-	                     + "target entity.",
-	         exampleList = {"DisplayEntity1 DisplayEntity2"})
+	                     + "target entity.")
 	private final EntityListInput<DisplayEntity> graphicsList;
 
 	@Keyword(description = "A number that determines the choice of entities from the "
