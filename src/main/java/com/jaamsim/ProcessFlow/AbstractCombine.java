@@ -38,8 +38,7 @@ public abstract class AbstractCombine extends LinkedService {
 	         exampleList = { "3.0 h", "ExponentialDistribution1", "'1[s] + 0.5*[TimeSeries1].PresentValue'" })
 	private final SampleInput serviceTime;
 
-	@Keyword(description = "The Queue objects in which to place the arriving entities.",
-	         exampleList = {"Queue1 Queue2"})
+	@Keyword(description = "The Queue objects in which to place the arriving entities.")
 	private final EntityProvListInput<Queue> waitQueueList;
 
 	@Keyword(description = "The number of entities required from each queue for processing to "
