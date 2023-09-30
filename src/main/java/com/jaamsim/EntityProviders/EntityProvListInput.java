@@ -92,6 +92,17 @@ public class EntityProvListInput<T extends Entity> extends ArrayListInput<Entity
 	}
 
 	@Override
+	public String[] getExamples() {
+		String name = entClass.getSimpleName();
+		if (entClass == DisplayEntity.class) {
+			name = "Entity";
+		}
+		return new String[]{name+"1 "+name+"2",
+				"{ "+name+"1 } { "+name+"2 }",
+				"{ this.attrib1 } { this.attrib2 }"};
+	}
+
+	@Override
 	public ArrayList<String> getValidOptions(Entity ent) {
 		ArrayList<String> list = new ArrayList<>();
 		JaamSimModel simModel = ent.getJaamSimModel();
