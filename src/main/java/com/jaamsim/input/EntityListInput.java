@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2010-2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018-2022 JaamSim Software Inc.
+ * Copyright (C) 2018-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ package com.jaamsim.input;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.JaamSimModel;
 
@@ -106,6 +107,15 @@ public class EntityListInput<T extends Entity> extends ArrayListInput<T> {
 	@Override
 	public String getValidInputDesc() {
 		return Input.VALID_ENTITY_LIST;
+	}
+
+	@Override
+	public String[] getExamples() {
+		String name = entClass.getSimpleName();
+		if (entClass == DisplayEntity.class) {
+			name = "Entity";
+		}
+		return new String[]{name+"1 "+name+"2"};
 	}
 
 	public void setUnique(boolean unique) {
