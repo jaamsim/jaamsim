@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2010-2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018-2021 JaamSim Software Inc.
+ * Copyright (C) 2018-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -60,6 +60,15 @@ public class EntityInput<T extends Entity> extends Input<T> {
 			return Input.VALID_ENTITY;
 		}
 		return String.format(Input.VALID_ENTITY_TYPE, entClass.getSimpleName());
+	}
+
+	@Override
+	public String[] getExamples() {
+		String name = entClass.getSimpleName();
+		if (entClass == DisplayEntity.class) {
+			name = "Entity";
+		}
+		return new String[]{name+"1"};
 	}
 
 	@Override
