@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018-2020 JaamSim Software Inc.
+ * Copyright (C) 2018-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,8 +25,7 @@ import com.jaamsim.input.Keyword;
 
 public class AddTo extends AbstractPack {
 
-	@Keyword(description = "The queue in which the waiting containers will be placed.",
-	         exampleList = {"Queue1"})
+	@Keyword(description = "The queue in which the waiting containers will be placed.")
 	private final EntityInput<Queue> containerQueue;
 
 	{

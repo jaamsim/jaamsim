@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2022 JaamSim Software Inc.
+ * Copyright (C) 2016-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,8 +50,7 @@ public abstract class LinkedComponent extends StateEntity implements SubjectEnti
 	                     + "Normally, obj is set to the last entity received by this object. "
 	                     + "Prior to receiving its first entity, obj is set to the object "
 	                     + "provided by DefaultEntity. If an input for DefaultEntity is not "
-	                     + "provided, then obj is set to null until the first entity is received.",
-	         exampleList = {"SimEntity1"})
+	                     + "provided, then obj is set to null until the first entity is received.")
 	protected final EntityInput<DisplayEntity> defaultEntity;
 
 	@Keyword(description = "The next object to which the processed entity is passed.",

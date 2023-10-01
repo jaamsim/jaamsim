@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2018 JaamSim Software Inc.
+ * Copyright (C) 2016-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,8 +30,7 @@ import com.jaamsim.units.DimensionlessUnit;
  */
 public abstract class CalculationEntity extends DisplayEntity implements Controllable {
 
-	@Keyword(description = "The Controller object that signals the updating of the calculation.",
-	         exampleList = {"Controller1"})
+	@Keyword(description = "The Controller object that signals the updating of the calculation.")
 	protected final EntityInput<Controller> controller;
 
 	@Keyword(description = "The sequence number used by the Controller to determine the order "

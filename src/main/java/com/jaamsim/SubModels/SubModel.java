@@ -39,8 +39,7 @@ import com.jaamsim.units.Unit;
 
 public class SubModel extends CompoundEntity implements DragAndDropable {
 
-	@Keyword(description = "The prototype sub-model from which this sub-model is cloned.",
-	         exampleList = {"SubModel1"})
+	@Keyword(description = "The prototype sub-model from which this sub-model is cloned.")
 	protected final EntityInput<SubModel> prototypeSubModel;
 
 	@Keyword(description = "Defines new keywords for the sub-model and creates new outputs with "
