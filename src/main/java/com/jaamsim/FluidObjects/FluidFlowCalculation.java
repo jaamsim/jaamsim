@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,8 +30,7 @@ import com.jaamsim.units.VolumeFlowUnit;
  */
 public abstract class FluidFlowCalculation extends CalculationEntity {
 
-	@Keyword(description = "The Fluid being moved by the flow.",
-	         exampleList = {"Fluid1"})
+	@Keyword(description = "The Fluid being moved by the flow.")
 	private final EntityInput<Fluid> fluidInput;
 
 	@Keyword(description = "The source object for the flow.",

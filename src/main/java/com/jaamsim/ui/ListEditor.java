@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2005-2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2020 JaamSim Software Inc.
+ * Copyright (C) 2016-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,11 +53,17 @@ public class ListEditor extends CellEditor {
 			}
 		}
 
+		// If there are no options then open the Input Builder immediately
+		if (options.isEmpty() && input.useExpressionBuilder()) {
+			launchExpressionBox();
+			return;
+		}
+
 		// Open the dialog box and wait for it to be closed
 		ArrayList<String> initList = new ArrayList<>();
 		Parser.tokenize(initList, getValue(), true);
 		ListDialog dialog = new ListDialog(EditBox.getInstance(), "Select items", true,
-				options, initList);
+				options, initList, input.useExpressionBuilder());
 		dialog.setLocationRelativeTo((Component)e.getSource());
 		int result = dialog.showDialog();
 
@@ -71,6 +77,12 @@ public class ListEditor extends CellEditor {
 					sb.append(str).append(" ");
 			}
 			setValue(sb.toString());
+		}
+
+		// Launch the Input Builder
+		else if (result == ListDialog.INPUT_BUILDER_OPTION) {
+			launchExpressionBox();
+			return;
 		}
 
 		// Apply editing

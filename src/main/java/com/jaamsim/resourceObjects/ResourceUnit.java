@@ -43,8 +43,7 @@ public class ResourceUnit extends StateUserEntity implements Seizable, ResourceP
 
 	@Keyword(description = "The name of the ResourcePool from which this ResourceUnit can be "
 	                     + "selected. If no pool is specified, the ResourceUnit itself is "
-	                     + "considered to be a ResourcePool with one unit.",
-	         exampleList = {"ResourcePool1"})
+	                     + "considered to be a ResourcePool with one unit.")
 	private final EntityInput<ResourcePool> resourcePool;
 
 	@Keyword(description = "An optional expression that tests whether an entity is elible to "

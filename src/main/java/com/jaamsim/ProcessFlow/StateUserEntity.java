@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2016-2022 JaamSim Software Inc.
+ * Copyright (C) 2016-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,63 +33,53 @@ public abstract class StateUserEntity extends AbstractStateUserEntity implements
 	                     + "operate. Operation is stopped immediately when one of the thresholds "
 	                     + "closes. If a threshold closes part way though processing an entity, "
 	                     + "the work is considered to be partly done and the remainder is "
-	                     + "completed once the threshold re-opens.",
-	         exampleList = {"ExpressionThreshold1 TimeSeriesThreshold1 SignalThreshold1"})
+	                     + "completed once the threshold re-opens.")
 	protected final EntityListInput<Threshold> immediateThresholdList;
 
 	@Keyword(description = "A list of thresholds that must be satisfied for the object to "
 	                     + "operate. Operation is stopped immediately when one of the thresholds "
 	                     + "closes. If a threshold closes part way though processing an entity, "
-	                     + "the work is interrupted and the entity is released.",
-	         exampleList = {"ExpressionThreshold1 TimeSeriesThreshold1 SignalThreshold1"})
+	                     + "the work is interrupted and the entity is released.")
 	protected final EntityListInput<Threshold> immediateReleaseThresholdList;
 
 	@Keyword(description = "A list of thresholds that must be satisfied for the object to "
 	                     + "operate. If a threshold closes part way though processing an entity, "
 	                     + "the remaining work is completed and the entity is released before the "
-	                     + "object is closed.",
-	         exampleList = {"ExpressionThreshold1 TimeSeriesThreshold1 SignalThreshold1"})
+	                     + "object is closed.")
 	protected final EntityListInput<Threshold> operatingThresholdList;
 
 	@Keyword(description = "A list of thresholds that must be satisfied for the object to "
 	                     + "operate. If a threshold closes part way though processing an entity, "
 	                     + "the remaining work is completed, but the entity is retained "
-	                     + "until the threshold re-opens.",
-	         exampleList = {"ExpressionThreshold1 TimeSeriesThreshold1 SignalThreshold1"})
+	                     + "until the threshold re-opens.")
 	protected final EntityListInput<Threshold> releaseThresholdList;
 
 	@Keyword(description = "A list of DowntimeEntities representing planned maintenance that "
 	                     + "must be performed immediately, interrupting any work underway at "
-	                     + "present.",
-	         exampleList = {"DowntimeEntity1 DowntimeEntity2 DowntimeEntity3"})
+	                     + "present.")
 	protected final EntityListInput<DowntimeEntity> immediateMaintenanceList;
 
 	@Keyword(description = "A list of DowntimeEntities representing planned maintenance that "
-	                     + "must begin as soon as task underway at present is finished.",
-	         exampleList = {"DowntimeEntity1 DowntimeEntity2 DowntimeEntity3"})
+	                     + "must begin as soon as task underway at present is finished.")
 	protected final EntityListInput<DowntimeEntity> forcedMaintenanceList;
 
 	@Keyword(description = "A list of DowntimeEntities representing planned maintenance that "
 	                     + "can wait until task underway at present is finished and the queue "
-	                     + "of tasks is empty.",
-	         exampleList = {"DowntimeEntity1 DowntimeEntity2 DowntimeEntity3"})
+	                     + "of tasks is empty.")
 	protected final EntityListInput<DowntimeEntity> opportunisticMaintenanceList;
 
 	@Keyword(description = "A list of DowntimeEntities representing unplanned maintenance that "
 	                     + "must be performed immediately, interrupting any work underway at "
-	                     + "present.",
-	         exampleList = {"DowntimeEntity1 DowntimeEntity2 DowntimeEntity3"})
+	                     + "present.")
 	protected final EntityListInput<DowntimeEntity> immediateBreakdownList;
 
 	@Keyword(description = "A list of DowntimeEntities representing unplanned maintenance that "
-	                     + "must begin as soon as task underway at present is finished.",
-	         exampleList = {"DowntimeEntity1 DowntimeEntity2 DowntimeEntity3"})
+	                     + "must begin as soon as task underway at present is finished.")
 	protected final EntityListInput<DowntimeEntity> forcedBreakdownList;
 
 	@Keyword(description = "A list of DowntimeEntities representing unplanned maintenance that "
 	                     + "can wait until task underway at present is finished and the queue "
-	                     + "of tasks is empty.",
-	         exampleList = {"DowntimeEntity1 DowntimeEntity2 DowntimeEntity3"})
+	                     + "of tasks is empty.")
 	protected final EntityListInput<DowntimeEntity> opportunisticBreakdownList;
 
 	{

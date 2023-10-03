@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2022 JaamSim Software Inc.
+ * Copyright (C) 2016-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,9 +38,7 @@ public class Assign extends LinkedComponent {
 	                     + "expression:\n"
 	                     + "- this entity -- this.AttributeName\n"
 	                     + "- entity received -- this.obj.AttributeName\n"
-	                     + "- another entity -- [EntityName].AttributeName",
-	         exampleList = {"{ 'this.A = 1' } { 'this.obj.B = 1' } { '[Ent1].C = 1' }",
-	                        "{ 'this.D = 1[s] + 0.5*this.SimTime' }"})
+	                     + "- another entity -- [EntityName].AttributeName")
 	private final AssignmentListInput assignmentList;
 
 	{

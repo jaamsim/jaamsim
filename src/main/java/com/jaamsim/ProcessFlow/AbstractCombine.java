@@ -21,10 +21,10 @@ import java.util.ArrayList;
 
 import com.jaamsim.BooleanProviders.BooleanProvInput;
 import com.jaamsim.Commands.KeywordCommand;
+import com.jaamsim.EntityProviders.EntityProvListInput;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.Samples.SampleListInput;
-import com.jaamsim.input.EntityListInput;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.KeywordIndex;
@@ -38,9 +38,8 @@ public abstract class AbstractCombine extends LinkedService {
 	         exampleList = { "3.0 h", "ExponentialDistribution1", "'1[s] + 0.5*[TimeSeries1].PresentValue'" })
 	private final SampleInput serviceTime;
 
-	@Keyword(description = "The Queue objects in which to place the arriving entities.",
-	         exampleList = {"Queue1 Queue2"})
-	private final EntityListInput<Queue> waitQueueList;
+	@Keyword(description = "The Queue objects in which to place the arriving entities.")
+	private final EntityProvListInput<Queue> waitQueueList;
 
 	@Keyword(description = "The number of entities required from each queue for processing to "
 	                     + "begin. "
@@ -81,7 +80,7 @@ public abstract class AbstractCombine extends LinkedService {
 		serviceTime.setValidRange(0, Double.POSITIVE_INFINITY);
 		this.addInput(serviceTime);
 
-		waitQueueList = new EntityListInput<>(Queue.class, "WaitQueueList", KEY_INPUTS, new ArrayList<Queue>());
+		waitQueueList = new EntityProvListInput<>(Queue.class, "WaitQueueList", KEY_INPUTS, null);
 		waitQueueList.setRequired(true);
 		this.addInput(waitQueueList);
 
@@ -123,7 +122,7 @@ public abstract class AbstractCombine extends LinkedService {
 
 	@Override
 	public ArrayList<Queue> getQueues() {
-		return waitQueueList.getValue();
+		return waitQueueList.getNextEntityList(this, 0.0d);
 	}
 
 	public int[] getNumberRequired(double simTime) {

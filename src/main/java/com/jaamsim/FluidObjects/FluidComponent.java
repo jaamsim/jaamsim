@@ -35,8 +35,7 @@ import com.jaamsim.units.SpeedUnit;
  */
 public class FluidComponent extends DisplayEntity {
 
-	@Keyword(description = "The upstream component that feeds this component.",
-	         exampleList = {"Comp1"})
+	@Keyword(description = "The upstream component that feeds this component.")
 	private final EntityInput<FluidComponent> previousInput;
 
 	@Keyword(description = "The hydraulic diameter of the component. "

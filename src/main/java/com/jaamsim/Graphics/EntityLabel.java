@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2015 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018-2022 JaamSim Software Inc.
+ * Copyright (C) 2018-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,8 +35,7 @@ import com.jaamsim.units.DistanceUnit;
 
 public class EntityLabel extends TextBasics {
 
-	@Keyword(description = "The name of an entity that is labelled by this EntityLabel.",
-	         exampleList = {"DisplayEntity1"})
+	@Keyword(description = "The name of an entity that is labelled by this EntityLabel.")
 	protected final EntityInput<DisplayEntity> targetEntity;
 
 	{

@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2018 JaamSim Software Inc.
+ * Copyright (C) 2018-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package com.jaamsim.ui;
 
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
@@ -41,16 +42,16 @@ public class ListDialog extends JDialog {
 	private ArrayList<String> selectedList;
 	private int result;
 
+	public static final int INPUT_BUILDER_OPTION = 2;  // Input Builder button is clicked
 	public static final int CANCEL_OPTION = 1;  // Cancel button is clicked
 	public static final int APPROVE_OPTION = 0; // Accept button is clicked
 	public static final int ERROR_OPTION = -1;  // Error occurs or the dialog is dismissed
 
 	public ListDialog(Frame owner, String title, boolean modal,
-			ArrayList<String> optionList, ArrayList<String> initList) {
+			ArrayList<String> optionList, ArrayList<String> initList, boolean inputBuilder) {
 		super(owner, title, modal);
 		setType(Type.UTILITY);
 		selectedList = new ArrayList<>();
-		setSize(190, 300);
 
 		// Build a list of checkboxes for the options
 		final DefaultListModel<JCheckBox> listModel = new DefaultListModel<>();
@@ -67,6 +68,7 @@ public class ListDialog extends JDialog {
 
 		// Add the checkbox list to the dialog
 		JScrollPane jScroll = new JScrollPane(list);
+		jScroll.setPreferredSize(new Dimension(jScroll.getPreferredSize().width, 250));
 		getContentPane().add(jScroll);
 
 		// Scroll to the first item on the initial list
@@ -104,11 +106,23 @@ public class ListDialog extends JDialog {
 			}
 		});
 
+		// Input Builder button
+		JButton inputBuilderButton = new JButton("Input Builder");
+		inputBuilderButton.addActionListener( new ActionListener() {
+			@Override
+			public void actionPerformed( ActionEvent e ) {
+				result = INPUT_BUILDER_OPTION;
+				setVisible(false);
+			}
+		});
+		inputBuilderButton.setEnabled(inputBuilder);
+
 		// Add the buttons to the dialog
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.setLayout( new FlowLayout(FlowLayout.CENTER) );
 		buttonPanel.add(acceptButton);
 		buttonPanel.add(cancelButton);
+		buttonPanel.add(inputBuilderButton);
 		getContentPane().add("South", buttonPanel);
 
 		// Window closed event
@@ -121,6 +135,7 @@ public class ListDialog extends JDialog {
 			}
 		} );
 
+		pack();
 		setAlwaysOnTop(true);
 	}
 

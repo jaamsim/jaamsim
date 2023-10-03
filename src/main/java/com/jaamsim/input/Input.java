@@ -159,7 +159,13 @@ public abstract class Input<T> {
 	                                                     + "Each entry in the list must be enclosed by braces.";
 	protected static final String VALID_COLOR_LIST = "Accepts a list of colours that are expressed as either a colour name or an RGB value. "
 	                                               + "Each entry in the list must be enclosed by braces.";
+
 	protected static final String VALID_ENTITY_LIST = "Accepts a list of entity names separated by spaces.";
+	protected static final String VALID_ENTITY_PROV_LIST = "Accepts a list of entity names or expressions that return an entity. "
+	                                                     + "Each entry in the list can be enclosed by braces.";
+	protected static final String VALID_ENTITY_PROV_LIST_TYPE = "Accepts a list of entity names of type %s or expressions that return such an entity. "
+	                                                          + "Each entry in the list can be enclosed by braces.";
+
 	protected static final String VALID_FORMAT = "Accepts a Java format string for a number. For example, '%.3f' would print a number with three decimal places.";
 	protected static final String VALID_VEC3D = "Accepts three numbers separated by spaces followed by a unit of type %s. "
 	                                          + "If only two numbers are entered, the third value defaults to zero.";
@@ -167,9 +173,21 @@ public abstract class Input<T> {
 	protected static final String VALID_VEC3D_LIST = "Accepts a list of vectors enclosed by braces. "
 	                                               + "Each vector consists of three numbers separated by spaces followed by a unit of type %s. "
 	                                               + "If a vector has only two numbers, the third value defaults to zero.";
+
 	protected static final String VALID_ATTRIB_DEF = "Accepts a list of attribute definitions each consisting of an attribute name followed by an expression "
 	                                               + "that sets the initial value for the attribute. "
 	                                               + "Each definition in the list must be enclosed by braces.";
+	protected static final String[] EXAMPLE_ATTRIB_DEF = new String[] {"{ AAA 1 } { bbb 2[s] } { c '\"abc\"' } { d [Queue1] }",
+	                                                                   "{ e '{1,2,3}' } { f '{\"key1\"=10, \"key2\"=4}' } { g '|x|(2*x)' }"};
+
+	protected static final String VALID_ATTRIB_ASSIGN = "Accepts a list of attribute assignments each consisting of an left-hand side expression that selects an attribute, "
+	                                                  + "an equal sign, and a right-hand side expression that calculates the new value for the attribute. "
+	                                                  + "Each assignment in the list must be enclosed by braces. "
+	                                                  + "Single quotes are required around assignments that include spaces.";
+	protected static final String[] EXAMPLE_ATTRIB_ASSIGN = new String[] {"{ 'this.A = 1' } { 'this.obj.B = 1' } { '[Ent1].C = 1' }",
+	                                                                      "{ 'this.D = 1[s] + 0.5*this.SimTime' }",
+	                                                                      "{ 'this.Array(this.obj.Index) = 1' }"};
+
 	protected static final String VALID_CUSTOM_OUT = "Accepts a list of custom output definitions each consisting of a custom output name, an expression, and a unit type (if required). "
 	                                               + "Each definition in the list must be enclosed by braces.";
 	protected static final String VALID_PASSTHROUGH = "Accepts a list of passthrough keyword definitions each consisting of the name for the new keyword and output followed by the unit type for the new output. "

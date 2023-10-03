@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2022 JaamSim Software Inc.
+ * Copyright (C) 2016-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 
 import com.jaamsim.basicsim.Entity;
-import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.input.ExpEvaluator.EntityParseContext;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
@@ -111,6 +110,11 @@ public class AttributeDefinitionListInput extends ArrayListInput<AttributeHandle
 	}
 
 	@Override
+	public String[] getExamples() {
+		return Input.EXAMPLE_ATTRIB_DEF;
+	}
+
+	@Override
 	public void getValueTokens(ArrayList<String> toks) {
 		if (value == null || isDef)
 			return;
@@ -121,14 +125,6 @@ public class AttributeDefinitionListInput extends ArrayListInput<AttributeHandle
 			toks.add(parseContextList.get(i).getUpdatedSource());
 			toks.add("}");
 		}
-	}
-
-	@Override
-	public String getDefaultString(JaamSimModel simModel) {
-		if (defValue == null || defValue.isEmpty())
-			return "";
-
-		return defValue.toString();
 	}
 
 	@Override

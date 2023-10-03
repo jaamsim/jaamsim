@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2016-2022 JaamSim Software Inc.
+ * Copyright (C) 2016-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 
 import com.jaamsim.basicsim.Entity;
-import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.input.ExpEvaluator.EntityParseContext;
 import com.jaamsim.input.ExpParser.Expression;
 import com.jaamsim.units.DimensionlessUnit;
@@ -112,14 +111,6 @@ public class NamedExpressionListInput extends ArrayListInput<NamedExpression> {
 				toks.add(ne.getUnitType().getSimpleName());
 			toks.add("}");
 		}
-	}
-
-	@Override
-	public String getDefaultString(JaamSimModel simModel) {
-		if (defValue == null || defValue.isEmpty())
-			return "";
-
-		return defValue.toString();
 	}
 
 	@Override

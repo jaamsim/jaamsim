@@ -44,8 +44,7 @@ public class ObjectType extends Entity implements DragAndDropable {
 	         exampleList = {"This is placeholder example text"})
 	private final StringInput palette;
 
-	@Keyword(description = "Only for DisplayEntity",
-	         exampleList = {"This is placeholder example text"})
+	@Keyword(description = "Only for DisplayEntity")
 	private final EntityInput<DisplayModel> defaultDisplayModel;
 
 	@Keyword(description = "This is placeholder description text")

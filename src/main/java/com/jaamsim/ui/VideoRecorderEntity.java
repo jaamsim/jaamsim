@@ -72,8 +72,7 @@ public class VideoRecorderEntity extends DisplayEntity {
 	         exampleList = {"1920 1080"})
 	private final IntegerListInput captureArea;
 
-	@Keyword(description = "The list of View windows to be captured.",
-	         exampleList = {"View1 View2 View3"})
+	@Keyword(description = "The list of View windows to be captured.")
 	private final EntityListInput<View> captureViews;
 
 	@Keyword(description = "The background color for the captured frames.\n"

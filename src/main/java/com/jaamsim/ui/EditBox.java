@@ -455,17 +455,7 @@ public static class EditTable extends JTable {
 			ret = new FileEditor(width, height);
 		}
 
-		// 3) Expression Builder
-		else if (in.useExpressionBuilder()) {
-			ret = new ExpressionEditor(width, height);
-		}
-
-		// 4) Normal text
-		else if (array == null) {
-			ret = new StringEditor(width, height);
-		}
-
-		// 5) Multiple selections from a List
+		// 3) Multiple selections from a List
 		else if (in instanceof ListInput) {
 			ListEditor listEditor = new ListEditor(width, height, array);
 			if (in instanceof StringListInput) {
@@ -475,6 +465,16 @@ public static class EditTable extends JTable {
 				listEditor.setInnerBraces(true);
 			}
 			ret = listEditor;
+		}
+
+		// 4) Expression Builder
+		else if (in.useExpressionBuilder()) {
+			ret = new ExpressionEditor(width, height);
+		}
+
+		// 5) Normal text
+		else if (array == null) {
+			ret = new StringEditor(width, height);
 		}
 
 		// 6) Single selection from a drop down box

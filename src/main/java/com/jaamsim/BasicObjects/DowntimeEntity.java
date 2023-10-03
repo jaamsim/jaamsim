@@ -46,14 +46,12 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 
 	@Keyword(description = "The object whose working time determines the occurrence of the "
 	                     + "planned or unplanned maintenance events. Calendar time is used if "
-	                     + "the input is left blank.",
-	         exampleList = {"Object1"})
+	                     + "the input is left blank.")
 	private final EntityInput<StateEntity> iatWorkingEntity;
 
 	@Keyword(description = "The object whose working time determines the completion of the "
 	                     + "planned or unplanned maintenance activity. Calendar time is used if "
-	                     + "the input is left blank.",
-	         exampleList = {"Object1"})
+	                     + "the input is left blank.")
 	private final EntityInput<StateEntity> durationWorkingEntity;
 
 	@Keyword(description = "The calendar or working time between the start of the last planned or "

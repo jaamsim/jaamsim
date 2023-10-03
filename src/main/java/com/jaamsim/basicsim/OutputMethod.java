@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2012 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,8 +28,7 @@ import com.jaamsim.input.StringListInput;
 
 public class OutputMethod extends Entity {
 
-@Keyword(description = "The target Entity we are collecting output from",
-         exampleList = {"Entity1"})
+@Keyword(description = "The target Entity we are collecting output from")
 private final EntityInput<Entity> target;
 
 @Keyword(description = "The name of the method to call on the target",

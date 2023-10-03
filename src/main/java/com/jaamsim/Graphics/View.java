@@ -50,8 +50,7 @@ public class View extends Entity {
 
 	private final int viewID;
 
-	@Keyword(description = "The region in which the view's coordinates are given.",
-	         exampleList = {"Region1"})
+	@Keyword(description = "The region in which the view's coordinates are given.")
 	private final EntityInput<Region> region;
 
 	@Keyword(description = "The position at which the view camera is pointed.",
@@ -88,8 +87,7 @@ public class View extends Entity {
 
 	@Keyword(description = "The (optional) entity for this view to follow. Setting this input "
 	                     + "makes the view ignore ViewCenter and interprets ViewPosition as a "
-	                     + "relative offset to this entity.",
-	         exampleList = {"Ship1"})
+	                     + "relative offset to this entity.")
 	private final EntityInput<DisplayEntity> followEntityInput;
 
 	@Keyword(description = "The (optional) scripted curve for the view position to follow.",

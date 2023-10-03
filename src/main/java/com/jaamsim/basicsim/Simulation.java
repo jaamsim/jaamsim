@@ -204,7 +204,8 @@ public class Simulation extends Entity {
 	         exampleList = {"22", "1-3-2"})
 	private final RunNumberInput startingScenarioNumber;
 
-	@Keyword(description = "The last scenario number to be executed.",
+	@Keyword(description = "The last scenario number to be executed.\n\n"
+	                     + "The default value is the 'StartingScenarioNumber' input.",
 	         exampleList = {"78", "2-3-8"})
 	private final RunNumberInput endingScenarioNumber;
 
@@ -476,6 +477,7 @@ public class Simulation extends Entity {
 		endingScenarioNumber.setUnitType(DimensionlessUnit.class);
 		endingScenarioNumber.setIntegerValue(true);
 		endingScenarioNumber.setValidRange(1, Integer.MAX_VALUE);
+		endingScenarioNumber.setDefaultText("StartingScenarioNumber");
 		this.addInput(endingScenarioNumber);
 		this.addSynonym(endingScenarioNumber, "EndingRunNumber");
 
@@ -1283,7 +1285,8 @@ public class Simulation extends Entity {
 	}
 
 	public int getEndingScenarioNumber() {
-		return (int) endingScenarioNumber.getNextSample(this, 0.0d);
+		int ret = (int) endingScenarioNumber.getNextSample(this, 0.0d);
+		return Math.max(ret, getStartingScenarioNumber());
 	}
 
 	public int getNumberOfScenarios() {
