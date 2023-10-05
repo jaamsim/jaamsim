@@ -232,7 +232,7 @@ public class EntityLabel extends TextBasics {
 
 	public static boolean canLabel(DisplayEntity ent) {
 		return !(ent instanceof TextEntity) && !(ent instanceof OverlayEntity)
-				&& !(ent instanceof Graph) && !(ent instanceof Arrow) && !(ent instanceof Region)
+				&& !(ent instanceof GraphBasics) && !(ent instanceof Arrow) && !(ent instanceof Region)
 				&& !(ent instanceof Polyline)
 				&& ent.isRegistered()
 				&& !ent.getName().equals("XY-Grid") && !ent.getName().equals("XYZ-Axis");
