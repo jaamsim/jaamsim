@@ -201,4 +201,14 @@ public static String[] splitSubstrings(String str) {
 	return ret;
 }
 
+public static final String addSubstringQuotesIfNeeded(String str) {
+	String[] array = splitSubstrings(str);
+	StringBuilder sb = new StringBuilder();
+	for (int i = 0; i < array.length; i++) {
+		array[i] = addQuotesIfNeeded(array[i]);
+		sb.append("{").append(array[i]).append("}");
+	}
+	return sb.toString();
+}
+
 }
