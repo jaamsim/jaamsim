@@ -28,7 +28,7 @@ import com.jaamsim.units.Unit;
 /**
  * AttributeDefinitionListInput is an object for parsing inputs consisting of a list of
  * Attribute definitions using the syntax:
- * Entity AttributeDefinitionList { { AttibuteName1 Value1 Unit1 } { AttibuteName2 Value2 Unit2 } ... }
+ * Entity AttributeDefinitionList { { AttibuteName1 Value1 } { AttibuteName2 Value2 } ... }
  * @author Harry King
  */
 public class AttributeDefinitionListInput extends ArrayListInput<AttributeHandle> {
@@ -41,7 +41,18 @@ public class AttributeDefinitionListInput extends ArrayListInput<AttributeHandle
 
 	@Override
 	public String applyConditioning(String str) {
-		return Parser.addEnclosure("{", str, "}");
+		String[] array = Parser.splitSubstrings(str);
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < array.length; i++) {
+			String[] args = array[i].split("\\s+", 2);
+			sb.append("{").append(args[0]);
+			if (args.length == 2) {
+				args[1] = Parser.addQuotesIfNeeded(args[1]);
+				sb.append(" ").append(args[1]);
+			}
+			sb.append("}");
+		}
+		return sb.toString();
 	}
 
 	@Override

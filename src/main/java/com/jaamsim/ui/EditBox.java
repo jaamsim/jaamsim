@@ -456,7 +456,7 @@ public static class EditTable extends JTable {
 		}
 
 		// 3) Multiple selections from a List
-		else if (in instanceof ListInput) {
+		else if (in instanceof ListInput && array != null && !array.isEmpty()) {
 			ListEditor listEditor = new ListEditor(width, height, array);
 			if (in instanceof StringListInput) {
 				listEditor.setCaseSensitive( ((StringListInput)(in)).getCaseSensitive() );

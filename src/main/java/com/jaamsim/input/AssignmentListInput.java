@@ -33,6 +33,11 @@ public class AssignmentListInput extends ArrayListInput<ExpParser.Assignment> {
 	}
 
 	@Override
+	public String applyConditioning(String str) {
+		return Parser.addSubstringQuotesIfNeeded(str);
+	}
+
+	@Override
 	public void parse(Entity thisEnt, KeywordIndex kw) throws InputErrorException {
 
 		// Divide up the inputs by the inner braces

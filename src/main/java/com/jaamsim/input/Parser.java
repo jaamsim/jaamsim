@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018-2022 JaamSim Software Inc.
+ * Copyright (C) 2018-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -178,6 +178,37 @@ public static final String removeEnclosure(String prefix, String str, String suf
 	if (str.endsWith(suffix))
 		endIndex -= suffix.length();
 	return str.substring(beginIndex, endIndex);
+}
+
+/**
+ * Parses the specified input string into an array of input substrings that were grouped by opening
+ * and closing curly braces.
+ * @param str - input string
+ * @return array of substrings
+ */
+public static String[] splitSubstrings(String str) {
+	str = str.trim();
+	if (str.charAt(0) == '{') {
+		str = str.substring(1);
+	}
+	if (str.charAt(str.length() - 1) == '}') {
+		str = str.substring(0, str.length() - 1);
+	}
+	String[] ret = str.split("\\}\\s*\\{");
+	for (int i = 0; i < ret.length; i++) {
+		ret[i] = ret[i].trim();
+	}
+	return ret;
+}
+
+public static final String addSubstringQuotesIfNeeded(String str) {
+	String[] array = splitSubstrings(str);
+	StringBuilder sb = new StringBuilder();
+	for (int i = 0; i < array.length; i++) {
+		array[i] = addQuotesIfNeeded(array[i]);
+		sb.append("{").append(array[i]).append("}");
+	}
+	return sb.toString();
 }
 
 }
