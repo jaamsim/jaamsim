@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2017-2023 JaamSim Software Inc.
+ * Copyright (C) 2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,34 +19,29 @@ package com.jaamsim.EntityProviders;
 import java.util.ArrayList;
 
 import com.jaamsim.basicsim.Entity;
+import com.jaamsim.basicsim.Group;
 
-public class EntityProvConstant<T extends Entity> implements EntityProvider<T>, EntityListProvider<T> {
+public class EntityProvGroup<T extends Entity> implements EntityListProvider<T> {
 
-	private final T ent;
+	private final Group group;
 
-	public EntityProvConstant(T ent) {
-		this.ent = ent;
+	public EntityProvGroup(Group g) {
+		group = g;
 	}
 
-	public Entity getEntity() {
-		return ent;
-	}
-
-	@Override
-	public T getNextEntity(Entity thisEnt, double simTime) {
-		return ent;
-	}
-
+	@SuppressWarnings("unchecked")
 	@Override
 	public void getNextEntityList(Entity thisEnt, double simTime, ArrayList<T> list) {
-		if (ent != null && !list.contains(ent)) {
-			list.add(ent);
+		for (Entity ent : group.getList()) {
+			if (ent != null && !list.contains(ent)) {
+				list.add((T) ent);
+			}
 		}
 	}
 
 	@Override
 	public String toString() {
-		return ent.getName();
+		return group.toString();
 	}
 
 }

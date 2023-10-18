@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2017-2022 JaamSim Software Inc.
+ * Copyright (C) 2017-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ import com.jaamsim.input.ExpResType;
 import com.jaamsim.input.ExpResult;
 import com.jaamsim.input.Input;
 
-public class EntityProvExpression<T extends Entity> implements EntityProvider<T> {
+public class EntityProvExpression<T extends Entity> implements EntityProvider<T>, EntityListProvider<T> {
 
 	private final Expression exp;
 	private final ExpEvaluator.EntityParseContext parseContext;
@@ -64,6 +64,33 @@ public class EntityProvExpression<T extends Entity> implements EntityProvider<T>
 			throw new ErrorException(thisEnt, e);
 		}
 		return ret;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public void getNextEntityList(Entity thisEnt, double simTime, ArrayList<T> list) {
+		try {
+			ExpResult result = ExpEvaluator.evaluateExpression(exp, thisEnt, simTime);
+
+			// Result is a single entity
+			if (result.type == ExpResType.ENTITY) {
+				Entity ent = result.entVal;
+				if (ent != null && !entClass.isAssignableFrom(ent.getClass())) {
+					throw new ExpError(exp.source, 0, Input.EXP_ERR_CLASS,
+							ent.getClass().getSimpleName(), entClass.getSimpleName());
+				}
+				if (ent != null && !list.contains(ent)) {
+					list.add((T) ent);
+				}
+			}
+			else {
+				throw new ExpError(exp.source, 0, Input.EXP_ERR_RESULT_TYPE,
+						result.type, "ENTITY or COLLECTION");
+			}
+		}
+		catch(ExpError e) {
+			throw new ErrorException(thisEnt, e);
+		}
 	}
 
 	public void appendEntityReferences(ArrayList<Entity> list) {
