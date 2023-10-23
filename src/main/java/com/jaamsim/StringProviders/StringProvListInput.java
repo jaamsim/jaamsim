@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2015 Ausenco Engineering Canada Inc.
- * Copyright (C) 2017-2022 JaamSim Software Inc.
+ * Copyright (C) 2017-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -156,11 +156,9 @@ public class StringProvListInput extends ArrayListInput<StringProvider> {
 		boolean first = true;
 		for (int i = 0; i < value.size(); i++) {
 			if (!first) {
-				first = false;
-			}
-			else {
 				sb.append(Input.SEPARATOR);
 			}
+			first = false;
 			sb.append("{").append(Input.BRACE_SEPARATOR);
 			sb.append(getNextString(i, thisEnt, simTime));
 			sb.append(Input.BRACE_SEPARATOR).append("}");
