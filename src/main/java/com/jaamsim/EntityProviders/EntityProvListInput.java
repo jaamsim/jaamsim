@@ -28,11 +28,11 @@ import com.jaamsim.input.Input;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.KeywordIndex;
 
-public class EntityProvListInput<T extends Entity> extends ArrayListInput<EntityProvider<T>> {
+public class EntityProvListInput<T extends Entity> extends ArrayListInput<EntityListProvider<T>> {
 
 	private Class<T> entClass;
 
-	public EntityProvListInput(Class<T> aClass, String key, String cat, ArrayList<EntityProvider<T>> def) {
+	public EntityProvListInput(Class<T> aClass, String key, String cat, ArrayList<EntityListProvider<T>> def) {
 		super(key, cat, def);
 		entClass = aClass;
 	}
@@ -45,11 +45,11 @@ public class EntityProvListInput<T extends Entity> extends ArrayListInput<Entity
 		// Simple format without inner braces
 		if (subArgs.size() == 1) {
 			KeywordIndex subArg = subArgs.get(0);
-			ArrayList<EntityProvider<T>> temp = new ArrayList<>(subArg.numArgs());
+			ArrayList<EntityListProvider<T>> temp = new ArrayList<>(subArg.numArgs());
 			for (int i = 0; i < subArg.numArgs(); i++) {
 				KeywordIndex argKw = new KeywordIndex(subArg, i, i + 1);
 				try {
-					EntityProvider<T> ep = Input.parseEntityProvider(argKw, thisEnt, entClass);
+					EntityListProvider<T> ep = Input.parseEntityListProvider(argKw, thisEnt, entClass);
 					temp.add(ep);
 				}
 				catch (InputErrorException e) {
@@ -65,11 +65,11 @@ public class EntityProvListInput<T extends Entity> extends ArrayListInput<Entity
 		}
 
 		// Normal format with inner braces
-		ArrayList<EntityProvider<T>> temp = new ArrayList<>(subArgs.size());
+		ArrayList<EntityListProvider<T>> temp = new ArrayList<>(subArgs.size());
 		for (int i = 0; i < subArgs.size(); i++) {
 			KeywordIndex subArg = subArgs.get(i);
 			try {
-				EntityProvider<T> ep = Input.parseEntityProvider(subArg, thisEnt, entClass);
+				EntityListProvider<T> ep = Input.parseEntityListProvider(subArg, thisEnt, entClass);
 				temp.add(ep);
 			}
 			catch (InputErrorException e) {
@@ -136,7 +136,7 @@ public class EntityProvListInput<T extends Entity> extends ArrayListInput<Entity
 			return false;
 		boolean ret = false;
 		for (int i = value.size() - 1; i >= 0; i--) {
-			EntityProvider<T> ep = value.get(i);
+			EntityListProvider<T> ep = value.get(i);
 			if (ep instanceof EntityProvConstant
 					&& ((EntityProvConstant<T>) ep).getEntity() == ent) {
 				value.remove(i);
@@ -150,7 +150,7 @@ public class EntityProvListInput<T extends Entity> extends ArrayListInput<Entity
 	public void appendEntityReferences(ArrayList<Entity> list) {
 		if (value == null)
 			return;
-		for (EntityProvider<T> ep : value) {
+		for (EntityListProvider<T> ep : value) {
 			if (ep instanceof EntityProvConstant) {
 				Entity ent = ((EntityProvConstant<T>) ep).getEntity();
 				if (ent == null || list.contains(ent))
@@ -175,42 +175,24 @@ public class EntityProvListInput<T extends Entity> extends ArrayListInput<Entity
 			return "";
 
 		StringBuilder sb = new StringBuilder();
+		sb.append("{").append(Input.BRACE_SEPARATOR);
 		boolean first = true;
-		for (EntityProvider<T> ep : value) {
+		for (T ent : getNextEntityList(thisEnt, simTime)) {
 			if (!first) {
-				first = false;
+				sb.append(", ");
 			}
-			else {
-				sb.append(Input.SEPARATOR);
-			}
-			//sb.append("{").append(Input.BRACE_SEPARATOR);
-			//sb.append(String.format("[%s]", ep.getNextEntity(thisEnt, simTime)));
-			sb.append(ep.getNextEntity(thisEnt, simTime));
-			//sb.append(Input.BRACE_SEPARATOR).append("}");
+			first = false;
+			sb.append(String.format("[%s]", ent));
 		}
+		sb.append(Input.BRACE_SEPARATOR).append("}");
 		return sb.toString();
-	}
-
-	public T getNextEntity(int i, Entity thisEnt, double simTime) {
-		try {
-			return getValue().get(i).getNextEntity(thisEnt, simTime);
-		}
-		catch (ErrorException e) {
-			e.keyword = getKeyword();
-			e.index = i + 1;
-			throw e;
-		}
-		catch (Exception e) {
-			throw new ErrorException("", -1, thisEnt.getName(), getKeyword(), i + 1,
-					e.getMessage(), e);
-		}
 	}
 
 	public ArrayList<T> getNextEntityList(Entity thisEnt, double simTime) {
 		ArrayList<T> ret = new ArrayList<>();
 		for (int i = 0; i < getListSize(); i++) {
 			try {
-				ret.add(getValue().get(i).getNextEntity(thisEnt, simTime));
+				getValue().get(i).getNextEntityList(thisEnt, simTime, ret);
 			}
 			catch (ErrorException e) {
 				e.keyword = getKeyword();
