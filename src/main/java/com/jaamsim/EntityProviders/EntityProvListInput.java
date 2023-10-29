@@ -31,10 +31,12 @@ import com.jaamsim.input.KeywordIndex;
 public class EntityProvListInput<T extends Entity> extends ArrayListInput<EntityListProvider<T>> {
 
 	private Class<T> entClass;
+	private boolean unique; // flag to determine if list must be unique or not
 
 	public EntityProvListInput(Class<T> aClass, String key, String cat, ArrayList<EntityListProvider<T>> def) {
 		super(key, cat, def);
 		entClass = aClass;
+		unique = true;
 	}
 
 	@Override
@@ -100,6 +102,10 @@ public class EntityProvListInput<T extends Entity> extends ArrayListInput<Entity
 		return new String[]{name+"1 "+name+"2",
 				"{ "+name+"1 } { "+name+"2 }",
 				"{ this.attrib1 } { this.attrib2 }"};
+	}
+
+	public void setUnique(boolean unique) {
+		this.unique = unique;
 	}
 
 	@Override
@@ -192,7 +198,7 @@ public class EntityProvListInput<T extends Entity> extends ArrayListInput<Entity
 		ArrayList<T> ret = new ArrayList<>();
 		for (int i = 0; i < getListSize(); i++) {
 			try {
-				getValue().get(i).getNextEntityList(thisEnt, simTime, ret);
+				getValue().get(i).getNextEntityList(thisEnt, simTime, ret, unique);
 			}
 			catch (ErrorException e) {
 				e.keyword = getKeyword();

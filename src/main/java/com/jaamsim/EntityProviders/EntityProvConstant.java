@@ -38,8 +38,8 @@ public class EntityProvConstant<T extends Entity> implements EntityProvider<T>, 
 	}
 
 	@Override
-	public void getNextEntityList(Entity thisEnt, double simTime, ArrayList<T> list) {
-		if (ent != null && !list.contains(ent)) {
+	public void getNextEntityList(Entity thisEnt, double simTime, ArrayList<T> list, boolean unique) {
+		if (ent != null && (!unique || !list.contains(ent))) {
 			list.add(ent);
 		}
 	}

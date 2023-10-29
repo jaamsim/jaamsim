@@ -31,9 +31,9 @@ public class EntityProvGroup<T extends Entity> implements EntityListProvider<T> 
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public void getNextEntityList(Entity thisEnt, double simTime, ArrayList<T> list) {
+	public void getNextEntityList(Entity thisEnt, double simTime, ArrayList<T> list, boolean unique) {
 		for (Entity ent : group.getList()) {
-			if (ent != null && !list.contains(ent)) {
+			if (ent != null && (!unique || !list.contains(ent))) {
 				list.add((T) ent);
 			}
 		}

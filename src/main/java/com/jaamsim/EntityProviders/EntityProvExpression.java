@@ -68,7 +68,7 @@ public class EntityProvExpression<T extends Entity> implements EntityProvider<T>
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public void getNextEntityList(Entity thisEnt, double simTime, ArrayList<T> list) {
+	public void getNextEntityList(Entity thisEnt, double simTime, ArrayList<T> list, boolean unique) {
 		try {
 			ExpResult result = ExpEvaluator.evaluateExpression(exp, thisEnt, simTime);
 
@@ -79,7 +79,7 @@ public class EntityProvExpression<T extends Entity> implements EntityProvider<T>
 					throw new ExpError(exp.source, 0, Input.EXP_ERR_CLASS,
 							ent.getClass().getSimpleName(), entClass.getSimpleName());
 				}
-				if (ent != null && !list.contains(ent)) {
+				if (ent != null && (!unique || !list.contains(ent))) {
 					list.add((T) ent);
 				}
 			}

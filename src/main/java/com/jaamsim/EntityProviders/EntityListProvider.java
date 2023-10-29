@@ -22,6 +22,6 @@ import com.jaamsim.basicsim.Entity;
 
 public interface EntityListProvider<T extends Entity> {
 
-	public void getNextEntityList(Entity thisEnt, double simTime, ArrayList<T> list);
+	public void getNextEntityList(Entity thisEnt, double simTime, ArrayList<T> list, boolean unique);
 
 }
