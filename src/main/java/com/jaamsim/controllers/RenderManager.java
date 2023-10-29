@@ -38,6 +38,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.ReentrantLock;
 
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
@@ -142,7 +145,10 @@ public class RenderManager implements DragSourceListener {
 	private final AtomicBoolean fatalError = new AtomicBoolean(false);
 	private final RedrawCallback redraw = new RedrawCallback();
 
-	private final AtomicBoolean screenshot = new AtomicBoolean(false);
+	// The video recorder to sample
+	private final AtomicReference<VideoRecorder> recorder = new AtomicReference<>();
+	private final ReentrantLock screenshotLock = new ReentrantLock();
+	private final Condition screenshotWait = screenshotLock.newCondition();
 
 	private final AtomicBoolean showReferences = new AtomicBoolean(false);
 	private final AtomicBoolean showLinks = new AtomicBoolean(false);
@@ -178,9 +184,6 @@ public class RenderManager implements DragSourceListener {
 
 	// The object type for drag-and-drop operation, if this is null, the user is not dragging
 	private DragAndDropable dndObjectType;
-
-	// The video recorder to sample
-	private VideoRecorder recorder;
 
 	private final PreviewCache previewCache = new PreviewCache();
 
@@ -221,7 +224,7 @@ public class RenderManager implements DragSourceListener {
 		@Override
 		public void run() {
 			synchronized(this) {
-				if (windowControls.size() == 0 && !screenshot.get()) {
+				if (windowControls.size() == 0 && recorder.get() == null) {
 					return; // Do not queue a redraw if there are no open windows
 				}
 				redraw.set(true);
@@ -396,7 +399,7 @@ public class RenderManager implements DragSourceListener {
 					cc.checkForUpdate();
 				}
 
-				boolean screenShotThisFrame = screenshot.get();
+				boolean screenShotThisFrame = (recorder.get() != null);
 
 				int totalBindings = 0;
 				long startNanos = System.nanoTime();
@@ -2115,29 +2118,31 @@ public class RenderManager implements DragSourceListener {
 	}
 
 	private void takeScreenShot() {
+		VideoRecorder rec = recorder.get();
+		if (rec != null)
+			rec.sample();
 
-		if (recorder != null)
-			recorder.sample();
-
-		synchronized(screenshot) {
-			screenshot.set(false);
-			recorder = null;
-			screenshot.notifyAll();
+		screenshotLock.lock();
+		try {
+			this.recorder.set(null);
+			screenshotWait.signalAll();
+		}
+		finally {
+			screenshotLock.unlock();
 		}
 	}
 
 	public void blockOnScreenShot(VideoRecorder recorder) {
-		assert(!screenshot.get());
-
-		synchronized (screenshot) {
-			screenshot.set(true);
-			this.recorder = recorder;
+		screenshotLock.lock();
+		try {
+			this.recorder.set(recorder);
 			GUIFrame.updateUI();
-			while (screenshot.get()) {
-				try {
-					screenshot.wait();
-				} catch (InterruptedException ex) {}
+			while (this.recorder.get() != null) {
+				screenshotWait.awaitUninterruptibly();
 			}
+		}
+		finally {
+			screenshotLock.unlock();
 		}
 	}
 
