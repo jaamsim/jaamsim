@@ -44,6 +44,8 @@ import java.util.Map.Entry;
 import java.util.Queue;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.regex.Pattern;
 
 import com.jaamsim.DisplayModels.DisplayModel;
@@ -149,6 +151,8 @@ public class Renderer implements GLAnimatorControl {
 	private final Queue<RenderMessage> renderMessages = new ArrayDeque<>();
 
 	private final AtomicBoolean displayNeeded = new AtomicBoolean(true);
+	private final ReentrantLock dispLock = new ReentrantLock();
+	private final Condition dispWait = dispLock.newCondition();
 	private final AtomicBoolean initialized = new AtomicBoolean(false);
 	private final AtomicBoolean shutdown = new AtomicBoolean(false);
 	private final AtomicBoolean fatalError = new AtomicBoolean(false);
@@ -398,16 +402,16 @@ public class Renderer implements GLAnimatorControl {
 				loopTimeNS = (loopEnd - lastLoopEnd);
 				lastLoopEnd = loopEnd;
 
-				try {
-					synchronized (displayNeeded) {
-						if (!displayNeeded.get()) {
-							displayNeeded.wait();
-						}
+				if (!displayNeeded.get()) {
+					dispLock.lock();
+					try {
+						if (!displayNeeded.get())
+							dispWait.awaitUninterruptibly();
 					}
-				} catch (InterruptedException e) {
-					// Let's loop anyway...
+					finally {
+						dispLock.unlock();
+					}
 				}
-
 			} catch (Throwable t) {
 				// Any other unexpected exceptions...
 				logException(t);
@@ -456,9 +460,19 @@ public class Renderer implements GLAnimatorControl {
 	}
 
 	public void queueRedraw() {
-		synchronized(displayNeeded) {
+		if (displayNeeded.get())
+			return;
+
+		dispLock.lock();
+		try {
+			if (displayNeeded.get()) {
+				return;
+			}
 			displayNeeded.set(true);
-			displayNeeded.notifyAll();
+			dispWait.signalAll();
+		}
+		finally {
+			dispLock.unlock();
 		}
 	}
 
