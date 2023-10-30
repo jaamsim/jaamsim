@@ -47,7 +47,7 @@ public final class EventManager {
 	private final ReentrantLock evtLock; // Object used as global lock for synchronization
 
 	private final EventTree eventTree;
-	private final AtomicReference<Process> runningProc;
+	private final AtomicReference<Thread> runningProc;
 	private ProcessTarget startTarget;
 	private final AtomicLong currentTick;
 	private volatile boolean executeEvents;
@@ -102,6 +102,26 @@ public final class EventManager {
 		realTimeFactor = 1;
 		rebaseRealTime = true;
 		setTimeListener(null);
+	}
+
+	private static final ScopedValue<EventManager> scopedEvt = ScopedValue.newInstance();
+	final Runnable startThread = new EventStart(this);
+
+	private static class EventStart implements Runnable {
+		private final EventManager evt;
+		EventStart(EventManager evt) {
+			this.evt = evt;
+		}
+
+		@Override
+		public void run() {
+			ScopedValue.runWhere(scopedEvt, evt, ()->exec());
+		}
+
+		public void exec() {
+			evt.execute();
+		}
+
 	}
 
 	public final void setTimeListener(EventTimeListener l) {
@@ -217,7 +237,8 @@ public final class EventManager {
 	 * Main event execution method the eventManager, this is the only entrypoint
 	 * for Process objects taken out of the pool.
 	 */
-	final void execute(Process cur) {
+	final void execute() {
+		final Process cur = Process.current();
 		evtLock.lock();
 		try {
 			if (runningProc.get() != cur) {
