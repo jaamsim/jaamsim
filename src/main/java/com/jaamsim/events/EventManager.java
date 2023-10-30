@@ -18,6 +18,7 @@
 package com.jaamsim.events;
 
 import java.util.ArrayList;
+import java.util.NoSuchElementException;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Condition;
@@ -477,7 +478,7 @@ public final class EventManager {
 	 */
 	public static final void waitTicks(long ticks, int priority, boolean fifo, EventHandle handle) {
 		Process cur = Process.current();
-		cur.evt().waitTicks(cur, ticks, priority, fifo, handle);
+		EventManager.current().waitTicks(cur, ticks, priority, fifo, handle);
 	}
 
 	/**
@@ -491,8 +492,8 @@ public final class EventManager {
 	 */
 	public static final void waitSeconds(double secs, int priority, boolean fifo, EventHandle handle) {
 		Process cur = Process.current();
-		long ticks = cur.evt().secondsToNearestTick(secs);
-		cur.evt().waitTicks(cur, ticks, priority, fifo, handle);
+		long ticks = EventManager.current().secondsToNearestTick(secs);
+		EventManager.current().waitTicks(cur, ticks, priority, fifo, handle);
 	}
 
 	/**
@@ -551,7 +552,7 @@ public final class EventManager {
 
 	public static final void waitUntil(Conditional cond, EventHandle handle) {
 		Process cur = Process.current();
-		cur.evt().waitUntil(cur, cond, handle);
+		EventManager.current().waitUntil(cur, cond, handle);
 	}
 
 	/**
@@ -579,7 +580,7 @@ public final class EventManager {
 
 	public static final void scheduleUntil(ProcessTarget t, Conditional cond, EventHandle handle) {
 		Process cur = Process.current();
-		cur.evt().schedUntil(cur, t, cond, handle);
+		EventManager.current().schedUntil(cur, t, cond, handle);
 	}
 
 	private void schedUntil(Process cur, ProcessTarget t, Conditional cond, EventHandle handle) {
@@ -600,7 +601,7 @@ public final class EventManager {
 
 	public static final void startProcess(ProcessTarget t) {
 		Process cur = Process.current();
-		cur.evt().start(cur, t);
+		EventManager.current().start(cur, t);
 	}
 
 	private void start(Process cur, ProcessTarget t) {
@@ -663,7 +664,7 @@ public final class EventManager {
 	 */
 	public static final void killEvent(EventHandle handle) {
 		Process cur = Process.current();
-		cur.evt().killEvent(cur, handle);
+		EventManager.current().killEvent(cur, handle);
 	}
 
 	/**
@@ -703,7 +704,7 @@ public final class EventManager {
 	 */
 	public static final void interruptEvent(EventHandle handle) {
 		Process cur = Process.current();
-		cur.evt().interruptEvent(cur, handle);
+		EventManager.current().interruptEvent(cur, handle);
 	}
 
 	/**
@@ -830,7 +831,7 @@ public final class EventManager {
 	 */
 	public static final void scheduleTicks(long waitLength, int eventPriority, boolean fifo, ProcessTarget t, EventHandle handle) {
 		Process cur = Process.current();
-		cur.evt().scheduleTicks(cur, waitLength, eventPriority, fifo, t, handle);
+		EventManager.current().scheduleTicks(cur, waitLength, eventPriority, fifo, t, handle);
 	}
 
 	/**
@@ -846,8 +847,8 @@ public final class EventManager {
 	 */
 	public static final void scheduleSeconds(double secs, int eventPriority, boolean fifo, ProcessTarget t, EventHandle handle) {
 		Process cur = Process.current();
-		long ticks = cur.evt().secondsToNearestTick(secs);
-		cur.evt().scheduleTicks(cur, ticks, eventPriority, fifo, t, handle);
+		long ticks = EventManager.current().secondsToNearestTick(secs);
+		EventManager.current().scheduleTicks(cur, ticks, eventPriority, fifo, t, handle);
 	}
 
 	private void scheduleTicks(Process cur, long waitLength, int eventPriority, boolean fifo, ProcessTarget t, EventHandle handle) {
@@ -940,7 +941,12 @@ public final class EventManager {
 	 * @throws ProcessError if called outside of a Process context
 	 */
 	public static final EventManager current() {
-		return Process.current().evt();
+		try {
+			return scopedEvt.get();
+		}
+		catch (NoSuchElementException e) {
+			throw new ProcessError("Non-process thread called Process.current()");
+		}
 	}
 
 	/**
@@ -948,7 +954,7 @@ public final class EventManager {
 	 * @throws ProcessError if called outside of a Process context
 	 */
 	public static final long simTicks() {
-		return Process.current().evt().currentTick.get();
+		return EventManager.current().currentTick.get();
 	}
 
 	/**
@@ -956,7 +962,7 @@ public final class EventManager {
 	 * @throws ProcessError if called outside of a Process context
 	 */
 	public static final double simSeconds() {
-		return Process.current().evt().getSeconds();
+		return EventManager.current().getSeconds();
 	}
 
 	public final double getSeconds() {

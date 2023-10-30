@@ -122,10 +122,6 @@ final class Process extends Thread {
 		}
 	}
 
-	final EventManager evt() {
-		return evt.get();
-	}
-
 	// Set up a new process for the given entity, method, and arguments and return a process from the pool or create a new one.
 	static Process allocate(EventManager evt, Process next) {
 		while (true) {
