@@ -17,7 +17,7 @@
 package com.jaamsim.events;
 
 class WaitTarget extends ProcessTarget {
-	private Process proc;
+	private final Process proc;
 
 	WaitTarget(Process p) {
 		proc = p;

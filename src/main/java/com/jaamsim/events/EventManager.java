@@ -477,8 +477,7 @@ public final class EventManager {
 	 * @throws ProcessError if called outside of a Process context
 	 */
 	public static final void waitTicks(long ticks, int priority, boolean fifo, EventHandle handle) {
-		Process cur = Process.current();
-		EventManager.current().waitTicks(cur, ticks, priority, fifo, handle);
+		EventManager.current()._waitTicks(ticks, priority, fifo, handle);
 	}
 
 	/**
@@ -491,9 +490,9 @@ public final class EventManager {
 	 * @throws ProcessError if called outside of a Process context
 	 */
 	public static final void waitSeconds(double secs, int priority, boolean fifo, EventHandle handle) {
-		Process cur = Process.current();
-		long ticks = EventManager.current().secondsToNearestTick(secs);
-		EventManager.current().waitTicks(cur, ticks, priority, fifo, handle);
+		EventManager evt = EventManager.current();
+		long ticks = evt.secondsToNearestTick(secs);
+		evt._waitTicks(ticks, priority, fifo, handle);
 	}
 
 	/**
@@ -503,9 +502,10 @@ public final class EventManager {
 	 * @param ticks the number of discrete ticks from now to schedule the event.
 	 * @param priority the priority of the scheduled event: 1 is the highest priority (default is priority 5)
 	 */
-	private void waitTicks(Process cur, long ticks, int priority, boolean fifo, EventHandle handle) {
+	private void _waitTicks(long ticks, int priority, boolean fifo, EventHandle handle) {
 		assertCanSchedule();
 		long nextEventTime = calculateEventTime(ticks);
+		Process cur = Process.current();
 		WaitTarget t = new WaitTarget(cur);
 		EventNode node = getEventNode(nextEventTime, priority);
 		Event evt = getEvent();
@@ -551,8 +551,7 @@ public final class EventManager {
 	}
 
 	public static final void waitUntil(Conditional cond, EventHandle handle) {
-		Process cur = Process.current();
-		EventManager.current().waitUntil(cur, cond, handle);
+		EventManager.current()._waitUntil(cond, handle);
 	}
 
 	/**
@@ -560,8 +559,9 @@ public final class EventManager {
 	 * thread to the conditional stack, then wakes the next waiting thread on
 	 * the thread stack.
 	 */
-	private void waitUntil(Process cur, Conditional cond, EventHandle handle) {
+	private void _waitUntil(Conditional cond, EventHandle handle) {
 		assertCanSchedule();
+		Process cur = Process.current();
 		WaitTarget t = new WaitTarget(cur);
 		ConditionalEvent evt = new ConditionalEvent(cond, t, handle);
 		if (handle != null) {
@@ -579,11 +579,10 @@ public final class EventManager {
 	}
 
 	public static final void scheduleUntil(ProcessTarget t, Conditional cond, EventHandle handle) {
-		Process cur = Process.current();
-		EventManager.current().schedUntil(cur, t, cond, handle);
+		EventManager.current()._scheduleUntil(t, cond, handle);
 	}
 
-	private void schedUntil(Process cur, ProcessTarget t, Conditional cond, EventHandle handle) {
+	private void _scheduleUntil(ProcessTarget t, Conditional cond, EventHandle handle) {
 		assertCanSchedule();
 		ConditionalEvent evt = new ConditionalEvent(cond, t, handle);
 		if (handle != null) {
@@ -600,13 +599,12 @@ public final class EventManager {
 	}
 
 	public static final void startProcess(ProcessTarget t) {
-		Process cur = Process.current();
-		EventManager.current().start(cur, t);
+		EventManager.current()._startProcess(t);
 	}
 
-	private void start(Process cur, ProcessTarget t) {
+	private void _startProcess(ProcessTarget t) {
 		assertCanSchedule();
-
+		Process cur = Process.current();
 		if (trcListener != null) {
 			disableSchedule();
 			trcListener.traceProcessStart(t);
@@ -663,14 +661,13 @@ public final class EventManager {
 	 * @throws ProcessError if called outside of a Process context
 	 */
 	public static final void killEvent(EventHandle handle) {
-		Process cur = Process.current();
-		EventManager.current().killEvent(cur, handle);
+		EventManager.current()._killEvent(handle);
 	}
 
 	/**
 	 *	Removes an event from the pending list without executing it.
 	 */
-	private void killEvent(Process cur, EventHandle handle) {
+	private void _killEvent(EventHandle handle) {
 		assertCanSchedule();
 
 		// no handle given, or Handle was not scheduled, nothing to do
@@ -703,16 +700,15 @@ public final class EventManager {
 	 * @throws ProcessError if called outside of a Process context
 	 */
 	public static final void interruptEvent(EventHandle handle) {
-		Process cur = Process.current();
-		EventManager.current().interruptEvent(cur, handle);
+		EventManager.current()._interruptEvent(handle);
 	}
 
 	/**
 	 *	Removes an event from the pending list and executes it.
 	 */
-	private void interruptEvent(Process cur, EventHandle handle) {
+	private void _interruptEvent(EventHandle handle) {
 		assertCanSchedule();
-
+		Process cur = Process.current();
 		// no handle given, or Handle was not scheduled, nothing to do
 		if (handle == null || handle.event == null)
 			return;
@@ -830,8 +826,7 @@ public final class EventManager {
 	 * @throws ProcessError if called outside of a Process context
 	 */
 	public static final void scheduleTicks(long waitLength, int eventPriority, boolean fifo, ProcessTarget t, EventHandle handle) {
-		Process cur = Process.current();
-		EventManager.current().scheduleTicks(cur, waitLength, eventPriority, fifo, t, handle);
+		EventManager.current()._scheduleTicks(waitLength, eventPriority, fifo, t, handle);
 	}
 
 	/**
@@ -846,12 +841,12 @@ public final class EventManager {
 	 * @throws ProcessError if called outside of a Process context
 	 */
 	public static final void scheduleSeconds(double secs, int eventPriority, boolean fifo, ProcessTarget t, EventHandle handle) {
-		Process cur = Process.current();
-		long ticks = EventManager.current().secondsToNearestTick(secs);
-		EventManager.current().scheduleTicks(cur, ticks, eventPriority, fifo, t, handle);
+		EventManager evt = EventManager.current();
+		long ticks = evt.secondsToNearestTick(secs);
+		evt._scheduleTicks(ticks, eventPriority, fifo, t, handle);
 	}
 
-	private void scheduleTicks(Process cur, long waitLength, int eventPriority, boolean fifo, ProcessTarget t, EventHandle handle) {
+	private void _scheduleTicks(long waitLength, int eventPriority, boolean fifo, ProcessTarget t, EventHandle handle) {
 		assertCanSchedule();
 		long schedTick = calculateEventTime(waitLength);
 		EventNode node = getEventNode(schedTick, eventPriority);
