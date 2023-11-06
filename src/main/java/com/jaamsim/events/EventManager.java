@@ -195,7 +195,7 @@ public final class EventManager {
 			Process p = t.getProcess();
 			if (p != null) {
 				p.setNextProcess(cur);
-				p.wake();
+				((WaitTarget)t).eventWake();
 				runningProc.set(p);
 				threadWait(cur);
 				return;
@@ -435,7 +435,8 @@ public final class EventManager {
 	// restorePreviousActiveThread()
 	 * Must hold the lockObject when calling this method.
 	 */
-	private void captureProcess(Process cur) {
+	private void captureProcess(WaitTarget t) {
+		Process cur = t.getProcess();
 		// if we don't wake a new process, take one from the pool
 		Process next = cur.preCapture();
 		if (next == null) {
@@ -446,7 +447,7 @@ public final class EventManager {
 		}
 
 		runningProc.set(next);
-		threadWait(cur);
+		eventWait(t);
 		cur.postCapture();
 	}
 
@@ -505,8 +506,7 @@ public final class EventManager {
 	private void _waitTicks(long ticks, int priority, boolean fifo, EventHandle handle) {
 		assertCanSchedule();
 		long nextEventTime = calculateEventTime(ticks);
-		Process cur = Process.current();
-		WaitTarget t = new WaitTarget(cur);
+		WaitTarget t = new WaitTarget(this);
 		EventNode node = getEventNode(nextEventTime, priority);
 		Event evt = getEvent();
 		evt.node = node;
@@ -524,7 +524,7 @@ public final class EventManager {
 			enableSchedule();
 		}
 		node.addEvent(evt, fifo);
-		captureProcess(cur);
+		captureProcess(t);
 	}
 
 	/**
@@ -561,8 +561,7 @@ public final class EventManager {
 	 */
 	private void _waitUntil(Conditional cond, EventHandle handle) {
 		assertCanSchedule();
-		Process cur = Process.current();
-		WaitTarget t = new WaitTarget(cur);
+		WaitTarget t = new WaitTarget(this);
 		ConditionalEvent evt = new ConditionalEvent(cond, t, handle);
 		if (handle != null) {
 			if (handle.isScheduled())
@@ -575,7 +574,7 @@ public final class EventManager {
 			trcListener.traceWaitUntil();
 			enableSchedule();
 		}
-		captureProcess(cur);
+		captureProcess(t);
 	}
 
 	public static final void scheduleUntil(ProcessTarget t, Conditional cond, EventHandle handle) {
@@ -727,7 +726,7 @@ public final class EventManager {
 		}
 		else {
 			proc.setNextProcess(cur);
-			proc.wake();
+			((WaitTarget)t).eventWake();
 		}
 		runningProc.set(proc);
 		threadWait(cur);
@@ -779,6 +778,26 @@ public final class EventManager {
 				throw new ThreadKilledException("Thread killed");
 
 			if (runningProc.get() == cur)
+				break;
+
+			System.out.println("Spurious wakeup in EventManager wait." + Thread.currentThread());
+		}
+	}
+
+	private void eventWait(WaitTarget t) {
+		/*
+		 * Halt the thread and only wake up by being interrupted.
+		 *
+		 * The infinite loop is _absolutely_ necessary to prevent
+		 * spurious wakeups from waking us early....which causes the
+		 * model to get into an inconsistent state causing crashes.
+		 */
+		while (true) {
+			t.cond.awaitUninterruptibly();
+			if (t.dieFlag.get())
+				throw new ThreadKilledException("Thread killed");
+
+			if (runningProc.get() == Thread.currentThread())
 				break;
 
 			System.out.println("Spurious wakeup in EventManager wait." + Thread.currentThread());
