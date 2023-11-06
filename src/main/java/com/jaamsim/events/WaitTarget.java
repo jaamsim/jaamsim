@@ -20,18 +20,18 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Condition;
 
 class WaitTarget extends ProcessTarget {
-	private final Process proc;
+	private final Thread proc;
 	final Condition cond;
 	final AtomicBoolean dieFlag;
 
 	WaitTarget(EventManager evt) {
-		proc = Process.current();
+		proc = Thread.currentThread();
 		cond = evt.getWaitCondition();
 		dieFlag = new AtomicBoolean(false);
 	}
 
 	@Override
-	Process getProcess() { return proc; }
+	Thread getProcess() { return proc; }
 
 	@Override
 	void kill() {

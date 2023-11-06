@@ -193,7 +193,7 @@ public final class EventManager {
 	private void executeTarget(ProcessTarget t) {
 		try {
 			// If the event has a captured process, pass control to it
-			Process p = t.getProcess();
+			Thread p = t.getProcess();
 			if (p != null) {
 				ThreadEntry te = new ThreadEntry(this, p);
 				te.next = runningProc.get();
@@ -246,11 +246,10 @@ public final class EventManager {
 	 * for Process objects taken out of the pool.
 	 */
 	final void execute() {
-		final Process cur = Process.current();
 		evtLock.lock();
 		try {
-			if (runningProc.get().proc != cur) {
-				System.out.println("Invalid Process Entering EventManager:" + cur);
+			if (runningProc.get().proc != Thread.currentThread()) {
+				System.out.println("Invalid Process Entering EventManager:" + Thread.currentThread());
 				return;
 			}
 
@@ -302,7 +301,7 @@ public final class EventManager {
 
 					// If the current Process is the runningProc, continue executing events
 					// otherwise exit and return to Process pool
-					if (runningProc.get().proc != cur)
+					if (runningProc.get().proc != Thread.currentThread())
 						return;
 
 					continue;
@@ -446,7 +445,7 @@ public final class EventManager {
 		// if we don't wake a new process, take one from the pool
 		ThreadEntry next = runningProc.get().next;
 		if (next == null) {
-			Process p = Process.allocate(this);
+			Thread p = Process.allocate(this);
 			next = new ThreadEntry(this, p);
 		}
 		else {
@@ -609,14 +608,13 @@ public final class EventManager {
 
 	private void _startProcess(ProcessTarget t) {
 		assertCanSchedule();
-		Process cur = Process.current();
 		if (trcListener != null) {
 			disableSchedule();
 			trcListener.traceProcessStart(t);
 			enableSchedule();
 		}
 
-		Process proc = Process.allocate(this);
+		Thread proc = Process.allocate(this);
 		ThreadEntry te = new ThreadEntry(this, proc);
 		te.next = runningProc.get();
 		startTarget = t;
@@ -715,7 +713,7 @@ public final class EventManager {
 	 */
 	private void _interruptEvent(EventHandle handle) {
 		assertCanSchedule();
-		Process cur = Process.current();
+
 		// no handle given, or Handle was not scheduled, nothing to do
 		if (handle == null || handle.event == null)
 			return;
@@ -727,7 +725,7 @@ public final class EventManager {
 		}
 		ProcessTarget t = rem(handle);
 
-		Process proc = t.getProcess();
+		Thread proc = t.getProcess();
 		ThreadEntry te;
 		if (proc == null) {
 			proc = Process.allocate(this);
@@ -769,7 +767,7 @@ public final class EventManager {
 		final Condition cond;
 		final AtomicBoolean dieFlag;
 
-		ThreadEntry(EventManager evt, Process p) {
+		ThreadEntry(EventManager evt, Thread p) {
 			cond = evt.getWaitCondition();
 			proc = p;
 			dieFlag = new AtomicBoolean(false);
@@ -945,7 +943,7 @@ public final class EventManager {
 				return;
 
 			executeEvents = true;
-			Process proc = Process.allocate(this);
+			Thread proc = Process.allocate(this);
 			ThreadEntry te = new ThreadEntry(this, proc);
 			runningProc.set(te);
 		}
@@ -965,7 +963,13 @@ public final class EventManager {
 	 * @return true if we are in a Process context, false otherwise
 	 */
 	public static final boolean hasCurrent() {
-		return (Thread.currentThread() instanceof Process);
+		try {
+			EventManager evt = scopedEvt.get();
+			return true;
+		}
+		catch (NoSuchElementException e) {
+			return false;
+		}
 	}
 
 	/**

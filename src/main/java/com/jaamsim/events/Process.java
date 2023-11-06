@@ -112,7 +112,7 @@ final class Process extends Thread {
 	}
 
 	// Set up a new process for the given entity, method, and arguments and return a process from the pool or create a new one.
-	static Process allocate(EventManager evt) {
+	static Thread allocate(EventManager evt) {
 		while (true) {
 			poolLock.lock();
 			try {
