@@ -709,7 +709,7 @@ public final class EventManager {
 	}
 
 	private Thread allocateThread() {
-		return Process.allocate(this);
+		return Thread.ofVirtual().name(this.name).start(startThread);
 	}
 
 	/**
