@@ -19,6 +19,7 @@ package com.jaamsim.events;
 
 import java.util.ArrayList;
 import java.util.NoSuchElementException;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Condition;
@@ -48,7 +49,7 @@ public final class EventManager {
 	private final ReentrantLock evtLock; // Object used as global lock for synchronization
 
 	private final EventTree eventTree;
-	private final AtomicReference<Thread> runningProc;
+	private final AtomicReference<ThreadEntry> runningProc;
 	private ProcessTarget startTarget;
 	private final AtomicLong currentTick;
 	private volatile boolean executeEvents;
@@ -189,15 +190,16 @@ public final class EventManager {
 		}
 	}
 
-	private void executeTarget(Process cur, ProcessTarget t) {
+	private void executeTarget(ProcessTarget t) {
 		try {
 			// If the event has a captured process, pass control to it
 			Process p = t.getProcess();
 			if (p != null) {
-				p.setNextProcess(cur);
+				ThreadEntry te = new ThreadEntry(this, p);
+				te.next = runningProc.get();
 				((WaitTarget)t).eventWake();
-				runningProc.set(p);
-				threadWait(cur);
+				runningProc.set(te);
+				threadWait(te.next);
 				return;
 			}
 
@@ -211,10 +213,10 @@ public final class EventManager {
 				enableSchedule();
 			}
 
-			p = cur.getNextProcess();
-			if (p != null) {
-				p.wake();
-				runningProc.set(p);
+			ThreadEntry te = runningProc.get().next;
+			if (te != null) {
+				te.cond.signal();
+				runningProc.set(te);
 			}
 		}
 		catch (Throwable e) {
@@ -223,7 +225,12 @@ public final class EventManager {
 				return;
 
 			// Tear down any threads waiting for this to finish
-			cur.tearDownRunningProcesses();
+			ThreadEntry entries = runningProc.get().next;
+			while (entries != null) {
+				entries.dieFlag.set(true);
+				entries.cond.signal();
+				entries = entries.next;
+			}
 			executeEvents = false;
 			runningProc.set(null);
 			timelistener.handleError(e);
@@ -242,7 +249,7 @@ public final class EventManager {
 		final Process cur = Process.current();
 		evtLock.lock();
 		try {
-			if (runningProc.get() != cur) {
+			if (runningProc.get().proc != cur) {
 				System.out.println("Invalid Process Entering EventManager:" + cur);
 				return;
 			}
@@ -252,7 +259,7 @@ public final class EventManager {
 			if (startTarget != null) {
 				ProcessTarget t = startTarget;
 				startTarget = null;
-				executeTarget(cur, t);
+				executeTarget(t);
 				return;
 			}
 
@@ -291,11 +298,11 @@ public final class EventManager {
 						executeEvents = false;
 					}
 
-					executeTarget(cur, nextTarget);
+					executeTarget(nextTarget);
 
 					// If the current Process is the runningProc, continue executing events
 					// otherwise exit and return to Process pool
-					if (runningProc.get() != cur)
+					if (runningProc.get().proc != cur)
 						return;
 
 					continue;
@@ -333,7 +340,7 @@ public final class EventManager {
 						currentTick.set(realTick);
 						timelistener.tickUpdate(currentTick.get());
 						//Halt the thread for 20ms and then reevaluate the loop
-						try { cur.waitInEvt.get().awaitNanos(20000000); } catch( InterruptedException e ) {}
+						try { runningProc.get().cond.awaitNanos(20000000); } catch( InterruptedException e ) {}
 						continue;
 					}
 				}
@@ -436,14 +443,14 @@ public final class EventManager {
 	 * Must hold the lockObject when calling this method.
 	 */
 	private void captureProcess(WaitTarget t) {
-		Process cur = t.getProcess();
 		// if we don't wake a new process, take one from the pool
-		Process next = cur.getNextProcess();
+		ThreadEntry next = runningProc.get().next;
 		if (next == null) {
-			next = Process.allocate(this, null);
+			Process p = Process.allocate(this);
+			next = new ThreadEntry(this, p);
 		}
 		else {
-			next.wake();
+			next.cond.signal();
 		}
 
 		runningProc.set(next);
@@ -609,10 +616,12 @@ public final class EventManager {
 			enableSchedule();
 		}
 
-		Process proc = Process.allocate(this, cur);
+		Process proc = Process.allocate(this);
+		ThreadEntry te = new ThreadEntry(this, proc);
+		te.next = runningProc.get();
 		startTarget = t;
-		runningProc.set(proc);
-		threadWait(cur);
+		runningProc.set(te);
+		threadWait(te.next);
 	}
 
 	/**
@@ -719,16 +728,20 @@ public final class EventManager {
 		ProcessTarget t = rem(handle);
 
 		Process proc = t.getProcess();
+		ThreadEntry te;
 		if (proc == null) {
-			proc = Process.allocate(this, cur);
+			proc = Process.allocate(this);
+			te = new ThreadEntry(this, proc);
+			te.next = runningProc.get();
 			startTarget = t;
 		}
 		else {
-			proc.setNextProcess(cur);
+			te = new ThreadEntry(this, proc);
+			te.next = runningProc.get();
 			((WaitTarget)t).eventWake();
 		}
-		runningProc.set(proc);
-		threadWait(cur);
+		runningProc.set(te);
+		threadWait(te.next);
 	}
 
 	private void trcInterrupt(BaseEvent event) {
@@ -750,6 +763,19 @@ public final class EventManager {
 			rebaseRealTime = true;
 	}
 
+	private static class ThreadEntry {
+		ThreadEntry next;
+		Thread proc;
+		final Condition cond;
+		final AtomicBoolean dieFlag;
+
+		ThreadEntry(EventManager evt, Process p) {
+			cond = evt.getWaitCondition();
+			proc = p;
+			dieFlag = new AtomicBoolean(false);
+		}
+	}
+
 	/**
 	 * Locks the calling thread in an inactive state to the global lock.
 	 * When a new thread is created, and the current thread has been pushed
@@ -763,7 +789,7 @@ public final class EventManager {
 	 * There is a synchronized block of code that will acquire the global lock
 	 * and then wait() the current thread.
 	 */
-	private void threadWait(Process cur) {
+	private void threadWait(ThreadEntry te) {
 		/*
 		 * Halt the thread and only wake up by being interrupted.
 		 *
@@ -772,11 +798,11 @@ public final class EventManager {
 		 * model to get into an inconsistent state causing crashes.
 		 */
 		while (true) {
-			cur.waitInEvt.get().awaitUninterruptibly();
-			if (cur.shouldDie())
+			te.cond.awaitUninterruptibly();
+			if (te.dieFlag.get())
 				throw new ThreadKilledException("Thread killed");
 
-			if (runningProc.get() == cur)
+			if (runningProc.get().proc == Thread.currentThread())
 				break;
 
 			System.out.println("Spurious wakeup in EventManager wait." + Thread.currentThread());
@@ -796,7 +822,7 @@ public final class EventManager {
 			if (t.dieFlag.get())
 				throw new ThreadKilledException("Thread killed");
 
-			if (runningProc.get() == Thread.currentThread())
+			if (runningProc.get().proc == Thread.currentThread())
 				break;
 
 			System.out.println("Spurious wakeup in EventManager wait." + Thread.currentThread());
@@ -919,8 +945,9 @@ public final class EventManager {
 				return;
 
 			executeEvents = true;
-			Process proc = Process.allocate(this, null);
-			runningProc.set(proc);
+			Process proc = Process.allocate(this);
+			ThreadEntry te = new ThreadEntry(this, proc);
+			runningProc.set(te);
 		}
 		finally {
 			evtLock.unlock();
