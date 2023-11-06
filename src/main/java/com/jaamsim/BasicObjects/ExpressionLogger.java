@@ -193,6 +193,9 @@ public class ExpressionLogger extends Logger implements StateEntityListener, Obs
 	public void startUp() {
 		super.startUp();
 
+		if (!isActive())
+			return;
+
 		// Start tracing the expression values
 		if (valueTraceList.getListSize() > 0) {
 			for (int i=0; i<valueTraceList.getListSize(); i++) {
@@ -212,6 +215,8 @@ public class ExpressionLogger extends Logger implements StateEntityListener, Obs
 
 	@Override
 	public ArrayList<SubjectEntity> getWatchList() {
+		if (!isActive())
+			return new ArrayList<>();
 		return watchList.getValue();
 	}
 
