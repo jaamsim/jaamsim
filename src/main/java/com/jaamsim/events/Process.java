@@ -18,7 +18,6 @@
 package com.jaamsim.events;
 
 import java.util.ArrayList;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
@@ -48,9 +47,6 @@ final class Process extends Thread {
 	private final Condition waitInPool = poolLock.newCondition();
 
 	private final AtomicReference<EventManager> evt = new AtomicReference<>(); // The EventManager that is currently managing this Process
-	final AtomicReference<Condition> waitInEvt = new AtomicReference<>(); // The EventManager that is currently managing this Process
-	private final AtomicReference<Process> nextProcess = new AtomicReference<>(); // The Process from which the present process was created
-	private final AtomicBoolean dieFlag = new AtomicBoolean();
 
 	// Initialize the storage for the pooled Processes
 	static {
@@ -90,9 +86,6 @@ final class Process extends Thread {
 			try {
 				// Ensure all state is cleared before returning to the pool
 				evt.set(null);
-				waitInEvt.set(null);
-				nextProcess.set(null);
-				dieFlag.set(false);
 
 				// Add ourselves to the pool and wait to be assigned work
 				pool.add(this);
@@ -123,7 +116,7 @@ final class Process extends Thread {
 	}
 
 	// Set up a new process for the given entity, method, and arguments and return a process from the pool or create a new one.
-	static Process allocate(EventManager evt, Process next) {
+	static Process allocate(EventManager evt) {
 		while (true) {
 			poolLock.lock();
 			try {
@@ -131,8 +124,6 @@ final class Process extends Thread {
 				if (pool.size() > 0) {
 					Process proc = pool.remove(pool.size() - 1);
 					proc.evt.set(evt);
-					proc.waitInEvt.set(evt.getWaitCondition());
-					proc.nextProcess.set(next);
 					proc.waitInPool.signal();
 					return proc;
 				}
@@ -159,41 +150,5 @@ final class Process extends Thread {
 	@Override
 	public void interrupt() {
 		new Throwable("AUDIT: direct call of Process.interrupt").printStackTrace();
-	}
-
-	/**
-	 * This is the wrapper to allow internal code to advance the state machine by waking
-	 * a Process.
-	 */
-	final void wake() {
-		waitInEvt.get().signal();
-	}
-
-	void setNextProcess(Process next) {
-		nextProcess.set(next);
-	}
-
-	/**
-	 * Returns true if we woke a next Process, otherwise return false.
-	 */
-	final Process getNextProcess() {
-		return nextProcess.getAndSet(null);
-	}
-
-	/**
-	 * This is used to tear down a live threadstack when an error is received from
-	 * the model.
-	 */
-	final void tearDownRunningProcesses() {
-		Process next = nextProcess.getAndSet(null);
-		while (next != null) {
-			next.dieFlag.set(true);
-			next.wake();
-			next = next.nextProcess.getAndSet(null);
-		}
-	}
-
-	boolean shouldDie() {
-		return dieFlag.get();
 	}
 }
