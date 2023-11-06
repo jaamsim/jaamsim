@@ -445,7 +445,7 @@ public final class EventManager {
 		// if we don't wake a new process, take one from the pool
 		ThreadEntry next = runningProc.get().next;
 		if (next == null) {
-			Thread p = Process.allocate(this);
+			Thread p = this.allocateThread();
 			next = new ThreadEntry(this, p);
 		}
 		else {
@@ -614,7 +614,7 @@ public final class EventManager {
 			enableSchedule();
 		}
 
-		Thread proc = Process.allocate(this);
+		Thread proc = this.allocateThread();
 		ThreadEntry te = new ThreadEntry(this, proc);
 		te.next = runningProc.get();
 		startTarget = t;
@@ -708,6 +708,10 @@ public final class EventManager {
 		EventManager.current()._interruptEvent(handle);
 	}
 
+	private Thread allocateThread() {
+		return Process.allocate(this);
+	}
+
 	/**
 	 *	Removes an event from the pending list and executes it.
 	 */
@@ -728,7 +732,7 @@ public final class EventManager {
 		Thread proc = t.getProcess();
 		ThreadEntry te;
 		if (proc == null) {
-			proc = Process.allocate(this);
+			proc = this.allocateThread();
 			te = new ThreadEntry(this, proc);
 			te.next = runningProc.get();
 			startTarget = t;
@@ -943,7 +947,7 @@ public final class EventManager {
 				return;
 
 			executeEvents = true;
-			Thread proc = Process.allocate(this);
+			Thread proc = this.allocateThread();
 			ThreadEntry te = new ThreadEntry(this, proc);
 			runningProc.set(te);
 		}
