@@ -196,10 +196,8 @@ public final class EventManager {
 			Thread p = t.getProcess();
 			if (p != null) {
 				ThreadEntry te = new ThreadEntry(this, p);
-				te.next = runningProc.get();
 				((WaitTarget)t).eventWake();
-				runningProc.set(te);
-				threadWait(te.next);
+				pushThread(te);
 				return;
 			}
 
@@ -614,12 +612,9 @@ public final class EventManager {
 			enableSchedule();
 		}
 
-		Thread proc = this.allocateThread();
-		ThreadEntry te = new ThreadEntry(this, proc);
-		te.next = runningProc.get();
+		ThreadEntry te = new ThreadEntry(this, this.allocateThread());
 		startTarget = t;
-		runningProc.set(te);
-		threadWait(te.next);
+		pushThread(te);
 	}
 
 	/**
@@ -732,18 +727,14 @@ public final class EventManager {
 		Thread proc = t.getProcess();
 		ThreadEntry te;
 		if (proc == null) {
-			proc = this.allocateThread();
-			te = new ThreadEntry(this, proc);
-			te.next = runningProc.get();
+			te = new ThreadEntry(this, this.allocateThread());
 			startTarget = t;
 		}
 		else {
 			te = new ThreadEntry(this, proc);
-			te.next = runningProc.get();
 			((WaitTarget)t).eventWake();
 		}
-		runningProc.set(te);
-		threadWait(te.next);
+		pushThread(te);
 	}
 
 	private void trcInterrupt(BaseEvent event) {
@@ -791,7 +782,11 @@ public final class EventManager {
 	 * There is a synchronized block of code that will acquire the global lock
 	 * and then wait() the current thread.
 	 */
-	private void threadWait(ThreadEntry te) {
+	private void pushThread(ThreadEntry te) {
+		te.next = runningProc.get();
+		runningProc.set(te);
+		te = te.next;
+
 		/*
 		 * Halt the thread and only wake up by being interrupted.
 		 *
