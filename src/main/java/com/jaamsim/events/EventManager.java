@@ -18,7 +18,6 @@
 package com.jaamsim.events;
 
 import java.util.ArrayList;
-import java.util.NoSuchElementException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
@@ -962,13 +961,7 @@ public final class EventManager {
 	 * @return true if we are in a Process context, false otherwise
 	 */
 	public static final boolean hasCurrent() {
-		try {
-			EventManager evt = scopedEvt.get();
-			return true;
-		}
-		catch (NoSuchElementException e) {
-			return false;
-		}
+		return scopedEvt.orElse(null) != null;
 	}
 
 	/**
@@ -984,12 +977,10 @@ public final class EventManager {
 	 * @throws ProcessError if called outside of a Process context
 	 */
 	public static final EventManager current() {
-		try {
-			return scopedEvt.get();
-		}
-		catch (NoSuchElementException e) {
-			throw new ProcessError("Non-process thread called Process.current()");
-		}
+		EventManager evt = scopedEvt.orElse(null);
+		if (evt == null)
+			throw new ProcessError("Non-event thread called EventManager.current()");
+		return evt;
 	}
 
 	/**
