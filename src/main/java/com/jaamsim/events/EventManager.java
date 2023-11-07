@@ -122,7 +122,10 @@ public final class EventManager {
 		public void exec() {
 			evt.execute();
 		}
+	}
 
+	private Thread allocateThread() {
+		return Thread.ofVirtual().start(startThread);
 	}
 
 	public final void setTimeListener(EventTimeListener l) {
@@ -716,10 +719,6 @@ public final class EventManager {
 	 */
 	public static final void interruptEvent(EventHandle handle) {
 		EventManager.current()._interruptEvent(handle);
-	}
-
-	private Thread allocateThread() {
-		return Thread.ofVirtual().name(this.name).start(startThread);
 	}
 
 	/**
