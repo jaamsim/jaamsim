@@ -450,7 +450,23 @@ public final class EventManager {
 		}
 
 		runningProc.set(next);
-		eventWait(t);
+		/*
+		 * Halt the thread and only wake up by being interrupted.
+		 *
+		 * The infinite loop is _absolutely_ necessary to prevent
+		 * spurious wakeups from waking us early....which causes the
+		 * model to get into an inconsistent state causing crashes.
+		 */
+		while (true) {
+			t.cond.awaitUninterruptibly();
+			if (t.dieFlag.get())
+				throw new ThreadKilledException("Thread killed");
+
+			if (runningProc.get().proc == Thread.currentThread())
+				break;
+
+			System.out.println("Spurious wakeup in EventManager wait." + Thread.currentThread());
+		}
 	}
 
 	/**
@@ -801,27 +817,7 @@ public final class EventManager {
 			if (runningProc.get().proc == Thread.currentThread())
 				break;
 
-			System.out.println("Spurious wakeup in EventManager wait." + Thread.currentThread());
-		}
-	}
-
-	private void eventWait(WaitTarget t) {
-		/*
-		 * Halt the thread and only wake up by being interrupted.
-		 *
-		 * The infinite loop is _absolutely_ necessary to prevent
-		 * spurious wakeups from waking us early....which causes the
-		 * model to get into an inconsistent state causing crashes.
-		 */
-		while (true) {
-			t.cond.awaitUninterruptibly();
-			if (t.dieFlag.get())
-				throw new ThreadKilledException("Thread killed");
-
-			if (runningProc.get().proc == Thread.currentThread())
-				break;
-
-			System.out.println("Spurious wakeup in EventManager wait." + Thread.currentThread());
+			System.out.println("Spurious wakeup in EventManager eventStack." + Thread.currentThread());
 		}
 	}
 
