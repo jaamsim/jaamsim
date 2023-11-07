@@ -106,7 +106,7 @@ public final class EventManager {
 	}
 
 	private static final ScopedValue<EventManager> scopedEvt = ScopedValue.newInstance();
-	final Runnable startThread = new EventStart(this);
+	private final Runnable startThread = new EventStart(this);
 
 	private static class EventStart implements Runnable {
 		private final EventManager evt;
@@ -965,7 +965,10 @@ public final class EventManager {
 	 * @return true if a future event can be scheduled
 	 */
 	public static final boolean canSchedule() {
-		return hasCurrent() && EventManager.current().scheduleEnabled();
+		EventManager evt = scopedEvt.orElse(null);
+		if (evt == null)
+			return false;
+		return evt.scheduleEnabled();
 	}
 
 	/**
