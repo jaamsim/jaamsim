@@ -61,8 +61,7 @@ public class ShapeModel extends AbstractShapeModel {
 		BARGAUGE2D,
 	}
 
-	@Keyword(description = "The shape of a display model determines the appearance of the display model.",
-	         exampleList = { "CIRCLE" })
+	@Keyword(description = "The shape of a display model determines the appearance of the display model.")
 	private final EnumInput<ValidShapes> shape;
 
 	{

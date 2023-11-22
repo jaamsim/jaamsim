@@ -97,8 +97,7 @@ public class DisplayEntity extends Entity {
 	                       "{ 1.0 1.0 m } { 2.0 2.0 m } { 3.0 3.0 m }"})
 	protected final Vec3dListInput pointsInput;
 
-	@Keyword(description = "The type of curve interpolation used for line type entities.",
-	         exampleList = {"LINEAR", "BEZIER", "SPLINE"})
+	@Keyword(description = "The type of curve interpolation used for line type entities.")
 	protected final EnumInput<PolylineInfo.CurveType> curveTypeInput;
 
 	@Keyword(description = "If a Region is specified, the Position and Orientation inputs for "

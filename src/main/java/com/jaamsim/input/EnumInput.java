@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2012 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,4 +44,14 @@ public class EnumInput<T extends Enum<T>> extends Input<T> {
 			tmp.add(each.name());
 		return tmp;
 	}
+
+	@Override
+	public String[] getExamples() {
+		String[] ret = new String[1];
+		T[] array = type.getEnumConstants();
+		if (array.length > 0)
+			ret[0] = array[0].name();
+		return ret;
+	}
+
 }
