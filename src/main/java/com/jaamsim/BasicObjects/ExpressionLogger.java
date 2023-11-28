@@ -244,7 +244,7 @@ public class ExpressionLogger extends Logger implements StateEntityListener, Obs
 
 		@Override
 		public void process() {
-			if (valueChanged() || testWatchListCondition(ent)) {
+			if (isValueChanged() || testWatchListCondition(ent)) {
 				watchedEntity = ent;
 				recordLogEntry(getSimTime(), ent);
 			}
@@ -358,7 +358,7 @@ public class ExpressionLogger extends Logger implements StateEntityListener, Obs
 	/**
 	 * Returns true if any of the traced expressions have changed their values.
 	 */
-	final boolean valueChanged() {
+	final boolean isValueChanged() {
 		boolean ret = false;
 		double simTime = getSimTime();
 		try {
@@ -390,7 +390,7 @@ public class ExpressionLogger extends Logger implements StateEntityListener, Obs
 		this.recordLogEntry(simTime, null);
 
 		// Wait for the next value change
-		EventManager.scheduleUntil(doValueTrace, valueChanged, null);
+		EventManager.scheduleUntil(doValueTraceTarget, valueChangedConditional, null);
 	}
 
 	static class ValueChangedConditional extends Conditional {
@@ -399,14 +399,16 @@ public class ExpressionLogger extends Logger implements StateEntityListener, Obs
 		ValueChangedConditional(ExpressionLogger ent) {
 			this.ent = ent;
 		}
+
 		@Override
 		public boolean evaluate() {
-			return ent.valueChanged();
+			return ent.isValueChanged();
 		}
 	}
-	private final Conditional valueChanged = new ValueChangedConditional(this);
+	private final Conditional valueChangedConditional = new ValueChangedConditional(this);
 
-	class DoValueTraceTarget extends ProcessTarget {
+	private final ProcessTarget doValueTraceTarget = new ProcessTarget() {
+
 		@Override
 		public String getDescription() {
 			return ExpressionLogger.this.getName() + ".doValueTrace";
@@ -419,8 +421,7 @@ public class ExpressionLogger extends Logger implements StateEntityListener, Obs
 				error(ERR_WATCHLIST);
 			doValueTrace();
 		}
-	}
-	private final ProcessTarget doValueTrace = new DoValueTraceTarget();
+	};
 
 	@Output(name = "WatchedEntity",
 	 description = "The entity in the WatchList input that triggered the most recent log entry.",
