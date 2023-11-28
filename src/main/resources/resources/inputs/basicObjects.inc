@@ -12,6 +12,7 @@ Define ObjectType {
                     ExpressionLogger
                     EntitlementSelector
                     ExpressionEntity
+                    ExpressionStatistics
                     DowntimeEntity
                     ValueSequence
                     EventSchedule
@@ -33,6 +34,7 @@ Define IconModel  {
                     ExpLoggerIconModel
                     SelectorIconModel
                     ExpressionEntityIconModel
+                    ExpressionStatisticsIconModel
                     DowntimeIconModel
                     ValueSequenceIconModel
                     EventScheduleIconModel
@@ -48,6 +50,7 @@ TimeSeriesIconModel     ImageFile { '<res>/images/TimeSeries-256.png'   }  Trans
 SelectorIconModel       ImageFile { '<res>/images/Selector-256.png'     }  Transparent { TRUE }
 ExpLoggerIconModel      ImageFile { '<res>/images/ExpressionLogger-256.png' }  Transparent { TRUE }
 ExpressionEntityIconModel  ImageFile { '<res>/images/ExpressionEntity-256.png' }  Transparent { TRUE }
+ExpressionStatisticsIconModel  ImageFile { '<res>/images/ExpressionStatistics-256.png' }  Transparent { TRUE }
 DowntimeIconModel       ImageFile { '<res>/images/Downtime-256.png'     }  Transparent { TRUE }
 ValueSequenceIconModel  ImageFile { '<res>/images/ValueSequence-256.png'}  Transparent { TRUE }
 EventScheduleIconModel  ImageFile { '<res>/images/EventSchedule-256.png'}  Transparent { TRUE }
@@ -70,6 +73,7 @@ ExpressionThreshold     JavaClass { com.jaamsim.Thresholds.ExpressionThreshold  
 ExpressionLogger        JavaClass { com.jaamsim.BasicObjects.ExpressionLogger           } Palette { 'Basic Objects' } DefaultDisplayModel { ExpLoggerIconModel  } IconFile { '<res>/images/ExpressionLogger-24.png' }
 EntitlementSelector     JavaClass { com.jaamsim.BasicObjects.EntitlementSelector        } Palette { 'Basic Objects' } DefaultDisplayModel { SelectorIconModel   } IconFile { '<res>/images/Selector-24.png'     }
 ExpressionEntity        JavaClass { com.jaamsim.BasicObjects.ExpressionEntity           } Palette { 'Basic Objects' } DefaultDisplayModel { ExpressionEntityIconModel   } IconFile { '<res>/images/ExpressionEntity-24.png' }
+ExpressionStatistics    JavaClass { com.jaamsim.BasicObjects.ExpressionStatistics       } Palette { 'Basic Objects' } DefaultDisplayModel { ExpressionStatisticsIconModel } IconFile { '<res>/images/ExpressionStatistics-24.png' }
 DowntimeEntity          JavaClass { com.jaamsim.BasicObjects.DowntimeEntity             } Palette { 'Basic Objects' } DefaultDisplayModel { DowntimeIconModel   } IconFile { '<res>/images/Downtime-24.png'     }
 ValueSequence           JavaClass { com.jaamsim.BasicObjects.ValueSequence              } Palette { 'Basic Objects' } DefaultDisplayModel { ValueSequenceIconModel } IconFile { '<res>/images/ValueSequence-24.png' }
 EventSchedule           JavaClass { com.jaamsim.BasicObjects.EventSchedule              } Palette { 'Basic Objects' } DefaultDisplayModel { EventScheduleIconModel } IconFile { '<res>/images/EventSchedule-24.png' }
@@ -93,6 +97,7 @@ ExpressionThreshold   Description { 'Specifies a logical condition for which an 
 ExpressionLogger      Description { 'Records the values for one or more expressions to a log file at regular intervals.' }
 EntitlementSelector   Description { 'Selects an index on the basis of entitlement from a given set of proportions.' }
 ExpressionEntity      Description { 'Calculates the value for a specified expression.' }
+ExpressionStatistics  Description { 'Records the statistics for the numerical value of a specified expression.' }
 DowntimeEntity        Description { 'Provides Breakdown and Maintenance controls.' }
 ValueSequence         Description { 'Generates a repeating sequence of numerical values.' }
 EventSchedule         Description { 'Generates a sequence inter-arrival times from a list of event times.' }
