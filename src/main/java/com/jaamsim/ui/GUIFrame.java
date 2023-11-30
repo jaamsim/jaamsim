@@ -4551,35 +4551,34 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				System.getProperty("java.vendor"), System.getProperty("java.version"));
 		LogBox.format("Software: %s (version: %s)%n", AboutBox.softwareName, AboutBox.version);
 
-		// create a graphic simulation
-		LogBox.logLine("Loading Simulation Environment ... ");
+		// Create the user interface
+		GUIFrame gui = null;
+		if (!headless) {
+			LogBox.logLine("Loading Simulation Environment ... ");
+			gui = GUIFrame.createInstance();
+			if (minimize) {
+				gui.setExtendedState(JFrame.ICONIFIED);
+			}
+			if (!batch) {
+				RenderManager.initialize(SAFE_GRAPHICS);
+			}
+			LogBox.logLine("Simulation Environment Loaded");
+		}
+
+		// Create a graphic simulation
 		JaamSimModel simModel = getNextJaamSimModel();
 		simModel.autoLoad();
 
 		// Add the run manager
 		RunManager runMgr = new RunManager(simModel);
-
-		GUIFrame gui = null;
-		if (!headless) {
-			gui = GUIFrame.createInstance();
-		}
 		setRunManager(runMgr);
 
 		if (!headless) {
-			if (minimize)
-				gui.setExtendedState(JFrame.ICONIFIED);
 			// This is only here to initialize the static cache in the MRG1999a class to avoid future latency
 			// when initializing other objects in drag+drop
 			@SuppressWarnings("unused")
 			MRG1999a cacher = new MRG1999a();
 		}
-
-		if (!batch && !headless) {
-			// Begin initializing the rendering system
-			RenderManager.initialize(SAFE_GRAPHICS);
-		}
-
-		LogBox.logLine("Simulation Environment Loaded");
 
 		simModel.setBatchRun(batch);
 		simModel.setScriptMode(scriptMode);
