@@ -346,25 +346,27 @@ public class ExampleBox extends JDialog {
 
 		// Create the new simulation model
 		JaamSimModel simModel = new JaamSimModel(name);
-
-		// Load the specified model file
 		simModel.autoLoad();
 		Simulation simulation = simModel.getSimulation();
 		GUIFrame.getInstance().setWindowDefaults(simulation);
+
+		// Add the run manager
+		RunManager runMgr = new RunManager(simModel);
+
+		// Set the Control Panel to the new JaamSimModel and reset the user interface
+		GUIFrame.setRunManager(runMgr);
+
+		// Load the specified model file
 		InputAgent.readResource(simModel, "<res>/examples/" + name);
 		simModel.postLoad();
 
 		// A RecordEdits marker in the example file must be ignored
 		simModel.setRecordEditsFound(false);
 
-		// Add the run manager
-		RunManager runMgr = new RunManager(simModel);
-
 		// Add labels and sub-models
 		simModel.showTemporaryLabels( simulation.isShowLabels() );
 
 		// Display the new model
-		GUIFrame.setRunManager(runMgr);
 		FrameBox.setSelectedEntity(simulation, false);
 
 		// Bring the new model to front
