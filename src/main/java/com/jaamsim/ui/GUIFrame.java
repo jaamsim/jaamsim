@@ -4567,6 +4567,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 		// Create a graphic simulation
 		JaamSimModel simModel = getNextJaamSimModel();
+		simModel.setGUIListener(gui);
 		simModel.autoLoad();
 
 		// Add the run manager
