@@ -24,8 +24,11 @@ import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.StringProviders.StringProvListInput;
 import com.jaamsim.StringProviders.StringProvider;
+import com.jaamsim.basicsim.EntityTarget;
 import com.jaamsim.basicsim.FileEntity;
 import com.jaamsim.basicsim.JaamSimModel;
+import com.jaamsim.events.EventHandle;
+import com.jaamsim.events.EventManager;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
@@ -184,6 +187,21 @@ public abstract class Logger extends DisplayEntity {
 	private boolean isIncludeInitialization(double simTime) {
 		return includeInitialization.getNextBoolean(this, simTime);
 	}
+
+	public void scheduleLogEntry() {
+		if (recordLogEntryHandle.isScheduled())
+			return;
+		EventManager.scheduleTicks(0L, 99, true, recordLogEntryTarget, recordLogEntryHandle);
+	}
+
+	private final EventHandle recordLogEntryHandle = new EventHandle();
+
+	private final EntityTarget<Logger> recordLogEntryTarget = new EntityTarget<Logger>(this, "recordLogEntry") {
+		@Override
+		public void process() {
+			recordLogEntry(ent.getSimTime(), null);
+		}
+	};
 
 	/**
 	 * Writes an entry to the log file.

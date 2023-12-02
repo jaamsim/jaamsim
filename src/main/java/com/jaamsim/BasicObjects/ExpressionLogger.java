@@ -30,7 +30,6 @@ import com.jaamsim.basicsim.FileEntity;
 import com.jaamsim.basicsim.ObserverEntity;
 import com.jaamsim.basicsim.SubjectEntity;
 import com.jaamsim.events.Conditional;
-import com.jaamsim.events.EventHandle;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.BooleanInput;
@@ -227,32 +226,10 @@ public class ExpressionLogger extends Logger implements StateEntityListener, Obs
 
 	@Override
 	public void observerUpdate(SubjectEntity subj) {
-		if (recordLogEntryHandle.isScheduled())
-			return;
 		DisplayEntity ent = (DisplayEntity) subj;
-		EventManager.scheduleTicks(0L, 11, true, new RecordLogEntryTarget(ent), recordLogEntryHandle);
-	}
-
-	private final EventHandle recordLogEntryHandle = new EventHandle();
-
-	private class RecordLogEntryTarget extends ProcessTarget {
-		DisplayEntity ent;
-
-		public RecordLogEntryTarget(DisplayEntity ent) {
-			this.ent = ent;
-		}
-
-		@Override
-		public void process() {
-			if (isValueChanged() || testWatchListCondition(ent)) {
-				watchedEntity = ent;
-				recordLogEntry(getSimTime(), ent);
-			}
-		}
-
-		@Override
-		public String getDescription() {
-			return "recordLogEntry";
+		if (isValueChanged() || testWatchListCondition(ent)) {
+			watchedEntity = ent;
+			scheduleLogEntry();
 		}
 	}
 
