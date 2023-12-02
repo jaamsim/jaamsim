@@ -283,7 +283,7 @@ public class ExpressionLogger extends Logger implements StateEntityListener, Obs
 			return;
 
 		// Record the entry in the log
-		this.recordLogEntry(simTime, null);
+		scheduleLogEntry();
 
 		// Get ready for the next entry
 		this.startAction();
@@ -329,7 +329,7 @@ public class ExpressionLogger extends Logger implements StateEntityListener, Obs
 
 	@Override
 	public void updateForStateChange(StateEntity ent, StateRecord prev, StateRecord next) {
-		this.recordLogEntry(getSimTime(), ent);
+		scheduleLogEntry();
 	}
 
 	/**
@@ -364,7 +364,7 @@ public class ExpressionLogger extends Logger implements StateEntityListener, Obs
 			return;
 
 		// Record the entry in the log
-		this.recordLogEntry(simTime, null);
+		scheduleLogEntry();
 
 		// Wait for the next value change
 		EventManager.scheduleUntil(doValueTraceTarget, valueChangedConditional, null);
