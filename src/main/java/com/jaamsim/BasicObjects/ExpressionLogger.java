@@ -31,7 +31,6 @@ import com.jaamsim.basicsim.ObserverEntity;
 import com.jaamsim.basicsim.SubjectEntity;
 import com.jaamsim.events.Conditional;
 import com.jaamsim.events.EventManager;
-import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.EntityListInput;
 import com.jaamsim.input.ExpResType;
@@ -289,18 +288,13 @@ public class ExpressionLogger extends Logger implements StateEntityListener, Obs
 		this.startAction();
 	}
 
-	protected final ProcessTarget endActionTarget = new EndActionTarget(this);
-
-	private static class EndActionTarget extends EntityTarget<ExpressionLogger> {
-		EndActionTarget(ExpressionLogger ent) {
-			super(ent, "endAction");
-		}
-
+	protected final EntityTarget<ExpressionLogger> endActionTarget =
+			new EntityTarget<ExpressionLogger>(this, "endAction") {
 		@Override
 		public void process() {
 			ent.endAction();
 		}
-	}
+	};
 
 	@Override
 	protected void recordEntry(FileEntity file, double simTime, DisplayEntity dEnt) {
@@ -387,19 +381,14 @@ public class ExpressionLogger extends Logger implements StateEntityListener, Obs
 	}
 	private final Conditional valueChangedConditional = new ValueChangedConditional(this);
 
-	private final ProcessTarget doValueTraceTarget = new ProcessTarget() {
-
-		@Override
-		public String getDescription() {
-			return ExpressionLogger.this.getName() + ".doValueTrace";
-		}
-
+	private final EntityTarget<ExpressionLogger> doValueTraceTarget =
+			new EntityTarget<ExpressionLogger>(this, "doValueTrace") {
 		@Override
 		public void process() {
-			double simTime = ExpressionLogger.this.getSimTime();
+			double simTime = ent.getSimTime();
 			if (isVerifyWatchList(simTime))
-				error(ERR_WATCHLIST);
-			doValueTrace();
+				ent.error(ERR_WATCHLIST);
+			ent.doValueTrace();
 		}
 	};
 
