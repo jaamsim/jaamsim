@@ -16,16 +16,22 @@
  */
 package com.jaamsim.BasicObjects;
 
+import java.util.ArrayList;
+
+import com.jaamsim.BooleanProviders.BooleanProvInput;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.Statistics.TimeBasedFrequency;
 import com.jaamsim.Statistics.TimeBasedStatistics;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.EntityTarget;
+import com.jaamsim.basicsim.ObserverEntity;
+import com.jaamsim.basicsim.SubjectEntity;
 import com.jaamsim.events.Conditional;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputCallback;
+import com.jaamsim.input.InterfaceEntityListInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.UnitTypeInput;
@@ -34,7 +40,7 @@ import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
 
-public class ExpressionStatistics extends DisplayEntity {
+public class ExpressionStatistics extends DisplayEntity implements ObserverEntity {
 
 	@Keyword(description = "Unit type for the variable whose statistics will be collected.",
 	         exampleList = {"DistanceUnit"})
@@ -49,6 +55,30 @@ public class ExpressionStatistics extends DisplayEntity {
 	                     + "Histogram data will not be generated if the input is left blank.",
 	         exampleList = {"1 h"})
 	private final SampleInput histogramBinWidth;
+
+	@Keyword(description = "Optional list of objects to monitor.\n\n"
+	                     + "If the 'WatchList' input is provided, then the 'DataSource' input is "
+	                     + "evaluated ONLY when triggered by an object in its 'WatchList'. "
+	                     + "This is much more efficient than the default behaviour which "
+	                     + "evaluates the 'DataSource' input at every event time.\n\n"
+	                     + "Care must be taken to ensure that the 'WatchList' input includes "
+	                     + "every object that can trigger a change in the value of 'DataSource' "
+	                     + "input. "
+	                     + "Normally, the 'WatchList' should include every object that is "
+	                     + "referenced directly or indirectly by the 'DataSource' input. "
+	                     + "The 'VerfiyWatchList' input can be used to ensure that the "
+	                     + "'WatchList' includes all the necessary objects.",
+	         exampleList = {"Object1  Object2"})
+	protected final InterfaceEntityListInput<SubjectEntity> watchList;
+
+	@Keyword(description = "Allows the user to verify that the 'WatchList' input includes all the "
+	                     + "objects that can trigger a change in the value of the 'DataSource' "
+	                     + "input. "
+	                     + "When set to TRUE, the both the normal logic and the 'WatchList' logic "
+	                     + "is used to test the value of the 'DataSource' input. "
+	                     + "An error message is generated if 'DataSource' input changes "
+	                     + "its value without being triggered by a 'WatchList' object.")
+	private final BooleanProvInput verifyWatchList;
 
 	private double lastValue;
 	private final TimeBasedStatistics timeStats = new TimeBasedStatistics();
@@ -68,6 +98,14 @@ public class ExpressionStatistics extends DisplayEntity {
 		histogramBinWidth = new SampleInput("HistogramBinWidth", KEY_INPUTS, null);
 		histogramBinWidth.setUnitType(UserSpecifiedUnit.class);
 		this.addInput(histogramBinWidth);
+
+		watchList = new InterfaceEntityListInput<>(SubjectEntity.class, "WatchList", KEY_INPUTS, new ArrayList<>());
+		watchList.setIncludeSelf(false);
+		watchList.setUnique(true);
+		this.addInput(watchList);
+
+		verifyWatchList = new BooleanProvInput("VerifyWatchList", KEY_INPUTS, false);
+		this.addInput(verifyWatchList);
 	}
 
 	static final InputCallback inputCallback = new InputCallback() {
@@ -94,7 +132,11 @@ public class ExpressionStatistics extends DisplayEntity {
 	public void startUp() {
 		super.startUp();
 		lastValue = Double.NaN;
-		doValueTrace();
+
+		// If there is no WatchList, the open/close expressions are tested after every event
+		if (!isWatchList() || isVerifyWatchList(0.0d)) {
+			doValueTrace();
+		}
 	}
 
 	@Override
@@ -106,6 +148,26 @@ public class ExpressionStatistics extends DisplayEntity {
 
 	private double getBinWidth() {
 		return histogramBinWidth.getNextSample(this, 0.0d);
+	}
+
+	public boolean isVerifyWatchList(double simTime) {
+		return verifyWatchList.getNextBoolean(this, simTime);
+	}
+
+	public boolean isWatchList() {
+		return !getWatchList().isEmpty();
+	}
+
+	@Override
+	public ArrayList<SubjectEntity> getWatchList() {
+		return watchList.getValue();
+	}
+
+	@Override
+	public void observerUpdate(SubjectEntity subj) {
+		if (isValueChanged()) {
+			recordValue();
+		}
 	}
 
 	public void recordValue() {
