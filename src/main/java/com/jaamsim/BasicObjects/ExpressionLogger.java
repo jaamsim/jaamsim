@@ -315,6 +315,9 @@ public class ExpressionLogger extends Logger implements StateEntityListener, Obs
 			for (int i=0; i<valueTraceList.getListSize(); i++) {
 				String str = valueTraceList.getNextString(i, this, simTime);
 				file.format("\t%s", str);
+
+				// Update the saved values
+				lastValueList.set(i, str);
 			}
 		}
 		catch (Exception e) {
