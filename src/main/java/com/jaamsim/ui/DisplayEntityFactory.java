@@ -261,7 +261,7 @@ public class DisplayEntityFactory extends Entity {
 
 			// Calculate the DisplayEntity's size and position from the ColladaModel
 			MeshProtoKey meshKey = RenderUtils.FileNameToMeshProtoKey(f.toURI());
-			AABB modelBounds = RenderManager.inst().getMeshBounds(meshKey, true);
+			AABB modelBounds = RenderManager.inst().getMeshBounds(meshKey);
 			Vec3d entityPos = modelBounds.center;
 			Vec3d modelSize = new Vec3d(modelBounds.radius);
 			modelSize.scale3(2);

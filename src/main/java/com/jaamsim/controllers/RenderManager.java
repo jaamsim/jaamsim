@@ -1924,24 +1924,12 @@ public class RenderManager implements DragSourceListener {
 	@Override
 	public void dropActionChanged(DragSourceDragEvent arg0) {}
 
-	public AABB getMeshBounds(MeshProtoKey key, boolean block) {
-		if (block || MeshDataCache.isMeshLoaded(key)) {
-			return MeshDataCache.getMeshData(key).getDefaultBounds();
-		}
-
-		// The mesh is not loaded and we are non-blocking, so trigger a mesh load and return
-		MeshDataCache.loadMesh(key);
-		return null;
+	public AABB getMeshBounds(MeshProtoKey key) {
+		return MeshDataCache.getMeshData(key).getDefaultBounds();
 	}
 
-	public ArrayList<Action.Description> getMeshActions(MeshProtoKey key, boolean block) {
-		if (block || MeshDataCache.isMeshLoaded(key)) {
-			return MeshDataCache.getMeshData(key).getActionDescriptions();
-		}
-
-		// The mesh is not loaded and we are non-blocking, so trigger a mesh load and return
-		MeshDataCache.loadMesh(key);
-		return null;
+	public ArrayList<Action.Description> getMeshActions(MeshProtoKey key) {
+		return MeshDataCache.getMeshData(key).getActionDescriptions();
 	}
 
 	public Vec2d getImageDims(URI imageURI) {

@@ -212,7 +212,7 @@ public class ColladaModel extends DisplayModel {
 
 			MeshProtoKey meshKey = getCachedMeshKey(filename);
 
-			AABB bounds = RenderManager.inst().getMeshBounds(meshKey, true);
+			AABB bounds = RenderManager.inst().getMeshBounds(meshKey);
 			if (bounds == null || bounds.isEmpty()) {
 				// This mesh has not been loaded yet, try again next time
 				cachedProxies = null; // Invalidate the cache
@@ -325,7 +325,7 @@ public class ColladaModel extends DisplayModel {
 
 		// Check that any actions listed in the action list exist in the specified collada file
 		MeshProtoKey meshKey = getCachedMeshKey(colladaFile.getValue());
-		ArrayList<Action.Description> actionDescs = RenderManager.inst().getMeshActions(meshKey, true);
+		ArrayList<Action.Description> actionDescs = RenderManager.inst().getMeshActions(meshKey);
 		ArrayList<Action.Binding> bindings = actions.getValue();
 		for (Action.Binding b : bindings) {
 			boolean found = false;
@@ -349,7 +349,7 @@ public class ColladaModel extends DisplayModel {
 		if (!RenderManager.isGood() || colladaFile.getValue() == null)
 			return "";
 		MeshProtoKey meshKey = getCachedMeshKey(colladaFile.getValue());
-		ArrayList<Action.Description> actionDescs = RenderManager.inst().getMeshActions(meshKey, true);
+		ArrayList<Action.Description> actionDescs = RenderManager.inst().getMeshActions(meshKey);
 
 		StringBuilder ret = new StringBuilder();
 		for (Action.Description desc : actionDescs) {

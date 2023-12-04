@@ -21,7 +21,6 @@ import java.net.URISyntaxException;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.jaamsim.MeshFiles.BlockReader;
 import com.jaamsim.MeshFiles.MeshData;
@@ -33,9 +32,6 @@ import com.jaamsim.ui.LogBox;
 
 public class MeshDataCache {
 	private static final HashMap<MeshProtoKey, MeshData> dataMap = new HashMap<>();
-
-	private static final HashMap<MeshProtoKey, MeshDataLoader> loadingMap = new HashMap<>();
-
 	private static final HashSet<MeshProtoKey> badMeshSet = new HashSet<>();
 	private static MeshData badMesh = null;
 
@@ -60,18 +56,6 @@ public class MeshDataCache {
 		synchronized (badMeshSet) {
 			if (badMeshSet.contains(key)) {
 				return getBadMesh();
-			}
-		}
-
-		MeshDataLoader ml = null;
-		synchronized (loadingMap) {
-			ml = loadingMap.get(key);
-		}
-
-		if (ml != null) {
-			ml.waitForLoading();
-			synchronized (dataMap) {
-				return dataMap.get(key);
 			}
 		}
 
@@ -123,53 +107,6 @@ public class MeshDataCache {
 		}
 	}
 
-	private static class MeshDataLoader implements Runnable {
-		final AtomicBoolean loaded = new AtomicBoolean();
-		final MeshProtoKey key;
-
-		MeshDataLoader(MeshProtoKey key) {
-			this.key = key;
-		}
-
-		@Override
-		public void run() {
-			getMeshData(key); // Cause the lazy initializer to load the mesh (or return quickly if already loaded)
-
-			loaded.set(true);
-
-			synchronized(this) {
-				this.notifyAll();
-			}
-
-		}
-
-		public void waitForLoading() {
-			if (loaded.get())
-				return;
-
-			// Someone already triggered a delayed load for this mesh, let's just wait for that one...
-			synchronized (this) {
-				while (!loaded.get()) {
-					try {
-						this.wait();
-					} catch (InterruptedException ex) {}
-				}
-			}
-		}
-	}
-
-	/**
-	 * Load the mesh in a new thread, then notify on 'notifier'
-	 * @param key
-	 */
-	public static void loadMesh(final MeshProtoKey key) {
-		MeshDataLoader ml = new MeshDataLoader(key);
-		synchronized (loadingMap) {
-			loadingMap.put(key, ml);
-		}
-
-		new Thread(ml).start();
-	}
 
 	// Lazily load the bad mesh data
 	public synchronized static MeshData getBadMesh() {
