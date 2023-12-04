@@ -283,7 +283,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 			if (iatWorkingEntity.getValue() == null) {
 				double workingSecs = EventManager.simSeconds();
 				double waitSecs = secondsForNextFailure - workingSecs;
-				scheduleProcess(Math.max(waitSecs, 0.0), 5, scheduleDowntime, scheduleDowntimeHandle);
+				EventManager.scheduleSeconds(Math.max(waitSecs, 0.0), 5, false, scheduleDowntime, scheduleDowntimeHandle);
 
 			}
 			// 2) Working time
@@ -291,7 +291,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 				if (iatWorkingEntity.getValue().isWorkingState()) {
 					double workingSecs = iatWorkingEntity.getValue().getWorkingTime();
 					double waitSecs = secondsForNextFailure - workingSecs;
-					scheduleProcess(Math.max(waitSecs, 0.0), 5, scheduleDowntime, scheduleDowntimeHandle);
+					EventManager.scheduleSeconds(Math.max(waitSecs, 0.0), 5, false, scheduleDowntime, scheduleDowntimeHandle);
 				}
 			}
 		}
@@ -313,7 +313,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 				// Calendar time
 				double workingSecs = EventManager.simSeconds();
 				double waitSecs = secondsForNextRepair - workingSecs;
-				scheduleProcess(waitSecs, 5, endDowntime, endDowntimeHandle);
+				EventManager.scheduleSeconds(waitSecs, 5, false, endDowntime, endDowntimeHandle);
 				return;
 			}
 
@@ -325,7 +325,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 
 				double workingSecs = durationWorkingEntity.getValue().getWorkingTime();
 				double waitSecs = secondsForNextRepair - workingSecs;
-				scheduleProcess(waitSecs, 5, endDowntime, endDowntimeHandle);
+				EventManager.scheduleSeconds(waitSecs, 5, false, endDowntime, endDowntimeHandle);
 			}
 			// The Entity is not working, remove scheduled end of the downtime event
 			else {

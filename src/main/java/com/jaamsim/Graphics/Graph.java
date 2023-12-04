@@ -399,7 +399,7 @@ public class Graph extends GraphBasics  {
 
 		double xLength = xAxisEnd.getValue() - xAxisStart.getValue();
 		double xInterval = xLength / (getNumberOfPoints() - 1);
-		scheduleProcess(xInterval, 7, processGraph);
+		EventManager.scheduleSeconds(xInterval, 7, false, processGraph, null);
 	}
 
 	/**

@@ -25,10 +25,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 
-import com.jaamsim.events.Conditional;
-import com.jaamsim.events.EventHandle;
-import com.jaamsim.events.EventManager;
-import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.AttributeDefinitionListInput;
 import com.jaamsim.input.AttributeHandle;
 import com.jaamsim.input.BooleanInput;
@@ -781,95 +777,6 @@ public class Entity {
 		for (NamedExpression ne : namedExpressionInput.getValue()) {
 			addCustomOutput(ne.getName(), ne.getExpression(), ne.getUnitType());
 		}
-	}
-
-	public final void startProcess(String methodName, Object... args) {
-		EventManager.startProcess(new ReflectionTarget(this, methodName, args));
-	}
-
-	public final void startProcess(ProcessTarget t) {
-		EventManager.startProcess(t);
-	}
-
-	public final void scheduleProcess(double secs, int priority, ProcessTarget t) {
-		EventManager.scheduleSeconds(secs, priority, false, t, null);
-	}
-
-	public final void scheduleProcess(double secs, int priority, String methodName, Object... args) {
-		EventManager.scheduleSeconds(secs, priority, false, new ReflectionTarget(this, methodName, args), null);
-	}
-
-	public final void scheduleProcess(double secs, int priority, ProcessTarget t, EventHandle handle) {
-		EventManager.scheduleSeconds(secs, priority, false, t, handle);
-	}
-
-	public final void scheduleProcess(double secs, int priority, boolean fifo, ProcessTarget t, EventHandle handle) {
-		EventManager.scheduleSeconds(secs, priority, fifo, t, handle);
-	}
-
-	public final void scheduleProcessTicks(long ticks, int priority, boolean fifo, ProcessTarget t, EventHandle h) {
-		EventManager.scheduleTicks(ticks, priority, fifo, t, h);
-	}
-
-	public final void scheduleProcessTicks(long ticks, int priority, ProcessTarget t) {
-		EventManager.scheduleTicks(ticks, priority, false, t, null);
-	}
-
-	public final void scheduleProcessTicks(long ticks, int priority, String methodName, Object... args) {
-		EventManager.scheduleTicks(ticks, priority, false, new ReflectionTarget(this, methodName, args), null);
-	}
-
-	public final void waitUntil(Conditional cond, EventHandle handle) {
-		// Don't actually wait if the condition is already true
-		if (cond.evaluate()) return;
-		EventManager.waitUntil(cond, handle);
-	}
-
-	/**
-	 * Wait a number of simulated seconds and a given priority.
-	 * @param secs
-	 * @param priority
-	 */
-	public final void simWait(double secs, int priority) {
-		EventManager.waitSeconds(secs, priority, false, null);
-	}
-
-	/**
-	 * Wait a number of simulated seconds and a given priority.
-	 * @param secs
-	 * @param priority
-	 */
-	public final void simWait(double secs, int priority, EventHandle handle) {
-		EventManager.waitSeconds(secs, priority, false, handle);
-	}
-
-	/**
-	 * Wait a number of simulated seconds and a given priority.
-	 * @param secs
-	 * @param priority
-	 */
-	public final void simWait(double secs, int priority, boolean fifo, EventHandle handle) {
-		EventManager.waitSeconds(secs, priority, fifo, handle);
-	}
-
-	/**
-	 * Wait a number of discrete simulation ticks and a given priority.
-	 * @param ticks
-	 * @param priority
-	 */
-	public final void simWaitTicks(long ticks, int priority) {
-		EventManager.waitTicks(ticks, priority, false, null);
-	}
-
-	/**
-	 * Wait a number of discrete simulation ticks and a given priority.
-	 * @param ticks
-	 * @param priority
-	 * @param fifo
-	 * @param handle
-	 */
-	public final void simWaitTicks(long ticks, int priority, boolean fifo, EventHandle handle) {
-		EventManager.waitTicks(ticks, priority, fifo, handle);
 	}
 
 	public void handleSelectionLost() {}

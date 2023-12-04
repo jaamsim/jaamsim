@@ -133,7 +133,7 @@ public class Controller extends DisplayEntity implements SubjectEntity {
 
 		// Schedule the first update
 		if (getMaxUpdates(0.0d) > 0)
-			this.scheduleProcess(firstTime.getNextSample(this, 0.0d), 5, doUpdate);
+			EventManager.scheduleSeconds(firstTime.getNextSample(this, 0.0d), 5, false, doUpdate, null);
 	}
 
 	private static class DoUpdateTarget extends EntityTarget<Controller> {
@@ -163,7 +163,7 @@ public class Controller extends DisplayEntity implements SubjectEntity {
 
 		// Schedule the next update
 		if (count < getMaxUpdates(simTime))
-			this.scheduleProcess(interval.getNextSample(this, simTime), 5, doUpdate);
+			EventManager.scheduleSeconds(interval.getNextSample(this, simTime), 5, false, doUpdate, null);
 	}
 
 	public int getCount() {
