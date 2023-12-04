@@ -181,7 +181,7 @@ public class TimeSeries extends DisplayEntity implements TimeSeriesProvider, Sub
 	 * Schedules an event when the TimeSeries' value changes.
 	 */
 	final void waitForNextValue() {
-		long ticks = this.getSimTicks();
+		long ticks = EventManager.simTicks();
 		long durTicks = getNextChangeAfterTicks(ticks) - ticks;
 		if (isTraceFlag())
 			trace(0, "waitForNextValue - dur=%.6f", EventManager.current().ticksToSeconds(durTicks));

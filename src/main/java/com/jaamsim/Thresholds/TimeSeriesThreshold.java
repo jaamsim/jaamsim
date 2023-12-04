@@ -179,13 +179,13 @@ public class TimeSeriesThreshold extends Threshold {
 	 */
 	public void doOpenClose() {
 		long wait;
-		if (this.isOpenAtTicks(getSimTicks())) {
+		if (this.isOpenAtTicks(EventManager.simTicks())) {
 			setOpen(true);
-			wait = this.calcOpenTicksFromTicks(getSimTicks());
+			wait = this.calcOpenTicksFromTicks(EventManager.simTicks());
 		}
 		else {
 			setOpen(false);
-			wait = this.calcClosedTicksFromTicks(getSimTicks());
+			wait = this.calcClosedTicksFromTicks(EventManager.simTicks());
 		}
 
 		if (wait == Long.MAX_VALUE)

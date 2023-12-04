@@ -160,7 +160,7 @@ public abstract class StateEntity extends DisplayEntity implements StateUser {
 	private void initStateData() {
 		lastStateCollectionTick = 0;
 		if (EventManager.hasCurrent())
-			lastStateCollectionTick = getSimTicks();
+			lastStateCollectionTick = EventManager.simTicks();
 		workingTicks = 0;
 		states.clear();
 		useCurrentCycle = false;
@@ -262,7 +262,7 @@ public abstract class StateEntity extends DisplayEntity implements StateUser {
 	 * Update the statistics kept for ticks in the presentState
 	 */
 	private void updateStateStats() {
-		long curTick = getSimTicks();
+		long curTick = EventManager.simTicks();
 		if (curTick == lastStateCollectionTick)
 			return;
 
@@ -374,7 +374,7 @@ public abstract class StateEntity extends DisplayEntity implements StateUser {
 	}
 
 	public long getTicksInState(StateRecord state) {
-		return getTicksInState(getSimTicks(), state);
+		return getTicksInState(EventManager.simTicks(), state);
 	}
 
 	public long getCurrentCycleTicks(long simTicks, StateRecord state) {
@@ -388,7 +388,7 @@ public abstract class StateEntity extends DisplayEntity implements StateUser {
 	}
 
 	public long getCurrentCycleTicks(StateRecord state) {
-		return getCurrentCycleTicks(getSimTicks(), state);
+		return getCurrentCycleTicks(EventManager.simTicks(), state);
 	}
 
 	public long getCompletedCycleTicks(StateRecord state) {
@@ -417,7 +417,7 @@ public abstract class StateEntity extends DisplayEntity implements StateUser {
 	 * Returns the number of seconds that the entity has been in use.
 	 */
 	public double getWorkingTime() {
-		long ticks = getWorkingTicks(getSimTicks());
+		long ticks = getWorkingTicks(EventManager.simTicks());
 		return EventManager.current().ticksToSeconds(ticks);
 	}
 

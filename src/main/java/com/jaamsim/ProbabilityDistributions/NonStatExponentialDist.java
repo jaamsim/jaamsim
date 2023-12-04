@@ -20,6 +20,7 @@ package com.jaamsim.ProbabilityDistributions;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.Samples.TimeSeries;
 import com.jaamsim.Samples.TimeSeriesProvider;
+import com.jaamsim.events.EventManager;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.TimeSeriesInput;
@@ -98,7 +99,7 @@ public class NonStatExponentialDist extends Distribution {
 	@Override
 	protected double getSample(double simTime) {
 
-		long ticksNow = getSimTicks();  // ignore the simTime passed as an argument
+		long ticksNow = EventManager.simTicks();  // ignore the simTime passed as an argument
 		TimeSeriesProvider ts = expectedArrivals.getValue();
 		double factor = getScaleFactor(simTime);
 		double valueNow = factor * ts.getInterpolatedCumulativeValueForTicks(ticksNow);

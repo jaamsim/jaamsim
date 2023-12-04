@@ -148,7 +148,7 @@ public class Resource extends AbstractResourceProvider {
 		// Wait until the state is ready to change
 		if (capacity.getValue() instanceof TimeSeries) {
 			TimeSeries ts = (TimeSeries)capacity.getValue();
-			long simTicks = getSimTicks();
+			long simTicks = EventManager.simTicks();
 			long durTicks = ts.getNextChangeAfterTicks(simTicks) - simTicks;
 			this.scheduleProcessTicks(durTicks, 10, true, updateForCapacityChangeTarget, null); // FIFO
 		}

@@ -380,14 +380,6 @@ public class Entity {
 	 */
 	public void close() {}
 
-	/**
-	 * Get the current Simulation ticks value.
-	 * @return the current simulation tick
-	 */
-	public final long getSimTicks() {
-		return EventManager.simTicks();
-	}
-
 	protected void clearInputs() {
 		inpList.clear();
 	}

@@ -187,7 +187,7 @@ public class ResourceUnit extends StateUserEntity implements Seizable, ResourceP
 			error("Unit is already in use: assignment=%s, entity=%s", presentAssignment, ent);
 		}
 		presentAssignment = ent;
-		assignmentTicks = getSimTicks();
+		assignmentTicks = EventManager.simTicks();
 		unitsSeized++;
 		setPresentState();
 		collectStatistics(simTime, getUnitsInUse());
@@ -198,7 +198,7 @@ public class ResourceUnit extends StateUserEntity implements Seizable, ResourceP
 		double simTime = EventManager.simSeconds();
 		presentAssignment = null;
 		assignmentTicks = -1L;
-		lastReleaseTicks = getSimTicks();
+		lastReleaseTicks = EventManager.simTicks();
 		unitsReleased++;
 		setPresentState();
 		collectStatistics(simTime, getUnitsInUse());
