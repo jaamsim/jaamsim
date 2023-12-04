@@ -28,6 +28,7 @@ import com.jaamsim.Statistics.TimeBasedFrequency;
 import com.jaamsim.Statistics.TimeBasedStatistics;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.JaamSimModel;
+import com.jaamsim.events.EventManager;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.units.DimensionlessUnit;
@@ -82,7 +83,7 @@ public abstract class AbstractResourceProvider extends DisplayEntity implements 
 
 	@Override
 	public boolean isStrictOrder() {
-		return strictOrder.getNextBoolean(this, getSimTime());
+		return strictOrder.getNextBoolean(this, EventManager.simSeconds());
 	}
 
 	@Override
@@ -110,7 +111,7 @@ public abstract class AbstractResourceProvider extends DisplayEntity implements 
 	@Override
 	public void clearStatistics() {
 		super.clearStatistics();
-		double simTime = this.getSimTime();
+		double simTime = EventManager.simSeconds();
 		unitsSeized = 0;
 		unitsReleased = 0;
 		stats.clear();

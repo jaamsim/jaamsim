@@ -23,6 +23,7 @@ import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleListInput;
 import com.jaamsim.basicsim.Entity;
+import com.jaamsim.events.EventManager;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InterfaceEntityListInput;
 import com.jaamsim.input.Keyword;
@@ -89,7 +90,7 @@ public class Duplicate extends LinkedComponent {
 	@Override
 	public void addEntity(DisplayEntity ent) {
 		super.addEntity(ent);
-		double simTime = getSimTime();
+		double simTime = EventManager.simSeconds();
 
 		// Set the base name for the duplicates
 		String name = baseName.getValue();

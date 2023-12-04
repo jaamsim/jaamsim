@@ -25,6 +25,7 @@ import com.jaamsim.Samples.SampleListInput;
 import com.jaamsim.Samples.SampleProvider;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.datatypes.DoubleVector;
+import com.jaamsim.events.EventManager;
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.ColorListInput;
 import com.jaamsim.input.ColourInput;
@@ -412,7 +413,7 @@ public class Graph extends GraphBasics  {
 			return;
 		}
 
-		double t = getSimTime() + xAxisEnd.getValue();
+		double t = EventManager.simSeconds() + xAxisEnd.getValue();
 		double presentValue = this.getCurrentValue(t, info);
 
 		info.indexOfLastEntry++;

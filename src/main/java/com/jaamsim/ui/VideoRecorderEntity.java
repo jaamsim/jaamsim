@@ -207,7 +207,7 @@ public class VideoRecorderEntity extends DisplayEntity {
 	 */
 	public void doCaptureNetwork() {
 		JaamSimModel simModel = getJaamSimModel();
-		double simTime = getSimTime();
+		double simTime = EventManager.simSeconds();
 		double startTime = captureStartTime.getNextSample(this, simTime);
 
 		// If the capture network is already in progress, then stop the previous network

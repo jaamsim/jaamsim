@@ -26,6 +26,7 @@ import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ObserverEntity;
 import com.jaamsim.basicsim.SubjectEntity;
 import com.jaamsim.basicsim.SubjectEntityDelegate;
+import com.jaamsim.events.EventManager;
 import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
@@ -166,7 +167,7 @@ public abstract class LinkedComponent extends StateEntity implements SubjectEnti
 	 * @param ent - the entity to be sent downstream.
 	 */
 	public void sendToNextComponent(DisplayEntity ent) {
-		releaseEntity(getSimTime());
+		releaseEntity(EventManager.simSeconds());
 		if (getNextComponent() != null )
 			getNextComponent().addEntity(ent);
 	}
@@ -174,7 +175,7 @@ public abstract class LinkedComponent extends StateEntity implements SubjectEnti
 	protected void setEntityState(DisplayEntity ent) {
 		if (stateAssignment.isDefault() || !(ent instanceof StateEntity))
 			return;
-		String state = stateAssignment.getNextString(this, getSimTime());
+		String state = stateAssignment.getNextString(this, EventManager.simSeconds());
 		((StateEntity) ent).setPresentState(state);
 	}
 

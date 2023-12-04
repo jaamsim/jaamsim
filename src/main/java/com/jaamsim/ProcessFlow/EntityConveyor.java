@@ -213,7 +213,7 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 	@Override
 	public void addEntity(DisplayEntity ent ) {
 		super.addEntity(ent);
-		double simTime = this.getSimTime();
+		double simTime = EventManager.simSeconds();
 
 		// Update the positions of the entities on the conveyor
 		this.updateProgress();
@@ -366,7 +366,7 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 		if (isTraceFlag()) traceLine(2, "BEFORE - entryList=%s", entryList);
 
 		ConveyorEntry lastEntry = null;
-		double convLength = length.getNextSample(this, getSimTime());
+		double convLength = length.getNextSample(this, EventManager.simSeconds());
 		double maxPos = 1.0d;
 		for (ConveyorEntry entry : entryList) {
 			if (lastEntry != null && convLength > 0.0d)

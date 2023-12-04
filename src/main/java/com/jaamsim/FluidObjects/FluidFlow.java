@@ -19,6 +19,7 @@ package com.jaamsim.FluidObjects;
 
 import java.util.ArrayList;
 
+import com.jaamsim.events.EventManager;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Output;
 
@@ -81,7 +82,7 @@ public class FluidFlow extends FluidFlowCalculation {
 
 	@Override
 	protected void calcFlowRate( FluidComponent source, FluidComponent destination, double dt ) {
-		double simTime = getSimTime();
+		double simTime = EventManager.simSeconds();
 
 		// Update the flow rate
 		this.setFlowRate( this.getFlowRate() + flowAcceleration * dt );

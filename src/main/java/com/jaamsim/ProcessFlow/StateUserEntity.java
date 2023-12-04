@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import com.jaamsim.BasicObjects.DowntimeEntity;
 import com.jaamsim.Thresholds.Threshold;
 import com.jaamsim.Thresholds.ThresholdUser;
+import com.jaamsim.events.EventManager;
 import com.jaamsim.input.EntityListInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
@@ -369,7 +370,7 @@ public abstract class StateUserEntity extends AbstractStateUserEntity implements
 		// Downtime can start when any work in progress has been interrupted and there are no
 		// other maintenance or breakdown activities that are being performed. It is okay to start
 		// downtime when one or more thresholds are closed.
-		double simTime = getSimTime();
+		double simTime = EventManager.simSeconds();
 		return !isBusy() && (down.isConcurrent(simTime) || !isMaintenance() && !isBreakdown());
 	}
 

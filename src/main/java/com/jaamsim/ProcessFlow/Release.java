@@ -21,6 +21,7 @@ import java.util.ArrayList;
 
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleListInput;
+import com.jaamsim.events.EventManager;
 import com.jaamsim.input.InterfaceEntityListInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.resourceObjects.AbstractResourceProvider;
@@ -69,7 +70,7 @@ public class Release extends LinkedComponent {
 	 * Release the specified Resources.
 	 */
 	public void releaseResources(DisplayEntity ent) {
-		double simTime = this.getSimTime();
+		double simTime = EventManager.simSeconds();
 		ArrayList<ResourceProvider> resList = resourceList.getValue();
 
 		// Release the Resources

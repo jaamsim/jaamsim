@@ -163,7 +163,7 @@ public class EntityDelay extends LinkedComponent implements LineEntity {
 		super.addEntity(ent);
 
 		// Select the delay time for this entity
-		double simTime = this.getSimTime();
+		double simTime = EventManager.simSeconds();
 		double dur = duration.getNextSample(this, simTime);
 		long durTicks = EventManager.current().secondsToNearestTick(dur);
 
@@ -207,7 +207,7 @@ public class EntityDelay extends LinkedComponent implements LineEntity {
 	public void removeDisplayEntity(DisplayEntity ent) {
 
 		// Remove the entity from the lists
-		double simTime = getSimTime();
+		double simTime = EventManager.simSeconds();
 		if (isAnimation(simTime))
 			entityMap.remove(ent.getEntityNumber());
 

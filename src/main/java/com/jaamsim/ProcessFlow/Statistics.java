@@ -139,7 +139,7 @@ public class Statistics extends LinkedComponent {
 	@Override
 	public void addEntity(DisplayEntity ent) {
 		super.addEntity(ent);
-		double simTime = this.getSimTime();
+		double simTime = EventManager.simSeconds();
 
 		// Update the statistics
 		if (!sampleValue.isDefault()) {

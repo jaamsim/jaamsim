@@ -19,6 +19,7 @@ package com.jaamsim.ProcessFlow;
 
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleInput;
+import com.jaamsim.events.EventManager;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.units.DimensionlessUnit;
@@ -59,7 +60,7 @@ public class Server extends LinkedService {
 	protected boolean startProcessing(double simTime) {
 
 		// Determine the match value
-		String m = this.getNextMatchValue(getSimTime());
+		String m = this.getNextMatchValue(EventManager.simSeconds());
 		this.setMatchValue(m);
 
 		// Remove the first entity from the queue

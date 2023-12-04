@@ -118,7 +118,7 @@ public abstract class Device extends StateUserEntity implements ObserverEntity, 
 		if (isTraceFlag()) trace(0, "restart - START WORK");
 		processing = true;
 		startUpTicks = getSimTicks();
-		lastUpdateTime = getSimTime();
+		lastUpdateTime = EventManager.simSeconds();
 		startStep();
 	}
 
@@ -149,7 +149,7 @@ public abstract class Device extends StateUserEntity implements ObserverEntity, 
 					isAvailable(), isForcedDowntimePending(), isImmediateDowntimePending());
 		}
 
-		double simTime = this.getSimTime();
+		double simTime = EventManager.simSeconds();
 
 		// Is the process loop is already working?
 		if (endStepHandle.isScheduled()) {
@@ -222,7 +222,7 @@ public abstract class Device extends StateUserEntity implements ObserverEntity, 
 	 */
 	final void endStep() {
 		if (isTraceFlag()) trace(0, "endStep");
-		double simTime = this.getSimTime();
+		double simTime = EventManager.simSeconds();
 
 		// Update the process for the time that has elapsed
 		this.updateProgress();
@@ -243,7 +243,7 @@ public abstract class Device extends StateUserEntity implements ObserverEntity, 
 	 */
 	protected final void updateProgress() {
 		if (isTraceFlag()) trace(1, "updateProgress");
-		double simTime = this.getSimTime();
+		double simTime = EventManager.simSeconds();
 
 		if (this.isBusy()) {
 			double dt = simTime - lastUpdateTime;

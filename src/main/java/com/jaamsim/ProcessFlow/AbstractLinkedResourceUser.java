@@ -22,6 +22,7 @@ import java.util.Arrays;
 
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleListInput;
+import com.jaamsim.events.EventManager;
 import com.jaamsim.input.InterfaceEntityListInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
@@ -82,19 +83,19 @@ public abstract class AbstractLinkedResourceUser extends LinkedService implement
 
 	@Override
 	public boolean hasWaitingEntity() {
-		double simTime = getSimTime();
+		double simTime = EventManager.simSeconds();
 		return !getQueue(simTime).isEmpty();
 	}
 
 	@Override
 	public int getPriority() {
-		double simTime = getSimTime();
+		double simTime = EventManager.simSeconds();
 		return getQueue(simTime).getFirstPriority();
 	}
 
 	@Override
 	public double getWaitTime() {
-		double simTime = getSimTime();
+		double simTime = EventManager.simSeconds();
 		return getQueue(simTime).getQueueTime();
 	}
 
@@ -103,7 +104,7 @@ public abstract class AbstractLinkedResourceUser extends LinkedService implement
 		if (isTraceFlag()) trace(2, "startNextEntity");
 
 		// Remove the first entity from the queue
-		double simTime = getSimTime();
+		double simTime = EventManager.simSeconds();
 		String m = this.getNextMatchValue(simTime);
 		this.setMatchValue(m);
 		DisplayEntity ent = removeNextEntity(m);
@@ -134,7 +135,7 @@ public abstract class AbstractLinkedResourceUser extends LinkedService implement
 		if (!isAbleToRestart()) {
 			return false;
 		}
-		double simTime = getSimTime();
+		double simTime = EventManager.simSeconds();
 		String m = this.getNextMatchValue(simTime);
 		DisplayEntity ent = getNextEntity(m);
 		return ent != null && checkResources(ent);
@@ -145,7 +146,7 @@ public abstract class AbstractLinkedResourceUser extends LinkedService implement
 	 * @return = TRUE if all the resources are available
 	 */
 	public boolean checkResources(DisplayEntity ent) {
-		double simTime = this.getSimTime();
+		double simTime = EventManager.simSeconds();
 
 		// Temporarily set the obj entity to the first one in the queue
 		DisplayEntity oldEnt = this.getReceivedEntity(simTime);
@@ -168,7 +169,7 @@ public abstract class AbstractLinkedResourceUser extends LinkedService implement
 	 * Seize the required Resources.
 	 */
 	public void seizeResources() {
-		double simTime = this.getSimTime();
+		double simTime = EventManager.simSeconds();
 		if (getResourceList().isEmpty())
 			return;
 

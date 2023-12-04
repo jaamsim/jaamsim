@@ -20,6 +20,7 @@ package com.jaamsim.ProcessFlow;
 import java.util.ArrayList;
 
 import com.jaamsim.Graphics.DisplayEntity;
+import com.jaamsim.events.EventManager;
 import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.Keyword;
 
@@ -40,7 +41,7 @@ public class AddTo extends AbstractPack {
 
 	@Override
 	public void addEntity(DisplayEntity ent) {
-		double simTime = getSimTime();
+		double simTime = EventManager.simSeconds();
 
 		// Add an incoming container to its queue
 		if (ent instanceof EntContainer)

@@ -20,6 +20,7 @@ package com.jaamsim.ProcessFlow;
 import com.jaamsim.BasicObjects.DowntimeEntity;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleInput;
+import com.jaamsim.events.EventManager;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.units.DimensionlessUnit;
@@ -66,9 +67,9 @@ public class EntityGate extends LinkedService {
 
 		// If the gate is closed, in maintenance or breakdown, or other entities are already
 		// queued, then add the entity to the queue
-		double simTime = getSimTime();
+		double simTime = EventManager.simSeconds();
 		Queue queue = getQueue(simTime);
-		if (!queue.isEmpty() || !this.isIdle() || num >= getNumberToRelease(getSimTime())) {
+		if (!queue.isEmpty() || !this.isIdle() || num >= getNumberToRelease(EventManager.simSeconds())) {
 			queue.addEntity(ent);
 			return;
 		}
@@ -88,7 +89,7 @@ public class EntityGate extends LinkedService {
 			return false;
 
 		// Determine the match value
-		String m = this.getNextMatchValue(getSimTime());
+		String m = this.getNextMatchValue(EventManager.simSeconds());
 		this.setMatchValue(m);
 
 		// Select the next entity to release

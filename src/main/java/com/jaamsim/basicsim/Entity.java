@@ -388,14 +388,6 @@ public class Entity {
 		return EventManager.simTicks();
 	}
 
-	/**
-	 * Get the current Simulation time.
-	 * @return the current time in seconds
-	 */
-	public final double getSimTime() {
-		return EventManager.simSeconds();
-	}
-
 	protected void clearInputs() {
 		inpList.clear();
 	}

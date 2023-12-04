@@ -184,7 +184,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 		if (firstDowntime.getValue() == null)
 			secondsForNextFailure = getNextDowntimeIAT();
 		else
-			secondsForNextFailure = firstDowntime.getNextSample(this, getSimTime());
+			secondsForNextFailure = firstDowntime.getNextSample(this, EventManager.simSeconds());
 	}
 
 	public void registerDowntimeUser(DowntimeUser du) {
@@ -281,7 +281,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 
 			// 1) Calendar time
 			if (iatWorkingEntity.getValue() == null) {
-				double workingSecs = this.getSimTime();
+				double workingSecs = EventManager.simSeconds();
 				double waitSecs = secondsForNextFailure - workingSecs;
 				scheduleProcess(Math.max(waitSecs, 0.0), 5, scheduleDowntime, scheduleDowntimeHandle);
 
@@ -311,7 +311,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 					return;
 
 				// Calendar time
-				double workingSecs = this.getSimTime();
+				double workingSecs = EventManager.simSeconds();
 				double waitSecs = secondsForNextRepair - workingSecs;
 				scheduleProcess(waitSecs, 5, endDowntime, endDowntimeHandle);
 				return;
@@ -373,7 +373,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 	}
 
 	public void scheduleDowntime() {
-		double simTime = getSimTime();
+		double simTime = EventManager.simSeconds();
 		if (downtimePendings == getMaxDowntimesPending(simTime))
 			return;
 
@@ -407,7 +407,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 	private void startDowntime() {
 		setDown(true);
 
-		startTime = this.getSimTime();
+		startTime = EventManager.simSeconds();
 		downtimePendings--;
 
 		// Determine the time when the downtime event will be over
@@ -415,7 +415,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 
 		// Calendar time based
 		if( durationWorkingEntity.getValue() == null ) {
-			secondsForNextRepair = this.getSimTime() + downDuration;
+			secondsForNextRepair = EventManager.simSeconds() + downDuration;
 		}
 		// Working time based
 		else {
@@ -449,9 +449,9 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 		}
 
 		// If this event was late, increment counter
-		if(this.getSimTime() > targetCompletionTime ) {
+		if(EventManager.simSeconds() > targetCompletionTime ) {
 			numLateEvents++;
-			totalLateTime += (this.getSimTime() - targetCompletionTime);
+			totalLateTime += (EventManager.simSeconds() - targetCompletionTime);
 		}
 
 		this.checkProcessNetwork();
@@ -461,35 +461,35 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 	 * Return the time in seconds of the next downtime IAT
 	 */
 	private double getNextDowntimeIAT() {
-		return downtimeIATDistribution.getNextSample(this, getSimTime());
+		return downtimeIATDistribution.getNextSample(this, EventManager.simSeconds());
 	}
 
 	/**
 	 * Return the expected time in seconds of the first downtime
 	 */
 	public double getExpectedFirstDowntime() {
-		return firstDowntime.getValue().getMeanValue( getSimTime() );
+		return firstDowntime.getValue().getMeanValue( EventManager.simSeconds() );
 	}
 
 	/**
 	 * Return the expected time in seconds of the downtime IAT
 	 */
 	public double getExpectedDowntimeIAT() {
-		return downtimeIATDistribution.getValue().getMeanValue( getSimTime() );
+		return downtimeIATDistribution.getValue().getMeanValue( EventManager.simSeconds() );
 	}
 
 	/**
 	 * Return the expected time in seconds of the downtime duration
 	 */
 	public double getExpectedDowntimeDuration() {
-		return downtimeDurationDistribution.getValue().getMeanValue( getSimTime() );
+		return downtimeDurationDistribution.getValue().getMeanValue( EventManager.simSeconds() );
 	}
 
 	/**
 	 * Return the time in seconds of the next downtime duration
 	 */
 	private double getDowntimeDuration() {
-		return downtimeDurationDistribution.getNextSample(this, getSimTime());
+		return downtimeDurationDistribution.getNextSample(this, EventManager.simSeconds());
 	}
 
 	public SampleProvider getDowntimeDurationDistribution() {

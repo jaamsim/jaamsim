@@ -19,6 +19,7 @@ package com.jaamsim.Examples;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.basicsim.EntityTarget;
+import com.jaamsim.events.EventManager;
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
@@ -93,7 +94,7 @@ public class DemoEntity extends DisplayEntity {
 	private void startTravel() {
 
 		// Set the duration for the trip
-		double simTime = this.getSimTime();
+		double simTime = EventManager.simSeconds();
 		double duration = travelTime.getNextSample(this, simTime);
 
 		// Set the speed
@@ -113,7 +114,7 @@ public class DemoEntity extends DisplayEntity {
 	public void endTravel() {
 
 		// Update the entity's relative position
-		double simTime = this.getSimTime();
+		double simTime = EventManager.simSeconds();
 		distance += this.getDistanceTravelled(simTime);
 
 		// Adjust the relative distance to avoid round-off error

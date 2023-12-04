@@ -98,7 +98,7 @@ public class Seize extends AbstractLinkedResourceUser {
 	@Override
 	public void startNextEntity() {
 		super.startNextEntity();
-		double simTime = getSimTime();
+		double simTime = EventManager.simSeconds();
 		DisplayEntity ent = getReceivedEntity(simTime);
 		this.sendToNextComponent(ent);
 	}

@@ -23,6 +23,7 @@ import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.OverlayEntity;
 import com.jaamsim.Graphics.TextBasics;
 import com.jaamsim.Samples.SampleInput;
+import com.jaamsim.events.EventManager;
 import com.jaamsim.input.EntityListInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.units.DimensionlessUnit;
@@ -69,7 +70,7 @@ public class SetGraphics extends LinkedComponent {
 	@Override
 	public void addEntity(DisplayEntity ent) {
 		super.addEntity(ent);
-		double simTime = this.getSimTime();
+		double simTime = EventManager.simSeconds();
 
 		// Identify the entity whose graphics are to be changed
 		DisplayEntity target = ent;

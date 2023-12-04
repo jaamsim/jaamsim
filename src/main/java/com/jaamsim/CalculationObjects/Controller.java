@@ -28,6 +28,7 @@ import com.jaamsim.basicsim.EntityTarget;
 import com.jaamsim.basicsim.ObserverEntity;
 import com.jaamsim.basicsim.SubjectEntity;
 import com.jaamsim.basicsim.SubjectEntityDelegate;
+import com.jaamsim.events.EventManager;
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
@@ -149,7 +150,7 @@ public class Controller extends DisplayEntity implements SubjectEntity {
 	public void doUpdate() {
 
 		// Update the last value for each entity
-		double simTime = this.getSimTime();
+		double simTime = EventManager.simSeconds();
 		for (Controllable ent : entityList) {
 			ent.update(simTime);
 		}

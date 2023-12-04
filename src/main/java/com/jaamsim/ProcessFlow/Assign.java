@@ -20,6 +20,7 @@ package com.jaamsim.ProcessFlow;
 import java.util.ArrayList;
 
 import com.jaamsim.Graphics.DisplayEntity;
+import com.jaamsim.events.EventManager;
 import com.jaamsim.input.AssignmentListInput;
 import com.jaamsim.input.ExpParser;
 import com.jaamsim.input.Keyword;
@@ -52,7 +53,7 @@ public class Assign extends LinkedComponent {
 		super.addEntity(ent);
 
 		// Evaluate the assignment expressions
-		assignmentList.executeAssignments(this, getSimTime());
+		assignmentList.executeAssignments(this, EventManager.simSeconds());
 
 		// Pass the entity to the next component
 		this.sendToNextComponent(ent);
