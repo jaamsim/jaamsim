@@ -27,6 +27,7 @@ import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.KeywordIndex;
+import com.jaamsim.input.Parser;
 import com.jaamsim.input.ArrayListInput;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
@@ -104,6 +105,14 @@ public class SampleListInput extends ArrayListInput<SampleProvider> {
 	public void setValidRange(double min, double max) {
 		minValue = min;
 		maxValue = max;
+	}
+
+	@Override
+	public String applyConditioning(String str) {
+		if (!str.contains("{")) {
+			return str;
+		}
+		return Parser.addSubstringQuotesIfNeeded(str);
 	}
 
 	@Override

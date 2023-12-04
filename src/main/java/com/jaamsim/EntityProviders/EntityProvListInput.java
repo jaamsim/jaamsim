@@ -27,6 +27,7 @@ import com.jaamsim.input.ArrayListInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.KeywordIndex;
+import com.jaamsim.input.Parser;
 
 public class EntityProvListInput<T extends Entity> extends ArrayListInput<EntityListProvider<T>> {
 
@@ -37,6 +38,14 @@ public class EntityProvListInput<T extends Entity> extends ArrayListInput<Entity
 		super(key, cat, def);
 		entClass = aClass;
 		unique = true;
+	}
+
+	@Override
+	public String applyConditioning(String str) {
+		if (!str.contains("{")) {
+			return str;
+		}
+		return Parser.addSubstringQuotesIfNeeded(str);
 	}
 
 	@Override
