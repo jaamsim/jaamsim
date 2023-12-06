@@ -34,7 +34,10 @@ public class LogLogisticDistribution extends Distribution {
 	         exampleList = {"3.0", "InputValue1", "'2 * [InputValue1].Value'"})
 	private final SampleInput scaleInput;
 
-	@Keyword(description = "The shape parameter for the Log-Logistic distribution.  A decimal value > 0.0.",
+	@Keyword(description = "The shape parameter for the Log-Logistic distribution. "
+	                     + "A decimal value > 0.0.\n\n"
+	                     + "Note that the mean value of the distribution is infinite for shape <= 1.0. "
+	                     + "The standard deviation is infinite for shape <= 2.0.",
 	         exampleList = {"1.0", "InputValue1", "'2 * [InputValue1].Value'"})
 	private final SampleInput shapeInput;
 
@@ -49,7 +52,7 @@ public class LogLogisticDistribution extends Distribution {
 		this.addInput(scaleInput);
 
 		shapeInput = new SampleInput("Shape", KEY_INPUTS, 1.0d);
-		shapeInput.setValidRange(2.000001d, Double.POSITIVE_INFINITY);
+		shapeInput.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		shapeInput.setUnitType(DimensionlessUnit.class);
 		this.addInput(shapeInput);
 	}
@@ -105,11 +108,15 @@ public class LogLogisticDistribution extends Distribution {
 	}
 
 	public static double getMean(double scale, double shape) {
+		if (shape <= 1.0d)
+			return Double.POSITIVE_INFINITY;
 		double theta = Math.PI / shape;
 		return scale * theta / Math.sin( theta );
 	}
 
 	public static double getStandardDev(double scale, double shape) {
+		if (shape <= 2.0d)
+			return Double.POSITIVE_INFINITY;
 		double theta = Math.PI / shape;
 		return scale * Math.sqrt( theta * ( 2.0/Math.sin(2.0*theta) - theta/Math.pow( Math.sin(theta), 2.0) ) );
 	}
