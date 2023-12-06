@@ -72,7 +72,7 @@ implements SampleProvider, RandomStreamUser {
 	protected final SampleInput maxValueInput;
 
 	private final SampleStatistics stats = new SampleStatistics();
-	private double lastSample = 0;
+	private double lastSample = Double.NaN;
 
 	private static int MAX_ATTEMPTS = 1000;
 
@@ -124,7 +124,7 @@ implements SampleProvider, RandomStreamUser {
 	public void earlyInit() {
 		super.earlyInit();
 		stats.clear();
-		lastSample = getInitValue();
+		lastSample = Double.NaN;
 	}
 
 	static final InputCallback inputCallback = new InputCallback() {
@@ -136,10 +136,6 @@ implements SampleProvider, RandomStreamUser {
 
 	void updateInputValue() {
 		setUnitType(getUnitType());
-	}
-
-	public double getInitValue() {
-		return getMeanValue(0);
 	}
 
 	@Override
@@ -202,11 +198,8 @@ implements SampleProvider, RandomStreamUser {
 	public final double getNextSample(Entity thisEnt, double simTime) {
 		// If we are not in a model context, do not perturb the distribution by sampling,
 		// instead simply return the last sampled value
-		if (!EventManager.hasCurrent()) {
-			if (simTime == 0.0d)
-				return getInitValue();
+		if (!EventManager.hasCurrent())
 			return lastSample;
-		}
 
 		// Loop until the select sample falls within the desired min and max values
 		double nextSample;
