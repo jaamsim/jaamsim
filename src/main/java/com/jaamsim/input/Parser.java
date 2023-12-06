@@ -211,4 +211,28 @@ public static final String addSubstringQuotesIfNeeded(String str) {
 	return sb.toString();
 }
 
+public static final String addQuotesIfNeededToDefinitions(String str) {
+	String[] array = Parser.splitSubstrings(str);
+	StringBuilder sb = new StringBuilder();
+	for (int i = 0; i < array.length; i++) {
+		String[] args = array[i].split("\\s+", 2);
+		sb.append("{").append(args[0]);
+		if (args.length == 2) {
+			String utName = "";
+			if (args[1].endsWith("Unit")) {
+				int index = args[1].lastIndexOf(' ') + 1;
+				utName = args[1].substring(index);
+				args[1] = args[1].substring(0, index).trim();
+			}
+			args[1] = Parser.addQuotesIfNeeded(args[1]);
+			sb.append(" ").append(args[1]);
+			if (!utName.isEmpty()) {
+				sb.append(" ").append(utName);
+			}
+		}
+		sb.append("}");
+	}
+	return sb.toString();
+}
+
 }
