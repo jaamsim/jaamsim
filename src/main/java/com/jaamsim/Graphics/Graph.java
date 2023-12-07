@@ -257,9 +257,6 @@ public class Graph extends GraphBasics  {
 	public void earlyInit(){
 		super.earlyInit();
 
-		primarySeries.clear();
-		secondarySeries.clear();
-
 		// Populate the primary series data structures
 		populateSeriesInfo(primarySeries, dataSource);
 		populateSeriesInfo(secondarySeries, secondaryDataSource);
@@ -434,14 +431,6 @@ public class Graph extends GraphBasics  {
 	 */
 	protected double getCurrentValue(double simTime, SeriesInfo info) {
 		return info.samp.getNextSample(this, simTime);
-	}
-
-	public ArrayList<SeriesInfo> getPrimarySeries() {
-		return primarySeries;
-	}
-
-	public ArrayList<SeriesInfo> getSecondarySeries() {
-		return secondarySeries;
 	}
 
 	public int getNumberOfPoints() {

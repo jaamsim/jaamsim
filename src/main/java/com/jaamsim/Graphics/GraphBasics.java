@@ -287,6 +287,14 @@ public abstract class GraphBasics extends DisplayEntity {
 		showSecondaryYAxis = false;
 	}
 
+	@Override
+	public void earlyInit(){
+		super.earlyInit();
+
+		primarySeries.clear();
+		secondarySeries.clear();
+	}
+
 	protected void setXAxisUnit(Class<? extends Unit> unitType) {
 		xAxisUnit.setSubClass(unitType);
 		xAxisStart.setUnitType(unitType);
@@ -408,6 +416,14 @@ public abstract class GraphBasics extends DisplayEntity {
 
 	public boolean showSecondaryYAxis() {
 		return showSecondaryYAxis;
+	}
+
+	public ArrayList<SeriesInfo> getPrimarySeries() {
+		return primarySeries;
+	}
+
+	public ArrayList<SeriesInfo> getSecondarySeries() {
+		return secondarySeries;
 	}
 
 }
