@@ -59,4 +59,9 @@ public class XYGraph extends AbstractGraph {
 		this.addInput(secondaryShowBars);
 	}
 
+	public XYGraph() {}
+
+	@Override
+	public void setInputsForDragAndDrop() {}
+
 }

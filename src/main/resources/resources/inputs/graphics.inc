@@ -6,6 +6,7 @@ Define ObjectType {
                     Arrow
                     Text
                     Graph
+                    XYGraph
                     EntityLabel
                     BarGauge
                     BooleanIndicator
@@ -27,6 +28,7 @@ Polyline              JavaClass { com.jaamsim.Graphics.Polyline                 
 Arrow                 JavaClass { com.jaamsim.Graphics.Arrow                         } Palette { 'Graphics Objects' } DefaultDisplayModel { ArrowModelDefault        } IconFile { '<res>/images/Arrow-24.png' }
 Text                  JavaClass { com.jaamsim.Graphics.Text                          } Palette { 'Graphics Objects' } DefaultDisplayModel { TextModelDefault         } IconFile { '<res>/images/Text-24.png' }
 Graph                 JavaClass { com.jaamsim.Graphics.Graph                         } Palette { 'Graphics Objects' } DefaultDisplayModel { GraphModelDefault        } IconFile { '<res>/images/Graph-24.png' } DefaultSize { 5.0 3.0 1.0 m }
+XYGraph               JavaClass { com.jaamsim.Graphics.XYGraph                       } Palette { 'Graphics Objects' } DefaultDisplayModel { GraphModelDefault        } IconFile { '<res>/images/Graph-24.png' } DefaultSize { 5.0 3.0 1.0 m }
 EntityLabel           JavaClass { com.jaamsim.Graphics.EntityLabel                   } Palette { 'Graphics Objects' } DefaultDisplayModel { EntityLabelModel         } DragAndDrop { FALSE }
 BarGauge              JavaClass { com.jaamsim.Graphics.BarGauge                      } Palette { 'Graphics Objects' } DefaultDisplayModel { BarGauge2D               } IconFile { '<res>/images/BarGauge-24.png' } DefaultSize { 0.5 1.0 1.0 m }
 BooleanIndicator      JavaClass { com.jaamsim.BasicObjects.BooleanIndicator          } Palette { 'Graphics Objects' } DefaultDisplayModel { Circle                   } IconFile { '<res>/images/BooleanIndicator-24.png' } DefaultSize { 0.25 0.25 0.0 m }
@@ -44,6 +46,7 @@ Polyline      Description { 'Straight or curved line segments.' }
 Arrow         Description { 'Line that terminates in an arrow head.' }
 Text          Description { 'Text that appears in the 3D model universe.' }
 Graph         Description { 'Chart that shows the values of model outputs as they change in time.' }
+XYGraph       Description { 'Chart that shows the values of model outputs plotted on the x- and y-axes.' }
 BarGauge      Description { 'Gauge that displays the value of an expression.' }
 BooleanIndicator  Description { 'Circular entity that changes color to indicate TRUE and FALSE' }
 OverlayImage  Description { 'Picture that appears in a fixed position in the display window.' }
