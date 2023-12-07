@@ -106,7 +106,6 @@ public class Graph extends GraphBasics  {
 
 		secondaryDataSource = new SampleListInput("SecondaryDataSource", KEY_INPUTS, null);
 		secondaryDataSource.setUnitType(DimensionlessUnit.class);
-		secondaryDataSource.setCallback(inputCallback3);
 		this.addInput(secondaryDataSource);
 
 		ArrayList<Color4d> defSecondaryLineColor = new ArrayList<>(0);
@@ -134,17 +133,6 @@ public class Graph extends GraphBasics  {
 	public void postDefine() {
 		super.postDefine();
 		setXAxisUnit(TimeUnit.class);
-	}
-
-	static final InputCallback inputCallback3 = new InputCallback() {
-		@Override
-		public void callback(Entity ent, Input<?> inp) {
-			((Graph)ent).updateInputValue3();
-		}
-	};
-
-	void updateInputValue3() {
-		showSecondaryYAxis = !secondaryDataSource.isDefault();
 	}
 
 	static final InputCallback inputCallback4 = new InputCallback() {
@@ -400,6 +388,11 @@ public class Graph extends GraphBasics  {
 
 	public int getNumberOfPoints() {
 		return (int) numberOfPoints.getNextSample(this, 0.0d);
+	}
+
+	@Override
+	public boolean showSecondaryYAxis() {
+		return !secondaryDataSource.isDefault();
 	}
 
 }
