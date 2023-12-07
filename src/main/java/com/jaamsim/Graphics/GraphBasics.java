@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2009-2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2017-2019 JaamSim Software Inc.
+ * Copyright (C) 2017-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,16 +21,21 @@ import java.util.ArrayList;
 
 import com.jaamsim.DisplayModels.GraphModel;
 import com.jaamsim.Samples.SampleProvider;
+import com.jaamsim.basicsim.Entity;
 import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.input.ColorListInput;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.FormatInput;
+import com.jaamsim.input.Input;
+import com.jaamsim.input.InputCallback;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.StringInput;
+import com.jaamsim.input.UnitTypeInput;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.input.ValueListInput;
 import com.jaamsim.math.Color4d;
+import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
 
@@ -60,6 +65,16 @@ public abstract class GraphBasics extends DisplayEntity {
 	@Keyword(description= "Text for the graph title.",
 	         exampleList = {"'Title of the Graph'"})
 	private final StringInput title;
+
+	@Keyword(description = "The unit type for the primary y-axis. "
+	                     + "MUST be entered before most other inputs for this axis.",
+	         exampleList = {"DistanceUnit"})
+	private final UnitTypeInput unitType;
+
+	@Keyword(description = "The unit type for the secondary y-axis. "
+	                     + "MUST be entered before most other inputs for this axis.",
+	         exampleList = {"DistanceUnit"})
+	private final UnitTypeInput secondaryUnitType;
 
 	// X-Axis category
 
@@ -175,6 +190,14 @@ public abstract class GraphBasics extends DisplayEntity {
 		title = new StringInput("Title", KEY_INPUTS, "Graph Title");
 		this.addInput(title);
 
+		unitType = new UnitTypeInput("UnitType", KEY_INPUTS, DimensionlessUnit.class);
+		unitType.setCallback(inputCallback1);
+		this.addInput(unitType);
+
+		secondaryUnitType = new UnitTypeInput("SecondaryUnitType", KEY_INPUTS, DimensionlessUnit.class);
+		secondaryUnitType.setCallback(inputCallback2);
+		this.addInput(secondaryUnitType);
+
 		// X-Axis category
 
 		xAxisTitle = new StringInput("XAxisTitle", X_AXIS, "X-Axis Title");
@@ -279,12 +302,43 @@ public abstract class GraphBasics extends DisplayEntity {
 	}
 
 	public GraphBasics() {
-
 		primarySeries = new ArrayList<>();
 		secondarySeries = new ArrayList<>();
 
 		timeTrace = false;
 		showSecondaryYAxis = false;
+	}
+
+	@Override
+	public void postDefine() {
+		super.postDefine();
+		setYAxisUnit(DimensionlessUnit.class);
+		setSecondaryYAxisUnit(DimensionlessUnit.class);
+		setXAxisUnit(DimensionlessUnit.class);
+	}
+
+	static final InputCallback inputCallback1 = new InputCallback() {
+		@Override
+		public void callback(Entity ent, Input<?> inp) {
+			((GraphBasics)ent).updateInputValue1();
+		}
+	};
+
+	static final InputCallback inputCallback2 = new InputCallback() {
+		@Override
+		public void callback(Entity ent, Input<?> inp) {
+			((GraphBasics)ent).updateInputValue2();
+		}
+	};
+
+	void updateInputValue1() {
+		Class<? extends Unit> ut = unitType.getUnitType();
+		this.setYAxisUnit(ut);
+	}
+
+	void updateInputValue2() {
+		Class<? extends Unit> ut = secondaryUnitType.getUnitType();
+		this.setSecondaryYAxisUnit(ut);
 	}
 
 	@Override

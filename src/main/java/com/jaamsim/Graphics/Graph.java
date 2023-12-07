@@ -17,7 +17,6 @@
  */
 package com.jaamsim.Graphics;
 
-
 import java.util.ArrayList;
 
 import com.jaamsim.Samples.SampleInput;
@@ -31,7 +30,6 @@ import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputCallback;
 import com.jaamsim.input.Keyword;
-import com.jaamsim.input.UnitTypeInput;
 import com.jaamsim.input.ValueListInput;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Vec3d;
@@ -41,16 +39,9 @@ import com.jaamsim.units.Unit;
 
 public class Graph extends GraphBasics  {
 
-	// Key Inputs category
-
 	@Keyword(description = "The number of data points for each line on the graph.",
 	         exampleList = {"200"})
 	protected final SampleInput numberOfPoints;
-
-	@Keyword(description = "The unit type for the primary y-axis. "
-	                     + "MUST be entered before most other inputs for this axis.",
-	         exampleList = {"DistanceUnit"})
-	private final UnitTypeInput unitType;
 
 	@Keyword(description = "One or more sources of data to be graphed against the primary y-axis. "
 	                     + "Each source is graphed as a separate line. "
@@ -68,11 +59,6 @@ public class Graph extends GraphBasics  {
 	                     + "If only one line width is provided, it is used for all the lines.",
 	         exampleList = {"2 1"})
 	protected final ValueListInput lineWidths;
-
-	@Keyword(description = "The unit type for the secondary y-axis. "
-	                     + "MUST be entered before most other inputs for this axis.",
-	         exampleList = {"DistanceUnit"})
-	private final UnitTypeInput secondaryUnitType;
 
 	@Keyword(description = "One or more sources of data to be graphed against the secondary y-axis. "
 	                     + "Each source is graphed as a separate line. "
@@ -92,16 +78,10 @@ public class Graph extends GraphBasics  {
 	protected final ValueListInput secondaryLineWidths;
 
 	{
-		// Key Inputs category
-
 		numberOfPoints = new SampleInput("NumberOfPoints", KEY_INPUTS, 100);
 		numberOfPoints.setValidRange(0, Double.POSITIVE_INFINITY);
 		numberOfPoints.setIntegerValue(true);
 		this.addInput(numberOfPoints);
-
-		unitType = new UnitTypeInput("UnitType", KEY_INPUTS, DimensionlessUnit.class);
-		unitType.setCallback(inputCallback1);
-		this.addInput(unitType);
 
 		dataSource = new SampleListInput("DataSource", KEY_INPUTS, null);
 		dataSource.setUnitType(DimensionlessUnit.class);
@@ -123,10 +103,6 @@ public class Graph extends GraphBasics  {
 		lineWidths.setValidCountRange(1, Integer.MAX_VALUE);
 		lineWidths.setCallback(inputCallback5);
 		this.addInput(lineWidths);
-
-		secondaryUnitType = new UnitTypeInput("SecondaryUnitType", KEY_INPUTS, DimensionlessUnit.class);
-		secondaryUnitType.setCallback(inputCallback2);
-		this.addInput(secondaryUnitType);
 
 		secondaryDataSource = new SampleListInput("SecondaryDataSource", KEY_INPUTS, null);
 		secondaryDataSource.setUnitType(DimensionlessUnit.class);
@@ -152,35 +128,12 @@ public class Graph extends GraphBasics  {
 
 	public Graph() {
 		timeTrace = true;
-		this.setXAxisUnit(TimeUnit.class);
-		this.setYAxisUnit(DimensionlessUnit.class);
-		this.setSecondaryYAxisUnit(DimensionlessUnit.class);
 	}
 
-	static final InputCallback inputCallback1 = new InputCallback() {
-		@Override
-		public void callback(Entity ent, Input<?> inp) {
-			((Graph)ent).updateInputValue1();
-		}
-	};
-
-	void updateInputValue1() {
-		Class<? extends Unit> ut = unitType.getUnitType();
-		dataSource.setUnitType(ut);
-		this.setYAxisUnit(ut);
-	}
-
-	static final InputCallback inputCallback2 = new InputCallback() {
-		@Override
-		public void callback(Entity ent, Input<?> inp) {
-			((Graph)ent).updateInputValue2();
-		}
-	};
-
-	void updateInputValue2() {
-		Class<? extends Unit> ut = secondaryUnitType.getUnitType();
-		secondaryDataSource.setUnitType(ut);
-		this.setSecondaryYAxisUnit(ut);
+	@Override
+	public void postDefine() {
+		super.postDefine();
+		setXAxisUnit(TimeUnit.class);
 	}
 
 	static final InputCallback inputCallback3 = new InputCallback() {
@@ -248,6 +201,18 @@ public class Graph extends GraphBasics  {
 			SeriesInfo info = secondarySeries.get(i);
 			info.lineWidth = getLineWidth(i, secondaryLineWidths.getValue());
 		}
+	}
+
+	@Override
+	protected void setYAxisUnit(Class<? extends Unit> unitType) {
+		super.setYAxisUnit(unitType);
+		dataSource.setUnitType(unitType);
+	}
+
+	@Override
+	protected void setSecondaryYAxisUnit(Class<? extends Unit> unitType) {
+		super.setSecondaryYAxisUnit(unitType);
+		secondaryDataSource.setUnitType(unitType);
 	}
 
 	@Override
