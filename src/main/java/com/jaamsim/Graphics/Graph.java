@@ -209,8 +209,9 @@ public class Graph extends GraphBasics  {
 		super.earlyInit();
 
 		// Populate the primary series data structures
-		populateSeriesInfo(primarySeries, dataSource);
-		populateSeriesInfo(secondarySeries, secondaryDataSource);
+		int num = getNumberOfPoints();
+		populatePrimarySeriesInfo(dataSource.getListSize(), num, dataSource.getValue());
+		populateSecondarySeriesInfo(secondaryDataSource.getListSize(), num, secondaryDataSource.getValue());
 	}
 
 	@Override
@@ -218,21 +219,6 @@ public class Graph extends GraphBasics  {
 		Vec3d ret = super.getSize();
 		ret.z = Math.max(ret.z, 0.001d);
 		return ret;
-	}
-
-	private void populateSeriesInfo(ArrayList<SeriesInfo> infos, SampleListInput data) {
-		ArrayList<SampleProvider> sampList = data.getValue();
-		if( sampList == null )
-			return;
-		int num = getNumberOfPoints();
-		for (int i = 0; i < sampList.size(); ++i) {
-			SeriesInfo info = new SeriesInfo();
-			info.samp = sampList.get(i);
-			info.yValues = new double[num];
-			info.xValues = new double[num];
-
-			infos.add(info);
-		}
 	}
 
 	@Override

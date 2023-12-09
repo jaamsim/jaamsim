@@ -474,4 +474,24 @@ public abstract class GraphBasics extends DisplayEntity {
 		return secondarySeries;
 	}
 
+	protected void populatePrimarySeriesInfo(int numSeries, int numPoints, ArrayList<SampleProvider> sampList) {
+		populateSeriesInfo(primarySeries, numSeries, numPoints, sampList);
+	}
+
+	protected void populateSecondarySeriesInfo(int numSeries, int numPoints, ArrayList<SampleProvider> sampList) {
+		populateSeriesInfo(secondarySeries, numSeries, numPoints, sampList);
+	}
+
+	protected void populateSeriesInfo(ArrayList<SeriesInfo> infos, int numSeries, int numPoints, ArrayList<SampleProvider> sampList) {
+		for (int i = 0; i < numSeries; ++i) {
+			SeriesInfo info = new SeriesInfo();
+			if (sampList != null)
+				info.samp = sampList.get(i);
+			info.yValues = new double[numPoints];
+			info.xValues = new double[numPoints];
+
+			infos.add(info);
+		}
+	}
+
 }
