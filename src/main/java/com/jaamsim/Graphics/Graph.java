@@ -91,7 +91,7 @@ public class Graph extends GraphBasics  {
 		defLineColor.add(ColourInput.getColorWithName("red"));
 		lineColorsList = new ColorListInput("LineColours", KEY_INPUTS, defLineColor);
 		lineColorsList.setValidCountRange(1, Integer.MAX_VALUE);
-		lineColorsList.setCallback(inputCallback4);
+		lineColorsList.setCallback(lineColoursCallback);
 		this.addInput(lineColorsList);
 		this.addSynonym(lineColorsList, "LineColors");
 
@@ -100,7 +100,7 @@ public class Graph extends GraphBasics  {
 		lineWidths = new ValueListInput("LineWidths", KEY_INPUTS, defLineWidths);
 		lineWidths.setUnitType(DimensionlessUnit.class);
 		lineWidths.setValidCountRange(1, Integer.MAX_VALUE);
-		lineWidths.setCallback(inputCallback5);
+		lineWidths.setCallback(lineWidthsCallback);
 		this.addInput(lineWidths);
 
 		secondaryDataSource = new SampleListInput("SecondaryDataSource", KEY_INPUTS, null);
@@ -111,7 +111,7 @@ public class Graph extends GraphBasics  {
 		defSecondaryLineColor.add(ColourInput.getColorWithName("black"));
 		secondaryLineColorsList = new ColorListInput("SecondaryLineColours", KEY_INPUTS, defSecondaryLineColor);
 		secondaryLineColorsList.setValidCountRange(1, Integer.MAX_VALUE);
-		secondaryLineColorsList.setCallback(inputCallback6);
+		secondaryLineColorsList.setCallback(secondaryLineColoursCallback);
 		this.addInput(secondaryLineColorsList);
 		this.addSynonym(secondaryLineColorsList, "SecondaryLineColors");
 
@@ -120,7 +120,7 @@ public class Graph extends GraphBasics  {
 		secondaryLineWidths = new ValueListInput("SecondaryLineWidths", KEY_INPUTS, defSecondaryLineWidths);
 		secondaryLineWidths.setUnitType(DimensionlessUnit.class);
 		secondaryLineWidths.setValidCountRange(1, Integer.MAX_VALUE);
-		secondaryLineWidths.setCallback(inputCallback7);
+		secondaryLineWidths.setCallback(secondaryLineWidthsCallback);
 		this.addInput(secondaryLineWidths);
 	}
 
@@ -132,61 +132,53 @@ public class Graph extends GraphBasics  {
 		setXAxisUnit(TimeUnit.class);
 	}
 
-	static final InputCallback inputCallback4 = new InputCallback() {
+	static final InputCallback lineColoursCallback = new InputCallback() {
 		@Override
 		public void callback(Entity ent, Input<?> inp) {
-			((Graph)ent).updateInputValue4();
+			Graph graph = (Graph) ent;
+			ColorListInput colListIn = (ColorListInput) inp;
+			for (int i = 0; i < graph.primarySeriesSize(); ++ i) {
+				Color4d col = graph.getLineColor(i, colListIn.getValue());
+				graph.setPrimarySeriesColour(i, col);
+			}
 		}
 	};
 
-	void updateInputValue4() {
-		for (int i = 0; i < primarySeriesSize(); ++ i) {
-			Color4d col = getLineColor(i, lineColorsList.getValue());
-			setPrimarySeriesColour(i, col);
-		}
-	}
-
-	static final InputCallback inputCallback5 = new InputCallback() {
+	static final InputCallback lineWidthsCallback = new InputCallback() {
 		@Override
 		public void callback(Entity ent, Input<?> inp) {
-			((Graph)ent).updateInputValue5();
+			Graph graph = (Graph) ent;
+			ValueListInput widthListIn = (ValueListInput) inp;
+			for (int i = 0; i < graph.primarySeriesSize(); ++ i) {
+				int width = (int) graph.getLineWidth(i, widthListIn.getValue());
+				graph.setPrimarySeriesWidth(i, width);
+			}
 		}
 	};
 
-	void updateInputValue5() {
-		for (int i = 0; i < primarySeriesSize(); ++ i) {
-			int width = (int) getLineWidth(i, lineWidths.getValue());
-			setPrimarySeriesWidth(i, width);
-		}
-	}
-
-	static final InputCallback inputCallback6 = new InputCallback() {
+	static final InputCallback secondaryLineColoursCallback = new InputCallback() {
 		@Override
 		public void callback(Entity ent, Input<?> inp) {
-			((Graph)ent).updateInputValue6();
+			Graph graph = (Graph) ent;
+			ColorListInput colListIn = (ColorListInput) inp;
+			for (int i = 0; i < graph.secondarySeriesSize(); ++ i) {
+				Color4d col = graph.getLineColor(i, colListIn.getValue());
+				graph.setSecondarySeriesColour(i, col);
+			}
 		}
 	};
 
-	void updateInputValue6() {
-		for (int i = 0; i < secondarySeriesSize(); ++ i) {
-			Color4d col = getLineColor(i, secondaryLineColorsList.getValue());
-			setSecondarySeriesColour(i, col);
-		}
-	}
-
-	static final InputCallback inputCallback7 = new InputCallback() {
+	static final InputCallback secondaryLineWidthsCallback = new InputCallback() {
 		@Override
 		public void callback(Entity ent, Input<?> inp) {
-			((Graph)ent).updateInputValue7();
+			Graph graph = (Graph) ent;
+			ValueListInput widthListIn = (ValueListInput) inp;
+			for (int i = 0; i < graph.secondarySeriesSize(); ++ i) {
+				int width = (int) graph.getLineWidth(i, widthListIn.getValue());
+				graph.setSecondarySeriesWidth(i, width);
+			}
 		}
 	};
-
-	void updateInputValue7() {
-		for (int i = 0; i < secondarySeriesSize(); ++ i) {
-			int width = (int) getLineWidth(i, secondaryLineWidths.getValue());
-			setSecondarySeriesWidth(i, width);
-		}
-	}
 
 	@Override
 	protected void setYAxisUnit(Class<? extends Unit> unitType) {
