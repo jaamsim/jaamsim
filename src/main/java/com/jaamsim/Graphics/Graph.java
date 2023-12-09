@@ -242,11 +242,11 @@ public class Graph extends GraphBasics  {
 		double xLength = xAxisEnd.getValue() - xAxisStart.getValue();
 		double xInterval = xLength/(getNumberOfPoints() - 1);
 
-		for (SeriesInfo info : primarySeries) {
+		for (SeriesInfo info : getPrimarySeries()) {
 			setupSeriesData(info, xLength, xInterval);
 		}
 
-		for (SeriesInfo info : secondarySeries) {
+		for (SeriesInfo info : getSecondarySeries()) {
 			setupSeriesData(info, xLength, xInterval);
 		}
 
@@ -317,6 +317,8 @@ public class Graph extends GraphBasics  {
 		extraProcessing();
 
 		// stop the processing loop
+		ArrayList<SeriesInfo> primarySeries = getPrimarySeries();
+		ArrayList<SeriesInfo> secondarySeries = getSecondarySeries();
 		if (primarySeries.isEmpty() && secondarySeries.isEmpty())
 			return;
 

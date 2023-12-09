@@ -54,8 +54,8 @@ public abstract class GraphBasics extends DisplayEntity {
 		public Color4d lineColour;
 	}
 
-	protected final ArrayList<SeriesInfo> primarySeries;
-	protected final ArrayList<SeriesInfo> secondarySeries;
+	private final ArrayList<SeriesInfo> primarySeries;
+	private final ArrayList<SeriesInfo> secondarySeries;
 
 	// Key Inputs category
 
