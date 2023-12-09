@@ -21,7 +21,6 @@ import java.util.ArrayList;
 
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.Samples.SampleListInput;
-import com.jaamsim.Samples.SampleProvider;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.events.ProcessTarget;
@@ -141,9 +140,9 @@ public class Graph extends GraphBasics  {
 	};
 
 	void updateInputValue4() {
-		for (int i = 0; i < primarySeries.size(); ++ i) {
-			SeriesInfo info = primarySeries.get(i);
-			info.lineColour = getLineColor(i, lineColorsList.getValue());
+		for (int i = 0; i < primarySeriesSize(); ++ i) {
+			Color4d col = getLineColor(i, lineColorsList.getValue());
+			setPrimarySeriesColour(i, col);
 		}
 	}
 
@@ -155,9 +154,9 @@ public class Graph extends GraphBasics  {
 	};
 
 	void updateInputValue5() {
-		for (int i = 0; i < primarySeries.size(); ++ i) {
-			SeriesInfo info = primarySeries.get(i);
-			info.lineWidth = getLineWidth(i, lineWidths.getValue());
+		for (int i = 0; i < primarySeriesSize(); ++ i) {
+			int width = (int) getLineWidth(i, lineWidths.getValue());
+			setPrimarySeriesWidth(i, width);
 		}
 	}
 
@@ -169,9 +168,9 @@ public class Graph extends GraphBasics  {
 	};
 
 	void updateInputValue6() {
-		for (int i = 0; i < secondarySeries.size(); ++ i) {
-			SeriesInfo info = secondarySeries.get(i);
-			info.lineColour = getLineColor(i, secondaryLineColorsList.getValue());
+		for (int i = 0; i < secondarySeriesSize(); ++ i) {
+			Color4d col = getLineColor(i, secondaryLineColorsList.getValue());
+			setSecondarySeriesColour(i, col);
 		}
 	}
 
@@ -183,9 +182,9 @@ public class Graph extends GraphBasics  {
 	};
 
 	void updateInputValue7() {
-		for (int i = 0; i < secondarySeries.size(); ++ i) {
-			SeriesInfo info = secondarySeries.get(i);
-			info.lineWidth = getLineWidth(i, secondaryLineWidths.getValue());
+		for (int i = 0; i < secondarySeriesSize(); ++ i) {
+			int width = (int) getLineWidth(i, secondaryLineWidths.getValue());
+			setSecondarySeriesWidth(i, width);
 		}
 	}
 
@@ -226,18 +225,19 @@ public class Graph extends GraphBasics  {
 		super.startUp();
 		extraStartGraph();
 
-		for (int i = 0; i < primarySeries.size(); ++ i) {
-			SeriesInfo info = primarySeries.get(i);
-			info.lineColour = getLineColor(i, lineColorsList.getValue());
-			info.lineWidth = getLineWidth(i, lineWidths.getValue());
+		for (int i = 0; i < primarySeriesSize(); ++ i) {
+			Color4d col = getLineColor(i, lineColorsList.getValue());
+			int width = (int) getLineWidth(i, lineWidths.getValue());
+			setPrimarySeriesColour(i, col);
+			setPrimarySeriesWidth(i, width);
 		}
 
-		for (int i = 0; i < secondarySeries.size(); ++i) {
-			SeriesInfo info = secondarySeries.get(i);
-			info.lineColour = getLineColor(i, secondaryLineColorsList.getValue());
-			info.lineWidth = getLineWidth(i, secondaryLineWidths.getValue());
+		for (int i = 0; i < secondarySeriesSize(); ++i) {
+			Color4d col = getLineColor(i, secondaryLineColorsList.getValue());
+			int width = (int) getLineWidth(i, secondaryLineWidths.getValue());
+			setSecondarySeriesColour(i, col);
+			setSecondarySeriesWidth(i, width);
 		}
-
 
 		double xLength = xAxisEnd.getValue() - xAxisStart.getValue();
 		double xInterval = xLength/(getNumberOfPoints() - 1);

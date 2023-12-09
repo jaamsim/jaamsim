@@ -494,4 +494,36 @@ public abstract class GraphBasics extends DisplayEntity {
 		}
 	}
 
+	protected int primarySeriesSize() {
+		return primarySeries.size();
+	}
+
+	protected int secondarySeriesSize() {
+		return secondarySeries.size();
+	}
+
+	protected void setPrimarySeriesColour(int i, Color4d col) {
+		if (i >= primarySeries.size())
+			return;
+		primarySeries.get(i).lineColour = col;
+	}
+
+	protected void setSecondarySeriesColour(int i, Color4d col) {
+		if (i >= secondarySeries.size())
+			return;
+		secondarySeries.get(i).lineColour = col;
+	}
+
+	protected void setPrimarySeriesWidth(int i, int width) {
+		if (i >= primarySeries.size())
+			return;
+		primarySeries.get(i).lineWidth = width;
+	}
+
+	protected void setSecondarySeriesWidth(int i, int width) {
+		if (i >= secondarySeries.size())
+			return;
+		secondarySeries.get(i).lineWidth = width;
+	}
+
 }
