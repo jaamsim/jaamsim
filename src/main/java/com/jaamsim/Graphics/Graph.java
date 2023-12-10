@@ -36,7 +36,7 @@ import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
 import com.jaamsim.units.Unit;
 
-public class Graph extends GraphBasics  {
+public class Graph extends AbstractGraph  {
 
 	@Keyword(description = "The number of data points for each line on the graph.",
 	         exampleList = {"200"})

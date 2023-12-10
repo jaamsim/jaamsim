@@ -26,7 +26,7 @@ import com.jaamsim.input.Keyword;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.units.UserSpecifiedUnit;
 
-public class XYGraph extends GraphBasics {
+public class XYGraph extends AbstractGraph {
 
 	// Key Inputs category
 

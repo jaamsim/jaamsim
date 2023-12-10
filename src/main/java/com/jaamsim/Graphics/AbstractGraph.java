@@ -39,7 +39,7 @@ import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
 
-public abstract class GraphBasics extends DisplayEntity {
+public abstract class AbstractGraph extends DisplayEntity {
 
 	/**
 	 * A struct containing all the information pertaining to a specific series
@@ -298,7 +298,7 @@ public abstract class GraphBasics extends DisplayEntity {
 		this.addInput(secondaryYAxisLabelFormat);
 	}
 
-	public GraphBasics() {
+	public AbstractGraph() {
 		primarySeries = new ArrayList<>();
 		secondarySeries = new ArrayList<>();
 	}
@@ -315,7 +315,7 @@ public abstract class GraphBasics extends DisplayEntity {
 		@Override
 		public void callback(Entity ent, Input<?> inp) {
 			Class<? extends Unit> ut = ((UnitTypeInput) inp).getUnitType();
-			((GraphBasics) ent).setYAxisUnit(ut);
+			((AbstractGraph) ent).setYAxisUnit(ut);
 		}
 	};
 
@@ -323,7 +323,7 @@ public abstract class GraphBasics extends DisplayEntity {
 		@Override
 		public void callback(Entity ent, Input<?> inp) {
 			Class<? extends Unit> ut = ((UnitTypeInput) inp).getUnitType();
-			((GraphBasics) ent).setSecondaryYAxisUnit(ut);
+			((AbstractGraph) ent).setSecondaryYAxisUnit(ut);
 		}
 	};
 

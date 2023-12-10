@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.jaamsim.ColourProviders.ColourProvInput;
-import com.jaamsim.Graphics.GraphBasics;
+import com.jaamsim.Graphics.AbstractGraph;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.datatypes.DoubleVector;
@@ -220,7 +220,7 @@ public class GraphModel extends DisplayModel {
 
 	@Override
 	public boolean canDisplayEntity(Entity ent) {
-		return ent instanceof GraphBasics;
+		return ent instanceof AbstractGraph;
 	}
 
 	private class Binding extends DisplayModelBinding {
@@ -230,7 +230,7 @@ public class GraphModel extends DisplayModel {
 		protected Vec3d graphOrigin; // bottom left position of the graph area,
 		protected Vec3d graphCenter; // Center point of the graph area
 
-		private GraphBasics graphObservee;
+		private AbstractGraph graphObservee;
 
 		private List<Vec4d> graphRectPoints = null;
 		private Mat4d graphAreaTrans = null;
@@ -282,7 +282,7 @@ public class GraphModel extends DisplayModel {
 			graphCenter = new Vec3d();
 
 			try {
-				graphObservee = (GraphBasics)observee;
+				graphObservee = (AbstractGraph)observee;
 				if (graphObservee != null) {
 					pickingID = graphObservee.getEntityNumber();
 				}
@@ -385,19 +385,19 @@ public class GraphModel extends DisplayModel {
 			drawYLines(out);
 
 			// Draw the primary series
-			ArrayList<GraphBasics.SeriesInfo> primarySeries = graphObservee.getPrimarySeries();
+			ArrayList<AbstractGraph.SeriesInfo> primarySeries = graphObservee.getPrimarySeries();
 			for (int i = 0; i < primarySeries.size(); ++i) {
 				drawSeries(primarySeries.get(i), yMin, yMax, simTime, out);
 			}
 
 			// Draw the secondary series
-			ArrayList<GraphBasics.SeriesInfo> secondarySeries = graphObservee.getSecondarySeries();
+			ArrayList<AbstractGraph.SeriesInfo> secondarySeries = graphObservee.getSecondarySeries();
 			for (int i = 0; i < secondarySeries.size(); ++i) {
 				drawSeries(secondarySeries.get(i), secYMin, secYMax, simTime, out);
 			}
 		}
 
-		private void drawSeries(GraphBasics.SeriesInfo series, double yMinimum, double yMaximum, double simTime, ArrayList<RenderProxy> out) {
+		private void drawSeries(AbstractGraph.SeriesInfo series, double yMinimum, double yMaximum, double simTime, ArrayList<RenderProxy> out) {
 
 			if (series.numPoints < 2)
 				return; // Nothing to display yet
