@@ -188,11 +188,11 @@ public abstract class GraphBasics extends DisplayEntity {
 		this.addInput(title);
 
 		unitType = new UnitTypeInput("UnitType", KEY_INPUTS, DimensionlessUnit.class);
-		unitType.setCallback(inputCallback1);
+		unitType.setCallback(unitTypeCallback);
 		this.addInput(unitType);
 
 		secondaryUnitType = new UnitTypeInput("SecondaryUnitType", KEY_INPUTS, DimensionlessUnit.class);
-		secondaryUnitType.setCallback(inputCallback2);
+		secondaryUnitType.setCallback(secondaryUnitTypeCallback);
 		this.addInput(secondaryUnitType);
 
 		// X-Axis category
@@ -311,29 +311,21 @@ public abstract class GraphBasics extends DisplayEntity {
 		setXAxisUnit(DimensionlessUnit.class);
 	}
 
-	static final InputCallback inputCallback1 = new InputCallback() {
+	static final InputCallback unitTypeCallback = new InputCallback() {
 		@Override
 		public void callback(Entity ent, Input<?> inp) {
-			((GraphBasics)ent).updateInputValue1();
+			Class<? extends Unit> ut = ((UnitTypeInput) inp).getUnitType();
+			((GraphBasics) ent).setYAxisUnit(ut);
 		}
 	};
 
-	static final InputCallback inputCallback2 = new InputCallback() {
+	static final InputCallback secondaryUnitTypeCallback = new InputCallback() {
 		@Override
 		public void callback(Entity ent, Input<?> inp) {
-			((GraphBasics)ent).updateInputValue2();
+			Class<? extends Unit> ut = ((UnitTypeInput) inp).getUnitType();
+			((GraphBasics) ent).setSecondaryYAxisUnit(ut);
 		}
 	};
-
-	void updateInputValue1() {
-		Class<? extends Unit> ut = unitType.getUnitType();
-		this.setYAxisUnit(ut);
-	}
-
-	void updateInputValue2() {
-		Class<? extends Unit> ut = secondaryUnitType.getUnitType();
-		this.setSecondaryYAxisUnit(ut);
-	}
 
 	@Override
 	public void earlyInit(){
