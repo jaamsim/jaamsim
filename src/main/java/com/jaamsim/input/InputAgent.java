@@ -76,7 +76,7 @@ public class InputAgent {
 	                                                "TickLength",
 	                                                "ConversionFactorToSI",
 	                                                "UnitType", "UnitTypeList", "OutputUnitType",
-	                                                "SecondaryUnitType",
+	                                                "SecondaryUnitType", "XAxisUnitType",
 	                                                "GregorianCalendar", "StartDate", "DataFile",
 	                                                "AttributeDefinitionList", "CustomOutputList",
 	                                                "KeywordList"};
