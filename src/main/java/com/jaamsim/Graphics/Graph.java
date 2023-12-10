@@ -125,9 +125,7 @@ public class Graph extends GraphBasics  {
 		this.addInput(secondaryLineWidths);
 	}
 
-	public Graph() {
-		timeTrace = true;
-	}
+	public Graph() {}
 
 	@Override
 	public void postDefine() {
@@ -393,6 +391,11 @@ public class Graph extends GraphBasics  {
 	@Override
 	public boolean showSecondaryYAxis() {
 		return !secondaryDataSource.isDefault();
+	}
+
+	@Override
+	public boolean isTimeTrace() {
+		return true;
 	}
 
 }

@@ -57,8 +57,6 @@ public abstract class GraphBasics extends DisplayEntity {
 	protected final ArrayList<SeriesInfo> primarySeries;
 	protected final ArrayList<SeriesInfo> secondarySeries;
 
-	protected boolean timeTrace;  // TRUE if the x-axis moves so that zero is always the present time
-
 	// Key Inputs category
 
 	@Keyword(description= "Text for the graph title.",
@@ -303,8 +301,6 @@ public abstract class GraphBasics extends DisplayEntity {
 	public GraphBasics() {
 		primarySeries = new ArrayList<>();
 		secondarySeries = new ArrayList<>();
-
-		timeTrace = false;
 	}
 
 	@Override
@@ -462,8 +458,8 @@ public abstract class GraphBasics extends DisplayEntity {
 		return yLinesColor.getValue();
 	}
 
-	public boolean getTimeTrace() {
-		return timeTrace;
+	public boolean isTimeTrace() {
+		return false;
 	}
 
 	public boolean showSecondaryYAxis() {

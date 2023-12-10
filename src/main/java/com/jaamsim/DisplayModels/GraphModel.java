@@ -325,7 +325,7 @@ public class GraphModel extends DisplayModel {
 			secYRange = secYMax - secYMin;
 			secYAxisInterval = graphObservee.getSecondaryYAxisInterval();
 
-			timeTrace = graphObservee.getTimeTrace();
+			timeTrace = graphObservee.isTimeTrace();
 
 			yAxisTitleHeight = yAxisTitleTextHeight.getValue()*xScaleFactor; // scaled height of the y-axis title
 
