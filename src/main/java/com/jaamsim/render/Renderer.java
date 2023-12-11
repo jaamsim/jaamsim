@@ -981,8 +981,13 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 			currentOverlay = new ArrayList<>();
 
 			for (RenderProxy proxy : proxyScene) {
-				proxy.collectRenderables(this, currentScene);
-				proxy.collectOverlayRenderables(this, currentOverlay);
+				try {
+					proxy.collectRenderables(this, currentScene);
+					proxy.collectOverlayRenderables(this, currentOverlay);
+				}
+				catch (Throwable t) {
+					logException(t);
+				}
 			}
 
 			sceneTimeNS = System.nanoTime() - sceneStart;
