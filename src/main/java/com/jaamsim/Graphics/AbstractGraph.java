@@ -73,6 +73,8 @@ public abstract class AbstractGraph extends DisplayEntity {
 	         exampleList = {"DistanceUnit"})
 	private final UnitTypeInput secondaryUnitType;
 
+	// Format category
+
 	@Keyword(description = "A list of colours for the lines graphed against the primary y-axis. "
 	                     + "If only one colour is provided, it is used for all the lines.",
 	         exampleList = {"{ red } { green }"})
@@ -215,9 +217,11 @@ public abstract class AbstractGraph extends DisplayEntity {
 		secondaryUnitType.setCallback(secondaryUnitTypeCallback);
 		this.addInput(secondaryUnitType);
 
+		// Format category
+
 		ArrayList<Color4d> defLineColor = new ArrayList<>(0);
 		defLineColor.add(ColourInput.getColorWithName("red"));
-		lineColorsList = new ColorListInput("LineColours", KEY_INPUTS, defLineColor);
+		lineColorsList = new ColorListInput("LineColours", FORMAT, defLineColor);
 		lineColorsList.setValidCountRange(1, Integer.MAX_VALUE);
 		lineColorsList.setCallback(lineColoursCallback);
 		this.addInput(lineColorsList);
@@ -225,7 +229,7 @@ public abstract class AbstractGraph extends DisplayEntity {
 
 		DoubleVector defLineWidths = new DoubleVector(1);
 		defLineWidths.add(1.0);
-		lineWidths = new ValueListInput("LineWidths", KEY_INPUTS, defLineWidths);
+		lineWidths = new ValueListInput("LineWidths", FORMAT, defLineWidths);
 		lineWidths.setUnitType(DimensionlessUnit.class);
 		lineWidths.setValidCountRange(1, Integer.MAX_VALUE);
 		lineWidths.setCallback(lineWidthsCallback);
@@ -233,7 +237,7 @@ public abstract class AbstractGraph extends DisplayEntity {
 
 		ArrayList<Color4d> defSecondaryLineColor = new ArrayList<>(0);
 		defSecondaryLineColor.add(ColourInput.getColorWithName("black"));
-		secondaryLineColorsList = new ColorListInput("SecondaryLineColours", KEY_INPUTS, defSecondaryLineColor);
+		secondaryLineColorsList = new ColorListInput("SecondaryLineColours", FORMAT, defSecondaryLineColor);
 		secondaryLineColorsList.setValidCountRange(1, Integer.MAX_VALUE);
 		secondaryLineColorsList.setCallback(secondaryLineColoursCallback);
 		this.addInput(secondaryLineColorsList);
@@ -241,7 +245,7 @@ public abstract class AbstractGraph extends DisplayEntity {
 
 		DoubleVector defSecondaryLineWidths = new DoubleVector(1);
 		defSecondaryLineWidths.add(1.0);
-		secondaryLineWidths = new ValueListInput("SecondaryLineWidths", KEY_INPUTS, defSecondaryLineWidths);
+		secondaryLineWidths = new ValueListInput("SecondaryLineWidths", FORMAT, defSecondaryLineWidths);
 		secondaryLineWidths.setUnitType(DimensionlessUnit.class);
 		secondaryLineWidths.setValidCountRange(1, Integer.MAX_VALUE);
 		secondaryLineWidths.setCallback(secondaryLineWidthsCallback);
