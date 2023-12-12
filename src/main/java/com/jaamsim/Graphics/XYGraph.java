@@ -17,14 +17,24 @@
  */
 package com.jaamsim.Graphics;
 
+import com.jaamsim.basicsim.Entity;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.ExpResType;
 import com.jaamsim.input.ExpressionInput;
+import com.jaamsim.input.Input;
+import com.jaamsim.input.InputCallback;
 import com.jaamsim.input.Keyword;
+import com.jaamsim.input.UnitTypeInput;
+import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
 
 public class XYGraph extends AbstractGraph {
+
+	@Keyword(description = "Unit type for the x-axis. "
+	                     + "MUST be entered before most other inputs for this axis.",
+	         exampleList = {"DistanceUnit"})
+	private final UnitTypeInput xUnitType;
 
 	@Keyword(description = "One or more sources of data to be graphed on the primary y-axis.\n"
 	                     + "Each source is graphed as a separate line or bar and is specified by an "
@@ -59,6 +69,10 @@ public class XYGraph extends AbstractGraph {
 	protected final BooleanInput secondaryShowBars;
 
 	{
+		xUnitType = new UnitTypeInput("XAxisUnitType", KEY_INPUTS, DimensionlessUnit.class);
+		xUnitType.setCallback(xAxisUnitTypeCallback);
+		this.addInput(xUnitType);
+
 		yDataSource = new ExpressionInput("YDataSource", KEY_INPUTS, null);
 		yDataSource.setResultType(ExpResType.COLLECTION);
 		yDataSource.setUnitType(UserSpecifiedUnit.class);
@@ -88,6 +102,14 @@ public class XYGraph extends AbstractGraph {
 
 	public XYGraph() {}
 
+	static final InputCallback xAxisUnitTypeCallback = new InputCallback() {
+		@Override
+		public void callback(Entity ent, Input<?> inp) {
+			Class<? extends Unit> ut = ((UnitTypeInput) inp).getUnitType();
+			((XYGraph) ent).setXAxisUnit(ut);
+		}
+	};
+
 	@Override
 	public void setInputsForDragAndDrop() {}
 
@@ -101,6 +123,12 @@ public class XYGraph extends AbstractGraph {
 	protected void setSecondaryYAxisUnit(Class<? extends Unit> unitType) {
 		super.setSecondaryYAxisUnit(unitType);
 		ySecondaryDataSource.setUnitType(unitType);
+	}
+
+	@Override
+	protected void setXAxisUnit(Class<? extends Unit> unitType) {
+		super.setXAxisUnit(unitType);
+		xDataSource.setUnitType(unitType);
 	}
 
 	@Override
