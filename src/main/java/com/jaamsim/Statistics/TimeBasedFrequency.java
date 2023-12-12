@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2018-2021 JaamSim Software Inc.
+ * Copyright (C) 2018-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -209,10 +209,48 @@ public class TimeBasedFrequency {
 	 * @return array of values between 0 and 1
 	 */
 	public double[] getBinFractions(double t) {
-		double[] ret = getBinTimes(t);
+		return getBinFractions(t, minVal, maxVal);
+	}
+
+	/**
+	 * Returns an array containing the fractional time that each integer value applied,
+	 * covering the range between the specified first and last values.
+	 * @param t - specified time
+	 * @param val0 - first integer value for the returned array
+	 * @param val1 - last integer value for the returned array
+	 * @return array of values between 0 and 1
+	 */
+	public double[] getBinFractions(double t, int val0, int val1) {
+		double[] ret = getBinTimes(t, val0, val1);
 		double total = t - startTime;
 		for (int i = 0; i < ret.length; i++) {
 			ret[i] = ret[i]/total;
+		}
+		return ret;
+	}
+
+	/**
+	 * Returns an array containing the fractional time that each integer value or less applied,
+	 * covering the range between the lowest and highest values.
+	 * @param t - specified time
+	 * @return array of values that increase monotonically to 1
+	 */
+	public double[] getBinCumulativeFractions(double t) {
+		return getBinCumulativeFractions(t, minVal, maxVal);
+	}
+
+	/**
+	 * Returns an array containing the fractional time that each integer value or less applied,
+	 * covering the range between the specified first and last values.
+	 * @param t - specified time
+	 * @return array of values that increase monotonically to 1
+	 */
+	public double[] getBinCumulativeFractions(double t, int val0, int val1) {
+		double[] ret = getBinTimes(t, val0, val1);
+		double total = t - startTime;
+		ret[0] /= total;
+		for (int i = 1; i < ret.length; i++) {
+			ret[i] = ret[i - 1] + ret[i]/total;
 		}
 		return ret;
 	}
