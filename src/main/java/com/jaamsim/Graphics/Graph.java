@@ -21,15 +21,8 @@ import java.util.ArrayList;
 
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.Samples.SampleListInput;
-import com.jaamsim.basicsim.Entity;
-import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.events.ProcessTarget;
-import com.jaamsim.input.ColorListInput;
-import com.jaamsim.input.ColourInput;
-import com.jaamsim.input.Input;
-import com.jaamsim.input.InputCallback;
 import com.jaamsim.input.Keyword;
-import com.jaamsim.input.ValueListInput;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.units.DimensionlessUnit;
@@ -49,32 +42,12 @@ public class Graph extends AbstractGraph  {
 	         exampleList = {"{ [Entity1].Output1 } { [Entity2].Output2 }"})
 	protected final SampleListInput dataSource;
 
-	@Keyword(description = "A list of colours for the lines graphed against the primary y-axis. "
-	                     + "If only one colour is provided, it is used for all the lines.",
-	         exampleList = {"{ red } { green }"})
-	protected final ColorListInput lineColorsList;
-
-	@Keyword(description = "A list of line widths (in pixels) for the line series to be displayed. "
-	                     + "If only one line width is provided, it is used for all the lines.",
-	         exampleList = {"2 1"})
-	protected final ValueListInput lineWidths;
-
 	@Keyword(description = "One or more sources of data to be graphed against the secondary y-axis. "
 	                     + "Each source is graphed as a separate line. "
 	                     + "BEFORE entering this input, specify the unit type for the secondary "
 	                     + "y-axis using the 'SecondaryUnitType' keyword.",
 	         exampleList = {"{ [Entity1].Output1 } { [Entity2].Output2 }"})
 	protected final SampleListInput secondaryDataSource;
-
-	@Keyword(description = "A list of colours for the lines graphed against the secondary y-axis. "
-	                     + "If only one colour is provided, it is used for all the lines.",
-	         exampleList = {"{ red } { green }"})
-	protected final ColorListInput secondaryLineColorsList;
-
-	@Keyword(description = "A list of line widths (in pixels) for the seconardy line series to be displayed. "
-	                     + "If only one line width is provided, it is used for all the lines.",
-	         exampleList = {"2 1"})
-	protected final ValueListInput secondaryLineWidths;
 
 	{
 		numberOfPoints = new SampleInput("NumberOfPoints", KEY_INPUTS, 100);
@@ -87,41 +60,9 @@ public class Graph extends AbstractGraph  {
 		dataSource.setRequired(true);
 		this.addInput(dataSource);
 
-		ArrayList<Color4d> defLineColor = new ArrayList<>(0);
-		defLineColor.add(ColourInput.getColorWithName("red"));
-		lineColorsList = new ColorListInput("LineColours", KEY_INPUTS, defLineColor);
-		lineColorsList.setValidCountRange(1, Integer.MAX_VALUE);
-		lineColorsList.setCallback(lineColoursCallback);
-		this.addInput(lineColorsList);
-		this.addSynonym(lineColorsList, "LineColors");
-
-		DoubleVector defLineWidths = new DoubleVector(1);
-		defLineWidths.add(1.0);
-		lineWidths = new ValueListInput("LineWidths", KEY_INPUTS, defLineWidths);
-		lineWidths.setUnitType(DimensionlessUnit.class);
-		lineWidths.setValidCountRange(1, Integer.MAX_VALUE);
-		lineWidths.setCallback(lineWidthsCallback);
-		this.addInput(lineWidths);
-
 		secondaryDataSource = new SampleListInput("SecondaryDataSource", KEY_INPUTS, null);
 		secondaryDataSource.setUnitType(DimensionlessUnit.class);
 		this.addInput(secondaryDataSource);
-
-		ArrayList<Color4d> defSecondaryLineColor = new ArrayList<>(0);
-		defSecondaryLineColor.add(ColourInput.getColorWithName("black"));
-		secondaryLineColorsList = new ColorListInput("SecondaryLineColours", KEY_INPUTS, defSecondaryLineColor);
-		secondaryLineColorsList.setValidCountRange(1, Integer.MAX_VALUE);
-		secondaryLineColorsList.setCallback(secondaryLineColoursCallback);
-		this.addInput(secondaryLineColorsList);
-		this.addSynonym(secondaryLineColorsList, "SecondaryLineColors");
-
-		DoubleVector defSecondaryLineWidths = new DoubleVector(1);
-		defSecondaryLineWidths.add(1.0);
-		secondaryLineWidths = new ValueListInput("SecondaryLineWidths", KEY_INPUTS, defSecondaryLineWidths);
-		secondaryLineWidths.setUnitType(DimensionlessUnit.class);
-		secondaryLineWidths.setValidCountRange(1, Integer.MAX_VALUE);
-		secondaryLineWidths.setCallback(secondaryLineWidthsCallback);
-		this.addInput(secondaryLineWidths);
 	}
 
 	public Graph() {}
@@ -131,54 +72,6 @@ public class Graph extends AbstractGraph  {
 		super.postDefine();
 		setXAxisUnit(TimeUnit.class);
 	}
-
-	static final InputCallback lineColoursCallback = new InputCallback() {
-		@Override
-		public void callback(Entity ent, Input<?> inp) {
-			Graph graph = (Graph) ent;
-			ColorListInput colListIn = (ColorListInput) inp;
-			for (int i = 0; i < graph.primarySeriesSize(); ++ i) {
-				Color4d col = graph.getLineColor(i, colListIn.getValue());
-				graph.setPrimarySeriesColour(i, col);
-			}
-		}
-	};
-
-	static final InputCallback lineWidthsCallback = new InputCallback() {
-		@Override
-		public void callback(Entity ent, Input<?> inp) {
-			Graph graph = (Graph) ent;
-			ValueListInput widthListIn = (ValueListInput) inp;
-			for (int i = 0; i < graph.primarySeriesSize(); ++ i) {
-				int width = (int) graph.getLineWidth(i, widthListIn.getValue());
-				graph.setPrimarySeriesWidth(i, width);
-			}
-		}
-	};
-
-	static final InputCallback secondaryLineColoursCallback = new InputCallback() {
-		@Override
-		public void callback(Entity ent, Input<?> inp) {
-			Graph graph = (Graph) ent;
-			ColorListInput colListIn = (ColorListInput) inp;
-			for (int i = 0; i < graph.secondarySeriesSize(); ++ i) {
-				Color4d col = graph.getLineColor(i, colListIn.getValue());
-				graph.setSecondarySeriesColour(i, col);
-			}
-		}
-	};
-
-	static final InputCallback secondaryLineWidthsCallback = new InputCallback() {
-		@Override
-		public void callback(Entity ent, Input<?> inp) {
-			Graph graph = (Graph) ent;
-			ValueListInput widthListIn = (ValueListInput) inp;
-			for (int i = 0; i < graph.secondarySeriesSize(); ++ i) {
-				int width = (int) graph.getLineWidth(i, widthListIn.getValue());
-				graph.setSecondarySeriesWidth(i, width);
-			}
-		}
-	};
 
 	@Override
 	protected void setYAxisUnit(Class<? extends Unit> unitType) {
@@ -249,16 +142,6 @@ public class Graph extends AbstractGraph  {
 	 * Hook for sub-classes to do some processing at startup
 	 */
 	protected void extraStartGraph() {}
-
-	protected Color4d getLineColor(int index, ArrayList<Color4d> colorList) {
-		index = Math.min(index, colorList.size()-1);
-		return colorList.get(index);
-	}
-
-	protected double getLineWidth(int index, DoubleVector widthList) {
-		index = Math.min(index, widthList.size()-1);
-		return widthList.get(index);
-	}
 
 	/**
 	 * Initialize the data for the specified series

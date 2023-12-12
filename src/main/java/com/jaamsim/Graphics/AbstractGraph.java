@@ -73,6 +73,26 @@ public abstract class AbstractGraph extends DisplayEntity {
 	         exampleList = {"DistanceUnit"})
 	private final UnitTypeInput secondaryUnitType;
 
+	@Keyword(description = "A list of colours for the lines graphed against the primary y-axis. "
+	                     + "If only one colour is provided, it is used for all the lines.",
+	         exampleList = {"{ red } { green }"})
+	protected final ColorListInput lineColorsList;
+
+	@Keyword(description = "A list of line widths (in pixels) for the line series to be displayed. "
+	                     + "If only one line width is provided, it is used for all the lines.",
+	         exampleList = {"2 1"})
+	protected final ValueListInput lineWidths;
+
+	@Keyword(description = "A list of colours for the lines graphed against the secondary y-axis. "
+	                     + "If only one colour is provided, it is used for all the lines.",
+	         exampleList = {"{ red } { green }"})
+	protected final ColorListInput secondaryLineColorsList;
+
+	@Keyword(description = "A list of line widths (in pixels) for the seconardy line series to be displayed. "
+	                     + "If only one line width is provided, it is used for all the lines.",
+	         exampleList = {"2 1"})
+	protected final ValueListInput secondaryLineWidths;
+
 	// X-Axis category
 
 	@Keyword(description = "Title of the x-axis.",
@@ -194,6 +214,38 @@ public abstract class AbstractGraph extends DisplayEntity {
 		secondaryUnitType = new UnitTypeInput("SecondaryUnitType", KEY_INPUTS, DimensionlessUnit.class);
 		secondaryUnitType.setCallback(secondaryUnitTypeCallback);
 		this.addInput(secondaryUnitType);
+
+		ArrayList<Color4d> defLineColor = new ArrayList<>(0);
+		defLineColor.add(ColourInput.getColorWithName("red"));
+		lineColorsList = new ColorListInput("LineColours", KEY_INPUTS, defLineColor);
+		lineColorsList.setValidCountRange(1, Integer.MAX_VALUE);
+		lineColorsList.setCallback(lineColoursCallback);
+		this.addInput(lineColorsList);
+		this.addSynonym(lineColorsList, "LineColors");
+
+		DoubleVector defLineWidths = new DoubleVector(1);
+		defLineWidths.add(1.0);
+		lineWidths = new ValueListInput("LineWidths", KEY_INPUTS, defLineWidths);
+		lineWidths.setUnitType(DimensionlessUnit.class);
+		lineWidths.setValidCountRange(1, Integer.MAX_VALUE);
+		lineWidths.setCallback(lineWidthsCallback);
+		this.addInput(lineWidths);
+
+		ArrayList<Color4d> defSecondaryLineColor = new ArrayList<>(0);
+		defSecondaryLineColor.add(ColourInput.getColorWithName("black"));
+		secondaryLineColorsList = new ColorListInput("SecondaryLineColours", KEY_INPUTS, defSecondaryLineColor);
+		secondaryLineColorsList.setValidCountRange(1, Integer.MAX_VALUE);
+		secondaryLineColorsList.setCallback(secondaryLineColoursCallback);
+		this.addInput(secondaryLineColorsList);
+		this.addSynonym(secondaryLineColorsList, "SecondaryLineColors");
+
+		DoubleVector defSecondaryLineWidths = new DoubleVector(1);
+		defSecondaryLineWidths.add(1.0);
+		secondaryLineWidths = new ValueListInput("SecondaryLineWidths", KEY_INPUTS, defSecondaryLineWidths);
+		secondaryLineWidths.setUnitType(DimensionlessUnit.class);
+		secondaryLineWidths.setValidCountRange(1, Integer.MAX_VALUE);
+		secondaryLineWidths.setCallback(secondaryLineWidthsCallback);
+		this.addInput(secondaryLineWidths);
 
 		// X-Axis category
 
@@ -327,6 +379,54 @@ public abstract class AbstractGraph extends DisplayEntity {
 		}
 	};
 
+	static final InputCallback lineColoursCallback = new InputCallback() {
+		@Override
+		public void callback(Entity ent, Input<?> inp) {
+			AbstractGraph graph = (AbstractGraph) ent;
+			ColorListInput colListIn = (ColorListInput) inp;
+			for (int i = 0; i < graph.primarySeriesSize(); ++ i) {
+				Color4d col = graph.getLineColor(i, colListIn.getValue());
+				graph.setPrimarySeriesColour(i, col);
+			}
+		}
+	};
+
+	static final InputCallback lineWidthsCallback = new InputCallback() {
+		@Override
+		public void callback(Entity ent, Input<?> inp) {
+			AbstractGraph graph = (AbstractGraph) ent;
+			ValueListInput widthListIn = (ValueListInput) inp;
+			for (int i = 0; i < graph.primarySeriesSize(); ++ i) {
+				int width = (int) graph.getLineWidth(i, widthListIn.getValue());
+				graph.setPrimarySeriesWidth(i, width);
+			}
+		}
+	};
+
+	static final InputCallback secondaryLineColoursCallback = new InputCallback() {
+		@Override
+		public void callback(Entity ent, Input<?> inp) {
+			AbstractGraph graph = (AbstractGraph) ent;
+			ColorListInput colListIn = (ColorListInput) inp;
+			for (int i = 0; i < graph.secondarySeriesSize(); ++ i) {
+				Color4d col = graph.getLineColor(i, colListIn.getValue());
+				graph.setSecondarySeriesColour(i, col);
+			}
+		}
+	};
+
+	static final InputCallback secondaryLineWidthsCallback = new InputCallback() {
+		@Override
+		public void callback(Entity ent, Input<?> inp) {
+			AbstractGraph graph = (AbstractGraph) ent;
+			ValueListInput widthListIn = (ValueListInput) inp;
+			for (int i = 0; i < graph.secondarySeriesSize(); ++ i) {
+				int width = (int) graph.getLineWidth(i, widthListIn.getValue());
+				graph.setSecondarySeriesWidth(i, width);
+			}
+		}
+	};
+
 	@Override
 	public void earlyInit(){
 		super.earlyInit();
@@ -356,6 +456,16 @@ public abstract class AbstractGraph extends DisplayEntity {
 		secondaryYAxisStart.setUnitType(unitType);
 		secondaryYAxisEnd.setUnitType(unitType);
 		secondaryYAxisInterval.setUnitType(unitType);
+	}
+
+	protected Color4d getLineColor(int index, ArrayList<Color4d> colorList) {
+		index = Math.min(index, colorList.size()-1);
+		return colorList.get(index);
+	}
+
+	protected double getLineWidth(int index, DoubleVector widthList) {
+		index = Math.min(index, widthList.size()-1);
+		return widthList.get(index);
 	}
 
 	public String getTitle() {
