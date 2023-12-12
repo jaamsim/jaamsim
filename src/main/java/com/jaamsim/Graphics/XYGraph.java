@@ -19,7 +19,9 @@ package com.jaamsim.Graphics;
 
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.input.BooleanInput;
+import com.jaamsim.input.ExpError;
 import com.jaamsim.input.ExpResType;
+import com.jaamsim.input.ExpResult;
 import com.jaamsim.input.ExpressionInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputCallback;
@@ -134,6 +136,66 @@ public class XYGraph extends AbstractGraph {
 	@Override
 	public boolean showSecondaryYAxis() {
 		return !ySecondaryDataSource.isDefault();
+	}
+
+	@Override
+	public void updateGraphics(double simTime){
+		super.updateGraphics(simTime);
+
+		getPrimarySeries().clear();
+		getSecondarySeries().clear();
+
+		if (!yDataSource.isDefault() && !xDataSource.isDefault()) {
+			ExpResult.Collection yCol = yDataSource.getNextResult(this, simTime).colVal;
+			ExpResult.Collection xCol = xDataSource.getNextResult(this, simTime).colVal;
+
+			int numPoints = Math.min(xCol.getSize(), yCol.getSize());
+			populatePrimarySeriesInfo(1, numPoints, null);
+
+			int series = -1;
+			for (SeriesInfo info : getPrimarySeries()) {
+				series++;
+				info.numPoints = numPoints;
+				info.indexOfLastEntry = numPoints - 1;
+				info.lineColour = getLineColor(series, lineColorsList.getValue());
+				info.lineWidth = getLineWidth(series, lineWidths.getValue());
+				for (int i = 0; i < info.numPoints; i++ ) {
+					ExpResult ind = ExpResult.makeNumResult(i + 1, DimensionlessUnit.class);
+					try {
+						info.yValues[i] = yCol.index(ind).value;
+						info.xValues[i] = xCol.index(ind).value;
+					}
+					catch (ExpError e) {}
+				}
+				//System.out.format("numPoints=%s, yValues=%s, xValues=%s%n", info.numPoints,
+				//		Arrays.toString(info.yValues), Arrays.toString(info.xValues));
+			}
+		}
+
+		if (!ySecondaryDataSource.isDefault() && !xSecondaryDataSource.isDefault()) {
+			ExpResult.Collection ySecCol = ySecondaryDataSource.getNextResult(this, simTime).colVal;
+			ExpResult.Collection xSecCol = xSecondaryDataSource.getNextResult(this, simTime).colVal;
+
+			int numPointsSec = Math.min(xSecCol.getSize(), ySecCol.getSize());
+			populateSecondarySeriesInfo(1, numPointsSec, null);
+
+			int series = -1;
+			for (SeriesInfo info : getSecondarySeries()) {
+				series++;
+				info.numPoints = numPointsSec;
+				info.indexOfLastEntry = numPointsSec - 1;
+				info.lineColour = getLineColor(series, secondaryLineColorsList.getValue());
+				info.lineWidth = getLineWidth(series, secondaryLineWidths.getValue());
+				for (int i = 0; i < info.numPoints; i++ ) {
+					ExpResult ind = ExpResult.makeNumResult(i + 1, DimensionlessUnit.class);
+					try {
+						info.yValues[i] = ySecCol.index(ind).value;
+						info.xValues[i] = xSecCol.index(ind).value;
+					}
+					catch (ExpError e) {}
+				}
+			}
+		}
 	}
 
 }
