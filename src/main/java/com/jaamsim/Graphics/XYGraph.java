@@ -157,8 +157,8 @@ public class XYGraph extends AbstractGraph {
 				series++;
 				info.numPoints = numPoints;
 				info.indexOfLastEntry = numPoints - 1;
-				info.lineColour = getLineColor(series, lineColorsList.getValue());
-				info.lineWidth = getLineWidth(series, lineWidths.getValue());
+				info.lineColour = getLineColor(series);
+				info.lineWidth = getLineWidth(series);
 				for (int i = 0; i < info.numPoints; i++ ) {
 					ExpResult ind = ExpResult.makeNumResult(i + 1, DimensionlessUnit.class);
 					try {
@@ -184,8 +184,8 @@ public class XYGraph extends AbstractGraph {
 				series++;
 				info.numPoints = numPointsSec;
 				info.indexOfLastEntry = numPointsSec - 1;
-				info.lineColour = getLineColor(series, secondaryLineColorsList.getValue());
-				info.lineWidth = getLineWidth(series, secondaryLineWidths.getValue());
+				info.lineColour = getSecondaryLineColor(series);
+				info.lineWidth = getSecondaryLineWidth(series);
 				for (int i = 0; i < info.numPoints; i++ ) {
 					ExpResult ind = ExpResult.makeNumResult(i + 1, DimensionlessUnit.class);
 					try {

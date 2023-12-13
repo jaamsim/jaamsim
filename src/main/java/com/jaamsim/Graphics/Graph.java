@@ -23,7 +23,6 @@ import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.Samples.SampleListInput;
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.Keyword;
-import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
@@ -111,17 +110,13 @@ public class Graph extends AbstractGraph  {
 		extraStartGraph();
 
 		for (int i = 0; i < primarySeriesSize(); ++ i) {
-			Color4d col = getLineColor(i, lineColorsList.getValue());
-			int width = (int) getLineWidth(i, lineWidths.getValue());
-			setPrimarySeriesColour(i, col);
-			setPrimarySeriesWidth(i, width);
+			setPrimarySeriesColour(i, getLineColor(i));
+			setPrimarySeriesWidth(i, getLineWidth(i));
 		}
 
 		for (int i = 0; i < secondarySeriesSize(); ++i) {
-			Color4d col = getLineColor(i, secondaryLineColorsList.getValue());
-			int width = (int) getLineWidth(i, secondaryLineWidths.getValue());
-			setSecondarySeriesColour(i, col);
-			setSecondarySeriesWidth(i, width);
+			setSecondarySeriesColour(i, getSecondaryLineColor(i));
+			setSecondarySeriesWidth(i, getSecondaryLineWidth(i));
 		}
 
 		double xLength = xAxisEnd.getValue() - xAxisStart.getValue();

@@ -383,10 +383,8 @@ public abstract class AbstractGraph extends DisplayEntity {
 		@Override
 		public void callback(Entity ent, Input<?> inp) {
 			AbstractGraph graph = (AbstractGraph) ent;
-			ColorListInput colListIn = (ColorListInput) inp;
 			for (int i = 0; i < graph.primarySeriesSize(); ++ i) {
-				Color4d col = graph.getLineColor(i, colListIn.getValue());
-				graph.setPrimarySeriesColour(i, col);
+				graph.setPrimarySeriesColour(i, graph.getLineColor(i));
 			}
 		}
 	};
@@ -395,10 +393,8 @@ public abstract class AbstractGraph extends DisplayEntity {
 		@Override
 		public void callback(Entity ent, Input<?> inp) {
 			AbstractGraph graph = (AbstractGraph) ent;
-			ValueListInput widthListIn = (ValueListInput) inp;
 			for (int i = 0; i < graph.primarySeriesSize(); ++ i) {
-				int width = (int) graph.getLineWidth(i, widthListIn.getValue());
-				graph.setPrimarySeriesWidth(i, width);
+				graph.setPrimarySeriesWidth(i, graph.getLineWidth(i));
 			}
 		}
 	};
@@ -407,10 +403,8 @@ public abstract class AbstractGraph extends DisplayEntity {
 		@Override
 		public void callback(Entity ent, Input<?> inp) {
 			AbstractGraph graph = (AbstractGraph) ent;
-			ColorListInput colListIn = (ColorListInput) inp;
 			for (int i = 0; i < graph.secondarySeriesSize(); ++ i) {
-				Color4d col = graph.getLineColor(i, colListIn.getValue());
-				graph.setSecondarySeriesColour(i, col);
+				graph.setSecondarySeriesColour(i, graph.getSecondaryLineColor(i));
 			}
 		}
 	};
@@ -419,10 +413,8 @@ public abstract class AbstractGraph extends DisplayEntity {
 		@Override
 		public void callback(Entity ent, Input<?> inp) {
 			AbstractGraph graph = (AbstractGraph) ent;
-			ValueListInput widthListIn = (ValueListInput) inp;
 			for (int i = 0; i < graph.secondarySeriesSize(); ++ i) {
-				int width = (int) graph.getLineWidth(i, widthListIn.getValue());
-				graph.setSecondarySeriesWidth(i, width);
+				graph.setSecondarySeriesWidth(i, graph.getSecondaryLineWidth(i));
 			}
 		}
 	};
@@ -463,9 +455,25 @@ public abstract class AbstractGraph extends DisplayEntity {
 		return colorList.get(index);
 	}
 
-	protected double getLineWidth(int index, DoubleVector widthList) {
+	protected int getLineWidth(int index, DoubleVector widthList) {
 		index = Math.min(index, widthList.size()-1);
-		return widthList.get(index);
+		return (int) widthList.get(index);
+	}
+
+	protected Color4d getLineColor(int index) {
+		return getLineColor(index, lineColorsList.getValue());
+	}
+
+	protected Color4d getSecondaryLineColor(int index) {
+		return getLineColor(index, secondaryLineColorsList.getValue());
+	}
+
+	protected int getLineWidth(int index) {
+		return getLineWidth(index, lineWidths.getValue());
+	}
+
+	protected int getSecondaryLineWidth(int index) {
+		return getLineWidth(index, secondaryLineWidths.getValue());
 	}
 
 	public String getTitle() {
