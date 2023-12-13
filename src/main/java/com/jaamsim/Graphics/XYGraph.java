@@ -18,7 +18,7 @@
 package com.jaamsim.Graphics;
 
 import com.jaamsim.basicsim.Entity;
-import com.jaamsim.input.BooleanInput;
+import com.jaamsim.input.EnumInput;
 import com.jaamsim.input.ExpError;
 import com.jaamsim.input.ExpResType;
 import com.jaamsim.input.ExpResult;
@@ -52,9 +52,6 @@ public class XYGraph extends AbstractGraph {
 	                        "{ [Statistics1].HistogramBinCentres } { [Statistics2].HistogramBinCentres }"})
 	protected final ExpressionInput xDataSource;
 
-	@Keyword(description = "Set to TRUE if the primary series are to be shown as bars instead of lines.")
-	protected final BooleanInput showBars;
-
 	@Keyword(description = "One or more sources of data to be graphed on the secondary y-axis.\n"
 	                     + "Each source is graphed as a separate line or bar and is specified by an Entity and its Output.",
 	         exampleList = {"{ Entity1 Output1 } { Entity2 Output2 }"})
@@ -67,8 +64,20 @@ public class XYGraph extends AbstractGraph {
 	                        "{ [Statistics1].HistogramBinCentres } { [Statistics2].HistogramBinCentres }"})
 	protected final ExpressionInput xSecondaryDataSource;
 
-	@Keyword(description = "Set to TRUE if the secondary series are to be shown as bars instead of lines.")
-	protected final BooleanInput secondaryShowBars;
+	@Keyword(description = "Type of graph for each of the primary series:\n"
+	                     + "LINE_GRAPH - each series displayed as a line\n"
+	                     + "BAR_GRAPH  - each series displayed as a sequence of bars")
+	protected final EnumInput<ValidGraphTypes> graphType;
+
+	@Keyword(description = "Type of graph for each of the secondary series:\n"
+	                     + "LINE_GRAPH - each series displayed as a line\n"
+	                     + "BAR_GRAPH  - each series displayed as a sequence of bars")
+	protected final EnumInput<ValidGraphTypes> secondaryGraphType;
+
+	enum ValidGraphTypes {
+		LINE_GRAPH,
+		BAR_GRAPH,
+	}
 
 	{
 		xUnitType = new UnitTypeInput("XAxisUnitType", KEY_INPUTS, DimensionlessUnit.class);
@@ -85,9 +94,6 @@ public class XYGraph extends AbstractGraph {
 		xDataSource.setUnitType(UserSpecifiedUnit.class);
 		this.addInput(xDataSource);
 
-		showBars = new BooleanInput("ShowBars", KEY_INPUTS, false);
-		this.addInput(showBars);
-
 		ySecondaryDataSource = new ExpressionInput("YSecondaryDataSource", KEY_INPUTS, null);
 		ySecondaryDataSource.setResultType(ExpResType.COLLECTION);
 		ySecondaryDataSource.setUnitType(UserSpecifiedUnit.class);
@@ -98,8 +104,11 @@ public class XYGraph extends AbstractGraph {
 		xSecondaryDataSource.setUnitType(UserSpecifiedUnit.class);
 		this.addInput(xSecondaryDataSource);
 
-		secondaryShowBars = new BooleanInput("SecondaryShowBars", KEY_INPUTS, false);
-		this.addInput(secondaryShowBars);
+		graphType = new EnumInput<>(ValidGraphTypes.class, "GraphType", FORMAT, ValidGraphTypes.LINE_GRAPH);
+		addInput(graphType);
+
+		secondaryGraphType = new EnumInput<>(ValidGraphTypes.class, "SecondaryGraphType", FORMAT, ValidGraphTypes.LINE_GRAPH);
+		addInput(secondaryGraphType);
 	}
 
 	public XYGraph() {}
@@ -159,6 +168,7 @@ public class XYGraph extends AbstractGraph {
 				info.indexOfLastEntry = numPoints - 1;
 				info.lineColour = getLineColor(series);
 				info.lineWidth = getLineWidth(series);
+				info.isBar = (graphType.getValue() == ValidGraphTypes.BAR_GRAPH);
 				for (int i = 0; i < info.numPoints; i++ ) {
 					ExpResult ind = ExpResult.makeNumResult(i + 1, DimensionlessUnit.class);
 					try {
@@ -186,6 +196,7 @@ public class XYGraph extends AbstractGraph {
 				info.indexOfLastEntry = numPointsSec - 1;
 				info.lineColour = getSecondaryLineColor(series);
 				info.lineWidth = getSecondaryLineWidth(series);
+				info.isBar = (secondaryGraphType.getValue() == ValidGraphTypes.BAR_GRAPH);
 				for (int i = 0; i < info.numPoints; i++ ) {
 					ExpResult ind = ExpResult.makeNumResult(i + 1, DimensionlessUnit.class);
 					try {

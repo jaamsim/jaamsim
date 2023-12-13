@@ -52,6 +52,7 @@ public abstract class AbstractGraph extends DisplayEntity {
 		public SampleProvider samp; // The source of the data for the series
 		public double lineWidth;
 		public Color4d lineColour;
+		public boolean isBar;
 	}
 
 	private final ArrayList<SeriesInfo> primarySeries;
