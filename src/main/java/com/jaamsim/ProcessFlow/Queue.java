@@ -771,12 +771,30 @@ public class Queue extends LinkedComponent {
 		return freq.getBinTimes(simTime, 0, freq.getMax());
 	}
 
-	@Output(name = "AverageQueueTime",
-	 description = "The average time each entity waits in the queue.  Calculated as total queue time to date divided " +
-			"by the total number of entities added to the queue.",
-	    unitType = TimeUnit.class,
+	@Output(name = "QueueLengthFractions",
+	 description = "Fraction of total time that the queue has length 0, 1, 2, etc.",
 	  reportable = true,
 	    sequence = 10)
+	public double[] getQueueLengthFractions(double simTime) {
+		return freq.getBinFractions(simTime, 0, freq.getMax());
+	}
+
+	@Output(name = "QueueLengthCumulativeFractions",
+	 description = "Fraction of total time that the queue has length less than or equal to 0, 1, "
+	             + "2, etc.",
+	  reportable = true,
+	    sequence = 11)
+	public double[] getQueueLengthCumulativeFractions(double simTime) {
+		return freq.getBinCumulativeFractions(simTime, 0, freq.getMax());
+	}
+
+	@Output(name = "AverageQueueTime",
+	 description = "Average time each entity waits in the queue. "
+	             + "Calculated as total queue time to date divided by the total number of "
+	             + "entities added to the queue.",
+	    unitType = TimeUnit.class,
+	  reportable = true,
+	    sequence = 12)
 	public double getAverageQueueTime(double simTime) {
 		return stats.getSum(simTime) / getNumberAdded(simTime);
 	}
@@ -784,14 +802,14 @@ public class Queue extends LinkedComponent {
 	@Output(name = "MatchValueCount",
 	 description = "The present number of unique match values in the queue.",
 	    unitType = DimensionlessUnit.class,
-	    sequence = 11)
+	    sequence = 13)
 	public int getMatchValueCount(double simTime) {
 		return getEntityTypes().size();
 	}
 
 	@Output(name = "UniqueMatchValues",
 	 description = "The list of unique Match values for the entities in the queue.",
-	    sequence = 12)
+	    sequence = 14)
 	public ArrayList<String> getUniqueMatchValues(double simTime) {
 		ArrayList<String> ret = new ArrayList<>(getEntityTypes());
 		Collections.sort(ret, Input.uiSortOrder);
@@ -803,7 +821,7 @@ public class Queue extends LinkedComponent {
 	             + "For example, '[Queue1].MatchValueCountMap(\"SKU1\")' returns the number of "
 	             + "entities whose Match value is \"SKU1\".",
 	    unitType = DimensionlessUnit.class,
-	    sequence = 13)
+	    sequence = 15)
 	public LinkedHashMap<String, Integer> getMatchValueCountMap(double simTime) {
 		LinkedHashMap<String, Integer> ret = new LinkedHashMap<>(getEntityTypes().size());
 		for (String m : getUniqueMatchValues(simTime)) {
@@ -816,7 +834,7 @@ public class Queue extends LinkedComponent {
 	 description = "Provides a list of entities in the queue for each Match expression value.\n"
 	             + "For example, '[Queue1].MatchValueMap(\"SKU1\")' returns a list of entities "
 	             + "whose Match value is \"SKU1\".",
-	    sequence = 14)
+	    sequence = 16)
 	public LinkedHashMap<String, ArrayList<DisplayEntity>> getMatchValueMap(double simTime) {
 		LinkedHashMap<String, ArrayList<DisplayEntity>> ret = new LinkedHashMap<>(getEntityTypes().size());
 		for (String m : getUniqueMatchValues(simTime)) {
@@ -829,7 +847,7 @@ public class Queue extends LinkedComponent {
 	 description = "The number of entities that reneged from the queue.",
 	    unitType = DimensionlessUnit.class,
 	  reportable = true,
-	    sequence = 15)
+	    sequence = 17)
 	public long getNumberReneged(double simTime) {
 		return numberReneged;
 	}
@@ -839,7 +857,7 @@ public class Queue extends LinkedComponent {
 	             + "First in queue = 1, second in queue = 2, etc.",
 	    unitType = DimensionlessUnit.class,
 	  reportable = false,
-	    sequence = 16)
+	    sequence = 18)
 	public long getQueuePosition(double simTime) {
 		DisplayEntity objEnt = this.getReceivedEntity(simTime);
 		if (objEnt == null)
