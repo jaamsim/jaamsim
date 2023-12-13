@@ -308,7 +308,25 @@ public abstract class AbstractResourceProvider extends DisplayEntity implements 
 	  reportable = true,
 	    sequence = 11)
 	public double[] getUnitsInUseDistribution(double simTime) {
-		return freq.getBinTimes(simTime);
+		return freq.getBinTimes(simTime, 0, freq.getMax());
+	}
+
+	@Output(name = "UnitsInUseFractions",
+	 description = "Fraction of total time that the number of resource units in use was 0, 1, 2, "
+	             + "etc.",
+	  reportable = true,
+	    sequence = 12)
+	public double[] getUnitsInUseFractions(double simTime) {
+		return freq.getBinFractions(simTime, 0, freq.getMax());
+	}
+
+	@Output(name = "UnitsInUseCumulativeFractions",
+	 description = "Fraction of total time that the number of resource units in use was less than "
+	             + "or equal to 0, 1, 2, etc.",
+	  reportable = true,
+	    sequence = 13)
+	public double[] getUnitsInUseCumulativeFractions(double simTime) {
+		return freq.getBinCumulativeFractions(simTime, 0, freq.getMax());
 	}
 
 }
