@@ -402,6 +402,7 @@ public class GraphModel extends DisplayModel {
 			if (series.numPoints < 2)
 				return; // Nothing to display yet
 
+			// Calculated the x and y coordinates in the graph coordinates (relative to the graph's centre)
 			double yRange = yMaximum - yMinimum;  // yRange can be either the primary or secondary range
 
 			double[] yVals = new double[series.numPoints];
@@ -416,6 +417,38 @@ public class GraphModel extends DisplayModel {
 				yVals[i] = MathUtils.bound((series.yValues[i] - yMinimum) / yRange, 0, 1) - 0.5;
 			}
 
+			// Show series as a bar graph
+			if (series.isBar) {
+				for (int i = 0; i < series.numPoints; i++) {
+					double startX = xVals[i];
+					if (i > 0)
+						startX -= 0.5d * (xVals[i] - xVals[i - 1]);
+
+					double endX = xVals[i];
+					if (i < xVals.length - 1)
+						endX += 0.5d * (xVals[i + 1] - xVals[i]);
+
+					double startY = -0.5d;
+					double endY = yVals[i];
+
+					startX = (startX + graphCenter.x) * graphSize.x;
+					endX = (endX + graphCenter.x) * graphSize.x;
+					startY = (startY + graphCenter.y) * graphSize.y;
+					endY = (endY + graphCenter.y) * graphSize.y;
+
+					List<Vec4d> barPts = new ArrayList<>();
+					barPts.add(new Vec4d(  endX, startY, zBump, 1.0d));
+					barPts.add(new Vec4d(  endX,   endY, zBump, 1.0d));
+					barPts.add(new Vec4d(startX,   endY, zBump, 1.0d));
+					barPts.add(new Vec4d(startX, startY, zBump, 1.0d));
+
+					out.add(new PolygonProxy(barPts, objectTrans, objectScale, series.lineColour, false, 1, getVisibilityInfo(), pickingID));
+					out.add(new PolygonProxy(barPts, objectTrans, objectScale, ColourInput.BLACK, true, 1, getVisibilityInfo(), pickingID));
+				}
+				return;
+			}
+
+			// Create the list of 3d points for the line
 			ArrayList<Vec4d> seriesPoints = new ArrayList<>((series.numPoints-1)*2);
 			for (int i=0; i<series.numPoints; i++) {
 				if (i != series.indexOfLastEntry) {
@@ -724,7 +757,6 @@ public class GraphModel extends DisplayModel {
 
 			graphToWorldTrans = new Mat4d();
 			graphToWorldTrans.mult4(objectTransComp, graphAreaTrans);
-
 		}
 
 	}
