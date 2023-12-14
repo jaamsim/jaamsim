@@ -100,11 +100,11 @@ public abstract class AbstractGraph extends DisplayEntity {
 
 	@Keyword(description = "Title of the x-axis.",
 	         exampleList = {"'Time (s)'"})
-	private final StringInput xAxisTitle;
+	protected final StringInput xAxisTitle;
 
 	@Keyword(description = "The unit to be used for the x-axis.",
 	         exampleList = {"h"})
-	private final EntityInput<Unit> xAxisUnit;
+	protected final EntityInput<Unit> xAxisUnit;
 
 	@Keyword(description = "The minimum value for the x-axis.",
 	         exampleList = {"-48 h"})
@@ -116,22 +116,22 @@ public abstract class AbstractGraph extends DisplayEntity {
 
 	@Keyword(description = "The interval between x-axis labels.",
 	         exampleList = {"8 h"})
-	private final ValueInput xAxisInterval;
+	protected final ValueInput xAxisInterval;
 
 	@Keyword(description = "The format to be used for the tick mark values on the x-axis.",
 	         exampleList = {"%.1f"})
-	private final FormatInput xAxisLabelFormat;
+	protected final FormatInput xAxisLabelFormat;
 
 	@Keyword(description = "A list of values between XAxisStart and XAxisEnd at which to insert "
 	                     + "vertical gridlines.",
 	         exampleList = {"-48 -40 -32 -24 -16 -8 0 h"})
-	private final ValueListInput xLines;
+	protected final ValueListInput xLines;
 
 	@Keyword(description = "The colours for the vertical gridlines defined by input to the "
 	                     + "'XLines' keyword. "
 	                     + "If only one colour is provided, it is used for all the lines.",
 	         exampleList = {"gray76"})
-	private final ColorListInput xLinesColor;
+	protected final ColorListInput xLinesColor;
 
 	// Y-Axis category
 

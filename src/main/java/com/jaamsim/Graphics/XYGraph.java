@@ -18,6 +18,7 @@
 package com.jaamsim.Graphics;
 
 import com.jaamsim.basicsim.Entity;
+import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.input.EnumInput;
 import com.jaamsim.input.ExpError;
 import com.jaamsim.input.ExpResType;
@@ -80,6 +81,12 @@ public class XYGraph extends AbstractGraph {
 	}
 
 	{
+		xAxisStart.setDefaultValue(0.0d);
+		xAxisEnd.setDefaultValue(10.0d);
+		xAxisInterval.setDefaultValue(1.0d);
+		xAxisLabelFormat.setDefaultValue("%.0f");
+		xLines.setDefaultValue(new DoubleVector(5.0d));
+
 		xUnitType = new UnitTypeInput("XAxisUnitType", KEY_INPUTS, DimensionlessUnit.class);
 		xUnitType.setCallback(xAxisUnitTypeCallback);
 		this.addInput(xUnitType);
