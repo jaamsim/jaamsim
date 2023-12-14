@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2002-2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2022 JaamSim Software Inc.
+ * Copyright (C) 2022-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,6 +49,12 @@ public class DoubleVector {
 		capIncrement = 1;
 		storage = new double[numElements];
 		System.arraycopy(original.storage, 0, storage, 0, numElements);
+	}
+
+	public DoubleVector(double... vals) {
+		this(vals.length);
+		numElements = vals.length;
+		System.arraycopy(vals, 0, storage, 0, numElements);
 	}
 
 	/**
