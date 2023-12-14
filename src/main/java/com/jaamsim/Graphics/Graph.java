@@ -21,7 +21,9 @@ import java.util.ArrayList;
 
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.Samples.SampleListInput;
+import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.events.ProcessTarget;
+import com.jaamsim.input.Input;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.units.DimensionlessUnit;
@@ -49,6 +51,13 @@ public class Graph extends AbstractGraph  {
 	protected final SampleListInput secondaryDataSource;
 
 	{
+		xAxisTitle.setDefaultValue("Time (h)");
+		Unit unit = Input.parseEntity(getJaamSimModel(), "h", TimeUnit.class);
+		xAxisUnit.setDefaultValue(unit);
+		xAxisStart.setDefaultValue(-24 * 3600d);
+		xAxisInterval.setDefaultValue(6 * 3600d);
+		xLines.setDefaultValue(new DoubleVector(-6*3600d, -12*3600d, -18*3600d));
+
 		numberOfPoints = new SampleInput("NumberOfPoints", KEY_INPUTS, 100);
 		numberOfPoints.setValidRange(0, Double.POSITIVE_INFINITY);
 		numberOfPoints.setIntegerValue(true);
