@@ -51,12 +51,7 @@ public abstract class DisplayModel extends Entity {
 	         exampleList = {"5 5 5"})
 	private final Vec3dInput modelScale;
 
-	private static final DoubleVector defRange = new DoubleVector(2);
-
-	static {
-		defRange.add(0.0d);
-		defRange.add(Double.POSITIVE_INFINITY);
-	}
+	private static final DoubleVector defRange = new DoubleVector(0d, Double.POSITIVE_INFINITY);
 
 	{
 		attributeDefinitionList.setHidden(true);

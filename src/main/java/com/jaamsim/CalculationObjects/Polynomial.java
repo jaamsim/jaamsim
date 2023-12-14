@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2022 JaamSim Software Inc.
+ * Copyright (C) 2016-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@ import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.Samples.SampleProvider;
 import com.jaamsim.basicsim.Entity;
-import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.ValueListInput;
@@ -51,9 +50,7 @@ public class Polynomial extends DisplayEntity implements SampleProvider {
 		inputValue.setUnitType(DimensionlessUnit.class);
 		this.addInput(inputValue);
 
-		DoubleVector defList = new DoubleVector();
-		defList.add(0.0);
-		coefficientList = new ValueListInput("CoefficientList", KEY_INPUTS, defList);
+		coefficientList = new ValueListInput("CoefficientList", KEY_INPUTS, 0.0d);
 		coefficientList.setUnitType(DimensionlessUnit.class);
 		this.addInput( coefficientList);
 	}

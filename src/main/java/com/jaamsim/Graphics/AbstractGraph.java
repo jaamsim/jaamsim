@@ -228,9 +228,7 @@ public abstract class AbstractGraph extends DisplayEntity {
 		this.addInput(lineColorsList);
 		this.addSynonym(lineColorsList, "LineColors");
 
-		DoubleVector defLineWidths = new DoubleVector(1);
-		defLineWidths.add(1.0);
-		lineWidths = new ValueListInput("LineWidths", FORMAT, defLineWidths);
+		lineWidths = new ValueListInput("LineWidths", FORMAT, 1.0d);
 		lineWidths.setUnitType(DimensionlessUnit.class);
 		lineWidths.setValidCountRange(1, Integer.MAX_VALUE);
 		lineWidths.setCallback(lineWidthsCallback);
@@ -244,9 +242,7 @@ public abstract class AbstractGraph extends DisplayEntity {
 		this.addInput(secondaryLineColorsList);
 		this.addSynonym(secondaryLineColorsList, "SecondaryLineColors");
 
-		DoubleVector defSecondaryLineWidths = new DoubleVector(1);
-		defSecondaryLineWidths.add(1.0);
-		secondaryLineWidths = new ValueListInput("SecondaryLineWidths", FORMAT, defSecondaryLineWidths);
+		secondaryLineWidths = new ValueListInput("SecondaryLineWidths", FORMAT, 1.0d);
 		secondaryLineWidths.setUnitType(DimensionlessUnit.class);
 		secondaryLineWidths.setValidCountRange(1, Integer.MAX_VALUE);
 		secondaryLineWidths.setCallback(secondaryLineWidthsCallback);
@@ -278,10 +274,7 @@ public abstract class AbstractGraph extends DisplayEntity {
 		xAxisLabelFormat = new FormatInput("XAxisLabelFormat", X_AXIS, "%.0f");
 		this.addInput(xAxisLabelFormat);
 
-		DoubleVector defXLines = new DoubleVector();
-		defXLines.add(-20.0);
-		defXLines.add(-40.0);
-		xLines = new ValueListInput("XLines", X_AXIS, defXLines);
+		xLines = new ValueListInput("XLines", X_AXIS, new DoubleVector(-20d, -40d));
 		xLines.setUnitType(UserSpecifiedUnit.class);
 		this.addInput(xLines);
 
@@ -315,12 +308,7 @@ public abstract class AbstractGraph extends DisplayEntity {
 		yAxisLabelFormat = new FormatInput("YAxisLabelFormat", Y_AXIS, "%.1f");
 		this.addInput(yAxisLabelFormat);
 
-		DoubleVector defYLines = new DoubleVector();
-		defYLines.add(1.0);
-		defYLines.add(2.0);
-		defYLines.add(3.0);
-		defYLines.add(4.0);
-		yLines = new ValueListInput("YLines", Y_AXIS, defYLines);
+		yLines = new ValueListInput("YLines", Y_AXIS, new DoubleVector(1d, 2d, 3d, 4d));
 		yLines.setUnitType(UserSpecifiedUnit.class);
 		this.addInput(yLines);
 

@@ -152,13 +152,10 @@ public class DisplayEntity extends Entity {
 	private final HashMap<String, Tag> tagMap = new HashMap<>();
 
 	private static final ArrayList<Vec3d> defPoints =  new ArrayList<>();
-	private static final DoubleVector defRange = new DoubleVector(2);
+	private static final DoubleVector defRange = new DoubleVector(0.0d, Double.POSITIVE_INFINITY);
 	static {
 		defPoints.add(new Vec3d(0.0d, 0.0d, 0.0d));
 		defPoints.add(new Vec3d(1.0d, 0.0d, 0.0d));
-
-		defRange.add(0.0d);
-		defRange.add(Double.POSITIVE_INFINITY);
 	}
 
 	{
