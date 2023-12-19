@@ -266,6 +266,14 @@ public abstract class Logger extends DisplayEntity {
 	@Override
 	public void doEnd() {
 		super.doEnd();
+
+		// Write the last log entry if one is scheduled
+		if (recordLogEntryHandle.isScheduled()) {
+			EventManager.killEvent(recordLogEntryHandle);
+			recordLogEntry(getSimTime(), null);
+		}
+
+		// Flush the log file's print buffer
 		if (file == null)
 			return;
 		file.flush();
