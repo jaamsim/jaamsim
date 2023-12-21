@@ -58,6 +58,7 @@ import com.jaamsim.Graphics.EntityLabel;
 import com.jaamsim.Graphics.OverlayEntity;
 import com.jaamsim.Graphics.Region;
 import com.jaamsim.Graphics.View;
+import com.jaamsim.SubModels.SubModel;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.basicsim.ObjectType;
@@ -1880,6 +1881,12 @@ public class RenderManager implements DragSourceListener {
 
 			// Set the focus on the window that received the entity
 			renderer.requestFocus(windowID);
+		}
+
+		// Create any clones for the new entity
+		if (parent instanceof SubModel) {
+			SubModel submodel = (SubModel) parent;
+			submodel.updateClones();
 		}
 	}
 
