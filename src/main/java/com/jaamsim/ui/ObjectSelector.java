@@ -521,29 +521,24 @@ public class ObjectSelector extends FrameBox {
 
 	static class MyMouseListener implements MouseListener {
 		private final JPopupMenu menu= new JPopupMenu();
-
 		@Override
-		public void mouseClicked(MouseEvent e) {
-
-			if(e.getButton() != MouseEvent.BUTTON3)
-				return;
-
-			if(currentEntity == null)
-				return;
-
-			// Right mouse click on a movable DisplayEntity
-			menu.removeAll();
-			ContextMenu.populateMenu(menu, currentEntity, -1, e.getComponent(), e.getX(), e.getY());
-			menu.show(e.getComponent(), e.getX(), e.getY());
-		}
+		public void mouseClicked(MouseEvent e) {}
 		@Override
 		public void mouseEntered(MouseEvent e) {}
 		@Override
 		public void mouseExited(MouseEvent e) {}
 		@Override
 		public void mousePressed(MouseEvent e) {}
+
 		@Override
-		public void mouseReleased(MouseEvent e) {}
+		public void mouseReleased(MouseEvent e) {
+			// Show context menu for right-click
+			if (e.getButton() != MouseEvent.BUTTON3 || currentEntity == null)
+				return;
+			menu.removeAll();
+			ContextMenu.populateMenu(menu, currentEntity, -1, e.getComponent(), e.getX(), e.getY());
+			menu.show(e.getComponent(), e.getX(), e.getY());
+		}
 	}
 
 	static class MyKeyListener implements KeyListener {
