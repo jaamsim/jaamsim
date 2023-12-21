@@ -222,17 +222,18 @@ public class View extends Entity {
 	}
 
 	/**
-	 * Returns the point on the x-y plane at which the camera is aimed.
-	 * @return point on the x-y plane
+	 * Returns the point at which the camera is aimed on the x-y plane containing the point of interest.
+	 * @return point on the x-y plane containing the point of interest
 	 */
 	public Vec3d getEffViewCenter() {
 		Vec3d camPos = getViewPosition();
 		Vec3d center = getViewCenter();
+		Vec3d poi = getPointOfInterest(0.0d);
 		Vec3d vec = new Vec3d();
 		vec.sub3(camPos, center);
-		if (MathUtils.near(center.z, 0.0d) || MathUtils.near(vec.z, 0.0d))
+		if (MathUtils.near(center.z, poi.z) || MathUtils.near(vec.z, 0.0d))
 			return center;
-		double factor = center.z/vec.z;
+		double factor = (center.z - poi.z)/vec.z;
 		vec.scale3(factor);
 		Vec3d ret = new Vec3d(center);
 		ret.sub3(vec);
