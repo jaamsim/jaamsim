@@ -37,6 +37,7 @@ import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.StringInput;
 import com.jaamsim.input.Vec3dInput;
+import com.jaamsim.math.MathUtils;
 import com.jaamsim.math.Transform;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.math.Vec4d;
@@ -226,14 +227,14 @@ public class View extends Entity {
 	 */
 	public Vec3d getEffViewCenter() {
 		Vec3d camPos = getViewPosition();
-		if (camPos.z == 0.0d)
-			return camPos;
 		Vec3d center = getViewCenter();
 		Vec3d vec = new Vec3d();
 		vec.sub3(camPos, center);
-		double factor = camPos.z/vec.z;
+		if (MathUtils.near(center.z, 0.0d) || MathUtils.near(vec.z, 0.0d))
+			return center;
+		double factor = center.z/vec.z;
 		vec.scale3(factor);
-		Vec3d ret = new Vec3d(camPos);
+		Vec3d ret = new Vec3d(center);
 		ret.sub3(vec);
 		return ret;
 	}
