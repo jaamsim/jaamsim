@@ -43,6 +43,7 @@ public class LogNormalDistribution extends Distribution {
 	{
 		minValueInput.setDefaultValue(0.0d);
 
+		locationInput.setHidden(false);
 		scaleInput.setHidden(false);
 
 		normalMeanInput = new SampleInput("NormalMean", KEY_INPUTS, 0.0d);
@@ -67,18 +68,20 @@ public class LogNormalDistribution extends Distribution {
 
 	@Override
 	protected double getSample(double simTime) {
+		double location = getLocationInput(simTime);
 		double scale = getScaleInput(simTime);
 		double mean = normalMeanInput.getNextSample(this, simTime);
 		double sd = normalStandardDeviationInput.getNextSample(this, simTime);
-		return scale * getSample(mean, sd, rng1, rng2);
+		return location + scale * getSample(mean, sd, rng1, rng2);
 	}
 
 	@Override
 	protected double getMean(double simTime) {
+		double location = getLocationInput(simTime);
 		double scale = getScaleInput(simTime);
 		double mean = normalMeanInput.getNextSample(this, simTime);
 		double sd = normalStandardDeviationInput.getNextSample(this, simTime);
-		return scale * getMean(mean, sd);
+		return location + scale * getMean(mean, sd);
 	}
 
 	@Override
@@ -91,7 +94,8 @@ public class LogNormalDistribution extends Distribution {
 
 	@Override
 	protected double getMin(double simTime) {
-		return 0.0d;
+		double location = getLocationInput(simTime);
+		return location;
 	}
 
 	@Override

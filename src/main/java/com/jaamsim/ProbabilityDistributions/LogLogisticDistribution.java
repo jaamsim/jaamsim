@@ -40,6 +40,7 @@ public class LogLogisticDistribution extends Distribution {
 	{
 		minValueInput.setDefaultValue(0.0d);
 
+		locationInput.setHidden(false);
 		scaleInput.setHidden(false);
 
 		shapeInput = new SampleInput("Shape", KEY_INPUTS, 1.0d);
@@ -58,16 +59,18 @@ public class LogLogisticDistribution extends Distribution {
 
 	@Override
 	protected double getSample(double simTime) {
+		double location = getLocationInput(simTime);
 		double scale = getScaleInput(simTime);
 		double shape = shapeInput.getNextSample(this, simTime);
-		return getSample(scale, shape, rng);
+		return location + getSample(scale, shape, rng);
 	}
 
 	@Override
 	protected double getMean(double simTime) {
+		double location = getLocationInput(simTime);
 		double scale = getScaleInput(simTime);
 		double shape = shapeInput.getNextSample(this, simTime);
-		return getMean(scale, shape);
+		return location + getMean(scale, shape);
 	}
 
 	@Override
@@ -79,7 +82,8 @@ public class LogLogisticDistribution extends Distribution {
 
 	@Override
 	protected double getMin(double simTime) {
-		return 0.0d;
+		double location = getLocationInput(simTime);
+		return location;
 	}
 
 	@Override

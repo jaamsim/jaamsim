@@ -71,6 +71,12 @@ implements SampleProvider, RandomStreamUser {
 	         exampleList = {"200.0", "InputValue1", "'2 * [InputValue1].Value'"})
 	protected final SampleInput maxValueInput;
 
+	@Keyword(description = "Offset that is applied to the random samples from the distribution. "
+	                     + "A non-zero value shifts the distribution right or left along the "
+	                     + "x-axis.",
+	         exampleList = {"3.0 h", "InputValue1", "'2 * [InputValue1].Value'"})
+	protected final SampleInput locationInput;
+
 	@Keyword(description = "Factor that is applied to the random samples from the distribution. "
 	                     + "The value applies the unit type to the samples from the distribution.",
 	         exampleList = {"3.0 h", "InputValue1", "'2 * [InputValue1].Value'"})
@@ -101,6 +107,11 @@ implements SampleProvider, RandomStreamUser {
 		maxValueInput = new SampleInput("MaxValue", KEY_INPUTS, Double.POSITIVE_INFINITY);
 		maxValueInput.setUnitType(UserSpecifiedUnit.class);
 		this.addInput(maxValueInput);
+
+		locationInput = new SampleInput("Location", KEY_INPUTS, 0.0d);
+		locationInput.setUnitType(UserSpecifiedUnit.class);
+		locationInput.setHidden(true);
+		this.addInput(locationInput);
 
 		scaleInput = new SampleInput("Scale", KEY_INPUTS, 1.0d);
 		scaleInput.setValidRange(0.0d, Double.POSITIVE_INFINITY);
@@ -176,6 +187,7 @@ implements SampleProvider, RandomStreamUser {
 	protected void setUnitType(Class<? extends Unit> ut) {
 		minValueInput.setUnitType(ut);
 		maxValueInput.setUnitType(ut);
+		locationInput.setUnitType(ut);
 		scaleInput.setUnitType(ut);
 	}
 
@@ -241,6 +253,10 @@ implements SampleProvider, RandomStreamUser {
 
 	public double getMaxValueInput(double simTime) {
 		return maxValueInput.getNextSample(this, simTime);
+	}
+
+	public double getLocationInput(double simTime) {
+		return locationInput.getNextSample(this, simTime);
 	}
 
 	public double getScaleInput(double simTime) {

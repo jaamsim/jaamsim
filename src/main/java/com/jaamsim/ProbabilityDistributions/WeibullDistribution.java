@@ -22,8 +22,6 @@ import com.jaamsim.input.Keyword;
 import com.jaamsim.math.Gamma;
 import com.jaamsim.rng.MRG1999a;
 import com.jaamsim.units.DimensionlessUnit;
-import com.jaamsim.units.Unit;
-import com.jaamsim.units.UserSpecifiedUnit;
 
 /**
  * Weibull Distribution.
@@ -35,20 +33,13 @@ public class WeibullDistribution extends Distribution {
 	         exampleList = {"1.0", "InputValue1", "'2 * [InputValue1].Value'"})
 	private final SampleInput shapeInput;
 
-	@Keyword(description = "The location parameter for the Weibull distribution.",
-	         exampleList = {"5.0 h", "InputValue1", "'2 * [InputValue1].Value'"})
-	private final SampleInput locationInput;
-
 	private final MRG1999a rng = new MRG1999a();
 
 	{
 		minValueInput.setDefaultValue(0.0d);
 
+		locationInput.setHidden(false);
 		scaleInput.setHidden(false);
-
-		locationInput = new SampleInput("Location", KEY_INPUTS, 0.0d);
-		locationInput.setUnitType(UserSpecifiedUnit.class);
-		this.addInput(locationInput);
 
 		shapeInput = new SampleInput("Shape", KEY_INPUTS, 1.0d);
 		shapeInput.setValidRange(1.0e-10d, Double.POSITIVE_INFINITY);
@@ -65,25 +56,19 @@ public class WeibullDistribution extends Distribution {
 	}
 
 	@Override
-	protected void setUnitType(Class<? extends Unit> ut) {
-		super.setUnitType(ut);
-		locationInput.setUnitType(ut);
-	}
-
-	@Override
 	protected double getSample(double simTime) {
+		double location = getLocationInput(simTime);
 		double scale = getScaleInput(simTime);
 		double shape = shapeInput.getNextSample(this, simTime);
-		double loc = locationInput.getNextSample(this, simTime);
-		return loc + getSample(scale, shape, rng);
+		return location + getSample(scale, shape, rng);
 	}
 
 	@Override
 	protected double getMean(double simTime) {
+		double location = getLocationInput(simTime);
 		double scale = getScaleInput(simTime);
 		double shape = shapeInput.getNextSample(this, simTime);
-		double loc = locationInput.getNextSample(this, simTime);
-		return loc + getMean(scale, shape);
+		return location + getMean(scale, shape);
 	}
 
 	@Override
@@ -95,7 +80,8 @@ public class WeibullDistribution extends Distribution {
 
 	@Override
 	protected double getMin(double simTime) {
-		return 0.0d;
+		double location = getLocationInput(simTime);
+		return location;
 	}
 
 	@Override

@@ -37,6 +37,7 @@ public class BetaDistribution extends Distribution {
 	{
 		minValueInput.setDefaultValue(0.0d);
 
+		locationInput.setHidden(false);
 		scaleInput.setHidden(false);
 
 		alphaInput = new SampleInput("AlphaParam", KEY_INPUTS, 1.0d);
@@ -60,18 +61,20 @@ public class BetaDistribution extends Distribution {
 
 	@Override
 	protected double getSample(double simTime) {
+		double location = getLocationInput(simTime);
 		double scale = getScaleInput(simTime);
 		double alpha = alphaInput.getNextSample(this, simTime);
 		double beta = betaInput.getNextSample(this, simTime);
-		return getSample(alpha, beta, scale, rng);
+		return location + getSample(alpha, beta, scale, rng);
 	}
 
 	@Override
 	protected double getMean(double simTime) {
+		double location = getLocationInput(simTime);
 		double scale = getScaleInput(simTime);
 		double alpha = alphaInput.getNextSample(this, simTime);
 		double beta = betaInput.getNextSample(this, simTime);
-		return getMean(alpha, beta, scale);
+		return location + getMean(alpha, beta, scale);
 	}
 
 	@Override
@@ -84,13 +87,15 @@ public class BetaDistribution extends Distribution {
 
 	@Override
 	protected double getMin(double simTime) {
-		return 0.0d;
+		double location = getLocationInput(simTime);
+		return location;
 	}
 
 	@Override
 	protected double getMax(double simTime) {
+		double location = getLocationInput(simTime);
 		double scale = getScaleInput(simTime);
-		return scale;
+		return location + scale;
 	}
 
 	public static double getSample(double alpha, double beta, double scale, MRG1999a rng) {
