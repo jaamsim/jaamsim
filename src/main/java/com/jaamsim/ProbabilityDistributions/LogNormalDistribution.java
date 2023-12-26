@@ -104,23 +104,7 @@ public class LogNormalDistribution extends Distribution {
 	}
 
 	public static double getSample(double normalMean, double normalSD, MRG1999a rng1, MRG1999a rng2) {
-
-		// Loop until we have a random x-y coordinate in the unit circle
-		double w, v1, v2, sample;
-		do {
-			v1 = 2.0 * rng1.nextUniform() - 1.0;
-			v2 = 2.0 * rng2.nextUniform() - 1.0;
-			w = ( v1 * v1 ) + ( v2 * v2 );
-		} while( w > 1.0 || w == 0.0 );
-
-		// Calculate the normalised random sample
-		// (normally distributed with mode = 0 and standard deviation = 1)
-		sample = v1 * Math.sqrt( -2.0 * Math.log( w ) / w );
-
-		// Adjust for the desired mode and standard deviation
-		sample = normalMean + sample*normalSD;
-
-		// Convert to lognormal
+		double sample = NormalDistribution.getSample(normalMean, normalSD, rng1, rng2);
 		return Math.exp(sample);
 	}
 
