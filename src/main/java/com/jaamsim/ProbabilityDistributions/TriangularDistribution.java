@@ -74,24 +74,24 @@ public class TriangularDistribution extends Distribution {
 
 	@Override
 	protected double getSample(double simTime) {
-		double minVal = minValueInput.getNextSample(this, simTime);
-		double maxVal = maxValueInput.getNextSample(this, simTime);
+		double minVal = getMinValueInput(simTime);
+		double maxVal = getMaxValueInput(simTime);
 		double mode = modeInput.getNextSample(this, simTime);
 		return getSample(minVal, mode, maxVal, rng);
 	}
 
 	@Override
 	protected double getMean(double simTime) {
-		double minVal = minValueInput.getNextSample(this, simTime);
-		double maxVal = maxValueInput.getNextSample(this, simTime);
+		double minVal = getMinValueInput(simTime);
+		double maxVal = getMaxValueInput(simTime);
 		double mode = modeInput.getNextSample(this, simTime);
 		return getMean(minVal, mode, maxVal);
 	}
 
 	@Override
 	protected double getStandardDev(double simTime) {
-		double a = minValueInput.getNextSample(this, simTime);
-		double b = maxValueInput.getNextSample(this, simTime);
+		double a = getMinValueInput(simTime);
+		double b = getMaxValueInput(simTime);
 		double m = modeInput.getNextSample(this, simTime);
 		return  getStandardDev(a, m, b);
 	}
