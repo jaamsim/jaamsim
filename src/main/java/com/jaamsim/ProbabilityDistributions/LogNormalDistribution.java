@@ -83,9 +83,10 @@ public class LogNormalDistribution extends Distribution {
 
 	@Override
 	protected double getStandardDev(double simTime) {
+		double scale = getScaleInput(simTime);
 		double mean = normalMeanInput.getNextSample(this, simTime);
 		double sd = normalStandardDeviationInput.getNextSample(this, simTime);
-		return getStandardDev(mean, sd);
+		return scale * getStandardDev(mean, sd);
 	}
 
 	@Override
