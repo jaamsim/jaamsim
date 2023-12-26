@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2022 JaamSim Software Inc.
+ * Copyright (C) 2016-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,8 +21,6 @@ import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.rng.MRG1999a;
 import com.jaamsim.units.DimensionlessUnit;
-import com.jaamsim.units.Unit;
-import com.jaamsim.units.UserSpecifiedUnit;
 
 /**
  * LogNormal Distribution.
@@ -30,10 +28,6 @@ import com.jaamsim.units.UserSpecifiedUnit;
  * Polar Method, Marsaglia and Bray (1964) is used to calculate the normal distribution
  */
 public class LogNormalDistribution extends Distribution {
-
-	@Keyword(description = "The scale parameter for the Log-Normal distribution.",
-	         exampleList = {"3.0 h", "InputValue1", "'2 * [InputValue1].Value'"})
-	private final SampleInput scaleInput;
 
 	@Keyword(description = "The mean of the dimensionless normal distribution (not the mean of the lognormal).",
 	         exampleList = {"5.0", "InputValue1", "'2 * [InputValue1].Value'"})
@@ -49,10 +43,7 @@ public class LogNormalDistribution extends Distribution {
 	{
 		minValueInput.setDefaultValue(0.0d);
 
-		scaleInput = new SampleInput("Scale", KEY_INPUTS, 1.0d);
-		scaleInput.setValidRange(0.0, Double.POSITIVE_INFINITY);
-		scaleInput.setUnitType(UserSpecifiedUnit.class);
-		this.addInput(scaleInput);
+		scaleInput.setHidden(false);
 
 		normalMeanInput = new SampleInput("NormalMean", KEY_INPUTS, 0.0d);
 		normalMeanInput.setUnitType(DimensionlessUnit.class);
@@ -75,24 +66,18 @@ public class LogNormalDistribution extends Distribution {
 	}
 
 	@Override
-	protected void setUnitType(Class<? extends Unit> specified) {
-		super.setUnitType(specified);
-		scaleInput.setUnitType(specified);
-	}
-
-	@Override
 	protected double getSample(double simTime) {
+		double scale = getScaleInput(simTime);
 		double mean = normalMeanInput.getNextSample(this, simTime);
 		double sd = normalStandardDeviationInput.getNextSample(this, simTime);
-		double scale = scaleInput.getNextSample(this, simTime);
 		return scale * getSample(mean, sd, rng1, rng2);
 	}
 
 	@Override
 	protected double getMean(double simTime) {
+		double scale = getScaleInput(simTime);
 		double mean = normalMeanInput.getNextSample(this, simTime);
 		double sd = normalStandardDeviationInput.getNextSample(this, simTime);
-		double scale = scaleInput.getNextSample(this, simTime);
 		return scale * getMean(mean, sd);
 	}
 

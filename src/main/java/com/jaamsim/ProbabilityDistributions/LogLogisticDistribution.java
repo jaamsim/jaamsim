@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2022 JaamSim Software Inc.
+ * Copyright (C) 2016-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,18 +21,12 @@ import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.rng.MRG1999a;
 import com.jaamsim.units.DimensionlessUnit;
-import com.jaamsim.units.Unit;
-import com.jaamsim.units.UserSpecifiedUnit;
 
 /**
  * Log-Logistic Distribution.
  * Adapted from A.M. Law, "Simulation Modelling and Analysis, 4th Edition", page 456.
  */
 public class LogLogisticDistribution extends Distribution {
-
-	@Keyword(description = "The scale parameter for the Log-Logistic distribution.",
-	         exampleList = {"3.0", "InputValue1", "'2 * [InputValue1].Value'"})
-	private final SampleInput scaleInput;
 
 	@Keyword(description = "The shape parameter for the Log-Logistic distribution. "
 	                     + "A decimal value > 0.0.\n\n"
@@ -46,10 +40,7 @@ public class LogLogisticDistribution extends Distribution {
 	{
 		minValueInput.setDefaultValue(0.0d);
 
-		scaleInput = new SampleInput("Scale", KEY_INPUTS, 1.0d);
-		scaleInput.setValidRange(0.0, Double.POSITIVE_INFINITY);
-		scaleInput.setUnitType(UserSpecifiedUnit.class);
-		this.addInput(scaleInput);
+		scaleInput.setHidden(false);
 
 		shapeInput = new SampleInput("Shape", KEY_INPUTS, 1.0d);
 		shapeInput.setValidRange(0.0d, Double.POSITIVE_INFINITY);
@@ -66,28 +57,22 @@ public class LogLogisticDistribution extends Distribution {
 	}
 
 	@Override
-	protected void setUnitType(Class<? extends Unit> ut) {
-		super.setUnitType(ut);
-		scaleInput.setUnitType(ut);
-	}
-
-	@Override
 	protected double getSample(double simTime) {
-		double scale = scaleInput.getNextSample(this, simTime);
+		double scale = getScaleInput(simTime);
 		double shape = shapeInput.getNextSample(this, simTime);
 		return getSample(scale, shape, rng);
 	}
 
 	@Override
 	protected double getMean(double simTime) {
-		double scale = scaleInput.getNextSample(this, simTime);
+		double scale = getScaleInput(simTime);
 		double shape = shapeInput.getNextSample(this, simTime);
 		return getMean(scale, shape);
 	}
 
 	@Override
 	protected double getStandardDev(double simTime) {
-		double scale = scaleInput.getNextSample(this, simTime);
+		double scale = getScaleInput(simTime);
 		double shape = shapeInput.getNextSample(this, simTime);
 		return getStandardDev(scale, shape);
 	}

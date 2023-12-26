@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2022 JaamSim Software Inc.
+ * Copyright (C) 2016-2023 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,8 +22,6 @@ import com.jaamsim.input.Keyword;
 import com.jaamsim.math.Gamma;
 import com.jaamsim.rng.MRG1999a;
 import com.jaamsim.units.DimensionlessUnit;
-import com.jaamsim.units.Unit;
-import com.jaamsim.units.UserSpecifiedUnit;
 
 public class BetaDistribution extends Distribution {
 	@Keyword(description = "The alpha tuning parameter.",
@@ -34,15 +32,12 @@ public class BetaDistribution extends Distribution {
 	         exampleList = {"5.0", "InputValue1", "'2 * [InputValue1].Value'"})
 	private final SampleInput betaInput;
 
-	@Keyword(description = "The scale parameter for the distribution.  This scales the " +
-	                       "value of the distribution so it return values between 0 and scale.",
-	         exampleList = {"5.0", "InputValue1", "'2 * [InputValue1].Value'"})
-	private final SampleInput scaleInput;
-
 	private final MRG1999a rng = new MRG1999a();
 
 	{
 		minValueInput.setDefaultValue(0.0d);
+
+		scaleInput.setHidden(false);
 
 		alphaInput = new SampleInput("AlphaParam", KEY_INPUTS, 1.0d);
 		alphaInput.setUnitType(DimensionlessUnit.class);
@@ -53,11 +48,6 @@ public class BetaDistribution extends Distribution {
 		betaInput.setUnitType(DimensionlessUnit.class);
 		betaInput.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		this.addInput(betaInput);
-
-		scaleInput = new SampleInput("Scale", KEY_INPUTS, 1.0d);
-		scaleInput.setValidRange(0.0d, Double.POSITIVE_INFINITY);
-		scaleInput.setUnitType(UserSpecifiedUnit.class);
-		this.addInput(scaleInput);
 	}
 
 	public BetaDistribution() {}
@@ -69,32 +59,26 @@ public class BetaDistribution extends Distribution {
 	}
 
 	@Override
-	protected void setUnitType(Class<? extends Unit> ut) {
-		super.setUnitType(ut);
-		scaleInput.setUnitType(ut);
-	}
-
-	@Override
 	protected double getSample(double simTime) {
+		double scale = getScaleInput(simTime);
 		double alpha = alphaInput.getNextSample(this, simTime);
 		double beta = betaInput.getNextSample(this, simTime);
-		double scale = scaleInput.getNextSample(this, simTime);
 		return getSample(alpha, beta, scale, rng);
 	}
 
 	@Override
 	protected double getMean(double simTime) {
+		double scale = getScaleInput(simTime);
 		double alpha = alphaInput.getNextSample(this, simTime);
 		double beta = betaInput.getNextSample(this, simTime);
-		double scale = scaleInput.getNextSample(this, simTime);
 		return getMean(alpha, beta, scale);
 	}
 
 	@Override
 	protected double getStandardDev(double simTime) {
+		double scale = getScaleInput(simTime);
 		double alpha = alphaInput.getNextSample(this, simTime);
 		double beta = betaInput.getNextSample(this, simTime);
-		double scale = scaleInput.getNextSample(this, simTime);
 		return getStandardDev(alpha, beta, scale);
 	}
 
@@ -105,7 +89,7 @@ public class BetaDistribution extends Distribution {
 
 	@Override
 	protected double getMax(double simTime) {
-		double scale = scaleInput.getNextSample(this, simTime);
+		double scale = getScaleInput(simTime);
 		return scale;
 	}
 
