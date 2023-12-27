@@ -423,10 +423,20 @@ public class GraphModel extends DisplayModel {
 					double startX = xVals[i];
 					if (i > 0)
 						startX -= 0.5d * (xVals[i] - xVals[i - 1]);
+					else
+						startX -= 0.5d * (xVals[i + 1] - xVals[i]);
+					startX = Math.max(startX, -0.5d);
+					if (startX > 0.5d)
+						continue;
 
 					double endX = xVals[i];
 					if (i < xVals.length - 1)
 						endX += 0.5d * (xVals[i + 1] - xVals[i]);
+					else
+						endX += 0.5d * (xVals[i] - xVals[i - 1]);
+					endX = Math.min(endX, 0.5d);
+					if (endX < -0.5d)
+						continue;
 
 					double startY = -0.5d;
 					double endY = yVals[i];
