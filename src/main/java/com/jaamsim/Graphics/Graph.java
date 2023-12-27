@@ -58,6 +58,9 @@ public class Graph extends AbstractGraph  {
 		xAxisInterval.setDefaultValue(6 * 3600d);
 		xLines.setDefaultValue(new DoubleVector(-6*3600d, -12*3600d, -18*3600d));
 
+		xAxisStart.setValidRange(Double.NEGATIVE_INFINITY, 1.0e-6);
+		xAxisEnd.setValidRange(0.0, Double.POSITIVE_INFINITY);
+
 		numberOfPoints = new SampleInput("NumberOfPoints", KEY_INPUTS, 100);
 		numberOfPoints.setValidRange(0, Double.POSITIVE_INFINITY);
 		numberOfPoints.setIntegerValue(true);

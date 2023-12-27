@@ -258,12 +258,10 @@ public abstract class AbstractGraph extends DisplayEntity {
 
 		xAxisStart = new ValueInput("XAxisStart", X_AXIS, -60.0d);
 		xAxisStart.setUnitType(UserSpecifiedUnit.class);
-		xAxisStart.setValidRange(Double.NEGATIVE_INFINITY, 1.0e-6);
 		this.addInput(xAxisStart);
 
 		xAxisEnd = new ValueInput("XAxisEnd", X_AXIS, 0.0d);
 		xAxisEnd.setUnitType(UserSpecifiedUnit.class);
-		xAxisEnd.setValidRange(0.0, Double.POSITIVE_INFINITY);
 		this.addInput(xAxisEnd);
 
 		xAxisInterval = new ValueInput("XAxisInterval", X_AXIS, 10.0d);
