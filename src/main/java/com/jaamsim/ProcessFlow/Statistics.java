@@ -291,11 +291,23 @@ public class Statistics extends LinkedComponent {
 		return freq.getBinFractions();
 	}
 
+	@Output(name = "HistogramBinCumulativeFractions",
+	 description = "The fractional number of values within each histogram bin or smaller.",
+	    unitType = DimensionlessUnit.class,
+	  reportable = true,
+	    sequence = 9)
+	public double[] getHistogramCumulativeBinFractions(double simTime) {
+		if (histogramBinWidth.isDefault()) {
+			return new double[0];
+		}
+		return freq.getBinCumulativeFractions();
+	}
+
 	@Output(name = "EntityTimeMinimum",
 	 description = "The minimum time the received entities have spent in each state.",
 	    unitType = TimeUnit.class,
 	  reportable = true,
-	    sequence = 9)
+	    sequence = 10)
 	public LinkedHashMap<String, Double> getEntityTimeMinimum(double simTime) {
 		long num = getNumberProcessed(simTime);
 		LinkedHashMap<String, Double> ret = new LinkedHashMap<>(stateStats.size());
@@ -313,7 +325,7 @@ public class Statistics extends LinkedComponent {
 	 description = "The maximum time the received entities have spent in each state.",
 	    unitType = TimeUnit.class,
 	  reportable = true,
-	    sequence = 10)
+	    sequence = 11)
 	public LinkedHashMap<String, Double> getEntityTimeMaximum(double simTime) {
 		LinkedHashMap<String, Double> ret = new LinkedHashMap<>(stateStats.size());
 		for (Map.Entry<String, SampleStatistics> entry : stateStats.entrySet()) {
@@ -327,7 +339,7 @@ public class Statistics extends LinkedComponent {
 	 description = "The average time the received entities have spent in each state.",
 	    unitType = TimeUnit.class,
 	  reportable = true,
-	    sequence = 11)
+	    sequence = 12)
 	public LinkedHashMap<String, Double> getEntityTimeAverage(double simTime) {
 		long num = getNumberProcessed(simTime);
 		LinkedHashMap<String, Double> ret = new LinkedHashMap<>(stateStats.size());
@@ -343,7 +355,7 @@ public class Statistics extends LinkedComponent {
 	             + "each state.",
 	    unitType = TimeUnit.class,
 	  reportable = true,
-	    sequence = 12)
+	    sequence = 13)
 	public LinkedHashMap<String, Double> getEntityTimeStandardDeviation(double simTime) {
 		long num = getNumberProcessed(simTime);
 		LinkedHashMap<String, Double> ret = new LinkedHashMap<>(stateStats.size());

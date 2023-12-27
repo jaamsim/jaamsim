@@ -178,4 +178,21 @@ public class SampleFrequency {
 		return ret;
 	}
 
+	/**
+	 * Returns an array containing the fractional number of times each integer value or less was
+	 * recorded, covering the range between the lowest and highest values.
+	 * @return array of values between 0 and 1
+	 */
+	public double[] getBinCumulativeFractions() {
+		int num = maxVal - minVal + 1;
+		int offset = minVal - firstVal;
+		double total = getCount();
+		double[] ret = new double[num];
+		ret[0] = binCounts[offset]/total;
+		for (int i = 1; i < num; i++) {
+			ret[i] = ret[i - 1] + binCounts[i + offset]/total;
+		}
+		return ret;
+	}
+
 }
