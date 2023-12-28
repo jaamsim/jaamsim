@@ -17,12 +17,14 @@
  */
 package com.jaamsim.ProcessFlow;
 
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import com.jaamsim.BooleanProviders.BooleanProvInput;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleInput;
+import com.jaamsim.Samples.SampleListInput;
 import com.jaamsim.Statistics.SampleFrequency;
 import com.jaamsim.Statistics.SampleStatistics;
 import com.jaamsim.Statistics.TimeBasedStatistics;
@@ -61,6 +63,14 @@ public class Statistics extends LinkedComponent {
 	         exampleList = {"1 h"})
 	private final SampleInput histogramBinWidth;
 
+	@Keyword(description = "List of percentiles for which the corresponding recording values will "
+	                     + "be returned by the 'PercentileValues' output. "
+	                     + "This input requires the 'HistogramBinWidth' input to be specified, "
+	                     + "and the accuracy of the values for the specified percentiles will "
+	                     + "depend on the size of the bin width.",
+	         exampleList = {"90 95 99"})
+	private final SampleListInput targetPercentiles;
+
 	@Keyword(description = "If TRUE, the state times for received entities are recorded for "
 	                     + "statistics generation. "
 	                     + "The statistics for each state are returned by the outputs: "
@@ -92,6 +102,11 @@ public class Statistics extends LinkedComponent {
 		histogramBinWidth = new SampleInput("HistogramBinWidth", KEY_INPUTS, null);
 		histogramBinWidth.setUnitType(UserSpecifiedUnit.class);
 		this.addInput(histogramBinWidth);
+
+		targetPercentiles = new SampleListInput("TargetPercentiles", KEY_INPUTS, null);
+		targetPercentiles.setUnitType(DimensionlessUnit.class);
+		targetPercentiles.setDimensionless(true);
+		this.addInput(targetPercentiles);
 
 		recordEntityStateTimes = new BooleanProvInput("RecordEntityStateTimes", KEY_INPUTS, false);
 		this.addInput(recordEntityStateTimes);
@@ -320,11 +335,62 @@ public class Statistics extends LinkedComponent {
 		return freq.getBinCumulativeFractions();
 	}
 
+	@Output(name = "TargetPercentiles",
+	 description = "The percentiles specified by the 'TargetPercentiles' input.",
+	  reportable = true,
+	    sequence = 11)
+	public double[] getTargetPercentiles(double simTime) {
+		double[] ret = new double[targetPercentiles.getListSize()];
+		for (int i = 0; i < targetPercentiles.getListSize(); i++) {
+			ret[i] = targetPercentiles.getNextSample(i, this, simTime);
+		}
+		return ret;
+	}
+
+	@Output(name = "PercentileValues",
+	 description = "The recorded values corresponding to percentiles specified by the "
+	             + "'TargetPercentiles' input.",
+	    unitType = UserSpecifiedUnit.class,
+	  reportable = true,
+	    sequence = 12)
+	public double[] getPercentileValues(double simTime) {
+		double[] ret = new double[targetPercentiles.getListSize()];
+		if (histogramBinWidth.isDefault()) {
+			return ret;
+		}
+		double[] cumFractions = getHistogramCumulativeBinFractions(simTime);
+		double[] values = getHistogramBinUpperLimits(simTime);
+		for (int i = 0; i < targetPercentiles.getListSize(); i++) {
+			double targetFraction = targetPercentiles.getNextSample(i, this, simTime) / 100.0d;
+			targetFraction = Math.min(targetFraction, 1.0d);
+			targetFraction = Math.max(targetFraction, 0.0d);
+			int k = Arrays.binarySearch(cumFractions, targetFraction);
+			if (k >= 0) {
+				ret[i] = values[k];
+				continue;
+			}
+			int index = -k - 1;
+			index = Math.min(index, cumFractions.length - 1);
+			if (index == 0) {
+				ret[i] = values[0] * targetFraction / cumFractions[0];
+				continue;
+			}
+			if (index >= values.length) {
+				ret[i] = values[values.length - 1];
+				continue;
+			}
+			double ratio = (targetFraction - cumFractions[index - 1])
+					/ (cumFractions[index] - cumFractions[index - 1]);
+			ret[i] = values[index - 1] + ratio * (values[index] - values[index - 1]);
+		}
+		return ret;
+	}
+
 	@Output(name = "EntityTimeMinimum",
 	 description = "The minimum time the received entities have spent in each state.",
 	    unitType = TimeUnit.class,
 	  reportable = true,
-	    sequence = 11)
+	    sequence = 13)
 	public LinkedHashMap<String, Double> getEntityTimeMinimum(double simTime) {
 		long num = getNumberProcessed(simTime);
 		LinkedHashMap<String, Double> ret = new LinkedHashMap<>(stateStats.size());
@@ -342,7 +408,7 @@ public class Statistics extends LinkedComponent {
 	 description = "The maximum time the received entities have spent in each state.",
 	    unitType = TimeUnit.class,
 	  reportable = true,
-	    sequence = 12)
+	    sequence = 14)
 	public LinkedHashMap<String, Double> getEntityTimeMaximum(double simTime) {
 		LinkedHashMap<String, Double> ret = new LinkedHashMap<>(stateStats.size());
 		for (Map.Entry<String, SampleStatistics> entry : stateStats.entrySet()) {
@@ -356,7 +422,7 @@ public class Statistics extends LinkedComponent {
 	 description = "The average time the received entities have spent in each state.",
 	    unitType = TimeUnit.class,
 	  reportable = true,
-	    sequence = 13)
+	    sequence = 15)
 	public LinkedHashMap<String, Double> getEntityTimeAverage(double simTime) {
 		long num = getNumberProcessed(simTime);
 		LinkedHashMap<String, Double> ret = new LinkedHashMap<>(stateStats.size());
@@ -372,7 +438,7 @@ public class Statistics extends LinkedComponent {
 	             + "each state.",
 	    unitType = TimeUnit.class,
 	  reportable = true,
-	    sequence = 14)
+	    sequence = 16)
 	public LinkedHashMap<String, Double> getEntityTimeStandardDeviation(double simTime) {
 		long num = getNumberProcessed(simTime);
 		LinkedHashMap<String, Double> ret = new LinkedHashMap<>(stateStats.size());
