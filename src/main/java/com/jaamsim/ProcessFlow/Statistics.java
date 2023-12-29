@@ -250,15 +250,6 @@ public class Statistics extends LinkedComponent {
 		return sampStats.getStandardDeviation();
 	}
 
-	@Output(name = "StandardDeviationOfTheMean",
-	 description = "The estimated standard deviation of the sample mean.",
-	    unitType = UserSpecifiedUnit.class,
-	  reportable = true,
-	    sequence = 4)
-	public double getStandardDeviationOfTheMean(double simTime) {
-		return sampStats.getStandardDeviation()/Math.sqrt(sampStats.getCount() - 1L);
-	}
-
 	@Output(name = "TimeAverage",
 	 description = "The average of the values recorded, weighted by the duration of each value.",
 	    unitType = UserSpecifiedUnit.class,
