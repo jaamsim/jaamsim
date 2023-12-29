@@ -199,7 +199,7 @@ public class SampleListInput extends ArrayListInput<SampleProvider> {
 				if (value.get(i) instanceof SampleConstant && !integerValue) {
 					toks.add(valueTokens[i]);
 					// Single input value with dimensions
-					if (!dimensionless) {
+					if (!dimensionless && getUnitType(i) != DimensionlessUnit.class && i + 1 < valueTokens.length) {
 						toks.add(valueTokens[i + 1]);
 						return;
 					}
