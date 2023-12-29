@@ -1,0 +1,998 @@
+package com.jaamsim.GLTF;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URI;
+import java.net.URL;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.channels.FileChannel;
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import com.jaamsim.JSON.JSONError;
+import com.jaamsim.JSON.JSONParser;
+import com.jaamsim.JSON.JSONValue;
+import com.jaamsim.MeshFiles.MeshData;
+import com.jaamsim.MeshFiles.VertexMap;
+import com.jaamsim.math.AABB;
+import com.jaamsim.math.Color4d;
+import com.jaamsim.math.Mat4d;
+import com.jaamsim.math.Quaternion;
+import com.jaamsim.math.Vec2d;
+import com.jaamsim.math.Vec3d;
+import com.jaamsim.render.RenderException;
+
+public class GLTFReader {
+
+	private static String getStringChild(HashMap<String, JSONValue> parentMap, String childName, boolean optional) {
+
+		JSONValue child = parentMap.get(childName);
+		if (child == null || !child.isString()) {
+			if (optional)
+				return null;
+
+			String msg = String.format("Missing string attribute: %s", childName);
+			throw new RenderException(msg);
+		}
+		return child.stringVal;
+	}
+
+	private static Double getNumberChild(HashMap<String, JSONValue> parentMap, String childName, boolean optional) {
+
+		JSONValue child = parentMap.get(childName);
+		if (child == null || !child.isNumber()) {
+			if (optional)
+				return null;
+
+			String msg = String.format("Missing number attribute: %s", childName);
+			throw new RenderException(msg);
+		}
+		return child.numVal;
+	}
+
+	// This is similar to getNumberChild but checks that the value is a whole integer and casts to Integer
+	private static Integer getIntChild(HashMap<String, JSONValue> parentMap, String childName, boolean optional) {
+
+		Double val = getNumberChild(parentMap, childName, optional);
+		if (val == null && optional) {
+			return null;
+		}
+
+		if (Math.floor(val) != val) {
+			String msg = String.format("Property (%s): (%f) is not an integer", childName, val);
+			throw new RenderException(msg);
+		}
+		return (int) Math.round(val);
+	}
+
+	private static ArrayList<JSONValue> getListChild(HashMap<String, JSONValue> parentMap, String childName, boolean optional) {
+
+		JSONValue child = parentMap.get(childName);
+		if (child == null || !child.isList()) {
+			if (optional)
+				return null;
+			String msg = String.format("Missing list attribute: %s", childName);
+			throw new RenderException(msg);
+		}
+		return child.listVal;
+	}
+
+	private static double[] getNumberListChild(HashMap<String, JSONValue> parentMap, String childName, boolean optional) {
+
+		JSONValue child = parentMap.get(childName);
+		if (child == null || !child.isList()) {
+			if (optional)
+				return null;
+
+			String msg = String.format("Missing number list attribute: %s", childName);
+			throw new RenderException(msg);
+		}
+		ArrayList<JSONValue> listVal = child.listVal;
+
+		double[] ret = new double[listVal.size()];
+
+		for (int i = 0; i < listVal.size(); ++i) {
+			JSONValue v = listVal.get(i);
+			if (!v.isNumber()) {
+				throw new RenderException("Child of number list is not a number");
+			}
+			ret[i] = v.numVal;
+		}
+		return ret;
+	}
+	private static int[] getIntListChild(HashMap<String, JSONValue> parentMap, String childName, boolean optional) {
+		double[] doubles = getNumberListChild(parentMap, childName, optional);
+		if (optional && doubles == null) return null;
+
+		int[] ret = new int[doubles.length];
+		for (int i = 0; i < doubles.length; ++i) {
+			double num = doubles[i];
+			if (Math.floor(num) != num) {
+				String msg = String.format("Property (%s) contains (%f) which is not an integer", childName, num);
+				throw new RenderException(msg);
+			}
+			ret[i] = (int) Math.round(num);
+		}
+		return ret;
+	}
+
+	private static HashMap<String, JSONValue> getMapChild(HashMap<String, JSONValue> parentMap, String childName, boolean optional) {
+
+		JSONValue child = parentMap.get(childName);
+		if (child == null || !child.isMap()) {
+			if (optional)
+				return null;
+
+			String msg = String.format("Missing map attribute: %s", childName);
+			throw new RenderException(msg);
+		}
+		return child.mapVal;
+	}
+
+	// Map
+	private static String getCompTypeFromNum(int gltfTypeNum) {
+		switch(gltfTypeNum) {
+		case 5120:
+			return "int8";
+		case 5121:
+			return "uint8";
+		case 5122:
+			return "int16";
+		case 5123:
+			return "uint16";
+		case 5125:
+			return "uint32";
+		case 5126:
+			return "float32";
+		default:
+			throw new RenderException(String.format("Unknown gltf value type: %d", gltfTypeNum));
+		}
+	}
+
+	private static int getTypeSize(String typeStr) {
+		switch(typeStr) {
+		case "int8":
+			return 1;
+		case "uint8":
+			return 1;
+		case "int16":
+			return 2;
+		case "uint16":
+			return 2;
+		case "uint32":
+			return 4;
+		case "float32":
+			return 4;
+		default:
+			throw new RenderException(String.format("Unknown gltf type: %s", typeStr));
+		}
+	}
+
+	private static int getNumComponents(String vecType) {
+		switch(vecType) {
+		case "SCALAR":
+			return 1;
+		case "VEC2":
+			return 2;
+		case "VEC3":
+			return 3;
+		case "VEC4":
+			return 4;
+		case "MAT2":
+			return 4;
+		case "MAT3":
+			return 9;
+		case "MAT4":
+			return 16;
+		default:
+			throw new RenderException(String.format("Unknown gltf accessor type: %s", vecType));
+
+		}
+	}
+
+	private static int readIntFromBuffer(ByteBuffer buff, int pos, String compType) {
+		int val;
+		switch(compType) {
+		case "int8":
+			return buff.getChar(pos);
+		case "uint8":
+			val = buff.getChar(pos);
+			// Fixup Java's lack of unsigned integer types
+			if (val < 0) {
+				val += 256;
+			}
+			return val;
+		case "int16":
+			return buff.getShort(pos);
+		case "uint16":
+			val = buff.getShort(pos);
+			// Fixup Java's lack of unsigned integer types
+			if (val < 0) {
+				val += (1 << 16);
+			}
+			return val;
+		case "uint32":
+			val = buff.getInt(pos);
+			if (val < 0) {
+				long realVal = val + (1<<32);
+				// We technically could represent this in a long but
+				// this means there's a scalar value > 2 billion so we're going
+				// to error out for now until we find a model where this is valid
+				throw new RenderException(String.format("Exceptionally large integer value, probably an error: %d", realVal));
+			}
+			return val;
+		case "float32":
+			float floatVal = buff.getFloat(pos);
+			val = Math.round(floatVal);
+			return val;
+		default:
+			throw new RenderException(String.format("Unknown component type: %s", compType));
+		}
+
+
+	}
+
+	private final MeshData outputData = new MeshData(false);
+	private final URI asset;
+	private final URL contextURL;
+
+	private static class SceneNode {
+		public Quaternion rot;
+		public Vec3d trans;
+		public Vec3d scale;
+
+		public Mat4d mat;
+
+		public int[] children;
+
+		public Integer meshIdx = null;
+
+		public boolean isValid() {
+			if (mat == null)
+				return true;
+
+			// matrix is not null, then the others must be null
+			return rot == null && trans == null && scale == null;
+		}
+
+		// fill the remaining elements
+		public void fill() {
+			if (mat != null) return;
+
+			if (rot == null)
+				rot = new Quaternion();
+			if (trans == null)
+				trans = new Vec3d(0.0, 0.0, 0.0);
+			if (scale == null)
+				scale = new Vec3d(1.0, 1.0, 1.0);
+		}
+
+		public Mat4d getStaticMatrix() {
+			if (mat != null)
+				return mat;
+
+			fill();
+
+			Mat4d res = new Mat4d();
+			res.setRot3(rot);
+			res.scaleCols3(scale);
+			res.setTranslate3(trans);
+			return res;
+		}
+	}
+
+	private static class MeshPrimitive {
+		Integer posAcc;
+		Integer normAcc;
+		Integer texCoord0Acc;
+		Integer indicesAcc;
+		Integer material;
+	}
+
+	private static class Mesh {
+		ArrayList<MeshPrimitive> primitives = new ArrayList<>();
+	}
+
+	private static class Buffer {
+		ByteBuffer contents;
+	}
+
+	private static class BufferView {
+		int buffIdx;
+		int length;
+		int offset;
+		int stride;
+	}
+
+	private static class Accessor {
+		int bufferView;
+		int byteOffset;
+		String compType;
+		String vecType;
+		int count;
+
+		double[] min;
+		double[] max;
+	}
+
+	private static class Image {
+		String uri;
+	}
+
+	private static class Texture {
+		int source;
+	}
+
+	private static class Material {
+
+		int colorTex;
+		Color4d colorFactor;
+	}
+
+	// Members
+	HashMap<String, JSONValue> rootMap;
+
+	// Lazily initialized members
+	HashMap<Integer, SceneNode> nodes = new HashMap<>();
+	HashMap<Integer, Mesh> meshes = new HashMap<>();
+
+	HashMap<Integer, Buffer> buffers = new HashMap<>();
+	HashMap<Integer, BufferView> bufferViews = new HashMap<>();
+	HashMap<Integer, Accessor> accessors = new HashMap<>();
+
+	HashMap<Integer, Image> images = new HashMap<>();
+	HashMap<Integer, Texture> textures= new HashMap<>();
+	HashMap<Integer, Material> materials = new HashMap<>();
+
+	HashMap<Integer, int[]> processedMeshes = new HashMap<>();
+
+	HashMap<Integer, Integer> materialMap = new HashMap<>();
+	HashMap<Integer, int[]> primitiveMap = new HashMap<>();
+	int numMats = 0;
+	int numPrims = 0;
+
+	// Many GLTF top level objects are lists of maps, this is a utility function
+	// to get an indexed object from the list of a given name
+	private HashMap<String, JSONValue> getRootObj(String typeName, int index) {
+		ArrayList<JSONValue> topList = getListChild(rootMap, typeName, false);
+		JSONValue objMap = topList.get(index);
+		if (objMap == null || !objMap.isMap()) {
+			String msg = String.format("GLTF file referencing missing %s: %d", typeName, index);
+			throw new RenderException(msg);
+		}
+		return objMap.mapVal;
+	}
+
+	private Buffer getBuffer(int index) {
+		Buffer buff = buffers.get(index);
+		if (buff != null)
+			return buff;
+
+		HashMap<String, JSONValue> buffMap = getRootObj("buffers", index);
+		String uri = getStringChild(buffMap, "uri", false);
+		int byteLen = getIntChild(buffMap, "byteLength", false);
+
+		if (byteLen > (1 << 24)) {
+			// Cap buffers at an arbitrary 16MB. This can be increased if non-pathological assets need it
+			String msg = String.format("Buffer byte length (%d) is too large", byteLen);
+			throw new RenderException(msg);
+		}
+
+		URI buffURI = null;
+		try {
+			buffURI = new URL(contextURL, uri).toURI();
+		} catch (Exception ex) {
+			throw new RenderException(ex.getMessage());
+		}
+
+		if (!buffURI.getScheme().equals("file")) {
+			throw new RenderException(String.format("Can only load buffers from 'file' URLs currently. Invalid url: %s", buffURI.toString()));
+		}
+
+
+		//Path buffPath = FileSystems.getDefault().getPath(buffURL.getPath());
+		ByteBuffer byteBuff;
+		try {
+			File buffFile = new File(buffURI);
+			FileInputStream buffStream = new FileInputStream(buffFile);
+			FileChannel buffChann = buffStream.getChannel();
+
+			//FileChannel buffChann = FileChannel.open(buffPath, StandardOpenOption.READ);
+			long fileSize = buffChann.size();
+			if (fileSize < byteLen) {
+				String msg = String.format("Buffer file (%s) too small. The file is %d bytes, but must be at least %d", uri, byteLen);
+				buffStream.close();
+				throw new RenderException(msg);
+			}
+			byteBuff = ByteBuffer.allocateDirect(byteLen);
+			buffChann.read(byteBuff);
+
+			// GLTF buffers are little endian
+			byteBuff.order(ByteOrder.LITTLE_ENDIAN);
+
+			buffStream.close();
+
+		} catch (IOException io) {
+			throw new RenderException(io.getMessage());
+		}
+		buff = new Buffer();
+		buff.contents = byteBuff;
+		buffers.put(index, buff);
+		return buff;
+	}
+
+	private BufferView getBufferView(int index) {
+		BufferView buffView = bufferViews.get(index);
+		if (buffView != null)
+			return buffView;
+
+		HashMap<String, JSONValue> buffViewMap = getRootObj("bufferViews", index);
+
+		buffView = new BufferView();
+
+		// Mandatory params
+		buffView.buffIdx = getIntChild(buffViewMap, "buffer", false);
+		buffView.length = getIntChild(buffViewMap, "byteLength", false);
+
+		// optional params
+		Integer byteOffset = getIntChild(buffViewMap, "byteOffset", true);
+		if (byteOffset == null)
+			byteOffset = 0;
+
+		buffView.offset = byteOffset;
+
+		Integer byteStride = getIntChild(buffViewMap, "byteStride", true);
+		if (byteStride == null)
+			byteStride = 0;
+
+		buffView.stride = byteStride;
+
+		// Check that the buffer view fits in the buffer
+		Buffer buff = getBuffer(buffView.buffIdx);
+		if (buffView.offset + buffView.length > buff.contents.capacity()) {
+			throw new RenderException(String.format("Buffer %d view is too large for buffer", index));
+		}
+
+		bufferViews.put(index, buffView);
+		return buffView;
+	}
+
+	private Accessor getAccessor(int index) {
+		Accessor accessor = accessors.get(index);
+		if (accessor != null)
+			return accessor;
+
+		HashMap<String, JSONValue> accessorMap = getRootObj("accessors", index);
+
+		accessor = new Accessor();
+
+		accessor.bufferView = getIntChild(accessorMap, "bufferView", false);
+		accessor.count = getIntChild(accessorMap, "count", false);
+		accessor.vecType = getStringChild(accessorMap, "type", false);
+
+		int compTypeNum = getIntChild(accessorMap, "componentType", false);
+		accessor.compType = getCompTypeFromNum(compTypeNum);
+
+		Integer byteOffset = getIntChild(accessorMap, "byteOffset", true);
+		if (byteOffset == null)
+			byteOffset = 0;
+		accessor.byteOffset = byteOffset;
+
+		accessor.min = getNumberListChild(accessorMap, "min", true);
+		accessor.max = getNumberListChild(accessorMap, "max", true);
+
+		// Check that the accessor fits inside the buffer view
+		int numComps = getNumComponents(accessor.vecType);
+		int compSize = getTypeSize(accessor.compType);
+
+		BufferView view = getBufferView(accessor.bufferView);
+
+		int stride = numComps*compSize;
+		if (view.stride != 0) {
+			stride = view.stride;
+		}
+		int accEnd = accessor.byteOffset + (accessor.count-1)*stride + numComps*compSize;
+		if (accEnd > view.length) {
+			throw new RenderException(String.format("Accessor %d does not fit in buffer view", index));
+		}
+
+		accessors.put(index, accessor);
+		return accessor;
+	}
+
+	private static MeshPrimitive parsePrim(HashMap<String, JSONValue> prim) {
+		MeshPrimitive ret = new MeshPrimitive();
+
+		Integer mode = getIntChild(prim, "mode", true);
+		if (mode != null) {
+			if (mode.intValue() != 4) {
+				throw new RenderException(String.format("Currently unsupported GLTF geometry mode: %d", mode.intValue()));
+			}
+		}
+
+		HashMap<String, JSONValue> attribMap = getMapChild(prim, "attributes", false);
+
+		ret.posAcc = getIntChild(attribMap, "POSITION", true);
+		ret.normAcc = getIntChild(attribMap, "NORMAL", true);
+		ret.texCoord0Acc = getIntChild(attribMap, "TEXCOORD_0", true);
+
+		ret.indicesAcc = getIntChild(prim, "indices", true);
+		ret.material = getIntChild(prim, "material", true);
+		return ret;
+	}
+
+	private Mesh getMesh(int index) {
+		Mesh mesh = meshes.get(index);
+		if (mesh != null)
+			return mesh;
+
+		HashMap<String, JSONValue> meshMap = getRootObj("meshes", index);
+
+		mesh = new Mesh();
+		ArrayList<JSONValue> primsList = getListChild(meshMap, "primitives", false);
+
+		for (JSONValue prim: primsList) {
+			if (!prim.isMap()) {
+				throw new RenderException("Mesh primitive is not a JSON map");
+			}
+			mesh.primitives.add(parsePrim(prim.mapVal));
+		}
+
+		meshes.put(index, mesh);
+		return mesh;
+	}
+
+	private Image getImage(int index) {
+		Image image = images.get(index);
+		if (image != null)
+			return image;
+
+		HashMap<String, JSONValue> imageMap = getRootObj("images", index);
+
+		image = new Image();
+
+		// We only support URI based images for now
+		image.uri = getStringChild(imageMap, "uri", false);
+
+		images.put(index, image);
+		return image;
+	}
+
+	private Texture getTexture(int index) {
+		Texture texture = textures.get(index);
+		if (texture != null)
+			return texture;
+
+		HashMap<String, JSONValue> textureMap = getRootObj("textures", index);
+
+		texture = new Texture();
+		texture.source = getIntChild(textureMap, "source", false);
+
+		textures.put(index, texture);
+		return texture;
+	}
+
+	private Material getMaterial(int index) {
+		Material material = materials.get(index);
+		if (material != null)
+			return material;
+
+		HashMap<String, JSONValue> materialMap = getRootObj("materials", index);
+		HashMap<String, JSONValue> pbrMap = getMapChild(materialMap, "pbrMetallicRoughness", false);
+
+		material = new Material();
+
+
+		HashMap<String, JSONValue> colorTexInfo = getMapChild(pbrMap, "baseColorTexture", true);
+		if (colorTexInfo == null) {
+			throw new RenderException("Material missing color texture info");
+		}
+
+		material.colorTex = getIntChild(colorTexInfo, "index", false);
+
+		double[] bcNums = getNumberListChild(pbrMap, "baseColorFactor", true);
+		if (bcNums != null) {
+			if (bcNums.length != 4) {
+				throw new RenderException("baseColorFactor must have 4 values");
+			}
+			material.colorFactor = new Color4d(bcNums[0],bcNums[1],bcNums[2],bcNums[3]);
+		} else {
+			material.colorFactor = new Color4d(1,1,1,1);
+		}
+
+		materials.put(index, material);
+		return material;
+	}
+
+	private SceneNode getNode(int index) {
+		SceneNode node = nodes.get(index);
+		if (node != null) {
+			return node;
+		}
+
+		HashMap<String, JSONValue> nodeMap = getRootObj("nodes", index);
+
+		node = new SceneNode();
+		node.meshIdx = getIntChild(nodeMap, "mesh", true);
+
+		node.children = getIntListChild(nodeMap, "children", true);
+		double[] matNums = getNumberListChild(nodeMap, "matrix", true);
+		double[] rotNums = getNumberListChild(nodeMap, "rotation", true);
+		double[] transNums = getNumberListChild(nodeMap, "translation", true);
+		double[] scaleNums = getNumberListChild(nodeMap, "scale", true);
+
+		if (matNums != null) {
+			if (matNums.length != 16) {
+				throw new RenderException("Node matrix property must have 16 values");
+			}
+			node.mat = new Mat4d(matNums);
+			node.mat.transpose4(); // GLTF matrix is in column major order
+		}
+		if (rotNums != null) {
+			if (rotNums.length != 4) {
+				throw new RenderException("Node rotationproperty must have 4 values");
+			}
+			node.rot = new Quaternion(rotNums[0], rotNums[1], rotNums[2], rotNums[3]);
+			node.rot.normalize();
+		}
+		if (transNums != null) {
+			if (transNums.length != 3) {
+				throw new RenderException("Node translation property must have 3 values");
+			}
+			node.trans = new Vec3d(transNums[0], transNums[1], transNums[2]);
+		}
+		if (scaleNums != null) {
+			if (scaleNums.length != 3) {
+				throw new RenderException("Node scale property must have 3 values");
+			}
+			node.scale = new Vec3d(scaleNums[0], scaleNums[1], scaleNums[2]);
+		}
+
+		node.fill();
+
+		if (!node.isValid()) {
+			throw new RenderException(String.format("Invalid scene node: %d", index));
+		}
+
+		nodes.put(index, node);
+		return node;
+	}
+
+	private int getProcessedMaterial(int matIdx) {
+		if (materialMap.get(matIdx) != null) {
+			return materialMap.get(matIdx);
+		}
+
+		// This material has not yet been added to the output data
+		int outMatIdx = numMats++;
+
+		Material mat = getMaterial(matIdx);
+		Texture colorTex = getTexture(mat.colorTex);
+		Image colorImage = getImage(colorTex.source);
+		URI colorURI;
+		try {
+			colorURI = new URL(contextURL, colorImage.uri).toURI();
+		} catch (Exception ex) {
+			throw new RenderException(ex.getMessage());
+		}
+
+		outputData.addMaterial(colorURI, colorImage.uri, mat.colorFactor, null, null, 1, MeshData.NO_TRANS, null);
+		return outMatIdx;
+	}
+
+	private Vec3d[] accToVec3dArray(int accIdx) {
+		Accessor acc = getAccessor(accIdx);
+		BufferView view = getBufferView(acc.bufferView);
+		Buffer buff = getBuffer(view.buffIdx);
+
+		if (!acc.vecType.equals("VEC3")) {
+			throw new RenderException(String.format("Accessor %d expected to be VEC3", accIdx));
+		}
+		if (!acc.compType.equals("float32")) {
+			throw new RenderException(String.format("Accessor %d expected to be float32", accIdx));
+		}
+
+		int stride = 4*3; // float32 * vec3
+		if (view.stride != 0) {
+			stride = view.stride;
+		}
+		int offset = acc.byteOffset + view.offset;
+		Vec3d[] ret = new Vec3d[acc.count];
+		for (int i = 0; i < acc.count; ++i) {
+			float xVal = buff.contents.getFloat(offset + i*stride + 0);
+			float yVal = buff.contents.getFloat(offset + i*stride + 4);
+			float zVal = buff.contents.getFloat(offset + i*stride + 8);
+			ret[i] = new Vec3d(xVal, yVal, zVal);
+		}
+		return ret;
+	}
+
+	private Vec2d[] accToVec2dArray(int accIdx) {
+		Accessor acc = getAccessor(accIdx);
+		BufferView view = getBufferView(acc.bufferView);
+		Buffer buff = getBuffer(view.buffIdx);
+
+		if (!acc.vecType.equals("VEC2")) {
+			throw new RenderException(String.format("Accessor %d expected to be VEC2", accIdx));
+		}
+		if (!acc.compType.equals("float32")) {
+			throw new RenderException(String.format("Accessor %d expected to be float32", accIdx));
+		}
+
+		int stride = 4*2; // float32 * vec3
+		if (view.stride != 0) {
+			stride = view.stride;
+		}
+		int offset = acc.byteOffset + view.offset;
+		Vec2d[] ret = new Vec2d[acc.count];
+
+		for (int i = 0; i < acc.count; ++i) {
+			float xVal = buff.contents.getFloat(offset + i*stride + 0);
+			float yVal = buff.contents.getFloat(offset + i*stride + 4);
+			ret[i] = new Vec2d(xVal, yVal);
+		}
+		return ret;
+	}
+
+	private int[] accToIntArray(int accIdx) {
+		Accessor acc = getAccessor(accIdx);
+		BufferView view = getBufferView(acc.bufferView);
+		Buffer buff = getBuffer(view.buffIdx);
+
+		if (!acc.vecType.equals("SCALAR")) {
+			throw new RenderException(String.format("Accessor %d expected to be SCALAR", accIdx));
+		}
+
+		int stride = getTypeSize(acc.compType);
+		if (view.stride != 0) {
+			stride = view.stride;
+		}
+
+		int offset = acc.byteOffset + view.offset;
+		int[] ret = new int[acc.count];
+
+		for (int i = 0; i < acc.count; ++i) {
+			int pos = offset + i*stride;
+
+			ret[i] = readIntFromBuffer(buff.contents, pos, acc.compType);
+		}
+		return ret;
+	}
+
+	private Vec3d[] generateNormals(Vec3d[] verts) {
+		Vec3d[] ret = new Vec3d[verts.length];
+		if (verts.length % 3 != 0) {
+			throw new RenderException("Mesh vertices not divisible by 3");
+		}
+		Vec3d t0 = new Vec3d();
+		Vec3d t1 = new Vec3d();
+
+		int numTris = verts.length / 3;
+		for (int i = 0; i < numTris; i++) {
+			Vec3d x = verts[i*3 + 0];
+			Vec3d y = verts[i*3 + 1];
+			Vec3d z = verts[i*3 + 2];
+
+			t0.sub3(y, x);
+			t1.sub3(z, y);
+			Vec3d norm = new Vec3d();
+			norm.cross3(t0, t1);
+			norm.normalize3();
+
+			// Don't worry about degenerate faces, they will be removed later
+
+			ret[i*3 + 0] = norm;
+			ret[i*3 + 1] = norm;
+			ret[i*3 + 2] = norm;
+		}
+		return ret;
+	}
+
+	// Returns a list of the sub meshes (each matching a mesh primitive) in the final MeshData
+	private int[] getProcessedMesh(int meshIdx) {
+
+		if (processedMeshes.get(meshIdx) != null) {
+			return processedMeshes.get(meshIdx);
+		}
+
+		Mesh mesh = getMesh(meshIdx);
+
+		int[] ret = new int[mesh.primitives.size()];
+		for (int primIdx = 0; primIdx < ret.length; ++ primIdx) {
+			MeshPrimitive prim = mesh.primitives.get(primIdx);
+
+			Vec3d[] vertPos = accToVec3dArray(prim.posAcc);
+			Vec3d[] vertNorms;
+			if (prim.normAcc != null) {
+				vertNorms = accToVec3dArray(prim.normAcc);
+			} else {
+				vertNorms = generateNormals(vertPos);
+			}
+
+			Vec2d[] texCoords = null;
+			if (prim.texCoord0Acc != null) {
+				texCoords = accToVec2dArray(prim.texCoord0Acc);
+				for (Vec2d tc: texCoords) {
+					// GLTF specifies the texture origin is top left,
+					// while we use bottom left. Flip the y-coordinate
+					tc.y = 1.0 - tc.y;
+				}
+			}
+
+			int[] indices = null;
+			if (prim.indicesAcc != null) {
+				indices = accToIntArray(prim.indicesAcc);
+			}
+
+			int numVerts;
+			if (indices != null) {
+				numVerts = indices.length;
+			} else {
+				numVerts = vertPos.length;
+			}
+
+			// Optional validation code
+			Accessor posAcc = getAccessor(prim.posAcc);
+			if (posAcc.min == null || posAcc.max == null || posAcc.min.length != 3 || posAcc.max.length != 3) {
+				throw new RenderException("Mesh position accessors missing min or max bounds");
+			}
+			Vec3d posMin = new Vec3d(posAcc.min[0], posAcc.min[1], posAcc.min[2]);
+			Vec3d posMax = new Vec3d(posAcc.max[0], posAcc.max[1], posAcc.max[2]);
+			AABB posBounds = new AABB(posMax, posMin);
+			for (Vec3d pos: vertPos) {
+				if (!posBounds.collides(pos, 0.0001)) {
+					throw new RenderException("Mesh position fails bounds check");
+				}
+			}
+
+			VertexMap vMap = new VertexMap();
+			int[] outIndices = new int[numVerts];
+			for (int i = 0; i < numVerts; ++i) {
+				int vertIdx = i;
+				if (indices != null) {
+					vertIdx = indices[i];
+				}
+				Vec3d pos = vertPos[vertIdx];
+				Vec3d norm = vertNorms[vertIdx];
+				Vec2d texCoord = null;
+				if (texCoords != null) {
+					texCoord = texCoords[vertIdx];
+				}
+				outIndices[i] = vMap.getVertIndex(pos, norm, texCoord);
+			}
+
+
+			ret[primIdx] = numPrims++;
+			outputData.addSubMesh(vMap.getVertList(), outIndices);
+		}
+
+		processedMeshes.put(meshIdx, ret);
+		return ret;
+	}
+
+	public static MeshData parse(URI asset) throws RenderException {
+
+		GLTFReader parser = new GLTFReader(asset);
+
+		parser.process();
+
+		return parser.outputData;
+	}
+
+	private GLTFReader(URI asset) {
+		this.asset = asset;
+
+		try {
+			contextURL = asset.toURL();
+		} catch(Exception ex) {
+			throw new RenderException(ex.getMessage());
+		}
+	}
+
+	private void processNode(int nodeIdx, Mat4d parentMat) {
+		SceneNode node = getNode(nodeIdx);
+
+		Mat4d localMat = node.getStaticMatrix();
+		Mat4d globalMat = new Mat4d();
+		globalMat.mult4(parentMat, localMat);
+
+		if (node.meshIdx != null) {
+			// Process the mesh and add a mesh instance
+
+			Mesh mesh = getMesh(node.meshIdx);
+			int[] subMeshes = getProcessedMesh(node.meshIdx);
+			for (int i = 0; i < mesh.primitives.size(); ++i) {
+				// Add a sub mesh instance for each primitive in the mesh
+				int subMeshIdx = subMeshes[i];
+				int matIdx = mesh.primitives.get(i).material;
+				int outMatIdx = getProcessedMaterial(matIdx);
+
+				// Note: JaamSim allows sub meshes to use arbitrary materials
+				// while JLTF primitives have fixed materials therefore we
+				// need to bind the materials when adding each sub mesh instance
+				outputData.addStaticMeshInstance(subMeshIdx, outMatIdx, globalMat);
+			}
+		}
+
+		if (node.children != null) {
+			// Recursively process children
+			for (int childIdx: node.children) {
+				processNode(childIdx, globalMat);
+			}
+		}
+	}
+
+	private void process() {
+		InputStream inStream;
+		try {
+			inStream = asset.toURL().openStream();
+		} catch (IOException ex) {
+			throw new RenderException("Can't read " + asset);
+		}
+		BufferedReader br = new BufferedReader(new InputStreamReader(inStream));
+		JSONParser jsonParser = new JSONParser();
+		Object[] lines = br.lines().toArray();
+		for (Object l: lines) {
+			jsonParser.addPiece((String)l);
+		}
+		JSONValue root;
+		try {
+			root = jsonParser.parse();
+			if (!root.isMap()) {
+				throw new RenderException("Top level GLTF JSON error. File is not a map");
+			}
+		} catch (JSONError ex) {
+			String msg = String.format("Could not read (%s). Error: %s", asset.toString(), ex.getMessage());
+			throw new RenderException(msg);
+		}
+
+		rootMap = root.mapVal;
+
+		Integer scene = getIntChild(rootMap, "scene", true);
+		if (scene == null)
+			scene = 0;
+		ArrayList<JSONValue> scenes = getListChild(rootMap, "scenes", false);
+		if (scenes.size() <= scene) {
+			throw new RenderException(String.format("Scene %d missing from file", scene));
+		}
+		JSONValue sceneVal = scenes.get(scene);
+
+		if (!sceneVal.isMap()) {
+			throw new RenderException("Scene object must be a JSON object");
+		}
+		// Create a rotation to map 'forward' from GLTF convention to JaamSim convention
+		// Specifically,
+		// Fwd: +Z -> +X
+		// Up: +Y -> + Z
+
+		Quaternion rotY = new Quaternion();
+		rotY.setRotYAxis(Math.PI/2.0);
+
+		Quaternion rotX = new Quaternion();
+		rotX.setRotXAxis(Math.PI/2.0);
+
+		Quaternion finalRot = new Quaternion();
+		finalRot.mult(rotX, rotY);
+
+		Mat4d rotMat = new Mat4d();
+		rotMat.setRot4(finalRot);
+
+		int[] nodes = getIntListChild(sceneVal.mapVal, "nodes", false);
+		for (int node: nodes) {
+			processNode(node, rotMat);
+		}
+
+		MeshData.TreeNode dummyTree = new MeshData.TreeNode();
+		dummyTree.trans = new MeshData.StaticTrans(rotMat);
+
+		outputData.setTree(dummyTree);
+
+		outputData.finalizeData();
+
+	}
+}

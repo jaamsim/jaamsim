@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import com.jaamsim.GLTF.GLTFReader;
 import com.jaamsim.MeshFiles.BlockReader;
 import com.jaamsim.MeshFiles.MeshData;
 import com.jaamsim.MeshFiles.MeshReader;
@@ -77,12 +78,19 @@ public class MeshDataCache {
 
 		// Release the lock long enough to load the model
 		String fileString = key.getURI().toString();
-		String ext = fileString.substring(fileString.length() - 3, fileString.length());
 
 		MeshData data = null;
 		try {
+			int lastDot = fileString.lastIndexOf('.');
+			if (lastDot < 0) {
+				lastDot = 0;
+			}
+			String ext = fileString.substring(lastDot + 1, fileString.length());
+
 			if (ext.toUpperCase().equals("DAE")) {
 				data = ColParser.parse(key.getURI());
+			} else if (ext.toUpperCase().equals("GLTF")) {
+				data = GLTFReader.parse(key.getURI());
 			} else if (ext.toUpperCase().equals("JSM")) {
 				data = MeshReader.parse(key.getURI());
 			} else if (ext.toUpperCase().equals("JSB")) {
