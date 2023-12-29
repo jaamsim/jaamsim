@@ -112,7 +112,13 @@ public class SampleListInput extends ArrayListInput<SampleProvider> {
 		if (!str.contains("{")) {
 			return str;
 		}
-		return Parser.addSubstringQuotesIfNeeded(str);
+		String[] array = Parser.splitSubstrings(str);
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < array.length; i++) {
+			array[i] = SampleProvider.addQuotesIfNeeded(array[i]);
+			sb.append("{").append(array[i]).append("}");
+		}
+		return sb.toString();
 	}
 
 	@Override

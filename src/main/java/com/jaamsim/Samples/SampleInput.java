@@ -27,7 +27,6 @@ import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.KeywordIndex;
-import com.jaamsim.input.Parser;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
@@ -89,14 +88,7 @@ public class SampleInput extends Input<SampleProvider> {
 
 	@Override
 	public String applyConditioning(String str) {
-
-		// No changes required if the input is a number and unit
-		ArrayList<String> tokens = new ArrayList<>();
-		Parser.tokenize(tokens, str, true);
-		if (tokens.size() == 2 && isDouble(tokens.get(0)))
-			return str;
-
-		return Parser.addQuotesIfNeeded(str);
+		return SampleProvider.addQuotesIfNeeded(str);
 	}
 
 	@Override
