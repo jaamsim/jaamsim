@@ -21,16 +21,17 @@ import java.util.ArrayList;
 
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ErrorException;
+import com.jaamsim.input.ExpEvaluator.EntityParseContext;
 import com.jaamsim.input.ExpParser.Expression;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 
-public class ExpressionInput extends Input<ExpParser.Expression> {
+public class ExpressionInput extends Input<Expression> {
 	private Class<? extends Unit> unitType;
-	private ExpEvaluator.EntityParseContext parseContext;
+	private EntityParseContext parseContext;
 	private ExpResType resType;
 
-	public ExpressionInput(String key, String cat, ExpParser.Expression def) {
+	public ExpressionInput(String key, String cat, Expression def) {
 		super(key, cat, def);
 	}
 
@@ -94,6 +95,9 @@ public class ExpressionInput extends Input<ExpParser.Expression> {
 
 		if (resType == ExpResType.ENTITY)
 			return VALID_EXP_ENT;
+
+		if (resType == ExpResType.COLLECTION)
+			return VALID_EXP_COL;
 
 		return VALID_EXP;
 	}

@@ -144,6 +144,7 @@ public abstract class Input<T> {
 	protected static final String VALID_EXP_NUM = "Accepts an expression that returns a number.";
 	protected static final String VALID_EXP_STR = "Accepts an expression that returns a string.";
 	protected static final String VALID_EXP_ENT = "Accepts an expression that returns an entity.";
+	protected static final String VALID_EXP_COL = "Accepts an expression that returns an array or hashmap.";
 	protected static final String VALID_EXP = "Accepts an expression.";
 	protected static final String VALID_KEYEVENT = "Accepts a single character representing a key on the keyboard. "
 	                                             + "For non-printing keys, enter the key's name such as HOME, ESCAPE, SPACE, F1, etc.";
