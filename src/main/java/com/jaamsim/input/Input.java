@@ -168,6 +168,13 @@ public abstract class Input<T> {
 	protected static final String VALID_ENTITY_PROV_LIST_TYPE = "Accepts a list of entity names of type %s or expressions that return such an entity. "
 	                                                          + "Each entry in the list can be enclosed by braces.";
 
+	protected static final String VALID_EXP_LIST_DIMLESS = "Accepts a list of expressions that return dimensionless numbers.";
+	protected static final String VALID_EXP_LIST_NUM = "Accepts a list of expressions that return numbers.";
+	protected static final String VALID_EXP_LIST_STR = "Accepts a list of expressions that return strings.";
+	protected static final String VALID_EXP_LIST_ENT = "Accepts a list of expressions that return entitys.";
+	protected static final String VALID_EXP_LIST_COL = "Accepts a list of expressions that return arrays or hashmaps.";
+	protected static final String VALID_EXP_LIST = "Accepts a list of expressions.";
+
 	protected static final String VALID_FORMAT = "Accepts a Java format string for a number. For example, '%.3f' would print a number with three decimal places.";
 	protected static final String VALID_VEC3D = "Accepts three numbers separated by spaces followed by a unit of type %s. "
 	                                          + "If only two numbers are entered, the third value defaults to zero.";
