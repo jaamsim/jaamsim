@@ -23,7 +23,7 @@ import com.jaamsim.input.EnumInput;
 import com.jaamsim.input.ExpError;
 import com.jaamsim.input.ExpResType;
 import com.jaamsim.input.ExpResult;
-import com.jaamsim.input.ExpressionInput;
+import com.jaamsim.input.ExpressionListInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputCallback;
 import com.jaamsim.input.Keyword;
@@ -44,26 +44,26 @@ public class XYGraph extends AbstractGraph {
 	                     + "array of numbers with or without units.",
 	         exampleList = {"'{1.0[m], 0.5[m]}'",
 	                        "{ [Statistics1].HistogramBinFractions } { [Statistics2].HistogramBinFractions }"})
-	protected final ExpressionInput yDataSource;
+	protected final ExpressionListInput yDataSource;
 
 	@Keyword(description = "One or more sources of data for the x-axis values corresponding to the "
 	                     + "primary y-axis data sources.\n"
 	                     + "Each source is specified by an array of numbers with or without units.",
 	         exampleList = {"'{1.0[m], 0.5[m]}'",
 	                        "{ [Statistics1].HistogramBinCentres } { [Statistics2].HistogramBinCentres }"})
-	protected final ExpressionInput xDataSource;
+	protected final ExpressionListInput xDataSource;
 
 	@Keyword(description = "One or more sources of data to be graphed on the secondary y-axis.\n"
 	                     + "Each source is graphed as a separate line or bar and is specified by an Entity and its Output.",
 	         exampleList = {"{ Entity1 Output1 } { Entity2 Output2 }"})
-	protected final ExpressionInput ySecondaryDataSource;
+	protected final ExpressionListInput ySecondaryDataSource;
 
 	@Keyword(description = "One or more sources of data for the x-axis values corresponding to the "
 	                     + "secondary y-axis data sources.\n"
 	                     + "Each source is specified by an array of numbers with or without units.",
 	         exampleList = {"'{1.0[m], 0.5[m]}'",
 	                        "{ [Statistics1].HistogramBinCentres } { [Statistics2].HistogramBinCentres }"})
-	protected final ExpressionInput xSecondaryDataSource;
+	protected final ExpressionListInput xSecondaryDataSource;
 
 	@Keyword(description = "Type of graph for each of the primary series:\n"
 	                     + "LINE_GRAPH - each series displayed as a line\n"
@@ -91,22 +91,22 @@ public class XYGraph extends AbstractGraph {
 		xUnitType.setCallback(xAxisUnitTypeCallback);
 		this.addInput(xUnitType);
 
-		yDataSource = new ExpressionInput("YDataSource", KEY_INPUTS, null);
+		yDataSource = new ExpressionListInput("YDataSource", KEY_INPUTS, null);
 		yDataSource.setResultType(ExpResType.COLLECTION);
 		yDataSource.setUnitType(UserSpecifiedUnit.class);
 		this.addInput(yDataSource);
 
-		xDataSource = new ExpressionInput("XDataSource", KEY_INPUTS, null);
+		xDataSource = new ExpressionListInput("XDataSource", KEY_INPUTS, null);
 		xDataSource.setResultType(ExpResType.COLLECTION);
 		xDataSource.setUnitType(UserSpecifiedUnit.class);
 		this.addInput(xDataSource);
 
-		ySecondaryDataSource = new ExpressionInput("YSecondaryDataSource", KEY_INPUTS, null);
+		ySecondaryDataSource = new ExpressionListInput("YSecondaryDataSource", KEY_INPUTS, null);
 		ySecondaryDataSource.setResultType(ExpResType.COLLECTION);
 		ySecondaryDataSource.setUnitType(UserSpecifiedUnit.class);
 		this.addInput(ySecondaryDataSource);
 
-		xSecondaryDataSource = new ExpressionInput("XSecondaryDataSource", KEY_INPUTS, null);
+		xSecondaryDataSource = new ExpressionListInput("XSecondaryDataSource", KEY_INPUTS, null);
 		xSecondaryDataSource.setResultType(ExpResType.COLLECTION);
 		xSecondaryDataSource.setUnitType(UserSpecifiedUnit.class);
 		this.addInput(xSecondaryDataSource);
@@ -162,15 +162,17 @@ public class XYGraph extends AbstractGraph {
 		getSecondarySeries().clear();
 
 		if (!yDataSource.isDefault() && !xDataSource.isDefault()) {
-			ExpResult.Collection yCol = yDataSource.getNextResult(this, simTime).colVal;
-			ExpResult.Collection xCol = xDataSource.getNextResult(this, simTime).colVal;
+			int numSeries = Math.min(yDataSource.getListSize(), xDataSource.getListSize());
+			for (int series = 0; series < numSeries; series++) {
+				ExpResult.Collection yCol = yDataSource.getNextResult(series, this, simTime).colVal;
+				ExpResult.Collection xCol = xDataSource.getNextResult(series, this, simTime).colVal;
 
-			int numPoints = Math.min(xCol.getSize(), yCol.getSize());
-			populatePrimarySeriesInfo(1, numPoints, null);
+				SeriesInfo info = new SeriesInfo();
+				getPrimarySeries().add(info);
+				int numPoints = Math.min(xCol.getSize(), yCol.getSize());
+				info.yValues = new double[numPoints];
+				info.xValues = new double[numPoints];
 
-			int series = -1;
-			for (SeriesInfo info : getPrimarySeries()) {
-				series++;
 				info.numPoints = numPoints;
 				info.indexOfLastEntry = numPoints - 1;
 				info.lineColour = getLineColor(series);
@@ -190,15 +192,17 @@ public class XYGraph extends AbstractGraph {
 		}
 
 		if (!ySecondaryDataSource.isDefault() && !xSecondaryDataSource.isDefault()) {
-			ExpResult.Collection ySecCol = ySecondaryDataSource.getNextResult(this, simTime).colVal;
-			ExpResult.Collection xSecCol = xSecondaryDataSource.getNextResult(this, simTime).colVal;
+			int numSeries = Math.min(ySecondaryDataSource.getListSize(), xSecondaryDataSource.getListSize());
+			for (int series = 0; series < numSeries; series++) {
+				ExpResult.Collection ySecCol = ySecondaryDataSource.getNextResult(series, this, simTime).colVal;
+				ExpResult.Collection xSecCol = xSecondaryDataSource.getNextResult(series, this, simTime).colVal;
 
-			int numPointsSec = Math.min(xSecCol.getSize(), ySecCol.getSize());
-			populateSecondarySeriesInfo(1, numPointsSec, null);
+				SeriesInfo info = new SeriesInfo();
+				getSecondarySeries().add(info);
+				int numPointsSec = Math.min(xSecCol.getSize(), ySecCol.getSize());
+				info.yValues = new double[numPointsSec];
+				info.xValues = new double[numPointsSec];
 
-			int series = -1;
-			for (SeriesInfo info : getSecondarySeries()) {
-				series++;
 				info.numPoints = numPointsSec;
 				info.indexOfLastEntry = numPointsSec - 1;
 				info.lineColour = getSecondaryLineColor(series);
