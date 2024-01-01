@@ -317,7 +317,7 @@ implements SampleProvider, RandomStreamUser {
 
 	@Override
 	public void copyInput(Entity ent, String key, ParseContext context, boolean lock) {
-		if (key.equals(getStreamNumberKeyword())) {
+		if (key.equals(getStreamNumberKeyword()) && getJaamSimModel() == ent.getJaamSimModel()) {
 			RandomStreamUser.setUniqueRandomSeed(this);
 			return;
 		}
