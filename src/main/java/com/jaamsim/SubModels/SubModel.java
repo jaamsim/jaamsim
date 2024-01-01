@@ -79,7 +79,9 @@ public class SubModel extends CompoundEntity implements DragAndDropable {
 		@Override
 		public void callback(Entity ent, Input<?> inp) {
 			// Set the prototype property and clear the Prototype input so that it is not saved
-			ent.setPrototype((SubModel) inp.getValue());
+			SubModel proto = (SubModel) inp.getValue();
+			if (proto != null)
+				ent.setPrototype(proto);
 			inp.reset();
 		}
 	};
