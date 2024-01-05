@@ -1130,6 +1130,12 @@ public void loadGPUAssets(GL2GL3 gl, Renderer renderer) {
 	assert(!_isLoadedGPU);
 
 	try {
+		// If this MeshData has an embedded images, register them with the texture cache
+		for (String imageURI: data.getExplicitImages().keySet()) {
+			ByteBuffer imageData = data.getExplicitImages().get(imageURI);
+			renderer.getTexCache().addExplicitData(imageURI, imageData);
+		}
+
 		for (MeshData.SubMeshData subData : data.getSubMeshData()) {
 			loadGPUSubMesh(gl, renderer, subData);
 		}

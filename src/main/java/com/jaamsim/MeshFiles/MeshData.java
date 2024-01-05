@@ -22,6 +22,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -515,6 +516,8 @@ public class MeshData {
 	private final ArrayList<AnimMeshInstance> _animMeshInstances = new ArrayList<>();
 	private final ArrayList<AnimLineInstance> _animLineInstances = new ArrayList<>();
 
+	private final HashMap<String, ByteBuffer> explicitImages = new HashMap<>();
+
 	private TreeNode treeRoot;
 	private int numTreeNodes;
 
@@ -540,6 +543,10 @@ public class MeshData {
 
 	public void setSource(String source) {
 		this.source = source;
+	}
+
+	public void addExplicitImage(String imageURI, ByteBuffer data) {
+		explicitImages.put(imageURI, data);
 	}
 
 	public void addStaticMeshInstance(int meshIndex, int matIndex, Mat4d mat) {
@@ -1290,6 +1297,10 @@ public class MeshData {
 
 	public ArrayList<StaticLineBatch> getLineBatches() {
 		return lineBatches;
+	}
+
+	public HashMap<String, ByteBuffer> getExplicitImages() {
+		return explicitImages;
 	}
 
 	public int getNumTriangles() {

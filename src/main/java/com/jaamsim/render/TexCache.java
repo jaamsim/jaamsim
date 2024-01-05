@@ -23,7 +23,10 @@ import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
@@ -92,6 +95,8 @@ public class TexCache {
 	private final Map<String, TexEntry> _texMap = new HashMap<>();
 	private final Map<String, LoadingEntry> _loadingMap = new HashMap<>();
 
+	private final Map<String, ByteBuffer> explicitDataMap = new HashMap<>();
+
 	private final EntryLoaderRunner entryLoader = new EntryLoaderRunner();
 
 	private final Renderer _renderer;
@@ -122,6 +127,10 @@ public class TexCache {
 
 		badTextureID = loadGLTexture(gl, badLE);
 		assert(badTextureID != -1); // Hopefully OpenGL never naturally returns -1, but I don't think it should
+	}
+
+	public void addExplicitData(String key, ByteBuffer data) {
+		explicitDataMap.put(key, data);
 	}
 
 	public int getTexID(GL2GL3 gl, URI imageURI, boolean withAlpha, boolean compressed, boolean waitUntilLoaded) {
@@ -197,7 +206,12 @@ public class TexCache {
 
 	private LoadingEntry launchLoadImage(GL2GL3 gl, final URI imageURI, boolean transparent, boolean compressed) {
 
-		Dimension dim = getImageDimension(imageURI);
+		Dimension dim = null;
+		try {
+			InputStream dataStream = getDataStream(imageURI);
+			dim = getImageDimension(dataStream);
+		} catch(Exception ex) {
+		}
 		if (dim == null) {
 			// Could not load image
 			String pre = "Unable to load texture file";
@@ -345,10 +359,27 @@ public class TexCache {
 		return glTexID;
 	}
 
+	private InputStream getDataStream(URI imageURI) throws MalformedURLException, IOException {
+		if (explicitDataMap.containsKey(imageURI.toString())) {
+			return new ByteArrayInputStream(explicitDataMap.get(imageURI.toString()).array());
+		} else {
+			return imageURI.toURL().openStream();
+		}
+	}
+
+	// Note: this version of getImageDimension() is not aware of images added via addExplicitData()
 	public static Dimension getImageDimension(URI imageURI) {
+		try {
+			return getImageDimension(imageURI.toURL().openStream());
+		} catch (Exception ex) {
+			return null;
+		}
+	}
+
+	public static Dimension getImageDimension(InputStream dataStream) {
 		ImageInputStream inStream = null;
 		try {
-			inStream = ImageIO.createImageInputStream(imageURI.toURL().openStream());
+			inStream = ImageIO.createImageInputStream(dataStream);
 			Iterator<ImageReader> it = ImageIO.getImageReaders(inStream);
 			if (it.hasNext()) {
 				ImageReader reader = it.next();
@@ -363,6 +394,8 @@ public class TexCache {
 
 		return null;
 	}
+
+
 
 	private class EntryLoaderRunner implements Runnable {
 		final ArrayList<LoadingEntry> list = new ArrayList<>();
@@ -398,7 +431,7 @@ public class TexCache {
 	private void loadImage(LoadingEntry le) {
 		BufferedImage img = null;
 		try {
-			img = ImageIO.read(le.imageURI.toURL());
+			img = ImageIO.read(getDataStream(le.imageURI));
 		}
 		catch(Exception e) {
 			le.failed.set(true);
