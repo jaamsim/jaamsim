@@ -7,10 +7,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
-import java.net.URL;
+import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -238,8 +239,8 @@ public class GLTFReader {
 	}
 
 	private final MeshData outputData = new MeshData(false);
-	private final URI asset;
-	private final URL contextURL;
+	private final URI contextURI;
+	private final ByteBuffer defaultBuffer;
 
 	private static class SceneNode {
 		public Quaternion rot;
@@ -322,6 +323,8 @@ public class GLTFReader {
 
 	private static class Image {
 		String uri;
+		ByteBuffer imageData;
+		String mimeType;
 	}
 
 	private static class Texture {
@@ -374,7 +377,7 @@ public class GLTFReader {
 			return buff;
 
 		HashMap<String, JSONValue> buffMap = getRootObj("buffers", index);
-		String uri = getStringChild(buffMap, "uri", false);
+		String uri = getStringChild(buffMap, "uri", true);
 		int byteLen = getIntChild(buffMap, "byteLength", false);
 
 		if (byteLen > (1 << 24)) {
@@ -383,14 +386,32 @@ public class GLTFReader {
 			throw new RenderException(msg);
 		}
 
-		URI buffURI = null;
-		try {
-			buffURI = new URL(contextURL, uri).toURI();
-		} catch (Exception ex) {
-			throw new RenderException(ex.getMessage());
+		if (uri == null) {
+			if (index != 0) {
+				throw new RenderException(String.format("Buffer %d is missing URI", index));
+			}
+			if (defaultBuffer == null) {
+				throw new RenderException("Missing GLB binary data chunk");
+			}
+
+			// Check the chunk size
+			int padding = 0;
+			if ((byteLen % 4) != 0) {
+				padding = 4 - byteLen % 4;
+			}
+			if (defaultBuffer.capacity() < byteLen + padding) {
+				throw new RenderException("GLB default buffer too small");
+			}
+
+			buff = new Buffer();
+			buff.contents = defaultBuffer;
+			buffers.put(index, buff);
+			return buff;
 		}
 
-		if (!buffURI.getScheme().equals("file")) {
+		URI buffURI = contextURI.resolve(uri);
+
+		if (buffURI.getScheme() != null && !buffURI.getScheme().equals("file")) {
 			throw new RenderException(String.format("Can only load buffers from 'file' URLs currently. Invalid url: %s", buffURI.toString()));
 		}
 
@@ -556,8 +577,54 @@ public class GLTFReader {
 
 		image = new Image();
 
-		// We only support URI based images for now
-		image.uri = getStringChild(imageMap, "uri", false);
+		image.uri = getStringChild(imageMap, "uri", true);
+		Integer bufferViewIdx = getIntChild(imageMap, "bufferView", true);
+		image.mimeType = getStringChild(imageMap, "mimeType", true);
+
+		if (bufferViewIdx != null) {
+			// This is an embedded image
+			BufferView view = getBufferView(bufferViewIdx);
+			Buffer buff = getBuffer(view.buffIdx);
+			if (view.stride != 0) {
+				throw new RenderException("Image buffer view has a defined stride.");
+			}
+			if (image.uri != null) {
+				throw new RenderException("Image declared with both URI and buffer view");
+			}
+			if (!image.mimeType.equals("image/png") && !image.mimeType.equals("image/jpeg")) {
+				throw new RenderException(String.format("GLTF Image %d has unknown mime type: %s", index, image.mimeType));
+			}
+
+			// Allocate an indirect buffer for the image data
+			// this technically is an extra copy but can be made to play more nicely with ImageIO
+			image.imageData = ByteBuffer.allocate(view.length);
+			buff.contents.position(view.offset);
+			buff.contents.get(image.imageData.array(), 0, view.length);
+			buff.contents.position(0);
+
+			// Create a new URI format for embedded images
+			try {
+				image.uri = new URI("gltf-image", contextURI.getSchemeSpecificPart(), Integer.toString(index)).toString();
+			} catch(URISyntaxException ex) {
+				throw new RenderException(ex.getMessage());
+			}
+
+			// Add this image data to the final output
+			outputData.addExplicitImage(image.uri, image.imageData);
+		} else {
+			if (image.uri == null) {
+				throw new RenderException(String.format("GLTF Image %d defines neither URI or buffer view", index));
+			}
+			try {
+				URI imageURI = new URI(image.uri);
+				if (imageURI.getScheme() != null && imageURI.getScheme().equals("data")) {
+					throw new RenderException("Images in Data URIs are not yet supported");
+				}
+
+			} catch(URISyntaxException ex) {
+				throw new RenderException(ex.getMessage());
+			}
+		}
 
 		images.put(index, image);
 		return image;
@@ -674,12 +741,7 @@ public class GLTFReader {
 		Material mat = getMaterial(matIdx);
 		Texture colorTex = getTexture(mat.colorTex);
 		Image colorImage = getImage(colorTex.source);
-		URI colorURI;
-		try {
-			colorURI = new URL(contextURL, colorImage.uri).toURI();
-		} catch (Exception ex) {
-			throw new RenderException(ex.getMessage());
-		}
+		URI colorURI = contextURI.resolve(colorImage.uri);
 
 		outputData.addMaterial(colorURI, colorImage.uri, mat.colorFactor, null, null, 1, MeshData.NO_TRANS, null);
 		return outMatIdx;
@@ -875,23 +937,125 @@ public class GLTFReader {
 		return ret;
 	}
 
-	public static MeshData parse(URI asset) throws RenderException {
+	public static MeshData parseGLTF(URI asset) throws RenderException {
 
-		GLTFReader parser = new GLTFReader(asset);
+		GLTFReader parser = new GLTFReader(asset, null);
 
+		parser.setRootFromURI(asset);
 		parser.process();
 
 		return parser.outputData;
 	}
 
-	private GLTFReader(URI asset) {
-		this.asset = asset;
+	public static MeshData parseGLB(URI asset) throws RenderException {
 
+		ByteBuffer gltfBuff = null;
+		ByteBuffer defaultBuff = null;
 		try {
-			contextURL = asset.toURL();
-		} catch(Exception ex) {
+			if (asset.getScheme() != null && !asset.getScheme().equals("file")) {
+				throw new RenderException("GLB assets must be files");
+			}
+
+			File buffFile = new File(asset);
+			FileInputStream buffStream = new FileInputStream(buffFile);
+			FileChannel buffChann = buffStream.getChannel();
+
+			long fileSize = buffChann.size();
+			if (fileSize > (1 << 30)) {
+				// Arbitrary file size limit. We most likely do not want to support assets > 1GB
+				buffStream.close();
+				throw new RenderException("GLB asset is too large");
+			}
+
+			if (fileSize < 256) {
+				// Arbitrary file size limit. It is likely impossible to have a meaningful GLB asset this small
+				buffStream.close();
+				throw new RenderException("GLB asset is too small");
+			}
+
+			ByteBuffer headerBuff = ByteBuffer.allocateDirect(20);
+			buffChann.read(headerBuff);
+
+			// GLB buffers are little endian
+			headerBuff.order(ByteOrder.LITTLE_ENDIAN);
+			headerBuff.flip();
+
+			int magic = headerBuff.getInt();
+			int version = headerBuff.getInt();
+			int length = headerBuff.getInt();
+
+			if (magic != 0x46546C67) {
+				buffStream.close();
+				throw new RenderException("Asset is not a GLB file");
+			}
+			if (version != 2) {
+				buffStream.close();
+				throw new RenderException("Unsupport GLTF version");
+			}
+
+			if (length != fileSize) {
+				buffStream.close();
+				throw new RenderException(String.format("GLB asset is incorrect size. Expected: %d, got: %d", length, fileSize));
+			}
+
+			int gltfChunkLength = headerBuff.getInt();
+			int gltfChunkType = headerBuff.getInt();
+			if (gltfChunkType != 0x4E4F534A) {
+				buffStream.close();
+				throw new RenderException("GLTF chunk missing in GLB file");
+			}
+			if (fileSize < gltfChunkLength + 20) {
+				buffStream.close();
+				throw new RenderException("GLTF chuck reported size is too large for GLB file");
+			}
+			gltfBuff = ByteBuffer.allocateDirect(gltfChunkLength);
+			buffChann.read(gltfBuff);
+			gltfBuff.flip();
+
+			if (buffChann.position() != fileSize) {
+				// We are not at the end of the file, there is a binary chunk
+				ByteBuffer binHeaderBuff = ByteBuffer.allocateDirect(8);
+				buffChann.read(binHeaderBuff);
+
+				// GLB buffers are little endian
+				binHeaderBuff.order(ByteOrder.LITTLE_ENDIAN);
+				binHeaderBuff.flip();
+
+				int binChunkLength = binHeaderBuff.getInt();
+				int binChunkType = binHeaderBuff.getInt();
+				if (binChunkType != 0x004E4942) {
+					buffStream.close();
+					throw new RenderException("Unknown second GLB chunk type");
+				}
+				if (binChunkLength > fileSize - buffChann.position()) {
+					buffStream.close();
+					throw new RenderException("GLB chunk size is too large");
+				}
+				defaultBuff = ByteBuffer.allocateDirect(binChunkLength);
+				buffChann.read(defaultBuff);
+				defaultBuff.order(ByteOrder.LITTLE_ENDIAN);
+				defaultBuff.flip();
+			}
+
+			buffStream.close();
+
+		} catch(RenderException ex) {
+			throw ex;
+		} catch (Exception ex) {
 			throw new RenderException(ex.getMessage());
 		}
+		GLTFReader parser = new GLTFReader(asset, defaultBuff);
+
+		parser.setRootFromByteBuffer(gltfBuff);
+		parser.process();
+
+		return parser.outputData;
+	}
+
+	private GLTFReader(URI context, ByteBuffer defBuff) {
+		contextURI = context;
+		contextURI.normalize();
+		defaultBuffer = defBuff;
 	}
 
 	private void processNode(int nodeIdx, Mat4d parentMat) {
@@ -927,7 +1091,27 @@ public class GLTFReader {
 		}
 	}
 
-	private void process() {
+	private void setRootFromByteBuffer(ByteBuffer buff) {
+		String jsonString = StandardCharsets.UTF_8.decode(buff).toString();
+
+		JSONParser jsonParser = new JSONParser();
+		jsonParser.addPiece(jsonString);
+		JSONValue root;
+		try {
+			root = jsonParser.parse();
+			if (!root.isMap()) {
+				throw new RenderException("Top level GLTF JSON error. File is not a map");
+			}
+		} catch (JSONError ex) {
+			String msg = String.format("JSON parse error: %s", ex.getMessage());
+			throw new RenderException(msg);
+		}
+
+		rootMap = root.mapVal;
+
+	}
+
+	private void setRootFromURI(URI asset) {
 		InputStream inStream;
 		try {
 			inStream = asset.toURL().openStream();
@@ -952,6 +1136,9 @@ public class GLTFReader {
 		}
 
 		rootMap = root.mapVal;
+	}
+
+	private void process() {
 
 		Integer scene = getIntChild(rootMap, "scene", true);
 		if (scene == null)

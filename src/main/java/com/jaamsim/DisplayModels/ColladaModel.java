@@ -65,11 +65,12 @@ public class ColladaModel extends DisplayModel {
 
 	private static HashMap<URI, MeshProtoKey> _cachedKeys = new HashMap<>();
 
-	public static final String[] VALID_FILE_EXTENSIONS = {"ZIP", "DAE", "GLTF", "OBJ", "JSM", "JSB"};
+	public static final String[] VALID_FILE_EXTENSIONS = {"ZIP", "DAE", "GLTF", "GLB", "OBJ", "JSM", "JSB"};
 	public static final String[] VALID_FILE_DESCRIPTIONS = {
 			"Zipped 3D Files (*.zip)",
 			"COLLADA Files (*.dae)",
 			"GLTF Files (*.gltf)",
+			"GLTF Binary Files (*.glb)",
 			"Wavefront Files (*.obj)",
 			"JaamSim 3D Files (*.jsm)",
 			"JaamSim 3D Binary Files (*.jsb)"};

@@ -90,7 +90,9 @@ public class MeshDataCache {
 			if (ext.toUpperCase().equals("DAE")) {
 				data = ColParser.parse(key.getURI());
 			} else if (ext.toUpperCase().equals("GLTF")) {
-				data = GLTFReader.parse(key.getURI());
+				data = GLTFReader.parseGLTF(key.getURI());
+			} else if (ext.toUpperCase().equals("GLB")) {
+				data = GLTFReader.parseGLB(key.getURI());
 			} else if (ext.toUpperCase().equals("JSM")) {
 				data = MeshReader.parse(key.getURI());
 			} else if (ext.toUpperCase().equals("JSB")) {
@@ -112,7 +114,6 @@ public class MeshDataCache {
 			catch (Exception e) {}
 			GUIFrame.invokeErrorDialog("3D Loader Error", source, 0, pre, msg, post);
 			LogBox.formatRenderLog("%s\n%s\n%s\n%s", pre, msg, source, post);
-
 			synchronized (badMeshSet) {
 				badMeshSet.add(key);
 				return getBadMesh();
