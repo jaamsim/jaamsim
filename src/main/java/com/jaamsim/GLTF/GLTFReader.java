@@ -76,8 +76,14 @@ public class GLTFReader {
 	private static Integer getIntChild(HashMap<String, JSONValue> parentMap, String childName, boolean optional) {
 
 		Double val = getNumberChild(parentMap, childName, optional);
-		if (val == null && optional) {
-			return null;
+		if (val == null) {
+			if (optional) {
+				return null;
+			}
+			else {
+				String msg = String.format("Missing integer attribute: %s", childName);
+				throw new RenderException(msg);
+			}
 		}
 
 		if (Math.floor(val) != val) {
