@@ -144,6 +144,37 @@ public class GLTFReader {
 		return ret;
 	}
 
+	// Walk through chained JSON maps based on a arbitrary list of keys and return the value found
+	// returns null on any error
+	private static JSONValue walkMap(HashMap<String, JSONValue> map, String... keys) {
+
+		HashMap<String, JSONValue> currMap = map;
+		for (int i = 0; i < keys.length; ++i) {
+			String key = keys[i];
+			JSONValue val = currMap.get(key);
+			if (val == null) {
+				return null;
+			}
+			if (i == keys.length-1) {
+				// Last key
+				return val;
+			}
+			if (!val.isMap()) {
+				return null;
+			}
+			currMap = val.mapVal;
+		}
+
+		return null;
+	}
+	private static Integer walkMapForInt(HashMap<String, JSONValue> map, String... keys) {
+		JSONValue val = walkMap(map, keys);
+		if (val != null && val.isNumber()) {
+			return (int)Math.round(val.numVal);
+		}
+		return null;
+	}
+
 	private static HashMap<String, JSONValue> getMapChild(HashMap<String, JSONValue> parentMap, String childName, boolean optional) {
 
 		JSONValue child = parentMap.get(childName);
@@ -355,7 +386,7 @@ public class GLTFReader {
 
 	private static class Material {
 
-		int colorTex;
+		int colorTex = -1;
 		Color4d colorFactor;
 	}
 
@@ -672,19 +703,26 @@ public class GLTFReader {
 			return material;
 
 		HashMap<String, JSONValue> materialMap = getRootObj("materials", index);
-		HashMap<String, JSONValue> pbrMap = getMapChild(materialMap, "pbrMetallicRoughness", false);
 
 		material = new Material();
 
+		Integer colorTex = walkMapForInt(materialMap, "pbrMetallicRoughness", "baseColorTexture", "index");
 
-		HashMap<String, JSONValue> colorTexInfo = getMapChild(pbrMap, "baseColorTexture", true);
-		if (colorTexInfo == null) {
-			throw new RenderException("Material missing color texture info");
+		if (colorTex == null) {
+			// Color texture is missing, maybe this material has a spec/gloss extension
+			colorTex = walkMapForInt(materialMap, "extensions", "KHR_materials_pbrSpecularGlossiness", "diffuseTexture", "index");
 		}
 
-		material.colorTex = getIntChild(colorTexInfo, "index", false);
+		if (colorTex == null) {
+			throw new RenderException(String.format("Material %d is missing color texture", index));
+		}
+		material.colorTex = colorTex;
 
-		double[] bcNums = getNumberListChild(pbrMap, "baseColorFactor", true);
+		HashMap<String, JSONValue> pbrMap = getMapChild(materialMap, "pbrMetallicRoughness", true);
+		double[] bcNums = null;
+		if (pbrMap != null) {
+			bcNums = getNumberListChild(pbrMap, "baseColorFactor", true);
+		}
 		if (bcNums != null) {
 			if (bcNums.length != 4) {
 				throw new RenderException("baseColorFactor must have 4 values");
