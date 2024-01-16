@@ -222,9 +222,9 @@ public class GLTFReader {
 		int val;
 		switch(compType) {
 		case "int8":
-			return buff.getChar(pos);
+			return buff.get(pos);
 		case "uint8":
-			val = buff.getChar(pos);
+			val = buff.get(pos);
 			// Fixup Java's lack of unsigned integer types
 			if (val < 0) {
 				val += 256;
@@ -402,8 +402,8 @@ public class GLTFReader {
 		String uri = getStringChild(buffMap, "uri", true);
 		int byteLen = getIntChild(buffMap, "byteLength", false);
 
-		if (byteLen > (1 << 24)) {
-			// Cap buffers at an arbitrary 16MB. This can be increased if non-pathological assets need it
+		if (byteLen > (1 << 30)) {
+			// Cap buffers at an arbitrary 1GB. This can be increased if non-pathological assets need it
 			String msg = String.format("Buffer byte length (%d) is too large", byteLen);
 			throw new RenderException(msg);
 		}
