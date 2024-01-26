@@ -30,6 +30,7 @@ import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Stack;
 
 import com.jaamsim.JSON.JSONError;
 import com.jaamsim.JSON.JSONParser;
@@ -175,6 +176,14 @@ public class GLTFReader {
 		return null;
 	}
 
+	private static String walkMapForString(HashMap<String, JSONValue> map, String... keys) {
+		JSONValue val = walkMap(map, keys);
+		if (val != null && val.isString()) {
+			return val.stringVal;
+		}
+		return null;
+	}
+
 	private static HashMap<String, JSONValue> getMapChild(HashMap<String, JSONValue> parentMap, String childName, boolean optional) {
 
 		JSONValue child = parentMap.get(childName);
@@ -295,10 +304,169 @@ public class GLTFReader {
 	private final URI contextURI;
 	private final ByteBuffer defaultBuffer;
 
+	private static class NodeAnimation {
+		public float[] rotInput;
+		public Quaternion[] rotValues;
+		public String rotInterp;
+
+		public float[] transInput;
+		public Vec3d[] transValues;
+		public String transInterp;
+
+		public float[] scaleInput;
+		public Vec3d[] scaleValues;
+		public String scaleInterp;
+
+		// Re-use Vec3d interpolation between translation and scale
+		private static Vec3d interpVec3d(float time, float[] input, Vec3d[] output, String interp) {
+			if (input == null) return null;
+
+			if (time <= input[0]) {
+				if (interp.equals("CUBICSPLINE"))
+					return output[1];
+				else
+					return output[0];
+			}
+			if (time >=input[input.length-1]) {
+				if (interp.equals("CUBICSPLINE"))
+					return output[output.length-2];
+				else
+					return output[output.length-1];
+			}
+			Vec3d ret;
+			Vec3d temp;
+			for (int i = 0; i < input.length-1; ++i) {
+				boolean inSeg = time >= input[i] && time < input[i+1];
+				if (!inSeg) continue;
+
+				float segDur = (input[i+1] - input[i]);
+				float t = (time - input[i]) / segDur;
+				switch(interp) {
+				case "STEP":
+					return output[i];
+				case "LINEAR":
+					ret = new Vec3d(output[i]);
+					ret.scale3(t);
+					temp = new Vec3d(output[i+1]);
+					temp.scale3(1.0 - t);
+					ret.add3(temp);
+					return ret;
+				case "CUBICSPLINE":
+					Vec3d vk = output[i*3 + 1];
+					Vec3d vk1 = output[(i+1)*3 + 1];
+					Vec3d bk = output[i*3 + 2];
+					Vec3d ak1 = output[(i+1)*3];
+					float t2 = t*t;
+					float t3 = t*t2;
+					float aTerm = 2*t3 - 3*t2 + 1;
+					float bTerm = (t3 - 2*t2 + t)*segDur;
+					float cTerm = -2*t3 + 3*t2;
+					float dTerm = (t3 - t2)*segDur;
+					ret = new Vec3d(vk);
+					ret.scale3(aTerm);
+
+					temp = new Vec3d(bk);
+					temp.scale3(bTerm);
+					ret.add3(temp);
+
+					temp = new Vec3d(vk1);
+					temp.scale3(cTerm);
+					ret.add3(temp);
+
+					temp = new Vec3d(ak1);
+					temp.scale3(dTerm);
+					ret.add3(temp);
+
+					return ret;
+
+				default:
+					throw new RenderException("Uknown interpolation type");
+				}
+			}
+			throw new RenderException("Internal error");
+		}
+		public Vec3d getTrans(float time) {
+			return interpVec3d(time, transInput, transValues, transInterp);
+		}
+		public Vec3d getScale(float time) {
+			return interpVec3d(time, scaleInput, scaleValues, scaleInterp);
+		}
+		public Quaternion getRot(float time) {
+			if (rotInput == null) return null;
+
+			if (time <= rotInput[0]) {
+				if (rotInterp.equals("CUBICSPLINE"))
+					return rotValues[1];
+				else
+					return rotValues[0];
+			}
+			if (time >=rotInput[rotInput.length-1]) {
+				if (rotInterp.equals("CUBICSPLINE"))
+					return rotValues[rotValues.length-2];
+				else
+					return rotValues[rotValues.length-1];
+			}
+			Quaternion ret;
+			Quaternion temp;
+			for (int i = 0; i < rotInput.length-1; ++i) {
+				boolean inSeg = time >= rotInput[i] && time < rotInput[i+1];
+				if (!inSeg) continue;
+
+				float segDur = (rotInput[i+1] - rotInput[i]);
+				float t = (time - rotInput[i]) / segDur;
+				switch(rotInterp) {
+				case "STEP":
+					return rotValues[i];
+				case "LINEAR":
+
+					ret = new Quaternion();
+					rotValues[i].slerp(rotValues[i+1], 1.0-t, ret);
+					return ret;
+				case "CUBICSPLINE":
+					Quaternion vk = rotValues[i*3 + 1];
+					Quaternion vk1 = rotValues[(i+1)*3 + 1];
+					Quaternion bk = rotValues[i*3 + 2];
+					Quaternion ak1 = rotValues[(i+1)*3];
+
+					float t2 = t*t;
+					float t3 = t*t2;
+					float aTerm = 2*t3 - 3*t2 + 1;
+					float bTerm = (t3 - 2*t2 + t)*segDur;
+					float cTerm = -2*t3 + 3*t2;
+					float dTerm = (t3 - t2)*segDur;
+					ret = new Quaternion(vk);
+					ret.scale(aTerm);
+
+					temp = new Quaternion(bk);
+					temp.scale(bTerm);
+					ret.add(temp);
+
+					temp = new Quaternion(vk1);
+					temp.scale(cTerm);
+					ret.add(temp);
+
+					temp = new Quaternion(ak1);
+					temp.scale(dTerm);
+					ret.add(temp);
+
+					ret.normalize();
+					return ret;
+
+				default:
+					throw new RenderException("Uknown interpolation type");
+				}
+			}
+			throw new RenderException("Internal error");
+		}
+	}
+
 	private static class SceneNode {
 		public Quaternion rot;
 		public Vec3d trans;
 		public Vec3d scale;
+
+		public boolean animated = false;
+		public HashMap<Integer, NodeAnimation> animMap = new HashMap<>();
 
 		public Mat4d mat;
 
@@ -337,6 +505,34 @@ public class GLTFReader {
 			res.scaleCols3(scale);
 			res.setTranslate3(trans);
 			return res;
+		}
+
+		public Mat4d getAnimatedMatrix(int animIdx, float time) {
+			if (!animated) {
+				return getStaticMatrix();
+			}
+
+			NodeAnimation anim = animMap.get(animIdx);
+			if (anim == null) {
+				return getStaticMatrix();
+			}
+
+			Vec3d trans = anim.getTrans(time);
+			if (trans == null)
+				trans = new Vec3d(0, 0, 0);
+			Vec3d scale = anim.getScale(time);
+			if (scale == null)
+				scale = new Vec3d(1, 1, 1);
+			Quaternion rot = anim.getRot(time);
+			if (rot == null)
+				rot = new Quaternion();
+
+			Mat4d res = new Mat4d();
+			res.setRot3(rot);
+			res.scaleCols3(scale);
+			res.setTranslate3(trans);
+			return res;
+
 		}
 	}
 
@@ -390,12 +586,34 @@ public class GLTFReader {
 		Color4d colorFactor;
 	}
 
+	private static class Channel {
+		int samplerIdx;
+		int targetNode;
+		String targetPath;
+	}
+
+	private static class Sampler {
+		int inputAcc;
+		int outputAcc;
+		String interpolation;
+	}
+
+	private static class Animation {
+		ArrayList<Channel> channels = new ArrayList<>();
+		ArrayList<Sampler> samplers = new ArrayList<>();
+		String name;
+		float start = Float.POSITIVE_INFINITY;
+		float end = Float.NEGATIVE_INFINITY;
+	}
+
 	// Members
 	HashMap<String, JSONValue> rootMap;
 
 	// Lazily initialized members
 	HashMap<Integer, SceneNode> nodes = new HashMap<>();
 	HashMap<Integer, Mesh> meshes = new HashMap<>();
+
+	HashMap<Integer, Animation> animations = new HashMap<>();
 
 	HashMap<Integer, Buffer> buffers = new HashMap<>();
 	HashMap<Integer, BufferView> bufferViews = new HashMap<>();
@@ -577,6 +795,60 @@ public class GLTFReader {
 
 		accessors.put(index, accessor);
 		return accessor;
+	}
+
+	private static Sampler parseSampler(HashMap<String, JSONValue> sampMap) {
+		Sampler samp = new Sampler();
+		samp.inputAcc = getIntChild(sampMap, "input", false);
+		samp.outputAcc = getIntChild(sampMap, "output", false);
+		samp.interpolation = getStringChild(sampMap, "interpolation", true);
+		if (samp.interpolation == null) {
+			samp.interpolation = "LINEAR";
+		}
+		return samp;
+	}
+
+	private static Channel parseChannel(HashMap<String, JSONValue> chanMap) {
+		Channel chan = new Channel();
+		chan.samplerIdx = getIntChild(chanMap, "sampler", false);
+		Integer targetNode = walkMapForInt(chanMap, "target", "node");
+		String targetPath = walkMapForString(chanMap, "target", "path");
+		if (targetNode == null || targetPath == null) {
+			throw new RenderException("Incomplete animation channel");
+		}
+		chan.targetNode = targetNode;
+		chan.targetPath = targetPath;
+		return chan;
+	}
+
+	private Animation getAnimation(int index) {
+		Animation anim = animations.get(index);
+		if (anim != null)
+			return anim;
+
+		HashMap<String, JSONValue> animMap = getRootObj("animations", index);
+
+		anim = new Animation();
+		anim.name = getStringChild(animMap, "name", true);
+
+		ArrayList<JSONValue> samplers = getListChild(animMap, "samplers", false);
+		for (JSONValue samp: samplers) {
+			if (!samp.isMap()) {
+				throw new RenderException("Animation sampler is not a JSON map");
+			}
+			anim.samplers.add(parseSampler(samp.mapVal));
+		}
+
+		ArrayList<JSONValue> channels = getListChild(animMap, "channels", false);
+		for (JSONValue channel: channels) {
+			if (!channel.isMap()) {
+				throw new RenderException("Animation channel is not a JSON map");
+			}
+			anim.channels.add(parseChannel(channel.mapVal));
+		}
+
+		animations.put(index, anim);
+		return anim;
 	}
 
 	private static MeshPrimitive parsePrim(HashMap<String, JSONValue> prim) {
@@ -807,6 +1079,35 @@ public class GLTFReader {
 		return outMatIdx;
 	}
 
+	private Quaternion[] accToQuatArray(int accIdx) {
+		Accessor acc = getAccessor(accIdx);
+		BufferView view = getBufferView(acc.bufferView);
+		Buffer buff = getBuffer(view.buffIdx);
+
+		if (!acc.vecType.equals("VEC4")) {
+			throw new RenderException(String.format("Accessor %d expected to be VEC3", accIdx));
+		}
+		// TODO: GLTF allows normalized integer values here
+		if (!acc.compType.equals("float32")) {
+			throw new RenderException(String.format("Accessor %d expected to be float32. Only float based animation rotations are currently supported", accIdx));
+		}
+
+		int stride = 4*4; // float32 * vec4
+		if (view.stride != 0) {
+			stride = view.stride;
+		}
+		int offset = acc.byteOffset + view.offset;
+		Quaternion[] ret = new Quaternion[acc.count];
+		for (int i = 0; i < acc.count; ++i) {
+			float xVal = buff.contents.getFloat(offset + i*stride + 0);
+			float yVal = buff.contents.getFloat(offset + i*stride + 4);
+			float zVal = buff.contents.getFloat(offset + i*stride + 8);
+			float wVal = buff.contents.getFloat(offset + i*stride + 12);
+			ret[i] = new Quaternion(xVal, yVal, zVal, wVal);
+		}
+		return ret;
+	}
+
 	private Vec3d[] accToVec3dArray(int accIdx) {
 		Accessor acc = getAccessor(accIdx);
 		BufferView view = getBufferView(acc.bufferView);
@@ -857,6 +1158,34 @@ public class GLTFReader {
 			float xVal = buff.contents.getFloat(offset + i*stride + 0);
 			float yVal = buff.contents.getFloat(offset + i*stride + 4);
 			ret[i] = new Vec2d(xVal, yVal);
+		}
+		return ret;
+	}
+
+	private float[] accToFloatArray(int accIdx) {
+		Accessor acc = getAccessor(accIdx);
+		BufferView view = getBufferView(acc.bufferView);
+		Buffer buff = getBuffer(view.buffIdx);
+
+		if (!acc.vecType.equals("SCALAR")) {
+			throw new RenderException(String.format("Accessor %d expected to be SCALAR", accIdx));
+		}
+
+		if (!acc.compType.equals("float32")) {
+			throw new RenderException(String.format("Accessor %d expected to be float32", accIdx));
+		}
+
+		int stride = 4;
+
+		if (view.stride != 0) {
+			stride = view.stride;
+		}
+
+		int offset = acc.byteOffset + view.offset;
+		float[] ret = new float[acc.count];
+
+		for (int i = 0; i < acc.count; ++i) {
+			ret[i] = buff.contents.getFloat(offset + i*stride);
 		}
 		return ret;
 	}
@@ -1118,12 +1447,46 @@ public class GLTFReader {
 		defaultBuffer = defBuff;
 	}
 
-	private void processNode(int nodeIdx, Mat4d parentMat) {
-		SceneNode node = getNode(nodeIdx);
+	private MeshData.TreeNode buildOutputNode(int nodeIdx, Stack<Integer> nodeStack) {
+		if (nodeStack.contains(nodeIdx)) {
+			throw new RenderException("Scene node loop detected");
+		}
+		nodeStack.push(nodeIdx);
 
-		Mat4d localMat = node.getStaticMatrix();
-		Mat4d globalMat = new Mat4d();
-		globalMat.mult4(parentMat, localMat);
+		SceneNode node = getNode(nodeIdx);
+		MeshData.TreeNode ret = new MeshData.TreeNode();
+
+		Mat4d staticMat = node.getStaticMatrix();
+		if (!node.animated) {
+			ret.trans = new MeshData.StaticTrans(staticMat);
+		} else {
+			int numAnims = node.animMap.size();
+			double[][] timesArray = new double[numAnims][];
+			Mat4d[][] matsArray = new Mat4d[numAnims][];
+			String[] names = new String[numAnims];
+			int outIdx = 0;
+			for (int animIdx : node.animMap.keySet()) {
+				Animation anim = getAnimation(animIdx);
+
+				names[outIdx] = anim.name;
+				float duration = anim.end - anim.start;
+				// TODO: more intelligent sampling logic
+				float SAMPLE_RATE = 1.0f/20.0f;
+
+				int numSamples = Math.round(duration/SAMPLE_RATE);
+				timesArray[outIdx] = new double[numSamples];
+				matsArray[outIdx] = new Mat4d[numSamples];
+				float sampTime = anim.start;
+				for (int i = 0; i < numSamples; ++i) {
+					timesArray[outIdx][i] = sampTime;
+					matsArray[outIdx][i] = node.getAnimatedMatrix(animIdx, sampTime);
+
+					sampTime += SAMPLE_RATE;
+				}
+				outIdx++;
+			}
+			ret.trans = new MeshData.AnimTrans(timesArray, matsArray, names, staticMat);
+		}
 
 		if (node.meshIdx != null) {
 			// Process the mesh and add a mesh instance
@@ -1139,16 +1502,18 @@ public class GLTFReader {
 				// Note: JaamSim allows sub meshes to use arbitrary materials
 				// while JLTF primitives have fixed materials therefore we
 				// need to bind the materials when adding each sub mesh instance
-				outputData.addStaticMeshInstance(subMeshIdx, outMatIdx, globalMat);
-			}
-		}
+				MeshData.AnimMeshInstance inst = new MeshData.AnimMeshInstance(subMeshIdx, outMatIdx);
 
-		if (node.children != null) {
-			// Recursively process children
-			for (int childIdx: node.children) {
-				processNode(childIdx, globalMat);
+				ret.meshInstances.add(inst);
 			}
 		}
+		if (node.children != null) {
+			for (int childIdx: node.children) {
+				ret.children.add(buildOutputNode(childIdx, nodeStack));
+			}
+		}
+		nodeStack.pop();
+		return ret;
 	}
 
 	private void setRootFromByteBuffer(ByteBuffer buff) {
@@ -1229,15 +1594,88 @@ public class GLTFReader {
 		Mat4d rotMat = new Mat4d();
 		rotMat.setRot4(finalRot);
 
-		int[] nodes = getIntListChild(sceneVal.mapVal, "nodes", false);
-		for (int node: nodes) {
-			processNode(node, rotMat);
+		JSONValue animList = rootMap.get("animations");
+		if (animList != null && animList.isList()) {
+			for (int i = 0; i <animList.listVal.size(); ++i) {
+				Animation anim = getAnimation(i);
+
+				for (Channel chan: anim.channels) {
+					SceneNode targetNode = getNode(chan.targetNode);
+					targetNode.animated = true;
+
+					NodeAnimation nodeAnim = targetNode.animMap.get(i);
+					if (nodeAnim == null) {
+						nodeAnim = new NodeAnimation();
+						targetNode.animMap.put(i, nodeAnim);
+					}
+
+					if (chan.samplerIdx < 0 || chan.samplerIdx >= anim.samplers.size()) {
+						throw new RenderException("Animation sampler index out of bounds");
+					}
+					Sampler samp = anim.samplers.get(chan.samplerIdx);
+					float[] inputArray = accToFloatArray(samp.inputAcc);
+
+					// Validate the input array
+					for (int ii = 0; ii < inputArray.length-1; ++ii) {
+						if (inputArray[ii] > inputArray[ii+1]) {
+							throw new RenderException("Animation keyframes are not monotonically increasing");
+						}
+					}
+					if (inputArray[0] < anim.start) {
+						anim.start = inputArray[0];
+					}
+					if (inputArray[inputArray.length-1] > anim.end) {
+						anim.end = inputArray[inputArray.length-1];
+					}
+
+					switch(chan.targetPath) {
+					case "rotation":
+						if (nodeAnim.rotInput != null) {
+							throw new RenderException("The same node is target of more than one rotation curve in same animation");
+						}
+						nodeAnim.rotInput = inputArray;
+						nodeAnim.rotValues = accToQuatArray(samp.outputAcc);
+						nodeAnim.rotInterp = samp.interpolation;
+						break;
+					case "translation":
+						if (nodeAnim.transInput != null) {
+							throw new RenderException("The same node is target of more than one scale curve in same animation");
+						}
+						nodeAnim.transInput = inputArray;
+						nodeAnim.transValues = accToVec3dArray(samp.outputAcc);
+						nodeAnim.transInterp = samp.interpolation;
+						break;
+					case "scale":
+						if (nodeAnim.scaleInput != null) {
+							throw new RenderException("The same node is target of more than one translation curve in same animation");
+						}
+						nodeAnim.scaleInput = inputArray;
+						nodeAnim.scaleValues = accToVec3dArray(samp.outputAcc);
+						nodeAnim.scaleInterp = samp.interpolation;
+						break;
+					case "weights":
+						// Ignore for now
+						break;
+					default:
+						throw new RenderException(String.format("Unknown animation channel target path: %s", chan.targetPath));
+					}
+
+				}
+			}
 		}
 
-		MeshData.TreeNode dummyTree = new MeshData.TreeNode();
-		dummyTree.trans = new MeshData.StaticTrans(rotMat);
+		int[] nodes = getIntListChild(sceneVal.mapVal, "nodes", false);
 
-		outputData.setTree(dummyTree);
+		// Stack for node loop detection
+		Stack<Integer> nodeStack = new Stack<>();
+
+		MeshData.TreeNode rootNode = new MeshData.TreeNode();
+		rootNode.trans = new MeshData.StaticTrans(rotMat);
+		for (int node: nodes) {
+			rootNode.children.add(buildOutputNode(node, nodeStack));
+		}
+
+		outputData.setTree(rootNode);
 
 		outputData.finalizeData();
 

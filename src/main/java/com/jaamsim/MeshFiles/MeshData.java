@@ -252,6 +252,11 @@ public class MeshData {
 				act.invMatrices = new Mat4d[act.matrices.length];
 				for (int j = 0; j < act.matrices.length; ++j) {
 					act.invMatrices[j] = act.matrices[j].inverse();
+					if (act.invMatrices[j] == null) {
+						// The action includes a non-invertible matrix
+						// maybe this should be an exception?
+						act.invMatrices[j] = new Mat4d();
+					}
 				}
 
 				actions.add(act);
