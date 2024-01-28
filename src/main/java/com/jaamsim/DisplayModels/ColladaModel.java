@@ -345,17 +345,16 @@ public class ColladaModel extends DisplayModel {
 	@Output(name = "Actions",
 	 description = "Names of the animations contained in the 3D model.",
 	    sequence = 1)
-	public String getActionsOutput(double simTime) {
+	public ArrayList<String> getActionsOutput(double simTime) {
+		ArrayList<String> ret = new ArrayList<>();
 		if (!RenderManager.isGood() || colladaFile.getValue() == null)
-			return "";
+			return ret;
 		MeshProtoKey meshKey = getCachedMeshKey(colladaFile.getValue());
 		ArrayList<Action.Description> actionDescs = RenderManager.inst().getMeshActions(meshKey, true);
-
-		StringBuilder ret = new StringBuilder();
 		for (Action.Description desc : actionDescs) {
-			ret.append(desc.name + " ");
+			ret.add(desc.name);
 		}
-		return ret.toString();
+		return ret;
 	}
 
 	public void exportBinaryMesh(String outputName) {
