@@ -357,6 +357,22 @@ public class ColladaModel extends DisplayModel {
 		return ret;
 	}
 
+	@Output(name = "Durations",
+	 description = "Durations of the animations contained in the 3D model.",
+	    sequence = 2)
+	public double[] getDurationsOutput(double simTime) {
+		if (!RenderManager.isGood() || colladaFile.getValue() == null)
+			return new double[0];
+		MeshProtoKey meshKey = getCachedMeshKey(colladaFile.getValue());
+		ArrayList<Action.Description> actionDescs = RenderManager.inst().getMeshActions(meshKey, true);
+		double[] ret = new double[actionDescs.size()];
+		for (int i = 0; i < actionDescs.size(); i++) {
+			Action.Description desc = actionDescs.get(i);
+			ret[i] = desc.duration;
+		}
+		return ret;
+	}
+
 	public void exportBinaryMesh(String outputName) {
 		MeshProtoKey meshKey = getCachedMeshKey(colladaFile.getValue());
 
