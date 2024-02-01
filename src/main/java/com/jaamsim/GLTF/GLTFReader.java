@@ -554,11 +554,11 @@ public class GLTFReader {
 	}
 
 	private static class MeshPrimitive {
-		final Integer posAcc;
+		final int posAcc;
 		final Integer normAcc;
 		final Integer texCoord0Acc;
 		final Integer indicesAcc;
-		final Integer material;
+		final int material;
 
 		MeshPrimitive(HashMap<String, JSONValue> prim) {
 			Integer mode = getIntChild(prim, "mode", true);
