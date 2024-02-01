@@ -537,11 +537,29 @@ public class GLTFReader {
 	}
 
 	private static class MeshPrimitive {
-		Integer posAcc;
-		Integer normAcc;
-		Integer texCoord0Acc;
-		Integer indicesAcc;
-		Integer material;
+		final Integer posAcc;
+		final Integer normAcc;
+		final Integer texCoord0Acc;
+		final Integer indicesAcc;
+		final Integer material;
+
+		MeshPrimitive(HashMap<String, JSONValue> prim) {
+			Integer mode = getIntChild(prim, "mode", true);
+			if (mode != null) {
+				if (mode.intValue() != 4) {
+					throw new RenderException(String.format("Currently unsupported GLTF geometry mode: %d", mode.intValue()));
+				}
+			}
+
+			HashMap<String, JSONValue> attribMap = getMapChild(prim, "attributes", false);
+
+			posAcc = getIntChild(attribMap, "POSITION", true);
+			normAcc = getIntChild(attribMap, "NORMAL", true);
+			texCoord0Acc = getIntChild(attribMap, "TEXCOORD_0", true);
+
+			indicesAcc = getIntChild(prim, "indices", true);
+			material = getIntChild(prim, "material", true);
+		}
 	}
 
 	private static class Mesh {
@@ -587,15 +605,36 @@ public class GLTFReader {
 	}
 
 	private static class Channel {
-		int samplerIdx;
-		int targetNode;
-		String targetPath;
+		final int samplerIdx;
+		final int targetNode;
+		final String targetPath;
+
+		Channel(HashMap<String, JSONValue> chanMap) {
+			samplerIdx = getIntChild(chanMap, "sampler", false);
+			Integer targetNode = walkMapForInt(chanMap, "target", "node");
+			String targetPath = walkMapForString(chanMap, "target", "path");
+			if (targetNode == null || targetPath == null) {
+				throw new RenderException("Incomplete animation channel");
+			}
+			this.targetNode = targetNode;
+			this.targetPath = targetPath;
+		}
 	}
 
 	private static class Sampler {
-		int inputAcc;
-		int outputAcc;
-		String interpolation;
+		final int inputAcc;
+		final int outputAcc;
+		final String interpolation;
+
+		Sampler(HashMap<String, JSONValue> sampMap) {
+			inputAcc = getIntChild(sampMap, "input", false);
+			outputAcc = getIntChild(sampMap, "output", false);
+			String interp = getStringChild(sampMap, "interpolation", true);
+			if (interp != null)
+				interpolation = interp;
+			else
+				interpolation = "LINEAR";
+		}
 	}
 
 	private static class Animation {
@@ -626,7 +665,7 @@ public class GLTFReader {
 	HashMap<Integer, int[]> processedMeshes = new HashMap<>();
 
 	HashMap<Integer, Integer> materialMap = new HashMap<>();
-	HashMap<Integer, int[]> primitiveMap = new HashMap<>();
+	//HashMap<Integer, int[]> primitiveMap = new HashMap<>();
 	int numMats = 0;
 	int numPrims = 0;
 
@@ -797,30 +836,6 @@ public class GLTFReader {
 		return accessor;
 	}
 
-	private static Sampler parseSampler(HashMap<String, JSONValue> sampMap) {
-		Sampler samp = new Sampler();
-		samp.inputAcc = getIntChild(sampMap, "input", false);
-		samp.outputAcc = getIntChild(sampMap, "output", false);
-		samp.interpolation = getStringChild(sampMap, "interpolation", true);
-		if (samp.interpolation == null) {
-			samp.interpolation = "LINEAR";
-		}
-		return samp;
-	}
-
-	private static Channel parseChannel(HashMap<String, JSONValue> chanMap) {
-		Channel chan = new Channel();
-		chan.samplerIdx = getIntChild(chanMap, "sampler", false);
-		Integer targetNode = walkMapForInt(chanMap, "target", "node");
-		String targetPath = walkMapForString(chanMap, "target", "path");
-		if (targetNode == null || targetPath == null) {
-			throw new RenderException("Incomplete animation channel");
-		}
-		chan.targetNode = targetNode;
-		chan.targetPath = targetPath;
-		return chan;
-	}
-
 	private Animation getAnimation(int index) {
 		Animation anim = animations.get(index);
 		if (anim != null)
@@ -836,7 +851,7 @@ public class GLTFReader {
 			if (!samp.isMap()) {
 				throw new RenderException("Animation sampler is not a JSON map");
 			}
-			anim.samplers.add(parseSampler(samp.mapVal));
+			anim.samplers.add(new Sampler(samp.mapVal));
 		}
 
 		ArrayList<JSONValue> channels = getListChild(animMap, "channels", false);
@@ -844,32 +859,11 @@ public class GLTFReader {
 			if (!channel.isMap()) {
 				throw new RenderException("Animation channel is not a JSON map");
 			}
-			anim.channels.add(parseChannel(channel.mapVal));
+			anim.channels.add(new Channel(channel.mapVal));
 		}
 
 		animations.put(index, anim);
 		return anim;
-	}
-
-	private static MeshPrimitive parsePrim(HashMap<String, JSONValue> prim) {
-		MeshPrimitive ret = new MeshPrimitive();
-
-		Integer mode = getIntChild(prim, "mode", true);
-		if (mode != null) {
-			if (mode.intValue() != 4) {
-				throw new RenderException(String.format("Currently unsupported GLTF geometry mode: %d", mode.intValue()));
-			}
-		}
-
-		HashMap<String, JSONValue> attribMap = getMapChild(prim, "attributes", false);
-
-		ret.posAcc = getIntChild(attribMap, "POSITION", true);
-		ret.normAcc = getIntChild(attribMap, "NORMAL", true);
-		ret.texCoord0Acc = getIntChild(attribMap, "TEXCOORD_0", true);
-
-		ret.indicesAcc = getIntChild(prim, "indices", true);
-		ret.material = getIntChild(prim, "material", true);
-		return ret;
 	}
 
 	private Mesh getMesh(int index) {
@@ -886,7 +880,7 @@ public class GLTFReader {
 			if (!prim.isMap()) {
 				throw new RenderException("Mesh primitive is not a JSON map");
 			}
-			mesh.primitives.add(parsePrim(prim.mapVal));
+			mesh.primitives.add(new MeshPrimitive(prim.mapVal));
 		}
 
 		meshes.put(index, mesh);
