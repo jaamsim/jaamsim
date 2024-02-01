@@ -578,14 +578,32 @@ public class GLTFReader {
 	}
 
 	private static class Accessor {
-		int bufferView;
-		int byteOffset;
-		String compType;
-		String vecType;
-		int count;
+		final int bufferView;
+		final int byteOffset;
+		final String compType;
+		final String vecType;
+		final int count;
 
-		double[] min;
-		double[] max;
+		final double[] min;
+		final double[] max;
+
+		Accessor(HashMap<String, JSONValue> accessorMap) {
+			bufferView = getIntChild(accessorMap, "bufferView", false);
+			count = getIntChild(accessorMap, "count", false);
+			vecType = getStringChild(accessorMap, "type", false);
+
+			int compTypeNum = getIntChild(accessorMap, "componentType", false);
+			compType = getCompTypeFromNum(compTypeNum);
+
+			Integer bOffset = getIntChild(accessorMap, "byteOffset", true);
+			if (bOffset == null)
+				byteOffset = 0;
+			else
+				byteOffset = bOffset;
+
+			min = getNumberListChild(accessorMap, "min", true);
+			max = getNumberListChild(accessorMap, "max", true);
+		}
 	}
 
 	private static class Image {
@@ -800,22 +818,7 @@ public class GLTFReader {
 
 		HashMap<String, JSONValue> accessorMap = getRootObj("accessors", index);
 
-		accessor = new Accessor();
-
-		accessor.bufferView = getIntChild(accessorMap, "bufferView", false);
-		accessor.count = getIntChild(accessorMap, "count", false);
-		accessor.vecType = getStringChild(accessorMap, "type", false);
-
-		int compTypeNum = getIntChild(accessorMap, "componentType", false);
-		accessor.compType = getCompTypeFromNum(compTypeNum);
-
-		Integer byteOffset = getIntChild(accessorMap, "byteOffset", true);
-		if (byteOffset == null)
-			byteOffset = 0;
-		accessor.byteOffset = byteOffset;
-
-		accessor.min = getNumberListChild(accessorMap, "min", true);
-		accessor.max = getNumberListChild(accessorMap, "max", true);
+		accessor = new Accessor(accessorMap);
 
 		// Check that the accessor fits inside the buffer view
 		int numComps = getNumComponents(accessor.vecType);
