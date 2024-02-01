@@ -666,19 +666,23 @@ public class GLTFReader {
 			inputAcc = getIntChild(sampMap, "input", false);
 			outputAcc = getIntChild(sampMap, "output", false);
 			String interp = getStringChild(sampMap, "interpolation", true);
-			switch (interp) {
-			case "STEP":
-				interpolation = Interp.STEP;
-				break;
-			case "LINEAR":
+			if (interp == null)
 				interpolation = Interp.LINEAR;
-				break;
-			case "CUBICSPLINE":
-				interpolation = Interp.CUBICSPLINE;
-				break;
-			default:
-				interpolation = Interp.LINEAR;
-			}
+			else
+				switch (interp) {
+				case "STEP":
+					interpolation = Interp.STEP;
+					break;
+				case "LINEAR":
+					interpolation = Interp.LINEAR;
+					break;
+				case "CUBICSPLINE":
+					interpolation = Interp.CUBICSPLINE;
+					break;
+				default:
+					// throw unknown type here instead?
+					interpolation = Interp.LINEAR;
+				}
 		}
 	}
 
