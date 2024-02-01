@@ -316,31 +316,36 @@ public class GLTFReader {
 	private final URI contextURI;
 	private final ByteBuffer defaultBuffer;
 
+	enum Interp {
+		STEP,
+		LINEAR,
+		CUBICSPLINE;
+	}
 	private static class NodeAnimation {
 		public float[] rotInput;
 		public Quaternion[] rotValues;
-		public String rotInterp;
+		public Interp rotInterp;
 
 		public float[] transInput;
 		public Vec3d[] transValues;
-		public String transInterp;
+		public Interp transInterp;
 
 		public float[] scaleInput;
 		public Vec3d[] scaleValues;
-		public String scaleInterp;
+		public Interp scaleInterp;
 
 		// Re-use Vec3d interpolation between translation and scale
-		private static Vec3d interpVec3d(float time, float[] input, Vec3d[] output, String interp) {
+		private static Vec3d interpVec3d(float time, float[] input, Vec3d[] output, Interp interp) {
 			if (input == null) return null;
 
 			if (time <= input[0]) {
-				if (interp.equals("CUBICSPLINE"))
+				if (interp == Interp.CUBICSPLINE)
 					return output[1];
 				else
 					return output[0];
 			}
 			if (time >=input[input.length-1]) {
-				if (interp.equals("CUBICSPLINE"))
+				if (interp == Interp.CUBICSPLINE)
 					return output[output.length-2];
 				else
 					return output[output.length-1];
@@ -354,16 +359,16 @@ public class GLTFReader {
 				float segDur = (input[i+1] - input[i]);
 				float t = (time - input[i]) / segDur;
 				switch(interp) {
-				case "STEP":
+				case STEP:
 					return output[i];
-				case "LINEAR":
+				case LINEAR:
 					ret = new Vec3d(output[i]);
 					ret.scale3(t);
 					temp = new Vec3d(output[i+1]);
 					temp.scale3(1.0 - t);
 					ret.add3(temp);
 					return ret;
-				case "CUBICSPLINE":
+				case CUBICSPLINE:
 					Vec3d vk = output[i*3 + 1];
 					Vec3d vk1 = output[(i+1)*3 + 1];
 					Vec3d bk = output[i*3 + 2];
@@ -427,14 +432,14 @@ public class GLTFReader {
 				float segDur = (rotInput[i+1] - rotInput[i]);
 				float t = (time - rotInput[i]) / segDur;
 				switch(rotInterp) {
-				case "STEP":
+				case STEP:
 					return rotValues[i];
-				case "LINEAR":
+				case LINEAR:
 
 					ret = new Quaternion();
 					rotValues[i].slerp(rotValues[i+1], 1.0-t, ret);
 					return ret;
-				case "CUBICSPLINE":
+				case CUBICSPLINE:
 					Quaternion vk = rotValues[i*3 + 1];
 					Quaternion vk1 = rotValues[(i+1)*3 + 1];
 					Quaternion bk = rotValues[i*3 + 2];
@@ -655,16 +660,25 @@ public class GLTFReader {
 	private static class Sampler {
 		final int inputAcc;
 		final int outputAcc;
-		final String interpolation;
+		final Interp interpolation;
 
 		Sampler(HashMap<String, JSONValue> sampMap) {
 			inputAcc = getIntChild(sampMap, "input", false);
 			outputAcc = getIntChild(sampMap, "output", false);
 			String interp = getStringChild(sampMap, "interpolation", true);
-			if (interp != null)
-				interpolation = interp;
-			else
-				interpolation = "LINEAR";
+			switch (interp) {
+			case "STEP":
+				interpolation = Interp.STEP;
+				break;
+			case "LINEAR":
+				interpolation = Interp.LINEAR;
+				break;
+			case "CUBICSPLINE":
+				interpolation = Interp.CUBICSPLINE;
+				break;
+			default:
+				interpolation = Interp.LINEAR;
+			}
 		}
 	}
 
