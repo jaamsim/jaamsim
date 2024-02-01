@@ -687,11 +687,15 @@ public class GLTFReader {
 	}
 
 	private static class Animation {
-		ArrayList<Channel> channels = new ArrayList<>();
-		ArrayList<Sampler> samplers = new ArrayList<>();
-		String name;
+		final ArrayList<Channel> channels = new ArrayList<>();
+		final ArrayList<Sampler> samplers = new ArrayList<>();
+		final String name;
 		float start = Float.POSITIVE_INFINITY;
 		float end = Float.NEGATIVE_INFINITY;
+
+		Animation(String name) {
+			this.name = name;
+		}
 	}
 
 	// Members
@@ -877,8 +881,7 @@ public class GLTFReader {
 
 		HashMap<String, JSONValue> animMap = getRootObj("animations", index);
 
-		anim = new Animation();
-		anim.name = getStringChild(animMap, "name", true);
+		anim = new Animation(getStringChild(animMap, "name", true));
 
 		ArrayList<JSONValue> samplers = getListChild(animMap, "samplers", false);
 		for (JSONValue samp: samplers) {
