@@ -197,89 +197,101 @@ public class GLTFReader {
 		return child.mapVal;
 	}
 
+	private enum ComponentType {
+		int8(1),
+		uint8(1),
+		int16(2),
+		uint16(2),
+		uint32(4),
+		float32(4);
+
+		final int size;
+
+		ComponentType(int size) {
+			this.size = size;
+		}
+	}
+
 	// Map
-	private static String getCompTypeFromNum(int gltfTypeNum) {
+	private static ComponentType getCompTypeFromNum(int gltfTypeNum) {
 		switch(gltfTypeNum) {
 		case 5120:
-			return "int8";
+			return ComponentType.int8;
 		case 5121:
-			return "uint8";
+			return ComponentType.uint8;
 		case 5122:
-			return "int16";
+			return ComponentType.int16;
 		case 5123:
-			return "uint16";
+			return ComponentType.uint16;
 		case 5125:
-			return "uint32";
+			return ComponentType.uint32;
 		case 5126:
-			return "float32";
+			return ComponentType.float32;
 		default:
 			throw new RenderException(String.format("Unknown gltf value type: %d", gltfTypeNum));
 		}
 	}
 
-	private static int getTypeSize(String typeStr) {
-		switch(typeStr) {
-		case "int8":
-			return 1;
-		case "uint8":
-			return 1;
-		case "int16":
-			return 2;
-		case "uint16":
-			return 2;
-		case "uint32":
-			return 4;
-		case "float32":
-			return 4;
-		default:
-			throw new RenderException(String.format("Unknown gltf type: %s", typeStr));
+	private enum VectorType {
+		SCALAR(1),
+		VEC2(2),
+		VEC3(3),
+		VEC4(4),
+		MAT2(4),
+		MAT3(9),
+		MAT4(16);
+
+		final int numComps;
+
+		VectorType(int components) {
+			numComps = components;
 		}
 	}
 
-	private static int getNumComponents(String vecType) {
+	private static VectorType getVectorType(String vecType) {
 		switch(vecType) {
 		case "SCALAR":
-			return 1;
+			return VectorType.SCALAR;
 		case "VEC2":
-			return 2;
+			return VectorType.VEC2;
 		case "VEC3":
-			return 3;
+			return VectorType.VEC3;
 		case "VEC4":
-			return 4;
+			return VectorType.VEC4;
 		case "MAT2":
-			return 4;
+			return VectorType.MAT2;
 		case "MAT3":
-			return 9;
+			return VectorType.MAT3;
 		case "MAT4":
-			return 16;
+			return VectorType.MAT4;
 		default:
 			throw new RenderException(String.format("Unknown gltf accessor type: %s", vecType));
 
 		}
 	}
 
-	private static int readIntFromBuffer(ByteBuffer buff, int pos, String compType) {
+	private static int readIntFromBuffer(ByteBuffer buff, int pos, ComponentType compType) {
 		int val;
 		switch(compType) {
-		case "int8":
+		case int8:
 			return buff.get(pos);
-		case "uint8":
+		case uint8:
 			val = buff.get(pos);
 			// Fixup Java's lack of unsigned integer types
 			if (val < 0) {
 				val += 256;
 			}
 			return val;
-		case "int16":
+		case int16:
 			return buff.getShort(pos);
-		case "uint16":
+		case uint16:
 			val = buff.getShort(pos);
 			// Fixup Java's lack of unsigned integer types
 			if (val < 0) {
 				val += (1 << 16);
 			}
 			return val;
-		case "uint32":
+		case uint32:
 			val = buff.getInt(pos);
 			if (val < 0) {
 				long realVal = val + (1<<32);
@@ -289,7 +301,7 @@ public class GLTFReader {
 				throw new RenderException(String.format("Exceptionally large integer value, probably an error: %d", realVal));
 			}
 			return val;
-		case "float32":
+		case float32:
 			float floatVal = buff.getFloat(pos);
 			val = Math.round(floatVal);
 			return val;
@@ -580,8 +592,8 @@ public class GLTFReader {
 	private static class Accessor {
 		final int bufferView;
 		final int byteOffset;
-		final String compType;
-		final String vecType;
+		final ComponentType compType;
+		final VectorType vecType;
 		final int count;
 
 		final double[] min;
@@ -590,8 +602,9 @@ public class GLTFReader {
 		Accessor(HashMap<String, JSONValue> accessorMap) {
 			bufferView = getIntChild(accessorMap, "bufferView", false);
 			count = getIntChild(accessorMap, "count", false);
-			vecType = getStringChild(accessorMap, "type", false);
 
+			String vecTypeDesc = getStringChild(accessorMap, "type", false);
+			vecType = getVectorType(vecTypeDesc);
 			int compTypeNum = getIntChild(accessorMap, "componentType", false);
 			compType = getCompTypeFromNum(compTypeNum);
 
@@ -821,8 +834,8 @@ public class GLTFReader {
 		accessor = new Accessor(accessorMap);
 
 		// Check that the accessor fits inside the buffer view
-		int numComps = getNumComponents(accessor.vecType);
-		int compSize = getTypeSize(accessor.compType);
+		int numComps = accessor.vecType.numComps;
+		int compSize = accessor.compType.size;
 
 		BufferView view = getBufferView(accessor.bufferView);
 
@@ -1081,11 +1094,11 @@ public class GLTFReader {
 		BufferView view = getBufferView(acc.bufferView);
 		Buffer buff = getBuffer(view.buffIdx);
 
-		if (!acc.vecType.equals("VEC4")) {
+		if (acc.vecType != VectorType.VEC4) {
 			throw new RenderException(String.format("Accessor %d expected to be VEC3", accIdx));
 		}
 		// TODO: GLTF allows normalized integer values here
-		if (!acc.compType.equals("float32")) {
+		if (acc.compType != ComponentType.float32) {
 			throw new RenderException(String.format("Accessor %d expected to be float32. Only float based animation rotations are currently supported", accIdx));
 		}
 
@@ -1110,10 +1123,10 @@ public class GLTFReader {
 		BufferView view = getBufferView(acc.bufferView);
 		Buffer buff = getBuffer(view.buffIdx);
 
-		if (!acc.vecType.equals("VEC3")) {
+		if (acc.vecType != VectorType.VEC3) {
 			throw new RenderException(String.format("Accessor %d expected to be VEC3", accIdx));
 		}
-		if (!acc.compType.equals("float32")) {
+		if (acc.compType != ComponentType.float32) {
 			throw new RenderException(String.format("Accessor %d expected to be float32", accIdx));
 		}
 
@@ -1137,10 +1150,10 @@ public class GLTFReader {
 		BufferView view = getBufferView(acc.bufferView);
 		Buffer buff = getBuffer(view.buffIdx);
 
-		if (!acc.vecType.equals("VEC2")) {
+		if (acc.vecType != VectorType.VEC2) {
 			throw new RenderException(String.format("Accessor %d expected to be VEC2", accIdx));
 		}
-		if (!acc.compType.equals("float32")) {
+		if (acc.compType != ComponentType.float32) {
 			throw new RenderException(String.format("Accessor %d expected to be float32", accIdx));
 		}
 
@@ -1164,11 +1177,11 @@ public class GLTFReader {
 		BufferView view = getBufferView(acc.bufferView);
 		Buffer buff = getBuffer(view.buffIdx);
 
-		if (!acc.vecType.equals("SCALAR")) {
+		if (acc.vecType != VectorType.SCALAR) {
 			throw new RenderException(String.format("Accessor %d expected to be SCALAR", accIdx));
 		}
 
-		if (!acc.compType.equals("float32")) {
+		if (acc.compType != ComponentType.float32) {
 			throw new RenderException(String.format("Accessor %d expected to be float32", accIdx));
 		}
 
@@ -1192,11 +1205,11 @@ public class GLTFReader {
 		BufferView view = getBufferView(acc.bufferView);
 		Buffer buff = getBuffer(view.buffIdx);
 
-		if (!acc.vecType.equals("SCALAR")) {
+		if (acc.vecType != VectorType.SCALAR) {
 			throw new RenderException(String.format("Accessor %d expected to be SCALAR", accIdx));
 		}
 
-		int stride = getTypeSize(acc.compType);
+		int stride = acc.compType.size;
 		if (view.stride != 0) {
 			stride = view.stride;
 		}
