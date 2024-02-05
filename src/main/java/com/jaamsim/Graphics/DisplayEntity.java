@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2002-2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2017-2023 JaamSim Software Inc.
+ * Copyright (C) 2017-2024 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -363,13 +363,11 @@ public class DisplayEntity extends Entity {
 	static final InputCallback regionCallback = new InputCallback() {
 		@Override
 		public void callback(Entity ent, Input<?> inp) {
-			((DisplayEntity)ent).updateRegionCallback();
+			DisplayEntity de = (DisplayEntity) ent;
+			Region region = (Region) inp.getValue();
+			de.setRegion(region);
 		}
 	};
-
-	void updateRegionCallback() {
-		this.setRegion(regionInput.getValue());
-	}
 
 	static final InputCallback updateRangeVisibilityCallback = new InputCallback() {
 		@Override

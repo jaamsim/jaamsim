@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2019-2023 JaamSim Software Inc.
+ * Copyright (C) 2019-2024 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -96,17 +96,19 @@ public abstract class CompoundEntity extends LinkedComponent {
 	static final InputCallback regionCallback = new InputCallback() {
 		@Override
 		public void callback(Entity ent, Input<?> inp) {
-			((CompoundEntity)ent).updateCompoundRegionCallback();
+			CompoundEntity sm = (CompoundEntity) ent;
+			Region region = (Region) inp.getValue();
+
+			// Set the region for the sub-model
+			sm.setRegion(region);
+
+			// Set the region input for the sub-model's region
+			Region subModelRegion = sm.getSubModelRegion();
+			if (subModelRegion != null && region != null) {
+				InputAgent.applyArgs(subModelRegion, inp.getKeyword(), region.getName());
+			}
 		}
 	};
-
-	void updateCompoundRegionCallback() {
-		this.setRegion(regionInput.getValue());
-		if (getCurrentRegion() == null || getSubModelRegion() == null)
-			return;
-		String key = regionInput.getKeyword();
-		InputAgent.applyArgs(getSubModelRegion(), key, getCurrentRegion().getName());
-	}
 
 	@Override
 	public void earlyInit() {
