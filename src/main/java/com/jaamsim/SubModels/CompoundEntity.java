@@ -102,7 +102,7 @@ public abstract class CompoundEntity extends LinkedComponent {
 
 	void updateCompoundRegionCallback() {
 		this.setRegion(regionInput.getValue());
-		if (getCurrentRegion() == null)
+		if (getCurrentRegion() == null || getSubModelRegion() == null)
 			return;
 		String key = regionInput.getKeyword();
 		InputAgent.applyArgs(getSubModelRegion(), key, getCurrentRegion().getName());
