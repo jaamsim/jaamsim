@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2018-2023 JaamSim Software Inc.
+ * Copyright (C) 2018-2024 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,8 +21,6 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 
-import com.jaamsim.Graphics.DisplayEntity;
-import com.jaamsim.Graphics.Region;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.GUIListener;
 import com.jaamsim.input.EntityInput;
@@ -273,13 +271,9 @@ public class SubModel extends CompoundEntity implements DragAndDropable {
 			String name = protoComp.getLocalName();
 			if (getChild(name) != null)
 				continue;
-			Entity comp = InputAgent.generateEntityWithName(getJaamSimModel(),
+			InputAgent.generateEntityWithName(getJaamSimModel(),
 					protoComp.getClass(), protoComp, name, this, true, true);
 			//System.out.format("protoComp=%s, comp=%s%n", protoComp, comp);
-			if (comp instanceof DisplayEntity && !(comp instanceof Region)) {
-				InputAgent.applyArgs(comp, "Region", proto.getSubModelRegion().getName());
-				comp.getInput("Region").setLocked(true);
-			}
 		}
 	}
 
