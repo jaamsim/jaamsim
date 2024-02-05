@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2002-2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2023 JaamSim Software Inc.
+ * Copyright (C) 2016-2024 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -493,11 +493,6 @@ public class Entity {
 		Input<?> sourceInput = ent.getInput(key);
 		Input<?> targetInput = this.getInput(key);
 		if (sourceInput == null || targetInput == null)
-			return;
-
-		// Ignore locked inputs for generated entities.
-		// These inputs are set automatically in the postLoad.
-		if (ent.isGenerated() && sourceInput.isLocked())
 			return;
 
 		// Replace references to the parent entity
