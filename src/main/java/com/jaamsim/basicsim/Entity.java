@@ -489,6 +489,8 @@ public class Entity {
 	 * @param lock - true if the copied input is locked after its value is set
 	 */
 	public void copyInput(Entity ent, String key, ParseContext context, boolean lock) {
+		//boolean trace = getName().startsWith("Fred") && key.equals("NextComponent");
+		//if (trace) System.out.format("%n%s.copyInput - ent=%s, key=%s, lock=%s%n", this, ent, key, lock);
 
 		Input<?> sourceInput = ent.getInput(key);
 		Input<?> targetInput = this.getInput(key);
@@ -499,6 +501,7 @@ public class Entity {
 		ArrayList<String> tmp = sourceInput.getValueTokens();
 		String oldParent = ent.getParent().getName();
 		String newParent = this.getParent().getName();
+		//if (trace) System.out.format("oldParent=%s, newParent=%s, tmp=%s%n", oldParent, newParent, tmp);
 		boolean changed = false;
 		if (!newParent.equals(oldParent)) {
 			String oldParent1 = String.format("[%s]", oldParent);

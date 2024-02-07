@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2012 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2023 JaamSim Software Inc.
+ * Copyright (C) 2016-2024 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -1840,6 +1840,7 @@ public class RenderManager implements DragSourceListener {
 			proto = null;
 		InputAgent.storeAndExecute(new DefineCommand(simModel, klass, proto, name));
 		Entity ent = simModel.getNamedEntity(name);
+		//System.out.format("%ncreateDNDObject - %s%n", ent);
 
 		// Set input values for a dragged and dropped entity
 		ent.setInputsForDragAndDrop();
@@ -1860,6 +1861,7 @@ public class RenderManager implements DragSourceListener {
 			DisplayEntity dispEnt = (DisplayEntity) ent;
 
 			// Set the region
+			//System.out.format("%nRegion Input - %s%n", ent);
 			if (region != null && !(ent instanceof OverlayEntity))
 				InputAgent.applyArgs(ent, "Region", region.getName());
 
@@ -1877,6 +1879,7 @@ public class RenderManager implements DragSourceListener {
 			catch (InputErrorException e) {}
 
 			// Add labels for the entity and its children
+			//System.out.format("%nshowTemporaryLabels%n");
 			simModel.showTemporaryLabels(simulation.isShowLabels());
 
 			// Set the focus on the window that received the entity

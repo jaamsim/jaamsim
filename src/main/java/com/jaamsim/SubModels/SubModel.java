@@ -215,6 +215,7 @@ public class SubModel extends CompoundEntity implements DragAndDropable {
 	}
 
 	public void updateClones() {
+		//System.out.format("%n%s.updateClones()%n", this);
 		for (Entity clone : getAllClones()) {
 			((SubModel) clone).update();
 		}
@@ -224,6 +225,7 @@ public class SubModel extends CompoundEntity implements DragAndDropable {
 	 * Adjusts the clone to match the present setting for its prototype sub-model.
 	 */
 	public void update() {
+		//System.out.format("%n%s.update()%n", this);
 
 		// Both the prototype and region must be set
 		if (getPrototype() == null || getSubModelRegion() == null)
@@ -238,6 +240,7 @@ public class SubModel extends CompoundEntity implements DragAndDropable {
 
 		// Set the inputs for each component
 		for (int seq = 0; seq < 2; seq++) {
+			//System.out.format("%n%s - copyInputs - seq=%s%n", this, seq);
 			for (Entity protoComp : getPrototype().getChildren()) {
 				String localName = protoComp.getLocalName();
 				Entity comp = getChild(localName);
@@ -254,8 +257,8 @@ public class SubModel extends CompoundEntity implements DragAndDropable {
 	 * @param protoCompList - components for the prototype
 	 */
 	public void createComponents() {
+		//System.out.format("%n%s.createComponents%n", this);
 		SubModel proto = (SubModel) getPrototype();
-		//System.out.format("%s.createComponents%n", this);
 
 		// Delete any components that are not in the prototype
 		for (Entity comp : getChildren()) {

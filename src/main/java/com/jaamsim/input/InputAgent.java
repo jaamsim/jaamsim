@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2009-2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018-2023 JaamSim Software Inc.
+ * Copyright (C) 2018-2024 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -551,6 +551,12 @@ public class InputAgent {
 	}
 
 	public static final void apply(Entity ent, Input<?> in, KeywordIndex kw) {
+
+		//if (ent.getName().startsWith("Fred") && kw.keyword.equals("NextComponent")) {
+		//	System.out.format("apply - ent=%s, key=%s, args=%s%n",
+		//			ent, kw.keyword, Arrays.toString(kw.getArgArray()));
+		//}
+
 		if (in.isLocked()) {
 			if (in.isDef() && kw.numArgs() == 0
 					|| Arrays.equals(in.valueTokens, kw.getArgArray()))

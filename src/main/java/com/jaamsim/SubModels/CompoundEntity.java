@@ -69,6 +69,7 @@ public abstract class CompoundEntity extends LinkedComponent {
 	@Override
 	public void postDefine() {
 		super.postDefine();
+		//System.out.format("%n%s.postDefine()%n", this);
 
 		// If a clone, the region and its inputs are copied from the prototype
 		Region smRegion = getSubModelRegion();
@@ -81,6 +82,7 @@ public abstract class CompoundEntity extends LinkedComponent {
 		if (getPrototype() != null)
 			proto = ((CompoundEntity) getPrototype()).getSubModelRegion();
 		smRegion = InputAgent.generateEntityWithName(simModel, Region.class, proto, smRegionName, this, true, true);
+		//System.out.format("%n%s - SubModelRegion=%s%n", this, smRegion);
 
 		// Set the region's default inputs if it has no prototype from which to inherit its inputs
 		if (proto == null) {
