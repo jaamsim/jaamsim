@@ -413,13 +413,13 @@ public class GLTFReader {
 			if (rotInput == null) return null;
 
 			if (time <= rotInput[0]) {
-				if (rotInterp.equals("CUBICSPLINE"))
+				if (rotInterp == Interp.CUBICSPLINE)
 					return rotValues[1];
 				else
 					return rotValues[0];
 			}
 			if (time >=rotInput[rotInput.length-1]) {
-				if (rotInterp.equals("CUBICSPLINE"))
+				if (rotInterp == Interp.CUBICSPLINE)
 					return rotValues[rotValues.length-2];
 				else
 					return rotValues[rotValues.length-1];
