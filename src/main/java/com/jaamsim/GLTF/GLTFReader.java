@@ -585,7 +585,11 @@ public class GLTFReader {
 	}
 
 	private static class Buffer {
-		ByteBuffer contents;
+		final ByteBuffer contents;
+
+		Buffer(ByteBuffer contents) {
+			this.contents = contents;
+		}
 	}
 
 	private static class BufferView {
@@ -785,8 +789,7 @@ public class GLTFReader {
 				throw new RenderException("GLB default buffer too small");
 			}
 
-			buff = new Buffer();
-			buff.contents = defaultBuffer;
+			buff = new Buffer(defaultBuffer);
 			buffers.put(index, buff);
 			return buff;
 		}
@@ -823,8 +826,7 @@ public class GLTFReader {
 		} catch (IOException io) {
 			throw new RenderException(io.getMessage());
 		}
-		buff = new Buffer();
-		buff.contents = byteBuff;
+		buff = new Buffer(byteBuff);
 		buffers.put(index, buff);
 		return buff;
 	}
