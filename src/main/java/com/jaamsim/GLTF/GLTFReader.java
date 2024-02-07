@@ -589,10 +589,28 @@ public class GLTFReader {
 	}
 
 	private static class BufferView {
-		int buffIdx;
-		int length;
-		int offset;
-		int stride;
+		final int buffIdx;
+		final int length;
+		final int offset;
+		final int stride;
+
+		BufferView(HashMap<String, JSONValue> buffViewMap) {
+			buffIdx = getIntChild(buffViewMap, "buffer", false);
+			length = getIntChild(buffViewMap, "byteLength", false);
+
+			// optional params
+			Integer byteOffset = getIntChild(buffViewMap, "byteOffset", true);
+			if (byteOffset == null)
+				byteOffset = 0;
+
+			offset = byteOffset;
+
+			Integer byteStride = getIntChild(buffViewMap, "byteStride", true);
+			if (byteStride == null)
+				byteStride = 0;
+
+			stride = byteStride;
+		}
 	}
 
 	private static class Accessor {
@@ -817,26 +835,7 @@ public class GLTFReader {
 			return buffView;
 
 		HashMap<String, JSONValue> buffViewMap = getRootObj("bufferViews", index);
-
-		buffView = new BufferView();
-
-		// Mandatory params
-		buffView.buffIdx = getIntChild(buffViewMap, "buffer", false);
-		buffView.length = getIntChild(buffViewMap, "byteLength", false);
-
-		// optional params
-		Integer byteOffset = getIntChild(buffViewMap, "byteOffset", true);
-		if (byteOffset == null)
-			byteOffset = 0;
-
-		buffView.offset = byteOffset;
-
-		Integer byteStride = getIntChild(buffViewMap, "byteStride", true);
-		if (byteStride == null)
-			byteStride = 0;
-
-		buffView.stride = byteStride;
-
+		buffView = new BufferView(buffViewMap);
 		// Check that the buffer view fits in the buffer
 		Buffer buff = getBuffer(buffView.buffIdx);
 		if (buffView.offset + buffView.length > buff.contents.capacity()) {
