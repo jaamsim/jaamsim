@@ -581,7 +581,7 @@ public class GLTFReader {
 	}
 
 	private static class Mesh {
-		ArrayList<MeshPrimitive> primitives = new ArrayList<>();
+		final ArrayList<MeshPrimitive> primitives = new ArrayList<>();
 	}
 
 	private static class Buffer {
