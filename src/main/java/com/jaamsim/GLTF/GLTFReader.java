@@ -210,25 +210,25 @@ public class GLTFReader {
 		ComponentType(int size) {
 			this.size = size;
 		}
-	}
 
-	// Map
-	private static ComponentType getCompTypeFromNum(int gltfTypeNum) {
-		switch(gltfTypeNum) {
-		case 5120:
-			return ComponentType.int8;
-		case 5121:
-			return ComponentType.uint8;
-		case 5122:
-			return ComponentType.int16;
-		case 5123:
-			return ComponentType.uint16;
-		case 5125:
-			return ComponentType.uint32;
-		case 5126:
-			return ComponentType.float32;
-		default:
-			throw new RenderException(String.format("Unknown gltf value type: %d", gltfTypeNum));
+		// Map
+		static ComponentType getFromNum(int gltfTypeNum) {
+			switch(gltfTypeNum) {
+			case 5120:
+				return ComponentType.int8;
+			case 5121:
+				return ComponentType.uint8;
+			case 5122:
+				return ComponentType.int16;
+			case 5123:
+				return ComponentType.uint16;
+			case 5125:
+				return ComponentType.uint32;
+			case 5126:
+				return ComponentType.float32;
+			default:
+				throw new RenderException(String.format("Unknown gltf value type: %d", gltfTypeNum));
+			}
 		}
 	}
 
@@ -246,28 +246,29 @@ public class GLTFReader {
 		VectorType(int components) {
 			numComps = components;
 		}
-	}
 
-	private static VectorType getVectorType(String vecType) {
-		switch(vecType) {
-		case "SCALAR":
-			return VectorType.SCALAR;
-		case "VEC2":
-			return VectorType.VEC2;
-		case "VEC3":
-			return VectorType.VEC3;
-		case "VEC4":
-			return VectorType.VEC4;
-		case "MAT2":
-			return VectorType.MAT2;
-		case "MAT3":
-			return VectorType.MAT3;
-		case "MAT4":
-			return VectorType.MAT4;
-		default:
-			throw new RenderException(String.format("Unknown gltf accessor type: %s", vecType));
+		private static VectorType getFromType(String vecType) {
+			switch(vecType) {
+			case "SCALAR":
+				return VectorType.SCALAR;
+			case "VEC2":
+				return VectorType.VEC2;
+			case "VEC3":
+				return VectorType.VEC3;
+			case "VEC4":
+				return VectorType.VEC4;
+			case "MAT2":
+				return VectorType.MAT2;
+			case "MAT3":
+				return VectorType.MAT3;
+			case "MAT4":
+				return VectorType.MAT4;
+			default:
+				throw new RenderException(String.format("Unknown gltf accessor type: %s", vecType));
 
+			}
 		}
+
 	}
 
 	private static int readIntFromBuffer(ByteBuffer buff, int pos, ComponentType compType) {
@@ -609,9 +610,9 @@ public class GLTFReader {
 			count = getIntChild(accessorMap, "count", false);
 
 			String vecTypeDesc = getStringChild(accessorMap, "type", false);
-			vecType = getVectorType(vecTypeDesc);
+			vecType = VectorType.getFromType(vecTypeDesc);
 			int compTypeNum = getIntChild(accessorMap, "componentType", false);
-			compType = getCompTypeFromNum(compTypeNum);
+			compType = ComponentType.getFromNum(compTypeNum);
 
 			Integer bOffset = getIntChild(accessorMap, "byteOffset", true);
 			if (bOffset == null)
