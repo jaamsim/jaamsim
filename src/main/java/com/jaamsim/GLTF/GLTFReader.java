@@ -654,7 +654,11 @@ public class GLTFReader {
 	}
 
 	private static class Texture {
-		int source;
+		final int source;
+
+		Texture(HashMap<String, JSONValue> textureMap) {
+			source = getIntChild(textureMap, "source", false);
+		}
 	}
 
 	private static class Material {
@@ -995,9 +999,7 @@ public class GLTFReader {
 
 		HashMap<String, JSONValue> textureMap = getRootObj("textures", index);
 
-		texture = new Texture();
-		texture.source = getIntChild(textureMap, "source", false);
-
+		texture = new Texture(textureMap);
 		textures.put(index, texture);
 		return texture;
 	}
