@@ -662,9 +662,37 @@ public class GLTFReader {
 	}
 
 	private static class Material {
+		final int colorTex;
+		final Color4d colorFactor;
 
-		int colorTex = -1;
-		Color4d colorFactor;
+		Material(HashMap<String, JSONValue> materialMap, int index) {
+			Integer colorTex = walkMapForInt(materialMap, "pbrMetallicRoughness", "baseColorTexture", "index");
+
+			if (colorTex == null) {
+				// Color texture is missing, maybe this material has a spec/gloss extension
+				colorTex = walkMapForInt(materialMap, "extensions", "KHR_materials_pbrSpecularGlossiness", "diffuseTexture", "index");
+			}
+
+			if (colorTex == null) {
+				throw new RenderException(String.format("Material %d is missing color texture", index));
+			}
+			this.colorTex = colorTex;
+
+			HashMap<String, JSONValue> pbrMap = getMapChild(materialMap, "pbrMetallicRoughness", true);
+			double[] bcNums = null;
+			if (pbrMap != null) {
+				bcNums = getNumberListChild(pbrMap, "baseColorFactor", true);
+			}
+			if (bcNums != null) {
+				if (bcNums.length != 4) {
+					throw new RenderException("baseColorFactor must have 4 values");
+				}
+				this.colorFactor = new Color4d(bcNums[0],bcNums[1],bcNums[2],bcNums[3]);
+			} else {
+				this.colorFactor = new Color4d(1,1,1,1);
+			}
+
+		}
 	}
 
 	private static class Channel {
@@ -1011,34 +1039,7 @@ public class GLTFReader {
 
 		HashMap<String, JSONValue> materialMap = getRootObj("materials", index);
 
-		material = new Material();
-
-		Integer colorTex = walkMapForInt(materialMap, "pbrMetallicRoughness", "baseColorTexture", "index");
-
-		if (colorTex == null) {
-			// Color texture is missing, maybe this material has a spec/gloss extension
-			colorTex = walkMapForInt(materialMap, "extensions", "KHR_materials_pbrSpecularGlossiness", "diffuseTexture", "index");
-		}
-
-		if (colorTex == null) {
-			throw new RenderException(String.format("Material %d is missing color texture", index));
-		}
-		material.colorTex = colorTex;
-
-		HashMap<String, JSONValue> pbrMap = getMapChild(materialMap, "pbrMetallicRoughness", true);
-		double[] bcNums = null;
-		if (pbrMap != null) {
-			bcNums = getNumberListChild(pbrMap, "baseColorFactor", true);
-		}
-		if (bcNums != null) {
-			if (bcNums.length != 4) {
-				throw new RenderException("baseColorFactor must have 4 values");
-			}
-			material.colorFactor = new Color4d(bcNums[0],bcNums[1],bcNums[2],bcNums[3]);
-		} else {
-			material.colorFactor = new Color4d(1,1,1,1);
-		}
-
+		material = new Material(materialMap, index);
 		materials.put(index, material);
 		return material;
 	}
