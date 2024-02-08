@@ -230,6 +230,7 @@ public abstract class AbstractCombine extends LinkedService {
 	}
 
 	public void addConsumedEntity(DisplayEntity ent) {
+		ent.setShow(false);
 		consumedEntityList.add(ent);
 	}
 
