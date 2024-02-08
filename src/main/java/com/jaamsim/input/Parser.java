@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018-2023 JaamSim Software Inc.
+ * Copyright (C) 2018-2024 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -191,7 +191,7 @@ public static String[] splitSubstrings(String str) {
 	if (str.charAt(0) == '{') {
 		str = str.substring(1);
 	}
-	if (str.charAt(str.length() - 1) == '}') {
+	if (!str.isEmpty() && str.charAt(str.length() - 1) == '}') {
 		str = str.substring(0, str.length() - 1);
 	}
 	String[] ret = str.split("\\}\\s*\\{");
