@@ -757,22 +757,22 @@ public class GLTFReader {
 	HashMap<String, JSONValue> rootMap;
 
 	// Lazily initialized members
-	HashMap<Integer, SceneNode> nodes = new HashMap<>();
-	HashMap<Integer, Mesh> meshes = new HashMap<>();
+	final HashMap<Integer, SceneNode> nodes = new HashMap<>();
+	final HashMap<Integer, Mesh> meshes = new HashMap<>();
 
-	HashMap<Integer, Animation> animations = new HashMap<>();
+	final HashMap<Integer, Animation> animations = new HashMap<>();
 
-	HashMap<Integer, Buffer> buffers = new HashMap<>();
-	HashMap<Integer, BufferView> bufferViews = new HashMap<>();
-	HashMap<Integer, Accessor> accessors = new HashMap<>();
+	final HashMap<Integer, Buffer> buffers = new HashMap<>();
+	final HashMap<Integer, BufferView> bufferViews = new HashMap<>();
+	final HashMap<Integer, Accessor> accessors = new HashMap<>();
 
-	HashMap<Integer, Image> images = new HashMap<>();
-	HashMap<Integer, Texture> textures= new HashMap<>();
-	HashMap<Integer, Material> materials = new HashMap<>();
+	final HashMap<Integer, Image> images = new HashMap<>();
+	final HashMap<Integer, Texture> textures= new HashMap<>();
+	final HashMap<Integer, Material> materials = new HashMap<>();
 
-	HashMap<Integer, int[]> processedMeshes = new HashMap<>();
+	final HashMap<Integer, int[]> processedMeshes = new HashMap<>();
 
-	HashMap<Integer, Integer> materialMap = new HashMap<>();
+	final HashMap<Integer, Integer> materialMap = new HashMap<>();
 	//HashMap<Integer, int[]> primitiveMap = new HashMap<>();
 	int numMats = 0;
 	int numPrims = 0;
