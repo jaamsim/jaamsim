@@ -754,7 +754,7 @@ public class GLTFReader {
 	}
 
 	// Members
-	HashMap<String, JSONValue> rootMap;
+	final HashMap<String, JSONValue> rootMap;
 
 	// Lazily initialized members
 	final HashMap<Integer, SceneNode> nodes = new HashMap<>();
@@ -1364,11 +1364,7 @@ public class GLTFReader {
 
 	public static MeshData parseGLTF(URI asset) throws RenderException {
 
-		GLTFReader parser = new GLTFReader(asset, null);
-
-		parser.setRootFromURI(asset);
-		parser.process();
-
+		GLTFReader parser = new GLTFReader(asset, null, null);
 		return parser.outputData;
 	}
 
@@ -1469,18 +1465,20 @@ public class GLTFReader {
 		} catch (Exception ex) {
 			throw new RenderException(ex.getMessage());
 		}
-		GLTFReader parser = new GLTFReader(asset, defaultBuff);
-
-		parser.setRootFromByteBuffer(gltfBuff);
-		parser.process();
-
+		GLTFReader parser = new GLTFReader(asset, gltfBuff, defaultBuff);
 		return parser.outputData;
 	}
 
-	private GLTFReader(URI context, ByteBuffer defBuff) {
+	private GLTFReader(URI context, ByteBuffer gltfBuff, ByteBuffer defBuff) {
 		contextURI = context;
 		contextURI.normalize();
 		defaultBuffer = defBuff;
+		if (defaultBuffer == null)
+			rootMap = setRootFromURI(context);
+		else
+			rootMap = setRootFromByteBuffer(gltfBuff);
+
+		process();
 	}
 
 	private MeshData.TreeNode buildOutputNode(int nodeIdx, Stack<Integer> nodeStack) {
@@ -1552,7 +1550,7 @@ public class GLTFReader {
 		return ret;
 	}
 
-	private void setRootFromByteBuffer(ByteBuffer buff) {
+	private HashMap<String, JSONValue> setRootFromByteBuffer(ByteBuffer buff) {
 		String jsonString = StandardCharsets.UTF_8.decode(buff).toString();
 
 		JSONParser jsonParser = new JSONParser();
@@ -1568,11 +1566,10 @@ public class GLTFReader {
 			throw new RenderException(msg);
 		}
 
-		rootMap = root.mapVal;
-
+		return root.mapVal;
 	}
 
-	private void setRootFromURI(URI asset) {
+	private HashMap<String, JSONValue> setRootFromURI(URI asset) {
 		InputStream inStream;
 		try {
 			inStream = asset.toURL().openStream();
@@ -1596,7 +1593,7 @@ public class GLTFReader {
 			throw new RenderException(msg);
 		}
 
-		rootMap = root.mapVal;
+		return root.mapVal;
 	}
 
 	private void process() {
