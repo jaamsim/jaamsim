@@ -211,6 +211,20 @@ private void _norm(Quaternion q) {
 	this.w = q.w / mag;
 }
 
+public void add(Quaternion q) {
+	this.x += q.x;
+	this.y += q.y;
+	this.z += q.z;
+	this.w += q.w;
+}
+
+public void scale(double scale) {
+	this.x *= scale;
+	this.y *= scale;
+	this.z *= scale;
+	this.w *= scale;
+}
+
 /**
  * Normalize the quaternion in place
  */

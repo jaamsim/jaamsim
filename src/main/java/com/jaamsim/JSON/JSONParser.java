@@ -35,7 +35,7 @@ public class JSONParser {
 		HashMap<String, JSONValue> vals = new HashMap<>();
 
 		// special case: empty list
-		if (isSymTok(tok, "]")) {
+		if (isSymTok(tok, "}")) {
 			// This map has terminated
 			outVal.mapVal = vals;
 			return pos+1;
