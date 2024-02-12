@@ -1040,17 +1040,14 @@ public class InputAgent {
 	 */
 	public static void saveDefinitions(ArrayList<Entity> newEntities, FileEntity file) {
 
-		// 1) WRITE THE DEFINITION STATEMENTS FOR NON-CLONES
-
-		// Loop through the entities that are not clones
+		// Loop through the entities
 		Class<? extends Entity> entClass = null;
 		int level = 0;
+		Entity proto = null;
 		for (Entity ent : newEntities) {
-			if (ent.isClone())
-				continue;
 
 			// Is the class different from the last one
-			if (ent.getClass() != entClass) {
+			if (ent.getClass() != entClass || ent.getPrototype() != proto) {
 
 				// Close the previous Define statement
 				if (entClass != null) {
@@ -1065,7 +1062,11 @@ public class InputAgent {
 
 				// Start the new Define statement
 				entClass = ent.getClass();
-				file.format("Define %s {", ent.getObjectType());
+				proto = ent.getPrototype();
+				String objName = ent.getObjectType().getName();
+				if (proto != null)
+					objName = proto.getName();
+				file.format("Define %s {", objName);
 			}
 
 			// Print the entity name to the Define statement
@@ -1074,36 +1075,6 @@ public class InputAgent {
 
 		// Close the define statement
 		if (!newEntities.isEmpty())
-			file.format("}%n");
-
-		// 2) WRITE THE DEFINITION STATEMENTS FOR CLONES
-
-		// Loop through the entities that are clones
-		Entity proto = null;
-		for (Entity ent : newEntities) {
-			if (!ent.isClone())
-				continue;
-
-			// Is the prototype different from the last one
-			if (ent.getPrototype() != proto) {
-
-				// Close the previous Define statement
-				if (proto != null) {
-					file.format("}");
-				}
-				file.format("%n");
-
-				// Start the new Define statement
-				proto = ent.getPrototype();
-				file.format("Define %s {", proto);
-			}
-
-			// Print the entity name to the Define statement
-			file.format(" %s ", ent);
-		}
-
-		// Close the define statement
-		if (proto != null)
 			file.format("}%n");
 	}
 
