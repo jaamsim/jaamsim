@@ -752,6 +752,49 @@ public class Entity {
 		return parent.getSubModelLevel() + 1;
 	}
 
+	/**
+	 * Returns the number of entities that must be defined before this entity can be defined.
+	 * @return number of entities that must be defined previously
+	 */
+	public int getDependenceLevel() {
+		if (parent == null && prototype == null && !hasClone())
+			return 0;
+		return getDependencies().size();
+	}
+
+	/**
+	 * Returns a list of entities that must be defined before this entity can be defined.
+	 * @return list of entities to be defined previously
+	 */
+	private ArrayList<Entity> getDependencies() {
+		ArrayList<Entity> ret = new ArrayList<>();
+		addDependencies(ret);
+		return ret;
+	}
+
+	private void addDependencies(ArrayList<Entity> list) {
+
+		// Add the parent entity and its dependencies
+		if (parent != null && !list.contains(parent)) {
+			list.add(parent);
+			parent.addDependencies(list);
+		}
+
+		// Add the prototype entity and its dependencies
+		if (prototype != null && !list.contains(prototype)) {
+			list.add(prototype);
+			prototype.addDependencies(list);
+
+			// Any children of the prototype must also be defined previously
+			for (Entity ent : prototype.getChildren()) {
+				if (!ent.isGenerated() && !list.contains(ent)) {
+					list.add(ent);
+					ent.addDependencies(list);
+				}
+			}
+		}
+	}
+
 	static final InputCallback traceInputCallback = new InputCallback() {
 		@Override
 		public void callback(Entity ent, Input<?> inp) {
