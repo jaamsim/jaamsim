@@ -1583,13 +1583,8 @@ public class InputAgent {
 			if (ret != 0)
 				return ret;
 
-			// First sort by sub-model level
-			ret = subModelSortOrder.compare(ent0, ent1);
-			if (ret != 0)
-				return ret;
-
-			// If the sub-model levels are the same, then sort by clone level
-			ret = Integer.compare(ent0.getCloneLevel(), ent1.getCloneLevel());
+			// First sort by dependence level
+			ret = Integer.compare(ent0.getDependenceLevel(), ent1.getDependenceLevel());
 			if (ret != 0)
 				return ret;
 
