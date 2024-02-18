@@ -1054,9 +1054,9 @@ public class InputAgent {
 					file.format("}%n");
 				}
 
-				// Add a blank line between sub-model levels
-				if (ent.getSubModelLevel() != level) {
-					level = ent.getSubModelLevel();
+				// Add a blank line between dependency levels
+				if (ent.getDependenceLevel() != level) {
+					level = ent.getDependenceLevel();
 					file.format("%n");
 				}
 
