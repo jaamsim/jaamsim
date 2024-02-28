@@ -201,12 +201,24 @@ public static String[] splitSubstrings(String str) {
 	return ret;
 }
 
+/**
+ * Returns a formated input string that includes single quote marks when necessary around the
+ * contents of each pair of curly braces.<p>
+ * Note that the format for the returned string MUST be consistent with Input.getValueString
+ * otherwise any carriage returns added in the Input Builder will be lost when
+ * CellEditor.setInputValue is executed on the completion of editing.
+ * @param str - input string to be formated
+ * @return formatted input string
+ */
 public static final String addSubstringQuotesIfNeeded(String str) {
 	String[] array = splitSubstrings(str);
 	StringBuilder sb = new StringBuilder();
 	for (int i = 0; i < array.length; i++) {
-		array[i] = addQuotesIfNeeded(array[i]);
-		sb.append("{").append(array[i]).append("}");
+		if (i > 0)
+			sb.append(Input.BRACE_SEPARATOR);
+		sb.append("{").append(Input.BRACE_SEPARATOR);
+		sb.append(addQuotesIfNeeded(array[i]));
+		sb.append(Input.BRACE_SEPARATOR).append("}");
 	}
 	return sb.toString();
 }
