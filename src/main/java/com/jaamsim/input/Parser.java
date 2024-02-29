@@ -228,7 +228,16 @@ public static final String addQuotesIfNeededToDefinitions(String str) {
 	StringBuilder sb = new StringBuilder();
 	for (int i = 0; i < array.length; i++) {
 		String[] args = array[i].split("\\s+", 2);
-		sb.append("{").append(args[0]);
+
+		// Opening curly brace
+		if (i > 0)
+			sb.append(Input.BRACE_SEPARATOR);
+		sb.append("{").append(Input.BRACE_SEPARATOR);
+
+		// Name of the attribute or custom output
+		sb.append(args[0]);
+
+		// Parse the unit type if present
 		if (args.length == 2) {
 			String utName = "";
 			if (args[1].endsWith("Unit")) {
@@ -236,13 +245,17 @@ public static final String addQuotesIfNeededToDefinitions(String str) {
 				utName = args[1].substring(index);
 				args[1] = args[1].substring(0, index).trim();
 			}
+
+			// Expression for the attribute or custom output value
 			args[1] = Parser.addQuotesIfNeeded(args[1]);
-			sb.append(" ").append(args[1]);
+			sb.append(Input.SEPARATOR).append(args[1]);
+
+			// Unit type if present
 			if (!utName.isEmpty()) {
-				sb.append(" ").append(utName);
+				sb.append(Input.SEPARATOR).append(utName);
 			}
 		}
-		sb.append("}");
+		sb.append(Input.BRACE_SEPARATOR).append("}");
 	}
 	return sb.toString();
 }
