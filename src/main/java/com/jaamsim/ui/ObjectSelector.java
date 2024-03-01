@@ -128,6 +128,15 @@ public class ObjectSelector extends FrameBox {
 	}
 
 	@Override
+	public void setVisible(boolean bool) {
+		if (bool && !isVisible()) {
+			myInstance.treeView.getHorizontalScrollBar().getModel().setValue(0);
+			myInstance.treeView.getVerticalScrollBar().getModel().setValue(0);
+		}
+		super.setVisible(bool);
+	}
+
+	@Override
 	public void setEntity(Entity ent) {
 
 		if (ent == currentEntity)
@@ -201,9 +210,6 @@ public class ObjectSelector extends FrameBox {
 	public static synchronized ObjectSelector getInstance() {
 		if (myInstance == null)
 			myInstance = new ObjectSelector();
-
-		myInstance.treeView.getHorizontalScrollBar().getModel().setValue(0);
-
 		return myInstance;
 	}
 
