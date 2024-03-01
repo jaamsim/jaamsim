@@ -1040,32 +1040,33 @@ public class InputAgent {
 	 */
 	public static void saveDefinitions(ArrayList<Entity> newEntities, FileEntity file) {
 
-		// 1) WRITE THE DEFINITION STATEMENTS FOR NON-CLONES
-
-		// Loop through the entities that are not clones
+		// Loop through the entities
 		Class<? extends Entity> entClass = null;
 		int level = 0;
+		Entity proto = null;
 		for (Entity ent : newEntities) {
-			if (ent.isClone())
-				continue;
 
 			// Is the class different from the last one
-			if (ent.getClass() != entClass) {
+			if (ent.getClass() != entClass || ent.getPrototype() != proto) {
 
 				// Close the previous Define statement
 				if (entClass != null) {
 					file.format("}%n");
 				}
 
-				// Add a blank line between sub-model levels
-				if (ent.getSubModelLevel() != level) {
-					level = ent.getSubModelLevel();
+				// Add a blank line between dependency levels
+				if (ent.getDependenceLevel() != level) {
+					level = ent.getDependenceLevel();
 					file.format("%n");
 				}
 
 				// Start the new Define statement
 				entClass = ent.getClass();
-				file.format("Define %s {", ent.getObjectType());
+				proto = ent.getPrototype();
+				String objName = ent.getObjectType().getName();
+				if (proto != null)
+					objName = proto.getName();
+				file.format("Define %s {", objName);
 			}
 
 			// Print the entity name to the Define statement
@@ -1074,36 +1075,6 @@ public class InputAgent {
 
 		// Close the define statement
 		if (!newEntities.isEmpty())
-			file.format("}%n");
-
-		// 2) WRITE THE DEFINITION STATEMENTS FOR CLONES
-
-		// Loop through the entities that are clones
-		Entity proto = null;
-		for (Entity ent : newEntities) {
-			if (!ent.isClone())
-				continue;
-
-			// Is the prototype different from the last one
-			if (ent.getPrototype() != proto) {
-
-				// Close the previous Define statement
-				if (proto != null) {
-					file.format("}");
-				}
-				file.format("%n");
-
-				// Start the new Define statement
-				proto = ent.getPrototype();
-				file.format("Define %s {", proto);
-			}
-
-			// Print the entity name to the Define statement
-			file.format(" %s ", ent);
-		}
-
-		// Close the define statement
-		if (proto != null)
 			file.format("}%n");
 	}
 
@@ -1583,13 +1554,8 @@ public class InputAgent {
 			if (ret != 0)
 				return ret;
 
-			// First sort by sub-model level
-			ret = subModelSortOrder.compare(ent0, ent1);
-			if (ret != 0)
-				return ret;
-
-			// If the sub-model levels are the same, then sort by clone level
-			ret = Integer.compare(ent0.getCloneLevel(), ent1.getCloneLevel());
+			// First sort by dependence level
+			ret = Integer.compare(ent0.getDependenceLevel(), ent1.getDependenceLevel());
 			if (ret != 0)
 				return ret;
 

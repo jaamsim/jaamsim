@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2020 JaamSim Software Inc.
+ * Copyright (C) 2016-2024 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,6 +48,7 @@ import org.junit.runners.Suite.SuiteClasses;
 	com.jaamsim.input.TestOutput.class,
 	com.jaamsim.basicsim.TestSimulation.class,
 	com.jaamsim.basicsim.TestSimCalendar.class,
+	com.jaamsim.basicsim.TestEntityDefinitions.class,
 	com.jaamsim.probability.TestContinuousDistribution.class,
 	com.jaamsim.probability.TestDiscreteDistribution.class,
 	com.jaamsim.probability.TestErlangDistribution.class,
