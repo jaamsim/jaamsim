@@ -34,7 +34,7 @@ import com.jaamsim.units.Unit;
 
 public class SampleListInput extends ArrayListInput<SampleProvider> {
 
-	private ArrayList<Class<? extends Unit>> unitTypeList;
+	private final ArrayList<Class<? extends Unit>> unitTypeList;
 	private boolean dimensionless = false;
 	private double minValue = Double.NEGATIVE_INFINITY;
 	private double maxValue = Double.POSITIVE_INFINITY;
@@ -53,7 +53,7 @@ public class SampleListInput extends ArrayListInput<SampleProvider> {
 		this(key, cat, new ArrayList<SampleProvider>(Arrays.asList(new SampleConstant(def))));
 	}
 
-	public void setUnitTypeList(ArrayList<Class<? extends Unit>> utList) {
+	private void setUnitTypeList(ArrayList<Class<? extends Unit>> utList) {
 
 		if (utList.equals(unitTypeList))
 			return;
@@ -61,7 +61,8 @@ public class SampleListInput extends ArrayListInput<SampleProvider> {
 		// Save the new unit types
 		if (!isDef)
 			setValid(false);
-		unitTypeList = new ArrayList<>(utList);
+		unitTypeList.clear();
+		unitTypeList.addAll(utList);
 
 		// Set the units for the default value column in the Input Editor
 		if (defValue == null)
