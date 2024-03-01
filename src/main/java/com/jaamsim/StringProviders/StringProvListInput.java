@@ -24,11 +24,11 @@ import com.jaamsim.Samples.SampleProvider;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.basicsim.JaamSimModel;
+import com.jaamsim.input.ArrayListInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.Parser;
-import com.jaamsim.input.ArrayListInput;
 import com.jaamsim.units.DimensionlessUnit;
 
 public class StringProvListInput extends ArrayListInput<StringProvider> {
@@ -136,9 +136,9 @@ public class StringProvListInput extends ArrayListInput<StringProvider> {
 			return;
 		for (StringProvider sp : value) {
 			if (sp instanceof Entity) {
-				if (list.contains(sp))
+				if (list.contains((Entity)sp))
 					continue;
-				list.add((Entity) sp);
+				list.add((Entity)sp);
 				continue;
 			}
 

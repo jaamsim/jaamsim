@@ -24,11 +24,11 @@ import java.util.Collections;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.basicsim.JaamSimModel;
+import com.jaamsim.input.ArrayListInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.Parser;
-import com.jaamsim.input.ArrayListInput;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 
@@ -257,9 +257,9 @@ public class SampleListInput extends ArrayListInput<SampleProvider> {
 			return;
 		for (SampleProvider samp : value) {
 			if (samp instanceof Entity) {
-				if (list.contains(samp))
+				if (list.contains((Entity)samp))
 					continue;
-				list.add((Entity) samp);
+				list.add((Entity)samp);
 				continue;
 			}
 
