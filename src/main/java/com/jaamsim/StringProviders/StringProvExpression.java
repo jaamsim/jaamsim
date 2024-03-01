@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2016-2022 JaamSim Software Inc.
+ * Copyright (C) 2016-2024 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,13 +34,17 @@ import com.jaamsim.units.Unit;
 public class StringProvExpression implements StringProvider {
 
 	private final Expression exp;
-	private final Class<? extends Unit> unitType;
+	private Class<? extends Unit> unitType;
 	private final ExpEvaluator.EntityParseContext parseContext;
 
 	public StringProvExpression(String expString, Entity thisEnt, Class<? extends Unit> ut) throws ExpError {
 		unitType = ut;
 		parseContext = ExpEvaluator.getParseContext(thisEnt, expString);
 		exp = ExpParser.parseExpression(parseContext, expString);
+	}
+
+	public void setUnitType(Class<? extends Unit> ut) {
+		unitType = ut;
 	}
 
 	@Override

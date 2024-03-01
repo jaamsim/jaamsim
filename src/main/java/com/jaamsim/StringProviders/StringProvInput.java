@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2015 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018-2023 JaamSim Software Inc.
+ * Copyright (C) 2018-2024 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,6 +50,9 @@ public class StringProvInput extends Input<StringProvider> {
 		if (!isDef)
 			setValid(false);
 		unitType = ut;
+		if (value instanceof StringProvExpression) {
+			((StringProvExpression) value).setUnitType(ut);
+		}
 	}
 
 	@Override
