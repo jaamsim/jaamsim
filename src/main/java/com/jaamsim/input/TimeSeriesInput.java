@@ -117,9 +117,11 @@ public class TimeSeriesInput extends Input<TimeSeriesProvider> {
 
 	@Override
 	public void appendEntityReferences(ArrayList<Entity> list) {
-		if (!(value instanceof Entity) || list.contains(value))
-			return;
-		list.add((Entity) value);
+		if (value instanceof Entity) {
+			if (list.contains((Entity)value))
+				return;
+			list.add((Entity)value);
+		}
 	}
 
 	@Override
