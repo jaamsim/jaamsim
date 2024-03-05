@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2020-2023 JaamSim Software Inc.
+ * Copyright (C) 2020-2024 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,10 +24,18 @@ import com.jaamsim.Graphics.DisplayEntity;
  */
 public class EntitySink extends LinkedComponent {
 
+	DisplayEntity lastEnt;
+
 	{
 		nextComponent.setHidden(true);
 		defaultEntity.setHidden(true);
 		stateAssignment.setHidden(true);
+	}
+
+	@Override
+	public void earlyInit() {
+		super.earlyInit();
+		lastEnt = null;
 	}
 
 	@Override
@@ -38,11 +46,22 @@ public class EntitySink extends LinkedComponent {
 		// Increment the number processed
 		releaseEntity(simTime);
 
-		// Clear the 'obj' output
-		setReceivedEntity(null);
+		// Save the new entity and kill the previous one
+		if (lastEnt != null) {
+			lastEnt.dispose();
+		}
+		lastEnt = ent;
 
-		// Kill the added entity
-		ent.dispose();
+		// Hide the received entity
+		ent.setShow(false);
+	}
+
+	@Override
+	public void updateGraphics(double simTime) {
+		super.updateGraphics(simTime);
+		if (lastEnt == null)
+			return;
+		lastEnt.setGlobalPosition(getGlobalPosition());
 	}
 
 }
