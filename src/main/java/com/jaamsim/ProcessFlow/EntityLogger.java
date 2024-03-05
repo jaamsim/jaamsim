@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2015-2023 JaamSim Software Inc.
+ * Copyright (C) 2015-2024 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,7 +40,10 @@ public class EntityLogger extends Logger implements Linkable, StateEntityListene
 	protected final InterfaceEntityInput<Linkable> nextComponent;
 
 	@Keyword(description = "If TRUE, an entry will made in the log file every time one of the "
-	                     + "received entities changes state.")
+	                     + "received entities changes state.\n\n"
+	                     + "With this option, entities are NOT logged when the are received. "
+	                     + "They are logged ONLY when their 'State' output changes as they move "
+	                     + "through the model.")
 	private final BooleanProvInput traceEntityStates;
 
 	{
