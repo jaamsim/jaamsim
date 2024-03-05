@@ -110,6 +110,7 @@ public class Assemble extends AbstractCombine implements EntityGen {
 		// Create the new entity
 		assembledEntity = (DisplayEntity) InputAgent.getGeneratedClone(proto, name);
 		assembledEntity.earlyInit();
+		assembledEntity.lateInit();
 
 		// Set the obj output to the assembled part
 		receiveEntity(assembledEntity);
