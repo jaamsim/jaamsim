@@ -54,7 +54,9 @@ public class CameraControl implements WindowInteractionListener {
 		_renderer = renderer;
 		_updateView = updateView;
 
-		setPOI(_updateView.getGlobalCenter());
+		Vec3d pos = _updateView.getGlobalCenter();
+		pos.z = 0.0d;
+		setPOI(pos);
 	}
 
 	@Override
