@@ -67,6 +67,7 @@ limitations under the License.
     <jar jarfile="${jars.dir}/JaamSim${ver}-bare.jar" compress="true">
       <manifest>
         <attribute name="Main-Class" value="com.jaamsim.ui.GUIFrame"/>
+        <attribute name="Add-Opens" value="java.desktop/sun.awt"/>
         <attribute name="Class-Path" value="jogl-all.jar gluegen-rt.jar"/>
       </manifest>
       <fileset dir="${class.dir}"/>
@@ -76,6 +77,7 @@ limitations under the License.
     <jar jarfile="${jars.dir}/JaamSim${ver}.jar" compress="true">
       <manifest>
         <attribute name="Main-Class" value="com.jaamsim.ui.GUIFrame"/>
+        <attribute name="Add-Opens" value="java.desktop/sun.awt"/>
       </manifest>
       <fileset dir="${class.dir}"/>
       <fileset dir="${res.dir}"/>
