@@ -1789,16 +1789,33 @@ public class RenderManager implements DragSourceListener {
 	}
 
 	public void mouseMoved(int windowID, int x, int y) {
+
+		// Calculate the position on the x-y plane
 		Ray currentRay = getRayForMouse(windowID, x, y);
 		double dist = RenderManager.XY_PLANE.collisionDist(currentRay);
-
 		if (dist == Double.POSITIVE_INFINITY) {
-			// I dunno...
 			return;
 		}
-
 		mousePosition = currentRay.getPointAtDist(dist);
-		GUIFrame.showLocatorPosition(mousePosition);
+		Vec3d pos = new Vec3d(mousePosition);
+
+		// If the mouse is over an entity, show the postion on that entity
+		DisplayEntity ent = pickEntityForMouse(windowID, false);
+		if (ent != null) {
+			Vec3d posOnEntity = getNearestPick(windowID);
+			if (posOnEntity != null)
+				pos = posOnEntity;
+
+			// If the mouse is over a region, show the local position in that region
+			Region region = ent.getCurrentRegion();
+			if (ent instanceof Region)
+				region = (Region) ent;
+			if (region != null) {
+				region.getInverseRegionTrans().multAndTrans(pos, pos);
+			}
+		}
+
+		GUIFrame.showLocatorPosition(pos);
 	}
 
 	public void mouseEntry(int windowID, int x, int y, boolean isInWindow) {
