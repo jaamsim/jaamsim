@@ -672,8 +672,8 @@ public class RenderManager implements DragSourceListener {
 		// Find the entity at this location
 		DisplayEntity ent = pickEntityForMouse(windowID, false);
 
-		// If no entity is found, set the selected entity to null
-		if (ent == null) {
+		// If no movable entity is found, set the selected entity to null
+		if (ent == null || !ent.isMovable()) {
 			FrameBox.setSelectedEntity(null, false);
 			GUIFrame.updateUI();
 			return;
@@ -715,6 +715,10 @@ public class RenderManager implements DragSourceListener {
 			if (e.isMovable()) {
 				ret = e;
 				break;
+			}
+			// Record the first non-movable entity in case no movable entity is found
+			else if (ret == null) {
+				ret = e;
 			}
 		}
 		return ret;
