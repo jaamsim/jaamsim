@@ -670,18 +670,7 @@ public class RenderManager implements DragSourceListener {
 			return;
 
 		// Find the entity at this location
-		List<PickData> picks = pickForMouse(windowID, false);
-		Collections.sort(picks, new SelectionSorter());
-		DisplayEntity ent = null;
-		for (PickData pd : picks) {
-			if (!pd.isEntity)
-				continue;
-			DisplayEntity e = (DisplayEntity) GUIFrame.getJaamSimModel().idToEntity(pd.id);
-			if (e.isMovable()) {
-				ent = e;
-				break;
-			}
-		}
+		DisplayEntity ent = pickEntityForMouse(windowID, false);
 
 		// If no entity is found, set the selected entity to null
 		if (ent == null) {
@@ -712,6 +701,23 @@ public class RenderManager implements DragSourceListener {
 		Vec3d globalCoord = getGlobalPositionForMouseData(windowID, x, y, ent);
 		ent.handleMouseClicked(count, globalCoord, shiftDown, controlDown, altDown);
 		GUIFrame.updateUI();
+	}
+
+	private DisplayEntity pickEntityForMouse(int windowID, boolean precise) {
+		List<PickData> picks = pickForMouse(windowID, false);
+		Collections.sort(picks, new SelectionSorter());
+		DisplayEntity ret = null;
+		for (PickData pd : picks) {
+			if (!pd.isEntity)
+				continue;
+			DisplayEntity e = (DisplayEntity) GUIFrame.getJaamSimModel().idToEntity(pd.id);
+			// Return the first movable entity
+			if (e.isMovable()) {
+				ret = e;
+				break;
+			}
+		}
+		return ret;
 	}
 
 	/**
