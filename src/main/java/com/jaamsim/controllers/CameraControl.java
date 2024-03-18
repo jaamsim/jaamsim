@@ -85,17 +85,17 @@ public class CameraControl implements WindowInteractionListener {
 		else if (dragInfo.button == 3 && !_updateView.is2DLocked()) {
 
 			if (dragInfo.shiftDown()) {
-				handleTurnCamera(dragInfo.dx, dragInfo.dy);
+				handleTurnCamera(dragInfo.x, dragInfo.y, dragInfo.startX, dragInfo.startY);
 			} else {
-				handleRotAroundPoint(dragInfo.x, dragInfo.y, dragInfo.dx, dragInfo.dy);
+				handleRotAroundPoint(dragInfo.x, dragInfo.y, dragInfo.startX, dragInfo.startY);
 			}
 		}
 	}
 
-	private void handleTurnCamera(int dx, int dy) {
+	private void handleTurnCamera(int x, int y, int x0, int y0) {
 
-		Vec3d camPos = _updateView.getGlobalPosition();
-		Vec3d center = _updateView.getGlobalCenter();
+		Vec3d camPos = new Vec3d(dragViewPosition);
+		Vec3d center = new Vec3d(dragViewCenter);
 
 		PolarInfo origPi = new PolarInfo(center, camPos);
 
@@ -106,10 +106,10 @@ public class CameraControl implements WindowInteractionListener {
 		rotXAxis.mult3(rot, rotXAxis);
 
 		Quaternion rotX = new Quaternion();
-		rotX.setAxisAngle(rotXAxis, dy * ROT_SCALE_X / 4);
+		rotX.setAxisAngle(rotXAxis, (y - y0) * ROT_SCALE_X / 4);
 
 		Quaternion rotZ = new Quaternion();
-		rotZ.setRotZAxis(dx * ROT_SCALE_Z / 4);
+		rotZ.setRotZAxis((x - x0) * ROT_SCALE_Z / 4);
 
 
 		Mat4d rotTransX = MathUtils.rotateAroundPoint(rotX, camPos);
@@ -186,10 +186,10 @@ public class CameraControl implements WindowInteractionListener {
 
 	}
 
-	private void handleRotAroundPoint(int x, int y, int dx, int dy) {
+	private void handleRotAroundPoint(int x, int y, int x0, int y0) {
 
-		Vec3d camPos = _updateView.getGlobalPosition();
-		Vec3d center = _updateView.getGlobalCenter();
+		Vec3d camPos = new Vec3d(dragViewPosition);
+		Vec3d center = new Vec3d(dragViewCenter);
 
 		PolarInfo origPi = new PolarInfo(center, camPos);
 		if ( camPos.x == center.x &&
@@ -209,10 +209,10 @@ public class CameraControl implements WindowInteractionListener {
 		rotXAxis.mult3(rot, rotXAxis);
 
 		Quaternion rotX = new Quaternion();
-		rotX.setAxisAngle(rotXAxis, -dy * ROT_SCALE_X);
+		rotX.setAxisAngle(rotXAxis, -(y - y0) * ROT_SCALE_X);
 
 		Quaternion rotZ = new Quaternion();
-		rotZ.setRotZAxis(-dx * ROT_SCALE_Z);
+		rotZ.setRotZAxis(-(x - x0) * ROT_SCALE_Z);
 
 		Mat4d rotTransX = MathUtils.rotateAroundPoint(rotX, POI);
 		Mat4d rotTransZ = MathUtils.rotateAroundPoint(rotZ, POI);
@@ -234,8 +234,8 @@ public class CameraControl implements WindowInteractionListener {
 		if (upDot < 0) {
 			// The up angle has changed by more than 90 degrees, we probably are looking directly up or down
 			// Instead only apply the rotation around Z
-			camPos = _updateView.getGlobalPosition();
-			center = _updateView.getGlobalCenter();
+			camPos = new Vec3d(dragViewPosition);
+			center = new Vec3d(dragViewCenter);
 
 			camPos.multAndTrans3(rotTransZ, camPos);
 			center.multAndTrans3(rotTransZ, center);
