@@ -77,7 +77,7 @@ public class CameraControl implements WindowInteractionListener {
 
 		if (dragInfo.button == 1) {
 			if (dragInfo.shiftDown()) {
-				handleExpVertPan(dragInfo.x, dragInfo.y, dragInfo.dx, dragInfo.dy);
+				handleExpVertPan(dragInfo.x, dragInfo.y, dragInfo.startX, dragInfo.startY);
 			} else {
 				handleExpPan(dragInfo.x, dragInfo.y, dragInfo.startX, dragInfo.startY);
 			}
@@ -167,18 +167,18 @@ public class CameraControl implements WindowInteractionListener {
 
 	}
 
-	private void handleExpVertPan(int x, int y, int dx, int dy) {
+	private void handleExpVertPan(int x, int y, int x0, int y0) {
 		Renderer.WindowMouseInfo info = _renderer.getMouseInfo(_windowID);
 		if (info == null) return;
 
 		//Cast a ray into the XY plane both for now, and for the previous mouse position
 		Ray currRay = RenderUtils.getPickRayForPosition(info.cameraInfo, x, y, info.width, info.height);
-		Ray prevRay = RenderUtils.getPickRayForPosition(info.cameraInfo, x - dx, y - dy, info.width, info.height);
+		Ray prevRay = RenderUtils.getPickRayForPosition(info.cameraInfo, x0, y0, info.width, info.height);
 
 		double zDiff = RenderUtils.getZDiff(POI, currRay, prevRay);
 
-		Vec3d camPos = _updateView.getGlobalPosition();
-		Vec3d center = _updateView.getGlobalCenter();
+		Vec3d camPos = new Vec3d(dragViewPosition);
+		Vec3d center = new Vec3d(dragViewCenter);
 		camPos.z -= zDiff;
 		center.z -= zDiff;
 		PolarInfo pi = new PolarInfo(center, camPos);
