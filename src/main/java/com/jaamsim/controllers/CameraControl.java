@@ -19,6 +19,7 @@
 package com.jaamsim.controllers;
 
 import com.jaamsim.Graphics.View;
+import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.math.Mat4d;
 import com.jaamsim.math.MathUtils;
 import com.jaamsim.math.Plane;
@@ -158,10 +159,20 @@ public class CameraControl implements WindowInteractionListener {
 		Vec3d diff = new Vec3d();
 		diff.sub3(currIntersect, prevIntersect);
 
-		Vec3d camPos = new Vec3d(dragViewPosition);
 		Vec3d center = new Vec3d(dragViewCenter);
-		camPos.sub3(diff);
 		center.sub3(diff);
+
+		// Apply snap-grid
+		Simulation simulation = _updateView.getJaamSimModel().getSimulation();
+		if (simulation.isSnapToGrid()) {
+			center = simulation.getSnapGridPosition(center, dragViewCenter, false);
+			diff = new Vec3d(dragViewCenter);
+			diff.sub3(center);
+		}
+
+		Vec3d camPos = new Vec3d(dragViewPosition);
+		camPos.sub3(diff);
+
 		PolarInfo pi = new PolarInfo(center, camPos);
 		updateCamTrans(pi, true);
 
