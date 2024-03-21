@@ -30,7 +30,6 @@ import com.jaamsim.input.ExpressionInput;
 import com.jaamsim.input.InterfaceEntityListInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
-import com.jaamsim.states.StateRecord;
 
 public class EntitySystem extends AbstractStateUserEntity implements ObserverEntity, SubjectEntity {
 
@@ -208,12 +207,6 @@ public class EntitySystem extends AbstractStateUserEntity implements ObserverEnt
 		String state = stateExp.getNextResult(this, getSimTime()).stringVal;
 		setPresentState(state);
 		if (isTraceFlag()) trace(1, "setPresentState - %s", state);
-	}
-
-	@Override
-	public void stateChanged(StateRecord prev, StateRecord next) {
-		super.stateChanged(prev, next);
-		notifyObservers();
 	}
 
 	@Output(name = "EntityList",
