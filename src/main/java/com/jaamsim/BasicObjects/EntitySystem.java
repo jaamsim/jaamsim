@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2020-2022 JaamSim Software Inc.
+ * Copyright (C) 2020-2024 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,6 @@ import com.jaamsim.input.ExpressionInput;
 import com.jaamsim.input.InterfaceEntityListInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
-import com.jaamsim.states.StateRecord;
 
 public class EntitySystem extends AbstractStateUserEntity implements ObserverEntity, SubjectEntity {
 
@@ -207,12 +206,7 @@ public class EntitySystem extends AbstractStateUserEntity implements ObserverEnt
 		// Calculate the state from the StateExpression input
 		String state = stateExp.getNextResult(this, getSimTime()).stringVal;
 		setPresentState(state);
-	}
-
-	@Override
-	public void stateChanged(StateRecord prev, StateRecord next) {
-		super.stateChanged(prev, next);
-		notifyObservers();
+		if (isTraceFlag()) trace(1, "setPresentState - %s", state);
 	}
 
 	@Output(name = "EntityList",

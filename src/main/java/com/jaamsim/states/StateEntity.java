@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018-2023 JaamSim Software Inc.
+ * Copyright (C) 2018-2024 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,6 +31,7 @@ import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.FileEntity;
 import com.jaamsim.basicsim.JaamSimModel;
+import com.jaamsim.basicsim.SubjectEntity;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.Keyword;
@@ -253,9 +254,14 @@ public abstract class StateEntity extends DisplayEntity implements StateUser {
 			stateReportFile.flush();
 		}
 
+		// Notify the state listeners
 		for (StateEntityListener each : stateListeners) {
 			each.updateForStateChange(this, prev, next);
 		}
+
+		// Notify the observers
+		if (this instanceof SubjectEntity)
+			((SubjectEntity) this).notifyObservers();
 	}
 
 	/**
