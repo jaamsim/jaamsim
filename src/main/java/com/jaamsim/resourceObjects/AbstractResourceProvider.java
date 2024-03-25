@@ -68,14 +68,18 @@ public abstract class AbstractResourceProvider extends DisplayEntity implements 
 	@Override
 	public void earlyInit() {
 		super.earlyInit();
-		userList = ResourceProvider.getUserList(this);
-
 		unitsSeized = 0;
 		unitsReleased = 0;
 		stats.clear();
 		stats.addValue(0.0d, 0);
 		freq.clear();
 		freq.addValue(0.0d,  0);
+	}
+
+	@Override
+	public void lateInit() {
+		super.lateInit();
+		userList = ResourceProvider.getUserList(this);
 	}
 
 	@Override

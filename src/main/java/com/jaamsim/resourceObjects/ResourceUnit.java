@@ -127,7 +127,6 @@ public class ResourceUnit extends StateUserEntity implements Seizable, ResourceP
 		presentAssignment = null;
 		assignmentTicks = -1L;
 		lastReleaseTicks = 0L;
-		userList = ResourceProvider.getUserList(this);
 
 		unitsSeized = 0;
 		unitsReleased = 0;
@@ -135,6 +134,12 @@ public class ResourceUnit extends StateUserEntity implements Seizable, ResourceP
 		stats.addValue(0.0d, 0);
 		freq.clear();
 		freq.addValue(0.0d,  0);
+	}
+
+	@Override
+	public void lateInit() {
+		super.lateInit();
+		userList = ResourceProvider.getUserList(this);
 	}
 
 	@Override
