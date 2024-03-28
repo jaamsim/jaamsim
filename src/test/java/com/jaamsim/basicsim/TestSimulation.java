@@ -201,6 +201,9 @@ public class TestSimulation {
 			simModel.setInput("Simulation", "RunDuration", "1000 s");
 			simModel.setInput("Simulation", "InitializationDuration", "0 s");
 
+			// Ensure that the PrintReport input is FALSE
+			assertTrue(!simModel.getSimulation().getPrintReport());
+
 			// Validate the inputs
 			boolean bool = simModel.validate();
 			if (!bool)
