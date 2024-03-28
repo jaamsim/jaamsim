@@ -24,7 +24,6 @@ import com.jaamsim.ProbabilityDistributions.Distribution;
 import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.Samples.TimeSeries;
-import com.jaamsim.basicsim.Entity;
 import com.jaamsim.events.Conditional;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.events.ProcessTarget;
@@ -63,15 +62,6 @@ public class Resource extends AbstractResourceProvider {
 	@Override
 	public void validate() {
 		super.validate();
-
-		boolean found = false;
-		for (Entity ent : getJaamSimModel().getClonesOfIterator(Entity.class, ResourceUser.class)) {
-			ResourceUser ru = (ResourceUser) ent;
-			if (ru.requiresResource(this))
-				found = true;
-		}
-		if (!found)
-			throw new InputErrorException( "At least one object must seize this resource." );
 
 		if( capacity.getValue() instanceof Distribution )
 			throw new InputErrorException( "The Capacity keyword cannot accept a probability distribution.");
