@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2016-2023 JaamSim Software Inc.
+ * Copyright (C) 2016-2024 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -513,15 +513,15 @@ public class ContextMenu {
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
+				GUIFrame.getInstance().saveEntity(submodel);
+
 				ArrayList<Entity> refList = submodel.getExternalReferences();
 				if (!refList.isEmpty()) {
-					String msg = String.format("SubModel cannot be saved because contains "
+					String msg = String.format("The saved SubModel file contains the following "
 							+ "external references: %s", refList);
 					LogBox.logLine(msg);
-					GUIFrame.getInstance().invokeErrorDialogBox("Save Error", msg);
-					return;
+					GUIFrame.getInstance().invokeErrorDialogBox("Warning", msg);
 				}
-				GUIFrame.getInstance().saveEntity(submodel);
 			}
 		} );
 		menu.add( saveSubModelItem );
