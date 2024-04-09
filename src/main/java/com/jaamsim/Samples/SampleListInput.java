@@ -257,9 +257,10 @@ public class SampleListInput extends ArrayListInput<SampleProvider> {
 			return;
 		for (SampleProvider samp : value) {
 			if (samp instanceof Entity) {
-				if (list.contains((Entity)samp))
+				final Entity sampEnt = (Entity)samp;
+				if (list.contains(sampEnt))
 					continue;
-				list.add((Entity)samp);
+				list.add(sampEnt);
 				continue;
 			}
 

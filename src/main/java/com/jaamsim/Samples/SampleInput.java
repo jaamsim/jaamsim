@@ -159,9 +159,10 @@ public class SampleInput extends Input<SampleProvider> {
 	@Override
 	public void appendEntityReferences(ArrayList<Entity> list) {
 		if (value instanceof Entity) {
-			if (list.contains((Entity)value))
+			final Entity entRef = (Entity)value;
+			if (list.contains(entRef))
 				return;
-			list.add((Entity) value);
+			list.add(entRef);
 			return;
 		}
 

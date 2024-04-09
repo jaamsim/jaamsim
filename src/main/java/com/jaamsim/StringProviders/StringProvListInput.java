@@ -136,9 +136,10 @@ public class StringProvListInput extends ArrayListInput<StringProvider> {
 			return;
 		for (StringProvider sp : value) {
 			if (sp instanceof Entity) {
-				if (list.contains((Entity)sp))
+				final Entity entref = (Entity)sp;
+				if (list.contains(entref))
 					continue;
-				list.add((Entity)sp);
+				list.add(entref);
 				continue;
 			}
 

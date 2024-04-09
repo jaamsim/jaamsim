@@ -117,9 +117,10 @@ public class StringProvInput extends Input<StringProvider> {
 	@Override
 	public void appendEntityReferences(ArrayList<Entity> list) {
 		if (value instanceof Entity) {
-			if (list.contains((Entity)value))
+			final Entity entref = (Entity)value;
+			if (list.contains(entref))
 				return;
-			list.add((Entity)value);
+			list.add(entref);
 			return;
 		}
 
