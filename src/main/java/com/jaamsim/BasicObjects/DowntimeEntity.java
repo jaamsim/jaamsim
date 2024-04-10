@@ -261,7 +261,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 			ent.endDowntime();
 		}
 	}
-	private final ProcessTarget endDowntime = new EndDowntimeTarget(this);
+	private final ProcessTarget endDowntimeTarget = new EndDowntimeTarget(this);
 	private final EventHandle endDowntimeHandle = new EventHandle();
 
 	/**
@@ -277,7 +277,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 			ent.scheduleDowntime();
 		}
 	}
-	private final ProcessTarget scheduleDowntime = new ScheduleDowntimeTarget(this);
+	private final ProcessTarget scheduleDowntimeTarget = new ScheduleDowntimeTarget(this);
 	private final EventHandle scheduleDowntimeHandle = new EventHandle();
 
 	/**
@@ -294,7 +294,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 			if (iatWorkingEntity.getValue() == null) {
 				double workingSecs = this.getSimTime();
 				double waitSecs = secondsForNextFailure - workingSecs;
-				scheduleProcess(Math.max(waitSecs, 0.0), 5, scheduleDowntime, scheduleDowntimeHandle);
+				scheduleProcess(Math.max(waitSecs, 0.0), 5, scheduleDowntimeTarget, scheduleDowntimeHandle);
 
 			}
 			// 2) Working time
@@ -302,7 +302,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 				if (iatWorkingEntity.getValue().isWorkingState()) {
 					double workingSecs = iatWorkingEntity.getValue().getWorkingTime();
 					double waitSecs = secondsForNextFailure - workingSecs;
-					scheduleProcess(Math.max(waitSecs, 0.0), 5, scheduleDowntime, scheduleDowntimeHandle);
+					scheduleProcess(Math.max(waitSecs, 0.0), 5, scheduleDowntimeTarget, scheduleDowntimeHandle);
 				}
 			}
 		}
@@ -324,7 +324,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 				// Calendar time
 				double workingSecs = this.getSimTime();
 				double waitSecs = secondsForNextRepair - workingSecs;
-				scheduleProcess(waitSecs, 5, endDowntime, endDowntimeHandle);
+				scheduleProcess(waitSecs, 5, endDowntimeTarget, endDowntimeHandle);
 				return;
 			}
 
@@ -336,7 +336,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 
 				double workingSecs = durationWorkingEntity.getValue().getWorkingTime();
 				double waitSecs = secondsForNextRepair - workingSecs;
-				scheduleProcess(waitSecs, 5, endDowntime, endDowntimeHandle);
+				scheduleProcess(waitSecs, 5, endDowntimeTarget, endDowntimeHandle);
 			}
 			// The Entity is not working, remove scheduled end of the downtime event
 			else {
