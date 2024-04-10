@@ -345,19 +345,8 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 		}
 		// 2) Start the next downtime event if required/possible
 		else {
-			if (downtimePendings > 0) {
-
-				// If all entities are ready, start the downtime event
-				boolean allEntitiesCanStart = true;
-				for (DowntimeUser each : downtimeUserList) {
-					if (!each.canStartDowntime(this)) {
-						allEntitiesCanStart = false;
-						break;
-					}
-				}
-				if (allEntitiesCanStart) {
-					this.startDowntime();
-				}
+			if (downtimePendings > 0 && canStartDowntime()) {
+				startDowntime();
 			}
 		}
 	}
@@ -410,6 +399,15 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 		}
 
 		this.checkProcessNetwork();
+	}
+
+	public boolean canStartDowntime() {
+		for (DowntimeUser each : downtimeUserList) {
+			if (!each.canStartDowntime(this)) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	/**
