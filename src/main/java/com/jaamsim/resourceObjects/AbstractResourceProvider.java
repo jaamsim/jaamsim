@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2018-2023 JaamSim Software Inc.
+ * Copyright (C) 2018-2024 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -70,7 +70,7 @@ public abstract class AbstractResourceProvider extends DisplayEntity implements 
 	@Override
 	public void earlyInit() {
 		super.earlyInit();
-		userList = getUserList(this);
+		userList = ResourceProvider.getUserList(this);
 
 		unitsSeized = 0;
 		unitsReleased = 0;
