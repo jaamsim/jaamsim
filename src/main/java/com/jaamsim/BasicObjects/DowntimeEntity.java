@@ -367,12 +367,13 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 
 		// Determine the time the next downtime event is due
 		// Calendar time based
-		if( iatWorkingEntity.getValue() == null ) {
+		StateEntity iatWorkingEnt = iatWorkingEntity.getValue();
+		if (iatWorkingEnt == null) {
 			secondsForNextFailure += this.getNextDowntimeIAT();
 		}
 		// Working time based
 		else {
-			secondsForNextFailure = iatWorkingEntity.getValue().getWorkingTime() + this.getNextDowntimeIAT();
+			secondsForNextFailure = iatWorkingEnt.getWorkingTime() + getNextDowntimeIAT();
 		}
 
 		// prepare all entities for the downtime event
