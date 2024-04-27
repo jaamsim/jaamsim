@@ -565,7 +565,7 @@ public class GLTFReader {
 			Integer mode = getIntChild(prim, "mode", true);
 			if (mode != null) {
 				if (mode.intValue() != 4) {
-					throw new RenderException(String.format("Currently unsupported GLTF geometry mode: %d", mode.intValue()));
+					throw new RenderException(String.format("Currently unsupported GLTF geometry mode: %d", mode));
 				}
 			}
 
