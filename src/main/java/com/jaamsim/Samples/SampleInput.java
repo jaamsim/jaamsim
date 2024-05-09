@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2023 JaamSim Software Inc.
+ * Copyright (C) 2016-2024 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -218,7 +218,11 @@ public class SampleInput extends Input<SampleProvider> {
 			return ret;
 		}
 		catch (ErrorException e) {
-			e.keyword = getKeyword();
+			if (e.entName.isEmpty()) {
+				e.entName = thisEnt.getName();
+				e.keyword = getKeyword();
+				e.index = -1;
+			}
 			throw e;
 		}
 		catch (Exception e) {
