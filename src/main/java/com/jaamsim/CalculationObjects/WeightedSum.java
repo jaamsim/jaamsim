@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2022 JaamSim Software Inc.
+ * Copyright (C) 2016-2024 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -130,7 +130,7 @@ public class WeightedSum extends DisplayEntity implements SampleProvider {
 		// Calculate the unweighted sum of the inputs
 		if (coefficientList.getValue() == null) {
 			for (int i = 0; i < inputValueList.getListSize(); i++) {
-				val += inputValueList.getNextSample(i, thisEnt, simTime);
+				val += inputValueList.getNextSample(i, this, simTime);
 			}
 		}
 
@@ -138,7 +138,7 @@ public class WeightedSum extends DisplayEntity implements SampleProvider {
 		else {
 			for (int i = 0; i < inputValueList.getListSize(); i++) {
 				val += coefficientList.getValue().get(i)
-						* inputValueList.getNextSample(i, thisEnt, simTime);
+						* inputValueList.getNextSample(i, this, simTime);
 			}
 		}
 

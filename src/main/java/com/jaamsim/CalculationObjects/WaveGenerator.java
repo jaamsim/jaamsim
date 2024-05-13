@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2023 JaamSim Software Inc.
+ * Copyright (C) 2016-2024 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -126,12 +126,12 @@ public abstract class WaveGenerator extends DisplayEntity implements SampleProvi
 	public double getNextSample(Entity thisEnt, double simTime) {
 
 		// Calculate the present phase angle
-		double angle = 2.0*Math.PI * simTime/period.getNextSample(thisEnt, simTime)
-				+ phaseAngle.getNextSample(thisEnt, simTime);
+		double angle = 2.0*Math.PI * simTime/period.getNextSample(this, simTime)
+				+ phaseAngle.getNextSample(this, simTime);
 
 		// Set the output value for the wave
-		return amplitude.getNextSample(thisEnt, simTime) * this.getSignal(angle)
-				+ offset.getNextSample(thisEnt, simTime);
+		return amplitude.getNextSample(this, simTime) * this.getSignal(angle)
+				+ offset.getNextSample(this, simTime);
 	}
 
 	@Override

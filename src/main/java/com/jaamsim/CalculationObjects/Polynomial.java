@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2023 JaamSim Software Inc.
+ * Copyright (C) 2016-2024 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -66,7 +66,7 @@ public class Polynomial extends DisplayEntity implements SampleProvider {
 
 	@Override
 	public double getNextSample(Entity thisEnt, double simTime) {
-		double x = inputValue.getNextSample(thisEnt, simTime);
+		double x = inputValue.getNextSample(this, simTime);
 		double pow = 1.0;
 		double val = 0.0;
 		for(int i=0; i<coefficientList.getValue().size(); i++ ) {
