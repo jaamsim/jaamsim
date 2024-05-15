@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2022 JaamSim Software Inc.
+ * Copyright (C) 2016-2024 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,6 @@ import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.Samples.SampleProvider;
 import com.jaamsim.basicsim.Entity;
-import com.jaamsim.events.EventManager;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InputCallback;
@@ -117,19 +116,7 @@ implements SampleProvider {
 	 * @return input value to this calculation object.
 	 */
 	public double getInputValue(double simTime) {
-		if (isTraceFlag()) trace(0, "getInputValue - lastInputValue=%s", lastInputValue);
-
-		// An exception will be generated if the model has an infinite loop causing the
-		// call stack size to be exceeded
-		double ret = lastInputValue;
-		try {
-			ret = inputValue.getNextSample(this, simTime);
-		} catch(Exception e) {
-			if (EventManager.hasCurrent()) {
-				error("Closed loop detected in calculation. Insert a UnitDelay object.");
-			}
-		}
-		return ret;
+		return inputValue.getNextSample(this, simTime);
 	}
 
 	/*
