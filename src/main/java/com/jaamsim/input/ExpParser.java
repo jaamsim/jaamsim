@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2023 JaamSim Software Inc.
+ * Copyright (C) 2016-2024 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -204,7 +204,7 @@ public class ExpParser {
 		public ExpResult evaluate(EvalContext ec) throws ExpError {
 			synchronized(executingThreads) {
 				if (executingThreads.contains(Thread.currentThread())) {
-					throw new ExpError(null, 0, "Expression recursion detected for expression: %s", source);
+					throw new ExpError(source, 0, "Cannot evaluate an expression with recursive self-references");
 				}
 
 				executingThreads.add(Thread.currentThread());
@@ -215,7 +215,7 @@ public class ExpParser {
 				res = rootNode.evaluate(ec);
 			}
 			catch (StackOverflowError e) {
-				throw new ExpError(null, 0, "Excessive recursion detected in expression: %s, source");
+				throw new ExpError(source, 0, "Cannot evaluate an expression with excessive recursion");
 			}
 			finally {
 				synchronized(executingThreads) {
