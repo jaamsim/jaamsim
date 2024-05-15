@@ -1328,6 +1328,8 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 					perf.append( String.format( "   Frame time (ms): %.3f", lastFrameNanos/1000000.0) );
 					perf.append( String.format( "   SceneTime (ms): %.3f", sceneTimeNS/1000000.0) );
 					perf.append( String.format( "   Loop Time (ms): %.3f", loopTimeNS/1000000.0) );
+					float[] scales = window.getGLWindowRef().getCurrentSurfaceScale(new float[2]);
+					perf.append( String.format( "   Pixel Scale: %.3f %.3f", scales[0], scales[1]) );
 
 					TessFont defFont = getTessFont(defaultBoldFontKey);
 					OverlayString os = new OverlayString(defFont, perf.toString(), ColourInput.BLACK,
