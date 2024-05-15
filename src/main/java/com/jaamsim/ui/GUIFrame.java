@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2002-2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2023 JaamSim Software Inc.
+ * Copyright (C) 2016-2024 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -4782,7 +4782,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 	@Override
 	public void handleInputError(Throwable t, Entity ent) {
-		String msg = t.getMessage();
+		String msg = t.getLocalizedMessage();
 		if (msg == null)
 			msg = "null";
 		String source = "";
@@ -4809,7 +4809,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 	@Override
 	public void handleError(Throwable t) {
-		String msg = t.getMessage();
+		String msg = t.getLocalizedMessage();
 		if (msg == null)
 			msg = "null";
 		String source = "";
@@ -4946,21 +4946,22 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 	static void handleConfigError(Throwable t, File file) {
 		JaamSimModel sim = getJaamSimModel();
+		String msg = t.getLocalizedMessage();
 		if (t instanceof InputErrorException) {
-			InputAgent.logMessage(sim, "Input Error: %s", t.getMessage());
+			InputAgent.logMessage(sim, "Input Error: %s", msg);
 			GUIFrame.showErrorOptionDialog("Input Error",
 					String.format("Input errors were detected while loading file: '%s'\n\n"
 							+ "%s\n\n"
 							+ "Open '%s' with Log Viewer?",
-							file.getName(), t.getMessage(), sim.getRunName() + ".log"));
+							file.getName(), msg, sim.getRunName() + ".log"));
 			return;
 		}
 
-		InputAgent.logMessage(sim, "Fatal Error while loading file '%s': %s\n", file.getName(), t.getMessage());
+		InputAgent.logMessage(sim, "Fatal Error while loading file '%s': %s\n", file.getName(), msg);
 		InputAgent.logStackTrace(sim, t);
 		GUIFrame.showErrorDialog("Fatal Error",
 				String.format("A fatal error has occured while loading the file '%s':", file.getName()),
-				t.getMessage(),
+				msg,
 				"");
 	}
 

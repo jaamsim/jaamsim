@@ -931,7 +931,7 @@ public class InputAgent {
 				"Runtime error in replication %s of scenario %s at time %f s:",
 				simModel.getReplicationNumber(), simModel.getScenarioNumber(),
 				simModel.getSimTime());
-		InputAgent.logMessage(simModel, "%s", t.getMessage());
+		InputAgent.logMessage(simModel, "%s", t.getLocalizedMessage());
 
 		// Stack trace for the root cause
 		Throwable rootCause = t;
