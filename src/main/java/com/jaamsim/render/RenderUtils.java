@@ -278,11 +278,17 @@ static void nioBuffToGL(GL2GL3 gl, Renderer r, int bufferHandle, int itemSize, B
 	 * @param width - window width
 	 * @param height - window height
 	 */
-	public static Ray getPickRayForPosition(CameraInfo cameraInfo, int x, int y, int width, int height) {
+	public static Ray getPickRayForPosition(Renderer.WindowMouseInfo mouseInfo, int x, int y) {
+		CameraInfo cameraInfo = mouseInfo.cameraInfo;
+		int width = mouseInfo.width;
+		int height = mouseInfo.height;
+
+		int scaledX = (int)Math.round((double)x / mouseInfo.scaleX);
+		int scaledY = (int)Math.round((double)y / mouseInfo.scaleY);
 
 		double aspectRatio = (double)width / (double)height;
-		double normX = 2.0*((double)x / (double)width) - 1.0;
-		double normY = 1.0 - 2.0*((double)y / (double)height); // In openGL space, y is -1 at the bottom
+		double normX = 2.0*((double)scaledX / (double)width) - 1.0;
+		double normY = 1.0 - 2.0*((double)scaledY / (double)height); // In openGL space, y is -1 at the bottom
 
 		return RenderUtils.getViewRay(cameraInfo, aspectRatio, normX, normY);
 	}
@@ -298,11 +304,9 @@ static void nioBuffToGL(GL2GL3 gl, Renderer r, int bufferHandle, int itemSize, B
 			return null;
 		}
 
-		return getPickRayForPosition(mouseInfo.cameraInfo,
+		return getPickRayForPosition(mouseInfo,
 		                             mouseInfo.x,
-		                             mouseInfo.y,
-		                             mouseInfo.width,
-		                             mouseInfo.height);
+		                             mouseInfo.y);
 	}
 
 	/**

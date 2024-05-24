@@ -1112,8 +1112,8 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 			float[] scales = w.getGLWindowRef().getCurrentSurfaceScale(new float[2]);
 			WindowMouseInfo info = new WindowMouseInfo();
 
-			info.x = (int)Math.round((double)w.getMouseX() / scales[0]);
-			info.y = (int)Math.round((double)w.getMouseY() / scales[1]);
+			info.x = w.getMouseX();
+			info.y = w.getMouseY();
 			info.width = w.getViewableWidth();
 			info.height = w.getViewableHeight();
 			info.viewableX = w.getViewableX();
