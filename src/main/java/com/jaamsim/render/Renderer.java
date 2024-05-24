@@ -1093,6 +1093,8 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 		public int viewableX, viewableY;
 		public boolean mouseInWindow;
 		public CameraInfo cameraInfo;
+		public float scaleX;
+		public float scaleY;
 	}
 
 	/**
@@ -1107,16 +1109,19 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 				return null; // Not a valid window ID, or the window has closed
 			}
 
+			float[] scales = w.getGLWindowRef().getCurrentSurfaceScale(new float[2]);
 			WindowMouseInfo info = new WindowMouseInfo();
 
-			info.x = w.getMouseX();
-			info.y = w.getMouseY();
+			info.x = (int)Math.round((double)w.getMouseX() / scales[0]);
+			info.y = (int)Math.round((double)w.getMouseY() / scales[1]);
 			info.width = w.getViewableWidth();
 			info.height = w.getViewableHeight();
 			info.viewableX = w.getViewableX();
 			info.viewableY = w.getViewableY();
 			info.mouseInWindow = w.isMouseInWindow();
 			info.cameraInfo = cameras.get(windowID).getInfo();
+			info.scaleX = scales[0];
+			info.scaleY = scales[1];
 
 			return info;
 		}
@@ -1291,7 +1296,8 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 				Camera cam = cameras.get(window.getWindowID());
 
 				// The ray of the current mouse position (or null if the mouse is not hovering over the window)
-				Ray pickRay = RenderUtils.getPickRay(getMouseInfo(window.getWindowID()));
+				WindowMouseInfo info = getMouseInfo(window.getWindowID());
+				Ray pickRay = RenderUtils.getPickRay(info);
 
 				PerfInfo pi = new PerfInfo();
 
@@ -1330,6 +1336,7 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 					perf.append( String.format( "   Loop Time (ms): %.3f", loopTimeNS/1000000.0) );
 					float[] scales = window.getGLWindowRef().getCurrentSurfaceScale(new float[2]);
 					perf.append( String.format( "   Pixel Scale: %.3f %.3f", scales[0], scales[1]) );
+					perf.append( String.format( "   Vieawble: %d %d %d %d", info.x, info.y, info.width, info.height) );
 
 					TessFont defFont = getTessFont(defaultBoldFontKey);
 					OverlayString os = new OverlayString(defFont, perf.toString(), ColourInput.BLACK,
