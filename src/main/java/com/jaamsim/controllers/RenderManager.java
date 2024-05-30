@@ -622,8 +622,8 @@ public class RenderManager implements DragSourceListener {
 			lastPopup = menu;
 
 			menu.setLightWeightPopupEnabled(false);
-			final int menuX = mouseInfo.x + awtFrame.getInsets().left;
-			final int menuY = mouseInfo.y + awtFrame.getInsets().top;
+			final int menuX = mouseInfo.getScaledX() + awtFrame.getInsets().left;
+			final int menuY = mouseInfo.getScaledY() + awtFrame.getInsets().top;
 			final int nodeIndex = getNodeIndex(windowID, mouseInfo.x, mouseInfo.y);
 
 			if (ents.size() == 0) {
@@ -741,8 +741,8 @@ public class RenderManager implements DragSourceListener {
 		}
 
 		// Look for overlay entities
-		int x = mouseInfo.x;
-		int y = mouseInfo.y;
+		int x = mouseInfo.getScaledX();
+		int y = mouseInfo.getScaledY();
 		List<PickData> ret = pickForRasterCoord(x, y, view.getID());
 
 		// Look for normal entities

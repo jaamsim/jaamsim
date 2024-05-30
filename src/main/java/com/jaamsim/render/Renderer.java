@@ -1095,6 +1095,14 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 		public CameraInfo cameraInfo;
 		public float scaleX;
 		public float scaleY;
+
+		public int getScaledX() {
+			return (int)Math.round((double)x / scaleX);
+		}
+
+		public int getScaledY() {
+			return (int)Math.round((double)y / scaleY);
+		}
 	}
 
 	/**
