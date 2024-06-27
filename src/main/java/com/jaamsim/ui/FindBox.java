@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2019-2023 JaamSim Software Inc.
+ * Copyright (C) 2019-2024 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -61,6 +61,7 @@ public class FindBox extends JDialog {
 			@Override
 			public ArrayList<String> getTopicList(String str) {
 				str = str.replaceAll("[{}\\[\\]]", "").trim();  // remove braces
+				str = str.replaceAll("\\(R\\)", "");  // remove reverse tag
 				if (str.isEmpty())
 					return new ArrayList<>();
 				String[] names = str.split("[\\s,]", 2);  // ignore anything after whitespace or comma
