@@ -166,8 +166,13 @@ public class FindBox extends JDialog {
 		Entity ent = GUIFrame.getJaamSimModel().getEntity(name);
 		if (ent == null || ent instanceof ObjectType || ent instanceof Unit ||
 				ent instanceof IconModel) {
-			String msg = String.format("Cannot find entity named: '%s'.", name);
-			GUIFrame.showErrorDialog("Error", msg);
+			if (searchText.getTopicList(name).isEmpty()) {
+				String msg = String.format("Cannot find entity named: '%s'.", name);
+				GUIFrame.showErrorDialog("Error", msg);
+			}
+			else {
+				searchText.search(name);
+			}
 			return false;
 		}
 		FrameBox.setSelectedEntity(ent, false);
