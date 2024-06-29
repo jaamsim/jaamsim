@@ -53,7 +53,7 @@ public class FindBox extends JDialog {
 		setDefaultCloseOperation(HIDE_ON_CLOSE);
 
 		// Search text
-		searchText = new SearchField(30) {
+		searchText = new SearchField(50) {
 			@Override
 			public boolean showTopic(String topic) {
 				return findEntity(topic);
