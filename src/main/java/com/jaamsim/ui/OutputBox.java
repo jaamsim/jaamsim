@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2019-2023 JaamSim Software Inc.
+ * Copyright (C) 2019-2024 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,9 +18,6 @@
 package com.jaamsim.ui;
 
 import java.awt.Point;
-import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -69,8 +66,7 @@ public class OutputBox extends FrameBox {
 				if (!(obj instanceof String))
 					return;
 				String str = (String) obj;
-				Clipboard clpbrd = Toolkit.getDefaultToolkit().getSystemClipboard();
-				clpbrd.setContents(new StringSelection(str), null);
+				GUIFrame.copyToClipboard(str);
 			}
 		});
 

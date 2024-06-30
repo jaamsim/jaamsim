@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2005-2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2023 JaamSim Software Inc.
+ * Copyright (C) 2016-2024 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,10 +20,6 @@ package com.jaamsim.ui;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
@@ -149,8 +145,7 @@ public abstract class CellEditor extends AbstractCellEditor implements TableCell
 		jPanel.getActionMap().put("copy", new AbstractAction() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				Clipboard clpbrd = Toolkit.getDefaultToolkit().getSystemClipboard();
-				clpbrd.setContents(new StringSelection(text.getText()), null);
+				GUIFrame.copyToClipboard(text.getText());
 			}
 		});
 
@@ -159,13 +154,11 @@ public abstract class CellEditor extends AbstractCellEditor implements TableCell
 		jPanel.getActionMap().put("paste", new AbstractAction() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				Clipboard clpbrd = Toolkit.getDefaultToolkit().getSystemClipboard();
-				try {
-					String str = (String)clpbrd.getData(DataFlavor.stringFlavor);
-					text.setText(str);
-					fireEditingStopped();
-				}
-				catch (Throwable err) {}
+				String str = GUIFrame.getStringFromClipboard();
+				if (str == null)
+					return;
+				text.setText(str);
+				fireEditingStopped();
 			}
 		});
 
@@ -174,8 +167,7 @@ public abstract class CellEditor extends AbstractCellEditor implements TableCell
 		jPanel.getActionMap().put("cut", new AbstractAction() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				Clipboard clpbrd = Toolkit.getDefaultToolkit().getSystemClipboard();
-				clpbrd.setContents(new StringSelection(text.getText()), null);
+				GUIFrame.copyToClipboard(text.getText());
 				text.setText("");
 				fireEditingStopped();
 			}

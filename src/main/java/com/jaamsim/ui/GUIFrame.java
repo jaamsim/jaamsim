@@ -4063,9 +4063,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 	public void copyLocationToClipBoard(Vec3d pos) {
 		String data = String.format("(%.3f, %.3f, %.3f)", pos.x, pos.y, pos.z);
-		StringSelection stringSelection = new StringSelection(data);
-		Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-		clipboard.setContents( stringSelection, null );
+		copyToClipboard(data);
 	}
 
 	public static void showLocatorPosition(Vec3d pos) {
@@ -5125,19 +5123,29 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	private void copyToClipboard(Entity ent) {
 		if (ent == getJaamSimModel().getSimulation())
 			return;
-		Clipboard clpbrd = Toolkit.getDefaultToolkit().getSystemClipboard();
-		clpbrd.setContents(new StringSelection(ent.getName()), null);
+		copyToClipboard(ent.getName());
 	}
 
-	public Entity getEntityFromClipboard() {
+	public static void copyToClipboard(String str) {
+		Clipboard clpbrd = Toolkit.getDefaultToolkit().getSystemClipboard();
+		clpbrd.setContents(new StringSelection(str), null);
+	}
+
+	public static String getStringFromClipboard() {
 		Clipboard clpbrd = Toolkit.getDefaultToolkit().getSystemClipboard();
 		try {
-			String name = (String)clpbrd.getData(DataFlavor.stringFlavor);
-			return getJaamSimModel().getNamedEntity(name);
+			return (String)clpbrd.getData(DataFlavor.stringFlavor);
 		}
 		catch (Throwable err) {
 			return null;
 		}
+	}
+
+	public Entity getEntityFromClipboard() {
+		String name = getStringFromClipboard();
+		if (name == null)
+			return null;
+		return getJaamSimModel().getNamedEntity(name);
 	}
 
 	private void pasteEntityFromClipboard() {

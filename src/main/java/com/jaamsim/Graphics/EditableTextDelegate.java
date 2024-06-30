@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2018-2023 JaamSim Software Inc.
+ * Copyright (C) 2018-2024 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,7 @@
  */
 package com.jaamsim.Graphics;
 
-import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.StringSelection;
-
+import com.jaamsim.ui.GUIFrame;
 import com.jogamp.newt.event.KeyEvent;
 
 public class EditableTextDelegate implements EditableText {
@@ -325,24 +321,21 @@ public class EditableTextDelegate implements EditableText {
 
 	@Override
 	public void copyToClipboard() {
-		Clipboard clpbrd = Toolkit.getDefaultToolkit().getSystemClipboard();
 		int start = Math.min(insertPos, insertPos + numSelected);
 		int end = Math.max(insertPos, insertPos + numSelected);
 		StringBuilder sb = new StringBuilder(text);
 		String copiedText = sb.substring(start, end);
-		clpbrd.setContents(new StringSelection(copiedText), null);
+		GUIFrame.copyToClipboard(copiedText);
 	}
 
 	@Override
 	public void pasteFromClipboard() {
-		Clipboard clpbrd = Toolkit.getDefaultToolkit().getSystemClipboard();
-		try {
-			String newText = (String)clpbrd.getData(DataFlavor.stringFlavor);
-			StringBuilder sb = new StringBuilder(text);
-			text = sb.insert(insertPos, newText).toString();
-			insertPos += newText.length();
-		}
-		catch (Throwable err) {}
+		String newText = GUIFrame.getStringFromClipboard();
+		if (newText == null)
+			return;
+		StringBuilder sb = new StringBuilder(text);
+		text = sb.insert(insertPos, newText).toString();
+		insertPos += newText.length();
 	}
 
 	@Override
