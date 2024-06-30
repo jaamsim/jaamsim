@@ -19,10 +19,16 @@ package com.jaamsim.ui;
 
 import java.awt.Point;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
 
 import javax.swing.AbstractAction;
+import javax.swing.ImageIcon;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.KeyStroke;
@@ -40,6 +46,7 @@ public class OutputBox extends FrameBox {
 	private static OutputBox myInstance;
 	private Entity currentEntity;
 	OutputTableModel tableModel;
+	OutputTable table;
 
 	private final ArrayList<Object> entries = new ArrayList<>();
 
@@ -49,7 +56,7 @@ public class OutputBox extends FrameBox {
 		addWindowListener(FrameBox.getCloseListener("ShowOutputViewer"));
 
 		tableModel = new OutputTableModel();
-		OutputTable table = new OutputTable(tableModel);
+		table = new OutputTable(tableModel);
 		JScrollPane scrollPane = new JScrollPane(table);
 
 		getContentPane().add( scrollPane );
@@ -79,6 +86,9 @@ public class OutputBox extends FrameBox {
 				FindBox.getInstance().search(str);
 			}
 		});
+
+		// Context menu
+		table.addMouseListener(new MyMouseListener());
 	}
 
 	/**
@@ -89,6 +99,58 @@ public class OutputBox extends FrameBox {
 			myInstance = new OutputBox();
 
 		return myInstance;
+	}
+
+	class MyMouseListener implements MouseListener {
+		private final JPopupMenu menu= new JPopupMenu();
+		@Override
+		public void mouseClicked(MouseEvent e) {}
+		@Override
+		public void mouseEntered(MouseEvent e) {}
+		@Override
+		public void mouseExited(MouseEvent e) {}
+		@Override
+		public void mousePressed(MouseEvent e) {}
+
+		@Override
+		public void mouseReleased(MouseEvent e) {
+			// Show context menu for right-click
+			if (e.getButton() != MouseEvent.BUTTON3 || currentEntity == null)
+				return;
+			String str = table.getSelectedString();
+			if (str == null)
+				return;
+			menu.removeAll();
+
+			// Copy
+			JMenuItem copyMenuItem = new JMenuItem("Copy");
+			copyMenuItem.setIcon( new ImageIcon(
+					GUIFrame.class.getResource("/resources/images/Copy-16.png")) );
+			copyMenuItem.setAccelerator(KeyStroke.getKeyStroke(
+			        KeyEvent.VK_C, ActionEvent.CTRL_MASK));
+			copyMenuItem.addActionListener( new ActionListener() {
+				@Override
+				public void actionPerformed( ActionEvent event ) {
+					GUIFrame.copyToClipboard(str);
+				}
+			} );
+			menu.add(copyMenuItem);
+
+			// Find
+			JMenuItem findMenuItem = new JMenuItem("Find");
+			findMenuItem.setIcon( new ImageIcon(
+					GUIFrame.class.getResource("/resources/images/Find-16.png")) );
+			findMenuItem.setAccelerator(KeyStroke.getKeyStroke(
+			        KeyEvent.VK_F, ActionEvent.CTRL_MASK));
+			findMenuItem.addActionListener( new ActionListener() {
+				@Override
+				public void actionPerformed( ActionEvent event ) {
+					FindBox.getInstance().search(str);
+				}
+			} );
+			menu.add(findMenuItem);
+			menu.show(e.getComponent(), e.getX(), e.getY());
+		}
 	}
 
 	@Override
