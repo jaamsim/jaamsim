@@ -61,11 +61,9 @@ public class OutputBox extends FrameBox {
 		table.getActionMap().put("copy", new AbstractAction() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				int row = table.getSelectedRow();
-				Object obj = table.getValueAt(row, 1);
-				if (!(obj instanceof String))
+				String str = table.getSelectedString();
+				if (str == null)
 					return;
-				String str = (String) obj;
 				GUIFrame.copyToClipboard(str);
 			}
 		});
@@ -75,11 +73,9 @@ public class OutputBox extends FrameBox {
 		table.getActionMap().put("find", new AbstractAction() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				int row = table.getSelectedRow();
-				Object obj = table.getValueAt(row, 1);
-				if (!(obj instanceof String))
+				String str = table.getSelectedString();
+				if (str == null)
 					return;
-				String str = (String) obj;
 				FindBox.getInstance().search(str);
 			}
 		});
@@ -180,6 +176,14 @@ public class OutputBox extends FrameBox {
 		@Override
 		public void doLayout() {
 			FrameBox.fitTableToLastColumn(this);
+		}
+
+		public String getSelectedString() {
+			int row = getSelectedRow();
+			Object obj = getValueAt(row, 1);
+			if (!(obj instanceof String))
+				return null;
+			return (String) obj;
 		}
 	}
 
