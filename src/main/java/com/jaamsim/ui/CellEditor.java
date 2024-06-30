@@ -26,12 +26,17 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.net.URI;
 
 import javax.swing.AbstractAction;
 import javax.swing.AbstractCellEditor;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
@@ -272,6 +277,107 @@ public abstract class CellEditor extends AbstractCellEditor implements TableCell
 		}
 
 		text.setPreferredSize(new Dimension(width - buttonWidth, height));
+
+		// Context menu
+		text.addMouseListener(new MyMouseListener());
+	}
+
+	class MyMouseListener implements MouseListener {
+		private final JPopupMenu menu= new JPopupMenu();
+		@Override
+		public void mouseClicked(MouseEvent e) {}
+		@Override
+		public void mouseEntered(MouseEvent e) {}
+		@Override
+		public void mouseExited(MouseEvent e) {}
+		@Override
+		public void mousePressed(MouseEvent e) {}
+
+		@Override
+		public void mouseReleased(MouseEvent e) {
+			// Show context menu for right-click
+			if (e.getButton() != MouseEvent.BUTTON3)
+				return;
+			String str = text.getText();
+			if (str == null)
+				return;
+			menu.removeAll();
+
+			// Cut
+			JMenuItem cutMenuItem = new JMenuItem("Cut");
+			cutMenuItem.setAccelerator(KeyStroke.getKeyStroke(
+			        KeyEvent.VK_X, ActionEvent.CTRL_MASK));
+			cutMenuItem.addActionListener( new ActionListener() {
+				@Override
+				public void actionPerformed( ActionEvent event ) {
+					GUIFrame.copyToClipboard(str);
+					text.setText("");
+					fireEditingStopped();
+				}
+			} );
+			menu.add(cutMenuItem);
+
+			// Copy
+			JMenuItem copyMenuItem = new JMenuItem("Copy");
+			copyMenuItem.setIcon( new ImageIcon(
+					GUIFrame.class.getResource("/resources/images/Copy-16.png")) );
+			copyMenuItem.setAccelerator(KeyStroke.getKeyStroke(
+			        KeyEvent.VK_C, ActionEvent.CTRL_MASK));
+			copyMenuItem.addActionListener( new ActionListener() {
+				@Override
+				public void actionPerformed( ActionEvent event ) {
+					GUIFrame.copyToClipboard(str);
+				}
+			} );
+			menu.add(copyMenuItem);
+
+			// Paste
+			JMenuItem pasteMenuItem = new JMenuItem("Paste");
+			pasteMenuItem.setIcon( new ImageIcon(
+					GUIFrame.class.getResource("/resources/images/Paste-16.png")) );
+			pasteMenuItem.setAccelerator(KeyStroke.getKeyStroke(
+			        KeyEvent.VK_V, ActionEvent.CTRL_MASK));
+			pasteMenuItem.addActionListener( new ActionListener() {
+				@Override
+				public void actionPerformed( ActionEvent event ) {
+					String str = GUIFrame.getStringFromClipboard();
+					if (str == null)
+						return;
+					text.setText(str);
+					fireEditingStopped();
+				}
+			} );
+			menu.add(pasteMenuItem);
+
+			// Delete
+			JMenuItem deleteMenuItem = new JMenuItem("Delete");
+			deleteMenuItem.setAccelerator(KeyStroke.getKeyStroke(
+			        KeyEvent.VK_DELETE, 0));
+			deleteMenuItem.addActionListener( new ActionListener() {
+				@Override
+				public void actionPerformed( ActionEvent event ) {
+					text.setText("");
+					fireEditingStopped();
+				}
+			} );
+			menu.add( deleteMenuItem );
+			menu.addSeparator();
+
+			// Find
+			JMenuItem findMenuItem = new JMenuItem("Find");
+			findMenuItem.setIcon( new ImageIcon(
+					GUIFrame.class.getResource("/resources/images/Find-16.png")) );
+			findMenuItem.setAccelerator(KeyStroke.getKeyStroke(
+			        KeyEvent.VK_F, ActionEvent.CTRL_MASK));
+			findMenuItem.addActionListener( new ActionListener() {
+				@Override
+				public void actionPerformed( ActionEvent event ) {
+					FindBox.getInstance().search(str);
+				}
+			} );
+			menu.add(findMenuItem);
+			menu.show(e.getComponent(), e.getX(), e.getY());
+		}
 	}
 
 	@Override
