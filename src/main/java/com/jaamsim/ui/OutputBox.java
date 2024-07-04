@@ -180,6 +180,8 @@ public class OutputBox extends FrameBox {
 
 		public String getSelectedString() {
 			int row = getSelectedRow();
+			if (row < 0)
+				return null;
 			Object obj = getValueAt(row, 1);
 			if (!(obj instanceof String))
 				return null;
