@@ -63,10 +63,12 @@ public class FindBox extends JDialog {
 				str = str.trim();
 				str = str.replaceAll("[{}\\[\\],'\"]", "");  // remove braces, commas, and quotes
 				str = str.replaceAll("\\(R\\)", "");  // remove reverse tag
-				if (str.isEmpty())
-					return new ArrayList<>();
-				String[] names = str.split("[\\s,]", 2);  // ignore anything after whitespace or comma
-				return getNameList(names[0]);
+				String[] names = str.split("[\\s]");  // split on whitespace
+				ArrayList<String> ret = new ArrayList<>();
+				for (String name : names) {
+					ret.addAll(getNameList(name));
+				}
+				return ret;
 			}
 		};
 		searchText.setToolTipText(GUIFrame.formatToolTip("Entity Name",
