@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2010-2012 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2023 JaamSim Software Inc.
+ * Copyright (C) 2016-2024 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -232,6 +232,7 @@ public abstract class Input<T> {
 	private boolean isReqd;     // indicates whether this input must be provided by the user
 	private boolean isValid;  // if false, the input is no longer valid and must be re-entered
 	private boolean isLocked; // indicates whether the input can be changed through by the user
+	private boolean isInherited;  // indicates whether this input is inherited from its prototype
 
 	public static final Comparator<Object> uiSortOrder = new NaturalOrderComparator();
 
@@ -266,6 +267,7 @@ public abstract class Input<T> {
 		edited = false;
 		isDef = true;
 		isValid = true;
+		isInherited = false;
 	}
 
 	/**
@@ -439,6 +441,14 @@ public abstract class Input<T> {
 
 	public boolean isLocked() {
 		return isLocked;
+	}
+
+	public void setInherited(boolean bool) {
+		isInherited = bool;
+	}
+
+	public boolean isInherited() {
+		return isInherited;
 	}
 
 	public boolean useExpressionBuilder() {
