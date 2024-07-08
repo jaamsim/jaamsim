@@ -282,9 +282,12 @@ static void nioBuffToGL(GL2GL3 gl, Renderer r, int bufferHandle, int itemSize, B
 		CameraInfo cameraInfo = info.cameraInfo;
 		int width = info.width;
 		int height = info.height;
+
+		double scaledX = Math.round((double)x / info.scaleX);
+		double scaledY = Math.round((double)y / info.scaleY);
 		double aspectRatio = (double)width / (double)height;
-		double normX = 2.0*((double)x / (double)width) - 1.0;
-		double normY = 1.0 - 2.0*((double)y / (double)height); // In openGL space, y is -1 at the bottom
+		double normX = 2.0*(scaledX / (double)width) - 1.0;
+		double normY = 1.0 - 2.0*(scaledY / (double)height); // In openGL space, y is -1 at the bottom
 
 		return RenderUtils.getViewRay(cameraInfo, aspectRatio, normX, normY);
 	}

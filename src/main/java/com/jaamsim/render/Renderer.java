@@ -1093,6 +1093,8 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 		public int viewableX, viewableY;
 		public boolean mouseInWindow;
 		public CameraInfo cameraInfo;
+		public float scaleX;
+		public float scaleY;
 	}
 
 	/**
@@ -1106,7 +1108,7 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 			if (w == null) {
 				return null; // Not a valid window ID, or the window has closed
 			}
-
+			float[] scales = w.getGLWindowRef().getCurrentSurfaceScale(new float[2]);
 			WindowMouseInfo info = new WindowMouseInfo();
 
 			info.x = w.getMouseX();
@@ -1117,6 +1119,8 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 			info.viewableY = w.getViewableY();
 			info.mouseInWindow = w.isMouseInWindow();
 			info.cameraInfo = cameras.get(windowID).getInfo();
+			info.scaleX = scales[0];
+			info.scaleY = scales[1];
 
 			return info;
 		}
