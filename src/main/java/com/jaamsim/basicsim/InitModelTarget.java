@@ -17,7 +17,6 @@
  */
 package com.jaamsim.basicsim;
 
-import com.jaamsim.SubModels.SubModel;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.events.ProcessTarget;
 
@@ -38,11 +37,6 @@ public class InitModelTarget extends ProcessTarget {
 	public void process() {
 		//System.out.format("%ninit%n");
 		Simulation simulation = simModel.getSimulation();
-
-		// Create the components for any sub-model clones
-		for (SubModel clone : simModel.getClonesOfIterator(SubModel.class)) {
-			clone.update();
-		}
 
 		// Initialise each entity
 		simModel.earlyInit();
