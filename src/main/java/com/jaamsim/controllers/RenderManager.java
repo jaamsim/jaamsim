@@ -945,7 +945,7 @@ public class RenderManager implements DragSourceListener {
 			return new Ray();
 		}
 
-		return RenderUtils.getPickRayForPosition(mouseInfo.cameraInfo, x, y, mouseInfo.width, mouseInfo.height);
+		return RenderUtils.getPickRayForPosition(mouseInfo, x, y);
 	}
 
 	public static CameraInfo getCameraInfoForView(View view) {

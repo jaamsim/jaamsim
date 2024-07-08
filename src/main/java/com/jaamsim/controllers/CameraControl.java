@@ -130,8 +130,8 @@ public class CameraControl implements WindowInteractionListener {
 		if (info == null) return;
 
 		//Cast a ray into the XY plane both for now, and for the previous mouse position
-		Ray currRay = RenderUtils.getPickRayForPosition(info.cameraInfo, x, y, info.width, info.height);
-		Ray prevRay = RenderUtils.getPickRayForPosition(info.cameraInfo, x0, y0, info.width, info.height);
+		Ray currRay = RenderUtils.getPickRayForPosition(info, x, y);
+		Ray prevRay = RenderUtils.getPickRayForPosition(info, x0, y0);
 
 		double currZDot = currRay.getDirRef().z;
 		double prevZDot = prevRay.getDirRef().z;
@@ -183,8 +183,8 @@ public class CameraControl implements WindowInteractionListener {
 		if (info == null) return;
 
 		//Cast a ray into the XY plane both for now, and for the previous mouse position
-		Ray currRay = RenderUtils.getPickRayForPosition(info.cameraInfo, x, y, info.width, info.height);
-		Ray prevRay = RenderUtils.getPickRayForPosition(info.cameraInfo, x0, y0, info.width, info.height);
+		Ray currRay = RenderUtils.getPickRayForPosition(info, x, y);
+		Ray prevRay = RenderUtils.getPickRayForPosition(info, x0, y0);
 
 		double zDiff = RenderUtils.getZDiff(POI, currRay, prevRay);
 
@@ -408,7 +408,7 @@ public class CameraControl implements WindowInteractionListener {
 			if (clickPoint == null) {
 				Renderer.WindowMouseInfo info = _renderer.getMouseInfo(_windowID);
 				if (info != null) {
-					Ray mouseRay = RenderUtils.getPickRayForPosition(info.cameraInfo, x, y, info.width, info.height);
+					Ray mouseRay = RenderUtils.getPickRayForPosition(info, x, y);
 					double dist = RenderManager.XY_PLANE.collisionDist(mouseRay);
 					if (dist >= 0.0d)
 						clickPoint = mouseRay.getPointAtDist(dist);
