@@ -558,9 +558,6 @@ public class InputAgent {
 		//}
 
 		if (in.isLocked()) {
-			if (in.isDef() && kw.numArgs() == 0
-					|| Arrays.equals(in.valueTokens, kw.getArgArray()))
-				return;
 			throw new InputErrorException("Input value is locked");
 		}
 
