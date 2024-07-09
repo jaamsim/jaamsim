@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2012 Ausenco Engineering Canada Inc.
- * Copyright (C) 2020 JaamSim Software Inc.
+ * Copyright (C) 2020-2024 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -286,8 +286,8 @@ static void nioBuffToGL(GL2GL3 gl, Renderer r, int bufferHandle, int itemSize, B
 		double scaledX = Math.round((double)x / info.scaleX);
 		double scaledY = Math.round((double)y / info.scaleY);
 		double aspectRatio = (double)width / (double)height;
-		double normX = 2.0*(scaledX / (double)width) - 1.0;
-		double normY = 1.0 - 2.0*(scaledY / (double)height); // In openGL space, y is -1 at the bottom
+		double normX = 2.0*(scaledX / width) - 1.0;
+		double normY = 1.0 - 2.0*(scaledY / height); // In openGL space, y is -1 at the bottom
 
 		return RenderUtils.getViewRay(cameraInfo, aspectRatio, normX, normY);
 	}
