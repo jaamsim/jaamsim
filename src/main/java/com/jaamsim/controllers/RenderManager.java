@@ -1943,8 +1943,8 @@ public class RenderManager implements DragSourceListener {
 		Renderer.WindowMouseInfo mouseInfo = renderer.getMouseInfo(windowID);
 		if (mouseInfo == null)
 			return;
-		int x = evt.getX() - mouseInfo.viewableX;
-		int y = evt.getY() - mouseInfo.viewableY;
+		int x = (int) Math.round(mouseInfo.scaleX * (double)(evt.getX() - mouseInfo.viewableX));
+		int y = (int) Math.round(mouseInfo.scaleY * (double)(evt.getY() - mouseInfo.viewableY));
 
 		createDNDObject(windowID, x, y);
 	}
