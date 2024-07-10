@@ -1147,8 +1147,7 @@ public class RenderManager implements DragSourceListener {
 				return olEnt.handleDrag(dragInfo.x, dragInfo.y, dragInfo.startX, dragInfo.startY,
 					(int)size.x, (int)size.y);
 			}
-			return handleOverlayMove(dragInfo.x, dragInfo.y, dragInfo.startX, dragInfo.startY,
-					(int)size.x, (int)size.y);
+			return handleOverlayMove(dragInfo, (int)size.x, (int)size.y);
 		}
 
 		// Find the start and current world space positions
@@ -1220,15 +1219,22 @@ public class RenderManager implements DragSourceListener {
 	}
 
 	// Moves an overlay entity to a new position in the windows
-	private boolean handleOverlayMove(int x, int y, int startX, int startY, int windowWidth, int windowHeight) {
+	private boolean handleOverlayMove(WindowInteractionListener.DragInfo dragInfo, int windowWidth, int windowHeight) {
 		DisplayEntity selectedEntity = getSelectedEntity();
 		OverlayEntity olEnt = (OverlayEntity) selectedEntity;
 		IntegerVector lastPos = olEnt.getScreenPosition();
 
 		if (dragEntityScreenPosition == null)
 			return false;
-		int dx = x - startX;
-		int dy = y - startY;
+
+		Renderer.WindowMouseInfo mouseInfo = renderer.getMouseInfo(dragInfo.windowID);
+		if (mouseInfo == null)
+			return false;
+		double scaleX = mouseInfo.scaleX;
+		double scaleY = mouseInfo.scaleY;
+		int dx = (int) Math.round((dragInfo.x - dragInfo.startX) / scaleX);
+		int dy = (int) Math.round((dragInfo.y - dragInfo.startY) / scaleY);
+
 		int posX = dragEntityScreenPosition.get(0) + dx * (olEnt.getAlignRight() ? -1 : 1);
 		int posY = dragEntityScreenPosition.get(1) + dy * (olEnt.getAlignBottom() ? -1 : 1);
 		posX = Math.min(Math.max(0, posX), windowWidth);
