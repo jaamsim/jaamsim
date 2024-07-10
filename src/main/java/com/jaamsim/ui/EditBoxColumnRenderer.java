@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2012 Ausenco Engineering Canada Inc.
- * Copyright (C) 2020-2023 JaamSim Software Inc.
+ * Copyright (C) 2020-2024 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -83,7 +83,7 @@ public Component getTableCellRendererComponent(JTable table, Object value,
 		else if (str.isEmpty() && in.isRequired() && !ent.hasClone())
 			str = EditBox.REQD;
 		// Input value that is inherited from the prototype entity
-		else if (!str.isEmpty() && in.isDef())
+		else if (!str.isEmpty() && in.isDef() || in.isInherited())
 			str = EditBox.formatInheritedText(str);
 		// Input value that is locked
 		else if (in.isLocked())
