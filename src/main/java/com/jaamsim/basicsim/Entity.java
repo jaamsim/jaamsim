@@ -492,27 +492,8 @@ public class Entity {
 			return;
 
 		// Replace references to the parent entity
-		ArrayList<String> tmp = sourceInput.getValueTokens();
-		String oldParent = ent.getParent().getName();
-		String newParent = this.getParent().getName();
-		//if (trace) System.out.format("oldParent=%s, newParent=%s, tmp=%s%n", oldParent, newParent, tmp);
-		boolean changed = false;
-		if (!newParent.equals(oldParent)) {
-			String oldParent1 = String.format("[%s]", oldParent);
-			String oldParent2 = String.format("%s.", oldParent);
-			String newParent1 = String.format("[%s]", newParent);
-			String newParent2 = String.format("%s.", newParent);
-
-			for (int i = 0; i < tmp.size(); i++) {
-				String str = tmp.get(i);
-				if (str.equals(oldParent))
-					str = newParent;
-				str = str.replace(oldParent1, newParent1);
-				str = str.replace(oldParent2, newParent2);
-				changed = changed || !str.equals(tmp.get(i));
-				tmp.set(i, str);
-			}
-		}
+		ArrayList<String> tmp = ent.getValueTokens(sourceInput, parent);
+		boolean changed = !tmp.equals(sourceInput.getValueTokens());
 
 		// An overwritten input for a clone cannot be changed by the prototype, except in the
 		// following circumstances:
@@ -538,6 +519,40 @@ public class Entity {
 		// Mark the input explicitly as 'inherited' if it had to be changed from its inherited
 		// value because of a reference to its prototype
 		targetInput.setInherited(changed && !targetInput.isDef() && getPrototype() == ent);
+	}
+
+	/**
+	 * Returns the array of input tokens for the specified input with any explicit references to
+	 * this entity's parent entity replaced with the specified parent entity.
+	 * @param in - input object
+	 * @param newParent - specified parent entity
+	 * @return input tokens
+	 */
+	public ArrayList<String> getValueTokens(Input<?> in, Entity newParent) {
+		ArrayList<String> ret = in.getValueTokens();
+		if (parent == null || parent == newParent)
+			return ret;
+
+		// Replace any explicit references to the parent entity with the specified new parent
+		String oldName = parent.getName();
+		String oldName1 = String.format("[%s]", oldName);
+		String oldName2 = String.format("%s.", oldName);
+
+		String newName = newParent.getName();
+		String newName1 = String.format("[%s]", newName);
+		String newName2 = String.format("%s.", newName);
+
+		for (int i = 0; i < ret.size(); i++) {
+			String str = ret.get(i);
+			if (str.equals(oldName))
+				str = newName;
+			else {
+				str = str.replace(oldName1, newName1);
+				str = str.replace(oldName2, newName2);
+			}
+			ret.set(i, str);
+		}
+		return ret;
 	}
 
 	/**
