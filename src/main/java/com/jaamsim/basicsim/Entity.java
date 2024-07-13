@@ -561,6 +561,12 @@ public class Entity {
 		return ret;
 	}
 
+	public ArrayList<String> getInheritedValueTokens(Input<?> in) {
+		if (prototype == null || in.getProtoInput() == null)
+			return new ArrayList<>();
+		return prototype.getValueTokens(in.getProtoInput(), parent);
+	}
+
 	/**
 	 * Copies the present attribute values from one entity to another.
 	 * @param ent - entity whose attribute values are to be copied
