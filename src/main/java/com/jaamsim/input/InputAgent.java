@@ -564,13 +564,30 @@ public class InputAgent {
 			throw new InputErrorException("Input value is locked");
 		}
 
+		ArrayList<String> defaultInheritedTokens = null;
+		ArrayList<String> inheritedTokens = null;
+		if (ent.isClone()) {
+			defaultInheritedTokens = new ArrayList<>(Arrays.asList(in.getInheritedValueArray()));
+			inheritedTokens = ent.getInheritedValueTokens(in);
+			//System.out.format("%ndefaultInheritedTokens=%s%n", defaultInheritedTokens);
+			//System.out.format("inheritedTokens=%s%n", inheritedTokens);
+		}
+
 		// Restore the default if the input value is blank or is equal to its inherited value
 		boolean changed = true;
-		if (kw.numArgs() == 0 || (in.getProtoInput() != null
+		if (kw.numArgs() == 0 || (ent.isClone()
 				&& Arrays.equals(in.getInheritedValueArray(), kw.getArgArray()))) {
 			if (in.isDef())
 				changed = false;
 			in.reset();
+
+			// Set the inherited value if the input value is blank
+			if (ent.isClone() && kw.numArgs() == 0
+					&& !inheritedTokens.equals(defaultInheritedTokens)) {
+				kw = new KeywordIndex(kw.keyword, inheritedTokens, kw.context);
+				in.parse(ent, kw);
+				in.setTokens(kw);
+			}
 		}
 
 		// Ignore the input if it is the same as the present value
@@ -583,6 +600,11 @@ public class InputAgent {
 			in.parse(ent, kw);
 			in.setTokens(kw);
 		}
+
+		// Mark the input explicitly as 'inherited' if it had to be changed from its inherited
+		// value because of a reference to its parent SubModel
+		in.setInherited(ent.isClone() && !in.isDef()
+				&& in.getValueTokens().equals(inheritedTokens));
 
 		// Only mark the keyword edited if we have finished initial configuration
 		JaamSimModel simModel = ent.getJaamSimModel();
