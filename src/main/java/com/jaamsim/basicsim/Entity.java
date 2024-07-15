@@ -493,7 +493,6 @@ public class Entity {
 
 		// Replace references to the parent entity
 		ArrayList<String> tmp = ent.getValueTokens(sourceInput, parent);
-		boolean changed = !tmp.equals(sourceInput.getValueTokens());
 
 		// An overwritten input for a clone cannot be changed by the prototype, except in the
 		// following circumstances:
@@ -515,10 +514,6 @@ public class Entity {
 		catch (Exception e) {
 			throw new ErrorException("", -1, getName(), key, -1, e.getMessage(), e);
 		}
-
-		// Mark the input explicitly as 'inherited' if it had to be changed from its inherited
-		// value because of a reference to its prototype
-		targetInput.setInherited(changed && !targetInput.isDef() && getPrototype() == ent);
 	}
 
 	/**
