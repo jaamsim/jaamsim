@@ -598,7 +598,7 @@ public class InputAgent {
 		boolean bool = simModel.isRecordEdits();
 		simModel.setRecordEdits(false);
 		for (Entity clone : ent.getAllClones()) {
-			clone.copyInput(ent, in.getKeyword(), kw.context, true);
+			clone.copyInput(ent, in.getKeyword(), kw.context);
 		}
 		simModel.setRecordEdits(bool);
 

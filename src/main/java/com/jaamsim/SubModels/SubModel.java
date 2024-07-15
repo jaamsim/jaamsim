@@ -244,7 +244,7 @@ public class SubModel extends CompoundEntity implements DragAndDropable {
 			for (Entity protoComp : getPrototype().getChildren()) {
 				String localName = protoComp.getLocalName();
 				Entity comp = getChild(localName);
-				comp.copyInputs(protoComp, seq, true);
+				comp.copyInputs(protoComp, seq);
 			}
 		}
 

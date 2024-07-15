@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2016-2023 JaamSim Software Inc.
+ * Copyright (C) 2016-2024 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -211,7 +211,7 @@ public class JaamSimModel implements EventTimeListener {
 				Entity newEnt = getNamedEntity(ent.getName());
 				if (newEnt == null)
 					throw new ErrorException("New entity not found: %s", ent.getName());
-				newEnt.copyInput(ent, key, context, false);
+				newEnt.copyInput(ent, key, context);
 			}
 		}
 
@@ -224,7 +224,7 @@ public class JaamSimModel implements EventTimeListener {
 				if (in.isSynonym() || InputAgent.isEarlyInput(in))
 					continue;
 				String key = in.getKeyword();
-				newEnt.copyInput(ent, key, context, false);
+				newEnt.copyInput(ent, key, context);
 			}
 		}
 

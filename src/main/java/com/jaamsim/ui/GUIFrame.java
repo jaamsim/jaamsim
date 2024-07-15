@@ -5267,7 +5267,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			for (Entity child : parent0.getChildren()) {
 				String localName = child.getLocalName();
 				Entity copiedChild = parent1.getChild(localName);
-				copiedChild.copyInputs(child, seq, false);
+				copiedChild.copyInputs(child, seq);
 			}
 		}
 

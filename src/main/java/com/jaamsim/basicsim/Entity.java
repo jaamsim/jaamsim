@@ -431,31 +431,26 @@ public class Entity {
 	 * @param ent = entity whose inputs are to be copied
 	 */
 	public void copyInputs(Entity ent) {
-		copyInputs(ent, false);
-	}
-
-	public void copyInputs(Entity ent, boolean lock) {
 		for (int seq = 0; seq < 2; seq++) {
-			copyInputs(ent, seq, lock);
+			copyInputs(ent, seq);
 		}
 	}
 
-	public void copyInputs(Entity ent, int seq, boolean lock) {
+	public void copyInputs(Entity ent, int seq) {
 		ParseContext context = null;
 		if (ent.getJaamSimModel().getConfigFile() != null) {
 			URI uri = ent.getJaamSimModel().getConfigFile().getParentFile().toURI();
 			context = new ParseContext(uri, null);
 		}
-		copyInputs(ent, seq, context, lock);
+		copyInputs(ent, seq, context);
 	}
 
 	/**
 	 * Copy the inputs for the keywords with the specified sequence number to the caller.
 	 * @param ent = entity whose inputs are to be copied
 	 * @param seq = sequence number for the keyword (0 = early keyword, 1 = normal keyword)
-	 * @param lock = true if each copied input is locked after its value is set
 	 */
-	public void copyInputs(Entity ent, int seq, ParseContext context, boolean lock) {
+	public void copyInputs(Entity ent, int seq, ParseContext context) {
 
 		// Provide stub definitions for the custom outputs
 		if (seq == 0) {
@@ -472,7 +467,7 @@ public class Entity {
 				continue;
 			String key = sourceInput.getKeyword();
 			try {
-				copyInput(ent, key, context, lock);
+				copyInput(ent, key, context);
 			}
 			catch (Throwable t) {
 				LogBox.logException(t);
@@ -486,9 +481,8 @@ public class Entity {
 	 * @param key - keyword for the input to be copied
 	 * @param context - specifies the file path to the folder containing the configuration file
 	 * @param ignoreDef - true if a default input is not copied
-	 * @param lock - true if the copied input is locked after its value is set
 	 */
-	public void copyInput(Entity ent, String key, ParseContext context, boolean lock) {
+	public void copyInput(Entity ent, String key, ParseContext context) {
 		//boolean trace = getName().startsWith("Fred") && key.equals("NextComponent");
 		//if (trace) System.out.format("%n%s.copyInput - ent=%s, key=%s, lock=%s%n", this, ent, key, lock);
 
@@ -541,10 +535,9 @@ public class Entity {
 			throw new ErrorException("", -1, getName(), key, -1, e.getMessage(), e);
 		}
 
-		// Lock the input if it had to be changed from its inherited value because of an
-		// explicit reference to its prototype
-		targetInput.setInherited(lock && changed && !targetInput.isDef()
-				 && getPrototype() == ent);
+		// Mark the input explicitly as 'inherited' if it had to be changed from its inherited
+		// value because of a reference to its prototype
+		targetInput.setInherited(changed && !targetInput.isDef() && getPrototype() == ent);
 	}
 
 	/**

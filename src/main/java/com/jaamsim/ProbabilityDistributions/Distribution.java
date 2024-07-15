@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2023 JaamSim Software Inc.
+ * Copyright (C) 2016-2024 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -316,12 +316,12 @@ implements SampleProvider, RandomStreamUser {
 	protected abstract double getMax(double simTime);
 
 	@Override
-	public void copyInput(Entity ent, String key, ParseContext context, boolean lock) {
+	public void copyInput(Entity ent, String key, ParseContext context) {
 		if (key.equals(getStreamNumberKeyword()) && getJaamSimModel() == ent.getJaamSimModel()) {
 			RandomStreamUser.setUniqueRandomSeed(this);
 			return;
 		}
-		super.copyInput(ent, key, context, lock);
+		super.copyInput(ent, key, context);
 	}
 
 	@Output(name = "CalculatedMean",
