@@ -605,7 +605,7 @@ public class InputAgent {
 
 		// Only mark the keyword edited if we have finished initial configuration
 		JaamSimModel simModel = ent.getJaamSimModel();
-		if (changed && simModel.isRecordEdits()) {
+		if (changed && simModel.isRecordEdits() && !in.isInherited()) {
 			in.setEdited(true);
 			ent.setEdited();
 		}
@@ -614,12 +614,9 @@ public class InputAgent {
 		in.doCallback(ent);
 
 		// Copy the input value to any clones
-		boolean bool = simModel.isRecordEdits();
-		simModel.setRecordEdits(false);
 		for (Entity clone : ent.getAllClones()) {
 			clone.copyInput(ent, in.getKeyword(), kw.context);
 		}
-		simModel.setRecordEdits(bool);
 
 		// Refresh the graphics
 		GUIListener gui = ent.getJaamSimModel().getGUIListener();
