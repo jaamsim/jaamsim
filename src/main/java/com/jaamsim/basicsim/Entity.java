@@ -1320,16 +1320,23 @@ public class Entity {
 		return getParent();
 	}
 
+	@Output(name = "Children",
+	 description = "List of entities whose parent is this entity.",
+	    sequence = 4)
+	public ArrayList<Entity> getChildren(double simTime) {
+		return getChildren();
+	}
+
 	@Output(name = "Prototype",
 	 description = "The entity that provides the default inputs for this entity.",
-	    sequence = 4)
+	    sequence = 5)
 	public Entity getPrototype(double simTime) {
 		return getPrototype();
 	}
 
 	@Output(name = "CloneList",
 	 description = "List of entities whose prototype is this entity.",
-	    sequence = 5)
+	    sequence = 6)
 	public ArrayList<Entity> getCloneList(double simTime) {
 		ArrayList<Entity> ret = getAllClones();
 		Collections.sort(ret, InputAgent.uiEntitySortOrder);
