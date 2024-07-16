@@ -297,6 +297,8 @@ public class Entity {
 		simModel.restoreInstance(this);
 		this.setName(name);
 		this.clearFlag(Entity.FLAG_DEAD);
+		if (prototype != null && isRegistered())
+			prototype.addClone(this);
 		postDefine();
 	}
 
