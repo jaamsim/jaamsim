@@ -207,6 +207,13 @@ public class Entity {
 				Class<? extends Entity> klass = child.getClass();
 				InputAgent.generateEntityWithName(simModel, klass, child, name, this, true, true);
 			}
+
+			// Copy the inputs for the new components
+			for (int seq = 0; seq < 2; seq++) {
+				for (Entity child : getChildren()) {
+					child.copyInputs(child.prototype, seq);
+				}
+			}
 		}
 	}
 
