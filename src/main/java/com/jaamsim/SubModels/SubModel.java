@@ -105,12 +105,6 @@ public class SubModel extends CompoundEntity implements DragAndDropable {
 	};
 
 	@Override
-	public void postDefine() {
-		super.postDefine();
-		update();
-	}
-
-	@Override
 	public void setPrototype(Entity proto) {
 		super.setPrototype(proto);
 		update();
