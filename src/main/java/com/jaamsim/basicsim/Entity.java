@@ -450,15 +450,20 @@ public class Entity {
 	 * @param ent = entity whose inputs are to be copied
 	 */
 	public void copyInputs(Entity ent) {
+		ParseContext context = null;
+		if (simModel.getConfigFile() != null) {
+			URI uri = simModel.getConfigFile().getParentFile().toURI();
+			context = new ParseContext(uri, null);
+		}
 		for (int seq = 0; seq < 2; seq++) {
-			copyInputs(ent, seq);
+			copyInputs(ent, seq, context);
 		}
 	}
 
 	public void copyInputs(Entity ent, int seq) {
 		ParseContext context = null;
-		if (ent.getJaamSimModel().getConfigFile() != null) {
-			URI uri = ent.getJaamSimModel().getConfigFile().getParentFile().toURI();
+		if (simModel.getConfigFile() != null) {
+			URI uri = simModel.getConfigFile().getParentFile().toURI();
 			context = new ParseContext(uri, null);
 		}
 		copyInputs(ent, seq, context);
