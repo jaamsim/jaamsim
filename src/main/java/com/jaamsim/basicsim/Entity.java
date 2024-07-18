@@ -198,7 +198,17 @@ public class Entity {
 	/**
 	 * Performs any initialization that must occur after the constructor has finished.
 	 */
-	public void postDefine() {}
+	public void postDefine() {
+
+		// Create any children for the new entity
+		if (prototype != null) {
+			for (Entity child : prototype.getChildren()) {
+				String name = child.getLocalName();
+				Class<? extends Entity> klass = child.getClass();
+				InputAgent.generateEntityWithName(simModel, klass, child, name, this, true, true);
+			}
+		}
+	}
 
 	public JaamSimModel getJaamSimModel() {
 		return simModel;
