@@ -51,6 +51,7 @@ import com.jaamsim.input.ParseContext;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.rng.MRG1999a;
 import com.jaamsim.states.StateEntity;
+import com.jaamsim.ui.DragAndDropable;
 import com.jaamsim.ui.EventViewer;
 import com.jaamsim.ui.LogBox;
 import com.jaamsim.units.DimensionlessUnit;
@@ -1141,8 +1142,13 @@ public class JaamSimModel implements EventTimeListener {
 		}
 		ent.entityName = newName;
 		addNamedEntity(ent);
-		if (gui != null)
+
+		if (gui != null) {
 			gui.updateObjectSelector();
+			if (ent instanceof DragAndDropable && ((DragAndDropable) ent).isDragAndDrop()) {
+				gui.updateModelBuilder();
+			}
+		}
 	}
 
 	private void validateEntList() {
