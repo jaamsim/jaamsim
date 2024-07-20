@@ -669,26 +669,7 @@ public class Entity {
 		if (!this.isRegistered() || parent == null) {
 			return entityName;
 		}
-
-		// Build up the name based on the chain of parents
-		ArrayList<String> revNames = new ArrayList<>();
-		revNames.add(entityName);
-		Entity curEnt = this.getParent();
-		JaamSimModel model = getJaamSimModel();
-		while(curEnt != model.getSimulation()) {
-			revNames.add(curEnt.entityName);
-			curEnt = curEnt.getParent();
-		}
-
-		// Build up the name back to front
-		StringBuilder sb = new StringBuilder();
-		for (int i = revNames.size() - 1; i >= 0; i--) {
-			sb.append(revNames.get(i));
-			if (i > 0) {
-				sb.append('.');
-			}
-		}
-		return sb.toString();
+		return parent.getName() + "." + entityName;
 	}
 
 	public final String getLocalName() {
