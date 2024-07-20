@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2015 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018-2023 JaamSim Software Inc.
+ * Copyright (C) 2018-2024 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -108,7 +108,7 @@ public class EntityLabel extends TextBasics {
 		Entity ent = targetEntity.getValue();
 		if (ent == null || ent.getName() == null)
 			return "ERROR";
-		return ent.getName();
+		return ent.getLocalName();
 	}
 
 	@Override
@@ -124,7 +124,11 @@ public class EntityLabel extends TextBasics {
 			return;
 		try {
 			// Rename both the target entity and the label
-			gui.renameEntity(targetEntity.getValue(), getText());
+			Entity ent = targetEntity.getValue();
+			String newName = getText();
+			if (ent.getParent() != getSimulation())
+				newName = ent.getParent().getName() + "." + newName;
+			gui.renameEntity(ent, newName);
 			super.acceptEdits();
 		}
 		catch (ErrorException e) {
@@ -138,7 +142,7 @@ public class EntityLabel extends TextBasics {
 	}
 
 	public void updateForTargetNameChange() {
-		String targetName = targetEntity.getValue().getName();
+		String targetName = targetEntity.getValue().getLocalName();
 		setText(targetName);
 		this.resizeForText();
 	}
