@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 
+import com.jaamsim.Graphics.EntityLabel;
 import com.jaamsim.events.Conditional;
 import com.jaamsim.events.EventHandle;
 import com.jaamsim.events.EventManager;
@@ -32,6 +33,7 @@ import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.AttributeDefinitionListInput;
 import com.jaamsim.input.AttributeHandle;
 import com.jaamsim.input.BooleanInput;
+import com.jaamsim.input.EntityNameInput;
 import com.jaamsim.input.ExpError;
 import com.jaamsim.input.ExpParser.Expression;
 import com.jaamsim.input.ExpResType;
@@ -107,6 +109,10 @@ public class Entity {
 	public static final String GUI = "GUI";
 	public static final String MULTIPLE_RUNS = "Multiple Runs";
 
+	@Keyword(description = "Local name for the entity.",
+	         exampleList = {"Conveyor1"})
+	protected final EntityNameInput nameInput;
+
 	@Keyword(description = "A free-form string describing the object.",
 	         exampleList = {"'A very useful entity'"})
 	protected final StringInput desc;
@@ -135,6 +141,10 @@ public class Entity {
 	public final NamedExpressionListInput namedExpressionInput;
 
 	{
+		nameInput = new EntityNameInput("Name", KEY_INPUTS, "");
+		nameInput.setCallback(nameInputCallback);
+		this.addInput(nameInput);
+
 		desc = new StringInput("Description", KEY_INPUTS, "");
 		this.addInput(desc);
 
@@ -167,6 +177,27 @@ public class Entity {
 		simModel = JaamSimModel.getCreateModel();
 		entityNumber = simModel.getNextEntityID();
 		flags = 0;
+	}
+
+	static final InputCallback nameInputCallback = new InputCallback() {
+		@Override
+		public void callback(Entity ent, Input<?> inp) {
+			String newName = (String) inp.getValue();
+			if (newName.isEmpty() || newName.equals(ent.entityName))
+				return;
+			EntityLabel label = EntityLabel.getLabel(ent);
+			ent.setLocalName(newName);
+
+			// Update the entity's label
+			if (label != null) {
+				label.setLocalName(newName + "_Label");
+				label.updateForTargetNameChange();
+			}
+		}
+	};
+
+	public void setNameInput(String localName) throws InputErrorException {
+		InputAgent.applyArgs(this, nameInput.getKeyword(), localName);
 	}
 
 	public boolean isCopyOf(Entity ent) {
