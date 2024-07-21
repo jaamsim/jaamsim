@@ -102,6 +102,8 @@ public abstract class Input<T> {
 	public static final String EXP_ERR_UNIT = "Incorrect unit type returned by expression.%n"
 	                                        + "Received: %s, expected: %s";
 
+	protected static final String VALID_ENTITY_NAME = "A local entity name cannot be blank or contain spaces, tabs, braces, single or double quotes, square brackets, hash characters, or periods.";
+
 	protected static final String VALID_SAMPLE_PROV = "Accepts a number with units of type %s, an object that returns such a number, or an expression that returns such a number.";
 	protected static final String VALID_SAMPLE_PROV_DIMLESS = "Accepts a dimensionless number, an object that returns such a number, or an expression that returns such a number.";
 	protected static final String VALID_SAMPLE_PROV_UNIT = "Accepts a number with or without units, an object that returns such a number, or an expression that returns such a number. "
