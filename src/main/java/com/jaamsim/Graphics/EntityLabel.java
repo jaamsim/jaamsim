@@ -52,7 +52,9 @@ public class EntityLabel extends TextBasics {
 
 	public EntityLabel() {}
 
-	public static EntityLabel getLabel(DisplayEntity ent) {
+	public static EntityLabel getLabel(Entity ent) {
+		if (!(ent instanceof DisplayEntity))
+			return null;
 
 		// Is there a label with the correct name?
 		Entity label = ent.getJaamSimModel().getNamedEntity(ent.getName() + "_Label");
