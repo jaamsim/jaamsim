@@ -37,11 +37,11 @@ public class RenameCommand implements Command {
 	}
 
 	private static void rename(Entity ent, String name) {
+		EntityLabel label = EntityLabel.getLabel(ent);
 		ent.setName(name);
 		ent.getJaamSimModel().setSessionEdited(true);
 
 		// Update the entity's label
-		EntityLabel label = EntityLabel.getLabel(ent);
 		if (label != null) {
 			label.setName(name + "_Label");
 			label.updateForTargetNameChange();
