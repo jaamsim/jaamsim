@@ -61,7 +61,6 @@ import java.nio.file.StandardCopyOption;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Locale;
@@ -3527,36 +3526,28 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	/**
 	 * Assigns a new name to the given entity.
 	 * @param ent - entity to be renamed
-	 * @param newName - new absolute name for the entity
+	 * @param localName - new local name for the entity
 	 */
 	@Override
-	public void renameEntity(Entity ent, String newName) {
+	public void renameEntity(Entity ent, String localName) {
 		JaamSimModel sim = getJaamSimModel();
 
 		// If the name has not changed, do nothing
-		if (ent.getName().equals(newName))
+		if (ent.getLocalName().equals(localName))
 			return;
 
 		// Check that the entity was defined AFTER the RecordEdits command
 		if (!ent.isAdded())
 			throw new ErrorException("Cannot rename an entity that was defined before the RecordEdits command.");
 
-		// Get the new local name
-		String localName = newName;
-		if (newName.contains(".")) {
-			String[] names = newName.split("\\.");
-			if (names.length == 0)
-				throw new ErrorException(InputAgent.INP_ERR_BADNAME, localName);
-			localName = names[names.length - 1];
-			names = Arrays.copyOf(names, names.length - 1);
-			Entity parent = sim.getEntityFromNames(names);
-			if (parent != ent.getParent())
-				throw new ErrorException("Cannot rename the entity's parent");
-		}
-
 		// Check that the new name is valid
 		if (!InputAgent.isValidName(localName))
 			throw new ErrorException(InputAgent.INP_ERR_BADNAME, localName);
+
+		// Get the new absolute name
+		String newName = localName;
+		if (ent.getParent() != ent.getSimulation())
+			newName = ent.getParent().getName() + "." + localName;
 
 		// Check that the new name does not conflict with another entity
 		if (sim.getNamedEntity(newName) != null)
