@@ -5253,7 +5253,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			// Add a label if necessary
 			if (child instanceof DisplayEntity) {
 				Entity copiedChild = parent1.getChild(localName);
-				EntityLabel label = EntityLabel.getLabel((DisplayEntity) child);
+				EntityLabel label = EntityLabel.getLabel(child);
 				if (label != null) {
 					EntityLabel newLabel = EntityLabel.createLabel((DisplayEntity) copiedChild, true);
 					InputAgent.applyBoolean(newLabel, "Show", label.getShowInput());

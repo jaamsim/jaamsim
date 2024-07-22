@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2017-2022 JaamSim Software Inc.
+ * Copyright (C) 2017-2024 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
  */
 package com.jaamsim.Commands;
 
-import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.EntityLabel;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.JaamSimModel;
@@ -42,13 +41,10 @@ public class RenameCommand implements Command {
 		ent.getJaamSimModel().setSessionEdited(true);
 
 		// Update the entity's label
-		if (ent instanceof DisplayEntity) {
-			DisplayEntity dEnt = (DisplayEntity) ent;
-			EntityLabel label = EntityLabel.getLabel(dEnt);
-			if (label != null) {
-				label.setName(name + "_Label");
-				label.updateForTargetNameChange();
-			}
+		EntityLabel label = EntityLabel.getLabel(ent);
+		if (label != null) {
+			label.setName(name + "_Label");
+			label.updateForTargetNameChange();
 		}
 	}
 
