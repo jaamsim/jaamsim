@@ -497,8 +497,13 @@ public class ObjectSelector extends FrameBox {
 		public void treeNodesChanged( TreeModelEvent e ) {
 			DefaultMutableTreeNode node = (DefaultMutableTreeNode)tree.getLastSelectedPathComponent();
 			String newName = ((String)node.getUserObject()).trim();
+			String localName = newName;
+			if (newName.contains(".")) {
+				String[] names = newName.split("\\.");
+				localName = names[names.length - 1];
+			}
 			try {
-				GUIFrame.getInstance().renameEntity(currentEntity, newName);
+				GUIFrame.getInstance().renameEntity(currentEntity, localName);
 			}
 			catch (ErrorException err) {
 				GUIFrame.showErrorDialog("Input Error", err.getMessage());

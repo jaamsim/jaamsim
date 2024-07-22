@@ -127,10 +127,8 @@ public class EntityLabel extends TextBasics {
 		try {
 			// Rename both the target entity and the label
 			Entity ent = targetEntity.getValue();
-			String newName = getText();
-			if (ent.getParent() != getSimulation())
-				newName = ent.getParent().getName() + "." + newName;
-			gui.renameEntity(ent, newName);
+			String localName = getText();
+			gui.renameEntity(ent, localName);
 			super.acceptEdits();
 		}
 		catch (ErrorException e) {
