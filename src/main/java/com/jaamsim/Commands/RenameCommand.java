@@ -27,7 +27,7 @@ public class RenameCommand implements Command {
 	private final String newName;
 
 	public RenameCommand(Entity ent, String name) {
-		this(ent, ent.getName(), name);
+		this(ent, ent.getLocalName(), name);
 	}
 
 	public RenameCommand(Entity ent, String name0, String name1) {
@@ -38,12 +38,12 @@ public class RenameCommand implements Command {
 
 	private static void rename(Entity ent, String name) {
 		EntityLabel label = EntityLabel.getLabel(ent);
-		ent.setName(name);
+		ent.setLocalName(name);
 		ent.getJaamSimModel().setSessionEdited(true);
 
 		// Update the entity's label
 		if (label != null) {
-			label.setName(name + "_Label");
+			label.setLocalName(name + "_Label");
 			label.updateForTargetNameChange();
 		}
 	}
