@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018-2023 JaamSim Software Inc.
+ * Copyright (C) 2018-2024 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,8 +44,6 @@ import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 import com.jaamsim.DisplayModels.IconModel;
-import com.jaamsim.Graphics.DisplayEntity;
-import com.jaamsim.Graphics.EntityLabel;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.EntityIterator;
 import com.jaamsim.basicsim.ErrorException;
@@ -501,12 +499,6 @@ public class ObjectSelector extends FrameBox {
 			String newName = ((String)node.getUserObject()).trim();
 			try {
 				GUIFrame.getInstance().renameEntity(currentEntity, newName);
-				if (currentEntity instanceof DisplayEntity) {
-					DisplayEntity dEnt = (DisplayEntity) currentEntity;
-					EntityLabel label = EntityLabel.getLabel(dEnt);
-					if (label != null)
-						label.updateForTargetNameChange();
-				}
 			}
 			catch (ErrorException err) {
 				GUIFrame.showErrorDialog("Input Error", err.getMessage());
