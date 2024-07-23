@@ -505,7 +505,7 @@ public class ObjectSelector extends FrameBox {
 			try {
 				GUIFrame.getInstance().renameEntity(currentEntity, localName);
 			}
-			catch (ErrorException err) {
+			catch (Exception err) {
 				GUIFrame.showErrorDialog("Input Error", err.getMessage());
 			}
 			finally {
