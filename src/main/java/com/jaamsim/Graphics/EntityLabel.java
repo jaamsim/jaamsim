@@ -21,7 +21,6 @@ import java.util.ArrayList;
 
 import com.jaamsim.Commands.DefineCommand;
 import com.jaamsim.basicsim.Entity;
-import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.basicsim.GUIListener;
 import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.input.EntityInput;
@@ -132,7 +131,7 @@ public class EntityLabel extends TextBasics {
 			gui.renameEntity(ent, localName);
 			super.acceptEdits();
 		}
-		catch (ErrorException e) {
+		catch (Exception e) {
 			super.cancelEdits();
 			gui.invokeErrorDialogBox("Input Error", e.getMessage());
 		}

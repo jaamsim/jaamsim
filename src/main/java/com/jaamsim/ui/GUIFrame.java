@@ -111,7 +111,6 @@ import com.jaamsim.Commands.DefineCommand;
 import com.jaamsim.Commands.DefineViewCommand;
 import com.jaamsim.Commands.DeleteCommand;
 import com.jaamsim.Commands.KeywordCommand;
-import com.jaamsim.Commands.RenameCommand;
 import com.jaamsim.DisplayModels.TextModel;
 import com.jaamsim.Graphics.BillboardText;
 import com.jaamsim.Graphics.DirectedEntity;
@@ -3530,32 +3529,10 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	 */
 	@Override
 	public void renameEntity(Entity ent, String localName) {
-		JaamSimModel sim = getJaamSimModel();
-
-		// If the name has not changed, do nothing
 		if (ent.getLocalName().equals(localName))
 			return;
-
-		// Check that the entity was defined AFTER the RecordEdits command
-		if (!ent.isAdded())
-			throw new ErrorException("Cannot rename an entity that was defined before the RecordEdits command.");
-
-		// Check that the new name is valid
-		if (!InputAgent.isValidName(localName))
-			throw new ErrorException(InputAgent.INP_ERR_BADNAME, localName);
-
-		// Get the new absolute name
-		String newName = localName;
-		if (ent.getParent() != ent.getSimulation())
-			newName = ent.getParent().getName() + "." + localName;
-
-		// Check that the new name does not conflict with another entity
-		if (sim.getNamedEntity(newName) != null)
-			throw new ErrorException(InputAgent.INP_ERR_DEFINEUSED, newName,
-					sim.getNamedEntity(newName).getClass().getSimpleName());
-
-		// Rename the entity
-		InputAgent.storeAndExecute(new RenameCommand(ent, localName));
+		KeywordIndex kw = InputAgent.formatArgs("Name", localName);
+		InputAgent.storeAndExecute(new KeywordCommand(ent, kw));
 	}
 
 	@Override
