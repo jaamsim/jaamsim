@@ -16,7 +16,6 @@
  */
 package com.jaamsim.Commands;
 
-import com.jaamsim.Graphics.EntityLabel;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.JaamSimModel;
 
@@ -37,15 +36,7 @@ public class RenameCommand implements Command {
 	}
 
 	private static void rename(Entity ent, String name) {
-		EntityLabel label = EntityLabel.getLabel(ent);
-		ent.setLocalName(name);
-		ent.getJaamSimModel().setSessionEdited(true);
-
-		// Update the entity's label
-		if (label != null) {
-			label.setLocalName(name + "_Label");
-			label.updateForTargetNameChange();
-		}
+		ent.setNameInput(name);
 	}
 
 	@Override

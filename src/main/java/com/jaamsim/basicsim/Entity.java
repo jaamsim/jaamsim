@@ -200,6 +200,11 @@ public class Entity {
 		InputAgent.applyArgs(this, nameInput.getKeyword(), localName);
 	}
 
+	public void resetNameInput() {
+		nameInput.reset();
+		setLocalName(nameInput.getValue());
+	}
+
 	public boolean isCopyOf(Entity ent) {
 
 		// Names and classes must match
@@ -745,7 +750,7 @@ public class Entity {
 			String[] names = newName.split("\\.");
 			localName = names[names.length - 1];
 		}
-		setLocalName(localName);
+		setNameInput(localName);
 	}
 
 	/**
@@ -1269,7 +1274,7 @@ public class Entity {
 		if (clonePool == null)
 			clonePool = new ArrayList<>();
 		clone.setFlag(Entity.FLAG_POOLED);
-		clone.setLocalName("");
+		clone.resetNameInput();
 		clonePool.add(clone);
 	}
 
