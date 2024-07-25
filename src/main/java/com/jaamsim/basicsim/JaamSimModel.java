@@ -1062,10 +1062,8 @@ public class JaamSimModel implements EventTimeListener {
 			ent.setFlag(Entity.FLAG_RETAINED);
 
 		ent.parent = parent;
-		ent.entityName = name;
+		ent.setNameInput(name);
 		ent.setPrototype(proto);
-		if (reg)
-			addNamedEntity(ent);
 
 		// Create any objects associated with this entity and set their inputs
 		// (These objects and their inputs are not be marked as 'edited' to avoid having them saved
