@@ -66,4 +66,10 @@ public class EntityNameInput extends Input<String> {
 		return false;
 	}
 
+	public void setInitialValue(String name) {
+		value = name;
+		valueTokens = new String[]{name};
+		isDef = false;
+	}
+
 }
