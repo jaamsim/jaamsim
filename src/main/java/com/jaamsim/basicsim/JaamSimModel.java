@@ -335,6 +335,10 @@ public class JaamSimModel implements EventTimeListener {
 		return simState >= SIM_STATE_RUNNING;
 	}
 
+	public boolean isConfigured() {
+		return simState >= SIM_STATE_CONFIGURED;
+	}
+
 	public boolean isRealTime() {
 		return simulation.isRealTime();
 	}
@@ -1130,7 +1134,7 @@ public class JaamSimModel implements EventTimeListener {
 	final void renameEntity(Entity ent, String newName) {
 		if (!ent.isRegistered()) {
 			ent.entityName = newName;
-			if (gui != null)
+			if (gui != null && isConfigured())
 				gui.updateObjectSelector();
 			return;
 		}
@@ -1141,7 +1145,7 @@ public class JaamSimModel implements EventTimeListener {
 		ent.entityName = newName;
 		addNamedEntity(ent);
 
-		if (gui != null) {
+		if (gui != null && isConfigured()) {
 			gui.updateObjectSelector();
 			if (ent instanceof DragAndDropable && ((DragAndDropable) ent).isDragAndDrop()) {
 				gui.updateModelBuilder();
