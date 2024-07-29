@@ -202,6 +202,7 @@ public class Entity {
 			entityName = localName;
 			if (isRegistered())
 				getJaamSimModel().addNamedEntity(this);
+			nameInput.setLocked(isGenerated());
 			return;
 		}
 		InputAgent.applyArgs(this, nameInput.getKeyword(), localName);
