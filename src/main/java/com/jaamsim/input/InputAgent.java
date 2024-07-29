@@ -557,7 +557,7 @@ public class InputAgent {
 		//			ent, kw.keyword, Arrays.toString(kw.getArgArray()));
 		//}
 
-		if (in.isLocked()) {
+		if (in.isLocked() && !ent.isGenerated()) {
 			throw new InputErrorException("Input value is locked");
 		}
 
