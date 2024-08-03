@@ -4311,7 +4311,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		simulation.setLogViewerDefaults(      COL4_START, LOWER_START,   COL4_WIDTH, LOWER_HEIGHT);
 		simulation.setEventViewerDefaults(    COL4_START, LOWER_START,   COL4_WIDTH, LOWER_HEIGHT);
 		simulation.setControlPanelWidthDefault(DEFAULT_GUI_WIDTH);
-		updateControls(simulation);
+
 		clearUndoRedo();
 	}
 
