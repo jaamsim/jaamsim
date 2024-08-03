@@ -4303,23 +4303,16 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		View.setDefaultPosition(COL2_START, TOP_START);
 		View.setDefaultSize(VIEW_WIDTH, VIEW_HEIGHT);
 
-		// Set the defaults from the AWT thread to avoid synchronization problems with updateUI and
-		// the SizePosAdapter for the tool windows
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				simulation.setModelBuilderDefaults(   COL1_START, TOP_START,     COL1_WIDTH, HALF_TOP    );
-				simulation.setObjectSelectorDefaults( COL1_START, BOTTOM_START,  COL1_WIDTH, HALF_BOTTOM );
-				simulation.setInputEditorDefaults(    COL2_START, LOWER_START,   COL2_WIDTH, LOWER_HEIGHT);
-				simulation.setOutputViewerDefaults(   COL3_START, LOWER_START,   COL3_WIDTH, LOWER_HEIGHT);
-				simulation.setPropertyViewerDefaults( COL4_START, LOWER_START,   COL4_WIDTH, LOWER_HEIGHT);
-				simulation.setLogViewerDefaults(      COL4_START, LOWER_START,   COL4_WIDTH, LOWER_HEIGHT);
-				simulation.setEventViewerDefaults(    COL4_START, LOWER_START,   COL4_WIDTH, LOWER_HEIGHT);
-				simulation.setControlPanelWidthDefault(DEFAULT_GUI_WIDTH);
-				updateControls(simulation);
-				clearUndoRedo();
-			}
-		});
+		simulation.setModelBuilderDefaults(   COL1_START, TOP_START,     COL1_WIDTH, HALF_TOP    );
+		simulation.setObjectSelectorDefaults( COL1_START, BOTTOM_START,  COL1_WIDTH, HALF_BOTTOM );
+		simulation.setInputEditorDefaults(    COL2_START, LOWER_START,   COL2_WIDTH, LOWER_HEIGHT);
+		simulation.setOutputViewerDefaults(   COL3_START, LOWER_START,   COL3_WIDTH, LOWER_HEIGHT);
+		simulation.setPropertyViewerDefaults( COL4_START, LOWER_START,   COL4_WIDTH, LOWER_HEIGHT);
+		simulation.setLogViewerDefaults(      COL4_START, LOWER_START,   COL4_WIDTH, LOWER_HEIGHT);
+		simulation.setEventViewerDefaults(    COL4_START, LOWER_START,   COL4_WIDTH, LOWER_HEIGHT);
+		simulation.setControlPanelWidthDefault(DEFAULT_GUI_WIDTH);
+		updateControls(simulation);
+		clearUndoRedo();
 	}
 
 	public ArrayList<View> getViews() {
@@ -4555,7 +4548,12 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			gui.setVisible(true);
 			gui.calcWindowDefaults();
 			gui.setLocation(gui.getX(), gui.getY());  //FIXME remove when setLocation is fixed for Windows 10
-			gui.setWindowDefaults(simModel.getSimulation());
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					getInstance().setWindowDefaults(simModel.getSimulation());
+				}
+			});
 		}
 
 		// Resolve all input arguments against the current working directory
@@ -4851,7 +4849,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		// Create the new JaamSimModel and load the default objects and inputs
 		JaamSimModel simModel = new JaamSimModel(file.getName());
 		simModel.autoLoad();
-		setWindowDefaults(simModel.getSimulation());
 
 		// Add the run manager
 		RunManager runMgr = new RunManager(simModel);
@@ -4865,6 +4862,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			public void run() {
 				setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 				simModel.setRecordEdits(false);
+
+				setWindowDefaults(simModel.getSimulation());
 
 				Throwable ret = GUIFrame.configure(file);
 				if (ret != null) {
