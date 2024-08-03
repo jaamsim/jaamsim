@@ -281,6 +281,9 @@ public class Simulation extends Entity {
 	@Keyword(description = "The state of the 'Presentation Mode' button on the Control Panel.")
 	private final BooleanInput presentationMode;
 
+	@Keyword(description = "The state of the 'LockWindows' button on the Control Panel.")
+	private final BooleanInput lockWindows;
+
 	@Keyword(description = "The state of the 'Show References' button on the Control Panel.")
 	private final BooleanInput showReferences;
 
@@ -559,6 +562,11 @@ public class Simulation extends Entity {
 		presentationMode.setPromptReqd(false);
 		presentationMode.setHidden(true);
 		this.addInput(presentationMode);
+
+		lockWindows = new BooleanInput("LockWindows", GUI, false);
+		lockWindows.setPromptReqd(false);
+		lockWindows.setHidden(true);
+		this.addInput(lockWindows);
 
 		showReferences = new BooleanInput("ShowReferences", GUI, false);
 		showReferences.setPromptReqd(false);
@@ -991,6 +999,10 @@ public class Simulation extends Entity {
 
 	public boolean isPresentationMode() {
 		return presentationMode.getValue();
+	}
+
+	public boolean isLockWindows() {
+		return lockWindows.getValue();
 	}
 
 	public boolean isShowReferences() {
