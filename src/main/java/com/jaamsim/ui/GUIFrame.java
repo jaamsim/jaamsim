@@ -281,6 +281,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 	// Collection of default window parameters
 	int DEFAULT_GUI_WIDTH;
+	int DEFAULT_GUI_HEIGHT;
 	int COL1_WIDTH;
 	int COL2_WIDTH;
 	int COL3_WIDTH;
@@ -362,6 +363,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		                       //      Same problem in Windows 10.
 		                       //      The problem is visible with an executable, not with Eclipse
 		pack();
+
+		DEFAULT_GUI_HEIGHT = getSize().height;
 
 		controlStartResume.requestFocusInWindow();
 
@@ -3464,7 +3467,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		updateViewVisibilities();
 		updateViewSizes();
 		updateViewLocations();
-		setControlPanelWidth(simulation.getControlPanelWidth());
+		setSize(simulation.getControlPanelWidth(), DEFAULT_GUI_HEIGHT);
 	}
 
 	private void updateSaveButton() {
@@ -4290,11 +4293,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			IntegerVector pos = getWindowPos(v);
 			window.setLocation(pos.get(0), pos.get(1));
 		}
-	}
-
-	public void setControlPanelWidth(int width) {
-		int height = getSize().height;
-		setSize(width, height);
 	}
 
 	public void setWindowDefaults(Simulation simulation) {
