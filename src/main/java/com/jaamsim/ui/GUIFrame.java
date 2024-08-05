@@ -4069,7 +4069,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	 * windows based on the size of the computer display being used.
 	 */
 	private void calcWindowDefaults() {
-		Dimension guiSize = this.getSize();
 		Rectangle winSize = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
 
 		DEFAULT_GUI_WIDTH = winSize.width;
@@ -4085,12 +4084,12 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		COL3_START = COL2_START + COL2_WIDTH;
 		COL4_START = Math.min(COL3_START + COL3_WIDTH, winSize.width - COL4_WIDTH);
 
-		HALF_TOP = (winSize.height - guiSize.height) / 2;
-		HALF_BOTTOM = (winSize.height - guiSize.height - HALF_TOP);
-		LOWER_HEIGHT = Math.min(250, (winSize.height - guiSize.height) / 3);
-		VIEW_HEIGHT = winSize.height - guiSize.height - LOWER_HEIGHT;
+		HALF_TOP = (winSize.height - DEFAULT_GUI_HEIGHT) / 2;
+		HALF_BOTTOM = (winSize.height - DEFAULT_GUI_HEIGHT - HALF_TOP);
+		LOWER_HEIGHT = Math.min(250, (winSize.height - DEFAULT_GUI_HEIGHT) / 3);
+		VIEW_HEIGHT = winSize.height - DEFAULT_GUI_HEIGHT - LOWER_HEIGHT;
 
-		TOP_START = this.getY() + guiSize.height;
+		TOP_START = this.getY() + DEFAULT_GUI_HEIGHT;
 		BOTTOM_START = TOP_START + HALF_TOP;
 		LOWER_START = TOP_START + VIEW_HEIGHT;
 	}
