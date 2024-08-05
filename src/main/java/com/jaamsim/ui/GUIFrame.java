@@ -3467,6 +3467,9 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		updateViewVisibilities();
 		updateViewSizes();
 		updateViewLocations();
+		if (getExtendedState() == MAXIMIZED_BOTH) {
+			setExtendedState(NORMAL);
+		}
 		setSize(simulation.getControlPanelWidth(), DEFAULT_GUI_HEIGHT);
 	}
 
