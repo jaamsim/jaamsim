@@ -513,7 +513,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 	@Override
 	public Dimension getPreferredSize() {
-		Point fix = OSFix.getSizeAdjustment();
+		Point fix = OSFix.getSizeAdjustment(isResizable());
 		return new Dimension(DEFAULT_GUI_WIDTH + fix.x, super.getPreferredSize().height);
 	}
 

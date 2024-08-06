@@ -36,25 +36,25 @@ public class OSFixJFrame extends JFrame {
 
 	@Override
 	public void setLocation(int x, int y) {
-		Point fix = OSFix.getLocationAdjustment();
+		Point fix = OSFix.getLocationAdjustment(isResizable());
 		super.setLocation(x+fix.x, y+fix.y);
 	}
 
 	@Override
 	public Point getLocation() {
-		Point fix = OSFix.getLocationAdjustment();
+		Point fix = OSFix.getLocationAdjustment(isResizable());
 		return new Point(super.getX()-fix.x, super.getY()-fix.y);
 	}
 
 	@Override
 	public void setSize(int x, int y) {
-		Point fix = OSFix.getSizeAdjustment();
+		Point fix = OSFix.getSizeAdjustment(isResizable());
 		super.setSize(x+fix.x, y+fix.y);
 	}
 
 	@Override
 	public Dimension getSize() {
-		Point fix = OSFix.getSizeAdjustment();
+		Point fix = OSFix.getSizeAdjustment(isResizable());
 		return new Dimension(super.getSize().width-fix.x, super.getSize().height-fix.y);
 	}
 
