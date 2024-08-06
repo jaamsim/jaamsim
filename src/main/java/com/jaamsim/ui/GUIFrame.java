@@ -358,10 +358,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		this.setIconImages(GUIFrame.getWindowIcons());
 
 		//Set window size
-		setResizable( true );  //FIXME should be false, but this causes the window to be sized
-		                       //      and positioned incorrectly in the Windows 7 Aero theme
-		                       //      Same problem in Windows 10.
-		                       //      The problem is visible with an executable, not with Eclipse
+		setResizable(false);
 		pack();
 
 		DEFAULT_GUI_HEIGHT = getSize().height;
