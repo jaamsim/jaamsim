@@ -513,7 +513,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 	@Override
 	public Dimension getPreferredSize() {
-		Point fix = OSFix.getSizeAdustment();
+		Point fix = OSFix.getSizeAdjustment();
 		return new Dimension(DEFAULT_GUI_WIDTH + fix.x, super.getPreferredSize().height);
 	}
 
@@ -4365,7 +4365,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	}
 
 	public IntegerVector getWindowPos(View v) {
-		Point fix = OSFix.getLocationAdustment();  //FIXME
+		Point fix = OSFix.getLocationAdjustment();
 		IntegerVector ret = new IntegerVector(v.getWindowPos());
 
 		// Presentation mode
@@ -4384,7 +4384,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	}
 
 	public IntegerVector getWindowSize(View v) {
-		Point fix = OSFix.getSizeAdustment();  //FIXME
+		Point fix = OSFix.getSizeAdjustment();
 		IntegerVector ret = new IntegerVector(v.getWindowSize());
 
 		// Presentation mode
@@ -4404,8 +4404,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	public void setWindowPos(View v, int x, int y, int width, int height) {
 		if (presentMode.isSelected())
 			return;
-		Point posFix = OSFix.getLocationAdustment();
-		Point sizeFix = OSFix.getSizeAdustment();
+		Point posFix = OSFix.getLocationAdjustment();
+		Point sizeFix = OSFix.getSizeAdjustment();
 		Point pt = getRelativeLocation(x - posFix.x, y - posFix.y);
 		v.setWindowPos(pt.x, pt.y, width - sizeFix.x, height - sizeFix.y);
 	}

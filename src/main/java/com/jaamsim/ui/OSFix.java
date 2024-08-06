@@ -34,7 +34,7 @@ public class OSFix {
 		return OS_NAME.startsWith("Win");
 	}
 
-	public static final Point getSizeAdustment() {
+	public static final Point getSizeAdjustment() {
 		Point ret;
 		switch (OS_NAME) {
 		case WIN_10:
@@ -48,7 +48,7 @@ public class OSFix {
 		return ret;
 	}
 
-	public static final Point getLocationAdustment() {
+	public static final Point getLocationAdjustment() {
 		Point ret;
 		switch (OS_NAME) {
 		case WIN_10:
