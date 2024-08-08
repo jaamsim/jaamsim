@@ -4814,6 +4814,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		// Load the default model
 		simModel.setRecordEdits(true);
 		InputAgent.loadDefault(simModel);
+		GUIFrame.updateForSimState(JaamSimModel.SIM_STATE_CONFIGURED);
 
 		FrameBox.setSelectedEntity(simModel.getSimulation(), false);
 	}

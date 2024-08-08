@@ -359,6 +359,7 @@ public class ExampleBox extends JDialog {
 		// Load the specified model file
 		InputAgent.readResource(simModel, "<res>/examples/" + name);
 		simModel.postLoad();
+		GUIFrame.updateForSimState(JaamSimModel.SIM_STATE_CONFIGURED);
 
 		// A RecordEdits marker in the example file must be ignored
 		simModel.setRecordEditsFound(false);
