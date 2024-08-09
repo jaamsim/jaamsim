@@ -398,10 +398,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			@Override
 			public void componentResized(ComponentEvent e) {
 				JaamSimModel sim = getJaamSimModel();
-				if (sim == null)
-					return;
-
-				if (sim.getSimulation() == null)
+				if (sim == null || sim.getSimulation() == null)
 					return;
 				sim.getSimulation().setControlPanelWidth(getSize().width);
 			}
@@ -409,12 +406,11 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			@Override
 			public void componentMoved(ComponentEvent e) {
 				JaamSimModel sim = getJaamSimModel();
-				Simulation simulation = sim.getSimulation();
-				if (simulation == null)
+				if (sim == null || sim.getSimulation() == null)
 					return;
 				windowOffset = new Point(getLocation().x - initLocation.x,
 						getLocation().y - initLocation.y);
-				updateToolLocations(simulation);
+				updateToolLocations(sim.getSimulation());
 				updateViewLocations();
 			}
 		});
@@ -539,7 +535,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	}
 
 	public void showWindows() {
-		if (!RenderManager.isGood())
+		JaamSimModel sim = getJaamSimModel();
+		if (!RenderManager.isGood() || sim == null || sim.getSimulation() == null)
 			return;
 
 		// Identity the view window that is active
@@ -557,7 +554,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			RenderManager.inst().createWindow(activeView);
 
 		// Re-open the tools
-		showActiveTools(getJaamSimModel().getSimulation());
+		showActiveTools(sim.getSimulation());
 		updateUI();
 	}
 
