@@ -4394,7 +4394,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	}
 
 	public IntegerVector getWindowPos(View v) {
-		Point fix = OSFix.getLocationAdjustment();
+		Point fix = OSFix.getLocationAdjustment(v.isResizable());
 		IntegerVector ret = new IntegerVector(v.getWindowPos());
 
 		// Presentation mode
@@ -4413,7 +4413,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	}
 
 	public IntegerVector getWindowSize(View v) {
-		Point fix = OSFix.getSizeAdjustment();
+		Point fix = OSFix.getSizeAdjustment(v.isResizable());
 		IntegerVector ret = new IntegerVector(v.getWindowSize());
 
 		// Presentation mode
@@ -4434,8 +4434,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		if (presentMode.isSelected()
 				|| runManager.getJaamSimModel().getSimulation().isLockWindows())
 			return;
-		Point posFix = OSFix.getLocationAdjustment();
-		Point sizeFix = OSFix.getSizeAdjustment();
+		Point posFix = OSFix.getLocationAdjustment(v.isResizable());
+		Point sizeFix = OSFix.getSizeAdjustment(v.isResizable());
 		Point pt = getRelativeLocation(x - posFix.x, y - posFix.y);
 		v.setWindowPos(pt.x, pt.y, width - sizeFix.x, height - sizeFix.y);
 	}
