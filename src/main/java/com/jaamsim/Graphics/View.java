@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018-2023 JaamSim Software Inc.
+ * Copyright (C) 2018-2024 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -418,6 +418,18 @@ public class View extends Entity {
 
 	public boolean is2DLocked() {
 		return lock2D.getNextBoolean(this, 0.0d);
+	}
+
+	public void setResizable(boolean bool) {
+		GUIListener gui = getJaamSimModel().getGUIListener();
+		if (gui == null)
+			return;
+		gui.setResizable(this, bool);
+	}
+
+	public boolean isResizable() {
+		GUIListener gui = getJaamSimModel().getGUIListener();
+		return gui != null && gui.isResizable(this);
 	}
 
 	public URI getSkyboxTexture() {

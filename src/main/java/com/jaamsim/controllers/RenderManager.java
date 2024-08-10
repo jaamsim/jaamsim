@@ -2084,6 +2084,18 @@ public class RenderManager implements DragSourceListener {
 		return control.getPOI();
 	}
 
+	public void setResizable(View v, boolean bool) {
+		int winID = getWindowID(v);
+		Frame frame = renderer.getAWTFrame(winID);
+		frame.setResizable(bool);
+	}
+
+	public boolean isResizable(View v) {
+		int winID = getWindowID(v);
+		Frame frame = renderer.getAWTFrame(winID);
+		return frame != null && frame.isResizable();
+	}
+
 	/**
 	 * Can this hardware perform off screen rendering. Note: this method returning true is necessary, but not sufficient to
 	 * support off screen rendering.

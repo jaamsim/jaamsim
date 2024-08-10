@@ -4343,6 +4343,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		clearUndoRedo();
 	}
 
+	@Override
 	public ArrayList<View> getViews() {
 		synchronized (views) {
 			return views;
@@ -4444,6 +4445,20 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		if (!RenderManager.isGood())
 			return new Vec3d();
 		return RenderManager.inst().getPOI(v);
+	}
+
+	@Override
+	public void setResizable(View v, boolean bool) {
+		if (!RenderManager.isGood())
+			return;
+		RenderManager.inst().setResizable(v, bool);
+	}
+
+	@Override
+	public boolean isResizable(View v) {
+		if (!RenderManager.isGood())
+			return false;
+		return RenderManager.inst().isResizable(v);
 	}
 
 	// ******************************************************************************************************

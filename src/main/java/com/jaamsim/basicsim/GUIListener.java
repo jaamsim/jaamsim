@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2019-2021 JaamSim Software Inc.
+ * Copyright (C) 2019-2024 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 package com.jaamsim.basicsim;
+
+import java.util.ArrayList;
 
 import com.jaamsim.Commands.Command;
 import com.jaamsim.Graphics.View;
@@ -41,5 +43,8 @@ public interface GUIListener extends EventTimeListener {
 	public Vec3d getPOI(View v);
 	public String getDefaultFolder();
 	public boolean isSelected(Entity ent);
+	public ArrayList<View> getViews();
+	public void setResizable(View v, boolean bool);
+	public boolean isResizable(View v);
 
 }
