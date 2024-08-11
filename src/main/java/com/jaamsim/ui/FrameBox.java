@@ -126,11 +126,17 @@ public class FrameBox extends OSFixJFrame {
 
 		@Override
 		public void componentMoved(ComponentEvent e) {
+			if (GUIFrame.getJaamSimModel().getSimulation().isLockWindows()) {
+				return;
+			}
 			setSizePos();
 		}
 
 		@Override
 		public void componentResized(ComponentEvent e) {
+			if (GUIFrame.getJaamSimModel().getSimulation().isLockWindows()) {
+				return;
+			}
 			setSizePos();
 		}
 
