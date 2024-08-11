@@ -82,6 +82,12 @@ public class FrameBox extends OSFixJFrame {
 		}
 	}
 
+	public static void allowResizing(boolean bool) {
+		for (FrameBox frame : allInstances) {
+			frame.setResizable(bool);
+		}
+	}
+
 	public void reset() {}
 
 	public static WindowAdapter getCloseListener(String key) {

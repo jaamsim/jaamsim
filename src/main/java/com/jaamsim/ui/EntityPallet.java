@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2019-2021 JaamSim Software Inc.
+ * Copyright (C) 2019-2024 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -112,6 +112,12 @@ public class EntityPallet extends OSFixJFrame implements DragGestureListener {
 			@Override
 			public void keyReleased(KeyEvent e) {}
 		});
+	}
+
+	public static void allowResizing(boolean bool) {
+		if (myInstance == null)
+			return;
+		myInstance.setResizable(bool);
 	}
 
 	@Override

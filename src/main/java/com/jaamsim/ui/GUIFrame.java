@@ -4461,6 +4461,15 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		return RenderManager.inst().isResizable(v);
 	}
 
+	@Override
+	public void allowResizing(boolean bool) {
+		FrameBox.allowResizing(bool);
+		EntityPallet.allowResizing(bool);
+		for (View v : views) {
+			setResizable(v, bool);
+		}
+	}
+
 	// ******************************************************************************************************
 	// MAIN
 	// ******************************************************************************************************

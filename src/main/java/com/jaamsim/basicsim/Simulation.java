@@ -21,6 +21,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import javax.swing.SwingUtilities;
+
 import com.jaamsim.Commands.KeywordCommand;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.StringProviders.StringProvListInput;
@@ -566,6 +568,7 @@ public class Simulation extends Entity {
 		lockWindows = new BooleanInput("LockWindows", GUI, false);
 		lockWindows.setPromptReqd(false);
 		lockWindows.setHidden(true);
+		lockWindows.setCallback(lockWindowsCallback);
 		this.addInput(lockWindows);
 
 		showReferences = new BooleanInput("ShowReferences", GUI, false);
@@ -799,6 +802,22 @@ public class Simulation extends Entity {
 		startingScenarioNumber.setRunIndexRangeList(getScenarioIndexDefinitionList());
 		endingScenarioNumber.setRunIndexRangeList(getScenarioIndexDefinitionList());
 	}
+
+	static final InputCallback lockWindowsCallback = new InputCallback() {
+		@Override
+		public void callback(Entity ent, Input<?> inp) {
+			boolean bool = (boolean) inp.getValue();
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					GUIListener gui = ent.getJaamSimModel().getGUIListener();
+					if (gui != null) {
+						gui.allowResizing(!bool);
+					}
+				}
+			});
+		}
+	};
 
 	@Override
 	public void validate() {

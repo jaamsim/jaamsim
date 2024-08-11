@@ -46,5 +46,6 @@ public interface GUIListener extends EventTimeListener {
 	public ArrayList<View> getViews();
 	public void setResizable(View v, boolean bool);
 	public boolean isResizable(View v);
+	public void allowResizing(boolean bool);
 
 }
