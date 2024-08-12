@@ -1064,10 +1064,6 @@ public class Entity {
 		userOutputMap.put(name, eh);
 	}
 
-	public boolean hasCustomOutput(String name) {
-		return userOutputMap.get(name) instanceof ExpressionHandle;
-	}
-
 	/**
 	 * Returns true if there are any outputs that will be printed to the output report.
 	 */
@@ -1082,10 +1078,6 @@ public class Entity {
 	private void addAttribute(String name, ExpResult initVal, ExpResult val, Class<? extends Unit> ut) {
 		AttributeHandle ah = new AttributeHandle(this, name, initVal, val, ut);
 		userOutputMap.put(name, ah);
-	}
-
-	public boolean hasAttribute(String name) {
-		return userOutputMap.get(name) instanceof AttributeHandle;
 	}
 
 	// Utility function to help set attribute values for nested indices
