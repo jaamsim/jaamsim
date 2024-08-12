@@ -96,8 +96,7 @@ public class Entity {
 
 	private final ArrayList<Input<?>> inpList = new ArrayList<>();
 
-	private final HashMap<String, AttributeHandle> attributeMap = new LinkedHashMap<>();
-	private final HashMap<String, ExpressionHandle> customOutputMap = new LinkedHashMap<>();
+	private final HashMap<String, ValueHandle> userOutputMap = new LinkedHashMap<>();
 
 	public static final String KEY_INPUTS = "Key Inputs";
 	public static final String OPTIONS = "Options";
@@ -297,7 +296,10 @@ public class Entity {
 	public void earlyInit() {
 
 		// Reset the attributes to their initial values
-		for (AttributeHandle h : attributeMap.values()) {
+		for (ValueHandle vh : userOutputMap.values()) {
+			if (!(vh instanceof AttributeHandle))
+				continue;
+			AttributeHandle h = (AttributeHandle) vh;
 			h.setValue(h.getInitialValue());
 		}
 
@@ -636,10 +638,13 @@ public class Entity {
 	 * @param target - entity whose attribute values are to be assigned
 	 */
 	public static void copyAttributeValues(Entity ent, Entity target) {
-		for (AttributeHandle sourceHandle : ent.attributeMap.values()) {
-			AttributeHandle targetHandle = target.attributeMap.get(sourceHandle.getName());
-			if (targetHandle == null)
+		for (ValueHandle sourceVHandle : ent.userOutputMap.values()) {
+			ValueHandle targetVHandle = target.userOutputMap.get(sourceVHandle.getName());
+			if (!(sourceVHandle instanceof AttributeHandle)
+					|| !(targetVHandle instanceof AttributeHandle))
 				continue;
+			AttributeHandle sourceHandle = (AttributeHandle) sourceVHandle;
+			AttributeHandle targetHandle = (AttributeHandle) targetVHandle;
 			targetHandle.setValue(sourceHandle.copyValue());
 		}
 	}
@@ -878,26 +883,22 @@ public class Entity {
 	static final InputCallback attributeDefinitionListCallback = new InputCallback() {
 		@Override
 		public void callback(Entity ent, Input<?> inp) {
-			ent.updateAttributeMap();
+			ent.updateUserOutputMap();
 		}
 	};
-
-	void updateAttributeMap() {
-		attributeMap.clear();
-		for (AttributeHandle h : attributeDefinitionList.getValue()) {
-			addAttribute(h.getName(), h.getInitialValue(), h.copyValue(), h.getUnitType());
-		}
-	}
 
 	static final InputCallback namedExpressionInputCallback = new InputCallback() {
 		@Override
 		public void callback(Entity ent, Input<?> inp) {
-			ent.updatecustomOutputMap();
+			ent.updateUserOutputMap();
 		}
 	};
 
-	void updatecustomOutputMap() {
-		customOutputMap.clear();
+	void updateUserOutputMap() {
+		userOutputMap.clear();
+		for (AttributeHandle h : attributeDefinitionList.getValue()) {
+			addAttribute(h.getName(), h.getInitialValue(), h.copyValue(), h.getUnitType());
+		}
 		for (NamedExpression ne : namedExpressionInput.getValue()) {
 			addCustomOutput(ne.getName(), ne.getExpression(), ne.getUnitType());
 		}
@@ -1051,29 +1052,20 @@ public class Entity {
 	}
 
 	public ValueHandle getOutputHandle(String outputName) {
-		ValueHandle ret;
-		ret = attributeMap.get(outputName);
+		ValueHandle ret = userOutputMap.get(outputName);
 		if (ret != null)
 			return ret;
 
-		ret = customOutputMap.get(outputName);
-		if (ret != null)
-			return ret;
-
-		ret = OutputHandle.getOutputHandle(this, outputName);
-		if (ret != null)
-			return ret;
-
-		return null;
+		return OutputHandle.getOutputHandle(this, outputName);
 	}
 
 	private void addCustomOutput(String name, Expression exp, Class<? extends Unit> unitType) {
 		ExpressionHandle eh = new ExpressionHandle(this, exp, name, unitType);
-		customOutputMap.put(name, eh);
+		userOutputMap.put(name, eh);
 	}
 
 	public boolean hasCustomOutput(String name) {
-		return customOutputMap.containsKey(name);
+		return userOutputMap.get(name) instanceof ExpressionHandle;
 	}
 
 	/**
@@ -1089,11 +1081,11 @@ public class Entity {
 
 	private void addAttribute(String name, ExpResult initVal, ExpResult val, Class<? extends Unit> ut) {
 		AttributeHandle ah = new AttributeHandle(this, name, initVal, val, ut);
-		attributeMap.put(name, ah);
+		userOutputMap.put(name, ah);
 	}
 
 	public boolean hasAttribute(String name) {
-		return attributeMap.containsKey(name);
+		return userOutputMap.get(name) instanceof AttributeHandle;
 	}
 
 	// Utility function to help set attribute values for nested indices
@@ -1121,9 +1113,10 @@ public class Entity {
 	}
 
 	public void setAttribute(String name, ExpResult[] indices, ExpResult value) throws ExpError {
-		AttributeHandle h = attributeMap.get(name);
-		if (h == null)
+		ValueHandle vh = userOutputMap.get(name);
+		if (!(vh instanceof AttributeHandle))
 			throw new ExpError(null, -1, "Invalid attribute name for %s: %s", this, name);
+		AttributeHandle h = (AttributeHandle) vh;
 
 		ExpResult assignValue = null;
 
@@ -1160,13 +1153,8 @@ public class Entity {
 	public ArrayList<ValueHandle> getAllOutputs() {
 		ArrayList<ValueHandle> ret = OutputHandle.getAllOutputHandles(this);
 
-		// And the attributes
-		for (Entry<String, AttributeHandle> e : attributeMap.entrySet()) {
-			ret.add(e.getValue());
-		}
-
-		// Add the custom outputs
-		for (Entry<String, ExpressionHandle> e : customOutputMap.entrySet()) {
+		// Add the attributes and custom outputs
+		for (Entry<String, ValueHandle> e : userOutputMap.entrySet()) {
 			ret.add(e.getValue());
 		}
 
