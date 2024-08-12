@@ -40,10 +40,6 @@ public class OSFix {
 		return OS_NAME.startsWith("Win");
 	}
 
-	public static final Point getSizeAdjustment() {
-		return getSizeAdjustment(true);
-	}
-
 	public static final Point getSizeAdjustment(boolean resizable) {
 		Point ret;
 		switch (OS_NAME) {
@@ -56,10 +52,6 @@ public class OSFix {
 			break;
 		}
 		return ret;
-	}
-
-	public static final Point getLocationAdjustment() {
-		return getLocationAdjustment(true);
 	}
 
 	public static final Point getLocationAdjustment(boolean resizable) {
