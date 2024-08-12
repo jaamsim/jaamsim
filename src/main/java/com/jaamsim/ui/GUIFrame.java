@@ -210,6 +210,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	private JToggleButton showLabels;
 	private JToggleButton showSubModels;
 	private JToggleButton presentMode;
+	private JToggleButton lockWindows;
 
 	private JToggleButton showReferences;
 	private JToggleButton showLinks;
@@ -1402,6 +1403,10 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		buttonBar.addSeparator(separatorDim);
 		addPresentationModeButton(buttonBar, noMargin);
 
+		// Lock windows button
+		buttonBar.add(Box.createRigidArea(gapDim));
+		addLockWindowsButton(buttonBar, noMargin);
+
 		// 2D, axes, and grid buttons
 		buttonBar.addSeparator(separatorDim);
 		add2dButton(buttonBar, smallMargin);
@@ -1806,6 +1811,28 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			}
 		} );
 		buttonBar.add( presentMode );
+	}
+
+	private void addLockWindowsButton(JToolBar buttonBar, Insets margin) {
+		lockWindows = new JToggleButton( new ImageIcon(
+				GUIFrame.class.getResource("/resources/images/LockWindows-16.png")) );
+		lockWindows.setMargin(margin);
+		lockWindows.setFocusPainted(false);
+		lockWindows.setRequestFocusEnabled(false);
+		lockWindows.setToolTipText(formatToolTip("Lock Windows",
+				"Disables repositioning/resizing of the tool and view windows with the mouse."));
+		lockWindows.addActionListener( new ActionListener() {
+
+			@Override
+			public void actionPerformed( ActionEvent event ) {
+				JaamSimModel sim = getJaamSimModel();
+				boolean bool = lockWindows.isSelected();
+				KeywordIndex kw = InputAgent.formatBoolean("LockWindows", bool);
+				InputAgent.storeAndExecute(new KeywordCommand(sim.getSimulation(), kw));
+				controlStartResume.requestFocusInWindow();
+			}
+		} );
+		buttonBar.add( lockWindows );
 	}
 
 	private void addSnapToGridButton(JToolBar buttonBar, Insets margin) {
@@ -3453,6 +3480,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		updateShowLabelsButton(simulation.isShowLabels());
 		updateShowSubModelsButton(simulation.isShowSubModels());
 		updatePresentationModeButton(simulation.isPresentationMode());
+		updateLockWindowsButton(simulation.isLockWindows());
 		updateShowReferencesButton(simulation.isShowReferences());
 		updateShowEntityFlowButton(simulation.isShowEntityFlow());
 		updateToolVisibilities(simulation);
@@ -4119,6 +4147,12 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		if (presentMode.isSelected() == bool)
 			return;
 		presentMode.setSelected(bool);
+	}
+
+	private void updateLockWindowsButton(boolean bool) {
+		if (lockWindows.isSelected() == bool)
+			return;
+		lockWindows.setSelected(bool);
 	}
 
 	public void clearPresentationMode() {
