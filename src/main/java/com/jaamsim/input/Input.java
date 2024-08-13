@@ -388,6 +388,10 @@ public abstract class Input<T> {
 		return value;
 	}
 
+	public Class<? extends Unit> getUnitType() {
+		return null;
+	}
+
 	@SuppressWarnings("unchecked")
 	public void setProtoInput(Input<?> in) {
 		protoInput = (Input<T>) in;
