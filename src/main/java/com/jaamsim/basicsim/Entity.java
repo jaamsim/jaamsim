@@ -19,11 +19,11 @@ package com.jaamsim.basicsim;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.Map.Entry;
 
 import com.jaamsim.Graphics.EntityLabel;
 import com.jaamsim.events.Conditional;
@@ -96,7 +96,7 @@ public class Entity {
 
 	private final ArrayList<Input<?>> inpList = new ArrayList<>();
 
-	private final HashMap<String, ValueHandle> userOutputMap = new LinkedHashMap<>();
+	private HashMap<String, ValueHandle> userOutputMap;
 
 	public static final String KEY_INPUTS = "Key Inputs";
 	public static final String OPTIONS = "Options";
@@ -296,7 +296,7 @@ public class Entity {
 	public void earlyInit() {
 
 		// Reset the attributes to their initial values
-		for (ValueHandle vh : userOutputMap.values()) {
+		for (ValueHandle vh : getAllUserOutputHandles()) {
 			if (!(vh instanceof AttributeHandle))
 				continue;
 			AttributeHandle h = (AttributeHandle) vh;
@@ -638,8 +638,8 @@ public class Entity {
 	 * @param target - entity whose attribute values are to be assigned
 	 */
 	public static void copyAttributeValues(Entity ent, Entity target) {
-		for (ValueHandle sourceVHandle : ent.userOutputMap.values()) {
-			ValueHandle targetVHandle = target.userOutputMap.get(sourceVHandle.getName());
+		for (ValueHandle sourceVHandle : ent.getAllUserOutputHandles()) {
+			ValueHandle targetVHandle = target.getUserOutputHandle(sourceVHandle.getName());
 			if (!(sourceVHandle instanceof AttributeHandle)
 					|| !(targetVHandle instanceof AttributeHandle))
 				continue;
@@ -895,7 +895,7 @@ public class Entity {
 	};
 
 	void updateUserOutputMap() {
-		userOutputMap.clear();
+		clearUserOutputs();
 		for (AttributeHandle h : attributeDefinitionList.getValue()) {
 			addAttribute(h.getName(), h.getInitialValue(), h.copyValue(), h.getUnitType());
 		}
@@ -1052,7 +1052,7 @@ public class Entity {
 	}
 
 	public ValueHandle getOutputHandle(String outputName) {
-		ValueHandle ret = userOutputMap.get(outputName);
+		ValueHandle ret = getUserOutputHandle(outputName);
 		if (ret != null)
 			return ret;
 
@@ -1061,7 +1061,7 @@ public class Entity {
 
 	private void addCustomOutput(String name, Expression exp, Class<? extends Unit> unitType) {
 		ExpressionHandle eh = new ExpressionHandle(this, exp, name, unitType);
-		userOutputMap.put(name, eh);
+		addUserOutputHandle(name, eh);
 	}
 
 	/**
@@ -1077,7 +1077,29 @@ public class Entity {
 
 	private void addAttribute(String name, ExpResult initVal, ExpResult val, Class<? extends Unit> ut) {
 		AttributeHandle ah = new AttributeHandle(this, name, initVal, val, ut);
-		userOutputMap.put(name, ah);
+		addUserOutputHandle(name, ah);
+	}
+
+	private void addUserOutputHandle(String name, ValueHandle vh) {
+		if (userOutputMap == null)
+			userOutputMap = new LinkedHashMap<>();
+		userOutputMap.put(name, vh);
+	}
+
+	private ValueHandle getUserOutputHandle(String name) {
+		if (userOutputMap == null)
+			return null;
+		return userOutputMap.get(name);
+	}
+
+	private Collection<ValueHandle> getAllUserOutputHandles() {
+		if (userOutputMap == null)
+			return new ArrayList<>(0);
+		return userOutputMap.values();
+	}
+
+	private void clearUserOutputs() {
+		userOutputMap = null;
 	}
 
 	// Utility function to help set attribute values for nested indices
@@ -1105,7 +1127,7 @@ public class Entity {
 	}
 
 	public void setAttribute(String name, ExpResult[] indices, ExpResult value) throws ExpError {
-		ValueHandle vh = userOutputMap.get(name);
+		ValueHandle vh = getUserOutputHandle(name);
 		if (!(vh instanceof AttributeHandle))
 			throw new ExpError(null, -1, "Invalid attribute name for %s: %s", this, name);
 		AttributeHandle h = (AttributeHandle) vh;
@@ -1146,9 +1168,7 @@ public class Entity {
 		ArrayList<ValueHandle> ret = OutputHandle.getAllOutputHandles(this);
 
 		// Add the attributes and custom outputs
-		for (Entry<String, ValueHandle> e : userOutputMap.entrySet()) {
-			ret.add(e.getValue());
-		}
+		ret.addAll( getAllUserOutputHandles() );
 
 		Collections.sort(ret, new ValueHandleComparator());
 		return ret;
