@@ -530,17 +530,17 @@ public class Entity {
 	 */
 	public ArrayList<String> getValueTokens(Input<?> in, Entity newParent) {
 		ArrayList<String> ret = in.getValueTokens();
-		if (parent == null || parent == newParent)
+		if (ret.isEmpty() || parent == null || parent == newParent)
 			return ret;
 
 		// Replace any explicit references to the parent entity with the specified new parent
 		String oldName = parent.getName();
-		String oldName1 = String.format("[%s]", oldName);
-		String oldName2 = String.format("%s.", oldName);
+		String oldName1 = "[" + oldName + "]";
+		String oldName2 = oldName + ".";
 
 		String newName = newParent.getName();
-		String newName1 = String.format("[%s]", newName);
-		String newName2 = String.format("%s.", newName);
+		String newName1 = "[" + newName + "]";
+		String newName2 = newName + ".";
 
 		for (int i = 0; i < ret.size(); i++) {
 			String str = ret.get(i);
