@@ -35,7 +35,6 @@ import com.jaamsim.input.AttributeHandle;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.EntityNameInput;
 import com.jaamsim.input.ExpError;
-import com.jaamsim.input.ExpParser.Expression;
 import com.jaamsim.input.ExpResType;
 import com.jaamsim.input.ExpResult;
 import com.jaamsim.input.ExpValResult;
@@ -890,10 +889,12 @@ public class Entity {
 	void updateUserOutputMap() {
 		clearUserOutputs();
 		for (AttributeHandle h : attributeDefinitionList.getValue()) {
-			addAttribute(h.getName(), h.getInitialValue(), h.copyValue(), h.getUnitType());
+			AttributeHandle ah = new AttributeHandle(this, h.getName(), h.getInitialValue(), h.copyValue(), h.getUnitType());
+			addUserOutputHandle(h.getName(), ah);
 		}
 		for (NamedExpression ne : namedExpressionInput.getValue()) {
-			addCustomOutput(ne.getName(), ne.getExpression(), ne.getUnitType());
+			ExpressionHandle eh = new ExpressionHandle(this, ne.getExpression(), ne.getName(), ne.getUnitType());
+			addUserOutputHandle(eh.getName(), eh);
 		}
 	}
 
@@ -1052,11 +1053,6 @@ public class Entity {
 		return OutputHandle.getOutputHandle(this, outputName);
 	}
 
-	private void addCustomOutput(String name, Expression exp, Class<? extends Unit> unitType) {
-		ExpressionHandle eh = new ExpressionHandle(this, exp, name, unitType);
-		addUserOutputHandle(name, eh);
-	}
-
 	/**
 	 * Returns true if there are any outputs that will be printed to the output report.
 	 */
@@ -1066,11 +1062,6 @@ public class Entity {
 
 	public String getDescription() {
 		return desc.getValue();
-	}
-
-	private void addAttribute(String name, ExpResult initVal, ExpResult val, Class<? extends Unit> ut) {
-		AttributeHandle ah = new AttributeHandle(this, name, initVal, val, ut);
-		addUserOutputHandle(name, ah);
 	}
 
 	private void addUserOutputHandle(String name, ValueHandle vh) {
