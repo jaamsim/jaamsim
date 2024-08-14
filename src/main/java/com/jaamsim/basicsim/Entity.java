@@ -158,13 +158,13 @@ public class Entity {
 
 		attributeDefinitionList = new AttributeDefinitionListInput("AttributeDefinitionList",
 				OPTIONS, new ArrayList<AttributeHandle>());
-		attributeDefinitionList.setCallback(attributeDefinitionListCallback);
+		attributeDefinitionList.setCallback(userOutputCallback);
 		attributeDefinitionList.setHidden(false);
 		this.addInput(attributeDefinitionList);
 
 		namedExpressionInput = new NamedExpressionListInput("CustomOutputList",
 				OPTIONS, new ArrayList<NamedExpression>());
-		namedExpressionInput.setCallback(namedExpressionInputCallback);
+		namedExpressionInput.setCallback(userOutputCallback);
 		namedExpressionInput.setHidden(false);
 		this.addInput(namedExpressionInput);
 	}
@@ -880,14 +880,7 @@ public class Entity {
 		setTraceFlag(bool && trace.getValue());
 	}
 
-	static final InputCallback attributeDefinitionListCallback = new InputCallback() {
-		@Override
-		public void callback(Entity ent, Input<?> inp) {
-			ent.updateUserOutputMap();
-		}
-	};
-
-	static final InputCallback namedExpressionInputCallback = new InputCallback() {
+	static final InputCallback userOutputCallback = new InputCallback() {
 		@Override
 		public void callback(Entity ent, Input<?> inp) {
 			ent.updateUserOutputMap();
