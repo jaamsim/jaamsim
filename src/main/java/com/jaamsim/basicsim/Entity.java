@@ -529,6 +529,12 @@ public class Entity {
 	 * @return input tokens
 	 */
 	public ArrayList<String> getValueTokens(Input<?> in, Entity newParent) {
+
+		// For a blank input, check the input inherited from its prototype and replace references
+		// to the prototype's parent
+		if (in.isDef() && prototype != null && in.getProtoInput() != null)
+			return prototype.getValueTokens(in.getProtoInput(), newParent);
+
 		ArrayList<String> ret = in.getValueTokens();
 		if (ret.isEmpty() || parent == null || parent == newParent)
 			return ret;
