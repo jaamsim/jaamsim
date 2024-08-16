@@ -388,6 +388,11 @@ public abstract class Input<T> {
 		return value;
 	}
 
+	@SuppressWarnings("unchecked")
+	public <V> V getValue(Entity thisEnt, double simTime, Class<V> klass) {
+		return (V) getValue();
+	}
+
 	public Class<?> getReturnType() {
 		return null;
 	}
