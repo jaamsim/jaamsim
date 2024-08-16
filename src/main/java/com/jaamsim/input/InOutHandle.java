@@ -46,7 +46,7 @@ public class InOutHandle extends ValueHandle {
 
 	@Override
 	public String getDescription() {
-		return String.format("The input value for input: %s", name);
+		return String.format("Value for the input '%s'.", name);
 	}
 
 	@Override
