@@ -39,6 +39,7 @@ import com.jaamsim.input.ExpResType;
 import com.jaamsim.input.ExpResult;
 import com.jaamsim.input.ExpValResult;
 import com.jaamsim.input.ExpressionHandle;
+import com.jaamsim.input.InOutHandle;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InputCallback;
@@ -241,6 +242,9 @@ public class Entity {
 	 * Performs any initialization that must occur after the constructor has finished.
 	 */
 	public void postDefine() {
+
+		// Add any specified inputs as outputs
+		updateUserOutputMap();
 
 		// Create any children for the new entity
 		if (prototype != null) {
@@ -895,6 +899,12 @@ public class Entity {
 		for (NamedExpression ne : namedExpressionInput.getValue()) {
 			ExpressionHandle eh = new ExpressionHandle(this, ne.getExpression(), ne.getName(), ne.getUnitType());
 			addUserOutputHandle(eh.getName(), eh);
+		}
+		for (Input<?> in : inpList) {
+			if (!in.isOutput() || in.getHidden())
+				continue;
+			InOutHandle ioh = new InOutHandle(this, in, in.getKeyword(), in.getReturnType(), in.getUnitType());
+			addUserOutputHandle(ioh.getName(), ioh);
 		}
 	}
 
