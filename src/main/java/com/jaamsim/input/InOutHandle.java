@@ -61,7 +61,7 @@ public class InOutHandle extends ValueHandle {
 
 	@Override
 	public boolean isReportable() {
-		return true;
+		return false;
 	}
 
 	@Override
