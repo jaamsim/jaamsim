@@ -5571,7 +5571,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		}
 
 		// Error message
-		if (!message.isEmpty()) {
+		if (message != null && !message.isEmpty()) {
 			sb.append(html_replace(message)).append("<br>");
 		}
 
