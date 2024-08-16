@@ -232,6 +232,22 @@ public class SampleInput extends Input<SampleProvider> {
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
+	public <V> V getValue(Entity thisEnt, double simTime, Class<V> klass) {
+		return (V) (Double) getNextSample(thisEnt, simTime);
+	}
+
+	@Override
+	public Class<?> getReturnType() {
+		return double.class;
+	}
+
+	@Override
+	public Class<? extends Unit> getUnitType() {
+		return unitType;
+	}
+
+	@Override
 	public void validate() {
 		super.validate();
 
