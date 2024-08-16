@@ -235,6 +235,7 @@ public abstract class Input<T> {
 	private boolean isValid;  // if false, the input is no longer valid and must be re-entered
 	private boolean isLocked; // indicates whether the input can be changed through by the user
 	private boolean isInherited;  // indicates whether this input is inherited from its prototype
+	private boolean isOutput;  // indicates whether this input is available as an output
 
 	public static final Comparator<Object> uiSortOrder = new NaturalOrderComparator();
 
@@ -247,6 +248,7 @@ public abstract class Input<T> {
 		hidden = false;
 		defText = null;
 		isReqd = false;
+		isOutput = false;
 
 		reset();
 	}
@@ -464,6 +466,14 @@ public abstract class Input<T> {
 
 	public boolean isInherited() {
 		return isInherited;
+	}
+
+	public void setOutput(boolean bool) {
+		isOutput = bool;
+	}
+
+	public boolean isOutput() {
+		return isOutput;
 	}
 
 	public boolean useExpressionBuilder() {
