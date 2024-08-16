@@ -34,11 +34,9 @@ public class InOutHandle extends ValueHandle {
 		this.unitType = ut;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public <V> V getValue(double simTime, Class<V> klass) {
-		// The cast should be safe, but the type checker does not know that
-		return (V) in.getValue();
+		return in.getValue(ent, simTime, klass);
 	}
 
 	@Override
