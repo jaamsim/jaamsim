@@ -388,6 +388,10 @@ public abstract class Input<T> {
 		return value;
 	}
 
+	public Class<?> getReturnType() {
+		return null;
+	}
+
 	public Class<? extends Unit> getUnitType() {
 		return null;
 	}
