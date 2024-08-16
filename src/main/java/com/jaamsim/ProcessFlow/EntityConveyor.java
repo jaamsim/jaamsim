@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2023 JaamSim Software Inc.
+ * Copyright (C) 2016-2024 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -117,11 +117,13 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 		travelTimeInput = new SampleInput("TravelTime", KEY_INPUTS, 0.0d);
 		travelTimeInput.setValidRange(0.0, Double.POSITIVE_INFINITY);
 		travelTimeInput.setUnitType(TimeUnit.class);
+		travelTimeInput.setOutput(true);
 		this.addInput(travelTimeInput);
 
 		length = new SampleInput("Length", KEY_INPUTS, 0.0d);
 		length.setValidRange(0.0, Double.POSITIVE_INFINITY);
 		length.setUnitType(DistanceUnit.class);
+		length.setOutput(true);
 		this.addInput(length);
 
 		entitySpace = new SampleInput("EntitySpace", KEY_INPUTS, 0.0d);
