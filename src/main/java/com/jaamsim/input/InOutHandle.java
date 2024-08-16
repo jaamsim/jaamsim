@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2018-2021 JaamSim Software Inc.
+ * Copyright (C) 2018-2024 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,14 +27,11 @@ public class InOutHandle extends ValueHandle {
 	private final Class<? extends Unit> unitType;
 	private final int sequence;
 
-	public InOutHandle(Entity ent, Input<?> in, String name, int seq, Class<? extends Unit> ut) {
+	public InOutHandle(Entity ent, Input<?> in, String name, int seq, Class<?> retType, Class<? extends Unit> ut) {
 		super(ent);
 		this.in = in;
 		this.name = name;
-
-		this.returnType = in.getDefaultValue().getClass();
-		assert(this.returnType != null);
-
+		this.returnType = retType;
 		this.sequence = seq;
 		this.unitType = ut;
 	}
