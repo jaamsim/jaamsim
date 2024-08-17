@@ -890,7 +890,7 @@ public class Entity {
 		}
 	};
 
-	void updateUserOutputMap() {
+	public void updateUserOutputMap() {
 		clearUserOutputs();
 		for (AttributeHandle h : attributeDefinitionList.getValue()) {
 			AttributeHandle ah = new AttributeHandle(this, h.getName(), h.getInitialValue(), h.copyValue(), h.getUnitType());
