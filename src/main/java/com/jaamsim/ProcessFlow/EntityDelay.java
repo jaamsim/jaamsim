@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2019-2023 JaamSim Software Inc.
+ * Copyright (C) 2019-2024 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -85,7 +85,7 @@ public class EntityDelay extends LinkedComponent implements LineEntity {
 
 		stateGraphics.setHidden(false);
 
-		duration = new SampleInput("Duration", KEY_INPUTS, null);
+		duration = new SampleInput("Duration", KEY_INPUTS, Double.NaN);
 		duration.setUnitType(TimeUnit.class);
 		duration.setValidRange(0, Double.POSITIVE_INFINITY);
 		duration.setRequired(true);

@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018-2023 JaamSim Software Inc.
+ * Copyright (C) 2018-2024 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -95,11 +95,11 @@ public class Statistics extends LinkedComponent {
 		unitType.setCallback(inputCallback);
 		this.addInput(unitType);
 
-		sampleValue = new SampleInput("SampleValue", KEY_INPUTS, null);
+		sampleValue = new SampleInput("SampleValue", KEY_INPUTS, Double.NaN);
 		sampleValue.setUnitType(UserSpecifiedUnit.class);
 		this.addInput(sampleValue);
 
-		histogramBinWidth = new SampleInput("HistogramBinWidth", KEY_INPUTS, null);
+		histogramBinWidth = new SampleInput("HistogramBinWidth", KEY_INPUTS, Double.NaN);
 		histogramBinWidth.setUnitType(UserSpecifiedUnit.class);
 		this.addInput(histogramBinWidth);
 

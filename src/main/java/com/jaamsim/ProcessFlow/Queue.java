@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2003-2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2023 JaamSim Software Inc.
+ * Copyright (C) 2016-2024 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -135,7 +135,7 @@ public class Queue extends LinkedComponent {
 		fifo = new BooleanProvInput("FIFO", KEY_INPUTS, true);
 		this.addInput(fifo);
 
-		renegeTime = new SampleInput("RenegeTime", KEY_INPUTS, null);
+		renegeTime = new SampleInput("RenegeTime", KEY_INPUTS, Double.POSITIVE_INFINITY);
 		renegeTime.setUnitType(TimeUnit.class);
 		renegeTime.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		renegeTime.setCallback(inputCallback);
@@ -187,7 +187,7 @@ public class Queue extends LinkedComponent {
 	};
 
 	void updateRenegeTimeCallback() {
-		boolean bool = renegeTime.getValue() != null;
+		boolean bool = !renegeTime.isDefault();
 		renegeDestination.setRequired(bool);
 	}
 
@@ -275,7 +275,7 @@ public class Queue extends LinkedComponent {
 			m = match.getNextString(this, simTime, 1.0d, true);
 
 		EventHandle rh = null;
-		if (renegeTime.getValue() != null)
+		if (!renegeTime.isDefault())
 			rh = new EventHandle();
 
 		QueueEntry entry = new QueueEntry(ent, m, pri, n, simTime, rh);
@@ -291,7 +291,7 @@ public class Queue extends LinkedComponent {
 			EventManager.scheduleTicks(0, 2, false, userUpdate, userUpdateHandle);
 
 		// Schedule the time to check the renege condition
-		if (renegeTime.getValue() != null) {
+		if (!renegeTime.isDefault()) {
 			double dur = renegeTime.getNextSample(this, getSimTime());
 			// Schedule the renege tests in FIFO order so that if two or more entities are added to
 			// the queue at the same time, the one nearest the front of the queue is tested first

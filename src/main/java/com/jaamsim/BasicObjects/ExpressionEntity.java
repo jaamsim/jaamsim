@@ -45,7 +45,7 @@ public class ExpressionEntity extends DisplayEntity implements SampleProvider {
 		unitType.setCallback(unitTypeInputCallback);
 		this.addInput(unitType);
 
-		sampleValue = new SampleInput("Expression", KEY_INPUTS, null);
+		sampleValue = new SampleInput("Expression", KEY_INPUTS, Double.NaN);
 		sampleValue.setUnitType(UserSpecifiedUnit.class);
 		sampleValue.setRequired(true);
 		this.addInput(sampleValue);
@@ -89,9 +89,6 @@ public class ExpressionEntity extends DisplayEntity implements SampleProvider {
 
 	@Override
 	public double getNextSample(Entity thisEnt, double simTime) {
-		if (sampleValue.getValue() == null)
-			return 0.0d;
-
 		return sampleValue.getNextSample(this, simTime);
 	}
 

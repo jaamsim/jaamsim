@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014-2015 Ausenco Engineering Canada Inc.
- * Copyright (C) 2022 JaamSim Software Inc.
+ * Copyright (C) 2022-2024 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,7 +51,7 @@ public class BooleanIndicator extends DisplayEntity {
 	private final StringInput falseText;
 
 	{
-		expInput = new SampleInput("DataSource", KEY_INPUTS, null);
+		expInput = new SampleInput("DataSource", KEY_INPUTS, Double.NaN);
 		expInput.setUnitType(DimensionlessUnit.class);
 		expInput.setRequired(true);
 		this.addInput(expInput);
@@ -79,7 +79,7 @@ public class BooleanIndicator extends DisplayEntity {
 	public void updateGraphics(double simTime) {
 		super.updateGraphics(simTime);
 
-		if (expInput.getValue() == null)
+		if (expInput.isDefault())
 			return;
 		if (expInput.getNextSample(this, simTime) != 0.0d)
 			setTagColour(ShapeModel.TAG_CONTENTS, trueColor.getNextColour(this, simTime));
@@ -92,7 +92,7 @@ public class BooleanIndicator extends DisplayEntity {
 	             + "If it is FALSE, then return FalseText.",
 	    unitType = DimensionlessUnit.class)
 	public String getText(double simTime) {
-		if (expInput.getValue() == null)
+		if (expInput.isDefault())
 			return "";
 		if (expInput.getNextSample(this, simTime) != 0.0d)
 			return trueText.getValue();

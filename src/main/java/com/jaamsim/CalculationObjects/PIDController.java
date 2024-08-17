@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2023 JaamSim Software Inc.
+ * Copyright (C) 2016-2024 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -88,12 +88,12 @@ public class PIDController extends DoubleCalculation {
 	{
 		inputValue.setHidden(true);
 
-		setPoint = new SampleInput("SetPoint", KEY_INPUTS, null);
+		setPoint = new SampleInput("SetPoint", KEY_INPUTS, Double.NaN);
 		setPoint.setUnitType(UserSpecifiedUnit.class);
 		setPoint.setRequired(true);
 		this.addInput(setPoint);
 
-		processVariable = new SampleInput("ProcessVariable", KEY_INPUTS, null);
+		processVariable = new SampleInput("ProcessVariable", KEY_INPUTS, Double.NaN);
 		processVariable.setUnitType(UserSpecifiedUnit.class);
 		processVariable.setRequired(true);
 		this.addInput(processVariable);
@@ -180,7 +180,7 @@ public class PIDController extends DoubleCalculation {
 	    unitType = DimensionlessUnit.class,
 	    sequence = 1)
 	public double getError(double simTime) {
-		if (setPoint.getValue() == null || processVariable.getValue() == null)
+		if (setPoint.isDefault() || processVariable.isDefault())
 			return Double.NaN;
 		double diff = setPoint.getNextSample(this, simTime)
 				- processVariable.getNextSample(this, simTime);

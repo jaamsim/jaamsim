@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2015 Ausenco Engineering Canada Inc.
- * Copyright (C) 2015-2023 JaamSim Software Inc.
+ * Copyright (C) 2015-2024 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -123,7 +123,7 @@ public class ExpressionLogger extends Logger implements StateEntityListener, Obs
 	private Entity watchedEntity;  // last subject entity that triggered a log entry
 
 	{
-		interval = new SampleInput("Interval", KEY_INPUTS, null);
+		interval = new SampleInput("Interval", KEY_INPUTS, Double.NaN);
 		interval.setUnitType(TimeUnit.class);
 		interval.setValidRange(1.0e-10, Double.POSITIVE_INFINITY);
 		this.addInput(interval);
@@ -209,7 +209,7 @@ public class ExpressionLogger extends Logger implements StateEntityListener, Obs
 		}
 
 		// Start log entries at fixed intervals
-		if (interval.getValue() != null)
+		if (!interval.isDefault())
 			this.scheduleProcess(getStartTime(getSimTime()), 5, endActionTarget);
 	}
 

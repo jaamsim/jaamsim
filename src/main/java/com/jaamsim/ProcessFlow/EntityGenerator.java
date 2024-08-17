@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2022 JaamSim Software Inc.
+ * Copyright (C) 2016-2024 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -110,7 +110,7 @@ public class EntityGenerator extends LinkedService implements EntityGen {
 		baseName.setDefaultText("Generator Name");
 		this.addInput(baseName);
 
-		maxNumber = new SampleInput("MaxNumber", KEY_INPUTS, null);
+		maxNumber = new SampleInput("MaxNumber", KEY_INPUTS, Double.POSITIVE_INFINITY);
 		maxNumber.setUnitType(DimensionlessUnit.class);
 		maxNumber.setIntegerValue(true);
 		maxNumber.setValidRange(0, Double.POSITIVE_INFINITY);
@@ -150,7 +150,7 @@ public class EntityGenerator extends LinkedService implements EntityGen {
 	protected boolean startProcessing(double simTime) {
 
 		// Stop if the last entity been generated
-		if (maxNumber.getValue() != null
+		if (!maxNumber.isDefault()
 				&& numberGenerated >= maxNumber.getNextSample(this, simTime))
 			return false;
 

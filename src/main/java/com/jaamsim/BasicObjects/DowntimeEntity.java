@@ -106,7 +106,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 	{
 		workingStateListInput.setHidden(true);
 
-		firstDowntime = new SampleInput("FirstDowntime", KEY_INPUTS, null);
+		firstDowntime = new SampleInput("FirstDowntime", KEY_INPUTS, Double.NaN);
 		firstDowntime.setUnitType(TimeUnit.class);
 		this.addInput(firstDowntime);
 
@@ -117,7 +117,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 		durationWorkingEntity = new EntityInput<>(StateEntity.class, "DurationWorkingEntity", KEY_INPUTS, null);
 		this.addInput(durationWorkingEntity);
 
-		downtimeIATDistribution = new SampleInput("Interval", KEY_INPUTS, null);
+		downtimeIATDistribution = new SampleInput("Interval", KEY_INPUTS, Double.NaN);
 		downtimeIATDistribution.setUnitType(TimeUnit.class);
 		downtimeIATDistribution.setRequired(true);
 		downtimeIATDistribution.setValidRange(0.0d, Double.POSITIVE_INFINITY);
@@ -125,7 +125,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 		this.addSynonym(downtimeIATDistribution, "IAT");
 		this.addSynonym(downtimeIATDistribution, "TimeBetweenFailures");
 
-		downtimeDurationDistribution = new SampleInput("Duration", KEY_INPUTS, null);
+		downtimeDurationDistribution = new SampleInput("Duration", KEY_INPUTS, Double.NaN);
 		downtimeDurationDistribution.setUnitType(TimeUnit.class);
 		downtimeDurationDistribution.setRequired(true);
 		downtimeDurationDistribution.setValidRange(0.0d, Double.POSITIVE_INFINITY);
@@ -181,7 +181,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 		super.lateInit();
 
 		// Determine the time for the first downtime event
-		if (firstDowntime.getValue() == null)
+		if (firstDowntime.isDefault())
 			secondsForNextFailure = getNextDowntimeIAT();
 		else
 			secondsForNextFailure = firstDowntime.getNextSample(this, getSimTime());
@@ -614,8 +614,8 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 	             + "(avg. downtime duration)/(avg. downtime interval)",
 	    sequence = 5)
 	public double getCalculatedDowntimeRatio(double simTime) {
-		if (downtimeDurationDistribution.getValue() == null
-				|| downtimeIATDistribution.getValue() == null)
+		if (downtimeDurationDistribution.isDefault()
+				|| downtimeIATDistribution.isDefault())
 			return Double.NaN;
 		double dur = downtimeDurationDistribution.getValue().getMeanValue(simTime);
 		double iat = downtimeIATDistribution.getValue().getMeanValue(simTime);

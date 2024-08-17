@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2016-2022 JaamSim Software Inc.
+ * Copyright (C) 2016-2024 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,7 +55,7 @@ public class DemoEntity extends DisplayEntity {
 	private long numberOfTrips; // number of times the entity has travelled between the nodes
 
 	{
-		travelTime = new SampleInput("TravelTime", KEY_INPUTS, null);
+		travelTime = new SampleInput("TravelTime", KEY_INPUTS, Double.NaN);
 		travelTime.setUnitType(TimeUnit.class);
 		travelTime.setRequired(true);
 		travelTime.setValidRange(1.0e-6, Double.POSITIVE_INFINITY);

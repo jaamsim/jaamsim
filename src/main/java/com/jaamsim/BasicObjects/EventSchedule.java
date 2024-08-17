@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2021-2023 JaamSim Software Inc.
+ * Copyright (C) 2021-2024 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -56,7 +56,7 @@ public class EventSchedule extends DisplayEntity implements SampleProvider{
 		timeList.setRequired(true);
 		this.addInput(timeList);
 
-		cycleTime = new SampleInput("CycleTime", KEY_INPUTS, null);
+		cycleTime = new SampleInput("CycleTime", KEY_INPUTS, Double.NaN);
 		cycleTime.setUnitType(TimeUnit.class);
 		cycleTime.setValidRange(0.0, Double.POSITIVE_INFINITY);
 		cycleTime.setRequired(true);

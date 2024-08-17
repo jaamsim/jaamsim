@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2023 JaamSim Software Inc.
+ * Copyright (C) 2023-2024 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -90,12 +90,12 @@ public class ExpressionStatistics extends DisplayEntity implements ObserverEntit
 		unitType.setCallback(inputCallback);
 		this.addInput(unitType);
 
-		dataSource = new SampleInput("DataSource", KEY_INPUTS, null);
+		dataSource = new SampleInput("DataSource", KEY_INPUTS, Double.NaN);
 		dataSource.setUnitType(UserSpecifiedUnit.class);
 		dataSource.setRequired(true);
 		this.addInput(dataSource);
 
-		histogramBinWidth = new SampleInput("HistogramBinWidth", KEY_INPUTS, null);
+		histogramBinWidth = new SampleInput("HistogramBinWidth", KEY_INPUTS, Double.NaN);
 		histogramBinWidth.setUnitType(UserSpecifiedUnit.class);
 		this.addInput(histogramBinWidth);
 
@@ -225,8 +225,6 @@ public class ExpressionStatistics extends DisplayEntity implements ObserverEntit
 	  reportable = true,
 	    sequence = 1)
 	public double getValue(double simTime) {
-		if (dataSource.isDefault())
-			return Double.NaN;
 		return dataSource.getNextSample(this, simTime);
 	}
 
