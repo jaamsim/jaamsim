@@ -97,10 +97,12 @@ public class Statistics extends LinkedComponent {
 
 		sampleValue = new SampleInput("SampleValue", KEY_INPUTS, Double.NaN);
 		sampleValue.setUnitType(UserSpecifiedUnit.class);
+		sampleValue.setOutput(true);
 		this.addInput(sampleValue);
 
 		histogramBinWidth = new SampleInput("HistogramBinWidth", KEY_INPUTS, Double.NaN);
 		histogramBinWidth.setUnitType(UserSpecifiedUnit.class);
+		histogramBinWidth.setOutput(true);
 		this.addInput(histogramBinWidth);
 
 		targetPercentiles = new SampleListInput("TargetPercentiles", KEY_INPUTS, null);

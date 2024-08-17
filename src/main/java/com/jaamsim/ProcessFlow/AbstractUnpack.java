@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2022 JaamSim Software Inc.
+ * Copyright (C) 2016-2024 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -61,6 +61,7 @@ public abstract class AbstractUnpack extends LinkedService {
 		serviceTime = new SampleInput("ServiceTime", KEY_INPUTS, 0.0d);
 		serviceTime.setUnitType(TimeUnit.class);
 		serviceTime.setValidRange(0, Double.POSITIVE_INFINITY);
+		serviceTime.setOutput(true);
 		this.addInput(serviceTime);
 
 		containerStateAssignment = new StringProvInput("ContainerStateAssignment", OPTIONS, null);

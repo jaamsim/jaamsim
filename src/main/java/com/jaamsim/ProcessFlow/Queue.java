@@ -126,6 +126,7 @@ public class Queue extends LinkedComponent {
 		priority.setUnitType(DimensionlessUnit.class);
 		priority.setIntegerValue(true);
 		priority.setValidRange(0.0d, Double.POSITIVE_INFINITY);
+		priority.setOutput(true);
 		this.addInput(priority);
 
 		match = new StringProvInput("Match", KEY_INPUTS, null);
@@ -139,11 +140,13 @@ public class Queue extends LinkedComponent {
 		renegeTime.setUnitType(TimeUnit.class);
 		renegeTime.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		renegeTime.setCallback(inputCallback);
+		renegeTime.setOutput(true);
 		this.addInput(renegeTime);
 
 		renegeCondition = new SampleInput("RenegeCondition", KEY_INPUTS, 1);
 		renegeCondition.setUnitType(DimensionlessUnit.class);
 		renegeCondition.setValidRange(0.0d, 1.0d);
+		renegeCondition.setOutput(true);
 		this.addInput(renegeCondition);
 
 		renegeDestination = new InterfaceEntityInput<>(Linkable.class, "RenegeDestination", KEY_INPUTS, null);
@@ -152,20 +155,24 @@ public class Queue extends LinkedComponent {
 		maxValidLength = new SampleInput("MaxValidLength", KEY_INPUTS, 10000);
 		maxValidLength.setValidRange(0, Double.POSITIVE_INFINITY);
 		maxValidLength.setIntegerValue(true);
+		maxValidLength.setOutput(true);
 		this.addInput(maxValidLength);
 
 		spacing = new SampleInput("Spacing", FORMAT, 0.0d);
 		spacing.setUnitType(DistanceUnit.class);
+		spacing.setOutput(true);
 		this.addInput(spacing);
 
 		maxPerLine = new SampleInput("MaxPerLine", FORMAT, Double.POSITIVE_INFINITY);
 		maxPerLine.setValidRange(1, Double.POSITIVE_INFINITY);
 		maxPerLine.setIntegerValue(true);
+		maxPerLine.setOutput(true);
 		this.addInput(maxPerLine);
 
 		maxRows = new SampleInput("MaxRows", FORMAT, Double.POSITIVE_INFINITY);
 		maxRows.setValidRange(1, Double.POSITIVE_INFINITY);
 		maxRows.setIntegerValue(true);
+		maxRows.setOutput(true);
 		this.addInput(maxRows);
 
 		showEntities = new BooleanProvInput("ShowEntities", FORMAT, true);

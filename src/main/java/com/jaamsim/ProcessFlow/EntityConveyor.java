@@ -129,11 +129,13 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 		entitySpace = new SampleInput("EntitySpace", KEY_INPUTS, 0.0d);
 		entitySpace.setValidRange(0.0, Double.POSITIVE_INFINITY);
 		entitySpace.setUnitType(DistanceUnit.class);
+		entitySpace.setOutput(true);
 		this.addInput(entitySpace);
 
 		accumulationLength = new SampleInput("AccumulationLength", KEY_INPUTS, 0.0d);
 		accumulationLength.setValidRange(0.0, Double.POSITIVE_INFINITY);
 		accumulationLength.setUnitType(DistanceUnit.class);
+		accumulationLength.setOutput(true);
 		this.addInput(accumulationLength);
 
 		accumulating = new BooleanProvInput("Accumulating", KEY_INPUTS, false);
@@ -142,6 +144,7 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 		maxValidNumber = new SampleInput("MaxValidNumber", KEY_INPUTS, 10000);
 		maxValidNumber.setValidRange(0, Double.POSITIVE_INFINITY);
 		maxValidNumber.setIntegerValue(true);
+		maxValidNumber.setOutput(true);
 		this.addInput(maxValidNumber);
 
 		rotateEntities = new BooleanProvInput("RotateEntities", FORMAT, false);
@@ -151,6 +154,7 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 		widthInput.setValidRange(1, Double.POSITIVE_INFINITY);
 		widthInput.setIntegerValue(true);
 		widthInput.setDefaultText("PolylineModel");
+		widthInput.setOutput(true);
 		this.addInput(widthInput);
 		this.addSynonym(widthInput, "Width");
 

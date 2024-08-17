@@ -89,6 +89,7 @@ public class EntityDelay extends LinkedComponent implements LineEntity {
 		duration.setUnitType(TimeUnit.class);
 		duration.setValidRange(0, Double.POSITIVE_INFINITY);
 		duration.setRequired(true);
+		duration.setOutput(true);
 		this.addInput(duration);
 
 		allowOvertaking = new BooleanProvInput("AllowOvertaking", KEY_INPUTS, true);
@@ -97,6 +98,7 @@ public class EntityDelay extends LinkedComponent implements LineEntity {
 		minSeparation = new SampleInput("MinSeparation", KEY_INPUTS, 0.0d);
 		minSeparation.setUnitType(TimeUnit.class);
 		minSeparation.setValidRange(0, Double.POSITIVE_INFINITY);
+		minSeparation.setOutput(true);
 		this.addInput(minSeparation);
 
 		animation = new BooleanProvInput("Animation", FORMAT, true);
@@ -110,6 +112,7 @@ public class EntityDelay extends LinkedComponent implements LineEntity {
 		widthInput.setValidRange(1, Double.POSITIVE_INFINITY);
 		widthInput.setIntegerValue(true);
 		widthInput.setDefaultText("PolylineModel");
+		widthInput.setOutput(true);
 		this.addInput(widthInput);
 		this.addSynonym(widthInput, "Width");
 

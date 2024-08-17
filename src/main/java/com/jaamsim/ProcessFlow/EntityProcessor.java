@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2017-2023 JaamSim Software Inc.
+ * Copyright (C) 2017-2024 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -63,11 +63,13 @@ public class EntityProcessor extends AbstractLinkedResourceUser {
 		capacity.setUnitType(DimensionlessUnit.class);
 		capacity.setIntegerValue(true);
 		capacity.setValidRange(0, Double.POSITIVE_INFINITY);
+		capacity.setOutput(true);
 		this.addInput(capacity);
 
 		serviceTime = new SampleInput("ServiceTime", KEY_INPUTS, 0.0d);
 		serviceTime.setUnitType(TimeUnit.class);
 		serviceTime.setValidRange(0, Double.POSITIVE_INFINITY);
+		serviceTime.setOutput(true);
 		this.addInput(serviceTime);
 	}
 
