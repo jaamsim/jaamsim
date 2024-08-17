@@ -29,7 +29,6 @@ import com.jaamsim.input.InputCallback;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.KeywordIndex;
-import com.jaamsim.input.Output;
 import com.jaamsim.input.UnitTypeInput;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
@@ -55,6 +54,7 @@ public class InputValue extends TextBasics implements SampleProvider {
 		valInput = new SampleInput("Value", KEY_INPUTS, 0.0d);
 		valInput.setUnitType(UserSpecifiedUnit.class);
 		valInput.setCallback(valInputCallback);
+		valInput.setOutput(true);
 		this.addInput(valInput);
 	}
 
@@ -119,13 +119,6 @@ public class InputValue extends TextBasics implements SampleProvider {
 	@Override
 	public Class<? extends Unit> getUserUnitType() {
 		return unitType.getUnitType();
-	}
-
-	@Output(name = "Value",
-	        description = "The present value for this input.",
-	        unitType = UserSpecifiedUnit.class)
-	public final double getNextSample(double simTime) {
-		return getNextSample(this, simTime);
 	}
 
 	@Override
