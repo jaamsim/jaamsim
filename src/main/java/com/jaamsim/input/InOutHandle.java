@@ -25,14 +25,12 @@ public class InOutHandle extends ValueHandle {
 	private final String name;
 	private final Class<?> returnType;
 	private final Class<? extends Unit> unitType;
-	private final int sequence;
 
-	public InOutHandle(Entity ent, Input<?> in, String name, int seq, Class<?> retType, Class<? extends Unit> ut) {
+	public InOutHandle(Entity ent, Input<?> in, String name, Class<?> retType, Class<? extends Unit> ut) {
 		super(ent);
 		this.in = in;
 		this.name = name;
 		this.returnType = retType;
-		this.sequence = seq;
 		this.unitType = ut;
 	}
 
@@ -70,7 +68,7 @@ public class InOutHandle extends ValueHandle {
 
 	@Override
 	public int getSequence() {
-		return sequence;
+		return Integer.MAX_VALUE;
 	}
 	@Override
 	public boolean canCache() {
