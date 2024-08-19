@@ -81,6 +81,11 @@ public class ExpressionHandle extends ValueHandle {
 	}
 
 	@Override
+	public String getTitle() {
+		return "User-Defined Outputs";
+	}
+
+	@Override
 	public String getName() {
 		return name;
 	}

@@ -82,6 +82,12 @@ public class AttributeHandle extends ValueHandle {
 	public String getDescription() {
 		return String.format("Value for the user-defined attribute '%s'.", attributeName);
 	}
+
+	@Override
+	public String getTitle() {
+		return "User-Defined Attributes";
+	}
+
 	@Override
 	public String getName() {
 		return attributeName;

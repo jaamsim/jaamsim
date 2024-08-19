@@ -50,6 +50,11 @@ public class InOutHandle extends ValueHandle {
 	}
 
 	@Override
+	public String getTitle() {
+		return "Input Values";
+	}
+
+	@Override
 	public String getName() {
 		return name;
 	}

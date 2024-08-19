@@ -165,15 +165,26 @@ public class OutputBox extends FrameBox {
 
 		// Build up the row list, leaving extra rows for entity names
 		Class<?> currClass = null;
+		Class<? extends ValueHandle> currHandleClass = null;
 		entries.clear();
 
 		for (ValueHandle h : currentEntity.getAllOutputs()) {
+
+			// Add a title for each group of outputs
 			Class<?> klass = h.getDeclaringClass();
 			if (currClass != klass) {
 				// This is the first time we've seen this class, add a place holder row
 				currClass = klass;
+				currHandleClass = h.getClass();
 				entries.add(klass);
 			}
+
+			// Add a title for attributes, custom outputs, and input values
+			else if (currHandleClass != h.getClass()) {
+				currHandleClass = h.getClass();
+				entries.add(currHandleClass);
+			}
+
 			entries.add(h);
 		}
 	}
@@ -278,8 +289,10 @@ public class OutputBox extends FrameBox {
 			Object entry = entries.get(row);
 			switch (col) {
 			case 0:
-				if (entry instanceof Class)
-					return String.format("<HTML><B>%s</B></HTML>", ((Class<?>)entry).getSimpleName());
+				if (entry instanceof Class) {
+					ValueHandle out = (ValueHandle) entries.get(row + 1);
+					return String.format("<HTML><B>%s</B></HTML>", out.getTitle());
+				}
 				return String.format("    %s", ((ValueHandle)entry).getName());
 			case 1:
 				if (entry instanceof Class)
