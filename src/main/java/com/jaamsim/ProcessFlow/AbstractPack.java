@@ -76,7 +76,7 @@ public abstract class AbstractPack extends LinkedService {
 		serviceTime.setOutput(true);
 		this.addInput(serviceTime);
 
-		containerStateAssignment = new StringProvInput("ContainerStateAssignment", OPTIONS, null);
+		containerStateAssignment = new StringProvInput("ContainerStateAssignment", OPTIONS, "");
 		containerStateAssignment.setUnitType(DimensionlessUnit.class);
 		this.addInput(containerStateAssignment);
 

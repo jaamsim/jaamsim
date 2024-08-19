@@ -42,6 +42,11 @@ public class StringProvInput extends Input<StringProvider> {
 		unitType = null;
 	}
 
+	public StringProvInput(String key, String cat, String def) {
+		super(key, cat, new StringProvConstant(def));
+		unitType = null;
+	}
+
 	public void setUnitType(Class<? extends Unit> ut) {
 
 		if (ut == unitType)

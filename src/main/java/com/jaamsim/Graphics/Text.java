@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2009-2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018-2022 JaamSim Software Inc.
+ * Copyright (C) 2018-2024 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@ import java.util.ArrayList;
 
 import com.jaamsim.BooleanProviders.BooleanProvInput;
 import com.jaamsim.Commands.KeywordCommand;
-import com.jaamsim.StringProviders.StringProvConstant;
 import com.jaamsim.StringProviders.StringProvInput;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.GUIListener;
@@ -104,7 +103,7 @@ public class Text extends TextBasics {
 		unit.setSubClass(null);
 		this.addInput(unit);
 
-		dataSource = new StringProvInput("DataSource", KEY_INPUTS, new StringProvConstant(""));
+		dataSource = new StringProvInput("DataSource", KEY_INPUTS, "");
 		dataSource.setUnitType(DimensionlessUnit.class);
 		this.addInput(dataSource);
 		this.addSynonym(dataSource, "OutputName");

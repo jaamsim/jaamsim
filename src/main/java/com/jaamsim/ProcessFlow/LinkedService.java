@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2023 JaamSim Software Inc.
+ * Copyright (C) 2016-2024 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -132,7 +132,7 @@ public abstract class LinkedService extends LinkedDevice implements QueueUser {
 		waitQueue.setRequired(true);
 		this.addInput(waitQueue);
 
-		match = new StringProvInput("Match", KEY_INPUTS, null);
+		match = new StringProvInput("Match", KEY_INPUTS, "");
 		match.setUnitType(DimensionlessUnit.class);
 		this.addInput(match);
 

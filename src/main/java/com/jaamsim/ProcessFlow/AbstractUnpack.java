@@ -54,7 +54,7 @@ public abstract class AbstractUnpack extends LinkedService {
 	private DisplayEntity unpackedEntity;  // the entity being unpacked
 
 	{
-		matchForEntities = new StringProvInput("MatchForEntities", KEY_INPUTS, null);
+		matchForEntities = new StringProvInput("MatchForEntities", KEY_INPUTS, "");
 		matchForEntities.setUnitType(DimensionlessUnit.class);
 		this.addInput(matchForEntities);
 
@@ -64,7 +64,7 @@ public abstract class AbstractUnpack extends LinkedService {
 		serviceTime.setOutput(true);
 		this.addInput(serviceTime);
 
-		containerStateAssignment = new StringProvInput("ContainerStateAssignment", OPTIONS, null);
+		containerStateAssignment = new StringProvInput("ContainerStateAssignment", OPTIONS, "");
 		containerStateAssignment.setUnitType(DimensionlessUnit.class);
 		this.addInput(containerStateAssignment);
 	}

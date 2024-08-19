@@ -129,7 +129,7 @@ public class Queue extends LinkedComponent {
 		priority.setOutput(true);
 		this.addInput(priority);
 
-		match = new StringProvInput("Match", KEY_INPUTS, null);
+		match = new StringProvInput("Match", KEY_INPUTS, "");
 		match.setUnitType(DimensionlessUnit.class);
 		this.addInput(match);
 
