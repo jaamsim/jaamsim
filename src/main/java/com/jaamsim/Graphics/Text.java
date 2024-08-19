@@ -142,6 +142,7 @@ public class Text extends TextBasics {
 		Class<? extends Unit> ut = unitType.getUnitType();
 		dataSource.setUnitType(ut);
 		unit.setSubClass(ut);
+		updateUserOutputMap();
 	}
 
 	@Override

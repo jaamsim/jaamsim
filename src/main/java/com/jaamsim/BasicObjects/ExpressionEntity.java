@@ -63,6 +63,7 @@ public class ExpressionEntity extends DisplayEntity implements SampleProvider {
 
 	void updateSampleUnitType() {
 		sampleValue.setUnitType(getUnitType());
+		updateUserOutputMap();
 	}
 
 	@Override

@@ -92,6 +92,7 @@ public class WeightedSum extends DisplayEntity implements SampleProvider {
 
 	void updateUnitTypeCallback() {
 		inputValueList.setUnitType(unitType.getUnitType());
+		updateUserOutputMap();
 	}
 
 	@Override

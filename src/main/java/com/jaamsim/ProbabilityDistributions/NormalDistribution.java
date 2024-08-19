@@ -71,6 +71,7 @@ public class NormalDistribution extends Distribution {
 		super.setUnitType(specified);
 		meanInput.setUnitType(specified);
 		standardDeviationInput.setUnitType(specified);
+		updateUserOutputMap();
 	}
 
 	@Override

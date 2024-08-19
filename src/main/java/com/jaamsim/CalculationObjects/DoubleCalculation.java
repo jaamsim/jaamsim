@@ -76,6 +76,7 @@ implements SampleProvider {
 
 	void updateUnitType() {
 		this.setUnitType(unitType.getUnitType());
+		updateUserOutputMap();
 	}
 
 	protected void setUnitType(Class<? extends Unit> ut) {

@@ -211,6 +211,7 @@ public class OverlayText extends OverlayEntity implements TextEntity, EditableTe
 		Class<? extends Unit> ut = unitType.getUnitType();
 		dataSource.setUnitType(ut);
 		unit.setSubClass(ut);
+		updateUserOutputMap();
 	}
 
 	@Override

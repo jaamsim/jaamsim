@@ -69,6 +69,7 @@ public class ErlangDistribution extends Distribution {
 	protected void setUnitType(Class<? extends Unit> specified) {
 		super.setUnitType(specified);
 		meanInput.setUnitType(specified);
+		updateUserOutputMap();
 	}
 
 	@Override

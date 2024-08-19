@@ -73,6 +73,7 @@ public class InputValue extends TextBasics implements SampleProvider {
 		setUnitType(unitType.getUnitType());
 		if (valInput.isDefault())
 			setText(valInput.getDefaultString(getJaamSimModel()));
+		updateUserOutputMap();
 	}
 
 	static final InputCallback valInputCallback = new InputCallback() {

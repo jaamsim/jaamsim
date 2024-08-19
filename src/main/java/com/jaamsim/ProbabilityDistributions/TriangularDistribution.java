@@ -71,6 +71,7 @@ public class TriangularDistribution extends Distribution {
 	protected void setUnitType(Class<? extends Unit> specified) {
 		super.setUnitType(specified);
 		modeInput.setUnitType(specified);
+		updateUserOutputMap();
 	}
 
 	@Override

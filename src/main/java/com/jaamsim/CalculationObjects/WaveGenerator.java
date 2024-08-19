@@ -98,6 +98,7 @@ public abstract class WaveGenerator extends DisplayEntity implements SampleProvi
 	void updateUnitType() {
 		amplitude.setUnitType(unitType.getUnitType());
 		offset.setUnitType(unitType.getUnitType());
+		updateUserOutputMap();
 	}
 
 	@Override

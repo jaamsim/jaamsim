@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2009-2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2017-2023 JaamSim Software Inc.
+ * Copyright (C) 2017-2024 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -432,6 +432,7 @@ public abstract class AbstractGraph extends DisplayEntity {
 		yAxisEnd.setUnitType(unitType);
 		yAxisInterval.setUnitType(unitType);
 		yLines.setUnitType(unitType);
+		updateUserOutputMap();
 	}
 
 	protected void setSecondaryYAxisUnit(Class<? extends Unit> unitType) {
@@ -439,6 +440,7 @@ public abstract class AbstractGraph extends DisplayEntity {
 		secondaryYAxisStart.setUnitType(unitType);
 		secondaryYAxisEnd.setUnitType(unitType);
 		secondaryYAxisInterval.setUnitType(unitType);
+		updateUserOutputMap();
 	}
 
 	protected Color4d getLineColor(int index, ArrayList<Color4d> colorList) {

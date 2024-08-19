@@ -130,6 +130,7 @@ public class Statistics extends LinkedComponent {
 		Class<? extends Unit> ut = unitType.getUnitType();
 		sampleValue.setUnitType(ut);
 		histogramBinWidth.setUnitType(ut);
+		updateUserOutputMap();
 	}
 
 	@Override

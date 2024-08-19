@@ -194,6 +194,7 @@ implements SampleProvider, RandomStreamUser {
 		maxValueInput.setUnitType(ut);
 		locationInput.setUnitType(ut);
 		scaleInput.setUnitType(ut);
+		updateUserOutputMap();
 	}
 
 	@Override

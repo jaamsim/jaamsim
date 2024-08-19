@@ -146,6 +146,7 @@ public class PIDController extends DoubleCalculation {
 		outputLow.setUnitType(outUnitType);
 		outputHigh.setUnitType(outUnitType);
 		proportionalGain.setUnitType(outUnitType);
+		updateUserOutputMap();
 	}
 
 	@Override

@@ -121,6 +121,7 @@ public class ExpressionStatistics extends DisplayEntity implements ObserverEntit
 		Class<? extends Unit> ut = unitType.getUnitType();
 		dataSource.setUnitType(ut);
 		histogramBinWidth.setUnitType(ut);
+		updateUserOutputMap();
 	}
 
 	@Override
