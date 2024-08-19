@@ -93,10 +93,12 @@ public class ExpressionStatistics extends DisplayEntity implements ObserverEntit
 		dataSource = new SampleInput("DataSource", KEY_INPUTS, Double.NaN);
 		dataSource.setUnitType(UserSpecifiedUnit.class);
 		dataSource.setRequired(true);
+		dataSource.setOutput(true);
 		this.addInput(dataSource);
 
 		histogramBinWidth = new SampleInput("HistogramBinWidth", KEY_INPUTS, Double.NaN);
 		histogramBinWidth.setUnitType(UserSpecifiedUnit.class);
+		histogramBinWidth.setOutput(true);
 		this.addInput(histogramBinWidth);
 
 		watchList = new InterfaceEntityListInput<>(SubjectEntity.class, "WatchList", KEY_INPUTS, new ArrayList<>());

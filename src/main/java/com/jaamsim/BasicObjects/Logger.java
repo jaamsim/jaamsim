@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2016-2023 JaamSim Software Inc.
+ * Copyright (C) 2016-2024 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -99,11 +99,13 @@ public abstract class Logger extends DisplayEntity {
 		startTime = new SampleInput("StartTime", KEY_INPUTS, 0.0d);
 		startTime.setUnitType(TimeUnit.class);
 		startTime.setValidRange(0.0d, Double.POSITIVE_INFINITY);
+		startTime.setOutput(true);
 		this.addInput(startTime);
 
 		endTime = new SampleInput("EndTime", KEY_INPUTS, Double.POSITIVE_INFINITY);
 		endTime.setUnitType(TimeUnit.class);
 		endTime.setValidRange(0.0d, Double.POSITIVE_INFINITY);
+		endTime.setOutput(true);
 		this.addInput(endTime);
 	}
 

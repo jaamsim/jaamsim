@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2021-2023 JaamSim Software Inc.
+ * Copyright (C) 2021-2024 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -91,6 +91,7 @@ public class ToggleButton extends GameEntity implements SubjectEntity, LineEntit
 		lineWidth.setValidRange(0, Double.POSITIVE_INFINITY);
 		lineWidth.setIntegerValue(true);
 		lineWidth.setDefaultText("ShapeModel value");
+		lineWidth.setOutput(true);
 		this.addInput(lineWidth);
 	}
 

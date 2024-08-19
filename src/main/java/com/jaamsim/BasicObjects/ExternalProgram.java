@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2019-2023 JaamSim Software Inc.
+ * Copyright (C) 2019-2024 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,6 +42,7 @@ public class ExternalProgram extends AbstractExternalProgram {
 		timeOut = new SampleInput("TimeOut", KEY_INPUTS, 1000);
 		timeOut.setValidRange(1, Double.POSITIVE_INFINITY);
 		timeOut.setIntegerValue(true);
+		timeOut.setOutput(true);
 		this.addInput(timeOut);
 	}
 
