@@ -226,4 +226,20 @@ public class StringProvInput extends Input<StringProvider> {
 		}
 	}
 
+	@Override
+	@SuppressWarnings("unchecked")
+	public <V> V getValue(Entity thisEnt, double simTime, Class<V> klass) {
+		return (V) getNextString(thisEnt, simTime);
+	}
+
+	@Override
+	public Class<?> getReturnType() {
+		return String.class;
+	}
+
+	@Override
+	public Class<? extends Unit> getUnitType() {
+		return unitType;
+	}
+
 }

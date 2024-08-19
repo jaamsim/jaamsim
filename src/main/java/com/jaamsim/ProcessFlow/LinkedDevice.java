@@ -72,6 +72,7 @@ public abstract class LinkedDevice extends Device implements Linkable {
 
 		stateAssignment = new StringProvInput("StateAssignment", OPTIONS, "");
 		stateAssignment.setUnitType(DimensionlessUnit.class);
+		stateAssignment.setOutput(true);
 		this.addInput(stateAssignment);
 	}
 

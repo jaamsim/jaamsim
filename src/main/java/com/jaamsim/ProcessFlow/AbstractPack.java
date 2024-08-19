@@ -78,6 +78,7 @@ public abstract class AbstractPack extends LinkedService {
 
 		containerStateAssignment = new StringProvInput("ContainerStateAssignment", OPTIONS, "");
 		containerStateAssignment.setUnitType(DimensionlessUnit.class);
+		containerStateAssignment.setOutput(true);
 		this.addInput(containerStateAssignment);
 
 		numberToStart = new SampleInput("NumberToStart", OPTIONS, Double.NaN);

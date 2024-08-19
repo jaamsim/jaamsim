@@ -102,6 +102,7 @@ public class EntityContainer extends SimEntity implements EntContainer {
 
 		match = new StringProvInput("Match", KEY_INPUTS, "");
 		match.setUnitType(DimensionlessUnit.class);
+		match.setOutput(true);
 		this.addInput(match);
 
 		fifo = new BooleanProvInput("FIFO", KEY_INPUTS, true);
