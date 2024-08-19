@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2023 JaamSim Software Inc.
+ * Copyright (C) 2016-2024 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,11 +43,13 @@ public class BetaDistribution extends Distribution {
 		alphaInput = new SampleInput("AlphaParam", KEY_INPUTS, 1.0d);
 		alphaInput.setUnitType(DimensionlessUnit.class);
 		alphaInput.setValidRange(0.0d, Double.POSITIVE_INFINITY);
+		alphaInput.setOutput(true);
 		this.addInput(alphaInput);
 
 		betaInput = new SampleInput("BetaParam", KEY_INPUTS, 1.0d);
 		betaInput.setUnitType(DimensionlessUnit.class);
 		betaInput.setValidRange(0.0d, Double.POSITIVE_INFINITY);
+		betaInput.setOutput(true);
 		this.addInput(betaInput);
 	}
 

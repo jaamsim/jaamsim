@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2023 JaamSim Software Inc.
+ * Copyright (C) 2016-2024 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,11 +47,13 @@ public class ErlangDistribution extends Distribution {
 		meanInput = new SampleInput("Mean", KEY_INPUTS, 1.0d);
 		meanInput.setUnitType(UserSpecifiedUnit.class);
 		meanInput.setValidRange(0.0d, Double.POSITIVE_INFINITY);
+		meanInput.setOutput(true);
 		this.addInput(meanInput);
 
 		shapeInput = new SampleInput("Shape", KEY_INPUTS, 1);
 		shapeInput.setValidRange( 1, Double.POSITIVE_INFINITY);
 		shapeInput.setIntegerValue(true);
+		shapeInput.setOutput(true);
 		this.addInput(shapeInput);
 	}
 

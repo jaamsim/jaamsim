@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2022 JaamSim Software Inc.
+ * Copyright (C) 2022-2024 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,6 +44,7 @@ public class GeometricDistribution extends Distribution {
 		probability = new SampleInput("Probability", KEY_INPUTS, 1.0d);
 		probability.setUnitType(DimensionlessUnit.class);
 		probability.setValidRange(0.0d, 1.0d);
+		probability.setOutput(true);
 		this.addInput(probability);
 	}
 

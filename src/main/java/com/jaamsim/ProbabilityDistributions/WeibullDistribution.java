@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2023 JaamSim Software Inc.
+ * Copyright (C) 2016-2024 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,6 +44,7 @@ public class WeibullDistribution extends Distribution {
 		shapeInput = new SampleInput("Shape", KEY_INPUTS, 1.0d);
 		shapeInput.setValidRange(1.0e-10d, Double.POSITIVE_INFINITY);
 		shapeInput.setUnitType(DimensionlessUnit.class);
+		shapeInput.setOutput(true);
 		this.addInput(shapeInput);
 	}
 

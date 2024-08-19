@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2022 JaamSim Software Inc.
+ * Copyright (C) 2016-2024 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,11 +46,13 @@ public class NormalDistribution extends Distribution {
 	{
 		meanInput = new SampleInput("Mean", KEY_INPUTS, 0.0d);
 		meanInput.setUnitType(UserSpecifiedUnit.class);
+		meanInput.setOutput(true);
 		this.addInput(meanInput);
 
 		standardDeviationInput = new SampleInput("StandardDeviation", KEY_INPUTS, 1.0d);
 		standardDeviationInput.setUnitType(UserSpecifiedUnit.class);
 		standardDeviationInput.setValidRange(0.0d, Double.POSITIVE_INFINITY);
+		standardDeviationInput.setOutput(true);
 		this.addInput(standardDeviationInput);
 	}
 
