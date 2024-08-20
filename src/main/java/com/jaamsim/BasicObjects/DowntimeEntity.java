@@ -93,6 +93,8 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 	private double secondsForNextFailure;    // The number of working seconds required before the next downtime event
 	private double secondsForNextRepair;    // The number of working seconds required before the downtime event ends
 
+	private int numberStarted;       // Number of downtime events that have been started
+	private int numberCompleted;     // Number of downtime events that have been completed
 	private double startTime;        // The start time of the latest downtime event
 	private double endTime;          // the end time of the latest downtime event
 
@@ -162,6 +164,8 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 		downtimeUserList.clear();
 		downtimePendings = 0;
 		downtimePendingStartTime = 0.0;
+		numberStarted = 0;
+		numberCompleted = 0;
 		startTime = 0;
 		endTime = 0;
 		numLateEvents = 0;
@@ -211,6 +215,8 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 	@Override
 	public void clearStatistics() {
 		super.clearStatistics();
+		numberStarted = 0;
+		numberCompleted = 0;
 		numLateEvents = 0;
 		totalLateTime = 0;
 	}
@@ -414,6 +420,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 
 		startTime = this.getSimTime();
 		downtimePendings--;
+		numberStarted++;
 
 		// Determine the time when the downtime event will be over
 		double downDuration = this.getDowntimeDuration();
@@ -448,6 +455,8 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 
 	final void endDowntime() {
 		setDown(false);
+
+		numberCompleted++;
 
 		// Loop through all objects that this object is watching and try to restart them.
 		for (DowntimeUser each : downtimeUserList) {
@@ -577,10 +586,27 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 		return downtimePendings;
 	}
 
+	@Output(name = "NumberStarted",
+	 description = "The number of downtime events that have been started, including ones that "
+	             + "have been completed. "
+	             + "Excludes downtimes that were started during the initialization period.",
+	    sequence = 2)
+	public int getNumberStarted(double simTime) {
+		return numberStarted;
+	}
+
+	@Output(name = "NumberCompleted",
+	 description = "The number of downtime events that have been completed. "
+	             + "Excludes downtimes that were completed during the initialization period.",
+	    sequence = 3)
+	public int getNumberCompleted(double simTime) {
+		return numberCompleted;
+	}
+
 	@Output(name = "StartTime",
 	 description = "The time that the most recent downtime event started.",
 	    unitType = TimeUnit.class,
-	    sequence = 2)
+	    sequence = 4)
 	public double getStartTime(double simTime) {
 		return startTime;
 	}
@@ -588,7 +614,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 	@Output(name = "EndTime",
 	 description = "The time that the most recent downtime event finished or will finish.",
 	    unitType = TimeUnit.class,
-	    sequence = 3)
+	    sequence = 5)
 	public double getEndTime(double simTime) {
 		return endTime;
 	}
@@ -599,7 +625,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 	             + "time is estimated assuming that it will work continuously until the downtime "
 	             + "event occurs.",
 	    unitType = TimeUnit.class,
-	    sequence = 4)
+	    sequence = 6)
 	public double getNextStartTime(double simTime) {
 		StateEntity ent = iatWorkingEntity.getValue();
 
@@ -617,7 +643,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 	@Output(name = "CalculatedDowntimeRatio",
 	 description = "The value calculated directly from model inputs for:\n"
 	             + "(avg. downtime duration)/(avg. downtime interval)",
-	    sequence = 5)
+	    sequence = 7)
 	public double getCalculatedDowntimeRatio(double simTime) {
 		if (downtimeDurationDistribution.isDefault()
 				|| downtimeIATDistribution.isDefault())
@@ -630,7 +656,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 	@Output(name = "Availability",
 	 description = "The fraction of calendar time (excluding the initialisation period) during "
 	             + "which this type of downtime did not occur.",
-	    sequence = 6)
+	    sequence = 8)
 	public double getAvailability(double simTime) {
 		double total = simTime;
 		if (simTime > getSimulation().getInitializationTime())
@@ -643,7 +669,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 	 description = "Number of events that did not finish within the Completion Time limit.",
 	    unitType = DimensionlessUnit.class,
 	  reportable = true,
-	    sequence = 6)
+	    sequence = 9)
 	public double getLateEvents(double simTime) {
 		return numLateEvents;
 	}
@@ -652,7 +678,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 	 description = "Total hours after completion time limit that the downtime took to complete.",
 	    unitType = TimeUnit.class,
 	  reportable = true,
-	    sequence = 7)
+	    sequence = 10)
 	public double getTotalLateTime(double simTime) {
 		return totalLateTime;
 	}
