@@ -582,7 +582,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 	             + "If two or more downtime events are pending they will be performed one after "
 	             + "another.",
 	    sequence = 1)
-	public double getNumberPending(double simTime) {
+	public int getNumberPending(double simTime) {
 		return downtimePendings;
 	}
 
@@ -670,7 +670,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 	    unitType = DimensionlessUnit.class,
 	  reportable = true,
 	    sequence = 9)
-	public double getLateEvents(double simTime) {
+	public int getLateEvents(double simTime) {
 		return numLateEvents;
 	}
 
