@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2018-2023 JaamSim Software Inc.
+ * Copyright (C) 2018-2024 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package com.jaamsim.basicsim;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -30,6 +31,7 @@ import com.jaamsim.events.TestFrameworkHelpers;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.KeywordIndex;
+import com.jaamsim.input.OutputHandle;
 import com.jaamsim.input.ValueHandle;
 import com.jaamsim.ui.GUIFrame;
 
@@ -80,6 +82,43 @@ public class TestSimulation {
 				catch (Throwable t) {
 					System.out.println("Ent: " + ent.getName() + " Out: " + out.getName());
 					numErrors++;
+				}
+			}
+		}
+
+		if (numErrors > 0)
+			Assert.fail();
+	}
+
+	@Test
+	public void testAllOutputs() {
+		JaamSimModel simModel = new JaamSimModel();
+		simModel.autoLoad();
+
+		int numErrors = 0;
+
+		// Define an instance of every drag-and-drop type
+		for (ObjectType each: simModel.getClonesOfIterator(ObjectType.class)) {
+			Class<? extends Entity> klass = Input.parseEntityType(simModel, each.getName());
+			Entity ent = null;
+			if (klass == Simulation.class)
+				ent = simModel.getSimulation();
+			else
+				ent = InputAgent.defineEntityWithUniqueName(simModel, klass, each.getName(), "-", true);
+
+			// Check that the outputs generated for inputs do not collide with the named outputs
+			HashMap<String, ValueHandle> handleMap = new HashMap<>();
+			for (ValueHandle handle : OutputHandle.getAllOutputHandles(ent)) {
+				handleMap.put(handle.getName(), handle);
+			}
+			for (Input<?> in : ent.getEditableInputs()) {
+				if (!in.isOutput())
+					continue;
+				String name = in.getKeyword();
+				if (handleMap.get(name) != null) {
+					numErrors++;
+					System.out.format("Name collision with output - objectType=%s, input=%s%n",
+							each, name);
 				}
 			}
 		}
@@ -219,6 +258,7 @@ public class TestSimulation {
 			nanos = System.nanoTime() - nanos;
 			System.out.format("completed at simTime=%s, millis=%s%n", simModel.getSimTime(), nanos/1000000L);
 		}
+		System.out.println();
 	}
 
 	static class WaitForPauseListener implements RunListener {
