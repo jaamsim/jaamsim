@@ -54,7 +54,7 @@ public class Resource extends AbstractResourceProvider {
 		capacity.setUnitType(DimensionlessUnit.class);
 		capacity.setIntegerValue(true);
 		capacity.setValidRange(0, Double.POSITIVE_INFINITY);
-		capacity.setOutput(true);
+		//capacity.setOutput(true);  //FIXME output name collision
 		this.addInput(capacity);
 	}
 

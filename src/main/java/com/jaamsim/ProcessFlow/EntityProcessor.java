@@ -385,10 +385,6 @@ public class EntityProcessor extends AbstractLinkedResourceUser {
 		}
 	}
 
-	@Output(name = "Capacity",
-	 description = "The present number of entities that can be processed simultaneously.",
-	    unitType = DimensionlessUnit.class,
-	    sequence = 0)
 	public int getCapacity(double simTime) {
 		return (int) capacity.getNextSample(this, simTime);
 	}

@@ -1419,30 +1419,11 @@ public class Simulation extends Entity {
 		return timeStamp;
 	}
 
-	@Output(name = "InitializationDuration",
-	 description = "The length of time the model was executed prior to the start of statistics "
-	             + "collection.",
-	    unitType = TimeUnit.class,
-	  reportable = true,
-	    sequence = 9)
-	public double getInitializationDuration(double simTime) {
-		return getInitializationTime();
-	}
-
-	@Output(name = "RunDuration",
-	 description = "The length of time over which statistics were collected.",
-	    unitType = TimeUnit.class,
-	  reportable = true,
-	    sequence = 10)
-	public double getRunDuration(double simTime) {
-		return getRunDuration();
-	}
-
 	@Output(name = "PresentSimulationTime",
 	 description = "The value for the simulation clock at the present time.",
 	    unitType = TimeUnit.class,
 	  reportable = true,
-	    sequence = 11)
+	    sequence = 9)
 	public double getPresentSimulationTime(double simTime) {
 		return simTime;
 	}
@@ -1452,7 +1433,7 @@ public class Simulation extends Entity {
 	             + "as an array of integer values in the format "
 	             + "(YYYY, MM, DD, hh, mm, ss, milliseconds).",
 	    unitType = DimensionlessUnit.class,
-	    sequence = 12)
+	    sequence = 10)
 	public int[] getSimDate(double simTime) {
 		long millis = getJaamSimModel().simTimeToCalendarMillis(simTime);
 		return getJaamSimModel().getSimDate(millis).toArray();
@@ -1462,7 +1443,7 @@ public class Simulation extends Entity {
 	 description = "The calendar day of week (Sunday = 1, Monday = 2, ..., Saturday = 7) for the "
 	             + "present simulation time.",
 	    unitType = DimensionlessUnit.class,
-	    sequence = 13)
+	    sequence = 11)
 	public int getSimDayOfWeek(double simTime) {
 		long millis = getJaamSimModel().simTimeToCalendarMillis(simTime);
 		return getJaamSimModel().getDayOfWeek(millis);
@@ -1472,7 +1453,7 @@ public class Simulation extends Entity {
 	 description = "The present local calendar date and time of day expressed "
 	             + "as an array of integer values in the format "
 	             + "(YYYY, MM, DD, hh, mm, ss, milliseconds).",
-	    sequence = 14)
+	    sequence = 12)
 	public int[] getPresentDate(double simTime) {
 		SimDate simDate = new SimDate(Calendar.getInstance());
 		return simDate.toArray();
@@ -1482,7 +1463,7 @@ public class Simulation extends Entity {
 	 description = "The calendar day of week (Sunday = 1, Monday = 2, ..., Saturday = 7) for the "
 	             + "present local time.",
 	    unitType = DimensionlessUnit.class,
-	    sequence = 15)
+	    sequence = 13)
 	public int getPresentDayOfWeek(double simTime) {
 		return Calendar.getInstance().get(Calendar.DAY_OF_WEEK);
 	}
@@ -1490,7 +1471,7 @@ public class Simulation extends Entity {
 	@Output(name = "PresentTime",
 	 description = "The present elapsed time since the epoch (1970-01-01 00:00:00).",
 	    unitType = TimeUnit.class,
-	    sequence = 16)
+	    sequence = 14)
 	public double getPresentMilliseconds(double simTime) {
 		return Calendar.getInstance().getTimeInMillis()/1000.0d;
 	}
