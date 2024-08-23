@@ -403,6 +403,10 @@ public abstract class Input<T> {
 		return null;
 	}
 
+	public boolean isIntegerValue() {
+		return false;
+	}
+
 	@SuppressWarnings("unchecked")
 	public void setProtoInput(Input<?> in) {
 		protoInput = (Input<T>) in;

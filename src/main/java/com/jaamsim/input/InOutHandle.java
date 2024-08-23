@@ -65,6 +65,11 @@ public class InOutHandle extends ValueHandle {
 	}
 
 	@Override
+	public boolean isIntegerValue() {
+		return in.isIntegerValue();
+	}
+
+	@Override
 	public boolean isReportable() {
 		return false;
 	}

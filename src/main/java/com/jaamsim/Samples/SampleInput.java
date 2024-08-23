@@ -248,6 +248,11 @@ public class SampleInput extends Input<SampleProvider> {
 	}
 
 	@Override
+	public boolean isIntegerValue() {
+		return integerValue;
+	}
+
+	@Override
 	public void validate() {
 		super.validate();
 
