@@ -90,7 +90,7 @@ public class EntityLabel extends TextBasics {
 	};
 
 	void updateInputValue() {
-		DisplayEntity ent = targetEntity.getValue();
+		DisplayEntity ent = getTarget();
 		if (ent == null) {
 			setText("ERROR");
 			return;
@@ -139,7 +139,7 @@ public class EntityLabel extends TextBasics {
 	public String getText() {
 		if (isEditMode())
 			return super.getText();
-		Entity ent = targetEntity.getValue();
+		Entity ent = getTarget();
 		if (ent == null || ent.getName() == null)
 			return "ERROR";
 		return ent.getLocalName();
@@ -158,7 +158,7 @@ public class EntityLabel extends TextBasics {
 			return;
 		try {
 			// Rename both the target entity and the label
-			Entity ent = targetEntity.getValue();
+			Entity ent = getTarget();
 			String localName = getText();
 			gui.renameEntity(ent, localName);
 			super.acceptEdits();
@@ -174,7 +174,7 @@ public class EntityLabel extends TextBasics {
 	}
 
 	public void updateForTargetNameChange() {
-		String targetName = targetEntity.getValue().getLocalName();
+		String targetName = getTarget().getLocalName();
 		setText(targetName);
 		this.resizeForText();
 	}
