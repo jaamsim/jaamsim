@@ -16,15 +16,12 @@
  */
 package com.jaamsim.SubModels;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
 
 import com.jaamsim.BooleanProviders.BooleanProvInput;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.Region;
 import com.jaamsim.ProcessFlow.LinkedComponent;
 import com.jaamsim.basicsim.Entity;
-import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
@@ -46,7 +43,6 @@ public abstract class CompoundEntity extends LinkedComponent {
 	         exampleList = {"1.0 0.0 0.01 m"})
 	protected final Vec3dInput processPosition;
 
-	private final LinkedHashMap<String, Entity> namedChildren = new LinkedHashMap<>();
 	private SubModelStart smStart;
 
 	private static final String smRegionName = "Region";
@@ -129,37 +125,6 @@ public abstract class CompoundEntity extends LinkedComponent {
 			if (comp instanceof SubModelEnd) {
 				((SubModelEnd)comp).setSubModel(this);
 			}
-		}
-	}
-
-	@Override
-	public Entity getChild(String name) {
-		synchronized (namedChildren) {
-			return namedChildren.get(name);
-		}
-	}
-
-	@Override
-	public void addChild(Entity ent) {
-		synchronized (namedChildren) {
-			if (namedChildren.get(ent.getLocalName()) != null)
-				throw new ErrorException("Entity name: %s is already in use.", ent.getName());
-			namedChildren.put(ent.getLocalName(), ent);
-		}
-	}
-
-	@Override
-	public void removeChild(Entity ent) {
-		synchronized (namedChildren) {
-			if (ent != namedChildren.remove(ent.getLocalName()))
-				throw new ErrorException("Named Children Internal Consistency error: %s", ent);
-		}
-	}
-
-	@Override
-	public ArrayList<Entity> getChildren() {
-		synchronized (namedChildren) {
-			return new ArrayList<>(namedChildren.values());
 		}
 	}
 

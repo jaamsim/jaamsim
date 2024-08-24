@@ -19,6 +19,7 @@ package com.jaamsim.Graphics;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 import com.jaamsim.BooleanProviders.BooleanProvInput;
 import com.jaamsim.Commands.KeywordCommand;
@@ -135,6 +136,8 @@ public class DisplayEntity extends Entity {
 	                     + "entity is displayed.",
 	         exampleList = {"0 100 m"})
 	private final ValueListInput drawRange;
+
+	private final LinkedHashMap<String, Entity> namedChildren = new LinkedHashMap<>();
 
 	private final Vec3d position = new Vec3d();
 	private final ArrayList<Vec3d> points = new ArrayList<>();
@@ -421,6 +424,37 @@ public class DisplayEntity extends Entity {
 		pos.add3(pts.get(pts.size() - 1));
 		pos.scale3(0.5d, pos);
 		setPosition(pos);
+	}
+
+	@Override
+	public Entity getChild(String name) {
+		synchronized (namedChildren) {
+			return namedChildren.get(name);
+		}
+	}
+
+	@Override
+	public void addChild(Entity ent) {
+		synchronized (namedChildren) {
+			if (namedChildren.get(ent.getLocalName()) != null)
+				throw new ErrorException("Entity name: %s is already in use.", ent.getName());
+			namedChildren.put(ent.getLocalName(), ent);
+		}
+	}
+
+	@Override
+	public void removeChild(Entity ent) {
+		synchronized (namedChildren) {
+			if (ent != namedChildren.remove(ent.getLocalName()))
+				throw new ErrorException("Named Children Internal Consistency error: %s", ent);
+		}
+	}
+
+	@Override
+	public ArrayList<Entity> getChildren() {
+		synchronized (namedChildren) {
+			return new ArrayList<>(namedChildren.values());
+		}
 	}
 
 	/**
