@@ -606,17 +606,28 @@ public class Entity {
 			return prototype.getValueTokens(in.getProtoInput(), newParent);
 
 		ArrayList<String> ret = in.getValueTokens();
-		if (ret.isEmpty() || parent == null || parent == newParent)
+		if (ret.isEmpty() || parent == null || newParent == null || parent == newParent)
 			return ret;
+
+		// Find the first parent that has a different name
+		Entity oldP = parent;
+		Entity newP = newParent;
+		while (oldP.getLocalName().equals(newP.getLocalName())) {
+			oldP = oldP.getParent();
+			newP = newP.getParent();
+			if (oldP == null || newP == null) {
+				return ret;
+			}
+		}
 
 		// Replace any explicit references to the parent entity with the specified new parent
 		String oldName = parent.getName();
 		String oldName1 = "[" + oldName + "]";
-		String oldName2 = oldName + ".";
+		String oldName2 = oldP.getLocalName() + ".";
 
 		String newName = newParent.getName();
 		String newName1 = "[" + newName + "]";
-		String newName2 = newName + ".";
+		String newName2 = newP.getLocalName() + ".";
 
 		for (int i = 0; i < ret.size(); i++) {
 			String str = ret.get(i);
