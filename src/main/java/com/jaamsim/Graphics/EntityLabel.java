@@ -45,7 +45,14 @@ public class EntityLabel extends TextBasics {
 
 		targetEntity = new EntityInput<>(DisplayEntity.class, "TargetEntity", KEY_INPUTS, null);
 		targetEntity.setCallback(inputCallback);
+		targetEntity.setHidden(true);
 		this.addInput(targetEntity);
+
+		relativeEntity.setHidden(true);
+		relativeEntity.setCallback(disabledInputCallback);
+
+		regionInput.setHidden(true);
+		regionInput.setCallback(disabledInputCallback);
 
 		textHeight.setCallback(textHeightCallback);
 	}
@@ -98,8 +105,33 @@ public class EntityLabel extends TextBasics {
 		}
 	};
 
+	static final InputCallback disabledInputCallback = new InputCallback() {
+		@Override
+		public void callback(Entity ent, Input<?> inp) {
+			inp.setEdited(false);
+		}
+	};
+
 	@Override
 	public boolean isGraphicsNominal() {
+		return true;
+	}
+
+	@Override
+	public DisplayEntity getRelativeEntity() {
+		return getTarget();
+	}
+
+	@Override
+	public Region getCurrentRegion() {
+		DisplayEntity target = getTarget();
+		if (target == null)
+			return null;
+		return target.getCurrentRegion();
+	}
+
+	@Override
+	public boolean isRegionNominal() {
 		return true;
 	}
 
@@ -172,12 +204,7 @@ public class EntityLabel extends TextBasics {
 
 		// Assign inputs that link the label to its target entity
 		InputAgent.applyArgs(label, "TargetEntity", ent.getName());
-		InputAgent.applyArgs(label, "RelativeEntity", ent.getName());
-		if (ent.getCurrentRegion() != null)
-			InputAgent.applyArgs(label, "Region", ent.getCurrentRegion().getName());
 		label.getInput("TargetEntity").setLocked(true);
-		label.getInput("RelativeEntity").setLocked(true);
-		label.getInput("Region").setLocked(true);
 
 		// Set the visible views to match its target entity
 		if (ent.getVisibleViews() != null) {
