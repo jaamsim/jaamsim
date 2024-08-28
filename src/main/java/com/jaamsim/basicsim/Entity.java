@@ -198,9 +198,7 @@ public class Entity {
 	public void setNameInput(String localName) throws InputErrorException {
 		if (nameInput.isDef()) {
 			nameInput.setInitialValue(localName);
-			entityName = localName;
-			if (isRegistered())
-				getJaamSimModel().addNamedEntity(this);
+			setLocalName(localName);
 			nameInput.setLocked(isGenerated());
 			return;
 		}
