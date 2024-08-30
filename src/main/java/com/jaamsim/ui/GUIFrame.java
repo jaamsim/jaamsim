@@ -4796,6 +4796,10 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			double callBackTime = evt.ticksToSeconds(frame.simTicks);
 
 			frame.setClock(callBackTime);
+			if (frame.selectedEntity != null && (frame.selectedEntity.isDead()
+					|| frame.selectedEntity.isPooled())) {
+				FrameBox.setSelectedEntity(null, false);
+			}
 			frame.updateControls(sim.getSimulation());
 			FrameBox.updateEntityValues(callBackTime);
 
