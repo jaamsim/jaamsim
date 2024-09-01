@@ -3455,9 +3455,39 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		EditBox.getInstance().setEntity(null);
 	}
 
+	/**
+	 * Resets the toggle buttons to their off positions.
+	 * Some of these buttons do not require resetting, but are done to be consistent with the ones
+	 * that do need to be reset.
+	 */
 	private void clearButtons() {
+
+		// Presentation mode and lock windows
+		presentMode.setSelected(false);
+		lockWindows.setSelected(false);
+
+		// Show axes and grid
+		xyzAxis.setSelected(false);
+		grid.setSelected(false);
+
+		// Show labels and sub-models
+		showLabels.setSelected(false);
+		showSubModels.setSelected(false);
+
+		// Snap-to-grid
+		snapToGrid.setSelected(false);
+
+		// References and links
+		// (doClick is required to perform the action for each button)
+		if (showReferences.isSelected())
+			showReferences.doClick();
+		if (showLinks.isSelected())
+			showLinks.doClick();
 		if (createLinks.isSelected())
 			createLinks.doClick();
+
+		// Reverse
+		// (doClick is required to perform the action for each button)
 		if (reverseButton.isSelected())
 			reverseButton.doClick();
 	}
