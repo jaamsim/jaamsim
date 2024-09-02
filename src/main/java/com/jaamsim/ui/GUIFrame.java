@@ -1062,6 +1062,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 					File file = chooser.getSelectedFile();
 					try {
 						simModel.loadFile(file);
+						simModel.showTemporaryLabels( simModel.getSimulation().isShowLabels() );
 						if (simModel.getNumErrors() > numErrors) {
 							throw new InputErrorException("%d input errors and %d warnings found",
 									simModel.getNumErrors() - numErrors,
