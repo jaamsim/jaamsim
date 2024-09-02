@@ -1106,6 +1106,8 @@ public class InputAgent {
 		// Write a stub definition for the Custom Outputs for each entity
 		boolean blankLinePrinted = false;
 		for (Entity ent : entityList) {
+			if (!ent.isRegistered())
+				continue;
 			Input<?> in = ent.getInput("CustomOutputList");
 			if (in == null || !in.isEdited())
 				continue;
@@ -1122,6 +1124,8 @@ public class InputAgent {
 			// Loop through the entities
 			blankLinePrinted = false;
 			for (Entity ent : entityList) {
+				if (!ent.isRegistered())
+					continue;
 
 				// Print an entry for each entity that used this keyword
 				final Input<?> in = ent.getInput(EARLY_KEYWORDS[i]);
@@ -1139,7 +1143,7 @@ public class InputAgent {
 		Class<? extends Entity> entClass = null;
 		Entity lastEnt = null;
 		for (Entity ent : entityList) {
-			if (isGraphicsEntity(ent))
+			if (!ent.isRegistered() || isGraphicsEntity(ent))
 				continue;
 
 			for (Input<?> in : ent.getEditableInputs()) {
@@ -1166,7 +1170,7 @@ public class InputAgent {
 		// Graphics inputs for non-graphic entities
 		lastEnt = null;
 		for (Entity ent : entityList) {
-			if (isGraphicsEntity(ent))
+			if (!ent.isRegistered() || isGraphicsEntity(ent))
 				continue;
 
 			for (Input<?> in : ent.getEditableInputs()) {
@@ -1191,7 +1195,7 @@ public class InputAgent {
 		entClass = null;
 		lastEnt = null;
 		for (Entity ent : entityList) {
-			if (!isGraphicsEntity(ent))
+			if (!ent.isRegistered() || !isGraphicsEntity(ent))
 				continue;
 
 			for (Input<?> in : ent.getEditableInputs()) {
