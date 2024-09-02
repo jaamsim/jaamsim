@@ -4462,8 +4462,9 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	}
 
 	public void setWindowPos(View v, int x, int y, int width, int height) {
-		if (presentMode.isSelected()
-				|| runManager.getJaamSimModel().getSimulation().isLockWindows())
+		JaamSimModel simModel = runManager.getJaamSimModel();
+		if (presentMode.isSelected() || simModel.getSimulation().isLockWindows()
+				|| !simModel.isConfigured())
 			return;
 		Point posFix = OSFix.getLocationAdjustment(v.isResizable());
 		Point sizeFix = OSFix.getSizeAdjustment(v.isResizable());
