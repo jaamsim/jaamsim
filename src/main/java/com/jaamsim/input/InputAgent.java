@@ -1061,6 +1061,8 @@ public class InputAgent {
 		int level = 0;
 		Entity proto = null;
 		for (Entity ent : newEntities) {
+			if (ent.isGenerated())
+				continue;
 
 			// Is the class different from the last one
 			if (ent.getClass() != entClass || ent.getPrototype() != proto) {
