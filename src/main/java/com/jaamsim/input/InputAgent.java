@@ -1221,13 +1221,23 @@ public class InputAgent {
 	}
 
 	public static void saveEntity(Entity entity, File f) {
-		ArrayList<Entity> entityList = new ArrayList<>(entity.getDescendants());
-		entityList.add(0, entity);
+
+		// List the entities to be saved
+		ArrayList<Entity> entityList = new ArrayList<>();
+		entityList.add(entity);
+		for (Entity ent : entity.getDescendants()) {
+			if (ent instanceof EntityLabel && !((EntityLabel) ent).getShowInput()
+					&& ((EntityLabel) ent).isDefault())
+				continue;
+			entityList.add(ent);
+		}
 		Collections.sort(entityList, uiEntitySortOrder);
 
+		// Save the definitions and inputs
 		FileEntity file = new FileEntity(f);
 		saveDefinitions(entityList, file);
 		saveInputs(entityList, file);
+
 		file.flush();
 		file.close();
 	}
