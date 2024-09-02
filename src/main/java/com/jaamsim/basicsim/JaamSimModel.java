@@ -25,6 +25,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -107,7 +108,7 @@ public class JaamSimModel implements EventTimeListener {
 
 	private final HashMap<String, MRG1999a[]> rngMap = new HashMap<>();
 
-	private int simState;
+	private final AtomicInteger simState = new AtomicInteger(0);
 
 	/** model was executed, but no configuration performed */
 	public static final int SIM_STATE_LOADED = 0;
@@ -316,27 +317,27 @@ public class JaamSimModel implements EventTimeListener {
 	}
 
 	public int getSimState() {
-		return simState;
+		return simState.get();
 	}
 
 	public void setSimState(int state) {
-		simState = state;
+		simState.set(state);
 	}
 
 	public boolean isRunningState() {
-		return simState == SIM_STATE_RUNNING;
+		return getSimState() == SIM_STATE_RUNNING;
 	}
 
 	public boolean isPausedState() {
-		return simState == SIM_STATE_PAUSED;
+		return getSimState() == SIM_STATE_PAUSED;
 	}
 
 	public boolean isStarted() {
-		return simState >= SIM_STATE_RUNNING;
+		return getSimState() >= SIM_STATE_RUNNING;
 	}
 
 	public boolean isConfigured() {
-		return simState >= SIM_STATE_CONFIGURED;
+		return getSimState() >= SIM_STATE_CONFIGURED;
 	}
 
 	public boolean isRealTime() {
