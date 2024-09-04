@@ -161,12 +161,13 @@ public class EntityLabel extends TextBasics {
 		// Create the EntityLabel object
 		JaamSimModel simModel = ent.getJaamSimModel();
 		String name = InputAgent.getUniqueName(simModel, ent.getName() + "_Label", "");
+		EntityLabel proto = EntityLabel.getLabel(ent.getPrototype());
 		if (undo) {
-			InputAgent.storeAndExecute(new DefineCommand(simModel, EntityLabel.class, name));
+			InputAgent.storeAndExecute(new DefineCommand(simModel, EntityLabel.class, proto, name));
 			label = (EntityLabel)simModel.getNamedEntity(name);
 		}
 		else {
-			label = InputAgent.defineEntityWithUniqueName(simModel, EntityLabel.class, name, "", true);
+			label = InputAgent.defineEntityWithUniqueName(simModel, EntityLabel.class, proto, name, "", true);
 		}
 
 		// Assign inputs that link the label to its target entity
