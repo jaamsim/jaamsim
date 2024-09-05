@@ -474,7 +474,7 @@ public class DisplayEntity extends Entity {
 	}
 
 	public boolean isRegionNominal() {
-		return currentRegion == regionInput.getValue();
+		return getCurrentRegion() == regionInput.getValue();
 	}
 
 	public boolean isShowNominal() {
@@ -811,8 +811,9 @@ public class DisplayEntity extends Entity {
 		ret.merge(ret, alignTrans);
 
 		// Convert the alignment/orientation transformation to the global coordinate system
-		if (currentRegion != null)
-			ret.merge(currentRegion.getRegionTransForVectors(), ret);
+		Region region = getCurrentRegion();
+		if (region != null)
+			ret.merge(region.getRegionTransForVectors(), ret);
 
 		// Offset the transformation by the entity's global position vector
 		ret.getTransRef().add3(getGlobalPosition());
@@ -872,16 +873,17 @@ public class DisplayEntity extends Entity {
 
 		// Position is relative to another entity
 		DisplayEntity ent = this.getRelativeEntity();
+		Region region = getCurrentRegion();
 		if (ent != null) {
-			if (currentRegion != null)
-				currentRegion.getRegionTransForVectors().multAndTrans(ret, ret);
+			if (region != null)
+				region.getRegionTransForVectors().multAndTrans(ret, ret);
 			ret.add3(ent.getGlobalPosition());
 			return ret;
 		}
 
 		// Position is given in a local coordinate system
-		if (currentRegion != null)
-			currentRegion.getRegionTrans().multAndTrans(ret, ret);
+		if (region != null)
+			region.getRegionTrans().multAndTrans(ret, ret);
 
 		return ret;
 	}
@@ -925,19 +927,20 @@ public class DisplayEntity extends Entity {
 	public Vec3d getLocalPosition(Vec3d pos) {
 
 		Vec3d localPos = new Vec3d(pos);
+		Region region = getCurrentRegion();
 
 		// Position is relative to another entity
 		DisplayEntity ent = this.getRelativeEntity();
 		if (ent != null) {
 			localPos.sub3(ent.getGlobalPosition());
-			if (currentRegion != null)
-				currentRegion.getInverseRegionTransForVectors().multAndTrans(localPos, localPos);
+			if (region != null)
+				region.getInverseRegionTransForVectors().multAndTrans(localPos, localPos);
 			return localPos;
 		}
 
 		// Position is given in a local coordinate system
-		if (currentRegion != null)
-			currentRegion.getInverseRegionTrans().multAndTrans(pos, localPos);
+		if (region != null)
+			region.getInverseRegionTrans().multAndTrans(pos, localPos);
 
 		return localPos;
 	}
@@ -953,19 +956,20 @@ public class DisplayEntity extends Entity {
 	 */
 	public Transform getGlobalPositionTransform() {
 		Transform ret =  new Transform(null, null, 1.0d);
+		Region region = getCurrentRegion();
 
 		// Position is relative to another entity
 		DisplayEntity relEnt = this.getRelativeEntity();
 		if (relEnt != null) {
-			if (currentRegion != null)
-				ret = currentRegion.getRegionTransForVectors();
+			if (region != null)
+				ret = region.getRegionTransForVectors();
 			ret.getTransRef().add3(relEnt.getGlobalPosition());
 			return ret;
 		}
 
 		// Position is given in a local coordinate system
-		if (currentRegion != null)
-			ret = currentRegion.getRegionTrans();
+		if (region != null)
+			ret = region.getRegionTrans();
 
 		return ret;
 	}
@@ -1357,8 +1361,9 @@ public class DisplayEntity extends Entity {
 	 */
 	public double getRadius() {
 		double scale = 1.0d;
-		if (currentRegion != null)
-			scale = currentRegion.getGlobalScale();
+		Region region = getCurrentRegion();
+		if (region != null)
+			scale = region.getGlobalScale();
 		if (usePointsInput())
 			return 0.05d * scale;
 		double ret = Math.min(getSize().x, getSize().y)/2.0 + 0.05d;
@@ -1367,8 +1372,9 @@ public class DisplayEntity extends Entity {
 
 	public double getMinRadius() {
 		double scale = 1.0d;
-		if (currentRegion != null)
-			scale = currentRegion.getGlobalScale();
+		Region region = getCurrentRegion();
+		if (region != null)
+			scale = region.getGlobalScale();
 		return 0.05d * scale;
 	}
 
