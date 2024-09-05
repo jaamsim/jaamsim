@@ -189,7 +189,8 @@ public class Entity {
 
 			// Update the entity's label
 			if (label != null) {
-				label.setLocalName(newName + "_Label");
+				if (label.getParent() != ent)
+					label.setLocalName(newName + "_Label");
 				label.updateForTargetNameChange();
 			}
 		}

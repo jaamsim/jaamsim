@@ -64,9 +64,14 @@ public class EntityLabel extends TextBasics {
 			return null;
 
 		// Is there a label with the correct name?
-		Entity label = ent.getJaamSimModel().getNamedEntity(ent.getName() + "_Label");
+		Entity label = ent.getChild("Label");
+
+		// Old ways in which labels were defined
 		if (label == null) // FIXME - remove when all labels have the correct name
+			label = ent.getJaamSimModel().getNamedEntity(ent.getName() + "_Label");
+		if (label == null)
 			label = ent.getJaamSimModel().getNamedEntity(ent.getName() + "_Label1");
+
 		if (label instanceof EntityLabel)
 			return (EntityLabel) label;
 
@@ -170,6 +175,8 @@ public class EntityLabel extends TextBasics {
 	}
 
 	private DisplayEntity getTarget() {
+		if (getParent() instanceof DisplayEntity)
+			return (DisplayEntity) getParent();
 		return targetEntity.getValue();
 	}
 
@@ -192,7 +199,7 @@ public class EntityLabel extends TextBasics {
 
 		// Create the EntityLabel object
 		JaamSimModel simModel = ent.getJaamSimModel();
-		String name = InputAgent.getUniqueName(simModel, ent.getName() + "_Label", "");
+		String name = InputAgent.getUniqueName(simModel, ent.getName() + ".Label", "");
 		EntityLabel proto = EntityLabel.getLabel(ent.getPrototype());
 		if (undo) {
 			InputAgent.storeAndExecute(new DefineCommand(simModel, EntityLabel.class, proto, name));
@@ -201,10 +208,6 @@ public class EntityLabel extends TextBasics {
 		else {
 			label = InputAgent.defineEntityWithUniqueName(simModel, EntityLabel.class, proto, name, "", true);
 		}
-
-		// Assign inputs that link the label to its target entity
-		InputAgent.applyArgs(label, "TargetEntity", ent.getName());
-		label.getInput("TargetEntity").setLocked(true);
 
 		// Set the visible views to match its target entity
 		if (ent.getVisibleViews() != null) {
