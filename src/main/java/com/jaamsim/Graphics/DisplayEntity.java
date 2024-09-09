@@ -394,6 +394,17 @@ public class DisplayEntity extends Entity {
 	}
 
 	@Override
+	public void postDefine() {
+		super.postDefine();
+
+		// Add a label if required
+		if (getSimulation() != null && getSimulation().isShowLabels()
+				&& EntityLabel.canLabel(this)) {
+			EntityLabel.showTemporaryLabel(this, true, false);
+		}
+	}
+
+	@Override
 	public void validate()
 	throws InputErrorException {
 		super.validate();
