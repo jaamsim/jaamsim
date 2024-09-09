@@ -1911,10 +1911,6 @@ public class RenderManager implements DragSourceListener {
 			}
 			catch (InputErrorException e) {}
 
-			// Add labels for the entity and its children
-			//System.out.format("%nshowTemporaryLabels%n");
-			simModel.showTemporaryLabels(simulation.isShowLabels());
-
 			// Set the focus on the window that received the entity
 			renderer.requestFocus(windowID);
 		}
