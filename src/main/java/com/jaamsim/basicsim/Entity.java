@@ -352,6 +352,8 @@ public class Entity {
 		if (this.isDead())
 			return;
 		simModel.removeInstance(this);
+		entityName = null;
+		setFlag(Entity.FLAG_DEAD);
 	}
 
 	/**

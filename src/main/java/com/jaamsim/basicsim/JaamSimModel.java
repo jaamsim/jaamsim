@@ -1301,8 +1301,6 @@ public class JaamSimModel implements EventTimeListener {
 			if (e.isRegistered())
 				removeNamedEntity(e);
 
-			e.entityName = null;
-			e.setFlag(Entity.FLAG_DEAD);
 			EntityListNode listNode = e.listNode;
 
 			// Break the link to the list
