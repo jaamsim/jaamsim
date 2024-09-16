@@ -2659,7 +2659,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	}
 
 	private void addLineWidthSpinner(JToolBar buttonBar, Insets margin) {
-		SpinnerNumberModel numberModel = new SpinnerNumberModel(1, 1, 10, 1);
+		SpinnerNumberModel numberModel = new SpinnerNumberModel(1, 0, 10, 1);
 		lineWidth = new JSpinner(numberModel);
 		lineWidth.addChangeListener(new ChangeListener() {
 
