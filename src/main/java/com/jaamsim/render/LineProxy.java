@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2012 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2024 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,7 +49,7 @@ public class LineProxy implements RenderProxy {
 	@Override
 	public void collectRenderables(Renderer r, ArrayList<Renderable> outList) {
 
-		if (_lineSegments == null || _lineSegments.size() < 2)
+		if (_lineSegments == null || _lineSegments.size() < 2 || _lineWidth < 1.0d)
 			return;
 
 		if (_cachedLine == null) {
