@@ -352,17 +352,14 @@ public class Entity {
 		if (this.isDead())
 			return;
 		simModel.removeInstance(this);
-		entityName = null;
 		setFlag(Entity.FLAG_DEAD);
 	}
 
 	/**
 	 * Reverses the actions taken by the kill method.
-	 * @param name - entity's absolute name before it was deleted
 	 */
-	public void restore(String name) {
+	public void restore() {
 		simModel.restoreInstance(this);
-		this.setName(name);
 		this.clearFlag(Entity.FLAG_DEAD);
 		if (prototype != null && isRegistered())
 			prototype.addClone(this);

@@ -46,7 +46,7 @@ public class DefineCommand implements Command {
 
 		// If the entity has been killed by the undo method, then simply restore it to life
 		if (entity != null) {
-			entity.restore(entityName);
+			entity.restore();
 			simModel.setSessionEdited(true);
 			return;
 		}

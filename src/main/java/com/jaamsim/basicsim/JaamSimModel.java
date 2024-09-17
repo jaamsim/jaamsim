@@ -1268,6 +1268,9 @@ public class JaamSimModel implements EventTimeListener {
 		synchronized (namedEntities) {
 			validateEntList();
 			numLiveEnts++;
+			if (e.isRegistered())
+				addNamedEntity(e);
+
 			// Scan through the linked list to find the place to insert this entity
 			// This is slow, but should only happen due to user actions
 			long entNum = e.getEntityNumber();
