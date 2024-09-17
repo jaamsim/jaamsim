@@ -34,7 +34,7 @@ import javax.swing.JTextArea;
 public class AboutBox extends JDialog {
 
 	public static final String softwareName = "JaamSim";
-	public static final String version = "2024-06";
+	public static final String version = "2024-07";
 
 	public AboutBox() {
 		super((JDialog)null, "About", true);
