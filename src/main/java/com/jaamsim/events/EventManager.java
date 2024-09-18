@@ -223,11 +223,11 @@ public final class EventManager {
 	 * Main event execution method the eventManager, this is the only entrypoint
 	 * for Process objects taken out of the pool.
 	 */
-	final void execute(Process cur) {
+	final void execute() {
 		evtLock.lock();
 		try {
-			if (runningProc.get().proc != cur) {
-				System.out.println("Invalid Process Entering EventManager:" + cur);
+			if (runningProc.get().proc != Thread.currentThread()) {
+				System.out.println("Invalid Process Entering EventManager:" + Thread.currentThread());
 				return;
 			}
 
@@ -279,7 +279,7 @@ public final class EventManager {
 
 					// If the current Process is the runningProc, continue executing events
 					// otherwise exit and return to Process pool
-					if (runningProc.get().proc != cur)
+					if (runningProc.get().proc != Thread.currentThread())
 						return;
 
 					continue;

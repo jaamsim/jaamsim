@@ -95,7 +95,7 @@ final class Process extends Thread {
 				poolLock.unlock();
 			}
 
-			evt.get().execute(this);
+			evt.get().execute();
 		}
 	}
 
