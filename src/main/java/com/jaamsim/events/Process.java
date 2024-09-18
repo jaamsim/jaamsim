@@ -184,13 +184,6 @@ final class Process extends Thread {
 		return nextProcess.getAndSet(null);
 	}
 
-	void kill() {
-		if (activeFlag.get())
-			throw new ProcessError("Cannot terminate an active thread");
-		dieFlag.set(true);
-		this.wake();
-	}
-
 	/**
 	 * This is used to tear down a live threadstack when an error is received from
 	 * the model.
