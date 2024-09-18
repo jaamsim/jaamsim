@@ -423,8 +423,7 @@ public final class EventManager {
 		// if we don't wake a new process, take one from the pool
 		ThreadEntry next = runningProc.get().next;
 		if (next == null) {
-			Process p = Process.allocate(this);
-			next = new ThreadEntry(this, p, null);
+			next = new ThreadEntry(this, this.allocateThread(), null);
 		}
 		else {
 			next.cond.signal();
@@ -602,8 +601,7 @@ public final class EventManager {
 			enableSchedule();
 		}
 
-		Process proc = Process.allocate(this);
-		ThreadEntry te = new ThreadEntry(this, proc, runningProc.get());
+		ThreadEntry te = new ThreadEntry(this, this.allocateThread(), runningProc.get());
 		startTarget = t;
 		runningProc.set(te);
 		threadWait(te.next);
@@ -715,8 +713,7 @@ public final class EventManager {
 		Thread proc = t.getProcess();
 		ThreadEntry te;
 		if (proc == null) {
-			proc = Process.allocate(this);
-			te = new ThreadEntry(this, proc, runningProc.get());
+			te = new ThreadEntry(this, this.allocateThread(), runningProc.get());
 			startTarget = t;
 		}
 		else {
@@ -909,8 +906,7 @@ public final class EventManager {
 				return;
 
 			executeEvents = true;
-			Process proc = Process.allocate(this);
-			ThreadEntry te = new ThreadEntry(this, proc, null);
+			ThreadEntry te = new ThreadEntry(this, this.allocateThread(), null);
 			runningProc.set(te);
 		}
 		finally {
@@ -921,6 +917,10 @@ public final class EventManager {
 	@Override
 	public String toString() {
 		return name;
+	}
+
+	private Thread allocateThread() {
+		return Process.allocate(this);
 	}
 
 	/**
@@ -945,7 +945,12 @@ public final class EventManager {
 	 * @throws ProcessError if called outside of a Process context
 	 */
 	public static final EventManager current() {
-		return Process.current().evt();
+		try {
+			return ((Process)Thread.currentThread()).evt();
+		}
+		catch (ClassCastException e) {
+			throw new ProcessError("Non-process thread called Process.current()");
+		}
 	}
 
 	/**

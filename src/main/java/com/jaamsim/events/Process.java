@@ -59,18 +59,6 @@ final class Process extends Thread {
 	}
 
 	/**
-	 * Returns the currently executing Process.
-	 */
-	static final Process current() {
-		try {
-			return (Process)Thread.currentThread();
-		}
-		catch (ClassCastException e) {
-			throw new ProcessError("Non-process thread called Process.current()");
-		}
-	}
-
-	/**
 	 * Run method invokes the method on the target with the given arguments.
 	 * A process loops endlessly after it is created executing the method on the
 	 * target set as the entry point.  After completion, it calls endProcess and
