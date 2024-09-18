@@ -25,7 +25,7 @@ class WaitTarget extends ProcessTarget {
 	final AtomicBoolean dieFlag;
 
 	WaitTarget(EventManager evt) {
-		proc = Process.current();
+		proc = Thread.currentThread();
 		cond = evt.getWaitCondition();
 		dieFlag = new AtomicBoolean(false);
 	}
