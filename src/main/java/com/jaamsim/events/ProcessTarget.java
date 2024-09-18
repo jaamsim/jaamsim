@@ -17,7 +17,7 @@
 package com.jaamsim.events;
 
 public abstract class ProcessTarget {
-	Process getProcess() { return null; }
+	Thread getProcess() { return null; }
 
 	void kill() {}
 

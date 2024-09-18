@@ -172,7 +172,7 @@ public final class EventManager {
 	private void executeTarget(ProcessTarget t) {
 		try {
 			// If the event has a captured process, pass control to it
-			Process p = t.getProcess();
+			Thread p = t.getProcess();
 			if (p != null) {
 				ThreadEntry te = new ThreadEntry(this, p, runningProc.get());
 				((WaitTarget)t).eventWake();
@@ -718,7 +718,7 @@ public final class EventManager {
 		}
 		ProcessTarget t = rem(handle);
 
-		Process proc = t.getProcess();
+		Thread proc = t.getProcess();
 		ThreadEntry te;
 		if (proc == null) {
 			proc = Process.allocate(this);
