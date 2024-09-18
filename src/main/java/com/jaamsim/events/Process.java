@@ -51,7 +51,6 @@ final class Process extends Thread {
 	final AtomicReference<Condition> waitInEvt = new AtomicReference<>(); // The EventManager that is currently managing this Process
 	private final AtomicReference<Process> nextProcess = new AtomicReference<>(); // The Process from which the present process was created
 	private final AtomicBoolean dieFlag = new AtomicBoolean();
-	private final AtomicBoolean activeFlag = new AtomicBoolean();
 
 	// Initialize the storage for the pooled Processes
 	static {
@@ -93,7 +92,6 @@ final class Process extends Thread {
 				evt.set(null);
 				waitInEvt.set(null);
 				nextProcess.set(null);
-				activeFlag.set(false);
 				dieFlag.set(false);
 
 				// Add ourselves to the pool and wait to be assigned work
@@ -111,8 +109,6 @@ final class Process extends Thread {
 					else
 						break;
 				}
-
-				activeFlag.set(true);
 			}
 			finally {
 				poolLock.unlock();
@@ -199,14 +195,5 @@ final class Process extends Thread {
 
 	boolean shouldDie() {
 		return dieFlag.get();
-	}
-
-	final Process preCapture() {
-		activeFlag.set(false);
-		return nextProcess.getAndSet(null);
-	}
-
-	final void postCapture() {
-		activeFlag.set(true);
 	}
 }

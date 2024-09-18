@@ -416,7 +416,7 @@ public final class EventManager {
 	private void captureProcess(WaitTarget t) {
 		Process cur = t.getProcess();
 		// if we don't wake a new process, take one from the pool
-		Process next = cur.preCapture();
+		Process next = cur.getNextProcess();
 		if (next == null) {
 			next = Process.allocate(this, null);
 		}
@@ -435,7 +435,6 @@ public final class EventManager {
 
 			System.out.println("Spurious wakeup in EventManager wait." + Thread.currentThread());
 		}
-		cur.postCapture();
 	}
 
 	/**
