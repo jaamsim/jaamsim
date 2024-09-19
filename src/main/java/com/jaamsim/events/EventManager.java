@@ -430,6 +430,13 @@ public final class EventManager {
 		}
 
 		runningProc.set(next);
+		/*
+		 * Halt the thread and only wake up by being interrupted.
+		 *
+		 * The infinite loop is _absolutely_ necessary to prevent
+		 * spurious wakeups from waking us early....which causes the
+		 * model to get into an inconsistent state causing crashes.
+		 */
 		while (true) {
 			t.cond.awaitUninterruptibly();
 			if (t.dieFlag.get())
