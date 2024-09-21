@@ -215,6 +215,26 @@ public final class EventManager {
 		return evtLock.newCondition();
 	}
 
+	private static final ScopedValue<EventManager> scopedEvt = ScopedValue.newInstance();
+	private final Runnable startThread = new EventStart(this);
+
+	private static class EventStart implements Runnable {
+		private final EventManager evt;
+
+		EventStart(EventManager evt) {
+			this.evt = evt;
+		}
+
+		@Override
+		public void run() {
+			ScopedValue.runWhere(scopedEvt, evt, () -> { evt.execute(); });
+		}
+	}
+
+	private Thread allocateThread() {
+		return Thread.ofVirtual().start(startThread);
+	}
+
 	/**
 	 * Main event execution method the eventManager, this is the only entrypoint
 	 * for Process objects taken out of the pool.
@@ -223,7 +243,7 @@ public final class EventManager {
 		evtLock.lock();
 		try {
 			if (runningProc.get().proc != Thread.currentThread()) {
-				System.out.println("Invalid Process Entering EventManager:" + Thread.currentThread());
+				System.out.println("Invalid Thread Entering EventManager:" + Thread.currentThread());
 				return;
 			}
 
@@ -941,17 +961,13 @@ public final class EventManager {
 		return name;
 	}
 
-	private Thread allocateThread() {
-		return Process.allocate(this);
-	}
-
 	/**
 	 * Returns whether or not we are currently running in a Process context
 	 * that has a controlling EventManager.
 	 * @return true if we are in a Process context, false otherwise
 	 */
 	public static final boolean hasCurrent() {
-		return (Thread.currentThread() instanceof Process);
+		return scopedEvt.orElse(null) != null;
 	}
 
 	/**
@@ -959,7 +975,10 @@ public final class EventManager {
 	 * @return true if a future event can be scheduled
 	 */
 	public static final boolean canSchedule() {
-		return hasCurrent() && EventManager.current().scheduleEnabled();
+		EventManager evt = scopedEvt.orElse(null);
+		if (evt == null)
+			return false;
+		return evt.scheduleEnabled();
 	}
 
 	/**
@@ -967,12 +986,11 @@ public final class EventManager {
 	 * @throws ProcessError if called outside of a Process context
 	 */
 	public static final EventManager current() {
-		try {
-			return ((Process)Thread.currentThread()).evt();
-		}
-		catch (ClassCastException e) {
-			throw new ProcessError("Non-process thread called Process.current()");
-		}
+		EventManager evt = scopedEvt.orElse(null);
+		if (evt == null)
+			throw new ProcessError("Non-event thread called EventManager.current()");
+
+		return evt;
 	}
 
 	/**
