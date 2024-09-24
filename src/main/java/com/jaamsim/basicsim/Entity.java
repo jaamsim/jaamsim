@@ -1228,7 +1228,7 @@ public class Entity {
 		return prototype;
 	}
 
-	public boolean hasClone() {
+	public synchronized boolean hasClone() {
 		return cloneList != null && !cloneList.isEmpty();
 	}
 
