@@ -169,18 +169,15 @@ public final class EventManager {
 		}
 	}
 
+	void processWaitingThread(WaitTarget t) {
+		ThreadEntry te = new ThreadEntry(this, t.proc, runningProc.get());
+		t.eventWake();
+		runningProc.set(te);
+		threadWait(te.next);
+	}
+
 	private void executeTarget(ProcessTarget t) {
 		try {
-			// If the event has a captured process, pass control to it
-			Thread p = t.getProcess();
-			if (p != null) {
-				ThreadEntry te = new ThreadEntry(this, p, runningProc.get());
-				((WaitTarget)t).eventWake();
-				runningProc.set(te);
-				threadWait(te.next);
-				return;
-			}
-
 			// Execute the method
 			t.process();
 

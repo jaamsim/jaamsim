@@ -19,8 +19,8 @@ package com.jaamsim.events;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Condition;
 
-class WaitTarget extends ProcessTarget {
-	private final Thread proc;
+final class WaitTarget extends ProcessTarget {
+	final Thread proc;
 	final Condition cond;
 	final AtomicBoolean dieFlag;
 
@@ -49,5 +49,7 @@ class WaitTarget extends ProcessTarget {
 	}
 
 	@Override
-	public void process() {}
+	public void process() {
+		EventManager.current().processWaitingThread(this);
+	}
 }

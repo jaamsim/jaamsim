@@ -1274,7 +1274,7 @@ public class Entity {
 		return ret;
 	}
 
-	public void addCloneToPool(Entity clone) {
+	private void addCloneToPool(Entity clone) {
 		if (clonePool == null)
 			clonePool = new ArrayList<>();
 		clone.setFlag(Entity.FLAG_POOLED);
