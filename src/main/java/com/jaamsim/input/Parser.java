@@ -18,6 +18,7 @@
 package com.jaamsim.input;
 
 import java.util.ArrayList;
+import java.util.regex.Pattern;
 
 public class Parser {
 
@@ -223,11 +224,12 @@ public static final String addSubstringQuotesIfNeeded(String str) {
 	return sb.toString();
 }
 
+private static final Pattern splitter = Pattern.compile("\\s+");
 public static final String addQuotesIfNeededToDefinitions(String str) {
 	String[] array = Parser.splitSubstrings(str);
 	StringBuilder sb = new StringBuilder();
 	for (int i = 0; i < array.length; i++) {
-		String[] args = array[i].split("\\s+", 2);
+		String[] args = splitter.split(array[i], 2);
 
 		// Opening curly brace
 		if (i > 0)
