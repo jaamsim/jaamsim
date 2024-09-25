@@ -413,7 +413,7 @@ public abstract class CellEditor extends AbstractCellEditor implements TableCell
 			str = getValue();
 
 		// Launch the dialog box and wait for editing to finish
-		ExpressionBox expDialog = new ExpressionBox(input, str);
+		ExpressionBox expDialog = ExpressionBox.getInstance(input, str);
 		int result = expDialog.showDialog();
 
 		// Return the new expression

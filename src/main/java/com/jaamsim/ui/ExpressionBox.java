@@ -101,9 +101,8 @@ public class ExpressionBox extends JDialog {
 
 	public static final String DIALOG_NAME = "Input Builder";
 
-	public ExpressionBox(Input<?> in, String str) {
+	private ExpressionBox(Input<?> in, String str) {
 		super((JDialog)null, DIALOG_NAME, true);
-		instance = this;
 		setType(Type.UTILITY);
 
 		getContentPane().setLayout( new BorderLayout() );
@@ -314,13 +313,13 @@ public class ExpressionBox extends JDialog {
 	    });
 	}
 
-	public static synchronized ExpressionBox getInstance() {
+	public static synchronized ExpressionBox getInstance(Input<?> input, String str) {
+		instance = new ExpressionBox(input, str);
 		return instance;
 	}
 
-	public static boolean isInstanceVisible() {
-		ExpressionBox inst = getInstance();
-		return inst != null && inst.isVisible();
+	public static synchronized boolean isInstanceVisible() {
+		return instance != null && instance.isVisible();
 	}
 
 	private void setEditMode(int mode) {
