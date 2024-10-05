@@ -236,6 +236,7 @@ public abstract class Input<T> {
 	private boolean isLocked; // indicates whether the input can be changed through by the user
 	private boolean isInherited;  // indicates whether this input is inherited from its prototype
 	private boolean isOutput;  // indicates whether this input is available as an output
+	private boolean isReportable;  // indicated whether this input is a reportable output
 
 	public static final Comparator<Object> uiSortOrder = new NaturalOrderComparator();
 
@@ -249,6 +250,7 @@ public abstract class Input<T> {
 		defText = null;
 		isReqd = false;
 		isOutput = false;
+		isReportable = false;
 
 		reset();
 	}
@@ -478,6 +480,14 @@ public abstract class Input<T> {
 
 	public boolean isOutput() {
 		return isOutput;
+	}
+
+	public void setReportable(boolean bool) {
+		isReportable = bool;
+	}
+
+	public boolean isReportable() {
+		return isReportable;
 	}
 
 	public boolean useExpressionBuilder() {
