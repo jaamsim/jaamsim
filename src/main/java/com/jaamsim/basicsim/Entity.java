@@ -419,7 +419,7 @@ public class Entity {
 	 * @return true if the entity is pooled for re-use
 	 */
 	public final boolean isPooled() {
-		return this.testFlag(Entity.FLAG_POOLED);
+		return this.testFlag(Entity.FLAG_POOLED) || (parent != null && parent.isPooled());
 	}
 
 	/**
