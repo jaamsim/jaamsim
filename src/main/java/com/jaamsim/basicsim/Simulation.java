@@ -396,12 +396,14 @@ public class Simulation extends Entity {
 		runDuration.setUnitType(TimeUnit.class);
 		runDuration.setValidRange(1e-15d, Double.POSITIVE_INFINITY);
 		runDuration.setOutput(true);
+		runDuration.setReportable(true);
 		this.addInput(runDuration);
 
 		initializationTime = new SampleInput("InitializationDuration", KEY_INPUTS, 0.0);
 		initializationTime.setUnitType(TimeUnit.class);
 		initializationTime.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		initializationTime.setOutput(true);
+		initializationTime.setReportable(true);
 		this.addInput(initializationTime);
 
 		gregorianCalendar = new BooleanInput("GregorianCalendar", OPTIONS, false);
