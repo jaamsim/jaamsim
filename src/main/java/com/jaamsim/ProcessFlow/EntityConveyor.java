@@ -258,6 +258,8 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 
 	@Override
 	protected boolean startProcessing(double simTime) {
+		if (isTraceFlag()) trace(2, "startProcessing");
+
 		if (entryList.isEmpty()) {
 			readyForNext = true;
 			return false;
@@ -321,6 +323,7 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 
 	@Override
 	protected void processStep(double simTime) {
+		if (isTraceFlag()) trace(2, "processStep - exitFlag=%s, nextEntFlag=%s", exitFlag, nextEntFlag);
 
 		// Release the entity at the exit of the conveyor
 		if (exitFlag) {
@@ -359,6 +362,7 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 
 	@Override
 	public void updateProgress(double dt) {
+		if (isTraceFlag()) trace(2, "updateProgress(%s)", dt);
 
 		if (presentTravelTime == 0.0d)
 			return;
@@ -381,7 +385,7 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 			lastEntry = entry;
 		}
 
-		if (isTraceFlag()) traceLine(2, "AFTER - entryList=%s", entryList);
+		if (isTraceFlag()) traceLine(2, "AFTER  - entryList=%s", entryList);
 	}
 
 	private void updateTravelTime(double simTime) {
