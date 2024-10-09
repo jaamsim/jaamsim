@@ -175,9 +175,9 @@ public class EntityLabel extends TextBasics {
 	}
 
 	private DisplayEntity getTarget() {
-		if (getParent() instanceof DisplayEntity)
-			return (DisplayEntity) getParent();
-		return targetEntity.getValue();
+		if (!targetEntity.isDef())
+			return targetEntity.getValue();
+		return (DisplayEntity) getParent();
 	}
 
 	public void updateForTargetNameChange() {
