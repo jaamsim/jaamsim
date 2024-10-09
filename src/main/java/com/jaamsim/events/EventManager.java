@@ -231,11 +231,7 @@ public final class EventManager {
 
 		@Override
 		public void run() {
-			ScopedValue.runWhere(scopedEvt, evt, () -> exec());
-		}
-
-		public void exec() {
-			evt.execute();
+			ScopedValue.runWhere(scopedEvt, evt, () -> { evt.execute(); });
 		}
 	}
 
