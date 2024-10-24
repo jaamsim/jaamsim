@@ -17,8 +17,6 @@
  */
 package com.jaamsim.Graphics;
 
-import java.util.ArrayList;
-
 import com.jaamsim.Commands.DefineCommand;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.GUIListener;
@@ -28,8 +26,8 @@ import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InputCallback;
 import com.jaamsim.input.Keyword;
-import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.math.Vec3d;
+import com.jaamsim.render.VisibilityInfo;
 import com.jaamsim.units.DistanceUnit;
 
 public class EntityLabel extends TextBasics {
@@ -42,6 +40,8 @@ public class EntityLabel extends TextBasics {
 		desc.setHidden(true);
 		attributeDefinitionList.setHidden(true);
 		namedExpressionInput.setHidden(true);
+		visibleViews.setHidden(true);
+		drawRange.setHidden(true);
 
 		targetEntity = new EntityInput<>(DisplayEntity.class, "TargetEntity", KEY_INPUTS, null);
 		targetEntity.setCallback(inputCallback);
@@ -211,16 +211,6 @@ public class EntityLabel extends TextBasics {
 			label = InputAgent.defineEntityWithUniqueName(simModel, EntityLabel.class, proto, name, "", true);
 		}
 
-		// Set the visible views to match its target entity
-		if (ent.getVisibleViews() != null) {
-			ArrayList<String> tokens = new ArrayList<>(ent.getVisibleViews().size());
-			for (View v : ent.getVisibleViews()) {
-				tokens.add(v.getName());
-			}
-			KeywordIndex kw = new KeywordIndex("VisibleViews", tokens, null);
-			InputAgent.apply(label, kw);
-		}
-
 		// Set the label's position
 		Vec3d pos = label.getDefaultPosition();
 		InputAgent.apply(label, simModel.formatVec3dInput("Position", pos, DistanceUnit.class));
@@ -287,6 +277,14 @@ public class EntityLabel extends TextBasics {
 	public boolean getShow(double simTime) {
 		return (super.getShow(simTime) || getSimulation().isShowLabels())
 				&& getTarget() != null && getTarget().getShow(simTime) && getTarget().isMovable();
+	}
+
+	@Override
+	public VisibilityInfo getVisibilityInfo() {
+		DisplayEntity target = getTarget();
+		if (target == null)
+			return null;
+		return target.getVisibilityInfo();
 	}
 
 }

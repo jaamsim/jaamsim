@@ -130,12 +130,12 @@ public class DisplayEntity extends Entity {
 	private final BooleanProvInput movable;
 
 	@Keyword(description = "The view windows on which this entity will be visible.")
-	private final EntityListInput<View> visibleViews;
+	protected final EntityListInput<View> visibleViews;
 
 	@Keyword(description = "The minimum and maximum distance from the camera for which this "
 	                     + "entity is displayed.",
 	         exampleList = {"0 100 m"})
-	private final ValueListInput drawRange;
+	protected final ValueListInput drawRange;
 
 	private final LinkedHashMap<String, Entity> namedChildren = new LinkedHashMap<>();
 
