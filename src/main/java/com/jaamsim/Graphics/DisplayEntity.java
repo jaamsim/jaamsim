@@ -902,6 +902,14 @@ public class DisplayEntity extends Entity {
 	}
 
 	/**
+	 * Returns the position of the centre in the global coordinate system.
+	 * @return global position of the centre
+	 */
+	public Vec3d getGlobalCentre() {
+		return getGlobalPosition(getCentre());
+	}
+
+	/**
 	 * Return the position in the global coordinate system
 	 */
 	public Vec3d getGlobalPosition() {
