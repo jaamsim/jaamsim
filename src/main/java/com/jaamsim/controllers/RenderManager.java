@@ -87,6 +87,7 @@ import com.jaamsim.render.LineProxy;
 import com.jaamsim.render.MeshDataCache;
 import com.jaamsim.render.MeshProtoKey;
 import com.jaamsim.render.OffscreenTarget;
+import com.jaamsim.render.PointProxy;
 import com.jaamsim.render.PreviewCache;
 import com.jaamsim.render.RenderProxy;
 import com.jaamsim.render.RenderUtils;
@@ -2503,6 +2504,11 @@ public class RenderManager implements DragSourceListener {
 				Vec3d source = ((DisplayEntity) ref).getGlobalPosition();
 				double sourceRadius = 0.0d;
 				addLink(source, sink, sourceRadius, sinkRadius, REF_LINK_COLOUR, arrowSize, delta, scene);
+
+				// Show a dot at the start of the arrow
+				List<Vec4d> pl = new ArrayList<>(1);
+				pl.add(new Vec4d(source.x, source.y, source.z + delta, 0.0d));
+				scene.add(new PointProxy(pl, REF_LINK_COLOUR, 5, DisplayModel.ALWAYS, 0));
 			}
 		}
 	}
