@@ -316,7 +316,8 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 
 		// 1) Determine when to end the current downtime event
 		if (down) {
-			if (durationWorkingEntity.getValue() == null) {
+			StateEntity durWorkingEnt = durationWorkingEntity.getValue();
+			if (durWorkingEnt == null) {
 
 				if (endDowntimeHandle.isScheduled())
 					return;
@@ -329,12 +330,12 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 			}
 
 			// The Entity is working, schedule the end of the downtime event
-			if (durationWorkingEntity.getValue().isWorkingState()) {
+			if (durWorkingEnt.isWorkingState()) {
 
 				if (endDowntimeHandle.isScheduled())
 					return;
 
-				double workingSecs = durationWorkingEntity.getValue().getWorkingTime();
+				double workingSecs = durWorkingEnt.getWorkingTime();
 				double waitSecs = secondsForNextRepair - workingSecs;
 				scheduleProcess(waitSecs, 5, endDowntimeTarget, endDowntimeHandle);
 			}
