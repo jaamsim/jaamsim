@@ -290,21 +290,12 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 		// Schedule the next downtime event
 		StateEntity iatWorkingEnt = iatWorkingEntity.getValue();
 		if (!scheduleDowntimeHandle.isScheduled()) {
-
-			// 1) Calendar time
-			if (iatWorkingEnt == null) {
-				double workingSecs = this.getSimTime();
-				double waitSecs = secondsForNextFailure - workingSecs;
-				scheduleProcess(Math.max(waitSecs, 0.0), 5, scheduleDowntimeTarget, scheduleDowntimeHandle);
-
-			}
-			// 2) Working time
-			else {
-				if (iatWorkingEnt.isWorkingState()) {
-					double workingSecs = iatWorkingEnt.getWorkingTime();
-					double waitSecs = secondsForNextFailure - workingSecs;
-					scheduleProcess(Math.max(waitSecs, 0.0), 5, scheduleDowntimeTarget, scheduleDowntimeHandle);
-				}
+			if (iatWorkingEnt == null || iatWorkingEnt.isWorkingState()) {
+				double workingSecs = getSimTime();
+				if (iatWorkingEnt != null)
+					workingSecs = iatWorkingEnt.getWorkingTime();
+				double waitSecs = Math.max(secondsForNextFailure - workingSecs, 0.0d);
+				scheduleProcess(waitSecs, 5, scheduleDowntimeTarget, scheduleDowntimeHandle);
 			}
 		}
 		// the next event is already scheduled.  If the working entity has stopped working, need to cancel the event
