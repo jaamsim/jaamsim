@@ -21,14 +21,17 @@ import java.util.ArrayList;
 
 import com.jaamsim.BooleanProviders.BooleanProvInput;
 import com.jaamsim.Samples.SampleInput;
+import com.jaamsim.Samples.SampleListInput;
 import com.jaamsim.Samples.SampleProvider;
 import com.jaamsim.basicsim.EntityTarget;
 import com.jaamsim.events.EventHandle;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.EntityInput;
+import com.jaamsim.input.InterfaceEntityListInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
+import com.jaamsim.resourceObjects.ResourceProvider;
 import com.jaamsim.states.DowntimeUser;
 import com.jaamsim.states.StateEntity;
 import com.jaamsim.states.StateEntityListener;
@@ -84,6 +87,23 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 	         exampleList = {"48 h"})
 	protected final SampleInput completionTimeLimit;
 
+	@Keyword(description = "Resources required to perform the maintenance process. "
+	                     + "If any of the resources are not available at the start of downtime, "
+	                     + "the maintenance duration will be delayed until the resources can be "
+	                     + "seized. "
+	                     + "All the resource units must be available to be seized before any one "
+	                     + "unit is seized.",
+	         exampleList = {"Resource1 Resource2"})
+	protected final InterfaceEntityListInput<ResourceProvider> resourceList;
+
+	@Keyword(description = "The number of units to seize from the Resources specified by the "
+	                     + "'ResourceList' keyword. "
+	                     + "The last value in the list is used if the number of resources is "
+	                     + "greater than the number of values. "
+	                     + "Only an integer number of resource units can be seized. "
+	                     + "A decimal value will be truncated to an integer.",
+	         exampleList = {"2 1", "{ 2 } { 1 }", "{ DiscreteDistribution1 } { 'this.obj.attrib1 + 1' }"})
+	private final SampleListInput numberOfUnitsList;
 
 	private final ArrayList<DowntimeUser> downtimeUserList;  // entities that use this downtime entity
 	private boolean down;             // true for the duration of a downtime event
@@ -150,6 +170,16 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 		completionTimeLimit.setUnitType(TimeUnit.class);
 		completionTimeLimit.setOutput(true);
 		this.addInput(completionTimeLimit);
+		ArrayList<ResourceProvider> resDef = new ArrayList<>();
+		resourceList = new InterfaceEntityListInput<>(ResourceProvider.class, "ResourceList", KEY_INPUTS, resDef);
+		this.addInput(resourceList);
+
+		numberOfUnitsList = new SampleListInput("NumberOfUnits", KEY_INPUTS, 1);
+		numberOfUnitsList.setValidRange(0, Double.POSITIVE_INFINITY);
+		numberOfUnitsList.setDimensionless(true);
+		numberOfUnitsList.setUnitType(DimensionlessUnit.class);
+		numberOfUnitsList.setIntegerValue(true);
+		this.addInput(numberOfUnitsList);
 	}
 
 	public DowntimeEntity(){
