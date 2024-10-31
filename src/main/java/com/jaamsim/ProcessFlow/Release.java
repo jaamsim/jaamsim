@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018-2022 JaamSim Software Inc.
+ * Copyright (C) 2018-2024 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import com.jaamsim.input.InterfaceEntityListInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.resourceObjects.AbstractResourceProvider;
 import com.jaamsim.resourceObjects.ResourceProvider;
+import com.jaamsim.resourceObjects.ResourceUserDelegate;
 import com.jaamsim.units.DimensionlessUnit;
 
 public class Release extends LinkedComponent {
@@ -41,6 +42,8 @@ public class Release extends LinkedComponent {
 	                     + "A decimal value will be truncated to an integer.",
 	         exampleList = {"2 1", "{ 2 } { 1 }", "{ DiscreteDistribution1 } { 'this.obj.attrib1 + 1' }"})
 	private final SampleListInput numberOfUnitsList;
+
+	private ResourceUserDelegate resUserDelegate;
 
 	{
 		resourceList = new InterfaceEntityListInput<>(ResourceProvider.class, "ResourceList", KEY_INPUTS, null);
@@ -59,6 +62,12 @@ public class Release extends LinkedComponent {
 	public Release() {}
 
 	@Override
+	public void earlyInit() {
+		super.earlyInit();
+		resUserDelegate = new ResourceUserDelegate(resourceList.getValue());
+	}
+
+	@Override
 	public void addEntity( DisplayEntity ent ) {
 		super.addEntity(ent);
 		this.releaseResources(ent);
@@ -73,13 +82,8 @@ public class Release extends LinkedComponent {
 		ArrayList<ResourceProvider> resList = resourceList.getValue();
 
 		// Release the Resources
-		for(int i=0; i<resList.size(); i++) {
-			int ind = Math.min(i, numberOfUnitsList.getListSize() - 1);
-			int n = (int) numberOfUnitsList.getNextSample(ind, this, simTime);
-			if (n == 0)
-				continue;
-			resList.get(i).release(n, ent);
-		}
+		int[] nums = numberOfUnitsList.getNextIntegers(this, simTime, resList.size());
+		resUserDelegate.releaseResources(nums, ent);
 
 		// Notify any resource users that are waiting for these Resources
 		AbstractResourceProvider.notifyResourceUsers(resList);
