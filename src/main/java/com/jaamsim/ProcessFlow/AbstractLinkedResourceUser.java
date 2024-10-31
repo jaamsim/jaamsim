@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2017-2023 JaamSim Software Inc.
+ * Copyright (C) 2017-2024 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@ import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.resourceObjects.ResourceProvider;
 import com.jaamsim.resourceObjects.ResourceUser;
+import com.jaamsim.resourceObjects.ResourceUserDelegate;
 import com.jaamsim.units.DimensionlessUnit;
 
 public abstract class AbstractLinkedResourceUser extends LinkedService implements ResourceUser {
@@ -56,6 +57,7 @@ public abstract class AbstractLinkedResourceUser extends LinkedService implement
 	         exampleList = {"2 1", "{ 2 } { 1 }", "{ DiscreteDistribution1 } { 'this.obj.attrib1 + 1' }"})
 	private final SampleListInput numberOfUnitsList;
 
+	private ResourceUserDelegate resUserDelegate;
 	private int[] seizedUnits = new int[1];  // resource units seized by the last entity
 
 	{
@@ -77,7 +79,8 @@ public abstract class AbstractLinkedResourceUser extends LinkedService implement
 	@Override
 	public void earlyInit() {
 		super.earlyInit();
-		seizedUnits = new int[resourceList.getListSize()];
+		resUserDelegate = new ResourceUserDelegate(resourceList.getValue());
+		seizedUnits = new int[resUserDelegate.getListSize()];
 	}
 
 	@Override
@@ -113,7 +116,8 @@ public abstract class AbstractLinkedResourceUser extends LinkedService implement
 		setEntityState(ent);
 
 		// Seize the resources
-		this.seizeResources();
+		seizedUnits = numberOfUnitsList.getNextIntegers(this, simTime, resUserDelegate.getListSize());
+		seizeResources(seizedUnits, ent);
 
 		// Assign attributes
 		assignAttributesAtStart(simTime);
@@ -121,12 +125,7 @@ public abstract class AbstractLinkedResourceUser extends LinkedService implement
 
 	@Override
 	public boolean hasStrictResource() {
-		for (ResourceProvider res : getResourceList()) {
-			if (res.isStrictOrder()) {
-				return true;
-			}
-		}
-		return false;
+		return resUserDelegate.hasStrictResource();
 	}
 
 	@Override
@@ -151,50 +150,32 @@ public abstract class AbstractLinkedResourceUser extends LinkedService implement
 		DisplayEntity oldEnt = this.getReceivedEntity(simTime);
 		this.setReceivedEntity(ent);
 
-		ArrayList<ResourceProvider> resList = getResourceList();
-		for (int i=0; i<resList.size(); i++) {
-			int ind = Math.min(i, numberOfUnitsList.getListSize() - 1);
-			int n = (int) numberOfUnitsList.getNextSample(ind, this, simTime);
-			if (!resList.get(i).canSeize(simTime, n, ent)) {
-				this.setReceivedEntity(oldEnt);
-				return false;
-			}
-		}
+		int[] nums = numberOfUnitsList.getNextIntegers(this, simTime, resUserDelegate.getListSize());
+		boolean ret = resUserDelegate.canSeizeResources(simTime, nums, ent);
+
+		// Reset the obj entity
 		this.setReceivedEntity(oldEnt);
-		return true;
+		return ret;
 	}
 
 	/**
 	 * Seize the required Resources.
 	 */
-	public void seizeResources() {
-		double simTime = this.getSimTime();
-		if (getResourceList().isEmpty())
-			return;
+	public void seizeResources(int[] nums, DisplayEntity ent) {
+		resUserDelegate.seizeResources(nums, ent);
+	}
 
-		// Set the number of resources to seize
-		ArrayList<ResourceProvider> resList = getResourceList();
-		for (int i = 0; i < numberOfUnitsList.getListSize(); i++) {
-			int ind = Math.min(i, numberOfUnitsList.getListSize() - 1);
-			seizedUnits[i] = (int) numberOfUnitsList.getNextSample(ind, this, simTime);
-		}
-
-		// Seize the resources
-		DisplayEntity ent = getReceivedEntity(simTime);
-		for (int i=0; i<resList.size(); i++) {
-			resList.get(i).seize(seizedUnits[i], ent);
-		}
+	public void releaseResources(int[] nums, DisplayEntity ent) {
+		resUserDelegate.releaseResources(nums, ent);
 	}
 
 	public ArrayList<ResourceProvider> getResourceList() {
-		return resourceList.getValue();
+		return resUserDelegate.getResourceList();
 	}
 
 	@Override
 	public boolean requiresResource(ResourceProvider res) {
-		if (getResourceList() == null)
-			return false;
-		return getResourceList().contains(res);
+		return resUserDelegate.requiresResource(res);
 	}
 
 	@Output(name = "SeizedUnits",
