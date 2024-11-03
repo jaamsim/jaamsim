@@ -405,16 +405,10 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 
 		// Determine the time when the downtime event will be over
 		double downDuration = this.getDowntimeDuration();
-
-		// Calendar time based
 		StateEntity durWorkingEnt = durationWorkingEntity.getValue();
-		if (durWorkingEnt == null) {
-			secondsForNextRepair = this.getSimTime() + downDuration;
-		}
-		// Working time based
-		else {
+		secondsForNextRepair = getSimTime() + downDuration;
+		if (durWorkingEnt != null)
 			secondsForNextRepair = durWorkingEnt.getWorkingTime() + downDuration;
-		}
 
 		endTime = startTime + downDuration;
 
