@@ -490,10 +490,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener, 
 	private void setDown(boolean b) {
 		if (isTraceFlag()) this.trace(1, "setDown(%s)", b);
 		down = b;
-		if (down)
-			setPresentState(STATE_DOWNTIME);
-		else
-			setPresentState(STATE_WORKING);
+		setPresentState();
 	}
 
 	final void endDowntime() {
@@ -658,6 +655,13 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener, 
 	@Override
 	public boolean hasStrictResource() {
 		return resUserDelegate.hasStrictResource();
+	}
+
+	public void setPresentState() {
+		if (down)
+			setPresentState(STATE_DOWNTIME);
+		else
+			setPresentState(STATE_WORKING);
 	}
 
 	// ******************************************************************************************************
