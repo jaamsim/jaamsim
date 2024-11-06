@@ -327,6 +327,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener, 
 	 * entity affected by this type of maintenance changes state.
 	 */
 	public void checkProcessNetwork() {
+		if (isTraceFlag()) trace(0, "checkProcessNetwork");
 
 		// Schedule the next downtime event
 		StateEntity iatWorkingEnt = iatWorkingEntity.getValue();
@@ -337,12 +338,14 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener, 
 					workingSecs = iatWorkingEnt.getWorkingTime();
 				double waitSecs = Math.max(secondsForNextFailure - workingSecs, 0.0d);
 				scheduleProcess(waitSecs, 5, scheduleDowntimeTarget, scheduleDowntimeHandle);
+				if (isTraceFlag()) traceLine(1, "downtime event scheduled - waitSecs=%s", waitSecs);
 			}
 		}
 		// the next event is already scheduled.  If the working entity has stopped working, need to cancel the event
 		else {
 			if (iatWorkingEnt != null && !iatWorkingEnt.isWorkingState()) {
 				EventManager.killEvent(scheduleDowntimeHandle);
+				if (isTraceFlag()) traceLine(1, "downtime event canceled");
 			}
 		}
 
@@ -354,6 +357,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener, 
 				return;
 			resUserDelegate.seizeResources(nums, this);
 			seizedUnits = nums;
+			if (isTraceFlag()) traceLine(1, "resources seized");
 
 			// Determine the time when the downtime event will be over
 			StateEntity durWorkingEnt = durationWorkingEntity.getValue();
@@ -375,12 +379,14 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener, 
 					workingSecs = durWorkingEnt.getWorkingTime();
 				double waitSecs = secondsForNextRepair - workingSecs;
 				scheduleProcess(waitSecs, 5, endDowntimeTarget, endDowntimeHandle);
+				if (isTraceFlag()) traceLine(1, "downtime end event scheduled - waitSecs=%s", waitSecs);
 				return;
 			}
 
 			// The Entity is not working, remove scheduled end of the downtime event
 			if (durWorkingEnt != null && !durWorkingEnt.isWorkingState()) {
 				EventManager.killEvent(endDowntimeHandle);
+				if (isTraceFlag()) traceLine(1, "downtime end event canceled");
 			}
 		}
 
@@ -434,6 +440,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener, 
 		else {
 			secondsForNextFailure = iatWorkingEnt.getWorkingTime() + getNextDowntimeIAT();
 		}
+		if (isTraceFlag()) trace(0, "scheduleDowntime - secondsForNextFailure=%s", secondsForNextFailure);
 
 		// prepare all entities for the downtime event
 		for (DowntimeUser each : downtimeUserList) {
@@ -456,6 +463,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener, 
 	 * When enough working hours have been accumulated by WorkingEntity, trigger all entities in downtimeUserList to perform downtime
 	 */
 	private void startDowntime() {
+		if (isTraceFlag()) trace(0, "startDowntime");
 		setDown(true);
 
 		startTime = this.getSimTime();
@@ -489,6 +497,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener, 
 	}
 
 	final void endDowntime() {
+		if (isTraceFlag()) trace(0, "endDowntime");
 		setDown(false);
 
 		numberCompleted++;
