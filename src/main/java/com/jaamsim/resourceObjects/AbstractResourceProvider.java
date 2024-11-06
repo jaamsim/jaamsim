@@ -26,8 +26,6 @@ import com.jaamsim.BooleanProviders.BooleanProvInput;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Statistics.TimeBasedFrequency;
 import com.jaamsim.Statistics.TimeBasedStatistics;
-import com.jaamsim.basicsim.Entity;
-import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.units.DimensionlessUnit;
@@ -117,23 +115,6 @@ public abstract class AbstractResourceProvider extends DisplayEntity implements 
 		stats.addValue(simTime, getUnitsInUse());
 		freq.clear();
 		freq.addValue(simTime, getUnitsInUse());
-	}
-
-	/**
-	 * Returns a list of the ResourceUsers (such as Seize) that want to seize the specified
-	 * ResourceProvider (such as ResourcePool).
-	 * @param pool - specified ResourceProvider
-	 * @return list of ResourceUsers that want to seize this ResourceProvider
-	 */
-	public static ArrayList<ResourceUser> getUserList(ResourceProvider pool) {
-		ArrayList<ResourceUser> ret = new ArrayList<>();
-		JaamSimModel simModel = ((Entity) pool).getJaamSimModel();
-		for (Entity ent : simModel.getClonesOfIterator(Entity.class, ResourceUser.class)) {
-			ResourceUser ru = (ResourceUser) ent;
-			if (ru.requiresResource(pool))
-				ret.add(ru);
-		}
-		return ret;
 	}
 
 	public static void notifyResourceUsers(ResourceProvider prov) {
