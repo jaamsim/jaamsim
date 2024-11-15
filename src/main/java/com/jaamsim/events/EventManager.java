@@ -174,10 +174,7 @@ public final class EventManager {
 			// If the event has a captured process, pass control to it
 			Thread p = t.getProcess();
 			if (p != null) {
-				ThreadEntry te = new ThreadEntry(this, p, runningProc.get());
-				((WaitTarget)t).eventWake();
-				runningProc.set(te);
-				threadWait(te.next);
+				pushProcess(t);
 				return;
 			}
 
@@ -411,13 +408,44 @@ public final class EventManager {
 	}
 
 	/**
-	// Pause the current active thread and restart the next thread on the
-	// active thread list. For this case, a future event or conditional event
-	// has been created for the current thread.  Called by
-	// eventManager.scheduleWait() and related methods, and by
-	// eventManager.waitUntil().
-	// restorePreviousActiveThread()
-	 * Must hold the lockObject when calling this method.
+	 * Pass control to a thread when starting or interrupting a event, wait on
+	 * the condition in the currently running ThreadEntry.
+	 */
+	private void pushProcess(ProcessTarget t) {
+		Thread proc = t.getProcess();
+		ThreadEntry te = runningProc.get();
+		if (proc == null) {
+			runningProc.set(new ThreadEntry(this, this.allocateThread(), te));
+			startTarget = t;
+		}
+		else {
+			runningProc.set(new ThreadEntry(this, proc, te));
+			((WaitTarget)t).eventWake();
+		}
+
+		/*
+		 * Halt the thread and only wake up by being interrupted.
+		 *
+		 * The infinite loop is _absolutely_ necessary to prevent
+		 * spurious wakeups from waking us early....which causes the
+		 * model to get into an inconsistent state causing crashes.
+		 */
+		while (true) {
+			te.cond.awaitUninterruptibly();
+			if (te.dieFlag.get())
+				throw new ThreadKilledException("Thread killed");
+
+			if (runningProc.get().proc == Thread.currentThread())
+				break;
+
+			System.out.println("Spurious wakeup in EventManager eventStack." + Thread.currentThread());
+		}
+	}
+
+	/**
+	 * Capture a running thread in a wait or conditional wait using the condition in the
+	 * WaitTarget argument. Signal the next thread in the stack to continue running or allocate
+	 * a new thread if the event thread is being captured.
 	 */
 	private void captureProcess(WaitTarget t) {
 		// if we don't wake a new process, take one from the pool
@@ -608,10 +636,7 @@ public final class EventManager {
 			enableSchedule();
 		}
 
-		ThreadEntry te = new ThreadEntry(this, this.allocateThread(), runningProc.get());
-		startTarget = t;
-		runningProc.set(te);
-		threadWait(te.next);
+		pushProcess(t);
 	}
 
 	/**
@@ -716,19 +741,7 @@ public final class EventManager {
 			enableSchedule();
 		}
 		ProcessTarget t = rem(handle);
-
-		Thread proc = t.getProcess();
-		ThreadEntry te;
-		if (proc == null) {
-			te = new ThreadEntry(this, this.allocateThread(), runningProc.get());
-			startTarget = t;
-		}
-		else {
-			te = new ThreadEntry(this, proc, runningProc.get());
-			((WaitTarget)t).eventWake();
-		}
-		runningProc.set(te);
-		threadWait(te.next);
+		pushProcess(t);
 	}
 
 	private void trcInterrupt(BaseEvent event) {
@@ -761,39 +774,6 @@ public final class EventManager {
 			cond = evt.getWaitCondition();
 			proc = p;
 			dieFlag = new AtomicBoolean(false);
-		}
-	}
-
-	/**
-	 * Locks the calling thread in an inactive state to the global lock.
-	 * When a new thread is created, and the current thread has been pushed
-	 * onto the inactive thread stack it must be put to sleep to preserve
-	 * program ordering.
-	 * <p>
-	 * The function takes no parameters, it puts the calling thread to sleep.
-	 * This method is NOT static as it requires the use of wait() which cannot
-	 * be called from a static context
-	 * <p>
-	 * There is a synchronized block of code that will acquire the global lock
-	 * and then wait() the current thread.
-	 */
-	private void threadWait(ThreadEntry te) {
-		/*
-		 * Halt the thread and only wake up by being interrupted.
-		 *
-		 * The infinite loop is _absolutely_ necessary to prevent
-		 * spurious wakeups from waking us early....which causes the
-		 * model to get into an inconsistent state causing crashes.
-		 */
-		while (true) {
-			te.cond.awaitUninterruptibly();
-			if (te.dieFlag.get())
-				throw new ThreadKilledException("Thread killed");
-
-			if (runningProc.get().proc == Thread.currentThread())
-				break;
-
-			System.out.println("Spurious wakeup in EventManager eventStack." + Thread.currentThread());
 		}
 	}
 
