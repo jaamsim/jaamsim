@@ -367,8 +367,6 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener, 
 			secondsForNextRepair = simTime + downDuration;
 			if (durWorkingEnt != null)
 				secondsForNextRepair = durWorkingEnt.getWorkingTime() + downDuration;
-
-			endTime = simTime + downDuration;
 		}
 
 		// 1) Determine when to end the current downtime event
@@ -382,6 +380,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener, 
 					workingSecs = durWorkingEnt.getWorkingTime();
 				double waitSecs = secondsForNextRepair - workingSecs;
 				scheduleProcess(waitSecs, 5, endDowntimeTarget, endDowntimeHandle);
+				endTime = getSimTime() + waitSecs;
 				if (isTraceFlag()) traceLine(1, "downtime end event scheduled - waitSecs=%s", waitSecs);
 				return;
 			}
