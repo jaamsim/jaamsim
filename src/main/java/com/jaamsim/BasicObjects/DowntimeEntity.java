@@ -123,6 +123,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener, 
 	private double downDuration;     // repair time for the latest downtime event
 
 	private static final String STATE_DOWNTIME = "Downtime";
+	private static final String STATE_WAITING_FOR_RESOURCES = "WaitingForResources";
 
 	private int numLateEvents;    // Number of events that did not finish within the completion time limit
 	private double targetCompletionTime; // the time that the latest downtime event should be completed
@@ -276,7 +277,8 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener, 
 	 */
 	@Override
 	public boolean isValidState(String state) {
-		return STATE_WORKING.equals(state) || STATE_DOWNTIME.equals(state);
+		return STATE_WORKING.equals(state) || STATE_DOWNTIME.equals(state)
+				|| STATE_WAITING_FOR_RESOURCES.equals(state);
 	}
 
 	/**
@@ -357,6 +359,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener, 
 				return;
 			resUserDelegate.seizeResources(nums, this);
 			seizedUnits = nums;
+			setPresentState();
 			if (isTraceFlag()) traceLine(1, "resources seized");
 
 			// Determine the time when the downtime event will be over
@@ -658,6 +661,10 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener, 
 	}
 
 	public void setPresentState() {
+		if (isWaitingForResources()) {
+			setPresentState(STATE_WAITING_FOR_RESOURCES);
+			return;
+		}
 		if (down)
 			setPresentState(STATE_DOWNTIME);
 		else
@@ -760,8 +767,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener, 
 		double total = simTime;
 		if (simTime > getSimulation().getInitializationTime())
 			total -= getSimulation().getInitializationTime();
-		double down = this.getTimeInState(simTime, STATE_DOWNTIME);
-		return 1.0d - down/total;
+		return getTimeInState(simTime, STATE_WORKING) / total;
 	}
 
 	@Output(name = "LateEvents",
