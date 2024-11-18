@@ -238,6 +238,8 @@ public final class EventManager {
 			}
 
 			enableSchedule();
+
+			//TODO: fix to avoid calling multiple times when a scheduled event waits
 			timelistener.timeRunning();
 
 			// Loop continuously
