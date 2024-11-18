@@ -1286,7 +1286,6 @@ public class Entity {
 		if (clonePool == null)
 			clonePool = new ArrayList<>();
 		clone.setFlag(Entity.FLAG_POOLED);
-		clone.resetNameInput();
 		clonePool.add(clone);
 	}
 
@@ -1301,6 +1300,7 @@ public class Entity {
 			return null;
 		Entity ret = clonePool.remove(clonePool.size() - 1);
 		ret.clearFlag(Entity.FLAG_POOLED);
+		ret.resetNameInput();
 
 		// Reset any inputs that were changed
 		if (ret.isEdited()) {
