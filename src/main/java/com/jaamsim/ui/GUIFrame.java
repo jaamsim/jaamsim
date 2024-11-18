@@ -3612,14 +3612,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		if (ent instanceof SubModel && ((SubModel) ent).hasClone())
 			throw new ErrorException("Cannot delete a SubModel that has one or more clones.");
 
-		// Delete any child entities
-		for (Entity child : ent.getChildren()) {
-			if (child.isGenerated() || child instanceof EntityLabel)
-				child.kill();
-			else
-				deleteEntity(child);
-		}
-
 		// Delete any clones
 		for (Entity clone : ent.getAllClones()) {
 			if (clone.isGenerated() || clone instanceof EntityLabel)
@@ -3634,7 +3626,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			// Reset the Region input for the entities in this region
 			KeywordIndex kw = InputAgent.formatArgs("Region");
 			for (DisplayEntity e : sim.getClonesOfIterator(DisplayEntity.class)) {
-				if (e == ent || e.getInput("Region").getValue() != ent)
+				if (e == ent || e.getParent() == ent
+						|| e.getInput("Region").getValue() != ent)
 					continue;
 				InputAgent.storeAndExecute(new CoordinateCommand(e, kw));
 			}
@@ -3642,17 +3635,12 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 		// DisplayEntity
 		if (ent instanceof DisplayEntity) {
-			DisplayEntity dEnt = (DisplayEntity) ent;
-
-			// Kill the label
-			EntityLabel label = EntityLabel.getLabel(dEnt);
-			if (label != null)
-				deleteEntity(label);
 
 			// Reset the RelativeEntity input for entities
 			KeywordIndex kw = InputAgent.formatArgs("RelativeEntity");
 			for (DisplayEntity e : sim.getClonesOfIterator(DisplayEntity.class)) {
-				if (e == ent || e.getInput("RelativeEntity").getValue() != ent)
+				if (e == ent || e.getParent() == ent
+						|| e.getInput("RelativeEntity").getValue() != ent)
 					continue;
 				InputAgent.storeAndExecute(new CoordinateCommand(e, kw));
 			}
@@ -3660,7 +3648,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 		// Delete any references to this entity in the inputs to other entities
 		for (Entity e : getJaamSimModel().getClonesOfIterator(Entity.class)) {
-			if (e == ent)
+			if (e == ent || e.getParent() == ent)
 				continue;
 			ArrayList<KeywordIndex> oldKwList = new ArrayList<>();
 			ArrayList<KeywordIndex> newKwList = new ArrayList<>();

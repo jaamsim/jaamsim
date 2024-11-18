@@ -446,6 +446,10 @@ public class DisplayEntity extends Entity {
 
 	@Override
 	public void addChild(Entity ent) {
+		// If the entity is dead, it already has a hashmap of its children
+		if (isDead())
+			return;
+
 		synchronized (namedChildren) {
 			if (namedChildren.get(ent.getLocalName()) != null)
 				throw new ErrorException("Entity name: %s is already in use.", ent.getName());
@@ -455,6 +459,10 @@ public class DisplayEntity extends Entity {
 
 	@Override
 	public void removeChild(Entity ent) {
+		// If the entity is dead, then retain its hashmap of children
+		if (isDead())
+			return;
+
 		synchronized (namedChildren) {
 			if (ent != namedChildren.remove(ent.getLocalName()))
 				throw new ErrorException("Named Children Internal Consistency error: %s", ent);

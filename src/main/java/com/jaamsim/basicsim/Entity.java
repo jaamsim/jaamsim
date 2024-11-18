@@ -336,10 +336,6 @@ public class Entity {
 	public void setInputsForDragAndDrop() {}
 
 	public void kill() {
-		for (Entity ent : getChildren()) {
-			ent.kill();
-		}
-
 		for (Entity clone : getCloneList()) {
 			clone.prototype = null;
 			clone.kill();
@@ -349,21 +345,34 @@ public class Entity {
 		if (prototype != null && isRegistered())
 			prototype.removeClone(this);
 
-		if (this.isDead())
-			return;
-		simModel.removeInstance(this);
-		setFlag(Entity.FLAG_DEAD);
+		// Remove the entity from the model
+		if (!isDead()) {
+			simModel.removeInstance(this);
+			setFlag(Entity.FLAG_DEAD);
+		}
+
+		// Kill the children after the parent entity
+		for (Entity ent : getChildren()) {
+			ent.kill();
+		}
 	}
 
 	/**
 	 * Reverses the actions taken by the kill method.
 	 */
 	public void restore() {
+
+		// Restore the children before the parent entity
+		for (Entity ent : getChildren()) {
+			ent.restore();
+		}
+
+		// Restore the entity to the model
 		simModel.restoreInstance(this);
 		this.clearFlag(Entity.FLAG_DEAD);
+
 		if (prototype != null && isRegistered())
 			prototype.addClone(this);
-		postDefine();
 	}
 
 	/**
