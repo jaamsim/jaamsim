@@ -17,7 +17,6 @@
  */
 package com.jaamsim.Graphics;
 
-import com.jaamsim.Commands.DefineCommand;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.GUIListener;
 import com.jaamsim.basicsim.JaamSimModel;
@@ -194,22 +193,13 @@ public class EntityLabel extends TextBasics {
 	 * @param undo - true if undo is to be enabled
 	 * @return label object
 	 */
-	public static EntityLabel createLabel(DisplayEntity ent, boolean undo) {
-		EntityLabel label = getLabel(ent);
-		if (label != null)
-			return label;
+	public static EntityLabel createLabel(DisplayEntity ent) {
 
 		// Create the EntityLabel object
 		JaamSimModel simModel = ent.getJaamSimModel();
 		String name = InputAgent.getUniqueName(simModel, ent.getName() + ".Label", "");
 		EntityLabel proto = EntityLabel.getLabel(ent.getPrototype());
-		if (undo) {
-			InputAgent.storeAndExecute(new DefineCommand(simModel, EntityLabel.class, proto, name));
-			label = (EntityLabel)simModel.getNamedEntity(name);
-		}
-		else {
-			label = InputAgent.defineEntityWithUniqueName(simModel, EntityLabel.class, proto, name, "", true);
-		}
+		EntityLabel label = InputAgent.defineEntityWithUniqueName(simModel, EntityLabel.class, proto, name, "", true);
 
 		// Set the label's position
 		Vec3d pos = label.getDefaultPosition();
@@ -236,7 +226,7 @@ public class EntityLabel extends TextBasics {
 		if (label == null) {
 			if (!bool)
 				return;
-			label = EntityLabel.createLabel(ent, true);
+			label = EntityLabel.createLabel(ent);
 		}
 
 		// Show or hide the label
@@ -248,7 +238,7 @@ public class EntityLabel extends TextBasics {
 	public static void showTemporaryLabel(DisplayEntity ent) {
 		EntityLabel label = getLabel(ent);
 		if (label == null) {
-			label = EntityLabel.createLabel(ent, false);
+			label = EntityLabel.createLabel(ent);
 			InputAgent.applyBoolean(label, "Show", false);
 		}
 	}
