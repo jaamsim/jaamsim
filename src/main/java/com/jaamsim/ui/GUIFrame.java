@@ -1062,7 +1062,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 					File file = chooser.getSelectedFile();
 					try {
 						simModel.loadFile(file);
-						simModel.showTemporaryLabels( simModel.getSimulation().isShowLabels() );
+						if (simModel.getSimulation().isShowLabels())
+							simModel.showTemporaryLabels();
 						if (simModel.getNumErrors() > numErrors) {
 							throw new InputErrorException("%d input errors and %d warnings found",
 									simModel.getNumErrors() - numErrors,
@@ -1761,7 +1762,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				boolean bool = showLabels.isSelected();
 				KeywordIndex kw = InputAgent.formatBoolean("ShowLabels", bool);
 				InputAgent.storeAndExecute(new KeywordCommand(sim.getSimulation(), kw));
-				sim.showTemporaryLabels(bool);
+				if (bool)
+					sim.showTemporaryLabels();
 				updateUI();
 				controlStartResume.requestFocusInWindow();
 			}
@@ -4151,7 +4153,8 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		if (showLabels.isSelected() == bool)
 			return;
 		showLabels.setSelected(bool);
-		getJaamSimModel().showTemporaryLabels(bool);
+		if (bool)
+			getJaamSimModel().showTemporaryLabels();
 		updateUI();
 	}
 

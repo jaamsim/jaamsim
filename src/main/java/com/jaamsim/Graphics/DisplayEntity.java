@@ -400,7 +400,7 @@ public class DisplayEntity extends Entity {
 		// Add a label if required
 		if (getSimulation() != null && getSimulation().isShowLabels()
 				&& EntityLabel.canLabel(this)) {
-			EntityLabel.showTemporaryLabel(this, true);
+			EntityLabel.showTemporaryLabel(this);
 		}
 	}
 

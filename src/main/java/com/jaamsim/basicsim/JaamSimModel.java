@@ -680,7 +680,8 @@ public class JaamSimModel implements EventTimeListener {
 		rngMap.clear();
 
 		// Keep the labels and sub-models consistent with the gui
-		showTemporaryLabels(getSimulation().isShowLabels());
+		if (getSimulation().isShowLabels())
+			showTemporaryLabels();
 
 		// Perform earlyInit
 		for (Entity each : getClonesOfIterator(Entity.class)) {
@@ -1889,11 +1890,11 @@ public class JaamSimModel implements EventTimeListener {
 		return ret;
 	}
 
-	public void showTemporaryLabels(boolean bool) {
+	public void showTemporaryLabels() {
 		for (DisplayEntity ent : getClonesOfIterator(DisplayEntity.class)) {
 			if (!EntityLabel.canLabel(ent))
 				continue;
-			EntityLabel.showTemporaryLabel(ent, bool);
+			EntityLabel.showTemporaryLabel(ent);
 		}
 	}
 
