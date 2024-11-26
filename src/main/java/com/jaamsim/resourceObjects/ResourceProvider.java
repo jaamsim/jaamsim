@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2018-2020 JaamSim Software Inc.
+ * Copyright (C) 2018-2024 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,8 @@ package com.jaamsim.resourceObjects;
 import java.util.ArrayList;
 
 import com.jaamsim.Graphics.DisplayEntity;
+import com.jaamsim.basicsim.Entity;
+import com.jaamsim.basicsim.JaamSimModel;
 
 public interface ResourceProvider {
 
@@ -77,5 +79,22 @@ public interface ResourceProvider {
 	 * @return resource units that are assigned
 	 */
 	public int getUnitsInUse();
+
+	/**
+	 * Returns a list of the ResourceUsers (such as Seize) that want to seize the specified
+	 * ResourceProvider (such as ResourcePool).
+	 * @param pool - specified ResourceProvider
+	 * @return list of ResourceUsers that want to seize this ResourceProvider
+	 */
+	public static ArrayList<ResourceUser> getUserList(ResourceProvider pool) {
+		ArrayList<ResourceUser> ret = new ArrayList<>();
+		JaamSimModel simModel = ((Entity) pool).getJaamSimModel();
+		for (Entity ent : simModel.getClonesOfIterator(Entity.class, ResourceUser.class)) {
+			ResourceUser ru = (ResourceUser) ent;
+			if (ru.requiresResource(pool))
+				ret.add(ru);
+		}
+		return ret;
+	}
 
 }

@@ -324,4 +324,27 @@ public class SampleListInput extends ArrayListInput<SampleProvider> {
 		}
 	}
 
+	public double[] getNextDoubles(Entity thisEnt, double simTime) {
+		double[] ret = new double[getListSize()];
+		for (int i = 0; i < getListSize(); i++) {
+			ret[i] = getNextSample(i, thisEnt, simTime);
+			if (integerValue)
+				ret[i] = (int) ret[i];
+		}
+		return ret;
+	}
+
+	public int[] getNextIntegers(Entity thisEnt, double simTime) {
+		return getNextIntegers(thisEnt, simTime, getListSize());
+	}
+
+	public int[] getNextIntegers(Entity thisEnt, double simTime, int length) {
+		int[] ret = new int[length];
+		for (int i = 0; i < length; i++) {
+			int ind = Math.min(i, getListSize() - 1);
+			ret[i] = (int) getNextSample(ind, thisEnt, simTime);
+		}
+		return ret;
+	}
+
 }

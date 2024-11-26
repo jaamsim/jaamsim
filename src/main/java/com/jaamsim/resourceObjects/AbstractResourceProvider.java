@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2018-2023 JaamSim Software Inc.
+ * Copyright (C) 2018-2024 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,8 +26,6 @@ import com.jaamsim.BooleanProviders.BooleanProvInput;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Statistics.TimeBasedFrequency;
 import com.jaamsim.Statistics.TimeBasedStatistics;
-import com.jaamsim.basicsim.Entity;
-import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.units.DimensionlessUnit;
@@ -70,14 +68,18 @@ public abstract class AbstractResourceProvider extends DisplayEntity implements 
 	@Override
 	public void earlyInit() {
 		super.earlyInit();
-		userList = getUserList(this);
-
 		unitsSeized = 0;
 		unitsReleased = 0;
 		stats.clear();
 		stats.addValue(0.0d, 0);
 		freq.clear();
 		freq.addValue(0.0d,  0);
+	}
+
+	@Override
+	public void lateInit() {
+		super.lateInit();
+		userList = ResourceProvider.getUserList(this);
 	}
 
 	@Override
@@ -117,23 +119,6 @@ public abstract class AbstractResourceProvider extends DisplayEntity implements 
 		stats.addValue(simTime, getUnitsInUse());
 		freq.clear();
 		freq.addValue(simTime, getUnitsInUse());
-	}
-
-	/**
-	 * Returns a list of the ResourceUsers (such as Seize) that want to seize the specified
-	 * ResourceProvider (such as ResourcePool).
-	 * @param pool - specified ResourceProvider
-	 * @return list of ResourceUsers that want to seize this ResourceProvider
-	 */
-	public static ArrayList<ResourceUser> getUserList(ResourceProvider pool) {
-		ArrayList<ResourceUser> ret = new ArrayList<>();
-		JaamSimModel simModel = ((Entity) pool).getJaamSimModel();
-		for (Entity ent : simModel.getClonesOfIterator(Entity.class, ResourceUser.class)) {
-			ResourceUser ru = (ResourceUser) ent;
-			if (ru.requiresResource(pool))
-				ret.add(ru);
-		}
-		return ret;
 	}
 
 	public static void notifyResourceUsers(ResourceProvider prov) {

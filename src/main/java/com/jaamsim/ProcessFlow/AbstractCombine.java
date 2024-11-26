@@ -126,20 +126,7 @@ public abstract class AbstractCombine extends LinkedService {
 	}
 
 	public int[] getNumberRequired(double simTime) {
-
-		// Number of values enter by the user
-		int[] ret = new int[waitQueueList.getListSize()];
-		for (int i = 0; i < numberRequired.getListSize(); i++) {
-			int n = (int) numberRequired.getNextSample(i, this, simTime);
-			ret[i] = n;
-		}
-
-		// Additional copies of the last value needed to complete the list
-		int lastVal = ret[numberRequired.getListSize() - 1];
-		for (int i = numberRequired.getListSize(); i < waitQueueList.getListSize(); i++) {
-			ret[i] = lastVal;
-		}
-		return ret;
+		return numberRequired.getNextIntegers(this, simTime, waitQueueList.getListSize());
 	}
 
 	public boolean isMatchRequired(double simTime) {

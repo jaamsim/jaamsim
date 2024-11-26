@@ -17,9 +17,6 @@
  */
 package com.jaamsim.Graphics;
 
-import java.util.ArrayList;
-
-import com.jaamsim.Commands.DefineCommand;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.GUIListener;
 import com.jaamsim.basicsim.JaamSimModel;
@@ -28,8 +25,8 @@ import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InputCallback;
 import com.jaamsim.input.Keyword;
-import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.math.Vec3d;
+import com.jaamsim.render.VisibilityInfo;
 import com.jaamsim.units.DistanceUnit;
 
 public class EntityLabel extends TextBasics {
@@ -42,6 +39,8 @@ public class EntityLabel extends TextBasics {
 		desc.setHidden(true);
 		attributeDefinitionList.setHidden(true);
 		namedExpressionInput.setHidden(true);
+		visibleViews.setHidden(true);
+		drawRange.setHidden(true);
 
 		targetEntity = new EntityInput<>(DisplayEntity.class, "TargetEntity", KEY_INPUTS, null);
 		targetEntity.setCallback(inputCallback);
@@ -175,9 +174,11 @@ public class EntityLabel extends TextBasics {
 	}
 
 	private DisplayEntity getTarget() {
+		if (!targetEntity.isDef())
+			return targetEntity.getValue();
 		if (getParent() instanceof DisplayEntity)
 			return (DisplayEntity) getParent();
-		return targetEntity.getValue();
+		return null;
 	}
 
 	public void updateForTargetNameChange() {
@@ -192,32 +193,13 @@ public class EntityLabel extends TextBasics {
 	 * @param undo - true if undo is to be enabled
 	 * @return label object
 	 */
-	public static EntityLabel createLabel(DisplayEntity ent, boolean undo) {
-		EntityLabel label = getLabel(ent);
-		if (label != null)
-			return label;
+	public static EntityLabel createLabel(DisplayEntity ent) {
 
 		// Create the EntityLabel object
 		JaamSimModel simModel = ent.getJaamSimModel();
 		String name = InputAgent.getUniqueName(simModel, ent.getName() + ".Label", "");
 		EntityLabel proto = EntityLabel.getLabel(ent.getPrototype());
-		if (undo) {
-			InputAgent.storeAndExecute(new DefineCommand(simModel, EntityLabel.class, proto, name));
-			label = (EntityLabel)simModel.getNamedEntity(name);
-		}
-		else {
-			label = InputAgent.defineEntityWithUniqueName(simModel, EntityLabel.class, proto, name, "", true);
-		}
-
-		// Set the visible views to match its target entity
-		if (ent.getVisibleViews() != null) {
-			ArrayList<String> tokens = new ArrayList<>(ent.getVisibleViews().size());
-			for (View v : ent.getVisibleViews()) {
-				tokens.add(v.getName());
-			}
-			KeywordIndex kw = new KeywordIndex("VisibleViews", tokens, null);
-			InputAgent.apply(label, kw);
-		}
+		EntityLabel label = InputAgent.defineEntityWithUniqueName(simModel, EntityLabel.class, proto, name, "", true);
 
 		// Set the label's position
 		Vec3d pos = label.getDefaultPosition();
@@ -244,7 +226,7 @@ public class EntityLabel extends TextBasics {
 		if (label == null) {
 			if (!bool)
 				return;
-			label = EntityLabel.createLabel(ent, true);
+			label = EntityLabel.createLabel(ent);
 		}
 
 		// Show or hide the label
@@ -253,14 +235,10 @@ public class EntityLabel extends TextBasics {
 		InputAgent.applyBoolean(label, "Show", bool);
 	}
 
-	public static void showTemporaryLabel(DisplayEntity ent, boolean bool) {
-		if (!bool)
-			return;
-
-		// Does the label exist yet?
+	public static void showTemporaryLabel(DisplayEntity ent) {
 		EntityLabel label = getLabel(ent);
 		if (label == null) {
-			label = EntityLabel.createLabel(ent, false);
+			label = EntityLabel.createLabel(ent);
 			InputAgent.applyBoolean(label, "Show", false);
 		}
 	}
@@ -285,6 +263,14 @@ public class EntityLabel extends TextBasics {
 	public boolean getShow(double simTime) {
 		return (super.getShow(simTime) || getSimulation().isShowLabels())
 				&& getTarget() != null && getTarget().getShow(simTime) && getTarget().isMovable();
+	}
+
+	@Override
+	public VisibilityInfo getVisibilityInfo() {
+		DisplayEntity target = getTarget();
+		if (target == null)
+			return null;
+		return target.getVisibilityInfo();
 	}
 
 }

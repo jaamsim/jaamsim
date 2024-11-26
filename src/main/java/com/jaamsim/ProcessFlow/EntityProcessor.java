@@ -241,9 +241,7 @@ public class EntityProcessor extends AbstractLinkedResourceUser {
 			entryList.remove(entry);
 
 			// Release the resources
-			for (int i = 0; i < entry.resourceUnits.length; i++) {
-				getResourceList().get(i).release(entry.resourceUnits[i], entry.entity);
-			}
+			releaseResources(entry.resourceUnits, entry.entity);
 
 			// Pass the entity to the next component
 			sendToNextComponent(entry.entity);

@@ -87,6 +87,7 @@ import com.jaamsim.render.LineProxy;
 import com.jaamsim.render.MeshDataCache;
 import com.jaamsim.render.MeshProtoKey;
 import com.jaamsim.render.OffscreenTarget;
+import com.jaamsim.render.PointProxy;
 import com.jaamsim.render.PreviewCache;
 import com.jaamsim.render.RenderProxy;
 import com.jaamsim.render.RenderUtils;
@@ -2469,7 +2470,7 @@ public class RenderManager implements DragSourceListener {
 			if (!ent.getShow() || ent instanceof EntityLabel || ent instanceof OverlayEntity
 					|| ent instanceof Region)
 				continue;
-			Vec3d sink = ent.getGlobalPosition();
+			Vec3d sink = ent.getGlobalCentre();
 			double sinkRadius = 2.0d * ent.getMinRadius();
 
 			// Set the arrow head size for the region
@@ -2500,9 +2501,14 @@ public class RenderManager implements DragSourceListener {
 					continue;
 
 				// Show an arrow for each reference
-				Vec3d source = ((DisplayEntity) ref).getGlobalPosition();
+				Vec3d source = ((DisplayEntity) ref).getGlobalCentre();
 				double sourceRadius = 0.0d;
 				addLink(source, sink, sourceRadius, sinkRadius, REF_LINK_COLOUR, arrowSize, delta, scene);
+
+				// Show a dot at the start of the arrow
+				List<Vec4d> pl = new ArrayList<>(1);
+				pl.add(new Vec4d(source.x, source.y, source.z + delta, 0.0d));
+				scene.add(new PointProxy(pl, REF_LINK_COLOUR, 5, DisplayModel.ALWAYS, 0));
 			}
 		}
 	}

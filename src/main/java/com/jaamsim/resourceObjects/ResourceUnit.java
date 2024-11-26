@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2018-2023 JaamSim Software Inc.
+ * Copyright (C) 2018-2024 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -127,7 +127,6 @@ public class ResourceUnit extends StateUserEntity implements Seizable, ResourceP
 		presentAssignment = null;
 		assignmentTicks = -1L;
 		lastReleaseTicks = 0L;
-		userList = AbstractResourceProvider.getUserList(this);
 
 		unitsSeized = 0;
 		unitsReleased = 0;
@@ -135,6 +134,12 @@ public class ResourceUnit extends StateUserEntity implements Seizable, ResourceP
 		stats.addValue(0.0d, 0);
 		freq.clear();
 		freq.addValue(0.0d,  0);
+	}
+
+	@Override
+	public void lateInit() {
+		super.lateInit();
+		userList = ResourceProvider.getUserList(this);
 	}
 
 	@Override

@@ -134,12 +134,12 @@ public class ExpEvaluator {
 			for (Map.Entry<Entity, String> entEntry : entityReferences.entrySet()) {
 				Entity ent = entEntry.getKey();
 				String oldName = entEntry.getValue();
-				if (ent.getName() != null && ent.getName().equals(oldName)) {
+				if (ent.getName() != null && ent.getName().equals(oldName) && !ent.isDead()) {
 					// This name did not change
 					continue;
 				}
 				String newName = ent.getName();
-				if (ent.getName() == null) {
+				if (ent.getName() == null || ent.isDead()) {
 					// An entity with a null name means the entity has been deleted
 					newName = "**DeletedEntity**";
 				}

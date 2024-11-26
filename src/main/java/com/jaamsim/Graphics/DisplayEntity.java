@@ -130,12 +130,12 @@ public class DisplayEntity extends Entity {
 	private final BooleanProvInput movable;
 
 	@Keyword(description = "The view windows on which this entity will be visible.")
-	private final EntityListInput<View> visibleViews;
+	protected final EntityListInput<View> visibleViews;
 
 	@Keyword(description = "The minimum and maximum distance from the camera for which this "
 	                     + "entity is displayed.",
 	         exampleList = {"0 100 m"})
-	private final ValueListInput drawRange;
+	protected final ValueListInput drawRange;
 
 	private final LinkedHashMap<String, Entity> namedChildren = new LinkedHashMap<>();
 
@@ -400,7 +400,7 @@ public class DisplayEntity extends Entity {
 		// Add a label if required
 		if (getSimulation() != null && getSimulation().isShowLabels()
 				&& EntityLabel.canLabel(this)) {
-			EntityLabel.showTemporaryLabel(this, true);
+			EntityLabel.showTemporaryLabel(this);
 		}
 	}
 
@@ -446,6 +446,10 @@ public class DisplayEntity extends Entity {
 
 	@Override
 	public void addChild(Entity ent) {
+		// If the entity is dead, it already has a hashmap of its children
+		if (isDead())
+			return;
+
 		synchronized (namedChildren) {
 			if (namedChildren.get(ent.getLocalName()) != null)
 				throw new ErrorException("Entity name: %s is already in use.", ent.getName());
@@ -455,6 +459,10 @@ public class DisplayEntity extends Entity {
 
 	@Override
 	public void removeChild(Entity ent) {
+		// If the entity is dead, then retain its hashmap of children
+		if (isDead())
+			return;
+
 		synchronized (namedChildren) {
 			if (ent != namedChildren.remove(ent.getLocalName()))
 				throw new ErrorException("Named Children Internal Consistency error: %s", ent);
@@ -899,6 +907,14 @@ public class DisplayEntity extends Entity {
 	 */
 	public Mat4d getInvTransMatrix() {
 		return RenderUtils.getInverseWithScale(getGlobalTrans(), size);
+	}
+
+	/**
+	 * Returns the position of the centre in the global coordinate system.
+	 * @return global position of the centre
+	 */
+	public Vec3d getGlobalCentre() {
+		return getGlobalPosition(getCentre());
 	}
 
 	/**

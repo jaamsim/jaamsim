@@ -336,10 +336,6 @@ public class Entity {
 	public void setInputsForDragAndDrop() {}
 
 	public void kill() {
-		for (Entity ent : getChildren()) {
-			ent.kill();
-		}
-
 		for (Entity clone : getCloneList()) {
 			clone.prototype = null;
 			clone.kill();
@@ -349,24 +345,34 @@ public class Entity {
 		if (prototype != null && isRegistered())
 			prototype.removeClone(this);
 
-		if (this.isDead())
-			return;
-		simModel.removeInstance(this);
-		entityName = null;
-		setFlag(Entity.FLAG_DEAD);
+		// Remove the entity from the model
+		if (!isDead()) {
+			simModel.removeInstance(this);
+			setFlag(Entity.FLAG_DEAD);
+		}
+
+		// Kill the children after the parent entity
+		for (Entity ent : getChildren()) {
+			ent.kill();
+		}
 	}
 
 	/**
 	 * Reverses the actions taken by the kill method.
-	 * @param name - entity's absolute name before it was deleted
 	 */
-	public void restore(String name) {
+	public void restore() {
+
+		// Restore the children before the parent entity
+		for (Entity ent : getChildren()) {
+			ent.restore();
+		}
+
+		// Restore the entity to the model
 		simModel.restoreInstance(this);
-		this.setName(name);
 		this.clearFlag(Entity.FLAG_DEAD);
+
 		if (prototype != null && isRegistered())
 			prototype.addClone(this);
-		postDefine();
 	}
 
 	/**
@@ -419,7 +425,7 @@ public class Entity {
 	 * @return true if the entity is pooled for re-use
 	 */
 	public final boolean isPooled() {
-		return this.testFlag(Entity.FLAG_POOLED);
+		return this.testFlag(Entity.FLAG_POOLED) || (parent != null && parent.isPooled());
 	}
 
 	/**
@@ -606,17 +612,28 @@ public class Entity {
 			return prototype.getValueTokens(in.getProtoInput(), newParent);
 
 		ArrayList<String> ret = in.getValueTokens();
-		if (ret.isEmpty() || parent == null || parent == newParent)
+		if (ret.isEmpty() || parent == null || newParent == null || parent == newParent)
 			return ret;
+
+		// Find the first parent that has a different name
+		Entity oldP = parent;
+		Entity newP = newParent;
+		while (oldP.getLocalName().equals(newP.getLocalName())) {
+			oldP = oldP.getParent();
+			newP = newP.getParent();
+			if (oldP == null || newP == null) {
+				return ret;
+			}
+		}
 
 		// Replace any explicit references to the parent entity with the specified new parent
 		String oldName = parent.getName();
 		String oldName1 = "[" + oldName + "]";
-		String oldName2 = oldName + ".";
+		String oldName2 = oldP.getLocalName() + ".";
 
 		String newName = newParent.getName();
 		String newName1 = "[" + newName + "]";
-		String newName2 = newName + ".";
+		String newName2 = newP.getLocalName() + ".";
 
 		for (int i = 0; i < ret.size(); i++) {
 			String str = ret.get(i);
@@ -1278,7 +1295,6 @@ public class Entity {
 		if (clonePool == null)
 			clonePool = new ArrayList<>();
 		clone.setFlag(Entity.FLAG_POOLED);
-		clone.resetNameInput();
 		clonePool.add(clone);
 	}
 
@@ -1293,6 +1309,7 @@ public class Entity {
 			return null;
 		Entity ret = clonePool.remove(clonePool.size() - 1);
 		ret.clearFlag(Entity.FLAG_POOLED);
+		ret.resetNameInput();
 
 		// Reset any inputs that were changed
 		if (ret.isEdited()) {

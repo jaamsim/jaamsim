@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2020-2023 JaamSim Software Inc.
+ * Copyright (C) 2020-2024 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -321,7 +321,8 @@ public class ExampleBox extends JDialog {
 
 			// Add labels and sub-models
 			Simulation simulation = simModel.getSimulation();
-			simModel.showTemporaryLabels( simulation.isShowLabels() );
+			if (simulation.isShowLabels())
+				simModel.showTemporaryLabels();
 
 			// Get the View to render
 			View view = null;
@@ -365,7 +366,8 @@ public class ExampleBox extends JDialog {
 		simModel.setRecordEditsFound(false);
 
 		// Add labels and sub-models
-		simModel.showTemporaryLabels( simulation.isShowLabels() );
+		if (simulation.isShowLabels())
+			simModel.showTemporaryLabels();
 
 		// Display the new model
 		FrameBox.setSelectedEntity(simulation, false);

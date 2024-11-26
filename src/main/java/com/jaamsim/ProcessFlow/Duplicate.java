@@ -71,20 +71,7 @@ public class Duplicate extends LinkedComponent {
 	public Duplicate() {}
 
 	public int[] getNumberOfDuplicates(double simTime) {
-
-		// Number of targets entered by the user
-		int[] ret = new int[targetComponentList.getListSize()];
-		for (int i = 0; i < numberOfDuplicates.getListSize(); i++) {
-			int n = (int) numberOfDuplicates.getNextSample(i, this, simTime);
-			ret[i] = n;
-		}
-
-		// Additional copies of the last value needed to complete the list
-		int lastVal = ret[numberOfDuplicates.getListSize() - 1];
-		for (int i = numberOfDuplicates.getListSize(); i < targetComponentList.getListSize(); i++) {
-			ret[i] = lastVal;
-		}
-		return ret;
+		return numberOfDuplicates.getNextIntegers(this, simTime, targetComponentList.getListSize());
 	}
 
 	@Override

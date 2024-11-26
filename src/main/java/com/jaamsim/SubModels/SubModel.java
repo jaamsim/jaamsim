@@ -125,8 +125,8 @@ public class SubModel extends CompoundEntity implements DragAndDropable {
 	}
 
 	@Override
-	public void restore(String name) {
-		super.restore(name);
+	public void restore() {
+		super.restore();
 		GUIListener gui = getJaamSimModel().getGUIListener();
 		if (gui != null)
 			gui.updateModelBuilder();

@@ -21,14 +21,20 @@ import java.util.ArrayList;
 
 import com.jaamsim.BooleanProviders.BooleanProvInput;
 import com.jaamsim.Samples.SampleInput;
+import com.jaamsim.Samples.SampleListInput;
 import com.jaamsim.Samples.SampleProvider;
 import com.jaamsim.basicsim.EntityTarget;
 import com.jaamsim.events.EventHandle;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.EntityInput;
+import com.jaamsim.input.InterfaceEntityListInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
+import com.jaamsim.resourceObjects.AbstractResourceProvider;
+import com.jaamsim.resourceObjects.ResourceProvider;
+import com.jaamsim.resourceObjects.ResourceUser;
+import com.jaamsim.resourceObjects.ResourceUserDelegate;
 import com.jaamsim.states.DowntimeUser;
 import com.jaamsim.states.StateEntity;
 import com.jaamsim.states.StateEntityListener;
@@ -36,7 +42,7 @@ import com.jaamsim.states.StateRecord;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
 
-public class DowntimeEntity extends StateEntity implements StateEntityListener {
+public class DowntimeEntity extends StateEntity implements StateEntityListener, ResourceUser {
 
 	@Keyword(description = "The calendar or working time for the first planned or unplanned "
 	                     + "maintenance event. If an input is not provided, the first maintenance "
@@ -84,6 +90,23 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 	         exampleList = {"48 h"})
 	protected final SampleInput completionTimeLimit;
 
+	@Keyword(description = "Resources required to perform the maintenance process. "
+	                     + "If any of the resources are not available at the start of downtime, "
+	                     + "the maintenance duration will be delayed until the resources can be "
+	                     + "seized. "
+	                     + "All the resource units must be available to be seized before any one "
+	                     + "unit is seized.",
+	         exampleList = {"Resource1 Resource2"})
+	protected final InterfaceEntityListInput<ResourceProvider> resourceList;
+
+	@Keyword(description = "The number of units to seize from the Resources specified by the "
+	                     + "'ResourceList' keyword. "
+	                     + "The last value in the list is used if the number of resources is "
+	                     + "greater than the number of values. "
+	                     + "Only an integer number of resource units can be seized. "
+	                     + "A decimal value will be truncated to an integer.",
+	         exampleList = {"2 1", "{ 2 } { 1 }", "{ DiscreteDistribution1 } { 'this.obj.attrib1 + 1' }"})
+	private final SampleListInput numberOfUnitsList;
 
 	private final ArrayList<DowntimeUser> downtimeUserList;  // entities that use this downtime entity
 	private boolean down;             // true for the duration of a downtime event
@@ -97,13 +120,18 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 	private int numberCompleted;     // Number of downtime events that have been completed
 	private double startTime;        // The start time of the latest downtime event
 	private double endTime;          // the end time of the latest downtime event
+	private double downDuration;     // repair time for the latest downtime event
 
 	private static final String STATE_DOWNTIME = "Downtime";
+	private static final String STATE_WAITING_FOR_RESOURCES = "WaitingForResources";
 
 	private int numLateEvents;    // Number of events that did not finish within the completion time limit
 	private double targetCompletionTime; // the time that the latest downtime event should be completed
 
 	private double totalLateTime;  // Total time after completion time limit that the downtime took to complete
+
+	private ResourceUserDelegate resUserDelegate;
+	private int[] seizedUnits = new int[0];
 
 	{
 		workingStateListInput.setHidden(true);
@@ -150,6 +178,17 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 		completionTimeLimit.setUnitType(TimeUnit.class);
 		completionTimeLimit.setOutput(true);
 		this.addInput(completionTimeLimit);
+
+		ArrayList<ResourceProvider> resDef = new ArrayList<>();
+		resourceList = new InterfaceEntityListInput<>(ResourceProvider.class, "ResourceList", KEY_INPUTS, resDef);
+		this.addInput(resourceList);
+
+		numberOfUnitsList = new SampleListInput("NumberOfUnits", KEY_INPUTS, 1);
+		numberOfUnitsList.setValidRange(0, Double.POSITIVE_INFINITY);
+		numberOfUnitsList.setDimensionless(true);
+		numberOfUnitsList.setUnitType(DimensionlessUnit.class);
+		numberOfUnitsList.setIntegerValue(true);
+		this.addInput(numberOfUnitsList);
 	}
 
 	public DowntimeEntity(){
@@ -170,6 +209,9 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 		endTime = 0;
 		numLateEvents = 0;
 		totalLateTime = 0;
+
+		resUserDelegate = new ResourceUserDelegate(resourceList.getValue());
+		seizedUnits = new int[0];
 
 		if (!this.isActive())
 			return;
@@ -235,7 +277,8 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 	 */
 	@Override
 	public boolean isValidState(String state) {
-		return STATE_WORKING.equals(state) || STATE_DOWNTIME.equals(state);
+		return STATE_WORKING.equals(state) || STATE_DOWNTIME.equals(state)
+				|| STATE_WAITING_FOR_RESOURCES.equals(state);
 	}
 
 	/**
@@ -261,7 +304,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 			ent.endDowntime();
 		}
 	}
-	private final ProcessTarget endDowntime = new EndDowntimeTarget(this);
+	private final ProcessTarget endDowntimeTarget = new EndDowntimeTarget(this);
 	private final EventHandle endDowntimeHandle = new EventHandle();
 
 	/**
@@ -277,7 +320,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 			ent.scheduleDowntime();
 		}
 	}
-	private final ProcessTarget scheduleDowntime = new ScheduleDowntimeTarget(this);
+	private final ProcessTarget scheduleDowntimeTarget = new ScheduleDowntimeTarget(this);
 	private final EventHandle scheduleDowntimeHandle = new EventHandle();
 
 	/**
@@ -286,78 +329,73 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 	 * entity affected by this type of maintenance changes state.
 	 */
 	public void checkProcessNetwork() {
+		if (isTraceFlag()) trace(0, "checkProcessNetwork");
 
 		// Schedule the next downtime event
+		StateEntity iatWorkingEnt = iatWorkingEntity.getValue();
 		if (!scheduleDowntimeHandle.isScheduled()) {
-
-			// 1) Calendar time
-			if (iatWorkingEntity.getValue() == null) {
-				double workingSecs = this.getSimTime();
-				double waitSecs = secondsForNextFailure - workingSecs;
-				scheduleProcess(Math.max(waitSecs, 0.0), 5, scheduleDowntime, scheduleDowntimeHandle);
-
-			}
-			// 2) Working time
-			else {
-				if (iatWorkingEntity.getValue().isWorkingState()) {
-					double workingSecs = iatWorkingEntity.getValue().getWorkingTime();
-					double waitSecs = secondsForNextFailure - workingSecs;
-					scheduleProcess(Math.max(waitSecs, 0.0), 5, scheduleDowntime, scheduleDowntimeHandle);
-				}
+			if (iatWorkingEnt == null || iatWorkingEnt.isWorkingState()) {
+				double workingSecs = getSimTime();
+				if (iatWorkingEnt != null)
+					workingSecs = iatWorkingEnt.getWorkingTime();
+				double waitSecs = Math.max(secondsForNextFailure - workingSecs, 0.0d);
+				scheduleProcess(waitSecs, 5, scheduleDowntimeTarget, scheduleDowntimeHandle);
+				if (isTraceFlag()) traceLine(1, "downtime event scheduled - waitSecs=%s", waitSecs);
 			}
 		}
 		// the next event is already scheduled.  If the working entity has stopped working, need to cancel the event
 		else {
-			if (iatWorkingEntity.getValue() != null && !iatWorkingEntity.getValue().isWorkingState()) {
+			if (iatWorkingEnt != null && !iatWorkingEnt.isWorkingState()) {
 				EventManager.killEvent(scheduleDowntimeHandle);
+				if (isTraceFlag()) traceLine(1, "downtime event canceled");
 			}
+		}
+
+		// Seize resources
+		if (isWaitingForResources()) {
+			double simTime = getSimTime();
+			int[] nums = numberOfUnitsList.getNextIntegers(this, simTime, resUserDelegate.getListSize());
+			if (!resUserDelegate.canSeizeResources(simTime, nums, this))
+				return;
+			resUserDelegate.seizeResources(nums, this);
+			seizedUnits = nums;
+			setPresentState();
+			if (isTraceFlag()) traceLine(1, "resources seized");
+
+			// Determine the time when the downtime event will be over
+			StateEntity durWorkingEnt = durationWorkingEntity.getValue();
+			secondsForNextRepair = simTime + downDuration;
+			if (durWorkingEnt != null)
+				secondsForNextRepair = durWorkingEnt.getWorkingTime() + downDuration;
 		}
 
 		// 1) Determine when to end the current downtime event
 		if (down) {
-
-			if (durationWorkingEntity.getValue() == null) {
-
+			StateEntity durWorkingEnt = durationWorkingEntity.getValue();
+			if (durWorkingEnt == null || durWorkingEnt.isWorkingState()) {
 				if (endDowntimeHandle.isScheduled())
 					return;
-
-				// Calendar time
 				double workingSecs = this.getSimTime();
+				if (durWorkingEnt != null)
+					workingSecs = durWorkingEnt.getWorkingTime();
 				double waitSecs = secondsForNextRepair - workingSecs;
-				scheduleProcess(waitSecs, 5, endDowntime, endDowntimeHandle);
+				scheduleProcess(waitSecs, 5, endDowntimeTarget, endDowntimeHandle);
+				endTime = getSimTime() + waitSecs;
+				if (isTraceFlag()) traceLine(1, "downtime end event scheduled - waitSecs=%s", waitSecs);
 				return;
 			}
 
-			// The Entity is working, schedule the end of the downtime event
-			if (durationWorkingEntity.getValue().isWorkingState()) {
-
-				if (endDowntimeHandle.isScheduled())
-					return;
-
-				double workingSecs = durationWorkingEntity.getValue().getWorkingTime();
-				double waitSecs = secondsForNextRepair - workingSecs;
-				scheduleProcess(waitSecs, 5, endDowntime, endDowntimeHandle);
-			}
 			// The Entity is not working, remove scheduled end of the downtime event
-			else {
+			if (durWorkingEnt != null && !durWorkingEnt.isWorkingState()) {
 				EventManager.killEvent(endDowntimeHandle);
+				if (isTraceFlag()) traceLine(1, "downtime end event canceled");
 			}
 		}
+
 		// 2) Start the next downtime event if required/possible
 		else {
-			if (downtimePendings > 0) {
-
-				// If all entities are ready, start the downtime event
-				boolean allEntitiesCanStart = true;
-				for (DowntimeUser each : downtimeUserList) {
-					if (!each.canStartDowntime(this)) {
-						allEntitiesCanStart = false;
-						break;
-					}
-				}
-				if (allEntitiesCanStart) {
-					this.startDowntime();
-				}
+			if (downtimePendings > 0 && canStartDowntime()) {
+				startDowntime();
 			}
 		}
 	}
@@ -396,13 +434,15 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 
 		// Determine the time the next downtime event is due
 		// Calendar time based
-		if( iatWorkingEntity.getValue() == null ) {
+		StateEntity iatWorkingEnt = iatWorkingEntity.getValue();
+		if (iatWorkingEnt == null) {
 			secondsForNextFailure += this.getNextDowntimeIAT();
 		}
 		// Working time based
 		else {
-			secondsForNextFailure = iatWorkingEntity.getValue().getWorkingTime() + this.getNextDowntimeIAT();
+			secondsForNextFailure = iatWorkingEnt.getWorkingTime() + getNextDowntimeIAT();
 		}
+		if (isTraceFlag()) trace(0, "scheduleDowntime - secondsForNextFailure=%s", secondsForNextFailure);
 
 		// prepare all entities for the downtime event
 		for (DowntimeUser each : downtimeUserList) {
@@ -412,10 +452,20 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 		this.checkProcessNetwork();
 	}
 
+	public boolean canStartDowntime() {
+		for (DowntimeUser each : downtimeUserList) {
+			if (!each.canStartDowntime(this)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
 	/**
 	 * When enough working hours have been accumulated by WorkingEntity, trigger all entities in downtimeUserList to perform downtime
 	 */
 	private void startDowntime() {
+		if (isTraceFlag()) trace(0, "startDowntime");
 		setDown(true);
 
 		startTime = this.getSimTime();
@@ -423,16 +473,11 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 		numberStarted++;
 
 		// Determine the time when the downtime event will be over
-		double downDuration = this.getDowntimeDuration();
-
-		// Calendar time based
-		if( durationWorkingEntity.getValue() == null ) {
-			secondsForNextRepair = this.getSimTime() + downDuration;
-		}
-		// Working time based
-		else {
-			secondsForNextRepair = durationWorkingEntity.getValue().getWorkingTime() + downDuration;
-		}
+		downDuration = getDowntimeDuration();
+		StateEntity durWorkingEnt = durationWorkingEntity.getValue();
+		secondsForNextRepair = getSimTime() + downDuration;
+		if (durWorkingEnt != null)
+			secondsForNextRepair = durWorkingEnt.getWorkingTime() + downDuration;
 
 		endTime = startTime + downDuration;
 
@@ -447,21 +492,26 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 	private void setDown(boolean b) {
 		if (isTraceFlag()) this.trace(1, "setDown(%s)", b);
 		down = b;
-		if (down)
-			setPresentState(STATE_DOWNTIME);
-		else
-			setPresentState(STATE_WORKING);
+		setPresentState();
 	}
 
 	final void endDowntime() {
+		if (isTraceFlag()) trace(0, "endDowntime");
 		setDown(false);
 
 		numberCompleted++;
+
+		// Release resources
+		resUserDelegate.releaseResources(seizedUnits, this);
+		seizedUnits = new int[0];
 
 		// Loop through all objects that this object is watching and try to restart them.
 		for (DowntimeUser each : downtimeUserList) {
 			each.endDowntime(this);
 		}
+
+		// Notify any resource users that are waiting for these Resources
+		AbstractResourceProvider.notifyResourceUsers(resUserDelegate.getResourceList());
 
 		// If this event was late, increment counter
 		if(this.getSimTime() > targetCompletionTime ) {
@@ -565,6 +615,61 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 		return (int) maxDowntimesPending.getNextSample(this, simTime);
 	}
 
+	public boolean isWaitingForResources() {
+		return down && !resUserDelegate.isEmpty() && seizedUnits.length == 0;
+	}
+
+	@Override
+	public boolean requiresResource(ResourceProvider res) {
+		return resUserDelegate.requiresResource(res);
+	}
+
+	@Override
+	public boolean hasWaitingEntity() {
+		return isWaitingForResources();
+	}
+
+	@Override
+	public int getPriority() {
+		return 0;
+	}
+
+	@Override
+	public double getWaitTime() {
+		double ret = 0.0d;
+		if (isWaitingForResources())
+			ret = getSimTime() - startTime;
+		return ret;
+	}
+
+	@Override
+	public boolean isReadyToStart() {
+		double simTime = getSimTime();
+		int[] nums = numberOfUnitsList.getNextIntegers(this, simTime, resUserDelegate.getListSize());
+		return resUserDelegate.canSeizeResources(simTime, nums, this);
+	}
+
+	@Override
+	public void startNextEntity() {
+		checkProcessNetwork();
+	}
+
+	@Override
+	public boolean hasStrictResource() {
+		return resUserDelegate.hasStrictResource();
+	}
+
+	public void setPresentState() {
+		if (isWaitingForResources()) {
+			setPresentState(STATE_WAITING_FOR_RESOURCES);
+			return;
+		}
+		if (down)
+			setPresentState(STATE_DOWNTIME);
+		else
+			setPresentState(STATE_WORKING);
+	}
+
 	// ******************************************************************************************************
 	// OUTPUTS
 	// ******************************************************************************************************
@@ -661,8 +766,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 		double total = simTime;
 		if (simTime > getSimulation().getInitializationTime())
 			total -= getSimulation().getInitializationTime();
-		double down = this.getTimeInState(simTime, STATE_DOWNTIME);
-		return 1.0d - down/total;
+		return getTimeInState(simTime, STATE_WORKING) / total;
 	}
 
 	@Output(name = "LateEvents",

@@ -22,11 +22,9 @@ import com.jaamsim.basicsim.JaamSimModel;
 public class DeleteCommand implements Command {
 
 	private final Entity entity;
-	private final String entityName;
 
 	public DeleteCommand(Entity ent) {
 		entity = ent;
-		entityName = entity.getName();
 	}
 
 	@Override
@@ -37,7 +35,7 @@ public class DeleteCommand implements Command {
 
 	@Override
 	public void undo() {
-		entity.restore(entityName);
+		entity.restore();
 		entity.getJaamSimModel().setSessionEdited(true);
 	}
 
@@ -58,7 +56,7 @@ public class DeleteCommand implements Command {
 
 	@Override
 	public String toString() {
-		return String.format("Delete: '%s'", entityName);
+		return String.format("Delete: '%s'", entity.getName());
 	}
 
 }
