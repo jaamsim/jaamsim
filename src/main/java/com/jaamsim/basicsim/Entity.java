@@ -401,6 +401,15 @@ public class Entity {
 	}
 
 	/**
+	 * Returns whether the generated entity is retained at the end of a simulation run for re-use
+	 * in the next run.
+	 * @return true if the entity is to be retained at the end of the simulation run
+	 */
+	public final boolean isRetained() {
+		return this.testFlag(Entity.FLAG_RETAINED);
+	}
+
+	/**
 	 * Returns whether all references to the entity have been removed by the 'kill' method.
 	 * @return true if the entity has been killed
 	 */
