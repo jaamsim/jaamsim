@@ -748,7 +748,7 @@ public class Entity {
 	 * Use getLocalName() for the name relative to this entity's parent
 	 */
 	public final String getName() {
-		if (!this.isRegistered() || parent == null) {
+		if (parent == null) {
 			return entityName;
 		}
 		return parent.getName() + "." + entityName;
