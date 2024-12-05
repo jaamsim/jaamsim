@@ -247,10 +247,12 @@ public class Entity {
 
 		// Create any children for the new entity
 		if (prototype != null) {
+			boolean reg = isRegistered();
+			boolean retain = isRetained();
 			for (Entity child : prototype.getChildren()) {
 				String name = child.getLocalName();
 				Class<? extends Entity> klass = child.getClass();
-				InputAgent.generateEntityWithName(simModel, klass, child, name, this, true, true);
+				InputAgent.generateEntityWithName(simModel, klass, child, name, this, reg, retain);
 			}
 
 			// Copy the inputs for the new components
