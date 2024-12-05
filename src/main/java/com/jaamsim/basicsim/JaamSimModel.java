@@ -725,6 +725,11 @@ public class JaamSimModel implements EventTimeListener {
 		EntityListNode curNode = entityList.next;
 		while(curNode != entityList) {
 			Entity curEnt = curNode.ent;
+			if (curEnt == null) {
+				curNode = curNode.next;
+				continue;
+			}
+
 			if (!curEnt.isDead() && !curEnt.testFlag(Entity.FLAG_RETAINED)) {
 				curEnt.kill();
 			}
