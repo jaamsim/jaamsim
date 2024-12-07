@@ -108,8 +108,11 @@ public class DiscreteDistribution extends Distribution {
 
 	@Override
 	protected double getSample(double simTime) {
-		double[] values = valueListInput.getValue().toArray();
-		return getSample(values, cumProbList, sampleCount, rng);
+		int index = getSample(cumProbList, rng);
+		if (index < 0 || index >= valueListInput.getListSize())
+			throw new RuntimeException("Bad index returned from binary search.");
+		sampleCount[index]++;
+		return valueListInput.getValue().get(index);
 	}
 
 	@Override
@@ -142,7 +145,7 @@ public class DiscreteDistribution extends Distribution {
 		return getStandardDev(values, cumProbList);
 	}
 
-	public static double getSample(double[] values, double[] cumProbs, int[] count, MRG1999a rng) {
+	public static int getSample(double[] cumProbs, MRG1999a rng) {
 		double rand = rng.nextUniform();
 		int index = -1;
 
@@ -152,11 +155,13 @@ public class DiscreteDistribution extends Distribution {
 			index = k;
 		else
 			index = -k - 1;
+		return index;
+	}
 
+	public static double getSample(double[] values, double[] cumProbs, MRG1999a rng) {
+		int index = getSample(cumProbs, rng);
 		if (index < 0 || index >= values.length)
 			throw new RuntimeException("Bad index returned from binary search.");
-
-		count[index]++;
 		return values[index];
 	}
 
