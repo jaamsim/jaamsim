@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2017-2022 JaamSim Software Inc.
+ * Copyright (C) 2017-2024 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import java.util.Comparator;
 
 import com.jaamsim.ProbabilityDistributions.BetaDistribution;
 import com.jaamsim.ProbabilityDistributions.BinomialDistribution;
+import com.jaamsim.ProbabilityDistributions.DiscreteDistribution;
 import com.jaamsim.ProbabilityDistributions.DiscreteUniformDistribution;
 import com.jaamsim.ProbabilityDistributions.ErlangDistribution;
 import com.jaamsim.ProbabilityDistributions.ExponentialDistribution;
@@ -46,6 +47,7 @@ import com.jaamsim.input.ExpParser.LambdaClosure;
 import com.jaamsim.input.ExpParser.LazyBinOpFunc;
 import com.jaamsim.input.ExpParser.ParseContext;
 import com.jaamsim.input.ExpParser.UnOpFunc;
+import com.jaamsim.math.MathUtils;
 import com.jaamsim.rng.MRG1999a;
 import com.jaamsim.units.AngleUnit;
 import com.jaamsim.units.DimensionlessUnit;
@@ -332,6 +334,33 @@ public class ExpOperators {
 			}
 		}
 		return ExpValResult.makeValidRes(ExpResType.NUMBER, args[0].unitType);
+	}
+
+	private static ExpValResult validateArrayFunction(ParseContext context, ExpValResult[] args, String source, int pos) {
+		for (ExpValResult arg : args) {
+			if (  arg.state == ExpValResult.State.ERROR ||
+			      arg.state == ExpValResult.State.UNDECIDABLE) {
+				return arg;
+			}
+		}
+
+		// Count the number of arrays
+		int num = 0;
+		for (int i = 0; i < args.length; i++) {
+			ExpValResult arg = args[i];
+			if (arg.type == ExpResType.COLLECTION) {
+				num++;
+			}
+		}
+		if (num != 2) {
+			ExpError error = new ExpError(source, pos, "First two inputs must be arrays");
+			return ExpValResult.makeErrorRes(error);
+		}
+		if (args.length == 3 && args[2].type != ExpResType.NUMBER) {
+			ExpError error = new ExpError(source, pos, "Last argument must be a number");
+			return ExpValResult.makeErrorRes(error);
+		}
+		return ExpValResult.makeUndecidableRes();
 	}
 
 	private static String unitToString(Class<? extends Unit> unit) {
@@ -2450,6 +2479,62 @@ public class ExpOperators {
 			@Override
 			public ExpValResult validate(ParseContext context, ExpValResult[] args, String source, int pos) {
 				return validateRandomFunction(context, args, source, pos);
+			}
+		});
+
+		addFunction("discrete", 2, 3, new CallableFunc() {
+			@Override
+			public void checkUnits(ParseContext context, ExpResult[] args, String source, int pos) throws ExpError {
+				if (args.length > 2 && args[2].unitType != DimensionlessUnit.class)
+					throw new ExpError(source, pos, "Input 'seed' must be dimensionless");
+			}
+			@Override
+			public ExpResult call(EvalContext context, ExpResult[] args, String source, int pos) throws ExpError {
+				if (context == null)  // trap call from ConstOptimizer.updateRef
+					return null;
+
+				Entity thisEnt = ((EntityEvalContext) context).thisEnt;
+				JaamSimModel simModel = thisEnt.getJaamSimModel();
+				int seed = -1;
+				if (args.length > 2)
+					seed = (int) args[2].value;
+				String key = seed + "discrete" + thisEnt.getEntityNumber();
+				MRG1999a[] rngs = simModel.getRandomGenerators(key, seed, 1);
+
+				double val = 0.0d;
+				Class<? extends Unit> ut = DimensionlessUnit.class;
+				if (EventManager.hasCurrent()) {
+					if (args[0].colVal.getSize() != args[1].colVal.getSize()) {
+						throw new ExpError(source, pos, "The 'values' and 'probs' arrays must have the same number of entries.");
+					}
+					int n = args[0].colVal.getSize();
+					double[] cumProbs = new double[n];
+					double[] values = new double[n];
+					double total = 0.0d;
+					for (int i = 0; i < n; i++) {
+						ExpResult indexRes = ExpResult.makeNumResult(i + 1, DimensionlessUnit.class);
+						total += args[0].colVal.index(indexRes).value;
+						cumProbs[i] = total;
+						ExpResult res = args[1].colVal.index(indexRes);
+						if (i == 0) {
+							ut = res.unitType;
+						}
+						else if (res.unitType != ut) {
+							throw new ExpError(source, pos, "The entries in the 'values' array must have the same unit type.");
+						}
+						values[i] = res.value;
+					}
+					if (!MathUtils.near(cumProbs[n - 1], 1.0d)) {
+						throw new ExpError(source, pos, "The entries in the 'probs' array must sum to exactly 1.0.");
+					}
+					cumProbs[n - 1] = 1.0d;
+					val = DiscreteDistribution.getSample(values, cumProbs, rngs[0]);
+				}
+				return ExpResult.makeNumResult(val, ut);
+			}
+			@Override
+			public ExpValResult validate(ParseContext context, ExpValResult[] args, String source, int pos) {
+				return validateArrayFunction(context, args, source, pos);
 			}
 		});
 

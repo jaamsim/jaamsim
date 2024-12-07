@@ -1967,6 +1967,20 @@ public class ExpressionBox extends JDialog {
 				"'binomial(10, 0.4, 5)' returns a dimensionless integer value using random stream 5",
 				"'binomial(10, 0.4)' returns a dimensionless integer value using a selected random stream"));
 
+		functions.add(new ButtonDesc("discrete", "User-defined discrete distribution function ('discrete')",
+				"Returns a randomly selected value based on an array of probabilities and a corresponding array of values.",
+				"Accepts input parameters of probs, values, and random stream. "
+						+ "Returns a randomly selected value from the values array. "
+						+ "The probs argument is an array of probabilies that sum to exactly 1.0. "
+						+ "The values argument is an array of values from which the output is selected. "
+						+ "The random stream input is dimensionless. "
+						+ "If a random stream value is not entered, the model will chose the next "
+						+ "unused value.",
+				"discrete(probs, values, stream)",
+				-1,
+				"'discrete({0.3, 0.3. 0.4}, {4, 7, 9}, 5)' returns a value using random stream 5",
+				"'discrete({0.3, 0.3. 0.4}, {4, 7, 9})' returns a value using a selected random stream"));
+
 		functions.add(new ButtonDesc("discreteUniform", "Discrete uniform distribution function "
 						+ "('discreteUniform')",
 				"Returns a random sample from the discrete uniform distribution, i.e. a randomly "
