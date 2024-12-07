@@ -338,14 +338,6 @@ public class Entity {
 	public void setInputsForDragAndDrop() {}
 
 	public void kill() {
-		for (Entity clone : getCloneList()) {
-			clone.prototype = null;
-			clone.kill();
-		}
-		clonePool = null;
-
-		if (prototype != null && isRegistered())
-			prototype.removeClone(this);
 
 		// Remove the entity from the model
 		if (!isDead()) {
@@ -353,7 +345,20 @@ public class Entity {
 			setFlag(Entity.FLAG_DEAD);
 		}
 
-		// Kill the children after the parent entity
+		// Kill the entity's clones
+		for (Entity clone : getCloneList()) {
+			clone.prototype = null;
+			clone.kill();
+		}
+
+		// Clear the pool of generated clones
+		clonePool = null;
+
+		// If the entity is a clone, remove it from its prototype's list
+		if (prototype != null && isRegistered())
+			prototype.removeClone(this);
+
+		// Kill the entity's children
 		for (Entity ent : getChildren()) {
 			ent.kill();
 		}
