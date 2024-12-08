@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2018-2023 JaamSim Software Inc.
+ * Copyright (C) 2018-2024 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -248,8 +248,7 @@ public class ExpressionBox extends JDialog {
 				}
 
 				// Return or space bar pressed while in edit mode
-				if ((c == '\n' || c == ' ') && (editMode == EDIT_MODE_ENTITY
-						|| editMode == EDIT_MODE_OUTPUT)) {
+				else if ((c == '\n' || c == ' ') && editMode != EDIT_MODE_NORMAL) {
 					SwingUtilities.invokeLater(new Runnable() {
 						@Override
 						public void run() {
@@ -523,7 +522,6 @@ public class ExpressionBox extends JDialog {
 
 				@Override
 				public void actionPerformed( ActionEvent event ) {
-					entityMenu = null;
 					String str = String.format("[%s]", entName);
 					editArea.replaceRange(str, ind0, ind1 + 1);
 					editArea.requestFocusInWindow();
@@ -583,7 +581,6 @@ public class ExpressionBox extends JDialog {
 
 				@Override
 				public void actionPerformed( ActionEvent event ) {
-					outputMenu = null;
 					editArea.replaceRange(item.getText(), ind0 + 1, ind1 + 1);
 					editArea.requestFocusInWindow();
 					setEditMode(EDIT_MODE_NORMAL);
@@ -618,7 +615,6 @@ public class ExpressionBox extends JDialog {
 
 				@Override
 				public void actionPerformed( ActionEvent event ) {
-					outputMenu = null;
 					editArea.replaceRange(hand.getName(), ind0 + 1, ind1 + 1);
 					editArea.requestFocusInWindow();
 					setEditMode(EDIT_MODE_NORMAL);
