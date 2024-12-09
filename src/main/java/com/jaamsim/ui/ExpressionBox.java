@@ -252,27 +252,17 @@ public class ExpressionBox extends JDialog {
 					SwingUtilities.invokeLater(new Runnable() {
 						@Override
 						public void run() {
+							JMenuItem item = null;
 							if (editMode == EDIT_MODE_ENTITY) {
-								int ind0 = editArea.getText().lastIndexOf('[', e.getOffset());
-								if (ind0 == -1 || nameList.isEmpty())
-									return;
-								String name = String.format("[%s]", nameList.get(0));
-								editArea.replaceRange(name, ind0, e.getOffset() + 1);
+								item = entityMenu.getMenuItem(0);
 							}
 							else if (editMode == EDIT_MODE_OUTPUT) {
-								String name = "";
-								if (!compList.isEmpty()) {
-									name = String.format("[%s]", compList.get(0));
-								}
-								else if (!handles.isEmpty()) {
-									name = handles.get(0).getName();
-								}
-								int ind0 = editArea.getText().lastIndexOf('.', e.getOffset());
-								if (ind0 == -1 || name.isEmpty())
-									return;
-								editArea.replaceRange(name, ind0 + 1, e.getOffset() + 1);
+								item = outputMenu.getMenuItem(0);
 							}
-							setEditMode(EDIT_MODE_NORMAL);
+							if (item == null)
+								return;
+							editArea.replaceRange("", e.getOffset(), e.getOffset() + 1);
+							item.doClick();
 						}
 					});
 					return;
