@@ -647,15 +647,15 @@ public class ExpressionBox extends JDialog {
 		return null;
 	}
 
-	public boolean isControlChar(char ch) {
+	public static boolean isControlChar(char ch) {
 		return containsChar(controlChars, ch);
 	}
 
-	public boolean isMathChar(char ch) {
+	public static boolean isMathChar(char ch) {
 		return containsChar(mathChars, ch);
 	}
 
-	private boolean containsChar(char[] chars, char ch) {
+	private static boolean containsChar(char[] chars, char ch) {
 		for (char c : chars) {
 			if (c == ch)
 				return true;
