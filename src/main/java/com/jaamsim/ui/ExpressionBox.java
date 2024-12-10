@@ -83,15 +83,19 @@ public class ExpressionBox extends JDialog {
 	private Point menuPos;
 	private ScrollablePopupMenu entityMenu;
 	private ScrollablePopupMenu outputMenu;
+	private ScrollablePopupMenu functionMenu;
 
 	private final ArrayList<String> nameList = new ArrayList<>();
 	private final ArrayList<String> compList = new ArrayList<>();
 	private final ArrayList<ValueHandle> handles = new ArrayList<>();
+	private final ArrayList<String> functionList = new ArrayList<>();
+
 	private final AutoCompleteComparator autoCompleteComparator = new AutoCompleteComparator();
 
 	private static final int EDIT_MODE_NORMAL = 0;
 	private static final int EDIT_MODE_ENTITY = 1;
 	private static final int EDIT_MODE_OUTPUT = 2;
+	private static final int EDIT_MODE_FUNCTION = 3;
 
 	private static final char[] controlChars = {' ', '.', ',', ';', '(', ')', '{', '}', '[', ']', '"', '\'', '#', '\t', '\n'};
 	private static final char[] mathChars = { '+', '-', '*', '/', '^', '%', '?', '=', '>', '<', '!', '&', '|'};
@@ -260,6 +264,9 @@ public class ExpressionBox extends JDialog {
 							else if (editMode == EDIT_MODE_OUTPUT) {
 								item = outputMenu.getMenuItem(0);
 							}
+							else if (editMode == EDIT_MODE_FUNCTION) {
+								item = functionMenu.getMenuItem(0);
+							}
 							if (item == null)
 								return;
 							editArea.replaceRange("", e.getOffset(), e.getOffset() + 1);
@@ -267,6 +274,18 @@ public class ExpressionBox extends JDialog {
 						}
 					});
 					return;
+				}
+
+				// Clear the auto-complete menus if a math or control character is entered
+				else if (isControlChar(c) || isMathChar(c)) {
+					setEditMode(EDIT_MODE_NORMAL);
+					return;
+				}
+
+				// Otherwise, use the auto-complete menu for functions
+				else if ((editMode != EDIT_MODE_ENTITY && editMode != EDIT_MODE_OUTPUT
+						&& Character.isLetter(c))) {
+					setEditMode(EDIT_MODE_FUNCTION);
 				}
 
 				// Show the pop-up menus for entity/output selection
@@ -329,6 +348,10 @@ public class ExpressionBox extends JDialog {
 		if (mode != EDIT_MODE_OUTPUT && outputMenu != null) {
 			outputMenu.setVisible(false);
 			outputMenu = null;
+		}
+		if (mode != EDIT_MODE_FUNCTION && functionMenu != null) {
+			functionMenu.setVisible(false);
+			functionMenu = null;
 		}
 	}
 
@@ -459,6 +482,39 @@ public class ExpressionBox extends JDialog {
 					public void run() {
 						outputMenu.dispatchEvent(new KeyEvent(outputMenu, KeyEvent.KEY_PRESSED, 0, 0, KeyEvent.VK_DOWN, '\0'));
 						outputMenu.dispatchEvent(new KeyEvent(outputMenu, KeyEvent.KEY_PRESSED, 0, 0, KeyEvent.VK_DOWN, '\0'));
+					}
+				});
+			}
+			return;
+		}
+
+		if (editMode == EDIT_MODE_FUNCTION) {
+
+			// Find the partial function name
+			int ind0 = 0;
+			for (int i = ind1 - 1; i >= 0; i--) {
+				char c = text.charAt(i);
+				if (isControlChar(c) || isMathChar(c)) {
+					ind0 = i + 1;
+					break;
+				}
+			}
+			if (ind0 > ind1) {
+				setEditMode(EDIT_MODE_NORMAL);
+				return;
+			}
+			String name = text.substring(ind0, ind1 + 1);
+
+			// Show the function name pop-up
+			showFunctionMenu(name, ind0, ind1, focusable);
+
+			// If the popup menu takes the focus, set it to the second item on the list
+			if (focusable) {
+				SwingUtilities.invokeLater(new Runnable() {
+					@Override
+					public void run() {
+						functionMenu.dispatchEvent(new KeyEvent(functionMenu, KeyEvent.KEY_PRESSED, 0, 0, KeyEvent.VK_DOWN, '\0'));
+						functionMenu.dispatchEvent(new KeyEvent(functionMenu, KeyEvent.KEY_PRESSED, 0, 0, KeyEvent.VK_DOWN, '\0'));
 					}
 				});
 			}
@@ -618,6 +674,80 @@ public class ExpressionBox extends JDialog {
 			outputMenu.setFocusable(false);
 		outputMenu.show(editArea, menuPos.x, menuPos.y);
 		JMenuItem item = outputMenu.getMenuItem(0);
+		if (item == null)
+			return;
+		item.setArmed(true);
+		ScrollablePopupMenu.showToolTip(item);
+	}
+
+	/**
+	 * Displays the auto-complete menu for a function name.
+	 * @param name - partial name of the function
+	 * @param ind0 - starting position of the text to be replaced
+	 * @param ind1 - ending position of the text to be replaced
+	 * @param focusable - true if the menu is to take the focus
+	 */
+	private void showFunctionMenu(String name, final int ind0, final int ind1, boolean focusable) {
+		if (functionMenu != null)
+			functionMenu.setVisible(false);
+		functionMenu = new ScrollablePopupMenu();
+		functionList.clear();
+
+		// Special names
+		for (final ButtonDesc bd : simObjects) {
+			if (!bd.symbol.toUpperCase().contains(name.toUpperCase()))
+				continue;
+			functionList.add(bd.symbol);
+		}
+
+		// Functions
+		for (final String funcName : ExpParser.getFunctionNames()) {
+			if (!funcName.toUpperCase().contains(name.toUpperCase()))
+				continue;
+			functionList.add(funcName);
+		}
+		autoCompleteComparator.setName(name);
+		Collections.sort(functionList, autoCompleteComparator);
+
+		for (final String funcName : functionList) {
+			JMenuItem item = new JMenuItem(funcName) {
+				@Override
+				public Point getToolTipLocation(MouseEvent e) {
+					return new Point(functionMenu.getWidth(), -getY());
+				}
+			};
+			final ButtonDesc bd = functionMap.get(funcName);
+			if (bd != null) {
+				item.setToolTipText(GUIFrame.formatKeywordToolTip(
+						null,
+						bd.title,
+						bd.description,
+						bd.arguments,
+						bd.examples));
+			}
+			item.addActionListener( new ActionListener() {
+
+				@Override
+				public void actionPerformed( ActionEvent event ) {
+					String str = funcName;
+					int offset = 0;
+					if (bd != null) {
+						str = bd.insert;
+						offset = bd.insertPos;
+					}
+					editArea.replaceRange(str, ind0, ind1 + 1);
+					editArea.setCaretPosition(editArea.getCaretPosition() + offset);
+					editArea.requestFocusInWindow();
+					setEditMode(EDIT_MODE_NORMAL);
+				}
+			} );
+			functionMenu.add(item);
+		}
+
+		if (!focusable)
+			functionMenu.setFocusable(false);
+		functionMenu.show(editArea, menuPos.x, menuPos.y);
+		JMenuItem item = functionMenu.getMenuItem(0);
 		if (item == null)
 			return;
 		item.setArmed(true);
@@ -1948,6 +2078,9 @@ public class ExpressionBox extends JDialog {
 				"'typeName([Simulation])' returns \"ENTITY\""));
 
 		for (ButtonDesc bd : functions) {
+			functionMap.put(bd.symbol, bd);
+		}
+		for (ButtonDesc bd : simObjects) {
 			functionMap.put(bd.symbol, bd);
 		}
 	}
