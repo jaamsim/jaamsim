@@ -25,6 +25,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
@@ -84,6 +85,9 @@ public class ExpressionBox extends JDialog {
 	private ScrollablePopupMenu entityMenu;
 	private ScrollablePopupMenu outputMenu;
 	private ScrollablePopupMenu functionMenu;
+
+	private int wordStart = -1;
+	private String word = "";
 
 	private final ArrayList<String> nameList = new ArrayList<>();
 	private final ArrayList<String> compList = new ArrayList<>();
@@ -320,6 +324,67 @@ public class ExpressionBox extends JDialog {
 				setEditMode(EDIT_MODE_NORMAL);
 			}
 	    });
+
+		// Track the location of the mouse in the document
+		editArea.addMouseMotionListener(new MouseMotionListener() {
+
+			@Override
+			public void mouseDragged(MouseEvent e) {}
+
+			@Override
+			public void mouseMoved(MouseEvent e) {
+				int start = -1;
+				String str = "";
+
+				// Find the word over which the mouse is positioned
+				String text = editArea.getText();
+				int ind = editArea.viewToModel(e.getPoint());
+				if (ind >= 0 && ind < text.length() && Character.isLetter(text.charAt(ind))) {
+
+					// Index for the first letter of the word
+					start = 0;
+					for (int i = ind - 1; i >= 0; i--) {
+						if (!Character.isLetter(text.charAt(i))) {
+							start = i + 1;
+							break;
+						}
+					}
+
+					// Index for the last letter of the word
+					int end = text.length() - 1;
+					for (int i = ind + 1; i < text.length(); i++) {
+						if (!Character.isLetter(text.charAt(i))) {
+							end = i - 1;
+							break;
+						}
+					}
+
+					// Save the word
+					str = text.substring(start, end + 1);
+				}
+
+				// Has the word or its position in the text changed?
+				if (start != wordStart || !str.equals(word)) {
+					wordStart = start;
+					word = str;
+					String popupText = null;
+
+					// Is the word a function name?
+					ButtonDesc bd = functionMap.get(word);
+					if (bd != null) {
+						popupText = GUIFrame.formatKeywordToolTip(
+								null,
+								bd.title,
+								bd.description,
+								bd.arguments,
+								bd.examples);
+					}
+
+					// Reset the tool tip
+					editArea.setToolTipText(popupText);
+				}
+			}
+		});
 	}
 
 	public static synchronized ExpressionBox getInstance(Input<?> input, String str) {
