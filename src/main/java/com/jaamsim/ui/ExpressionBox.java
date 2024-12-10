@@ -1029,15 +1029,6 @@ public class ExpressionBox extends JDialog {
 				0,
 				"'sub.Name' returns the name of the sub-model containing the entity."));
 
-		simObjects.add(new ButtonDesc("Sim", "Entity 'Simulation'",
-				"The Simulation entity is used to store the inputs and outputs related to the "
-						+ "simulation run.",
-				null,
-				"[Simulation]",
-				0,
-				"'[Simulation].RunNumber' returns the sequence number for the present "
-						+ "simulation run."));
-
 		simObjects.add(new ButtonDesc("null", "Entity 'null'",
 				"The null entity can be used to test whether an output that returns an object "
 						+ "has been set.",
