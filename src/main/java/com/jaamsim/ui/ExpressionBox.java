@@ -29,6 +29,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -910,7 +911,7 @@ public class ExpressionBox extends JDialog {
 								return new Point(funcMenu.getWidth(), -getY());
 							}
 						};
-						final ButtonDesc bd = getButtonDesc(functions, funcName);
+						final ButtonDesc bd = functionMap.get(funcName);
 						if (bd != null) {
 							item.setToolTipText(GUIFrame.formatKeywordToolTip(
 									null,
@@ -974,21 +975,13 @@ public class ExpressionBox extends JDialog {
 
 	}
 
-	public static ButtonDesc getButtonDesc(ArrayList<ButtonDesc> list, String name) {
-		for (ButtonDesc bd : list) {
-			if (bd.symbol.equals(name)) {
-				return bd;
-			}
-		}
-		return null;
-	}
-
 	private static ArrayList<ButtonDesc> initObjects = new ArrayList<>();
 	private static ArrayList<ButtonDesc> simObjects = new ArrayList<>();
 	private static ArrayList<ButtonDesc> expObjects = new ArrayList<>();
 	private static ArrayList<ButtonDesc> basicOperators = new ArrayList<>();
 	private static ArrayList<ButtonDesc> logicalOperators = new ArrayList<>();
 	private static ArrayList<ButtonDesc> functions = new ArrayList<>();
+	private static HashMap<String, ButtonDesc> functionMap = new HashMap<>();
 
 	static {
 
@@ -1953,6 +1946,9 @@ public class ExpressionBox extends JDialog {
 				"'typeName(\"abd\")' returns \"STRING\"",
 				"'typeName([Simulation])' returns \"ENTITY\""));
 
+		for (ButtonDesc bd : functions) {
+			functionMap.put(bd.symbol, bd);
+		}
 	}
 
 }
