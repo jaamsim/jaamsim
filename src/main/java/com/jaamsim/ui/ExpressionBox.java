@@ -1044,6 +1044,13 @@ public class ExpressionBox extends JDialog {
 				"'[Server1].obj != null' returns TRUE (i.e. 1) if the output 'obj' for Server1 "
 						+ "has been set."));
 
+		simObjects.add(new ButtonDesc("simTime", "Simulation time",
+				"The present simulation time.",
+				null,
+				"simTime",
+				0,
+				"'simTime/1[s]' returns the present simulation time in seconds."));
+
 		// EXPRESSION OBJECTS
 
 		expObjects.add(new ButtonDesc("String", "String",
