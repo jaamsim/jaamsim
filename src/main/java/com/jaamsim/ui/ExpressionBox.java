@@ -674,10 +674,13 @@ public class ExpressionBox extends JDialog {
 		buttonBar.add(Box.createRigidArea(gapDim));
 		addButtons(buttonBar, initObjects, width, editArea);
 
-		// Object buttons
+		// Keywords
 		width = 35;
 		buttonBar.addSeparator(separatorDim);
 		addButtons(buttonBar, simObjects, width, editArea);
+
+		// Object buttons
+		buttonBar.addSeparator(separatorDim);
 		buttonBar.add( new EntityButton("Entity", width, editArea) );
 		addButtons(buttonBar, expObjects, width, editArea);
 
