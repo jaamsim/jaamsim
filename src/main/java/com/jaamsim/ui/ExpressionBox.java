@@ -380,6 +380,21 @@ public class ExpressionBox extends JDialog {
 								bd.examples);
 					}
 
+					// Is the word an output name?
+					else if (wordStart > 0 && text.charAt(wordStart - 1) == '.') {
+						Entity ent = getEntityReference(text, wordStart - 1);
+						if (ent != null) {
+							for (ValueHandle hand : ent.getAllOutputs()) {
+								if (hand.getName().equals(word)) {
+									popupText = GUIFrame.formatOutputToolTip(
+											hand.getName(),
+											hand.getDescription());
+									break;
+								}
+							}
+						}
+					}
+
 					// Reset the tool tip
 					editArea.setToolTipText(popupText);
 				}
