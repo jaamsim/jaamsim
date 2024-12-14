@@ -200,6 +200,8 @@ public class ScrollablePopupMenu extends JPopupMenu {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
+				if (!comp.isValid())
+					return;
 				MouseEvent evt = new MouseEvent(comp, MouseEvent.MOUSE_MOVED,
 		                System.currentTimeMillis(), 0, 10, 10, 0, false);
 				ToolTipManager.sharedInstance().mouseMoved(evt);
