@@ -22,6 +22,7 @@ import java.util.Comparator;
 
 import com.jaamsim.ProbabilityDistributions.BetaDistribution;
 import com.jaamsim.ProbabilityDistributions.BinomialDistribution;
+import com.jaamsim.ProbabilityDistributions.ContinuousDistribution;
 import com.jaamsim.ProbabilityDistributions.DiscreteDistribution;
 import com.jaamsim.ProbabilityDistributions.DiscreteUniformDistribution;
 import com.jaamsim.ProbabilityDistributions.ErlangDistribution;
@@ -2479,6 +2480,67 @@ public class ExpOperators {
 			@Override
 			public ExpValResult validate(ParseContext context, ExpValResult[] args, String source, int pos) {
 				return validateRandomFunction(context, args, source, pos);
+			}
+		});
+
+		addFunction("continuous", 2, 3, new CallableFunc() {
+			@Override
+			public void checkUnits(ParseContext context, ExpResult[] args, String source, int pos) throws ExpError {
+				if (args.length > 2 && args[2].unitType != DimensionlessUnit.class)
+					throw new ExpError(source, pos, "Input 'seed' must be dimensionless");
+			}
+			@Override
+			public ExpResult call(EvalContext context, ExpResult[] args, String source, int pos) throws ExpError {
+				if (context == null)  // trap call from ConstOptimizer.updateRef
+					return null;
+
+				Entity thisEnt = ((EntityEvalContext) context).thisEnt;
+				JaamSimModel simModel = thisEnt.getJaamSimModel();
+				int seed = -1;
+				if (args.length > 2)
+					seed = (int) args[2].value;
+				String key = seed + "continuous" + thisEnt.getEntityNumber();
+				MRG1999a[] rngs = simModel.getRandomGenerators(key, seed, 1);
+
+				double val = 0.0d;
+				Class<? extends Unit> ut = DimensionlessUnit.class;
+				if (EventManager.hasCurrent()) {
+					if (args[0].colVal.getSize() != args[1].colVal.getSize()) {
+						throw new ExpError(source, pos, "The 'values' and 'cumProbs' arrays must have the same number of entries.");
+					}
+					int n = args[0].colVal.getSize();
+					double[] cumProbs = new double[n];
+					double[] values = new double[n];
+					for (int i = 0; i < n; i++) {
+						ExpResult indexRes = ExpResult.makeNumResult(i + 1, DimensionlessUnit.class);
+						cumProbs[i] = args[0].colVal.index(indexRes).value;
+						ExpResult res = args[1].colVal.index(indexRes);
+						if (i == 0) {
+							ut = res.unitType;
+						}
+						else {
+							if (res.unitType != ut) {
+								throw new ExpError(source, pos, "The entries in the 'values' array must have the same unit type.");
+							}
+							if (cumProbs[i] < cumProbs[i - 1]) {
+								throw new ExpError(source, pos, "The entries in the 'cumProbs' array must increase monotonically.");
+							}
+						}
+						values[i] = res.value;
+					}
+					if (cumProbs[0] != 0.0d) {
+						throw new ExpError(source, pos, "The first entry in the 'cumProbs' array must be exactly 0.0.");
+					}
+					if (cumProbs[n - 1] != 1.0d) {
+						throw new ExpError(source, pos, "The last entry in the 'cumProbs' array must be exactly 1.0.");
+					}
+					val = ContinuousDistribution.getSample(values, cumProbs, rngs[0]);
+				}
+				return ExpResult.makeNumResult(val, ut);
+			}
+			@Override
+			public ExpValResult validate(ParseContext context, ExpValResult[] args, String source, int pos) {
+				return validateArrayFunction(context, args, source, pos);
 			}
 		});
 
