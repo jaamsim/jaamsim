@@ -364,7 +364,7 @@ public class JaamSimModel implements EventTimeListener {
 		EntityListNode listNode = entityList.next;
 		while(listNode != entityList) {
 			Entity curEnt = listNode.ent;
-			if (!curEnt.isDead()) {
+			if (curEnt != null && !curEnt.isDead()) {
 				curEnt.kill();
 			}
 			listNode = listNode.next;
@@ -722,15 +722,14 @@ public class JaamSimModel implements EventTimeListener {
 	 * Destroys the entities that were generated during the present simulation run.
 	 */
 	public void killGeneratedEntities() {
-		EntityListNode curNode = entityList.next;
-		while(curNode != entityList) {
-			Entity curEnt = curNode.ent;
-			if (!curEnt.isDead() && !curEnt.isRetained()) {
+		EntityListNode listNode = entityList.next;
+		while(listNode != entityList) {
+			Entity curEnt = listNode.ent;
+			if (curEnt != null && !curEnt.isDead() && !curEnt.isRetained()) {
 				curEnt.kill();
 			}
-			curNode = curNode.next;
+			listNode = listNode.next;
 		}
-
 	}
 
 	/**
