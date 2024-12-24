@@ -1365,7 +1365,7 @@ public class Simulation extends Entity {
 	}
 
 	@Output(name = "ScenarioNumber",
-	 description = "The counter used to indentify an individual simulation scenario when multiple "
+	 description = "The counter used to identify an individual simulation scenario when multiple "
 	             + "scenarios are being made.",
 	    unitType = DimensionlessUnit.class,
 	  reportable = true,
@@ -1384,7 +1384,7 @@ public class Simulation extends Entity {
 	}
 
 	@Output(name = "ReplicationNumber",
-	 description = "The counter used to indentify an individual replication for the present "
+	 description = "The counter used to identify an individual replication for the present "
 	             + "scenario.",
 	    unitType = DimensionlessUnit.class,
 	  reportable = true,
@@ -1394,7 +1394,7 @@ public class Simulation extends Entity {
 	}
 
 	@Output(name = "RunNumber",
-	 description = "The counter used to indentify an individual simulation run when multiple runs "
+	 description = "The counter used to identify an individual simulation run when multiple runs "
 	             + "are being made.",
 	    unitType = DimensionlessUnit.class,
 	  reportable = true,
