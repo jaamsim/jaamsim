@@ -1971,7 +1971,7 @@ public class ExpressionBox extends JDialog {
 				"Returns a randomly selected value based on an array of cumulative probabilities and a corresponding array of values.",
 				"Accepts input parameters of cumProbs, values, and random stream. "
 						+ "Returns a randomly selected value that is interpolated from the values array. "
-						+ "The cumProbs argument is an array of cumulative probabilies with entries that increase monotonically from exactly 0.0 to exactly 1.0"
+						+ "The cumProbs argument is an array of cumulative probabilies with entries that increase monotonically from exactly 0.0 to exactly 1.0. "
 						+ "The values argument is an array of values from which the output is interpolated. "
 						+ "The random stream input is dimensionless. "
 						+ "If a random stream value is not entered, the model will choose the next "
