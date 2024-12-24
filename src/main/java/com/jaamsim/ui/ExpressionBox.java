@@ -1946,7 +1946,7 @@ public class ExpressionBox extends JDialog {
 				"Accepts input parameters of alpha, beta, scale, and random stream. "
 						+ "Returns a random sample with the same units as the scale input. "
 						+ "The alpha, beta, and random stream inputs are dimensionless. "
-						+ "If a random stream value is not entered, the model will chose the next "
+						+ "If a random stream value is not entered, the model will choose the next "
 						+ "unused value.",
 				"beta(alpha, beta, scale, stream)",
 				-1,
@@ -1960,7 +1960,7 @@ public class ExpressionBox extends JDialog {
 						+ "Returns a randomly selected dimensionless integer value. "
 						+ "The numberOfTrials, probability, and random stream inputs are "
 						+ "dimensionless. "
-						+ "If a random stream value is not entered, the model will chose the next "
+						+ "If a random stream value is not entered, the model will choose the next "
 						+ "unused value.",
 				"binomial(numberOfTrials, probability, stream)",
 				-1,
@@ -1974,7 +1974,7 @@ public class ExpressionBox extends JDialog {
 						+ "The cumProbs argument is an array of cumulative probabilies with entries that increase monotonically from exactly 0.0 to exactly 1.0"
 						+ "The values argument is an array of values from which the output is interpolated. "
 						+ "The random stream input is dimensionless. "
-						+ "If a random stream value is not entered, the model will chose the next "
+						+ "If a random stream value is not entered, the model will choose the next "
 						+ "unused value.",
 				"continuous(cumProbs, values, stream)",
 				-1,
@@ -1988,7 +1988,7 @@ public class ExpressionBox extends JDialog {
 						+ "The probs argument is an array of probabilies that sum to exactly 1.0. "
 						+ "The values argument is an array of values from which the output is selected. "
 						+ "The random stream input is dimensionless. "
-						+ "If a random stream value is not entered, the model will chose the next "
+						+ "If a random stream value is not entered, the model will choose the next "
 						+ "unused value.",
 				"discrete(probs, values, stream)",
 				-1,
@@ -2002,7 +2002,7 @@ public class ExpressionBox extends JDialog {
 				"Accepts input parameters of minIndex, maxIndex, and random stream. "
 						+ "Returns a randomly selected dimensionless integer value. "
 						+ "The minIndex, maxIndex, and random stream inputs are dimensionless. "
-						+ "If a random stream value is not entered, the model will chose the next "
+						+ "If a random stream value is not entered, the model will choose the next "
 						+ "unused value.",
 				"discreteUniform(minIndex, maxIndex, stream)",
 				-1,
@@ -2014,7 +2014,7 @@ public class ExpressionBox extends JDialog {
 				"Accepts input parameters of mean, shape, and random stream. "
 						+ "Returns a random sample with the same units as the mean input. "
 						+ "The shape and random stream input are dimensionless. "
-						+ "If a random stream value is not entered, the model will chose the next "
+						+ "If a random stream value is not entered, the model will choose the next "
 						+ "unused value.",
 				"erlang(mean, shape, stream)",
 				-1,
@@ -2026,7 +2026,7 @@ public class ExpressionBox extends JDialog {
 				"Accepts input parameters of mean and random stream. "
 						+ "Returns a random sample with the same units as the mean input. "
 						+ "The random stream input is dimensionless. "
-						+ "If a random stream value is not entered, the model will chose the next "
+						+ "If a random stream value is not entered, the model will choose the next "
 						+ "unused value.",
 				"exponential(mean, stream)",
 				-1,
@@ -2038,7 +2038,7 @@ public class ExpressionBox extends JDialog {
 				"Accepts input parameters of mean, shape, and random stream. "
 						+ "Returns a random sample with the same units as the mean input. "
 						+ "The shape and random stream inputs are dimensionless. "
-						+ "If a random stream value is not entered, the model will chose the next "
+						+ "If a random stream value is not entered, the model will choose the next "
 						+ "unused value.",
 				"gamma(mean, shape, stream)",
 				-1,
@@ -2052,7 +2052,7 @@ public class ExpressionBox extends JDialog {
 				"Accepts input parameters of probability and random stream. "
 						+ "Returns a randomly selected dimensionless integer value. "
 						+ "The probability and random stream inputs are dimensionless. "
-						+ "If a random stream value is not entered, the model will chose the next "
+						+ "If a random stream value is not entered, the model will choose the next "
 						+ "unused value.",
 				"geometric(probability, stream)",
 				-1,
@@ -2064,7 +2064,7 @@ public class ExpressionBox extends JDialog {
 				"Accepts input parameters of scale, shape, and random stream. "
 						+ "Returns a random sample with the same units as the scale input. "
 						+ "The shape and random stream inputs are dimensionless. "
-						+ "If a random stream value is not entered, the model will chose the next "
+						+ "If a random stream value is not entered, the model will choose the next "
 						+ "unused value.",
 				"loglogistic(scale, shape, stream)",
 				-1,
@@ -2076,7 +2076,7 @@ public class ExpressionBox extends JDialog {
 				"Accepts input parameters of scale, normalMean, normalStandardDeviation, and random stream. "
 						+ "Returns a random sample with the same units as the scale input. "
 						+ "The normalMean, normalStandardDeviation, and random stream inputs are dimensionless. "
-						+ "If a random stream value is not entered, the model will chose the next "
+						+ "If a random stream value is not entered, the model will choose the next "
 						+ "unused value.",
 				"lognormal(scale, normalMean, normalStandardDeviation, stream)",
 				-1,
@@ -2091,7 +2091,7 @@ public class ExpressionBox extends JDialog {
 				"Accepts input parameters of successfulTrials, probability, and random stream. "
 						+ "Returns a randomly selected dimensionless integer value. "
 						+ "The successfulTrials, probability, and random stream inputs are dimensionless. "
-						+ "If a random stream value is not entered, the model will chose the next "
+						+ "If a random stream value is not entered, the model will choose the next "
 						+ "unused value.",
 				"negativeBinomial(successfulTrials, probability, stream)",
 				-1,
@@ -2104,7 +2104,7 @@ public class ExpressionBox extends JDialog {
 						+ "Returns a random sample with the same units as the scale input. "
 						+ "The standardDeviation input must have the unit type as the mean. "
 						+ "The random stream input is dimensionless. "
-						+ "If a random stream value is not entered, the model will chose the next "
+						+ "If a random stream value is not entered, the model will choose the next "
 						+ "unused value.",
 				"normal(mean, standardDeviation, stream)",
 				-1,
@@ -2117,7 +2117,7 @@ public class ExpressionBox extends JDialog {
 				"Accepts input parameters of mean and random stream. "
 						+ "Returns a randomly selected dimensionless integer value. "
 						+ "The random stream input is dimensionless. "
-						+ "If a random stream value is not entered, the model will chose the next "
+						+ "If a random stream value is not entered, the model will choose the next "
 						+ "unused value.",
 				"poisson(mean, stream)",
 				-1,
@@ -2130,7 +2130,7 @@ public class ExpressionBox extends JDialog {
 						+ "Returns a random sample with the same units as the minValue input. "
 						+ "The mode and maxValue inputs must have the same unit type as the minValue. "
 						+ "The random stream input is dimensionless. "
-						+ "If a random stream value is not entered, the model will chose the next "
+						+ "If a random stream value is not entered, the model will choose the next "
 						+ "unused value.",
 				"triangular(minValue, mode, maxValue, stream)",
 				-1,
@@ -2143,7 +2143,7 @@ public class ExpressionBox extends JDialog {
 						+ "Returns a random sample with the same units as the minValue input. "
 						+ "The maxValue input must have the same unit type as the minValue. "
 						+ "The random stream input is dimensionless. "
-						+ "If a random stream value is not entered, the model will chose the next "
+						+ "If a random stream value is not entered, the model will choose the next "
 						+ "unused value.",
 				"uniform(minValue, maxValue, stream)",
 				-1,
@@ -2155,7 +2155,7 @@ public class ExpressionBox extends JDialog {
 				"Accepts input parameters of scale, shape, and random stream. "
 						+ "Returns a random sample with the same units as the scale input. "
 						+ "The shape and random stream inputs are dimensionless. "
-						+ "If a random stream value is not entered, the model will chose the next "
+						+ "If a random stream value is not entered, the model will choose the next "
 						+ "unused value.",
 				"weibull(scale, shape, stream)",
 				-1,
