@@ -115,7 +115,7 @@ public abstract class LinkedService extends LinkedDevice implements QueueUser {
 	protected final InterfaceEntityListInput<SubjectEntity> watchList;
 
 	@Keyword(description = "A list of attribute assignments that are triggered at the start of "
-	                     + "processing for each new entity, after any resources have been sezied.")
+	                     + "processing for each new entity, after any resources have been seized.")
 	protected final AssignmentListInput assignmentsAtStart;
 
 	private String matchValue;
