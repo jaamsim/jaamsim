@@ -42,27 +42,25 @@ public class XYGraph extends AbstractGraph {
 	@Keyword(description = "One or more sources of data to be graphed on the primary y-axis.\n"
 	                     + "Each source is graphed as a separate line or bar and is specified by an "
 	                     + "array of numbers with or without units.",
-	         exampleList = {"'{1.0[m], 0.5[m]}'",
-	                        "{ [Statistics1].HistogramBinFractions } { [Statistics2].HistogramBinFractions }"})
+	         exampleList = {"{ [Statistics1].HistogramBinFractions } { [Statistics2].HistogramBinFractions }"})
 	protected final ExpressionListInput yDataSource;
 
 	@Keyword(description = "One or more sources of data for the x-axis values corresponding to the "
 	                     + "primary y-axis data sources.\n"
 	                     + "Each source is specified by an array of numbers with or without units.",
-	         exampleList = {"'{1.0[m], 0.5[m]}'",
-	                        "{ [Statistics1].HistogramBinCentres } { [Statistics2].HistogramBinCentres }"})
+	         exampleList = {"{ [Statistics1].HistogramBinCentres } { [Statistics2].HistogramBinCentres }"})
 	protected final ExpressionListInput xDataSource;
 
 	@Keyword(description = "One or more sources of data to be graphed on the secondary y-axis.\n"
-	                     + "Each source is graphed as a separate line or bar and is specified by an Entity and its Output.",
-	         exampleList = {"{ Entity1 Output1 } { Entity2 Output2 }"})
+	                     + "Each source is graphed as a separate line or bar and is specified by an "
+	                     + "array of numbers with or without units.",
+	         exampleList = {"{ [Statistics1].HistogramBinCumulativeFractions } { [Statistics2].HistogramBinCumulativeFractions }"})
 	protected final ExpressionListInput ySecondaryDataSource;
 
 	@Keyword(description = "One or more sources of data for the x-axis values corresponding to the "
 	                     + "secondary y-axis data sources.\n"
 	                     + "Each source is specified by an array of numbers with or without units.",
-	         exampleList = {"'{1.0[m], 0.5[m]}'",
-	                        "{ [Statistics1].HistogramBinCentres } { [Statistics2].HistogramBinCentres }"})
+	         exampleList = {"{ [Statistics1].HistogramBinUpperLimits } { [Statistics2].HistogramBinUpperLimits }"})
 	protected final ExpressionListInput xSecondaryDataSource;
 
 	@Keyword(description = "Type of graph for each of the primary series:\n"
