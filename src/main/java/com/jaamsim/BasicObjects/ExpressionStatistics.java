@@ -17,10 +17,12 @@
 package com.jaamsim.BasicObjects;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import com.jaamsim.BooleanProviders.BooleanProvInput;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleInput;
+import com.jaamsim.Samples.SampleListInput;
 import com.jaamsim.Statistics.TimeBasedFrequency;
 import com.jaamsim.Statistics.TimeBasedStatistics;
 import com.jaamsim.basicsim.Entity;
@@ -55,6 +57,14 @@ public class ExpressionStatistics extends DisplayEntity implements ObserverEntit
 	                     + "Histogram data will not be generated if the input is left blank.",
 	         exampleList = {"1 h"})
 	private final SampleInput histogramBinWidth;
+
+	@Keyword(description = "List of percentiles for which the corresponding recording values will "
+	                     + "be returned by the 'PercentileValues' output. "
+	                     + "This input requires the 'HistogramBinWidth' input to be specified, "
+	                     + "and the accuracy of the values for the specified percentiles will "
+	                     + "depend on the size of the bin width.",
+	         exampleList = {"90 95 99"})
+	private final SampleListInput targetPercentiles;
 
 	@Keyword(description = "Optional list of objects to monitor.\n\n"
 	                     + "If the 'WatchList' input is provided, then the 'DataSource' input is "
@@ -100,6 +110,11 @@ public class ExpressionStatistics extends DisplayEntity implements ObserverEntit
 		histogramBinWidth.setUnitType(UserSpecifiedUnit.class);
 		histogramBinWidth.setOutput(true);
 		this.addInput(histogramBinWidth);
+
+		targetPercentiles = new SampleListInput("TargetPercentiles", KEY_INPUTS, null);
+		targetPercentiles.setUnitType(DimensionlessUnit.class);
+		targetPercentiles.setDimensionless(true);
+		this.addInput(targetPercentiles);
 
 		watchList = new InterfaceEntityListInput<>(SubjectEntity.class, "WatchList", KEY_INPUTS, new ArrayList<>());
 		watchList.setIncludeSelf(false);
@@ -284,16 +299,96 @@ public class ExpressionStatistics extends DisplayEntity implements ObserverEntit
 		return ret;
 	}
 
+	@Output(name = "HistogramBinUpperLimits",
+	 description = "The largest value that can be assigned to each histogram bin.",
+	    unitType = UserSpecifiedUnit.class,
+	  reportable = true,
+	    sequence = 7)
+	public double[] getHistogramBinUpperLimits(double simTime) {
+		if (histogramBinWidth.isDefault()) {
+			return new double[0];
+		}
+		int[] binVals = freq.getBinValues();
+		double[] ret = new double[binVals.length];
+		for (int i = 0; i < binVals.length; i++) {
+			ret[i] = getBinWidth() * (binVals[i] + 0.5d);
+		}
+		return ret;
+	}
+
 	@Output(name = "HistogramBinFractions",
 	 description = "Fraction of total time that the recorded value was within each histogram bin.",
 	    unitType = DimensionlessUnit.class,
 	  reportable = true,
-	    sequence = 7)
+	    sequence = 8)
 	public double[] getHistogramBinFractions(double simTime) {
 		if (histogramBinWidth.isDefault()) {
 			return new double[0];
 		}
 		return freq.getBinFractions(simTime);
+	}
+
+	@Output(name = "HistogramBinCumulativeFractions",
+	 description = "The fractional number of values within each histogram bin or smaller.",
+	    unitType = DimensionlessUnit.class,
+	  reportable = true,
+	    sequence = 9)
+	public double[] getHistogramCumulativeBinFractions(double simTime) {
+		if (histogramBinWidth.isDefault()) {
+			return new double[0];
+		}
+		return freq.getBinCumulativeFractions(simTime);
+	}
+
+	@Output(name = "TargetPercentiles",
+	 description = "The percentiles specified by the 'TargetPercentiles' input.",
+	  reportable = true,
+	    sequence = 10)
+	public double[] getTargetPercentiles(double simTime) {
+		double[] ret = new double[targetPercentiles.getListSize()];
+		for (int i = 0; i < targetPercentiles.getListSize(); i++) {
+			ret[i] = targetPercentiles.getNextSample(i, this, simTime);
+		}
+		return ret;
+	}
+
+	@Output(name = "PercentileValues",
+	 description = "The recorded values corresponding to percentiles specified by the "
+	             + "'TargetPercentiles' input.",
+	    unitType = UserSpecifiedUnit.class,
+	  reportable = true,
+	    sequence = 11)
+	public double[] getPercentileValues(double simTime) {
+		double[] ret = new double[targetPercentiles.getListSize()];
+		if (histogramBinWidth.isDefault()) {
+			return ret;
+		}
+		double[] cumFractions = getHistogramCumulativeBinFractions(simTime);
+		double[] values = getHistogramBinUpperLimits(simTime);
+		for (int i = 0; i < targetPercentiles.getListSize(); i++) {
+			double targetFraction = targetPercentiles.getNextSample(i, this, simTime) / 100.0d;
+			targetFraction = Math.min(targetFraction, 1.0d);
+			targetFraction = Math.max(targetFraction, 0.0d);
+			int k = Arrays.binarySearch(cumFractions, targetFraction);
+			if (k >= 0) {
+				ret[i] = values[k];
+				continue;
+			}
+			int index = -k - 1;
+			index = Math.min(index, cumFractions.length - 1);
+			if (index == 0) {
+				ret[i] = values[0] * targetFraction / cumFractions[0];
+				continue;
+			}
+			if (index >= values.length) {
+				ret[i] = values[values.length - 1];
+				continue;
+			}
+			double ratio = (targetFraction - cumFractions[index - 1])
+					/ (cumFractions[index] - cumFractions[index - 1]);
+			ret[i] = values[index - 1] + ratio * (values[index] - values[index - 1]);
+		}
+		return ret;
 	}
 
 }
