@@ -3101,7 +3101,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		locatorPos.setPreferredSize( new Dimension( 140, 16 ) );
 		locatorPos.setForeground( new Color( 1.0f, 0.0f, 0.0f ) );
 		locatorPos.setToolTipText(formatToolTip("Cursor Position",
-				"The coordinates of the cursor on the x-y plane."));
+				"The coordinates on the surface of the object under the cursor in 3D space."));
 		mainToolBar.add( locatorPos );
 	}
 
