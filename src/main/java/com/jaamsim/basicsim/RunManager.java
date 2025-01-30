@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2021-2022 JaamSim Software Inc.
+ * Copyright (C) 2021-2025 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -177,13 +177,21 @@ public class RunManager implements RunListener {
 				if (numOuts > 0) {
 					outStream = getOutStream();
 					if (outStream != null) {
+						int replications = scene.getRunsCompleted().size();
 						boolean labels = simulation.getPrintRunLabels();
 						boolean reps = simulation.getPrintReplications();
 						boolean bool = simulation.getPrintConfidenceIntervals();
+
+						// Print the column headers
 						if (run.getScenarioNumber() == getStartingScenarioNumber())
 							InputAgent.printRunOutputHeaders(simModel, labels, reps, bool, outStream);
+
+						// Print the output lines for the scenario
 						InputAgent.printScenarioOutputs(scene, labels, reps, bool, outStream);
-						if (reps && run.getScenarioNumber() < getEndingScenarioNumber()) {
+
+						// Print a blank line after the scenario if the replications are shown
+						if (reps && replications > 1 &&
+								run.getScenarioNumber() < getEndingScenarioNumber()) {
 							outStream.println();
 						}
 					}
