@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2009-2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018-2024 JaamSim Software Inc.
+ * Copyright (C) 2018-2025 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -1331,7 +1331,7 @@ public class InputAgent {
 		});
 
 		// Print the outputs for each replication
-		if (reps || replications == 1) {
+		if (reps) {
 			for (SimRun run : runList) {
 				StringBuilder sb = new StringBuilder();
 
@@ -1362,7 +1362,8 @@ public class InputAgent {
 			}
 		}
 
-		if (replications <= 1)
+		// No need to print the aggregate averages if there is just one replication
+		if (replications <= 1 && reps)
 			return;
 
 		// Print an error message for any runs that failed
