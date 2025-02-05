@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2012 Ausenco Engineering Canada Inc.
- * Copyright (C) 2019-2020 JaamSim Software Inc.
+ * Copyright (C) 2019-2025 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
  */
 package com.jaamsim.controllers;
 
+import com.jaamsim.math.MathUtils;
 import com.jaamsim.math.Quaternion;
 import com.jaamsim.math.Vec3d;
 
@@ -40,7 +41,7 @@ public class PolarInfo {
 		radius = viewDiff.mag3();
 
 		rotZ = Math.atan2(viewDiff.x, -viewDiff.y);
-		if (viewDiff.x == 0.0d && viewDiff.y == 0.0d)  // degenerate case
+		if (MathUtils.near(viewDiff.x, 0.0d) && MathUtils.near(viewDiff.y, 0.0d))
 			rotZ = 0.0d;
 
 		double xyDist = Math.hypot(viewDiff.x, viewDiff.y);
@@ -67,6 +68,12 @@ public class PolarInfo {
 
 		return pi.rotZ == rotZ && pi.rotX == rotX && pi.radius == radius &&
 		       viewCenter.equals3(pi.viewCenter);
+	}
+
+	@Override
+	public String toString() {
+		return String.format("rotZ=%s, rotX=%s, radius=%s, viewCenter=%s",
+				rotZ, rotX, radius, viewCenter);
 	}
 
 }
