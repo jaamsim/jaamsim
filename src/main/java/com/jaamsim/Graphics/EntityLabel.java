@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2015 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018-2024 JaamSim Software Inc.
+ * Copyright (C) 2018-2025 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,7 +43,7 @@ public class EntityLabel extends TextBasics {
 		drawRange.setHidden(true);
 
 		targetEntity = new EntityInput<>(DisplayEntity.class, "TargetEntity", KEY_INPUTS, null);
-		targetEntity.setCallback(inputCallback);
+		targetEntity.setCallback(targetEntityCallback);
 		targetEntity.setHidden(true);
 		this.addInput(targetEntity);
 
@@ -86,21 +86,13 @@ public class EntityLabel extends TextBasics {
 	@Override
 	public void resetGraphics() {}
 
-	static final InputCallback inputCallback = new InputCallback() {
+	static final InputCallback targetEntityCallback = new InputCallback() {
 		@Override
 		public void callback(Entity ent, Input<?> inp) {
-			((EntityLabel)ent).updateInputValue();
+			if (inp.getValue() == ent.getParent())
+				inp.reset();
 		}
 	};
-
-	void updateInputValue() {
-		DisplayEntity ent = getTarget();
-		if (ent == null) {
-			setText("ERROR");
-			return;
-		}
-		setText(ent.getName());
-	}
 
 	static final InputCallback textHeightCallback = new InputCallback() {
 		@Override
@@ -112,7 +104,7 @@ public class EntityLabel extends TextBasics {
 	static final InputCallback disabledInputCallback = new InputCallback() {
 		@Override
 		public void callback(Entity ent, Input<?> inp) {
-			inp.setEdited(false);
+			inp.reset();
 		}
 	};
 
