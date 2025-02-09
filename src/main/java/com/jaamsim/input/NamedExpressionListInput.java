@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2016-2024 JaamSim Software Inc.
+ * Copyright (C) 2016-2025 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 
 import com.jaamsim.basicsim.Entity;
+import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.input.ExpEvaluator.EntityParseContext;
 import com.jaamsim.input.ExpParser.Expression;
 import com.jaamsim.units.DimensionlessUnit;
@@ -141,6 +142,41 @@ public class NamedExpressionListInput extends ArrayListInput<NamedExpression> {
 				sb.append(Input.BRACE_SEPARATOR);
 			}
 			sb.append(ne.getStubDefinition());
+		}
+		return sb.toString();
+	}
+
+	@Override
+	public String getPresentValueString(Entity thisEnt, double simTime) {
+		if (value == null || isDef)
+			return "";
+
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < value.size(); i++) {
+			NamedExpression ne = value.get(i);
+			if (i > 0)
+				sb.append(BRACE_SEPARATOR);
+
+			// Opening brace and output name
+			sb.append("{").append(BRACE_SEPARATOR);
+			sb.append(ne.getName()).append(SEPARATOR);
+
+			// Present value
+			try {
+				ExpResult res = ExpEvaluator.evaluateExpression(ne.getExpression(), thisEnt, simTime);
+				if (res.type == ExpResType.NUMBER && res.unitType != ne.getUnitType()) {
+					throw new ExpError(ne.getParseContext().getUpdatedSource(), 0, EXP_ERR_UNIT,
+							res.unitType.getSimpleName(), ne.getUnitType().getSimpleName());
+				}
+				sb.append(res.toString());
+			}
+			catch (ExpError e) {
+				throw new ErrorException(e.source, e.pos, thisEnt.getName(), getKeyword(), i + 1,
+						e.getMessage(), e);
+			}
+
+			// Closing brace
+			sb.append(BRACE_SEPARATOR).append("}");
 		}
 		return sb.toString();
 	}
