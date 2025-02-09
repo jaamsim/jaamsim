@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2019-2024 JaamSim Software Inc.
+ * Copyright (C) 2019-2025 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -317,7 +317,7 @@ public class OutputBox extends FrameBox {
 					return InputAgent.getValueAsString(simModel, out, simTime, fmt, factor, unitString);
 				}
 				catch (Throwable e) {
-					return "Cannot evaluate";
+					return "Error: " + e.getMessage();
 				}
 			default:
 				assert false;
