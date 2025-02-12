@@ -59,6 +59,7 @@ import com.jaamsim.Graphics.EntityLabel;
 import com.jaamsim.Graphics.OverlayEntity;
 import com.jaamsim.Graphics.Region;
 import com.jaamsim.basicsim.Entity;
+import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.input.ExpEvaluator;
 import com.jaamsim.input.ExpParser;
@@ -502,7 +503,14 @@ public class ExpressionBox extends JDialog {
 			valStr = input.getPresentValueString(ent, simTime);
 		}
 		catch (Exception e) {
-			msgText.setText("CANNOT EVALUATE: " + e.getMessage());
+			String msg = "CANNOT EVALUATE";
+			if (e instanceof ErrorException) {
+				int index = ((ErrorException) e).index;
+				if (index > 0) {
+					msg = msg + " ENTRY " + index;
+				}
+			}
+			msgText.setText(msg + ": " + e.getMessage());
 			return;
 		}
 		msgText.setText("PRESENT VALUE: " + valStr);
