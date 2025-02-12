@@ -490,7 +490,7 @@ public class ExpressionBox extends JDialog {
 			acceptButton.setEnabled(true);
 		}
 		catch (Exception e) {
-			msgText.setText("SYNTAX ERROR: " + e.getMessage());
+			msgText.setText("SYNTAX ERROR:\n" + e.getMessage());
 			acceptButton.setEnabled(false);
 			return;
 		}
@@ -510,10 +510,10 @@ public class ExpressionBox extends JDialog {
 					msg = msg + " ENTRY " + index;
 				}
 			}
-			msgText.setText(msg + ": " + e.getMessage());
+			msgText.setText(msg + ":\n" + e.getMessage());
 			return;
 		}
-		msgText.setText("PRESENT VALUE: " + valStr);
+		msgText.setText("PRESENT VALUE:\n" + valStr);
 	}
 
 	public int showDialog() {
