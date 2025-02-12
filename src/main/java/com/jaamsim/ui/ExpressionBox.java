@@ -24,6 +24,7 @@ import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -325,6 +326,24 @@ public class ExpressionBox extends JDialog {
 				setEditMode(EDIT_MODE_NORMAL);
 			}
 	    });
+
+		// Clear the auto-complete menu if the ESCAPE key is pressed
+		editArea.addKeyListener(new KeyListener() {
+
+			@Override
+			public void keyTyped(KeyEvent e) {}
+
+			@Override
+			public void keyPressed(KeyEvent e) {}
+
+			@Override
+			public void keyReleased(KeyEvent e) {
+				if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+					setEditMode(EDIT_MODE_NORMAL);
+				}
+			}
+
+		});
 
 		// Clear the auto-complete menu if the mouse is clicked in the text
 		editArea.addMouseListener(new MouseListener() {
