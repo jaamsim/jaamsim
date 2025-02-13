@@ -160,15 +160,12 @@ public class StringProvListInput extends ArrayListInput<StringProvider> {
 			return "";
 
 		StringBuilder sb = new StringBuilder();
-		boolean first = true;
 		for (int i = 0; i < value.size(); i++) {
-			if (!first) {
-				sb.append(Input.SEPARATOR);
-			}
-			first = false;
-			sb.append("{").append(Input.BRACE_SEPARATOR);
+			if (i > 0)
+				sb.append(BRACE_SEPARATOR);
+			sb.append("{").append(BRACE_SEPARATOR);
 			sb.append(getNextString(i, thisEnt, simTime));
-			sb.append(Input.BRACE_SEPARATOR).append("}");
+			sb.append(BRACE_SEPARATOR).append("}");
 		}
 		return sb.toString();
 	}

@@ -284,13 +284,11 @@ public class SampleListInput extends ArrayListInput<SampleProvider> {
 		JaamSimModel simModel = thisEnt.getJaamSimModel();
 
 		StringBuilder sb = new StringBuilder();
-		boolean first = true;
-		for (SampleProvider samp : value) {
-			if (!first) {
-				sb.append(Input.SEPARATOR);
-			}
-			first = false;
-			sb.append("{").append(Input.BRACE_SEPARATOR);
+		for (int i = 0; i < value.size(); i++) {
+			SampleProvider samp = value.get(i);
+			if (i > 0)
+				sb.append(BRACE_SEPARATOR);
+			sb.append("{").append(BRACE_SEPARATOR);
 			Class<? extends Unit> ut = samp.getUnitType();
 			if (ut == DimensionlessUnit.class) {
 				sb.append(Double.toString(samp.getNextSample(thisEnt, simTime)));
@@ -301,7 +299,7 @@ public class SampleListInput extends ArrayListInput<SampleProvider> {
 				sb.append(Double.toString(samp.getNextSample(thisEnt, simTime)/sifactor));
 				sb.append("[").append(unitString).append("]");
 			}
-			sb.append(Input.BRACE_SEPARATOR).append("}");
+			sb.append(BRACE_SEPARATOR).append("}");
 		}
 		return sb.toString();
 	}

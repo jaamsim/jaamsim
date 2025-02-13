@@ -142,14 +142,12 @@ public class ExpressionListInput extends ArrayListInput<Expression> {
 	public String getPresentValueString(Entity thisEnt, double simTime) {
 		if (value == null)
 			return "";
+
 		StringBuilder sb = new StringBuilder();
-		boolean first = true;
 		for (int i = 0; i < value.size(); i++) {
-			if (!first) {
-				sb.append(Input.SEPARATOR);
-			}
-			first = false;
-			sb.append("{").append(Input.BRACE_SEPARATOR);
+			if (i > 0)
+				sb.append(BRACE_SEPARATOR);
+			sb.append("{").append(BRACE_SEPARATOR);
 			try {
 				ExpResult res = ExpEvaluator.evaluateExpression(value.get(i), thisEnt, simTime);
 				sb.append(res.toString());
@@ -157,7 +155,7 @@ public class ExpressionListInput extends ArrayListInput<Expression> {
 			catch (ExpError e) {
 				sb.append(getValueString());
 			}
-			sb.append(Input.BRACE_SEPARATOR).append("}");
+			sb.append(BRACE_SEPARATOR).append("}");
 		}
 		return sb.toString();
 	}

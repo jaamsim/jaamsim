@@ -190,7 +190,7 @@ public class EntityProvListInput<T extends Entity> extends ArrayListInput<Entity
 			return "";
 
 		StringBuilder sb = new StringBuilder();
-		sb.append("{").append(Input.BRACE_SEPARATOR);
+		sb.append("{").append(BRACE_SEPARATOR);
 		boolean first = true;
 		for (T ent : getNextEntityList(thisEnt, simTime)) {
 			if (!first) {
@@ -199,7 +199,7 @@ public class EntityProvListInput<T extends Entity> extends ArrayListInput<Entity
 			first = false;
 			sb.append(String.format("[%s]", ent));
 		}
-		sb.append(Input.BRACE_SEPARATOR).append("}");
+		sb.append(BRACE_SEPARATOR).append("}");
 		return sb.toString();
 	}
 
