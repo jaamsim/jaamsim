@@ -153,7 +153,7 @@ public class ExpressionListInput extends ArrayListInput<Expression> {
 				sb.append(res.toString());
 			}
 			catch (ExpError e) {
-				sb.append(getValueString());
+				throw new ErrorException(thisEnt, getKeyword(), i, e);
 			}
 			sb.append(BRACE_SEPARATOR).append("}");
 		}
