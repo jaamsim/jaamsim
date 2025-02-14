@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2002-2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2024 JaamSim Software Inc.
+ * Copyright (C) 2016-2025 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ public class ErrorException extends RuntimeException {
 
 	public String entName;
 	public String keyword;
-	public int index;
+	public int index;  // index (1, 2, etc.) for list type inputs
 	public String source;
 	public int position;
 
@@ -67,8 +67,20 @@ public class ErrorException extends RuntimeException {
 		this(e.source, e.pos, ent.getName(), key, -1, e.getMessage(), e);
 	}
 
+	public ErrorException(Entity ent, String key, int i, ExpError e) {
+		this(e.source, e.pos, ent.getName(), key, i, e.getMessage(), e);
+	}
+
 	public ErrorException(Entity ent, Throwable cause) {
 		this("", -1, ent.getName(), "", -1, cause.getMessage(), cause);
+	}
+
+	public ErrorException(Entity ent, String key, Throwable cause) {
+		this("", -1, ent.getName(), key, -1, cause.getMessage(), cause);
+	}
+
+	public ErrorException(Entity ent, String key, int i, Throwable cause) {
+		this("", -1, ent.getName(), key, i, cause.getMessage(), cause);
 	}
 
 	public ErrorException( Throwable cause ) {

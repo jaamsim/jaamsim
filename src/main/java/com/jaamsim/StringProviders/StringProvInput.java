@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2015 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018-2024 JaamSim Software Inc.
+ * Copyright (C) 2018-2025 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -189,8 +189,7 @@ public class StringProvInput extends Input<StringProvider> {
 			throw e;
 		}
 		catch (Exception e) {
-			throw new ErrorException("", -1, thisEnt.getName(), getKeyword(), -1,
-					e.getMessage(), e);
+			throw new ErrorException(thisEnt, getKeyword(), e);
 		}
 	}
 
@@ -207,8 +206,7 @@ public class StringProvInput extends Input<StringProvider> {
 			throw e;
 		}
 		catch (Exception e) {
-			throw new ErrorException("", -1, thisEnt.getName(), getKeyword(), -1,
-					e.getMessage(), e);
+			throw new ErrorException(thisEnt, getKeyword(), e);
 		}
 	}
 
@@ -221,8 +219,7 @@ public class StringProvInput extends Input<StringProvider> {
 			throw e;
 		}
 		catch (Exception e) {
-			throw new ErrorException("", -1, thisEnt.getName(), getKeyword(), -1,
-					e.getMessage(), e);
+			throw new ErrorException(thisEnt, getKeyword(), e);
 		}
 	}
 

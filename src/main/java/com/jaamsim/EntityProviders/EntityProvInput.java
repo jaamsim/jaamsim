@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2017-2022 JaamSim Software Inc.
+ * Copyright (C) 2017-2025 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -151,8 +151,7 @@ public class EntityProvInput<T extends Entity> extends Input<EntityProvider<T>> 
 			throw e;
 		}
 		catch (Exception e) {
-			throw new ErrorException("", -1, thisEnt.getName(), getKeyword(), -1,
-					e.getMessage(), e);
+			throw new ErrorException(thisEnt, getKeyword(), e);
 		}
 	}
 

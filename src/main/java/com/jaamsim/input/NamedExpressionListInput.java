@@ -171,8 +171,7 @@ public class NamedExpressionListInput extends ArrayListInput<NamedExpression> {
 				sb.append(res.toString());
 			}
 			catch (ExpError e) {
-				throw new ErrorException(e.source, e.pos, thisEnt.getName(), getKeyword(), i + 1,
-						e.getMessage(), e);
+				throw new ErrorException(thisEnt, getKeyword(), i + 1, e);
 			}
 
 			// Closing brace

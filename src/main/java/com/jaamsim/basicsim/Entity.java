@@ -609,7 +609,7 @@ public class Entity {
 			InputAgent.apply(this, targetInput, kw);
 		}
 		catch (Exception e) {
-			throw new ErrorException("", -1, getName(), key, -1, e.getMessage(), e);
+			throw new ErrorException(this, key, e);
 		}
 	}
 
