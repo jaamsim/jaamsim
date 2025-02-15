@@ -30,14 +30,6 @@ public class ErrorException extends RuntimeException {
 	public String source;
 	public int position;
 
-	public ErrorException(String src, int pos, String name, String msg) {
-		this(src, pos, name, "", -1, msg, null);
-	}
-
-	public ErrorException(String src, int pos, String name, String msg, Throwable cause) {
-		this(src, pos, name, "", -1, msg, cause);
-	}
-
 	public ErrorException(String src, int pos, String name, String key, int ind, String msg, Throwable cause) {
 		super(msg, cause);
 		entName = name;
