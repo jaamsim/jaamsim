@@ -198,6 +198,7 @@ public class InputAgent {
 			ArrayList<String> record = new ArrayList<>();
 			int braceDepth = 0;
 			boolean quoted = false;
+			String firstLine = "";
 
 			ParseContext pc = new ParseContext(resolved, root);
 
@@ -208,6 +209,9 @@ public class InputAgent {
 				if (str == null)
 					break;
 				line = str;
+
+				if (record.isEmpty() && !line.isEmpty())
+					firstLine = line;
 
 				int previousRecordSize = record.size();
 				quoted = Parser.tokenize(record, line, quoted, true);
@@ -260,8 +264,18 @@ public class InputAgent {
 			}
 
 			// Leftover Input at end of file
-			if (record.size() > 0)
-				InputAgent.logError(simModel, "Unable to parse the input:%n%s", line);
+			if (record.size() > 0) {
+				StringBuilder sb = new StringBuilder();
+				sb.append("File ended before the last model input was completed:%n");
+				if (braceDepth > 0)
+					sb.append("- missing a closing brace ('}')%n");
+				if (quoted)
+					sb.append("- missing a closing single quote (')%n");
+				sb.append("The bad input began with the following line:%n");
+				sb.append(firstLine);
+				InputAgent.logError(simModel, sb.toString());
+			}
+
 			buf.close();
 		}
 		catch (IOException e) {
