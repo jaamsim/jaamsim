@@ -90,7 +90,7 @@ public class GraphicBox extends JDialog {
 		WindowListener windowListener = new WindowAdapter() {
 			@Override
 			public void windowClosing( WindowEvent e ) {
-				myInstance.close();
+				((GraphicBox)e.getWindow()).close();
 			}
 		};
 		this.addWindowListener( windowListener );
@@ -218,7 +218,7 @@ public class GraphicBox extends JDialog {
 					}
 
 					 // Add the new DisplayModel to the List
-					myInstance.refresh();
+					((GraphicBox)((JButton)e.getSource()).getTopLevelAncestor()).refresh();
 					GUIFrame.updateUI();
 
 					// Scroll to the new DisplayModel and ensure it is visible
@@ -244,7 +244,8 @@ public class GraphicBox extends JDialog {
 				kwList.add(dmKw);
 
 				if (!RenderManager.isGood()) {
-					myInstance.close();
+					((GraphicBox)((JButton)e.getSource()).getTopLevelAncestor()).close();
+					return;
 				}
 
 				Locale loc = null;
@@ -315,8 +316,8 @@ public class GraphicBox extends JDialog {
 				kwList.toArray(kws);
 				InputAgent.storeAndExecute(new KeywordCommand(currentEntity, kws));
 
+				((GraphicBox)((JButton)e.getSource()).getTopLevelAncestor()).close();
 				GUIFrame.updateUI();
-				myInstance.close();
 			}
 		} );
 
@@ -325,7 +326,7 @@ public class GraphicBox extends JDialog {
 		cancelButton.addActionListener( new ActionListener() {
 			@Override
 			public void actionPerformed( ActionEvent e ) {
-				myInstance.close();
+				((GraphicBox)((JButton)e.getSource()).getTopLevelAncestor()).close();
 			}
 		} );
 
@@ -349,7 +350,7 @@ public class GraphicBox extends JDialog {
 		this.pack();
 	}
 
-	public static GraphicBox getInstance(DisplayEntity ent, Component c, int x, int y) {
+	static GraphicBox getInstance(DisplayEntity ent, Component c, int x, int y) {
 		// Has the Graphic Box been created?
 		if (myInstance == null) {
 			myInstance = new GraphicBox();
