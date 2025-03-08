@@ -347,22 +347,24 @@ public class GraphicBox extends JDialog {
 		buttonPanel.add(acceptButton);
 		buttonPanel.add(cancelButton);
 		getContentPane().add(buttonPanel, BorderLayout.SOUTH);
+		this.setMinimumSize(new Dimension(400, 300));
 		this.pack();
 	}
 
-	static GraphicBox getInstance(DisplayEntity ent, Component c, int x, int y) {
+	static synchronized GraphicBox getInstance(DisplayEntity ent, Component c, int x, int y) {
 		// Has the Graphic Box been created?
-		if (myInstance == null) {
-			myInstance = new GraphicBox();
-			myInstance.setMinimumSize(new Dimension(400, 300));
+		GraphicBox gb = myInstance;
+		if (gb == null) {
+			gb = new GraphicBox();
+			myInstance = gb;
 		}
-		myInstance.currentEntity = ent;
+		gb.currentEntity = ent;
 		// Position of the GraphicBox
 		Point pos = c.getLocationOnScreen();
-		myInstance.setLocation(pos.x + x, pos.y + y);
-		myInstance.refresh();
-		myInstance.setEnabled(true);
-		return myInstance;
+		gb.setLocation(pos.x + x, pos.y + y);
+		gb.refresh();
+		gb.setEnabled(true);
+		return gb;
 	}
 
 	private void close() {
@@ -370,10 +372,14 @@ public class GraphicBox extends JDialog {
 		setVisible(false);
 	}
 
+	private synchronized static void killInstance() {
+		myInstance = null;
+	}
+
 	@Override
 	public void dispose() {
+		killInstance();
 		super.dispose();
-		myInstance = null;
 	}
 
 	private void refresh() {
