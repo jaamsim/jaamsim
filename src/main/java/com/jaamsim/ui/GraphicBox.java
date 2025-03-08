@@ -31,6 +31,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Locale;
+import java.util.concurrent.atomic.AtomicReference;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -66,7 +67,7 @@ import com.jaamsim.render.MeshProtoKey;
 import com.jaamsim.render.RenderUtils;
 
 public class GraphicBox extends JDialog {
-	private static GraphicBox myInstance;  // only one instance allowed to be open
+	private static final AtomicReference<GraphicBox> myInstance = new AtomicReference<>(null);  // only one instance allowed to be open
 	private final  JLabel previewLabel; // preview DisplayModel as a picture
 	final ImageIcon previewIcon = new ImageIcon();
 	private DisplayEntity currentEntity;
@@ -347,22 +348,24 @@ public class GraphicBox extends JDialog {
 		buttonPanel.add(acceptButton);
 		buttonPanel.add(cancelButton);
 		getContentPane().add(buttonPanel, BorderLayout.SOUTH);
+		this.setMinimumSize(new Dimension(400, 300));
 		this.pack();
 	}
 
 	static GraphicBox getInstance(DisplayEntity ent, Component c, int x, int y) {
 		// Has the Graphic Box been created?
-		if (myInstance == null) {
-			myInstance = new GraphicBox();
-			myInstance.setMinimumSize(new Dimension(400, 300));
+		GraphicBox gb = myInstance.get();
+		if (gb == null) {
+			gb = new GraphicBox();
+			myInstance.set(gb);
 		}
-		myInstance.currentEntity = ent;
+		gb.currentEntity = ent;
 		// Position of the GraphicBox
 		Point pos = c.getLocationOnScreen();
-		myInstance.setLocation(pos.x + x, pos.y + y);
-		myInstance.refresh();
-		myInstance.setEnabled(true);
-		return myInstance;
+		gb.setLocation(pos.x + x, pos.y + y);
+		gb.refresh();
+		gb.setEnabled(true);
+		return gb;
 	}
 
 	private void close() {
@@ -373,7 +376,7 @@ public class GraphicBox extends JDialog {
 	@Override
 	public void dispose() {
 		super.dispose();
-		myInstance = null;
+		myInstance.compareAndExchange(this, null);
 	}
 
 	private void refresh() {
