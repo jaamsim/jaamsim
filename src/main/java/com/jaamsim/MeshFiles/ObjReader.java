@@ -98,9 +98,7 @@ public class ObjReader {
 	}
 
 	private void processContent() {
-		try {
-			BufferedReader br = new BufferedReader(new InputStreamReader(contentURL.openStream()));
-
+		try (BufferedReader br = new BufferedReader(new InputStreamReader(contentURL.openStream()))) {
 			data = new MeshData(false);
 			while(true) {
 				String line = br.readLine();
