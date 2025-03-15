@@ -329,19 +329,16 @@ public class ObjReader {
 	private void parseMaterial(String[] tokens) {
 		parseAssert(tokens.length == 2);
 		String mtlFile = tokens[1];
-		try {
-			URL mtlURL = new URL(contentURL, mtlFile);
 
-			BufferedReader br = new BufferedReader(new InputStreamReader(mtlURL.openStream()));
-
+		try (BufferedReader br = new BufferedReader(new InputStreamReader(new URL(contentURL, mtlFile).openStream()))) {
 			while (true) {
 				String line = br.readLine();
-				if (line == null) break;
+				if (line == null)
+					break;
 
-				if (line.isEmpty() || line.charAt(0) == '#') continue;
-
-				String[] mtlTokens = whitespace.split(line.trim());
-				parseMTLLine(mtlTokens);
+				if (line.isEmpty() || line.charAt(0) == '#')
+					continue;
+				parseMTLLine(whitespace.split(line.trim()));
 			}
 
 		} catch (MalformedURLException ex) {
