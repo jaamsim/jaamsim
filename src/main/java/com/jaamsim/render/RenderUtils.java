@@ -576,31 +576,29 @@ static void nioBuffToGL(GL2GL3 gl, Renderer r, int bufferHandle, int itemSize, B
 			if (ext.toUpperCase().equals(".ZIP")) {
 				// This is a zip, use a zip stream to actually pull out
 				// the .dae file
-				ZipInputStream zipInputStream = new ZipInputStream(meshURL.openStream());
+				try (ZipInputStream zipIS = new ZipInputStream(meshURL.openStream())) {
+					// Loop through zipEntries
+					for (ZipEntry ze; (ze = zipIS.getNextEntry()) != null;) {
 
-				// Loop through zipEntries
-				for (ZipEntry zipEntry; (zipEntry = zipInputStream
-						.getNextEntry()) != null;) {
+						String entryName = ze.getName();
+						if (!isValidExtension(entryName))
+							continue;
 
-					String entryName = zipEntry.getName();
-					if (!isValidExtension(entryName))
-						continue;
+						// This zipEntry is a collada file, no need to look
+						// any further
 
-					// This zipEntry is a collada file, no need to look
-					// any further
+						// Abuse URI a bit to URI-encode the filename
+						URI encEntryURI = new URI(null, entryName, null);
+						String encEntry = encEntryURI.getRawSchemeSpecificPart();
 
-					// Abuse URI a bit to URI-encode the filename
-					URI encEntryURI = new URI(null, entryName, null);
-					String encEntry = encEntryURI.getRawSchemeSpecificPart();
-
-					meshURL = new URL("jar:" + meshURL + "!/"
-							+ encEntry);
-					break;
+						meshURL = new URL("jar:" + meshURL + "!/"
+								+ encEntry);
+						break;
+					}
 				}
 			}
 
-			MeshProtoKey ret = new MeshProtoKey(meshURL.toURI());
-			return ret;
+			return new MeshProtoKey(meshURL.toURI());
 		} catch (MalformedURLException e) {
 			LogBox.renderLogException(e);
 			assert (false);
