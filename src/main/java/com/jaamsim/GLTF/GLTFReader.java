@@ -20,7 +20,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -1570,15 +1569,13 @@ public class GLTFReader {
 	}
 
 	private HashMap<String, JSONValue> setRootFromURI(URI asset) {
-		InputStream inStream;
-		try {
-			inStream = asset.toURL().openStream();
-		} catch (IOException ex) {
+		JSONParser jsonParser = new JSONParser();
+		try (BufferedReader br = new BufferedReader(new InputStreamReader(asset.toURL().openStream()))) {
+			br.lines().forEachOrdered(x -> jsonParser.addPiece(x));
+		}
+		catch (IOException e) {
 			throw new RenderException("Can't read " + asset);
 		}
-		BufferedReader br = new BufferedReader(new InputStreamReader(inStream));
-		JSONParser jsonParser = new JSONParser();
-		br.lines().forEachOrdered(x -> jsonParser.addPiece(x));
 		JSONValue root;
 		try {
 			root = jsonParser.parse();
