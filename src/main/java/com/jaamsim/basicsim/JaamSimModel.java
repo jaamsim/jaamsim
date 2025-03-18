@@ -655,7 +655,7 @@ public class JaamSimModel implements EventTimeListener {
 	 * @param simTime - next pause time
 	 */
 	public void resume(double simTime) {
-		eventManager.resume(eventManager.secondsToNearestTick(simTime));
+		eventManager.resumeSeconds(simTime);
 	}
 
 	/**

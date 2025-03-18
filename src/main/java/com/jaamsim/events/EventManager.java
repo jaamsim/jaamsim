@@ -337,12 +337,12 @@ public final class EventManager {
 
 	public void nextOneEvent(double simTime) {
 		oneEvent = true;
-		resume(this.secondsToNearestTick(simTime));
+		resumeTicks(this.secondsToNearestTick(simTime));
 	}
 
 	public void nextEventTime(double simTime) {
 		oneSimTime = true;
-		resume(this.secondsToNearestTick(simTime));
+		resumeTicks(this.secondsToNearestTick(simTime));
 	}
 
 	public final long getTicks() {
@@ -872,6 +872,10 @@ public final class EventManager {
 		executeEvents = false;
 	}
 
+	public final void resumeSeconds(double simTime) {
+		this.resumeTicks(this.secondsToNearestTick(simTime));
+	}
+
 	/**
 	 * Sets the value that is tested in the doProcess loop to determine if the
 	 * next event should be executed.  Generates an interrupt of activeThread
@@ -880,7 +884,7 @@ public final class EventManager {
 	 * from an inconsistent state.
 	 * @param targetTicks - clock ticks at which to pause
 	 */
-	public void resume(long targetTicks) {
+	public void resumeTicks(long targetTicks) {
 		evtLock.lock();
 		try {
 

@@ -42,7 +42,7 @@ public class TestFrameworkHelpers {
 			synchronized (this) {
 				waitThread = Thread.currentThread();
 				evt.setTimeListener(this);
-				evt.resume(ticks);
+				evt.resumeTicks(ticks);
 
 				try { this.wait(timeoutMS); }
 				catch (InterruptedException e) {
