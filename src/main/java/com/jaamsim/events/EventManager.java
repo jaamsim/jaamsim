@@ -133,6 +133,8 @@ public final class EventManager {
 		try {
 			currentTick.set(0);
 			nextTick = 0;
+			oneEvent = false;
+			oneSimTime = false;
 			targetTick = Long.MAX_VALUE;
 			rebaseRealTime = true;
 
@@ -300,7 +302,7 @@ public final class EventManager {
 						continue;
 
 					// If 'Next Time' button was clicked, then stop without advancing time
-					if (oneSimTime ) {
+					if (oneSimTime) {
 						executeEvents = false;
 						oneSimTime = false;
 						continue;
@@ -333,16 +335,6 @@ public final class EventManager {
 		finally {
 			evtLock.unlock();
 		}
-	}
-
-	public void nextOneEvent(double simTime) {
-		oneEvent = true;
-		resumeTicks(this.secondsToNearestTick(simTime));
-	}
-
-	public void nextEventTime(double simTime) {
-		oneSimTime = true;
-		resumeTicks(this.secondsToNearestTick(simTime));
 	}
 
 	public final long getTicks() {
@@ -873,7 +865,11 @@ public final class EventManager {
 	}
 
 	public final void resumeSeconds(double simTime) {
-		this.resumeTicks(this.secondsToNearestTick(simTime));
+		this.resumeTicks(this.secondsToNearestTick(simTime), false, false);
+	}
+
+	public final void resumeSeconds(double simTime, boolean doOneEvent, boolean doOneTime) {
+		this.resumeTicks(this.secondsToNearestTick(simTime), doOneEvent, doOneTime);
 	}
 
 	/**
@@ -884,8 +880,15 @@ public final class EventManager {
 	 * from an inconsistent state.
 	 * @param targetTicks - clock ticks at which to pause
 	 */
-	public void resumeTicks(long targetTicks) {
+	public final void resumeTicks(long targetTicks, boolean doOneEvent, boolean doOneTime) {
 		evtLock.lock();
+
+		if (doOneEvent)
+			oneEvent = true;
+
+		if (doOneTime)
+			oneSimTime = true;
+
 		try {
 
 			// Ignore the pause time if it has already been reached
