@@ -860,7 +860,7 @@ public final class EventManager {
 	 * guaranteed in this state that there is an empty thread stack and the
 	 * thread referenced in activeThread is the eventManager thread.
 	 */
-	public void pause() {
+	public final void pause() {
 		executeEvents = false;
 	}
 
