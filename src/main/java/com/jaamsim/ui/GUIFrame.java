@@ -3535,7 +3535,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	/**
 	 * updates RealTime button and Spinner
 	 */
-	private synchronized void updateForRealTime(boolean executeRT, double factorRT) {
+	private void updateForRealTime(boolean executeRT, double factorRT) {
 		getJaamSimModel().getEventManager().setExecuteRealTime(executeRT, factorRT);
 		controlRealTime.setSelected(executeRT);
 		spinner.setValue(factorRT);
