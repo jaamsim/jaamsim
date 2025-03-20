@@ -310,18 +310,8 @@ public final class EventManager {
 				}
 
 				// Advance to the next event time
-				if (executeRealTime) {
-					// Loop until the next event time is reached
-					long realTick = this.calcRealTimeTick();
-					if (realTick < nextTick && realTick < targetTick) {
-						// Update the displayed simulation time
-						currentTick.set(realTick);
-						timelistener.tickUpdate(currentTick.get());
-						//Halt the thread for 20ms and then reevaluate the loop
-						try { runningProc.get().cond.awaitNanos(20000000); } catch( InterruptedException e ) {}
-						continue;
-					}
-				}
+				if (executeRealTime && this.waitForNextRealTick())
+					continue;
 
 				// advance time
 				if (targetTick < nextTick)
@@ -384,11 +374,10 @@ public final class EventManager {
 	}
 
 	/**
-	 * Return the simulation time corresponding the given wall clock time
-	 * @param simTime = the current simulation time used when setting a real-time basis
-	 * @return simulation time in seconds
+	 * Introduce a pause if needed for real time.
+	 * @return true if we introduced a real-time wait
 	 */
-	private long calcRealTimeTick() {
+	private boolean waitForNextRealTick() {
 		long curMS = System.currentTimeMillis();
 		if (rebaseRealTime) {
 			realTimeTick = currentTick.get();
@@ -398,7 +387,18 @@ public final class EventManager {
 
 		double simElapsedsec = ((curMS - realTimeMillis) * realTimeFactor) / 1000.0d;
 		long simElapsedTicks = secondsToNearestTick(simElapsedsec);
-		return realTimeTick + simElapsedTicks;
+
+		long realTick = realTimeTick + simElapsedTicks;
+		if (realTick < nextTick && realTick < targetTick) {
+			// Update the displayed simulation time
+			currentTick.set(realTick);
+			timelistener.tickUpdate(currentTick.get());
+			//Halt the thread for 20ms and then reevaluate the loop
+			try { runningProc.get().cond.awaitNanos(20000000); } catch( InterruptedException e ) {}
+			return true;
+		}
+
+		return false;
 	}
 
 	/**
