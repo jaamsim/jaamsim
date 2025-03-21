@@ -64,13 +64,7 @@ public final class EventManager {
 	private double ticksPerSecond; // The number of discrete ticks per simulated second
 	private double secsPerTick;    // The length of time in seconds each tick represents
 
-	// Real time execution state
-	private long realTimeTick;    // the simulation tick corresponding to the wall-clock millis value
-	private long realTimeMillis;  // the wall-clock time in millis
-
-	private volatile boolean executeRealTime;  // TRUE if the simulation is to be executed in Real Time mode
-	private volatile boolean rebaseRealTime;   // TRUE if the time keeping for Real Time model needs re-basing
-	private volatile double realTimeFactor;    // target ratio of elapsed simulation time to elapsed wall clock time
+	private final AtomicReference<RealTimeState> rt;
 
 	private EventTimeListener timelistener;
 	private EventTraceListener trcListener;
@@ -99,9 +93,8 @@ public final class EventManager {
 		runningProc = new AtomicReference<>(null);
 		executeEvents = false;
 		disableSchedule = false;
-		executeRealTime = false;
-		realTimeFactor = 1;
-		rebaseRealTime = true;
+
+		rt = new AtomicReference<>(null);
 		setTimeListener(null);
 	}
 
@@ -136,7 +129,9 @@ public final class EventManager {
 			oneEvent = false;
 			oneSimTime = false;
 			targetTick = Long.MAX_VALUE;
-			rebaseRealTime = true;
+			RealTimeState state = rt.get();
+			if (state != null)
+				state.realTimeMillis = -1l;
 
 			eventTree.runOnAllNodes(new KillAllEvents());
 			eventTree.reset();
@@ -310,7 +305,7 @@ public final class EventManager {
 				}
 
 				// Advance to the next event time
-				if (executeRealTime && this.waitForNextRealTick())
+				if (rt.get() != null && this.waitForNextRealTick())
 					continue;
 
 				// advance time
@@ -373,22 +368,46 @@ public final class EventManager {
 		enableSchedule();
 	}
 
+	public final void setExecuteRealTime(boolean useRealTime, double factor) {
+		if (!useRealTime) {
+			rt.set(null);
+			return;
+		}
+
+		RealTimeState s = new RealTimeState(factor);
+		rt.set(s);
+	}
+
+	private static class RealTimeState {
+		final double realTimeFactor;
+		long realTimeMillis;
+		long realTimeTick;
+
+		RealTimeState(double factor) {
+			realTimeFactor = factor;
+			realTimeMillis = -1;
+			realTimeTick = -1;
+		}
+	}
 	/**
 	 * Introduce a pause if needed for real time.
 	 * @return true if we introduced a real-time wait
 	 */
 	private boolean waitForNextRealTick() {
+		RealTimeState state = rt.get();
+		if (state == null)
+			return false;
+
 		long curMS = System.currentTimeMillis();
-		if (rebaseRealTime) {
-			realTimeTick = currentTick.get();
-			realTimeMillis = curMS;
-			rebaseRealTime = false;
+		if (state.realTimeMillis == -1l) {
+			state.realTimeTick = currentTick.get();
+			state.realTimeMillis = curMS;
 		}
 
-		double simElapsedsec = ((curMS - realTimeMillis) * realTimeFactor) / 1000.0d;
+		double simElapsedsec = ((curMS - state.realTimeMillis) * state.realTimeFactor) / 1000.0d;
 		long simElapsedTicks = secondsToNearestTick(simElapsedsec);
 
-		long realTick = realTimeTick + simElapsedTicks;
+		long realTick = state.realTimeTick + simElapsedTicks;
 		if (realTick < nextTick && realTick < targetTick) {
 			// Update the displayed simulation time
 			currentTick.set(realTick);
@@ -748,15 +767,6 @@ public final class EventManager {
 		}
 	}
 
-	public void setExecuteRealTime(boolean useRealTime, double factor) {
-		if (useRealTime == executeRealTime && factor == realTimeFactor)
-			return;
-		executeRealTime = useRealTime;
-		realTimeFactor = factor;
-		if (useRealTime)
-			rebaseRealTime = true;
-	}
-
 	private static class ThreadEntry {
 		final ThreadEntry next;
 		final Thread proc;
@@ -897,7 +907,9 @@ public final class EventManager {
 			else
 				targetTick = Long.MAX_VALUE;
 
-			rebaseRealTime = true;
+			RealTimeState state = rt.get();
+			if (state != null)
+				state.realTimeMillis = -1;;
 			if (executeEvents)
 				return;
 
