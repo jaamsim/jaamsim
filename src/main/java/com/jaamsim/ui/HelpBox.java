@@ -56,7 +56,7 @@ public class HelpBox extends JDialog {
 	private static final String DIALOG_NAME = "Help - JaamSim";
 	private static final String DEFAULT_TOPIC = "Mouse Actions";
 
-	public HelpBox() {
+	private HelpBox() {
 		super((JDialog)null, DIALOG_NAME, false);
 		setIconImages(GUIFrame.getWindowIcons());
 		setResizable(true);

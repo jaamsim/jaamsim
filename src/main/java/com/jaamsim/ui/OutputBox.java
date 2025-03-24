@@ -50,7 +50,7 @@ public class OutputBox extends FrameBox {
 
 	private final ArrayList<Object> entries = new ArrayList<>();
 
-	public OutputBox() {
+	private OutputBox() {
 		super( "Output Viewer" );
 		setDefaultCloseOperation(FrameBox.DISPOSE_ON_CLOSE);
 		addWindowListener(FrameBox.getCloseListener("ShowOutputViewer"));

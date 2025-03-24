@@ -50,7 +50,7 @@ public class RunProgressBox extends JFrame {
 	private static String LABEL_FORMAT = "THREAD %s:  scenario %s, replication %s";
 	private static String LABEL_FORMAT_SHORT = "THREAD %s:";
 
-	public RunProgressBox() {
+	private RunProgressBox() {
 		super("Run Progress");
 		setType(Type.UTILITY);
 		setAutoRequestFocus(false);

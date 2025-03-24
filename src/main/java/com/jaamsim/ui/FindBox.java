@@ -46,7 +46,7 @@ public class FindBox extends JDialog {
 	public static final String DIALOG_NAME = "Entity Finder";
 	public static final int MAX_LIST_SIZE = 1000;  // max size of the entity list pop-up
 
-	public FindBox() {
+	private FindBox() {
 		super((JDialog)null, DIALOG_NAME, false);
 		getContentPane().setLayout( new BorderLayout() );
 		setIconImages(GUIFrame.getWindowIcons());

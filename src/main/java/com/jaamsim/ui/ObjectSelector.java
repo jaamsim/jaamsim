@@ -67,7 +67,7 @@ public class ObjectSelector extends FrameBox {
 
 	private final static int MAX_FOR_REALTIME_UPDATE = 10000;
 
-	public ObjectSelector() {
+	private ObjectSelector() {
 		super( "Object Selector" );
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		addWindowListener(FrameBox.getCloseListener("ShowObjectSelector"));

@@ -45,7 +45,7 @@ public class PropertyBox extends FrameBox {
 	private final JTabbedPane jTabbedFrame = new JTabbedPane();
 	private static int MAX_ARRAY_ENTRIES_TO_DISPLAY = 10;
 
-	public PropertyBox() {
+	private PropertyBox() {
 		super("Property Viewer");
 		setDefaultCloseOperation(FrameBox.DISPOSE_ON_CLOSE);
 		addWindowListener(FrameBox.getCloseListener("ShowPropertyViewer"));

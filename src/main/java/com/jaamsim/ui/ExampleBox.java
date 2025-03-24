@@ -72,7 +72,7 @@ public class ExampleBox extends JDialog {
 	private static final String DIALOG_NAME = "Examples - JaamSim";
 	private static final String DEFAULT_TOPIC = "";
 
-	public ExampleBox() {
+	private ExampleBox() {
 		super((JDialog)null, DIALOG_NAME, false);
 		setIconImages(GUIFrame.getWindowIcons());
 		setResizable(true);
