@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2023 JaamSim Software Inc.
+ * Copyright (C) 2023-2025 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,6 +54,8 @@ public abstract class DisplayModel extends Entity {
 	private static final DoubleVector defRange = new DoubleVector(0d, Double.POSITIVE_INFINITY);
 
 	{
+		active.setDefaultValue(false);
+
 		attributeDefinitionList.setHidden(true);
 		namedExpressionInput.setHidden(true);
 
