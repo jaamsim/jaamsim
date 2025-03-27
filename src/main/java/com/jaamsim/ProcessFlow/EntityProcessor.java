@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2017-2024 JaamSim Software Inc.
+ * Copyright (C) 2017-2025 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -146,10 +146,7 @@ public class EntityProcessor extends AbstractLinkedResourceUser {
 
 	@Override
 	public boolean isReadyToStart() {
-		if (entryList.size() + newEntryList.size() >= getCapacity(getSimTime())) {
-			return false;
-		}
-		return super.isReadyToStart();
+		return super.isReadyToStart() && (getUnitsInUse() < getCapacity(getSimTime()));
 	}
 
 	@Override
@@ -168,6 +165,10 @@ public class EntityProcessor extends AbstractLinkedResourceUser {
 
 		// Interrupt the processing loop
 		this.performUnscheduledUpdate();
+	}
+
+	public int getUnitsInUse() {
+		return entryList.size() + newEntryList.size();
 	}
 
 	@Override
@@ -392,7 +393,7 @@ public class EntityProcessor extends AbstractLinkedResourceUser {
 	    unitType = DimensionlessUnit.class,
 	    sequence = 1)
 	public int getUnitsInUse(double simTime) {
-		return entryList.size();
+		return getUnitsInUse();
 	}
 
 	@Output(name = "EntityList",
