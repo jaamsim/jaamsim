@@ -24,6 +24,8 @@ import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.Samples.TimeSeries;
+import com.jaamsim.Statistics.TimeBasedFrequency;
+import com.jaamsim.Statistics.TimeBasedStatistics;
 import com.jaamsim.basicsim.EntityTarget;
 import com.jaamsim.basicsim.SubjectEntity;
 import com.jaamsim.events.Conditional;
@@ -54,6 +56,9 @@ public class EntityProcessor extends AbstractLinkedResourceUser {
 	private final ArrayList<ProcessorEntry> newEntryList;  // List of the entities to add to entryList
 	private int lastCapacity; // Last recorded value for capacity
 
+	private final TimeBasedStatistics stats;
+	private final TimeBasedFrequency freq;
+
 	{
 		releaseThresholdList.setHidden(false);
 
@@ -76,6 +81,8 @@ public class EntityProcessor extends AbstractLinkedResourceUser {
 	public EntityProcessor() {
 		entryList = new ArrayList<>();
 		newEntryList = new ArrayList<>();
+		stats = new TimeBasedStatistics();
+		freq = new TimeBasedFrequency(0, 10);
 	}
 
 	@Override
@@ -83,6 +90,10 @@ public class EntityProcessor extends AbstractLinkedResourceUser {
 		super.earlyInit();
 		entryList.clear();
 		newEntryList.clear();
+		stats.clear();
+		stats.addValue(0.0d, 0);
+		freq.clear();
+		freq.addValue(0.0d,  0);
 	}
 
 	@Override
@@ -171,6 +182,21 @@ public class EntityProcessor extends AbstractLinkedResourceUser {
 		return entryList.size() + newEntryList.size();
 	}
 
+	public void collectStatistics(double simTime, int unitsInUse) {
+		stats.addValue(simTime, unitsInUse);
+		freq.addValue(simTime, unitsInUse);
+	}
+
+	@Override
+	public void clearStatistics() {
+		super.clearStatistics();
+		double simTime = this.getSimTime();
+		stats.clear();
+		stats.addValue(simTime, getUnitsInUse());
+		freq.clear();
+		freq.addValue(simTime, getUnitsInUse());
+	}
+
 	@Override
 	protected boolean startProcessing(double simTime) {
 		if (isTraceFlag()) trace(2, "startProcessing");
@@ -180,6 +206,9 @@ public class EntityProcessor extends AbstractLinkedResourceUser {
 			entryList.addAll(newEntryList);
 			newEntryList.clear();
 			if (isTraceFlag()) traceLine(3, "entryList=%s", entryList);
+
+			// Record the number of units in use
+			collectStatistics(simTime, getUnitsInUse());
 		}
 
 		// Stop when there are no entities to process
@@ -251,6 +280,9 @@ public class EntityProcessor extends AbstractLinkedResourceUser {
 			if (isReleaseThresholdClosure())
 				break;
 		}
+
+		// Record the number of units in use
+		collectStatistics(simTime, getUnitsInUse());
 
 		// Notify any resource users that are waiting for these Resources
 		if (getResourceList().isEmpty()) {
@@ -423,6 +455,82 @@ public class EntityProcessor extends AbstractLinkedResourceUser {
 			ret[i] = Math.max(0L, ret[i]);
 		}
 		return ret;
+	}
+
+	@Output(name = "AvailableUnits",
+	 description = "The number of processor units that are not in use.",
+	    unitType = DimensionlessUnit.class,
+	    sequence = 4)
+	public int getAvailableUnits(double simTime) {
+		return getCapacity(simTime) - getUnitsInUse();
+	}
+
+	@Output(name = "UnitsInUseAverage",
+	 description = "The average number of processor units that are in use.",
+	    unitType = DimensionlessUnit.class,
+	  reportable = true,
+	    sequence = 5)
+	public double getUnitsInUseAverage(double simTime) {
+		return stats.getMean(simTime);
+	}
+
+	@Output(name = "UnitsInUseStandardDeviation",
+	 description = "The standard deviation of the number of processor units that are in use.",
+	    unitType = DimensionlessUnit.class,
+	  reportable = true,
+	    sequence = 6)
+	public double getUnitsInUseStandardDeviation(double simTime) {
+		return stats.getStandardDeviation(simTime);
+	}
+
+	@Output(name = "UnitsInUseMinimum",
+	 description = "The minimum number of processor units that are in use.",
+	    unitType = DimensionlessUnit.class,
+	  reportable = true,
+	    sequence = 7)
+	public int getUnitsInUseMinimum(double simTime) {
+		return (int) stats.getMin();
+	}
+
+	@Output(name = "UnitsInUseMaximum",
+	 description = "The maximum number of processor units that are in use.",
+	    unitType = DimensionlessUnit.class,
+	  reportable = true,
+	    sequence = 8)
+	public int getUnitsInUseMaximum(double simTime) {
+		int ret = (int) stats.getMax();
+		// A unit that is seized and released immediately
+		// does not count as a non-zero maximum in use
+		if (ret == 1 && freq.getBinTime(simTime, 1) == 0.0d)
+			return 0;
+		return ret;
+	}
+
+	@Output(name = "UnitsInUseTimes",
+	 description = "The total time that the number of processor units in use was 0, 1, 2, etc.",
+	    unitType = TimeUnit.class,
+	  reportable = true,
+	    sequence = 9)
+	public double[] getUnitsInUseDistribution(double simTime) {
+		return freq.getBinTimes(simTime, 0, freq.getMax());
+	}
+
+	@Output(name = "UnitsInUseFractions",
+	 description = "Fraction of total time that the number of processor units in use was 0, 1, 2, "
+	             + "etc.",
+	  reportable = true,
+	    sequence = 10)
+	public double[] getUnitsInUseFractions(double simTime) {
+		return freq.getBinFractions(simTime, 0, freq.getMax());
+	}
+
+	@Output(name = "UnitsInUseCumulativeFractions",
+	 description = "Fraction of total time that the number of processor units in use was less than "
+	             + "or equal to 0, 1, 2, etc.",
+	  reportable = true,
+	    sequence = 11)
+	public double[] getUnitsInUseCumulativeFractions(double simTime) {
+		return freq.getBinCumulativeFractions(simTime, 0, freq.getMax());
 	}
 
 }
