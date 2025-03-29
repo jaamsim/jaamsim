@@ -244,10 +244,11 @@ public final class EventManager {
 				return;
 			}
 
-			enableSchedule();
-
-			//TODO: fix to avoid calling multiple times when a scheduled event waits
-			timelistener.timeRunning();
+			// If we are resuming execution, have the first thread call the timeRunning callback and enable scheduling
+			if (runningProc.get().start) {
+				enableSchedule();
+				timelistener.timeRunning();
+			}
 
 			// Loop continuously
 			while (true) {
@@ -469,7 +470,7 @@ public final class EventManager {
 		// if we don't wake a new process, take one from the pool
 		ThreadEntry next = runningProc.get().next;
 		if (next == null) {
-			next = new ThreadEntry(this, this.allocateThread(), null, null);
+			next = new ThreadEntry(this, false);
 		}
 		else {
 			next.cond.signal();
@@ -778,13 +779,24 @@ public final class EventManager {
 		final Condition cond;
 		final AtomicBoolean dieFlag;
 		final ProcessTarget target;
+		final boolean start;
 
-		ThreadEntry(EventManager evt, Thread p, ThreadEntry next, ProcessTarget t) {
-			this.next = next;
+		ThreadEntry(EventManager evt, boolean startup) {
+			next = null;
+			proc = evt.allocateThread();
 			cond = evt.getWaitCondition();
+			dieFlag = new AtomicBoolean(false);
+			target = null;
+			start = startup;
+		}
+
+		ThreadEntry(EventManager evt, Thread p, ThreadEntry nxt, ProcessTarget t) {
+			next = nxt;
 			proc = p;
+			cond = evt.getWaitCondition();
 			dieFlag = new AtomicBoolean(false);
 			target = t;
+			start = false;
 		}
 	}
 
@@ -921,8 +933,7 @@ public final class EventManager {
 				return;
 
 			executeEvents = true;
-			ThreadEntry te = new ThreadEntry(this, this.allocateThread(), null, null);
-			runningProc.set(te);
+			runningProc.set(new ThreadEntry(this, true));
 		}
 		finally {
 			evtLock.unlock();
