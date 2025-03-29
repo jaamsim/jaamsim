@@ -682,7 +682,7 @@ public final class EventManager {
 		freeEvents = evt;
 	}
 
-	private ProcessTarget rem(EventHandle handle) {
+	private ProcessTarget getTargetFromHandle(EventHandle handle) {
 		BaseEvent base = handle.event;
 		ProcessTarget t = base.target;
 		handle.event = null;
@@ -720,9 +720,8 @@ public final class EventManager {
 			trcKill(handle.event);
 			enableSchedule();
 		}
-		ProcessTarget t = rem(handle);
 
-		t.kill();
+		getTargetFromHandle(handle).kill();
 	}
 
 	private void trcKill(BaseEvent event) {
@@ -759,8 +758,8 @@ public final class EventManager {
 			trcInterrupt(handle.event);
 			enableSchedule();
 		}
-		ProcessTarget t = rem(handle);
-		pushProcess(t);
+
+		pushProcess(getTargetFromHandle(handle));
 	}
 
 	private void trcInterrupt(BaseEvent event) {
