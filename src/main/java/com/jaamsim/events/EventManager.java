@@ -166,13 +166,19 @@ public final class EventManager {
 		}
 	}
 
-	private void executeTarget(ProcessTarget t) {
+	/**
+	 * Executes the event logic from the ProcessTarget
+	 *
+	 * @param t
+	 * @return true if the execution thread should exit the event loop
+	 */
+	private boolean executeTarget(ProcessTarget t) {
 		try {
 			// If the event has a captured process, pass control to it
 			Thread p = t.getProcess();
 			if (p != null) {
 				pushProcess(t);
-				return;
+				return false;
 			}
 
 			// Execute the method
@@ -189,12 +195,14 @@ public final class EventManager {
 			if (te != null) {
 				te.cond.signal();
 				runningProc.set(te);
+				return true;
 			}
+			return false;
 		}
 		catch (Throwable e) {
 			// This is how kill() is implemented for sleeping processes.
 			if (e instanceof ThreadKilledException)
-				return;
+				return true;
 
 			// Tear down any threads waiting for this to finish
 			ThreadEntry entries = runningProc.get().next;
@@ -206,6 +214,7 @@ public final class EventManager {
 			executeEvents = false;
 			runningProc.set(null);
 			timelistener.handleError(e);
+			return true;
 		}
 	}
 
@@ -231,7 +240,11 @@ public final class EventManager {
 			if (startTarget != null) {
 				ProcessTarget t = startTarget;
 				startTarget = null;
-				executeTarget(t);
+				// This should always be true here, send a message out if not
+				if (executeTarget(t))
+					return;
+
+				System.out.println("Startprocess thread should always exit:" + cur);
 				return;
 			}
 
@@ -272,11 +285,7 @@ public final class EventManager {
 						executeEvents = false;
 					}
 
-					executeTarget(nextTarget);
-
-					// If the current Process is the runningProc, continue executing events
-					// otherwise exit and return to Process pool
-					if (runningProc.get().proc != cur)
+					if (executeTarget(nextTarget))
 						return;
 
 					continue;
