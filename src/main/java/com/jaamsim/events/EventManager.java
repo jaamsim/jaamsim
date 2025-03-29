@@ -376,13 +376,10 @@ public final class EventManager {
 	}
 
 	public final void setExecuteRealTime(boolean useRealTime, double factor) {
-		if (!useRealTime) {
+		if (useRealTime)
+			rt.set(new RealTimeState(factor));
+		else
 			rt.set(null);
-			return;
-		}
-
-		RealTimeState s = new RealTimeState(factor);
-		rt.set(s);
 	}
 
 	private static class RealTimeState {
