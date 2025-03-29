@@ -49,7 +49,6 @@ public final class EventManager {
 
 	private final EventTree eventTree;
 	private final AtomicReference<ThreadEntry> runningProc;
-	private ProcessTarget startTarget;
 	private final AtomicLong currentTick;
 	private volatile boolean executeEvents;
 	private boolean disableSchedule;
@@ -228,23 +227,20 @@ public final class EventManager {
 	 */
 	final void execute() {
 		evtLock.lock();
-		final Thread cur = Thread.currentThread();
 		try {
-			if (runningProc.get().proc != cur) {
-				System.out.println("Invalid Process Entering EventManager:" + cur);
+			if (runningProc.get().proc != Thread.currentThread()) {
+				System.out.println("Invalid Process Entering EventManager:" + Thread.currentThread());
 				return;
 			}
 
 			// This occurs in the startProcess or interrupt case where we start
 			// a process with a target already assigned
-			if (startTarget != null) {
-				ProcessTarget t = startTarget;
-				startTarget = null;
+			if (runningProc.get().target != null) {
 				// This should always be true here, send a message out if not
-				if (executeTarget(t))
+				if (executeTarget(runningProc.get().target))
 					return;
 
-				System.out.println("Startprocess thread should always exit:" + cur);
+				System.out.println("Startprocess thread should always exit:" + Thread.currentThread());
 				return;
 			}
 
@@ -438,11 +434,10 @@ public final class EventManager {
 		Thread proc = t.getProcess();
 		ThreadEntry te = runningProc.get();
 		if (proc == null) {
-			runningProc.set(new ThreadEntry(this, this.allocateThread(), te));
-			startTarget = t;
+			runningProc.set(new ThreadEntry(this, this.allocateThread(), te, t));
 		}
 		else {
-			runningProc.set(new ThreadEntry(this, proc, te));
+			runningProc.set(new ThreadEntry(this, proc, te, null));
 			((WaitTarget)t).eventWake();
 		}
 
@@ -474,7 +469,7 @@ public final class EventManager {
 		// if we don't wake a new process, take one from the pool
 		ThreadEntry next = runningProc.get().next;
 		if (next == null) {
-			next = new ThreadEntry(this, this.allocateThread(), null);
+			next = new ThreadEntry(this, this.allocateThread(), null, null);
 		}
 		else {
 			next.cond.signal();
@@ -782,12 +777,14 @@ public final class EventManager {
 		final Thread proc;
 		final Condition cond;
 		final AtomicBoolean dieFlag;
+		final ProcessTarget target;
 
-		ThreadEntry(EventManager evt, Thread p, ThreadEntry next) {
+		ThreadEntry(EventManager evt, Thread p, ThreadEntry next, ProcessTarget t) {
 			this.next = next;
 			cond = evt.getWaitCondition();
 			proc = p;
 			dieFlag = new AtomicBoolean(false);
+			target = t;
 		}
 	}
 
@@ -924,7 +921,7 @@ public final class EventManager {
 				return;
 
 			executeEvents = true;
-			ThreadEntry te = new ThreadEntry(this, this.allocateThread(), null);
+			ThreadEntry te = new ThreadEntry(this, this.allocateThread(), null, null);
 			runningProc.set(te);
 		}
 		finally {
