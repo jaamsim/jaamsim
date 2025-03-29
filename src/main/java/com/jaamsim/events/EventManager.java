@@ -219,9 +219,10 @@ public final class EventManager {
 	 */
 	final void execute() {
 		evtLock.lock();
+		final Thread cur = Thread.currentThread();
 		try {
-			if (runningProc.get().proc != Thread.currentThread()) {
-				System.out.println("Invalid Process Entering EventManager:" + Thread.currentThread());
+			if (runningProc.get().proc != cur) {
+				System.out.println("Invalid Process Entering EventManager:" + cur);
 				return;
 			}
 
@@ -275,7 +276,7 @@ public final class EventManager {
 
 					// If the current Process is the runningProc, continue executing events
 					// otherwise exit and return to Process pool
-					if (runningProc.get().proc != Thread.currentThread())
+					if (runningProc.get().proc != cur)
 						return;
 
 					continue;
