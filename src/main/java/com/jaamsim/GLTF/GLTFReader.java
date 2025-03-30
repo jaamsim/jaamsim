@@ -1578,10 +1578,7 @@ public class GLTFReader {
 		}
 		BufferedReader br = new BufferedReader(new InputStreamReader(inStream));
 		JSONParser jsonParser = new JSONParser();
-		Object[] lines = br.lines().toArray();
-		for (Object l: lines) {
-			jsonParser.addPiece((String)l);
-		}
+		br.lines().forEachOrdered(x -> jsonParser.addPiece(x));
 		JSONValue root;
 		try {
 			root = jsonParser.parse();
