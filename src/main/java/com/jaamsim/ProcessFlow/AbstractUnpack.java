@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2024 JaamSim Software Inc.
+ * Copyright (C) 2016-2025 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -103,9 +103,12 @@ public abstract class AbstractUnpack extends LinkedService {
 			setMatchValue(m);
 
 			// Remove the container from the queue
-			container = (EntContainer)this.removeNextEntity(m);
-			if (container == null)
+			DisplayEntity ent = removeNextEntity(m);
+			if (ent == null)
 				return false;
+			if (!(ent instanceof EntContainer))
+				error("Entity '%s' is not an EntityContainer or equivalent", ent);
+			container = (EntContainer) ent;
 
 			setContainerState();
 

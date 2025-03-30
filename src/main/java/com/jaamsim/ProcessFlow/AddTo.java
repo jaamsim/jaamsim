@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
- * Copyright (C) 2018-2023 JaamSim Software Inc.
+ * Copyright (C) 2018-2025 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -64,7 +64,10 @@ public class AddTo extends AbstractPack {
 
 	@Override
 	protected EntContainer getNextContainer() {
-		return (EntContainer) containerQueue.getValue().removeFirst();
+		DisplayEntity ret = containerQueue.getValue().removeFirst();
+		if (!(ret instanceof EntContainer))
+			error("Entity '%s' is not an EntityContainer or equivalent", ret);
+		return (EntContainer) ret;
 	}
 
 	@Override
