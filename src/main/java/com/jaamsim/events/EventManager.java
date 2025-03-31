@@ -924,7 +924,7 @@ public final class EventManager {
 
 			RealTimeState state = rt.get();
 			if (state != null)
-				state.realTimeMillis = -1;;
+				state.realTimeMillis = -1;
 			if (executeEvents)
 				return;
 
