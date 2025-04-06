@@ -312,7 +312,7 @@ public final class EventManager {
 				}
 
 				// Advance to the next event time
-				if (rt.get() != null && this.waitForNextRealTick())
+				if (this.waitForNextRealTick())
 					continue;
 
 				// advance time
@@ -376,8 +376,14 @@ public final class EventManager {
 	}
 
 	public final void setExecuteRealTime(boolean useRealTime, double factor) {
-		if (useRealTime)
+		if (useRealTime) {
+			RealTimeState state = rt.get();
+			// do not update state if we are already running in real time and we are setting the same factor
+			if (state != null && state.realTimeFactor == factor)
+				return;
+
 			rt.set(new RealTimeState(factor));
+		}
 		else
 			rt.set(null);
 	}
@@ -389,8 +395,8 @@ public final class EventManager {
 
 		RealTimeState(double factor) {
 			realTimeFactor = factor;
-			realTimeMillis = -1;
-			realTimeTick = -1;
+			realTimeMillis = -1l;
+			realTimeTick = -1l;
 		}
 	}
 	/**
@@ -398,7 +404,7 @@ public final class EventManager {
 	 * @return true if we introduced a real-time wait
 	 */
 	private boolean waitForNextRealTick() {
-		RealTimeState state = rt.get();
+		final RealTimeState state = rt.get();
 		if (state == null)
 			return false;
 
@@ -924,7 +930,7 @@ public final class EventManager {
 
 			RealTimeState state = rt.get();
 			if (state != null)
-				state.realTimeMillis = -1;
+				state.realTimeMillis = -1l;
 			if (executeEvents)
 				return;
 
