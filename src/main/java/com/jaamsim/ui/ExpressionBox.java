@@ -260,7 +260,8 @@ public class ExpressionBox extends JDialog {
 				}
 
 				// Return or space bar pressed while in edit mode
-				else if ((c == '\n' || c == ' ') && editMode != EDIT_MODE_NORMAL) {
+				else if (c == '\n' && editMode != EDIT_MODE_NORMAL
+						|| c == ' ' && (editMode == EDIT_MODE_ENTITY || editMode == EDIT_MODE_OUTPUT)) {
 					SwingUtilities.invokeLater(new Runnable() {
 						@Override
 						public void run() {
