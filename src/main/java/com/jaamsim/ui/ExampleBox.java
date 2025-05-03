@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2020-2024 JaamSim Software Inc.
+ * Copyright (C) 2020-2025 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -71,6 +71,7 @@ public class ExampleBox extends JDialog {
 
 	private static final String DIALOG_NAME = "Examples - JaamSim";
 	private static final String DEFAULT_TOPIC = "";
+	private static final String EXAMPLES_FOLDER_NAME = "/resources/examples";
 
 	private ExampleBox() {
 		super((JDialog)null, DIALOG_NAME, false);
@@ -83,9 +84,18 @@ public class ExampleBox extends JDialog {
 		setPreferredSize(new Dimension(1100, 800));
 
 		// Example List
-		for (String name : GUIFrame.getResourceFileNames("/resources/examples")) {
+		for (String name : GUIFrame.getResourceFileNames(EXAMPLES_FOLDER_NAME)) {
 			if (name.endsWith(".cfg")) {
 				exampleList.add(name.substring(0, name.length() - 4));
+			}
+		}
+		for (String subfolderName : GUIFrame.getResourceSubfolderNames(EXAMPLES_FOLDER_NAME)) {
+			String folderName = EXAMPLES_FOLDER_NAME + "/" + subfolderName;
+			for (String name : GUIFrame.getResourceFileNames(folderName)) {
+				if (name.endsWith(".cfg")) {
+					String topic = subfolderName + "/" + name.substring(0, name.length() - 4);
+					exampleList.add(topic);
+				}
 			}
 		}
 		Collections.sort(exampleList, Input.uiSortOrder);
@@ -275,7 +285,7 @@ public class ExampleBox extends JDialog {
 
 	private boolean showTopic(String topic) {
 		try {
-			URL url = GUIFrame.class.getResource("/resources/examples/" + topic + ".cfg");
+			URL url = GUIFrame.class.getResource(EXAMPLES_FOLDER_NAME + "/" + topic + ".cfg");
 			if (url == null)
 				return false;
 			presentExample = topic;
