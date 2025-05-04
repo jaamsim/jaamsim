@@ -235,8 +235,10 @@ public class TestSimulation {
 			simModel.autoLoad();
 			InputAgent.readResource(simModel, "<res>/examples/" + name + ".cfg");
 			simModel.postLoad();
-			simModel.setInput("Simulation", "RunDuration", "1000 s");
+			if (simModel.getSimulation().getRunDuration() > 1000.0d)
+				simModel.setInput("Simulation", "RunDuration", "1000 s");
 			simModel.setInput("Simulation", "InitializationDuration", "0 s");
+			simModel.setInput("Simulation", "PauseTime", "");
 
 			// Ensure that the PrintReport input is FALSE
 			assertTrue(!simModel.getSimulation().getPrintReport());
