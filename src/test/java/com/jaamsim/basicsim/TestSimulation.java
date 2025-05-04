@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2018-2024 JaamSim Software Inc.
+ * Copyright (C) 2018-2025 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@ import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.OutputHandle;
 import com.jaamsim.input.ValueHandle;
-import com.jaamsim.ui.GUIFrame;
+import com.jaamsim.ui.ExampleBox;
 
 public class TestSimulation {
 
@@ -226,16 +226,14 @@ public class TestSimulation {
 		System.out.println("Example Models:");
 
 		// Loop through the configuration files in the examples folder
-		for (String name : GUIFrame.getResourceFileNames("/resources/examples")) {
-			if (!name.endsWith(".cfg"))
-				continue;
+		for (String name : ExampleBox.getExampleList()) {
 			System.out.println();
 			System.out.println(name);
 
 			// Load the example model
-			JaamSimModel simModel = new JaamSimModel(name);
+			JaamSimModel simModel = new JaamSimModel(name + ".cfg");
 			simModel.autoLoad();
-			InputAgent.readResource(simModel, "<res>/examples/" + name);
+			InputAgent.readResource(simModel, "<res>/examples/" + name + ".cfg");
 			simModel.postLoad();
 			simModel.setInput("Simulation", "RunDuration", "1000 s");
 			simModel.setInput("Simulation", "InitializationDuration", "0 s");

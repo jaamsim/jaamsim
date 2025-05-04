@@ -57,7 +57,7 @@ import com.jaamsim.render.Future;
 public class ExampleBox extends JDialog {
 
 	private String presentExample;
-	private final ArrayList<String> exampleList = new ArrayList<>();
+	private final ArrayList<String> exampleList;
 	private JList<String> list;
 	private final SearchField exampleSearch;
 	private final AutoCompleteComparator autoCompleteComparator = new AutoCompleteComparator();
@@ -84,21 +84,7 @@ public class ExampleBox extends JDialog {
 		setPreferredSize(new Dimension(1100, 800));
 
 		// Example List
-		for (String name : GUIFrame.getResourceFileNames(EXAMPLES_FOLDER_NAME)) {
-			if (name.endsWith(".cfg")) {
-				exampleList.add(name.substring(0, name.length() - 4));
-			}
-		}
-		for (String subfolderName : GUIFrame.getResourceSubfolderNames(EXAMPLES_FOLDER_NAME)) {
-			String folderName = EXAMPLES_FOLDER_NAME + "/" + subfolderName;
-			for (String name : GUIFrame.getResourceFileNames(folderName)) {
-				if (name.endsWith(".cfg")) {
-					String topic = subfolderName + "/" + name.substring(0, name.length() - 4);
-					exampleList.add(topic);
-				}
-			}
-		}
-		Collections.sort(exampleList, Input.uiSortOrder);
+		exampleList = getExampleList();
 
 		// Example search
 		exampleSearch = new SearchField(50) {
@@ -228,6 +214,26 @@ public class ExampleBox extends JDialog {
 	public void dispose() {
 		killInstance();
 		super.dispose();
+	}
+
+	public static ArrayList<String> getExampleList() {
+		ArrayList<String> ret = new ArrayList<>();
+		for (String name : GUIFrame.getResourceFileNames(EXAMPLES_FOLDER_NAME)) {
+			if (name.endsWith(".cfg")) {
+				ret.add(name.substring(0, name.length() - 4));
+			}
+		}
+		for (String subfolderName : GUIFrame.getResourceSubfolderNames(EXAMPLES_FOLDER_NAME)) {
+			String folderName = EXAMPLES_FOLDER_NAME + "/" + subfolderName;
+			for (String name : GUIFrame.getResourceFileNames(folderName)) {
+				if (name.endsWith(".cfg")) {
+					String topic = subfolderName + "/" + name.substring(0, name.length() - 4);
+					ret.add(topic);
+				}
+			}
+		}
+		Collections.sort(ret, Input.uiSortOrder);
+		return ret;
 	}
 
 	/**
