@@ -3829,6 +3829,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		View view = RenderManager.inst().getActiveView();
 		if (view == null)
 			return;
+		lockViewXYPlane.setEnabled(view.isMovable());
 		lockViewXYPlane.setSelected(view.is2DLocked());
 	}
 
