@@ -57,6 +57,7 @@ import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -111,6 +112,7 @@ import com.jaamsim.Commands.DefineCommand;
 import com.jaamsim.Commands.DefineViewCommand;
 import com.jaamsim.Commands.DeleteCommand;
 import com.jaamsim.Commands.KeywordCommand;
+import com.jaamsim.DisplayModels.DisplayModel;
 import com.jaamsim.DisplayModels.TextModel;
 import com.jaamsim.Graphics.BillboardText;
 import com.jaamsim.Graphics.DirectedEntity;
@@ -132,6 +134,7 @@ import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.basicsim.GUIListener;
 import com.jaamsim.basicsim.JaamSimModel;
+import com.jaamsim.basicsim.ObjectType;
 import com.jaamsim.basicsim.RunManager;
 import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.controllers.RateLimiter;
@@ -140,6 +143,7 @@ import com.jaamsim.datatypes.IntegerVector;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.events.EventTimeListener;
 import com.jaamsim.input.ColourInput;
+import com.jaamsim.input.FileInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InputErrorException;
@@ -5083,8 +5087,61 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 		// Save the configuration file
 		setSaveFile(file);
-
 		setConfigFolder(file.getParent());
+
+		// Check for external file references
+		JaamSimModel simModel = getJaamSimModel();
+		String configDir = simModel.getConfigFile().getParentFile().toString();
+		boolean changed = false;
+		ArrayList<URI> uriList = new ArrayList<>();
+		for (Entity ent : simModel.getClonesOfIterator(Entity.class)) {
+			if (ent.isGenerated() || ent instanceof ObjectType || ent instanceof DisplayModel)
+				continue;
+
+			// Loop through the file inputs for the entity
+			for (FileInput in : InputAgent.getExamplesFileInputs(ent)) {
+
+				// Create a path to a new file in the same folder as the configuration file
+				Path src = Paths.get(in.getValue());
+				String fileName = src.getFileName().toString();
+				Path dst = Paths.get(configDir, fileName);
+
+				// Does the file need to be saved?
+				if (!uriList.contains(in.getValue())) {
+
+					// Confirm whether or not to save the new file
+					if (!showSaveExternalFile(fileName))
+						continue;
+					if (dst.toFile().exists() && !showSaveAsDialog(fileName))
+						continue;
+
+					// Save the new file
+					try {
+						Files.copy(src, dst, StandardCopyOption.REPLACE_EXISTING);
+						uriList.add(in.getValue());
+					} catch (IOException e) {
+						showErrorDialog("File Error", "Could not save the new file");
+						e.printStackTrace();
+						continue;
+					}
+				}
+
+				// Set the input to the new file
+				try {
+					InputAgent.applyArgs(ent, in.getKeyword(), dst.toString());
+					changed = true;
+				}
+				catch (Exception e) {
+					showErrorDialog("Input Error", "Could not change the file name input");
+					e.printStackTrace();
+				}
+			}
+		}
+
+		// Re-save the configuration file if any of the FileInputs have been changed
+		if (changed)
+			setSaveFile(file);
+
 		updateUI();
 		return true;
 	}
@@ -5530,6 +5587,25 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				String.format("The file '%s' already exists.\n" +
 						"Do you want to replace it?", fileName),
 				"Confirm Save As",
+				JOptionPane.YES_NO_OPTION,
+				JOptionPane.WARNING_MESSAGE);
+		return (userOption == JOptionPane.YES_OPTION);
+	}
+
+	/**
+	 * Shows the "Confirm Save As" dialog box
+	 * @param fileName - name of the file to be saved
+	 * @return true if the file is to be overwritten.
+	 */
+	public static boolean showSaveExternalFile(String fileName) {
+		if (RunProgressBox.hasInstance())
+			RunProgressBox.getInstance().setShow(false);
+		int userOption = JOptionPane.showConfirmDialog(null,
+				String.format("The model inputs include a reference to an internal file '%s'.\n"
+						+ "Do you want to save a copy of this file in the same folder as the "
+						+ "saved configuration file and to modify the inputs to reference that "
+						+ "file?", fileName),
+				"Confirm Save",
 				JOptionPane.YES_NO_OPTION,
 				JOptionPane.WARNING_MESSAGE);
 		return (userOption == JOptionPane.YES_OPTION);

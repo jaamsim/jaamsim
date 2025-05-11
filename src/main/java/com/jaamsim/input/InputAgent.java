@@ -1850,6 +1850,35 @@ public class InputAgent {
 		}
 	}
 
+	public static String getResourceFolderName(URI uri) {
+		String resString = resRoot.toString();
+		String inputString = uri.toString();
+		if (!inputString.startsWith(resString))
+			return null;
+		return inputString.substring(resString.length());
+	}
+
+	public static ArrayList<FileInput> getExamplesFileInputs(Entity ent) {
+		ArrayList<FileInput> ret = new ArrayList<>();
+		for (Input<?> in : ent.getEditableInputs()) {
+
+			// Is the input a FileInput whose value has been set?
+			if (!(in instanceof FileInput))
+				continue;
+			FileInput fileIn = (FileInput) in;
+			URI uri = fileIn.getValue();
+			if (uri == null)
+				continue;
+
+			// Is the file located in the 'examples' folder?
+			String folder = getResourceFolderName(uri);
+			if (folder != null && folder.startsWith("examples")) {
+				ret.add(fileIn);
+			}
+		}
+		return ret;
+	}
+
 	/**
 	 * Loads the default configuration file.
 	 */
