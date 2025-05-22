@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2024 JaamSim Software Inc.
+ * Copyright (C) 2016-2025 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -518,9 +518,14 @@ public class EntityConveyor extends LinkedService implements LineEntity {
 
 			convPos = Math.max(convPos, 0.0d);
 			Vec3d localPos = PolylineInfo.getPositionOnPolyline(getCurvePoints(), convPos);
-			Vec3d alignment = entry.entity.getAlignment();
-			alignment.x = -0.5d;
-			entry.entity.setGlobalPositionForAlignment(getGlobalPosition(localPos), alignment);
+			if (isAccumulating()) {
+				Vec3d alignment = entry.entity.getAlignment();
+				alignment.x = -0.5d;
+				entry.entity.setGlobalPositionForAlignment(getGlobalPosition(localPos), alignment);
+			}
+			else {
+				entry.entity.setGlobalPosition(localPos);
+			}
 
 			if (isRotateEntities(simTime)) {
 				Vec3d orient = PolylineInfo.getOrientationOnPolyline(getCurvePoints(), convPos);
