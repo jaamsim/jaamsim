@@ -634,22 +634,20 @@ public class Entity {
 		// Find the first parent that has a different name
 		Entity oldP = parent;
 		Entity newP = newParent;
-		while (oldP.getLocalName().equals(newP.getLocalName())) {
-			oldP = oldP.getParent();
-			newP = newP.getParent();
-			if (oldP == null || newP == null) {
-				return ret;
-			}
+		while (oldP.getLocalName().equals(newP.getLocalName())
+				&& oldP.parent != null && newP.parent != null) {
+			oldP = oldP.parent;
+			newP = newP.parent;
 		}
 
 		// Replace any explicit references to the parent entity with the specified new parent
 		String oldName = parent.getName();
 		String oldName1 = "[" + oldName + "]";
-		String oldName2 = oldP.getLocalName() + ".";
+		String oldName2 = oldP.getName() + ".";
 
 		String newName = newParent.getName();
 		String newName1 = "[" + newName + "]";
-		String newName2 = newP.getLocalName() + ".";
+		String newName2 = newP.getName() + ".";
 
 		for (int i = 0; i < ret.size(); i++) {
 			String str = ret.get(i);
