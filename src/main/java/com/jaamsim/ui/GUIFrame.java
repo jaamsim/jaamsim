@@ -489,7 +489,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		// Pass the simulation time for the new model to the user interface
 		gui.initSpeedUp(sm.getSimTime());
 		gui.tickUpdate(sm.getSimTicks());
-		gui.updateForSimulationState(sm.getSimState());
+		gui.updateForSimulationState();
 	}
 
 	public void setTitle(JaamSimModel sm) {
@@ -3330,8 +3330,12 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	void updateForSimulationState(int state) {
 		JaamSimModel sim = getJaamSimModel();
 		sim.setSimState(state);
+		updateForSimulationState();
+	}
 
-		switch (sim.getSimState()) {
+	void updateForSimulationState() {
+
+		switch (getJaamSimModel().getSimState()) {
 			case JaamSimModel.SIM_STATE_LOADED:
 				for( int i = 0; i < fileMenu.getItemCount() - 1; i++ ) {
 					if (fileMenu.getItem(i) == null)
@@ -4816,17 +4820,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 	@Override
 	public void timeRunning() {
-		EventManager evt = EventManager.current();
-		boolean running = evt.isRunning();
-		if (running) {
-			updateForSimulationState(JaamSimModel.SIM_STATE_RUNNING);
-		}
-		else {
-			int state = JaamSimModel.SIM_STATE_PAUSED;
-			if (!getJaamSimModel().getSimulation().canResume(simTicks))
-				state = JaamSimModel.SIM_STATE_ENDED;
-			updateForSimulationState(state);
-		}
+		updateForSimulationState();
 	}
 
 	@Override
