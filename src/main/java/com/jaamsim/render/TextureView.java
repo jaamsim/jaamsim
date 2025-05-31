@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2012 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2025 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,6 +47,7 @@ public class TextureView implements Renderable {
 	private final AABB _bounds;
 
 	private final VisibilityInfo _visInfo;
+	private final float[] lightDir = new float[3];
 
 	// Initialize the very simple buffers needed to render this image
 	static private boolean staticInit = false;
@@ -78,7 +80,6 @@ public class TextureView implements Renderable {
 	static private int cVar;
 	static private int fcVar;
 
-	static private float[] lightDir = new float[3];
 	static private float[] lightInt = new float[1];
 
 	// a column-major identity matrix
@@ -112,6 +113,13 @@ public class TextureView implements Renderable {
 
 		_bounds = new AABB(vs, modelMat);
 
+		// Lighting direction
+		Vec4d vec = new Vec4d(0, 0, -1, 0);
+		_trans.apply(vec, vec);
+		vec.scale3(1.0d/_trans.getScale());
+		lightDir[0] = (float) vec.x;
+		lightDir[1] = (float) vec.y;
+		lightDir[2] = (float) vec.z;
 	}
 
 	private static void initStaticBuffers(Renderer r) {
@@ -180,10 +188,6 @@ public class TextureView implements Renderable {
 
 		cVar = gl.glGetUniformLocation(progHandle, "C");
 		fcVar = gl.glGetUniformLocation(progHandle, "FC");
-
-		lightDir[0] = 0;
-		lightDir[1] = 0;
-		lightDir[2] = -1;
 
 		lightInt[0] = 1;
 
