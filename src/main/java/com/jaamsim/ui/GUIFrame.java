@@ -629,7 +629,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		// File menu creation
 		fileMenu = new JMenu( "File" );
 		fileMenu.setMnemonic(KeyEvent.VK_F);
-		fileMenu.setEnabled( false );
 
 		// 1) "New" menu item
 		JMenuItem newMenuItem = new JMenuItem( "New" );
@@ -3409,7 +3408,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			default:
 				throw new ErrorException( "Unrecognized Graphics State" );
 		}
-		fileMenu.setEnabled( true );
 	}
 
 	@Override
