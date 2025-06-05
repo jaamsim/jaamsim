@@ -345,7 +345,7 @@ public class JaamSimModel implements EventTimeListener {
 	}
 
 	public boolean isStarted() {
-		return getSimState() >= SIM_STATE_RUNNING;
+		return eventManager.hasStarted();
 	}
 
 	public boolean isConfigured() {

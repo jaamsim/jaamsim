@@ -67,6 +67,7 @@ public final class EventManager {
 
 	private EventTimeListener timelistener;
 	private EventTraceListener trcListener;
+	private final AtomicBoolean hasStarted = new AtomicBoolean();
 
 	/**
 	 * Allocates a new EventManager with the given parent and name
@@ -92,6 +93,7 @@ public final class EventManager {
 		runningProc = new AtomicReference<>(null);
 		executeEvents = false;
 		disableSchedule = false;
+		hasStarted.set(false);
 
 		rt = new AtomicReference<>(null);
 		setTimeListener(null);
@@ -127,6 +129,7 @@ public final class EventManager {
 			nextTick = 0;
 			oneEvent = false;
 			oneSimTime = false;
+			hasStarted.set(false);
 			targetTick = Long.MAX_VALUE;
 			RealTimeState state = rt.get();
 			if (state != null)
@@ -234,6 +237,7 @@ public final class EventManager {
 			// If we are resuming execution, have the first thread call the timeRunning callback and enable scheduling
 			if (runningProc.get().start) {
 				enableSchedule();
+				hasStarted.set(true);
 				timelistener.timeRunning();
 			}
 
@@ -326,6 +330,10 @@ public final class EventManager {
 
 	public final boolean isRunning() {
 		return runningProc.get() != null;
+	}
+
+	public final boolean hasStarted() {
+		return hasStarted.get();
 	}
 
 	private void evaluateConditions() {
