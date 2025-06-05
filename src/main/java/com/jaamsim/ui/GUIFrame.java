@@ -3337,17 +3337,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 		switch (getJaamSimModel().getSimState()) {
 			case JaamSimModel.SIM_STATE_LOADED:
-				for( int i = 0; i < fileMenu.getItemCount() - 1; i++ ) {
-					if (fileMenu.getItem(i) == null)
-						continue;
-					fileMenu.getItem(i).setEnabled(true);
-				}
-				for( int i = 0; i < toolsMenu.getItemCount(); i++ ) {
-					if (toolsMenu.getItem(i) == null)
-						continue;
-					toolsMenu.getItem(i).setEnabled(true);
-				}
-
 				speedUpDisplay.setEnabled( false );
 				remainingDisplay.setEnabled( false );
 				setSpeedUp(0);
@@ -3363,17 +3352,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				break;
 
 			case JaamSimModel.SIM_STATE_UNCONFIGURED:
-				for( int i = 0; i < fileMenu.getItemCount() - 1; i++ ) {
-					if (fileMenu.getItem(i) == null)
-						continue;
-					fileMenu.getItem(i).setEnabled(true);
-				}
-				for( int i = 0; i < toolsMenu.getItemCount(); i++ ) {
-					if (toolsMenu.getItem(i) == null)
-						continue;
-					toolsMenu.getItem(i).setEnabled(true);
-				}
-
 				speedUpDisplay.setEnabled( false );
 				remainingDisplay.setEnabled( false );
 				setSpeedUp(0);
@@ -3388,17 +3366,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				break;
 
 			case JaamSimModel.SIM_STATE_CONFIGURED:
-				for( int i = 0; i < fileMenu.getItemCount() - 1; i++ ) {
-					if (fileMenu.getItem(i) == null)
-						continue;
-					fileMenu.getItem(i).setEnabled(true);
-				}
-				for( int i = 0; i < toolsMenu.getItemCount(); i++ ) {
-					if (toolsMenu.getItem(i) == null)
-						continue;
-					toolsMenu.getItem(i).setEnabled(true);
-				}
-
 				speedUpDisplay.setEnabled( false );
 				remainingDisplay.setEnabled( false );
 				setSpeedUp(0);
