@@ -1377,7 +1377,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	/**
 	 * Sets up the Control Panel's button bar.
 	 */
-	public void initializeButtonBar() {
+	private void initializeButtonBar() {
 
 		Insets noMargin = new Insets( 0, 0, 0, 0 );
 		Insets smallMargin = new Insets( 1, 1, 1, 1 );
@@ -2813,7 +2813,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	/**
 	 * Sets up the Control Panel's main tool bar.
 	 */
-	public void initializeMainToolBars() {
+	private void initializeMainToolBars() {
 
 		// Insets used in setting the tool bar components
 		Insets noMargin = new Insets( 0, 0, 0, 0 );
