@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2021-2023 JaamSim Software Inc.
+ * Copyright (C) 2021-2026 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,22 +54,22 @@ public abstract class AbstractShapeModel extends DisplayModel implements LineEnt
 	protected final SampleInput lineWidth;
 
 	{
-		fillColour = new ColourProvInput("FillColour", KEY_INPUTS, ColourInput.MED_GREY);
+		filled = new BooleanProvInput("Filled", FORMAT, false);
+		this.addInput(filled);
+
+		fillColour = new ColourProvInput("FillColour", FORMAT, ColourInput.MED_GREY);
 		this.addInput(fillColour);
 		this.addSynonym(fillColour, "FillColor");
 
-		lineColour = new ColourProvInput("LineColour", KEY_INPUTS, ColourInput.BLACK);
+		outlined = new BooleanProvInput("Outlined", FORMAT, false);
+		this.addInput(outlined);
+
+		lineColour = new ColourProvInput("LineColour", FORMAT, ColourInput.BLACK);
 		this.addInput(lineColour);
 		this.addSynonym(lineColour, "OutlineColour");
 		this.addSynonym(lineColour, "OutlineColor");
 
-		filled = new BooleanProvInput("Filled", KEY_INPUTS, false);
-		this.addInput(filled);
-
-		outlined = new BooleanProvInput("Outlined", KEY_INPUTS, false);
-		this.addInput(outlined);
-
-		lineWidth = new SampleInput("LineWidth", KEY_INPUTS, 1);
+		lineWidth = new SampleInput("LineWidth", FORMAT, 1);
 		lineWidth.setValidRange(0, Double.POSITIVE_INFINITY);
 		lineWidth.setIntegerValue(true);
 		this.addInput(lineWidth);
