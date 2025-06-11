@@ -508,7 +508,7 @@ public class CameraControl implements WindowInteractionListener {
 		Vec3d left = new Vec3d( -forward.y, forward.x, 0.0d);
 
 		// Scale the two vectors to the desired step size
-		double inc = GUIFrame.getJaamSimModel().getSimulation().getIncrementSize();
+		double inc = _updateView.getJaamSimModel().getSimulation().getIncrementSize();
 		forward.scale3(inc);
 		left.scale3(inc);
 
