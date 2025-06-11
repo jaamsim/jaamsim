@@ -16,13 +16,13 @@
  */
 package com.jaamsim.basicsim;
 
+import static org.junit.Assert.assertTrue;
+
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-
-import static org.junit.Assert.assertTrue;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -252,7 +252,6 @@ public class TestSimulation {
 			long nanos = System.nanoTime();
 			WaitForPauseListener listener = new WaitForPauseListener(simModel);
 			simModel.setRunListener(listener);
-			simModel.initRun();
 			simModel.start();
 			listener.waitForPause(5000L);
 			nanos = System.nanoTime() - nanos;
