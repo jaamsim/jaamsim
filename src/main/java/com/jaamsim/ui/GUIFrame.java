@@ -3243,7 +3243,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	 */
 	public boolean startSimulation() {
 		JaamSimModel sim = getJaamSimModel();
-		double pauseTime = sim.getSimulation().getPauseTime();
 		if (!sim.isStarted()) {
 			boolean confirmed = true;
 			if (sim.isSessionEdited()) {
@@ -3253,7 +3252,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				if (!sim.isRealTime() && runManager.getNumberOfRuns() > 1) {
 					RunProgressBox.getInstance().setShow(true);
 				}
-				runManager.start(pauseTime);
+				runManager.start();
 			}
 			return confirmed;
 		}
@@ -3261,7 +3260,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			if (!sim.isRealTime() && runManager.getNumberOfRuns() > 1) {
 				RunProgressBox.getInstance().setShow(true);
 			}
-			runManager.resume(pauseTime);
+			runManager.resume();
 			return true;
 		}
 		else

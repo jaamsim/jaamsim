@@ -122,14 +122,14 @@ public class Scenario implements RunListener {
 		}
 	}
 
-	public void startNextRun(JaamSimModel simModel, double pauseTime) {
+	public void startNextRun(JaamSimModel simModel) {
 		synchronized (this) {
 			if (runsToStart.isEmpty())
 				return;
 			SimRun run = runsToStart.remove(0);
 			runsInProgress.add(run);
 			run.setJaamSimModel(simModel);
-			run.start(pauseTime);
+			run.start();
 		}
 	}
 

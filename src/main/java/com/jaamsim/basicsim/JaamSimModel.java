@@ -521,16 +521,7 @@ public class JaamSimModel implements EventTimeListener {
 		return true;
 	}
 
-	/**
-	 * Starts the simulation model on a new thread.
-	 */
 	public void start() {
-		//System.out.format("%s.start%n", this);
-		double pauseTime = getSimulation().getPauseTime();
-		start(pauseTime);
-	}
-
-	public void start(double pauseTime) {
 		boolean bool = validate();
 		if (!bool)
 			return;
@@ -563,7 +554,7 @@ public class JaamSimModel implements EventTimeListener {
 
 		eventManager.setTickLength(getSimulation().getTickLength());
 		initRun();
-		resume(pauseTime);
+		resume();
 	}
 
 	void initRun() {
@@ -659,8 +650,8 @@ public class JaamSimModel implements EventTimeListener {
 	 * Events scheduled at the next pause time will not be executed until the model is resumed.
 	 * @param simTime - next pause time
 	 */
-	public void resume(double simTime) {
-		eventManager.resumeSeconds(simTime);
+	public void resume() {
+		eventManager.resumeSeconds(getSimulation().getPauseTime());
 	}
 
 	/**
