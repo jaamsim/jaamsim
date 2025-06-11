@@ -898,6 +898,8 @@ public class Simulation extends Entity {
 	}
 
 	public double getPauseTime() {
+		if (getJaamSimModel().isBatchRun())
+			return Double.POSITIVE_INFINITY;
 		return pauseTime.getValue();
 	}
 

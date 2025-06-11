@@ -59,10 +59,6 @@ public class RunManager implements RunListener {
 	}
 
 	public synchronized void start() {
-		start(Double.POSITIVE_INFINITY);
-	}
-
-	public synchronized void start(double pauseTime) {
 		Simulation simulation = simModel.getSimulation();
 
 		// Open the main report
@@ -99,7 +95,7 @@ public class RunManager implements RunListener {
 			}
 
 			// Start the next simulation run for the present scenario
-			startNextRun(sm, pauseTime);
+			startNextRun(sm);
 		}
 	}
 
@@ -109,9 +105,9 @@ public class RunManager implements RunListener {
 		}
 	}
 
-	public synchronized void resume(double pauseTime) {
+	public synchronized void resume() {
 		for (JaamSimModel sm : simModelList) {
-			sm.resume(pauseTime);
+			sm.resume();
 		}
 	}
 
@@ -229,14 +225,13 @@ public class RunManager implements RunListener {
 
 		// Start the next run
 		JaamSimModel sm = run.getJaamSimModel();
-		double pauseTime = simModel.getSimulation().getPauseTime();
-		startNextRun(sm, pauseTime);
+		startNextRun(sm);
 	}
 
 	@Override
 	public void handleError(Throwable t) {}
 
-	private void startNextRun(JaamSimModel sm, double pauseTime) {
+	private void startNextRun(JaamSimModel sm) {
 		synchronized (scenarioList) {
 			Simulation simulation = simModel.getSimulation();
 
@@ -258,7 +253,7 @@ public class RunManager implements RunListener {
 
 			// Start the next simulation run for the present scenario
 			if (presentScenario.hasRunsToStart()) {
-				presentScenario.startNextRun(sm, pauseTime);
+				presentScenario.startNextRun(sm);
 				if (sm == simModel && GUIFrame.getInstance() != null) {
 					GUIFrame.getInstance().initSpeedUp(0.0d);
 				}

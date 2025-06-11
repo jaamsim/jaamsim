@@ -77,7 +77,7 @@ public class SimRun implements RunListener {
 	/**
 	 * Starts the simulation run on a new thread.
 	 */
-	public void start(double pauseTime) {
+	public void start() {
 
 		// Reset the scenario and replication numbers
 		simModel.setScenarioNumber(scenarioNumber);
@@ -89,7 +89,7 @@ public class SimRun implements RunListener {
 
 		// Start the run
 		simModel.setRunListener(this);
-		simModel.start(pauseTime);
+		simModel.start();
 	}
 
 	@Override
