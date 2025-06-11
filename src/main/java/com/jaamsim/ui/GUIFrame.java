@@ -433,8 +433,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	}
 
 	public static JaamSimModel getJaamSimModel() {
-		if (runManager == null)
-			return null;
 		return runManager.getJaamSimModel();
 	}
 
@@ -456,13 +454,12 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			runManagerList.add(mgr);
 
 		// Remove the previous model if it is unedited and unsaved
-		JaamSimModel sim = getJaamSimModel();
-		if (sim != null && sim.getConfigFile() == null && !sim.isSessionEdited()
-				&& sim.getName().startsWith(DEFAULT_MODEL_NAME))
-			runManagerList.remove(runManager);
-
-		// Clear the listeners for the previous model
-		if (sim != null) {
+		if (runManager != null) {
+			JaamSimModel sim = getJaamSimModel();
+			if (sim.getConfigFile() == null && !sim.isSessionEdited()
+					&& sim.getName().startsWith(DEFAULT_MODEL_NAME))
+				runManagerList.remove(runManager);
+			// Clear the listeners for the previous model
 			sim.setGUIListener(null);
 		}
 
@@ -4539,6 +4536,12 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				System.getProperty("java.vendor"), System.getProperty("java.version"));
 		LogBox.format("Software: %s (version: %s)%n", AboutBox.softwareName, AboutBox.version);
 
+		// Create a graphic simulation
+		JaamSimModel simModel = getNextJaamSimModel();
+		simModel.autoLoad();
+		// Add the run manager
+		setRunManager(new RunManager(simModel));
+
 		// Create the user interface
 		GUIFrame gui = null;
 		if (!headless) {
@@ -4551,24 +4554,14 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				RenderManager.initialize(SAFE_GRAPHICS);
 			}
 			LogBox.logLine("Simulation Environment Loaded");
-		}
 
-		// Create a graphic simulation
-		JaamSimModel simModel = getNextJaamSimModel();
-		simModel.setGUIListener(gui);
-		simModel.autoLoad();
-
-		// Add the run manager
-		RunManager runMgr = new RunManager(simModel);
-		setRunManager(runMgr);
-
-		if (!headless) {
 			// This is only here to initialize the static cache in the MRG1999a class to avoid future latency
 			// when initializing other objects in drag+drop
 			@SuppressWarnings("unused")
 			MRG1999a cacher = new MRG1999a();
 		}
 
+		simModel.setGUIListener(gui);
 		simModel.setBatchRun(batch);
 		simModel.setScriptMode(scriptMode);
 
@@ -4642,7 +4635,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		if (batch) {
 			if (simModel.getNumErrors() > 0)
 				GUIFrame.shutdown(0);
-			runMgr.start();
+			getRunManager().start();
 			return;
 		}
 
