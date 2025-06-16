@@ -365,7 +365,8 @@ public class ExampleBox extends JDialog {
 		JaamSimModel simModel = new JaamSimModel(name);
 		simModel.autoLoad();
 		Simulation simulation = simModel.getSimulation();
-		GUIFrame.getInstance().setWindowDefaults(simulation);
+		GUIFrame gui = GUIFrame.getInstance();
+		gui.setWindowDefaults(simulation);
 
 		// Add the run manager
 		RunManager runMgr = new RunManager(simModel);
@@ -376,7 +377,7 @@ public class ExampleBox extends JDialog {
 		// Load the specified model file
 		InputAgent.readResource(simModel, "<res>/examples/" + name);
 		simModel.postLoad();
-		GUIFrame.updateForSimState(JaamSimModel.SIM_STATE_CONFIGURED);
+		gui.updateForSimulationState(JaamSimModel.SIM_STATE_CONFIGURED);
 
 		// A RecordEdits marker in the example file must be ignored
 		simModel.setRecordEditsFound(false);

@@ -3290,14 +3290,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			throw new ErrorException( "Invalid Simulation State for stop" );
 	}
 
-	public static void updateForSimState(int state) {
-		GUIFrame inst = GUIFrame.getInstance();
-		if (inst == null)
-			return;
-
-		inst.updateForSimulationState(state);
-	}
-
 	/**
 	 * Sets the state of the simulation run to the given state value.
 	 * @param state - an index that designates the state of the simulation run.
@@ -4617,7 +4609,10 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				public void run() {
 					simModel.setRecordEdits(true);
 					InputAgent.loadDefault(simModel);
-					GUIFrame.updateForSimState(JaamSimModel.SIM_STATE_CONFIGURED);
+
+					GUIFrame gui = GUIFrame.getInstance();
+					if (gui != null)
+						gui.updateForSimulationState(JaamSimModel.SIM_STATE_CONFIGURED);
 				}
 			});
 		}
@@ -4784,7 +4779,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				message,
 				"The error must be corrected before the simulation can be started.");
 
-		GUIFrame.updateForSimState(JaamSimModel.SIM_STATE_CONFIGURED);
+		this.updateForSimulationState(JaamSimModel.SIM_STATE_CONFIGURED);
 	}
 
 	@Override
@@ -4833,7 +4828,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		// Load the default model
 		simModel.setRecordEdits(true);
 		InputAgent.loadDefault(simModel);
-		GUIFrame.updateForSimState(JaamSimModel.SIM_STATE_CONFIGURED);
+		this.updateForSimulationState(JaamSimModel.SIM_STATE_CONFIGURED);
 
 		FrameBox.setSelectedEntity(simModel.getSimulation(), false);
 	}
@@ -4899,7 +4894,10 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	}
 
 	static Throwable configure(File file) {
-		GUIFrame.updateForSimState(JaamSimModel.SIM_STATE_UNCONFIGURED);
+		GUIFrame gui = GUIFrame.getInstance();
+		if (gui != null)
+			gui.updateForSimulationState(JaamSimModel.SIM_STATE_UNCONFIGURED);
+
 		JaamSimModel sim = getJaamSimModel();
 
 		Throwable ret = null;
@@ -4916,7 +4914,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			LogBox.logLine("Configuration File Loaded - errors found");
 
 		// show the present state in the user interface
-		GUIFrame gui = GUIFrame.getInstance();
 		if (gui != null) {
 			gui.setProgress(0);
 			gui.setTitle(sim);
