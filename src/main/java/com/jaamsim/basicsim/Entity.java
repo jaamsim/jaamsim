@@ -1,7 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2002-2011 Ausenco Engineering Canada Inc.
- * Copyright (C) 2016-2024 JaamSim Software Inc.
+ * Copyright (C) 2016-2025 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,6 +35,7 @@ import com.jaamsim.input.AttributeHandle;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.EntityNameInput;
 import com.jaamsim.input.ExpError;
+import com.jaamsim.input.ExpEvaluator;
 import com.jaamsim.input.ExpResType;
 import com.jaamsim.input.ExpResult;
 import com.jaamsim.input.ExpValResult;
@@ -157,7 +158,7 @@ public class Entity {
 		this.addInput(active);
 
 		attributeDefinitionList = new AttributeDefinitionListInput("AttributeDefinitionList",
-				OPTIONS, new ArrayList<AttributeHandle>());
+				OPTIONS, new ArrayList<NamedExpression>());
 		attributeDefinitionList.setCallback(userOutputCallback);
 		attributeDefinitionList.setHidden(false);
 		this.addInput(attributeDefinitionList);
@@ -304,7 +305,13 @@ public class Entity {
 			if (!(vh instanceof AttributeHandle))
 				continue;
 			AttributeHandle h = (AttributeHandle) vh;
-			h.setValue(h.getInitialValue());
+			try {
+				ExpResult res = ExpEvaluator.evaluateExpression(h.getExpression(), this, 0.0d);
+				h.setValue(res);
+			}
+			catch (ExpError e) {
+				throw new ErrorException(this, attributeDefinitionList.getKeyword(), e);
+			}
 		}
 
 		// Clear the clone pool
@@ -927,9 +934,9 @@ public class Entity {
 
 	public void updateUserOutputMap() {
 		clearUserOutputs();
-		for (AttributeHandle h : attributeDefinitionList.getValue()) {
-			AttributeHandle ah = new AttributeHandle(this, h.getName(), h.getInitialValue(), h.copyValue(), h.getUnitType());
-			addUserOutputHandle(h.getName(), ah);
+		for (NamedExpression ne : attributeDefinitionList.getValue()) {
+			AttributeHandle ah = new AttributeHandle(this, ne.getName(), ne.getExpression(), null, ne.getUnitType());
+			addUserOutputHandle(ne.getName(), ah);
 		}
 		for (NamedExpression ne : namedExpressionInput.getValue()) {
 			ExpressionHandle eh = new ExpressionHandle(this, ne.getExpression(), ne.getName(), ne.getUnitType());
