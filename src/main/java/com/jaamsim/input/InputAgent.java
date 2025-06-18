@@ -1117,18 +1117,11 @@ public class InputAgent {
 	 */
 	public static void saveInputs(ArrayList<Entity> entityList, FileEntity file) {
 
-		// Write a stub definition for the Custom Outputs for each entity
-		boolean blankLinePrinted = false;
+		// Write a stub definition for the Attributes and Custom Outputs for each entity
+		file.format("%n");
 		for (Entity ent : entityList) {
 			if (!ent.isRegistered())
 				continue;
-			Input<?> in = ent.getInput("CustomOutputList");
-			if (in == null || !in.isEdited())
-				continue;
-			if (!blankLinePrinted) {
-				file.format("%n");
-				blankLinePrinted = true;
-			}
 			writeStubOutputDefs(file, ent);
 		}
 
@@ -1136,7 +1129,7 @@ public class InputAgent {
 		for (int i = 0; i < EARLY_KEYWORDS.length; i++) {
 
 			// Loop through the entities
-			blankLinePrinted = false;
+			boolean blankLinePrinted = false;
 			for (Entity ent : entityList) {
 				if (!ent.isRegistered())
 					continue;
@@ -1277,11 +1270,12 @@ public class InputAgent {
 	}
 
 	static void writeStubOutputDefs(FileEntity file, Entity ent) {
-		NamedExpressionListInput in = (NamedExpressionListInput) ent.getInput("CustomOutputList");
-		if (in == null || in.isDef()) {
-			return;
+		for (Input<?> in : ent.getEditableInputs()) {
+			String stub = in.getStubDefinition();
+			if (stub == null || in.isDef())
+				continue;
+			file.format("%s %s { %s }%n", ent.getName(), in.getKeyword(), stub);
 		}
-		file.format("%s %s { %s }%n", ent.getName(), in.getKeyword(), in.getStubDefinition());
 	}
 
 	/**

@@ -550,9 +550,11 @@ public class Entity {
 
 		// Provide stub definitions for the custom outputs
 		if (seq == 0) {
-			NamedExpressionListInput in = (NamedExpressionListInput) ent.getInput("CustomOutputList");
-			if (in != null && !in.isDef()) {
-				KeywordIndex kw = InputAgent.formatInput(in.getKeyword(), in.getStubDefinition());
+			for (Input<?> in : ent.getEditableInputs()) {
+				String stub = in.getStubDefinition();
+				if (stub == null || in.isDef())
+					continue;
+				KeywordIndex kw = InputAgent.formatInput(in.getKeyword(), stub);
 				InputAgent.apply(this, kw);
 			}
 		}
@@ -600,7 +602,7 @@ public class Entity {
 		// - the input is for the CustomOutputList keyword which had been assigned a stub value
 		if (getPrototype() == ent && !targetInput.isDef() && !targetInput.isInherited()
 				&& !targetInput.getValueTokens().equals(tmp)
-				&& !targetInput.getKeyword().equals("CustomOutputList"))
+				&& targetInput.getStubDefinition() == null)
 			return;
 
 		// Set the new input value

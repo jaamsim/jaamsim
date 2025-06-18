@@ -47,7 +47,6 @@ import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.KeywordIndex;
-import com.jaamsim.input.NamedExpressionListInput;
 import com.jaamsim.input.ParseContext;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.rng.MRG1999a;
@@ -191,14 +190,16 @@ public class JaamSimModel implements EventTimeListener {
 		for (Entity ent : entityList) {
 			if (ent.isGenerated())
 				continue;
-			NamedExpressionListInput in = (NamedExpressionListInput) ent.getInput("CustomOutputList");
-			if (in == null || in.isDef())
-				continue;
-			Entity newEnt = getNamedEntity(ent.getName());
-			if (newEnt == null)
-				throw new ErrorException("New entity not found: %s", ent.getName());
-			KeywordIndex kw = InputAgent.formatInput(in.getKeyword(), in.getStubDefinition());
-			InputAgent.apply(newEnt, kw);
+			for (Input<?> in : ent.getEditableInputs()) {
+				String stub = in.getStubDefinition();
+				if (stub == null || in.isDef())
+					continue;
+				Entity newEnt = getNamedEntity(ent.getName());
+				if (newEnt == null)
+					throw new ErrorException("New entity not found: %s", ent.getName());
+				KeywordIndex kw = InputAgent.formatInput(in.getKeyword(), stub);
+				InputAgent.apply(newEnt, kw);
+			}
 		}
 
 		ParseContext context = null;
