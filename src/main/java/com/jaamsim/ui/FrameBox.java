@@ -151,6 +151,11 @@ public class FrameBox extends OSFixJFrame {
 			Point pos = tool.getLocation();
 			pos = GUIFrame.getInstance().getRelativeLocation(pos.x, pos.y);
 
+			if (size.width == 0 || size.height == 0) {
+				System.out.println("Suppressed bad window size update");
+				return;
+			}
+
 			Simulation simulation = GUIFrame.getJaamSimModel().getSimulation();
 			IntegerVector oldSize = (IntegerVector) simulation.getInput(sizeKeyword).getValue();
 			IntegerVector oldPos = (IntegerVector) simulation.getInput(posKeyword).getValue();
