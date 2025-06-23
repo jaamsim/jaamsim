@@ -589,8 +589,8 @@ public class Entity {
 	 * @param ignoreDef - true if a default input is not copied
 	 */
 	public void copyInput(Entity ent, String key, ParseContext context) {
-		//boolean trace = getName().startsWith("Fred") && key.equals("NextComponent");
-		//if (trace) System.out.format("%n%s.copyInput - ent=%s, key=%s, lock=%s%n", this, ent, key, lock);
+		//boolean trace = ent.getLocalName().equals("Label") && key.equals("Name");
+		//if (trace) System.out.format("%n%s.copyInput - ent=%s, key=%s%n", this, ent, key);
 
 		Input<?> sourceInput = ent.getInput(key);
 		Input<?> targetInput = this.getInput(key);

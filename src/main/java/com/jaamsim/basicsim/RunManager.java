@@ -73,6 +73,7 @@ public class RunManager implements RunListener {
 		simModelList.clear();
 		scenarioList.clear();
 		for (int i = 0; i < getNumberOfThreads(); i++) {
+			//System.out.format("Thread %s:%n", i);
 
 			// Create a JaamSimModel for each thread
 			JaamSimModel sm = simModel;
@@ -80,6 +81,7 @@ public class RunManager implements RunListener {
 				try {
 					sm = new JaamSimModel(simModel);
 					sm.setName(String.format("%s(%s)", simModel.getName(), simModelList.size() + 1));
+					//System.out.format("JaamSimModel %s created%n", sm);
 				}
 				catch (Exception e) {
 					pause();
@@ -92,10 +94,12 @@ public class RunManager implements RunListener {
 					return;
 				}
 			}
+			//System.out.format("hasRunsToStart=%s%n", hasRunsToStart());
 			if (!hasRunsToStart())
 				return;
 			synchronized (simModelList) {
 				simModelList.add(sm);
+				//System.out.format("simModelList=%s%n", simModelList);
 			}
 
 			// Start the next simulation run for the present scenario
@@ -254,6 +258,7 @@ public class RunManager implements RunListener {
 				int numberOfReplications = getNumberOfReplications();
 				presentScenario = new Scenario(numOuts, scenarioNumber, numberOfReplications, this);
 				scenarioList.add(presentScenario);
+				//System.out.format("Scenario %s started%n", presentScenario.getScenarioNumber());
 			}
 
 			// Start the next simulation run for the present scenario
