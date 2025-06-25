@@ -290,6 +290,10 @@ public class Entity {
 				throw e;
 			}
 		}
+
+		if (!isActive() && active.getHidden() && !active.isDef())
+			throw new ErrorException(
+					"Setting the Active keyword to FALSE has no effect on this object");
 	}
 
 	/**
