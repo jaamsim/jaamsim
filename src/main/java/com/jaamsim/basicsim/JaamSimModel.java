@@ -25,6 +25,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
@@ -108,6 +109,8 @@ public class JaamSimModel implements EventTimeListener {
 
 	private final HashMap<String, MRG1999a[]> rngMap = new HashMap<>();
 
+	final AtomicBoolean hasStarted = new AtomicBoolean();
+	final AtomicBoolean hasEnded = new AtomicBoolean();
 	private final AtomicInteger simState = new AtomicInteger(0);
 
 	/** model was executed, but no configuration performed */
@@ -304,7 +307,7 @@ public class JaamSimModel implements EventTimeListener {
 		if (isRunning()) {
 			setSimState(SIM_STATE_RUNNING);
 		}
-		else if (getSimulation().canResume(getSimTicks())) {
+		else if (!hasEnded.get()) {
 			setSimState(SIM_STATE_PAUSED);
 		}
 		else {
@@ -345,7 +348,7 @@ public class JaamSimModel implements EventTimeListener {
 	}
 
 	public boolean isStarted() {
-		return getSimState() >= SIM_STATE_RUNNING;
+		return hasStarted.get();
 	}
 
 	public boolean isConfigured() {
@@ -367,6 +370,8 @@ public class JaamSimModel implements EventTimeListener {
 	public void clear() {
 		eventManager.clear();
 		eventManager.setTraceListener(null);
+		hasStarted.set(false);
+		hasEnded.set(false);
 
 		// Reset the GUI inputs maintained by the Simulation entity
 		if (getSimulation() != null) {
@@ -527,6 +532,8 @@ public class JaamSimModel implements EventTimeListener {
 			return;
 		prepareReportDirectory();
 		eventManager.clear();
+		hasStarted.set(false);
+		hasEnded.set(false);
 
 		// Set up any tracing to be performed
 		eventManager.setTraceListener(null);
@@ -672,6 +679,8 @@ public class JaamSimModel implements EventTimeListener {
 	public void reset() {
 		eventManager.pause();
 		eventManager.clear();
+		hasStarted.set(false);
+		hasEnded.set(false);
 		killGeneratedEntities();
 		rngMap.clear();
 

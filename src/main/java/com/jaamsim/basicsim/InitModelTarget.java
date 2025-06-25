@@ -38,6 +38,7 @@ public class InitModelTarget extends ProcessTarget {
 		//System.out.format("%ninit%n");
 		Simulation simulation = simModel.getSimulation();
 
+		simModel.hasStarted.set(true);
 		// Initialise each entity
 		simModel.earlyInit();
 		simModel.lateInit();

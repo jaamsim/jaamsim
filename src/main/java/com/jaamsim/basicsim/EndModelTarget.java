@@ -34,6 +34,7 @@ class EndModelTarget extends ProcessTarget {
 
 	@Override
 	public void process() {
+		simModel.hasEnded.set(true);
 		simModel.endRun();
 	}
 }

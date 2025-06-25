@@ -865,16 +865,6 @@ public class Simulation extends Entity {
 		return getJaamSimModel().getNamedEntity(name);
 	}
 
-	/**
-	 * Returns whether a paused simulation can be resumed.
-	 * @param simTicks - present simulation time in clock ticks
-	 * @return true if the simulation can be resumed
-	 */
-	public boolean canResume(long simTicks) {
-		double totalDur = getRunDuration() + getInitializationTime();
-		return simTicks < this.getJaamSimModel().getEventManager().secondsToNearestTick(totalDur);
-	}
-
 	public int getSubstreamNumber() {
 		if (globalSeedInput.isDefault())
 			return getJaamSimModel().getReplicationNumber();
