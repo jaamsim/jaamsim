@@ -2948,7 +2948,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			@Override
 			public void actionPerformed( ActionEvent event ) {
 				JaamSimModel sim = getJaamSimModel();
-				if (sim.isRunningState()) {
+				if (sim.isRunning()) {
 					GUIFrame.this.pauseSimulation();
 				}
 				controlStartResume.requestFocusInWindow();
@@ -3149,7 +3149,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		}
 
 		// Do nothing further if the simulation is not executing events
-		if (!sim.isRunningState())
+		if (!sim.isRunning())
 			return;
 
 		// Set the speedup factor display
@@ -3253,7 +3253,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			}
 			return confirmed;
 		}
-		else if (sim.isPausedState()) {
+		else if (!sim.isRunning()) {
 			if (!sim.isRealTime() && runManager.getNumberOfRuns() > 1) {
 				RunProgressBox.getInstance().setShow(true);
 			}
@@ -3268,7 +3268,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	 * Pauses the simulation run.
 	 */
 	private void pauseSimulation() {
-		if (getJaamSimModel().isRunningState())
+		if (getJaamSimModel().isRunning())
 			runManager.pause();
 		else
 			throw new ErrorException( "Invalid Simulation State for pause" );
