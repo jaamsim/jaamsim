@@ -2902,7 +2902,11 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 					}
 				}
 				else {
-					GUIFrame.this.pauseSimulation();
+					if (getJaamSimModel().isRunning())
+						runManager.pause();
+					else
+						throw new ErrorException( "Invalid Simulation State for pause" );
+
 					controlStartResume.setPressedIcon(runPressedIcon);
 				}
 				controlStartResume.requestFocusInWindow();
@@ -2947,10 +2951,9 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				JaamSimModel sim = getJaamSimModel();
-				if (sim.isRunning()) {
-					GUIFrame.this.pauseSimulation();
-				}
+				if (getJaamSimModel().isRunning())
+					runManager.pause();
+
 				controlStartResume.requestFocusInWindow();
 				boolean confirmed = GUIFrame.showConfirmStopDialog();
 				if (!confirmed) {
@@ -3262,16 +3265,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		}
 		else
 			throw new ErrorException( "Invalid Simulation State for Start/Resume" );
-	}
-
-	/**
-	 * Pauses the simulation run.
-	 */
-	private void pauseSimulation() {
-		if (getJaamSimModel().isRunning())
-			runManager.pause();
-		else
-			throw new ErrorException( "Invalid Simulation State for pause" );
 	}
 
 	/**
