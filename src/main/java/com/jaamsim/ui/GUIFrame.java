@@ -3146,7 +3146,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		this.setProgress(progress);
 
 		// Show the overall progress in JaamSim's title bar
-		if (sim.isConfigured()) {
+		if (sim.isStarted()) {
 			int overallProgress = (int) Math.round(runManager.getProgress() * 100.0d);
 			setTitle(sim, overallProgress);
 		}
