@@ -4600,7 +4600,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			SwingUtilities.invokeLater(new Runnable() {
 				@Override
 				public void run() {
-					simModel.setRecordEdits(true);
 					InputAgent.loadDefault(simModel);
 
 					GUIFrame gui = GUIFrame.getInstance();
@@ -4819,7 +4818,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		setRunManager(runMgr);
 
 		// Load the default model
-		simModel.setRecordEdits(true);
 		InputAgent.loadDefault(simModel);
 		this.updateForSimulationState(JaamSimModel.SIM_STATE_CONFIGURED);
 

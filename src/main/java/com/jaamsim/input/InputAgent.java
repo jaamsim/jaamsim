@@ -1883,7 +1883,7 @@ public class InputAgent {
 	 * Loads the default configuration file.
 	 */
 	public static void loadDefault(JaamSimModel simModel) {
-
+		simModel.setRecordEdits(true);
 		// Read the default configuration file
 		InputAgent.readResource(simModel, "<res>/inputs/default.cfg");
 
