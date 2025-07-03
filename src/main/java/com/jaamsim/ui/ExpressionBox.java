@@ -381,7 +381,7 @@ public class ExpressionBox extends JDialog {
 
 				// Find the word over which the mouse is positioned
 				String text = editArea.getText();
-				int ind = editArea.viewToModel(e.getPoint());
+				int ind = editArea.viewToModel2D(e.getPoint());
 				if (ind >= 0 && ind < text.length() && Character.isLetter(text.charAt(ind))) {
 
 					// Index for the first letter of the word
