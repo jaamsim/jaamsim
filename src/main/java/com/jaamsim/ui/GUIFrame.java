@@ -3152,8 +3152,12 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		}
 
 		// Do nothing further if the simulation is not executing events
-		if (!sim.isRunning())
+		if (!sim.isRunning()) {
+			setSpeedUp(0);
+			setRemaining(-1);
+			setProgress(0);
 			return;
+		}
 
 		// Set the speedup factor display
 		double duration = simulation.getRunDuration() + simulation.getInitializationTime();
@@ -3294,55 +3298,34 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	}
 
 	void updateForSimulationState() {
-
 		switch (getJaamSimModel().getSimState()) {
 			case JaamSimModel.SIM_STATE_LOADED:
-				speedUpDisplay.setEnabled( false );
-				remainingDisplay.setEnabled( false );
-				setSpeedUp(0);
-				setRemaining(-1);
-				setProgress(0);
 				controlStartResume.setEnabled( true );
 				controlStartResume.setSelected( false );
 				controlStartResume.setToolTipText(RUN_TOOLTIP);
 				controlStop.setEnabled( false );
 				controlStop.setSelected( false );
 				lockViewXYPlane.setEnabled( true );
-				progressBar.setEnabled( false );
 				break;
 
 			case JaamSimModel.SIM_STATE_UNCONFIGURED:
-				speedUpDisplay.setEnabled( false );
-				remainingDisplay.setEnabled( false );
-				setSpeedUp(0);
-				setRemaining(-1);
-				setProgress(0);
 				controlStartResume.setEnabled( false );
 				controlStartResume.setSelected( false );
 				controlStop.setSelected( false );
 				controlStop.setEnabled( false );
 				lockViewXYPlane.setEnabled( true );
-				progressBar.setEnabled( false );
 				break;
 
 			case JaamSimModel.SIM_STATE_CONFIGURED:
-				speedUpDisplay.setEnabled( false );
-				remainingDisplay.setEnabled( false );
-				setSpeedUp(0);
-				setRemaining(-1);
-				setProgress(0);
 				controlStartResume.setEnabled( true );
 				controlStartResume.setSelected( false );
 				controlStartResume.setToolTipText(RUN_TOOLTIP);
 				controlStop.setSelected( false );
 				controlStop.setEnabled( false );
 				lockViewXYPlane.setEnabled( true );
-				progressBar.setEnabled( true );
 				break;
 
 			case JaamSimModel.SIM_STATE_RUNNING:
-				speedUpDisplay.setEnabled( true );
-				remainingDisplay.setEnabled( true );
 				controlStartResume.setEnabled( true );
 				controlStartResume.setSelected( true );
 				controlStartResume.setToolTipText(PAUSE_TOOLTIP);
