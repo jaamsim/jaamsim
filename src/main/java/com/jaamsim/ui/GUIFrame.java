@@ -3298,52 +3298,50 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	}
 
 	void updateForSimulationState() {
+		JaamSimModel sim = getJaamSimModel();
+
+		if (sim.isRunning() || sim.isStarted()) {
+			controlStop.setEnabled(true);
+			controlStop.setSelected(false);
+		} else {
+			controlStop.setEnabled(false);
+			controlStop.setSelected(false);
+		}
+
 		switch (getJaamSimModel().getSimState()) {
 			case JaamSimModel.SIM_STATE_LOADED:
 				controlStartResume.setEnabled( true );
 				controlStartResume.setSelected( false );
 				controlStartResume.setToolTipText(RUN_TOOLTIP);
-				controlStop.setEnabled( false );
-				controlStop.setSelected( false );
 				break;
 
 			case JaamSimModel.SIM_STATE_UNCONFIGURED:
 				controlStartResume.setEnabled( false );
 				controlStartResume.setSelected( false );
-				controlStop.setSelected( false );
-				controlStop.setEnabled( false );
 				break;
 
 			case JaamSimModel.SIM_STATE_CONFIGURED:
 				controlStartResume.setEnabled( true );
 				controlStartResume.setSelected( false );
 				controlStartResume.setToolTipText(RUN_TOOLTIP);
-				controlStop.setSelected( false );
-				controlStop.setEnabled( false );
 				break;
 
 			case JaamSimModel.SIM_STATE_RUNNING:
 				controlStartResume.setEnabled( true );
 				controlStartResume.setSelected( true );
 				controlStartResume.setToolTipText(PAUSE_TOOLTIP);
-				controlStop.setEnabled( true );
-				controlStop.setSelected( false );
 				break;
 
 			case JaamSimModel.SIM_STATE_PAUSED:
 				controlStartResume.setEnabled( true );
 				controlStartResume.setSelected( false );
 				controlStartResume.setToolTipText(RUN_TOOLTIP);
-				controlStop.setEnabled( true );
-				controlStop.setSelected( false );
 				break;
 
 			case JaamSimModel.SIM_STATE_ENDED:
 				controlStartResume.setEnabled( false );
 				controlStartResume.setSelected( false );
 				controlStartResume.setToolTipText(RUN_TOOLTIP);
-				controlStop.setEnabled( true );
-				controlStop.setSelected( false );
 				break;
 
 			default:
