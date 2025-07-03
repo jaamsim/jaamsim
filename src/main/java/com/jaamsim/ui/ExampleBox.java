@@ -370,14 +370,15 @@ public class ExampleBox extends JDialog {
 
 		// Add the run manager
 		RunManager runMgr = new RunManager(simModel);
-
+		simModel.setConfiguring(true);
 		// Set the Control Panel to the new JaamSimModel and reset the user interface
 		GUIFrame.setRunManager(runMgr);
 
 		// Load the specified model file
 		InputAgent.readResource(simModel, "<res>/examples/" + name);
 		simModel.postLoad();
-		gui.updateForSimulationState(JaamSimModel.SIM_STATE_CONFIGURED);
+		simModel.setConfiguring(false);
+		gui.updateForSimulationState();
 
 		// A RecordEdits marker in the example file must be ignored
 		simModel.setRecordEditsFound(false);

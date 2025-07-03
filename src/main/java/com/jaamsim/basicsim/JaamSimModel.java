@@ -111,6 +111,7 @@ public class JaamSimModel implements EventTimeListener {
 
 	final AtomicBoolean hasStarted = new AtomicBoolean();
 	final AtomicBoolean hasEnded = new AtomicBoolean();
+	final AtomicBoolean isConfiguring = new AtomicBoolean();
 	private final AtomicInteger simState = new AtomicInteger(0);
 
 	/** model was executed, but no configuration performed */
@@ -343,8 +344,16 @@ public class JaamSimModel implements EventTimeListener {
 		return hasStarted.get();
 	}
 
-	public boolean isConfigured() {
-		return getSimState() >= SIM_STATE_CONFIGURED;
+	public boolean isEnded() {
+		return hasEnded.get();
+	}
+
+	public void setConfiguring(boolean config) {
+		isConfiguring.set(config);
+	}
+
+	public boolean isConfiguring() {
+		return isConfiguring.get();
 	}
 
 	public boolean isRealTime() {
@@ -1140,7 +1149,7 @@ public class JaamSimModel implements EventTimeListener {
 			addNamedEntity(ent);
 		}
 
-		if (gui != null && isConfigured()) {
+		if (gui != null && !isConfiguring()) {
 			gui.updateObjectSelector();
 			if (ent instanceof DragAndDropable && ((DragAndDropable) ent).isDragAndDrop()) {
 				gui.updateModelBuilder();

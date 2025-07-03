@@ -3281,20 +3281,10 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			if (RunProgressBox.hasInstance())
 				RunProgressBox.getInstance().dispose();
 			FrameBox.stop();
-			this.updateForSimulationState(JaamSimModel.SIM_STATE_CONFIGURED);
+			this.updateForSimulationState();
 		}
 		else
 			throw new ErrorException( "Invalid Simulation State for stop" );
-	}
-
-	/**
-	 * Sets the state of the simulation run to the given state value.
-	 * @param state - an index that designates the state of the simulation run.
-	 */
-	void updateForSimulationState(int state) {
-		JaamSimModel sim = getJaamSimModel();
-		sim.setSimState(state);
-		updateForSimulationState();
 	}
 
 	void updateForSimulationState() {
@@ -3308,44 +3298,23 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			controlStop.setSelected(false);
 		}
 
-		switch (getJaamSimModel().getSimState()) {
-			case JaamSimModel.SIM_STATE_LOADED:
-				controlStartResume.setEnabled( true );
-				controlStartResume.setSelected( false );
-				controlStartResume.setToolTipText(RUN_TOOLTIP);
-				break;
-
-			case JaamSimModel.SIM_STATE_UNCONFIGURED:
-				controlStartResume.setEnabled( false );
-				controlStartResume.setSelected( false );
-				break;
-
-			case JaamSimModel.SIM_STATE_CONFIGURED:
-				controlStartResume.setEnabled( true );
-				controlStartResume.setSelected( false );
-				controlStartResume.setToolTipText(RUN_TOOLTIP);
-				break;
-
-			case JaamSimModel.SIM_STATE_RUNNING:
-				controlStartResume.setEnabled( true );
-				controlStartResume.setSelected( true );
-				controlStartResume.setToolTipText(PAUSE_TOOLTIP);
-				break;
-
-			case JaamSimModel.SIM_STATE_PAUSED:
-				controlStartResume.setEnabled( true );
-				controlStartResume.setSelected( false );
-				controlStartResume.setToolTipText(RUN_TOOLTIP);
-				break;
-
-			case JaamSimModel.SIM_STATE_ENDED:
-				controlStartResume.setEnabled( false );
-				controlStartResume.setSelected( false );
-				controlStartResume.setToolTipText(RUN_TOOLTIP);
-				break;
-
-			default:
-				throw new ErrorException( "Unrecognized Graphics State" );
+		if (sim.isConfiguring()) {
+			controlStartResume.setEnabled(false);
+			controlStartResume.setSelected(false);
+		}
+		else if (sim.isRunning()) {
+			controlStartResume.setEnabled(true);
+			controlStartResume.setSelected(true);
+			controlStartResume.setToolTipText(PAUSE_TOOLTIP);
+		}
+		else if (sim.isEnded()) {
+			controlStartResume.setEnabled(false);
+			controlStartResume.setSelected(false);
+		}
+		else {
+			controlStartResume.setEnabled(true);
+			controlStartResume.setSelected(false);
+			controlStartResume.setToolTipText(RUN_TOOLTIP);
 		}
 	}
 
@@ -4368,7 +4337,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	public void setWindowPos(View v, int x, int y, int width, int height) {
 		JaamSimModel simModel = runManager.getJaamSimModel();
 		if (presentMode.isSelected() || simModel.getSimulation().isLockWindows()
-				|| !simModel.isConfigured())
+				|| simModel.isConfiguring())
 			return;
 		Point posFix = OSFix.getLocationAdjustment(v.isResizable());
 		Point sizeFix = OSFix.getSizeAdjustment(v.isResizable());
@@ -4578,11 +4547,16 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 			SwingUtilities.invokeLater(new Runnable() {
 				@Override
 				public void run() {
-					InputAgent.loadDefault(simModel);
-
+					simModel.setConfiguring(true);
 					GUIFrame gui = GUIFrame.getInstance();
 					if (gui != null)
-						gui.updateForSimulationState(JaamSimModel.SIM_STATE_CONFIGURED);
+						gui.updateForSimulationState();
+
+					InputAgent.loadDefault(simModel);
+
+					simModel.setConfiguring(false);
+					if (gui != null)
+						gui.updateForSimulationState();
 				}
 			});
 		}
@@ -4692,7 +4666,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		@Override
 		public void run() {
 			JaamSimModel sim = getJaamSimModel();
-			if (sim == null || !sim.isConfigured())
+			if (sim == null || sim.isConfiguring())
 				return;
 			EventManager evt = sim.getEventManager();
 			double callBackTime = evt.ticksToSeconds(frame.simTicks);
@@ -4748,8 +4722,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				"JaamSim has detected the following input error during validation:",
 				message,
 				"The error must be corrected before the simulation can be started.");
-
-		this.updateForSimulationState(JaamSimModel.SIM_STATE_CONFIGURED);
 	}
 
 	@Override
@@ -4795,9 +4767,12 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		// Set the Control Panel to the new JaamSimModel and reset the user interface
 		setRunManager(runMgr);
 
+		simModel.setConfiguring(true);
+		this.updateForSimulationState();
 		// Load the default model
 		InputAgent.loadDefault(simModel);
-		this.updateForSimulationState(JaamSimModel.SIM_STATE_CONFIGURED);
+		simModel.setConfiguring(false);
+		this.updateForSimulationState();
 
 		FrameBox.setSelectedEntity(simModel.getSimulation(), false);
 	}
@@ -4863,11 +4838,11 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 	}
 
 	static Throwable configure(File file) {
+		JaamSimModel sim = getJaamSimModel();
+		sim.setConfiguring(true);
 		GUIFrame gui = GUIFrame.getInstance();
 		if (gui != null)
-			gui.updateForSimulationState(JaamSimModel.SIM_STATE_UNCONFIGURED);
-
-		JaamSimModel sim = getJaamSimModel();
+			gui.updateForSimulationState();
 
 		Throwable ret = null;
 		try {
@@ -4876,7 +4851,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		catch (Throwable t) {
 			ret = t;
 		}
-
+		sim.setConfiguring(false);
 		if (ret == null)
 			LogBox.logLine("Configuration File Loaded");
 		else
@@ -4886,7 +4861,7 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 		if (gui != null) {
 			gui.setProgress(0);
 			gui.setTitle(sim);
-			gui.updateForSimulationState(JaamSimModel.SIM_STATE_CONFIGURED);
+			gui.updateForSimulationState();
 			gui.enableSave(sim.isRecordEditsFound());
 		}
 		return ret;
