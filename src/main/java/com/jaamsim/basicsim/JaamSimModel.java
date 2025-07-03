@@ -26,7 +26,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -112,20 +111,6 @@ public class JaamSimModel implements EventTimeListener {
 	final AtomicBoolean hasStarted = new AtomicBoolean();
 	final AtomicBoolean hasEnded = new AtomicBoolean();
 	final AtomicBoolean isConfiguring = new AtomicBoolean();
-	private final AtomicInteger simState = new AtomicInteger(0);
-
-	/** model was executed, but no configuration performed */
-	public static final int SIM_STATE_LOADED = 0;
-	/** essential model elements created, no configuration performed */
-	public static final int SIM_STATE_UNCONFIGURED = 1;
-	/** model has been configured, not started */
-	public static final int SIM_STATE_CONFIGURED = 2;
-	/** model is presently executing events */
-	public static final int SIM_STATE_RUNNING = 3;
-	/** model has run, but presently is paused */
-	public static final int SIM_STATE_PAUSED = 4;
-	/** model is paused but cannot be resumed */
-	public static final int SIM_STATE_ENDED = 5;
 
 	public JaamSimModel() {
 		this("");
@@ -303,21 +288,8 @@ public class JaamSimModel implements EventTimeListener {
 
 	@Override
 	public void timeRunning() {
-
-		// Set the simulation state
-		if (isRunning()) {
-			setSimState(SIM_STATE_RUNNING);
-		}
-		else if (!hasEnded.get()) {
-			setSimState(SIM_STATE_PAUSED);
-		}
-		else {
-			setSimState(SIM_STATE_ENDED);
-		}
-
-		if (gui == null)
-			return;
-		gui.timeRunning();
+		if (gui != null)
+			gui.timeRunning();
 	}
 
 	@Override
@@ -330,14 +302,6 @@ public class JaamSimModel implements EventTimeListener {
 		if (gui == null)
 			return;
 		gui.handleError(t);
-	}
-
-	public int getSimState() {
-		return simState.get();
-	}
-
-	public void setSimState(int state) {
-		simState.set(state);
 	}
 
 	public boolean isStarted() {
