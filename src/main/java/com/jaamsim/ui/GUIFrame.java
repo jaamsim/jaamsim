@@ -3305,7 +3305,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				controlStartResume.setToolTipText(RUN_TOOLTIP);
 				controlStop.setEnabled( false );
 				controlStop.setSelected( false );
-				lockViewXYPlane.setEnabled( true );
 				break;
 
 			case JaamSimModel.SIM_STATE_UNCONFIGURED:
@@ -3313,7 +3312,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				controlStartResume.setSelected( false );
 				controlStop.setSelected( false );
 				controlStop.setEnabled( false );
-				lockViewXYPlane.setEnabled( true );
 				break;
 
 			case JaamSimModel.SIM_STATE_CONFIGURED:
@@ -3322,7 +3320,6 @@ public class GUIFrame extends OSFixJFrame implements EventTimeListener, GUIListe
 				controlStartResume.setToolTipText(RUN_TOOLTIP);
 				controlStop.setSelected( false );
 				controlStop.setEnabled( false );
-				lockViewXYPlane.setEnabled( true );
 				break;
 
 			case JaamSimModel.SIM_STATE_RUNNING:
