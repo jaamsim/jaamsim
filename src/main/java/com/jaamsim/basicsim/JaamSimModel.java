@@ -734,7 +734,7 @@ public class JaamSimModel implements EventTimeListener {
 	 * @return simulation time
 	 */
 	public double getSimTime() {
-		return eventManager.ticksToSeconds(eventManager.getTicks());
+		return eventManager.getSeconds();
 	}
 
 	public long getSimTicks() {
