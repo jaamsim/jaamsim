@@ -25,11 +25,11 @@ import com.jaamsim.Statistics.SampleStatistics;
  * @author Harry King
  *
  */
-public class Scenario implements RunListener {
+public class Scenario {
 
 	private final int scenarioNumber;
 	private final int replications;  // number of replications to be performed
-	private final RunListener listener;  // notifies the RunManager that the run has ended
+	private final RunManager listener;  // notifies the RunManager that the run has ended
 
 	private final ArrayList<SimRun> runsToStart;
 	private final ArrayList<SimRun> runsInProgress;
@@ -37,7 +37,7 @@ public class Scenario implements RunListener {
 
 	private final ArrayList<SampleStatistics> runStatistics;
 
-	public Scenario(int numOuts, int scene, int numReps, RunListener l) {
+	public Scenario(int numOuts, int scene, int numReps, RunManager l) {
 		scenarioNumber = scene;
 		replications = numReps;
 		listener = l;
@@ -139,7 +139,6 @@ public class Scenario implements RunListener {
 		}
 	}
 
-	@Override
 	public void runEnded(SimRun run) {
 		if (!run.isError())
 			recordRun(run);
@@ -149,9 +148,6 @@ public class Scenario implements RunListener {
 		}
 		listener.runEnded(run);
 	}
-
-	@Override
-	public void handleError(Throwable t) {}
 
 	public double getProgress() {
 		synchronized (this) {

@@ -22,7 +22,7 @@ public interface RunListener {
 	 * Notifies that the specified simulation run has finished execution.
 	 * @param run - simulation run that has been completed
 	 */
-	public void runEnded(SimRun run);
+	public void runEnded();
 
 	/**
 	 * Called when a runtime error is encountered.

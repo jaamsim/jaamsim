@@ -16,16 +16,15 @@
  */
 package com.jaamsim.probability;
 
-import org.junit.Test;
-
 import static org.junit.Assert.assertTrue;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
+import org.junit.Test;
+
 import com.jaamsim.basicsim.JaamSimModel;
 import com.jaamsim.basicsim.RunListener;
-import com.jaamsim.basicsim.SimRun;
 
 public class TestDistributionFunctions implements RunListener {
 
@@ -213,7 +212,7 @@ public class TestDistributionFunctions implements RunListener {
 	}
 
 	@Override
-	public void runEnded(SimRun run) {
+	public void runEnded() {
 		countDownLatch.countDown();
 	}
 

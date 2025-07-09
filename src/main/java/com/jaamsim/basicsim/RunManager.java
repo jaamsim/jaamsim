@@ -33,7 +33,7 @@ import com.jaamsim.ui.RunProgressBox;
  * @author Harry King
  *
  */
-public class RunManager implements RunListener {
+public class RunManager {
 
 	private final JaamSimModel simModel;
 	private PrintStream outStream;  // location where the custom outputs will be written
@@ -153,7 +153,6 @@ public class RunManager implements RunListener {
 		}
 	}
 
-	@Override
 	public void runEnded(SimRun run) {
 		Simulation simulation = simModel.getSimulation();
 		if (RunProgressBox.hasInstance())
@@ -227,9 +226,6 @@ public class RunManager implements RunListener {
 		JaamSimModel sm = run.getJaamSimModel();
 		startNextRun(sm);
 	}
-
-	@Override
-	public void handleError(Throwable t) {}
 
 	private void startNextRun(JaamSimModel sm) {
 		synchronized (scenarioList) {

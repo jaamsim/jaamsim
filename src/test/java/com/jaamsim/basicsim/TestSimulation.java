@@ -270,7 +270,7 @@ public class TestSimulation {
 		}
 
 		@Override
-		public void runEnded(SimRun run) {
+		public void runEnded() {
 			countDownLatch.countDown();
 		}
 

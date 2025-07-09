@@ -685,7 +685,7 @@ public class JaamSimModel implements EventTimeListener {
 
 		// Notify the run manager
 		if (runListener != null)
-			runListener.runEnded(null);
+			runListener.runEnded();
 	}
 
 	/**
