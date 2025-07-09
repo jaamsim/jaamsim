@@ -29,7 +29,7 @@ public class Scenario {
 
 	private final int scenarioNumber;
 	private final int replications;  // number of replications to be performed
-	private final RunManager listener;  // notifies the RunManager that the run has ended
+	private final RunManager runmanager;  // notifies the RunManager that the run has ended
 
 	private final ArrayList<SimRun> runsToStart;
 	private final ArrayList<SimRun> runsInProgress;
@@ -37,10 +37,10 @@ public class Scenario {
 
 	private final ArrayList<SampleStatistics> runStatistics;
 
-	public Scenario(int numOuts, int scene, int numReps, RunManager l) {
+	public Scenario(int numOuts, int scene, int numReps, RunManager r) {
 		scenarioNumber = scene;
 		replications = numReps;
-		listener = l;
+		runmanager = r;
 
 		runsToStart = new ArrayList<>(replications);
 		runsInProgress = new ArrayList<>(replications);
@@ -146,7 +146,7 @@ public class Scenario {
 			runsInProgress.remove(run);
 			runsCompleted.add(run);
 		}
-		listener.runEnded(run);
+		runmanager.runEnded(run);
 	}
 
 	public double getProgress() {

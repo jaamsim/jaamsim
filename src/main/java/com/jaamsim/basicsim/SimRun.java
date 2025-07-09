@@ -28,7 +28,7 @@ public class SimRun implements RunListener {
 	private final int scenarioNumber;     // scenario number
 	private final int replicationNumber;  // replication number
 	private JaamSimModel simModel;        // simulation model to be executed
-	private final Scenario listener;   // notifies the Scenario that the run has ended
+	private final Scenario scen;   // notifies the Scenario that the run has ended
 	private ArrayList<Double> runOutputValues;
 	private ArrayList<String> runOutputStrings;
 	private ArrayList<String> runParameterStrings;
@@ -40,10 +40,10 @@ public class SimRun implements RunListener {
 	 * @param rep - replication number for the run
 	 * @param l - listens for the end of the run
 	 */
-	public SimRun(int scene, int rep, Scenario l) {
+	public SimRun(int scene, int rep, Scenario s) {
 		scenarioNumber = scene;
 		replicationNumber = rep;
-		listener = l;
+		scen = s;
 		runOutputValues = new ArrayList<>();
 		runOutputStrings = new ArrayList<>();
 		runParameterStrings = new ArrayList<>();
@@ -102,7 +102,7 @@ public class SimRun implements RunListener {
 		runParameterStrings = simModel.getSimulation().getRunParameterStrings(simTime);
 
 		// Notify the listener
-		listener.runEnded(this);
+		scen.runEnded(this);
 	}
 
 	@Override
@@ -112,7 +112,7 @@ public class SimRun implements RunListener {
 		runOutputStrings.add(t.getMessage());
 		runParameterStrings = simModel.getSimulation().getRunParameterStrings(simTime);
 		errorFlag = true;
-		listener.runEnded(this);
+		scen.runEnded(this);
 	}
 
 	public ArrayList<Double> getRunOutputValues() {
