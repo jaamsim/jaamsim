@@ -46,15 +46,6 @@ public class SimRun implements RunListener {
 		runParameterStrings = new ArrayList<>();
 	}
 
-	/**
-	 * Sets the JaamSimModel to be executed for the run.
-	 * The model must be configured already and may have been used for a previous run.
-	 * @param model - pre-configured simulation model
-	 */
-	public void setJaamSimModel(JaamSimModel model) {
-		simModel = model;
-	}
-
 	public JaamSimModel getJaamSimModel() {
 		return simModel;
 	}
@@ -72,10 +63,13 @@ public class SimRun implements RunListener {
 	}
 
 	/**
-	 * Starts the simulation run on a new thread.
+	 * Starts the simulation model run on a new thread. The model must be configured
+	 * already and may have been used for a previous run.
+	 *
+	 * @param sm - pre-configured simulation model
 	 */
-	public void start() {
-
+	public void start(JaamSimModel sm) {
+		simModel = sm;
 		// Reset the scenario and replication numbers
 		simModel.setScenarioNumber(scen.getScenarioNumber());
 		simModel.setReplicationNumber(replicationNumber);

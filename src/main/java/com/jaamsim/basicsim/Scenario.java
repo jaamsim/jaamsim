@@ -128,8 +128,7 @@ public class Scenario {
 				return;
 			SimRun run = runsToStart.remove(0);
 			runsInProgress.add(run);
-			run.setJaamSimModel(simModel);
-			run.start();
+			run.start(simModel);
 		}
 	}
 
