@@ -1634,6 +1634,9 @@ public class JaamSimModel implements EventTimeListener {
 	}
 
 	public final void trace(int indent, Entity ent, String fmt, Object... args) {
+		if (!EventManager.hasCurrent())
+			return;
+
 		// Print a TIME header every time time has advanced
 		EventManager evt = EventManager.current();
 		long traceTick = evt.getTicks();
