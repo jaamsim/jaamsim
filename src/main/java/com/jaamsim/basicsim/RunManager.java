@@ -139,13 +139,6 @@ public class RunManager {
 		}
 	}
 
-	public Scenario getScenario(int scenarioNumber) {
-		synchronized (scenarioList) {
-			int i = scenarioNumber - getStartingScenarioNumber();
-			return scenarioList.get(i);
-		}
-	}
-
 	public boolean hasRunsToStart() {
 		synchronized (scenarioList) {
 			return scenarioList.size() < getNumberOfScenarios()
@@ -164,7 +157,7 @@ public class RunManager {
 				InputAgent.printReport(run.getJaamSimModel(), EventManager.simSeconds(), reportFile);
 
 			// Is the scenario finished?
-			Scenario scene = getScenario(run.getScenarioNumber());
+			Scenario scene = run.getScenario();
 			if (scene.isFinished()) {
 
 				// Print the results
@@ -178,7 +171,7 @@ public class RunManager {
 						boolean bool = simulation.getPrintConfidenceIntervals();
 
 						// Print the column headers
-						if (run.getScenarioNumber() == getStartingScenarioNumber())
+						if (scene.getScenarioNumber() == getStartingScenarioNumber())
 							InputAgent.printRunOutputHeaders(simModel, labels, reps, bool, outStream);
 
 						// Print the output lines for the scenario
@@ -186,14 +179,14 @@ public class RunManager {
 
 						// Print a blank line after the scenario if the replications are shown
 						if (reps && replications > 1 &&
-								run.getScenarioNumber() < getEndingScenarioNumber()) {
+								scene.getScenarioNumber() < getEndingScenarioNumber()) {
 							outStream.println();
 						}
 					}
 				}
 
 				// Exit if this is the last scenario
-				if (run.getScenarioNumber() == getEndingScenarioNumber()) {
+				if (scene.getScenarioNumber() == getEndingScenarioNumber()) {
 					if (outStream != null) {
 						outStream.close();
 						outStream = null;
@@ -210,7 +203,7 @@ public class RunManager {
 						StringBuilder sb = new StringBuilder();
 						for (SimRun r : errorRuns) {
 							sb.append(String.format("replication %s of scenario %s%n",
-									r.getReplicationNumber(), r.getScenarioNumber()));
+									r.getReplicationNumber(), r.getScenario().getScenarioNumber()));
 						}
 						GUIFrame.invokeErrorDialog("Runtime Error",
 								"Runtime errors occured in the following simulation runs:",

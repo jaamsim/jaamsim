@@ -1389,7 +1389,7 @@ public class InputAgent {
 				if (!run.getRunOutputStrings().isEmpty())
 					msg = run.getRunOutputStrings().get(0);
 				outStream.format("%s\tError in replication %s - %s%n",
-						run.getScenarioNumber(), run.getReplicationNumber(), msg);
+						run.getScenario().getScenarioNumber(), run.getReplicationNumber(), msg);
 			}
 		}
 

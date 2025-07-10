@@ -24,8 +24,6 @@ import java.util.ArrayList;
  *
  */
 public class SimRun implements RunListener {
-
-	private final int scenarioNumber;     // scenario number
 	private final int replicationNumber;  // replication number
 	private JaamSimModel simModel;        // simulation model to be executed
 	private final Scenario scen;   // notifies the Scenario that the run has ended
@@ -40,8 +38,7 @@ public class SimRun implements RunListener {
 	 * @param rep - replication number for the run
 	 * @param l - listens for the end of the run
 	 */
-	public SimRun(int scene, int rep, Scenario s) {
-		scenarioNumber = scene;
+	public SimRun(int rep, Scenario s) {
 		replicationNumber = rep;
 		scen = s;
 		runOutputValues = new ArrayList<>();
@@ -62,8 +59,8 @@ public class SimRun implements RunListener {
 		return simModel;
 	}
 
-	public int getScenarioNumber() {
-		return scenarioNumber;
+	public Scenario getScenario() {
+		return scen;
 	}
 
 	public int getReplicationNumber() {
@@ -80,7 +77,7 @@ public class SimRun implements RunListener {
 	public void start() {
 
 		// Reset the scenario and replication numbers
-		simModel.setScenarioNumber(scenarioNumber);
+		simModel.setScenarioNumber(scen.getScenarioNumber());
 		simModel.setReplicationNumber(replicationNumber);
 
 		// Clear the model prior to the next run

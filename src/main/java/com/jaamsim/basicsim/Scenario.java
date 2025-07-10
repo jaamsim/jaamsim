@@ -46,7 +46,7 @@ public class Scenario {
 		runsInProgress = new ArrayList<>(replications);
 		runsCompleted = new ArrayList<>(replications);
 		for (int i = 1; i <= replications; i++) {
-			runsToStart.add(new SimRun(scenarioNumber, i, this));
+			runsToStart.add(new SimRun(i, this));
 		}
 
 		runStatistics = new ArrayList<>(numOuts);
